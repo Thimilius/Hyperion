@@ -1,7 +1,5 @@
 #include <hyperion/hyperion.hpp>
 
-#include <stdio.h>
-
 using namespace Hyperion;
 
 class CSandboxApp : public CApplication {

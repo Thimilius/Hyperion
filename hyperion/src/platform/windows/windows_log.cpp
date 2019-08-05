@@ -32,18 +32,10 @@ namespace Hyperion {
         // Compose full message
         va_list args;
         va_start(args, message_format);
-        int message_length = vsnprintf(nullptr, 0, message_format, args);
-        int final_message_length = prefix_length + message_length + 2;
-        char *final_message_buffer = (char*)malloc(final_message_length);
-        strcpy(final_message_buffer, prefix_buffer);
-        vsnprintf(final_message_buffer + prefix_length, message_length + 1, message_format, args);
-        final_message_buffer[final_message_length - 2] = '\n';
-        final_message_buffer[final_message_length - 1] = 0;
+        CString string = CString("%s%s\n", prefix_buffer, CString::FromArgs(message_format, args).ToCString());
         va_end(args);
 
-        WriteToConsole(level, final_message_buffer, final_message_length);
-
-        free(final_message_buffer);
+        WriteToConsole(level, string.ToCString(), string.GetLength());
     }
 
     void CWindowsLog::WriteToConsole(ELogLevel level, const char *message, int messsage_length) {

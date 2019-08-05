@@ -1,4 +1,6 @@
-#include "core.hpp"
+#include "common.hpp"
+
+#include "core/string.hpp"
 
 #include "app/application.hpp"
 

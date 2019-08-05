@@ -1,10 +1,8 @@
 #pragma once
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <string.h>
+#include <string>
+#include <vector>
+#include <array>
 
 #ifdef HYP_PLATFORM_WINDOWS
     #include <Windows.h>
@@ -12,7 +10,12 @@
 
 #include <glad/glad.h>
 #include <glad/glad_wgl.h>
-
 #include <stb/stb_image.h>
 
+#include <hyperion/common.hpp>
+
+#include <hyperion/core/string.hpp>
+
 #include <hyperion/app/application.hpp>
+
+#include <hyperion/util/log.hpp>
