@@ -7,8 +7,10 @@ namespace Hyperion {
     CApplication *CApplication::s_instance = nullptr;
 
     CApplication::CApplication() {
-        //HYP_ASSERT(!s_instance);
-        
+        // Initialize engine
+        CLog::Get()->Init();
+
+        HYP_ASSERT(!s_instance);
         s_instance = this;
     }
 

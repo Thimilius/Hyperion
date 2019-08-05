@@ -72,7 +72,7 @@ project "hyperion"
 		
 		files
 		{
-			"%{prj.name}/src/platform/win32/**.cpp",
+			"%{prj.name}/src/platform/windows/**.cpp",
 		}
 		
 		defines

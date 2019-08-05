@@ -7,7 +7,7 @@ using namespace Hyperion;
 class CSandboxApp : public CApplication {
 
     virtual void OnInit() override {
-    
+        HYP_TRACE("Hello Hyperion!");
     }
     
     virtual void OnUpdate(float delta_time) override {
