@@ -1,0 +1,14 @@
+# Directories
+.vs/
+bin/
+bin_int/
+
+# Files
+*.sln
+*.user
+*.vcxproj
+*.filters
+*.cache
+
+# Special
+run_tree/*.exe

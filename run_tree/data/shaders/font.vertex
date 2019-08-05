@@ -1,0 +1,14 @@
+#version 410 core
+
+layout (location = 0) in vec2 a_position;
+layout (location = 1) in vec2 a_uv0;
+
+layout (location = 0) out vec2 o_uv0;
+
+uniform mat4 u_projection;
+
+void main()
+{
+    o_uv0 = a_uv0;
+	gl_Position = u_projection * vec4(a_position, 0.0, 1.0);
+}
