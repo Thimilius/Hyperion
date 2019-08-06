@@ -39,6 +39,12 @@ project "hyperion"
 		"%{prj.name}/vendor/**.h",
 	}
 
+	excludes
+	{
+		"%{prj.name}/src/%{prj.name}/platform/windows/**.hpp",
+		"%{prj.name}/src/%{prj.name}/platform/windows/**.cpp",
+	}
+
 	includedirs
 	{
 		"%{prj.name}/include",
@@ -72,7 +78,8 @@ project "hyperion"
 		
 		files
 		{
-			"%{prj.name}/src/platform/windows/**.cpp",
+			"%{prj.name}/src/%{prj.name}/platform/windows/**.hpp",
+			"%{prj.name}/src/%{prj.name}/platform/windows/**.cpp",
 		}
 		
 		defines

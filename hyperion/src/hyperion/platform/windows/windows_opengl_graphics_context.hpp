@@ -1,6 +1,6 @@
 #pragma once
 
-#include "platform/opengl/opengl_graphics_context.hpp"
+#include "hyperion/platform/opengl/opengl_graphics_context.hpp"
 
 #include <Windows.h>
 
