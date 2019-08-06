@@ -14,6 +14,8 @@ namespace Hyperion {
         CApplication();
         virtual ~CApplication() = default;
 
+        inline CWindow *GetWindow() const { return m_window; }
+
         int Run();
         void Exit();
 

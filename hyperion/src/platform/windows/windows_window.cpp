@@ -105,7 +105,7 @@ namespace Hyperion {
     }
 
     void CWindowsWindow::SetVSyncMode(EVSyncMode vsync_mode) {
-        if (vsync_mode != vsync_mode) {
+        if (m_vsync_mode != vsync_mode) {
             m_graphics_context->SetVSyncMode(vsync_mode);
         }
     }

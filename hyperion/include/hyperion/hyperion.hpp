@@ -4,6 +4,7 @@
 
 #include "app/application.hpp"
 #include "app/window.hpp"
+#include "app/time.hpp"
 
 #include "math/math.hpp"
 

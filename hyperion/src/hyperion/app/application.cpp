@@ -19,9 +19,32 @@ namespace Hyperion {
         m_running = true;
 
         OnInit();
+
+        CTimer *timer = CTimer::StartNew();
+        float last_time = 0, tick_timer = 0;
+        u64 frame_counter = 0;
         while (m_running) {
-            OnUpdate(1.0f / 60.0f);
-            OnTick();
+            float now = timer->ElapsedSeconds();
+            float delta = now - last_time;
+            last_time = now;
+
+            tick_timer += delta;
+
+            CTime::s_delta = delta;
+            CTime::s_time += delta;
+
+            frame_counter++;
+            OnUpdate(delta);
+
+            if (tick_timer > 1.0f) {
+                u32 fps = (u32)(frame_counter * (1.0 / tick_timer));
+                CTime::s_fps = fps;
+                CTime::s_frame_time = 1000.0f / fps;
+                OnTick();
+
+                frame_counter = 0;
+                tick_timer = 0;
+            }
 
             m_window->Update();
         }

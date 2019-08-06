@@ -15,9 +15,11 @@
 #include "hyperion/common.hpp"
 
 #include "hyperion/core/string.hpp"
+#include "hyperion/core/timer.hpp"
 
 #include "hyperion/app/application.hpp"
 #include "hyperion/app/window.hpp"
+#include "hyperion/app/time.hpp"
 
 #include "hyperion/math/math.hpp"
 
