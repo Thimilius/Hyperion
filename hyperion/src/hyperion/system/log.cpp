@@ -2,7 +2,33 @@
 
 #include "hyperion/system/log.hpp"
 
+#include <time.h>
+
 namespace Hyperion {
+
+    CLog *CLog::s_instance = new CLog();
+
+    void CLog::Log(ELogType type, ELogLevel level, const char *message_format, ...) {
+        if (level < m_level) {
+            return;
+        }
+
+        // Create prefix
+        time_t current_time;
+        time(&current_time);
+        struct tm time_info;
+        localtime_s(&time_info, &current_time);
+        char prefix_buffer[30];
+        int prefix_length = (int)strftime(prefix_buffer, sizeof(prefix_buffer), GetPrefixFormat(type), &time_info);
+
+        // Compose full message
+        va_list args;
+        va_start(args, message_format);
+        CString message = CString("%s%s\n", prefix_buffer, CString::FromArgs(message_format, args).ToCString());
+        va_end(args);
+
+        COperatingSystem::GetInstance()->PrintToConsole(GetLogColor(level), message);
+    }
 
     const char *CLog::GetPrefixFormat(ELogType type) {
         switch (type) {

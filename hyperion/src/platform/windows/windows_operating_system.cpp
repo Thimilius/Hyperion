@@ -18,6 +18,15 @@ namespace Hyperion {
 
     COperatingSystem* COperatingSystem::s_instance = new CWindowsOperatingSystem();
 
+    void CWindowsOperatingSystem::Init() {
+        // Initialize console
+        m_console_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+        if (m_console_handle == NULL) {
+            AllocConsole();
+            m_console_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+        }
+    }
+
     EOperatingSystemType CWindowsOperatingSystem::GetType() const {
         return EOperatingSystemType::Windows;
     }
@@ -45,6 +54,28 @@ namespace Hyperion {
         result.memory_info.total_virtual_memory = memory_status.ullTotalVirtual;
 
         return result;
+    }
+
+    void CWindowsOperatingSystem::PrintToConsole(ELogColor color, const CString &message) const {
+        s16 console_color = FOREGROUND_INTENSITY;
+        switch (color) {
+            case Hyperion::ELogColor::Black: break;
+            case Hyperion::ELogColor::Red: console_color = FOREGROUND_RED; break;
+            case Hyperion::ELogColor::Green: console_color = FOREGROUND_GREEN; break;
+            case Hyperion::ELogColor::Blue: console_color = FOREGROUND_BLUE; break;
+            case Hyperion::ELogColor::Yellow: console_color = FOREGROUND_RED | FOREGROUND_GREEN; break;
+            case Hyperion::ELogColor::Magenta: console_color = FOREGROUND_RED | FOREGROUND_BLUE; break;
+            case Hyperion::ELogColor::Cyan: console_color = FOREGROUND_BLUE | FOREGROUND_GREEN; break;
+            case Hyperion::ELogColor::White: console_color = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE; break;
+            default: HYP_ASSERT(false);
+        }
+
+        CONSOLE_SCREEN_BUFFER_INFO console_screen_buffer_info;
+        GetConsoleScreenBufferInfo(m_console_handle, &console_screen_buffer_info);
+        SetConsoleTextAttribute(m_console_handle, console_color);
+        unsigned long written_chars = 0;
+        WriteConsoleA(m_console_handle, message.ToCString(), message.GetLength(), &written_chars, nullptr);
+        SetConsoleTextAttribute(m_console_handle, console_screen_buffer_info.wAttributes);
     }
 
 }

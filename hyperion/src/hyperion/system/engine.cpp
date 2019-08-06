@@ -5,7 +5,7 @@
 namespace Hyperion {
 
     void CEngine::Init() {
-        CLog::GetInstance()->Init();
+        COperatingSystem::GetInstance()->Init();
 
         HYP_CORE_INFO("[Engine] - Initializing...");
         SSystemInfo system_info = COperatingSystem::GetInstance()->GetSystemInfo();

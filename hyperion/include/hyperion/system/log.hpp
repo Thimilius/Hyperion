@@ -27,19 +27,18 @@ namespace Hyperion {
     };
 
     class CLog {
-    protected:
+    private:
         static CLog *s_instance;
         ELogLevel m_level;
     public:
-        const char *GetPrefixFormat(ELogType type);
-        ELogColor GetLogColor(ELogLevel level);
-
         inline void SetLevel(ELogLevel level) { m_level = level; }
 
-        virtual void Init() = 0;
-        virtual void Log(ELogType type, ELogLevel level, const char *message, ...) = 0;
+        void Log(ELogType type, ELogLevel level, const char *message, ...);
 
-        static CLog *GetInstance() { return s_instance; }
+        inline static CLog *GetInstance() { return s_instance; }
+    private:
+        const char *GetPrefixFormat(ELogType type);
+        ELogColor GetLogColor(ELogLevel level);
     };
 
 }

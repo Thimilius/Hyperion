@@ -28,10 +28,14 @@ namespace Hyperion {
     private:
         static COperatingSystem *s_instance;
     public:
+        virtual void Init() = 0;
+
         virtual EOperatingSystemType GetType() const = 0;
         virtual SSystemInfo GetSystemInfo() const = 0;
 
-        static COperatingSystem* GetInstance() { return s_instance; }
+        virtual void PrintToConsole(ELogColor color, const CString &message) const = 0;
+
+        inline static COperatingSystem* GetInstance() { return s_instance; }
     };
 
 }
