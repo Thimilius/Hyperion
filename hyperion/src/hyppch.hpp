@@ -18,4 +18,6 @@
 
 #include <hyperion/app/application.hpp>
 
+#include <hyperion/system/operating_system.hpp>
+
 #include <hyperion/util/log.hpp>

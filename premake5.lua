@@ -126,6 +126,12 @@ project "sandbox"
 		defines { "HYP_PLATFORM_WINDOWS" }
 		systemversion "latest"
 		
+		links
+		{
+			"PowrProf"
+		}
+		
+		
 	filter "configurations:Debug"
 		defines { "HYP_DEBUG" }
 		runtime "Debug"

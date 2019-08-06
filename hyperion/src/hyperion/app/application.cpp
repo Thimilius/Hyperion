@@ -7,11 +7,17 @@ namespace Hyperion {
     CApplication *CApplication::s_instance = nullptr;
 
     CApplication::CApplication() {
-        // Initialize engine
-        CLog::Get()->Init();
-
         HYP_ASSERT(!s_instance);
         s_instance = this;
+
+        CLog::Get()->Init(); 
+        
+        HYP_CORE_INFO("Initializing Hyperion...");
+        SystemInfo system_info = OperatingSystem::Get()->GetSystemInfo();
+        HYP_CORE_INFO("[SystemInfo] - Processor Count: %d | Processor Frequency: %.2f Ghz | Physical Memory: %.2f GB",
+            system_info.processor_info.processor_count,
+            (float)system_info.processor_info.processor_mhz_frequency / 1000.0f,
+            (float)system_info.memory_info.total_physical_memory / (1024.0f * 1024.0f * 1024.0f));
     }
 
     int CApplication::Run() {

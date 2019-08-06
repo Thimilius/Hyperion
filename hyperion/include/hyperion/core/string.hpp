@@ -17,6 +17,7 @@ namespace Hyperion {
 
         static CString FromArgs(const char *format, va_list args);
 
+        operator const char*();
         CString operator+(const CString &string) const;
         CString operator=(const CString &string);
     };

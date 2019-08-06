@@ -39,6 +39,10 @@ namespace Hyperion {
         return result;
     }
 
+    CString::operator const char*() {
+        return m_buffer;
+    }
+
     CString CString::operator+(const CString &string) const {
         CString result;
         result.m_buffer = new char[GetLength() + string.GetLength() + 1];
