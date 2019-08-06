@@ -4,9 +4,9 @@
 
 namespace Hyperion {
 
-    class WindowsOperatingSystem : public OperatingSystem {
-        OperatingSystemType GetType() const override;
-        SystemInfo GetSystemInfo() const override;
+    class CWindowsOperatingSystem : public COperatingSystem {
+        EOperatingSystemType GetType() const override;
+        SSystemInfo GetSystemInfo() const override;
     };
 
 }

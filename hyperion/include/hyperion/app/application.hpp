@@ -18,9 +18,10 @@ namespace Hyperion {
         virtual void OnUpdate(float delta_time) = 0;
         virtual void OnTick() = 0;
 
-        static CApplication *Get() { return s_instance; }
+        static CApplication *GetInstance() { return s_instance; }
     };
 
+    // This is a function to be defined by the client
     CApplication *CreateApplication();
 
 }

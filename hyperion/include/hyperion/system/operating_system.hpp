@@ -4,12 +4,12 @@
 
 namespace Hyperion {
 
-    enum class OperatingSystemType {
+    enum class EOperatingSystemType {
         Unknown,
         Windows
     };
 
-    struct SystemInfo {
+    struct SSystemInfo {
         struct ProcessorInfo {
             u32 processor_count;
             u32 processor_mhz_frequency;
@@ -24,14 +24,14 @@ namespace Hyperion {
         } memory_info;
     };
 
-    class OperatingSystem {
+    class COperatingSystem {
     private:
-        static OperatingSystem *s_instance;
+        static COperatingSystem *s_instance;
     public:
-        virtual OperatingSystemType GetType() const = 0;
-        virtual SystemInfo GetSystemInfo() const = 0;
+        virtual EOperatingSystemType GetType() const = 0;
+        virtual SSystemInfo GetSystemInfo() const = 0;
 
-        static OperatingSystem* Get() { return s_instance; }
+        static COperatingSystem* GetInstance() { return s_instance; }
     };
 
 }

@@ -16,14 +16,14 @@ namespace Hyperion {
         ULONG CurrentIdleState;
     } PROCESSOR_POWER_INFORMATION, *PPROCESSOR_POWER_INFORMATION;
 
-    OperatingSystem* OperatingSystem::s_instance = new WindowsOperatingSystem();
+    COperatingSystem* COperatingSystem::s_instance = new CWindowsOperatingSystem();
 
-    OperatingSystemType WindowsOperatingSystem::GetType() const {
-        return OperatingSystemType::Windows;
+    EOperatingSystemType CWindowsOperatingSystem::GetType() const {
+        return EOperatingSystemType::Windows;
     }
 
-    SystemInfo WindowsOperatingSystem::GetSystemInfo() const {
-        SystemInfo result;
+    SSystemInfo CWindowsOperatingSystem::GetSystemInfo() const {
+        SSystemInfo result;
 
         // Gather processor info
         SYSTEM_INFO system_info;
