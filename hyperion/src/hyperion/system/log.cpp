@@ -33,7 +33,6 @@ namespace Hyperion {
     const char *CLog::GetPrefixFormat(ELogType type) {
         switch (type) {
             case Hyperion::ELogType::Core: return "[%H:%M:%S] - [Core] - ";
-            case Hyperion::ELogType::OpenGL: return "[%H:%M:%S] - [OpenGL] - ";
             case Hyperion::ELogType::Client: return "[%H:%M:%S] - [Client] - ";
             default: HYP_ASSERT(false); return "";
         }

@@ -22,7 +22,6 @@ namespace Hyperion {
 
     enum class ELogType {
         Core,
-        OpenGL,
         Client
     };
 
@@ -49,12 +48,6 @@ namespace Hyperion {
     #define HYP_CORE_INFO(m, ...)  Hyperion::CLog::GetInstance()->Log(ELogType::Core, ELogLevel::Info, m, __VA_ARGS__)
     #define HYP_CORE_WARN(m, ...)  Hyperion::CLog::GetInstance()->Log(ELogType::Core, ELogLevel::Warning, m, __VA_ARGS__)
     #define HYP_CORE_ERROR(m, ...) Hyperion::CLog::GetInstance()->Log(ELogType::Core, ELogLevel::Error, m, __VA_ARGS__)
-
-    #define HYP_GL(m, ...)       Hyperion::CLog::GetInstance()->Log(ELogType::OpenGL, ELogLevel::Trace, m, __VA_ARGS__)
-    #define HYP_GL_TRACE(m, ...) Hyperion::CLog::GetInstance()->Log(ELogType::OpenGL, ELogLevel::Trace, m, __VA_ARGS__)
-    #define HYP_GL_INFO(m, ...)  Hyperion::CLog::GetInstance()->Log(ELogType::OpenGL, ELogLevel::Info, m, __VA_ARGS__)
-    #define HYP_GL_WARN(m, ...)  Hyperion::CLog::GetInstance()->Log(ELogType::OpenGL, ELogLevel::Warning, m, __VA_ARGS__)
-    #define HYP_GL_ERROR(m, ...) Hyperion::CLog::GetInstance()->Log(ELogType::OpenGL, ELogLevel::Error, m, __VA_ARGS__)
 
     #define HYP(m, ...)       Hyperion::CLog::GetInstance()->Log(ELogType::Client, ELogLevel::Trace, m, __VA_ARGS__)
     #define HYP_TRACE(m, ...) Hyperion::CLog::GetInstance()->Log(ELogType::Client, ELogLevel::Trace, m, __VA_ARGS__)

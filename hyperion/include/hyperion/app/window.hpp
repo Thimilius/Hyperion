@@ -6,6 +6,11 @@
 
 namespace Hyperion {
 
+    class CApplication;
+    namespace Rendering {
+        class CGraphicsContext;
+    }
+
     enum class EWindowMode {
         Windowed,
         Borderless,
@@ -24,6 +29,8 @@ namespace Hyperion {
         Math::SVec2 m_size;
         EWindowMode m_window_mode;
         EVSyncMode m_vsync_mode;
+
+        Rendering::CGraphicsContext *m_graphics_context;
     public:
         virtual ~CWindow() = default;
 
@@ -36,9 +43,11 @@ namespace Hyperion {
         inline EVSyncMode GetVSyncMode() const { return m_vsync_mode; }
         virtual void SetVSyncMode(EVSyncMode vsync_mode) = 0;
 
+        static CWindow *Create(CString title, Math::SVec2 size, EWindowMode window_mode, EVSyncMode vsync_mode);
+    private:
         virtual void Update() const = 0;
 
-        static CWindow *Create(CString title, Math::SVec2 size, EWindowMode window_mode, EVSyncMode vsync_mode);
+        friend class CApplication;
     };
 
 }

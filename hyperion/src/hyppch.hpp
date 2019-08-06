@@ -17,6 +17,7 @@
 #include "hyperion/core/string.hpp"
 
 #include "hyperion/app/application.hpp"
+#include "hyperion/app/window.hpp"
 
 #include "hyperion/math/math.hpp"
 

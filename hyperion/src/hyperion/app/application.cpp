@@ -22,6 +22,8 @@ namespace Hyperion {
         while (m_running) {
             OnUpdate(1.0f / 60.0f);
             OnTick();
+
+            m_window->Update();
         }
 
         return 0;

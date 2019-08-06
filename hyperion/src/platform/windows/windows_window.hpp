@@ -7,7 +7,6 @@ namespace Hyperion {
     class CWindowsWindow : public CWindow {
     private:
         HWND m_window_handle;
-        HDC m_device_context;
         WINDOWPLACEMENT m_previous_placement;
     public:
         CWindowsWindow(CString title, Math::SVec2 size, EWindowMode window_mode, EVSyncMode vsync_mode);

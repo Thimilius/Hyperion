@@ -3,6 +3,7 @@
 #include "core/string.hpp"
 
 #include "app/application.hpp"
+#include "app/window.hpp"
 
 #include "math/math.hpp"
 

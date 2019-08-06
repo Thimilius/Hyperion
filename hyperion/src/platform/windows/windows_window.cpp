@@ -2,6 +2,8 @@
 
 #include "windows_window.hpp"
 
+#include "windows_opengl_graphics_context.hpp"
+
 namespace Hyperion {
 
     static LRESULT CALLBACK window_callback(HWND window_handle, u32 message, WPARAM first_message_param, LPARAM second_message_param);
@@ -54,7 +56,12 @@ namespace Hyperion {
             HYP_CORE_ERROR("Failed to create window!");
         }
 
-        m_device_context = GetDC(m_window_handle);
+        // TODO: We need to have a way to differentiate between graphics apis
+        m_graphics_context = new Rendering::CWindowsOpenGLGraphicsContext(m_window_handle);
+        m_graphics_context->Init();
+
+        // Set inital properties
+        m_graphics_context->SetVSyncMode(vsync_mode);
 
         ShowWindow(m_window_handle, SW_SHOWNORMAL);
     }
@@ -98,11 +105,13 @@ namespace Hyperion {
     }
 
     void CWindowsWindow::SetVSyncMode(EVSyncMode vsync_mode) {
-
+        if (vsync_mode != vsync_mode) {
+            m_graphics_context->SetVSyncMode(vsync_mode);
+        }
     }
 
     void CWindowsWindow::Update() const {
-        SwapBuffers(m_device_context);
+        m_graphics_context->SwapBuffers();
 
         MSG message;
         while (PeekMessageA(&message, NULL, 0, 0, PM_REMOVE)) {
