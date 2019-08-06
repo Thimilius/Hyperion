@@ -1,6 +1,6 @@
 #pragma once
 
-#include "hyperion/util/log.hpp"
+#include "hyperion/system/log.hpp"
 
 #include <Windows.h>
 
