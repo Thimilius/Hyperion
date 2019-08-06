@@ -18,6 +18,8 @@
 
 #include "hyperion/app/application.hpp"
 
+#include "hyperion/math/math.hpp"
+
 #include "hyperion/system/log.hpp"
 #include "hyperion/system/engine.hpp"
 #include "hyperion/system/operating_system.hpp"

@@ -1,6 +1,9 @@
 #include <hyperion/hyperion.hpp>
 
+#include <stdio.h>
+
 using namespace Hyperion;
+using namespace Hyperion::Math;
 
 class CSandboxApp : public CApplication {
 
@@ -13,7 +16,7 @@ class CSandboxApp : public CApplication {
     }
     
     virtual void OnTick() override {
-    
+        
     }
 
 };

@@ -2,8 +2,6 @@
 
 #include <stdint.h>
 
-#include "system/log.hpp"
-
 typedef int8_t  s8;
 typedef int16_t s16;
 typedef int32_t s32;
@@ -13,6 +11,10 @@ typedef uint8_t  u8;
 typedef uint16_t u16;
 typedef uint32_t u32;
 typedef uint64_t u64;
+
+#include "core/string.hpp"
+
+#include "system/log.hpp"
 
 #ifdef _MSC_VER
     #define HYP_DEBUG_BREAK __debugbreak()
