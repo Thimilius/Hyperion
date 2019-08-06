@@ -27,7 +27,7 @@ namespace Hyperion {
 
     CString::~CString() {
         if (m_buffer) {
-            delete m_buffer;
+            delete[] m_buffer;
         }
     }
 
@@ -56,7 +56,8 @@ namespace Hyperion {
             if (m_buffer) {
                 delete[] m_buffer;
             }
-            m_buffer = new char[string.GetLength() + 1];
+            m_length = string.GetLength();
+            m_buffer = new char[m_length + 1];
             strcpy(m_buffer, string.m_buffer);
         }
         return *this;

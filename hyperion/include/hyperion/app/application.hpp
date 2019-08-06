@@ -1,11 +1,14 @@
 #pragma once
 
+#include "window.hpp"
+
 namespace Hyperion {
 
     class CApplication {
     private:
         static CApplication *s_instance;
 
+        CWindow *m_window;
         bool m_running;
     public:
         CApplication();

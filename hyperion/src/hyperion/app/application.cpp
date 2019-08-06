@@ -11,6 +11,8 @@ namespace Hyperion {
         s_instance = this;
 
         CEngine::Init();
+
+        m_window = CWindow::Create(CString("Hyperion"), Math::SVec2(1280, 720), EWindowMode::Windowed, EVSyncMode::EveryVBlank);
     }
 
     int CApplication::Run() {
