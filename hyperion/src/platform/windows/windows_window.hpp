@@ -9,14 +9,18 @@ namespace Hyperion {
         HWND m_window_handle;
         WINDOWPLACEMENT m_previous_placement;
     public:
-        CWindowsWindow(CString title, Math::SVec2 size, EWindowMode window_mode, EVSyncMode vsync_mode);
+        CWindowsWindow(const CString &title, u32 width, u32 height, EWindowMode window_mode);
 
         virtual void SetTitle(CString title) override;
-        virtual void SetSize(Math::SVec2 size) override;
+        virtual void SetSize(u32 width, u32 height) override;
         virtual void SetWindowMode(EWindowMode window_mode) override;
         virtual void SetVSyncMode(EVSyncMode vsync_mode) override;
-
+    private:
         virtual void Update() const override;
+
+        void DispatchEvent(CEvent &event) const;
+
+        static LRESULT CALLBACK MessageCallback(HWND window_handle, u32 message, WPARAM first_message_param, LPARAM second_message_param);
     };
 
 }

@@ -4,19 +4,19 @@
 
 #include "windows_opengl_graphics_context.hpp"
 
+// TODO: Fully implement events
+
 namespace Hyperion {
 
-    static LRESULT CALLBACK window_callback(HWND window_handle, u32 message, WPARAM first_message_param, LPARAM second_message_param);
-
-    CWindow *CWindow::Create(CString title, Math::SVec2 size, EWindowMode window_mode, EVSyncMode vsync_mode) {
-        return new CWindowsWindow(title, size, window_mode, vsync_mode);
+    CWindow *CWindow::Create(const CString &title, u32 width, u32 height, EWindowMode window_mode) {
+        return new CWindowsWindow(title, width, height, window_mode);
     }
 
-    CWindowsWindow::CWindowsWindow(CString title, Math::SVec2 size, EWindowMode window_mode, EVSyncMode vsync_mode) {
+    CWindowsWindow::CWindowsWindow(const CString &title, u32 width, u32 height, EWindowMode window_mode) {
         m_title = title;
-        m_size = size;
+        m_width = width;
+        m_height = height;
         m_window_mode = window_mode;
-        m_vsync_mode = vsync_mode;
 
         u32 window_styles = WS_OVERLAPPEDWINDOW; //& ~WS_THICKFRAME & ~WS_MAXIMIZEBOX
         const char *window_class_name = "HYPERION_WINDOW_CLASS";
@@ -27,14 +27,14 @@ namespace Hyperion {
         window_class.lpszClassName = window_class_name;
         window_class.style = CS_HREDRAW | CS_VREDRAW;
         window_class.hInstance = instance;
-        window_class.lpfnWndProc = window_callback;
+        window_class.lpfnWndProc = &MessageCallback;
         window_class.hCursor = LoadCursorA(NULL, (LPSTR)IDC_ARROW);
 
         RegisterClassExA(&window_class);
 
         RECT window_rect = {0};
-        window_rect.right = (LONG)size.x;
-        window_rect.bottom = (LONG)size.y;
+        window_rect.right = (LONG)m_width;
+        window_rect.bottom = (LONG)m_height;
         AdjustWindowRect(&window_rect, window_styles, false);
 
         m_window_handle = CreateWindowExA(
@@ -49,19 +49,20 @@ namespace Hyperion {
             NULL,
             NULL,
             instance,
-            NULL
+            this // Used later to store user pointer
         );
 
         if (m_window_handle == NULL) {
             HYP_CORE_ERROR("Failed to create window!");
         }
 
+        SetLastError(0);
+        auto result = SetWindowLongPtrA(m_window_handle, GWLP_USERDATA, (LONG_PTR)(void*)this);
+        auto error = GetLastError();
+
         // TODO: We need to have a way to differentiate between graphics apis
         m_graphics_context = new Rendering::CWindowsOpenGLGraphicsContext(m_window_handle);
         m_graphics_context->Init();
-
-        // Set inital properties
-        m_graphics_context->SetVSyncMode(vsync_mode);
 
         ShowWindow(m_window_handle, SW_SHOWNORMAL);
     }
@@ -71,7 +72,7 @@ namespace Hyperion {
         SetWindowTextA(m_window_handle, title.ToCString());
     }
 
-    void CWindowsWindow::SetSize(Math::SVec2 size) {
+    void CWindowsWindow::SetSize(u32 width, u32 height) {
 
     }
 
@@ -117,23 +118,40 @@ namespace Hyperion {
         while (PeekMessageA(&message, NULL, 0, 0, PM_REMOVE)) {
             TranslateMessage(&message);
             DispatchMessageA(&message);
-
-            if (message.message == WM_QUIT) {
-                CApplication::GetInstance()->Exit();
-            }
         }
     }
 
-    LRESULT window_callback(HWND window_handle, u32 message, WPARAM first_message_param, LPARAM second_message_param) {
+    void CWindowsWindow::DispatchEvent(CEvent &event) const {
+        if (m_event_callback != nullptr) {
+            m_event_callback(event);
+        }
+    }
+
+    LRESULT CWindowsWindow::MessageCallback(HWND window_handle, u32 message, WPARAM w_param, LPARAM l_param) {
         LRESULT result = 0;
 
+        // This will be null on creation
+        CWindowsWindow *window = (CWindowsWindow*)GetWindowLongPtrA(window_handle, GWLP_USERDATA);
+
         switch (message) {
+            case WM_CREATE: {
+                // Store user pointer
+                SetWindowLongPtrA(window_handle, GWLP_USERDATA, (LONG_PTR)((CREATESTRUCT *)l_param)->lpCreateParams);
+                SetWindowPos(window_handle, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
+                break;
+            }
             case WM_CLOSE: {
-                PostQuitMessage(0);
+                CWindowCloseEvent event;
+                window->DispatchEvent(event);
+                break;
+            }
+            case WM_ACTIVATEAPP: {
+                CWindowFocusEvent event((bool)w_param);
+                window->DispatchEvent(event);
                 break;
             }
             default: {
-                result = DefWindowProcA(window_handle, message, first_message_param, second_message_param);
+                result = DefWindowProcA(window_handle, message, w_param, l_param);
             }
         }
 

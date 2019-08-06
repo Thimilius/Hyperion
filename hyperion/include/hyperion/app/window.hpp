@@ -2,7 +2,7 @@
 
 #include "hyperion/common.hpp"
 
-#include "hyperion/math/vec2.hpp"
+#include "event.hpp"
 
 namespace Hyperion {
 
@@ -24,28 +24,38 @@ namespace Hyperion {
     };
 
     class CWindow {
+        using EventCallbackFunction = std::function<void(CEvent &)>;
     protected:
         CString m_title;
-        Math::SVec2 m_size;
+        u32 m_width;
+        u32 m_height;
         EWindowMode m_window_mode;
         EVSyncMode m_vsync_mode;
 
+        EventCallbackFunction m_event_callback;
+
         Rendering::CGraphicsContext *m_graphics_context;
     public:
+
         virtual ~CWindow() = default;
 
         inline CString GetTitle() const { return m_title; }
         virtual void SetTitle(CString title) = 0;
-        inline Math::SVec2 GetSize() const { return m_size; }
-        virtual void SetSize(Math::SVec2 size) = 0;
+
+        inline u32 GetWidth() const { return m_width; }
+        inline u32 GetHeight() const { return m_height; }
+        virtual void SetSize(u32 width, u32 height) = 0;
+
         inline EWindowMode GetWindowMode() const { return m_window_mode; }
         virtual void SetWindowMode(EWindowMode window_mode) = 0;
+
         inline EVSyncMode GetVSyncMode() const { return m_vsync_mode; }
         virtual void SetVSyncMode(EVSyncMode vsync_mode) = 0;
 
-        static CWindow *Create(CString title, Math::SVec2 size, EWindowMode window_mode, EVSyncMode vsync_mode);
+        static CWindow *Create(const CString &title, u32 width, u32 height, EWindowMode window_mode);
     private:
         virtual void Update() const = 0;
+        void SetEventCallbackFunction(const EventCallbackFunction &callback) { m_event_callback = callback; }
 
         friend class CApplication;
     };

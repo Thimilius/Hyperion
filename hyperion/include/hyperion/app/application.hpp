@@ -1,6 +1,7 @@
 #pragma once
 
 #include "window.hpp"
+#include "event.hpp"
 
 namespace Hyperion {
 
@@ -11,7 +12,7 @@ namespace Hyperion {
         CWindow *m_window;
         bool m_running;
     public:
-        CApplication();
+        CApplication(const CString& title, u32 width, u32 height, EWindowMode mode);
         virtual ~CApplication() = default;
 
         inline CWindow *GetWindow() const { return m_window; }
@@ -19,11 +20,15 @@ namespace Hyperion {
         int Run();
         void Exit();
 
+        inline static CApplication *GetInstance() { return s_instance; }
+    protected:
         virtual void OnInit() = 0;
+        virtual void OnEvent(CEvent &event) = 0;
+        virtual void OnFixedUpdate(float delta_time) = 0;
         virtual void OnUpdate(float delta_time) = 0;
         virtual void OnTick() = 0;
-
-        inline static CApplication *GetInstance() { return s_instance; }
+    private:
+        void OnEventInternal(CEvent &event);
     };
 
     // This is a function to be defined by the client
