@@ -23,7 +23,7 @@ typedef uint64_t u64;
 #endif
 
 #ifdef HYP_DEBUG
-    #define HYP_ASSERT(x) do { if(!x) { HYP_CORE_ERROR("***Assertion failed!*** %s (%d)", __FILE__, __LINE__); HYP_DEBUG_BREAK; } } while(0)
+    #define HYP_ASSERT(x) do { if(!(x)) { HYP_CORE_ERROR("***Assertion failed!*** %s (%d)", __FILE__, __LINE__); HYP_DEBUG_BREAK; } } while(0)
 #else
     #define HYP_ASSERT(x)
 #endif

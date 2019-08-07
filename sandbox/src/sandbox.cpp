@@ -1,7 +1,5 @@
 #include <hyperion/hyperion.hpp>
 
-#include <stdio.h>
-
 using namespace Hyperion;
 using namespace Hyperion::Math;
 

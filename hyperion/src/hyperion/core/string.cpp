@@ -32,7 +32,7 @@ namespace Hyperion {
             return;
         }
         
-        m_length = string.GetLength();
+        m_length = string.m_length;
         m_buffer = new char[m_length + 1];
         strcpy(m_buffer, string.m_buffer);
     }
@@ -51,15 +51,19 @@ namespace Hyperion {
         return result;
     }
 
-    CString::operator const char*() {
-        return m_buffer;
-    }
-
     CString CString::operator+(const CString &string) const {
         CString result;
-        result.m_buffer = new char[GetLength() + string.GetLength() + 1];
+        result.m_buffer = new char[m_length + string.m_length + 1];
         strcpy(result.m_buffer, m_buffer);
         strcat(result.m_buffer, string.m_buffer);
+        return result;
+    }
+
+    CString operator+(CString string, bool value) {
+        CString result;
+        result.m_buffer = new char[string.m_length + (value ? 4 : 5) + 1];
+        strcpy(result.m_buffer, string.m_buffer);
+        strcat(result.m_buffer, value ? "true" : "false");
         return result;
     }
 
@@ -68,7 +72,7 @@ namespace Hyperion {
             if (m_buffer) {
                 delete[] m_buffer;
             }
-            m_length = string.GetLength();
+            m_length = string.m_length;
             m_buffer = new char[m_length + 1];
             strcpy(m_buffer, string.m_buffer);
         }

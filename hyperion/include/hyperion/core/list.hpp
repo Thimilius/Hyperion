@@ -1,0 +1,150 @@
+#pragma once
+
+#include "hyperion/common.hpp"
+
+#include <initializer_list>
+
+namespace Hyperion {
+
+    template<typename T>
+    class CList {
+    private:
+        s32 m_count;
+        s32 m_capacity;
+        T *m_data;
+    public:
+        inline CList() : m_count(0), m_data(nullptr) {
+            Reserve(10);
+        }
+        
+        inline CList(std::initializer_list<T> list) : m_count(0), m_data(nullptr) {
+            Reserve((s32)list.size());
+
+            for (auto item : list) {
+                Add(item);
+            }
+        }
+
+        inline CList(s32 capacity) : m_count(0), m_data(nullptr) {
+            Reserve(capacity);
+        }
+
+        inline CList(const CList &list) {
+            if (this == &list) {
+                return;
+            }
+
+            m_count = list.m_count;
+            m_capacity = list.m_capacity;
+            m_data = new T[m_count];
+
+            memcpy(m_data, list.m_data, m_count * sizeof(T));
+        }
+
+        inline ~CList() {
+            if (m_data) {
+                delete[] m_data;
+            }
+        }
+
+        inline s32 GetCount() const {
+            return m_count;
+        }
+
+        inline s32 GetCapacity() const {
+            return m_capacity;
+        }
+        
+        inline bool IsEmpty() const {
+            return m_count == 0;
+        }
+
+        inline void Add(T item) {
+            if (m_count == m_capacity) {
+                Reserve(m_capacity * 2);
+            }
+
+            m_data[m_count] = item;
+            m_count++;
+        }
+
+        inline T &Get(s32 index) const {
+            if (index < 0 || index >= m_count) {
+                return T();
+            }
+            return m_data[index];
+        }
+
+        inline s32 IndexOf(T item) const {
+            for (s32 i = 0; i < m_count; i++) {
+                if (item == m_data[i]) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        inline bool Contains(T item) const {
+            return IndexOf(item) >= 0;
+        }
+
+        inline void Remove(T item) {
+            s32 index = IndexOf(item);
+            if (index >= 0) {
+                RemoveAt(index);
+            }
+        }
+
+        inline void RemoveAt(s32 index) {
+            if (index < 0 || index >= m_count) {
+                return;
+            }
+
+            char *pointer = (char*)&m_data[index];
+            size_t element_size = sizeof(T);
+
+            memcpy(pointer, pointer + element_size, (m_count - index - 1) * element_size);
+
+            m_count--;
+        }
+
+        inline void Clear() {
+            m_count = 0;
+        }
+
+        inline T *begin() {
+            return m_count > 0 ? &m_data[0] : nullptr;
+        }
+        
+        inline T *end() { 
+            return m_count > 0 ? &m_data[m_count - 1] : nullptr;
+        }
+
+        CList operator=(const CList &list) {
+            if (this != &list) {
+                if (m_data) {
+                    delete[] m_data;
+                }
+                m_count = list.m_count;
+                m_capacity = list.m_capacity;
+                m_data = new T[m_count + 1];
+                memcpy(m_data, list.m_data, m_count * sizeof(T));
+            }
+            return *this;
+        }
+
+        T &operator[] (s32 index) {
+            HYP_ASSERT(index >= 0 || index < m_count);
+            return m_data[index];
+        }
+    private:
+        inline void Reserve(s32 capacity) {
+            if (m_data) {
+                delete[] m_data;
+            }
+
+            m_data = new T[capacity];
+            m_capacity = capacity;
+        }
+    };
+}

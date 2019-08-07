@@ -1,11 +1,13 @@
 #pragma once
 
+#include "hyperion/common.hpp"
+
 namespace Hyperion {
 
     class CString {
     private:
         char *m_buffer;
-        int m_length;
+        u32 m_length;
     public:
         CString();
         CString(bool value);
@@ -13,12 +15,13 @@ namespace Hyperion {
         CString(const CString &string);
         ~CString();
 
-        int GetLength() const { return m_length; };
-        const char *ToCString() const { return m_buffer; }
+        inline u32 GetLength() const { return m_length; };
+        inline const char *ToCString() const { return m_buffer == nullptr ? "" : m_buffer; }
 
         static CString FromArgs(const char *format, va_list args);
 
-        operator const char*();
+        friend CString operator+(CString string, bool value);
+
         CString operator+(const CString &string) const;
         CString operator=(const CString &string);
     };
