@@ -15,8 +15,11 @@ namespace Hyperion {
         void SetSize(u32 width, u32 height) override;
         void SetWindowMode(EWindowMode window_mode) override;
         void SetVSyncMode(EVSyncMode vsync_mode) override;
+
+        void SetIcon(const char *path) override;
     private:
         void Update() const override;
+        void Show() const override;
 
         EKeyCode GetKeyCode(u32 code) const override;
         EMouseButtonCode GetMouseButtonCode(u32 code) const override;

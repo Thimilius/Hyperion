@@ -6,6 +6,18 @@ namespace Hyperion {
 
     CString::CString() : m_buffer(nullptr), m_length(0) { }
 
+    CString::CString(bool value) {
+        if (value) {
+            m_length = 4;
+            m_buffer = new char[5];
+            strcpy(m_buffer, "true");
+        } else {
+            m_length = 5;
+            m_buffer = new char[6];
+            strcpy(m_buffer, "false");
+        }
+    }
+
     CString::CString(const char *format, ...) {
         va_list args;
         va_start(args, format);

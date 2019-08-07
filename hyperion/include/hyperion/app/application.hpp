@@ -24,7 +24,6 @@ namespace Hyperion {
     protected:
         virtual void OnInit() = 0;
         virtual void OnEvent(CEvent &event) = 0;
-        virtual void OnFixedUpdate(float delta_time) = 0;
         virtual void OnUpdate(float delta_time) = 0;
         virtual void OnTick() = 0;
     private:

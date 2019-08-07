@@ -7,19 +7,23 @@ using namespace Hyperion::Math;
 
 class CSandboxApp : public CApplication {
 public:
-    CSandboxApp() : CApplication(CString("Hyperion | FPS: 0 (0 ms)"), 1280, 720, EWindowMode::Windowed) {
-
-    }
+    CSandboxApp() : CApplication("", 1280, 720, EWindowMode::Windowed) { }
 protected:
+    void UpdateTitle() {
+        GetWindow()->SetTitle(CString("Hyperion | FPS: %d (%.2f ms) | VSync: %s",
+            CTime::GetFPS(),
+            CTime::GetFrameTime(),
+            CString(GetWindow()->GetVSyncMode() != EVSyncMode::DontSync).ToCString()));
+    }
+
     void OnInit() override {
         GetWindow()->SetVSyncMode(EVSyncMode::EveryVBlank);
+        GetWindow()->SetIcon("logo/logo.ico");
+
+        UpdateTitle();
     }
     
     void OnEvent(CEvent &event) override {
-
-    }
-
-    void OnFixedUpdate(float delta_time) override {
 
     }
 
@@ -27,10 +31,18 @@ protected:
         if (CInput::GetKey(EKeyCode::Control) && CInput::GetKeyDown(EKeyCode::W)) {
             Exit();
         }
+
+        if (CInput::GetKeyDown(EKeyCode::F1)) {
+            GetWindow()->SetWindowMode(GetWindow()->GetWindowMode() == EWindowMode::Windowed ? EWindowMode::Borderless : EWindowMode::Windowed);
+        }
+        if (CInput::GetKeyDown(EKeyCode::F2)) {
+            GetWindow()->SetVSyncMode(GetWindow()->GetVSyncMode() == EVSyncMode::DontSync ? EVSyncMode::EveryVBlank : EVSyncMode::DontSync);
+            UpdateTitle();
+        }
     }
     
     void OnTick() override {
-        GetWindow()->SetTitle(CString("Hyperion | FPS: %d (%.2f ms)", CTime::GetFPS(), CTime::GetFrameTime()));
+        UpdateTitle();
     }
 };
 

@@ -2,9 +2,7 @@
 
 #include "hyperion/app/application.hpp"
 
-#define SIM_TICKS_PER_SECOND (50)
-#define SIM_TIME_STEP (1.0 / (double)SIM_TICKS_PER_SECOND)
-#define SIM_MAX_FRAMESKIP (10)
+#define MAX_DELTA_TIME (1.0 / 20.0)
 
 namespace Hyperion {
 
@@ -24,33 +22,27 @@ namespace Hyperion {
         m_running = true;
 
         OnInit();
+        m_window->Show();
 
         CTimer *timer = CTimer::StartNew();
         double last_time = 0, tick_timer = 0, accumulated_time = 0;
         u64 frame_counter = 0;
         while (m_running) {
             float now = timer->ElapsedSeconds();
-            float delta = (float)(now - last_time);
+            float delta_time = (float)(now - last_time);
+            if (delta_time > MAX_DELTA_TIME) {
+                delta_time = (float)MAX_DELTA_TIME;
+            }
+
             last_time = now;
 
-            tick_timer += delta;
+            tick_timer += delta_time;
 
-            CTime::s_delta_time = delta;
-            CTime::s_time += delta;
-            CTime::s_fixed_delta_time = (float)SIM_TIME_STEP;
-
-            double sim_delta = delta;
-            if (sim_delta > SIM_MAX_FRAMESKIP) {
-                sim_delta = SIM_MAX_FRAMESKIP;
-            }
-            accumulated_time += sim_delta;
-            while (accumulated_time >= SIM_TIME_STEP) {
-                OnFixedUpdate((float)SIM_TIME_STEP);
-                accumulated_time -= SIM_TIME_STEP;
-            }
+            CTime::s_delta_time = delta_time;
+            CTime::s_time += delta_time;
 
             frame_counter++;
-            OnUpdate(delta);
+            OnUpdate(delta_time);
 
             if (tick_timer > 1.0f) {
                 u32 fps = (u32)(frame_counter * (1.0 / tick_timer));

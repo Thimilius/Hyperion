@@ -61,8 +61,6 @@ namespace Hyperion {
         // TODO: We need to have a way to differentiate between graphics apis
         m_graphics_context = new Rendering::CWindowsOpenGLGraphicsContext(m_window_handle);
         m_graphics_context->Init();
-
-        ShowWindow(m_window_handle, SW_SHOWNORMAL);
     }
 
     void CWindowsWindow::SetTitle(CString title) {
@@ -71,7 +69,18 @@ namespace Hyperion {
     }
 
     void CWindowsWindow::SetSize(u32 width, u32 height) {
+        m_width = width;
+        m_height = height;
 
+        RECT window_rect = { 0 };
+        window_rect.right = (LONG)width;
+        window_rect.bottom = (LONG)height;
+        AdjustWindowRect(&window_rect, GetWindowLongA(m_window_handle, GWL_STYLE), false);
+        width = window_rect.right - window_rect.left;
+        height = window_rect.bottom - window_rect.top;
+
+        u32 flags = SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER;
+        SetWindowPos(m_window_handle, NULL, 0, 0, width, height, flags);
     }
 
     void CWindowsWindow::SetWindowMode(EWindowMode window_mode) {
@@ -105,8 +114,20 @@ namespace Hyperion {
 
     void CWindowsWindow::SetVSyncMode(EVSyncMode vsync_mode) {
         if (m_vsync_mode != vsync_mode) {
+            m_vsync_mode = vsync_mode;
             m_graphics_context->SetVSyncMode(vsync_mode);
         }
+    }
+
+    void CWindowsWindow::SetIcon(const char *path) {
+        HICON icon = (HICON)LoadImageA(NULL, path, IMAGE_ICON, 64, 64, LR_LOADFROMFILE);
+        SendMessage(m_window_handle, WM_SETICON, ICON_SMALL, (LPARAM)icon);
+        SendMessage(m_window_handle, WM_SETICON, ICON_BIG, (LPARAM)icon);
+
+        // We also set the icon for the console window
+        HWND console_window_handle = GetConsoleWindow();
+        SendMessage(console_window_handle, WM_SETICON, ICON_SMALL, (LPARAM)icon);
+        SendMessage(console_window_handle, WM_SETICON, ICON_BIG, (LPARAM)icon);
     }
 
     void CWindowsWindow::Update() const {
@@ -117,6 +138,10 @@ namespace Hyperion {
             TranslateMessage(&message);
             DispatchMessageA(&message);
         }
+    }
+
+    void CWindowsWindow::Show() const {
+        ShowWindow(m_window_handle, SW_SHOWNORMAL);
     }
 
     void CWindowsWindow::DispatchEvent(CEvent &event) const {
@@ -309,19 +334,6 @@ namespace Hyperion {
                 break;
             }
 
-            // Prevent system menu from opening
-            case WM_SYSCOMMAND: {
-                switch (w_param) {
-                    case SC_KEYMENU: break;
-                    case SC_MOUSEMENU: break;
-                    default: result = DefWindowProcA(window_handle, message, w_param, l_param);
-                }
-                break;
-            }
-            case WM_NCRBUTTONDOWN: {
-                break;
-            }
-
             case WM_CHAR: 
             case WM_SYSCHAR: {
                 u32 character = (u32)w_param;
@@ -393,8 +405,8 @@ namespace Hyperion {
                 break;
             }
             case WM_SIZE: {
-                u32 width = HIWORD(l_param);
-                u32 height = LOWORD(l_param);
+                u32 width = LOWORD(l_param);
+                u32 height = HIWORD(l_param);
 
                 window->m_width = width;
                 window->m_height = height;

@@ -8,6 +8,7 @@ namespace Hyperion {
         int m_length;
     public:
         CString();
+        CString(bool value);
         CString(const char *format, ...);
         CString(const CString &string);
         ~CString();

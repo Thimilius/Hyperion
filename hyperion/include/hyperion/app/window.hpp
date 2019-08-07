@@ -52,9 +52,12 @@ namespace Hyperion {
         inline EVSyncMode GetVSyncMode() const { return m_vsync_mode; }
         virtual void SetVSyncMode(EVSyncMode vsync_mode) = 0;
 
+        virtual void SetIcon(const char *path) = 0;
+
         static CWindow *Create(const CString &title, u32 width, u32 height, EWindowMode window_mode);
     protected:
         virtual void Update() const = 0;
+        virtual void Show() const = 0;
 
         virtual EKeyCode GetKeyCode(u32 code) const = 0;
         virtual EMouseButtonCode GetMouseButtonCode(u32 code) const = 0;
