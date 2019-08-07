@@ -11,7 +11,7 @@ namespace Hyperion {
     public:
         CWindowsWindow(const CString &title, u32 width, u32 height, EWindowMode window_mode);
 
-        void SetTitle(CString title) override;
+        void SetTitle(const CString &title) override;
         void SetSize(u32 width, u32 height) override;
         void SetWindowMode(EWindowMode window_mode) override;
         void SetVSyncMode(EVSyncMode vsync_mode) override;

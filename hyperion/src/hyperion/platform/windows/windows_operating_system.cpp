@@ -67,7 +67,7 @@ namespace Hyperion {
             case Hyperion::ELogColor::Magenta: console_color = FOREGROUND_RED | FOREGROUND_BLUE; break;
             case Hyperion::ELogColor::Cyan: console_color = FOREGROUND_BLUE | FOREGROUND_GREEN; break;
             case Hyperion::ELogColor::White: console_color = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE; break;
-            default: HYP_ASSERT(false);
+            default: HYP_ASSERT_ENUM_OUT_OF_RAGE;
         }
 
         CONSOLE_SCREEN_BUFFER_INFO console_screen_buffer_info;

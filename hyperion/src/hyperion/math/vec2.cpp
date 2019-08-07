@@ -69,7 +69,7 @@ namespace Hyperion::Math {
     }
 
     CString SVec2::ToString() const {
-        return CString("(%.2f, %.2f)", x, y);
+        return CString::Format("(%.2f, %.2f)", x, y);
     }
 
     SVec2 operator+(SVec2 left, const SVec2 &right) {

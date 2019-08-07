@@ -5,13 +5,11 @@ using namespace Hyperion::Math;
 
 class CSandboxApp : public CApplication {
 public:
-    CSandboxApp() : CApplication("", 1280, 720, EWindowMode::Windowed) { }
+    CSandboxApp() : CApplication("Hyperion", 1280, 720, EWindowMode::Windowed) { }
 protected:
     void UpdateTitle() {
-        GetWindow()->SetTitle(CString("Hyperion | FPS: %d (%.2f ms) | VSync: %s",
-            CTime::GetFPS(),
-            CTime::GetFrameTime(),
-            CString(GetWindow()->GetVSyncMode() != EVSyncMode::DontSync).ToCString()));
+        CString title = CString("Hyperion | FPS: ") + CTime::GetFPS() + " (" + CTime::GetFrameTime() + " ms) | VSync: " + (GetWindow()->GetVSyncMode() != EVSyncMode::DontSync);
+        GetWindow()->SetTitle(title);
     }
 
     void OnInit() override {

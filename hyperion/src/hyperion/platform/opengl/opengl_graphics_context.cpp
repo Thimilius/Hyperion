@@ -57,7 +57,7 @@ namespace Hyperion::Rendering {
             case GL_DEBUG_SEVERITY_MEDIUM: HYP_CORE_WARN(log_string_format, source_string, type_string, id, message); break;
             case GL_DEBUG_SEVERITY_LOW:
             case GL_DEBUG_SEVERITY_NOTIFICATION: HYP_CORE_INFO(log_string_format, source_string, type_string, id, message); break;
-            default: HYP_ASSERT(false); break;
+            default: HYP_ASSERT_ENUM_OUT_OF_RAGE; break;
         }
 
         if (OPENGL_BREAK_ON_ERROR) {

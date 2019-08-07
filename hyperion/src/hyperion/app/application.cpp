@@ -9,7 +9,7 @@ namespace Hyperion {
     CApplication *CApplication::s_instance = nullptr;
 
     CApplication::CApplication(const CString &title, u32 width, u32 height, EWindowMode mode) {
-        HYP_ASSERT(!s_instance);
+        HYP_ASSERT(!s_instance, "Trying to create application more than once!");
         s_instance = this;
 
         CEngine::Init();

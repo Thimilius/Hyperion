@@ -88,7 +88,7 @@ project "hyperion"
 		}
 	
 	filter "configurations:Debug"
-		defines { "HYP_DEBUG" }
+		defines { "HYP_DEBUG", "HYP_BREAK_ON_ASSERT" }
 		runtime "Debug"
 		symbols "On"
 
@@ -140,7 +140,7 @@ project "sandbox"
 		
 		
 	filter "configurations:Debug"
-		defines { "HYP_DEBUG" }
+		defines { "HYP_DEBUG", "HYP_BREAK_ON_ASSERT" }
 		runtime "Debug"
 		symbols "On"
 

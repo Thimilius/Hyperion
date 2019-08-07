@@ -63,7 +63,7 @@ namespace Hyperion {
         m_graphics_context->Init();
     }
 
-    void CWindowsWindow::SetTitle(CString title) {
+    void CWindowsWindow::SetTitle(const CString &title) {
         m_title = title;
         SetWindowTextA(m_window_handle, title.ToCString());
     }

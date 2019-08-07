@@ -213,7 +213,7 @@ namespace Hyperion::Math {
     }
 
     CString SMat4::ToString() const {
-        return CString("(%.2f, %.2f, %.2f, %.2f)\n(%.2f, %.2f, %.2f, %.2f)\n(%.2f, %.2f, %.2f, %.2f)\n(%.2f, %.2f, %.2f, %.2f)\n",
+        return CString::Format("(%.2f, %.2f, %.2f, %.2f)\n(%.2f, %.2f, %.2f, %.2f)\n(%.2f, %.2f, %.2f, %.2f)\n(%.2f, %.2f, %.2f, %.2f)\n",
             columns[0].x, columns[1].x, columns[2].x, columns[3].x,
             columns[0].y, columns[1].y, columns[2].y, columns[3].y,
             columns[0].z, columns[1].z, columns[2].z, columns[3].z,

@@ -68,10 +68,10 @@ namespace Hyperion {
             m_count++;
         }
 
-        inline T &Get(s32 index) const {
-            if (index < 0 || index >= m_count) {
-                return T();
-            }
+
+
+        inline T &ElementAt(s32 index) const {
+            HYP_ASSERT(index >= 0 && index < m_count, "List bounds check failed!");
             return m_data[index];
         }
 
@@ -117,7 +117,8 @@ namespace Hyperion {
         }
         
         inline T *end() { 
-            return m_count > 0 ? &m_data[m_count - 1] : nullptr;
+            // End points past the last element
+            return m_count > 0 ? &m_data[m_count] : nullptr;
         }
 
         CList operator=(const CList &list) {
@@ -134,7 +135,7 @@ namespace Hyperion {
         }
 
         T &operator[] (s32 index) {
-            HYP_ASSERT(index >= 0 || index < m_count);
+            HYP_ASSERT(index >= 0 && index < m_count, "List bounds check failed!");
             return m_data[index];
         }
     private:

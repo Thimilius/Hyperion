@@ -39,8 +39,8 @@ namespace Hyperion {
 
         virtual ~CWindow() = default;
 
-        inline CString GetTitle() const { return m_title; }
-        virtual void SetTitle(CString title) = 0;
+        inline const CString &GetTitle() const { return m_title; }
+        virtual void SetTitle(const CString &title) = 0;
 
         inline u32 GetWidth() const { return m_width; }
         inline u32 GetHeight() const { return m_height; }

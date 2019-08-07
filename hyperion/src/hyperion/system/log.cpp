@@ -24,7 +24,7 @@ namespace Hyperion {
         // Compose full message
         va_list args;
         va_start(args, message_format);
-        CString message = CString("%s%s\n", prefix_buffer, CString::FromArgs(message_format, args).ToCString());
+        CString message = CString::Format("%s%s\n", prefix_buffer, CString::FormatArgs(message_format, args).ToCString());
         va_end(args);
 
         COperatingSystem::GetInstance()->PrintToConsole(GetLogColor(level), message);
@@ -34,7 +34,7 @@ namespace Hyperion {
         switch (type) {
             case Hyperion::ELogType::Core: return "[%H:%M:%S] - [Core] - ";
             case Hyperion::ELogType::Client: return "[%H:%M:%S] - [Client] - ";
-            default: HYP_ASSERT(false); return "";
+            default: HYP_ASSERT_ENUM_OUT_OF_RAGE; return "";
         }
     }
 
@@ -44,7 +44,7 @@ namespace Hyperion {
             case Hyperion::ELogLevel::Info: return ELogColor::Green;
             case Hyperion::ELogLevel::Warning: return ELogColor::Yellow;
             case Hyperion::ELogLevel::Error: return ELogColor::Red;
-            default: HYP_ASSERT(false); return ELogColor::White;
+            default: HYP_ASSERT_ENUM_OUT_OF_RAGE; return ELogColor::White;
         }
     }
 

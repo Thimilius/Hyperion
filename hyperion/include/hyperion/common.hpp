@@ -13,17 +13,26 @@ typedef uint32_t u32;
 typedef uint64_t u64;
 
 #include "core/string.hpp"
-
 #include "system/log.hpp"
 
 #ifdef _MSC_VER
     #define HYP_DEBUG_BREAK __debugbreak()
 #else
-    #error
+    #define HYP_DEBUG_BREAK
 #endif
 
 #ifdef HYP_DEBUG
-    #define HYP_ASSERT(x) do { if(!(x)) { HYP_CORE_ERROR("***Assertion failed!*** %s (%d)", __FILE__, __LINE__); HYP_DEBUG_BREAK; } } while(0)
-#else
-    #define HYP_ASSERT(x)
+    #ifdef HYP_BREAK_ON_ASSERT
+        #define HYP_ASSERT_DEBUG_BREAK HYP_DEBUG_BREAK
+    #else
+        #define HYP_ASSERT_DEBUG_BREAK
+    #endif
+
+    #define HYP_ASSERT(x, m) do {\
+        if(!(x)) {\
+            HYP_CORE_ERROR("[Assert] - Assertion failed!\nIn file: %s (%d)\nWith assertion message: %s", __FILE__, __LINE__, m);\
+            HYP_ASSERT_DEBUG_BREAK;\
+            abort();\
+        } } while(0)
+    #define HYP_ASSERT_ENUM_OUT_OF_RAGE HYP_ASSERT(false, "Enum out of range!")
 #endif

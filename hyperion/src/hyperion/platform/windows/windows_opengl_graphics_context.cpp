@@ -81,7 +81,7 @@ namespace Hyperion::Rendering {
             case EVSyncMode::DontSync: swap_interval = 0; break;
             case EVSyncMode::EveryVBlank: swap_interval = 1; break;
             case EVSyncMode::EverySecondVBlank: swap_interval = 2; break;
-            default: HYP_ASSERT(false); break;
+            default: HYP_ASSERT_ENUM_OUT_OF_RAGE; break;
         }
         wglSwapIntervalEXT(swap_interval);
     }
