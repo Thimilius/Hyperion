@@ -7,14 +7,33 @@ workspace "hyperion"
 	
 	configurations
 	{
-		"Debug",
-		"Release",
-		"Distribution"
+		"debug",
+		"release",
+		"distribution"
 	}
 
 	flags { "FatalCompileWarnings" }
 
 	outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+
+	filter "system:windows"
+		defines { "HYP_PLATFORM_WINDOWS" }
+		systemversion "latest"
+
+	filter "configurations:debug"
+		defines { "HYP_DEBUG", "HYP_BREAK_ON_ASSERT" }
+		runtime "Debug"
+		symbols "On"
+
+	filter "configurations:release"
+		defines { "HYP_RELEASE" }
+		runtime "Release"
+		optimize "On"
+		
+	filter "configurations:distribution"
+		defines { "HYP_DISTRIBUTION" }
+		runtime "Release"
+		optimize "On"
 	
 project "hyperion"
 	location "hyperion"
@@ -74,33 +93,11 @@ project "hyperion"
 		flags { "NoPCH" }
 
 	filter "system:windows"
-		systemversion "latest"
-		
 		files
 		{
 			"%{prj.name}/src/%{prj.name}/platform/windows/**.hpp",
 			"%{prj.name}/src/%{prj.name}/platform/windows/**.cpp",
 		}
-		
-		defines
-		{
-			"HYP_PLATFORM_WINDOWS"
-		}
-	
-	filter "configurations:Debug"
-		defines { "HYP_DEBUG", "HYP_BREAK_ON_ASSERT" }
-		runtime "Debug"
-		symbols "On"
-
-	filter "configurations:Release"
-		defines { "HYP_RELEASE" }
-		runtime "Release"
-		optimize "On"
-		
-	filter "configurations:Distribution"
-		defines { "HYP_DISTRIBUTION" }
-		runtime "Release"
-		optimize "On"
 		
 project "sandbox"
 	location "sandbox"
@@ -130,26 +127,10 @@ project "sandbox"
 	}
 	
 	filter "system:windows"
-		defines { "HYP_PLATFORM_WINDOWS" }
-		systemversion "latest"
-		
 		links
 		{
 			"PowrProf"
 		}
 		
-		
-	filter "configurations:Debug"
-		defines { "HYP_DEBUG", "HYP_BREAK_ON_ASSERT" }
-		runtime "Debug"
-		symbols "On"
-
-	filter "configurations:Release"
-		defines { "HYP_RELEASE" }
-		runtime "Release"
-		optimize "On"
-		
-	filter "configurations:Distribution"
-		defines { "HYP_DISTRIBUTION" }
-		runtime "Release"
-		optimize "On"
+	filter "kind:ConsoleApp"
+		defines { "HYP_CONSOLE" }
