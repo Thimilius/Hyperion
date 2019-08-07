@@ -29,6 +29,9 @@ namespace Hyperion {
         virtual void OnTick() = 0;
     private:
         void OnEventInternal(CEvent &event);
+
+        void OnKeyEvent(CKeyEvent &event, bool down);
+        void OnMouseButtonEvent(CMouseButtonEvent &event, bool down);
     };
 
     // This is a function to be defined by the client

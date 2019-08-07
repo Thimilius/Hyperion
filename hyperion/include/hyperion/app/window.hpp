@@ -53,8 +53,13 @@ namespace Hyperion {
         virtual void SetVSyncMode(EVSyncMode vsync_mode) = 0;
 
         static CWindow *Create(const CString &title, u32 width, u32 height, EWindowMode window_mode);
-    private:
+    protected:
         virtual void Update() const = 0;
+
+        virtual EKeyCode GetKeyCode(u32 code) const = 0;
+        virtual EMouseButtonCode GetMouseButtonCode(u32 code) const = 0;
+        virtual EKeyModifier GetKeyModifier() const = 0;
+
         void SetEventCallbackFunction(const EventCallbackFunction &callback) { m_event_callback = callback; }
 
         friend class CApplication;

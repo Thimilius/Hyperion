@@ -11,12 +11,16 @@ namespace Hyperion {
     public:
         CWindowsWindow(const CString &title, u32 width, u32 height, EWindowMode window_mode);
 
-        virtual void SetTitle(CString title) override;
-        virtual void SetSize(u32 width, u32 height) override;
-        virtual void SetWindowMode(EWindowMode window_mode) override;
-        virtual void SetVSyncMode(EVSyncMode vsync_mode) override;
+        void SetTitle(CString title) override;
+        void SetSize(u32 width, u32 height) override;
+        void SetWindowMode(EWindowMode window_mode) override;
+        void SetVSyncMode(EVSyncMode vsync_mode) override;
     private:
-        virtual void Update() const override;
+        void Update() const override;
+
+        EKeyCode GetKeyCode(u32 code) const override;
+        EMouseButtonCode GetMouseButtonCode(u32 code) const override;
+        EKeyModifier GetKeyModifier() const override;
 
         void DispatchEvent(CEvent &event) const;
 

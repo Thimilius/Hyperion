@@ -1,13 +1,14 @@
 #pragma once
 
 #include "hyperion/common.hpp"
+#include "hyperion/math/vec2.hpp"
 
 namespace Hyperion {
 
     class CApplication;
 
     enum class EKeyCode {
-        NONE,
+        None,
 
         Alpha0,
         Alpha1,
@@ -77,8 +78,8 @@ namespace Hyperion {
         Numlock,
         Capslock,
 
-        LeftWindows,
-        RightWindows,
+        LeftSuper,
+        RightSuper,
         Application,
 
         Control,
@@ -142,32 +143,60 @@ namespace Hyperion {
     enum class EMouseButtonCode {
         None,
 
-        MouseLeft,
-        MouseRight,
-        MouseMiddle,
+        Left,
+        Right,
+        Middle,
+
+        Button4,
+        Button5,
 
         Last
     };
 
+    enum class EKeyModifier {
+        None     = 0,
+        Shift    = 1 << 0,
+        Control  = 1 << 1,
+        Alt      = 1 << 2,
+        Super    = 1 << 3,
+        Capslock = 1 << 4,
+        Numlock  = 1 << 5
+    };
+    inline EKeyModifier operator|(EKeyModifier a, EKeyModifier b) {
+        return static_cast<EKeyModifier>(static_cast<s32>(a) | static_cast<s32>(b));
+    }
+    inline EKeyModifier operator|=(EKeyModifier &a, EKeyModifier b) {
+        return a = a | b;
+    }
+    inline EKeyModifier operator&(EKeyModifier a, EKeyModifier b) {
+        return static_cast<EKeyModifier>(static_cast<s32>(a) & static_cast<s32>(b));
+    }
+
     class CInput {
     private:
-        static bool s_keys_down[(u32)EKeyCode::Last];
-        static bool s_keys[(u32)EKeyCode::Last];
-        static bool s_keys_last[(u32)EKeyCode::Last];
-        static bool s_keys_up[(u32)EKeyCode::Last];
+        static bool s_keys_down[(s32)EKeyCode::Last];
+        static bool s_keys[(s32)EKeyCode::Last];
+        static bool s_keys_last[(s32)EKeyCode::Last];
+        static bool s_keys_up[(s32)EKeyCode::Last];
 
-        static bool s_mouse_buttons_down[(u32)EMouseButtonCode::Last];
-        static bool s_mouse_buttons[(u32)EMouseButtonCode::Last];
-        static bool s_mouse_buttons_last[(u32)EMouseButtonCode::Last];
-        static bool s_mouse_buttons_up[(u32)EMouseButtonCode::Last];
+        static bool s_mouse_buttons_down[(s32)EMouseButtonCode::Last];
+        static bool s_mouse_buttons[(s32)EMouseButtonCode::Last];
+        static bool s_mouse_buttons_last[(s32)EMouseButtonCode::Last];
+        static bool s_mouse_buttons_up[(s32)EMouseButtonCode::Last];
+
+        static Math::SVec2 s_mouse_position;
+        static float s_mouse_scroll;
     public:
-        inline static bool GetKeyDown(EKeyCode key_code) { return s_keys_down[(u32)key_code]; }
-        inline static bool GetKey(EKeyCode key_code) { return s_keys[(u32)key_code]; }
-        inline static bool GetKeyUp(EKeyCode key_code) { return s_keys_up[(u32)key_code]; }
+        inline static bool GetKeyDown(EKeyCode key_code) { return s_keys_down[(s32)key_code]; }
+        inline static bool GetKey(EKeyCode key_code) { return s_keys[(s32)key_code]; }
+        inline static bool GetKeyUp(EKeyCode key_code) { return s_keys_up[(s32)key_code]; }
 
-        inline static bool GetMouseButtonDown(EMouseButtonCode mouse_button_code) { return s_mouse_buttons_down[(u32)mouse_button_code]; }
-        inline static bool GetMouseButton(EMouseButtonCode mouse_button_code) { return s_mouse_buttons[(u32)mouse_button_code]; }
-        inline static bool GetMouseButtonUp(EMouseButtonCode mouse_button_code) { return s_mouse_buttons_up[(u32)mouse_button_code]; }
+        inline static bool GetMouseButtonDown(EMouseButtonCode mouse_button_code) { return s_mouse_buttons_down[(s32)mouse_button_code]; }
+        inline static bool GetMouseButton(EMouseButtonCode mouse_button_code) { return s_mouse_buttons[(s32)mouse_button_code]; }
+        inline static bool GetMouseButtonUp(EMouseButtonCode mouse_button_code) { return s_mouse_buttons_up[(s32)mouse_button_code]; }
+
+        inline static Math::SVec2 GetMousePosition() { return s_mouse_position; }
+        inline static float GetMouseScroll() { return s_mouse_scroll; }
     private:
         CInput() = delete;
         ~CInput() = delete;
