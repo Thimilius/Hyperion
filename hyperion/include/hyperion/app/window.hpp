@@ -17,6 +17,12 @@ namespace Hyperion {
         Fullscreen
     };
 
+    enum class EWindowState {
+        Normal,
+        Minimized,
+        Maximized
+    };
+
     enum class EVSyncMode {
         DontSync,
         EveryVBlank,
@@ -30,6 +36,7 @@ namespace Hyperion {
         u32 m_width;
         u32 m_height;
         EWindowMode m_window_mode;
+        EWindowState m_window_state;
         EVSyncMode m_vsync_mode;
 
         EventCallbackFunction m_event_callback;
@@ -48,6 +55,9 @@ namespace Hyperion {
 
         inline EWindowMode GetWindowMode() const { return m_window_mode; }
         virtual void SetWindowMode(EWindowMode window_mode) = 0;
+
+        inline EWindowState GetWindowState() const { return m_window_state; }
+        virtual void SetWindowState(EWindowState window_state) = 0;
 
         inline EVSyncMode GetVSyncMode() const { return m_vsync_mode; }
         virtual void SetVSyncMode(EVSyncMode vsync_mode) = 0;

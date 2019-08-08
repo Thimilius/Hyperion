@@ -14,6 +14,7 @@ namespace Hyperion {
         void SetTitle(const CString &title) override;
         void SetSize(u32 width, u32 height) override;
         void SetWindowMode(EWindowMode window_mode) override;
+        void SetWindowState(EWindowState window_state) override;
         void SetVSyncMode(EVSyncMode vsync_mode) override;
 
         void SetIcon(const char *path) override;

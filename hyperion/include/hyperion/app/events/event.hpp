@@ -16,6 +16,7 @@ namespace Hyperion::Events {
         WindowResize,
         WindowFocus,
         WindowMoved,
+        WindowStateChanged,
 
         KeyPressed,
         KeyReleased,

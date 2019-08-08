@@ -17,6 +17,7 @@ namespace Hyperion {
         m_width = width;
         m_height = height;
         m_window_mode = window_mode;
+        m_window_state = EWindowState::Normal;
 
         u32 window_styles = WS_OVERLAPPEDWINDOW; //& ~WS_THICKFRAME & ~WS_MAXIMIZEBOX
         const char *window_class_name = "HYPERION_WINDOW_CLASS";
@@ -108,6 +109,26 @@ namespace Hyperion {
         }
 
         m_window_mode = window_mode;
+    }
+
+    void CWindowsWindow::SetWindowState(EWindowState window_state) {
+        switch (window_state) {
+            case Hyperion::EWindowState::Normal: {
+                ShowWindow(m_window_handle, SW_RESTORE);
+                break;
+            }
+            case Hyperion::EWindowState::Minimized: {
+                ShowWindow(m_window_handle, SW_MINIMIZE);
+                break;
+            }
+            case Hyperion::EWindowState::Maximized: {
+                ShowWindow(m_window_handle, SW_MAXIMIZE);
+                break;
+            }
+            default: HYP_ASSERT_ENUM_OUT_OF_RAGE;
+        }
+
+        m_window_state = window_state;
     }
 
     void CWindowsWindow::SetVSyncMode(EVSyncMode vsync_mode) {
@@ -420,11 +441,20 @@ namespace Hyperion {
             };
 
             case WM_SIZE: {
+                EWindowState window_state;
+                switch (w_param) {
+                    case SIZE_RESTORED: window_state = EWindowState::Normal; break;
+                    case SIZE_MINIMIZED: window_state = EWindowState::Minimized; break;
+                    case SIZE_MAXIMIZED: window_state = EWindowState::Maximized; break;
+                    default: window_state = EWindowState::Normal; break;
+                }
+
                 u32 width = LOWORD(l_param);
                 u32 height = HIWORD(l_param);
 
                 window->m_width = width;
                 window->m_height = height;
+                window->m_window_state = window_state;
 
                 CWindowResizeEvent event(width, height);
                 window->DispatchEvent(event);

@@ -2,6 +2,8 @@
 
 #include "event.hpp"
 
+#include "hyperion/app/window.hpp"
+
 namespace Hyperion::Events {
 
     class CWindowCloseEvent : public CEvent {
@@ -48,6 +50,20 @@ namespace Hyperion::Events {
         EEventCategory GetCategory() const override { return EEventCategory::Window; }
 
         static EEventType GetStaticType() { return EEventType::WindowMoved; }
+    };
+
+    class CWindowStateChangedEvent : public CEvent {
+    private:
+        EWindowState m_state;
+    public:
+        CWindowStateChangedEvent(EWindowState state) : m_state(state) {}
+
+        inline EWindowState GetState() const { return m_state; }
+
+        EEventType GetType() const override { return EEventType::WindowStateChanged; }
+        EEventCategory GetCategory() const override { return EEventCategory::Window; }
+
+        static EEventType GetStaticType() { return EEventType::WindowStateChanged; }
     };
 
 }
