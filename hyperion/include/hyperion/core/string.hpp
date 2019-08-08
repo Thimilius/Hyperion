@@ -6,8 +6,8 @@ namespace Hyperion {
 
     class CString {
     private:
-        char *m_buffer;
-        u32 m_length;
+        char *m_buffer = nullptr;
+        u32 m_length = 0;
     public:
         CString();
         CString(const char *string);

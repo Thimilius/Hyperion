@@ -4,7 +4,7 @@
 
 namespace Hyperion {
 
-    CString::CString() : m_buffer(nullptr), m_length(0) { }
+    CString::CString() { }
 
     CString::CString(const char *string) {
         m_length = (u32)strlen(string);

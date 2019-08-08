@@ -19,6 +19,7 @@
 
 #include "hyperion/app/application.hpp"
 #include "hyperion/app/window.hpp"
+#include "hyperion/app/display.hpp"
 #include "hyperion/app/input.hpp"
 #include "hyperion/app/event.hpp"
 #include "hyperion/app/time.hpp"

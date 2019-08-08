@@ -13,6 +13,8 @@ namespace Hyperion {
             system_info.processor_info.processor_count,
             (float)system_info.processor_info.processor_mhz_frequency / 1000.0f,
             (float)system_info.memory_info.total_physical_memory / (1024.0f * 1024.0f * 1024.0f));
+
+        CDisplay::UpdateDisplayInfos();
     }
 
 }

@@ -129,11 +129,11 @@ namespace Hyperion {
             m_count = 0;
         }
 
-        inline T *begin() {
+        inline T *begin() const {
             return m_count > 0 ? &m_data[0] : nullptr;
         }
         
-        inline T *end() { 
+        inline T *end() const { 
             // End points past the last element
             return m_count > 0 ? &m_data[m_count] : nullptr;
         }
@@ -151,7 +151,7 @@ namespace Hyperion {
             return *this;
         }
 
-        T &operator[] (s32 index) {
+        T &operator[] (s32 index) const {
             HYP_ASSERT_MESSAGE(index >= 0 && index < m_count, "List bounds check failed!");
             return m_data[index];
         }
