@@ -7,8 +7,8 @@
 #include "app/window.hpp"
 #include "app/display.hpp"
 #include "app/input.hpp"
-#include "app/event.hpp"
 #include "app/time.hpp"
+#include "app/events/event.hpp"
 
 #include "math/math.hpp"
 

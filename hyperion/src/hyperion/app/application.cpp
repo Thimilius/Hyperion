@@ -6,6 +6,8 @@
 
 namespace Hyperion {
 
+    using namespace Events;
+
     CApplication *CApplication::s_instance = nullptr;
 
     CApplication::CApplication(const CString &title, u32 width, u32 height, EWindowMode mode) {
@@ -67,8 +69,14 @@ namespace Hyperion {
     }
 
     void CApplication::OnEventInternal(CEvent &event) {
-        // Events dispatched internally should probably never get handled
+        // Events dispatched internally should probably never be set as handled
         CEventDispatcher dispatcher(event);
+
+        // Handle app events
+        auto update_display_infos_func = CDisplay::UpdateDisplayInfos;
+        dispatcher.Dispatch<CAppDisplayChangeEvent>([update_display_infos_func](CAppDisplayChangeEvent &app_display_change_event) {
+            update_display_infos_func();
+        });
 
         // Handle window events
         dispatcher.Dispatch<CWindowCloseEvent>([this](CWindowCloseEvent &window_close_event) { 

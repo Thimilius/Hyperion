@@ -26,7 +26,7 @@ namespace Hyperion {
         EKeyModifier GetKeyModifier() const override;
 
         void CreateContext();
-        void DispatchEvent(CEvent &event) const;
+        void DispatchEvent(Events::CEvent &event) const;
 
         static LRESULT CALLBACK MessageCallback(HWND window_handle, u32 message, WPARAM first_message_param, LPARAM second_message_param);
     };

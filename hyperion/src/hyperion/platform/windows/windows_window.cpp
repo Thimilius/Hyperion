@@ -6,6 +6,8 @@
 
 namespace Hyperion {
 
+    using namespace Events;
+
     CWindow *CWindow::Create(const CString &title, u32 width, u32 height, EWindowMode window_mode) {
         return new CWindowsWindow(title, width, height, window_mode);
     }
@@ -340,6 +342,13 @@ namespace Hyperion {
                 // Store user pointer
                 SetWindowLongPtrA(window_handle, GWLP_USERDATA, (LONG_PTR)((CREATESTRUCT *)l_param)->lpCreateParams);
                 SetWindowPos(window_handle, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
+                break;
+            }
+
+            case WM_DEVICECHANGE:
+            case WM_DISPLAYCHANGE: {
+                CAppDisplayChangeEvent event;
+                window->DispatchEvent(event);
                 break;
             }
 

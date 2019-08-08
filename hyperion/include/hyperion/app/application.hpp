@@ -1,7 +1,7 @@
 #pragma once
 
-#include "window.hpp"
-#include "event.hpp"
+#include "hyperion/app/window.hpp"
+#include "hyperion/app/events/events.hpp"
 
 namespace Hyperion {
 
@@ -23,15 +23,15 @@ namespace Hyperion {
         inline static CApplication *GetInstance() { return s_instance; }
     protected:
         virtual void OnInit() = 0;
-        virtual void OnEvent(CEvent &event) = 0;
+        virtual void OnEvent(Events::CEvent &event) = 0;
         virtual void OnUpdate(float delta_time) = 0;
         virtual void OnRender() = 0;
         virtual void OnTick() = 0;
     private:
-        void OnEventInternal(CEvent &event);
+        void OnEventInternal(Events::CEvent &event);
 
-        void OnKeyEvent(CKeyEvent &event, bool down);
-        void OnMouseButtonEvent(CMouseButtonEvent &event, bool down);
+        void OnKeyEvent(Events::CKeyEvent &event, bool down);
+        void OnMouseButtonEvent(Events::CMouseButtonEvent &event, bool down);
     };
 
     // This is a function to be defined by the client

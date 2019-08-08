@@ -2,7 +2,7 @@
 
 #include "hyperion/common.hpp"
 
-#include "event.hpp"
+#include "hyperion/app/events/event.hpp"
 
 namespace Hyperion {
 
@@ -24,7 +24,7 @@ namespace Hyperion {
     };
 
     class CWindow {
-        using EventCallbackFunction = std::function<void(CEvent &)>;
+        using EventCallbackFunction = std::function<void(Events::CEvent &)>;
     protected:
         CString m_title;
         u32 m_width;
