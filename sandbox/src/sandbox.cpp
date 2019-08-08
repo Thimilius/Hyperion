@@ -2,6 +2,7 @@
 
 using namespace Hyperion;
 using namespace Hyperion::Math;
+using namespace Hyperion::Rendering;
 
 class CSandboxApp : public CApplication {
 public:
@@ -35,6 +36,11 @@ protected:
             GetWindow()->SetVSyncMode(GetWindow()->GetVSyncMode() == EVSyncMode::DontSync ? EVSyncMode::EveryVBlank : EVSyncMode::DontSync);
             UpdateTitle();
         }
+    }
+
+    void OnRender() override {
+        CRenderCommand::SetClearColor(0, 1, 1, 1);
+        CRenderCommand::Clear();
     }
     
     void OnTick() override {

@@ -54,13 +54,9 @@ namespace Hyperion {
             HYP_CORE_ERROR("Failed to create window!");
         }
 
-        SetLastError(0);
-        auto result = SetWindowLongPtrA(m_window_handle, GWLP_USERDATA, (LONG_PTR)(void*)this);
-        auto error = GetLastError();
+        SetWindowLongPtrA(m_window_handle, GWLP_USERDATA, (LONG_PTR)(void *)this);
 
-        // TODO: We need to have a way to differentiate between graphics apis
-        m_graphics_context = new Rendering::CWindowsOpenGLGraphicsContext(m_window_handle);
-        m_graphics_context->Init();
+        CreateContext();
     }
 
     void CWindowsWindow::SetTitle(const CString &title) {
@@ -142,6 +138,19 @@ namespace Hyperion {
 
     void CWindowsWindow::Show() const {
         ShowWindow(m_window_handle, SW_SHOWNORMAL);
+    }
+
+    void CWindowsWindow::CreateContext() {
+        switch (Rendering::CRenderAPI::GetAPI()) {
+            case Rendering::ERenderAPI::OpenGL: {
+                m_graphics_context = new Rendering::CWindowsOpenGLGraphicsContext(m_window_handle);
+                break;
+            }
+                
+            default: HYP_ASSERT_ENUM_OUT_OF_RAGE;
+        }
+        
+        m_graphics_context->Init();
     }
 
     void CWindowsWindow::DispatchEvent(CEvent &event) const {
@@ -364,6 +373,7 @@ namespace Hyperion {
                 window->DispatchEvent(event);
                 break;
             }
+
             case WM_LBUTTONUP:
             case WM_RBUTTONUP:
             case WM_MBUTTONUP:
@@ -392,6 +402,7 @@ namespace Hyperion {
                 window->DispatchEvent(event);
                 break;
             }
+
             case WM_MOUSEWHEEL: {
                 s32 scroll = GET_WHEEL_DELTA_WPARAM(w_param);
                 CMouseScrolledEvent event(scroll < 0 ? -1.0f : 1.0f);
@@ -399,11 +410,6 @@ namespace Hyperion {
                 break;
             };
 
-            case WM_CLOSE: {
-                CWindowCloseEvent event;
-                window->DispatchEvent(event);
-                break;
-            }
             case WM_SIZE: {
                 u32 width = LOWORD(l_param);
                 u32 height = HIWORD(l_param);
@@ -415,11 +421,19 @@ namespace Hyperion {
                 window->DispatchEvent(event);
                 break;
             }
+
             case WM_MOVE: {
                 CWindowMovedEvent event;
                 window->DispatchEvent(event);
                 break;
             }
+
+            case WM_CLOSE: {
+                CWindowCloseEvent event;
+                window->DispatchEvent(event);
+                break;
+            }
+
             case WM_ACTIVATEAPP: {
                 CWindowFocusEvent event((bool)w_param);
                 window->DispatchEvent(event);

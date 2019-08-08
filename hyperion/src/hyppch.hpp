@@ -1,9 +1,5 @@
 #pragma once
 
-#include <string>
-#include <vector>
-#include <array>
-
 #ifdef HYP_PLATFORM_WINDOWS
     #include <Windows.h>
 #endif
@@ -25,6 +21,9 @@
 #include "hyperion/app/time.hpp"
 
 #include "hyperion/math/math.hpp"
+
+#include "hyperion/rendering/render_api.hpp"
+#include "hyperion/rendering/render_command.hpp"
 
 #include "hyperion/system/log.hpp"
 #include "hyperion/system/engine.hpp"

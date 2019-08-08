@@ -22,6 +22,7 @@ namespace Hyperion::Rendering {
                 HYP_CORE_INFO("[OpenGL] - %s", glGetStringi(GL_EXTENSIONS, i));
             }
         }
+
         HYP_CORE_INFO("[OpenGL] - Initialized OpenGL! (%s)", glGetString(GL_VERSION));
     }
 
@@ -51,7 +52,7 @@ namespace Hyperion::Rendering {
             default:                                type_string = "Unknown"; break;
         }
 
-        const char *log_string_format = "[OpenGL] - Source: %s, Type: %s, ID: %d, Message:\n%s";
+        const char *log_string_format = "[OpenGL] - Source: %s, Type: %s, ID: %d,\nMessage: %s";
         switch (severity) {
             case GL_DEBUG_SEVERITY_HIGH: HYP_CORE_ERROR(log_string_format, source_string, type_string, id, message); break;
             case GL_DEBUG_SEVERITY_MEDIUM: HYP_CORE_WARN(log_string_format, source_string, type_string, id, message); break;

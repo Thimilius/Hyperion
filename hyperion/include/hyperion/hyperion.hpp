@@ -12,7 +12,11 @@
 
 #include "math/math.hpp"
 
+#include "rendering/render_command.hpp"
+
 #include "system/log.hpp"
+#include "system/engine.hpp"
+#include "system/operating_system.hpp"
 
 // ------------ ENTRY POINT --------------
 #include "entry_point.hpp"

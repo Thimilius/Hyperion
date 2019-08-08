@@ -43,6 +43,7 @@ namespace Hyperion {
 
             frame_counter++;
             OnUpdate(delta_time);
+            OnRender();
 
             if (tick_timer > 1.0f) {
                 u32 fps = (u32)(frame_counter * (1.0 / tick_timer));
@@ -72,6 +73,9 @@ namespace Hyperion {
         // Handle window events
         dispatcher.Dispatch<CWindowCloseEvent>([this](CWindowCloseEvent &window_close_event) { 
             Exit();
+        });
+        dispatcher.Dispatch<CWindowResizeEvent>([this](CWindowResizeEvent &window_resize_event) {
+            Rendering::CRenderCommand::SetViewport(0, 0, window_resize_event.GetWidth(), window_resize_event.GetHeight());
         });
 
         // Handle key events

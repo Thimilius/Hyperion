@@ -18,6 +18,8 @@ namespace Hyperion {
         CDisplay::UpdateDisplayInfos();
         CDisplayInfo::SDisplayModeInfo mode_info = CDisplay::GetCurrentDisplayModeInfo();
         HYP_CORE_INFO("[Engine] - Primary display: %dx%d @%d Hz", mode_info.width, mode_info.height, mode_info.refresh_rate);
+
+        Rendering::CRenderCommand::Init();
     }
 
 }

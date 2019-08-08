@@ -25,6 +25,7 @@ namespace Hyperion {
         virtual void OnInit() = 0;
         virtual void OnEvent(CEvent &event) = 0;
         virtual void OnUpdate(float delta_time) = 0;
+        virtual void OnRender() = 0;
         virtual void OnTick() = 0;
     private:
         void OnEventInternal(CEvent &event);
