@@ -13,7 +13,10 @@ typedef uint32_t u32;
 typedef uint64_t u64;
 
 #include "core/string.hpp"
+#include "core/enum.hpp"
 #include "system/log.hpp"
+
+#define BIT(x) (1 << x)
 
 #ifdef _MSC_VER
     #define HYP_DEBUG_BREAK __debugbreak()

@@ -155,37 +155,29 @@ namespace Hyperion {
 
     enum class EKeyModifier {
         None     = 0,
-        Shift    = 1 << 0,
-        Control  = 1 << 1,
-        Alt      = 1 << 2,
-        Super    = 1 << 3,
-        Capslock = 1 << 4,
-        Numlock  = 1 << 5
+        Shift    = BIT(0),
+        Control  = BIT(1),
+        Alt      = BIT(2),
+        Super    = BIT(3),
+        Capslock = BIT(4),
+        Numlock  = BIT(5)
     };
-    inline EKeyModifier operator|(EKeyModifier a, EKeyModifier b) {
-        return static_cast<EKeyModifier>(static_cast<s32>(a) | static_cast<s32>(b));
-    }
-    inline EKeyModifier operator|=(EKeyModifier &a, EKeyModifier b) {
-        return a = a | b;
-    }
-    inline EKeyModifier operator&(EKeyModifier a, EKeyModifier b) {
-        return static_cast<EKeyModifier>(static_cast<s32>(a) & static_cast<s32>(b));
-    }
+    HYP_CREATE_ENUM_FLAG_OPERATORS(EKeyModifier)
 
     class CInput {
     private:
-        static bool s_keys_down[(s32)EKeyCode::Last];
-        static bool s_keys[(s32)EKeyCode::Last];
-        static bool s_keys_last[(s32)EKeyCode::Last];
-        static bool s_keys_up[(s32)EKeyCode::Last];
+        inline static bool s_keys_down[(s32)EKeyCode::Last];
+        inline static bool s_keys[(s32)EKeyCode::Last];
+        inline static bool s_keys_last[(s32)EKeyCode::Last];
+        inline static bool s_keys_up[(s32)EKeyCode::Last];
 
-        static bool s_mouse_buttons_down[(s32)EMouseButtonCode::Last];
-        static bool s_mouse_buttons[(s32)EMouseButtonCode::Last];
-        static bool s_mouse_buttons_last[(s32)EMouseButtonCode::Last];
-        static bool s_mouse_buttons_up[(s32)EMouseButtonCode::Last];
-
-        static Math::SVec2 s_mouse_position;
-        static float s_mouse_scroll;
+        inline static bool s_mouse_buttons_down[(s32)EMouseButtonCode::Last];
+        inline static bool s_mouse_buttons[(s32)EMouseButtonCode::Last];
+        inline static bool s_mouse_buttons_last[(s32)EMouseButtonCode::Last];
+        inline static bool s_mouse_buttons_up[(s32)EMouseButtonCode::Last];
+        
+        inline static Math::SVec2 s_mouse_position;
+        inline static float s_mouse_scroll;
     public:
         inline static bool GetKeyDown(EKeyCode key_code) { return s_keys_down[(s32)key_code]; }
         inline static bool GetKey(EKeyCode key_code) { return s_keys[(s32)key_code]; }

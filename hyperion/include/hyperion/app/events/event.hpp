@@ -30,22 +30,14 @@ namespace Hyperion::Events {
 
     enum class EEventCategory {
         None        = 0,
-        App         = 1 << 0,
-        Window      = 1 << 1,
-        Input       = 1 << 2,
-        Keyboard    = 1 << 3,
-        Mouse       = 1 << 4,
-        MouseButton = 1 << 5
+        App         = BIT(0),
+        Window      = BIT(1),
+        Input       = BIT(2),
+        Keyboard    = BIT(3),
+        Mouse       = BIT(4),
+        MouseButton = BIT(5)
     };
-    inline EEventCategory operator|(EEventCategory a, EEventCategory b) {
-        return static_cast<EEventCategory>(static_cast<s32>(a) | static_cast<s32>(b));
-    }
-    inline EEventCategory operator|=(EEventCategory &a, EEventCategory b) {
-        return a = a | b;
-    }
-    inline EEventCategory operator&(EEventCategory a, EEventCategory b) {
-        return static_cast<EEventCategory>(static_cast<s32>(a) & static_cast<s32>(b));
-    }
+    HYP_CREATE_ENUM_FLAG_OPERATORS(EEventCategory)
 
     class CEvent {
     private:
