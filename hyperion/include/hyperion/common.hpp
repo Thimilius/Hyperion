@@ -28,11 +28,11 @@ typedef uint64_t u64;
         #define HYP_ASSERT_DEBUG_BREAK
     #endif
 
-    #define HYP_ASSERT(x, m) do {\
+    #define HYP_ASSERT_MESSAGE(x, m) do {\
         if(!(x)) {\
             HYP_CORE_ERROR("[Assert] - Assertion failed!\nIn file: %s (%d)\nWith assertion message: %s", __FILE__, __LINE__, m);\
             HYP_ASSERT_DEBUG_BREAK;\
             abort();\
         } } while(0)
-    #define HYP_ASSERT_ENUM_OUT_OF_RAGE HYP_ASSERT(false, "Enum out of range!")
+    #define HYP_ASSERT_ENUM_OUT_OF_RAGE HYP_ASSERT_MESSAGE(false, "Enum out of range!")
 #endif
