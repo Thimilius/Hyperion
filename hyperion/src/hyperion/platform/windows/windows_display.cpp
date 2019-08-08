@@ -4,6 +4,36 @@
 
 namespace Hyperion {
 
+    CDisplayInfo::SDisplayModeInfo CDisplay::GetCurrentDisplayModeInfo() {
+        DISPLAY_DEVICEA display_device = { 0 };
+        display_device.cb = sizeof(display_device);
+
+        s32 device_number = 0;
+        while (EnumDisplayDevicesA(NULL, device_number, &display_device, 0)) {
+            device_number++;
+
+            if (display_device.StateFlags & DISPLAY_DEVICE_ATTACHED_TO_DESKTOP && display_device.StateFlags & DISPLAY_DEVICE_PRIMARY_DEVICE) {
+                DEVMODEA dev_mode = { 0 };
+                dev_mode.dmSize = sizeof(dev_mode);
+                u32 display_mode_number = 0;
+
+                if (EnumDisplaySettingsA(display_device.DeviceName, ENUM_CURRENT_SETTINGS, &dev_mode)) {
+                    CDisplayInfo::SDisplayModeInfo result;
+                    result.width = dev_mode.dmPelsWidth;
+                    result.height = dev_mode.dmPelsHeight;
+                    result.refresh_rate = dev_mode.dmDisplayFrequency;
+                    result.bits_per_pixel = dev_mode.dmBitsPerPel;
+                        
+                    return result;
+                }
+            }
+        }
+
+        HYP_ASSERT_MESSAGE(false, "Windows does not have a primary display device set!");
+
+        return CDisplayInfo::SDisplayModeInfo();
+    }
+
     void CDisplay::UpdateDisplayInfos() {
         DISPLAY_DEVICEA display_device = { 0 };
         display_device.cb = sizeof(display_device);
@@ -11,20 +41,22 @@ namespace Hyperion {
         s_display_infos.Clear();
 
         s32 device_number = 0;
-        // Enumerate display devices
         while (EnumDisplayDevicesA(NULL, device_number, &display_device, 0)) {
+            device_number++;
+
             if (display_device.StateFlags & DISPLAY_DEVICE_ATTACHED_TO_DESKTOP) {
                 CDisplayInfo display_info;
                 display_info.m_name = CString(display_device.DeviceName);
+                display_info.m_is_primary = display_device.StateFlags & DISPLAY_DEVICE_PRIMARY_DEVICE;
 
                 DEVMODEA dev_mode = { 0 };
                 dev_mode.dmSize = sizeof(dev_mode);
-                u32 display_mode_count = 0;
-                while (EnumDisplaySettingsA(display_device.DeviceName, display_mode_count, &dev_mode)) {
-                    display_mode_count++;
+                u32 display_mode_number = 0;
+                while (EnumDisplaySettingsA(display_device.DeviceName, display_mode_number, &dev_mode)) {
+                    display_mode_number++;
 
-                    // We only support a minium of 32 bits per pixel
-                    if (dev_mode.dmPelsWidth < 32) {
+                    // We only support a modes with a minimum of 24 bits per pixel
+                    if (dev_mode.dmPelsWidth < 24) {
                         continue;
                     }
 
@@ -43,8 +75,6 @@ namespace Hyperion {
 
                 s_display_infos.Add(display_info);
             }
-
-            device_number++;
         }
     }
 

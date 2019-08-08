@@ -3,6 +3,7 @@
 #include "hyperion/common.hpp"
 
 #include <initializer_list>
+#include <functional>
 
 namespace Hyperion {
 
@@ -95,7 +96,7 @@ namespace Hyperion {
             return IndexOf(item) >= 0;
         }
 
-        inline T &Find(bool (*predicate)(const T &)) const {
+        inline T &Find(std::function<bool (const T &)> predicate) const {
             for (s32 i = 0; i < m_count; i++) {
                 T &item = m_data[i];
                 if (predicate(item)) {

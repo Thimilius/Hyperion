@@ -35,8 +35,6 @@ protected:
             GetWindow()->SetVSyncMode(GetWindow()->GetVSyncMode() == EVSyncMode::DontSync ? EVSyncMode::EveryVBlank : EVSyncMode::DontSync);
             UpdateTitle();
         }
-
-        auto &infos = CDisplay::GetDisplayInfos();
     }
     
     void OnTick() override {

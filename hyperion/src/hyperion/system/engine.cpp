@@ -5,6 +5,7 @@
 namespace Hyperion {
 
     void CEngine::Init() {
+        // We initialize the operating system first to get logging ability
         COperatingSystem::GetInstance()->Init();
 
         HYP_CORE_INFO("[Engine] - Initializing...");
@@ -15,6 +16,8 @@ namespace Hyperion {
             (float)system_info.memory_info.total_physical_memory / (1024.0f * 1024.0f * 1024.0f));
 
         CDisplay::UpdateDisplayInfos();
+        CDisplayInfo::SDisplayModeInfo mode_info = CDisplay::GetCurrentDisplayModeInfo();
+        HYP_CORE_INFO("[Engine] - Primary display: %dx%d @%d Hz", mode_info.width, mode_info.height, mode_info.refresh_rate);
     }
 
 }
