@@ -1,6 +1,6 @@
 #pragma once
 
-#include "hyperion/graphics/graphics_context.hpp"
+#include "hyperion/rendering/graphics_context.hpp"
 
 namespace Hyperion::Rendering {
 
