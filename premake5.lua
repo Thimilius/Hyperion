@@ -55,6 +55,7 @@ project "hyperion"
 		"%{prj.name}/src/**.cpp",
 		
 		"%{prj.name}/vendor/**.c",
+		"%{prj.name}/vendor/**.cpp",
 		"%{prj.name}/vendor/**.h",
 	}
 
@@ -68,8 +69,10 @@ project "hyperion"
 	{
 		"%{prj.name}/include",
 		"%{prj.name}/src",
+		
 		"%{prj.name}/vendor/glad/include",
 		"%{prj.name}/vendor/stb/include",
+		"%{prj.name}/vendor/fmt/include",
 		"%{prj.name}/vendor/freetype/include",
 	}
 	
@@ -89,7 +92,7 @@ project "hyperion"
 		"_CRT_SECURE_NO_WARNINGS"
 	}
 	
-	filter "files:hyperion/vendor/**.c"
+	filter "files:hyperion/vendor/**"
 		flags { "NoPCH" }
 
 	filter "system:windows"
