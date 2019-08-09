@@ -19,11 +19,11 @@ namespace Hyperion::Rendering {
             s32 extension_count;
             glGetIntegerv(GL_NUM_EXTENSIONS, &extension_count);
             for (s32 i = 0; i < extension_count; i++) {
-                HYP_CORE_INFO("[OpenGL] - %s", glGetStringi(GL_EXTENSIONS, i));
+                HYP_CORE_INFO("[OpenGL] - {}", glGetStringi(GL_EXTENSIONS, i));
             }
         }
 
-        HYP_CORE_INFO("[OpenGL] - Initialized OpenGL! (%s)", glGetString(GL_VERSION));
+        HYP_CORE_INFO("[OpenGL] - Initialized OpenGL! ({})", glGetString(GL_VERSION));
     }
 
     void COpenGLGraphicsContext::DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *user_pointer) {
@@ -52,7 +52,7 @@ namespace Hyperion::Rendering {
             default:                                type_string = "Unknown"; break;
         }
 
-        const char *log_string_format = "[OpenGL] - Source: %s, Type: %s, ID: %d,\nMessage: %s";
+        const char *log_string_format = "[OpenGL] - Source: {}, Type: {}, ID: {},\nMessage: {}";
         switch (severity) {
             case GL_DEBUG_SEVERITY_HIGH: HYP_CORE_ERROR(log_string_format, source_string, type_string, id, message); break;
             case GL_DEBUG_SEVERITY_MEDIUM: HYP_CORE_WARN(log_string_format, source_string, type_string, id, message); break;

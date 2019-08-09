@@ -33,7 +33,7 @@ typedef uint64_t u64;
 
     #define HYP_ASSERT_MESSAGE(x, m) do {\
         if(!(x)) {\
-            HYP_CORE_ERROR("[Assert] - Assertion failed!\nIn file: %s (%d)\nWith assertion message: %s", __FILE__, __LINE__, m);\
+            HYP_CORE_ERROR("[Assert] - Assertion failed!\nIn file: {} ({})\nWith assertion message: {}", __FILE__, __LINE__, m);\
             HYP_ASSERT_DEBUG_BREAK;\
             abort();\
         } } while(0)

@@ -50,6 +50,7 @@ project "hyperion"
 	files
 	{ 
 		"%{prj.name}/include/**.hpp",
+		"%{prj.name}/include/**.h",
 		
 		"%{prj.name}/src/**.hpp",
 		"%{prj.name}/src/**.cpp",

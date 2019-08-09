@@ -1,6 +1,7 @@
 #pragma once
 
 #include "hyperion/common.hpp"
+#include <vendor/fmt/format.h>
 
 namespace Hyperion {
 
@@ -17,25 +18,38 @@ namespace Hyperion {
         inline u32 GetLength() const { return m_length; };
         inline const char *ToCString() const { return m_buffer == nullptr ? "" : m_buffer; }
 
-        static CString FormatArgs(const char *format, va_list args);
-        static CString Format(const char *format, ...);
+        template<typename ...Args>
+        static CString Format(const char *format, Args... args) {
+            CString result;
+            u32 length = (u32)fmt::formatted_size(format, args...);
 
-        friend CString operator+(CString string, char *c_string);
-        friend CString operator+(CString string, void *value);
-        friend CString operator+(CString string, bool value);
-        friend CString operator+(CString string, s8 value);
-        friend CString operator+(CString string, u8 value);
-        friend CString operator+(CString string, s16 value);
-        friend CString operator+(CString string, u16 value);
-        friend CString operator+(CString string, s32 value);
-        friend CString operator+(CString string, u32 value);
-        friend CString operator+(CString string, s64 value);
-        friend CString operator+(CString string, u64 value);
-        friend CString operator+(CString string, float value);
-        friend CString operator+(CString string, double value);
+            result.m_length = length;
+            result.m_buffer = new char[length + 1];
+            fmt::memory_buffer memory_buffer;
+            fmt::format_to(memory_buffer, format, args...);
 
-        CString operator+(const CString &string) const;
+            memcpy(result.m_buffer, memory_buffer.data(), length);
+            result.m_buffer[length] = 0;
+
+            return result;
+        }
+
         CString operator=(const CString &string);
+    };
+
+}
+
+namespace fmt {
+
+    template <>
+    struct formatter<Hyperion::CString> {
+        template <typename ParseContext>
+        constexpr auto parse(ParseContext &context) { return context.begin(); }
+
+        template <typename FormatContext>
+        auto format(const Hyperion::CString &string, FormatContext &context) {
+            return format_to(context.begin(), "{}", string.ToCString());
+        }
     };
 
 }

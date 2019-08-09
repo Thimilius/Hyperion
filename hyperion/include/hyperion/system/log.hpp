@@ -1,5 +1,7 @@
 #pragma once
 
+#include <time.h>
+
 namespace Hyperion {
 
     enum class ELogColor {
@@ -32,11 +34,24 @@ namespace Hyperion {
     public:
         inline void SetLevel(ELogLevel level) { m_level = level; }
 
-        void Log(ELogType type, ELogLevel level, const char *message, ...);
+        template<typename ...Args>
+        void Log(ELogType type, ELogLevel level, const char *format, Args... args) {
+            time_t current_time;
+            time(&current_time);
+            struct tm time_info;
+            localtime_s(&time_info, &current_time);
+            char prefix_buffer[30];
+            int prefix_length = (int)strftime(prefix_buffer, sizeof(prefix_buffer), GetPrefixFormat(type), &time_info);
+
+            CString message = CString::Format("{}{}\n", prefix_buffer, CString::Format(format, args...).ToCString());
+
+            COperatingSystem::GetInstance()->PrintToConsole(GetLogColor(level), message.ToCString());
+        }
 
         inline static CLog *GetInstance() { return s_instance; }
     private:
         const char *GetPrefixFormat(ELogType type);
+
         ELogColor GetLogColor(ELogLevel level);
     };
 

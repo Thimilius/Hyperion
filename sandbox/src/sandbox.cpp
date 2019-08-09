@@ -10,7 +10,7 @@ public:
     CSandboxApp() : CApplication("Hyperion", 1280, 720, EWindowMode::Windowed) { }
 protected:
     void UpdateTitle() {
-        CString title = CString("Hyperion | FPS: ") + CTime::GetFPS() + " (" + CTime::GetFrameTime() + " ms) | VSync: " + (GetWindow()->GetVSyncMode() != EVSyncMode::DontSync);
+        CString title = CString::Format("Hyperion | FPS: {} ({:.2f} ms) | Vsync: {}", CTime::GetFPS(), CTime::GetFrameTime(), GetWindow()->GetVSyncMode() != EVSyncMode::DontSync);
         GetWindow()->SetTitle(title);
     }
 

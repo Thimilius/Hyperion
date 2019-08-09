@@ -6,7 +6,7 @@
 
 #include <glad/glad.h>
 #include <glad/glad_wgl.h>
-#include <fmt/format.h>
+#include <vendor/fmt/format.h>
 #include <stb/stb_image.h>
 
 #include "hyperion/common.hpp"
