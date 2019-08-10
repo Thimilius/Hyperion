@@ -16,7 +16,6 @@ namespace Hyperion {
         m_title = title;
         m_width = width;
         m_height = height;
-        m_window_mode = window_mode;
         m_window_state = EWindowState::Normal;
 
         u32 window_styles = WS_OVERLAPPEDWINDOW; //& ~WS_THICKFRAME & ~WS_MAXIMIZEBOX
@@ -59,6 +58,8 @@ namespace Hyperion {
 
         SetWindowLongPtrA(m_window_handle, GWLP_USERDATA, (LONG_PTR)(void *)this);
 
+        SetWindowMode(window_mode);
+
         CreateContext();
     }
 
@@ -87,28 +88,68 @@ namespace Hyperion {
             return;
         }
 
-        DWORD window_style = GetWindowLongA(m_window_handle, GWL_STYLE);
-        if (window_mode == EWindowMode::Borderless || window_mode == EWindowMode::Fullscreen) {
-            MONITORINFO monitor_info = { sizeof(monitor_info) };
-            GetWindowPlacement(m_window_handle, &m_previous_placement);
-            GetMonitorInfoA(MonitorFromWindow(m_window_handle, MONITOR_DEFAULTTOPRIMARY), &monitor_info);
-            SetWindowLongA(m_window_handle, GWL_STYLE, window_style & ~WS_OVERLAPPEDWINDOW);
-            SetWindowPos(m_window_handle,
-                HWND_TOP,
-                monitor_info.rcMonitor.left,
-                monitor_info.rcMonitor.top,
-                monitor_info.rcMonitor.right - monitor_info.rcMonitor.left,
-                monitor_info.rcMonitor.bottom - monitor_info.rcMonitor.top,
-                SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
-        } else {
-            // TODO: How do we handle styles correctly?
-            SetWindowLongA(m_window_handle, GWL_STYLE, window_style | (WS_OVERLAPPEDWINDOW));
-            SetWindowPlacement(m_window_handle, &m_previous_placement);
-            u32 flags = SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED;
-            SetWindowPos(m_window_handle, NULL, 0, 0, 0, 0, flags);
+        DWORD window_styles = GetWindowLongA(m_window_handle, GWL_STYLE);
+
+        EWindowMode last_window_mode = m_window_mode;
+        // This already needs to be set here for all later message callbacks
+        m_window_mode = window_mode;
+
+        switch (window_mode) {
+            case Hyperion::EWindowMode::Windowed: {
+                ResetFullscreenDisplayMode();
+
+                // TODO: How do we handle styles correctly?
+                SetWindowLongA(m_window_handle, GWL_STYLE, window_styles | (WS_OVERLAPPEDWINDOW));
+                SetWindowPlacement(m_window_handle, &m_previous_placement);
+                u32 flags = SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED;
+
+                RECT window_rect = { 0 };
+                window_rect.right = (LONG)1280;
+                window_rect.bottom = (LONG)720;
+                AdjustWindowRect(&window_rect, window_styles, false);
+
+                LONG width = window_rect.right - window_rect.left;
+                LONG height = window_rect.bottom - window_rect.top;
+
+                SetWindowPos(m_window_handle, NULL, 0, 0, width, height, flags);
+                break;
+            }
+            case Hyperion::EWindowMode::Borderless: {
+                if (last_window_mode == EWindowMode::Windowed) {
+                    GetWindowPlacement(m_window_handle, &m_previous_placement);
+                }
+
+                ResetFullscreenDisplayMode();
+
+                MONITORINFO monitor_info = { sizeof(monitor_info) };
+                GetMonitorInfoA(MonitorFromWindow(m_window_handle, MONITOR_DEFAULTTOPRIMARY), &monitor_info);
+                SetWindowLongA(m_window_handle, GWL_STYLE, window_styles & ~WS_OVERLAPPEDWINDOW);
+
+                LONG x = monitor_info.rcMonitor.left;
+                LONG y = monitor_info.rcMonitor.top;
+                LONG width = monitor_info.rcMonitor.right - monitor_info.rcMonitor.left;
+                LONG height = monitor_info.rcMonitor.bottom - monitor_info.rcMonitor.top;
+
+                SetWindowPos(m_window_handle, HWND_TOP, x, y, width, height, SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+                break;
+            }
+            case Hyperion::EWindowMode::Fullscreen: {
+                if (last_window_mode == EWindowMode::Windowed) {
+                    GetWindowPlacement(m_window_handle, &m_previous_placement);
+                }
+                
+                SetWindowLongA(m_window_handle, GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_TOPMOST);
+                SetWindowLongA(m_window_handle, GWL_STYLE, WS_SYSMENU | WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE);
+                SetWindowPos(m_window_handle, HWND_TOPMOST, 0, 0, 1280, 720, SWP_SHOWWINDOW);
+
+                SetFullscreenDisplayMode();
+
+                ShowWindow(m_window_handle, SW_MAXIMIZE);
+                break;
+            }
+            default: HYP_ASSERT_ENUM_OUT_OF_RAGE;
         }
 
-        m_window_mode = window_mode;
     }
 
     void CWindowsWindow::SetWindowState(EWindowState window_state) {
@@ -140,13 +181,13 @@ namespace Hyperion {
 
     void CWindowsWindow::SetIcon(const char *path) {
         HICON icon = (HICON)LoadImageA(NULL, path, IMAGE_ICON, 64, 64, LR_LOADFROMFILE);
-        SendMessage(m_window_handle, WM_SETICON, ICON_SMALL, (LPARAM)icon);
-        SendMessage(m_window_handle, WM_SETICON, ICON_BIG, (LPARAM)icon);
+        SendMessageA(m_window_handle, WM_SETICON, ICON_SMALL, (LPARAM)icon);
+        SendMessageA(m_window_handle, WM_SETICON, ICON_BIG, (LPARAM)icon);
 
         // We also set the icon for the console window
         HWND console_window_handle = GetConsoleWindow();
-        SendMessage(console_window_handle, WM_SETICON, ICON_SMALL, (LPARAM)icon);
-        SendMessage(console_window_handle, WM_SETICON, ICON_BIG, (LPARAM)icon);
+        SendMessageA(console_window_handle, WM_SETICON, ICON_SMALL, (LPARAM)icon);
+        SendMessageA(console_window_handle, WM_SETICON, ICON_BIG, (LPARAM)icon);
     }
 
     void CWindowsWindow::Update() const {
@@ -180,6 +221,28 @@ namespace Hyperion {
         if (m_event_callback != nullptr) {
             m_event_callback(event);
         }
+    }
+
+    void CWindowsWindow::ResetFullscreenDisplayMode() {
+        u32 flags = SWP_NOMOVE | SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_FRAMECHANGED;
+        SetWindowPos(m_window_handle, HWND_NOTOPMOST, 0, 0, 0, 0, flags);
+
+        ChangeDisplaySettingsA(NULL, CDS_RESET);
+    }
+
+    void CWindowsWindow::SetFullscreenDisplayMode() {
+        CDisplayInfo::SDisplayModeInfo current_mode_info = CDisplay::GetCurrentDisplayModeInfo();
+
+        DEVMODEA dev_mode = { 0 };
+        dev_mode.dmSize = sizeof(dev_mode);
+        dev_mode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL | DM_DISPLAYFREQUENCY;
+        dev_mode.dmBitsPerPel = current_mode_info.bits_per_pixel;
+        dev_mode.dmDisplayFrequency = current_mode_info.refresh_rate;
+        dev_mode.dmPelsWidth = 1280;
+        dev_mode.dmPelsHeight = 720;
+
+        // TODO: Add ability to change from primary display to a different one
+        LONG result = ChangeDisplaySettingsA(&dev_mode, CDS_FULLSCREEN);
     }
 
     EMouseButtonCode CWindowsWindow::GetMouseButtonCode(u32 code) const {
@@ -448,7 +511,7 @@ namespace Hyperion {
                     case SIZE_MAXIMIZED: window_state = EWindowState::Maximized; break;
                     default: window_state = EWindowState::Normal; break;
                 }
-
+                
                 u32 width = LOWORD(l_param);
                 u32 height = HIWORD(l_param);
 
@@ -456,9 +519,23 @@ namespace Hyperion {
                 window->m_height = height;
                 window->m_window_state = window_state;
 
+                if (window->m_window_mode == EWindowMode::Fullscreen) {
+                    if (window_state == EWindowState::Minimized) {
+                        window->ResetFullscreenDisplayMode();
+                    } else if (window_state == EWindowState::Normal || window_state == EWindowState::Maximized) {
+                        window->SetFullscreenDisplayMode();
+                    }
+                }
+
                 CWindowResizeEvent event(width, height);
                 window->DispatchEvent(event);
                 break;
+            }
+
+            case WM_KILLFOCUS: {
+                if (window->m_window_mode == EWindowMode::Fullscreen) {
+                    window->SetWindowState(EWindowState::Minimized);
+                }
             }
 
             case WM_MOVE: {
