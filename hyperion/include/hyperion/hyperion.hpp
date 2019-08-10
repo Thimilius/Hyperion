@@ -10,6 +10,10 @@
 #include "app/time.hpp"
 #include "app/events/event.hpp"
 
+#include "entity/game_object.hpp"
+#include "entity/components/component.hpp"
+#include "entity/components/transform_component.hpp"
+
 #include "math/math.hpp"
 
 #include "rendering/render_command.hpp"

@@ -21,6 +21,10 @@
 #include "hyperion/app/time.hpp"
 #include "hyperion/app/events/events.hpp"
 
+#include "hyperion/entity/game_object.hpp"
+#include "hyperion/entity/components/component.hpp"
+#include "hyperion/entity/components/transform_component.hpp"
+
 #include "hyperion/math/math.hpp"
 
 #include "hyperion/rendering/render_api.hpp"
