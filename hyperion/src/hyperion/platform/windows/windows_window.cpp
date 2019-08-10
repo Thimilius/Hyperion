@@ -68,19 +68,32 @@ namespace Hyperion {
         SetWindowTextA(m_window_handle, title.ToCString());
     }
 
-    void CWindowsWindow::SetSize(u32 width, u32 height) {
+    void CWindowsWindow::SetResolution(u32 width, u32 height, u32 refresh_rate) {
+
+        switch (m_window_mode) {
+            case Hyperion::EWindowMode::Windowed: {
+                RECT window_rect = { 0 };
+                window_rect.right = (LONG)width;
+                window_rect.bottom = (LONG)height;
+                AdjustWindowRect(&window_rect, GetWindowLongA(m_window_handle, GWL_STYLE), false);
+                width = window_rect.right - window_rect.left;
+                height = window_rect.bottom - window_rect.top;
+
+                u32 flags = SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER;
+                SetWindowPos(m_window_handle, NULL, 0, 0, width, height, flags);
+                break;
+            }
+            case Hyperion::EWindowMode::Borderless: {
+                break;
+            }
+            case Hyperion::EWindowMode::Fullscreen: {
+                break;
+            }
+            default: HYP_ASSERT_ENUM_OUT_OF_RAGE;
+        }
+
         m_width = width;
         m_height = height;
-
-        RECT window_rect = { 0 };
-        window_rect.right = (LONG)width;
-        window_rect.bottom = (LONG)height;
-        AdjustWindowRect(&window_rect, GetWindowLongA(m_window_handle, GWL_STYLE), false);
-        width = window_rect.right - window_rect.left;
-        height = window_rect.bottom - window_rect.top;
-
-        u32 flags = SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER;
-        SetWindowPos(m_window_handle, NULL, 0, 0, width, height, flags);
     }
 
     void CWindowsWindow::SetWindowMode(EWindowMode window_mode) {
@@ -98,15 +111,14 @@ namespace Hyperion {
             case Hyperion::EWindowMode::Windowed: {
                 ResetFullscreenDisplayMode();
 
-                // TODO: How do we handle styles correctly?
                 SetWindowLongA(m_window_handle, GWL_STYLE, window_styles | (WS_OVERLAPPEDWINDOW));
                 SetWindowPlacement(m_window_handle, &m_previous_placement);
                 u32 flags = SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED;
 
                 RECT window_rect = { 0 };
-                window_rect.right = (LONG)1280;
-                window_rect.bottom = (LONG)720;
-                AdjustWindowRect(&window_rect, window_styles, false);
+                window_rect.right = (LONG)m_width;
+                window_rect.bottom = (LONG)m_height;
+                AdjustWindowRect(&window_rect, GetWindowLongA(m_window_handle, GWL_STYLE), false);
 
                 LONG width = window_rect.right - window_rect.left;
                 LONG height = window_rect.bottom - window_rect.top;
@@ -140,7 +152,15 @@ namespace Hyperion {
                 
                 SetWindowLongA(m_window_handle, GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_TOPMOST);
                 SetWindowLongA(m_window_handle, GWL_STYLE, WS_SYSMENU | WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE);
-                SetWindowPos(m_window_handle, HWND_TOPMOST, 0, 0, 1280, 720, SWP_SHOWWINDOW);
+
+                RECT window_rect = { 0 };
+                window_rect.right = (LONG)m_width;
+                window_rect.bottom = (LONG)m_height;
+                AdjustWindowRect(&window_rect, GetWindowLongA(m_window_handle, GWL_STYLE), false);
+
+                LONG width = window_rect.right - window_rect.left;
+                LONG height = window_rect.bottom - window_rect.top;
+                SetWindowPos(m_window_handle, HWND_TOPMOST, 0, 0, width, height, SWP_SHOWWINDOW);
 
                 SetFullscreenDisplayMode();
 
@@ -163,7 +183,9 @@ namespace Hyperion {
                 break;
             }
             case Hyperion::EWindowState::Maximized: {
-                ShowWindow(m_window_handle, SW_MAXIMIZE);
+                if (m_window_mode == EWindowMode::Windowed) {
+                    ShowWindow(m_window_handle, SW_MAXIMIZE);
+                }
                 break;
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RAGE;
@@ -210,7 +232,6 @@ namespace Hyperion {
                 m_graphics_context = new Rendering::CWindowsOpenGLGraphicsContext(m_window_handle);
                 break;
             }
-                
             default: HYP_ASSERT_ENUM_OUT_OF_RAGE;
         }
         
@@ -238,8 +259,8 @@ namespace Hyperion {
         dev_mode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL | DM_DISPLAYFREQUENCY;
         dev_mode.dmBitsPerPel = current_mode_info.bits_per_pixel;
         dev_mode.dmDisplayFrequency = current_mode_info.refresh_rate;
-        dev_mode.dmPelsWidth = 1280;
-        dev_mode.dmPelsHeight = 720;
+        dev_mode.dmPelsWidth = m_width;
+        dev_mode.dmPelsHeight = m_height;
 
         // TODO: Add ability to change from primary display to a different one
         LONG result = ChangeDisplaySettingsA(&dev_mode, CDS_FULLSCREEN);
@@ -536,6 +557,7 @@ namespace Hyperion {
                 if (window->m_window_mode == EWindowMode::Fullscreen) {
                     window->SetWindowState(EWindowState::Minimized);
                 }
+                break;
             }
 
             case WM_MOVE: {

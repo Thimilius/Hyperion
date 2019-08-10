@@ -43,6 +43,8 @@ protected:
             GetWindow()->SetVSyncMode(GetWindow()->GetVSyncMode() == EVSyncMode::DontSync ? EVSyncMode::EveryVBlank : EVSyncMode::DontSync);
             UpdateTitle();
         }
+
+        //HYP_TRACE("{}x{}", GetWindow()->GetWidth(), GetWindow()->GetHeight());
     }
 
     void OnRender() override {
