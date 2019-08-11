@@ -5,10 +5,12 @@
 namespace Hyperion::Rendering {
 
     class CGraphicsContext {
-    public:
+    private:
         virtual void Init() = 0;
         virtual void SwapBuffers() = 0;
         virtual void SetVSyncMode(EVSyncMode vsync_mode) = 0;
+
+        friend class CWindowsWindow;
     };
 
 }

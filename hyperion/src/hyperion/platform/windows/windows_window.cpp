@@ -211,7 +211,7 @@ namespace Hyperion {
     void CWindowsWindow::CreateContext() {
         switch (Rendering::CRenderAPI::GetAPI()) {
             case Rendering::ERenderAPI::OpenGL: {
-                m_graphics_context = new Rendering::CWindowsOpenGLGraphicsContext(m_window_handle);
+                m_graphics_context.reset(new Rendering::CWindowsOpenGLGraphicsContext(m_window_handle));
                 break;
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;

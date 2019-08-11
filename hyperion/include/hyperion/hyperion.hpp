@@ -16,6 +16,7 @@
 
 #include "math/math.hpp"
 
+#include "rendering/graphics_context.hpp"
 #include "rendering/render_command.hpp"
 #include "rendering/buffer.hpp"
 #include "rendering/shader.hpp"

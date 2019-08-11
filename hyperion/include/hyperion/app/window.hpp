@@ -42,7 +42,7 @@ namespace Hyperion {
 
         EventCallbackFunction m_event_callback;
 
-        Rendering::CGraphicsContext *m_graphics_context;
+        PScope<Rendering::CGraphicsContext> m_graphics_context;
     public:
 
         virtual ~CWindow() = default;
@@ -63,6 +63,8 @@ namespace Hyperion {
         inline EVSyncMode GetVSyncMode() const { return m_vsync_mode; }
         virtual void SetVSyncMode(EVSyncMode vsync_mode) = 0;
 
+        inline const PScope<Rendering::CGraphicsContext> &GetGraphicsContext() const { return m_graphics_context; }
+        
         virtual void SetIcon(const char *path) = 0;
     protected:
         virtual void Update() const = 0;
