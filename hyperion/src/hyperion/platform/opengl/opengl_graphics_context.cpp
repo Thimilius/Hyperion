@@ -24,6 +24,7 @@ namespace Hyperion::Rendering {
         }
 
         HYP_CORE_INFO("[OpenGL] - Initialized OpenGL! ({})", glGetString(GL_VERSION));
+        HYP_CORE_INFO("[OpenGL] - Renderer: {} {}", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
     }
 
     void COpenGLGraphicsContext::DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *user_pointer) {
@@ -58,7 +59,7 @@ namespace Hyperion::Rendering {
             case GL_DEBUG_SEVERITY_MEDIUM: HYP_CORE_WARN(log_string_format, source_string, type_string, id, message); break;
             case GL_DEBUG_SEVERITY_LOW:
             case GL_DEBUG_SEVERITY_NOTIFICATION: HYP_CORE_INFO(log_string_format, source_string, type_string, id, message); break;
-            default: HYP_ASSERT_ENUM_OUT_OF_RAGE; break;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
         }
 
         if (OPENGL_BREAK_ON_ERROR) {

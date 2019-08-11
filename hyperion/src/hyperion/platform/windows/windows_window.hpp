@@ -17,7 +17,7 @@ namespace Hyperion {
         void SetWindowState(EWindowState window_state) override;
         void SetVSyncMode(EVSyncMode vsync_mode) override;
 
-        void SetIcon(const char *path) override;
+        void SetIcon(const char *path) = 0;
     private:
         void Update() const override;
         void Show() const override;

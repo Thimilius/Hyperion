@@ -19,7 +19,7 @@ namespace Hyperion::Rendering {
             case EShaderDataType::Int3:   return 3;
             case EShaderDataType::Int4:   return 4;
             case EShaderDataType::Bool:   return 1;
-            default: HYP_ASSERT_ENUM_OUT_OF_RAGE; return 0;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }
 
@@ -36,14 +36,14 @@ namespace Hyperion::Rendering {
     CVertexBuffer *CVertexBuffer::Create(u8 *vertices, u32 size) {
         switch (CRenderAPI::GetAPI()) {
             case ERenderAPI::OpenGL: return new COpenGLVertexBuffer(vertices, size);
-            default: HYP_ASSERT_ENUM_OUT_OF_RAGE; return nullptr;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }
 
     CIndexBuffer *CIndexBuffer::Create(u32 *indices, u32 size) {
         switch (CRenderAPI::GetAPI()) {
             case ERenderAPI::OpenGL: return new COpenGLIndexBuffer(indices, size);
-            default: HYP_ASSERT_ENUM_OUT_OF_RAGE; return nullptr;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }
 

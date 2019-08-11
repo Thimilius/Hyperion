@@ -12,7 +12,7 @@ namespace Hyperion::Rendering {
                 s_render_api = new COpenGLRenderAPI();
                 break;
             }
-            default: HYP_ASSERT_ENUM_OUT_OF_RAGE;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
     }
 

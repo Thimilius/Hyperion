@@ -9,7 +9,7 @@ namespace Hyperion::Rendering {
     CVertexArray *CVertexArray::Create() {
         switch (CRenderAPI::GetAPI()) {
             case ERenderAPI::OpenGL: return new COpenGLVertexArray();
-            default: HYP_ASSERT_ENUM_OUT_OF_RAGE; return nullptr;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }
 

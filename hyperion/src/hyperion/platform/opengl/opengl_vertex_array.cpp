@@ -62,7 +62,7 @@ namespace Hyperion::Rendering {
             case EShaderDataType::Int3:   return GL_INT;
             case EShaderDataType::Int4:   return GL_INT;
             case EShaderDataType::Bool:   return GL_BOOL;
-            default: HYP_ASSERT_ENUM_OUT_OF_RAGE; return 0;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }
 }

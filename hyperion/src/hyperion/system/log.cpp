@@ -12,7 +12,7 @@ namespace Hyperion {
         switch (type) {
             case Hyperion::ELogType::Core: return "[%H:%M:%S] - [Core] - ";
             case Hyperion::ELogType::Client: return "[%H:%M:%S] - [Client] - ";
-            default: HYP_ASSERT_ENUM_OUT_OF_RAGE; return "";
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return "";
         }
     }
 
@@ -22,7 +22,7 @@ namespace Hyperion {
             case Hyperion::ELogLevel::Info: return ELogColor::Green;
             case Hyperion::ELogLevel::Warning: return ELogColor::Yellow;
             case Hyperion::ELogLevel::Error: return ELogColor::Red;
-            default: HYP_ASSERT_ENUM_OUT_OF_RAGE; return ELogColor::White;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return ELogColor::White;
         }
     }
 

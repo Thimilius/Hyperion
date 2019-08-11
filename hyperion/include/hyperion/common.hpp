@@ -38,7 +38,7 @@ typedef uint64_t u64;
             HYP_ASSERT_DEBUG_BREAK;\
             abort();\
         } } while(0)
-    #define HYP_ASSERT_ENUM_OUT_OF_RAGE HYP_ASSERT_MESSAGE(false, "Enum out of range!")
+    #define HYP_ASSERT_ENUM_OUT_OF_RANGE HYP_ASSERT_MESSAGE(false, "Enum out of range!")
 #endif
 
 namespace Hyperion {

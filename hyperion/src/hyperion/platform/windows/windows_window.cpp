@@ -95,7 +95,7 @@ namespace Hyperion {
             case Hyperion::EWindowMode::Borderless: {
                 break;
             }
-            default: HYP_ASSERT_ENUM_OUT_OF_RAGE;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
 
         m_width = width;
@@ -145,7 +145,7 @@ namespace Hyperion {
                 SetWindowPos(m_window_handle, HWND_TOP, x, y, width, height, SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
                 break;
             }
-            default: HYP_ASSERT_ENUM_OUT_OF_RAGE;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
 
     }
@@ -170,7 +170,7 @@ namespace Hyperion {
                 }
                 break;
             }
-            default: HYP_ASSERT_ENUM_OUT_OF_RAGE;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
 
         m_window_state = window_state;
@@ -214,7 +214,7 @@ namespace Hyperion {
                 m_graphics_context = new Rendering::CWindowsOpenGLGraphicsContext(m_window_handle);
                 break;
             }
-            default: HYP_ASSERT_ENUM_OUT_OF_RAGE;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
         
         m_graphics_context->Init();

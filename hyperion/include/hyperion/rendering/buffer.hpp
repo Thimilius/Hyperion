@@ -26,7 +26,7 @@ namespace Hyperion::Rendering {
             case EShaderDataType::Int3:   return 4 * 3;
             case EShaderDataType::Int4:   return 4 * 4;
             case EShaderDataType::Bool:   return 1;
-            default: HYP_ASSERT_ENUM_OUT_OF_RAGE; return 0;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }
 
