@@ -30,6 +30,7 @@
 #include "hyperion/rendering/render_api.hpp"
 #include "hyperion/rendering/render_command.hpp"
 #include "hyperion/rendering/buffer.hpp"
+#include "hyperion/rendering/shader.hpp"
 
 #include "hyperion/system/log.hpp"
 #include "hyperion/system/engine.hpp"

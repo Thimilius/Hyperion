@@ -18,6 +18,7 @@
 
 #include "rendering/render_command.hpp"
 #include "rendering/buffer.hpp"
+#include "rendering/shader.hpp"
 
 #include "system/log.hpp"
 #include "system/engine.hpp"

@@ -25,10 +25,9 @@ namespace Hyperion::Rendering {
 
         vertex_buffer->Bind();
 
-        u32 index = 0;
         const auto &layout = vertex_buffer->GetLayout();
         const auto &elements = layout.GetElements();
-        for (u32 index = 0; index < elements.GetCount(); index++) {
+        for (s32 index = 0; index < elements.GetCount(); index++) {
             auto &element = elements[index];
             glEnableVertexAttribArray(index);
             glVertexAttribPointer(
@@ -37,7 +36,7 @@ namespace Hyperion::Rendering {
                 ShaderDataTypeToOpenGLBaseType(element.type),
                 element.normalized ? GL_TRUE : GL_FALSE,
                 layout.GetStride(),
-                (const void *)element.offset);
+                (const void *)(u64)element.offset);
         }
 
         m_vertex_buffers.Add(vertex_buffer);
