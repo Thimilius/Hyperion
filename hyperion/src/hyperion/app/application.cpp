@@ -2,7 +2,7 @@
 
 #include "hyperion/app/application.hpp"
 
-#define MAX_DELTA_TIME (1.0 / 20.0)
+#define MAX_DELTA_TIME (0.15)
 
 namespace Hyperion {
 
@@ -84,6 +84,10 @@ namespace Hyperion {
         });
         dispatcher.Dispatch<CWindowResizeEvent>([this](CWindowResizeEvent &window_resize_event) {
             Rendering::CRenderCommand::SetViewport(0, 0, window_resize_event.GetWidth(), window_resize_event.GetHeight());
+        });
+        auto window_reset = CInput::Reset;
+        dispatcher.Dispatch<CWindowFocusEvent>([window_reset](CWindowFocusEvent &window_focus_event){
+            window_reset();
         });
 
         // Handle key events

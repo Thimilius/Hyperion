@@ -31,20 +31,12 @@ protected:
         }
 
         if (CInput::GetKeyDown(EKeyCode::F1)) {
-            GetWindow()->SetWindowMode(EWindowMode::Windowed);
+            GetWindow()->SetWindowMode(GetWindow()->GetWindowMode() == EWindowMode::Windowed ? EWindowMode::Borderless : EWindowMode::Windowed);
         }
         if (CInput::GetKeyDown(EKeyCode::F2)) {
-            GetWindow()->SetWindowMode(EWindowMode::Borderless);
-        }
-        if (CInput::GetKeyDown(EKeyCode::F3)) {
-            GetWindow()->SetWindowMode(EWindowMode::Fullscreen);
-        }
-        if (CInput::GetKeyDown(EKeyCode::F4)) {
             GetWindow()->SetVSyncMode(GetWindow()->GetVSyncMode() == EVSyncMode::DontSync ? EVSyncMode::EveryVBlank : EVSyncMode::DontSync);
             UpdateTitle();
         }
-
-        //HYP_TRACE("{}x{}", GetWindow()->GetWidth(), GetWindow()->GetHeight());
     }
 
     void OnRender() override {

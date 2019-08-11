@@ -13,8 +13,7 @@ namespace Hyperion {
 
     enum class EWindowMode {
         Windowed,
-        Borderless,
-        Fullscreen
+        Borderless
     };
 
     enum class EWindowState {
@@ -36,7 +35,6 @@ namespace Hyperion {
 
         u32 m_width;
         u32 m_height;
-        u32 m_refresh_rate;
 
         EWindowMode m_window_mode;
         EWindowState m_window_state;
@@ -54,9 +52,7 @@ namespace Hyperion {
 
         inline u32 GetWidth() const { return m_width; }
         inline u32 GetHeight() const { return m_height; }
-        inline u32 GetRefreshRate() const { return m_refresh_rate; }
-
-        virtual void SetResolution(u32 width, u32 height, u32 refresh_rate) = 0;
+        virtual void SetSize(u32 width, u32 height) = 0;
 
         inline EWindowMode GetWindowMode() const { return m_window_mode; }
         virtual void SetWindowMode(EWindowMode window_mode) = 0;

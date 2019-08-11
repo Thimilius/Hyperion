@@ -18,7 +18,7 @@ namespace Hyperion {
         m_height = height;
         m_window_state = EWindowState::Normal;
 
-        u32 window_styles = WS_OVERLAPPEDWINDOW; //& ~WS_THICKFRAME & ~WS_MAXIMIZEBOX
+        u32 window_styles = WS_OVERLAPPEDWINDOW;
         const char *window_class_name = "HYPERION_WINDOW_CLASS";
         HINSTANCE instance = GetModuleHandleA(NULL);
 
@@ -68,10 +68,17 @@ namespace Hyperion {
         SetWindowTextA(m_window_handle, title.ToCString());
     }
 
-    void CWindowsWindow::SetResolution(u32 width, u32 height, u32 refresh_rate) {
+    void CWindowsWindow::SetSize(u32 width, u32 height) {
+        if (m_width == width && m_height == height) {
+            return;
+        }
 
         switch (m_window_mode) {
             case Hyperion::EWindowMode::Windowed: {
+                if (m_window_state == EWindowState::Maximized) {
+                    SetWindowState(EWindowState::Normal);
+                }
+
                 RECT window_rect = { 0 };
                 window_rect.right = (LONG)width;
                 window_rect.bottom = (LONG)height;
@@ -84,9 +91,6 @@ namespace Hyperion {
                 break;
             }
             case Hyperion::EWindowMode::Borderless: {
-                break;
-            }
-            case Hyperion::EWindowMode::Fullscreen: {
                 break;
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RAGE;
@@ -109,8 +113,6 @@ namespace Hyperion {
 
         switch (window_mode) {
             case Hyperion::EWindowMode::Windowed: {
-                ResetFullscreenDisplayMode();
-
                 SetWindowLongA(m_window_handle, GWL_STYLE, window_styles | (WS_OVERLAPPEDWINDOW));
                 SetWindowPlacement(m_window_handle, &m_previous_placement);
                 u32 flags = SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED;
@@ -127,11 +129,7 @@ namespace Hyperion {
                 break;
             }
             case Hyperion::EWindowMode::Borderless: {
-                if (last_window_mode == EWindowMode::Windowed) {
-                    GetWindowPlacement(m_window_handle, &m_previous_placement);
-                }
-
-                ResetFullscreenDisplayMode();
+                GetWindowPlacement(m_window_handle, &m_previous_placement);
 
                 MONITORINFO monitor_info = { sizeof(monitor_info) };
                 GetMonitorInfoA(MonitorFromWindow(m_window_handle, MONITOR_DEFAULTTOPRIMARY), &monitor_info);
@@ -145,34 +143,16 @@ namespace Hyperion {
                 SetWindowPos(m_window_handle, HWND_TOP, x, y, width, height, SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
                 break;
             }
-            case Hyperion::EWindowMode::Fullscreen: {
-                if (last_window_mode == EWindowMode::Windowed) {
-                    GetWindowPlacement(m_window_handle, &m_previous_placement);
-                }
-                
-                SetWindowLongA(m_window_handle, GWL_EXSTYLE, WS_EX_APPWINDOW | WS_EX_TOPMOST);
-                SetWindowLongA(m_window_handle, GWL_STYLE, WS_SYSMENU | WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_VISIBLE);
-
-                RECT window_rect = { 0 };
-                window_rect.right = (LONG)m_width;
-                window_rect.bottom = (LONG)m_height;
-                AdjustWindowRect(&window_rect, GetWindowLongA(m_window_handle, GWL_STYLE), false);
-
-                LONG width = window_rect.right - window_rect.left;
-                LONG height = window_rect.bottom - window_rect.top;
-                SetWindowPos(m_window_handle, HWND_TOPMOST, 0, 0, width, height, SWP_SHOWWINDOW);
-
-                SetFullscreenDisplayMode();
-
-                ShowWindow(m_window_handle, SW_MAXIMIZE);
-                break;
-            }
             default: HYP_ASSERT_ENUM_OUT_OF_RAGE;
         }
 
     }
 
     void CWindowsWindow::SetWindowState(EWindowState window_state) {
+        if (m_window_state == window_state) {
+            return;
+        }
+
         switch (window_state) {
             case Hyperion::EWindowState::Normal: {
                 ShowWindow(m_window_handle, SW_RESTORE);
@@ -242,28 +222,6 @@ namespace Hyperion {
         if (m_event_callback != nullptr) {
             m_event_callback(event);
         }
-    }
-
-    void CWindowsWindow::ResetFullscreenDisplayMode() {
-        u32 flags = SWP_NOMOVE | SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_FRAMECHANGED;
-        SetWindowPos(m_window_handle, HWND_NOTOPMOST, 0, 0, 0, 0, flags);
-
-        ChangeDisplaySettingsA(NULL, CDS_RESET);
-    }
-
-    void CWindowsWindow::SetFullscreenDisplayMode() {
-        CDisplayInfo::SDisplayModeInfo current_mode_info = CDisplay::GetCurrentDisplayModeInfo();
-
-        DEVMODEA dev_mode = { 0 };
-        dev_mode.dmSize = sizeof(dev_mode);
-        dev_mode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL | DM_DISPLAYFREQUENCY;
-        dev_mode.dmBitsPerPel = current_mode_info.bits_per_pixel;
-        dev_mode.dmDisplayFrequency = current_mode_info.refresh_rate;
-        dev_mode.dmPelsWidth = m_width;
-        dev_mode.dmPelsHeight = m_height;
-
-        // TODO: Add ability to change from primary display to a different one
-        LONG result = ChangeDisplaySettingsA(&dev_mode, CDS_FULLSCREEN);
     }
 
     EMouseButtonCode CWindowsWindow::GetMouseButtonCode(u32 code) const {
@@ -518,8 +476,8 @@ namespace Hyperion {
             }
 
             case WM_MOUSEWHEEL: {
-                s32 scroll = GET_WHEEL_DELTA_WPARAM(w_param);
-                CMouseScrolledEvent event(scroll < 0 ? -1.0f : 1.0f);
+                s16 scroll = GET_WHEEL_DELTA_WPARAM(w_param);
+                CMouseScrolledEvent event(scroll / (float)WHEEL_DELTA);
                 window->DispatchEvent(event);
                 break;
             };
@@ -532,7 +490,7 @@ namespace Hyperion {
                     case SIZE_MAXIMIZED: window_state = EWindowState::Maximized; break;
                     default: window_state = EWindowState::Normal; break;
                 }
-                
+
                 u32 width = LOWORD(l_param);
                 u32 height = HIWORD(l_param);
 
@@ -540,23 +498,8 @@ namespace Hyperion {
                 window->m_height = height;
                 window->m_window_state = window_state;
 
-                if (window->m_window_mode == EWindowMode::Fullscreen) {
-                    if (window_state == EWindowState::Minimized) {
-                        window->ResetFullscreenDisplayMode();
-                    } else if (window_state == EWindowState::Normal || window_state == EWindowState::Maximized) {
-                        window->SetFullscreenDisplayMode();
-                    }
-                }
-
                 CWindowResizeEvent event(width, height);
                 window->DispatchEvent(event);
-                break;
-            }
-
-            case WM_KILLFOCUS: {
-                if (window->m_window_mode == EWindowMode::Fullscreen) {
-                    window->SetWindowState(EWindowState::Minimized);
-                }
                 break;
             }
 
@@ -572,8 +515,9 @@ namespace Hyperion {
                 break;
             }
 
-            case WM_ACTIVATEAPP: {
-                CWindowFocusEvent event((bool)w_param);
+            case WM_SETFOCUS: 
+            case WM_KILLFOCUS: {
+                CWindowFocusEvent event(message == WM_SETFOCUS);
                 window->DispatchEvent(event);
                 break;
             }

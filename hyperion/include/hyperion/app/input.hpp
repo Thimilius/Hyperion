@@ -194,6 +194,7 @@ namespace Hyperion {
         ~CInput() = delete;
 
         static void Update();
+        static void Reset();
 
         friend class CApplication;
     };
