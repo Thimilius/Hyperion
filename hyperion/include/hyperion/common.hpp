@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <memory>
 
 typedef int8_t  s8;
 typedef int16_t s16;
@@ -39,3 +40,13 @@ typedef uint64_t u64;
         } } while(0)
     #define HYP_ASSERT_ENUM_OUT_OF_RAGE HYP_ASSERT_MESSAGE(false, "Enum out of range!")
 #endif
+
+namespace Hyperion {
+
+    template<typename T>
+    using PRef = std::shared_ptr<T>;
+
+    template<typename T>
+    using PScope = std::unique_ptr<T>;
+
+}
