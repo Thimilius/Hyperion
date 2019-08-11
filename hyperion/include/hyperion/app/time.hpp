@@ -8,12 +8,16 @@ namespace Hyperion {
 
     class CTime {
     private:
-        static float s_delta_time;
-        static double s_time;
+        inline static float s_max_delta_time = 0;
+
+        inline static float s_delta_time = 0;
+        inline static double s_time = 0;
         
-        static u32 s_fps;
-        static double s_frame_time;
+        inline static u32 s_fps = 0;
+        inline static double s_frame_time = 0;
     public:
+        static inline float GetMaxDeltaTime() { return s_max_delta_time; }
+
         static inline float GetDeltaTime() { return s_delta_time; }
         static inline double GetTime() { return s_time; }
 

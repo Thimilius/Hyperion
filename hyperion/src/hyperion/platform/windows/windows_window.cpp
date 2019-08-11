@@ -8,11 +8,11 @@ namespace Hyperion {
 
     using namespace Events;
 
-    CWindow *CWindow::Create(const CString &title, u32 width, u32 height, EWindowMode window_mode) {
-        return new CWindowsWindow(title, width, height, window_mode);
+    CWindow *CWindow::Create(const CString &title, u32 width, u32 height, EWindowMode window_mode, EVSyncMode vsync_mode) {
+        return new CWindowsWindow(title, width, height, window_mode, vsync_mode);
     }
 
-    CWindowsWindow::CWindowsWindow(const CString &title, u32 width, u32 height, EWindowMode window_mode) {
+    CWindowsWindow::CWindowsWindow(const CString &title, u32 width, u32 height, EWindowMode window_mode, EVSyncMode vsync_mode) {
         m_title = title;
         m_width = width;
         m_height = height;
@@ -61,6 +61,8 @@ namespace Hyperion {
         SetWindowMode(window_mode);
 
         CreateContext();
+
+        SetVSyncMode(vsync_mode);
     }
 
     void CWindowsWindow::SetTitle(const CString &title) {

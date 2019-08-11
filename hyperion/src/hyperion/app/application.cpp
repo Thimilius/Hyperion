@@ -2,21 +2,22 @@
 
 #include "hyperion/app/application.hpp"
 
-#define MAX_DELTA_TIME (0.15)
-
 namespace Hyperion {
 
     using namespace Events;
 
     CApplication *CApplication::s_instance = nullptr;
 
-    CApplication::CApplication(const CString &title, u32 width, u32 height, EWindowMode mode) {
+    CApplication::CApplication(const SApplicationSettings &settings) {
         HYP_ASSERT_MESSAGE(!s_instance, "Trying to create application more than once!");
         s_instance = this;
 
         CEngine::Init();
+        
+        HYP_ASSERT_MESSAGE(settings.max_delta_time > 0, "Max delta time must be greater than zero!");
+        CTime::s_max_delta_time = settings.max_delta_time;
 
-        m_window = CWindow::Create(title, width, height, mode);
+        m_window = CWindow::Create(settings.window.title, settings.window.width, settings.window.height, settings.window.window_mode, settings.window.vsync_mode);
         m_window->SetEventCallbackFunction(std::bind(&CApplication::OnEventInternal, this, std::placeholders::_1));
     }
 
@@ -32,8 +33,8 @@ namespace Hyperion {
         while (m_running) {
             float now = timer->ElapsedSeconds();
             float delta_time = (float)(now - last_time);
-            if (delta_time > MAX_DELTA_TIME) {
-                delta_time = (float)MAX_DELTA_TIME;
+            if (delta_time > CTime::GetMaxDeltaTime()) {
+                delta_time = CTime::GetMaxDeltaTime();
             }
 
             last_time = now;

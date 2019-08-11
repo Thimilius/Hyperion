@@ -7,7 +7,7 @@ using namespace Hyperion::Rendering;
 
 class CSandboxApp : public CApplication {
 public:
-    CSandboxApp() : CApplication("Hyperion", 1280, 720, EWindowMode::Windowed) { }
+    CSandboxApp() : CApplication(SApplicationSettings()) { }
 protected:
     void UpdateTitle() {
         CString title = CString::Format("Hyperion | FPS: {} ({:.2f} ms) | Vsync: {}", CTime::GetFPS(), CTime::GetFrameTime(), GetWindow()->GetVSyncMode() != EVSyncMode::DontSync);
@@ -15,7 +15,6 @@ protected:
     }
 
     void OnInit() override {
-        GetWindow()->SetVSyncMode(EVSyncMode::EveryVBlank);
         GetWindow()->SetIcon("logo/logo.ico");
 
         UpdateTitle();

@@ -5,6 +5,20 @@
 
 namespace Hyperion {
 
+    struct SApplicationSettings {
+        struct {
+            CString title = "Hyperion";
+
+            u32 width = 1280;
+            u32 height = 720;
+
+            EWindowMode window_mode = EWindowMode::Windowed;
+            EVSyncMode vsync_mode = EVSyncMode::EveryVBlank;
+        } window;
+
+        float max_delta_time = 0.15f;
+    };
+
     class CApplication {
     private:
         static CApplication *s_instance;
@@ -12,7 +26,7 @@ namespace Hyperion {
         CWindow *m_window;
         bool m_running;
     public:
-        CApplication(const CString& title, u32 width, u32 height, EWindowMode mode);
+        CApplication(const SApplicationSettings &settings);
         virtual ~CApplication() = default;
 
         inline CWindow *GetWindow() const { return m_window; }
