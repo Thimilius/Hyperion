@@ -2,6 +2,8 @@
 
 #include <time.h>
 
+#include "hyperion/core/string_utils.hpp"
+
 namespace Hyperion {
 
     enum class ELogColor {
@@ -43,9 +45,9 @@ namespace Hyperion {
             char prefix_buffer[30];
             int prefix_length = (int)strftime(prefix_buffer, sizeof(prefix_buffer), GetPrefixFormat(type), &time_info);
 
-            CString message = CString::Format("{}{}\n", prefix_buffer, CString::Format(format, args...).ToCString());
+            CString message = CStringUtils::Format("{}{}\n", prefix_buffer, CStringUtils::Format(format, args...));
 
-            COperatingSystem::GetInstance()->PrintToConsole(GetLogColor(level), message.ToCString());
+            COperatingSystem::GetInstance()->PrintToConsole(GetLogColor(level), message.c_str());
         }
 
         inline static CLog *GetInstance() { return s_instance; }

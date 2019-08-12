@@ -1,6 +1,8 @@
 #pragma once
 
 #include <stdint.h>
+#include <string>
+#include <vector>
 #include <memory>
 
 typedef int8_t  s8;
@@ -13,7 +15,7 @@ typedef uint16_t u16;
 typedef uint32_t u32;
 typedef uint64_t u64;
 
-#include "core/string.hpp"
+#include "core/string_utils.hpp"
 #include "core/enum.hpp"
 #include "system/log.hpp"
 
@@ -42,6 +44,9 @@ typedef uint64_t u64;
 #endif
 
 namespace Hyperion {
+
+    template<typename T>
+    using CList = std::vector<T>;
 
     template<typename T>
     using PRef = std::shared_ptr<T>;

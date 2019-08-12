@@ -27,7 +27,7 @@ namespace Hyperion::Rendering {
 
         const auto &layout = vertex_buffer->GetLayout();
         const auto &elements = layout.GetElements();
-        for (s32 index = 0; index < elements.GetCount(); index++) {
+        for (s32 index = 0; index < elements.size(); index++) {
             auto &element = elements[index];
             glEnableVertexAttribArray(index);
             glVertexAttribPointer(
@@ -39,7 +39,7 @@ namespace Hyperion::Rendering {
                 (const void *)(u64)element.offset);
         }
 
-        m_vertex_buffers.Add(vertex_buffer);
+        m_vertex_buffers.push_back(vertex_buffer);
     }
 
     void COpenGLVertexArray::SetIndexBuffer(const PRef<CIndexBuffer> &index_buffer) {

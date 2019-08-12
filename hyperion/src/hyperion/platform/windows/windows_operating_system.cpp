@@ -74,7 +74,7 @@ namespace Hyperion {
         GetConsoleScreenBufferInfo(m_console_handle, &console_screen_buffer_info);
         SetConsoleTextAttribute(m_console_handle, console_color);
         unsigned long written_chars = 0;
-        WriteConsoleA(m_console_handle, message.ToCString(), message.GetLength(), &written_chars, nullptr);
+        WriteConsoleA(m_console_handle, message.c_str(), (DWORD)message.length(), &written_chars, nullptr);
         SetConsoleTextAttribute(m_console_handle, console_screen_buffer_info.wAttributes);
     }
 

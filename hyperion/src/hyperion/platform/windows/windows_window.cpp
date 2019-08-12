@@ -40,7 +40,7 @@ namespace Hyperion {
         m_window_handle = CreateWindowExA(
             0,
             window_class_name,
-            title.ToCString(),
+            title.c_str(),
             window_styles,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
@@ -67,7 +67,7 @@ namespace Hyperion {
 
     void CWindowsWindow::SetTitle(const CString &title) {
         m_title = title;
-        SetWindowTextA(m_window_handle, title.ToCString());
+        SetWindowTextA(m_window_handle, title.c_str());
     }
 
     void CWindowsWindow::SetSize(u32 width, u32 height) {

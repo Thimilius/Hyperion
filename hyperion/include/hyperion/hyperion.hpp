@@ -1,7 +1,7 @@
 #include "common.hpp"
 
-#include "core/string.hpp"
-#include "core/list.hpp"
+#include "core/string_utils.hpp"
+#include "core/timer.hpp"
 
 #include "app/application.hpp"
 #include "app/window.hpp"

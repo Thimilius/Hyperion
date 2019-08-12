@@ -1,6 +1,6 @@
 #pragma once
 
-#include "hyperion/core/list.hpp"
+#include "hyperion/common.hpp"
 
 namespace Hyperion {
 

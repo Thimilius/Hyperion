@@ -16,7 +16,7 @@ protected:
     PRef<CVertexArray> m_vertex_array;
 
     void UpdateTitle() {
-        CString title = CString::Format("Hyperion | FPS: {} ({:.2f} ms) | Vsync: {}", CTime::GetFPS(), CTime::GetFrameTime(), GetWindow()->GetVSyncMode() != EVSyncMode::DontSync);
+        CString title = CStringUtils::Format("Hyperion | FPS: {} ({:.2f} ms) | Vsync: {}", CTime::GetFPS(), CTime::GetFrameTime(), GetWindow()->GetVSyncMode() != EVSyncMode::DontSync);
         GetWindow()->SetTitle(title);
     }
 
@@ -73,9 +73,9 @@ protected:
         };
         m_vertex_buffer.reset(CVertexBuffer::Create((u8*)verticies, sizeof(verticies)));
         CBufferLayout buffer_layout({
-            SBufferElement(EShaderDataType::Float3),
-            SBufferElement(EShaderDataType::Float2),
-            SBufferElement(EShaderDataType::Float4),
+            SBufferElement("a_position", EShaderDataType::Float3),
+            SBufferElement("a_uv", EShaderDataType::Float2),
+            SBufferElement("a_color", EShaderDataType::Float4),
         });
         m_vertex_buffer->SetLayout(buffer_layout);
 

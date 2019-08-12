@@ -85,7 +85,7 @@ namespace Hyperion::Math {
     }
 
     CString SVec3::ToString() const {
-        return CString::Format("({:.2f}, {:.2f}, {:.2f})", x, y, z);
+        return CStringUtils::Format("({:.2f}, {:.2f}, {:.2f})", x, y, z);
     }
 
     SVec3 operator+(SVec3 left, const SVec3 &right) {

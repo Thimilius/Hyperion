@@ -38,7 +38,7 @@ namespace Hyperion {
         DISPLAY_DEVICEA display_device = { 0 };
         display_device.cb = sizeof(display_device);
 
-        s_display_infos.Clear();
+        s_display_infos.clear();
 
         s32 device_number = 0;
         while (EnumDisplayDevicesA(NULL, device_number, &display_device, 0)) {
@@ -66,14 +66,14 @@ namespace Hyperion {
                     display_mode_info.refresh_rate = dev_mode.dmDisplayFrequency;
                     display_mode_info.bits_per_pixel = dev_mode.dmBitsPerPel;
 
-                    if (display_info.m_mode_infos.Contains(display_mode_info)) {
+                    if (std::find(display_info.m_mode_infos.begin(), display_info.m_mode_infos.end(), display_mode_info) != display_info.m_mode_infos.end()) {
                         continue;
                     }
 
-                    display_info.m_mode_infos.Add(display_mode_info);
+                    display_info.m_mode_infos.push_back(display_mode_info);
                 }
 
-                s_display_infos.Add(display_info);
+                s_display_infos.push_back(display_info);
             }
         }
     }

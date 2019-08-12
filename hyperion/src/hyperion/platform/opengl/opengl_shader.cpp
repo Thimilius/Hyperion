@@ -7,7 +7,7 @@ namespace Hyperion::Rendering {
     COpenGLShader::COpenGLShader(const CString &vertex_source, const CString &fragment_source) {
         GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
         {
-            const GLchar *source = vertex_source.ToCString();
+            const GLchar *source = vertex_source.c_str();
             glShaderSource(vertex_shader, 1, &source, 0);
 
             glCompileShader(vertex_shader);
@@ -34,7 +34,7 @@ namespace Hyperion::Rendering {
 
         GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
         {
-            const GLchar *source = fragment_source.ToCString();
+            const GLchar *source = fragment_source.c_str();
             glShaderSource(fragment_shader, 1, &source, 0);
 
             glCompileShader(fragment_shader);
@@ -133,7 +133,7 @@ namespace Hyperion::Rendering {
     }
 
     s32 COpenGLShader::TryGetUniformLocation(const CString &name) {
-        s32 location = glGetUniformLocation(m_program_id, name.ToCString());
+        s32 location = glGetUniformLocation(m_program_id, name.c_str());
         if (location < 0) {
             HYP_CORE_ERROR("[OpenGL] - Failed to get location for uniform: {}", name);
         }

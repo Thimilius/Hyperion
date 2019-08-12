@@ -1,7 +1,6 @@
 #pragma once
 
 #include "hyperion/common.hpp"
-#include "hyperion/core/list.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -31,6 +30,7 @@ namespace Hyperion::Rendering {
     }
 
     struct SBufferElement {
+        CString name;
         EShaderDataType type;
         u32 size;
         u32 offset;
@@ -38,8 +38,8 @@ namespace Hyperion::Rendering {
 
         SBufferElement() {}
 
-        SBufferElement(EShaderDataType type, bool normalized = false)
-            : type(type), size(ShaderDataTypeSize(type)), offset(0), normalized(normalized) {
+        SBufferElement(const CString &name, EShaderDataType type, bool normalized = false)
+            : name(name), type(type), size(ShaderDataTypeSize(type)), offset(0), normalized(normalized) {
         }
 
         u32 GetComponentCount() const;

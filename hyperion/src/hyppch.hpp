@@ -4,6 +4,12 @@
     #include <Windows.h>
 #endif
 
+#include <memory>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <functional>
+
 #include <glad/glad.h>
 #include <glad/glad_wgl.h>
 #include <vendor/fmt/format.h>
@@ -11,7 +17,7 @@
 
 #include "hyperion/common.hpp"
 
-#include "hyperion/core/string.hpp"
+#include "hyperion/core/string_utils.hpp"
 #include "hyperion/core/timer.hpp"
 
 #include "hyperion/app/application.hpp"

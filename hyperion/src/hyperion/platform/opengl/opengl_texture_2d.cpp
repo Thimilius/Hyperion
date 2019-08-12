@@ -26,7 +26,7 @@ namespace Hyperion::Rendering {
         int width;
         int height;
         int channels;
-        u8 *pixels = stbi_load(path.ToCString(), &width, &height, &channels, 0);
+        u8 *pixels = stbi_load(path.c_str(), &width, &height, &channels, 0);
 
         if (pixels == nullptr) {
             HYP_CORE_ERROR("Failed to load texture from path: {}!", path);
