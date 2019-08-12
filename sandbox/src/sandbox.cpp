@@ -9,6 +9,11 @@ class CSandboxApp : public CApplication {
 public:
     CSandboxApp() : CApplication(SApplicationSettings()) { }
 protected:
+    PRef<CShader> m_shader;
+    PRef<CVertexBuffer> m_vertex_buffer;
+    PRef<CIndexBuffer> m_index_buffer;
+    PRef<CVertexArray> m_vertex_array;
+
     void UpdateTitle() {
         CString title = CString::Format("Hyperion | FPS: {} ({:.2f} ms) | Vsync: {}", CTime::GetFPS(), CTime::GetFrameTime(), GetWindow()->GetVSyncMode() != EVSyncMode::DontSync);
         GetWindow()->SetTitle(title);
@@ -18,6 +23,60 @@ protected:
         GetWindow()->SetIcon("logo/logo.ico");
 
         UpdateTitle();
+
+        CString vertex_source = R"(
+            #version 410 core
+
+            layout(location = 0) in vec3 a_position;
+            layout(location = 1) in vec4 a_color;
+
+            out VS_OUT {
+                vec4 color;
+            } vs_out;
+
+            void main() {
+                vs_out.color = a_color;
+
+                gl_Position = vec4(a_position, 1.0f);
+            }
+        )";
+        CString fragment_source = R"(
+            #version 410 core
+
+            out vec4 o_color;
+
+            in VS_OUT {
+                vec4 color;
+            } fs_in;
+
+            void main() {
+                o_color = fs_in.color;
+            }
+        )";
+        m_shader.reset(CShader::Create(vertex_source, fragment_source));
+
+        float verticies[] = { 
+            0.5f, 0.5f, 0.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+            0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f, 1.0f,
+            -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f, 1.0f,
+            -0.5f, 0.5f, 0.0f,  1.0f, 1.0f, 0.0f, 1.0f,
+        };
+        m_vertex_buffer.reset(CVertexBuffer::Create((u8*)verticies, sizeof(verticies)));
+        CBufferLayout buffer_layout({
+            SBufferElement(EShaderDataType::Float3), 
+            SBufferElement(EShaderDataType::Float4),
+        });
+        m_vertex_buffer->SetLayout(buffer_layout);
+
+        u32 indicies[] = {
+            0, 1, 2,
+            0, 2, 3,
+        };
+        m_index_buffer.reset(CIndexBuffer::Create(indicies, sizeof(indicies)));
+
+        m_vertex_array.reset(CVertexArray::Create());
+        m_vertex_array->AddVertexBuffer(m_vertex_buffer);
+        m_vertex_array->SetIndexBuffer(m_index_buffer);
     }
     
     void OnEvent(CEvent &event) override {
@@ -39,8 +98,17 @@ protected:
     }
 
     void OnRender() override {
-        CRenderCommand::SetClearColor(0, 1, 1, 1);
-        CRenderCommand::Clear();
+        float clear_color = CMathf::Sin((float)CTime::GetTime()) / 2.0f + 0.5f;
+        CRenderCommand::SetClearColor(clear_color, clear_color, clear_color, clear_color);
+        CRenderCommand::Clear(EClearMask::Color | EClearMask::Depth);
+
+        CRenderCommand::EnableFeature(EFeature::Culling);
+        CRenderCommand::SetFrontFaceMode(EFrontFaceMode::Clockwise);
+        CRenderCommand::SetCullingMode(ECullingMode::Back);
+
+        m_shader->Bind();
+        m_vertex_array->Bind();
+        CRenderCommand::DrawIndexed(m_vertex_array);
     }
     
     void OnTick() override {
