@@ -5,7 +5,7 @@
 namespace Hyperion::Rendering {
 
     class COpenGLGraphicsContext : public CGraphicsContext {
-    private:
+    protected:
         void Init() override;
 
         static void GLAPIENTRY DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *user_pointer);
