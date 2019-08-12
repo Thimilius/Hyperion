@@ -12,6 +12,14 @@ namespace Hyperion::Rendering {
         glDisable(GetGLFeature(feature));
     }
 
+    void COpenGLRenderAPI::SetBlendFunc(EBlendFactor source_factor, EBlendFactor destination_factor) {
+        glBlendFunc(GetGLBlendFactor(source_factor), GetGLBlendFactor(destination_factor));
+    }
+
+    void COpenGLRenderAPI::SetBlendEquation(EBlendEquation blend_equation) {
+        glBlendEquation(GetGLBlendEquation(blend_equation));
+    }
+
     void COpenGLRenderAPI::SetFrontFaceMode(EFrontFaceMode front_face_mode) {
         glFrontFace(GetGLFrontFaceMode(front_face_mode));
     }
@@ -42,6 +50,31 @@ namespace Hyperion::Rendering {
             case Hyperion::Rendering::EFeature::Culling: return GL_CULL_FACE;
             case Hyperion::Rendering::EFeature::DepthTesting: return GL_DEPTH_TEST;
             case Hyperion::Rendering::EFeature::StencilTesting: return GL_STENCIL_TEST;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    u32 COpenGLRenderAPI::GetGLBlendFactor(EBlendFactor blend_factor) {
+        switch (blend_factor) {
+            case EBlendFactor::Zero: return GL_ZERO;
+            case EBlendFactor::One: return GL_ONE;
+            case EBlendFactor::SourceAlpha: return GL_SRC_ALPHA;
+            case EBlendFactor::SourceColor: return GL_SRC_COLOR;
+            case EBlendFactor::DestinationAlpha: return GL_DST_ALPHA;
+            case EBlendFactor::DestinationColor: return GL_DST_COLOR;
+            case EBlendFactor::InverseSourceAlpha: return GL_ONE_MINUS_SRC_ALPHA;
+            case EBlendFactor::InverseSourceColor: return GL_ONE_MINUS_SRC_COLOR;
+            case EBlendFactor::InverseDestinationAlpha: return GL_ONE_MINUS_DST_ALPHA;
+            case EBlendFactor::InverseDestinationColor: return GL_ONE_MINUS_DST_COLOR;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    u32 COpenGLRenderAPI::GetGLBlendEquation(EBlendEquation blend_equation) {
+        switch (blend_equation) {
+            case EBlendEquation::Add: return GL_FUNC_ADD;
+            case EBlendEquation::Subtract: return GL_FUNC_SUBTRACT;
+            case EBlendEquation::ReverseSubract: return GL_FUNC_REVERSE_SUBTRACT;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }

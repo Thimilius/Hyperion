@@ -9,6 +9,9 @@ namespace Hyperion::Rendering {
         void EnableFeature(EFeature feature) override;
         void DisableFeature(EFeature feature) override;
 
+        void SetBlendFunc(EBlendFactor source_factor, EBlendFactor destination_factor) override;
+        void SetBlendEquation(EBlendEquation blend_equation) override;
+
         void SetFrontFaceMode(EFrontFaceMode front_face_mode) override;
         void SetCullingMode(ECullingMode culling_mode) override;
 
@@ -20,6 +23,8 @@ namespace Hyperion::Rendering {
         void DrawIndexed(const PRef<CVertexArray> &vertex_array) override;
     private:
         static u32 GetGLFeature(EFeature feature);
+        static u32 GetGLBlendFactor(EBlendFactor blend_factor);
+        static u32 GetGLBlendEquation(EBlendEquation blend_equation);
         static u32 GetGLFrontFaceMode(EFrontFaceMode front_face_mode);
         static u32 GetGLCullingMode(ECullingMode culling_mode);
         static u32 GetGLClearMask(EClearMask mask);

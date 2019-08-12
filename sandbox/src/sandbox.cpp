@@ -63,7 +63,7 @@ protected:
         m_shader.reset(CShader::Create(vertex_source, fragment_source));
 
         m_texture.reset(CTexture2D::CreateFromFile("data/textures/grass.png", ETextureWrapMode::Clamp, ETextureFilter::Bilinear));
-        //m_texture.reset(CTexture2D::CreateFromFile("logo/logo.png", ETextureWrapMode::Clamp, ETextureFilter::Bilinear));
+        m_texture.reset(CTexture2D::CreateFromFile("logo/logo.png", ETextureWrapMode::Clamp, ETextureFilter::Bilinear));
         
         float verticies[] = { 
              0.5f,  0.5f, 0.0f,  1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
@@ -116,6 +116,9 @@ protected:
         CRenderCommand::EnableFeature(EFeature::Culling);
         CRenderCommand::SetFrontFaceMode(EFrontFaceMode::Clockwise);
         CRenderCommand::SetCullingMode(ECullingMode::Back);
+
+        CRenderCommand::EnableFeature(EFeature::Blending);
+        CRenderCommand::SetBlendFunc(EBlendFactor::SourceAlpha, EBlendFactor::InverseSourceAlpha);
 
         CRenderer::Begin();
         m_texture->Bind(0);

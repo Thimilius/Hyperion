@@ -27,6 +27,30 @@ namespace Hyperion::Rendering {
     };
     HYP_CREATE_ENUM_FLAG_OPERATORS(EClearMask);
 
+    enum class EBlendFactor {
+        None,
+        
+        Zero,
+        One,
+
+        SourceAlpha,
+        SourceColor,
+        DestinationAlpha,
+        DestinationColor,
+        
+        InverseSourceAlpha,
+        InverseSourceColor,
+        InverseDestinationAlpha,
+        InverseDestinationColor
+    };
+
+    enum class EBlendEquation {
+        None,
+        Add,
+        Subtract,
+        ReverseSubract,
+    };
+
     enum class EFrontFaceMode {
         None,
         Clockwise,
@@ -49,6 +73,9 @@ namespace Hyperion::Rendering {
 
         virtual void SetFrontFaceMode(EFrontFaceMode front_face_mode) = 0;
         virtual void SetCullingMode(ECullingMode culling_mode) = 0;
+
+        virtual void SetBlendFunc(EBlendFactor source_factor, EBlendFactor destination_factor) = 0;
+        virtual void SetBlendEquation(EBlendEquation blend_equation) = 0;
 
         virtual void SetClearColor(float r, float g, float b, float a) = 0;
         virtual void Clear(EClearMask mask) = 0;

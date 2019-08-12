@@ -25,6 +25,14 @@ namespace Hyperion::Rendering {
             s_render_api->SetCullingMode(culling_mode);
         }
 
+        inline static void SetBlendFunc(EBlendFactor source_factor, EBlendFactor destination_factor) {
+            s_render_api->SetBlendFunc(source_factor, destination_factor);
+        }
+
+        inline static void SetBlendEquation(EBlendEquation blend_equation) {
+            s_render_api->SetBlendEquation(blend_equation);
+        }
+
         inline static void SetClearColor(float r, float g, float b, float a) {
             s_render_api->SetClearColor(r, g, b, a);
         }
