@@ -106,9 +106,9 @@ protected:
         CRenderCommand::SetFrontFaceMode(EFrontFaceMode::Clockwise);
         CRenderCommand::SetCullingMode(ECullingMode::Back);
 
-        m_shader->Bind();
-        m_vertex_array->Bind();
-        CRenderCommand::DrawIndexed(m_vertex_array);
+        CRenderer::Begin();
+        CRenderer::Submit(m_shader, m_vertex_array);
+        CRenderer::End();
     }
     
     void OnTick() override {
