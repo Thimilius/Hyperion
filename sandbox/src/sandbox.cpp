@@ -10,6 +10,7 @@ public:
     CSandboxApp() : CApplication(SApplicationSettings()) { }
 protected:
     PRef<CShader> m_shader;
+    PRef<CTexture2D> m_texture;
     PRef<CVertexBuffer> m_vertex_buffer;
     PRef<CIndexBuffer> m_index_buffer;
     PRef<CVertexArray> m_vertex_array;
@@ -28,13 +29,16 @@ protected:
             #version 410 core
 
             layout(location = 0) in vec3 a_position;
-            layout(location = 1) in vec4 a_color;
+            layout(location = 1) in vec2 a_uv;
+            layout(location = 2) in vec4 a_color;
 
             out VS_OUT {
+                vec2 uv;
                 vec4 color;
             } vs_out;
 
             void main() {
+                vs_out.uv = a_uv;
                 vs_out.color = a_color;
 
                 gl_Position = vec4(a_position, 1.0f);
@@ -46,24 +50,31 @@ protected:
             out vec4 o_color;
 
             in VS_OUT {
+                vec2 uv;
                 vec4 color;
             } fs_in;
 
+            uniform sampler2D u_texture;
+
             void main() {
-                o_color = fs_in.color;
+                o_color = texture(u_texture, fs_in.uv);
             }
         )";
         m_shader.reset(CShader::Create(vertex_source, fragment_source));
 
+        m_texture.reset(CTexture2D::CreateFromFile("data/textures/grass.png", ETextureWrapMode::Clamp, ETextureFilter::Bilinear));
+        //m_texture.reset(CTexture2D::CreateFromFile("logo/logo.png", ETextureWrapMode::Clamp, ETextureFilter::Bilinear));
+        
         float verticies[] = { 
-            0.5f, 0.5f, 0.0f,  1.0f, 0.0f, 0.0f, 1.0f,
-            0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f, 1.0f,
-            -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f, 1.0f,
-            -0.5f, 0.5f, 0.0f,  1.0f, 1.0f, 0.0f, 1.0f,
+             0.5f,  0.5f, 0.0f,  1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+             0.5f, -0.5f, 0.0f,  1.0f, 0.0f,  0.0f, 1.0f, 0.0f, 1.0f,
+            -0.5f, -0.5f, 0.0f,  0.0f, 0.0f,  0.0f, 0.0f, 1.0f, 1.0f,
+            -0.5f,  0.5f, 0.0f,  0.0f, 1.0f,  1.0f, 1.0f, 0.0f, 1.0f,
         };
         m_vertex_buffer.reset(CVertexBuffer::Create((u8*)verticies, sizeof(verticies)));
         CBufferLayout buffer_layout({
-            SBufferElement(EShaderDataType::Float3), 
+            SBufferElement(EShaderDataType::Float3),
+            SBufferElement(EShaderDataType::Float2),
             SBufferElement(EShaderDataType::Float4),
         });
         m_vertex_buffer->SetLayout(buffer_layout);
@@ -107,6 +118,9 @@ protected:
         CRenderCommand::SetCullingMode(ECullingMode::Back);
 
         CRenderer::Begin();
+        m_texture->Bind(0);
+        m_shader->Bind();
+        m_shader->SetInt("u_texture", 0);
         CRenderer::Submit(m_shader, m_vertex_array);
         CRenderer::End();
     }

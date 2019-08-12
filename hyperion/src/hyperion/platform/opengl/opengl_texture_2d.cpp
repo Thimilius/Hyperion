@@ -3,25 +3,48 @@
 
 namespace Hyperion::Rendering {
 
-    COpenGLTexture2D::COpenGLTexture2D(u32 width, u32 height, ETextureFormat mode, ETextureWrapMode wrap_mode, ETextureFilter filter)
-        : COpenGLTexture2D(width, height, mode, wrap_mode, filter, nullptr) { }
+    COpenGLTexture2D::COpenGLTexture2D(u32 width, u32 height, ETextureFormat format, ETextureWrapMode wrap_mode, ETextureFilter filter)
+        : COpenGLTexture2D(width, height, format, wrap_mode, filter, nullptr) { }
 
-    COpenGLTexture2D::COpenGLTexture2D(u32 width, u32 height, ETextureFormat mode, ETextureWrapMode wrap_mode, ETextureFilter filter, const void *pixels) {
+    COpenGLTexture2D::COpenGLTexture2D(u32 width, u32 height, ETextureFormat format, ETextureWrapMode wrap_mode, ETextureFilter filter, const u8 *pixels) {
         m_width = width;
         m_height = height;
-        m_format = mode;
+        m_format = format;
         m_wrap_mode = wrap_mode;
         m_filter = filter;
 
-        glGenTextures(1, &m_texture_id);
-        glBindTexture(GL_TEXTURE_2D, m_texture_id);
+        CreateTexture(pixels);
+    }
 
-        SetFilter(filter);
-        SetWrapMode(wrap_mode);
+    COpenGLTexture2D::COpenGLTexture2D(const CString &path, ETextureWrapMode wrap_mode, ETextureFilter filter) {
+        
+        m_wrap_mode = wrap_mode;
+        m_filter = filter;
 
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_width, m_height, GetGLFormat(), GL_UNSIGNED_BYTE, pixels);
-        glGenerateMipmap(GL_TEXTURE_2D);
-        glGenTextures(1, 0);
+        stbi_set_flip_vertically_on_load(true);
+
+        int width;
+        int height;
+        int channels;
+        u8 *pixels = stbi_load(path.ToCString(), &width, &height, &channels, 0);
+
+        if (pixels == nullptr) {
+            HYP_CORE_ERROR("Failed to load texture from path: {}!", path);
+        } else {
+            ETextureFormat format = ETextureFormat::None;
+            switch (channels) {
+                case 3: format = ETextureFormat::RGB; break;
+                case 4: format = ETextureFormat::RGBA; break;
+            }
+
+            m_width = width;
+            m_height = height;
+            m_format = format;
+
+            CreateTexture(pixels);
+        }
+
+        stbi_image_free(pixels);
     }
 
     COpenGLTexture2D::~COpenGLTexture2D() {
@@ -35,7 +58,7 @@ namespace Hyperion::Rendering {
 
     void COpenGLTexture2D::Unbind(u32 slot) const {
         glActiveTexture(GL_TEXTURE0 + slot);
-        glBindTexture(GL_TEXTURE_2D, m_texture_id);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     void COpenGLTexture2D::SetData(const void *pixels) {
@@ -71,6 +94,18 @@ namespace Hyperion::Rendering {
         m_filter = filter;
         glTextureParameteri(m_texture_id, GL_TEXTURE_MIN_FILTER, min_filter);
         glTextureParameteri(m_texture_id, GL_TEXTURE_MAG_FILTER, mag_filter);
+    }
+
+    void COpenGLTexture2D::CreateTexture(const u8 *pixels) {
+        glGenTextures(1, &m_texture_id);
+        glBindTexture(GL_TEXTURE_2D, m_texture_id);
+
+        SetFilter(m_filter);
+        SetWrapMode(m_wrap_mode);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GetGLFormat(), m_width, m_height, 0, GetGLFormat(), GL_UNSIGNED_BYTE, pixels);
+        glGenerateMipmap(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     u32 COpenGLTexture2D::GetGLFormat() const {
