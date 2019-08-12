@@ -2,9 +2,10 @@
 
 #include "opengl_graphics_context.hpp"
 
-#define OPENGL_LOG_EXTENSIONS false
 #define OPENGL_DEBUG_LOG true
 #define OPENGL_BREAK_ON_ERROR true
+#define OPENGL_LOG_EXTENSIONS false
+#define OPENGL_LOG_NOTIFICATIONS false
 
 namespace Hyperion::Rendering {
 
@@ -19,7 +20,7 @@ namespace Hyperion::Rendering {
             s32 extension_count;
             glGetIntegerv(GL_NUM_EXTENSIONS, &extension_count);
             for (s32 i = 0; i < extension_count; i++) {
-                HYP_CORE_INFO("[OpenGL] - {}", glGetStringi(GL_EXTENSIONS, i));
+                HYP_CORE_INFO("[OpenGL] - Extension: {} available!", glGetStringi(GL_EXTENSIONS, i));
             }
         }
 
@@ -53,17 +54,24 @@ namespace Hyperion::Rendering {
             default:                                type_string = "Unknown"; break;
         }
 
-        const char *log_string_format = "[OpenGL] - Source: {}, Type: {}, ID: {},\nMessage: {}";
+        const char *log_string_format = "[OpenGL] - Severity: {}, Source: {}, Type: {}, ID: {},\nMessage: {}";
         switch (severity) {
-            case GL_DEBUG_SEVERITY_HIGH: HYP_CORE_ERROR(log_string_format, source_string, type_string, id, message); break;
-            case GL_DEBUG_SEVERITY_MEDIUM: HYP_CORE_WARN(log_string_format, source_string, type_string, id, message); break;
-            case GL_DEBUG_SEVERITY_LOW:
-            case GL_DEBUG_SEVERITY_NOTIFICATION: HYP_CORE_INFO(log_string_format, source_string, type_string, id, message); break;
+            case GL_DEBUG_SEVERITY_HIGH: HYP_CORE_ERROR(log_string_format, "High", source_string, type_string, id, message); break;
+            case GL_DEBUG_SEVERITY_MEDIUM: HYP_CORE_WARN(log_string_format, "Medium", source_string, type_string, id, message); break;
+            case GL_DEBUG_SEVERITY_LOW: HYP_CORE_WARN(log_string_format, "Low", source_string, type_string, id, message); break;
+            case GL_DEBUG_SEVERITY_NOTIFICATION: {
+                if (OPENGL_LOG_NOTIFICATIONS) {
+                    HYP_CORE_INFO(log_string_format, "Notification", source_string, type_string, id, message);
+                }
+                break;
+            }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
         }
 
-        if (OPENGL_BREAK_ON_ERROR) {
-            HYP_DEBUG_BREAK;
+        if (severity == GL_DEBUG_SEVERITY_HIGH) {
+            if (OPENGL_BREAK_ON_ERROR) {
+                HYP_DEBUG_BREAK;
+            }
         }
     }
 

@@ -18,8 +18,10 @@
 
 #include "rendering/graphics_context.hpp"
 #include "rendering/render_command.hpp"
-#include "rendering/buffer.hpp"
 #include "rendering/shader.hpp"
+#include "rendering/texture.hpp"
+#include "rendering/buffer.hpp"
+#include "rendering/vertex_array.hpp"
 
 #include "system/log.hpp"
 #include "system/engine.hpp"

@@ -4,16 +4,78 @@
 
 namespace Hyperion::Rendering {
 
+    void COpenGLRenderAPI::EnableFeature(EFeature feature) {
+        glEnable(GetGLFeature(feature));
+    }
+
+    void COpenGLRenderAPI::DisableFeature(EFeature feature) {
+        glDisable(GetGLFeature(feature));
+    }
+
+    void COpenGLRenderAPI::SetFrontFaceMode(EFrontFaceMode front_face_mode) {
+        glFrontFace(GetGLFrontFaceMode(front_face_mode));
+    }
+
+    void COpenGLRenderAPI::SetCullingMode(ECullingMode culling_mode) {
+        glCullFace(GetGLCullingMode(culling_mode));
+    }
+
     void COpenGLRenderAPI::SetClearColor(float r, float g, float b, float a) {
         glClearColor(r, g, b, a);
     }
 
-    void COpenGLRenderAPI::Clear() {
-        glClear(GL_COLOR_BUFFER_BIT);
+    void COpenGLRenderAPI::Clear(EClearMask mask) {
+        glClear(GetGLClearMask(mask));
     }
 
     void COpenGLRenderAPI::SetViewport(s32 x, s32 y, s32 width, s32 height) {
         glViewport(x, y, width, height);
     }
 
+    void COpenGLRenderAPI::DrawIndexed(const PRef<CVertexArray> &vertex_array) {
+        glDrawElements(GL_TRIANGLES, vertex_array->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+    }
+
+    u32 COpenGLRenderAPI::GetGLFeature(EFeature feature) {
+        switch (feature) {
+            case Hyperion::Rendering::EFeature::Blending: return GL_BLEND;
+            case Hyperion::Rendering::EFeature::Culling: return GL_CULL_FACE;
+            case Hyperion::Rendering::EFeature::DepthTesting: return GL_DEPTH_TEST;
+            case Hyperion::Rendering::EFeature::StencilTesting: return GL_STENCIL_TEST;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    u32 COpenGLRenderAPI::GetGLFrontFaceMode(EFrontFaceMode front_face_mode) {
+        switch (front_face_mode) {
+            case EFrontFaceMode::Clockwise: return GL_CW;
+            case EFrontFaceMode::CounterClockwise: return GL_CCW;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    u32 COpenGLRenderAPI::GetGLCullingMode(ECullingMode culling_mode) {
+        switch (culling_mode) {
+            case ECullingMode::Back: return GL_BACK;
+            case ECullingMode::Front: return GL_FRONT;
+            case ECullingMode::FrontAndBack: return GL_FRONT_AND_BACK;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    u32 COpenGLRenderAPI::GetGLClearMask(EClearMask mask) {
+        u32 result = 0;
+
+        if ((mask & EClearMask::Color) == EClearMask::Color) {
+            result |= GL_COLOR_BUFFER_BIT;
+        }
+        if ((mask & EClearMask::Depth) == EClearMask::Depth) {
+            result |= GL_DEPTH_BUFFER_BIT;
+        }
+        if ((mask & EClearMask::Stencil) == EClearMask::Stencil) {
+            result |= GL_STENCIL_BUFFER_BIT;
+        }
+
+        return result;
+    }
 }

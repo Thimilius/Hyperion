@@ -31,7 +31,6 @@ namespace Hyperion::Rendering {
     }
 
     struct SBufferElement {
-        CString name;
         EShaderDataType type;
         u32 size;
         u32 offset;
@@ -39,8 +38,8 @@ namespace Hyperion::Rendering {
 
         SBufferElement() {}
 
-        SBufferElement(EShaderDataType type, const CString &name, bool normalized = false)
-            : name(name), type(type), size(ShaderDataTypeSize(type)), offset(0), normalized(normalized) {
+        SBufferElement(EShaderDataType type, bool normalized = false)
+            : type(type), size(ShaderDataTypeSize(type)), offset(0), normalized(normalized) {
         }
 
         u32 GetComponentCount() const;
