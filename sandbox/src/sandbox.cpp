@@ -118,15 +118,6 @@ protected:
             UpdateTitle();
         }
 
-        if (CInput::GetKey(EKeyCode::Shift)) {
-            if (CInput::GetMouseButton(EMouseButtonCode::Middle)) {
-                // FIXME: Why does this not work!?!?!
-                HYP_TRACE("Middle");
-            }
-        }
-
-        HYP_TRACE("{}", CInput::GetMouseButton(EMouseButtonCode::Middle));
-
         m_camera->Update();
     }
 

@@ -208,25 +208,9 @@ namespace Hyperion {
         ShowWindow(m_window_handle, SW_SHOWNORMAL);
     }
 
-    void CWindowsWindow::CreateContext() {
-        switch (Rendering::CRenderAPI::GetAPI()) {
-            case Rendering::ERenderAPI::OpenGL: {
-                m_graphics_context.reset(new Rendering::CWindowsOpenGLGraphicsContext(m_window_handle));
-                break;
-            }
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-        }
-        
-        m_graphics_context->Init();
-    }
-
-    void CWindowsWindow::DispatchEvent(CEvent &event) const {
-        if (m_event_callback != nullptr) {
-            m_event_callback(event);
-        }
-    }
-
     EMouseButtonCode CWindowsWindow::GetMouseButtonCode(u32 code) const {
+        code = code & ~(MK_CONTROL & MK_SHIFT);
+
         switch (code) {
             case MK_LBUTTON: return EMouseButtonCode::Left;
             case MK_RBUTTON: return EMouseButtonCode::Right;
@@ -396,6 +380,45 @@ namespace Hyperion {
         return key_modifier;
     }
 
+    void CWindowsWindow::CreateContext() {
+        switch (Rendering::CRenderAPI::GetAPI()) {
+            case Rendering::ERenderAPI::OpenGL:
+            {
+                m_graphics_context.reset(new Rendering::CWindowsOpenGLGraphicsContext(m_window_handle));
+                break;
+            }
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        }
+
+        m_graphics_context->Init();
+    }
+
+    void CWindowsWindow::DispatchEvent(CEvent &event) const {
+        if (m_event_callback != nullptr) {
+            m_event_callback(event);
+        }
+    }
+
+    u32 CWindowsWindow::GetMouseButtonFromMessage(u32 message, u32 w_param) const {
+        if (message == WM_LBUTTONDOWN || message == WM_LBUTTONUP) {
+            return MK_LBUTTON;
+        } else if (message == WM_RBUTTONDOWN || message == WM_RBUTTONUP) {
+            return MK_RBUTTON;
+        } else if (message == WM_MBUTTONDOWN || message == WM_MBUTTONUP) {
+            return MK_MBUTTON;
+        } else if (message == WM_XBUTTONDOWN || message == WM_XBUTTONUP) {
+            if (GET_XBUTTON_WPARAM(w_param) == XBUTTON1) {
+                return MK_XBUTTON2;
+            } else if (GET_XBUTTON_WPARAM(w_param) == XBUTTON2) {
+                return MK_XBUTTON1;
+            } else {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
+    }
+
     LRESULT CWindowsWindow::MessageCallback(HWND window_handle, u32 message, WPARAM w_param, LPARAM l_param) {
         LRESULT result = 0;
 
@@ -443,7 +466,8 @@ namespace Hyperion {
             case WM_RBUTTONDOWN:
             case WM_MBUTTONDOWN:
             case WM_XBUTTONDOWN: {
-                CMouseButtonPressedEvent event(window->GetMouseButtonCode((u32)w_param), window->GetKeyModifier());
+                u32 code = window->GetMouseButtonFromMessage((u32)message, (u32)w_param);
+                CMouseButtonPressedEvent event(window->GetMouseButtonCode(code), window->GetKeyModifier());
                 window->DispatchEvent(event);
                 break;
             }
@@ -452,19 +476,8 @@ namespace Hyperion {
             case WM_RBUTTONUP:
             case WM_MBUTTONUP:
             case WM_XBUTTONUP: {
-                if (message == WM_LBUTTONUP) {
-                    w_param = MK_LBUTTON;
-                } else if (message == WM_RBUTTONUP) {
-                    w_param = MK_RBUTTON;
-                } else if (message == WM_MBUTTONUP) {
-                    w_param = MK_MBUTTON;
-                } else if (GET_XBUTTON_WPARAM(w_param) == XBUTTON1) {
-                    w_param = MK_XBUTTON1;
-                } else if (GET_XBUTTON_WPARAM(w_param) == XBUTTON2) {
-                    w_param = MK_XBUTTON2;
-                }
-
-                CMouseButtonReleasedEvent event(window->GetMouseButtonCode((u32)w_param), window->GetKeyModifier());
+                u32 code = window->GetMouseButtonFromMessage((u32)message, (u32)w_param);
+                CMouseButtonReleasedEvent event(window->GetMouseButtonCode(code), window->GetKeyModifier());
                 window->DispatchEvent(event);
                 break;
             }

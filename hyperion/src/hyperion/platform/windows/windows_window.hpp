@@ -22,12 +22,13 @@ namespace Hyperion {
         void Update() const override;
         void Show() const override;
 
-        EKeyCode GetKeyCode(u32 code) const override;
-        EMouseButtonCode GetMouseButtonCode(u32 code) const override;
-        EKeyModifier GetKeyModifier() const override;
+        EKeyCode GetKeyCode(u32 code) const;
+        EMouseButtonCode GetMouseButtonCode(u32 code) const;
+        EKeyModifier GetKeyModifier() const;
 
         void CreateContext();
         void DispatchEvent(Events::CEvent &event) const;
+        u32 GetMouseButtonFromMessage(u32 message, u32 w_param) const;
 
         static LRESULT CALLBACK MessageCallback(HWND window_handle, u32 message, WPARAM first_message_param, LPARAM second_message_param);
     };

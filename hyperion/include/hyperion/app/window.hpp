@@ -70,10 +70,6 @@ namespace Hyperion {
         virtual void Update() const = 0;
         virtual void Show() const = 0;
 
-        virtual EKeyCode GetKeyCode(u32 code) const = 0;
-        virtual EMouseButtonCode GetMouseButtonCode(u32 code) const = 0;
-        virtual EKeyModifier GetKeyModifier() const = 0;
-
         void SetEventCallbackFunction(const EventCallbackFunction &callback) { m_event_callback = callback; }
 
         static CWindow *Create(const TString &title, u32 width, u32 height, EWindowMode window_mode, EVSyncMode vsync_mode);
