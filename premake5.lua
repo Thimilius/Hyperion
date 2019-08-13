@@ -5,6 +5,9 @@ workspace "hyperion"
 	staticruntime "On"
 	startproject "sandbox"
 	
+	exceptionhandling ("Off")
+	rtti ("Off")
+	
 	configurations
 	{
 		"debug",
