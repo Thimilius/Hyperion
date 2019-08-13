@@ -9,14 +9,14 @@ class CSandboxApp : public CApplication {
 public:
     CSandboxApp() : CApplication(SApplicationSettings()) { }
 protected:
-    PRef<CShader> m_shader;
-    PRef<CTexture2D> m_texture;
-    PRef<CVertexBuffer> m_vertex_buffer;
-    PRef<CIndexBuffer> m_index_buffer;
-    PRef<CVertexArray> m_vertex_array;
+    TRef<CShader> m_shader;
+    TRef<CTexture2D> m_texture;
+    TRef<CVertexBuffer> m_vertex_buffer;
+    TRef<CIndexBuffer> m_index_buffer;
+    TRef<CVertexArray> m_vertex_array;
 
     void UpdateTitle() {
-        CString title = CStringUtils::Format("Hyperion | FPS: {} ({:.2f} ms) | Vsync: {}", CTime::GetFPS(), CTime::GetFrameTime(), GetWindow()->GetVSyncMode() != EVSyncMode::DontSync);
+        TString title = CStringUtils::Format("Hyperion | FPS: {} ({:.2f} ms) | Vsync: {}", CTime::GetFPS(), CTime::GetFrameTime(), GetWindow()->GetVSyncMode() != EVSyncMode::DontSync);
         GetWindow()->SetTitle(title);
     }
 
@@ -25,7 +25,7 @@ protected:
 
         UpdateTitle();
 
-        CString vertex_source = R"(
+        TString vertex_source = R"(
             #version 410 core
 
             layout(location = 0) in vec3 a_position;
@@ -44,7 +44,7 @@ protected:
                 gl_Position = vec4(a_position, 1.0f);
             }
         )";
-        CString fragment_source = R"(
+        TString fragment_source = R"(
             #version 410 core
 
             out vec4 o_color;

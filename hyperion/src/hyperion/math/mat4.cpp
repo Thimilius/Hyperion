@@ -212,7 +212,7 @@ namespace Hyperion::Math {
         elements[index + 3 * 4] = column.w;
     }
 
-    CString SMat4::ToString() const {
+    TString SMat4::ToString() const {
         return CStringUtils::Format("({:.2f}, {:.2f}, {:.2f}, {:.2f})\n({:.2f}, {:.2f}, {:.2f}, {:.2f})\n({:.2f}, {:.2f}, {:.2f}, {:.2f})\n({:.2f}, {:.2f}, {:.2f}, {:.2f})\n",
             columns[0].x, columns[1].x, columns[2].x, columns[3].x,
             columns[0].y, columns[1].y, columns[2].y, columns[3].y,

@@ -31,7 +31,7 @@ namespace Hyperion {
     class CWindow {
         using EventCallbackFunction = std::function<void(Events::CEvent &)>;
     protected:
-        CString m_title;
+        TString m_title;
 
         u32 m_width;
         u32 m_height;
@@ -42,13 +42,13 @@ namespace Hyperion {
 
         EventCallbackFunction m_event_callback;
 
-        PScope<Rendering::CGraphicsContext> m_graphics_context;
+        TScope<Rendering::CGraphicsContext> m_graphics_context;
     public:
 
         virtual ~CWindow() = default;
 
-        inline const CString &GetTitle() const { return m_title; }
-        virtual void SetTitle(const CString &title) = 0;
+        inline const TString &GetTitle() const { return m_title; }
+        virtual void SetTitle(const TString &title) = 0;
 
         inline u32 GetWidth() const { return m_width; }
         inline u32 GetHeight() const { return m_height; }
@@ -63,7 +63,7 @@ namespace Hyperion {
         inline EVSyncMode GetVSyncMode() const { return m_vsync_mode; }
         virtual void SetVSyncMode(EVSyncMode vsync_mode) = 0;
 
-        inline const PScope<Rendering::CGraphicsContext> &GetGraphicsContext() const { return m_graphics_context; }
+        inline const TScope<Rendering::CGraphicsContext> &GetGraphicsContext() const { return m_graphics_context; }
         
         virtual void SetIcon(const char *path) = 0;
     protected:
@@ -76,7 +76,7 @@ namespace Hyperion {
 
         void SetEventCallbackFunction(const EventCallbackFunction &callback) { m_event_callback = callback; }
 
-        static CWindow *Create(const CString &title, u32 width, u32 height, EWindowMode window_mode, EVSyncMode vsync_mode);
+        static CWindow *Create(const TString &title, u32 width, u32 height, EWindowMode window_mode, EVSyncMode vsync_mode);
 
         friend class CApplication;
     };

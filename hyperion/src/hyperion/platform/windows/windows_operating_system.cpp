@@ -56,7 +56,7 @@ namespace Hyperion {
         return result;
     }
 
-    void CWindowsOperatingSystem::PrintToConsole(ELogColor color, const CString &message) const {
+    void CWindowsOperatingSystem::PrintToConsole(ELogColor color, const TString &message) const {
         s16 console_color = FOREGROUND_INTENSITY;
         switch (color) {
             case Hyperion::ELogColor::Black: break;

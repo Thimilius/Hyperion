@@ -30,7 +30,7 @@ namespace Hyperion::Rendering {
     }
 
     struct SBufferElement {
-        CString name;
+        TString name;
         EShaderDataType type;
         u32 size;
         u32 offset;
@@ -38,7 +38,7 @@ namespace Hyperion::Rendering {
 
         SBufferElement() {}
 
-        SBufferElement(const CString &name, EShaderDataType type, bool normalized = false)
+        SBufferElement(const TString &name, EShaderDataType type, bool normalized = false)
             : name(name), type(type), size(ShaderDataTypeSize(type)), offset(0), normalized(normalized) {
         }
 
@@ -47,7 +47,7 @@ namespace Hyperion::Rendering {
 
     class CBufferLayout {
     private:
-        CList<SBufferElement> m_elements;
+        TVector<SBufferElement> m_elements;
         u32 m_stride = 0;
     public:
         CBufferLayout() {}
@@ -58,7 +58,7 @@ namespace Hyperion::Rendering {
         }
 
         inline uint32_t GetStride() const { return m_stride; }
-        inline const CList<SBufferElement> &GetElements() const { return m_elements; }
+        inline const TVector<SBufferElement> &GetElements() const { return m_elements; }
     private:
         void CalculateOffsetsAndStride();
     };

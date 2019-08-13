@@ -20,7 +20,7 @@ namespace Hyperion::Rendering {
 
         void SetViewport(s32 x, s32 y, s32 width, s32 height) override;
 
-        void DrawIndexed(const PRef<CVertexArray> &vertex_array) override;
+        void DrawIndexed(const TRef<CVertexArray> &vertex_array) override;
     private:
         static u32 GetGLFeature(EFeature feature);
         static u32 GetGLBlendFactor(EBlendFactor blend_factor);

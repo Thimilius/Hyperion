@@ -20,7 +20,7 @@ namespace Hyperion::Rendering {
         }
     }
 
-    CTexture2D *CTexture2D::CreateFromFile(const CString &path, ETextureWrapMode wrap_mode, ETextureFilter filter) {
+    CTexture2D *CTexture2D::CreateFromFile(const TString &path, ETextureWrapMode wrap_mode, ETextureFilter filter) {
         switch (CRenderAPI::GetAPI()) {
             case ERenderAPI::OpenGL: return new COpenGLTexture2D(path, wrap_mode, filter);
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;

@@ -45,7 +45,7 @@ namespace Hyperion {
             char prefix_buffer[30];
             int prefix_length = (int)strftime(prefix_buffer, sizeof(prefix_buffer), GetPrefixFormat(type), &time_info);
 
-            CString message = CStringUtils::Format("{}{}\n", prefix_buffer, CStringUtils::Format(format, args...));
+            TString message = CStringUtils::Format("{}{}\n", prefix_buffer, CStringUtils::Format(format, args...));
 
             COperatingSystem::GetInstance()->PrintToConsole(GetLogColor(level), message.c_str());
         }

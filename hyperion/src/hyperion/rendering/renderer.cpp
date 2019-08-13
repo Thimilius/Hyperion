@@ -12,7 +12,7 @@ namespace Hyperion::Rendering {
 
     }
 
-    void CRenderer::Submit(const PRef<CShader> &shader, const PRef<CVertexArray> &vertex_array) {
+    void CRenderer::Submit(const TRef<CShader> &shader, const TRef<CVertexArray> &vertex_array) {
         shader->Bind();
         vertex_array->Bind();
 

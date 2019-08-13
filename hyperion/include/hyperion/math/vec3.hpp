@@ -26,7 +26,7 @@ namespace Hyperion::Math {
 
         SVec3 Multiply(const SMat4 &transform) const;
 
-        CString ToString() const;
+        TString ToString() const;
 
         friend SVec3 operator+(SVec3 left, const SVec3 &right);
         friend SVec3 operator-(SVec3 left, const SVec3 &right);

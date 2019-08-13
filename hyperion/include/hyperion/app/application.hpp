@@ -7,7 +7,7 @@ namespace Hyperion {
 
     struct SApplicationSettings {
         struct {
-            CString title = "Hyperion";
+            TString title = "Hyperion";
 
             u32 width = 1280;
             u32 height = 720;

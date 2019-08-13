@@ -10,7 +10,7 @@ namespace Hyperion::Rendering {
     public:
         COpenGLTexture2D(u32 width, u32 height, ETextureFormat format, ETextureWrapMode wrap_mode, ETextureFilter filter);
         COpenGLTexture2D(u32 width, u32 height, ETextureFormat format, ETextureWrapMode wrap_mode, ETextureFilter filter, const u8 *pixels);
-        COpenGLTexture2D(const CString &path, ETextureWrapMode wrap_mode, ETextureFilter filter);
+        COpenGLTexture2D(const TString &path, ETextureWrapMode wrap_mode, ETextureFilter filter);
         ~COpenGLTexture2D();
 
         void Bind(u32 slot = 0) const override;

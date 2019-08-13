@@ -68,7 +68,7 @@ namespace Hyperion::Math {
         return *this;
     }
 
-    CString SVec2::ToString() const {
+    TString SVec2::ToString() const {
         return CStringUtils::Format("({:.2f}, {:.2f})", x, y);
     }
 

@@ -21,7 +21,7 @@ namespace Hyperion::Math {
         SVec2 &Multiply(float value);
         SVec2 &Divide(float value);
 
-        CString ToString() const;
+        TString ToString() const;
 
         friend SVec2 operator+(SVec2 left, const SVec2 &right);
         friend SVec2 operator-(SVec2 left, const SVec2 &right);

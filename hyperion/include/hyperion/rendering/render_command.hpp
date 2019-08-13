@@ -45,7 +45,7 @@ namespace Hyperion::Rendering {
             s_render_api->SetViewport(x, y, width, height);
         }
 
-        inline static void DrawIndexed(const PRef<CVertexArray> &vertex_array) {
+        inline static void DrawIndexed(const TRef<CVertexArray> &vertex_array) {
             s_render_api->DrawIndexed(vertex_array);
         }
     private:

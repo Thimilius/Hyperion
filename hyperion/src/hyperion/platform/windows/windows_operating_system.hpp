@@ -15,7 +15,7 @@ namespace Hyperion {
         EOperatingSystemType GetType() const override;
         SSystemInfo GetSystemInfo() const override;
 
-        void PrintToConsole(ELogColor color, const CString &message) const override;
+        void PrintToConsole(ELogColor color, const TString &message) const override;
     };
 
 }

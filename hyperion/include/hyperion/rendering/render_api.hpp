@@ -82,7 +82,7 @@ namespace Hyperion::Rendering {
 
         virtual void SetViewport(s32 x, s32 y, s32 width, s32 height) = 0;
         
-        virtual void DrawIndexed(const PRef<CVertexArray> &vertex_array) = 0;
+        virtual void DrawIndexed(const TRef<CVertexArray> &vertex_array) = 0;
     public:
         inline static ERenderAPI GetAPI() { return m_render_api; }
     };

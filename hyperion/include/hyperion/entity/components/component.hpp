@@ -7,7 +7,7 @@ namespace Hyperion {
     class CGameObject;
 
     struct SComponentType {
-        CString name;
+        TString name;
     };
 
     class CComponent {

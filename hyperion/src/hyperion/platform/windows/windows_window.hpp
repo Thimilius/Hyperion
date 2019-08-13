@@ -9,9 +9,9 @@ namespace Hyperion {
         HWND m_window_handle;
         WINDOWPLACEMENT m_previous_placement;
     public:
-        CWindowsWindow(const CString &title, u32 width, u32 height, EWindowMode window_mode, EVSyncMode vsync_mode);
+        CWindowsWindow(const TString &title, u32 width, u32 height, EWindowMode window_mode, EVSyncMode vsync_mode);
 
-        void SetTitle(const CString &title) override;
+        void SetTitle(const TString &title) override;
         void SetSize(u32 width, u32 height) override;
         void SetWindowMode(EWindowMode window_mode) override;
         void SetWindowState(EWindowState window_state) override;

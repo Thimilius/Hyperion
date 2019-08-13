@@ -20,7 +20,7 @@ namespace Hyperion::Rendering {
         glBindVertexArray(0);
     }
 
-    void COpenGLVertexArray::AddVertexBuffer(const PRef<CVertexBuffer> &vertex_buffer) {
+    void COpenGLVertexArray::AddVertexBuffer(const TRef<CVertexBuffer> &vertex_buffer) {
         Bind();
 
         vertex_buffer->Bind();
@@ -42,7 +42,7 @@ namespace Hyperion::Rendering {
         m_vertex_buffers.push_back(vertex_buffer);
     }
 
-    void COpenGLVertexArray::SetIndexBuffer(const PRef<CIndexBuffer> &index_buffer) {
+    void COpenGLVertexArray::SetIndexBuffer(const TRef<CIndexBuffer> &index_buffer) {
         Bind();
 
         index_buffer->Bind();

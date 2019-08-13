@@ -16,7 +16,7 @@ namespace Hyperion::Rendering {
         CreateTexture(pixels);
     }
 
-    COpenGLTexture2D::COpenGLTexture2D(const CString &path, ETextureWrapMode wrap_mode, ETextureFilter filter) {
+    COpenGLTexture2D::COpenGLTexture2D(const TString &path, ETextureWrapMode wrap_mode, ETextureFilter filter) {
         
         m_wrap_mode = wrap_mode;
         m_filter = filter;

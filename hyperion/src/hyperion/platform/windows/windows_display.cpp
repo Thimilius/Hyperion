@@ -46,7 +46,7 @@ namespace Hyperion {
 
             if (display_device.StateFlags & DISPLAY_DEVICE_ATTACHED_TO_DESKTOP) {
                 CDisplayInfo display_info;
-                display_info.m_name = CString(display_device.DeviceName);
+                display_info.m_name = TString(display_device.DeviceName);
                 display_info.m_is_primary = display_device.StateFlags & DISPLAY_DEVICE_PRIMARY_DEVICE;
 
                 DEVMODEA dev_mode = { 0 };

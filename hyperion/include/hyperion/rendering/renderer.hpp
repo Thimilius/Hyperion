@@ -11,7 +11,7 @@ namespace Hyperion::Rendering {
         static void Begin();
         static void End();
 
-        static void Submit(const PRef<CShader> &shader, const PRef<CVertexArray> &vertex_array);
+        static void Submit(const TRef<CShader> &shader, const TRef<CVertexArray> &vertex_array);
     };
 
 }

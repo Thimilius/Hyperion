@@ -31,7 +31,7 @@ namespace Hyperion::Math {
         SVec4 GetRow(int index) const;
         void SetRow(int index, const SVec4 &column);
 
-        CString ToString() const;
+        TString ToString() const;
 
         static SMat4 Identity();
         static SMat4 Translate(const SVec3 &position);

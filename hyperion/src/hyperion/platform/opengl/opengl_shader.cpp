@@ -4,7 +4,7 @@
 
 namespace Hyperion::Rendering {
 
-    COpenGLShader::COpenGLShader(const CString &vertex_source, const CString &fragment_source) {
+    COpenGLShader::COpenGLShader(const TString &vertex_source, const TString &fragment_source) {
         GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
         {
             const GLchar *source = vertex_source.c_str();
@@ -108,31 +108,31 @@ namespace Hyperion::Rendering {
         glUseProgram(0);
     }
 
-    void COpenGLShader::SetInt(const CString &name, int value) {
+    void COpenGLShader::SetInt(const TString &name, int value) {
         glUniform1i(TryGetUniformLocation(name), value);
     }
 
-    void COpenGLShader::SetFloat(const CString &name, float value) {
+    void COpenGLShader::SetFloat(const TString &name, float value) {
         glUniform1f(TryGetUniformLocation(name), value);
     }
 
-    void COpenGLShader::SetFloat2(const CString &name, const Math::SVec2 &value) {
+    void COpenGLShader::SetFloat2(const TString &name, const Math::SVec2 &value) {
         glUniform2f(TryGetUniformLocation(name), value.x, value.y);
     }
 
-    void COpenGLShader::SetFloat3(const CString &name, const Math::SVec3 &value) {
+    void COpenGLShader::SetFloat3(const TString &name, const Math::SVec3 &value) {
         glUniform3f(TryGetUniformLocation(name), value.x, value.y, value.z);
     }
 
-    void COpenGLShader::SetFloat4(const CString &name, const Math::SVec4 &value) {
+    void COpenGLShader::SetFloat4(const TString &name, const Math::SVec4 &value) {
         glUniform4f(TryGetUniformLocation(name), value.x, value.y, value.z, value.w);
     }
 
-    void COpenGLShader::SetMat4(const CString &name, const Math::SMat4 &matrix) {
+    void COpenGLShader::SetMat4(const TString &name, const Math::SMat4 &matrix) {
         glUniformMatrix4fv(TryGetUniformLocation(name), 1, GL_FALSE, matrix.elements);
     }
 
-    s32 COpenGLShader::TryGetUniformLocation(const CString &name) {
+    s32 COpenGLShader::TryGetUniformLocation(const TString &name) {
         s32 location = glGetUniformLocation(m_program_id, name.c_str());
         if (location < 0) {
             HYP_CORE_ERROR("[OpenGL] - Failed to get location for uniform: {}", name);

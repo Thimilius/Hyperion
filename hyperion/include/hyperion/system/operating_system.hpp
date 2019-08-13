@@ -31,7 +31,7 @@ namespace Hyperion {
         virtual EOperatingSystemType GetType() const = 0;
         virtual SSystemInfo GetSystemInfo() const = 0;
 
-        virtual void PrintToConsole(ELogColor color, const CString &message) const = 0;
+        virtual void PrintToConsole(ELogColor color, const TString &message) const = 0;
 
         inline static COperatingSystem* GetInstance() { return s_instance; }
     private:

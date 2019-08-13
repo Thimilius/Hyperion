@@ -58,7 +58,7 @@ namespace Hyperion::Rendering {
 
         static CTexture2D *Create(u32 width, u32 height, ETextureFormat format, ETextureWrapMode wrap_mode, ETextureFilter filter);
         static CTexture2D *Create(u32 width, u32 height, ETextureFormat format, ETextureWrapMode wrap_mode, ETextureFilter filter, const u8 *pixels);
-        static CTexture2D *CreateFromFile(const CString &path, ETextureWrapMode wrap_mode, ETextureFilter filter);
+        static CTexture2D *CreateFromFile(const TString &path, ETextureWrapMode wrap_mode, ETextureFilter filter);
     };
 
 }

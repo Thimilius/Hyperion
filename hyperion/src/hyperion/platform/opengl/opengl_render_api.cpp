@@ -40,7 +40,7 @@ namespace Hyperion::Rendering {
         glViewport(x, y, width, height);
     }
 
-    void COpenGLRenderAPI::DrawIndexed(const PRef<CVertexArray> &vertex_array) {
+    void COpenGLRenderAPI::DrawIndexed(const TRef<CVertexArray> &vertex_array) {
         glDrawElements(GL_TRIANGLES, vertex_array->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
     }
 

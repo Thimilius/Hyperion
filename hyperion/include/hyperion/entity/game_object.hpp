@@ -4,8 +4,6 @@
 
 #include "hyperion/entity/components/component.hpp"
 
-#include <type_traits>
-#include <unordered_map>
 
 namespace Hyperion {
 
@@ -13,18 +11,18 @@ namespace Hyperion {
 
     class CGameObject {
     private:
-        CString m_name;
+        TString m_name;
 
-        std::unordered_map<SComponentType *, CComponent*> m_components;
+        TMap<SComponentType*, CComponent*> m_components;
 
         CTransformComponent *m_transform;
     public:
         CGameObject() : CGameObject("New GameObject") {}
-        CGameObject(const CString &name);
+        CGameObject(const TString &name);
         ~CGameObject();
 
-        inline const CString &GetName() const { return m_name; }
-        inline void SetName(const CString &name) { m_name = name; }
+        inline const TString &GetName() const { return m_name; }
+        inline void SetName(const TString &name) { m_name = name; }
 
         inline CTransformComponent *GetTransform() { return m_transform; }
 

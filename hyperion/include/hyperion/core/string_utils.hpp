@@ -1,15 +1,16 @@
 #pragma once
 
+#include <string>
 #include "vendor/fmt/format.h"
 
 namespace Hyperion {
 
-    using CString = std::string;
+    using TString = std::string;
 
     class CStringUtils {
     public:
         template<typename ...Args>
-        inline static CString Format(const char *format, Args... args) {
+        inline static TString Format(const char *format, Args... args) {
             return fmt::format(format, args...);
         }
     private:

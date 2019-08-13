@@ -1,5 +1,6 @@
 #include "common.hpp"
 
+#include "core/types.hpp"
 #include "core/string_utils.hpp"
 #include "core/timer.hpp"
 
