@@ -160,10 +160,6 @@ namespace Hyperion::Math {
         return x >= other.x && y >= other.y && z >= other.z;
     }
 
-    SVec3 SVec3::Cross(const SVec3 &other) const {
-        return SVec3(y * other.z - z * other.y, z * other.x - x * other.z, x * other.y - y * other.x);
-    }
-
     float SVec3::Dot(const SVec3 &other) const {
         return x * other.x + y * other.y + z * other.z;
     }
@@ -191,6 +187,14 @@ namespace Hyperion::Math {
         float z = this->z - other.z;
 
         return CMathf::Sqrt(x * x + y * y + z * z);
+    }
+
+    SVec3 SVec3::Cross(const SVec3 &a, const SVec3 &b) {
+        float x = a.y * b.z - a.z * b.y;
+        float y = a.z * b.x - a.x * b.z;
+        float z = a.x * b.y - a.y * b.x;
+
+        return SVec3(x, y, z);
     }
 
 }

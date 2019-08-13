@@ -51,7 +51,6 @@ namespace Hyperion::Math {
         bool operator>(const SVec3 &other) const;
         bool operator>=(const SVec3 &other) const;
 
-        SVec3 Cross(const SVec3 &other) const;
         float Dot(const SVec3 &other) const;
 
         SVec3 Normalized() const;
@@ -60,6 +59,8 @@ namespace Hyperion::Math {
         float SqrMagnitude() const;
 
         float Distance(const SVec3 &other) const;
+
+        static SVec3 Cross(const SVec3 &a, const SVec3 &b);
 
         inline static SVec3 Zero() { return SVec3(0, 0, 0); }
         inline static SVec3 One() { return SVec3(1, 1, 1); }

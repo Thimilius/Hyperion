@@ -55,7 +55,7 @@ namespace Hyperion {
                 camera_speed *= 2;
             }
             SVec3 direction = camera_speed * m_forward;
-            SVec3 right = m_forward.Cross(m_up).Normalized();
+            SVec3 right = SVec3::Cross(m_forward, m_up).Normalized();
             right = camera_speed * right;
             SVec3 up = camera_speed * SVec3::Up();
             if (CInput::GetKey(EKeyCode::W)) {

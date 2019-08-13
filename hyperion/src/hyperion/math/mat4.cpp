@@ -321,8 +321,8 @@ namespace Hyperion::Math {
         SMat4 result(1.0f);
 
         SVec3 f = (to - from).Normalized();
-        SVec3 s = f.Cross(up.Normalized());
-        SVec3 u = s.Cross(f).Normalized();
+        SVec3 s = SVec3::Cross(f, up.Normalized()).Normalized();
+        SVec3 u = SVec3::Cross(s, f).Normalized();
 
         result.elements[0 + 0 * 4] = s.x;
         result.elements[0 + 1 * 4] = s.y;
