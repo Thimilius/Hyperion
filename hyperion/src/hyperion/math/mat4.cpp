@@ -291,50 +291,52 @@ namespace Hyperion::Math {
         result.elements[1 + 1 * 4] = 2.0f / (top - bottom);
         result.elements[2 + 2 * 4] = 2.0f / (z_near - z_far);
 
-        result.elements[0 + 3 * 4] = (left + right) / (left - right);
-        result.elements[1 + 3 * 4] = (bottom + top) / (bottom - top);
-        result.elements[2 + 3 * 4] = (z_far + z_near) / (z_far - z_near);
+        result.elements[0 + 3 * 4] = -(right + left)   / (right - left);
+        result.elements[1 + 3 * 4] = -(top + bottom)   / (top - bottom);
+        result.elements[2 + 3 * 4] = -(z_near + z_far) / (z_far - z_near);
 
         return result;
     }
 
-    SMat4 SMat4::Perspective(float fov, float aspectRatio, float z_near, float z_far) {
-        SMat4 result(1.0f);
+    SMat4 SMat4::Perspective(float fov, float aspect_ratio, float z_near, float z_far) {
+        SMat4 result(0.0f);
 
-        float q = 1.0f / CMathf::Tan(CMathf::ToRadians(0.5f * fov));
-        float a = q / aspectRatio;
+        float t = CMathf::Tan(0.5f * CMathf::ToRadians(fov)) * z_near;
+        float b = -t;
+        float r = t * aspect_ratio;
+        float l = -r;
 
-        float b = (z_near + z_far) / (z_near - z_far);
-        float c = (2.0f * z_near * z_far) / (z_near - z_far);
-
-        result.elements[0 + 0 * 4] = a;
-        result.elements[1 + 1 * 4] = q;
-        result.elements[2 + 2 * 4] = b;
+        result.elements[0 + 0 * 4] = 2.0f * z_near / (r - l);
+        result.elements[1 + 1 * 4] = 2.0f * z_near / (t - b);
+        result.elements[0 + 2 * 4] = (r + l) / (r - l);
+        result.elements[1 + 2 * 4] = (t + b) / (t - b);
+        result.elements[2 + 2 * 4] = -(z_far + z_near) / (z_far - z_near);
         result.elements[3 + 2 * 4] = -1.0f;
-        result.elements[2 + 3 * 4] = c;
+        result.elements[2 + 3 * 4] = -(2 * z_far * z_near) / (z_far - z_near);
 
         return result;
     }
 
-    SMat4 SMat4::LookAt(const SVec3 &camera, const SVec3 &object, const SVec3 &up) {
+    SMat4 SMat4::LookAt(const SVec3 &from, const SVec3 &to, const SVec3 &up) {
         SMat4 result(1.0f);
-        SVec3 f = (object - camera).Normalize();
-        SVec3 s = f.Cross(up.Normalize());
-        SVec3 u = s.Cross(f);
+
+        SVec3 f = (to - from).Normalized();
+        SVec3 s = f.Cross(up.Normalized());
+        SVec3 u = s.Cross(f).Normalized();
 
         result.elements[0 + 0 * 4] = s.x;
-        result.elements[1 + 0 * 4] = s.y;
-        result.elements[2 + 0 * 4] = s.z;
+        result.elements[0 + 1 * 4] = s.y;
+        result.elements[0 + 2 * 4] = s.z;
 
-        result.elements[0 + 1 * 4] = u.x;
+        result.elements[1 + 0 * 4] = u.x;
         result.elements[1 + 1 * 4] = u.y;
-        result.elements[2 + 1 * 4] = u.z;
+        result.elements[1 + 2 * 4] = u.z;
 
-        result.elements[0 + 2 * 4] = -f.x;
-        result.elements[1 + 2 * 4] = -f.y;
+        result.elements[2 + 0 * 4] = -f.x;
+        result.elements[2 + 1 * 4] = -f.y;
         result.elements[2 + 2 * 4] = -f.z;
 
-        return result * Translate(SVec3(-camera.x, -camera.y, -camera.z));
+        return result * Translate(SVec3(-from.x, -from.y, -from.z));
     }
 
 }

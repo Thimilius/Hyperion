@@ -54,7 +54,7 @@ namespace Hyperion::Math {
         SVec3 Cross(const SVec3 &other) const;
         float Dot(const SVec3 &other) const;
 
-        SVec3 Normalize() const;
+        SVec3 Normalized() const;
 
         float Magnitude() const;
         float SqrMagnitude() const;

@@ -168,7 +168,7 @@ namespace Hyperion::Math {
         return x * other.x + y * other.y + z * other.z;
     }
 
-    SVec3 SVec3::Normalize() const {
+    SVec3 SVec3::Normalized() const {
         float magnitude = Magnitude();
         if (magnitude == 0) {
             return SVec3();

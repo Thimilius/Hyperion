@@ -14,6 +14,7 @@ protected:
     TRef<CVertexBuffer> m_vertex_buffer;
     TRef<CIndexBuffer> m_index_buffer;
     TRef<CVertexArray> m_vertex_array;
+    CPerspectiveCamera *m_camera = new CPerspectiveCamera(); 
 
     void UpdateTitle() {
         TString title = CStringUtils::Format("Hyperion | FPS: {} ({:.2f} ms) | Vsync: {}", CTime::GetFPS(), CTime::GetFrameTime(), GetWindow()->GetVSyncMode() != EVSyncMode::DontSync);
@@ -37,11 +38,21 @@ protected:
                 vec4 color;
             } vs_out;
 
+            uniform struct Transform {
+                mat4 model;
+                mat4 view;
+                mat4 projection;
+            } u_transform;
+
+            vec4 model_to_clip_space(vec3 position) {
+                return u_transform.projection * u_transform.view * u_transform.model * vec4(position, 1.0f);
+            }
+
             void main() {
                 vs_out.uv = a_uv;
                 vs_out.color = a_color;
 
-                gl_Position = vec4(a_position, 1.0f);
+                gl_Position = model_to_clip_space(a_position);
             }
         )";
         TString fragment_source = R"(
@@ -63,7 +74,7 @@ protected:
         m_shader.reset(CShader::Create(vertex_source, fragment_source));
 
         m_texture.reset(CTexture2D::CreateFromFile("data/textures/grass.png", ETextureWrapMode::Clamp, ETextureFilter::Bilinear));
-        m_texture.reset(CTexture2D::CreateFromFile("logo/logo.png", ETextureWrapMode::Clamp, ETextureFilter::Bilinear));
+        //m_texture.reset(CTexture2D::CreateFromFile("logo/logo.png", ETextureWrapMode::Clamp, ETextureFilter::Bilinear));
         
         float verticies[] = { 
              0.5f,  0.5f, 0.0f,  1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
@@ -106,6 +117,17 @@ protected:
             GetWindow()->SetVSyncMode(GetWindow()->GetVSyncMode() == EVSyncMode::DontSync ? EVSyncMode::EveryVBlank : EVSyncMode::DontSync);
             UpdateTitle();
         }
+
+        if (CInput::GetKey(EKeyCode::Shift)) {
+            if (CInput::GetMouseButton(EMouseButtonCode::Middle)) {
+                // FIXME: Why does this not work!?!?!
+                HYP_TRACE("Middle");
+            }
+        }
+
+        HYP_TRACE("{}", CInput::GetMouseButton(EMouseButtonCode::Middle));
+
+        m_camera->Update();
     }
 
     void OnRender() override {
@@ -113,18 +135,20 @@ protected:
         CRenderCommand::SetClearColor(clear_color, clear_color, clear_color, clear_color);
         CRenderCommand::Clear(EClearMask::Color | EClearMask::Depth);
 
-        CRenderCommand::EnableFeature(EFeature::Culling);
+        //CRenderCommand::EnableFeature(EFeature::Culling);
         CRenderCommand::SetFrontFaceMode(EFrontFaceMode::Clockwise);
         CRenderCommand::SetCullingMode(ECullingMode::Back);
 
         CRenderCommand::EnableFeature(EFeature::Blending);
         CRenderCommand::SetBlendFunc(EBlendFactor::SourceAlpha, EBlendFactor::InverseSourceAlpha);
 
-        CRenderer::Begin();
-        m_texture->Bind(0);
-        m_shader->Bind();
-        m_shader->SetInt("u_texture", 0);
-        CRenderer::Submit(m_shader, m_vertex_array);
+        CRenderer::Begin(*m_camera);
+        {
+            m_shader->Bind();
+            m_shader->SetInt("u_texture", 0);
+            m_texture->Bind(0);
+            CRenderer::Submit(m_shader, m_vertex_array, SMat4::Translate(0, 0, -1));
+        }
         CRenderer::End();
     }
     

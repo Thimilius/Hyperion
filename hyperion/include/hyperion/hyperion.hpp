@@ -12,6 +12,7 @@
 #include "app/events/event.hpp"
 
 #include "entity/game_object.hpp"
+#include "entity/camera.hpp"
 #include "entity/components/component.hpp"
 #include "entity/components/transform_component.hpp"
 

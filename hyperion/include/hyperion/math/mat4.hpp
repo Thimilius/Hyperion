@@ -7,7 +7,7 @@ namespace Hyperion::Math {
 
     struct SMat4 {
         union {
-            float elements[16]; // Index with elements[column + row * 4]
+            float elements[16]; // Index with elements[row + column * 4]
             SVec4 columns[4];
         };
 
@@ -42,8 +42,8 @@ namespace Hyperion::Math {
         static SMat4 TRS(const SVec3 &position, const SVec3 &axis, float angle, const SVec3 &scale);
 
         static SMat4 Orthographic(float left, float right, float bottom, float top, float z_near, float z_far);
-        static SMat4 Perspective(float fov, float aspectRatio, float z_near, float z_far);
-        static SMat4 LookAt(const SVec3 &position, const SVec3 &direction, const SVec3 &up);
+        static SMat4 Perspective(float fov, float aspect_ratio, float z_near, float z_far);
+        static SMat4 LookAt(const SVec3 &from, const SVec3 &to, const SVec3 &up);
     };
 
 }
