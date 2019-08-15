@@ -12,7 +12,6 @@
 #include "app/events/event.hpp"
 
 #include "entity/game_object.hpp"
-#include "entity/camera.hpp"
 #include "entity/components/component.hpp"
 #include "entity/components/transform_component.hpp"
 
@@ -25,6 +24,7 @@
 #include "rendering/texture.hpp"
 #include "rendering/buffer.hpp"
 #include "rendering/vertex_array.hpp"
+#include "rendering/camera.hpp"
 
 #include "system/log.hpp"
 #include "system/engine.hpp"

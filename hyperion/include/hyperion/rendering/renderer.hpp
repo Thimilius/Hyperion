@@ -3,8 +3,8 @@
 #include "hyperion/common.hpp"
 #include "hyperion/rendering/shader.hpp"
 #include "hyperion/rendering/vertex_array.hpp"
+#include "hyperion/rendering/camera.hpp"
 #include "hyperion/math/mat4.hpp"
-#include "hyperion/entity/camera.hpp"
 
 namespace Hyperion::Rendering {
 

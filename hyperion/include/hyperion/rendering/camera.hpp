@@ -2,7 +2,7 @@
 
 #include "hyperion/math/math.hpp"
 
-namespace Hyperion {
+namespace Hyperion::Rendering {
 
     class CCamera {
     protected:

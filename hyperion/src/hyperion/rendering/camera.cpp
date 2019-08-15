@@ -1,8 +1,8 @@
 #include "hyppch.hpp"
 
-#include "hyperion/entity/camera.hpp"
+#include "hyperion/rendering/camera.hpp"
 
-namespace Hyperion {
+namespace Hyperion::Rendering {
 
     using namespace Math;
 
@@ -76,6 +76,19 @@ namespace Hyperion {
             if (CInput::GetKey(EKeyCode::Space)) {
                 m_position = m_position + up;
             }
+        }
+
+        // Reset
+        if (CInput::GetKeyDown(EKeyCode::R)) {
+            m_position = SVec3::Zero();
+            m_forward = SVec3(0, 0, -1);
+            m_up = SVec3::Up();
+
+            m_pitch = 0.0f;
+            m_yaw = -90.0f;
+
+            m_fov = 90.0f;
+            m_fov_target = m_fov;
         }
 
         RecacluateMatricies();
