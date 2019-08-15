@@ -11,13 +11,13 @@ namespace Hyperion::Rendering {
 
         // Rotation
         {
-            if (CInput::GetMouseButtonDown(EMouseButtonCode::Middle)) {
+            if (CInput::GetMouseButtonDown(EMouseButtonCode::Right)) {
                 m_last_mouse_position = CInput::GetMousePosition();
             }
 
             float x_offset = 0.0f;
             float y_offset = 0.0f;
-            if (CInput::GetMouseButton(EMouseButtonCode::Middle)) {
+            if (CInput::GetMouseButton(EMouseButtonCode::Right)) {
                 SVec2 mouse_position = CInput::GetMousePosition();
                 x_offset = mouse_position.x - m_last_mouse_position.x;
                 y_offset = m_last_mouse_position.y - mouse_position.y;
