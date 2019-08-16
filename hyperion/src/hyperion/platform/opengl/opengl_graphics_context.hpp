@@ -5,6 +5,8 @@
 namespace Hyperion::Rendering {
 
     class COpenGLGraphicsContext : public CGraphicsContext {
+    public:
+        SContextProperties GetProperties() override;
     protected:
         void Init() override;
 

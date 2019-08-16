@@ -9,6 +9,18 @@
 
 namespace Hyperion::Rendering {
 
+    SContextProperties COpenGLGraphicsContext::GetProperties() {
+        SContextProperties result;
+
+        result.vendor = (const char *)glGetString(GL_VENDOR);
+        result.renderer = (const char *)glGetString(GL_RENDERER);
+        result.version = (const char *)glGetString(GL_VERSION);
+
+        glGetIntegerv(GL_MAX_SAMPLES, &result.max_samples);
+
+        return result;
+    }
+
     void COpenGLGraphicsContext::Init() {
         if (OPENGL_DEBUG_LOG) {
             glDebugMessageCallback(DebugMessageCallback, NULL);
@@ -24,8 +36,10 @@ namespace Hyperion::Rendering {
             }
         }
 
-        HYP_CORE_INFO("[OpenGL] - Initialized OpenGL! ({})", glGetString(GL_VERSION));
-        HYP_CORE_INFO("[OpenGL] - Renderer: {} {}", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
+        SContextProperties properties = GetProperties();
+        HYP_CORE_INFO("[OpenGL] - Initialized OpenGL! ({})", properties.version);
+        HYP_CORE_INFO("[OpenGL] - Renderer: {} {}", properties.vendor, properties.renderer);
+        HYP_CORE_INFO("[OpenGL] - Max samples: {}", properties.max_samples);
     }
 
     void COpenGLGraphicsContext::DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *user_pointer) {
