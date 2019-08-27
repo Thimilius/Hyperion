@@ -14,7 +14,9 @@ protected:
     TRef<CVertexBuffer> m_vertex_buffer;
     TRef<CIndexBuffer> m_index_buffer;
     TRef<CVertexArray> m_vertex_array;
-    CPerspectiveCamera *m_camera = new CPerspectiveCamera(); 
+
+    TRef<CRenderTexture> m_render_texture;
+    TRef<CPerspectiveCamera> m_camera = std::make_shared<CPerspectiveCamera>(); 
 
     void UpdateTitle() {
         TString title = CStringUtils::Format("Hyperion | FPS: {} ({:.2f} ms) | Vsync: {}", CTime::GetFPS(), CTime::GetFrameTime(), GetWindow()->GetVSyncMode() != EVSyncMode::DontSync);
@@ -99,6 +101,8 @@ protected:
         m_vertex_array.reset(CVertexArray::Create());
         m_vertex_array->AddVertexBuffer(m_vertex_buffer);
         m_vertex_array->SetIndexBuffer(m_index_buffer);
+
+        m_render_texture.reset(CRenderTexture::Create(GetWindow()->GetWidth(), GetWindow()->GetHeight(), ERenderTextureFormat::RGBA8));
     }
     
     void OnEvent(CEvent &event) override {

@@ -24,6 +24,7 @@
 #include "rendering/texture.hpp"
 #include "rendering/buffer.hpp"
 #include "rendering/vertex_array.hpp"
+#include "rendering/render_texture.hpp"
 #include "rendering/camera.hpp"
 
 #include "system/log.hpp"
