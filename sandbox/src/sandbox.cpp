@@ -126,6 +126,9 @@ protected:
     }
 
     void OnRender() override {
+        m_render_texture->Bind();
+        m_render_texture->Resize(GetWindow()->GetWidth(), GetWindow()->GetHeight());
+
         float clear_color = CMathf::Sin((float)CTime::GetTime()) / 2.0f + 0.5f;
         CRenderCommand::SetClearColor(clear_color, clear_color, clear_color, clear_color);
         CRenderCommand::Clear(EClearMask::Color | EClearMask::Depth);
@@ -145,6 +148,19 @@ protected:
             CRenderer::Submit(m_shader, m_vertex_array, SMat4::Translate(0, 0, -1));
         }
         CRenderer::End();
+
+        CRenderCommand::Blit(
+            nullptr, 
+            0,
+            0, 
+            GetWindow()->GetWidth(), 
+            GetWindow()->GetHeight(), 
+            m_render_texture.get(), 
+            0,
+            0, 
+            m_render_texture->GetWidth(), 
+            m_render_texture->GetHeight()
+        );
     }
     
     void OnTick() override {

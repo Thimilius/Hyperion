@@ -1,6 +1,7 @@
 #pragma once
 
 #include "render_api.hpp"
+#include "render_texture.hpp"
 #include "vertex_array.hpp"
 
 namespace Hyperion::Rendering {
@@ -43,6 +44,10 @@ namespace Hyperion::Rendering {
 
         inline static void SetViewport(s32 x, s32 y, s32 width, s32 height) {
             s_render_api->SetViewport(x, y, width, height);
+        }
+
+        inline static void Blit(CRenderTexture *destination, s32 dstX0, s32 dstY0, s32 dstX1, s32 dstY1, CRenderTexture *source, s32 srcX0, s32 srcY0, s32 srcX1, s32 srcY1) {
+            s_render_api->Blit(destination, dstX0, dstY0, dstX1, dstY1, source, srcX0, srcY0, srcX1, srcY1);
         }
 
         inline static void DrawIndexed(const TRef<CVertexArray> &vertex_array) {

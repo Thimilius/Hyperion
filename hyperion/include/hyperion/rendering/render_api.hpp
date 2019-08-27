@@ -3,6 +3,7 @@
 #include "hyperion/common.hpp"
 #include "hyperion/core/enum.hpp"
 #include "vertex_array.hpp"
+#include "render_texture.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -81,7 +82,9 @@ namespace Hyperion::Rendering {
         virtual void Clear(EClearMask mask) = 0;
 
         virtual void SetViewport(s32 x, s32 y, s32 width, s32 height) = 0;
-        
+
+        virtual void Blit(CRenderTexture *destination, s32 dstX0, s32 dstY0, s32 dstX1, s32 dstY1, CRenderTexture *source, s32 srcX0, s32 srcY0, s32 srcX1, s32 srcY1) = 0;
+
         virtual void DrawIndexed(const TRef<CVertexArray> &vertex_array) = 0;
     public:
         inline static ERenderAPI GetAPI() { return m_render_api; }

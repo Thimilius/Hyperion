@@ -13,8 +13,10 @@ namespace Hyperion::Rendering {
         COpenGLRenderTexture(u32 width, u32 height, ERenderTextureFormat format);
         ~COpenGLRenderTexture();
 
-        virtual void Bind() const override;
+        virtual void Bind(ERenderTextureTarget target = ERenderTextureTarget::DrawAndRead) const override;
         virtual void Unbind() const override;
+
+        virtual void Resize(u32 width, u32 height) override;
     };
 
 }

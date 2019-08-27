@@ -40,6 +40,25 @@ namespace Hyperion::Rendering {
         glViewport(x, y, width, height);
     }
 
+    void COpenGLRenderAPI::Blit(CRenderTexture *destination, s32 dstX0, s32 dstY0, s32 dstX1, s32 dstY1, CRenderTexture *source, s32 srcX0, s32 srcY0, s32 srcX1, s32 srcY1) {
+        s32 draw_framebuffer_id;
+        glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &draw_framebuffer_id);
+        s32 read_framebuffer_id;
+        glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &read_framebuffer_id);
+
+        if (destination == nullptr) {
+            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        } else {
+            destination->Bind(ERenderTextureTarget::Draw);
+        }
+
+        source->Bind(ERenderTextureTarget::Read);
+        glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, draw_framebuffer_id);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, read_framebuffer_id);
+    }
+
     void COpenGLRenderAPI::DrawIndexed(const TRef<CVertexArray> &vertex_array) {
         glDrawElements(GL_TRIANGLES, vertex_array->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
     }
