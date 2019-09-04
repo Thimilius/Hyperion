@@ -29,6 +29,7 @@
 
 #include "system/log.hpp"
 #include "system/engine.hpp"
+#include "system/file_utilities.hpp"
 #include "system/operating_system.hpp"
 
 // ------------ ENTRY POINT --------------
