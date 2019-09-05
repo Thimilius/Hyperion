@@ -29,8 +29,9 @@
 
 #include "system/log.hpp"
 #include "system/engine.hpp"
-#include "system/file_utilities.hpp"
 #include "system/operating_system.hpp"
+#include "system/file_utilities.hpp"
+#include "system/file_watcher.hpp"
 
 // ------------ ENTRY POINT --------------
 #include "entry_point.hpp"

@@ -10,7 +10,7 @@ namespace Hyperion {
         std::ifstream file(path);
         if (!file) {
             HYP_CORE_ERROR("Failed to open file: {}!", path);
-            return nullptr;
+            return TString();
         }
 
         file.seekg(0, file.end);
@@ -25,7 +25,7 @@ namespace Hyperion {
 
         if (!file.eof()) {
             HYP_CORE_ERROR("Failed to read entire file: {}!", path);
-            return nullptr;
+            return TString();
         }
 
         return result;

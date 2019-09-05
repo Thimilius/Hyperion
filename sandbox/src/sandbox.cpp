@@ -18,6 +18,8 @@ protected:
     TRef<CRenderTexture> m_render_texture;
     TRef<CPerspectiveCamera> m_camera = std::make_shared<CPerspectiveCamera>(); 
 
+    TRef<CFileWatcher> m_watcher;
+
     void UpdateTitle() {
         TString title = CStringUtils::Format("Hyperion | FPS: {} ({:.2f} ms) | VSync: {}", CTime::GetFPS(), CTime::GetFrameTime(), GetWindow()->GetVSyncMode() != EVSyncMode::DontSync);
         GetWindow()->SetTitle(title);
@@ -27,6 +29,15 @@ protected:
         GetWindow()->SetIcon("logo/logo.ico");
 
         UpdateTitle();
+
+        m_watcher.reset(new CFileWatcher("data/shaders/", [this](EFileStatus status, const TString &path) {
+            if (CStringUtils::EndsWith(path, "simple.glsl")) {
+                TString source = CFileUtilities::ReadFile("data/shaders/simple.glsl");
+                if (!source.empty()) {
+                    m_shader.reset(CShader::Create(source));
+                }
+            }
+        }, true));
 
         m_shader.reset(CShader::Create(CFileUtilities::ReadFile("data/shaders/simple.glsl")));
         m_texture.reset(CTexture2D::CreateFromFile("data/textures/grass.png", ETextureWrapMode::Clamp, ETextureFilter::Bilinear));
@@ -76,6 +87,7 @@ protected:
         }
 
         m_camera->Update();
+        m_watcher->Update();
     }
 
     void OnRender() override {
