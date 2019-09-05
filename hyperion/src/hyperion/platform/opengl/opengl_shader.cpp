@@ -4,96 +4,16 @@
 
 namespace Hyperion::Rendering {
 
+    COpenGLShader::COpenGLShader(const TString &source) {
+        Compile(PreProcess(source));
+    }
+    
     COpenGLShader::COpenGLShader(const TString &vertex_source, const TString &fragment_source) {
-        GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-        {
-            const GLchar *source = vertex_source.c_str();
-            glShaderSource(vertex_shader, 1, &source, 0);
+        TMap<EShaderType, TString> sources(2);
+        sources[EShaderType::Vertex] = vertex_source;
+        sources[EShaderType::Fragment] = fragment_source;
 
-            glCompileShader(vertex_shader);
-
-            GLint is_compiled = 0;
-            glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &is_compiled);
-            if (is_compiled == GL_FALSE) {
-                GLint log_length = 0;
-                glGetShaderiv(vertex_shader, GL_INFO_LOG_LENGTH, &log_length);
-
-                GLchar *info_log = new GLchar[log_length];
-                glGetShaderInfoLog(vertex_shader, log_length, &log_length, info_log);
-
-                glDeleteShader(vertex_shader);
-
-                HYP_CORE_ERROR("Vertex shader compilation error:\n{}", info_log);
-                HYP_ASSERT_MESSAGE(false, "Vertex shader compilation failure!");
-
-                delete info_log;
-
-                return;
-            }
-        }
-
-        GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-        {
-            const GLchar *source = fragment_source.c_str();
-            glShaderSource(fragment_shader, 1, &source, 0);
-
-            glCompileShader(fragment_shader);
-
-            GLint is_compiled = 0;
-            glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &is_compiled);
-            if (is_compiled == GL_FALSE) {
-                GLint log_length = 0;
-                glGetShaderiv(vertex_shader, GL_INFO_LOG_LENGTH, &log_length);
-
-                GLchar *info_log = new GLchar[log_length];
-                glGetShaderInfoLog(vertex_shader, log_length, &log_length, info_log);
-
-                glDeleteShader(fragment_shader);
-                glDeleteShader(vertex_shader);
-
-                HYP_CORE_ERROR("Fragment shader compilation error:\n{}", info_log);
-                HYP_ASSERT_MESSAGE(false, "Fragment shader compilation failure!");
-
-                delete info_log;
-
-                return;
-            }
-        }
-
-        m_program_id = glCreateProgram();
-        {
-            glAttachShader(m_program_id, vertex_shader);
-            glAttachShader(m_program_id, fragment_shader);
-
-            glLinkProgram(m_program_id);
-
-            GLint is_linked = 0;
-            glGetProgramiv(m_program_id, GL_LINK_STATUS, (int *)& is_linked);
-            if (is_linked == GL_FALSE) {
-                GLint log_length = 0;
-                glGetShaderiv(vertex_shader, GL_INFO_LOG_LENGTH, &log_length);
-
-                GLchar *info_log = new GLchar[log_length];
-                glGetShaderInfoLog(vertex_shader, log_length, &log_length, info_log);
-
-                glDeleteProgram(m_program_id);
-                glDeleteShader(vertex_shader);
-                glDeleteShader(fragment_shader);
-
-                HYP_CORE_ERROR("Shader linking error:\n{}", info_log);
-                HYP_ASSERT_MESSAGE(false, "Shader linking failure!");
-
-                delete info_log;
-
-                return;
-            }
-        }
-
-        glDetachShader(m_program_id, vertex_shader);
-        glDetachShader(m_program_id, fragment_shader);
-
-        glDeleteShader(vertex_shader);
-        glDeleteShader(fragment_shader);
+        Compile(sources);
     }
 
     COpenGLShader::~COpenGLShader() {
@@ -130,6 +50,113 @@ namespace Hyperion::Rendering {
 
     void COpenGLShader::SetMat4(const TString &name, const Math::SMat4 &matrix) {
         glUniformMatrix4fv(TryGetUniformLocation(name), 1, GL_FALSE, matrix.elements);
+    }
+
+    TMap<EShaderType, TString> COpenGLShader::PreProcess(const TString &source) {
+        TMap<EShaderType, TString> sources;
+
+        const auto type_token = "#type";
+        u64 type_token_length = strlen(type_token);
+        u64 position = source.find(type_token, 0);
+
+        while (position != TString::npos) {
+            u64 end_of_line = source.find_first_of("\r\n", position);
+            HYP_ASSERT_MESSAGE(end_of_line != TString::npos, "Shader syntax error!");
+            u64 begin = position + type_token_length + 1;
+            TString type = source.substr(begin, end_of_line - begin);
+            HYP_ASSERT_MESSAGE(type == "vertex" || type == "fragment", "Invalid shader type specifier!");
+
+            u64 next_line_position = source.find_first_not_of("\r\n", end_of_line);
+            position = source.find(type_token, next_line_position);
+
+            u64 end = position - (next_line_position == TString::npos ? source.size() - 1 : next_line_position);
+            sources[ShaderTypeFromString(type)] = source.substr(next_line_position, end);
+        }
+
+        return sources;
+    }
+
+    void COpenGLShader::Compile(TMap<EShaderType, TString> sources) {
+        // Compile shaders
+        TVector<u32> shaders;
+        for (auto pair : sources) {
+            u32 shader = glCreateShader(GetGLShaderType(pair.first));
+
+            const GLchar *source = pair.second.c_str();
+            glShaderSource(shader, 1, &source, 0);
+
+            glCompileShader(shader);
+
+            GLint is_compiled = 0;
+            glGetShaderiv(shader, GL_COMPILE_STATUS, &is_compiled);
+            if (is_compiled == GL_FALSE) {
+                GLint log_length = 0;
+                glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &log_length);
+
+                GLchar *info_log = new GLchar[log_length];
+                glGetShaderInfoLog(shader, log_length, &log_length, info_log);
+
+                for (u32 id : shaders) {
+                    glDeleteShader(id);
+                }
+                glDeleteShader(shader);
+
+                HYP_CORE_ERROR("Shader compilation error:\n{}", info_log);
+                HYP_ASSERT_MESSAGE(false, "Shader compilation failure!");
+
+                delete info_log;
+
+                return;
+            }
+
+            shaders.push_back(shader);
+        }   
+
+        // Link program
+        u32 program = glCreateProgram();
+        {
+            for (u32 id : shaders) {
+                glAttachShader(program, id);
+            }
+            glLinkProgram(program);
+
+            GLint is_linked = 0;
+            glGetProgramiv(program, GL_LINK_STATUS, (int *)& is_linked);
+            if (is_linked == GL_FALSE) {
+                GLint log_length = 0;
+                glGetProgramiv(program, GL_INFO_LOG_LENGTH, &log_length);
+
+                GLchar *info_log = new GLchar[log_length];
+                glGetProgramInfoLog(program, log_length, &log_length, info_log);
+
+                for (u32 id : shaders) {
+                    glDeleteShader(id);
+                }
+                glDeleteProgram(program);
+
+                HYP_CORE_ERROR("Shader linking error:\n{}", info_log);
+                HYP_ASSERT_MESSAGE(false, "Shader linking failure!");
+
+                delete info_log;
+
+                return;
+            }
+        }
+
+        m_program_id = program;
+
+        for (u32 shader : shaders) {
+            glDetachShader(program, shader);
+            glDeleteShader(shader);
+        }
+    }
+
+    u32 COpenGLShader::GetGLShaderType(EShaderType type) {
+        switch (type) {
+            case Hyperion::Rendering::EShaderType::Vertex: return GL_VERTEX_SHADER;
+            case Hyperion::Rendering::EShaderType::Fragment: return GL_FRAGMENT_SHADER;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
     }
 
     s32 COpenGLShader::TryGetUniformLocation(const TString &name) {

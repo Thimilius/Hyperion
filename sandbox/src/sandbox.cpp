@@ -28,10 +28,7 @@ protected:
 
         UpdateTitle();
 
-        TString vertex_source = CFileUtilities::ReadFile("data/shaders/simple_vert.glsl");
-        TString fragment_source = CFileUtilities::ReadFile("data/shaders/simple_frag.glsl");
-        m_shader.reset(CShader::Create(vertex_source, fragment_source));
-
+        m_shader.reset(CShader::Create(CFileUtilities::ReadFile("data/shaders/simple.glsl")));
         m_texture.reset(CTexture2D::CreateFromFile("data/textures/grass.png", ETextureWrapMode::Clamp, ETextureFilter::Bilinear));
         
         float verticies[] = { 

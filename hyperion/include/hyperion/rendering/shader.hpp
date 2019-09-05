@@ -5,6 +5,12 @@
 
 namespace Hyperion::Rendering {
 
+    enum class EShaderType {
+        None,
+        Vertex,
+        Fragment
+    };
+
     class CShader {
     public:
         virtual ~CShader() = default;
@@ -21,7 +27,10 @@ namespace Hyperion::Rendering {
 
         virtual void SetMat4(const TString &name, const Math::SMat4 &matrix) = 0;
 
+        static CShader *Create(const TString &source);
         static CShader *Create(const TString &vertex_source, const TString &fragment_source);
+    protected:
+        EShaderType ShaderTypeFromString(const TString &string);
     };
 
 }
