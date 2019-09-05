@@ -46,6 +46,10 @@ namespace Hyperion::Rendering {
             s_render_api->SetViewport(x, y, width, height);
         }
 
+        inline static void SetActiveRenderTarget(CRenderTexture *texture, ERenderTextureTarget target = ERenderTextureTarget::DrawAndRead) {
+            s_render_api->SetActiveRenderTarget(texture, target);
+        }
+
         inline static void Blit(CRenderTexture *destination, s32 dstX0, s32 dstY0, s32 dstX1, s32 dstY1, CRenderTexture *source, s32 srcX0, s32 srcY0, s32 srcX1, s32 srcY1) {
             s_render_api->Blit(destination, dstX0, dstY0, dstX1, dstY1, source, srcX0, srcY0, srcX1, srcY1);
         }

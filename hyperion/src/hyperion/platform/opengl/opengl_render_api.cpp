@@ -40,6 +40,33 @@ namespace Hyperion::Rendering {
         glViewport(x, y, width, height);
     }
 
+    void COpenGLRenderAPI::SetActiveRenderTarget(CRenderTexture *texture, ERenderTextureTarget target) {
+        u32 id = 0;
+        if (texture != nullptr) {
+            id = texture->GetID();
+        }
+
+        switch (target) {
+            case Hyperion::Rendering::ERenderTextureTarget::DrawAndRead:
+                glBindFramebuffer(GL_FRAMEBUFFER, id);
+                break;
+            case Hyperion::Rendering::ERenderTextureTarget::Draw:
+                glBindFramebuffer(GL_DRAW_FRAMEBUFFER, id);
+                break;
+            case Hyperion::Rendering::ERenderTextureTarget::Read:
+                glBindFramebuffer(GL_READ_FRAMEBUFFER, id);
+                break;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        }
+
+        if (id == 0) {
+            CWindow *window = CApplication::GetInstance()->GetWindow();
+            glViewport(0, 0, window->GetWidth(), window->GetHeight());
+        } else {
+            glViewport(0, 0, texture->GetWidth(), texture->GetHeight());
+        }
+    }
+
     void COpenGLRenderAPI::Blit(CRenderTexture *destination, s32 dstX0, s32 dstY0, s32 dstX1, s32 dstY1, CRenderTexture *source, s32 srcX0, s32 srcY0, s32 srcX1, s32 srcY1) {
         s32 draw_framebuffer_id;
         glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &draw_framebuffer_id);
@@ -49,10 +76,10 @@ namespace Hyperion::Rendering {
         if (destination == nullptr) {
             glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
         } else {
-            destination->Bind(ERenderTextureTarget::Draw);
+            SetActiveRenderTarget(destination, ERenderTextureTarget::Draw);
         }
 
-        source->Bind(ERenderTextureTarget::Read);
+        SetActiveRenderTarget(source, ERenderTextureTarget::Read);
         glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, draw_framebuffer_id);

@@ -19,7 +19,7 @@ protected:
     TRef<CPerspectiveCamera> m_camera = std::make_shared<CPerspectiveCamera>(); 
 
     void UpdateTitle() {
-        TString title = CStringUtils::Format("Hyperion | FPS: {} ({:.2f} ms) | Vsync: {}", CTime::GetFPS(), CTime::GetFrameTime(), GetWindow()->GetVSyncMode() != EVSyncMode::DontSync);
+        TString title = CStringUtils::Format("Hyperion | FPS: {} ({:.2f} ms) | VSync: {}", CTime::GetFPS(), CTime::GetFrameTime(), GetWindow()->GetVSyncMode() != EVSyncMode::DontSync);
         GetWindow()->SetTitle(title);
     }
 
@@ -82,8 +82,8 @@ protected:
     }
 
     void OnRender() override {
-        m_render_texture->Bind();
         m_render_texture->Resize(GetWindow()->GetWidth(), GetWindow()->GetHeight());
+        CRenderCommand::SetActiveRenderTarget(m_render_texture.get());
 
         float clear_color = CMathf::Sin((float)CTime::GetTime()) / 2.0f + 0.5f;
         CRenderCommand::SetClearColor(clear_color, clear_color, clear_color, clear_color);
@@ -117,6 +117,9 @@ protected:
             m_render_texture->GetWidth(), 
             m_render_texture->GetHeight()
         );
+
+        // Setting back buffer as render target before swapping buffers fixes vsync
+        CRenderCommand::SetActiveRenderTarget(nullptr);
     }
     
     void OnTick() override {

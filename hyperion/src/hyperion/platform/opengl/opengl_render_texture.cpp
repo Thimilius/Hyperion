@@ -14,26 +14,6 @@ namespace Hyperion::Rendering {
         glDeleteFramebuffers(1, &m_framebuffer_id);
     }
 
-    void COpenGLRenderTexture::Bind(ERenderTextureTarget target) const {
-        switch (target) {
-            case Hyperion::Rendering::ERenderTextureTarget::DrawAndRead:
-                glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer_id);
-                break;
-            case Hyperion::Rendering::ERenderTextureTarget::Draw:
-                glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_framebuffer_id);
-                break;
-            case Hyperion::Rendering::ERenderTextureTarget::Read:
-                glBindFramebuffer(GL_READ_FRAMEBUFFER, m_framebuffer_id);
-                break;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-        }
-        glViewport(0, 0, m_width, m_height);
-    }
-
-    void COpenGLRenderTexture::Unbind() const {
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    }
-
     void COpenGLRenderTexture::Resize(u32 width, u32 height) {
         if (m_width == width && m_height == height) {
             return;
