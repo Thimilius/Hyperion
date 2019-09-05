@@ -83,7 +83,7 @@ protected:
 
     void OnRender() override {
         m_render_texture->Resize(GetWindow()->GetWidth(), GetWindow()->GetHeight());
-        CRenderCommand::SetActiveRenderTarget(m_render_texture.get());
+        CRenderCommand::SetActiveRenderTarget(m_render_texture);
 
         float clear_color = CMathf::Sin((float)CTime::GetTime()) / 2.0f + 0.5f;
         CRenderCommand::SetClearColor(clear_color, clear_color, clear_color, clear_color);
@@ -111,7 +111,7 @@ protected:
             0, 
             GetWindow()->GetWidth(), 
             GetWindow()->GetHeight(), 
-            m_render_texture.get(), 
+            m_render_texture, 
             0,
             0, 
             m_render_texture->GetWidth(), 
