@@ -34,12 +34,12 @@ protected:
             if (CStringUtils::EndsWith(path, "simple.glsl")) {
                 TString source = CFileUtilities::ReadFile("data/shaders/simple.glsl");
                 if (!source.empty()) {
-                    m_shader.reset(CShader::Create(source));
+                    m_shader = CShader::Create(source);
                 }
             }
         }, true));
 
-        m_shader.reset(CShader::Create(CFileUtilities::ReadFile("data/shaders/simple.glsl")));
+        m_shader = CShader::Create(CFileUtilities::ReadFile("data/shaders/simple.glsl"));
         m_texture.reset(CTexture2D::CreateFromFile("data/textures/grass.png", ETextureWrapMode::Clamp, ETextureFilter::Bilinear));
         
         float verticies[] = { 
@@ -70,7 +70,9 @@ protected:
     }
     
     void OnEvent(CEvent &event) override {
-
+        if (event.GetType() == EEventType::WindowResize) {
+            //m_render_texture->Resize(GetWindow()->GetWidth(), GetWindow()->GetHeight());
+        }
     }
 
     void OnUpdate(float delta_time) override {
@@ -91,7 +93,6 @@ protected:
     }
 
     void OnRender() override {
-        m_render_texture->Resize(GetWindow()->GetWidth(), GetWindow()->GetHeight());
         CRenderCommand::SetActiveRenderTarget(m_render_texture);
 
         float clear_color = CMathf::Sin((float)CTime::GetTime()) / 2.0f + 0.5f;
