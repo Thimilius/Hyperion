@@ -17,7 +17,7 @@ namespace Hyperion::Rendering {
         virtual const TVector<TRef<CVertexBuffer>> &GetVertexBuffers() const = 0;
         virtual const TRef<CIndexBuffer> &GetIndexBuffer() const = 0;
 
-        static CVertexArray *Create();
+        static TRef<CVertexArray> Create();
     };
 
 }

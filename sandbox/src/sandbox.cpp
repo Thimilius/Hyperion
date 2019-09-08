@@ -40,7 +40,7 @@ protected:
         }, true));
 
         m_shader = CShader::Create(CFileUtilities::ReadFile("data/shaders/simple.glsl"));
-        m_texture.reset(CTexture2D::CreateFromFile("data/textures/grass.png", ETextureWrapMode::Clamp, ETextureFilter::Bilinear));
+        m_texture = CTexture2D::CreateFromFile("data/textures/grass.png", ETextureWrapMode::Clamp, ETextureFilter::Bilinear);
         
         float verticies[] = { 
              0.5f,  0.5f, 0.0f,  1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
@@ -48,7 +48,7 @@ protected:
             -0.5f, -0.5f, 0.0f,  0.0f, 0.0f,  0.0f, 0.0f, 1.0f, 1.0f,
             -0.5f,  0.5f, 0.0f,  0.0f, 1.0f,  1.0f, 1.0f, 0.0f, 1.0f,
         };
-        m_vertex_buffer.reset(CVertexBuffer::Create((u8*)verticies, sizeof(verticies)));
+        m_vertex_buffer = CVertexBuffer::Create((u8*)verticies, sizeof(verticies));
         CBufferLayout buffer_layout({
             SBufferElement("a_position", EShaderDataType::Float3),
             SBufferElement("a_uv", EShaderDataType::Float2),
@@ -60,18 +60,18 @@ protected:
             0, 1, 2,
             0, 2, 3,
         };
-        m_index_buffer.reset(CIndexBuffer::Create(indicies, sizeof(indicies)));
+        m_index_buffer = CIndexBuffer::Create(indicies, sizeof(indicies));
 
-        m_vertex_array.reset(CVertexArray::Create());
+        m_vertex_array = CVertexArray::Create();
         m_vertex_array->AddVertexBuffer(m_vertex_buffer);
         m_vertex_array->SetIndexBuffer(m_index_buffer);
 
-        m_render_texture.reset(CRenderTexture::Create(GetWindow()->GetWidth(), GetWindow()->GetHeight(), ERenderTextureFormat::RGBA8));
+        m_render_texture = CRenderTexture::Create(GetWindow()->GetWidth(), GetWindow()->GetHeight(), ERenderTextureFormat::RGBA8);
     }
     
     void OnEvent(CEvent &event) override {
         if (event.GetType() == EEventType::WindowResize) {
-            //m_render_texture->Resize(GetWindow()->GetWidth(), GetWindow()->GetHeight());
+            m_render_texture->Resize(GetWindow()->GetWidth(), GetWindow()->GetHeight());
         }
     }
 

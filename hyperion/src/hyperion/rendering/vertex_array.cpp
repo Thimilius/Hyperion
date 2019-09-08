@@ -6,9 +6,9 @@
 
 namespace Hyperion::Rendering {
 
-    CVertexArray *CVertexArray::Create() {
+    TRef<CVertexArray> CVertexArray::Create() {
         switch (CRenderAPI::GetAPI()) {
-            case ERenderAPI::OpenGL: return new COpenGLVertexArray();
+            case ERenderAPI::OpenGL: return std::make_shared<COpenGLVertexArray>();
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }

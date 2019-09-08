@@ -26,7 +26,7 @@ namespace Hyperion::Rendering {
 
         virtual void Resize(u32 width, u32 height) = 0;
 
-        static CRenderTexture *Create(u32 width, u32 height, ERenderTextureFormat format);
+        static TRef<CRenderTexture> Create(u32 width, u32 height, ERenderTextureFormat format);
     };
 
 }
