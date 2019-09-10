@@ -8,8 +8,8 @@ namespace Hyperion::Rendering {
     private:
         u32 m_program_id;
     public:
-        COpenGLShader(const TString &source);
-        COpenGLShader(const TString &vertex_source, const TString &fragment_source);
+        COpenGLShader(const TString &name, const TString &source);
+        COpenGLShader(const TString &name, const TString &vertex_source, const TString &fragment_source);
         ~COpenGLShader();
 
         void Bind() const override;

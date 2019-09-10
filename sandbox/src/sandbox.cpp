@@ -32,14 +32,11 @@ protected:
 
         m_watcher.reset(new CFileWatcher("data/shaders/", [this](EFileStatus status, const TString &path) {
             if (CStringUtils::EndsWith(path, "simple.glsl")) {
-                TString source = CFileUtilities::ReadFile("data/shaders/simple.glsl");
-                if (!source.empty()) {
-                    m_shader = CShader::Create(source);
-                }
+                m_shader = CShaderLibrary::Reload("simple");
             }
         }, true));
 
-        m_shader = CShader::Create(CFileUtilities::ReadFile("data/shaders/simple.glsl"));
+        m_shader = CShaderLibrary::Load("simple", "data/shaders/simple.glsl");
         m_texture = CTexture2D::CreateFromFile("data/textures/grass.png", ETextureWrapMode::Clamp, ETextureFilter::Bilinear);
         
         float verticies[] = { 

@@ -4,11 +4,11 @@
 
 namespace Hyperion::Rendering {
 
-    COpenGLShader::COpenGLShader(const TString &source) {
+    COpenGLShader::COpenGLShader(const TString &name, const TString &source) : CShader(name) {
         Compile(PreProcess(source));
     }
     
-    COpenGLShader::COpenGLShader(const TString &vertex_source, const TString &fragment_source) {
+    COpenGLShader::COpenGLShader(const TString &name, const TString &vertex_source, const TString &fragment_source) : CShader(name) {
         TMap<EShaderType, TString> sources(2);
         sources[EShaderType::Vertex] = vertex_source;
         sources[EShaderType::Fragment] = fragment_source;

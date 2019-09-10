@@ -1,6 +1,7 @@
 #pragma once
 
 #include "hyperion/common.hpp"
+#include "hyperion/core/asset.hpp"
 #include "hyperion/math/math.hpp"
 
 namespace Hyperion::Rendering {
@@ -11,8 +12,9 @@ namespace Hyperion::Rendering {
         Fragment
     };
 
-    class CShader {
+    class CShader : public CAsset {
     public:
+        CShader(const TString &name) : CAsset(name) { }
         virtual ~CShader() = default;
 
         virtual void Bind() const = 0;
@@ -27,19 +29,24 @@ namespace Hyperion::Rendering {
 
         virtual void SetMat4(const TString &name, const Math::SMat4 &matrix) = 0;
 
-        static TRef<CShader> Create(const TString &source);
-        static TRef<CShader> Create(const TString &vertex_source, const TString &fragment_source);
+        static TRef<CShader> Create(const TString &name, const TString &source);
+        static TRef<CShader> Create(const TString &name, const TString &vertex_source, const TString &fragment_source);
     protected:
         EShaderType ShaderTypeFromString(const TString &string);
     };
 
     class CShaderLibrary {
     private:
-        inline static TMap<TString, TRef<CShader>> m_shaders;
+        struct SShaderEntry {
+            TRef<CShader> shader;
+            TString filepath;
+        };
+
+        inline static TMap<TString, SShaderEntry> m_shaders;
     public:
         static TRef<CShader> Load(const TString &name, const TString &filepath);
-
-        static void Add(const TString &name, const TRef<CShader> &shader);
+        static TRef<CShader> Reload(const TString &name);
+        static void Add(const TString &name, const TString &filepath, const TRef<CShader> &shader);
         static TRef<CShader> Get(const TString &name);
     private:
         CShaderLibrary() = delete;
