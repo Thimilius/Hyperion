@@ -26,7 +26,7 @@ protected:
     }
 
     void OnInit() override {
-        GetWindow()->SetIcon("logo/logo.ico");
+        GetWindow()->SetIcon("logo/logo_1.ico");
 
         UpdateTitle();
 
