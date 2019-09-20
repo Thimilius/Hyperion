@@ -36,33 +36,9 @@ protected:
 
         m_shader = CShaderLibrary::Load("simple", "data/shaders/simple.glsl");
         m_texture = CTexture2D::CreateFromFile("data/textures/grass.png", ETextureWrapMode::Clamp, ETextureFilter::Bilinear);
-
-        float verticies[] = { 
-             0.5f,  0.5f, 0.0f,  1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
-             0.5f, -0.5f, 0.0f,  1.0f, 0.0f,  0.0f, 1.0f, 0.0f, 1.0f,
-            -0.5f, -0.5f, 0.0f,  0.0f, 0.0f,  0.0f, 0.0f, 1.0f, 1.0f,
-            -0.5f,  0.5f, 0.0f,  0.0f, 1.0f,  1.0f, 1.0f, 0.0f, 1.0f,
-        };
-        TRef<CVertexBuffer> m_vertex_buffer = CVertexBuffer::Create((u8*)verticies, sizeof(verticies));
-        CBufferLayout buffer_layout({
-            SBufferElement("a_position", EShaderDataType::Float3),
-            SBufferElement("a_uv", EShaderDataType::Float2),
-            SBufferElement("a_color", EShaderDataType::Float4),
-        });
-        m_vertex_buffer->SetLayout(buffer_layout);
-
-        u32 indicies[] = {
-            0, 1, 2,
-            0, 2, 3,
-        };
-        TRef<CIndexBuffer> m_index_buffer = CIndexBuffer::Create(indicies, sizeof(indicies));
-
-        TRef<CVertexArray> m_vertex_array = CVertexArray::Create();
-        m_vertex_array->AddVertexBuffer(m_vertex_buffer);
-        m_vertex_array->SetIndexBuffer(m_index_buffer);
-
-        m_mesh = CMesh::Create(m_vertex_array);
-
+  
+        m_mesh = CMesh::CreatePlane(1, 1);
+         
         m_render_texture = CRenderTexture::Create(GetWindow()->GetWidth(), GetWindow()->GetHeight(), ERenderTextureFormat::RGBA8);
     }
     
@@ -96,7 +72,7 @@ protected:
         CRenderCommand::SetClearColor(clear_color, clear_color, clear_color, clear_color);
         CRenderCommand::Clear(EClearMask::Color | EClearMask::Depth);
 
-        //CRenderCommand::EnableFeature(EFeature::Culling);
+        CRenderCommand::EnableFeature(EFeature::Culling);
         CRenderCommand::SetFrontFaceMode(EFrontFaceMode::Clockwise);
         CRenderCommand::SetCullingMode(ECullingMode::Back);
 
@@ -108,7 +84,7 @@ protected:
             m_shader->Bind();
             m_shader->SetInt("u_texture", 0);
             m_texture->Bind(0);
-            CRenderer::Submit(m_mesh, m_shader, SMat4::Translate(0, 0, -1));
+            CRenderer::Submit(m_mesh, m_shader, SMat4::TRS(SVec3(0, 0, -1), SVec3(1, 0, 0), 90.0f, SVec3::One()));
         }
         CRenderer::End();
 

@@ -2,12 +2,12 @@
 #version 410 core
 
 layout(location = 0) in vec3 a_position;
-layout(location = 1) in vec2 a_uv;
-layout(location = 2) in vec4 a_color;
+layout(location = 1) in vec3 a_normal;
+layout(location = 2) in vec2 a_uv;
 
 out VS_OUT {
+	vec3 normal;
 	vec2 uv;
-	vec4 color;
 } vs_out;
 
 uniform struct Transform {
@@ -22,7 +22,7 @@ vec4 obj_to_clip_space(vec3 position) {
 
 void main() {
 	vs_out.uv = a_uv;
-	vs_out.color = a_color;
+	vs_out.normal = a_normal;
 
 	gl_Position = obj_to_clip_space(a_position);
 }
@@ -33,8 +33,8 @@ void main() {
 out vec4 o_color;
 
 in VS_OUT {
+	vec3 normal;
 	vec2 uv;
-	vec4 color;
 } fs_in;
 
 uniform sampler2D u_texture;
