@@ -513,8 +513,12 @@ namespace Hyperion {
                 window->m_height = height;
                 window->m_window_state = window_state;
 
-                CWindowResizeEvent event(width, height);
-                window->DispatchEvent(event);
+                // We do not want to generate a window resize event when the size gets 0 because the window got minimized
+                if (width > 0 && height > 0) {
+                    CWindowResizeEvent event(width, height);
+                    window->DispatchEvent(event);
+                }
+                
                 break;
             }
 
