@@ -8,9 +8,9 @@ namespace Hyperion::Rendering {
     private:
         u32 m_texture_id;
     public:
-        COpenGLTexture2D(u32 width, u32 height, ETextureFormat format, ETextureWrapMode wrap_mode, ETextureFilter filter);
-        COpenGLTexture2D(u32 width, u32 height, ETextureFormat format, ETextureWrapMode wrap_mode, ETextureFilter filter, const u8 *pixels);
-        COpenGLTexture2D(const TString &path, ETextureWrapMode wrap_mode, ETextureFilter filter);
+        COpenGLTexture2D(u32 width, u32 height, ETextureFormat format, ETextureWrapMode wrap_mode, ETextureFilter filter, ETextureAnisotropicFilter anisotropic_filter);
+        COpenGLTexture2D(u32 width, u32 height, ETextureFormat format, ETextureWrapMode wrap_mode, ETextureFilter filter, ETextureAnisotropicFilter anisotropic_filter, const u8 *pixels);
+        COpenGLTexture2D(const TString &path, ETextureWrapMode wrap_mode, ETextureFilter filter, ETextureAnisotropicFilter anisotropic_filter);
         ~COpenGLTexture2D();
 
         void Bind(u32 slot = 0) const override;
@@ -20,6 +20,7 @@ namespace Hyperion::Rendering {
 
         void SetWrapMode(ETextureWrapMode wrap_mode) override;
         void SetFilter(ETextureFilter filter) override;
+        void SetAnisotropicFilter(ETextureAnisotropicFilter anisotropic_filter) override;
     private:
         void CreateTexture(const u8 *pixels);
 

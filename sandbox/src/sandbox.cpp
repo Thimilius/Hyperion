@@ -35,8 +35,8 @@ protected:
         }, true));
 
         m_shader = CShaderLibrary::Load("simple", "data/shaders/simple.glsl");
-        m_texture = CTexture2D::CreateFromFile("data/textures/grass.png", ETextureWrapMode::Clamp, ETextureFilter::Bilinear);
-  
+        m_texture = CTexture2D::CreateFromFile("data/textures/grass.png", ETextureWrapMode::Clamp, ETextureFilter::Bilinear, ETextureAnisotropicFilter::None);
+
         m_mesh = CMesh::CreatePlane(1, 1);
          
         m_render_texture = CRenderTexture::Create(GetWindow()->GetWidth(), GetWindow()->GetHeight(), ERenderTextureFormat::RGBA8);

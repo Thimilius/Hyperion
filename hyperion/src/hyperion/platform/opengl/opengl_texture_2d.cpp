@@ -3,23 +3,24 @@
 
 namespace Hyperion::Rendering {
 
-    COpenGLTexture2D::COpenGLTexture2D(u32 width, u32 height, ETextureFormat format, ETextureWrapMode wrap_mode, ETextureFilter filter)
-        : COpenGLTexture2D(width, height, format, wrap_mode, filter, nullptr) { }
+    COpenGLTexture2D::COpenGLTexture2D(u32 width, u32 height, ETextureFormat format, ETextureWrapMode wrap_mode, ETextureFilter filter, ETextureAnisotropicFilter anisotropic_filter)
+        : COpenGLTexture2D(width, height, format, wrap_mode, filter, anisotropic_filter, nullptr) { }
 
-    COpenGLTexture2D::COpenGLTexture2D(u32 width, u32 height, ETextureFormat format, ETextureWrapMode wrap_mode, ETextureFilter filter, const u8 *pixels) {
+    COpenGLTexture2D::COpenGLTexture2D(u32 width, u32 height, ETextureFormat format, ETextureWrapMode wrap_mode, ETextureFilter filter, ETextureAnisotropicFilter anisotropic_filter, const u8 *pixels) {
         m_width = width;
         m_height = height;
         m_format = format;
         m_wrap_mode = wrap_mode;
         m_filter = filter;
+        m_anisotropic_filter = anisotropic_filter;
 
         CreateTexture(pixels);
     }
 
-    COpenGLTexture2D::COpenGLTexture2D(const TString &path, ETextureWrapMode wrap_mode, ETextureFilter filter) {
-        
+    COpenGLTexture2D::COpenGLTexture2D(const TString &path, ETextureWrapMode wrap_mode, ETextureFilter filter, ETextureAnisotropicFilter anisotropic_filter) {
         m_wrap_mode = wrap_mode;
         m_filter = filter;
+        m_anisotropic_filter = anisotropic_filter;
 
         stbi_set_flip_vertically_on_load(true);
 
@@ -96,12 +97,26 @@ namespace Hyperion::Rendering {
         glTextureParameteri(m_texture_id, GL_TEXTURE_MAG_FILTER, mag_filter);
     }
 
+    void COpenGLTexture2D::SetAnisotropicFilter(ETextureAnisotropicFilter anisotropic_filter) {
+        float amount = 1.0f;
+        switch (anisotropic_filter) {
+            case Hyperion::Rendering::ETextureAnisotropicFilter::None: amount = 1.0f; break;
+            case Hyperion::Rendering::ETextureAnisotropicFilter::Times2: amount = 2.0f; break;
+            case Hyperion::Rendering::ETextureAnisotropicFilter::Times4: amount = 4.0f; break;
+            case Hyperion::Rendering::ETextureAnisotropicFilter::Times8: amount = 8.0f; break;
+            case Hyperion::Rendering::ETextureAnisotropicFilter::Times16: amount = 16.0f; break;
+            default: amount = 1.0f; break;
+        }
+        glTextureParameterf(m_texture_id, GL_TEXTURE_MAX_ANISOTROPY_EXT, amount);
+    }
+
     void COpenGLTexture2D::CreateTexture(const u8 *pixels) {
         glGenTextures(1, &m_texture_id);
         glBindTexture(GL_TEXTURE_2D, m_texture_id);
 
-        SetFilter(m_filter);
         SetWrapMode(m_wrap_mode);
+        SetFilter(m_filter);
+        SetAnisotropicFilter(m_anisotropic_filter);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GetGLFormat(), m_width, m_height, 0, GetGLFormat(), GL_UNSIGNED_BYTE, pixels);
         glGenerateMipmap(GL_TEXTURE_2D);
