@@ -1,6 +1,7 @@
 #pragma once
 
 #include "hyperion/common.hpp"
+#include "hyperion/core/asset.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -24,7 +25,7 @@ namespace Hyperion::Rendering {
         Trilinear
     };
 
-    class CTexture {
+    class CTexture : public CAsset {
     protected:
         ETextureFormat m_format;
         ETextureWrapMode m_wrap_mode;
