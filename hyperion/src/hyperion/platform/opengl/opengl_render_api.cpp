@@ -86,8 +86,8 @@ namespace Hyperion::Rendering {
         glBindFramebuffer(GL_READ_FRAMEBUFFER, read_framebuffer_id);
     }
 
-    void COpenGLRenderAPI::DrawIndexed(const TRef<CVertexArray> &vertex_array) {
-        glDrawElements(GL_TRIANGLES, vertex_array->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+    void COpenGLRenderAPI::DrawIndexed(const TRef<CIndexBuffer> &index_buffer) {
+        glDrawElements(GL_TRIANGLES, index_buffer->GetCount(), GL_UNSIGNED_INT, nullptr);
     }
 
     u32 COpenGLRenderAPI::GetGLFeature(EFeature feature) {

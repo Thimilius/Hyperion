@@ -2,7 +2,7 @@
 
 #include "render_api.hpp"
 #include "render_texture.hpp"
-#include "vertex_array.hpp"
+#include "buffer.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -54,8 +54,8 @@ namespace Hyperion::Rendering {
             s_render_api->Blit(destination, dstX0, dstY0, dstX1, dstY1, source, srcX0, srcY0, srcX1, srcY1);
         }
 
-        inline static void DrawIndexed(const TRef<CVertexArray> &vertex_array) {
-            s_render_api->DrawIndexed(vertex_array);
+        inline static void DrawIndexed(const TRef<CIndexBuffer> &index_buffer) {
+            s_render_api->DrawIndexed(index_buffer);
         }
     private:
         static void Init();

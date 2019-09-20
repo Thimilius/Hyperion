@@ -11,9 +11,7 @@ public:
 protected:
     TRef<CShader> m_shader;
     TRef<CTexture2D> m_texture;
-    TRef<CVertexBuffer> m_vertex_buffer;
-    TRef<CIndexBuffer> m_index_buffer;
-    TRef<CVertexArray> m_vertex_array;
+    TRef<CMesh> m_mesh;
 
     TRef<CRenderTexture> m_render_texture;
     TRef<CPerspectiveCamera> m_camera = std::make_shared<CPerspectiveCamera>(); 
@@ -45,7 +43,7 @@ protected:
             -0.5f, -0.5f, 0.0f,  0.0f, 0.0f,  0.0f, 0.0f, 1.0f, 1.0f,
             -0.5f,  0.5f, 0.0f,  0.0f, 1.0f,  1.0f, 1.0f, 0.0f, 1.0f,
         };
-        m_vertex_buffer = CVertexBuffer::Create((u8*)verticies, sizeof(verticies));
+        TRef<CVertexBuffer> m_vertex_buffer = CVertexBuffer::Create((u8*)verticies, sizeof(verticies));
         CBufferLayout buffer_layout({
             SBufferElement("a_position", EShaderDataType::Float3),
             SBufferElement("a_uv", EShaderDataType::Float2),
@@ -57,11 +55,13 @@ protected:
             0, 1, 2,
             0, 2, 3,
         };
-        m_index_buffer = CIndexBuffer::Create(indicies, sizeof(indicies));
+        TRef<CIndexBuffer> m_index_buffer = CIndexBuffer::Create(indicies, sizeof(indicies));
 
-        m_vertex_array = CVertexArray::Create();
+        TRef<CVertexArray> m_vertex_array = CVertexArray::Create();
         m_vertex_array->AddVertexBuffer(m_vertex_buffer);
         m_vertex_array->SetIndexBuffer(m_index_buffer);
+
+        m_mesh = CMesh::Create(m_vertex_array);
 
         m_render_texture = CRenderTexture::Create(GetWindow()->GetWidth(), GetWindow()->GetHeight(), ERenderTextureFormat::RGBA8);
     }
@@ -108,7 +108,7 @@ protected:
             m_shader->Bind();
             m_shader->SetInt("u_texture", 0);
             m_texture->Bind(0);
-            CRenderer::Submit(m_shader, m_vertex_array, SMat4::Translate(0, 0, -1));
+            CRenderer::Submit(m_mesh, m_shader, SMat4::Translate(0, 0, -1));
         }
         CRenderer::End();
 

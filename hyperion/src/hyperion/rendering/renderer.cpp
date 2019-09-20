@@ -16,14 +16,15 @@ namespace Hyperion::Rendering {
         
     }
 
-    void CRenderer::Submit(const TRef<CShader> &shader, const TRef<CVertexArray> &vertex_array, const SMat4 &transform) {
+    void CRenderer::Submit(const TRef<CMesh> &mesh, const TRef<CShader> &shader, const Math::SMat4 &transform) {
         shader->Bind();
         shader->SetMat4("u_transform.view", s_state->transform.view);
         shader->SetMat4("u_transform.projection", s_state->transform.projection);
         shader->SetMat4("u_transform.model", transform);
 
+        const TRef<CVertexArray> &vertex_array = mesh->GetVertexArray();
         vertex_array->Bind();
-        CRenderCommand::DrawIndexed(vertex_array);
+        CRenderCommand::DrawIndexed(vertex_array->GetIndexBuffer());
     }
 
 }

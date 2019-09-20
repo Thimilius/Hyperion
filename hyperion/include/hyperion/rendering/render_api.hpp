@@ -93,7 +93,7 @@ namespace Hyperion::Rendering {
         virtual void SetActiveRenderTarget(const TRef<CRenderTexture> texture, ERenderTextureTarget target) = 0;
         virtual void Blit(const TRef<CRenderTexture> destination, s32 dstX0, s32 dstY0, s32 dstX1, s32 dstY1, const TRef<CRenderTexture> source, s32 srcX0, s32 srcY0, s32 srcX1, s32 srcY1) = 0;
 
-        virtual void DrawIndexed(const TRef<CVertexArray> &vertex_array) = 0;
+        virtual void DrawIndexed(const TRef<CIndexBuffer> &index_buffer) = 0;
     public:
         inline static ERenderAPI GetAPI() { return m_render_api; }
     };

@@ -2,7 +2,7 @@
 
 #include "hyperion/common.hpp"
 #include "hyperion/rendering/shader.hpp"
-#include "hyperion/rendering/vertex_array.hpp"
+#include "hyperion/rendering/mesh.hpp"
 #include "hyperion/rendering/camera.hpp"
 #include "hyperion/math/mat4.hpp"
 
@@ -13,7 +13,7 @@ namespace Hyperion::Rendering {
         static void Begin(const CCamera &camera);
         static void End();
 
-        static void Submit(const TRef<CShader> &shader, const TRef<CVertexArray> &vertex_array, const Math::SMat4 &transform);
+        static void Submit(const TRef<CMesh> &mesh, const TRef<CShader> &shader, const Math::SMat4 &transform);
     private:
         struct SState {
             struct {
