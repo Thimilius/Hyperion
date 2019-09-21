@@ -37,8 +37,8 @@ protected:
         m_shader = CShaderLibrary::Load("simple", "data/shaders/simple.glsl");
         m_texture = CTexture2D::CreateFromFile("data/textures/grass.png", ETextureWrapMode::Clamp, ETextureFilter::Bilinear, ETextureAnisotropicFilter::None);
 
-        m_mesh = CMesh::CreatePlane(1, 1);
-         
+        m_mesh = CMesh::CreateCube(2);
+
         m_render_texture = CRenderTexture::Create(GetWindow()->GetWidth(), GetWindow()->GetHeight(), ERenderTextureFormat::RGBA8);
     }
     
@@ -62,7 +62,7 @@ protected:
         }
 
         m_camera->Update();
-        m_watcher->Update();
+        //m_watcher->Update();
     }
 
     void OnRender() override {
@@ -71,6 +71,8 @@ protected:
         float clear_color = CMathf::Sin((float)CTime::GetTime()) / 2.0f + 0.5f;
         CRenderCommand::SetClearColor(clear_color, clear_color, clear_color, clear_color);
         CRenderCommand::Clear(EClearMask::Color | EClearMask::Depth);
+
+        CRenderCommand::EnableFeature(EFeature::DepthTesting);
 
         CRenderCommand::EnableFeature(EFeature::Culling);
         CRenderCommand::SetFrontFaceMode(EFrontFaceMode::Clockwise);
@@ -84,7 +86,8 @@ protected:
             m_shader->Bind();
             m_shader->SetInt("u_texture", 0);
             m_texture->Bind(0);
-            CRenderer::Submit(m_mesh, m_shader, SMat4::TRS(SVec3(0, 0, -1), SVec3(1, 0, 0), 90.0f, SVec3::One()));
+            s32 size = 25;
+            CRenderer::Submit(m_mesh, m_shader, SMat4::Translate(0, 0, -1));
         }
         CRenderer::End();
 

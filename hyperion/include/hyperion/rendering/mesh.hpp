@@ -22,6 +22,7 @@ namespace Hyperion::Rendering {
         static TRef<CMesh> Create(const TRef<CVertexArray> &vertex_array);
         static TRef<CMesh> CreatePlane(float width, float height);
         static TRef<CMesh> CreatePlane(Math::SVec2 size);
+        static TRef<CMesh> CreateCube(float size);
     };
 
 }

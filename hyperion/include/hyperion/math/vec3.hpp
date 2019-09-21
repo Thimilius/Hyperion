@@ -68,8 +68,8 @@ namespace Hyperion::Math {
         inline static SVec3 Down() { return SVec3(0, -1, 0); }
         inline static SVec3 Right() { return SVec3(1, 0, 0); }
         inline static SVec3 Left() { return SVec3(-1, 0, 0); }
-        inline static SVec3 Forward() { return SVec3(0, 0, 1); }
-        inline static SVec3 Back() { return SVec3(0, 0, -1); }
+        inline static SVec3 Forward() { return SVec3(0, 0, -1); }
+        inline static SVec3 Back() { return SVec3(0, 0, 1); }
     };
 
 }
