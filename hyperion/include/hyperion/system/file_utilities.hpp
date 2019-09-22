@@ -6,7 +6,7 @@ namespace Hyperion {
 
     class CFileUtilities {
     public:
-        static TString ReadFile(const TString &path);
+        static TString ReadTextFile(const TString &path);
     private:
         CFileUtilities() = delete;
         ~CFileUtilities() = delete;
