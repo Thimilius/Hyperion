@@ -1,0 +1,34 @@
+#pragma once
+
+#include "hyperion/common.hpp"
+#include "hyperion/system/file_watcher.hpp"
+
+namespace Hyperion {
+
+    
+    class CWindowsFileWatcher : public CFileWatcher {
+        using WatcherCallbackFunc = std::function<void(EFileStatus, const TString &)>;
+    private:
+        struct SWatchStruct {
+            OVERLAPPED overlapped;
+            HANDLE directory_handle;
+            BYTE buffer[32 * 1024];
+            DWORD notify_filter;
+            bool stop_now;
+            CWindowsFileWatcher *watcher; 
+        };
+
+        SWatchStruct watch_struct;
+    public:
+        CWindowsFileWatcher(const TString &path, WatcherCallbackFunc callback, bool recursive);
+        virtual ~CWindowsFileWatcher();
+
+        void Update() override;
+    private:
+        bool RefreshWatch(bool clear);
+        void HandleAction(const TString &path, u32 action);
+
+        static void CALLBACK WatchCallback(DWORD error_code, DWORD number_of_bytes_transfered, LPOVERLAPPED overlapped);
+    };
+
+}

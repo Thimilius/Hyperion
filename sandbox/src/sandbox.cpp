@@ -28,11 +28,11 @@ protected:
 
         UpdateTitle();
 
-        m_watcher.reset(new CFileWatcher("data/shaders/", [this](EFileStatus status, const TString &path) {
+        m_watcher = CFileWatcher::Create("data/shaders/", [this](EFileStatus status, const TString &path) {
             if (CStringUtils::EndsWith(path, "simple.glsl")) {
                 m_shader = CShaderLibrary::Reload("simple");
             }
-        }, true));
+        }, true);
 
         m_shader = CShaderLibrary::Load("simple", "data/shaders/simple.glsl");
         m_texture = CTexture2D::CreateFromFile("data/textures/grass.png", ETextureWrapMode::Clamp, ETextureFilter::Bilinear, ETextureAnisotropicFilter::None);
@@ -62,7 +62,7 @@ protected:
         }
 
         m_camera->Update();
-        //m_watcher->Update();
+        m_watcher->Update();
     }
 
     void OnRender() override {
