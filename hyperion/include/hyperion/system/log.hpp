@@ -8,12 +8,24 @@ namespace Hyperion {
 
     enum class ELogColor {
         Black,
+        
         Red,
         Green,
         Blue,
+
         Yellow,
         Magenta,
         Cyan,
+
+        DarkRed,
+        DarkGreen,
+        DarkBlue,
+
+        DarkYellow,
+        DarkMagenta,
+        DarkCyan,
+
+        Grey,
         White
     };
 

@@ -57,15 +57,22 @@ namespace Hyperion {
     }
 
     void CWindowsOperatingSystem::PrintToConsole(ELogColor color, const TString &message) const {
-        s16 console_color = FOREGROUND_INTENSITY;
+        s16 console_color = 0;
         switch (color) {
-            case Hyperion::ELogColor::Black: break;
-            case Hyperion::ELogColor::Red: console_color = FOREGROUND_RED; break;
-            case Hyperion::ELogColor::Green: console_color = FOREGROUND_GREEN; break;
-            case Hyperion::ELogColor::Blue: console_color = FOREGROUND_BLUE; break;
-            case Hyperion::ELogColor::Yellow: console_color = FOREGROUND_RED | FOREGROUND_GREEN; break;
-            case Hyperion::ELogColor::Magenta: console_color = FOREGROUND_RED | FOREGROUND_BLUE; break;
-            case Hyperion::ELogColor::Cyan: console_color = FOREGROUND_BLUE | FOREGROUND_GREEN; break;
+            case Hyperion::ELogColor::Black: console_color = 0; break;
+            case Hyperion::ELogColor::Red: console_color = FOREGROUND_INTENSITY | FOREGROUND_RED; break;
+            case Hyperion::ELogColor::Green: console_color = FOREGROUND_INTENSITY | FOREGROUND_GREEN; break;
+            case Hyperion::ELogColor::Blue: console_color = FOREGROUND_INTENSITY | FOREGROUND_BLUE; break;
+            case Hyperion::ELogColor::Yellow: console_color = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN; break;
+            case Hyperion::ELogColor::Magenta: console_color = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE; break;
+            case Hyperion::ELogColor::Cyan: console_color = FOREGROUND_INTENSITY | FOREGROUND_BLUE | FOREGROUND_GREEN; break;
+            case Hyperion::ELogColor::DarkRed: console_color = FOREGROUND_RED; break;
+            case Hyperion::ELogColor::DarkGreen: console_color = FOREGROUND_GREEN; break;
+            case Hyperion::ELogColor::DarkBlue: console_color = FOREGROUND_BLUE; break;
+            case Hyperion::ELogColor::DarkYellow: console_color = FOREGROUND_RED | FOREGROUND_GREEN; break;
+            case Hyperion::ELogColor::DarkMagenta: console_color = FOREGROUND_RED | FOREGROUND_BLUE; break;
+            case Hyperion::ELogColor::DarkCyan: console_color = FOREGROUND_BLUE | FOREGROUND_GREEN; break;
+            case Hyperion::ELogColor::Grey: console_color = FOREGROUND_INTENSITY; break;
             case Hyperion::ELogColor::White: console_color = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE; break;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }

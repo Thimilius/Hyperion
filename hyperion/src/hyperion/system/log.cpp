@@ -19,9 +19,9 @@ namespace Hyperion {
     ELogColor CLog::GetLogColor(ELogLevel level) {
         switch (level) {
             case Hyperion::ELogLevel::Trace: return ELogColor::White;
-            case Hyperion::ELogLevel::Info: return ELogColor::Green;
-            case Hyperion::ELogLevel::Warning: return ELogColor::Yellow;
-            case Hyperion::ELogLevel::Error: return ELogColor::Red;
+            case Hyperion::ELogLevel::Info: return ELogColor::DarkGreen;
+            case Hyperion::ELogLevel::Warning: return ELogColor::DarkYellow;
+            case Hyperion::ELogLevel::Error: return ELogColor::DarkRed;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return ELogColor::White;
         }
     }
