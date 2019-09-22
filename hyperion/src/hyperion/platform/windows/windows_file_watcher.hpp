@@ -1,9 +1,9 @@
 #pragma once
 
 #include "hyperion/common.hpp"
-#include "hyperion/system/file_watcher.hpp"
+#include "hyperion/io/file_watcher.hpp"
 
-namespace Hyperion {
+namespace Hyperion::IO {
 
     
     class CWindowsFileWatcher : public CFileWatcher {

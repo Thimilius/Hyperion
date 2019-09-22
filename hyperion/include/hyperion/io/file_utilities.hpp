@@ -2,7 +2,7 @@
 
 #include "hyperion/common.hpp"
 
-namespace Hyperion {
+namespace Hyperion::IO {
 
     class CFileUtilities {
     public:

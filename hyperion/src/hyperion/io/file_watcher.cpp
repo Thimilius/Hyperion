@@ -1,12 +1,12 @@
 #include "hyppch.hpp"
 
-#include "hyperion/system/file_watcher.hpp"
+#include "hyperion/io/file_watcher.hpp"
 
 #ifdef HYP_PLATFORM_WINDOWS
     #include "hyperion/platform/windows/windows_file_watcher.hpp"
 #endif
 
-namespace Hyperion {
+namespace Hyperion::IO {
 
     TRef<CFileWatcher> CFileWatcher::Create(const TString &path, WatcherCallbackFunc callback, bool recursive) {
         switch (COperatingSystem::GetInstance()->GetType()) {

@@ -1,8 +1,8 @@
 #include "hyppch.hpp"
 
-#include "hyperion/system/file_utilities.hpp"
+#include "hyperion/io/file_utilities.hpp"
 
-namespace Hyperion {
+namespace Hyperion::IO {
 
     TString CFileUtilities::ReadTextFile(const TString &path) {
         HANDLE file_handle = CreateFileA(path.c_str(), GENERIC_READ, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);

@@ -4,7 +4,7 @@
 
 #include <filesystem>
 
-namespace Hyperion {
+namespace Hyperion::IO {
 
     enum class EFileStatus {
         None,

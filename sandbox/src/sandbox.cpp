@@ -3,6 +3,7 @@
 using namespace Hyperion;
 using namespace Hyperion::Events;
 using namespace Hyperion::Math;
+using namespace Hyperion::IO;
 using namespace Hyperion::Rendering;
 
 class CSandboxApp : public CApplication {

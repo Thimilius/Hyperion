@@ -27,11 +27,12 @@
 #include "rendering/render_texture.hpp"
 #include "rendering/camera.hpp"
 
+#include "io/file_utilities.hpp"
+#include "io/file_watcher.hpp"
+
 #include "system/log.hpp"
 #include "system/engine.hpp"
 #include "system/operating_system.hpp"
-#include "system/file_utilities.hpp"
-#include "system/file_watcher.hpp"
 
 // ------------ ENTRY POINT --------------
 #include "entry_point.hpp"

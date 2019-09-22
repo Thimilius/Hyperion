@@ -2,7 +2,7 @@
 
 #include "windows_file_watcher.hpp"
 
-namespace Hyperion {
+namespace Hyperion::IO {
 
     CWindowsFileWatcher::CWindowsFileWatcher(const TString &path, WatcherCallbackFunc callback, bool recursive) {
         m_path = path;
