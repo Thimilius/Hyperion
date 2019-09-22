@@ -10,7 +10,7 @@ class CSandboxApp : public CApplication {
 public:
     CSandboxApp() : CApplication(SApplicationSettings()) { }
 protected:
-    TRef<CShader> m_shader;
+    TRef<CShader> m_lambertian_shader;
     TRef<CTexture2D> m_texture;
     TRef<CMesh> m_mesh;
 
@@ -29,18 +29,16 @@ protected:
 
         UpdateTitle();
 
+        m_lambertian_shader = CShaderLibrary::Load("lambertian", "data/shaders/lambertian.glsl");
+        m_texture = CTexture2D::CreateFromFile("data/textures/grass.png", ETextureWrapMode::Clamp, ETextureFilter::Bilinear, ETextureAnisotropicFilter::None);
+        m_mesh = CMesh::CreateCube(1);
+        m_render_texture = CRenderTexture::Create(GetWindow()->GetWidth(), GetWindow()->GetHeight(), ERenderTextureFormat::RGBA8);
+
         m_watcher = CFileWatcher::Create("data/shaders/", [this](EFileStatus status, const TString &path) {
-            if (CStringUtils::EndsWith(path, "simple.glsl")) {
-                m_shader = CShaderLibrary::Reload("simple");
+            if (CStringUtils::EndsWith(path, "lambertian.glsl")) {
+                m_lambertian_shader = CShaderLibrary::Reload("lambertian");
             }
         }, true);
-
-        m_shader = CShaderLibrary::Load("simple", "data/shaders/simple.glsl");
-        m_texture = CTexture2D::CreateFromFile("data/textures/grass.png", ETextureWrapMode::Clamp, ETextureFilter::Bilinear, ETextureAnisotropicFilter::None);
-
-        m_mesh = CMesh::CreateCube(1);
-
-        m_render_texture = CRenderTexture::Create(GetWindow()->GetWidth(), GetWindow()->GetHeight(), ERenderTextureFormat::RGBA8);
     }
     
     void OnEvent(CEvent &event) override {
@@ -69,8 +67,7 @@ protected:
     void OnRender() override {
         CRenderCommand::SetActiveRenderTarget(m_render_texture);
 
-        float clear_color = CMathf::Sin((float)CTime::GetTime()) / 2.0f + 0.5f;
-        CRenderCommand::SetClearColor(clear_color, clear_color, clear_color, clear_color);
+        CRenderCommand::SetClearColor(0, 0, 0, 1);
         CRenderCommand::Clear(EClearMask::Color | EClearMask::Depth);
 
         CRenderCommand::EnableFeature(EFeature::DepthTesting);
@@ -84,11 +81,12 @@ protected:
 
         CRenderer::Begin(*m_camera);
         {
-            m_shader->Bind();
-            m_shader->SetInt("u_texture", 0);
+            m_lambertian_shader->Bind();
+            m_lambertian_shader->SetFloat3("u_light.position", SVec3(2, 2, 2));
+            m_lambertian_shader->SetFloat3("u_light.color", SVec3(1, 1, 1));
+            m_lambertian_shader->SetInt("u_texture", 0);
             m_texture->Bind(0);
-            s32 size = 25;
-            CRenderer::Submit(m_mesh, m_shader, SMat4::Translate(0, 0, -1));
+            CRenderer::Submit(m_mesh, m_lambertian_shader, SMat4::Translate(0, 0, -1));
         }
         CRenderer::End();
 

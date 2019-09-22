@@ -15,7 +15,6 @@ namespace Hyperion::IO {
         GetFileSizeEx(file_handle, &file_size_large);
 
         u64 file_size = file_size_large.QuadPart;
-        HYP_ASSERT_MESSAGE(file_size > 0, "");
 
         char *file_buffer = new char[file_size + 1];
         DWORD bytes_read = 0;
