@@ -25,9 +25,23 @@ namespace Hyperion::Rendering {
                 m_last_mouse_position.y = mouse_position.y;
             }
 
-            float sensitivity = 0.25f;
+            const float sensitivity = 0.25f;
             x_offset *= sensitivity;
             y_offset *= sensitivity;
+
+            const float rotation_speed = 100.0f * delta;
+            if (CInput::GetKey(EKeyCode::Left) || CInput::GetKey(EKeyCode::Q)) {
+                m_yaw -= rotation_speed;
+            }
+            if (CInput::GetKey(EKeyCode::Right) || CInput::GetKey(EKeyCode::E)) {
+                m_yaw += rotation_speed;
+            }
+            if (CInput::GetKey(EKeyCode::Up)) {
+                m_pitch += rotation_speed;
+            }
+            if (CInput::GetKey(EKeyCode::Down)) {
+                m_pitch -= rotation_speed;
+            }
 
             m_yaw += x_offset;
             m_pitch += y_offset;
