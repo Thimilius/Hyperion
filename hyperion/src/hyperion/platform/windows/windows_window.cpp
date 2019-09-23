@@ -208,7 +208,7 @@ namespace Hyperion {
         ShowWindow(m_window_handle, SW_SHOWNORMAL);
     }
 
-    EMouseButtonCode CWindowsWindow::GetMouseButtonCode(u32 code) const {
+    EMouseButtonCode CWindowsWindow::TranslateMouseButtonCode(u32 code) const {
         code = code & ~(MK_CONTROL & MK_SHIFT);
 
         switch (code) {
@@ -223,8 +223,39 @@ namespace Hyperion {
         }
     }
 
-    EKeyCode CWindowsWindow::GetKeyCode(u32 code) const {
-        switch (code) {
+    EKeyCode CWindowsWindow::TranslateKeyCode(u32 w_param, u32 l_param) const {
+        // Left and right keys need to be distinguished as extended keys
+        if (w_param == VK_CONTROL) {
+            if (l_param & 0x01000000) {
+                return EKeyCode::RightControl;
+            }
+
+            // Alt-Gr sends both left control and alt right messages.
+            // We are only interested in the alt right message,
+            // so we need to discard the left control message.
+            {
+                DWORD message_time = GetMessageTime();
+                MSG next_message;
+                if (PeekMessageA(&next_message, NULL, 0, 0, PM_NOREMOVE)) {
+                    if (next_message.message == WM_KEYDOWN || next_message.message == WM_SYSKEYDOWN || next_message.message == WM_KEYUP || next_message.message == WM_SYSKEYUP) {
+                        if (next_message.wParam == VK_MENU && (next_message.lParam & 0x01000000) && next_message.time == message_time) {
+                            // Next message is right alt down so discard this
+                            return EKeyCode::None;
+                        }
+                    }
+                }
+            }
+
+            return EKeyCode::LeftControl;
+        } else if (w_param == VK_MENU) {
+            if (l_param & 0x01000000) {
+                return EKeyCode::RightAlt;
+            } else {
+                return EKeyCode::LeftAlt;
+            }
+        }
+
+        switch (w_param) {
             case '1': return EKeyCode::Alpha1;
             case '2': return EKeyCode::Alpha2;
             case '3': return EKeyCode::Alpha3;
@@ -296,17 +327,10 @@ namespace Hyperion {
             case VK_RWIN: return EKeyCode::RightSuper;
             case VK_APPS: return EKeyCode::Application;
 
-            case VK_CONTROL: return EKeyCode::Control;
-            case VK_LCONTROL: return EKeyCode::LeftControl;
-            case VK_RCONTROL: return EKeyCode::RightControl;
-
+            // FIXME: Left and right shift keys are not distinguished!
             case VK_SHIFT: return EKeyCode::Shift;
             case VK_LSHIFT: return EKeyCode::LeftShift;
             case VK_RSHIFT: return EKeyCode::RightShift;
-
-            case VK_MENU: return EKeyCode::Alt;
-            case VK_LMENU: return EKeyCode::LeftAlt;
-            case VK_RMENU: return EKeyCode::RightAlt;
 
             case VK_F1: return EKeyCode::F1;
             case VK_F2: return EKeyCode::F2;
@@ -450,15 +474,21 @@ namespace Hyperion {
 
             case WM_KEYDOWN: 
             case WM_SYSKEYDOWN: {
-                CKeyPressedEvent event(window->GetKeyCode((u32)w_param), window->GetKeyModifier());
-                window->DispatchEvent(event);
+                EKeyCode key_code = window->TranslateKeyCode((u32)w_param, (u32)l_param);
+                if (key_code != EKeyCode::None) {
+                    CKeyPressedEvent event(key_code, window->GetKeyModifier());
+                    window->DispatchEvent(event);
+                }
                 break;
             }
 
             case WM_KEYUP:
             case WM_SYSKEYUP: {
-                CKeyReleasedEvent event(window->GetKeyCode(((u32)w_param)), window->GetKeyModifier());
-                window->DispatchEvent(event);
+                EKeyCode key_code = window->TranslateKeyCode((u32)w_param, (u32)l_param);
+                if (key_code != EKeyCode::None) {
+                    CKeyReleasedEvent event(key_code, window->GetKeyModifier());
+                    window->DispatchEvent(event);
+                }
                 break;
             }
 
@@ -467,7 +497,7 @@ namespace Hyperion {
             case WM_MBUTTONDOWN:
             case WM_XBUTTONDOWN: {
                 u32 code = window->GetMouseButtonFromMessage((u32)message, (u32)w_param);
-                CMouseButtonPressedEvent event(window->GetMouseButtonCode(code), window->GetKeyModifier());
+                CMouseButtonPressedEvent event(window->TranslateMouseButtonCode(code), window->GetKeyModifier());
                 window->DispatchEvent(event);
                 break;
             }
@@ -477,7 +507,7 @@ namespace Hyperion {
             case WM_MBUTTONUP:
             case WM_XBUTTONUP: {
                 u32 code = window->GetMouseButtonFromMessage((u32)message, (u32)w_param);
-                CMouseButtonReleasedEvent event(window->GetMouseButtonCode(code), window->GetKeyModifier());
+                CMouseButtonReleasedEvent event(window->TranslateMouseButtonCode(code), window->GetKeyModifier());
                 window->DispatchEvent(event);
                 break;
             }

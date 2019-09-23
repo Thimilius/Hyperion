@@ -22,8 +22,8 @@ namespace Hyperion {
         void Update() const override;
         void Show() const override;
 
-        EKeyCode GetKeyCode(u32 code) const;
-        EMouseButtonCode GetMouseButtonCode(u32 code) const;
+        EKeyCode TranslateKeyCode(u32 w_param, u32 l_param) const;
+        EMouseButtonCode TranslateMouseButtonCode(u32 code) const;
         EKeyModifier GetKeyModifier() const;
 
         void CreateContext();
