@@ -190,8 +190,10 @@ namespace Hyperion {
 
         // We also set the icon for the console window
         HWND console_window_handle = GetConsoleWindow();
-        SendMessageA(console_window_handle, WM_SETICON, ICON_SMALL, (LPARAM)icon);
-        SendMessageA(console_window_handle, WM_SETICON, ICON_BIG, (LPARAM)icon);
+        if (console_window_handle) {
+            SendMessageA(console_window_handle, WM_SETICON, ICON_SMALL, (LPARAM)icon);
+            SendMessageA(console_window_handle, WM_SETICON, ICON_BIG, (LPARAM)icon);
+        }
     }
 
     void CWindowsWindow::Update() const {
@@ -233,20 +235,40 @@ namespace Hyperion {
             // Alt-Gr sends both left control and alt right messages.
             // We are only interested in the alt right message,
             // so we need to discard the left control message.
-            {
-                DWORD message_time = GetMessageTime();
-                MSG next_message;
-                if (PeekMessageA(&next_message, NULL, 0, 0, PM_NOREMOVE)) {
-                    if (next_message.message == WM_KEYDOWN || next_message.message == WM_SYSKEYDOWN || next_message.message == WM_KEYUP || next_message.message == WM_SYSKEYUP) {
-                        if (next_message.wParam == VK_MENU && (next_message.lParam & 0x01000000) && next_message.time == message_time) {
-                            // Next message is right alt down so discard this
-                            return EKeyCode::None;
-                        }
+            DWORD message_time = GetMessageTime();
+            MSG next_message;
+            if (PeekMessageA(&next_message, NULL, 0, 0, PM_NOREMOVE)) {
+                if (next_message.message == WM_KEYDOWN || next_message.message == WM_SYSKEYDOWN || next_message.message == WM_KEYUP || next_message.message == WM_SYSKEYUP) {
+                    if (next_message.wParam == VK_MENU && (next_message.lParam & 0x01000000) && next_message.time == message_time) {
+                        // Next message is right alt down so discard this
+                        return EKeyCode::None;
                     }
                 }
             }
 
             return EKeyCode::LeftControl;
+        } else if (w_param == VK_SHIFT) {
+            // Left and right shift keys are not send as extended keys
+            // and therefore need to be queried explicitly
+            bool left_shift_down = GetKeyState(VK_LSHIFT) & 0x8000;
+            bool right_shift_down = GetAsyncKeyState(VK_RSHIFT) & 0x8000;
+
+            if (left_shift_down) {
+                return EKeyCode::LeftShift;
+            } else if (right_shift_down) {
+                return EKeyCode::RightShift;
+            } else {
+                // If neither the right nor the left shift key is down this means they just got released.
+                // however we can not distinguish between the two and just send out both release events explicitly
+
+                // FIXME: The event dispatching should not be done in this method
+                CKeyReleasedEvent left_event(EKeyCode::LeftShift, GetKeyModifier());
+                CKeyReleasedEvent right_event(EKeyCode::RightShift, GetKeyModifier());
+                DispatchEvent(left_event);
+                DispatchEvent(right_event);
+
+                return EKeyCode::None;
+            }
         } else if (w_param == VK_MENU) {
             if (l_param & 0x01000000) {
                 return EKeyCode::RightAlt;
@@ -326,11 +348,6 @@ namespace Hyperion {
             case VK_LWIN: return EKeyCode::LeftSuper;
             case VK_RWIN: return EKeyCode::RightSuper;
             case VK_APPS: return EKeyCode::Application;
-
-            // FIXME: Left and right shift keys are not distinguished!
-            case VK_SHIFT: return EKeyCode::Shift;
-            case VK_LSHIFT: return EKeyCode::LeftShift;
-            case VK_RSHIFT: return EKeyCode::RightShift;
 
             case VK_F1: return EKeyCode::F1;
             case VK_F2: return EKeyCode::F2;

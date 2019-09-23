@@ -65,7 +65,7 @@ namespace Hyperion::Rendering {
         // Movement
         {
             float camera_speed = m_speed * delta;
-            if (CInput::GetKey(EKeyCode::Shift)) {
+            if (CInput::GetKey(EKeyCode::LeftShift) || CInput::GetKey(EKeyCode::RightShift)) {
                 camera_speed *= 2;
             }
             SVec3 direction = camera_speed * m_forward;
@@ -84,7 +84,7 @@ namespace Hyperion::Rendering {
             if (CInput::GetKey(EKeyCode::D)) {
                 m_position = m_position + right;
             }
-            if (CInput::GetKey(EKeyCode::Control)) {
+            if (CInput::GetKey(EKeyCode::LeftControl) || CInput::GetKey(EKeyCode::RightControl)) {
                 m_position = m_position - up;
             }
             if (CInput::GetKey(EKeyCode::Space)) {

@@ -82,15 +82,12 @@ namespace Hyperion {
         RightSuper,
         Application,
 
-        Control,
         LeftControl,
         RightControl,
 
-        Shift,
         LeftShift,
         RightShift,
 
-        Alt,
         LeftAlt,
         RightAlt,
 

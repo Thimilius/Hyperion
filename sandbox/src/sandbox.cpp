@@ -48,7 +48,7 @@ protected:
     }
 
     void OnUpdate(float delta_time) override {
-        if (CInput::GetKey(EKeyCode::Control) && CInput::GetKeyDown(EKeyCode::W)) {
+        if ((CInput::GetKey(EKeyCode::LeftControl) || CInput::GetKey(EKeyCode::RightControl)) && CInput::GetKeyDown(EKeyCode::W)) {
             Exit();
         }
 
