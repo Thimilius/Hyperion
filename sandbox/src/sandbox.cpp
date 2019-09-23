@@ -15,7 +15,7 @@ protected:
     TRef<CMesh> m_mesh;
 
     TRef<CRenderTexture> m_render_texture;
-    TRef<CPerspectiveCamera> m_camera = std::make_shared<CPerspectiveCamera>(); 
+    TRef<CPerspectiveCameraController> m_camera_controller = std::make_shared<CPerspectiveCameraController>(std::make_shared<CPerspectiveCamera>()); 
 
     TRef<CFileWatcher> m_watcher;
 
@@ -60,7 +60,7 @@ protected:
             UpdateTitle();
         }
 
-        m_camera->Update();
+        m_camera_controller->Update(delta_time);
         m_watcher->Update();
     }
 
@@ -79,7 +79,7 @@ protected:
         CRenderCommand::EnableFeature(EFeature::Blending);
         CRenderCommand::SetBlendFunc(EBlendFactor::SourceAlpha, EBlendFactor::InverseSourceAlpha);
 
-        CRenderer::Begin(*m_camera);
+        CRenderer::Begin(m_camera_controller->GetCamera());
         {
             m_lambertian_shader->Bind();
             m_lambertian_shader->SetFloat3("u_light.position", SVec3(2, 2, 2));

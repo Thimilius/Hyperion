@@ -2,6 +2,8 @@
 
 #include "hyperion/entity/game_object.hpp"
 
+#include "hyperion/entity/components/transform_component.hpp"
+
 namespace Hyperion {
 
     CGameObject::CGameObject(const TString &name) : m_name(name) {

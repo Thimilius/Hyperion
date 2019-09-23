@@ -10,7 +10,7 @@ namespace Hyperion::Rendering {
 
     class CRenderer {
     public:
-        static void Begin(const CCamera &camera);
+        static void Begin(const TRef<CCamera> &camera);
         static void End();
 
         static void Submit(const TRef<CMesh> &mesh, const TRef<CShader> &shader, const Math::SMat4 &transform);

@@ -6,10 +6,10 @@ namespace Hyperion::Rendering {
 
     using namespace Math;
 
-    void CRenderer::Begin(const CCamera &camera) {
-        s_state->transform.view = camera.GetViewMatrix();
-        s_state->transform.projection = camera.GetProjectionMatrix();
-        s_state->transform.view_projection = camera.GetViewProjectionMatrix();
+    void CRenderer::Begin(const TRef<CCamera> &camera) {
+        s_state->transform.view = camera->GetViewMatrix();
+        s_state->transform.projection = camera->GetProjectionMatrix();
+        s_state->transform.view_projection = camera->GetViewProjectionMatrix();
     }
 
     void CRenderer::End() {
