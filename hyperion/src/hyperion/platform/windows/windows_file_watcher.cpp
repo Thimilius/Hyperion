@@ -102,8 +102,8 @@ namespace Hyperion::IO {
 
                 TString path = CStringUtils::Format("{}{}", watch_struct->watcher->m_path, file);
 
+                Sleep(1);
                 watch_struct->watcher->HandleAction(path, notify->Action);
-
             } while (notify->NextEntryOffset != 0);
         }
 

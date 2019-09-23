@@ -1,5 +1,7 @@
 #include <hyperion/hyperion.hpp>
 
+#include <filesystem>
+
 using namespace Hyperion;
 using namespace Hyperion::Events;
 using namespace Hyperion::Math;
@@ -29,7 +31,16 @@ protected:
 
         UpdateTitle();
 
-        m_lambertian_shader = CShaderLibrary::Load("lambertian", "data/shaders/lambertian.glsl");
+        // Load all shaders into shader library
+        for (auto &entry : std::filesystem::directory_iterator("data/shaders/")) {
+            auto &path = entry.path();
+            if (path.extension() == ".glsl") {
+                auto &filename = path.filename().string();
+                CShaderLibrary::Load(filename.substr(0, filename.length() - 5), path.string());
+            }
+        }
+
+        m_lambertian_shader = CShaderLibrary::Get("lambertian");
         m_texture = CTexture2D::CreateFromFile("data/textures/grass.png", ETextureWrapMode::Clamp, ETextureFilter::Bilinear, ETextureAnisotropicFilter::None);
         m_mesh = CMesh::CreateCube(1);
         m_render_texture = CRenderTexture::Create(GetWindow()->GetWidth(), GetWindow()->GetHeight(), ERenderTextureFormat::RGBA8);
