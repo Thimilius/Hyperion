@@ -15,6 +15,8 @@ namespace Hyperion::Rendering {
         void SetFrontFaceMode(EFrontFaceMode front_face_mode) override;
         void SetCullingMode(ECullingMode culling_mode) override;
 
+        void SetPolygonMode(EPolygonMode polygon_mode) override;
+
         void SetClearColor(float r, float g, float b, float a) override;
         void Clear(EClearMask mask) override;
 
@@ -29,6 +31,7 @@ namespace Hyperion::Rendering {
         static u32 GetGLBlendFactor(EBlendFactor blend_factor);
         static u32 GetGLBlendEquation(EBlendEquation blend_equation);
         static u32 GetGLFrontFaceMode(EFrontFaceMode front_face_mode);
+        static u32 GetGLPolygonMode(EPolygonMode polygon_mode);
         static u32 GetGLCullingMode(ECullingMode culling_mode);
         static u32 GetGLClearMask(EClearMask mask);
     };

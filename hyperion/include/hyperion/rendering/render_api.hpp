@@ -72,6 +72,12 @@ namespace Hyperion::Rendering {
         Read
     };
 
+    enum class EPolygonMode {
+        None,
+        Fill,
+        Line,
+    };
+
     class CRenderAPI {
     private:
         inline static ERenderAPI m_render_api = ERenderAPI::OpenGL;
@@ -84,6 +90,8 @@ namespace Hyperion::Rendering {
 
         virtual void SetBlendFunc(EBlendFactor source_factor, EBlendFactor destination_factor) = 0;
         virtual void SetBlendEquation(EBlendEquation blend_equation) = 0;
+
+        virtual void SetPolygonMode(EPolygonMode polygon_mode) = 0;
 
         virtual void SetClearColor(float r, float g, float b, float a) = 0;
         virtual void Clear(EClearMask mask) = 0;

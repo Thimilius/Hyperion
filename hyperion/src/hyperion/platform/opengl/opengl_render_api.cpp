@@ -28,6 +28,10 @@ namespace Hyperion::Rendering {
         glCullFace(GetGLCullingMode(culling_mode));
     }
 
+    void COpenGLRenderAPI::SetPolygonMode(EPolygonMode polygon_mode) {
+        glPolygonMode(GL_FRONT_AND_BACK, GetGLPolygonMode(polygon_mode));
+    }
+
     void COpenGLRenderAPI::SetClearColor(float r, float g, float b, float a) {
         glClearColor(r, g, b, a);
     }
@@ -129,6 +133,14 @@ namespace Hyperion::Rendering {
         switch (front_face_mode) {
             case EFrontFaceMode::Clockwise: return GL_CW;
             case EFrontFaceMode::CounterClockwise: return GL_CCW;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    u32 COpenGLRenderAPI::GetGLPolygonMode(EPolygonMode polygon_mode) {
+        switch (polygon_mode) {
+            case Hyperion::Rendering::EPolygonMode::Fill: return GL_FILL;
+            case Hyperion::Rendering::EPolygonMode::Line: return GL_LINE;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }

@@ -34,6 +34,10 @@ namespace Hyperion::Rendering {
             s_render_api->SetBlendEquation(blend_equation);
         }
 
+        inline static void SetPolygonMode(EPolygonMode polygon_mode) {
+            s_render_api->SetPolygonMode(polygon_mode);
+        }
+
         inline static void SetClearColor(float r, float g, float b, float a) {
             s_render_api->SetClearColor(r, g, b, a);
         }

@@ -25,11 +25,11 @@ namespace Hyperion::Rendering {
                 m_last_mouse_position.y = mouse_position.y;
             }
 
-            const float sensitivity = 0.25f;
+            float sensitivity = 0.25f;
             x_offset *= sensitivity;
             y_offset *= sensitivity;
 
-            const float rotation_speed = 100.0f * delta;
+            float rotation_speed = 100.0f * delta;
             if (CInput::GetKey(EKeyCode::Left) || CInput::GetKey(EKeyCode::Q)) {
                 m_yaw -= rotation_speed;
             }
@@ -65,9 +65,6 @@ namespace Hyperion::Rendering {
         // Movement
         {
             float camera_speed = m_speed * delta;
-            if (CInput::GetKey(EKeyCode::LeftShift) || CInput::GetKey(EKeyCode::RightShift)) {
-                camera_speed *= 2;
-            }
             SVec3 direction = camera_speed * m_forward;
             SVec3 right = SVec3::Cross(m_forward, m_up).Normalized();
             right = camera_speed * right;
@@ -84,7 +81,7 @@ namespace Hyperion::Rendering {
             if (CInput::GetKey(EKeyCode::D)) {
                 m_position = m_position + right;
             }
-            if (CInput::GetKey(EKeyCode::LeftControl) || CInput::GetKey(EKeyCode::RightControl)) {
+            if (CInput::GetKey(EKeyCode::LeftShift) || CInput::GetKey(EKeyCode::RightShift)) {
                 m_position = m_position - up;
             }
             if (CInput::GetKey(EKeyCode::Space)) {
