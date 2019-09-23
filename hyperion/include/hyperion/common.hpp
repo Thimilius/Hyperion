@@ -32,6 +32,9 @@
             abort();\
         } } while(0)
     #define HYP_ASSERT_ENUM_OUT_OF_RANGE HYP_ASSERT_MESSAGE(false, "Enum out of range!")
+#else
+    #define HYP_ASSERT_MESSAGE(x, m)
+    #define HYP_ASSERT_ENUM_OUT_OF_RANGE
 #endif
 
 namespace Hyperion {
