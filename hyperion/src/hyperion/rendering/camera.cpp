@@ -57,7 +57,7 @@ namespace Hyperion::Rendering {
         // Zoom
         {
             float wheel = CInput::GetMouseScroll();
-            m_fov_target -= wheel * 500.0f * delta;
+            m_fov_target -= wheel * 5.0f;
             m_fov_target = CMathf::Clamp(m_fov_target, 25, 120);
             m_fov = CMathf::Lerp(m_fov, m_fov_target, delta * 15);
         }
