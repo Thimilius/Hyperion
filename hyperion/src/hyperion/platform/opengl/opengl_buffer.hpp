@@ -19,6 +19,7 @@ namespace Hyperion::Rendering {
     private:
         u32 m_buffer_id;
     public:
+        COpenGLIndexBuffer(u16 *indices, u32 count);
         COpenGLIndexBuffer(u32 *indices, u32 count);
         ~COpenGLIndexBuffer();
 

@@ -93,7 +93,7 @@ namespace Hyperion::Rendering {
     }
 
     void COpenGLRenderAPI::DrawIndexed(const TRef<CIndexBuffer> &index_buffer) {
-        glDrawElements(GL_TRIANGLES, index_buffer->GetCount(), GL_UNSIGNED_INT, nullptr);
+        glDrawElements(GL_TRIANGLES, index_buffer->GetCount(), GetGLIndexFormat(index_buffer->GetFormat()), nullptr);
     }
 
     u32 COpenGLRenderAPI::GetGLFeature(EFeature feature) {
@@ -156,19 +156,27 @@ namespace Hyperion::Rendering {
         }
     }
 
-    u32 COpenGLRenderAPI::GetGLClearMask(EClearMask mask) {
+    u32 COpenGLRenderAPI::GetGLClearMask(EClearMask clear_mask) {
         u32 result = 0;
 
-        if ((mask & EClearMask::Color) == EClearMask::Color) {
+        if ((clear_mask & EClearMask::Color) == EClearMask::Color) {
             result |= GL_COLOR_BUFFER_BIT;
         }
-        if ((mask & EClearMask::Depth) == EClearMask::Depth) {
+        if ((clear_mask & EClearMask::Depth) == EClearMask::Depth) {
             result |= GL_DEPTH_BUFFER_BIT;
         }
-        if ((mask & EClearMask::Stencil) == EClearMask::Stencil) {
+        if ((clear_mask & EClearMask::Stencil) == EClearMask::Stencil) {
             result |= GL_STENCIL_BUFFER_BIT;
         }
 
         return result;
+    }
+
+    u32 COpenGLRenderAPI::GetGLIndexFormat(EIndexFormat index_format) {
+        switch (index_format) {
+            case EIndexFormat::UInt16: return GL_UNSIGNED_SHORT;
+            case EIndexFormat::UInt32: return GL_UNSIGNED_INT;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
     }
 }

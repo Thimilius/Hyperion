@@ -33,7 +33,8 @@ namespace Hyperion::Rendering {
         static u32 GetGLFrontFaceMode(EFrontFaceMode front_face_mode);
         static u32 GetGLPolygonMode(EPolygonMode polygon_mode);
         static u32 GetGLCullingMode(ECullingMode culling_mode);
-        static u32 GetGLClearMask(EClearMask mask);
+        static u32 GetGLClearMask(EClearMask clear_mask);
+        static u32 GetGLIndexFormat(EIndexFormat index_format);
     };
 
 }

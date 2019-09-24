@@ -12,6 +12,12 @@ namespace Hyperion::Rendering {
         Bool
     };
 
+    enum class EIndexFormat {
+        None,
+        UInt16,
+        UInt32
+    };
+
     static u32 ShaderDataTypeSize(EShaderDataType type) {
         switch (type) {
             case EShaderDataType::Float:  return 4;
@@ -69,8 +75,8 @@ namespace Hyperion::Rendering {
     public:
         virtual ~CVertexBuffer() = default;
 
-        const CBufferLayout &GetLayout() const { return m_layout; }
-        void SetLayout(const CBufferLayout &layout) { m_layout = layout; }
+        inline const CBufferLayout &GetLayout() const { return m_layout; }
+        inline void SetLayout(const CBufferLayout &layout) { m_layout = layout; }
 
         virtual void Bind() const = 0;
         virtual void Unbind() const = 0;
@@ -80,16 +86,19 @@ namespace Hyperion::Rendering {
 
     class CIndexBuffer {
     protected:
+        EIndexFormat m_format;
         u32 m_count;
     public:
-        CIndexBuffer(u32 count) : m_count(count) {}
+        CIndexBuffer(EIndexFormat format, u32 count) : m_format(format), m_count(count) { }
         virtual ~CIndexBuffer() = default;
 
-        u32 GetCount() const { return m_count; }
+        inline EIndexFormat GetFormat() const { return m_format; }
+        inline u32 GetCount() const { return m_count; }
 
         virtual void Bind() const = 0;
         virtual void Unbind() const = 0;
 
+        static TRef<CIndexBuffer> Create(u16 *indices, u32 size);
         static TRef<CIndexBuffer> Create(u32 *indices, u32 size);
     };
 

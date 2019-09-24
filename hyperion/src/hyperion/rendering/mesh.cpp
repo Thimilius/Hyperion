@@ -48,7 +48,7 @@ namespace Hyperion::Rendering {
         });
         vertex_buffer->SetLayout(buffer_layout);
 
-        u32 indicies[6] = {
+        u16 indicies[6] = {
             0, 2, 1,
             0, 3, 2
         };
@@ -183,7 +183,7 @@ namespace Hyperion::Rendering {
             });
         vertex_buffer->SetLayout(buffer_layout);
 
-        u32 indicies[] = {
+        u16 indicies[] = {
             // Back
             0, 1, 2,
             0, 2, 3,
@@ -213,8 +213,6 @@ namespace Hyperion::Rendering {
         TRef<CVertexArray> vertex_array = CVertexArray::Create();
         vertex_array->AddVertexBuffer(vertex_buffer);
         vertex_array->SetIndexBuffer(index_buffer);
-
-        return Create(vertex_array);
 
         return Create(vertex_array);
     }
