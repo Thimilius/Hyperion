@@ -85,4 +85,32 @@ namespace Hyperion {
         SetConsoleTextAttribute(m_console_handle, console_screen_buffer_info.wAttributes);
     }
 
+    TString CWindowsOperatingSystem::ConvertUTF16ToUTF8(const std::wstring &string) const {
+        auto utf8_length = WideCharToMultiByte(CP_UTF8, 0, string.c_str(), (int)string.length(), nullptr, 0, nullptr, nullptr);
+
+        char *buffer = new char[utf8_length + 1];
+        buffer[utf8_length] = 0;
+
+        WideCharToMultiByte(CP_UTF8, 0, string.c_str(), (int)string.length(), buffer, utf8_length, nullptr, nullptr);
+
+        TString result = buffer;
+        delete[] buffer;
+
+        return result;
+    }
+
+    std::wstring CWindowsOperatingSystem::ConvertUTF8ToUTF16(const std::string &string) const {
+        auto utf16_length = MultiByteToWideChar(CP_UTF8, 0, string.c_str(), (int)string.length(), nullptr, 0);
+        
+        WCHAR *buffer = new WCHAR[utf16_length + 1];
+        buffer[utf16_length] = 0;
+
+        MultiByteToWideChar(CP_UTF8, 0, string.c_str(), (int)string.length(), buffer, utf16_length);
+
+        std::wstring result = buffer;
+        delete[] buffer;
+
+        return result;
+    }
+
 }
