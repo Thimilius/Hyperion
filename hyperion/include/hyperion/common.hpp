@@ -10,7 +10,7 @@
 #include "core/enum.hpp"
 #include "system/log.hpp"
 
-#define BIT(x) (1 << x)
+#define BIT(x) (unsigned)(1 << x)
 
 #ifdef _MSC_VER
     #define HYP_DEBUG_BREAK __debugbreak()

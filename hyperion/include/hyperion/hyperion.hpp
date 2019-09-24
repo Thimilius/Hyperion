@@ -27,6 +27,7 @@
 #include "rendering/vertex_array.hpp"
 #include "rendering/render_texture.hpp"
 #include "rendering/camera.hpp"
+#include "rendering/layer.hpp"
 
 #include "io/file_utilities.hpp"
 #include "io/file_watcher.hpp"
