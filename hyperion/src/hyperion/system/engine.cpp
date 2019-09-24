@@ -2,6 +2,10 @@
 
 #include "hyperion/system/engine.hpp"
 
+#include "hyperion/app/display.hpp"
+#include "hyperion/audio/audio_engine.hpp"
+#include "hyperion/rendering/render_command.hpp"
+
 namespace Hyperion {
 
     void CEngine::Init() {

@@ -2,6 +2,8 @@
 
 #include "opengl_render_api.hpp"
 
+#include "hyperion/app/application.hpp"
+
 namespace Hyperion::Rendering {
 
     void COpenGLRenderAPI::EnableFeature(EFeature feature) {

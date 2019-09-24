@@ -2,6 +2,7 @@
 
 #include "windows_window.hpp"
 
+#include "hyperion/app/events/events.hpp"
 #include "windows_opengl_graphics_context.hpp"
 
 namespace Hyperion {

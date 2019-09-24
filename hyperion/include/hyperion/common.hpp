@@ -1,7 +1,7 @@
 #pragma once
 
-#include <unordered_map>
 #include <vector>
+#include <unordered_map>
 #include <functional>
 #include <memory>
 
@@ -27,7 +27,7 @@
 
     #define HYP_ASSERT_MESSAGE(x, m) do {\
         if(!(x)) {\
-            HYP_LOG_ERROR("Assertion failed!\nIn file: {} ({})\nWith assertion message: {}", "Assert", __FILE__, __LINE__, m);\
+            HYP_LOG_ERROR("Assert", "Assertion failed!\nIn file: {} ({})\nWith assertion message: {}", __FILE__, __LINE__, m);\
             HYP_ASSERT_DEBUG_BREAK;\
             abort();\
         } } while(0)

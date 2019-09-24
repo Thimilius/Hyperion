@@ -2,6 +2,8 @@
 
 #include "hyperion/rendering/renderer.hpp"
 
+#include "hyperion/rendering/render_command.hpp"
+
 namespace Hyperion::Rendering {
 
     using namespace Math;

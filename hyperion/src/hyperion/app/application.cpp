@@ -2,6 +2,13 @@
 
 #include "hyperion/app/application.hpp"
 
+#include "hyperion/core/timer.hpp"
+#include "hyperion/app/time.hpp"
+#include "hyperion/app/display.hpp"
+#include "hyperion/app/events/events.hpp"
+#include "hyperion/rendering/render_command.hpp"
+#include "hyperion/system/engine.hpp"
+
 namespace Hyperion {
 
     using namespace Events;

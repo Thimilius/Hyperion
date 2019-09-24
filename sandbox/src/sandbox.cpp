@@ -1,7 +1,5 @@
 #include <hyperion/hyperion.hpp>
 
-#include <filesystem>
-
 using namespace Hyperion;
 using namespace Hyperion::Events;
 using namespace Hyperion::Math;

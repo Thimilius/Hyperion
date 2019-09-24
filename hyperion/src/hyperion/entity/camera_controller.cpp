@@ -1,6 +1,7 @@
 #include "hyppch.hpp"
 
 #include "hyperion/entity/camera_controller.hpp"
+#include "hyperion/app/input.hpp"
 
 using namespace Hyperion::Math;
 using namespace Hyperion::Rendering;

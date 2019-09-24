@@ -2,6 +2,8 @@
 
 #include "hyperion/rendering/camera.hpp"
 
+#include "hyperion/app/application.hpp"
+
 namespace Hyperion::Rendering {
 
     using namespace Math;
