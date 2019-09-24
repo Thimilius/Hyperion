@@ -30,7 +30,7 @@ namespace Hyperion::Rendering {
         u8 *pixels = stbi_load(path.c_str(), &width, &height, &channels, 0);
 
         if (pixels == nullptr) {
-            HYP_CORE_ERROR("Failed to load texture from path: {}!", path);
+            HYP_LOG_ERROR("OpenGL", "Failed to load texture from path: {}!", path);
         } else {
             ETextureFormat format = ETextureFormat::None;
             switch (channels) {

@@ -9,12 +9,12 @@ namespace Hyperion::Audio {
     void CAudioEngine::LoadSound(const TString &name, const TString &path) {
         FMOD::Sound *sound;
         if (m_system->createSound(path.c_str(), FMOD_DEFAULT, nullptr, &sound) != FMOD_OK) {
-            HYP_CORE_ERROR("[Audio] - Failed to load sound '{}' at path: '{}'!", name, path);
+            HYP_LOG_ERROR("Audio", "Failed to load sound '{}' at path: '{}'!", name, path);
             return;
         }
 
         if (m_sounds.find(name) != m_sounds.end()) {
-            HYP_CORE_ERROR("[Audio] - Sound '{}' already loaded!", name);
+            HYP_LOG_ERROR("Audio", "Sound '{}' already loaded!", name);
         } else {
             m_sounds[name] = sound;
         }
@@ -23,7 +23,7 @@ namespace Hyperion::Audio {
     void CAudioEngine::PlaySound(const TString &name) {
         auto it = m_sounds.find(name);
         if (it == m_sounds.end()) {
-            HYP_CORE_ERROR("[Audio] - Sound '{}' not loaded!", name);
+            HYP_LOG_ERROR("Audio", "Sound '{}' not loaded!", name);
         } else {
             FMOD::Sound *sound = it->second;
             sound->setMode(FMOD_LOOP_NORMAL);
@@ -34,7 +34,7 @@ namespace Hyperion::Audio {
 
     void CAudioEngine::Init() {
         if (FMOD::System_Create(&m_system) != FMOD_OK) {
-            HYP_CORE_ERROR("[Audio] - Failed to create FMOD system!");
+            HYP_LOG_ERROR("Audio", "Failed to create FMOD system!");
             return;
         }
 
@@ -42,12 +42,12 @@ namespace Hyperion::Audio {
         m_system->getNumDrivers(&driver_count);
 
         if (driver_count == 0) {
-            HYP_CORE_ERROR("[Audio] - There is no audio driver on this system!");
+            HYP_LOG_ERROR("Audio", "There is no audio driver on this system!");
             return;
         }
 
         m_system->init(36, FMOD_INIT_NORMAL, nullptr);
-        HYP_CORE_INFO("[Audio] - Initialized audio engine!");
+        HYP_LOG_INFO("Audio", "Initialized audio engine!");
     }
 
     void CAudioEngine::Shutdown() {

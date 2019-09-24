@@ -101,7 +101,7 @@ namespace Hyperion::Rendering {
                 }
                 glDeleteShader(shader);
 
-                HYP_CORE_ERROR("Shader compilation error:\n{}", info_log);
+                HYP_LOG_ERROR("Shader compilation error:\n{}", info_log);
                 HYP_ASSERT_MESSAGE(false, "Shader compilation failure!");
 
                 delete info_log;
@@ -134,7 +134,7 @@ namespace Hyperion::Rendering {
                 }
                 glDeleteProgram(program);
 
-                HYP_CORE_ERROR("Shader linking error:\n{}", info_log);
+                HYP_LOG_ERROR("Shader linking error:\n{}", info_log);
                 HYP_ASSERT_MESSAGE(false, "Shader linking failure!");
 
                 delete info_log;
@@ -162,7 +162,7 @@ namespace Hyperion::Rendering {
     s32 COpenGLShader::TryGetUniformLocation(const TString &name) {
         s32 location = glGetUniformLocation(m_program_id, name.c_str());
         if (location < 0) {
-            HYP_CORE_ERROR("[OpenGL] - Failed to get location for uniform: {}", name);
+            HYP_LOG_ERROR("OpenGL", "Failed to get location for uniform: {}", name);
         }
         return location;
     }

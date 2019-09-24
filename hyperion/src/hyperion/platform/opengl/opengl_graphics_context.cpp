@@ -32,14 +32,14 @@ namespace Hyperion::Rendering {
             s32 extension_count;
             glGetIntegerv(GL_NUM_EXTENSIONS, &extension_count);
             for (s32 i = 0; i < extension_count; i++) {
-                HYP_CORE_INFO("[OpenGL] - Extension: {} available!", glGetStringi(GL_EXTENSIONS, i));
+                HYP_LOG_INFO("OpenGL", "Extension: {} available!", glGetStringi(GL_EXTENSIONS, i));
             }
         }
 
         SContextProperties properties = GetProperties();
-        HYP_CORE_INFO("[OpenGL] - Initialized OpenGL! ({})", properties.version);
-        HYP_CORE_INFO("[OpenGL] - Renderer: {} {}", properties.vendor, properties.renderer);
-        HYP_CORE_INFO("[OpenGL] - Max samples: {}", properties.max_samples);
+        HYP_LOG_INFO("OpenGL", "Initialized OpenGL! ({})", properties.version);
+        HYP_LOG_INFO("OpenGL", "Renderer: {} {}", properties.vendor, properties.renderer);
+        HYP_LOG_INFO("OpenGL", "Max samples: {}", properties.max_samples);
     }
 
     void COpenGLGraphicsContext::DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *user_pointer) {
@@ -68,14 +68,14 @@ namespace Hyperion::Rendering {
             default:                                type_string = "Unknown"; break;
         }
 
-        const char *log_string_format = "[OpenGL] - Severity: {}, Source: {}, Type: {}, ID: {},\nMessage: {}";
+        const char *log_string_format = "Severity: {}, Source: {}, Type: {}, ID: {},\nMessage: {}";
         switch (severity) {
-            case GL_DEBUG_SEVERITY_HIGH: HYP_CORE_ERROR(log_string_format, "High", source_string, type_string, id, message); break;
-            case GL_DEBUG_SEVERITY_MEDIUM: HYP_CORE_WARN(log_string_format, "Medium", source_string, type_string, id, message); break;
-            case GL_DEBUG_SEVERITY_LOW: HYP_CORE_WARN(log_string_format, "Low", source_string, type_string, id, message); break;
+            case GL_DEBUG_SEVERITY_HIGH: HYP_LOG_ERROR(log_string_format, "High", source_string, type_string, id, message); break;
+            case GL_DEBUG_SEVERITY_MEDIUM: HYP_LOG_WARN(log_string_format, "Medium", source_string, type_string, id, message); break;
+            case GL_DEBUG_SEVERITY_LOW: HYP_LOG_WARN(log_string_format, "Low", source_string, type_string, id, message); break;
             case GL_DEBUG_SEVERITY_NOTIFICATION: {
                 if (OPENGL_LOG_NOTIFICATIONS) {
-                    HYP_CORE_INFO(log_string_format, "Notification", source_string, type_string, id, message);
+                    HYP_LOG_INFO("OpenGL", log_string_format, "Notification", source_string, type_string, id, message);
                 }
                 break;
             }

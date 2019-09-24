@@ -28,7 +28,7 @@ namespace Hyperion::Rendering {
 
             GLADloadproc extension_loader = (GLADloadproc)wglGetProcAddress;
             if (!gladLoadWGLLoader(extension_loader, m_device_context)) {
-                HYP_CORE_ERROR("[OpenGL] - Failed to load windows opengl extensions!");
+                HYP_LOG_ERROR("OpenGL]", "Failed to load windows opengl extensions!");
             }
 
             wglMakeCurrent(m_device_context, NULL);
@@ -64,7 +64,7 @@ namespace Hyperion::Rendering {
             wglMakeCurrent(m_device_context, opengl_context);
 
             if (!gladLoadGL()) {
-                HYP_CORE_ERROR("[OpenGL] - Failed to load opengl extensions!");
+                HYP_LOG_ERROR("OpenGL", "Failed to load opengl extensions!");
             }
         }
 

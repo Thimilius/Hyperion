@@ -68,7 +68,7 @@ namespace Hyperion::Rendering {
 
         // Check for completion
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            HYP_CORE_ERROR("[OpenGL] - Failed to generate framebuffer!");
+            HYP_LOG_ERROR("OpenGL", "Failed to generate framebuffer!");
         }
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);

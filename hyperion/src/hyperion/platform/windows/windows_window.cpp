@@ -53,7 +53,7 @@ namespace Hyperion {
         );
 
         if (m_window_handle == NULL) {
-            HYP_CORE_ERROR("Failed to create window!");
+            HYP_LOG_ERROR("Engine", "Failed to create window!");
         }
 
         SetWindowLongPtrA(m_window_handle, GWLP_USERDATA, (LONG_PTR)(void *)this);

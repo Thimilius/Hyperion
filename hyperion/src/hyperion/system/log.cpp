@@ -7,14 +7,6 @@
 namespace Hyperion {
 
     CLog *CLog::s_instance = new CLog();
-    
-    const char *CLog::GetPrefixFormat(ELogType type) {
-        switch (type) {
-            case Hyperion::ELogType::Core: return "[%H:%M:%S] - [Core] - ";
-            case Hyperion::ELogType::Client: return "[%H:%M:%S] - [Client] - ";
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return "";
-        }
-    }
 
     ELogColor CLog::GetLogColor(ELogLevel level) {
         switch (level) {
