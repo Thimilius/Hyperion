@@ -12,3 +12,4 @@ bin_int/
 
 # Special
 run_tree/*.exe
+run_tree/*.dll

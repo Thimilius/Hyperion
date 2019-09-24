@@ -1,19 +1,23 @@
 #pragma once
 
-#ifdef HYP_PLATFORM_WINDOWS
-    #include <Windows.h>
-#endif
-
+// Standard library
 #include <memory>
 #include <string>
 #include <vector>
 #include <algorithm>
 #include <functional>
 
+// Platform specific
+#ifdef HYP_PLATFORM_WINDOWS
+    #include <Windows.h>
+#endif
+
+// Vendors
 #include <glad/glad.h>
 #include <glad/glad_wgl.h>
 #include <vendor/fmt/format.h>
 #include <stb/stb_image.h>
+#include <fmod/fmod.hpp>
 
 #include "hyperion/common.hpp"
 

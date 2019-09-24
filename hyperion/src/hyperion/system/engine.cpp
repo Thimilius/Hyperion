@@ -4,6 +4,8 @@
 
 namespace Hyperion {
 
+    FMOD::System *fmod_system;
+
     void CEngine::Init() {
         // We initialize the operating system first to get logging ability
         COperatingSystem::GetInstance()->Init();

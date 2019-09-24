@@ -50,6 +50,11 @@ project "hyperion"
 
 	debugdir "run_tree/"
 
+	postbuildcommands
+	{
+		"{COPY} vendor/fmod/lib/x64/fmod.dll %{cfg.targetdir}"
+	}
+
 	files
 	{ 
 		"%{prj.name}/include/**.hpp",
@@ -78,17 +83,19 @@ project "hyperion"
 		"%{prj.name}/vendor/stb/include",
 		"%{prj.name}/vendor/fmt/include",
 		"%{prj.name}/vendor/freetype/include",
+		"%{prj.name}/vendor/fmod/include",
 	}
 	
 	links
-	{
-		"opengl32",
-		"freetype"
+	{	
+		"freetype",
+		"fmod_vc"
 	}
 	
 	libdirs
 	{
-		"%{prj.name}/vendor/freetype"
+		"%{prj.name}/vendor/freetype/lib/x64",
+		"%{prj.name}/vendor/fmod/lib/x64",
 	}
 	
 	defines
@@ -106,6 +113,17 @@ project "hyperion"
 			"%{prj.name}/src/%{prj.name}/platform/windows/**.cpp",
 		}
 		
+		links
+		{
+			"opengl32",
+			"PowrProf"
+		}
+		
+		linkoptions
+		{
+			"-IGNORE:4006"
+		}
+		
 project "sandbox"
 	location "sandbox"
 	kind "ConsoleApp"
@@ -119,7 +137,9 @@ project "sandbox"
 
 	postbuildcommands
 	{
-		"{COPY} %{cfg.targetdir}/%{prj.name}.exe ../run_tree/%{prj.name}.exe*"
+		"{COPY} %{cfg.targetdir}/%{prj.name}.exe ../run_tree/",
+		
+		"{COPY} %{cfg.targetdir}/fmod.dll ../run_tree/"
 	}
 	
 	files
@@ -132,12 +152,6 @@ project "sandbox"
 	{
 		"hyperion/include"
 	}
-	
-	filter "system:windows"
-		links
-		{
-			"PowrProf"
-		}
 		
 	filter "kind:ConsoleApp"
 		defines { "HYP_CONSOLE" }
