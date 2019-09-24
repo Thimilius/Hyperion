@@ -107,7 +107,7 @@ namespace Hyperion {
 
         // Reset
         if (CInput::GetKeyDown(EKeyCode::R)) {
-            position = SVec3::Zero();
+            position = SVec3(0, 0, 1);
             forward = SVec3(0, 0, -1);
             up = SVec3::Up();
 

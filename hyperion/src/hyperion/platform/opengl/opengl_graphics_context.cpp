@@ -9,19 +9,8 @@
 
 namespace Hyperion::Rendering {
 
-    SContextProperties COpenGLGraphicsContext::GetProperties() {
-        SContextProperties result;
-
-        result.vendor = (const char *)glGetString(GL_VENDOR);
-        result.renderer = (const char *)glGetString(GL_RENDERER);
-        result.version = (const char *)glGetString(GL_VERSION);
-
-        glGetIntegerv(GL_MAX_SAMPLES, &result.max_samples);
-
-        return result;
-    }
-
     void COpenGLGraphicsContext::Init() {
+        // Enable debug messages
         if (OPENGL_DEBUG_LOG) {
             glDebugMessageCallback(DebugMessageCallback, NULL);
             glEnable(GL_DEBUG_OUTPUT);
@@ -36,10 +25,22 @@ namespace Hyperion::Rendering {
             }
         }
 
-        SContextProperties properties = GetProperties();
-        HYP_LOG_INFO("OpenGL", "Initialized OpenGL! ({})", properties.version);
-        HYP_LOG_INFO("OpenGL", "Renderer: {} {}", properties.vendor, properties.renderer);
-        HYP_LOG_INFO("OpenGL", "Max samples: {}", properties.max_samples);
+        // Query properties
+        {
+            m_properties.vendor = (const char *)glGetString(GL_VENDOR);
+            m_properties.renderer = (const char *)glGetString(GL_RENDERER);
+            m_properties.version = (const char *)glGetString(GL_VERSION);
+        }
+
+        // Query limits
+        {
+            glGetIntegerv(GL_MAX_SAMPLES, &m_limits.max_msaa_samples);
+            glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_limits.max_texture_units);
+        }
+
+        HYP_LOG_INFO("OpenGL", "Initialized OpenGL! ({})", m_properties.version);
+        HYP_LOG_INFO("OpenGL", "Renderer: {}", m_properties.renderer);
+        HYP_LOG_INFO("OpenGL", "Max texture units: {} - Max MSAA samples: {}", m_limits.max_texture_units, m_limits.max_msaa_samples);
     }
 
     void COpenGLGraphicsContext::DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *user_pointer) {

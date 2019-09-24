@@ -4,9 +4,16 @@
 
 namespace Hyperion::Rendering {
 
+    struct SOpenGLContextLimits {
+        s32 max_msaa_samples;
+        s32 max_texture_units;
+    };
+
     class COpenGLGraphicsContext : public CGraphicsContext {
+    private:
+        SOpenGLContextLimits m_limits;
     public:
-        SContextProperties GetProperties() override;
+        inline const SOpenGLContextLimits &GetLimits() const { return m_limits; }
     protected:
         void Init() override;
 

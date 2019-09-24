@@ -8,13 +8,13 @@ namespace Hyperion::Rendering {
         TString vendor;
         TString renderer;
         TString version;
-
-        s32 max_samples;
     };
     
     class CGraphicsContext {
+    protected:
+        SContextProperties m_properties;
     public:
-        virtual SContextProperties GetProperties() = 0;
+        inline const SContextProperties &GetProperties() const { return m_properties; }
     protected:
         virtual void Init() = 0;
         virtual void SwapBuffers() = 0;
