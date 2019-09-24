@@ -62,6 +62,8 @@ namespace Hyperion {
             m_window->Update();
         }
 
+        CEngine::Shutdown();
+
         return 0;
     }
 

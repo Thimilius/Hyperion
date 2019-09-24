@@ -4,8 +4,6 @@
 
 namespace Hyperion {
 
-    FMOD::System *fmod_system;
-
     void CEngine::Init() {
         // We initialize the operating system first to get logging ability
         COperatingSystem::GetInstance()->Init();
@@ -21,7 +19,13 @@ namespace Hyperion {
         CDisplayInfo::SDisplayModeInfo mode_info = CDisplay::GetCurrentDisplayModeInfo();
         HYP_CORE_INFO("[Engine] - Primary display: {}x{} @{} Hz", mode_info.width, mode_info.height, mode_info.refresh_rate);
 
+        Audio::CAudioEngine::Init();
+
         Rendering::CRenderCommand::Init();
+    }
+
+    void CEngine::Shutdown() {
+        Audio::CAudioEngine::Shutdown();
     }
 
 }

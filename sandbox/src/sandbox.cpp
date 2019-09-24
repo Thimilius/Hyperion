@@ -7,6 +7,7 @@ using namespace Hyperion::Events;
 using namespace Hyperion::Math;
 using namespace Hyperion::IO;
 using namespace Hyperion::Rendering;
+using namespace Hyperion::Audio;
 
 class CSandboxApp : public CApplication {
 public:

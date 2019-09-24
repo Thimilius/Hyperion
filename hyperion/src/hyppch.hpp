@@ -38,6 +38,8 @@
 #include "hyperion/rendering/buffer.hpp"
 #include "hyperion/rendering/shader.hpp"
 
+#include "hyperion/audio/audio_engine.hpp"
+
 #include "hyperion/system/log.hpp"
 #include "hyperion/system/engine.hpp"
 #include "hyperion/system/operating_system.hpp"

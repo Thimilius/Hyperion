@@ -8,6 +8,7 @@ namespace Hyperion {
         ~CEngine() = delete;
 
         static void Init();
+        static void Shutdown();
 
         friend class CApplication;
     };

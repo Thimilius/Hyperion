@@ -31,6 +31,8 @@
 #include "io/file_utilities.hpp"
 #include "io/file_watcher.hpp"
 
+#include "audio/audio_engine.hpp"
+
 #include "system/log.hpp"
 #include "system/engine.hpp"
 #include "system/operating_system.hpp"
