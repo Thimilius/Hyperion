@@ -4,7 +4,7 @@
 
 #include "hyperion/entity/components/transform_component.hpp"
 
-namespace Hyperion {
+namespace Hyperion::Entity {
 
     CGameObject::CGameObject(const TString &name) : m_name(name) {
         m_transform = new CTransformComponent();

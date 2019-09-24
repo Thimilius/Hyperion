@@ -3,7 +3,7 @@
 #include "hyperion/math/math.hpp"
 #include "hyperion/entity/components/component.hpp"
 
-namespace Hyperion {
+namespace Hyperion::Entity {
 
     class CTransformComponent : public CComponent {
     private:

@@ -2,7 +2,7 @@
 
 #include "hyperion/rendering/camera.hpp"
 
-namespace Hyperion {
+namespace Hyperion::Entity {
 
     class CPerspectiveCameraController {
     private:

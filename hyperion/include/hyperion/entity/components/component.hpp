@@ -2,7 +2,7 @@
 
 #include "hyperion/common.hpp"
 
-namespace Hyperion {
+namespace Hyperion::Entity {
 
     class CGameObject;
 

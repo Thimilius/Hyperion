@@ -4,8 +4,7 @@
 
 #include "hyperion/entity/components/component.hpp"
 
-
-namespace Hyperion {
+namespace Hyperion::Entity {
 
     class CTransformComponent;
 

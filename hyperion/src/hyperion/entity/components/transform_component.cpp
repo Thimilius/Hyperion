@@ -2,7 +2,7 @@
 
 #include "hyperion/entity/components/transform_component.hpp"
 
-namespace Hyperion {
+namespace Hyperion::Entity {
 
     using namespace Math;
 
