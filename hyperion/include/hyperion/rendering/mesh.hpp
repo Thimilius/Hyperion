@@ -15,6 +15,14 @@ namespace Hyperion::Rendering {
         Math::SVec3 position;
         Math::SVec3 normal;
         Math::SVec2 uv;
+
+        static CBufferLayout GetBufferLayout() {
+            return CBufferLayout({
+                SBufferElement("a_position", EShaderDataType::Float3),
+                SBufferElement("a_normal", EShaderDataType::Float3),
+                SBufferElement("a_uv", EShaderDataType::Float2)
+            });
+        }
     };
 
     struct SSubMesh {
@@ -26,7 +34,7 @@ namespace Hyperion::Rendering {
     };
 
     class CMesh : public CAsset {
-    protected:
+    private:
         TRef<CVertexArray> m_vertex_array;
         TVector<SSubMesh> m_sub_meshes;
     public:

@@ -44,12 +44,7 @@ namespace Hyperion::Rendering {
         verticies[3].uv = SVec2(0.0f, 1.0f);
 
         TRef<CVertexBuffer> vertex_buffer = CVertexBuffer::Create((u8*)verticies, sizeof(verticies));
-        CBufferLayout buffer_layout = CBufferLayout({
-           SBufferElement("a_position", EShaderDataType::Float3),
-           SBufferElement("a_normal", EShaderDataType::Float3),
-           SBufferElement("a_uv", EShaderDataType::Float2),
-        });
-        vertex_buffer->SetLayout(buffer_layout);
+        vertex_buffer->SetLayout(SVertexPNU::GetBufferLayout());
 
         u16 indicies[6] = {
             0, 2, 1,
@@ -179,12 +174,7 @@ namespace Hyperion::Rendering {
         }
 
         TRef<CVertexBuffer> vertex_buffer = CVertexBuffer::Create((u8 *)verticies, sizeof(verticies));
-        CBufferLayout buffer_layout = CBufferLayout({
-           SBufferElement("a_position", EShaderDataType::Float3),
-           SBufferElement("a_normal", EShaderDataType::Float3),
-           SBufferElement("a_uv", EShaderDataType::Float2),
-        });
-        vertex_buffer->SetLayout(buffer_layout);
+        vertex_buffer->SetLayout(SVertexPNU::GetBufferLayout());
 
         u16 indicies[] = {
             // Back
@@ -257,11 +247,7 @@ namespace Hyperion::Rendering {
         }
 
         TRef<CVertexBuffer> vertex_buffer = CVertexBuffer::Create((u8*)verticies.data(), (u32)(verticies.size() * sizeof(SVertexPNU)));
-        vertex_buffer->SetLayout(CBufferLayout({
-            SBufferElement("a_position", EShaderDataType::Float3),
-            SBufferElement("a_normal", EShaderDataType::Float3),
-            SBufferElement("a_uv", EShaderDataType::Float2)
-        }));
+        vertex_buffer->SetLayout(SVertexPNU::GetBufferLayout());
 
         TRef<CIndexBuffer> index_buffer = CIndexBuffer::Create(indicies.data(), (u32)indicies.size());
 
