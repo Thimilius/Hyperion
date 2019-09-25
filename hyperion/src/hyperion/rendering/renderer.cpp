@@ -26,7 +26,12 @@ namespace Hyperion::Rendering {
 
         const TRef<CVertexArray> &vertex_array = mesh->GetVertexArray();
         vertex_array->Bind();
-        CRenderCommand::DrawIndexed(vertex_array->GetIndexBuffer());
+        const TRef<CIndexBuffer> &index_buffer = vertex_array->GetIndexBuffer();
+
+        EIndexFormat format = index_buffer->GetFormat();
+        for (const SSubMesh &sub_mesh : mesh->GetSubMeshes()) {
+            CRenderCommand::DrawIndexed(format, sub_mesh.index_count, sub_mesh.index_offset, sub_mesh.vertex_offset);
+        }
     }
 
 }

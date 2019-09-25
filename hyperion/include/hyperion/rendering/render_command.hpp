@@ -58,8 +58,8 @@ namespace Hyperion::Rendering {
             s_render_api->Blit(destination, dstX0, dstY0, dstX1, dstY1, source, srcX0, srcY0, srcX1, srcY1);
         }
 
-        inline static void DrawIndexed(const TRef<CIndexBuffer> &index_buffer) {
-            s_render_api->DrawIndexed(index_buffer);
+        inline static void DrawIndexed(EIndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) {
+            s_render_api->DrawIndexed(format, index_count, index_offset, vertex_offset); 
         }
     private:
         static void Init();

@@ -11,7 +11,7 @@ using namespace Hyperion::Math;
 namespace Hyperion::Rendering {
 
     TRef<CMesh> CMesh::Create(const TRef<CVertexArray> &vertex_array) {
-        return Create(vertex_array, { { 0, vertex_array->GetIndexBuffer()->GetCount() } });
+        return Create(vertex_array, { SSubMesh(vertex_array->GetIndexBuffer()->GetCount(), 0, 0) });
     }
 
     TRef<CMesh> CMesh::Create(const TRef<CVertexArray> &vertex_array, const TVector<SSubMesh> sub_meshes) {
@@ -280,7 +280,8 @@ namespace Hyperion::Rendering {
         }
 
         // Handle verticies
-        verticies.reserve(verticies.size() + mesh->mNumVertices);
+        u32 verticies_offset = (u32)verticies.size();
+        verticies.reserve(verticies_offset + mesh->mNumVertices);
         for (u32 i = 0; i < mesh->mNumVertices; i++) {
             SVertexPNU vertex;
 
@@ -310,11 +311,7 @@ namespace Hyperion::Rendering {
             indicies.push_back(face.mIndices[2]);
         }
 
-        if (sub_meshes.size() == 0) {
-            sub_meshes.push_back({ 0, indicies_count });
-        } else {
-            sub_meshes.push_back({ indicies_offset, indicies_count });
-        }
+        sub_meshes.push_back(SSubMesh(indicies_count, indicies_offset, verticies_offset));
     }
 
 }

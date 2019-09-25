@@ -92,8 +92,8 @@ namespace Hyperion::Rendering {
         glBindFramebuffer(GL_READ_FRAMEBUFFER, read_framebuffer_id);
     }
 
-    void COpenGLRenderAPI::DrawIndexed(const TRef<CIndexBuffer> &index_buffer) {
-        glDrawElements(GL_TRIANGLES, index_buffer->GetCount(), GetGLIndexFormat(index_buffer->GetFormat()), nullptr);
+    void COpenGLRenderAPI::DrawIndexed(EIndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) {
+        glDrawElementsBaseVertex(GL_TRIANGLES, index_count, GetGLIndexFormat(format), (void*)(GetGLIndexSize(format) * index_offset), vertex_offset);
     }
 
     u32 COpenGLRenderAPI::GetGLFeature(EFeature feature) {
@@ -176,6 +176,14 @@ namespace Hyperion::Rendering {
         switch (index_format) {
             case EIndexFormat::UInt16: return GL_UNSIGNED_SHORT;
             case EIndexFormat::UInt32: return GL_UNSIGNED_INT;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    u64 COpenGLRenderAPI::GetGLIndexSize(EIndexFormat index_format) {
+        switch (index_format) {
+            case EIndexFormat::UInt16: return sizeof(u16);
+            case EIndexFormat::UInt32: return sizeof(u32);
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }

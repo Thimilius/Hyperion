@@ -17,14 +17,15 @@ namespace Hyperion::Rendering {
         Math::SVec2 uv;
     };
 
-    class CMesh : public CAsset {
-    private:
-        
     struct SSubMesh {
-        u32 index_offset;
         u32 index_count;
+        u32 index_offset;
+        u32 vertex_offset;
+
+        SSubMesh(u32 index_count, u32 index_offset, u32 vertex_offset) : index_count(index_count), index_offset(index_offset), vertex_offset(vertex_offset) { }
     };
 
+    class CMesh : public CAsset {
     protected:
         TRef<CVertexArray> m_vertex_array;
         TVector<SSubMesh> m_sub_meshes;
