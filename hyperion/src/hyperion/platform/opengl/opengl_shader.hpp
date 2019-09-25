@@ -7,6 +7,7 @@ namespace Hyperion::Rendering {
     class COpenGLShader : public CShader {
     private:
         u32 m_program_id;
+        TMap<TString, u32> m_uniforms;
     public:
         COpenGLShader(const TString &name, const TString &source);
         COpenGLShader(const TString &name, const TString &vertex_source, const TString &fragment_source);

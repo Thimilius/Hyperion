@@ -77,6 +77,9 @@ namespace Hyperion::Rendering {
     }
 
     void COpenGLShader::Compile(TMap<EShaderType, TString> sources) {
+        // Clear uniforms
+        m_uniforms.clear();
+
         // Compile shaders
         TVector<u32> shaders;
         for (auto pair : sources) {
@@ -197,11 +200,16 @@ namespace Hyperion::Rendering {
     }
 
     s32 COpenGLShader::TryGetUniformLocation(const TString &name) {
-        s32 location = glGetUniformLocation(m_program_id, name.c_str());
-        if (location < 0) {
-            HYP_LOG_ERROR("OpenGL", "Failed to get location for uniform: {}", name);
+        auto loc = m_uniforms.find(name);
+        if (loc == m_uniforms.end()) {
+            s32 location = glGetUniformLocation(m_program_id, name.c_str());
+            if (location < 0) {
+                HYP_LOG_ERROR("OpenGL", "Failed to get location for uniform: {}", name);
+            }
+            m_uniforms[name] = location;
+            return location;
         }
-        return location;
+        return loc->second;
     }
 
 }
