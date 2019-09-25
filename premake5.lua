@@ -52,7 +52,8 @@ project "hyperion"
 
 	postbuildcommands
 	{
-		"{COPY} vendor/fmod/lib/x64/fmod.dll %{cfg.targetdir}"
+		"{COPY} vendor/fmod/lib/x64/fmod.dll %{cfg.targetdir}",
+		"{COPY} vendor/assimp/lib/x64/assimp-vc140-mt.dll %{cfg.targetdir}"
 	}
 
 	files
@@ -84,18 +85,21 @@ project "hyperion"
 		"%{prj.name}/vendor/fmt/include",
 		"%{prj.name}/vendor/freetype/include",
 		"%{prj.name}/vendor/fmod/include",
+		"%{prj.name}/vendor/assimp/include",
 	}
 	
 	links
 	{	
 		"freetype",
-		"fmod_vc"
+		"fmod_vc",
+		"assimp-vc140-mt"
 	}
 	
 	libdirs
 	{
 		"%{prj.name}/vendor/freetype/lib/x64",
 		"%{prj.name}/vendor/fmod/lib/x64",
+		"%{prj.name}/vendor/assimp/lib/x64",
 	}
 	
 	defines
@@ -139,7 +143,8 @@ project "sandbox"
 	{
 		"{COPY} %{cfg.targetdir}/%{prj.name}.exe ../run_tree/",
 		
-		"{COPY} %{cfg.targetdir}/fmod.dll ../run_tree/"
+		"{COPY} %{cfg.targetdir}/fmod.dll ../run_tree/",
+		"{COPY} %{cfg.targetdir}/assimp-vc140-mt.dll ../run_tree/"
 	}
 	
 	files
