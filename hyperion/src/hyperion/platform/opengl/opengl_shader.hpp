@@ -26,6 +26,7 @@ namespace Hyperion::Rendering {
     private:
         TMap<EShaderType, TString> PreProcess(const TString &source);
         void Compile(TMap<EShaderType, TString> sources);
+        void CompileFallbackShader();
 
         u32 GetGLShaderType(EShaderType type);
         s32 TryGetUniformLocation(const TString &name);

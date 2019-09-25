@@ -101,10 +101,11 @@ namespace Hyperion::Rendering {
                 }
                 glDeleteShader(shader);
 
-                HYP_LOG_ERROR("Shader compilation error:\n{}", info_log);
-                HYP_ASSERT_MESSAGE(false, "Shader compilation failure!");
+                HYP_LOG_ERROR("OpenGL", "Shader compilation error:\n{}", info_log);
 
                 delete info_log;
+
+                CompileFallbackShader();
 
                 return;
             }
@@ -134,10 +135,11 @@ namespace Hyperion::Rendering {
                 }
                 glDeleteProgram(program);
 
-                HYP_LOG_ERROR("Shader linking error:\n{}", info_log);
-                HYP_ASSERT_MESSAGE(false, "Shader linking failure!");
+                HYP_LOG_ERROR("OpenGL", "Shader linking error:\n{}", info_log);
 
                 delete info_log;
+
+                CompileFallbackShader();
 
                 return;
             }
@@ -149,6 +151,41 @@ namespace Hyperion::Rendering {
             glDetachShader(program, shader);
             glDeleteShader(shader);
         }
+    }
+
+    void COpenGLShader::CompileFallbackShader() {
+        TMap<EShaderType, TString> sources;
+        sources[EShaderType::Vertex] = R"(
+            #version 410 core
+
+            layout(location = 0) in vec3 a_position;
+            layout(location = 1) in vec3 a_normal;
+            layout(location = 2) in vec2 a_uv;
+
+            uniform struct Transform {
+	            mat4 model;
+	            mat4 view;
+	            mat4 projection;
+            } u_transform;
+
+            vec4 obj_to_clip_space(vec3 position) {
+	            return u_transform.projection * u_transform.view * u_transform.model * vec4(position, 1.0f);
+            }
+
+            void main() {
+                gl_Position = obj_to_clip_space(a_position);
+            }
+        )";
+        sources[EShaderType::Fragment] = R"(
+            #version 410 core
+
+            out vec4 o_color;
+
+            void main() {
+	            o_color = vec4(0, 1, 1, 1);
+            }
+        )";
+        Compile(sources);
     }
 
     u32 COpenGLShader::GetGLShaderType(EShaderType type) {
