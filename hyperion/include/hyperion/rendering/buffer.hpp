@@ -98,8 +98,8 @@ namespace Hyperion::Rendering {
         virtual void Bind() const = 0;
         virtual void Unbind() const = 0;
 
-        static TRef<CIndexBuffer> Create(u16 *indices, u32 size);
-        static TRef<CIndexBuffer> Create(u32 *indices, u32 size);
+        static TRef<CIndexBuffer> Create(u16 *indices, u32 count);
+        static TRef<CIndexBuffer> Create(u32 *indices, u32 count);
     };
 
 }

@@ -73,5 +73,5 @@ void main() {
 	vec3 lighting_color = ambient_lighting + diffuse_lighting;
 	
 	// Final color
-	o_color = vec4(lighting_color, 1.0) * texture_color;
+	o_color = vec4(lighting_color, 1.0);
 }

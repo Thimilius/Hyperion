@@ -2,17 +2,20 @@
 
 #include "hyperion/rendering/mesh.hpp"
 
-#include "hyperion/platform/opengl/opengl_mesh.hpp"
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 using namespace Hyperion::Math;
 
 namespace Hyperion::Rendering {
 
     TRef<CMesh> CMesh::Create(const TRef<CVertexArray> &vertex_array) {
-        switch (CRenderAPI::GetAPI()) {
-            case ERenderAPI::OpenGL: return std::make_shared<COpenGLMesh>(vertex_array);
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
-        }
+        return Create(vertex_array, { { 0, vertex_array->GetIndexBuffer()->GetCount() } });
+    }
+
+    TRef<CMesh> CMesh::Create(const TRef<CVertexArray> &vertex_array, const TVector<SSubMesh> sub_meshes) {
+        return TRef<CMesh>(new CMesh(vertex_array, sub_meshes));
     }
 
     TRef<CMesh> CMesh::CreatePlane(float width, float height) {
@@ -22,7 +25,7 @@ namespace Hyperion::Rendering {
         // The plane should face up
         SVec3 normal = SVec3::Up();
 
-        SVertexPNUV verticies[4];
+        SVertexPNU verticies[4];
 
         verticies[0].position = SVec3(half_width, 0, half_height);
         verticies[0].normal = normal;
@@ -66,7 +69,7 @@ namespace Hyperion::Rendering {
     }
 
     TRef<CMesh> CMesh::CreateCube(float size) {
-        SVertexPNUV verticies[24];
+        SVertexPNU verticies[24];
 
         float half_size = size / 2.0f;
 
@@ -180,7 +183,7 @@ namespace Hyperion::Rendering {
            SBufferElement("a_position", EShaderDataType::Float3),
            SBufferElement("a_normal", EShaderDataType::Float3),
            SBufferElement("a_uv", EShaderDataType::Float2),
-            });
+        });
         vertex_buffer->SetLayout(buffer_layout);
 
         u16 indicies[] = {
@@ -215,6 +218,103 @@ namespace Hyperion::Rendering {
         vertex_array->SetIndexBuffer(index_buffer);
 
         return Create(vertex_array);
+    }
+
+    TRef<CMesh> CMesh::CreateFromFile(const TString &path) {
+        return LoadMesh(path);
+    }
+
+    CMesh::CMesh(const TRef<CVertexArray> &vertex_array, const TVector<SSubMesh> sub_meshes) {
+        m_vertex_array = vertex_array;
+        m_sub_meshes = sub_meshes;
+    }
+
+    TRef<CMesh> CMesh::LoadMesh(const TString &path) {
+        Assimp::Importer importer;
+        u32 import_flags = aiProcess_CalcTangentSpace | // Create binormals/tangents just in case
+            aiProcess_Triangulate |                     // Make sure we're triangles
+            aiProcess_SortByPType |                     // Split meshes by primitive type
+            aiProcess_GenNormals |                      // Make sure we have legit normals
+            aiProcess_GenUVCoords |                     // Convert UVs if required 
+            aiProcess_OptimizeMeshes |                  // Batch draws where possible
+            aiProcess_FlipWindingOrder |                // Flip winding order to be clockwise                                                        
+            aiProcess_ValidateDataStructure;            // Validation
+        const aiScene *scene = importer.ReadFile(path, import_flags);
+        if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
+            HYP_LOG_ERROR("Engine", "Failed to load mesh: '{}'", path);
+            return nullptr;
+        };
+        if (scene->mNumMeshes == 0) {
+            HYP_LOG_ERROR("Engine", "The loaded mesh '{}' does not contain any meshes!", path);
+            return nullptr;
+        }
+
+        TVector<SVertexPNU> verticies;
+        TVector<u32> indicies;
+        TVector<SSubMesh> sub_meshes;
+        for (u32 i = 0; i < scene->mNumMeshes; i++) {
+            LoadSubMesh(scene->mMeshes[i], verticies, indicies, sub_meshes);
+        }
+
+        TRef<CVertexBuffer> vertex_buffer = CVertexBuffer::Create((u8*)verticies.data(), (u32)(verticies.size() * sizeof(SVertexPNU)));
+        vertex_buffer->SetLayout(CBufferLayout({
+            SBufferElement("a_position", EShaderDataType::Float3),
+            SBufferElement("a_normal", EShaderDataType::Float3),
+            SBufferElement("a_uv", EShaderDataType::Float2)
+        }));
+
+        TRef<CIndexBuffer> index_buffer = CIndexBuffer::Create(indicies.data(), (u32)indicies.size());
+
+        TRef<CVertexArray> vertex_array = CVertexArray::Create();
+        vertex_array->AddVertexBuffer(vertex_buffer);
+        vertex_array->SetIndexBuffer(index_buffer);
+
+        return Create(vertex_array, sub_meshes);
+    }
+
+    void CMesh::LoadSubMesh(const aiMesh *mesh, TVector<SVertexPNU> &verticies, TVector<u32> &indicies, TVector<SSubMesh> &sub_meshes) {
+        // Make sure the mesh has all necessary components
+        if (!mesh->HasPositions() || !mesh->HasNormals() || !mesh->HasTextureCoords(0)) {
+            HYP_LOG_ERROR("Engine", "Mesh does not contain relevant data!");
+            return;
+        }
+
+        // Handle verticies
+        verticies.reserve(verticies.size() + mesh->mNumVertices);
+        for (u32 i = 0; i < mesh->mNumVertices; i++) {
+            SVertexPNU vertex;
+
+            aiVector3D position = mesh->mVertices[i];
+            vertex.position = SVec3(position.x, position.y, position.z);
+            aiVector3D normal = mesh->mNormals[i];
+            vertex.normal = SVec3(normal.x, normal.y, normal.z);
+            aiVector3D uv = mesh->mTextureCoords[0][i];
+            vertex.uv = SVec2(uv.x, uv.y);
+
+            verticies.emplace_back(vertex);
+        }
+
+        // Handle indicies
+        u32 indicies_offset = (u32)indicies.size();
+        u32 indicies_count = mesh->mNumFaces * 3;
+        indicies.reserve(indicies_offset + indicies_count);
+        for (u32 i = 0; i < mesh->mNumFaces; i++) {
+            aiFace face = mesh->mFaces[i];
+            if (face.mNumIndices != 3) {
+                HYP_LOG_ERROR("Engine", "Mesh contains faces which do not have 3 indicies!");
+                return;
+            }
+
+            indicies.push_back(face.mIndices[0]);
+            indicies.push_back(face.mIndices[1]);
+            indicies.push_back(face.mIndices[2]);
+        }
+
+        if (sub_meshes.size() == 0) {
+            sub_meshes.push_back({ 0, indicies_count });
+        } else {
+            sub_meshes.push_back({ indicies_offset, indicies_count });
+        }
     }
 
 }

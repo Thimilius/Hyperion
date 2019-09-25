@@ -40,16 +40,16 @@ namespace Hyperion::Rendering {
         }
     }
 
-    TRef<CIndexBuffer> CIndexBuffer::Create(u16 *indices, u32 size) {
+    TRef<CIndexBuffer> CIndexBuffer::Create(u16 *indices, u32 count) {
         switch (CRenderAPI::GetAPI()) {
-            case ERenderAPI::OpenGL: return std::make_shared<COpenGLIndexBuffer>(indices, size);
+            case ERenderAPI::OpenGL: return std::make_shared<COpenGLIndexBuffer>(indices, count);
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }
 
-    TRef<CIndexBuffer> CIndexBuffer::Create(u32 *indices, u32 size) {
+    TRef<CIndexBuffer> CIndexBuffer::Create(u32 *indices, u32 count) {
         switch (CRenderAPI::GetAPI()) {
-            case ERenderAPI::OpenGL: return std::make_shared<COpenGLIndexBuffer>(indices, size);
+            case ERenderAPI::OpenGL: return std::make_shared<COpenGLIndexBuffer>(indices, count);
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }
