@@ -75,8 +75,8 @@ namespace Hyperion {
 #define HYP_LOG_WARN(s, m, ...)  Hyperion::CLog::GetInstance()->Log(ELogType::Core, ELogLevel::Warning, s, m, __VA_ARGS__)
 #define HYP_LOG_ERROR(s, m, ...) Hyperion::CLog::GetInstance()->Log(ELogType::Core, ELogLevel::Error, s, m, __VA_ARGS__)
 
-#define HYP(m, ...)       Hyperion::CLog::GetInstance()->Log(ELogType::Client, ELogLevel::Trace, m, "Client", __VA_ARGS__)
-#define HYP_TRACE(m, ...) Hyperion::CLog::GetInstance()->Log(ELogType::Client, ELogLevel::Trace, m, "Client", __VA_ARGS__)
-#define HYP_INFO(m, ...)  Hyperion::CLog::GetInstance()->Log(ELogType::Client, ELogLevel::Info, m, "Client", __VA_ARGS__)
-#define HYP_WARN(m, ...)  Hyperion::CLog::GetInstance()->Log(ELogType::Client, ELogLevel::Warning, m, "Client", __VA_ARGS__)
-#define HYP_ERROR(m, ...) Hyperion::CLog::GetInstance()->Log(ELogType::Client, ELogLevel::Error, m, "Client", __VA_ARGS__)
+#define HYP(m, ...)       Hyperion::CLog::GetInstance()->Log(ELogType::Client, ELogLevel::Trace, "Client", m, __VA_ARGS__)
+#define HYP_TRACE(m, ...) Hyperion::CLog::GetInstance()->Log(ELogType::Client, ELogLevel::Trace, "Client", m, __VA_ARGS__)
+#define HYP_INFO(m, ...)  Hyperion::CLog::GetInstance()->Log(ELogType::Client, ELogLevel::Info, "Client", m, __VA_ARGS__)
+#define HYP_WARN(m, ...)  Hyperion::CLog::GetInstance()->Log(ELogType::Client, ELogLevel::Warning, "Client", m, __VA_ARGS__)
+#define HYP_ERROR(m, ...) Hyperion::CLog::GetInstance()->Log(ELogType::Client, ELogLevel::Error, "Client", m, __VA_ARGS__)

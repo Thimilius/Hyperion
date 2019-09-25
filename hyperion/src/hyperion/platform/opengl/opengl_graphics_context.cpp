@@ -71,9 +71,9 @@ namespace Hyperion::Rendering {
 
         const char *log_string_format = "Severity: {}, Source: {}, Type: {}, ID: {},\nMessage: {}";
         switch (severity) {
-            case GL_DEBUG_SEVERITY_HIGH: HYP_LOG_ERROR(log_string_format, "High", source_string, type_string, id, message); break;
-            case GL_DEBUG_SEVERITY_MEDIUM: HYP_LOG_WARN(log_string_format, "Medium", source_string, type_string, id, message); break;
-            case GL_DEBUG_SEVERITY_LOW: HYP_LOG_WARN(log_string_format, "Low", source_string, type_string, id, message); break;
+            case GL_DEBUG_SEVERITY_HIGH: HYP_LOG_ERROR("OpenGL", log_string_format, "High", source_string, type_string, id, message); break;
+            case GL_DEBUG_SEVERITY_MEDIUM: HYP_LOG_WARN("OpenGL", log_string_format, "Medium", source_string, type_string, id, message); break;
+            case GL_DEBUG_SEVERITY_LOW: HYP_LOG_WARN("OpenGL", log_string_format, "Low", source_string, type_string, id, message); break;
             case GL_DEBUG_SEVERITY_NOTIFICATION: {
                 if (OPENGL_LOG_NOTIFICATIONS) {
                     HYP_LOG_INFO("OpenGL", log_string_format, "Notification", source_string, type_string, id, message);

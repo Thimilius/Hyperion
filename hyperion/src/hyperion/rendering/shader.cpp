@@ -42,22 +42,22 @@ namespace Hyperion::Rendering {
     }
 
     TRef<CShader> CShaderLibrary::Reload(const TString &name) {
-        HYP_ASSERT_MESSAGE(m_shaders.find(name) != m_shaders.end(), "Can not find shader in library!");
-        SShaderEntry entry = m_shaders[name];
+        HYP_ASSERT_MESSAGE(s_shaders.find(name) != s_shaders.end(), "Can not find shader in library!");
+        SShaderEntry entry = s_shaders[name];
         TString &source = CFileUtilities::ReadTextFile(entry.filepath);
         TRef<CShader> &shader = CShader::Create(name, source);
-        m_shaders[name].shader = shader;
+        s_shaders[name].shader = shader;
         return shader;
     }
 
     void CShaderLibrary::Add(const TString &name, const TString &filepath, const TRef<CShader> &shader) {
-        HYP_ASSERT_MESSAGE(m_shaders.find(name) == m_shaders.end(), "Shader already in library!");
-        m_shaders[name] = { shader, filepath };
+        HYP_ASSERT_MESSAGE(s_shaders.find(name) == s_shaders.end(), "Shader already in library!");
+        s_shaders[name] = { shader, filepath };
     }
 
     TRef<CShader> CShaderLibrary::Get(const TString &name) {
-        HYP_ASSERT_MESSAGE(m_shaders.find(name) != m_shaders.end(), "Can not find shader in library!");
-        return m_shaders[name].shader;
+        HYP_ASSERT_MESSAGE(s_shaders.find(name) != s_shaders.end(), "Can not find shader in library!");
+        return s_shaders[name].shader;
     }
 
 }
