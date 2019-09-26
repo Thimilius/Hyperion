@@ -227,6 +227,37 @@ namespace Hyperion::Rendering {
         } else {
             m_sub_meshes = sub_meshes;
         }
+
+        RecalculateBounds();
+    }
+
+    void CMesh::RecalculateBounds() {
+        SVec3 min = SVec3(FLT_MAX, FLT_MAX, FLT_MAX);
+        SVec3 max = SVec3(FLT_MIN, FLT_MIN, FLT_MIN);
+
+        for (u32 i = 0; i < m_mesh_data.positions.size(); i++) {
+            SVec3 position = m_mesh_data.positions[i];
+            if (position.x < min.x) {
+                min.x = position.x;
+            } 
+            if (position.y < min.y) {
+                min.y = position.y;
+            }
+            if (position.z < min.z) {
+                min.z = position.z;
+            }
+            if (position.x > max.x) {
+                max.x = position.x;
+            }
+            if (position.y > max.y) {
+                max.y = position.y;
+            }
+            if (position.z > max.z) {
+                max.z = position.z;
+            }
+        }
+
+        return m_bounds.SetMinMax(min, max);
     }
 
     TRef<CMesh> CMesh::LoadMesh(const TString &path) {

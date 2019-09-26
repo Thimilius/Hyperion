@@ -9,6 +9,7 @@ namespace Hyperion::Math {
         SVec3 center;
         SVec3 extends;
 
+        SBounds();
         SBounds(SVec3 center, SVec3 extends);
 
         SVec3 GetSize() const;

@@ -5,8 +5,6 @@
 #include "hyperion/rendering/vertex_array.hpp"
 #include "hyperion/math/math.hpp"
 
-struct aiScene;
-struct aiNode;
 struct aiMesh;
 
 namespace Hyperion::Rendering {
@@ -44,14 +42,16 @@ namespace Hyperion::Rendering {
     class CMesh : public CAsset {
     private:
         SMeshData m_mesh_data;
+        Math::SBounds m_bounds;
 
         TVector<SSubMesh> m_sub_meshes;
 
         TRef<CVertexArray> m_vertex_array;
     public:
-        const SMeshData &GetMeshData() const { return m_mesh_data; }
-        const TRef<CVertexArray> GetVertexArray() const { return m_vertex_array; }
-        const TVector<SSubMesh> GetSubMeshes() const { return m_sub_meshes; }
+        inline const SMeshData &GetMeshData() const { return m_mesh_data; }
+        inline Math::SBounds GetBounds() const { return m_bounds; }
+        inline const TRef<CVertexArray> GetVertexArray() const { return m_vertex_array; }
+        inline const TVector<SSubMesh> GetSubMeshes() const { return m_sub_meshes; }
 
         static TRef<CMesh> Create(const SMeshData &mesh_data);
         static TRef<CMesh> Create(const SMeshData &mesh_data, const TVector<SSubMesh> sub_meshes);
@@ -59,8 +59,9 @@ namespace Hyperion::Rendering {
         static TRef<CMesh> CreateCube(float size);
         static TRef<CMesh> CreateFromFile(const TString &path);
     private:
-        CMesh(const SMeshData &mesh_data);
         CMesh(const SMeshData &mesh_data, const TVector<SSubMesh> sub_meshes);
+
+        void RecalculateBounds();
 
         static TRef<CMesh> LoadMesh(const TString &path);
         static void LoadSubMesh(const aiMesh *mesh, SMeshData &mesh_data, TVector<SSubMesh> &sub_meshes);

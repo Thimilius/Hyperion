@@ -4,6 +4,8 @@
 
 namespace Hyperion::Math {
 
+    SBounds::SBounds() { }
+    
     SBounds::SBounds(SVec3 center, SVec3 size)
         : center(center), extends(size * 0.5f) { }
 
@@ -25,7 +27,7 @@ namespace Hyperion::Math {
     }
 
     TString SBounds::ToString() const {
-        return CStringUtils::Format("(Center: {}, Extends: {})", center, extends);
+        return CStringUtils::Format("(Center: {}, Extends: {})", center.ToString(), extends.ToString());
     }
 
 }
