@@ -6,7 +6,7 @@ namespace Hyperion::Rendering {
 
     class COpenGLVertexArray : public CVertexArray {
     private:
-        u32 m_array_id;
+        u32 m_vertex_array_id;
 
         TVector<TRef<CVertexBuffer>> m_vertex_buffers;
         TRef<CIndexBuffer> m_index_buffer;
@@ -16,6 +16,8 @@ namespace Hyperion::Rendering {
 
         virtual void Bind() const override;
         virtual void Unbind() const override;
+
+        virtual u32 GetID() const override { return m_vertex_array_id; }
 
         virtual void AddVertexBuffer(const TRef<CVertexBuffer> &vertex_buffer) override;
         virtual void SetIndexBuffer(const TRef<CIndexBuffer> &index_buffer) override;

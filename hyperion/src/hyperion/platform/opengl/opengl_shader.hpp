@@ -6,7 +6,7 @@ namespace Hyperion::Rendering {
 
     class COpenGLShader : public CShader {
     private:
-        u32 m_program_id;
+        u32 m_shader_program_id;
         TMap<TString, u32> m_uniforms;
     public:
         COpenGLShader(const TString &name, const TString &source);
@@ -15,6 +15,8 @@ namespace Hyperion::Rendering {
 
         void Bind() const override;
         void Unbind() const override;
+
+        u32 GetID() const override { return m_shader_program_id; }
 
         void SetInt(const TString &name, int value) override;
 

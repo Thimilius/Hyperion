@@ -45,6 +45,8 @@ namespace Hyperion::Rendering {
         virtual void Bind(u32 slot = 0) const = 0;
         virtual void Unbind(u32 slot = 0) const = 0;
 
+        virtual u32 GetID() const = 0;
+
         virtual void SetData(const void *pixels) = 0;
 
         inline ETextureFormat GetFormat() const { return m_format; }

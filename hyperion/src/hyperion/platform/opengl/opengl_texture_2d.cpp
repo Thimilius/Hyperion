@@ -63,8 +63,7 @@ namespace Hyperion::Rendering {
     }
 
     void COpenGLTexture2D::SetData(const void *pixels) {
-        glBindTexture(GL_TEXTURE_2D, m_texture_id);
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_width, m_height, GetGLFormat(), GL_UNSIGNED_BYTE, pixels);
+        glTextureSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_width, m_height, GetGLFormat(), GL_UNSIGNED_BYTE, pixels);
     }
 
     void COpenGLTexture2D::SetWrapMode(ETextureWrapMode wrap_mode) {
@@ -111,7 +110,7 @@ namespace Hyperion::Rendering {
     }
 
     void COpenGLTexture2D::CreateTexture(const u8 *pixels) {
-        glGenTextures(1, &m_texture_id);
+        glCreateTextures(GL_TEXTURE_2D, 1, &m_texture_id);
         glBindTexture(GL_TEXTURE_2D, m_texture_id);
 
         SetWrapMode(m_wrap_mode);

@@ -80,6 +80,8 @@ namespace Hyperion::Rendering {
 
         virtual void Bind() const = 0;
         virtual void Unbind() const = 0;
+        
+        virtual u32 GetID() const = 0;
 
         static TRef<CVertexBuffer> Create(const u8 *vertices, u32 size);
     };
@@ -97,6 +99,8 @@ namespace Hyperion::Rendering {
 
         virtual void Bind() const = 0;
         virtual void Unbind() const = 0;
+
+        virtual u32 GetID() const = 0;
 
         static TRef<CIndexBuffer> Create(const u16 *indices, u32 count);
         static TRef<CIndexBuffer> Create(const u32 *indices, u32 count);

@@ -17,11 +17,11 @@ namespace Hyperion::Rendering {
     }
 
     COpenGLShader::~COpenGLShader() {
-        glDeleteProgram(m_program_id);
+        glDeleteProgram(m_shader_program_id);
     }
 
     void COpenGLShader::Bind() const {
-        glUseProgram(m_program_id);
+        glUseProgram(m_shader_program_id);
     }
 
     void COpenGLShader::Unbind() const {
@@ -148,7 +148,7 @@ namespace Hyperion::Rendering {
             }
         }
 
-        m_program_id = program;
+        m_shader_program_id = program;
 
         for (u32 shader : shaders) {
             glDetachShader(program, shader);
@@ -202,7 +202,7 @@ namespace Hyperion::Rendering {
     s32 COpenGLShader::TryGetUniformLocation(const TString &name) {
         auto loc = m_uniforms.find(name);
         if (loc == m_uniforms.end()) {
-            s32 location = glGetUniformLocation(m_program_id, name.c_str());
+            s32 location = glGetUniformLocation(m_shader_program_id, name.c_str());
             if (location < 0) {
                 HYP_LOG_ERROR("OpenGL", "Failed to get location for uniform: {}", name);
             }

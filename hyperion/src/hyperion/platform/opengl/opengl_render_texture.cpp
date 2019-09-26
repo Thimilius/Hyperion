@@ -29,12 +29,11 @@ namespace Hyperion::Rendering {
             glDeleteRenderbuffers(1, &m_depth_attachment_id);
         }
 
-        glGenFramebuffers(1, &m_framebuffer_id);
-        glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer_id);
+        glCreateFramebuffers(1, &m_framebuffer_id);
 
         // Add color attachment
         {
-            glGenTextures(1, &m_color_attachment_id);
+            glCreateTextures(GL_TEXTURE_2D, 1, &m_color_attachment_id);
             glBindTexture(GL_TEXTURE_2D, m_color_attachment_id);
 
             switch (m_format) {
@@ -47,23 +46,19 @@ namespace Hyperion::Rendering {
                 default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
             }
 
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTextureParameteri(m_color_attachment_id, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTextureParameteri(m_color_attachment_id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_color_attachment_id, 0);
+            glNamedFramebufferTexture(m_framebuffer_id, GL_COLOR_ATTACHMENT0, m_color_attachment_id, 0);
             glBindTexture(GL_TEXTURE_2D, 0);
         }
 
 
         // Add depth-stencil attachment
         {
-            glGenRenderbuffers(1, &m_depth_attachment_id);
-            glBindRenderbuffer(GL_RENDERBUFFER, m_depth_attachment_id);
-
-            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-
-            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depth_attachment_id);
-            glBindRenderbuffer(GL_RENDERBUFFER, 0);
+            glCreateRenderbuffers(1, &m_depth_attachment_id);
+            glNamedRenderbufferStorage(m_depth_attachment_id, GL_DEPTH24_STENCIL8, width, height);
+            glNamedFramebufferRenderbuffer(m_framebuffer_id, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depth_attachment_id);
         }
 
         // Check for completion

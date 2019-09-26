@@ -11,6 +11,8 @@ namespace Hyperion::Rendering {
         virtual void Bind() const = 0;
         virtual void Unbind() const = 0;
 
+        virtual u32 GetID() const = 0;
+
         virtual void AddVertexBuffer(const TRef<CVertexBuffer> &vertex_buffer) = 0;
         virtual void SetIndexBuffer(const TRef<CIndexBuffer> &index_buffer) = 0;
 

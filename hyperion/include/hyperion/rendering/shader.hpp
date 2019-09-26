@@ -20,6 +20,8 @@ namespace Hyperion::Rendering {
         virtual void Bind() const = 0;
         virtual void Unbind() const = 0;
 
+        virtual u32 GetID() const = 0;
+
         virtual void SetInt(const TString &name, int value) = 0;
 
         virtual void SetFloat(const TString &name, float value) = 0;

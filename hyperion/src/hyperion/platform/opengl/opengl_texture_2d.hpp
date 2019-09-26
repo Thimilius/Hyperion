@@ -16,6 +16,8 @@ namespace Hyperion::Rendering {
         void Bind(u32 slot = 0) const override;
         void Unbind(u32 slot = 0) const override;
 
+        u32 GetID() const override { return m_texture_id; }
+
         void SetData(const void *pixels) override;
 
         void SetWrapMode(ETextureWrapMode wrap_mode) override;

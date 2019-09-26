@@ -5,15 +5,15 @@
 namespace Hyperion::Rendering {
 
     COpenGLVertexArray::COpenGLVertexArray() {
-        glGenVertexArrays(1, &m_array_id);
+        glGenVertexArrays(1, &m_vertex_array_id);
     }
 
     COpenGLVertexArray::~COpenGLVertexArray() {
-        glDeleteVertexArrays(1, &m_array_id);
+        glDeleteVertexArrays(1, &m_vertex_array_id);
     }
 
     void COpenGLVertexArray::Bind() const {
-        glBindVertexArray(m_array_id);
+        glBindVertexArray(m_vertex_array_id);
     }
 
     void COpenGLVertexArray::Unbind() const {
@@ -43,12 +43,8 @@ namespace Hyperion::Rendering {
     }
 
     void COpenGLVertexArray::SetIndexBuffer(const TRef<CIndexBuffer> &index_buffer) {
-        Bind();
-
-        index_buffer->Bind();
         m_index_buffer = index_buffer;
-
-        Unbind();
+        glVertexArrayElementBuffer(m_vertex_array_id, index_buffer->GetID());
     }
 
     u32 COpenGLVertexArray::ShaderDataTypeToOpenGLBaseType(EShaderDataType type) {
