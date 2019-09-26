@@ -17,7 +17,7 @@ uniform struct Transform {
 } u_transform;
 
 vec4 obj_to_clip_space(vec3 position) {
-	return u_transform.projection * u_transform.view * u_transform.model * vec4(position, 1.0f);
+	return u_transform.projection * u_transform.view * u_transform.model * vec4(position, 1.0);
 }
 
 void main() {

@@ -97,9 +97,14 @@ protected:
             m_lambertian_shader->SetFloat3("u_light.color", SVec3(1, 1, 1));
             m_lambertian_shader->SetInt("u_texture", 0);
             m_texture->Bind(0);
-            CRenderer::Submit(m_mesh, m_lambertian_shader, SMat4::Translate(0, 0, -1));
+            CRenderCommand::SetPolygonMode(EPolygonMode::Fill);
+            CRenderer::Submit(m_mesh, m_lambertian_shader, SMat4::Translate(0, 0, 0));
+            CRenderCommand::SetPolygonMode(EPolygonMode::Line);
+            CRenderCommand::DisableFeature(EFeature::Culling);
+            CRenderer::ImmediateCube(m_mesh->GetBounds().center, m_mesh->GetBounds().GetSize(), SVec4(1, 1, 1, 1));
         }
         CRenderer::End();
+
 
         CRenderCommand::Blit(
             nullptr, 

@@ -47,6 +47,8 @@ namespace Hyperion::Rendering {
 
         index_buffer->Bind();
         m_index_buffer = index_buffer;
+
+        Unbind();
     }
 
     u32 COpenGLVertexArray::ShaderDataTypeToOpenGLBaseType(EShaderDataType type) {
