@@ -25,31 +25,33 @@ namespace Hyperion::Rendering {
         // The plane should face up
         SVec3 normal = SVec3::Up();
 
+        // Remember that we are right-handed and therefore -z is into the screen!
+
         SMeshData mesh_data;
         mesh_data.positions.resize(4);
         mesh_data.normals.resize(4);
         mesh_data.uvs.resize(4);
         mesh_data.indicies.resize(6);
 
-        mesh_data.positions[0] = SVec3(half_width, 0, half_height);
+        mesh_data.positions[0] = SVec3(-half_width, 0, half_height);
         mesh_data.normals[0]   = normal;
-        mesh_data.uvs[0]       = SVec2(1.0f, 1.0f);
+        mesh_data.uvs[0]       = SVec2(0.0f, 0.0f);
 
-        mesh_data.positions[1] = SVec3(half_width, 0, -half_height);
+        mesh_data.positions[1] = SVec3(-half_width, 0, -half_height);
         mesh_data.normals[1]   = normal;
-        mesh_data.uvs[1]       = SVec2(1.0f, 0.0f);
+        mesh_data.uvs[1]       = SVec2(0.0f, 1.0f);
 
-        mesh_data.positions[2] = SVec3(-half_width, 0, -half_height);
+        mesh_data.positions[2] = SVec3(half_width, 0, -half_height);
         mesh_data.normals[2]   = normal;
-        mesh_data.uvs[2]       = SVec2(0.0f, 0.0f);
+        mesh_data.uvs[2]       = SVec2(1.0f, 1.0f);
 
-        mesh_data.positions[3] = SVec3(-half_width, 0, half_height);
+        mesh_data.positions[3] = SVec3(half_width, 0, half_height);
         mesh_data.normals[3]   = normal;
-        mesh_data.uvs[3]       = SVec2(0.0f, 1.0f);
+        mesh_data.uvs[3]       = SVec2(1.0f, 0.0f);
 
         mesh_data.indicies = {
-            0, 2, 1,
-            0, 3, 2
+            0, 1, 2,
+            0, 2, 3
         };
 
         return Create(mesh_data);
@@ -64,9 +66,9 @@ namespace Hyperion::Rendering {
 
         float half_size = size / 2.0f;
 
-        // Forward and back as seen from the center of the cube!
+        // Forward and back as seen from the center of the cube (aka right-handed)!
         {
-            // Forward
+            // Forward (-z)
             mesh_data.positions[0]  = SVec3(half_size, -half_size, -half_size);
             mesh_data.normals[0]    = SVec3::Forward();
             mesh_data.uvs[0]        = SVec2(0, 0);
@@ -100,7 +102,7 @@ namespace Hyperion::Rendering {
             mesh_data.normals[7]    = SVec3::Right();
             mesh_data.uvs[7]        = SVec2(1, 0);
 
-            // Back
+            // Back (+z)
             mesh_data.positions[8]  = SVec3(-half_size, -half_size, half_size);
             mesh_data.normals[8]    = SVec3::Back();
             mesh_data.uvs[8]        = SVec2(0, 0);
