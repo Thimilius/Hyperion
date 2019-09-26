@@ -17,13 +17,17 @@ namespace Hyperion::Rendering {
             glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
         }
 
-        if (OPENGL_LOG_EXTENSIONS) {
-            s32 extension_count;
-            glGetIntegerv(GL_NUM_EXTENSIONS, &extension_count);
-            for (s32 i = 0; i < extension_count; i++) {
-                HYP_LOG_INFO("OpenGL", "Extension: {} available!", glGetStringi(GL_EXTENSIONS, i));
+        // Query extensions
+        s32 extension_count;
+        glGetIntegerv(GL_NUM_EXTENSIONS, &extension_count);
+        for (s32 i = 0; i < extension_count; i++) {
+            TString extension = (char *)glGetStringi(GL_EXTENSIONS, i);
+            m_extensions.push_back(extension);
+            if (OPENGL_LOG_EXTENSIONS) {
+                HYP_LOG_INFO("OpenGL", "Extension: '{}' available!", extension);
             }
         }
+        CheckExtensions();
 
         // Query properties
         {
@@ -31,7 +35,7 @@ namespace Hyperion::Rendering {
             m_properties.renderer = (const char *)glGetString(GL_RENDERER);
             m_properties.version = (const char *)glGetString(GL_VERSION);
         }
-
+        
         // Query limits
         {
             glGetIntegerv(GL_MAX_SAMPLES, &m_limits.max_msaa_samples);
@@ -41,6 +45,18 @@ namespace Hyperion::Rendering {
         HYP_LOG_INFO("OpenGL", "Initialized OpenGL! ({})", m_properties.version);
         HYP_LOG_INFO("OpenGL", "Renderer: {}", m_properties.renderer);
         HYP_LOG_INFO("OpenGL", "Max texture units: {} - Max MSAA samples: {}", m_limits.max_texture_units, m_limits.max_msaa_samples);
+    }
+
+    void COpenGLGraphicsContext::CheckExtensions() {
+        CheckExtension("GL_ARB_direct_state_access");
+        CheckExtension("GL_EXT_texture_filter_anisotropic");
+    }
+
+    void COpenGLGraphicsContext::CheckExtension(const TString &extension) {
+        if (std::find(m_extensions.begin(), m_extensions.end(), extension) == m_extensions.end()) {
+            HYP_LOG_ERROR("OpenGL", "Manditory extension: '{}' not available!", extension);
+            HYP_ASSERT_MESSAGE(false, "Missing OpenGL extension!");
+        }
     }
 
     void COpenGLGraphicsContext::DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *user_pointer) {
