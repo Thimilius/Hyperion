@@ -24,6 +24,14 @@ namespace Hyperion::Rendering {
             });
         }
     };
+    
+    struct SMeshData {
+        TVector<Math::SVec3> positions;
+        TVector<Math::SVec3> normals;
+        TVector<Math::SVec2> uvs;
+
+        TVector<u32> indicies;
+    };
 
     struct SSubMesh {
         u32 index_count;
@@ -35,23 +43,27 @@ namespace Hyperion::Rendering {
 
     class CMesh : public CAsset {
     private:
-        TRef<CVertexArray> m_vertex_array;
+        SMeshData m_mesh_data;
+
         TVector<SSubMesh> m_sub_meshes;
+
+        TRef<CVertexArray> m_vertex_array;
     public:
+        const SMeshData &GetMeshData() const { return m_mesh_data; }
         const TRef<CVertexArray> GetVertexArray() const { return m_vertex_array; }
         const TVector<SSubMesh> GetSubMeshes() const { return m_sub_meshes; }
 
-        static TRef<CMesh> Create(const TRef<CVertexArray> &vertex_array);
-        static TRef<CMesh> Create(const TRef<CVertexArray> &vertex_array, const TVector<SSubMesh> sub_meshes);
+        static TRef<CMesh> Create(const SMeshData &mesh_data);
+        static TRef<CMesh> Create(const SMeshData &mesh_data, const TVector<SSubMesh> sub_meshes);
         static TRef<CMesh> CreatePlane(float width, float height);
-        static TRef<CMesh> CreatePlane(Math::SVec2 size);
         static TRef<CMesh> CreateCube(float size);
         static TRef<CMesh> CreateFromFile(const TString &path);
     private:
-        CMesh(const TRef<CVertexArray> &vertex_array, const TVector<SSubMesh> sub_meshes);
+        CMesh(const SMeshData &mesh_data);
+        CMesh(const SMeshData &mesh_data, const TVector<SSubMesh> sub_meshes);
 
         static TRef<CMesh> LoadMesh(const TString &path);
-        static void LoadSubMesh(const aiMesh *mesh, TVector<SVertexPNU> &verticies, TVector<u32> &indicies, TVector<SSubMesh> &sub_meshes);
+        static void LoadSubMesh(const aiMesh *mesh, SMeshData &mesh_data, TVector<SSubMesh> &sub_meshes);
     };
 
 }

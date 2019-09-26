@@ -8,7 +8,7 @@ namespace Hyperion::Rendering {
     private:
         u32 m_buffer_id;
     public:
-        COpenGLVertexBuffer(u8 *vertices, u32 size);
+        COpenGLVertexBuffer(const u8 *vertices, u32 size);
         ~COpenGLVertexBuffer();
 
         void Bind() const override;
@@ -19,8 +19,8 @@ namespace Hyperion::Rendering {
     private:
         u32 m_buffer_id;
     public:
-        COpenGLIndexBuffer(u16 *indices, u32 count);
-        COpenGLIndexBuffer(u32 *indices, u32 count);
+        COpenGLIndexBuffer(const u16 *indices, u32 count);
+        COpenGLIndexBuffer(const u32 *indices, u32 count);
         ~COpenGLIndexBuffer();
 
         void Bind() const override;
