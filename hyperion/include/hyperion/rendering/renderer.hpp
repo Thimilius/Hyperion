@@ -24,7 +24,7 @@ namespace Hyperion::Rendering {
         inline static SState s_immediate_state;
         inline static u32 s_immediate_vertex_offset;
         inline static TRef<CShader> s_immediate_shader;
-        inline static SVertexPNU s_immediate_buffer[2000];
+        inline static SVertexPNCU s_immediate_buffer[2000];
         inline static TRef<CVertexArray> s_immediate_vertex_array;
         inline static TRef<CVertexBuffer> s_immediate_vertex_buffer;
     public:

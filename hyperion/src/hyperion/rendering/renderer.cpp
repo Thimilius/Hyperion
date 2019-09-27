@@ -45,7 +45,7 @@ namespace Hyperion::Rendering {
 
         if (!s_immediate_vertex_array) {
             s_immediate_vertex_buffer = CVertexBuffer::Create(nullptr, sizeof(s_immediate_buffer), EBufferUsage::DynamicDraw);
-            s_immediate_vertex_buffer->SetLayout(SVertexPNU::GetBufferLayout());
+            s_immediate_vertex_buffer->SetLayout(SVertexPNCU::GetBufferLayout());
             s_immediate_vertex_array = CVertexArray::Create();
             s_immediate_vertex_array->AddVertexBuffer(s_immediate_vertex_buffer);
         }
@@ -111,7 +111,7 @@ namespace Hyperion::Rendering {
         s_immediate_buffer[s_immediate_vertex_offset].position = position;
         s_immediate_buffer[s_immediate_vertex_offset].normal = normal;
         s_immediate_buffer[s_immediate_vertex_offset].uv = uv;
-        // TODO: We need a vertex layout that supports colors
+        s_immediate_buffer[s_immediate_vertex_offset].color = color;
 
         s_immediate_vertex_offset++;
     }

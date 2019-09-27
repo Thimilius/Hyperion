@@ -3,26 +3,12 @@
 #include "hyperion/common.hpp"
 #include "hyperion/core/asset.hpp"
 #include "hyperion/rendering/vertex_array.hpp"
-#include "hyperion/math/math.hpp"
+#include "hyperion/rendering/vertex_format.hpp"
 
 struct aiMesh;
 
 namespace Hyperion::Rendering {
 
-    struct SVertexPNU {
-        Math::SVec3 position;
-        Math::SVec3 normal;
-        Math::SVec2 uv;
-
-        static CBufferLayout GetBufferLayout() {
-            return CBufferLayout({
-                SBufferElement("a_position", EShaderDataType::Float3),
-                SBufferElement("a_normal", EShaderDataType::Float3),
-                SBufferElement("a_uv", EShaderDataType::Float2)
-            });
-        }
-    };
-    
     struct SMeshData {
         TVector<Math::SVec3> positions;
         TVector<Math::SVec3> normals;
