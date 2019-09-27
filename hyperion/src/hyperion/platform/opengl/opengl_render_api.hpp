@@ -25,8 +25,8 @@ namespace Hyperion::Rendering {
         void SetActiveRenderTarget(const TRef<CRenderTexture> texture, ERenderTextureTarget target) override;
         void Blit(const TRef<CRenderTexture> destination, s32 dstX0, s32 dstY0, s32 dstX1, s32 dstY1, const TRef<CRenderTexture> source, s32 srcX0, s32 srcY0, s32 srcX1, s32 srcY1) override;
 
-        void DrawIndexed(EIndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) override;
-        void Draw(u32 vertex_count, u32 vertex_offset) override;
+        void DrawIndexed(EPrimitive primitive, EIndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) override;
+        void Draw(EPrimitive primitive, u32 vertex_count, u32 vertex_offset) override;
     private:
         static u32 GetGLFeature(EFeature feature);
         static u32 GetGLBlendFactor(EBlendFactor blend_factor);
@@ -35,6 +35,7 @@ namespace Hyperion::Rendering {
         static u32 GetGLPolygonMode(EPolygonMode polygon_mode);
         static u32 GetGLCullingMode(ECullingMode culling_mode);
         static u32 GetGLClearMask(EClearMask clear_mask);
+        static u32 GetGLPrimitive(EPrimitive primitive);
         static u32 GetGLIndexFormat(EIndexFormat index_format);
         static u64 GetGLIndexSize(EIndexFormat index_format);
     };

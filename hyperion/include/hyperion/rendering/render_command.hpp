@@ -1,8 +1,9 @@
 #pragma once
 
-#include "render_api.hpp"
-#include "render_texture.hpp"
-#include "buffer.hpp"
+#include "hyperion/rendering/render_api.hpp"
+#include "hyperion/rendering/render_texture.hpp"
+#include "hyperion/rendering/buffer.hpp"
+#include "hyperion/app/application.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -54,16 +55,22 @@ namespace Hyperion::Rendering {
             s_render_api->SetActiveRenderTarget(texture, target);
         }
 
+        inline static void Blit(const TRef<CRenderTexture> destination, const TRef<CRenderTexture> source) {
+            u32 destination_width = destination ? destination->GetWidth() : CApplication::GetInstance()->GetWindow()->GetWidth();
+            u32 destination_height = destination ? destination->GetHeight() : CApplication::GetInstance()->GetWindow()->GetHeight();
+            s_render_api->Blit(destination, 0, 0, destination_width, destination_height, source, 0, 0, source->GetWidth(), source->GetHeight());
+        }
+
         inline static void Blit(const TRef<CRenderTexture> destination, s32 dstX0, s32 dstY0, s32 dstX1, s32 dstY1, const TRef<CRenderTexture> source, s32 srcX0, s32 srcY0, s32 srcX1, s32 srcY1) {
             s_render_api->Blit(destination, dstX0, dstY0, dstX1, dstY1, source, srcX0, srcY0, srcX1, srcY1);
         }
 
-        inline static void DrawIndexed(EIndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) {
-            s_render_api->DrawIndexed(format, index_count, index_offset, vertex_offset); 
+        inline static void DrawIndexed(EPrimitive primitive, EIndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) {
+            s_render_api->DrawIndexed(primitive, format, index_count, index_offset, vertex_offset);
         }
 
-        inline static void Draw(u32 vertex_count, u32 vertex_offset) {
-            s_render_api->Draw(vertex_count, vertex_offset);
+        inline static void Draw(EPrimitive primitive, u32 vertex_count, u32 vertex_offset) {
+            s_render_api->Draw(primitive, vertex_count, vertex_offset);
         }
     private:
         static void Init();

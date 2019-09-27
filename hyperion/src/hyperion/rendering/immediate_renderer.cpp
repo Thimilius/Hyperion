@@ -98,7 +98,7 @@ namespace Hyperion::Rendering {
         s_vertex_buffer->SetData(0, (u8 *)s_data_buffer, s_state.vertex_offset * sizeof(SVertexImmediate));
         s_vertex_array->Bind();
 
-        CRenderCommand::Draw(s_state.vertex_offset, 0);
+        CRenderCommand::Draw(EPrimitive::Triangles, s_state.vertex_offset, 0);
     }
 
 }

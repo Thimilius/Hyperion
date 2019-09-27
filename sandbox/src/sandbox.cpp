@@ -103,18 +103,7 @@ protected:
         }
         CImmediateRenderer::End();
 
-        CRenderCommand::Blit(
-            nullptr, 
-            0,
-            0, 
-            GetWindow()->GetWidth(), 
-            GetWindow()->GetHeight(), 
-            m_render_texture, 
-            0,
-            0, 
-            m_render_texture->GetWidth(), 
-            m_render_texture->GetHeight()
-        );
+        CRenderCommand::Blit(nullptr, m_render_texture);
 
         // Setting back buffer as render target before swapping buffers fixes vsync
         CRenderCommand::SetActiveRenderTarget(nullptr);

@@ -25,7 +25,7 @@ namespace Hyperion::Rendering {
 
         EIndexFormat format = vertex_array->GetIndexBuffer()->GetFormat();
         for (const SSubMesh &sub_mesh : mesh->GetSubMeshes()) {
-            CRenderCommand::DrawIndexed(format, sub_mesh.index_count, sub_mesh.index_offset, sub_mesh.vertex_offset);
+            CRenderCommand::DrawIndexed(EPrimitive::Triangles, format, sub_mesh.index_count, sub_mesh.index_offset, sub_mesh.vertex_offset);
         }
 
         vertex_array->Unbind();
