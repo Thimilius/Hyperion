@@ -19,8 +19,6 @@ void main() {
 
 out vec4 o_color;
 
-uniform vec4 u_color;
-
 void main() {
-	o_color = u_color;
+	o_color = vec4(1, 1, 1, 1);
 }

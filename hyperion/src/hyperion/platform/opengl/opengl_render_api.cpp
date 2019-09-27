@@ -96,6 +96,10 @@ namespace Hyperion::Rendering {
         glDrawElementsBaseVertex(GL_TRIANGLES, index_count, GetGLIndexFormat(format), (void*)(GetGLIndexSize(format) * index_offset), vertex_offset);
     }
 
+    void COpenGLRenderAPI::Draw(u32 vertex_count, u32 vertex_offset) {
+        glDrawArrays(GL_TRIANGLES, vertex_offset, vertex_count);
+    }
+
     u32 COpenGLRenderAPI::GetGLFeature(EFeature feature) {
         switch (feature) {
             case Hyperion::Rendering::EFeature::Blending: return GL_BLEND;

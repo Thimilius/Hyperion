@@ -102,6 +102,7 @@ namespace Hyperion::Rendering {
         virtual void Blit(const TRef<CRenderTexture> destination, s32 dstX0, s32 dstY0, s32 dstX1, s32 dstY1, const TRef<CRenderTexture> source, s32 srcX0, s32 srcY0, s32 srcX1, s32 srcY1) = 0;
 
         virtual void DrawIndexed(EIndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) = 0;
+        virtual void Draw(u32 vertex_count, u32 vertex_offset) = 0;
     public:
         inline static ERenderAPI GetAPI() { return m_render_api; }
     };

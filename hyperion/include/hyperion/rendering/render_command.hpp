@@ -61,6 +61,10 @@ namespace Hyperion::Rendering {
         inline static void DrawIndexed(EIndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) {
             s_render_api->DrawIndexed(format, index_count, index_offset, vertex_offset); 
         }
+
+        inline static void Draw(u32 vertex_count, u32 vertex_offset) {
+            s_render_api->Draw(vertex_count, vertex_offset);
+        }
     private:
         static void Init();
 

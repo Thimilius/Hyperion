@@ -31,14 +31,7 @@ protected:
 
         UpdateTitle();
 
-        // Load all shaders into shader library
-        for (auto &entry : std::filesystem::directory_iterator("data/shaders/")) {
-            auto &path = entry.path();
-            if (path.extension() == ".glsl") {
-                auto &filename = path.filename().string();
-                CShaderLibrary::Load(filename.substr(0, filename.length() - 5), path.string());
-            }
-        }
+        CShaderLibrary::LoadAll("data/shaders");
 
         m_lambertian_shader = CShaderLibrary::Get("lambertian");
         m_texture = CTexture2D::CreateFromFile("data/textures/grass.png", ETextureWrapMode::Clamp, ETextureFilter::Bilinear, ETextureAnisotropicFilter::None);
@@ -99,12 +92,16 @@ protected:
             m_texture->Bind(0);
             CRenderCommand::SetPolygonMode(EPolygonMode::Fill);
             CRenderer::Submit(m_mesh, m_lambertian_shader, SMat4::Translate(0, 0, 0));
-            CRenderCommand::SetPolygonMode(EPolygonMode::Line);
-            CRenderCommand::DisableFeature(EFeature::Culling);
-            CRenderer::ImmediateCube(m_mesh->GetBounds().center, m_mesh->GetBounds().GetSize(), SVec4(1, 1, 1, 1));
         }
         CRenderer::End();
 
+        CRenderer::ImmediateBegin(m_camera_controller->GetCamera());
+        {
+            CRenderCommand::SetPolygonMode(EPolygonMode::Line);
+            CRenderCommand::DisableFeature(EFeature::Culling);
+            CRenderer::ImmediateCube(m_mesh->GetBounds().center, m_mesh->GetBounds().GetSize(), SVec4(1, 0, 1, 1));
+        }
+        CRenderer::ImmediateEnd();
 
         CRenderCommand::Blit(
             nullptr, 
