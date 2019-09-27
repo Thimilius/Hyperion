@@ -21,6 +21,7 @@
 #include "rendering/graphics_context.hpp"
 #include "rendering/render_command.hpp"
 #include "rendering/renderer.hpp"
+#include "rendering/immediate_renderer.hpp"
 #include "rendering/shader.hpp"
 #include "rendering/texture.hpp"
 #include "rendering/buffer.hpp"

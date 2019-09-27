@@ -95,13 +95,13 @@ protected:
         }
         CRenderer::End();
 
-        CRenderer::ImmediateBegin(m_camera_controller->GetCamera());
+        CImmediateRenderer::Begin(m_camera_controller->GetCamera());
         {
             CRenderCommand::SetPolygonMode(EPolygonMode::Line);
             CRenderCommand::DisableFeature(EFeature::Culling);
-            CRenderer::ImmediateCube(m_mesh->GetBounds().center, m_mesh->GetBounds().GetSize(), SVec4(1, 0, 1, 1));
+            CImmediateRenderer::DrawCube(m_mesh->GetBounds().center, m_mesh->GetBounds().GetSize(), SVec4(1, 1, 1, 1));
         }
-        CRenderer::ImmediateEnd();
+        CImmediateRenderer::End();
 
         CRenderCommand::Blit(
             nullptr, 

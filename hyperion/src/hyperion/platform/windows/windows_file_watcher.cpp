@@ -102,7 +102,11 @@ namespace Hyperion::IO {
 
                 TString path = CStringUtils::Format("{}{}", watch_struct->watcher->m_path, file);
 
-                Sleep(1);
+                // HACK: This is a pretty nasty hack of trying to "wait" for long enough,
+                // so that file changes are actually written to disk and
+                // to not cause any weird errors when trying to load
+                Sleep(2);
+
                 watch_struct->watcher->HandleAction(path, notify->Action);
             } while (notify->NextEntryOffset != 0);
         }

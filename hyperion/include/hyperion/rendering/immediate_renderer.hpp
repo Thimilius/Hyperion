@@ -2,13 +2,13 @@
 
 #include "hyperion/common.hpp"
 #include "hyperion/rendering/shader.hpp"
-#include "hyperion/rendering/mesh.hpp"
+#include "hyperion/rendering/vertex_format.hpp"
 #include "hyperion/rendering/camera.hpp"
 #include "hyperion/math/mat4.hpp"
 
 namespace Hyperion::Rendering {
 
-    class CRenderer {
+    class CImmediateRenderer {
     private:
         struct SState {
             struct {
@@ -19,8 +19,6 @@ namespace Hyperion::Rendering {
             } transform;
         };
 
-        inline static SState s_state;
-
         inline static SState s_immediate_state;
         inline static u32 s_immediate_vertex_offset;
         inline static TRef<CShader> s_immediate_shader;
@@ -29,11 +27,13 @@ namespace Hyperion::Rendering {
         inline static TRef<CVertexBuffer> s_immediate_vertex_buffer;
     public:
         static void Begin(const TRef<CCamera> &camera);
-        static void Submit(const TRef<CMesh> &mesh, const TRef<CShader> &shader, const Math::SMat4 &transform);
+        static void DrawCube(Math::SVec3 center, Math::SVec3 size, Math::SVec4 color);
         static void End();
     private:
-        CRenderer() = delete;
-        ~CRenderer() = delete;
+        CImmediateRenderer() = delete;
+        ~CImmediateRenderer() = delete;
+
+        static void AddVertex(Math::SVec3 position, Math::SVec3 normal, Math::SVec2 uv, Math::SVec4 color);
     };
 
 }
