@@ -2,8 +2,9 @@
 
 #include "hyperion/rendering/shader.hpp"
 
-#include "hyperion/platform/opengl/opengl_shader.hpp"
+#include <filesystem>
 
+#include "hyperion/platform/opengl/opengl_shader.hpp"
 #include "hyperion/io/file_utilities.hpp"
 
 using namespace Hyperion::IO;
@@ -31,6 +32,16 @@ namespace Hyperion::Rendering {
             return EShaderType::Fragment;
         } else {
             HYP_ASSERT_MESSAGE(false, "Failed to get shader type from string!"); return EShaderType::None;
+        }
+    }
+
+    void CShaderLibrary::LoadAll(const TString &path) {
+        for (auto &entry : std::filesystem::directory_iterator(path)) {
+            auto &path = entry.path();
+            if (path.extension() == ".glsl") {
+                auto &filename = path.filename().string();
+                Load(filename.substr(0, filename.length() - 5), path.string());
+            }
         }
     }
 

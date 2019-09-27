@@ -46,6 +46,7 @@ namespace Hyperion::Rendering {
 
         inline static TMap<TString, SShaderEntry> s_shaders;
     public:
+        static void LoadAll(const TString &path);
         static TRef<CShader> Load(const TString &name, const TString &filepath);
         static TRef<CShader> Reload(const TString &name);
         static void Add(const TString &name, const TString &filepath, const TRef<CShader> &shader);
