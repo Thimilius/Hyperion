@@ -40,6 +40,13 @@ namespace Hyperion::Rendering {
         }
     }
 
+    TRef<CVertexBuffer> CVertexBuffer::Create(const u8 *vertices, u32 size, EBufferUsage usage) {
+        switch (CRenderAPI::GetAPI()) {
+            case ERenderAPI::OpenGL: return std::make_shared<COpenGLVertexBuffer>(vertices, size, usage);
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
+        }
+    }
+
     TRef<CIndexBuffer> CIndexBuffer::Create(const u16 *indices, u32 count) {
         switch (CRenderAPI::GetAPI()) {
             case ERenderAPI::OpenGL: return std::make_shared<COpenGLIndexBuffer>(indices, count);

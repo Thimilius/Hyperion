@@ -18,6 +18,13 @@ namespace Hyperion::Rendering {
         UInt32
     };
 
+    enum class EBufferUsage {
+        None,
+        StaticDraw,
+        StreamDraw,
+        DynamicDraw
+    };
+
     static u32 ShaderDataTypeSize(EShaderDataType type) {
         switch (type) {
             case EShaderDataType::Float:  return 4;
@@ -71,9 +78,13 @@ namespace Hyperion::Rendering {
 
     class CVertexBuffer {
     protected:
+        u32 m_size;
         CBufferLayout m_layout;
     public:
+        CVertexBuffer(u32 size) : m_size(size) { }
         virtual ~CVertexBuffer() = default;
+
+        inline const u32 GetSize() const { return m_size; }
 
         inline const CBufferLayout &GetLayout() const { return m_layout; }
         inline void SetLayout(const CBufferLayout &layout) { m_layout = layout; }
@@ -83,7 +94,10 @@ namespace Hyperion::Rendering {
         
         virtual u32 GetID() const = 0;
 
+        virtual void SetData(u32 offset, const u8 *verticies, u32 size) = 0;
+
         static TRef<CVertexBuffer> Create(const u8 *vertices, u32 size);
+        static TRef<CVertexBuffer> Create(const u8 *vertices, u32 size, EBufferUsage usage);
     };
 
     class CIndexBuffer {
