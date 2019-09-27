@@ -20,20 +20,4 @@ namespace Hyperion::Rendering {
         }
     };
 
-    struct SVertexPNCU {
-        Math::SVec3 position;
-        Math::SVec3 normal;
-        Math::SVec4 color;
-        Math::SVec2 uv;
-
-        static CBufferLayout GetBufferLayout() {
-            return CBufferLayout({
-                SBufferElement("a_position", EShaderDataType::Float3),
-                SBufferElement("a_normal", EShaderDataType::Float3),
-                SBufferElement("a_color", EShaderDataType::Float4),
-                SBufferElement("a_uv", EShaderDataType::Float2)
-            });
-        }
-    };
-
 }

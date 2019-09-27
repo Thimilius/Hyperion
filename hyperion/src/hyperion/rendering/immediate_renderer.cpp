@@ -9,21 +9,21 @@ using namespace Hyperion::Math;
 namespace Hyperion::Rendering {
 
     void CImmediateRenderer::Begin(const TRef<CCamera> &camera) {
-        s_immediate_state.transform.view = camera->GetViewMatrix();
-        s_immediate_state.transform.projection = camera->GetProjectionMatrix();
-        s_immediate_state.transform.view_projection = camera->GetViewProjectionMatrix();
+        s_state.transform.view = camera->GetViewMatrix();
+        s_state.transform.projection = camera->GetProjectionMatrix();
+        s_state.transform.view_projection = camera->GetViewProjectionMatrix();
 
         // FIXME: This does not need to be set every time
         s_immediate_shader = CShaderLibrary::Get("immediate");
 
-        if (!s_immediate_vertex_array) {
-            s_immediate_vertex_buffer = CVertexBuffer::Create(nullptr, sizeof(s_immediate_buffer), EBufferUsage::DynamicDraw);
-            s_immediate_vertex_buffer->SetLayout(SVertexPNCU::GetBufferLayout());
-            s_immediate_vertex_array = CVertexArray::Create();
-            s_immediate_vertex_array->AddVertexBuffer(s_immediate_vertex_buffer);
+        if (!s_vertex_array) {
+            s_vertex_buffer = CVertexBuffer::Create(nullptr, sizeof(s_data_buffer), EBufferUsage::DynamicDraw);
+            s_vertex_buffer->SetLayout(SVertexImmediate::GetBufferLayout());
+            s_vertex_array = CVertexArray::Create();
+            s_vertex_array->AddVertexBuffer(s_vertex_buffer);
         }
 
-        s_immediate_vertex_offset = 0;
+        s_state.vertex_offset = 0;
     }
 
     void CImmediateRenderer::DrawCube(SVec3 center, SVec3 size, SVec4 color) {
@@ -79,25 +79,26 @@ namespace Hyperion::Rendering {
     }
 
     void CImmediateRenderer::AddVertex(SVec3 position, SVec3 normal, SVec2 uv, SVec4 color) {
-        HYP_ASSERT_MESSAGE(s_immediate_vertex_offset < 2000, "Immediate vertex buffer is full!");
+        u32 vertex_offset = s_state.vertex_offset;
+        HYP_ASSERT_MESSAGE(vertex_offset < 2000, "Immediate vertex buffer is full!");
 
-        s_immediate_buffer[s_immediate_vertex_offset].position = position;
-        s_immediate_buffer[s_immediate_vertex_offset].normal = normal;
-        s_immediate_buffer[s_immediate_vertex_offset].uv = uv;
-        s_immediate_buffer[s_immediate_vertex_offset].color = color;
+        s_data_buffer[vertex_offset].position = position;
+        s_data_buffer[vertex_offset].normal = normal;
+        s_data_buffer[vertex_offset].uv = uv;
+        s_data_buffer[vertex_offset].color = color;
 
-        s_immediate_vertex_offset++;
+        s_state.vertex_offset++;
     }
 
     void CImmediateRenderer::End() {
         s_immediate_shader->Bind();
-        s_immediate_shader->SetMat4("u_transform.view", s_immediate_state.transform.view);
-        s_immediate_shader->SetMat4("u_transform.projection", s_immediate_state.transform.projection);
+        s_immediate_shader->SetMat4("u_transform.view", s_state.transform.view);
+        s_immediate_shader->SetMat4("u_transform.projection", s_state.transform.projection);
 
-        s_immediate_vertex_buffer->SetData(0, (u8 *)s_immediate_buffer, s_immediate_vertex_offset * sizeof(SVertexPNU));
-        s_immediate_vertex_array->Bind();
+        s_vertex_buffer->SetData(0, (u8 *)s_data_buffer, s_state.vertex_offset * sizeof(SVertexImmediate));
+        s_vertex_array->Bind();
 
-        CRenderCommand::Draw(s_immediate_vertex_offset, 0);
+        CRenderCommand::Draw(s_state.vertex_offset, 0);
     }
 
 }
