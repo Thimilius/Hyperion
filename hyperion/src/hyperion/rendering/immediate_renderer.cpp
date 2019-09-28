@@ -91,6 +91,11 @@ namespace Hyperion::Rendering {
     }
 
     void CImmediateRenderer::End() {
+        // We do not need to draw anything if no verticies were added
+        if (s_state.vertex_offset == 0) {
+            return;
+        }
+
         s_immediate_shader->Bind();
         s_immediate_shader->SetMat4("u_transform.view", s_state.transform.view);
         s_immediate_shader->SetMat4("u_transform.projection", s_state.transform.projection);
