@@ -1,4 +1,5 @@
 #include <hyperion/hyperion.hpp>
+#include <hyperion/entry_point.hpp>
 
 using namespace Hyperion;
 using namespace Hyperion::Events;
