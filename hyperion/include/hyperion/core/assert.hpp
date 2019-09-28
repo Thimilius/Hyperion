@@ -11,13 +11,13 @@
             if(!(x)) {                                                                                                             \
                 HYP_LOG_ERROR("Assert", "Assertion failed!\nIn file: {} ({})\nWith assertion message: {}", __FILE__, __LINE__, m); \
                 HYP_ASSERT_DEBUG_BREAK;                                                                                            \
-                abort();                                                                                                           \
+                exit(-1);                                                                                                          \
             } } while(0)
     #define HYP_ASSERT_NO_MESSAGE(x) do {                                                                                          \
             if (!(x)) {                                                                                                            \
                 HYP_LOG_ERROR("Assert", "Assertion failed!\nIn file: {} ({})", __FILE__, __LINE__);                                \
                 HYP_ASSERT_DEBUG_BREAK;                                                                                            \
-                abort();                                                                                                           \
+                exit(-1);                                                                                                          \
             } } while (0)
 
     #define HYP_ASSERT_ENUM_OUT_OF_RANGE HYP_ASSERT_MESSAGE(false, "Enum out of range!")

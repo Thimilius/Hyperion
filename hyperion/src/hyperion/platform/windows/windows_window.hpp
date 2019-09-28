@@ -1,6 +1,7 @@
 #pragma once
 
 #include "hyperion/app/window.hpp"
+#include "hyperion/math/vec2.hpp"
 
 namespace Hyperion {
 
@@ -21,6 +22,8 @@ namespace Hyperion {
     private:
         void Update() const override;
         void Show() const override;
+
+        Math::SVec2 GetActualWindowSize(u32 client_width, u32 client_height);
 
         EKeyCode TranslateKeyCode(u32 w_param, u32 l_param) const;
         EMouseButtonCode TranslateMouseButtonCode(u32 code) const;

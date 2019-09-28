@@ -24,11 +24,15 @@ namespace Hyperion::Rendering {
             SetPixelFormat(m_device_context, pixel_format, &pixel_format_descriptor);
 
             HGLRC temp_context = wglCreateContext(m_device_context);
+            if (!temp_context) {
+                HYP_PANIC_MESSAGE("Failed to create temporary OpenGL context!");
+            }
+
             wglMakeCurrent(m_device_context, temp_context);
 
             GLADloadproc extension_loader = (GLADloadproc)wglGetProcAddress;
             if (!gladLoadWGLLoader(extension_loader, m_device_context)) {
-                HYP_LOG_ERROR("OpenGL]", "Failed to load windows opengl extensions!");
+                HYP_PANIC_MESSAGE("Failed to load windows OpenGL extensions!");
             }
 
             wglMakeCurrent(m_device_context, NULL);
@@ -61,10 +65,14 @@ namespace Hyperion::Rendering {
                 0
             };
             HGLRC opengl_context = wglCreateContextAttribsARB(m_device_context, NULL, context_attributes);
+            if (!opengl_context) {
+                HYP_PANIC_MESSAGE("Failed to create OpenGL context!");
+            }
+
             wglMakeCurrent(m_device_context, opengl_context);
 
             if (!gladLoadGL()) {
-                HYP_LOG_ERROR("OpenGL", "Failed to load opengl extensions!");
+                HYP_PANIC_MESSAGE("Failed to load OpenGL extensions!");
             }
         }
 

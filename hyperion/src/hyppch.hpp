@@ -25,4 +25,5 @@
 #include "hyperion/core/string_utils.hpp"
 #include "hyperion/math/math.hpp"
 #include "hyperion/rendering/render_api.hpp"
+#include "hyperion/system/engine.hpp"
 #include "hyperion/system/operating_system.hpp"

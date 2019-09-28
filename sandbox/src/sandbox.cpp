@@ -1,4 +1,4 @@
-#include <hyperion/hyperion.hpp>
+﻿#include <hyperion/hyperion.hpp>
 #include <hyperion/entry_point.hpp>
 
 using namespace Hyperion;

@@ -22,6 +22,9 @@ namespace Hyperion {
         u32 window_styles = WS_OVERLAPPEDWINDOW;
         auto window_class_name = L"HYPERION_WINDOW_CLASS";
         HINSTANCE instance = GetModuleHandleW(NULL);
+        if (!instance) {
+            HYP_PANIC_MESSAGE("Failed to get windows application instance!");
+        }
 
         WNDCLASSEXW window_class = { 0 };
         window_class.cbSize = sizeof(window_class);
@@ -31,12 +34,11 @@ namespace Hyperion {
         window_class.lpfnWndProc = &MessageCallback;
         window_class.hCursor = LoadCursorW(NULL, IDC_ARROW);
 
-        RegisterClassExW(&window_class);
+        if (!RegisterClassExW(&window_class)) {
+            HYP_PANIC_MESSAGE("Failed to register windows window class!");
+        }
 
-        RECT window_rect = {0};
-        window_rect.right = (LONG)m_width;
-        window_rect.bottom = (LONG)m_height;
-        AdjustWindowRect(&window_rect, window_styles, false);
+        Math::SVec2 size = GetActualWindowSize(width, height);
 
         m_window_handle = CreateWindowExW(
             0,
@@ -45,19 +47,21 @@ namespace Hyperion {
             window_styles,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
-            window_rect.right - window_rect.left,
-            window_rect.bottom - window_rect.top,
+            (u32)size.x,
+            (u32)size.y,
             NULL,
             NULL,
             instance,
-            this // Used later to store user pointer
+            this // Parameter to WM_CREATE that then stores the user pointer
         );
 
         if (m_window_handle == NULL) {
-            HYP_LOG_ERROR("Engine", "Failed to create window!");
+            HYP_PANIC_MESSAGE("Failed to create window!");
         }
 
-        SetWindowLongPtrW(m_window_handle, GWLP_USERDATA, (LONG_PTR)(void *)this);
+        if (!SetWindowLongPtrW(m_window_handle, GWLP_USERDATA, (LONG_PTR)(void *)this)) {
+            HYP_PANIC_MESSAGE("Failed to set window attribute!");
+        }
         
         SetWindowMode(window_mode);
 
@@ -68,7 +72,9 @@ namespace Hyperion {
 
     void CWindowsWindow::SetTitle(const TString &title) {
         m_title = title;
-        SetWindowTextW(m_window_handle, COperatingSystem::GetInstance()->ConvertUTF8ToUTF16(title).c_str());
+        if (!SetWindowTextW(m_window_handle, COperatingSystem::GetInstance()->ConvertUTF8ToUTF16(title).c_str())) {
+            HYP_PANIC_MESSAGE("Failed to set window title!");
+        }
     }
 
     void CWindowsWindow::SetSize(u32 width, u32 height) {
@@ -78,22 +84,19 @@ namespace Hyperion {
 
         switch (m_window_mode) {
             case Hyperion::EWindowMode::Windowed: {
+                // If we are maximized we first restore the window to be normal
                 if (m_window_state == EWindowState::Maximized) {
                     SetWindowState(EWindowState::Normal);
                 }
 
-                RECT window_rect = { 0 };
-                window_rect.right = (LONG)width;
-                window_rect.bottom = (LONG)height;
-                AdjustWindowRect(&window_rect, GetWindowLongW(m_window_handle, GWL_STYLE), false);
-                width = window_rect.right - window_rect.left;
-                height = window_rect.bottom - window_rect.top;
+                Math::SVec2 size = GetActualWindowSize(width, height);
 
                 u32 flags = SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER;
-                SetWindowPos(m_window_handle, NULL, 0, 0, width, height, flags);
+                SetWindowPos(m_window_handle, NULL, 0, 0, (u32)size.x, (u32)size.y, flags);
                 break;
             }
             case Hyperion::EWindowMode::Borderless: {
+                // In borderless mode we do not resize because we would probably not fill the screen anymore
                 break;
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
@@ -118,17 +121,11 @@ namespace Hyperion {
             case Hyperion::EWindowMode::Windowed: {
                 SetWindowLongW(m_window_handle, GWL_STYLE, window_styles | (WS_OVERLAPPEDWINDOW));
                 SetWindowPlacement(m_window_handle, &m_previous_placement);
+
+                Math::SVec2 size = GetActualWindowSize(m_width, m_height);
+
                 u32 flags = SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED;
-
-                RECT window_rect = { 0 };
-                window_rect.right = (LONG)m_width;
-                window_rect.bottom = (LONG)m_height;
-                AdjustWindowRect(&window_rect, GetWindowLongW(m_window_handle, GWL_STYLE), false);
-
-                LONG width = window_rect.right - window_rect.left;
-                LONG height = window_rect.bottom - window_rect.top;
-
-                SetWindowPos(m_window_handle, NULL, 0, 0, width, height, flags);
+                SetWindowPos(m_window_handle, NULL, 0, 0, (u32)size.x, (u32)size.y, flags);
                 break;
             }
             case Hyperion::EWindowMode::Borderless: {
@@ -156,22 +153,28 @@ namespace Hyperion {
             return;
         }
 
+        bool result = true;
         switch (window_state) {
             case Hyperion::EWindowState::Normal: {
-                ShowWindow(m_window_handle, SW_RESTORE);
+                result = ShowWindow(m_window_handle, SW_RESTORE);
                 break;
             }
             case Hyperion::EWindowState::Minimized: {
-                ShowWindow(m_window_handle, SW_MINIMIZE);
+                result = ShowWindow(m_window_handle, SW_MINIMIZE);
                 break;
             }
             case Hyperion::EWindowState::Maximized: {
+                // We only maximize in windowed mode
                 if (m_window_mode == EWindowMode::Windowed) {
-                    ShowWindow(m_window_handle, SW_MAXIMIZE);
+                    result = ShowWindow(m_window_handle, SW_MAXIMIZE);
                 }
                 break;
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        }
+
+        if (!result) {
+            HYP_PANIC_MESSAGE("Failed set window state!");
         }
 
         m_window_state = window_state;
@@ -209,6 +212,16 @@ namespace Hyperion {
 
     void CWindowsWindow::Show() const {
         ShowWindow(m_window_handle, SW_SHOWNORMAL);
+    }
+
+    Math::SVec2 CWindowsWindow::GetActualWindowSize(u32 client_width, u32 client_height) {
+        RECT window_rect = { 0 };
+        window_rect.right = (LONG)client_width;
+        window_rect.bottom = (LONG)client_height;
+        if (!AdjustWindowRect(&window_rect, GetWindowLongW(m_window_handle, GWL_STYLE), false)) {
+            HYP_PANIC_MESSAGE("Failed to calculate window size!");
+        }
+        return Math::SVec2((float)(window_rect.right - window_rect.left), (float)(window_rect.bottom - window_rect.top));
     }
 
     EMouseButtonCode CWindowsWindow::TranslateMouseButtonCode(u32 code) const {
@@ -464,7 +477,7 @@ namespace Hyperion {
     LRESULT CWindowsWindow::MessageCallback(HWND window_handle, u32 message, WPARAM w_param, LPARAM l_param) {
         LRESULT result = 0;
 
-        // This will be null on creation
+        // This will be null on WM_CREATE
         CWindowsWindow *window = (CWindowsWindow*)GetWindowLongPtrW(window_handle, GWLP_USERDATA);
 
         switch (message) {
