@@ -53,7 +53,7 @@ protected:
     }
 
     void OnUpdate(float delta_time) override {
-        if ((CInput::GetKey(EKeyCode::LeftControl) || CInput::GetKey(EKeyCode::RightControl)) && CInput::GetKeyDown(EKeyCode::W)) {
+        if (CInput::GetKeyDown(EKeyCode::Escape) || ((CInput::GetKey(EKeyCode::LeftControl) || CInput::GetKey(EKeyCode::RightControl)) && CInput::GetKeyDown(EKeyCode::W))) {
             Exit();
         }
 
@@ -92,7 +92,7 @@ protected:
             m_lambertian_shader->SetInt("u_texture", 0);
             m_texture->Bind(0);
             CRenderCommand::SetPolygonMode(EPolygonMode::Fill);
-            CRenderer::Submit(m_mesh, m_lambertian_shader, SMat4::Translate(0, 0, 0));
+            CRenderer::Submit(m_mesh, m_lambertian_shader, SMat4::Rotate(SVec3(0, 1, 0), (float)CTime::GetTime() * 50.0f));
         }
         CRenderer::End();
 
@@ -100,7 +100,7 @@ protected:
         {
             CRenderCommand::SetPolygonMode(EPolygonMode::Line);
             CRenderCommand::DisableFeature(EFeature::Culling);
-            CImmediateRenderer::DrawCube(m_mesh->GetBounds().center, m_mesh->GetBounds().GetSize(), SVec4(1, 1, 1, 1));
+            //CImmediateRenderer::DrawCube(m_mesh->GetBounds().center, m_mesh->GetBounds().GetSize(), SVec4(1, 1, 1, 1));
         }
         CImmediateRenderer::End();
 

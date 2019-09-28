@@ -8,8 +8,7 @@ workspace "hyperion"
 	exceptionhandling ("Off")
 	rtti ("Off")
 	
-	configurations
-	{
+	configurations {
 		"debug",
 		"release",
 		"distribution"
@@ -24,7 +23,7 @@ workspace "hyperion"
 		systemversion "latest"
 
 	filter "configurations:debug"
-		defines { "HYP_DEBUG", "HYP_BREAK_ON_ASSERT" }
+		defines { "HYP_DEBUG", "HYP_ENABLE_ASSERTS", "HYP_BREAK_ON_ASSERT" }
 		runtime "Debug"
 		symbols "On"
 
@@ -50,14 +49,12 @@ project "hyperion"
 
 	debugdir "run_tree/"
 
-	postbuildcommands
-	{
+	postbuildcommands {
 		"{COPY} vendor/fmod/lib/x64/fmod.dll %{cfg.targetdir}",
 		"{COPY} vendor/assimp/lib/x64/assimp-vc140-mt.dll %{cfg.targetdir}"
 	}
 
-	files
-	{ 
+	files { 
 		"%{prj.name}/include/**.hpp",
 		"%{prj.name}/include/**.h",
 		
@@ -69,14 +66,12 @@ project "hyperion"
 		"%{prj.name}/vendor/**.h",
 	}
 
-	excludes
-	{
+	excludes {
 		"%{prj.name}/src/%{prj.name}/platform/windows/**.hpp",
 		"%{prj.name}/src/%{prj.name}/platform/windows/**.cpp",
 	}
 
-	includedirs
-	{
+	includedirs {
 		"%{prj.name}/include",
 		"%{prj.name}/src",
 		
@@ -88,45 +83,27 @@ project "hyperion"
 		"%{prj.name}/vendor/assimp/include",
 	}
 	
-	links
-	{	
-		"freetype",
-		"fmod_vc",
-		"assimp-vc140-mt"
-	}
+	links {	"freetype", "fmod_vc", "assimp-vc140-mt" }
 	
-	libdirs
-	{
+	libdirs {
 		"%{prj.name}/vendor/freetype/lib/x64",
 		"%{prj.name}/vendor/fmod/lib/x64",
 		"%{prj.name}/vendor/assimp/lib/x64",
 	}
 	
-	defines
-	{
-		"_CRT_SECURE_NO_WARNINGS"
-	}
+	defines { "_CRT_SECURE_NO_WARNINGS" }
 	
 	filter "files:hyperion/vendor/**"
 		flags { "NoPCH" }
 
 	filter "system:windows"
-		files
-		{
+		files {
 			"%{prj.name}/src/%{prj.name}/platform/windows/**.hpp",
 			"%{prj.name}/src/%{prj.name}/platform/windows/**.cpp",
 		}
 		
-		links
-		{
-			"opengl32",
-			"PowrProf"
-		}
-		
-		linkoptions
-		{
-			"-IGNORE:4006"
-		}
+		links { "opengl32", "PowrProf" }
+		linkoptions { "-IGNORE:4006" }
 		
 project "sandbox"
 	location "sandbox"
@@ -139,24 +116,19 @@ project "sandbox"
 	
 	debugdir "run_tree/"
 
-	postbuildcommands
-	{
+	postbuildcommands {
 		"{COPY} %{cfg.targetdir}/%{prj.name}.exe ../run_tree/",
 		
 		"{COPY} %{cfg.targetdir}/fmod.dll ../run_tree/",
 		"{COPY} %{cfg.targetdir}/assimp-vc140-mt.dll ../run_tree/"
 	}
 	
-	files
-	{ 
+	files { 
 		"%{prj.name}/src/**.hpp",
 		"%{prj.name}/src/**.cpp",
 	}	
 	
-	includedirs
-	{
-		"hyperion/include"
-	}
+	includedirs { "hyperion/include" }
 		
 	filter "kind:ConsoleApp"
 		defines { "HYP_CONSOLE" }
