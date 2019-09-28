@@ -7,6 +7,8 @@ namespace Hyperion {
 
     using TString = std::string;
 
+    using TWString = std::wstring;
+
     class CStringUtils {
     public:
         template<typename ...Args>

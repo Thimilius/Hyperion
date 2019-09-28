@@ -31,6 +31,10 @@ namespace Hyperion {
         virtual EOperatingSystemType GetType() const = 0;
         virtual SSystemInfo GetSystemInfo() const = 0;
 
+        // NOTE: This should probably be in a different place?
+        virtual TString ConvertUTF16ToUTF8(const TWString &string) const = 0;
+        virtual TWString ConvertUTF8ToUTF16(const TString &string) const = 0;
+
         virtual void PrintToConsole(ELogColor color, const TString &message) const = 0;
 
         inline static COperatingSystem* GetInstance() { return s_instance; }

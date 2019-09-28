@@ -47,7 +47,7 @@ namespace Hyperion {
         ELogLevel m_level;
     public:
         inline void SetLevel(ELogLevel level) { m_level = level; }
-
+        
         template<typename ...Args>
         void Log(ELogType type, ELogLevel level, const char *system, const char *message_format, Args... args) {
             time_t current_time;

@@ -65,7 +65,7 @@ namespace Hyperion {
 
         inline const TScope<Rendering::CGraphicsContext> &GetGraphicsContext() const { return m_graphics_context; }
         
-        virtual void SetIcon(const char *path) = 0;
+        virtual void SetIcon(const TString &path) = 0;
     protected:
         virtual void Update() const = 0;
         virtual void Show() const = 0;

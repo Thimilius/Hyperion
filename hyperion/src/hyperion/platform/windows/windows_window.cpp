@@ -20,28 +20,28 @@ namespace Hyperion {
         m_window_state = EWindowState::Normal;
 
         u32 window_styles = WS_OVERLAPPEDWINDOW;
-        const char *window_class_name = "HYPERION_WINDOW_CLASS";
-        HINSTANCE instance = GetModuleHandleA(NULL);
+        auto window_class_name = L"HYPERION_WINDOW_CLASS";
+        HINSTANCE instance = GetModuleHandleW(NULL);
 
-        WNDCLASSEXA window_class = { 0 };
+        WNDCLASSEXW window_class = { 0 };
         window_class.cbSize = sizeof(window_class);
         window_class.lpszClassName = window_class_name;
         window_class.style = CS_HREDRAW | CS_VREDRAW;
         window_class.hInstance = instance;
         window_class.lpfnWndProc = &MessageCallback;
-        window_class.hCursor = LoadCursorA(NULL, (LPSTR)IDC_ARROW);
+        window_class.hCursor = LoadCursorW(NULL, IDC_ARROW);
 
-        RegisterClassExA(&window_class);
+        RegisterClassExW(&window_class);
 
         RECT window_rect = {0};
         window_rect.right = (LONG)m_width;
         window_rect.bottom = (LONG)m_height;
         AdjustWindowRect(&window_rect, window_styles, false);
 
-        m_window_handle = CreateWindowExA(
+        m_window_handle = CreateWindowExW(
             0,
             window_class_name,
-            title.c_str(),
+            COperatingSystem::GetInstance()->ConvertUTF8ToUTF16(title).c_str(),
             window_styles,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
@@ -57,8 +57,8 @@ namespace Hyperion {
             HYP_LOG_ERROR("Engine", "Failed to create window!");
         }
 
-        SetWindowLongPtrA(m_window_handle, GWLP_USERDATA, (LONG_PTR)(void *)this);
-
+        SetWindowLongPtrW(m_window_handle, GWLP_USERDATA, (LONG_PTR)(void *)this);
+        
         SetWindowMode(window_mode);
 
         CreateContext();
@@ -68,7 +68,7 @@ namespace Hyperion {
 
     void CWindowsWindow::SetTitle(const TString &title) {
         m_title = title;
-        SetWindowTextA(m_window_handle, title.c_str());
+        SetWindowTextW(m_window_handle, COperatingSystem::GetInstance()->ConvertUTF8ToUTF16(title).c_str());
     }
 
     void CWindowsWindow::SetSize(u32 width, u32 height) {
@@ -85,7 +85,7 @@ namespace Hyperion {
                 RECT window_rect = { 0 };
                 window_rect.right = (LONG)width;
                 window_rect.bottom = (LONG)height;
-                AdjustWindowRect(&window_rect, GetWindowLongA(m_window_handle, GWL_STYLE), false);
+                AdjustWindowRect(&window_rect, GetWindowLongW(m_window_handle, GWL_STYLE), false);
                 width = window_rect.right - window_rect.left;
                 height = window_rect.bottom - window_rect.top;
 
@@ -108,7 +108,7 @@ namespace Hyperion {
             return;
         }
 
-        DWORD window_styles = GetWindowLongA(m_window_handle, GWL_STYLE);
+        DWORD window_styles = GetWindowLongW(m_window_handle, GWL_STYLE);
 
         EWindowMode last_window_mode = m_window_mode;
         // This already needs to be set here for all later message callbacks
@@ -116,14 +116,14 @@ namespace Hyperion {
 
         switch (window_mode) {
             case Hyperion::EWindowMode::Windowed: {
-                SetWindowLongA(m_window_handle, GWL_STYLE, window_styles | (WS_OVERLAPPEDWINDOW));
+                SetWindowLongW(m_window_handle, GWL_STYLE, window_styles | (WS_OVERLAPPEDWINDOW));
                 SetWindowPlacement(m_window_handle, &m_previous_placement);
                 u32 flags = SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED;
 
                 RECT window_rect = { 0 };
                 window_rect.right = (LONG)m_width;
                 window_rect.bottom = (LONG)m_height;
-                AdjustWindowRect(&window_rect, GetWindowLongA(m_window_handle, GWL_STYLE), false);
+                AdjustWindowRect(&window_rect, GetWindowLongW(m_window_handle, GWL_STYLE), false);
 
                 LONG width = window_rect.right - window_rect.left;
                 LONG height = window_rect.bottom - window_rect.top;
@@ -135,8 +135,8 @@ namespace Hyperion {
                 GetWindowPlacement(m_window_handle, &m_previous_placement);
 
                 MONITORINFO monitor_info = { sizeof(monitor_info) };
-                GetMonitorInfoA(MonitorFromWindow(m_window_handle, MONITOR_DEFAULTTOPRIMARY), &monitor_info);
-                SetWindowLongA(m_window_handle, GWL_STYLE, window_styles & ~WS_OVERLAPPEDWINDOW);
+                GetMonitorInfoW(MonitorFromWindow(m_window_handle, MONITOR_DEFAULTTOPRIMARY), &monitor_info);
+                SetWindowLongW(m_window_handle, GWL_STYLE, window_styles & ~WS_OVERLAPPEDWINDOW);
 
                 LONG x = monitor_info.rcMonitor.left;
                 LONG y = monitor_info.rcMonitor.top;
@@ -184,16 +184,16 @@ namespace Hyperion {
         }
     }
 
-    void CWindowsWindow::SetIcon(const char *path) {
-        HICON icon = (HICON)LoadImageA(NULL, path, IMAGE_ICON, 64, 64, LR_LOADFROMFILE);
-        SendMessageA(m_window_handle, WM_SETICON, ICON_SMALL, (LPARAM)icon);
-        SendMessageA(m_window_handle, WM_SETICON, ICON_BIG, (LPARAM)icon);
+    void CWindowsWindow::SetIcon(const TString &path) {
+        HICON icon = (HICON)LoadImageW(NULL, COperatingSystem::GetInstance()->ConvertUTF8ToUTF16(path).c_str(), IMAGE_ICON, 64, 64, LR_LOADFROMFILE);
+        SendMessageW(m_window_handle, WM_SETICON, ICON_SMALL, (LPARAM)icon);
+        SendMessageW(m_window_handle, WM_SETICON, ICON_BIG, (LPARAM)icon);
 
         // We also set the icon for the console window
         HWND console_window_handle = GetConsoleWindow();
         if (console_window_handle) {
-            SendMessageA(console_window_handle, WM_SETICON, ICON_SMALL, (LPARAM)icon);
-            SendMessageA(console_window_handle, WM_SETICON, ICON_BIG, (LPARAM)icon);
+            SendMessageW(console_window_handle, WM_SETICON, ICON_SMALL, (LPARAM)icon);
+            SendMessageW(console_window_handle, WM_SETICON, ICON_BIG, (LPARAM)icon);
         }
     }
 
@@ -201,9 +201,9 @@ namespace Hyperion {
         m_graphics_context->SwapBuffers();
 
         MSG message;
-        while (PeekMessageA(&message, NULL, 0, 0, PM_REMOVE)) {
+        while (PeekMessageW(&message, NULL, 0, 0, PM_REMOVE)) {
             TranslateMessage(&message);
-            DispatchMessageA(&message);
+            DispatchMessageW(&message);
         }
     }
 
@@ -238,7 +238,7 @@ namespace Hyperion {
             // so we need to discard the left control message.
             DWORD message_time = GetMessageTime();
             MSG next_message;
-            if (PeekMessageA(&next_message, NULL, 0, 0, PM_NOREMOVE)) {
+            if (PeekMessageW(&next_message, NULL, 0, 0, PM_NOREMOVE)) {
                 if (next_message.message == WM_KEYDOWN || next_message.message == WM_SYSKEYDOWN || next_message.message == WM_KEYUP || next_message.message == WM_SYSKEYUP) {
                     if (next_message.wParam == VK_MENU && (next_message.lParam & 0x01000000) && next_message.time == message_time) {
                         // Next message is right alt down so discard this
@@ -465,12 +465,12 @@ namespace Hyperion {
         LRESULT result = 0;
 
         // This will be null on creation
-        CWindowsWindow *window = (CWindowsWindow*)GetWindowLongPtrA(window_handle, GWLP_USERDATA);
+        CWindowsWindow *window = (CWindowsWindow*)GetWindowLongPtrW(window_handle, GWLP_USERDATA);
 
         switch (message) {
             case WM_CREATE: {
                 // Store user pointer
-                SetWindowLongPtrA(window_handle, GWLP_USERDATA, (LONG_PTR)((CREATESTRUCT *)l_param)->lpCreateParams);
+                SetWindowLongPtrW(window_handle, GWLP_USERDATA, (LONG_PTR)((CREATESTRUCT *)l_param)->lpCreateParams);
                 SetWindowPos(window_handle, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
                 break;
             }
@@ -590,7 +590,7 @@ namespace Hyperion {
             }
 
             default: {
-                result = DefWindowProcA(window_handle, message, w_param, l_param);
+                result = DefWindowProcW(window_handle, message, w_param, l_param);
             }
         }
 
