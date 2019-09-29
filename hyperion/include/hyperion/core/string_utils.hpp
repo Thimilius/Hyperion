@@ -23,6 +23,9 @@ namespace Hyperion {
                 return false;
             }
         }
+
+        static TWString Utf8ToUtf16(const TString &string);
+        static TString Utf16ToUtf8(const TWString &string);
     private:
         CStringUtils() = delete;
         ~CStringUtils() = delete;

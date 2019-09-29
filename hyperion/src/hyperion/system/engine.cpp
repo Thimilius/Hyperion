@@ -10,7 +10,7 @@ namespace Hyperion {
     
     void CEngine::Panic(const TString &message) {
 #ifdef HYP_PLATFORM_WINDOWS
-        MessageBoxW(nullptr, COperatingSystem::GetInstance()->ConvertUTF8ToUTF16(message).c_str(), L"Engine error!", MB_OK | MB_ICONERROR);
+        MessageBoxW(nullptr, CStringUtils::Utf8ToUtf16(message).c_str(), L"Engine error!", MB_OK | MB_ICONERROR);
 #endif
 
         // This is not really a good way of exiting as it does not necessarily free all relevant resources

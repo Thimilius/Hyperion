@@ -43,7 +43,7 @@ namespace Hyperion {
         m_window_handle = CreateWindowExW(
             0,
             window_class_name,
-            COperatingSystem::GetInstance()->ConvertUTF8ToUTF16(title).c_str(),
+            CStringUtils::Utf8ToUtf16(title).c_str(),
             window_styles,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
@@ -72,7 +72,7 @@ namespace Hyperion {
 
     void CWindowsWindow::SetTitle(const TString &title) {
         m_title = title;
-        if (!SetWindowTextW(m_window_handle, COperatingSystem::GetInstance()->ConvertUTF8ToUTF16(title).c_str())) {
+        if (!SetWindowTextW(m_window_handle, CStringUtils::Utf8ToUtf16(title).c_str())) {
             HYP_PANIC_MESSAGE("Failed to set window title!");
         }
     }
@@ -188,7 +188,7 @@ namespace Hyperion {
     }
 
     void CWindowsWindow::SetIcon(const TString &path) {
-        HICON icon = (HICON)LoadImageW(NULL, COperatingSystem::GetInstance()->ConvertUTF8ToUTF16(path).c_str(), IMAGE_ICON, 64, 64, LR_LOADFROMFILE);
+        HICON icon = (HICON)LoadImageW(NULL, CStringUtils::Utf8ToUtf16(path).c_str(), IMAGE_ICON, 64, 64, LR_LOADFROMFILE);
         SendMessageW(m_window_handle, WM_SETICON, ICON_SMALL, (LPARAM)icon);
         SendMessageW(m_window_handle, WM_SETICON, ICON_BIG, (LPARAM)icon);
 

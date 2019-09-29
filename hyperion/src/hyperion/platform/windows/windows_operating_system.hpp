@@ -16,9 +16,6 @@ namespace Hyperion {
         SSystemInfo GetSystemInfo() const override;
 
         void PrintToConsole(ELogColor color, const TString &message) const override;
-
-        TString ConvertUTF16ToUTF8(const TWString &string) const override;
-        std::wstring ConvertUTF8ToUTF16(const TString &string) const override;
     };
 
 }
