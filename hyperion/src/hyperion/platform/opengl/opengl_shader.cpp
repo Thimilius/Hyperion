@@ -5,15 +5,11 @@
 namespace Hyperion::Rendering {
 
     COpenGLShader::COpenGLShader(const TString &name, const TString &source) : CShader(name) {
-        Compile(PreProcess(source));
+        Recompile(source);
     }
     
     COpenGLShader::COpenGLShader(const TString &name, const TString &vertex_source, const TString &fragment_source) : CShader(name) {
-        TMap<EShaderType, TString> sources(2);
-        sources[EShaderType::Vertex] = vertex_source;
-        sources[EShaderType::Fragment] = fragment_source;
-
-        Compile(sources);
+        Recompile(vertex_source, fragment_source);
     }
 
     COpenGLShader::~COpenGLShader() {
@@ -50,6 +46,18 @@ namespace Hyperion::Rendering {
 
     void COpenGLShader::SetMat4(const TString &name, const Math::SMat4 &matrix) {
         glUniformMatrix4fv(TryGetUniformLocation(name), 1, GL_FALSE, matrix.elements);
+    }
+
+    void COpenGLShader::Recompile(const TString &source) {
+        Compile(PreProcess(source));
+    }
+
+    void COpenGLShader::Recompile(const TString &vertex_source, const TString &fragment_source) {
+        TMap<EShaderType, TString> sources(2);
+        sources[EShaderType::Vertex] = vertex_source;
+        sources[EShaderType::Fragment] = fragment_source;
+
+        Compile(sources);
     }
 
     TMap<EShaderType, TString> COpenGLShader::PreProcess(const TString &source) {

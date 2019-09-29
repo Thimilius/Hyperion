@@ -26,6 +26,9 @@ namespace Hyperion::Rendering {
         void SetFloat4(const TString &name, const Math::SVec4 &value) override;
 
         void SetMat4(const TString &name, const Math::SMat4 &matrix) override;
+
+        void Recompile(const TString &source) override;
+        void Recompile(const TString &vertex_source, const TString &fragment_source) override;
     private:
         TMap<EShaderType, TString> PreProcess(const TString &source);
         void Compile(TMap<EShaderType, TString> sources);

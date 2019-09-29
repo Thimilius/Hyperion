@@ -35,7 +35,7 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void CShaderLibrary::LoadAll(const TString &path) {
+    void CShaderLibrary::Init(const TString &path) {
         for (auto &entry : std::filesystem::directory_iterator(path)) {
             auto &path = entry.path();
             if (path.extension() == ".glsl") {
@@ -43,6 +43,14 @@ namespace Hyperion::Rendering {
                 Load(filename.substr(0, filename.length() - 5), path.string());
             }
         }
+
+        s_watcher = CFileWatcher::Create(path, [](EFileStatus status, const TString &path) {
+            if (CStringUtils::EndsWith(path, ".glsl")) {
+                auto last_slash = path.find_last_of("/\\");
+                TString &name = path.substr(last_slash + 1, path.length() - last_slash - 6);
+                Reload(name);
+            }
+        }, false);
     }
 
     TRef<CShader> CShaderLibrary::Load(const TString &name, const TString &filepath) {
@@ -52,23 +60,25 @@ namespace Hyperion::Rendering {
         return shader;
     }
 
-    TRef<CShader> CShaderLibrary::Reload(const TString &name) {
-        HYP_ASSERT_MESSAGE(s_shaders.find(name) != s_shaders.end(), "Can not find shader in library!");
-        SShaderEntry entry = s_shaders[name];
-        TString &source = CFileUtilities::ReadTextFile(entry.filepath);
-        TRef<CShader> &shader = CShader::Create(name, source);
-        s_shaders[name].shader = shader;
-        return shader;
-    }
-
     void CShaderLibrary::Add(const TString &name, const TString &filepath, const TRef<CShader> &shader) {
-        HYP_ASSERT_MESSAGE(s_shaders.find(name) == s_shaders.end(), "Shader already in library!");
+        HYP_ASSERT_MESSAGE(s_shaders.find(name) == s_shaders.end(), "Trying to add shader that is already in the library!");
         s_shaders[name] = { shader, filepath };
     }
 
     TRef<CShader> CShaderLibrary::Get(const TString &name) {
-        HYP_ASSERT_MESSAGE(s_shaders.find(name) != s_shaders.end(), "Can not find shader in library!");
+        HYP_ASSERT_MESSAGE(s_shaders.find(name) != s_shaders.end(), "Trying to get shader that is not in the library!");
         return s_shaders[name].shader;
+    }
+
+    void CShaderLibrary::Update() {
+        s_watcher->Update();
+    }
+
+    void CShaderLibrary::Reload(const TString &name) {
+        HYP_ASSERT_MESSAGE(s_shaders.find(name) != s_shaders.end(), "Trying to reload a shader that is not in the library!");
+        SShaderEntry entry = s_shaders[name];
+        TString &source = CFileUtilities::ReadTextFile(entry.filepath);
+        entry.shader->Recompile(source);
     }
 
 }

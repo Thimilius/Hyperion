@@ -2,8 +2,6 @@
 
 #include "hyperion/common.hpp"
 
-#include <filesystem>
-
 namespace Hyperion::IO {
 
     enum class EFileStatus {

@@ -20,8 +20,6 @@ protected:
     TRef<CRenderTexture> m_render_texture;
     TRef<CPerspectiveCameraController> m_camera_controller = std::make_shared<CPerspectiveCameraController>(std::make_shared<CPerspectiveCamera>()); 
 
-    TRef<CFileWatcher> m_watcher;
-
     void UpdateTitle() {
         TString title = CStringUtils::Format("Hyperion | FPS: {} ({:.2f} ms) | VSync: {}", CTime::GetFPS(), CTime::GetFrameTime(), GetWindow()->GetVSyncMode() != EVSyncMode::DontSync);
         GetWindow()->SetTitle(title);
@@ -32,18 +30,12 @@ protected:
 
         UpdateTitle();
 
-        CShaderLibrary::LoadAll("data/shaders");
+        CShaderLibrary::Init("data/shaders/");
 
         m_lambertian_shader = CShaderLibrary::Get("lambertian");
         m_texture = CTexture2D::CreateFromFile("data/textures/grass.png", ETextureWrapMode::Clamp, ETextureFilter::Bilinear, ETextureAnisotropicFilter::None);
         m_mesh = CMesh::CreateFromFile("data/models/dragon.obj");
         m_render_texture = CRenderTexture::Create(GetWindow()->GetWidth(), GetWindow()->GetHeight(), ERenderTextureFormat::RGBA8);
-
-        m_watcher = CFileWatcher::Create("data/shaders/", [this](EFileStatus status, const TString &path) {
-            if (CStringUtils::EndsWith(path, "lambertian.glsl")) {
-                m_lambertian_shader = CShaderLibrary::Reload("lambertian");
-            }
-        }, true);
     }
     
     void OnEvent(CEvent &event) override {
@@ -66,7 +58,8 @@ protected:
         }
 
         m_camera_controller->Update(delta_time);
-        m_watcher->Update();
+
+        CShaderLibrary::Update();
     }
 
     void OnRender() override {
@@ -100,7 +93,7 @@ protected:
         {
             CRenderCommand::SetPolygonMode(EPolygonMode::Line);
             CRenderCommand::DisableFeature(EFeature::Culling);
-            //CImmediateRenderer::DrawCube(m_mesh->GetBounds().center, m_mesh->GetBounds().GetSize(), SVec4(1, 1, 1, 1));
+            CImmediateRenderer::DrawCube(m_mesh->GetBounds().center, m_mesh->GetBounds().GetSize(), SVec4(1, 1, 1, 1));
         }
         CImmediateRenderer::End();
 

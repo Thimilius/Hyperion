@@ -3,6 +3,7 @@
 #include "hyperion/common.hpp"
 #include "hyperion/core/asset.hpp"
 #include "hyperion/math/math.hpp"
+#include "hyperion/io/file_watcher.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -31,6 +32,9 @@ namespace Hyperion::Rendering {
 
         virtual void SetMat4(const TString &name, const Math::SMat4 &matrix) = 0;
 
+        virtual void Recompile(const TString &source) = 0;
+        virtual void Recompile(const TString &vertex_source, const TString &fragment_source) = 0;
+
         static TRef<CShader> Create(const TString &name, const TString &source);
         static TRef<CShader> Create(const TString &name, const TString &vertex_source, const TString &fragment_source);
     protected:
@@ -45,15 +49,20 @@ namespace Hyperion::Rendering {
         };
 
         inline static TMap<TString, SShaderEntry> s_shaders;
+        inline static TRef<IO::CFileWatcher> s_watcher;
     public:
-        static void LoadAll(const TString &path);
+        static void Init(const TString &path);
         static TRef<CShader> Load(const TString &name, const TString &filepath);
-        static TRef<CShader> Reload(const TString &name);
+
         static void Add(const TString &name, const TString &filepath, const TRef<CShader> &shader);
         static TRef<CShader> Get(const TString &name);
+
+        static void Update();
     private:
         CShaderLibrary() = delete;
         ~CShaderLibrary() = delete;
+
+        static void Reload(const TString &name);
     };
 
 }
