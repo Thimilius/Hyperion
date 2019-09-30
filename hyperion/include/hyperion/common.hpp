@@ -24,11 +24,13 @@
 #include "core/enum.hpp"
 #include "system/log.hpp"
 
-#define HYP_PANIC do {                                      \
-            HYP_DEBUG_BREAK;                                \
-            CEngine::Panic("Engine encountered an error!"); \
+#define HYP_PANIC do {                                                \
+            HYP_LOG_ERROR("Engine", "Engine encountered an error!");  \
+            HYP_DEBUG_BREAK;                                          \
+            CEngine::Panic("Engine", "Engine encountered an error!"); \
         } while(false);
-#define HYP_PANIC_MESSAGE(m) do { \
-            HYP_DEBUG_BREAK;      \
-            CEngine::Panic((m));  \
+#define HYP_PANIC_MESSAGE(s, m) do {  \
+            HYP_LOG_ERROR((s), (m));  \
+            HYP_DEBUG_BREAK;          \
+            CEngine::Panic((s), (m)); \
         } while(false);

@@ -4,7 +4,7 @@ namespace Hyperion {
 
     class CEngine {
     public:
-        static void Panic(const TString &message);
+        static void Panic(const TString &system, const TString &message);
     private:
         CEngine() = delete;
         ~CEngine() = delete;

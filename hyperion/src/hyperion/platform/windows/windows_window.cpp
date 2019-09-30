@@ -23,7 +23,7 @@ namespace Hyperion {
         auto window_class_name = L"HYPERION_WINDOW_CLASS";
         HINSTANCE instance = GetModuleHandleW(NULL);
         if (!instance) {
-            HYP_PANIC_MESSAGE("Failed to get windows application instance!");
+            HYP_PANIC_MESSAGE("Engine", "Failed to get windows application instance!");
         }
 
         WNDCLASSEXW window_class = { 0 };
@@ -35,7 +35,7 @@ namespace Hyperion {
         window_class.hCursor = LoadCursorW(NULL, IDC_ARROW);
 
         if (!RegisterClassExW(&window_class)) {
-            HYP_PANIC_MESSAGE("Failed to register windows window class!");
+            HYP_PANIC_MESSAGE("Engine", "Failed to register windows window class!");
         }
 
         Math::SVec2 size = GetActualWindowSize(width, height);
@@ -56,11 +56,11 @@ namespace Hyperion {
         );
 
         if (m_window_handle == NULL) {
-            HYP_PANIC_MESSAGE("Failed to create window!");
+            HYP_PANIC_MESSAGE("Engine", "Failed to create window!");
         }
 
         if (!SetWindowLongPtrW(m_window_handle, GWLP_USERDATA, (LONG_PTR)(void *)this)) {
-            HYP_PANIC_MESSAGE("Failed to set window attribute!");
+            HYP_PANIC_MESSAGE("Engine", "Failed to set window attribute!");
         }
         
         SetWindowMode(window_mode);
@@ -73,7 +73,7 @@ namespace Hyperion {
     void CWindowsWindow::SetTitle(const TString &title) {
         m_title = title;
         if (!SetWindowTextW(m_window_handle, CStringUtils::Utf8ToUtf16(title).c_str())) {
-            HYP_PANIC_MESSAGE("Failed to set window title!");
+            HYP_PANIC_MESSAGE("Engine", "Failed to set window title!");
         }
     }
 
@@ -174,7 +174,7 @@ namespace Hyperion {
         }
 
         if (!result) {
-            HYP_PANIC_MESSAGE("Failed set window state!");
+            HYP_PANIC_MESSAGE("Engine", "Failed set window state!");
         }
 
         m_window_state = window_state;
@@ -219,7 +219,7 @@ namespace Hyperion {
         window_rect.right = (LONG)client_width;
         window_rect.bottom = (LONG)client_height;
         if (!AdjustWindowRect(&window_rect, GetWindowLongW(m_window_handle, GWL_STYLE), false)) {
-            HYP_PANIC_MESSAGE("Failed to calculate window size!");
+            HYP_PANIC_MESSAGE("Engine", "Failed to calculate window size!");
         }
         return Math::SVec2((float)(window_rect.right - window_rect.left), (float)(window_rect.bottom - window_rect.top));
     }
