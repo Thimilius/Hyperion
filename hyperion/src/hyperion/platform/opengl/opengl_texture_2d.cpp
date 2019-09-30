@@ -106,7 +106,7 @@ namespace Hyperion::Rendering {
             case Hyperion::Rendering::ETextureAnisotropicFilter::Times16: amount = 16.0f; break;
             default: amount = 1.0f; break;
         }
-        glTextureParameterf(m_texture_id, GL_TEXTURE_MAX_ANISOTROPY_EXT, amount);
+        glTextureParameterf(m_texture_id, GL_TEXTURE_MAX_ANISOTROPY, amount);
     }
 
     void COpenGLTexture2D::CreateTexture(const u8 *pixels) {
