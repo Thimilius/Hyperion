@@ -100,7 +100,15 @@ namespace Hyperion::IO {
                 int count = WideCharToMultiByte(CP_ACP, 0, notify->FileName, notify->FileNameLength / sizeof(WCHAR), file, MAX_PATH - 1, NULL, NULL);
                 file[count] = '\0';
 
-                TString path = CStringUtils::Format("{}{}", watch_struct->watcher->m_path, file);
+                // Format path to always include last directory seperator
+                bool has_seperator = false;
+                if (watch_struct->watcher->m_path.back() == '\\' || watch_struct->watcher->m_path.back() == '/') {
+                    has_seperator = true;
+                }
+
+                TString path = has_seperator ?
+                    CStringUtils::Format("{}{}", watch_struct->watcher->m_path, file) : 
+                    CStringUtils::Format("{}/{}", watch_struct->watcher->m_path, file);
 
                 // HACK: This is a pretty nasty hack of trying to "wait" for long enough,
                 // so that file changes are actually written to disk and
