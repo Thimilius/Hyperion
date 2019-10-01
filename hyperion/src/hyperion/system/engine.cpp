@@ -23,7 +23,8 @@ namespace Hyperion {
         CDisplayInfo::SDisplayModeInfo mode_info = CDisplay::GetCurrentDisplayModeInfo();
         HYP_LOG_INFO("Engine", "Primary display: {}x{} @{} Hz", mode_info.width, mode_info.height, mode_info.refresh_rate);
 
-        Audio::CAudioEngine::Init();
+        // TEMP: For faster startup time, skip initializing the audio engine
+        //Audio::CAudioEngine::Init();
 
         Rendering::CRenderCommand::Init();
     }
