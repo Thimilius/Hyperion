@@ -111,7 +111,7 @@ namespace Hyperion::Rendering {
 
     void *COpenGLTexture2D::GetPixels() {
         // FIXME: This is a very expensive allocation
-        u32 size = m_width * m_height * GetBitsPerPixel(m_format);
+        u32 size = m_width * m_height * GetBytesPerPixel(m_format);
         char *pixels = new char[size];
 
         // TODO: Provide ability to get pixels from other mipmaps

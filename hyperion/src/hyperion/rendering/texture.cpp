@@ -27,7 +27,7 @@ namespace Hyperion::Rendering {
         }
     }
 
-    u32 CTexture::GetBitsPerPixel(ETextureFormat format) {
+    u32 CTexture::GetBytesPerPixel(ETextureFormat format) {
         switch (format) {
             case Hyperion::Rendering::ETextureFormat::RGB: return 3;
             case Hyperion::Rendering::ETextureFormat::RGBA: return 4;

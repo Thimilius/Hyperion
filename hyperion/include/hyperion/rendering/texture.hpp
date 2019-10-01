@@ -58,7 +58,7 @@ namespace Hyperion::Rendering {
         virtual void SetAnisotropicFilter(ETextureAnisotropicFilter anisotropic_filter) = 0;
         inline ETextureAnisotropicFilter GetAnisotropicFilter() const { return m_anisotropic_filter; }
 
-        static u32 GetBitsPerPixel(ETextureFormat format);
+        static u32 GetBytesPerPixel(ETextureFormat format);
     };
 
     class CTexture2D : public CTexture {
