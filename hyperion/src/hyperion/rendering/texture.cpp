@@ -26,4 +26,12 @@ namespace Hyperion::Rendering {
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }
+
+    u32 CTexture::GetBitsPerPixel(ETextureFormat format) {
+        switch (format) {
+            case Hyperion::Rendering::ETextureFormat::RGB: return 3;
+            case Hyperion::Rendering::ETextureFormat::RGBA: return 4;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
 }

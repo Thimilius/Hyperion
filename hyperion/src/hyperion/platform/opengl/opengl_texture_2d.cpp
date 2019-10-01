@@ -62,13 +62,9 @@ namespace Hyperion::Rendering {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    void COpenGLTexture2D::SetData(const void *pixels) {
-        glTextureSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_width, m_height, GetGLFormat(), GL_UNSIGNED_BYTE, pixels);
-    }
-
     void COpenGLTexture2D::SetWrapMode(ETextureWrapMode wrap_mode) {
         m_wrap_mode = wrap_mode;
-        u32 wrap = GetGLWrapMode();
+        u32 wrap = GetGLWrapMode(wrap_mode);
         glTextureParameteri(m_texture_id, GL_TEXTURE_WRAP_S, wrap);
         glTextureParameteri(m_texture_id, GL_TEXTURE_WRAP_T, wrap);
     }
@@ -109,6 +105,21 @@ namespace Hyperion::Rendering {
         glTextureParameterf(m_texture_id, GL_TEXTURE_MAX_ANISOTROPY, amount);
     }
 
+    void COpenGLTexture2D::SetPixels(const void *pixels) {
+        glTextureSubImage2D(m_texture_id, 0, 0, 0, m_width, m_height, GetGLFormat(m_format), GL_UNSIGNED_BYTE, pixels);
+    }
+
+    void *COpenGLTexture2D::GetPixels() {
+        // FIXME: This is a very expensive allocation
+        u32 size = m_width * m_height * GetBitsPerPixel(m_format);
+        char *pixels = new char[size];
+
+        // TODO: Provide ability to get pixels from other mipmaps
+        glGetTextureImage(m_texture_id, 0, GetGLFormat(m_format), GL_UNSIGNED_BYTE, size, pixels);
+
+        return pixels;
+    }
+
     void COpenGLTexture2D::CreateTexture(const u8 *pixels) {
         glCreateTextures(GL_TEXTURE_2D, 1, &m_texture_id);
         glBindTexture(GL_TEXTURE_2D, m_texture_id);
@@ -117,21 +128,23 @@ namespace Hyperion::Rendering {
         SetFilter(m_filter);
         SetAnisotropicFilter(m_anisotropic_filter);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GetGLFormat(), m_width, m_height, 0, GetGLFormat(), GL_UNSIGNED_BYTE, pixels);
-        glGenerateMipmap(GL_TEXTURE_2D);
+        auto format = GetGLFormat(m_format);
+        glTexImage2D(GL_TEXTURE_2D, 0, format, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, pixels);
+        glGenerateTextureMipmap(m_texture_id);
+
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    u32 COpenGLTexture2D::GetGLFormat() const {
-        switch (m_format) {
+    u32 COpenGLTexture2D::GetGLFormat(ETextureFormat format) {
+        switch (format) {
             case Hyperion::Rendering::ETextureFormat::RGB: return GL_RGB;
             case Hyperion::Rendering::ETextureFormat::RGBA: return GL_RGBA;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }
 
-    u32 COpenGLTexture2D::GetGLWrapMode() const {
-        switch (m_wrap_mode) {
+    u32 COpenGLTexture2D::GetGLWrapMode(ETextureWrapMode wrap_mode) {
+        switch (wrap_mode) {
             case ETextureWrapMode::Clamp: return GL_CLAMP_TO_EDGE;
             case ETextureWrapMode::Border: return GL_CLAMP_TO_BORDER;
             case ETextureWrapMode::Repeat: return GL_REPEAT;

@@ -47,8 +47,6 @@ namespace Hyperion::Rendering {
 
         virtual u32 GetID() const = 0;
 
-        virtual void SetData(const void *pixels) = 0;
-
         inline ETextureFormat GetFormat() const { return m_format; }
 
         virtual void SetWrapMode(ETextureWrapMode wrap_mode) = 0;
@@ -59,6 +57,8 @@ namespace Hyperion::Rendering {
 
         virtual void SetAnisotropicFilter(ETextureAnisotropicFilter anisotropic_filter) = 0;
         inline ETextureAnisotropicFilter GetAnisotropicFilter() const { return m_anisotropic_filter; }
+
+        static u32 GetBitsPerPixel(ETextureFormat format);
     };
 
     class CTexture2D : public CTexture {
@@ -70,6 +70,9 @@ namespace Hyperion::Rendering {
         
         inline u32 GetWidth() const { return m_width; }
         inline u32 GetHeight() const { return m_height; }
+
+        virtual void SetPixels(const void *pixels) = 0;
+        virtual void *GetPixels() = 0;
 
         static TRef<CTexture2D> Create(u32 width, u32 height, ETextureFormat format, ETextureWrapMode wrap_mode, ETextureFilter filter, ETextureAnisotropicFilter anisotropic_filter);
         static TRef<CTexture2D> Create(u32 width, u32 height, ETextureFormat format, ETextureWrapMode wrap_mode, ETextureFilter filter, ETextureAnisotropicFilter anisotropic_filter, const u8 *pixels);

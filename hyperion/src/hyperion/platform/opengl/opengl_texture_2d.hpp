@@ -18,16 +18,17 @@ namespace Hyperion::Rendering {
 
         u32 GetID() const override { return m_texture_id; }
 
-        void SetData(const void *pixels) override;
-
         void SetWrapMode(ETextureWrapMode wrap_mode) override;
         void SetFilter(ETextureFilter filter) override;
         void SetAnisotropicFilter(ETextureAnisotropicFilter anisotropic_filter) override;
+
+        void SetPixels(const void *pixels) override;
+        void *GetPixels() override;
     private:
         void CreateTexture(const u8 *pixels);
 
-        u32 GetGLFormat() const;
-        u32 GetGLWrapMode() const;
+        static u32 GetGLFormat(ETextureFormat format);
+        static u32 GetGLWrapMode(ETextureWrapMode wrap_mode);
     };
 
 }
