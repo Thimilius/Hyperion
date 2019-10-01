@@ -56,6 +56,10 @@ namespace Hyperion {
         return result;
     }
 
+    void CWindowsOperatingSystem::DisplayError(const TString &title, const TString &message) const {
+        MessageBoxW(nullptr, CStringUtils::Utf8ToUtf16(message).c_str(), CStringUtils::Utf8ToUtf16(title).c_str(), MB_OK | MB_ICONERROR);
+    }
+
     void CWindowsOperatingSystem::PrintToConsole(ELogColor color, const TString &message) const {
         s16 console_color = 0;
         switch (color) {

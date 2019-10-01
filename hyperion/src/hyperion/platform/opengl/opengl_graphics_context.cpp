@@ -54,7 +54,7 @@ namespace Hyperion::Rendering {
 
     void COpenGLGraphicsContext::CheckExtension(const TString &extension) {
         if (std::find(m_extensions.begin(), m_extensions.end(), extension) == m_extensions.end()) {
-            HYP_PANIC_MESSAGE("OpenGL", CStringUtils::Format("Manditory OpenGL extension: '{}' not available!", extension).c_str());
+            HYP_PANIC_MESSAGE("OpenGL", "Manditory OpenGL extension: '{}' not available!", extension);
         }
     }
 

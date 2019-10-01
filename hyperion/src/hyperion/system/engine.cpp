@@ -8,16 +8,6 @@
 
 namespace Hyperion {
     
-    void CEngine::Panic(const TString &system, const TString &message) {
-        TString title = CStringUtils::Format("{} error!", system);
-#ifdef HYP_PLATFORM_WINDOWS
-        MessageBoxW(nullptr, CStringUtils::Utf8ToUtf16(message).c_str(), CStringUtils::Utf8ToUtf16(title).c_str(), MB_OK | MB_ICONERROR);
-#endif
-
-        // This is not really a good way of exiting as it does not necessarily free all relevant resources
-        exit(-1);
-    }
-
     void CEngine::Init() {
         // We initialize the operating system first to get logging ability
         COperatingSystem::GetInstance()->Init();

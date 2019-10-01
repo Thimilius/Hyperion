@@ -9,6 +9,4 @@
 	- Fix path not containing last directory slash if not provided previously
 	- Give directory, filename and extension as seperate arguments to the callback
 - Should the shader library be part of the engine?
-- Put 'MessageBox' into 'DisplayError' abstraction in operating system class
 - Fix 'Log' function taking c strings as arguments
-- Provide variable arguments to format message in panic macro

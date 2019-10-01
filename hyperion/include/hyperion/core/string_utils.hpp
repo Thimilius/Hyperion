@@ -16,6 +16,11 @@ namespace Hyperion {
             return fmt::format(format, args...);
         }
 
+        template<typename ...Args>
+        inline static TString Format(const TString &format, Args... args) {
+            return fmt::format(format, args...);
+        }
+
         inline static bool EndsWith(TString const &string, TString const &ending) {
             if (string.length() >= ending.length()) {
                 return string.compare(string.length() - ending.length(), ending.length(), ending) == 0;

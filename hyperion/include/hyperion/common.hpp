@@ -29,8 +29,8 @@
             HYP_DEBUG_BREAK;                                          \
             CEngine::Panic("Engine", "Engine encountered an error!"); \
         } while(false);
-#define HYP_PANIC_MESSAGE(s, m) do {  \
-            HYP_LOG_ERROR((s), (m));  \
-            HYP_DEBUG_BREAK;          \
-            CEngine::Panic((s), (m)); \
+#define HYP_PANIC_MESSAGE(s, m, ...) do {          \
+            HYP_LOG_ERROR((s), (m), __VA_ARGS__);  \
+            HYP_DEBUG_BREAK;                       \
+            CEngine::Panic((s), (m), __VA_ARGS__); \
         } while(false);

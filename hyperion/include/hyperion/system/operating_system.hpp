@@ -33,6 +33,8 @@ namespace Hyperion {
 
         virtual void PrintToConsole(ELogColor color, const TString &message) const = 0;
 
+        virtual void DisplayError(const TString &title, const TString &message) const = 0;
+
         inline static COperatingSystem* GetInstance() { return s_instance; }
     private:
         virtual void Init() = 0;
