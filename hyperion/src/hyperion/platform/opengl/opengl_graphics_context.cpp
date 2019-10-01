@@ -49,6 +49,7 @@ namespace Hyperion::Rendering {
 
     void COpenGLGraphicsContext::CheckExtensions() {
         CheckExtension("GL_ARB_direct_state_access");
+        CheckExtension("GL_EXT_direct_state_access");
         CheckExtension("GL_ARB_texture_filter_anisotropic");
     }
 

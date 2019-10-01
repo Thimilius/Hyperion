@@ -129,7 +129,7 @@ namespace Hyperion::Rendering {
         SetAnisotropicFilter(m_anisotropic_filter);
 
         auto format = GetGLFormat(m_format);
-        glTexImage2D(GL_TEXTURE_2D, 0, format, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, pixels);
+        glTextureImage2DEXT(m_texture_id, GL_TEXTURE_2D, 0, format, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, pixels);
         glGenerateTextureMipmap(m_texture_id);
 
         glBindTexture(GL_TEXTURE_2D, 0);
