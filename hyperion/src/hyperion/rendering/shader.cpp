@@ -44,10 +44,9 @@ namespace Hyperion::Rendering {
             }
         }
 
-        s_watcher = CFileWatcher::Create(path, [](EFileStatus status, const TString &path) {
-            if (CStringUtils::EndsWith(path, ".glsl")) {
-                auto last_slash = path.find_last_of("/\\");
-                TString &name = path.substr(last_slash + 1, path.length() - last_slash - 6);
+        s_watcher = CFileWatcher::Create(path, [](EFileStatus status, const TString &path, const TString &filename, const TString &extension) {
+            if (extension == ".glsl") {
+                auto name = filename.substr(0, filename.length() - 5);
                 Reload(name);
             }
         }, false);

@@ -14,7 +14,7 @@ namespace Hyperion::IO {
     // Currently we only allow to watch one directory at a time which may or may not be changed in the future
 
     class CFileWatcher {
-        using WatcherCallbackFunc = std::function<void(EFileStatus, const TString &)>;
+        using WatcherCallbackFunc = std::function<void(EFileStatus, const TString &, const TString &, const TString &)>;
     protected:
         TString m_path;
         WatcherCallbackFunc m_callback;

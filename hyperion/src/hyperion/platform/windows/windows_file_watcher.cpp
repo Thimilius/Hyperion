@@ -63,7 +63,7 @@ namespace Hyperion::IO {
         return result != 0;
     }
 
-    void CWindowsFileWatcher::HandleAction(const TString &path, u32 action) {
+    void CWindowsFileWatcher::HandleAction(u32 action, const TString &path, const TString &filename, const TString &extension) {
         EFileStatus status;
         switch (action) {
             case FILE_ACTION_RENAMED_NEW_NAME:
@@ -79,14 +79,13 @@ namespace Hyperion::IO {
                 break;
         }
 
-        m_callback(status, path);
+        m_callback(status, path, filename, extension);
     }
 
     void CALLBACK CWindowsFileWatcher::WatchCallback(DWORD error_code, DWORD number_of_bytes_transfered, LPOVERLAPPED overlapped) {
-        char file[MAX_PATH];
         FILE_NOTIFY_INFORMATION *notify;
         SWatchStruct *watch_struct = (SWatchStruct *)overlapped;
-        size_t offset = 0;
+        size_t notify_offset = 0;
 
         if (number_of_bytes_transfered == 0) {
             return;
@@ -94,28 +93,30 @@ namespace Hyperion::IO {
 
         if (error_code == ERROR_SUCCESS) {
             do {
-                notify = (FILE_NOTIFY_INFORMATION*)&watch_struct->buffer[offset];
-                offset += notify->NextEntryOffset;
-
-                int count = WideCharToMultiByte(CP_ACP, 0, notify->FileName, notify->FileNameLength / sizeof(WCHAR), file, MAX_PATH - 1, NULL, NULL);
-                file[count] = '\0';
+                notify = (FILE_NOTIFY_INFORMATION*)&watch_struct->buffer[notify_offset];
+                notify_offset += notify->NextEntryOffset;
+                
+                // File name length is in bytes and therefore needs to be converted
+                auto filename_length = notify->FileNameLength / 2;
+                TString filename = CStringUtils::Utf16ToUtf8(TWString(notify->FileName).substr(0, filename_length));
 
                 // Format path to always include last directory seperator
                 bool has_seperator = false;
                 if (watch_struct->watcher->m_path.back() == '\\' || watch_struct->watcher->m_path.back() == '/') {
                     has_seperator = true;
                 }
-
                 TString path = has_seperator ?
-                    CStringUtils::Format("{}{}", watch_struct->watcher->m_path, file) : 
-                    CStringUtils::Format("{}/{}", watch_struct->watcher->m_path, file);
+                    CStringUtils::Format("{}{}", watch_struct->watcher->m_path, filename) :
+                    CStringUtils::Format("{}/{}", watch_struct->watcher->m_path, filename);
+                
+                TString extension = filename.substr(filename.find_last_of("."));
 
                 // HACK: This is a pretty nasty hack of trying to "wait" for long enough,
                 // so that file changes are actually written to disk and
-                // to not cause any weird errors when trying to load
+                // do not cause any weird errors when trying to load
                 Sleep(2);
-
-                watch_struct->watcher->HandleAction(path, notify->Action);
+                 
+                watch_struct->watcher->HandleAction(notify->Action, path, filename, extension);
             } while (notify->NextEntryOffset != 0);
         }
 
