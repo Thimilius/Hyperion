@@ -8,6 +8,8 @@ using namespace Hyperion::Rendering;
 
 namespace Hyperion::Entity {
 
+
+
     CPerspectiveCameraController::CPerspectiveCameraController(const TRef<CPerspectiveCamera> &perspective_camera) {
         m_perspective_camera = perspective_camera;
 

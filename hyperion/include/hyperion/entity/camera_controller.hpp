@@ -4,7 +4,18 @@
 
 namespace Hyperion::Entity {
 
-    class CPerspectiveCameraController {
+    class CCameraController {
+    protected:
+        float m_speed = 5.0f;
+        float m_yaw = -90.0f;
+        float m_pitch = 0.0f;
+
+        Math::SVec2 m_last_mouse_position;
+    public:
+        virtual void Update(float delta) = 0;
+    };
+
+    class CPerspectiveCameraController : CCameraController {
     private:
         TRef<Rendering::CPerspectiveCamera> m_perspective_camera;
 
@@ -19,10 +30,10 @@ namespace Hyperion::Entity {
 
         inline const TRef<Rendering::CPerspectiveCamera> &GetCamera() const { return m_perspective_camera; }
 
-        void Update(float delta);
+        void Update(float delta) override;
     };
 
-    class COrthographicCameraController {
+    class COrthographicCameraController : CCameraController {
     private:
         TRef<Rendering::COrthographicCamera> m_orthographic_camera;
 
@@ -37,7 +48,7 @@ namespace Hyperion::Entity {
 
         inline const TRef<Rendering::COrthographicCamera> &GetCamera() const { return m_orthographic_camera; }
 
-        void Update(float delta);
+        void Update(float delta) override;
     };
 
 }
