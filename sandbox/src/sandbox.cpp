@@ -18,7 +18,7 @@ protected:
     TRef<CMesh> m_mesh;
 
     TRef<CRenderTexture> m_render_texture;
-    TRef<CPerspectiveCameraController> m_camera_controller = std::make_shared<CPerspectiveCameraController>(std::make_shared<CPerspectiveCamera>()); 
+    TRef<COrthographicCameraController> m_camera_controller = std::make_shared<COrthographicCameraController>(std::make_shared<COrthographicCamera>());
 
     void UpdateTitle() {
         TString title = CStringUtils::Format("Hyperion | FPS: {} ({:.2f} ms) | VSync: {}", CTime::GetFPS(), CTime::GetFrameTime(), GetWindow()->GetVSyncMode() != EVSyncMode::DontSync);

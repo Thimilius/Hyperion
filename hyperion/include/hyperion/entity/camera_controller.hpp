@@ -22,4 +22,22 @@ namespace Hyperion::Entity {
         void Update(float delta);
     };
 
+    class COrthographicCameraController {
+    private:
+        TRef<Rendering::COrthographicCamera> m_orthographic_camera;
+
+        float m_speed = 5.0f;
+        float m_size_target;
+        float m_yaw = -90.0f;
+        float m_pitch = 0.0f;
+
+        Math::SVec2 m_last_mouse_position;
+    public:
+        COrthographicCameraController(const TRef<Rendering::COrthographicCamera> &orthographic_camera);
+
+        inline const TRef<Rendering::COrthographicCamera> &GetCamera() const { return m_orthographic_camera; }
+
+        void Update(float delta);
+    };
+
 }
