@@ -48,4 +48,15 @@ namespace Hyperion::Rendering {
 
         void RecalculateMatricies() override;
     };
+
+    class COrthographicCamera : public CCamera {
+    private:
+        float m_size;
+    public:
+        inline float GetSize() const { return m_size; }
+        inline void SetSize(float size) { m_size = size; }
+
+        void RecalculateMatricies() override;
+    };
+
 }
