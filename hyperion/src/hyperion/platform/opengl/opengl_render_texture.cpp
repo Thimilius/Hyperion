@@ -14,6 +14,11 @@ namespace Hyperion::Rendering {
         glDeleteFramebuffers(1, &m_framebuffer_id);
     }
 
+    void COpenGLRenderTexture::BindTexture(u32 slot) {
+        glActiveTexture(GL_TEXTURE0 + slot);
+        glBindTexture(GL_TEXTURE_2D, m_color_attachment_id);
+    }
+
     void COpenGLRenderTexture::Resize(u32 width, u32 height) {
         if (m_width == width && m_height == height) {
             return;

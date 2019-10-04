@@ -24,6 +24,8 @@ namespace Hyperion::Rendering {
 
         virtual u32 GetID() const = 0;
 
+        virtual void BindTexture(u32 slot = 0) = 0;
+
         virtual void Resize(u32 width, u32 height) = 0;
 
         static TRef<CRenderTexture> Create(u32 width, u32 height, ERenderTextureFormat format);

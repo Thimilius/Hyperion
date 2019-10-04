@@ -15,6 +15,8 @@ namespace Hyperion::Rendering {
 
         virtual u32 GetID() const { return m_framebuffer_id; }
 
+        void BindTexture(u32 slot = 0) override;
+
         virtual void Resize(u32 width, u32 height) override;
     };
 
