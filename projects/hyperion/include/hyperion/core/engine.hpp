@@ -1,5 +1,7 @@
 #pragma once
 
+#include "hyperion/app/application.hpp"
+
 namespace Hyperion {
 
     class Engine {
@@ -16,7 +18,9 @@ namespace Hyperion {
         Engine() = delete;
         ~Engine() = delete;
 
-        static void Init();
+        static void Init(const ApplicationSettings &settings);
+        static void Setup(const ApplicationSettings &settings);
+        static void Update(f32 delta_time);
         static void Shutdown();
 
         friend class Application;

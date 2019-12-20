@@ -33,23 +33,6 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void ShaderLibrary::Init(const String &path) {
-        for (auto &entry : std::filesystem::directory_iterator(path)) {
-            auto &path = entry.path();
-            if (path.extension() == ".glsl") {
-                auto &filename = path.filename().string();
-                Load(filename.substr(0, filename.length() - 5), path.string());
-            }
-        }
-
-        s_watcher = FileWatcher::Create(path, [](FileStatus status, const String &path, const String &filename, const String &extension) {
-            if (extension == ".glsl") {
-                auto name = filename.substr(0, filename.length() - 5);
-                Reload(name);
-            }
-        }, false);
-    }
-
     Ref<Shader> ShaderLibrary::Load(const String &name, const String &filepath) {
         String &source = FileUtilities::ReadTextFile(filepath);
         Ref<Shader> &shader = Shader::Create(name, source);
@@ -65,6 +48,23 @@ namespace Hyperion::Rendering {
     Ref<Shader> ShaderLibrary::Get(const String &name) {
         HYP_ASSERT_MESSAGE(s_shaders.find(name) != s_shaders.end(), "Trying to get shader that is not in the library!");
         return s_shaders[name].shader;
+    }
+
+    void ShaderLibrary::Init(const String &path) {
+        for (auto &entry : std::filesystem::directory_iterator(path)) {
+            auto &path = entry.path();
+            if (path.extension() == ".glsl") {
+                auto &filename = path.filename().string();
+                Load(filename.substr(0, filename.length() - 5), path.string());
+            }
+        }
+
+        s_watcher = FileWatcher::Create(path, [](FileStatus status, const String &path, const String &filename, const String &extension) {
+            if (extension == ".glsl") {
+                auto name = filename.substr(0, filename.length() - 5);
+                Reload(name);
+            }
+        }, false);
     }
 
     void ShaderLibrary::Update() {

@@ -27,8 +27,6 @@ protected:
 
         UpdateTitle();
 
-        ShaderLibrary::Init("data/shaders/");
-
         m_shader = ShaderLibrary::Get("phong");
         m_texture = Texture2D::CreateFromFile("data/textures/grass.png", TextureWrapMode::Clamp, TextureFilter::Bilinear, TextureAnisotropicFilter::None);
         m_mesh = Mesh::CreateCube(1);
@@ -55,8 +53,6 @@ protected:
         }
 
         m_camera_controller->Update(delta_time);
-
-        ShaderLibrary::Update();
     }
 
     void OnRender() override {

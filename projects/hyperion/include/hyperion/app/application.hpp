@@ -16,7 +16,13 @@ namespace Hyperion {
             VSyncMode vsync_mode = VSyncMode::EveryVBlank;
         } window;
 
-        f32 max_delta_time = 0.15f;
+        struct {
+            f32 max_delta_time = 0.15f;
+        } app;
+
+        struct {
+            String shader_path = "data/shaders";
+        } assets;
     };
 
     class Application {
@@ -25,6 +31,7 @@ namespace Hyperion {
 
         Window *m_window;
         bool m_running;
+        ApplicationSettings m_starting_settings;
     public:
         Application(const ApplicationSettings &settings);
         virtual ~Application() = default;

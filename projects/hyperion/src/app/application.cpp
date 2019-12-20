@@ -16,11 +16,12 @@ namespace Hyperion {
     Application::Application(const ApplicationSettings &settings) {
         HYP_ASSERT_MESSAGE(!s_instance, "Trying to create application more than once!");
         s_instance = this;
+        m_starting_settings = settings;
 
-        Engine::Init();
+        Engine::Init(settings);
         
-        HYP_ASSERT_MESSAGE(settings.max_delta_time > 0, "Max delta time must be greater than zero!");
-        Time::s_max_delta_time = settings.max_delta_time;
+        HYP_ASSERT_MESSAGE(settings.app.max_delta_time > 0, "Max delta time must be greater than zero!");
+        Time::s_max_delta_time = settings.app.max_delta_time;
 
         m_window = Window::Create(settings.window.title, settings.window.width, settings.window.height, settings.window.window_mode, settings.window.vsync_mode);
         m_window->SetEventCallbackFunction(std::bind(&Application::OnEventInternal, this, std::placeholders::_1));
@@ -29,6 +30,7 @@ namespace Hyperion {
     int Application::Run() {
         m_running = true;
 
+        Engine::Setup(m_starting_settings);
         OnInit();
         m_window->Show();
 
@@ -50,6 +52,8 @@ namespace Hyperion {
             Time::s_time += delta_time;
 
             frame_counter++;
+
+            Engine::Update(delta_time);
             OnUpdate(delta_time);
             OnRender();
 

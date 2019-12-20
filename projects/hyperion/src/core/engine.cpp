@@ -5,10 +5,11 @@
 #include "hyperion/app/display.hpp"
 #include "hyperion/audio/audio_engine.hpp"
 #include "hyperion/rendering/render_command.hpp"
+#include "hyperion/rendering/shader.hpp"
 
 namespace Hyperion {
     
-    void Engine::Init() {
+    void Engine::Init(const ApplicationSettings &settings) {
         // We initialize the operating system first to get logging ability
         OperatingSystem::GetInstance()->Init();
 
@@ -22,11 +23,18 @@ namespace Hyperion {
         CDisplay::UpdateDisplayInfos();
         DisplayInfo::DisplayModeInfo mode_info = CDisplay::GetCurrentDisplayModeInfo();
         HYP_LOG_INFO("Engine", "Primary display: {}x{} @{} Hz", mode_info.width, mode_info.height, mode_info.refresh_rate);
+    }
 
+    void Engine::Setup(const ApplicationSettings &settings) {
         // TEMP: For faster startup time, skip initializing the audio engine
         //Audio::CAudioEngine::Init();
 
+        Rendering::ShaderLibrary::Init(settings.assets.shader_path);
         Rendering::RenderCommand::Init();
+    }
+
+    void Engine::Update(f32 delta_time) {
+        Rendering::ShaderLibrary::Update();
     }
 
     void Engine::Shutdown() {

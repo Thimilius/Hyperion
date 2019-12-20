@@ -51,18 +51,20 @@ namespace Hyperion::Rendering {
         inline static Map<String, ShaderEntry> s_shaders;
         inline static Ref<FileWatcher> s_watcher;
     public:
-        static void Init(const String &path);
         static Ref<Shader> Load(const String &name, const String &filepath);
 
         static void Add(const String &name, const String &filepath, const Ref<Shader> &shader);
         static Ref<Shader> Get(const String &name);
-
-        static void Update();
     private:
         ShaderLibrary() = delete;
         ~ShaderLibrary() = delete;
 
+        static void Init(const String &path);
+        static void Update();
+
         static void Reload(const String &name);
+
+        friend class Hyperion::Engine;
     };
 
 }
