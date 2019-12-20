@@ -18,7 +18,7 @@ protected:
     TRef<CMesh> m_mesh;
 
     TRef<CRenderTexture> m_render_texture;
-    TRef<COrthographicCameraController> m_camera_controller = std::make_shared<COrthographicCameraController>(std::make_shared<COrthographicCamera>());
+    TRef<CPerspectiveCameraController> m_camera_controller = std::make_shared<CPerspectiveCameraController>(std::make_shared<CPerspectiveCamera>());
 
     void UpdateTitle() {
         TString title = CStringUtils::Format("Hyperion | FPS: {} ({:.2f} ms) | VSync: {}", CTime::GetFPS(), CTime::GetFrameTime(), GetWindow()->GetVSyncMode() != EVSyncMode::DontSync);
@@ -94,7 +94,7 @@ protected:
         {
             CRenderCommand::SetPolygonMode(EPolygonMode::Line);
             CRenderCommand::DisableFeature(EFeature::Culling);
-            //CImmediateRenderer::DrawCube(m_mesh->GetBounds().center, m_mesh->GetBounds().GetSize(), SVec4(1, 1, 1, 1));
+            CImmediateRenderer::DrawCube(m_mesh->GetBounds().center, m_mesh->GetBounds().GetSize(), SVec4(1, 1, 1, 1));
         }
         CImmediateRenderer::End();
 
