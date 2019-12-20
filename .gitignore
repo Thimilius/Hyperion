@@ -1,7 +1,6 @@
 # Directories
 .vs/
-bin/
-bin_int/
+build/
 
 # Files
 *.sln

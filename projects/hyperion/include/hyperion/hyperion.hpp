@@ -17,10 +17,7 @@
 #include "core/timer.hpp"
 
 // Entity
-#include "entity/game_object.hpp"
 #include "entity/camera_controller.hpp"
-#include "entity/components/component.hpp"
-#include "entity/components/transform_component.hpp"
 
 // IO
 #include "io/file_utilities.hpp"

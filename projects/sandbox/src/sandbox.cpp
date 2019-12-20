@@ -90,14 +90,6 @@ protected:
         }
         CRenderer::End();
 
-        CImmediateRenderer::Begin(m_camera_controller->GetCamera());
-        {
-            CRenderCommand::SetPolygonMode(EPolygonMode::Line);
-            CRenderCommand::DisableFeature(EFeature::Culling);
-            CImmediateRenderer::DrawCube(m_mesh->GetBounds().center, m_mesh->GetBounds().GetSize(), SVec4(1, 1, 1, 1));
-        }
-        CImmediateRenderer::End();
-
         CRenderCommand::Blit(nullptr, m_render_texture);
 
         // Setting back buffer as render target before swapping buffers fixes vsync

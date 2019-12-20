@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "vendor/fmt/format.h"
+#include "fmt/format.h"
 
 namespace Hyperion {
 

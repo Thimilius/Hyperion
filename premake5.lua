@@ -83,7 +83,9 @@ project "hyperion"
 		
 		links { "opengl32", "PowrProf" }
 		linkoptions { "-IGNORE:4006" }
-		
+
+
+
 project "sandbox"
 	location "projects/sandbox"
 	kind "ConsoleApp"
@@ -101,7 +103,11 @@ project "sandbox"
 	
 	files { "projects/sandbox/**" }	
 	
-	includedirs { "projects/hyperion/include" }
+	includedirs {
+		"projects/hyperion/include",
+		
+		"projects/hyperion/vendor/fmt/include",
+	}
 		
 	filter "kind:ConsoleApp"
 		defines { "HYP_CONSOLE" }
