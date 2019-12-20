@@ -7,35 +7,35 @@
 
 namespace Hyperion::Rendering {
 
-    class CRenderCommand {
+    class RenderCommand {
     private: 
-        inline static CRenderAPI *s_render_api;
+        inline static RenderAPI *s_render_api;
     public:
-        inline static void EnableFeature(EFeature feature) {
+        inline static void EnableFeature(Feature feature) {
             s_render_api->EnableFeature(feature);
         }
 
-        inline static void DisableFeature(EFeature feature) {
+        inline static void DisableFeature(Feature feature) {
             s_render_api->DisableFeature(feature);
         }
 
-        inline static void SetFrontFaceMode(EFrontFaceMode front_face_mode) {
+        inline static void SetFrontFaceMode(FrontFaceMode front_face_mode) {
             s_render_api->SetFrontFaceMode(front_face_mode);
         }
 
-        inline static void SetCullingMode(ECullingMode culling_mode) {
+        inline static void SetCullingMode(CullingMode culling_mode) {
             s_render_api->SetCullingMode(culling_mode);
         }
 
-        inline static void SetBlendFunc(EBlendFactor source_factor, EBlendFactor destination_factor) {
+        inline static void SetBlendFunc(BlendFactor source_factor, BlendFactor destination_factor) {
             s_render_api->SetBlendFunc(source_factor, destination_factor);
         }
 
-        inline static void SetBlendEquation(EBlendEquation blend_equation) {
+        inline static void SetBlendEquation(BlendEquation blend_equation) {
             s_render_api->SetBlendEquation(blend_equation);
         }
 
-        inline static void SetPolygonMode(EPolygonMode polygon_mode) {
+        inline static void SetPolygonMode(PolygonMode polygon_mode) {
             s_render_api->SetPolygonMode(polygon_mode);
         }
 
@@ -43,7 +43,7 @@ namespace Hyperion::Rendering {
             s_render_api->SetClearColor(r, g, b, a);
         }
 
-        inline static void Clear(EClearMask mask) {
+        inline static void Clear(ClearMask mask) {
             s_render_api->Clear(mask);
         }
 
@@ -51,31 +51,31 @@ namespace Hyperion::Rendering {
             s_render_api->SetViewport(x, y, width, height);
         }
 
-        inline static void SetActiveRenderTarget(const TRef<CRenderTexture> texture, ERenderTextureTarget target = ERenderTextureTarget::DrawAndRead) {
+        inline static void SetActiveRenderTarget(const Ref<RenderTexture> texture, RenderTextureTarget target = RenderTextureTarget::DrawAndRead) {
             s_render_api->SetActiveRenderTarget(texture, target);
         }
 
-        inline static void Blit(const TRef<CRenderTexture> destination, const TRef<CRenderTexture> source) {
-            u32 destination_width = destination ? destination->GetWidth() : CApplication::GetInstance()->GetWindow()->GetWidth();
-            u32 destination_height = destination ? destination->GetHeight() : CApplication::GetInstance()->GetWindow()->GetHeight();
+        inline static void Blit(const Ref<RenderTexture> destination, const Ref<RenderTexture> source) {
+            u32 destination_width = destination ? destination->GetWidth() : Application::GetInstance()->GetWindow()->GetWidth();
+            u32 destination_height = destination ? destination->GetHeight() : Application::GetInstance()->GetWindow()->GetHeight();
             s_render_api->Blit(destination, 0, 0, destination_width, destination_height, source, 0, 0, source->GetWidth(), source->GetHeight());
         }
 
-        inline static void Blit(const TRef<CRenderTexture> destination, s32 dstX0, s32 dstY0, s32 dstX1, s32 dstY1, const TRef<CRenderTexture> source, s32 srcX0, s32 srcY0, s32 srcX1, s32 srcY1) {
+        inline static void Blit(const Ref<RenderTexture> destination, s32 dstX0, s32 dstY0, s32 dstX1, s32 dstY1, const Ref<RenderTexture> source, s32 srcX0, s32 srcY0, s32 srcX1, s32 srcY1) {
             s_render_api->Blit(destination, dstX0, dstY0, dstX1, dstY1, source, srcX0, srcY0, srcX1, srcY1);
         }
 
-        inline static void DrawIndexed(EPrimitive primitive, EIndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) {
+        inline static void DrawIndexed(Primitive primitive, IndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) {
             s_render_api->DrawIndexed(primitive, format, index_count, index_offset, vertex_offset);
         }
 
-        inline static void Draw(EPrimitive primitive, u32 vertex_count, u32 vertex_offset) {
+        inline static void Draw(Primitive primitive, u32 vertex_count, u32 vertex_offset) {
             s_render_api->Draw(primitive, vertex_count, vertex_offset);
         }
     private:
         static void Init();
 
-        friend class CEngine;
+        friend class Engine;
     };
 
 }

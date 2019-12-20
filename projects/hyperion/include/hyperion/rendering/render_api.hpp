@@ -6,12 +6,12 @@
 
 namespace Hyperion::Rendering {
 
-    enum class ERenderAPI {
+    enum class RenderBackendAPI {
         None,
         OpenGL
     };
 
-    enum class EFeature {
+    enum class Feature {
         None,
         Culling,
         DepthTesting,
@@ -19,15 +19,15 @@ namespace Hyperion::Rendering {
         Blending
     };
 
-    enum class EClearMask {
+    enum class ClearMask {
         None,
         Color   = BIT(0),
         Depth   = BIT(1),
         Stencil = BIT(2)
     };
-    HYP_CREATE_ENUM_FLAG_OPERATORS(EClearMask);
+    HYP_CREATE_ENUM_FLAG_OPERATORS(ClearMask);
 
-    enum class EBlendFactor {
+    enum class BlendFactor {
         None,
         
         Zero,
@@ -44,40 +44,40 @@ namespace Hyperion::Rendering {
         InverseDestinationColor
     };
 
-    enum class EBlendEquation {
+    enum class BlendEquation {
         None,
         Add,
         Subtract,
         ReverseSubract,
     };
 
-    enum class EFrontFaceMode {
+    enum class FrontFaceMode {
         None,
         Clockwise,
         CounterClockwise
     };
 
-    enum class ECullingMode {
+    enum class CullingMode {
         None,
         Back,
         Front,
         FrontAndBack
     };
 
-    enum class ERenderTextureTarget {
+    enum class RenderTextureTarget {
         None,
         DrawAndRead,
         Draw,
         Read
     };
 
-    enum class EPolygonMode {
+    enum class PolygonMode {
         None,
         Fill,
         Line
     };
 
-    enum class EPrimitive {
+    enum class Primitive {
         None,
         Lines,
         LineStrip,
@@ -85,33 +85,33 @@ namespace Hyperion::Rendering {
         Triangles
     };
 
-    class CRenderAPI {
+    class RenderAPI {
     private:
-        inline static ERenderAPI m_render_api = ERenderAPI::OpenGL;
+        inline static RenderBackendAPI m_render_backend_api = RenderBackendAPI::OpenGL;
     public:
-        virtual void EnableFeature(EFeature feature) = 0;
-        virtual void DisableFeature(EFeature feature) = 0;
+        virtual void EnableFeature(Feature feature) = 0;
+        virtual void DisableFeature(Feature feature) = 0;
 
-        virtual void SetFrontFaceMode(EFrontFaceMode front_face_mode) = 0;
-        virtual void SetCullingMode(ECullingMode culling_mode) = 0;
+        virtual void SetFrontFaceMode(FrontFaceMode front_face_mode) = 0;
+        virtual void SetCullingMode(CullingMode culling_mode) = 0;
 
-        virtual void SetBlendFunc(EBlendFactor source_factor, EBlendFactor destination_factor) = 0;
-        virtual void SetBlendEquation(EBlendEquation blend_equation) = 0;
+        virtual void SetBlendFunc(BlendFactor source_factor, BlendFactor destination_factor) = 0;
+        virtual void SetBlendEquation(BlendEquation blend_equation) = 0;
 
-        virtual void SetPolygonMode(EPolygonMode polygon_mode) = 0;
+        virtual void SetPolygonMode(PolygonMode polygon_mode) = 0;
 
         virtual void SetClearColor(float r, float g, float b, float a) = 0;
-        virtual void Clear(EClearMask mask) = 0;
+        virtual void Clear(ClearMask mask) = 0;
 
         virtual void SetViewport(s32 x, s32 y, s32 width, s32 height) = 0;
 
-        virtual void SetActiveRenderTarget(const TRef<CRenderTexture> texture, ERenderTextureTarget target) = 0;
-        virtual void Blit(const TRef<CRenderTexture> destination, s32 dstX0, s32 dstY0, s32 dstX1, s32 dstY1, const TRef<CRenderTexture> source, s32 srcX0, s32 srcY0, s32 srcX1, s32 srcY1) = 0;
+        virtual void SetActiveRenderTarget(const Ref<RenderTexture> texture, RenderTextureTarget target) = 0;
+        virtual void Blit(const Ref<RenderTexture> destination, s32 dstX0, s32 dstY0, s32 dstX1, s32 dstY1, const Ref<RenderTexture> source, s32 srcX0, s32 srcY0, s32 srcX1, s32 srcY1) = 0;
 
-        virtual void DrawIndexed(EPrimitive primitive, EIndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) = 0;
-        virtual void Draw(EPrimitive primitive, u32 vertex_count, u32 vertex_offset) = 0;
+        virtual void DrawIndexed(Primitive primitive, IndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) = 0;
+        virtual void Draw(Primitive primitive, u32 vertex_count, u32 vertex_offset) = 0;
     public:
-        inline static ERenderAPI GetAPI() { return m_render_api; }
+        inline static RenderBackendAPI GetBackendAPI() { return m_render_backend_api; }
     };
 
 }

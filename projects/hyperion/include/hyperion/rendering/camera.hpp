@@ -4,27 +4,27 @@
 
 namespace Hyperion::Rendering {
 
-    class CCamera {
+    class Camera {
     protected:
-        Math::SVec3 m_position;
-        Math::SVec3 m_forward;
-        Math::SVec3 m_up;
+        Vec3 m_position;
+        Vec3 m_forward;
+        Vec3 m_up;
 
         float m_near_plane = 0.1f;
         float m_far_plane = 100.0f;
 
-        Math::SMat4 m_view_matrix;
-        Math::SMat4 m_projection_matrix;
-        Math::SMat4 m_view_projection_matrix;
+        Mat4 m_view_matrix;
+        Mat4 m_projection_matrix;
+        Mat4 m_view_projection_matrix;
     public:
-        inline Math::SVec3 GetPosition() const { return m_position; }
-        inline void SetPosition(Math::SVec3 position) { m_position = position; }
+        inline Vec3 GetPosition() const { return m_position; }
+        inline void SetPosition(Vec3 position) { m_position = position; }
 
-        inline Math::SVec3 GetForward() const { return m_forward; }
-        inline void SetForward(Math::SVec3 forward) { m_forward = forward; }
+        inline Vec3 GetForward() const { return m_forward; }
+        inline void SetForward(Vec3 forward) { m_forward = forward; }
 
-        inline Math::SVec3 GetUp() const { return m_up; }
-        inline void SetUp(Math::SVec3 up) { m_up = up; }
+        inline Vec3 GetUp() const { return m_up; }
+        inline void SetUp(Vec3 up) { m_up = up; }
 
         inline float GetNearPlane() const { return m_near_plane; }
         inline void SetNearPlane(float near_plane) { m_near_plane = near_plane; }
@@ -34,12 +34,12 @@ namespace Hyperion::Rendering {
 
         virtual void RecalculateMatricies() = 0;
 
-        const Math::SMat4 &GetViewMatrix() const { return m_view_matrix; }
-        const Math::SMat4 &GetProjectionMatrix() const { return m_projection_matrix; }
-        const Math::SMat4 &GetViewProjectionMatrix() const { return m_view_projection_matrix; }
+        const Mat4 &GetViewMatrix() const { return m_view_matrix; }
+        const Mat4 &GetProjectionMatrix() const { return m_projection_matrix; }
+        const Mat4 &GetViewProjectionMatrix() const { return m_view_projection_matrix; }
     };
 
-    class CPerspectiveCamera : public CCamera {
+    class PerspectiveCamera : public Camera {
     private:
         float m_fov;
     public:
@@ -49,7 +49,7 @@ namespace Hyperion::Rendering {
         void RecalculateMatricies() override;
     };
 
-    class COrthographicCamera : public CCamera {
+    class OrthographicCamera : public Camera {
     private:
         float m_size;
     public:

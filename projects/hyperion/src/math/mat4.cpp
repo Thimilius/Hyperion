@@ -2,13 +2,13 @@
 
 #include "hyperion/math/mat4.hpp"
 
-namespace Hyperion::Math {
+namespace Hyperion {
 
-    SMat4::SMat4() {
+    Mat4::Mat4() {
         memset(elements, 0, 16 * sizeof(float));
     }
 
-    SMat4::SMat4(float diagonal) {
+    Mat4::Mat4(float diagonal) {
         memset(elements, 0, 16 * sizeof(float));
         elements[0 + 0 * 4] = diagonal;
         elements[1 + 1 * 4] = diagonal;
@@ -16,18 +16,18 @@ namespace Hyperion::Math {
         elements[3 + 3 * 4] = diagonal;
     }
 
-    SMat4::SMat4(float *elements) {
+    Mat4::Mat4(float *elements) {
         memcpy(this->elements, elements, 16 * sizeof(float));
     }
 
-    SMat4::SMat4(const SVec4 &column0, const SVec4 &column1, const SVec4 &column2, const SVec4 &column3) {
+    Mat4::Mat4(const Vec4 &column0, const Vec4 &column1, const Vec4 &column2, const Vec4 &column3) {
         columns[0] = column0;
         columns[1] = column1;
         columns[2] = column2;
         columns[3] = column3;
     }
 
-    SMat4 &SMat4::Multiply(const SMat4 &other) {
+    Mat4 &Mat4::Multiply(const Mat4 &other) {
         float data[16];
         for (int y = 0; y < 4; y++) {
             for (int x = 0; x < 4; x++) {
@@ -42,31 +42,31 @@ namespace Hyperion::Math {
         return *this;
     }
 
-    SVec3 SMat4::Multiply(const SVec3 &other) const {
+    Vec3 Mat4::Multiply(const Vec3 &other) const {
         return other.Multiply(*this);
     }
 
-    SVec4 SMat4::Multiply(const SVec4 &other) const {
+    Vec4 Mat4::Multiply(const Vec4 &other) const {
         return other.Multiply(*this);
     }
 
-    SMat4 operator*(SMat4 left, const SMat4 &right) {
+    Mat4 operator*(Mat4 left, const Mat4 &right) {
         return left.Multiply(right);
     }
 
-    SMat4 &SMat4::operator*=(const SMat4 &other) {
+    Mat4 &Mat4::operator*=(const Mat4 &other) {
         return Multiply(other);
     }
 
-    SVec3 operator*(const SMat4 &left, const SVec3 &right) {
+    Vec3 operator*(const Mat4 &left, const Vec3 &right) {
         return left.Multiply(right);
     }
 
-    SVec4 operator*(const SMat4 &left, const SVec4 &right) {
+    Vec4 operator*(const Mat4 &left, const Vec4 &right) {
         return left.Multiply(right);
     }
 
-    SMat4 &SMat4::Invert() {
+    Mat4 &Mat4::Invert() {
         float temp[16];
 
         temp[0] = elements[5] * elements[10] * elements[15] -
@@ -191,29 +191,29 @@ namespace Hyperion::Math {
         return *this;
     }
 
-    SMat4 SMat4::Transpose() {
-        return SMat4(
-            SVec4(columns[0].x, columns[1].x, columns[2].x, columns[3].x),
-            SVec4(columns[0].y, columns[1].y, columns[2].y, columns[3].y),
-            SVec4(columns[0].z, columns[1].z, columns[2].z, columns[3].z),
-            SVec4(columns[0].w, columns[1].w, columns[2].w, columns[3].w)
+    Mat4 Mat4::Transpose() {
+        return Mat4(
+            Vec4(columns[0].x, columns[1].x, columns[2].x, columns[3].x),
+            Vec4(columns[0].y, columns[1].y, columns[2].y, columns[3].y),
+            Vec4(columns[0].z, columns[1].z, columns[2].z, columns[3].z),
+            Vec4(columns[0].w, columns[1].w, columns[2].w, columns[3].w)
         );
     }
 
 
-    SVec4 SMat4::GetRow(int index) const {
-        return SVec4(elements[index + 0 * 4], elements[index + 1 * 4], elements[index + 2 * 4], elements[index + 3 * 4]);
+    Vec4 Mat4::GetRow(int index) const {
+        return Vec4(elements[index + 0 * 4], elements[index + 1 * 4], elements[index + 2 * 4], elements[index + 3 * 4]);
     }
 
-    void SMat4::SetRow(int index, const SVec4 &column) {
+    void Mat4::SetRow(int index, const Vec4 &column) {
         elements[index + 0 * 4] = column.x;
         elements[index + 1 * 4] = column.y;
         elements[index + 2 * 4] = column.z;
         elements[index + 3 * 4] = column.w;
     }
 
-    TString SMat4::ToString() const {
-        return CStringUtils::Format("({:.2f}, {:.2f}, {:.2f}, {:.2f})\n({:.2f}, {:.2f}, {:.2f}, {:.2f})\n({:.2f}, {:.2f}, {:.2f}, {:.2f})\n({:.2f}, {:.2f}, {:.2f}, {:.2f})\n",
+    String Mat4::ToString() const {
+        return StringUtils::Format("({:.2f}, {:.2f}, {:.2f}, {:.2f})\n({:.2f}, {:.2f}, {:.2f}, {:.2f})\n({:.2f}, {:.2f}, {:.2f}, {:.2f})\n({:.2f}, {:.2f}, {:.2f}, {:.2f})\n",
             columns[0].x, columns[1].x, columns[2].x, columns[3].x,
             columns[0].y, columns[1].y, columns[2].y, columns[3].y,
             columns[0].z, columns[1].z, columns[2].z, columns[3].z,
@@ -221,16 +221,16 @@ namespace Hyperion::Math {
         );
     }
 
-    SMat4 SMat4::Identity() {
-        return SMat4(1.0f);
+    Mat4 Mat4::Identity() {
+        return Mat4(1.0f);
     }
 
-    SMat4 SMat4::Translate(const SVec3 &position) {
+    Mat4 Mat4::Translate(const Vec3 &position) {
         return Translate(position.x, position.y, position.z);
     }
 
-    SMat4 SMat4::Translate(float x, float y, float z) {
-        SMat4 result(1.0f);
+    Mat4 Mat4::Translate(float x, float y, float z) {
+        Mat4 result(1.0f);
 
         result.elements[0 + 3 * 4] = x;
         result.elements[1 + 3 * 4] = y;
@@ -239,12 +239,12 @@ namespace Hyperion::Math {
         return result;
     }
 
-    SMat4 SMat4::Rotate(const SVec3 &axis, float angle) {
-        SMat4 result(1.0f);
+    Mat4 Mat4::Rotate(const Vec3 &axis, float angle) {
+        Mat4 result(1.0f);
 
-        float radians = CMathf::ToRadians(angle);
-        float cos = CMathf::Cos(radians);
-        float sin = CMathf::Sin(radians);
+        float radians = Mathf::ToRadians(angle);
+        float cos = Mathf::Cos(radians);
+        float sin = Mathf::Sin(radians);
         float omc = 1.0f - cos;
 
         float x = axis.x;
@@ -266,12 +266,12 @@ namespace Hyperion::Math {
         return result;
     }
 
-    SMat4 SMat4::Scale(const SVec3 &scale) {
+    Mat4 Mat4::Scale(const Vec3 &scale) {
         return Scale(scale.x, scale.y, scale.z);
     }
 
-    SMat4 SMat4::Scale(float x, float y, float z) {
-        SMat4 result(1.0f);
+    Mat4 Mat4::Scale(float x, float y, float z) {
+        Mat4 result(1.0f);
 
         result.elements[0 + 0 * 4] = x;
         result.elements[1 + 1 * 4] = z;
@@ -280,12 +280,12 @@ namespace Hyperion::Math {
         return result;
     }
 
-    SMat4 SMat4::TRS(const SVec3 &position, const SVec3 &axis, float angle, const SVec3 &scale) {
+    Mat4 Mat4::TRS(const Vec3 &position, const Vec3 &axis, float angle, const Vec3 &scale) {
         return Translate(position) * Rotate(axis, angle) * Scale(scale);
     }
 
-    SMat4 SMat4::Orthographic(float left, float right, float bottom, float top, float z_near, float z_far) {
-        SMat4 result(1.0f);
+    Mat4 Mat4::Orthographic(float left, float right, float bottom, float top, float z_near, float z_far) {
+        Mat4 result(1.0f);
 
         result.elements[0 + 0 * 4] = 2.0f / (right - left);
         result.elements[1 + 1 * 4] = 2.0f / (top - bottom);
@@ -298,10 +298,10 @@ namespace Hyperion::Math {
         return result;
     }
 
-    SMat4 SMat4::Perspective(float fov, float aspect_ratio, float z_near, float z_far) {
-        SMat4 result(0.0f);
+    Mat4 Mat4::Perspective(float fov, float aspect_ratio, float z_near, float z_far) {
+        Mat4 result(0.0f);
 
-        float t = CMathf::Tan(0.5f * CMathf::ToRadians(fov)) * z_near;
+        float t = Mathf::Tan(0.5f * Mathf::ToRadians(fov)) * z_near;
         float b = -t;
         float r = t * aspect_ratio;
         float l = -r;
@@ -317,12 +317,12 @@ namespace Hyperion::Math {
         return result;
     }
 
-    SMat4 SMat4::LookAt(const SVec3 &from, const SVec3 &to, const SVec3 &up) {
-        SMat4 result(1.0f);
+    Mat4 Mat4::LookAt(const Vec3 &from, const Vec3 &to, const Vec3 &up) {
+        Mat4 result(1.0f);
 
-        SVec3 f = (to - from).Normalized();
-        SVec3 s = SVec3::Cross(f, up.Normalized()).Normalized();
-        SVec3 u = SVec3::Cross(s, f).Normalized();
+        Vec3 f = (to - from).Normalized();
+        Vec3 s = Vec3::Cross(f, up.Normalized()).Normalized();
+        Vec3 u = Vec3::Cross(s, f).Normalized();
 
         result.elements[0 + 0 * 4] = s.x;
         result.elements[0 + 1 * 4] = s.y;
@@ -336,7 +336,7 @@ namespace Hyperion::Math {
         result.elements[2 + 1 * 4] = -f.y;
         result.elements[2 + 2 * 4] = -f.z;
 
-        return result * Translate(SVec3(-from.x, -from.y, -from.z));
+        return result * Translate(Vec3(-from.x, -from.y, -from.z));
     }
 
 }

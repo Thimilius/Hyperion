@@ -6,18 +6,18 @@
 
 namespace Hyperion {
 
-    class CWindowsOperatingSystem : public COperatingSystem {
+    class WindowsOperatingSystem : public OperatingSystem {
     private:
         HANDLE m_console_handle;
     public:
         void Init() override;
 
-        EOperatingSystemType GetType() const override;
-        SSystemInfo GetSystemInfo() const override;
+        OperatingSystemType GetType() const override;
+        SystemInfo GetSystemInfo() const override;
 
-        void DisplayError(const TString &title, const TString &message) const override;
+        void DisplayError(const String &title, const String &message) const override;
 
-        void PrintToConsole(ELogColor color, const TString &message) const override;
+        void PrintToConsole(LogColor color, const String &message) const override;
     };
 
 }

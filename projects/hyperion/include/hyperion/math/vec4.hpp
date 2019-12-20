@@ -2,57 +2,57 @@
 
 #include "hyperion/common.hpp"
 
-namespace Hyperion::Math {
+namespace Hyperion {
 
-    struct SMat4;
+    struct Mat4;
 
-    struct SVec4 {
+    struct Vec4 {
         float x;
         float y;
         float z;
         float w;
 
-        SVec4();
-        SVec4(float x, float y, float z, float w);
+        Vec4();
+        Vec4(float x, float y, float z, float w);
 
-        SVec4 &Add(const SVec4 &other);
-        SVec4 &Subtract(const SVec4 &other);
-        SVec4 &Multiply(const SVec4 &other);
-        SVec4 &Divide(const SVec4 &other);
+        Vec4 &Add(const Vec4 &other);
+        Vec4 &Subtract(const Vec4 &other);
+        Vec4 &Multiply(const Vec4 &other);
+        Vec4 &Divide(const Vec4 &other);
 
-        SVec4 &Add(float value);
-        SVec4 &Subtract(float value);
-        SVec4 &Multiply(float value);
-        SVec4 &Divide(float value);
+        Vec4 &Add(float value);
+        Vec4 &Subtract(float value);
+        Vec4 &Multiply(float value);
+        Vec4 &Divide(float value);
 
-        SVec4 Multiply(const SMat4 &transform) const;
+        Vec4 Multiply(const Mat4 &transform) const;
 
-        TString ToString() const;
+        String ToString() const;
 
-        friend SVec4 operator+(SVec4 left, const SVec4 &right);
-        friend SVec4 operator-(SVec4 left, const SVec4 &right);
-        friend SVec4 operator*(SVec4 left, const SVec4 &right);
-        friend SVec4 operator/(SVec4 left, const SVec4 &right);
+        friend Vec4 operator+(Vec4 left, const Vec4 &right);
+        friend Vec4 operator-(Vec4 left, const Vec4 &right);
+        friend Vec4 operator*(Vec4 left, const Vec4 &right);
+        friend Vec4 operator/(Vec4 left, const Vec4 &right);
 
-        friend SVec4 operator+(SVec4 left, float value);
-        friend SVec4 operator-(SVec4 left, float value);
-        friend SVec4 operator*(SVec4 left, float value);
-        friend SVec4 operator/(SVec4 left, float value);
+        friend Vec4 operator+(Vec4 left, float value);
+        friend Vec4 operator-(Vec4 left, float value);
+        friend Vec4 operator*(Vec4 left, float value);
+        friend Vec4 operator/(Vec4 left, float value);
 
-        bool operator==(const SVec4 &other) const;
-        bool operator!=(const SVec4 &other) const;
+        bool operator==(const Vec4 &other) const;
+        bool operator!=(const Vec4 &other) const;
 
-        SVec4 &operator+=(const SVec4 &other);
-        SVec4 &operator-=(const SVec4 &other);
-        SVec4 &operator*=(const SVec4 &other);
-        SVec4 &operator/=(const SVec4 &other);
+        Vec4 &operator+=(const Vec4 &other);
+        Vec4 &operator-=(const Vec4 &other);
+        Vec4 &operator*=(const Vec4 &other);
+        Vec4 &operator/=(const Vec4 &other);
 
-        bool operator<(const SVec4 &other) const;
-        bool operator<=(const SVec4 &other) const;
-        bool operator>(const SVec4 &other) const;
-        bool operator>=(const SVec4 &other) const;
+        bool operator<(const Vec4 &other) const;
+        bool operator<=(const Vec4 &other) const;
+        bool operator>(const Vec4 &other) const;
+        bool operator>=(const Vec4 &other) const;
 
-        float Dot(const SVec4 &other) const;
+        float Dot(const Vec4 &other) const;
     };
 
 }

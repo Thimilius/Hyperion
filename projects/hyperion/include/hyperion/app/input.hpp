@@ -5,9 +5,9 @@
 
 namespace Hyperion {
 
-    class CApplication;
+    class Application;
 
-    enum class EKeyCode {
+    enum class KeyCode {
         None,
 
         Alpha0,
@@ -137,7 +137,7 @@ namespace Hyperion {
         Last
     };
 
-    enum class EMouseButtonCode {
+    enum class MouseButtonCode {
         None,
 
         Left,
@@ -150,7 +150,7 @@ namespace Hyperion {
         Last
     };
 
-    enum class EKeyModifier {
+    enum class KeyModifier {
         None     = 0,
         Shift    = BIT(0),
         Control  = BIT(1),
@@ -159,41 +159,41 @@ namespace Hyperion {
         Capslock = BIT(4),
         Numlock  = BIT(5)
     };
-    HYP_CREATE_ENUM_FLAG_OPERATORS(EKeyModifier)
+    HYP_CREATE_ENUM_FLAG_OPERATORS(KeyModifier)
 
-    class CInput {
+    class Input {
     private:
-        inline static bool s_keys_down[(s32)EKeyCode::Last];
-        inline static bool s_keys[(s32)EKeyCode::Last];
-        inline static bool s_keys_last[(s32)EKeyCode::Last];
-        inline static bool s_keys_up[(s32)EKeyCode::Last];
+        inline static bool s_keys_down[(s32)KeyCode::Last];
+        inline static bool s_keys[(s32)KeyCode::Last];
+        inline static bool s_keys_last[(s32)KeyCode::Last];
+        inline static bool s_keys_up[(s32)KeyCode::Last];
 
-        inline static bool s_mouse_buttons_down[(s32)EMouseButtonCode::Last];
-        inline static bool s_mouse_buttons[(s32)EMouseButtonCode::Last];
-        inline static bool s_mouse_buttons_last[(s32)EMouseButtonCode::Last];
-        inline static bool s_mouse_buttons_up[(s32)EMouseButtonCode::Last];
+        inline static bool s_mouse_buttons_down[(s32)MouseButtonCode::Last];
+        inline static bool s_mouse_buttons[(s32)MouseButtonCode::Last];
+        inline static bool s_mouse_buttons_last[(s32)MouseButtonCode::Last];
+        inline static bool s_mouse_buttons_up[(s32)MouseButtonCode::Last];
         
-        inline static Math::SVec2 s_mouse_position;
+        inline static Vec2 s_mouse_position;
         inline static float s_mouse_scroll;
     public:
-        inline static bool GetKeyDown(EKeyCode key_code) { return s_keys_down[(s32)key_code]; }
-        inline static bool GetKey(EKeyCode key_code) { return s_keys[(s32)key_code]; }
-        inline static bool GetKeyUp(EKeyCode key_code) { return s_keys_up[(s32)key_code]; }
+        inline static bool GetKeyDown(KeyCode key_code) { return s_keys_down[(s32)key_code]; }
+        inline static bool GetKey(KeyCode key_code) { return s_keys[(s32)key_code]; }
+        inline static bool GetKeyUp(KeyCode key_code) { return s_keys_up[(s32)key_code]; }
 
-        inline static bool GetMouseButtonDown(EMouseButtonCode mouse_button_code) { return s_mouse_buttons_down[(s32)mouse_button_code]; }
-        inline static bool GetMouseButton(EMouseButtonCode mouse_button_code) { return s_mouse_buttons[(s32)mouse_button_code]; }
-        inline static bool GetMouseButtonUp(EMouseButtonCode mouse_button_code) { return s_mouse_buttons_up[(s32)mouse_button_code]; }
+        inline static bool GetMouseButtonDown(MouseButtonCode mouse_button_code) { return s_mouse_buttons_down[(s32)mouse_button_code]; }
+        inline static bool GetMouseButton(MouseButtonCode mouse_button_code) { return s_mouse_buttons[(s32)mouse_button_code]; }
+        inline static bool GetMouseButtonUp(MouseButtonCode mouse_button_code) { return s_mouse_buttons_up[(s32)mouse_button_code]; }
 
-        inline static Math::SVec2 GetMousePosition() { return s_mouse_position; }
+        inline static Vec2 GetMousePosition() { return s_mouse_position; }
         inline static float GetMouseScroll() { return s_mouse_scroll; }
     private:
-        CInput() = delete;
-        ~CInput() = delete;
+        Input() = delete;
+        ~Input() = delete;
 
         static void Update();
         static void Reset();
 
-        friend class CApplication;
+        friend class Application;
     };
 
 }

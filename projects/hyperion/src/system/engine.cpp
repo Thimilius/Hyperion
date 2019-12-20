@@ -8,29 +8,29 @@
 
 namespace Hyperion {
     
-    void CEngine::Init() {
+    void Engine::Init() {
         // We initialize the operating system first to get logging ability
-        COperatingSystem::GetInstance()->Init();
+        OperatingSystem::GetInstance()->Init();
 
         HYP_LOG_INFO("Engine", "Initializing...");
-        SSystemInfo system_info = COperatingSystem::GetInstance()->GetSystemInfo();
+        SystemInfo system_info = OperatingSystem::GetInstance()->GetSystemInfo();
         HYP_LOG_INFO("Engine", "Processor Count: {} | Processor Frequency: {:.2f} Ghz | Physical Memory: {:.2f} GB",
             system_info.processor_info.processor_count,
             (float)system_info.processor_info.processor_mhz_frequency / 1000.0f,
             (float)system_info.memory_info.total_physical_memory / (1024.0f * 1024.0f * 1024.0f));
 
         CDisplay::UpdateDisplayInfos();
-        CDisplayInfo::SDisplayModeInfo mode_info = CDisplay::GetCurrentDisplayModeInfo();
+        DisplayInfo::DisplayModeInfo mode_info = CDisplay::GetCurrentDisplayModeInfo();
         HYP_LOG_INFO("Engine", "Primary display: {}x{} @{} Hz", mode_info.width, mode_info.height, mode_info.refresh_rate);
 
         // TEMP: For faster startup time, skip initializing the audio engine
         //Audio::CAudioEngine::Init();
 
-        Rendering::CRenderCommand::Init();
+        Rendering::RenderCommand::Init();
     }
 
-    void CEngine::Shutdown() {
-        Audio::CAudioEngine::Shutdown();
+    void Engine::Shutdown() {
+        Audio::AudioEngine::Shutdown();
     }
 
 }

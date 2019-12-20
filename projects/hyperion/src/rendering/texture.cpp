@@ -6,31 +6,31 @@
 
 namespace Hyperion::Rendering {
 
-    TRef<CTexture2D> CTexture2D::Create(u32 width, u32 height, ETextureFormat format, ETextureWrapMode wrap_mode, ETextureFilter filter, ETextureAnisotropicFilter anisotropic_filter) {
-        switch (CRenderAPI::GetAPI()) {
-            case ERenderAPI::OpenGL: return std::make_shared<COpenGLTexture2D>(width, height, format, wrap_mode, filter, anisotropic_filter);
+    Ref<Texture2D> Texture2D::Create(u32 width, u32 height, TextureFormat format, TextureWrapMode wrap_mode, TextureFilter filter, TextureAnisotropicFilter anisotropic_filter) {
+        switch (RenderAPI::GetBackendAPI()) {
+            case RenderBackendAPI::OpenGL: return std::make_shared<OpenGLTexture2D>(width, height, format, wrap_mode, filter, anisotropic_filter);
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }
 
-    TRef<CTexture2D> CTexture2D::Create(u32 width, u32 height, ETextureFormat format, ETextureWrapMode wrap_mode, ETextureFilter filter, ETextureAnisotropicFilter anisotropic_filter, const u8 *pixels) {
-        switch (CRenderAPI::GetAPI()) {
-            case ERenderAPI::OpenGL: return std::make_shared<COpenGLTexture2D>(width, height, format, wrap_mode, filter, anisotropic_filter, pixels);
+    Ref<Texture2D> Texture2D::Create(u32 width, u32 height, TextureFormat format, TextureWrapMode wrap_mode, TextureFilter filter, TextureAnisotropicFilter anisotropic_filter, const u8 *pixels) {
+        switch (RenderAPI::GetBackendAPI()) {
+            case RenderBackendAPI::OpenGL: return std::make_shared<OpenGLTexture2D>(width, height, format, wrap_mode, filter, anisotropic_filter, pixels);
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }
 
-    TRef<CTexture2D> CTexture2D::CreateFromFile(const TString &path, ETextureWrapMode wrap_mode, ETextureFilter filter, ETextureAnisotropicFilter anisotropic_filter) {
-        switch (CRenderAPI::GetAPI()) {
-            case ERenderAPI::OpenGL: return std::make_shared<COpenGLTexture2D>(path, wrap_mode, filter, anisotropic_filter);
+    Ref<Texture2D> Texture2D::CreateFromFile(const String &path, TextureWrapMode wrap_mode, TextureFilter filter, TextureAnisotropicFilter anisotropic_filter) {
+        switch (RenderAPI::GetBackendAPI()) {
+            case RenderBackendAPI::OpenGL: return std::make_shared<OpenGLTexture2D>(path, wrap_mode, filter, anisotropic_filter);
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }
 
-    u32 CTexture::GetBytesPerPixel(ETextureFormat format) {
+    u32 Texture::GetBytesPerPixel(TextureFormat format) {
         switch (format) {
-            case Hyperion::Rendering::ETextureFormat::RGB: return 3;
-            case Hyperion::Rendering::ETextureFormat::RGBA: return 4;
+            case Hyperion::Rendering::TextureFormat::RGB: return 3;
+            case Hyperion::Rendering::TextureFormat::RGBA: return 4;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }

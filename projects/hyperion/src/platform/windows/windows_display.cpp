@@ -4,7 +4,7 @@
 
 namespace Hyperion {
 
-    CDisplayInfo::SDisplayModeInfo CDisplay::GetCurrentDisplayModeInfo() {
+    DisplayInfo::DisplayModeInfo CDisplay::GetCurrentDisplayModeInfo() {
         DISPLAY_DEVICEA display_device = { 0 };
         display_device.cb = sizeof(display_device);
 
@@ -18,7 +18,7 @@ namespace Hyperion {
                 u32 display_mode_number = 0;
 
                 if (EnumDisplaySettingsA(display_device.DeviceName, ENUM_CURRENT_SETTINGS, &dev_mode)) {
-                    CDisplayInfo::SDisplayModeInfo result;
+                    DisplayInfo::DisplayModeInfo result;
                     result.width = dev_mode.dmPelsWidth;
                     result.height = dev_mode.dmPelsHeight;
                     result.refresh_rate = dev_mode.dmDisplayFrequency;
@@ -31,7 +31,7 @@ namespace Hyperion {
 
         HYP_ASSERT_MESSAGE(false, "Windows does not have a primary display device set!");
 
-        return CDisplayInfo::SDisplayModeInfo();
+        return DisplayInfo::DisplayModeInfo();
     }
 
     void CDisplay::UpdateDisplayInfos() {
@@ -45,8 +45,8 @@ namespace Hyperion {
             device_number++;
 
             if (display_device.StateFlags & DISPLAY_DEVICE_ATTACHED_TO_DESKTOP) {
-                CDisplayInfo display_info;
-                display_info.m_name = TString(display_device.DeviceName);
+                DisplayInfo display_info;
+                display_info.m_name = String(display_device.DeviceName);
                 display_info.m_is_primary = display_device.StateFlags & DISPLAY_DEVICE_PRIMARY_DEVICE;
 
                 DEVMODEA dev_mode = { 0 };
@@ -60,7 +60,7 @@ namespace Hyperion {
                         continue;
                     }
 
-                    CDisplayInfo::SDisplayModeInfo display_mode_info;
+                    DisplayInfo::DisplayModeInfo display_mode_info;
                     display_mode_info.width = dev_mode.dmPelsWidth;
                     display_mode_info.height = dev_mode.dmPelsHeight;
                     display_mode_info.refresh_rate = dev_mode.dmDisplayFrequency;

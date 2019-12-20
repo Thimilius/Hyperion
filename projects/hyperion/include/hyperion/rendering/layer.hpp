@@ -4,7 +4,7 @@
 
 namespace Hyperion::Rendering {
 
-    enum class ELayerMask : unsigned int {
+    enum class LayerMask : unsigned int {
         None    = 0,
         Layer1  = BIT(0),
         Layer2  = BIT(1),
@@ -39,9 +39,9 @@ namespace Hyperion::Rendering {
         Layer31 = BIT(30),
         Layer32 = BIT(31)
     };
-    HYP_CREATE_ENUM_FLAG_OPERATORS(ELayerMask);
+    HYP_CREATE_ENUM_FLAG_OPERATORS(LayerMask);
 
-    struct ELayer {
+    struct Layer {
 
     };
 

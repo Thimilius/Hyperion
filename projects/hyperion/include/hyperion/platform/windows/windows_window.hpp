@@ -7,32 +7,32 @@
 
 namespace Hyperion {
 
-    class CWindowsWindow : public CWindow {
+    class WindowsWindow : public Window {
     private:
         HWND m_window_handle;
         WINDOWPLACEMENT m_previous_placement;
     public:
-        CWindowsWindow(const TString &title, u32 width, u32 height, EWindowMode window_mode, EVSyncMode vsync_mode);
+        WindowsWindow(const String &title, u32 width, u32 height, WindowMode window_mode, VSyncMode vsync_mode);
 
-        void SetTitle(const TString &title) override;
+        void SetTitle(const String &title) override;
         void SetSize(u32 width, u32 height) override;
-        void SetWindowMode(EWindowMode window_mode) override;
-        void SetWindowState(EWindowState window_state) override;
-        void SetVSyncMode(EVSyncMode vsync_mode) override;
+        void SetWindowMode(WindowMode window_mode) override;
+        void SetWindowState(WindowState window_state) override;
+        void SetVSyncMode(VSyncMode vsync_mode) override;
 
-        void SetIcon(const TString &path) override;
+        void SetIcon(const String &path) override;
     private:
         void Update() const override;
         void Show() const override;
 
-        Math::SVec2 GetActualWindowSize(u32 client_width, u32 client_height);
+        Vec2 GetActualWindowSize(u32 client_width, u32 client_height);
 
-        EKeyCode TranslateKeyCode(u32 w_param, u32 l_param) const;
-        EMouseButtonCode TranslateMouseButtonCode(u32 code) const;
-        EKeyModifier GetKeyModifier() const;
+        KeyCode TranslateKeyCode(u32 w_param, u32 l_param) const;
+        MouseButtonCode TranslateMouseButtonCode(u32 code) const;
+        KeyModifier GetKeyModifier() const;
 
         void CreateContext();
-        void DispatchEvent(Events::CEvent &event) const;
+        void DispatchEvent(Event &event) const;
         u32 GetMouseButtonFromMessage(u32 message, u32 w_param) const;
 
         static LRESULT CALLBACK MessageCallback(HWND window_handle, u32 message, WPARAM first_message_param, LPARAM second_message_param);

@@ -7,62 +7,62 @@
 
 namespace Hyperion::Rendering {
 
-    enum class EShaderType {
+    enum class ShaderType {
         None,
         Vertex,
         Fragment
     };
 
-    class CShader : public CAsset {
+    class Shader : public Asset {
     public:
-        CShader(const TString &name) : CAsset(name) { }
-        virtual ~CShader() = default;
+        Shader(const String &name) : Asset(name) { }
+        virtual ~Shader() = default;
 
         virtual void Bind() const = 0;
         virtual void Unbind() const = 0;
 
         virtual u32 GetID() const = 0;
 
-        virtual void SetInt(const TString &name, int value) = 0;
+        virtual void SetInt(const String &name, int value) = 0;
 
-        virtual void SetFloat(const TString &name, float value) = 0;
-        virtual void SetFloat2(const TString &name, const Math::SVec2 &value) = 0;
-        virtual void SetFloat3(const TString &name, const Math::SVec3 &value) = 0;
-        virtual void SetFloat4(const TString &name, const Math::SVec4 &value) = 0;
+        virtual void SetFloat(const String &name, float value) = 0;
+        virtual void SetFloat2(const String &name, const Vec2 &value) = 0;
+        virtual void SetFloat3(const String &name, const Vec3 &value) = 0;
+        virtual void SetFloat4(const String &name, const Vec4 &value) = 0;
 
-        virtual void SetMat4(const TString &name, const Math::SMat4 &matrix) = 0;
+        virtual void SetMat4(const String &name, const Mat4 &matrix) = 0;
 
-        virtual void Recompile(const TString &source) = 0;
-        virtual void Recompile(const TString &vertex_source, const TString &fragment_source) = 0;
+        virtual void Recompile(const String &source) = 0;
+        virtual void Recompile(const String &vertex_source, const String &fragment_source) = 0;
 
-        static TRef<CShader> Create(const TString &name, const TString &source);
-        static TRef<CShader> Create(const TString &name, const TString &vertex_source, const TString &fragment_source);
+        static Ref<Shader> Create(const String &name, const String &source);
+        static Ref<Shader> Create(const String &name, const String &vertex_source, const String &fragment_source);
     protected:
-        EShaderType ShaderTypeFromString(const TString &string);
+        ShaderType ShaderTypeFromString(const String &string);
     };
 
-    class CShaderLibrary {
+    class ShaderLibrary {
     private:
-        struct SShaderEntry {
-            TRef<CShader> shader;
-            TString filepath;
+        struct ShaderEntry {
+            Ref<Shader> shader;
+            String filepath;
         };
 
-        inline static TMap<TString, SShaderEntry> s_shaders;
-        inline static TRef<IO::CFileWatcher> s_watcher;
+        inline static Map<String, ShaderEntry> s_shaders;
+        inline static Ref<FileWatcher> s_watcher;
     public:
-        static void Init(const TString &path);
-        static TRef<CShader> Load(const TString &name, const TString &filepath);
+        static void Init(const String &path);
+        static Ref<Shader> Load(const String &name, const String &filepath);
 
-        static void Add(const TString &name, const TString &filepath, const TRef<CShader> &shader);
-        static TRef<CShader> Get(const TString &name);
+        static void Add(const String &name, const String &filepath, const Ref<Shader> &shader);
+        static Ref<Shader> Get(const String &name);
 
         static void Update();
     private:
-        CShaderLibrary() = delete;
-        ~CShaderLibrary() = delete;
+        ShaderLibrary() = delete;
+        ~ShaderLibrary() = delete;
 
-        static void Reload(const TString &name);
+        static void Reload(const String &name);
     };
 
 }

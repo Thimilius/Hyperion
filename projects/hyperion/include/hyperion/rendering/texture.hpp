@@ -5,13 +5,13 @@
 
 namespace Hyperion::Rendering {
 
-    enum class ETextureFormat {
+    enum class TextureFormat {
         None,
         RGB,
         RGBA
     };
 
-    enum class ETextureWrapMode {
+    enum class TextureWrapMode {
         None,
         Clamp,
         Border,
@@ -19,13 +19,13 @@ namespace Hyperion::Rendering {
         MirroredRepeat
     };
 
-    enum class ETextureFilter {
+    enum class TextureFilter {
         Point,
         Bilinear,
         Trilinear
     };
 
-    enum class ETextureAnisotropicFilter {
+    enum class TextureAnisotropicFilter {
         None,
         Times2,
         Times4,
@@ -33,40 +33,40 @@ namespace Hyperion::Rendering {
         Times16
     };
 
-    class CTexture : public CAsset {
+    class Texture : public Asset {
     protected:
-        ETextureFormat m_format;
-        ETextureWrapMode m_wrap_mode;
-        ETextureFilter m_filter;
-        ETextureAnisotropicFilter m_anisotropic_filter;
+        TextureFormat m_format;
+        TextureWrapMode m_wrap_mode;
+        TextureFilter m_filter;
+        TextureAnisotropicFilter m_anisotropic_filter;
     public:
-        virtual ~CTexture() = default;
+        virtual ~Texture() = default;
 
         virtual void Bind(u32 slot = 0) const = 0;
         virtual void Unbind(u32 slot = 0) const = 0;
 
         virtual u32 GetID() const = 0;
 
-        inline ETextureFormat GetFormat() const { return m_format; }
+        inline TextureFormat GetFormat() const { return m_format; }
 
-        virtual void SetWrapMode(ETextureWrapMode wrap_mode) = 0;
-        inline ETextureWrapMode GetWrapMode() const { return m_wrap_mode; }
+        virtual void SetWrapMode(TextureWrapMode wrap_mode) = 0;
+        inline TextureWrapMode GetWrapMode() const { return m_wrap_mode; }
 
-        virtual void SetFilter(ETextureFilter filter) = 0;
-        inline ETextureFilter GetFilter() const { return m_filter; }
+        virtual void SetFilter(TextureFilter filter) = 0;
+        inline TextureFilter GetFilter() const { return m_filter; }
 
-        virtual void SetAnisotropicFilter(ETextureAnisotropicFilter anisotropic_filter) = 0;
-        inline ETextureAnisotropicFilter GetAnisotropicFilter() const { return m_anisotropic_filter; }
+        virtual void SetAnisotropicFilter(TextureAnisotropicFilter anisotropic_filter) = 0;
+        inline TextureAnisotropicFilter GetAnisotropicFilter() const { return m_anisotropic_filter; }
 
-        static u32 GetBytesPerPixel(ETextureFormat format);
+        static u32 GetBytesPerPixel(TextureFormat format);
     };
 
-    class CTexture2D : public CTexture {
+    class Texture2D : public Texture {
     protected:
         u32 m_width;
         u32 m_height;
     public:
-        virtual ~CTexture2D() = default;
+        virtual ~Texture2D() = default;
         
         inline u32 GetWidth() const { return m_width; }
         inline u32 GetHeight() const { return m_height; }
@@ -74,9 +74,9 @@ namespace Hyperion::Rendering {
         virtual void SetPixels(const void *pixels) = 0;
         virtual void *GetPixels() = 0;
 
-        static TRef<CTexture2D> Create(u32 width, u32 height, ETextureFormat format, ETextureWrapMode wrap_mode, ETextureFilter filter, ETextureAnisotropicFilter anisotropic_filter);
-        static TRef<CTexture2D> Create(u32 width, u32 height, ETextureFormat format, ETextureWrapMode wrap_mode, ETextureFilter filter, ETextureAnisotropicFilter anisotropic_filter, const u8 *pixels);
-        static TRef<CTexture2D> CreateFromFile(const TString &path, ETextureWrapMode wrap_mode, ETextureFilter filter, ETextureAnisotropicFilter anisotropic_filter);
+        static Ref<Texture2D> Create(u32 width, u32 height, TextureFormat format, TextureWrapMode wrap_mode, TextureFilter filter, TextureAnisotropicFilter anisotropic_filter);
+        static Ref<Texture2D> Create(u32 width, u32 height, TextureFormat format, TextureWrapMode wrap_mode, TextureFilter filter, TextureAnisotropicFilter anisotropic_filter, const u8 *pixels);
+        static Ref<Texture2D> CreateFromFile(const String &path, TextureWrapMode wrap_mode, TextureFilter filter, TextureAnisotropicFilter anisotropic_filter);
     };
 
 }

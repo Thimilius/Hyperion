@@ -2,58 +2,58 @@
 
 #include "hyperion/common.hpp"
 
-namespace Hyperion::Math {
+namespace Hyperion {
 
-    struct SVec2 {
+    struct Vec2 {
         float x;
         float y;
 
-        SVec2();
-        SVec2(float x, float y);
+        Vec2();
+        Vec2(float x, float y);
 
-        SVec2 &Add(const SVec2 &other);
-        SVec2 &Subtract(const SVec2 &other);
-        SVec2 &Multiply(const SVec2 &other);
-        SVec2 &Divide(const SVec2 &other);
+        Vec2 &Add(const Vec2 &other);
+        Vec2 &Subtract(const Vec2 &other);
+        Vec2 &Multiply(const Vec2 &other);
+        Vec2 &Divide(const Vec2 &other);
 
-        SVec2 &Add(float value);
-        SVec2 &Subtract(float value);
-        SVec2 &Multiply(float value);
-        SVec2 &Divide(float value);
+        Vec2 &Add(float value);
+        Vec2 &Subtract(float value);
+        Vec2 &Multiply(float value);
+        Vec2 &Divide(float value);
 
-        TString ToString() const;
+        String ToString() const;
 
-        friend SVec2 operator+(SVec2 left, const SVec2 &right);
-        friend SVec2 operator-(SVec2 left, const SVec2 &right);
-        friend SVec2 operator*(SVec2 left, const SVec2 &right);
-        friend SVec2 operator/(SVec2 left, const SVec2 &right);
+        friend Vec2 operator+(Vec2 left, const Vec2 &right);
+        friend Vec2 operator-(Vec2 left, const Vec2 &right);
+        friend Vec2 operator*(Vec2 left, const Vec2 &right);
+        friend Vec2 operator/(Vec2 left, const Vec2 &right);
 
-        friend SVec2 operator+(SVec2 left, float value);
-        friend SVec2 operator-(SVec2 left, float value);
-        friend SVec2 operator*(SVec2 left, float value);
-        friend SVec2 operator/(SVec2 left, float value);
+        friend Vec2 operator+(Vec2 left, float value);
+        friend Vec2 operator-(Vec2 left, float value);
+        friend Vec2 operator*(Vec2 left, float value);
+        friend Vec2 operator/(Vec2 left, float value);
 
-        bool operator==(const SVec2 &other) const;
-        bool operator!=(const SVec2 &other) const;
+        bool operator==(const Vec2 &other) const;
+        bool operator!=(const Vec2 &other) const;
 
-        SVec2 &operator+=(const SVec2 &other);
-        SVec2 &operator-=(const SVec2 &other);
-        SVec2 &operator*=(const SVec2 &other);
-        SVec2 &operator/=(const SVec2 &other);
+        Vec2 &operator+=(const Vec2 &other);
+        Vec2 &operator-=(const Vec2 &other);
+        Vec2 &operator*=(const Vec2 &other);
+        Vec2 &operator/=(const Vec2 &other);
 
-        bool operator<(const SVec2 &other) const;
-        bool operator<=(const SVec2 &other) const;
-        bool operator>(const SVec2 &other) const;
-        bool operator>=(const SVec2 &other) const;
+        bool operator<(const Vec2 &other) const;
+        bool operator<=(const Vec2 &other) const;
+        bool operator>(const Vec2 &other) const;
+        bool operator>=(const Vec2 &other) const;
 
-        float Dot(const SVec2 &other) const;
+        float Dot(const Vec2 &other) const;
 
-        SVec2 Normalized() const;
+        Vec2 Normalized() const;
 
         float Magnitude() const;
         float SqrMagnitude() const;
 
-        float Distance(const SVec2 &other) const;
+        float Distance(const Vec2 &other) const;
     };
 
 }

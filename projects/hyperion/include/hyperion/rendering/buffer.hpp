@@ -4,7 +4,7 @@
 
 namespace Hyperion::Rendering {
 
-    enum class EShaderDataType {
+    enum class ShaderDataType {
         None,
         Float, Float2, Float3, Float4,
         Mat3, Mat4,
@@ -12,82 +12,82 @@ namespace Hyperion::Rendering {
         Bool
     };
 
-    enum class EIndexFormat {
+    enum class IndexFormat {
         None,
         UInt16,
         UInt32
     };
 
-    enum class EBufferUsage {
+    enum class BufferUsage {
         None,
         StaticDraw,
         StreamDraw,
         DynamicDraw
     };
 
-    static u32 ShaderDataTypeSize(EShaderDataType type) {
+    static u32 ShaderDataTypeSize(ShaderDataType type) {
         switch (type) {
-            case EShaderDataType::Float:  return 4;
-            case EShaderDataType::Float2: return 4 * 2;
-            case EShaderDataType::Float3: return 4 * 3;
-            case EShaderDataType::Float4: return 4 * 4;
-            case EShaderDataType::Mat3:   return 4 * 3 * 3;
-            case EShaderDataType::Mat4:   return 4 * 4 * 4;
-            case EShaderDataType::Int:    return 4;
-            case EShaderDataType::Int2:   return 4 * 2;
-            case EShaderDataType::Int3:   return 4 * 3;
-            case EShaderDataType::Int4:   return 4 * 4;
-            case EShaderDataType::Bool:   return 1;
+            case ShaderDataType::Float:  return 4;
+            case ShaderDataType::Float2: return 4 * 2;
+            case ShaderDataType::Float3: return 4 * 3;
+            case ShaderDataType::Float4: return 4 * 4;
+            case ShaderDataType::Mat3:   return 4 * 3 * 3;
+            case ShaderDataType::Mat4:   return 4 * 4 * 4;
+            case ShaderDataType::Int:    return 4;
+            case ShaderDataType::Int2:   return 4 * 2;
+            case ShaderDataType::Int3:   return 4 * 3;
+            case ShaderDataType::Int4:   return 4 * 4;
+            case ShaderDataType::Bool:   return 1;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }
 
-    struct SBufferElement {
-        TString name;
-        EShaderDataType type;
+    struct BufferElement {
+        String name;
+        ShaderDataType type;
         u32 size;
         u32 offset;
         bool normalized;
 
-        SBufferElement() {}
+        BufferElement() {}
 
-        SBufferElement(const TString &name, EShaderDataType type, bool normalized = false)
+        BufferElement(const String &name, ShaderDataType type, bool normalized = false)
             : name(name), type(type), size(ShaderDataTypeSize(type)), offset(0), normalized(normalized) {
         }
 
         u32 GetComponentCount() const;
     };
 
-    class CBufferLayout {
+    class BufferLayout {
     private:
-        TVector<SBufferElement> m_elements;
+        Vector<BufferElement> m_elements;
         u32 m_stride = 0;
     public:
-        CBufferLayout() {}
+        BufferLayout() {}
 
-        CBufferLayout(const std::initializer_list<SBufferElement> &elements)
+        BufferLayout(const std::initializer_list<BufferElement> &elements)
             : m_elements(elements) {
             CalculateOffsetsAndStride();
         }
 
         inline uint32_t GetStride() const { return m_stride; }
-        inline const TVector<SBufferElement> &GetElements() const { return m_elements; }
+        inline const Vector<BufferElement> &GetElements() const { return m_elements; }
     private:
         void CalculateOffsetsAndStride();
     };
 
-    class CVertexBuffer {
+    class VertexBuffer {
     protected:
         u32 m_size;
-        CBufferLayout m_layout;
+        BufferLayout m_layout;
     public:
-        CVertexBuffer(u32 size) : m_size(size) { }
-        virtual ~CVertexBuffer() = default;
+        VertexBuffer(u32 size) : m_size(size) { }
+        virtual ~VertexBuffer() = default;
 
         inline const u32 GetSize() const { return m_size; }
 
-        inline const CBufferLayout &GetLayout() const { return m_layout; }
-        inline void SetLayout(const CBufferLayout &layout) { m_layout = layout; }
+        inline const BufferLayout &GetLayout() const { return m_layout; }
+        inline void SetLayout(const BufferLayout &layout) { m_layout = layout; }
 
         virtual void Bind() const = 0;
         virtual void Unbind() const = 0;
@@ -96,19 +96,19 @@ namespace Hyperion::Rendering {
 
         virtual void SetData(u32 offset, const u8 *verticies, u32 size) = 0;
 
-        static TRef<CVertexBuffer> Create(const u8 *vertices, u32 size);
-        static TRef<CVertexBuffer> Create(const u8 *vertices, u32 size, EBufferUsage usage);
+        static Ref<VertexBuffer> Create(const u8 *vertices, u32 size);
+        static Ref<VertexBuffer> Create(const u8 *vertices, u32 size, BufferUsage usage);
     };
 
-    class CIndexBuffer {
+    class IndexBuffer {
     protected:
-        EIndexFormat m_format;
+        IndexFormat m_format;
         u32 m_count;
     public:
-        CIndexBuffer(EIndexFormat format, u32 count) : m_format(format), m_count(count) { }
-        virtual ~CIndexBuffer() = default;
+        IndexBuffer(IndexFormat format, u32 count) : m_format(format), m_count(count) { }
+        virtual ~IndexBuffer() = default;
 
-        inline EIndexFormat GetFormat() const { return m_format; }
+        inline IndexFormat GetFormat() const { return m_format; }
         inline u32 GetCount() const { return m_count; }
 
         virtual void Bind() const = 0;
@@ -116,8 +116,8 @@ namespace Hyperion::Rendering {
 
         virtual u32 GetID() const = 0;
 
-        static TRef<CIndexBuffer> Create(const u16 *indices, u32 count);
-        static TRef<CIndexBuffer> Create(const u32 *indices, u32 count);
+        static Ref<IndexBuffer> Create(const u16 *indices, u32 count);
+        static Ref<IndexBuffer> Create(const u32 *indices, u32 count);
     };
 
 }

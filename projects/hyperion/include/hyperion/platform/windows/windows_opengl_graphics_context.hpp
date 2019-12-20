@@ -6,15 +6,15 @@
 
 namespace Hyperion::Rendering {
 
-    class CWindowsOpenGLGraphicsContext : public COpenGLGraphicsContext {
+    class WindowsOpenGLGraphicsContext : public OpenGLGraphicsContext {
     private:
         HDC m_device_context;
     public:
-        CWindowsOpenGLGraphicsContext(HWND window_handle);
+        WindowsOpenGLGraphicsContext(HWND window_handle);
     private:
         void Init() override;
         void SwapBuffers() override;
-        void SetVSyncMode(EVSyncMode vsync_mode) override;
+        void SetVSyncMode(VSyncMode vsync_mode) override;
     };
 
 }

@@ -4,9 +4,9 @@
 
 namespace Hyperion {
 
-    class CApplication;
+    class Application;
 
-    class CTime {
+    class Time {
     private:
         inline static float s_max_delta_time = 0;
 
@@ -24,10 +24,10 @@ namespace Hyperion {
         static inline u32 GetFPS() { return s_fps; }
         static inline double GetFrameTime() { return s_frame_time; }
     private:
-        CTime() = delete;
-        ~CTime() = delete;
+        Time() = delete;
+        ~Time() = delete;
 
-        friend class CApplication;
+        friend class Application;
     };
 
 }

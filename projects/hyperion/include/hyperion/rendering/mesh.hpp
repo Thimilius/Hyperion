@@ -9,48 +9,48 @@ struct aiMesh;
 
 namespace Hyperion::Rendering {
 
-    struct SMeshData {
-        TVector<Math::SVec3> positions;
-        TVector<Math::SVec3> normals;
-        TVector<Math::SVec2> uvs;
+    struct MeshData {
+        Vector<Vec3> positions;
+        Vector<Vec3> normals;
+        Vector<Vec2> uvs;
 
-        TVector<u32> indicies;
+        Vector<u32> indicies;
     };
 
-    struct SSubMesh {
+    struct SubMesh {
         u32 index_count;
         u32 index_offset;
         u32 vertex_offset;
 
-        SSubMesh(u32 index_count, u32 index_offset, u32 vertex_offset) : index_count(index_count), index_offset(index_offset), vertex_offset(vertex_offset) { }
+        SubMesh(u32 index_count, u32 index_offset, u32 vertex_offset) : index_count(index_count), index_offset(index_offset), vertex_offset(vertex_offset) { }
     };
 
-    class CMesh : public CAsset {
+    class Mesh : public Asset {
     private:
-        SMeshData m_mesh_data;
-        Math::SBounds m_bounds;
+        MeshData m_mesh_data;
+        Bounds m_bounds;
 
-        TVector<SSubMesh> m_sub_meshes;
+        Vector<SubMesh> m_sub_meshes;
 
-        TRef<CVertexArray> m_vertex_array;
+        Ref<VertexArray> m_vertex_array;
     public:
-        inline const SMeshData &GetMeshData() const { return m_mesh_data; }
-        inline Math::SBounds GetBounds() const { return m_bounds; }
-        inline const TRef<CVertexArray> GetVertexArray() const { return m_vertex_array; }
-        inline const TVector<SSubMesh> GetSubMeshes() const { return m_sub_meshes; }
+        inline const MeshData &GetMeshData() const { return m_mesh_data; }
+        inline Bounds GetBounds() const { return m_bounds; }
+        inline const Ref<VertexArray> GetVertexArray() const { return m_vertex_array; }
+        inline const Vector<SubMesh> GetSubMeshes() const { return m_sub_meshes; }
 
-        static TRef<CMesh> Create(const SMeshData &mesh_data);
-        static TRef<CMesh> Create(const SMeshData &mesh_data, const TVector<SSubMesh> sub_meshes);
-        static TRef<CMesh> CreatePlane(float width, float height);
-        static TRef<CMesh> CreateCube(float size);
-        static TRef<CMesh> CreateFromFile(const TString &path);
+        static Ref<Mesh> Create(const MeshData &mesh_data);
+        static Ref<Mesh> Create(const MeshData &mesh_data, const Vector<SubMesh> sub_meshes);
+        static Ref<Mesh> CreatePlane(float width, float height);
+        static Ref<Mesh> CreateCube(float size);
+        static Ref<Mesh> CreateFromFile(const String &path);
     private:
-        CMesh(const SMeshData &mesh_data, const TVector<SSubMesh> sub_meshes);
+        Mesh(const MeshData &mesh_data, const Vector<SubMesh> sub_meshes);
 
         void RecalculateBounds();
 
-        static TRef<CMesh> LoadMesh(const TString &path);
-        static void LoadSubMesh(const aiMesh *mesh, SMeshData &mesh_data, TVector<SSubMesh> &sub_meshes);
+        static Ref<Mesh> LoadMesh(const String &path);
+        static void LoadSubMesh(const aiMesh *mesh, MeshData &mesh_data, Vector<SubMesh> &sub_meshes);
     };
 
 }

@@ -4,92 +4,92 @@
 
 namespace Hyperion::Rendering {
 
-    COpenGLShader::COpenGLShader(const TString &name, const TString &source) : CShader(name) {
+    OpenGLShader::OpenGLShader(const String &name, const String &source) : Shader(name) {
         Recompile(source);
     }
     
-    COpenGLShader::COpenGLShader(const TString &name, const TString &vertex_source, const TString &fragment_source) : CShader(name) {
+    OpenGLShader::OpenGLShader(const String &name, const String &vertex_source, const String &fragment_source) : Shader(name) {
         Recompile(vertex_source, fragment_source);
     }
 
-    COpenGLShader::~COpenGLShader() {
+    OpenGLShader::~OpenGLShader() {
         glDeleteProgram(m_shader_program_id);
     }
 
-    void COpenGLShader::Bind() const {
+    void OpenGLShader::Bind() const {
         glUseProgram(m_shader_program_id);
     }
 
-    void COpenGLShader::Unbind() const {
+    void OpenGLShader::Unbind() const {
         glUseProgram(0);
     }
 
-    void COpenGLShader::SetInt(const TString &name, int value) {
+    void OpenGLShader::SetInt(const String &name, int value) {
         glUniform1i(TryGetUniformLocation(name), value);
     }
 
-    void COpenGLShader::SetFloat(const TString &name, float value) {
+    void OpenGLShader::SetFloat(const String &name, float value) {
         glUniform1f(TryGetUniformLocation(name), value);
     }
 
-    void COpenGLShader::SetFloat2(const TString &name, const Math::SVec2 &value) {
+    void OpenGLShader::SetFloat2(const String &name, const Vec2 &value) {
         glUniform2f(TryGetUniformLocation(name), value.x, value.y);
     }
 
-    void COpenGLShader::SetFloat3(const TString &name, const Math::SVec3 &value) {
+    void OpenGLShader::SetFloat3(const String &name, const Vec3 &value) {
         glUniform3f(TryGetUniformLocation(name), value.x, value.y, value.z);
     }
 
-    void COpenGLShader::SetFloat4(const TString &name, const Math::SVec4 &value) {
+    void OpenGLShader::SetFloat4(const String &name, const Vec4 &value) {
         glUniform4f(TryGetUniformLocation(name), value.x, value.y, value.z, value.w);
     }
 
-    void COpenGLShader::SetMat4(const TString &name, const Math::SMat4 &matrix) {
+    void OpenGLShader::SetMat4(const String &name, const Mat4 &matrix) {
         glUniformMatrix4fv(TryGetUniformLocation(name), 1, GL_FALSE, matrix.elements);
     }
 
-    void COpenGLShader::Recompile(const TString &source) {
+    void OpenGLShader::Recompile(const String &source) {
         Compile(PreProcess(source));
     }
 
-    void COpenGLShader::Recompile(const TString &vertex_source, const TString &fragment_source) {
-        TMap<EShaderType, TString> sources(2);
-        sources[EShaderType::Vertex] = vertex_source;
-        sources[EShaderType::Fragment] = fragment_source;
+    void OpenGLShader::Recompile(const String &vertex_source, const String &fragment_source) {
+        Map<ShaderType, String> sources(2);
+        sources[ShaderType::Vertex] = vertex_source;
+        sources[ShaderType::Fragment] = fragment_source;
 
         Compile(sources);
     }
 
-    TMap<EShaderType, TString> COpenGLShader::PreProcess(const TString &source) {
-        TMap<EShaderType, TString> sources;
+    Map<ShaderType, String> OpenGLShader::PreProcess(const String &source) {
+        Map<ShaderType, String> sources;
 
         const auto type_token = "#type";
         u64 type_token_length = strlen(type_token);
         u64 position = source.find(type_token, 0);
 
-        while (position != TString::npos) {
+        while (position != String::npos) {
             u64 end_of_line = source.find_first_of("\r\n", position);
-            HYP_ASSERT_MESSAGE(end_of_line != TString::npos, "Shader syntax error!");
+            HYP_ASSERT_MESSAGE(end_of_line != String::npos, "Shader syntax error!");
             u64 begin = position + type_token_length + 1;
-            TString type = source.substr(begin, end_of_line - begin);
+            String type = source.substr(begin, end_of_line - begin);
             HYP_ASSERT_MESSAGE(type == "vertex" || type == "fragment", "Invalid shader type specifier!");
 
             u64 next_line_position = source.find_first_not_of("\r\n", end_of_line);
             position = source.find(type_token, next_line_position);
 
-            u64 end = position - (next_line_position == TString::npos ? source.size() - 1 : next_line_position);
+            u64 end = position - (next_line_position == String::npos ? source.size() - 1 : next_line_position);
             sources[ShaderTypeFromString(type)] = source.substr(next_line_position, end);
         }
 
         return sources;
     }
 
-    void COpenGLShader::Compile(TMap<EShaderType, TString> sources) {
+    void OpenGLShader::Compile(Map<ShaderType, String> sources) {
         // Clear uniforms
         m_uniforms.clear();
 
         // Compile shaders
-        TVector<u32> shaders;
+        Vector<u32> shaders;
         for (auto pair : sources) {
             u32 shader = glCreateShader(GetGLShaderType(pair.first));
 
@@ -164,9 +164,9 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void COpenGLShader::CompileFallbackShader() {
-        TMap<EShaderType, TString> sources;
-        sources[EShaderType::Vertex] = R"(
+    void OpenGLShader::CompileFallbackShader() {
+        Map<ShaderType, String> sources;
+        sources[ShaderType::Vertex] = R"(
             #version 410 core
 
             layout(location = 0) in vec3 a_position;
@@ -187,7 +187,7 @@ namespace Hyperion::Rendering {
                 gl_Position = obj_to_clip_space(a_position);
             }
         )";
-        sources[EShaderType::Fragment] = R"(
+        sources[ShaderType::Fragment] = R"(
             #version 410 core
 
             out vec4 o_color;
@@ -199,15 +199,15 @@ namespace Hyperion::Rendering {
         Compile(sources);
     }
 
-    u32 COpenGLShader::GetGLShaderType(EShaderType type) {
+    u32 OpenGLShader::GetGLShaderType(ShaderType type) {
         switch (type) {
-            case Hyperion::Rendering::EShaderType::Vertex: return GL_VERTEX_SHADER;
-            case Hyperion::Rendering::EShaderType::Fragment: return GL_FRAGMENT_SHADER;
+            case Hyperion::Rendering::ShaderType::Vertex: return GL_VERTEX_SHADER;
+            case Hyperion::Rendering::ShaderType::Fragment: return GL_FRAGMENT_SHADER;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }
 
-    s32 COpenGLShader::TryGetUniformLocation(const TString &name) {
+    s32 OpenGLShader::TryGetUniformLocation(const String &name) {
         auto loc = m_uniforms.find(name);
         if (loc == m_uniforms.end()) {
             s32 location = glGetUniformLocation(m_shader_program_id, name.c_str());

@@ -2,9 +2,9 @@
 
 #include "hyperion/io/file_utilities.hpp"
 
-namespace Hyperion::IO {
+namespace Hyperion {
 
-    TString CFileUtilities::ReadTextFile(const TString &path) {
+    String FileUtilities::ReadTextFile(const String &path) {
         HANDLE file_handle = CreateFileA(path.c_str(), GENERIC_READ, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
         if (file_handle == INVALID_HANDLE_VALUE) {
             HYP_LOG_ERROR("Engine", "Failed to open file: '{}'!", path);
@@ -23,7 +23,7 @@ namespace Hyperion::IO {
 
         CloseHandle(file_handle);
 
-        TString result = TString(file_buffer);
+        String result = String(file_buffer);
         delete[] file_buffer;
         return result;
     }

@@ -15,18 +15,18 @@ namespace Hyperion {
     using u64 = uint64_t;
 
     template<typename T>
-    using TRef = std::shared_ptr<T>;
+    using Ref = std::shared_ptr<T>;
 
     template<typename T>
-    using TScope = std::unique_ptr<T>;
+    using Scope = std::unique_ptr<T>;
 
     template<typename T>
-    using TVector = std::vector<T>;
+    using Vector = std::vector<T>;
 
     template<typename Key, typename Value>
-    using TMap = std::unordered_map<Key, Value>;
+    using Map = std::unordered_map<Key, Value>;
 
     template<typename T>
-    using TSet = std::set<T>;
+    using Set = std::set<T>;
 
 }

@@ -2,14 +2,14 @@
 
 #include "hyperion/common.hpp"
 
-namespace Hyperion::IO {
+namespace Hyperion {
 
-    class CFileUtilities {
+    class FileUtilities {
     public:
-        static TString ReadTextFile(const TString &path);
+        static String ReadTextFile(const String &path);
     private:
-        CFileUtilities() = delete;
-        ~CFileUtilities() = delete;
+        FileUtilities() = delete;
+        ~FileUtilities() = delete;
     };
 
 }

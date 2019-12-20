@@ -2,9 +2,9 @@
 
 #include "hyperion/common.hpp"
 
-namespace Hyperion::IO {
+namespace Hyperion {
 
-    enum class EFileStatus {
+    enum class FileStatus {
         None,
         Created,
         Modified,
@@ -13,17 +13,17 @@ namespace Hyperion::IO {
 
     // Currently we only allow to watch one directory at a time which may or may not be changed in the future
 
-    class CFileWatcher {
-        using WatcherCallbackFunc = std::function<void(EFileStatus, const TString &, const TString &, const TString &)>;
+    class FileWatcher {
+        using WatcherCallbackFunc = std::function<void(FileStatus, const String &, const String &, const String &)>;
     protected:
-        TString m_path;
+        String m_path;
         WatcherCallbackFunc m_callback;
         bool m_recursive;
     public:
-        virtual ~CFileWatcher() = default;
+        virtual ~FileWatcher() = default;
 
         virtual void Update() = 0;
 
-        static TRef<CFileWatcher> Create(const TString &path, WatcherCallbackFunc callback, bool recursive);
+        static Ref<FileWatcher> Create(const String &path, WatcherCallbackFunc callback, bool recursive);
     };
 }

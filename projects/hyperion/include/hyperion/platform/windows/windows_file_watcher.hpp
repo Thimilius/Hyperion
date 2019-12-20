@@ -5,29 +5,29 @@
 
 #include <Windows.h>
 
-namespace Hyperion::IO {
+namespace Hyperion {
 
-    class CWindowsFileWatcher : public CFileWatcher {
-        using WatcherCallbackFunc = std::function<void(EFileStatus, const TString &, const TString &, const TString &)>;
+    class WindowsFileWatcher : public FileWatcher {
+        using WatcherCallbackFunc = std::function<void(FileStatus, const String &, const String &, const String &)>;
     private:
-        struct SWatchStruct {
+        struct WatchStruct {
             OVERLAPPED overlapped;
             HANDLE directory_handle;
             BYTE buffer[32 * 1024];
             DWORD notify_filter;
             bool stop_now;
-            CWindowsFileWatcher *watcher; 
+            WindowsFileWatcher *watcher; 
         };
 
-        SWatchStruct watch_struct;
+        WatchStruct watch_struct;
     public:
-        CWindowsFileWatcher(const TString &path, WatcherCallbackFunc callback, bool recursive);
-        virtual ~CWindowsFileWatcher();
+        WindowsFileWatcher(const String &path, WatcherCallbackFunc callback, bool recursive);
+        virtual ~WindowsFileWatcher();
 
         void Update() override;
     private:
         bool RefreshWatch(bool clear);
-        void HandleAction(u32 action, const TString &path, const TString &filename, const TString &extension);
+        void HandleAction(u32 action, const String &path, const String &filename, const String &extension);
 
         static void CALLBACK WatchCallback(DWORD error_code, DWORD number_of_bytes_transfered, LPOVERLAPPED overlapped);
     };

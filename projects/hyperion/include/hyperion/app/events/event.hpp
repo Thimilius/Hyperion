@@ -5,9 +5,9 @@
 
 #include <functional>
 
-namespace Hyperion::Events {
+namespace Hyperion {
 
-    enum class EEventType {
+    enum class EventType {
         None,
 
         AppDisplayChange,
@@ -28,7 +28,7 @@ namespace Hyperion::Events {
         MouseScrolled,
     };
 
-    enum class EEventCategory {
+    enum class EventCategory {
         None        = 0,
         App         = BIT(0),
         Window      = BIT(1),
@@ -37,28 +37,28 @@ namespace Hyperion::Events {
         Mouse       = BIT(4),
         MouseButton = BIT(5)
     };
-    HYP_CREATE_ENUM_FLAG_OPERATORS(EEventCategory)
+    HYP_CREATE_ENUM_FLAG_OPERATORS(EventCategory)
 
-    class CEvent {
+    class Event {
     private:
         bool m_handled = false;
     public:
         inline bool IsHandled() const { return m_handled; }
         inline void Handle() { m_handled = false; }
 
-        virtual EEventType GetType() const = 0;
-        virtual EEventCategory GetCategory() const = 0;
+        virtual EventType GetType() const = 0;
+        virtual EventCategory GetCategory() const = 0;
 
-        inline bool IsInCategory(EEventCategory category) const { return (GetCategory() & category) == category; }
+        inline bool IsInCategory(EventCategory category) const { return (GetCategory() & category) == category; }
     };
 
     class CEventDispatcher {
         template<typename T>
         using EventFunction = std::function<void(T &)>;
     private:
-        CEvent &m_event;
+        Event &m_event;
     public:
-        CEventDispatcher(CEvent &event)
+        CEventDispatcher(Event &event)
             : m_event(event) {
         }
 

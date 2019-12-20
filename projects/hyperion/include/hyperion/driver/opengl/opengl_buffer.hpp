@@ -4,13 +4,13 @@
 
 namespace Hyperion::Rendering {
 
-    class COpenGLVertexBuffer : public CVertexBuffer {
+    class OpenGLVertexBuffer : public VertexBuffer {
     private:
         u32 m_vertex_buffer_id;
     public:
-        COpenGLVertexBuffer(const u8 *vertices, u32 size);
-        COpenGLVertexBuffer(const u8 *vertices, u32 size, EBufferUsage usage);
-        ~COpenGLVertexBuffer();
+        OpenGLVertexBuffer(const u8 *vertices, u32 size);
+        OpenGLVertexBuffer(const u8 *vertices, u32 size, BufferUsage usage);
+        ~OpenGLVertexBuffer();
 
         void Bind() const override;
         void Unbind() const override;
@@ -19,16 +19,16 @@ namespace Hyperion::Rendering {
 
         void SetData(u32 offset, const u8 *verticies, u32 size) override;
     private:
-        u32 GetGLBufferUsage(EBufferUsage usage);
+        u32 GetGLBufferUsage(BufferUsage usage);
     };
 
-    class COpenGLIndexBuffer : public CIndexBuffer {
+    class OpenGLIndexBuffer : public IndexBuffer {
     private:
         u32 m_index_buffer_id;
     public:
-        COpenGLIndexBuffer(const u16 *indices, u32 count);
-        COpenGLIndexBuffer(const u32 *indices, u32 count);
-        ~COpenGLIndexBuffer();
+        OpenGLIndexBuffer(const u16 *indices, u32 count);
+        OpenGLIndexBuffer(const u32 *indices, u32 count);
+        ~OpenGLIndexBuffer();
 
         void Bind() const override;
         void Unbind() const override;

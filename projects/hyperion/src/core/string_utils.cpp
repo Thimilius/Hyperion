@@ -4,7 +4,7 @@
 
 namespace Hyperion {
 
-    TWString CStringUtils::Utf8ToUtf16(const TString &string) {
+    WideString StringUtils::Utf8ToUtf16(const String &string) {
 #ifdef HYP_PLATFORM_WINDOWS
         auto utf16_length = MultiByteToWideChar(CP_UTF8, 0, string.c_str(), (int)string.length(), nullptr, 0);
 
@@ -22,7 +22,7 @@ namespace Hyperion {
 #endif
     }
 
-    TString CStringUtils::Utf16ToUtf8(const TWString &string) {
+    String StringUtils::Utf16ToUtf8(const WideString &string) {
 #ifdef HYP_PLATFORM_WINDOWS
         auto utf8_length = WideCharToMultiByte(CP_UTF8, 0, string.c_str(), (int)string.length(), nullptr, 0, nullptr, nullptr);
 
@@ -31,7 +31,7 @@ namespace Hyperion {
 
         WideCharToMultiByte(CP_UTF8, 0, string.c_str(), (int)string.length(), buffer, utf8_length, nullptr, nullptr);
 
-        TString result = buffer;
+        String result = buffer;
         delete[] buffer;
 
         return result;

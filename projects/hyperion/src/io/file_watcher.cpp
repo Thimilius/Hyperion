@@ -6,11 +6,11 @@
     #include "hyperion/platform/windows/windows_file_watcher.hpp"
 #endif
 
-namespace Hyperion::IO {
+namespace Hyperion {
 
-    TRef<CFileWatcher> CFileWatcher::Create(const TString &path, WatcherCallbackFunc callback, bool recursive) {
-        switch (COperatingSystem::GetInstance()->GetType()) {
-            case EOperatingSystemType::Windows: return std::make_shared<CWindowsFileWatcher>(path, callback, recursive);
+    Ref<FileWatcher> FileWatcher::Create(const String &path, WatcherCallbackFunc callback, bool recursive) {
+        switch (OperatingSystem::GetInstance()->GetType()) {
+            case OperatingSystemType::Windows: return std::make_shared<WindowsFileWatcher>(path, callback, recursive);
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }

@@ -8,49 +8,49 @@
 
 namespace Hyperion::Rendering {
 
-    class CImmediateRenderer {
+    class ImmediateRenderer {
     private:
-        struct SState {
+        struct State {
             struct {
-                Math::SMat4 view;
-                Math::SMat4 projection;
+                Mat4 view;
+                Mat4 projection;
 
-                Math::SMat4 view_projection;
+                Mat4 view_projection;
             } transform;
 
             u32 vertex_offset;
         };
 
-        struct SVertexImmediate {
-            Math::SVec3 position;
-            Math::SVec3 normal;
-            Math::SVec4 color;
-            Math::SVec2 uv;
+        struct VertexImmediate {
+            Vec3 position;
+            Vec3 normal;
+            Vec4 color;
+            Vec2 uv;
 
-            static CBufferLayout GetBufferLayout() {
-                return CBufferLayout({
-                    SBufferElement("a_position", EShaderDataType::Float3),
-                    SBufferElement("a_normal", EShaderDataType::Float3),
-                    SBufferElement("a_color", EShaderDataType::Float4),
-                    SBufferElement("a_uv", EShaderDataType::Float2)
+            static BufferLayout GetBufferLayout() {
+                return BufferLayout({
+                    BufferElement("a_position", ShaderDataType::Float3),
+                    BufferElement("a_normal", ShaderDataType::Float3),
+                    BufferElement("a_color", ShaderDataType::Float4),
+                    BufferElement("a_uv", ShaderDataType::Float2)
                 });
             }
         };
 
-        inline static SState s_state;
-        inline static TRef<CShader> s_immediate_shader;
-        inline static SVertexImmediate s_data_buffer[2000];
-        inline static TRef<CVertexArray> s_vertex_array;
-        inline static TRef<CVertexBuffer> s_vertex_buffer;
+        inline static State s_state;
+        inline static Ref<Shader> s_immediate_shader;
+        inline static VertexImmediate s_data_buffer[2000];
+        inline static Ref<VertexArray> s_vertex_array;
+        inline static Ref<VertexBuffer> s_vertex_buffer;
     public:
-        static void Begin(const TRef<CCamera> &camera);
-        static void DrawCube(Math::SVec3 center, Math::SVec3 size, Math::SVec4 color);
+        static void Begin(const Ref<Camera> &camera);
+        static void DrawCube(Vec3 center, Vec3 size, Vec4 color);
         static void End();
     private:
-        CImmediateRenderer() = delete;
-        ~CImmediateRenderer() = delete;
+        ImmediateRenderer() = delete;
+        ~ImmediateRenderer() = delete;
 
-        static void AddVertex(Math::SVec3 position, Math::SVec3 normal, Math::SVec2 uv, Math::SVec4 color);
+        static void AddVertex(Vec3 position, Vec3 normal, Vec2 uv, Vec4 color);
     };
 
 }

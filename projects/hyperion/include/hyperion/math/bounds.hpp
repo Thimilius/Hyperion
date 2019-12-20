@@ -3,22 +3,22 @@
 #include "hyperion/common.hpp"
 #include "hyperion/math/vec3.hpp"
 
-namespace Hyperion::Math {
+namespace Hyperion {
 
-    struct SBounds {
-        SVec3 center;
-        SVec3 extends;
+    struct Bounds {
+        Vec3 center;
+        Vec3 extends;
 
-        SBounds();
-        SBounds(SVec3 center, SVec3 extends);
+        Bounds();
+        Bounds(Vec3 center, Vec3 extends);
 
-        SVec3 GetSize() const;
-        SVec3 GetMin() const;
-        SVec3 GetMax() const;
+        Vec3 GetSize() const;
+        Vec3 GetMin() const;
+        Vec3 GetMax() const;
 
-        void SetMinMax(SVec3 min, SVec3 max);
+        void SetMinMax(Vec3 min, Vec3 max);
 
-        TString ToString() const;
+        String ToString() const;
     };
 
 }

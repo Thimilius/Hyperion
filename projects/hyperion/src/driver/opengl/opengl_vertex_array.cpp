@@ -4,23 +4,23 @@
 
 namespace Hyperion::Rendering {
 
-    COpenGLVertexArray::COpenGLVertexArray() {
+    OpenGLVertexArray::OpenGLVertexArray() {
         glGenVertexArrays(1, &m_vertex_array_id);
     }
 
-    COpenGLVertexArray::~COpenGLVertexArray() {
+    OpenGLVertexArray::~OpenGLVertexArray() {
         glDeleteVertexArrays(1, &m_vertex_array_id);
     }
 
-    void COpenGLVertexArray::Bind() const {
+    void OpenGLVertexArray::Bind() const {
         glBindVertexArray(m_vertex_array_id);
     }
 
-    void COpenGLVertexArray::Unbind() const {
+    void OpenGLVertexArray::Unbind() const {
         glBindVertexArray(0);
     }
 
-    void COpenGLVertexArray::AddVertexBuffer(const TRef<CVertexBuffer> &vertex_buffer) {
+    void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer> &vertex_buffer) {
         Bind();
 
         vertex_buffer->Bind();
@@ -42,24 +42,24 @@ namespace Hyperion::Rendering {
         m_vertex_buffers.push_back(vertex_buffer);
     }
 
-    void COpenGLVertexArray::SetIndexBuffer(const TRef<CIndexBuffer> &index_buffer) {
+    void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer> &index_buffer) {
         m_index_buffer = index_buffer;
         glVertexArrayElementBuffer(m_vertex_array_id, index_buffer->GetID());
     }
 
-    u32 COpenGLVertexArray::ShaderDataTypeToOpenGLBaseType(EShaderDataType type) {
+    u32 OpenGLVertexArray::ShaderDataTypeToOpenGLBaseType(ShaderDataType type) {
         switch (type) {
-            case EShaderDataType::Float:  return GL_FLOAT;
-            case EShaderDataType::Float2: return GL_FLOAT;
-            case EShaderDataType::Float3: return GL_FLOAT;
-            case EShaderDataType::Float4: return GL_FLOAT;
-            case EShaderDataType::Mat3:   return GL_FLOAT;
-            case EShaderDataType::Mat4:   return GL_FLOAT;
-            case EShaderDataType::Int:    return GL_INT;
-            case EShaderDataType::Int2:   return GL_INT;
-            case EShaderDataType::Int3:   return GL_INT;
-            case EShaderDataType::Int4:   return GL_INT;
-            case EShaderDataType::Bool:   return GL_BOOL;
+            case ShaderDataType::Float:  return GL_FLOAT;
+            case ShaderDataType::Float2: return GL_FLOAT;
+            case ShaderDataType::Float3: return GL_FLOAT;
+            case ShaderDataType::Float4: return GL_FLOAT;
+            case ShaderDataType::Mat3:   return GL_FLOAT;
+            case ShaderDataType::Mat4:   return GL_FLOAT;
+            case ShaderDataType::Int:    return GL_INT;
+            case ShaderDataType::Int2:   return GL_INT;
+            case ShaderDataType::Int3:   return GL_INT;
+            case ShaderDataType::Int4:   return GL_INT;
+            case ShaderDataType::Bool:   return GL_BOOL;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }

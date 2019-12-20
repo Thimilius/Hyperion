@@ -16,9 +16,9 @@ namespace Hyperion {
         ULONG CurrentIdleState;
     } PROCESSOR_POWER_INFORMATION, *PPROCESSOR_POWER_INFORMATION;
 
-    COperatingSystem* COperatingSystem::s_instance = new CWindowsOperatingSystem();
+    OperatingSystem* OperatingSystem::s_instance = new WindowsOperatingSystem();
 
-    void CWindowsOperatingSystem::Init() {
+    void WindowsOperatingSystem::Init() {
         // Initialize console
         m_console_handle = GetStdHandle(STD_OUTPUT_HANDLE);
         if (m_console_handle == NULL) {
@@ -27,12 +27,12 @@ namespace Hyperion {
         }
     }
 
-    EOperatingSystemType CWindowsOperatingSystem::GetType() const {
-        return EOperatingSystemType::Windows;
+    OperatingSystemType WindowsOperatingSystem::GetType() const {
+        return OperatingSystemType::Windows;
     }
 
-    SSystemInfo CWindowsOperatingSystem::GetSystemInfo() const {
-        SSystemInfo result;
+    SystemInfo WindowsOperatingSystem::GetSystemInfo() const {
+        SystemInfo result;
 
         // Gather processor info
         SYSTEM_INFO system_info;
@@ -56,28 +56,28 @@ namespace Hyperion {
         return result;
     }
 
-    void CWindowsOperatingSystem::DisplayError(const TString &title, const TString &message) const {
-        MessageBoxW(nullptr, CStringUtils::Utf8ToUtf16(message).c_str(), CStringUtils::Utf8ToUtf16(title).c_str(), MB_OK | MB_ICONERROR);
+    void WindowsOperatingSystem::DisplayError(const String &title, const String &message) const {
+        MessageBoxW(nullptr, StringUtils::Utf8ToUtf16(message).c_str(), StringUtils::Utf8ToUtf16(title).c_str(), MB_OK | MB_ICONERROR);
     }
 
-    void CWindowsOperatingSystem::PrintToConsole(ELogColor color, const TString &message) const {
+    void WindowsOperatingSystem::PrintToConsole(LogColor color, const String &message) const {
         s16 console_color = 0;
         switch (color) {
-            case Hyperion::ELogColor::Black: console_color = 0; break;
-            case Hyperion::ELogColor::Red: console_color = FOREGROUND_INTENSITY | FOREGROUND_RED; break;
-            case Hyperion::ELogColor::Green: console_color = FOREGROUND_INTENSITY | FOREGROUND_GREEN; break;
-            case Hyperion::ELogColor::Blue: console_color = FOREGROUND_INTENSITY | FOREGROUND_BLUE; break;
-            case Hyperion::ELogColor::Yellow: console_color = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN; break;
-            case Hyperion::ELogColor::Magenta: console_color = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE; break;
-            case Hyperion::ELogColor::Cyan: console_color = FOREGROUND_INTENSITY | FOREGROUND_BLUE | FOREGROUND_GREEN; break;
-            case Hyperion::ELogColor::DarkRed: console_color = FOREGROUND_RED; break;
-            case Hyperion::ELogColor::DarkGreen: console_color = FOREGROUND_GREEN; break;
-            case Hyperion::ELogColor::DarkBlue: console_color = FOREGROUND_BLUE; break;
-            case Hyperion::ELogColor::DarkYellow: console_color = FOREGROUND_RED | FOREGROUND_GREEN; break;
-            case Hyperion::ELogColor::DarkMagenta: console_color = FOREGROUND_RED | FOREGROUND_BLUE; break;
-            case Hyperion::ELogColor::DarkCyan: console_color = FOREGROUND_BLUE | FOREGROUND_GREEN; break;
-            case Hyperion::ELogColor::Grey: console_color = FOREGROUND_INTENSITY; break;
-            case Hyperion::ELogColor::White: console_color = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE; break;
+            case Hyperion::LogColor::Black: console_color = 0; break;
+            case Hyperion::LogColor::Red: console_color = FOREGROUND_INTENSITY | FOREGROUND_RED; break;
+            case Hyperion::LogColor::Green: console_color = FOREGROUND_INTENSITY | FOREGROUND_GREEN; break;
+            case Hyperion::LogColor::Blue: console_color = FOREGROUND_INTENSITY | FOREGROUND_BLUE; break;
+            case Hyperion::LogColor::Yellow: console_color = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN; break;
+            case Hyperion::LogColor::Magenta: console_color = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE; break;
+            case Hyperion::LogColor::Cyan: console_color = FOREGROUND_INTENSITY | FOREGROUND_BLUE | FOREGROUND_GREEN; break;
+            case Hyperion::LogColor::DarkRed: console_color = FOREGROUND_RED; break;
+            case Hyperion::LogColor::DarkGreen: console_color = FOREGROUND_GREEN; break;
+            case Hyperion::LogColor::DarkBlue: console_color = FOREGROUND_BLUE; break;
+            case Hyperion::LogColor::DarkYellow: console_color = FOREGROUND_RED | FOREGROUND_GREEN; break;
+            case Hyperion::LogColor::DarkMagenta: console_color = FOREGROUND_RED | FOREGROUND_BLUE; break;
+            case Hyperion::LogColor::DarkCyan: console_color = FOREGROUND_BLUE | FOREGROUND_GREEN; break;
+            case Hyperion::LogColor::Grey: console_color = FOREGROUND_INTENSITY; break;
+            case Hyperion::LogColor::White: console_color = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE; break;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
 

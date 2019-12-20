@@ -4,11 +4,11 @@
 
 namespace Hyperion::Rendering {
 
-    CWindowsOpenGLGraphicsContext::CWindowsOpenGLGraphicsContext(HWND window_handle) {
+    WindowsOpenGLGraphicsContext::WindowsOpenGLGraphicsContext(HWND window_handle) {
         m_device_context = GetDC(window_handle);
     }
 
-    void CWindowsOpenGLGraphicsContext::Init() {
+    void WindowsOpenGLGraphicsContext::Init() {
         // Create temp context for extension loading
         {
             PIXELFORMATDESCRIPTOR pixel_format_descriptor = { 0 };
@@ -76,19 +76,19 @@ namespace Hyperion::Rendering {
             }
         }
 
-        COpenGLGraphicsContext::Init();
+        OpenGLGraphicsContext::Init();
     }
 
-    void CWindowsOpenGLGraphicsContext::SwapBuffers() {
+    void WindowsOpenGLGraphicsContext::SwapBuffers() {
         ::SwapBuffers(m_device_context);
     }
 
-    void CWindowsOpenGLGraphicsContext::SetVSyncMode(EVSyncMode vsync_mode) {
+    void WindowsOpenGLGraphicsContext::SetVSyncMode(VSyncMode vsync_mode) {
         s32 swap_interval = 0;
         switch (vsync_mode) {
-            case EVSyncMode::DontSync: swap_interval = 0; break;
-            case EVSyncMode::EveryVBlank: swap_interval = 1; break;
-            case EVSyncMode::EverySecondVBlank: swap_interval = 2; break;
+            case VSyncMode::DontSync: swap_interval = 0; break;
+            case VSyncMode::EveryVBlank: swap_interval = 1; break;
+            case VSyncMode::EverySecondVBlank: swap_interval = 2; break;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
         }
         wglSwapIntervalEXT(swap_interval);

@@ -4,66 +4,66 @@
 
 #include "hyperion/app/window.hpp"
 
-namespace Hyperion::Events {
+namespace Hyperion {
 
-    class CWindowCloseEvent : public CEvent {
+    class WindowCloseEvent : public Event {
     public:
-        EEventType GetType() const override { return EEventType::WindowClose; }
-        EEventCategory GetCategory() const override { return EEventCategory::Window; }
+        EventType GetType() const override { return EventType::WindowClose; }
+        EventCategory GetCategory() const override { return EventCategory::Window; }
 
-        static EEventType GetStaticType() { return EEventType::WindowClose; }
+        static EventType GetStaticType() { return EventType::WindowClose; }
     };
 
-    class CWindowResizeEvent : public CEvent {
+    class WindowResizeEvent : public Event {
     private:
         u32 m_width;
         u32 m_height;
     public:
-        CWindowResizeEvent(u32 width, u32 height) : m_width(width), m_height(height) {}
+        WindowResizeEvent(u32 width, u32 height) : m_width(width), m_height(height) {}
 
         inline u32 GetWidth() const { return m_width; }
         inline u32 GetHeight() const { return m_height; }
 
-        EEventType GetType() const override { return EEventType::WindowResize; }
-        EEventCategory GetCategory() const override { return EEventCategory::Window; }
+        EventType GetType() const override { return EventType::WindowResize; }
+        EventCategory GetCategory() const override { return EventCategory::Window; }
 
-        static EEventType GetStaticType() { return EEventType::WindowResize; }
+        static EventType GetStaticType() { return EventType::WindowResize; }
     };
 
-    class CWindowFocusEvent : public CEvent {
+    class WindowFocusEvent : public Event {
     private:
         bool m_focus;
     public:
-        CWindowFocusEvent(bool focus) : m_focus(focus) {}
+        WindowFocusEvent(bool focus) : m_focus(focus) {}
 
         inline bool GetFocus() const { return m_focus; }
 
-        EEventType GetType() const override { return EEventType::WindowFocus; }
-        EEventCategory GetCategory() const override { return EEventCategory::Window; }
+        EventType GetType() const override { return EventType::WindowFocus; }
+        EventCategory GetCategory() const override { return EventCategory::Window; }
 
-        static EEventType GetStaticType() { return EEventType::WindowFocus; }
+        static EventType GetStaticType() { return EventType::WindowFocus; }
     };
 
-    class CWindowMovedEvent : public CEvent {
+    class WindowMovedEvent : public Event {
     public:
-        EEventType GetType() const override { return EEventType::WindowMoved; }
-        EEventCategory GetCategory() const override { return EEventCategory::Window; }
+        EventType GetType() const override { return EventType::WindowMoved; }
+        EventCategory GetCategory() const override { return EventCategory::Window; }
 
-        static EEventType GetStaticType() { return EEventType::WindowMoved; }
+        static EventType GetStaticType() { return EventType::WindowMoved; }
     };
 
-    class CWindowStateChangedEvent : public CEvent {
+    class WindowStateChangedEvent : public Event {
     private:
-        EWindowState m_state;
+        WindowState m_state;
     public:
-        CWindowStateChangedEvent(EWindowState state) : m_state(state) {}
+        WindowStateChangedEvent(WindowState state) : m_state(state) {}
 
-        inline EWindowState GetState() const { return m_state; }
+        inline WindowState GetState() const { return m_state; }
 
-        EEventType GetType() const override { return EEventType::WindowStateChanged; }
-        EEventCategory GetCategory() const override { return EEventCategory::Window; }
+        EventType GetType() const override { return EventType::WindowStateChanged; }
+        EventCategory GetCategory() const override { return EventCategory::Window; }
 
-        static EEventType GetStaticType() { return EEventType::WindowStateChanged; }
+        static EventType GetStaticType() { return EventType::WindowStateChanged; }
     };
 
 }

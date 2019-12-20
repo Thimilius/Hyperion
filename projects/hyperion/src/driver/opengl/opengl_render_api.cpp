@@ -6,74 +6,74 @@
 
 namespace Hyperion::Rendering {
 
-    void COpenGLRenderAPI::EnableFeature(EFeature feature) {
+    void OpenGLRenderAPI::EnableFeature(Feature feature) {
         glEnable(GetGLFeature(feature));
     }
 
-    void COpenGLRenderAPI::DisableFeature(EFeature feature) {
+    void OpenGLRenderAPI::DisableFeature(Feature feature) {
         glDisable(GetGLFeature(feature));
     }
 
-    void COpenGLRenderAPI::SetBlendFunc(EBlendFactor source_factor, EBlendFactor destination_factor) {
+    void OpenGLRenderAPI::SetBlendFunc(BlendFactor source_factor, BlendFactor destination_factor) {
         glBlendFunc(GetGLBlendFactor(source_factor), GetGLBlendFactor(destination_factor));
     }
 
-    void COpenGLRenderAPI::SetBlendEquation(EBlendEquation blend_equation) {
+    void OpenGLRenderAPI::SetBlendEquation(BlendEquation blend_equation) {
         glBlendEquation(GetGLBlendEquation(blend_equation));
     }
 
-    void COpenGLRenderAPI::SetFrontFaceMode(EFrontFaceMode front_face_mode) {
+    void OpenGLRenderAPI::SetFrontFaceMode(FrontFaceMode front_face_mode) {
         glFrontFace(GetGLFrontFaceMode(front_face_mode));
     }
 
-    void COpenGLRenderAPI::SetCullingMode(ECullingMode culling_mode) {
+    void OpenGLRenderAPI::SetCullingMode(CullingMode culling_mode) {
         glCullFace(GetGLCullingMode(culling_mode));
     }
 
-    void COpenGLRenderAPI::SetPolygonMode(EPolygonMode polygon_mode) {
+    void OpenGLRenderAPI::SetPolygonMode(PolygonMode polygon_mode) {
         glPolygonMode(GL_FRONT_AND_BACK, GetGLPolygonMode(polygon_mode));
     }
 
-    void COpenGLRenderAPI::SetClearColor(float r, float g, float b, float a) {
+    void OpenGLRenderAPI::SetClearColor(float r, float g, float b, float a) {
         glClearColor(r, g, b, a);
     }
 
-    void COpenGLRenderAPI::Clear(EClearMask mask) {
+    void OpenGLRenderAPI::Clear(ClearMask mask) {
         glClear(GetGLClearMask(mask));
     }
 
-    void COpenGLRenderAPI::SetViewport(s32 x, s32 y, s32 width, s32 height) {
+    void OpenGLRenderAPI::SetViewport(s32 x, s32 y, s32 width, s32 height) {
         glViewport(x, y, width, height);
     }
 
-    void COpenGLRenderAPI::SetActiveRenderTarget(const TRef<CRenderTexture> texture, ERenderTextureTarget target) {
+    void OpenGLRenderAPI::SetActiveRenderTarget(const Ref<RenderTexture> texture, RenderTextureTarget target) {
         u32 id = 0;
         if (texture != nullptr) {
             id = texture->GetID();
         }
 
         switch (target) {
-            case Hyperion::Rendering::ERenderTextureTarget::DrawAndRead:
+            case Hyperion::Rendering::RenderTextureTarget::DrawAndRead:
                 glBindFramebuffer(GL_FRAMEBUFFER, id);
                 break;
-            case Hyperion::Rendering::ERenderTextureTarget::Draw:
+            case Hyperion::Rendering::RenderTextureTarget::Draw:
                 glBindFramebuffer(GL_DRAW_FRAMEBUFFER, id);
                 break;
-            case Hyperion::Rendering::ERenderTextureTarget::Read:
+            case Hyperion::Rendering::RenderTextureTarget::Read:
                 glBindFramebuffer(GL_READ_FRAMEBUFFER, id);
                 break;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
 
         if (id == 0) {
-            CWindow *window = CApplication::GetInstance()->GetWindow();
+            Window *window = Application::GetInstance()->GetWindow();
             glViewport(0, 0, window->GetWidth(), window->GetHeight());
         } else {
             glViewport(0, 0, texture->GetWidth(), texture->GetHeight());
         }
     }
 
-    void COpenGLRenderAPI::Blit(const TRef<CRenderTexture> destination, s32 dstX0, s32 dstY0, s32 dstX1, s32 dstY1, const TRef<CRenderTexture> source, s32 srcX0, s32 srcY0, s32 srcX1, s32 srcY1) {
+    void OpenGLRenderAPI::Blit(const Ref<RenderTexture> destination, s32 dstX0, s32 dstY0, s32 dstX1, s32 dstY1, const Ref<RenderTexture> source, s32 srcX0, s32 srcY0, s32 srcX1, s32 srcY1) {
         s32 draw_framebuffer_id;
         glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &draw_framebuffer_id);
         s32 read_framebuffer_id;
@@ -82,122 +82,122 @@ namespace Hyperion::Rendering {
         if (destination == nullptr) {
             glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
         } else {
-            SetActiveRenderTarget(destination, ERenderTextureTarget::Draw);
+            SetActiveRenderTarget(destination, RenderTextureTarget::Draw);
         }
 
-        SetActiveRenderTarget(source, ERenderTextureTarget::Read);
+        SetActiveRenderTarget(source, RenderTextureTarget::Read);
         glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, draw_framebuffer_id);
         glBindFramebuffer(GL_READ_FRAMEBUFFER, read_framebuffer_id);
     }
 
-    void COpenGLRenderAPI::DrawIndexed(EPrimitive primitive, EIndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) {
+    void OpenGLRenderAPI::DrawIndexed(Primitive primitive, IndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) {
         glDrawElementsBaseVertex(GL_TRIANGLES, index_count, GetGLIndexFormat(format), (void*)(GetGLIndexSize(format) * index_offset), vertex_offset);
     }
 
-    void COpenGLRenderAPI::Draw(EPrimitive primitive, u32 vertex_count, u32 vertex_offset) {
+    void OpenGLRenderAPI::Draw(Primitive primitive, u32 vertex_count, u32 vertex_offset) {
         glDrawArrays(GL_TRIANGLES, vertex_offset, vertex_count);
     }
 
-    u32 COpenGLRenderAPI::GetGLFeature(EFeature feature) {
+    u32 OpenGLRenderAPI::GetGLFeature(Feature feature) {
         switch (feature) {
-            case Hyperion::Rendering::EFeature::Blending: return GL_BLEND;
-            case Hyperion::Rendering::EFeature::Culling: return GL_CULL_FACE;
-            case Hyperion::Rendering::EFeature::DepthTesting: return GL_DEPTH_TEST;
-            case Hyperion::Rendering::EFeature::StencilTesting: return GL_STENCIL_TEST;
+            case Hyperion::Rendering::Feature::Blending: return GL_BLEND;
+            case Hyperion::Rendering::Feature::Culling: return GL_CULL_FACE;
+            case Hyperion::Rendering::Feature::DepthTesting: return GL_DEPTH_TEST;
+            case Hyperion::Rendering::Feature::StencilTesting: return GL_STENCIL_TEST;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }
 
-    u32 COpenGLRenderAPI::GetGLBlendFactor(EBlendFactor blend_factor) {
+    u32 OpenGLRenderAPI::GetGLBlendFactor(BlendFactor blend_factor) {
         switch (blend_factor) {
-            case EBlendFactor::Zero: return GL_ZERO;
-            case EBlendFactor::One: return GL_ONE;
-            case EBlendFactor::SourceAlpha: return GL_SRC_ALPHA;
-            case EBlendFactor::SourceColor: return GL_SRC_COLOR;
-            case EBlendFactor::DestinationAlpha: return GL_DST_ALPHA;
-            case EBlendFactor::DestinationColor: return GL_DST_COLOR;
-            case EBlendFactor::InverseSourceAlpha: return GL_ONE_MINUS_SRC_ALPHA;
-            case EBlendFactor::InverseSourceColor: return GL_ONE_MINUS_SRC_COLOR;
-            case EBlendFactor::InverseDestinationAlpha: return GL_ONE_MINUS_DST_ALPHA;
-            case EBlendFactor::InverseDestinationColor: return GL_ONE_MINUS_DST_COLOR;
+            case BlendFactor::Zero: return GL_ZERO;
+            case BlendFactor::One: return GL_ONE;
+            case BlendFactor::SourceAlpha: return GL_SRC_ALPHA;
+            case BlendFactor::SourceColor: return GL_SRC_COLOR;
+            case BlendFactor::DestinationAlpha: return GL_DST_ALPHA;
+            case BlendFactor::DestinationColor: return GL_DST_COLOR;
+            case BlendFactor::InverseSourceAlpha: return GL_ONE_MINUS_SRC_ALPHA;
+            case BlendFactor::InverseSourceColor: return GL_ONE_MINUS_SRC_COLOR;
+            case BlendFactor::InverseDestinationAlpha: return GL_ONE_MINUS_DST_ALPHA;
+            case BlendFactor::InverseDestinationColor: return GL_ONE_MINUS_DST_COLOR;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }
 
-    u32 COpenGLRenderAPI::GetGLBlendEquation(EBlendEquation blend_equation) {
+    u32 OpenGLRenderAPI::GetGLBlendEquation(BlendEquation blend_equation) {
         switch (blend_equation) {
-            case EBlendEquation::Add: return GL_FUNC_ADD;
-            case EBlendEquation::Subtract: return GL_FUNC_SUBTRACT;
-            case EBlendEquation::ReverseSubract: return GL_FUNC_REVERSE_SUBTRACT;
+            case BlendEquation::Add: return GL_FUNC_ADD;
+            case BlendEquation::Subtract: return GL_FUNC_SUBTRACT;
+            case BlendEquation::ReverseSubract: return GL_FUNC_REVERSE_SUBTRACT;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }
 
-    u32 COpenGLRenderAPI::GetGLFrontFaceMode(EFrontFaceMode front_face_mode) {
+    u32 OpenGLRenderAPI::GetGLFrontFaceMode(FrontFaceMode front_face_mode) {
         switch (front_face_mode) {
-            case EFrontFaceMode::Clockwise: return GL_CW;
-            case EFrontFaceMode::CounterClockwise: return GL_CCW;
+            case FrontFaceMode::Clockwise: return GL_CW;
+            case FrontFaceMode::CounterClockwise: return GL_CCW;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }
 
-    u32 COpenGLRenderAPI::GetGLPolygonMode(EPolygonMode polygon_mode) {
+    u32 OpenGLRenderAPI::GetGLPolygonMode(PolygonMode polygon_mode) {
         switch (polygon_mode) {
-            case Hyperion::Rendering::EPolygonMode::Fill: return GL_FILL;
-            case Hyperion::Rendering::EPolygonMode::Line: return GL_LINE;
+            case Hyperion::Rendering::PolygonMode::Fill: return GL_FILL;
+            case Hyperion::Rendering::PolygonMode::Line: return GL_LINE;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }
 
-    u32 COpenGLRenderAPI::GetGLCullingMode(ECullingMode culling_mode) {
+    u32 OpenGLRenderAPI::GetGLCullingMode(CullingMode culling_mode) {
         switch (culling_mode) {
-            case ECullingMode::Back: return GL_BACK;
-            case ECullingMode::Front: return GL_FRONT;
-            case ECullingMode::FrontAndBack: return GL_FRONT_AND_BACK;
+            case CullingMode::Back: return GL_BACK;
+            case CullingMode::Front: return GL_FRONT;
+            case CullingMode::FrontAndBack: return GL_FRONT_AND_BACK;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }
 
-    u32 COpenGLRenderAPI::GetGLClearMask(EClearMask clear_mask) {
+    u32 OpenGLRenderAPI::GetGLClearMask(ClearMask clear_mask) {
         u32 result = 0;
 
-        if ((clear_mask & EClearMask::Color) == EClearMask::Color) {
+        if ((clear_mask & ClearMask::Color) == ClearMask::Color) {
             result |= GL_COLOR_BUFFER_BIT;
         }
-        if ((clear_mask & EClearMask::Depth) == EClearMask::Depth) {
+        if ((clear_mask & ClearMask::Depth) == ClearMask::Depth) {
             result |= GL_DEPTH_BUFFER_BIT;
         }
-        if ((clear_mask & EClearMask::Stencil) == EClearMask::Stencil) {
+        if ((clear_mask & ClearMask::Stencil) == ClearMask::Stencil) {
             result |= GL_STENCIL_BUFFER_BIT;
         }
 
         return result;
     }
 
-    u32 COpenGLRenderAPI::GetGLPrimitive(EPrimitive primitive) {
+    u32 OpenGLRenderAPI::GetGLPrimitive(Primitive primitive) {
         switch (primitive) {
-            case Hyperion::Rendering::EPrimitive::Lines: return GL_LINES;
-            case Hyperion::Rendering::EPrimitive::LineStrip: return GL_LINE_STRIP;
-            case Hyperion::Rendering::EPrimitive::LineLoop: return GL_LINE_LOOP;
-            case Hyperion::Rendering::EPrimitive::Triangles: return GL_TRIANGLES;
+            case Hyperion::Rendering::Primitive::Lines: return GL_LINES;
+            case Hyperion::Rendering::Primitive::LineStrip: return GL_LINE_STRIP;
+            case Hyperion::Rendering::Primitive::LineLoop: return GL_LINE_LOOP;
+            case Hyperion::Rendering::Primitive::Triangles: return GL_TRIANGLES;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }
 
-    u32 COpenGLRenderAPI::GetGLIndexFormat(EIndexFormat index_format) {
+    u32 OpenGLRenderAPI::GetGLIndexFormat(IndexFormat index_format) {
         switch (index_format) {
-            case EIndexFormat::UInt16: return GL_UNSIGNED_SHORT;
-            case EIndexFormat::UInt32: return GL_UNSIGNED_INT;
+            case IndexFormat::UInt16: return GL_UNSIGNED_SHORT;
+            case IndexFormat::UInt32: return GL_UNSIGNED_INT;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }
 
-    u64 COpenGLRenderAPI::GetGLIndexSize(EIndexFormat index_format) {
+    u64 OpenGLRenderAPI::GetGLIndexSize(IndexFormat index_format) {
         switch (index_format) {
-            case EIndexFormat::UInt16: return sizeof(u16);
-            case EIndexFormat::UInt32: return sizeof(u32);
+            case IndexFormat::UInt16: return sizeof(u16);
+            case IndexFormat::UInt32: return sizeof(u32);
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }

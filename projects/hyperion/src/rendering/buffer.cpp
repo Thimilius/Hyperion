@@ -6,24 +6,24 @@
 
 namespace Hyperion::Rendering {
 
-    u32 SBufferElement::GetComponentCount() const {
+    u32 BufferElement::GetComponentCount() const {
         switch (type) {
-            case EShaderDataType::Float:  return 1;
-            case EShaderDataType::Float2: return 2;
-            case EShaderDataType::Float3: return 3;
-            case EShaderDataType::Float4: return 4;
-            case EShaderDataType::Mat3:   return 3 * 3;
-            case EShaderDataType::Mat4:   return 4 * 4;
-            case EShaderDataType::Int:    return 1;
-            case EShaderDataType::Int2:   return 2;
-            case EShaderDataType::Int3:   return 3;
-            case EShaderDataType::Int4:   return 4;
-            case EShaderDataType::Bool:   return 1;
+            case ShaderDataType::Float:  return 1;
+            case ShaderDataType::Float2: return 2;
+            case ShaderDataType::Float3: return 3;
+            case ShaderDataType::Float4: return 4;
+            case ShaderDataType::Mat3:   return 3 * 3;
+            case ShaderDataType::Mat4:   return 4 * 4;
+            case ShaderDataType::Int:    return 1;
+            case ShaderDataType::Int2:   return 2;
+            case ShaderDataType::Int3:   return 3;
+            case ShaderDataType::Int4:   return 4;
+            case ShaderDataType::Bool:   return 1;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }
 
-    void CBufferLayout::CalculateOffsetsAndStride() {
+    void BufferLayout::CalculateOffsetsAndStride() {
         uint32_t offset = 0;
         m_stride = 0;
         for (auto &element : m_elements) {
@@ -33,30 +33,30 @@ namespace Hyperion::Rendering {
         }
     }
 
-    TRef<CVertexBuffer> CVertexBuffer::Create(const u8 *vertices, u32 size) {
-        switch (CRenderAPI::GetAPI()) {
-            case ERenderAPI::OpenGL: return std::make_shared<COpenGLVertexBuffer>(vertices, size);
+    Ref<VertexBuffer> VertexBuffer::Create(const u8 *vertices, u32 size) {
+        switch (RenderAPI::GetBackendAPI()) {
+            case RenderBackendAPI::OpenGL: return std::make_shared<OpenGLVertexBuffer>(vertices, size);
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }
 
-    TRef<CVertexBuffer> CVertexBuffer::Create(const u8 *vertices, u32 size, EBufferUsage usage) {
-        switch (CRenderAPI::GetAPI()) {
-            case ERenderAPI::OpenGL: return std::make_shared<COpenGLVertexBuffer>(vertices, size, usage);
+    Ref<VertexBuffer> VertexBuffer::Create(const u8 *vertices, u32 size, BufferUsage usage) {
+        switch (RenderAPI::GetBackendAPI()) {
+            case RenderBackendAPI::OpenGL: return std::make_shared<OpenGLVertexBuffer>(vertices, size, usage);
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }
 
-    TRef<CIndexBuffer> CIndexBuffer::Create(const u16 *indices, u32 count) {
-        switch (CRenderAPI::GetAPI()) {
-            case ERenderAPI::OpenGL: return std::make_shared<COpenGLIndexBuffer>(indices, count);
+    Ref<IndexBuffer> IndexBuffer::Create(const u16 *indices, u32 count) {
+        switch (RenderAPI::GetBackendAPI()) {
+            case RenderBackendAPI::OpenGL: return std::make_shared<OpenGLIndexBuffer>(indices, count);
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }
 
-    TRef<CIndexBuffer> CIndexBuffer::Create(const u32 *indices, u32 count) {
-        switch (CRenderAPI::GetAPI()) {
-            case ERenderAPI::OpenGL: return std::make_shared<COpenGLIndexBuffer>(indices, count);
+    Ref<IndexBuffer> IndexBuffer::Create(const u32 *indices, u32 count) {
+        switch (RenderAPI::GetBackendAPI()) {
+            case RenderBackendAPI::OpenGL: return std::make_shared<OpenGLIndexBuffer>(indices, count);
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }

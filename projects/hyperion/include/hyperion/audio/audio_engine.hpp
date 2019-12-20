@@ -9,22 +9,22 @@ namespace FMOD {
 
 namespace Hyperion::Audio {
 
-    class CAudioEngine {
+    class AudioEngine {
     private:
         inline static FMOD::System *m_system;
 
-        inline static TMap<TString, FMOD::Sound*> m_sounds;
+        inline static Map<String, FMOD::Sound*> m_sounds;
     public:
-        static void LoadSound(const TString &name, const TString &path);
-        static void PlaySound(const TString &name);
+        static void LoadSound(const String &name, const String &path);
+        static void PlaySound(const String &name);
     private:
-        CAudioEngine() = delete;
-        ~CAudioEngine() = delete;
+        AudioEngine() = delete;
+        ~AudioEngine() = delete;
 
         static void Init();
         static void Shutdown();
 
-        friend class CEngine;
+        friend class Engine;
     };
 
 }

@@ -2,26 +2,23 @@
 #include <hyperion/entry_point.hpp>
 
 using namespace Hyperion;
-using namespace Hyperion::Events;
-using namespace Hyperion::Math;
-using namespace Hyperion::IO;
 using namespace Hyperion::Rendering;
 using namespace Hyperion::Audio;
 using namespace Hyperion::Entity;
 
-class CSandboxApp : public CApplication {
+class SandboxApp : public Application {
 public:
-    CSandboxApp() : CApplication(SApplicationSettings()) { }
+    SandboxApp() : Application(ApplicationSettings()) { }
 protected:
-    TRef<CShader> m_shader;
-    TRef<CTexture2D> m_texture;
-    TRef<CMesh> m_mesh;
+    Ref<Shader> m_shader;
+    Ref<Texture2D> m_texture;
+    Ref<Mesh> m_mesh;
 
-    TRef<CRenderTexture> m_render_texture;
-    TRef<CPerspectiveCameraController> m_camera_controller = std::make_shared<CPerspectiveCameraController>(std::make_shared<CPerspectiveCamera>());
+    Ref<RenderTexture> m_render_texture;
+    Ref<PerspectiveCameraController> m_camera_controller = std::make_shared<PerspectiveCameraController>(std::make_shared<PerspectiveCamera>());
 
     void UpdateTitle() {
-        TString title = CStringUtils::Format("Hyperion | FPS: {} ({:.2f} ms) | VSync: {}", CTime::GetFPS(), CTime::GetFrameTime(), GetWindow()->GetVSyncMode() != EVSyncMode::DontSync);
+        String title = StringUtils::Format("Hyperion | FPS: {} ({:.2f} ms) | VSync: {}", Time::GetFPS(), Time::GetFrameTime(), GetWindow()->GetVSyncMode() != VSyncMode::DontSync);
         GetWindow()->SetTitle(title);
     }
 
@@ -30,70 +27,70 @@ protected:
 
         UpdateTitle();
 
-        CShaderLibrary::Init("data/shaders/");
+        ShaderLibrary::Init("data/shaders/");
 
-        m_shader = CShaderLibrary::Get("phong");
-        m_texture = CTexture2D::CreateFromFile("data/textures/grass.png", ETextureWrapMode::Clamp, ETextureFilter::Bilinear, ETextureAnisotropicFilter::None);
-        m_mesh = CMesh::CreateCube(1);
-        m_render_texture = CRenderTexture::Create(GetWindow()->GetWidth(), GetWindow()->GetHeight(), ERenderTextureFormat::RGBA8);
+        m_shader = ShaderLibrary::Get("phong");
+        m_texture = Texture2D::CreateFromFile("data/textures/grass.png", TextureWrapMode::Clamp, TextureFilter::Bilinear, TextureAnisotropicFilter::None);
+        m_mesh = Mesh::CreateCube(1);
+        m_render_texture = RenderTexture::Create(GetWindow()->GetWidth(), GetWindow()->GetHeight(), RenderTextureFormat::RGBA8);
     }
     
-    void OnEvent(CEvent &event) override {
-        if (event.GetType() == EEventType::WindowResize) {
+    void OnEvent(Event &event) override {
+        if (event.GetType() == EventType::WindowResize) {
             m_render_texture->Resize(GetWindow()->GetWidth(), GetWindow()->GetHeight());
         }
     }
 
     void OnUpdate(float delta_time) override {
-        if (CInput::GetKeyDown(EKeyCode::Escape) || ((CInput::GetKey(EKeyCode::LeftControl) || CInput::GetKey(EKeyCode::RightControl)) && CInput::GetKeyDown(EKeyCode::W))) {
+        if (Input::GetKeyDown(KeyCode::Escape) || ((Input::GetKey(KeyCode::LeftControl) || Input::GetKey(KeyCode::RightControl)) && Input::GetKeyDown(KeyCode::W))) {
             Exit();
         }
 
-        if (CInput::GetKeyDown(EKeyCode::F1)) {
-            GetWindow()->SetWindowMode(GetWindow()->GetWindowMode() == EWindowMode::Windowed ? EWindowMode::Borderless : EWindowMode::Windowed);
+        if (Input::GetKeyDown(KeyCode::F1)) {
+            GetWindow()->SetWindowMode(GetWindow()->GetWindowMode() == WindowMode::Windowed ? WindowMode::Borderless : WindowMode::Windowed);
         }
-        if (CInput::GetKeyDown(EKeyCode::F2)) {
-            GetWindow()->SetVSyncMode(GetWindow()->GetVSyncMode() == EVSyncMode::DontSync ? EVSyncMode::EveryVBlank : EVSyncMode::DontSync);
+        if (Input::GetKeyDown(KeyCode::F2)) {
+            GetWindow()->SetVSyncMode(GetWindow()->GetVSyncMode() == VSyncMode::DontSync ? VSyncMode::EveryVBlank : VSyncMode::DontSync);
             UpdateTitle();
         }
 
         m_camera_controller->Update(delta_time);
 
-        CShaderLibrary::Update();
+        ShaderLibrary::Update();
     }
 
     void OnRender() override {
-        CRenderCommand::SetActiveRenderTarget(m_render_texture);
+        RenderCommand::SetActiveRenderTarget(m_render_texture);
 
-        CRenderCommand::SetClearColor(0, 0, 0, 1);
-        CRenderCommand::Clear(EClearMask::Color | EClearMask::Depth);
+        RenderCommand::SetClearColor(0, 0, 0, 1);
+        RenderCommand::Clear(ClearMask::Color | ClearMask::Depth);
 
-        CRenderCommand::EnableFeature(EFeature::DepthTesting);
+        RenderCommand::EnableFeature(Feature::DepthTesting);
 
-        CRenderCommand::EnableFeature(EFeature::Culling);
-        CRenderCommand::SetFrontFaceMode(EFrontFaceMode::Clockwise);
-        CRenderCommand::SetCullingMode(ECullingMode::Back);
+        RenderCommand::EnableFeature(Feature::Culling);
+        RenderCommand::SetFrontFaceMode(FrontFaceMode::Clockwise);
+        RenderCommand::SetCullingMode(CullingMode::Back);
 
-        CRenderCommand::EnableFeature(EFeature::Blending);
-        CRenderCommand::SetBlendFunc(EBlendFactor::SourceAlpha, EBlendFactor::InverseSourceAlpha);
+        RenderCommand::EnableFeature(Feature::Blending);
+        RenderCommand::SetBlendFunc(BlendFactor::SourceAlpha, BlendFactor::InverseSourceAlpha);
 
-        CRenderer::Begin(m_camera_controller->GetCamera());
+        Renderer::Begin(m_camera_controller->GetCamera());
         {
             m_shader->Bind();
             m_shader->SetFloat3("u_camera.position", m_camera_controller->GetCamera()->GetPosition());
-            m_shader->SetFloat3("u_light.position", SVec3(2, 2, 2));
-            m_shader->SetFloat3("u_light.color", SVec3(1, 1, 1));
+            m_shader->SetFloat3("u_light.position", Vec3(2, 2, 2));
+            m_shader->SetFloat3("u_light.color", Vec3(1, 1, 1));
             m_shader->SetInt("u_texture", 0);
             m_texture->Bind(0);
-            CRenderCommand::SetPolygonMode(EPolygonMode::Fill);
-            CRenderer::Submit(m_mesh, m_shader, SMat4::Rotate(SVec3(0, 1, 0), (float)CTime::GetTime() * 50.0f));
+            RenderCommand::SetPolygonMode(PolygonMode::Fill);
+            Renderer::Submit(m_mesh, m_shader, Mat4::Rotate(Vec3(0, 1, 0), (float)Time::GetTime() * 50.0f));
         }
-        CRenderer::End();
+        Renderer::End();
 
-        CRenderCommand::Blit(nullptr, m_render_texture);
+        RenderCommand::Blit(nullptr, m_render_texture);
 
         // Setting back buffer as render target before swapping buffers fixes vsync
-        CRenderCommand::SetActiveRenderTarget(nullptr);
+        RenderCommand::SetActiveRenderTarget(nullptr);
     }
     
     void OnTick() override {
@@ -101,6 +98,6 @@ protected:
     }
 };
 
-Hyperion::CApplication *Hyperion::CreateApplication() {
-    return new CSandboxApp();
+Hyperion::Application *Hyperion::CreateApplication() {
+    return new SandboxApp();
 }

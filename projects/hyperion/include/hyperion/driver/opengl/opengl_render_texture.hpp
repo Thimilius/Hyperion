@@ -4,14 +4,14 @@
 
 namespace Hyperion::Rendering {
 
-    class COpenGLRenderTexture : public CRenderTexture {
+    class OpenGLRenderTexture : public RenderTexture {
     private:
         u32 m_framebuffer_id;
         u32 m_color_attachment_id;
         u32 m_depth_attachment_id;
     public:
-        COpenGLRenderTexture(u32 width, u32 height, ERenderTextureFormat format);
-        ~COpenGLRenderTexture();
+        OpenGLRenderTexture(u32 width, u32 height, RenderTextureFormat format);
+        ~OpenGLRenderTexture();
 
         virtual u32 GetID() const { return m_framebuffer_id; }
 

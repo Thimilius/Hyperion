@@ -4,22 +4,22 @@
 
 namespace Hyperion::Rendering {
 
-    COpenGLRenderTexture::COpenGLRenderTexture(u32 width, u32 height, ERenderTextureFormat format) {
+    OpenGLRenderTexture::OpenGLRenderTexture(u32 width, u32 height, RenderTextureFormat format) {
         m_format = format;
         
         Resize(width, height);
     }
     
-    COpenGLRenderTexture::~COpenGLRenderTexture() {
+    OpenGLRenderTexture::~OpenGLRenderTexture() {
         glDeleteFramebuffers(1, &m_framebuffer_id);
     }
 
-    void COpenGLRenderTexture::BindTexture(u32 slot) {
+    void OpenGLRenderTexture::BindTexture(u32 slot) {
         glActiveTexture(GL_TEXTURE0 + slot);
         glBindTexture(GL_TEXTURE_2D, m_color_attachment_id);
     }
 
-    void COpenGLRenderTexture::Resize(u32 width, u32 height) {
+    void OpenGLRenderTexture::Resize(u32 width, u32 height) {
         if (m_width == width && m_height == height) {
             return;
         }
@@ -42,10 +42,10 @@ namespace Hyperion::Rendering {
             glBindTexture(GL_TEXTURE_2D, m_color_attachment_id);
 
             switch (m_format) {
-                case Hyperion::Rendering::ERenderTextureFormat::RGBA8:
+                case Hyperion::Rendering::RenderTextureFormat::RGBA8:
                     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
                     break;
-                case Hyperion::Rendering::ERenderTextureFormat::RGBA16F:
+                case Hyperion::Rendering::RenderTextureFormat::RGBA16F:
                     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGB, GL_FLOAT, NULL);
                     break;
                 default: HYP_ASSERT_ENUM_OUT_OF_RANGE;

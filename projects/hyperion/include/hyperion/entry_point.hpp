@@ -2,7 +2,7 @@
 
 #include "app/application.hpp"
 
-extern Hyperion::CApplication *Hyperion::CreateApplication();
+extern Hyperion::Application *Hyperion::CreateApplication();
 
 #if !defined HYP_PLATFORM_WINDOWS || HYP_CONSOLE
 int main(int argc, char **argv) {

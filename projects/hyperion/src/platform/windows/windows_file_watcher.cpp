@@ -2,9 +2,9 @@
 
 #include "hyperion/platform/windows/windows_file_watcher.hpp"
 
-namespace Hyperion::IO {
+namespace Hyperion {
 
-    CWindowsFileWatcher::CWindowsFileWatcher(const TString &path, WatcherCallbackFunc callback, bool recursive) {
+    WindowsFileWatcher::WindowsFileWatcher(const String &path, WatcherCallbackFunc callback, bool recursive) {
         m_path = path;
         m_callback = callback;
         m_recursive = recursive;
@@ -31,7 +31,7 @@ namespace Hyperion::IO {
         }
     }
 
-    CWindowsFileWatcher::~CWindowsFileWatcher() {
+    WindowsFileWatcher::~WindowsFileWatcher() {
         CancelIo(watch_struct.directory_handle);
 
         RefreshWatch(true);
@@ -46,11 +46,11 @@ namespace Hyperion::IO {
         CloseHandle(watch_struct.directory_handle);
     }
 
-    void CWindowsFileWatcher::Update() {
+    void WindowsFileWatcher::Update() {
         MsgWaitForMultipleObjectsEx(0, NULL, 0, QS_ALLINPUT, MWMO_ALERTABLE);
     }
 
-    bool CWindowsFileWatcher::RefreshWatch(bool clear) {
+    bool WindowsFileWatcher::RefreshWatch(bool clear) {
         BOOL result = ReadDirectoryChangesW(
             watch_struct.directory_handle,
             watch_struct.buffer,
@@ -63,28 +63,28 @@ namespace Hyperion::IO {
         return result != 0;
     }
 
-    void CWindowsFileWatcher::HandleAction(u32 action, const TString &path, const TString &filename, const TString &extension) {
-        EFileStatus status;
+    void WindowsFileWatcher::HandleAction(u32 action, const String &path, const String &filename, const String &extension) {
+        FileStatus status;
         switch (action) {
             case FILE_ACTION_RENAMED_NEW_NAME:
             case FILE_ACTION_ADDED:
-                status = EFileStatus::Created;
+                status = FileStatus::Created;
                 break;
             case FILE_ACTION_RENAMED_OLD_NAME:
             case FILE_ACTION_REMOVED:
-                status = EFileStatus::Deleted;
+                status = FileStatus::Deleted;
                 break;
             case FILE_ACTION_MODIFIED:
-                status = EFileStatus::Modified;
+                status = FileStatus::Modified;
                 break;
         }
 
         m_callback(status, path, filename, extension);
     }
 
-    void CALLBACK CWindowsFileWatcher::WatchCallback(DWORD error_code, DWORD number_of_bytes_transfered, LPOVERLAPPED overlapped) {
+    void CALLBACK WindowsFileWatcher::WatchCallback(DWORD error_code, DWORD number_of_bytes_transfered, LPOVERLAPPED overlapped) {
         FILE_NOTIFY_INFORMATION *notify;
-        SWatchStruct *watch_struct = (SWatchStruct *)overlapped;
+        WatchStruct *watch_struct = (WatchStruct *)overlapped;
         size_t notify_offset = 0;
 
         if (number_of_bytes_transfered == 0) {
@@ -98,18 +98,18 @@ namespace Hyperion::IO {
                 
                 // File name length is in bytes and therefore needs to be converted
                 auto filename_length = notify->FileNameLength / 2;
-                TString filename = CStringUtils::Utf16ToUtf8(TWString(notify->FileName).substr(0, filename_length));
+                String filename = StringUtils::Utf16ToUtf8(WideString(notify->FileName).substr(0, filename_length));
 
                 // Format path to always include last directory seperator
                 bool has_seperator = false;
                 if (watch_struct->watcher->m_path.back() == '\\' || watch_struct->watcher->m_path.back() == '/') {
                     has_seperator = true;
                 }
-                TString path = has_seperator ?
-                    CStringUtils::Format("{}{}", watch_struct->watcher->m_path, filename) :
-                    CStringUtils::Format("{}/{}", watch_struct->watcher->m_path, filename);
+                String path = has_seperator ?
+                    StringUtils::Format("{}{}", watch_struct->watcher->m_path, filename) :
+                    StringUtils::Format("{}/{}", watch_struct->watcher->m_path, filename);
                 
-                TString extension = filename.substr(filename.find_last_of("."));
+                String extension = filename.substr(filename.find_last_of("."));
 
                 // HACK: This is a pretty nasty hack of trying to "wait" for long enough,
                 // so that file changes are actually written to disk and

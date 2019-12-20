@@ -4,7 +4,7 @@
 
 namespace Hyperion {
 
-    void CInput::Update() {
+    void Input::Update() {
         memset(&s_keys_down, false, sizeof(s_keys_down));
         memset(&s_keys_up, false, sizeof(s_keys_up));
         memcpy(&s_keys_last, &s_keys, sizeof(s_keys_last));
@@ -16,7 +16,7 @@ namespace Hyperion {
         s_mouse_scroll = 0.0f;
     }
 
-    void CInput::Reset() {
+    void Input::Reset() {
         memset(&s_keys_down, false, sizeof(s_keys_down));
         memset(&s_keys_up, false, sizeof(s_keys_up));
         memset(&s_keys, false, sizeof(s_keys));

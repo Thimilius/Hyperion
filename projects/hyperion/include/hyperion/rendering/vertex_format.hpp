@@ -7,15 +7,15 @@
 namespace Hyperion::Rendering {
 
     struct SVertexPNU {
-        Math::SVec3 position;
-        Math::SVec3 normal;
-        Math::SVec2 uv;
+        Vec3 position;
+        Vec3 normal;
+        Vec2 uv;
 
-        static CBufferLayout GetBufferLayout() {
-            return CBufferLayout({
-                SBufferElement("a_position", EShaderDataType::Float3),
-                SBufferElement("a_normal", EShaderDataType::Float3),
-                SBufferElement("a_uv", EShaderDataType::Float2)
+        static BufferLayout GetBufferLayout() {
+            return BufferLayout({
+                BufferElement("a_position", ShaderDataType::Float3),
+                BufferElement("a_normal", ShaderDataType::Float3),
+                BufferElement("a_uv", ShaderDataType::Float2)
             });
         }
     };

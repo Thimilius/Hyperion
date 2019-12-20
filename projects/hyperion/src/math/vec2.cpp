@@ -2,174 +2,174 @@
 
 #include "hyperion/math/vec2.hpp"
 
-namespace Hyperion::Math {
+namespace Hyperion {
 
-    SVec2::SVec2()
+    Vec2::Vec2()
         : x(0), y(0) {
     }
 
-    SVec2::SVec2(float x, float y)
+    Vec2::Vec2(float x, float y)
         : x(x), y(y) {
     }
 
-    SVec2 &SVec2::Add(const SVec2 &other) {
+    Vec2 &Vec2::Add(const Vec2 &other) {
         x += other.x;
         y += other.y;
 
         return *this;
     }
 
-    SVec2 &SVec2::Subtract(const SVec2 &other) {
+    Vec2 &Vec2::Subtract(const Vec2 &other) {
         x -= other.x;
         y -= other.y;
 
         return *this;
     }
 
-    SVec2 &SVec2::Multiply(const SVec2 &other) {
+    Vec2 &Vec2::Multiply(const Vec2 &other) {
         x *= other.x;
         y *= other.y;
 
         return *this;
     }
 
-    SVec2 &SVec2::Divide(const SVec2 &other) {
+    Vec2 &Vec2::Divide(const Vec2 &other) {
         x /= other.x;
         y /= other.y;
 
         return *this;
     }
 
-    SVec2 &SVec2::Add(float value) {
+    Vec2 &Vec2::Add(float value) {
         x += value;
         y += value;
 
         return *this;
     }
 
-    SVec2 &SVec2::Subtract(float value) {
+    Vec2 &Vec2::Subtract(float value) {
         x -= value;
         y -= value;
 
         return *this;
     }
 
-    SVec2 &SVec2::Multiply(float value) {
+    Vec2 &Vec2::Multiply(float value) {
         x *= value;
         y *= value;
 
         return *this;
     }
 
-    SVec2 &SVec2::Divide(float value) {
+    Vec2 &Vec2::Divide(float value) {
         x /= value;
         y /= value;
 
         return *this;
     }
 
-    TString SVec2::ToString() const {
-        return CStringUtils::Format("({:.2f}, {:.2f})", x, y);
+    String Vec2::ToString() const {
+        return StringUtils::Format("({:.2f}, {:.2f})", x, y);
     }
 
-    SVec2 operator+(SVec2 left, const SVec2 &right) {
+    Vec2 operator+(Vec2 left, const Vec2 &right) {
         return left.Add(right);
     }
 
-    SVec2 operator-(SVec2 left, const SVec2 &right) {
+    Vec2 operator-(Vec2 left, const Vec2 &right) {
         return left.Subtract(right);
     }
 
-    SVec2 operator*(SVec2 left, const SVec2 &right) {
+    Vec2 operator*(Vec2 left, const Vec2 &right) {
         return left.Multiply(right);
     }
 
-    SVec2 operator/(SVec2 left, const SVec2 &right) {
+    Vec2 operator/(Vec2 left, const Vec2 &right) {
         return left.Divide(right);
     }
 
-    SVec2 operator+(SVec2 left, float value) {
+    Vec2 operator+(Vec2 left, float value) {
         return left.Add(value);
     }
 
-    SVec2 operator-(SVec2 left, float value) {
+    Vec2 operator-(Vec2 left, float value) {
         return left.Subtract(value);
     }
 
-    SVec2 operator*(SVec2 left, float value) {
+    Vec2 operator*(Vec2 left, float value) {
         return left.Multiply(value);
     }
 
-    SVec2 operator/(SVec2 left, float value) {
+    Vec2 operator/(Vec2 left, float value) {
         return left.Divide(value);
     }
 
-    bool SVec2::operator==(const SVec2 &other) const {
+    bool Vec2::operator==(const Vec2 &other) const {
         return x == other.x && y == other.y;
     }
 
-    bool SVec2::operator!=(const SVec2 &other) const {
+    bool Vec2::operator!=(const Vec2 &other) const {
         return !(*this == other);
     }
 
-    SVec2 &SVec2::operator+=(const SVec2 &other) {
+    Vec2 &Vec2::operator+=(const Vec2 &other) {
         return Add(other);
     }
 
-    SVec2 &SVec2::operator-=(const SVec2 &other) {
+    Vec2 &Vec2::operator-=(const Vec2 &other) {
         return Subtract(other);
     }
 
-    SVec2 &SVec2::operator*=(const SVec2 &other) {
+    Vec2 &Vec2::operator*=(const Vec2 &other) {
         return Multiply(other);
     }
 
-    SVec2 &SVec2::operator/=(const SVec2 &other) {
+    Vec2 &Vec2::operator/=(const Vec2 &other) {
         return Divide(other);
     }
 
-    bool SVec2::operator<(const SVec2 &other) const {
+    bool Vec2::operator<(const Vec2 &other) const {
         return x < other.x && y < other.y;
     }
 
-    bool SVec2::operator<=(const SVec2 &other) const {
+    bool Vec2::operator<=(const Vec2 &other) const {
         return x <= other.x && y <= other.y;
     }
 
-    bool SVec2::operator>(const SVec2 &other) const {
+    bool Vec2::operator>(const Vec2 &other) const {
         return x > other.x && y > other.y;
     }
 
-    bool SVec2::operator>=(const SVec2 &other) const {
+    bool Vec2::operator>=(const Vec2 &other) const {
         return x >= other.x && y >= other.y;
     }
 
-    float SVec2::Dot(const SVec2 &other) const {
+    float Vec2::Dot(const Vec2 &other) const {
         return x * other.x + y * other.y;
     }
 
-    SVec2 SVec2::Normalized() const {
+    Vec2 Vec2::Normalized() const {
         float magnitude = Magnitude();
         if (magnitude == 0) {
-            return SVec2();
+            return Vec2();
         } else {
-            return SVec2(x / magnitude, y / magnitude);
+            return Vec2(x / magnitude, y / magnitude);
         }
     }
 
-    float SVec2::Magnitude() const {
-        return CMathf::Sqrt(x * x + y * y);
+    float Vec2::Magnitude() const {
+        return Mathf::Sqrt(x * x + y * y);
     }
 
-    float SVec2::SqrMagnitude() const {
+    float Vec2::SqrMagnitude() const {
         return x * x + y * y;
     }
 
-    float SVec2::Distance(const SVec2 &other) const {
+    float Vec2::Distance(const Vec2 &other) const {
         float x = this->x - other.x;
         float y = this->y - other.y;
 
-        return CMathf::Sqrt(x * x + y * y);
+        return Mathf::Sqrt(x * x + y * y);
     }
 
 }

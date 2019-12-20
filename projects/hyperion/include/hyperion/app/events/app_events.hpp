@@ -2,14 +2,14 @@
 
 #include "hyperion/app/events/event.hpp"
 
-namespace Hyperion::Events {
+namespace Hyperion {
 
-    class CAppDisplayChangeEvent : public CEvent {
+    class AppDisplayChangeEvent : public Event {
     public:
-        EEventType GetType() const override { return EEventType::AppDisplayChange; }
-        EEventCategory GetCategory() const override { return EEventCategory::App; }
+        EventType GetType() const override { return EventType::AppDisplayChange; }
+        EventCategory GetCategory() const override { return EventCategory::App; }
 
-        static EEventType GetStaticType() { return EEventType::AppDisplayChange; }
+        static EventType GetStaticType() { return EventType::AppDisplayChange; }
     };
 
 }

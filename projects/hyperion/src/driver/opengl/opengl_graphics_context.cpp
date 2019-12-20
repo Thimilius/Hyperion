@@ -9,7 +9,7 @@
 
 namespace Hyperion::Rendering {
 
-    void COpenGLGraphicsContext::Init() {
+    void OpenGLGraphicsContext::Init() {
         // Enable debug messages
         if (OPENGL_DEBUG_LOG) {
             glDebugMessageCallback(DebugMessageCallback, NULL);
@@ -21,7 +21,7 @@ namespace Hyperion::Rendering {
         s32 extension_count;
         glGetIntegerv(GL_NUM_EXTENSIONS, &extension_count);
         for (s32 i = 0; i < extension_count; i++) {
-            TString extension = (char *)glGetStringi(GL_EXTENSIONS, i);
+            String extension = (char *)glGetStringi(GL_EXTENSIONS, i);
             m_extensions.push_back(extension);
             if (OPENGL_LOG_EXTENSIONS) {
                 HYP_LOG_INFO("OpenGL", "Extension: '{}' available!", extension);
@@ -47,19 +47,19 @@ namespace Hyperion::Rendering {
         HYP_LOG_INFO("OpenGL", "Max texture units: {} - Max MSAA samples: {}", m_limits.max_texture_units, m_limits.max_msaa_samples);
     }
 
-    void COpenGLGraphicsContext::CheckExtensions() {
+    void OpenGLGraphicsContext::CheckExtensions() {
         CheckExtension("GL_ARB_direct_state_access");
         CheckExtension("GL_EXT_direct_state_access");
         CheckExtension("GL_ARB_texture_filter_anisotropic");
     }
 
-    void COpenGLGraphicsContext::CheckExtension(const TString &extension) {
+    void OpenGLGraphicsContext::CheckExtension(const String &extension) {
         if (std::find(m_extensions.begin(), m_extensions.end(), extension) == m_extensions.end()) {
             HYP_PANIC_MESSAGE("OpenGL", "Manditory OpenGL extension: '{}' not available!", extension);
         }
     }
 
-    void COpenGLGraphicsContext::DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *user_pointer) {
+    void OpenGLGraphicsContext::DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *user_pointer) {
         const char *source_string;
         switch (source) {
             case GL_DEBUG_SOURCE_API:             source_string = "API"; break;

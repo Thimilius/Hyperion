@@ -5,23 +5,23 @@
 
 namespace Hyperion {
 
-    using TString = std::string;
+    using String = std::string;
 
-    using TWString = std::wstring;
+    using WideString = std::wstring;
 
-    class CStringUtils {
+    class StringUtils {
     public:
         template<typename ...Args>
-        inline static TString Format(const char *format, Args... args) {
+        inline static String Format(const char *format, Args... args) {
             return fmt::format(format, args...);
         }
 
         template<typename ...Args>
-        inline static TString Format(const TString &format, Args... args) {
+        inline static String Format(const String &format, Args... args) {
             return fmt::format(format, args...);
         }
 
-        inline static bool EndsWith(TString const &string, TString const &ending) {
+        inline static bool EndsWith(String const &string, String const &ending) {
             if (string.length() >= ending.length()) {
                 return string.compare(string.length() - ending.length(), ending.length(), ending) == 0;
             } else {
@@ -29,11 +29,11 @@ namespace Hyperion {
             }
         }
 
-        static TWString Utf8ToUtf16(const TString &string);
-        static TString Utf16ToUtf8(const TWString &string);
+        static WideString Utf8ToUtf16(const String &string);
+        static String Utf16ToUtf8(const WideString &string);
     private:
-        CStringUtils() = delete;
-        ~CStringUtils() = delete;
+        StringUtils() = delete;
+        ~StringUtils() = delete;
     };
 
 }

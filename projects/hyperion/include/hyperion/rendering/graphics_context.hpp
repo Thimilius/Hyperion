@@ -4,23 +4,23 @@
 
 namespace Hyperion::Rendering {
 
-    struct SContextProperties {
-        TString vendor;
-        TString renderer;
-        TString version;
+    struct ContextProperties {
+        String vendor;
+        String renderer;
+        String version;
     };
     
-    class CGraphicsContext {
+    class GraphicsContext {
     protected:
-        SContextProperties m_properties;
+        ContextProperties m_properties;
     public:
-        inline const SContextProperties &GetProperties() const { return m_properties; }
+        inline const ContextProperties &GetProperties() const { return m_properties; }
     protected:
         virtual void Init() = 0;
         virtual void SwapBuffers() = 0;
-        virtual void SetVSyncMode(EVSyncMode vsync_mode) = 0;
+        virtual void SetVSyncMode(VSyncMode vsync_mode) = 0;
 
-        friend class CWindowsWindow;
+        friend class WindowsWindow;
     };
 
 }

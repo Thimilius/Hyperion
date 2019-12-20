@@ -4,7 +4,7 @@
 
 namespace Hyperion::Audio {
 
-    void CAudioEngine::LoadSound(const TString &name, const TString &path) {
+    void AudioEngine::LoadSound(const String &name, const String &path) {
         FMOD::Sound *sound;
         if (m_system->createSound(path.c_str(), FMOD_DEFAULT, nullptr, &sound) != FMOD_OK) {
             HYP_LOG_ERROR("Audio", "Failed to load sound '{}' at path: '{}'!", name, path);
@@ -18,7 +18,7 @@ namespace Hyperion::Audio {
         }
     }
 
-    void CAudioEngine::PlaySound(const TString &name) {
+    void AudioEngine::PlaySound(const String &name) {
         auto it = m_sounds.find(name);
         if (it == m_sounds.end()) {
             HYP_LOG_ERROR("Audio", "Sound '{}' not loaded!", name);
@@ -30,7 +30,7 @@ namespace Hyperion::Audio {
         }
     }
 
-    void CAudioEngine::Init() {
+    void AudioEngine::Init() {
         if (FMOD::System_Create(&m_system) != FMOD_OK) {
             HYP_LOG_ERROR("Audio", "Failed to create FMOD system!");
             return;
@@ -48,7 +48,7 @@ namespace Hyperion::Audio {
         HYP_LOG_INFO("Audio", "Initialized audio engine!");
     }
 
-    void CAudioEngine::Shutdown() {
+    void AudioEngine::Shutdown() {
         for (auto sound : m_sounds) {
             sound.second->release();
         }

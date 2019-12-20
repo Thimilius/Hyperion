@@ -1,8 +1,8 @@
 #pragma once
 
-namespace Hyperion::Math {
+namespace Hyperion {
 
-    class CMathf {
+    class Mathf {
     public:
         static const float PI;
         static const float TAU;
@@ -25,8 +25,8 @@ namespace Hyperion::Math {
 
         static float Sqrt(float value);
     private:
-        CMathf() = delete;
-        ~CMathf() = delete;
+        Mathf() = delete;
+        ~Mathf() = delete;
     };
 
 }

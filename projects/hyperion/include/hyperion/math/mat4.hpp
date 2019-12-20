@@ -3,47 +3,47 @@
 #include "hyperion/math/vec4.hpp"
 #include "hyperion/math/vec3.hpp"
 
-namespace Hyperion::Math {
+namespace Hyperion {
 
-    struct SMat4 {
+    struct Mat4 {
         union {
             float elements[16]; // Index with elements[row + column * 4]
-            SVec4 columns[4];
+            Vec4 columns[4];
         };
 
-        SMat4();
-        SMat4(float diagonal);
-        SMat4(float *elements);
-        SMat4(const SVec4 &column0, const SVec4 &column1, const SVec4 &column2, const SVec4 &column3);
+        Mat4();
+        Mat4(float diagonal);
+        Mat4(float *elements);
+        Mat4(const Vec4 &column0, const Vec4 &column1, const Vec4 &column2, const Vec4 &column3);
 
-        SMat4 &Multiply(const SMat4 &other);
-        SVec3 Multiply(const SVec3 &other) const;
-        SVec4 Multiply(const SVec4 &other) const;
+        Mat4 &Multiply(const Mat4 &other);
+        Vec3 Multiply(const Vec3 &other) const;
+        Vec4 Multiply(const Vec4 &other) const;
 
-        SMat4 &operator*=(const SMat4 &other);
-        friend SMat4 operator*(SMat4 left, const SMat4 &right);
-        friend SVec3 operator*(const SMat4 &left, const SVec3 &right);
-        friend SVec4 operator*(const SMat4 &left, const SVec4 &right);
+        Mat4 &operator*=(const Mat4 &other);
+        friend Mat4 operator*(Mat4 left, const Mat4 &right);
+        friend Vec3 operator*(const Mat4 &left, const Vec3 &right);
+        friend Vec4 operator*(const Mat4 &left, const Vec4 &right);
 
-        SMat4 &Invert();
-        SMat4 Transpose();
+        Mat4 &Invert();
+        Mat4 Transpose();
 
-        SVec4 GetRow(int index) const;
-        void SetRow(int index, const SVec4 &column);
+        Vec4 GetRow(int index) const;
+        void SetRow(int index, const Vec4 &column);
 
-        TString ToString() const;
+        String ToString() const;
 
-        static SMat4 Identity();
-        static SMat4 Translate(const SVec3 &position);
-        static SMat4 Translate(float x, float y, float z);
-        static SMat4 Rotate(const SVec3 &axis, float angle);
-        static SMat4 Scale(const SVec3 &scale);
-        static SMat4 Scale(float x, float y, float z);
-        static SMat4 TRS(const SVec3 &position, const SVec3 &axis, float angle, const SVec3 &scale);
+        static Mat4 Identity();
+        static Mat4 Translate(const Vec3 &position);
+        static Mat4 Translate(float x, float y, float z);
+        static Mat4 Rotate(const Vec3 &axis, float angle);
+        static Mat4 Scale(const Vec3 &scale);
+        static Mat4 Scale(float x, float y, float z);
+        static Mat4 TRS(const Vec3 &position, const Vec3 &axis, float angle, const Vec3 &scale);
 
-        static SMat4 Orthographic(float left, float right, float bottom, float top, float z_near, float z_far);
-        static SMat4 Perspective(float fov, float aspect_ratio, float z_near, float z_far);
-        static SMat4 LookAt(const SVec3 &from, const SVec3 &to, const SVec3 &up);
+        static Mat4 Orthographic(float left, float right, float bottom, float top, float z_near, float z_far);
+        static Mat4 Perspective(float fov, float aspect_ratio, float z_near, float z_far);
+        static Mat4 LookAt(const Vec3 &from, const Vec3 &to, const Vec3 &up);
     };
 
 }

@@ -6,75 +6,75 @@
 
 namespace Hyperion {
 
-    class CApplication;
+    class Application;
     namespace Rendering {
-        class CGraphicsContext;
+        class GraphicsContext;
     }
 
-    enum class EWindowMode {
+    enum class WindowMode {
         Windowed,
         Borderless
     };
 
-    enum class EWindowState {
+    enum class WindowState {
         Normal,
         Minimized,
         Maximized
     };
 
-    enum class EVSyncMode {
+    enum class VSyncMode {
         DontSync,
         EveryVBlank,
         EverySecondVBlank
     };
 
-    class CWindow {
-        using EventCallbackFunction = std::function<void(Events::CEvent &)>;
+    class Window {
+        using EventCallbackFunction = std::function<void(Event &)>;
     protected:
-        TString m_title;
+        String m_title;
 
         u32 m_width;
         u32 m_height;
 
-        EWindowMode m_window_mode;
-        EWindowState m_window_state;
-        EVSyncMode m_vsync_mode;
+        WindowMode m_window_mode;
+        WindowState m_window_state;
+        VSyncMode m_vsync_mode;
 
         EventCallbackFunction m_event_callback;
 
-        TScope<Rendering::CGraphicsContext> m_graphics_context;
+        Scope<Rendering::GraphicsContext> m_graphics_context;
     public:
 
-        virtual ~CWindow() = default;
+        virtual ~Window() = default;
 
-        inline const TString &GetTitle() const { return m_title; }
-        virtual void SetTitle(const TString &title) = 0;
+        inline const String &GetTitle() const { return m_title; }
+        virtual void SetTitle(const String &title) = 0;
 
         inline u32 GetWidth() const { return m_width; }
         inline u32 GetHeight() const { return m_height; }
         virtual void SetSize(u32 width, u32 height) = 0;
 
-        inline EWindowMode GetWindowMode() const { return m_window_mode; }
-        virtual void SetWindowMode(EWindowMode window_mode) = 0;
+        inline WindowMode GetWindowMode() const { return m_window_mode; }
+        virtual void SetWindowMode(WindowMode window_mode) = 0;
 
-        inline EWindowState GetWindowState() const { return m_window_state; }
-        virtual void SetWindowState(EWindowState window_state) = 0;
+        inline WindowState GetWindowState() const { return m_window_state; }
+        virtual void SetWindowState(WindowState window_state) = 0;
 
-        inline EVSyncMode GetVSyncMode() const { return m_vsync_mode; }
-        virtual void SetVSyncMode(EVSyncMode vsync_mode) = 0;
+        inline VSyncMode GetVSyncMode() const { return m_vsync_mode; }
+        virtual void SetVSyncMode(VSyncMode vsync_mode) = 0;
 
-        inline const TScope<Rendering::CGraphicsContext> &GetGraphicsContext() const { return m_graphics_context; }
+        inline const Scope<Rendering::GraphicsContext> &GetGraphicsContext() const { return m_graphics_context; }
         
-        virtual void SetIcon(const TString &path) = 0;
+        virtual void SetIcon(const String &path) = 0;
     protected:
         virtual void Update() const = 0;
         virtual void Show() const = 0;
 
         void SetEventCallbackFunction(const EventCallbackFunction &callback) { m_event_callback = callback; }
 
-        static CWindow *Create(const TString &title, u32 width, u32 height, EWindowMode window_mode, EVSyncMode vsync_mode);
+        static Window *Create(const String &title, u32 width, u32 height, WindowMode window_mode, VSyncMode vsync_mode);
 
-        friend class CApplication;
+        friend class Application;
     };
 
 }

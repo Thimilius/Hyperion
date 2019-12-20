@@ -7,17 +7,15 @@
 
 namespace Hyperion {
 
-    using namespace Events;
-
-    CWindow *CWindow::Create(const TString &title, u32 width, u32 height, EWindowMode window_mode, EVSyncMode vsync_mode) {
-        return new CWindowsWindow(title, width, height, window_mode, vsync_mode);
+    Window *Window::Create(const String &title, u32 width, u32 height, WindowMode window_mode, VSyncMode vsync_mode) {
+        return new WindowsWindow(title, width, height, window_mode, vsync_mode);
     }
 
-    CWindowsWindow::CWindowsWindow(const TString &title, u32 width, u32 height, EWindowMode window_mode, EVSyncMode vsync_mode) {
+    WindowsWindow::WindowsWindow(const String &title, u32 width, u32 height, WindowMode window_mode, VSyncMode vsync_mode) {
         m_title = title;
         m_width = width;
         m_height = height;
-        m_window_state = EWindowState::Normal;
+        m_window_state = WindowState::Normal;
 
         u32 window_styles = WS_OVERLAPPEDWINDOW;
         auto window_class_name = L"HYPERION_WINDOW_CLASS";
@@ -38,12 +36,12 @@ namespace Hyperion {
             HYP_PANIC_MESSAGE("Engine", "Failed to register windows window class!");
         }
 
-        Math::SVec2 size = GetActualWindowSize(width, height);
+        Vec2 size = GetActualWindowSize(width, height);
 
         m_window_handle = CreateWindowExW(
             0,
             window_class_name,
-            CStringUtils::Utf8ToUtf16(title).c_str(),
+            StringUtils::Utf8ToUtf16(title).c_str(),
             window_styles,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
@@ -70,32 +68,32 @@ namespace Hyperion {
         SetVSyncMode(vsync_mode);
     }
 
-    void CWindowsWindow::SetTitle(const TString &title) {
+    void WindowsWindow::SetTitle(const String &title) {
         m_title = title;
-        if (!SetWindowTextW(m_window_handle, CStringUtils::Utf8ToUtf16(title).c_str())) {
+        if (!SetWindowTextW(m_window_handle, StringUtils::Utf8ToUtf16(title).c_str())) {
             HYP_PANIC_MESSAGE("Engine", "Failed to set window title!");
         }
     }
 
-    void CWindowsWindow::SetSize(u32 width, u32 height) {
+    void WindowsWindow::SetSize(u32 width, u32 height) {
         if (m_width == width && m_height == height) {
             return;
         }
 
         switch (m_window_mode) {
-            case Hyperion::EWindowMode::Windowed: {
+            case Hyperion::WindowMode::Windowed: {
                 // If we are maximized we first restore the window to be normal
-                if (m_window_state == EWindowState::Maximized) {
-                    SetWindowState(EWindowState::Normal);
+                if (m_window_state == WindowState::Maximized) {
+                    SetWindowState(WindowState::Normal);
                 }
 
-                Math::SVec2 size = GetActualWindowSize(width, height);
+                Vec2 size = GetActualWindowSize(width, height);
 
                 u32 flags = SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER;
                 SetWindowPos(m_window_handle, NULL, 0, 0, (u32)size.x, (u32)size.y, flags);
                 break;
             }
-            case Hyperion::EWindowMode::Borderless: {
+            case Hyperion::WindowMode::Borderless: {
                 // In borderless mode we do not resize because we would probably not fill the screen anymore
                 break;
             }
@@ -106,29 +104,29 @@ namespace Hyperion {
         m_height = height;
     }
 
-    void CWindowsWindow::SetWindowMode(EWindowMode window_mode) {
+    void WindowsWindow::SetWindowMode(WindowMode window_mode) {
         if (m_window_mode == window_mode) {
             return;
         }
 
         DWORD window_styles = GetWindowLongW(m_window_handle, GWL_STYLE);
 
-        EWindowMode last_window_mode = m_window_mode;
+        WindowMode last_window_mode = m_window_mode;
         // This already needs to be set here for all later message callbacks
         m_window_mode = window_mode;
 
         switch (window_mode) {
-            case Hyperion::EWindowMode::Windowed: {
+            case Hyperion::WindowMode::Windowed: {
                 SetWindowLongW(m_window_handle, GWL_STYLE, window_styles | (WS_OVERLAPPEDWINDOW));
                 SetWindowPlacement(m_window_handle, &m_previous_placement);
 
-                Math::SVec2 size = GetActualWindowSize(m_width, m_height);
+                Vec2 size = GetActualWindowSize(m_width, m_height);
 
                 u32 flags = SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED;
                 SetWindowPos(m_window_handle, NULL, 0, 0, (u32)size.x, (u32)size.y, flags);
                 break;
             }
-            case Hyperion::EWindowMode::Borderless: {
+            case Hyperion::WindowMode::Borderless: {
                 GetWindowPlacement(m_window_handle, &m_previous_placement);
 
                 MONITORINFO monitor_info = { sizeof(monitor_info) };
@@ -148,24 +146,24 @@ namespace Hyperion {
 
     }
 
-    void CWindowsWindow::SetWindowState(EWindowState window_state) {
+    void WindowsWindow::SetWindowState(WindowState window_state) {
         if (m_window_state == window_state) {
             return;
         }
 
         bool result = true;
         switch (window_state) {
-            case Hyperion::EWindowState::Normal: {
+            case Hyperion::WindowState::Normal: {
                 result = ShowWindow(m_window_handle, SW_RESTORE);
                 break;
             }
-            case Hyperion::EWindowState::Minimized: {
+            case Hyperion::WindowState::Minimized: {
                 result = ShowWindow(m_window_handle, SW_MINIMIZE);
                 break;
             }
-            case Hyperion::EWindowState::Maximized: {
+            case Hyperion::WindowState::Maximized: {
                 // We only maximize in windowed mode
-                if (m_window_mode == EWindowMode::Windowed) {
+                if (m_window_mode == WindowMode::Windowed) {
                     result = ShowWindow(m_window_handle, SW_MAXIMIZE);
                 }
                 break;
@@ -180,15 +178,15 @@ namespace Hyperion {
         m_window_state = window_state;
     }
 
-    void CWindowsWindow::SetVSyncMode(EVSyncMode vsync_mode) {
+    void WindowsWindow::SetVSyncMode(VSyncMode vsync_mode) {
         if (m_vsync_mode != vsync_mode) {
             m_vsync_mode = vsync_mode;
             m_graphics_context->SetVSyncMode(vsync_mode);
         }
     }
 
-    void CWindowsWindow::SetIcon(const TString &path) {
-        HICON icon = (HICON)LoadImageW(NULL, CStringUtils::Utf8ToUtf16(path).c_str(), IMAGE_ICON, 64, 64, LR_LOADFROMFILE);
+    void WindowsWindow::SetIcon(const String &path) {
+        HICON icon = (HICON)LoadImageW(NULL, StringUtils::Utf8ToUtf16(path).c_str(), IMAGE_ICON, 64, 64, LR_LOADFROMFILE);
         SendMessageW(m_window_handle, WM_SETICON, ICON_SMALL, (LPARAM)icon);
         SendMessageW(m_window_handle, WM_SETICON, ICON_BIG, (LPARAM)icon);
 
@@ -200,7 +198,7 @@ namespace Hyperion {
         }
     }
 
-    void CWindowsWindow::Update() const {
+    void WindowsWindow::Update() const {
         m_graphics_context->SwapBuffers();
 
         MSG message;
@@ -210,40 +208,40 @@ namespace Hyperion {
         }
     }
 
-    void CWindowsWindow::Show() const {
+    void WindowsWindow::Show() const {
         ShowWindow(m_window_handle, SW_SHOWNORMAL);
     }
 
-    Math::SVec2 CWindowsWindow::GetActualWindowSize(u32 client_width, u32 client_height) {
+    Vec2 WindowsWindow::GetActualWindowSize(u32 client_width, u32 client_height) {
         RECT window_rect = { 0 };
         window_rect.right = (LONG)client_width;
         window_rect.bottom = (LONG)client_height;
         if (!AdjustWindowRect(&window_rect, GetWindowLongW(m_window_handle, GWL_STYLE), false)) {
             HYP_PANIC_MESSAGE("Engine", "Failed to calculate window size!");
         }
-        return Math::SVec2((float)(window_rect.right - window_rect.left), (float)(window_rect.bottom - window_rect.top));
+        return Vec2((float)(window_rect.right - window_rect.left), (float)(window_rect.bottom - window_rect.top));
     }
 
-    EMouseButtonCode CWindowsWindow::TranslateMouseButtonCode(u32 code) const {
+    MouseButtonCode WindowsWindow::TranslateMouseButtonCode(u32 code) const {
         code = code & ~(MK_CONTROL & MK_SHIFT);
 
         switch (code) {
-            case MK_LBUTTON: return EMouseButtonCode::Left;
-            case MK_RBUTTON: return EMouseButtonCode::Right;
-            case MK_MBUTTON: return EMouseButtonCode::Middle;
+            case MK_LBUTTON: return MouseButtonCode::Left;
+            case MK_RBUTTON: return MouseButtonCode::Right;
+            case MK_MBUTTON: return MouseButtonCode::Middle;
 
-            case MK_XBUTTON1: return EMouseButtonCode::Button4;
-            case MK_XBUTTON2: return EMouseButtonCode::Button5;
+            case MK_XBUTTON1: return MouseButtonCode::Button4;
+            case MK_XBUTTON2: return MouseButtonCode::Button5;
 
-            default: return EMouseButtonCode::None;
+            default: return MouseButtonCode::None;
         }
     }
 
-    EKeyCode CWindowsWindow::TranslateKeyCode(u32 w_param, u32 l_param) const {
+    KeyCode WindowsWindow::TranslateKeyCode(u32 w_param, u32 l_param) const {
         // Left and right keys need to be distinguished as extended keys
         if (w_param == VK_CONTROL) {
             if (l_param & 0x01000000) {
-                return EKeyCode::RightControl;
+                return KeyCode::RightControl;
             }
 
             // Alt-Gr sends both left control and alt right messages.
@@ -255,12 +253,12 @@ namespace Hyperion {
                 if (next_message.message == WM_KEYDOWN || next_message.message == WM_SYSKEYDOWN || next_message.message == WM_KEYUP || next_message.message == WM_SYSKEYUP) {
                     if (next_message.wParam == VK_MENU && (next_message.lParam & 0x01000000) && next_message.time == message_time) {
                         // Next message is right alt down so discard this
-                        return EKeyCode::None;
+                        return KeyCode::None;
                     }
                 }
             }
 
-            return EKeyCode::LeftControl;
+            return KeyCode::LeftControl;
         } else if (w_param == VK_SHIFT) {
             // Left and right shift keys are not send as extended keys
             // and therefore need to be queried explicitly
@@ -268,178 +266,178 @@ namespace Hyperion {
             bool right_shift_down = GetAsyncKeyState(VK_RSHIFT) & 0x8000;
 
             if (left_shift_down) {
-                return EKeyCode::LeftShift;
+                return KeyCode::LeftShift;
             } else if (right_shift_down) {
-                return EKeyCode::RightShift;
+                return KeyCode::RightShift;
             } else {
                 // If neither the right nor the left shift key is down this means they just got released.
                 // however we can not distinguish between the two and just send out both release events explicitly
 
                 // FIXME: The event dispatching should not be done in this method
-                CKeyReleasedEvent left_event(EKeyCode::LeftShift, GetKeyModifier());
-                CKeyReleasedEvent right_event(EKeyCode::RightShift, GetKeyModifier());
+                KeyReleasedEvent left_event(KeyCode::LeftShift, GetKeyModifier());
+                KeyReleasedEvent right_event(KeyCode::RightShift, GetKeyModifier());
                 DispatchEvent(left_event);
                 DispatchEvent(right_event);
 
-                return EKeyCode::None;
+                return KeyCode::None;
             }
         } else if (w_param == VK_MENU) {
             if (l_param & 0x01000000) {
-                return EKeyCode::RightAlt;
+                return KeyCode::RightAlt;
             } else {
-                return EKeyCode::LeftAlt;
+                return KeyCode::LeftAlt;
             }
         }
 
         switch (w_param) {
-            case '1': return EKeyCode::Alpha1;
-            case '2': return EKeyCode::Alpha2;
-            case '3': return EKeyCode::Alpha3;
-            case '4': return EKeyCode::Alpha4;
-            case '5': return EKeyCode::Alpha5;
-            case '6': return EKeyCode::Alpha6;
-            case '7': return EKeyCode::Alpha7;
-            case '8': return EKeyCode::Alpha8;
-            case '9': return EKeyCode::Alpha9;
+            case '1': return KeyCode::Alpha1;
+            case '2': return KeyCode::Alpha2;
+            case '3': return KeyCode::Alpha3;
+            case '4': return KeyCode::Alpha4;
+            case '5': return KeyCode::Alpha5;
+            case '6': return KeyCode::Alpha6;
+            case '7': return KeyCode::Alpha7;
+            case '8': return KeyCode::Alpha8;
+            case '9': return KeyCode::Alpha9;
 
-            case 'A': return EKeyCode::A;
-            case 'B': return EKeyCode::B;
-            case 'C': return EKeyCode::C;
-            case 'D': return EKeyCode::D;
-            case 'E': return EKeyCode::E;
-            case 'F': return EKeyCode::F;
-            case 'G': return EKeyCode::G;
-            case 'H': return EKeyCode::H;
-            case 'I': return EKeyCode::I;
-            case 'J': return EKeyCode::J;
-            case 'K': return EKeyCode::K;
-            case 'L': return EKeyCode::L;
-            case 'M': return EKeyCode::M;
-            case 'N': return EKeyCode::N;
-            case 'O': return EKeyCode::O;
-            case 'P': return EKeyCode::P;
-            case 'Q': return EKeyCode::Q;
-            case 'R': return EKeyCode::R;
-            case 'S': return EKeyCode::S;
-            case 'T': return EKeyCode::T;
-            case 'U': return EKeyCode::U;
-            case 'V': return EKeyCode::V;
-            case 'W': return EKeyCode::W;
-            case 'X': return EKeyCode::X;
-            case 'Y': return EKeyCode::Y;
-            case 'Z': return EKeyCode::Z;
+            case 'A': return KeyCode::A;
+            case 'B': return KeyCode::B;
+            case 'C': return KeyCode::C;
+            case 'D': return KeyCode::D;
+            case 'E': return KeyCode::E;
+            case 'F': return KeyCode::F;
+            case 'G': return KeyCode::G;
+            case 'H': return KeyCode::H;
+            case 'I': return KeyCode::I;
+            case 'J': return KeyCode::J;
+            case 'K': return KeyCode::K;
+            case 'L': return KeyCode::L;
+            case 'M': return KeyCode::M;
+            case 'N': return KeyCode::N;
+            case 'O': return KeyCode::O;
+            case 'P': return KeyCode::P;
+            case 'Q': return KeyCode::Q;
+            case 'R': return KeyCode::R;
+            case 'S': return KeyCode::S;
+            case 'T': return KeyCode::T;
+            case 'U': return KeyCode::U;
+            case 'V': return KeyCode::V;
+            case 'W': return KeyCode::W;
+            case 'X': return KeyCode::X;
+            case 'Y': return KeyCode::Y;
+            case 'Z': return KeyCode::Z;
 
-            case VK_ESCAPE: return EKeyCode::Escape;
-            case VK_BACK: return EKeyCode::Back;
-            case VK_TAB: return EKeyCode::Tab;
-            case VK_SPACE: return EKeyCode::Space;
-            case VK_RETURN: return EKeyCode::Return;
+            case VK_ESCAPE: return KeyCode::Escape;
+            case VK_BACK: return KeyCode::Back;
+            case VK_TAB: return KeyCode::Tab;
+            case VK_SPACE: return KeyCode::Space;
+            case VK_RETURN: return KeyCode::Return;
 
-            case VK_PRINT: return EKeyCode::Print;
-            case VK_SCROLL: return EKeyCode::Scroll;
-            case VK_PAUSE: return EKeyCode::Pause;
+            case VK_PRINT: return KeyCode::Print;
+            case VK_SCROLL: return KeyCode::Scroll;
+            case VK_PAUSE: return KeyCode::Pause;
 
-            case VK_INSERT: return EKeyCode::Insert;
-            case VK_DELETE: return EKeyCode::Delete;
-            case VK_HOME: return EKeyCode::Home;
-            case VK_END: return EKeyCode::End;
-            case VK_PRIOR: return EKeyCode::PageUp;
-            case VK_NEXT: return EKeyCode::PageDown;
+            case VK_INSERT: return KeyCode::Insert;
+            case VK_DELETE: return KeyCode::Delete;
+            case VK_HOME: return KeyCode::Home;
+            case VK_END: return KeyCode::End;
+            case VK_PRIOR: return KeyCode::PageUp;
+            case VK_NEXT: return KeyCode::PageDown;
 
-            case VK_OEM_PLUS: return EKeyCode::Plus;
-            case VK_OEM_MINUS: return EKeyCode::Minus;
-            case VK_OEM_PERIOD: return EKeyCode::Period;
-            case VK_OEM_COMMA: return EKeyCode::Comma;
+            case VK_OEM_PLUS: return KeyCode::Plus;
+            case VK_OEM_MINUS: return KeyCode::Minus;
+            case VK_OEM_PERIOD: return KeyCode::Period;
+            case VK_OEM_COMMA: return KeyCode::Comma;
 
-            case VK_UP: return EKeyCode::Up;
-            case VK_DOWN: return EKeyCode::Down;
-            case VK_LEFT: return EKeyCode::Left;
-            case VK_RIGHT: return EKeyCode::Right;
+            case VK_UP: return KeyCode::Up;
+            case VK_DOWN: return KeyCode::Down;
+            case VK_LEFT: return KeyCode::Left;
+            case VK_RIGHT: return KeyCode::Right;
 
-            case VK_NUMLOCK: return EKeyCode::Numlock;
-            case VK_CAPITAL: return EKeyCode::Capslock;
+            case VK_NUMLOCK: return KeyCode::Numlock;
+            case VK_CAPITAL: return KeyCode::Capslock;
 
-            case VK_LWIN: return EKeyCode::LeftSuper;
-            case VK_RWIN: return EKeyCode::RightSuper;
-            case VK_APPS: return EKeyCode::Application;
+            case VK_LWIN: return KeyCode::LeftSuper;
+            case VK_RWIN: return KeyCode::RightSuper;
+            case VK_APPS: return KeyCode::Application;
 
-            case VK_F1: return EKeyCode::F1;
-            case VK_F2: return EKeyCode::F2;
-            case VK_F3: return EKeyCode::F3;
-            case VK_F4: return EKeyCode::F4;
-            case VK_F5: return EKeyCode::F5;
-            case VK_F6: return EKeyCode::F6;
-            case VK_F7: return EKeyCode::F7;
-            case VK_F8: return EKeyCode::F8;
-            case VK_F9: return EKeyCode::F9;
-            case VK_F10: return EKeyCode::F10;
-            case VK_F11: return EKeyCode::F11;
-            case VK_F12: return EKeyCode::F12;
-            case VK_F13: return EKeyCode::F13;
-            case VK_F14: return EKeyCode::F14;
-            case VK_F15: return EKeyCode::F15;
-            case VK_F16: return EKeyCode::F16;
-            case VK_F17: return EKeyCode::F17;
-            case VK_F18: return EKeyCode::F18;
-            case VK_F19: return EKeyCode::F19;
-            case VK_F20: return EKeyCode::F20;
-            case VK_F21: return EKeyCode::F21;
-            case VK_F22: return EKeyCode::F22;
-            case VK_F23: return EKeyCode::F23;
-            case VK_F24: return EKeyCode::F24;
+            case VK_F1: return KeyCode::F1;
+            case VK_F2: return KeyCode::F2;
+            case VK_F3: return KeyCode::F3;
+            case VK_F4: return KeyCode::F4;
+            case VK_F5: return KeyCode::F5;
+            case VK_F6: return KeyCode::F6;
+            case VK_F7: return KeyCode::F7;
+            case VK_F8: return KeyCode::F8;
+            case VK_F9: return KeyCode::F9;
+            case VK_F10: return KeyCode::F10;
+            case VK_F11: return KeyCode::F11;
+            case VK_F12: return KeyCode::F12;
+            case VK_F13: return KeyCode::F13;
+            case VK_F14: return KeyCode::F14;
+            case VK_F15: return KeyCode::F15;
+            case VK_F16: return KeyCode::F16;
+            case VK_F17: return KeyCode::F17;
+            case VK_F18: return KeyCode::F18;
+            case VK_F19: return KeyCode::F19;
+            case VK_F20: return KeyCode::F20;
+            case VK_F21: return KeyCode::F21;
+            case VK_F22: return KeyCode::F22;
+            case VK_F23: return KeyCode::F23;
+            case VK_F24: return KeyCode::F24;
 
-            case VK_NUMPAD0: return EKeyCode::Num0;
-            case VK_NUMPAD1: return EKeyCode::Num1;
-            case VK_NUMPAD2: return EKeyCode::Num2;
-            case VK_NUMPAD3: return EKeyCode::Num3;
-            case VK_NUMPAD4: return EKeyCode::Num4;
-            case VK_NUMPAD5: return EKeyCode::Num5;
-            case VK_NUMPAD6: return EKeyCode::Num6;
-            case VK_NUMPAD7: return EKeyCode::Num7;
-            case VK_NUMPAD8: return EKeyCode::Num8;
-            case VK_NUMPAD9: return EKeyCode::Num9;
+            case VK_NUMPAD0: return KeyCode::Num0;
+            case VK_NUMPAD1: return KeyCode::Num1;
+            case VK_NUMPAD2: return KeyCode::Num2;
+            case VK_NUMPAD3: return KeyCode::Num3;
+            case VK_NUMPAD4: return KeyCode::Num4;
+            case VK_NUMPAD5: return KeyCode::Num5;
+            case VK_NUMPAD6: return KeyCode::Num6;
+            case VK_NUMPAD7: return KeyCode::Num7;
+            case VK_NUMPAD8: return KeyCode::Num8;
+            case VK_NUMPAD9: return KeyCode::Num9;
 
-            case VK_ADD: return EKeyCode::NumAdd;
-            case VK_SUBTRACT: return EKeyCode::NumSubtract;
-            case VK_DIVIDE: return EKeyCode::NumDivide;
-            case VK_MULTIPLY: return EKeyCode::NumMultiply;
-            case VK_SEPARATOR: return EKeyCode::NumEnter;
-            case VK_DECIMAL: return EKeyCode::NumComma;
+            case VK_ADD: return KeyCode::NumAdd;
+            case VK_SUBTRACT: return KeyCode::NumSubtract;
+            case VK_DIVIDE: return KeyCode::NumDivide;
+            case VK_MULTIPLY: return KeyCode::NumMultiply;
+            case VK_SEPARATOR: return KeyCode::NumEnter;
+            case VK_DECIMAL: return KeyCode::NumComma;
 
-            default: return EKeyCode::None;
+            default: return KeyCode::None;
         }
     }
 
-    EKeyModifier CWindowsWindow::GetKeyModifier() const {
-        EKeyModifier key_modifier = EKeyModifier::None;
+    KeyModifier WindowsWindow::GetKeyModifier() const {
+        KeyModifier key_modifier = KeyModifier::None;
 
         if (GetKeyState(VK_SHIFT) & 0x8000) {
-            key_modifier |= EKeyModifier::Shift;
+            key_modifier |= KeyModifier::Shift;
         }
         if (GetKeyState(VK_CONTROL) & 0x8000) {
-            key_modifier |= EKeyModifier::Control;
+            key_modifier |= KeyModifier::Control;
         }
         if (GetKeyState(VK_MENU) & 0x8000) {
-            key_modifier |= EKeyModifier::Alt;
+            key_modifier |= KeyModifier::Alt;
         }
         if ((GetKeyState(VK_LWIN) | GetKeyState(VK_RWIN)) & 0x8000) {
-            key_modifier |= EKeyModifier::Super;
+            key_modifier |= KeyModifier::Super;
         }
         if (GetKeyState(VK_CAPITAL) & 1) {
-            key_modifier |= EKeyModifier::Capslock;
+            key_modifier |= KeyModifier::Capslock;
         }
         if (GetKeyState(VK_NUMLOCK) & 1) {
-            key_modifier |= EKeyModifier::Numlock;
+            key_modifier |= KeyModifier::Numlock;
         }
 
         return key_modifier;
     }
 
-    void CWindowsWindow::CreateContext() {
-        switch (Rendering::CRenderAPI::GetAPI()) {
-            case Rendering::ERenderAPI::OpenGL:
+    void WindowsWindow::CreateContext() {
+        switch (Rendering::RenderAPI::GetBackendAPI()) {
+            case Rendering::RenderBackendAPI::OpenGL:
             {
-                m_graphics_context.reset(new Rendering::CWindowsOpenGLGraphicsContext(m_window_handle));
+                m_graphics_context.reset(new Rendering::WindowsOpenGLGraphicsContext(m_window_handle));
                 break;
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
@@ -448,13 +446,13 @@ namespace Hyperion {
         m_graphics_context->Init();
     }
 
-    void CWindowsWindow::DispatchEvent(CEvent &event) const {
+    void WindowsWindow::DispatchEvent(Event &event) const {
         if (m_event_callback != nullptr) {
             m_event_callback(event);
         }
     }
 
-    u32 CWindowsWindow::GetMouseButtonFromMessage(u32 message, u32 w_param) const {
+    u32 WindowsWindow::GetMouseButtonFromMessage(u32 message, u32 w_param) const {
         if (message == WM_LBUTTONDOWN || message == WM_LBUTTONUP) {
             return MK_LBUTTON;
         } else if (message == WM_RBUTTONDOWN || message == WM_RBUTTONUP) {
@@ -474,11 +472,11 @@ namespace Hyperion {
         }
     }
 
-    LRESULT CWindowsWindow::MessageCallback(HWND window_handle, u32 message, WPARAM w_param, LPARAM l_param) {
+    LRESULT WindowsWindow::MessageCallback(HWND window_handle, u32 message, WPARAM w_param, LPARAM l_param) {
         LRESULT result = 0;
 
         // This will be null on WM_CREATE
-        CWindowsWindow *window = (CWindowsWindow*)GetWindowLongPtrW(window_handle, GWLP_USERDATA);
+        WindowsWindow *window = (WindowsWindow*)GetWindowLongPtrW(window_handle, GWLP_USERDATA);
 
         switch (message) {
             case WM_CREATE: {
@@ -490,7 +488,7 @@ namespace Hyperion {
 
             case WM_DEVICECHANGE:
             case WM_DISPLAYCHANGE: {
-                CAppDisplayChangeEvent event;
+                AppDisplayChangeEvent event;
                 window->DispatchEvent(event);
                 break;
             }
@@ -498,16 +496,16 @@ namespace Hyperion {
             case WM_CHAR: 
             case WM_SYSCHAR: {
                 u32 character = (u32)w_param;
-                CKeyTypedEvent event(character, window->GetKeyModifier());
+                KeyTypedEvent event(character, window->GetKeyModifier());
                 window->DispatchEvent(event);
                 break;
             }
 
             case WM_KEYDOWN: 
             case WM_SYSKEYDOWN: {
-                EKeyCode key_code = window->TranslateKeyCode((u32)w_param, (u32)l_param);
-                if (key_code != EKeyCode::None) {
-                    CKeyPressedEvent event(key_code, window->GetKeyModifier());
+                KeyCode key_code = window->TranslateKeyCode((u32)w_param, (u32)l_param);
+                if (key_code != KeyCode::None) {
+                    KeyPressedEvent event(key_code, window->GetKeyModifier());
                     window->DispatchEvent(event);
                 }
                 break;
@@ -515,9 +513,9 @@ namespace Hyperion {
 
             case WM_KEYUP:
             case WM_SYSKEYUP: {
-                EKeyCode key_code = window->TranslateKeyCode((u32)w_param, (u32)l_param);
-                if (key_code != EKeyCode::None) {
-                    CKeyReleasedEvent event(key_code, window->GetKeyModifier());
+                KeyCode key_code = window->TranslateKeyCode((u32)w_param, (u32)l_param);
+                if (key_code != KeyCode::None) {
+                    KeyReleasedEvent event(key_code, window->GetKeyModifier());
                     window->DispatchEvent(event);
                 }
                 break;
@@ -528,7 +526,7 @@ namespace Hyperion {
             case WM_MBUTTONDOWN:
             case WM_XBUTTONDOWN: {
                 u32 code = window->GetMouseButtonFromMessage((u32)message, (u32)w_param);
-                CMouseButtonPressedEvent event(window->TranslateMouseButtonCode(code), window->GetKeyModifier());
+                MouseButtonPressedEvent event(window->TranslateMouseButtonCode(code), window->GetKeyModifier());
                 window->DispatchEvent(event);
                 break;
             }
@@ -538,7 +536,7 @@ namespace Hyperion {
             case WM_MBUTTONUP:
             case WM_XBUTTONUP: {
                 u32 code = window->GetMouseButtonFromMessage((u32)message, (u32)w_param);
-                CMouseButtonReleasedEvent event(window->TranslateMouseButtonCode(code), window->GetKeyModifier());
+                MouseButtonReleasedEvent event(window->TranslateMouseButtonCode(code), window->GetKeyModifier());
                 window->DispatchEvent(event);
                 break;
             }
@@ -546,25 +544,25 @@ namespace Hyperion {
             case WM_MOUSEMOVE: {
                 u32 x = LOWORD(l_param);
                 u32 y = HIWORD(l_param);
-                CMouseMovedEvent event((float)x, (float)y);
+                MouseMovedEvent event((float)x, (float)y);
                 window->DispatchEvent(event);
                 break;
             }
 
             case WM_MOUSEWHEEL: {
                 s16 scroll = GET_WHEEL_DELTA_WPARAM(w_param);
-                CMouseScrolledEvent event(scroll / (float)WHEEL_DELTA);
+                MouseScrolledEvent event(scroll / (float)WHEEL_DELTA);
                 window->DispatchEvent(event);
                 break;
             };
 
             case WM_SIZE: {
-                EWindowState window_state;
+                WindowState window_state;
                 switch (w_param) {
-                    case SIZE_RESTORED: window_state = EWindowState::Normal; break;
-                    case SIZE_MINIMIZED: window_state = EWindowState::Minimized; break;
-                    case SIZE_MAXIMIZED: window_state = EWindowState::Maximized; break;
-                    default: window_state = EWindowState::Normal; break;
+                    case SIZE_RESTORED: window_state = WindowState::Normal; break;
+                    case SIZE_MINIMIZED: window_state = WindowState::Minimized; break;
+                    case SIZE_MAXIMIZED: window_state = WindowState::Maximized; break;
+                    default: window_state = WindowState::Normal; break;
                 }
 
                 u32 width = LOWORD(l_param);
@@ -576,7 +574,7 @@ namespace Hyperion {
 
                 // We do not want to generate a window resize event when the size gets 0 because the window got minimized
                 if (width > 0 && height > 0) {
-                    CWindowResizeEvent event(width, height);
+                    WindowResizeEvent event(width, height);
                     window->DispatchEvent(event);
                 }
                 
@@ -584,20 +582,20 @@ namespace Hyperion {
             }
 
             case WM_MOVE: {
-                CWindowMovedEvent event;
+                WindowMovedEvent event;
                 window->DispatchEvent(event);
                 break;
             }
 
             case WM_CLOSE: {
-                CWindowCloseEvent event;
+                WindowCloseEvent event;
                 window->DispatchEvent(event);
                 break;
             }
 
             case WM_SETFOCUS: 
             case WM_KILLFOCUS: {
-                CWindowFocusEvent event(message == WM_SETFOCUS);
+                WindowFocusEvent event(message == WM_SETFOCUS);
                 window->DispatchEvent(event);
                 break;
             }

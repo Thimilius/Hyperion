@@ -4,23 +4,23 @@
 
 namespace Hyperion::Rendering {
 
-    enum class ERenderTextureFormat {
+    enum class RenderTextureFormat {
         None,
         RGBA8,
         RGBA16F
     };
 
-    class CRenderTexture {
+    class RenderTexture {
     protected:
         u32 m_width;
         u32 m_height;
-        ERenderTextureFormat m_format;
+        RenderTextureFormat m_format;
     public:
-        virtual ~CRenderTexture() { }
+        virtual ~RenderTexture() { }
 
         inline u32 GetWidth() const { return m_width; }
         inline u32 GetHeight() const { return m_height; }
-        inline ERenderTextureFormat GetFormat() const { return m_format; }
+        inline RenderTextureFormat GetFormat() const { return m_format; }
 
         virtual u32 GetID() const = 0;
 
@@ -28,7 +28,7 @@ namespace Hyperion::Rendering {
 
         virtual void Resize(u32 width, u32 height) = 0;
 
-        static TRef<CRenderTexture> Create(u32 width, u32 height, ERenderTextureFormat format);
+        static Ref<RenderTexture> Create(u32 width, u32 height, RenderTextureFormat format);
     };
 
 }

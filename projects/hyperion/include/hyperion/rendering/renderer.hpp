@@ -8,25 +8,25 @@
 
 namespace Hyperion::Rendering {
 
-    class CRenderer {
+    class Renderer {
     private:
-        struct SState {
+        struct State {
             struct {
-                Math::SMat4 view;
-                Math::SMat4 projection;
+                Mat4 view;
+                Mat4 projection;
 
-                Math::SMat4 view_projection;
+                Mat4 view_projection;
             } transform;
         };
 
-        inline static SState s_state;
+        inline static State s_state;
     public:
-        static void Begin(const TRef<CCamera> &camera);
-        static void Submit(const TRef<CMesh> &mesh, const TRef<CShader> &shader, const Math::SMat4 &transform);
+        static void Begin(const Ref<Camera> &camera);
+        static void Submit(const Ref<Mesh> &mesh, const Ref<Shader> &shader, const Mat4 &transform);
         static void End();
     private:
-        CRenderer() = delete;
-        ~CRenderer() = delete;
+        Renderer() = delete;
+        ~Renderer() = delete;
     };
 
 }

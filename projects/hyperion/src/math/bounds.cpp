@@ -2,32 +2,32 @@
 
 #include "hyperion/math/bounds.hpp"
 
-namespace Hyperion::Math {
+namespace Hyperion {
 
-    SBounds::SBounds() { }
+    Bounds::Bounds() { }
     
-    SBounds::SBounds(SVec3 center, SVec3 size)
+    Bounds::Bounds(Vec3 center, Vec3 size)
         : center(center), extends(size * 0.5f) { }
 
-    SVec3 SBounds::GetSize() const {
+    Vec3 Bounds::GetSize() const {
         return extends * 2.0f;
     }
 
-    SVec3 SBounds::GetMin() const {
+    Vec3 Bounds::GetMin() const {
         return center - extends;
     }
 
-    SVec3 SBounds::GetMax() const {
+    Vec3 Bounds::GetMax() const {
         return center + extends;
     }
 
-    void SBounds::SetMinMax(SVec3 min, SVec3 max) {
+    void Bounds::SetMinMax(Vec3 min, Vec3 max) {
         extends = (max - min) * 0.5f;
         center = min + extends;
     }
 
-    TString SBounds::ToString() const {
-        return CStringUtils::Format("(Center: {}, Extends: {})", center.ToString(), extends.ToString());
+    String Bounds::ToString() const {
+        return StringUtils::Format("(Center: {}, Extends: {})", center.ToString(), extends.ToString());
     }
 
 }

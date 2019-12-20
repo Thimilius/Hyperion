@@ -6,12 +6,12 @@
 
 namespace Hyperion {
 
-    class CWindowsTimer : public CTimer {
+    class WindowsTimer : public Timer {
     private:
         LARGE_INTEGER m_start;
         double m_frequency;
     public:
-        CWindowsTimer();
+        WindowsTimer();
 
         float ElapsedSeconds() const override;
         float ElapsedMilliSeconds() const override;

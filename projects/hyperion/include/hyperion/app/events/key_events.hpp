@@ -2,53 +2,53 @@
 
 #include "hyperion/app/events/event.hpp"
 
-namespace Hyperion::Events {
+namespace Hyperion {
 
-    class CKeyEvent : public CEvent {
+    class KeyEvent : public Event {
     private:
-        EKeyCode m_key_code;
-        EKeyModifier m_key_modifier;
+        KeyCode m_key_code;
+        KeyModifier m_key_modifier;
     public:
-        CKeyEvent(EKeyCode key_code, EKeyModifier key_modifier) : m_key_code(key_code), m_key_modifier(key_modifier) {}
+        KeyEvent(KeyCode key_code, KeyModifier key_modifier) : m_key_code(key_code), m_key_modifier(key_modifier) {}
 
-        inline EKeyCode GetKeyCode() const { return m_key_code; }
-        inline bool HasKeyModifier(EKeyModifier key_modifier) const { return (m_key_modifier & key_modifier) == key_modifier; }
+        inline KeyCode GetKeyCode() const { return m_key_code; }
+        inline bool HasKeyModifier(KeyModifier key_modifier) const { return (m_key_modifier & key_modifier) == key_modifier; }
 
-        EEventCategory GetCategory() const override { return EEventCategory::Input & EEventCategory::Keyboard; }
+        EventCategory GetCategory() const override { return EventCategory::Input & EventCategory::Keyboard; }
     };
 
-    class CKeyPressedEvent : public CKeyEvent {
+    class KeyPressedEvent : public KeyEvent {
     public:
-        CKeyPressedEvent(EKeyCode key_code, EKeyModifier key_modifier) : CKeyEvent(key_code, key_modifier) {}
+        KeyPressedEvent(KeyCode key_code, KeyModifier key_modifier) : KeyEvent(key_code, key_modifier) {}
 
-        EEventType GetType() const override { return EEventType::KeyPressed; }
+        EventType GetType() const override { return EventType::KeyPressed; }
 
-        static EEventType GetStaticType() { return EEventType::KeyPressed; }
+        static EventType GetStaticType() { return EventType::KeyPressed; }
     };
 
-    class CKeyReleasedEvent : public CKeyEvent {
+    class KeyReleasedEvent : public KeyEvent {
     public:
-        CKeyReleasedEvent(EKeyCode key_code, EKeyModifier key_modifier) : CKeyEvent(key_code, key_modifier) {}
+        KeyReleasedEvent(KeyCode key_code, KeyModifier key_modifier) : KeyEvent(key_code, key_modifier) {}
 
-        EEventType GetType() const override { return EEventType::KeyReleased; }
+        EventType GetType() const override { return EventType::KeyReleased; }
 
-        static EEventType GetStaticType() { return EEventType::KeyReleased; }
+        static EventType GetStaticType() { return EventType::KeyReleased; }
     };
 
-    class CKeyTypedEvent : public CEvent {
+    class KeyTypedEvent : public Event {
     private:
         u32 m_character;
-        EKeyModifier m_key_modifier;
+        KeyModifier m_key_modifier;
     public:
-        CKeyTypedEvent(u32 character, EKeyModifier key_modifier) : m_character(character), m_key_modifier(key_modifier) {}
+        KeyTypedEvent(u32 character, KeyModifier key_modifier) : m_character(character), m_key_modifier(key_modifier) {}
 
         inline u32 GetCharacter() const { return m_character; }
-        inline bool HasKeyModifier(EKeyModifier key_modifier) const { return (m_key_modifier & key_modifier) == key_modifier; }
+        inline bool HasKeyModifier(KeyModifier key_modifier) const { return (m_key_modifier & key_modifier) == key_modifier; }
 
-        EEventType GetType() const override { return EEventType::KeyTyped; }
-        EEventCategory GetCategory() const override { return EEventCategory::Input & EEventCategory::Keyboard; }
+        EventType GetType() const override { return EventType::KeyTyped; }
+        EventCategory GetCategory() const override { return EventCategory::Input & EventCategory::Keyboard; }
 
-        static EEventType GetStaticType() { return EEventType::KeyTyped; }
+        static EventType GetStaticType() { return EventType::KeyTyped; }
     };
 
 }

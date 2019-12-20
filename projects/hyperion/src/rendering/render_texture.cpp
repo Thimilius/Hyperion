@@ -6,9 +6,9 @@
 
 namespace Hyperion::Rendering {
 
-    TRef<CRenderTexture> CRenderTexture::Create(u32 width, u32 height, ERenderTextureFormat format) {
-        switch (CRenderAPI::GetAPI()) {
-            case ERenderAPI::OpenGL: return std::make_shared<COpenGLRenderTexture>(width, height, format);
+    Ref<RenderTexture> RenderTexture::Create(u32 width, u32 height, RenderTextureFormat format) {
+        switch (RenderAPI::GetBackendAPI()) {
+            case RenderBackendAPI::OpenGL: return std::make_shared<OpenGLRenderTexture>(width, height, format);
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }

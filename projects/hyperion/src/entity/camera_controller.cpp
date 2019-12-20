@@ -3,39 +3,38 @@
 #include "hyperion/entity/camera_controller.hpp"
 #include "hyperion/app/input.hpp"
 
-using namespace Hyperion::Math;
 using namespace Hyperion::Rendering;
 
 namespace Hyperion::Entity {
 
-    CPerspectiveCameraController::CPerspectiveCameraController(const TRef<CPerspectiveCamera> &perspective_camera) {
+    PerspectiveCameraController::PerspectiveCameraController(const Ref<PerspectiveCamera> &perspective_camera) {
         m_perspective_camera = perspective_camera;
 
-        m_perspective_camera->SetPosition(SVec3(0, 0, 1));
-        m_perspective_camera->SetForward(SVec3(0, 0, -1));
-        m_perspective_camera->SetUp(SVec3(0, 1, 0));
+        m_perspective_camera->SetPosition(Vec3(0, 0, 1));
+        m_perspective_camera->SetForward(Vec3(0, 0, -1));
+        m_perspective_camera->SetUp(Vec3(0, 1, 0));
 
         m_perspective_camera->SetFOV(90.0f);
         m_fov_target = m_perspective_camera->GetFOV();
     }
 
-    void CPerspectiveCameraController::Update(float delta) {
-        Math::SVec3 position = m_perspective_camera->GetPosition();
-        Math::SVec3 forward = m_perspective_camera->GetForward();
-        Math::SVec3 up = m_perspective_camera->GetUp();
+    void PerspectiveCameraController::Update(float delta) {
+        Vec3 position = m_perspective_camera->GetPosition();
+        Vec3 forward = m_perspective_camera->GetForward();
+        Vec3 up = m_perspective_camera->GetUp();
 
         float fov = m_perspective_camera->GetFOV();
 
         // Rotation
         {
-            if (CInput::GetMouseButtonDown(EMouseButtonCode::Right) || CInput::GetMouseButtonDown(EMouseButtonCode::Middle)) {
-                m_last_mouse_position = CInput::GetMousePosition();
+            if (Input::GetMouseButtonDown(MouseButtonCode::Right) || Input::GetMouseButtonDown(MouseButtonCode::Middle)) {
+                m_last_mouse_position = Input::GetMousePosition();
             }
 
             float x_offset = 0.0f;
             float y_offset = 0.0f;
-            if (CInput::GetMouseButton(EMouseButtonCode::Right) || CInput::GetMouseButton(EMouseButtonCode::Middle)) {
-                SVec2 mouse_position = CInput::GetMousePosition();
+            if (Input::GetMouseButton(MouseButtonCode::Right) || Input::GetMouseButton(MouseButtonCode::Middle)) {
+                Vec2 mouse_position = Input::GetMousePosition();
                 x_offset = mouse_position.x - m_last_mouse_position.x;
                 y_offset = m_last_mouse_position.y - mouse_position.y;
                 m_last_mouse_position.x = mouse_position.x;
@@ -47,70 +46,70 @@ namespace Hyperion::Entity {
             y_offset *= sensitivity;
 
             float rotation_speed = 100.0f * delta;
-            if (CInput::GetKey(EKeyCode::Left) || CInput::GetKey(EKeyCode::Q)) {
+            if (Input::GetKey(KeyCode::Left) || Input::GetKey(KeyCode::Q)) {
                 m_yaw -= rotation_speed;
             }
-            if (CInput::GetKey(EKeyCode::Right) || CInput::GetKey(EKeyCode::E)) {
+            if (Input::GetKey(KeyCode::Right) || Input::GetKey(KeyCode::E)) {
                 m_yaw += rotation_speed;
             }
-            if (CInput::GetKey(EKeyCode::Up)) {
+            if (Input::GetKey(KeyCode::Up)) {
                 m_pitch += rotation_speed;
             }
-            if (CInput::GetKey(EKeyCode::Down)) {
+            if (Input::GetKey(KeyCode::Down)) {
                 m_pitch -= rotation_speed;
             }
 
             m_yaw += x_offset;
             m_pitch += y_offset;
-            m_pitch = CMathf::Clamp(m_pitch, -89.0f, 89.0f);
+            m_pitch = Mathf::Clamp(m_pitch, -89.0f, 89.0f);
 
-            SVec3 new_forward = SVec3::Zero();
-            new_forward.x = CMathf::Cos(CMathf::ToRadians(m_pitch)) * CMathf::Cos(CMathf::ToRadians(m_yaw));
-            new_forward.y = CMathf::Sin(CMathf::ToRadians(m_pitch));
-            new_forward.z = CMathf::Cos(CMathf::ToRadians(m_pitch)) * CMathf::Sin(CMathf::ToRadians(m_yaw));
+            Vec3 new_forward = Vec3::Zero();
+            new_forward.x = Mathf::Cos(Mathf::ToRadians(m_pitch)) * Mathf::Cos(Mathf::ToRadians(m_yaw));
+            new_forward.y = Mathf::Sin(Mathf::ToRadians(m_pitch));
+            new_forward.z = Mathf::Cos(Mathf::ToRadians(m_pitch)) * Mathf::Sin(Mathf::ToRadians(m_yaw));
             forward = new_forward.Normalized();
         }
 
         // Zoom
         {
-            float wheel = CInput::GetMouseScroll();
+            float wheel = Input::GetMouseScroll();
             m_fov_target -= wheel * 5.0f;
-            m_fov_target = CMathf::Clamp(m_fov_target, 25, 120);
-            fov = CMathf::Lerp(fov, m_fov_target, delta * 15);
+            m_fov_target = Mathf::Clamp(m_fov_target, 25, 120);
+            fov = Mathf::Lerp(fov, m_fov_target, delta * 15);
         }
 
         // Movement
         {
             float camera_speed = m_speed * delta;
-            SVec3 direction = camera_speed * forward;
-            SVec3 right = SVec3::Cross(forward, up).Normalized();
+            Vec3 direction = camera_speed * forward;
+            Vec3 right = Vec3::Cross(forward, up).Normalized();
             right = camera_speed * right;
-            SVec3 up = camera_speed * SVec3::Up();
-            if (CInput::GetKey(EKeyCode::W)) {
+            Vec3 up = camera_speed * Vec3::Up();
+            if (Input::GetKey(KeyCode::W)) {
                 position = position + direction;
             }
-            if (CInput::GetKey(EKeyCode::S)) {
+            if (Input::GetKey(KeyCode::S)) {
                 position = position - direction;
             }
-            if (CInput::GetKey(EKeyCode::A)) {
+            if (Input::GetKey(KeyCode::A)) {
                 position = position - right;
             }
-            if (CInput::GetKey(EKeyCode::D)) {
+            if (Input::GetKey(KeyCode::D)) {
                 position = position + right;
             }
-            if (CInput::GetKey(EKeyCode::LeftShift) || CInput::GetKey(EKeyCode::RightShift)) {
+            if (Input::GetKey(KeyCode::LeftShift) || Input::GetKey(KeyCode::RightShift)) {
                 position = position - up;
             }
-            if (CInput::GetKey(EKeyCode::Space)) {
+            if (Input::GetKey(KeyCode::Space)) {
                 position = position + up;
             }
         }
 
         // Reset
-        if (CInput::GetKeyDown(EKeyCode::R)) {
-            position = SVec3(0, 0, 1);
-            forward = SVec3(0, 0, -1);
-            up = SVec3::Up();
+        if (Input::GetKeyDown(KeyCode::R)) {
+            position = Vec3(0, 0, 1);
+            forward = Vec3(0, 0, -1);
+            up = Vec3::Up();
 
             m_pitch = 0.0f;
             m_yaw = -90.0f;
@@ -127,34 +126,34 @@ namespace Hyperion::Entity {
         m_perspective_camera->RecalculateMatricies();
     }
 
-    COrthographicCameraController::COrthographicCameraController(const TRef<Rendering::COrthographicCamera> &orthographic_camera) {
+    OrthographicCameraController::OrthographicCameraController(const Ref<Rendering::OrthographicCamera> &orthographic_camera) {
         m_orthographic_camera = orthographic_camera;
 
-        m_orthographic_camera->SetPosition(SVec3(0, 0, 1));
-        m_orthographic_camera->SetForward(SVec3(0, 0, -1));
-        m_orthographic_camera->SetUp(SVec3(0, 1, 0));
+        m_orthographic_camera->SetPosition(Vec3(0, 0, 1));
+        m_orthographic_camera->SetForward(Vec3(0, 0, -1));
+        m_orthographic_camera->SetUp(Vec3(0, 1, 0));
 
         m_orthographic_camera->SetSize(1.0f);
         m_size_target = m_orthographic_camera->GetSize();
     }
 
-    void COrthographicCameraController::Update(float delta) {
-        Math::SVec3 position = m_orthographic_camera->GetPosition();
-        Math::SVec3 forward = m_orthographic_camera->GetForward();
-        Math::SVec3 up = m_orthographic_camera->GetUp();
+    void OrthographicCameraController::Update(float delta) {
+        Vec3 position = m_orthographic_camera->GetPosition();
+        Vec3 forward = m_orthographic_camera->GetForward();
+        Vec3 up = m_orthographic_camera->GetUp();
 
         float size = m_orthographic_camera->GetSize();
 
         // Rotation
         {
-            if (CInput::GetMouseButtonDown(EMouseButtonCode::Right) || CInput::GetMouseButtonDown(EMouseButtonCode::Middle)) {
-                m_last_mouse_position = CInput::GetMousePosition();
+            if (Input::GetMouseButtonDown(MouseButtonCode::Right) || Input::GetMouseButtonDown(MouseButtonCode::Middle)) {
+                m_last_mouse_position = Input::GetMousePosition();
             }
 
             float x_offset = 0.0f;
             float y_offset = 0.0f;
-            if (CInput::GetMouseButton(EMouseButtonCode::Right) || CInput::GetMouseButton(EMouseButtonCode::Middle)) {
-                SVec2 mouse_position = CInput::GetMousePosition();
+            if (Input::GetMouseButton(MouseButtonCode::Right) || Input::GetMouseButton(MouseButtonCode::Middle)) {
+                Vec2 mouse_position = Input::GetMousePosition();
                 x_offset = mouse_position.x - m_last_mouse_position.x;
                 y_offset = m_last_mouse_position.y - mouse_position.y;
                 m_last_mouse_position.x = mouse_position.x;
@@ -166,70 +165,70 @@ namespace Hyperion::Entity {
             y_offset *= sensitivity;
 
             float rotation_speed = 100.0f * delta;
-            if (CInput::GetKey(EKeyCode::Left) || CInput::GetKey(EKeyCode::Q)) {
+            if (Input::GetKey(KeyCode::Left) || Input::GetKey(KeyCode::Q)) {
                 m_yaw -= rotation_speed;
             }
-            if (CInput::GetKey(EKeyCode::Right) || CInput::GetKey(EKeyCode::E)) {
+            if (Input::GetKey(KeyCode::Right) || Input::GetKey(KeyCode::E)) {
                 m_yaw += rotation_speed;
             }
-            if (CInput::GetKey(EKeyCode::Up)) {
+            if (Input::GetKey(KeyCode::Up)) {
                 m_pitch += rotation_speed;
             }
-            if (CInput::GetKey(EKeyCode::Down)) {
+            if (Input::GetKey(KeyCode::Down)) {
                 m_pitch -= rotation_speed;
             }
 
             m_yaw += x_offset;
             m_pitch += y_offset;
-            m_pitch = CMathf::Clamp(m_pitch, -89.0f, 89.0f);
+            m_pitch = Mathf::Clamp(m_pitch, -89.0f, 89.0f);
 
-            SVec3 new_forward = SVec3::Zero();
-            new_forward.x = CMathf::Cos(CMathf::ToRadians(m_pitch)) * CMathf::Cos(CMathf::ToRadians(m_yaw));
-            new_forward.y = CMathf::Sin(CMathf::ToRadians(m_pitch));
-            new_forward.z = CMathf::Cos(CMathf::ToRadians(m_pitch)) * CMathf::Sin(CMathf::ToRadians(m_yaw));
+            Vec3 new_forward = Vec3::Zero();
+            new_forward.x = Mathf::Cos(Mathf::ToRadians(m_pitch)) * Mathf::Cos(Mathf::ToRadians(m_yaw));
+            new_forward.y = Mathf::Sin(Mathf::ToRadians(m_pitch));
+            new_forward.z = Mathf::Cos(Mathf::ToRadians(m_pitch)) * Mathf::Sin(Mathf::ToRadians(m_yaw));
             forward = new_forward.Normalized();
         }
 
         // Zoom
         {
-            float wheel = CInput::GetMouseScroll();
+            float wheel = Input::GetMouseScroll();
             m_size_target -= wheel * 0.25f;
-            m_size_target = CMathf::Clamp(m_size_target, 0.1f, 10);
-            size = CMathf::Lerp(size, m_size_target, delta * 15);
+            m_size_target = Mathf::Clamp(m_size_target, 0.1f, 10);
+            size = Mathf::Lerp(size, m_size_target, delta * 15);
         }
 
         // Movement
         {
             float camera_speed = m_speed * delta;
-            SVec3 direction = camera_speed * forward;
-            SVec3 right = SVec3::Cross(forward, up).Normalized();
+            Vec3 direction = camera_speed * forward;
+            Vec3 right = Vec3::Cross(forward, up).Normalized();
             right = camera_speed * right;
-            SVec3 up = camera_speed * SVec3::Up();
-            if (CInput::GetKey(EKeyCode::W)) {
+            Vec3 up = camera_speed * Vec3::Up();
+            if (Input::GetKey(KeyCode::W)) {
                 position = position + direction;
             }
-            if (CInput::GetKey(EKeyCode::S)) {
+            if (Input::GetKey(KeyCode::S)) {
                 position = position - direction;
             }
-            if (CInput::GetKey(EKeyCode::A)) {
+            if (Input::GetKey(KeyCode::A)) {
                 position = position - right;
             }
-            if (CInput::GetKey(EKeyCode::D)) {
+            if (Input::GetKey(KeyCode::D)) {
                 position = position + right;
             }
-            if (CInput::GetKey(EKeyCode::LeftShift) || CInput::GetKey(EKeyCode::RightShift)) {
+            if (Input::GetKey(KeyCode::LeftShift) || Input::GetKey(KeyCode::RightShift)) {
                 position = position - up;
             }
-            if (CInput::GetKey(EKeyCode::Space)) {
+            if (Input::GetKey(KeyCode::Space)) {
                 position = position + up;
             }
         }
 
         // Reset
-        if (CInput::GetKeyDown(EKeyCode::R)) {
-            position = SVec3(0, 0, 1);
-            forward = SVec3(0, 0, -1);
-            up = SVec3::Up();
+        if (Input::GetKeyDown(KeyCode::R)) {
+            position = Vec3(0, 0, 1);
+            forward = Vec3(0, 0, -1);
+            up = Vec3::Up();
 
             m_pitch = 0.0f;
             m_yaw = -90.0f;

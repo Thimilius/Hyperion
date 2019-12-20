@@ -6,10 +6,10 @@
 
 namespace Hyperion::Rendering {
 
-    void CRenderCommand::Init() {
-        switch (CRenderAPI::GetAPI()) {
-            case ERenderAPI::OpenGL: {
-                s_render_api = new COpenGLRenderAPI();
+    void RenderCommand::Init() {
+        switch (RenderAPI::GetBackendAPI()) {
+            case RenderBackendAPI::OpenGL: {
+                s_render_api = new OpenGLRenderAPI();
                 break;
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;

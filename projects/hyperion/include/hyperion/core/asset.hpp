@@ -4,15 +4,15 @@
 
 namespace Hyperion {
 
-    class CAsset {
+    class Asset {
     private:
-        TString m_name;
+        String m_name;
     public:
-        CAsset() { }
-        CAsset(const TString &name) : m_name(name) {  }
+        Asset() { }
+        Asset(const String &name) : m_name(name) {  }
 
-        inline const TString &GetName() const { return m_name; }
-        inline void SetName(const TString &name) { m_name = name; }
+        inline const String &GetName() const { return m_name; }
+        inline void SetName(const String &name) { m_name = name; }
     };
 
 }
