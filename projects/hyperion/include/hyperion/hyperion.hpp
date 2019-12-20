@@ -10,6 +10,11 @@
 #include "hyperion/core/io/file_utilities.hpp"
 #include "hyperion/core/io/file_watcher.hpp"
 #include "hyperion/core/math/math.hpp"
+#include "hyperion/core/math/bounds.hpp"
+#include "hyperion/core/math/vec2.hpp"
+#include "hyperion/core/math/vec3.hpp"
+#include "hyperion/core/math/vec4.hpp"
+#include "hyperion/core/math/mat4.hpp"
 
 // App
 #include "hyperion/app/application.hpp"

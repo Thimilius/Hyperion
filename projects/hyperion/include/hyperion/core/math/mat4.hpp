@@ -5,9 +5,17 @@
 
 namespace Hyperion {
 
+    // NOTE: Matricies are in column-major order!
+    // They can therefore be indexed like that: [row + column * 4]
+    // The elements are layed out in memory in the following way:
+    // [  0  4  8 12 ]
+    // [  1  5  9 13 ]
+    // [  2  6 10 14 ]
+    // [  3  7 11 15 ]
+
     struct Mat4 {
         union {
-            f32 elements[16]; // Index with elements[row + column * 4]
+            f32 elements[16];
             Vec4 columns[4];
         };
 

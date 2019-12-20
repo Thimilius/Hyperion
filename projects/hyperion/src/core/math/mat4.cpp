@@ -242,9 +242,9 @@ namespace Hyperion {
     Mat4 Mat4::Rotate(const Vec3 &axis, f32 angle) {
         Mat4 result(1.0f);
 
-        f32 radians = Mathf::ToRadians(angle);
-        f32 cos = Mathf::Cos(radians);
-        f32 sin = Mathf::Sin(radians);
+        f32 radians = Math::DegToRad(angle);
+        f32 cos = Math::Cos(radians);
+        f32 sin = Math::Sin(radians);
         f32 omc = 1.0f - cos;
 
         f32 x = axis.x;
@@ -301,7 +301,7 @@ namespace Hyperion {
     Mat4 Mat4::Perspective(f32 fov, f32 aspect_ratio, f32 z_near, f32 z_far) {
         Mat4 result(0.0f);
 
-        f32 t = Mathf::Tan(0.5f * Mathf::ToRadians(fov)) * z_near;
+        f32 t = Math::Tan(0.5f * Math::DegToRad(fov)) * z_near;
         f32 b = -t;
         f32 r = t * aspect_ratio;
         f32 l = -r;

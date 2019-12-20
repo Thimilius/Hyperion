@@ -158,7 +158,7 @@ namespace Hyperion {
     }
 
     f32 Vec2::Magnitude() const {
-        return Mathf::Sqrt(x * x + y * y);
+        return Math::Sqrt(x * x + y * y);
     }
 
     f32 Vec2::SqrMagnitude() const {
@@ -169,7 +169,7 @@ namespace Hyperion {
         f32 x = this->x - other.x;
         f32 y = this->y - other.y;
 
-        return Mathf::Sqrt(x * x + y * y);
+        return Math::Sqrt(x * x + y * y);
     }
 
 }

@@ -61,12 +61,12 @@ namespace Hyperion::Entity {
 
             m_yaw += x_offset;
             m_pitch += y_offset;
-            m_pitch = Mathf::Clamp(m_pitch, -89.0f, 89.0f);
+            m_pitch = Math::Clamp(m_pitch, -89.0f, 89.0f);
 
             Vec3 new_forward = Vec3::Zero();
-            new_forward.x = Mathf::Cos(Mathf::ToRadians(m_pitch)) * Mathf::Cos(Mathf::ToRadians(m_yaw));
-            new_forward.y = Mathf::Sin(Mathf::ToRadians(m_pitch));
-            new_forward.z = Mathf::Cos(Mathf::ToRadians(m_pitch)) * Mathf::Sin(Mathf::ToRadians(m_yaw));
+            new_forward.x = Math::Cos(Math::DegToRad(m_pitch)) * Math::Cos(Math::DegToRad(m_yaw));
+            new_forward.y = Math::Sin(Math::DegToRad(m_pitch));
+            new_forward.z = Math::Cos(Math::DegToRad(m_pitch)) * Math::Sin(Math::DegToRad(m_yaw));
             forward = new_forward.Normalized();
         }
 
@@ -74,8 +74,8 @@ namespace Hyperion::Entity {
         {
             f32 wheel = Input::GetMouseScroll();
             m_fov_target -= wheel * 5.0f;
-            m_fov_target = Mathf::Clamp(m_fov_target, 25, 120);
-            fov = Mathf::Lerp(fov, m_fov_target, delta * 15);
+            m_fov_target = Math::Clamp(m_fov_target, 25, 120);
+            fov = Math::Lerp(fov, m_fov_target, delta * 15);
         }
 
         // Movement
@@ -180,12 +180,12 @@ namespace Hyperion::Entity {
 
             m_yaw += x_offset;
             m_pitch += y_offset;
-            m_pitch = Mathf::Clamp(m_pitch, -89.0f, 89.0f);
+            m_pitch = Math::Clamp(m_pitch, -89.0f, 89.0f);
 
             Vec3 new_forward = Vec3::Zero();
-            new_forward.x = Mathf::Cos(Mathf::ToRadians(m_pitch)) * Mathf::Cos(Mathf::ToRadians(m_yaw));
-            new_forward.y = Mathf::Sin(Mathf::ToRadians(m_pitch));
-            new_forward.z = Mathf::Cos(Mathf::ToRadians(m_pitch)) * Mathf::Sin(Mathf::ToRadians(m_yaw));
+            new_forward.x = Math::Cos(Math::DegToRad(m_pitch)) * Math::Cos(Math::DegToRad(m_yaw));
+            new_forward.y = Math::Sin(Math::DegToRad(m_pitch));
+            new_forward.z = Math::Cos(Math::DegToRad(m_pitch)) * Math::Sin(Math::DegToRad(m_yaw));
             forward = new_forward.Normalized();
         }
 
@@ -193,8 +193,8 @@ namespace Hyperion::Entity {
         {
             f32 wheel = Input::GetMouseScroll();
             m_size_target -= wheel * 0.25f;
-            m_size_target = Mathf::Clamp(m_size_target, 0.1f, 10);
-            size = Mathf::Lerp(size, m_size_target, delta * 15);
+            m_size_target = Math::Clamp(m_size_target, 0.1f, 10);
+            size = Math::Lerp(size, m_size_target, delta * 15);
         }
 
         // Movement

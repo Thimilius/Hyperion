@@ -1,11 +1,84 @@
 #pragma once
 
-#include "mathf.hpp"
+#include "hyperion/core/types.hpp"
+#include <cmath>
 
-#include "vec2.hpp"
-#include "vec3.hpp"
-#include "vec4.hpp"
+namespace Hyperion {
 
-#include "mat4.hpp"
+    class Math {
+    public:
+        inline static const f32 PI = 3.1415926535897932384626433833f;
+        inline static const f32 TAU = PI * 2.0f;
+        inline static const f32 EPSILON = 0.001f;
+        inline static const f32 E = 2.7182818284590452353602874714f;
 
-#include "bounds.hpp"
+        inline static f32 Max(f32 a, f32 b) { return a > b ? a : b; }
+        inline static f32 Min(f32 a, f32 b) { return a < b ? a : b; }
+        static inline f32 Abs(f32 p_val) { return std::abs(p_val); }
+
+        static inline f32 Sin(f32 p_rad) { return std::sin(p_rad); }
+        static inline f32 Cos(f32 p_rad) { return std::cos(p_rad); }
+        static inline f32 Tan(f32 p_rad) { return std::tan(p_rad); }
+
+        static inline f32 Asin(f32 p_val) { return std::asin(p_val); }
+        static inline f32 Acos(f32 p_val) { return std::acos(p_val); }
+        static inline f32 Atan(f32 p_val) { return std::atan(p_val); }
+        static inline f32 Atan2(f32 p_a, f32 p_b) { return std::atan2(p_a, p_b); }
+
+        static inline f32 Round(f32 p_val) { return std::round(p_val); }
+        static inline f32 Floor(f32 p_val) { return std::floor(p_val); }
+        static inline f32 Ceil(f32 p_val) { return std::ceil(p_val); }
+
+        static inline f32 Sqrt(f32 p_val) { return std::sqrt(p_val); }
+        static inline f32 Fmod(f32 p_a, f32 p_b) { return std::fmod(p_a, p_b); }
+
+        static inline f32 Pow(f32 p_base, f32 p_expo) { return std::pow(p_base, p_expo); }
+        static inline f32 Log(f32 p_val) { return std::log(p_val); }
+        static inline f32 Exp(f32 p_val) { return std::exp(p_val); }
+
+        static inline f32 DegToRad(f32 p_deg) { return p_deg * PI / 180.0f; }
+        static inline f32 RadToDeg(f32 p_rad) { return p_rad * 180.0f / PI; }
+
+        static inline f32 Clamp(f32 p_val, f32 p_min, f32 p_max) {
+            if (p_val < p_min) {
+                return p_min;
+            } else if (p_val > p_max) {
+                return p_max;
+            } else {
+                return p_val;
+            }
+        }
+
+        static inline f32 Clamp01(f32 p_val) {
+            if (p_val < 0.0f) {
+                return 0.0f;
+            } else if (p_val > 1.0f) {
+                return 1.0f;
+            } else {
+                return p_val;
+            }
+        }
+
+        static inline f32 Lerp(f32 p_from, f32 p_to, f32 p_t) {
+            p_t = Clamp01(p_t);
+            return (1.0f - p_t) * p_from + p_t * p_to;
+        }
+
+        static inline f32 LerpUnclamped(f32 p_from, f32 p_to, f32 p_t) {
+            return (1.0f - p_t) * p_from + p_t * p_to;
+        }
+
+        static inline f32 InverseLerp(f32 p_from, f32 p_to, f32 p_val) {
+            return (p_val - p_from) / (p_to - p_from);
+        }
+
+        static inline f32 Smoothstep(f32 p_from, f32 p_to, f32 p_t) {
+            p_t = Clamp01((p_t - p_from) / (p_to - p_from));
+            return p_t * p_t * (3.0f - 2.0f * p_t);
+        }
+    private:
+        Math() = delete;
+        ~Math() = delete;
+    };
+
+}

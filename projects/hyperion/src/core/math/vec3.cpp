@@ -1,7 +1,5 @@
 #include "hyppch.hpp"
 
-#include "hyperion/core/math/vec3.hpp"
-
 namespace Hyperion {
 
     Vec3::Vec3()
@@ -174,7 +172,7 @@ namespace Hyperion {
     }
 
     f32 Vec3::Magnitude() const {
-        return Mathf::Sqrt(x * x + y * y + z * z);
+        return Math::Sqrt(x * x + y * y + z * z);
     }
 
     f32 Vec3::SqrMagnitude() const {
@@ -186,7 +184,7 @@ namespace Hyperion {
         f32 y = this->y - other.y;
         f32 z = this->z - other.z;
 
-        return Mathf::Sqrt(x * x + y * y + z * z);
+        return Math::Sqrt(x * x + y * y + z * z);
     }
 
     Vec3 Vec3::Cross(const Vec3 &a, const Vec3 &b) {
