@@ -4,19 +4,19 @@
 
 namespace Hyperion {
 
-    const float Mathf::PI = 3.14159265358979323846f;
-    const float Mathf::TAU = Mathf::PI * 2.0f;
-    const float Mathf::EPSILON = 2.71828182845904523536f;
+    const f32 Mathf::PI = 3.14159265358979323846f;
+    const f32 Mathf::TAU = Mathf::PI * 2.0f;
+    const f32 Mathf::EPSILON = 2.71828182845904523536f;
 
-    float Mathf::Max(float a, float b) {
+    f32 Mathf::Max(f32 a, f32 b) {
         return a > b ? a : b;
     }
 
-    float Mathf::Min(float a, float b) {
+    f32 Mathf::Min(f32 a, f32 b) {
         return a < b ? a : b;
     }
 
-    float Mathf::Clamp(float value, float min, float max) {
+    f32 Mathf::Clamp(f32 value, f32 min, f32 max) {
         if (value < min) {
             return min;
         } else if (value > max) {
@@ -26,7 +26,7 @@ namespace Hyperion {
         }
     }
 
-    float Mathf::Clamp01(float value) {
+    f32 Mathf::Clamp01(f32 value) {
         if (value < 0) {
             return 0.0f;
         } else if (value > 1) {
@@ -36,32 +36,32 @@ namespace Hyperion {
         }
     }
 
-    float Mathf::Lerp(float a, float b, float t) {
+    f32 Mathf::Lerp(f32 a, f32 b, f32 t) {
         t = Clamp01(t);
         return (1 - t) * a + t * b;
     }
 
-    float Mathf::Sin(float value) {
+    f32 Mathf::Sin(f32 value) {
         return sin(value);
     }
 
-    float Mathf::Cos(float value) {
+    f32 Mathf::Cos(f32 value) {
         return cos(value);
     }
 
-    float Mathf::Tan(float value) {
+    f32 Mathf::Tan(f32 value) {
         return tan(value);
     }
 
-    float Mathf::ToRadians(float degrees) {
+    f32 Mathf::ToRadians(f32 degrees) {
         return degrees * PI / 180.0f;
     }
 
-    float Mathf::ToDegree(float radians) {
+    f32 Mathf::ToDegree(f32 radians) {
         return radians * 180.0f / PI;
     }
 
-    float Mathf::Sqrt(float value) {
+    f32 Mathf::Sqrt(f32 value) {
         return sqrt(value);
     }
 

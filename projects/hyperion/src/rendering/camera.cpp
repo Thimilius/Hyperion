@@ -8,7 +8,7 @@ namespace Hyperion::Rendering {
 
     void PerspectiveCamera::RecalculateMatricies() {
         Window *window = Application::GetInstance()->GetWindow();
-        float aspect_ratio = (float)window->GetWidth() / (float)window->GetHeight();
+        f32 aspect_ratio = (f32)window->GetWidth() / (f32)window->GetHeight();
         m_view_matrix = Mat4::LookAt(m_position, m_position + m_forward, m_up);
         m_projection_matrix = Mat4::Perspective(m_fov, aspect_ratio, m_near_plane, m_far_plane);
         m_view_projection_matrix = m_projection_matrix * m_view_matrix;
@@ -16,7 +16,7 @@ namespace Hyperion::Rendering {
 
     void OrthographicCamera::RecalculateMatricies() {
         Window *window = Application::GetInstance()->GetWindow();
-        float aspect_ratio = (float)window->GetWidth() / (float)window->GetHeight();
+        f32 aspect_ratio = (f32)window->GetWidth() / (f32)window->GetHeight();
         m_view_matrix = Mat4::LookAt(m_position, m_position + m_forward, m_up);
         m_projection_matrix = Mat4::Orthographic(-m_size * aspect_ratio, m_size * aspect_ratio, -m_size, m_size, m_near_plane, m_far_plane);
         m_view_projection_matrix = m_projection_matrix * m_view_matrix;

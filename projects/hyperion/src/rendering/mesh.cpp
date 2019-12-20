@@ -16,9 +16,9 @@ namespace Hyperion::Rendering {
         return Ref<Mesh>(new Mesh(mesh_data, sub_meshes));
     }
 
-    Ref<Mesh> Mesh::CreatePlane(float width, float height) {
-        float half_width = width / 2.0f;
-        float half_height = height / 2.0f;
+    Ref<Mesh> Mesh::CreatePlane(f32 width, f32 height) {
+        f32 half_width = width / 2.0f;
+        f32 half_height = height / 2.0f;
 
         // The plane should face up
         Vec3 normal = Vec3::Up();
@@ -55,14 +55,14 @@ namespace Hyperion::Rendering {
         return Create(mesh_data);
     }
 
-    Ref<Mesh> Mesh::CreateCube(float size) {
+    Ref<Mesh> Mesh::CreateCube(f32 size) {
         MeshData mesh_data;
         mesh_data.positions.resize(24);
         mesh_data.normals.resize(24);
         mesh_data.uvs.resize(24);
         mesh_data.indicies.resize(36);
 
-        float half_size = size / 2.0f;
+        f32 half_size = size / 2.0f;
 
         // Forward and back as seen from the center of the cube (aka right-handed)!
         {

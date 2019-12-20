@@ -34,7 +34,7 @@ namespace Hyperion::Rendering {
         glPolygonMode(GL_FRONT_AND_BACK, GetGLPolygonMode(polygon_mode));
     }
 
-    void OpenGLRenderAPI::SetClearColor(float r, float g, float b, float a) {
+    void OpenGLRenderAPI::SetClearColor(f32 r, f32 g, f32 b, f32 a) {
         glClearColor(r, g, b, a);
     }
 

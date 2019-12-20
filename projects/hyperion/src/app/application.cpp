@@ -33,11 +33,11 @@ namespace Hyperion {
         m_window->Show();
 
         Timer *timer = Timer::StartNew();
-        double last_time = 0, tick_timer = 0, accumulated_time = 0;
+        f64 last_time = 0, tick_timer = 0, accumulated_time = 0;
         u64 frame_counter = 0;
         while (m_running) {
-            float now = timer->ElapsedSeconds();
-            float delta_time = (float)(now - last_time);
+            f32 now = timer->ElapsedSeconds();
+            f32 delta_time = (f32)(now - last_time);
             if (delta_time > Time::GetMaxDeltaTime()) {
                 delta_time = Time::GetMaxDeltaTime();
             }

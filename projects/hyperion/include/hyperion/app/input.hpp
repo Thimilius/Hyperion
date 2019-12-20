@@ -174,7 +174,7 @@ namespace Hyperion {
         inline static bool s_mouse_buttons_up[(s32)MouseButtonCode::Last];
         
         inline static Vec2 s_mouse_position;
-        inline static float s_mouse_scroll;
+        inline static f32 s_mouse_scroll;
     public:
         inline static bool GetKeyDown(KeyCode key_code) { return s_keys_down[(s32)key_code]; }
         inline static bool GetKey(KeyCode key_code) { return s_keys[(s32)key_code]; }
@@ -185,7 +185,7 @@ namespace Hyperion {
         inline static bool GetMouseButtonUp(MouseButtonCode mouse_button_code) { return s_mouse_buttons_up[(s32)mouse_button_code]; }
 
         inline static Vec2 GetMousePosition() { return s_mouse_position; }
-        inline static float GetMouseScroll() { return s_mouse_scroll; }
+        inline static f32 GetMouseScroll() { return s_mouse_scroll; }
     private:
         Input() = delete;
         ~Input() = delete;

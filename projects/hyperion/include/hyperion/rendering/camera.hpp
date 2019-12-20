@@ -10,8 +10,8 @@ namespace Hyperion::Rendering {
         Vec3 m_forward;
         Vec3 m_up;
 
-        float m_near_plane = 0.1f;
-        float m_far_plane = 100.0f;
+        f32 m_near_plane = 0.1f;
+        f32 m_far_plane = 100.0f;
 
         Mat4 m_view_matrix;
         Mat4 m_projection_matrix;
@@ -26,11 +26,11 @@ namespace Hyperion::Rendering {
         inline Vec3 GetUp() const { return m_up; }
         inline void SetUp(Vec3 up) { m_up = up; }
 
-        inline float GetNearPlane() const { return m_near_plane; }
-        inline void SetNearPlane(float near_plane) { m_near_plane = near_plane; }
+        inline f32 GetNearPlane() const { return m_near_plane; }
+        inline void SetNearPlane(f32 near_plane) { m_near_plane = near_plane; }
 
-        inline float GetFarPlane() const { return m_far_plane; }
-        inline void SetFarPlane(float far_plane) { m_far_plane = far_plane; }
+        inline f32 GetFarPlane() const { return m_far_plane; }
+        inline void SetFarPlane(f32 far_plane) { m_far_plane = far_plane; }
 
         virtual void RecalculateMatricies() = 0;
 
@@ -41,20 +41,20 @@ namespace Hyperion::Rendering {
 
     class PerspectiveCamera : public Camera {
     private:
-        float m_fov;
+        f32 m_fov;
     public:
-        inline float GetFOV() const { return m_fov; }
-        inline void SetFOV(float fov) { m_fov = fov; }
+        inline f32 GetFOV() const { return m_fov; }
+        inline void SetFOV(f32 fov) { m_fov = fov; }
 
         void RecalculateMatricies() override;
     };
 
     class OrthographicCamera : public Camera {
     private:
-        float m_size;
+        f32 m_size;
     public:
-        inline float GetSize() const { return m_size; }
-        inline void SetSize(float size) { m_size = size; }
+        inline f32 GetSize() const { return m_size; }
+        inline void SetSize(f32 size) { m_size = size; }
 
         void RecalculateMatricies() override;
     };

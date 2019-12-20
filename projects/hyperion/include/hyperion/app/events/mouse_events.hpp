@@ -37,13 +37,13 @@ namespace Hyperion {
 
     class MouseMovedEvent : public Event {
     private:
-        float m_x;
-        float m_y;
+        f32 m_x;
+        f32 m_y;
     public:
-        MouseMovedEvent(float x, float y) : m_x(x), m_y(y) {}
+        MouseMovedEvent(f32 x, f32 y) : m_x(x), m_y(y) {}
 
-        inline float GetX() const { return m_x; }
-        inline float GetY() const { return m_y; }
+        inline f32 GetX() const { return m_x; }
+        inline f32 GetY() const { return m_y; }
 
         EventType GetType() const override { return EventType::MouseMoved; }
         EventCategory GetCategory() const override { return EventCategory::Input & EventCategory::Mouse; }
@@ -53,11 +53,11 @@ namespace Hyperion {
 
     class MouseScrolledEvent : public Event {
     private:
-        float m_scroll;
+        f32 m_scroll;
     public:
-        MouseScrolledEvent(float scroll) : m_scroll(scroll) {}
+        MouseScrolledEvent(f32 scroll) : m_scroll(scroll) {}
 
-        inline float GetScroll() const { return m_scroll; }
+        inline f32 GetScroll() const { return m_scroll; }
 
         EventType GetType() const override { return EventType::MouseScrolled; }
         EventCategory GetCategory() const override { return EventCategory::Input & EventCategory::Mouse; }

@@ -219,7 +219,7 @@ namespace Hyperion {
         if (!AdjustWindowRect(&window_rect, GetWindowLongW(m_window_handle, GWL_STYLE), false)) {
             HYP_PANIC_MESSAGE("Engine", "Failed to calculate window size!");
         }
-        return Vec2((float)(window_rect.right - window_rect.left), (float)(window_rect.bottom - window_rect.top));
+        return Vec2((f32)(window_rect.right - window_rect.left), (f32)(window_rect.bottom - window_rect.top));
     }
 
     MouseButtonCode WindowsWindow::TranslateMouseButtonCode(u32 code) const {
@@ -544,14 +544,14 @@ namespace Hyperion {
             case WM_MOUSEMOVE: {
                 u32 x = LOWORD(l_param);
                 u32 y = HIWORD(l_param);
-                MouseMovedEvent event((float)x, (float)y);
+                MouseMovedEvent event((f32)x, (f32)y);
                 window->DispatchEvent(event);
                 break;
             }
 
             case WM_MOUSEWHEEL: {
                 s16 scroll = GET_WHEEL_DELTA_WPARAM(w_param);
-                MouseScrolledEvent event(scroll / (float)WHEEL_DELTA);
+                MouseScrolledEvent event(scroll / (f32)WHEEL_DELTA);
                 window->DispatchEvent(event);
                 break;
             };

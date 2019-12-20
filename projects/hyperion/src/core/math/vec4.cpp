@@ -8,7 +8,7 @@ namespace Hyperion {
         : x(0), y(0), z(0), w(0) {
     }
 
-    Vec4::Vec4(float x, float y, float z, float w)
+    Vec4::Vec4(f32 x, f32 y, f32 z, f32 w)
         : x(x), y(y), z(z), w(w) {
     }
 
@@ -48,7 +48,7 @@ namespace Hyperion {
         return *this;
     }
 
-    Vec4 &Vec4::Add(float value) {
+    Vec4 &Vec4::Add(f32 value) {
         x += value;
         y += value;
         z += value;
@@ -57,7 +57,7 @@ namespace Hyperion {
         return *this;
     }
 
-    Vec4 &Vec4::Subtract(float value) {
+    Vec4 &Vec4::Subtract(f32 value) {
         x -= value;
         y -= value;
         z -= value;
@@ -66,7 +66,7 @@ namespace Hyperion {
         return *this;
     }
 
-    Vec4 &Vec4::Multiply(float value) {
+    Vec4 &Vec4::Multiply(f32 value) {
         x *= value;
         y *= value;
         z *= value;
@@ -75,7 +75,7 @@ namespace Hyperion {
         return *this;
     }
 
-    Vec4 &Vec4::Divide(float value) {
+    Vec4 &Vec4::Divide(f32 value) {
         x /= value;
         y /= value;
         z /= value;
@@ -113,19 +113,19 @@ namespace Hyperion {
         return left.Divide(right);
     }
 
-    Vec4 operator+(Vec4 left, float value) {
+    Vec4 operator+(Vec4 left, f32 value) {
         return left.Add(value);
     }
 
-    Vec4 operator-(Vec4 left, float value) {
+    Vec4 operator-(Vec4 left, f32 value) {
         return left.Subtract(value);
     }
 
-    Vec4 operator*(Vec4 left, float value) {
+    Vec4 operator*(Vec4 left, f32 value) {
         return left.Multiply(value);
     }
 
-    Vec4 operator/(Vec4 left, float value) {
+    Vec4 operator/(Vec4 left, f32 value) {
         return left.Divide(value);
     }
 
@@ -169,7 +169,7 @@ namespace Hyperion {
         return x >= other.x && y >= other.y && z >= other.z && w >= other.w;
     }
 
-    float Vec4::Dot(const Vec4 &other) const {
+    f32 Vec4::Dot(const Vec4 &other) const {
         return x * other.x + y * other.y + z * other.z + w * other.w;
     }
 

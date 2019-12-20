@@ -41,7 +41,7 @@ protected:
         }
     }
 
-    void OnUpdate(float delta_time) override {
+    void OnUpdate(f32 delta_time) override {
         if (Input::GetKeyDown(KeyCode::Escape) || ((Input::GetKey(KeyCode::LeftControl) || Input::GetKey(KeyCode::RightControl)) && Input::GetKeyDown(KeyCode::W))) {
             Exit();
         }
@@ -83,7 +83,7 @@ protected:
             m_shader->SetInt("u_texture", 0);
             m_texture->Bind(0);
             RenderCommand::SetPolygonMode(PolygonMode::Fill);
-            Renderer::Submit(m_mesh, m_shader, Mat4::Rotate(Vec3(0, 1, 0), (float)Time::GetTime() * 50.0f));
+            Renderer::Submit(m_mesh, m_shader, Mat4::Rotate(Vec3(0, 1, 0), Time::GetTime() * 50.0f));
         }
         Renderer::End();
 

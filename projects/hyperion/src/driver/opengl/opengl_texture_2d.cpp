@@ -94,7 +94,7 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLTexture2D::SetAnisotropicFilter(TextureAnisotropicFilter anisotropic_filter) {
-        float amount = 1.0f;
+        f32 amount = 1.0f;
         switch (anisotropic_filter) {
             case Hyperion::Rendering::TextureAnisotropicFilter::None: amount = 1.0f; break;
             case Hyperion::Rendering::TextureAnisotropicFilter::Times2: amount = 2.0f; break;

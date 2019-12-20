@@ -24,11 +24,11 @@ namespace Hyperion::Rendering {
         glUseProgram(0);
     }
 
-    void OpenGLShader::SetInt(const String &name, int value) {
+    void OpenGLShader::SetInt(const String &name, u32 value) {
         glUniform1i(TryGetUniformLocation(name), value);
     }
 
-    void OpenGLShader::SetFloat(const String &name, float value) {
+    void OpenGLShader::SetFloat(const String &name, f32 value) {
         glUniform1f(TryGetUniformLocation(name), value);
     }
 

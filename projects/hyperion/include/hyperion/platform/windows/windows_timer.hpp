@@ -9,12 +9,12 @@ namespace Hyperion {
     class WindowsTimer : public Timer {
     private:
         LARGE_INTEGER m_start;
-        double m_frequency;
+        f64 m_frequency;
     public:
         WindowsTimer();
 
-        float ElapsedSeconds() const override;
-        float ElapsedMilliSeconds() const override;
+        f32 ElapsedSeconds() const override;
+        f32 ElapsedMilliSeconds() const override;
 
         void Reset() override;
     };

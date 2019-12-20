@@ -18,12 +18,12 @@ namespace Hyperion::Entity {
         m_fov_target = m_perspective_camera->GetFOV();
     }
 
-    void PerspectiveCameraController::Update(float delta) {
+    void PerspectiveCameraController::Update(f32 delta) {
         Vec3 position = m_perspective_camera->GetPosition();
         Vec3 forward = m_perspective_camera->GetForward();
         Vec3 up = m_perspective_camera->GetUp();
 
-        float fov = m_perspective_camera->GetFOV();
+        f32 fov = m_perspective_camera->GetFOV();
 
         // Rotation
         {
@@ -31,8 +31,8 @@ namespace Hyperion::Entity {
                 m_last_mouse_position = Input::GetMousePosition();
             }
 
-            float x_offset = 0.0f;
-            float y_offset = 0.0f;
+            f32 x_offset = 0.0f;
+            f32 y_offset = 0.0f;
             if (Input::GetMouseButton(MouseButtonCode::Right) || Input::GetMouseButton(MouseButtonCode::Middle)) {
                 Vec2 mouse_position = Input::GetMousePosition();
                 x_offset = mouse_position.x - m_last_mouse_position.x;
@@ -41,11 +41,11 @@ namespace Hyperion::Entity {
                 m_last_mouse_position.y = mouse_position.y;
             }
 
-            float sensitivity = 0.25f;
+            f32 sensitivity = 0.25f;
             x_offset *= sensitivity;
             y_offset *= sensitivity;
 
-            float rotation_speed = 100.0f * delta;
+            f32 rotation_speed = 100.0f * delta;
             if (Input::GetKey(KeyCode::Left) || Input::GetKey(KeyCode::Q)) {
                 m_yaw -= rotation_speed;
             }
@@ -72,7 +72,7 @@ namespace Hyperion::Entity {
 
         // Zoom
         {
-            float wheel = Input::GetMouseScroll();
+            f32 wheel = Input::GetMouseScroll();
             m_fov_target -= wheel * 5.0f;
             m_fov_target = Mathf::Clamp(m_fov_target, 25, 120);
             fov = Mathf::Lerp(fov, m_fov_target, delta * 15);
@@ -80,7 +80,7 @@ namespace Hyperion::Entity {
 
         // Movement
         {
-            float camera_speed = m_speed * delta;
+            f32 camera_speed = m_speed * delta;
             Vec3 direction = camera_speed * forward;
             Vec3 right = Vec3::Cross(forward, up).Normalized();
             right = camera_speed * right;
@@ -137,12 +137,12 @@ namespace Hyperion::Entity {
         m_size_target = m_orthographic_camera->GetSize();
     }
 
-    void OrthographicCameraController::Update(float delta) {
+    void OrthographicCameraController::Update(f32 delta) {
         Vec3 position = m_orthographic_camera->GetPosition();
         Vec3 forward = m_orthographic_camera->GetForward();
         Vec3 up = m_orthographic_camera->GetUp();
 
-        float size = m_orthographic_camera->GetSize();
+        f32 size = m_orthographic_camera->GetSize();
 
         // Rotation
         {
@@ -150,8 +150,8 @@ namespace Hyperion::Entity {
                 m_last_mouse_position = Input::GetMousePosition();
             }
 
-            float x_offset = 0.0f;
-            float y_offset = 0.0f;
+            f32 x_offset = 0.0f;
+            f32 y_offset = 0.0f;
             if (Input::GetMouseButton(MouseButtonCode::Right) || Input::GetMouseButton(MouseButtonCode::Middle)) {
                 Vec2 mouse_position = Input::GetMousePosition();
                 x_offset = mouse_position.x - m_last_mouse_position.x;
@@ -160,11 +160,11 @@ namespace Hyperion::Entity {
                 m_last_mouse_position.y = mouse_position.y;
             }
 
-            float sensitivity = 0.25f;
+            f32 sensitivity = 0.25f;
             x_offset *= sensitivity;
             y_offset *= sensitivity;
 
-            float rotation_speed = 100.0f * delta;
+            f32 rotation_speed = 100.0f * delta;
             if (Input::GetKey(KeyCode::Left) || Input::GetKey(KeyCode::Q)) {
                 m_yaw -= rotation_speed;
             }
@@ -191,7 +191,7 @@ namespace Hyperion::Entity {
 
         // Zoom
         {
-            float wheel = Input::GetMouseScroll();
+            f32 wheel = Input::GetMouseScroll();
             m_size_target -= wheel * 0.25f;
             m_size_target = Mathf::Clamp(m_size_target, 0.1f, 10);
             size = Mathf::Lerp(size, m_size_target, delta * 15);
@@ -199,7 +199,7 @@ namespace Hyperion::Entity {
 
         // Movement
         {
-            float camera_speed = m_speed * delta;
+            f32 camera_speed = m_speed * delta;
             Vec3 direction = camera_speed * forward;
             Vec3 right = Vec3::Cross(forward, up).Normalized();
             right = camera_speed * right;

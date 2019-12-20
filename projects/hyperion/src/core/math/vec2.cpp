@@ -8,7 +8,7 @@ namespace Hyperion {
         : x(0), y(0) {
     }
 
-    Vec2::Vec2(float x, float y)
+    Vec2::Vec2(f32 x, f32 y)
         : x(x), y(y) {
     }
 
@@ -40,28 +40,28 @@ namespace Hyperion {
         return *this;
     }
 
-    Vec2 &Vec2::Add(float value) {
+    Vec2 &Vec2::Add(f32 value) {
         x += value;
         y += value;
 
         return *this;
     }
 
-    Vec2 &Vec2::Subtract(float value) {
+    Vec2 &Vec2::Subtract(f32 value) {
         x -= value;
         y -= value;
 
         return *this;
     }
 
-    Vec2 &Vec2::Multiply(float value) {
+    Vec2 &Vec2::Multiply(f32 value) {
         x *= value;
         y *= value;
 
         return *this;
     }
 
-    Vec2 &Vec2::Divide(float value) {
+    Vec2 &Vec2::Divide(f32 value) {
         x /= value;
         y /= value;
 
@@ -88,19 +88,19 @@ namespace Hyperion {
         return left.Divide(right);
     }
 
-    Vec2 operator+(Vec2 left, float value) {
+    Vec2 operator+(Vec2 left, f32 value) {
         return left.Add(value);
     }
 
-    Vec2 operator-(Vec2 left, float value) {
+    Vec2 operator-(Vec2 left, f32 value) {
         return left.Subtract(value);
     }
 
-    Vec2 operator*(Vec2 left, float value) {
+    Vec2 operator*(Vec2 left, f32 value) {
         return left.Multiply(value);
     }
 
-    Vec2 operator/(Vec2 left, float value) {
+    Vec2 operator/(Vec2 left, f32 value) {
         return left.Divide(value);
     }
 
@@ -144,12 +144,12 @@ namespace Hyperion {
         return x >= other.x && y >= other.y;
     }
 
-    float Vec2::Dot(const Vec2 &other) const {
+    f32 Vec2::Dot(const Vec2 &other) const {
         return x * other.x + y * other.y;
     }
 
     Vec2 Vec2::Normalized() const {
-        float magnitude = Magnitude();
+        f32 magnitude = Magnitude();
         if (magnitude == 0) {
             return Vec2();
         } else {
@@ -157,17 +157,17 @@ namespace Hyperion {
         }
     }
 
-    float Vec2::Magnitude() const {
+    f32 Vec2::Magnitude() const {
         return Mathf::Sqrt(x * x + y * y);
     }
 
-    float Vec2::SqrMagnitude() const {
+    f32 Vec2::SqrMagnitude() const {
         return x * x + y * y;
     }
 
-    float Vec2::Distance(const Vec2 &other) const {
-        float x = this->x - other.x;
-        float y = this->y - other.y;
+    f32 Vec2::Distance(const Vec2 &other) const {
+        f32 x = this->x - other.x;
+        f32 y = this->y - other.y;
 
         return Mathf::Sqrt(x * x + y * y);
     }

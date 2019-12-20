@@ -23,9 +23,9 @@ namespace Hyperion::Rendering {
 
         virtual u32 GetID() const = 0;
 
-        virtual void SetInt(const String &name, int value) = 0;
+        virtual void SetInt(const String &name, u32 value) = 0;
 
-        virtual void SetFloat(const String &name, float value) = 0;
+        virtual void SetFloat(const String &name, f32 value) = 0;
         virtual void SetFloat2(const String &name, const Vec2 &value) = 0;
         virtual void SetFloat3(const String &name, const Vec3 &value) = 0;
         virtual void SetFloat4(const String &name, const Vec4 &value) = 0;

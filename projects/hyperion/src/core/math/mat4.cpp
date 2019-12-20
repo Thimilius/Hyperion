@@ -5,19 +5,19 @@
 namespace Hyperion {
 
     Mat4::Mat4() {
-        memset(elements, 0, 16 * sizeof(float));
+        memset(elements, 0, 16 * sizeof(f32));
     }
 
-    Mat4::Mat4(float diagonal) {
-        memset(elements, 0, 16 * sizeof(float));
+    Mat4::Mat4(f32 diagonal) {
+        memset(elements, 0, 16 * sizeof(f32));
         elements[0 + 0 * 4] = diagonal;
         elements[1 + 1 * 4] = diagonal;
         elements[2 + 2 * 4] = diagonal;
         elements[3 + 3 * 4] = diagonal;
     }
 
-    Mat4::Mat4(float *elements) {
-        memcpy(this->elements, elements, 16 * sizeof(float));
+    Mat4::Mat4(f32 *elements) {
+        memcpy(this->elements, elements, 16 * sizeof(f32));
     }
 
     Mat4::Mat4(const Vec4 &column0, const Vec4 &column1, const Vec4 &column2, const Vec4 &column3) {
@@ -28,17 +28,17 @@ namespace Hyperion {
     }
 
     Mat4 &Mat4::Multiply(const Mat4 &other) {
-        float data[16];
+        f32 data[16];
         for (int y = 0; y < 4; y++) {
             for (int x = 0; x < 4; x++) {
-                float sum = 0.0f;
+                f32 sum = 0.0f;
                 for (int e = 0; e < 4; e++) {
                     sum += elements[x + e * 4] * other.elements[e + y * 4];
                 }
                 data[x + y * 4] = sum;
             }
         }
-        memcpy(elements, data, 16 * sizeof(float));
+        memcpy(elements, data, 16 * sizeof(f32));
         return *this;
     }
 
@@ -67,7 +67,7 @@ namespace Hyperion {
     }
 
     Mat4 &Mat4::Invert() {
-        float temp[16];
+        f32 temp[16];
 
         temp[0] = elements[5] * elements[10] * elements[15] -
             elements[5] * elements[11] * elements[14] -
@@ -181,7 +181,7 @@ namespace Hyperion {
             elements[8] * elements[1] * elements[6] -
             elements[8] * elements[2] * elements[5];
 
-        float determinant = elements[0] * temp[0] + elements[1] * temp[4] + elements[2] * temp[8] + elements[3] * temp[12];
+        f32 determinant = elements[0] * temp[0] + elements[1] * temp[4] + elements[2] * temp[8] + elements[3] * temp[12];
         determinant = 1.0f / determinant;
 
         for (int i = 0; i < 4 * 4; i++) {
@@ -229,7 +229,7 @@ namespace Hyperion {
         return Translate(position.x, position.y, position.z);
     }
 
-    Mat4 Mat4::Translate(float x, float y, float z) {
+    Mat4 Mat4::Translate(f32 x, f32 y, f32 z) {
         Mat4 result(1.0f);
 
         result.elements[0 + 3 * 4] = x;
@@ -239,17 +239,17 @@ namespace Hyperion {
         return result;
     }
 
-    Mat4 Mat4::Rotate(const Vec3 &axis, float angle) {
+    Mat4 Mat4::Rotate(const Vec3 &axis, f32 angle) {
         Mat4 result(1.0f);
 
-        float radians = Mathf::ToRadians(angle);
-        float cos = Mathf::Cos(radians);
-        float sin = Mathf::Sin(radians);
-        float omc = 1.0f - cos;
+        f32 radians = Mathf::ToRadians(angle);
+        f32 cos = Mathf::Cos(radians);
+        f32 sin = Mathf::Sin(radians);
+        f32 omc = 1.0f - cos;
 
-        float x = axis.x;
-        float y = axis.y;
-        float z = axis.z;
+        f32 x = axis.x;
+        f32 y = axis.y;
+        f32 z = axis.z;
 
         result.elements[0 + 0 * 4] = x * x * omc + cos;
         result.elements[1 + 0 * 4] = y * x * omc + z * sin;
@@ -270,7 +270,7 @@ namespace Hyperion {
         return Scale(scale.x, scale.y, scale.z);
     }
 
-    Mat4 Mat4::Scale(float x, float y, float z) {
+    Mat4 Mat4::Scale(f32 x, f32 y, f32 z) {
         Mat4 result(1.0f);
 
         result.elements[0 + 0 * 4] = x;
@@ -280,11 +280,11 @@ namespace Hyperion {
         return result;
     }
 
-    Mat4 Mat4::TRS(const Vec3 &position, const Vec3 &axis, float angle, const Vec3 &scale) {
+    Mat4 Mat4::TRS(const Vec3 &position, const Vec3 &axis, f32 angle, const Vec3 &scale) {
         return Translate(position) * Rotate(axis, angle) * Scale(scale);
     }
 
-    Mat4 Mat4::Orthographic(float left, float right, float bottom, float top, float z_near, float z_far) {
+    Mat4 Mat4::Orthographic(f32 left, f32 right, f32 bottom, f32 top, f32 z_near, f32 z_far) {
         Mat4 result(1.0f);
 
         result.elements[0 + 0 * 4] = 2.0f / (right - left);
@@ -298,13 +298,13 @@ namespace Hyperion {
         return result;
     }
 
-    Mat4 Mat4::Perspective(float fov, float aspect_ratio, float z_near, float z_far) {
+    Mat4 Mat4::Perspective(f32 fov, f32 aspect_ratio, f32 z_near, f32 z_far) {
         Mat4 result(0.0f);
 
-        float t = Mathf::Tan(0.5f * Mathf::ToRadians(fov)) * z_near;
-        float b = -t;
-        float r = t * aspect_ratio;
-        float l = -r;
+        f32 t = Mathf::Tan(0.5f * Mathf::ToRadians(fov)) * z_near;
+        f32 b = -t;
+        f32 r = t * aspect_ratio;
+        f32 l = -r;
 
         result.elements[0 + 0 * 4] = 2.0f * z_near / (r - l);
         result.elements[1 + 1 * 4] = 2.0f * z_near / (t - b);

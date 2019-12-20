@@ -16,7 +16,7 @@ namespace Hyperion {
             VSyncMode vsync_mode = VSyncMode::EveryVBlank;
         } window;
 
-        float max_delta_time = 0.15f;
+        f32 max_delta_time = 0.15f;
     };
 
     class Application {
@@ -38,7 +38,7 @@ namespace Hyperion {
     protected:
         virtual void OnInit() = 0;
         virtual void OnEvent(Event &event) = 0;
-        virtual void OnUpdate(float delta_time) = 0;
+        virtual void OnUpdate(f32 delta_time) = 0;
         virtual void OnRender() = 0;
         virtual void OnTick() = 0;
     private:

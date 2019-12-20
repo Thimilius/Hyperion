@@ -7,23 +7,23 @@ namespace Hyperion {
     struct Mat4;
 
     struct Vec4 {
-        float x;
-        float y;
-        float z;
-        float w;
+        f32 x;
+        f32 y;
+        f32 z;
+        f32 w;
 
         Vec4();
-        Vec4(float x, float y, float z, float w);
+        Vec4(f32 x, f32 y, f32 z, f32 w);
 
         Vec4 &Add(const Vec4 &other);
         Vec4 &Subtract(const Vec4 &other);
         Vec4 &Multiply(const Vec4 &other);
         Vec4 &Divide(const Vec4 &other);
 
-        Vec4 &Add(float value);
-        Vec4 &Subtract(float value);
-        Vec4 &Multiply(float value);
-        Vec4 &Divide(float value);
+        Vec4 &Add(f32 value);
+        Vec4 &Subtract(f32 value);
+        Vec4 &Multiply(f32 value);
+        Vec4 &Divide(f32 value);
 
         Vec4 Multiply(const Mat4 &transform) const;
 
@@ -34,10 +34,10 @@ namespace Hyperion {
         friend Vec4 operator*(Vec4 left, const Vec4 &right);
         friend Vec4 operator/(Vec4 left, const Vec4 &right);
 
-        friend Vec4 operator+(Vec4 left, float value);
-        friend Vec4 operator-(Vec4 left, float value);
-        friend Vec4 operator*(Vec4 left, float value);
-        friend Vec4 operator/(Vec4 left, float value);
+        friend Vec4 operator+(Vec4 left, f32 value);
+        friend Vec4 operator-(Vec4 left, f32 value);
+        friend Vec4 operator*(Vec4 left, f32 value);
+        friend Vec4 operator/(Vec4 left, f32 value);
 
         bool operator==(const Vec4 &other) const;
         bool operator!=(const Vec4 &other) const;
@@ -52,7 +52,7 @@ namespace Hyperion {
         bool operator>(const Vec4 &other) const;
         bool operator>=(const Vec4 &other) const;
 
-        float Dot(const Vec4 &other) const;
+        f32 Dot(const Vec4 &other) const;
     };
 
 }

@@ -39,7 +39,7 @@ namespace Hyperion::Rendering {
             s_render_api->SetPolygonMode(polygon_mode);
         }
 
-        inline static void SetClearColor(float r, float g, float b, float a) {
+        inline static void SetClearColor(f32 r, f32 g, f32 b, f32 a) {
             s_render_api->SetClearColor(r, g, b, a);
         }
 

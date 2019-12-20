@@ -18,9 +18,9 @@ namespace Hyperion::Rendering {
 
         u32 GetID() const override { return m_shader_program_id; }
 
-        void SetInt(const String &name, int value) override;
+        void SetInt(const String &name, u32 value) override;
 
-        void SetFloat(const String &name, float value) override;
+        void SetFloat(const String &name, f32 value) override;
         void SetFloat2(const String &name, const Vec2 &value) override;
         void SetFloat3(const String &name, const Vec3 &value) override;
         void SetFloat4(const String &name, const Vec4 &value) override;

@@ -8,7 +8,7 @@ namespace Hyperion {
         : x(0), y(0), z(0) {
     }
 
-    Vec3::Vec3(float x, float y, float z)
+    Vec3::Vec3(f32 x, f32 y, f32 z)
         : x(x), y(y), z(z) {
     }
 
@@ -44,7 +44,7 @@ namespace Hyperion {
         return *this;
     }
 
-    Vec3 &Vec3::Add(float value) {
+    Vec3 &Vec3::Add(f32 value) {
         x += value;
         y += value;
         z += value;
@@ -52,7 +52,7 @@ namespace Hyperion {
         return *this;
     }
 
-    Vec3 &Vec3::Subtract(float value) {
+    Vec3 &Vec3::Subtract(f32 value) {
         x -= value;
         y -= value;
         z -= value;
@@ -60,7 +60,7 @@ namespace Hyperion {
         return *this;
     }
 
-    Vec3 &Vec3::Multiply(float value) {
+    Vec3 &Vec3::Multiply(f32 value) {
         x *= value;
         y *= value;
         z *= value;
@@ -68,7 +68,7 @@ namespace Hyperion {
         return *this;
     }
 
-    Vec3 &Vec3::Divide(float value) {
+    Vec3 &Vec3::Divide(f32 value) {
         x /= value;
         y /= value;
         z /= value;
@@ -104,19 +104,19 @@ namespace Hyperion {
         return left.Divide(right);
     }
 
-    Vec3 operator+(Vec3 left, float value) {
+    Vec3 operator+(Vec3 left, f32 value) {
         return left.Add(value);
     }
 
-    Vec3 operator-(Vec3 left, float value) {
+    Vec3 operator-(Vec3 left, f32 value) {
         return left.Subtract(value);
     }
 
-    Vec3 operator*(Vec3 left, float value) {
+    Vec3 operator*(Vec3 left, f32 value) {
         return left.Multiply(value);
     }
 
-    Vec3 operator/(Vec3 left, float value) {
+    Vec3 operator/(Vec3 left, f32 value) {
         return left.Divide(value);
     }
 
@@ -160,12 +160,12 @@ namespace Hyperion {
         return x >= other.x && y >= other.y && z >= other.z;
     }
 
-    float Vec3::Dot(const Vec3 &other) const {
+    f32 Vec3::Dot(const Vec3 &other) const {
         return x * other.x + y * other.y + z * other.z;
     }
 
     Vec3 Vec3::Normalized() const {
-        float magnitude = Magnitude();
+        f32 magnitude = Magnitude();
         if (magnitude == 0) {
             return Vec3();
         } else {
@@ -173,26 +173,26 @@ namespace Hyperion {
         }
     }
 
-    float Vec3::Magnitude() const {
+    f32 Vec3::Magnitude() const {
         return Mathf::Sqrt(x * x + y * y + z * z);
     }
 
-    float Vec3::SqrMagnitude() const {
+    f32 Vec3::SqrMagnitude() const {
         return x * x + y * y + z * z;
     }
 
-    float Vec3::Distance(const Vec3 &other) const {
-        float x = this->x - other.x;
-        float y = this->y - other.y;
-        float z = this->z - other.z;
+    f32 Vec3::Distance(const Vec3 &other) const {
+        f32 x = this->x - other.x;
+        f32 y = this->y - other.y;
+        f32 z = this->z - other.z;
 
         return Mathf::Sqrt(x * x + y * y + z * z);
     }
 
     Vec3 Vec3::Cross(const Vec3 &a, const Vec3 &b) {
-        float x = a.y * b.z - a.z * b.y;
-        float y = a.z * b.x - a.x * b.z;
-        float z = a.x * b.y - a.y * b.x;
+        f32 x = a.y * b.z - a.z * b.y;
+        f32 y = a.z * b.x - a.x * b.z;
+        f32 z = a.x * b.y - a.y * b.x;
 
         return Vec3(x, y, z);
     }

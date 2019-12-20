@@ -5,21 +5,21 @@
 namespace Hyperion {
 
     struct Vec2 {
-        float x;
-        float y;
+        f32 x;
+        f32 y;
 
         Vec2();
-        Vec2(float x, float y);
+        Vec2(f32 x, f32 y);
 
         Vec2 &Add(const Vec2 &other);
         Vec2 &Subtract(const Vec2 &other);
         Vec2 &Multiply(const Vec2 &other);
         Vec2 &Divide(const Vec2 &other);
 
-        Vec2 &Add(float value);
-        Vec2 &Subtract(float value);
-        Vec2 &Multiply(float value);
-        Vec2 &Divide(float value);
+        Vec2 &Add(f32 value);
+        Vec2 &Subtract(f32 value);
+        Vec2 &Multiply(f32 value);
+        Vec2 &Divide(f32 value);
 
         String ToString() const;
 
@@ -28,10 +28,10 @@ namespace Hyperion {
         friend Vec2 operator*(Vec2 left, const Vec2 &right);
         friend Vec2 operator/(Vec2 left, const Vec2 &right);
 
-        friend Vec2 operator+(Vec2 left, float value);
-        friend Vec2 operator-(Vec2 left, float value);
-        friend Vec2 operator*(Vec2 left, float value);
-        friend Vec2 operator/(Vec2 left, float value);
+        friend Vec2 operator+(Vec2 left, f32 value);
+        friend Vec2 operator-(Vec2 left, f32 value);
+        friend Vec2 operator*(Vec2 left, f32 value);
+        friend Vec2 operator/(Vec2 left, f32 value);
 
         bool operator==(const Vec2 &other) const;
         bool operator!=(const Vec2 &other) const;
@@ -46,14 +46,14 @@ namespace Hyperion {
         bool operator>(const Vec2 &other) const;
         bool operator>=(const Vec2 &other) const;
 
-        float Dot(const Vec2 &other) const;
+        f32 Dot(const Vec2 &other) const;
 
         Vec2 Normalized() const;
 
-        float Magnitude() const;
-        float SqrMagnitude() const;
+        f32 Magnitude() const;
+        f32 SqrMagnitude() const;
 
-        float Distance(const Vec2 &other) const;
+        f32 Distance(const Vec2 &other) const;
     };
 
 }

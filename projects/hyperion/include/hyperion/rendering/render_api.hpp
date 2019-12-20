@@ -100,7 +100,7 @@ namespace Hyperion::Rendering {
 
         virtual void SetPolygonMode(PolygonMode polygon_mode) = 0;
 
-        virtual void SetClearColor(float r, float g, float b, float a) = 0;
+        virtual void SetClearColor(f32 r, f32 g, f32 b, f32 a) = 0;
         virtual void Clear(ClearMask mask) = 0;
 
         virtual void SetViewport(s32 x, s32 y, s32 width, s32 height) = 0;

@@ -16,14 +16,14 @@ namespace Hyperion {
         Reset();
     }
 
-    float WindowsTimer::ElapsedSeconds() const {
+    f32 WindowsTimer::ElapsedSeconds() const {
         LARGE_INTEGER current;
         QueryPerformanceCounter(&current);
         u64 cycles = current.QuadPart - m_start.QuadPart;
-        return (float)(cycles * m_frequency);
+        return (f32)(cycles * m_frequency);
     }
 
-    float WindowsTimer::ElapsedMilliSeconds() const {
+    f32 WindowsTimer::ElapsedMilliSeconds() const {
         return ElapsedSeconds() * 1000.0f;
     }
 
