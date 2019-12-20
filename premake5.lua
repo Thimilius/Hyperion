@@ -1,26 +1,22 @@
 workspace "hyperion"
+	startproject "sandbox"
+
 	language "C++"
 	cppdialect "C++17"
-	architecture "x64"
+	architecture "x86_64"
+	
 	staticruntime "On"
-	startproject "sandbox"
 	
 	exceptionhandling ("Off")
 	rtti ("Off")
 	
-	configurations {
-		"debug",
-		"release",
-		"distribution"
-	}
-
 	flags { "FatalCompileWarnings" }
+	
+	configurations { "debug", "release" }
 
 	outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
-
-	filter "system:windows"
-		defines { "HYP_PLATFORM_WINDOWS" }
-		systemversion "latest"
+	targetdir ("build/bin/" .. outputdir)
+	objdir ("build/obj/" .. outputdir)
 
 	filter "configurations:debug"
 		defines { "HYP_DEBUG", "HYP_ENABLE_ASSERTS", "HYP_BREAK_ON_ASSERT" }
@@ -31,21 +27,17 @@ workspace "hyperion"
 		defines { "HYP_RELEASE" }
 		runtime "Release"
 		optimize "On"
-		
-	filter "configurations:distribution"
-		defines { "HYP_DISTRIBUTION" }
-		runtime "Release"
-		optimize "On"
+	
+	filter "system:windows"
+		defines { "HYP_PLATFORM_WINDOWS", "_CRT_SECURE_NO_WARNINGS" }
+		systemversion "latest"
 	
 project "hyperion"
-	location "hyperion"
+	location "projects/hyperion"
 	kind "StaticLib"
 	
-	targetdir ("bin/" .. outputdir)
-	objdir ("bin_int/" .. outputdir)
-
 	pchheader "hyppch.hpp"
-	pchsource "%{prj.name}/src/hyppch.cpp"
+	pchsource "projects/hyperion/src/hyppch.cpp"
 
 	debugdir "run_tree/"
 
@@ -54,81 +46,62 @@ project "hyperion"
 		"{COPY} vendor/assimp/lib/x64/assimp-vc140-mt.dll %{cfg.targetdir}"
 	}
 
-	files { 
-		"%{prj.name}/include/**.hpp",
-		"%{prj.name}/include/**.h",
-		
-		"%{prj.name}/src/**.hpp",
-		"%{prj.name}/src/**.cpp",
-		
-		"%{prj.name}/vendor/**.c",
-		"%{prj.name}/vendor/**.cpp",
-		"%{prj.name}/vendor/**.h",
-	}
+	files { "projects/hyperion/**" }
 
 	excludes {
-		"%{prj.name}/src/%{prj.name}/platform/windows/**.hpp",
-		"%{prj.name}/src/%{prj.name}/platform/windows/**.cpp",
+		"projects/hyperion/src/platform/**",
+		"projects/hyperion/include/hyperion/platform/**",
 	}
 
 	includedirs {
-		"%{prj.name}/include",
-		"%{prj.name}/src",
+		"projects/hyperion/include",
 		
-		"%{prj.name}/vendor/glad/include",
-		"%{prj.name}/vendor/stb/include",
-		"%{prj.name}/vendor/fmt/include",
-		"%{prj.name}/vendor/freetype/include",
-		"%{prj.name}/vendor/fmod/include",
-		"%{prj.name}/vendor/assimp/include",
+		"projects/hyperion/vendor/glad/include",
+		"projects/hyperion/vendor/stb/include",
+		"projects/hyperion/vendor/fmt/include",
+		"projects/hyperion/vendor/freetype/include",
+		"projects/hyperion/vendor/fmod/include",
+		"projects/hyperion/vendor/assimp/include",
 	}
 	
 	links {	"freetype", "fmod_vc", "assimp-vc140-mt" }
 	
 	libdirs {
-		"%{prj.name}/vendor/freetype/lib/x64",
-		"%{prj.name}/vendor/fmod/lib/x64",
-		"%{prj.name}/vendor/assimp/lib/x64",
+		"projects/hyperion/vendor/freetype/lib/x64",
+		"projects/hyperion/vendor/fmod/lib/x64",
+		"projects/hyperion/vendor/assimp/lib/x64",
 	}
 	
-	defines { "_CRT_SECURE_NO_WARNINGS" }
-	
-	filter "files:hyperion/vendor/**"
+	filter "files:projects/hyperion/vendor/**"
 		flags { "NoPCH" }
 
 	filter "system:windows"
 		files {
-			"%{prj.name}/src/%{prj.name}/platform/windows/**.hpp",
-			"%{prj.name}/src/%{prj.name}/platform/windows/**.cpp",
+			"projects/hyperion/include/hyperion/platform/windows/**",
+			"projects/hyperion/src/platform/windows/**"
 		}
 		
 		links { "opengl32", "PowrProf" }
 		linkoptions { "-IGNORE:4006" }
 		
 project "sandbox"
-	location "sandbox"
+	location "projects/sandbox"
 	kind "ConsoleApp"
 	
 	links { "hyperion" }
 	
-	targetdir ("bin/" .. outputdir)
-	objdir ("bin_int/" .. outputdir)
-	
 	debugdir "run_tree/"
 
 	postbuildcommands {
-		"{COPY} %{cfg.targetdir}/%{prj.name}.exe ../run_tree/",
+		"{COPY} %{cfg.targetdir}/%{prj.name}.exe ../../run_tree/",
 		
-		"{COPY} %{cfg.targetdir}/fmod.dll ../run_tree/",
-		"{COPY} %{cfg.targetdir}/assimp-vc140-mt.dll ../run_tree/"
+		"{COPY} %{cfg.targetdir}/fmod.dll ../../run_tree/",
+		"{COPY} %{cfg.targetdir}/assimp-vc140-mt.dll ../../run_tree/"
 	}
 	
-	files { 
-		"%{prj.name}/src/**.hpp",
-		"%{prj.name}/src/**.cpp",
-	}	
+	files { "projects/sandbox/**" }	
 	
-	includedirs { "hyperion/include" }
+	includedirs { "projects/hyperion/include" }
 		
 	filter "kind:ConsoleApp"
 		defines { "HYP_CONSOLE" }
