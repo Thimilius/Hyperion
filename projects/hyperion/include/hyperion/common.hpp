@@ -18,11 +18,11 @@
     #define HYP_DEBUG_BREAK
 #endif
 
-#include "core/types.hpp"
-#include "core/assert.hpp"
-#include "core/string_utils.hpp"
-#include "core/enum.hpp"
-#include "system/log.hpp"
+#include "hyperion/core/types.hpp"
+#include "hyperion/core/assert.hpp"
+#include "hyperion/core/string_utils.hpp"
+#include "hyperion/core/enum.hpp"
+#include "hyperion/core/log.hpp"
 
 #define HYP_PANIC do {                                                \
             HYP_LOG_ERROR("Engine", "Engine encountered an error!");  \

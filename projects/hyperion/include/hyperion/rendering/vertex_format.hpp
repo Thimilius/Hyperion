@@ -2,7 +2,7 @@
 
 #include "hyperion/common.hpp"
 #include "hyperion/rendering/buffer.hpp"
-#include "hyperion/math/math.hpp"
+#include "hyperion/core/math/math.hpp"
 
 namespace Hyperion::Rendering {
 

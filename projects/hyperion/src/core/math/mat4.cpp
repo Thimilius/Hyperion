@@ -1,6 +1,6 @@
 #include "hyppch.hpp"
 
-#include "hyperion/math/mat4.hpp"
+#include "hyperion/core/math/mat4.hpp"
 
 namespace Hyperion {
 

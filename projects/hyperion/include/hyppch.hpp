@@ -23,7 +23,8 @@
 // Hyperion
 #include "hyperion/common.hpp"
 #include "hyperion/core/string_utils.hpp"
-#include "hyperion/math/math.hpp"
+#include "hyperion/core/math/math.hpp"
+#include "hyperion/core/operating_system.hpp"
+#include "hyperion/core/engine.hpp"
+#include "hyperion/core/math/math.hpp"
 #include "hyperion/rendering/render_api.hpp"
-#include "hyperion/system/engine.hpp"
-#include "hyperion/system/operating_system.hpp"

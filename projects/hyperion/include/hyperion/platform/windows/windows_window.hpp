@@ -1,7 +1,7 @@
 #pragma once
 
 #include "hyperion/app/window.hpp"
-#include "hyperion/math/vec2.hpp"
+#include "hyperion/core/math/vec2.hpp"
 
 #include <Windows.h>
 

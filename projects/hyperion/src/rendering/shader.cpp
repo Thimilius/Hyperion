@@ -5,7 +5,7 @@
 #include <filesystem>
 
 #include "hyperion/driver/opengl/opengl_shader.hpp"
-#include "hyperion/io/file_utilities.hpp"
+#include "hyperion/core/io/file_utilities.hpp"
 
 namespace Hyperion::Rendering {
 

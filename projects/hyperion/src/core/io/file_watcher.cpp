@@ -1,6 +1,6 @@
 #include "hyppch.hpp"
 
-#include "hyperion/io/file_watcher.hpp"
+#include "hyperion/core/io/file_watcher.hpp"
 
 #ifdef HYP_PLATFORM_WINDOWS
     #include "hyperion/platform/windows/windows_file_watcher.hpp"

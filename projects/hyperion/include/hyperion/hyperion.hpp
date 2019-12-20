@@ -1,45 +1,39 @@
 #include "common.hpp"
 
-// App
-#include "app/application.hpp"
-#include "app/window.hpp"
-#include "app/display.hpp"
-#include "app/input.hpp"
-#include "app/time.hpp"
-#include "app/events/event.hpp"
-
-// Audio
-#include "audio/audio_engine.hpp"
-
 // Core
-#include "core/types.hpp"
-#include "core/string_utils.hpp"
-#include "core/timer.hpp"
+#include "hyperion/core/types.hpp"
+#include "hyperion/core/string_utils.hpp"
+#include "hyperion/core/timer.hpp"
+#include "hyperion/core/log.hpp"
+#include "hyperion/core/engine.hpp"
+#include "hyperion/core/operating_system.hpp"
+#include "hyperion/core/io/file_utilities.hpp"
+#include "hyperion/core/io/file_watcher.hpp"
+#include "hyperion/core/math/math.hpp"
 
-// Entity
-#include "entity/camera_controller.hpp"
-
-// IO
-#include "io/file_utilities.hpp"
-#include "io/file_watcher.hpp"
-
-// Math
-#include "math/math.hpp"
+// App
+#include "hyperion/app/application.hpp"
+#include "hyperion/app/window.hpp"
+#include "hyperion/app/display.hpp"
+#include "hyperion/app/input.hpp"
+#include "hyperion/app/time.hpp"
+#include "hyperion/app/events/event.hpp"
 
 // Rendering
-#include "rendering/graphics_context.hpp"
-#include "rendering/render_command.hpp"
-#include "rendering/renderer.hpp"
-#include "rendering/immediate_renderer.hpp"
-#include "rendering/shader.hpp"
-#include "rendering/texture.hpp"
-#include "rendering/buffer.hpp"
-#include "rendering/vertex_array.hpp"
-#include "rendering/render_texture.hpp"
-#include "rendering/camera.hpp"
-#include "rendering/layer.hpp"
+#include "hyperion/rendering/graphics_context.hpp"
+#include "hyperion/rendering/render_command.hpp"
+#include "hyperion/rendering/renderer.hpp"
+#include "hyperion/rendering/immediate_renderer.hpp"
+#include "hyperion/rendering/shader.hpp"
+#include "hyperion/rendering/texture.hpp"
+#include "hyperion/rendering/buffer.hpp"
+#include "hyperion/rendering/vertex_array.hpp"
+#include "hyperion/rendering/render_texture.hpp"
+#include "hyperion/rendering/camera.hpp"
+#include "hyperion/rendering/layer.hpp"
 
-// System
-#include "system/log.hpp"
-#include "system/engine.hpp"
-#include "system/operating_system.hpp"
+// Audio
+#include "hyperion/audio/audio_engine.hpp"
+
+// Entity
+#include "hyperion/entity/camera_controller.hpp"

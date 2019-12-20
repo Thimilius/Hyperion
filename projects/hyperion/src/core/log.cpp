@@ -1,8 +1,8 @@
 #include "hyppch.hpp"
 
-#include "hyperion/system/log.hpp"
+#include "hyperion/core/log.hpp"
 
-#include <time.h>
+#include <ctime>
 
 namespace Hyperion {
 

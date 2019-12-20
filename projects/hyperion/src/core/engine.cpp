@@ -1,6 +1,6 @@
 #include "hyppch.hpp"
 
-#include "hyperion/system/engine.hpp"
+#include "hyperion/core/engine.hpp"
 
 #include "hyperion/app/display.hpp"
 #include "hyperion/audio/audio_engine.hpp"

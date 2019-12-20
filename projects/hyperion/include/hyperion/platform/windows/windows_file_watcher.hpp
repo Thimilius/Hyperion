@@ -1,7 +1,7 @@
 #pragma once
 
 #include "hyperion/common.hpp"
-#include "hyperion/io/file_watcher.hpp"
+#include "hyperion/core/io/file_watcher.hpp"
 
 #include <Windows.h>
 

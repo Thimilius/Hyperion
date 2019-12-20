@@ -1,6 +1,6 @@
 #include "hyppch.hpp"
 
-#include "hyperion/math/vec3.hpp"
+#include "hyperion/core/math/vec3.hpp"
 
 namespace Hyperion {
 

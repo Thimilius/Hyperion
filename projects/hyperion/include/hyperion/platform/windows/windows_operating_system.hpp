@@ -1,6 +1,6 @@
 #pragma once
 
-#include "hyperion/system/operating_system.hpp"
+#include "hyperion/core/operating_system.hpp"
 
 #include <Windows.h>
 

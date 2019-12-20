@@ -1,6 +1,6 @@
 #include "hyppch.hpp"
 
-#include "hyperion/math/bounds.hpp"
+#include "hyperion/core/math/bounds.hpp"
 
 namespace Hyperion {
 

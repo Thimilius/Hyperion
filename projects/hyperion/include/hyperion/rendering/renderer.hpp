@@ -4,7 +4,7 @@
 #include "hyperion/rendering/shader.hpp"
 #include "hyperion/rendering/mesh.hpp"
 #include "hyperion/rendering/camera.hpp"
-#include "hyperion/math/mat4.hpp"
+#include "hyperion/core/math/mat4.hpp"
 
 namespace Hyperion::Rendering {
 

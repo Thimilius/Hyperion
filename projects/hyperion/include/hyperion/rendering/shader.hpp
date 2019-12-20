@@ -2,8 +2,8 @@
 
 #include "hyperion/common.hpp"
 #include "hyperion/core/asset.hpp"
-#include "hyperion/math/math.hpp"
-#include "hyperion/io/file_watcher.hpp"
+#include "hyperion/core/math/math.hpp"
+#include "hyperion/core/io/file_watcher.hpp"
 
 namespace Hyperion::Rendering {
 
