@@ -10,9 +10,8 @@ class SandboxApp : public Application {
 public:
     SandboxApp() : Application(ApplicationSettings()) { }
 protected:
-    Ref<Shader> m_shader;
-    Ref<Texture2D> m_texture;
-    Ref<Mesh> m_mesh;
+    Ref<Shader> m_gizmo_shader;
+    Ref<Mesh> m_gizmo_mesh;
 
     Ref<RenderTexture> m_render_texture;
     Ref<PerspectiveCameraController> m_camera_controller = std::make_shared<PerspectiveCameraController>(std::make_shared<PerspectiveCamera>());
@@ -27,9 +26,8 @@ protected:
 
         UpdateTitle();
 
-        m_shader = ShaderLibrary::Get("phong");
-        m_texture = Texture2D::CreateFromFile("data/textures/grass.png", TextureWrapMode::Clamp, TextureFilter::Bilinear, TextureAnisotropicFilter::None);
-        m_mesh = Mesh::CreateCube(1);
+        m_gizmo_shader = ShaderLibrary::Get("gizmo");
+        m_gizmo_mesh = Mesh::CreateFromFile("data/models/gizmo.obj");
         m_render_texture = RenderTexture::Create(GetWindow()->GetWidth(), GetWindow()->GetHeight(), RenderTextureFormat::RGBA8);
     }
     
@@ -70,16 +68,28 @@ protected:
         RenderCommand::EnableFeature(Feature::Blending);
         RenderCommand::SetBlendFunc(BlendFactor::SourceAlpha, BlendFactor::InverseSourceAlpha);
 
+        RenderCommand::SetPolygonMode(PolygonMode::Fill);
+
         Renderer::Begin(m_camera_controller->GetCamera());
         {
-            m_shader->Bind();
-            m_shader->SetFloat3("u_camera.position", m_camera_controller->GetCamera()->GetPosition());
-            m_shader->SetFloat3("u_light.position", Vec3(2, 2, 2));
-            m_shader->SetFloat3("u_light.color", Vec3(1, 1, 1));
-            m_shader->SetInt("u_texture", 0);
-            m_texture->Bind(0);
-            RenderCommand::SetPolygonMode(PolygonMode::Fill);
-            Renderer::Submit(m_mesh, m_shader, Mat4::Rotate(Vec3(0, 1, 0), (f32)Time::GetTime() * 50.0f));
+            // Draw gizmo
+            {
+                // We draw the gizmos on top of everything so erase depth information
+                RenderCommand::Clear(ClearMask::Depth);
+
+                m_gizmo_shader->Bind();
+                m_gizmo_shader->SetFloat3("u_camera.position", m_camera_controller->GetCamera()->GetPosition());
+
+                // X gizmo
+                m_gizmo_shader->SetFloat3("u_color", Vec3(1, 0, 0));
+                Renderer::Submit(m_gizmo_mesh, m_gizmo_shader, Mat4::Rotate(Vec3(0, 0, 1), -90.0f));
+                // Y gizmo
+                m_gizmo_shader->SetFloat3("u_color", Vec3(0, 1, 0));
+                Renderer::Submit(m_gizmo_mesh, m_gizmo_shader, Mat4::Identity());
+                // Z gizmo
+                m_gizmo_shader->SetFloat3("u_color", Vec3(0, 0, 1));
+                Renderer::Submit(m_gizmo_mesh, m_gizmo_shader, Mat4::Rotate(Vec3(1, 0, 0), 90.0f));
+            }
         }
         Renderer::End();
 

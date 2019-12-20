@@ -7,8 +7,8 @@ namespace Hyperion::Entity {
     class CameraController {
     protected:
         f32 m_speed = 5.0f;
-        f32 m_yaw = -90.0f;
-        f32 m_pitch = 0.0f;
+        f32 m_pitch = -35.0f;
+        f32 m_yaw = 225.0f;
 
         Vec2 m_last_mouse_position;
     public:
@@ -19,12 +19,7 @@ namespace Hyperion::Entity {
     private:
         Ref<Rendering::PerspectiveCamera> m_perspective_camera;
 
-        f32 m_speed = 5.0f;
         f32 m_fov_target;
-        f32 m_yaw = -90.0f;
-        f32 m_pitch = 0.0f;
-
-        Vec2 m_last_mouse_position;
     public:
         PerspectiveCameraController(const Ref<Rendering::PerspectiveCamera> &perspective_camera);
 
@@ -37,12 +32,7 @@ namespace Hyperion::Entity {
     private:
         Ref<Rendering::OrthographicCamera> m_orthographic_camera;
 
-        f32 m_speed = 5.0f;
         f32 m_size_target;
-        f32 m_yaw = -90.0f;
-        f32 m_pitch = 0.0f;
-
-        Vec2 m_last_mouse_position;
     public:
         OrthographicCameraController(const Ref<Rendering::OrthographicCamera> &orthographic_camera);
 

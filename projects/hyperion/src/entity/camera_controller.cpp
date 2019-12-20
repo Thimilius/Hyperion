@@ -10,7 +10,7 @@ namespace Hyperion::Entity {
     PerspectiveCameraController::PerspectiveCameraController(const Ref<PerspectiveCamera> &perspective_camera) {
         m_perspective_camera = perspective_camera;
 
-        m_perspective_camera->SetPosition(Vec3(0, 0, 1));
+        m_perspective_camera->SetPosition(Vec3(2, 2, 2));
         m_perspective_camera->SetForward(Vec3(0, 0, -1));
         m_perspective_camera->SetUp(Vec3(0, 1, 0));
 
@@ -107,12 +107,12 @@ namespace Hyperion::Entity {
 
         // Reset
         if (Input::GetKeyDown(KeyCode::R)) {
-            position = Vec3(0, 0, 1);
-            forward = Vec3(0, 0, -1);
+            position = Vec3(2, 2, 2);
+            forward = Vec3(-0.579227984f, -0.579227984f, -0.579227984f);
             up = Vec3::Up();
 
-            m_pitch = 0.0f;
-            m_yaw = -90.0f;
+            m_pitch = -35.0f;
+            m_yaw = 225.0f;
 
             fov = 90.0f;
             m_fov_target = fov;
@@ -226,12 +226,12 @@ namespace Hyperion::Entity {
 
         // Reset
         if (Input::GetKeyDown(KeyCode::R)) {
-            position = Vec3(0, 0, 1);
-            forward = Vec3(0, 0, -1);
+            position = Vec3(2, 2, 2);
+            forward = Vec3(-0.579227984f, -0.579227984f, -0.579227984f);
             up = Vec3::Up();
 
-            m_pitch = 0.0f;
-            m_yaw = -90.0f;
+            m_pitch = -35.0f;
+            m_yaw = 225.0f;
 
             size = 1.0f;
             m_size_target = size;
