@@ -1,7 +1,11 @@
 #pragma once
 
-#include "hyperion/app/window.hpp"
-#include "hyperion/app/events/events.hpp"
+#include "hyperion/core/app/window.hpp"
+#include "hyperion/core/app/events/event.hpp"
+#include "hyperion/core/app/events/app_events.hpp"
+#include "hyperion/core/app/events/window_events.hpp"
+#include "hyperion/core/app/events/key_events.hpp"
+#include "hyperion/core/app/events/mouse_events.hpp"
 
 namespace Hyperion {
 

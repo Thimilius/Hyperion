@@ -2,7 +2,11 @@
 
 #include "hyperion/platform/windows/windows_window.hpp"
 
-#include "hyperion/app/events/events.hpp"
+#include "hyperion/core/app/events/event.hpp"
+#include "hyperion/core/app/events/app_events.hpp"
+#include "hyperion/core/app/events/window_events.hpp"
+#include "hyperion/core/app/events/key_events.hpp"
+#include "hyperion/core/app/events/mouse_events.hpp"
 #include "hyperion/platform/windows/windows_opengl_graphics_context.hpp"
 
 namespace Hyperion {

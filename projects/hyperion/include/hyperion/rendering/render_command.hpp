@@ -3,13 +3,13 @@
 #include "hyperion/rendering/render_api.hpp"
 #include "hyperion/rendering/render_texture.hpp"
 #include "hyperion/rendering/buffer.hpp"
-#include "hyperion/app/application.hpp"
+#include "hyperion/core/app/application.hpp"
 
 namespace Hyperion::Rendering {
 
     class RenderCommand {
     private: 
-        inline static RenderAPI *s_render_api;
+        inline static Scope<RenderAPI> s_render_api;
     public:
         inline static void EnableFeature(Feature feature) {
             s_render_api->EnableFeature(feature);

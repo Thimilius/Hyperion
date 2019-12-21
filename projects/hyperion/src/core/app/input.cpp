@@ -1,6 +1,6 @@
 #include "hyppch.hpp"
 
-#include "hyperion/app/input.hpp"
+#include "hyperion/core/app/input.hpp"
 
 namespace Hyperion {
 

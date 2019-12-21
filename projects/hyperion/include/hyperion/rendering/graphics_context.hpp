@@ -1,6 +1,6 @@
 #pragma once
 
-#include "hyperion/app/window.hpp"
+#include "hyperion/core/app/window.hpp"
 
 namespace Hyperion::Rendering {
 

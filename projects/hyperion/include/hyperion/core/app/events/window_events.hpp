@@ -1,8 +1,8 @@
 #pragma once
 
-#include "hyperion/app/events/event.hpp"
+#include "hyperion/core/app/events/event.hpp"
 
-#include "hyperion/app/window.hpp"
+#include "hyperion/core/app/window.hpp"
 
 namespace Hyperion {
 

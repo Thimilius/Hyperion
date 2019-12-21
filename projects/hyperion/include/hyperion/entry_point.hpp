@@ -1,6 +1,6 @@
 #pragma once
 
-#include "app/application.hpp"
+#include "hyperion/core/app/application.hpp"
 
 extern Hyperion::Application *Hyperion::CreateApplication();
 

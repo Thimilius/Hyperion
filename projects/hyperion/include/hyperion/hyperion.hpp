@@ -15,14 +15,16 @@
 #include "hyperion/core/math/vec3.hpp"
 #include "hyperion/core/math/vec4.hpp"
 #include "hyperion/core/math/mat4.hpp"
-
-// App
-#include "hyperion/app/application.hpp"
-#include "hyperion/app/window.hpp"
-#include "hyperion/app/display.hpp"
-#include "hyperion/app/input.hpp"
-#include "hyperion/app/time.hpp"
-#include "hyperion/app/events/event.hpp"
+#include "hyperion/core/app/application.hpp"
+#include "hyperion/core/app/window.hpp"
+#include "hyperion/core/app/display.hpp"
+#include "hyperion/core/app/input.hpp"
+#include "hyperion/core/app/time.hpp"
+#include "hyperion/core/app/events/event.hpp"
+#include "hyperion/core/app/events/app_events.hpp"
+#include "hyperion/core/app/events/window_events.hpp"
+#include "hyperion/core/app/events/key_events.hpp"
+#include "hyperion/core/app/events/mouse_events.hpp"
 
 // Rendering
 #include "hyperion/rendering/graphics_context.hpp"

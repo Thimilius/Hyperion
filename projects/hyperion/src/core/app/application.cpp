@@ -1,12 +1,11 @@
 #include "hyppch.hpp"
 
-#include "hyperion/app/application.hpp"
+#include "hyperion/core/app/application.hpp"
 
 #include "hyperion/core/timer.hpp"
 #include "hyperion/core/engine.hpp"
-#include "hyperion/app/time.hpp"
-#include "hyperion/app/display.hpp"
-#include "hyperion/app/events/events.hpp"
+#include "hyperion/core/app/time.hpp"
+#include "hyperion/core/app/display.hpp"
 #include "hyperion/rendering/render_command.hpp"
 
 namespace Hyperion {

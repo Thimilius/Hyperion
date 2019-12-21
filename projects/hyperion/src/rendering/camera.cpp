@@ -2,7 +2,7 @@
 
 #include "hyperion/rendering/camera.hpp"
 
-#include "hyperion/app/application.hpp"
+#include "hyperion/core/app/application.hpp"
 
 namespace Hyperion::Rendering {
 

@@ -2,7 +2,7 @@
 
 #include "hyperion/core/engine.hpp"
 
-#include "hyperion/app/display.hpp"
+#include "hyperion/core/app/display.hpp"
 #include "hyperion/audio/audio_engine.hpp"
 #include "hyperion/rendering/render_command.hpp"
 #include "hyperion/rendering/shader.hpp"

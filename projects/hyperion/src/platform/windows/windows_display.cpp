@@ -1,6 +1,6 @@
 #include "hyppch.hpp"
 
-#include "hyperion/app/display.hpp"
+#include "hyperion/core/app/display.hpp"
 
 namespace Hyperion {
 

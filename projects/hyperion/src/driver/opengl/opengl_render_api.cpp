@@ -2,7 +2,7 @@
 
 #include "hyperion/driver/opengl/opengl_render_api.hpp"
 
-#include "hyperion/app/application.hpp"
+#include "hyperion/core/app/application.hpp"
 
 namespace Hyperion::Rendering {
 

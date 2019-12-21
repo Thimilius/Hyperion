@@ -1,7 +1,7 @@
 #pragma once
 
 #include "hyperion/common.hpp"
-#include "hyperion/app/input.hpp"
+#include "hyperion/core/app/input.hpp"
 
 #include <functional>
 
