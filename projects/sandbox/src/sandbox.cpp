@@ -16,8 +16,12 @@ protected:
     Ref<RenderTexture> m_render_texture;
     Ref<PerspectiveCameraController> m_camera_controller = std::make_shared<PerspectiveCameraController>(std::make_shared<PerspectiveCamera>());
 
-    Bounds m_bounds;
-    bool m_hit = false;
+    Bounds m_gizmo_x_bounds;
+    bool m_gizmo_x_hit = false;
+    Bounds m_gizmo_y_bounds;
+    bool m_gizmo_y_hit = false;
+    Bounds m_gizmo_z_bounds;
+    bool m_gizmo_z_hit = false;
 
     void UpdateTitle() {
         String title = StringUtils::Format("Hyperion | FPS: {} ({:.2f} ms) | VSync: {}", Time::GetFPS(), Time::GetFrameTime(), GetWindow()->GetVSyncMode() != VSyncMode::DontSync);
@@ -32,7 +36,9 @@ protected:
         m_gizmo_shader = ShaderLibrary::Get("gizmo");
         m_gizmo_mesh = Mesh::CreateFromFile("data/models/gizmo.obj");
         m_render_texture = RenderTexture::Create(GetWindow()->GetWidth(), GetWindow()->GetHeight(), RenderTextureFormat::RGBA8);
-        m_bounds = m_gizmo_mesh->GetBounds();
+        m_gizmo_x_bounds = Bounds(Vec3(0.5f, 0.0f, 0.0f), Vec3(1.0f, 0.1f, 0.1f));
+        m_gizmo_y_bounds = Bounds(Vec3(0.0f, 0.5f, 0.0f), Vec3(0.1f, 1.0f, 0.1f));
+        m_gizmo_z_bounds = Bounds(Vec3(0.0f, 0.0f, 0.5f), Vec3(0.1f, 0.1f, 1.0f));
     }
     
     void OnEvent(Event &event) override {
@@ -56,9 +62,14 @@ protected:
 
         m_camera_controller->Update(delta_time);
 
-        Vec2 mouse_position = Input::GetMousePosition();
-        Ray ray = m_camera_controller->GetCamera()->ScreenPointToRay(mouse_position);
-        m_hit = m_bounds.Intersects(ray);
+        // Gizmo intersections
+        {
+            Vec2 mouse_position = Input::GetMousePosition();
+            Ray ray = m_camera_controller->GetCamera()->ScreenPointToRay(mouse_position);
+            m_gizmo_x_hit = m_gizmo_x_bounds.Intersects(ray);
+            m_gizmo_y_hit = m_gizmo_y_bounds.Intersects(ray);
+            m_gizmo_z_hit = m_gizmo_z_bounds.Intersects(ray);
+        }
     }
 
     void OnRender() override {
@@ -89,25 +100,17 @@ protected:
                 m_gizmo_shader->SetFloat3("u_camera.position", m_camera_controller->GetCamera()->GetPosition());
 
                 // X gizmo
-                m_gizmo_shader->SetFloat3("u_color", Vec3(1, 0, 0));
+                m_gizmo_shader->SetFloat3("u_color", m_gizmo_x_hit ? Vec3(1, 1, 1) : Vec3(1, 0, 0));
                 Renderer::Submit(m_gizmo_mesh, m_gizmo_shader, Mat4::Rotate(Vec3(0, 0, 1), -90.0f));
                 // Y gizmo
-                m_gizmo_shader->SetFloat3("u_color", m_hit ? Vec3(1, 1, 1) : Vec3(0, 1, 0));
+                m_gizmo_shader->SetFloat3("u_color", m_gizmo_y_hit ? Vec3(1, 1, 1) : Vec3(0, 1, 0));
                 Renderer::Submit(m_gizmo_mesh, m_gizmo_shader, Mat4::Identity());
                 // Z gizmo
-                m_gizmo_shader->SetFloat3("u_color", Vec3(0, 0, 1));
+                m_gizmo_shader->SetFloat3("u_color", m_gizmo_z_hit ? Vec3(1, 1, 1) : Vec3(0, 0, 1));
                 Renderer::Submit(m_gizmo_mesh, m_gizmo_shader, Mat4::Rotate(Vec3(1, 0, 0), 90.0f));
             }
         }
         Renderer::End();
-
-        ImmediateRenderer::Begin(m_camera_controller->GetCamera());
-        {
-            RenderCommand::SetPolygonMode(PolygonMode::Line);
-            RenderCommand::DisableFeature(Feature::Culling);
-            //ImmediateRenderer::DrawCube(m_bounds.center, m_bounds.GetSize(), Vec4(1, 1, 1, 1));
-        }
-        ImmediateRenderer::End();
 
         RenderCommand::Blit(nullptr, m_render_texture);
 

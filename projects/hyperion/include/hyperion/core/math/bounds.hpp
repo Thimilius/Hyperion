@@ -11,7 +11,7 @@ namespace Hyperion {
         Vec3 extends;
 
         Bounds();
-        Bounds(Vec3 center, Vec3 extends);
+        Bounds(Vec3 center, Vec3 size);
 
         Vec3 GetSize() const;
         Vec3 GetMin() const;
