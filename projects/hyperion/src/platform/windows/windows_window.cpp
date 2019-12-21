@@ -11,11 +11,11 @@
 
 namespace Hyperion {
 
-    Window *Window::Create(const String &title, u32 width, u32 height, WindowMode window_mode, VSyncMode vsync_mode, Rendering::RenderBackendAPI backend_api) {
+    Window *Window::Create(const String &title, u32 width, u32 height, WindowMode window_mode, VSyncMode vsync_mode, Rendering::RenderBackend backend_api) {
         return new WindowsWindow(title, width, height, window_mode, vsync_mode, backend_api);
     }
 
-    WindowsWindow::WindowsWindow(const String &title, u32 width, u32 height, WindowMode window_mode, VSyncMode vsync_mode, Rendering::RenderBackendAPI backend_api) {
+    WindowsWindow::WindowsWindow(const String &title, u32 width, u32 height, WindowMode window_mode, VSyncMode vsync_mode, Rendering::RenderBackend backend_api) {
         m_title = title;
         m_width = width;
         m_height = height;
@@ -437,9 +437,9 @@ namespace Hyperion {
         return key_modifier;
     }
 
-    void WindowsWindow::CreateContext(Rendering::RenderBackendAPI backend_api) {
+    void WindowsWindow::CreateContext(Rendering::RenderBackend backend_api) {
         switch (backend_api) {
-            case Rendering::RenderBackendAPI::OpenGL: {
+            case Rendering::RenderBackend::OpenGL: {
                 m_graphics_context.reset(new Rendering::WindowsOpenGLGraphicsContext(m_window_handle));
                 break;
             }

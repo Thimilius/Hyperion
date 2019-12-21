@@ -46,7 +46,7 @@ namespace Hyperion::Rendering {
         glViewport(x, y, width, height);
     }
 
-    void OpenGLRenderAPI::SetActiveRenderTarget(const Ref<RenderTexture> texture, RenderTextureTarget target) {
+    void OpenGLRenderAPI::SetActiveRenderTarget(const Ref<RenderTexture> &texture, RenderTextureTarget target) {
         u32 id = 0;
         if (texture != nullptr) {
             id = texture->GetID();
@@ -73,7 +73,7 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void OpenGLRenderAPI::Blit(const Ref<RenderTexture> destination, s32 dstX0, s32 dstY0, s32 dstX1, s32 dstY1, const Ref<RenderTexture> source, s32 srcX0, s32 srcY0, s32 srcX1, s32 srcY1) {
+    void OpenGLRenderAPI::Blit(const Ref<RenderTexture> &destination, s32 dstX0, s32 dstY0, s32 dstX1, s32 dstY1, const Ref<RenderTexture> &source, s32 srcX0, s32 srcY0, s32 srcX1, s32 srcY1) {
         s32 draw_framebuffer_id;
         glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &draw_framebuffer_id);
         s32 read_framebuffer_id;

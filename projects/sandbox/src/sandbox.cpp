@@ -16,6 +16,8 @@ protected:
     Ref<RenderTexture> m_render_texture;
     Ref<PerspectiveCameraController> m_camera_controller = std::make_shared<PerspectiveCameraController>(std::make_shared<PerspectiveCamera>());
 
+    Bounds m_bounds;
+
     void UpdateTitle() {
         String title = StringUtils::Format("Hyperion | FPS: {} ({:.2f} ms) | VSync: {}", Time::GetFPS(), Time::GetFrameTime(), GetWindow()->GetVSyncMode() != VSyncMode::DontSync);
         GetWindow()->SetTitle(title);
@@ -29,6 +31,7 @@ protected:
         m_gizmo_shader = ShaderLibrary::Get("gizmo");
         m_gizmo_mesh = Mesh::CreateFromFile("data/models/gizmo.obj");
         m_render_texture = RenderTexture::Create(GetWindow()->GetWidth(), GetWindow()->GetHeight(), RenderTextureFormat::RGBA8);
+        m_bounds = m_gizmo_mesh->GetBounds();
     }
     
     void OnEvent(Event &event) override {
@@ -92,6 +95,14 @@ protected:
             }
         }
         Renderer::End();
+
+        ImmediateRenderer::Begin(m_camera_controller->GetCamera());
+        {
+            RenderCommand::SetPolygonMode(PolygonMode::Line);
+            RenderCommand::DisableFeature(Feature::Culling);
+            ImmediateRenderer::DrawCube(m_bounds.center, m_bounds.GetSize(), Vec4(1, 1, 1, 1));
+        }
+        ImmediateRenderer::End();
 
         RenderCommand::Blit(nullptr, m_render_texture);
 

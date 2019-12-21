@@ -29,7 +29,7 @@ namespace Hyperion {
         // TEMP: For faster startup time, skip initializing the audio engine
         //Audio::CAudioEngine::Init();
 
-        Rendering::RenderCommand::Init(settings.renderer.backend_api);
+        Rendering::RenderCommand::Init(settings.renderer.backend);
         Rendering::ShaderLibrary::Init(settings.assets.shader_path);
     }
 

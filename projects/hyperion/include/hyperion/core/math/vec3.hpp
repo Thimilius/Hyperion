@@ -28,16 +28,6 @@ namespace Hyperion {
 
         String ToString() const;
 
-        friend Vec3 operator+(Vec3 left, const Vec3 &right);
-        friend Vec3 operator-(Vec3 left, const Vec3 &right);
-        friend Vec3 operator*(Vec3 left, const Vec3 &right);
-        friend Vec3 operator/(Vec3 left, const Vec3 &right);
-
-        friend Vec3 operator+(Vec3 left, f32 value);
-        friend Vec3 operator-(Vec3 left, f32 value);
-        friend Vec3 operator*(Vec3 left, f32 value);
-        friend Vec3 operator/(Vec3 left, f32 value);
-
         bool operator==(const Vec3 &other) const;
         bool operator!=(const Vec3 &other) const;
 
@@ -70,6 +60,16 @@ namespace Hyperion {
         inline static Vec3 Left() { return Vec3(-1, 0, 0); }
         inline static Vec3 Forward() { return Vec3(0, 0, -1); }
         inline static Vec3 Back() { return Vec3(0, 0, 1); }
+
+        friend Vec3 operator+(Vec3 left, const Vec3 &right);
+        friend Vec3 operator-(Vec3 left, const Vec3 &right);
+        friend Vec3 operator*(Vec3 left, const Vec3 &right);
+        friend Vec3 operator/(Vec3 left, const Vec3 &right);
+
+        friend Vec3 operator+(Vec3 left, f32 value);
+        friend Vec3 operator-(Vec3 left, f32 value);
+        friend Vec3 operator*(Vec3 left, f32 value);
+        friend Vec3 operator/(Vec3 left, f32 value);
     };
 
 }

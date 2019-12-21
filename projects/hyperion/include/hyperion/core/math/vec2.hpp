@@ -23,16 +23,6 @@ namespace Hyperion {
 
         String ToString() const;
 
-        friend Vec2 operator+(Vec2 left, const Vec2 &right);
-        friend Vec2 operator-(Vec2 left, const Vec2 &right);
-        friend Vec2 operator*(Vec2 left, const Vec2 &right);
-        friend Vec2 operator/(Vec2 left, const Vec2 &right);
-
-        friend Vec2 operator+(Vec2 left, f32 value);
-        friend Vec2 operator-(Vec2 left, f32 value);
-        friend Vec2 operator*(Vec2 left, f32 value);
-        friend Vec2 operator/(Vec2 left, f32 value);
-
         bool operator==(const Vec2 &other) const;
         bool operator!=(const Vec2 &other) const;
 
@@ -54,6 +44,16 @@ namespace Hyperion {
         f32 SqrMagnitude() const;
 
         f32 Distance(const Vec2 &other) const;
+
+        friend Vec2 operator+(Vec2 left, const Vec2 &right);
+        friend Vec2 operator-(Vec2 left, const Vec2 &right);
+        friend Vec2 operator*(Vec2 left, const Vec2 &right);
+        friend Vec2 operator/(Vec2 left, const Vec2 &right);
+
+        friend Vec2 operator+(Vec2 left, f32 value);
+        friend Vec2 operator-(Vec2 left, f32 value);
+        friend Vec2 operator*(Vec2 left, f32 value);
+        friend Vec2 operator/(Vec2 left, f32 value);
     };
 
 }

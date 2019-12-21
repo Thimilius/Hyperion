@@ -22,7 +22,7 @@ namespace Hyperion {
         HYP_ASSERT_MESSAGE(settings.app.max_delta_time > 0, "Max delta time must be greater than zero!");
         Time::s_max_delta_time = settings.app.max_delta_time;
 
-        m_window = Window::Create(settings.window.title, settings.window.width, settings.window.height, settings.window.window_mode, settings.window.vsync_mode, settings.renderer.backend_api);
+        m_window = Window::Create(settings.window.title, settings.window.width, settings.window.height, settings.window.window_mode, settings.window.vsync_mode, settings.renderer.backend);
         m_window->SetEventCallbackFunction(std::bind(&Application::OnEventInternal, this, std::placeholders::_1));
     }
 

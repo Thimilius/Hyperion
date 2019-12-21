@@ -51,17 +51,17 @@ namespace Hyperion::Rendering {
             s_render_api->SetViewport(x, y, width, height);
         }
 
-        inline static void SetActiveRenderTarget(const Ref<RenderTexture> texture, RenderTextureTarget target = RenderTextureTarget::DrawAndRead) {
+        inline static void SetActiveRenderTarget(const Ref<RenderTexture> &texture, RenderTextureTarget target = RenderTextureTarget::DrawAndRead) {
             s_render_api->SetActiveRenderTarget(texture, target);
         }
 
-        inline static void Blit(const Ref<RenderTexture> destination, const Ref<RenderTexture> source) {
+        inline static void Blit(const Ref<RenderTexture> &destination, const Ref<RenderTexture> &source) {
             u32 destination_width = destination ? destination->GetWidth() : Application::GetInstance()->GetWindow()->GetWidth();
             u32 destination_height = destination ? destination->GetHeight() : Application::GetInstance()->GetWindow()->GetHeight();
             s_render_api->Blit(destination, 0, 0, destination_width, destination_height, source, 0, 0, source->GetWidth(), source->GetHeight());
         }
 
-        inline static void Blit(const Ref<RenderTexture> destination, s32 dstX0, s32 dstY0, s32 dstX1, s32 dstY1, const Ref<RenderTexture> source, s32 srcX0, s32 srcY0, s32 srcX1, s32 srcY1) {
+        inline static void Blit(const Ref<RenderTexture> &destination, s32 dstX0, s32 dstY0, s32 dstX1, s32 dstY1, const Ref<RenderTexture> &source, s32 srcX0, s32 srcY0, s32 srcX1, s32 srcY1) {
             s_render_api->Blit(destination, dstX0, dstY0, dstX1, dstY1, source, srcX0, srcY0, srcX1, srcY1);
         }
 
@@ -73,7 +73,7 @@ namespace Hyperion::Rendering {
             s_render_api->Draw(primitive, vertex_count, vertex_offset);
         }
     private:
-        static void Init(RenderBackendAPI backend_api);
+        static void Init(RenderBackend backend_api);
 
         friend class Engine;
     };

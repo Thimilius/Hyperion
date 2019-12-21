@@ -84,46 +84,6 @@ namespace Hyperion {
         return StringUtils::Format("({:.2f}, {:.2f}, {:.2f})", x, y, z);
     }
 
-    Vec3 operator+(Vec3 left, const Vec3 &right) {
-        return left.Add(right);
-    }
-
-    Vec3 operator-(Vec3 left, const Vec3 &right) {
-        return left.Subtract(right);
-    }
-
-    Vec3 operator*(Vec3 left, const Vec3 &right) {
-        return left.Multiply(right);
-    }
-
-    Vec3 operator/(Vec3 left, const Vec3 &right) {
-        return left.Divide(right);
-    }
-
-    Vec3 operator+(Vec3 left, f32 value) {
-        return left.Add(value);
-    }
-
-    Vec3 operator-(Vec3 left, f32 value) {
-        return left.Subtract(value);
-    }
-
-    Vec3 operator*(Vec3 left, f32 value) {
-        return left.Multiply(value);
-    }
-
-    Vec3 operator/(Vec3 left, f32 value) {
-        return left.Divide(value);
-    }
-
-    bool Vec3::operator==(const Vec3 &other) const {
-        return x == other.x && y == other.y && z == other.z;
-    }
-
-    bool Vec3::operator!=(const Vec3 &other) const {
-        return !(*this == other);
-    }
-
     Vec3 &Vec3::operator+=(const Vec3 &other) {
         return Add(other);
     }
@@ -191,6 +151,46 @@ namespace Hyperion {
         f32 z = a.x * b.y - a.y * b.x;
 
         return Vec3(x, y, z);
+    }
+
+    Vec3 operator+(Vec3 left, const Vec3 &right) {
+        return left.Add(right);
+    }
+
+    Vec3 operator-(Vec3 left, const Vec3 &right) {
+        return left.Subtract(right);
+    }
+
+    Vec3 operator*(Vec3 left, const Vec3 &right) {
+        return left.Multiply(right);
+    }
+
+    Vec3 operator/(Vec3 left, const Vec3 &right) {
+        return left.Divide(right);
+    }
+
+    Vec3 operator+(Vec3 left, f32 value) {
+        return left.Add(value);
+    }
+
+    Vec3 operator-(Vec3 left, f32 value) {
+        return left.Subtract(value);
+    }
+
+    Vec3 operator*(Vec3 left, f32 value) {
+        return left.Multiply(value);
+    }
+
+    Vec3 operator/(Vec3 left, f32 value) {
+        return left.Divide(value);
+    }
+
+    bool Vec3::operator==(const Vec3 &other) const {
+        return x == other.x && y == other.y && z == other.z;
+    }
+
+    bool Vec3::operator!=(const Vec3 &other) const {
+        return !(*this == other);
     }
 
 }

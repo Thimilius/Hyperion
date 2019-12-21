@@ -95,38 +95,6 @@ namespace Hyperion {
         return StringUtils::Format("({:.2f}, {:.2f}, {:.2f}, {:.2f})", x, y, z, w);
     }
 
-    Vec4 operator+(Vec4 left, const Vec4 &right) {
-        return left.Add(right);
-    }
-
-    Vec4 operator-(Vec4 left, const Vec4 &right) {
-        return left.Subtract(right);
-    }
-
-    Vec4 operator*(Vec4 left, const Vec4 &right) {
-        return left.Multiply(right);
-    }
-
-    Vec4 operator/(Vec4 left, const Vec4 &right) {
-        return left.Divide(right);
-    }
-
-    Vec4 operator+(Vec4 left, f32 value) {
-        return left.Add(value);
-    }
-
-    Vec4 operator-(Vec4 left, f32 value) {
-        return left.Subtract(value);
-    }
-
-    Vec4 operator*(Vec4 left, f32 value) {
-        return left.Multiply(value);
-    }
-
-    Vec4 operator/(Vec4 left, f32 value) {
-        return left.Divide(value);
-    }
-
     bool Vec4::operator==(const Vec4 &other) const {
         return x == other.x && y == other.y && z == other.z && w == other.w;
     }
@@ -169,6 +137,38 @@ namespace Hyperion {
 
     f32 Vec4::Dot(const Vec4 &other) const {
         return x * other.x + y * other.y + z * other.z + w * other.w;
+    }
+
+    Vec4 operator+(Vec4 left, const Vec4 &right) {
+        return left.Add(right);
+    }
+
+    Vec4 operator-(Vec4 left, const Vec4 &right) {
+        return left.Subtract(right);
+    }
+
+    Vec4 operator*(Vec4 left, const Vec4 &right) {
+        return left.Multiply(right);
+    }
+
+    Vec4 operator/(Vec4 left, const Vec4 &right) {
+        return left.Divide(right);
+    }
+
+    Vec4 operator+(Vec4 left, f32 value) {
+        return left.Add(value);
+    }
+
+    Vec4 operator-(Vec4 left, f32 value) {
+        return left.Subtract(value);
+    }
+
+    Vec4 operator*(Vec4 left, f32 value) {
+        return left.Multiply(value);
+    }
+
+    Vec4 operator/(Vec4 left, f32 value) {
+        return left.Divide(value);
     }
 
 }

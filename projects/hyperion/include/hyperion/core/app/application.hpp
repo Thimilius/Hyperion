@@ -30,7 +30,7 @@ namespace Hyperion {
         } assets;
 
         struct {
-            Rendering::RenderBackendAPI backend_api = Rendering::RenderBackendAPI::OpenGL;
+            Rendering::RenderBackend backend = Rendering::RenderBackend::OpenGL;
         } renderer;
     };
 

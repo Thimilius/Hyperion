@@ -70,38 +70,6 @@ namespace Hyperion {
         return StringUtils::Format("({:.2f}, {:.2f})", x, y);
     }
 
-    Vec2 operator+(Vec2 left, const Vec2 &right) {
-        return left.Add(right);
-    }
-
-    Vec2 operator-(Vec2 left, const Vec2 &right) {
-        return left.Subtract(right);
-    }
-
-    Vec2 operator*(Vec2 left, const Vec2 &right) {
-        return left.Multiply(right);
-    }
-
-    Vec2 operator/(Vec2 left, const Vec2 &right) {
-        return left.Divide(right);
-    }
-
-    Vec2 operator+(Vec2 left, f32 value) {
-        return left.Add(value);
-    }
-
-    Vec2 operator-(Vec2 left, f32 value) {
-        return left.Subtract(value);
-    }
-
-    Vec2 operator*(Vec2 left, f32 value) {
-        return left.Multiply(value);
-    }
-
-    Vec2 operator/(Vec2 left, f32 value) {
-        return left.Divide(value);
-    }
-
     bool Vec2::operator==(const Vec2 &other) const {
         return x == other.x && y == other.y;
     }
@@ -168,6 +136,38 @@ namespace Hyperion {
         f32 y = this->y - other.y;
 
         return Math::Sqrt(x * x + y * y);
+    }
+
+    Vec2 operator+(Vec2 left, const Vec2 &right) {
+        return left.Add(right);
+    }
+
+    Vec2 operator-(Vec2 left, const Vec2 &right) {
+        return left.Subtract(right);
+    }
+
+    Vec2 operator*(Vec2 left, const Vec2 &right) {
+        return left.Multiply(right);
+    }
+
+    Vec2 operator/(Vec2 left, const Vec2 &right) {
+        return left.Divide(right);
+    }
+
+    Vec2 operator+(Vec2 left, f32 value) {
+        return left.Add(value);
+    }
+
+    Vec2 operator-(Vec2 left, f32 value) {
+        return left.Subtract(value);
+    }
+
+    Vec2 operator*(Vec2 left, f32 value) {
+        return left.Multiply(value);
+    }
+
+    Vec2 operator/(Vec2 left, f32 value) {
+        return left.Divide(value);
     }
 
 }

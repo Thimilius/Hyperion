@@ -29,16 +29,6 @@ namespace Hyperion {
 
         String ToString() const;
 
-        friend Vec4 operator+(Vec4 left, const Vec4 &right);
-        friend Vec4 operator-(Vec4 left, const Vec4 &right);
-        friend Vec4 operator*(Vec4 left, const Vec4 &right);
-        friend Vec4 operator/(Vec4 left, const Vec4 &right);
-
-        friend Vec4 operator+(Vec4 left, f32 value);
-        friend Vec4 operator-(Vec4 left, f32 value);
-        friend Vec4 operator*(Vec4 left, f32 value);
-        friend Vec4 operator/(Vec4 left, f32 value);
-
         bool operator==(const Vec4 &other) const;
         bool operator!=(const Vec4 &other) const;
 
@@ -53,6 +43,16 @@ namespace Hyperion {
         bool operator>=(const Vec4 &other) const;
 
         f32 Dot(const Vec4 &other) const;
+
+        friend Vec4 operator+(Vec4 left, const Vec4 &right);
+        friend Vec4 operator-(Vec4 left, const Vec4 &right);
+        friend Vec4 operator*(Vec4 left, const Vec4 &right);
+        friend Vec4 operator/(Vec4 left, const Vec4 &right);
+
+        friend Vec4 operator+(Vec4 left, f32 value);
+        friend Vec4 operator-(Vec4 left, f32 value);
+        friend Vec4 operator*(Vec4 left, f32 value);
+        friend Vec4 operator/(Vec4 left, f32 value);
     };
 
 }

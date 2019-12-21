@@ -6,7 +6,7 @@
 
 namespace Hyperion::Rendering {
 
-    enum class RenderBackendAPI {
+    enum class RenderBackend {
         None,
         OpenGL
     };
@@ -87,7 +87,7 @@ namespace Hyperion::Rendering {
 
     class RenderAPI {
     private:
-        inline static RenderBackendAPI s_render_backend_api;
+        inline static RenderBackend s_render_backend;
     public:
         virtual void EnableFeature(Feature feature) = 0;
         virtual void DisableFeature(Feature feature) = 0;
@@ -105,13 +105,13 @@ namespace Hyperion::Rendering {
 
         virtual void SetViewport(s32 x, s32 y, s32 width, s32 height) = 0;
 
-        virtual void SetActiveRenderTarget(const Ref<RenderTexture> texture, RenderTextureTarget target) = 0;
-        virtual void Blit(const Ref<RenderTexture> destination, s32 dstX0, s32 dstY0, s32 dstX1, s32 dstY1, const Ref<RenderTexture> source, s32 srcX0, s32 srcY0, s32 srcX1, s32 srcY1) = 0;
+        virtual void SetActiveRenderTarget(const Ref<RenderTexture> &texture, RenderTextureTarget target) = 0;
+        virtual void Blit(const Ref<RenderTexture> &destination, s32 dstX0, s32 dstY0, s32 dstX1, s32 dstY1, const Ref<RenderTexture> &source, s32 srcX0, s32 srcY0, s32 srcX1, s32 srcY1) = 0;
 
         virtual void DrawIndexed(Primitive primitive, IndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) = 0;
         virtual void Draw(Primitive primitive, u32 vertex_count, u32 vertex_offset) = 0;
 
-        inline static RenderBackendAPI GetBackendAPI() { return s_render_backend_api; }
+        inline static RenderBackend GetBackend() { return s_render_backend; }
     private:
         friend class RenderCommand;
     };

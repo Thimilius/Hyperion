@@ -12,7 +12,7 @@ namespace Hyperion {
         HWND m_window_handle;
         WINDOWPLACEMENT m_previous_placement;
     public:
-        WindowsWindow(const String &title, u32 width, u32 height, WindowMode window_mode, VSyncMode vsync_mode, Rendering::RenderBackendAPI backend_api);
+        WindowsWindow(const String &title, u32 width, u32 height, WindowMode window_mode, VSyncMode vsync_mode, Rendering::RenderBackend backend_api);
 
         void SetTitle(const String &title) override;
         void SetSize(u32 width, u32 height) override;
@@ -31,7 +31,7 @@ namespace Hyperion {
         MouseButtonCode TranslateMouseButtonCode(u32 code) const;
         KeyModifier GetKeyModifier() const;
 
-        void CreateContext(Rendering::RenderBackendAPI backend_api);
+        void CreateContext(Rendering::RenderBackend backend_api);
         void DispatchEvent(Event &event) const;
         u32 GetMouseButtonFromMessage(u32 message, u32 w_param) const;
 
