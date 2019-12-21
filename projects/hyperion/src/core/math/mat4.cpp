@@ -66,7 +66,7 @@ namespace Hyperion {
         return left.Multiply(right);
     }
 
-    Mat4 &Mat4::Invert() {
+    Mat4 Mat4::Inverted() {
         f32 temp[16];
 
         temp[0] = elements[5] * elements[10] * elements[15] -
@@ -184,14 +184,15 @@ namespace Hyperion {
         f32 determinant = elements[0] * temp[0] + elements[1] * temp[4] + elements[2] * temp[8] + elements[3] * temp[12];
         determinant = 1.0f / determinant;
 
+        Mat4 result;
         for (int i = 0; i < 4 * 4; i++) {
-            elements[i] = temp[i] * determinant;
+            result.elements[i] = temp[i] * determinant;
         }
 
-        return *this;
+        return result;
     }
 
-    Mat4 Mat4::Transpose() {
+    Mat4 Mat4::Transposed() {
         return Mat4(
             Vec4(columns[0].x, columns[1].x, columns[2].x, columns[3].x),
             Vec4(columns[0].y, columns[1].y, columns[2].y, columns[3].y),

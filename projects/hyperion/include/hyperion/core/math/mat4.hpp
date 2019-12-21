@@ -33,8 +33,8 @@ namespace Hyperion {
         friend Vec3 operator*(const Mat4 &left, const Vec3 &right);
         friend Vec4 operator*(const Mat4 &left, const Vec4 &right);
 
-        Mat4 &Invert();
-        Mat4 Transpose();
+        Mat4 Inverted();
+        Mat4 Transposed();
 
         Vec4 GetRow(int index) const;
         void SetRow(int index, const Vec4 &column);

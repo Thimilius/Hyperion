@@ -1,6 +1,7 @@
 #pragma once
 
 #include "hyperion/core/math/math.hpp"
+#include "hyperion/core/math/ray.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -16,6 +17,9 @@ namespace Hyperion::Rendering {
         Mat4 m_view_matrix;
         Mat4 m_projection_matrix;
         Mat4 m_view_projection_matrix;
+
+        Mat4 m_inverse_view_matrix;
+        Mat4 m_inverse_projection_matrix;
     public:
         inline Vec3 GetPosition() const { return m_position; }
         inline void SetPosition(Vec3 position) { m_position = position; }
@@ -32,11 +36,17 @@ namespace Hyperion::Rendering {
         inline f32 GetFarPlane() const { return m_far_plane; }
         inline void SetFarPlane(f32 far_plane) { m_far_plane = far_plane; }
 
+        Vec2 ScreenPointToNDC(Vec2 screen_point);
+        Ray ScreenPointToRay(Vec2 screen_point);
+
         virtual void RecalculateMatricies() = 0;
 
         const Mat4 &GetViewMatrix() const { return m_view_matrix; }
         const Mat4 &GetProjectionMatrix() const { return m_projection_matrix; }
         const Mat4 &GetViewProjectionMatrix() const { return m_view_projection_matrix; }
+
+        const Mat4 &GetInverseViewMatrix() const { return m_inverse_view_matrix; }
+        const Mat4 &GetInverseProjectionMatrix() const { return m_inverse_projection_matrix; }
     };
 
     class PerspectiveCamera : public Camera {
