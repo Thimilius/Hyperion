@@ -6,6 +6,7 @@
 #include "hyperion/core/app/events/window_events.hpp"
 #include "hyperion/core/app/events/key_events.hpp"
 #include "hyperion/core/app/events/mouse_events.hpp"
+#include "hyperion/rendering/render_api.hpp"
 
 namespace Hyperion {
 
@@ -27,6 +28,10 @@ namespace Hyperion {
         struct {
             String shader_path = "data/shaders";
         } assets;
+
+        struct {
+            Rendering::RenderBackendAPI backend_api = Rendering::RenderBackendAPI::OpenGL;
+        } renderer;
     };
 
     class Application {

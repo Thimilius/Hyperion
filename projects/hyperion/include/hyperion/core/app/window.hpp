@@ -3,6 +3,7 @@
 #include "hyperion/common.hpp"
 
 #include "hyperion/core/app/events/event.hpp"
+#include "hyperion/rendering/render_api.hpp"
 
 namespace Hyperion {
 
@@ -72,7 +73,7 @@ namespace Hyperion {
 
         void SetEventCallbackFunction(const EventCallbackFunction &callback) { m_event_callback = callback; }
 
-        static Window *Create(const String &title, u32 width, u32 height, WindowMode window_mode, VSyncMode vsync_mode);
+        static Window *Create(const String &title, u32 width, u32 height, WindowMode window_mode, VSyncMode vsync_mode, Rendering::RenderBackendAPI backend_api);
 
         friend class Application;
     };

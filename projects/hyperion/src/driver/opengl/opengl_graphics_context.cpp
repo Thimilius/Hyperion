@@ -2,16 +2,16 @@
 
 #include "hyperion/driver/opengl/opengl_graphics_context.hpp"
 
-#define OPENGL_DEBUG_LOG true
-#define OPENGL_BREAK_ON_ERROR true
-#define OPENGL_LOG_EXTENSIONS false
-#define OPENGL_LOG_NOTIFICATIONS false
+#define HYP_OPENGL_DEBUG_LOG true
+#define HYP_OPENGL_BREAK_ON_ERROR true
+#define HYP_OPENGL_LOG_EXTENSIONS false
+#define HYP_OPENGL_LOG_NOTIFICATIONS false
 
 namespace Hyperion::Rendering {
 
     void OpenGLGraphicsContext::Init() {
         // Enable debug messages
-        if (OPENGL_DEBUG_LOG) {
+        if (HYP_OPENGL_DEBUG_LOG) {
             glDebugMessageCallback(DebugMessageCallback, NULL);
             glEnable(GL_DEBUG_OUTPUT);
             glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
@@ -23,7 +23,7 @@ namespace Hyperion::Rendering {
         for (s32 i = 0; i < extension_count; i++) {
             String extension = (char *)glGetStringi(GL_EXTENSIONS, i);
             m_extensions.push_back(extension);
-            if (OPENGL_LOG_EXTENSIONS) {
+            if (HYP_OPENGL_LOG_EXTENSIONS) {
                 HYP_LOG_INFO("OpenGL", "Extension: '{}' available!", extension);
             }
         }
@@ -91,7 +91,7 @@ namespace Hyperion::Rendering {
             case GL_DEBUG_SEVERITY_MEDIUM: HYP_LOG_WARN("OpenGL", log_string_format, "Medium", source_string, type_string, id, message); break;
             case GL_DEBUG_SEVERITY_LOW: HYP_LOG_WARN("OpenGL", log_string_format, "Low", source_string, type_string, id, message); break;
             case GL_DEBUG_SEVERITY_NOTIFICATION: {
-                if (OPENGL_LOG_NOTIFICATIONS) {
+                if (HYP_OPENGL_LOG_NOTIFICATIONS) {
                     HYP_LOG_INFO("OpenGL", log_string_format, "Notification", source_string, type_string, id, message);
                 }
                 break;
@@ -100,7 +100,7 @@ namespace Hyperion::Rendering {
         }
 
         if (severity == GL_DEBUG_SEVERITY_HIGH) {
-            if (OPENGL_BREAK_ON_ERROR) {
+            if (HYP_OPENGL_BREAK_ON_ERROR) {
                 HYP_DEBUG_BREAK;
             }
         }

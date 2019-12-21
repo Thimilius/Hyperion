@@ -87,7 +87,7 @@ namespace Hyperion::Rendering {
 
     class RenderAPI {
     private:
-        inline static RenderBackendAPI m_render_backend_api = RenderBackendAPI::OpenGL;
+        inline static RenderBackendAPI s_render_backend_api;
     public:
         virtual void EnableFeature(Feature feature) = 0;
         virtual void DisableFeature(Feature feature) = 0;
@@ -110,8 +110,10 @@ namespace Hyperion::Rendering {
 
         virtual void DrawIndexed(Primitive primitive, IndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) = 0;
         virtual void Draw(Primitive primitive, u32 vertex_count, u32 vertex_offset) = 0;
-    public:
-        inline static RenderBackendAPI GetBackendAPI() { return m_render_backend_api; }
+
+        inline static RenderBackendAPI GetBackendAPI() { return s_render_backend_api; }
+    private:
+        friend class RenderCommand;
     };
 
 }
