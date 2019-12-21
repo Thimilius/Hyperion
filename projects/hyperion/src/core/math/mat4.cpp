@@ -5,11 +5,11 @@
 namespace Hyperion {
 
     Mat4::Mat4() {
-        memset(elements, 0, 16 * sizeof(f32));
+        std::memset(elements, 0, 16 * sizeof(f32));
     }
 
     Mat4::Mat4(f32 diagonal) {
-        memset(elements, 0, 16 * sizeof(f32));
+        std::memset(elements, 0, 16 * sizeof(f32));
         elements[0 + 0 * 4] = diagonal;
         elements[1 + 1 * 4] = diagonal;
         elements[2 + 2 * 4] = diagonal;
@@ -17,7 +17,7 @@ namespace Hyperion {
     }
 
     Mat4::Mat4(f32 *elements) {
-        memcpy(this->elements, elements, 16 * sizeof(f32));
+        std::memcpy(this->elements, elements, 16 * sizeof(f32));
     }
 
     Mat4::Mat4(const Vec4 &column0, const Vec4 &column1, const Vec4 &column2, const Vec4 &column3) {
@@ -38,7 +38,7 @@ namespace Hyperion {
                 data[x + y * 4] = sum;
             }
         }
-        memcpy(elements, data, 16 * sizeof(f32));
+        std::memcpy(elements, data, 16 * sizeof(f32));
         return *this;
     }
 

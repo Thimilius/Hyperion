@@ -3,12 +3,10 @@
 namespace Hyperion {
 
     Vec3::Vec3()
-        : x(0), y(0), z(0) {
-    }
+        : x(0), y(0), z(0) { }
 
     Vec3::Vec3(f32 x, f32 y, f32 z)
-        : x(x), y(y), z(z) {
-    }
+        : x(x), y(y), z(z) { }
 
     Vec3 &Vec3::Add(const Vec3 &other) {
         x += other.x;
