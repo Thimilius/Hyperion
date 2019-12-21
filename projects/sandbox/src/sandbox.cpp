@@ -14,7 +14,8 @@ protected:
     Ref<Mesh> m_gizmo_mesh;
 
     Ref<RenderTexture> m_render_texture;
-    Ref<PerspectiveCameraController> m_camera_controller = std::make_shared<PerspectiveCameraController>(std::make_shared<PerspectiveCamera>());
+    Ref<Camera> m_camera = std::make_shared<Camera>();
+    Ref<CameraController> m_camera_controller = std::make_shared<CameraController>(m_camera);
 
     Bounds m_gizmo_x_bounds;
     bool m_gizmo_x_hit = false;
@@ -59,13 +60,16 @@ protected:
             GetWindow()->SetVSyncMode(GetWindow()->GetVSyncMode() == VSyncMode::DontSync ? VSyncMode::EveryVBlank : VSyncMode::DontSync);
             UpdateTitle();
         }
+        if (Input::GetKeyDown(KeyCode::F3)) {
+            m_camera->SetType(m_camera->GetType() == CameraType::Perspective ? CameraType::Orthographic : CameraType::Perspective);
+        }
 
         m_camera_controller->Update(delta_time);
 
         // Gizmo intersections
         {
             Vec2 mouse_position = Input::GetMousePosition();
-            Ray ray = m_camera_controller->GetCamera()->ScreenPointToRay(mouse_position);
+            Ray ray = m_camera->ScreenPointToRay(mouse_position);
             m_gizmo_x_hit = m_gizmo_x_bounds.Intersects(ray);
             m_gizmo_y_hit = m_gizmo_y_bounds.Intersects(ray);
             m_gizmo_z_hit = m_gizmo_z_bounds.Intersects(ray);
@@ -89,7 +93,7 @@ protected:
 
         RenderCommand::SetPolygonMode(PolygonMode::Fill);
 
-        Renderer::Begin(m_camera_controller->GetCamera());
+        Renderer::Begin(m_camera);
         {
             // Draw gizmo
             {
@@ -97,7 +101,7 @@ protected:
                 RenderCommand::Clear(ClearMask::Depth);
 
                 m_gizmo_shader->Bind();
-                m_gizmo_shader->SetFloat3("u_camera.position", m_camera_controller->GetCamera()->GetPosition());
+                m_gizmo_shader->SetFloat3("u_camera.position", m_camera->GetPosition());
 
                 // X gizmo
                 m_gizmo_shader->SetFloat3("u_color", m_gizmo_x_hit ? Vec3(1, 1, 1) : Vec3(1, 0, 0));
