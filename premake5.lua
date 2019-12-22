@@ -84,8 +84,6 @@ project "hyperion"
 		links { "opengl32", "PowrProf" }
 		linkoptions { "-IGNORE:4006" }
 
-
-
 project "sandbox"
 	location "projects/sandbox"
 	kind "ConsoleApp"
