@@ -6,6 +6,22 @@
 
 namespace Hyperion::Rendering {
 
+    OpenGLRenderAPI::OpenGLRenderAPI() {
+        // Setup intial state
+        SetClearColor(0, 0, 0, 1);
+
+        EnableFeature(Feature::DepthTesting);
+
+        EnableFeature(Feature::Culling);
+        SetFrontFaceMode(FrontFaceMode::Clockwise);
+        SetCullingMode(CullingMode::Back);
+
+        EnableFeature(Feature::Blending);
+        SetBlendFunc(BlendFactor::SourceAlpha, BlendFactor::InverseSourceAlpha);
+
+        SetPolygonMode(PolygonMode::Fill);
+    }
+
     void OpenGLRenderAPI::EnableFeature(Feature feature) {
         glEnable(GetGLFeature(feature));
     }

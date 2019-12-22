@@ -6,6 +6,8 @@ namespace Hyperion::Rendering {
 
     class OpenGLRenderAPI : public RenderAPI {
     public:
+        OpenGLRenderAPI();
+
         void EnableFeature(Feature feature) override;
         void DisableFeature(Feature feature) override;
 

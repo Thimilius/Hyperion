@@ -62,17 +62,6 @@ protected:
         RenderCommand::SetClearColor(0, 0, 0, 1);
         RenderCommand::Clear(ClearMask::Color | ClearMask::Depth);
 
-        RenderCommand::EnableFeature(Feature::DepthTesting);
-
-        RenderCommand::EnableFeature(Feature::Culling);
-        RenderCommand::SetFrontFaceMode(FrontFaceMode::Clockwise);
-        RenderCommand::SetCullingMode(CullingMode::Back);
-
-        RenderCommand::EnableFeature(Feature::Blending);
-        RenderCommand::SetBlendFunc(BlendFactor::SourceAlpha, BlendFactor::InverseSourceAlpha);
-
-        RenderCommand::SetPolygonMode(PolygonMode::Fill);
-
         Gizmos::Render(m_camera);
 
         RenderCommand::Blit(nullptr, m_render_texture);
