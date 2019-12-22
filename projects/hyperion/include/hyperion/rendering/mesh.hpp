@@ -28,14 +28,14 @@ namespace Hyperion::Rendering {
     class Mesh : public Asset {
     private:
         MeshData m_mesh_data;
-        Bounds m_bounds;
+        AABB m_bounds;
 
         Vector<SubMesh> m_sub_meshes;
 
         Ref<VertexArray> m_vertex_array;
     public:
         inline const MeshData &GetMeshData() const { return m_mesh_data; }
-        inline Bounds GetBounds() const { return m_bounds; }
+        inline AABB GetBounds() const { return m_bounds; }
         inline const Ref<VertexArray> GetVertexArray() const { return m_vertex_array; }
         inline const Vector<SubMesh> GetSubMeshes() const { return m_sub_meshes; }
 

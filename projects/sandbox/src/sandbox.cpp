@@ -17,11 +17,11 @@ protected:
     Ref<Camera> m_camera = std::make_shared<Camera>();
     Ref<CameraController> m_camera_controller = std::make_shared<CameraController>(m_camera);
 
-    Bounds m_gizmo_x_bounds;
+    AABB m_gizmo_x_aabb;
     bool m_gizmo_x_hit = false;
-    Bounds m_gizmo_y_bounds;
+    AABB m_gizmo_y_aabb;
     bool m_gizmo_y_hit = false;
-    Bounds m_gizmo_z_bounds;
+    AABB m_gizmo_z_aabb;
     bool m_gizmo_z_hit = false;
 
     void UpdateTitle() {
@@ -37,9 +37,9 @@ protected:
         m_gizmo_shader = ShaderLibrary::Get("gizmo");
         m_gizmo_mesh = Mesh::CreateFromFile("data/models/gizmo.obj");
         m_render_texture = RenderTexture::Create(GetWindow()->GetWidth(), GetWindow()->GetHeight(), RenderTextureFormat::RGBA8);
-        m_gizmo_x_bounds = Bounds(Vec3(0.5f, 0.0f, 0.0f), Vec3(1.0f, 0.1f, 0.1f));
-        m_gizmo_y_bounds = Bounds(Vec3(0.0f, 0.5f, 0.0f), Vec3(0.1f, 1.0f, 0.1f));
-        m_gizmo_z_bounds = Bounds(Vec3(0.0f, 0.0f, 0.5f), Vec3(0.1f, 0.1f, 1.0f));
+        m_gizmo_x_aabb = AABB(Vec3(0.5f, 0.0f, 0.0f), Vec3(1.0f, 0.1f, 0.1f));
+        m_gizmo_y_aabb = AABB(Vec3(0.0f, 0.5f, 0.0f), Vec3(0.1f, 1.0f, 0.1f));
+        m_gizmo_z_aabb = AABB(Vec3(0.0f, 0.0f, 0.5f), Vec3(0.1f, 0.1f, 1.0f));
     }
     
     void OnEvent(Event &event) override {
@@ -70,9 +70,9 @@ protected:
         {
             Vec2 mouse_position = Input::GetMousePosition();
             Ray ray = m_camera->ScreenPointToRay(mouse_position);
-            m_gizmo_x_hit = m_gizmo_x_bounds.Intersects(ray);
-            m_gizmo_y_hit = m_gizmo_y_bounds.Intersects(ray);
-            m_gizmo_z_hit = m_gizmo_z_bounds.Intersects(ray);
+            m_gizmo_x_hit = m_gizmo_x_aabb.Intersects(ray);
+            m_gizmo_y_hit = m_gizmo_y_aabb.Intersects(ray);
+            m_gizmo_z_hit = m_gizmo_z_aabb.Intersects(ray);
         }
     }
 

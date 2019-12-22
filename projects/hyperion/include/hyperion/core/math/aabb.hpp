@@ -6,26 +6,26 @@
 
 namespace Hyperion {
 
-    struct Bounds {
+    struct AABB {
         Vec3 center;
         Vec3 extends;
 
-        Bounds();
-        Bounds(Vec3 center, Vec3 size);
+        AABB();
+        AABB(Vec3 center, Vec3 size);
 
         Vec3 GetSize() const;
         Vec3 GetMin() const;
         Vec3 GetMax() const;
 
-        bool Intersects(Bounds bounds);
+        bool Intersects(AABB bounds);
         bool Intersects(Ray ray);
 
         void SetMinMax(Vec3 min, Vec3 max);
 
         String ToString() const;
 
-        bool operator==(const Bounds &other) const;
-        bool operator!=(const Bounds &other) const;
+        bool operator==(const AABB &other) const;
+        bool operator!=(const AABB &other) const;
     };
 
 }

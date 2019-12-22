@@ -27,7 +27,7 @@
 #include "hyperion/core/operating_system.hpp"
 #include "hyperion/core/engine.hpp"
 #include "hyperion/core/math/math.hpp"
-#include "hyperion/core/math/bounds.hpp"
+#include "hyperion/core/math/aabb.hpp"
 #include "hyperion/core/math/vec2.hpp"
 #include "hyperion/core/math/vec3.hpp"
 #include "hyperion/core/math/vec4.hpp"

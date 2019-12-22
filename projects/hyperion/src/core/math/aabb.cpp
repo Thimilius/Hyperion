@@ -1,27 +1,27 @@
 #include "hyppch.hpp"
 
-#include "hyperion/core/math/bounds.hpp"
+#include "hyperion/core/math/aabb.hpp"
 
 namespace Hyperion {
 
-    Bounds::Bounds() { }
+    AABB::AABB() { }
     
-    Bounds::Bounds(Vec3 center, Vec3 size)
+    AABB::AABB(Vec3 center, Vec3 size)
         : center(center), extends(size * 0.5f) { }
 
-    Vec3 Bounds::GetSize() const {
+    Vec3 AABB::GetSize() const {
         return extends * 2.0f;
     }
 
-    Vec3 Bounds::GetMin() const {
+    Vec3 AABB::GetMin() const {
         return center - extends;
     }
 
-    Vec3 Bounds::GetMax() const {
+    Vec3 AABB::GetMax() const {
         return center + extends;
     }
 
-    bool Bounds::Intersects(Bounds bounds) {
+    bool AABB::Intersects(AABB bounds) {
         Vec3 min = GetMin();
         Vec3 max = GetMax();
         Vec3 bounds_min = bounds.GetMin();
@@ -29,7 +29,7 @@ namespace Hyperion {
         return (max > bounds_min && min < bounds_max) || (min > bounds_max && max < bounds_min);
     }
 
-    bool Bounds::Intersects(Ray ray) {
+    bool AABB::Intersects(Ray ray) {
         Vec3 inv_dir = Vec3(1.0f / ray.direction.x, 1.0f / ray.direction.y, 1.0f / ray.direction.z);
         u32 sign[3];
         sign[0] = (inv_dir.x < 0);
@@ -67,20 +67,20 @@ namespace Hyperion {
         return true;
     }
 
-    void Bounds::SetMinMax(Vec3 min, Vec3 max) {
+    void AABB::SetMinMax(Vec3 min, Vec3 max) {
         extends = (max - min) * 0.5f;
         center = min + extends;
     }
 
-    String Bounds::ToString() const {
+    String AABB::ToString() const {
         return StringUtils::Format("(Center: {}, Extends: {})", center.ToString(), extends.ToString());
     }
 
-    bool Bounds::operator==(const Bounds &other) const {
+    bool AABB::operator==(const AABB &other) const {
         return center != other.center && extends != other.extends;
     }
 
-    bool Bounds::operator!=(const Bounds &other) const {
+    bool AABB::operator!=(const AABB &other) const {
         return !(*this == other);
     }
 
