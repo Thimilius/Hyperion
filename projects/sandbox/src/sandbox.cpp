@@ -4,7 +4,7 @@
 using namespace Hyperion;
 using namespace Hyperion::Rendering;
 using namespace Hyperion::Audio;
-using namespace Hyperion::Entity;
+using namespace Hyperion::Editor;
 
 class SandboxApp : public Application {
 public:

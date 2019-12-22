@@ -42,5 +42,5 @@
 // Audio
 #include "hyperion/audio/audio_engine.hpp"
 
-// Entity
-#include "hyperion/entity/camera_controller.hpp"
+// Editor
+#include "hyperion/editor/camera_controller.hpp"

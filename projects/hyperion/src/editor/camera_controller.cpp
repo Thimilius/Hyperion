@@ -1,11 +1,12 @@
 #include "hyppch.hpp"
 
-#include "hyperion/entity/camera_controller.hpp"
+#include "hyperion/editor/camera_controller.hpp"
+
 #include "hyperion/core/app/input.hpp"
 
 using namespace Hyperion::Rendering;
 
-namespace Hyperion::Entity {
+namespace Hyperion::Editor {
 
     CameraController::CameraController(const Ref<Camera> &camera) {
         m_camera = camera;
