@@ -52,13 +52,13 @@ namespace Hyperion {
         inline bool IsInCategory(EventCategory category) const { return (GetCategory() & category) == category; }
     };
 
-    class CEventDispatcher {
+    class EventDispatcher {
         template<typename T>
         using EventFunction = std::function<void(T &)>;
     private:
         Event &m_event;
     public:
-        CEventDispatcher(Event &event)
+        EventDispatcher(Event &event)
             : m_event(event) {
         }
 

@@ -81,7 +81,7 @@ namespace Hyperion {
 
     void Application::OnEventInternal(Event &event) {
         // Events dispatched internally should probably never be set as handled
-        CEventDispatcher dispatcher(event);
+        EventDispatcher dispatcher(event);
 
         // Handle app events
         auto update_display_infos_func = Display::UpdateDisplayInfos;
