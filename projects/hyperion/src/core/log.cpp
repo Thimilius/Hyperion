@@ -2,12 +2,12 @@
 
 #include "hyperion/core/log.hpp"
 
-#include <ctime>
-
 namespace Hyperion {
 
-    Log *Log::s_instance = new Log();
-
+    void Log::LogMessageInternal(LogLevel level, String message) {
+        OperatingSystem::GetInstance()->PrintToConsole(GetLogColor(level), message.c_str());
+    }
+    
     LogColor Log::GetLogColor(LogLevel level) {
         switch (level) {
             case Hyperion::LogLevel::Trace: return LogColor::White;
