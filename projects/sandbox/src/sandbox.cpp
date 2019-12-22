@@ -10,19 +10,9 @@ class SandboxApp : public Application {
 public:
     SandboxApp() : Application(ApplicationSettings()) { }
 protected:
-    Ref<Shader> m_gizmo_shader;
-    Ref<Mesh> m_gizmo_mesh;
-
     Ref<RenderTexture> m_render_texture;
     Ref<Camera> m_camera = std::make_shared<Camera>();
     Ref<CameraController> m_camera_controller = std::make_shared<CameraController>(m_camera);
-
-    AABB m_gizmo_x_aabb;
-    bool m_gizmo_x_hit = false;
-    AABB m_gizmo_y_aabb;
-    bool m_gizmo_y_hit = false;
-    AABB m_gizmo_z_aabb;
-    bool m_gizmo_z_hit = false;
 
     void UpdateTitle() {
         String title = StringUtils::Format("Hyperion | FPS: {} ({:.2f} ms) | VSync: {}", Time::GetFPS(), Time::GetFrameTime(), GetWindow()->GetVSyncMode() != VSyncMode::DontSync);
@@ -34,12 +24,9 @@ protected:
 
         UpdateTitle();
 
-        m_gizmo_shader = ShaderLibrary::Get("gizmo");
-        m_gizmo_mesh = Mesh::CreateFromFile("data/models/gizmo.obj");
         m_render_texture = RenderTexture::Create(GetWindow()->GetWidth(), GetWindow()->GetHeight(), RenderTextureFormat::RGBA8);
-        m_gizmo_x_aabb = AABB(Vec3(0.5f, 0.0f, 0.0f), Vec3(1.0f, 0.1f, 0.1f));
-        m_gizmo_y_aabb = AABB(Vec3(0.0f, 0.5f, 0.0f), Vec3(0.1f, 1.0f, 0.1f));
-        m_gizmo_z_aabb = AABB(Vec3(0.0f, 0.0f, 0.5f), Vec3(0.1f, 0.1f, 1.0f));
+        
+        Gizmos::Init();
     }
     
     void OnEvent(Event &event) override {
@@ -66,14 +53,7 @@ protected:
 
         m_camera_controller->Update(delta_time);
 
-        // Gizmo intersections
-        {
-            Vec2 mouse_position = Input::GetMousePosition();
-            Ray ray = m_camera->ScreenPointToRay(mouse_position);
-            m_gizmo_x_hit = m_gizmo_x_aabb.Intersects(ray);
-            m_gizmo_y_hit = m_gizmo_y_aabb.Intersects(ray);
-            m_gizmo_z_hit = m_gizmo_z_aabb.Intersects(ray);
-        }
+        Gizmos::Update(m_camera);
     }
 
     void OnRender() override {
@@ -93,28 +73,7 @@ protected:
 
         RenderCommand::SetPolygonMode(PolygonMode::Fill);
 
-        Renderer::Begin(m_camera);
-        {
-            // Draw gizmo
-            {
-                // We draw the gizmos on top of everything so erase depth information
-                RenderCommand::Clear(ClearMask::Depth);
-
-                m_gizmo_shader->Bind();
-                m_gizmo_shader->SetFloat3("u_camera.position", m_camera->GetPosition());
-
-                // X gizmo
-                m_gizmo_shader->SetFloat3("u_color", m_gizmo_x_hit ? Vec3(1, 1, 1) : Vec3(1, 0, 0));
-                Renderer::Submit(m_gizmo_mesh, m_gizmo_shader, Mat4::Rotate(Vec3(0, 0, 1), -90.0f));
-                // Y gizmo
-                m_gizmo_shader->SetFloat3("u_color", m_gizmo_y_hit ? Vec3(1, 1, 1) : Vec3(0, 1, 0));
-                Renderer::Submit(m_gizmo_mesh, m_gizmo_shader, Mat4::Identity());
-                // Z gizmo
-                m_gizmo_shader->SetFloat3("u_color", m_gizmo_z_hit ? Vec3(1, 1, 1) : Vec3(0, 0, 1));
-                Renderer::Submit(m_gizmo_mesh, m_gizmo_shader, Mat4::Rotate(Vec3(1, 0, 0), 90.0f));
-            }
-        }
-        Renderer::End();
+        Gizmos::Render(m_camera);
 
         RenderCommand::Blit(nullptr, m_render_texture);
 

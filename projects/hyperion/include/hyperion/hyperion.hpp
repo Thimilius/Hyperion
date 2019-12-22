@@ -44,3 +44,4 @@
 
 // Editor
 #include "hyperion/editor/camera_controller.hpp"
+#include "hyperion/editor/gizmos.hpp"
