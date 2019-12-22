@@ -66,14 +66,14 @@ namespace Hyperion {
 
 }
 
-#define HYP_LOG(s, m, ...)       Hyperion::Log::LogMessage(LogType::Core, LogLevel::Trace, s, m, __VA_ARGS__)
-#define HYP_LOG_TRACE(s, m, ...) Hyperion::Log::LogMessage(LogType::Core, LogLevel::Trace, s, m, __VA_ARGS__)
-#define HYP_LOG_INFO(s, m, ...)  Hyperion::Log::LogMessage(LogType::Core, LogLevel::Info, s, m, __VA_ARGS__)
-#define HYP_LOG_WARN(s, m, ...)  Hyperion::Log::LogMessage(LogType::Core, LogLevel::Warning, s, m, __VA_ARGS__)
-#define HYP_LOG_ERROR(s, m, ...) Hyperion::Log::LogMessage(LogType::Core, LogLevel::Error, s, m, __VA_ARGS__)
+#define HYP_LOG(s, m, ...)       Hyperion::Log::LogMessage(LogType::Core, LogLevel::Trace, s, m, ##__VA_ARGS__)
+#define HYP_LOG_TRACE(s, m, ...) Hyperion::Log::LogMessage(LogType::Core, LogLevel::Trace, s, m, ##__VA_ARGS__)
+#define HYP_LOG_INFO(s, m, ...)  Hyperion::Log::LogMessage(LogType::Core, LogLevel::Info, s, m, ##__VA_ARGS__)
+#define HYP_LOG_WARN(s, m, ...)  Hyperion::Log::LogMessage(LogType::Core, LogLevel::Warning, s, m, ##__VA_ARGS__)
+#define HYP_LOG_ERROR(s, m, ...) Hyperion::Log::LogMessage(LogType::Core, LogLevel::Error, s, m, ##__VA_ARGS__)
 
-#define HYP(m, ...)       Hyperion::Log::LogMessage(LogType::Client, LogLevel::Trace, "Client", m, __VA_ARGS__)
-#define HYP_TRACE(m, ...) Hyperion::Log::LogMessage(LogType::Client, LogLevel::Trace, "Client", m, __VA_ARGS__)
-#define HYP_INFO(m, ...)  Hyperion::Log::LogMessage(LogType::Client, LogLevel::Info, "Client", m, __VA_ARGS__)
-#define HYP_WARN(m, ...)  Hyperion::Log::LogMessage(LogType::Client, LogLevel::Warning, "Client", m, __VA_ARGS__)
-#define HYP_ERROR(m, ...) Hyperion::Log::LogMessage(LogType::Client, LogLevel::Error, "Client", m, __VA_ARGS__)
+#define HYP(m, ...)       Hyperion::Log::LogMessage(LogType::Client, LogLevel::Trace, "Client", m, ##__VA_ARGS__)
+#define HYP_TRACE(m, ...) Hyperion::Log::LogMessage(LogType::Client, LogLevel::Trace, "Client", m, ##__VA_ARGS__)
+#define HYP_INFO(m, ...)  Hyperion::Log::LogMessage(LogType::Client, LogLevel::Info, "Client", m, ##__VA_ARGS__)
+#define HYP_WARN(m, ...)  Hyperion::Log::LogMessage(LogType::Client, LogLevel::Warning, "Client", m, ##__VA_ARGS__)
+#define HYP_ERROR(m, ...) Hyperion::Log::LogMessage(LogType::Client, LogLevel::Error, "Client", m, ##__VA_ARGS__)
