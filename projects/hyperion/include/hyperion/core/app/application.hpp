@@ -7,10 +7,15 @@
 #include "hyperion/core/app/events/key_events.hpp"
 #include "hyperion/core/app/events/mouse_events.hpp"
 #include "hyperion/rendering/render_api.hpp"
+#include "hyperion/audio/audio_engine.hpp"
 
 namespace Hyperion {
 
     struct ApplicationSettings {
+        struct {
+            f32 max_delta_time = 0.15f;
+        } app;
+
         struct {
             String title = "Hyperion";
 
@@ -22,16 +27,16 @@ namespace Hyperion {
         } window;
 
         struct {
-            f32 max_delta_time = 0.15f;
-        } app;
-
-        struct {
             String shader_path = "data/shaders";
         } assets;
 
         struct {
             Rendering::RenderBackend backend = Rendering::RenderBackend::OpenGL;
         } renderer;
+
+        struct {
+            Audio::AudioBackend backend = Audio::AudioBackend::FMod;
+        } audio;
     };
 
     class Application {

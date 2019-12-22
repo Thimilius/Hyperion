@@ -2,58 +2,27 @@
 
 #include "hyperion/audio/audio_engine.hpp"
 
+#include "hyperion/driver/fmod/fmod_audio_driver.hpp"
+
 namespace Hyperion::Audio {
 
-    void AudioEngine::LoadSound(const String &name, const String &path) {
-        FMOD::Sound *sound;
-        if (m_system->createSound(path.c_str(), FMOD_DEFAULT, nullptr, &sound) != FMOD_OK) {
-            HYP_LOG_ERROR("Audio", "Failed to load sound '{}' at path: '{}'!", name, path);
-            return;
+    void AudioEngine::Init(AudioBackend backend) {
+        switch (backend) {
+            case Hyperion::Audio::AudioBackend::None:
+                s_audio_driver.reset(new DummyAudioDriver());
+                break;
+            case Hyperion::Audio::AudioBackend::FMod:
+                s_audio_driver.reset(new FModAudioDriver());
+                break;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return;
         }
 
-        if (m_sounds.find(name) != m_sounds.end()) {
-            HYP_LOG_ERROR("Audio", "Sound '{}' already loaded!", name);
-        } else {
-            m_sounds[name] = sound;
-        }
-    }
-
-    void AudioEngine::PlaySound(const String &name) {
-        auto it = m_sounds.find(name);
-        if (it == m_sounds.end()) {
-            HYP_LOG_ERROR("Audio", "Sound '{}' not loaded!", name);
-        } else {
-            FMOD::Sound *sound = it->second;
-            sound->setMode(FMOD_LOOP_NORMAL);
-            sound->setLoopCount(-1);
-            m_system->playSound(sound, nullptr, false, nullptr);
-        }
-    }
-
-    void AudioEngine::Init() {
-        if (FMOD::System_Create(&m_system) != FMOD_OK) {
-            HYP_LOG_ERROR("Audio", "Failed to create FMOD system!");
-            return;
-        }
-
-        s32 driver_count = 0;
-        m_system->getNumDrivers(&driver_count);
-
-        if (driver_count == 0) {
-            HYP_LOG_ERROR("Audio", "There is no audio driver on this system!");
-            return;
-        }
-
-        m_system->init(36, FMOD_INIT_NORMAL, nullptr);
-        HYP_LOG_INFO("Audio", "Initialized audio engine!");
+        s_audio_backend = backend;
+        s_audio_driver->Init();
     }
 
     void AudioEngine::Shutdown() {
-        for (auto sound : m_sounds) {
-            sound.second->release();
-        }
-
-        m_system->release();
+        s_audio_driver->Shutdown();
     }
 
 }

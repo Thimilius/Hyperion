@@ -6,15 +6,11 @@
 
 namespace Hyperion::Rendering {
 
-    void RenderCommand::Init(RenderBackend backend_api) {
-        switch (backend_api) {
-            case RenderBackend::None: {
-                HYP_PANIC_MESSAGE("Rendering", "Trying to create renderer with no backend API!");
-                break;
-            }
+    void RenderCommand::Init(RenderBackend backend) {
+        switch (backend) {
             case RenderBackend::OpenGL: {
                 s_render_api.reset(new OpenGLRenderAPI());
-                s_render_api->s_render_backend = backend_api;
+                s_render_api->s_render_backend = backend;
                 break;
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;

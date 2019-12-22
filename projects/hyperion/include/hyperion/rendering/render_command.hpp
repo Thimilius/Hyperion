@@ -73,7 +73,7 @@ namespace Hyperion::Rendering {
             s_render_api->Draw(primitive, vertex_count, vertex_offset);
         }
     private:
-        static void Init(RenderBackend backend_api);
+        static void Init(RenderBackend backend);
 
         friend class Hyperion::Engine;
     };

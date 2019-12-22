@@ -8,7 +8,7 @@ using namespace Hyperion::Editor;
 
 class SandboxApp : public Application {
 public:
-    SandboxApp() : Application(ApplicationSettings()) { }
+    SandboxApp(const ApplicationSettings &settings) : Application(settings) { }
 protected:
     Ref<RenderTexture> m_render_texture;
     Ref<Camera> m_camera = std::make_shared<Camera>();
@@ -76,5 +76,7 @@ protected:
 };
 
 Hyperion::Application *Hyperion::CreateApplication() {
-    return new SandboxApp();
+    ApplicationSettings settings;
+    settings.audio.backend = AudioBackend::None;
+    return new SandboxApp(settings);
 }

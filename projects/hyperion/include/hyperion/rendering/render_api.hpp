@@ -7,7 +7,6 @@
 namespace Hyperion::Rendering {
 
     enum class RenderBackend {
-        None,
         OpenGL
     };
 

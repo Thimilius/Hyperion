@@ -24,6 +24,7 @@ namespace Hyperion {
         } memory_info;
     };
 
+    // FIXME: OperatingSystem does not need to be a singleton!
     class OperatingSystem {
     private:
         static OperatingSystem *s_instance;

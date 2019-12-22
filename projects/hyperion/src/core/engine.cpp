@@ -26,11 +26,10 @@ namespace Hyperion {
     }
 
     void Engine::Setup(const ApplicationSettings &settings) {
-        // TEMP: For faster startup time, skip initializing the audio engine
-        //Audio::CAudioEngine::Init();
-
         Rendering::RenderCommand::Init(settings.renderer.backend);
         Rendering::ShaderLibrary::Init(settings.assets.shader_path);
+
+        Audio::AudioEngine::Init(settings.audio.backend);
     }
 
     void Engine::Update(f32 delta_time) {
