@@ -12,12 +12,11 @@ namespace Hyperion {
     public:
         void Init() override;
 
-        OperatingSystemType GetType() const override;
+        inline OperatingSystemType GetType() const { return OperatingSystemType::Windows; }
         SystemInfo GetSystemInfo() const override;
 
-        void DisplayError(const String &title, const String &message) const override;
-
-        void PrintToConsole(LogColor color, const String &message) const override;
+        void DisplayError(const String &title, const String &message) override;
+        void PrintToConsole(LogColor color, const String &message) override;
     };
 
 }

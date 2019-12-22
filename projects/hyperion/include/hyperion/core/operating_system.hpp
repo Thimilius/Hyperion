@@ -5,7 +5,6 @@
 namespace Hyperion {
 
     enum class OperatingSystemType {
-        Unknown,
         Windows
     };
 
@@ -24,7 +23,6 @@ namespace Hyperion {
         } memory_info;
     };
 
-    // FIXME: OperatingSystem does not need to be a singleton!
     class OperatingSystem {
     private:
         static OperatingSystem *s_instance;
@@ -32,9 +30,8 @@ namespace Hyperion {
         virtual OperatingSystemType GetType() const = 0;
         virtual SystemInfo GetSystemInfo() const = 0;
 
-        virtual void PrintToConsole(LogColor color, const String &message) const = 0;
-
-        virtual void DisplayError(const String &title, const String &message) const = 0;
+        virtual void PrintToConsole(LogColor color, const String &message) = 0;
+        virtual void DisplayError(const String &title, const String &message) = 0;
 
         inline static OperatingSystem* GetInstance() { return s_instance; }
     private:

@@ -25,10 +25,10 @@ namespace Hyperion {
         inline bool IsPrimary() const { return m_is_primary; }
         inline const Vector<DisplayModeInfo> &GetModeInfos() const { return m_mode_infos; }
 
-        friend class CDisplay;
+        friend class Display;
     };
 
-    class CDisplay {
+    class Display {
     private:
         inline static Vector<DisplayInfo> s_display_infos;
     public:

@@ -4,7 +4,7 @@
 
 namespace Hyperion {
 
-    DisplayInfo::DisplayModeInfo CDisplay::GetCurrentDisplayModeInfo() {
+    DisplayInfo::DisplayModeInfo Display::GetCurrentDisplayModeInfo() {
         DISPLAY_DEVICEA display_device = { 0 };
         display_device.cb = sizeof(display_device);
 
@@ -34,7 +34,7 @@ namespace Hyperion {
         return DisplayInfo::DisplayModeInfo();
     }
 
-    void CDisplay::UpdateDisplayInfos() {
+    void Display::UpdateDisplayInfos() {
         DISPLAY_DEVICEA display_device = { 0 };
         display_device.cb = sizeof(display_device);
 
@@ -66,6 +66,7 @@ namespace Hyperion {
                     display_mode_info.refresh_rate = dev_mode.dmDisplayFrequency;
                     display_mode_info.bits_per_pixel = dev_mode.dmBitsPerPel;
 
+                    // Skip duplicate modes
                     if (std::find(display_info.m_mode_infos.begin(), display_info.m_mode_infos.end(), display_mode_info) != display_info.m_mode_infos.end()) {
                         continue;
                     }

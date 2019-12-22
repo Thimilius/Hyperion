@@ -27,10 +27,6 @@ namespace Hyperion {
         }
     }
 
-    OperatingSystemType WindowsOperatingSystem::GetType() const {
-        return OperatingSystemType::Windows;
-    }
-
     SystemInfo WindowsOperatingSystem::GetSystemInfo() const {
         SystemInfo result;
 
@@ -56,11 +52,11 @@ namespace Hyperion {
         return result;
     }
 
-    void WindowsOperatingSystem::DisplayError(const String &title, const String &message) const {
+    void WindowsOperatingSystem::DisplayError(const String &title, const String &message) {
         MessageBoxW(nullptr, StringUtils::Utf8ToUtf16(message).c_str(), StringUtils::Utf8ToUtf16(title).c_str(), MB_OK | MB_ICONERROR);
     }
 
-    void WindowsOperatingSystem::PrintToConsole(LogColor color, const String &message) const {
+    void WindowsOperatingSystem::PrintToConsole(LogColor color, const String &message) {
         s16 console_color = 0;
         switch (color) {
             case Hyperion::LogColor::Black: console_color = 0; break;

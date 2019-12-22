@@ -84,7 +84,7 @@ namespace Hyperion {
         CEventDispatcher dispatcher(event);
 
         // Handle app events
-        auto update_display_infos_func = CDisplay::UpdateDisplayInfos;
+        auto update_display_infos_func = Display::UpdateDisplayInfos;
         dispatcher.Dispatch<AppDisplayChangeEvent>([update_display_infos_func](AppDisplayChangeEvent &app_display_change_event) {
             update_display_infos_func();
         });

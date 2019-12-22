@@ -15,7 +15,7 @@ namespace Hyperion::Audio {
 
     class DummyAudioDriver : public AudioDriver {
     public:
-        virtual void Init() override { }
+        virtual void Init() override { HYP_LOG_INFO("Audio", "Initialized Dummy audio driver!"); }
         virtual void Shutdown() override { }
 
         virtual void Load(const String &name, const String &path) override { }

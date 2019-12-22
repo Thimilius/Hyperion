@@ -25,7 +25,7 @@ protected:
         UpdateTitle();
 
         m_render_texture = RenderTexture::Create(GetWindow()->GetWidth(), GetWindow()->GetHeight(), RenderTextureFormat::RGBA8);
-        
+
         Gizmos::Init();
     }
     

@@ -20,8 +20,8 @@ namespace Hyperion {
             (f32)system_info.processor_info.processor_mhz_frequency / 1000.0f,
             (f32)system_info.memory_info.total_physical_memory / (1024.0f * 1024.0f * 1024.0f));
 
-        CDisplay::UpdateDisplayInfos();
-        DisplayInfo::DisplayModeInfo mode_info = CDisplay::GetCurrentDisplayModeInfo();
+        Display::UpdateDisplayInfos();
+        DisplayInfo::DisplayModeInfo mode_info = Display::GetCurrentDisplayModeInfo();
         HYP_LOG_INFO("Engine", "Primary display: {}x{} @{} Hz", mode_info.width, mode_info.height, mode_info.refresh_rate);
     }
 
