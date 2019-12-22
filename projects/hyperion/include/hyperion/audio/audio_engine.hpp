@@ -24,7 +24,7 @@ namespace Hyperion::Audio {
         static void Init();
         static void Shutdown();
 
-        friend class Engine;
+        friend class Hyperion::Engine;
     };
 
 }

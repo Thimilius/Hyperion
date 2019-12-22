@@ -75,7 +75,7 @@ namespace Hyperion::Rendering {
     private:
         static void Init(RenderBackend backend_api);
 
-        friend class Engine;
+        friend class Hyperion::Engine;
     };
 
 }
