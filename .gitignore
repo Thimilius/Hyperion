@@ -8,7 +8,6 @@ build/
 *.vcxproj
 *.filters
 *.cache
-
-# Special
+Makefile
 run_tree/*.exe
 run_tree/*.dll

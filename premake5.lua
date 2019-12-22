@@ -50,7 +50,7 @@ project "hyperion"
 
 	excludes {
 		"projects/hyperion/src/platform/**",
-		"projects/hyperion/include/hyperion/platform/**",
+		"projects/hyperion/include/hyperion/platform/**"
 	}
 
 	includedirs {

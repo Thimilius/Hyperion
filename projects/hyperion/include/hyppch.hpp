@@ -1,4 +1,5 @@
-#pragma once
+#ifndef HYP_PCH
+#define HYP_PCH
 
 // Standard library
 #include <memory>
@@ -11,11 +12,11 @@
 // Platform specific
 #ifdef HYP_PLATFORM_WINDOWS
     #include <Windows.h>
+	#include <glad/glad_wgl.h>
 #endif
 
 // Vendors
 #include <glad/glad.h>
-#include <glad/glad_wgl.h>
 #include <fmt/format.h>
 #include <stb/stb_image.h>
 #include <fmod/fmod.hpp>
@@ -33,3 +34,5 @@
 #include "hyperion/core/math/vec4.hpp"
 #include "hyperion/core/math/mat4.hpp"
 #include "hyperion/rendering/render_api.hpp"
+
+#endif
