@@ -154,20 +154,36 @@ namespace Hyperion {
         return left.Divide(right);
     }
 
-    Vec2 operator+(Vec2 left, f32 value) {
-        return left.Add(value);
+    Vec2 operator+(Vec2 left, f32 right) {
+        return left.Add(right);
     }
 
-    Vec2 operator-(Vec2 left, f32 value) {
-        return left.Subtract(value);
+    Vec2 operator-(Vec2 left, f32 right) {
+        return left.Subtract(right);
     }
 
-    Vec2 operator*(Vec2 left, f32 value) {
-        return left.Multiply(value);
+    Vec2 operator*(Vec2 left, f32 right) {
+        return left.Multiply(right);
     }
 
-    Vec2 operator/(Vec2 left, f32 value) {
-        return left.Divide(value);
+    Vec2 operator/(Vec2 left, f32 right) {
+        return left.Divide(right);
+    }
+
+    Vec2 operator+(f32 left, Vec2 right) {
+        return right.Add(left);
+    }
+
+    Vec2 operator-(f32 left, Vec2 right) {
+        return right.Subtract(left);
+    }
+
+    Vec2 operator*(f32 left, Vec2 right) {
+        return right.Multiply(left);
+    }
+
+    Vec2 operator/(f32 left, Vec2 right) {
+        return right.Divide(left);
     }
 
 }

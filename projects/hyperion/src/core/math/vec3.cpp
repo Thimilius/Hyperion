@@ -84,6 +84,14 @@ namespace Hyperion {
         return StringUtils::Format("({:.2f}, {:.2f}, {:.2f})", x, y, z);
     }
 
+    bool Vec3::operator==(const Vec3 &other) const {
+        return x == other.x && y == other.y && z == other.z;
+    }
+
+    bool Vec3::operator!=(const Vec3 &other) const {
+        return !(*this == other);
+    }
+
     Vec3 &Vec3::operator+=(const Vec3 &other) {
         return Add(other);
     }
@@ -169,28 +177,36 @@ namespace Hyperion {
         return left.Divide(right);
     }
 
-    Vec3 operator+(Vec3 left, f32 value) {
-        return left.Add(value);
+    Vec3 operator+(Vec3 left, f32 right) {
+        return left.Add(right);
     }
 
-    Vec3 operator-(Vec3 left, f32 value) {
-        return left.Subtract(value);
+    Vec3 operator-(Vec3 left, f32 right) {
+        return left.Subtract(right);
     }
 
-    Vec3 operator*(Vec3 left, f32 value) {
-        return left.Multiply(value);
+    Vec3 operator*(Vec3 left, f32 right) {
+        return left.Multiply(right);
     }
 
-    Vec3 operator/(Vec3 left, f32 value) {
-        return left.Divide(value);
+    Vec3 operator/(Vec3 left, f32 right) {
+        return left.Divide(right);
     }
 
-    bool Vec3::operator==(const Vec3 &other) const {
-        return x == other.x && y == other.y && z == other.z;
+    Vec3 operator+(f32 left, Vec3 right) {
+        return right.Add(left);
     }
 
-    bool Vec3::operator!=(const Vec3 &other) const {
-        return !(*this == other);
+    Vec3 operator-(f32 left, Vec3 right) {
+        return right.Subtract(left);
+    }
+
+    Vec3 operator*(f32 left, Vec3 right) {
+        return right.Multiply(left);
+    }
+
+    Vec3 operator/(f32 left, Vec3 right) {
+        return right.Divide(left);
     }
 
 }

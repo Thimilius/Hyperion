@@ -53,6 +53,11 @@ namespace Hyperion {
         friend Vec4 operator-(Vec4 left, f32 value);
         friend Vec4 operator*(Vec4 left, f32 value);
         friend Vec4 operator/(Vec4 left, f32 value);
+
+        friend Vec4 operator+(f32 left, Vec4 value);
+        friend Vec4 operator-(f32 left, Vec4 value);
+        friend Vec4 operator*(f32 left, Vec4 value);
+        friend Vec4 operator/(f32 left, Vec4 value);
     };
 
 }

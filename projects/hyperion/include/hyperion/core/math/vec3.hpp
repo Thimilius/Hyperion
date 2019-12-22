@@ -66,10 +66,15 @@ namespace Hyperion {
         friend Vec3 operator*(Vec3 left, const Vec3 &right);
         friend Vec3 operator/(Vec3 left, const Vec3 &right);
 
-        friend Vec3 operator+(Vec3 left, f32 value);
-        friend Vec3 operator-(Vec3 left, f32 value);
-        friend Vec3 operator*(Vec3 left, f32 value);
-        friend Vec3 operator/(Vec3 left, f32 value);
+        friend Vec3 operator+(Vec3 left, f32 right);
+        friend Vec3 operator-(Vec3 left, f32 right);
+        friend Vec3 operator*(Vec3 left, f32 right);
+        friend Vec3 operator/(Vec3 left, f32 right);
+
+        friend Vec3 operator+(f32 left, Vec3 right);
+        friend Vec3 operator-(f32 left, Vec3 right);
+        friend Vec3 operator*(f32 left, Vec3 right);
+        friend Vec3 operator/(f32 left, Vec3 right);
     };
 
 }
