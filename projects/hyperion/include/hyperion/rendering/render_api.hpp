@@ -12,7 +12,6 @@ namespace Hyperion::Rendering {
     };
 
     enum class Feature {
-        None,
         Culling,
         DepthTesting,
         StencilTesting,
@@ -28,8 +27,6 @@ namespace Hyperion::Rendering {
     HYP_CREATE_ENUM_FLAG_OPERATORS(ClearMask);
 
     enum class BlendFactor {
-        None,
-        
         Zero,
         One,
 
@@ -45,40 +42,34 @@ namespace Hyperion::Rendering {
     };
 
     enum class BlendEquation {
-        None,
         Add,
         Subtract,
         ReverseSubract,
     };
 
     enum class FrontFaceMode {
-        None,
         Clockwise,
         CounterClockwise
     };
 
     enum class CullingMode {
-        None,
         Back,
         Front,
         FrontAndBack
     };
 
     enum class RenderTextureTarget {
-        None,
         DrawAndRead,
         Draw,
         Read
     };
 
     enum class PolygonMode {
-        None,
         Fill,
         Line
     };
 
     enum class Primitive {
-        None,
         Lines,
         LineStrip,
         LineLoop,

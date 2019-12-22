@@ -5,7 +5,6 @@
 namespace Hyperion::Rendering {
 
     enum class RenderTextureFormat {
-        None,
         RGBA8,
         RGBA16F
     };

@@ -6,13 +6,11 @@
 namespace Hyperion::Rendering {
 
     enum class TextureFormat {
-        None,
         RGB,
         RGBA
     };
 
     enum class TextureWrapMode {
-        None,
         Clamp,
         Border,
         Repeat,

@@ -5,7 +5,6 @@
 namespace Hyperion::Rendering {
 
     enum class ShaderDataType {
-        None,
         Float, Float2, Float3, Float4,
         Mat3, Mat4,
         Int, Int2, Int3, Int4,
@@ -13,13 +12,11 @@ namespace Hyperion::Rendering {
     };
 
     enum class IndexFormat {
-        None,
         UInt16,
         UInt32
     };
 
     enum class BufferUsage {
-        None,
         StaticDraw,
         StreamDraw,
         DynamicDraw

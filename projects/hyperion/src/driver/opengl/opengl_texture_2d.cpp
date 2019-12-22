@@ -33,7 +33,7 @@ namespace Hyperion::Rendering {
         if (pixels == nullptr) {
             HYP_LOG_ERROR("OpenGL", "Failed to load texture from path: {}!", path);
         } else {
-            TextureFormat format = TextureFormat::None;
+            TextureFormat format;
             switch (channels) {
                 case 3: format = TextureFormat::RGB; break;
                 case 4: format = TextureFormat::RGBA; break;
