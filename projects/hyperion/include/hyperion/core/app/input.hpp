@@ -5,8 +5,6 @@
 
 namespace Hyperion {
 
-    class Application;
-
     enum class KeyCode {
         None,
 

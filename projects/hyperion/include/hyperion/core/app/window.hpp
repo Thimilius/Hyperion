@@ -7,7 +7,6 @@
 
 namespace Hyperion {
 
-    class Application;
     namespace Rendering {
         class GraphicsContext;
     }

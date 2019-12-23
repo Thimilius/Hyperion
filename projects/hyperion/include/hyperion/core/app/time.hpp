@@ -4,8 +4,6 @@
 
 namespace Hyperion {
 
-    class Application;
-
     class Time {
     private:
         inline static f32 s_max_delta_time = 0;
