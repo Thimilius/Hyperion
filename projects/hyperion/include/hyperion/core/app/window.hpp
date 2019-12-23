@@ -3,6 +3,7 @@
 #include "hyperion/common.hpp"
 
 #include "hyperion/core/app/events/event.hpp"
+#include "hyperion/core/app/window_settings.hpp"
 #include "hyperion/rendering/render_backend.hpp"
 
 namespace Hyperion {
@@ -10,23 +11,6 @@ namespace Hyperion {
     namespace Rendering {
         class GraphicsContext;
     }
-
-    enum class WindowMode {
-        Windowed,
-        Borderless
-    };
-
-    enum class WindowState {
-        Normal,
-        Minimized,
-        Maximized
-    };
-
-    enum class VSyncMode {
-        DontSync,
-        EveryVBlank,
-        EverySecondVBlank
-    };
 
     class Window {
         using EventCallbackFunction = std::function<void(Event &)>;
@@ -71,7 +55,7 @@ namespace Hyperion {
 
         void SetEventCallbackFunction(const EventCallbackFunction &callback) { m_event_callback = callback; }
 
-        static Ref<Window> Create(const String &title, u32 width, u32 height, WindowMode window_mode, VSyncMode vsync_mode, Rendering::RenderBackend backend_api);
+        static Ref<Window> Create(const WindowSettings &settings, Rendering::RenderBackend render_backend);
 
         friend class Application;
     };

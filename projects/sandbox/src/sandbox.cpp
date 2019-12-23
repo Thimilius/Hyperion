@@ -18,8 +18,6 @@ protected:
     Ref<Texture2D> m_cube_texture;
 
     void OnInit() override {
-        GetWindow()->SetIcon("icon/icon.ico");
-
         m_camera = Camera::Create();
         m_render_texture = RenderTexture::Create(GetWindow()->GetWidth(), GetWindow()->GetHeight(), RenderTextureFormat::RGBA8);
 

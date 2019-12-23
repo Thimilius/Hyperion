@@ -11,14 +11,14 @@
 
 namespace Hyperion {
 
-    Ref<Window> Window::Create(const String &title, u32 width, u32 height, WindowMode window_mode, VSyncMode vsync_mode, Rendering::RenderBackend backend_api) {
-        return std::make_shared<WindowsWindow>(title, width, height, window_mode, vsync_mode, backend_api);
+    Ref<Window> Window::Create(const WindowSettings &settings, Rendering::RenderBackend render_backend) {
+        return std::make_shared<WindowsWindow>(settings, render_backend);
     }
 
-    WindowsWindow::WindowsWindow(const String &title, u32 width, u32 height, WindowMode window_mode, VSyncMode vsync_mode, Rendering::RenderBackend backend_api) {
-        m_title = title;
-        m_width = width;
-        m_height = height;
+    WindowsWindow::WindowsWindow(const WindowSettings &settings, Rendering::RenderBackend render_backend) {
+        m_title = settings.title;
+        m_width = settings.width;
+        m_height = settings.height;
         m_window_state = WindowState::Normal;
 
         u32 window_styles = WS_OVERLAPPEDWINDOW;
@@ -40,12 +40,12 @@ namespace Hyperion {
             HYP_PANIC_MESSAGE("Engine", "Failed to register windows window class!");
         }
 
-        Vec2 size = GetActualWindowSize(width, height);
+        Vec2 size = GetActualWindowSize(settings.width, settings.height);
 
         m_window_handle = CreateWindowExW(
             0,
             window_class_name,
-            StringUtils::Utf8ToUtf16(title).c_str(),
+            StringUtils::Utf8ToUtf16(settings.title).c_str(),
             window_styles,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
@@ -65,11 +65,13 @@ namespace Hyperion {
             HYP_PANIC_MESSAGE("Engine", "Failed to set window attribute!");
         }
         
-        SetWindowMode(window_mode);
+        SetIcon(settings.icon);
 
-        CreateContext(backend_api);
+        SetWindowMode(settings.window_mode);
 
-        SetVSyncMode(vsync_mode);
+        CreateContext(render_backend);
+
+        SetVSyncMode(settings.vsync_mode);
     }
 
     void WindowsWindow::SetTitle(const String &title) {

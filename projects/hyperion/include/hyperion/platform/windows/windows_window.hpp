@@ -12,7 +12,7 @@ namespace Hyperion {
         HWND m_window_handle;
         WINDOWPLACEMENT m_previous_placement;
     public:
-        WindowsWindow(const String &title, u32 width, u32 height, WindowMode window_mode, VSyncMode vsync_mode, Rendering::RenderBackend backend_api);
+        WindowsWindow(const WindowSettings &settings, Rendering::RenderBackend render_backend);
 
         void SetTitle(const String &title) override;
         void SetSize(u32 width, u32 height) override;
