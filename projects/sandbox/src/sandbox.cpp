@@ -10,8 +10,8 @@ class SandboxApp : public Application {
 public:
     SandboxApp(const ApplicationSettings &settings) : Application(settings) { }
 protected:
+    Ref<Camera> m_camera;
     Ref<RenderTexture> m_render_texture;
-    Ref<Camera> m_camera = std::make_shared<Camera>();
 
     Ref<Mesh> m_cube_mesh;
     Ref<Shader> m_cube_shader;
@@ -20,6 +20,7 @@ protected:
     void OnInit() override {
         GetWindow()->SetIcon("icon/icon.ico");
 
+        m_camera = Camera::Create();
         m_render_texture = RenderTexture::Create(GetWindow()->GetWidth(), GetWindow()->GetHeight(), RenderTextureFormat::RGBA8);
 
         m_cube_mesh = Mesh::CreateCube(1);
@@ -56,7 +57,6 @@ protected:
             Renderer::Submit(m_cube_mesh, m_cube_shader, Mat4::Identity());
         }
         Renderer::End();
-
 
         RenderEngine::Blit(nullptr, m_render_texture);
         // Setting back buffer as render target before swapping buffers fixes vsync

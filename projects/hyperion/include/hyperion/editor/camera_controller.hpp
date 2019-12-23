@@ -17,11 +17,13 @@ namespace Hyperion::Editor {
         f32 m_fov_target;
         f32 m_size_target;
     public:
-        CameraController(const Ref<Rendering::Camera> &camera);
-
         inline const Ref<Rendering::Camera> &GetCamera() const { return m_camera; }
 
         void Update(f32 delta);
+
+        static Ref<CameraController> Create(const Ref<Rendering::Camera> &camera);
+    private:
+        CameraController(const Ref<Rendering::Camera> &camera);
     };
 
 }

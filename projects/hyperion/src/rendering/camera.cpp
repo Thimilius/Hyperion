@@ -8,7 +8,7 @@ namespace Hyperion::Rendering {
 
     Ray Camera::ScreenPointToRay(Vec2 screen_point) {
         // FIXME: This does not work for an orthographic projection!
-        Window *window = Application::GetInstance()->GetWindow();
+        Ref<Window> window = Application::GetInstance()->GetWindow();
         f32 x = (2.0f * screen_point.x) / window->GetWidth() - 1;
         f32 y = (2.0f * screen_point.y) / window->GetHeight() - 1;
         Vec2 ndc = Vec2(x, -y);
@@ -23,7 +23,7 @@ namespace Hyperion::Rendering {
     }
 
     void Camera::RecalculateMatricies() {
-        Window *window = Application::GetInstance()->GetWindow();
+        Ref<Window> window = Application::GetInstance()->GetWindow();
         f32 aspect_ratio = (f32)window->GetWidth() / (f32)window->GetHeight();
 
         m_view_matrix = Mat4::LookAt(m_position, m_position + m_forward, m_up);
@@ -42,6 +42,10 @@ namespace Hyperion::Rendering {
 
         m_inverse_view_matrix = m_view_matrix.Inverted();
         m_inverse_projection_matrix = m_projection_matrix.Inverted();
+    }
+
+    Ref<Camera> Camera::Create() {
+        return Ref<Camera>(new Camera());
     }
 
 }

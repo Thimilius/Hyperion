@@ -11,8 +11,8 @@
 
 namespace Hyperion {
 
-    Window *Window::Create(const String &title, u32 width, u32 height, WindowMode window_mode, VSyncMode vsync_mode, Rendering::RenderBackend backend_api) {
-        return new WindowsWindow(title, width, height, window_mode, vsync_mode, backend_api);
+    Ref<Window> Window::Create(const String &title, u32 width, u32 height, WindowMode window_mode, VSyncMode vsync_mode, Rendering::RenderBackend backend_api) {
+        return std::make_shared<WindowsWindow>(title, width, height, window_mode, vsync_mode, backend_api);
     }
 
     WindowsWindow::WindowsWindow(const String &title, u32 width, u32 height, WindowMode window_mode, VSyncMode vsync_mode, Rendering::RenderBackend backend_api) {

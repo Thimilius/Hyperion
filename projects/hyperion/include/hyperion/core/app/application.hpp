@@ -13,14 +13,14 @@ namespace Hyperion {
     private:
         static Application *s_instance;
 
-        Window *m_window;
+        Ref<Window> m_window;
         bool m_running;
         ApplicationSettings m_starting_settings;
     public:
         Application(const ApplicationSettings &settings);
         virtual ~Application() = default;
 
-        inline Window *GetWindow() const { return m_window; }
+        inline Ref<Window> GetWindow() const { return m_window; }
 
         int Run();
         void Exit();

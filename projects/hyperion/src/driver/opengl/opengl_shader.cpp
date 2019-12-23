@@ -114,7 +114,7 @@ namespace Hyperion::Rendering {
 
                 HYP_LOG_ERROR("OpenGL", "Shader compilation error:\n{}", info_log);
 
-                delete info_log;
+                delete[] info_log;
 
                 CompileFallbackShader();
 
@@ -148,7 +148,7 @@ namespace Hyperion::Rendering {
 
                 HYP_LOG_ERROR("OpenGL", "Shader linking error:\n{}", info_log);
 
-                delete info_log;
+                delete[] info_log;
 
                 CompileFallbackShader();
 

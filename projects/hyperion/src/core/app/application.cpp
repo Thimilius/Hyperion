@@ -32,7 +32,7 @@ namespace Hyperion {
         OnInit();
         m_window->Show();
 
-        Timer *timer = Timer::StartNew();
+        Ref<Timer> timer = Timer::Create();
         f64 last_time = 0, tick_timer = 0, accumulated_time = 0;
         u64 frame_counter = 0;
         while (m_running) {

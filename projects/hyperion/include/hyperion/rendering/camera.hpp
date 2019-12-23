@@ -61,6 +61,10 @@ namespace Hyperion::Rendering {
 
         const Mat4 &GetInverseViewMatrix() const { return m_inverse_view_matrix; }
         const Mat4 &GetInverseProjectionMatrix() const { return m_inverse_projection_matrix; }
+
+        static Ref<Camera> Create();
+    private:
+        Camera() = default;
     };
 
 }

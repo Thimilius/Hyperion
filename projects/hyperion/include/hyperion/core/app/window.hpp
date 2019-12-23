@@ -71,7 +71,7 @@ namespace Hyperion {
 
         void SetEventCallbackFunction(const EventCallbackFunction &callback) { m_event_callback = callback; }
 
-        static Window *Create(const String &title, u32 width, u32 height, WindowMode window_mode, VSyncMode vsync_mode, Rendering::RenderBackend backend_api);
+        static Ref<Window> Create(const String &title, u32 width, u32 height, WindowMode window_mode, VSyncMode vsync_mode, Rendering::RenderBackend backend_api);
 
         friend class Application;
     };

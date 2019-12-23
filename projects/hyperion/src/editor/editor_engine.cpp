@@ -9,7 +9,7 @@ namespace Hyperion::Editor {
 
     void EditorEngine::OnInit(const Ref<Camera> &camera) {
         s_camera = camera;
-        s_camera_controller = std::make_shared<CameraController>(camera);
+        s_camera_controller = CameraController::Create(camera);
 
         s_gizmos.Init();
 
@@ -17,7 +17,7 @@ namespace Hyperion::Editor {
     }
 
     void EditorEngine::OnUpdate(const Ref<Camera> &camera) {
-        Window *window = Application::GetInstance()->GetWindow();
+        Ref<Window> window = Application::GetInstance()->GetWindow();
 
         if (Input::GetKeyDown(KeyCode::Escape) || ((Input::GetKey(KeyCode::LeftControl) || Input::GetKey(KeyCode::RightControl)) && Input::GetKeyDown(KeyCode::W))) {
             Application::GetInstance()->Exit();
@@ -55,7 +55,7 @@ namespace Hyperion::Editor {
     }
 
     void EditorEngine::UpdateTitle() {
-        Window *window = Application::GetInstance()->GetWindow();
+        Ref<Window> window = Application::GetInstance()->GetWindow();
         String title = StringUtils::Format("Hyperion | FPS: {} ({:.2f} ms) | VSync: {}", Time::GetFPS(), Time::GetFrameTime(), window->GetVSyncMode() != VSyncMode::DontSync);
         window->SetTitle(title);
     }

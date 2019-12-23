@@ -86,7 +86,7 @@ namespace Hyperion::Rendering {
         }
 
         if (id == 0) {
-            Window *window = Application::GetInstance()->GetWindow();
+            Ref<Window> window = Application::GetInstance()->GetWindow();
             glViewport(0, 0, window->GetWidth(), window->GetHeight());
         } else {
             glViewport(0, 0, texture->GetWidth(), texture->GetHeight());

@@ -8,21 +8,6 @@ using namespace Hyperion::Rendering;
 
 namespace Hyperion::Editor {
 
-    CameraController::CameraController(const Ref<Camera> &camera) {
-        m_camera = camera;
-
-        m_camera->SetPosition(Vec3(2, 2, 2));
-        m_camera->SetForward(Vec3(0, 0, -1));
-        m_camera->SetUp(Vec3(0, 1, 0));
-
-        m_camera->SetFOV(90.0f);
-        m_fov_target = m_camera->GetFOV();
-        m_camera->SetSize(2.75f);
-        m_size_target = m_camera->GetSize();
-
-        m_camera->RecalculateMatricies();
-    }
-
     void CameraController::Update(f32 delta) {
         Vec3 position = m_camera->GetPosition();
         Vec3 forward = m_camera->GetForward();
@@ -145,6 +130,25 @@ namespace Hyperion::Editor {
         m_camera->SetUp(up);
         m_camera->SetFOV(fov);
         m_camera->SetSize(size);
+        m_camera->RecalculateMatricies();
+    }
+
+    Ref<CameraController> CameraController::Create(const Ref<Rendering::Camera> &camera) {
+        return Ref<CameraController>(new CameraController(camera));
+    }
+
+    CameraController::CameraController(const Ref<Camera> &camera) {
+        m_camera = camera;
+
+        m_camera->SetPosition(Vec3(2, 2, 2));
+        m_camera->SetForward(Vec3(0, 0, -1));
+        m_camera->SetUp(Vec3(0, 1, 0));
+
+        m_camera->SetFOV(90.0f);
+        m_fov_target = m_camera->GetFOV();
+        m_camera->SetSize(2.75f);
+        m_size_target = m_camera->GetSize();
+
         m_camera->RecalculateMatricies();
     }
 
