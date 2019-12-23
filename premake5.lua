@@ -12,11 +12,13 @@ workspace "hyperion"
 	
 	flags { "FatalCompileWarnings" }
 	
-	configurations { "debug", "release" }
-
+	debugdir "run_tree/"
+	
 	outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 	targetdir ("build/bin/" .. outputdir)
 	objdir ("build/obj/" .. outputdir)
+
+	configurations { "debug", "release" }
 
 	filter "configurations:debug"
 		defines { "HYP_DEBUG", "HYP_ENABLE_ASSERTS", "HYP_BREAK_ON_ASSERT" }
@@ -39,11 +41,9 @@ project "hyperion"
 	pchheader "hyppch.hpp"
 	pchsource "projects/hyperion/src/hyppch.cpp"
 
-	debugdir "run_tree/"
-
 	postbuildcommands {
 		"{COPY} vendor/fmod/lib/x64/fmod.dll %{cfg.targetdir}",
-		"{COPY} vendor/assimp/lib/x64/assimp-vc140-mt.dll %{cfg.targetdir}"
+		"{COPY} vendor/assimp/lib/windows/assimp.dll %{cfg.targetdir}"
 	}
 
 	files { "projects/hyperion/**" }
@@ -64,14 +64,6 @@ project "hyperion"
 		"projects/hyperion/vendor/assimp/include",
 	}
 	
-	links {	"freetype", "fmod_vc", "assimp-vc140-mt" }
-	
-	libdirs {
-		"projects/hyperion/vendor/freetype/lib/x64",
-		"projects/hyperion/vendor/fmod/lib/x64",
-		"projects/hyperion/vendor/assimp/lib/x64",
-	}
-	
 	filter "files:projects/hyperion/vendor/**"
 		flags { "NoPCH" }
 
@@ -81,7 +73,21 @@ project "hyperion"
 			"projects/hyperion/src/platform/windows/**"
 		}
 		
-		links { "opengl32", "PowrProf" }
+		libdirs {
+			"projects/hyperion/vendor/freetype/lib/x64",
+			"projects/hyperion/vendor/fmod/lib/x64",
+			"projects/hyperion/vendor/assimp/lib/windows",
+		}
+		
+		links {
+			"opengl32",
+			"PowrProf",
+		
+			"freetype",
+			"fmod_vc",
+			"assimp"
+		}
+		
 		linkoptions { "-IGNORE:4006" }
 
 project "sandbox"
@@ -90,13 +96,11 @@ project "sandbox"
 	
 	links { "hyperion" }
 	
-	debugdir "run_tree/"
-
 	postbuildcommands {
 		"{COPY} %{cfg.targetdir}/%{prj.name}.exe ../../run_tree/",
 		
 		"{COPY} %{cfg.targetdir}/fmod.dll ../../run_tree/",
-		"{COPY} %{cfg.targetdir}/assimp-vc140-mt.dll ../../run_tree/"
+		"{COPY} %{cfg.targetdir}/assimp.dll ../../run_tree/"
 	}
 	
 	files { "projects/sandbox/**" }	
