@@ -9,8 +9,8 @@ namespace Hyperion::Rendering {
         void Init() override;
         void Shutdown() override;
 
-        void EnableFeature(Feature feature) override;
-        void DisableFeature(Feature feature) override;
+        void EnableFeature(RenderFeature feature) override;
+        void DisableFeature(RenderFeature feature) override;
 
         void SetBlendFunc(BlendFactor source_factor, BlendFactor destination_factor) override;
         void SetBlendEquation(BlendEquation blend_equation) override;
@@ -31,7 +31,7 @@ namespace Hyperion::Rendering {
         void DrawIndexed(Primitive primitive, IndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) override;
         void Draw(Primitive primitive, u32 vertex_count, u32 vertex_offset) override;
     private:
-        static u32 GetGLFeature(Feature feature);
+        static u32 GetGLFeature(RenderFeature feature);
         static u32 GetGLBlendFactor(BlendFactor blend_factor);
         static u32 GetGLBlendEquation(BlendEquation blend_equation);
         static u32 GetGLFrontFaceMode(FrontFaceMode front_face_mode);

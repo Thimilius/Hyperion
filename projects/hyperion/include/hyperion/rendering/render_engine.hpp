@@ -14,11 +14,11 @@ namespace Hyperion::Rendering {
 
         inline static Scope<RenderDriver> s_render_driver;
     public:
-        inline static void EnableFeature(Feature feature) {
+        inline static void EnableFeature(RenderFeature feature) {
             s_render_driver->EnableFeature(feature);
         }
 
-        inline static void DisableFeature(Feature feature) {
+        inline static void DisableFeature(RenderFeature feature) {
             s_render_driver->DisableFeature(feature);
         }
 

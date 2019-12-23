@@ -6,7 +6,7 @@
 
 namespace Hyperion::Rendering {
 
-    enum class Feature {
+    enum class RenderFeature {
         Culling,
         DepthTesting,
         StencilTesting,
@@ -76,8 +76,8 @@ namespace Hyperion::Rendering {
         virtual void Init() = 0;
         virtual void Shutdown() = 0;
 
-        virtual void EnableFeature(Feature feature) = 0;
-        virtual void DisableFeature(Feature feature) = 0;
+        virtual void EnableFeature(RenderFeature feature) = 0;
+        virtual void DisableFeature(RenderFeature feature) = 0;
 
         virtual void SetFrontFaceMode(FrontFaceMode front_face_mode) = 0;
         virtual void SetCullingMode(CullingMode culling_mode) = 0;

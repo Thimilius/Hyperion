@@ -10,13 +10,13 @@ namespace Hyperion::Rendering {
         // Setup intial state
         SetClearColor(0, 0, 0, 1);
 
-        EnableFeature(Feature::DepthTesting);
+        EnableFeature(RenderFeature::DepthTesting);
 
-        EnableFeature(Feature::Culling);
+        EnableFeature(RenderFeature::Culling);
         SetFrontFaceMode(FrontFaceMode::Clockwise);
         SetCullingMode(CullingMode::Back);
 
-        EnableFeature(Feature::Blending);
+        EnableFeature(RenderFeature::Blending);
         SetBlendFunc(BlendFactor::SourceAlpha, BlendFactor::InverseSourceAlpha);
 
         SetPolygonMode(PolygonMode::Fill);
@@ -26,11 +26,11 @@ namespace Hyperion::Rendering {
 
     }
 
-    void OpenGLRenderDriver::EnableFeature(Feature feature) {
+    void OpenGLRenderDriver::EnableFeature(RenderFeature feature) {
         glEnable(GetGLFeature(feature));
     }
 
-    void OpenGLRenderDriver::DisableFeature(Feature feature) {
+    void OpenGLRenderDriver::DisableFeature(RenderFeature feature) {
         glDisable(GetGLFeature(feature));
     }
 
@@ -120,12 +120,12 @@ namespace Hyperion::Rendering {
         glDrawArrays(GL_TRIANGLES, vertex_offset, vertex_count);
     }
 
-    u32 OpenGLRenderDriver::GetGLFeature(Feature feature) {
+    u32 OpenGLRenderDriver::GetGLFeature(RenderFeature feature) {
         switch (feature) {
-            case Hyperion::Rendering::Feature::Blending: return GL_BLEND;
-            case Hyperion::Rendering::Feature::Culling: return GL_CULL_FACE;
-            case Hyperion::Rendering::Feature::DepthTesting: return GL_DEPTH_TEST;
-            case Hyperion::Rendering::Feature::StencilTesting: return GL_STENCIL_TEST;
+            case Hyperion::Rendering::RenderFeature::Blending: return GL_BLEND;
+            case Hyperion::Rendering::RenderFeature::Culling: return GL_CULL_FACE;
+            case Hyperion::Rendering::RenderFeature::DepthTesting: return GL_DEPTH_TEST;
+            case Hyperion::Rendering::RenderFeature::StencilTesting: return GL_STENCIL_TEST;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }
