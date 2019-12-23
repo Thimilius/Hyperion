@@ -2,8 +2,6 @@
 
 #include "hyperion/rendering/renderer.hpp"
 
-#include "hyperion/rendering/render_command.hpp"
-
 namespace Hyperion::Rendering {
 
     void Renderer::Begin(const Ref<Camera> &camera) {
@@ -23,7 +21,7 @@ namespace Hyperion::Rendering {
 
         IndexFormat format = vertex_array->GetIndexBuffer()->GetFormat();
         for (const SubMesh &sub_mesh : mesh->GetSubMeshes()) {
-            RenderCommand::DrawIndexed(Primitive::Triangles, format, sub_mesh.index_count, sub_mesh.index_offset, sub_mesh.vertex_offset);
+            RenderEngine::DrawIndexed(Primitive::Triangles, format, sub_mesh.index_count, sub_mesh.index_offset, sub_mesh.vertex_offset);
         }
 
         vertex_array->Unbind();

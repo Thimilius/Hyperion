@@ -34,28 +34,28 @@ namespace Hyperion::Rendering {
     }
 
     Ref<VertexBuffer> VertexBuffer::Create(const u8 *vertices, u32 size) {
-        switch (RenderAPI::GetBackend()) {
+        switch (RenderEngine::GetBackend()) {
             case RenderBackend::OpenGL: return std::make_shared<OpenGLVertexBuffer>(vertices, size);
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }
 
     Ref<VertexBuffer> VertexBuffer::Create(const u8 *vertices, u32 size, BufferUsage usage) {
-        switch (RenderAPI::GetBackend()) {
+        switch (RenderEngine::GetBackend()) {
             case RenderBackend::OpenGL: return std::make_shared<OpenGLVertexBuffer>(vertices, size, usage);
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }
 
     Ref<IndexBuffer> IndexBuffer::Create(const u16 *indices, u32 count) {
-        switch (RenderAPI::GetBackend()) {
+        switch (RenderEngine::GetBackend()) {
             case RenderBackend::OpenGL: return std::make_shared<OpenGLIndexBuffer>(indices, count);
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }
 
     Ref<IndexBuffer> IndexBuffer::Create(const u32 *indices, u32 count) {
-        switch (RenderAPI::GetBackend()) {
+        switch (RenderEngine::GetBackend()) {
             case RenderBackend::OpenGL: return std::make_shared<OpenGLIndexBuffer>(indices, count);
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }

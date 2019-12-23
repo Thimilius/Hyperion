@@ -3,9 +3,8 @@
 #include "hyperion/core/engine.hpp"
 
 #include "hyperion/core/app/display.hpp"
-#include "hyperion/audio/audio_engine.hpp"
-#include "hyperion/rendering/render_command.hpp"
 #include "hyperion/rendering/shader.hpp"
+#include "hyperion/audio/audio_engine.hpp"
 
 namespace Hyperion {
     
@@ -26,7 +25,7 @@ namespace Hyperion {
     }
 
     void Engine::Setup(const ApplicationSettings &settings) {
-        Rendering::RenderCommand::Init(settings.renderer.backend);
+        Rendering::RenderEngine::Init(settings.renderer.backend);
         Rendering::ShaderLibrary::Init(settings.assets.shader_path);
 
         Audio::AudioEngine::Init(settings.audio.backend);
@@ -37,6 +36,7 @@ namespace Hyperion {
     }
 
     void Engine::Shutdown() {
+        Rendering::RenderEngine::Shutdown();
         Audio::AudioEngine::Shutdown();
     }
 

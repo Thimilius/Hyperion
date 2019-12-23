@@ -35,6 +35,9 @@ namespace Hyperion {
         inline static const Vector<DisplayInfo> &GetDisplayInfos() { return s_display_infos; }
         static DisplayInfo::DisplayModeInfo GetCurrentDisplayModeInfo();
     private:
+        Display() = delete;
+        ~Display() = delete;
+
         static void UpdateDisplayInfos();
 
         friend class Engine;

@@ -6,10 +6,6 @@
 
 namespace Hyperion::Rendering {
 
-    enum class RenderBackend {
-        OpenGL
-    };
-
     enum class Feature {
         Culling,
         DepthTesting,
@@ -75,10 +71,11 @@ namespace Hyperion::Rendering {
         Triangles
     };
 
-    class RenderAPI {
-    private:
-        inline static RenderBackend s_render_backend;
+    class RenderDriver {
     public:
+        virtual void Init() = 0;
+        virtual void Shutdown() = 0;
+
         virtual void EnableFeature(Feature feature) = 0;
         virtual void DisableFeature(Feature feature) = 0;
 
@@ -100,10 +97,6 @@ namespace Hyperion::Rendering {
 
         virtual void DrawIndexed(Primitive primitive, IndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) = 0;
         virtual void Draw(Primitive primitive, u32 vertex_count, u32 vertex_offset) = 0;
-
-        inline static RenderBackend GetBackend() { return s_render_backend; }
-    private:
-        friend class RenderCommand;
     };
 
 }

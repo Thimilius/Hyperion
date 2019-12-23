@@ -6,7 +6,6 @@
 #include "hyperion/core/engine.hpp"
 #include "hyperion/core/app/time.hpp"
 #include "hyperion/core/app/display.hpp"
-#include "hyperion/rendering/render_command.hpp"
 
 namespace Hyperion {
 
@@ -94,7 +93,7 @@ namespace Hyperion {
             Exit();
         });
         dispatcher.Dispatch<WindowResizeEvent>([this](WindowResizeEvent &window_resize_event) {
-            Rendering::RenderCommand::SetViewport(0, 0, window_resize_event.GetWidth(), window_resize_event.GetHeight());
+            Rendering::RenderEngine::SetViewport(0, 0, window_resize_event.GetWidth(), window_resize_event.GetHeight());
         });
         auto window_reset = Input::Reset;
         dispatcher.Dispatch<WindowFocusEvent>([window_reset](WindowFocusEvent &window_focus_event){

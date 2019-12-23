@@ -2,8 +2,6 @@
 
 #include "hyperion/rendering/immediate_renderer.hpp"
 
-#include "hyperion/rendering/render_command.hpp"
-
 namespace Hyperion::Rendering {
 
     void ImmediateRenderer::Begin(const Ref<Camera> &camera) {
@@ -101,7 +99,7 @@ namespace Hyperion::Rendering {
         s_vertex_buffer->SetData(0, (u8 *)s_data_buffer, s_state.vertex_offset * sizeof(VertexImmediate));
         s_vertex_array->Bind();
 
-        RenderCommand::Draw(Primitive::Triangles, s_state.vertex_offset, 0);
+        RenderEngine::Draw(Primitive::Triangles, s_state.vertex_offset, 0);
     }
 
 }

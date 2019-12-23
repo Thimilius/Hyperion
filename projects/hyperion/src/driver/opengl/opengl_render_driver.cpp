@@ -1,12 +1,12 @@
 #include "hyppch.hpp"
 
-#include "hyperion/driver/opengl/opengl_render_api.hpp"
+#include "hyperion/driver/opengl/opengl_render_driver.hpp"
 
 #include "hyperion/core/app/application.hpp"
 
 namespace Hyperion::Rendering {
 
-    OpenGLRenderAPI::OpenGLRenderAPI() {
+    void OpenGLRenderDriver::Init() {
         // Setup intial state
         SetClearColor(0, 0, 0, 1);
 
@@ -22,47 +22,51 @@ namespace Hyperion::Rendering {
         SetPolygonMode(PolygonMode::Fill);
     }
 
-    void OpenGLRenderAPI::EnableFeature(Feature feature) {
+    void OpenGLRenderDriver::Shutdown() {
+
+    }
+
+    void OpenGLRenderDriver::EnableFeature(Feature feature) {
         glEnable(GetGLFeature(feature));
     }
 
-    void OpenGLRenderAPI::DisableFeature(Feature feature) {
+    void OpenGLRenderDriver::DisableFeature(Feature feature) {
         glDisable(GetGLFeature(feature));
     }
 
-    void OpenGLRenderAPI::SetBlendFunc(BlendFactor source_factor, BlendFactor destination_factor) {
+    void OpenGLRenderDriver::SetBlendFunc(BlendFactor source_factor, BlendFactor destination_factor) {
         glBlendFunc(GetGLBlendFactor(source_factor), GetGLBlendFactor(destination_factor));
     }
 
-    void OpenGLRenderAPI::SetBlendEquation(BlendEquation blend_equation) {
+    void OpenGLRenderDriver::SetBlendEquation(BlendEquation blend_equation) {
         glBlendEquation(GetGLBlendEquation(blend_equation));
     }
 
-    void OpenGLRenderAPI::SetFrontFaceMode(FrontFaceMode front_face_mode) {
+    void OpenGLRenderDriver::SetFrontFaceMode(FrontFaceMode front_face_mode) {
         glFrontFace(GetGLFrontFaceMode(front_face_mode));
     }
 
-    void OpenGLRenderAPI::SetCullingMode(CullingMode culling_mode) {
+    void OpenGLRenderDriver::SetCullingMode(CullingMode culling_mode) {
         glCullFace(GetGLCullingMode(culling_mode));
     }
 
-    void OpenGLRenderAPI::SetPolygonMode(PolygonMode polygon_mode) {
+    void OpenGLRenderDriver::SetPolygonMode(PolygonMode polygon_mode) {
         glPolygonMode(GL_FRONT_AND_BACK, GetGLPolygonMode(polygon_mode));
     }
 
-    void OpenGLRenderAPI::SetClearColor(f32 r, f32 g, f32 b, f32 a) {
+    void OpenGLRenderDriver::SetClearColor(f32 r, f32 g, f32 b, f32 a) {
         glClearColor(r, g, b, a);
     }
 
-    void OpenGLRenderAPI::Clear(ClearMask mask) {
+    void OpenGLRenderDriver::Clear(ClearMask mask) {
         glClear(GetGLClearMask(mask));
     }
 
-    void OpenGLRenderAPI::SetViewport(s32 x, s32 y, s32 width, s32 height) {
+    void OpenGLRenderDriver::SetViewport(s32 x, s32 y, s32 width, s32 height) {
         glViewport(x, y, width, height);
     }
 
-    void OpenGLRenderAPI::SetActiveRenderTarget(const Ref<RenderTexture> &texture, RenderTextureTarget target) {
+    void OpenGLRenderDriver::SetActiveRenderTarget(const Ref<RenderTexture> &texture, RenderTextureTarget target) {
         u32 id = 0;
         if (texture != nullptr) {
             id = texture->GetID();
@@ -89,7 +93,7 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void OpenGLRenderAPI::Blit(const Ref<RenderTexture> &destination, s32 dstX0, s32 dstY0, s32 dstX1, s32 dstY1, const Ref<RenderTexture> &source, s32 srcX0, s32 srcY0, s32 srcX1, s32 srcY1) {
+    void OpenGLRenderDriver::Blit(const Ref<RenderTexture> &destination, s32 dstX0, s32 dstY0, s32 dstX1, s32 dstY1, const Ref<RenderTexture> &source, s32 srcX0, s32 srcY0, s32 srcX1, s32 srcY1) {
         s32 draw_framebuffer_id;
         glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &draw_framebuffer_id);
         s32 read_framebuffer_id;
@@ -108,15 +112,15 @@ namespace Hyperion::Rendering {
         glBindFramebuffer(GL_READ_FRAMEBUFFER, read_framebuffer_id);
     }
 
-    void OpenGLRenderAPI::DrawIndexed(Primitive primitive, IndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) {
+    void OpenGLRenderDriver::DrawIndexed(Primitive primitive, IndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) {
         glDrawElementsBaseVertex(GL_TRIANGLES, index_count, GetGLIndexFormat(format), (void*)(GetGLIndexSize(format) * index_offset), vertex_offset);
     }
 
-    void OpenGLRenderAPI::Draw(Primitive primitive, u32 vertex_count, u32 vertex_offset) {
+    void OpenGLRenderDriver::Draw(Primitive primitive, u32 vertex_count, u32 vertex_offset) {
         glDrawArrays(GL_TRIANGLES, vertex_offset, vertex_count);
     }
 
-    u32 OpenGLRenderAPI::GetGLFeature(Feature feature) {
+    u32 OpenGLRenderDriver::GetGLFeature(Feature feature) {
         switch (feature) {
             case Hyperion::Rendering::Feature::Blending: return GL_BLEND;
             case Hyperion::Rendering::Feature::Culling: return GL_CULL_FACE;
@@ -126,7 +130,7 @@ namespace Hyperion::Rendering {
         }
     }
 
-    u32 OpenGLRenderAPI::GetGLBlendFactor(BlendFactor blend_factor) {
+    u32 OpenGLRenderDriver::GetGLBlendFactor(BlendFactor blend_factor) {
         switch (blend_factor) {
             case BlendFactor::Zero: return GL_ZERO;
             case BlendFactor::One: return GL_ONE;
@@ -142,7 +146,7 @@ namespace Hyperion::Rendering {
         }
     }
 
-    u32 OpenGLRenderAPI::GetGLBlendEquation(BlendEquation blend_equation) {
+    u32 OpenGLRenderDriver::GetGLBlendEquation(BlendEquation blend_equation) {
         switch (blend_equation) {
             case BlendEquation::Add: return GL_FUNC_ADD;
             case BlendEquation::Subtract: return GL_FUNC_SUBTRACT;
@@ -151,7 +155,7 @@ namespace Hyperion::Rendering {
         }
     }
 
-    u32 OpenGLRenderAPI::GetGLFrontFaceMode(FrontFaceMode front_face_mode) {
+    u32 OpenGLRenderDriver::GetGLFrontFaceMode(FrontFaceMode front_face_mode) {
         switch (front_face_mode) {
             case FrontFaceMode::Clockwise: return GL_CW;
             case FrontFaceMode::CounterClockwise: return GL_CCW;
@@ -159,7 +163,7 @@ namespace Hyperion::Rendering {
         }
     }
 
-    u32 OpenGLRenderAPI::GetGLPolygonMode(PolygonMode polygon_mode) {
+    u32 OpenGLRenderDriver::GetGLPolygonMode(PolygonMode polygon_mode) {
         switch (polygon_mode) {
             case Hyperion::Rendering::PolygonMode::Fill: return GL_FILL;
             case Hyperion::Rendering::PolygonMode::Line: return GL_LINE;
@@ -167,7 +171,7 @@ namespace Hyperion::Rendering {
         }
     }
 
-    u32 OpenGLRenderAPI::GetGLCullingMode(CullingMode culling_mode) {
+    u32 OpenGLRenderDriver::GetGLCullingMode(CullingMode culling_mode) {
         switch (culling_mode) {
             case CullingMode::Back: return GL_BACK;
             case CullingMode::Front: return GL_FRONT;
@@ -176,7 +180,7 @@ namespace Hyperion::Rendering {
         }
     }
 
-    u32 OpenGLRenderAPI::GetGLClearMask(ClearMask clear_mask) {
+    u32 OpenGLRenderDriver::GetGLClearMask(ClearMask clear_mask) {
         u32 result = 0;
 
         if ((clear_mask & ClearMask::Color) == ClearMask::Color) {
@@ -192,7 +196,7 @@ namespace Hyperion::Rendering {
         return result;
     }
 
-    u32 OpenGLRenderAPI::GetGLPrimitive(Primitive primitive) {
+    u32 OpenGLRenderDriver::GetGLPrimitive(Primitive primitive) {
         switch (primitive) {
             case Hyperion::Rendering::Primitive::Lines: return GL_LINES;
             case Hyperion::Rendering::Primitive::LineStrip: return GL_LINE_STRIP;
@@ -202,7 +206,7 @@ namespace Hyperion::Rendering {
         }
     }
 
-    u32 OpenGLRenderAPI::GetGLIndexFormat(IndexFormat index_format) {
+    u32 OpenGLRenderDriver::GetGLIndexFormat(IndexFormat index_format) {
         switch (index_format) {
             case IndexFormat::UInt16: return GL_UNSIGNED_SHORT;
             case IndexFormat::UInt32: return GL_UNSIGNED_INT;
@@ -210,7 +214,7 @@ namespace Hyperion::Rendering {
         }
     }
 
-    u64 OpenGLRenderAPI::GetGLIndexSize(IndexFormat index_format) {
+    u64 OpenGLRenderDriver::GetGLIndexSize(IndexFormat index_format) {
         switch (index_format) {
             case IndexFormat::UInt16: return sizeof(u16);
             case IndexFormat::UInt32: return sizeof(u32);

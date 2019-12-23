@@ -43,9 +43,9 @@ namespace Hyperion {
 
     class Log {
     private:
-        static inline LogLevel m_level;
+        inline static LogLevel m_level;
     public:
-        static inline void SetLevel(LogLevel level) { m_level = level; }
+        inline static void SetLevel(LogLevel level) { m_level = level; }
         
         template<typename ...Args>
         static void LogMessage(LogType type, LogLevel level, const char *system, const char *message_format, Args... args) {

@@ -3,7 +3,6 @@
 #include "hyperion/editor/gizmos.hpp"
 
 #include "hyperion/rendering/renderer.hpp"
-#include "hyperion/rendering/render_command.hpp"
 
 using namespace Hyperion::Rendering;
 
@@ -30,7 +29,7 @@ namespace Hyperion::Editor {
         Renderer::Begin(camera);
         {
             // We draw the gizmos on top of everything so erase depth information
-            RenderCommand::Clear(ClearMask::Depth);
+            RenderEngine::Clear(ClearMask::Depth);
 
             m_shader->Bind();
             m_shader->SetFloat3("u_camera.position", camera->GetPosition());

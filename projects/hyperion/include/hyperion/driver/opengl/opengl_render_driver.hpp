@@ -1,12 +1,13 @@
 #pragma once
 
-#include "hyperion/rendering/render_api.hpp"
+#include "hyperion/rendering/render_driver.hpp"
 
 namespace Hyperion::Rendering {
 
-    class OpenGLRenderAPI : public RenderAPI {
+    class OpenGLRenderDriver : public RenderDriver {
     public:
-        OpenGLRenderAPI();
+        void Init() override;
+        void Shutdown() override;
 
         void EnableFeature(Feature feature) override;
         void DisableFeature(Feature feature) override;

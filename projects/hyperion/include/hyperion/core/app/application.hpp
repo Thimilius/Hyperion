@@ -6,8 +6,8 @@
 #include "hyperion/core/app/events/window_events.hpp"
 #include "hyperion/core/app/events/key_events.hpp"
 #include "hyperion/core/app/events/mouse_events.hpp"
-#include "hyperion/rendering/render_api.hpp"
-#include "hyperion/audio/audio_engine.hpp"
+#include "hyperion/rendering/render_backend.hpp"
+#include "hyperion/audio/audio_backend.hpp"
 
 namespace Hyperion {
 

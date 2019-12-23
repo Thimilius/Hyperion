@@ -57,17 +57,17 @@ protected:
     }
 
     void OnRender() override {
-        RenderCommand::SetActiveRenderTarget(m_render_texture);
+        RenderEngine::SetActiveRenderTarget(m_render_texture);
 
-        RenderCommand::SetClearColor(0, 0, 0, 1);
-        RenderCommand::Clear(ClearMask::Color | ClearMask::Depth);
+        RenderEngine::SetClearColor(0, 0, 0, 1);
+        RenderEngine::Clear(ClearMask::Color | ClearMask::Depth);
 
         Gizmos::Render(m_camera);
 
-        RenderCommand::Blit(nullptr, m_render_texture);
+        RenderEngine::Blit(nullptr, m_render_texture);
 
         // Setting back buffer as render target before swapping buffers fixes vsync
-        RenderCommand::SetActiveRenderTarget(nullptr);
+        RenderEngine::SetActiveRenderTarget(nullptr);
     }
     
     void OnTick() override {
