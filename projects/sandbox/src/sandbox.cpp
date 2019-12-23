@@ -12,21 +12,21 @@ public:
 protected:
     Ref<RenderTexture> m_render_texture;
     Ref<Camera> m_camera = std::make_shared<Camera>();
-    Ref<CameraController> m_camera_controller = std::make_shared<CameraController>(m_camera);
 
-    void UpdateTitle() {
-        String title = StringUtils::Format("Hyperion | FPS: {} ({:.2f} ms) | VSync: {}", Time::GetFPS(), Time::GetFrameTime(), GetWindow()->GetVSyncMode() != VSyncMode::DontSync);
-        GetWindow()->SetTitle(title);
-    }
+    Ref<Mesh> m_cube_mesh;
+    Ref<Shader> m_cube_shader;
+    Ref<Texture2D> m_cube_texture;
 
     void OnInit() override {
         GetWindow()->SetIcon("icon/icon.ico");
 
-        UpdateTitle();
-
         m_render_texture = RenderTexture::Create(GetWindow()->GetWidth(), GetWindow()->GetHeight(), RenderTextureFormat::RGBA8);
 
-        Gizmos::Init();
+        m_cube_mesh = Mesh::CreateCube(1);
+        m_cube_shader = AssetLibrary::GetShader("phong");
+        m_cube_texture = Texture2D::CreateFromFile("data/textures/grass.png", TextureWrapMode::Clamp, TextureFilter::Bilinear, TextureAnisotropicFilter::None);
+
+        EditorEngine::OnInit(m_camera);
     }
     
     void OnEvent(Event &event) override {
@@ -36,24 +36,7 @@ protected:
     }
 
     void OnUpdate(f32 delta_time) override {
-        if (Input::GetKeyDown(KeyCode::Escape) || ((Input::GetKey(KeyCode::LeftControl) || Input::GetKey(KeyCode::RightControl)) && Input::GetKeyDown(KeyCode::W))) {
-            Exit();
-        }
-
-        if (Input::GetKeyDown(KeyCode::F1)) {
-            GetWindow()->SetWindowMode(GetWindow()->GetWindowMode() == WindowMode::Windowed ? WindowMode::Borderless : WindowMode::Windowed);
-        }
-        if (Input::GetKeyDown(KeyCode::F2)) {
-            GetWindow()->SetVSyncMode(GetWindow()->GetVSyncMode() == VSyncMode::DontSync ? VSyncMode::EveryVBlank : VSyncMode::DontSync);
-            UpdateTitle();
-        }
-        if (Input::GetKeyDown(KeyCode::F3)) {
-            m_camera->SetType(m_camera->GetType() == CameraType::Perspective ? CameraType::Orthographic : CameraType::Perspective);
-        }
-
-        m_camera_controller->Update(delta_time);
-
-        Gizmos::Update(m_camera);
+        EditorEngine::OnUpdate(m_camera);
     }
 
     void OnRender() override {
@@ -62,16 +45,28 @@ protected:
         RenderEngine::SetClearColor(0, 0, 0, 1);
         RenderEngine::Clear(ClearMask::Color | ClearMask::Depth);
 
-        Gizmos::Render(m_camera);
+        Renderer::Begin(m_camera);
+        {
+            m_cube_shader->Bind();
+            m_cube_shader->SetFloat3("u_camera.position", m_camera->GetPosition());
+            m_cube_shader->SetFloat3("u_light.position", Vec3(1.5f, 2.0f, 3.0f));
+            m_cube_shader->SetFloat3("u_light.color", Vec3::One());
+            m_cube_shader->SetInt("u_texture", 0);
+            m_cube_texture->Bind(0);
+            Renderer::Submit(m_cube_mesh, m_cube_shader, Mat4::Identity());
+        }
+        Renderer::End();
+
 
         RenderEngine::Blit(nullptr, m_render_texture);
-
         // Setting back buffer as render target before swapping buffers fixes vsync
         RenderEngine::SetActiveRenderTarget(nullptr);
+
+        EditorEngine::OnRender(m_camera);
     }
     
     void OnTick() override {
-        UpdateTitle();
+        EditorEngine::OnTick();
     }
 };
 

@@ -19,6 +19,8 @@ namespace Hyperion::Editor {
         m_fov_target = m_camera->GetFOV();
         m_camera->SetSize(2.75f);
         m_size_target = m_camera->GetSize();
+
+        m_camera->RecalculateMatricies();
     }
 
     void CameraController::Update(f32 delta) {

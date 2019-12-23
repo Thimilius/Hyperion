@@ -41,10 +41,12 @@
 
 // Assets
 #include "hyperion/assets/asset.hpp"
+#include "hyperion/assets/asset_library.hpp"
 
 // Audio
 #include "hyperion/audio/audio_engine.hpp"
 
 // Editor
+#include "hyperion/editor/editor_engine.hpp"
 #include "hyperion/editor/camera_controller.hpp"
 #include "hyperion/editor/gizmos.hpp"
