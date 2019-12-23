@@ -12,7 +12,7 @@ namespace Hyperion::Rendering {
         return Ref<Mesh>(new Mesh(mesh_data, { }));
     }
 
-    Ref<Mesh> Mesh::Create(const MeshData &mesh_data, const Vector<SubMesh> sub_meshes) {
+    Ref<Mesh> Mesh::Create(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes) {
         return Ref<Mesh>(new Mesh(mesh_data, sub_meshes));
     }
 
@@ -202,7 +202,7 @@ namespace Hyperion::Rendering {
         return LoadMesh(path);
     }
     
-    Mesh::Mesh(const MeshData &mesh_data, const Vector<SubMesh> sub_meshes) {
+    Mesh::Mesh(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes) {
         m_mesh_data = mesh_data;
 
         u32 vertex_count = (u32)mesh_data.positions.size();

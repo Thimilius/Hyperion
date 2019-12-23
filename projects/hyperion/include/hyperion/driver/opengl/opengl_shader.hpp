@@ -11,7 +11,7 @@ namespace Hyperion::Rendering {
     public:
         OpenGLShader(const String &name, const String &source);
         OpenGLShader(const String &name, const String &vertex_source, const String &fragment_source);
-        ~OpenGLShader();
+        ~OpenGLShader() override;
 
         void Bind() const override;
         void Unbind() const override;

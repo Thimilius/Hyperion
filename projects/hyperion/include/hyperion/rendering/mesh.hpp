@@ -42,12 +42,12 @@ namespace Hyperion::Rendering {
         inline const Vector<SubMesh> GetSubMeshes() const { return m_sub_meshes; }
 
         static Ref<Mesh> Create(const MeshData &mesh_data);
-        static Ref<Mesh> Create(const MeshData &mesh_data, const Vector<SubMesh> sub_meshes);
+        static Ref<Mesh> Create(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes);
         static Ref<Mesh> CreatePlane(f32 width, f32 height);
         static Ref<Mesh> CreateCube(f32 size);
         static Ref<Mesh> CreateFromFile(const String &path);
     private:
-        Mesh(const MeshData &mesh_data, const Vector<SubMesh> sub_meshes);
+        Mesh(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes);
 
         void RecalculateBounds();
 

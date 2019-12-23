@@ -12,7 +12,7 @@ namespace Hyperion::Rendering {
         Ref<IndexBuffer> m_index_buffer;
     public:
         OpenGLVertexArray();
-        ~OpenGLVertexArray();
+        ~OpenGLVertexArray() override;
 
         virtual void Bind() const override;
         virtual void Unbind() const override;

@@ -15,7 +15,7 @@ namespace Hyperion::Rendering {
         u32 m_height;
         RenderTextureFormat m_format;
     public:
-        virtual ~RenderTexture() { }
+        virtual ~RenderTexture() = default;
 
         inline u32 GetWidth() const { return m_width; }
         inline u32 GetHeight() const { return m_height; }

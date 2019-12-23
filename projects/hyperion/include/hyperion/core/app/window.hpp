@@ -44,7 +44,6 @@ namespace Hyperion {
 
         Scope<Rendering::GraphicsContext> m_graphics_context;
     public:
-
         virtual ~Window() = default;
 
         inline const String &GetTitle() const { return m_title; }

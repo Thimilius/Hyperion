@@ -11,7 +11,7 @@ namespace Hyperion::Rendering {
         u32 m_depth_attachment_id;
     public:
         OpenGLRenderTexture(u32 width, u32 height, RenderTextureFormat format);
-        ~OpenGLRenderTexture();
+        ~OpenGLRenderTexture() override;
 
         virtual u32 GetID() const { return m_framebuffer_id; }
 

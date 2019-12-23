@@ -14,7 +14,7 @@ namespace Hyperion {
     private:
         String m_name;
     public:
-        virtual ~Asset() { }
+        virtual ~Asset() = default;
 
         virtual AssetType GetType() const = 0;
 

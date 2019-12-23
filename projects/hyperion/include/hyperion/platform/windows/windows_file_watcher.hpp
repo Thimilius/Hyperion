@@ -22,7 +22,7 @@ namespace Hyperion {
         WatchStruct watch_struct;
     public:
         WindowsFileWatcher(const String &path, WatcherCallbackFunc callback, bool recursive);
-        virtual ~WindowsFileWatcher();
+        ~WindowsFileWatcher() override;
 
         void Update() override;
     private:

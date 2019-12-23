@@ -10,7 +10,7 @@ namespace Hyperion::Rendering {
     public:
         OpenGLVertexBuffer(const u8 *vertices, u32 size);
         OpenGLVertexBuffer(const u8 *vertices, u32 size, BufferUsage usage);
-        ~OpenGLVertexBuffer();
+        ~OpenGLVertexBuffer() override;
 
         void Bind() const override;
         void Unbind() const override;
@@ -28,7 +28,7 @@ namespace Hyperion::Rendering {
     public:
         OpenGLIndexBuffer(const u16 *indices, u32 count);
         OpenGLIndexBuffer(const u32 *indices, u32 count);
-        ~OpenGLIndexBuffer();
+        ~OpenGLIndexBuffer() override;
 
         void Bind() const override;
         void Unbind() const override;
