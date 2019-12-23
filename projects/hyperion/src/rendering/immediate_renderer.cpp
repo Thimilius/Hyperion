@@ -2,6 +2,8 @@
 
 #include "hyperion/rendering/immediate_renderer.hpp"
 
+#include "hyperion/assets/asset_library.hpp"
+
 namespace Hyperion::Rendering {
 
     void ImmediateRenderer::Begin(const Ref<Camera> &camera) {
@@ -10,7 +12,7 @@ namespace Hyperion::Rendering {
         s_state.transform.view_projection = camera->GetViewProjectionMatrix();
 
         // FIXME: This does not need to be set every time
-        s_immediate_shader = ShaderLibrary::Get("immediate");
+        s_immediate_shader = AssetLibrary::GetShader("immediate");
 
         if (!s_vertex_array) {
             s_vertex_buffer = VertexBuffer::Create(nullptr, sizeof(s_data_buffer), BufferUsage::DynamicDraw);

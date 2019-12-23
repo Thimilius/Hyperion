@@ -3,6 +3,7 @@
 #include "hyperion/core/engine.hpp"
 
 #include "hyperion/core/app/display.hpp"
+#include "hyperion/assets/asset_library.hpp"
 #include "hyperion/rendering/shader.hpp"
 #include "hyperion/audio/audio_engine.hpp"
 
@@ -26,18 +27,20 @@ namespace Hyperion {
 
     void Engine::Setup(const ApplicationSettings &settings) {
         Rendering::RenderEngine::Init(settings.renderer.backend);
-        Rendering::ShaderLibrary::Init(settings.assets.shader_path);
-
         Audio::AudioEngine::Init(settings.audio.backend);
+
+        AssetLibrary::Init(settings.assets.hot_loading, settings.assets.shader_path);
     }
 
     void Engine::Update(f32 delta_time) {
-        Rendering::ShaderLibrary::Update();
+        AssetLibrary::Update();
     }
 
     void Engine::Shutdown() {
-        Rendering::RenderEngine::Shutdown();
+        AssetLibrary::Shutdown();
+
         Audio::AudioEngine::Shutdown();
+        Rendering::RenderEngine::Shutdown();
     }
 
 }

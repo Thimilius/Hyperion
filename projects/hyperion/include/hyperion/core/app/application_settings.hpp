@@ -22,6 +22,8 @@ namespace Hyperion {
         } window;
 
         struct {
+            bool hot_loading = true;
+
             String shader_path = "data/shaders";
         } assets;
 

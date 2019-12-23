@@ -3,13 +3,14 @@
 #include "hyperion/editor/gizmos.hpp"
 
 #include "hyperion/rendering/renderer.hpp"
+#include "hyperion/assets/asset_library.hpp"
 
 using namespace Hyperion::Rendering;
 
 namespace Hyperion::Editor {
 
     void Gizmos::Init() {
-        m_shader = ShaderLibrary::Get("gizmo");
+        m_shader = AssetLibrary::GetShader("gizmo");
         m_mesh = Mesh::CreateFromFile("data/models/gizmo.obj");
 
         m_x_axis_aabb = AABB(Vec3(0.5f, 0.0f, 0.0f), Vec3(1.0f, 0.1f, 0.1f));

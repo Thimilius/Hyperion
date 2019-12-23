@@ -3,7 +3,6 @@
 #include "hyperion/common.hpp"
 #include "hyperion/assets/asset.hpp"
 #include "hyperion/core/math/math.hpp"
-#include "hyperion/core/io/file_watcher.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -42,32 +41,6 @@ namespace Hyperion::Rendering {
         Shader(const String &name) : Asset(name) { }
 
         ShaderType ShaderTypeFromString(const String &string);
-    };
-
-    class ShaderLibrary {
-    private:
-        struct ShaderEntry {
-            Ref<Shader> shader;
-            String filepath;
-        };
-
-        inline static Map<String, ShaderEntry> s_shaders;
-        inline static Ref<FileWatcher> s_watcher;
-    public:
-        static Ref<Shader> Load(const String &name, const String &filepath);
-
-        static void Add(const String &name, const String &filepath, const Ref<Shader> &shader);
-        static Ref<Shader> Get(const String &name);
-    private:
-        ShaderLibrary() = delete;
-        ~ShaderLibrary() = delete;
-
-        static void Init(const String &path);
-        static void Update();
-
-        static void Reload(const String &name);
-
-        friend class Hyperion::Engine;
     };
 
 }
