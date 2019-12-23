@@ -1,7 +1,7 @@
 #pragma once
 
 #include "hyperion/common.hpp"
-#include "hyperion/core/asset.hpp"
+#include "hyperion/assets/asset.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -39,6 +39,8 @@ namespace Hyperion::Rendering {
         TextureAnisotropicFilter m_anisotropic_filter;
     public:
         virtual ~Texture() = default;
+
+        AssetType GetType() const override { return AssetType::Texture; }
 
         virtual void Bind(u32 slot = 0) const = 0;
         virtual void Unbind(u32 slot = 0) const = 0;

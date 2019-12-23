@@ -39,6 +39,9 @@
 #include "hyperion/rendering/camera.hpp"
 #include "hyperion/rendering/layer.hpp"
 
+// Assets
+#include "hyperion/assets/asset.hpp"
+
 // Audio
 #include "hyperion/audio/audio_engine.hpp"
 

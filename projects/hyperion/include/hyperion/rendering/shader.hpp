@@ -1,7 +1,7 @@
 #pragma once
 
 #include "hyperion/common.hpp"
-#include "hyperion/core/asset.hpp"
+#include "hyperion/assets/asset.hpp"
 #include "hyperion/core/math/math.hpp"
 #include "hyperion/core/io/file_watcher.hpp"
 
@@ -15,8 +15,9 @@ namespace Hyperion::Rendering {
 
     class Shader : public Asset {
     public:
-        Shader(const String &name) : Asset(name) { }
         virtual ~Shader() = default;
+
+        AssetType GetType() const override { return AssetType::Shader; }
 
         virtual void Bind() const = 0;
         virtual void Unbind() const = 0;
@@ -38,6 +39,8 @@ namespace Hyperion::Rendering {
         static Ref<Shader> Create(const String &name, const String &source);
         static Ref<Shader> Create(const String &name, const String &vertex_source, const String &fragment_source);
     protected:
+        Shader(const String &name) : Asset(name) { }
+
         ShaderType ShaderTypeFromString(const String &string);
     };
 

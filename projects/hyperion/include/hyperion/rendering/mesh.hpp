@@ -1,7 +1,7 @@
 #pragma once
 
 #include "hyperion/common.hpp"
-#include "hyperion/core/asset.hpp"
+#include "hyperion/assets/asset.hpp"
 #include "hyperion/rendering/vertex_array.hpp"
 #include "hyperion/rendering/vertex_format.hpp"
 
@@ -34,6 +34,8 @@ namespace Hyperion::Rendering {
 
         Ref<VertexArray> m_vertex_array;
     public:
+        inline AssetType GetType() const override { return AssetType::Mesh; }
+
         inline const MeshData &GetMeshData() const { return m_mesh_data; }
         inline AABB GetBounds() const { return m_bounds; }
         inline const Ref<VertexArray> GetVertexArray() const { return m_vertex_array; }
