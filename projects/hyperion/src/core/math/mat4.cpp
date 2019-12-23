@@ -275,8 +275,8 @@ namespace Hyperion {
         Mat4 result(1.0f);
 
         result.elements[0 + 0 * 4] = x;
-        result.elements[1 + 1 * 4] = z;
-        result.elements[2 + 2 * 4] = y;
+        result.elements[1 + 1 * 4] = y;
+        result.elements[2 + 2 * 4] = z;
 
         return result;
     }
