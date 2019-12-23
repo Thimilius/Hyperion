@@ -74,8 +74,8 @@ project "hyperion"
 		}
 		
 		libdirs {
-			"projects/hyperion/vendor/freetype/lib/x64",
-			"projects/hyperion/vendor/fmod/lib/x64",
+			"projects/hyperion/vendor/freetype/lib/windows",
+			"projects/hyperion/vendor/fmod/lib/windows",
 			"projects/hyperion/vendor/assimp/lib/windows",
 		}
 		
