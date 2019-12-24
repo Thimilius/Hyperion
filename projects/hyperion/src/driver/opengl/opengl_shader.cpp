@@ -49,7 +49,14 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLShader::Recompile(const String &source) {
-        Compile(PreProcess(source));
+        Map<ShaderType, String> sources = PreProcess(source);
+
+        // For now this is hardcoded to be always 2 elements big
+        if (sources.size() != 2) {
+            CompileFallbackShader();
+        } else {
+            Compile(sources);
+        }
     }
 
     void OpenGLShader::Recompile(const String &vertex_source, const String &fragment_source) {
@@ -63,28 +70,103 @@ namespace Hyperion::Rendering {
     Map<ShaderType, String> OpenGLShader::PreProcess(const String &source) {
         Map<ShaderType, String> sources;
 
-        const auto type_token = "#type";
-        u64 type_token_length = strlen(type_token);
-        u64 position = source.find(type_token, 0);
+        const char *type_token = "#type ";
+        const char *import_token = "#import ";
+        u64 type_token_length = std::strlen(type_token);
+        u64 import_token_length = std::strlen(import_token);
 
+        // TODO: Correctly handle all error cases
+
+        // Find and split the source into corresponding shader type
+        u64 position = source.find(type_token, 0);
         while (position != String::npos) {
+            String shader_source;
+            ShaderType shader_type;
+
             u64 end_of_line = source.find_first_of("\r\n", position);
             HYP_ASSERT_MESSAGE(end_of_line != String::npos, "Shader syntax error!");
-            u64 begin = position + type_token_length + 1;
-            String type = source.substr(begin, end_of_line - begin);
-            HYP_ASSERT_MESSAGE(type == "vertex" || type == "fragment", "Invalid shader type specifier!");
+            u64 begin = position + type_token_length;
+            String type_string = source.substr(begin, end_of_line - begin);
+            shader_type = ShaderTypeFromString(type_string);
+            if (shader_type == ShaderType::Unknown) {
+                HYP_LOG_ERROR("OpenGL", "Invalid shader type specifier: '{}'!", type_string);
+                return sources;
+            }
 
             u64 next_line_position = source.find_first_not_of("\r\n", end_of_line);
             position = source.find(type_token, next_line_position);
-
             u64 end = position - (next_line_position == String::npos ? source.size() - 1 : next_line_position);
-            sources[ShaderTypeFromString(type)] = source.substr(next_line_position, end);
+
+            shader_source = source.substr(next_line_position, end);
+
+            // Find and handle import statements in source
+            {
+                u64 position = shader_source.find(import_token, 0);
+                while (position != String::npos) {
+                    u64 end_of_line = shader_source.find_first_of("\r\n", position);
+                    HYP_ASSERT_MESSAGE(end_of_line != String::npos, "Shader syntax error!");
+                    u64 begin = position + import_token_length;
+                    u64 end = end_of_line - begin;
+
+                    String import_string = shader_source.substr(begin, end_of_line - begin);
+                    // TODO: This is totally hardcoded for now
+                    if (import_string != "\"basic\"") {
+                        HYP_LOG_ERROR("OpenGL", "Invalid import specifier: '{}'!", import_string);
+                        return sources;
+                    }
+
+                    const char *basic_import = R"(
+                        layout(location = 0) in vec3 a_position;
+                        layout(location = 1) in vec3 a_normal;
+                        layout(location = 2) in vec2 a_uv;
+                        
+                        out VS_OUT {
+                            vec3 position;
+                            vec3 normal;
+                            vec2 uv;
+                        } vs_out;
+
+                        uniform struct Transform {
+                            mat4 model;
+                            mat4 view;
+                            mat4 projection;
+                        } u_transform;
+
+                        vec3 obj_to_world_space(vec3 position) {
+                            return (u_transform.model * vec4(position, 1.0)).xyz;
+                        }
+
+                        vec3 normal_to_world_space(vec3 normal) {
+                            return normalize(mat3(transpose(inverse(u_transform.model))) * a_normal);
+                        }
+
+                        vec4 obj_to_clip_space(vec3 position) {
+                            return u_transform.projection * u_transform.view * u_transform.model * vec4(position, 1.0);
+                        }
+                    )";
+
+                    shader_source = shader_source.replace(position, (begin - position) + end, basic_import);
+
+                    position = shader_source.find(import_token, end_of_line);
+                }
+            }
+
+            sources[shader_type] = shader_source;
+        }
+
+        // Check that we found both a vertex and fragment source
+        if (sources.find(ShaderType::Vertex) == sources.end()) {
+            HYP_LOG_ERROR("OpenGL", "Failed to find a vertex type specifier!");
+            return sources;
+        } else if (sources.find(ShaderType::Fragment) == sources.end()) {
+            HYP_LOG_ERROR("OpenGL", "Failed to find a fragment type specifier!");
+            return sources;
         }
 
         return sources;
     }
 
-    void OpenGLShader::Compile(Map<ShaderType, String> sources) {
+    void OpenGLShader::Compile(const Map<ShaderType, String> &sources) {
         // Clear uniforms
         m_uniforms.clear();
 
@@ -174,13 +256,13 @@ namespace Hyperion::Rendering {
             layout(location = 2) in vec2 a_uv;
 
             uniform struct Transform {
-	            mat4 model;
-	            mat4 view;
-	            mat4 projection;
+                mat4 model;
+                mat4 view;
+                mat4 projection;
             } u_transform;
 
             vec4 obj_to_clip_space(vec3 position) {
-	            return u_transform.projection * u_transform.view * u_transform.model * vec4(position, 1.0f);
+                return u_transform.projection * u_transform.view * u_transform.model * vec4(position, 1.0f);
             }
 
             void main() {
@@ -193,10 +275,20 @@ namespace Hyperion::Rendering {
             out vec4 o_color;
 
             void main() {
-	            o_color = vec4(0, 1, 1, 1);
+                o_color = vec4(0, 1, 1, 1);
             }
         )";
         Compile(sources);
+    }
+
+    ShaderType OpenGLShader::ShaderTypeFromString(const String &string) {
+        if (string == "vertex") {
+            return ShaderType::Vertex;
+        } else if (string == "fragment") {
+            return ShaderType::Fragment;
+        } else {
+            return ShaderType::Unknown;
+        }
     }
 
     u32 OpenGLShader::GetGLShaderType(ShaderType type) {

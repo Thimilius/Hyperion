@@ -31,8 +31,10 @@ namespace Hyperion::Rendering {
         void Recompile(const String &vertex_source, const String &fragment_source) override;
     private:
         Map<ShaderType, String> PreProcess(const String &source);
-        void Compile(Map<ShaderType, String> sources);
+        void Compile(const Map<ShaderType, String> &sources);
         void CompileFallbackShader();
+
+        ShaderType ShaderTypeFromString(const String &string);
 
         u32 GetGLShaderType(ShaderType type);
         s32 TryGetUniformLocation(const String &name);

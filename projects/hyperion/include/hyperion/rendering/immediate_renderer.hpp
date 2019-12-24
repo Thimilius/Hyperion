@@ -2,7 +2,6 @@
 
 #include "hyperion/common.hpp"
 #include "hyperion/rendering/shader.hpp"
-#include "hyperion/rendering/vertex_format.hpp"
 #include "hyperion/rendering/camera.hpp"
 #include "hyperion/core/math/mat4.hpp"
 

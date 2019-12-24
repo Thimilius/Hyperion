@@ -23,14 +23,4 @@ namespace Hyperion::Rendering {
         }
     }
 
-    ShaderType Shader::ShaderTypeFromString(const String &string) {
-        if (string == "vertex") {
-            return ShaderType::Vertex;
-        } else if (string == "fragment") {
-            return ShaderType::Fragment;
-        } else {
-            HYP_ASSERT_MESSAGE(false, "Failed to get shader type from string!"); return ShaderType::None;
-        }
-    }
-
 }

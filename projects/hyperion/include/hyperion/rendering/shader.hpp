@@ -7,7 +7,7 @@
 namespace Hyperion::Rendering {
 
     enum class ShaderType {
-        None,
+        Unknown,
         Vertex,
         Fragment
     };
@@ -39,8 +39,6 @@ namespace Hyperion::Rendering {
         static Ref<Shader> Create(const String &name, const String &vertex_source, const String &fragment_source);
     protected:
         Shader(const String &name) : Asset(name) { }
-
-        ShaderType ShaderTypeFromString(const String &string);
     };
 
 }
