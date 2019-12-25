@@ -4,6 +4,12 @@
 
 namespace Hyperion::Rendering {
 
+    enum class ShaderModule {
+        Unknown,
+        BasicVertex,
+        BasicFragment
+    };
+
     class OpenGLShader : public Shader {
     private:
         u32 m_shader_program_id;
@@ -35,6 +41,9 @@ namespace Hyperion::Rendering {
         void CompileFallbackShader();
 
         ShaderType ShaderTypeFromString(const String &string);
+        ShaderModule ShaderModuleFromString(const String &string);
+
+        const char *GetShaderModule(ShaderModule module);
 
         u32 GetGLShaderType(ShaderType type);
         s32 TryGetUniformLocation(const String &name);

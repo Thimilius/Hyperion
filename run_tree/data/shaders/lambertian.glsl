@@ -1,12 +1,12 @@
 #type vertex
 #version 410 core
 
-#import "basic"
+#import "basic_vertex"
 
 void main() {
-	vs_out.position = obj_to_world_space(a_position);
-	vs_out.normal = normal_to_world_space(a_normal);
-	vs_out.uv = a_uv;
+	o_vs_to_fs.position = obj_to_world_space(a_position);
+	o_vs_to_fs.normal = normal_to_world_space(a_normal);
+	o_vs_to_fs.uv = a_uv;
 
 	gl_Position = obj_to_clip_space(a_position);
 }
@@ -14,13 +14,7 @@ void main() {
 #type fragment
 #version 410 core
 
-out vec4 o_color;
-
-in VS_OUT {
-	vec3 position;
-	vec3 normal;
-	vec2 uv;
-} fs_in;
+#import "basic_fragment"
 
 uniform struct Light {
 	vec3 position;
@@ -31,7 +25,7 @@ uniform sampler2D u_texture;
 
 void main() {
 	// Texture
-	vec4 texture_color = texture(u_texture, fs_in.uv);
+	vec4 texture_color = texture(u_texture, i_vs_to_fs.uv);
 	
 	// Ambient
 	float ambient_intensity = 0.2;
@@ -39,8 +33,8 @@ void main() {
 	
 	// Diffuse
 	float diffuse_intensity = 0.8;
-	vec3 light_direction = normalize(u_light.position - fs_in.position);
-	diffuse_intensity = diffuse_intensity * max(dot(fs_in.normal, light_direction), 0.0);
+	vec3 light_direction = normalize(u_light.position - i_vs_to_fs.position);
+	diffuse_intensity = diffuse_intensity * max(dot(i_vs_to_fs.normal, light_direction), 0.0);
 	vec3 diffuse_lighting = diffuse_intensity * u_light.color;
 	
 	// Final lighting

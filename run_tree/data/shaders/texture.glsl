@@ -1,12 +1,12 @@
 #type vertex
 #version 410 core
 
-#import "basic"
+#import "basic_vertex"
 
 void main() {
-	vs_out.position = obj_to_world_space(a_position);
-	vs_out.normal = normal_to_world_space(a_normal);
-	vs_out.uv = a_uv;
+	o_vs_to_fs.position = obj_to_world_space(a_position);
+	o_vs_to_fs.normal = normal_to_world_space(a_normal);
+	o_vs_to_fs.uv = a_uv;
 
 	gl_Position = obj_to_clip_space(a_position);
 }
@@ -14,16 +14,10 @@ void main() {
 #type fragment
 #version 410 core
 
-out vec4 o_color;
-
-in VS_OUT {
-	vec3 position;
-	vec3 normal;
-	vec2 uv;
-} fs_in;
+#import "basic_fragment"
 
 uniform sampler2D u_texture;
 
 void main() {
-	o_color = texture(u_texture, fs_in.uv);
+	o_color = texture(u_texture, i_vs_to_fs.uv);
 }
