@@ -123,7 +123,6 @@ namespace Hyperion::Rendering {
 
     void OpenGLTexture2D::CreateTexture(const u8 *pixels) {
         glCreateTextures(GL_TEXTURE_2D, 1, &m_texture_id);
-        glBindTexture(GL_TEXTURE_2D, m_texture_id);
 
         SetWrapMode(m_wrap_mode);
         SetFilter(m_filter);
@@ -132,8 +131,6 @@ namespace Hyperion::Rendering {
         auto format = GetGLFormat(m_format);
         glTextureImage2DEXT(m_texture_id, GL_TEXTURE_2D, 0, format, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, pixels);
         glGenerateTextureMipmap(m_texture_id);
-
-        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     u32 OpenGLTexture2D::GetGLFormat(TextureFormat format) {

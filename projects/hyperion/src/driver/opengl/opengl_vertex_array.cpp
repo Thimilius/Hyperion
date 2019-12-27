@@ -5,7 +5,7 @@
 namespace Hyperion::Rendering {
 
     OpenGLVertexArray::OpenGLVertexArray() {
-        glGenVertexArrays(1, &m_vertex_array_id);
+        glCreateVertexArrays(1, &m_vertex_array_id);
     }
 
     OpenGLVertexArray::~OpenGLVertexArray() {
@@ -21,22 +21,21 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer> &vertex_buffer) {
-        Bind();
-
-        vertex_buffer->Bind();
-
         const auto &layout = vertex_buffer->GetLayout();
         const auto &elements = layout.GetElements();
         for (s32 index = 0; index < elements.size(); index++) {
             auto &element = elements[index];
-            glEnableVertexAttribArray(index);
-            glVertexAttribPointer(
-                index,
-                element.GetComponentCount(),
-                ShaderDataTypeToOpenGLBaseType(element.type),
-                element.normalized ? GL_TRUE : GL_FALSE,
-                layout.GetStride(),
-                (const void *)(u64)element.offset);
+
+            // To better distinguish the different indicies used
+            s32 attribute_index = index;
+            s32 binding_index = (s32)m_vertex_buffers.size();
+
+            // This is the modern way of defining the format of a vertex buffer in OpenGL using DSA
+            GLboolean normalized = element.normalized ? GL_TRUE : GL_FALSE;
+            glEnableVertexArrayAttrib(m_vertex_array_id, attribute_index);
+            glVertexArrayAttribFormat(m_vertex_array_id, attribute_index, element.GetComponentCount(), ShaderDataTypeToOpenGLBaseType(element.type), normalized, element.offset);
+            glVertexArrayVertexBuffer(m_vertex_array_id, binding_index, vertex_buffer->GetID(), 0, layout.GetStride());
+            glVertexArrayAttribBinding(m_vertex_array_id, attribute_index, binding_index);
         }
 
         m_vertex_buffers.push_back(vertex_buffer);
