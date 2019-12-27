@@ -113,11 +113,11 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLRenderDriver::DrawIndexed(Primitive primitive, IndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) {
-        glDrawElementsBaseVertex(GL_TRIANGLES, index_count, GetGLIndexFormat(format), (void*)(GetGLIndexSize(format) * index_offset), vertex_offset);
+        glDrawElementsBaseVertex(GetGLPrimitive(primitive), index_count, GetGLIndexFormat(format), (void*)(GetGLIndexSize(format) * index_offset), vertex_offset);
     }
 
     void OpenGLRenderDriver::Draw(Primitive primitive, u32 vertex_count, u32 vertex_offset) {
-        glDrawArrays(GL_TRIANGLES, vertex_offset, vertex_count);
+        glDrawArrays(GetGLPrimitive(primitive), vertex_offset, vertex_count);
     }
 
     u32 OpenGLRenderDriver::GetGLFeature(RenderFeature feature) {
