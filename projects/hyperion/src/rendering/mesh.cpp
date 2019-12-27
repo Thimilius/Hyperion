@@ -262,22 +262,23 @@ namespace Hyperion::Rendering {
 
     Ref<Mesh> Mesh::LoadMesh(const String &path) {
         Assimp::Importer importer;
-        u32 import_flags = aiProcess_CalcTangentSpace | // Create binormals/tangents just in case
-            aiProcess_Triangulate |                     // Make sure we're triangles
-            aiProcess_JoinIdenticalVertices |           // Join verticies to optimize for indexed rendering
-            aiProcess_SortByPType |                     // Split meshes by primitive type
-            aiProcess_GenNormals |                      // Make sure we have legit normals
-            aiProcess_GenUVCoords |                     // Convert UVs if required 
-            aiProcess_OptimizeMeshes |                  // Batch draws where possible
-            aiProcess_FlipWindingOrder |                // Flip winding order to be clockwise                                                        
-            aiProcess_ValidateDataStructure;            // Validation
+        u32 import_flags =
+            aiProcess_GenNormals |            // Make sure we have normals
+            aiProcess_GenUVCoords |           // Make sure we have uvs
+            aiProcess_CalcTangentSpace |      // Create binormals/tangents
+            aiProcess_Triangulate |           // Make sure we have triangles
+            aiProcess_JoinIdenticalVertices | // Join verticies to optimize for indexed rendering
+            aiProcess_SortByPType |           // Split meshes by primitive type
+            aiProcess_OptimizeMeshes |        // Batch draws where possible
+            aiProcess_FlipWindingOrder |      // Flip winding order to be clockwise                                                        
+            aiProcess_ValidateDataStructure;  // Validation
         const aiScene *scene = importer.ReadFile(path, import_flags);
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-            HYP_LOG_ERROR("Engine", "Failed to load mesh: '{}'", path);
+            HYP_LOG_ERROR("Importer", "Failed to load mesh: '{}'", path);
             return nullptr;
         };
         if (scene->mNumMeshes == 0) {
-            HYP_LOG_ERROR("Engine", "The loaded mesh '{}' does not contain any meshes!", path);
+            HYP_LOG_ERROR("Importer", "The loaded mesh '{}' does not contain any meshes!", path);
             return nullptr;
         }
 
@@ -292,8 +293,8 @@ namespace Hyperion::Rendering {
 
     void Mesh::LoadSubMesh(const aiMesh *mesh, MeshData &mesh_data, Vector<SubMesh> &sub_meshes) {
         // Make sure the mesh has all necessary components
-        if (!mesh->HasPositions() || !mesh->HasNormals() || !mesh->HasTextureCoords(0)) {
-            HYP_LOG_ERROR("Engine", "Mesh does not contain relevant data!");
+        if (!mesh->HasPositions() || !mesh->HasNormals() || !mesh->HasTextureCoords(0) || mesh->mPrimitiveTypes != aiPrimitiveType_TRIANGLE) {
+            HYP_LOG_ERROR("Importer", "Mesh does not contain relevant data!");
             return;
         }
 
@@ -319,10 +320,6 @@ namespace Hyperion::Rendering {
         mesh_data.indicies.reserve(index_offset + index_count);
         for (u32 i = 0; i < mesh->mNumFaces; i++) {
             aiFace face = mesh->mFaces[i];
-            if (face.mNumIndices != 3) {
-                HYP_LOG_ERROR("Engine", "Mesh contains faces which do not have 3 indicies!");
-                return;
-            }
 
             mesh_data.indicies.emplace_back(face.mIndices[0]);
             mesh_data.indicies.emplace_back(face.mIndices[1]);
