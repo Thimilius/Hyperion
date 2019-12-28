@@ -94,22 +94,9 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLRenderDriver::Blit(const Ref<RenderTexture> &destination, s32 dstX0, s32 dstY0, s32 dstX1, s32 dstY1, const Ref<RenderTexture> &source, s32 srcX0, s32 srcY0, s32 srcX1, s32 srcY1) {
-        s32 draw_framebuffer_id;
-        glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &draw_framebuffer_id);
-        s32 read_framebuffer_id;
-        glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &read_framebuffer_id);
-
-        if (destination == nullptr) {
-            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-        } else {
-            SetActiveRenderTarget(destination, RenderTextureTarget::Draw);
-        }
-
-        SetActiveRenderTarget(source, RenderTextureTarget::Read);
-        glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, draw_framebuffer_id);
-        glBindFramebuffer(GL_READ_FRAMEBUFFER, read_framebuffer_id);
+        u32 draw_id = destination ? destination->GetID() : 0;
+        s32 read_id = source ? source->GetID() : 0;
+        glBlitNamedFramebuffer(read_id, draw_id, srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, GL_COLOR_BUFFER_BIT, GL_LINEAR);
     }
 
     void OpenGLRenderDriver::DrawIndexed(Primitive primitive, IndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) {
