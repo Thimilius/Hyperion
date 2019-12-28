@@ -97,9 +97,11 @@ namespace Hyperion {
 
         if (s_hot_loading) {
             s_shader_watcher = FileWatcher::Create(shader_path, [](FileStatus status, const String &path, const String &filename, const String &extension) {
-                if (extension == ".glsl") {
-                    auto name = filename.substr(0, filename.length() - 5);
-                    ReloadShader(name);
+                if (status == FileStatus::Modified) {
+                    if (extension == ".glsl") {
+                        auto name = filename.substr(0, filename.length() - 5);
+                        ReloadShader(name);
+                    }
                 }
             }, false);
         }
@@ -116,9 +118,11 @@ namespace Hyperion {
 
         if (s_hot_loading) {
             s_texture_watcher = FileWatcher::Create(texture_path, [](FileStatus status, const String &path, const String &filename, const String &extension) {
-                if (extension == ".png") {
-                    auto name = filename.substr(0, filename.length() - 4);
-                    ReloadTexture2D(name);
+                if (status == FileStatus::Modified) {
+                    if (extension == ".png") {
+                        auto name = filename.substr(0, filename.length() - 4);
+                        ReloadTexture2D(name);
+                    }
                 }
             }, false);
         }
