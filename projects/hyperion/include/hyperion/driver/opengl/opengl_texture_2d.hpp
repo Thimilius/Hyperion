@@ -22,7 +22,10 @@ namespace Hyperion::Rendering {
         void SetFilter(TextureFilter filter) override;
         void SetAnisotropicFilter(TextureAnisotropicFilter anisotropic_filter) override;
 
-        void SetPixels(const void *pixels) override;
+        void Resize(u32 width, u32 height) override;
+        void Resize(u32 width, u32 height, TextureFormat format) override;
+
+        void SetPixels(const u8 *pixels) override;
         void *GetPixels() override;
     private:
         void CreateTexture(const u8 *pixels);

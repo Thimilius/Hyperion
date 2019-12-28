@@ -23,6 +23,8 @@ namespace Hyperion::Rendering {
         m_filter = filter;
         m_anisotropic_filter = anisotropic_filter;
 
+        // FIXME: The actual image data loading should not be in here at all!
+
         stbi_set_flip_vertically_on_load(true);
 
         int width;
@@ -106,8 +108,22 @@ namespace Hyperion::Rendering {
         glTextureParameterf(m_texture_id, GL_TEXTURE_MAX_ANISOTROPY, amount);
     }
 
-    void OpenGLTexture2D::SetPixels(const void *pixels) {
+    void OpenGLTexture2D::Resize(u32 width, u32 height) {
+        Resize(width, height, m_format);
+    }
+
+    void OpenGLTexture2D::Resize(u32 width, u32 height, TextureFormat format) {
+        m_width = width;
+        m_height = height;
+        m_format = format;
+
+        u32 gl_format = GetGLFormat(format);
+        glTextureImage2DEXT(m_texture_id, GL_TEXTURE_2D, 0, gl_format, width, height, 0, gl_format, GL_UNSIGNED_BYTE, nullptr);
+    }
+
+    void OpenGLTexture2D::SetPixels(const u8 *pixels) {
         glTextureSubImage2D(m_texture_id, 0, 0, 0, m_width, m_height, GetGLFormat(m_format), GL_UNSIGNED_BYTE, pixels);
+        glGenerateTextureMipmap(m_texture_id);
     }
 
     void *OpenGLTexture2D::GetPixels() {
@@ -128,7 +144,7 @@ namespace Hyperion::Rendering {
         SetFilter(m_filter);
         SetAnisotropicFilter(m_anisotropic_filter);
 
-        auto format = GetGLFormat(m_format);
+        u32 format = GetGLFormat(m_format);
         glTextureImage2DEXT(m_texture_id, GL_TEXTURE_2D, 0, format, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, pixels);
         glGenerateTextureMipmap(m_texture_id);
     }
