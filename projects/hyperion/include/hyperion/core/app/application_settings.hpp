@@ -14,6 +14,7 @@ namespace Hyperion {
         bool hot_loading = true;
 
         String shader_path = "data/shaders";
+        String texture_path = "data/textures";
     };
 
     struct RendererSettings {

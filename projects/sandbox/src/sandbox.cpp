@@ -23,7 +23,7 @@ protected:
 
         m_cube_mesh = Mesh::CreateCube(1);
         m_cube_shader = AssetLibrary::GetShader("phong");
-        m_cube_texture = Texture2D::CreateFromFile("data/textures/grass.png", TextureWrapMode::Clamp, TextureFilter::Bilinear, TextureAnisotropicFilter::None);
+        m_cube_texture = AssetLibrary::GetTexture2D("grass");
 
         EditorEngine::OnInit(m_camera);
     }

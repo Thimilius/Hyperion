@@ -29,7 +29,7 @@ namespace Hyperion {
         Rendering::RenderEngine::Init(settings.renderer.backend);
         Audio::AudioEngine::Init(settings.audio.backend);
 
-        AssetLibrary::Init(settings.assets.hot_loading, settings.assets.shader_path);
+        AssetLibrary::Init(settings.assets.hot_loading, settings.assets.shader_path, settings.assets.texture_path);
     }
 
     void Engine::Update(f32 delta_time) {
