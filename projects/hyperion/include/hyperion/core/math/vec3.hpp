@@ -4,6 +4,8 @@
 
 namespace Hyperion {
 
+    struct Vec2;
+    struct Vec4;
     struct Mat4;
 
     struct Vec3 {
@@ -13,6 +15,8 @@ namespace Hyperion {
 
         Vec3();
         Vec3(f32 x, f32 y, f32 z);
+        Vec3(const Vec2 &vec2, f32 z);
+        Vec3(const Vec4 &vec4);
 
         Vec3 &Add(const Vec3 &other);
         Vec3 &Subtract(const Vec3 &other);

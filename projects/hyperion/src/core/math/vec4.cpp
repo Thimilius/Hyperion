@@ -10,6 +10,9 @@ namespace Hyperion {
     Vec4::Vec4(f32 x, f32 y, f32 z, f32 w)
         : x(x), y(y), z(z), w(w) { }
 
+    Vec4::Vec4(const Vec3 &vec3, f32 w)
+        : x(vec3.x), y(vec3.y), z(vec3.z), w(w) { }
+
     Vec4 &Vec4::Add(const Vec4 &other) {
         x += other.x;
         y += other.y;
