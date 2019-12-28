@@ -10,8 +10,8 @@ namespace Hyperion::Editor {
         static inline Ref<Rendering::Camera> s_camera;
         static inline Ref<CameraController> s_camera_controller;
 
-        static inline Gizmos s_gizmos;
-        static inline bool s_gizmos_enabled = false;
+        static inline bool s_grid_enabled = false;
+        static inline bool s_origin_enabled = false;
     public:
         static void OnInit(const Ref<Rendering::Camera> &camera);
         static void OnUpdate(const Ref<Rendering::Camera> &camera);

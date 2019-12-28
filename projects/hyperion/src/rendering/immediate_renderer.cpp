@@ -13,15 +13,12 @@ namespace Hyperion::Rendering {
 
         // FIXME: This does not need to be set every time
         s_immediate_shader = AssetLibrary::GetShader("immediate");
-
         if (!s_vertex_array) {
             s_vertex_buffer = VertexBuffer::Create(nullptr, sizeof(s_data_buffer), BufferUsage::DynamicDraw);
             s_vertex_buffer->SetLayout(VertexImmediate::GetBufferLayout());
             s_vertex_array = VertexArray::Create();
             s_vertex_array->AddVertexBuffer(s_vertex_buffer);
         }
-
-        s_state.vertex_offset = 0;
     }
 
     void ImmediateRenderer::DrawCube(Vec3 center, Vec3 size, Vec4 color) {
@@ -115,6 +112,8 @@ namespace Hyperion::Rendering {
         s_vertex_array->Bind();
 
         RenderEngine::Draw(type, s_state.vertex_offset, 0);
+
+        s_state.vertex_offset = 0;
     }
 
 }

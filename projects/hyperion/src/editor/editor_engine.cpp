@@ -2,6 +2,7 @@
 
 #include "hyperion/core/app/time.hpp"
 #include "hyperion/editor/editor_engine.hpp"
+#include "hyperion/rendering/immediate_renderer.hpp"
 
 using namespace Hyperion::Rendering;
 
@@ -10,8 +11,6 @@ namespace Hyperion::Editor {
     void EditorEngine::OnInit(const Ref<Camera> &camera) {
         s_camera = camera;
         s_camera_controller = CameraController::Create(camera);
-
-        s_gizmos.Init();
 
         UpdateTitle();
     }
@@ -31,22 +30,59 @@ namespace Hyperion::Editor {
             UpdateTitle();
         }
         if (Input::GetKeyDown(KeyCode::F3)) {
-            s_gizmos_enabled = !s_gizmos_enabled;
+            s_grid_enabled = !s_grid_enabled;
+        }
+        if (Input::GetKeyDown(KeyCode::F4)) {
+            s_origin_enabled = !s_origin_enabled;
         }
 
         s_camera_controller->Update(Time::GetDeltaTime());
-
-        if (s_gizmos_enabled) {
-            s_gizmos.Update(camera);
-        }
     }
 
     void EditorEngine::OnRender(const Ref<Camera> &camera) {
-        // We draw the editor on top of everything so erase depth information
-        RenderEngine::Clear(ClearMask::Depth);
+        if (s_grid_enabled) {
+            // NOTE: The performance of this is obviously far from optimal
+            ImmediateRenderer::Begin(camera);
+            {
+                Vec4 grid_color = Vec4(1, 1, 1, 1);
 
-        if (s_gizmos_enabled) {
-            s_gizmos.Render(camera);
+                s32 grid_size = 20;
+                s32 half_grid_size = grid_size / 2;
+                f32 to_point = (f32)half_grid_size;
+
+                for (s32 x = -half_grid_size; x <= half_grid_size; x++) {
+                    // We want to skip drawing the middle line to avoid an ugly overlap with the origin lines
+                    if (s_origin_enabled && x == 0) {
+                        continue;
+                    }
+
+                    f32 from_point = (f32)x;
+                    ImmediateRenderer::DrawLine(Vec3(from_point, 0, to_point), Vec3(from_point, 0, -to_point), grid_color);
+                }
+                for (s32 z = -half_grid_size; z <= half_grid_size; z++) {
+                    // We want to skip drawing the middle line to avoid an ugly overlap with the origin lines
+                    if (s_origin_enabled && z == 0) {
+                        continue;
+                    }
+
+                    f32 from_point = (f32)z;
+                    ImmediateRenderer::DrawLine(Vec3(to_point, 0, from_point), Vec3(-to_point, 0, from_point), grid_color);
+                }
+            }
+            ImmediateRenderer::End();
+        }
+
+        if (s_origin_enabled) {
+            // We want to draw the origin on top of the grid
+            RenderEngine::Clear(ClearMask::Depth);
+
+            ImmediateRenderer::Begin(camera);
+            {
+                ImmediateRenderer::DrawLine(Vec3(-1000, 0, 0), Vec3(1000, 0, 0), Vec4(1, 0, 0, 1));
+                ImmediateRenderer::DrawLine(Vec3(0, -1000, 0), Vec3(0, 1000, 0), Vec4(0, 1, 0, 1));
+                ImmediateRenderer::DrawLine(Vec3(0, 0, -1000), Vec3(0, 0, 1000), Vec4(0, 0, 1, 1));
+            }
+            ImmediateRenderer::End();
         }
     }
 

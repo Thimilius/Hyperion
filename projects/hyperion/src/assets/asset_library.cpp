@@ -97,7 +97,7 @@ namespace Hyperion {
 
         if (s_hot_loading) {
             s_shader_watcher = FileWatcher::Create(shader_path, [](FileStatus status, const String &path, const String &filename, const String &extension) {
-                if (status == FileStatus::Modified) {
+                if (status == FileStatus::Created || status == FileStatus::Modified) {
                     if (extension == ".glsl") {
                         auto name = filename.substr(0, filename.length() - 5);
                         ReloadShader(name);
@@ -118,7 +118,7 @@ namespace Hyperion {
 
         if (s_hot_loading) {
             s_texture_watcher = FileWatcher::Create(texture_path, [](FileStatus status, const String &path, const String &filename, const String &extension) {
-                if (status == FileStatus::Modified) {
+                if (status == FileStatus::Created || status == FileStatus::Modified) {
                     if (extension == ".png") {
                         auto name = filename.substr(0, filename.length() - 4);
                         ReloadTexture2D(name);
@@ -129,14 +129,23 @@ namespace Hyperion {
     }
 
     void AssetLibrary::ReloadShader(const String &name) {
-        HYP_ASSERT_MESSAGE(s_shaders.find(name) != s_shaders.end(), "Trying to reload a shader that is not in the library!");
+        if (s_shaders.find(name) == s_shaders.end()) {
+            // Apparently we are trying to reload a shader that is not part of the 
+            HYP_LOG_WARN("Assets", "Trying to reload a shader that is not in the library!");
+            return;
+        }
+
         AssetEntry entry = s_shaders[name];
         String &source = FileUtilities::ReadTextFile(entry.filepath);
         entry.asset->Recompile(source);
     }
 
     void AssetLibrary::ReloadTexture2D(const String &name) {
-        HYP_ASSERT_MESSAGE(s_textures.find(name) != s_textures.end(), "Trying to reload a 2D texture that is not in the library!");
+        if (s_textures.find(name) == s_textures.end()) {
+            HYP_LOG_WARN("Assets", "Trying to reload a 2D texture that is not in the library!");
+            return;
+        }
+        
         AssetEntry entry = s_textures[name];
 
         stbi_set_flip_vertically_on_load(true);

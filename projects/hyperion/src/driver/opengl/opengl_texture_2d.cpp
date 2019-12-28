@@ -94,7 +94,7 @@ namespace Hyperion::Rendering {
     }
 
     void *OpenGLTexture2D::GetPixels() {
-        // FIXME: This is a very expensive allocation
+        // NOTE: This is a very expensive allocation
         u32 size = m_width * m_height * GetBytesPerPixel(m_format);
         char *pixels = new char[size];
 
