@@ -268,24 +268,30 @@ namespace Hyperion {
         } else if (w_param == VK_SHIFT) {
             // Left and right shift keys are not send as extended keys
             // and therefore need to be queried explicitly
-            bool left_shift_down = GetKeyState(VK_LSHIFT) & 0x8000;
-            bool right_shift_down = GetAsyncKeyState(VK_RSHIFT) & 0x8000;
+
+            // To distinguish the two keys we explicily store their previous state
+            // so that we can send out the correct key released events later
+            static bool left_shift_down = false;
+            static bool right_shift_down = false;
+            bool previous_left_shift_down = left_shift_down;
+            bool previous_right_shift_down = right_shift_down;
+            left_shift_down = GetKeyState(VK_LSHIFT) & 0x8000;
+            right_shift_down = GetAsyncKeyState(VK_RSHIFT) & 0x8000;
 
             if (left_shift_down) {
                 return KeyCode::LeftShift;
             } else if (right_shift_down) {
                 return KeyCode::RightShift;
             } else {
-                // If neither the right nor the left shift key is down this means they just got released.
-                // however we can not distinguish between the two and just send out both release events explicitly
-
-                // FIXME: The event dispatching should not be done in this method
-                KeyReleasedEvent left_event(KeyCode::LeftShift, GetKeyModifier());
-                KeyReleasedEvent right_event(KeyCode::RightShift, GetKeyModifier());
-                DispatchEvent(left_event);
-                DispatchEvent(right_event);
-
-                return KeyCode::None;
+                // If neither the right nor the left shift key is down this means they just got released
+                // so send out the corresponding key released event
+                if (previous_left_shift_down) {
+                    return KeyCode::LeftShift;
+                } else if (previous_right_shift_down) {
+                    return KeyCode::RightShift;
+                } else {
+                    return KeyCode::None;
+                }
             }
         } else if (w_param == VK_MENU) {
             if (l_param & 0x01000000) {
