@@ -43,10 +43,10 @@ namespace Hyperion::Rendering {
 
             switch (m_format) {
                 case Hyperion::Rendering::RenderTextureFormat::RGBA8:
-                    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+                    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
                     break;
                 case Hyperion::Rendering::RenderTextureFormat::RGBA16F:
-                    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGB, GL_FLOAT, NULL);
+                    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGB, GL_FLOAT, nullptr);
                     break;
                 default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
             }

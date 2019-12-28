@@ -9,7 +9,7 @@ namespace Hyperion {
         display_device.cb = sizeof(display_device);
 
         s32 device_number = 0;
-        while (EnumDisplayDevicesA(NULL, device_number, &display_device, 0)) {
+        while (EnumDisplayDevicesA(nullptr, device_number, &display_device, 0)) {
             device_number++;
 
             if (display_device.StateFlags & DISPLAY_DEVICE_ATTACHED_TO_DESKTOP && display_device.StateFlags & DISPLAY_DEVICE_PRIMARY_DEVICE) {
@@ -41,7 +41,7 @@ namespace Hyperion {
         s_display_infos.clear();
 
         s32 device_number = 0;
-        while (EnumDisplayDevicesA(NULL, device_number, &display_device, 0)) {
+        while (EnumDisplayDevicesA(nullptr, device_number, &display_device, 0)) {
             device_number++;
 
             if (display_device.StateFlags & DISPLAY_DEVICE_ATTACHED_TO_DESKTOP) {

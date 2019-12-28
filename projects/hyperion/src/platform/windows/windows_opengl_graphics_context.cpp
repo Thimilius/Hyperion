@@ -35,7 +35,7 @@ namespace Hyperion::Rendering {
                 HYP_PANIC_MESSAGE("OpenGL", "Failed to load windows OpenGL extensions!");
             }
 
-            wglMakeCurrent(m_device_context, NULL);
+            wglMakeCurrent(m_device_context, nullptr);
             wglDeleteContext(temp_context);
         }
 
@@ -54,7 +54,7 @@ namespace Hyperion::Rendering {
             };
             s32 pixel_format;
             u32 formats_count;
-            wglChoosePixelFormatARB(m_device_context, pixel_attributes, NULL, 1, &pixel_format, &formats_count);
+            wglChoosePixelFormatARB(m_device_context, pixel_attributes, nullptr, 1, &pixel_format, &formats_count);
 
             PIXELFORMATDESCRIPTOR pixel_format_descriptor;
             DescribePixelFormat(m_device_context, pixel_format, sizeof(pixel_format_descriptor), &pixel_format_descriptor);
@@ -64,7 +64,7 @@ namespace Hyperion::Rendering {
                 WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
                 0
             };
-            HGLRC opengl_context = wglCreateContextAttribsARB(m_device_context, NULL, context_attributes);
+            HGLRC opengl_context = wglCreateContextAttribsARB(m_device_context, nullptr, context_attributes);
             if (!opengl_context) {
                 HYP_PANIC_MESSAGE("OpenGL", "Failed to create OpenGL context!");
             }

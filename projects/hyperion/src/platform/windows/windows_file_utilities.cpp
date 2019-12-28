@@ -5,10 +5,10 @@
 namespace Hyperion {
 
     String FileUtilities::ReadTextFile(const String &path) {
-        HANDLE file_handle = CreateFileA(path.c_str(), GENERIC_READ, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+        HANDLE file_handle = CreateFileA(path.c_str(), GENERIC_READ, FILE_SHARE_WRITE | FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
         if (file_handle == INVALID_HANDLE_VALUE) {
             HYP_LOG_ERROR("Engine", "Failed to open file: '{}'!", path);
-            return NULL; // FIXME: What the hell is this supposed to be!?!?
+            return String();
         }
 
         LARGE_INTEGER file_size_large;
@@ -18,7 +18,7 @@ namespace Hyperion {
 
         char *file_buffer = new char[file_size + 1];
         DWORD bytes_read = 0;
-        ReadFile(file_handle, file_buffer, (DWORD)file_size, &bytes_read, NULL);
+        ReadFile(file_handle, file_buffer, (DWORD)file_size, &bytes_read, nullptr);
         file_buffer[file_size] = 0;
 
         CloseHandle(file_handle);

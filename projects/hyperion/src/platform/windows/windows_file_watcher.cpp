@@ -17,13 +17,13 @@ namespace Hyperion {
             path.c_str(),
             FILE_LIST_DIRECTORY,
             FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
-            NULL,
+            nullptr,
             OPEN_EXISTING,
             FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
-            NULL);
+            nullptr);
 
         if (watch_struct.directory_handle != INVALID_HANDLE_VALUE) {
-            watch_struct.overlapped.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+            watch_struct.overlapped.hEvent = CreateEvent(nullptr, TRUE, FALSE, nullptr);
             watch_struct.notify_filter = FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_LAST_WRITE | FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME;
             watch_struct.watcher = this;
             watch_struct.stop_now = false;
@@ -51,7 +51,7 @@ namespace Hyperion {
     }
 
     void WindowsFileWatcher::Update() {
-        MsgWaitForMultipleObjectsEx(0, NULL, 0, QS_ALLINPUT, MWMO_ALERTABLE);
+        MsgWaitForMultipleObjectsEx(0, nullptr, 0, QS_ALLINPUT, MWMO_ALERTABLE);
     }
 
     bool WindowsFileWatcher::RefreshWatch(bool clear) {
@@ -61,7 +61,7 @@ namespace Hyperion {
             sizeof(watch_struct.buffer),
             m_recursive,
             watch_struct.notify_filter,
-            NULL,
+            nullptr,
             &watch_struct.overlapped,
             clear ? 0 : WatchCallback);
         return result != 0;

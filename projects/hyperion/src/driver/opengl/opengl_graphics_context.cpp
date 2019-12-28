@@ -12,7 +12,7 @@ namespace Hyperion::Rendering {
     void OpenGLGraphicsContext::Init() {
         // Enable debug messages
         if (HYP_OPENGL_DEBUG_LOG) {
-            glDebugMessageCallback(DebugMessageCallback, NULL);
+            glDebugMessageCallback(DebugMessageCallback, nullptr);
             glEnable(GL_DEBUG_OUTPUT);
             glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
         }

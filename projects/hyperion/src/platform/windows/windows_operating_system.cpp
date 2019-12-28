@@ -21,7 +21,7 @@ namespace Hyperion {
     void WindowsOperatingSystem::Init() {
         // Initialize console
         m_console_handle = GetStdHandle(STD_OUTPUT_HANDLE);
-        if (m_console_handle == NULL) {
+        if (m_console_handle == INVALID_HANDLE_VALUE) {
             AllocConsole();
             m_console_handle = GetStdHandle(STD_OUTPUT_HANDLE);
         }
@@ -35,7 +35,7 @@ namespace Hyperion {
         GetNativeSystemInfo(&system_info);
         u32 processor_count = system_info.dwNumberOfProcessors;
         PROCESSOR_POWER_INFORMATION *processor_info = new PROCESSOR_POWER_INFORMATION[processor_count];
-        CallNtPowerInformation(ProcessorInformation, NULL, 0, processor_info, (u32)(sizeof(*processor_info) * processor_count));
+        CallNtPowerInformation(ProcessorInformation, nullptr, 0, processor_info, (u32)(sizeof(*processor_info) * processor_count));
         result.processor_info.processor_count = processor_count;
         result.processor_info.processor_mhz_frequency = processor_info[0].MaxMhz;
         delete[] processor_info;

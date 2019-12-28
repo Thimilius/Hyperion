@@ -23,7 +23,7 @@ namespace Hyperion {
 
         u32 window_styles = WS_OVERLAPPEDWINDOW;
         auto window_class_name = L"HYPERION_WINDOW_CLASS";
-        HINSTANCE instance = GetModuleHandleW(NULL);
+        HINSTANCE instance = GetModuleHandleW(nullptr);
         if (!instance) {
             HYP_PANIC_MESSAGE("Engine", "Failed to get windows application instance!");
         }
@@ -34,7 +34,7 @@ namespace Hyperion {
         window_class.style = CS_HREDRAW | CS_VREDRAW;
         window_class.hInstance = instance;
         window_class.lpfnWndProc = &MessageCallback;
-        window_class.hCursor = LoadCursorW(NULL, IDC_ARROW);
+        window_class.hCursor = LoadCursorW(nullptr, IDC_ARROW);
 
         if (!RegisterClassExW(&window_class)) {
             HYP_PANIC_MESSAGE("Engine", "Failed to register windows window class!");
@@ -51,13 +51,13 @@ namespace Hyperion {
             CW_USEDEFAULT,
             (u32)size.x,
             (u32)size.y,
-            NULL,
-            NULL,
+            nullptr,
+            nullptr,
             instance,
             this // Parameter to WM_CREATE that then stores the user pointer
         );
 
-        if (m_window_handle == NULL) {
+        if (m_window_handle == INVALID_HANDLE_VALUE) {
             HYP_PANIC_MESSAGE("Engine", "Failed to create window!");
         }
 
@@ -96,7 +96,7 @@ namespace Hyperion {
                 Vec2 size = GetActualWindowSize(width, height);
 
                 u32 flags = SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER;
-                SetWindowPos(m_window_handle, NULL, 0, 0, (u32)size.x, (u32)size.y, flags);
+                SetWindowPos(m_window_handle, nullptr, 0, 0, (u32)size.x, (u32)size.y, flags);
                 break;
             }
             case Hyperion::WindowMode::Borderless: {
@@ -129,7 +129,7 @@ namespace Hyperion {
                 Vec2 size = GetActualWindowSize(m_width, m_height);
 
                 u32 flags = SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED;
-                SetWindowPos(m_window_handle, NULL, 0, 0, (u32)size.x, (u32)size.y, flags);
+                SetWindowPos(m_window_handle, nullptr, 0, 0, (u32)size.x, (u32)size.y, flags);
                 break;
             }
             case Hyperion::WindowMode::Borderless: {
@@ -192,7 +192,7 @@ namespace Hyperion {
     }
 
     void WindowsWindow::SetIcon(const String &path) {
-        HICON icon = (HICON)LoadImageW(NULL, StringUtils::Utf8ToUtf16(path).c_str(), IMAGE_ICON, 64, 64, LR_LOADFROMFILE);
+        HICON icon = (HICON)LoadImageW(nullptr, StringUtils::Utf8ToUtf16(path).c_str(), IMAGE_ICON, 64, 64, LR_LOADFROMFILE);
         SendMessageW(m_window_handle, WM_SETICON, ICON_SMALL, (LPARAM)icon);
         SendMessageW(m_window_handle, WM_SETICON, ICON_BIG, (LPARAM)icon);
 
@@ -208,7 +208,7 @@ namespace Hyperion {
         m_graphics_context->SwapBuffers();
 
         MSG message;
-        while (PeekMessageW(&message, NULL, 0, 0, PM_REMOVE)) {
+        while (PeekMessageW(&message, nullptr, 0, 0, PM_REMOVE)) {
             TranslateMessage(&message);
             DispatchMessageW(&message);
         }
@@ -255,7 +255,7 @@ namespace Hyperion {
             // so we need to discard the left control message.
             DWORD message_time = GetMessageTime();
             MSG next_message;
-            if (PeekMessageW(&next_message, NULL, 0, 0, PM_NOREMOVE)) {
+            if (PeekMessageW(&next_message, nullptr, 0, 0, PM_NOREMOVE)) {
                 if (next_message.message == WM_KEYDOWN || next_message.message == WM_SYSKEYDOWN || next_message.message == WM_KEYUP || next_message.message == WM_SYSKEYUP) {
                     if (next_message.wParam == VK_MENU && (next_message.lParam & 0x01000000) && next_message.time == message_time) {
                         // Next message is right alt down so discard this
