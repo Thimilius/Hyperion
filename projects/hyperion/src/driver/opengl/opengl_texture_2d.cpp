@@ -18,39 +18,6 @@ namespace Hyperion::Rendering {
         CreateTexture(pixels);
     }
 
-    OpenGLTexture2D::OpenGLTexture2D(const String &path, TextureWrapMode wrap_mode, TextureFilter filter, TextureAnisotropicFilter anisotropic_filter) {
-        m_wrap_mode = wrap_mode;
-        m_filter = filter;
-        m_anisotropic_filter = anisotropic_filter;
-
-        // FIXME: The actual image data loading should not be in here at all!
-
-        stbi_set_flip_vertically_on_load(true);
-
-        int width;
-        int height;
-        int channels;
-        u8 *pixels = stbi_load(path.c_str(), &width, &height, &channels, 0);
-
-        if (pixels == nullptr) {
-            HYP_LOG_ERROR("OpenGL", "Failed to load texture from path: {}!", path);
-        } else {
-            TextureFormat format;
-            switch (channels) {
-                case 3: format = TextureFormat::RGB; break;
-                case 4: format = TextureFormat::RGBA; break;
-            }
-
-            m_width = width;
-            m_height = height;
-            m_format = format;
-
-            CreateTexture(pixels);
-        }
-
-        stbi_image_free(pixels);
-    }
-
     OpenGLTexture2D::~OpenGLTexture2D() {
         glDeleteTextures(1, &m_texture_id);
     }

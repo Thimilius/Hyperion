@@ -5,6 +5,8 @@
 #include <filesystem>
 #include "hyperion/core/io/file_utilities.hpp"
 
+// TODO: Move image loading code to dedicated loader abstraction
+
 using namespace Hyperion::Rendering;
 
 namespace Hyperion {
@@ -28,8 +30,31 @@ namespace Hyperion {
 
     Ref<Texture2D> AssetLibrary::LoadTexture2D(const String &name, const String &filepath) {
         // TODO: Add ability to specify the texture parameters
-        Ref<Texture2D> &texture = Texture2D::CreateFromFile(filepath, TextureWrapMode::Clamp, TextureFilter::Bilinear, TextureAnisotropicFilter::None);
+
+        stbi_set_flip_vertically_on_load(true);
+
+        s32 width;
+        s32 height;
+        s32 channels;
+        u8 *pixels = stbi_load(filepath.c_str(), &width, &height, &channels, 0);
+
+        Ref<Texture2D> texture;
+        if (pixels) {
+            TextureFormat format;
+            switch (channels) {
+                case 3: format = TextureFormat::RGB; break;
+                case 4: format = TextureFormat::RGBA; break;
+            }
+
+            texture = Texture2D::Create(width, height, format, TextureWrapMode::Clamp, TextureFilter::Bilinear, TextureAnisotropicFilter::None, pixels);
+        } else {
+            HYP_LOG_ERROR("Assets", "Failed to load 2D texture from path: {}!", filepath);
+        }
+
+        stbi_image_free(pixels);
+        
         AddTexture2D(name, filepath, texture);
+
         return texture;
     }
 
@@ -109,7 +134,6 @@ namespace Hyperion {
     void AssetLibrary::ReloadTexture2D(const String &name) {
         HYP_ASSERT_MESSAGE(s_textures.find(name) != s_textures.end(), "Trying to reload a 2D texture that is not in the library!");
         AssetEntry entry = s_textures[name];
-        HYP_INFO("Reload texture from path: {}", entry.filepath);
 
         stbi_set_flip_vertically_on_load(true);
 

@@ -20,13 +20,6 @@ namespace Hyperion::Rendering {
         }
     }
 
-    Ref<Texture2D> Texture2D::CreateFromFile(const String &path, TextureWrapMode wrap_mode, TextureFilter filter, TextureAnisotropicFilter anisotropic_filter) {
-        switch (RenderEngine::GetBackend()) {
-            case RenderBackend::OpenGL: return std::make_shared<OpenGLTexture2D>(path, wrap_mode, filter, anisotropic_filter);
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
-        }
-    }
-
     u32 Texture::GetBytesPerPixel(TextureFormat format) {
         switch (format) {
             case Hyperion::Rendering::TextureFormat::RGB: return 3;

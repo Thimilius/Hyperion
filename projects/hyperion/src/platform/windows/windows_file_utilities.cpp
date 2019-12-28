@@ -8,7 +8,7 @@ namespace Hyperion {
         HANDLE file_handle = CreateFileA(path.c_str(), GENERIC_READ, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
         if (file_handle == INVALID_HANDLE_VALUE) {
             HYP_LOG_ERROR("Engine", "Failed to open file: '{}'!", path);
-            return NULL;
+            return NULL; // FIXME: What the hell is this supposed to be!?!?
         }
 
         LARGE_INTEGER file_size_large;
