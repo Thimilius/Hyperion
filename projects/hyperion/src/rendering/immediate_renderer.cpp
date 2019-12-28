@@ -74,6 +74,15 @@ namespace Hyperion::Rendering {
         AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z - half_size.z), Vec3(), Vec2(), color);
         AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z + half_size.z), Vec3(), Vec2(), color);
         AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z - half_size.z), Vec3(), Vec2(), color);
+
+        Flush(PrimitiveType::Triangles);
+    }
+
+    void ImmediateRenderer::DrawLine(Vec3 a, Vec3 b, Vec4 color) {
+        AddVertex(a, Vec3(), Vec2(), color);
+        AddVertex(b, Vec3(), Vec2(), color);
+
+        Flush(PrimitiveType::Lines);
     }
 
     void ImmediateRenderer::AddVertex(Vec3 position, Vec3 normal, Vec2 uv, Vec4 color) {
@@ -89,6 +98,10 @@ namespace Hyperion::Rendering {
     }
 
     void ImmediateRenderer::End() {
+        
+    }
+
+    void ImmediateRenderer::Flush(PrimitiveType type) {
         // We do not need to draw anything if no verticies were added
         if (s_state.vertex_offset == 0) {
             return;
@@ -101,7 +114,7 @@ namespace Hyperion::Rendering {
         s_vertex_buffer->SetData(0, (u8 *)s_data_buffer, s_state.vertex_offset * sizeof(VertexImmediate));
         s_vertex_array->Bind();
 
-        RenderEngine::Draw(PrimitiveType::Triangles, s_state.vertex_offset, 0);
+        RenderEngine::Draw(type, s_state.vertex_offset, 0);
     }
 
 }

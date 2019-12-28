@@ -44,12 +44,15 @@ namespace Hyperion::Rendering {
     public:
         static void Begin(const Ref<Camera> &camera);
         static void DrawCube(Vec3 center, Vec3 size, Vec4 color);
+        static void DrawLine(Vec3 a, Vec3 b, Vec4 color);
         static void End();
     private:
         ImmediateRenderer() = delete;
         ~ImmediateRenderer() = delete;
 
         static void AddVertex(Vec3 position, Vec3 normal, Vec2 uv, Vec4 color);
+
+        static void Flush(PrimitiveType type);
     };
 
 }
