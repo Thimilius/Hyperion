@@ -99,12 +99,12 @@ namespace Hyperion::Rendering {
         glBlitNamedFramebuffer(read_id, draw_id, srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, GL_COLOR_BUFFER_BIT, GL_LINEAR);
     }
 
-    void OpenGLRenderDriver::DrawIndexed(Primitive primitive, IndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) {
-        glDrawElementsBaseVertex(GetGLPrimitive(primitive), index_count, GetGLIndexFormat(format), (void*)(GetGLIndexSize(format) * index_offset), vertex_offset);
+    void OpenGLRenderDriver::DrawIndexed(PrimitiveType primitive, IndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) {
+        glDrawElementsBaseVertex(GetGLPrimitiveType(primitive), index_count, GetGLIndexFormat(format), (void*)(GetGLIndexSize(format) * index_offset), vertex_offset);
     }
 
-    void OpenGLRenderDriver::Draw(Primitive primitive, u32 vertex_count, u32 vertex_offset) {
-        glDrawArrays(GetGLPrimitive(primitive), vertex_offset, vertex_count);
+    void OpenGLRenderDriver::Draw(PrimitiveType primitive, u32 vertex_count, u32 vertex_offset) {
+        glDrawArrays(GetGLPrimitiveType(primitive), vertex_offset, vertex_count);
     }
 
     u32 OpenGLRenderDriver::GetGLFeature(RenderFeature feature) {
@@ -183,12 +183,12 @@ namespace Hyperion::Rendering {
         return result;
     }
 
-    u32 OpenGLRenderDriver::GetGLPrimitive(Primitive primitive) {
+    u32 OpenGLRenderDriver::GetGLPrimitiveType(PrimitiveType primitive) {
         switch (primitive) {
-            case Hyperion::Rendering::Primitive::Lines: return GL_LINES;
-            case Hyperion::Rendering::Primitive::LineStrip: return GL_LINE_STRIP;
-            case Hyperion::Rendering::Primitive::LineLoop: return GL_LINE_LOOP;
-            case Hyperion::Rendering::Primitive::Triangles: return GL_TRIANGLES;
+            case Hyperion::Rendering::PrimitiveType::Lines: return GL_LINES;
+            case Hyperion::Rendering::PrimitiveType::LineStrip: return GL_LINE_STRIP;
+            case Hyperion::Rendering::PrimitiveType::LineLoop: return GL_LINE_LOOP;
+            case Hyperion::Rendering::PrimitiveType::Triangles: return GL_TRIANGLES;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }

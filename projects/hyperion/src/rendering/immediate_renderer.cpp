@@ -101,7 +101,7 @@ namespace Hyperion::Rendering {
         s_vertex_buffer->SetData(0, (u8 *)s_data_buffer, s_state.vertex_offset * sizeof(VertexImmediate));
         s_vertex_array->Bind();
 
-        RenderEngine::Draw(Primitive::Triangles, s_state.vertex_offset, 0);
+        RenderEngine::Draw(PrimitiveType::Triangles, s_state.vertex_offset, 0);
     }
 
 }

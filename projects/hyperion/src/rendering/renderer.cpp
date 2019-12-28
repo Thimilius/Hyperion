@@ -21,7 +21,7 @@ namespace Hyperion::Rendering {
 
         IndexFormat format = vertex_array->GetIndexBuffer()->GetFormat();
         for (const SubMesh &sub_mesh : mesh->GetSubMeshes()) {
-            RenderEngine::DrawIndexed(Primitive::Triangles, format, sub_mesh.index_count, sub_mesh.index_offset, sub_mesh.vertex_offset);
+            RenderEngine::DrawIndexed(PrimitiveType::Triangles, format, sub_mesh.index_count, sub_mesh.index_offset, sub_mesh.vertex_offset);
         }
 
         vertex_array->Unbind();
