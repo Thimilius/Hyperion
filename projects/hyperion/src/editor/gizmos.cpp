@@ -4,6 +4,7 @@
 
 #include "hyperion/rendering/renderer.hpp"
 #include "hyperion/assets/asset_library.hpp"
+#include "hyperion/assets/mesh_factory.hpp"
 
 using namespace Hyperion::Rendering;
 
@@ -11,7 +12,7 @@ namespace Hyperion::Editor {
 
     void Gizmos::Init() {
         m_shader = AssetLibrary::GetShader("gizmo");
-        m_mesh = Mesh::CreateFromFile("data/models/gizmo.obj");
+        m_mesh = MeshFactory::CreateFromFile("data/models/gizmo.obj");
     }
 
     void Gizmos::Update(const Ref<Camera> &camera) {

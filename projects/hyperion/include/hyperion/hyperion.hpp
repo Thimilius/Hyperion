@@ -42,6 +42,7 @@
 // Assets
 #include "hyperion/assets/asset.hpp"
 #include "hyperion/assets/asset_library.hpp"
+#include "hyperion/assets/mesh_factory.hpp"
 
 // Audio
 #include "hyperion/audio/audio_engine.hpp"

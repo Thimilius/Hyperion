@@ -21,7 +21,7 @@ protected:
         m_camera = Camera::Create();
         m_render_texture = RenderTexture::Create(GetWindow()->GetWidth(), GetWindow()->GetHeight(), RenderTextureFormat::RGBA8);
 
-        m_cube_mesh = Mesh::CreateCube(1);
+        m_cube_mesh = MeshFactory::CreateCube(1);
         m_cube_shader = AssetLibrary::GetShader("phong");
         m_cube_texture = AssetLibrary::GetTexture2D("grass");
 
