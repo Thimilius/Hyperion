@@ -84,29 +84,34 @@ namespace Hyperion::Editor {
 
         // Movement
         {
-            f32 camera_speed = m_speed * delta;
-            Vec3 direction = camera_speed * forward;
-            Vec3 right = Vec3::Cross(forward, up).Normalized();
-            right = camera_speed * right;
-            Vec3 up = camera_speed * Vec3::Up();
+            f32 camera_acceleration = m_acceleration * delta;
+
+            Vec3 direction = camera_acceleration * forward;
+            Vec3 right = camera_acceleration * Vec3::Cross(direction, up).Normalized();
+            Vec3 up = camera_acceleration * Vec3::Up();
+            
+            position += m_velocity * delta;
+
             if (Input::GetKey(KeyCode::W)) {
-                position = position + direction;
+                m_velocity += direction;
             }
             if (Input::GetKey(KeyCode::S)) {
-                position = position - direction;
+                m_velocity -= direction;
             }
             if (Input::GetKey(KeyCode::A)) {
-                position = position - right;
+                m_velocity -= right;
             }
             if (Input::GetKey(KeyCode::D)) {
-                position = position + right;
+                m_velocity += right;
             }
             if (Input::GetKey(KeyCode::LeftShift) || Input::GetKey(KeyCode::RightShift)) {
-                position = position - up;
+                m_velocity -= up;
             }
             if (Input::GetKey(KeyCode::Space)) {
-                position = position + up;
+                m_velocity += up;
             }
+
+            m_velocity -= m_friction * m_velocity;
         }
 
         // Reset
@@ -114,6 +119,8 @@ namespace Hyperion::Editor {
             position = Vec3(2, 2, 2);
             forward = Vec3(-0.579227984f, -0.579227984f, -0.579227984f);
             up = Vec3::Up();
+
+            m_velocity = Vec3::Zero();
 
             m_pitch = -35.0f;
             m_yaw = 225.0f;
