@@ -7,20 +7,18 @@
 namespace Hyperion {
 
     struct AABB {
-        Vec3 center;
-        Vec3 extends;
+        Vec3 min;
+        Vec3 max;
 
         AABB();
-        AABB(Vec3 center, Vec3 size);
+        AABB(Vec3 min, Vec3 max);
 
         Vec3 GetSize() const;
-        Vec3 GetMin() const;
-        Vec3 GetMax() const;
+        Vec3 GetCenter() const;
 
         bool Intersects(AABB bounds);
         bool Intersects(Ray ray);
-
-        void SetMinMax(Vec3 min, Vec3 max);
+        bool Contains(const Vec3 &point);
 
         String ToString() const;
 

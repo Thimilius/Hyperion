@@ -67,7 +67,7 @@ namespace Hyperion::Rendering {
             }
         }
 
-        return m_bounds.SetMinMax(min, max);
+        m_bounds = AABB(min, max);
     }
 
 }
