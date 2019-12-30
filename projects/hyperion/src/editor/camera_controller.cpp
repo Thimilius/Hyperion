@@ -65,12 +65,12 @@ namespace Hyperion::Editor {
         {
             f32 wheel = Input::GetMouseScroll();
             switch (m_camera->GetType()) {
-                case CameraType::Perspective: {
+                case CameraMode::Perspective: {
                     m_fov_target -= wheel * 5.0f;
                     m_fov_target = Math::Clamp(m_fov_target, 25, 120);
                     break;
                 }
-                case CameraType::Orthographic: {
+                case CameraMode::Orthographic: {
                     m_size_target -= wheel * 0.25f;
                     m_size_target = Math::Clamp(m_size_target, 0.1f, 10);
                     break;

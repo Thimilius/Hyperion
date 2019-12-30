@@ -5,14 +5,14 @@
 
 namespace Hyperion::Rendering {
 
-    enum class CameraType {
+    enum class CameraMode {
         Perspective,
         Orthographic
     };
 
     class Camera {
     private:
-        CameraType m_type = CameraType::Perspective;
+        CameraMode m_mode = CameraMode::Perspective;
         
         Vec3 m_position = Vec3(0, 0, 0);
         Vec3 m_forward = Vec3(0, 0, -1);
@@ -31,8 +31,8 @@ namespace Hyperion::Rendering {
         Mat4 m_inverse_view_matrix;
         Mat4 m_inverse_projection_matrix;
     public:
-        inline CameraType GetType() const { return m_type; }
-        inline void SetType(CameraType type) { m_type = type; }
+        inline CameraMode GetType() const { return m_mode; }
+        inline void SetType(CameraMode type) { m_mode = type; }
 
         inline Vec3 GetPosition() const { return m_position; }
         inline void SetPosition(Vec3 position) { m_position = position; }
