@@ -37,6 +37,7 @@ namespace Hyperion::Rendering {
         TextureWrapMode m_wrap_mode;
         TextureFilter m_filter;
         TextureAnisotropicFilter m_anisotropic_filter;
+        u32 m_mipmap_count;
     public:
         virtual ~Texture() = default;
 
@@ -48,6 +49,7 @@ namespace Hyperion::Rendering {
         virtual u32 GetID() const = 0;
 
         inline TextureFormat GetFormat() const { return m_format; }
+        inline u32 GetMipmapCount() const { return m_mipmap_count; }
 
         virtual void SetWrapMode(TextureWrapMode wrap_mode) = 0;
         inline TextureWrapMode GetWrapMode() const { return m_wrap_mode; }
@@ -59,6 +61,7 @@ namespace Hyperion::Rendering {
         inline TextureAnisotropicFilter GetAnisotropicFilter() const { return m_anisotropic_filter; }
 
         static u32 GetBytesPerPixel(TextureFormat format);
+        static u32 CalculateMipmapCount(u32 width, u32 height);
     };
 
     class Texture2D : public Texture {
@@ -75,7 +78,7 @@ namespace Hyperion::Rendering {
         virtual void Resize(u32 width, u32 height, TextureFormat format) = 0;
 
         virtual void SetPixels(const u8 *pixels) = 0;
-        virtual void *GetPixels() = 0;
+        virtual u8 *GetPixels() = 0;
 
         static Ref<Texture2D> Create(u32 width, u32 height, TextureFormat format, TextureWrapMode wrap_mode, TextureFilter filter, TextureAnisotropicFilter anisotropic_filter);
         static Ref<Texture2D> Create(u32 width, u32 height, TextureFormat format, TextureWrapMode wrap_mode, TextureFilter filter, TextureAnisotropicFilter anisotropic_filter, const u8 *pixels);

@@ -2,6 +2,8 @@
 
 #include "hyperion/driver/opengl/opengl_texture_2d.hpp"
 
+#define HYP_OPENGL_MIPMAP_LEVEL_COUNT 6
+
 namespace Hyperion::Rendering {
 
     OpenGLTexture2D::OpenGLTexture2D(u32 width, u32 height, TextureFormat format, TextureWrapMode wrap_mode, TextureFilter filter, TextureAnisotropicFilter anisotropic_filter)
@@ -14,6 +16,7 @@ namespace Hyperion::Rendering {
         m_wrap_mode = wrap_mode;
         m_filter = filter;
         m_anisotropic_filter = anisotropic_filter;
+        m_mipmap_count = Texture::CalculateMipmapCount(width, height);
 
         CreateTexture(pixels);
     }
@@ -23,13 +26,11 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLTexture2D::Bind(u32 slot) const {
-        glActiveTexture(GL_TEXTURE0 + slot);
-        glBindTexture(GL_TEXTURE_2D, m_texture_id);
+        glBindTextureUnit(slot, m_texture_id);
     }
 
     void OpenGLTexture2D::Unbind(u32 slot) const {
-        glActiveTexture(GL_TEXTURE0 + slot);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindTextureUnit(slot, 0);
     }
 
     void OpenGLTexture2D::SetWrapMode(TextureWrapMode wrap_mode) {
@@ -65,11 +66,11 @@ namespace Hyperion::Rendering {
     void OpenGLTexture2D::SetAnisotropicFilter(TextureAnisotropicFilter anisotropic_filter) {
         f32 amount = 1.0f;
         switch (anisotropic_filter) {
-            case Hyperion::Rendering::TextureAnisotropicFilter::None: amount = 1.0f; break;
-            case Hyperion::Rendering::TextureAnisotropicFilter::Times2: amount = 2.0f; break;
-            case Hyperion::Rendering::TextureAnisotropicFilter::Times4: amount = 4.0f; break;
-            case Hyperion::Rendering::TextureAnisotropicFilter::Times8: amount = 8.0f; break;
-            case Hyperion::Rendering::TextureAnisotropicFilter::Times16: amount = 16.0f; break;
+            case TextureAnisotropicFilter::None: amount = 1.0f; break;
+            case TextureAnisotropicFilter::Times2: amount = 2.0f; break;
+            case TextureAnisotropicFilter::Times4: amount = 4.0f; break;
+            case TextureAnisotropicFilter::Times8: amount = 8.0f; break;
+            case TextureAnisotropicFilter::Times16: amount = 16.0f; break;
             default: amount = 1.0f; break;
         }
         glTextureParameterf(m_texture_id, GL_TEXTURE_MAX_ANISOTROPY, amount);
@@ -80,12 +81,27 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLTexture2D::Resize(u32 width, u32 height, TextureFormat format) {
+        // FIXME: The process of copying old pixel data to the new texture is everything but fast!
+        u32 old_texture = m_texture_id;
+        u32 old_width = m_width;
+        u32 old_height = m_height;
+
+        u8 *pixels = GetPixels();
+
         m_width = width;
         m_height = height;
         m_format = format;
+        m_mipmap_count = Texture::CalculateMipmapCount(width, height);
 
-        u32 gl_format = GetGLFormat(format);
-        glTextureImage2DEXT(m_texture_id, GL_TEXTURE_2D, 0, gl_format, width, height, 0, gl_format, GL_UNSIGNED_BYTE, nullptr);
+        CreateTexture(nullptr);
+
+        u32 sub_image_width = old_width > width ? width : old_width;
+        u32 sub_image_height = old_height > height ? height : old_height;
+        glTextureSubImage2D(m_texture_id, 0, 0, 0, sub_image_width, sub_image_height, GetGLFormat(m_format), GL_UNSIGNED_BYTE, pixels);
+        glGenerateTextureMipmap(m_texture_id);
+
+        delete[] pixels;
+        glDeleteTextures(1, &old_texture);
     }
 
     void OpenGLTexture2D::SetPixels(const u8 *pixels) {
@@ -93,10 +109,10 @@ namespace Hyperion::Rendering {
         glGenerateTextureMipmap(m_texture_id);
     }
 
-    void *OpenGLTexture2D::GetPixels() {
+    u8 *OpenGLTexture2D::GetPixels() {
         // NOTE: This is a very expensive allocation
         u32 size = m_width * m_height * GetBytesPerPixel(m_format);
-        char *pixels = new char[size];
+        u8 *pixels = new u8[size];
 
         // TODO: Provide ability to get pixels from other mipmaps
         glGetTextureImage(m_texture_id, 0, GetGLFormat(m_format), GL_UNSIGNED_BYTE, size, pixels);
@@ -111,15 +127,25 @@ namespace Hyperion::Rendering {
         SetFilter(m_filter);
         SetAnisotropicFilter(m_anisotropic_filter);
 
-        u32 format = GetGLFormat(m_format);
-        glTextureImage2DEXT(m_texture_id, GL_TEXTURE_2D, 0, format, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, pixels);
-        glGenerateTextureMipmap(m_texture_id);
+        glTextureStorage2D(m_texture_id, m_mipmap_count, GetGLInternalFormat(m_format), m_width, m_height);
+        if (pixels != nullptr) {
+            glTextureSubImage2D(m_texture_id, 0, 0, 0, m_width, m_height, GetGLFormat(m_format), GL_UNSIGNED_BYTE, pixels);
+            glGenerateTextureMipmap(m_texture_id);
+        }
     }
 
     u32 OpenGLTexture2D::GetGLFormat(TextureFormat format) {
         switch (format) {
-            case Hyperion::Rendering::TextureFormat::RGB: return GL_RGB;
-            case Hyperion::Rendering::TextureFormat::RGBA: return GL_RGBA;
+            case TextureFormat::RGB: return GL_RGB;
+            case TextureFormat::RGBA: return GL_RGBA;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    u32 OpenGLTexture2D::GetGLInternalFormat(TextureFormat format) {
+        switch (format) {
+            case TextureFormat::RGB: return GL_RGB8;
+            case TextureFormat::RGBA: return GL_RGBA8;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }

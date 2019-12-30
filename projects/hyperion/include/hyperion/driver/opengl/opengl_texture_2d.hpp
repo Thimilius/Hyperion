@@ -25,11 +25,12 @@ namespace Hyperion::Rendering {
         void Resize(u32 width, u32 height, TextureFormat format) override;
 
         void SetPixels(const u8 *pixels) override;
-        void *GetPixels() override;
+        u8 *GetPixels() override;
     private:
         void CreateTexture(const u8 *pixels);
 
         static u32 GetGLFormat(TextureFormat format);
+        static u32 GetGLInternalFormat(TextureFormat format);
         static u32 GetGLWrapMode(TextureWrapMode wrap_mode);
     };
 

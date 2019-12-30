@@ -27,4 +27,9 @@ namespace Hyperion::Rendering {
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }
+
+    u32 Texture::CalculateMipmapCount(u32 width, u32 height) {
+        return (u32)(1 + Math::Floor(Math::Log2(Math::Max((f32)width, (f32)height))));
+    }
+
 }
