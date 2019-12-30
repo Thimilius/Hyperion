@@ -34,6 +34,7 @@ namespace Hyperion {
 
         inline static f32 Pow(f32 p_base, f32 p_expo) { return std::pow(p_base, p_expo); }
         inline static f32 Log(f32 p_val) { return std::log(p_val); }
+        inline static f32 Log2(f32 p_val) { return std::log2(p_val); }
         inline static f32 Exp(f32 p_val) { return std::exp(p_val); }
 
         inline static f32 DegToRad(f32 p_deg) { return p_deg * PI / 180.0f; }
