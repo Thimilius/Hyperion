@@ -43,11 +43,6 @@ namespace Hyperion::Rendering {
 
         AssetType GetType() const override { return AssetType::Texture; }
 
-        virtual void Bind(u32 slot = 0) const = 0;
-        virtual void Unbind(u32 slot = 0) const = 0;
-
-        virtual u32 GetID() const = 0;
-
         inline TextureFormat GetFormat() const { return m_format; }
         inline u32 GetMipmapCount() const { return m_mipmap_count; }
 
@@ -60,6 +55,8 @@ namespace Hyperion::Rendering {
         virtual void SetAnisotropicFilter(TextureAnisotropicFilter anisotropic_filter) = 0;
         inline TextureAnisotropicFilter GetAnisotropicFilter() const { return m_anisotropic_filter; }
 
+        virtual u32 GetID() const = 0;
+    protected:
         static u32 GetBytesPerPixel(TextureFormat format);
         static u32 CalculateMipmapCount(u32 width, u32 height);
     };
@@ -73,6 +70,9 @@ namespace Hyperion::Rendering {
         
         inline u32 GetWidth() const { return m_width; }
         inline u32 GetHeight() const { return m_height; }
+
+        virtual void Bind(u32 slot = 0) const = 0;
+        virtual void Unbind(u32 slot = 0) const = 0;
 
         virtual void Resize(u32 width, u32 height) = 0;
         virtual void Resize(u32 width, u32 height, TextureFormat format) = 0;

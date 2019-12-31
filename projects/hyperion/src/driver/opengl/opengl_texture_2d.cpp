@@ -81,6 +81,11 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLTexture2D::Resize(u32 width, u32 height, TextureFormat format) {
+        // If we get passed no new size or format we can bail out early
+        if (width == m_width && height == m_height && format == m_format) {
+            return;
+        }
+
         // FIXME: The process of copying old pixel data to the new texture is everything but fast!
         u32 old_texture = m_texture_id;
         u32 old_width = m_width;

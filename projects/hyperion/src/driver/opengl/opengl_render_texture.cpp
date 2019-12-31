@@ -5,8 +5,14 @@
 namespace Hyperion::Rendering {
 
     OpenGLRenderTexture::OpenGLRenderTexture(u32 width, u32 height, RenderTextureFormat format) {
-        m_format = format;
-        
+        m_render_format = format;
+        m_format = GetTextureFormat(m_render_format);
+        m_wrap_mode = TextureWrapMode::Clamp;
+        m_filter = TextureFilter::Point;
+        m_anisotropic_filter = TextureAnisotropicFilter::None;
+        m_mipmap_count = 1;
+
+        m_framebuffer_id = 0;
         Resize(width, height);
     }
     
@@ -14,9 +20,23 @@ namespace Hyperion::Rendering {
         glDeleteFramebuffers(1, &m_framebuffer_id);
     }
 
+    void OpenGLRenderTexture::SetWrapMode(TextureWrapMode wrap_mode) {
+        m_wrap_mode = wrap_mode;
+        m_color_attachment->SetWrapMode(wrap_mode);
+    }
+
+    void OpenGLRenderTexture::SetFilter(TextureFilter filter) {
+        m_filter = filter;
+        m_color_attachment->SetFilter(filter);
+    }
+
+    void OpenGLRenderTexture::SetAnisotropicFilter(TextureAnisotropicFilter anisotropic_filter) {
+        m_anisotropic_filter = anisotropic_filter;
+        m_color_attachment->SetAnisotropicFilter(anisotropic_filter);
+    }
+
     void OpenGLRenderTexture::BindTexture(u32 slot) {
-        glActiveTexture(GL_TEXTURE0 + slot);
-        glBindTexture(GL_TEXTURE_2D, m_color_attachment_id);
+        m_color_attachment->Bind(slot);
     }
 
     void OpenGLRenderTexture::Resize(u32 width, u32 height) {
@@ -30,34 +50,19 @@ namespace Hyperion::Rendering {
         // Delete old resources if present
         if (m_framebuffer_id != 0) {
             glDeleteFramebuffers(1, &m_framebuffer_id);
-            glDeleteTextures(1, &m_color_attachment_id);
             glDeleteRenderbuffers(1, &m_depth_attachment_id);
+        } else {
+            // Create initial texture attachment
+            m_color_attachment = Texture2D::Create(width, height, m_format, m_wrap_mode, m_filter, m_anisotropic_filter);
         }
 
         glCreateFramebuffers(1, &m_framebuffer_id);
 
         // Add color attachment
         {
-            glCreateTextures(GL_TEXTURE_2D, 1, &m_color_attachment_id);
-            glBindTexture(GL_TEXTURE_2D, m_color_attachment_id);
-
-            switch (m_format) {
-                case Hyperion::Rendering::RenderTextureFormat::RGBA8:
-                    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
-                    break;
-                case Hyperion::Rendering::RenderTextureFormat::RGBA16F:
-                    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGB, GL_FLOAT, nullptr);
-                    break;
-                default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-            }
-
-            glTextureParameteri(m_color_attachment_id, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTextureParameteri(m_color_attachment_id, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-            glNamedFramebufferTexture(m_framebuffer_id, GL_COLOR_ATTACHMENT0, m_color_attachment_id, 0);
-            glBindTexture(GL_TEXTURE_2D, 0);
+            m_color_attachment->Resize(width, height);
+            glNamedFramebufferTexture(m_framebuffer_id, GL_COLOR_ATTACHMENT0, m_color_attachment->GetID(), 0);
         }
-
 
         // Add depth-stencil attachment
         {
@@ -70,8 +75,6 @@ namespace Hyperion::Rendering {
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
             HYP_LOG_ERROR("OpenGL", "Failed to generate framebuffer!");
         }
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
 }

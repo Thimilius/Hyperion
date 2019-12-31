@@ -13,4 +13,11 @@ namespace Hyperion::Rendering {
         }
     }
 
+    TextureFormat RenderTexture::GetTextureFormat(RenderTextureFormat format) {
+        switch (format) {
+            case Hyperion::Rendering::RenderTextureFormat::RGBA8: return TextureFormat::RGBA;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return TextureFormat::RGBA;
+        };
+    }
+
 }
