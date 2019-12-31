@@ -536,6 +536,8 @@ namespace Hyperion {
             case WM_RBUTTONDOWN:
             case WM_MBUTTONDOWN:
             case WM_XBUTTONDOWN: {
+                SetCapture(window->m_window_handle);
+
                 u32 code = window->GetMouseButtonFromMessage((u32)message, (u32)w_param);
                 MouseButtonPressedEvent event(window->TranslateMouseButtonCode(code), window->GetKeyModifier());
                 window->DispatchEvent(event);
@@ -546,6 +548,8 @@ namespace Hyperion {
             case WM_RBUTTONUP:
             case WM_MBUTTONUP:
             case WM_XBUTTONUP: {
+                ReleaseCapture();
+                
                 u32 code = window->GetMouseButtonFromMessage((u32)message, (u32)w_param);
                 MouseButtonReleasedEvent event(window->TranslateMouseButtonCode(code), window->GetKeyModifier());
                 window->DispatchEvent(event);
