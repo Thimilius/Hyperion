@@ -3,6 +3,7 @@
 #include "hyperion/common.hpp"
 #include "hyperion/rendering/shader.hpp"
 #include "hyperion/rendering/camera.hpp"
+#include "hyperion/core/color.hpp"
 #include "hyperion/core/math/mat4.hpp"
 
 namespace Hyperion::Rendering {
@@ -23,7 +24,7 @@ namespace Hyperion::Rendering {
         struct VertexImmediate {
             Vec3 position;
             Vec3 normal;
-            Vec4 color;
+            Color color;
             Vec2 uv;
 
             static BufferLayout GetBufferLayout() {
@@ -43,14 +44,14 @@ namespace Hyperion::Rendering {
         inline static Ref<VertexBuffer> s_vertex_buffer;
     public:
         static void Begin(const Ref<Camera> &camera);
-        static void DrawCube(Vec3 center, Vec3 size, Vec4 color);
-        static void DrawLine(Vec3 a, Vec3 b, Vec4 color);
+        static void DrawCube(Vec3 center, Vec3 size, Color color);
+        static void DrawLine(Vec3 a, Vec3 b, Color color);
         static void End();
     private:
         ImmediateRenderer() = delete;
         ~ImmediateRenderer() = delete;
 
-        static void AddVertex(Vec3 position, Vec3 normal, Vec2 uv, Vec4 color);
+        static void AddVertex(Vec3 position, Vec3 normal, Vec2 uv, Color color);
 
         static void Flush(PrimitiveType type);
     };

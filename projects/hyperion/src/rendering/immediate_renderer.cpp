@@ -21,7 +21,7 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void ImmediateRenderer::DrawCube(Vec3 center, Vec3 size, Vec4 color) {
+    void ImmediateRenderer::DrawCube(Vec3 center, Vec3 size, Color color) {
         Vec3 half_size = size * 0.5f;
 
         // Forward
@@ -75,14 +75,14 @@ namespace Hyperion::Rendering {
         Flush(PrimitiveType::Triangles);
     }
 
-    void ImmediateRenderer::DrawLine(Vec3 a, Vec3 b, Vec4 color) {
+    void ImmediateRenderer::DrawLine(Vec3 a, Vec3 b, Color color) {
         AddVertex(a, Vec3(), Vec2(), color);
         AddVertex(b, Vec3(), Vec2(), color);
 
         Flush(PrimitiveType::Lines);
     }
 
-    void ImmediateRenderer::AddVertex(Vec3 position, Vec3 normal, Vec2 uv, Vec4 color) {
+    void ImmediateRenderer::AddVertex(Vec3 position, Vec3 normal, Vec2 uv, Color color) {
         u32 vertex_offset = s_state.vertex_offset;
         HYP_ASSERT_MESSAGE(vertex_offset < 2000, "Immediate vertex buffer is full!");
 

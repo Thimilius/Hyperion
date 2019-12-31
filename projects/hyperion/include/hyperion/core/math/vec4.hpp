@@ -6,6 +6,7 @@ namespace Hyperion {
 
     struct Vec3;
     struct Mat4;
+    struct Color;
 
     struct Vec4 {
         f32 x;
@@ -29,6 +30,8 @@ namespace Hyperion {
 
         Vec4 Multiply(const Mat4 &transform) const;
 
+        f32 Dot(const Vec4 &other) const;
+
         String ToString() const;
 
         bool operator==(const Vec4 &other) const;
@@ -44,22 +47,22 @@ namespace Hyperion {
         bool operator>(const Vec4 &other) const;
         bool operator>=(const Vec4 &other) const;
 
-        f32 Dot(const Vec4 &other) const;
+        operator Color();
 
         friend Vec4 operator+(Vec4 left, const Vec4 &right);
         friend Vec4 operator-(Vec4 left, const Vec4 &right);
         friend Vec4 operator*(Vec4 left, const Vec4 &right);
         friend Vec4 operator/(Vec4 left, const Vec4 &right);
 
-        friend Vec4 operator+(Vec4 left, f32 value);
-        friend Vec4 operator-(Vec4 left, f32 value);
-        friend Vec4 operator*(Vec4 left, f32 value);
-        friend Vec4 operator/(Vec4 left, f32 value);
+        friend Vec4 operator+(Vec4 left, f32 right);
+        friend Vec4 operator-(Vec4 left, f32 right);
+        friend Vec4 operator*(Vec4 left, f32 right);
+        friend Vec4 operator/(Vec4 left, f32 right);
 
-        friend Vec4 operator+(f32 left, Vec4 value);
-        friend Vec4 operator-(f32 left, Vec4 value);
-        friend Vec4 operator*(f32 left, Vec4 value);
-        friend Vec4 operator/(f32 left, Vec4 value);
+        friend Vec4 operator+(f32 left, Vec4 right);
+        friend Vec4 operator-(f32 left, Vec4 right);
+        friend Vec4 operator*(f32 left, Vec4 right);
+        friend Vec4 operator/(f32 left, Vec4 right);
     };
 
 }

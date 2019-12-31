@@ -30,6 +30,15 @@ namespace Hyperion {
 
         Vec3 Multiply(const Mat4 &transform) const;
 
+        f32 Dot(const Vec3 &other) const;
+
+        Vec3 Normalized() const;
+
+        f32 Magnitude() const;
+        f32 SqrMagnitude() const;
+
+        f32 Distance(const Vec3 &other) const;
+
         String ToString() const;
 
         bool operator==(const Vec3 &other) const;
@@ -44,15 +53,6 @@ namespace Hyperion {
         bool operator<=(const Vec3 &other) const;
         bool operator>(const Vec3 &other) const;
         bool operator>=(const Vec3 &other) const;
-
-        f32 Dot(const Vec3 &other) const;
-
-        Vec3 Normalized() const;
-
-        f32 Magnitude() const;
-        f32 SqrMagnitude() const;
-
-        f32 Distance(const Vec3 &other) const;
 
         static Vec3 Cross(const Vec3 &a, const Vec3 &b);
 

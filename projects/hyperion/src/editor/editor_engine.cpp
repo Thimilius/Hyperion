@@ -44,7 +44,7 @@ namespace Hyperion::Editor {
             // NOTE: The performance of this is obviously far from optimal
             ImmediateRenderer::Begin(camera);
             {
-                Vec4 grid_color = Vec4(1, 1, 1, 1);
+                Color grid_color = Color::White();
 
                 s32 grid_size = 20;
                 s32 half_grid_size = grid_size / 2;
@@ -78,9 +78,9 @@ namespace Hyperion::Editor {
 
             ImmediateRenderer::Begin(camera);
             {
-                ImmediateRenderer::DrawLine(Vec3(-1000, 0, 0), Vec3(1000, 0, 0), Vec4(1, 0, 0, 1));
-                ImmediateRenderer::DrawLine(Vec3(0, -1000, 0), Vec3(0, 1000, 0), Vec4(0, 1, 0, 1));
-                ImmediateRenderer::DrawLine(Vec3(0, 0, -1000), Vec3(0, 0, 1000), Vec4(0, 0, 1, 1));
+                ImmediateRenderer::DrawLine(Vec3(-1000, 0, 0), Vec3(1000, 0, 0), Color::Red());
+                ImmediateRenderer::DrawLine(Vec3(0, -1000, 0), Vec3(0, 1000, 0), Color::Green());
+                ImmediateRenderer::DrawLine(Vec3(0, 0, -1000), Vec3(0, 0, 1000), Color::Blue());
             }
             ImmediateRenderer::End();
         }

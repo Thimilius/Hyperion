@@ -7,6 +7,7 @@
 #include "hyperion/core/log.hpp"
 #include "hyperion/core/engine.hpp"
 #include "hyperion/core/operating_system.hpp"
+#include "hyperion/core/color.hpp"
 #include "hyperion/core/io/file_utilities.hpp"
 #include "hyperion/core/io/file_watcher.hpp"
 #include "hyperion/core/math/math.hpp"

@@ -2,6 +2,8 @@
 
 #include "hyperion/core/math/vec4.hpp"
 
+#include "hyperion/core/color.hpp"
+
 namespace Hyperion {
 
     Vec4::Vec4()
@@ -136,6 +138,10 @@ namespace Hyperion {
 
     bool Vec4::operator>=(const Vec4 &other) const {
         return x >= other.x && y >= other.y && z >= other.z && w >= other.w;
+    }
+
+    Vec4::operator Color() {
+        return Color(x, y, z, w);
     }
 
     f32 Vec4::Dot(const Vec4 &other) const {
