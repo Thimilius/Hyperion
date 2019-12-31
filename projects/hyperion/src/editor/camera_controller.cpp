@@ -32,26 +32,30 @@ namespace Hyperion::Editor {
                 m_last_mouse_position.y = mouse_position.y;
             }
 
-            f32 sensitivity = 0.25f;
+            f32 sensitivity = 0.2f;
             x_offset *= sensitivity;
             y_offset *= sensitivity;
 
             f32 rotation_speed = 100.0f * delta;
             if (Input::GetKey(KeyCode::Left) || Input::GetKey(KeyCode::Q)) {
-                m_yaw -= rotation_speed;
+                m_target_yaw -= rotation_speed;
             }
             if (Input::GetKey(KeyCode::Right) || Input::GetKey(KeyCode::E)) {
-                m_yaw += rotation_speed;
+                m_target_yaw += rotation_speed;
             }
             if (Input::GetKey(KeyCode::Up)) {
-                m_pitch += rotation_speed;
+                m_target_pitch += rotation_speed;
             }
             if (Input::GetKey(KeyCode::Down)) {
-                m_pitch -= rotation_speed;
+                m_target_pitch -= rotation_speed;
             }
 
-            m_yaw += x_offset;
-            m_pitch += y_offset;
+            m_target_yaw += x_offset;
+            m_target_pitch += y_offset;
+
+            f32 mouse_friction = 20.0f;
+            m_yaw = Math::Lerp(m_yaw, m_target_yaw, delta * mouse_friction);
+            m_pitch = Math::Lerp(m_pitch, m_target_pitch, delta * mouse_friction);
             m_pitch = Math::Clamp(m_pitch, -89.0f, 89.0f);
 
             Vec3 new_forward = Vec3::Zero();
@@ -124,6 +128,8 @@ namespace Hyperion::Editor {
 
             m_pitch = -35.0f;
             m_yaw = 225.0f;
+            m_target_pitch = m_pitch;
+            m_target_yaw = m_yaw;
 
             fov = 90.0f;
             m_fov_target = fov;

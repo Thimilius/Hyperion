@@ -14,6 +14,8 @@ namespace Hyperion::Editor {
 
         f32 m_pitch = -35.0f;
         f32 m_yaw = 225.0f;
+        f32 m_target_pitch = m_pitch;
+        f32 m_target_yaw = m_yaw;
 
         Vec2 m_last_mouse_position;
 
