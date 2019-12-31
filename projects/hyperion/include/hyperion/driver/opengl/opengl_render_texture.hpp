@@ -22,8 +22,7 @@ namespace Hyperion::Rendering {
         void SetAnisotropicFilter(TextureAnisotropicFilter anisotropic_filter) override;
 
         void BindTexture(u32 slot = 0) override;
-
-        virtual void Resize(u32 width, u32 height) override;
+        void Resize(u32 width, u32 height) override;
     };
 
 }

@@ -5,6 +5,10 @@
 
 namespace Hyperion::Rendering {
 
+    enum class TextureDimension {
+        Texture2D
+    };
+
     enum class TextureFormat {
         RGB,
         RGBA
@@ -42,6 +46,8 @@ namespace Hyperion::Rendering {
         virtual ~Texture() = default;
 
         AssetType GetType() const override { return AssetType::Texture; }
+
+        virtual TextureDimension GetDimension() const = 0;
 
         inline TextureFormat GetFormat() const { return m_format; }
         inline u32 GetMipmapCount() const { return m_mipmap_count; }

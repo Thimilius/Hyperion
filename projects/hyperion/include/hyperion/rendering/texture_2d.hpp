@@ -11,6 +11,8 @@ namespace Hyperion::Rendering {
     public:
         virtual ~Texture2D() = default;
 
+        inline TextureDimension GetDimension() const override { return TextureDimension::Texture2D; }
+
         inline u32 GetWidth() const { return m_width; }
         inline u32 GetHeight() const { return m_height; }
 

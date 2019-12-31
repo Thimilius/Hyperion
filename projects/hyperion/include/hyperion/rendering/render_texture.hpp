@@ -17,12 +17,14 @@ namespace Hyperion::Rendering {
     public:
         virtual ~RenderTexture() = default;
 
+        inline TextureDimension GetDimension() const override { return TextureDimension::Texture2D; }
+        
         inline u32 GetWidth() const { return m_width; }
         inline u32 GetHeight() const { return m_height; }
+
         inline RenderTextureFormat GetRenderFormat() const { return m_render_format; }
 
         virtual void BindTexture(u32 slot = 0) = 0;
-
         virtual void Resize(u32 width, u32 height) = 0;
 
         static Ref<RenderTexture> Create(u32 width, u32 height, RenderTextureFormat format);
