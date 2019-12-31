@@ -2,7 +2,7 @@
 
 #include "hyperion/core/io/file_watcher.hpp"
 #include "hyperion/rendering/shader.hpp"
-#include "hyperion/rendering/texture.hpp"
+#include "hyperion/rendering/texture_2d.hpp"
 
 namespace Hyperion {
 

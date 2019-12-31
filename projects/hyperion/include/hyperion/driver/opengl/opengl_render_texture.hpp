@@ -1,7 +1,7 @@
 #pragma once
 
 #include "hyperion/rendering/render_texture.hpp"
-#include "hyperion/rendering/texture.hpp"
+#include "hyperion/rendering/texture_2d.hpp"
 
 namespace Hyperion::Rendering {
 

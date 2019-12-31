@@ -36,6 +36,7 @@
 #include "hyperion/rendering/immediate_renderer.hpp"
 #include "hyperion/rendering/shader.hpp"
 #include "hyperion/rendering/texture.hpp"
+#include "hyperion/rendering/texture_2d.hpp"
 #include "hyperion/rendering/buffer.hpp"
 #include "hyperion/rendering/vertex_array.hpp"
 #include "hyperion/rendering/render_texture.hpp"
