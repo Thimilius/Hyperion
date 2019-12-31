@@ -10,7 +10,7 @@ namespace Hyperion::Editor {
 
         Vec3 m_velocity;
         f32 m_acceleration = 100.0f;
-        f32 m_friction = 0.075f;
+        f32 m_friction = 10.0f;
 
         f32 m_pitch = -35.0f;
         f32 m_yaw = 225.0f;

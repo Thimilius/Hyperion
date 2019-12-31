@@ -111,7 +111,7 @@ namespace Hyperion::Editor {
                 m_velocity += up;
             }
 
-            m_velocity -= m_friction * m_velocity;
+            m_velocity -= m_friction * delta * m_velocity;
         }
 
         // Reset
