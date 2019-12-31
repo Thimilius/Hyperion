@@ -50,23 +50,11 @@ namespace Hyperion {
         return other.Multiply(*this);
     }
 
-    Mat4 operator*(Mat4 left, const Mat4 &right) {
-        return left.Multiply(right);
-    }
-
     Mat4 &Mat4::operator*=(const Mat4 &other) {
         return Multiply(other);
     }
 
-    Vec3 operator*(const Mat4 &left, const Vec3 &right) {
-        return left.Multiply(right);
-    }
-
-    Vec4 operator*(const Mat4 &left, const Vec4 &right) {
-        return left.Multiply(right);
-    }
-
-    Mat4 Mat4::Inverted() {
+    Mat4 Mat4::Inverted() const {
         f32 temp[16];
 
         temp[0] = elements[5] * elements[10] * elements[15] -
@@ -192,7 +180,7 @@ namespace Hyperion {
         return result;
     }
 
-    Mat4 Mat4::Transposed() {
+    Mat4 Mat4::Transposed()const {
         return Mat4(
             Vec4(columns[0].x, columns[1].x, columns[2].x, columns[3].x),
             Vec4(columns[0].y, columns[1].y, columns[2].y, columns[3].y),
@@ -338,6 +326,18 @@ namespace Hyperion {
         result.elements[2 + 2 * 4] = -f.z;
 
         return result * Translate(Vec3(-from.x, -from.y, -from.z));
+    }
+
+    Mat4 operator*(Mat4 left, const Mat4 &right) {
+        return left.Multiply(right);
+    }
+
+    Vec3 operator*(const Mat4 &left, const Vec3 &right) {
+        return left.Multiply(right);
+    }
+
+    Vec4 operator*(const Mat4 &left, const Vec4 &right) {
+        return left.Multiply(right);
     }
 
 }

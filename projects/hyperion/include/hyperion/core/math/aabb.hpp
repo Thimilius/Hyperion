@@ -16,9 +16,9 @@ namespace Hyperion {
         Vec3 GetSize() const;
         Vec3 GetCenter() const;
 
-        bool Intersects(AABB bounds);
-        bool Intersects(Ray ray);
-        bool Contains(const Vec3 &point);
+        bool Intersects(AABB bounds) const;
+        bool Intersects(Ray ray) const;
+        bool Contains(Vec3 point) const;
 
         String ToString() const;
 

@@ -29,12 +29,9 @@ namespace Hyperion {
         Vec4 Multiply(const Vec4 &other) const;
 
         Mat4 &operator*=(const Mat4 &other);
-        friend Mat4 operator*(Mat4 left, const Mat4 &right);
-        friend Vec3 operator*(const Mat4 &left, const Vec3 &right);
-        friend Vec4 operator*(const Mat4 &left, const Vec4 &right);
 
-        Mat4 Inverted();
-        Mat4 Transposed();
+        Mat4 Inverted() const;
+        Mat4 Transposed() const;
 
         Vec4 GetRow(int index) const;
         void SetRow(int index, const Vec4 &column);
@@ -52,6 +49,10 @@ namespace Hyperion {
         static Mat4 Orthographic(f32 left, f32 right, f32 bottom, f32 top, f32 z_near, f32 z_far);
         static Mat4 Perspective(f32 fov, f32 aspect_ratio, f32 z_near, f32 z_far);
         static Mat4 LookAt(const Vec3 &from, const Vec3 &to, const Vec3 &up);
+
+        friend Mat4 operator*(Mat4 left, const Mat4 &right);
+        friend Vec3 operator*(const Mat4 &left, const Vec3 &right);
+        friend Vec4 operator*(const Mat4 &left, const Vec4 &right);
     };
 
 }
