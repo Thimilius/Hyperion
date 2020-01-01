@@ -20,10 +20,10 @@ namespace Hyperion {
         inline static f32 Cos(f32 p_rad) { return std::cos(p_rad); }
         inline static f32 Tan(f32 p_rad) { return std::tan(p_rad); }
 
-        inline static f32 Asin(f32 p_val) { return std::asin(p_val); }
-        inline static f32 Acos(f32 p_val) { return std::acos(p_val); }
-        inline static f32 Atan(f32 p_val) { return std::atan(p_val); }
-        inline static f32 Atan2(f32 p_a, f32 p_b) { return std::atan2(p_a, p_b); }
+        inline static f32 ASin(f32 p_val) { return std::asin(p_val); }
+        inline static f32 ACos(f32 p_val) { return std::acos(p_val); }
+        inline static f32 ATan(f32 p_val) { return std::atan(p_val); }
+        inline static f32 ATan2(f32 p_a, f32 p_b) { return std::atan2(p_a, p_b); }
 
         inline static f32 Round(f32 p_val) { return std::round(p_val); }
         inline static f32 Floor(f32 p_val) { return std::floor(p_val); }

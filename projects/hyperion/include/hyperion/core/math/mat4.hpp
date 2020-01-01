@@ -2,6 +2,7 @@
 
 #include "hyperion/core/math/vec4.hpp"
 #include "hyperion/core/math/vec3.hpp"
+#include "hyperion/core/math/quaternion.hpp"
 
 namespace Hyperion {
 
@@ -42,6 +43,7 @@ namespace Hyperion {
         static Mat4 Translate(const Vec3 &position);
         static Mat4 Translate(f32 x, f32 y, f32 z);
         static Mat4 Rotate(const Vec3 &axis, f32 angle);
+        static Mat4 Rotate(const Quaternion &quaternion);
         static Mat4 Scale(const Vec3 &scale);
         static Mat4 Scale(f32 x, f32 y, f32 z);
         static Mat4 TRS(const Vec3 &position, const Vec3 &axis, f32 angle, const Vec3 &scale);

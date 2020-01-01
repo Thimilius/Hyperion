@@ -255,6 +255,33 @@ namespace Hyperion {
         return result;
     }
 
+    Mat4 Mat4::Rotate(const Quaternion &quaternion) {
+        Mat4 result = Identity();
+
+        f32 qx = quaternion.x;
+        f32 qy = quaternion.y;
+        f32 qz = quaternion.z;
+        f32 qw = quaternion.w;
+        f32 qx2 = (qx + qx);
+        f32 qy2 = (qy + qy);
+        f32 qz2 = (qz + qz);
+        f32 qxqx2 = (qx * qx2);
+        f32 qxqy2 = (qx * qy2);
+        f32 qxqz2 = (qx * qz2);
+        f32 qxqw2 = (qw * qx2);
+        f32 qyqy2 = (qy * qy2);
+        f32 qyqz2 = (qy * qz2);
+        f32 qyqw2 = (qw * qy2);
+        f32 qzqz2 = (qz * qz2);
+        f32 qzqw2 = (qw * qz2);
+
+        result.columns[0] = Vec4((1.0f - qyqy2) - qzqz2, qxqy2 + qzqw2, qxqz2 - qyqw2, 0.0f);
+        result.columns[1] = Vec4(qxqy2 - qzqw2, (1.0f - qxqx2) - qzqz2, qyqz2 + qxqw2, 0.0f);
+        result.columns[2] = Vec4(qxqz2 + qyqw2, qyqz2 - qxqw2, (1.0f - qxqx2) - qyqy2, 0.0f);
+
+        return result;
+    }
+
     Mat4 Mat4::Scale(const Vec3 &scale) {
         return Scale(scale.x, scale.y, scale.z);
     }
