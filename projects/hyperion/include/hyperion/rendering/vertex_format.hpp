@@ -6,7 +6,7 @@
 
 namespace Hyperion::Rendering {
 
-    struct SVertexPNU {
+    struct VertexPNU {
         Vec3 position;
         Vec3 normal;
         Vec2 uv;
