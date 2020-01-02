@@ -1,10 +1,10 @@
 #pragma once
 
 #include "hyperion/common.hpp"
+#include "hyperion/core/math/mat4.hpp"
 #include "hyperion/rendering/shader.hpp"
 #include "hyperion/rendering/camera.hpp"
-#include "hyperion/core/color.hpp"
-#include "hyperion/core/math/mat4.hpp"
+#include "hyperion/rendering/vertex_format.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -21,22 +21,6 @@ namespace Hyperion::Rendering {
             u32 vertex_offset;
         };
 
-        struct VertexImmediate {
-            Vec3 position;
-            Vec3 normal;
-            Color color;
-            Vec2 uv;
-
-            static BufferLayout GetBufferLayout() {
-                return BufferLayout({
-                    BufferElement("a_position", ShaderDataType::Float3),
-                    BufferElement("a_normal", ShaderDataType::Float3),
-                    BufferElement("a_color", ShaderDataType::Float4),
-                    BufferElement("a_uv", ShaderDataType::Float2)
-                });
-            }
-        };
-
         inline static State s_state;
         inline static Ref<Shader> s_immediate_shader;
         inline static VertexImmediate s_data_buffer[2000];
@@ -51,7 +35,7 @@ namespace Hyperion::Rendering {
         ImmediateRenderer() = delete;
         ~ImmediateRenderer() = delete;
 
-        static void AddVertex(Vec3 position, Vec3 normal, Vec2 uv, Color color);
+        static void AddVertex(Vec3 position, Color color);
 
         static void Flush(PrimitiveType type);
     };

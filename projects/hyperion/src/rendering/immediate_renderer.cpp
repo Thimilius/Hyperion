@@ -25,70 +25,68 @@ namespace Hyperion::Rendering {
         Vec3 half_size = size * 0.5f;
 
         // Forward
-        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z - half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z - half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z - half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z - half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z - half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z - half_size.z), Vec3(), Vec2(), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z - half_size.z), color);
 
         // Right
-        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z + half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z + half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z - half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z + half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z - half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z - half_size.z), Vec3(), Vec2(), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z - half_size.z), color);
 
         // Back
-        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z + half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z + half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z + half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z + half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z + half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z + half_size.z), Vec3(), Vec2(), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z + half_size.z), color);
 
         // Left
-        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z - half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z - half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z + half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z - half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z + half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z + half_size.z), Vec3(), Vec2(), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z + half_size.z), color);
 
         // Up
-        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z + half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z - half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z - half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z + half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z - half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z + half_size.z), Vec3(), Vec2(), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z + half_size.z), color);
 
         // Down
-        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z - half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z + half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z + half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z - half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z + half_size.z), Vec3(), Vec2(), color);
-        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z - half_size.z), Vec3(), Vec2(), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z - half_size.z), color);
 
         Flush(PrimitiveType::Triangles);
     }
 
     void ImmediateRenderer::DrawLine(Vec3 a, Vec3 b, Color color) {
-        AddVertex(a, Vec3(), Vec2(), color);
-        AddVertex(b, Vec3(), Vec2(), color);
+        AddVertex(a, color);
+        AddVertex(b, color);
 
         Flush(PrimitiveType::Lines);
     }
 
-    void ImmediateRenderer::AddVertex(Vec3 position, Vec3 normal, Vec2 uv, Color color) {
+    void ImmediateRenderer::AddVertex(Vec3 position, Color color) {
         u32 vertex_offset = s_state.vertex_offset;
         HYP_ASSERT_MESSAGE(vertex_offset < 2000, "Immediate vertex buffer is full!");
 
         s_data_buffer[vertex_offset].position = position;
-        s_data_buffer[vertex_offset].normal = normal;
-        s_data_buffer[vertex_offset].uv = uv;
         s_data_buffer[vertex_offset].color = color;
 
         s_state.vertex_offset++;
