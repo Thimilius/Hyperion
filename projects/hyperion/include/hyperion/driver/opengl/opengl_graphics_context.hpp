@@ -3,6 +3,8 @@
 #include "hyperion/common.hpp"
 #include "hyperion/rendering/graphics_context.hpp"
 
+#include <glad/glad.h>
+
 namespace Hyperion::Rendering {
 
     struct OpenGLContextLimits {

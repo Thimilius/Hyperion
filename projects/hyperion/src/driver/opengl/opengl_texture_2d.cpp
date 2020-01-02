@@ -2,7 +2,7 @@
 
 #include "hyperion/driver/opengl/opengl_texture_2d.hpp"
 
-#define HYP_OPENGL_MIPMAP_LEVEL_COUNT 6
+#include <glad/glad.h>
 
 namespace Hyperion::Rendering {
 

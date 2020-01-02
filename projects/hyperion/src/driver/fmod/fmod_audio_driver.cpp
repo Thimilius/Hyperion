@@ -2,6 +2,8 @@
 
 #include "hyperion/driver/fmod/fmod_audio_driver.hpp"
 
+#include <fmod/fmod.hpp>
+
 namespace Hyperion::Audio {
 
     void FModAudioDriver::Init() {

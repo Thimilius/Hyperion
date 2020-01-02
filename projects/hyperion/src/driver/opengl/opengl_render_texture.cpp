@@ -2,6 +2,8 @@
 
 #include "hyperion/driver/opengl/opengl_render_texture.hpp"
 
+#include <glad/glad.h>
+
 namespace Hyperion::Rendering {
 
     OpenGLRenderTexture::OpenGLRenderTexture(u32 width, u32 height, RenderTextureFormat format) {

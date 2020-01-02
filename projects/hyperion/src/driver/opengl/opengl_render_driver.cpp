@@ -4,6 +4,8 @@
 
 #include "hyperion/core/app/application.hpp"
 
+#include <glad/glad.h>
+
 namespace Hyperion::Rendering {
 
     void OpenGLRenderDriver::Init() {

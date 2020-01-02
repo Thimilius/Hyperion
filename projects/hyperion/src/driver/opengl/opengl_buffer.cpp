@@ -2,6 +2,8 @@
 
 #include "hyperion/driver/opengl/opengl_buffer.hpp"
 
+#include <glad/glad.h>
+
 namespace Hyperion::Rendering {
 
     OpenGLVertexBuffer::OpenGLVertexBuffer(const u8 *vertices, u32 size) : OpenGLVertexBuffer(vertices, size, BufferUsage::StaticDraw) { }

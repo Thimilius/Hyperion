@@ -2,6 +2,8 @@
 
 #include "hyperion/driver/opengl/opengl_shader.hpp"
 
+#include <glad/glad.h>
+
 namespace Hyperion::Rendering {
 
     OpenGLShader::OpenGLShader(const String &name, const String &source) : Shader(name) {

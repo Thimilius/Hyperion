@@ -2,6 +2,8 @@
 
 #include "hyperion/driver/opengl/opengl_vertex_array.hpp"
 
+#include <glad/glad.h>
+
 namespace Hyperion::Rendering {
 
     OpenGLVertexArray::OpenGLVertexArray() {

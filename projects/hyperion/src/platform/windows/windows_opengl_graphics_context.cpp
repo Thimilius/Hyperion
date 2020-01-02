@@ -2,6 +2,8 @@
 
 #include "hyperion/platform/windows/windows_opengl_graphics_context.hpp"
 
+#include "glad/glad_wgl.h"
+
 namespace Hyperion::Rendering {
 
     WindowsOpenGLGraphicsContext::WindowsOpenGLGraphicsContext(HWND window_handle) {

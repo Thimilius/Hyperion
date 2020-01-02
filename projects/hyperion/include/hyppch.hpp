@@ -12,14 +12,10 @@
 // Platform specific
 #ifdef HYP_PLATFORM_WINDOWS
     #include <Windows.h>
-	#include <glad/glad_wgl.h>
 #endif
 
 // Vendors
-#include <glad/glad.h>
 #include <fmt/format.h>
-#include <stb/stb_image.h>
-#include <fmod/fmod.hpp>
 
 // Hyperion
 #include "hyperion/common.hpp"
