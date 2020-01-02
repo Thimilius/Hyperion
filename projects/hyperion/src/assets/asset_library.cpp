@@ -4,6 +4,7 @@
 
 #include <filesystem>
 #include "hyperion/core/io/file_utilities.hpp"
+#include "hyperion/core/io/image_loader.hpp"
 
 // TODO: Move image loading code to dedicated loader abstraction
 
@@ -30,28 +31,17 @@ namespace Hyperion {
 
     Ref<Texture2D> AssetLibrary::LoadTexture2D(const String &name, const String &filepath) {
         // TODO: Add ability to specify the texture parameters
-
-        stbi_set_flip_vertically_on_load(true);
-
-        s32 width;
-        s32 height;
-        s32 channels;
-        u8 *pixels = stbi_load(filepath.c_str(), &width, &height, &channels, 0);
-
+        Ref<Image> image = ImageLoader::Load(filepath);
         Ref<Texture2D> texture;
-        if (pixels) {
+        if (!image->IsEmpty()) {
             TextureFormat format;
-            switch (channels) {
+            switch (image->GetChannels()) {
                 case 3: format = TextureFormat::RGB; break;
                 case 4: format = TextureFormat::RGBA; break;
             }
 
-            texture = Texture2D::Create(width, height, format, TextureWrapMode::Clamp, TextureFilter::Bilinear, TextureAnisotropicFilter::None, pixels);
-        } else {
-            HYP_LOG_ERROR("Assets", "Failed to load 2D texture from path: {}!", filepath);
+            texture = Texture2D::Create(image->GetWidth(), image->GetHeight(), format, TextureWrapMode::Clamp, TextureFilter::Bilinear, TextureAnisotropicFilter::None, image->GetPixels());
         }
-
-        stbi_image_free(pixels);
         
         AddTexture2D(name, filepath, texture);
 
@@ -148,19 +138,12 @@ namespace Hyperion {
         
         AssetEntry entry = s_textures[name];
 
-        stbi_set_flip_vertically_on_load(true);
+        Ref<Image> image = ImageLoader::Load(entry.filepath);
 
-        s32 width;
-        s32 height;
-        s32 channels;
-        u8 *pixels = stbi_load(entry.filepath.c_str(), &width, &height, &channels, 0);
-
-        if (pixels) {
-            entry.asset->Resize(width, height);
-            entry.asset->SetPixels(pixels);
+        if (!image->IsEmpty()) {
+            entry.asset->Resize(image->GetWidth(), image->GetHeight());
+            entry.asset->SetPixels(image->GetPixels());
         }
-
-        stbi_image_free(pixels);
     }
 
 }
