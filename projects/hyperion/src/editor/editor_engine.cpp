@@ -3,6 +3,7 @@
 #include "hyperion/core/app/time.hpp"
 #include "hyperion/editor/editor_engine.hpp"
 #include "hyperion/rendering/immediate_renderer.hpp"
+#include "hyperion/assets/asset_library.hpp"
 
 using namespace Hyperion::Rendering;
 
@@ -11,6 +12,34 @@ namespace Hyperion::Editor {
     void EditorEngine::OnInit(const Ref<Camera> &camera) {
         s_camera = camera;
         s_camera_controller = CameraController::Create(camera);
+
+        // Initialize grid vertex buffer
+        {
+            Color grid_color = Color::White();
+
+            s32 half_grid_size = s_grid_size / 2;
+            f32 to_point = (f32)half_grid_size;
+
+            s_grid_vertex_count = (s_grid_size + 1) * 4;
+            Vector<VertexImmediate> verticies(s_grid_vertex_count);
+
+            u32 index = 0;
+            for (s32 x = -half_grid_size; x <= half_grid_size; x++) {
+                f32 from_point = (f32)x;
+                verticies[index++] = { Vec3(from_point, 0, to_point), grid_color };
+                verticies[index++] = { Vec3(from_point, 0, -to_point), grid_color };
+            }
+            for (s32 z = -half_grid_size; z <= half_grid_size; z++) {
+                f32 from_point = (f32)z;
+                verticies[index++] = { Vec3(to_point, 0, from_point), grid_color };
+                verticies[index++] = { Vec3(-to_point, 0, from_point), grid_color };
+            }
+
+            Ref<VertexBuffer> vertex_buffer = VertexBuffer::Create((u8*)verticies.data(), sizeof(VertexImmediate) * s_grid_vertex_count);
+            vertex_buffer->SetLayout(VertexImmediate::GetBufferLayout());
+            s_grid_vertex_array = VertexArray::Create();
+            s_grid_vertex_array->AddVertexBuffer(vertex_buffer);
+        }
 
         UpdateTitle();
     }
@@ -40,50 +69,21 @@ namespace Hyperion::Editor {
     }
 
     void EditorEngine::OnRender(const Ref<Camera> &camera) {
-        if (s_grid_enabled) {
-            // NOTE: The performance of this is obviously far from optimal
-            ImmediateRenderer::Begin(camera);
-            {
-                Color grid_color = Color::White();
-
-                s32 grid_size = 20;
-                s32 half_grid_size = grid_size / 2;
-                f32 to_point = (f32)half_grid_size;
-
-                for (s32 x = -half_grid_size; x <= half_grid_size; x++) {
-                    // We want to skip drawing the middle line to avoid an ugly overlap with the origin lines
-                    if (s_origin_enabled && x == 0) {
-                        continue;
-                    }
-
-                    f32 from_point = (f32)x;
-                    ImmediateRenderer::DrawLine(Vec3(from_point, 0, to_point), Vec3(from_point, 0, -to_point), grid_color);
-                }
-                for (s32 z = -half_grid_size; z <= half_grid_size; z++) {
-                    // We want to skip drawing the middle line to avoid an ugly overlap with the origin lines
-                    if (s_origin_enabled && z == 0) {
-                        continue;
-                    }
-
-                    f32 from_point = (f32)z;
-                    ImmediateRenderer::DrawLine(Vec3(to_point, 0, from_point), Vec3(-to_point, 0, from_point), grid_color);
-                }
+        ImmediateRenderer::Begin(camera);
+        {
+            if (s_grid_enabled) {
+                ImmediateRenderer::Draw(PrimitiveType::Lines, s_grid_vertex_array, s_grid_vertex_count);
             }
-            ImmediateRenderer::End();
-        }
+            if (s_origin_enabled) {
+                // We want to draw the origin on top of the grid
+                RenderEngine::Clear(ClearMask::Depth);
 
-        if (s_origin_enabled) {
-            // We want to draw the origin on top of the grid
-            RenderEngine::Clear(ClearMask::Depth);
-
-            ImmediateRenderer::Begin(camera);
-            {
                 ImmediateRenderer::DrawLine(Vec3(-1000, 0, 0), Vec3(1000, 0, 0), Color::Red());
                 ImmediateRenderer::DrawLine(Vec3(0, -1000, 0), Vec3(0, 1000, 0), Color::Green());
                 ImmediateRenderer::DrawLine(Vec3(0, 0, -1000), Vec3(0, 0, 1000), Color::Blue());
             }
-            ImmediateRenderer::End();
         }
+        ImmediateRenderer::End();
     }
 
     void EditorEngine::OnTick() {

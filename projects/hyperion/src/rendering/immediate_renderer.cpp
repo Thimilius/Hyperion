@@ -11,14 +11,24 @@ namespace Hyperion::Rendering {
         s_state.transform.projection = camera->GetProjectionMatrix();
         s_state.transform.view_projection = camera->GetViewProjectionMatrix();
 
-        // FIXME: This does not need to be set every time
-        s_immediate_shader = AssetLibrary::GetShader("immediate");
+        // FIXME: This should be done in an initialization step
         if (!s_vertex_array) {
+            s_immediate_shader = AssetLibrary::GetShader("immediate");
             s_vertex_buffer = VertexBuffer::Create(nullptr, sizeof(s_data_buffer), BufferUsage::DynamicDraw);
             s_vertex_buffer->SetLayout(VertexImmediate::GetBufferLayout());
             s_vertex_array = VertexArray::Create();
             s_vertex_array->AddVertexBuffer(s_vertex_buffer);
         }
+    }
+
+    void ImmediateRenderer::Draw(PrimitiveType primitive_type, const Ref<VertexArray> &vertex_array, u32 vertex_count) {
+        s_immediate_shader->Bind();
+        s_immediate_shader->SetMat4("u_transform.view", s_state.transform.view);
+        s_immediate_shader->SetMat4("u_transform.projection", s_state.transform.projection);
+
+        vertex_array->Bind();
+
+        RenderEngine::Draw(primitive_type, vertex_count, 0);
     }
 
     void ImmediateRenderer::DrawCube(Vec3 center, Vec3 size, Color color) {
@@ -106,7 +116,7 @@ namespace Hyperion::Rendering {
         s_immediate_shader->SetMat4("u_transform.view", s_state.transform.view);
         s_immediate_shader->SetMat4("u_transform.projection", s_state.transform.projection);
 
-        s_vertex_buffer->SetData(0, (u8 *)s_data_buffer, s_state.vertex_offset * sizeof(VertexImmediate));
+        s_vertex_buffer->SetData(0, (u8*)s_data_buffer, s_state.vertex_offset * sizeof(VertexImmediate));
         s_vertex_array->Bind();
 
         RenderEngine::Draw(type, s_state.vertex_offset, 0);
