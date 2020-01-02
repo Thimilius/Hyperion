@@ -95,9 +95,9 @@ namespace Hyperion {
         dispatcher.Dispatch<WindowResizeEvent>([this](WindowResizeEvent &window_resize_event) {
             Rendering::RenderEngine::SetViewport(0, 0, window_resize_event.GetWidth(), window_resize_event.GetHeight());
         });
-        auto window_reset = Input::Reset;
-        dispatcher.Dispatch<WindowFocusEvent>([window_reset](WindowFocusEvent &window_focus_event){
-            window_reset();
+        auto window_reset_func = Input::Reset;
+        dispatcher.Dispatch<WindowFocusEvent>([window_reset_func](WindowFocusEvent &window_focus_event){
+            window_reset_func();
         });
 
         // Handle key events
@@ -118,9 +118,9 @@ namespace Hyperion {
         dispatcher.Dispatch<MouseScrolledEvent>([&mouse_scroll](MouseScrolledEvent &mouse_scrolled_event) {
             mouse_scroll = mouse_scrolled_event.GetScroll();
         });
-        Vec2 &s_mouse_position = Input::s_mouse_position;
-        dispatcher.Dispatch<MouseMovedEvent>([&s_mouse_position](MouseMovedEvent &mouse_moved_event) {
-            s_mouse_position = Vec2(mouse_moved_event.GetX(), mouse_moved_event.GetY());
+        Vec2 &mouse_position = Input::s_mouse_position;
+        dispatcher.Dispatch<MouseMovedEvent>([&mouse_position](MouseMovedEvent &mouse_moved_event) {
+            mouse_position = Vec2(mouse_moved_event.GetX(), mouse_moved_event.GetY());
         });
         dispatcher.Dispatch<MouseButtonPressedEvent>([this](MouseButtonPressedEvent &mouse_button_pressed_event) {
             OnMouseButtonEvent(mouse_button_pressed_event, true);

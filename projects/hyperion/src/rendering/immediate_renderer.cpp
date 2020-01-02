@@ -116,7 +116,7 @@ namespace Hyperion::Rendering {
         s_immediate_shader->SetMat4("u_transform.view", s_state.transform.view);
         s_immediate_shader->SetMat4("u_transform.projection", s_state.transform.projection);
 
-        s_vertex_buffer->SetData(0, (u8*)s_data_buffer, s_state.vertex_offset * sizeof(VertexImmediate));
+        s_vertex_buffer->SetData(0, s_state.vertex_offset * sizeof(VertexImmediate), (u8*)s_data_buffer);
         s_vertex_array->Bind();
 
         RenderEngine::Draw(type, s_state.vertex_offset, 0);

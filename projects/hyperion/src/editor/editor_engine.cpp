@@ -35,7 +35,7 @@ namespace Hyperion::Editor {
                 verticies[index++] = { Vec3(-to_point, 0, from_point), grid_color };
             }
 
-            Ref<VertexBuffer> vertex_buffer = VertexBuffer::Create((u8*)verticies.data(), sizeof(VertexImmediate) * s_grid_vertex_count);
+            Ref<VertexBuffer> vertex_buffer = VertexBuffer::Create((u8*)verticies.data(), s_grid_vertex_count * sizeof(VertexImmediate));
             vertex_buffer->SetLayout(VertexImmediate::GetBufferLayout());
             s_grid_vertex_array = VertexArray::Create();
             s_grid_vertex_array->AddVertexBuffer(vertex_buffer);

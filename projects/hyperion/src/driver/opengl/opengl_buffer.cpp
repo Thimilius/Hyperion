@@ -25,7 +25,7 @@ namespace Hyperion::Rendering {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
-    void OpenGLVertexBuffer::SetData(u32 offset, const u8 *verticies, u32 size) {
+    void OpenGLVertexBuffer::SetData(u32 offset, u32 size, const u8 *verticies) {
         HYP_ASSERT_MESSAGE((offset + size) < m_size, "Trying to set more data that can fit into the vertex buffer!");
         glNamedBufferSubData(m_vertex_buffer_id, offset, size, verticies);
     }

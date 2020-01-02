@@ -17,7 +17,7 @@ namespace Hyperion::Rendering {
 
         u32 GetID() const override { return m_vertex_buffer_id; }
 
-        void SetData(u32 offset, const u8 *verticies, u32 size) override;
+        void SetData(u32 offset, u32 size, const u8 *verticies) override;
     private:
         u32 GetGLBufferUsage(BufferUsage usage);
     };

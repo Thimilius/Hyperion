@@ -91,7 +91,7 @@ namespace Hyperion::Rendering {
         
         virtual u32 GetID() const = 0;
 
-        virtual void SetData(u32 offset, const u8 *verticies, u32 size) = 0;
+        virtual void SetData(u32 offset, u32 size, const u8 *verticies) = 0;
 
         static Ref<VertexBuffer> Create(const u8 *vertices, u32 size);
         static Ref<VertexBuffer> Create(const u8 *vertices, u32 size, BufferUsage usage);

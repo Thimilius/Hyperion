@@ -22,7 +22,7 @@ namespace Hyperion::Rendering {
             verticies[i].normal = mesh_data.normals[i];
             verticies[i].uv = mesh_data.uvs[i];
         }
-        Ref<VertexBuffer> vertex_buffer = VertexBuffer::Create((u8*)verticies.data(), sizeof(VertexPNU) * vertex_count);
+        Ref<VertexBuffer> vertex_buffer = VertexBuffer::Create((u8*)verticies.data(), vertex_count * sizeof(VertexPNU));
         vertex_buffer->SetLayout(VertexPNU::GetBufferLayout());
 
         u32 index_count = (u32)mesh_data.indicies.size();
