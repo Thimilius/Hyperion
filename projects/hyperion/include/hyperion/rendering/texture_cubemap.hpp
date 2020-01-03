@@ -7,8 +7,8 @@ namespace Hyperion::Rendering {
     enum class CubemapFace {
         PositiveX, // Right
         NegativeX, // Left
-        PositiveY, // Up
-        NegativeY, // Down
+        PositiveY, // Top
+        NegativeY, // Bottom
         PositiveZ, // Back
         NegativeZ  // Front
     };
