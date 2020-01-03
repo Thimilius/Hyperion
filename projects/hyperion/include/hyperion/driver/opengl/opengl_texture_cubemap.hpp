@@ -1,10 +1,11 @@
 #pragma once
 
+#include "hyperion/driver/opengl/opengl_texture.hpp"
 #include "hyperion/rendering/texture_cubemap.hpp"
 
 namespace Hyperion::Rendering {
 
-    class OpenGLTextureCubemap : public TextureCubemap {
+    class OpenGLTextureCubemap : public OpenGLTexture, public TextureCubemap {
     private:
         u32 m_texture_id;
     public:
@@ -24,10 +25,6 @@ namespace Hyperion::Rendering {
         void SetPixels(TextureCubemapFace face, const u8 *pixels);
     private:
         void CreateTexture(const Map<TextureCubemapFace, const u8 *> &pixels);
-
-        static u32 GetGLFormat(TextureFormat format);
-        static u32 GetGLInternalFormat(TextureFormat format);
-        static u32 GetGLWrapMode(TextureWrapMode wrap_mode);
     };
 
 }

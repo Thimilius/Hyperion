@@ -35,45 +35,25 @@ namespace Hyperion::Rendering {
 
     void OpenGLTexture2D::SetWrapMode(TextureWrapMode wrap_mode) {
         m_wrap_mode = wrap_mode;
+
         u32 wrap = GetGLWrapMode(wrap_mode);
         glTextureParameteri(m_texture_id, GL_TEXTURE_WRAP_S, wrap);
         glTextureParameteri(m_texture_id, GL_TEXTURE_WRAP_T, wrap);
     }
 
     void OpenGLTexture2D::SetFilter(TextureFilter filter) {
-        u32 min_filter;
-        u32 mag_filter;
-        switch (filter) {
-            case TextureFilter::Point:
-                min_filter = GL_NEAREST_MIPMAP_NEAREST;
-                mag_filter = GL_NEAREST;
-                break;
-            case TextureFilter::Bilinear:
-                min_filter = GL_LINEAR_MIPMAP_NEAREST;
-                mag_filter = GL_LINEAR;
-                break;
-            case TextureFilter::Trilinear:
-                min_filter = GL_LINEAR_MIPMAP_LINEAR;
-                mag_filter = GL_LINEAR;
-                break;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-        }
         m_filter = filter;
+
+        u32 min_filter = GetGLMinFilter(filter);
+        u32 mag_filter = GetGLMaxFilter(filter);
         glTextureParameteri(m_texture_id, GL_TEXTURE_MIN_FILTER, min_filter);
         glTextureParameteri(m_texture_id, GL_TEXTURE_MAG_FILTER, mag_filter);
     }
 
     void OpenGLTexture2D::SetAnisotropicFilter(TextureAnisotropicFilter anisotropic_filter) {
-        f32 amount = 1.0f;
-        switch (anisotropic_filter) {
-            case TextureAnisotropicFilter::None: amount = 1.0f; break;
-            case TextureAnisotropicFilter::Times2: amount = 2.0f; break;
-            case TextureAnisotropicFilter::Times4: amount = 4.0f; break;
-            case TextureAnisotropicFilter::Times8: amount = 8.0f; break;
-            case TextureAnisotropicFilter::Times16: amount = 16.0f; break;
-            default: amount = 1.0f; break;
-        }
-        glTextureParameterf(m_texture_id, GL_TEXTURE_MAX_ANISOTROPY, amount);
+        m_anisotropic_filter = anisotropic_filter;
+
+        glTextureParameterf(m_texture_id, GL_TEXTURE_MAX_ANISOTROPY, GetGLAnisotropicFilter(anisotropic_filter));
     }
 
     void OpenGLTexture2D::Resize(u32 width, u32 height) {
@@ -137,32 +117,6 @@ namespace Hyperion::Rendering {
         if (pixels != nullptr) {
             glTextureSubImage2D(m_texture_id, 0, 0, 0, m_width, m_height, GetGLFormat(m_format), GL_UNSIGNED_BYTE, pixels);
             glGenerateTextureMipmap(m_texture_id);
-        }
-    }
-
-    u32 OpenGLTexture2D::GetGLFormat(TextureFormat format) {
-        switch (format) {
-            case TextureFormat::RGB: return GL_RGB;
-            case TextureFormat::RGBA: return GL_RGBA;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
-        }
-    }
-
-    u32 OpenGLTexture2D::GetGLInternalFormat(TextureFormat format) {
-        switch (format) {
-            case TextureFormat::RGB: return GL_RGB8;
-            case TextureFormat::RGBA: return GL_RGBA8;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
-        }
-    }
-
-    u32 OpenGLTexture2D::GetGLWrapMode(TextureWrapMode wrap_mode) {
-        switch (wrap_mode) {
-            case TextureWrapMode::Clamp: return GL_CLAMP_TO_EDGE;
-            case TextureWrapMode::Border: return GL_CLAMP_TO_BORDER;
-            case TextureWrapMode::Repeat: return GL_REPEAT;
-            case TextureWrapMode::MirroredRepeat: return GL_MIRRORED_REPEAT;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }
 

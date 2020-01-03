@@ -1,10 +1,11 @@
 #pragma once
 
+#include "hyperion/driver/opengl/opengl_texture.hpp"
 #include "hyperion/rendering/texture_2d.hpp"
 
 namespace Hyperion::Rendering {
 
-    class OpenGLTexture2D : public Texture2D {
+    class OpenGLTexture2D : public OpenGLTexture, public Texture2D {
     private:
         u32 m_texture_id;
     public:
@@ -28,10 +29,6 @@ namespace Hyperion::Rendering {
         u8 *GetPixels() const override;
     private:
         void CreateTexture(const u8 *pixels);
-
-        static u32 GetGLFormat(TextureFormat format);
-        static u32 GetGLInternalFormat(TextureFormat format);
-        static u32 GetGLWrapMode(TextureWrapMode wrap_mode);
     };
 
 }
