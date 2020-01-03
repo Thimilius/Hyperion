@@ -1,6 +1,7 @@
 #pragma once
 
 #include "hyperion/core/io/file_watcher.hpp"
+#include "hyperion/core/image.hpp"
 #include "hyperion/rendering/shader.hpp"
 #include "hyperion/rendering/texture_2d.hpp"
 #include "hyperion/rendering/texture_cubemap.hpp"
@@ -49,6 +50,8 @@ namespace Hyperion {
 
         static void InitTextures2D(const String &texture_path);
         static void ReloadTexture2D(const String &name);
+
+        static Rendering::TextureFormat GetTextureFormatFromImage(const Ref<Image> &image);
 
         friend class Engine;
     };

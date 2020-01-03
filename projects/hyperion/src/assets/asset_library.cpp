@@ -32,13 +32,11 @@ namespace Hyperion {
         Ref<Image> image = ImageLoader::Load(filepath);
         Ref<Texture2D> texture;
         if (!image->IsEmpty()) {
-            TextureFormat format;
-            switch (image->GetChannels()) {
-                case 3: format = TextureFormat::RGB; break;
-                case 4: format = TextureFormat::RGBA; break;
-            }
-
-            texture = Texture2D::Create(image->GetWidth(), image->GetHeight(), format, TextureWrapMode::Clamp, TextureFilter::Bilinear, TextureAnisotropicFilter::None, image->GetPixels());
+            TextureFormat format = GetTextureFormatFromImage(image);
+            TextureWrapMode wrap_mode = TextureWrapMode::Clamp;
+            TextureFilter filter = TextureFilter::Bilinear;
+            TextureAnisotropicFilter anisotropic_filter = TextureAnisotropicFilter::None;
+            texture = Texture2D::Create(image->GetWidth(), image->GetHeight(), format, wrap_mode, filter, anisotropic_filter, image->GetPixels());
         }
         
         AddTexture2D(name, filepath, texture);
@@ -67,11 +65,7 @@ namespace Hyperion {
         Ref<Image> &sample_image = images.begin()->second;
         u32 width = sample_image->GetWidth();
         u32 height = sample_image->GetHeight();
-        TextureFormat format;
-        switch (sample_image->GetChannels()) {
-            case 3: format = TextureFormat::RGB; break;
-            case 4: format = TextureFormat::RGBA; break;
-        }
+        TextureFormat format = GetTextureFormatFromImage(sample_image);
 
         Map<TextureCubemapFace, const u8 *> pixels;
         for (auto pair : images) {
@@ -179,6 +173,14 @@ namespace Hyperion {
         if (!image->IsEmpty()) {
             entry.asset->Resize(image->GetWidth(), image->GetHeight());
             entry.asset->SetPixels(image->GetPixels());
+        }
+    }
+
+    TextureFormat AssetLibrary::GetTextureFormatFromImage(const Ref<Image> &image) {
+        switch (image->GetChannels()) {
+            case 3: return TextureFormat::RGB;
+            case 4: return TextureFormat::RGBA;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return TextureFormat::RGBA;
         }
     }
 
