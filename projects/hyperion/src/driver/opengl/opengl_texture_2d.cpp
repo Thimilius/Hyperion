@@ -111,10 +111,11 @@ namespace Hyperion::Rendering {
 
     void OpenGLTexture2D::SetPixels(const u8 *pixels) {
         glTextureSubImage2D(m_texture_id, 0, 0, 0, m_width, m_height, GetGLFormat(m_format), GL_UNSIGNED_BYTE, pixels);
+        // TODO: There should be an option to disable mipmap generation when setting pixels
         glGenerateTextureMipmap(m_texture_id);
     }
 
-    u8 *OpenGLTexture2D::GetPixels() {
+    u8 *OpenGLTexture2D::GetPixels() const {
         // NOTE: This is a very expensive allocation
         u32 size = m_width * m_height * GetBytesPerPixel(m_format);
         u8 *pixels = new u8[size];

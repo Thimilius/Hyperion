@@ -25,7 +25,7 @@ namespace Hyperion::Rendering {
         void Resize(u32 width, u32 height, TextureFormat format) override;
 
         void SetPixels(const u8 *pixels) override;
-        u8 *GetPixels() override;
+        u8 *GetPixels() const override;
     private:
         void CreateTexture(const u8 *pixels);
 

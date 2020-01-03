@@ -6,7 +6,8 @@
 namespace Hyperion::Rendering {
 
     enum class TextureDimension {
-        Texture2D
+        Texture2D,
+        TextureCubemap
     };
 
     enum class TextureFormat {
