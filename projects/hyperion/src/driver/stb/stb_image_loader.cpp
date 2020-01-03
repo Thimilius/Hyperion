@@ -7,8 +7,8 @@
 
 namespace Hyperion {
 
-    Ref<Image> StbImageLoader::LoadFromFile(const String &path) {
-        stbi_set_flip_vertically_on_load(false);
+    Ref<Image> StbImageLoader::LoadFromFile(const String &path, bool flip_vertically) {
+        stbi_set_flip_vertically_on_load(flip_vertically);
 
         s32 width;
         s32 height;

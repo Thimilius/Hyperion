@@ -28,12 +28,12 @@ protected:
         m_cube_texture = AssetLibrary::GetTexture2D("grass");
 
         Ref<Timer> timer = Timer::Create();
-        Ref<Image> skybox_right = ImageLoader::Load("data/textures/skybox/skybox_right.jpg");
-        Ref<Image> skybox_left = ImageLoader::Load("data/textures/skybox/skybox_left.jpg");
-        Ref<Image> skybox_top = ImageLoader::Load("data/textures/skybox/skybox_top.jpg");
-        Ref<Image> skybox_bottom = ImageLoader::Load("data/textures/skybox/skybox_bottom.jpg");
-        Ref<Image> skybox_back = ImageLoader::Load("data/textures/skybox/skybox_back.jpg");
-        Ref<Image> skybox_front = ImageLoader::Load("data/textures/skybox/skybox_front.jpg");
+        Ref<Image> skybox_right = ImageLoader::Load("data/textures/skybox/skybox_right.jpg", false);
+        Ref<Image> skybox_left = ImageLoader::Load("data/textures/skybox/skybox_left.jpg", false);
+        Ref<Image> skybox_top = ImageLoader::Load("data/textures/skybox/skybox_top.jpg", false);
+        Ref<Image> skybox_bottom = ImageLoader::Load("data/textures/skybox/skybox_bottom.jpg", false);
+        Ref<Image> skybox_back = ImageLoader::Load("data/textures/skybox/skybox_back.jpg", false);
+        Ref<Image> skybox_front = ImageLoader::Load("data/textures/skybox/skybox_front.jpg", false);
 
         Map<TextureCubemapFace, const u8 *> pixels = {
             { TextureCubemapFace::PositiveX, skybox_right->GetPixels() },

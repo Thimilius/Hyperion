@@ -8,8 +8,8 @@ namespace Hyperion {
 
     Scope<ImageLoader> ImageLoader::m_loader = std::make_unique<StbImageLoader>();
 
-    Ref<Image> ImageLoader::Load(const String &path) {
-        return m_loader->LoadFromFile(path);
+    Ref<Image> ImageLoader::Load(const String &path, bool flip_vertically) {
+        return m_loader->LoadFromFile(path, flip_vertically);
     }
 
 }

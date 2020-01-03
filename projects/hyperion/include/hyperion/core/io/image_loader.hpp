@@ -10,9 +10,9 @@ namespace Hyperion {
     public:
         virtual ~ImageLoader() = default;
 
-        virtual Ref<Image> LoadFromFile(const String &path) = 0;
+        virtual Ref<Image> LoadFromFile(const String &path, bool flip_vertically) = 0;
 
-        static Ref<Image> Load(const String &path);
+        static Ref<Image> Load(const String &path, bool flip_vertically = true);
     protected:
         ImageLoader() = default;
     };

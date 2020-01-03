@@ -6,7 +6,7 @@ namespace Hyperion {
 
     class StbImageLoader : public ImageLoader {
     public:
-        Ref<Image> LoadFromFile(const String &path) override;
+        Ref<Image> LoadFromFile(const String &path, bool flip_vertically) override;
     };
 
 }
