@@ -16,6 +16,8 @@ protected:
     Ref<Mesh> m_cube_mesh;
     Ref<Shader> m_cube_shader;
     Ref<Texture2D> m_cube_texture;
+    Ref<Shader> m_skybox_shader;
+    Ref<TextureCubemap> m_skybox_texture;
 
     void OnInit() override {
         m_camera = Camera::Create();
@@ -24,6 +26,26 @@ protected:
         m_cube_mesh = MeshFactory::CreateCube(1);
         m_cube_shader = AssetLibrary::GetShader("phong");
         m_cube_texture = AssetLibrary::GetTexture2D("grass");
+
+        Ref<Timer> timer = Timer::Create();
+        Ref<Image> skybox_right = ImageLoader::Load("data/textures/skybox/skybox_right.jpg");
+        Ref<Image> skybox_left = ImageLoader::Load("data/textures/skybox/skybox_left.jpg");
+        Ref<Image> skybox_top = ImageLoader::Load("data/textures/skybox/skybox_top.jpg");
+        Ref<Image> skybox_bottom = ImageLoader::Load("data/textures/skybox/skybox_bottom.jpg");
+        Ref<Image> skybox_back = ImageLoader::Load("data/textures/skybox/skybox_back.jpg");
+        Ref<Image> skybox_front = ImageLoader::Load("data/textures/skybox/skybox_front.jpg");
+
+        Map<TextureCubemapFace, const u8 *> pixels = {
+            { TextureCubemapFace::PositiveX, skybox_right->GetPixels() },
+            { TextureCubemapFace::NegativeX, skybox_left->GetPixels() },
+            { TextureCubemapFace::PositiveY, skybox_top->GetPixels() },
+            { TextureCubemapFace::NegativeY, skybox_bottom->GetPixels() },
+            { TextureCubemapFace::PositiveZ, skybox_back->GetPixels() },
+            { TextureCubemapFace::NegativeZ, skybox_front->GetPixels() },
+        };
+
+        m_skybox_shader = AssetLibrary::GetShader("skybox");
+        m_skybox_texture = TextureCubemap::Create(skybox_right->GetWidth(), skybox_right->GetHeight(), TextureFormat::RGB, pixels);
 
         EditorEngine::OnInit(m_camera);
     }
@@ -46,6 +68,16 @@ protected:
 
         Renderer::Begin(m_camera);
         {
+            RenderEngine::DisableFeature(RenderFeature::Culling);
+
+            m_skybox_shader->Bind();
+            m_skybox_shader->SetInt("u_texture", 0);
+            m_skybox_texture->Bind(0);
+            Renderer::Submit(m_cube_mesh, m_skybox_shader, Mat4::Identity());
+
+            RenderEngine::EnableFeature(RenderFeature::Culling);
+            RenderEngine::Clear(ClearMask::Depth);
+
             m_cube_shader->Bind();
             m_cube_shader->SetFloat3("u_camera.position", m_camera->GetPosition());
             m_cube_shader->SetFloat3("u_light.position", Vec3(1.5f, 2.0f, 3.0f));

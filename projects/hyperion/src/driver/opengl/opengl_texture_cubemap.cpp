@@ -11,7 +11,7 @@ namespace Hyperion::Rendering {
     OpenGLTextureCubemap::OpenGLTextureCubemap(u32 width, u32 height, TextureFormat format) 
         : OpenGLTextureCubemap(width, height, format, { }) { }
 
-    OpenGLTextureCubemap::OpenGLTextureCubemap(u32 width, u32 height, TextureFormat format, const Map<CubemapFace, const u8 *> &pixels) {
+    OpenGLTextureCubemap::OpenGLTextureCubemap(u32 width, u32 height, TextureFormat format, const Map<TextureCubemapFace, const u8 *> &pixels) {
         m_width = width;
         m_height = height;
         m_format = format;
@@ -28,11 +28,11 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLTextureCubemap::Bind(u32 slot) const {
-
+        glBindTextureUnit(slot, m_texture_id);
     }
 
     void OpenGLTextureCubemap::Unbind(u32 slot) const {
-
+        glBindTextureUnit(slot, 0);
     }
 
     void OpenGLTextureCubemap::SetWrapMode(TextureWrapMode wrap_mode) {
@@ -79,15 +79,15 @@ namespace Hyperion::Rendering {
         glTextureParameterf(m_texture_id, GL_TEXTURE_MAX_ANISOTROPY, amount);
     }
 
-    void OpenGLTextureCubemap::SetPixels(CubemapFace face, const u8 *pixels) {
+    void OpenGLTextureCubemap::SetPixels(TextureCubemapFace face, const u8 *pixels) {
         u32 face_offset = 0;
         switch (face) {
-            case CubemapFace::PositiveX: face_offset = 0; break;
-            case CubemapFace::NegativeX: face_offset = 1; break;
-            case CubemapFace::PositiveY: face_offset = 2; break;
-            case CubemapFace::NegativeY: face_offset = 3; break;
-            case CubemapFace::PositiveZ: face_offset = 4; break;
-            case CubemapFace::NegativeZ: face_offset = 5; break;
+            case TextureCubemapFace::PositiveX: face_offset = 0; break;
+            case TextureCubemapFace::NegativeX: face_offset = 1; break;
+            case TextureCubemapFace::PositiveY: face_offset = 2; break;
+            case TextureCubemapFace::NegativeY: face_offset = 3; break;
+            case TextureCubemapFace::PositiveZ: face_offset = 4; break;
+            case TextureCubemapFace::NegativeZ: face_offset = 5; break;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
 
@@ -97,10 +97,10 @@ namespace Hyperion::Rendering {
         glGenerateTextureMipmap(m_texture_id);
     }
 
-    void OpenGLTextureCubemap::CreateTexture(const Map<CubemapFace, const u8 *> &pixels) {
+    void OpenGLTextureCubemap::CreateTexture(const Map<TextureCubemapFace, const u8 *> &pixels) {
         glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_texture_id);
 
-        bool valid_pixels = pixels.size() != 0 && pixels.size() != 6;
+        bool valid_pixels = pixels.size() == 0 || pixels.size() == 6;
         if (!valid_pixels) {
             HYP_ASSERT_MESSAGE(false, "Can't create cube map from less than 6 faces!");
         }

@@ -4,7 +4,7 @@
 
 namespace Hyperion::Rendering {
 
-    enum class CubemapFace {
+    enum class TextureCubemapFace {
         PositiveX, // Right
         NegativeX, // Left
         PositiveY, // Top
@@ -28,11 +28,10 @@ namespace Hyperion::Rendering {
         virtual void Bind(u32 slot = 0) const = 0;
         virtual void Unbind(u32 slot = 0) const = 0;
 
-        virtual void SetPixels(CubemapFace face, const u8 *pixels) = 0;
-        virtual u8 *GetPixels(CubemapFace face) const = 0;
+        virtual void SetPixels(TextureCubemapFace face, const u8 *pixels) = 0;
 
-        static Ref<TextureCubemap> Create(u32 width, u32 height);
-        static Ref<TextureCubemap> Create(u32 width, u32 height, const Map<CubemapFace, const u8 *> &pixels);
+        static Ref<TextureCubemap> Create(u32 width, u32 height, TextureFormat format);
+        static Ref<TextureCubemap> Create(u32 width, u32 height, TextureFormat format, const Map<TextureCubemapFace, const u8 *> &pixels);
     };
 
 }

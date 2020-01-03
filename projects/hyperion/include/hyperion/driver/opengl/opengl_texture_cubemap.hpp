@@ -9,7 +9,7 @@ namespace Hyperion::Rendering {
         u32 m_texture_id;
     public:
         OpenGLTextureCubemap(u32 width, u32 height, TextureFormat format);
-        OpenGLTextureCubemap(u32 width, u32 height, TextureFormat format, const Map<CubemapFace, const u8 *> &pixels);
+        OpenGLTextureCubemap(u32 width, u32 height, TextureFormat format, const Map<TextureCubemapFace, const u8 *> &pixels);
         ~OpenGLTextureCubemap() override;
 
         void Bind(u32 slot = 0) const;
@@ -21,9 +21,9 @@ namespace Hyperion::Rendering {
         void SetFilter(TextureFilter filter) override;
         void SetAnisotropicFilter(TextureAnisotropicFilter anisotropic_filter) override;
 
-        void SetPixels(CubemapFace face, const u8 *pixels);
+        void SetPixels(TextureCubemapFace face, const u8 *pixels);
     private:
-        void CreateTexture(const Map<CubemapFace, const u8 *> &pixels);
+        void CreateTexture(const Map<TextureCubemapFace, const u8 *> &pixels);
 
         static u32 GetGLFormat(TextureFormat format);
         static u32 GetGLInternalFormat(TextureFormat format);
