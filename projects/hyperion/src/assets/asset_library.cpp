@@ -6,8 +6,6 @@
 #include "hyperion/core/io/file_utilities.hpp"
 #include "hyperion/core/io/image_loader.hpp"
 
-// TODO: Move image loading code to dedicated loader abstraction
-
 using namespace Hyperion::Rendering;
 
 namespace Hyperion {
@@ -56,6 +54,44 @@ namespace Hyperion {
     Ref<Texture2D> AssetLibrary::GetTexture2D(const String &name) {
         HYP_ASSERT_MESSAGE(s_textures.find(name) != s_textures.end(), "Trying to get 2D texture that is not in the library!");
         return s_textures[name].asset;
+    }
+
+    Ref<TextureCubemap> AssetLibrary::LoadTextureCubemap(const String &name, const Map<TextureCubemapFace, String> &files) {
+        HYP_ASSERT_MESSAGE(files.size() == 6, "Trying to load cube texture with less or greater than 6 faces!");
+
+        Map<TextureCubemapFace, Ref<Image>> images;
+        for (auto pair : files) {
+            images[pair.first] = ImageLoader::Load(pair.second, false);
+        } 
+
+        Ref<Image> &sample_image = images.begin()->second;
+        u32 width = sample_image->GetWidth();
+        u32 height = sample_image->GetHeight();
+        TextureFormat format;
+        switch (sample_image->GetChannels()) {
+            case 3: format = TextureFormat::RGB; break;
+            case 4: format = TextureFormat::RGBA; break;
+        }
+
+        Map<TextureCubemapFace, const u8 *> pixels;
+        for (auto pair : images) {
+            pixels[pair.first] = pair.second->GetPixels();
+        }
+
+        Ref<TextureCubemap> texture_cubemap = TextureCubemap::Create(width, height, format, pixels);
+
+        return texture_cubemap;
+    }
+
+    void AssetLibrary::AddTextureCubemap(const String &name, const Ref<Rendering::TextureCubemap> &texture_cubemap) {
+        HYP_ASSERT_MESSAGE(s_texture_cubemaps.find(name) == s_texture_cubemaps.end(), "Trying to add cube texture that is already in the library!");
+        // NOTE: The corresponding cubemap files currently get ignored which means they can not be hotloaded
+        s_texture_cubemaps[name] = { texture_cubemap, "" };
+    }
+
+    Ref<TextureCubemap> AssetLibrary::GetTextureCubemap(const String &name) {
+        HYP_ASSERT_MESSAGE(s_textures.find(name) != s_textures.end(), "Trying to get cubemap texture that is not in the library!");
+        return s_texture_cubemaps[name].asset;
     }
 
     void AssetLibrary::Init(bool hot_loading, const String &shader_path, const String &texture_path) {

@@ -26,26 +26,16 @@ protected:
         m_cube_mesh = MeshFactory::CreateCube(1);
         m_cube_shader = AssetLibrary::GetShader("phong");
         m_cube_texture = AssetLibrary::GetTexture2D("grass");
-
-        Ref<Timer> timer = Timer::Create();
-        Ref<Image> skybox_right = ImageLoader::Load("data/textures/skybox/skybox_right.jpg", false);
-        Ref<Image> skybox_left = ImageLoader::Load("data/textures/skybox/skybox_left.jpg", false);
-        Ref<Image> skybox_top = ImageLoader::Load("data/textures/skybox/skybox_top.jpg", false);
-        Ref<Image> skybox_bottom = ImageLoader::Load("data/textures/skybox/skybox_bottom.jpg", false);
-        Ref<Image> skybox_back = ImageLoader::Load("data/textures/skybox/skybox_back.jpg", false);
-        Ref<Image> skybox_front = ImageLoader::Load("data/textures/skybox/skybox_front.jpg", false);
-
-        Map<TextureCubemapFace, const u8 *> pixels = {
-            { TextureCubemapFace::PositiveX, skybox_right->GetPixels() },
-            { TextureCubemapFace::NegativeX, skybox_left->GetPixels() },
-            { TextureCubemapFace::PositiveY, skybox_top->GetPixels() },
-            { TextureCubemapFace::NegativeY, skybox_bottom->GetPixels() },
-            { TextureCubemapFace::PositiveZ, skybox_back->GetPixels() },
-            { TextureCubemapFace::NegativeZ, skybox_front->GetPixels() },
-        };
-
+        
         m_skybox_shader = AssetLibrary::GetShader("skybox");
-        m_skybox_texture = TextureCubemap::Create(skybox_right->GetWidth(), skybox_right->GetHeight(), TextureFormat::RGB, pixels);
+        m_skybox_texture = AssetLibrary::LoadTextureCubemap("skybox", {
+            { TextureCubemapFace::PositiveX, "data/textures/skybox/skybox_right.jpg" },
+            { TextureCubemapFace::NegativeX, "data/textures/skybox/skybox_left.jpg" },
+            { TextureCubemapFace::PositiveY, "data/textures/skybox/skybox_top.jpg" },
+            { TextureCubemapFace::NegativeY, "data/textures/skybox/skybox_bottom.jpg" },
+            { TextureCubemapFace::PositiveZ, "data/textures/skybox/skybox_back.jpg" },
+            { TextureCubemapFace::NegativeZ, "data/textures/skybox/skybox_front.jpg" },
+        });
 
         EditorEngine::OnInit(m_camera);
     }

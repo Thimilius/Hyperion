@@ -3,6 +3,7 @@
 #include "hyperion/core/io/file_watcher.hpp"
 #include "hyperion/rendering/shader.hpp"
 #include "hyperion/rendering/texture_2d.hpp"
+#include "hyperion/rendering/texture_cubemap.hpp"
 
 namespace Hyperion {
 
@@ -21,6 +22,8 @@ namespace Hyperion {
 
         inline static Map<String, AssetEntry<Rendering::Texture2D>> s_textures;
         inline static Ref<FileWatcher> s_texture_watcher;
+
+        inline static Map<String, AssetEntry<Rendering::TextureCubemap>> s_texture_cubemaps;
     public:
         static Ref<Rendering::Shader> LoadShader(const String &name, const String &filepath);
         static void AddShader(const String &name, const String &filepath, const Ref<Rendering::Shader> &shader);
@@ -29,6 +32,10 @@ namespace Hyperion {
         static Ref<Rendering::Texture2D> LoadTexture2D(const String &name, const String &filepath);
         static void AddTexture2D(const String &name, const String &filepath, const Ref<Rendering::Texture2D> &texture);
         static Ref<Rendering::Texture2D> GetTexture2D(const String &name);
+
+        static Ref<Rendering::TextureCubemap> LoadTextureCubemap(const String &name, const Map<Rendering::TextureCubemapFace, String> &files);
+        static void AddTextureCubemap(const String &name, const Ref<Rendering::TextureCubemap> &texture_cubemap);
+        static Ref<Rendering::TextureCubemap> GetTextureCubemap(const String &name);
     private:
         AssetLibrary() = delete;
         ~AssetLibrary() = delete;
