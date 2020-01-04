@@ -48,8 +48,9 @@ namespace Hyperion {
         
         virtual void SetIcon(const String &path) = 0;
     protected:
-        virtual void Update() const = 0;
-        virtual void Show() const = 0;
+        virtual void Init(const EventCallbackFunction &callback) = 0;
+        virtual void Update() = 0;
+        virtual void Show() = 0;
 
         void SetEventCallbackFunction(const EventCallbackFunction &callback) { m_event_callback = callback; }
 

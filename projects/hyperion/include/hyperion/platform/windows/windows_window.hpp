@@ -8,6 +8,7 @@
 namespace Hyperion {
 
     class WindowsWindow : public Window {
+        using EventCallbackFunction = std::function<void(Event &)>;
     private:
         HWND m_window_handle;
         WINDOWPLACEMENT m_previous_placement;
@@ -23,21 +24,23 @@ namespace Hyperion {
 
         void SetIcon(const String &path) override;
     private:
-        void Update() const override;
-        void Show() const override;
+        void Init(const EventCallbackFunction &callback) override;
+        void Update() override;
+        void Show() override;
 
         Vec2 GetActualWindowSize(u32 client_width, u32 client_height);
 
         void CreateContext(Rendering::RenderBackend backend_api);
-        void DispatchEvent(Event &event) const;
+        void DispatchEvent(Event &event);
 
-        KeyCode TranslateKeyCode(u32 w_param, u32 l_param) const;
-        MouseButtonCode TranslateMouseButtonCode(u32 code) const;
-        KeyModifier GetKeyModifier() const;
-        u32 GetMouseButtonFromMessage(u32 message, u32 w_param) const;
+        void UpdateGamepads();
+        void QueryConnectedGamepads(bool use_custom_callback, const EventCallbackFunction &callback);
 
-        void CheckForConnectedGamepads(bool send_events);
-        Gamepad GetGamepadFromId(u32 id);
+        static KeyCode TranslateKeyCode(u32 w_param, u32 l_param);
+        static MouseButtonCode TranslateMouseButtonCode(u32 code);
+        static KeyModifier GetKeyModifier();
+        static u32 GetMouseButtonFromMessage(u32 message, u32 w_param);
+        static Gamepad GetGamepadFromId(u32 id);
 
         static LRESULT CALLBACK MessageCallback(HWND window_handle, u32 message, WPARAM first_message_param, LPARAM second_message_param);
     };

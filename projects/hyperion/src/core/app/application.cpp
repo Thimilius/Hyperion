@@ -21,6 +21,11 @@ namespace Hyperion {
         Time::s_max_delta_time = settings.time.max_delta_time;
 
         m_window = Window::Create(settings.window, settings.renderer.backend);
+        m_window->Init([this](Event &event) {
+            if (event.GetType() == EventType::GamepadConnectionChanged) {
+                OnGamepadConnectionChanged((GamepadConnectionChangedEvent &)event);
+            }
+        });
         m_window->SetEventCallbackFunction(std::bind(&Application::OnEventInternal, this, std::placeholders::_1));
     }
 

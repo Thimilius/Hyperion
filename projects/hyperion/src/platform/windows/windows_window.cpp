@@ -15,6 +15,14 @@
 
 namespace Hyperion {
 
+    // To distinguish the two shift keys we explicily store their previous state
+    // so that we can send out the correct key released events when appropriate
+    static bool g_left_shift_last_down = false;
+    static bool g_right_shift_last_down = false;
+
+    // We store the connected gamepads we want to poll for input
+    static Vector<u32> g_connected_gamepads;
+
     Ref<Window> Window::Create(const WindowSettings &settings, Rendering::RenderBackend render_backend) {
         return std::make_shared<WindowsWindow>(settings, render_backend);
     }
@@ -74,8 +82,6 @@ namespace Hyperion {
 
         CreateContext(render_backend);
         SetVSyncMode(settings.vsync_mode);
-
-        CheckForConnectedGamepads(false);
     }
 
     WindowsWindow::~WindowsWindow() {
@@ -212,7 +218,11 @@ namespace Hyperion {
         }
     }
 
-    void WindowsWindow::Update() const {
+    void WindowsWindow::Init(const EventCallbackFunction &callback) {
+        QueryConnectedGamepads(true, callback);
+    }
+
+    void WindowsWindow::Update() {
         m_graphics_context->SwapBuffers();
 
         MSG message;
@@ -220,9 +230,11 @@ namespace Hyperion {
             TranslateMessage(&message);
             DispatchMessageW(&message);
         }
+
+        UpdateGamepads();
     }
 
-    void WindowsWindow::Show() const {
+    void WindowsWindow::Show() {
         ShowWindow(m_window_handle, SW_SHOWNORMAL);
     }
 
@@ -249,13 +261,67 @@ namespace Hyperion {
         m_graphics_context->Init();
     }
 
-    void WindowsWindow::DispatchEvent(Event &event) const {
+    void WindowsWindow::DispatchEvent(Event &event) {
         if (m_event_callback != nullptr) {
             m_event_callback(event);
         }
     }
 
-    MouseButtonCode WindowsWindow::TranslateMouseButtonCode(u32 code) const {
+    void WindowsWindow::UpdateGamepads() {
+        for (DWORD i = 0; i < g_connected_gamepads.size(); i++) {
+            u32 gamepad_id = g_connected_gamepads[i];
+            XINPUT_STATE state = { 0 };
+            DWORD result = XInputGetState(gamepad_id, &state);
+
+            auto begin = g_connected_gamepads.begin();
+            auto end = g_connected_gamepads.end();
+
+            if (result != ERROR_SUCCESS) {
+                if (std::find(begin, end, gamepad_id) != end) {
+                    g_connected_gamepads.erase(std::remove(begin, end, gamepad_id), end);
+
+                    GamepadConnectionChangedEvent event(GetGamepadFromId(gamepad_id), false);
+                    DispatchEvent(event);
+                }
+            }
+        }
+    }
+
+    void WindowsWindow::QueryConnectedGamepads(bool use_custom_callback, const EventCallbackFunction &callback) {
+        for (DWORD gamepad_id = 0; gamepad_id < XUSER_MAX_COUNT; gamepad_id++) {
+            XINPUT_STATE state = { 0 };
+            DWORD result = XInputGetState(gamepad_id, &state);
+
+            auto begin = g_connected_gamepads.begin();
+            auto end = g_connected_gamepads.end();
+
+            if (result == ERROR_SUCCESS) {
+                if (std::find(begin, end, gamepad_id) == end) {
+                    g_connected_gamepads.push_back(gamepad_id);
+
+                    GamepadConnectionChangedEvent event(GetGamepadFromId(gamepad_id), true);
+                    if (use_custom_callback) {
+                        callback(event);
+                    } else {
+                        DispatchEvent(event);
+                    }
+                }
+            } else {
+                if (std::find(begin, end, gamepad_id) != end) {
+                    g_connected_gamepads.erase(std::remove(begin, end, gamepad_id), end);
+
+                    GamepadConnectionChangedEvent event(GetGamepadFromId(gamepad_id), false);
+                    if (use_custom_callback) {
+                        callback(event);
+                    } else {
+                        DispatchEvent(event);
+                    }
+                }
+            }
+        }
+    }
+
+    MouseButtonCode WindowsWindow::TranslateMouseButtonCode(u32 code) {
         code = code & ~(MK_CONTROL & MK_SHIFT);
 
         switch (code) {
@@ -270,7 +336,7 @@ namespace Hyperion {
         }
     }
 
-    KeyCode WindowsWindow::TranslateKeyCode(u32 w_param, u32 l_param) const {
+    KeyCode WindowsWindow::TranslateKeyCode(u32 w_param, u32 l_param) {
         // Left and right keys need to be distinguished as extended keys
         if (w_param == VK_CONTROL) {
             if (l_param & 0x01000000) {
@@ -295,19 +361,14 @@ namespace Hyperion {
         } else if (w_param == VK_SHIFT) {
             // Left and right shift keys are not send as extended keys
             // and therefore need to be queried explicitly
+            bool previous_left_shift_down = g_left_shift_last_down;
+            bool previous_right_shift_down = g_right_shift_last_down;
+            g_left_shift_last_down = GetKeyState(VK_LSHIFT) & 0x8000;
+            g_right_shift_last_down = GetAsyncKeyState(VK_RSHIFT) & 0x8000;
 
-            // To distinguish the two keys we explicily store their previous state
-            // so that we can send out the correct key released events later
-            static bool left_shift_down = false;
-            static bool right_shift_down = false;
-            bool previous_left_shift_down = left_shift_down;
-            bool previous_right_shift_down = right_shift_down;
-            left_shift_down = GetKeyState(VK_LSHIFT) & 0x8000;
-            right_shift_down = GetAsyncKeyState(VK_RSHIFT) & 0x8000;
-
-            if (left_shift_down) {
+            if (g_left_shift_last_down) {
                 return KeyCode::LeftShift;
-            } else if (right_shift_down) {
+            } else if (g_right_shift_last_down) {
                 return KeyCode::RightShift;
             } else {
                 // If neither the right nor the left shift key is down this means they just got released
@@ -447,7 +508,7 @@ namespace Hyperion {
         }
     }
 
-    KeyModifier WindowsWindow::GetKeyModifier() const {
+    KeyModifier WindowsWindow::GetKeyModifier() {
         KeyModifier key_modifier = KeyModifier::None;
 
         if (GetKeyState(VK_SHIFT) & 0x8000) {
@@ -472,7 +533,7 @@ namespace Hyperion {
         return key_modifier;
     }
 
-    u32 WindowsWindow::GetMouseButtonFromMessage(u32 message, u32 w_param) const {
+    u32 WindowsWindow::GetMouseButtonFromMessage(u32 message, u32 w_param) {
         if (message == WM_LBUTTONDOWN || message == WM_LBUTTONUP) {
             return MK_LBUTTON;
         } else if (message == WM_RBUTTONDOWN || message == WM_RBUTTONUP) {
@@ -490,41 +551,6 @@ namespace Hyperion {
         } else {
             return 0;
         }
-    }
-
-    void WindowsWindow::CheckForConnectedGamepads(bool send_events) {
-        static Vector<DWORD> connected_gamepads;
-
-        // TODO: Send out connection events
-
-        for (DWORD gamepad_id = 0; gamepad_id < XUSER_MAX_COUNT; gamepad_id++) {
-            XINPUT_STATE state = { 0 };
-
-            // Simply get the state of the controller from XInput.
-            DWORD result = XInputGetState(gamepad_id, &state);
-
-            auto begin = connected_gamepads.begin();
-            auto end = connected_gamepads.end();
-
-            if (result == ERROR_SUCCESS) {
-                if (std::find(begin, end, gamepad_id) == end) {
-                    // Connection is new so add the gamepad and send out appropriate event
-                    connected_gamepads.push_back(gamepad_id);
-
-                    GamepadConnectionChangedEvent event(GetGamepadFromId(gamepad_id), true);
-                    DispatchEvent(event);
-                }
-            } else {
-                if (std::find(begin, end, gamepad_id) != end) {
-                    // Connection is new so add the gamepad and send out appropriate event
-                    connected_gamepads.erase(std::remove(begin, end, gamepad_id), end);
-
-                    GamepadConnectionChangedEvent event(GetGamepadFromId(gamepad_id), false);
-                    DispatchEvent(event);
-                }
-            }
-        }
-
     }
 
     Gamepad WindowsWindow::GetGamepadFromId(u32 id) {
@@ -552,10 +578,10 @@ namespace Hyperion {
             }
 
             case WM_DEVICECHANGE: {
-                // NOTE: This polling is probably to frequently as there are changes beeing detected
-                // that have nothing to do with a gameplay beeing added or removed
+                // This querying is probably to frequently as there are device changes beeing detected
+                // that have pretty much nothing to do with a gameplay beeing added or removed
                 if (w_param == DBT_DEVNODES_CHANGED) {
-                    window->CheckForConnectedGamepads(true);
+                    window->QueryConnectedGamepads(false, [](Event &){ });
                 }
                 break;
             }
