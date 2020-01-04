@@ -2,11 +2,15 @@
 
 #include "hyperion/platform/windows/windows_window.hpp"
 
+#include <Xinput.h>
+#include <Dbt.h>
+
 #include "hyperion/core/app/events/event.hpp"
 #include "hyperion/core/app/events/app_events.hpp"
 #include "hyperion/core/app/events/window_events.hpp"
 #include "hyperion/core/app/events/key_events.hpp"
 #include "hyperion/core/app/events/mouse_events.hpp"
+#include "hyperion/core/app/events/gamepad_events.hpp"
 #include "hyperion/platform/windows/windows_opengl_graphics_context.hpp"
 
 namespace Hyperion {
@@ -66,12 +70,12 @@ namespace Hyperion {
         }
         
         SetIcon(settings.icon);
-
         SetWindowMode(settings.window_mode);
 
         CreateContext(render_backend);
-
         SetVSyncMode(settings.vsync_mode);
+
+        CheckForConnectedGamepads(false);
     }
 
     WindowsWindow::~WindowsWindow() {
@@ -230,6 +234,25 @@ namespace Hyperion {
             HYP_PANIC_MESSAGE("Engine", "Failed to calculate window size!");
         }
         return Vec2((f32)(window_rect.right - window_rect.left), (f32)(window_rect.bottom - window_rect.top));
+    }
+
+    void WindowsWindow::CreateContext(Rendering::RenderBackend backend_api) {
+        switch (backend_api) {
+            case Rendering::RenderBackend::OpenGL:
+            {
+                m_graphics_context.reset(new Rendering::WindowsOpenGLGraphicsContext(m_window_handle));
+                break;
+            }
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        }
+
+        m_graphics_context->Init();
+    }
+
+    void WindowsWindow::DispatchEvent(Event &event) const {
+        if (m_event_callback != nullptr) {
+            m_event_callback(event);
+        }
     }
 
     MouseButtonCode WindowsWindow::TranslateMouseButtonCode(u32 code) const {
@@ -449,24 +472,6 @@ namespace Hyperion {
         return key_modifier;
     }
 
-    void WindowsWindow::CreateContext(Rendering::RenderBackend backend_api) {
-        switch (backend_api) {
-            case Rendering::RenderBackend::OpenGL: {
-                m_graphics_context.reset(new Rendering::WindowsOpenGLGraphicsContext(m_window_handle));
-                break;
-            }
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-        }
-
-        m_graphics_context->Init();
-    }
-
-    void WindowsWindow::DispatchEvent(Event &event) const {
-        if (m_event_callback != nullptr) {
-            m_event_callback(event);
-        }
-    }
-
     u32 WindowsWindow::GetMouseButtonFromMessage(u32 message, u32 w_param) const {
         if (message == WM_LBUTTONDOWN || message == WM_LBUTTONUP) {
             return MK_LBUTTON;
@@ -487,6 +492,51 @@ namespace Hyperion {
         }
     }
 
+    void WindowsWindow::CheckForConnectedGamepads(bool send_events) {
+        static Vector<DWORD> connected_gamepads;
+
+        // TODO: Send out connection events
+
+        for (DWORD gamepad_id = 0; gamepad_id < XUSER_MAX_COUNT; gamepad_id++) {
+            XINPUT_STATE state = { 0 };
+
+            // Simply get the state of the controller from XInput.
+            DWORD result = XInputGetState(gamepad_id, &state);
+
+            auto begin = connected_gamepads.begin();
+            auto end = connected_gamepads.end();
+
+            if (result == ERROR_SUCCESS) {
+                if (std::find(begin, end, gamepad_id) == end) {
+                    // Connection is new so add the gamepad and send out appropriate event
+                    connected_gamepads.push_back(gamepad_id);
+
+                    GamepadConnectionChangedEvent event(GetGamepadFromId(gamepad_id), true);
+                    DispatchEvent(event);
+                }
+            } else {
+                if (std::find(begin, end, gamepad_id) != end) {
+                    // Connection is new so add the gamepad and send out appropriate event
+                    connected_gamepads.erase(std::remove(begin, end, gamepad_id), end);
+
+                    GamepadConnectionChangedEvent event(GetGamepadFromId(gamepad_id), false);
+                    DispatchEvent(event);
+                }
+            }
+        }
+
+    }
+
+    Gamepad WindowsWindow::GetGamepadFromId(u32 id) {
+        switch (id) {
+            case 0: return Gamepad::Gamepad1;
+            case 1: return Gamepad::Gamepad2;
+            case 2: return Gamepad::Gamepad3;
+            case 3: return Gamepad::Gamepad4;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return Gamepad::Gamepad1;
+        }
+    }
+
     LRESULT WindowsWindow::MessageCallback(HWND window_handle, u32 message, WPARAM w_param, LPARAM l_param) {
         LRESULT result = 0;
 
@@ -501,7 +551,15 @@ namespace Hyperion {
                 break;
             }
 
-            case WM_DEVICECHANGE:
+            case WM_DEVICECHANGE: {
+                // NOTE: This polling is probably to frequently as there are changes beeing detected
+                // that have nothing to do with a gameplay beeing added or removed
+                if (w_param == DBT_DEVNODES_CHANGED) {
+                    window->CheckForConnectedGamepads(true);
+                }
+                break;
+            }
+
             case WM_DISPLAYCHANGE: {
                 AppDisplayChangeEvent event;
                 window->DispatchEvent(event);

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "hyperion/core/app/events/event.hpp"
-
 #include "hyperion/core/app/window.hpp"
 
 namespace Hyperion {
@@ -19,7 +18,7 @@ namespace Hyperion {
         u32 m_width;
         u32 m_height;
     public:
-        WindowResizeEvent(u32 width, u32 height) : m_width(width), m_height(height) {}
+        WindowResizeEvent(u32 width, u32 height) : m_width(width), m_height(height) { }
 
         inline u32 GetWidth() const { return m_width; }
         inline u32 GetHeight() const { return m_height; }
@@ -34,7 +33,7 @@ namespace Hyperion {
     private:
         bool m_focus;
     public:
-        WindowFocusEvent(bool focus) : m_focus(focus) {}
+        WindowFocusEvent(bool focus) : m_focus(focus) { }
 
         inline bool GetFocus() const { return m_focus; }
 
@@ -56,7 +55,7 @@ namespace Hyperion {
     private:
         WindowState m_state;
     public:
-        WindowStateChangedEvent(WindowState state) : m_state(state) {}
+        WindowStateChangedEvent(WindowState state) : m_state(state) { }
 
         inline WindowState GetState() const { return m_state; }
 

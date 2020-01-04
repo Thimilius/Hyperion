@@ -159,6 +159,48 @@ namespace Hyperion {
     };
     HYP_CREATE_ENUM_FLAG_OPERATORS(KeyModifier)
 
+    enum class Gamepad {
+        Gamepad1,
+        Gamepad2,
+        Gamepad3,
+        Gamepad4,
+
+        Last
+    };
+
+    enum class GamepadButtonCode {
+        Start,
+        Back,
+
+        A,
+        B,
+        X,
+        Y,
+
+        DpadLeft,
+        DpadRight,
+        DpadUp,
+        DpadDown,
+
+        LeftThumb,
+        RightThumb,
+
+        LeftShoulder,
+        RightShoulder,
+
+        Last
+    };
+
+    enum class GamepadAxis {
+        LeftStick,
+        RightStick,
+
+        LeftTrigger,
+        RightTrigger,
+
+        Last
+    };
+
     class Input {
     private:
         inline static bool s_keys_down[(s32)KeyCode::Last];
@@ -171,6 +213,16 @@ namespace Hyperion {
         inline static bool s_mouse_buttons_last[(s32)MouseButtonCode::Last];
         inline static bool s_mouse_buttons_up[(s32)MouseButtonCode::Last];
         
+        struct GamepadState {
+            bool buttons_down[(s32)GamepadButtonCode::Last];
+            bool buttons[(s32)GamepadButtonCode::Last];
+            bool buttons_last[(s32)GamepadButtonCode::Last];
+            bool buttons_up[(s32)GamepadButtonCode::Last];
+        };
+
+        inline static Vector<Gamepad> s_gamepads_connected;
+        inline static GamepadState s_gamepads[(s32)Gamepad::Last];
+
         inline static Vec2 s_mouse_position;
         inline static f32 s_mouse_scroll;
     public:
@@ -178,12 +230,18 @@ namespace Hyperion {
         inline static bool GetKey(KeyCode key_code) { return s_keys[(s32)key_code]; }
         inline static bool GetKeyUp(KeyCode key_code) { return s_keys_up[(s32)key_code]; }
 
+        inline static Vec2 GetMousePosition() { return s_mouse_position; }
+        inline static f32 GetMouseScroll() { return s_mouse_scroll; }
+
         inline static bool GetMouseButtonDown(MouseButtonCode mouse_button_code) { return s_mouse_buttons_down[(s32)mouse_button_code]; }
         inline static bool GetMouseButton(MouseButtonCode mouse_button_code) { return s_mouse_buttons[(s32)mouse_button_code]; }
         inline static bool GetMouseButtonUp(MouseButtonCode mouse_button_code) { return s_mouse_buttons_up[(s32)mouse_button_code]; }
 
-        inline static Vec2 GetMousePosition() { return s_mouse_position; }
-        inline static f32 GetMouseScroll() { return s_mouse_scroll; }
+        inline static const Vector<Gamepad> &GetConnectedGamepads() { return s_gamepads_connected; }
+
+        inline static bool GetGamepadButtonDown(Gamepad gamepad, GamepadButtonCode gamepad_button_code) { return s_gamepads[(s32)gamepad].buttons_down[(s32)gamepad_button_code]; }
+        inline static bool GetGamepadButton(Gamepad gamepad, GamepadButtonCode gamepad_button_code) { return s_gamepads[(s32)gamepad].buttons[(s32)gamepad_button_code]; }
+        inline static bool GetGamepadButtonUp(Gamepad gamepad, GamepadButtonCode gamepad_button_code) { return s_gamepads[(s32)gamepad].buttons_up[(s32)gamepad_button_code]; }
     private:
         Input() = delete;
         ~Input() = delete;

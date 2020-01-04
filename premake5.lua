@@ -82,6 +82,7 @@ project "hyperion"
 		links {
 			"opengl32",
 			"PowrProf",
+			"XInput",
 		
 			"freetype",
 			"fmod_vc",

@@ -3,13 +3,9 @@
 #include "hyperion/common.hpp"
 #include "hyperion/core/app/input.hpp"
 
-#include <functional>
-
 namespace Hyperion {
 
     enum class EventType {
-        None,
-
         AppDisplayChange,
 
         WindowClose,
@@ -26,16 +22,20 @@ namespace Hyperion {
         MouseButtonReleased,
         MouseMoved,
         MouseScrolled,
+
+        GamepadButtonPressed,
+        GamepadButtonReleased,
+        GamepadConnectionChanged,
     };
 
     enum class EventCategory {
-        None        = 0,
         App         = BIT(0),
         Window      = BIT(1),
         Input       = BIT(2),
         Keyboard    = BIT(3),
         Mouse       = BIT(4),
-        MouseButton = BIT(5)
+        MouseButton = BIT(5),
+        Gamepad     = BIT(6)
     };
     HYP_CREATE_ENUM_FLAG_OPERATORS(EventCategory)
 

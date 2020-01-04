@@ -9,7 +9,7 @@ namespace Hyperion {
         KeyCode m_key_code;
         KeyModifier m_key_modifier;
     public:
-        KeyEvent(KeyCode key_code, KeyModifier key_modifier) : m_key_code(key_code), m_key_modifier(key_modifier) {}
+        KeyEvent(KeyCode key_code, KeyModifier key_modifier) : m_key_code(key_code), m_key_modifier(key_modifier) { }
 
         inline KeyCode GetKeyCode() const { return m_key_code; }
         inline bool HasKeyModifier(KeyModifier key_modifier) const { return (m_key_modifier & key_modifier) == key_modifier; }
@@ -19,7 +19,7 @@ namespace Hyperion {
 
     class KeyPressedEvent : public KeyEvent {
     public:
-        KeyPressedEvent(KeyCode key_code, KeyModifier key_modifier) : KeyEvent(key_code, key_modifier) {}
+        KeyPressedEvent(KeyCode key_code, KeyModifier key_modifier) : KeyEvent(key_code, key_modifier) { }
 
         EventType GetType() const override { return EventType::KeyPressed; }
 
@@ -28,7 +28,7 @@ namespace Hyperion {
 
     class KeyReleasedEvent : public KeyEvent {
     public:
-        KeyReleasedEvent(KeyCode key_code, KeyModifier key_modifier) : KeyEvent(key_code, key_modifier) {}
+        KeyReleasedEvent(KeyCode key_code, KeyModifier key_modifier) : KeyEvent(key_code, key_modifier) { }
 
         EventType GetType() const override { return EventType::KeyReleased; }
 
@@ -40,7 +40,7 @@ namespace Hyperion {
         u32 m_character;
         KeyModifier m_key_modifier;
     public:
-        KeyTypedEvent(u32 character, KeyModifier key_modifier) : m_character(character), m_key_modifier(key_modifier) {}
+        KeyTypedEvent(u32 character, KeyModifier key_modifier) : m_character(character), m_key_modifier(key_modifier) { }
 
         inline u32 GetCharacter() const { return m_character; }
         inline bool HasKeyModifier(KeyModifier key_modifier) const { return (m_key_modifier & key_modifier) == key_modifier; }

@@ -28,13 +28,16 @@ namespace Hyperion {
 
         Vec2 GetActualWindowSize(u32 client_width, u32 client_height);
 
+        void CreateContext(Rendering::RenderBackend backend_api);
+        void DispatchEvent(Event &event) const;
+
         KeyCode TranslateKeyCode(u32 w_param, u32 l_param) const;
         MouseButtonCode TranslateMouseButtonCode(u32 code) const;
         KeyModifier GetKeyModifier() const;
-
-        void CreateContext(Rendering::RenderBackend backend_api);
-        void DispatchEvent(Event &event) const;
         u32 GetMouseButtonFromMessage(u32 message, u32 w_param) const;
+
+        void CheckForConnectedGamepads(bool send_events);
+        Gamepad GetGamepadFromId(u32 id);
 
         static LRESULT CALLBACK MessageCallback(HWND window_handle, u32 message, WPARAM first_message_param, LPARAM second_message_param);
     };

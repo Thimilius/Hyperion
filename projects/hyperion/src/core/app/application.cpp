@@ -1,11 +1,12 @@
 #include "hyppch.hpp"
 
 #include "hyperion/core/app/application.hpp"
-
 #include "hyperion/core/timer.hpp"
 #include "hyperion/core/engine.hpp"
 #include "hyperion/core/app/time.hpp"
 #include "hyperion/core/app/display.hpp"
+#include "hyperion/core/app/events/app_events.hpp"
+#include "hyperion/core/app/events/window_events.hpp"
 
 namespace Hyperion {
 
@@ -127,6 +128,11 @@ namespace Hyperion {
             OnMouseButtonEvent(mouse_button_released_event, false);
         });
 
+        // Handle gamepad events
+        dispatcher.Dispatch<GamepadConnectionChangedEvent>([this](GamepadConnectionChangedEvent &gamepad_connection_changed_event) {
+            OnGamepadConnectionChanged(gamepad_connection_changed_event);
+        });
+
         OnEvent(event);
     }
 
@@ -142,6 +148,15 @@ namespace Hyperion {
         Input::s_mouse_buttons_down[mouse_button_code] = !Input::s_mouse_buttons_last[mouse_button_code] && down;
         Input::s_mouse_buttons[mouse_button_code] = down;
         Input::s_mouse_buttons_up[mouse_button_code] = Input::s_mouse_buttons_last[mouse_button_code] && !down;
+    }
+
+    void Application::OnGamepadConnectionChanged(GamepadConnectionChangedEvent &event) {
+        Gamepad gamepad = event.GetGamepad();
+        if (event.GetConnected()) {
+            Input::s_gamepads_connected.push_back(gamepad);
+        } else {
+            Input::s_gamepads_connected.erase(std::remove(Input::s_gamepads_connected.begin(), Input::s_gamepads_connected.end(), gamepad), Input::s_gamepads_connected.end());
+        }
     }
 
 }
