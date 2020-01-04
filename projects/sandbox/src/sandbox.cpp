@@ -34,15 +34,6 @@ protected:
         if (event.GetType() == EventType::WindowResize) {
             m_render_texture->Resize(GetWindow()->GetWidth(), GetWindow()->GetHeight());
         }
-
-        if (event.GetType() == EventType::GamepadConnectionChanged) {
-            GamepadConnectionChangedEvent gamepad_event = (GamepadConnectionChangedEvent &)event;
-            if (gamepad_event.GetConnected()) {
-                HYP_TRACE("Gamepad: {} got connected!", (u32)gamepad_event.GetGamepad());
-            } else {
-                HYP_TRACE("Gamepad: {} got diconnected!", (u32)gamepad_event.GetGamepad());
-            }
-        }
     }
 
     void OnUpdate(f32 delta_time) override {

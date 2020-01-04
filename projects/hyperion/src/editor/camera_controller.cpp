@@ -50,13 +50,17 @@ namespace Hyperion::Editor {
                 m_target_pitch -= rotation_speed;
             }
 
+            Vec2 right_stick = Input::GetGamepadAxis(Gamepad::Gamepad1, GamepadAxis::RightStick);
+            m_target_yaw += rotation_speed * right_stick.x;
+            m_target_pitch += rotation_speed * -right_stick.y;
+
             m_target_yaw += x_offset;
             m_target_pitch += y_offset;
+            m_target_pitch = Math::Clamp(m_target_pitch, -89.0f, 89.0f);
 
             f32 mouse_friction = 20.0f;
             m_yaw = Math::Lerp(m_yaw, m_target_yaw, delta * mouse_friction);
             m_pitch = Math::Lerp(m_pitch, m_target_pitch, delta * mouse_friction);
-            m_pitch = Math::Clamp(m_pitch, -89.0f, 89.0f);
 
             Vec3 new_forward = Vec3::Zero();
             new_forward.x = Math::Cos(Math::DegToRad(m_pitch)) * Math::Cos(Math::DegToRad(m_yaw));
@@ -115,6 +119,12 @@ namespace Hyperion::Editor {
                 m_velocity += up;
             }
 
+            Vec2 left_stick = Input::GetGamepadAxis(Gamepad::Gamepad1, GamepadAxis::LeftStick);
+            m_velocity += direction * -left_stick.y;
+            m_velocity += right * left_stick.x;
+            m_velocity += up * Input::GetGamepadAxis(Gamepad::Gamepad1, GamepadAxis::RightTrigger).x;
+            m_velocity -= up * Input::GetGamepadAxis(Gamepad::Gamepad1, GamepadAxis::LeftTrigger).x;
+
             m_velocity -= m_friction * delta * m_velocity;
         }
 
@@ -137,7 +147,6 @@ namespace Hyperion::Editor {
             m_size_target = size;
         }
 
-        // Set new properties
         m_camera->SetPosition(position);
         m_camera->SetForward(forward);
         m_camera->SetUp(up);

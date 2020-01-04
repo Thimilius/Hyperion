@@ -290,10 +290,10 @@ namespace Hyperion {
             {
                 f32 left_stick_x = (state.Gamepad.sThumbLX + 0.5f) / 32767.5f;
                 f32 left_stick_y = -(state.Gamepad.sThumbLY + 0.5f) / 32767.5f;
-                f32 right_stick_x = (state.Gamepad.sThumbLX + 0.5f) / 32767.5f;
-                f32 right_stick_y = -(state.Gamepad.sThumbLY + 0.5f) / 32767.5f;
+                f32 right_stick_x = (state.Gamepad.sThumbRX + 0.5f) / 32767.5f;
+                f32 right_stick_y = -(state.Gamepad.sThumbRY + 0.5f) / 32767.5f;
                 f32 left_trigger = state.Gamepad.bLeftTrigger / 255.0f;
-                f32 right_trigger = state.Gamepad.bLeftTrigger / 255.0f;
+                f32 right_trigger = state.Gamepad.bRightTrigger / 255.0f;
 
                 Input::s_gamepads[(s32)gamepad].axes[(s32)GamepadAxis::LeftStick] = TranslateGamepadAxis(left_stick_x, left_stick_y);
                 Input::s_gamepads[(s32)gamepad].axes[(s32)GamepadAxis::RightStick] = TranslateGamepadAxis(right_stick_x, right_stick_y);
