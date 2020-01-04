@@ -54,13 +54,21 @@ namespace Hyperion {
         return s_textures[name].asset;
     }
 
-    Ref<TextureCubemap> AssetLibrary::LoadTextureCubemap(const String &name, const Map<TextureCubemapFace, String> &files) {
-        HYP_ASSERT_MESSAGE(files.size() == 6, "Trying to load cube texture with less or greater than 6 faces!");
+    Ref<TextureCubemap> AssetLibrary::LoadTextureCubemap(const String &name, const String &directory, const String &extension) {
+        // Make sure directory has a seperator at the end
+        String dir;
+        if (directory.back() != '\\' || directory.back() != '/') {
+            dir = directory + "/";
+        }
 
-        Map<TextureCubemapFace, Ref<Image>> images;
-        for (auto pair : files) {
-            images[pair.first] = ImageLoader::Load(pair.second, false);
-        } 
+        Map<TextureCubemapFace, Ref<Image>> images = {
+            { TextureCubemapFace::PositiveX, ImageLoader::Load(dir + "right" + extension, false) },
+            { TextureCubemapFace::NegativeX, ImageLoader::Load(dir + "left" + extension, false) },
+            { TextureCubemapFace::PositiveY, ImageLoader::Load(dir + "top" + extension, false) },
+            { TextureCubemapFace::NegativeY, ImageLoader::Load(dir + "bottom" + extension, false) },
+            { TextureCubemapFace::PositiveZ, ImageLoader::Load(dir + "back" + extension, false) },
+            { TextureCubemapFace::NegativeZ, ImageLoader::Load(dir + "front" + extension, false) }
+        };
 
         Ref<Image> &sample_image = images.begin()->second;
         u32 width = sample_image->GetWidth();
