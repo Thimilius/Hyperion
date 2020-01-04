@@ -27,6 +27,10 @@ namespace Hyperion::Rendering {
     private:
         Renderer() = delete;
         ~Renderer() = delete;
+
+        static void Init();
+
+        friend class Hyperion::Engine;
     };
 
 }

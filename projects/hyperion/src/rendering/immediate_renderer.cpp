@@ -10,15 +10,6 @@ namespace Hyperion::Rendering {
         s_state.transform.view = camera->GetViewMatrix();
         s_state.transform.projection = camera->GetProjectionMatrix();
         s_state.transform.view_projection = camera->GetViewProjectionMatrix();
-
-        // FIXME: This should be done in an initialization step
-        if (!s_vertex_array) {
-            s_immediate_shader = AssetLibrary::GetShader("immediate");
-            s_vertex_buffer = VertexBuffer::Create(nullptr, sizeof(s_data_buffer), BufferUsage::DynamicDraw);
-            s_vertex_buffer->SetLayout(VertexImmediate::GetBufferLayout());
-            s_vertex_array = VertexArray::Create();
-            s_vertex_array->AddVertexBuffer(s_vertex_buffer);
-        }
     }
 
     void ImmediateRenderer::Draw(PrimitiveType primitive_type, const Ref<VertexArray> &vertex_array, u32 vertex_count) {
@@ -90,6 +81,14 @@ namespace Hyperion::Rendering {
         AddVertex(b, color);
 
         Flush(PrimitiveType::Lines);
+    }
+
+    void ImmediateRenderer::Init() {
+        s_immediate_shader = AssetLibrary::GetShader("immediate");
+        s_vertex_buffer = VertexBuffer::Create(nullptr, sizeof(s_data_buffer), BufferUsage::DynamicDraw);
+        s_vertex_buffer->SetLayout(VertexImmediate::GetBufferLayout());
+        s_vertex_array = VertexArray::Create();
+        s_vertex_array->AddVertexBuffer(s_vertex_buffer);
     }
 
     void ImmediateRenderer::AddVertex(Vec3 position, Color color) {

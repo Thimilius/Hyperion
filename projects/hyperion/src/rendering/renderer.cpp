@@ -31,4 +31,8 @@ namespace Hyperion::Rendering {
         
     }
 
+    void Renderer::Init() {
+
+    }
+
 }

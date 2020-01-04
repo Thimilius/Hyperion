@@ -4,8 +4,9 @@
 
 #include "hyperion/core/app/display.hpp"
 #include "hyperion/assets/asset_library.hpp"
-#include "hyperion/rendering/shader.hpp"
 #include "hyperion/audio/audio_engine.hpp"
+#include "hyperion/rendering/renderer.hpp"
+#include "hyperion/rendering/immediate_renderer.hpp"
 
 namespace Hyperion {
     
@@ -30,6 +31,9 @@ namespace Hyperion {
         Audio::AudioEngine::Init(settings.audio.backend);
 
         AssetLibrary::Init(settings.assets.hot_loading, settings.assets.shader_path, settings.assets.texture_path);
+
+        Rendering::Renderer::Init();
+        Rendering::ImmediateRenderer::Init();
     }
 
     void Engine::Update(f32 delta_time) {

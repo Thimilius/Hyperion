@@ -36,9 +36,12 @@ namespace Hyperion::Rendering {
         ImmediateRenderer() = delete;
         ~ImmediateRenderer() = delete;
 
-        static void AddVertex(Vec3 position, Color color);
+        static void Init();
 
+        static void AddVertex(Vec3 position, Color color);
         static void Flush(PrimitiveType type);
+
+        friend class Hyperion::Engine;
     };
 
 }
