@@ -45,8 +45,6 @@ namespace Hyperion {
 
         inline VSyncMode GetVSyncMode() const { return m_vsync_mode; }
         virtual void SetVSyncMode(VSyncMode vsync_mode) = 0;
-
-        inline const Scope<Rendering::GraphicsContext> &GetGraphicsContext() const { return m_graphics_context; }
         
         virtual void SetIcon(const String &path) = 0;
     protected:

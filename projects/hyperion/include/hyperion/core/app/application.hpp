@@ -11,11 +11,11 @@ namespace Hyperion {
 
     class Application {
     private:
-        static Application *s_instance;
-
         Ref<Window> m_window;
         bool m_running;
         ApplicationSettings m_starting_settings;
+
+        inline static Application *s_instance;
     public:
         Application(const ApplicationSettings &settings);
         virtual ~Application() = default;

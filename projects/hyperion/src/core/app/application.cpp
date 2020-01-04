@@ -9,8 +9,6 @@
 
 namespace Hyperion {
 
-    Application *Application::s_instance = nullptr;
-
     Application::Application(const ApplicationSettings &settings) {
         HYP_ASSERT_MESSAGE(!s_instance, "Trying to create application more than once!");
         s_instance = this;

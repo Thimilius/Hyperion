@@ -74,6 +74,10 @@ namespace Hyperion {
         SetVSyncMode(settings.vsync_mode);
     }
 
+    WindowsWindow::~WindowsWindow() {
+        DestroyWindow(m_window_handle);
+    }
+
     void WindowsWindow::SetTitle(const String &title) {
         m_title = title;
         if (!SetWindowTextW(m_window_handle, StringUtils::Utf8ToUtf16(title).c_str())) {

@@ -10,6 +10,10 @@ namespace Hyperion::Rendering {
         m_device_context = GetDC(window_handle);
     }
 
+    WindowsOpenGLGraphicsContext::~WindowsOpenGLGraphicsContext() {
+        wglDeleteContext(m_opengl_context);
+    }
+
     void WindowsOpenGLGraphicsContext::Init() {
         // Create temp context for extension loading
         {
@@ -66,12 +70,12 @@ namespace Hyperion::Rendering {
                 WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
                 0
             };
-            HGLRC opengl_context = wglCreateContextAttribsARB(m_device_context, nullptr, context_attributes);
-            if (!opengl_context) {
+            m_opengl_context = wglCreateContextAttribsARB(m_device_context, nullptr, context_attributes);
+            if (!m_opengl_context) {
                 HYP_PANIC_MESSAGE("OpenGL", "Failed to create OpenGL context!");
             }
 
-            wglMakeCurrent(m_device_context, opengl_context);
+            wglMakeCurrent(m_device_context, m_opengl_context);
 
             if (!gladLoadGL()) {
                 HYP_PANIC_MESSAGE("OpenGL", "Failed to load OpenGL extensions!");

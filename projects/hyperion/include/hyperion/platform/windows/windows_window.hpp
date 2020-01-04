@@ -13,6 +13,7 @@ namespace Hyperion {
         WINDOWPLACEMENT m_previous_placement;
     public:
         WindowsWindow(const WindowSettings &settings, Rendering::RenderBackend render_backend);
+        ~WindowsWindow();
 
         void SetTitle(const String &title) override;
         void SetSize(u32 width, u32 height) override;
