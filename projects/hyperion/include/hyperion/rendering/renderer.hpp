@@ -1,10 +1,11 @@
 #pragma once
 
 #include "hyperion/common.hpp"
+#include "hyperion/core/math/mat4.hpp"
 #include "hyperion/rendering/shader.hpp"
 #include "hyperion/rendering/mesh.hpp"
 #include "hyperion/rendering/camera.hpp"
-#include "hyperion/core/math/mat4.hpp"
+#include "hyperion/rendering/texture_cubemap.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -19,16 +20,27 @@ namespace Hyperion::Rendering {
             } transform;
         };
 
+        struct Skybox {
+            Ref<Shader> shader;
+            Ref<Mesh> mesh;
+        };
+
         inline static State s_state;
+        inline static Skybox s_skybox;
     public:
         static void Begin(const Ref<Camera> &camera);
-        static void Submit(const Ref<Mesh> &mesh, const Ref<Shader> &shader, const Mat4 &transform);
+        static void DrawSkybox(const Ref<TextureCubemap> &skybox);
+        static void Draw(const Ref<Mesh> &mesh, const Ref<Shader> &shader, const Mat4 &transform);
         static void End();
     private:
         Renderer() = delete;
         ~Renderer() = delete;
 
         static void Init();
+
+        static void PrepareShader(const Ref<Shader> &shader);
+        static void PrepareShader(const Ref<Shader> &shader, const Mat4 &transform);
+        static void Draw(const Ref<Mesh> &mesh);
 
         friend class Hyperion::Engine;
     };

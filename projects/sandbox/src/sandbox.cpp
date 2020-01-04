@@ -16,7 +16,6 @@ protected:
     Ref<Mesh> m_cube_mesh;
     Ref<Shader> m_cube_shader;
     Ref<Texture2D> m_cube_texture;
-    Ref<Shader> m_skybox_shader;
     Ref<TextureCubemap> m_skybox_texture;
 
     void OnInit() override {
@@ -27,7 +26,6 @@ protected:
         m_cube_shader = AssetLibrary::GetShader("phong");
         m_cube_texture = AssetLibrary::GetTexture2D("grass");
         
-        m_skybox_shader = AssetLibrary::GetShader("skybox");
         m_skybox_texture = AssetLibrary::LoadTextureCubemap("skybox", {
             { TextureCubemapFace::PositiveX, "data/textures/skybox/skybox_right.jpg" },
             { TextureCubemapFace::NegativeX, "data/textures/skybox/skybox_left.jpg" },
@@ -58,14 +56,8 @@ protected:
 
         Renderer::Begin(m_camera);
         {
-            RenderEngine::DisableFeature(RenderFeature::Culling);
+            Renderer::DrawSkybox(m_skybox_texture);
 
-            m_skybox_shader->Bind();
-            m_skybox_shader->SetInt("u_texture", 0);
-            m_skybox_texture->Bind(0);
-            Renderer::Submit(m_cube_mesh, m_skybox_shader, Mat4::Identity());
-
-            RenderEngine::EnableFeature(RenderFeature::Culling);
             RenderEngine::Clear(ClearMask::Depth);
 
             m_cube_shader->Bind();
@@ -74,7 +66,7 @@ protected:
             m_cube_shader->SetFloat3("u_light.color", Vec3::One());
             m_cube_shader->SetInt("u_texture", 0);
             m_cube_texture->Bind(0);
-            Renderer::Submit(m_cube_mesh, m_cube_shader, Mat4::Identity());
+            Renderer::Draw(m_cube_mesh, m_cube_shader, Mat4::Identity());
         }
         Renderer::End();
 

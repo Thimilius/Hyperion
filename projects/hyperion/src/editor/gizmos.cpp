@@ -33,13 +33,13 @@ namespace Hyperion::Editor {
 
             // X gizmo
             m_shader->SetFloat3("u_color", Vec3(1, 0, 0));
-            Renderer::Submit(m_mesh, m_shader, scale * Mat4::Rotate(Vec3(0, 0, 1), -90.0f));
+            Renderer::Draw(m_mesh, m_shader, scale * Mat4::Rotate(Vec3(0, 0, 1), -90.0f));
             // Y gizmo
             m_shader->SetFloat3("u_color", Vec3(0, 1, 0));
-            Renderer::Submit(m_mesh, m_shader, scale * Mat4::Identity());
+            Renderer::Draw(m_mesh, m_shader, scale * Mat4::Identity());
             // Z gizmo
             m_shader->SetFloat3("u_color", Vec3(0, 0, 1));
-            Renderer::Submit(m_mesh, m_shader, scale * Mat4::Rotate(Vec3(1, 0, 0), 90.0f));
+            Renderer::Draw(m_mesh, m_shader, scale * Mat4::Rotate(Vec3(1, 0, 0), 90.0f));
         }
         Renderer::End();
     }
