@@ -21,11 +21,18 @@ namespace Hyperion::Rendering {
             u32 vertex_offset;
         };
 
+        struct Immediate {
+            inline static const u32 DATA_BUFFER_SIZE = 2048;
+
+            Ref<Shader> shader;
+            Ref<VertexArray> vertex_array;
+            Ref<VertexBuffer> vertex_buffer;
+
+            VertexImmediate data_buffer[DATA_BUFFER_SIZE];
+        };
+
         inline static State s_state;
-        inline static Ref<Shader> s_immediate_shader;
-        inline static VertexImmediate s_data_buffer[2000];
-        inline static Ref<VertexArray> s_vertex_array;
-        inline static Ref<VertexBuffer> s_vertex_buffer;
+        inline static Immediate s_immediate;
     public:
         static void Begin(const Ref<Camera> &camera);
         static void Draw(PrimitiveType primitive_type, const Ref<VertexArray> &vertex_array, u32 vertex_count);
