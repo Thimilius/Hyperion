@@ -41,6 +41,7 @@ namespace Hyperion {
         static KeyModifier GetKeyModifier();
         static u32 GetMouseButtonFromMessage(u32 message, u32 w_param);
         static Gamepad GetGamepadFromId(u32 id);
+        static Vec2 TranslateGamepadAxis(f32 x, f32 y);
 
         static LRESULT CALLBACK MessageCallback(HWND window_handle, u32 message, WPARAM first_message_param, LPARAM second_message_param);
     };

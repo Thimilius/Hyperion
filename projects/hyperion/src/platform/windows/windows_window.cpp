@@ -276,13 +276,30 @@ namespace Hyperion {
             auto begin = g_connected_gamepads.begin();
             auto end = g_connected_gamepads.end();
 
+            Gamepad gamepad = GetGamepadFromId(gamepad_id);
+
             if (result != ERROR_SUCCESS) {
                 if (std::find(begin, end, gamepad_id) != end) {
                     g_connected_gamepads.erase(std::remove(begin, end, gamepad_id), end);
 
-                    GamepadConnectionChangedEvent event(GetGamepadFromId(gamepad_id), false);
+                    GamepadConnectionChangedEvent event(gamepad, false);
                     DispatchEvent(event);
                 }
+            }
+
+            {
+                f32 left_stick_x = (state.Gamepad.sThumbLX + 0.5f) / 32767.5f;
+                f32 left_stick_y = -(state.Gamepad.sThumbLY + 0.5f) / 32767.5f;
+                f32 right_stick_x = (state.Gamepad.sThumbLX + 0.5f) / 32767.5f;
+                f32 right_stick_y = -(state.Gamepad.sThumbLY + 0.5f) / 32767.5f;
+                f32 left_trigger = state.Gamepad.bLeftTrigger / 255.0f;
+                f32 right_trigger = state.Gamepad.bLeftTrigger / 255.0f;
+
+                Input::s_gamepads[(s32)gamepad].axes[(s32)GamepadAxis::LeftStick] = TranslateGamepadAxis(left_stick_x, left_stick_y);
+                Input::s_gamepads[(s32)gamepad].axes[(s32)GamepadAxis::RightStick] = TranslateGamepadAxis(right_stick_x, right_stick_y);
+                // Left and right trigger are treated as if they had the same two x and y axes
+                Input::s_gamepads[(s32)gamepad].axes[(s32)GamepadAxis::LeftTrigger] = Vec2(left_trigger, left_trigger);
+                Input::s_gamepads[(s32)gamepad].axes[(s32)GamepadAxis::RightTrigger] = Vec2(right_trigger, right_trigger);
             }
         }
     }
@@ -295,11 +312,13 @@ namespace Hyperion {
             auto begin = g_connected_gamepads.begin();
             auto end = g_connected_gamepads.end();
 
+            Gamepad gamepad = GetGamepadFromId(gamepad_id);
+
             if (result == ERROR_SUCCESS) {
                 if (std::find(begin, end, gamepad_id) == end) {
                     g_connected_gamepads.push_back(gamepad_id);
 
-                    GamepadConnectionChangedEvent event(GetGamepadFromId(gamepad_id), true);
+                    GamepadConnectionChangedEvent event(gamepad, true);
                     if (use_custom_callback) {
                         callback(event);
                     } else {
@@ -310,7 +329,7 @@ namespace Hyperion {
                 if (std::find(begin, end, gamepad_id) != end) {
                     g_connected_gamepads.erase(std::remove(begin, end, gamepad_id), end);
 
-                    GamepadConnectionChangedEvent event(GetGamepadFromId(gamepad_id), false);
+                    GamepadConnectionChangedEvent event(gamepad, false);
                     if (use_custom_callback) {
                         callback(event);
                     } else {
@@ -560,6 +579,21 @@ namespace Hyperion {
             case 2: return Gamepad::Gamepad3;
             case 3: return Gamepad::Gamepad4;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return Gamepad::Gamepad1;
+        }
+    }
+
+    Vec2 WindowsWindow::TranslateGamepadAxis(f32 x, f32 y) {
+        // Deadzone logic from: http://www.third-helix.com/2013/04/12/doing-thumbstick-dead-zones-right.html
+        f32 dead_zone = 0.15f;
+        Vec2 left_stick = Vec2(x, y);
+
+        if (left_stick.Magnitude() < dead_zone) {
+            return Vec2();
+        } else {
+            left_stick = left_stick.Normalized() * ((left_stick.Magnitude() - dead_zone) / (1 - dead_zone));
+            left_stick.x = Math::Clamp(left_stick.x, -1.0f, 1.0f);
+            left_stick.y = Math::Clamp(left_stick.y, -1.0f, 1.0f);
+            return left_stick;
         }
     }
 
