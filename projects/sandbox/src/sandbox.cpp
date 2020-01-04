@@ -27,12 +27,12 @@ protected:
         m_cube_texture = AssetLibrary::GetTexture2D("grass");
         
         m_skybox_texture = AssetLibrary::LoadTextureCubemap("skybox", {
-            { TextureCubemapFace::PositiveX, "data/textures/skybox/skybox_right.jpg" },
-            { TextureCubemapFace::NegativeX, "data/textures/skybox/skybox_left.jpg" },
-            { TextureCubemapFace::PositiveY, "data/textures/skybox/skybox_top.jpg" },
-            { TextureCubemapFace::NegativeY, "data/textures/skybox/skybox_bottom.jpg" },
-            { TextureCubemapFace::PositiveZ, "data/textures/skybox/skybox_back.jpg" },
-            { TextureCubemapFace::NegativeZ, "data/textures/skybox/skybox_front.jpg" },
+            { TextureCubemapFace::PositiveX, "data/textures/galaxy/galaxy_right.png" },
+            { TextureCubemapFace::NegativeX, "data/textures/galaxy/galaxy_left.png" },
+            { TextureCubemapFace::PositiveY, "data/textures/galaxy/galaxy_top.png" },
+            { TextureCubemapFace::NegativeY, "data/textures/galaxy/galaxy_bottom.png" },
+            { TextureCubemapFace::PositiveZ, "data/textures/galaxy/galaxy_back.png" },
+            { TextureCubemapFace::NegativeZ, "data/textures/galaxy/galaxy_front.png" },
         });
 
         EditorEngine::OnInit(m_camera);
