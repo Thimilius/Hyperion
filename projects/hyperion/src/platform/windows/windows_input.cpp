@@ -153,7 +153,7 @@ namespace Hyperion {
             memset(&gamepad.buttons_last, false, sizeof(gamepad.buttons_last));
 
             for (u32 j = 0; j < (u32)GamepadAxis::Last; j++) {
-                gamepad.axes[i] = Vec2();
+                gamepad.axes[j] = Vec2();
             }
         }
 
