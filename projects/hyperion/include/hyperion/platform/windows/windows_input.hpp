@@ -31,8 +31,9 @@ namespace Hyperion {
             Vec2 axes[(s32)GamepadAxis::Last];
         };
 
-        inline static Vector<Gamepad> m_gamepads_connected;
-        inline static GamepadState m_gamepads[(s32)Gamepad::Last];
+        bool m_gamepad_input_active = true;
+        Vector<Gamepad> m_gamepads_connected;
+        GamepadState m_gamepads[(s32)Gamepad::Last];
     public:
         bool GetKeyDown(KeyCode key_code) const override { return m_keys_down[(s32)key_code]; }
         bool GetKey(KeyCode key_code) const override { return m_keys[(s32)key_code]; }

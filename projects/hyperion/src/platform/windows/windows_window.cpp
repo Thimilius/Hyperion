@@ -625,8 +625,6 @@ namespace Hyperion {
 
             case WM_SETFOCUS: 
             case WM_KILLFOCUS: {
-                window->m_input->Reset();
-
                 WindowFocusEvent event(message == WM_SETFOCUS);
                 window->DispatchEvent(event);
                 break;
