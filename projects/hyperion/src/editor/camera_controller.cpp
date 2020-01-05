@@ -129,7 +129,7 @@ namespace Hyperion::Editor {
         }
 
         // Reset
-        if (Input::GetKeyDown(KeyCode::R)) {
+        if (Input::GetKeyDown(KeyCode::R) || Input::GetGamepadButtonDown(Gamepad::Gamepad1, GamepadButtonCode::RightThumb)) {
             position = Vec3(2, 2, 2);
             forward = Vec3(-0.579227984f, -0.579227984f, -0.579227984f);
             up = Vec3::Up();

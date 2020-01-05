@@ -34,6 +34,7 @@ namespace Hyperion {
         void DispatchEvent(Event &event);
 
         void UpdateGamepads();
+        void HandleGamepadButtonCode(Gamepad gamepad, GamepadButtonCode button_code, bool down);
         void QueryConnectedGamepads(bool use_custom_callback, const EventCallbackFunction &callback);
 
         static KeyCode TranslateKeyCode(u32 w_param, u32 l_param);

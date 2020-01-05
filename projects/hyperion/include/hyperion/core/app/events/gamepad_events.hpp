@@ -15,6 +15,33 @@ namespace Hyperion {
         EventCategory GetCategory() const override { return EventCategory::Input & EventCategory::Gamepad; }
     };
 
+    class GamepadButtonEvent : public GamepadEvent {
+    private:
+        GamepadButtonCode m_button_code;
+    public:
+        GamepadButtonEvent(Gamepad gamepad, GamepadButtonCode button_code) : GamepadEvent(gamepad), m_button_code(button_code) { }
+
+        inline GamepadButtonCode GetGamepadButtonCode() const { return m_button_code; }
+    };
+
+    class GamepadButtonPressedEvent : public GamepadButtonEvent {
+    public:
+        GamepadButtonPressedEvent(Gamepad gamepad, GamepadButtonCode button_code) : GamepadButtonEvent(gamepad, button_code) { }
+
+        EventType GetType() const override { return EventType::GamepadButtonPressed; }
+
+        static EventType GetStaticType() { return EventType::GamepadButtonPressed; }
+    };
+
+    class GamepadButtonReleasedEvent : public GamepadButtonEvent {
+    public:
+        GamepadButtonReleasedEvent(Gamepad gamepad, GamepadButtonCode button_code) : GamepadButtonEvent(gamepad, button_code) {}
+
+        EventType GetType() const override { return EventType::GamepadButtonReleased; }
+
+        static EventType GetStaticType() { return EventType::GamepadButtonReleased; }
+    };
+
     class GamepadConnectionChangedEvent : public GamepadEvent {
     private:
         bool m_connected;

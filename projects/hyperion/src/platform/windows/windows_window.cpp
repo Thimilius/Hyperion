@@ -13,6 +13,9 @@
 #include "hyperion/core/app/events/gamepad_events.hpp"
 #include "hyperion/platform/windows/windows_opengl_graphics_context.hpp"
 
+// TODO: Move the input stuff into its own windows_input class
+// FIXME: Do not send any gamepad events when application is not in focus
+
 namespace Hyperion {
 
     // To distinguish the two shift keys we explicily store their previous state
@@ -278,6 +281,7 @@ namespace Hyperion {
 
             Gamepad gamepad = GetGamepadFromId(gamepad_id);
 
+            // Handle disconnection
             if (result != ERROR_SUCCESS) {
                 if (std::find(begin, end, gamepad_id) != end) {
                     g_connected_gamepads.erase(std::remove(begin, end, gamepad_id), end);
@@ -287,6 +291,26 @@ namespace Hyperion {
                 }
             }
 
+            // Handle buttons
+            {
+                WORD buttons = state.Gamepad.wButtons;
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::Start, buttons & XINPUT_GAMEPAD_START);
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::Back, buttons & XINPUT_GAMEPAD_BACK);
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::A, buttons & XINPUT_GAMEPAD_A);
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::B, buttons & XINPUT_GAMEPAD_B);
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::X, buttons & XINPUT_GAMEPAD_X);
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::Y, buttons & XINPUT_GAMEPAD_Y);
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::DpadLeft, buttons & XINPUT_GAMEPAD_DPAD_LEFT);
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::DpadRight, buttons & XINPUT_GAMEPAD_DPAD_RIGHT);
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::DpadUp, buttons & XINPUT_GAMEPAD_DPAD_UP);
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::DpadDown, buttons & XINPUT_GAMEPAD_DPAD_DOWN);
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::LeftShoulder, buttons & XINPUT_GAMEPAD_LEFT_SHOULDER);
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::RightShoulder, buttons & XINPUT_GAMEPAD_RIGHT_SHOULDER);
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::LeftThumb, buttons & XINPUT_GAMEPAD_LEFT_THUMB);
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::RightThumb, buttons & XINPUT_GAMEPAD_RIGHT_THUMB);
+            }
+
+            // Handle axes
             {
                 f32 left_stick_x = (state.Gamepad.sThumbLX + 0.5f) / 32767.5f;
                 f32 left_stick_y = -(state.Gamepad.sThumbLY + 0.5f) / 32767.5f;
@@ -301,6 +325,21 @@ namespace Hyperion {
                 Input::s_gamepads[(s32)gamepad].axes[(s32)GamepadAxis::LeftTrigger] = Vec2(left_trigger, left_trigger);
                 Input::s_gamepads[(s32)gamepad].axes[(s32)GamepadAxis::RightTrigger] = Vec2(right_trigger, right_trigger);
             }
+        }
+    }
+
+    void WindowsWindow::HandleGamepadButtonCode(Gamepad gamepad, GamepadButtonCode button_code, bool down) {
+        Input::s_gamepads[(s32)gamepad].buttons_down[(s32)button_code] = !Input::s_gamepads[(s32)gamepad].buttons_last[(s32)button_code] && down;
+        Input::s_gamepads[(s32)gamepad].buttons[(s32)button_code] = down;
+        if (down) {
+            GamepadButtonPressedEvent event(gamepad, button_code);
+            DispatchEvent(event);
+        }
+        if (Input::s_gamepads[(s32)gamepad].buttons_last[(s32)button_code] && !down) {
+            Input::s_gamepads[(s32)gamepad].buttons_up[(s32)button_code] = true;
+
+            GamepadButtonReleasedEvent event(gamepad, button_code);
+            DispatchEvent(event);
         }
     }
 

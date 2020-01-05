@@ -169,6 +169,8 @@ namespace Hyperion {
     };
 
     enum class GamepadButtonCode {
+        None,
+
         Start,
         Back,
 
@@ -182,11 +184,11 @@ namespace Hyperion {
         DpadUp,
         DpadDown,
 
-        LeftThumb,
-        RightThumb,
-
         LeftShoulder,
         RightShoulder,
+
+        LeftThumb,
+        RightThumb,
 
         Last
     };
