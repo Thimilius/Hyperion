@@ -4,9 +4,9 @@
 #import "basic_vertex"
 
 void main() {
-	o_vs_to_fs.position = obj_to_world_space(a_position);
-	o_vs_to_fs.normal = normal_to_world_space(a_normal);
-	o_vs_to_fs.uv = a_uv;
+	o_v2f.position = obj_to_world_space(a_position);
+	o_v2f.normal = normal_to_world_space(a_normal);
+	o_v2f.uv = a_uv;
 
 	gl_Position = obj_to_clip_space(a_position);
 }
@@ -29,8 +29,8 @@ void main() {
 	
 	// Diffuse
 	float diffuse_intensity = 0.8;
-	vec3 to_light_direction = normalize(u_camera.position - i_vs_to_fs.position);
-	diffuse_intensity = diffuse_intensity * max(dot(i_vs_to_fs.normal, to_light_direction), 0.0);
+	vec3 to_light_direction = normalize(u_camera.position - i_v2f.position);
+	diffuse_intensity = diffuse_intensity * max(dot(i_v2f.normal, to_light_direction), 0.0);
 	vec3 diffuse_lighting = vec3(diffuse_intensity);
 	
 	// Final lighting

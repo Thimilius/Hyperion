@@ -285,7 +285,7 @@ namespace Hyperion::Rendering {
                         vec3 position;
                         vec3 normal;
                         vec2 uv;
-                    } o_vs_to_fs;
+                    } o_v2f;
 
                     uniform struct Transform {
                         mat4 model;
@@ -313,7 +313,7 @@ namespace Hyperion::Rendering {
 	                    vec3 position;
 	                    vec3 normal;
 	                    vec2 uv;
-                    } i_vs_to_fs;
+                    } i_v2f;
                 )";
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }

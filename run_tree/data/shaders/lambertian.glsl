@@ -4,9 +4,9 @@
 #import "basic_vertex"
 
 void main() {
-	o_vs_to_fs.position = obj_to_world_space(a_position);
-	o_vs_to_fs.normal = normal_to_world_space(a_normal);
-	o_vs_to_fs.uv = a_uv;
+	o_v2f.position = obj_to_world_space(a_position);
+	o_v2f.normal = normal_to_world_space(a_normal);
+	o_v2f.uv = a_uv;
 
 	gl_Position = obj_to_clip_space(a_position);
 }
@@ -25,7 +25,7 @@ uniform sampler2D u_texture;
 
 void main() {
 	// Texture
-	vec4 texture_color = texture(u_texture, i_vs_to_fs.uv);
+	vec4 texture_color = texture(u_texture, i_v2f.uv);
 	
 	// Ambient
 	float ambient_intensity = 0.2;
@@ -33,8 +33,8 @@ void main() {
 	
 	// Diffuse
 	float diffuse_intensity = 0.8;
-	vec3 light_direction = normalize(u_light.position - i_vs_to_fs.position);
-	diffuse_intensity = diffuse_intensity * max(dot(i_vs_to_fs.normal, light_direction), 0.0);
+	vec3 light_direction = normalize(u_light.position - i_v2f.position);
+	diffuse_intensity = diffuse_intensity * max(dot(i_v2f.normal, light_direction), 0.0);
 	vec3 diffuse_lighting = diffuse_intensity * u_light.color;
 	
 	// Final lighting

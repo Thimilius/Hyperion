@@ -4,9 +4,9 @@
 #import "basic_vertex"
 
 void main() {
-	o_vs_to_fs.position = obj_to_world_space(a_position);
-	o_vs_to_fs.normal = normal_to_world_space(a_normal);
-	o_vs_to_fs.uv = a_uv;
+	o_v2f.position = obj_to_world_space(a_position);
+	o_v2f.normal = normal_to_world_space(a_normal);
+	o_v2f.uv = a_uv;
 
 	gl_Position = obj_to_clip_space(a_position);
 }
@@ -19,5 +19,5 @@ void main() {
 uniform sampler2D u_texture;
 
 void main() {
-	o_color = texture(u_texture, i_vs_to_fs.uv);
+	o_color = texture(u_texture, i_v2f.uv);
 }

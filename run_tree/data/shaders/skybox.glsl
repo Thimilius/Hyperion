@@ -4,7 +4,7 @@
 #import "basic_vertex"
 
 void main() {
-	o_vs_to_fs.position = a_position;
+	o_v2f.position = a_position;
 
 	gl_Position = u_transform.projection * mat4(mat3(u_transform.view)) * vec4(a_position, 1.0);
 }
@@ -17,5 +17,5 @@ void main() {
 uniform samplerCube u_texture;
 
 void main() {
-	o_color = texture(u_texture, i_vs_to_fs.position);
+	o_color = texture(u_texture, i_v2f.position);
 }
