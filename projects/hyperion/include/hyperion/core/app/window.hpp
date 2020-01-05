@@ -3,6 +3,7 @@
 #include "hyperion/common.hpp"
 
 #include "hyperion/core/app/events/event.hpp"
+#include "hyperion/core/app/input.hpp"
 #include "hyperion/core/app/window_settings.hpp"
 #include "hyperion/rendering/render_backend.hpp"
 
@@ -48,13 +49,12 @@ namespace Hyperion {
         
         virtual void SetIcon(const String &path) = 0;
     protected:
-        virtual void Init(const EventCallbackFunction &callback) = 0;
         virtual void Update() = 0;
         virtual void Show() = 0;
 
-        void SetEventCallbackFunction(const EventCallbackFunction &callback) { m_event_callback = callback; }
+        void SetEventCallbackFunction(const EventCallbackFunction &event_callback) { m_event_callback = event_callback; }
 
-        static Ref<Window> Create(const WindowSettings &settings, Rendering::RenderBackend render_backend);
+        static Ref<Window> Create(const WindowSettings &settings, Rendering::RenderBackend render_backend, InputImplementation *input_driver);
 
         friend class Application;
     };

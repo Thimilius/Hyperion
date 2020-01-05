@@ -2,18 +2,28 @@
 
 #include "hyperion/core/app/window.hpp"
 #include "hyperion/core/math/vec2.hpp"
+#include "hyperion/platform/windows/windows_input.hpp"
 
 #include <Windows.h>
 
 namespace Hyperion {
 
     class WindowsWindow : public Window {
-        using EventCallbackFunction = std::function<void(Event &)>;
     private:
+        WindowsInput *m_input;
+
         HWND m_window_handle;
+        
+        // We store the last window placement in order to switch correctly
+        // between windowed and borderless mode
         WINDOWPLACEMENT m_previous_placement;
+        
+        // To distinguish the two shift keys we explicily store their previous state
+        // so that we can send out the correct key released events when appropriate
+        mutable bool m_left_shift_last_down = false;
+        mutable bool m_right_shift_last_down = false;
     public:
-        WindowsWindow(const WindowSettings &settings, Rendering::RenderBackend render_backend);
+        WindowsWindow(const WindowSettings &settings, Rendering::RenderBackend render_backend, WindowsInput *input_driver);
         ~WindowsWindow();
 
         void SetTitle(const String &title) override;
@@ -24,25 +34,18 @@ namespace Hyperion {
 
         void SetIcon(const String &path) override;
     private:
-        void Init(const EventCallbackFunction &callback) override;
         void Update() override;
         void Show() override;
-
+        
         Vec2 GetActualWindowSize(u32 client_width, u32 client_height);
 
         void CreateContext(Rendering::RenderBackend backend_api);
-        void DispatchEvent(Event &event);
+        void DispatchEvent(Event &event) const;
 
-        void UpdateGamepads();
-        void HandleGamepadButtonCode(Gamepad gamepad, GamepadButtonCode button_code, bool down);
-        void QueryConnectedGamepads(bool use_custom_callback, const EventCallbackFunction &callback);
-
-        static KeyCode TranslateKeyCode(u32 w_param, u32 l_param);
-        static MouseButtonCode TranslateMouseButtonCode(u32 code);
-        static KeyModifier GetKeyModifier();
-        static u32 GetMouseButtonFromMessage(u32 message, u32 w_param);
-        static Gamepad GetGamepadFromId(u32 id);
-        static Vec2 TranslateGamepadAxis(f32 x, f32 y);
+        KeyCode TranslateKeyCode(u32 w_param, u32 l_param) const;
+        MouseButtonCode TranslateMouseButtonCode(u32 code) const;
+        KeyModifier GetKeyModifier() const;
+        u32 GetMouseButtonFromMessage(u32 message, u32 w_param) const;
 
         static LRESULT CALLBACK MessageCallback(HWND window_handle, u32 message, WPARAM first_message_param, LPARAM second_message_param);
     };

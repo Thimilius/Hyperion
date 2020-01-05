@@ -1,7 +1,6 @@
 #pragma once
 
 #include "hyperion/common.hpp"
-#include "hyperion/core/app/input.hpp"
 
 namespace Hyperion {
 

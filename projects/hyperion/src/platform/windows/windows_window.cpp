@@ -2,7 +2,6 @@
 
 #include "hyperion/platform/windows/windows_window.hpp"
 
-#include <Xinput.h>
 #include <Dbt.h>
 
 #include "hyperion/core/app/events/event.hpp"
@@ -13,28 +12,19 @@
 #include "hyperion/core/app/events/gamepad_events.hpp"
 #include "hyperion/platform/windows/windows_opengl_graphics_context.hpp"
 
-// TODO: Move the input stuff into its own windows_input class
-// FIXME: Do not send any gamepad events when application is not in focus
-
 namespace Hyperion {
 
-    // To distinguish the two shift keys we explicily store their previous state
-    // so that we can send out the correct key released events when appropriate
-    static bool g_left_shift_last_down = false;
-    static bool g_right_shift_last_down = false;
-
-    // We store the connected gamepads we want to poll for input
-    static Vector<u32> g_connected_gamepads;
-
-    Ref<Window> Window::Create(const WindowSettings &settings, Rendering::RenderBackend render_backend) {
-        return std::make_shared<WindowsWindow>(settings, render_backend);
+    Ref<Window> Window::Create(const WindowSettings &settings, Rendering::RenderBackend render_backend, InputImplementation *input_driver) {
+        return std::make_shared<WindowsWindow>(settings, render_backend, (WindowsInput *)input_driver);
     }
 
-    WindowsWindow::WindowsWindow(const WindowSettings &settings, Rendering::RenderBackend render_backend) {
+    WindowsWindow::WindowsWindow(const WindowSettings &settings, Rendering::RenderBackend render_backend, WindowsInput *input_driver) {
         m_title = settings.title;
         m_width = settings.width;
         m_height = settings.height;
         m_window_state = WindowState::Normal;
+
+        m_input = input_driver;
 
         u32 window_styles = WS_OVERLAPPEDWINDOW;
         auto window_class_name = L"HYPERION_WINDOW_CLASS";
@@ -85,6 +75,8 @@ namespace Hyperion {
 
         CreateContext(render_backend);
         SetVSyncMode(settings.vsync_mode);
+
+        m_input->QueryConnectedGamepads();
     }
 
     WindowsWindow::~WindowsWindow() {
@@ -166,7 +158,6 @@ namespace Hyperion {
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
-
     }
 
     void WindowsWindow::SetWindowState(WindowState window_state) {
@@ -221,20 +212,16 @@ namespace Hyperion {
         }
     }
 
-    void WindowsWindow::Init(const EventCallbackFunction &callback) {
-        QueryConnectedGamepads(true, callback);
-    }
-
     void WindowsWindow::Update() {
         m_graphics_context->SwapBuffers();
+
+        m_input->Update();
 
         MSG message;
         while (PeekMessageW(&message, nullptr, 0, 0, PM_REMOVE)) {
             TranslateMessage(&message);
             DispatchMessageW(&message);
         }
-
-        UpdateGamepads();
     }
 
     void WindowsWindow::Show() {
@@ -253,8 +240,7 @@ namespace Hyperion {
 
     void WindowsWindow::CreateContext(Rendering::RenderBackend backend_api) {
         switch (backend_api) {
-            case Rendering::RenderBackend::OpenGL:
-            {
+            case Rendering::RenderBackend::OpenGL: {
                 m_graphics_context.reset(new Rendering::WindowsOpenGLGraphicsContext(m_window_handle));
                 break;
             }
@@ -264,122 +250,15 @@ namespace Hyperion {
         m_graphics_context->Init();
     }
 
-    void WindowsWindow::DispatchEvent(Event &event) {
-        if (m_event_callback != nullptr) {
+    void WindowsWindow::DispatchEvent(Event &event) const {
+        m_input->OnEvent(event);
+
+        if (m_event_callback) {
             m_event_callback(event);
         }
     }
 
-    void WindowsWindow::UpdateGamepads() {
-        for (DWORD i = 0; i < g_connected_gamepads.size(); i++) {
-            u32 gamepad_id = g_connected_gamepads[i];
-            XINPUT_STATE state = { 0 };
-            DWORD result = XInputGetState(gamepad_id, &state);
-
-            auto begin = g_connected_gamepads.begin();
-            auto end = g_connected_gamepads.end();
-
-            Gamepad gamepad = GetGamepadFromId(gamepad_id);
-
-            // Handle disconnection
-            if (result != ERROR_SUCCESS) {
-                if (std::find(begin, end, gamepad_id) != end) {
-                    g_connected_gamepads.erase(std::remove(begin, end, gamepad_id), end);
-
-                    GamepadConnectionChangedEvent event(gamepad, false);
-                    DispatchEvent(event);
-                }
-            }
-
-            // Handle buttons
-            {
-                WORD buttons = state.Gamepad.wButtons;
-                HandleGamepadButtonCode(gamepad, GamepadButtonCode::Start, buttons & XINPUT_GAMEPAD_START);
-                HandleGamepadButtonCode(gamepad, GamepadButtonCode::Back, buttons & XINPUT_GAMEPAD_BACK);
-                HandleGamepadButtonCode(gamepad, GamepadButtonCode::A, buttons & XINPUT_GAMEPAD_A);
-                HandleGamepadButtonCode(gamepad, GamepadButtonCode::B, buttons & XINPUT_GAMEPAD_B);
-                HandleGamepadButtonCode(gamepad, GamepadButtonCode::X, buttons & XINPUT_GAMEPAD_X);
-                HandleGamepadButtonCode(gamepad, GamepadButtonCode::Y, buttons & XINPUT_GAMEPAD_Y);
-                HandleGamepadButtonCode(gamepad, GamepadButtonCode::DpadLeft, buttons & XINPUT_GAMEPAD_DPAD_LEFT);
-                HandleGamepadButtonCode(gamepad, GamepadButtonCode::DpadRight, buttons & XINPUT_GAMEPAD_DPAD_RIGHT);
-                HandleGamepadButtonCode(gamepad, GamepadButtonCode::DpadUp, buttons & XINPUT_GAMEPAD_DPAD_UP);
-                HandleGamepadButtonCode(gamepad, GamepadButtonCode::DpadDown, buttons & XINPUT_GAMEPAD_DPAD_DOWN);
-                HandleGamepadButtonCode(gamepad, GamepadButtonCode::LeftShoulder, buttons & XINPUT_GAMEPAD_LEFT_SHOULDER);
-                HandleGamepadButtonCode(gamepad, GamepadButtonCode::RightShoulder, buttons & XINPUT_GAMEPAD_RIGHT_SHOULDER);
-                HandleGamepadButtonCode(gamepad, GamepadButtonCode::LeftThumb, buttons & XINPUT_GAMEPAD_LEFT_THUMB);
-                HandleGamepadButtonCode(gamepad, GamepadButtonCode::RightThumb, buttons & XINPUT_GAMEPAD_RIGHT_THUMB);
-            }
-
-            // Handle axes
-            {
-                f32 left_stick_x = (state.Gamepad.sThumbLX + 0.5f) / 32767.5f;
-                f32 left_stick_y = -(state.Gamepad.sThumbLY + 0.5f) / 32767.5f;
-                f32 right_stick_x = (state.Gamepad.sThumbRX + 0.5f) / 32767.5f;
-                f32 right_stick_y = -(state.Gamepad.sThumbRY + 0.5f) / 32767.5f;
-                f32 left_trigger = state.Gamepad.bLeftTrigger / 255.0f;
-                f32 right_trigger = state.Gamepad.bRightTrigger / 255.0f;
-
-                Input::s_gamepads[(s32)gamepad].axes[(s32)GamepadAxis::LeftStick] = TranslateGamepadAxis(left_stick_x, left_stick_y);
-                Input::s_gamepads[(s32)gamepad].axes[(s32)GamepadAxis::RightStick] = TranslateGamepadAxis(right_stick_x, right_stick_y);
-                // Left and right trigger are treated as if they had the same two x and y axes
-                Input::s_gamepads[(s32)gamepad].axes[(s32)GamepadAxis::LeftTrigger] = Vec2(left_trigger, left_trigger);
-                Input::s_gamepads[(s32)gamepad].axes[(s32)GamepadAxis::RightTrigger] = Vec2(right_trigger, right_trigger);
-            }
-        }
-    }
-
-    void WindowsWindow::HandleGamepadButtonCode(Gamepad gamepad, GamepadButtonCode button_code, bool down) {
-        Input::s_gamepads[(s32)gamepad].buttons_down[(s32)button_code] = !Input::s_gamepads[(s32)gamepad].buttons_last[(s32)button_code] && down;
-        Input::s_gamepads[(s32)gamepad].buttons[(s32)button_code] = down;
-        if (down) {
-            GamepadButtonPressedEvent event(gamepad, button_code);
-            DispatchEvent(event);
-        }
-        if (Input::s_gamepads[(s32)gamepad].buttons_last[(s32)button_code] && !down) {
-            Input::s_gamepads[(s32)gamepad].buttons_up[(s32)button_code] = true;
-
-            GamepadButtonReleasedEvent event(gamepad, button_code);
-            DispatchEvent(event);
-        }
-    }
-
-    void WindowsWindow::QueryConnectedGamepads(bool use_custom_callback, const EventCallbackFunction &callback) {
-        for (DWORD gamepad_id = 0; gamepad_id < XUSER_MAX_COUNT; gamepad_id++) {
-            XINPUT_STATE state = { 0 };
-            DWORD result = XInputGetState(gamepad_id, &state);
-
-            auto begin = g_connected_gamepads.begin();
-            auto end = g_connected_gamepads.end();
-
-            Gamepad gamepad = GetGamepadFromId(gamepad_id);
-
-            if (result == ERROR_SUCCESS) {
-                if (std::find(begin, end, gamepad_id) == end) {
-                    g_connected_gamepads.push_back(gamepad_id);
-
-                    GamepadConnectionChangedEvent event(gamepad, true);
-                    if (use_custom_callback) {
-                        callback(event);
-                    } else {
-                        DispatchEvent(event);
-                    }
-                }
-            } else {
-                if (std::find(begin, end, gamepad_id) != end) {
-                    g_connected_gamepads.erase(std::remove(begin, end, gamepad_id), end);
-
-                    GamepadConnectionChangedEvent event(gamepad, false);
-                    if (use_custom_callback) {
-                        callback(event);
-                    } else {
-                        DispatchEvent(event);
-                    }
-                }
-            }
-        }
-    }
-
-    MouseButtonCode WindowsWindow::TranslateMouseButtonCode(u32 code) {
+    MouseButtonCode WindowsWindow::TranslateMouseButtonCode(u32 code) const {
         code = code & ~(MK_CONTROL & MK_SHIFT);
 
         switch (code) {
@@ -394,7 +273,7 @@ namespace Hyperion {
         }
     }
 
-    KeyCode WindowsWindow::TranslateKeyCode(u32 w_param, u32 l_param) {
+    KeyCode WindowsWindow::TranslateKeyCode(u32 w_param, u32 l_param) const {
         // Left and right keys need to be distinguished as extended keys
         if (w_param == VK_CONTROL) {
             if (l_param & 0x01000000) {
@@ -419,14 +298,14 @@ namespace Hyperion {
         } else if (w_param == VK_SHIFT) {
             // Left and right shift keys are not send as extended keys
             // and therefore need to be queried explicitly
-            bool previous_left_shift_down = g_left_shift_last_down;
-            bool previous_right_shift_down = g_right_shift_last_down;
-            g_left_shift_last_down = GetKeyState(VK_LSHIFT) & 0x8000;
-            g_right_shift_last_down = GetAsyncKeyState(VK_RSHIFT) & 0x8000;
+            bool previous_left_shift_down = m_left_shift_last_down;
+            bool previous_right_shift_down = m_right_shift_last_down;
+            m_left_shift_last_down = GetKeyState(VK_LSHIFT) & 0x8000;
+            m_right_shift_last_down = GetAsyncKeyState(VK_RSHIFT) & 0x8000;
 
-            if (g_left_shift_last_down) {
+            if (m_left_shift_last_down) {
                 return KeyCode::LeftShift;
-            } else if (g_right_shift_last_down) {
+            } else if (m_right_shift_last_down) {
                 return KeyCode::RightShift;
             } else {
                 // If neither the right nor the left shift key is down this means they just got released
@@ -566,7 +445,7 @@ namespace Hyperion {
         }
     }
 
-    KeyModifier WindowsWindow::GetKeyModifier() {
+    KeyModifier WindowsWindow::GetKeyModifier() const {
         KeyModifier key_modifier = KeyModifier::None;
 
         if (GetKeyState(VK_SHIFT) & 0x8000) {
@@ -591,7 +470,7 @@ namespace Hyperion {
         return key_modifier;
     }
 
-    u32 WindowsWindow::GetMouseButtonFromMessage(u32 message, u32 w_param) {
+    u32 WindowsWindow::GetMouseButtonFromMessage(u32 message, u32 w_param) const {
         if (message == WM_LBUTTONDOWN || message == WM_LBUTTONUP) {
             return MK_LBUTTON;
         } else if (message == WM_RBUTTONDOWN || message == WM_RBUTTONUP) {
@@ -608,31 +487,6 @@ namespace Hyperion {
             }
         } else {
             return 0;
-        }
-    }
-
-    Gamepad WindowsWindow::GetGamepadFromId(u32 id) {
-        switch (id) {
-            case 0: return Gamepad::Gamepad1;
-            case 1: return Gamepad::Gamepad2;
-            case 2: return Gamepad::Gamepad3;
-            case 3: return Gamepad::Gamepad4;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return Gamepad::Gamepad1;
-        }
-    }
-
-    Vec2 WindowsWindow::TranslateGamepadAxis(f32 x, f32 y) {
-        // Deadzone logic from: http://www.third-helix.com/2013/04/12/doing-thumbstick-dead-zones-right.html
-        f32 dead_zone = 0.15f;
-        Vec2 left_stick = Vec2(x, y);
-
-        if (left_stick.Magnitude() < dead_zone) {
-            return Vec2();
-        } else {
-            left_stick = left_stick.Normalized() * ((left_stick.Magnitude() - dead_zone) / (1 - dead_zone));
-            left_stick.x = Math::Clamp(left_stick.x, -1.0f, 1.0f);
-            left_stick.y = Math::Clamp(left_stick.y, -1.0f, 1.0f);
-            return left_stick;
         }
     }
 
@@ -654,7 +508,7 @@ namespace Hyperion {
                 // This querying is probably to frequently as there are device changes beeing detected
                 // that have pretty much nothing to do with a gameplay beeing added or removed
                 if (w_param == DBT_DEVNODES_CHANGED) {
-                    window->QueryConnectedGamepads(false, [](Event &){ });
+                    window->m_input->QueryConnectedGamepads();
                 }
                 break;
             }
@@ -771,6 +625,8 @@ namespace Hyperion {
 
             case WM_SETFOCUS: 
             case WM_KILLFOCUS: {
+                window->m_input->Reset();
+
                 WindowFocusEvent event(message == WM_SETFOCUS);
                 window->DispatchEvent(event);
                 break;

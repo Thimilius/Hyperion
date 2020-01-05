@@ -1,0 +1,245 @@
+#include "hyppch.hpp"
+
+#include "hyperion/platform/windows/windows_input.hpp"
+
+#include <Xinput.h>
+
+#include "hyperion/core/app/events/app_events.hpp"
+#include "hyperion/core/app/events/window_events.hpp"
+
+// FIXME: Do not send any gamepad events when application is not in focus
+
+namespace Hyperion {
+
+    Scope<InputImplementation> Input::s_input_implementation = std::make_unique<WindowsInput>();
+
+    void WindowsInput::OnEvent(Event &event) {
+        EventDispatcher dispatcher(event);
+
+        // Handle window events
+        dispatcher.Dispatch<WindowCloseEvent>([this](WindowCloseEvent &window_close_event) {
+            Application::GetInstance()->Exit();
+        });
+
+        // Handle key events
+        dispatcher.Dispatch<KeyPressedEvent>([this](KeyPressedEvent &key_pressed_event) {
+            // Explicitly handle alt-f4 for closing
+            if (key_pressed_event.GetKeyCode() == KeyCode::F4 && key_pressed_event.HasKeyModifier(KeyModifier::Alt)) {
+                Application::GetInstance()->Exit();
+            }
+
+            OnKeyEvent(key_pressed_event, true);
+        });
+        dispatcher.Dispatch<KeyReleasedEvent>([this](KeyReleasedEvent &key_released_event) {
+            OnKeyEvent(key_released_event, false);
+        });
+
+        // Handle mouse events
+        dispatcher.Dispatch<MouseScrolledEvent>([this](MouseScrolledEvent &mouse_scrolled_event) {
+            m_mouse_scroll = mouse_scrolled_event.GetScroll();
+        });
+        dispatcher.Dispatch<MouseMovedEvent>([this](MouseMovedEvent &mouse_moved_event) {
+            m_mouse_position = Vec2(mouse_moved_event.GetX(), mouse_moved_event.GetY());
+        });
+        dispatcher.Dispatch<MouseButtonPressedEvent>([this](MouseButtonPressedEvent &mouse_button_pressed_event) {
+            OnMouseButtonEvent(mouse_button_pressed_event, true);
+        });
+        dispatcher.Dispatch<MouseButtonReleasedEvent>([this](MouseButtonReleasedEvent &mouse_button_released_event) {
+            OnMouseButtonEvent(mouse_button_released_event, false);
+        });
+    }
+
+    void WindowsInput::Update() {
+        // Set input state for the new frame
+        {
+            memset(&m_keys_down, false, sizeof(m_keys_down));
+            memset(&m_keys_up, false, sizeof(m_keys_up));
+            memcpy(&m_keys_last, &m_keys, sizeof(m_keys_last));
+
+            memset(&m_mouse_buttons_down, false, sizeof(m_mouse_buttons_down));
+            memset(&m_mouse_buttons_up, false, sizeof(m_mouse_buttons_up));
+            memcpy(&m_mouse_buttons_last, &m_mouse_buttons, sizeof(m_mouse_buttons_last));
+
+            for (u32 i = 0; i < (u32)Gamepad::Last; i++) {
+                GamepadState &gamepad = m_gamepads[i];
+
+                memset(&gamepad.buttons_down, false, sizeof(gamepad.buttons_down));
+                memset(&gamepad.buttons_up, false, sizeof(gamepad.buttons_up));
+                memcpy(&gamepad.buttons_last, &gamepad.buttons, sizeof(gamepad.buttons_last));
+            }
+
+            m_mouse_scroll = 0.0f;
+        }
+        
+        // Query gamepad input
+        for (DWORD i = 0; i < m_gamepads_connected.size(); i++) {
+            Gamepad gamepad = m_gamepads_connected[i];
+            XINPUT_STATE state = { 0 };
+            DWORD result = XInputGetState(GetIdFromGamepad(gamepad), &state);
+
+            auto begin = m_gamepads_connected.begin();
+            auto end = m_gamepads_connected.end();
+
+            // Handle disconnection
+            if (result != ERROR_SUCCESS) {
+                if (std::find(begin, end, gamepad) != end) {
+                    m_gamepads_connected.erase(std::remove(begin, end, gamepad), end);
+
+                    GamepadConnectionChangedEvent event(gamepad, false);
+                    DispatchEvent(event);
+                }
+            }
+
+            // Handle buttons
+            {
+                WORD buttons = state.Gamepad.wButtons;
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::Start, buttons & XINPUT_GAMEPAD_START);
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::Back, buttons & XINPUT_GAMEPAD_BACK);
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::A, buttons & XINPUT_GAMEPAD_A);
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::B, buttons & XINPUT_GAMEPAD_B);
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::X, buttons & XINPUT_GAMEPAD_X);
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::Y, buttons & XINPUT_GAMEPAD_Y);
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::DpadLeft, buttons & XINPUT_GAMEPAD_DPAD_LEFT);
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::DpadRight, buttons & XINPUT_GAMEPAD_DPAD_RIGHT);
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::DpadUp, buttons & XINPUT_GAMEPAD_DPAD_UP);
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::DpadDown, buttons & XINPUT_GAMEPAD_DPAD_DOWN);
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::LeftShoulder, buttons & XINPUT_GAMEPAD_LEFT_SHOULDER);
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::RightShoulder, buttons & XINPUT_GAMEPAD_RIGHT_SHOULDER);
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::LeftThumb, buttons & XINPUT_GAMEPAD_LEFT_THUMB);
+                HandleGamepadButtonCode(gamepad, GamepadButtonCode::RightThumb, buttons & XINPUT_GAMEPAD_RIGHT_THUMB);
+            }
+
+            // Handle axes
+            {
+                f32 left_stick_x = (state.Gamepad.sThumbLX + 0.5f) / 32767.5f;
+                f32 left_stick_y = -(state.Gamepad.sThumbLY + 0.5f) / 32767.5f;
+                f32 right_stick_x = (state.Gamepad.sThumbRX + 0.5f) / 32767.5f;
+                f32 right_stick_y = -(state.Gamepad.sThumbRY + 0.5f) / 32767.5f;
+                f32 left_trigger = state.Gamepad.bLeftTrigger / 255.0f;
+                f32 right_trigger = state.Gamepad.bRightTrigger / 255.0f;
+
+                m_gamepads[(s32)gamepad].axes[(s32)GamepadAxis::LeftStick] = ApplyGamepadDeadzone(left_stick_x, left_stick_y);
+                m_gamepads[(s32)gamepad].axes[(s32)GamepadAxis::RightStick] = ApplyGamepadDeadzone(right_stick_x, right_stick_y);
+                // Left and right trigger are treated as if they had the same two x and y axes
+                m_gamepads[(s32)gamepad].axes[(s32)GamepadAxis::LeftTrigger] = Vec2(left_trigger, left_trigger);
+                m_gamepads[(s32)gamepad].axes[(s32)GamepadAxis::RightTrigger] = Vec2(right_trigger, right_trigger);
+            }
+        }
+    }
+
+    void WindowsInput::Reset() {
+        memset(&m_keys_down, false, sizeof(m_keys_down));
+        memset(&m_keys_up, false, sizeof(m_keys_up));
+        memset(&m_keys, false, sizeof(m_keys));
+        memset(&m_keys_last, false, sizeof(m_keys_last));
+
+        memset(&m_mouse_buttons_down, false, sizeof(m_mouse_buttons_down));
+        memset(&m_mouse_buttons_up, false, sizeof(m_mouse_buttons_up));
+        memset(&m_mouse_buttons, false, sizeof(m_mouse_buttons));
+        memset(&m_mouse_buttons_last, false, sizeof(m_mouse_buttons_last));
+
+        for (u32 i = 0; i < (u32)Gamepad::Last; i++) {
+            GamepadState &gamepad = m_gamepads[i];
+
+            memset(&gamepad.buttons_down, false, sizeof(gamepad.buttons_down));
+            memset(&gamepad.buttons_up, false, sizeof(gamepad.buttons_up));
+            memset(&gamepad.buttons, false, sizeof(gamepad.buttons));
+            memset(&gamepad.buttons_last, false, sizeof(gamepad.buttons_last));
+        }
+
+        m_mouse_scroll = 0.0f;
+    }
+
+    void WindowsInput::QueryConnectedGamepads() {
+        for (DWORD gamepad_id = 0; gamepad_id < XUSER_MAX_COUNT; gamepad_id++) {
+            XINPUT_STATE state = { 0 };
+            DWORD result = XInputGetState(gamepad_id, &state);
+
+            auto begin = m_gamepads_connected.begin();
+            auto end = m_gamepads_connected.end();
+
+            Gamepad gamepad = GetGamepadFromId(gamepad_id);
+
+            if (result == ERROR_SUCCESS) {
+                if (std::find(begin, end, gamepad) == end) {
+                    m_gamepads_connected.push_back(gamepad);
+
+                    GamepadConnectionChangedEvent event(gamepad, true);
+                    DispatchEvent(event);
+                }
+            } else {
+                if (std::find(begin, end, gamepad) != end) {
+                    m_gamepads_connected.erase(std::remove(begin, end, gamepad), end);
+
+                    GamepadConnectionChangedEvent event(gamepad, false);
+                    DispatchEvent(event);
+                }
+            }
+        }
+    }
+
+    void WindowsInput::OnKeyEvent(KeyEvent &event, bool down) {
+        s32 key_code = (s32)event.GetKeyCode();
+        m_keys_down[key_code] = !m_keys_last[key_code] && down;
+        m_keys[key_code] = down;
+        m_keys_up[key_code] = m_keys_last[key_code] && !down;
+    }
+
+    void WindowsInput::OnMouseButtonEvent(MouseButtonEvent &event, bool down) {
+        s32 mouse_button_code = (s32)event.GetMouseButtonCode();
+        m_mouse_buttons_down[mouse_button_code] = !m_mouse_buttons_last[mouse_button_code] && down;
+        m_mouse_buttons[mouse_button_code] = down;
+        m_mouse_buttons_up[mouse_button_code] = m_mouse_buttons_last[mouse_button_code] && !down;
+    }
+
+    void WindowsInput::HandleGamepadButtonCode(Gamepad gamepad, GamepadButtonCode button_code, bool down) {
+        m_gamepads[(s32)gamepad].buttons_down[(s32)button_code] = !m_gamepads[(s32)gamepad].buttons_last[(s32)button_code] && down;
+        m_gamepads[(s32)gamepad].buttons[(s32)button_code] = down;
+        if (down) {
+            GamepadButtonPressedEvent event(gamepad, button_code);
+            DispatchEvent(event);
+        }
+        if (m_gamepads[(s32)gamepad].buttons_last[(s32)button_code] && !down) {
+            m_gamepads[(s32)gamepad].buttons_up[(s32)button_code] = true;
+
+            GamepadButtonReleasedEvent event(gamepad, button_code);
+            DispatchEvent(event);
+        }
+    }
+
+    Gamepad WindowsInput::GetGamepadFromId(u32 id) {
+        switch (id) {
+            case 0: return Gamepad::Gamepad1;
+            case 1: return Gamepad::Gamepad2;
+            case 2: return Gamepad::Gamepad3;
+            case 3: return Gamepad::Gamepad4;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return Gamepad::Gamepad1;
+        }
+    }
+
+    u32 WindowsInput::GetIdFromGamepad(Gamepad gamepad) {
+        switch (gamepad) {
+            case Hyperion::Gamepad::Gamepad1: return 0;
+            case Hyperion::Gamepad::Gamepad2: return 1;
+            case Hyperion::Gamepad::Gamepad3: return 2;
+            case Hyperion::Gamepad::Gamepad4: return 3;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    Vec2 WindowsInput::ApplyGamepadDeadzone(f32 x, f32 y) {
+        // Deadzone logic from: http://www.third-helix.com/2013/04/12/doing-thumbstick-dead-zones-right.html
+        f32 dead_zone = 0.15f;
+        Vec2 left_stick = Vec2(x, y);
+
+        if (left_stick.Magnitude() < dead_zone) {
+            return Vec2();
+        } else {
+            left_stick = left_stick.Normalized() * ((left_stick.Magnitude() - dead_zone) / (1 - dead_zone));
+            left_stick.x = Math::Clamp(left_stick.x, -1.0f, 1.0f);
+            left_stick.y = Math::Clamp(left_stick.y, -1.0f, 1.0f);
+            return left_stick;
+        }
+    }
+
+}

@@ -2,9 +2,6 @@
 
 #include "hyperion/core/app/application_settings.hpp"
 #include "hyperion/core/app/window.hpp"
-#include "hyperion/core/app/events/key_events.hpp"
-#include "hyperion/core/app/events/mouse_events.hpp"
-#include "hyperion/core/app/events/gamepad_events.hpp"
 
 namespace Hyperion {
 
@@ -33,10 +30,6 @@ namespace Hyperion {
         virtual void OnTick() = 0;
     private:
         void OnEventInternal(Event &event);
-
-        void OnKeyEvent(KeyEvent &event, bool down);
-        void OnMouseButtonEvent(MouseButtonEvent &event, bool down);
-        void OnGamepadConnectionChanged(GamepadConnectionChangedEvent &event);
     };
 
     // This is a function to be defined by the client

@@ -5,6 +5,7 @@
 #include "hyperion/core/engine.hpp"
 #include "hyperion/core/app/time.hpp"
 #include "hyperion/core/app/display.hpp"
+#include "hyperion/core/app/input.hpp"
 #include "hyperion/core/app/events/app_events.hpp"
 #include "hyperion/core/app/events/window_events.hpp"
 
@@ -20,13 +21,10 @@ namespace Hyperion {
         HYP_ASSERT_MESSAGE(settings.time.max_delta_time > 0, "Max delta time must be greater than zero!");
         Time::s_max_delta_time = settings.time.max_delta_time;
 
-        m_window = Window::Create(settings.window, settings.renderer.backend);
-        m_window->Init([this](Event &event) {
-            if (event.GetType() == EventType::GamepadConnectionChanged) {
-                OnGamepadConnectionChanged((GamepadConnectionChangedEvent &)event);
-            }
-        });
-        m_window->SetEventCallbackFunction(std::bind(&Application::OnEventInternal, this, std::placeholders::_1));
+        m_window = Window::Create(settings.window, settings.renderer.backend, Input::s_input_implementation.get());
+        auto event_callback = std::bind(&Application::OnEventInternal, this, std::placeholders::_1);
+        m_window->SetEventCallbackFunction(event_callback);
+        Input::s_input_implementation->SetEventCallbackFunction(event_callback);
     }
 
     int Application::Run() {
@@ -69,7 +67,6 @@ namespace Hyperion {
                 tick_timer = 0;
             }
 
-            Input::Update();
             m_window->Update();
         }
 
@@ -93,75 +90,12 @@ namespace Hyperion {
         });
 
         // Handle window events
-        dispatcher.Dispatch<WindowCloseEvent>([this](WindowCloseEvent &window_close_event) { 
-            Exit();
-        });
         dispatcher.Dispatch<WindowResizeEvent>([this](WindowResizeEvent &window_resize_event) {
             Rendering::RenderEngine::SetViewport(0, 0, window_resize_event.GetWidth(), window_resize_event.GetHeight());
         });
-        auto window_reset_func = Input::Reset;
-        dispatcher.Dispatch<WindowFocusEvent>([window_reset_func](WindowFocusEvent &window_focus_event){
-            window_reset_func();
-        });
 
-        // Handle key events
-        dispatcher.Dispatch<KeyPressedEvent>([this](KeyPressedEvent &key_pressed_event) {
-            // Explicitly handle alt-f4 for closing
-            if (key_pressed_event.GetKeyCode() == KeyCode::F4 && key_pressed_event.HasKeyModifier(KeyModifier::Alt)) {
-                Exit();
-            }
-
-            OnKeyEvent(key_pressed_event, true);
-        });
-        dispatcher.Dispatch<KeyReleasedEvent>([this](KeyReleasedEvent &key_released_event) {
-            OnKeyEvent(key_released_event, false);
-        });
-
-        // Handle mouse events
-        float &mouse_scroll = Input::s_mouse_scroll;
-        dispatcher.Dispatch<MouseScrolledEvent>([&mouse_scroll](MouseScrolledEvent &mouse_scrolled_event) {
-            mouse_scroll = mouse_scrolled_event.GetScroll();
-        });
-        Vec2 &mouse_position = Input::s_mouse_position;
-        dispatcher.Dispatch<MouseMovedEvent>([&mouse_position](MouseMovedEvent &mouse_moved_event) {
-            mouse_position = Vec2(mouse_moved_event.GetX(), mouse_moved_event.GetY());
-        });
-        dispatcher.Dispatch<MouseButtonPressedEvent>([this](MouseButtonPressedEvent &mouse_button_pressed_event) {
-            OnMouseButtonEvent(mouse_button_pressed_event, true);
-        });
-        dispatcher.Dispatch<MouseButtonReleasedEvent>([this](MouseButtonReleasedEvent &mouse_button_released_event) {
-            OnMouseButtonEvent(mouse_button_released_event, false);
-        });
-
-        // Handle gamepad events
-        dispatcher.Dispatch<GamepadConnectionChangedEvent>([this](GamepadConnectionChangedEvent &gamepad_connection_changed_event) {
-            OnGamepadConnectionChanged(gamepad_connection_changed_event);
-        });
-
+        // Forward event to client
         OnEvent(event);
-    }
-
-    void Application::OnKeyEvent(KeyEvent &event, bool down) {
-        s32 key_code = (s32)event.GetKeyCode();
-        Input::s_keys_down[key_code] = !Input::s_keys_last[key_code] && down;
-        Input::s_keys[key_code] = down;
-        Input::s_keys_up[key_code] = Input::s_keys_last[key_code] && !down;
-    }
-
-    void Application::OnMouseButtonEvent(MouseButtonEvent &event, bool down) {
-        s32 mouse_button_code = (s32)event.GetMouseButtonCode();
-        Input::s_mouse_buttons_down[mouse_button_code] = !Input::s_mouse_buttons_last[mouse_button_code] && down;
-        Input::s_mouse_buttons[mouse_button_code] = down;
-        Input::s_mouse_buttons_up[mouse_button_code] = Input::s_mouse_buttons_last[mouse_button_code] && !down;
-    }
-
-    void Application::OnGamepadConnectionChanged(GamepadConnectionChangedEvent &event) {
-        Gamepad gamepad = event.GetGamepad();
-        if (event.GetConnected()) {
-            Input::s_gamepads_connected.push_back(gamepad);
-        } else {
-            Input::s_gamepads_connected.erase(std::remove(Input::s_gamepads_connected.begin(), Input::s_gamepads_connected.end(), gamepad), Input::s_gamepads_connected.end());
-        }
     }
 
 }

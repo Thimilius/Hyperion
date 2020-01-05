@@ -2,6 +2,7 @@
 
 #include "hyperion/common.hpp"
 #include "hyperion/core/math/vec2.hpp"
+#include "hyperion/core/app/events/event.hpp"
 
 namespace Hyperion {
 
@@ -203,60 +204,66 @@ namespace Hyperion {
         Last
     };
 
+    class InputImplementation {
+        using EventCallbackFunction = std::function<void(Event &)>;
+    private:
+        EventCallbackFunction m_event_callback;
+    public:
+        virtual bool GetKeyDown(KeyCode key_code) const = 0;
+        virtual bool GetKey(KeyCode key_code) const = 0;
+        virtual bool GetKeyUp(KeyCode key_code) const = 0;
+
+        virtual Vec2 GetMousePosition() const = 0;
+        virtual f32 GetMouseScroll() const = 0;
+
+        virtual bool GetMouseButtonDown(MouseButtonCode mouse_button_code) const = 0;
+        virtual bool GetMouseButton(MouseButtonCode mouse_button_code) const = 0;
+        virtual bool GetMouseButtonUp(MouseButtonCode mouse_button_code) const = 0;
+
+        virtual const Vector<Gamepad> &GetConnectedGamepads() const = 0;
+        virtual Vec2 GetGamepadAxis(Gamepad gamepad, GamepadAxis axis) const = 0;
+
+        virtual bool GetGamepadButtonDown(Gamepad gamepad, GamepadButtonCode gamepad_button_code) const = 0;
+        virtual bool GetGamepadButton(Gamepad gamepad, GamepadButtonCode gamepad_button_code) const = 0;
+        virtual bool GetGamepadButtonUp(Gamepad gamepad, GamepadButtonCode gamepad_button_code) const = 0;
+    protected:
+        inline void DispatchEvent(Event &event) const {
+            if (m_event_callback) {
+                m_event_callback(event);
+            }
+        }
+    private:
+        void SetEventCallbackFunction(const EventCallbackFunction &event_callback) { m_event_callback = event_callback; }
+
+        friend class Application;
+    };
+
     class Input {
     private:
-        inline static bool s_keys_down[(s32)KeyCode::Last];
-        inline static bool s_keys[(s32)KeyCode::Last];
-        inline static bool s_keys_last[(s32)KeyCode::Last];
-        inline static bool s_keys_up[(s32)KeyCode::Last];
-
-        inline static bool s_mouse_buttons_down[(s32)MouseButtonCode::Last];
-        inline static bool s_mouse_buttons[(s32)MouseButtonCode::Last];
-        inline static bool s_mouse_buttons_last[(s32)MouseButtonCode::Last];
-        inline static bool s_mouse_buttons_up[(s32)MouseButtonCode::Last];
-        
-        inline static Vec2 s_mouse_position;
-        inline static f32 s_mouse_scroll;
-
-        struct GamepadState {
-            bool buttons_down[(s32)GamepadButtonCode::Last];
-            bool buttons[(s32)GamepadButtonCode::Last];
-            bool buttons_last[(s32)GamepadButtonCode::Last];
-            bool buttons_up[(s32)GamepadButtonCode::Last];
-
-            Vec2 axes[(s32)GamepadAxis::Last];
-        };
-
-        inline static Vector<Gamepad> s_gamepads_connected;
-        inline static GamepadState s_gamepads[(s32)Gamepad::Last];
+        static Scope<InputImplementation> s_input_implementation;
     public:
-        inline static bool GetKeyDown(KeyCode key_code) { return s_keys_down[(s32)key_code]; }
-        inline static bool GetKey(KeyCode key_code) { return s_keys[(s32)key_code]; }
-        inline static bool GetKeyUp(KeyCode key_code) { return s_keys_up[(s32)key_code]; }
+        inline static bool GetKeyDown(KeyCode key_code) { return s_input_implementation->GetKeyDown(key_code); }
+        inline static bool GetKey(KeyCode key_code) { return s_input_implementation->GetKey(key_code); }
+        inline static bool GetKeyUp(KeyCode key_code) { return s_input_implementation->GetKeyUp(key_code); }
 
-        inline static Vec2 GetMousePosition() { return s_mouse_position; }
-        inline static f32 GetMouseScroll() { return s_mouse_scroll; }
+        inline static Vec2 GetMousePosition() { return s_input_implementation->GetMousePosition(); }
+        inline static f32 GetMouseScroll() { return s_input_implementation->GetMouseScroll(); }
 
-        inline static bool GetMouseButtonDown(MouseButtonCode mouse_button_code) { return s_mouse_buttons_down[(s32)mouse_button_code]; }
-        inline static bool GetMouseButton(MouseButtonCode mouse_button_code) { return s_mouse_buttons[(s32)mouse_button_code]; }
-        inline static bool GetMouseButtonUp(MouseButtonCode mouse_button_code) { return s_mouse_buttons_up[(s32)mouse_button_code]; }
+        inline static bool GetMouseButtonDown(MouseButtonCode mouse_button_code) { return s_input_implementation->GetMouseButtonDown(mouse_button_code); }
+        inline static bool GetMouseButton(MouseButtonCode mouse_button_code) { return s_input_implementation->GetMouseButton(mouse_button_code); }
+        inline static bool GetMouseButtonUp(MouseButtonCode mouse_button_code) { return s_input_implementation->GetMouseButtonUp(mouse_button_code); }
 
-        inline static const Vector<Gamepad> &GetConnectedGamepads() { return s_gamepads_connected; }
+        inline static const Vector<Gamepad> &GetConnectedGamepads() { return s_input_implementation->GetConnectedGamepads(); }
+        inline static Vec2 GetGamepadAxis(Gamepad gamepad, GamepadAxis axis) { return s_input_implementation->GetGamepadAxis(gamepad, axis); }
 
-        inline static bool GetGamepadButtonDown(Gamepad gamepad, GamepadButtonCode gamepad_button_code) { return s_gamepads[(s32)gamepad].buttons_down[(s32)gamepad_button_code]; }
-        inline static bool GetGamepadButton(Gamepad gamepad, GamepadButtonCode gamepad_button_code) { return s_gamepads[(s32)gamepad].buttons[(s32)gamepad_button_code]; }
-        inline static bool GetGamepadButtonUp(Gamepad gamepad, GamepadButtonCode gamepad_button_code) { return s_gamepads[(s32)gamepad].buttons_up[(s32)gamepad_button_code]; }
-
-        inline static Vec2 GetGamepadAxis(Gamepad gamepad, GamepadAxis axis) { return s_gamepads[(s32)gamepad].axes[(s32)axis]; }
+        inline static bool GetGamepadButtonDown(Gamepad gamepad, GamepadButtonCode gamepad_button_code) { return s_input_implementation->GetGamepadButtonDown(gamepad, gamepad_button_code); }
+        inline static bool GetGamepadButton(Gamepad gamepad, GamepadButtonCode gamepad_button_code) { return s_input_implementation->GetGamepadButton(gamepad, gamepad_button_code); }
+        inline static bool GetGamepadButtonUp(Gamepad gamepad, GamepadButtonCode gamepad_button_code) { return s_input_implementation->GetGamepadButtonUp(gamepad, gamepad_button_code); }
     private:
         Input() = delete;
         ~Input() = delete;
 
-        static void Update();
-        static void Reset();
-
         friend class Application;
-        friend class WindowsWindow;
     };
 
 }
