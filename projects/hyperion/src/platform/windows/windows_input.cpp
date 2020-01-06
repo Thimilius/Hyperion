@@ -11,6 +11,16 @@ namespace Hyperion {
 
     Scope<InputImplementation> Input::s_input_implementation = std::make_unique<WindowsInput>();
 
+    void WindowsInput::SetGamepadVibration(Gamepad gamepad, f32 left_vibration, f32 right_vibration) {
+        u32 gamepad_id = GetIdFromGamepad(gamepad);
+
+        XINPUT_VIBRATION vibration;
+        vibration.wLeftMotorSpeed = (WORD)(Math::Clamp01(left_vibration) * 65535.0f);
+        vibration.wRightMotorSpeed = (WORD)(Math::Clamp01(left_vibration) * 65535.0f);
+
+        XInputSetState(gamepad_id, &vibration);
+    }
+
     void WindowsInput::OnEvent(Event &event) {
         EventDispatcher dispatcher(event);
 
