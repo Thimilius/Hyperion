@@ -63,6 +63,8 @@ namespace Hyperion::Rendering {
         inline TextureAnisotropicFilter GetAnisotropicFilter() const { return m_anisotropic_filter; }
 
         virtual u32 GetID() const = 0;
+        
+        virtual void GenerateMipmaps() = 0;
     protected:
         static u32 GetBytesPerPixel(TextureFormat format);
         static u32 CalculateMipmapCount(u32 width, u32 height);

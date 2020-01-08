@@ -18,6 +18,8 @@ namespace Hyperion::Rendering {
 
         u32 GetID() const override { return m_texture_id; }
 
+        void GenerateMipmaps() override;
+
         void SetWrapMode(TextureWrapMode wrap_mode) override;
         void SetFilter(TextureFilter filter) override;
         void SetAnisotropicFilter(TextureAnisotropicFilter anisotropic_filter) override;
@@ -25,7 +27,7 @@ namespace Hyperion::Rendering {
         void Resize(u32 width, u32 height) override;
         void Resize(u32 width, u32 height, TextureFormat format) override;
 
-        void SetPixels(const u8 *pixels) override;
+        void SetPixels(const u8 *pixels, bool generate_mipmaps) override;
         u8 *GetPixels() const override;
     private:
         void CreateTexture(const u8 *pixels);

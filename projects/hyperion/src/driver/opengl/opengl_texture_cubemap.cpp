@@ -33,6 +33,10 @@ namespace Hyperion::Rendering {
         glBindTextureUnit(slot, 0);
     }
 
+    void OpenGLTextureCubemap::GenerateMipmaps() {
+        glGenerateTextureMipmap(m_texture_id);
+    }
+
     void OpenGLTextureCubemap::SetWrapMode(TextureWrapMode wrap_mode) {
         m_wrap_mode = wrap_mode;
 
@@ -57,7 +61,7 @@ namespace Hyperion::Rendering {
         glTextureParameterf(m_texture_id, GL_TEXTURE_MAX_ANISOTROPY, GetGLAnisotropicFilter(anisotropic_filter));
     }
 
-    void OpenGLTextureCubemap::SetPixels(TextureCubemapFace face, const u8 *pixels) {
+    void OpenGLTextureCubemap::SetPixels(TextureCubemapFace face, const u8 *pixels, bool generate_mipmaps) {
         u32 face_offset = 0;
         switch (face) {
             case TextureCubemapFace::PositiveX: face_offset = 0; break;
@@ -71,8 +75,9 @@ namespace Hyperion::Rendering {
 
         glTextureSubImage3D(m_texture_id, 0, 0, 0, face_offset, m_width, m_height, 1, GetGLFormat(m_format), GL_UNSIGNED_BYTE, pixels);
 
-        // TODO: There should be an option to disable mipmap generation when setting pixels
-        glGenerateTextureMipmap(m_texture_id);
+        if (generate_mipmaps) {
+            GenerateMipmaps();
+        }
     }
 
     void OpenGLTextureCubemap::CreateTexture(const Map<TextureCubemapFace, const u8 *> &pixels) {
@@ -91,8 +96,10 @@ namespace Hyperion::Rendering {
 
         if (valid_pixels) {
             for (auto &pair : pixels) {
-                SetPixels(pair.first, pair.second);
+                SetPixels(pair.first, pair.second, false);
             }
+
+            GenerateMipmaps();
         }
     }
 

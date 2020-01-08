@@ -28,7 +28,7 @@ namespace Hyperion::Rendering {
         virtual void Bind(u32 slot = 0) const = 0;
         virtual void Unbind(u32 slot = 0) const = 0;
 
-        virtual void SetPixels(TextureCubemapFace face, const u8 *pixels) = 0;
+        virtual void SetPixels(TextureCubemapFace face, const u8 *pixels, bool generate_mipmaps = true) = 0;
 
         static Ref<TextureCubemap> Create(u32 width, u32 height, TextureFormat format);
         static Ref<TextureCubemap> Create(u32 width, u32 height, TextureFormat format, const Map<TextureCubemapFace, const u8 *> &pixels);

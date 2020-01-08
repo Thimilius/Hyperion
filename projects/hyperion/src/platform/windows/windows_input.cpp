@@ -2,6 +2,8 @@
 
 #include "hyperion/platform/windows/windows_input.hpp"
 
+// TODO: Make XInput a driver so we don't necessarily rely on it
+// and don't need to statically link to it
 #include <Xinput.h>
 
 #include "hyperion/core/app/events/app_events.hpp"

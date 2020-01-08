@@ -33,6 +33,10 @@ namespace Hyperion::Rendering {
         glBindTextureUnit(slot, 0);
     }
 
+    void OpenGLTexture2D::GenerateMipmaps() {
+        glGenerateTextureMipmap(m_texture_id);
+    }
+
     void OpenGLTexture2D::SetWrapMode(TextureWrapMode wrap_mode) {
         m_wrap_mode = wrap_mode;
 
@@ -89,10 +93,12 @@ namespace Hyperion::Rendering {
         glDeleteTextures(1, &old_texture);
     }
 
-    void OpenGLTexture2D::SetPixels(const u8 *pixels) {
+    void OpenGLTexture2D::SetPixels(const u8 *pixels, bool generate_mipmaps) {
         glTextureSubImage2D(m_texture_id, 0, 0, 0, m_width, m_height, GetGLFormat(m_format), GL_UNSIGNED_BYTE, pixels);
-        // TODO: There should be an option to disable mipmap generation when setting pixels
-        glGenerateTextureMipmap(m_texture_id);
+
+        if (generate_mipmaps) {
+            GenerateMipmaps();
+        }
     }
 
     u8 *OpenGLTexture2D::GetPixels() const {
@@ -116,7 +122,8 @@ namespace Hyperion::Rendering {
         glTextureStorage2D(m_texture_id, m_mipmap_count, GetGLInternalFormat(m_format), m_width, m_height);
         if (pixels != nullptr) {
             glTextureSubImage2D(m_texture_id, 0, 0, 0, m_width, m_height, GetGLFormat(m_format), GL_UNSIGNED_BYTE, pixels);
-            glGenerateTextureMipmap(m_texture_id);
+
+            GenerateMipmaps();
         }
     }
 

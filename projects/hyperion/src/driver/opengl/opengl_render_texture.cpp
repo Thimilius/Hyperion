@@ -12,7 +12,7 @@ namespace Hyperion::Rendering {
         m_wrap_mode = TextureWrapMode::Clamp;
         m_filter = TextureFilter::Point;
         m_anisotropic_filter = TextureAnisotropicFilter::None;
-        m_mipmap_count = 1;
+        m_mipmap_count = 0;
 
         m_framebuffer_id = 0;
         Resize(width, height);
@@ -20,6 +20,10 @@ namespace Hyperion::Rendering {
     
     OpenGLRenderTexture::~OpenGLRenderTexture() {
         glDeleteFramebuffers(1, &m_framebuffer_id);
+    }
+
+    void OpenGLRenderTexture::GenerateMipmaps() {
+        // TODO: Implement mipmaps for render textures
     }
 
     void OpenGLRenderTexture::SetWrapMode(TextureWrapMode wrap_mode) {
