@@ -6,22 +6,13 @@ namespace Hyperion::Rendering {
 
     class OpenGLRenderDriver : public RenderDriver {
     public:
+        OpenGLRenderDriver();
+
         void Init() override;
         void Shutdown() override;
 
-        void EnableFeature(RenderFeature feature) override;
-        void DisableFeature(RenderFeature feature) override;
-
-        void SetBlendFunc(BlendFactor source_factor, BlendFactor destination_factor) override;
-        void SetBlendEquation(BlendEquation blend_equation) override;
-
-        void SetFrontFaceMode(FrontFaceMode front_face_mode) override;
-        void SetCullingMode(CullingMode culling_mode) override;
-
-        void SetPolygonMode(PolygonMode polygon_mode) override;
-
-        void SetClearColor(f32 r, f32 g, f32 b, f32 a) override;
         void Clear(ClearMask mask) override;
+        void Clear(ClearMask mask, Color color) override;
 
         void SetViewport(s32 x, s32 y, s32 width, s32 height) override;
         
@@ -31,12 +22,6 @@ namespace Hyperion::Rendering {
         void DrawIndexed(PrimitiveType primitive, IndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) override;
         void Draw(PrimitiveType primitive, u32 vertex_count, u32 vertex_offset) override;
     private:
-        static u32 GetGLFeature(RenderFeature feature);
-        static u32 GetGLBlendFactor(BlendFactor blend_factor);
-        static u32 GetGLBlendEquation(BlendEquation blend_equation);
-        static u32 GetGLFrontFaceMode(FrontFaceMode front_face_mode);
-        static u32 GetGLPolygonMode(PolygonMode polygon_mode);
-        static u32 GetGLCullingMode(CullingMode culling_mode);
         static u32 GetGLClearMask(ClearMask clear_mask);
         static u32 GetGLPrimitiveType(PrimitiveType primitive);
         static u32 GetGLIndexFormat(IndexFormat index_format);

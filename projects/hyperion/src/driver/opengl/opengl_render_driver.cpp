@@ -3,64 +3,40 @@
 #include "hyperion/driver/opengl/opengl_render_driver.hpp"
 
 #include "hyperion/core/app/application.hpp"
+#include "hyperion/driver/opengl/opengl_rasterizer_state.hpp"
 
 #include <glad/glad.h>
 
 namespace Hyperion::Rendering {
 
+    OpenGLRenderDriver::OpenGLRenderDriver() {
+        m_rasterizer_state = std::make_unique<OpenGLRasterizerState>();
+    }
+
     void OpenGLRenderDriver::Init() {
         // Setup intial state
-        SetClearColor(0, 0, 0, 1);
+        m_rasterizer_state->EnableFeature(RenderFeature::DepthTesting);
 
-        EnableFeature(RenderFeature::DepthTesting);
+        m_rasterizer_state->EnableFeature(RenderFeature::Culling);
+        m_rasterizer_state->SetFrontFaceMode(FrontFaceMode::Clockwise);
+        m_rasterizer_state->SetCullingMode(CullingMode::Back);
 
-        EnableFeature(RenderFeature::Culling);
-        SetFrontFaceMode(FrontFaceMode::Clockwise);
-        SetCullingMode(CullingMode::Back);
+        m_rasterizer_state->EnableFeature(RenderFeature::Blending);
+        m_rasterizer_state->SetBlendFunc(BlendFactor::SourceAlpha, BlendFactor::InverseSourceAlpha);
 
-        EnableFeature(RenderFeature::Blending);
-        SetBlendFunc(BlendFactor::SourceAlpha, BlendFactor::InverseSourceAlpha);
-
-        SetPolygonMode(PolygonMode::Fill);
+        m_rasterizer_state->SetPolygonMode(PolygonMode::Fill);
     }
 
     void OpenGLRenderDriver::Shutdown() {
 
     }
 
-    void OpenGLRenderDriver::EnableFeature(RenderFeature feature) {
-        glEnable(GetGLFeature(feature));
-    }
-
-    void OpenGLRenderDriver::DisableFeature(RenderFeature feature) {
-        glDisable(GetGLFeature(feature));
-    }
-
-    void OpenGLRenderDriver::SetBlendFunc(BlendFactor source_factor, BlendFactor destination_factor) {
-        glBlendFunc(GetGLBlendFactor(source_factor), GetGLBlendFactor(destination_factor));
-    }
-
-    void OpenGLRenderDriver::SetBlendEquation(BlendEquation blend_equation) {
-        glBlendEquation(GetGLBlendEquation(blend_equation));
-    }
-
-    void OpenGLRenderDriver::SetFrontFaceMode(FrontFaceMode front_face_mode) {
-        glFrontFace(GetGLFrontFaceMode(front_face_mode));
-    }
-
-    void OpenGLRenderDriver::SetCullingMode(CullingMode culling_mode) {
-        glCullFace(GetGLCullingMode(culling_mode));
-    }
-
-    void OpenGLRenderDriver::SetPolygonMode(PolygonMode polygon_mode) {
-        glPolygonMode(GL_FRONT_AND_BACK, GetGLPolygonMode(polygon_mode));
-    }
-
-    void OpenGLRenderDriver::SetClearColor(f32 r, f32 g, f32 b, f32 a) {
-        glClearColor(r, g, b, a);
-    }
-
     void OpenGLRenderDriver::Clear(ClearMask mask) {
+        glClear(GetGLClearMask(mask));
+    }
+
+    void OpenGLRenderDriver::Clear(ClearMask mask, Color color) {
+        glClearColor(color.r, color.g, color.b, color.a);
         glClear(GetGLClearMask(mask));
     }
 
@@ -108,66 +84,6 @@ namespace Hyperion::Rendering {
 
     void OpenGLRenderDriver::Draw(PrimitiveType primitive, u32 vertex_count, u32 vertex_offset) {
         glDrawArrays(GetGLPrimitiveType(primitive), vertex_offset, vertex_count);
-    }
-
-    u32 OpenGLRenderDriver::GetGLFeature(RenderFeature feature) {
-        switch (feature) {
-            case Hyperion::Rendering::RenderFeature::Blending: return GL_BLEND;
-            case Hyperion::Rendering::RenderFeature::Culling: return GL_CULL_FACE;
-            case Hyperion::Rendering::RenderFeature::DepthTesting: return GL_DEPTH_TEST;
-            case Hyperion::Rendering::RenderFeature::StencilTesting: return GL_STENCIL_TEST;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
-        }
-    }
-
-    u32 OpenGLRenderDriver::GetGLBlendFactor(BlendFactor blend_factor) {
-        switch (blend_factor) {
-            case BlendFactor::Zero: return GL_ZERO;
-            case BlendFactor::One: return GL_ONE;
-            case BlendFactor::SourceAlpha: return GL_SRC_ALPHA;
-            case BlendFactor::SourceColor: return GL_SRC_COLOR;
-            case BlendFactor::DestinationAlpha: return GL_DST_ALPHA;
-            case BlendFactor::DestinationColor: return GL_DST_COLOR;
-            case BlendFactor::InverseSourceAlpha: return GL_ONE_MINUS_SRC_ALPHA;
-            case BlendFactor::InverseSourceColor: return GL_ONE_MINUS_SRC_COLOR;
-            case BlendFactor::InverseDestinationAlpha: return GL_ONE_MINUS_DST_ALPHA;
-            case BlendFactor::InverseDestinationColor: return GL_ONE_MINUS_DST_COLOR;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
-        }
-    }
-
-    u32 OpenGLRenderDriver::GetGLBlendEquation(BlendEquation blend_equation) {
-        switch (blend_equation) {
-            case BlendEquation::Add: return GL_FUNC_ADD;
-            case BlendEquation::Subtract: return GL_FUNC_SUBTRACT;
-            case BlendEquation::ReverseSubract: return GL_FUNC_REVERSE_SUBTRACT;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
-        }
-    }
-
-    u32 OpenGLRenderDriver::GetGLFrontFaceMode(FrontFaceMode front_face_mode) {
-        switch (front_face_mode) {
-            case FrontFaceMode::Clockwise: return GL_CW;
-            case FrontFaceMode::CounterClockwise: return GL_CCW;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
-        }
-    }
-
-    u32 OpenGLRenderDriver::GetGLPolygonMode(PolygonMode polygon_mode) {
-        switch (polygon_mode) {
-            case Hyperion::Rendering::PolygonMode::Fill: return GL_FILL;
-            case Hyperion::Rendering::PolygonMode::Line: return GL_LINE;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
-        }
-    }
-
-    u32 OpenGLRenderDriver::GetGLCullingMode(CullingMode culling_mode) {
-        switch (culling_mode) {
-            case CullingMode::Back: return GL_BACK;
-            case CullingMode::Front: return GL_FRONT;
-            case CullingMode::FrontAndBack: return GL_FRONT_AND_BACK;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
-        }
     }
 
     u32 OpenGLRenderDriver::GetGLClearMask(ClearMask clear_mask) {

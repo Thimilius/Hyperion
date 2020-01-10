@@ -1,17 +1,12 @@
 #pragma once
 
 #include "hyperion/common.hpp"
+#include "hyperion/core/color.hpp"
 #include "hyperion/rendering/vertex_array.hpp"
 #include "hyperion/rendering/render_texture.hpp"
+#include "hyperion/rendering/rasterizer_state.hpp"
 
 namespace Hyperion::Rendering {
-
-    enum class RenderFeature {
-        Culling,
-        DepthTesting,
-        StencilTesting,
-        Blending
-    };
 
     enum class ClearMask {
         None,
@@ -21,47 +16,10 @@ namespace Hyperion::Rendering {
     };
     HYP_CREATE_ENUM_FLAG_OPERATORS(ClearMask);
 
-    enum class BlendFactor {
-        Zero,
-        One,
-
-        SourceAlpha,
-        SourceColor,
-        DestinationAlpha,
-        DestinationColor,
-        
-        InverseSourceAlpha,
-        InverseSourceColor,
-        InverseDestinationAlpha,
-        InverseDestinationColor
-    };
-
-    enum class BlendEquation {
-        Add,
-        Subtract,
-        ReverseSubract,
-    };
-
-    enum class FrontFaceMode {
-        Clockwise,
-        CounterClockwise
-    };
-
-    enum class CullingMode {
-        Back,
-        Front,
-        FrontAndBack
-    };
-
     enum class RenderTextureTarget {
         DrawAndRead,
         Draw,
         Read
-    };
-
-    enum class PolygonMode {
-        Fill,
-        Line
     };
 
     enum class PrimitiveType {
@@ -72,23 +30,16 @@ namespace Hyperion::Rendering {
     };
 
     class RenderDriver {
+    protected:
+        Scope<RasterizerState> m_rasterizer_state;
     public:
         virtual void Init() = 0;
         virtual void Shutdown() = 0;
 
-        virtual void EnableFeature(RenderFeature feature) = 0;
-        virtual void DisableFeature(RenderFeature feature) = 0;
+        RasterizerState *GetRasterizerState() { return m_rasterizer_state.get(); }
 
-        virtual void SetFrontFaceMode(FrontFaceMode front_face_mode) = 0;
-        virtual void SetCullingMode(CullingMode culling_mode) = 0;
-
-        virtual void SetBlendFunc(BlendFactor source_factor, BlendFactor destination_factor) = 0;
-        virtual void SetBlendEquation(BlendEquation blend_equation) = 0;
-
-        virtual void SetPolygonMode(PolygonMode polygon_mode) = 0;
-
-        virtual void SetClearColor(f32 r, f32 g, f32 b, f32 a) = 0;
         virtual void Clear(ClearMask mask) = 0;
+        virtual void Clear(ClearMask mask, Color color) = 0;
 
         virtual void SetViewport(s32 x, s32 y, s32 width, s32 height) = 0;
 

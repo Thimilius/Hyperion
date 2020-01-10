@@ -14,40 +14,16 @@ namespace Hyperion::Rendering {
 
         inline static Scope<RenderDriver> s_render_driver;
     public:
-        inline static void EnableFeature(RenderFeature feature) {
-            s_render_driver->EnableFeature(feature);
-        }
-
-        inline static void DisableFeature(RenderFeature feature) {
-            s_render_driver->DisableFeature(feature);
-        }
-
-        inline static void SetFrontFaceMode(FrontFaceMode front_face_mode) {
-            s_render_driver->SetFrontFaceMode(front_face_mode);
-        }
-
-        inline static void SetCullingMode(CullingMode culling_mode) {
-            s_render_driver->SetCullingMode(culling_mode);
-        }
-
-        inline static void SetBlendFunc(BlendFactor source_factor, BlendFactor destination_factor) {
-            s_render_driver->SetBlendFunc(source_factor, destination_factor);
-        }
-
-        inline static void SetBlendEquation(BlendEquation blend_equation) {
-            s_render_driver->SetBlendEquation(blend_equation);
-        }
-
-        inline static void SetPolygonMode(PolygonMode polygon_mode) {
-            s_render_driver->SetPolygonMode(polygon_mode);
-        }
-
-        inline static void SetClearColor(f32 r, f32 g, f32 b, f32 a) {
-            s_render_driver->SetClearColor(r, g, b, a);
+        inline static RasterizerState *GetRasterizerState() { 
+            return s_render_driver->GetRasterizerState();
         }
 
         inline static void Clear(ClearMask mask) {
             s_render_driver->Clear(mask);
+        }
+
+        inline static void Clear(ClearMask mask, Color color) {
+            s_render_driver->Clear(mask, color);
         }
 
         inline static void SetViewport(s32 x, s32 y, s32 width, s32 height) {

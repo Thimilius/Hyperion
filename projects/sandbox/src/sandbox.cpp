@@ -43,8 +43,7 @@ protected:
     void OnRender() override {
         RenderEngine::SetActiveRenderTarget(m_render_texture);
         
-        RenderEngine::SetClearColor(0, 0, 0, 1);
-        RenderEngine::Clear(ClearMask::Color | ClearMask::Depth);
+        RenderEngine::Clear(ClearMask::Color | ClearMask::Depth, Color::Black());
 
         Renderer::Begin(m_camera);
         {
