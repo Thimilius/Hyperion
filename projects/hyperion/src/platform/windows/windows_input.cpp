@@ -2,8 +2,6 @@
 
 #include "hyperion/platform/windows/windows_input.hpp"
 
-// TODO: Make XInput a driver so we don't necessarily rely on it
-// and don't need to statically link to it
 #include <Xinput.h>
 
 #include "hyperion/core/app/events/app_events.hpp"
@@ -11,7 +9,44 @@
 
 namespace Hyperion {
 
+    using XInputGetStateFunc = DWORD(WINAPI *)(DWORD dwUserIndex, XINPUT_STATE *pState);
+    using XInputSetStateFunc = DWORD(WINAPI *)(DWORD dwUserIndex, XINPUT_VIBRATION *pVibration);
+
+    DWORD WINAPI XInputGetStateStub(DWORD dwUserIndex, XINPUT_STATE *pState) {
+        return ERROR_DEVICE_NOT_CONNECTED;
+    }
+
+    DWORD WINAPI XInputSetStateStub(DWORD dwUserIndex, XINPUT_VIBRATION *pVibration) {
+        return ERROR_DEVICE_NOT_CONNECTED;
+    }
+
+    HMODULE g_xinput_library;
+    XInputGetStateFunc g_xinput_get_state = XInputGetStateStub;
+    XInputSetStateFunc g_xinput_set_state = XInputSetStateStub;
+
     Scope<InputImplementation> Input::s_input_implementation = std::make_unique<WindowsInput>();
+
+    WindowsInput::WindowsInput() {
+        // Try to load XInput as a dll
+        g_xinput_library = LoadLibraryA("xinput1_4.dll");
+        if (!g_xinput_library) {
+            g_xinput_library = LoadLibraryA("xinput1_3.dll");
+        }
+
+        XInputGetStateFunc xinput_get_state = (XInputGetStateFunc)GetProcAddress(g_xinput_library, "XInputGetState");
+        if (xinput_get_state) {
+            g_xinput_get_state = xinput_get_state;
+        }
+
+        XInputSetStateFunc xinput_set_state = (XInputSetStateFunc)GetProcAddress(g_xinput_library, "XInputSetState");
+        if (xinput_set_state) {
+            g_xinput_set_state = xinput_set_state;
+        }
+    }
+
+    WindowsInput::~WindowsInput() {
+        FreeLibrary(g_xinput_library);
+    }
 
     void WindowsInput::SetGamepadVibration(Gamepad gamepad, f32 left_vibration, f32 right_vibration) {
         u32 gamepad_id = GetIdFromGamepad(gamepad);
@@ -20,7 +55,7 @@ namespace Hyperion {
         vibration.wLeftMotorSpeed = (WORD)(Math::Clamp01(left_vibration) * 65535.0f);
         vibration.wRightMotorSpeed = (WORD)(Math::Clamp01(left_vibration) * 65535.0f);
 
-        XInputSetState(gamepad_id, &vibration);
+        g_xinput_set_state(gamepad_id, &vibration);
     }
 
     void WindowsInput::OnEvent(Event &event) {
@@ -90,7 +125,7 @@ namespace Hyperion {
             for (DWORD i = 0; i < m_gamepads_connected.size(); i++) {
                 Gamepad gamepad = m_gamepads_connected[i];
                 XINPUT_STATE state = { 0 };
-                DWORD result = XInputGetState(GetIdFromGamepad(gamepad), &state);
+                DWORD result = g_xinput_get_state(GetIdFromGamepad(gamepad), &state);
 
                 auto begin = m_gamepads_connected.begin();
                 auto end = m_gamepads_connected.end();
@@ -168,13 +203,12 @@ namespace Hyperion {
                 gamepad.axes[j] = Vec2();
             }
         }
-
     }
 
     void WindowsInput::QueryConnectedGamepads() {
         for (DWORD gamepad_id = 0; gamepad_id < XUSER_MAX_COUNT; gamepad_id++) {
             XINPUT_STATE state = { 0 };
-            DWORD result = XInputGetState(gamepad_id, &state);
+            DWORD result = g_xinput_get_state(gamepad_id, &state);
 
             auto begin = m_gamepads_connected.begin();
             auto end = m_gamepads_connected.end();

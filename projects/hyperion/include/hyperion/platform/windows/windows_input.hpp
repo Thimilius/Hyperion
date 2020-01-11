@@ -35,6 +35,9 @@ namespace Hyperion {
         Vector<Gamepad> m_gamepads_connected;
         GamepadState m_gamepads[(s32)Gamepad::Last];
     public:
+        WindowsInput();
+        ~WindowsInput();
+
         bool GetKeyDown(KeyCode key_code) const override { return m_keys_down[(s32)key_code]; }
         bool GetKey(KeyCode key_code) const override { return m_keys[(s32)key_code]; }
         bool GetKeyUp(KeyCode key_code) const override { return m_keys_up[(s32)key_code]; }
