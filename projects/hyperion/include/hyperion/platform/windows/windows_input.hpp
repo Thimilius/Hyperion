@@ -54,7 +54,6 @@ namespace Hyperion {
         bool GetGamepadButton(Gamepad gamepad, GamepadButtonCode gamepad_button_code) const override { return m_gamepads[(s32)gamepad].buttons[(s32)gamepad_button_code]; }
         bool GetGamepadButtonUp(Gamepad gamepad, GamepadButtonCode gamepad_button_code) const override { return m_gamepads[(s32)gamepad].buttons_up[(s32)gamepad_button_code]; }
     private:
-
         void OnEvent(Event &event);
         void Update();
         void Reset();

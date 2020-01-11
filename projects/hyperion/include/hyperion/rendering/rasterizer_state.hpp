@@ -1,14 +1,7 @@
 #pragma once
 
 namespace Hyperion {
-
-    enum class RenderFeature {
-        Culling,
-        DepthTesting,
-        StencilTesting,
-        Blending
-    };
-
+    
     enum class BlendFactor {
         Zero,
         One,
@@ -48,31 +41,43 @@ namespace Hyperion {
 
     class RasterizerState {
     protected:
-        FrontFaceMode m_front_face_mode;
-        CullingMode m_culling_mode;
+        bool m_depth_test_enabled;
 
-        BlendFactor m_source_blend_factor;
-        BlendFactor m_destination_blend_factor;
-        BlendEquation m_blend_equation;
+        bool m_stencil_test_enabled;
+
+        bool m_culling_enabled;
+        CullingMode m_culling_mode;
+        FrontFaceMode m_front_face_mode;
+
+        bool m_blending_enabled;
+        BlendFactor m_blending_source_factor;
+        BlendFactor m_blending_destination_factor;
+        BlendEquation m_blending_equation;
 
         PolygonMode m_polygon_mode;
     public:
-        FrontFaceMode GetFrontFaceMode() const { return m_front_face_mode; }
+        bool IsDepthTestEnabled() const { return m_depth_test_enabled; }
+        virtual void SetDepthTestEnabled(bool enabled) = 0;
+
+        bool IsStencilTestEnabled() const { return m_stencil_test_enabled; }
+        virtual void SetStencilTestEnabled(bool enabled) = 0;
+
+        bool IsCullingEnabled() const { return m_culling_enabled; }
+        virtual void SetCullingEnabled(bool enabled) = 0;
         CullingMode GetCullingMode() const { return m_culling_mode; }
-        BlendFactor GetSourceBlendFactor() const { return m_source_blend_factor; }
-        BlendFactor GetDestinationBlendFactor() const { return m_destination_blend_factor; }
-        BlendEquation GetBlendEquation() const { return m_blend_equation; }
-        PolygonMode GetPolygonMode() const { return m_polygon_mode; }
-
-        virtual void EnableFeature(RenderFeature feature) = 0;
-        virtual void DisableFeature(RenderFeature feature) = 0;
-        
-        virtual void SetFrontFaceMode(FrontFaceMode front_face_mode) = 0;
         virtual void SetCullingMode(CullingMode culling_mode) = 0;
+        FrontFaceMode GetFrontFaceMode() const { return m_front_face_mode; }
+        virtual void SetFrontFaceMode(FrontFaceMode front_face_mode) = 0;
 
-        virtual void SetBlendFunc(BlendFactor source_factor, BlendFactor destination_factor) = 0;
-        virtual void SetBlendEquation(BlendEquation blend_equation) = 0;
+        bool IsBlendingEnabled() const { return m_blending_enabled; }
+        virtual void SetBlendingEnabled(bool enabled) = 0;
+        BlendFactor GetSourceBlendFactor() const { return m_blending_source_factor; }
+        BlendFactor GetDestinationBlendFactor() const { return m_blending_destination_factor; }
+        virtual void SetBlendingFunc(BlendFactor source_factor, BlendFactor destination_factor) = 0;
+        BlendEquation GetBlendEquation() const { return m_blending_equation; }
+        virtual void SetBlendingEquation(BlendEquation blend_equation) = 0;
 
+        PolygonMode GetPolygonMode() const { return m_polygon_mode; }
         virtual void SetPolygonMode(PolygonMode polygon_mode) = 0;
     };
 

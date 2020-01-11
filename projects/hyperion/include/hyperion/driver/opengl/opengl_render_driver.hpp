@@ -8,9 +8,6 @@ namespace Hyperion::Rendering {
     public:
         OpenGLRenderDriver();
 
-        void Init() override;
-        void Shutdown() override;
-
         void Clear(ClearMask mask) override;
         void Clear(ClearMask mask, Color color) override;
 

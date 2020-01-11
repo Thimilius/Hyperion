@@ -33,9 +33,6 @@ namespace Hyperion::Rendering {
     protected:
         Scope<RasterizerState> m_rasterizer_state;
     public:
-        virtual void Init() = 0;
-        virtual void Shutdown() = 0;
-
         RasterizerState *GetRasterizerState() { return m_rasterizer_state.get(); }
 
         virtual void Clear(ClearMask mask) = 0;

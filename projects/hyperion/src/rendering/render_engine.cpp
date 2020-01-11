@@ -16,11 +16,10 @@ namespace Hyperion::Rendering {
         }
 
         s_render_backend = backend;
-        s_render_driver->Init();
     }
 
     void RenderEngine::Shutdown() {
-        s_render_driver->Shutdown();
+
     }
 
 }

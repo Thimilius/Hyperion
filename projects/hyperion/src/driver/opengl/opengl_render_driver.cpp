@@ -13,24 +13,6 @@ namespace Hyperion::Rendering {
         m_rasterizer_state = std::make_unique<OpenGLRasterizerState>();
     }
 
-    void OpenGLRenderDriver::Init() {
-        // Setup intial state
-        m_rasterizer_state->EnableFeature(RenderFeature::DepthTesting);
-
-        m_rasterizer_state->EnableFeature(RenderFeature::Culling);
-        m_rasterizer_state->SetFrontFaceMode(FrontFaceMode::Clockwise);
-        m_rasterizer_state->SetCullingMode(CullingMode::Back);
-
-        m_rasterizer_state->EnableFeature(RenderFeature::Blending);
-        m_rasterizer_state->SetBlendFunc(BlendFactor::SourceAlpha, BlendFactor::InverseSourceAlpha);
-
-        m_rasterizer_state->SetPolygonMode(PolygonMode::Fill);
-    }
-
-    void OpenGLRenderDriver::Shutdown() {
-
-    }
-
     void OpenGLRenderDriver::Clear(ClearMask mask) {
         glClear(GetGLClearMask(mask));
     }

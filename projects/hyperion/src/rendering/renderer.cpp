@@ -14,14 +14,14 @@ namespace Hyperion::Rendering {
     }
 
     void Renderer::DrawSkybox(const Ref<TextureCubemap> &skybox) {
-        // TODO: Add a push and pop behaviour to rasterizer state
-        RenderEngine::GetRasterizerState()->DisableFeature(RenderFeature::Culling);
+        bool culling_enabled = RenderEngine::GetRasterizerState()->IsCullingEnabled();
+        RenderEngine::GetRasterizerState()->SetCullingEnabled(false);
 
         PrepareShader(s_skybox.shader);
         skybox->Bind(0);
         Draw(s_skybox.mesh);
 
-        RenderEngine::GetRasterizerState()->EnableFeature(RenderFeature::Culling);
+        RenderEngine::GetRasterizerState()->SetCullingEnabled(culling_enabled);
     }
 
     void Renderer::Draw(const Ref<Mesh> &mesh, const Ref<Shader> &shader, const Mat4 &transform) {

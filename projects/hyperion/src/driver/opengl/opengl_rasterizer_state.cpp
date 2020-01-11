@@ -6,42 +6,84 @@
 
 namespace Hyperion {
 
-    void OpenGLRasterizerState::EnableFeature(RenderFeature feature) {
-        glEnable(GetGLFeature(feature));
+    OpenGLRasterizerState::OpenGLRasterizerState() {
+        // Setup intial state
+        SetDepthTestEnabled(true);
+
+        SetStencilTestEnabled(false);
+
+        SetCullingEnabled(true);
+        SetFrontFaceMode(FrontFaceMode::Clockwise);
+        SetCullingMode(CullingMode::Back);
+
+        SetCullingEnabled(true);
+        SetBlendingFunc(BlendFactor::SourceAlpha, BlendFactor::InverseSourceAlpha);
+        SetBlendingEquation(BlendEquation::Add);
+
+        SetPolygonMode(PolygonMode::Fill);
     }
 
-    void OpenGLRasterizerState::DisableFeature(RenderFeature feature) {
-        glDisable(GetGLFeature(feature));
+    void OpenGLRasterizerState::SetDepthTestEnabled(bool enabled) {
+        m_depth_test_enabled = enabled;
+        if (enabled) {
+            glEnable(GL_DEPTH_TEST);
+        } else {
+            glDisable(GL_DEPTH_TEST);
+        }
     }
 
-    void OpenGLRasterizerState::SetBlendFunc(BlendFactor source_factor, BlendFactor destination_factor) {
-        glBlendFunc(GetGLBlendFactor(source_factor), GetGLBlendFactor(destination_factor));
+    void OpenGLRasterizerState::SetStencilTestEnabled(bool enabled) {
+        m_stencil_test_enabled = enabled;
+        if (enabled) {
+            glEnable(GL_STENCIL_TEST);
+        } else {
+            glDisable(GL_STENCIL_TEST);
+        }
     }
 
-    void OpenGLRasterizerState::SetBlendEquation(BlendEquation blend_equation) {
-        glBlendEquation(GetGLBlendEquation(blend_equation));
-    }
-
-    void OpenGLRasterizerState::SetFrontFaceMode(FrontFaceMode front_face_mode) {
-        glFrontFace(GetGLFrontFaceMode(front_face_mode));
+    void OpenGLRasterizerState::SetCullingEnabled(bool enabled) {
+        m_culling_enabled = enabled;
+        if (enabled) {
+            glEnable(GL_CULL_FACE);
+        } else {
+            glDisable(GL_CULL_FACE);
+        }
     }
 
     void OpenGLRasterizerState::SetCullingMode(CullingMode culling_mode) {
+        m_culling_mode = culling_mode;
         glCullFace(GetGLCullingMode(culling_mode));
     }
 
-    void OpenGLRasterizerState::SetPolygonMode(PolygonMode polygon_mode) {
-        glPolygonMode(GL_FRONT_AND_BACK, GetGLPolygonMode(polygon_mode));
+    void OpenGLRasterizerState::SetFrontFaceMode(FrontFaceMode front_face_mode) {
+        m_front_face_mode = front_face_mode;
+        glFrontFace(GetGLFrontFaceMode(front_face_mode));
     }
 
-    u32 OpenGLRasterizerState::GetGLFeature(RenderFeature feature) {
-        switch (feature) {
-            case RenderFeature::Blending: return GL_BLEND;
-            case RenderFeature::Culling: return GL_CULL_FACE;
-            case RenderFeature::DepthTesting: return GL_DEPTH_TEST;
-            case RenderFeature::StencilTesting: return GL_STENCIL_TEST;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+    void OpenGLRasterizerState::SetBlendingEnabled(bool enabled) {
+        m_blending_enabled = enabled;
+        if (enabled) {
+            glEnable(GL_BLEND);
+        } else {
+            glDisable(GL_BLEND);
         }
+
+    }
+
+    void OpenGLRasterizerState::SetBlendingFunc(BlendFactor source_factor, BlendFactor destination_factor) {
+        m_blending_source_factor = source_factor;
+        m_blending_destination_factor = destination_factor;
+        glBlendFunc(GetGLBlendFactor(source_factor), GetGLBlendFactor(destination_factor));
+    }
+
+    void OpenGLRasterizerState::SetBlendingEquation(BlendEquation blend_equation) {
+        m_blending_equation = blend_equation;
+        glBlendEquation(GetGLBlendEquation(blend_equation));
+    }
+
+    void OpenGLRasterizerState::SetPolygonMode(PolygonMode polygon_mode) {
+        m_polygon_mode = polygon_mode;
+        glPolygonMode(GL_FRONT_AND_BACK, GetGLPolygonMode(polygon_mode));
     }
 
     u32 OpenGLRasterizerState::GetGLBlendFactor(BlendFactor blend_factor) {

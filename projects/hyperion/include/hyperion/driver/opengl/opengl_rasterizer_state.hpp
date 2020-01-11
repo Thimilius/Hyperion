@@ -6,18 +6,22 @@ namespace Hyperion {
 
     class OpenGLRasterizerState : public RasterizerState {
     public:
-        void EnableFeature(RenderFeature feature) override;
-        void DisableFeature(RenderFeature feature) override;
+        OpenGLRasterizerState();
 
-        void SetBlendFunc(BlendFactor source_factor, BlendFactor destination_factor) override;
-        void SetBlendEquation(BlendEquation blend_equation) override;
+        void SetDepthTestEnabled(bool enabled) override;
 
-        void SetFrontFaceMode(FrontFaceMode front_face_mode) override;
+        void SetStencilTestEnabled(bool enabled) override;
+
+        void SetCullingEnabled(bool enabled) override;
         void SetCullingMode(CullingMode culling_mode) override;
+        void SetFrontFaceMode(FrontFaceMode front_face_mode) override;
+
+        void SetBlendingEnabled(bool enabled) override;
+        void SetBlendingFunc(BlendFactor source_factor, BlendFactor destination_factor) override;
+        void SetBlendingEquation(BlendEquation blend_equation) override;
 
         void SetPolygonMode(PolygonMode polygon_mode) override;
     private:
-        static u32 GetGLFeature(RenderFeature feature);
         static u32 GetGLBlendFactor(BlendFactor blend_factor);
         static u32 GetGLBlendEquation(BlendEquation blend_equation);
         static u32 GetGLFrontFaceMode(FrontFaceMode front_face_mode);
