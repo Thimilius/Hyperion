@@ -28,6 +28,9 @@ namespace Hyperion {
         u32 width = 1280;
         u32 height = 720;
 
+        u32 min_width = 640;
+        u32 min_height = 360;
+
         WindowMode window_mode = WindowMode::Windowed;
         VSyncMode vsync_mode = VSyncMode::EveryVBlank;
     };

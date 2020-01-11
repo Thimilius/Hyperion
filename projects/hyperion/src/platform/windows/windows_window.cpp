@@ -22,6 +22,8 @@ namespace Hyperion {
         m_title = settings.title;
         m_width = settings.width;
         m_height = settings.height;
+        m_min_width = settings.min_width;
+        m_min_height = settings.min_height;
         m_window_state = WindowState::Normal;
 
         m_input = input_driver;
@@ -62,7 +64,7 @@ namespace Hyperion {
             this // Parameter to WM_CREATE that then stores the user pointer
         );
 
-        if (m_window_handle == INVALID_HANDLE_VALUE) {
+        if (!m_window_handle) {
             HYP_PANIC_MESSAGE("Engine", "Failed to create window!");
         }
 
@@ -117,6 +119,11 @@ namespace Hyperion {
 
         m_width = width;
         m_height = height;
+    }
+
+    void WindowsWindow::SetMinimumSize(u32 min_width, u32 min_height) {
+        m_min_width = min_width;
+        m_min_height = min_height;
     }
 
     void WindowsWindow::SetWindowMode(WindowMode window_mode) {
@@ -608,6 +615,18 @@ namespace Hyperion {
                     window->DispatchEvent(event);
                 }
                 
+                break;
+            }
+
+            case WM_GETMINMAXINFO: {
+                MINMAXINFO *min_max_info = (MINMAXINFO *)l_param;
+                // We need the check for the window pointer here
+                // because we get the GETMINMAXINFO message before the CREATE message
+                if (window) {
+                    Vec2 min_size = window->GetActualWindowSize(window->m_min_width, window->m_min_height);
+                    min_max_info->ptMinTrackSize.x = (LONG)min_size.x;
+                    min_max_info->ptMinTrackSize.y = (LONG)min_size.y;
+                }
                 break;
             }
 

@@ -28,6 +28,7 @@ namespace Hyperion {
 
         void SetTitle(const String &title) override;
         void SetSize(u32 width, u32 height) override;
+        void SetMinimumSize(u32 min_width, u32 min_height) override;
         void SetWindowMode(WindowMode window_mode) override;
         void SetWindowState(WindowState window_state) override;
         void SetVSyncMode(VSyncMode vsync_mode) override;
