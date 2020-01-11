@@ -16,7 +16,7 @@ namespace Hyperion {
         SetFrontFaceMode(FrontFaceMode::Clockwise);
         SetCullingMode(CullingMode::Back);
 
-        SetCullingEnabled(true);
+        SetBlendingEnabled(false);
         SetBlendingFunc(BlendFactor::SourceAlpha, BlendFactor::InverseSourceAlpha);
         SetBlendingEquation(BlendEquation::Add);
 
