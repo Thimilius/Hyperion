@@ -1,6 +1,6 @@
 #include "hyppch.hpp"
 
-#include "hyperion/driver/stb/stb_image_loader.hpp"
+#include "hyperion/modules/stb/stb_image_loader.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>

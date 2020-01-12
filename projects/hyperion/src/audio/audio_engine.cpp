@@ -2,7 +2,7 @@
 
 #include "hyperion/audio/audio_engine.hpp"
 
-#include "hyperion/driver/fmod/fmod_audio_driver.hpp"
+#include "hyperion/modules/fmod/fmod_audio_driver.hpp"
 
 namespace Hyperion::Audio {
 

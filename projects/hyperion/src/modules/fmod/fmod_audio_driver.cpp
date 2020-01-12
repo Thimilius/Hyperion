@@ -1,6 +1,6 @@
 #include "hyppch.hpp"
 
-#include "hyperion/driver/fmod/fmod_audio_driver.hpp"
+#include "hyperion/modules/fmod/fmod_audio_driver.hpp"
 
 #include <fmod/fmod.hpp>
 

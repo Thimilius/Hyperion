@@ -2,7 +2,7 @@
 
 #include "hyperion/assets/mesh_factory.hpp"
 
-#include "hyperion/driver/assimp/assimp_mesh_loader.hpp"
+#include "hyperion/modules/assimp/assimp_mesh_loader.hpp"
 
 using namespace Hyperion::Rendering;
 

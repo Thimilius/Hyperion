@@ -1,6 +1,6 @@
 #include "hyppch.hpp"
 
-#include "hyperion/driver/assimp/assimp_mesh_loader.hpp"
+#include "hyperion/modules/assimp/assimp_mesh_loader.hpp"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
