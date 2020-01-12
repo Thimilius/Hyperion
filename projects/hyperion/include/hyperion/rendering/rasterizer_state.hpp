@@ -56,6 +56,8 @@ namespace Hyperion {
 
         PolygonMode m_polygon_mode;
     public:
+        virtual ~RasterizerState() = default;
+
         bool IsDepthTestEnabled() const { return m_depth_test_enabled; }
         virtual void SetDepthTestEnabled(bool enabled) = 0;
 

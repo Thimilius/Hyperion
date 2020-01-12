@@ -209,6 +209,8 @@ namespace Hyperion {
     private:
         EventCallbackFunction m_event_callback;
     public:
+        virtual ~InputImplementation() = default;
+
         virtual bool GetKeyDown(KeyCode key_code) const = 0;
         virtual bool GetKey(KeyCode key_code) const = 0;
         virtual bool GetKeyUp(KeyCode key_code) const = 0;

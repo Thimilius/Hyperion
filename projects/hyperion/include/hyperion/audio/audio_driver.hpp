@@ -6,6 +6,8 @@ namespace Hyperion::Audio {
 
     class AudioDriver {
     public:
+        virtual ~AudioDriver() = default;
+
         virtual void Init() = 0;
         virtual void Shutdown() = 0;
 
