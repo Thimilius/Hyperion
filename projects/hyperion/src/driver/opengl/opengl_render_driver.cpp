@@ -33,13 +33,13 @@ namespace Hyperion::Rendering {
         }
 
         switch (target) {
-            case Hyperion::Rendering::RenderTextureTarget::DrawAndRead:
+            case RenderTextureTarget::DrawAndRead:
                 glBindFramebuffer(GL_FRAMEBUFFER, id);
                 break;
-            case Hyperion::Rendering::RenderTextureTarget::Draw:
+            case RenderTextureTarget::Draw:
                 glBindFramebuffer(GL_DRAW_FRAMEBUFFER, id);
                 break;
-            case Hyperion::Rendering::RenderTextureTarget::Read:
+            case RenderTextureTarget::Read:
                 glBindFramebuffer(GL_READ_FRAMEBUFFER, id);
                 break;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
@@ -86,10 +86,10 @@ namespace Hyperion::Rendering {
 
     u32 OpenGLRenderDriver::GetGLPrimitiveType(PrimitiveType primitive) {
         switch (primitive) {
-            case Hyperion::Rendering::PrimitiveType::Lines: return GL_LINES;
-            case Hyperion::Rendering::PrimitiveType::LineStrip: return GL_LINE_STRIP;
-            case Hyperion::Rendering::PrimitiveType::LineLoop: return GL_LINE_LOOP;
-            case Hyperion::Rendering::PrimitiveType::Triangles: return GL_TRIANGLES;
+            case PrimitiveType::Lines: return GL_LINES;
+            case PrimitiveType::LineStrip: return GL_LINE_STRIP;
+            case PrimitiveType::LineLoop: return GL_LINE_LOOP;
+            case PrimitiveType::Triangles: return GL_TRIANGLES;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }
