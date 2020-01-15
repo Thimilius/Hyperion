@@ -42,6 +42,7 @@ namespace Hyperion {
     class RasterizerState {
     protected:
         bool m_depth_test_enabled;
+        bool m_depth_mask_enabled;
 
         bool m_stencil_test_enabled;
 
@@ -60,6 +61,8 @@ namespace Hyperion {
 
         bool IsDepthTestEnabled() const { return m_depth_test_enabled; }
         virtual void SetDepthTestEnabled(bool enabled) = 0;
+        bool IsDepthMaskEnabked() const { return m_depth_mask_enabled; }
+        virtual void SetDepthMaskEnabled(bool enabled) = 0;
 
         bool IsStencilTestEnabled() const { return m_stencil_test_enabled; }
         virtual void SetStencilTestEnabled(bool enabled) = 0;

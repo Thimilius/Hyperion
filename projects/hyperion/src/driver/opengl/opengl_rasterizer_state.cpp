@@ -9,6 +9,7 @@ namespace Hyperion {
     OpenGLRasterizerState::OpenGLRasterizerState() {
         // Setup intial state
         SetDepthTestEnabled(true);
+        SetDepthMaskEnabled(true);
 
         SetStencilTestEnabled(false);
 
@@ -29,6 +30,15 @@ namespace Hyperion {
             glEnable(GL_DEPTH_TEST);
         } else {
             glDisable(GL_DEPTH_TEST);
+        }
+    }
+
+    void OpenGLRasterizerState::SetDepthMaskEnabled(bool enabled) {
+        m_depth_mask_enabled = enabled;
+        if (enabled) {
+            glDepthMask(GL_TRUE);
+        } else {
+            glDepthMask(GL_FALSE);
         }
     }
 

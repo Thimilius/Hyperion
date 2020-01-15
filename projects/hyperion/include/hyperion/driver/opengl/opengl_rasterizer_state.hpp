@@ -9,6 +9,7 @@ namespace Hyperion {
         OpenGLRasterizerState();
 
         void SetDepthTestEnabled(bool enabled) override;
+        void SetDepthMaskEnabled(bool enabled) override;
 
         void SetStencilTestEnabled(bool enabled) override;
 
