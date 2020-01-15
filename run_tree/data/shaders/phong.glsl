@@ -22,7 +22,7 @@ uniform struct Camera {
 
 uniform struct Light {
 	vec3 position;
-	vec3 color;
+	vec4 color;
 } u_light;
 
 uniform sampler2D u_texture;
@@ -39,7 +39,7 @@ void main() {
 	float diffuse_intensity = 0.8;
 	vec3 to_light_direction = normalize(u_light.position - i_v2f.position);
 	diffuse_intensity = diffuse_intensity * max(dot(i_v2f.normal, to_light_direction), 0.0);
-	vec3 diffuse_lighting = diffuse_intensity * u_light.color;
+	vec3 diffuse_lighting = diffuse_intensity * u_light.color.xyz;
 	
 	// Specular
 	float specular_intensity = 0.5;
@@ -47,7 +47,7 @@ void main() {
 	vec3 to_camera_direction = normalize(u_camera.position - i_v2f.position);
 	vec3 reflection_direction = reflect(-to_light_direction, i_v2f.normal);
 	specular_intensity = specular_intensity * pow(max(dot(to_camera_direction, reflection_direction), 0.0), specular_exponent);
-	vec3 specular_lighting = specular_intensity * u_light.color;
+	vec3 specular_lighting = specular_intensity * u_light.color.xyz;
 	
 	// Final lighting
 	vec3 lighting_color = ambient_lighting + diffuse_lighting + specular_lighting;

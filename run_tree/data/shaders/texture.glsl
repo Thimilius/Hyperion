@@ -17,7 +17,8 @@ void main() {
 #import "basic_fragment"
 
 uniform sampler2D u_texture;
+uniform vec4 u_color;
 
 void main() {
-	o_color = texture(u_texture, i_v2f.uv);
+	o_color = texture(u_texture, i_v2f.uv) * vec4(u_color.xyz, 1);
 }

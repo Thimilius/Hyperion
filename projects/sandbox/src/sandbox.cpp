@@ -18,6 +18,10 @@ protected:
     Ref<Texture2D> m_cube_texture;
     Ref<TextureCubemap> m_skybox_texture;
 
+    Ref<Mesh> m_light_mesh;
+    Ref<Material> m_light_material;
+    Ref<Texture2D> m_light_texture;
+
     void OnInit() override {
         EditorLayer *editor_layer = new EditorLayer();
         PushLayer(editor_layer);
@@ -30,6 +34,10 @@ protected:
         m_cube_material = Material::Create(AssetLibrary::GetShader("phong"));
         m_cube_texture = AssetLibrary::GetTexture2D("grass");
         m_skybox_texture = AssetLibrary::LoadTextureCubemap("skybox", "data/textures/galaxy", ".png");
+
+        m_light_mesh = MeshFactory::CreatePlane(0.25f, 0.25f);
+        m_light_material = Material::Create(AssetLibrary::GetShader("texture"));
+        m_light_texture = AssetLibrary::GetTexture2D("light_icon");
     }
     
     void OnEvent(Event &event) override {
@@ -47,18 +55,38 @@ protected:
         
         RenderEngine::Clear(ClearMask::Color | ClearMask::Depth, Color::Black());
 
+        Vec3 light_position = Vec3(1.5f, 2.0f, 3.0f);
+        Color light_color = Color::Red();
+
         Renderer::Begin(m_camera);
         {
             Renderer::DrawSkybox(m_skybox_texture);
 
             RenderEngine::Clear(ClearMask::Depth);
 
-            m_cube_material->SetVec3("u_camera.position", m_camera->GetPosition());
-            m_cube_material->SetVec3("u_light.position", Vec3(1.5f, 2.0f, 3.0f));
-            m_cube_material->SetVec3("u_light.color", Vec3::One());
-            m_cube_material->SetTexture2D("u_texture", m_cube_texture);
+            // Draw cube
+            {
+                m_cube_material->SetVec3("u_camera.position", m_camera->GetPosition());
+                m_cube_material->SetVec3("u_light.position", light_position);
+                m_cube_material->SetColor("u_light.color", light_color);
+                m_cube_material->SetTexture2D("u_texture", m_cube_texture);
 
-            Renderer::Draw(m_cube_mesh, m_cube_material, Mat4::Identity());
+                Renderer::Draw(m_cube_mesh, m_cube_material, Mat4::Identity());
+            }
+
+            // Draw light icon
+            {
+                m_light_material->SetTexture2D("u_texture", m_light_texture);
+                m_light_material->SetColor("u_color", light_color);
+
+                RenderEngine::GetRasterizerState()->SetCullingEnabled(false);
+                RenderEngine::GetRasterizerState()->SetBlendingEnabled(true);
+                RenderEngine::GetRasterizerState()->SetDepthMaskEnabled(false);
+                Renderer::Draw(m_light_mesh, m_light_material, Mat4::Translate(light_position) * Mat4::Rotate(Vec3(1, 0, 0), 90));
+                RenderEngine::GetRasterizerState()->SetCullingEnabled(true);
+                RenderEngine::GetRasterizerState()->SetBlendingEnabled(false);
+                RenderEngine::GetRasterizerState()->SetDepthMaskEnabled(true);
+            }
         }
         Renderer::End();
 
