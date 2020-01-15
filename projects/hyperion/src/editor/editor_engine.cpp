@@ -45,7 +45,7 @@ namespace Hyperion::Editor {
     }
 
     void EditorEngine::Update() {
-        Ref<Window> window = Application::GetInstance()->GetWindow();
+        Window *window = Application::GetInstance()->GetWindow();
 
         if (Input::GetKeyDown(KeyCode::Escape) || ((Input::GetKey(KeyCode::LeftControl) || Input::GetKey(KeyCode::RightControl)) && Input::GetKeyDown(KeyCode::W))) {
             Application::GetInstance()->Exit();
@@ -91,7 +91,7 @@ namespace Hyperion::Editor {
     }
 
     void EditorEngine::UpdateTitle() {
-        Ref<Window> window = Application::GetInstance()->GetWindow();
+        Window *window = Application::GetInstance()->GetWindow();
         String title = StringUtils::Format("Hyperion | FPS: {} ({:.2f} ms) | VSync: {}", Time::GetFPS(), Time::GetFrameTime(), window->GetVSyncMode() != VSyncMode::DontSync);
         window->SetTitle(title);
     }

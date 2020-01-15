@@ -21,10 +21,9 @@ namespace Hyperion {
         HYP_ASSERT_MESSAGE(settings.time.max_delta_time > 0, "Max delta time must be greater than zero!");
         Time::s_max_delta_time = settings.time.max_delta_time;
 
-        m_window = Window::Create(settings.window, settings.renderer.backend, Input::s_input_implementation.get());
+        m_window = Window::Create(settings.window, settings.renderer.backend);
         auto event_callback = std::bind(&Application::OnEventInternal, this, std::placeholders::_1);
         m_window->SetEventCallbackFunction(event_callback);
-        Input::s_input_implementation->SetEventCallbackFunction(event_callback);
     }
 
     int Application::Run() {

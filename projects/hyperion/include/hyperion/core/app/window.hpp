@@ -59,9 +59,10 @@ namespace Hyperion {
         virtual void Update() = 0;
         virtual void Show() = 0;
 
-        void SetEventCallbackFunction(const EventCallbackFunction &event_callback) { m_event_callback = event_callback; }
+        virtual InputImplementation *GetInput() const = 0;
+        virtual void SetEventCallbackFunction(const EventCallbackFunction &event_callback) { m_event_callback = event_callback; }
 
-        static Ref<Window> Create(const WindowSettings &settings, Rendering::RenderBackend render_backend, InputImplementation *input_driver);
+        static Ref<Window> Create(const WindowSettings &settings, Rendering::RenderBackend render_backend);
 
         friend class Application;
     };

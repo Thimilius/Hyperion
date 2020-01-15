@@ -9,6 +9,7 @@
 namespace Hyperion {
 
     class WindowsWindow : public Window {
+        using EventCallbackFunction = std::function<void(Event &)>;
     private:
         WindowsInput *m_input;
 
@@ -23,7 +24,7 @@ namespace Hyperion {
         mutable bool m_left_shift_last_down = false;
         mutable bool m_right_shift_last_down = false;
     public:
-        WindowsWindow(const WindowSettings &settings, Rendering::RenderBackend render_backend, WindowsInput *input_driver);
+        WindowsWindow(const WindowSettings &settings, Rendering::RenderBackend render_backend);
         ~WindowsWindow();
 
         void SetTitle(const String &title) override;
@@ -38,6 +39,9 @@ namespace Hyperion {
         void Update() override;
         void Show() override;
         
+        InputImplementation *GetInput() const override { return m_input; }
+        void SetEventCallbackFunction(const EventCallbackFunction &event_callback) override;
+
         Vec2 GetActualWindowSize(u32 client_width, u32 client_height);
 
         void CreateContext(Rendering::RenderBackend backend_api);

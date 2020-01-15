@@ -235,10 +235,8 @@ namespace Hyperion {
                 m_event_callback(event);
             }
         }
-    private:
-        void SetEventCallbackFunction(const EventCallbackFunction &event_callback) { m_event_callback = event_callback; }
 
-        friend class Application;
+        void SetEventCallbackFunction(const EventCallbackFunction &event_callback) { m_event_callback = event_callback; }
     };
 
     class Input {
@@ -267,7 +265,7 @@ namespace Hyperion {
         Input() = delete;
         ~Input() = delete;
 
-        friend class Application;
+        friend class WindowsWindow;
     };
 
 }

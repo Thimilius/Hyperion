@@ -7,7 +7,7 @@
 namespace Hyperion::Rendering {
 
     Ray Camera::ScreenPointToRay(Vec2 screen_point) {
-        Ref<Window> window = Application::GetInstance()->GetWindow();
+        Window *window = Application::GetInstance()->GetWindow();
         f32 window_width = (f32)window->GetWidth();
         f32 window_height = (f32)window->GetHeight();
 
@@ -40,7 +40,7 @@ namespace Hyperion::Rendering {
     }
 
     void Camera::RecalculateMatricies() {
-        Ref<Window> window = Application::GetInstance()->GetWindow();
+        Window *window = Application::GetInstance()->GetWindow();
         f32 aspect_ratio = (f32)window->GetWidth() / (f32)window->GetHeight();
 
         m_view_matrix = Mat4::LookAt(m_position, m_position + m_forward, m_up);

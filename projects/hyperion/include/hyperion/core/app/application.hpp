@@ -16,7 +16,7 @@ namespace Hyperion {
         Application(const ApplicationSettings &settings);
         virtual ~Application() = default;
 
-        inline Ref<Window> GetWindow() const { return m_window; }
+        inline Window *GetWindow() const { return m_window.get(); }
 
         int Run();
         void Exit();

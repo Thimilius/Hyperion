@@ -14,11 +14,11 @@
 
 namespace Hyperion {
 
-    Ref<Window> Window::Create(const WindowSettings &settings, Rendering::RenderBackend render_backend, InputImplementation *input_driver) {
-        return std::make_shared<WindowsWindow>(settings, render_backend, (WindowsInput *)input_driver);
+    Ref<Window> Window::Create(const WindowSettings &settings, Rendering::RenderBackend render_backend) {
+        return std::make_shared<WindowsWindow>(settings, render_backend);
     }
 
-    WindowsWindow::WindowsWindow(const WindowSettings &settings, Rendering::RenderBackend render_backend, WindowsInput *input_driver) {
+    WindowsWindow::WindowsWindow(const WindowSettings &settings, Rendering::RenderBackend render_backend) {
         m_title = settings.title;
         m_width = settings.width;
         m_height = settings.height;
@@ -26,7 +26,7 @@ namespace Hyperion {
         m_min_height = settings.min_height;
         m_window_state = WindowState::Normal;
 
-        m_input = input_driver;
+        m_input = (WindowsInput*)Input::s_input_implementation.get();
 
         u32 window_styles = WS_OVERLAPPEDWINDOW;
         auto window_class_name = L"HYPERION_WINDOW_CLASS";
@@ -233,6 +233,11 @@ namespace Hyperion {
 
     void WindowsWindow::Show() {
         ShowWindow(m_window_handle, SW_SHOWNORMAL);
+    }
+
+    void WindowsWindow::SetEventCallbackFunction(const EventCallbackFunction &event_callback) {
+        m_event_callback = event_callback;
+        m_input->SetEventCallbackFunction(event_callback);
     }
 
     Vec2 WindowsWindow::GetActualWindowSize(u32 client_width, u32 client_height) {
