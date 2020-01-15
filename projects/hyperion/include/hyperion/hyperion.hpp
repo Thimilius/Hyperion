@@ -21,6 +21,8 @@
 #include "hyperion/core/math/ray.hpp"
 #include "hyperion/core/math/rect.hpp"
 #include "hyperion/core/app/application.hpp"
+#include "hyperion/core/app/application_layer.hpp"
+#include "hyperion/core/app/application_settings.hpp"
 #include "hyperion/core/app/window.hpp"
 #include "hyperion/core/app/display.hpp"
 #include "hyperion/core/app/input.hpp"
@@ -56,5 +58,5 @@
 #include "hyperion/audio/audio_engine.hpp"
 
 // Editor
-#include "hyperion/editor/editor_engine.hpp"
+#include "hyperion/editor/editor_layer.hpp"
 #include "hyperion/editor/editor_camera_controller.hpp"

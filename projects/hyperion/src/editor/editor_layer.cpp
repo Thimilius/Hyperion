@@ -1,7 +1,7 @@
 #include "hyppch.hpp"
 
 #include "hyperion/core/app/time.hpp"
-#include "hyperion/editor/editor_engine.hpp"
+#include "hyperion/editor/editor_layer.hpp"
 #include "hyperion/rendering/immediate_renderer.hpp"
 #include "hyperion/assets/asset_library.hpp"
 
@@ -9,19 +9,19 @@ using namespace Hyperion::Rendering;
 
 namespace Hyperion::Editor {
 
-    void EditorEngine::Init() {
-        s_camera = Camera::Create();
-        s_camera_controller = EditorCameraController(s_camera);
+    void EditorLayer::OnAttach() {
+        m_camera = Camera::Create();
+        m_camera_controller = EditorCameraController(m_camera);
 
         // Initialize grid vertex buffer
         {
             Color grid_color = Color::White();
 
-            s32 half_grid_size = s_grid_size / 2;
+            s32 half_grid_size = m_grid_size / 2;
             f32 to_point = (f32)half_grid_size;
 
-            s_grid_vertex_count = (s_grid_size + 1) * 4;
-            Vector<VertexImmediate> verticies(s_grid_vertex_count);
+            m_grid_vertex_count = (m_grid_size + 1) * 4;
+            Vector<VertexImmediate> verticies(m_grid_vertex_count);
 
             u32 index = 0;
             for (s32 x = -half_grid_size; x <= half_grid_size; x++) {
@@ -35,16 +35,16 @@ namespace Hyperion::Editor {
                 verticies[index++] = { Vec3(-to_point, 0, from_point), grid_color };
             }
 
-            Ref<VertexBuffer> vertex_buffer = VertexBuffer::Create((u8*)verticies.data(), s_grid_vertex_count * sizeof(VertexImmediate));
+            Ref<VertexBuffer> vertex_buffer = VertexBuffer::Create((u8*)verticies.data(), m_grid_vertex_count * sizeof(VertexImmediate));
             vertex_buffer->SetLayout(VertexImmediate::GetBufferLayout());
-            s_grid_vertex_array = VertexArray::Create();
-            s_grid_vertex_array->AddVertexBuffer(vertex_buffer);
+            m_grid_vertex_array = VertexArray::Create();
+            m_grid_vertex_array->AddVertexBuffer(vertex_buffer);
         }
 
         UpdateTitle();
     }
 
-    void EditorEngine::Update() {
+    void EditorLayer::OnUpdate(f32 delta_time) {
         Window *window = Application::GetInstance()->GetWindow();
 
         if (Input::GetKeyDown(KeyCode::Escape) || ((Input::GetKey(KeyCode::LeftControl) || Input::GetKey(KeyCode::RightControl)) && Input::GetKeyDown(KeyCode::W))) {
@@ -59,22 +59,22 @@ namespace Hyperion::Editor {
             UpdateTitle();
         }
         if (Input::GetKeyDown(KeyCode::F3)) {
-            s_grid_enabled = !s_grid_enabled;
+            m_grid_enabled = !m_grid_enabled;
         }
         if (Input::GetKeyDown(KeyCode::F4)) {
-            s_origin_enabled = !s_origin_enabled;
+            m_origin_enabled = !m_origin_enabled;
         }
 
-        s_camera_controller.Update(Time::GetDeltaTime());
+        m_camera_controller.Update(delta_time);
     }
 
-    void EditorEngine::Render() {
-        ImmediateRenderer::Begin(s_camera);
+    void EditorLayer::OnRender() {
+        ImmediateRenderer::Begin(m_camera);
         {
-            if (s_grid_enabled) {
-                ImmediateRenderer::Draw(PrimitiveType::Lines, s_grid_vertex_array, s_grid_vertex_count);
+            if (m_grid_enabled) {
+                ImmediateRenderer::Draw(PrimitiveType::Lines, m_grid_vertex_array, m_grid_vertex_count);
             }
-            if (s_origin_enabled) {
+            if (m_origin_enabled) {
                 // We want to draw the origin on top of the grid
                 RenderEngine::Clear(ClearMask::Depth);
 
@@ -86,11 +86,11 @@ namespace Hyperion::Editor {
         ImmediateRenderer::End();
     }
 
-    void EditorEngine::OnTick() {
+    void EditorLayer::OnTick() {
         UpdateTitle();
     }
 
-    void EditorEngine::UpdateTitle() {
+    void EditorLayer::UpdateTitle() {
         Window *window = Application::GetInstance()->GetWindow();
         String title = StringUtils::Format("Hyperion | FPS: {} ({:.2f} ms) | VSync: {}", Time::GetFPS(), Time::GetFrameTime(), window->GetVSyncMode() != VSyncMode::DontSync);
         window->SetTitle(title);

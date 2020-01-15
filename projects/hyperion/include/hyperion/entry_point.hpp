@@ -4,6 +4,8 @@
 
 extern Hyperion::Application *Hyperion::CreateApplication();
 
+// TODO: Move entry logic into a main class
+
 #if !defined HYP_PLATFORM_WINDOWS || HYP_CONSOLE
 int main(int argc, char **argv) {
     auto *app = Hyperion::CreateApplication();
