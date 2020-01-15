@@ -54,7 +54,7 @@ namespace Hyperion::Rendering {
                 case MaterialPropertyType::Int: m_shader->SetInt(name, std::get<u32>(storage)); break;
                 case MaterialPropertyType::Float: m_shader->SetFloat(name, std::get<f32>(storage)); break;
                 case MaterialPropertyType::Vec2: m_shader->SetFloat2(name, std::get<Vec2>(storage)); break;
-                case MaterialPropertyType::Vec3: m_shader->SetFloat3(name, std::get<Vec4>(storage)); break;
+                case MaterialPropertyType::Vec3: m_shader->SetFloat3(name, std::get<Vec3>(storage)); break;
                 case MaterialPropertyType::Vec4: m_shader->SetFloat4(name, std::get<Vec4>(storage)); break;
                 case MaterialPropertyType::Mat4: m_shader->SetMat4(name, std::get<Mat4>(storage)); break;
                 case MaterialPropertyType::Color: m_shader->SetFloat4(name, std::get<Color>(storage)); break;
@@ -79,7 +79,7 @@ namespace Hyperion::Rendering {
     }
 
     Ref<Material> Material::Create(const Ref<Shader> &shader) {
-        return Ref<Material>();
+        return Ref<Material>(new Material(shader));
     }
 
     u32 Material::FindOrAddProperty(const String &name, MaterialPropertyType type) {

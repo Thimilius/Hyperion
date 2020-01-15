@@ -24,8 +24,9 @@ namespace Hyperion::Rendering {
         RenderEngine::GetRasterizerState()->SetCullingEnabled(culling_enabled);
     }
 
-    void Renderer::Draw(const Ref<Mesh> &mesh, const Ref<Shader> &shader, const Mat4 &transform) {
-        PrepareShader(shader, transform);
+    void Renderer::Draw(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform) {
+        PrepareShader(material->GetShader(), transform);
+        material->Bind();
         Draw(mesh);
     }
 

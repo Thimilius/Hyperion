@@ -38,6 +38,10 @@ namespace Hyperion::Rendering {
         Vector<MaterialProperty> m_properties;
         Map<String, Ref<Texture2D>> m_textures;
     public:
+        AssetType GetType() const override { return AssetType::Material; }
+
+        Ref<Shader> GetShader() const { return m_shader; }
+
         void SetInt(const String &name, u32 value);
         void SetFloat(const String &name, f32 value);
         void SetVec2(const String &name, const Vec2 &value);

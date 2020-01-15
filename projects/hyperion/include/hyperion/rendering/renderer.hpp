@@ -3,6 +3,7 @@
 #include "hyperion/common.hpp"
 #include "hyperion/core/math/mat4.hpp"
 #include "hyperion/rendering/shader.hpp"
+#include "hyperion/rendering/material.hpp"
 #include "hyperion/rendering/mesh.hpp"
 #include "hyperion/rendering/camera.hpp"
 #include "hyperion/rendering/texture_cubemap.hpp"
@@ -30,7 +31,7 @@ namespace Hyperion::Rendering {
     public:
         static void Begin(const Ref<Camera> &camera);
         static void DrawSkybox(const Ref<TextureCubemap> &skybox);
-        static void Draw(const Ref<Mesh> &mesh, const Ref<Shader> &shader, const Mat4 &transform);
+        static void Draw(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform);
         static void End();
     private:
         Renderer() = delete;

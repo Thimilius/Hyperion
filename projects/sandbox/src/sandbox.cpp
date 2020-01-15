@@ -14,7 +14,7 @@ protected:
     Ref<RenderTexture> m_render_texture;
 
     Ref<Mesh> m_cube_mesh;
-    Ref<Shader> m_cube_shader;
+    Ref<Material> m_cube_material;
     Ref<Texture2D> m_cube_texture;
     Ref<TextureCubemap> m_skybox_texture;
 
@@ -23,7 +23,7 @@ protected:
         m_render_texture = RenderTexture::Create(GetWindow()->GetWidth(), GetWindow()->GetHeight(), RenderTextureFormat::RGBA8);
 
         m_cube_mesh = MeshFactory::CreateCube(1);
-        m_cube_shader = AssetLibrary::GetShader("phong");
+        m_cube_material = Material::Create(AssetLibrary::GetShader("phong"));
         m_cube_texture = AssetLibrary::GetTexture2D("grass");
         m_skybox_texture = AssetLibrary::LoadTextureCubemap("skybox", "data/textures/galaxy", ".png");
 
@@ -51,13 +51,12 @@ protected:
 
             RenderEngine::Clear(ClearMask::Depth);
 
-            m_cube_shader->Bind();
-            m_cube_shader->SetFloat3("u_camera.position", m_camera->GetPosition());
-            m_cube_shader->SetFloat3("u_light.position", Vec3(1.5f, 2.0f, 3.0f));
-            m_cube_shader->SetFloat3("u_light.color", Vec3::One());
-            m_cube_shader->SetInt("u_texture", 0);
-            m_cube_texture->Bind(0);
-            Renderer::Draw(m_cube_mesh, m_cube_shader, Mat4::Identity());
+            m_cube_material->SetVec3("u_camera.position", m_camera->GetPosition());
+            m_cube_material->SetVec3("u_light.position", Vec3(1.5f, 2.0f, 3.0f));
+            m_cube_material->SetVec3("u_light.color", Vec3::One());
+            m_cube_material->SetTexture2D("u_texture", m_cube_texture);
+
+            Renderer::Draw(m_cube_mesh, m_cube_material, Mat4::Identity());
         }
         Renderer::End();
 

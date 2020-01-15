@@ -8,6 +8,7 @@ namespace Hyperion {
         Mesh,
         Shader,
         Texture,
+        Material,
     };
 
     class Asset {
