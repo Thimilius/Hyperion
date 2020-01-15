@@ -1,6 +1,6 @@
 #include "hyppch.hpp"
 
-#include "hyperion/editor/camera_controller.hpp"
+#include "hyperion/editor/editor_camera_controller.hpp"
 
 #include "hyperion/core/app/input.hpp"
 
@@ -8,7 +8,7 @@ using namespace Hyperion::Rendering;
 
 namespace Hyperion::Editor {
 
-    void CameraController::Update(f32 delta) {
+    void EditorCameraController::Update(f32 delta) {
         Vec3 position = m_camera->GetPosition();
         Vec3 forward = m_camera->GetForward();
         Vec3 up = m_camera->GetUp();
@@ -155,11 +155,11 @@ namespace Hyperion::Editor {
         m_camera->RecalculateMatricies();
     }
 
-    Ref<CameraController> CameraController::Create(const Ref<Rendering::Camera> &camera) {
-        return Ref<CameraController>(new CameraController(camera));
+    EditorCameraController::EditorCameraController() {
+
     }
 
-    CameraController::CameraController(const Ref<Camera> &camera) {
+    EditorCameraController::EditorCameraController(const Ref<Camera> &camera) {
         m_camera = camera;
 
         m_camera->SetPosition(Vec3(2, 2, 2));

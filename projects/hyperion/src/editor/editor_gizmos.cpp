@@ -1,6 +1,6 @@
 #include "hyppch.hpp"
 
-#include "hyperion/editor/gizmos.hpp"
+#include "hyperion/editor/editor_gizmos.hpp"
 
 #include "hyperion/rendering/renderer.hpp"
 #include "hyperion/assets/asset_library.hpp"
@@ -10,16 +10,12 @@ using namespace Hyperion::Rendering;
 
 namespace Hyperion::Editor {
 
-    void Gizmos::Init() {
+    EditorGizmos::EditorGizmos() {
         m_material = Material::Create(AssetLibrary::GetShader("gizmo"));
         m_mesh = MeshFactory::CreateFromFile("data/models/gizmo.obj");
     }
 
-    void Gizmos::Update(const Ref<Camera> &camera) {
-
-    }
-
-    void Gizmos::Render(const Ref<Camera> &camera) {
+    void EditorGizmos::Render(const Ref<Camera> &camera) {
         Renderer::Begin(camera);
         {
             m_material->SetVec3("u_camera.position", camera->GetPosition());

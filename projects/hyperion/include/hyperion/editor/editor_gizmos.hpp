@@ -6,15 +6,15 @@
 
 namespace Hyperion::Editor {
 
-    class Gizmos {
+    class EditorGizmos {
     private:
         Ref<Rendering::Material> m_material;
         Ref<Rendering::Mesh> m_mesh;
         
         f32 m_gizmo_scale = 0.002f;
     public:
-        void Init();
-        void Update(const Ref<Rendering::Camera> &camera);
+        EditorGizmos();
+
         void Render(const Ref<Rendering::Camera> &camera);
     };
 

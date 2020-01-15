@@ -1,10 +1,11 @@
 #pragma once
 
+#include "hyperion/core/math/vec2.hpp"
 #include "hyperion/rendering/camera.hpp"
 
 namespace Hyperion::Editor {
 
-    class CameraController {
+    class EditorCameraController {
     private:
         Ref<Rendering::Camera> m_camera;
 
@@ -22,13 +23,12 @@ namespace Hyperion::Editor {
         f32 m_fov_target;
         f32 m_size_target;
     public:
+        EditorCameraController();
+        EditorCameraController(const Ref<Rendering::Camera> &camera);
+
         inline const Ref<Rendering::Camera> &GetCamera() const { return m_camera; }
 
         void Update(f32 delta);
-
-        static Ref<CameraController> Create(const Ref<Rendering::Camera> &camera);
-    private:
-        CameraController(const Ref<Rendering::Camera> &camera);
     };
 
 }

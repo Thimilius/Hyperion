@@ -19,15 +19,15 @@ protected:
     Ref<TextureCubemap> m_skybox_texture;
 
     void OnInit() override {
-        m_camera = Camera::Create();
+        EditorEngine::Init();
+        m_camera = EditorEngine::GetCamera();
+
         m_render_texture = RenderTexture::Create(GetWindow()->GetWidth(), GetWindow()->GetHeight(), RenderTextureFormat::RGBA8);
 
         m_cube_mesh = MeshFactory::CreateCube(1);
         m_cube_material = Material::Create(AssetLibrary::GetShader("phong"));
         m_cube_texture = AssetLibrary::GetTexture2D("grass");
         m_skybox_texture = AssetLibrary::LoadTextureCubemap("skybox", "data/textures/galaxy", ".png");
-
-        EditorEngine::OnInit(m_camera);
     }
     
     void OnEvent(Event &event) override {
@@ -37,7 +37,7 @@ protected:
     }
 
     void OnUpdate(f32 delta_time) override {
-        EditorEngine::OnUpdate(m_camera);
+        EditorEngine::Update();
     }
 
     void OnRender() override {
@@ -64,7 +64,7 @@ protected:
         // Setting back buffer as render target before swapping buffers fixes vsync
         RenderEngine::SetActiveRenderTarget(nullptr);
 
-        EditorEngine::OnRender(m_camera);
+        EditorEngine::Render();
     }
     
     void OnTick() override {

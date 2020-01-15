@@ -57,5 +57,4 @@
 
 // Editor
 #include "hyperion/editor/editor_engine.hpp"
-#include "hyperion/editor/camera_controller.hpp"
-#include "hyperion/editor/gizmos.hpp"
+#include "hyperion/editor/editor_camera_controller.hpp"

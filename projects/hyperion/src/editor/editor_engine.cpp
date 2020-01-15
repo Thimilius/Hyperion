@@ -9,9 +9,9 @@ using namespace Hyperion::Rendering;
 
 namespace Hyperion::Editor {
 
-    void EditorEngine::OnInit(const Ref<Camera> &camera) {
-        s_camera = camera;
-        s_camera_controller = CameraController::Create(camera);
+    void EditorEngine::Init() {
+        s_camera = Camera::Create();
+        s_camera_controller = EditorCameraController(s_camera);
 
         // Initialize grid vertex buffer
         {
@@ -44,7 +44,7 @@ namespace Hyperion::Editor {
         UpdateTitle();
     }
 
-    void EditorEngine::OnUpdate(const Ref<Camera> &camera) {
+    void EditorEngine::Update() {
         Ref<Window> window = Application::GetInstance()->GetWindow();
 
         if (Input::GetKeyDown(KeyCode::Escape) || ((Input::GetKey(KeyCode::LeftControl) || Input::GetKey(KeyCode::RightControl)) && Input::GetKeyDown(KeyCode::W))) {
@@ -65,11 +65,11 @@ namespace Hyperion::Editor {
             s_origin_enabled = !s_origin_enabled;
         }
 
-        s_camera_controller->Update(Time::GetDeltaTime());
+        s_camera_controller.Update(Time::GetDeltaTime());
     }
 
-    void EditorEngine::OnRender(const Ref<Camera> &camera) {
-        ImmediateRenderer::Begin(camera);
+    void EditorEngine::Render() {
+        ImmediateRenderer::Begin(s_camera);
         {
             if (s_grid_enabled) {
                 ImmediateRenderer::Draw(PrimitiveType::Lines, s_grid_vertex_array, s_grid_vertex_count);
