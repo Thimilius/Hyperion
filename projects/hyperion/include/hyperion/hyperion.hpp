@@ -33,6 +33,10 @@
 #include "hyperion/core/app/events/key_events.hpp"
 #include "hyperion/core/app/events/mouse_events.hpp"
 
+// Entity
+#include "hyperion/entity/entity.hpp"
+#include "hyperion/entity/entity_component.hpp"
+
 // Rendering
 #include "hyperion/rendering/graphics_context.hpp"
 #include "hyperion/rendering/render_engine.hpp"
