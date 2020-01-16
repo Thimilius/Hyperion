@@ -33,6 +33,9 @@ namespace Hyperion {
         virtual void PrintToConsole(LogColor color, const String &message) = 0;
         virtual void DisplayError(const String &title, const String &message) = 0;
 
+        virtual String OpenFileDialog(const String &title, const String &filter) = 0;
+        virtual String SaveFileDialog(const String &title, const String &filter) = 0;
+
         inline static OperatingSystem* GetInstance() { return s_instance; }
     private:
         virtual void Init() = 0;

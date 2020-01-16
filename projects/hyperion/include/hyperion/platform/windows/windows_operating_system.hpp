@@ -17,6 +17,10 @@ namespace Hyperion {
 
         void DisplayError(const String &title, const String &message) override;
         void PrintToConsole(LogColor color, const String &message) override;
+
+        // TODO: Make the filter work
+        String OpenFileDialog(const String &title, const String &filter) override;
+        String SaveFileDialog(const String &title, const String &filter) override;
     };
 
 }

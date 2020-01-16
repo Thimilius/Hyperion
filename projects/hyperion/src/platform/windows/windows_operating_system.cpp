@@ -85,4 +85,44 @@ namespace Hyperion {
         SetConsoleTextAttribute(m_console_handle, console_screen_buffer_info.wAttributes);
     }
 
+    String WindowsOperatingSystem::OpenFileDialog(const String &title, const String &filter) {
+        WCHAR file_output[MAX_PATH] = { 0 };
+
+        OPENFILENAMEW open_file_options = { };
+        open_file_options.lStructSize = sizeof(open_file_options);
+        open_file_options.hwndOwner = (HWND)Application::GetInstance()->GetWindow()->GetNativePointer();
+        open_file_options.nMaxFile = sizeof(file_output);
+        open_file_options.lpstrFile = file_output;
+        open_file_options.lpstrFilter = L"All\0*.*\0";
+        open_file_options.nFilterIndex = 1;
+        open_file_options.lpstrTitle = StringUtils::Utf8ToUtf16(title).c_str();
+        open_file_options.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+        if (GetOpenFileNameW(&open_file_options)) {
+            return StringUtils::Utf16ToUtf8(file_output);
+        } else {
+            return String();
+        }
+    }
+
+    String WindowsOperatingSystem::SaveFileDialog(const String &title, const String &filter) {
+        WCHAR file_output[MAX_PATH] = { 0 };
+
+        OPENFILENAMEW open_file_options = { };
+        open_file_options.lStructSize = sizeof(open_file_options);
+        open_file_options.hwndOwner = (HWND)Application::GetInstance()->GetWindow()->GetNativePointer();
+        open_file_options.nMaxFile = sizeof(file_output);
+        open_file_options.lpstrFile = file_output;
+        open_file_options.lpstrFilter = L"All\0*.*\0";
+        open_file_options.nFilterIndex = 1;
+        open_file_options.lpstrTitle = StringUtils::Utf8ToUtf16(title).c_str();
+        open_file_options.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+        if (GetSaveFileNameW(&open_file_options)) {
+            return StringUtils::Utf16ToUtf8(file_output);
+        } else {
+            return String();
+        }
+    }
+
 }
