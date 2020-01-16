@@ -46,7 +46,7 @@ namespace Hyperion {
         static Mat4 Rotate(const Quaternion &quaternion);
         static Mat4 Scale(const Vec3 &scale);
         static Mat4 Scale(f32 x, f32 y, f32 z);
-        static Mat4 TRS(const Vec3 &position, const Vec3 &axis, f32 angle, const Vec3 &scale);
+        static Mat4 TRS(const Vec3 &position, const Quaternion &rotation, const Vec3 &scale);
 
         static Mat4 Orthographic(f32 left, f32 right, f32 bottom, f32 top, f32 z_near, f32 z_far);
         static Mat4 Perspective(f32 fov, f32 aspect_ratio, f32 z_near, f32 z_far);

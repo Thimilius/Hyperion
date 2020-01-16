@@ -296,8 +296,8 @@ namespace Hyperion {
         return result;
     }
 
-    Mat4 Mat4::TRS(const Vec3 &position, const Vec3 &axis, f32 angle, const Vec3 &scale) {
-        return Translate(position) * Rotate(axis, angle) * Scale(scale);
+    Mat4 Mat4::TRS(const Vec3 &position, const Quaternion &rotation, const Vec3 &scale) {
+        return Translate(position) * Rotate(rotation) * Scale(scale);
     }
 
     Mat4 Mat4::Orthographic(f32 left, f32 right, f32 bottom, f32 top, f32 z_near, f32 z_far) {
