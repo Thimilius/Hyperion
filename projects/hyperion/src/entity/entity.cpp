@@ -2,14 +2,32 @@
 
 #include "hyperion/entity/entity.hpp"
 
+#include "hyperion/entity/scene.hpp"
+
 namespace Hyperion {
 
-    Entity::Entity(const String &name) : Asset(name) { }
+    // TODO: Rework memory management of entities
+    void Entity::Destroy() {
+        if (!m_destroyed) {
+            for (auto pair : m_components) {
+                delete pair.second;
+            }
+            m_components.clear();
 
-    Entity::~Entity() {
-        for (auto pair : m_components) {
-            delete pair.second;
+            m_scene->OnEntityDestroyed(this);
+
+            m_destroyed = true;
+            delete this;
         }
+    }
+
+    Entity *Entity::Create(const String &name) {
+        return new Entity(name);
+    }
+
+    Entity::Entity(const String &name) : Asset(name) { 
+        m_scene = SceneManager::GetActiveScene();
+        m_scene->AddRootEntity(this);
     }
 
 }

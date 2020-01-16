@@ -34,6 +34,7 @@
 #include "hyperion/core/app/events/mouse_events.hpp"
 
 // Entity
+#include "hyperion/entity/scene.hpp"
 #include "hyperion/entity/entity.hpp"
 #include "hyperion/entity/entity_component.hpp"
 

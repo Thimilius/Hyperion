@@ -8,13 +8,19 @@
 
 namespace Hyperion {
 
+    class Scene;
+
     class Entity : public Asset {
     private:
-        Map<std::type_index, EntityComponent*> m_components;
+        Scene *m_scene;
+        Map<std::type_index, EntityComponent *> m_components;
+
+        bool m_destroyed = false;
     public:
-        Entity() = default;
-        Entity(const String &name);
-        ~Entity();
+
+        inline AssetType GetType() const override { return AssetType::Entity; }
+
+        inline Scene *GetScene() const { return m_scene; }
 
         template<class T>
         void AddComponent() {
@@ -44,7 +50,12 @@ namespace Hyperion {
             }
         }
 
-        inline AssetType GetType() const override { return AssetType::Entity; }
+        void Destroy();
+
+        static Entity *Create(const String &name = "New Entity");
+    private:
+        Entity(const String &name);
+        ~Entity() = default;
     };
 
 }
