@@ -6,32 +6,29 @@
 
 namespace Hyperion {
 
-    // TODO: Rework memory management of entities
-    void Entity::Destroy() {
-        if (!m_destroyed) {
-            for (auto pair : m_components) {
-                delete pair.second;
-            }
-            m_components.clear();
-
-            m_scene->OnEntityDestroyed(this);
-
-            m_destroyed = true;
-            delete this;
-        }
-    }
-
-    void Entity::Destroy(Entity *entity) {
-        entity->Destroy();
-    }
-
     Entity *Entity::Create(const String &name) {
         return new Entity(name);
     }
 
-    Entity::Entity(const String &name) : Asset(name) { 
+    Entity::Entity(const String &name) : Object(name) { 
         m_scene = SceneManager::GetActiveScene();
         m_scene->AddRootEntity(this);
+    }
+
+    Entity::~Entity() {
+        if (!m_destroyed) {
+            for (auto pair : m_components) {
+                if (pair.first != TransformComponent::GetStaticType()) {
+                    Object::Destroy(pair.second);
+                }
+            }
+
+            m_scene->OnEntityDestroyed(this);
+        }
+    }
+
+    void Entity::OnComponentDestroyed(EntityComponent *component) {
+        m_components.erase(component->GetType());
     }
 
 }

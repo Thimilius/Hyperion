@@ -9,7 +9,6 @@ namespace Hyperion {
         Shader,
         Texture,
         Material,
-        Entity
     };
 
     class Asset {

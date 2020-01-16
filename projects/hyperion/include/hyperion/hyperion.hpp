@@ -3,6 +3,7 @@
 // Core
 #include "hyperion/core/types.hpp"
 #include "hyperion/core/string_utils.hpp"
+#include "hyperion/core/object.hpp"
 #include "hyperion/core/timer.hpp"
 #include "hyperion/core/log.hpp"
 #include "hyperion/core/engine.hpp"

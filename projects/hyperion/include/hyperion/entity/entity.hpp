@@ -3,23 +3,19 @@
 #include <type_traits>
 #include <typeindex>
 
-#include "hyperion/assets/asset.hpp"
 #include "hyperion/entity/components/transform_component.hpp"
 
 namespace Hyperion {
 
     class Scene;
 
-    class Entity : public Asset {
+    class Entity : public Object {
+        HYP_OBJECT(Entity, Object);
     private:
         TransformComponent m_transform;
-        Map<std::type_index, EntityComponent *> m_components = { { typeid(TransformComponent), &m_transform } };
+        Map<ObjectType, EntityComponent *> m_components = { { TransformComponent::GetStaticType(), &m_transform } };
         Scene *m_scene;
-
-        bool m_destroyed = false;
     public:
-        inline AssetType GetType() const override { return AssetType::Entity; }
-
         inline Scene *GetScene() const { return m_scene; }
         inline TransformComponent &GetTransform() { return m_transform; }
 
@@ -30,13 +26,13 @@ namespace Hyperion {
             static_assert(!std::is_same<EntityComponent, T>::value, "Template parameter must derive from EntityComponent");
             static_assert(!std::is_base_of<TransformComponent, T>::value, "Can not add an additional TransformComponent");
 
-            std::type_index type_index = typeid(T);
+            ObjectType type = T::GetStaticType();
             // TODO: Should we allow multiple components of the same type?
-            HYP_ASSERT_MESSAGE(m_components.find(type_index) == m_components.end(), "Failed to add component because a component with the same type already exists!");
+            HYP_ASSERT_MESSAGE(m_components.find(type) == m_components.end(), "Failed to add component because a component with the same type already exists!");
 
             EntityComponent *component = new T();
             component->m_entity = this;
-            m_components[type_index] = component;
+            m_components[type] = component;
         }
 
         template<class T>
@@ -44,8 +40,8 @@ namespace Hyperion {
             // Template component constraint
             static_assert(std::is_base_of<EntityComponent, T>::value, "Template parameter must derive from EntityComponent");
 
-            std::type_index type_index = typeid(T);
-            auto iterator = m_components.find(type_index);
+            ObjectType type = T::GetStaticType();
+            auto iterator = m_components.find(type);
             if (iterator != m_components.end()) {
                 return (T*)iterator->second;
             } else {
@@ -53,17 +49,15 @@ namespace Hyperion {
             }
         }
 
-        void Destroy();
-
-        static void Destroy(Entity *entity);
         static Entity *Create(const String &name = "New Entity");
     private:
         Entity(const String &name);
-        ~Entity() = default;
+        ~Entity();
 
-        // Entities can not be copied
-        Entity(Entity &other) = delete;
-        Entity operator=(Entity &other) = delete;
+        void OnComponentDestroyed(EntityComponent *component);
+
+        friend class Object;
+        friend class EntityComponent;
     };
 
 }

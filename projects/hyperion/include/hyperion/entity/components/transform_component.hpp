@@ -7,6 +7,7 @@ namespace Hyperion {
 
     // TODO: Add transform hierarchy
     class TransformComponent : public EntityComponent {
+        HYP_OBJECT(TransformComponent, EntityComponent)
     private:
         Vec3 m_position = Vec3::Zero();
         Quaternion m_rotation = Quaternion::Identity();
