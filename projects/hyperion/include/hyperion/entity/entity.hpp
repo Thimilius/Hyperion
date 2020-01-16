@@ -4,7 +4,7 @@
 #include <typeindex>
 
 #include "hyperion/assets/asset.hpp"
-#include "hyperion/entity/entity_component.hpp"
+#include "hyperion/entity/components/transform_component.hpp"
 
 namespace Hyperion {
 
@@ -12,15 +12,16 @@ namespace Hyperion {
 
     class Entity : public Asset {
     private:
+        TransformComponent m_transform;
+        Map<std::type_index, EntityComponent *> m_components = { { typeid(TransformComponent), &m_transform } };
         Scene *m_scene;
-        Map<std::type_index, EntityComponent *> m_components;
 
         bool m_destroyed = false;
     public:
-
         inline AssetType GetType() const override { return AssetType::Entity; }
 
         inline Scene *GetScene() const { return m_scene; }
+        inline TransformComponent &GetTransform() { return m_transform; }
 
         template<class T>
         void AddComponent() {
@@ -52,10 +53,15 @@ namespace Hyperion {
 
         void Destroy();
 
+        static void Destroy(Entity *entity);
         static Entity *Create(const String &name = "New Entity");
     private:
         Entity(const String &name);
         ~Entity() = default;
+
+        // Entities can not be copied
+        Entity(Entity &other) = delete;
+        Entity operator=(Entity &other) = delete;
     };
 
 }

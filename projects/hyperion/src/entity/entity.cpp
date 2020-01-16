@@ -21,6 +21,10 @@ namespace Hyperion {
         }
     }
 
+    void Entity::Destroy(Entity *entity) {
+        entity->Destroy();
+    }
+
     Entity *Entity::Create(const String &name) {
         return new Entity(name);
     }

@@ -8,11 +8,14 @@ namespace Hyperion {
     private:
         Entity *m_entity;
     public:
-        virtual ~EntityComponent() = default;
-
         inline Entity *GetEntity() const { return m_entity; }
     protected:
+        virtual ~EntityComponent() = default;
         EntityComponent() = default;
+    private:
+        // Components can not be copied
+        EntityComponent(EntityComponent &other) = delete;
+        EntityComponent operator=(EntityComponent &other) = delete;
 
         friend class Entity;
     };
