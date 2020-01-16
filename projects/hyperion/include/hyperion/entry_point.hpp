@@ -1,24 +1,17 @@
 #pragma once
 
+#include "hyperion/core/main.hpp"
 #include "hyperion/core/app/application.hpp"
 
 extern Hyperion::Application *Hyperion::CreateApplication();
 
-// TODO: Move entry logic into a main class
-
 #if !defined HYP_PLATFORM_WINDOWS || HYP_CONSOLE
 int main(int argc, char **argv) {
-    auto *app = Hyperion::CreateApplication();
-    int exit_code = app->Run();
-    delete app;
-    return exit_code;
+    return Hyperion::Main::Run();
 }
 #else
 #include <Windows.h>
 int WINAPI WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmd_line, int cmd_show) {
-    auto *app = Hyperion::CreateApplication();
-    int exit_code = app->Run();
-    delete app;
-    return exit_code;
+    return Hyperion::Main::Run();
 }
 #endif
