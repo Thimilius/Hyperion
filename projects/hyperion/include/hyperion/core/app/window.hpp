@@ -34,6 +34,8 @@ namespace Hyperion {
     public:
         virtual ~Window() = default;
 
+        virtual void *GetNativePointer() const = 0;
+
         inline const String &GetTitle() const { return m_title; }
         virtual void SetTitle(const String &title) = 0;
 

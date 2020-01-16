@@ -27,6 +27,8 @@ namespace Hyperion {
         WindowsWindow(const WindowSettings &settings, Rendering::RenderBackend render_backend);
         ~WindowsWindow();
 
+        void *GetNativePointer() const override { return m_window_handle; }
+
         void SetTitle(const String &title) override;
         void SetSize(u32 width, u32 height) override;
         void SetMinimumSize(u32 min_width, u32 min_height) override;
