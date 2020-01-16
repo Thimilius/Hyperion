@@ -38,6 +38,7 @@ protected:
         m_light_mesh = MeshFactory::CreatePlane(0.25f, 0.25f);
         m_light_material = Material::Create(AssetLibrary::GetShader("texture"));
         m_light_texture = AssetLibrary::GetTexture2D("light_icon");
+        m_light_texture->SetAnisotropicFilter(TextureAnisotropicFilter::Times16);
     }
     
     void OnEvent(Event &event) override {
@@ -56,7 +57,7 @@ protected:
         RenderEngine::Clear(ClearMask::Color | ClearMask::Depth, Color::Black());
 
         Vec3 light_position = Vec3(1.5f, 2.0f, 3.0f);
-        Color light_color = Color::Red();
+        Color light_color = Color::White();
 
         Renderer::Begin(m_camera);
         {

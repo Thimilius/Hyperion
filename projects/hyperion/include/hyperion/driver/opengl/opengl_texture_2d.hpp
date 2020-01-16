@@ -9,8 +9,8 @@ namespace Hyperion::Rendering {
     private:
         u32 m_texture_id;
     public:
-        OpenGLTexture2D(u32 width, u32 height, TextureFormat format, TextureWrapMode wrap_mode, TextureFilter filter, TextureAnisotropicFilter anisotropic_filter);
-        OpenGLTexture2D(u32 width, u32 height, TextureFormat format, TextureWrapMode wrap_mode, TextureFilter filter, TextureAnisotropicFilter anisotropic_filter, const u8 *pixels);
+        OpenGLTexture2D(u32 width, u32 height, TextureFormat format, TextureParameters parameters);
+        OpenGLTexture2D(u32 width, u32 height, TextureFormat format, TextureParameters parameters, const u8 *pixels);
         ~OpenGLTexture2D() override;
 
         void Bind(u32 slot = 0) const override;

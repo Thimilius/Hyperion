@@ -28,17 +28,20 @@ namespace Hyperion {
     }
 
     Ref<Texture2D> AssetLibrary::LoadTexture2D(const String &name, const String &filepath) {
-        // TODO: Add ability to specify the texture parameters
+        TextureParameters parameters;
+        parameters.wrap_mode = TextureWrapMode::Clamp;
+        parameters.filter = TextureFilter::Bilinear;
+        parameters.anisotropic_filter = TextureAnisotropicFilter::None;
+        return LoadTexture2D(name, filepath, parameters);
+    }
+
+    Ref<Texture2D> AssetLibrary::LoadTexture2D(const String &name, const String &filepath, TextureParameters parameters) {
         Ref<Image> image = ImageLoader::Load(filepath);
         Ref<Texture2D> texture;
         if (!image->IsEmpty()) {
-            TextureFormat format = GetTextureFormatFromImage(image);
-            TextureWrapMode wrap_mode = TextureWrapMode::Clamp;
-            TextureFilter filter = TextureFilter::Bilinear;
-            TextureAnisotropicFilter anisotropic_filter = TextureAnisotropicFilter::None;
-            texture = Texture2D::Create(image->GetWidth(), image->GetHeight(), format, wrap_mode, filter, anisotropic_filter, image->GetPixels());
+            texture = Texture2D::Create(image->GetWidth(), image->GetHeight(), GetTextureFormatFromImage(image), parameters, image->GetPixels());
         }
-        
+
         AddTexture2D(name, filepath, texture);
 
         return texture;

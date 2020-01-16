@@ -13,9 +13,9 @@ namespace Hyperion::Rendering {
         m_width = width;
         m_height = height;
         m_format = format;
-        m_wrap_mode = TextureWrapMode::Clamp;
-        m_filter = TextureFilter::Bilinear;
-        m_anisotropic_filter = TextureAnisotropicFilter::None;
+        m_parameters.wrap_mode = TextureWrapMode::Clamp;
+        m_parameters.filter = TextureFilter::Bilinear;
+        m_parameters.anisotropic_filter = TextureAnisotropicFilter::None;
         m_mipmap_count = CalculateMipmapCount(width, height);
 
         CreateTexture(pixels);
@@ -38,7 +38,7 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLTextureCubemap::SetWrapMode(TextureWrapMode wrap_mode) {
-        m_wrap_mode = wrap_mode;
+        m_parameters.wrap_mode = wrap_mode;
 
         u32 wrap = GetGLWrapMode(wrap_mode);
         glTextureParameteri(m_texture_id, GL_TEXTURE_WRAP_S, wrap);
@@ -47,7 +47,7 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLTextureCubemap::SetFilter(TextureFilter filter) {
-        m_filter = filter;
+        m_parameters.filter = filter;
 
         u32 min_filter = GetGLMinFilter(filter);
         u32 mag_filter = GetGLMaxFilter(filter);
@@ -56,7 +56,7 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLTextureCubemap::SetAnisotropicFilter(TextureAnisotropicFilter anisotropic_filter) {
-        m_anisotropic_filter = anisotropic_filter;
+        m_parameters.anisotropic_filter = anisotropic_filter;
 
         glTextureParameterf(m_texture_id, GL_TEXTURE_MAX_ANISOTROPY, GetGLAnisotropicFilter(anisotropic_filter));
     }
@@ -88,9 +88,9 @@ namespace Hyperion::Rendering {
             HYP_ASSERT_MESSAGE(false, "Can't create cube map from less than 6 faces!");
         }
 
-        SetFilter(m_filter);
-        SetWrapMode(m_wrap_mode);
-        SetAnisotropicFilter(m_anisotropic_filter);
+        SetFilter(m_parameters.filter);
+        SetWrapMode(m_parameters.wrap_mode);
+        SetAnisotropicFilter(m_parameters.anisotropic_filter);
 
         glTextureStorage2D(m_texture_id, m_mipmap_count, GetGLInternalFormat(m_format), m_width, m_height);
 

@@ -9,9 +9,9 @@ namespace Hyperion::Rendering {
     OpenGLRenderTexture::OpenGLRenderTexture(u32 width, u32 height, RenderTextureFormat format) {
         m_render_format = format;
         m_format = GetTextureFormat(m_render_format);
-        m_wrap_mode = TextureWrapMode::Clamp;
-        m_filter = TextureFilter::Point;
-        m_anisotropic_filter = TextureAnisotropicFilter::None;
+        m_parameters.wrap_mode = TextureWrapMode::Clamp;
+        m_parameters.filter = TextureFilter::Point;
+        m_parameters.anisotropic_filter = TextureAnisotropicFilter::None;
         m_mipmap_count = 0;
 
         m_framebuffer_id = 0;
@@ -27,17 +27,17 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLRenderTexture::SetWrapMode(TextureWrapMode wrap_mode) {
-        m_wrap_mode = wrap_mode;
+        m_parameters.wrap_mode = wrap_mode;
         m_color_attachment->SetWrapMode(wrap_mode);
     }
 
     void OpenGLRenderTexture::SetFilter(TextureFilter filter) {
-        m_filter = filter;
+        m_parameters.filter = filter;
         m_color_attachment->SetFilter(filter);
     }
 
     void OpenGLRenderTexture::SetAnisotropicFilter(TextureAnisotropicFilter anisotropic_filter) {
-        m_anisotropic_filter = anisotropic_filter;
+        m_parameters.anisotropic_filter = anisotropic_filter;
         m_color_attachment->SetAnisotropicFilter(anisotropic_filter);
     }
 
@@ -59,7 +59,7 @@ namespace Hyperion::Rendering {
             glDeleteRenderbuffers(1, &m_depth_attachment_id);
         } else {
             // Create initial texture attachment
-            m_color_attachment = Texture2D::Create(width, height, m_format, m_wrap_mode, m_filter, m_anisotropic_filter);
+            m_color_attachment = Texture2D::Create(width, height, m_format, m_parameters);
         }
 
         glCreateFramebuffers(1, &m_framebuffer_id);

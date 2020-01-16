@@ -36,12 +36,17 @@ namespace Hyperion::Rendering {
         Times16
     };
 
+    struct TextureParameters {
+        TextureWrapMode wrap_mode;
+        TextureFilter filter;
+        TextureAnisotropicFilter anisotropic_filter;
+    };
+
+    // TODO: Add ability to enabled/disable mipmaps for textures
     class Texture : public Asset {
     protected:
         TextureFormat m_format;
-        TextureWrapMode m_wrap_mode;
-        TextureFilter m_filter;
-        TextureAnisotropicFilter m_anisotropic_filter;
+        TextureParameters m_parameters;
         u32 m_mipmap_count;
     public:
         virtual ~Texture() = default;
@@ -54,13 +59,13 @@ namespace Hyperion::Rendering {
         inline u32 GetMipmapCount() const { return m_mipmap_count; }
 
         virtual void SetWrapMode(TextureWrapMode wrap_mode) = 0;
-        inline TextureWrapMode GetWrapMode() const { return m_wrap_mode; }
+        inline TextureWrapMode GetWrapMode() const { return m_parameters.wrap_mode; }
 
         virtual void SetFilter(TextureFilter filter) = 0;
-        inline TextureFilter GetFilter() const { return m_filter; }
+        inline TextureFilter GetFilter() const { return m_parameters.filter; }
 
         virtual void SetAnisotropicFilter(TextureAnisotropicFilter anisotropic_filter) = 0;
-        inline TextureAnisotropicFilter GetAnisotropicFilter() const { return m_anisotropic_filter; }
+        inline TextureAnisotropicFilter GetAnisotropicFilter() const { return m_parameters.anisotropic_filter; }
 
         virtual u32 GetID() const = 0;
         

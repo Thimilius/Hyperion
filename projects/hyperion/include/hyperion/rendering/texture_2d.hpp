@@ -25,6 +25,8 @@ namespace Hyperion::Rendering {
         virtual void SetPixels(const u8 *pixels, bool generate_mipmaps = true) = 0;
         virtual u8 *GetPixels() const = 0;
 
+        static Ref<Texture2D> Create(u32 width, u32 height, TextureFormat format, TextureParameters parameters);
+        static Ref<Texture2D> Create(u32 width, u32 height, TextureFormat format, TextureParameters parameters, const u8 *pixels);
         static Ref<Texture2D> Create(u32 width, u32 height, TextureFormat format, TextureWrapMode wrap_mode, TextureFilter filter, TextureAnisotropicFilter anisotropic_filter);
         static Ref<Texture2D> Create(u32 width, u32 height, TextureFormat format, TextureWrapMode wrap_mode, TextureFilter filter, TextureAnisotropicFilter anisotropic_filter, const u8 *pixels);
     };

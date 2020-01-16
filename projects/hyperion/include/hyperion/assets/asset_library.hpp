@@ -31,6 +31,7 @@ namespace Hyperion {
         static Ref<Rendering::Shader> GetShader(const String &name);
 
         static Ref<Rendering::Texture2D> LoadTexture2D(const String &name, const String &filepath);
+        static Ref<Rendering::Texture2D> LoadTexture2D(const String &name, const String &filepath, Rendering::TextureParameters parameters);
         static void AddTexture2D(const String &name, const String &filepath, const Ref<Rendering::Texture2D> &texture);
         static Ref<Rendering::Texture2D> GetTexture2D(const String &name);
 

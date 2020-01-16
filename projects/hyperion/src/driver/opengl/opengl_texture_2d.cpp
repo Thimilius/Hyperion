@@ -6,16 +6,14 @@
 
 namespace Hyperion::Rendering {
 
-    OpenGLTexture2D::OpenGLTexture2D(u32 width, u32 height, TextureFormat format, TextureWrapMode wrap_mode, TextureFilter filter, TextureAnisotropicFilter anisotropic_filter)
-        : OpenGLTexture2D(width, height, format, wrap_mode, filter, anisotropic_filter, nullptr) { }
+    OpenGLTexture2D::OpenGLTexture2D(u32 width, u32 height, TextureFormat format, TextureParameters parameters)
+        : OpenGLTexture2D(width, height, format, parameters, nullptr) { }
 
-    OpenGLTexture2D::OpenGLTexture2D(u32 width, u32 height, TextureFormat format, TextureWrapMode wrap_mode, TextureFilter filter, TextureAnisotropicFilter anisotropic_filter, const u8 *pixels) {
+    OpenGLTexture2D::OpenGLTexture2D(u32 width, u32 height, TextureFormat format, TextureParameters parameters, const u8 *pixels) {
         m_width = width;
         m_height = height;
         m_format = format;
-        m_wrap_mode = wrap_mode;
-        m_filter = filter;
-        m_anisotropic_filter = anisotropic_filter;
+        m_parameters = parameters;
         m_mipmap_count = Texture::CalculateMipmapCount(width, height);
 
         CreateTexture(pixels);
@@ -38,7 +36,7 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLTexture2D::SetWrapMode(TextureWrapMode wrap_mode) {
-        m_wrap_mode = wrap_mode;
+        m_parameters.wrap_mode = wrap_mode;
 
         u32 wrap = GetGLWrapMode(wrap_mode);
         glTextureParameteri(m_texture_id, GL_TEXTURE_WRAP_S, wrap);
@@ -46,7 +44,7 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLTexture2D::SetFilter(TextureFilter filter) {
-        m_filter = filter;
+        m_parameters.filter = filter;
 
         u32 min_filter = GetGLMinFilter(filter);
         u32 mag_filter = GetGLMaxFilter(filter);
@@ -55,7 +53,7 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLTexture2D::SetAnisotropicFilter(TextureAnisotropicFilter anisotropic_filter) {
-        m_anisotropic_filter = anisotropic_filter;
+        m_parameters.anisotropic_filter = anisotropic_filter;
 
         glTextureParameterf(m_texture_id, GL_TEXTURE_MAX_ANISOTROPY, GetGLAnisotropicFilter(anisotropic_filter));
     }
@@ -115,9 +113,9 @@ namespace Hyperion::Rendering {
     void OpenGLTexture2D::CreateTexture(const u8 *pixels) {
         glCreateTextures(GL_TEXTURE_2D, 1, &m_texture_id);
 
-        SetWrapMode(m_wrap_mode);
-        SetFilter(m_filter);
-        SetAnisotropicFilter(m_anisotropic_filter);
+        SetWrapMode(m_parameters.wrap_mode);
+        SetFilter(m_parameters.filter);
+        SetAnisotropicFilter(m_parameters.anisotropic_filter);
 
         glTextureStorage2D(m_texture_id, m_mipmap_count, GetGLInternalFormat(m_format), m_width, m_height);
         if (pixels != nullptr) {
