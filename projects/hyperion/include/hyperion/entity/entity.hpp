@@ -25,8 +25,10 @@ namespace Hyperion {
 
         template<class T>
         void AddComponent() {
-            // Template constraint
+            // Template component constraint
             static_assert(std::is_base_of<EntityComponent, T>::value, "Template parameter must derive from EntityComponent");
+            static_assert(!std::is_same<EntityComponent, T>::value, "Template parameter must derive from EntityComponent");
+            static_assert(!std::is_base_of<TransformComponent, T>::value, "Can not add an additional TransformComponent");
 
             std::type_index type_index = typeid(T);
             // TODO: Should we allow multiple components of the same type?
@@ -39,7 +41,7 @@ namespace Hyperion {
 
         template<class T>
         T *GetComponent() const {
-            // Template constraint
+            // Template component constraint
             static_assert(std::is_base_of<EntityComponent, T>::value, "Template parameter must derive from EntityComponent");
 
             std::type_index type_index = typeid(T);
