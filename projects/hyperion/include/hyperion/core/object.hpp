@@ -19,8 +19,6 @@ namespace Hyperion {
         String m_name;
 
         inline static ObjectType s_type = std::hash<String>()(String("Object"));
-    protected:
-        bool m_destroyed = false;
     public:
         inline static ObjectType GetStaticType() { return s_type; }
         inline virtual ObjectType GetType() const { return s_type; }

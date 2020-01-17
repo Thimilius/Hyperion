@@ -133,7 +133,7 @@ namespace Hyperion {
                 // Handle disconnection
                 if (result != ERROR_SUCCESS) {
                     if (std::find(begin, end, gamepad) != end) {
-                        m_gamepads_connected.erase(std::remove(begin, end, gamepad), end);
+                        m_gamepads_connected.erase(std::remove(begin, end, gamepad));
 
                         GamepadConnectionChangedEvent event(gamepad, false);
                         DispatchEvent(event);
@@ -224,7 +224,7 @@ namespace Hyperion {
                 }
             } else {
                 if (std::find(begin, end, gamepad) != end) {
-                    m_gamepads_connected.erase(std::remove(begin, end, gamepad), end);
+                    m_gamepads_connected.erase(std::remove(begin, end, gamepad));
 
                     GamepadConnectionChangedEvent event(gamepad, false);
                     DispatchEvent(event);

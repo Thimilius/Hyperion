@@ -47,8 +47,27 @@ protected:
         }
     }
 
-    void OnUpdate(f32 delta_time) override {
+    class FooComponent : public EntityComponent, EntityEventListener {
+        HYP_OBJECT(FooComponent, EntityComponent);
+    public:
+        void OnCreate() override {
+            GetEntity()->RegisterEventListener(this);
+        }
 
+        void OnDestroy() override {
+            GetEntity()->UnregisterEventListener(this);
+        }
+
+        void OnEvent(EntityEvent event) override {
+            
+        }
+    };
+
+    void OnUpdate(f32 delta_time) override {
+        Entity *entity = Entity::Create();
+        FooComponent *foo = entity->AddComponent<FooComponent>();
+        Object::Destroy(foo); 
+        foo = entity->GetComponent<FooComponent>();
     }
 
     void OnRender() override {

@@ -12,7 +12,7 @@ namespace Hyperion {
         auto begin = m_root_entities.begin();
         auto end = m_root_entities.end();
         if (std::find(begin, end, entity) != end) {
-            m_root_entities.erase(std::remove(begin, end, entity), end);
+            m_root_entities.erase(std::remove(begin, end, entity));
         }
     }
 
