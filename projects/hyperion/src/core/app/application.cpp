@@ -79,7 +79,9 @@ namespace Hyperion {
             for (ApplicationLayer *layer : m_layers) {
                 layer->OnUpdate(delta_time);
             }
-            Engine::PostUpdate();
+
+            Engine::LateUpdate();
+
             OnRender();
             for (ApplicationLayer *layer : m_layers) {
                 layer->OnRender();

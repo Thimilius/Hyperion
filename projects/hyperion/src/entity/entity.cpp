@@ -8,7 +8,8 @@ namespace Hyperion {
 
     void Entity::OnEvent(EntityEvent event) {
         switch (event.type) {
-            case EntityEventType::ComponentDestroyed: {
+            case EntityEventType::ComponentDestroyed:
+            {
                 EntityComponent *component = (EntityComponent *)event.parameter;
                 component->OnDestroy();
                 m_components.erase(component->GetType());
@@ -21,11 +22,7 @@ namespace Hyperion {
         }
     }
 
-    Entity *Entity::Create(const String &name) {
-        return new Entity(name);
-    }
-
-    Entity::Entity(const String &name) : Object(name) { 
+    void Entity::OnCreate() {
         m_components[TransformComponent::GetStaticType()] = &m_transform;
         m_transform.m_entity = this;
         m_transform.OnCreate();
@@ -34,17 +31,35 @@ namespace Hyperion {
         m_scene->AddRootEntity(this);
     }
 
-    Entity::~Entity() {
-        for (auto pair : m_components) {
-            if (pair.first != TransformComponent::GetStaticType()) {
-                Destroy(pair.second);
+    void Entity::OnDestroy() {
+        for (auto it = m_components.begin(); it != m_components.end(); ) {
+            if (it->first != TransformComponent::GetStaticType()) {
+                DestroyImmediate(it->second);
+                it++;
+            } else {
+                ++it;
             }
         }
         m_transform.OnDestroy();
 
-        for (TransformComponent *transform : m_transform.m_children) {
-            Destroy(transform->m_entity);
+        if (!m_transform.m_children.empty()) {
+            for (s32 i = ((s32)m_transform.m_children.size()) - 1; i >= 0; i--) {
+                Entity *child = m_transform.m_children[i]->m_entity;
+                // Children already scheduled for destruction get seperated from us by removing the parent reference.
+                // This way the order of destruction is not important.
+                if (child->m_destroyed) {
+                    child->m_transform.m_parent = nullptr;
+                } else {
+                    DestroyImmediate(child);
+                }
+            }
         }
+    }
+
+    Entity *Entity::Create(const String &name) {
+        Entity *entity = new Entity(name);
+        entity->OnCreate();
+        return entity;
     }
 
 }

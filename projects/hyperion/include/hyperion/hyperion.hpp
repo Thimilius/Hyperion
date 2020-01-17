@@ -37,6 +37,7 @@
 // Entity
 #include "hyperion/entity/scene.hpp"
 #include "hyperion/entity/entity.hpp"
+#include "hyperion/entity/entity_event.hpp"
 #include "hyperion/entity/components/entity_component.hpp"
 #include "hyperion/entity/components/transform_component.hpp"
 

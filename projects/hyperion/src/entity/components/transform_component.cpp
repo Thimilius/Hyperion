@@ -9,10 +9,6 @@
 
 namespace Hyperion {
 
-    // FIXME: Currently destroying an entity has an immediate effect
-    // which leads to mutates transform hierarchy during a potential iteration.
-    // This should be fixed by delaying the actual destruction to the end of the next frame.
-
     void TransformComponent::SetParent(TransformComponent *parent) {
         if (m_parent == parent) {
             return;
@@ -78,11 +74,9 @@ namespace Hyperion {
     }
 
     void TransformComponent::OnDestroy() {
-        GetEntity()->UnregisterEventListener(this);
-    }
-
-    TransformComponent::~TransformComponent() {
         Entity *entity = GetEntity();
+        entity->UnregisterEventListener(this);
+
         if (m_parent == nullptr) {
             entity->GetScene()->RemoveRootEntity(entity);
         } else {

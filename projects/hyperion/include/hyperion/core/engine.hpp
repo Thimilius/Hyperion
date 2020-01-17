@@ -21,7 +21,7 @@ namespace Hyperion {
         static void Init(const ApplicationSettings &settings);
         static void Setup(const ApplicationSettings &settings);
         static void Update();
-        static void PostUpdate();
+        static void LateUpdate();
         static void Shutdown();
 
         friend class Application;

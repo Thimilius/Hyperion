@@ -1,6 +1,6 @@
 #pragma once
 
-#include "hyperion/core/string_utils.hpp"
+#include "hyperion/common.hpp"
 
 #define HYP_OBJECT(TYPE, BASE_TYPE)                                                                                            \
     private:                                                                                                                   \
@@ -16,7 +16,8 @@ namespace Hyperion {
 
     class Object {
     private:
-        String m_name;
+        String m_name = "Object";
+        bool m_destroyed = false;
 
         inline static ObjectType s_type = std::hash<String>()(String("Object"));
     public:
@@ -35,9 +36,17 @@ namespace Hyperion {
         Object(const String &name) { m_name = name; }
         virtual ~Object() = default;
 
+        virtual void OnCreate() { }
+        virtual void OnDestroy() { }
+    private:
         // Objects can not be copied
         Object(const Object &other) = delete;
         Object &operator=(const Object &other) = delete;
+
+        static void DestroyImmediate(Object *object);
+
+        friend class ObjectSystem;
+        friend class Entity;
     };
 
 }

@@ -38,8 +38,6 @@ namespace Hyperion {
 
         void OnEvent(EntityEvent event) override;
     protected:
-        virtual ~TransformComponent() override;
-
         void OnCreate() override;
         void OnDestroy() override;
     private:

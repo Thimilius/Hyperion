@@ -22,6 +22,29 @@ protected:
     Ref<Material> m_light_material;
     Ref<Texture2D> m_light_texture;
 
+    void EntityTest() {
+        Entity *parent = Entity::Create("Entity_0_0");
+        parent->GetTransform()->SetScale(Vec3(1, 2, 1));
+        parent->GetTransform()->SetPosition(Vec3(1, 2, 3));
+        
+        for (size_t i = 0; i < 10; i++) {
+            Entity *child = Entity::Create(StringUtils::Format("Entity_1_{}", i));
+            child->GetTransform()->SetPosition(Vec3((f32)i, 0, 0));
+            child->GetTransform()->SetParent(parent->GetTransform());
+
+            for (size_t i = 0; i < 10; i++) {
+                Entity *child2 = Entity::Create(StringUtils::Format("Entity_2_{}", i));
+                child2->GetTransform()->SetPosition(Vec3((f32)i, 0, 0));
+                child2->GetTransform()->SetParent(child->GetTransform());
+            }
+        }
+        Object::Destroy(parent);
+
+        for (u32 i = 0; i < parent->GetTransform()->GetChildCount(); i++) {
+            Object::Destroy(parent->GetTransform()->GetChild(i)->GetEntity());
+        }
+    }
+
     void OnInit() override {
         EditorLayer *editor_layer = new EditorLayer();
         PushLayer(editor_layer);
@@ -40,17 +63,7 @@ protected:
         m_light_texture = AssetLibrary::GetTexture2D("light_icon");
         m_light_texture->SetAnisotropicFilter(TextureAnisotropicFilter::Times16);
 
-        Entity *parent = Entity::Create("Entity parent");
-        parent->GetTransform()->SetScale(Vec3(1, 2, 1));
-        parent->GetTransform()->SetPosition(Vec3(1, 2, 3));
-
-        Entity *child = Entity::Create("Entity child");
-        child->GetTransform()->SetPosition(Vec3(4, 5, 9));
-        child->GetTransform()->SetParent(parent->GetTransform());
-
-        parent->GetTransform()->SetPosition(Vec3(0, 0, 0));
-
-        Object::Destroy(parent);
+        EntityTest();
     }
     
     void OnEvent(Event &event) override {

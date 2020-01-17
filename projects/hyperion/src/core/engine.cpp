@@ -2,6 +2,7 @@
 
 #include "hyperion/core/engine.hpp"
 
+#include "hyperion/core/object_system.hpp"
 #include "hyperion/core/app/display.hpp"
 #include "hyperion/assets/asset_library.hpp"
 #include "hyperion/audio/audio_engine.hpp"
@@ -40,8 +41,8 @@ namespace Hyperion {
         AssetLibrary::Update();
     }
 
-    void Engine::PostUpdate() {
-        
+    void Engine::LateUpdate() {
+        ObjectSystem::LateUpdate();
     }
 
     void Engine::Shutdown() {

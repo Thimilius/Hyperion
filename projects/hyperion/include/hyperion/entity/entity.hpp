@@ -10,20 +10,23 @@ namespace Hyperion {
 
     class Scene;
 
-    // TODO: Implement an entity system to better support entity creation/destruction
-
     class Entity : public Object, public EntityEventListener {
         HYP_OBJECT(Entity, Object);
     private:
         TransformComponent m_transform;
         Map<ObjectType, EntityComponent *> m_components;
         
-        Scene *m_scene;
+        Scene *m_scene = nullptr;
 
         Vector<EntityEventListener *> m_event_listeners;
     public:
         inline Scene *GetScene() const { return m_scene; }
         inline TransformComponent *GetTransform() { return &m_transform; }
+
+        void OnEvent(EntityEvent event) override;
+
+        void OnCreate() override;
+        void OnDestroy() override;
 
         template<class T>
         T *AddComponent() {
@@ -33,7 +36,7 @@ namespace Hyperion {
             static_assert(!std::is_base_of<TransformComponent, T>::value, "Can not add an additional TransformComponent");
 
             ObjectType type = T::GetStaticType();
-            // TODO: Should we allow multiple components of the same type?
+            // NOTE: Should we allow multiple components of the same type?
             HYP_ASSERT_MESSAGE(m_components.find(type) == m_components.end(), "Failed to add component because a component with the same type already exists!");
 
             T *component = new T();
@@ -61,8 +64,6 @@ namespace Hyperion {
             }
         }
 
-        void OnEvent(EntityEvent event) override;
-
         inline void RegisterEventListener(EntityEventListener *listener) {
             m_event_listeners.push_back(listener);
         }
@@ -77,8 +78,9 @@ namespace Hyperion {
 
         static Entity *Create(const String &name = "New Entity");
     private:
-        Entity(const String &name);
-        ~Entity();
+        Entity(const String &name) : Object(name) { }
+        ~Entity() = default;
+
 
         friend class Object;
         friend class EntityComponent;
