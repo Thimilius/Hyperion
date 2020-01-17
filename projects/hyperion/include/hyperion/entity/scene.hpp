@@ -14,10 +14,11 @@ namespace Hyperion {
         ~Scene() = default;
 
         void AddRootEntity(Entity *entity);
-        void OnEntityDestroyed(Entity *entity);
+        void RemoveRootEntity(Entity *entity);
 
         friend class Entity;
         friend class SceneManager;
+        friend class TransformComponent;
     };
 
     class SceneManager {

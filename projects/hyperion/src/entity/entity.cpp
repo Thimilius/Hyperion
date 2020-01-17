@@ -28,6 +28,7 @@ namespace Hyperion {
     Entity::Entity(const String &name) : Object(name) { 
         m_components[TransformComponent::GetStaticType()] = &m_transform;
         m_transform.m_entity = this;
+        m_transform.OnCreate();
 
         m_scene = SceneManager::GetActiveScene();
         m_scene->AddRootEntity(this);
@@ -36,11 +37,14 @@ namespace Hyperion {
     Entity::~Entity() {
         for (auto pair : m_components) {
             if (pair.first != TransformComponent::GetStaticType()) {
-                Object::Destroy(pair.second);
+                Destroy(pair.second);
             }
         }
+        m_transform.OnDestroy();
 
-        m_scene->OnEntityDestroyed(this);
+        for (TransformComponent *transform : m_transform.m_children) {
+            Destroy(transform->m_entity);
+        }
     }
 
 }

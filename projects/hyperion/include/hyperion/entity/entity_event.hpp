@@ -3,9 +3,8 @@
 namespace Hyperion {
 
     enum class EntityEventType {
-        ComponentDestroyed,
-
-        Last
+        TransformChanged,
+        ComponentDestroyed
     };
 
     struct EntityEvent {

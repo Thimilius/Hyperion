@@ -10,6 +10,8 @@ namespace Hyperion {
 
     class Scene;
 
+    // TODO: Implement an entity system to better support entity creation/destruction
+
     class Entity : public Object, public EntityEventListener {
         HYP_OBJECT(Entity, Object);
     private:
@@ -21,7 +23,7 @@ namespace Hyperion {
         Vector<EntityEventListener *> m_event_listeners;
     public:
         inline Scene *GetScene() const { return m_scene; }
-        inline TransformComponent &GetTransform() { return m_transform; }
+        inline TransformComponent *GetTransform() { return &m_transform; }
 
         template<class T>
         T *AddComponent() {

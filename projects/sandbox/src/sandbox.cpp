@@ -39,6 +39,18 @@ protected:
         m_light_material = Material::Create(AssetLibrary::GetShader("texture"));
         m_light_texture = AssetLibrary::GetTexture2D("light_icon");
         m_light_texture->SetAnisotropicFilter(TextureAnisotropicFilter::Times16);
+
+        Entity *parent = Entity::Create("Entity parent");
+        parent->GetTransform()->SetScale(Vec3(1, 2, 1));
+        parent->GetTransform()->SetPosition(Vec3(1, 2, 3));
+
+        Entity *child = Entity::Create("Entity child");
+        child->GetTransform()->SetPosition(Vec3(4, 5, 9));
+        child->GetTransform()->SetParent(parent->GetTransform());
+
+        parent->GetTransform()->SetPosition(Vec3(0, 0, 0));
+
+        Object::Destroy(parent);
     }
     
     void OnEvent(Event &event) override {
@@ -47,27 +59,8 @@ protected:
         }
     }
 
-    class FooComponent : public EntityComponent, EntityEventListener {
-        HYP_OBJECT(FooComponent, EntityComponent);
-    public:
-        void OnCreate() override {
-            GetEntity()->RegisterEventListener(this);
-        }
-
-        void OnDestroy() override {
-            GetEntity()->UnregisterEventListener(this);
-        }
-
-        void OnEvent(EntityEvent event) override {
-            
-        }
-    };
-
     void OnUpdate(f32 delta_time) override {
-        Entity *entity = Entity::Create();
-        FooComponent *foo = entity->AddComponent<FooComponent>();
-        Object::Destroy(foo); 
-        foo = entity->GetComponent<FooComponent>();
+
     }
 
     void OnRender() override {

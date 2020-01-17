@@ -8,7 +8,7 @@ namespace Hyperion {
         m_root_entities.push_back(entity);
     }
 
-    void Scene::OnEntityDestroyed(Entity *entity) {
+    void Scene::RemoveRootEntity(Entity *entity) {
         auto begin = m_root_entities.begin();
         auto end = m_root_entities.end();
         if (std::find(begin, end, entity) != end) {

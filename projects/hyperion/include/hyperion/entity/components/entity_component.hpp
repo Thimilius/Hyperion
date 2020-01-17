@@ -12,12 +12,12 @@ namespace Hyperion {
         Entity *m_entity;
     public:
         inline Entity *GetEntity() const { return m_entity; }
-
-        virtual void OnCreate() { }
-        virtual void OnDestroy() { }
     protected:
         EntityComponent() = default;
         virtual ~EntityComponent() = default;
+
+        virtual void OnCreate() { }
+        virtual void OnDestroy() { }
     private:
         friend class Entity;
     };
