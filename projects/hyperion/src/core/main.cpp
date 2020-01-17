@@ -6,7 +6,7 @@ namespace Hyperion {
 
     u32 Main::Run() {
         Application *app = Hyperion::CreateApplication();
-        int exit_code = app->Run();
+        u32 exit_code = app->Run();
         delete app;
         return exit_code;
     }

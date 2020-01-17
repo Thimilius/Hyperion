@@ -36,8 +36,12 @@ namespace Hyperion {
         Rendering::ImmediateRenderer::Init();
     }
 
-    void Engine::Update(f32 delta_time) {
+    void Engine::Update() {
         AssetLibrary::Update();
+    }
+
+    void Engine::PostUpdate() {
+        
     }
 
     void Engine::Shutdown() {

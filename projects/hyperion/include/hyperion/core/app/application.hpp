@@ -8,7 +8,7 @@ namespace Hyperion {
 
     class Application {
     private:
-        Ref<Window> m_window;
+        Scope<Window> m_window;
         bool m_running;
         ApplicationSettings m_starting_settings;
         Vector<ApplicationLayer*> m_layers;
@@ -23,7 +23,6 @@ namespace Hyperion {
         void PushLayer(ApplicationLayer *layer);
         void PopLayer();
 
-        int Run(); // TODO: Make this method access private
         void Exit();
 
         inline static Application *GetInstance() { return s_instance; }
@@ -34,7 +33,11 @@ namespace Hyperion {
         virtual void OnRender() { }
         virtual void OnTick() { }
     private:
+        u32 Run();
+
         void OnEventInternal(Event &event);
+
+        friend class Main;
     };
 
     // This is a function to be defined by the client

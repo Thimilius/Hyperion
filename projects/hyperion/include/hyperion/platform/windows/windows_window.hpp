@@ -41,6 +41,8 @@ namespace Hyperion {
         void Update() override;
         void Show() override;
         
+        void SetupWindow(const WindowSettings &settings);
+
         InputImplementation *GetInput() const override { return m_input; }
         void SetEventCallbackFunction(const EventCallbackFunction &event_callback) override;
 

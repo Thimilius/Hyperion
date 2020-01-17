@@ -14,8 +14,8 @@
 
 namespace Hyperion {
 
-    Ref<Window> Window::Create(const WindowSettings &settings, Rendering::RenderBackend render_backend) {
-        return std::make_shared<WindowsWindow>(settings, render_backend);
+    Window *Window::Create(const WindowSettings &settings, Rendering::RenderBackend render_backend) {
+        return new WindowsWindow(settings, render_backend);
     }
 
     WindowsWindow::WindowsWindow(const WindowSettings &settings, Rendering::RenderBackend render_backend) {
@@ -28,49 +28,7 @@ namespace Hyperion {
 
         m_input = (WindowsInput*)Input::s_input_implementation.get();
 
-        u32 window_styles = WS_OVERLAPPEDWINDOW;
-        auto window_class_name = L"HYPERION_WINDOW_CLASS";
-        HINSTANCE instance = GetModuleHandleW(nullptr);
-        if (!instance) {
-            HYP_PANIC_MESSAGE("Engine", "Failed to get windows application instance!");
-        }
-
-        WNDCLASSEXW window_class = { 0 };
-        window_class.cbSize = sizeof(window_class);
-        window_class.lpszClassName = window_class_name;
-        window_class.style = CS_HREDRAW | CS_VREDRAW;
-        window_class.hInstance = instance;
-        window_class.lpfnWndProc = &MessageCallback;
-        window_class.hCursor = LoadCursorW(nullptr, IDC_ARROW);
-
-        if (!RegisterClassExW(&window_class)) {
-            HYP_PANIC_MESSAGE("Engine", "Failed to register windows window class!");
-        }
-
-        Vec2 size = GetActualWindowSize(settings.width, settings.height);
-
-        m_window_handle = CreateWindowExW(
-            0,
-            window_class_name,
-            StringUtils::Utf8ToUtf16(settings.title).c_str(),
-            window_styles,
-            CW_USEDEFAULT,
-            CW_USEDEFAULT,
-            (u32)size.x,
-            (u32)size.y,
-            nullptr,
-            nullptr,
-            instance,
-            this // Parameter to WM_CREATE that then stores the user pointer
-        );
-
-        if (!m_window_handle) {
-            HYP_PANIC_MESSAGE("Engine", "Failed to create window!");
-        }
-
-        if (!SetWindowLongPtrW(m_window_handle, GWLP_USERDATA, (LONG_PTR)(void *)this)) {
-            HYP_PANIC_MESSAGE("Engine", "Failed to set window attribute!");
-        }
+        SetupWindow(settings);
         
         SetIcon(settings.icon);
         SetWindowMode(settings.window_mode);
@@ -233,6 +191,52 @@ namespace Hyperion {
 
     void WindowsWindow::Show() {
         ShowWindow(m_window_handle, SW_SHOWNORMAL);
+    }
+
+    void WindowsWindow::SetupWindow(const WindowSettings &settings) {
+        u32 window_styles = WS_OVERLAPPEDWINDOW;
+        auto window_class_name = L"HYPERION_WINDOW_CLASS";
+        HINSTANCE instance = GetModuleHandleW(nullptr);
+        if (!instance) {
+            HYP_PANIC_MESSAGE("Engine", "Failed to get windows application instance!");
+        }
+
+        WNDCLASSEXW window_class = { 0 };
+        window_class.cbSize = sizeof(window_class);
+        window_class.lpszClassName = window_class_name;
+        window_class.style = CS_HREDRAW | CS_VREDRAW;
+        window_class.hInstance = instance;
+        window_class.lpfnWndProc = &MessageCallback;
+        window_class.hCursor = LoadCursorW(nullptr, IDC_ARROW);
+
+        if (!RegisterClassExW(&window_class)) {
+            HYP_PANIC_MESSAGE("Engine", "Failed to register windows window class!");
+        }
+
+        Vec2 size = GetActualWindowSize(settings.width, settings.height);
+
+        m_window_handle = CreateWindowExW(
+            0,
+            window_class_name,
+            StringUtils::Utf8ToUtf16(settings.title).c_str(),
+            window_styles,
+            CW_USEDEFAULT,
+            CW_USEDEFAULT,
+            (u32)size.x,
+            (u32)size.y,
+            nullptr,
+            nullptr,
+            instance,
+            this // Parameter to WM_CREATE that then stores the user pointer
+        );
+
+        if (!m_window_handle) {
+            HYP_PANIC_MESSAGE("Engine", "Failed to create window!");
+        }
+
+        if (!SetWindowLongPtrW(m_window_handle, GWLP_USERDATA, (LONG_PTR)(void *)this)) {
+            HYP_PANIC_MESSAGE("Engine", "Failed to set window attribute!");
+        }
     }
 
     void WindowsWindow::SetEventCallbackFunction(const EventCallbackFunction &event_callback) {

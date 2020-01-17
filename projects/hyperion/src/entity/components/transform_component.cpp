@@ -51,7 +51,6 @@ namespace Hyperion {
     void TransformComponent::NotifyTransformChange() {
         // TODO: We can probably optimize a little if we distinguish between what actually changed
         GetEntity()->OnEvent({ EntityEventType::TransformChanged, nullptr });
-        HYP_TRACE("NotifyTransformChange from entity: {}", GetEntity()->ToString());
     }
 
     void TransformComponent::RecalculateMatricies() {

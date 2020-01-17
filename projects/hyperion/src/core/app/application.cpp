@@ -21,7 +21,7 @@ namespace Hyperion {
         HYP_ASSERT_MESSAGE(settings.time.max_delta_time > 0, "Max delta time must be greater than zero!");
         Time::s_max_delta_time = settings.time.max_delta_time;
 
-        m_window = Window::Create(settings.window, settings.renderer.backend);
+        m_window.reset(Window::Create(settings.window, settings.renderer.backend));
         auto event_callback = std::bind(&Application::OnEventInternal, this, std::placeholders::_1);
         m_window->SetEventCallbackFunction(event_callback);
     }
@@ -44,7 +44,11 @@ namespace Hyperion {
         delete layer;
     }
 
-    int Application::Run() {
+    void Application::Exit() {
+        m_running = false;
+    }
+
+    u32 Application::Run() {
         m_running = true;
 
         Engine::Setup(m_starting_settings);
@@ -70,11 +74,12 @@ namespace Hyperion {
 
             frame_counter++;
 
-            Engine::Update(delta_time);
+            Engine::Update();
             OnUpdate(delta_time);
             for (ApplicationLayer *layer : m_layers) {
                 layer->OnUpdate(delta_time);
             }
+            Engine::PostUpdate();
             OnRender();
             for (ApplicationLayer *layer : m_layers) {
                 layer->OnRender();
@@ -100,10 +105,6 @@ namespace Hyperion {
         Engine::Shutdown();
 
         return 0;
-    }
-
-    void Application::Exit() {
-        m_running = false;
     }
 
     void Application::OnEventInternal(Event &event) {
