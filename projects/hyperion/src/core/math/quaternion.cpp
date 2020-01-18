@@ -13,9 +13,9 @@ namespace Hyperion {
         : x(xyz.x), y(xyz.y), z(xyz.z), w(w) { }
 
     Vec3 Quaternion::ToEulerAngles() const {
-        f32 x_value = Math::ATan2(2 * x * w - 2 * y * z, 1 - 2 * x * x - 2 * z * z);
-        f32 y_value = Math::ATan2(2 * y * w - 2 * x * z, 1 - 2 * y * y - 2 * z * z);
-        f32 z_value = Math::ASin(2 * x * y + 2 * z * w);
+        f32 x_value = Math::RadToDeg(Math::ATan2(2 * x * w - 2 * y * z, 1 - 2 * x * x - 2 * z * z));
+        f32 y_value = Math::RadToDeg(Math::ATan2(2 * y * w - 2 * x * z, 1 - 2 * y * y - 2 * z * z));
+        f32 z_value = Math::RadToDeg(Math::ASin(2 * x * y + 2 * z * w));
         return Vec3(x_value, y_value, z_value);
     }
 
@@ -79,22 +79,36 @@ namespace Hyperion {
     }
 
     Vec3 Quaternion::Rotate(const Quaternion &quaternion, const Vec3 &vec) {
-        f32 tmpX = (((quaternion.w * vec.x) + (quaternion.y * vec.z)) - (quaternion.z * vec.y));
-        f32 tmpY = (((quaternion.w * vec.y) + (quaternion.z * vec.x)) - (quaternion.x * vec.z));
-        f32 tmpZ = (((quaternion.w * vec.z) + (quaternion.x * vec.y)) - (quaternion.y * vec.x));
-        f32 tmpW = (((quaternion.x * vec.x) + (quaternion.y * vec.y)) + (quaternion.z * vec.z));
+        f32 x = (((quaternion.w * vec.x) + (quaternion.y * vec.z)) - (quaternion.z * vec.y));
+        f32 y = (((quaternion.w * vec.y) + (quaternion.z * vec.x)) - (quaternion.x * vec.z));
+        f32 z = (((quaternion.w * vec.z) + (quaternion.x * vec.y)) - (quaternion.y * vec.x));
+        f32 w = (((quaternion.x * vec.x) + (quaternion.y * vec.y)) + (quaternion.z * vec.z));
         return Vec3(
-            ((((tmpW * quaternion.x) + (tmpX * quaternion.w)) - (tmpY * quaternion.z)) + (tmpZ * quaternion.y)),
-            ((((tmpW * quaternion.y) + (tmpY * quaternion.w)) - (tmpZ * quaternion.x)) + (tmpX * quaternion.z)),
-            ((((tmpW * quaternion.z) + (tmpZ * quaternion.w)) - (tmpX * quaternion.y)) + (tmpY * quaternion.x))
+            ((((w * quaternion.x) + (x * quaternion.w)) - (y * quaternion.z)) + (z * quaternion.y)),
+            ((((w * quaternion.y) + (y * quaternion.w)) - (z * quaternion.x)) + (x * quaternion.z)),
+            ((((w * quaternion.z) + (z * quaternion.w)) - (x * quaternion.y)) + (y * quaternion.x))
         );
     }
 
     Quaternion Quaternion::FromEulerAngles(const Vec3 &angles) {
-        Quaternion pitch(Vec3(1.0, 0.0, 0.0), angles.x);
-        Quaternion yaw(Vec3(0.0, 1.0, 0.0), angles.y);
-        Quaternion roll(Vec3(0.0, 0.0, 1.0), angles.z);
-        return RotationX(angles.x) * RotationY(angles.y) * RotationZ(angles.z);
+        f32 x = Math::DegToRad(angles.x) * 0.5f;
+        f32 y = Math::DegToRad(angles.y) * 0.5f;
+        f32 z = Math::DegToRad(angles.z) * 0.5f;
+        
+        f32 cr = Math::Cos(x);
+        f32 sr = Math::Sin(x);
+        f32 cp = Math::Cos(y);
+        f32 sp = Math::Sin(y);
+        f32 cy = Math::Cos(z);
+        f32 sy = Math::Sin(z);
+
+        Quaternion result;
+        result.x = cy * cp * sr - sy * sp * cr;
+        result.y = sy * cp * sr + cy * sp * cr;
+        result.z = sy * cp * cr - cy * sp * sr;
+        result.w = cy * cp * cr + sy * sp * sr;
+
+        return result;
     }
 
     Quaternion Quaternion::Rotation(const Vec3 &axis, f32 angle) {
