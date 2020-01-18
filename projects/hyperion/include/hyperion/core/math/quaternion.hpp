@@ -17,6 +17,7 @@ namespace Hyperion {
         Vec3 ToEulerAngles() const;
 
         Quaternion Normalized() const;
+        Quaternion Inverted() const;
 
         String ToString() const;
 

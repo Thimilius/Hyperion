@@ -22,28 +22,8 @@ protected:
     Ref<Material> m_light_material;
     Ref<Texture2D> m_light_texture;
 
-    void EntityTest() {
-        Entity *parent = Entity::Create("Entity_0_0");
-        parent->GetTransform()->SetScale(Vec3(1, 2, 1));
-        parent->GetTransform()->SetPosition(Vec3(1, 2, 3));
-        
-        for (size_t i = 0; i < 10; i++) {
-            Entity *child = Entity::Create(StringUtils::Format("Entity_1_{}", i));
-            child->GetTransform()->SetPosition(Vec3((f32)i, 0, 0));
-            child->GetTransform()->SetParent(parent->GetTransform());
-
-            for (size_t i = 0; i < 10; i++) {
-                Entity *child2 = Entity::Create(StringUtils::Format("Entity_2_{}", i));
-                child2->GetTransform()->SetPosition(Vec3((f32)i, 0, 0));
-                child2->GetTransform()->SetParent(child->GetTransform());
-            }
-        }
-        Object::Destroy(parent);
-
-        for (u32 i = 0; i < parent->GetTransform()->GetChildCount(); i++) {
-            Object::Destroy(parent->GetTransform()->GetChild(i)->GetEntity());
-        }
-    }
+    Entity *m_entity_parent;
+    Entity *m_entity_child;
 
     void OnInit() override {
         EditorLayer *editor_layer = new EditorLayer();
@@ -63,7 +43,12 @@ protected:
         m_light_texture = AssetLibrary::GetTexture2D("light_icon");
         m_light_texture->SetAnisotropicFilter(TextureAnisotropicFilter::Times16);
 
-        EntityTest();
+        m_entity_parent = Entity::Create("Entity_0_0");
+        m_entity_parent->GetTransform()->SetPosition(Vec3(0, 0, 0));
+
+        m_entity_child = Entity::Create(StringUtils::Format("Entity_1_0"));
+        m_entity_child->GetTransform()->SetPosition(Vec3(1, 0, 0));
+        m_entity_child->GetTransform()->SetParent(m_entity_parent->GetTransform());
     }
     
     void OnEvent(Event &event) override {
@@ -90,14 +75,17 @@ protected:
 
             RenderEngine::Clear(ClearMask::Depth);
 
-            // Draw cube
+            // Draw entites
             {
                 m_cube_material->SetVec3("u_camera.position", m_camera->GetPosition());
                 m_cube_material->SetVec3("u_light.position", light_position);
-                m_cube_material->SetColor("u_light.color", light_color);
                 m_cube_material->SetTexture2D("u_texture", m_cube_texture);
 
-                Renderer::Draw(m_cube_mesh, m_cube_material, Mat4::Identity());
+                m_cube_material->SetColor("u_light.color", light_color);
+                Renderer::Draw(m_cube_mesh, m_cube_material, m_entity_parent->GetTransform()->GetLocalToWorldMatrix());
+
+                m_cube_material->SetColor("u_light.color", Color::Red());
+                Renderer::Draw(m_cube_mesh, m_cube_material, m_entity_child->GetTransform()->GetLocalToWorldMatrix());
             }
 
             // Draw light icon

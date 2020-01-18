@@ -29,6 +29,10 @@ namespace Hyperion {
         return *this * length_inverse;
     }
 
+    Quaternion Quaternion::Inverted() const {
+        return Quaternion(-x, -y, -z, w);
+    }
+
     String Quaternion::ToString() const {
         return StringUtils::Format("({:.2f}, {:.2f}, {:.2f}, {:.2f})", x, y, z, w);
     }

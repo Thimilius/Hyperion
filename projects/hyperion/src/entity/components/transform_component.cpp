@@ -36,6 +36,7 @@ namespace Hyperion {
 
     void TransformComponent::OnEvent(EntityEvent event) {
         if (event.type == EntityEventType::TransformChanged) {
+            RecalculateTransform();
             RecalculateMatricies();
 
             for (TransformComponent *child : m_children) {
@@ -45,27 +46,25 @@ namespace Hyperion {
     }
 
     void TransformComponent::NotifyTransformChange() {
-        // TODO: We can probably optimize a little if we distinguish between what actually changed
         GetEntity()->OnEvent({ EntityEventType::TransformChanged, nullptr });
     }
 
+    void TransformComponent::RecalculateTransform() {
+        if (m_parent) {
+            m_derived_rotation = m_parent->m_derived_rotation * m_local_rotation;
+            m_derived_scale = m_parent->m_derived_scale * m_local_scale;
+
+            m_derived_position = m_parent->m_derived_rotation * (m_parent->m_derived_scale * m_local_position);
+            m_derived_position += m_parent->m_derived_position;
+        } else {
+            m_derived_position = m_local_position;
+            m_derived_rotation = m_local_rotation;
+            m_derived_scale = m_local_scale;
+        }
+    }
+
     void TransformComponent::RecalculateMatricies() {
-        // FIXME: This seems to be a very naive implementation
-        std::stack<TransformComponent *> hierarchy;
-        TransformComponent *parent = m_parent;
-        while (parent != nullptr) {
-            hierarchy.push(parent);
-            parent = parent->m_parent;
-        }
-
-        Mat4 parent_transform = Mat4::Identity();
-        while (!hierarchy.empty()) {
-            TransformComponent *transform = hierarchy.top();
-            hierarchy.pop();
-            parent_transform = parent_transform * transform->m_local_to_world_matrix;
-        }
-
-        m_local_to_world_matrix = Mat4::TRS(m_position, m_rotation, m_scale) * parent_transform;
+        m_local_to_world_matrix = Mat4::TRS(m_derived_position, m_derived_rotation, m_derived_scale);
         m_world_to_local_matrix = m_local_to_world_matrix.Inverted();
     }
 
