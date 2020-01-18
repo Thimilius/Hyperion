@@ -55,6 +55,16 @@ namespace Hyperion {
             NotifyTransformChange();
         }
 
+        inline Vec3 GetRight() const {
+            return m_derived_rotation * Vec3::Right();
+        }
+        inline Vec3 GetUp() const {
+            return m_derived_rotation * Vec3::Up();
+        }
+        inline Vec3 GetForward() const {
+            return m_derived_rotation * Vec3::Forward();
+        }
+
         inline Vec3 WorldToLocalPosition(const Vec3 &position) const {
             return (m_derived_rotation.Inverted() * (position - m_derived_position)) / m_derived_scale;
         }
