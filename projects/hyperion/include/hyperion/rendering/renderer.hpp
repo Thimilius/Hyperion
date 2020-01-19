@@ -7,6 +7,8 @@
 #include "hyperion/rendering/mesh.hpp"
 #include "hyperion/rendering/camera.hpp"
 #include "hyperion/rendering/texture_cubemap.hpp"
+#include "hyperion/entity/world.hpp"
+#include "hyperion/entity/components/mesh_renderer_component.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -19,6 +21,8 @@ namespace Hyperion::Rendering {
 
                 Mat4 view_projection;
             } transform;
+
+            Ref<Camera> camera;
         };
 
         struct Skybox {
@@ -31,7 +35,8 @@ namespace Hyperion::Rendering {
     public:
         static void Begin(const Ref<Camera> &camera);
         static void DrawSkybox(const Ref<TextureCubemap> &skybox);
-        static void Draw(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform);
+        static void DrawWorld(World *world);
+        static void DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform);
         static void End();
     private:
         Renderer() = delete;
@@ -41,7 +46,9 @@ namespace Hyperion::Rendering {
 
         static void PrepareShader(const Ref<Shader> &shader);
         static void PrepareShader(const Ref<Shader> &shader, const Mat4 &transform);
-        static void Draw(const Ref<Mesh> &mesh);
+        static void DrawMesh(const Ref<Mesh> &mesh);
+
+        static void FindRendererComponents(Entity *root, Vector<MeshRendererComponent*> &renderers);
 
         friend class Hyperion::Engine;
     };

@@ -4,6 +4,7 @@
 
 #include "hyperion/assets/asset_library.hpp"
 #include "hyperion/assets/mesh_factory.hpp"
+#include "hyperion/entity/components/mesh_renderer_component.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -11,6 +12,8 @@ namespace Hyperion::Rendering {
         s_state.transform.view = camera->GetViewMatrix();
         s_state.transform.projection = camera->GetProjectionMatrix();
         s_state.transform.view_projection = camera->GetViewProjectionMatrix();
+
+        s_state.camera = camera;
     }
 
     void Renderer::DrawSkybox(const Ref<TextureCubemap> &skybox) {
@@ -19,15 +22,30 @@ namespace Hyperion::Rendering {
 
         PrepareShader(s_skybox.shader);
         skybox->Bind(0);
-        Draw(s_skybox.mesh);
+        DrawMesh(s_skybox.mesh);
 
         RenderEngine::GetRasterizerState()->SetCullingEnabled(culling_enabled);
     }
 
-    void Renderer::Draw(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform) {
+    void Renderer::DrawWorld(World *world) {
+        auto &root_entities = world->GetRootEntites();
+        Vector<MeshRendererComponent*> renderers;
+        for (Entity *root : root_entities) {
+            FindRendererComponents(root, renderers);
+        }
+
+        for (MeshRendererComponent *renderer : renderers) {
+            Ref<Material> material = renderer->GetMaterial();
+            material->SetVec3("u_camera.position", s_state.camera->GetPosition());
+            
+            DrawMesh(renderer->GetMesh(), material, renderer->GetTransform()->GetLocalToWorldMatrix());
+        }
+    }
+
+    void Renderer::DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform) {
         PrepareShader(material->GetShader(), transform);
         material->Bind();
-        Draw(mesh);
+        DrawMesh(mesh);
     }
 
     void Renderer::End() {
@@ -52,7 +70,7 @@ namespace Hyperion::Rendering {
         shader->SetMat4("u_transform.model", transform);
     }
 
-    void Renderer::Draw(const Ref<Mesh> &mesh) {
+    void Renderer::DrawMesh(const Ref<Mesh> &mesh) {
         const Ref<VertexArray> &vertex_array = mesh->GetVertexArray();
         vertex_array->Bind();
 
@@ -62,6 +80,18 @@ namespace Hyperion::Rendering {
         }
 
         vertex_array->Unbind();
+    }
+
+    void Renderer::FindRendererComponents(Entity *parent, Vector<MeshRendererComponent*> &renderers) {
+        MeshRendererComponent *renderer = parent->GetComponent<MeshRendererComponent>();
+        if (renderer) {
+            renderers.push_back(renderer);
+        }
+
+        TransformComponent *transform = parent->GetTransform();
+        for (u32 i = 0; i < transform->GetChildCount(); i++) {
+            FindRendererComponents(transform->GetChild(i)->GetEntity(), renderers);
+        }
     }
 
 }

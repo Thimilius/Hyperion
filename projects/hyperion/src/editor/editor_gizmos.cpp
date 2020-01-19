@@ -28,13 +28,13 @@ namespace Hyperion::Editor {
 
             // X gizmo
             m_material->SetVec3("u_color", Vec3(1, 0, 0));
-            Renderer::Draw(m_mesh, m_material, scale * Mat4::Rotate(Vec3(0, 0, 1), -90.0f));
+            Renderer::DrawMesh(m_mesh, m_material, scale * Mat4::Rotate(Vec3(0, 0, 1), -90.0f));
             // Y gizmo
             m_material->SetVec3("u_color", Vec3(0, 1, 0));
-            Renderer::Draw(m_mesh, m_material, scale * Mat4::Identity());
+            Renderer::DrawMesh(m_mesh, m_material, scale * Mat4::Identity());
             // Z gizmo
             m_material->SetVec3("u_color", Vec3(0, 0, 1));
-            Renderer::Draw(m_mesh, m_material, scale * Mat4::Rotate(Vec3(1, 0, 0), 90.0f));
+            Renderer::DrawMesh(m_mesh, m_material, scale * Mat4::Rotate(Vec3(1, 0, 0), 90.0f));
         }
         Renderer::End();
     }
