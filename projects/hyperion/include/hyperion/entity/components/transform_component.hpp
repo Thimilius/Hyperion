@@ -34,6 +34,8 @@ namespace Hyperion {
             m_local_rotation = rotation;
             NotifyTransformChange();
         }
+        inline Vec3 GetLocalEulerAngles() const { return m_local_rotation.ToEulerAngles(); }
+        inline void SetLocalEulerAngles(const Vec3 &angles) { SetLocalRotation(Quaternion::FromEulerAngles(angles)); }
 
         inline Vec3 GetLocalScale() const { return m_local_scale; }
         inline void SetLocalScale(const Vec3 &scale) {
@@ -54,6 +56,8 @@ namespace Hyperion {
             m_local_rotation = m_local_rotation * WorldToLocalRotation(rotation);
             NotifyTransformChange();
         }
+        inline Vec3 GetEulerAngles() const { return m_derived_rotation.ToEulerAngles(); }
+        inline void SetEulerAngles(const Vec3 &angles) { SetRotation(Quaternion::FromEulerAngles(angles)); }
 
         inline Vec3 GetRight() const {
             return m_derived_rotation * Vec3::Right();

@@ -91,10 +91,14 @@ namespace Hyperion {
     }
 
     Quaternion Quaternion::FromEulerAngles(const Vec3 &angles) {
-        f32 x = Math::DegToRad(angles.x) * 0.5f;
-        f32 y = Math::DegToRad(angles.y) * 0.5f;
-        f32 z = Math::DegToRad(angles.z) * 0.5f;
-        
+        return FromEulerAngles(angles.x, angles.y, angles.z);
+    }
+
+    Quaternion Quaternion::FromEulerAngles(f32 x, f32 y, f32 z) {
+        x = Math::DegToRad(x) * 0.5f;
+        y = Math::DegToRad(y) * 0.5f;
+        z = Math::DegToRad(z) * 0.5f;
+
         f32 cr = Math::Cos(x);
         f32 sr = Math::Sin(x);
         f32 cp = Math::Cos(y);
@@ -109,26 +113,6 @@ namespace Hyperion {
         result.w = cy * cp * cr + sy * sp * sr;
 
         return result;
-    }
-
-    Quaternion Quaternion::Rotation(const Vec3 &axis, f32 angle) {
-        angle = Math::DegToRad(angle) * 0.5f;
-        return Quaternion(axis * Math::Sin(angle), Math::Cos(angle));
-    }
-
-    Quaternion Quaternion::RotationX(f32 angle) {
-        angle = Math::DegToRad(angle) * 0.5f;
-        return Quaternion(Vec3(Math::Sin(angle), 0.0, 0.0), Math::Cos(angle));
-    }
-
-    Quaternion Quaternion::RotationY(f32 angle) {
-        angle = Math::DegToRad(angle) * 0.5f;
-        return Quaternion(Vec3(0.0, Math::Sin(angle), 0.0), Math::Cos(angle));
-    }
-
-    Quaternion Quaternion::RotationZ(f32 angle) {
-        angle = Math::DegToRad(angle) * 0.5f;
-        return Quaternion(Vec3(0.0, 0.0, Math::Sin(angle)), Math::Cos(angle));
     }
 
 }

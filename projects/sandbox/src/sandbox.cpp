@@ -52,13 +52,13 @@ protected:
     void OnUpdate(f32 delta_time) override {
         f32 speed = 50.0f;
         
-        Vec3 rotation = m_entity_parent->GetTransform()->GetRotation().ToEulerAngles();
+        Vec3 rotation = m_entity_parent->GetTransform()->GetEulerAngles();
         rotation.y += delta_time * speed;
-        m_entity_parent->GetTransform()->SetRotation(Quaternion::FromEulerAngles(rotation));
+        m_entity_parent->GetTransform()->SetEulerAngles(rotation);
 
-        rotation = m_entity_child->GetTransform()->GetRotation().ToEulerAngles();
+        rotation = m_entity_child->GetTransform()->GetEulerAngles();
         rotation.y += delta_time * speed;
-        m_entity_child->GetTransform()->SetRotation(Quaternion::FromEulerAngles(rotation));
+        m_entity_child->GetTransform()->SetEulerAngles(rotation);
     }
 
     void OnRender() override {

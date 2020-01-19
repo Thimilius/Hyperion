@@ -36,10 +36,7 @@ namespace Hyperion {
         static Vec3 Rotate(const Quaternion &quaternion, const Vec3 &vec);
 
         static Quaternion FromEulerAngles(const Vec3 &angles);
-        static Quaternion Rotation(const Vec3 &axis, f32 angle);
-        static Quaternion RotationX(f32 angle);
-        static Quaternion RotationY(f32 angle);
-        static Quaternion RotationZ(f32 angle);
+        static Quaternion FromEulerAngles(f32 x, f32 y, f32 z);
 
         inline static Quaternion Identity() { return Quaternion(0, 0, 0, 1); }
     };
