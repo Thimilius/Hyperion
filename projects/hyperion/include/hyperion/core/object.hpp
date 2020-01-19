@@ -36,7 +36,6 @@ namespace Hyperion {
         Object(const String &name) { m_name = name; }
         virtual ~Object() = default;
 
-        virtual void OnCreate() { }
         virtual void OnDestroy() { }
     private:
         // Objects can not be copied

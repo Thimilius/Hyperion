@@ -25,7 +25,7 @@ namespace Hyperion {
 
         void OnEvent(EntityEvent event) override;
 
-        void OnCreate() override;
+        void OnCreate();
         void OnDestroy() override;
 
         template<class T>

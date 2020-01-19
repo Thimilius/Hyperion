@@ -18,6 +18,7 @@ namespace Hyperion {
         EntityComponent() = default;
         virtual ~EntityComponent() = default;
 
+        virtual void OnCreate() { }
         virtual void OnDestroy() override;
     private:
         friend class Entity;

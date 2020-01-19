@@ -45,10 +45,16 @@ protected:
 
         m_entity_parent = Entity::Create("Entity_0_0");
         m_entity_parent->GetTransform()->SetPosition(Vec3(0, 0, 0));
+        auto mesh_renderer = m_entity_parent->AddComponent<MeshRendererComponent>();
+        mesh_renderer->SetMesh(m_cube_mesh);
+        mesh_renderer->SetMaterial(m_cube_material);
 
         m_entity_child = Entity::Create(StringUtils::Format("Entity_1_0"));
-        m_entity_child->GetTransform()->SetPosition(Vec3(1, 0, 0));
+        m_entity_child->GetTransform()->SetPosition(Vec3(2, 0, 0));
         m_entity_child->GetTransform()->SetParent(m_entity_parent->GetTransform());
+        mesh_renderer = m_entity_child->AddComponent<MeshRendererComponent>();
+        mesh_renderer->SetMesh(m_cube_mesh);
+        mesh_renderer->SetMaterial(m_cube_material);
     }
     
     void OnEvent(Event &event) override {

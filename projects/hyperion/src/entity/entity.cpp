@@ -8,10 +8,8 @@ namespace Hyperion {
 
     void Entity::OnEvent(EntityEvent event) {
         switch (event.type) {
-            case EntityEventType::ComponentDestroyed:
-            {
+            case EntityEventType::ComponentDestroyed: {
                 EntityComponent *component = (EntityComponent *)event.parameter;
-                component->OnDestroy();
                 m_components.erase(component->GetType());
                 break;
             }
