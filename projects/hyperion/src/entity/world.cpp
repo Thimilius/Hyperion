@@ -1,14 +1,14 @@
 #include "hyppch.hpp"
 
-#include "hyperion/entity/scene.hpp"
+#include "hyperion/entity/world.hpp"
 
 namespace Hyperion {
 
-    void Scene::AddRootEntity(Entity *entity) {
+    void World::AddRootEntity(Entity *entity) {
         m_root_entities.push_back(entity);
     }
 
-    void Scene::RemoveRootEntity(Entity *entity) {
+    void World::RemoveRootEntity(Entity *entity) {
         auto begin = m_root_entities.begin();
         auto end = m_root_entities.end();
         if (std::find(begin, end, entity) != end) {

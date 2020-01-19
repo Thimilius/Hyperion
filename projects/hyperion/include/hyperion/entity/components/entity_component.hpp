@@ -5,6 +5,7 @@
 namespace Hyperion {
 
     class Entity;
+    class TransformComponent;
 
     class EntityComponent : public Object {
         HYP_OBJECT(EntityComponent, Object);
@@ -12,6 +13,7 @@ namespace Hyperion {
         Entity *m_entity;
     public:
         inline Entity *GetEntity() const { return m_entity; }
+        TransformComponent *GetTransform() const;
     protected:
         EntityComponent() = default;
         virtual ~EntityComponent() = default;

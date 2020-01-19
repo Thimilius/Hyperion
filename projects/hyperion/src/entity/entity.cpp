@@ -2,7 +2,7 @@
 
 #include "hyperion/entity/entity.hpp"
 
-#include "hyperion/entity/scene.hpp"
+#include "hyperion/entity/world.hpp"
 
 namespace Hyperion {
 
@@ -27,8 +27,8 @@ namespace Hyperion {
         m_transform.m_entity = this;
         m_transform.OnCreate();
 
-        m_scene = SceneManager::GetActiveScene();
-        m_scene->AddRootEntity(this);
+        m_world = WorldManager::GetActiveWorld();
+        m_world->AddRootEntity(this);
     }
 
     void Entity::OnDestroy() {

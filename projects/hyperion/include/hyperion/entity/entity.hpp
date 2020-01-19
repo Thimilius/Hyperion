@@ -8,7 +8,7 @@
 
 namespace Hyperion {
 
-    class Scene;
+    class World;
 
     class Entity : public Object, public EntityEventListener {
         HYP_OBJECT(Entity, Object);
@@ -16,11 +16,11 @@ namespace Hyperion {
         TransformComponent m_transform;
         Map<ObjectType, EntityComponent *> m_components;
         
-        Scene *m_scene = nullptr;
+        World *m_world = nullptr;
 
         Vector<EntityEventListener *> m_event_listeners;
     public:
-        inline Scene *GetScene() const { return m_scene; }
+        inline World *GetScene() const { return m_world; }
         inline TransformComponent *GetTransform() { return &m_transform; }
 
         void OnEvent(EntityEvent event) override;

@@ -5,7 +5,7 @@
 #include <stack>
 
 #include "hyperion/entity/entity.hpp"
-#include "hyperion/entity/scene.hpp"
+#include "hyperion/entity/world.hpp"
 
 namespace Hyperion {
 
