@@ -16,7 +16,7 @@ namespace Hyperion {
 
     class Object {
     private:
-        String m_name = "Object";
+        String m_name;
         bool m_destroyed = false;
 
         inline static ObjectType s_type = std::hash<String>()(String("Object"));

@@ -95,7 +95,7 @@ namespace Hyperion {
         void OnCreate() override;
         void OnDestroy() override;
     private:
-        TransformComponent() = default;
+        TransformComponent() : EntityComponent("TransformComponent") { }
 
         void NotifyTransformChange();
         void RecalculateTransform();

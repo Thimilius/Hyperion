@@ -11,6 +11,8 @@ namespace Hyperion {
         Ref<Rendering::Mesh> m_mesh;
         Ref<Rendering::Material> m_material;
     public:
+        MeshRendererComponent() : EntityComponent("MeshRendererComponent") { }
+
         Ref<Rendering::Mesh> GetMesh() const { return m_mesh; }
         void SetMesh(const Ref<Rendering::Mesh> &mesh) { m_mesh = mesh; }
 

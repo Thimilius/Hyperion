@@ -14,8 +14,12 @@ namespace Hyperion {
     public:
         inline Entity *GetEntity() const { return m_entity; }
         TransformComponent *GetTransform() const;
+
+        template<class T>
+        T *GetComponent() const { return m_entity->GetComponent<T>(); }
     protected:
-        EntityComponent() = default;
+        EntityComponent() { }
+        EntityComponent(const String &name) : Object(name) { }
         virtual ~EntityComponent() = default;
 
         virtual void OnCreate() { }
