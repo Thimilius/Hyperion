@@ -43,17 +43,15 @@ namespace Hyperion {
             NotifyTransformChange();
         }
 
-        // HACK: The addition and multiplication in setting position and rotation is kind of weird
-
         inline Vec3 GetPosition() const { return m_derived_position; }
         inline void SetPosition(const Vec3 position) {
-            m_local_position += WorldToLocalPosition(position);
+            m_local_position = WorldToLocalPosition(position);
             NotifyTransformChange();
         }
 
         inline Quaternion GetRotation() const { return m_derived_rotation; }
         inline void SetRotation(const Quaternion &rotation) {
-            m_local_rotation = m_local_rotation * WorldToLocalRotation(rotation);
+            m_local_rotation = WorldToLocalRotation(rotation);
             NotifyTransformChange();
         }
         inline Vec3 GetEulerAngles() const { return m_derived_rotation.ToEulerAngles(); }
@@ -69,15 +67,17 @@ namespace Hyperion {
             return m_derived_rotation * Vec3::Forward();
         }
 
+        // FIXME: The transformation is off when both world rotation and position get set
+
         inline Vec3 WorldToLocalPosition(const Vec3 &position) const {
-            return (m_derived_rotation.Inverted() * (position - m_derived_position)) / m_derived_scale;
+            return m_local_position + ((m_derived_rotation.Inverted() * (position - m_derived_position)) / m_derived_scale);
         }
         inline Vec3 LocalToWorldPosition(const Vec3 &position) const {
             return (m_derived_rotation * (m_derived_scale * m_local_position)) + m_derived_position;
         }
 
         inline Quaternion WorldToLocalRotation(const Quaternion &rotation) const {
-            return m_derived_rotation.Inverted() * rotation;
+            return m_local_rotation * (m_derived_rotation.Inverted() * rotation);
         }
         inline Quaternion LocalToWorldRotation(const Quaternion &rotation) const {
             return m_derived_rotation * rotation;
