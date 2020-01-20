@@ -14,8 +14,7 @@ protected:
 
     Ref<TextureCubemap> m_skybox_texture;
 
-    Entity *m_entity_parent;
-    Entity *m_entity_child;
+    Entity *m_entity;
 
     void OnInit() override {
         EditorLayer *editor_layer = new EditorLayer();
@@ -23,42 +22,30 @@ protected:
         
         m_camera = editor_layer->GetCamera();
 
-        Ref<Mesh> mesh = MeshFactory::CreateCube(1);
+        Ref<Mesh> mesh = MeshFactory::CreateFromFile("data/models/sphere.obj");
         Ref<Material> material = Material::Create(AssetLibrary::GetShader("phong"));
         m_skybox_texture = AssetLibrary::LoadTextureCubemap("skybox", "data/textures/galaxy", ".png");
 
-        material->SetTexture2D("u_texture", AssetLibrary::GetTexture2D("grass"));
-        
+        material->SetTexture2D("u_texture", AssetLibrary::GetTexture2D("earth"));
+
         Vec3 light_position = Vec3(1.5f, 2.0f, 3.0f);
         Color light_color = Color::White();
         material->SetVec3("u_light.position", light_position);
         material->SetColor("u_light.color", light_color);
 
-        m_entity_parent = Entity::Create("Entity_0_0");
-        m_entity_parent->GetTransform()->SetPosition(Vec3(0, 0, 0));
-        MeshRendererComponent *mesh_renderer = m_entity_parent->AddComponent<MeshRendererComponent>();
-        mesh_renderer->SetMesh(mesh);
-        mesh_renderer->SetMaterial(material);
-
-        m_entity_child = Entity::Create(StringUtils::Format("Entity_1_0"));
-        m_entity_child->GetTransform()->SetPosition(Vec3(2, 0, 0));
-        m_entity_child->GetTransform()->SetLocalScale(Vec3(0.5f, 0.5f, 0.5f));
-        m_entity_child->GetTransform()->SetParent(m_entity_parent->GetTransform());
-        mesh_renderer = m_entity_child->AddComponent<MeshRendererComponent>();
+        m_entity = Entity::Create("Entity_0_0");
+        m_entity->GetTransform()->SetPosition(Vec3(0, 0, 0));
+        MeshRendererComponent *mesh_renderer = m_entity->AddComponent<MeshRendererComponent>();
         mesh_renderer->SetMesh(mesh);
         mesh_renderer->SetMaterial(material);
     }
 
     void OnUpdate(f32 delta_time) override {
-        f32 speed = 50.0f;
+        f32 speed = 5.0f;
         
-        Vec3 rotation = m_entity_parent->GetTransform()->GetEulerAngles();
+        Vec3 rotation = m_entity->GetTransform()->GetEulerAngles();
         rotation.y += delta_time * speed;
-        m_entity_parent->GetTransform()->SetEulerAngles(rotation);
-
-        rotation = m_entity_child->GetTransform()->GetEulerAngles();
-        rotation.y += delta_time * speed;
-        m_entity_child->GetTransform()->SetEulerAngles(rotation);
+        m_entity->GetTransform()->SetEulerAngles(rotation);
     }
 
     void OnRender() override {
