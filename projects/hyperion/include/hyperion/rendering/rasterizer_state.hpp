@@ -1,7 +1,20 @@
 #pragma once
 
-namespace Hyperion {
+namespace Hyperion::Rendering {
     
+    enum class DepthEquation {
+        Never,
+        Always,
+
+        Less,
+        LessEqual,
+        Greater,
+        GreaterEqual,
+
+        Equal,
+        NotEqual
+    };
+
     enum class BlendFactor {
         Zero,
         One,
@@ -20,7 +33,7 @@ namespace Hyperion {
     enum class BlendEquation {
         Add,
         Subtract,
-        ReverseSubract,
+        ReverseSubract
     };
 
     enum class FrontFaceMode {
@@ -43,6 +56,7 @@ namespace Hyperion {
     protected:
         bool m_depth_test_enabled;
         bool m_depth_mask_enabled;
+        DepthEquation m_depth_equation;
 
         bool m_stencil_test_enabled;
 
@@ -63,6 +77,8 @@ namespace Hyperion {
         virtual void SetDepthTestEnabled(bool enabled) = 0;
         bool IsDepthMaskEnabked() const { return m_depth_mask_enabled; }
         virtual void SetDepthMaskEnabled(bool enabled) = 0;
+        DepthEquation GetDepthEquation() const { return m_depth_equation; }
+        virtual void SetDepthEquation(DepthEquation depth_equation) = 0;
 
         bool IsStencilTestEnabled() const { return m_stencil_test_enabled; }
         virtual void SetStencilTestEnabled(bool enabled) = 0;

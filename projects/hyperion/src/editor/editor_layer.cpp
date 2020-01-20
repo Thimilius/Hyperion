@@ -77,6 +77,7 @@ namespace Hyperion::Editor {
             if (m_origin_enabled) {
                 // We want to draw the origin on top of the grid
                 RenderEngine::Clear(ClearMask::Depth);
+                RenderEngine::GetRasterizerState()->SetDepthEquation(DepthEquation::LessEqual);
 
                 ImmediateRenderer::DrawLine(Vec3(-1000, 0, 0), Vec3(1000, 0, 0), Color::Red());
                 ImmediateRenderer::DrawLine(Vec3(0, -1000, 0), Vec3(0, 1000, 0), Color::Green());

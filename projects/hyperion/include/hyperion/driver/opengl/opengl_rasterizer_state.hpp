@@ -2,7 +2,7 @@
 
 #include "hyperion/rendering/rasterizer_state.hpp"
 
-namespace Hyperion {
+namespace Hyperion::Rendering {
 
     class OpenGLRasterizerState : public RasterizerState {
     public:
@@ -10,6 +10,7 @@ namespace Hyperion {
 
         void SetDepthTestEnabled(bool enabled) override;
         void SetDepthMaskEnabled(bool enabled) override;
+        void SetDepthEquation(DepthEquation depth_equation) override;
 
         void SetStencilTestEnabled(bool enabled) override;
 
@@ -23,6 +24,7 @@ namespace Hyperion {
 
         void SetPolygonMode(PolygonMode polygon_mode) override;
     private:
+        static u32 GetGLDepthEquation(DepthEquation depth_equation);
         static u32 GetGLBlendFactor(BlendFactor blend_factor);
         static u32 GetGLBlendEquation(BlendEquation blend_equation);
         static u32 GetGLFrontFaceMode(FrontFaceMode front_face_mode);

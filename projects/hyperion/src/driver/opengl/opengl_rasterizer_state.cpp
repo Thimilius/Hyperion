@@ -4,12 +4,13 @@
 
 #include <glad/glad.h>
 
-namespace Hyperion {
+namespace Hyperion::Rendering {
 
     OpenGLRasterizerState::OpenGLRasterizerState() {
         // Setup intial state
         SetDepthTestEnabled(true);
         SetDepthMaskEnabled(true);
+        SetDepthEquation(DepthEquation::Less);
 
         SetStencilTestEnabled(false);
 
@@ -40,6 +41,11 @@ namespace Hyperion {
         } else {
             glDepthMask(GL_FALSE);
         }
+    }
+
+    void OpenGLRasterizerState::SetDepthEquation(DepthEquation depth_equation) {
+        m_depth_equation = depth_equation;
+        glDepthFunc(GetGLDepthEquation(depth_equation));
     }
 
     void OpenGLRasterizerState::SetStencilTestEnabled(bool enabled) {
@@ -94,6 +100,20 @@ namespace Hyperion {
     void OpenGLRasterizerState::SetPolygonMode(PolygonMode polygon_mode) {
         m_polygon_mode = polygon_mode;
         glPolygonMode(GL_FRONT_AND_BACK, GetGLPolygonMode(polygon_mode));
+    }
+
+    u32 OpenGLRasterizerState::GetGLDepthEquation(DepthEquation depth_equation) {
+        switch (depth_equation) {
+            case DepthEquation::Never: return GL_NEVER;
+            case DepthEquation::Always: return GL_ALWAYS;
+            case DepthEquation::Less: return GL_LESS;
+            case DepthEquation::LessEqual: return GL_LEQUAL;
+            case DepthEquation::Greater: return GL_GREATER;
+            case DepthEquation::GreaterEqual: return GL_GEQUAL;
+            case DepthEquation::Equal: return GL_EQUAL;
+            case DepthEquation::NotEqual: return GL_NOTEQUAL;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
     }
 
     u32 OpenGLRasterizerState::GetGLBlendFactor(BlendFactor blend_factor) {

@@ -53,9 +53,8 @@ protected:
 
         Renderer::Begin(m_camera);
         {
-            Renderer::DrawSkybox(m_skybox_texture);
-            RenderEngine::Clear(ClearMask::Depth);
             Renderer::DrawWorld(WorldManager::GetActiveWorld());
+            Renderer::DrawSkybox(m_skybox_texture);
         }
         Renderer::End();
     }

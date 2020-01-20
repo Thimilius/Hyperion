@@ -6,7 +6,7 @@
 void main() {
 	o_v2f.position = a_position;
 
-	gl_Position = u_transform.projection * mat4(mat3(u_transform.view)) * vec4(a_position, 1.0);
+	gl_Position = (u_transform.projection * mat4(mat3(u_transform.view)) * vec4(a_position, 1.0)).xyww;
 }
 
 #type fragment

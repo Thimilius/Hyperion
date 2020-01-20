@@ -19,11 +19,14 @@ namespace Hyperion::Rendering {
     void Renderer::DrawSkybox(const Ref<TextureCubemap> &skybox) {
         bool culling_enabled = RenderEngine::GetRasterizerState()->IsCullingEnabled();
         RenderEngine::GetRasterizerState()->SetCullingEnabled(false);
+        DepthEquation depth_equation = RenderEngine::GetRasterizerState()->GetDepthEquation();
+        RenderEngine::GetRasterizerState()->SetDepthEquation(DepthEquation::LessEqual);
 
         PrepareShader(s_skybox.shader);
         skybox->Bind(0);
         DrawMesh(s_skybox.mesh);
 
+        RenderEngine::GetRasterizerState()->SetDepthEquation(depth_equation);
         RenderEngine::GetRasterizerState()->SetCullingEnabled(culling_enabled);
     }
 
