@@ -18,7 +18,7 @@ namespace Hyperion {
 
         return result;
 #else
-    #error 
+        #error Missing platform implementation
 #endif
     }
 
@@ -36,7 +36,7 @@ namespace Hyperion {
 
         return result;
 #else
-    #error 
+        #error Missing platform implementation
 #endif
     }
 

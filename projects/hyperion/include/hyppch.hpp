@@ -1,7 +1,13 @@
 #ifndef HYP_PCH
 #define HYP_PCH
 
-// Standard library
+// C standard library
+#include <cstdint>
+#include <cfloat>
+#include <cmath>
+#include <ctime>
+
+// C++ standard library
 #include <memory>
 #include <string>
 #include <vector>

@@ -1,6 +1,7 @@
 #pragma once
 
-#include "hyperion/core/app/application.hpp"
+#include "hyperion/core/app/application_settings.hpp"
+#include "hyperion/core/operating_system.hpp"
 
 namespace Hyperion {
 

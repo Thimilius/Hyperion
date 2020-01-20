@@ -41,16 +41,13 @@ project "hyperion"
 	pchheader "hyppch.hpp"
 	pchsource "projects/hyperion/src/hyppch.cpp"
 
-	postbuildcommands {
-		"{COPY} vendor/fmod/lib/x64/fmod.dll %{cfg.targetdir}",
-		"{COPY} vendor/assimp/lib/windows/assimp.dll %{cfg.targetdir}"
-	}
-
 	files { "projects/hyperion/**" }
 
 	excludes {
 		"projects/hyperion/src/platform/**",
-		"projects/hyperion/include/hyperion/platform/**"
+		"projects/hyperion/include/hyperion/platform/**",
+
+        "projects/hyperion/vendor/glad/src/glad_wgl.c"
 	}
 
 	includedirs {
@@ -70,7 +67,9 @@ project "hyperion"
 	filter "system:windows"
 		files {
 			"projects/hyperion/include/hyperion/platform/windows/**",
-			"projects/hyperion/src/platform/windows/**"
+			"projects/hyperion/src/platform/windows/**",
+
+            "projects/hyperion/vendor/glad/src/glad_wgl.c"
 		}
 		
 		libdirs {
@@ -90,21 +89,21 @@ project "hyperion"
 		
 		linkoptions { "-IGNORE:4006" }
 
+	    postbuildcommands {
+		    "{COPY} vendor/fmod/lib/x64/fmod.dll %{cfg.targetdir}",
+		    "{COPY} vendor/assimp/lib/windows/assimp.dll %{cfg.targetdir}"
+	    }
+
 project "sandbox"
 	location "projects/sandbox"
 	kind "ConsoleApp"
 	
 	links { "hyperion" }
 	
-	postbuildcommands {
-		"{COPY} %{cfg.targetdir}/%{prj.name}.exe ../../run_tree/",
-		
-		"{COPY} %{cfg.targetdir}/fmod.dll ../../run_tree/",
-		"{COPY} %{cfg.targetdir}/assimp.dll ../../run_tree/"
-	}
-	
 	files { "projects/sandbox/**" }	
 	
+    excludes { "projects/sandbox/resource.rc" }
+
 	includedirs {
 		"projects/hyperion/include",
 		
@@ -113,3 +112,14 @@ project "sandbox"
 		
 	filter "kind:ConsoleApp"
 		defines { "HYP_CONSOLE" }
+
+    filter "system:Windows"
+        files { "projects/sandbox/resource.rc" }
+
+	    postbuildcommands {
+		    "{COPY} %{cfg.targetdir}/%{prj.name}.exe ../../run_tree/",
+		    
+		    "{COPY} %{cfg.targetdir}/fmod.dll ../../run_tree/",
+		    "{COPY} %{cfg.targetdir}/assimp.dll ../../run_tree/"
+	    }
+	

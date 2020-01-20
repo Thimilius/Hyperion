@@ -11,8 +11,8 @@ using namespace Hyperion::Rendering;
 namespace Hyperion {
 
     Ref<Shader> AssetLibrary::LoadShader(const String &name, const String &filepath) {
-        String &source = FileUtilities::ReadTextFile(filepath);
-        Ref<Shader> &shader = Shader::Create(name, source);
+        String source = FileUtilities::ReadTextFile(filepath);
+        Ref<Shader> shader = Shader::Create(name, source);
         AddShader(name, filepath, shader);
         return shader;
     }
@@ -121,7 +121,7 @@ namespace Hyperion {
         for (auto &entry : std::filesystem::directory_iterator(shader_path)) {
             auto &path = entry.path();
             if (path.extension() == ".glsl") {
-                auto &filename = path.filename().string();
+                auto filename = path.filename().string();
                 LoadShader(filename.substr(0, filename.length() - 5), path.string());
             }
         }
@@ -142,7 +142,7 @@ namespace Hyperion {
         for (auto &entry : std::filesystem::directory_iterator(texture_path)) {
             auto &path = entry.path();
             if (path.extension() == ".png") { // FIXME: This is hardcoded to only load .png files
-                auto &filename = path.filename().string();
+                auto filename = path.filename().string();
                 LoadTexture2D(filename.substr(0, filename.length() - 4), path.string());
             }
         }
@@ -167,7 +167,7 @@ namespace Hyperion {
         }
 
         AssetEntry entry = s_shaders[name];
-        String &source = FileUtilities::ReadTextFile(entry.filepath);
+        String source = FileUtilities::ReadTextFile(entry.filepath);
         entry.asset->Recompile(source);
     }
 

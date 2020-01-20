@@ -30,7 +30,7 @@ namespace Hyperion {
 
         EventCallbackFunction m_event_callback;
 
-        Scope<Rendering::GraphicsContext> m_graphics_context;
+        Ref<Rendering::GraphicsContext> m_graphics_context;
     public:
         virtual ~Window() = default;
 
