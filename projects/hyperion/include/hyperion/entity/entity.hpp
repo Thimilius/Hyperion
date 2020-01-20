@@ -10,6 +10,8 @@ namespace Hyperion {
 
     class World;
 
+    using EntityTag = String;
+
     class Entity : public Object, public EntityEventListener {
         HYP_OBJECT(Entity, Object);
     private:
@@ -17,6 +19,7 @@ namespace Hyperion {
         Map<ObjectType, EntityComponent *> m_components;
         
         World *m_world = nullptr;
+        Set<EntityTag> m_tags;
 
         Vector<EntityEventListener *> m_event_listeners;
     public:
@@ -64,23 +67,18 @@ namespace Hyperion {
             }
         }
 
-        inline void RegisterEventListener(EntityEventListener *listener) {
-            m_event_listeners.push_back(listener);
-        }
+        inline const Set<EntityTag> &GetTags() const { return m_tags; }
+        inline bool HasTag(const EntityTag &tag) const { return m_tags.find(tag) != m_tags.end(); }
+        inline bool AddTag(const EntityTag &tag) { return m_tags.insert(tag).second; }
+        inline void RemoveTag(const EntityTag &tag) { m_tags.erase(tag); }
 
-        inline void UnregisterEventListener(EntityEventListener *listener) {
-            auto begin = m_event_listeners.begin();
-            auto end = m_event_listeners.end();
-            if (std::find(begin, end, listener) != end) {
-                m_event_listeners.erase(std::remove(begin, end, listener));
-            }
-        }
+        void RegisterEventListener(EntityEventListener *listener);
+        void UnregisterEventListener(EntityEventListener *listener);
 
         static Entity *Create(const String &name = "New Entity");
     private:
         Entity(const String &name) : Object(name) { }
         ~Entity() = default;
-
 
         friend class Object;
         friend class EntityComponent;

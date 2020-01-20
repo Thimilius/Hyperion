@@ -54,6 +54,18 @@ namespace Hyperion {
         }
     }
 
+    void Entity::RegisterEventListener(EntityEventListener *listener) {
+        m_event_listeners.push_back(listener);
+    }
+
+    void Entity::UnregisterEventListener(EntityEventListener *listener) {
+        auto begin = m_event_listeners.begin();
+        auto end = m_event_listeners.end();
+        if (std::find(begin, end, listener) != end) {
+            m_event_listeners.erase(std::remove(begin, end, listener));
+        }
+    }
+
     Entity *Entity::Create(const String &name) {
         Entity *entity = new Entity(name);
         entity->OnCreate();
