@@ -25,11 +25,15 @@ namespace Hyperion::Editor {
 
             u32 index = 0;
             for (s32 x = -half_grid_size; x <= half_grid_size; x++) {
+                if (x == 0) continue;
+
                 f32 from_point = (f32)x;
                 verticies[index++] = { Vec3(from_point, 0, to_point), grid_color };
                 verticies[index++] = { Vec3(from_point, 0, -to_point), grid_color };
             }
             for (s32 z = -half_grid_size; z <= half_grid_size; z++) {
+                if (z == 0) continue;
+
                 f32 from_point = (f32)z;
                 verticies[index++] = { Vec3(to_point, 0, from_point), grid_color };
                 verticies[index++] = { Vec3(-to_point, 0, from_point), grid_color };
@@ -59,22 +63,18 @@ namespace Hyperion::Editor {
             UpdateTitle();
         }
         if (Input::GetKeyDown(KeyCode::F3)) {
-            m_grid_enabled = !m_grid_enabled;
-        }
-        if (Input::GetKeyDown(KeyCode::F4)) {
-            m_origin_enabled = !m_origin_enabled;
+            m_overlay_enabled = !m_overlay_enabled;
         }
 
         m_camera_controller.Update(delta_time);
     }
 
     void EditorLayer::OnRender() {
-        ImmediateRenderer::Begin(m_camera);
-        {
-            if (m_grid_enabled) {
+        if (m_overlay_enabled) {
+            ImmediateRenderer::Begin(m_camera);
+            {
                 ImmediateRenderer::Draw(PrimitiveType::Lines, m_grid_vertex_array, m_grid_vertex_count);
-            }
-            if (m_origin_enabled) {
+
                 // We want to draw the origin on top of the grid
                 RenderEngine::Clear(ClearMask::Depth);
                 RenderEngine::GetRasterizerState()->SetDepthEquation(DepthEquation::LessEqual);
@@ -83,8 +83,8 @@ namespace Hyperion::Editor {
                 ImmediateRenderer::DrawLine(Vec3(0, -1000, 0), Vec3(0, 1000, 0), Color::Green());
                 ImmediateRenderer::DrawLine(Vec3(0, 0, -1000), Vec3(0, 0, 1000), Color::Blue());
             }
+            ImmediateRenderer::End();
         }
-        ImmediateRenderer::End();
     }
 
     void EditorLayer::OnTick() {

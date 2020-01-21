@@ -15,8 +15,7 @@ namespace Hyperion::Editor {
         u32 m_grid_vertex_count;
         Ref<Rendering::VertexArray> m_grid_vertex_array;
 
-        bool m_grid_enabled = false;
-        bool m_origin_enabled = false;
+        bool m_overlay_enabled = false;
     public:
         Ref<Rendering::Camera> GetCamera() const { return m_camera; }
 
