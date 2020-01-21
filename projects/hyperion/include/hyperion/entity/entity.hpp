@@ -12,6 +12,7 @@ namespace Hyperion {
 
     using EntityTag = String;
 
+    // NOTE: Should we allow multiple components of the same type?
     class Entity : public Object, public EntityEventListener {
         HYP_OBJECT(Entity, Object);
     private:
@@ -28,15 +29,13 @@ namespace Hyperion {
 
         void OnEvent(EntityEvent event) override;
 
-        template<class T>
+        template<typename T>
         T *AddComponent() {
-            // Template component constraint
             static_assert(std::is_base_of<EntityComponent, T>::value, "Template parameter must derive from EntityComponent");
             static_assert(!std::is_same<EntityComponent, T>::value, "Template parameter must derive from EntityComponent");
             static_assert(!std::is_base_of<TransformComponent, T>::value, "Can not add an additional TransformComponent");
 
             ObjectType type = T::GetStaticType();
-            // NOTE: Should we allow multiple components of the same type?
             HYP_ASSERT_MESSAGE(m_components.find(type) == m_components.end(), "Failed to add component because a component with the same type already exists!");
 
             T *component = new T();
@@ -50,9 +49,8 @@ namespace Hyperion {
             return component;
         }
 
-        template<class T>
+        template<typename T>
         T *GetComponent() const {
-            // Template component constraint
             static_assert(std::is_base_of<EntityComponent, T>::value, "Template parameter must derive from EntityComponent");
 
             ObjectType type = T::GetStaticType();
@@ -62,6 +60,97 @@ namespace Hyperion {
             } else {
                 return nullptr;
             }
+        }
+
+        template<typename T>
+        T *GetComponentInChildren() const {
+            static_assert(std::is_base_of<EntityComponent, T>::value, "Template parameter must derive from EntityComponent");
+
+            ObjectType type = T::GetStaticType();
+            T *component = nullptr;
+
+            auto iterator = m_components.find(type);
+            if (iterator != m_components.end()) {
+                component = (T *)iterator->second;
+            } else {
+                for (TransformComponent *child : m_transform.m_children) {
+                    component = child->GetEntity()->GetComponentInChildren<T>();
+                    if (component) break;
+                }
+            }
+
+            return component;
+        }
+
+        template<typename T>
+        T *GetComponentInParent() const {
+            static_assert(std::is_base_of<EntityComponent, T>::value, "Template parameter must derive from EntityComponent");
+
+            ObjectType type = T::GetStaticType();
+            T *component = nullptr;
+            
+            auto iterator = m_components.find(type);
+            if (iterator != m_components.end()) {
+                component = (T *)iterator->second;
+            } else {
+                TransformComponent *parent = m_transform.m_parent;
+                while (parent != nullptr) {
+                    auto &parent_components = parent->GetEntity()->m_components;
+                    iterator = parent_components.find(type);
+                    if (iterator != parent_components.end()) {
+                        component = (T *)iterator->second;
+                        break;
+                    }
+
+                    parent = parent->m_parent;
+                }
+            }
+            
+            return component;
+        }
+
+        template<typename T>
+        Vector<T *> GetComponentsInChildren() const {
+            static_assert(std::is_base_of<EntityComponent, T>::value, "Template parameter must derive from EntityComponent");
+
+            ObjectType type = T::GetStaticType();
+            Vector<T *> components;
+
+            auto iterator = m_components.find(type);
+            if (iterator != m_components.end()) {
+                components.push_back((T *)iterator->second);
+            }
+            for (TransformComponent *child : m_transform.m_children) {
+                Vector<T *> child_components = child->GetEntity()->GetComponentsInChildren<T>();
+                components.insert(components.end(), child_components.begin(), child_components.end());
+            }
+
+            return components;
+        }
+
+        template<typename T>
+        Vector<T *> GetComponentsInParent() const {
+            static_assert(std::is_base_of<EntityComponent, T>::value, "Template parameter must derive from EntityComponent");
+
+            ObjectType type = T::GetStaticType();
+            Vector<T *> components;
+
+            auto iterator = m_components.find(type);
+            if (iterator != m_components.end()) {
+                components.push_back((T *)iterator->second);
+            }
+            TransformComponent *parent = m_transform.m_parent;
+            while (parent != nullptr) {
+                auto &parent_components = parent->GetEntity()->m_components;
+                iterator = parent_components.find(type);
+                if (iterator != parent_components.end()) {
+                    components.push_back((T *)iterator->second);
+                }
+
+                parent = parent->m_parent;
+            }
+
+            return components;
         }
 
         inline const Set<EntityTag> &GetTags() const { return m_tags; }
