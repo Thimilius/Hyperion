@@ -20,13 +20,22 @@ namespace Hyperion {
         }
     }
 
-    void Entity::OnCreate() {
-        m_components[TransformComponent::GetStaticType()] = &m_transform;
-        m_transform.m_entity = this;
-        m_transform.OnCreate();
+    void Entity::RegisterEventListener(EntityEventListener *listener) {
+        m_event_listeners.push_back(listener);
+    }
 
-        m_world = WorldManager::GetActiveWorld();
-        m_world->AddRootEntity(this);
+    void Entity::UnregisterEventListener(EntityEventListener *listener) {
+        auto begin = m_event_listeners.begin();
+        auto end = m_event_listeners.end();
+        if (std::find(begin, end, listener) != end) {
+            m_event_listeners.erase(std::remove(begin, end, listener));
+        }
+    }
+
+    Entity *Entity::Create(const String &name, Vec3 position, Quaternion rotation, TransformComponent *parent) {
+        Entity *entity = new Entity(name);
+        entity->OnCreate(position, rotation, parent);
+        return entity;
     }
 
     void Entity::OnDestroy() {
@@ -54,22 +63,19 @@ namespace Hyperion {
         }
     }
 
-    void Entity::RegisterEventListener(EntityEventListener *listener) {
-        m_event_listeners.push_back(listener);
-    }
+    void Entity::OnCreate(Vec3 position, Quaternion rotation, TransformComponent *parent) {
+        m_components[TransformComponent::GetStaticType()] = &m_transform;
+        m_transform.m_entity = this;
+        m_transform.OnCreate();
+        m_transform.SetLocalPosition(position);
+        m_transform.SetLocalRotation(rotation);
 
-    void Entity::UnregisterEventListener(EntityEventListener *listener) {
-        auto begin = m_event_listeners.begin();
-        auto end = m_event_listeners.end();
-        if (std::find(begin, end, listener) != end) {
-            m_event_listeners.erase(std::remove(begin, end, listener));
+        if (parent == nullptr) {
+            m_world = WorldManager::GetActiveWorld();
+            m_world->AddRootEntity(this);
+        } else {
+            m_transform.SetParent(parent);
         }
-    }
-
-    Entity *Entity::Create(const String &name) {
-        Entity *entity = new Entity(name);
-        entity->OnCreate();
-        return entity;
     }
 
 }

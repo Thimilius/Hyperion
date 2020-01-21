@@ -33,8 +33,7 @@ protected:
         material->SetVec3("u_light.position", light_position);
         material->SetColor("u_light.color", light_color);
 
-        m_entity = Entity::Create("Entity_0_0");
-        m_entity->GetTransform()->SetPosition(Vec3(0, 0, 0));
+        m_entity = Entity::Create("Entity_0_0", Vec3(0, 0, 0));
         MeshRendererComponent *mesh_renderer = m_entity->AddComponent<MeshRendererComponent>();
         mesh_renderer->SetMesh(mesh);
         mesh_renderer->SetMaterial(material);

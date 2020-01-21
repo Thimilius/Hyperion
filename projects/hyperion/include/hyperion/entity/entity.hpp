@@ -28,9 +28,6 @@ namespace Hyperion {
 
         void OnEvent(EntityEvent event) override;
 
-        void OnCreate();
-        void OnDestroy() override;
-
         template<class T>
         T *AddComponent() {
             // Template component constraint
@@ -75,10 +72,14 @@ namespace Hyperion {
         void RegisterEventListener(EntityEventListener *listener);
         void UnregisterEventListener(EntityEventListener *listener);
 
-        static Entity *Create(const String &name = "New Entity");
+        static Entity *Create(const String &name = "New Entity", Vec3 position = Vec3::Zero(), Quaternion rotation = Quaternion::Identity(), TransformComponent *parent = nullptr);
+    protected:
+        void OnDestroy() override;
     private:
         Entity(const String &name) : Object(name) { }
         ~Entity() = default;
+
+        void OnCreate(Vec3 position, Quaternion rotation, TransformComponent *parent);
 
         friend class Object;
         friend class EntityComponent;
