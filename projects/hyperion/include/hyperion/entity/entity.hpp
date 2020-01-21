@@ -23,7 +23,7 @@ namespace Hyperion {
 
         Vector<EntityEventListener *> m_event_listeners;
     public:
-        inline World *GetScene() const { return m_world; }
+        inline World *GetWorld() const { return m_world; }
         inline TransformComponent *GetTransform() { return &m_transform; }
 
         void OnEvent(EntityEvent event) override;

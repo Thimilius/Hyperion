@@ -2,12 +2,18 @@
 
 #include "hyperion/entity/components/transform_component.hpp"
 
-#include <stack>
-
 #include "hyperion/entity/entity.hpp"
 #include "hyperion/entity/world.hpp"
 
 namespace Hyperion {
+
+    TransformComponent *TransformComponent::GetRoot() const {
+        TransformComponent *parent = m_parent ? m_parent : (TransformComponent *)this;
+        while (parent->m_parent != nullptr) {
+            parent = parent->m_parent;
+        }
+        return parent;
+    }
 
     void TransformComponent::SetParent(TransformComponent *parent) {
         if (m_parent == parent) {
@@ -22,11 +28,11 @@ namespace Hyperion {
                 m_parent->m_children.erase(std::remove(begin, end, this));
             }
 
-            entity->GetScene()->AddRootEntity(entity);
+            entity->GetWorld()->AddRootEntity(entity);
         } else {
             parent->m_children.push_back(this);
 
-            entity->GetScene()->RemoveRootEntity(entity);
+            entity->GetWorld()->RemoveRootEntity(entity);
         }
 
         m_parent = parent;
@@ -77,7 +83,7 @@ namespace Hyperion {
         entity->UnregisterEventListener(this);
 
         if (m_parent == nullptr) {
-            entity->GetScene()->RemoveRootEntity(entity);
+            entity->GetWorld()->RemoveRootEntity(entity);
         } else {
             auto begin = m_parent->m_children.begin();
             auto end = m_parent->m_children.end();

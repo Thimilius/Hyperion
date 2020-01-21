@@ -64,6 +64,8 @@ namespace Hyperion {
     }
 
     void Entity::OnCreate(Vec3 position, Quaternion rotation, TransformComponent *parent) {
+        m_world = WorldManager::GetActiveWorld();
+
         m_components[TransformComponent::GetStaticType()] = &m_transform;
         m_transform.m_entity = this;
         m_transform.OnCreate();
@@ -71,7 +73,6 @@ namespace Hyperion {
         m_transform.SetLocalRotation(rotation);
 
         if (parent == nullptr) {
-            m_world = WorldManager::GetActiveWorld();
             m_world->AddRootEntity(this);
         } else {
             m_transform.SetParent(parent);

@@ -85,6 +85,7 @@ namespace Hyperion {
 
         inline u32 GetChildCount() const { return (u32)m_children.size(); }
         inline TransformComponent *GetChild(u32 index) { return m_children[index]; }
+        TransformComponent *GetRoot() const;
 
         void SetParent(TransformComponent *parent);
 
