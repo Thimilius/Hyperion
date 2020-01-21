@@ -27,10 +27,10 @@
 #define HYP_PANIC do {                                                \
             HYP_LOG_ERROR("Engine", "Engine encountered an error!");  \
             HYP_DEBUG_BREAK;                                          \
-            Engine::Panic("Engine", "Engine encountered an error!"); \
+            Engine::Panic("Engine", "Engine encountered an error!");  \
         } while(false);
-#define HYP_PANIC_MESSAGE(s, m, ...) do {          \
-            HYP_LOG_ERROR((s), (m), ##__VA_ARGS__);  \
-            HYP_DEBUG_BREAK;                       \
+#define HYP_PANIC_MESSAGE(s, m, ...) do {           \
+            HYP_LOG_ERROR((s), (m), ##__VA_ARGS__); \
+            HYP_DEBUG_BREAK;                        \
             Engine::Panic((s), (m), ##__VA_ARGS__); \
         } while(false);

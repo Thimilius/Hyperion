@@ -2,7 +2,6 @@
 
 #include "hyperion/assets/asset_library.hpp"
 
-#include <filesystem>
 #include "hyperion/core/io/file_utilities.hpp"
 #include "hyperion/core/io/image_loader.hpp"
 
@@ -102,6 +101,13 @@ namespace Hyperion {
     void AssetLibrary::Init(bool hot_loading, const String &shader_path, const String &texture_path) {
         s_hot_loading = hot_loading;
 
+        if (!std::filesystem::exists(shader_path)) {
+            HYP_PANIC_MESSAGE("AssetLibrary", "Shader path: '{}' does not exist!", std::filesystem::absolute(shader_path).u8string());
+        }
+        if (!std::filesystem::exists(texture_path)) {
+            HYP_PANIC_MESSAGE("AssetLibrary", "Texture path: '{}' does not exist!", std::filesystem::absolute(texture_path).u8string());
+        }
+
         InitShaders(shader_path);
         InitTextures2D(texture_path);
     }
@@ -162,7 +168,7 @@ namespace Hyperion {
     void AssetLibrary::ReloadShader(const String &name) {
         if (s_shaders.find(name) == s_shaders.end()) {
             // Apparently we are trying to reload a shader that is not part of the 
-            HYP_LOG_WARN("Assets", "Trying to reload a shader that is not in the library!");
+            HYP_LOG_WARN("AssetLibrary", "Trying to reload a shader that is not in the library!");
             return;
         }
 
@@ -173,7 +179,7 @@ namespace Hyperion {
 
     void AssetLibrary::ReloadTexture2D(const String &name) {
         if (s_textures.find(name) == s_textures.end()) {
-            HYP_LOG_WARN("Assets", "Trying to reload a 2D texture that is not in the library!");
+            HYP_LOG_WARN("AssetLibrary", "Trying to reload a 2D texture that is not in the library!");
             return;
         }
         

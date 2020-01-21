@@ -16,7 +16,7 @@ namespace Hyperion {
         u8 *pixels = stbi_load(path.c_str(), &width, &height, &channels, 0);
 
         if (!pixels) {
-            HYP_LOG_ERROR("Engine", "Failed to load image from path: {}", path);
+            HYP_LOG_ERROR("Engine", "Failed to load image from path: {}", std::filesystem::absolute(path).u8string());
             width = 0;
             height = 0;
             channels = 0;

@@ -4,10 +4,11 @@
 
 namespace Hyperion {
 
+    // TODO: This platform abstraction is not really necessary
     String FileUtilities::ReadTextFile(const String &path) {
         HANDLE file_handle = CreateFileA(path.c_str(), GENERIC_READ, FILE_SHARE_WRITE | FILE_SHARE_READ, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
         if (file_handle == INVALID_HANDLE_VALUE) {
-            HYP_LOG_ERROR("Engine", "Failed to open file: '{}'!", path);
+            HYP_LOG_ERROR("Engine", "Failed to open file: '{}'!", std::filesystem::absolute(path).u8string());
             return String();
         }
 

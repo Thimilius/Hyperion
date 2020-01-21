@@ -14,6 +14,7 @@
 #include <unordered_map>
 #include <algorithm>
 #include <functional>
+#include <filesystem>
 
 // Platform specific
 #ifdef HYP_PLATFORM_WINDOWS
