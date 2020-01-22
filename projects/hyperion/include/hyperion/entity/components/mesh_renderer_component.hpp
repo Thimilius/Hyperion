@@ -1,17 +1,18 @@
 #pragma once
 
-#include "hyperion/entity/components/entity_component.hpp"
+#include "hyperion/entity/components/behaviour_component.hpp"
 #include "hyperion/rendering/mesh.hpp"
 #include "hyperion/rendering/material.hpp"
 
 namespace Hyperion {
 
-    class MeshRendererComponent : public EntityComponent {
+    class MeshRendererComponent : public BehaviourComponent {
+        HYP_OBJECT(MeshRendererComponent, BehaviourComponent);
     private:
         Ref<Rendering::Mesh> m_mesh;
         Ref<Rendering::Material> m_material;
     public:
-        MeshRendererComponent() : EntityComponent("MeshRendererComponent") { }
+        MeshRendererComponent() : BehaviourComponent("MeshRendererComponent") { }
 
         Ref<Rendering::Mesh> GetMesh() const { return m_mesh; }
         void SetMesh(const Ref<Rendering::Mesh> &mesh) { m_mesh = mesh; }

@@ -45,6 +45,11 @@ protected:
         Vec3 rotation = m_entity->GetTransform()->GetEulerAngles();
         rotation.y += delta_time * speed;
         m_entity->GetTransform()->SetEulerAngles(rotation);
+
+        if (Input::GetKeyDown(KeyCode::F)) {
+            bool enabled = m_entity->GetComponent<MeshRendererComponent>()->IsEnabled();
+            m_entity->GetComponent<MeshRendererComponent>()->SetEnabled(!enabled);
+        }
     }
 
     void OnRender() override {

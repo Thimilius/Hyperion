@@ -34,6 +34,10 @@ namespace Hyperion::Rendering {
     void Renderer::DrawWorld(World *world) {
         auto &renderers = world->GetMeshRenderers();
         for (MeshRendererComponent *renderer : renderers) {
+            if (!renderer->IsEnabled()) {
+                continue;
+            }
+
             Ref<Material> material = renderer->GetMaterial();
             material->SetVec3("u_camera.position", s_state.camera->GetPosition());
             
