@@ -7,7 +7,7 @@ namespace Hyperion {
     class BehaviourComponent : public EntityComponent {
         HYP_OBJECT(BehaviourComponent, EntityComponent);
     private:
-        bool m_enabled;
+        bool m_enabled = true;
     public:
         bool IsEnabled() const { return m_enabled; }
         void SetEnabled(bool enabled) { m_enabled = enabled; }
