@@ -2,8 +2,8 @@
 
 #include "hyperion/core/engine.hpp"
 
-#include "hyperion/core/object_system.hpp"
 #include "hyperion/core/app/display.hpp"
+#include "hyperion/entity/object_system.hpp"
 #include "hyperion/assets/asset_library.hpp"
 #include "hyperion/audio/audio_engine.hpp"
 #include "hyperion/rendering/renderer.hpp"

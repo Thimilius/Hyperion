@@ -1,8 +1,8 @@
 #include "hyppch.hpp"
 
-#include "hyperion/core/object.hpp"
+#include "hyperion/entity/object.hpp"
 
-#include "hyperion/core/object_system.hpp"
+#include "hyperion/entity/object_system.hpp"
 
 namespace Hyperion {
 
