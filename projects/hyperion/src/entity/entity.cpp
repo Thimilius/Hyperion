@@ -41,8 +41,9 @@ namespace Hyperion {
     void Entity::OnDestroy() {
         for (auto it = m_components.begin(); it != m_components.end(); ) {
             if (it->first != TransformComponent::GetStaticType()) {
-                DestroyImmediate(it->second);
-                it++;
+                EntityComponent *component = it->second;
+                it = m_components.erase(it);
+                DestroyImmediate(component);
             } else {
                 ++it;
             }
