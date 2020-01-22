@@ -8,7 +8,6 @@
 #include "hyperion/rendering/camera.hpp"
 #include "hyperion/rendering/texture_cubemap.hpp"
 #include "hyperion/entity/world.hpp"
-#include "hyperion/entity/components/mesh_renderer_component.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -47,8 +46,6 @@ namespace Hyperion::Rendering {
         static void PrepareShader(const Ref<Shader> &shader);
         static void PrepareShader(const Ref<Shader> &shader, const Mat4 &transform);
         static void DrawMesh(const Ref<Mesh> &mesh);
-
-        static void FindRendererComponents(Entity *root, Vector<MeshRendererComponent*> &renderers);
 
         friend class Hyperion::Engine;
     };

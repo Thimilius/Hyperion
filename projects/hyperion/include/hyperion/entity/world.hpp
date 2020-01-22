@@ -1,14 +1,17 @@
 #pragma once
 
-#include "hyperion/entity/entity.hpp"
-
 namespace Hyperion {
+
+    class Entity;
+    class MeshRendererComponent;
 
     class World {
     private:
         Vector<Entity *> m_root_entities;
+        Vector<MeshRendererComponent *> m_mesh_renderers;
     public:
         const Vector<Entity *> &GetRootEntites() const { return m_root_entities; }
+        const Vector<MeshRendererComponent *> GetMeshRenderers() const { return m_mesh_renderers; }
     private:
         World() = default;
         ~World() = default;
@@ -16,9 +19,13 @@ namespace Hyperion {
         void AddRootEntity(Entity *entity);
         void RemoveRootEntity(Entity *entity);
 
+        void AddMeshRenderer(MeshRendererComponent *mesh_renderer);
+        void RemoveMeshRenderer(MeshRendererComponent *mesh_renderer);
+
         friend class Entity;
         friend class WorldManager;
         friend class TransformComponent;
+        friend class MeshRendererComponent;
     };
 
     class WorldManager {

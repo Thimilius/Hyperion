@@ -16,4 +16,17 @@ namespace Hyperion {
         }
     }
 
+    void World::AddMeshRenderer(MeshRendererComponent *mesh_renderer) {
+        m_mesh_renderers.push_back(mesh_renderer);
+
+    }
+
+    void World::RemoveMeshRenderer(MeshRendererComponent *mesh_renderer) {
+        auto begin = m_mesh_renderers.begin();
+        auto end = m_mesh_renderers.end();
+        if (std::find(begin, end, mesh_renderer) != end) {
+            m_mesh_renderers.erase(std::remove(begin, end, mesh_renderer));
+        }
+    }
+
 }

@@ -18,6 +18,9 @@ namespace Hyperion {
 
         Ref<Rendering::Material> GetMaterial() const { return m_material; }
         void SetMaterial(const Ref<Rendering::Material> &material) { m_material = material; }
+    protected:
+        void OnCreate() override;
+        void OnDestroy() override;
     };
 
 }

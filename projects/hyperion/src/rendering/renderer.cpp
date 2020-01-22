@@ -4,6 +4,7 @@
 
 #include "hyperion/assets/asset_library.hpp"
 #include "hyperion/assets/mesh_factory.hpp"
+#include "hyperion/entity/components/transform_component.hpp"
 #include "hyperion/entity/components/mesh_renderer_component.hpp"
 
 namespace Hyperion::Rendering {
@@ -31,12 +32,7 @@ namespace Hyperion::Rendering {
     }
 
     void Renderer::DrawWorld(World *world) {
-        auto &root_entities = world->GetRootEntites();
-        Vector<MeshRendererComponent*> renderers;
-        for (Entity *root : root_entities) {
-            FindRendererComponents(root, renderers);
-        }
-
+        auto &renderers = world->GetMeshRenderers();
         for (MeshRendererComponent *renderer : renderers) {
             Ref<Material> material = renderer->GetMaterial();
             material->SetVec3("u_camera.position", s_state.camera->GetPosition());
@@ -83,18 +79,6 @@ namespace Hyperion::Rendering {
         }
 
         vertex_array->Unbind();
-    }
-
-    void Renderer::FindRendererComponents(Entity *parent, Vector<MeshRendererComponent*> &renderers) {
-        MeshRendererComponent *renderer = parent->GetComponent<MeshRendererComponent>();
-        if (renderer) {
-            renderers.push_back(renderer);
-        }
-
-        TransformComponent *transform = parent->GetTransform();
-        for (u32 i = 0; i < transform->GetChildCount(); i++) {
-            FindRendererComponents(transform->GetChild(i)->GetEntity(), renderers);
-        }
     }
 
 }
