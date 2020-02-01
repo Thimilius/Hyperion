@@ -16,7 +16,7 @@ namespace Hyperion {
             String filepath;
         };
 
-        inline static bool s_hot_loading;
+        inline static AssetSettings s_settings;
         
         inline static Map<String, AssetEntry<Rendering::Shader>> s_shaders;
         inline static Ref<FileWatcher> s_shader_watcher;
@@ -26,6 +26,8 @@ namespace Hyperion {
 
         inline static Map<String, AssetEntry<Rendering::TextureCubemap>> s_texture_cubemaps;
     public:
+        static const AssetSettings &GetSettings() { return s_settings; }
+
         static Ref<Rendering::Shader> LoadShader(const String &name, const String &filepath);
         static void AddShader(const String &name, const String &filepath, const Ref<Rendering::Shader> &shader);
         static Ref<Rendering::Shader> GetShader(const String &name);
@@ -42,7 +44,7 @@ namespace Hyperion {
         AssetLibrary() = delete;
         ~AssetLibrary() = delete;
 
-        static void Init(bool hot_loading, const String &shader_path, const String &texture_path);
+        static void Init(const AssetSettings &settings);
         static void Update();
         static void Shutdown();
 

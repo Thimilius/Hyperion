@@ -29,12 +29,13 @@ namespace Hyperion {
 
     void Engine::Setup(const ApplicationSettings &settings) {
         Rendering::RenderEngine::Init(settings.renderer.backend);
-        Audio::AudioEngine::Init(settings.audio.backend);
 
-        AssetLibrary::Init(settings.assets.hot_loading, settings.assets.shader_path, settings.assets.texture_path);
+        AssetLibrary::Init(settings.assets);
 
         Rendering::Renderer::Init();
         Rendering::ImmediateRenderer::Init();
+
+        Audio::AudioEngine::Init(settings.audio.backend);
     }
 
     void Engine::Update() {

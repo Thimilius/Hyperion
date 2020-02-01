@@ -98,22 +98,22 @@ namespace Hyperion {
         return s_texture_cubemaps[name].asset;
     }
 
-    void AssetLibrary::Init(bool hot_loading, const String &shader_path, const String &texture_path) {
-        s_hot_loading = hot_loading;
+    void AssetLibrary::Init(const AssetSettings &settings) {
+        s_settings = settings;
 
-        if (!std::filesystem::exists(shader_path)) {
-            HYP_PANIC_MESSAGE("AssetLibrary", "Shader path: '{}' does not exist!", std::filesystem::absolute(shader_path).u8string());
+        if (!std::filesystem::exists(settings.shader_path)) {
+            HYP_PANIC_MESSAGE("AssetLibrary", "Shader path: '{}' does not exist!", std::filesystem::absolute(settings.shader_path).u8string());
         }
-        if (!std::filesystem::exists(texture_path)) {
-            HYP_PANIC_MESSAGE("AssetLibrary", "Texture path: '{}' does not exist!", std::filesystem::absolute(texture_path).u8string());
+        if (!std::filesystem::exists(settings.texture_path)) {
+            HYP_PANIC_MESSAGE("AssetLibrary", "Texture path: '{}' does not exist!", std::filesystem::absolute(settings.texture_path).u8string());
         }
 
-        InitShaders(shader_path);
-        InitTextures2D(texture_path);
+        InitShaders(settings.shader_path);
+        InitTextures2D(settings.texture_path);
     }
 
     void AssetLibrary::Update() {
-        if (s_hot_loading) {
+        if (s_settings.hot_loading) {
             s_shader_watcher->Update();
             s_texture_watcher->Update();
         }
@@ -124,6 +124,7 @@ namespace Hyperion {
     }
 
     void AssetLibrary::InitShaders(const String &shader_path) {
+        // FIXME: This is hardcoded to only work on OpenGL shaders
         for (auto &entry : std::filesystem::directory_iterator(shader_path)) {
             auto &path = entry.path();
             if (path.extension() == ".glsl") {
@@ -132,7 +133,7 @@ namespace Hyperion {
             }
         }
 
-        if (s_hot_loading) {
+        if (s_settings.hot_loading) {
             s_shader_watcher = FileWatcher::Create(shader_path, [](FileStatus status, const String &path, const String &filename, const String &extension) {
                 if (status == FileStatus::Created || status == FileStatus::Modified) {
                     if (extension == ".glsl") {
@@ -153,7 +154,7 @@ namespace Hyperion {
             }
         }
 
-        if (s_hot_loading) {
+        if (s_settings.hot_loading) {
             s_texture_watcher = FileWatcher::Create(texture_path, [](FileStatus status, const String &path, const String &filename, const String &extension) {
                 if (status == FileStatus::Created || status == FileStatus::Modified) {
                     if (extension == ".png") {

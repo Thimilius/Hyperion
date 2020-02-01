@@ -2,6 +2,9 @@
 
 #include "hyperion/driver/opengl/opengl_shader.hpp"
 
+#include "hyperion/assets/asset_library.hpp"
+#include "hyperion/core/io/file_utilities.hpp"
+
 #include <glad/glad.h>
 
 namespace Hyperion::Rendering {
@@ -111,13 +114,13 @@ namespace Hyperion::Rendering {
                     u64 end = end_of_line - begin;
 
                     String import_string = shader_source.substr(begin, end_of_line - begin);
-                    ShaderModule shader_module = ShaderModuleFromString(import_string);
-                    if (shader_module == ShaderModule::Unknown) {
+                    OpenGLShaderModule shader_module = ShaderModuleFromString(import_string);
+                    if (shader_module == OpenGLShaderModule::Unknown) {
                         HYP_LOG_ERROR("OpenGL", "Invalid shader import module: '{}'!", import_string);
                         return sources;
                     }
 
-                    shader_source = shader_source.replace(position, (begin - position) + end, GetShaderModule(shader_module));
+                    shader_source = shader_source.replace(position, (begin - position) + end, s_modules[shader_module]);
 
                     position = shader_source.find(import_token, end_of_line);
                 }
@@ -253,80 +256,6 @@ namespace Hyperion::Rendering {
         Compile(sources);
     }
 
-    ShaderType OpenGLShader::ShaderTypeFromString(const String &string) {
-        if (string == "vertex") {
-            return ShaderType::Vertex;
-        } else if (string == "fragment") {
-            return ShaderType::Fragment;
-        } else {
-            return ShaderType::Unknown;
-        }
-    }
-
-    ShaderModule OpenGLShader::ShaderModuleFromString(const String &string) {
-        if (string == "\"basic_vertex\"") {
-            return ShaderModule::BasicVertex;
-        } else if (string == "\"basic_fragment\"") {
-            return ShaderModule::BasicFragment;
-        } else {
-            return ShaderModule::Unknown;
-        }
-    }
-
-    const char *OpenGLShader::GetShaderModule(ShaderModule module) {
-        switch (module) {
-            case Hyperion::Rendering::ShaderModule::BasicVertex:
-                return R"(
-                    layout(location = 0) in vec3 a_position;
-                    layout(location = 1) in vec3 a_normal;
-                    layout(location = 2) in vec2 a_uv;
-                        
-                    out VS_TO_FS {
-                        vec3 position;
-                        vec3 normal;
-                        vec2 uv;
-                    } o_v2f;
-
-                    uniform struct Transform {
-                        mat4 model;
-                        mat4 view;
-                        mat4 projection;
-                    } u_transform;
-
-                    vec3 obj_to_world_space(vec3 position) {
-                        return (u_transform.model * vec4(position, 1.0)).xyz;
-                    }
-
-                    vec3 normal_to_world_space(vec3 normal) {
-                        return normalize(mat3(transpose(inverse(u_transform.model))) * a_normal);
-                    }
-
-                    vec4 obj_to_clip_space(vec3 position) {
-                        return u_transform.projection * u_transform.view * u_transform.model * vec4(position, 1.0);
-                    }
-                )";
-            case Hyperion::Rendering::ShaderModule::BasicFragment:
-                return R"(
-                    out vec4 o_color;
-
-                    in VS_TO_FS {
-	                    vec3 position;
-	                    vec3 normal;
-	                    vec2 uv;
-                    } i_v2f;
-                )";
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
-        }
-    }
-
-    u32 OpenGLShader::GetGLShaderType(ShaderType type) {
-        switch (type) {
-            case Hyperion::Rendering::ShaderType::Vertex: return GL_VERTEX_SHADER;
-            case Hyperion::Rendering::ShaderType::Fragment: return GL_FRAGMENT_SHADER;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
-        }
-    }
-
     s32 OpenGLShader::TryGetUniformLocation(const String &name) {
         auto loc = m_uniforms.find(name);
         if (loc == m_uniforms.end()) {
@@ -338,6 +267,43 @@ namespace Hyperion::Rendering {
             return location;
         }
         return loc->second;
+    }
+
+    void OpenGLShader::Init() {
+        // FIXME: There should probably a better and more global way of getting configuration stuff
+        const String &shader_path = AssetLibrary::GetSettings().shader_path;
+
+        // Load hardcoded modules
+        s_modules[OpenGLShaderModule::BasicVertex] = FileUtilities::ReadTextFile(shader_path + "/modules/basic_vertex.glsl");
+        s_modules[OpenGLShaderModule::BasicFragment] = FileUtilities::ReadTextFile(shader_path + "/modules/basic_fragment.glsl");
+    }
+
+    ShaderType OpenGLShader::ShaderTypeFromString(const String &string) {
+        if (string == "vertex") {
+            return ShaderType::Vertex;
+        } else if (string == "fragment") {
+            return ShaderType::Fragment;
+        } else {
+            return ShaderType::Unknown;
+        }
+    }
+
+    OpenGLShaderModule OpenGLShader::ShaderModuleFromString(const String &string) {
+        if (string == "\"basic_vertex\"") {
+            return OpenGLShaderModule::BasicVertex;
+        } else if (string == "\"basic_fragment\"") {
+            return OpenGLShaderModule::BasicFragment;
+        } else {
+            return OpenGLShaderModule::Unknown;
+        }
+    }
+
+    u32 OpenGLShader::GetGLShaderType(ShaderType type) {
+        switch (type) {
+            case ShaderType::Vertex: return GL_VERTEX_SHADER;
+            case ShaderType::Fragment: return GL_FRAGMENT_SHADER;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
     }
 
 }
