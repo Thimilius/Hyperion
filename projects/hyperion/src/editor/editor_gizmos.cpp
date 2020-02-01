@@ -18,8 +18,6 @@ namespace Hyperion::Editor {
     void EditorGizmos::Render(const Ref<Camera> &camera) {
         Renderer::Begin(camera);
         {
-            m_material->SetVec3("u_camera.position", camera->GetPosition());
-
             // Scale the gizmos in a way so that they appear at same size
             // no matter the distance and fov of the camera
             f32 fov = camera->GetFOV();

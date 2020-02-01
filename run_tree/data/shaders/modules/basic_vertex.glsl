@@ -14,6 +14,10 @@ uniform struct Transform {
 	mat4 projection;
 } u_transform;
 
+uniform struct Camera {
+	vec3 position;
+} u_camera;
+
 vec3 obj_to_world_space(vec3 position) {
 	return (u_transform.model * vec4(position, 1.0)).xyz;
 }

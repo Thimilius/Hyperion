@@ -16,10 +16,6 @@ void main() {
 
 #import "basic_fragment"
 
-uniform struct Camera {
-	vec3 position;
-} u_camera;
-
 uniform struct Light {
 	vec3 position;
 	vec4 color;

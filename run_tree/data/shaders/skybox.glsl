@@ -14,8 +14,8 @@ void main() {
 
 #import "basic_fragment"
 
-uniform samplerCube u_texture;
+uniform samplerCube u_skybox;
 
 void main() {
-	o_color = texture(u_texture, i_v2f.position);
+	o_color = texture(u_skybox, i_v2f.position);
 }

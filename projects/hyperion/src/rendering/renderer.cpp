@@ -24,6 +24,7 @@ namespace Hyperion::Rendering {
         RenderEngine::GetRasterizerState()->SetDepthEquation(DepthEquation::LessEqual);
 
         PrepareShader(s_skybox.shader);
+        s_skybox.shader->SetInt("u_skybox", 0);
         skybox->Bind(0);
         DrawMesh(s_skybox.mesh);
 
@@ -38,10 +39,7 @@ namespace Hyperion::Rendering {
                 continue;
             }
 
-            Ref<Material> material = renderer->GetMaterial();
-            material->SetVec3("u_camera.position", s_state.camera->GetPosition());
-            
-            DrawMesh(renderer->GetMesh(), material, renderer->GetTransform()->GetLocalToWorldMatrix());
+            DrawMesh(renderer->GetMesh(), renderer->GetMaterial(), renderer->GetTransform()->GetLocalToWorldMatrix());
         }
     }
 
@@ -62,15 +60,17 @@ namespace Hyperion::Rendering {
 
     void Renderer::PrepareShader(const Ref<Shader> &shader) {
         shader->Bind();
+
         shader->SetMat4("u_transform.view", s_state.transform.view);
         shader->SetMat4("u_transform.projection", s_state.transform.projection);
     }
 
     void Renderer::PrepareShader(const Ref<Shader> &shader, const Mat4 &transform) {
-        shader->Bind();
-        shader->SetMat4("u_transform.view", s_state.transform.view);
-        shader->SetMat4("u_transform.projection", s_state.transform.projection);
+        PrepareShader(shader);
+
         shader->SetMat4("u_transform.model", transform);
+
+        shader->SetFloat3("u_camera.position", s_state.camera->GetPosition());
     }
 
     void Renderer::DrawMesh(const Ref<Mesh> &mesh) {

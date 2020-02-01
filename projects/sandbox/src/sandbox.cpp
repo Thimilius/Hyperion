@@ -23,7 +23,7 @@ protected:
         m_camera = editor_layer->GetCamera();
 
         Ref<Mesh> mesh = MeshFactory::CreateFromFile("data/models/sphere.obj");
-        Ref<Material> material = Material::Create(AssetLibrary::GetShader("phong"));
+        Ref<Material> material = Material::Create(AssetLibrary::GetShader("standard_phong"));
         m_skybox_texture = AssetLibrary::LoadTextureCubemap("skybox", "data/textures/galaxy", ".png");
 
         material->SetTexture2D("u_texture", AssetLibrary::GetTexture2D("earth"));
