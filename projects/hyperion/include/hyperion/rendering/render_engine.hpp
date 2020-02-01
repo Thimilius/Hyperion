@@ -18,6 +18,10 @@ namespace Hyperion::Rendering {
             return s_render_driver->GetRasterizerState();
         }
 
+        inline static String GetShaderExtension() {
+            return s_render_driver->GetShaderExtension();
+        }
+
         inline static void Clear(ClearMask mask) {
             s_render_driver->Clear(mask);
         }

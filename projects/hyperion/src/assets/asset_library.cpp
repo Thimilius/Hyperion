@@ -124,10 +124,9 @@ namespace Hyperion {
     }
 
     void AssetLibrary::InitShaders(const String &shader_path) {
-        // FIXME: This is hardcoded to only work on OpenGL shaders
         for (auto &entry : std::filesystem::directory_iterator(shader_path)) {
             auto &path = entry.path();
-            if (path.extension() == ".glsl") {
+            if (path.extension() == RenderEngine::GetShaderExtension()) {
                 auto filename = path.filename().string();
                 LoadShader(filename.substr(0, filename.length() - 5), path.string());
             }
@@ -136,7 +135,7 @@ namespace Hyperion {
         if (s_settings.hot_loading) {
             s_shader_watcher = FileWatcher::Create(shader_path, [](FileStatus status, const String &path, const String &filename, const String &extension) {
                 if (status == FileStatus::Created || status == FileStatus::Modified) {
-                    if (extension == ".glsl") {
+                    if (extension == RenderEngine::GetShaderExtension()) {
                         auto name = filename.substr(0, filename.length() - 5);
                         ReloadShader(name);
                     }

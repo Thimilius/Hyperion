@@ -13,7 +13,7 @@ namespace Hyperion::Rendering {
     class OpenGLShader : public Shader {
     private:
         u32 m_shader_program_id;
-        Map<String, u32> m_uniforms;
+        Map<String, s32> m_uniforms;
 
         inline static Map<OpenGLShaderModule, String> s_modules;
     public:

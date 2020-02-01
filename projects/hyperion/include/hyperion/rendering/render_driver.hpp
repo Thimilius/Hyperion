@@ -35,6 +35,8 @@ namespace Hyperion::Rendering {
     public:
         RasterizerState *GetRasterizerState() { return m_rasterizer_state.get(); }
 
+        virtual String GetShaderExtension() const = 0;
+
         virtual void Clear(ClearMask mask) = 0;
         virtual void Clear(ClearMask mask, Color color) = 0;
 

@@ -8,6 +8,8 @@ namespace Hyperion::Rendering {
     public:
         OpenGLRenderDriver();
 
+        String GetShaderExtension() const override { return ".glsl"; }
+
         void Clear(ClearMask mask) override;
         void Clear(ClearMask mask, Color color) override;
 
