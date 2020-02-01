@@ -148,7 +148,7 @@ namespace Hyperion {
     void AssetLibrary::InitTextures2D(const String &texture_path) {
         for (auto &entry : std::filesystem::directory_iterator(texture_path)) {
             auto &path = entry.path();
-            if (path.extension() == ".png") { // FIXME: This is hardcoded to only load .png files
+            if (ImageLoader::SupportsExtension(path.extension().u8string())) {
                 auto filename = path.filename().string();
                 LoadTexture2D(filename.substr(0, filename.length() - 4), path.string());
             }
@@ -157,7 +157,7 @@ namespace Hyperion {
         if (s_settings.hot_loading) {
             s_texture_watcher = FileWatcher::Create(texture_path, [](FileStatus status, const String &path, const String &filename, const String &extension) {
                 if (status == FileStatus::Created || status == FileStatus::Modified) {
-                    if (extension == ".png") {
+                    if (ImageLoader::SupportsExtension(extension)) {
                         auto name = filename.substr(0, filename.length() - 4);
                         ReloadTexture2D(name);
                     }

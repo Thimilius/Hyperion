@@ -1,13 +1,17 @@
 #include "hyppch.hpp"
 
-#include "hyperion/modules/stb/stb_image_loader.hpp"
+#include "hyperion/modules/stb/stb_image_format_loader.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
 namespace Hyperion {
 
-    Ref<Image> StbImageLoader::LoadFromFile(const String &path, bool flip_vertically) {
+    bool StbImageFormatLoader::SupportsExtension(const String &extension) const {
+        return std::find(s_supported_extensions.begin(), s_supported_extensions.end(), extension) != s_supported_extensions.end();
+    }
+
+    Ref<Image> StbImageFormatLoader::Load(const String &path, bool flip_vertically) {
         stbi_set_flip_vertically_on_load(flip_vertically);
 
         s32 width;

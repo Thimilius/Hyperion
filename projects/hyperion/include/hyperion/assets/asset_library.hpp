@@ -26,7 +26,7 @@ namespace Hyperion {
 
         inline static Map<String, AssetEntry<Rendering::TextureCubemap>> s_texture_cubemaps;
     public:
-        static const AssetSettings &GetSettings() { return s_settings; }
+        inline static const AssetSettings &GetSettings() { return s_settings; }
 
         static Ref<Rendering::Shader> LoadShader(const String &name, const String &filepath);
         static void AddShader(const String &name, const String &filepath, const Ref<Rendering::Shader> &shader);
