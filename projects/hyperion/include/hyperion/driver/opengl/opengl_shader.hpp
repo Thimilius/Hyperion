@@ -7,7 +7,8 @@ namespace Hyperion::Rendering {
     enum class OpenGLShaderModule {
         Unknown,
         BasicVertex,
-        BasicFragment
+        BasicFragment,
+        PhongLighting
     };
 
     class OpenGLShader : public Shader {

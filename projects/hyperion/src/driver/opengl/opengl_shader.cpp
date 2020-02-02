@@ -276,6 +276,7 @@ namespace Hyperion::Rendering {
         // Load hardcoded modules
         s_modules[OpenGLShaderModule::BasicVertex] = FileUtilities::ReadTextFile(shader_path + "/modules/basic_vertex.glsl");
         s_modules[OpenGLShaderModule::BasicFragment] = FileUtilities::ReadTextFile(shader_path + "/modules/basic_fragment.glsl");
+        s_modules[OpenGLShaderModule::PhongLighting] = FileUtilities::ReadTextFile(shader_path + "/modules/phong_lighting.glsl");
     }
 
     ShaderType OpenGLShader::ShaderTypeFromString(const String &string) {
@@ -293,6 +294,8 @@ namespace Hyperion::Rendering {
             return OpenGLShaderModule::BasicVertex;
         } else if (string == "\"basic_fragment\"") {
             return OpenGLShaderModule::BasicFragment;
+        } else if (string == "\"phong_lighting\"") {
+            return OpenGLShaderModule::PhongLighting;
         } else {
             return OpenGLShaderModule::Unknown;
         }

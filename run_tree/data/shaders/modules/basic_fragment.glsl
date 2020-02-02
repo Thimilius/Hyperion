@@ -9,3 +9,5 @@ in VS_TO_FS {
 uniform struct Camera {
 	vec3 position;
 } u_camera;
+
+uniform sampler2D u_texture;

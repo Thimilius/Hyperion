@@ -16,6 +16,9 @@ namespace Hyperion::Rendering {
 
         Color color;
 
+        f32 intensity;
+        f32 radius;
+
         Vec3 position;
         Vec3 direction;
 
