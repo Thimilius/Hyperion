@@ -2,14 +2,38 @@
 
 namespace Hyperion {
 
+    namespace Rendering {
+        class TextureCubemap;
+    }
     class Entity;
     class MeshRendererComponent;
 
+    class WorldEnvironment {
+    private:
+        Ref<Rendering::TextureCubemap> m_skybox;
+
+        f32 m_ambient_light_intensity = 0.2f;
+        Color m_ambient_light_color = Color::White();
+    public:
+        f32 GetAmbientLightIntensity() const { return m_ambient_light_intensity; }
+        void SetAmbientLightIntensity(f32 ambient_light_intensity) { m_ambient_light_intensity = ambient_light_intensity; }
+
+        Color GetAmbientLightColor() const { return m_ambient_light_color; }
+        void SetAmbientLightColor(Color ambient_light_color) { m_ambient_light_color = ambient_light_color; }
+
+        Ref<Rendering::TextureCubemap> GetSkybox() const { return m_skybox; }
+        void SetSkybox(const Ref<Rendering::TextureCubemap> skybox) { m_skybox = skybox; }
+    };
+
     class World {
     private:
+        WorldEnvironment m_environment;
+
         Vector<Entity *> m_root_entities;
         Vector<MeshRendererComponent *> m_mesh_renderers;
     public:
+        WorldEnvironment &GetEnvironment() { return m_environment; }
+
         const Vector<Entity *> &GetRootEntites() const { return m_root_entities; }
         const Vector<MeshRendererComponent *> GetMeshRenderers() const { return m_mesh_renderers; }
     private:

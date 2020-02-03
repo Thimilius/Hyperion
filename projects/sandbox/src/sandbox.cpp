@@ -22,7 +22,7 @@ protected:
         
         m_camera = editor_layer->GetCamera();
 
-        m_skybox_texture = AssetLibrary::LoadTextureCubemap("skybox", "data/textures/galaxy", ".png");
+        WorldManager::GetActiveWorld()->GetEnvironment().SetSkybox(AssetLibrary::LoadTextureCubemap("skybox", "data/textures/galaxy", ".png"));
 
         m_entity = Entity::CreatePrimitive(EntityPrimitive::Sphere);
         Ref<Material> material = m_entity->GetComponent<MeshRendererComponent>()->GetSharedMaterial();
@@ -60,7 +60,6 @@ protected:
         Renderer::Begin(m_camera);
         {
             Renderer::DrawWorld(WorldManager::GetActiveWorld());
-            Renderer::DrawSkybox(m_skybox_texture);
         }
         Renderer::End();
     }

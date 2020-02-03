@@ -41,6 +41,11 @@ namespace Hyperion::Rendering {
 
             DrawMesh(renderer->GetSharedMesh(), renderer->GetSharedMaterial(), renderer->GetTransform()->GetLocalToWorldMatrix());
         }
+
+        Ref<TextureCubemap> skybox = world->GetEnvironment().GetSkybox();
+        if (skybox != nullptr) {
+            DrawSkybox(skybox);
+        }
     }
 
     void Renderer::DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform) {
