@@ -3,6 +3,9 @@
 #include "hyperion/entity/entity.hpp"
 
 #include "hyperion/entity/world.hpp"
+#include "hyperion/entity/components/mesh_renderer_component.hpp"
+#include "hyperion/assets/mesh_factory.hpp"
+#include "hyperion/assets/asset_library.hpp"
 
 namespace Hyperion {
 
@@ -35,6 +38,32 @@ namespace Hyperion {
     Entity *Entity::Create(const String &name, Vec3 position, Quaternion rotation, TransformComponent *parent) {
         Entity *entity = new Entity(name);
         entity->OnCreate(position, rotation, parent);
+        return entity;
+    }
+
+    Entity *Entity::CreatePrimitive(EntityPrimitive primitive) {
+        String name;
+        switch (primitive) {
+            case EntityPrimitive::Sphere: name = "Sphere"; break;
+            case EntityPrimitive::Cube: name = "Cube"; break;
+            case EntityPrimitive::Plane: name = "Plane"; break;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        }
+
+        Entity *entity = Create(name);
+        MeshRendererComponent *renderer = entity->AddComponent<MeshRendererComponent>();
+        
+        // TODO: Store shared primitive meshes instead of creating new ones every time
+        Ref<Rendering::Mesh> mesh;
+        switch (primitive) {
+            case EntityPrimitive::Sphere: mesh = MeshFactory::CreateFromFile("data/models/sphere.obj"); break; // TODO: Procedurally create sphere
+            case EntityPrimitive::Cube: mesh = MeshFactory::CreateCube(1); break;
+            case EntityPrimitive::Plane: mesh = MeshFactory::CreatePlane(1, 1); break;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        }
+        renderer->SetSharedMesh(mesh);
+        renderer->SetSharedMaterial(Rendering::Material::Create(AssetLibrary::GetShader("standard_phong")));
+
         return entity;
     }
 

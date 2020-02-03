@@ -14,11 +14,11 @@ namespace Hyperion {
     public:
         MeshRendererComponent() : BehaviourComponent("MeshRendererComponent") { }
 
-        Ref<Rendering::Mesh> GetMesh() const { return m_mesh; }
-        void SetMesh(const Ref<Rendering::Mesh> &mesh) { m_mesh = mesh; }
+        Ref<Rendering::Mesh> GetSharedMesh() const { return m_mesh; }
+        void SetSharedMesh(const Ref<Rendering::Mesh> &mesh) { m_mesh = mesh; }
 
-        Ref<Rendering::Material> GetMaterial() const { return m_material; }
-        void SetMaterial(const Ref<Rendering::Material> &material) { m_material = material; }
+        Ref<Rendering::Material> GetSharedMaterial() const { return m_material; }
+        void SetSharedMaterial(const Ref<Rendering::Material> &material) { m_material = material; }
     protected:
         void OnCreate() override;
         void OnDestroy() override;

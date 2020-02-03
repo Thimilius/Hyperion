@@ -39,7 +39,7 @@ namespace Hyperion::Rendering {
                 continue;
             }
 
-            DrawMesh(renderer->GetMesh(), renderer->GetMaterial(), renderer->GetTransform()->GetLocalToWorldMatrix());
+            DrawMesh(renderer->GetSharedMesh(), renderer->GetSharedMaterial(), renderer->GetTransform()->GetLocalToWorldMatrix());
         }
     }
 

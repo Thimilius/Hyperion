@@ -22,9 +22,10 @@ protected:
         
         m_camera = editor_layer->GetCamera();
 
-        Ref<Mesh> mesh = MeshFactory::CreateFromFile("data/models/sphere.obj");
-        Ref<Material> material = Material::Create(AssetLibrary::GetShader("standard_phong"));
         m_skybox_texture = AssetLibrary::LoadTextureCubemap("skybox", "data/textures/galaxy", ".png");
+
+        m_entity = Entity::CreatePrimitive(EntityPrimitive::Sphere);
+        Ref<Material> material = m_entity->GetComponent<MeshRendererComponent>()->GetSharedMaterial();
 
         material->SetTexture2D("u_texture", AssetLibrary::GetTexture2D("earth"));
 
@@ -38,11 +39,6 @@ protected:
         material->SetFloat("u_light.radius", light.range);
         material->SetFloat("u_light.intensity", light.intensity);
         material->SetVec3("u_light.position", Vec3(1, 2, 2));
-
-        m_entity = Entity::Create("Entity", Vec3(0, 0, 0));
-        MeshRendererComponent *mesh_renderer = m_entity->AddComponent<MeshRendererComponent>();
-        mesh_renderer->SetMesh(mesh);
-        mesh_renderer->SetMaterial(material);
     }
 
     void OnUpdate(f32 delta_time) override {

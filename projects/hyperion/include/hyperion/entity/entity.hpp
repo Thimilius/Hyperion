@@ -10,6 +10,12 @@ namespace Hyperion {
 
     class World;
 
+    enum class EntityPrimitive {
+        Sphere,
+        Cube,
+        Plane
+    };
+
     using EntityTag = String;
 
     // NOTE: Should we allow multiple components of the same type?
@@ -162,6 +168,7 @@ namespace Hyperion {
         void UnregisterEventListener(EntityEventListener *listener);
 
         static Entity *Create(const String &name = "New Entity", Vec3 position = Vec3::Zero(), Quaternion rotation = Quaternion::Identity(), TransformComponent *parent = nullptr);
+        static Entity *CreatePrimitive(EntityPrimitive primitive);
     protected:
         void OnDestroy() override;
     private:
