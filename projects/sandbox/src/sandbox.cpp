@@ -39,14 +39,14 @@ protected:
         material->SetFloat("u_light.intensity", light.intensity);
         material->SetVec3("u_light.position", Vec3(1, 2, 2));
 
-        m_entity = Entity::Create("Entity_0_0", Vec3(0, 0, 0));
+        m_entity = Entity::Create("Entity", Vec3(0, 0, 0));
         MeshRendererComponent *mesh_renderer = m_entity->AddComponent<MeshRendererComponent>();
         mesh_renderer->SetMesh(mesh);
         mesh_renderer->SetMaterial(material);
     }
 
     void OnUpdate(f32 delta_time) override {
-        f32 speed = 5.0f;
+        f32 speed = 50.0f;
         
         Vec3 rotation = m_entity->GetTransform()->GetEulerAngles();
         rotation.y += delta_time * speed;
