@@ -7,6 +7,7 @@ namespace Hyperion {
     }
     class Entity;
     class MeshRendererComponent;
+    class LightComponent;
 
     class WorldEnvironment {
     private:
@@ -15,14 +16,14 @@ namespace Hyperion {
         f32 m_ambient_light_intensity = 0.2f;
         Color m_ambient_light_color = Color::White();
     public:
-        f32 GetAmbientLightIntensity() const { return m_ambient_light_intensity; }
-        void SetAmbientLightIntensity(f32 ambient_light_intensity) { m_ambient_light_intensity = ambient_light_intensity; }
+        inline f32 GetAmbientLightIntensity() const { return m_ambient_light_intensity; }
+        inline void SetAmbientLightIntensity(f32 ambient_light_intensity) { m_ambient_light_intensity = ambient_light_intensity; }
 
-        Color GetAmbientLightColor() const { return m_ambient_light_color; }
-        void SetAmbientLightColor(Color ambient_light_color) { m_ambient_light_color = ambient_light_color; }
+        inline Color GetAmbientLightColor() const { return m_ambient_light_color; }
+        inline void SetAmbientLightColor(Color ambient_light_color) { m_ambient_light_color = ambient_light_color; }
 
-        Ref<Rendering::TextureCubemap> GetSkybox() const { return m_skybox; }
-        void SetSkybox(const Ref<Rendering::TextureCubemap> skybox) { m_skybox = skybox; }
+        inline Ref<Rendering::TextureCubemap> GetSkybox() const { return m_skybox; }
+        inline void SetSkybox(const Ref<Rendering::TextureCubemap> skybox) { m_skybox = skybox; }
     };
 
     class World {
@@ -31,11 +32,13 @@ namespace Hyperion {
 
         Vector<Entity *> m_root_entities;
         Vector<MeshRendererComponent *> m_mesh_renderers;
+        Vector<LightComponent *> m_lights;
     public:
-        WorldEnvironment &GetEnvironment() { return m_environment; }
+        inline WorldEnvironment &GetEnvironment() { return m_environment; }
 
-        const Vector<Entity *> &GetRootEntites() const { return m_root_entities; }
-        const Vector<MeshRendererComponent *> GetMeshRenderers() const { return m_mesh_renderers; }
+        inline const Vector<Entity *> &GetRootEntites() const { return m_root_entities; }
+        inline const Vector<MeshRendererComponent *> GetMeshRenderers() const { return m_mesh_renderers; }
+        inline const Vector<LightComponent *> GetLights() const { return m_lights; }
     private:
         World() = default;
         ~World() = default;
@@ -46,10 +49,14 @@ namespace Hyperion {
         void AddMeshRenderer(MeshRendererComponent *mesh_renderer);
         void RemoveMeshRenderer(MeshRendererComponent *mesh_renderer);
 
+        void AddLight(LightComponent *light);
+        void RemoveLight(LightComponent *light);
+
         friend class Entity;
         friend class WorldManager;
         friend class TransformComponent;
         friend class MeshRendererComponent;
+        friend class LightComponent;
     };
 
     class WorldManager {

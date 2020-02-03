@@ -11,15 +11,15 @@ namespace Hyperion::Rendering {
     };
 
     struct Light {
-        LightType type;
+        LightType type = LightType::Point;
 
-        Color color;
-        f32 intensity;
+        Color color = Color::White();
+        f32 intensity = 1.0f;
 
-        f32 range;
+        f32 range = 50.0f;
 
-        f32 spot_inner_radius;
-        f32 spot_outer_radius;
+        f32 inner_spot_radius = 1.0f;
+        f32 outer_spot_radius = 1.0f;
     };
 
 }

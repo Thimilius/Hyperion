@@ -41,6 +41,7 @@
 #include "hyperion/entity/components/entity_component.hpp"
 #include "hyperion/entity/components/transform_component.hpp"
 #include "hyperion/entity/components/mesh_renderer_component.hpp"
+#include "hyperion/entity/components/light_component.hpp"
 
 // Rendering
 #include "hyperion/rendering/graphics_context.hpp"

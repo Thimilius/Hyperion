@@ -9,8 +9,8 @@ namespace Hyperion {
     private:
         bool m_enabled = true;
     public:
-        bool IsEnabled() const { return m_enabled; }
-        void SetEnabled(bool enabled) { m_enabled = enabled; }
+        inline bool IsEnabled() const { return m_enabled; }
+        inline void SetEnabled(bool enabled) { m_enabled = enabled; }
     protected:
         BehaviourComponent() { }
         BehaviourComponent(const String &name) : EntityComponent(name) {}

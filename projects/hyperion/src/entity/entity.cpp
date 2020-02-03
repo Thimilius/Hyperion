@@ -4,6 +4,7 @@
 
 #include "hyperion/entity/world.hpp"
 #include "hyperion/entity/components/mesh_renderer_component.hpp"
+#include "hyperion/entity/components/light_component.hpp"
 #include "hyperion/assets/mesh_factory.hpp"
 #include "hyperion/assets/asset_library.hpp"
 
@@ -42,27 +43,23 @@ namespace Hyperion {
     }
 
     Entity *Entity::CreatePrimitive(EntityPrimitive primitive) {
-        String name;
-        switch (primitive) {
-            case EntityPrimitive::Sphere: name = "Sphere"; break;
-            case EntityPrimitive::Cube: name = "Cube"; break;
-            case EntityPrimitive::Plane: name = "Plane"; break;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-        }
-
-        Entity *entity = Create(name);
-        MeshRendererComponent *renderer = entity->AddComponent<MeshRendererComponent>();
+        Entity *entity = Create(GetPrimitiveName(primitive));
         
-        // TODO: Store shared primitive meshes instead of creating new ones every time
-        Ref<Rendering::Mesh> mesh;
-        switch (primitive) {
-            case EntityPrimitive::Sphere: mesh = MeshFactory::CreateFromFile("data/models/sphere.obj"); break; // TODO: Procedurally create sphere
-            case EntityPrimitive::Cube: mesh = MeshFactory::CreateCube(1); break;
-            case EntityPrimitive::Plane: mesh = MeshFactory::CreatePlane(1, 1); break;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        if (primitive == EntityPrimitive::Sphere || primitive == EntityPrimitive::Cube || primitive == EntityPrimitive::Plane) {
+            MeshRendererComponent *renderer = entity->AddComponent<MeshRendererComponent>();
+            // TODO: Store shared primitive meshes instead of creating new ones every time
+            Ref<Rendering::Mesh> mesh;
+            switch (primitive) {
+                case EntityPrimitive::Sphere: mesh = MeshFactory::CreateFromFile("data/models/sphere.obj"); break; // TODO: Procedurally create sphere
+                case EntityPrimitive::Cube: mesh = MeshFactory::CreateCube(1); break;
+                case EntityPrimitive::Plane: mesh = MeshFactory::CreatePlane(1, 1); break;
+                default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+            }
+            renderer->SetSharedMesh(mesh);
+            renderer->SetSharedMaterial(Rendering::Material::Create(AssetLibrary::GetShader("standard_phong")));
+        } else if (primitive == EntityPrimitive::Light) {
+            entity->AddComponent<LightComponent>();
         }
-        renderer->SetSharedMesh(mesh);
-        renderer->SetSharedMaterial(Rendering::Material::Create(AssetLibrary::GetShader("standard_phong")));
 
         return entity;
     }
@@ -106,6 +103,16 @@ namespace Hyperion {
             m_world->AddRootEntity(this);
         } else {
             m_transform.SetParent(parent);
+        }
+    }
+
+    String Entity::GetPrimitiveName(EntityPrimitive primitive) {
+        switch (primitive) {
+            case EntityPrimitive::Sphere: return "Sphere";
+            case EntityPrimitive::Cube: return "Cube";
+            case EntityPrimitive::Plane: return "Plane";
+            case EntityPrimitive::Light: return "Light";
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
     }
 

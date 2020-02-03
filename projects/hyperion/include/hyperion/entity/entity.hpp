@@ -13,7 +13,9 @@ namespace Hyperion {
     enum class EntityPrimitive {
         Sphere,
         Cube,
-        Plane
+        Plane,
+
+        Light
     };
 
     using EntityTag = String;
@@ -176,6 +178,8 @@ namespace Hyperion {
         ~Entity() = default;
 
         void OnCreate(Vec3 position, Quaternion rotation, TransformComponent *parent);
+
+        static String GetPrimitiveName(EntityPrimitive primitive);
 
         friend class Object;
         friend class EntityComponent;

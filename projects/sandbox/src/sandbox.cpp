@@ -20,15 +20,9 @@ protected:
 
         m_entity = Entity::CreatePrimitive(EntityPrimitive::Sphere);
         Ref<Material> material = m_entity->GetComponent<MeshRendererComponent>()->GetSharedMaterial();
-
         material->SetTexture2D("u_texture", AssetLibrary::GetTexture2D("earth"));
 
-        Light light;
-        light.type = LightType::Point;
-        light.color = Color::White();
-        light.intensity = 1;
-        light.range = 50;
-
+        Light light = Entity::CreatePrimitive(EntityPrimitive::Light)->GetComponent<LightComponent>()->GetLight();
         material->SetColor("u_light.color", light.color);
         material->SetFloat("u_light.radius", light.range);
         material->SetFloat("u_light.intensity", light.intensity);
