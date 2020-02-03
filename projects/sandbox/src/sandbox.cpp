@@ -11,16 +11,10 @@ public:
     SandboxApp(const ApplicationSettings &settings) : Application(settings) { }
 protected:
     Ref<Camera> m_camera;
-
-    Ref<TextureCubemap> m_skybox_texture;
-
     Entity *m_entity;
 
     void OnInit() override {
-        EditorLayer *editor_layer = new EditorLayer();
-        PushLayer(editor_layer);
-        
-        m_camera = editor_layer->GetCamera();
+        m_camera = GetEditorLayer()->GetCamera();
 
         WorldManager::GetActiveWorld()->GetEnvironment().SetSkybox(AssetLibrary::LoadTextureCubemap("skybox", "data/textures/galaxy", ".png"));
 

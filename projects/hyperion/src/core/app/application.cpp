@@ -8,6 +8,7 @@
 #include "hyperion/core/app/input.hpp"
 #include "hyperion/core/app/events/app_events.hpp"
 #include "hyperion/core/app/events/window_events.hpp"
+#include "hyperion/editor/editor_layer.hpp"
 
 namespace Hyperion {
 
@@ -52,6 +53,8 @@ namespace Hyperion {
         m_running = true;
 
         Engine::Setup(m_starting_settings);
+        m_editor_layer.reset(new Editor::EditorLayer());
+        m_editor_layer->OnAttach();
         OnInit();
         m_window->Show();
 
@@ -79,6 +82,7 @@ namespace Hyperion {
             for (ApplicationLayer *layer : m_layers) {
                 layer->OnUpdate(delta_time);
             }
+            m_editor_layer->OnUpdate(delta_time);
 
             Engine::LateUpdate();
 
@@ -86,6 +90,7 @@ namespace Hyperion {
             for (ApplicationLayer *layer : m_layers) {
                 layer->OnRender();
             }
+            m_editor_layer->OnRender();
 
             if (tick_timer > 1.0f) {
                 u32 fps = (u32)(frame_counter * (1.0 / tick_timer));
@@ -96,6 +101,7 @@ namespace Hyperion {
                 for (ApplicationLayer *layer : m_layers) {
                     layer->OnTick();
                 }
+                m_editor_layer->OnTick();
 
                 frame_counter = 0;
                 tick_timer = 0;

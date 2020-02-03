@@ -6,11 +6,17 @@
 
 namespace Hyperion {
 
+    namespace Editor {
+        class EditorLayer;
+    }
+
     class Application {
     private:
         Scope<Window> m_window;
         bool m_running;
         ApplicationSettings m_starting_settings;
+
+        Scope<Editor::EditorLayer> m_editor_layer;
         Vector<ApplicationLayer*> m_layers;
 
         inline static Application *s_instance;
@@ -20,6 +26,7 @@ namespace Hyperion {
 
         inline Window *GetWindow() const { return m_window.get(); }
 
+        inline Editor::EditorLayer *GetEditorLayer() const { return m_editor_layer.get(); }
         void PushLayer(ApplicationLayer *layer);
         void PopLayer();
 
