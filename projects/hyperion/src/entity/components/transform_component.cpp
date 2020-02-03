@@ -40,10 +40,9 @@ namespace Hyperion {
         NotifyTransformChange();
     }
 
-    void TransformComponent::OnEvent(EntityEvent event) {
-        if (event.type == EntityEventType::TransformChanged) {
+    void TransformComponent::OnMessage(EntityMessage message) {
+        if (message.type == EntityMessageType::TransformChanged) {
             RecalculateTransform();
-            RecalculateMatricies();
 
             for (TransformComponent *child : m_children) {
                 child->NotifyTransformChange();
@@ -52,7 +51,7 @@ namespace Hyperion {
     }
 
     void TransformComponent::NotifyTransformChange() {
-        GetEntity()->OnEvent({ EntityEventType::TransformChanged, nullptr });
+        GetEntity()->OnMessage({ EntityMessageType::TransformChanged, nullptr });
     }
 
     void TransformComponent::RecalculateTransform() {
@@ -67,20 +66,18 @@ namespace Hyperion {
             m_derived_rotation = m_local_rotation;
             m_derived_scale = m_local_scale;
         }
-    }
 
-    void TransformComponent::RecalculateMatricies() {
         m_local_to_world_matrix = Mat4::TRS(m_derived_position, m_derived_rotation, m_derived_scale);
         m_world_to_local_matrix = m_local_to_world_matrix.Inverted();
     }
 
     void TransformComponent::OnCreate() {
-        GetEntity()->RegisterEventListener(this);
+        GetEntity()->RegisterMessageListener(this);
     }
 
     void TransformComponent::OnDestroy() {
         Entity *entity = GetEntity();
-        entity->UnregisterEventListener(this);
+        entity->UnregisterMessageListener(this);
 
         if (m_parent == nullptr) {
             entity->GetWorld()->RemoveRootEntity(entity);

@@ -11,7 +11,7 @@ namespace Hyperion {
     }
 
     void EntityComponent::OnDestroy() {
-        GetEntity()->OnEvent({ EntityEventType::ComponentDestroyed, this });
+        GetEntity()->OnMessage({ EntityMessageType::ComponentDestroyed, this });
     }
 
 }

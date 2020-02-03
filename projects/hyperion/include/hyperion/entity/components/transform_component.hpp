@@ -1,12 +1,12 @@
 #pragma once
 
-#include "hyperion/entity/entity_event.hpp"
+#include "hyperion/entity/entity_message.hpp"
 #include "hyperion/entity/components/entity_component.hpp"
 #include "hyperion/core/math/quaternion.hpp"
 
 namespace Hyperion {
 
-    class TransformComponent : public EntityComponent, EntityEventListener {
+    class TransformComponent : public EntityComponent, EntityMessageListener {
         HYP_OBJECT(TransformComponent, EntityComponent)
     private:
         Vec3 m_local_position = Vec3::Zero();
@@ -82,6 +82,7 @@ namespace Hyperion {
         }
 
         inline Mat4 GetLocalToWorldMatrix() const { return m_local_to_world_matrix; }
+        inline Mat4 GetWorldToLocalMatrix() const { return m_world_to_local_matrix; }
 
         inline u32 GetChildCount() const { return (u32)m_children.size(); }
         inline TransformComponent *GetChild(u32 index) { return m_children[index]; }
@@ -89,7 +90,7 @@ namespace Hyperion {
 
         void SetParent(TransformComponent *parent);
 
-        void OnEvent(EntityEvent event) override;
+        void OnMessage(EntityMessage message) override;
     protected:
         void OnCreate() override;
         void OnDestroy() override;
@@ -98,7 +99,6 @@ namespace Hyperion {
 
         void NotifyTransformChange();
         void RecalculateTransform();
-        void RecalculateMatricies();
 
         friend class Entity;
     };

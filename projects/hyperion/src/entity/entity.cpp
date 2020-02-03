@@ -9,29 +9,29 @@
 
 namespace Hyperion {
 
-    void Entity::OnEvent(EntityEvent event) {
-        switch (event.type) {
-            case EntityEventType::ComponentDestroyed: {
-                EntityComponent *component = (EntityComponent *)event.parameter;
+    void Entity::OnMessage(EntityMessage message) {
+        switch (message.type) {
+            case EntityMessageType::ComponentDestroyed: {
+                EntityComponent *component = (EntityComponent *)message.parameter;
                 m_components.erase(component->GetType());
                 break;
             }
         }
 
-        for (EntityEventListener *listener : m_event_listeners) {
-            listener->OnEvent(event);
+        for (EntityMessageListener *listener : m_message_listeners) {
+            listener->OnMessage(message);
         }
     }
 
-    void Entity::RegisterEventListener(EntityEventListener *listener) {
-        m_event_listeners.push_back(listener);
+    void Entity::RegisterMessageListener(EntityMessageListener *listener) {
+        m_message_listeners.push_back(listener);
     }
 
-    void Entity::UnregisterEventListener(EntityEventListener *listener) {
-        auto begin = m_event_listeners.begin();
-        auto end = m_event_listeners.end();
+    void Entity::UnregisterMessageListener(EntityMessageListener *listener) {
+        auto begin = m_message_listeners.begin();
+        auto end = m_message_listeners.end();
         if (std::find(begin, end, listener) != end) {
-            m_event_listeners.erase(std::remove(begin, end, listener));
+            m_message_listeners.erase(std::remove(begin, end, listener));
         }
     }
 

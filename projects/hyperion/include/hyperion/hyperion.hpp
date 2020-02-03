@@ -37,7 +37,7 @@
 #include "hyperion/entity/object.hpp"
 #include "hyperion/entity/world.hpp"
 #include "hyperion/entity/entity.hpp"
-#include "hyperion/entity/entity_event.hpp"
+#include "hyperion/entity/entity_message.hpp"
 #include "hyperion/entity/components/entity_component.hpp"
 #include "hyperion/entity/components/transform_component.hpp"
 #include "hyperion/entity/components/mesh_renderer_component.hpp"

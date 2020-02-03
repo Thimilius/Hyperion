@@ -3,7 +3,7 @@
 #include <type_traits>
 #include <typeindex>
 
-#include "hyperion/entity/entity_event.hpp"
+#include "hyperion/entity/entity_message.hpp"
 #include "hyperion/entity/components/transform_component.hpp"
 
 namespace Hyperion {
@@ -19,7 +19,7 @@ namespace Hyperion {
     using EntityTag = String;
 
     // NOTE: Should we allow multiple components of the same type?
-    class Entity : public Object, public EntityEventListener {
+    class Entity : public Object, public EntityMessageListener {
         HYP_OBJECT(Entity, Object);
     private:
         TransformComponent m_transform;
@@ -28,12 +28,12 @@ namespace Hyperion {
         World *m_world = nullptr;
         Set<EntityTag> m_tags;
 
-        Vector<EntityEventListener *> m_event_listeners;
+        Vector<EntityMessageListener *> m_message_listeners;
     public:
         inline World *GetWorld() const { return m_world; }
         inline TransformComponent *GetTransform() { return &m_transform; }
 
-        void OnEvent(EntityEvent event) override;
+        void OnMessage(EntityMessage message) override;
 
         template<typename T>
         T *AddComponent() {
@@ -164,8 +164,8 @@ namespace Hyperion {
         inline bool AddTag(const EntityTag &tag) { return m_tags.insert(tag).second; }
         inline void RemoveTag(const EntityTag &tag) { m_tags.erase(tag); }
 
-        void RegisterEventListener(EntityEventListener *listener);
-        void UnregisterEventListener(EntityEventListener *listener);
+        void RegisterMessageListener(EntityMessageListener *listener);
+        void UnregisterMessageListener(EntityMessageListener *listener);
 
         static Entity *Create(const String &name = "New Entity", Vec3 position = Vec3::Zero(), Quaternion rotation = Quaternion::Identity(), TransformComponent *parent = nullptr);
         static Entity *CreatePrimitive(EntityPrimitive primitive);
