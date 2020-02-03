@@ -31,14 +31,13 @@ protected:
         Light light;
         light.type = LightType::Point;
         light.color = Color::White();
-        light.intensity = 5;
-        light.radius = 100;
-        light.position = Vec3(-1, 0, 0);
+        light.intensity = 1;
+        light.range = 50;
 
         material->SetColor("u_light.color", light.color);
-        material->SetFloat("u_light.radius", light.radius);
+        material->SetFloat("u_light.radius", light.range);
         material->SetFloat("u_light.intensity", light.intensity);
-        material->SetVec3("u_light.position", light.position);
+        material->SetVec3("u_light.position", Vec3(1, 2, 2));
 
         m_entity = Entity::Create("Entity_0_0", Vec3(0, 0, 0));
         MeshRendererComponent *mesh_renderer = m_entity->AddComponent<MeshRendererComponent>();
@@ -52,10 +51,6 @@ protected:
         Vec3 rotation = m_entity->GetTransform()->GetEulerAngles();
         rotation.y += delta_time * speed;
         m_entity->GetTransform()->SetEulerAngles(rotation);
-
-        Vec3 position = m_entity->GetTransform()->GetPosition();
-        position.x += delta_time;
-        m_entity->GetTransform()->SetPosition(position);
 
         if (Input::GetKeyDown(KeyCode::F)) {
             bool enabled = m_entity->GetComponent<MeshRendererComponent>()->IsEnabled();
