@@ -59,7 +59,7 @@ namespace Hyperion::Rendering {
     }
 
     void Renderer::Init() {
-        s_skybox.shader = AssetLibrary::GetShader("skybox");
+        s_skybox.shader = AssetLibrary::GetShader("standard_skybox");
         s_skybox.mesh = MeshFactory::CreateCube(1);
     }
 

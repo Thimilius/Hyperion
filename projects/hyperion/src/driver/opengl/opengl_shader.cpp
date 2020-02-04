@@ -114,13 +114,24 @@ namespace Hyperion::Rendering {
                     u64 end = end_of_line - begin;
 
                     String import_string = shader_source.substr(begin, end_of_line - begin);
-                    OpenGLShaderModule shader_module = ShaderModuleFromString(import_string);
-                    if (shader_module == OpenGLShaderModule::Unknown) {
+                    if (import_string.find_first_of('\"') != 0) {
+                        HYP_LOG_ERROR("OpenGL", "Invalid shader import synatx! Missing start quotation marks!");
+                        return sources;
+                    }   
+                    u64 import_end = import_string.find_last_of('\"');
+                    if (import_end == 0) {
+                        HYP_LOG_ERROR("OpenGL", "Invalid shader import synatx! Missing end quotation marks!");
+                        return sources;
+                    }
+
+                    import_string = import_string.substr(1, import_end - 1);
+                    String shader_module = ShaderModuleFromString(import_string);
+                    if (shader_module.empty()) {
                         HYP_LOG_ERROR("OpenGL", "Invalid shader import module: '{}'!", import_string);
                         return sources;
                     }
 
-                    shader_source = shader_source.replace(position, (begin - position) + end, s_modules[shader_module]);
+                    shader_source = shader_source.replace(position, (begin - position) + end, shader_module);
 
                     position = shader_source.find(import_token, end_of_line);
                 }
@@ -271,12 +282,14 @@ namespace Hyperion::Rendering {
 
     void OpenGLShader::Init() {
         // FIXME: There should probably a better and more global way of getting configuration stuff
-        const String &shader_path = AssetLibrary::GetSettings().shader_path;
-
-        // Load hardcoded modules
-        s_modules[OpenGLShaderModule::BasicVertex] = FileUtilities::ReadTextFile(shader_path + "/modules/basic_vertex.glsl");
-        s_modules[OpenGLShaderModule::BasicFragment] = FileUtilities::ReadTextFile(shader_path + "/modules/basic_fragment.glsl");
-        s_modules[OpenGLShaderModule::PhongLighting] = FileUtilities::ReadTextFile(shader_path + "/modules/phong_lighting.glsl");
+        for (auto &entry : std::filesystem::directory_iterator(AssetLibrary::GetSettings().shader_path + "/modules")) {
+            auto &path = entry.path();
+            if (path.extension() == ".glsl_module") {
+                String filename = path.filename().u8string();
+                String module_name = filename.substr(0, filename.find_last_of('.'));
+                s_modules[module_name] = FileUtilities::ReadTextFile(path.u8string());
+            }
+        }
     }
 
     ShaderType OpenGLShader::ShaderTypeFromString(const String &string) {
@@ -289,16 +302,12 @@ namespace Hyperion::Rendering {
         }
     }
 
-    OpenGLShaderModule OpenGLShader::ShaderModuleFromString(const String &string) {
-        if (string == "\"basic_vertex\"") {
-            return OpenGLShaderModule::BasicVertex;
-        } else if (string == "\"basic_fragment\"") {
-            return OpenGLShaderModule::BasicFragment;
-        } else if (string == "\"phong_lighting\"") {
-            return OpenGLShaderModule::PhongLighting;
-        } else {
-            return OpenGLShaderModule::Unknown;
+    String OpenGLShader::ShaderModuleFromString(const String &string) {
+        if (s_modules.find(string) == s_modules.end()) {
+            return String();
         }
+
+        return s_modules[string];
     }
 
     u32 OpenGLShader::GetGLShaderType(ShaderType type) {

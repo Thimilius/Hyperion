@@ -1,3 +1,6 @@
+#ifndef HYP_STANDARD_VERTEX_INCLUDE
+#define HYP_STANDARD_VERTEX_INCLUDE
+
 layout(location = 0) in vec3 a_position;
 layout(location = 1) in vec3 a_normal;
 layout(location = 2) in vec2 a_uv;
@@ -29,3 +32,5 @@ vec3 normal_to_world_space(vec3 normal) {
 vec4 obj_to_clip_space(vec3 position) {
 	return u_transform.projection * u_transform.view * u_transform.model * vec4(position, 1.0);
 }
+
+#endif // HYP_STANDARD_VERTEX_INCLUDE

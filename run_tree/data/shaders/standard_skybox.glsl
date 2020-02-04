@@ -1,7 +1,7 @@
 #type vertex
 #version 410 core
 
-#import "basic_vertex"
+#import "standard_vertex"
 
 void main() {
 	o_v2f.position = a_position;
@@ -12,7 +12,7 @@ void main() {
 #type fragment
 #version 410 core
 
-#import "basic_fragment"
+#import "standard_fragment"
 
 uniform samplerCube u_skybox;
 

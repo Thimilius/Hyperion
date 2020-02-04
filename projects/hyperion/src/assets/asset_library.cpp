@@ -139,7 +139,7 @@ namespace Hyperion {
             auto &path = entry.path();
             if (path.extension() == RenderEngine::GetShaderExtension()) {
                 auto filename = path.filename().string();
-                LoadShader(filename.substr(0, filename.length() - 5), path.string());
+                LoadShader(filename.substr(0, filename.find_last_of(".")), path.string());
             }
         }
 
@@ -147,7 +147,7 @@ namespace Hyperion {
             s_shader_watcher = FileWatcher::Create(shader_path, [](FileStatus status, const String &path, const String &filename, const String &extension) {
                 if (status == FileStatus::Created || status == FileStatus::Modified) {
                     if (extension == RenderEngine::GetShaderExtension()) {
-                        auto name = filename.substr(0, filename.length() - 5);
+                        auto name = filename.substr(0, filename.find_last_of("."));
                         ReloadShader(name);
                     }
                 }
@@ -160,7 +160,7 @@ namespace Hyperion {
             auto &path = entry.path();
             if (ImageLoader::SupportsExtension(path.extension().u8string())) {
                 auto filename = path.filename().string();
-                LoadTexture2D(filename.substr(0, filename.length() - 4), path.string());
+                LoadTexture2D(filename.substr(0, filename.find_last_of(".")), path.string());
             }
         }
 
@@ -168,7 +168,7 @@ namespace Hyperion {
             s_texture_watcher = FileWatcher::Create(texture_path, [](FileStatus status, const String &path, const String &filename, const String &extension) {
                 if (status == FileStatus::Created || status == FileStatus::Modified) {
                     if (ImageLoader::SupportsExtension(extension)) {
-                        auto name = filename.substr(0, filename.length() - 4);
+                        auto name = filename.substr(0, filename.find_last_of("."));
                         ReloadTexture2D(name);
                     }
                 }

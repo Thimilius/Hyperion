@@ -84,7 +84,7 @@ namespace Hyperion::Rendering {
     }
 
     void ImmediateRenderer::Init() {
-        s_immediate.shader = AssetLibrary::GetShader("immediate");
+        s_immediate.shader = AssetLibrary::GetShader("standard_immediate");
         s_immediate.vertex_buffer = VertexBuffer::Create(nullptr, sizeof(s_immediate.data_buffer), BufferUsage::DynamicDraw);
         s_immediate.vertex_buffer->SetLayout(VertexImmediate::GetBufferLayout());
         s_immediate.vertex_array = VertexArray::Create();

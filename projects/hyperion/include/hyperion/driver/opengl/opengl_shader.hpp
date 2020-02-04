@@ -4,19 +4,12 @@
 
 namespace Hyperion::Rendering {
 
-    enum class OpenGLShaderModule {
-        Unknown,
-        BasicVertex,
-        BasicFragment,
-        PhongLighting
-    };
-
     class OpenGLShader : public Shader {
     private:
         u32 m_shader_program_id;
         Map<String, s32> m_uniforms;
 
-        inline static Map<OpenGLShaderModule, String> s_modules;
+        inline static Map<String, String> s_modules;
     public:
         OpenGLShader(const String &name, const String &source);
         OpenGLShader(const String &name, const String &vertex_source, const String &fragment_source);
@@ -48,7 +41,7 @@ namespace Hyperion::Rendering {
         static void Init();
 
         static ShaderType ShaderTypeFromString(const String &string);
-        static OpenGLShaderModule ShaderModuleFromString(const String &string);
+        static String ShaderModuleFromString(const String &string);
         static u32 GetGLShaderType(ShaderType type);
 
         friend class OpenGLRenderDriver;

@@ -1,7 +1,7 @@
 #type vertex
 #version 410 core
 
-#import "basic_vertex"
+#import "standard_vertex"
 
 void main() {
 	o_v2f.position = obj_to_world_space(a_position);
@@ -14,8 +14,8 @@ void main() {
 #type fragment
 #version 410 core
 
-#import "basic_fragment"
-#import "phong_lighting"
+#import "standard_fragment"
+#import "standard_lighting"
 
 void main() {
 	// Texture

@@ -1,3 +1,6 @@
+#ifndef HYP_STANDARD_LIGHTING_INCLUDE
+#define HYP_STANDARD_LIGHTING_INCLUDE
+
 struct Light {
 	vec3 position;
 	vec3 direction;
@@ -47,3 +50,5 @@ vec3 calculate_phong_point_light(Light light) {
 vec3 calculate_full_phong_lighting() {
 	return calculate_phong_point_light(u_light) + LIGHT_AMBIENT;
 }
+
+#endif // HYP_PHONG_LIGHTING_INCLUDE
