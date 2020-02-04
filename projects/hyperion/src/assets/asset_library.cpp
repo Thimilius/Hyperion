@@ -11,7 +11,7 @@ using namespace Hyperion::Rendering;
 namespace Hyperion {
 
     Ref<Shader> AssetLibrary::LoadShader(const String &name, const String &filepath) {
-        String source = FileUtilities::ReadTextFile(filepath);
+        String source = FileUtilities::ReadAllText(filepath);
         Ref<Shader> shader = Shader::Create(name, source);
         AddShader(name, filepath, shader);
         return shader;
@@ -184,7 +184,7 @@ namespace Hyperion {
         }
 
         AssetEntry entry = s_shaders[name];
-        String source = FileUtilities::ReadTextFile(entry.filepath);
+        String source = FileUtilities::ReadAllText(entry.filepath);
         entry.asset->Recompile(source);
     }
 
