@@ -1,6 +1,6 @@
 #pragma once
 
-#include "hyperion/core/math/math.hpp"
+#include "hyperion/core/math/mat4.hpp"
 #include "hyperion/core/math/ray.hpp"
 
 namespace Hyperion::Rendering {

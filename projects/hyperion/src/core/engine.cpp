@@ -29,12 +29,13 @@ namespace Hyperion {
     }
 
     void Engine::Setup(const ApplicationSettings &settings) {
-        Rendering::RenderEngine::Init(settings.renderer.backend);
+        Rendering::RenderEngine::Init(settings.render.backend);
 
         AssetLibrary::Init(settings.assets);
 
         Rendering::Renderer::Init();
         Rendering::ImmediateRenderer::Init();
+        s_render_pipeline.reset(GetRenderPipeline(settings.render));
 
         Audio::AudioEngine::Init(settings.audio.backend);
 
@@ -51,7 +52,8 @@ namespace Hyperion {
     }
 
     void Engine::Render() {
-        Editor::EditorEngine::Render();
+        // TODO: How to properly supply different cameras
+        s_render_pipeline->Render(Editor::EditorEngine::GetCamera());
     }
 
     void Engine::Tick() {
@@ -63,6 +65,17 @@ namespace Hyperion {
 
         Audio::AudioEngine::Shutdown();
         Rendering::RenderEngine::Shutdown();
+    }
+
+    Rendering::RenderPipeline *Engine::GetRenderPipeline(const RenderSettings &settings) {
+        switch (settings.path) {
+            case Rendering::RenderPath::Forward: return new Rendering::ForwardRenderPipeline();
+            case Rendering::RenderPath::Custom: {
+                HYP_ASSERT_MESSAGE(settings.custom_pipeline, "When using a custom render path, a custom render pipeline must be provided!");
+                return settings.custom_pipeline;
+            }
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
+        }
     }
 
 }

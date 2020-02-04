@@ -2,6 +2,8 @@
 
 #include "hyperion/core/app/window_settings.hpp"
 #include "hyperion/rendering/render_backend.hpp"
+#include "hyperion/rendering/render_path.hpp"
+#include "hyperion/rendering/render_pipeline.hpp"
 #include "hyperion/audio/audio_backend.hpp"
 
 namespace Hyperion {
@@ -17,8 +19,10 @@ namespace Hyperion {
         String texture_path = "data/textures";
     };
 
-    struct RendererSettings {
+    struct RenderSettings {
         Rendering::RenderBackend backend = Rendering::RenderBackend::OpenGL;
+        Rendering::RenderPath path = Rendering::RenderPath::Forward;
+        Rendering::RenderPipeline *custom_pipeline = nullptr;
     };
 
     struct AudioSettings {
@@ -29,7 +33,7 @@ namespace Hyperion {
         TimeSettings time;
         WindowSettings window;
         AssetSettings assets;
-        RendererSettings renderer;
+        RenderSettings render;
         AudioSettings audio;
     };
 

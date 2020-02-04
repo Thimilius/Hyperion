@@ -23,6 +23,9 @@ namespace Hyperion::Editor {
         static void Render();
         static void Tick();
     private:
+        EditorEngine() = delete;
+        ~EditorEngine() = delete;
+
         static void UpdateTitle();
     };
 

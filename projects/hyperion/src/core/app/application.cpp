@@ -22,7 +22,7 @@ namespace Hyperion {
         HYP_ASSERT_MESSAGE(settings.time.max_delta_time > 0, "Max delta time must be greater than zero!");
         Time::s_max_delta_time = settings.time.max_delta_time;
 
-        m_window.reset(Window::Create(settings.window, settings.renderer.backend));
+        m_window.reset(Window::Create(settings.window, settings.render.backend));
         auto event_callback = std::bind(&Application::OnEventInternal, this, std::placeholders::_1);
         m_window->SetEventCallbackFunction(event_callback);
     }
@@ -58,7 +58,6 @@ namespace Hyperion {
             OnUpdate(delta_time);
             Engine::LateUpdate();
 
-            OnRender();
             Engine::Render();
 
             if (tick_timer > 1.0f) {
@@ -66,8 +65,8 @@ namespace Hyperion {
                 Time::s_fps = fps;
                 Time::s_frame_time = 1000.0 / fps;
 
-                OnTick();
                 Engine::Tick();
+                OnTick();
 
                 frame_counter = 0;
                 tick_timer = 0;

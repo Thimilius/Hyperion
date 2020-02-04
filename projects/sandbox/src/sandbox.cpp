@@ -10,12 +10,9 @@ class SandboxApp : public Application {
 public:
     SandboxApp(const ApplicationSettings &settings) : Application(settings) { }
 protected:
-    Ref<Camera> m_camera;
     Entity *m_entity;
 
     void OnInit() override {
-        m_camera = EditorEngine::GetCamera();
-
         WorldManager::GetActiveWorld()->GetEnvironment().SetSkybox(AssetLibrary::LoadTextureCubemap("skybox", "data/textures/galaxy", ".png"));
 
         m_entity = Entity::CreatePrimitive(EntityPrimitive::Sphere);
@@ -40,16 +37,6 @@ protected:
             bool enabled = m_entity->GetComponent<MeshRendererComponent>()->IsEnabled();
             m_entity->GetComponent<MeshRendererComponent>()->SetEnabled(!enabled);
         }
-    }
-
-    void OnRender() override {
-        RenderEngine::Clear(ClearMask::Color | ClearMask::Depth, Color::Black());
-
-        Renderer::Begin(m_camera);
-        {
-            Renderer::DrawWorld(WorldManager::GetActiveWorld());
-        }
-        Renderer::End();
     }
 };
 

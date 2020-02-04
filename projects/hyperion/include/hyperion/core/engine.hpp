@@ -2,10 +2,13 @@
 
 #include "hyperion/core/app/application_settings.hpp"
 #include "hyperion/core/operating_system.hpp"
+#include "hyperion/rendering/forward_render_pipeline.hpp"
 
 namespace Hyperion {
 
     class Engine {
+    private:
+        inline static Scope<Rendering::RenderPipeline> s_render_pipeline;
     public:
         template<typename ...Args>
         static void Panic(const String &system, const String &message_format, Args... args) {
@@ -26,6 +29,8 @@ namespace Hyperion {
         static void Render();
         static void Tick();
         static void Shutdown();
+
+        static Rendering::RenderPipeline *GetRenderPipeline(const RenderSettings &settings);
 
         friend class Application;
     };
