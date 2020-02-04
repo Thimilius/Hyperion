@@ -66,10 +66,18 @@ namespace Hyperion::Rendering {
             DescribePixelFormat(m_device_context, pixel_format, sizeof(pixel_format_descriptor), &pixel_format_descriptor);
             SetPixelFormat(m_device_context, pixel_format, &pixel_format_descriptor);
 
+#ifdef HYP_DEBUG
+            const s32 context_attributes[] = {
+                WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
+                WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_DEBUG_BIT_ARB,
+                0
+            };
+#else
             const s32 context_attributes[] = {
                 WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
                 0
-            };
+        };
+#endif
             m_opengl_context = wglCreateContextAttribsARB(m_device_context, nullptr, context_attributes);
             if (!m_opengl_context) {
                 HYP_PANIC_MESSAGE("OpenGL", "Failed to create OpenGL context!");
