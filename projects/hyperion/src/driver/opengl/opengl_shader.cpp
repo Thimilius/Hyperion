@@ -36,15 +36,15 @@ namespace Hyperion::Rendering {
         glUniform1f(TryGetUniformLocation(name), value);
     }
 
-    void OpenGLShader::SetFloat2(const String &name, const Vec2 &value) {
+    void OpenGLShader::SetVec2(const String &name, const Vec2 &value) {
         glUniform2f(TryGetUniformLocation(name), value.x, value.y);
     }
 
-    void OpenGLShader::SetFloat3(const String &name, const Vec3 &value) {
+    void OpenGLShader::SetVec3(const String &name, const Vec3 &value) {
         glUniform3f(TryGetUniformLocation(name), value.x, value.y, value.z);
     }
 
-    void OpenGLShader::SetFloat4(const String &name, const Vec4 &value) {
+    void OpenGLShader::SetVec4(const String &name, const Vec4 &value) {
         glUniform4f(TryGetUniformLocation(name), value.x, value.y, value.z, value.w);
     }
 

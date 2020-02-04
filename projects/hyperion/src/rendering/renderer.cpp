@@ -75,7 +75,7 @@ namespace Hyperion::Rendering {
 
         shader->SetMat4("u_transform.model", transform);
 
-        shader->SetFloat3("u_camera.position", s_state.camera->GetPosition());
+        shader->SetVec3("u_camera.position", s_state.camera->GetPosition());
     }
 
     void Renderer::DrawMesh(const Ref<Mesh> &mesh) {
