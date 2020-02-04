@@ -4,7 +4,7 @@
 
 #include "hyperion/core/app/application.hpp"
 #include "hyperion/driver/opengl/opengl_rasterizer_state.hpp"
-#include "hyperion/driver/opengl/opengl_shader.hpp"
+#include "hyperion/driver/opengl/opengl_shader_compiler.hpp"
 
 #include <glad/glad.h>
 
@@ -14,7 +14,7 @@ namespace Hyperion::Rendering {
         m_rasterizer_state = std::make_unique<OpenGLRasterizerState>();
 
         // FIXME: Is this the right place to call that?
-        OpenGLShader::Init();
+        OpenGLShaderCompiler::Init();
     }
 
     void OpenGLRenderDriver::Clear(ClearMask mask) {
