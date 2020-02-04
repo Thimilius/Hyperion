@@ -5,7 +5,6 @@
 #include "hyperion/entity/world.hpp"
 #include "hyperion/entity/components/mesh_renderer_component.hpp"
 #include "hyperion/entity/components/light_component.hpp"
-#include "hyperion/assets/mesh_factory.hpp"
 #include "hyperion/assets/asset_library.hpp"
 
 namespace Hyperion {
@@ -47,12 +46,11 @@ namespace Hyperion {
         
         if (primitive == EntityPrimitive::Sphere || primitive == EntityPrimitive::Cube || primitive == EntityPrimitive::Plane) {
             MeshRendererComponent *renderer = entity->AddComponent<MeshRendererComponent>();
-            // TODO: Store shared primitive meshes instead of creating new ones every time
             Ref<Rendering::Mesh> mesh;
             switch (primitive) {
-                case EntityPrimitive::Sphere: mesh = MeshFactory::CreateFromFile("data/models/sphere.obj"); break; // TODO: Procedurally create sphere
-                case EntityPrimitive::Cube: mesh = MeshFactory::CreateCube(1); break;
-                case EntityPrimitive::Plane: mesh = MeshFactory::CreatePlane(1, 1); break;
+                case EntityPrimitive::Sphere: mesh = AssetLibrary::GetMeshPrimitive(MeshPrimitive::Sphere); break; 
+                case EntityPrimitive::Cube: mesh = AssetLibrary::GetMeshPrimitive(MeshPrimitive::Cube); break;
+                case EntityPrimitive::Plane: mesh = AssetLibrary::GetMeshPrimitive(MeshPrimitive::Plane); break;
                 default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
             }
             renderer->SetSharedMesh(mesh);
@@ -112,7 +110,7 @@ namespace Hyperion {
             case EntityPrimitive::Cube: return "Cube";
             case EntityPrimitive::Plane: return "Plane";
             case EntityPrimitive::Light: return "Light";
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return "Primitive";
         }
     }
 

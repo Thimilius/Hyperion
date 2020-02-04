@@ -5,8 +5,15 @@
 #include "hyperion/rendering/shader.hpp"
 #include "hyperion/rendering/texture_2d.hpp"
 #include "hyperion/rendering/texture_cubemap.hpp"
+#include "hyperion/rendering/mesh.hpp"
 
 namespace Hyperion {
+
+    enum class MeshPrimitive {
+        Sphere,
+        Cube,
+        Plane
+    };
 
     class AssetLibrary {
     private:
@@ -25,6 +32,10 @@ namespace Hyperion {
         inline static Ref<FileWatcher> s_texture_watcher;
 
         inline static Map<String, AssetEntry<Rendering::TextureCubemap>> s_texture_cubemaps;
+        
+        inline static Ref<Rendering::Mesh> s_mesh_primitive_sphere;
+        inline static Ref<Rendering::Mesh> s_mesh_primitive_cube;
+        inline static Ref<Rendering::Mesh> s_mesh_primitive_plane;
     public:
         inline static const AssetSettings &GetSettings() { return s_settings; }
 
@@ -40,6 +51,8 @@ namespace Hyperion {
         static Ref<Rendering::TextureCubemap> LoadTextureCubemap(const String &name, const String &directory, const String &extension);
         static void AddTextureCubemap(const String &name, const Ref<Rendering::TextureCubemap> &texture_cubemap);
         static Ref<Rendering::TextureCubemap> GetTextureCubemap(const String &name);
+
+        static Ref<Rendering::Mesh> GetMeshPrimitive(MeshPrimitive mesh_primitive);
     private:
         AssetLibrary() = delete;
         ~AssetLibrary() = delete;
@@ -53,6 +66,8 @@ namespace Hyperion {
 
         static void InitTextures2D(const String &texture_path);
         static void ReloadTexture2D(const String &name);
+
+        static void InitMeshPrimitives();
 
         static Rendering::TextureFormat GetTextureFormatFromImage(const Ref<Image> &image);
 

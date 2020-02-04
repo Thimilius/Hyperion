@@ -4,6 +4,7 @@
 
 #include "hyperion/core/io/file_utilities.hpp"
 #include "hyperion/core/io/image_loader.hpp"
+#include "hyperion/assets/mesh_factory.hpp"
 
 using namespace Hyperion::Rendering;
 
@@ -98,6 +99,15 @@ namespace Hyperion {
         return s_texture_cubemaps[name].asset;
     }
 
+    Ref<Mesh> AssetLibrary::GetMeshPrimitive(MeshPrimitive mesh_primitive) {
+        switch (mesh_primitive) {
+            case MeshPrimitive::Sphere: return s_mesh_primitive_sphere;
+            case MeshPrimitive::Cube: return s_mesh_primitive_cube;
+            case MeshPrimitive::Plane: return s_mesh_primitive_plane;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
+        }
+    }
+
     void AssetLibrary::Init(const AssetSettings &settings) {
         s_settings = settings;
 
@@ -110,6 +120,7 @@ namespace Hyperion {
 
         InitShaders(settings.shader_path);
         InitTextures2D(settings.texture_path);
+        InitMeshPrimitives();
     }
 
     void AssetLibrary::Update() {
@@ -191,6 +202,13 @@ namespace Hyperion {
             entry.asset->Resize(image->GetWidth(), image->GetHeight());
             entry.asset->SetPixels(image->GetPixels());
         }
+    }
+
+    void AssetLibrary::InitMeshPrimitives() {
+        // TODO: Procedurally create sphere
+        s_mesh_primitive_sphere = MeshFactory::CreateFromFile("data/models/sphere.obj");
+        s_mesh_primitive_cube = MeshFactory::CreateCube(1);
+        s_mesh_primitive_plane = MeshFactory::CreatePlane(10, 10);
     }
 
     TextureFormat AssetLibrary::GetTextureFormatFromImage(const Ref<Image> &image) {
