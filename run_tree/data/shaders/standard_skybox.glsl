@@ -3,6 +3,12 @@
 
 #import "standard_vertex"
 
+out VS_TO_FS {
+	vec3 position;
+	vec3 normal;
+	vec2 uv;
+} o_v2f;
+
 void main() {
 	o_v2f.position = a_position;
 
@@ -13,6 +19,12 @@ void main() {
 #version 410 core
 
 #import "standard_fragment"
+
+in VS_TO_FS {
+	vec3 position;
+	vec3 normal;
+	vec2 uv;
+} i_v2f;
 
 uniform samplerCube u_skybox;
 

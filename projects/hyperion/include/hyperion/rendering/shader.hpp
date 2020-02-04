@@ -25,18 +25,14 @@ namespace Hyperion::Rendering {
 
         virtual void SetInt(const String &name, u32 value) = 0;
         virtual void SetFloat(const String &name, f32 value) = 0;
-
         virtual void SetVec2(const String &name, const Vec2 &value) = 0;
         virtual void SetVec3(const String &name, const Vec3 &value) = 0;
         virtual void SetVec4(const String &name, const Vec4 &value) = 0;
-
         virtual void SetMat4(const String &name, const Mat4 &matrix) = 0;
 
         virtual void Recompile(const String &source) = 0;
-        virtual void Recompile(const String &vertex_source, const String &fragment_source) = 0;
 
         static Ref<Shader> Create(const String &name, const String &source);
-        static Ref<Shader> Create(const String &name, const String &vertex_source, const String &fragment_source);
     protected:
         Shader(const String &name) : Asset(name) { }
     };

@@ -54,7 +54,7 @@ namespace Hyperion {
                 default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
             }
             renderer->SetSharedMesh(mesh);
-            renderer->SetSharedMaterial(Rendering::Material::Create(AssetLibrary::GetShader("standard_phong")));
+            renderer->SetSharedMaterial(Rendering::Material::Create(AssetLibrary::GetShader("standard")));
         } else if (primitive == EntityPrimitive::Light) {
             entity->AddComponent<LightComponent>();
         }

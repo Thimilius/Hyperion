@@ -24,22 +24,22 @@ float calculate_attenuation(float distance, float light_range) {
 	return 1.0 / (1.0 + attenuation_linear * distance + attenuation_quadratic * distance * distance);
 }
 
-vec3 calculate_phong_point_light(Light light) {
+vec3 calculate_phong_point_light(vec3 position, vec3 normal, Light light) {
 	// Diffuse
 	float diffuse_intensity = u_light.intensity;
-	vec3 to_light_direction = normalize(u_light.position - i_v2f.position);
-	diffuse_intensity = diffuse_intensity * max(dot(i_v2f.normal, to_light_direction), 0.0);
+	vec3 to_light_direction = normalize(u_light.position - position);
+	diffuse_intensity = diffuse_intensity * max(dot(normal, to_light_direction), 0.0);
 	vec3 diffuse_lighting = diffuse_intensity * u_light.color.rgb;
 	
 	// Specular
 	float specular_intensity = u_light.intensity;
-	vec3 to_camera_direction = normalize(u_camera.position - i_v2f.position);
-	vec3 reflection_direction = reflect(-to_light_direction, i_v2f.normal);
+	vec3 to_camera_direction = normalize(u_camera.position - position);
+	vec3 reflection_direction = reflect(-to_light_direction, normal);
 	specular_intensity = specular_intensity * pow(max(dot(to_camera_direction, reflection_direction), 0.0), LIGHT_SPECULAR_EXPONENT);
 	vec3 specular_lighting = specular_intensity * u_light.color.rgb;
 	
 	// Attenuation
-	float attenuation = calculate_attenuation(distance(u_light.position, i_v2f.position), u_light.radius);
+	float attenuation = calculate_attenuation(distance(u_light.position, position), u_light.radius);
 	
 	// Final lighting
 	vec3 lighting_color = attenuation * diffuse_lighting + attenuation * specular_lighting;
@@ -47,8 +47,8 @@ vec3 calculate_phong_point_light(Light light) {
 	return lighting_color;
 }
 
-vec3 calculate_full_phong_lighting() {
-	return calculate_phong_point_light(u_light) + LIGHT_AMBIENT;
+vec3 calculate_full_phong_lighting(vec3 position, vec3 normal) {
+	return calculate_phong_point_light(position, normal, u_light) + LIGHT_AMBIENT;
 }
 
 #endif // HYP_PHONG_LIGHTING_INCLUDE
