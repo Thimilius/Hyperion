@@ -1,7 +1,7 @@
 #type vertex
 #version 410 core
 
-#import "standard_vertex"
+#import standard_vertex
 
 out VS_TO_FS {
 	vec3 position;
@@ -20,14 +20,16 @@ void main() {
 #type fragment
 #version 410 core
 
-#import "standard_fragment"
-#import "standard_lighting"
+#import standard_fragment
+#import standard_lighting
 
 in VS_TO_FS {
 	vec3 position;
 	vec3 normal;
 	vec2 uv;
 } i_v2f;
+
+uniform sampler2D u_texture;
 
 void main() {
 	// Texture

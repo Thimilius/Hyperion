@@ -1,7 +1,7 @@
 #type vertex
 #version 410 core
 
-#import "standard_vertex"
+#import standard_vertex
 
 out VS_TO_FS {
 	vec3 position;
@@ -18,7 +18,7 @@ void main() {
 #type fragment
 #version 410 core
 
-#import "standard_fragment"
+#import standard_fragment
 
 in VS_TO_FS {
 	vec3 position;
