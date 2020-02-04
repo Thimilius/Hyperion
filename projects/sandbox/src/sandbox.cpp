@@ -14,7 +14,7 @@ protected:
     Entity *m_entity;
 
     void OnInit() override {
-        m_camera = GetEditorLayer()->GetCamera();
+        m_camera = EditorEngine::GetCamera();
 
         WorldManager::GetActiveWorld()->GetEnvironment().SetSkybox(AssetLibrary::LoadTextureCubemap("skybox", "data/textures/galaxy", ".png"));
 

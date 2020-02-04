@@ -8,6 +8,7 @@
 #include "hyperion/audio/audio_engine.hpp"
 #include "hyperion/rendering/renderer.hpp"
 #include "hyperion/rendering/immediate_renderer.hpp"
+#include "hyperion/editor/editor_engine.hpp"
 
 namespace Hyperion {
     
@@ -36,14 +37,25 @@ namespace Hyperion {
         Rendering::ImmediateRenderer::Init();
 
         Audio::AudioEngine::Init(settings.audio.backend);
+
+        Editor::EditorEngine::Init();
     }
 
-    void Engine::Update() {
+    void Engine::Update(f32 delta_time) {
         AssetLibrary::Update();
+        Editor::EditorEngine::Update(delta_time);
     }
 
     void Engine::LateUpdate() {
         ObjectSystem::LateUpdate();
+    }
+
+    void Engine::Render() {
+        Editor::EditorEngine::Render();
+    }
+
+    void Engine::Tick() {
+        Editor::EditorEngine::Tick();
     }
 
     void Engine::Shutdown() {
