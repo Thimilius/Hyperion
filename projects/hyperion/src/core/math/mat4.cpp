@@ -194,11 +194,11 @@ namespace Hyperion {
         return Vec4(elements[index + 0 * 4], elements[index + 1 * 4], elements[index + 2 * 4], elements[index + 3 * 4]);
     }
 
-    void Mat4::SetRow(int index, const Vec4 &column) {
-        elements[index + 0 * 4] = column.x;
-        elements[index + 1 * 4] = column.y;
-        elements[index + 2 * 4] = column.z;
-        elements[index + 3 * 4] = column.w;
+    void Mat4::SetRow(int index, const Vec4 &row) {
+        elements[index + 0 * 4] = row.x;
+        elements[index + 1 * 4] = row.y;
+        elements[index + 2 * 4] = row.z;
+        elements[index + 3 * 4] = row.w;
     }
 
     String Mat4::ToString() const {

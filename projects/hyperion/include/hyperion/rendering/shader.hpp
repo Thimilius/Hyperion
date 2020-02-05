@@ -28,6 +28,7 @@ namespace Hyperion::Rendering {
         virtual void SetVec2(const String &name, const Vec2 &value) = 0;
         virtual void SetVec3(const String &name, const Vec3 &value) = 0;
         virtual void SetVec4(const String &name, const Vec4 &value) = 0;
+        virtual void SetMat3(const String &name, const Mat3 &matrix) = 0;
         virtual void SetMat4(const String &name, const Mat4 &matrix) = 0;
 
         virtual void Recompile(const String &source) = 0;

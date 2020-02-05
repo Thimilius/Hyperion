@@ -22,6 +22,7 @@ namespace Hyperion::Rendering {
         void SetVec2(const String &name, const Vec2 &value) override;
         void SetVec3(const String &name, const Vec3 &value) override;
         void SetVec4(const String &name, const Vec4 &value) override;
+        void SetMat3(const String &name, const Mat3 &matrix) override;
         void SetMat4(const String &name, const Mat4 &matrix) override;
 
         void Recompile(const String &source) override;

@@ -29,6 +29,11 @@ namespace Hyperion::Rendering {
         m_properties[property_index].storage = value;
     }
 
+    void Material::SetMat3(const String &name, const Mat3 &value) {
+        u32 property_index = FindOrAddProperty(name, MaterialPropertyType::Mat3);
+        m_properties[property_index].storage = value;
+    }
+
     void Material::SetMat4(const String &name, const Mat4 &value) {
         u32 property_index = FindOrAddProperty(name, MaterialPropertyType::Mat4);
         m_properties[property_index].storage = value;

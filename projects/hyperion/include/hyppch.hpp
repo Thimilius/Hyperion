@@ -36,6 +36,7 @@
 #include "hyperion/core/math/vec3.hpp"
 #include "hyperion/core/math/vec4.hpp"
 #include "hyperion/core/math/mat4.hpp"
+#include "hyperion/core/math/mat3.hpp"
 #include "hyperion/rendering/render_engine.hpp"
 
 #endif

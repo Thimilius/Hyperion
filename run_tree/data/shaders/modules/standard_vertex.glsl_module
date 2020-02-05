@@ -7,8 +7,12 @@ layout(location = 2) in vec2 a_uv;
 
 uniform struct Transform {
 	mat4 model;
+	mat3 model_normal;
+	
 	mat4 view;
 	mat4 projection;
+	
+	mat4 mvp;
 } u_transform;
 
 uniform struct Camera {
@@ -20,11 +24,11 @@ vec3 obj_to_world_space(vec3 position) {
 }
 
 vec3 normal_to_world_space(vec3 normal) {
-	return normalize(mat3(transpose(inverse(u_transform.model))) * a_normal);
+	return normalize(u_transform.model_normal * a_normal);
 }
 
 vec4 obj_to_clip_space(vec3 position) {
-	return u_transform.projection * u_transform.view * u_transform.model * vec4(position, 1.0);
+	return u_transform.mvp * vec4(position, 1.0);
 }
 
 #endif // HYP_STANDARD_VERTEX_INCLUDE

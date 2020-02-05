@@ -39,7 +39,8 @@ namespace Hyperion::Rendering {
                 continue;
             }
 
-            DrawMesh(renderer->GetSharedMesh(), renderer->GetSharedMaterial(), renderer->GetTransform()->GetLocalToWorldMatrix());
+            TransformComponent *transform = renderer->GetTransform();
+            DrawMesh(renderer->GetSharedMesh(), renderer->GetSharedMaterial(), transform->GetLocalToWorldMatrix(), transform->GetWorldToLocalMatrix());
         }
 
         Ref<TextureCubemap> skybox = world->GetEnvironment().GetSkybox();
@@ -49,7 +50,11 @@ namespace Hyperion::Rendering {
     }
 
     void Renderer::DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform) {
-        PrepareShader(material->GetShader(), transform);
+        DrawMesh(mesh, material, transform, transform.Inverted());
+    }
+
+    void Renderer::DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform, const Mat4 &inverse_transform) {
+        PrepareShader(material->GetShader(), transform, inverse_transform);
         material->Bind();
         DrawMesh(mesh);
     }
@@ -70,10 +75,12 @@ namespace Hyperion::Rendering {
         shader->SetMat4("u_transform.projection", s_state.transform.projection);
     }
 
-    void Renderer::PrepareShader(const Ref<Shader> &shader, const Mat4 &transform) {
+    void Renderer::PrepareShader(const Ref<Shader> &shader, const Mat4 &transform, const Mat4 &inverse_transform) {
         PrepareShader(shader);
 
         shader->SetMat4("u_transform.model", transform);
+        shader->SetMat3("u_transform.model_normal", Mat3(inverse_transform.Transposed()));
+        shader->SetMat4("u_transform.mvp", s_state.transform.projection * s_state.transform.view * transform);
 
         shader->SetVec3("u_camera.position", s_state.camera->GetPosition());
     }

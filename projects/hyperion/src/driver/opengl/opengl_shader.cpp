@@ -44,6 +44,10 @@ namespace Hyperion::Rendering {
         glUniform4f(TryGetUniformLocation(name), value.x, value.y, value.z, value.w);
     }
 
+    void OpenGLShader::SetMat3(const String &name, const Mat3 &matrix) {
+        glUniformMatrix3fv(TryGetUniformLocation(name), 1, GL_FALSE, matrix.elements);
+    }
+
     void OpenGLShader::SetMat4(const String &name, const Mat4 &matrix) {
         glUniformMatrix4fv(TryGetUniformLocation(name), 1, GL_FALSE, matrix.elements);
     }

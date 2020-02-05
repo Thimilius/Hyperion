@@ -4,6 +4,7 @@
 #include "hyperion/rendering/texture_2d.hpp"
 #include "hyperion/rendering/texture_cubemap.hpp"
 #include "hyperion/core/math/mat4.hpp"
+#include "hyperion/core/math/mat3.hpp"
 #include "hyperion/core/math/vec2.hpp"
 #include "hyperion/core/color.hpp"
 
@@ -12,7 +13,7 @@
 namespace Hyperion::Rendering {
 
     class Material : public Asset {
-        using MaterialPropertyStorage = std::variant<u32, f32, Vec2, Vec3, Vec4, Mat4, Color>;
+        using MaterialPropertyStorage = std::variant<u32, f32, Vec2, Vec3, Vec4, Mat3, Mat4, Color>;
     private:
         enum class MaterialPropertyType {
             Int,
@@ -22,6 +23,7 @@ namespace Hyperion::Rendering {
             Vec3,
             Vec4,
 
+            Mat3,
             Mat4,
 
             Color
@@ -47,6 +49,7 @@ namespace Hyperion::Rendering {
         void SetVec2(const String &name, const Vec2 &value);
         void SetVec3(const String &name, const Vec3 &value);
         void SetVec4(const String &name, const Vec4 &value);
+        void SetMat3(const String &name, const Mat3 &value);
         void SetMat4(const String &name, const Mat4 &value);
         void SetColor(const String &name, const Color &color);
         void SetTexture2D(const String &name, const Ref<Texture2D> &texture);

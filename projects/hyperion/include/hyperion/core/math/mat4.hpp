@@ -6,7 +6,7 @@
 
 namespace Hyperion {
 
-    // NOTE: Matricies are in column-major order!
+    // Matrix is in column-major order!
     // They can therefore be indexed like that: [row + column * 4]
     // The elements are layed out in memory in the following way:
     // [  0  4  8 12 ]
@@ -35,7 +35,7 @@ namespace Hyperion {
         Mat4 Transposed() const;
 
         Vec4 GetRow(int index) const;
-        void SetRow(int index, const Vec4 &column);
+        void SetRow(int index, const Vec4 &row);
 
         String ToString() const;
 

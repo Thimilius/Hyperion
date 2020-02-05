@@ -36,6 +36,7 @@ namespace Hyperion::Rendering {
         static void DrawSkybox(const Ref<TextureCubemap> &skybox);
         static void DrawWorld(World *world);
         static void DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform);
+        static void DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform, const Mat4 &inverse_transform);
         static void End();
     private:
         Renderer() = delete;
@@ -44,7 +45,7 @@ namespace Hyperion::Rendering {
         static void Init();
 
         static void PrepareShader(const Ref<Shader> &shader);
-        static void PrepareShader(const Ref<Shader> &shader, const Mat4 &transform);
+        static void PrepareShader(const Ref<Shader> &shader, const Mat4 &transform, const Mat4 &inverse_transform);
         static void DrawMesh(const Ref<Mesh> &mesh);
 
         friend class Hyperion::Engine;
