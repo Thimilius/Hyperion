@@ -1,6 +1,7 @@
 #type vertex
 #version 410 core
 
+#import standard_vertex_attributes
 #import standard_vertex
 
 void main() {

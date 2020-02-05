@@ -1,9 +1,10 @@
 #type vertex
 #version 410 core
 
+#import standard_vertex_attributes
 #import standard_vertex
 
-out VS_TO_FS {
+out V2F {
 	vec3 position;
 	vec3 normal;
 	vec2 uv;
@@ -23,7 +24,7 @@ void main() {
 #import standard_fragment
 #import standard_lighting
 
-in VS_TO_FS {
+in V2F {
 	vec3 position;
 	vec3 normal;
 	vec2 uv;

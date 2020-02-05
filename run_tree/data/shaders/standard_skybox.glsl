@@ -1,13 +1,16 @@
 #type vertex
 #version 410 core
 
-#import standard_vertex
+#import standard_vertex_attributes
 
-out VS_TO_FS {
+out V2F {
 	vec3 position;
-	vec3 normal;
-	vec2 uv;
 } o_v2f;
+
+uniform struct Transform {
+	mat4 view;
+	mat4 projection;
+} u_transform;
 
 void main() {
 	o_v2f.position = a_position;
@@ -18,12 +21,10 @@ void main() {
 #type fragment
 #version 410 core
 
-#import standard_fragment
+out vec4 o_color;
 
-in VS_TO_FS {
+in V2F {
 	vec3 position;
-	vec3 normal;
-	vec2 uv;
 } i_v2f;
 
 uniform samplerCube u_skybox;

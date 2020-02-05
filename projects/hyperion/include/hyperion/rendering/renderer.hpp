@@ -44,9 +44,8 @@ namespace Hyperion::Rendering {
 
         static void Init();
 
-        static void PrepareShader(const Ref<Shader> &shader);
         static void PrepareShader(const Ref<Shader> &shader, const Mat4 &transform, const Mat4 &inverse_transform);
-        static void DrawMesh(const Ref<Mesh> &mesh);
+        static void DrawCall(const Ref<Mesh> &mesh);
 
         friend class Hyperion::Engine;
     };

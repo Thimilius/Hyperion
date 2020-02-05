@@ -4,7 +4,7 @@
 layout(location = 0) in vec3 a_position;
 layout(location = 1) in vec4 a_color;
 
-out VS_TO_FS {
+out V2F {
 	vec4 color;
 } o_v2f;
 
@@ -24,7 +24,7 @@ void main() {
 
 out vec4 o_color;
 
-in VS_TO_FS {
+in V2F {
 	vec4 color;
 } i_v2f;
 

@@ -23,10 +23,12 @@ namespace Hyperion::Rendering {
         DepthEquation depth_equation = RenderEngine::GetRasterizerState()->GetDepthEquation();
         RenderEngine::GetRasterizerState()->SetDepthEquation(DepthEquation::LessEqual);
 
-        PrepareShader(s_skybox.shader);
+        s_skybox.shader->Bind();
+        s_skybox.shader->SetMat4("u_transform.view", s_state.transform.view);
+        s_skybox.shader->SetMat4("u_transform.projection", s_state.transform.projection);
         s_skybox.shader->SetInt("u_skybox", 0);
         skybox->Bind(0);
-        DrawMesh(s_skybox.mesh);
+        DrawCall(s_skybox.mesh);
 
         RenderEngine::GetRasterizerState()->SetDepthEquation(depth_equation);
         RenderEngine::GetRasterizerState()->SetCullingEnabled(culling_enabled);
@@ -56,7 +58,7 @@ namespace Hyperion::Rendering {
     void Renderer::DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform, const Mat4 &inverse_transform) {
         PrepareShader(material->GetShader(), transform, inverse_transform);
         material->Bind();
-        DrawMesh(mesh);
+        DrawCall(mesh);
     }
 
     void Renderer::End() {
@@ -68,15 +70,8 @@ namespace Hyperion::Rendering {
         s_skybox.mesh = MeshFactory::CreateCube(1);
     }
 
-    void Renderer::PrepareShader(const Ref<Shader> &shader) {
-        shader->Bind();
-
-        shader->SetMat4("u_transform.view", s_state.transform.view);
-        shader->SetMat4("u_transform.projection", s_state.transform.projection);
-    }
-
     void Renderer::PrepareShader(const Ref<Shader> &shader, const Mat4 &transform, const Mat4 &inverse_transform) {
-        PrepareShader(shader);
+        shader->Bind();
 
         shader->SetMat4("u_transform.model", transform);
         shader->SetMat3("u_transform.model_normal", Mat3(inverse_transform.Transposed()));
@@ -85,7 +80,7 @@ namespace Hyperion::Rendering {
         shader->SetVec3("u_camera.position", s_state.camera->GetPosition());
     }
 
-    void Renderer::DrawMesh(const Ref<Mesh> &mesh) {
+    void Renderer::DrawCall(const Ref<Mesh> &mesh) {
         const Ref<VertexArray> &vertex_array = mesh->GetVertexArray();
         vertex_array->Bind();
 
