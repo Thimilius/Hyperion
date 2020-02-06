@@ -74,7 +74,7 @@ namespace Hyperion::Editor {
         if (s_overlay_enabled) {
             ImmediateRenderer::Begin(s_camera);
             {
-                ImmediateRenderer::Draw(PrimitiveType::Lines, s_grid_vertex_array, s_grid_vertex_count);
+                ImmediateRenderer::Draw(MeshTopology::Lines, s_grid_vertex_array, s_grid_vertex_count);
 
                 // We want to draw the origin on top of the grid
                 RenderEngine::Clear(ClearMask::Depth);

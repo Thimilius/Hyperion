@@ -64,12 +64,12 @@ namespace Hyperion::Rendering {
         glBlitNamedFramebuffer(read_id, draw_id, srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
     }
 
-    void OpenGLRenderDriver::DrawIndexed(PrimitiveType primitive, IndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) {
-        glDrawElementsBaseVertex(GetGLPrimitiveType(primitive), index_count, GetGLIndexFormat(format), (void*)(GetGLIndexSize(format) * index_offset), vertex_offset);
+    void OpenGLRenderDriver::DrawIndexed(MeshTopology topology, IndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) {
+        glDrawElementsBaseVertex(GetGLMeshTopology(topology), index_count, GetGLIndexFormat(format), (void*)(GetGLIndexSize(format) * index_offset), vertex_offset);
     }
 
-    void OpenGLRenderDriver::Draw(PrimitiveType primitive, u32 vertex_count, u32 vertex_offset) {
-        glDrawArrays(GetGLPrimitiveType(primitive), vertex_offset, vertex_count);
+    void OpenGLRenderDriver::Draw(MeshTopology topology, u32 vertex_count, u32 vertex_offset) {
+        glDrawArrays(GetGLMeshTopology(topology), vertex_offset, vertex_count);
     }
 
     u32 OpenGLRenderDriver::GetGLClearMask(ClearMask clear_mask) {
@@ -88,12 +88,12 @@ namespace Hyperion::Rendering {
         return result;
     }
 
-    u32 OpenGLRenderDriver::GetGLPrimitiveType(PrimitiveType primitive) {
-        switch (primitive) {
-            case PrimitiveType::Lines: return GL_LINES;
-            case PrimitiveType::LineStrip: return GL_LINE_STRIP;
-            case PrimitiveType::LineLoop: return GL_LINE_LOOP;
-            case PrimitiveType::Triangles: return GL_TRIANGLES;
+    u32 OpenGLRenderDriver::GetGLMeshTopology(MeshTopology topology) {
+        switch (topology) {
+            case MeshTopology::Triangles: return GL_TRIANGLES;
+            case MeshTopology::Lines: return GL_LINES;
+            case MeshTopology::LineStrip: return GL_LINE_STRIP;
+            case MeshTopology::Points: return GL_POINTS;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }

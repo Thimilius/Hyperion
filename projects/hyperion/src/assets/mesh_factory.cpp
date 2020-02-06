@@ -46,7 +46,7 @@ namespace Hyperion {
             0, 2, 3
         };
 
-        return Mesh::Create(mesh_data);
+        return Mesh::Create(mesh_data, { { MeshTopology::Triangles, 6, 0, 0 } });
     }
 
     Ref<Mesh> MeshFactory::CreateCube(f32 size) {
@@ -189,7 +189,7 @@ namespace Hyperion {
             20, 22, 23
         };
 
-        return Mesh::Create(mesh_data);
+        return Mesh::Create(mesh_data, { { MeshTopology::Triangles, 36, 0, 0 } });
     }
 
     Ref<Mesh> MeshFactory::CreateFromFile(const String &path) {

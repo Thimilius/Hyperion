@@ -48,12 +48,12 @@ namespace Hyperion::Rendering {
             s_render_driver->Blit(destination, dstX0, dstY0, dstX1, dstY1, source, srcX0, srcY0, srcX1, srcY1);
         }
 
-        inline static void DrawIndexed(PrimitiveType primitive, IndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) {
-            s_render_driver->DrawIndexed(primitive, format, index_count, index_offset, vertex_offset);
+        inline static void DrawIndexed(MeshTopology topology, IndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) {
+            s_render_driver->DrawIndexed(topology, format, index_count, index_offset, vertex_offset);
         }
 
-        inline static void Draw(PrimitiveType primitive, u32 vertex_count, u32 vertex_offset) {
-            s_render_driver->Draw(primitive, vertex_count, vertex_offset);
+        inline static void Draw(MeshTopology topology, u32 vertex_count, u32 vertex_offset) {
+            s_render_driver->Draw(topology, vertex_count, vertex_offset);
         }
 
         inline static RenderBackend GetBackend() { return s_render_backend; }

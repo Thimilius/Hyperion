@@ -4,16 +4,15 @@
 
 namespace Hyperion::Rendering {
 
-    Ref<Mesh> Mesh::Create(const MeshData &mesh_data) {
-        return Ref<Mesh>(new Mesh(mesh_data, { }));
-    }
-
     Ref<Mesh> Mesh::Create(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes) {
         return Ref<Mesh>(new Mesh(mesh_data, sub_meshes));
     }
 
     Mesh::Mesh(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes) {
+        HYP_ASSERT_MESSAGE(sub_meshes.size() > 0, "Must provide at least one submesh when creating a mesh!");
+
         m_mesh_data = mesh_data;
+        m_sub_meshes = sub_meshes;
 
         u32 vertex_count = (u32)mesh_data.positions.size();
         Vector<VertexPNU> verticies(vertex_count);
@@ -31,12 +30,6 @@ namespace Hyperion::Rendering {
         m_vertex_array = VertexArray::Create();
         m_vertex_array->AddVertexBuffer(vertex_buffer);
         m_vertex_array->SetIndexBuffer(index_buffer);
-
-        if (sub_meshes.size() == 0) {
-            m_sub_meshes = { { index_count, 0, 0 } };
-        } else {
-            m_sub_meshes = sub_meshes;
-        }
 
         RecalculateBounds();
     }

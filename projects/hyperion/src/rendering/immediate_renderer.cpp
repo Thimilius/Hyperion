@@ -12,14 +12,14 @@ namespace Hyperion::Rendering {
         s_state.transform.view_projection = camera->GetViewProjectionMatrix();
     }
 
-    void ImmediateRenderer::Draw(PrimitiveType primitive_type, const Ref<VertexArray> &vertex_array, u32 vertex_count) {
+    void ImmediateRenderer::Draw(MeshTopology topology, const Ref<VertexArray> &vertex_array, u32 vertex_count) {
         s_immediate.shader->Bind();
         s_immediate.shader->SetMat4("u_transform.view", s_state.transform.view);
         s_immediate.shader->SetMat4("u_transform.projection", s_state.transform.projection);
 
         vertex_array->Bind();
 
-        RenderEngine::Draw(primitive_type, vertex_count, 0);
+        RenderEngine::Draw(topology, vertex_count, 0);
     }
 
     void ImmediateRenderer::DrawCube(Vec3 center, Vec3 size, Color color) {
@@ -73,14 +73,14 @@ namespace Hyperion::Rendering {
         AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z + half_size.z), color);
         AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z - half_size.z), color);
 
-        Flush(PrimitiveType::Triangles);
+        Flush(MeshTopology::Triangles);
     }
 
     void ImmediateRenderer::DrawLine(Vec3 a, Vec3 b, Color color) {
         AddVertex(a, color);
         AddVertex(b, color);
 
-        Flush(PrimitiveType::Lines);
+        Flush(MeshTopology::Lines);
     }
 
     void ImmediateRenderer::Init() {
@@ -105,7 +105,7 @@ namespace Hyperion::Rendering {
         
     }
 
-    void ImmediateRenderer::Flush(PrimitiveType type) {
+    void ImmediateRenderer::Flush(MeshTopology topology) {
         // We do not need to draw anything if no verticies were added
         if (s_state.vertex_offset == 0) {
             return;
@@ -118,7 +118,7 @@ namespace Hyperion::Rendering {
         s_immediate.vertex_buffer->SetData(0, s_state.vertex_offset * sizeof(VertexImmediate), (u8*)s_immediate.data_buffer);
         s_immediate.vertex_array->Bind();
 
-        RenderEngine::Draw(type, s_state.vertex_offset, 0);
+        RenderEngine::Draw(topology, s_state.vertex_offset, 0);
 
         s_state.vertex_offset = 0;
     }

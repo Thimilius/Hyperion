@@ -5,6 +5,7 @@
 #include "hyperion/rendering/vertex_array.hpp"
 #include "hyperion/rendering/render_texture.hpp"
 #include "hyperion/rendering/rasterizer_state.hpp"
+#include "hyperion/rendering/mesh.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -20,13 +21,6 @@ namespace Hyperion::Rendering {
         DrawAndRead,
         Draw,
         Read
-    };
-
-    enum class PrimitiveType {
-        Lines,
-        LineStrip,
-        LineLoop,
-        Triangles
     };
 
     class RenderDriver {
@@ -45,8 +39,8 @@ namespace Hyperion::Rendering {
         virtual void SetActiveRenderTarget(const Ref<RenderTexture> &texture, RenderTextureTarget target) = 0;
         virtual void Blit(const Ref<RenderTexture> &destination, s32 dstX0, s32 dstY0, s32 dstX1, s32 dstY1, const Ref<RenderTexture> &source, s32 srcX0, s32 srcY0, s32 srcX1, s32 srcY1) = 0;
 
-        virtual void DrawIndexed(PrimitiveType primitive, IndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) = 0;
-        virtual void Draw(PrimitiveType primitive, u32 vertex_count, u32 vertex_offset) = 0;
+        virtual void DrawIndexed(MeshTopology topology, IndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) = 0;
+        virtual void Draw(MeshTopology topology, u32 vertex_count, u32 vertex_offset) = 0;
     };
 
 }

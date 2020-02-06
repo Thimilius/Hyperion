@@ -35,7 +35,7 @@ namespace Hyperion::Rendering {
         inline static Immediate s_immediate;
     public:
         static void Begin(const Ref<Camera> &camera);
-        static void Draw(PrimitiveType primitive_type, const Ref<VertexArray> &vertex_array, u32 vertex_count);
+        static void Draw(MeshTopology topology, const Ref<VertexArray> &vertex_array, u32 vertex_count);
         static void DrawCube(Vec3 center, Vec3 size, Color color);
         static void DrawLine(Vec3 a, Vec3 b, Color color);
         static void End();
@@ -46,7 +46,7 @@ namespace Hyperion::Rendering {
         static void Init();
 
         static void AddVertex(Vec3 position, Color color);
-        static void Flush(PrimitiveType type);
+        static void Flush(MeshTopology topology);
 
         friend class Hyperion::Engine;
     };

@@ -7,6 +7,13 @@
 
 namespace Hyperion::Rendering {
 
+    enum class MeshTopology {
+        Triangles,
+        Lines,
+        LineStrip,
+        Points
+    };
+
     struct MeshData {
         Vector<Vec3> positions;
         Vector<Vec3> normals;
@@ -16,6 +23,8 @@ namespace Hyperion::Rendering {
     };
 
     struct SubMesh {
+        MeshTopology topology;
+
         u32 index_count;
         u32 index_offset;
         u32 vertex_offset;
@@ -37,7 +46,6 @@ namespace Hyperion::Rendering {
         inline const Ref<VertexArray> GetVertexArray() const { return m_vertex_array; }
         inline const Vector<SubMesh> GetSubMeshes() const { return m_sub_meshes; }
 
-        static Ref<Mesh> Create(const MeshData &mesh_data);
         static Ref<Mesh> Create(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes);
     private:
         Mesh(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes);

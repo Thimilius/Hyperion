@@ -25,11 +25,11 @@ namespace Hyperion {
         Assimp::Importer importer;
         const aiScene *scene = importer.ReadFile(path, g_assimp_import_flags);
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-            HYP_LOG_ERROR("Importer", "Failed to load mesh: '{}'", path);
+            HYP_LOG_ERROR("MeshImporter", "Failed to load mesh: '{}'", path);
             return nullptr;
         };
         if (scene->mNumMeshes == 0) {
-            HYP_LOG_ERROR("Importer", "The loaded mesh '{}' does not contain any meshes!", path);
+            HYP_LOG_ERROR("MeshImporter", "The loaded mesh '{}' does not contain any meshes!", path);
             return nullptr;
         }
 
@@ -44,8 +44,8 @@ namespace Hyperion {
 
     void AssimpMeshLoader::LoadSubMesh(const aiMesh *mesh, MeshData &mesh_data, Vector<SubMesh> &sub_meshes) {
         // Make sure the mesh has all necessary components
-        if (!mesh->HasPositions() || !mesh->HasNormals() || !mesh->HasTextureCoords(0) || mesh->mPrimitiveTypes != aiPrimitiveType_TRIANGLE) {
-            HYP_LOG_ERROR("Importer", "Mesh does not contain relevant data!");
+        if (!mesh->HasPositions() || !mesh->HasNormals() || !mesh->HasTextureCoords(0)) {
+            HYP_LOG_ERROR("MeshImporter", "Mesh does not contain basic relevant data!");
             return;
         }
 
@@ -77,7 +77,16 @@ namespace Hyperion {
             mesh_data.indicies.emplace_back(face.mIndices[2]);
         }
 
-        sub_meshes.push_back({ index_count, index_offset, vertex_offset });
+        sub_meshes.push_back({ GetMeshTopologyForPrimitiveType(mesh->mPrimitiveTypes), index_count, index_offset, vertex_offset });
+    }
+
+    MeshTopology AssimpMeshLoader::GetMeshTopologyForPrimitiveType(u32 primitive_type) {
+        switch (primitive_type) {
+            case aiPrimitiveType_TRIANGLE: return MeshTopology::Triangles;
+            case aiPrimitiveType_LINE: return MeshTopology::Lines;
+            case aiPrimitiveType_POINT: return MeshTopology::Points;
+            default: HYP_LOG_ERROR("MeshImporter", "Mesh contains an unsupported primitive type!"); return MeshTopology::Triangles;
+        }
     }
 
 }
