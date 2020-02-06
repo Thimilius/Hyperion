@@ -10,7 +10,7 @@ namespace Hyperion::Editor {
         inline static Ref<Rendering::Camera> s_camera;
         inline static EditorCameraController s_camera_controller;
 
-        inline static u32 s_grid_size = 20;
+        inline static u32 s_grid_size = 100;
         inline static u32 s_grid_vertex_count;
         inline static Ref<Rendering::VertexArray> s_grid_vertex_array;
 
@@ -26,7 +26,8 @@ namespace Hyperion::Editor {
         EditorEngine() = delete;
         ~EditorEngine() = delete;
 
-        static void UpdateTitle();
+        static void UpdateWindowTitle();
+        static void InitGridVertexArray();
     };
 
 }

@@ -19,7 +19,7 @@ namespace Hyperion::Rendering {
         Vec3 m_up = Vec3(0, 1, 0);
 
         f32 m_near_plane = 0.1f;
-        f32 m_far_plane = 100.0f;
+        f32 m_far_plane = 1000.0f;
 
         f32 m_fov = 90.0f;
         f32 m_size = 2.75f;

@@ -14,39 +14,8 @@ namespace Hyperion::Editor {
         s_camera = Camera::Create();
         s_camera_controller = EditorCameraController(s_camera);
 
-        // Initialize grid vertex buffer
-        {
-            Color grid_color = Color::White();
-
-            s32 half_grid_size = s_grid_size / 2;
-            f32 to_point = (f32)half_grid_size;
-
-            s_grid_vertex_count = (s_grid_size + 1) * 4;
-            Vector<VertexImmediate> verticies(s_grid_vertex_count);
-
-            u32 index = 0;
-            for (s32 x = -half_grid_size; x <= half_grid_size; x++) {
-                if (x == 0) continue;
-
-                f32 from_point = (f32)x;
-                verticies[index++] = { Vec3(from_point, 0, to_point), grid_color };
-                verticies[index++] = { Vec3(from_point, 0, -to_point), grid_color };
-            }
-            for (s32 z = -half_grid_size; z <= half_grid_size; z++) {
-                if (z == 0) continue;
-
-                f32 from_point = (f32)z;
-                verticies[index++] = { Vec3(to_point, 0, from_point), grid_color };
-                verticies[index++] = { Vec3(-to_point, 0, from_point), grid_color };
-            }
-
-            Ref<VertexBuffer> vertex_buffer = VertexBuffer::Create((u8*)verticies.data(), s_grid_vertex_count * sizeof(VertexImmediate));
-            vertex_buffer->SetLayout(VertexImmediate::GetBufferLayout());
-            s_grid_vertex_array = VertexArray::Create();
-            s_grid_vertex_array->AddVertexBuffer(vertex_buffer);
-        }
-
-        UpdateTitle();
+        InitGridVertexArray();
+        UpdateWindowTitle();
     }
 
     void EditorEngine::Update(f32 delta_time) {
@@ -61,7 +30,7 @@ namespace Hyperion::Editor {
         }
         if (Input::GetKeyDown(KeyCode::F2)) {
             window->SetVSyncMode(window->GetVSyncMode() == VSyncMode::DontSync ? VSyncMode::EveryVBlank : VSyncMode::DontSync);
-            UpdateTitle();
+            UpdateWindowTitle();
         }
         if (Input::GetKeyDown(KeyCode::F3)) {
             s_overlay_enabled = !s_overlay_enabled;
@@ -75,27 +44,61 @@ namespace Hyperion::Editor {
             ImmediateRenderer::Begin(s_camera);
             {
                 ImmediateRenderer::Draw(MeshTopology::Lines, s_grid_vertex_array, s_grid_vertex_count);
-
-                // We want to draw the origin on top of the grid
-                RenderEngine::Clear(ClearMask::Depth);
-                RenderEngine::GetRasterizerState()->SetDepthEquation(DepthEquation::LessEqual);
-
-                ImmediateRenderer::DrawLine(Vec3(-1000, 0, 0), Vec3(1000, 0, 0), Color::Red());
-                ImmediateRenderer::DrawLine(Vec3(0, -1000, 0), Vec3(0, 1000, 0), Color::Green());
-                ImmediateRenderer::DrawLine(Vec3(0, 0, -1000), Vec3(0, 0, 1000), Color::Blue());
             }
             ImmediateRenderer::End();
         }
     }
 
     void EditorEngine::Tick() {
-        UpdateTitle();
+        UpdateWindowTitle();
     }
 
-    void EditorEngine::UpdateTitle() {
+    void EditorEngine::UpdateWindowTitle() {
         Window *window = Application::GetInstance()->GetWindow();
         String title = StringUtils::Format("Hyperion | FPS: {} ({:.2f} ms) | VSync: {}", Time::GetFPS(), Time::GetFrameTime(), window->GetVSyncMode() != VSyncMode::DontSync);
         window->SetTitle(title);
+    }
+
+    void EditorEngine::InitGridVertexArray() {
+        Color default_grid_color = Color(0.25f, 0.25f, 0.25f, 0.25f);
+        Color special_grid_color = Color(0.75f, 0.75f, 0.75f, 0.75f);
+
+        s32 half_grid_size = s_grid_size / 2;
+        f32 to_point = (f32)half_grid_size;
+
+        s_grid_vertex_count = ((s_grid_size) * 4) + 6;
+        Vector<VertexImmediate> verticies(s_grid_vertex_count);
+
+        u32 index = 0;
+        for (s32 x = -half_grid_size; x <= half_grid_size; x++) {
+            if (x == 0) continue; // Skip center line
+
+            f32 from_point = (f32)x;
+            Color color = (x % 10) == 0 ? special_grid_color : default_grid_color;
+            verticies[index++] = { Vec3(from_point, 0, to_point), color };
+            verticies[index++] = { Vec3(from_point, 0, -to_point), color };
+        }
+        for (s32 z = -half_grid_size; z <= half_grid_size; z++) {
+            if (z == 0) continue; // Skip center line
+
+            f32 from_point = (f32)z;
+            Color color = (z % 10) == 0 ? special_grid_color : default_grid_color;
+            verticies[index++] = { Vec3(to_point, 0, from_point), color };
+            verticies[index++] = { Vec3(-to_point, 0, from_point), color };
+        }
+
+        // Axis lines
+        verticies[index++] = { Vec3(-1000, 0, 0), Color::Red() };
+        verticies[index++] = { Vec3(1000, 0, 0), Color::Red() };
+        verticies[index++] = { Vec3(0, -1000, 0), Color::Green() };
+        verticies[index++] = { Vec3(0, 1000, 0), Color::Green() };
+        verticies[index++] = { Vec3(0, 0, -1000), Color::Blue() };
+        verticies[index++] = { Vec3(0, 0, 1000), Color::Blue() };
+
+        Ref<VertexBuffer> vertex_buffer = VertexBuffer::Create((u8 *)verticies.data(), s_grid_vertex_count * sizeof(VertexImmediate));
+        vertex_buffer->SetLayout(VertexImmediate::GetBufferLayout());
+        s_grid_vertex_array = VertexArray::Create();
+        s_grid_vertex_array->AddVertexBuffer(vertex_buffer);
     }
 
 }
