@@ -15,6 +15,7 @@ namespace Hyperion {
         inline OperatingSystemType GetType() const override { return OperatingSystemType::Windows; }
         SystemInfo GetSystemInfo() const override;
         SystemLanguage GetSystemLanguage() const override;
+        String GetSystemFolder(SystemFolder system_folder) const override;
 
         void DisplayError(const String &title, const String &message) override;
         void PrintToConsole(LogColor color, const String &message) override;

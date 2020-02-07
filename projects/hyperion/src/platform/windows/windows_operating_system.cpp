@@ -3,6 +3,7 @@
 #include "hyperion/platform/windows/windows_operating_system.hpp"
 
 #include <Powrprof.h>
+#include <Shlobj.h>
 
 namespace Hyperion {
 
@@ -104,6 +105,30 @@ namespace Hyperion {
 			case LANG_VIETNAMESE: result = SystemLanguage::Vietnamese; break;
 		}
         return result;
+    }
+
+    String WindowsOperatingSystem::GetSystemFolder(SystemFolder system_folder) const {
+        KNOWNFOLDERID folder_id;
+
+        switch (system_folder) {
+            case SystemFolder::Desktop: folder_id = FOLDERID_Desktop; break;
+            case SystemFolder::Downloads: folder_id = FOLDERID_Downloads; break;
+            case SystemFolder::Documents: folder_id = FOLDERID_Documents; break;
+            case SystemFolder::Pictures: folder_id = FOLDERID_Pictures; break;
+            case SystemFolder::Music: folder_id = FOLDERID_Music; break;
+            case SystemFolder::Videos: folder_id = FOLDERID_Videos; break;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        }
+
+        PWSTR wide_path;
+        HRESULT result = SHGetKnownFolderPath(folder_id, 0, NULL, &wide_path);
+        if (result == S_OK) {
+            String path = StringUtils::Utf16ToUtf8(WideString(wide_path));
+            CoTaskMemFree(wide_path);
+            return path;
+        } else {
+            return String();
+        }
     }
 
     void WindowsOperatingSystem::DisplayError(const String &title, const String &message) {
