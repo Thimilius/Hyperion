@@ -52,6 +52,60 @@ namespace Hyperion {
         return result;
     }
 
+    SystemLanguage WindowsOperatingSystem::GetSystemLanguage() const {
+        LANGID language_id = GetUserDefaultUILanguage();
+        u32 main_language  = language_id & 0xff;
+
+        SystemLanguage result = SystemLanguage::Unknown;
+		switch (main_language) {
+			case LANG_ALBANIAN: result = SystemLanguage::Albanian; break;
+			case LANG_ARABIC: result = SystemLanguage::Arabic; break;
+			case LANG_ARMENIAN: result = SystemLanguage::Armenian; break;
+			case LANG_BELARUSIAN: result = SystemLanguage::Belarusian; break;
+			case LANG_BULGARIAN: result = SystemLanguage::Bulgarian; break;
+			case LANG_CATALAN: result = SystemLanguage::Catalan; break;
+			case LANG_CHINESE: result = SystemLanguage::Chinese; break;
+			case LANG_CROATIAN: result = SystemLanguage::Croatian; break;
+			case LANG_CZECH: result = SystemLanguage::Czech; break;
+			case LANG_DANISH: result = SystemLanguage::Danish; break;
+			case LANG_DUTCH: result = SystemLanguage::Dutch; break;
+			case LANG_ENGLISH: result = SystemLanguage::English; break;
+			case LANG_ESTONIAN: result = SystemLanguage::Estonian; break;
+			case LANG_FINNISH: result = SystemLanguage::Finnish; break;
+			case LANG_FRENCH: result = SystemLanguage::French; break;
+			case LANG_GERMAN: result = SystemLanguage::German; break;
+			case LANG_GREEK: result = SystemLanguage::Greek; break;
+			case LANG_HEBREW: result = SystemLanguage::Hebrew; break;
+			case LANG_HINDI: result = SystemLanguage::Hindi; break;
+			case LANG_HUNGARIAN: result = SystemLanguage::Hungarian; break;
+			case LANG_ICELANDIC: result = SystemLanguage::Icelandic; break;
+			case LANG_INDONESIAN: result = SystemLanguage::Indonesian; break;
+			case LANG_IRISH: result = SystemLanguage::Irish; break;
+			case LANG_ITALIAN: result = SystemLanguage::Italian; break;
+			case LANG_JAPANESE: result = SystemLanguage::Japanese; break;
+			case LANG_KOREAN: result = SystemLanguage::Korean; break;
+			case LANG_LATVIAN: result = SystemLanguage::Lativian; break;
+			case LANG_LITHUANIAN: result = SystemLanguage::Lithuanian; break;
+			case LANG_MACEDONIAN: result = SystemLanguage::Macedonian; break;
+			case LANG_MALAY: result = SystemLanguage::Malay; break;
+			case LANG_MALTESE: result = SystemLanguage::Maltese; break;
+			case LANG_NORWEGIAN: result = SystemLanguage::Norwegian; break;
+			case LANG_POLISH: result = SystemLanguage::Polish; break;
+			case LANG_PORTUGUESE: result = SystemLanguage::Portuguese; break;
+			case LANG_ROMANIAN: result = SystemLanguage::Romanian; break;
+			case LANG_RUSSIAN: result = SystemLanguage::Russian; break;
+			case LANG_SLOVAK: result = SystemLanguage::Slovak; break;
+			case LANG_SLOVENIAN: result = SystemLanguage::Slovenian; break;
+			case LANG_SPANISH: result = SystemLanguage::Spanish; break;
+			case LANG_SWEDISH: result = SystemLanguage::Swedish; break;
+			case LANG_THAI: result = SystemLanguage::Thai; break;
+			case LANG_TURKISH: result = SystemLanguage::Turkish; break;
+			case LANG_UKRAINIAN: result = SystemLanguage::Ukrainian; break;
+			case LANG_VIETNAMESE: result = SystemLanguage::Vietnamese; break;
+		}
+        return result;
+    }
+
     void WindowsOperatingSystem::DisplayError(const String &title, const String &message) {
         MessageBoxW(nullptr, StringUtils::Utf8ToUtf16(message).c_str(), StringUtils::Utf8ToUtf16(title).c_str(), MB_OK | MB_ICONERROR);
     }

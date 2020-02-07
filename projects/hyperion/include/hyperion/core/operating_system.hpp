@@ -23,12 +23,62 @@ namespace Hyperion {
         } memory_info;
     };
 
+    enum class SystemLanguage {
+        Unknown,
+
+        Albanian,
+        Arabic,
+        Armenian,
+        Belarusian,
+        Bulgarian,
+        Catalan,
+        Chinese,
+        Croatian,
+        Czech,
+        Danish,
+        Dutch,
+        English,
+        Estonian,
+        Finnish,
+        French,
+        German,
+        Greek,
+        Hebrew,
+        Hindi,
+        Hungarian,
+        Icelandic,
+        Indonesian,
+        Irish,
+        Italian,
+        Japanese,
+        Korean,
+        Lativian,
+        Lithuanian,
+        Macedonian,
+        Malay,
+        Maltese,
+        Norwegian,
+        Polish,
+        Portuguese,
+        Romanian,
+        Russian,
+        Slovak,
+        Slovenian,
+        Spanish,
+        Swedish,
+        Thai,
+        Turkish,
+        Ukrainian,
+        Vietnamese
+    };
+
     class OperatingSystem {
     private:
         static OperatingSystem *s_instance;
     public:
         virtual OperatingSystemType GetType() const = 0;
         virtual SystemInfo GetSystemInfo() const = 0;
+        virtual SystemLanguage GetSystemLanguage() const = 0;
 
         virtual void PrintToConsole(LogColor color, const String &message) = 0;
         virtual void DisplayError(const String &title, const String &message) = 0;
