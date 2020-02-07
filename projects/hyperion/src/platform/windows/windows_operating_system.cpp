@@ -4,6 +4,7 @@
 
 #include <Powrprof.h>
 #include <Shlobj.h>
+#include <psapi.h>
 
 namespace Hyperion {
 
@@ -51,6 +52,12 @@ namespace Hyperion {
         result.memory_info.total_virtual_memory = memory_status.ullTotalVirtual;
 
         return result;
+    }
+
+    u64 WindowsOperatingSystem::GetMemoryUsage() const {
+        PROCESS_MEMORY_COUNTERS process_memory;
+        BOOL success = GetProcessMemoryInfo(GetCurrentProcess(), &process_memory, sizeof(process_memory));
+        return success ? process_memory.WorkingSetSize : 0;
     }
 
     SystemLanguage WindowsOperatingSystem::GetSystemLanguage() const {

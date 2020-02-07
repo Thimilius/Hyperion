@@ -55,7 +55,13 @@ namespace Hyperion::Editor {
 
     void EditorEngine::UpdateWindowTitle() {
         Window *window = Application::GetInstance()->GetWindow();
-        String title = StringUtils::Format("Hyperion | FPS: {} ({:.2f} ms) | VSync: {}", Time::GetFPS(), Time::GetFrameTime(), window->GetVSyncMode() != VSyncMode::DontSync);
+        f64 memory = (f64)OperatingSystem::GetInstance()->GetMemoryUsage() / 1024.0 / 1024.0;
+        String title = StringUtils::Format("Hyperion | FPS: {} ({:.2f} ms) | VSync: {} | Memory: {:.2f} MiB",
+            Time::GetFPS(),
+            Time::GetFrameTime(),
+            window->GetVSyncMode() != VSyncMode::DontSync,
+            memory
+        );
         window->SetTitle(title);
     }
 

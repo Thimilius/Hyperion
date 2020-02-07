@@ -87,6 +87,7 @@ namespace Hyperion {
     public:
         virtual OperatingSystemType GetType() const = 0;
         virtual SystemInfo GetSystemInfo() const = 0;
+        virtual u64 GetMemoryUsage() const = 0;
         virtual SystemLanguage GetSystemLanguage() const = 0;
         virtual String GetSystemFolder(SystemFolder system_folder) const = 0;
 
