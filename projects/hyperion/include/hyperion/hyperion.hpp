@@ -1,4 +1,4 @@
-#include "common.hpp"
+#include "hyperion/common.hpp"
 
 // Core
 #include "hyperion/core/types.hpp"
@@ -19,6 +19,7 @@
 #include "hyperion/core/math/mat4.hpp"
 #include "hyperion/core/math/mat3.hpp"
 #include "hyperion/core/math/aabb.hpp"
+#include "hyperion/core/math/plane.hpp"
 #include "hyperion/core/math/ray.hpp"
 #include "hyperion/core/math/rect.hpp"
 #include "hyperion/core/app/application.hpp"
