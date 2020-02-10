@@ -21,14 +21,13 @@ namespace Hyperion {
     }
 
     void Plane::Flip() {
-        // TODO: Add negation operator to vectors
-        normal = Vec3(-normal.x, -normal.y, -normal.z);
+        normal = -normal;
         distance = -distance;
     }
 
     bool Plane::Intersects(Ray ray, f32 *distance) const {
-        float angle = ray.direction.Dot(normal);
-        float origin_to_plane = -ray.origin.Dot(normal) - this->distance;
+        f32 angle = ray.direction.Dot(normal);
+        f32 origin_to_plane = -ray.origin.Dot(normal) - this->distance;
         bool hit;
         if (angle == 0.0f) {
             if (distance) {

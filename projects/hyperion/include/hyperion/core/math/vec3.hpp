@@ -44,6 +44,8 @@ namespace Hyperion {
         bool operator==(const Vec3 &other) const;
         bool operator!=(const Vec3 &other) const;
 
+        Vec3 &operator-();
+
         Vec3 &operator+=(const Vec3 &other);
         Vec3 &operator-=(const Vec3 &other);
         Vec3 &operator*=(const Vec3 &other);

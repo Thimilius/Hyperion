@@ -98,6 +98,14 @@ namespace Hyperion {
         return !(*this == other);
     }
 
+    Vec3 &Vec3::operator-() {
+        x = -x;
+        y = -y;
+        z = -z;
+
+        return *this;
+    }
+
     Vec3 &Vec3::operator+=(const Vec3 &other) {
         return Add(other);
     }

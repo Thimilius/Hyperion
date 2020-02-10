@@ -81,6 +81,13 @@ namespace Hyperion {
         return !(*this == other);
     }
 
+    Vec2 &Vec2::operator-() {
+        x = -x;
+        y = -y;
+
+        return *this;
+    }
+
     Vec2 &Vec2::operator+=(const Vec2 &other) {
         return Add(other);
     }

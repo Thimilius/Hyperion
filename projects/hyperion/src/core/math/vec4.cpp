@@ -108,6 +108,15 @@ namespace Hyperion {
         return !(*this == other);
     }
 
+    Vec4 &Vec4::operator-() {
+        x = -x;
+        y = -y;
+        z = -z;
+        w = -w;
+
+        *this;
+    }
+
     Vec4 &Vec4::operator+=(const Vec4 &other) {
         return Add(other);
     }
