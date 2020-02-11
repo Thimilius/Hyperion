@@ -114,7 +114,7 @@ namespace Hyperion {
         z = -z;
         w = -w;
 
-        *this;
+        return *this;
     }
 
     Vec4 &Vec4::operator+=(const Vec4 &other) {
