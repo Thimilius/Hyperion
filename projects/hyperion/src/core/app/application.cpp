@@ -17,7 +17,7 @@ namespace Hyperion {
         s_instance = this;
         m_starting_settings = settings;
 
-        Engine::Init(settings);
+        Engine::Setup(settings);
         
         HYP_ASSERT_MESSAGE(settings.time.max_delta_time > 0, "Max delta time must be greater than zero!");
         Time::s_max_delta_time = settings.time.max_delta_time;
@@ -34,7 +34,7 @@ namespace Hyperion {
     u32 Application::Run() {
         m_running = true;
 
-        Engine::Setup(m_starting_settings);
+        Engine::Init(m_starting_settings);
         OnInit();
         m_window->Show();
 

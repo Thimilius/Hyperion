@@ -61,13 +61,19 @@ namespace Hyperion {
 
     class WorldManager {
     private:
-        // FIXME: This is probably not the right way to force a default active world
-        inline static World *s_active_world = new World();
+        inline static World *s_active_world;
 
-        inline static Vector<World *> s_worlds = { s_active_world };
+        inline static Vector<World *> s_worlds;
     public:
         inline static World *GetActiveWorld() { return s_active_world; }
         inline static void SetActiveWorld(World *world) { s_active_world = world; }
+
+        inline static World *CreateWorld() {
+            World *world = new World();
+            s_worlds.push_back(world);
+            return world;
+        }
+        // TODO: Add ability to destroy world
     private:
         WorldManager() = delete;
         ~WorldManager() = delete;

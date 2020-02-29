@@ -8,6 +8,8 @@
 
 namespace Hyperion {
 
+    class World;
+
     struct TimeSettings {
         f32 max_delta_time = 0.15f;
     };
@@ -29,12 +31,18 @@ namespace Hyperion {
         Audio::AudioBackend backend = Audio::AudioBackend::FMod;
     };
 
+    struct EntitySettings {
+        // FIXME: An actual world pointer is probably not the right way to determine the starting world
+        World *start_world = nullptr;
+    };
+
     struct ApplicationSettings {
         TimeSettings time;
         WindowSettings window;
         AssetSettings assets;
         RenderSettings render;
         AudioSettings audio;
+        EntitySettings entity;
     };
 
 }

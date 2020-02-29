@@ -12,7 +12,7 @@
 
 namespace Hyperion {
     
-    void Engine::Init(const ApplicationSettings &settings) {
+    void Engine::Setup(const ApplicationSettings &settings) {
         // We initialize the operating system first to get logging ability
         OperatingSystem::GetInstance()->Init();
 
@@ -28,7 +28,7 @@ namespace Hyperion {
         HYP_LOG_INFO("Engine", "Primary display: {}x{} @{} Hz", mode_info.width, mode_info.height, mode_info.refresh_rate);
     }
 
-    void Engine::Setup(const ApplicationSettings &settings) {
+    void Engine::Init(const ApplicationSettings &settings) {
         Rendering::RenderEngine::Init(settings.render.backend);
 
         AssetLibrary::Init(settings.assets);
@@ -40,6 +40,13 @@ namespace Hyperion {
         Audio::AudioEngine::Init(settings.audio.backend);
 
         Editor::EditorEngine::Init();
+
+        World *world = settings.entity.start_world;
+        if (!world) {
+            // NOTE: We are currently forcing a new world
+            world = WorldManager::CreateWorld();
+        }
+        WorldManager::SetActiveWorld(world);
     }
 
     void Engine::Update(f32 delta_time) {

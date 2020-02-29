@@ -22,8 +22,8 @@ namespace Hyperion {
         Engine() = delete;
         ~Engine() = delete;
 
-        static void Init(const ApplicationSettings &settings);
         static void Setup(const ApplicationSettings &settings);
+        static void Init(const ApplicationSettings &settings);
         static void Update(f32 delta_time);
         static void LateUpdate();
         static void Render();
