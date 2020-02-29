@@ -9,21 +9,18 @@ namespace Hyperion {
     class MeshRendererComponent;
     class LightComponent;
 
-    class WorldEnvironment {
-    private:
-        Ref<Rendering::TextureCubemap> m_skybox;
+    enum class WorldEnvironmentBackgroundMode {
+        Color,
+        Skybox
+    };
 
-        f32 m_ambient_light_intensity = 0.2f;
-        Color m_ambient_light_color = Color::White();
-    public:
-        inline f32 GetAmbientLightIntensity() const { return m_ambient_light_intensity; }
-        inline void SetAmbientLightIntensity(f32 ambient_light_intensity) { m_ambient_light_intensity = ambient_light_intensity; }
+    struct WorldEnvironment {
+        WorldEnvironmentBackgroundMode background_mode = WorldEnvironmentBackgroundMode::Color;
+        Color background_color = Color::Black();
+        Ref<Rendering::TextureCubemap> background_skybox;
 
-        inline Color GetAmbientLightColor() const { return m_ambient_light_color; }
-        inline void SetAmbientLightColor(Color ambient_light_color) { m_ambient_light_color = ambient_light_color; }
-
-        inline Ref<Rendering::TextureCubemap> GetSkybox() const { return m_skybox; }
-        inline void SetSkybox(const Ref<Rendering::TextureCubemap> skybox) { m_skybox = skybox; }
+        f32 ambient_light_intensity = 0.2f;
+        Color ambient_light_color = Color::White();
     };
 
     class World {

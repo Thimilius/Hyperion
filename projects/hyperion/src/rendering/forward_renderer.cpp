@@ -35,6 +35,9 @@ namespace Hyperion::Rendering {
     }
 
     void ForwardRenderer::DrawWorld(World *world) {
+        WorldEnvironment environment = world->GetEnvironment();
+        RenderEngine::Clear(ClearMask::Color | ClearMask::Depth | ClearMask::Stencil, environment.background_color);
+        
         auto &renderers = world->GetMeshRenderers();
         for (MeshRendererComponent *renderer : renderers) {
             if (!renderer->IsEnabled()) {
@@ -45,9 +48,10 @@ namespace Hyperion::Rendering {
             DrawMesh(renderer->GetSharedMesh(), renderer->GetSharedMaterial(), transform->GetLocalToWorldMatrix(), transform->GetWorldToLocalMatrix());
         }
 
-        Ref<TextureCubemap> skybox = world->GetEnvironment().GetSkybox();
-        if (skybox != nullptr) {
-            DrawSkybox(skybox);
+        if (environment.background_mode == WorldEnvironmentBackgroundMode::Skybox) {
+            if (environment.background_skybox != nullptr) {
+                DrawSkybox(environment.background_skybox);
+            }
         }
     }
 
