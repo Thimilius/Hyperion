@@ -18,18 +18,13 @@ namespace Hyperion::Rendering {
         Map<ShaderType, String> sources;
         String source = m_source;
 
-        SkipWhitespace();
-        if (Peek() == '#') {
-            if (!HandleDirective(sources)) {
-                return result;
-            }
-        }
         while (!IsAtEnd()) {
-            char c = Peek();
-            if (c == '\n') {
-                Advance();
-
-                SkipWhitespace();
+            // Start of file counts as "new line"
+            if (Peek() == '\n' || m_position == 0) {
+                if (Peek() == '\n') {
+                    Advance();
+                }
+                SkipBlankspace();
 
                 if (Peek() == '#') {
                     if (!HandleDirective(sources)) {
@@ -69,9 +64,8 @@ namespace Hyperion::Rendering {
 
             // A new shader type starts
             {
-                SkipWhitespace();
+                SkipBlankspace();
                 String type_string = AdvanceUntilEndOfLine();
-                u64 directive_full_length = m_position - directive_start_position;
 
                 ShaderType shader_type = GetShaderTypeFromString(type_string);
                 if (shader_type == ShaderType::Unknown) {
@@ -83,7 +77,7 @@ namespace Hyperion::Rendering {
                 m_current_shader_type_directive_end = m_position;
             }
         } else if (std::memcmp("import", (void *)directive_type_start, 6) == 0) {
-            SkipWhitespace();
+            SkipBlankspace();
             String import_string = AdvanceUntilEndOfLine();
             u64 directive_full_length = m_position - directive_start_position;
 
@@ -139,7 +133,7 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void OpenGLShaderPreProcessor::SkipWhitespace() {
+    void OpenGLShaderPreProcessor::SkipBlankspace() {
         while (IsWhitespace(Peek()) && !IsAtEnd()) {
             Advance();
         }
@@ -154,7 +148,7 @@ namespace Hyperion::Rendering {
     }
 
     bool OpenGLShaderPreProcessor::IsWhitespace(char c) {
-        return c == ' ' || c == '\r' || c == '\r';
+        return c == ' ' || c == '\t' || c == '\r';
     }
 
     ShaderType OpenGLShaderPreProcessor::GetShaderTypeFromString(const String &string) {

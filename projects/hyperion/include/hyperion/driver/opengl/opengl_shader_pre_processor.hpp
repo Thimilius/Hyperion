@@ -35,7 +35,7 @@ namespace Hyperion::Rendering {
         char PeekNext();
 
         void SkipAlpha();
-        void SkipWhitespace();
+        void SkipBlankspace();
 
         bool IsAtEnd();
         bool IsAlpha(char c);
