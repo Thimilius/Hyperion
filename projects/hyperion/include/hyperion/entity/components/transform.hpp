@@ -1,13 +1,13 @@
 #pragma once
 
 #include "hyperion/entity/entity_message.hpp"
-#include "hyperion/entity/components/entity_component.hpp"
+#include "hyperion/entity/components/component.hpp"
 #include "hyperion/core/math/quaternion.hpp"
 
 namespace Hyperion {
 
-    class TransformComponent : public EntityComponent, EntityMessageListener {
-        HYP_OBJECT(TransformComponent, EntityComponent)
+    class Transform : public Component, EntityMessageListener {
+        HYP_OBJECT(Transform, Component)
     private:
         Vec3 m_local_position = Vec3::Zero();
         Quaternion m_local_rotation = Quaternion::Identity();
@@ -20,8 +20,8 @@ namespace Hyperion {
         Mat4 m_local_to_world_matrix = Mat4::Identity();
         Mat4 m_world_to_local_matrix = Mat4::Identity();
 
-        TransformComponent *m_parent = nullptr;
-        Vector<TransformComponent*> m_children;
+        Transform *m_parent = nullptr;
+        Vector<Transform*> m_children;
     public:
         inline Vec3 GetLocalPosition() const { return m_local_position; }
         inline void SetLocalPosition(const Vec3 &position) {
@@ -85,17 +85,17 @@ namespace Hyperion {
         inline Mat4 GetWorldToLocalMatrix() const { return m_world_to_local_matrix; }
 
         inline u32 GetChildCount() const { return (u32)m_children.size(); }
-        inline TransformComponent *GetChild(u32 index) { return m_children[index]; }
-        TransformComponent *GetRoot() const;
+        inline Transform *GetChild(u32 index) { return m_children[index]; }
+        Transform *GetRoot() const;
 
-        void SetParent(TransformComponent *parent);
+        void SetParent(Transform *parent);
 
         void OnMessage(EntityMessage message) override;
     protected:
         void OnCreate() override;
         void OnDestroy() override;
     private:
-        TransformComponent() : EntityComponent("TransformComponent") { }
+        Transform() : Component("Transform") { }
 
         void NotifyTransformChange();
         void RecalculateTransform();

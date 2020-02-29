@@ -4,8 +4,8 @@
 
 #include "hyperion/assets/asset_library.hpp"
 #include "hyperion/assets/mesh_factory.hpp"
-#include "hyperion/entity/components/transform_component.hpp"
-#include "hyperion/entity/components/mesh_renderer_component.hpp"
+#include "hyperion/entity/components/transform.hpp"
+#include "hyperion/entity/components/mesh_renderer.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -39,12 +39,12 @@ namespace Hyperion::Rendering {
         RenderEngine::Clear(ClearMask::Color | ClearMask::Depth | ClearMask::Stencil, environment.background_color);
         
         auto &renderers = world->GetMeshRenderers();
-        for (MeshRendererComponent *renderer : renderers) {
+        for (MeshRenderer *renderer : renderers) {
             if (!renderer->IsEnabled()) {
                 continue;
             }
 
-            TransformComponent *transform = renderer->GetTransform();
+            Transform *transform = renderer->GetTransform();
             DrawMesh(renderer->GetSharedMesh(), renderer->GetSharedMaterial(), transform->GetLocalToWorldMatrix(), transform->GetWorldToLocalMatrix());
         }
 
@@ -79,7 +79,7 @@ namespace Hyperion::Rendering {
 
         shader->SetMat4("u_transform.model", transform);
         shader->SetMat3("u_transform.model_normal", Mat3(inverse_transform.Transposed()));
-        shader->SetMat4("u_transform.mvp", s_state.transform.projection * s_state.transform.view * transform);
+        shader->SetMat4("u_transform.mvp", s_state.transform.view_projection * transform);
 
         shader->SetVec3("u_camera.position", s_state.camera->GetPosition());
     }

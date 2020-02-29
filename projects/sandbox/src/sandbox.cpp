@@ -16,10 +16,10 @@ protected:
         WorldManager::GetActiveWorld()->GetEnvironment().background_skybox = AssetLibrary::LoadTextureCubemap("skybox", "data/textures/galaxy", ".png");
 
         m_entity = Entity::CreatePrimitive(EntityPrimitive::Sphere);
-        Ref<Material> material = m_entity->GetComponent<MeshRendererComponent>()->GetSharedMaterial();
+        Ref<Material> material = m_entity->GetComponent<MeshRenderer>()->GetSharedMaterial();
         material->SetTexture2D("u_texture", AssetLibrary::GetTexture2D("earth"));
 
-        LightComponent *light = Entity::CreatePrimitive(EntityPrimitive::Light)->GetComponent<LightComponent>();
+        Light *light = Entity::CreatePrimitive(EntityPrimitive::Light)->GetComponent<Light>();
         material->SetColor("u_light.color", light->GetColor());
         material->SetFloat("u_light.radius", light->GetRange());
         material->SetFloat("u_light.intensity", light->GetIntensity());
@@ -34,8 +34,8 @@ protected:
         m_entity->GetTransform()->SetEulerAngles(rotation);
 
         if (Input::GetKeyDown(KeyCode::F)) {
-            bool enabled = m_entity->GetComponent<MeshRendererComponent>()->IsEnabled();
-            m_entity->GetComponent<MeshRendererComponent>()->SetEnabled(!enabled);
+            bool enabled = m_entity->GetComponent<MeshRenderer>()->IsEnabled();
+            m_entity->GetComponent<MeshRenderer>()->SetEnabled(!enabled);
         }
     }
 };

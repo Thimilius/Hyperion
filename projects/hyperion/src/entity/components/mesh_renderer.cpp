@@ -1,22 +1,22 @@
 #include "hyppch.hpp"
 
-#include "hyperion/entity/components/mesh_renderer_component.hpp"
+#include "hyperion/entity/components/mesh_renderer.hpp"
 
 #include "hyperion/entity/entity.hpp"
 #include "hyperion/entity/world.hpp"
 
 namespace Hyperion {
 
-    void MeshRendererComponent::OnCreate() {
+    void MeshRenderer::OnCreate() {
         GetEntity()->GetWorld()->AddMeshRenderer(this);
         
-        EntityComponent::OnCreate();
+        Component::OnCreate();
     }
 
-    void MeshRendererComponent::OnDestroy() {
+    void MeshRenderer::OnDestroy() {
         GetEntity()->GetWorld()->RemoveMeshRenderer(this);
 
-        EntityComponent::OnDestroy();
+        Component::OnDestroy();
     }
 
 }

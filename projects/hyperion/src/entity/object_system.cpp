@@ -3,7 +3,7 @@
 #include "hyperion/entity/object_system.hpp"
 
 #include "hyperion/entity/entity.hpp"
-#include "hyperion/entity/components/transform_component.hpp"
+#include "hyperion/entity/components/transform.hpp"
 
 namespace Hyperion {
 
@@ -19,7 +19,7 @@ namespace Hyperion {
     }
 
     void ObjectSystem::DestroyImmediate(Object *object) {
-        HYP_ASSERT_MESSAGE(object->GetType() != TransformComponent::GetStaticType(), "Destroying a transform component is not allowed");
+        HYP_ASSERT_MESSAGE(object->GetType() != Transform::GetStaticType(), "Destroying a transform component is not allowed");
 
         object->OnDestroy();
 

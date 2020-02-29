@@ -1,6 +1,6 @@
 #pragma once
 
-#include "hyperion/entity/components/behaviour_component.hpp"
+#include "hyperion/entity/components/behaviour.hpp"
 
 namespace Hyperion {
 
@@ -10,8 +10,8 @@ namespace Hyperion {
         Spot
     };
 
-    class LightComponent : public BehaviourComponent {
-        HYP_OBJECT(LightComponent, BehaviourComponent);
+    class Light : public Behaviour {
+        HYP_OBJECT(Light, Behaviour);
     private:
         LightType m_type = LightType::Point;
 
@@ -23,7 +23,7 @@ namespace Hyperion {
         f32 m_inner_spot_radius = 1.0f;
         f32 m_outer_spot_radius = 1.0f;
     public:
-        LightComponent() : BehaviourComponent("LightComponent") { }
+        Light() : Behaviour("Light") { }
 
         inline void SetLightType(LightType type) { m_type = type; }
         inline LightType GetLightType() const { return m_type; }

@@ -39,10 +39,10 @@
 #include "hyperion/entity/world.hpp"
 #include "hyperion/entity/entity.hpp"
 #include "hyperion/entity/entity_message.hpp"
-#include "hyperion/entity/components/entity_component.hpp"
-#include "hyperion/entity/components/transform_component.hpp"
-#include "hyperion/entity/components/mesh_renderer_component.hpp"
-#include "hyperion/entity/components/light_component.hpp"
+#include "hyperion/entity/components/component.hpp"
+#include "hyperion/entity/components/transform.hpp"
+#include "hyperion/entity/components/mesh_renderer.hpp"
+#include "hyperion/entity/components/light.hpp"
 
 // Rendering
 #include "hyperion/rendering/shader.hpp"

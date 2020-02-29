@@ -1,21 +1,21 @@
 #include "hyppch.hpp"
 
-#include "hyperion/entity/components/transform_component.hpp"
+#include "hyperion/entity/components/transform.hpp"
 
 #include "hyperion/entity/entity.hpp"
 #include "hyperion/entity/world.hpp"
 
 namespace Hyperion {
 
-    TransformComponent *TransformComponent::GetRoot() const {
-        TransformComponent *parent = m_parent ? m_parent : (TransformComponent *)this;
+    Transform *Transform::GetRoot() const {
+        Transform *parent = m_parent ? m_parent : (Transform *)this;
         while (parent->m_parent != nullptr) {
             parent = parent->m_parent;
         }
         return parent;
     }
 
-    void TransformComponent::SetParent(TransformComponent *parent) {
+    void Transform::SetParent(Transform *parent) {
         if (m_parent == parent) {
             return;
         }
@@ -40,21 +40,21 @@ namespace Hyperion {
         NotifyTransformChange();
     }
 
-    void TransformComponent::OnMessage(EntityMessage message) {
+    void Transform::OnMessage(EntityMessage message) {
         if (message.type == EntityMessageType::TransformChanged) {
             RecalculateTransform();
 
-            for (TransformComponent *child : m_children) {
+            for (Transform *child : m_children) {
                 child->NotifyTransformChange();
             }
         }
     }
 
-    void TransformComponent::NotifyTransformChange() {
+    void Transform::NotifyTransformChange() {
         GetEntity()->OnMessage({ EntityMessageType::TransformChanged, nullptr });
     }
 
-    void TransformComponent::RecalculateTransform() {
+    void Transform::RecalculateTransform() {
         if (m_parent) {
             m_derived_rotation = m_parent->m_derived_rotation * m_local_rotation;
             m_derived_scale = m_parent->m_derived_scale * m_local_scale;
@@ -71,11 +71,11 @@ namespace Hyperion {
         m_world_to_local_matrix = m_local_to_world_matrix.Inverted();
     }
 
-    void TransformComponent::OnCreate() {
+    void Transform::OnCreate() {
         GetEntity()->RegisterMessageListener(this);
     }
 
-    void TransformComponent::OnDestroy() {
+    void Transform::OnDestroy() {
         Entity *entity = GetEntity();
         entity->UnregisterMessageListener(this);
 

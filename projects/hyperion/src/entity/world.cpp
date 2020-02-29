@@ -16,11 +16,11 @@ namespace Hyperion {
         }
     }
 
-    void World::AddMeshRenderer(MeshRendererComponent *mesh_renderer) {
+    void World::AddMeshRenderer(MeshRenderer *mesh_renderer) {
         m_mesh_renderers.push_back(mesh_renderer);
     }
 
-    void World::RemoveMeshRenderer(MeshRendererComponent *mesh_renderer) {
+    void World::RemoveMeshRenderer(MeshRenderer *mesh_renderer) {
         auto begin = m_mesh_renderers.begin();
         auto end = m_mesh_renderers.end();
         if (std::find(begin, end, mesh_renderer) != end) {
@@ -28,11 +28,11 @@ namespace Hyperion {
         }
     }
 
-    void World::AddLight(LightComponent *light) {
+    void World::AddLight(Light *light) {
         m_lights.push_back(light);
     }
 
-    void World::RemoveLight(LightComponent *light) {
+    void World::RemoveLight(Light *light) {
         auto begin = m_lights.begin();
         auto end = m_lights.end();
         if (std::find(begin, end, light) != end) {

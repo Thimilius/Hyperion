@@ -3,8 +3,8 @@
 #include "hyperion/entity/entity.hpp"
 
 #include "hyperion/entity/world.hpp"
-#include "hyperion/entity/components/mesh_renderer_component.hpp"
-#include "hyperion/entity/components/light_component.hpp"
+#include "hyperion/entity/components/mesh_renderer.hpp"
+#include "hyperion/entity/components/light.hpp"
 #include "hyperion/assets/asset_library.hpp"
 
 namespace Hyperion {
@@ -12,7 +12,7 @@ namespace Hyperion {
     void Entity::OnMessage(EntityMessage message) {
         switch (message.type) {
             case EntityMessageType::ComponentDestroyed: {
-                EntityComponent *component = (EntityComponent *)message.parameter;
+                Component *component = (Component *)message.parameter;
                 m_components.erase(component->GetType());
                 break;
             }
@@ -35,7 +35,7 @@ namespace Hyperion {
         }
     }
 
-    Entity *Entity::Create(const String &name, Vec3 position, Quaternion rotation, TransformComponent *parent) {
+    Entity *Entity::Create(const String &name, Vec3 position, Quaternion rotation, Transform *parent) {
         Entity *entity = new Entity(name);
         entity->OnCreate(position, rotation, parent);
         return entity;
@@ -45,7 +45,7 @@ namespace Hyperion {
         Entity *entity = Create(GetPrimitiveName(primitive));
         
         if (primitive == EntityPrimitive::Sphere || primitive == EntityPrimitive::Cube || primitive == EntityPrimitive::Plane) {
-            MeshRendererComponent *renderer = entity->AddComponent<MeshRendererComponent>();
+            MeshRenderer *renderer = entity->AddComponent<MeshRenderer>();
             Ref<Rendering::Mesh> mesh;
             switch (primitive) {
                 case EntityPrimitive::Sphere: mesh = AssetLibrary::GetMeshPrimitive(MeshPrimitive::Sphere); break; 
@@ -56,7 +56,7 @@ namespace Hyperion {
             renderer->SetSharedMesh(mesh);
             renderer->SetSharedMaterial(Rendering::Material::Create(AssetLibrary::GetShader("standard")));
         } else if (primitive == EntityPrimitive::Light) {
-            entity->AddComponent<LightComponent>();
+            entity->AddComponent<Light>();
         }
 
         return entity;
@@ -64,8 +64,8 @@ namespace Hyperion {
 
     void Entity::OnDestroy() {
         for (auto it = m_components.begin(); it != m_components.end(); ) {
-            if (it->first != TransformComponent::GetStaticType()) {
-                EntityComponent *component = it->second;
+            if (it->first != Transform::GetStaticType()) {
+                Component *component = it->second;
                 it = m_components.erase(it);
                 DestroyImmediate(component);
             } else {
@@ -88,10 +88,10 @@ namespace Hyperion {
         }
     }
 
-    void Entity::OnCreate(Vec3 position, Quaternion rotation, TransformComponent *parent) {
+    void Entity::OnCreate(Vec3 position, Quaternion rotation, Transform *parent) {
         m_world = WorldManager::GetActiveWorld();
 
-        m_components[TransformComponent::GetStaticType()] = &m_transform;
+        m_components[Transform::GetStaticType()] = &m_transform;
         m_transform.m_entity = this;
         m_transform.OnCreate();
         m_transform.SetLocalPosition(position);

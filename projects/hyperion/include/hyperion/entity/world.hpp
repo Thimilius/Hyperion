@@ -6,8 +6,8 @@ namespace Hyperion {
         class TextureCubemap;
     }
     class Entity;
-    class MeshRendererComponent;
-    class LightComponent;
+    class MeshRenderer;
+    class Light;
 
     enum class WorldEnvironmentBackgroundMode {
         Color,
@@ -28,14 +28,14 @@ namespace Hyperion {
         WorldEnvironment m_environment;
 
         Vector<Entity *> m_root_entities;
-        Vector<MeshRendererComponent *> m_mesh_renderers;
-        Vector<LightComponent *> m_lights;
+        Vector<MeshRenderer *> m_mesh_renderers;
+        Vector<Light *> m_lights;
     public:
         inline WorldEnvironment &GetEnvironment() { return m_environment; }
 
         inline const Vector<Entity *> &GetRootEntites() const { return m_root_entities; }
-        inline const Vector<MeshRendererComponent *> GetMeshRenderers() const { return m_mesh_renderers; }
-        inline const Vector<LightComponent *> GetLights() const { return m_lights; }
+        inline const Vector<MeshRenderer *> GetMeshRenderers() const { return m_mesh_renderers; }
+        inline const Vector<Light *> GetLights() const { return m_lights; }
     private:
         World() = default;
         ~World() = default;
@@ -43,17 +43,17 @@ namespace Hyperion {
         void AddRootEntity(Entity *entity);
         void RemoveRootEntity(Entity *entity);
 
-        void AddMeshRenderer(MeshRendererComponent *mesh_renderer);
-        void RemoveMeshRenderer(MeshRendererComponent *mesh_renderer);
+        void AddMeshRenderer(MeshRenderer *mesh_renderer);
+        void RemoveMeshRenderer(MeshRenderer *mesh_renderer);
 
-        void AddLight(LightComponent *light);
-        void RemoveLight(LightComponent *light);
+        void AddLight(Light *light);
+        void RemoveLight(Light *light);
 
         friend class Entity;
         friend class WorldManager;
-        friend class TransformComponent;
-        friend class MeshRendererComponent;
-        friend class LightComponent;
+        friend class Transform;
+        friend class MeshRenderer;
+        friend class Light;
     };
 
     class WorldManager {

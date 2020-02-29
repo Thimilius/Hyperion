@@ -4,7 +4,7 @@
 #include <typeindex>
 
 #include "hyperion/entity/entity_message.hpp"
-#include "hyperion/entity/components/transform_component.hpp"
+#include "hyperion/entity/components/transform.hpp"
 
 namespace Hyperion {
 
@@ -24,8 +24,8 @@ namespace Hyperion {
     class Entity : public Object, public EntityMessageListener {
         HYP_OBJECT(Entity, Object);
     private:
-        TransformComponent m_transform;
-        Map<ObjectType, EntityComponent *> m_components;
+        Transform m_transform;
+        Map<ObjectType, Component *> m_components;
         
         World *m_world = nullptr;
         Set<EntityTag> m_tags;
@@ -33,22 +33,22 @@ namespace Hyperion {
         Vector<EntityMessageListener *> m_message_listeners;
     public:
         inline World *GetWorld() const { return m_world; }
-        inline TransformComponent *GetTransform() { return &m_transform; }
+        inline Transform *GetTransform() { return &m_transform; }
 
         void OnMessage(EntityMessage message) override;
 
         template<typename T>
         T *AddComponent() {
-            static_assert(std::is_base_of<EntityComponent, T>::value, "Template parameter must derive from EntityComponent");
-            static_assert(!std::is_same<EntityComponent, T>::value, "Template parameter must derive from EntityComponent");
-            static_assert(!std::is_base_of<TransformComponent, T>::value, "Can not add an additional TransformComponent");
+            static_assert(std::is_base_of<Component, T>::value, "Template parameter must derive from EntityComponent");
+            static_assert(!std::is_same<Component, T>::value, "Template parameter must derive from EntityComponent");
+            static_assert(!std::is_base_of<Transform, T>::value, "Can not add an additional TransformComponent");
 
             ObjectType type = T::GetStaticType();
             HYP_ASSERT_MESSAGE(m_components.find(type) == m_components.end(), "Failed to add component because a component with the same type already exists!");
 
             T *component = new T();
 
-            EntityComponent *entity_component = component;
+            Component *entity_component = component;
             entity_component->m_entity = this;
             m_components[type] = entity_component;
 
@@ -59,7 +59,7 @@ namespace Hyperion {
 
         template<typename T>
         T *GetComponent() const {
-            static_assert(std::is_base_of<EntityComponent, T>::value, "Template parameter must derive from EntityComponent");
+            static_assert(std::is_base_of<Component, T>::value, "Template parameter must derive from EntityComponent");
 
             ObjectType type = T::GetStaticType();
             auto iterator = m_components.find(type);
@@ -72,7 +72,7 @@ namespace Hyperion {
 
         template<typename T>
         T *GetComponentInChildren() const {
-            static_assert(std::is_base_of<EntityComponent, T>::value, "Template parameter must derive from EntityComponent");
+            static_assert(std::is_base_of<Component, T>::value, "Template parameter must derive from EntityComponent");
 
             ObjectType type = T::GetStaticType();
             T *component = nullptr;
@@ -81,7 +81,7 @@ namespace Hyperion {
             if (iterator != m_components.end()) {
                 component = (T *)iterator->second;
             } else {
-                for (TransformComponent *child : m_transform.m_children) {
+                for (Transform *child : m_transform.m_children) {
                     component = child->GetEntity()->GetComponentInChildren<T>();
                     if (component) break;
                 }
@@ -92,7 +92,7 @@ namespace Hyperion {
 
         template<typename T>
         T *GetComponentInParent() const {
-            static_assert(std::is_base_of<EntityComponent, T>::value, "Template parameter must derive from EntityComponent");
+            static_assert(std::is_base_of<Component, T>::value, "Template parameter must derive from EntityComponent");
 
             ObjectType type = T::GetStaticType();
             T *component = nullptr;
@@ -101,7 +101,7 @@ namespace Hyperion {
             if (iterator != m_components.end()) {
                 component = (T *)iterator->second;
             } else {
-                TransformComponent *parent = m_transform.m_parent;
+                Transform *parent = m_transform.m_parent;
                 while (parent != nullptr) {
                     auto &parent_components = parent->GetEntity()->m_components;
                     iterator = parent_components.find(type);
@@ -119,7 +119,7 @@ namespace Hyperion {
 
         template<typename T>
         Vector<T *> GetComponentsInChildren() const {
-            static_assert(std::is_base_of<EntityComponent, T>::value, "Template parameter must derive from EntityComponent");
+            static_assert(std::is_base_of<Component, T>::value, "Template parameter must derive from EntityComponent");
 
             ObjectType type = T::GetStaticType();
             Vector<T *> components;
@@ -128,7 +128,7 @@ namespace Hyperion {
             if (iterator != m_components.end()) {
                 components.push_back((T *)iterator->second);
             }
-            for (TransformComponent *child : m_transform.m_children) {
+            for (Transform *child : m_transform.m_children) {
                 Vector<T *> child_components = child->GetEntity()->GetComponentsInChildren<T>();
                 components.insert(components.end(), child_components.begin(), child_components.end());
             }
@@ -138,7 +138,7 @@ namespace Hyperion {
 
         template<typename T>
         Vector<T *> GetComponentsInParent() const {
-            static_assert(std::is_base_of<EntityComponent, T>::value, "Template parameter must derive from EntityComponent");
+            static_assert(std::is_base_of<Component, T>::value, "Template parameter must derive from EntityComponent");
 
             ObjectType type = T::GetStaticType();
             Vector<T *> components;
@@ -147,7 +147,7 @@ namespace Hyperion {
             if (iterator != m_components.end()) {
                 components.push_back((T *)iterator->second);
             }
-            TransformComponent *parent = m_transform.m_parent;
+            Transform *parent = m_transform.m_parent;
             while (parent != nullptr) {
                 auto &parent_components = parent->GetEntity()->m_components;
                 iterator = parent_components.find(type);
@@ -169,7 +169,7 @@ namespace Hyperion {
         void RegisterMessageListener(EntityMessageListener *listener);
         void UnregisterMessageListener(EntityMessageListener *listener);
 
-        static Entity *Create(const String &name = "New Entity", Vec3 position = Vec3::Zero(), Quaternion rotation = Quaternion::Identity(), TransformComponent *parent = nullptr);
+        static Entity *Create(const String &name = "New Entity", Vec3 position = Vec3::Zero(), Quaternion rotation = Quaternion::Identity(), Transform *parent = nullptr);
         static Entity *CreatePrimitive(EntityPrimitive primitive);
     protected:
         void OnDestroy() override;
@@ -177,12 +177,12 @@ namespace Hyperion {
         Entity(const String &name) : Object(name) { }
         ~Entity() = default;
 
-        void OnCreate(Vec3 position, Quaternion rotation, TransformComponent *parent);
+        void OnCreate(Vec3 position, Quaternion rotation, Transform *parent);
 
         static String GetPrimitiveName(EntityPrimitive primitive);
 
         friend class Object;
-        friend class EntityComponent;
+        friend class Component;
     };
 
 }
