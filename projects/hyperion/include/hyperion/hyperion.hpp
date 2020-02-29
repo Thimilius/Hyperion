@@ -55,7 +55,6 @@
 #include "hyperion/rendering/render_texture.hpp"
 #include "hyperion/rendering/camera.hpp"
 #include "hyperion/rendering/layer.hpp"
-#include "hyperion/rendering/light.hpp"
 
 // Assets
 #include "hyperion/assets/asset.hpp"

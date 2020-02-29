@@ -21,8 +21,8 @@ namespace Hyperion::Rendering {
         glClear(GetGLClearMask(mask));
     }
 
-    void OpenGLRenderDriver::Clear(ClearMask mask, Color color) {
-        glClearColor(color.r, color.g, color.b, color.a);
+    void OpenGLRenderDriver::Clear(ClearMask mask, Color m_color) {
+        glClearColor(m_color.r, m_color.g, m_color.b, m_color.a);
         glClear(GetGLClearMask(mask));
     }
 

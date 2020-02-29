@@ -11,7 +11,7 @@ namespace Hyperion::Rendering {
         String GetShaderExtension() const override { return ".glsl"; }
 
         void Clear(ClearMask mask) override;
-        void Clear(ClearMask mask, Color color) override;
+        void Clear(ClearMask mask, Color m_color) override;
 
         void SetViewport(s32 x, s32 y, s32 width, s32 height) override;
         

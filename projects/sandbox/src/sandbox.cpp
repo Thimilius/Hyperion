@@ -19,10 +19,10 @@ protected:
         Ref<Material> material = m_entity->GetComponent<MeshRendererComponent>()->GetSharedMaterial();
         material->SetTexture2D("u_texture", AssetLibrary::GetTexture2D("earth"));
 
-        Light light = Entity::CreatePrimitive(EntityPrimitive::Light)->GetComponent<LightComponent>()->GetLight();
-        material->SetColor("u_light.color", light.color);
-        material->SetFloat("u_light.radius", light.range);
-        material->SetFloat("u_light.intensity", light.intensity);
+        LightComponent *light = Entity::CreatePrimitive(EntityPrimitive::Light)->GetComponent<LightComponent>();
+        material->SetColor("u_light.color", light->GetColor());
+        material->SetFloat("u_light.radius", light->GetRange());
+        material->SetFloat("u_light.intensity", light->GetIntensity());
         material->SetVec3("u_light.position", Vec3(1, 2, 2));
     }
 

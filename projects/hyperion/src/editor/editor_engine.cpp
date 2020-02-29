@@ -80,17 +80,17 @@ namespace Hyperion::Editor {
             if (x == 0) continue; // Skip center line
 
             f32 from_point = (f32)x;
-            Color color = (x % 10) == 0 ? special_grid_color : default_grid_color;
-            verticies[index++] = { Vec3(from_point, 0, to_point), color };
-            verticies[index++] = { Vec3(from_point, 0, -to_point), color };
+            Color m_color = (x % 10) == 0 ? special_grid_color : default_grid_color;
+            verticies[index++] = { Vec3(from_point, 0, to_point), m_color };
+            verticies[index++] = { Vec3(from_point, 0, -to_point), m_color };
         }
         for (s32 z = -half_grid_size; z <= half_grid_size; z++) {
             if (z == 0) continue; // Skip center line
 
             f32 from_point = (f32)z;
-            Color color = (z % 10) == 0 ? special_grid_color : default_grid_color;
-            verticies[index++] = { Vec3(to_point, 0, from_point), color };
-            verticies[index++] = { Vec3(-to_point, 0, from_point), color };
+            Color m_color = (z % 10) == 0 ? special_grid_color : default_grid_color;
+            verticies[index++] = { Vec3(to_point, 0, from_point), m_color };
+            verticies[index++] = { Vec3(-to_point, 0, from_point), m_color };
         }
 
         // Axis lines
