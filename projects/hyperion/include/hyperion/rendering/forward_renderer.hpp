@@ -11,7 +11,7 @@
 
 namespace Hyperion::Rendering {
 
-    class Renderer {
+    class ForwardRenderer {
     private:
         struct State {
             struct {
@@ -39,8 +39,8 @@ namespace Hyperion::Rendering {
         static void DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform, const Mat4 &inverse_transform);
         static void End();
     private:
-        Renderer() = delete;
-        ~Renderer() = delete;
+        ForwardRenderer() = delete;
+        ~ForwardRenderer() = delete;
 
         static void Init();
 

@@ -45,10 +45,6 @@
 #include "hyperion/entity/components/light_component.hpp"
 
 // Rendering
-#include "hyperion/rendering/graphics_context.hpp"
-#include "hyperion/rendering/render_engine.hpp"
-#include "hyperion/rendering/renderer.hpp"
-#include "hyperion/rendering/immediate_renderer.hpp"
 #include "hyperion/rendering/shader.hpp"
 #include "hyperion/rendering/material.hpp"
 #include "hyperion/rendering/texture.hpp"

@@ -6,7 +6,7 @@
 #include "hyperion/entity/object_system.hpp"
 #include "hyperion/assets/asset_library.hpp"
 #include "hyperion/audio/audio_engine.hpp"
-#include "hyperion/rendering/renderer.hpp"
+#include "hyperion/rendering/forward_renderer.hpp"
 #include "hyperion/rendering/immediate_renderer.hpp"
 #include "hyperion/editor/editor_engine.hpp"
 
@@ -33,7 +33,7 @@ namespace Hyperion {
 
         AssetLibrary::Init(settings.assets);
 
-        Rendering::Renderer::Init();
+        Rendering::ForwardRenderer::Init();
         Rendering::ImmediateRenderer::Init();
         s_render_pipeline.reset(GetRenderPipeline(settings.render));
 

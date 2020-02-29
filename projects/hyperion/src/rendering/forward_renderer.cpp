@@ -1,6 +1,6 @@
 #include "hyppch.hpp"
 
-#include "hyperion/rendering/renderer.hpp"
+#include "hyperion/rendering/forward_renderer.hpp"
 
 #include "hyperion/assets/asset_library.hpp"
 #include "hyperion/assets/mesh_factory.hpp"
@@ -9,7 +9,7 @@
 
 namespace Hyperion::Rendering {
 
-    void Renderer::Begin(const Ref<Camera> &camera) {
+    void ForwardRenderer::Begin(const Ref<Camera> &camera) {
         s_state.transform.view = camera->GetViewMatrix();
         s_state.transform.projection = camera->GetProjectionMatrix();
         s_state.transform.view_projection = camera->GetViewProjectionMatrix();
@@ -17,7 +17,7 @@ namespace Hyperion::Rendering {
         s_state.camera = camera;
     }
 
-    void Renderer::DrawSkybox(const Ref<TextureCubemap> &skybox) {
+    void ForwardRenderer::DrawSkybox(const Ref<TextureCubemap> &skybox) {
         bool culling_enabled = RenderEngine::GetRasterizerState()->IsCullingEnabled();
         RenderEngine::GetRasterizerState()->SetCullingEnabled(false);
         DepthEquation depth_equation = RenderEngine::GetRasterizerState()->GetDepthEquation();
@@ -34,7 +34,7 @@ namespace Hyperion::Rendering {
         RenderEngine::GetRasterizerState()->SetCullingEnabled(culling_enabled);
     }
 
-    void Renderer::DrawWorld(World *world) {
+    void ForwardRenderer::DrawWorld(World *world) {
         auto &renderers = world->GetMeshRenderers();
         for (MeshRendererComponent *renderer : renderers) {
             if (!renderer->IsEnabled()) {
@@ -51,26 +51,26 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void Renderer::DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform) {
+    void ForwardRenderer::DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform) {
         DrawMesh(mesh, material, transform, transform.Inverted());
     }
 
-    void Renderer::DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform, const Mat4 &inverse_transform) {
+    void ForwardRenderer::DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform, const Mat4 &inverse_transform) {
         PrepareShader(material->GetShader(), transform, inverse_transform);
         material->Bind();
         DrawCall(mesh);
     }
 
-    void Renderer::End() {
+    void ForwardRenderer::End() {
         
     }
 
-    void Renderer::Init() {
+    void ForwardRenderer::Init() {
         s_skybox.shader = AssetLibrary::GetShader("standard_skybox");
         s_skybox.mesh = MeshFactory::CreateCube(1);
     }
 
-    void Renderer::PrepareShader(const Ref<Shader> &shader, const Mat4 &transform, const Mat4 &inverse_transform) {
+    void ForwardRenderer::PrepareShader(const Ref<Shader> &shader, const Mat4 &transform, const Mat4 &inverse_transform) {
         shader->Bind();
 
         shader->SetMat4("u_transform.model", transform);
@@ -80,7 +80,7 @@ namespace Hyperion::Rendering {
         shader->SetVec3("u_camera.position", s_state.camera->GetPosition());
     }
 
-    void Renderer::DrawCall(const Ref<Mesh> &mesh) {
+    void ForwardRenderer::DrawCall(const Ref<Mesh> &mesh) {
         const Ref<VertexArray> &vertex_array = mesh->GetVertexArray();
         vertex_array->Bind();
 

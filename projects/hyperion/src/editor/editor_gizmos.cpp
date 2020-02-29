@@ -2,7 +2,7 @@
 
 #include "hyperion/editor/editor_gizmos.hpp"
 
-#include "hyperion/rendering/renderer.hpp"
+#include "hyperion/rendering/forward_renderer.hpp"
 #include "hyperion/assets/asset_library.hpp"
 #include "hyperion/assets/mesh_factory.hpp"
 
@@ -16,7 +16,7 @@ namespace Hyperion::Editor {
     }
 
     void EditorGizmos::Render(const Ref<Camera> &camera) {
-        Renderer::Begin(camera);
+        ForwardRenderer::Begin(camera);
         {
             // Scale the gizmos in a way so that they appear at same size
             // no matter the distance and fov of the camera
@@ -26,15 +26,15 @@ namespace Hyperion::Editor {
 
             // X gizmo
             m_material->SetVec3("u_color", Vec3(1, 0, 0));
-            Renderer::DrawMesh(m_mesh, m_material, scale * Mat4::Rotate(Vec3(0, 0, 1), -90.0f));
+            ForwardRenderer::DrawMesh(m_mesh, m_material, scale * Mat4::Rotate(Vec3(0, 0, 1), -90.0f));
             // Y gizmo
             m_material->SetVec3("u_color", Vec3(0, 1, 0));
-            Renderer::DrawMesh(m_mesh, m_material, scale * Mat4::Identity());
+            ForwardRenderer::DrawMesh(m_mesh, m_material, scale * Mat4::Identity());
             // Z gizmo
             m_material->SetVec3("u_color", Vec3(0, 0, 1));
-            Renderer::DrawMesh(m_mesh, m_material, scale * Mat4::Rotate(Vec3(1, 0, 0), 90.0f));
+            ForwardRenderer::DrawMesh(m_mesh, m_material, scale * Mat4::Rotate(Vec3(1, 0, 0), 90.0f));
         }
-        Renderer::End();
+        ForwardRenderer::End();
     }
 
 }
