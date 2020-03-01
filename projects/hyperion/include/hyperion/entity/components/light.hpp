@@ -27,7 +27,7 @@ namespace Hyperion {
 
         inline void SetLightType(LightType type) { m_type = type; }
         inline LightType GetLightType() const { return m_type; }
-        inline void SetIntensity(f32 intensity) { m_intensity = intensity; }
+        inline void SetIntensity(f32 intensity) { m_intensity = Math::Max(intensity, 0.0f); }
         inline f32 GetIntensity() const { return m_intensity; }
         inline void SetColor(Color color) { m_color = color; }
         inline Color GetColor() const { return m_color; }
