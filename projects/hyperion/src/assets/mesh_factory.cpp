@@ -10,6 +10,44 @@ namespace Hyperion {
 
     Scope<MeshLoader> MeshFactory::s_mesh_loader = std::make_unique<AssimpMeshLoader>();
 
+
+    Ref<Rendering::Mesh> MeshFactory::CreateQuad(f32 width, f32 height) {
+        f32 half_width = width / 2.0f;
+        f32 half_height = height / 2.0f;
+
+        // The quad should face back
+        Vec3 normal = Vec3::Back();
+
+        MeshData mesh_data;
+        mesh_data.positions.resize(4);
+        mesh_data.normals.resize(4);
+        mesh_data.uvs.resize(4);
+        mesh_data.indicies.resize(6);
+
+        mesh_data.positions[0] = Vec3(half_width, half_height, 0);
+        mesh_data.normals[0] = normal;
+        mesh_data.uvs[0] = Vec2(1.0f, 1.0f);
+
+        mesh_data.positions[1] = Vec3(half_width, -half_height, 0);
+        mesh_data.normals[1] = normal;
+        mesh_data.uvs[1] = Vec2(1.0f, 0.0f);
+
+        mesh_data.positions[2] = Vec3(-half_width, -half_height, 0);
+        mesh_data.normals[2] = normal;
+        mesh_data.uvs[2] = Vec2(0.0f, 0.0f);
+
+        mesh_data.normals[3] = normal;
+        mesh_data.uvs[3] = Vec2(0.0f, 1.0f);
+        mesh_data.positions[3] = Vec3(-half_width, half_height, 0);
+
+        mesh_data.indicies = {
+            0, 1, 2,
+            0, 2, 3
+        };
+
+        return Mesh::Create(mesh_data, { { MeshTopology::Triangles, 6, 0, 0 } });
+    }
+
     Ref<Mesh> MeshFactory::CreatePlane(f32 width, f32 height) {
         f32 half_width = width / 2.0f;
         f32 half_height = height / 2.0f;
@@ -17,13 +55,13 @@ namespace Hyperion {
         // The plane should face up
         Vec3 normal = Vec3::Up();
 
-        // Remember that we are right-handed and therefore -z is into the screen!
-
         MeshData mesh_data;
         mesh_data.positions.resize(4);
         mesh_data.normals.resize(4);
         mesh_data.uvs.resize(4);
         mesh_data.indicies.resize(6);
+
+        // Remember that we are right-handed and therefore -z is into the screen!
 
         mesh_data.positions[0] = Vec3(-half_width, 0, half_height);
         mesh_data.normals[0] = normal;

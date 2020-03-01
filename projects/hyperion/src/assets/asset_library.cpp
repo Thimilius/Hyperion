@@ -101,9 +101,10 @@ namespace Hyperion {
 
     Ref<Mesh> AssetLibrary::GetMeshPrimitive(MeshPrimitive mesh_primitive) {
         switch (mesh_primitive) {
-            case MeshPrimitive::Sphere: return s_mesh_primitive_sphere;
-            case MeshPrimitive::Cube: return s_mesh_primitive_cube;
-            case MeshPrimitive::Plane: return s_mesh_primitive_plane;
+            case MeshPrimitive::Quad: return s_mesh_primitives.quad;
+            case MeshPrimitive::Plane: return s_mesh_primitives.plane;
+            case MeshPrimitive::Cube: return s_mesh_primitives.cube;
+            case MeshPrimitive::Sphere: return s_mesh_primitives.sphere;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }
@@ -205,10 +206,10 @@ namespace Hyperion {
     }
 
     void AssetLibrary::InitMeshPrimitives() {
-        // TODO: Procedurally create sphere
-        s_mesh_primitive_sphere = MeshFactory::CreateFromFile("data/models/sphere.obj");
-        s_mesh_primitive_cube = MeshFactory::CreateCube(1);
-        s_mesh_primitive_plane = MeshFactory::CreatePlane(10, 10);
+        s_mesh_primitives.quad = MeshFactory::CreateQuad(1, 1);
+        s_mesh_primitives.plane = MeshFactory::CreatePlane(10, 10);
+        s_mesh_primitives.cube = MeshFactory::CreateCube(1);
+        s_mesh_primitives.sphere = MeshFactory::CreateFromFile("data/models/sphere.obj"); // TODO: Procedurally create sphere
     }
 
     TextureFormat AssetLibrary::GetTextureFormatFromImage(const Ref<Image> &image) {

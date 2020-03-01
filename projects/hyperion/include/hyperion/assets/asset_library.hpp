@@ -10,9 +10,10 @@
 namespace Hyperion {
 
     enum class MeshPrimitive {
-        Sphere,
+        Quad,
+        Plane,
         Cube,
-        Plane
+        Sphere
     };
 
     class AssetLibrary {
@@ -21,6 +22,13 @@ namespace Hyperion {
         struct AssetEntry {
             Ref<T> asset;
             String filepath;
+        };
+
+        struct MeshPrimitives {
+            Ref<Rendering::Mesh> quad;
+            Ref<Rendering::Mesh> plane;
+            Ref<Rendering::Mesh> cube;
+            Ref<Rendering::Mesh> sphere;
         };
 
         inline static AssetSettings s_settings;
@@ -33,9 +41,7 @@ namespace Hyperion {
 
         inline static Map<String, AssetEntry<Rendering::TextureCubemap>> s_texture_cubemaps;
         
-        inline static Ref<Rendering::Mesh> s_mesh_primitive_sphere;
-        inline static Ref<Rendering::Mesh> s_mesh_primitive_cube;
-        inline static Ref<Rendering::Mesh> s_mesh_primitive_plane;
+        inline static MeshPrimitives s_mesh_primitives;
     public:
         inline static const AssetSettings &GetSettings() { return s_settings; }
 

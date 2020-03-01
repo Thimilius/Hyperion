@@ -39,10 +39,10 @@ namespace Hyperion::Editor {
 
             f32 rotation_speed = 100.0f * delta;
             if (Input::GetKey(KeyCode::Left) || Input::GetKey(KeyCode::Q)) {
-                m_target_yaw -= rotation_speed;
+                m_target_yaw += rotation_speed;
             }
             if (Input::GetKey(KeyCode::Right) || Input::GetKey(KeyCode::E)) {
-                m_target_yaw += rotation_speed;
+                m_target_yaw -= rotation_speed;
             }
             if (Input::GetKey(KeyCode::Up)) {
                 m_target_pitch += rotation_speed;
@@ -127,12 +127,12 @@ namespace Hyperion::Editor {
 
         // Reset
         if (Input::GetKeyDown(KeyCode::R) || Input::GetGamepadButtonDown(Gamepad::Gamepad1, GamepadButtonCode::RightThumb)) {
-            position = Vec3(2, 2, 2);
+            position = Vec3(-2, 2, 2);
 
             m_velocity = Vec3::Zero();
 
-            m_pitch = -25.0f;
-            m_yaw = 45.0f;
+            m_pitch = -35.0f;
+            m_yaw = -45.0f;
             m_target_pitch = m_pitch;
             m_target_yaw = m_yaw;
 
@@ -152,7 +152,7 @@ namespace Hyperion::Editor {
     EditorCameraController::EditorCameraController(Camera *camera) {
         m_camera = camera;
 
-        m_camera->GetTransform()->SetPosition(Vec3(2, 2, 2));
+        m_camera->GetTransform()->SetPosition(Vec3(-2, 2, 2));
         m_camera->GetTransform()->SetEulerAngles(Vec3::Zero());
 
         m_camera->SetFOV(90.0f);

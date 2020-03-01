@@ -4,9 +4,13 @@
 
 #include "hyperion/core/app/time.hpp"
 #include "hyperion/rendering/immediate_renderer.hpp"
+#include "hyperion/rendering/forward_renderer.hpp"
 #include "hyperion/assets/asset_library.hpp"
+#include "hyperion/assets/mesh_factory.hpp"
 #include "hyperion/entity/entity.hpp"
+#include "hyperion/entity/world_manager.hpp"
 #include "hyperion/entity/components/camera.hpp"
+#include "hyperion/entity/components/light.hpp"
 
 using namespace Hyperion::Rendering;
 
@@ -16,6 +20,8 @@ namespace Hyperion::Editor {
         // FIXME: That is a very odd way of enforcing an editor camera
         s_camera = Entity::Create("Camera")->AddComponent<Camera>();
         s_camera_controller = EditorCameraController(s_camera);
+        s_icon_mesh = MeshFactory::CreateQuad(0.5f, 0.5f);
+        s_icon_material = Material::Create(AssetLibrary::GetShader("standard_unlit"));
 
         InitGridVertexArray();
         UpdateWindowTitle();
@@ -49,6 +55,24 @@ namespace Hyperion::Editor {
                 ImmediateRenderer::Draw(MeshTopology::Lines, s_grid_vertex_array, s_grid_vertex_count);
             }
             ImmediateRenderer::End();
+
+            ForwardRenderer::Begin(s_camera->GetData());
+            {
+                // Draw light icons
+                {
+                    s_icon_material->SetTexture2D("u_texture", AssetLibrary::GetTexture2D("icon_light"));
+                    s_icon_material->SetColor("u_color", Color(0.8f, 0.7f, 0.05f, 1.0f));
+                    RenderEngine::GetRasterizerState()->SetBlendingEnabled(true);
+                    Mat4 camera_rotation = Mat4::Rotate(s_camera->GetTransform()->GetRotation());
+                    for (Light *light : WorldManager::GetActiveWorld()->GetLights()) {
+                        Transform *transform = light->GetTransform();
+                        Mat4 model = Mat4::Translate(transform->GetPosition()) * camera_rotation;
+                        ForwardRenderer::DrawMesh(s_icon_mesh, s_icon_material, model);
+                    }
+                }
+                
+            }
+            ForwardRenderer::End();
         }
     }
 

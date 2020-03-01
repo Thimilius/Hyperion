@@ -20,10 +20,12 @@ protected:
         material->SetTexture2D("u_texture", AssetLibrary::GetTexture2D("earth"));
 
         Light *light = Entity::CreatePrimitive(EntityPrimitive::Light)->GetComponent<Light>();
+        light->GetTransform()->SetPosition(Vec3(1, 2, 2));
+        light->SetColor(Color::White());
         material->SetColor("u_light.color", light->GetColor());
         material->SetFloat("u_light.radius", light->GetRange());
         material->SetFloat("u_light.intensity", light->GetIntensity());
-        material->SetVec3("u_light.position", Vec3(1, 2, 2));
+        material->SetVec3("u_light.position", light->GetTransform()->GetPosition());
     }
 
     void OnUpdate(f32 delta_time) override {
