@@ -35,9 +35,9 @@ namespace Hyperion {
         }
     }
 
-    Entity *Entity::Create(const String &name, Vec3 position, Quaternion rotation, Transform *parent) {
+    Entity *Entity::Create(const String &name, Vec3 position, Quaternion rotation, Transform *parent, World *world) {
         Entity *entity = new Entity(name);
-        entity->OnCreate(position, rotation, parent);
+        entity->OnCreate(position, rotation, parent, world);
         return entity;
     }
 
@@ -88,8 +88,11 @@ namespace Hyperion {
         }
     }
 
-    void Entity::OnCreate(Vec3 position, Quaternion rotation, Transform *parent) {
-        m_world = WorldManager::GetActiveWorld();
+    void Entity::OnCreate(Vec3 position, Quaternion rotation, Transform *parent, World *world) {
+        if (!world) {
+            world = WorldManager::GetActiveWorld();
+        }
+        m_world = world;
 
         m_components[Transform::GetStaticType()] = &m_transform;
         m_transform.m_entity = this;

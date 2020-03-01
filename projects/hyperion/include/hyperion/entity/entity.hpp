@@ -169,7 +169,7 @@ namespace Hyperion {
         void RegisterMessageListener(EntityMessageListener *listener);
         void UnregisterMessageListener(EntityMessageListener *listener);
 
-        static Entity *Create(const String &name = "New Entity", Vec3 position = Vec3::Zero(), Quaternion rotation = Quaternion::Identity(), Transform *parent = nullptr);
+        static Entity *Create(const String &name = "New Entity", Vec3 position = Vec3::Zero(), Quaternion rotation = Quaternion::Identity(), Transform *parent = nullptr, World *world = nullptr);
         static Entity *CreatePrimitive(EntityPrimitive primitive);
     protected:
         void OnDestroy() override;
@@ -177,7 +177,7 @@ namespace Hyperion {
         Entity(const String &name) : Object(name) { }
         ~Entity() = default;
 
-        void OnCreate(Vec3 position, Quaternion rotation, Transform *parent);
+        void OnCreate(Vec3 position, Quaternion rotation, Transform *parent, World *world);
 
         static String GetPrimitiveName(EntityPrimitive primitive);
 
