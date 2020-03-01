@@ -41,7 +41,11 @@ namespace Hyperion::Rendering {
         
         auto &renderers = world->GetMeshRenderers();
         auto &lights = world->GetLights();
-        Light *main_light = lights.size() > 0 ? lights[0] : nullptr;
+
+        // Set the main light to be the first directional light we can find
+        auto main_light_pos = std::find_if(lights.begin(), lights.end(), [](Light *light) { return light->GetLightType() == LightType::Directional; });
+        Light *main_light = main_light_pos != lights.end() ? *main_light_pos : nullptr;
+
         for (MeshRenderer *renderer : renderers) {
             if (!renderer->IsEnabled()) {
                 continue;
@@ -87,15 +91,13 @@ namespace Hyperion::Rendering {
             // when we are not sure if the shader has them to avoid unnecessary log messages
             shader->SetMat4("u_transform.model", transform);
             shader->SetMat3("u_transform.model_normal", Mat3(inverse_transform.Transposed()));
-
             shader->SetVec3("u_camera.position", s_state.camera.position);
 
             // FIXME: Correctly set up properties for main and additional lights
             if (main_light) {
-                shader->SetVec4("u_light.color", main_light->GetColor());
-                shader->SetFloat("u_light.radius", main_light->GetRange());
-                shader->SetFloat("u_light.intensity", main_light->GetIntensity());
-                shader->SetVec3("u_light.position", main_light->GetTransform()->GetPosition());
+                shader->SetFloat("u_main_light.intensity", main_light->GetIntensity());
+                shader->SetVec4("u_main_light.color", main_light->GetColor());
+                shader->SetVec3("u_main_light.direction", main_light->GetTransform()->GetForward());
             }
         }
     }

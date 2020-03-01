@@ -39,5 +39,5 @@ void main() {
 	vec4 texture_color = texture(u_texture, i_v2f.uv);
 	
 	// Final color
-	o_color = vec4(calculate_full_phong_lighting(i_v2f.position, i_v2f.normal), 1.0) * texture_color;
+	o_color = vec4(calculate_phong_lighting(i_v2f.position, i_v2f.normal), 1.0) * texture_color;
 }

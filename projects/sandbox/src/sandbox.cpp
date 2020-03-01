@@ -20,8 +20,10 @@ protected:
         material->SetTexture2D("u_texture", AssetLibrary::GetTexture2D("earth"));
 
         Light *light = Entity::CreatePrimitive(EntityPrimitive::Light)->GetComponent<Light>();
+        light->SetLightType(LightType::Directional);
         light->GetTransform()->SetPosition(Vec3(-1, 2, 2));
         light->SetColor(Color::White());
+        light->GetTransform()->SetEulerAngles(Vec3(0, -45.0f, 0));
     }
 
     void OnUpdate(f32 delta_time) override {
