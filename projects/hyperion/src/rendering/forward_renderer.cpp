@@ -6,6 +6,7 @@
 #include "hyperion/assets/mesh_factory.hpp"
 #include "hyperion/entity/components/transform.hpp"
 #include "hyperion/entity/components/mesh_renderer.hpp"
+#include "hyperion/entity/components/light.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -39,13 +40,15 @@ namespace Hyperion::Rendering {
         RenderEngine::Clear(ClearMask::Color | ClearMask::Depth | ClearMask::Stencil, environment.background_color);
         
         auto &renderers = world->GetMeshRenderers();
+        auto &lights = world->GetLights();
+        Light *main_light = lights.size() > 0 ? lights[0] : nullptr;
         for (MeshRenderer *renderer : renderers) {
             if (!renderer->IsEnabled()) {
                 continue;
             }
 
             Transform *transform = renderer->GetTransform();
-            DrawMesh(renderer->GetSharedMesh(), renderer->GetSharedMaterial(), transform->GetLocalToWorldMatrix(), transform->GetWorldToLocalMatrix());
+            DrawMesh(renderer->GetSharedMesh(), renderer->GetSharedMaterial(), transform->GetLocalToWorldMatrix(), transform->GetWorldToLocalMatrix(), main_light);
         }
 
         if (environment.background_mode == WorldEnvironmentBackgroundMode::Skybox) {
@@ -56,11 +59,11 @@ namespace Hyperion::Rendering {
     }
 
     void ForwardRenderer::DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform) {
-        DrawMesh(mesh, material, transform, transform.Inverted());
+        DrawMesh(mesh, material, transform, transform.Inverted(), nullptr);
     }
 
-    void ForwardRenderer::DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform, const Mat4 &inverse_transform) {
-        PrepareShader(material->GetShader(), transform, inverse_transform);
+    void ForwardRenderer::DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform, const Mat4 &inverse_transform, Light *main_light) {
+        PrepareShader(material->GetShader(), transform, inverse_transform, main_light);
         material->Bind();
         DrawCall(mesh);
     }
@@ -74,7 +77,7 @@ namespace Hyperion::Rendering {
         s_skybox.mesh = MeshFactory::CreateCube(1);
     }
 
-    void ForwardRenderer::PrepareShader(const Ref<Shader> &shader, const Mat4 &transform, const Mat4 &inverse_transform) {
+    void ForwardRenderer::PrepareShader(const Ref<Shader> &shader, const Mat4 &transform, const Mat4 &inverse_transform, Light *main_light) {
         shader->Bind();
 
         shader->SetMat4("u_transform.model", transform);
@@ -82,6 +85,14 @@ namespace Hyperion::Rendering {
         shader->SetMat4("u_transform.mvp", s_state.transform.view_projection * transform);
 
         shader->SetVec3("u_camera.position", s_state.camera.position);
+
+        // FIXME: Correctly set up properties for main and additional lights
+        if (main_light) {
+            shader->SetVec4("u_light.color", main_light->GetColor());
+            shader->SetFloat("u_light.radius", main_light->GetRange());
+            shader->SetFloat("u_light.intensity", main_light->GetIntensity());
+            shader->SetVec3("u_light.position", main_light->GetTransform()->GetPosition());
+        }
     }
 
     void ForwardRenderer::DrawCall(const Ref<Mesh> &mesh) {
