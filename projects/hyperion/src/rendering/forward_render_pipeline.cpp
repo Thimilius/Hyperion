@@ -9,8 +9,6 @@
 namespace Hyperion::Rendering {
 
     void ForwardRenderPipeline::Render(const CameraData &camera) {
-        RenderEngine::Clear(ClearMask::Color | ClearMask::Depth, Color::Black());
-
         ForwardRenderer::Begin(camera);
         {
             ForwardRenderer::DrawWorld(WorldManager::GetActiveWorld());
