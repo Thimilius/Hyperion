@@ -1,3 +1,5 @@
+#light_mode forward
+
 #type vertex
 #version 410 core
 

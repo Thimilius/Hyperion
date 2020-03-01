@@ -4,12 +4,17 @@
 
 namespace Hyperion::Rendering {
     
+    struct OpenGLShaderCompilerResult {
+        ShaderProperties properties;
+        u32 id;
+    };
+
     class OpenGLShaderCompiler {
     private:
-        inline static u32 s_fallback_shader;
+        inline static OpenGLShaderCompilerResult s_fallback_shader;
         inline static Map<String, String> s_modules;
     public:
-        static u32 Compile(const String &source);
+        static OpenGLShaderCompilerResult Compile(const String &source);
     private:
         OpenGLShaderCompiler() = delete;
         ~OpenGLShaderCompiler() = delete;

@@ -54,7 +54,9 @@ namespace Hyperion::Rendering {
 
     void OpenGLShader::Recompile(const String &source) {
         m_uniforms.clear();
-        m_shader_program_id = OpenGLShaderCompiler::Compile(source);
+        OpenGLShaderCompilerResult result = OpenGLShaderCompiler::Compile(source);
+        m_shader_program_id = result.id;
+        m_properties = result.properties;
     }
 
     s32 OpenGLShader::TryGetUniformLocation(const String &name) {

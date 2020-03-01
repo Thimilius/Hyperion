@@ -1,3 +1,5 @@
+#light_mode none
+
 #type vertex
 #version 410 core
 

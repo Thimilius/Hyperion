@@ -16,6 +16,7 @@ namespace Hyperion::Rendering {
         result.status = OpenGLShaderPreProcessStatus::Failed;
 
         Map<ShaderType, String> sources;
+        ShaderProperties properties;
         String source = m_source;
 
         while (!IsAtEnd()) {
@@ -27,7 +28,7 @@ namespace Hyperion::Rendering {
                 SkipBlankspace();
 
                 if (Peek() == '#') {
-                    if (!HandleDirective(sources)) {
+                    if (!HandleDirective(sources, properties)) {
                         return result;
                     }
                 }
@@ -48,18 +49,19 @@ namespace Hyperion::Rendering {
 
         result.status = OpenGLShaderPreProcessStatus::Success;
         result.sources = std::move(sources);
-
+        result.properties = std::move(properties);
+        
         return result;
     }
 
-    bool OpenGLShaderPreProcessor::HandleDirective(Map<ShaderType, String> &sources) {
+    bool OpenGLShaderPreProcessor::HandleDirective(Map<ShaderType, String> &sources, ShaderProperties &properties) {
         u64 directive_start_position = m_position;
         Advance();
 
         char *directive_type_start = m_source.data() + m_position;
-        SkipAlpha();
+        SkipAlphaNumeric();
 
-        if (std::memcmp("type", (void *)directive_type_start, 4) == 0) {
+        if (IsDirective("type", directive_type_start)) {
             EndShaderType(sources, directive_start_position);
 
             // A new shader type starts
@@ -76,7 +78,7 @@ namespace Hyperion::Rendering {
                 m_current_shader_type = shader_type;
                 m_current_shader_type_directive_end = m_position;
             }
-        } else if (std::memcmp("import", (void *)directive_type_start, 6) == 0) {
+        } else if (IsDirective("import", directive_type_start)) {
             SkipBlankspace();
             String import_string = AdvanceUntilEndOfLine();
             u64 directive_full_length = m_position - directive_start_position;
@@ -89,6 +91,26 @@ namespace Hyperion::Rendering {
 
             m_source = m_source.replace(directive_start_position, directive_full_length, shader_module);
             m_position = directive_start_position + shader_module.size();
+        } else if (IsDirective("light_mode", directive_type_start)) {
+            SkipBlankspace();
+            String light_mode_string = AdvanceUntilEndOfLine();
+            u64 directive_full_length = m_position - directive_start_position;
+
+            ShaderLightMode shader_light_mode = GetShaderLightModeFromString(light_mode_string);
+            if (shader_light_mode == ShaderLightMode::Unknown) {
+                HYP_LOG_ERROR("OpenGL", "Invalid shader light mode specifier: '{}'!", light_mode_string);
+                return false;
+            }
+
+            if (m_property_light_mode_set) {
+                HYP_LOG_WARN("OpenGL", "The shader light mode was already set!");
+            } else {
+                properties.light_mode = shader_light_mode;
+                m_property_light_mode_set = true;
+            }
+
+            m_source = m_source.replace(directive_start_position, directive_full_length, "");
+            m_position = directive_start_position;
         }
 
         return true;
@@ -109,7 +131,7 @@ namespace Hyperion::Rendering {
 
     String OpenGLShaderPreProcessor::AdvanceUntilEndOfLine() {
         u64 import_start_position = m_position;
-        SkipAlpha();
+        SkipAlphaNumeric();
         u64 import_end_position = m_position;
         u64 import_length = import_end_position - import_start_position;
 
@@ -127,8 +149,8 @@ namespace Hyperion::Rendering {
         return m_source[m_position];
     }
 
-    void OpenGLShaderPreProcessor::SkipAlpha() {
-        while (IsAlpha(Peek()) && !IsAtEnd()) {
+    void OpenGLShaderPreProcessor::SkipAlphaNumeric() {
+        while ((IsAlpha(Peek()) || IsNumeric(Peek())) && !IsAtEnd()) {
             Advance();
         }
     }
@@ -147,8 +169,16 @@ namespace Hyperion::Rendering {
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';;
     }
 
+    bool OpenGLShaderPreProcessor::IsNumeric(char c) {
+        return c >= '0' && c <= '9';
+    }
+
     bool OpenGLShaderPreProcessor::IsWhitespace(char c) {
         return c == ' ' || c == '\t' || c == '\r';
+    }
+
+    bool OpenGLShaderPreProcessor::IsDirective(const char *directive, const char *start) {
+        return std::memcmp(directive, (void *)start, std::strlen(directive)) == 0;
     }
 
     ShaderType OpenGLShaderPreProcessor::GetShaderTypeFromString(const String &string) {
@@ -158,6 +188,16 @@ namespace Hyperion::Rendering {
             return ShaderType::Fragment;
         } else {
             return ShaderType::Unknown;
+        }
+    }
+
+    ShaderLightMode OpenGLShaderPreProcessor::GetShaderLightModeFromString(const String &string) {
+        if (string == "none") {
+            return ShaderLightMode::None;
+        } else if (string == "forward") {
+            return ShaderLightMode::Forward;
+        } else {
+            return ShaderLightMode::Unknown;
         }
     }
 

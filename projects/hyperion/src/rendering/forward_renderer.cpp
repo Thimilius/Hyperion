@@ -79,19 +79,24 @@ namespace Hyperion::Rendering {
 
     void ForwardRenderer::PrepareShader(const Ref<Shader> &shader, const Mat4 &transform, const Mat4 &inverse_transform, Light *main_light) {
         shader->Bind();
-
-        shader->SetMat4("u_transform.model", transform);
-        shader->SetMat3("u_transform.model_normal", Mat3(inverse_transform.Transposed()));
+        
         shader->SetMat4("u_transform.mvp", s_state.transform.view_projection * transform);
 
-        shader->SetVec3("u_camera.position", s_state.camera.position);
+        if (shader->GetProperties().light_mode == ShaderLightMode::Forward) {
+            // TODO: There needs to be a better way of "not setting" shader uniforms
+            // when we are not sure if the shader has them to avoid unnecessary log messages
+            shader->SetMat4("u_transform.model", transform);
+            shader->SetMat3("u_transform.model_normal", Mat3(inverse_transform.Transposed()));
 
-        // FIXME: Correctly set up properties for main and additional lights
-        if (main_light) {
-            shader->SetVec4("u_light.color", main_light->GetColor());
-            shader->SetFloat("u_light.radius", main_light->GetRange());
-            shader->SetFloat("u_light.intensity", main_light->GetIntensity());
-            shader->SetVec3("u_light.position", main_light->GetTransform()->GetPosition());
+            shader->SetVec3("u_camera.position", s_state.camera.position);
+
+            // FIXME: Correctly set up properties for main and additional lights
+            if (main_light) {
+                shader->SetVec4("u_light.color", main_light->GetColor());
+                shader->SetFloat("u_light.radius", main_light->GetRange());
+                shader->SetFloat("u_light.intensity", main_light->GetIntensity());
+                shader->SetVec3("u_light.position", main_light->GetTransform()->GetPosition());
+            }
         }
     }
 

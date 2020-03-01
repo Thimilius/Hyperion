@@ -11,7 +11,7 @@
 
 namespace Hyperion::Rendering {
 
-    u32 OpenGLShaderCompiler::Compile(const String &source) {
+    OpenGLShaderCompilerResult OpenGLShaderCompiler::Compile(const String &source) {
         OpenGLShaderPreProcessor pre_processor(source);
         OpenGLShaderPreProcessResult pre_process_result = pre_processor.PreProcess();
         if (pre_process_result.status == OpenGLShaderPreProcessStatus::Failed) {
@@ -87,7 +87,10 @@ namespace Hyperion::Rendering {
             glDeleteShader(shader);
         }
 
-        return program;
+        OpenGLShaderCompilerResult result;
+        result.properties = pre_process_result.properties;
+        result.id = program;
+        return result;
     }
 
     void OpenGLShaderCompiler::Init() {
