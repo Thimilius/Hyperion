@@ -37,6 +37,7 @@
 // Entity
 #include "hyperion/entity/object.hpp"
 #include "hyperion/entity/world.hpp"
+#include "hyperion/entity/world_manager.hpp"
 #include "hyperion/entity/entity.hpp"
 #include "hyperion/entity/entity_message.hpp"
 #include "hyperion/entity/components/component.hpp"

@@ -46,6 +46,7 @@ namespace Hyperion {
 
         friend class ObjectSystem;
         friend class Entity;
+        friend class World;
     };
 
 }

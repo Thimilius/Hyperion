@@ -2,7 +2,7 @@
 
 #include "hyperion/entity/entity.hpp"
 
-#include "hyperion/entity/world.hpp"
+#include "hyperion/entity/world_manager.hpp"
 #include "hyperion/entity/components/mesh_renderer.hpp"
 #include "hyperion/entity/components/light.hpp"
 #include "hyperion/assets/asset_library.hpp"

@@ -8,6 +8,7 @@
 #include "hyperion/audio/audio_engine.hpp"
 #include "hyperion/rendering/forward_renderer.hpp"
 #include "hyperion/rendering/immediate_renderer.hpp"
+#include "hyperion/entity/world_manager.hpp"
 #include "hyperion/editor/editor_engine.hpp"
 
 namespace Hyperion {

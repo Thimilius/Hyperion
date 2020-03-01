@@ -1,5 +1,8 @@
 #pragma once
 
+#include "hyperion/common.hpp"
+#include "hyperion/core/color.hpp"
+
 namespace Hyperion {
 
     namespace Rendering {
@@ -38,7 +41,7 @@ namespace Hyperion {
         inline const Vector<Light *> GetLights() const { return m_lights; }
     private:
         World() = default;
-        ~World() = default;
+        ~World();
 
         void AddRootEntity(Entity *entity);
         void RemoveRootEntity(Entity *entity);
@@ -54,26 +57,6 @@ namespace Hyperion {
         friend class Transform;
         friend class MeshRenderer;
         friend class Light;
-    };
-
-    class WorldManager {
-    private:
-        inline static World *s_active_world;
-
-        inline static Vector<World *> s_worlds;
-    public:
-        inline static World *GetActiveWorld() { return s_active_world; }
-        inline static void SetActiveWorld(World *world) { s_active_world = world; }
-
-        inline static World *CreateWorld() {
-            World *world = new World();
-            s_worlds.push_back(world);
-            return world;
-        }
-        // TODO: Add ability to destroy world
-    private:
-        WorldManager() = delete;
-        ~WorldManager() = delete;
     };
 
 }

@@ -2,7 +2,15 @@
 
 #include "hyperion/entity/world.hpp"
 
+#include "hyperion/entity/entity.hpp"
+
 namespace Hyperion {
+
+    World::~World() {
+        for (Entity *entity : m_root_entities) {
+            Object::DestroyImmediate(entity);
+        }
+    }
 
     void World::AddRootEntity(Entity *entity) {
         m_root_entities.push_back(entity);
