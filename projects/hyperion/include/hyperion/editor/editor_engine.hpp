@@ -18,7 +18,7 @@ namespace Hyperion::Editor {
         inline static Ref<Rendering::Mesh> s_icon_mesh;
         inline static Ref<Rendering::Material> s_icon_material;
 
-        inline static bool s_overlay_enabled = false;
+        inline static bool s_overlay_enabled = true;
     public:
         static Camera *GetCamera() { return s_camera; }
 

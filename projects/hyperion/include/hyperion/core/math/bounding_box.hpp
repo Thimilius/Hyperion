@@ -1,7 +1,5 @@
 #pragma once
 
-#include "hyperion/common.hpp"
-#include "hyperion/core/math/vec3.hpp"
 #include "hyperion/core/math/ray.hpp"
 
 namespace Hyperion {
