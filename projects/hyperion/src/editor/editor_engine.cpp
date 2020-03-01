@@ -5,13 +5,16 @@
 #include "hyperion/core/app/time.hpp"
 #include "hyperion/rendering/immediate_renderer.hpp"
 #include "hyperion/assets/asset_library.hpp"
+#include "hyperion/entity/entity.hpp"
+#include "hyperion/entity/components/camera.hpp"
 
 using namespace Hyperion::Rendering;
 
 namespace Hyperion::Editor {
 
     void EditorEngine::Init() {
-        s_camera = Camera::Create();
+        // FIXME: That is a very odd way of enforcing an editor camera
+        s_camera = Entity::Create("Camera")->AddComponent<Camera>();
         s_camera_controller = EditorCameraController(s_camera);
 
         InitGridVertexArray();
@@ -41,7 +44,7 @@ namespace Hyperion::Editor {
 
     void EditorEngine::Render() {
         if (s_overlay_enabled) {
-            ImmediateRenderer::Begin(s_camera);
+            ImmediateRenderer::Begin(s_camera->GetData());
             {
                 ImmediateRenderer::Draw(MeshTopology::Lines, s_grid_vertex_array, s_grid_vertex_count);
             }

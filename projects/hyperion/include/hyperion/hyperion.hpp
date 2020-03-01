@@ -54,7 +54,7 @@
 #include "hyperion/rendering/buffer.hpp"
 #include "hyperion/rendering/vertex_array.hpp"
 #include "hyperion/rendering/render_texture.hpp"
-#include "hyperion/rendering/camera.hpp"
+#include "hyperion/rendering/camera_data.hpp"
 #include "hyperion/rendering/layer.hpp"
 
 // Assets

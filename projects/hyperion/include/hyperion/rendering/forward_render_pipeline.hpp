@@ -6,7 +6,7 @@ namespace Hyperion::Rendering {
 
     class ForwardRenderPipeline : public RenderPipeline {
     public:
-        void Render(const Ref<Camera> &camera) override;
+        void Render(const CameraData &camera) override;
     };
 
 }

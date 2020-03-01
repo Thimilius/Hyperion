@@ -9,10 +9,10 @@
 
 namespace Hyperion::Rendering {
 
-    void ForwardRenderer::Begin(const Ref<Camera> &camera) {
-        s_state.transform.view = camera->GetViewMatrix();
-        s_state.transform.projection = camera->GetProjectionMatrix();
-        s_state.transform.view_projection = camera->GetViewProjectionMatrix();
+    void ForwardRenderer::Begin(const CameraData &camera) {
+        s_state.transform.view = camera.view_matrix;
+        s_state.transform.projection = camera.projection_matrix;
+        s_state.transform.view_projection = camera.view_projection_matrix;
 
         s_state.camera = camera;
     }
@@ -81,7 +81,7 @@ namespace Hyperion::Rendering {
         shader->SetMat3("u_transform.model_normal", Mat3(inverse_transform.Transposed()));
         shader->SetMat4("u_transform.mvp", s_state.transform.view_projection * transform);
 
-        shader->SetVec3("u_camera.position", s_state.camera->GetPosition());
+        shader->SetVec3("u_camera.position", s_state.camera.position);
     }
 
     void ForwardRenderer::DrawCall(const Ref<Mesh> &mesh) {

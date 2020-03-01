@@ -1,6 +1,6 @@
 #pragma once
 
-#include "hyperion/rendering/camera.hpp"
+#include "hyperion/rendering/camera_data.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -8,7 +8,7 @@ namespace Hyperion::Rendering {
     public:
         virtual ~RenderPipeline() = default;
 
-        virtual void Render(const Ref<Camera> &camera) = 0;
+        virtual void Render(const CameraData &camera) = 0;
     };
 
 }

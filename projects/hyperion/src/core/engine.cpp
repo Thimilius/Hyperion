@@ -40,14 +40,14 @@ namespace Hyperion {
 
         Audio::AudioEngine::Init(settings.audio.backend);
 
-        Editor::EditorEngine::Init();
-
         World *world = settings.entity.start_world;
         if (!world) {
             // NOTE: We are currently forcing a new world
             world = WorldManager::CreateWorld();
         }
         WorldManager::SetActiveWorld(world);
+
+        Editor::EditorEngine::Init();
     }
 
     void Engine::Update(f32 delta_time) {
@@ -61,7 +61,7 @@ namespace Hyperion {
 
     void Engine::Render() {
         // TODO: How to properly supply different cameras
-        s_render_pipeline->Render(Editor::EditorEngine::GetCamera());
+        s_render_pipeline->Render(Editor::EditorEngine::GetCamera()->GetData());
     }
 
     void Engine::Tick() {

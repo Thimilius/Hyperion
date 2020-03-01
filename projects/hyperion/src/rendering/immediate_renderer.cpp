@@ -6,10 +6,10 @@
 
 namespace Hyperion::Rendering {
 
-    void ImmediateRenderer::Begin(const Ref<Camera> &camera) {
-        s_state.transform.view = camera->GetViewMatrix();
-        s_state.transform.projection = camera->GetProjectionMatrix();
-        s_state.transform.view_projection = camera->GetViewProjectionMatrix();
+    void ImmediateRenderer::Begin(const CameraData &camera) {
+        s_state.transform.view = camera.view_matrix;
+        s_state.transform.projection = camera.projection_matrix;
+        s_state.transform.view_projection = camera.view_projection_matrix;
     }
 
     void ImmediateRenderer::Draw(MeshTopology topology, const Ref<VertexArray> &vertex_array, u32 vertex_count) {

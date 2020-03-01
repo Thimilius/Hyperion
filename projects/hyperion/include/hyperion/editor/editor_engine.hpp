@@ -7,7 +7,7 @@ namespace Hyperion::Editor {
 
     class EditorEngine {
     private:
-        inline static Ref<Rendering::Camera> s_camera;
+        inline static Camera *s_camera;
         inline static EditorCameraController s_camera_controller;
 
         inline static u32 s_grid_size = 100;
@@ -16,7 +16,7 @@ namespace Hyperion::Editor {
 
         inline static bool s_overlay_enabled = false;
     public:
-        static Ref<Rendering::Camera> GetCamera() { return s_camera; }
+        static Camera *GetCamera() { return s_camera; }
 
         static void Init();
         static void Update(f32 delta_time);

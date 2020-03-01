@@ -5,7 +5,7 @@
 #include "hyperion/rendering/shader.hpp"
 #include "hyperion/rendering/material.hpp"
 #include "hyperion/rendering/mesh.hpp"
-#include "hyperion/rendering/camera.hpp"
+#include "hyperion/rendering/camera_data.hpp"
 #include "hyperion/rendering/texture_cubemap.hpp"
 #include "hyperion/entity/world.hpp"
 
@@ -21,7 +21,7 @@ namespace Hyperion::Rendering {
                 Mat4 view_projection;
             } transform;
 
-            Ref<Camera> camera;
+            CameraData camera;
         };
 
         struct Skybox {
@@ -32,7 +32,7 @@ namespace Hyperion::Rendering {
         inline static State s_state;
         inline static Skybox s_skybox;
     public:
-        static void Begin(const Ref<Camera> &camera);
+        static void Begin(const CameraData &camera);
         static void DrawSkybox(const Ref<TextureCubemap> &skybox);
         static void DrawWorld(World *world);
         static void DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform);

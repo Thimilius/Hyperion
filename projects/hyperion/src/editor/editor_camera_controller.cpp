@@ -3,15 +3,16 @@
 #include "hyperion/editor/editor_camera_controller.hpp"
 
 #include "hyperion/core/app/input.hpp"
+#include "hyperion/entity/components/transform.hpp"
 
 using namespace Hyperion::Rendering;
 
 namespace Hyperion::Editor {
 
     void EditorCameraController::Update(f32 delta) {
-        Vec3 position = m_camera->GetPosition();
-        Vec3 forward = m_camera->GetForward();
-        Vec3 up = m_camera->GetUp();
+        Transform *transform = m_camera->GetTransform();
+        Vec3 position = transform->GetPosition();
+        Vec3 rotation = transform->GetEulerAngles();
 
         f32 fov = m_camera->GetFOV();
         f32 size = m_camera->GetSize();
@@ -51,10 +52,10 @@ namespace Hyperion::Editor {
             }
 
             Vec2 right_stick = Input::GetGamepadAxis(Gamepad::Gamepad1, GamepadAxis::RightStick);
-            m_target_yaw += rotation_speed * right_stick.x;
+            m_target_yaw -= rotation_speed * right_stick.x;
             m_target_pitch += rotation_speed * -right_stick.y;
 
-            m_target_yaw += x_offset;
+            m_target_yaw -= x_offset;
             m_target_pitch += y_offset;
             m_target_pitch = Math::Clamp(m_target_pitch, -89.0f, 89.0f);
 
@@ -62,17 +63,13 @@ namespace Hyperion::Editor {
             m_yaw = Math::Lerp(m_yaw, m_target_yaw, delta * mouse_friction);
             m_pitch = Math::Lerp(m_pitch, m_target_pitch, delta * mouse_friction);
 
-            Vec3 new_forward = Vec3::Zero();
-            new_forward.x = Math::Cos(Math::DegToRad(m_pitch)) * Math::Cos(Math::DegToRad(m_yaw));
-            new_forward.y = Math::Sin(Math::DegToRad(m_pitch));
-            new_forward.z = Math::Cos(Math::DegToRad(m_pitch)) * Math::Sin(Math::DegToRad(m_yaw));
-            forward = new_forward.Normalized();
+            rotation = Vec3(m_pitch, m_yaw, 0);
         }
 
         // Zoom
         {
             f32 wheel = Input::GetMouseScroll();
-            switch (m_camera->GetType()) {
+            switch (m_camera->GetMode()) {
                 case CameraMode::Perspective: {
                     m_fov_target -= wheel * 5.0f;
                     m_fov_target = Math::Clamp(m_fov_target, 25, 120);
@@ -94,8 +91,8 @@ namespace Hyperion::Editor {
         {
             f32 camera_acceleration = m_acceleration * delta;
 
-            Vec3 direction = camera_acceleration * forward;
-            Vec3 right = camera_acceleration * Vec3::Cross(direction, up).Normalized();
+            Vec3 direction = camera_acceleration * transform->GetForward();
+            Vec3 right = camera_acceleration * Vec3::Cross(direction, transform->GetUp()).Normalized();
             Vec3 up = camera_acceleration * Vec3::Up();
             
             position += m_velocity * delta;
@@ -131,13 +128,11 @@ namespace Hyperion::Editor {
         // Reset
         if (Input::GetKeyDown(KeyCode::R) || Input::GetGamepadButtonDown(Gamepad::Gamepad1, GamepadButtonCode::RightThumb)) {
             position = Vec3(2, 2, 2);
-            forward = Vec3(-0.579227984f, -0.579227984f, -0.579227984f);
-            up = Vec3::Up();
 
             m_velocity = Vec3::Zero();
 
-            m_pitch = -35.0f;
-            m_yaw = 225.0f;
+            m_pitch = -25.0f;
+            m_yaw = 45.0f;
             m_target_pitch = m_pitch;
             m_target_yaw = m_yaw;
 
@@ -147,24 +142,18 @@ namespace Hyperion::Editor {
             m_size_target = size;
         }
 
-        m_camera->SetPosition(position);
-        m_camera->SetForward(forward);
-        m_camera->SetUp(up);
+        m_camera->GetTransform()->SetPosition(position);
+        m_camera->GetTransform()->SetEulerAngles(rotation);
         m_camera->SetFOV(fov);
         m_camera->SetSize(size);
         m_camera->RecalculateMatricies();
     }
 
-    EditorCameraController::EditorCameraController() {
-
-    }
-
-    EditorCameraController::EditorCameraController(const Ref<Camera> &camera) {
+    EditorCameraController::EditorCameraController(Camera *camera) {
         m_camera = camera;
 
-        m_camera->SetPosition(Vec3(2, 2, 2));
-        m_camera->SetForward(Vec3(0, 0, -1));
-        m_camera->SetUp(Vec3(0, 1, 0));
+        m_camera->GetTransform()->SetPosition(Vec3(2, 2, 2));
+        m_camera->GetTransform()->SetEulerAngles(Vec3::Zero());
 
         m_camera->SetFOV(90.0f);
         m_fov_target = m_camera->GetFOV();

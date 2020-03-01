@@ -3,7 +3,7 @@
 #include "hyperion/common.hpp"
 #include "hyperion/core/math/mat4.hpp"
 #include "hyperion/rendering/shader.hpp"
-#include "hyperion/rendering/camera.hpp"
+#include "hyperion/rendering/camera_data.hpp"
 #include "hyperion/rendering/vertex_format.hpp"
 
 namespace Hyperion::Rendering {
@@ -34,7 +34,7 @@ namespace Hyperion::Rendering {
         inline static State s_state;
         inline static Immediate s_immediate;
     public:
-        static void Begin(const Ref<Camera> &camera);
+        static void Begin(const CameraData &camera);
         static void Draw(MeshTopology topology, const Ref<VertexArray> &vertex_array, u32 vertex_count);
         static void DrawCube(Vec3 center, Vec3 size, Color color);
         static void DrawLine(Vec3 a, Vec3 b, Color color);

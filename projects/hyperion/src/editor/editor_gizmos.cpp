@@ -15,13 +15,12 @@ namespace Hyperion::Editor {
         m_mesh = MeshFactory::CreateFromFile("data/models/gizmo.obj");
     }
 
-    void EditorGizmos::Render(const Ref<Camera> &camera) {
+    void EditorGizmos::Render(const CameraData &camera) {
         ForwardRenderer::Begin(camera);
         {
             // Scale the gizmos in a way so that they appear at same size
             // no matter the distance and fov of the camera
-            f32 fov = camera->GetFOV();
-            f32 distance = camera->GetPosition().Magnitude() * fov * m_gizmo_scale;
+            f32 distance = camera.position.Magnitude() * camera.fov * m_gizmo_scale;
             Mat4 scale = Mat4::Scale(Vec3(distance, distance, distance));
 
             // X gizmo

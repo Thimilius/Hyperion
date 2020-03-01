@@ -1,7 +1,7 @@
 #pragma once
 
 #include "hyperion/rendering/material.hpp"
-#include "hyperion/rendering/camera.hpp"
+#include "hyperion/rendering/camera_data.hpp"
 #include "hyperion/rendering/mesh.hpp"
 
 namespace Hyperion::Editor {
@@ -15,7 +15,7 @@ namespace Hyperion::Editor {
     public:
         EditorGizmos();
 
-        void Render(const Ref<Rendering::Camera> &camera);
+        void Render(const Rendering::CameraData &camera);
     };
 
 }
