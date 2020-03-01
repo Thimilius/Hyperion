@@ -60,7 +60,7 @@ namespace Hyperion::Rendering {
             }
         }
 
-        m_bounds = AABB(min, max);
+        m_bounds = BoundingBox(min, max);
     }
 
 }

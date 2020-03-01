@@ -36,7 +36,7 @@
 #include "hyperion/core/math/vec4.hpp"
 #include "hyperion/core/math/mat3.hpp"
 #include "hyperion/core/math/mat4.hpp"
-#include "hyperion/core/math/aabb.hpp"
+#include "hyperion/core/math/bounding_box.hpp"
 #include "hyperion/core/math/plane.hpp"
 #include "hyperion/core/math/ray.hpp"
 #include "hyperion/core/math/rect.hpp"

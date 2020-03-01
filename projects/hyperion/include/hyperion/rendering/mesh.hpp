@@ -33,7 +33,7 @@ namespace Hyperion::Rendering {
     class Mesh : public Asset {
     private:
         MeshData m_mesh_data;
-        AABB m_bounds;
+        BoundingBox m_bounds;
 
         Vector<SubMesh> m_sub_meshes;
 
@@ -42,7 +42,7 @@ namespace Hyperion::Rendering {
         inline AssetType GetType() const override { return AssetType::Mesh; }
 
         inline const MeshData &GetMeshData() const { return m_mesh_data; }
-        inline AABB GetBounds() const { return m_bounds; }
+        inline BoundingBox GetBounds() const { return m_bounds; }
         inline const Ref<VertexArray> GetVertexArray() const { return m_vertex_array; }
         inline const Vector<SubMesh> GetSubMeshes() const { return m_sub_meshes; }
 
