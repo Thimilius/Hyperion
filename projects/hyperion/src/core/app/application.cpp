@@ -1,6 +1,7 @@
 #include "hyppch.hpp"
 
 #include "hyperion/core/app/application.hpp"
+
 #include "hyperion/core/timer.hpp"
 #include "hyperion/core/engine.hpp"
 #include "hyperion/core/app/time.hpp"

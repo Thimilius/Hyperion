@@ -2,9 +2,9 @@
 
 #include "hyperion/driver/opengl/opengl_shader.hpp"
 
-#include "hyperion/driver/opengl/opengl_shader_compiler.hpp"
-
 #include <glad/glad.h>
+
+#include "hyperion/driver/opengl/opengl_shader_compiler.hpp"
 
 namespace Hyperion::Rendering {
 

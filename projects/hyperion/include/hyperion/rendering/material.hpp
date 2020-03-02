@@ -1,5 +1,7 @@
 #pragma once
 
+#include <variant>
+
 #include "hyperion/rendering/shader.hpp"
 #include "hyperion/rendering/texture_2d.hpp"
 #include "hyperion/rendering/texture_cubemap.hpp"
@@ -7,8 +9,6 @@
 #include "hyperion/core/math/mat3.hpp"
 #include "hyperion/core/math/vec2.hpp"
 #include "hyperion/core/color.hpp"
-
-#include <variant>
 
 namespace Hyperion::Rendering {
 

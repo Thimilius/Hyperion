@@ -2,11 +2,11 @@
 
 #include "hyperion/driver/opengl/opengl_render_driver.hpp"
 
+#include <glad/glad.h>
+
 #include "hyperion/core/app/application.hpp"
 #include "hyperion/driver/opengl/opengl_rasterizer_state.hpp"
 #include "hyperion/driver/opengl/opengl_shader_compiler.hpp"
-
-#include <glad/glad.h>
 
 namespace Hyperion::Rendering {
 

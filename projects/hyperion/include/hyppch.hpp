@@ -16,13 +16,9 @@
 #include <functional>
 #include <filesystem>
 
-// Platform specific
-#ifdef HYP_PLATFORM_WINDOWS
-    #include <Windows.h>
-#endif
-
 // Vendors
 #include <fmt/format.h>
+#include <nlohmann/json.hpp>
 
 // Hyperion
 #include "hyperion/common.hpp"

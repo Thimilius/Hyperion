@@ -2,6 +2,8 @@
 
 #include "hyperion/core/app/display.hpp"
 
+#include <Windows.h>
+
 namespace Hyperion {
 
     DisplayInfo::DisplayModeInfo Display::GetCurrentDisplayModeInfo() {

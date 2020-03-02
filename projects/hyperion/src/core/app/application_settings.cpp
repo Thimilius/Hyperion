@@ -4,8 +4,6 @@
 
 #include "hyperion/core/io/file_utilities.hpp"
 
-#include <nlohmann/json.hpp>
-
 namespace Hyperion {
 
     // TODO: Is there a better way to convert strings to enums?!

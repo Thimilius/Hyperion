@@ -2,9 +2,6 @@
 
 #include "hyperion/core/math/bounding_box.hpp"
 
-#undef min
-#undef max
-
 namespace Hyperion {
 
     BoundingBox::BoundingBox() { }

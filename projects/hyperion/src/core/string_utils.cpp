@@ -2,6 +2,10 @@
 
 #include "hyperion/core/string_utils.hpp"
 
+#ifdef HYP_PLATFORM_WINDOWS
+    #include <Windows.h>
+#endif
+
 namespace Hyperion {
 
     WideString StringUtils::Utf8ToUtf16(const String &string) {

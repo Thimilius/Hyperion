@@ -2,6 +2,7 @@
 
 #include "hyperion/platform/windows/windows_input.hpp"
 
+#include <Windows.h>
 #include <Xinput.h>
 
 #include "hyperion/core/app/events/app_events.hpp"

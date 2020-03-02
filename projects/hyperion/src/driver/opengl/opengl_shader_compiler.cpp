@@ -2,12 +2,12 @@
 
 #include "hyperion/driver/opengl/opengl_shader_compiler.hpp"
 
+#include <glad/glad.h>
+#include <sstream>
+
 #include "hyperion/driver/opengl/opengl_shader_pre_processor.hpp"
 #include "hyperion/assets/asset_library.hpp"
 #include "hyperion/core/io/file_utilities.hpp"
-
-#include <glad/glad.h>
-#include <sstream>
 
 namespace Hyperion::Rendering {
 

@@ -1,7 +1,8 @@
 #pragma once
 
-#include "hyperion/core/types.hpp"
 #include <cmath>
+
+#include "hyperion/core/types.hpp"
 
 namespace Hyperion {
 

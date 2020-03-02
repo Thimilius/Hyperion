@@ -1,9 +1,9 @@
 #pragma once
 
+#include <glad/glad.h>
+
 #include "hyperion/common.hpp"
 #include "hyperion/rendering/graphics_context.hpp"
-
-#include <glad/glad.h>
 
 namespace Hyperion::Rendering {
 
