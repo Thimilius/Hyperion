@@ -88,7 +88,7 @@ namespace Hyperion {
             }
             auto json_window_min_height = json_window["min_height"];
             if (json_window_min_height.is_number_unsigned()) {
-                settings.window.min_width = json_window_min_height.get<u32>();
+                settings.window.min_height = json_window_min_height.get<u32>();
             }
             auto json_window_window_mode = json_window["window_mode"];
             if (json_window_window_mode.is_string()) {

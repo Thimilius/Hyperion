@@ -32,4 +32,16 @@ namespace Hyperion::Rendering {
         }
     };
 
+    struct VertexFont {
+        Vec2 position;
+        Vec2 uv;
+
+        static BufferLayout GetBufferLayout() {
+            return BufferLayout({
+                BufferElement("a_position", ShaderDataType::Float2),
+                BufferElement("a_uv", ShaderDataType::Float2),
+            });
+        }
+    };
+
 }

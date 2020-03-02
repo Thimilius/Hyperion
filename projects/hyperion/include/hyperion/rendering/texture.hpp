@@ -38,9 +38,9 @@ namespace Hyperion::Rendering {
     };
 
     struct TextureParameters {
-        TextureWrapMode wrap_mode;
-        TextureFilter filter;
-        TextureAnisotropicFilter anisotropic_filter;
+        TextureWrapMode wrap_mode = TextureWrapMode::Clamp;
+        TextureFilter filter = TextureFilter::Point;
+        TextureAnisotropicFilter anisotropic_filter = TextureAnisotropicFilter::None;
     };
 
     // TODO: Add ability to enabled/disable mipmaps for textures

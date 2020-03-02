@@ -3,6 +3,7 @@
 #include "hyperion/editor/editor_camera_controller.hpp"
 #include "hyperion/rendering/vertex_array.hpp"
 #include "hyperion/rendering/material.hpp"
+#include "hyperion/rendering/font.hpp"
 
 namespace Hyperion::Editor {
 
@@ -17,6 +18,9 @@ namespace Hyperion::Editor {
 
         inline static Ref<Rendering::Mesh> s_icon_mesh;
         inline static Ref<Rendering::Material> s_icon_material;
+
+        inline static String s_stats;
+        inline static Ref<Rendering::Font> s_font;
 
         inline static bool s_overlay_enabled = true;
     public:

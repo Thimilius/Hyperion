@@ -5,6 +5,7 @@
 #include "hyperion/core/app/time.hpp"
 #include "hyperion/rendering/immediate_renderer.hpp"
 #include "hyperion/rendering/forward_renderer.hpp"
+#include "hyperion/rendering/font.hpp"
 #include "hyperion/assets/asset_library.hpp"
 #include "hyperion/assets/mesh_factory.hpp"
 #include "hyperion/entity/entity.hpp"
@@ -22,6 +23,8 @@ namespace Hyperion::Editor {
         s_camera_controller = EditorCameraController(s_camera);
         s_icon_mesh = MeshFactory::CreateQuad(0.5f, 0.5f);
         s_icon_material = Material::Create(AssetLibrary::GetShader("standard_unlit"));
+
+        s_font = Font::Create("data/fonts/robotomono_regular.ttf", 16);
 
         InitGridVertexArray();
         UpdateWindowTitle();
@@ -70,9 +73,11 @@ namespace Hyperion::Editor {
                         ForwardRenderer::DrawMesh(s_icon_mesh, s_icon_material, model);
                     }
                 }
-                
             }
             ForwardRenderer::End();
+
+            f32 y = (f32)(Application::GetInstance()->GetWindow()->GetHeight() - s_font->GetSize());
+            ImmediateRenderer::DrawString(s_stats, s_font, 0, y, 1.0f, Color::White());
         }
     }
 
@@ -83,13 +88,12 @@ namespace Hyperion::Editor {
     void EditorEngine::UpdateWindowTitle() {
         Window *window = Application::GetInstance()->GetWindow();
         f64 memory = (f64)OperatingSystem::GetInstance()->GetMemoryUsage() / 1024.0 / 1024.0;
-        String title = StringUtils::Format("Hyperion | FPS: {} ({:.2f} ms) | VSync: {} | Memory: {:.2f} MiB",
+        s_stats = StringUtils::Format("FPS: {} ({:.2f} ms) | VSync: {} | Memory: {:.2f} MiB",
             Time::GetFPS(),
             Time::GetFrameTime(),
             window->GetVSyncMode() != VSyncMode::DontSync,
             memory
         );
-        window->SetTitle(title);
     }
 
     void EditorEngine::InitGridVertexArray() {
