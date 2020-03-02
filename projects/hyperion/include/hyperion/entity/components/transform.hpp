@@ -6,7 +6,7 @@
 
 namespace Hyperion {
 
-    class Transform : public Component, EntityMessageListener {
+    class Transform : public Component, public EntityMessageListener {
         HYP_OBJECT(Transform, Component)
     private:
         Vec3 m_local_position = Vec3::Zero();

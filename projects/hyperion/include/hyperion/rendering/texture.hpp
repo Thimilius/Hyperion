@@ -11,8 +11,9 @@ namespace Hyperion::Rendering {
     };
 
     enum class TextureFormat {
-        RGB,
-        RGBA
+        RGB24,
+        RGBA32,
+        R8
     };
 
     enum class TextureWrapMode {

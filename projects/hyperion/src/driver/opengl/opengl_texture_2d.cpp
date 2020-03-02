@@ -84,15 +84,18 @@ namespace Hyperion::Rendering {
 
         u32 sub_image_width = old_width > width ? width : old_width;
         u32 sub_image_height = old_height > height ? height : old_height;
-        glTextureSubImage2D(m_texture_id, 0, 0, 0, sub_image_width, sub_image_height, GetGLFormat(m_format), GL_UNSIGNED_BYTE, pixels);
-        glGenerateTextureMipmap(m_texture_id);
+        SetUnpackAlignmentForFormat(m_format);
+        glTextureSubImage2D(m_texture_id, 0, 0, 0, sub_image_width, sub_image_height, GetGLFormat(m_format), GetGLFormatType(m_format), pixels);
+        
+        GenerateMipmaps();
 
         delete[] pixels;
         glDeleteTextures(1, &old_texture);
     }
 
     void OpenGLTexture2D::SetPixels(const u8 *pixels, bool generate_mipmaps) {
-        glTextureSubImage2D(m_texture_id, 0, 0, 0, m_width, m_height, GetGLFormat(m_format), GL_UNSIGNED_BYTE, pixels);
+        SetUnpackAlignmentForFormat(m_format);
+        glTextureSubImage2D(m_texture_id, 0, 0, 0, m_width, m_height, GetGLFormat(m_format), GetGLFormatType(m_format), pixels);
 
         if (generate_mipmaps) {
             GenerateMipmaps();
@@ -105,7 +108,7 @@ namespace Hyperion::Rendering {
         u8 *pixels = new u8[size];
 
         // TODO: Provide ability to get pixels from other mipmaps
-        glGetTextureImage(m_texture_id, 0, GetGLFormat(m_format), GL_UNSIGNED_BYTE, size, pixels);
+        glGetTextureImage(m_texture_id, 0, GetGLFormat(m_format), GetGLFormatType(m_format), size, pixels);
 
         return pixels;
     }
@@ -119,7 +122,8 @@ namespace Hyperion::Rendering {
 
         glTextureStorage2D(m_texture_id, m_mipmap_count, GetGLInternalFormat(m_format), m_width, m_height);
         if (pixels != nullptr) {
-            glTextureSubImage2D(m_texture_id, 0, 0, 0, m_width, m_height, GetGLFormat(m_format), GL_UNSIGNED_BYTE, pixels);
+            SetUnpackAlignmentForFormat(m_format);
+            glTextureSubImage2D(m_texture_id, 0, 0, 0, m_width, m_height, GetGLFormat(m_format), GetGLFormatType(m_format), pixels);
 
             GenerateMipmaps();
         }

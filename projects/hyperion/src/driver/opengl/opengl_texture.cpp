@@ -6,18 +6,40 @@
 
 namespace Hyperion::Rendering {
 
+    void OpenGLTexture::SetUnpackAlignmentForFormat(TextureFormat format) {
+        u32 alignment = 4;
+        switch (format) {
+            case Hyperion::Rendering::TextureFormat::RGB24: alignment = 4; break;
+            case Hyperion::Rendering::TextureFormat::RGBA32: alignment = 4; break;
+            case Hyperion::Rendering::TextureFormat::R8: alignment = 1; break;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        }
+        glPixelStorei(GL_UNPACK_ALIGNMENT, alignment);
+    }
+
     u32 OpenGLTexture::GetGLFormat(TextureFormat format) {
         switch (format) {
-            case TextureFormat::RGB: return GL_RGB;
-            case TextureFormat::RGBA: return GL_RGBA;
+            case TextureFormat::RGB24: return GL_RGB;
+            case TextureFormat::RGBA32: return GL_RGBA;
+            case TextureFormat::R8: return GL_RED;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    u32 OpenGLTexture::GetGLFormatType(TextureFormat format) {
+        switch (format) {
+            case TextureFormat::RGB24: return GL_UNSIGNED_BYTE;
+            case TextureFormat::RGBA32: return GL_UNSIGNED_BYTE;
+            case TextureFormat::R8: return GL_UNSIGNED_BYTE;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }
 
     u32 OpenGLTexture::GetGLInternalFormat(TextureFormat format) {
         switch (format) {
-            case TextureFormat::RGB: return GL_RGB8;
-            case TextureFormat::RGBA: return GL_RGBA8;
+            case TextureFormat::RGB24: return GL_RGB8;
+            case TextureFormat::RGBA32: return GL_RGBA8;
+            case TextureFormat::R8: return GL_R8;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }

@@ -9,7 +9,10 @@ namespace Hyperion::Rendering {
         OpenGLTexture() = default;
         virtual ~OpenGLTexture() = default;
 
+        static void SetUnpackAlignmentForFormat(TextureFormat format);
+
         static u32 GetGLFormat(TextureFormat format);
+        static u32 GetGLFormatType(TextureFormat format);
         static u32 GetGLInternalFormat(TextureFormat format);
         static u32 GetGLWrapMode(TextureWrapMode wrap_mode);
         static u32 GetGLMinFilter(TextureFilter filter);

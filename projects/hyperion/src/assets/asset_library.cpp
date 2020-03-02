@@ -214,9 +214,9 @@ namespace Hyperion {
 
     TextureFormat AssetLibrary::GetTextureFormatFromImage(const Ref<Image> &image) {
         switch (image->GetChannels()) {
-            case 3: return TextureFormat::RGB;
-            case 4: return TextureFormat::RGBA;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return TextureFormat::RGBA;
+            case 3: return TextureFormat::RGB24;
+            case 4: return TextureFormat::RGBA32;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return TextureFormat::RGBA32;
         }
     }
 

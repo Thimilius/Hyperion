@@ -73,7 +73,8 @@ namespace Hyperion::Rendering {
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
 
-        glTextureSubImage3D(m_texture_id, 0, 0, 0, face_offset, m_width, m_height, 1, GetGLFormat(m_format), GL_UNSIGNED_BYTE, pixels);
+        SetUnpackAlignmentForFormat(m_format);
+        glTextureSubImage3D(m_texture_id, 0, 0, 0, face_offset, m_width, m_height, 1, GetGLFormat(m_format), GetGLFormatType(m_format), pixels);
 
         if (generate_mipmaps) {
             GenerateMipmaps();
