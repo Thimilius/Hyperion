@@ -53,12 +53,13 @@ project "hyperion"
 	includedirs {
 		"projects/hyperion/include",
 		
-		"projects/hyperion/vendor/glad/include",
-		"projects/hyperion/vendor/stb/include",
+		"projects/hyperion/vendor/assimp/include",
+		"projects/hyperion/vendor/fmod/include",
 		"projects/hyperion/vendor/fmt/include",
 		"projects/hyperion/vendor/freetype/include",
-		"projects/hyperion/vendor/fmod/include",
-		"projects/hyperion/vendor/assimp/include",
+		"projects/hyperion/vendor/glad/include",
+		"projects/hyperion/vendor/nlohmann/include",
+		"projects/hyperion/vendor/stb/include",
 	}
 	
 	filter "files:projects/hyperion/vendor/**"
