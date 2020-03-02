@@ -11,11 +11,16 @@ namespace Hyperion {
     class World;
 
     enum class EntityPrimitive {
-        Sphere,
-        Cube,
+        Quad,
         Plane,
+        Cube,
+        Sphere,
 
-        Light
+        DirectionalLight,
+        PointLight,
+        SpotLight,
+
+        Camera
     };
 
     using EntityTag = String;

@@ -17,8 +17,7 @@ protected:
         Ref<Material> material = m_entity->GetComponent<MeshRenderer>()->GetSharedMaterial();
         material->SetTexture2D("u_texture", AssetLibrary::GetTexture2D("earth"));
 
-        Light *light = Entity::CreatePrimitive(EntityPrimitive::Light)->GetComponent<Light>();
-        light->SetLightType(LightType::Directional);
+        Light *light = Entity::CreatePrimitive(EntityPrimitive::DirectionalLight)->GetComponent<Light>();
         light->GetTransform()->SetPosition(Vec3(-1, 2, 2));
         light->SetColor(Color::White());
         light->GetTransform()->SetEulerAngles(Vec3(0, -45.0f, 0));

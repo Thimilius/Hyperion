@@ -5,6 +5,7 @@
 #include "hyperion/entity/world_manager.hpp"
 #include "hyperion/entity/components/mesh_renderer.hpp"
 #include "hyperion/entity/components/light.hpp"
+#include "hyperion/entity/components/camera.hpp"
 #include "hyperion/assets/asset_library.hpp"
 
 namespace Hyperion {
@@ -44,19 +45,30 @@ namespace Hyperion {
     Entity *Entity::CreatePrimitive(EntityPrimitive primitive) {
         Entity *entity = Create(GetPrimitiveName(primitive));
         
-        if (primitive == EntityPrimitive::Sphere || primitive == EntityPrimitive::Cube || primitive == EntityPrimitive::Plane) {
+        if (primitive == EntityPrimitive::Quad || primitive == EntityPrimitive::Plane || primitive == EntityPrimitive::Cube || primitive == EntityPrimitive::Sphere) {
             MeshRenderer *renderer = entity->AddComponent<MeshRenderer>();
             Ref<Rendering::Mesh> mesh;
             switch (primitive) {
-                case EntityPrimitive::Sphere: mesh = AssetLibrary::GetMeshPrimitive(MeshPrimitive::Sphere); break; 
-                case EntityPrimitive::Cube: mesh = AssetLibrary::GetMeshPrimitive(MeshPrimitive::Cube); break;
+                case EntityPrimitive::Quad: mesh = AssetLibrary::GetMeshPrimitive(MeshPrimitive::Quad); break;
                 case EntityPrimitive::Plane: mesh = AssetLibrary::GetMeshPrimitive(MeshPrimitive::Plane); break;
+                case EntityPrimitive::Cube: mesh = AssetLibrary::GetMeshPrimitive(MeshPrimitive::Cube); break;
+                case EntityPrimitive::Sphere: mesh = AssetLibrary::GetMeshPrimitive(MeshPrimitive::Sphere); break; 
                 default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
             }
             renderer->SetSharedMesh(mesh);
             renderer->SetSharedMaterial(Rendering::Material::Create(AssetLibrary::GetShader("standard")));
-        } else if (primitive == EntityPrimitive::Light) {
-            entity->AddComponent<Light>();
+        } else if (primitive == EntityPrimitive::PointLight || primitive == EntityPrimitive::DirectionalLight || primitive == EntityPrimitive::SpotLight) {
+            Light *light = entity->AddComponent<Light>();
+            LightType light_type;
+            switch (primitive) {
+                case Hyperion::EntityPrimitive::DirectionalLight: light_type = LightType::Directional; break;
+                case Hyperion::EntityPrimitive::PointLight: light_type = LightType::Point; break;
+                case Hyperion::EntityPrimitive::SpotLight: light_type = LightType::Spot; break;
+                default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+            }
+            light->SetLightType(light_type);
+        } else if (primitive == EntityPrimitive::Camera) {
+            entity->AddComponent<Camera>();
         }
 
         return entity;
@@ -109,10 +121,14 @@ namespace Hyperion {
 
     String Entity::GetPrimitiveName(EntityPrimitive primitive) {
         switch (primitive) {
-            case EntityPrimitive::Sphere: return "Sphere";
-            case EntityPrimitive::Cube: return "Cube";
+            case EntityPrimitive::Quad: return "Quad";
             case EntityPrimitive::Plane: return "Plane";
-            case EntityPrimitive::Light: return "Light";
+            case EntityPrimitive::Cube: return "Cube";
+            case EntityPrimitive::Sphere: return "Sphere";
+            case EntityPrimitive::DirectionalLight: return "Directional Light";
+            case EntityPrimitive::PointLight: return "Point Light";
+            case EntityPrimitive::SpotLight: return "Spot Light";
+            case EntityPrimitive::Camera: return "Camera";
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return "Primitive";
         }
     }

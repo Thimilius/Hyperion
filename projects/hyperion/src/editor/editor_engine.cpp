@@ -18,7 +18,7 @@ namespace Hyperion::Editor {
 
     void EditorEngine::Init() {
         // FIXME: That is a very odd way of enforcing an editor camera
-        s_camera = Entity::Create("Camera")->AddComponent<Camera>();
+        s_camera = Entity::CreatePrimitive(EntityPrimitive::Camera)->GetComponent<Camera>();
         s_camera_controller = EditorCameraController(s_camera);
         s_icon_mesh = MeshFactory::CreateQuad(0.5f, 0.5f);
         s_icon_material = Material::Create(AssetLibrary::GetShader("standard_unlit"));
