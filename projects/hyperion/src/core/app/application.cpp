@@ -16,8 +16,6 @@ namespace Hyperion {
         HYP_ASSERT_MESSAGE(!s_instance, "Trying to create application more than once!");
         s_instance = this;
         m_starting_settings = settings;
-
-        Engine::Setup(settings);
         
         HYP_ASSERT_MESSAGE(settings.time.max_delta_time > 0, "Max delta time must be greater than zero!");
         Time::s_max_delta_time = settings.time.max_delta_time;

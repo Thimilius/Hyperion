@@ -11,21 +11,23 @@ namespace Hyperion {
     // TODO: Is there a better way to convert strings to enums?!
 
     Audio::AudioBackend AudioBackendFromString(const String &string) {
-        if (string == "fmod") {
-            return Audio::AudioBackend::FMod;
-        } else if (string == "none") {
+        if (string == "none") {
             return Audio::AudioBackend::None;
+        } else if (string == "fmod") {
+            return Audio::AudioBackend::FMod;
         } else {
+            HYP_LOG_ERROR("Engine", "Failed to read '{}' in application settings as audio backend!", string);
             return Audio::AudioBackend::None;
         }
     }
 
     WindowMode WindowModeFromString(const String &string) {
-        if (string == "borderless") {
-            return WindowMode::Borderless;
-        } else if (string == "windowed") {
+        if (string == "windowed") {
             return WindowMode::Windowed;
+        } else if (string == "borderless") {
+            return WindowMode::Borderless;
         } else {
+            HYP_LOG_ERROR("Engine", "Failed to read '{}' in application settings as window mode!", string);
             return WindowMode::Windowed;
         }
     }
@@ -38,7 +40,8 @@ namespace Hyperion {
         } else if (string == "every_second_v_blank") {
             return VSyncMode::EverySecondVBlank;
         } else {
-            return VSyncMode::DontSync;
+            HYP_LOG_ERROR("Engine", "Failed to read '{}' in application settings as vsync mode!", string);
+            return VSyncMode::EveryVBlank;
         }
     }
 
@@ -49,6 +52,7 @@ namespace Hyperion {
         ApplicationSettings settings;
 
         if (json.is_discarded()) {
+            HYP_LOG_ERROR("Engine", "Failed to load application settings from file: '{}'!", path);
             return settings;
         }
 

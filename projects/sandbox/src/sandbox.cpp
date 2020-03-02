@@ -33,5 +33,5 @@ protected:
 };
 
 Hyperion::Application *Hyperion::CreateApplication() {
-    return new SandboxApp(ApplicationSettings::FromJsonFile("engine.json"));
+    return new SandboxApp(ApplicationSettings::FromJsonFile("app.json"));
 }

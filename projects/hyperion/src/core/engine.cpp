@@ -13,7 +13,7 @@
 
 namespace Hyperion {
     
-    void Engine::Setup(const ApplicationSettings &settings) {
+    void Engine::Setup() {
         // We initialize the operating system first to get logging ability
         OperatingSystem::GetInstance()->Init();
 

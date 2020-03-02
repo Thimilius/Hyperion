@@ -5,9 +5,13 @@
 namespace Hyperion {
 
     u32 Main::Run() {
+        Engine::Setup();
+        
         Application *app = Hyperion::CreateApplication();
+
         u32 exit_code = app->Run();
         delete app;
+
         return exit_code;
     }
 

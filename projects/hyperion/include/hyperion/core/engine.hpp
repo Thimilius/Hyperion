@@ -22,7 +22,7 @@ namespace Hyperion {
         Engine() = delete;
         ~Engine() = delete;
 
-        static void Setup(const ApplicationSettings &settings);
+        static void Setup();
         static void Init(const ApplicationSettings &settings);
         static void Update(f32 delta_time);
         static void LateUpdate();
@@ -32,6 +32,7 @@ namespace Hyperion {
 
         static Rendering::RenderPipeline *GetRenderPipeline(const RenderSettings &settings);
 
+        friend class Main;
         friend class Application;
     };
 
