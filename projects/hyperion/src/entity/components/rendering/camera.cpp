@@ -1,6 +1,6 @@
 #include "hyppch.hpp"
 
-#include "hyperion/entity/components/camera.hpp"
+#include "hyperion/entity/components/rendering/camera.hpp"
 
 #include "hyperion/entity/components/transform.hpp"
 

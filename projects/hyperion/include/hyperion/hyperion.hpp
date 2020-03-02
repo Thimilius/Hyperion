@@ -43,8 +43,8 @@
 #include "hyperion/entity/entity_message.hpp"
 #include "hyperion/entity/components/component.hpp"
 #include "hyperion/entity/components/transform.hpp"
-#include "hyperion/entity/components/mesh_renderer.hpp"
-#include "hyperion/entity/components/light.hpp"
+#include "hyperion/entity/components/rendering/mesh_renderer.hpp"
+#include "hyperion/entity/components/rendering/light.hpp"
 
 // Rendering
 #include "hyperion/rendering/shader.hpp"

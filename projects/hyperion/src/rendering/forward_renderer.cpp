@@ -5,8 +5,8 @@
 #include "hyperion/assets/asset_library.hpp"
 #include "hyperion/assets/mesh_factory.hpp"
 #include "hyperion/entity/components/transform.hpp"
-#include "hyperion/entity/components/mesh_renderer.hpp"
-#include "hyperion/entity/components/light.hpp"
+#include "hyperion/entity/components/rendering/mesh_renderer.hpp"
+#include "hyperion/entity/components/rendering/light.hpp"
 
 namespace Hyperion::Rendering {
 

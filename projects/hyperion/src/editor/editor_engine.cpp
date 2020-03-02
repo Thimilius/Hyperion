@@ -9,8 +9,8 @@
 #include "hyperion/assets/mesh_factory.hpp"
 #include "hyperion/entity/entity.hpp"
 #include "hyperion/entity/world_manager.hpp"
-#include "hyperion/entity/components/camera.hpp"
-#include "hyperion/entity/components/light.hpp"
+#include "hyperion/entity/components/rendering/camera.hpp"
+#include "hyperion/entity/components/rendering/light.hpp"
 
 using namespace Hyperion::Rendering;
 
