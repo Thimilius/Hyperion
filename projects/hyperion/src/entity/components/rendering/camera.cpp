@@ -3,6 +3,7 @@
 #include "hyperion/entity/components/rendering/camera.hpp"
 
 #include "hyperion/entity/components/transform.hpp"
+#include "hyperion/entity/entity.hpp"
 
 using namespace Hyperion::Rendering;
 
@@ -47,6 +48,24 @@ namespace Hyperion {
         }
 
         return Ray(position, direction);
+    }
+
+    void Camera::OnMessage(EntityMessage message) {
+        if (message.type == EntityMessageType::TransformChanged) {
+            RecalculateMatricies();
+        }
+    }
+
+    void Camera::OnCreate() {
+        Component::OnCreate();
+
+        GetEntity()->RegisterMessageListener(this);
+    }
+
+    void Camera::OnDestroy() {
+        Component::OnDestroy();
+
+        GetEntity()->UnregisterMessageListener(this);
     }
 
     void Camera::RecalculateMatricies() {

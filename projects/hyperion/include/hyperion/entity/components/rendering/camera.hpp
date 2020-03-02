@@ -1,12 +1,12 @@
 #pragma once
 
+#include "hyperion/entity/entity_message.hpp"
 #include "hyperion/entity/components/component.hpp"
 #include "hyperion/rendering/camera_data.hpp"
 
 namespace Hyperion {
 
-    // TODO: Make recalculation of matricies automatic
-    class Camera : public Component {
+    class Camera : public Component, EntityMessageListener {
         HYP_OBJECT(Camera, Component);
     private:
         mutable Rendering::CameraData m_data;
@@ -35,6 +35,12 @@ namespace Hyperion {
         Rendering::CameraData GetData() const;
 
         Ray ScreenPointToRay(Vec2 screen_point) const;
+
+        void OnMessage(EntityMessage message);
+    protected:
+        void OnCreate() override;
+        void OnDestroy() override;
+    private:
         void RecalculateMatricies();
     };
 

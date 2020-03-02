@@ -42,8 +42,6 @@ namespace Hyperion {
 
     void Transform::OnMessage(EntityMessage message) {
         if (message.type == EntityMessageType::TransformChanged) {
-            RecalculateTransform();
-
             for (Transform *child : m_children) {
                 child->NotifyTransformChange();
             }
@@ -51,6 +49,8 @@ namespace Hyperion {
     }
 
     void Transform::NotifyTransformChange() {
+        RecalculateTransform();
+
         GetEntity()->OnMessage({ EntityMessageType::TransformChanged, nullptr });
     }
 
@@ -72,6 +72,8 @@ namespace Hyperion {
     }
 
     void Transform::OnCreate() {
+        Component::OnCreate();
+
         GetEntity()->RegisterMessageListener(this);
     }
 
@@ -88,6 +90,8 @@ namespace Hyperion {
                 m_parent->m_children.erase(std::remove(begin, end, this));
             }
         }
+
+        Component::OnDestroy();
     }
 
 }
