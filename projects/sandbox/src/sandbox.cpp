@@ -13,8 +13,6 @@ protected:
     Entity *m_entity;
 
     void OnInit() override {
-        WorldManager::GetActiveWorld()->GetEnvironment().background_skybox = AssetLibrary::LoadTextureCubemap("skybox", "data/textures/galaxy", ".png");
-
         m_entity = Entity::CreatePrimitive(EntityPrimitive::Sphere);
         Ref<Material> material = m_entity->GetComponent<MeshRenderer>()->GetSharedMaterial();
         material->SetTexture2D("u_texture", AssetLibrary::GetTexture2D("earth"));
