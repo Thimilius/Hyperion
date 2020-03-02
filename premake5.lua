@@ -83,7 +83,6 @@ project "hyperion"
 			"opengl32",
 			"PowrProf",
 		
-			"freetype",
 			"fmod_vc",
 			"assimp"
 		}
@@ -114,8 +113,10 @@ project "sandbox"
 	filter "kind:ConsoleApp"
 		defines { "HYP_CONSOLE" }
 
-    filter "system:Windows"
+    filter "system:windows"
         files { "projects/sandbox/resource.rc" }
+
+		libdirs { "projects/hyperion/vendor/freetype/lib/windows" }
 
 	    postbuildcommands {
 		    "{COPY} %{cfg.targetdir}/%{prj.name}.exe ../../run_tree/",
@@ -123,4 +124,9 @@ project "sandbox"
 		    "{COPY} %{cfg.targetdir}/fmod.dll ../../run_tree/",
 		    "{COPY} %{cfg.targetdir}/assimp.dll ../../run_tree/"
 	    }
+
+	filter { "system:windows", "configurations:debug" }
+		links { "freetype_debug" }
 	
+	filter { "system:windows", "configurations:release" }
+		links { "freetype_release" }
