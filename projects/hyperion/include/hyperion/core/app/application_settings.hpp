@@ -43,6 +43,8 @@ namespace Hyperion {
         RenderSettings render;
         AudioSettings audio;
         EntitySettings entity;
+
+        static ApplicationSettings FromJsonFile(const String &path);
     };
 
 }

@@ -1,0 +1,27 @@
+{
+	"time": {
+		"max_delta_time": 0.15
+	},
+	"window": {
+		"title": "Hyperion",
+		"icon": "icon/icon.ico",
+		
+		"width": 1280,
+		"height": 123123,
+		
+		"min_width": 640,
+		"min_height": 360,
+		
+		"window_mode": "windowed",
+		"vsync_mode": "every_v_blank"
+	},
+	"assets": {
+		"hot_loading": true,
+		
+		"shader_path": "data/shaders",
+		"texture_path": "data/textures"
+	},
+	"audio": {
+		"backend": "none"
+	}
+}

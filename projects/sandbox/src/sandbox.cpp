@@ -33,7 +33,5 @@ protected:
 };
 
 Hyperion::Application *Hyperion::CreateApplication() {
-    ApplicationSettings settings;
-    settings.audio.backend = AudioBackend::None;
-    return new SandboxApp(settings);
+    return new SandboxApp(ApplicationSettings::FromJsonFile("engine.json"));
 }
