@@ -59,13 +59,14 @@ namespace Hyperion::Editor {
             }
             ImmediateRenderer::End();
 
+            RenderEngine::GetRasterizerState()->SetBlendingEnabled(true);
+            RenderEngine::GetRasterizerState()->SetDepthTestEnabled(false);
             ForwardRenderer::Begin(s_camera->GetData());
             {
                 // Draw light icons
                 {
                     s_icon_material->SetTexture2D("u_texture", AssetLibrary::GetTexture2D("icon_light"));
                     s_icon_material->SetColor("u_color", Color(0.8f, 0.7f, 0.05f, 1.0f));
-                    RenderEngine::GetRasterizerState()->SetBlendingEnabled(true);
                     Mat4 camera_rotation = Mat4::Rotate(s_camera->GetTransform()->GetRotation());
                     for (Light *light : WorldManager::GetActiveWorld()->GetLights()) {
                         Transform *transform = light->GetTransform();

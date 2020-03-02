@@ -73,22 +73,6 @@ project "hyperion"
             "projects/hyperion/vendor/glad/src/glad_wgl.c"
 		}
 		
-		libdirs {
-			"projects/hyperion/vendor/freetype/lib/windows",
-			"projects/hyperion/vendor/fmod/lib/windows",
-			"projects/hyperion/vendor/assimp/lib/windows",
-		}
-		
-		links {
-			"opengl32",
-			"PowrProf",
-		
-			"fmod_vc",
-			"assimp"
-		}
-		
-		linkoptions { "-IGNORE:4006" }
-
 	    postbuildcommands {
 		    "{COPY} vendor/fmod/lib/x64/fmod.dll %{cfg.targetdir}",
 		    "{COPY} vendor/assimp/lib/windows/assimp.dll %{cfg.targetdir}"
@@ -116,7 +100,19 @@ project "sandbox"
     filter "system:windows"
         files { "projects/sandbox/resource.rc" }
 
-		libdirs { "projects/hyperion/vendor/freetype/lib/windows" }
+		libdirs { 
+			"projects/hyperion/vendor/freetype/lib/windows",
+			"projects/hyperion/vendor/fmod/lib/windows",
+			"projects/hyperion/vendor/assimp/lib/windows"
+		}
+
+		links {
+			"opengl32",
+			"PowrProf",
+		
+			"fmod_vc",
+			"assimp"
+		}
 
 	    postbuildcommands {
 		    "{COPY} %{cfg.targetdir}/%{prj.name}.exe ../../run_tree/",
