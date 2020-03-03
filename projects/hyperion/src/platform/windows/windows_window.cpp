@@ -30,6 +30,7 @@ namespace Hyperion {
 
         SetupWindow(settings);
         
+        SetTitle(settings.title);
         SetIcon(settings.icon);
         SetWindowMode(settings.window_mode);
 
@@ -45,8 +46,13 @@ namespace Hyperion {
 
     void WindowsWindow::SetTitle(const String &title) {
         m_title = title;
-        if (!SetWindowTextW(m_window_handle, StringUtils::Utf8ToUtf16(title).c_str())) {
+        WideString title_wide = StringUtils::Utf8ToUtf16(title);
+        const wchar_t *title_utf16 = title_wide.c_str();
+        if (!SetWindowTextW(m_window_handle, title_utf16)) {
             HYP_PANIC_MESSAGE("Engine", "Failed to set window title!");
+        }
+        if (!SetConsoleTitleW(title_utf16)) {
+            HYP_PANIC_MESSAGE("Engine", "Failed to set console window title!");
         }
     }
 

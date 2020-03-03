@@ -13,9 +13,9 @@ namespace Hyperion::Rendering {
     }
 
     void ImmediateRenderer::Draw(MeshTopology topology, const Ref<VertexArray> &vertex_array, u32 vertex_count) {
-        s_immediate.shader->Bind();
-        s_immediate.shader->SetMat4("u_transform.view", s_state.transform.view);
-        s_immediate.shader->SetMat4("u_transform.projection", s_state.transform.projection);
+        s_immediate_resources.shader->Bind();
+        s_immediate_resources.shader->SetMat4("u_transform.view", s_state.transform.view);
+        s_immediate_resources.shader->SetMat4("u_transform.projection", s_state.transform.projection);
 
         vertex_array->Bind();
 
@@ -83,7 +83,7 @@ namespace Hyperion::Rendering {
         Flush(MeshTopology::Lines);
     }
 
-    void ImmediateRenderer::DrawString(const String &text, const Ref<Font> &font, f32 x, f32 y, f32 scale, Color color) {
+    void ImmediateRenderer::DrawText(const String &text, const Ref<Font> &font, f32 x, f32 y, f32 scale, Color color) {
         s_font_resources.shader->Bind();
         s_font_resources.shader->SetVec4("u_color", color);
         Window *window = Application::GetInstance()->GetWindow();
@@ -122,11 +122,11 @@ namespace Hyperion::Rendering {
     }
 
     void ImmediateRenderer::Init() {
-        s_immediate.shader = AssetLibrary::GetShader("standard_immediate");
-        s_immediate.vertex_buffer = VertexBuffer::Create(nullptr, sizeof(s_immediate.data_buffer), BufferUsage::DynamicDraw);
-        s_immediate.vertex_buffer->SetLayout(VertexImmediate::GetBufferLayout());
-        s_immediate.vertex_array = VertexArray::Create();
-        s_immediate.vertex_array->AddVertexBuffer(s_immediate.vertex_buffer);
+        s_immediate_resources.shader = AssetLibrary::GetShader("standard_immediate");
+        s_immediate_resources.vertex_buffer = VertexBuffer::Create(nullptr, sizeof(s_immediate_resources.data_buffer), BufferUsage::DynamicDraw);
+        s_immediate_resources.vertex_buffer->SetLayout(VertexImmediate::GetBufferLayout());
+        s_immediate_resources.vertex_array = VertexArray::Create();
+        s_immediate_resources.vertex_array->AddVertexBuffer(s_immediate_resources.vertex_buffer);
 
         s_font_resources.shader = AssetLibrary::GetShader("standard_font");
         s_font_resources.vertex_buffer = VertexBuffer::Create(nullptr, 6 * 4 * sizeof(f32), BufferUsage::DynamicDraw);
@@ -139,8 +139,8 @@ namespace Hyperion::Rendering {
         u32 vertex_offset = s_state.vertex_offset;
         HYP_ASSERT_MESSAGE(vertex_offset < 2000, "Immediate vertex buffer is full!");
 
-        s_immediate.data_buffer[vertex_offset].position = position;
-        s_immediate.data_buffer[vertex_offset].color = color;
+        s_immediate_resources.data_buffer[vertex_offset].position = position;
+        s_immediate_resources.data_buffer[vertex_offset].color = color;
 
         s_state.vertex_offset++;
     }
@@ -155,12 +155,12 @@ namespace Hyperion::Rendering {
             return;
         }
 
-        s_immediate.shader->Bind();
-        s_immediate.shader->SetMat4("u_transform.view", s_state.transform.view);
-        s_immediate.shader->SetMat4("u_transform.projection", s_state.transform.projection);
+        s_immediate_resources.shader->Bind();
+        s_immediate_resources.shader->SetMat4("u_transform.view", s_state.transform.view);
+        s_immediate_resources.shader->SetMat4("u_transform.projection", s_state.transform.projection);
 
-        s_immediate.vertex_buffer->SetData(0, s_state.vertex_offset * sizeof(VertexImmediate), (u8*)s_immediate.data_buffer);
-        s_immediate.vertex_array->Bind();
+        s_immediate_resources.vertex_buffer->SetData(0, s_state.vertex_offset * sizeof(VertexImmediate), (u8*)s_immediate_resources.data_buffer);
+        s_immediate_resources.vertex_array->Bind();
 
         RenderEngine::Draw(topology, s_state.vertex_offset, 0);
 

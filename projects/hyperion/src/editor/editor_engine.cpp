@@ -78,7 +78,7 @@ namespace Hyperion::Editor {
             ForwardRenderer::End();
 
             f32 y = (f32)(Application::GetInstance()->GetWindow()->GetHeight() - s_font->GetSize());
-            ImmediateRenderer::DrawString(s_stats, s_font, 0, y, 1.0f, Color::White());
+            ImmediateRenderer::DrawText(s_stats, s_font, 0, y, 1.0f, Color::White());
         }
     }
 
