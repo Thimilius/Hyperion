@@ -16,7 +16,7 @@ namespace Hyperion {
 
         void Flip();
 
-        bool Intersects(Ray ray, f32 *distance) const;
+        bool Intersects(Ray ray, f32 &hit_distance) const;
 
         String ToString() const;
 

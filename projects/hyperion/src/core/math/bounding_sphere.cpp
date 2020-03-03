@@ -9,7 +9,7 @@ namespace Hyperion {
     BoundingSphere::BoundingSphere(Vec3 origin, f32 radius)
         : origin(origin), radius(radius) { }
 
-    bool BoundingSphere::Intersects(Ray ray) const {
+    bool BoundingSphere::Intersects(Ray ray, f32 &hit_distance) const {
         Vec3 distance = origin - ray.origin;
         f32 radius_squared = radius * radius;
 
@@ -37,7 +37,7 @@ namespace Hyperion {
             }
         }
 
-        f32 hit = t0;
+        hit_distance = t0;
         return true;
     }
 

@@ -23,7 +23,7 @@ namespace Hyperion {
         return (max > bounds_min && min < bounds_max) || (min > bounds_max && max < bounds_min);
     }
 
-    bool BoundingBox::Intersects(Ray ray) const {
+    bool BoundingBox::Intersects(Ray ray, f32 &hit_distance) const {
         Vec3 inv_dir = Vec3(1.0f / ray.direction.x, 1.0f / ray.direction.y, 1.0f / ray.direction.z);
         u32 sign[3];
         sign[0] = (inv_dir.x < 0);
@@ -41,22 +41,37 @@ namespace Hyperion {
         tymin = (bounds[sign[1]].y - ray.origin.y) * inv_dir.y;
         tymax = (bounds[1 - sign[1]].y - ray.origin.y) * inv_dir.y;
 
-        if ((tmin > tymax) || (tymin > tmax))
+        if ((tmin > tymax) || (tymin > tmax)) {
             return false;
-        if (tymin > tmin)
+        }
+        if (tymin > tmin) {
             tmin = tymin;
-        if (tymax < tmax)
+        }
+        if (tymax < tmax) {
             tmax = tymax;
+        }
 
         tzmin = (bounds[sign[2]].z - ray.origin.z) * inv_dir.z;
         tzmax = (bounds[1 - sign[2]].z - ray.origin.z) * inv_dir.z;
 
-        if ((tmin > tzmax) || (tzmin > tmax))
+        if ((tmin > tzmax) || (tzmin > tmax)) {
             return false;
-        if (tzmin > tmin)
+        }
+
+        if (tzmin > tmin) {
             tmin = tzmin;
-        if (tzmax < tmax)
+        }
+        if (tzmax < tmax) {
             tmax = tzmax;
+        }
+
+        hit_distance = tmin;
+        if (hit_distance < 0) {
+            hit_distance = tmax;
+            if (hit_distance < 0) {
+                return false;
+            }
+        }
 
         return true;
     }

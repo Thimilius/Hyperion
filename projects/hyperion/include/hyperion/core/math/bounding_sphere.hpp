@@ -11,7 +11,7 @@ namespace Hyperion {
         BoundingSphere();
         BoundingSphere(Vec3 origin, f32 radius);
 
-        bool Intersects(Ray ray) const;
+        bool Intersects(Ray ray, f32 &hit_distance) const;
 
         String ToString() const;
 

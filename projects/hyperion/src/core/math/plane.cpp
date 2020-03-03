@@ -25,20 +25,16 @@ namespace Hyperion {
         distance = -distance;
     }
 
-    bool Plane::Intersects(Ray ray, f32 *distance) const {
+    bool Plane::Intersects(Ray ray, f32 &hit_distance) const {
         f32 angle = ray.direction.Dot(normal);
         f32 origin_to_plane = -ray.origin.Dot(normal) - this->distance;
         bool hit;
         if (angle == 0.0f) {
-            if (distance) {
-                *distance = 0.0f;
-            }
+            hit_distance = 0.0f;
             hit = false;
         } else {
             f32 dis = origin_to_plane / angle;
-            if (distance) {
-                *distance = dis;
-            }
+            hit_distance = dis;
             hit = dis > 0.0f;
         }
         return hit;
