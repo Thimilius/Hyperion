@@ -38,6 +38,8 @@ namespace Hyperion {
         Rendering::ImmediateRenderer::Init();
         s_render_pipeline.reset(GetRenderPipeline(settings.render));
 
+        Rendering::Font::Init();
+
         Audio::AudioEngine::Init(settings.audio.backend);
 
         World *world = settings.entity.start_world;

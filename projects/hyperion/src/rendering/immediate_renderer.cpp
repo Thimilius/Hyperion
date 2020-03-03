@@ -117,7 +117,7 @@ namespace Hyperion::Rendering {
 
             RenderEngine::Draw(MeshTopology::Triangles, 6, 0);
 
-            x += (glyph.advance >> 6) * scale;
+            x += glyph.advance * scale;
         }
     }
 

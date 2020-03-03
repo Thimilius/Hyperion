@@ -19,16 +19,20 @@ namespace Hyperion::Rendering {
     class Font : public Asset {
     private:
         u32 m_size;
-        Map<char, FontGlyph> m_glyphs;
+        Map<u32, FontGlyph> m_glyphs;
     public:
         inline AssetType GetType() const { return AssetType::Font; };
 
         inline u32 GetSize() const { return m_size; }
-        inline FontGlyph GetGlyph(char c) const { return m_glyphs.at(c); }
+        inline FontGlyph GetGlyph(u32 c) const { return m_glyphs.at(c); }
 
         static Ref<Font> Create(const String &path, u32 size);
     private:
         Font(const String &path, u32 size);
+
+        static void Init();
+
+        friend class Engine;
     };
 
 }
