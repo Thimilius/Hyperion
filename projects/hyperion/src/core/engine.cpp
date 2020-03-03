@@ -3,12 +3,12 @@
 #include "hyperion/core/engine.hpp"
 
 #include "hyperion/core/app/display.hpp"
-#include "hyperion/entity/object_system.hpp"
-#include "hyperion/assets/asset_library.hpp"
+#include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/audio/audio_engine.hpp"
 #include "hyperion/rendering/forward_render_pipeline.hpp"
 #include "hyperion/rendering/forward_renderer.hpp"
 #include "hyperion/rendering/immediate_renderer.hpp"
+#include "hyperion/entity/object_manager.hpp"
 #include "hyperion/entity/world_manager.hpp"
 #include "hyperion/entity/entity.hpp"
 #include "hyperion/editor/editor_engine.hpp"
@@ -34,7 +34,7 @@ namespace Hyperion {
     void Engine::Init(const ApplicationSettings &settings) {
         Rendering::RenderEngine::Init(settings.render.backend);
 
-        AssetLibrary::Init(settings.assets);
+        AssetManager::Init(settings.assets);
 
         Rendering::ForwardRenderer::Init();
         Rendering::ImmediateRenderer::Init();
@@ -56,12 +56,12 @@ namespace Hyperion {
     }
 
     void Engine::Update(f32 delta_time) {
-        AssetLibrary::Update();
+        AssetManager::Update();
         Editor::EditorEngine::Update(delta_time);
     }
 
     void Engine::LateUpdate() {
-        ObjectSystem::LateUpdate();
+        ObjectManager::LateUpdate();
     }
 
     void Engine::Render() {
@@ -73,7 +73,7 @@ namespace Hyperion {
     }
 
     void Engine::Shutdown() {
-        AssetLibrary::Shutdown();
+        AssetManager::Shutdown();
 
         Audio::AudioEngine::Shutdown();
         Rendering::RenderEngine::Shutdown();

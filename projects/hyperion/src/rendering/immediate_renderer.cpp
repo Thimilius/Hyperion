@@ -2,7 +2,7 @@
 
 #include "hyperion/rendering/immediate_renderer.hpp"
 
-#include "hyperion/assets/asset_library.hpp"
+#include "hyperion/assets/asset_manager.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -121,13 +121,13 @@ namespace Hyperion::Rendering {
     }
 
     void ImmediateRenderer::Init() {
-        s_immediate_resources.shader = AssetLibrary::GetShader("standard_immediate");
+        s_immediate_resources.shader = AssetManager::GetShader("standard_immediate");
         s_immediate_resources.vertex_buffer = VertexBuffer::Create(nullptr, sizeof(s_immediate_resources.data_buffer), BufferUsage::DynamicDraw);
         s_immediate_resources.vertex_buffer->SetLayout(VertexImmediate::GetBufferLayout());
         s_immediate_resources.vertex_array = VertexArray::Create();
         s_immediate_resources.vertex_array->AddVertexBuffer(s_immediate_resources.vertex_buffer);
 
-        s_font_resources.shader = AssetLibrary::GetShader("standard_font");
+        s_font_resources.shader = AssetManager::GetShader("standard_font");
         s_font_resources.vertex_buffer = VertexBuffer::Create(nullptr, 6 * 4 * sizeof(f32), BufferUsage::DynamicDraw);
         s_font_resources.vertex_buffer->SetLayout(VertexFont::GetBufferLayout());
         s_font_resources.vertex_array = VertexArray::Create();

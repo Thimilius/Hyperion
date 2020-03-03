@@ -2,7 +2,7 @@
 
 #include "hyperion/rendering/forward_renderer.hpp"
 
-#include "hyperion/assets/asset_library.hpp"
+#include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/assets/mesh_factory.hpp"
 #include "hyperion/entity/components/transform.hpp"
 #include "hyperion/entity/components/rendering/mesh_renderer.hpp"
@@ -94,7 +94,7 @@ namespace Hyperion::Rendering {
     }
 
     void ForwardRenderer::Init() {
-        s_skybox.shader = AssetLibrary::GetShader("standard_skybox");
+        s_skybox.shader = AssetManager::GetShader("standard_skybox");
         s_skybox.mesh = MeshFactory::CreateCube(1);
 
         for (u32 i = 0; i < s_state.lighting.MAX_POINT_LIGHT_COUNT; i++) {

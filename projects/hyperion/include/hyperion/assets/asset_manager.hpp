@@ -1,7 +1,7 @@
 #pragma once
 
-#include "hyperion/core/io/file_watcher.hpp"
 #include "hyperion/core/image.hpp"
+#include "hyperion/core/io/file_watcher.hpp"
 #include "hyperion/rendering/shader.hpp"
 #include "hyperion/rendering/texture_2d.hpp"
 #include "hyperion/rendering/texture_cubemap.hpp"
@@ -16,7 +16,7 @@ namespace Hyperion {
         Sphere
     };
 
-    class AssetLibrary {
+    class AssetManager {
     private:
         template<typename T>
         struct AssetEntry {
@@ -49,19 +49,18 @@ namespace Hyperion {
         static void AddShader(const String &name, const String &filepath, const Ref<Rendering::Shader> &shader);
         static Ref<Rendering::Shader> GetShader(const String &name);
 
-        static Ref<Rendering::Texture2D> LoadTexture2D(const String &name, const String &filepath);
-        static Ref<Rendering::Texture2D> LoadTexture2D(const String &name, const String &filepath, Rendering::TextureParameters parameters);
+        static Ref<Rendering::Texture2D> LoadTexture2D(const String &name, const String &filepath, Rendering::TextureParameters parameters = Rendering::TextureParameters());
         static void AddTexture2D(const String &name, const String &filepath, const Ref<Rendering::Texture2D> &texture);
         static Ref<Rendering::Texture2D> GetTexture2D(const String &name);
 
-        static Ref<Rendering::TextureCubemap> LoadTextureCubemap(const String &name, const String &directory, const String &extension, Rendering::TextureParameters parameters);
+        static Ref<Rendering::TextureCubemap> LoadTextureCubemap(const String &name, const String &directory, const String &extension, Rendering::TextureParameters parameters = Rendering::TextureParameters());
         static void AddTextureCubemap(const String &name, const Ref<Rendering::TextureCubemap> &texture_cubemap);
         static Ref<Rendering::TextureCubemap> GetTextureCubemap(const String &name);
 
         static Ref<Rendering::Mesh> GetMeshPrimitive(MeshPrimitive mesh_primitive);
     private:
-        AssetLibrary() = delete;
-        ~AssetLibrary() = delete;
+        AssetManager() = delete;
+        ~AssetManager() = delete;
 
         static void Init(const AssetSettings &settings);
         static void Update();

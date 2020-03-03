@@ -3,7 +3,7 @@
 #include "hyperion/editor/editor_gizmos.hpp"
 
 #include "hyperion/rendering/forward_renderer.hpp"
-#include "hyperion/assets/asset_library.hpp"
+#include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/assets/mesh_factory.hpp"
 
 using namespace Hyperion::Rendering;
@@ -11,7 +11,7 @@ using namespace Hyperion::Rendering;
 namespace Hyperion::Editor {
 
     EditorGizmos::EditorGizmos() {
-        m_material = Material::Create(AssetLibrary::GetShader("gizmo"));
+        m_material = Material::Create(AssetManager::GetShader("standard_unlit"));
         m_mesh = MeshFactory::CreateFromFile("data/models/gizmo.obj");
     }
 

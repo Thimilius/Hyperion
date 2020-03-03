@@ -14,7 +14,7 @@ protected:
     void OnInit() override {
         m_entity = Entity::CreatePrimitive(EntityPrimitive::Sphere);
         Ref<Material> material = m_entity->GetComponent<MeshRenderer>()->GetSharedMaterial();
-        material->SetTexture2D("u_texture", AssetLibrary::GetTexture2D("earth"));
+        material->SetTexture2D("u_texture", AssetManager::GetTexture2D("earth"));
 
         m_light = Entity::CreatePrimitive(EntityPrimitive::DirectionalLight)->GetComponent<Light>();
         m_light->SetColor(Color::White());

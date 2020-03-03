@@ -6,7 +6,7 @@
 #include "hyperion/rendering/immediate_renderer.hpp"
 #include "hyperion/rendering/forward_renderer.hpp"
 #include "hyperion/rendering/font.hpp"
-#include "hyperion/assets/asset_library.hpp"
+#include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/assets/mesh_factory.hpp"
 #include "hyperion/entity/entity.hpp"
 #include "hyperion/entity/world_manager.hpp"
@@ -21,7 +21,7 @@ namespace Hyperion::Editor {
         s_camera = WorldManager::GetActiveWorld()->GetCameras()[0];
         s_camera_controller = EditorCameraController(s_camera);
         s_icon_mesh = MeshFactory::CreateQuad(0.5f, 0.5f);
-        s_icon_material = Material::Create(AssetLibrary::GetShader("standard_unlit"));
+        s_icon_material = Material::Create(AssetManager::GetShader("standard_unlit"));
 
         s_font = Font::Create("data/fonts/robotomono_regular.ttf", 16);
 
@@ -71,7 +71,7 @@ namespace Hyperion::Editor {
             {
                 // Draw light icons
                 {
-                    s_icon_material->SetTexture2D("u_texture", AssetLibrary::GetTexture2D("icon_light"));
+                    s_icon_material->SetTexture2D("u_texture", AssetManager::GetTexture2D("icon_light"));
                     Mat4 camera_rotation = Mat4::Rotate(s_camera->GetTransform()->GetRotation());
                     Vec3 camera_position = s_camera->GetTransform()->GetPosition();
                     for (Light *light : WorldManager::GetActiveWorld()->GetLights()) {

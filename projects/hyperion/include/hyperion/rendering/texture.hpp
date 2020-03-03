@@ -39,7 +39,7 @@ namespace Hyperion::Rendering {
 
     struct TextureParameters {
         TextureWrapMode wrap_mode = TextureWrapMode::Clamp;
-        TextureFilter filter = TextureFilter::Point;
+        TextureFilter filter = TextureFilter::Bilinear;
         TextureAnisotropicFilter anisotropic_filter = TextureAnisotropicFilter::None;
         bool use_mipmaps = true;
     };

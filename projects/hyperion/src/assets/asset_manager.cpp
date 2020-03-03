@@ -1,41 +1,33 @@
 #include "hyppch.hpp"
 
-#include "hyperion/assets/asset_library.hpp"
+#include "hyperion/assets/asset_manager.hpp"
 
+#include "hyperion/assets/mesh_factory.hpp"
 #include "hyperion/core/io/file_utilities.hpp"
 #include "hyperion/core/io/image_loader.hpp"
-#include "hyperion/assets/mesh_factory.hpp"
 
 using namespace Hyperion::Rendering;
 
 namespace Hyperion {
 
-    Ref<Shader> AssetLibrary::LoadShader(const String &name, const String &filepath) {
+    Ref<Shader> AssetManager::LoadShader(const String &name, const String &filepath) {
         String source = FileUtilities::ReadAllText(filepath);
         Ref<Shader> shader = Shader::Create(name, source);
         AddShader(name, filepath, shader);
         return shader;
     }
 
-    void AssetLibrary::AddShader(const String &name, const String &filepath, const Ref<Shader> &shader) {
+    void AssetManager::AddShader(const String &name, const String &filepath, const Ref<Shader> &shader) {
         HYP_ASSERT_MESSAGE(s_shaders.find(name) == s_shaders.end(), "Trying to add shader that is already in the library!");
         s_shaders[name] = { shader, filepath };
     }
 
-    Ref<Shader> AssetLibrary::GetShader(const String &name) {
+    Ref<Shader> AssetManager::GetShader(const String &name) {
         HYP_ASSERT_MESSAGE(s_shaders.find(name) != s_shaders.end(), "Trying to get shader that is not in the library!");
         return s_shaders[name].asset;
     }
 
-    Ref<Texture2D> AssetLibrary::LoadTexture2D(const String &name, const String &filepath) {
-        TextureParameters parameters;
-        parameters.wrap_mode = TextureWrapMode::Clamp;
-        parameters.filter = TextureFilter::Bilinear;
-        parameters.anisotropic_filter = TextureAnisotropicFilter::None;
-        return LoadTexture2D(name, filepath, parameters);
-    }
-
-    Ref<Texture2D> AssetLibrary::LoadTexture2D(const String &name, const String &filepath, TextureParameters parameters) {
+    Ref<Texture2D> AssetManager::LoadTexture2D(const String &name, const String &filepath, TextureParameters parameters) {
         Ref<Image> image = ImageLoader::Load(filepath);
         Ref<Texture2D> texture;
         if (!image->IsEmpty()) {
@@ -47,17 +39,17 @@ namespace Hyperion {
         return texture;
     }
 
-    void AssetLibrary::AddTexture2D(const String &name, const String &filepath, const Ref<Texture2D> &texture) {
+    void AssetManager::AddTexture2D(const String &name, const String &filepath, const Ref<Texture2D> &texture) {
         HYP_ASSERT_MESSAGE(s_textures.find(name) == s_textures.end(), "Trying to add 2D texture that is already in the library!");
         s_textures[name] = { texture, filepath };
     }
 
-    Ref<Texture2D> AssetLibrary::GetTexture2D(const String &name) {
+    Ref<Texture2D> AssetManager::GetTexture2D(const String &name) {
         HYP_ASSERT_MESSAGE(s_textures.find(name) != s_textures.end(), "Trying to get 2D texture that is not in the library!");
         return s_textures[name].asset;
     }
 
-    Ref<TextureCubemap> AssetLibrary::LoadTextureCubemap(const String &name, const String &directory, const String &extension, TextureParameters parameters) {
+    Ref<TextureCubemap> AssetManager::LoadTextureCubemap(const String &name, const String &directory, const String &extension, TextureParameters parameters) {
         // Make sure directory has a seperator at the end
         String dir;
         if (directory.back() != '\\' || directory.back() != '/') {
@@ -88,18 +80,18 @@ namespace Hyperion {
         return texture_cubemap;
     }
 
-    void AssetLibrary::AddTextureCubemap(const String &name, const Ref<Rendering::TextureCubemap> &texture_cubemap) {
+    void AssetManager::AddTextureCubemap(const String &name, const Ref<Rendering::TextureCubemap> &texture_cubemap) {
         HYP_ASSERT_MESSAGE(s_texture_cubemaps.find(name) == s_texture_cubemaps.end(), "Trying to add cube texture that is already in the library!");
         // NOTE: The corresponding cubemap files currently get ignored which means they can not be hotloaded
         s_texture_cubemaps[name] = { texture_cubemap, "" };
     }
 
-    Ref<TextureCubemap> AssetLibrary::GetTextureCubemap(const String &name) {
+    Ref<TextureCubemap> AssetManager::GetTextureCubemap(const String &name) {
         HYP_ASSERT_MESSAGE(s_textures.find(name) != s_textures.end(), "Trying to get cubemap texture that is not in the library!");
         return s_texture_cubemaps[name].asset;
     }
 
-    Ref<Mesh> AssetLibrary::GetMeshPrimitive(MeshPrimitive mesh_primitive) {
+    Ref<Mesh> AssetManager::GetMeshPrimitive(MeshPrimitive mesh_primitive) {
         switch (mesh_primitive) {
             case MeshPrimitive::Quad: return s_mesh_primitives.quad;
             case MeshPrimitive::Plane: return s_mesh_primitives.plane;
@@ -109,7 +101,7 @@ namespace Hyperion {
         }
     }
 
-    void AssetLibrary::Init(const AssetSettings &settings) {
+    void AssetManager::Init(const AssetSettings &settings) {
         s_settings = settings;
 
         if (!std::filesystem::exists(settings.shader_path)) {
@@ -124,18 +116,18 @@ namespace Hyperion {
         InitMeshPrimitives();
     }
 
-    void AssetLibrary::Update() {
+    void AssetManager::Update() {
         if (s_settings.hot_loading) {
             s_shader_watcher->Update();
             s_texture_watcher->Update();
         }
     }
 
-    void AssetLibrary::Shutdown() {
+    void AssetManager::Shutdown() {
 
     }
 
-    void AssetLibrary::InitShaders(const String &shader_path) {
+    void AssetManager::InitShaders(const String &shader_path) {
         for (auto &entry : std::filesystem::directory_iterator(shader_path)) {
             auto &path = entry.path();
             if (path.extension() == RenderEngine::GetShaderExtension()) {
@@ -156,7 +148,7 @@ namespace Hyperion {
         }
     }
 
-    void AssetLibrary::InitTextures2D(const String &texture_path) {
+    void AssetManager::InitTextures2D(const String &texture_path) {
         for (auto &entry : std::filesystem::directory_iterator(texture_path)) {
             auto &path = entry.path();
             if (ImageLoader::SupportsExtension(path.extension().u8string())) {
@@ -177,7 +169,7 @@ namespace Hyperion {
         }
     }
 
-    void AssetLibrary::ReloadShader(const String &name) {
+    void AssetManager::ReloadShader(const String &name) {
         if (s_shaders.find(name) == s_shaders.end()) {
             // Apparently we are trying to reload a shader that is not part of the 
             HYP_LOG_WARN("AssetLibrary", "Trying to reload a shader that is not in the library!");
@@ -189,7 +181,7 @@ namespace Hyperion {
         entry.asset->Recompile(source);
     }
 
-    void AssetLibrary::ReloadTexture2D(const String &name) {
+    void AssetManager::ReloadTexture2D(const String &name) {
         if (s_textures.find(name) == s_textures.end()) {
             HYP_LOG_WARN("AssetLibrary", "Trying to reload a 2D texture that is not in the library!");
             return;
@@ -205,14 +197,14 @@ namespace Hyperion {
         }
     }
 
-    void AssetLibrary::InitMeshPrimitives() {
+    void AssetManager::InitMeshPrimitives() {
         s_mesh_primitives.quad = MeshFactory::CreateQuad(1, 1);
         s_mesh_primitives.plane = MeshFactory::CreatePlane(10, 10);
         s_mesh_primitives.cube = MeshFactory::CreateCube(1);
         s_mesh_primitives.sphere = MeshFactory::CreateFromFile("data/models/sphere.obj"); // TODO: Procedurally create sphere
     }
 
-    TextureFormat AssetLibrary::GetTextureFormatFromImage(const Ref<Image> &image) {
+    TextureFormat AssetManager::GetTextureFormatFromImage(const Ref<Image> &image) {
         switch (image->GetChannels()) {
             case 3: return TextureFormat::RGB24;
             case 4: return TextureFormat::RGBA32;

@@ -60,7 +60,7 @@
 
 // Assets
 #include "hyperion/assets/asset.hpp"
-#include "hyperion/assets/asset_library.hpp"
+#include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/assets/mesh_factory.hpp"
 
 // Audio

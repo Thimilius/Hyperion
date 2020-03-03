@@ -6,7 +6,7 @@
 #include <sstream>
 
 #include "hyperion/driver/opengl/opengl_shader_pre_processor.hpp"
-#include "hyperion/assets/asset_library.hpp"
+#include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/core/io/file_utilities.hpp"
 
 namespace Hyperion::Rendering {
@@ -95,7 +95,7 @@ namespace Hyperion::Rendering {
 
     void OpenGLShaderCompiler::Init() {
         // FIXME: There should probably a better and more global way of getting configuration stuff
-        const String &shader_path = AssetLibrary::GetSettings().shader_path;
+        const String &shader_path = AssetManager::GetSettings().shader_path;
         for (auto &entry : std::filesystem::directory_iterator(shader_path + "/modules")) {
             auto &path = entry.path();
             if (path.extension() == ".glsl_module") {

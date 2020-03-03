@@ -4,12 +4,12 @@
 
 namespace Hyperion {
 
-    class ObjectSystem {
+    class ObjectManager {
     private:
         inline static Vector<Object *> s_objects_to_destroy;
     private:
-        ObjectSystem() = delete;
-        ~ObjectSystem() = delete;
+        ObjectManager() = delete;
+        ~ObjectManager() = delete;
 
         static void LateUpdate();
         static void Destroy(Object *object);

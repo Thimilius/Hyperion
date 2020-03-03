@@ -27,7 +27,6 @@ namespace Hyperion::Rendering {
         FT_Set_Pixel_Sizes(font_face, 0, size);
 
         TextureParameters texture_parameters;
-        texture_parameters.filter = TextureFilter::Bilinear;
         texture_parameters.use_mipmaps = false;
 
         FT_UInt index;

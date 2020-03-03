@@ -44,7 +44,7 @@ namespace Hyperion {
 
         static void DestroyImmediate(Object *object);
 
-        friend class ObjectSystem;
+        friend class ObjectManager;
         friend class Entity;
         friend class World;
     };
