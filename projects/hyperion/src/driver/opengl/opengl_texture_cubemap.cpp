@@ -14,7 +14,7 @@ namespace Hyperion::Rendering {
         m_height = height;
         m_format = format;
         m_parameters = parameters;
-        m_mipmap_count = m_parameters.has_mipmaps ? CalculateMipmapCount(width, height) : 0;
+        m_mipmap_count = m_parameters.use_mipmaps ? CalculateMipmapCount(width, height) : 0;
 
         CreateTexture(pixels);
     }
@@ -91,7 +91,7 @@ namespace Hyperion::Rendering {
         SetWrapMode(m_parameters.wrap_mode);
         SetAnisotropicFilter(m_parameters.anisotropic_filter);
 
-        glTextureStorage2D(m_texture_id, m_parameters.has_mipmaps ? m_mipmap_count : 1, GetGLInternalFormat(m_format), m_width, m_height);
+        glTextureStorage2D(m_texture_id, m_parameters.use_mipmaps ? m_mipmap_count : 1, GetGLInternalFormat(m_format), m_width, m_height);
 
         if (valid_pixels) {
             for (auto &pair : pixels) {

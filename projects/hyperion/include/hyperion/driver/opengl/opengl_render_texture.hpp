@@ -12,7 +12,7 @@ namespace Hyperion::Rendering {
 
         Ref<Texture2D> m_color_attachment;
     public:
-        OpenGLRenderTexture(u32 width, u32 height, RenderTextureFormat format);
+        OpenGLRenderTexture(u32 width, u32 height, RenderTextureFormat format, TextureParameters parameters);
         ~OpenGLRenderTexture() override;
 
         u32 GetID() const override { return m_framebuffer_id; }

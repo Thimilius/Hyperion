@@ -6,9 +6,9 @@
 
 namespace Hyperion::Rendering {
 
-    Ref<RenderTexture> RenderTexture::Create(u32 width, u32 height, RenderTextureFormat format) {
+    Ref<RenderTexture> RenderTexture::Create(u32 width, u32 height, RenderTextureFormat format, TextureParameters parameters) {
         switch (RenderEngine::GetBackend()) {
-            case RenderBackend::OpenGL: return std::make_shared<OpenGLRenderTexture>(width, height, format);
+            case RenderBackend::OpenGL: return std::make_shared<OpenGLRenderTexture>(width, height, format, parameters);
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }

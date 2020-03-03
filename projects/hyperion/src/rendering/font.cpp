@@ -28,7 +28,7 @@ namespace Hyperion::Rendering {
 
         TextureParameters texture_parameters;
         texture_parameters.filter = TextureFilter::Bilinear;
-        texture_parameters.has_mipmaps = false;
+        texture_parameters.use_mipmaps = false;
 
         FT_UInt index;
         FT_ULong character = FT_Get_First_Char(font_face, &index);

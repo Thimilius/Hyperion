@@ -6,12 +6,10 @@
 
 namespace Hyperion::Rendering {
 
-    OpenGLRenderTexture::OpenGLRenderTexture(u32 width, u32 height, RenderTextureFormat format) {
+    OpenGLRenderTexture::OpenGLRenderTexture(u32 width, u32 height, RenderTextureFormat format, TextureParameters parameters) {
         m_render_format = format;
         m_format = GetTextureFormat(m_render_format);
-        m_parameters.wrap_mode = TextureWrapMode::Clamp;
-        m_parameters.filter = TextureFilter::Point;
-        m_parameters.anisotropic_filter = TextureAnisotropicFilter::None;
+        m_parameters = parameters;
         m_mipmap_count = 0;
 
         m_framebuffer_id = 0;
@@ -23,7 +21,9 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLRenderTexture::GenerateMipmaps() {
-        // TODO: Implement mipmaps for render textures
+        if (m_parameters.use_mipmaps) {
+            m_color_attachment->GenerateMipmaps();
+        }
     }
 
     void OpenGLRenderTexture::SetWrapMode(TextureWrapMode wrap_mode) {
