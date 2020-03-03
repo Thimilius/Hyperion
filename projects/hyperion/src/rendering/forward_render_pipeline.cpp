@@ -8,12 +8,14 @@
 
 namespace Hyperion::Rendering {
 
-    void ForwardRenderPipeline::Render(const CameraData &camera) {
-        ForwardRenderer::Begin(camera);
-        {
-            ForwardRenderer::DrawWorld(WorldManager::GetActiveWorld());
+    void ForwardRenderPipeline::Render() {
+        for (Camera *camera : WorldManager::GetActiveWorld()->GetCameras()) {
+            ForwardRenderer::Begin(camera->GetData());
+            {
+                ForwardRenderer::DrawWorld(WorldManager::GetActiveWorld());
+            }
+            ForwardRenderer::End();
         }
-        ForwardRenderer::End();
 
         Editor::EditorEngine::Render();
     }

@@ -8,9 +8,9 @@
 namespace Hyperion {
 
     void Light::OnCreate() {
-        GetEntity()->GetWorld()->AddLight(this);
-
         Behaviour::OnCreate();
+
+        GetEntity()->GetWorld()->AddLight(this);
     }
 
     void Light::OnDestroy() {

@@ -39,8 +39,8 @@ namespace Hyperion::Rendering {
         WorldEnvironment environment = world->GetEnvironment();
         RenderEngine::Clear(ClearMask::Color | ClearMask::Depth | ClearMask::Stencil, environment.background_color);
         
-        Vector<MeshRenderer *> renderers = world->GetMeshRenderers();
-        Vector<Light *> lights = world->GetLights();
+        const Vector<MeshRenderer *> &renderers = world->GetMeshRenderers();
+        const Vector<Light *> &lights = world->GetLights();
 
         // Set the main light to be the first directional light we can find
         auto main_light_pos = std::find_if(lights.begin(), lights.end(), [](Light *light) { 

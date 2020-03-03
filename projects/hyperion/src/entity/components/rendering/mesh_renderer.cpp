@@ -8,9 +8,9 @@
 namespace Hyperion {
 
     void MeshRenderer::OnCreate() {
-        GetEntity()->GetWorld()->AddMeshRenderer(this);
-        
         Behaviour::OnCreate();
+
+        GetEntity()->GetWorld()->AddMeshRenderer(this);
     }
 
     void MeshRenderer::OnDestroy() {

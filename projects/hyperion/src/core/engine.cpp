@@ -10,6 +10,7 @@
 #include "hyperion/rendering/forward_renderer.hpp"
 #include "hyperion/rendering/immediate_renderer.hpp"
 #include "hyperion/entity/world_manager.hpp"
+#include "hyperion/entity/entity.hpp"
 #include "hyperion/editor/editor_engine.hpp"
 
 namespace Hyperion {
@@ -45,8 +46,9 @@ namespace Hyperion {
 
         World *world = settings.entity.start_world;
         if (!world) {
-            // NOTE: We are currently forcing a new world
+            // NOTE: We are currently forcing a new world with a camera
             world = WorldManager::CreateWorld();
+            Entity::Create("Camera", Vec3(), Quaternion::Identity(), nullptr, world)->AddComponent<Camera>();
         }
         WorldManager::SetActiveWorld(world);
 
@@ -63,8 +65,7 @@ namespace Hyperion {
     }
 
     void Engine::Render() {
-        // TODO: How to properly supply different cameras
-        s_render_pipeline->Render(Editor::EditorEngine::GetCamera()->GetData());
+        s_render_pipeline->Render();
     }
 
     void Engine::Tick() {

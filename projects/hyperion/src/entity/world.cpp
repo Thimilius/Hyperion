@@ -24,6 +24,18 @@ namespace Hyperion {
         }
     }
 
+    void World::AddCamera(Camera *camera) {
+        m_cameras.push_back(camera);
+    }
+
+    void World::RemoveCamera(Camera *camera) {
+        auto begin = m_cameras.begin();
+        auto end = m_cameras.end();
+        if (std::find(begin, end, camera) != end) {
+            m_cameras.erase(std::remove(begin, end, camera));
+        }
+    }
+
     void World::AddMeshRenderer(MeshRenderer *mesh_renderer) {
         m_mesh_renderers.push_back(mesh_renderer);
     }

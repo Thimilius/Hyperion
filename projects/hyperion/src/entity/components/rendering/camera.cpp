@@ -4,6 +4,7 @@
 
 #include "hyperion/entity/components/transform.hpp"
 #include "hyperion/entity/entity.hpp"
+#include "hyperion/entity/world.hpp"
 
 using namespace Hyperion::Rendering;
 
@@ -55,13 +56,15 @@ namespace Hyperion {
     void Camera::OnCreate() {
         Component::OnCreate();
 
+        GetEntity()->GetWorld()->AddCamera(this);
         GetEntity()->RegisterMessageListener(this);
     }
 
     void Camera::OnDestroy() {
-        Component::OnDestroy();
-
+        GetEntity()->GetWorld()->RemoveCamera(this);
         GetEntity()->UnregisterMessageListener(this);
+
+        Component::OnDestroy();
     }
 
     void Camera::RecalculateMatricies() {

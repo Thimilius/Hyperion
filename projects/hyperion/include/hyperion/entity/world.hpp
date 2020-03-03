@@ -11,6 +11,7 @@ namespace Hyperion {
     class Entity;
     class MeshRenderer;
     class Light;
+    class Camera;
 
     enum class WorldEnvironmentBackgroundMode {
         Color,
@@ -31,20 +32,27 @@ namespace Hyperion {
         WorldEnvironment m_environment;
 
         Vector<Entity *> m_root_entities;
+
+        Vector<Camera *> m_cameras;
         Vector<MeshRenderer *> m_mesh_renderers;
         Vector<Light *> m_lights;
     public:
         inline WorldEnvironment &GetEnvironment() { return m_environment; }
 
         inline const Vector<Entity *> &GetRootEntites() const { return m_root_entities; }
-        inline const Vector<MeshRenderer *> GetMeshRenderers() const { return m_mesh_renderers; }
-        inline const Vector<Light *> GetLights() const { return m_lights; }
+
+        inline const Vector<Camera *> &GetCameras() const { return m_cameras; }
+        inline const Vector<MeshRenderer *> &GetMeshRenderers() const { return m_mesh_renderers; }
+        inline const Vector<Light *> &GetLights() const { return m_lights; }
     private:
         World() = default;
         ~World();
 
         void AddRootEntity(Entity *entity);
         void RemoveRootEntity(Entity *entity);
+
+        void AddCamera(Camera *camera);
+        void RemoveCamera(Camera *camera);
 
         void AddMeshRenderer(MeshRenderer *mesh_renderer);
         void RemoveMeshRenderer(MeshRenderer *mesh_renderer);
@@ -57,6 +65,7 @@ namespace Hyperion {
         friend class Transform;
         friend class MeshRenderer;
         friend class Light;
+        friend class Camera;
     };
 
 }
