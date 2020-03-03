@@ -39,20 +39,37 @@ namespace Hyperion::Rendering {
         WorldEnvironment environment = world->GetEnvironment();
         RenderEngine::Clear(ClearMask::Color | ClearMask::Depth | ClearMask::Stencil, environment.background_color);
         
-        auto &renderers = world->GetMeshRenderers();
-        auto &lights = world->GetLights();
+        Vector<MeshRenderer *> renderers = world->GetMeshRenderers();
+        Vector<Light *> lights = world->GetLights();
 
         // Set the main light to be the first directional light we can find
-        auto main_light_pos = std::find_if(lights.begin(), lights.end(), [](Light *light) { return light->GetLightType() == LightType::Directional; });
-        Light *main_light = main_light_pos != lights.end() ? *main_light_pos : nullptr;
+        auto main_light_pos = std::find_if(lights.begin(), lights.end(), [](Light *light) { 
+            return light->IsEnabled() && light->GetLightType() == LightType::Directional;
+        });
+        s_state.lighting.main_light = main_light_pos != lights.end() ? *main_light_pos : nullptr;
+
+        Vector<Light *> point_lights;
+        s_state.lighting.point_lights = &point_lights;
+        for (Light *light : lights) {
+            if (light->IsEnabled() && light->GetLightType() == LightType::Point) {
+                point_lights.push_back(light);
+            }
+        }
 
         for (MeshRenderer *renderer : renderers) {
             if (!renderer->IsEnabled()) {
                 continue;
             }
 
+            Vec3 position = renderer->GetTransform()->GetPosition();
+            std::sort(point_lights.begin(), point_lights.end(), [position](Light *first, Light *second) {
+                f32 first_distance = (first->GetTransform()->GetPosition() - position).SqrMagnitude();
+                f32 second_distance = (second->GetTransform()->GetPosition() - position).SqrMagnitude();
+                return first_distance < second_distance;
+            });
+
             Transform *transform = renderer->GetTransform();
-            DrawMesh(renderer->GetSharedMesh(), renderer->GetSharedMaterial(), transform->GetLocalToWorldMatrix(), transform->GetWorldToLocalMatrix(), main_light);
+            DrawMesh(renderer->GetSharedMesh(), renderer->GetSharedMaterial(), transform->GetLocalToWorldMatrix(), transform->GetWorldToLocalMatrix());
         }
 
         if (environment.background_mode == WorldEnvironmentBackgroundMode::Skybox) {
@@ -63,11 +80,11 @@ namespace Hyperion::Rendering {
     }
 
     void ForwardRenderer::DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform) {
-        DrawMesh(mesh, material, transform, transform.Inverted(), nullptr);
+        DrawMesh(mesh, material, transform, transform.Inverted());
     }
 
-    void ForwardRenderer::DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform, const Mat4 &inverse_transform, Light *main_light) {
-        PrepareShader(material->GetShader(), transform, inverse_transform, main_light);
+    void ForwardRenderer::DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform, const Mat4 &inverse_transform) {
+        PrepareShader(material->GetShader(), transform, inverse_transform);
         material->Bind();
         DrawCall(mesh);
     }
@@ -79,9 +96,16 @@ namespace Hyperion::Rendering {
     void ForwardRenderer::Init() {
         s_skybox.shader = AssetLibrary::GetShader("standard_skybox");
         s_skybox.mesh = MeshFactory::CreateCube(1);
+
+        for (u32 i = 0; i < s_state.lighting.MAX_POINT_LIGHT_COUNT; i++) {
+            s_state.lighting.point_light_uniforms[i].intensity = StringUtils::Format("u_point_lights[{}].intensity", i);
+            s_state.lighting.point_light_uniforms[i].color = StringUtils::Format("u_point_lights[{}].color", i);
+            s_state.lighting.point_light_uniforms[i].position = StringUtils::Format("u_point_lights[{}].position", i);
+            s_state.lighting.point_light_uniforms[i].range = StringUtils::Format("u_point_lights[{}].range", i);
+        }
     }
 
-    void ForwardRenderer::PrepareShader(const Ref<Shader> &shader, const Mat4 &transform, const Mat4 &inverse_transform, Light *main_light) {
+    void ForwardRenderer::PrepareShader(const Ref<Shader> &shader, const Mat4 &transform, const Mat4 &inverse_transform) {
         shader->Bind();
         
         shader->SetMat4("u_transform.mvp", s_state.transform.view_projection * transform);
@@ -93,11 +117,30 @@ namespace Hyperion::Rendering {
             shader->SetMat3("u_transform.model_normal", Mat3(inverse_transform.Transposed()));
             shader->SetVec3("u_camera.position", s_state.camera.position);
 
-            // FIXME: Correctly set up properties for main and additional lights
-            if (main_light) {
-                shader->SetFloat("u_main_light.intensity", main_light->GetIntensity());
-                shader->SetVec4("u_main_light.color", main_light->GetColor());
-                shader->SetVec3("u_main_light.direction", main_light->GetTransform()->GetForward());
+            // Setup lighting
+            {
+                Light *main_light = s_state.lighting.main_light;
+                if (main_light) {
+                    shader->SetFloat("u_main_light.intensity", main_light->GetIntensity());
+                    shader->SetVec4("u_main_light.color", main_light->GetColor());
+                    shader->SetVec3("u_main_light.direction", main_light->GetTransform()->GetForward());
+                } else {
+                    shader->SetVec4("u_main_light.color", Color::Black());
+                }
+
+                if (s_state.lighting.point_lights) {
+                    u32 full_point_light_count = (u32)s_state.lighting.point_lights->size();
+                    u32 max_point_light_count = s_state.lighting.MAX_POINT_LIGHT_COUNT;
+                    u32 light_count = full_point_light_count <= max_point_light_count ? full_point_light_count : max_point_light_count;
+                    shader->SetInt("u_point_light_count", light_count);
+                    for (u32 i = 0; i < light_count && i < s_state.lighting.MAX_POINT_LIGHT_COUNT; i++) {
+                        Light *light = s_state.lighting.point_lights->at(i);
+                        shader->SetFloat(s_state.lighting.point_light_uniforms[i].intensity, light->GetIntensity());
+                        shader->SetVec4(s_state.lighting.point_light_uniforms[i].color, light->GetColor());
+                        shader->SetVec3(s_state.lighting.point_light_uniforms[i].position, light->GetTransform()->GetPosition());
+                        shader->SetFloat(s_state.lighting.point_light_uniforms[i].range, light->GetRange());
+                    }
+                }
             }
         }
     }

@@ -56,14 +56,14 @@ namespace Hyperion::Rendering {
             String &name = property.name;
             MaterialPropertyStorage &storage = property.storage;
             switch (property.type) {
-                case MaterialPropertyType::Int: m_shader->SetInt(name.c_str(), std::get<u32>(storage)); break;
-                case MaterialPropertyType::Float: m_shader->SetFloat(name.c_str(), std::get<f32>(storage)); break;
-                case MaterialPropertyType::Vec2: m_shader->SetVec2(name.c_str(), std::get<Vec2>(storage)); break;
-                case MaterialPropertyType::Vec3: m_shader->SetVec3(name.c_str(), std::get<Vec3>(storage)); break;
-                case MaterialPropertyType::Vec4: m_shader->SetVec4(name.c_str(), std::get<Vec4>(storage)); break;
-                case MaterialPropertyType::Mat3: m_shader->SetMat3(name.c_str(), std::get<Mat3>(storage)); break;
-                case MaterialPropertyType::Mat4: m_shader->SetMat4(name.c_str(), std::get<Mat4>(storage)); break;
-                case MaterialPropertyType::Color: m_shader->SetVec4(name.c_str(), std::get<Color>(storage)); break;
+                case MaterialPropertyType::Int: m_shader->SetInt(name, std::get<u32>(storage)); break;
+                case MaterialPropertyType::Float: m_shader->SetFloat(name, std::get<f32>(storage)); break;
+                case MaterialPropertyType::Vec2: m_shader->SetVec2(name, std::get<Vec2>(storage)); break;
+                case MaterialPropertyType::Vec3: m_shader->SetVec3(name, std::get<Vec3>(storage)); break;
+                case MaterialPropertyType::Vec4: m_shader->SetVec4(name, std::get<Vec4>(storage)); break;
+                case MaterialPropertyType::Mat3: m_shader->SetMat3(name, std::get<Mat3>(storage)); break;
+                case MaterialPropertyType::Mat4: m_shader->SetMat4(name, std::get<Mat4>(storage)); break;
+                case MaterialPropertyType::Color: m_shader->SetVec4(name, std::get<Color>(storage)); break;
                 default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
             }
         }
@@ -75,8 +75,10 @@ namespace Hyperion::Rendering {
             String name = pair.first;
             Ref<Texture2D> &texture = pair.second;
 
-            m_shader->SetInt(name.c_str(), index);
+            m_shader->SetInt(name, index);
             texture->Bind(index);
+
+            index++;
         }
     }
 

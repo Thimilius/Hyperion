@@ -59,6 +59,9 @@ namespace Hyperion::Editor {
             }
             ImmediateRenderer::End();
 
+
+            bool blending_enabled = RenderEngine::GetRasterizerState()->IsBlendingEnabled();
+            bool depth_test_enabled = RenderEngine::GetRasterizerState()->IsDepthTestEnabled();
             RenderEngine::GetRasterizerState()->SetBlendingEnabled(true);
             RenderEngine::GetRasterizerState()->SetDepthTestEnabled(false);
             ForwardRenderer::Begin(s_camera->GetData());
@@ -79,6 +82,9 @@ namespace Hyperion::Editor {
 
             f32 y = (f32)(Display::GetHeight() - s_font->GetSize());
             ImmediateRenderer::DrawText(s_stats, s_font, 0, y, 1.0f, Color::White());
+
+            RenderEngine::GetRasterizerState()->SetBlendingEnabled(blending_enabled);
+            RenderEngine::GetRasterizerState()->SetDepthTestEnabled(depth_test_enabled);
         }
     }
 

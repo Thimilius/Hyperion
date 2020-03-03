@@ -12,7 +12,7 @@ namespace Hyperion::Rendering {
     class ImmediateRenderer {
     private:
         struct State {
-            struct {
+            struct Transform {
                 Mat4 view;
                 Mat4 projection;
 
