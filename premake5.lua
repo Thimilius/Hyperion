@@ -111,7 +111,9 @@ project "sandbox"
 			"PowrProf",
 		
 			"fmod_vc",
-			"assimp"
+			"assimp",
+			
+			"freetype"
 		}
 
 	    postbuildcommands {
@@ -122,7 +124,7 @@ project "sandbox"
 	    }
 
 	filter { "system:windows", "configurations:debug" }
-		links { "freetype_debug" }
-	
+		libdirs { "projects/hyperion/vendor/freetype/lib/windows/debug" }
+		
 	filter { "system:windows", "configurations:release" }
-		links { "freetype_release" }
+		libdirs { "projects/hyperion/vendor/freetype/lib/windows/release" }

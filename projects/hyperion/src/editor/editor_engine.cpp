@@ -26,7 +26,7 @@ namespace Hyperion::Editor {
         s_font = Font::Create("data/fonts/robotomono_regular.ttf", 16);
 
         InitGridVertexArray();
-        UpdateWindowTitle();
+        UpdateStats();
     }
 
     void EditorEngine::Update(f32 delta_time) {
@@ -41,7 +41,7 @@ namespace Hyperion::Editor {
         }
         if (Input::GetKeyDown(KeyCode::F2)) {
             window->SetVSyncMode(window->GetVSyncMode() == VSyncMode::DontSync ? VSyncMode::EveryVBlank : VSyncMode::DontSync);
-            UpdateWindowTitle();
+            UpdateStats();
         }
         if (Input::GetKeyDown(KeyCode::F3)) {
             s_overlay_enabled = !s_overlay_enabled;
@@ -74,14 +74,22 @@ namespace Hyperion::Editor {
                     s_icon_material->SetTexture2D("u_texture", AssetManager::GetTexture2D("icon_light"));
                     Mat4 camera_rotation = Mat4::Rotate(s_camera->GetTransform()->GetRotation());
                     Vec3 camera_position = s_camera->GetTransform()->GetPosition();
-                    for (Light *light : WorldManager::GetActiveWorld()->GetLights()) {
+
+                    Vector<Light *> lights = WorldManager::GetActiveWorld()->GetLights();
+                    std::sort(lights.begin(), lights.end(), [camera_position](Light *first, Light *second) {
+                        f32 distance_first = (camera_position - first->GetTransform()->GetPosition()).SqrMagnitude();
+                        f32 distance_second = (camera_position - second->GetTransform()->GetPosition()).SqrMagnitude();
+                        return distance_first > distance_second;
+                    });
+
+                    for (Light *light : lights) {
                         Transform *transform = light->GetTransform();
                         Vec3 position = transform->GetPosition();
                         Vec3 forward = transform->GetForward();
                         Mat4 model = Mat4::Translate(position) * camera_rotation;
 
                         Color color = light->GetColor();
-                        color.a = Math::Clamp01((position - camera_position).Magnitude() - 0.5f);
+                        color.a = Math::Clamp01((camera_position - position).SqrMagnitude() - 0.15f);
                         s_icon_material->SetColor("u_color", color);
 
                         ForwardRenderer::DrawMesh(s_icon_mesh, s_icon_material, model);
@@ -101,10 +109,10 @@ namespace Hyperion::Editor {
     }
 
     void EditorEngine::Tick() {
-        UpdateWindowTitle();
+        UpdateStats();
     }
 
-    void EditorEngine::UpdateWindowTitle() {
+    void EditorEngine::UpdateStats() {
         f64 memory = (f64)OperatingSystem::GetInstance()->GetMemoryUsage() / 1024.0 / 1024.0;
         s_stats = StringUtils::Format("FPS: {} ({:.2f} ms) | VSync: {} | Memory: {:.2f} MiB",
             Time::GetFPS(),

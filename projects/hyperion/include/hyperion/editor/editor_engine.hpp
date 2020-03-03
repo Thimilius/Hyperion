@@ -35,7 +35,7 @@ namespace Hyperion::Editor {
         EditorEngine() = delete;
         ~EditorEngine() = delete;
 
-        static void UpdateWindowTitle();
+        static void UpdateStats();
         static void InitGridVertexArray();
     };
 
