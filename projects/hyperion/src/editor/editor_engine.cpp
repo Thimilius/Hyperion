@@ -47,11 +47,19 @@ namespace Hyperion::Editor {
         if (Input::GetKeyDown(KeyCode::F3)) {
             s_overlay_enabled = !s_overlay_enabled;
         }
+        if (Input::GetKeyDown(KeyCode::F4)) {
+            s_stats_enabled = !s_stats_enabled;
+        }
 
         s_camera_controller.Update(delta_time);
     }
 
     void EditorEngine::Render() {
+        bool blending_enabled = RenderEngine::GetRasterizerState()->IsBlendingEnabled();
+        bool depth_test_enabled = RenderEngine::GetRasterizerState()->IsDepthTestEnabled();
+
+        RenderEngine::GetRasterizerState()->SetBlendingEnabled(true);
+
         if (s_overlay_enabled) {
             ImmediateRenderer::Begin(s_camera->GetData());
             {
@@ -59,33 +67,38 @@ namespace Hyperion::Editor {
             }
             ImmediateRenderer::End();
 
-
-            bool blending_enabled = RenderEngine::GetRasterizerState()->IsBlendingEnabled();
-            bool depth_test_enabled = RenderEngine::GetRasterizerState()->IsDepthTestEnabled();
-            RenderEngine::GetRasterizerState()->SetBlendingEnabled(true);
             RenderEngine::GetRasterizerState()->SetDepthTestEnabled(false);
             ForwardRenderer::Begin(s_camera->GetData());
             {
                 // Draw light icons
                 {
                     s_icon_material->SetTexture2D("u_texture", AssetLibrary::GetTexture2D("icon_light"));
-                    s_icon_material->SetColor("u_color", Color(0.8f, 0.7f, 0.05f, 1.0f));
                     Mat4 camera_rotation = Mat4::Rotate(s_camera->GetTransform()->GetRotation());
+                    Vec3 camera_position = s_camera->GetTransform()->GetPosition();
                     for (Light *light : WorldManager::GetActiveWorld()->GetLights()) {
                         Transform *transform = light->GetTransform();
-                        Mat4 model = Mat4::Translate(transform->GetPosition()) * camera_rotation;
+                        Vec3 position = transform->GetPosition();
+                        Vec3 forward = transform->GetForward();
+                        Mat4 model = Mat4::Translate(position) * camera_rotation;
+
+                        Color color = light->GetColor();
+                        color.a = Math::Clamp01((position - camera_position).Magnitude() - 0.5f);
+                        s_icon_material->SetColor("u_color", color);
+
                         ForwardRenderer::DrawMesh(s_icon_mesh, s_icon_material, model);
                     }
                 }
             }
             ForwardRenderer::End();
+        }
 
+        if (s_stats_enabled) {
             f32 y = (f32)(Display::GetHeight() - s_font->GetSize());
             ImmediateRenderer::DrawText(s_stats, s_font, 0, y, 1.0f, Color::White());
-
-            RenderEngine::GetRasterizerState()->SetBlendingEnabled(blending_enabled);
-            RenderEngine::GetRasterizerState()->SetDepthTestEnabled(depth_test_enabled);
         }
+
+        RenderEngine::GetRasterizerState()->SetBlendingEnabled(blending_enabled);
+        RenderEngine::GetRasterizerState()->SetDepthTestEnabled(depth_test_enabled);
     }
 
     void EditorEngine::Tick() {

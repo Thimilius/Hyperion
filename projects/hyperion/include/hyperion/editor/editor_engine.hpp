@@ -23,6 +23,7 @@ namespace Hyperion::Editor {
         inline static Ref<Rendering::Font> s_font;
 
         inline static bool s_overlay_enabled = true;
+        inline static bool s_stats_enabled = true;
     public:
         static Camera *GetCamera() { return s_camera; }
 
