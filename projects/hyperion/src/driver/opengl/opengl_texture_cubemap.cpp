@@ -6,17 +6,15 @@
 
 namespace Hyperion::Rendering {
 
-    OpenGLTextureCubemap::OpenGLTextureCubemap(u32 width, u32 height, TextureFormat format) 
-        : OpenGLTextureCubemap(width, height, format, { }) { }
+    OpenGLTextureCubemap::OpenGLTextureCubemap(u32 width, u32 height, TextureFormat format, TextureParameters parameters)
+        : OpenGLTextureCubemap(width, height, format, parameters, { }) { }
 
-    OpenGLTextureCubemap::OpenGLTextureCubemap(u32 width, u32 height, TextureFormat format, const Map<TextureCubemapFace, const u8 *> &pixels) {
+    OpenGLTextureCubemap::OpenGLTextureCubemap(u32 width, u32 height, TextureFormat format, TextureParameters parameters, const Map<TextureCubemapFace, const u8 *> &pixels) {
         m_width = width;
         m_height = height;
         m_format = format;
-        m_parameters.wrap_mode = TextureWrapMode::Clamp;
-        m_parameters.filter = TextureFilter::Bilinear;
-        m_parameters.anisotropic_filter = TextureAnisotropicFilter::None;
-        m_mipmap_count = CalculateMipmapCount(width, height);
+        m_parameters = parameters;
+        m_mipmap_count = m_parameters.has_mipmaps ? CalculateMipmapCount(width, height) : 0;
 
         CreateTexture(pixels);
     }
@@ -93,7 +91,7 @@ namespace Hyperion::Rendering {
         SetWrapMode(m_parameters.wrap_mode);
         SetAnisotropicFilter(m_parameters.anisotropic_filter);
 
-        glTextureStorage2D(m_texture_id, m_mipmap_count, GetGLInternalFormat(m_format), m_width, m_height);
+        glTextureStorage2D(m_texture_id, m_parameters.has_mipmaps ? m_mipmap_count : 1, GetGLInternalFormat(m_format), m_width, m_height);
 
         if (valid_pixels) {
             for (auto &pair : pixels) {

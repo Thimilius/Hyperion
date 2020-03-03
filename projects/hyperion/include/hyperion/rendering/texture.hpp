@@ -41,9 +41,9 @@ namespace Hyperion::Rendering {
         TextureWrapMode wrap_mode = TextureWrapMode::Clamp;
         TextureFilter filter = TextureFilter::Point;
         TextureAnisotropicFilter anisotropic_filter = TextureAnisotropicFilter::None;
+        bool has_mipmaps = true;
     };
 
-    // TODO: Add ability to enabled/disable mipmaps for textures
     class Texture : public Asset {
     protected:
         TextureFormat m_format;
@@ -58,6 +58,7 @@ namespace Hyperion::Rendering {
 
         inline TextureFormat GetFormat() const { return m_format; }
         inline u32 GetMipmapCount() const { return m_mipmap_count; }
+        inline bool HasMipmaps() const { return m_parameters.has_mipmaps; }
 
         virtual void SetWrapMode(TextureWrapMode wrap_mode) = 0;
         inline TextureWrapMode GetWrapMode() const { return m_parameters.wrap_mode; }

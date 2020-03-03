@@ -54,7 +54,7 @@ namespace Hyperion {
         static void AddTexture2D(const String &name, const String &filepath, const Ref<Rendering::Texture2D> &texture);
         static Ref<Rendering::Texture2D> GetTexture2D(const String &name);
 
-        static Ref<Rendering::TextureCubemap> LoadTextureCubemap(const String &name, const String &directory, const String &extension);
+        static Ref<Rendering::TextureCubemap> LoadTextureCubemap(const String &name, const String &directory, const String &extension, Rendering::TextureParameters parameters);
         static void AddTextureCubemap(const String &name, const Ref<Rendering::TextureCubemap> &texture_cubemap);
         static Ref<Rendering::TextureCubemap> GetTextureCubemap(const String &name);
 

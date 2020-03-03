@@ -5,7 +5,7 @@
 
 namespace Hyperion::Rendering {
 
-    class OpenGLTexture2D : public OpenGLTexture, public Texture2D {
+    class OpenGLTexture2D : public Texture2D, public OpenGLTexture {
     private:
         u32 m_texture_id;
     public:

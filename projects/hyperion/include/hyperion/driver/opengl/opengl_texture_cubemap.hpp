@@ -5,12 +5,12 @@
 
 namespace Hyperion::Rendering {
 
-    class OpenGLTextureCubemap : public OpenGLTexture, public TextureCubemap {
+    class OpenGLTextureCubemap : public TextureCubemap, public OpenGLTexture {
     private:
         u32 m_texture_id;
     public:
-        OpenGLTextureCubemap(u32 width, u32 height, TextureFormat format);
-        OpenGLTextureCubemap(u32 width, u32 height, TextureFormat format, const Map<TextureCubemapFace, const u8 *> &pixels);
+        OpenGLTextureCubemap(u32 width, u32 height, TextureFormat format, TextureParameters parameters);
+        OpenGLTextureCubemap(u32 width, u32 height, TextureFormat format, TextureParameters parameters, const Map<TextureCubemapFace, const u8 *> &pixels);
         ~OpenGLTextureCubemap() override;
 
         void Bind(u32 slot = 0) const;

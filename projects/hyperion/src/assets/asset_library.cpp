@@ -57,7 +57,7 @@ namespace Hyperion {
         return s_textures[name].asset;
     }
 
-    Ref<TextureCubemap> AssetLibrary::LoadTextureCubemap(const String &name, const String &directory, const String &extension) {
+    Ref<TextureCubemap> AssetLibrary::LoadTextureCubemap(const String &name, const String &directory, const String &extension, TextureParameters parameters) {
         // Make sure directory has a seperator at the end
         String dir;
         if (directory.back() != '\\' || directory.back() != '/') {
@@ -83,7 +83,7 @@ namespace Hyperion {
             pixels[pair.first] = pair.second->GetPixels();
         }
 
-        Ref<TextureCubemap> texture_cubemap = TextureCubemap::Create(width, height, format, pixels);
+        Ref<TextureCubemap> texture_cubemap = TextureCubemap::Create(width, height, format, parameters, pixels);
 
         return texture_cubemap;
     }
