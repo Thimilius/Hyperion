@@ -77,7 +77,7 @@ namespace Hyperion::Editor {
             }
             ForwardRenderer::End();
 
-            f32 y = (f32)(Application::GetInstance()->GetWindow()->GetHeight() - s_font->GetSize());
+            f32 y = (f32)(Display::GetHeight() - s_font->GetSize());
             ImmediateRenderer::DrawText(s_stats, s_font, 0, y, 1.0f, Color::White());
         }
     }
@@ -87,12 +87,11 @@ namespace Hyperion::Editor {
     }
 
     void EditorEngine::UpdateWindowTitle() {
-        Window *window = Application::GetInstance()->GetWindow();
         f64 memory = (f64)OperatingSystem::GetInstance()->GetMemoryUsage() / 1024.0 / 1024.0;
         s_stats = StringUtils::Format("FPS: {} ({:.2f} ms) | VSync: {} | Memory: {:.2f} MiB",
             Time::GetFPS(),
             Time::GetFrameTime(),
-            window->GetVSyncMode() != VSyncMode::DontSync,
+            Application::GetInstance()->GetWindow()->GetVSyncMode() != VSyncMode::DontSync,
             memory
         );
     }

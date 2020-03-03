@@ -39,8 +39,8 @@ namespace Hyperion::Rendering {
         }
 
         inline static void Blit(const Ref<RenderTexture> &destination, const Ref<RenderTexture> &source) {
-            u32 destination_width = destination ? destination->GetWidth() : Application::GetInstance()->GetWindow()->GetWidth();
-            u32 destination_height = destination ? destination->GetHeight() : Application::GetInstance()->GetWindow()->GetHeight();
+            u32 destination_width = destination ? destination->GetWidth() : Display::GetWidth();
+            u32 destination_height = destination ? destination->GetHeight() : Display::GetHeight();
             s_render_driver->Blit(destination, 0, 0, destination_width, destination_height, source, 0, 0, source->GetWidth(), source->GetHeight());
         }
 

@@ -90,8 +90,14 @@ namespace Hyperion {
         });
 
         // Handle window events
-        dispatcher.Dispatch<WindowResizeEvent>([this](WindowResizeEvent &window_resize_event) {
-            Rendering::RenderEngine::SetViewport(0, 0, window_resize_event.GetWidth(), window_resize_event.GetHeight());
+        auto update_current_size = Display::UpdateCurrentSize;
+        dispatcher.Dispatch<WindowResizeEvent>([update_current_size](WindowResizeEvent &window_resize_event) {
+            u32 width = window_resize_event.GetWidth();
+            u32 height = window_resize_event.GetHeight();
+            update_current_size(width, height);
+
+            // FIXME: This is most likely not the right place to call this
+            Rendering::RenderEngine::SetViewport(0, 0, width, height);
         });
 
         // Forward event to client

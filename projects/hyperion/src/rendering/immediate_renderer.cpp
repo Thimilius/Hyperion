@@ -86,8 +86,7 @@ namespace Hyperion::Rendering {
     void ImmediateRenderer::DrawText(const String &text, const Ref<Font> &font, f32 x, f32 y, f32 scale, Color color) {
         s_font_resources.shader->Bind();
         s_font_resources.shader->SetVec4("u_color", color);
-        Window *window = Application::GetInstance()->GetWindow();
-        Mat4 projection = Mat4::Orthographic(0, (f32)window->GetWidth(), 0, (f32)window->GetHeight(), -1.0f, 1.0f);
+        Mat4 projection = Mat4::Orthographic(0, (f32)Display::GetWidth(), 0, (f32)Display::GetHeight(), -1.0f, 1.0f);
         s_font_resources.shader->SetMat4("u_transform.projection", projection);
 
         s_font_resources.vertex_array->Bind();

@@ -2,9 +2,12 @@
 
 #include "hyperion/core/app/application_settings.hpp"
 #include "hyperion/core/operating_system.hpp"
-#include "hyperion/rendering/forward_render_pipeline.hpp"
 
 namespace Hyperion {
+
+    namespace Rendering {
+        class RenderPipeline;
+    }
 
     class Engine {
     private:

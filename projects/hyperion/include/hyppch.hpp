@@ -26,6 +26,7 @@
 #include "hyperion/core/math/math.hpp"
 #include "hyperion/core/operating_system.hpp"
 #include "hyperion/core/engine.hpp"
+#include "hyperion/core/app/display.hpp"
 #include "hyperion/core/math/math.hpp"
 #include "hyperion/core/math/vec2.hpp"
 #include "hyperion/core/math/vec3.hpp"

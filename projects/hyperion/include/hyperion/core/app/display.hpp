@@ -31,14 +31,25 @@ namespace Hyperion {
     class Display {
     private:
         inline static Vector<DisplayInfo> s_display_infos;
+
+        inline static u32 s_cached_width;
+        inline static u32 s_cached_height;
     public:
         inline static const Vector<DisplayInfo> &GetDisplayInfos() { return s_display_infos; }
         static DisplayInfo::DisplayModeInfo GetCurrentDisplayModeInfo();
+
+        inline static u32 GetWidth() { return s_cached_width; }
+        inline static u32 GetHeight() { return s_cached_height; }
     private:
         Display() = delete;
         ~Display() = delete;
 
         static void UpdateDisplayInfos();
+
+        inline static void UpdateCurrentSize(u32 width, u32 height) {
+            s_cached_width = width;
+            s_cached_height = height;
+        }
 
         friend class Engine;
         friend class Application;

@@ -18,16 +18,12 @@ namespace Hyperion {
     }
 
     Ray Camera::ScreenPointToRay(Vec2 screen_point) const {
-        Window *window = Application::GetInstance()->GetWindow();
-        f32 window_width = (f32)window->GetWidth();
-        f32 window_height = (f32)window->GetHeight();
-
         Vec3 position;
         Vec3 direction;
         switch (m_data.mode) {
             case CameraMode::Perspective: {
-                f32 x = (2.0f * screen_point.x) / window_width - 1;
-                f32 y = (2.0f * screen_point.y) / window_height - 1;
+                f32 x = (2.0f * screen_point.x) / Display::GetWidth() - 1;
+                f32 y = (2.0f * screen_point.y) / Display::GetHeight() - 1;
                 Vec2 ndc = Vec2(x, -y);
                 Vec4 clip = Vec4(ndc.x, ndc.y, -1.0f, 1.0f);
                 Vec4 view = m_data.inverse_projection_matrix * clip;
@@ -69,8 +65,7 @@ namespace Hyperion {
     }
 
     void Camera::RecalculateMatricies() {
-        Window *window = Application::GetInstance()->GetWindow();
-        f32 aspect_ratio = (f32)window->GetWidth() / (f32)window->GetHeight();
+        f32 aspect_ratio = (f32)Display::GetWidth() / (f32)Display::GetHeight();
         Vec3 position = GetTransform()->GetPosition();
         f32 size = m_data.size;
 
