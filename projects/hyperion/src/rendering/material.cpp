@@ -45,13 +45,15 @@ namespace Hyperion::Rendering {
     }
 
     void Material::SetTexture2D(const String &name, const Ref<Texture2D> &texture) {
-        m_textures[name] = texture;
+        u32 property_index = FindOrAddProperty(name, MaterialPropertyType::Texture2D);
+        m_properties[property_index].storage = texture;
     }
 
     void Material::Bind() {
         m_shader->Bind();
 
         // TODO: This should be made more efficient
+        u32 texture_index = 0;
         for (MaterialProperty &property : m_properties) {
             String &name = property.name;
             MaterialPropertyStorage &storage = property.storage;
@@ -64,26 +66,27 @@ namespace Hyperion::Rendering {
                 case MaterialPropertyType::Mat3: m_shader->SetMat3(name, std::get<Mat3>(storage)); break;
                 case MaterialPropertyType::Mat4: m_shader->SetMat4(name, std::get<Mat4>(storage)); break;
                 case MaterialPropertyType::Color: m_shader->SetVec4(name, std::get<Color>(storage)); break;
+
+                case MaterialPropertyType::Texture2D: {
+                    m_shader->SetInt(name, texture_index);
+                    std::get<Ref<Texture2D>>(storage)->Bind(texture_index);
+                    texture_index++;
+                    break;
+                }
+
                 default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
             }
-        }
-
-        // TODO: Try to correctly determine indices of textures
-        // Set all textures
-        u32 index = 0;
-        for (auto &pair : m_textures) {
-            String name = pair.first;
-            Ref<Texture2D> &texture = pair.second;
-
-            m_shader->SetInt(name, index);
-            texture->Bind(index);
-
-            index++;
         }
     }
 
     void Material::Unbind() {
         m_shader->Unbind();
+    }
+
+    Ref<Material> Material::Copy() {
+        Ref<Material> copy = Create(m_shader);
+        copy->m_properties = m_properties;
+        return copy;
     }
 
     Ref<Material> Material::Create(const Ref<Shader> &shader) {

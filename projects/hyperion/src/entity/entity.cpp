@@ -56,7 +56,7 @@ namespace Hyperion {
                 default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
             }
             renderer->SetSharedMesh(mesh);
-            renderer->SetSharedMaterial(Rendering::Material::Create(AssetManager::GetShader("standard")));
+            renderer->SetSharedMaterial(AssetManager::GetDefaultMaterial());
         } else if (primitive == EntityPrimitive::PointLight || primitive == EntityPrimitive::DirectionalLight || primitive == EntityPrimitive::SpotLight) {
             Light *light = entity->AddComponent<Light>();
             LightType light_type;

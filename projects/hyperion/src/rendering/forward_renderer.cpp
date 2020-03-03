@@ -69,7 +69,7 @@ namespace Hyperion::Rendering {
             });
 
             Transform *transform = renderer->GetTransform();
-            DrawMesh(renderer->GetSharedMesh(), renderer->GetSharedMaterial(), transform->GetLocalToWorldMatrix(), transform->GetWorldToLocalMatrix());
+            DrawMesh(renderer->GetSharedMesh(), renderer->GetRenderMaterial(), transform->GetLocalToWorldMatrix(), transform->GetWorldToLocalMatrix());
         }
 
         if (environment.background_mode == WorldEnvironmentBackgroundMode::Skybox) {

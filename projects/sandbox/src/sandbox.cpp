@@ -31,8 +31,7 @@ protected:
     void OnInit() override {
         m_entity = Entity::CreatePrimitive(EntityPrimitive::Sphere);
         m_entity->AddComponent<Rotator>();
-        Ref<Material> material = m_entity->GetComponent<MeshRenderer>()->GetSharedMaterial();
-        material->SetTexture2D("u_texture", AssetManager::GetTexture2D("earth"));
+        m_entity->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture2D("u_texture", AssetManager::GetTexture2D("earth"));
 
         m_light = Entity::CreatePrimitive(EntityPrimitive::DirectionalLight)->GetComponent<Light>();
         m_light->SetColor(Color::White());

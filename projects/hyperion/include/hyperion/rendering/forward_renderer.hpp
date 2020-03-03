@@ -26,6 +26,8 @@ namespace Hyperion::Rendering {
             struct Lighting {
                 inline static const u32 MAX_POINT_LIGHT_COUNT = 3;
 
+                // TODO: Add ambient lighting
+
                 Light *main_light;
                 Vector<Light *> *point_lights;
 

@@ -13,7 +13,7 @@
 namespace Hyperion::Rendering {
 
     class Material : public Asset {
-        using MaterialPropertyStorage = std::variant<u32, f32, Vec2, Vec3, Vec4, Mat3, Mat4, Color>;
+        using MaterialPropertyStorage = std::variant<u32, f32, Vec2, Vec3, Vec4, Mat3, Mat4, Color, Ref<Texture2D>>;
     private:
         enum class MaterialPropertyType {
             Int,
@@ -26,7 +26,9 @@ namespace Hyperion::Rendering {
             Mat3,
             Mat4,
 
-            Color
+            Color,
+
+            Texture2D
         };
 
         // TODO: Better include of textures in material properties
@@ -38,7 +40,6 @@ namespace Hyperion::Rendering {
 
         Ref<Shader> m_shader;
         Vector<MaterialProperty> m_properties;
-        Map<String, Ref<Texture2D>> m_textures;
     public:
         AssetType GetType() const override { return AssetType::Material; }
 
@@ -56,6 +57,9 @@ namespace Hyperion::Rendering {
 
         void Bind();
         void Unbind();
+
+        // TODO: We need some universal copy mechanism
+        Ref<Material> Copy();
 
         static Ref<Material> Create(const Ref<Shader> &shader);
     private:

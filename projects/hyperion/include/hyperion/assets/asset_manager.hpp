@@ -6,6 +6,7 @@
 #include "hyperion/rendering/texture_2d.hpp"
 #include "hyperion/rendering/texture_cubemap.hpp"
 #include "hyperion/rendering/mesh.hpp"
+#include "hyperion/rendering/material.hpp"
 
 namespace Hyperion {
 
@@ -35,13 +36,13 @@ namespace Hyperion {
         
         inline static Map<String, AssetEntry<Rendering::Shader>> s_shaders;
         inline static Ref<FileWatcher> s_shader_watcher;
-
         inline static Map<String, AssetEntry<Rendering::Texture2D>> s_textures;
         inline static Ref<FileWatcher> s_texture_watcher;
-
         inline static Map<String, AssetEntry<Rendering::TextureCubemap>> s_texture_cubemaps;
         
         inline static MeshPrimitives s_mesh_primitives;
+        inline static Ref<Rendering::Texture2D> s_texture_primitive;
+        inline static Ref<Rendering::Material> s_default_material;
     public:
         inline static const AssetSettings &GetSettings() { return s_settings; }
 
@@ -58,6 +59,9 @@ namespace Hyperion {
         static Ref<Rendering::TextureCubemap> GetTextureCubemap(const String &name);
 
         static Ref<Rendering::Mesh> GetMeshPrimitive(MeshPrimitive mesh_primitive);
+        inline static Ref<Rendering::Texture2D> GetTexturePrimitive() { return s_texture_primitive; }
+
+        inline static Ref<Rendering::Material> GetDefaultMaterial() { return s_default_material; }
     private:
         AssetManager() = delete;
         ~AssetManager() = delete;

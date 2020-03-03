@@ -114,6 +114,14 @@ namespace Hyperion {
         InitShaders(settings.shader_path);
         InitTextures2D(settings.texture_path);
         InitMeshPrimitives();
+
+        u8 *pixels = new u8[2 * 2 * 4];
+        std::memset(pixels, 0xFF, 2 * 2 * 4);
+        s_texture_primitive = Texture2D::Create(2, 2, TextureFormat::RGBA32, TextureParameters(), pixels);
+        delete[] pixels;
+
+        s_default_material = Material::Create(GetShader("standard"));
+        s_default_material->SetTexture2D("u_texture", s_texture_primitive);
     }
 
     void AssetManager::Update() {
