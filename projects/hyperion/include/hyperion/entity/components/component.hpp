@@ -13,18 +13,8 @@ namespace Hyperion {
         Entity *m_entity;
     public:
         inline Entity *GetEntity() const { return m_entity; }
-        Transform *GetTransform() const;
 
-        template<typename T>
-        T *GetComponent() const { return m_entity->GetComponent<T>(); }
-        template<typename T>
-        T *GetComponentInChildren() const { return m_entity->GetComponentInChildren<T>(); }
-        template<typename T>
-        T *GetComponentInParent() const { return m_entity->GetComponentInParent<T>(); }
-        template<typename T>
-        Vector<T *> GetComponentsInChildren() const { return m_entity->GetComponentsInChildren<T>(); }
-        template<typename T>
-        Vector<T *> GetComponentsInParent() const { return m_entity->GetComponentsInParent<T>(); }
+        Transform *GetTransform() const;
     protected:
         Component() { }
         Component(const String &name) : Object(name) { }

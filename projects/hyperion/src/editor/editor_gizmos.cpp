@@ -10,7 +10,7 @@ using namespace Hyperion::Rendering;
 
 namespace Hyperion::Editor {
 
-    EditorGizmos::EditorGizmos() {
+    void EditorGizmos::Init() {
         m_material = Material::Create(AssetManager::GetShader("standard_unlit"));
         m_mesh = MeshFactory::CreateFromFile("data/models/gizmo.obj");
     }
@@ -24,13 +24,13 @@ namespace Hyperion::Editor {
             Mat4 scale = Mat4::Scale(Vec3(distance, distance, distance));
 
             // X gizmo
-            m_material->SetVec3("u_color", Vec3(1, 0, 0));
+            m_material->SetVec4("u_color", Color::Red());
             ForwardRenderer::DrawMesh(m_mesh, m_material, scale * Mat4::Rotate(Vec3(0, 0, 1), -90.0f));
             // Y gizmo
-            m_material->SetVec3("u_color", Vec3(0, 1, 0));
+            m_material->SetVec4("u_color", Color::Green());
             ForwardRenderer::DrawMesh(m_mesh, m_material, scale * Mat4::Identity());
             // Z gizmo
-            m_material->SetVec3("u_color", Vec3(0, 0, 1));
+            m_material->SetVec4("u_color", Color::Blue());
             ForwardRenderer::DrawMesh(m_mesh, m_material, scale * Mat4::Rotate(Vec3(1, 0, 0), 90.0f));
         }
         ForwardRenderer::End();

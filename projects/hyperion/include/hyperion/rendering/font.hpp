@@ -32,7 +32,7 @@ namespace Hyperion::Rendering {
 
         static void Init();
 
-        friend class Engine;
+        friend class Hyperion::Engine;
     };
 
 }

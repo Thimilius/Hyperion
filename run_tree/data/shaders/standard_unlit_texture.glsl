@@ -26,7 +26,8 @@ in V2F {
 } i_v2f;
 
 uniform vec4 u_color;
+uniform sampler2D u_texture;
 
 void main() {
-	o_color = u_color;
+	o_color = u_color * texture(u_texture, i_v2f.uv);
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "hyperion/editor/editor_camera_controller.hpp"
+#include "hyperion/editor/editor_gizmos.hpp"
 #include "hyperion/rendering/vertex_array.hpp"
 #include "hyperion/rendering/material.hpp"
 #include "hyperion/rendering/font.hpp"
@@ -21,6 +22,8 @@ namespace Hyperion::Editor {
 
         inline static String s_stats;
         inline static Ref<Rendering::Font> s_font;
+
+        inline static EditorGizmos s_gizmos;
 
         inline static bool s_overlay_enabled = true;
         inline static bool s_stats_enabled = true;

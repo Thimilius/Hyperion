@@ -13,8 +13,7 @@ namespace Hyperion::Editor {
         
         f32 m_gizmo_scale = 0.002f;
     public:
-        EditorGizmos();
-
+        void Init();
         void Render(const Rendering::CameraData &camera);
     };
 

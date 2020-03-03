@@ -21,9 +21,11 @@ namespace Hyperion::Editor {
         s_camera = WorldManager::GetActiveWorld()->GetCameras()[0];
         s_camera_controller = EditorCameraController(s_camera);
         s_icon_mesh = MeshFactory::CreateQuad(0.5f, 0.5f);
-        s_icon_material = Material::Create(AssetManager::GetShader("standard_unlit"));
+        s_icon_material = Material::Create(AssetManager::GetShader("standard_unlit_texture"));
 
         s_font = Font::Create("data/fonts/robotomono_regular.ttf", 16);
+
+        s_gizmos.Init();
 
         InitGridVertexArray();
         UpdateStats();
@@ -55,7 +57,6 @@ namespace Hyperion::Editor {
 
     void EditorEngine::Render() {
         bool blending_enabled = RenderEngine::GetRasterizerState()->IsBlendingEnabled();
-        bool depth_test_enabled = RenderEngine::GetRasterizerState()->IsDepthTestEnabled();
 
         RenderEngine::GetRasterizerState()->SetBlendingEnabled(true);
 
@@ -66,7 +67,9 @@ namespace Hyperion::Editor {
             }
             ImmediateRenderer::End();
 
-            RenderEngine::GetRasterizerState()->SetDepthTestEnabled(false);
+
+            RenderEngine::Clear(ClearMask::Depth);
+
             ForwardRenderer::Begin(s_camera->GetData());
             {
                 // Draw light icons
@@ -97,6 +100,10 @@ namespace Hyperion::Editor {
                 }
             }
             ForwardRenderer::End();
+
+            RenderEngine::Clear(ClearMask::Depth);
+
+            s_gizmos.Render(s_camera->GetData());
         }
 
         if (s_stats_enabled) {
@@ -105,7 +112,6 @@ namespace Hyperion::Editor {
         }
 
         RenderEngine::GetRasterizerState()->SetBlendingEnabled(blending_enabled);
-        RenderEngine::GetRasterizerState()->SetDepthTestEnabled(depth_test_enabled);
     }
 
     void EditorEngine::Tick() {
