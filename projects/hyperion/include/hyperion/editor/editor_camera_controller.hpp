@@ -28,7 +28,7 @@ namespace Hyperion::Editor {
 
         inline const Camera *GetCamera() const { return m_camera; }
 
-        void Update(f32 delta);
+        void Update(f32 delta_time);
     };
 
 }

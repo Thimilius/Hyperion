@@ -4,6 +4,38 @@
 using namespace Hyperion;
 using namespace Hyperion::Rendering;
 
+class Rotator : public Component {
+    HYP_OBJECT(Rotator, Component);
+private:
+    f32 m_rotation_speed = 50.0f;
+
+    void OnCreate() override {
+        RegisterUpdate();
+    }
+
+    void OnUpdate(f32 delta_time) override {
+        Transform *transform = GetTransform();
+        Vec3 rotation = transform->GetEulerAngles();
+        rotation.y += delta_time * m_rotation_speed;
+        transform->SetEulerAngles(rotation);
+
+        Vec3 position = transform->GetPosition();
+        if (Input::GetKey(KeyCode::I)) {
+            position.z -= delta_time * 2.5f;
+        }
+        if (Input::GetKey(KeyCode::K)) {
+            position.z += delta_time * 2.5f;
+        }
+        if (Input::GetKey(KeyCode::J)) {
+            position.x -= delta_time * 2.5f;
+        }
+        if (Input::GetKey(KeyCode::L)) {
+            position.x += delta_time * 2.5f;
+        }
+        transform->SetPosition(position);
+    }
+};
+
 class SandboxApp : public Application {
 public:
     SandboxApp(const ApplicationSettings &settings) : Application(settings) { }
@@ -13,6 +45,7 @@ protected:
 
     void OnInit() override {
         m_entity = Entity::CreatePrimitive(EntityPrimitive::Sphere);
+        m_entity->AddComponent<Rotator>();
         Ref<Material> material = m_entity->GetComponent<MeshRenderer>()->GetSharedMaterial();
         material->SetTexture2D("u_texture", AssetManager::GetTexture2D("earth"));
 
@@ -35,18 +68,6 @@ protected:
         Light *point_light4 = Entity::CreatePrimitive(EntityPrimitive::PointLight)->GetComponent<Light>();
         point_light4->GetTransform()->SetPosition(Vec3(0, 1, -1));
         point_light4->SetColor(Color::Yellow());
-    }
-
-    void OnUpdate(f32 delta_time) override {
-        f32 speed = 50.0f;
-        
-        Vec3 rotation = m_entity->GetTransform()->GetEulerAngles();
-        rotation.y += delta_time * speed;
-        m_entity->GetTransform()->SetEulerAngles(rotation);
-
-        if (Input::GetKeyDown(KeyCode::L)) {
-            m_light->SetEnabled(!m_light->IsEnabled());
-        }
     }
 };
 

@@ -58,6 +58,8 @@ namespace Hyperion {
     void Engine::Update(f32 delta_time) {
         AssetManager::Update();
         Editor::EditorEngine::Update(delta_time);
+
+        ObjectManager::Update(delta_time);
     }
 
     void Engine::LateUpdate() {

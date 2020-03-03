@@ -30,10 +30,14 @@ namespace Hyperion {
         Component(const String &name) : Object(name) { }
         virtual ~Component() = default;
 
+        void RegisterUpdate();
+
         virtual void OnCreate() { }
+        virtual void OnUpdate(f32 delta_time) { }
         virtual void OnDestroy() override;
     private:
         friend class Entity;
+        friend class ObjectManager;
     };
 
 }

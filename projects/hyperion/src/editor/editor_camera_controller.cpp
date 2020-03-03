@@ -9,7 +9,7 @@ using namespace Hyperion::Rendering;
 
 namespace Hyperion::Editor {
 
-    void EditorCameraController::Update(f32 delta) {
+    void EditorCameraController::Update(f32 delta_time) {
         Transform *transform = m_camera->GetTransform();
         Vec3 position = transform->GetPosition();
         Vec3 rotation = transform->GetEulerAngles();
@@ -37,7 +37,7 @@ namespace Hyperion::Editor {
             x_offset *= sensitivity;
             y_offset *= sensitivity;
 
-            f32 rotation_speed = 100.0f * delta;
+            f32 rotation_speed = 100.0f * delta_time;
             if (Input::GetKey(KeyCode::Left) || Input::GetKey(KeyCode::Q)) {
                 m_target_yaw += rotation_speed;
             }
@@ -60,8 +60,8 @@ namespace Hyperion::Editor {
             m_target_pitch = Math::Clamp(m_target_pitch, -89.0f, 89.0f);
 
             f32 mouse_friction = 20.0f;
-            m_yaw = Math::Lerp(m_yaw, m_target_yaw, delta * mouse_friction);
-            m_pitch = Math::Lerp(m_pitch, m_target_pitch, delta * mouse_friction);
+            m_yaw = Math::Lerp(m_yaw, m_target_yaw, delta_time * mouse_friction);
+            m_pitch = Math::Lerp(m_pitch, m_target_pitch, delta_time * mouse_friction);
 
             rotation = Vec3(m_pitch, m_yaw, 0);
         }
@@ -83,19 +83,19 @@ namespace Hyperion::Editor {
                 default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
             }
          
-            fov = Math::Lerp(fov, m_fov_target, delta * 15);
-            size = Math::Lerp(size, m_size_target, delta * 15);
+            fov = Math::Lerp(fov, m_fov_target, delta_time * 15);
+            size = Math::Lerp(size, m_size_target, delta_time * 15);
         }
 
         // Movement
         {
-            f32 camera_acceleration = m_acceleration * delta;
+            f32 camera_acceleration = m_acceleration * delta_time;
 
             Vec3 direction = camera_acceleration * transform->GetForward();
             Vec3 right = camera_acceleration * Vec3::Cross(direction, transform->GetUp()).Normalized();
             Vec3 up = camera_acceleration * Vec3::Up();
             
-            position += m_velocity * delta;
+            position += m_velocity * delta_time;
 
             if (Input::GetKey(KeyCode::W)) {
                 m_velocity += direction;
@@ -122,7 +122,7 @@ namespace Hyperion::Editor {
             m_velocity += up * Input::GetGamepadAxis(Gamepad::Gamepad1, GamepadAxis::RightTrigger).x;
             m_velocity -= up * Input::GetGamepadAxis(Gamepad::Gamepad1, GamepadAxis::LeftTrigger).x;
 
-            m_velocity -= m_friction * delta * m_velocity;
+            m_velocity -= m_friction * delta_time * m_velocity;
         }
 
         // Reset
