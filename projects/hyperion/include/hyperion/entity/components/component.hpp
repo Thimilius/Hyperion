@@ -16,7 +16,7 @@ namespace Hyperion {
 
         Transform *GetTransform() const;
     protected:
-        Component() { }
+        Component() = default;
         Component(const String &name) : Object(name) { }
         virtual ~Component() = default;
 
