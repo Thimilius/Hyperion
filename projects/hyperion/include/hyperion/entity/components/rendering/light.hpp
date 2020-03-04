@@ -1,5 +1,6 @@
 #pragma once
 
+#include "hyperion/core/color.hpp"
 #include "hyperion/entity/components/behaviour.hpp"
 
 namespace Hyperion {

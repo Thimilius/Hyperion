@@ -2,6 +2,7 @@
 
 #include "hyperion/rendering/texture_cubemap.hpp"
 
+#include "hyperion/rendering/render_engine.hpp"
 #include "hyperion/driver/opengl/opengl_texture_cubemap.hpp"
 
 namespace Hyperion::Rendering {

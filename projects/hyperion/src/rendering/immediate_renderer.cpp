@@ -2,6 +2,7 @@
 
 #include "hyperion/rendering/immediate_renderer.hpp"
 
+#include "hyperion/rendering/render_command.hpp"
 #include "hyperion/assets/asset_manager.hpp"
 
 namespace Hyperion::Rendering {
@@ -19,7 +20,7 @@ namespace Hyperion::Rendering {
 
         vertex_array->Bind();
 
-        RenderEngine::Draw(topology, vertex_count, 0);
+        RenderCommand::Draw(topology, vertex_count, 0);
     }
 
     void ImmediateRenderer::DrawCube(Vec3 center, Vec3 size, Color m_color) {
@@ -114,7 +115,7 @@ namespace Hyperion::Rendering {
             glyph.texture->Bind();
             s_font_resources.vertex_buffer->SetData(0, sizeof(vertices), (u8 *)vertices);
 
-            RenderEngine::Draw(MeshTopology::Triangles, 6, 0);
+            RenderCommand::Draw(MeshTopology::Triangles, 6, 0);
 
             x += glyph.advance * scale;
         }
@@ -161,7 +162,7 @@ namespace Hyperion::Rendering {
         s_immediate_resources.vertex_buffer->SetData(0, s_state.vertex_offset * sizeof(VertexImmediate), (u8*)s_immediate_resources.data_buffer);
         s_immediate_resources.vertex_array->Bind();
 
-        RenderEngine::Draw(topology, s_state.vertex_offset, 0);
+        RenderCommand::Draw(topology, s_state.vertex_offset, 0);
 
         s_state.vertex_offset = 0;
     }

@@ -138,7 +138,7 @@ namespace Hyperion {
     void AssetManager::InitShaders(const String &shader_path) {
         for (auto &entry : std::filesystem::directory_iterator(shader_path)) {
             auto &path = entry.path();
-            if (path.extension() == RenderEngine::GetShaderExtension()) {
+            if (path.extension() == ".shader") {
                 auto filename = path.filename().string();
                 LoadShader(filename.substr(0, filename.find_last_of(".")), path.string());
             }
@@ -147,7 +147,7 @@ namespace Hyperion {
         if (s_settings.hot_loading) {
             s_shader_watcher = FileWatcher::Create(shader_path, [](FileStatus status, const String &path, const String &filename, const String &extension) {
                 if (status == FileStatus::Created || status == FileStatus::Modified) {
-                    if (extension == RenderEngine::GetShaderExtension()) {
+                    if (extension == ".shader") {
                         auto name = filename.substr(0, filename.find_last_of("."));
                         ReloadShader(name);
                     }

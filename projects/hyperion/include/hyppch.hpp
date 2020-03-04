@@ -23,9 +23,9 @@
 // Hyperion
 #include "hyperion/common.hpp"
 #include "hyperion/core/string_utils.hpp"
-#include "hyperion/core/math/math.hpp"
 #include "hyperion/core/operating_system.hpp"
 #include "hyperion/core/engine.hpp"
+#include "hyperion/core/app/application.hpp"
 #include "hyperion/core/app/display.hpp"
 #include "hyperion/core/math/math.hpp"
 #include "hyperion/core/math/vec2.hpp"
@@ -38,6 +38,5 @@
 #include "hyperion/core/math/plane.hpp"
 #include "hyperion/core/math/ray.hpp"
 #include "hyperion/core/math/rect.hpp"
-#include "hyperion/rendering/render_engine.hpp"
 
 #endif

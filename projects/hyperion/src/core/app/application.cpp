@@ -95,9 +95,6 @@ namespace Hyperion {
             u32 width = window_resize_event.GetWidth();
             u32 height = window_resize_event.GetHeight();
             update_current_size(width, height);
-
-            // FIXME: This is most likely not the right place to call this
-            Rendering::RenderEngine::SetViewport(0, 0, width, height);
         });
 
         // Forward event to client

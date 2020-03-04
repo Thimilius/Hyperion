@@ -3,6 +3,7 @@
 #include "hyperion/editor/editor_engine.hpp"
 
 #include "hyperion/core/app/time.hpp"
+#include "hyperion/rendering/render_command.hpp"
 #include "hyperion/rendering/immediate_renderer.hpp"
 #include "hyperion/rendering/forward_renderer.hpp"
 #include "hyperion/rendering/font.hpp"
@@ -56,9 +57,8 @@ namespace Hyperion::Editor {
     }
 
     void EditorEngine::Render() {
-        bool blending_enabled = RenderEngine::GetRasterizerState()->IsBlendingEnabled();
-
-        RenderEngine::GetRasterizerState()->SetBlendingEnabled(true);
+        bool blending_enabled = RenderCommand::GetRasterizerState()->IsBlendingEnabled();
+        RenderCommand::GetRasterizerState()->SetBlendingEnabled(true);
 
         if (s_overlay_enabled) {
             ImmediateRenderer::Begin(s_camera->GetData());
@@ -68,7 +68,7 @@ namespace Hyperion::Editor {
             ImmediateRenderer::End();
 
 
-            RenderEngine::Clear(ClearMask::Depth);
+            RenderCommand::Clear(ClearMask::Depth);
 
             ForwardRenderer::Begin(s_camera->GetData());
             {
@@ -101,7 +101,7 @@ namespace Hyperion::Editor {
             }
             ForwardRenderer::End();
 
-            RenderEngine::Clear(ClearMask::Depth);
+            RenderCommand::Clear(ClearMask::Depth);
 
             s_gizmos.Render(s_camera->GetData());
         }
@@ -111,7 +111,7 @@ namespace Hyperion::Editor {
             ImmediateRenderer::DrawText(s_stats, s_font, 0, y, 1.0f, Color::White());
         }
 
-        RenderEngine::GetRasterizerState()->SetBlendingEnabled(blending_enabled);
+        RenderCommand::GetRasterizerState()->SetBlendingEnabled(blending_enabled);
     }
 
     void EditorEngine::Tick() {

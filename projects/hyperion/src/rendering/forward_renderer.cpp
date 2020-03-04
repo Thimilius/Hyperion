@@ -2,6 +2,7 @@
 
 #include "hyperion/rendering/forward_renderer.hpp"
 
+#include "hyperion/rendering/render_command.hpp"
 #include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/assets/mesh_factory.hpp"
 #include "hyperion/entity/components/transform.hpp"
@@ -19,10 +20,10 @@ namespace Hyperion::Rendering {
     }
 
     void ForwardRenderer::DrawSkybox(const Ref<TextureCubemap> &skybox) {
-        bool culling_enabled = RenderEngine::GetRasterizerState()->IsCullingEnabled();
-        RenderEngine::GetRasterizerState()->SetCullingEnabled(false);
-        DepthEquation depth_equation = RenderEngine::GetRasterizerState()->GetDepthEquation();
-        RenderEngine::GetRasterizerState()->SetDepthEquation(DepthEquation::LessEqual);
+        bool culling_enabled = RenderCommand::GetRasterizerState()->IsCullingEnabled();
+        RenderCommand::GetRasterizerState()->SetCullingEnabled(false);
+        DepthEquation depth_equation = RenderCommand::GetRasterizerState()->GetDepthEquation();
+        RenderCommand::GetRasterizerState()->SetDepthEquation(DepthEquation::LessEqual);
 
         s_skybox.shader->Bind();
         s_skybox.shader->SetMat4("u_transform.view", s_state.transform.view);
@@ -31,13 +32,13 @@ namespace Hyperion::Rendering {
         skybox->Bind(0);
         DrawCall(s_skybox.mesh);
 
-        RenderEngine::GetRasterizerState()->SetDepthEquation(depth_equation);
-        RenderEngine::GetRasterizerState()->SetCullingEnabled(culling_enabled);
+        RenderCommand::GetRasterizerState()->SetDepthEquation(depth_equation);
+        RenderCommand::GetRasterizerState()->SetCullingEnabled(culling_enabled);
     }
 
     void ForwardRenderer::DrawWorld(World *world) {
         WorldEnvironment environment = world->GetEnvironment();
-        RenderEngine::Clear(ClearMask::Color | ClearMask::Depth | ClearMask::Stencil, environment.background.color);
+        RenderCommand::Clear(ClearMask::Color | ClearMask::Depth | ClearMask::Stencil, environment.background.color);
         
         const Vector<MeshRenderer *> &renderers = world->GetMeshRenderers();
         const Vector<Light *> &lights = world->GetLights();
@@ -159,7 +160,7 @@ namespace Hyperion::Rendering {
 
         IndexFormat format = vertex_array->GetIndexBuffer()->GetFormat();
         for (const SubMesh &sub_mesh : mesh->GetSubMeshes()) {
-            RenderEngine::DrawIndexed(sub_mesh.topology, format, sub_mesh.index_count, sub_mesh.index_offset, sub_mesh.vertex_offset);
+            RenderCommand::DrawIndexed(sub_mesh.topology, format, sub_mesh.index_count, sub_mesh.index_offset, sub_mesh.vertex_offset);
         }
 
         vertex_array->Unbind();

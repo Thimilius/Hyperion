@@ -26,10 +26,10 @@ namespace Hyperion::Rendering {
         glClear(GetGLClearMask(mask));
     }
 
-    void OpenGLRenderDriver::SetViewport(s32 x, s32 y, s32 width, s32 height) {
+    void OpenGLRenderDriver::SetViewport(u32 x, u32 y, u32 width, u32 height) {
         glViewport(x, y, width, height);
     }
-
+    
     void OpenGLRenderDriver::SetActiveRenderTarget(const Ref<RenderTexture> &texture, RenderTextureTarget target) {
         u32 id = 0;
         if (texture != nullptr) {
@@ -48,16 +48,9 @@ namespace Hyperion::Rendering {
                 break;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
-
-        if (id == 0) {
-            Window *window = Application::GetInstance()->GetWindow();
-            glViewport(0, 0, window->GetWidth(), window->GetHeight());
-        } else {
-            glViewport(0, 0, texture->GetWidth(), texture->GetHeight());
-        }
     }
 
-    void OpenGLRenderDriver::Blit(const Ref<RenderTexture> &destination, s32 dstX0, s32 dstY0, s32 dstX1, s32 dstY1, const Ref<RenderTexture> &source, s32 srcX0, s32 srcY0, s32 srcX1, s32 srcY1) {
+    void OpenGLRenderDriver::Blit(const Ref<RenderTexture> &destination, u32 dstX0, u32 dstY0, u32 dstX1, u32 dstY1, const Ref<RenderTexture> &source, u32 srcX0, u32 srcY0, u32 srcX1, u32 srcY1) {
         u32 draw_id = destination ? destination->GetID() : 0;
         s32 read_id = source ? source->GetID() : 0;
         // TODO: The clear mask of the blitting operation should get exposed

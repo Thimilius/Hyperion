@@ -4,6 +4,7 @@
 
 #include <filesystem>
 
+#include "hyperion/rendering/render_engine.hpp"
 #include "hyperion/driver/opengl/opengl_shader.hpp"
 #include "hyperion/core/io/file_utilities.hpp"
 

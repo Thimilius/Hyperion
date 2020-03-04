@@ -2,6 +2,7 @@
 
 #include "hyperion/rendering/texture_2d.hpp"
 
+#include "hyperion/rendering/render_engine.hpp"
 #include "hyperion/driver/opengl/opengl_texture_2d.hpp"
 
 namespace Hyperion::Rendering {

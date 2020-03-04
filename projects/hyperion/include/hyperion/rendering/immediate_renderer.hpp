@@ -4,8 +4,10 @@
 #include "hyperion/core/math/mat4.hpp"
 #include "hyperion/rendering/shader.hpp"
 #include "hyperion/rendering/font.hpp"
+#include "hyperion/rendering/mesh.hpp"
 #include "hyperion/rendering/camera_data.hpp"
 #include "hyperion/rendering/vertex_format.hpp"
+#include "hyperion/rendering/vertex_array.hpp"
 
 namespace Hyperion::Rendering {
 

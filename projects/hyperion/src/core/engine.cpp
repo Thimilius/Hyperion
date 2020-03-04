@@ -5,6 +5,7 @@
 #include "hyperion/core/app/display.hpp"
 #include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/audio/audio_engine.hpp"
+#include "hyperion/rendering/render_engine.hpp"
 #include "hyperion/rendering/forward_render_pipeline.hpp"
 #include "hyperion/rendering/forward_renderer.hpp"
 #include "hyperion/rendering/immediate_renderer.hpp"

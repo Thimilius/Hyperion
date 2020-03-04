@@ -98,14 +98,14 @@ namespace Hyperion::Rendering {
         const String &shader_path = AssetManager::GetSettings().shader_path;
         for (auto &entry : std::filesystem::directory_iterator(shader_path + "/modules")) {
             auto &path = entry.path();
-            if (path.extension() == ".glsl_module") {
+            if (path.extension() == ".shader_module") {
                 String filename = path.filename().u8string();
                 String module_name = filename.substr(0, filename.find_last_of('.'));
                 s_modules[module_name] = FileUtilities::ReadAllText(path.u8string());
             }
         }
 
-        s_fallback_shader = Compile(FileUtilities::ReadAllText(shader_path + "/internal/standard_fallback.glsl"));
+        s_fallback_shader = Compile(FileUtilities::ReadAllText(shader_path + "/internal/standard_fallback.shader"));
     }
 
     String OpenGLShaderCompiler::GetShaderModuleFromName(const String &name) {
