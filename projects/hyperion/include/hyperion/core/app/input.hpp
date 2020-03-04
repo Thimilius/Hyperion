@@ -226,6 +226,9 @@ namespace Hyperion {
         virtual Vec2 GetGamepadAxis(Gamepad gamepad, GamepadAxis axis) const = 0;
         virtual void SetGamepadVibration(Gamepad gamepad, f32 left_vibration, f32 right_vibration) = 0;
 
+        virtual f32 GetGamepadDeadZone() const = 0;
+        virtual void SetGamepadDeadZone(f32 gamepad_dead_zone) = 0;
+
         virtual bool GetGamepadButtonDown(Gamepad gamepad, GamepadButtonCode gamepad_button_code) const = 0;
         virtual bool GetGamepadButton(Gamepad gamepad, GamepadButtonCode gamepad_button_code) const = 0;
         virtual bool GetGamepadButtonUp(Gamepad gamepad, GamepadButtonCode gamepad_button_code) const = 0;
@@ -257,6 +260,9 @@ namespace Hyperion {
         inline static const Vector<Gamepad> &GetConnectedGamepads() { return s_input_implementation->GetConnectedGamepads(); }
         inline static Vec2 GetGamepadAxis(Gamepad gamepad, GamepadAxis axis) { return s_input_implementation->GetGamepadAxis(gamepad, axis); }
         inline static void SetGamepadVibration(Gamepad gamepad, f32 left_vibration, f32 right_vibration) { s_input_implementation->SetGamepadVibration(gamepad, left_vibration, right_vibration); }
+
+        inline static f32 GetGamepadDeadZone() { return s_input_implementation->GetGamepadDeadZone(); }
+        inline static void GetGamepadDeadZone(f32 gamepad_dead_zone) { s_input_implementation->SetGamepadDeadZone(gamepad_dead_zone); }
 
         inline static bool GetGamepadButtonDown(Gamepad gamepad, GamepadButtonCode gamepad_button_code) { return s_input_implementation->GetGamepadButtonDown(gamepad, gamepad_button_code); }
         inline static bool GetGamepadButton(Gamepad gamepad, GamepadButtonCode gamepad_button_code) { return s_input_implementation->GetGamepadButton(gamepad, gamepad_button_code); }

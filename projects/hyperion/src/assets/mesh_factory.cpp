@@ -15,7 +15,7 @@ namespace Hyperion {
         f32 half_width = width / 2.0f;
         f32 half_height = height / 2.0f;
 
-        // The quad should face back
+        // The quad should face to viewer
         Vec3 normal = Vec3::Back();
 
         MeshData mesh_data;

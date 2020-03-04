@@ -34,6 +34,7 @@ namespace Hyperion {
         bool m_gamepad_input_active = true;
         Vector<Gamepad> m_gamepads_connected;
         GamepadState m_gamepads[(s32)Gamepad::Last];
+        f32 m_gamepad_dead_zone = 0.25f;
     public:
         WindowsInput();
         ~WindowsInput();
@@ -52,6 +53,9 @@ namespace Hyperion {
         const Vector<Gamepad> &GetConnectedGamepads() const override { return m_gamepads_connected; }
         Vec2 GetGamepadAxis(Gamepad gamepad, GamepadAxis axis) const override { return m_gamepads[(s32)gamepad].axes[(s32)axis]; }
         void SetGamepadVibration(Gamepad gamepad, f32 left_vibration, f32 right_vibration) override;
+
+        f32 GetGamepadDeadZone() const override { return m_gamepad_dead_zone; }
+        void SetGamepadDeadZone(f32 gamepad_dead_zone) { m_gamepad_dead_zone = gamepad_dead_zone; }
 
         bool GetGamepadButtonDown(Gamepad gamepad, GamepadButtonCode gamepad_button_code) const override { return m_gamepads[(s32)gamepad].buttons_down[(s32)gamepad_button_code]; }
         bool GetGamepadButton(Gamepad gamepad, GamepadButtonCode gamepad_button_code) const override { return m_gamepads[(s32)gamepad].buttons[(s32)gamepad_button_code]; }

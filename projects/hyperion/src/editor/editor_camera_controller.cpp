@@ -53,7 +53,7 @@ namespace Hyperion::Editor {
 
             Vec2 right_stick = Input::GetGamepadAxis(Gamepad::Gamepad1, GamepadAxis::RightStick);
             m_target_yaw -= rotation_speed * right_stick.x;
-            m_target_pitch += rotation_speed * -right_stick.y;
+            m_target_pitch += rotation_speed * right_stick.y;
 
             m_target_yaw -= x_offset;
             m_target_pitch += y_offset;
@@ -91,17 +91,17 @@ namespace Hyperion::Editor {
         {
             f32 camera_acceleration = m_acceleration * delta_time;
 
-            Vec3 direction = camera_acceleration * transform->GetForward();
-            Vec3 right = camera_acceleration * Vec3::Cross(direction, transform->GetUp()).Normalized();
+            Vec3 forward = camera_acceleration * transform->GetForward();
+            Vec3 right = camera_acceleration * transform->GetRight();
             Vec3 up = camera_acceleration * Vec3::Up();
             
             position += m_velocity * delta_time;
 
             if (Input::GetKey(KeyCode::W)) {
-                m_velocity += direction;
+                m_velocity += forward;
             }
             if (Input::GetKey(KeyCode::S)) {
-                m_velocity -= direction;
+                m_velocity -= forward;
             }
             if (Input::GetKey(KeyCode::A)) {
                 m_velocity -= right;
@@ -117,7 +117,7 @@ namespace Hyperion::Editor {
             }
 
             Vec2 left_stick = Input::GetGamepadAxis(Gamepad::Gamepad1, GamepadAxis::LeftStick);
-            m_velocity += direction * -left_stick.y;
+            m_velocity += forward * left_stick.y;
             m_velocity += right * left_stick.x;
             m_velocity += up * Input::GetGamepadAxis(Gamepad::Gamepad1, GamepadAxis::RightTrigger).x;
             m_velocity -= up * Input::GetGamepadAxis(Gamepad::Gamepad1, GamepadAxis::LeftTrigger).x;

@@ -63,9 +63,6 @@ namespace Hyperion {
         EventDispatcher dispatcher(event);
 
         // Handle window events
-        dispatcher.Dispatch<WindowCloseEvent>([this](WindowCloseEvent &window_close_event) {
-            Application::GetInstance()->Exit();
-        });
         dispatcher.Dispatch<WindowFocusEvent>([this](WindowFocusEvent &window_focus_event){
             Reset();
             m_gamepad_input_active = window_focus_event.GetFocus();
@@ -73,11 +70,6 @@ namespace Hyperion {
 
         // Handle key events
         dispatcher.Dispatch<KeyPressedEvent>([this](KeyPressedEvent &key_pressed_event) {
-            // Explicitly handle alt-f4 for closing
-            if (key_pressed_event.GetKeyCode() == KeyCode::F4 && key_pressed_event.HasKeyModifier(KeyModifier::Alt)) {
-                Application::GetInstance()->Exit();
-            }
-
             OnKeyEvent(key_pressed_event, true);
         });
         dispatcher.Dispatch<KeyReleasedEvent>([this](KeyReleasedEvent &key_released_event) {
@@ -163,9 +155,9 @@ namespace Hyperion {
                 // Handle axes
                 {
                     f32 left_stick_x = (state.Gamepad.sThumbLX + 0.5f) / 32767.5f;
-                    f32 left_stick_y = -(state.Gamepad.sThumbLY + 0.5f) / 32767.5f;
+                    f32 left_stick_y = (state.Gamepad.sThumbLY + 0.5f) / 32767.5f;
                     f32 right_stick_x = (state.Gamepad.sThumbRX + 0.5f) / 32767.5f;
-                    f32 right_stick_y = -(state.Gamepad.sThumbRY + 0.5f) / 32767.5f;
+                    f32 right_stick_y = (state.Gamepad.sThumbRY + 0.5f) / 32767.5f;
                     f32 left_trigger = state.Gamepad.bLeftTrigger / 255.0f;
                     f32 right_trigger = state.Gamepad.bRightTrigger / 255.0f;
 
@@ -284,8 +276,8 @@ namespace Hyperion {
     }
 
     Vec2 WindowsInput::ApplyGamepadDeadzone(f32 x, f32 y) {
-        // Deadzone logic from: http://www.third-helix.com/2013/04/12/doing-thumbstick-dead-zones-right.html
-        f32 dead_zone = 0.15f;
+        // Deadzone logic from: https://www.gamasutra.com/blogs/JoshSutphin/20130416/190541/Doing_Thumbstick_Dead_Zones_Right.php
+        f32 dead_zone = m_gamepad_dead_zone;
         Vec2 left_stick = Vec2(x, y);
 
         if (left_stick.Magnitude() < dead_zone) {
