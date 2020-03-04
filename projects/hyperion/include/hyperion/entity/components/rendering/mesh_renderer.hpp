@@ -33,6 +33,8 @@ namespace Hyperion {
         inline Ref<Rendering::Mesh> GetRenderMesh() const {
             return m_using_shared_mesh ? m_shared_mesh : m_mesh;
         }
+
+        BoundingBox GetBounds() const override;
     protected:
         void OnCreate() override;
         void OnDestroy() override;

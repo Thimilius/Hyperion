@@ -38,6 +38,8 @@ namespace Hyperion {
         inline Ref<Rendering::Material> GetRenderMaterial() const {
             return m_using_shared_material ? m_shared_material : m_material;
         }
+
+        virtual BoundingBox GetBounds() const = 0;
     };
 
 }
