@@ -13,9 +13,9 @@ namespace Hyperion::Rendering {
 
         static BufferLayout GetBufferLayout() {
             return BufferLayout({
-                BufferElement("a_position", ShaderDataType::Float3),
-                BufferElement("a_normal", ShaderDataType::Float3),
-                BufferElement("a_uv", ShaderDataType::Float2)
+                BufferElement("a_position", BufferDataType::Float3),
+                BufferElement("a_normal", BufferDataType::Float3),
+                BufferElement("a_uv", BufferDataType::Float2)
             });
         }
     };
@@ -26,8 +26,8 @@ namespace Hyperion::Rendering {
 
         static BufferLayout GetBufferLayout() {
             return BufferLayout({
-                BufferElement("a_position", ShaderDataType::Float3),
-                BufferElement("a_color", ShaderDataType::Float4),
+                BufferElement("a_position", BufferDataType::Float3),
+                BufferElement("a_color", BufferDataType::Float4),
             });
         }
     };
@@ -38,8 +38,8 @@ namespace Hyperion::Rendering {
 
         static BufferLayout GetBufferLayout() {
             return BufferLayout({
-                BufferElement("a_position", ShaderDataType::Float2),
-                BufferElement("a_uv", ShaderDataType::Float2),
+                BufferElement("a_position", BufferDataType::Float2),
+                BufferElement("a_uv", BufferDataType::Float2),
             });
         }
     };

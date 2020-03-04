@@ -25,7 +25,7 @@ namespace Hyperion::Rendering {
         virtual const Vector<Ref<VertexBuffer>> &GetVertexBuffers() const { return m_vertex_buffers; }
         virtual const Ref<IndexBuffer> &GetIndexBuffer() const { return m_index_buffer; }
 
-        static u32 ShaderDataTypeToOpenGLBaseType(ShaderDataType type);
+        static u32 BufferDataTypeToOpenGLBaseType(BufferDataType type);
     };
 
 }

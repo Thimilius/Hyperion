@@ -25,51 +25,58 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLShader::SetInt(const String &name, u32 value) {
-        glUniform1i(TryGetUniformLocation(name), value);
+        glProgramUniform1i(m_shader_program_id, m_uniforms.at(name), value);
     }
 
     void OpenGLShader::SetFloat(const String &name, f32 value) {
-        glUniform1f(TryGetUniformLocation(name), value);
+        glProgramUniform1f(m_shader_program_id, m_uniforms.at(name), value);
     }
 
     void OpenGLShader::SetVec2(const String &name, const Vec2 &value) {
-        glUniform2f(TryGetUniformLocation(name), value.x, value.y);
+        glProgramUniform2f(m_shader_program_id, m_uniforms.at(name), value.x, value.y);
     }
 
     void OpenGLShader::SetVec3(const String &name, const Vec3 &value) {
-        glUniform3f(TryGetUniformLocation(name), value.x, value.y, value.z);
+        glProgramUniform3f(m_shader_program_id, m_uniforms.at(name), value.x, value.y, value.z);
     }
 
     void OpenGLShader::SetVec4(const String &name, const Vec4 &value) {
-        glUniform4f(TryGetUniformLocation(name), value.x, value.y, value.z, value.w);
+        glProgramUniform4f(m_shader_program_id, m_uniforms.at(name), value.x, value.y, value.z, value.w);
     }
 
     void OpenGLShader::SetMat3(const String &name, const Mat3 &matrix) {
-        glUniformMatrix3fv(TryGetUniformLocation(name), 1, GL_FALSE, matrix.elements);
+        glProgramUniformMatrix3fv(m_shader_program_id, m_uniforms.at(name), 1, GL_FALSE, matrix.elements);
     }
 
     void OpenGLShader::SetMat4(const String &name, const Mat4 &matrix) {
-        glUniformMatrix4fv(TryGetUniformLocation(name), 1, GL_FALSE, matrix.elements);
+        glProgramUniformMatrix4fv(m_shader_program_id, m_uniforms.at(name), 1, GL_FALSE, matrix.elements);
     }
 
     void OpenGLShader::Recompile(const String &source) {
-        m_uniforms.clear();
         OpenGLShaderCompilerResult result = OpenGLShaderCompiler::Compile(source);
         m_shader_program_id = result.id;
-        m_properties = result.properties;
-    }
+        m_attributes = result.properties;
 
-    s32 OpenGLShader::TryGetUniformLocation(const String &name) {
-        auto loc = m_uniforms.find(name);
-        if (loc == m_uniforms.end()) {
-            s32 location = glGetUniformLocation(m_shader_program_id, name.c_str());
-            if (location < 0) {
-                HYP_LOG_ERROR("OpenGL", "Failed to get location for uniform: {}", name);
+        {
+            m_uniforms.clear();
+            
+            s32 uniform_count;
+            glGetProgramiv(m_shader_program_id, GL_ACTIVE_UNIFORMS, &uniform_count);
+            
+            for (s32 i = 0; i < uniform_count; i++) {
+                s32 uniform_name_length;
+                char uniform_name[128];
+                s32 uniform_size;
+                u32 uniform_type;
+                glGetActiveUniform(m_shader_program_id, i, 128, &uniform_name_length, &uniform_size, &uniform_type, uniform_name);
+
+                s32 location = glGetUniformLocation(m_shader_program_id, uniform_name);
+                if (location < 0) {
+                    HYP_LOG_ERROR("OpenGL", "Failed to introspection location for uniform: '{}'!", uniform_name);
+                }
+                m_uniforms[uniform_name] = location;
             }
-            m_uniforms[name] = location;
-            return location;
         }
-        return loc->second;
     }
 
 }

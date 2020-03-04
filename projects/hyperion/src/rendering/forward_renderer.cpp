@@ -115,7 +115,7 @@ namespace Hyperion::Rendering {
         
         shader->SetMat4("u_transform.mvp", s_state.transform.view_projection * transform);
 
-        if (shader->GetProperties().light_mode == ShaderLightMode::Forward) {
+        if (shader->GetAttributes().light_mode == ShaderLightMode::Forward) {
             // TODO: There needs to be a better way of "not setting" shader uniforms
             // when we are not sure if the shader has them to avoid unnecessary log messages
             shader->SetMat4("u_transform.model", transform);

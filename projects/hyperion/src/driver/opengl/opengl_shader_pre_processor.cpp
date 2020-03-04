@@ -16,7 +16,7 @@ namespace Hyperion::Rendering {
         result.status = OpenGLShaderPreProcessStatus::Failed;
 
         Map<ShaderType, String> sources;
-        ShaderProperties properties;
+        ShaderAttributes properties;
         String source = m_source;
 
         while (!IsAtEnd()) {
@@ -54,7 +54,7 @@ namespace Hyperion::Rendering {
         return result;
     }
 
-    bool OpenGLShaderPreProcessor::HandleDirective(Map<ShaderType, String> &sources, ShaderProperties &properties) {
+    bool OpenGLShaderPreProcessor::HandleDirective(Map<ShaderType, String> &sources, ShaderAttributes &properties) {
         u64 directive_start_position = m_position;
         Advance();
 

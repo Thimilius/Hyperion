@@ -4,6 +4,10 @@
 #include "hyperion/core/math/vec2.hpp"
 #include "hyperion/rendering/texture_2d.hpp"
 
+namespace Hyperion {
+    class Engine;
+}
+
 namespace Hyperion::Rendering {
 
     struct FontGlyph {

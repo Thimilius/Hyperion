@@ -15,22 +15,22 @@ namespace Hyperion::Rendering {
     enum class ShaderLightMode {
         Unknown,
         None,
-        Forward, // TODO: We may want to differentiate between forward base and additional lights 
+        Forward,
     };
 
-    struct ShaderProperties {
+    struct ShaderAttributes {
         ShaderLightMode light_mode = ShaderLightMode::None;
     };
 
     class Shader : public Asset {
     protected:
-        ShaderProperties m_properties;
+        ShaderAttributes m_attributes;
     public:
         virtual ~Shader() = default;
 
         AssetType GetAssetType() const override { return AssetType::Shader; }
 
-        ShaderProperties GetProperties() const { return m_properties; }
+        ShaderAttributes GetAttributes() const { return m_attributes; }
 
         virtual void Bind() const = 0;
         virtual void Unbind() const = 0;

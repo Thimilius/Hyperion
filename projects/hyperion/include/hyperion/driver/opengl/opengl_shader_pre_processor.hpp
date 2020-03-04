@@ -11,7 +11,7 @@ namespace Hyperion::Rendering {
 
     struct OpenGLShaderPreProcessResult {
         OpenGLShaderPreProcessStatus status;
-        ShaderProperties properties;
+        ShaderAttributes properties;
         Map<ShaderType, String> sources;
     };
 
@@ -29,7 +29,7 @@ namespace Hyperion::Rendering {
 
         OpenGLShaderPreProcessResult PreProcess();
     private:
-        bool HandleDirective(Map<ShaderType, String> &sources, ShaderProperties &properties);
+        bool HandleDirective(Map<ShaderType, String> &sources, ShaderAttributes &properties);
         void EndShaderType(Map<ShaderType, String> &sources, u64 end_position);
 
         char Advance();

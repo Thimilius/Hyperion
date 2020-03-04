@@ -5,7 +5,7 @@
 namespace Hyperion::Rendering {
     
     struct OpenGLShaderCompilerResult {
-        ShaderProperties properties;
+        ShaderAttributes properties;
         u32 id;
     };
 

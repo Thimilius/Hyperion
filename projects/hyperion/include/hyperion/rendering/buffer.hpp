@@ -4,7 +4,7 @@
 
 namespace Hyperion::Rendering {
 
-    enum class ShaderDataType {
+    enum class BufferDataType {
         Float, Float2, Float3, Float4,
         Mat3, Mat4,
         Int, Int2, Int3, Int4,
@@ -22,36 +22,21 @@ namespace Hyperion::Rendering {
         DynamicDraw
     };
 
-    static u32 ShaderDataTypeSize(ShaderDataType type) {
-        switch (type) {
-            case ShaderDataType::Float:  return 4;
-            case ShaderDataType::Float2: return 4 * 2;
-            case ShaderDataType::Float3: return 4 * 3;
-            case ShaderDataType::Float4: return 4 * 4;
-            case ShaderDataType::Mat3:   return 4 * 3 * 3;
-            case ShaderDataType::Mat4:   return 4 * 4 * 4;
-            case ShaderDataType::Int:    return 4;
-            case ShaderDataType::Int2:   return 4 * 2;
-            case ShaderDataType::Int3:   return 4 * 3;
-            case ShaderDataType::Int4:   return 4 * 4;
-            case ShaderDataType::Bool:   return 1;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
-        }
-    }
+    
 
     struct BufferElement {
         String name;
-        ShaderDataType type;
-        u32 size;
+        BufferDataType type;
         u32 offset;
         bool normalized;
 
-        BufferElement() {}
+        BufferElement() { }
 
-        BufferElement(const String &name, ShaderDataType type, bool normalized = false)
-            : name(name), type(type), size(ShaderDataTypeSize(type)), offset(0), normalized(normalized) {
+        BufferElement(const String &name, BufferDataType type, bool normalized = false)
+            : name(name), type(type), offset(0), normalized(normalized) {
         }
 
+        u32 GetSize() const;
         u32 GetComponentCount() const;
     };
 
@@ -60,7 +45,7 @@ namespace Hyperion::Rendering {
         Vector<BufferElement> m_elements;
         u32 m_stride = 0;
     public:
-        BufferLayout() {}
+        BufferLayout() { }
 
         BufferLayout(const std::initializer_list<BufferElement> &elements)
             : m_elements(elements) {

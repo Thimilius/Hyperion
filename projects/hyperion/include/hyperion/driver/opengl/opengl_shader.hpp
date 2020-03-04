@@ -26,8 +26,6 @@ namespace Hyperion::Rendering {
         void SetMat4(const String &name, const Mat4 &matrix) override;
 
         void Recompile(const String &source) override;
-    private:
-        s32 TryGetUniformLocation(const String &name);
     };
 
 }

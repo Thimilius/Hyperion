@@ -35,7 +35,7 @@ namespace Hyperion::Rendering {
             // This is the modern way of defining the format of a vertex buffer in OpenGL using DSA
             GLboolean normalized = element.normalized ? GL_TRUE : GL_FALSE;
             glEnableVertexArrayAttrib(m_vertex_array_id, attribute_index);
-            glVertexArrayAttribFormat(m_vertex_array_id, attribute_index, element.GetComponentCount(), ShaderDataTypeToOpenGLBaseType(element.type), normalized, element.offset);
+            glVertexArrayAttribFormat(m_vertex_array_id, attribute_index, element.GetComponentCount(), BufferDataTypeToOpenGLBaseType(element.type), normalized, element.offset);
             glVertexArrayVertexBuffer(m_vertex_array_id, binding_index, vertex_buffer->GetID(), 0, layout.GetStride());
             glVertexArrayAttribBinding(m_vertex_array_id, attribute_index, binding_index);
         }
@@ -48,19 +48,19 @@ namespace Hyperion::Rendering {
         glVertexArrayElementBuffer(m_vertex_array_id, index_buffer->GetID());
     }
 
-    u32 OpenGLVertexArray::ShaderDataTypeToOpenGLBaseType(ShaderDataType type) {
+    u32 OpenGLVertexArray::BufferDataTypeToOpenGLBaseType(BufferDataType type) {
         switch (type) {
-            case ShaderDataType::Float:  return GL_FLOAT;
-            case ShaderDataType::Float2: return GL_FLOAT;
-            case ShaderDataType::Float3: return GL_FLOAT;
-            case ShaderDataType::Float4: return GL_FLOAT;
-            case ShaderDataType::Mat3:   return GL_FLOAT;
-            case ShaderDataType::Mat4:   return GL_FLOAT;
-            case ShaderDataType::Int:    return GL_INT;
-            case ShaderDataType::Int2:   return GL_INT;
-            case ShaderDataType::Int3:   return GL_INT;
-            case ShaderDataType::Int4:   return GL_INT;
-            case ShaderDataType::Bool:   return GL_BOOL;
+            case BufferDataType::Float:  return GL_FLOAT;
+            case BufferDataType::Float2: return GL_FLOAT;
+            case BufferDataType::Float3: return GL_FLOAT;
+            case BufferDataType::Float4: return GL_FLOAT;
+            case BufferDataType::Mat3:   return GL_FLOAT;
+            case BufferDataType::Mat4:   return GL_FLOAT;
+            case BufferDataType::Int:    return GL_INT;
+            case BufferDataType::Int2:   return GL_INT;
+            case BufferDataType::Int3:   return GL_INT;
+            case BufferDataType::Int4:   return GL_INT;
+            case BufferDataType::Bool:   return GL_BOOL;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }

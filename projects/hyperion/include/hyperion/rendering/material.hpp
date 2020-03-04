@@ -32,7 +32,6 @@ namespace Hyperion::Rendering {
             Texture2D
         };
 
-        // TODO: Better include of textures in material properties
         struct MaterialProperty {
             MaterialPropertyType type;
             String name;
