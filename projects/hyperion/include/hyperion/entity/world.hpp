@@ -13,18 +13,22 @@ namespace Hyperion {
     class Light;
     class Camera;
 
-    enum class WorldEnvironmentBackgroundMode {
-        Color,
-        Skybox
-    };
-
     struct WorldEnvironment {
-        WorldEnvironmentBackgroundMode background_mode = WorldEnvironmentBackgroundMode::Color;
-        Color background_color = Color::Black();
-        Ref<Rendering::TextureCubemap> background_skybox;
+        struct Background {
+            enum class Mode {
+                Color,
+                Skybox
+            };
 
-        f32 ambient_light_intensity = 0.2f;
-        Color ambient_light_color = Color::White();
+            Mode mode = Mode::Color;
+            Color color = Color::Black();
+            Ref<Rendering::TextureCubemap> skybox;
+        } background;
+
+        struct AmbientLight {
+            f32 intensity = 0.2f;
+            Color color = Color::Red();
+        } ambient_light;
     };
 
     class World {
@@ -53,10 +57,8 @@ namespace Hyperion {
 
         void AddCamera(Camera *camera);
         void RemoveCamera(Camera *camera);
-
         void AddMeshRenderer(MeshRenderer *mesh_renderer);
         void RemoveMeshRenderer(MeshRenderer *mesh_renderer);
-
         void AddLight(Light *light);
         void RemoveLight(Light *light);
 
