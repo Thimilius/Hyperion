@@ -2,6 +2,7 @@
 
 #include <variant>
 
+#include "hyperion/assets/copyable.hpp"
 #include "hyperion/rendering/shader.hpp"
 #include "hyperion/rendering/texture_2d.hpp"
 #include "hyperion/rendering/texture_cubemap.hpp"
@@ -12,7 +13,7 @@
 
 namespace Hyperion::Rendering {
 
-    class Material : public Asset {
+    class Material : public Asset, public Copyable<Material> {
         using MaterialPropertyStorage = std::variant<u32, f32, Vec2, Vec3, Vec4, Mat3, Mat4, Color, Ref<Texture2D>>;
     private:
         enum class MaterialPropertyType {
@@ -41,7 +42,9 @@ namespace Hyperion::Rendering {
         Ref<Shader> m_shader;
         Vector<MaterialProperty> m_properties;
     public:
-        AssetType GetType() const override { return AssetType::Material; }
+        AssetType GetAssetType() const override { return AssetType::Material; }
+
+        Ref<Material> Copy() const override;
 
         Ref<Shader> GetShader() const { return m_shader; }
 
@@ -57,9 +60,6 @@ namespace Hyperion::Rendering {
 
         void Bind();
         void Unbind();
-
-        // TODO: We need some universal copy mechanism
-        Ref<Material> Copy();
 
         static Ref<Material> Create(const Ref<Shader> &shader);
     private:

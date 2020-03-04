@@ -2,6 +2,8 @@
 
 #include "hyperion/common.hpp"
 #include "hyperion/assets/asset.hpp"
+#include "hyperion/assets/copyable.hpp"
+#include "hyperion/core/math/bounding_box.hpp"
 #include "hyperion/rendering/vertex_array.hpp"
 #include "hyperion/rendering/vertex_format.hpp"
 
@@ -30,7 +32,7 @@ namespace Hyperion::Rendering {
         u32 vertex_offset;
     };
 
-    class Mesh : public Asset {
+    class Mesh : public Asset, public Copyable<Mesh> {
     private:
         MeshData m_mesh_data;
         BoundingBox m_bounds;
@@ -39,7 +41,9 @@ namespace Hyperion::Rendering {
 
         Ref<VertexArray> m_vertex_array;
     public:
-        inline AssetType GetType() const override { return AssetType::Mesh; }
+        inline AssetType GetAssetType() const override { return AssetType::Mesh; }
+
+        Ref<Mesh> Copy() const override;
 
         inline const MeshData &GetMeshData() const { return m_mesh_data; }
         inline BoundingBox GetBounds() const { return m_bounds; }

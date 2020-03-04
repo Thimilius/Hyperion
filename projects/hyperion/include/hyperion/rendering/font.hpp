@@ -21,7 +21,7 @@ namespace Hyperion::Rendering {
         u32 m_size;
         Map<u32, FontGlyph> m_glyphs;
     public:
-        inline AssetType GetType() const { return AssetType::Font; };
+        inline AssetType GetAssetType() const { return AssetType::Font; };
 
         inline u32 GetSize() const { return m_size; }
         inline FontGlyph GetGlyph(u32 c) const { return m_glyphs.at(c); }

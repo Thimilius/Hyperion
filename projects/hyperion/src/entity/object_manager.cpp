@@ -37,7 +37,7 @@ namespace Hyperion {
     }
 
     void ObjectManager::DestroyImmediate(Object *object) {
-        HYP_ASSERT_MESSAGE(object->GetType() != Transform::GetStaticType(), "Destroying a transform component is not allowed");
+        HYP_ASSERT_MESSAGE(object->GetType() != Transform::GetTypeStatic(), "Destroying a transform component is not allowed");
 
         object->OnDestroy();
 

@@ -48,7 +48,7 @@ namespace Hyperion {
             static_assert(!std::is_same<Component, T>::value, "Template parameter must derive from EntityComponent");
             static_assert(!std::is_base_of<Transform, T>::value, "Can not add an additional TransformComponent");
 
-            ObjectType type = T::GetStaticType();
+            ObjectType type = T::GetTypeStatic();
             HYP_ASSERT_MESSAGE(m_components.find(type) == m_components.end(), "Failed to add component because a component with the same type already exists!");
 
             T *component = new T();
@@ -66,7 +66,7 @@ namespace Hyperion {
         T *GetComponent() const {
             static_assert(std::is_base_of<Component, T>::value, "Template parameter must derive from EntityComponent");
 
-            ObjectType type = T::GetStaticType();
+            ObjectType type = T::GetTypeStatic();
             auto iterator = m_components.find(type);
             if (iterator != m_components.end()) {
                 return (T*)iterator->second;
@@ -79,7 +79,7 @@ namespace Hyperion {
         T *GetComponentInChildren() const {
             static_assert(std::is_base_of<Component, T>::value, "Template parameter must derive from EntityComponent");
 
-            ObjectType type = T::GetStaticType();
+            ObjectType type = T::GetTypeStatic();
             T *component = nullptr;
 
             auto iterator = m_components.find(type);
@@ -99,7 +99,7 @@ namespace Hyperion {
         T *GetComponentInParent() const {
             static_assert(std::is_base_of<Component, T>::value, "Template parameter must derive from EntityComponent");
 
-            ObjectType type = T::GetStaticType();
+            ObjectType type = T::GetTypeStatic();
             T *component = nullptr;
             
             auto iterator = m_components.find(type);
@@ -126,7 +126,7 @@ namespace Hyperion {
         Vector<T *> GetComponentsInChildren() const {
             static_assert(std::is_base_of<Component, T>::value, "Template parameter must derive from EntityComponent");
 
-            ObjectType type = T::GetStaticType();
+            ObjectType type = T::GetTypeStatic();
             Vector<T *> components;
 
             auto iterator = m_components.find(type);
@@ -145,7 +145,7 @@ namespace Hyperion {
         Vector<T *> GetComponentsInParent() const {
             static_assert(std::is_base_of<Component, T>::value, "Template parameter must derive from EntityComponent");
 
-            ObjectType type = T::GetStaticType();
+            ObjectType type = T::GetTypeStatic();
             Vector<T *> components;
 
             auto iterator = m_components.find(type);

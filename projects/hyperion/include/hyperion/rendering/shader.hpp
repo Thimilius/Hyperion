@@ -28,7 +28,7 @@ namespace Hyperion::Rendering {
     public:
         virtual ~Shader() = default;
 
-        AssetType GetType() const override { return AssetType::Shader; }
+        AssetType GetAssetType() const override { return AssetType::Shader; }
 
         ShaderProperties GetProperties() const { return m_properties; }
 

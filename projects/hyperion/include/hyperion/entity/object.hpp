@@ -6,7 +6,7 @@
     private:                                                                                                                   \
         inline static ObjectType s_type = std::hash<String>()(String(#TYPE));                                                  \
     public:                                                                                                                    \
-        inline static ObjectType GetStaticType() { return s_type; }                                                            \
+        inline static ObjectType GetTypeStatic() { return s_type; }                                                            \
         inline virtual ObjectType GetType() const override { return s_type; }                                                  \
         inline virtual bool IsBase(ObjectType type) const override { return type == s_type ? true : BASE_TYPE::IsBase(type); }
     
@@ -21,7 +21,7 @@ namespace Hyperion {
 
         inline static ObjectType s_type = std::hash<String>()(String("Object"));
     public:
-        inline static ObjectType GetStaticType() { return s_type; }
+        inline static ObjectType GetTypeStatic() { return s_type; }
         inline virtual ObjectType GetType() const { return s_type; }
         inline virtual bool IsBase(ObjectType type) const { return type == s_type; }
 

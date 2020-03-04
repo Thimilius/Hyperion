@@ -18,6 +18,9 @@ private:
         Vec3 rotation = transform->GetEulerAngles();
         rotation.y += delta_time * m_rotation_speed;
         transform->SetEulerAngles(rotation);
+
+        MeshRenderer *renderer = GetEntity()->GetComponent<MeshRenderer>();
+        Ref<Mesh> mesh = renderer->GetSharedMesh();
     }
 };
 

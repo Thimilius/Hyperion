@@ -4,8 +4,8 @@
 
 namespace Hyperion::Rendering {
 
-    Ref<Mesh> Mesh::Create(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes) {
-        return Ref<Mesh>(new Mesh(mesh_data, sub_meshes));
+    Ref<Mesh> Mesh::Copy() const {
+        return Mesh::Create(m_mesh_data, m_sub_meshes);
     }
 
     Mesh::Mesh(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes) {
@@ -32,6 +32,10 @@ namespace Hyperion::Rendering {
         m_vertex_array->SetIndexBuffer(index_buffer);
 
         RecalculateBounds();
+    }
+
+    Ref<Mesh> Mesh::Create(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes) {
+        return Ref<Mesh>(new Mesh(mesh_data, sub_meshes));
     }
 
     void Mesh::RecalculateBounds() {

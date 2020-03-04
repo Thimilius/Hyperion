@@ -76,7 +76,7 @@ namespace Hyperion {
 
     void Entity::OnDestroy() {
         for (auto it = m_components.begin(); it != m_components.end(); ) {
-            if (it->first != Transform::GetStaticType()) {
+            if (it->first != Transform::GetTypeStatic()) {
                 Component *component = it->second;
                 it = m_components.erase(it);
                 DestroyImmediate(component);
@@ -106,7 +106,7 @@ namespace Hyperion {
         }
         m_world = world;
 
-        m_components[Transform::GetStaticType()] = &m_transform;
+        m_components[Transform::GetTypeStatic()] = &m_transform;
         m_transform.m_entity = this;
         m_transform.OnCreate();
         m_transform.SetLocalPosition(position);

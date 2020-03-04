@@ -52,7 +52,7 @@ namespace Hyperion::Rendering {
     public:
         virtual ~Texture() = default;
 
-        AssetType GetType() const override { return AssetType::Texture; }
+        AssetType GetAssetType() const override { return AssetType::Texture; }
 
         virtual TextureDimension GetDimension() const = 0;
 

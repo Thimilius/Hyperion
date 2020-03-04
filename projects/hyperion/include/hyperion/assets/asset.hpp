@@ -18,7 +18,7 @@ namespace Hyperion {
     public:
         virtual ~Asset() = default;
 
-        virtual AssetType GetType() const = 0;
+        virtual AssetType GetAssetType() const = 0;
 
         inline const String &GetName() const { return m_name; }
         inline void SetName(const String &name) { m_name = name; }

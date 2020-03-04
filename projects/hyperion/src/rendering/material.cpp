@@ -4,6 +4,12 @@
 
 namespace Hyperion::Rendering {
 
+    Ref<Material> Material::Copy() const {
+        Ref<Material> copy = Create(m_shader);
+        copy->m_properties = m_properties;
+        return copy;
+    }
+
     void Material::SetInt(const String &name, u32 value) {
         u32 property_index = FindOrAddProperty(name, MaterialPropertyType::Int);
         m_properties[property_index].storage = value;
@@ -81,12 +87,6 @@ namespace Hyperion::Rendering {
 
     void Material::Unbind() {
         m_shader->Unbind();
-    }
-
-    Ref<Material> Material::Copy() {
-        Ref<Material> copy = Create(m_shader);
-        copy->m_properties = m_properties;
-        return copy;
     }
 
     Ref<Material> Material::Create(const Ref<Shader> &shader) {
