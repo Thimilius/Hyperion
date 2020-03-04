@@ -121,7 +121,7 @@ namespace Hyperion {
         delete[] pixels;
 
         s_default_material = Material::Create(GetShader("standard"));
-        s_default_material->SetTexture2D("u_texture", s_texture_primitive);
+        s_default_material->SetTexture2D("u_texture", GetTexture2D("checkerboard"));
     }
 
     void AssetManager::Update() {

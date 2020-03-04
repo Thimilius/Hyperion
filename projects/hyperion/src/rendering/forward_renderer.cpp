@@ -111,8 +111,6 @@ namespace Hyperion::Rendering {
     }
 
     void ForwardRenderer::PrepareShader(const Ref<Shader> &shader, const Mat4 &transform, const Mat4 &inverse_transform) {
-        shader->Bind();
-        
         shader->SetMat4("u_transform.mvp", s_state.transform.view_projection * transform);
 
         if (shader->GetAttributes().light_mode == ShaderLightMode::Forward) {

@@ -58,7 +58,6 @@ namespace Hyperion::Rendering {
     void Material::Bind() {
         m_shader->Bind();
 
-        // TODO: This should be made more efficient
         u32 texture_index = 0;
         for (MaterialProperty &property : m_properties) {
             String &name = property.name;

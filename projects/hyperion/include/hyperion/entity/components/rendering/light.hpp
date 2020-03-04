@@ -19,7 +19,7 @@ namespace Hyperion {
         Color m_color = Color::White();
         f32 m_intensity = 1.0f;
 
-        f32 m_range = 50.0f;
+        f32 m_range = 10.0f;
 
         f32 m_inner_spot_radius = 1.0f;
         f32 m_outer_spot_radius = 1.0f;

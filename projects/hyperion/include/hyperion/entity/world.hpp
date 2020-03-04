@@ -27,7 +27,7 @@ namespace Hyperion {
 
         struct AmbientLight {
             f32 intensity = 0.2f;
-            Color color = Color::Red();
+            Color color = Color::White();
         } ambient_light;
     };
 

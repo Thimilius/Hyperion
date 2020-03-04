@@ -48,7 +48,7 @@ namespace Hyperion::Rendering {
         inline const MeshData &GetMeshData() const { return m_mesh_data; }
         inline BoundingBox GetBounds() const { return m_bounds; }
         inline const Ref<VertexArray> GetVertexArray() const { return m_vertex_array; }
-        inline const Vector<SubMesh> GetSubMeshes() const { return m_sub_meshes; }
+        inline const Vector<SubMesh> &GetSubMeshes() const { return m_sub_meshes; }
 
         static Ref<Mesh> Create(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes);
     private:
