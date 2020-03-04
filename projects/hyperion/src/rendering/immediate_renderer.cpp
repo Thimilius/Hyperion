@@ -13,77 +13,6 @@ namespace Hyperion::Rendering {
         s_state.transform.view_projection = camera.view_projection_matrix;
     }
 
-    void ImmediateRenderer::Draw(MeshTopology topology, const Ref<VertexArray> &vertex_array, u32 vertex_count) {
-        s_immediate_resources.shader->Bind();
-        s_immediate_resources.shader->SetMat4("u_transform.view", s_state.transform.view);
-        s_immediate_resources.shader->SetMat4("u_transform.projection", s_state.transform.projection);
-
-        vertex_array->Bind();
-
-        RenderCommand::Draw(topology, vertex_count, 0);
-    }
-
-    void ImmediateRenderer::DrawCube(Vec3 center, Vec3 size, Color m_color) {
-        Vec3 half_size = size * 0.5f;
-
-        // Forward
-        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z - half_size.z), m_color);
-        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z - half_size.z), m_color);
-        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z - half_size.z), m_color);
-        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z - half_size.z), m_color);
-        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z - half_size.z), m_color);
-        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z - half_size.z), m_color);
-
-        // Right
-        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z + half_size.z), m_color);
-        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z + half_size.z), m_color);
-        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z - half_size.z), m_color);
-        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z + half_size.z), m_color);
-        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z - half_size.z), m_color);
-        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z - half_size.z), m_color);
-
-        // Back
-        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z + half_size.z), m_color);
-        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z + half_size.z), m_color);
-        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z + half_size.z), m_color);
-        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z + half_size.z), m_color);
-        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z + half_size.z), m_color);
-        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z + half_size.z), m_color);
-
-        // Left
-        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z - half_size.z), m_color);
-        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z - half_size.z), m_color);
-        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z + half_size.z), m_color);
-        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z - half_size.z), m_color);
-        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z + half_size.z), m_color);
-        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z + half_size.z), m_color);
-
-        // Up
-        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z + half_size.z), m_color);
-        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z - half_size.z), m_color);
-        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z - half_size.z), m_color);
-        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z + half_size.z), m_color);
-        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z - half_size.z), m_color);
-        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z + half_size.z), m_color);
-
-        // Down
-        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z - half_size.z), m_color);
-        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z + half_size.z), m_color);
-        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z + half_size.z), m_color);
-        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z - half_size.z), m_color);
-        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z + half_size.z), m_color);
-        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z - half_size.z), m_color);
-
-        Flush(MeshTopology::Triangles);
-    }
-
-    void ImmediateRenderer::DrawLine(Vec3 a, Vec3 b, Color m_color) {
-        AddVertex(a, m_color);
-        AddVertex(b, m_color);
-
-        Flush(MeshTopology::Lines);
-    }
-
     void ImmediateRenderer::DrawText(const String &text, const Ref<Font> &font, f32 x, f32 y, f32 scale, Color color) {
         s_font_resources.shader->Bind();
         s_font_resources.shader->SetVec4("u_color", color);
@@ -121,6 +50,113 @@ namespace Hyperion::Rendering {
         }
     }
 
+    void ImmediateRenderer::DrawCube(Vec3 center, Vec3 size, Color color) {
+        Vec3 half_size = size * 0.5f;
+
+        // Forward
+        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z - half_size.z), color);
+
+        // Right
+        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z - half_size.z), color);
+
+        // Back
+        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z + half_size.z), color);
+
+        // Left
+        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z + half_size.z), color);
+
+        // Up
+        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y + half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y + half_size.y, center.z + half_size.z), color);
+
+        // Down
+        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z - half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z + half_size.z), color);
+        AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z - half_size.z), color);
+
+        Flush(MeshTopology::Triangles);
+    }
+
+    void ImmediateRenderer::DrawLine(Vec3 a, Vec3 b, Color color) {
+        AddVertex(a, color);
+        AddVertex(b, color);
+
+        Flush(MeshTopology::Lines);
+    }
+
+    void ImmediateRenderer::DrawWire(MeshTopology topology, const Ref<VertexArray> &vertex_array, u32 vertex_count) {
+        s_immediate_resources.shader->Bind();
+        s_immediate_resources.shader->SetMat4("u_transform.view", s_state.transform.view);
+        s_immediate_resources.shader->SetMat4("u_transform.projection", s_state.transform.projection);
+
+        vertex_array->Bind();
+
+        RenderCommand::Draw(topology, vertex_count, 0);
+    }
+
+    void ImmediateRenderer::DrawWireCube(Vec3 center, Vec3 size, Color color) {
+        Vec3 half_size = size * 0.5f;
+
+        Vec3 min = center + half_size;
+        Vec3 max = center - half_size;
+
+        AddVertex(Vec3(max.x, max.y, min.z), color);
+        AddVertex(Vec3(max.x, min.y, min.z), color);
+        AddVertex(Vec3(max.x, min.y, min.z), color);
+        AddVertex(Vec3(min.x, min.y, min.z), color);
+        AddVertex(Vec3(min.x, min.y, min.z), color);
+        AddVertex(Vec3(min.x, max.y, min.z), color);
+        AddVertex(Vec3(min.x, max.y, min.z), color);
+        AddVertex(Vec3(max.x, max.y, min.z), color);
+
+        AddVertex(Vec3(max.x, max.y, min.z), color);
+        AddVertex(Vec3(max.x, max.y, max.z), color);
+        AddVertex(Vec3(max.x, min.y, min.z), color);
+        AddVertex(Vec3(max.x, min.y, max.z), color);
+        AddVertex(Vec3(min.x, min.y, min.z), color);
+        AddVertex(Vec3(min.x, min.y, max.z), color);
+        AddVertex(Vec3(min.x, max.y, min.z), color);
+        AddVertex(Vec3(min.x, max.y, max.z), color);
+
+        AddVertex(Vec3(max.x, max.y, max.z), color);
+        AddVertex(Vec3(max.x, min.y, max.z), color);
+        AddVertex(Vec3(max.x, min.y, max.z), color);
+        AddVertex(Vec3(min.x, min.y, max.z), color);
+        AddVertex(Vec3(min.x, min.y, max.z), color);
+        AddVertex(Vec3(min.x, max.y, max.z), color);
+        AddVertex(Vec3(min.x, max.y, max.z), color);
+        AddVertex(Vec3(max.x, max.y, max.z), color);
+
+        Flush(MeshTopology::Lines);
+    }
+
     void ImmediateRenderer::Init() {
         s_immediate_resources.shader = AssetManager::GetShader("standard_immediate");
         s_immediate_resources.vertex_buffer = VertexBuffer::Create(nullptr, sizeof(s_immediate_resources.data_buffer), BufferUsage::DynamicDraw);
@@ -137,7 +173,7 @@ namespace Hyperion::Rendering {
 
     void ImmediateRenderer::AddVertex(Vec3 position, Color color) {
         u32 vertex_offset = s_state.vertex_offset;
-        HYP_ASSERT_MESSAGE(vertex_offset < 2000, "Immediate vertex buffer is full!");
+        HYP_ASSERT_MESSAGE(vertex_offset < s_immediate_resources.DATA_BUFFER_SIZE, "Immediate vertex buffer is full!");
 
         s_immediate_resources.data_buffer[vertex_offset].position = position;
         s_immediate_resources.data_buffer[vertex_offset].color = color;
@@ -155,14 +191,9 @@ namespace Hyperion::Rendering {
             return;
         }
 
-        s_immediate_resources.shader->Bind();
-        s_immediate_resources.shader->SetMat4("u_transform.view", s_state.transform.view);
-        s_immediate_resources.shader->SetMat4("u_transform.projection", s_state.transform.projection);
-
         s_immediate_resources.vertex_buffer->SetData(0, s_state.vertex_offset * sizeof(VertexImmediate), (u8*)s_immediate_resources.data_buffer);
-        s_immediate_resources.vertex_array->Bind();
 
-        RenderCommand::Draw(topology, s_state.vertex_offset, 0);
+        DrawWire(topology, s_immediate_resources.vertex_array, s_state.vertex_offset);
 
         s_state.vertex_offset = 0;
     }

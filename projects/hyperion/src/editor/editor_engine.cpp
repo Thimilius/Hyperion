@@ -63,7 +63,7 @@ namespace Hyperion::Editor {
         if (s_overlay_enabled) {
             ImmediateRenderer::Begin(s_camera->GetData());
             {
-                ImmediateRenderer::Draw(MeshTopology::Lines, s_grid_vertex_array, s_grid_vertex_count);
+                ImmediateRenderer::DrawWire(MeshTopology::Lines, s_grid_vertex_array, s_grid_vertex_count);
             }
             ImmediateRenderer::End();
 
