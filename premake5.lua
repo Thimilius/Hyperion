@@ -54,6 +54,7 @@ project "hyperion"
 		"projects/hyperion/include",
 		
 		"projects/hyperion/vendor/assimp/include",
+		"projects/hyperion/vendor/bullet/include",
 		"projects/hyperion/vendor/fmod/include",
 		"projects/hyperion/vendor/fmt/include",
 		"projects/hyperion/vendor/freetype/include",
@@ -101,7 +102,7 @@ project "sandbox"
         files { "projects/sandbox/resource.rc" }
 
 		libdirs { 
-			"projects/hyperion/vendor/freetype/lib/windows",
+			"projects/hyperion/vendor/bullet/lib/windows/debug",
 			"projects/hyperion/vendor/fmod/lib/windows",
 			"projects/hyperion/vendor/assimp/lib/windows"
 		}
@@ -113,7 +114,8 @@ project "sandbox"
 			"fmod_vc",
 			"assimp",
 			
-			"freetype"
+			"freetype",
+			"bullet"
 		}
 
 	    postbuildcommands {
