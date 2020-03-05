@@ -21,9 +21,6 @@ private:
         rotation.y += delta_time * m_rotation_speed;
         transform->SetEulerAngles(rotation);
 
-        MeshRenderer *renderer = GetEntity()->GetComponent<MeshRenderer>();
-        Ref<Mesh> mesh = renderer->GetSharedMesh();
-
         if (Input::GetKeyDown(KeyCode::K)) {
             Destroy(GetEntity());
         }

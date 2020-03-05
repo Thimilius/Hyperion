@@ -75,7 +75,11 @@ namespace Hyperion::Physics {
     }
 
     void BulletPhysicsWorld::UpdateColliderTransform(Collider *collider) {
+        btCollisionObject *collision_object = m_collision_objects.at(collider);
 
+        UpdateTransform(collider, collision_object);
+
+        m_collision_world->updateSingleAabb(collision_object);
     }
 
     void BulletPhysicsWorld::AddCollider(Collider *collider, btCollisionObject *collision_object) {

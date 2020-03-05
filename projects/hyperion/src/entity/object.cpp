@@ -8,13 +8,14 @@ namespace Hyperion {
 
     void Object::Destroy(Object *object) {
         if (object && !object->m_destroyed) {
-            ObjectManager::Destroy(object);
             object->m_destroyed = true;
+            ObjectManager::Destroy(object);
         }
     }
 
     void Object::DestroyImmediate(Object *object) {
         if (object && !object->m_destroyed) {
+            object->m_destroyed = true;
             ObjectManager::DestroyImmediate(object);
         }
     }
