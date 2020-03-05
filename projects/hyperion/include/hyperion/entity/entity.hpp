@@ -42,12 +42,12 @@ namespace Hyperion {
 
         void OnMessage(EntityMessage message) override;
 
-        template<typename T>
+        template<typename T, typename =
+            std::enable_if<std::is_base_of<Component, T>::value &&
+            !std::is_same<Component, T>::value &&
+            !std::is_base_of<Transform, T>::value &&
+            std::is_default_constructible<T>::value>::type>
         T *AddComponent() {
-            static_assert(std::is_base_of<Component, T>::value, "Template parameter must derive from EntityComponent");
-            static_assert(!std::is_same<Component, T>::value, "Template parameter must derive from EntityComponent");
-            static_assert(!std::is_base_of<Transform, T>::value, "Can not add an additional TransformComponent");
-
             ObjectType type = T::GetTypeStatic();
             HYP_ASSERT_MESSAGE(m_components.find(type) == m_components.end(), "Failed to add component because a component with the same type already exists!");
 
@@ -62,10 +62,8 @@ namespace Hyperion {
             return component;
         }
 
-        template<typename T>
+        template<typename T, typename = std::enable_if<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>::type>
         T *GetComponent() const {
-            static_assert(std::is_base_of<Component, T>::value, "Template parameter must derive from EntityComponent");
-
             ObjectType type = T::GetTypeStatic();
             auto iterator = m_components.find(type);
             if (iterator != m_components.end()) {
@@ -75,10 +73,8 @@ namespace Hyperion {
             }
         }
 
-        template<typename T>
+        template<typename T, typename = std::enable_if<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>::type>
         T *GetComponentInChildren() const {
-            static_assert(std::is_base_of<Component, T>::value, "Template parameter must derive from EntityComponent");
-
             ObjectType type = T::GetTypeStatic();
             T *component = nullptr;
 
@@ -95,10 +91,8 @@ namespace Hyperion {
             return component;
         }
 
-        template<typename T>
+        template<typename T, typename = std::enable_if<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>::type>
         T *GetComponentInParent() const {
-            static_assert(std::is_base_of<Component, T>::value, "Template parameter must derive from EntityComponent");
-
             ObjectType type = T::GetTypeStatic();
             T *component = nullptr;
             
@@ -122,10 +116,8 @@ namespace Hyperion {
             return component;
         }
 
-        template<typename T>
+        template<typename T, typename = std::enable_if<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>::type>
         Vector<T *> GetComponentsInChildren() const {
-            static_assert(std::is_base_of<Component, T>::value, "Template parameter must derive from EntityComponent");
-
             ObjectType type = T::GetTypeStatic();
             Vector<T *> components;
 
@@ -141,10 +133,8 @@ namespace Hyperion {
             return components;
         }
 
-        template<typename T>
+        template<typename T, typename = std::enable_if<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>::type>
         Vector<T *> GetComponentsInParent() const {
-            static_assert(std::is_base_of<Component, T>::value, "Template parameter must derive from EntityComponent");
-
             ObjectType type = T::GetTypeStatic();
             Vector<T *> components;
 
