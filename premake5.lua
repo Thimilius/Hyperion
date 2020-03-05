@@ -101,8 +101,7 @@ project "sandbox"
     filter "system:windows"
         files { "projects/sandbox/resource.rc" }
 
-		libdirs { 
-			"projects/hyperion/vendor/bullet/lib/windows/debug",
+		libdirs {
 			"projects/hyperion/vendor/fmod/lib/windows",
 			"projects/hyperion/vendor/assimp/lib/windows"
 		}
@@ -127,6 +126,8 @@ project "sandbox"
 
 	filter { "system:windows", "configurations:debug" }
 		libdirs { "projects/hyperion/vendor/freetype/lib/windows/debug" }
+		libdirs { "projects/hyperion/vendor/bullet/lib/windows/debug" }
 		
 	filter { "system:windows", "configurations:release" }
 		libdirs { "projects/hyperion/vendor/freetype/lib/windows/release" }
+		libdirs { "projects/hyperion/vendor/bullet/lib/windows/release" }
