@@ -13,6 +13,7 @@
 #include "hyperion/entity/world_manager.hpp"
 #include "hyperion/entity/entity.hpp"
 #include "hyperion/editor/editor_engine.hpp"
+#include "hyperion/physics/physics_engine.hpp"
 
 namespace Hyperion {
     
@@ -43,6 +44,7 @@ namespace Hyperion {
 
         Rendering::Font::Init();
 
+        Physics::PhysicsEngine::Init(Physics::PhysicsBackend::Bullet);
         Audio::AudioEngine::Init(settings.audio.backend);
 
         World *world = settings.entity.start_world;
@@ -58,9 +60,9 @@ namespace Hyperion {
 
     void Engine::Update(f32 delta_time) {
         AssetManager::Update();
-        Editor::EditorEngine::Update(delta_time);
-
+        Physics::PhysicsEngine::Update(delta_time);
         ObjectManager::Update(delta_time);
+        Editor::EditorEngine::Update(delta_time);
     }
 
     void Engine::LateUpdate() {
@@ -77,8 +79,8 @@ namespace Hyperion {
 
     void Engine::Shutdown() {
         AssetManager::Shutdown();
-
         Audio::AudioEngine::Shutdown();
+        Physics::PhysicsEngine::Shutdown();
         Rendering::RenderEngine::Shutdown();
     }
 

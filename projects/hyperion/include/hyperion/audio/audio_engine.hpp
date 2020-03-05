@@ -16,21 +16,16 @@ namespace Hyperion::Audio {
 
         inline static Scope<AudioDriver> s_audio_driver;
     public:
-        inline static void Load(const String &name, const String &path) {
-            s_audio_driver->Load(name, path);
-        }
-
-        inline static void Play(const String &name) {
-            s_audio_driver->Play(name);
-        }
-
         inline static AudioBackend GetBackend() { return s_audio_backend; }
+
+        inline static void Load(const String &name, const String &path) { s_audio_driver->Load(name, path); }
+        inline static void Play(const String &name) { s_audio_driver->Play(name); }
     private:
         AudioEngine() = delete;
         ~AudioEngine() = delete;
 
         static void Init(AudioBackend backend);
-        static void Shutdown();
+        static void Shutdown() { s_audio_driver->Shutdown(); }
 
         friend class Hyperion::Engine;
     };
