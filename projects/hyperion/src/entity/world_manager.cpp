@@ -22,4 +22,6 @@ namespace Hyperion {
         delete world;
     }
 
+    // TODO: Clean up remaining worlds when shutting down
+
 }

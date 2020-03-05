@@ -11,12 +11,17 @@ namespace Hyperion::Physics {
         btDefaultCollisionConfiguration *m_collision_configuration;
         btCollisionDispatcher *m_collision_dispatcher;
         btBroadphaseInterface *m_collision_broadphase_interface;
-        btCollisionWorld *m_collision_world;
-        
     public:
+        bool Raycast(Ray ray, RaycastResult &result, f32 distance) override;
+
+        PhysicsWorld *CreatePhysicsWorld() override;
+        void DestroyPhysicsWorld(PhysicsWorld *world) override;
+
         void Init() override;
         void Update(f32 delta_time) override;
         void Shutdown() override;
+
+        friend class BulletPhysicsWorld;
     };
 
 }

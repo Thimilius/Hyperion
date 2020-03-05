@@ -1,7 +1,7 @@
 #pragma once
 
-#include "physics_backend.hpp"
-#include "physics_driver.hpp"
+#include "hyperion/physics/physics_backend.hpp"
+#include "hyperion/physics/physics_driver.hpp"
 
 namespace Hyperion {
     class Engine;
@@ -16,6 +16,11 @@ namespace Hyperion::Physics {
         inline static Scope<PhysicsDriver> s_physics_driver;
     public:
         inline static PhysicsBackend GetBackend() { return s_physics_backend; }
+
+        inline static bool Raycast(Ray ray, RaycastResult &result, f32 distance = 10000.0f) { s_physics_driver->Raycast(ray, result, distance); }
+
+        inline static PhysicsWorld *CreatePhysicsWorld() { return s_physics_driver->CreatePhysicsWorld(); }
+        inline static void DestroyPhysicsWorld(PhysicsWorld *world) { return s_physics_driver->DestroyPhysicsWorld(world); }
     private:
         PhysicsEngine() = delete;
         ~PhysicsEngine() = delete;

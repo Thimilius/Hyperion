@@ -3,13 +3,20 @@
 #include "hyperion/entity/world.hpp"
 
 #include "hyperion/entity/entity.hpp"
+#include "hyperion/physics/physics_engine.hpp"
 
 namespace Hyperion {
+
+    World::World() {
+        m_physics_world = Physics::PhysicsEngine::CreatePhysicsWorld();
+    }
 
     World::~World() {
         for (Entity *entity : m_root_entities) {
             Object::DestroyImmediate(entity);
         }
+
+        Physics::PhysicsEngine::DestroyPhysicsWorld(m_physics_world);
     }
 
     void World::AddRootEntity(Entity *entity) {

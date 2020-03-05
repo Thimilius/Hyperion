@@ -2,6 +2,7 @@
 
 #include "hyperion/common.hpp"
 #include "hyperion/core/color.hpp"
+#include "hyperion/physics/physics_world.hpp"
 
 namespace Hyperion {
 
@@ -35,6 +36,8 @@ namespace Hyperion {
     private:
         WorldEnvironment m_environment;
 
+        Physics::PhysicsWorld *m_physics_world;
+
         Vector<Entity *> m_root_entities;
 
         Vector<Camera *> m_cameras;
@@ -43,13 +46,15 @@ namespace Hyperion {
     public:
         inline WorldEnvironment &GetEnvironment() { return m_environment; }
 
+        inline Physics::PhysicsWorld *GetPhysicsWorld() const { return m_physics_world; }
+
         inline const Vector<Entity *> &GetRootEntites() const { return m_root_entities; }
 
         inline const Vector<Camera *> &GetCameras() const { return m_cameras; }
         inline const Vector<MeshRenderer *> &GetMeshRenderers() const { return m_mesh_renderers; }
         inline const Vector<Light *> &GetLights() const { return m_lights; }
     private:
-        World() = default;
+        World();
         ~World();
 
         void AddRootEntity(Entity *entity);
