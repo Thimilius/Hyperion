@@ -11,6 +11,10 @@ namespace Hyperion {
         return m_entity->GetTransform();
     }
 
+    World *Component::GetWorld() const {
+        return m_entity->GetWorld();
+    }
+
     void Component::RegisterUpdate() {
         ObjectManager::RegisterComponentForUpdate(this);
     }

@@ -6,6 +6,7 @@ namespace Hyperion {
 
     class Entity;
     class Transform;
+    class World;
 
     class Component : public Object {
         HYP_OBJECT(Component, Object);
@@ -15,6 +16,7 @@ namespace Hyperion {
         inline Entity *GetEntity() const { return m_entity; }
 
         Transform *GetTransform() const;
+        World *GetWorld() const;
     protected:
         Component() = default;
         Component(const String &name) : Object(name) { }

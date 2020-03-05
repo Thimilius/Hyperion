@@ -2,7 +2,12 @@
 
 #include "hyperion/core/math/vec3.hpp"
 #include "hyperion/core/math/ray.hpp"
-#include "hyperion/entity/components/physics/collider.hpp"
+
+namespace Hyperion {
+    class Collider;
+    class BoxCollider;
+    class SphereCollider;
+}
 
 namespace Hyperion::Physics {
 
@@ -18,6 +23,16 @@ namespace Hyperion::Physics {
         virtual ~PhysicsWorld() = default;
 
         virtual bool Raycast(Ray ray, RaycastResult &result, f32 distance) { return false; }
+    private:
+        virtual void AddBoxCollider(BoxCollider *box_collider) { }
+        virtual void AddSphereCollider(SphereCollider *sphere_collider) { }
+
+        virtual void RemoveCollider(Collider *collider) { }
+
+        virtual void UpdateColliderTransform(Collider *collider) { }
+
+        friend class BoxCollider;
+        friend class SphereCollider;
     };
 
 }

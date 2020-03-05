@@ -5,6 +5,7 @@
 
 namespace Hyperion {
     class Engine;
+    class World;
 }
 
 namespace Hyperion::Physics {
@@ -17,10 +18,7 @@ namespace Hyperion::Physics {
     public:
         inline static PhysicsBackend GetBackend() { return s_physics_backend; }
 
-        inline static bool Raycast(Ray ray, RaycastResult &result, f32 distance = 10000.0f) { s_physics_driver->Raycast(ray, result, distance); }
-
-        inline static PhysicsWorld *CreatePhysicsWorld() { return s_physics_driver->CreatePhysicsWorld(); }
-        inline static void DestroyPhysicsWorld(PhysicsWorld *world) { return s_physics_driver->DestroyPhysicsWorld(world); }
+        inline static bool Raycast(Ray ray, RaycastResult &result, f32 distance = 10000.0f) { return s_physics_driver->Raycast(ray, result, distance); }
     private:
         PhysicsEngine() = delete;
         ~PhysicsEngine() = delete;
@@ -29,7 +27,11 @@ namespace Hyperion::Physics {
         static void Update(f32 delta_time) { s_physics_driver->Update(delta_time); }
         static void Shutdown() { s_physics_driver->Shutdown(); }
 
+        inline static PhysicsWorld *CreatePhysicsWorld() { return s_physics_driver->CreatePhysicsWorld(); }
+        inline static void DestroyPhysicsWorld(PhysicsWorld *world) { return s_physics_driver->DestroyPhysicsWorld(world); }
+
         friend class Hyperion::Engine;
+        friend class Hyperion::World;
     };
 
 }

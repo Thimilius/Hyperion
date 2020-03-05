@@ -12,10 +12,6 @@ namespace Hyperion {
         mutable Ref<Rendering::Material> m_material;
         mutable bool m_using_shared_material = true;
     public:
-        Renderer() = default;
-        Renderer(const String &name) : Behaviour(name) { }
-        virtual ~Renderer() = default;
-
         inline Ref<Rendering::Material> GetSharedMaterial() const { return m_shared_material; }
         inline void SetSharedMaterial(const Ref<Rendering::Material> &shared_material) {
             m_shared_material = shared_material;
@@ -40,6 +36,10 @@ namespace Hyperion {
         }
 
         virtual BoundingBox GetBounds() const = 0;
+    protected:
+        Renderer() = default;
+        Renderer(const String & name) : Behaviour(name) {}
+        virtual ~Renderer() = default;
     };
 
 }

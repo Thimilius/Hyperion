@@ -6,11 +6,9 @@
 #include "hyperion/core/timer.hpp"
 #include "hyperion/core/log.hpp"
 #include "hyperion/core/engine.hpp"
-#include "hyperion/core/operating_system.hpp"
 #include "hyperion/core/color.hpp"
 #include "hyperion/core/image.hpp"
 #include "hyperion/core/io/file_utilities.hpp"
-#include "hyperion/core/io/file_watcher.hpp"
 #include "hyperion/core/io/image_loader.hpp"
 #include "hyperion/core/math/math.hpp"
 #include "hyperion/core/math/vec2.hpp"
@@ -29,22 +27,18 @@
 #include "hyperion/core/app/display.hpp"
 #include "hyperion/core/app/input.hpp"
 #include "hyperion/core/app/time.hpp"
-#include "hyperion/core/app/events/event.hpp"
-#include "hyperion/core/app/events/app_events.hpp"
-#include "hyperion/core/app/events/window_events.hpp"
-#include "hyperion/core/app/events/key_events.hpp"
-#include "hyperion/core/app/events/mouse_events.hpp"
 
 // Entity
 #include "hyperion/entity/object.hpp"
 #include "hyperion/entity/world.hpp"
 #include "hyperion/entity/world_manager.hpp"
 #include "hyperion/entity/entity.hpp"
-#include "hyperion/entity/entity_message.hpp"
-#include "hyperion/entity/components/component.hpp"
 #include "hyperion/entity/components/transform.hpp"
 #include "hyperion/entity/components/rendering/mesh_renderer.hpp"
 #include "hyperion/entity/components/rendering/light.hpp"
+#include "hyperion/entity/components/rendering/camera.hpp"
+#include "hyperion/entity/components/physics/box_collider.hpp"
+#include "hyperion/entity/components/physics/sphere_collider.hpp"
 
 // Rendering
 #include "hyperion/rendering/shader.hpp"
@@ -63,9 +57,8 @@
 #include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/assets/mesh_factory.hpp"
 
+// Physics
+#include "hyperion/physics/physics_engine.hpp"
+
 // Audio
 #include "hyperion/audio/audio_engine.hpp"
-
-// Editor
-#include "hyperion/editor/editor_engine.hpp"
-#include "hyperion/editor/editor_camera_controller.hpp"

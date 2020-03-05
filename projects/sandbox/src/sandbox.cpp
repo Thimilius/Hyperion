@@ -1,6 +1,8 @@
 ﻿#include <hyperion/hyperion.hpp>
 #include <hyperion/entry_point.hpp>
 
+#include <hyperion/editor/editor_engine.hpp>
+
 using namespace Hyperion;
 using namespace Hyperion::Rendering;
 
@@ -21,6 +23,10 @@ private:
 
         MeshRenderer *renderer = GetEntity()->GetComponent<MeshRenderer>();
         Ref<Mesh> mesh = renderer->GetSharedMesh();
+
+        if (Input::GetKeyDown(KeyCode::K)) {
+            Destroy(GetEntity());
+        }
     }
 };
 
@@ -28,17 +34,14 @@ class SandboxApp : public Application {
 public:
     SandboxApp(const ApplicationSettings &settings) : Application(settings) { }
 protected:
-    Entity *m_entity;
-    Light *m_light;
-
     void OnInit() override {
-        m_entity = Entity::CreatePrimitive(EntityPrimitive::Sphere);
-        m_entity->AddComponent<Rotator>();
-        m_entity->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture2D("u_texture", AssetManager::GetTexture2D("earth"));
+        Entity *entity = Entity::CreatePrimitive(EntityPrimitive::Cube);
+        entity->AddComponent<Rotator>();
+        entity->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture2D("u_texture", AssetManager::GetTexture2D("earth"));
 
-        m_light = Entity::CreatePrimitive(EntityPrimitive::DirectionalLight)->GetComponent<Light>();
-        m_light->SetColor(Color::White());
-        m_light->GetTransform()->SetEulerAngles(Vec3(0, -45.0f, 0));
+        Light *light = Entity::CreatePrimitive(EntityPrimitive::DirectionalLight)->GetComponent<Light>();
+        light->SetColor(Color::White());
+        light->GetTransform()->SetEulerAngles(Vec3(0, -45.0f, 0));
         
         Light *point_light_0 = Entity::CreatePrimitive(EntityPrimitive::PointLight)->GetComponent<Light>();
         point_light_0->GetTransform()->SetPosition(Vec3(-1, 2, 2));
@@ -55,6 +58,14 @@ protected:
         Light *point_light_3 = Entity::CreatePrimitive(EntityPrimitive::PointLight)->GetComponent<Light>();
         point_light_3->GetTransform()->SetPosition(Vec3(0, 1, -1));
         point_light_3->SetColor(Color::Yellow());
+    }
+
+    void OnUpdate(f32 delta_time) override {
+        Ray ray = Editor::EditorEngine::GetCamera()->ScreenPointToRay(Input::GetMousePosition());
+        Physics::RaycastResult result;
+        if (Physics::PhysicsEngine::Raycast(ray, result)) {
+            HYP_TRACE("{}", result.collider->GetEntity()->GetName());
+        }
     }
 };
 

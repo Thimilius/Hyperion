@@ -6,6 +6,8 @@
 #include "hyperion/entity/components/rendering/mesh_renderer.hpp"
 #include "hyperion/entity/components/rendering/light.hpp"
 #include "hyperion/entity/components/rendering/camera.hpp"
+#include "hyperion/entity/components/physics/box_collider.hpp"
+#include "hyperion/entity/components/physics/sphere_collider.hpp"
 #include "hyperion/assets/asset_manager.hpp"
 
 namespace Hyperion {
@@ -49,10 +51,24 @@ namespace Hyperion {
             MeshRenderer *renderer = entity->AddComponent<MeshRenderer>();
             Ref<Rendering::Mesh> mesh;
             switch (primitive) {
-                case EntityPrimitive::Quad: mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Quad); break;
-                case EntityPrimitive::Plane: mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Plane); break;
-                case EntityPrimitive::Cube: mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Cube); break;
-                case EntityPrimitive::Sphere: mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Sphere); break; 
+                case EntityPrimitive::Quad: {
+                    mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Quad);
+                    break;
+                }
+                case EntityPrimitive::Plane: {
+                    mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Plane);
+                    break;
+                }
+                case EntityPrimitive::Cube: {
+                    entity->AddComponent<BoxCollider>();
+                    mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Cube);
+                    break;
+                }
+                case EntityPrimitive::Sphere: {
+                    entity->AddComponent<SphereCollider>();
+                    mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Sphere);
+                    break;
+                }
                 default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
             }
             renderer->SetSharedMesh(mesh);
