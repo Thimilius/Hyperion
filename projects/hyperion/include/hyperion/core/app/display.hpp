@@ -46,7 +46,7 @@ namespace Hyperion {
 
         static void UpdateDisplayInfos();
 
-        inline static void UpdateCurrentSize(u32 width, u32 height) {
+        inline static void UpdateSize(u32 width, u32 height) {
             s_cached_width = width;
             s_cached_height = height;
         }

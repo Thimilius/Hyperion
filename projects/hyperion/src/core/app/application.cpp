@@ -22,6 +22,8 @@ namespace Hyperion {
         HYP_ASSERT_MESSAGE(settings.time.max_delta_time > 0, "Max delta time must be greater than zero!");
         Time::s_max_delta_time = settings.time.max_delta_time;
 
+        Display::UpdateSize(settings.window.width, settings.window.height);
+
         m_window.reset(Window::Create(settings.window, settings.render.backend));
         m_window->SetEventCallbackFunction(std::bind(&Application::OnEventInternal, this, std::placeholders::_1));
     }
@@ -83,8 +85,6 @@ namespace Hyperion {
         // Events dispatched internally should probably never be set as handled
         EventDispatcher dispatcher(event);
 
-        
-
         // Handle app events
         auto update_display_infos_func = Display::UpdateDisplayInfos;
         dispatcher.Dispatch<AppDisplayChangeEvent>([update_display_infos_func](AppDisplayChangeEvent &app_display_change_event) {
@@ -95,7 +95,7 @@ namespace Hyperion {
         dispatcher.Dispatch<WindowCloseEvent>([this](WindowCloseEvent &window_close_event) {
             Application::GetInstance()->Exit();
         });
-        auto update_current_size = Display::UpdateCurrentSize;
+        auto update_current_size = Display::UpdateSize;
         dispatcher.Dispatch<WindowResizeEvent>([update_current_size](WindowResizeEvent &window_resize_event) {
             u32 width = window_resize_event.GetWidth();
             u32 height = window_resize_event.GetHeight();

@@ -56,6 +56,8 @@ namespace Hyperion {
     void Camera::OnCreate() {
         Component::OnCreate();
 
+        RecalculateMatricies();
+
         GetEntity()->GetWorld()->AddCamera(this);
         GetEntity()->RegisterMessageListener(this);
     }
