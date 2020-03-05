@@ -2,16 +2,13 @@
 
 #include "hyperion/core/engine.hpp"
 
-#include "hyperion/core/app/display.hpp"
 #include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/audio/audio_engine.hpp"
 #include "hyperion/rendering/render_engine.hpp"
-#include "hyperion/rendering/forward_render_pipeline.hpp"
 #include "hyperion/rendering/forward_renderer.hpp"
 #include "hyperion/rendering/immediate_renderer.hpp"
 #include "hyperion/entity/object_manager.hpp"
 #include "hyperion/entity/world_manager.hpp"
-#include "hyperion/entity/entity.hpp"
 #include "hyperion/editor/editor_engine.hpp"
 #include "hyperion/physics/physics_engine.hpp"
 
@@ -34,26 +31,20 @@ namespace Hyperion {
     }
 
     void Engine::Init(const ApplicationSettings &settings) {
-        Rendering::RenderEngine::Init(settings.render.backend);
+        Rendering::RenderEngine::Init(settings.render);
 
         AssetManager::Init(settings.assets);
 
+        // TODO: This should be moved into render engine but cant because we need the assets
         Rendering::ForwardRenderer::Init();
         Rendering::ImmediateRenderer::Init();
-        s_render_pipeline.reset(GetRenderPipeline(settings.render));
 
         Rendering::Font::Init();
 
-        Physics::PhysicsEngine::Init(Physics::PhysicsBackend::Bullet);
-        Audio::AudioEngine::Init(settings.audio.backend);
+        Physics::PhysicsEngine::Init(settings.physics);
+        Audio::AudioEngine::Init(settings.audio);
 
-        World *world = settings.entity.start_world;
-        if (!world) {
-            // NOTE: We are currently forcing a new world with a camera
-            world = WorldManager::CreateWorld();
-            Entity::Create("Camera", Vec3(), Quaternion::Identity(), nullptr, world)->AddComponent<Camera>();
-        }
-        WorldManager::SetActiveWorld(world);
+        WorldManager::Init(settings.entity);
 
         Editor::EditorEngine::Init();
     }
@@ -70,7 +61,7 @@ namespace Hyperion {
     }
 
     void Engine::Render() {
-        s_render_pipeline->Render();
+        Rendering::RenderEngine::Render();
     }
 
     void Engine::Tick() {
@@ -78,21 +69,11 @@ namespace Hyperion {
     }
 
     void Engine::Shutdown() {
+        WorldManager::Shutdown();
         AssetManager::Shutdown();
         Audio::AudioEngine::Shutdown();
         Physics::PhysicsEngine::Shutdown();
         Rendering::RenderEngine::Shutdown();
-    }
-
-    Rendering::RenderPipeline *Engine::GetRenderPipeline(const RenderSettings &settings) {
-        switch (settings.path) {
-            case Rendering::RenderPath::Forward: return new Rendering::ForwardRenderPipeline();
-            case Rendering::RenderPath::Custom: {
-                HYP_ASSERT_MESSAGE(settings.custom_pipeline, "When using a custom render path, a custom render pipeline must be provided!");
-                return settings.custom_pipeline;
-            }
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
-        }
     }
 
 }

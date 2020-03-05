@@ -6,8 +6,10 @@
 
 namespace Hyperion::Audio {
 
-    void AudioEngine::Init(AudioBackend backend) {
-        switch (backend) {
+    void AudioEngine::Init(const AudioSettings &settings) {
+        s_audio_backend = settings.backend;
+
+        switch (settings.backend) {
             case AudioBackend::None:
                 s_audio_driver.reset(new DummyAudioDriver());
                 break;
@@ -17,7 +19,6 @@ namespace Hyperion::Audio {
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return;
         }
 
-        s_audio_backend = backend;
         s_audio_driver->Init();
     }
 

@@ -8,29 +8,18 @@ namespace Hyperion {
 
     // TODO: Is there a better way to convert strings to enums?!
 
-    Audio::AudioBackend AudioBackendFromString(const String &string) {
-        if (string == "none") {
-            return Audio::AudioBackend::None;
-        } else if (string == "fmod") {
-            return Audio::AudioBackend::FMod;
-        } else {
-            HYP_LOG_ERROR("Engine", "Failed to read '{}' in application settings as audio backend!", string);
-            return Audio::AudioBackend::None;
-        }
-    }
-
-    WindowMode WindowModeFromString(const String &string) {
+    WindowMode WindowModeFromString(const String &string, const String &path) {
         if (string == "windowed") {
             return WindowMode::Windowed;
         } else if (string == "borderless") {
             return WindowMode::Borderless;
         } else {
-            HYP_LOG_ERROR("Engine", "Failed to read '{}' in application settings as window mode!", string);
+            HYP_LOG_ERROR("Engine", "Failed to read '{}' in '{}' as window mode!", string, path);
             return WindowMode::Windowed;
         }
     }
 
-    VSyncMode VSyncModeFromString(const String &string) {
+    VSyncMode VSyncModeFromString(const String &string, const String &path) {
         if (string == "dont_sync") {
             return VSyncMode::DontSync;
         } else if (string == "every_v_blank") {
@@ -38,8 +27,30 @@ namespace Hyperion {
         } else if (string == "every_second_v_blank") {
             return VSyncMode::EverySecondVBlank;
         } else {
-            HYP_LOG_ERROR("Engine", "Failed to read '{}' in application settings as vsync mode!", string);
+            HYP_LOG_ERROR("Engine", "Failed to read '{}' in '{}' as vsync mode!", string, path);
             return VSyncMode::EveryVBlank;
+        }
+    }
+
+    Physics::PhysicsBackend PhysicsBackendFromString(const String &string, const String &path) {
+        if (string == "none") {
+            return Physics::PhysicsBackend::None;
+        } else if (string == "bullet") {
+            return Physics::PhysicsBackend::Bullet;
+        } else {
+            HYP_LOG_ERROR("Engine", "Failed to read '{}' in '{}' as physics backend!", string, path);
+            return Physics::PhysicsBackend::None;
+        }
+    }
+
+    Audio::AudioBackend AudioBackendFromString(const String &string, const String &path) {
+        if (string == "none") {
+            return Audio::AudioBackend::None;
+        } else if (string == "fmod") {
+            return Audio::AudioBackend::FMod;
+        } else {
+            HYP_LOG_ERROR("Engine", "Failed to read '{}' in '{}' as audio backend!", string, path);
+            return Audio::AudioBackend::None;
         }
     }
 
@@ -90,11 +101,11 @@ namespace Hyperion {
             }
             auto json_window_window_mode = json_window["window_mode"];
             if (json_window_window_mode.is_string()) {
-                settings.window.window_mode = WindowModeFromString(json_window_window_mode.get<String>());
+                settings.window.window_mode = WindowModeFromString(json_window_window_mode.get<String>(), path);
             }
             auto json_window_vsync_mode = json_window["vsync_mode"];
             if (json_window_vsync_mode.is_string()) {
-                settings.window.vsync_mode = VSyncModeFromString(json_window_vsync_mode.get<String>());
+                settings.window.vsync_mode = VSyncModeFromString(json_window_vsync_mode.get<String>(), path);
             }
         }
 
@@ -114,11 +125,19 @@ namespace Hyperion {
             }
         }
 
+        auto json_physics = json["physics"];
+        if (!json_physics.is_null()) {
+            auto json_physics_backend = json_physics["backend"];
+            if (json_physics_backend.is_string()) {
+                settings.physics.backend = PhysicsBackendFromString(json_physics_backend.get<String>(), path);
+            }
+        }
+
         auto json_audio = json["audio"];
         if (!json_audio.is_null()) {
             auto json_audio_backend = json_audio["backend"];
             if (json_audio_backend.is_string()) {
-                settings.audio.backend = AudioBackendFromString(json_audio_backend.get<String>());
+                settings.audio.backend = AudioBackendFromString(json_audio_backend.get<String>(), path);
             }
         }
 

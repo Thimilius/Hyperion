@@ -1,6 +1,6 @@
 #pragma once
 
-#include "hyperion/physics/physics_backend.hpp"
+#include "hyperion/core/app/application_settings.hpp"
 #include "hyperion/physics/physics_driver.hpp"
 
 namespace Hyperion {
@@ -23,7 +23,7 @@ namespace Hyperion::Physics {
         PhysicsEngine() = delete;
         ~PhysicsEngine() = delete;
 
-        static void Init(PhysicsBackend backend);
+        static void Init(const PhysicsSettings &settings);
         static void Update(f32 delta_time) { s_physics_driver->Update(delta_time); }
         static void Shutdown() { s_physics_driver->Shutdown(); }
 

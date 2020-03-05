@@ -1,5 +1,6 @@
 #pragma once
 
+#include "hyperion/core/app/application_settings.hpp"
 #include "hyperion/entity/world.hpp"
 
 namespace Hyperion {
@@ -21,6 +22,11 @@ namespace Hyperion {
     private:
         WorldManager() = delete;
         ~WorldManager() = delete;
+
+        static void Init(EntitySettings settings);
+        static void Shutdown();
+
+        friend class Engine;
     };
 
 }

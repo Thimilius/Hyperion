@@ -5,13 +5,7 @@
 
 namespace Hyperion {
 
-    namespace Rendering {
-        class RenderPipeline;
-    }
-
     class Engine {
-    private:
-        inline static Scope<Rendering::RenderPipeline> s_render_pipeline;
     public:
         template<typename ...Args>
         static void Panic(const String &system, const String &message_format, Args... args) {
@@ -32,8 +26,6 @@ namespace Hyperion {
         static void Render();
         static void Tick();
         static void Shutdown();
-
-        static Rendering::RenderPipeline *GetRenderPipeline(const RenderSettings &settings);
 
         friend class Main;
         friend class Application;

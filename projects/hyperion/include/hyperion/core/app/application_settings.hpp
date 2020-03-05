@@ -5,6 +5,7 @@
 #include "hyperion/rendering/render_path.hpp"
 #include "hyperion/rendering/render_pipeline.hpp"
 #include "hyperion/audio/audio_backend.hpp"
+#include "hyperion/physics/physics_backend.hpp"
 
 namespace Hyperion {
 
@@ -27,6 +28,10 @@ namespace Hyperion {
         Rendering::RenderPipeline *custom_pipeline = nullptr;
     };
 
+    struct PhysicsSettings {
+        Physics::PhysicsBackend backend = Physics::PhysicsBackend::Bullet;
+    };
+
     struct AudioSettings {
         Audio::AudioBackend backend = Audio::AudioBackend::FMod;
     };
@@ -41,6 +46,7 @@ namespace Hyperion {
         WindowSettings window;
         AssetSettings assets;
         RenderSettings render;
+        PhysicsSettings physics;
         AudioSettings audio;
         EntitySettings entity;
 

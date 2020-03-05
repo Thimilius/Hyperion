@@ -1,7 +1,7 @@
 #pragma once
 
 #include "hyperion/common.hpp"
-#include "hyperion/audio/audio_backend.hpp"
+#include "hyperion/core/app/application_settings.hpp"
 #include "hyperion/audio/audio_driver.hpp"
 
 namespace Hyperion {
@@ -24,7 +24,7 @@ namespace Hyperion::Audio {
         AudioEngine() = delete;
         ~AudioEngine() = delete;
 
-        static void Init(AudioBackend backend);
+        static void Init(const AudioSettings &settings);
         static void Shutdown() { s_audio_driver->Shutdown(); }
 
         friend class Hyperion::Engine;

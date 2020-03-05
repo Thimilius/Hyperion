@@ -6,8 +6,10 @@
 
 namespace Hyperion::Physics {
 
-    void PhysicsEngine::Init(PhysicsBackend backend) {
-        switch (backend) {
+    void PhysicsEngine::Init(const PhysicsSettings &settings) {
+        s_physics_backend = settings.backend;
+
+        switch (settings.backend) {
             case PhysicsBackend::None:
                 s_physics_driver.reset(new DummyPhysicsDriver());
                 break;
@@ -17,7 +19,6 @@ namespace Hyperion::Physics {
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return;
         }
 
-        s_physics_backend = backend;
         s_physics_driver->Init();
     }
 

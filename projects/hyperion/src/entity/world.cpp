@@ -12,11 +12,11 @@ namespace Hyperion {
     }
 
     World::~World() {
+        Physics::PhysicsEngine::DestroyPhysicsWorld(m_physics_world);
+
         for (Entity *entity : m_root_entities) {
             Object::DestroyImmediate(entity);
         }
-
-        Physics::PhysicsEngine::DestroyPhysicsWorld(m_physics_world);
     }
 
     void World::AddRootEntity(Entity *entity) {

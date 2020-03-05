@@ -35,7 +35,7 @@ public:
     SandboxApp(const ApplicationSettings &settings) : Application(settings) { }
 protected:
     void OnInit() override {
-        Entity *entity = Entity::CreatePrimitive(EntityPrimitive::Cube);
+        Entity *entity = Entity::CreatePrimitive(EntityPrimitive::Sphere);
         entity->AddComponent<Rotator>();
         entity->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture2D("u_texture", AssetManager::GetTexture2D("earth"));
 

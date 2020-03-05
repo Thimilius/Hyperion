@@ -21,7 +21,10 @@
 		"shader_path": "data/shaders",
 		"texture_path": "data/textures"
 	},
+	"physics": {
+		"backend": "bullet"
+	},
 	"audio": {
 		"backend": "none"
-	}
+	}	
 }
