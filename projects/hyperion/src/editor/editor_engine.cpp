@@ -122,7 +122,7 @@ namespace Hyperion::Editor {
         if (s_physics_debug_draw) {
             ImmediateRenderer::Begin(s_camera->GetData(), MeshTopology::Lines);
             {
-                s_gizmo->GetWorld()->GetPhysicsWorld()->DebugDraw();
+                WorldManager::GetActiveWorld()->GetPhysicsWorld()->DebugDraw();
             }
             ImmediateRenderer::End();
         }

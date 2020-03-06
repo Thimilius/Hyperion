@@ -4,6 +4,10 @@
 
 #include <bullet/btBulletCollisionCommon.h>
 
+namespace Hyperion {
+    class Transform;
+}
+
 namespace Hyperion::Physics {
 
     class BulletPhysicsDriver;
@@ -32,7 +36,7 @@ namespace Hyperion::Physics {
         void UpdateColliderActivation(Collider *collider) override;
 
         void AddCollider(Collider *collider, btCollisionObject *collision_object);
-        void UpdateTransform(Collider *collider, btCollisionObject *collision_object, Vec3 position_offset);
+        void UpdateTransform(Transform *tranform, btCollisionObject *collision_object, Vec3 position);
     };
 
 }

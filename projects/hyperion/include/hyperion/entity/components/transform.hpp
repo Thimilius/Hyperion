@@ -73,7 +73,7 @@ namespace Hyperion {
             return (m_derived_rotation.Inverted() * (position - m_derived_position)) / m_derived_scale;
         }
         inline Vec3 LocalToWorldPosition(const Vec3 &position) const {
-            return (m_derived_rotation * (m_derived_scale * m_local_position)) + m_derived_position;
+            return (m_derived_rotation * (m_derived_scale * position)) + m_derived_position;
         }
 
         inline Quaternion WorldToLocalRotation(const Quaternion &rotation) const {
