@@ -28,6 +28,10 @@ namespace Hyperion::Physics {
         btVector3 from = btVector3(ray.origin.x, ray.origin.y, ray.origin.z);
         btVector3 to = from + (distance * btVector3(ray.direction.x, ray.direction.y, ray.direction.z));
 
+        if (from.isZero() && to.isZero()) {
+            return false;
+        }
+
         btCollisionWorld::ClosestRayResultCallback result_callback(from, to);
         m_collision_world->rayTest(from, to, result_callback);
 

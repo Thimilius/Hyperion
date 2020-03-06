@@ -128,7 +128,7 @@ namespace Hyperion {
         }
 
         PWSTR wide_path;
-        HRESULT result = SHGetKnownFolderPath(folder_id, 0, NULL, &wide_path);
+        HRESULT result = SHGetKnownFolderPath(folder_id, 0, nullptr, &wide_path);
         if (result == S_OK) {
             String path = StringUtils::Utf16ToUtf8(WideString(wide_path));
             CoTaskMemFree(wide_path);
