@@ -1,10 +1,9 @@
 ﻿#include <hyperion/hyperion.hpp>
 #include <hyperion/entry_point.hpp>
 
-#include <hyperion/editor/editor_engine.hpp>
-
 using namespace Hyperion;
 using namespace Hyperion::Rendering;
+using namespace Hyperion::Physics;
 
 class Rotator : public Component {
     HYP_OBJECT(Rotator, Component);
@@ -31,7 +30,11 @@ class SandboxApp : public Application {
 public:
     SandboxApp(const ApplicationSettings &settings) : Application(settings) { }
 protected:
+    Camera *m_camera;
+
     void OnInit() override {
+        m_camera = WorldManager::GetActiveWorld()->FindComponentOfType<Camera>();
+
         Entity *entity = Entity::CreatePrimitive(EntityPrimitive::Sphere);
         entity->AddComponent<Rotator>();
         entity->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture2D("u_texture", AssetManager::GetTexture2D("earth"));
@@ -58,9 +61,9 @@ protected:
     }
 
     void OnUpdate(f32 delta_time) override {
-        Ray ray = Editor::EditorEngine::GetCamera()->ScreenPointToRay(Input::GetMousePosition());
-        Physics::RaycastResult result;
-        if (Physics::PhysicsEngine::Raycast(ray, result)) {
+        Ray ray = m_camera->ScreenPointToRay(Input::GetMousePosition());
+        RaycastResult result;
+        if (PhysicsEngine::Raycast(ray, result)) {
             HYP_TRACE("{}", result.collider->GetEntity()->GetName());
         }
     }

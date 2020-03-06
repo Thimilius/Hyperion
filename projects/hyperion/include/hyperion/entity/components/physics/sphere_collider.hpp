@@ -13,10 +13,16 @@ namespace Hyperion {
 
         ColliderType GetColliderType() const { return ColliderType::SphereCollider; }
 
-        f32 GetRadius() const { return m_radius; }
+        inline f32 GetRadius() const { return m_radius; }
+        inline void SetRadius(f32 radius) {
+            m_radius = radius;
+            NotifyColliderChange();
+        }
     protected:
         void OnCreate() override;
         void OnDestroy() override;
+    private:
+        void NotifyColliderChange();
     };
 
 }

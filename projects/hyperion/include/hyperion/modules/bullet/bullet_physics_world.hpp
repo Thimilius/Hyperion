@@ -23,6 +23,8 @@ namespace Hyperion::Physics {
 
         void RemoveCollider(Collider *collider) override;
 
+        void UpdateBoxCollider(BoxCollider *box_collider) override;
+        void UpdateSphereCollider(SphereCollider *sphere_collider) override;
         void UpdateColliderTransform(Collider *collider) override;
 
         void AddCollider(Collider *collider, btCollisionObject *collision_object);

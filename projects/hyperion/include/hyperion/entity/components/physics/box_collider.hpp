@@ -14,11 +14,21 @@ namespace Hyperion {
 
         ColliderType GetColliderType() const { return ColliderType::BoxCollider; }
 
-        Vec3 GetOrigin() const { return m_origin; }
-        Vec3 GetSize() const { return m_size; }
+        inline Vec3 GetOrigin() const { return m_origin; }
+        inline void SetOrigin(Vec3 origin) {
+            m_origin = origin;
+            NotifyColliderChange();
+        }
+        inline Vec3 GetSize() const { return m_size; }
+        inline void SetSize(Vec3 size) {
+            m_size = size;
+            NotifyColliderChange();
+        }
     protected:
         void OnCreate() override;
         void OnDestroy() override;
+    private:
+        void NotifyColliderChange();
     };
 
 }

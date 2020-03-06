@@ -19,4 +19,8 @@ namespace Hyperion {
         Collider::OnDestroy();
     }
 
+    void SphereCollider::NotifyColliderChange() {
+        GetWorld()->GetPhysicsWorld()->UpdateSphereCollider(this);
+    }
+
 }

@@ -74,6 +74,29 @@ namespace Hyperion::Physics {
         delete collision_object;
     }
 
+    void BulletPhysicsWorld::UpdateBoxCollider(BoxCollider *box_collider) {
+        btCollisionObject *collision_object = m_collision_objects.at(box_collider);
+
+        delete collision_object->getCollisionShape();
+
+        Vec3 half_extends = 0.5f * box_collider->GetSize();
+        Vec3 scale = box_collider->GetTransform()->GetScale();
+        btBoxShape *collision_box = new btBoxShape(btVector3(half_extends.x, half_extends.y, half_extends.z));
+        collision_box->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
+        collision_object->setCollisionShape(collision_box);
+
+        m_collision_world->updateSingleAabb(collision_object);
+    }
+
+    void BulletPhysicsWorld::UpdateSphereCollider(SphereCollider *sphere_collider) {
+        btCollisionObject *collision_object = m_collision_objects.at(sphere_collider);
+
+        btSphereShape *collision_sphere = static_cast<btSphereShape *>(collision_object->getCollisionShape());
+        collision_sphere->setUnscaledRadius(sphere_collider->GetRadius());
+
+        m_collision_world->updateSingleAabb(collision_object);
+    }
+
     void BulletPhysicsWorld::UpdateColliderTransform(Collider *collider) {
         btCollisionObject *collision_object = m_collision_objects.at(collider);
 
