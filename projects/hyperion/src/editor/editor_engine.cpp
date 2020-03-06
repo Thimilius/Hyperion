@@ -13,6 +13,7 @@
 #include "hyperion/entity/world_manager.hpp"
 #include "hyperion/entity/components/rendering/camera.hpp"
 #include "hyperion/entity/components/rendering/light.hpp"
+#include "hyperion/entity/components/physics/collider.hpp"
 
 using namespace Hyperion::Rendering;
 
@@ -21,12 +22,15 @@ namespace Hyperion::Editor {
     void EditorEngine::Init() {
         s_camera = WorldManager::GetActiveWorld()->GetCameras()[0];
         s_camera_controller = EditorCameraController(s_camera);
+        
+        s_world = WorldManager::CreateWorld();
+        s_gizmo = Entity::Create("Gizmo", Vec3::Zero(), Quaternion::Identity(), nullptr, s_world)->AddComponent<EditorGizmo>();
+        s_gizmo->SetCamera(s_camera);
+
         s_icon_mesh = MeshFactory::CreateQuad(0.5f, 0.5f);
         s_icon_material = Material::Create(AssetManager::GetShader("standard_unlit_texture"));
 
         s_font = Font::Create("data/fonts/robotomono_regular.ttf", 16);
-
-        s_gizmos.Init();
 
         InitGridVertexArray();
         UpdateStats();
@@ -98,12 +102,13 @@ namespace Hyperion::Editor {
                         ForwardRenderer::DrawMesh(s_icon_mesh, s_icon_material, model);
                     }
                 }
+
+                {
+                    RenderCommand::Clear(ClearMask::Depth);
+                    ForwardRenderer::DrawEntities(s_world);
+                }
             }
             ForwardRenderer::End();
-
-            RenderCommand::Clear(ClearMask::Depth);
-
-            s_gizmos.Render(s_camera->GetData());
         }
 
         if (s_stats_enabled) {

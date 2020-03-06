@@ -28,7 +28,6 @@ namespace Hyperion {
         inline void SetMaterial(const Ref<Rendering::Material> &material) {
             m_material = material;
             m_shared_material = material;
-            m_using_shared_material = false;
         }
 
         inline Ref<Rendering::Material> GetRenderMaterial() const {

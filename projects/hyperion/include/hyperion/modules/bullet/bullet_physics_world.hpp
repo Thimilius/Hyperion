@@ -25,11 +25,12 @@ namespace Hyperion::Physics {
 
         void UpdateBoxCollider(BoxCollider *box_collider) override;
         void UpdateSphereCollider(SphereCollider *sphere_collider) override;
-        void UpdateColliderTransform(Collider *collider) override;
+        void UpdateBoxColliderTransform(BoxCollider *box_collider) override;
+        void UpdateSphereColliderTransform(SphereCollider *sphere_collider) override;
         void UpdateColliderActivation(Collider *collider) override;
 
         void AddCollider(Collider *collider, btCollisionObject *collision_object);
-        void UpdateTransform(Collider *collider, btCollisionObject *collision_object);
+        void UpdateTransform(Collider *collider, btCollisionObject *collision_object, Vec3 position_offset);
     };
 
 }

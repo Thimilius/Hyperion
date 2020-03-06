@@ -9,18 +9,8 @@
 namespace Hyperion {
 
     void Collider::OnMessage(EntityMessage message) {
-        switch (message.type) {
-            case EntityMessageType::TransformChanged: {
-                if (IsEnabled()) {
-                    GetWorld()->GetPhysicsWorld()->UpdateColliderTransform(this);
-                }
-                break;
-            }
-            case EntityMessageType::BehaviourEnabledChanged: {
-                GetWorld()->GetPhysicsWorld()->UpdateColliderActivation(this);
-                break;
-            }
-            default: break;
+        if (message.type == EntityMessageType::BehaviourEnabledChanged) {
+            GetWorld()->GetPhysicsWorld()->UpdateColliderActivation(this);
         }
     }
 

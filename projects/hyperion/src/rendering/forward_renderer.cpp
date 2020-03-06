@@ -61,7 +61,7 @@ namespace Hyperion::Rendering {
         }
 
         for (MeshRenderer *renderer : renderers) {
-            if (!renderer->IsEnabled()) {
+            if (!renderer->IsEnabled() || !renderer->GetRenderMesh() || !renderer->GetRenderMaterial()) {
                 continue;
             }
 

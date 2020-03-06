@@ -24,6 +24,8 @@ namespace Hyperion {
             m_size = size;
             NotifyColliderChange();
         }
+
+        void OnMessage(EntityMessage message) override;
     protected:
         void OnCreate() override;
         void OnDestroy() override;

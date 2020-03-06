@@ -59,14 +59,6 @@ protected:
         point_light_3->GetTransform()->SetPosition(Vec3(0, 1, -1));
         point_light_3->SetColor(Color::Yellow());
     }
-
-    void OnUpdate(f32 delta_time) override {
-        Ray ray = m_camera->ScreenPointToRay(Input::GetMousePosition());
-        RaycastResult result;
-        if (PhysicsEngine::Raycast(ray, result)) {
-            HYP_TRACE("{}", result.collider->GetEntity()->GetName());
-        }
-    }
 };
 
 Hyperion::Application *Hyperion::CreateApplication() {

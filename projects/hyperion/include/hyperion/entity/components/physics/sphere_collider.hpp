@@ -18,6 +18,8 @@ namespace Hyperion {
             m_radius = radius;
             NotifyColliderChange();
         }
+
+        void OnMessage(EntityMessage message) override;
     protected:
         void OnCreate() override;
         void OnDestroy() override;

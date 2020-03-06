@@ -117,7 +117,9 @@ namespace Hyperion {
     }
 
     void Entity::OnCreate(Vec3 position, Quaternion rotation, Transform *parent, World *world) {
-        if (!world) {
+        if (parent) {
+            world = parent->GetWorld();
+        } else if (!world) {
             world = WorldManager::GetActiveWorld();
         }
         m_world = world;

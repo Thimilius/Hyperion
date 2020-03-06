@@ -56,7 +56,7 @@ namespace Hyperion::Physics {
         Vec3 half_extends = 0.5f * box_collider->GetSize();
         collision_object->setCollisionShape(new btBoxShape(btVector3(half_extends.x, half_extends.y, half_extends.z)));
 
-        UpdateTransform(box_collider, collision_object);
+        UpdateTransform(box_collider, collision_object, box_collider->GetOrigin());
 
         AddCollider(box_collider, collision_object);
     }
@@ -66,7 +66,7 @@ namespace Hyperion::Physics {
         collision_object->setUserPointer(sphere_collider);
         collision_object->setCollisionShape(new btSphereShape(sphere_collider->GetRadius()));
 
-        UpdateTransform(sphere_collider, collision_object);
+        UpdateTransform(sphere_collider, collision_object, Vec3::Zero());
 
         AddCollider(sphere_collider, collision_object);
     }
@@ -86,11 +86,14 @@ namespace Hyperion::Physics {
 
         delete collision_object->getCollisionShape();
 
+        Vec3 half_origin = 0.5f * box_collider->GetOrigin();
         Vec3 half_extends = 0.5f * box_collider->GetSize();
         Vec3 scale = box_collider->GetTransform()->GetScale();
         btBoxShape *collision_box = new btBoxShape(btVector3(half_extends.x, half_extends.y, half_extends.z));
         collision_box->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
         collision_object->setCollisionShape(collision_box);
+        btVector3 position = collision_object->getWorldTransform().getOrigin();
+        collision_object->getWorldTransform().setOrigin(btVector3(position.x() + half_origin.x, position.y() + half_origin.y, position.z() + half_origin.z));
 
         m_collision_world->updateSingleAabb(collision_object);
     }
@@ -104,10 +107,18 @@ namespace Hyperion::Physics {
         m_collision_world->updateSingleAabb(collision_object);
     }
 
-    void BulletPhysicsWorld::UpdateColliderTransform(Collider *collider) {
-        btCollisionObject *collision_object = m_collision_objects.at(collider);
+    void BulletPhysicsWorld::UpdateBoxColliderTransform(BoxCollider *box_collider) {
+        btCollisionObject *collision_object = m_collision_objects.at(box_collider);
 
-        UpdateTransform(collider, collision_object);
+        UpdateTransform(box_collider, collision_object, box_collider->GetTransform()->GetLocalScale() * 0.5f * box_collider->GetOrigin());
+
+        m_collision_world->updateSingleAabb(collision_object);
+    }
+
+    void BulletPhysicsWorld::UpdateSphereColliderTransform(SphereCollider *sphere_collider) {
+        btCollisionObject *collision_object = m_collision_objects.at(sphere_collider);
+
+        UpdateTransform(sphere_collider, collision_object, Vec3::Zero());
 
         m_collision_world->updateSingleAabb(collision_object);
     }
@@ -126,12 +137,12 @@ namespace Hyperion::Physics {
         m_collision_objects[collider] = collision_object;
     }
 
-    void BulletPhysicsWorld::UpdateTransform(Collider *collider, btCollisionObject *collision_object) {
+    void BulletPhysicsWorld::UpdateTransform(Collider *collider, btCollisionObject *collision_object, Vec3 position_offset) {
         Transform *transform = collider->GetTransform();
         Vec3 position = transform->GetPosition();
         Quaternion rotation = transform->GetRotation();
         Vec3 scale = transform->GetScale();
-        collision_object->getWorldTransform().setOrigin(btVector3(position.x, position.y, position.z));
+        collision_object->getWorldTransform().setOrigin(btVector3(position.x + position_offset.x, position.y + position_offset.y, position.z + position_offset.z));
         collision_object->getWorldTransform().setRotation(btQuaternion(rotation.x, rotation.y, rotation.z, rotation.w));
         collision_object->getCollisionShape()->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
     }
