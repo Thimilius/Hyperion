@@ -7,10 +7,11 @@
 
 namespace Hyperion::Rendering {
 
-    void ImmediateRenderer::Begin(const CameraData &camera) {
+    void ImmediateRenderer::Begin(const CameraData &camera, MeshTopology topology) {
         s_state.transform.view = camera.view_matrix;
         s_state.transform.projection = camera.projection_matrix;
         s_state.transform.view_projection = camera.view_projection_matrix;
+        s_state.topology = topology;
     }
 
     void ImmediateRenderer::DrawText(const String &text, const Ref<Font> &font, f32 x, f32 y, f32 scale, Color color) {
@@ -100,15 +101,11 @@ namespace Hyperion::Rendering {
         AddVertex(Vec3(center.x - half_size.x, center.y - half_size.y, center.z - half_size.z), color);
         AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z + half_size.z), color);
         AddVertex(Vec3(center.x + half_size.x, center.y - half_size.y, center.z - half_size.z), color);
-
-        Flush(MeshTopology::Triangles);
     }
 
     void ImmediateRenderer::DrawLine(Vec3 a, Vec3 b, Color color) {
         AddVertex(a, color);
         AddVertex(b, color);
-
-        Flush(MeshTopology::Lines);
     }
 
     void ImmediateRenderer::DrawWire(MeshTopology topology, const Ref<VertexArray> &vertex_array, u32 vertex_count) {
@@ -153,8 +150,6 @@ namespace Hyperion::Rendering {
         AddVertex(Vec3(min.x, max.y, max.z), color);
         AddVertex(Vec3(min.x, max.y, max.z), color);
         AddVertex(Vec3(max.x, max.y, max.z), color);
-
-        Flush(MeshTopology::Lines);
     }
 
     void ImmediateRenderer::Init() {
@@ -182,7 +177,7 @@ namespace Hyperion::Rendering {
     }
 
     void ImmediateRenderer::End() {
-        
+        Flush(s_state.topology);
     }
 
     void ImmediateRenderer::Flush(MeshTopology topology) {

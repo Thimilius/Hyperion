@@ -21,6 +21,7 @@ namespace Hyperion::Rendering {
                 Mat4 view_projection;
             } transform;
 
+            MeshTopology topology;
             u32 vertex_offset;
         };
 
@@ -44,7 +45,7 @@ namespace Hyperion::Rendering {
         inline static ImmediateResources s_immediate_resources;
         inline static FontResources s_font_resources;
     public:
-        static void Begin(const CameraData &camera);
+        static void Begin(const CameraData &camera, MeshTopology topology = MeshTopology::Triangles);
         static void DrawText(const String &text, const Ref<Font> &font, f32 x, f32 y, f32 scale, Color color);
         static void DrawCube(Vec3 center, Vec3 size, Color color);
         static void DrawLine(Vec3 a, Vec3 b, Color color);
