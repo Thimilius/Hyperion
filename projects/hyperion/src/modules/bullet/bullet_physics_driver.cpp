@@ -21,8 +21,6 @@ namespace Hyperion::Physics {
 
     void BulletPhysicsDriver::Init() {
         m_collision_configuration = new btDefaultCollisionConfiguration();
-        m_collision_dispatcher = new btCollisionDispatcher(m_collision_configuration);
-        m_collision_broadphase_interface = new btDbvtBroadphase();
 
         HYP_LOG_INFO("Physics", "Initialized Bullet physics engine!");
     }
@@ -32,7 +30,6 @@ namespace Hyperion::Physics {
     }
 
     void BulletPhysicsDriver::Shutdown() {
-        delete m_collision_broadphase_interface;
         delete m_collision_dispatcher;
         delete m_collision_configuration;
     }

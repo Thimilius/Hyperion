@@ -10,7 +10,8 @@
 namespace Hyperion::Physics {
 
     BulletPhysicsWorld::BulletPhysicsWorld(BulletPhysicsDriver *driver) {
-        m_collision_world = new btCollisionWorld(driver->m_collision_dispatcher, driver->m_collision_broadphase_interface, driver->m_collision_configuration);
+        btCollisionConfiguration *collision_configuration = driver->m_collision_configuration;
+        m_collision_world = new btCollisionWorld(new btCollisionDispatcher(collision_configuration), new btDbvtBroadphase(), collision_configuration);
     }
 
     BulletPhysicsWorld::~BulletPhysicsWorld() {
@@ -21,6 +22,8 @@ namespace Hyperion::Physics {
             delete collision_object;
         }
 
+        delete m_collision_world->getBroadphase();
+        delete m_collision_world->getDispatcher();
         delete m_collision_world;
     }
 
