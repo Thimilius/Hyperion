@@ -43,13 +43,13 @@ namespace Hyperion::Rendering {
             Ref<Texture2D> texture = Texture2D::Create(bitmap_width, bitmap_height, TextureFormat::R8, texture_parameters, buffer);
 
             FontGlyph glyph;
-            glyph.character = (u32)character;
+            glyph.character = static_cast<u32>(character);
             glyph.texture = texture;
-            glyph.size = Vec2((f32)bitmap_width, (f32)bitmap_height);
-            glyph.bearing = Vec2((f32)font_face->glyph->bitmap_left, (f32)font_face->glyph->bitmap_top);
+            glyph.size = Vec2(static_cast<f32>(bitmap_width), static_cast<f32>(bitmap_height));
+            glyph.bearing = Vec2(static_cast<f32>(font_face->glyph->bitmap_left), static_cast<f32>(font_face->glyph->bitmap_top));
             glyph.advance = font_face->glyph->advance.x >> 6;
 
-            m_glyphs[(u32)character] = glyph;
+            m_glyphs[static_cast<u32>(character)] = glyph;
 
             character = FT_Get_Next_Char(font_face, character, &index);
             if (!index) {

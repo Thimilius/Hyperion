@@ -21,7 +21,7 @@ namespace Hyperion::Rendering {
         s32 extension_count;
         glGetIntegerv(GL_NUM_EXTENSIONS, &extension_count);
         for (s32 i = 0; i < extension_count; i++) {
-            String extension = (char *)glGetStringi(GL_EXTENSIONS, i);
+            String extension = (const char *)glGetStringi(GL_EXTENSIONS, i);
             m_extensions.push_back(extension);
             if (HYP_OPENGL_LOG_EXTENSIONS) {
                 HYP_LOG_INFO("OpenGL", "Extension: '{}' available!", extension);

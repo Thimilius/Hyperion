@@ -15,7 +15,7 @@ namespace Hyperion {
     void Entity::OnMessage(EntityMessage message) {
         switch (message.type) {
             case EntityMessageType::ComponentDestroyed: {
-                Component *component = (Component *)message.parameter;
+                Component *component = static_cast<Component *>(message.parameter);
                 m_components.erase(component->GetType());
                 break;
             }
@@ -125,8 +125,8 @@ namespace Hyperion {
         m_components[Transform::GetTypeStatic()] = &m_transform;
         m_transform.m_entity = this;
         m_transform.OnCreate();
-        m_transform.SetLocalPosition(position);
-        m_transform.SetLocalRotation(rotation);
+        m_transform.m_local_position = position;
+        m_transform.m_local_rotation = rotation;
 
         if (parent == nullptr) {
             m_world->AddRootEntity(this);

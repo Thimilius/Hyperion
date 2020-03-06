@@ -56,7 +56,7 @@ namespace Hyperion {
         inline const Vector<MeshRenderer *> &GetMeshRenderers() const { return m_mesh_renderers; }
         inline const Vector<Light *> &GetLights() const { return m_lights; }
 
-        template<typename T, typename = std::enable_if<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>::type>
+        template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         T *FindComponentOfType() {
             // This is a depth first search
             for (Entity *entity : m_root_entities) {
@@ -69,7 +69,7 @@ namespace Hyperion {
             return nullptr;
         }
 
-        template<typename T, typename = std::enable_if<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>::type>
+        template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         Vector<T *> FindComponentsOfType() {
             Vector<T *> components;
 
@@ -84,6 +84,10 @@ namespace Hyperion {
     private:
         World();
         ~World();
+
+        // Worlds can not be copied
+        World(const World &other) = delete;
+        World &operator=(const World &other) = delete;
 
         void AddRootEntity(Entity *entity);
         void RemoveRootEntity(Entity *entity);

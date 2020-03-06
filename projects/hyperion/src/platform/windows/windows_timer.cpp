@@ -20,7 +20,7 @@ namespace Hyperion {
         LARGE_INTEGER current;
         QueryPerformanceCounter(&current);
         u64 cycles = current.QuadPart - m_start.QuadPart;
-        return (f32)(cycles * m_frequency);
+        return static_cast<f32>(cycles * m_frequency);
     }
 
     f32 WindowsTimer::ElapsedMilliSeconds() const {

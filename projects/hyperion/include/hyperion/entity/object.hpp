@@ -8,7 +8,8 @@
     public:                                                                                                                    \
         inline static ObjectType GetTypeStatic() { return s_type; }                                                            \
         inline virtual ObjectType GetType() const override { return s_type; }                                                  \
-        inline virtual bool IsBase(ObjectType type) const override { return type == s_type ? true : BASE_TYPE::IsBase(type); }
+        inline virtual bool IsBase(ObjectType type) const override { return type == s_type ? true : BASE_TYPE::IsBase(type); } \
+    private:
     
 namespace Hyperion {
 

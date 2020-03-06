@@ -13,7 +13,7 @@ namespace Hyperion::Rendering {
     }
 
     u32 Texture::CalculateMipmapCount(u32 width, u32 height) {
-        return (u32)(1 + Math::Floor(Math::Log2(Math::Max((f32)width, (f32)height))));
+        return static_cast<u32>(1 + Math::Floor(Math::Log2(Math::Max(static_cast<f32>(width), static_cast<f32>(height)))));
     }
 
 }

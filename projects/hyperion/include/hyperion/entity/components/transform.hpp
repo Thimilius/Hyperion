@@ -86,7 +86,7 @@ namespace Hyperion {
         inline Mat4 GetLocalToWorldMatrix() const { return m_local_to_world_matrix; }
         inline Mat4 GetWorldToLocalMatrix() const { return m_world_to_local_matrix; }
 
-        inline u32 GetChildCount() const { return (u32)m_children.size(); }
+        inline u32 GetChildCount() const { return static_cast<u32>(m_children.size()); }
         inline Transform *GetChild(u32 index) { return m_children[index]; }
         Transform *GetRoot() const;
 

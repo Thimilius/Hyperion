@@ -14,7 +14,7 @@ namespace Hyperion::Rendering {
         m_mesh_data = mesh_data;
         m_sub_meshes = sub_meshes;
 
-        u32 vertex_count = (u32)mesh_data.positions.size();
+        u32 vertex_count = static_cast<u32>(mesh_data.positions.size());
         Vector<VertexPNU> verticies(vertex_count);
         for (u32 i = 0; i < vertex_count; i++) {
             verticies[i].position = mesh_data.positions[i];
@@ -24,7 +24,7 @@ namespace Hyperion::Rendering {
         Ref<VertexBuffer> vertex_buffer = VertexBuffer::Create((u8*)verticies.data(), vertex_count * sizeof(VertexPNU));
         vertex_buffer->SetLayout(VertexPNU::GetBufferLayout());
 
-        u32 index_count = (u32)mesh_data.indicies.size();
+        u32 index_count = static_cast<u32>(mesh_data.indicies.size());
         Ref<IndexBuffer> index_buffer = IndexBuffer::Create(mesh_data.indicies.data(), index_count);
 
         m_vertex_array = VertexArray::Create();

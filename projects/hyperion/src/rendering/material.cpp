@@ -110,7 +110,7 @@ namespace Hyperion::Rendering {
         property.name = name;
         m_properties.push_back(property);
 
-        return (u32)(m_properties.size() - 1);
+        return static_cast<u32>(m_properties.size() - 1);
     }
 
     Material::Material(const Ref<Shader> &shader) {

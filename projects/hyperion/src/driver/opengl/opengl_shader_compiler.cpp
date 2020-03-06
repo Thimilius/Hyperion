@@ -61,7 +61,7 @@ namespace Hyperion::Rendering {
             glLinkProgram(program);
 
             GLint is_linked = 0;
-            glGetProgramiv(program, GL_LINK_STATUS, (int *)&is_linked);
+            glGetProgramiv(program, GL_LINK_STATUS, &is_linked);
             if (is_linked == GL_FALSE) {
                 GLint log_length = 0;
                 glGetProgramiv(program, GL_INFO_LOG_LENGTH, &log_length);

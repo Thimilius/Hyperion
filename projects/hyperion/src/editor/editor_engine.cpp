@@ -107,7 +107,7 @@ namespace Hyperion::Editor {
         }
 
         if (s_stats_enabled) {
-            f32 y = (f32)(Display::GetHeight() - s_font->GetSize());
+            f32 y = static_cast<f32>(Display::GetHeight() - s_font->GetSize());
             ImmediateRenderer::DrawText(s_stats, s_font, 0, y, 1.0f, Color::White());
         }
 
@@ -119,7 +119,7 @@ namespace Hyperion::Editor {
     }
 
     void EditorEngine::UpdateStats() {
-        f64 memory = (f64)OperatingSystem::GetInstance()->GetMemoryUsage() / 1024.0 / 1024.0;
+        f64 memory = static_cast<f64>(OperatingSystem::GetInstance()->GetMemoryUsage() / 1024.0 / 1024.0);
         s_stats = StringUtils::Format("FPS: {} ({:.2f} ms) | VSync: {} | Memory: {:.2f} MiB",
             Time::GetFPS(),
             Time::GetFrameTime(),
@@ -133,7 +133,7 @@ namespace Hyperion::Editor {
         Color special_grid_color = Color(0.75f, 0.75f, 0.75f, 0.75f);
 
         s32 half_grid_size = s_grid_size / 2;
-        f32 to_point = (f32)half_grid_size;
+        f32 to_point = static_cast<f32>(half_grid_size);
 
         s_grid_vertex_count = ((s_grid_size) * 4) + 6;
         Vector<VertexImmediate> verticies(s_grid_vertex_count);
@@ -142,7 +142,7 @@ namespace Hyperion::Editor {
         for (s32 x = -half_grid_size; x <= half_grid_size; x++) {
             if (x == 0) continue; // Skip center line
 
-            f32 from_point = (f32)x;
+            f32 from_point = static_cast<f32>(x);
             Color m_color = (x % 10) == 0 ? special_grid_color : default_grid_color;
             verticies[index++] = { Vec3(from_point, 0, to_point), m_color };
             verticies[index++] = { Vec3(from_point, 0, -to_point), m_color };
@@ -150,7 +150,7 @@ namespace Hyperion::Editor {
         for (s32 z = -half_grid_size; z <= half_grid_size; z++) {
             if (z == 0) continue; // Skip center line
 
-            f32 from_point = (f32)z;
+            f32 from_point = static_cast<f32>(z);
             Color m_color = (z % 10) == 0 ? special_grid_color : default_grid_color;
             verticies[index++] = { Vec3(to_point, 0, from_point), m_color };
             verticies[index++] = { Vec3(-to_point, 0, from_point), m_color };

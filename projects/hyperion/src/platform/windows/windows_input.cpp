@@ -102,7 +102,7 @@ namespace Hyperion {
             memset(&m_mouse_buttons_up, false, sizeof(m_mouse_buttons_up));
             memcpy(&m_mouse_buttons_last, &m_mouse_buttons, sizeof(m_mouse_buttons_last));
 
-            for (u32 i = 0; i < (u32)Gamepad::Last; i++) {
+            for (u32 i = 0; i < static_cast<u32>(Gamepad::Last); i++) {
                 GamepadState &gamepad = m_gamepads[i];
 
                 memset(&gamepad.buttons_down, false, sizeof(gamepad.buttons_down));
@@ -184,7 +184,7 @@ namespace Hyperion {
         memset(&m_mouse_buttons, false, sizeof(m_mouse_buttons));
         memset(&m_mouse_buttons_last, false, sizeof(m_mouse_buttons_last));
 
-        for (u32 i = 0; i < (u32)Gamepad::Last; i++) {
+        for (u32 i = 0; i < static_cast<u32>(Gamepad::Last); i++) {
             GamepadState &gamepad = m_gamepads[i];
 
             memset(&gamepad.buttons_down, false, sizeof(gamepad.buttons_down));
@@ -192,7 +192,7 @@ namespace Hyperion {
             memset(&gamepad.buttons, false, sizeof(gamepad.buttons));
             memset(&gamepad.buttons_last, false, sizeof(gamepad.buttons_last));
 
-            for (u32 j = 0; j < (u32)GamepadAxis::Last; j++) {
+            for (u32 j = 0; j < static_cast<u32>(GamepadAxis::Last); j++) {
                 gamepad.axes[j] = Vec2();
             }
         }

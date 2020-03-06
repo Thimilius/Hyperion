@@ -44,7 +44,7 @@ namespace Hyperion {
         u64 frame_counter = 0;
         while (m_running) {
             f32 now = timer->ElapsedSeconds();
-            f32 delta_time = (f32)(now - last_time);
+            f32 delta_time = static_cast<f32>(now - last_time);
             if (delta_time > Time::GetMaxDeltaTime()) {
                 delta_time = Time::GetMaxDeltaTime();
             }
@@ -62,7 +62,7 @@ namespace Hyperion {
             Engine::Render();
 
             if (tick_timer > 1.0f) {
-                u32 fps = (u32)(frame_counter * (1.0 / tick_timer));
+                u32 fps = static_cast<u32>(frame_counter * (1.0 / tick_timer));
                 Time::s_fps = fps;
                 Time::s_frame_time = 1000.0 / fps;
 

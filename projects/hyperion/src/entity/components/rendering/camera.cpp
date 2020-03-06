@@ -70,7 +70,7 @@ namespace Hyperion {
     }
 
     void Camera::RecalculateMatricies() {
-        f32 aspect_ratio = (f32)Display::GetWidth() / (f32)Display::GetHeight();
+        f32 aspect_ratio = static_cast<f32>(Display::GetWidth() / static_cast<f32>(Display::GetHeight()));
         Vec3 position = GetTransform()->GetPosition();
         f32 size = m_data.size;
 

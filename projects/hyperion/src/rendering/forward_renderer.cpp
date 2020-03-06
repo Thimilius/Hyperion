@@ -136,7 +136,7 @@ namespace Hyperion::Rendering {
                 }
 
                 if (lighting.point_lights) {
-                    u32 full_point_light_count = (u32)lighting.point_lights->size();
+                    u32 full_point_light_count = static_cast<u32>(lighting.point_lights->size());
                     u32 max_point_light_count = lighting.MAX_POINT_LIGHT_COUNT;
                     u32 light_count = full_point_light_count <= max_point_light_count ? full_point_light_count : max_point_light_count;
                     shader->SetInt("u_lighting.point_light_count", light_count);

@@ -37,7 +37,7 @@ namespace Hyperion {
         GetNativeSystemInfo(&system_info);
         u32 processor_count = system_info.dwNumberOfProcessors;
         PROCESSOR_POWER_INFORMATION *processor_info = new PROCESSOR_POWER_INFORMATION[processor_count];
-        CallNtPowerInformation(ProcessorInformation, nullptr, 0, processor_info, (u32)(sizeof(*processor_info) * processor_count));
+        CallNtPowerInformation(ProcessorInformation, nullptr, 0, processor_info, static_cast<u32>(sizeof(*processor_info) * processor_count));
         result.processor_info.processor_count = processor_count;
         result.processor_info.processor_mhz_frequency = processor_info[0].MaxMhz;
         delete[] processor_info;
@@ -167,7 +167,7 @@ namespace Hyperion {
         GetConsoleScreenBufferInfo(m_console_handle, &console_screen_buffer_info);
         SetConsoleTextAttribute(m_console_handle, console_color);
         unsigned long written_chars = 0;
-        WriteConsoleA(m_console_handle, message.c_str(), (DWORD)message.length(), &written_chars, nullptr);
+        WriteConsoleA(m_console_handle, message.c_str(), static_cast<DWORD>(message.length()), &written_chars, nullptr);
         SetConsoleTextAttribute(m_console_handle, console_screen_buffer_info.wAttributes);
     }
 
@@ -176,7 +176,7 @@ namespace Hyperion {
 
         OPENFILENAMEW open_file_options = { };
         open_file_options.lStructSize = sizeof(open_file_options);
-        open_file_options.hwndOwner = (HWND)Application::GetInstance()->GetWindow()->GetNativePointer();
+        open_file_options.hwndOwner = static_cast<HWND>(Application::GetInstance()->GetWindow()->GetNativePointer());
         open_file_options.nMaxFile = sizeof(file_output);
         open_file_options.lpstrFile = file_output;
         open_file_options.lpstrFilter = L"All\0*.*\0";
@@ -196,7 +196,7 @@ namespace Hyperion {
 
         OPENFILENAMEW open_file_options = { };
         open_file_options.lStructSize = sizeof(open_file_options);
-        open_file_options.hwndOwner = (HWND)Application::GetInstance()->GetWindow()->GetNativePointer();
+        open_file_options.hwndOwner = static_cast<HWND>(Application::GetInstance()->GetWindow()->GetNativePointer());
         open_file_options.nMaxFile = sizeof(file_output);
         open_file_options.lpstrFile = file_output;
         open_file_options.lpstrFilter = L"All\0*.*\0";

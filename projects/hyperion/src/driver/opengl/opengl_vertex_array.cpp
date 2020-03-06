@@ -30,7 +30,7 @@ namespace Hyperion::Rendering {
 
             // To better distinguish the different indicies used
             s32 attribute_index = index;
-            s32 binding_index = (s32)m_vertex_buffers.size();
+            s32 binding_index = static_cast<s32>(m_vertex_buffers.size());
 
             // This is the modern way of defining the format of a vertex buffer in OpenGL using DSA
             GLboolean normalized = element.normalized ? GL_TRUE : GL_FALSE;

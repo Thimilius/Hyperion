@@ -26,7 +26,7 @@ namespace Hyperion {
         m_min_height = settings.min_height;
         m_window_state = WindowState::Normal;
 
-        m_input = (WindowsInput*)Input::s_input_implementation.get();
+        m_input = static_cast<WindowsInput *>(Input::s_input_implementation.get());
 
         SetupWindow(settings);
         
@@ -71,7 +71,7 @@ namespace Hyperion {
                 Vec2 size = GetActualWindowSize(width, height);
 
                 u32 flags = SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER;
-                SetWindowPos(m_window_handle, nullptr, 0, 0, (u32)size.x, (u32)size.y, flags);
+                SetWindowPos(m_window_handle, nullptr, 0, 0, static_cast<u32>(size.x), static_cast<u32>(size.y), flags);
                 break;
             }
             case Hyperion::WindowMode::Borderless: {
@@ -109,7 +109,7 @@ namespace Hyperion {
                 Vec2 size = GetActualWindowSize(m_width, m_height);
 
                 u32 flags = SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED;
-                SetWindowPos(m_window_handle, nullptr, 0, 0, (u32)size.x, (u32)size.y, flags);
+                SetWindowPos(m_window_handle, nullptr, 0, 0, static_cast<u32>(size.x), static_cast<u32>(size.y), flags);
                 break;
             }
             case Hyperion::WindowMode::Borderless: {
@@ -228,8 +228,8 @@ namespace Hyperion {
             window_styles,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
-            (u32)size.x,
-            (u32)size.y,
+            static_cast<u32>(size.x),
+            static_cast<u32>(size.y),
             nullptr,
             nullptr,
             instance,
@@ -240,7 +240,7 @@ namespace Hyperion {
             HYP_PANIC_MESSAGE("Engine", "Failed to create window!");
         }
 
-        if (!SetWindowLongPtrW(m_window_handle, GWLP_USERDATA, (LONG_PTR)(void *)this)) {
+        if (!SetWindowLongPtrW(m_window_handle, GWLP_USERDATA, (LONG_PTR)(static_cast<void *>(this)))) {
             HYP_PANIC_MESSAGE("Engine", "Failed to set window attribute!");
         }
     }
@@ -252,12 +252,12 @@ namespace Hyperion {
 
     Vec2 WindowsWindow::GetActualWindowSize(u32 client_width, u32 client_height) {
         RECT window_rect = { 0 };
-        window_rect.right = (LONG)client_width;
-        window_rect.bottom = (LONG)client_height;
+        window_rect.right = static_cast<LONG>(client_width);
+        window_rect.bottom = static_cast<LONG>(client_height);
         if (!AdjustWindowRect(&window_rect, GetWindowLongW(m_window_handle, GWL_STYLE), false)) {
             HYP_PANIC_MESSAGE("Engine", "Failed to calculate window size!");
         }
-        return Vec2((f32)(window_rect.right - window_rect.left), (f32)(window_rect.bottom - window_rect.top));
+        return Vec2(static_cast<f32>(window_rect.right - window_rect.left), static_cast<f32>(window_rect.bottom - window_rect.top));
     }
 
     void WindowsWindow::CreateContext(Rendering::RenderBackend backend_api) {
@@ -516,7 +516,7 @@ namespace Hyperion {
         LRESULT result = 0;
 
         // This will be null on WM_CREATE
-        WindowsWindow *window = (WindowsWindow*)GetWindowLongPtrW(window_handle, GWLP_USERDATA);
+        WindowsWindow *window = static_cast<WindowsWindow *>((void *)(GetWindowLongPtrW(window_handle, GWLP_USERDATA)));
 
         switch (message) {
             case WM_CREATE: {
@@ -543,7 +543,7 @@ namespace Hyperion {
 
             case WM_CHAR: 
             case WM_SYSCHAR: {
-                u32 character = (u32)w_param;
+                u32 character = static_cast<u32>(w_param);
                 KeyTypedEvent event(character, window->GetKeyModifier());
                 window->DispatchEvent(event);
                 break;
@@ -551,7 +551,7 @@ namespace Hyperion {
 
             case WM_KEYDOWN: 
             case WM_SYSKEYDOWN: {
-                KeyCode key_code = window->TranslateKeyCode((u32)w_param, (u32)l_param);
+                KeyCode key_code = window->TranslateKeyCode(static_cast<u32>(w_param), static_cast<u32>(l_param));
                 if (key_code != KeyCode::None) {
                     KeyPressedEvent event(key_code, window->GetKeyModifier());
                     window->DispatchEvent(event);
@@ -561,7 +561,7 @@ namespace Hyperion {
 
             case WM_KEYUP:
             case WM_SYSKEYUP: {
-                KeyCode key_code = window->TranslateKeyCode((u32)w_param, (u32)l_param);
+                KeyCode key_code = window->TranslateKeyCode(static_cast<u32>(w_param), static_cast<u32>(l_param));
                 if (key_code != KeyCode::None) {
                     KeyReleasedEvent event(key_code, window->GetKeyModifier());
                     window->DispatchEvent(event);
@@ -575,7 +575,7 @@ namespace Hyperion {
             case WM_XBUTTONDOWN: {
                 SetCapture(window->m_window_handle);
 
-                u32 code = window->GetMouseButtonFromMessage((u32)message, (u32)w_param);
+                u32 code = window->GetMouseButtonFromMessage(static_cast<u32>(message), static_cast<u32>(w_param));
                 MouseButtonPressedEvent event(window->TranslateMouseButtonCode(code), window->GetKeyModifier());
                 window->DispatchEvent(event);
                 break;
@@ -587,7 +587,7 @@ namespace Hyperion {
             case WM_XBUTTONUP: {
                 ReleaseCapture();
                 
-                u32 code = window->GetMouseButtonFromMessage((u32)message, (u32)w_param);
+                u32 code = window->GetMouseButtonFromMessage(static_cast<u32>(message), static_cast<u32>(w_param));
                 MouseButtonReleasedEvent event(window->TranslateMouseButtonCode(code), window->GetKeyModifier());
                 window->DispatchEvent(event);
                 break;
@@ -596,14 +596,14 @@ namespace Hyperion {
             case WM_MOUSEMOVE: {
                 u32 x = LOWORD(l_param);
                 u32 y = HIWORD(l_param);
-                MouseMovedEvent event((f32)x, (f32)y);
+                MouseMovedEvent event(static_cast<f32>(x), static_cast<f32>(y));
                 window->DispatchEvent(event);
                 break;
             }
 
             case WM_MOUSEWHEEL: {
                 s16 scroll = GET_WHEEL_DELTA_WPARAM(w_param);
-                MouseScrolledEvent event(scroll / (f32)WHEEL_DELTA);
+                MouseScrolledEvent event(scroll / static_cast<f32>(WHEEL_DELTA));
                 window->DispatchEvent(event);
                 break;
             };
@@ -639,8 +639,8 @@ namespace Hyperion {
                 // because we get the GETMINMAXINFO message before the CREATE message
                 if (window) {
                     Vec2 min_size = window->GetActualWindowSize(window->m_min_width, window->m_min_height);
-                    min_max_info->ptMinTrackSize.x = (LONG)min_size.x;
-                    min_max_info->ptMinTrackSize.y = (LONG)min_size.y;
+                    min_max_info->ptMinTrackSize.x = static_cast<LONG>(min_size.x);
+                    min_max_info->ptMinTrackSize.y = static_cast<LONG>(min_size.y);
                 }
                 break;
             }

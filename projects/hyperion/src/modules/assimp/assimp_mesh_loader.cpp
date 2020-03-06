@@ -50,7 +50,7 @@ namespace Hyperion {
         }
 
         // Handle verticies
-        u32 vertex_offset = (u32)mesh_data.positions.size();
+        u32 vertex_offset = static_cast<u32>(mesh_data.positions.size());
         u32 vertex_size = mesh->mNumVertices;
         mesh_data.positions.reserve(vertex_offset + vertex_size);
         mesh_data.normals.reserve(vertex_offset + vertex_size);
@@ -66,7 +66,7 @@ namespace Hyperion {
         }
 
         // Handle indicies
-        u32 index_offset = (u32)mesh_data.indicies.size();
+        u32 index_offset = static_cast<u32>(mesh_data.indicies.size());
         u32 index_count = mesh->mNumFaces * 3;
         mesh_data.indicies.reserve(index_offset + index_count);
         for (u32 i = 0; i < mesh->mNumFaces; i++) {

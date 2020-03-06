@@ -22,8 +22,8 @@ namespace Hyperion {
         SystemInfo system_info = OperatingSystem::GetInstance()->GetSystemInfo();
         HYP_LOG_INFO("Engine", "Processor Count: {} | Processor Frequency: {:.2f} Ghz | Physical Memory: {:.2f} GB",
             system_info.processor_info.processor_count,
-            (f32)system_info.processor_info.processor_mhz_frequency / 1000.0f,
-            (f32)system_info.memory_info.total_physical_memory / (1024.0f * 1024.0f * 1024.0f));
+            static_cast<f32>(system_info.processor_info.processor_mhz_frequency / 1000.0f),
+            static_cast<f32>(system_info.memory_info.total_physical_memory / (1024.0f * 1024.0f * 1024.0f)));
 
         Display::UpdateDisplayInfos();
         DisplayInfo::DisplayModeInfo mode_info = Display::GetCurrentDisplayModeInfo();
