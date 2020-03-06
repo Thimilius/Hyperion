@@ -3,6 +3,7 @@
 #include "hyperion/modules/bullet/bullet_physics_world.hpp"
 
 #include "hyperion/modules/bullet/bullet_physics_driver.hpp"
+#include "hyperion/modules/bullet/bullet_physics_debug_drawer.hpp"
 #include "hyperion/entity/components/transform.hpp"
 #include "hyperion/entity/components/physics/box_collider.hpp"
 #include "hyperion/entity/components/physics/sphere_collider.hpp"
@@ -12,6 +13,7 @@ namespace Hyperion::Physics {
     BulletPhysicsWorld::BulletPhysicsWorld(BulletPhysicsDriver *driver) {
         btCollisionConfiguration *collision_configuration = driver->m_collision_configuration;
         m_collision_world = new btCollisionWorld(new btCollisionDispatcher(collision_configuration), new btDbvtBroadphase(), collision_configuration);
+        m_collision_world->setDebugDrawer(new BulletDebugDrawer());
     }
 
     BulletPhysicsWorld::~BulletPhysicsWorld() {
@@ -50,6 +52,10 @@ namespace Hyperion::Physics {
         }
     }
 
+    void BulletPhysicsWorld::DebugDraw() {
+        m_collision_world->debugDrawWorld();
+    }
+
     void BulletPhysicsWorld::AddBoxCollider(BoxCollider *box_collider) {
         btCollisionObject *collision_object = new btCollisionObject();
         collision_object->setUserPointer(box_collider);
@@ -86,7 +92,7 @@ namespace Hyperion::Physics {
 
         delete collision_object->getCollisionShape();
 
-        Vec3 half_origin = 0.5f * box_collider->GetOrigin();
+        Vec3 half_origin = box_collider->GetOrigin();
         Vec3 half_extends = 0.5f * box_collider->GetSize();
         Vec3 scale = box_collider->GetTransform()->GetScale();
         btBoxShape *collision_box = new btBoxShape(btVector3(half_extends.x, half_extends.y, half_extends.z));
@@ -110,7 +116,7 @@ namespace Hyperion::Physics {
     void BulletPhysicsWorld::UpdateBoxColliderTransform(BoxCollider *box_collider) {
         btCollisionObject *collision_object = m_collision_objects.at(box_collider);
 
-        UpdateTransform(box_collider, collision_object, box_collider->GetTransform()->GetLocalScale() * 0.5f * box_collider->GetOrigin());
+        UpdateTransform(box_collider, collision_object, box_collider->GetOrigin());
 
         m_collision_world->updateSingleAabb(collision_object);
     }

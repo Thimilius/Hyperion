@@ -56,6 +56,9 @@ namespace Hyperion::Editor {
         if (Input::GetKeyDown(KeyCode::F4)) {
             s_stats_enabled = !s_stats_enabled;
         }
+        if (Input::GetKeyDown(KeyCode::F5)) {
+            s_physics_debug_draw = !s_physics_debug_draw;
+        }
 
         s_camera_controller.Update(delta_time);
     }
@@ -114,6 +117,14 @@ namespace Hyperion::Editor {
         if (s_stats_enabled) {
             f32 y = static_cast<f32>(Display::GetHeight() - s_font->GetSize());
             ImmediateRenderer::DrawText(s_stats, s_font, 0, y, 1.0f, Color::White());
+        }
+
+        if (s_physics_debug_draw) {
+            ImmediateRenderer::Begin(s_camera->GetData());
+            {
+                s_gizmo->GetWorld()->GetPhysicsWorld()->DebugDraw();
+            }
+            ImmediateRenderer::End();
         }
 
         RenderCommand::GetRasterizerState()->SetBlendingEnabled(blending_enabled);

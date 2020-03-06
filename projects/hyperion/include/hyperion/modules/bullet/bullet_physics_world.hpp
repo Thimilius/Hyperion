@@ -16,7 +16,9 @@ namespace Hyperion::Physics {
         BulletPhysicsWorld(BulletPhysicsDriver *driver);
         ~BulletPhysicsWorld() override;
 
-        bool Raycast(Ray ray, RaycastResult &result, f32 distance);
+        bool Raycast(Ray ray, RaycastResult &result, f32 distance) override;
+
+        void DebugDraw() override;
     private:
         void AddBoxCollider(BoxCollider *box_collider) override;
         void AddSphereCollider(SphereCollider *sphere_collider) override;

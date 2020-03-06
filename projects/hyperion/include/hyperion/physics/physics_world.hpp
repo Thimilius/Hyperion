@@ -23,6 +23,8 @@ namespace Hyperion::Physics {
         virtual ~PhysicsWorld() = default;
 
         virtual bool Raycast(Ray ray, RaycastResult &result, f32 distance) { return false; }
+
+        virtual void DebugDraw() { }
     private:
         virtual void AddBoxCollider(BoxCollider *box_collider) { }
         virtual void AddSphereCollider(SphereCollider *sphere_collider) { }

@@ -29,6 +29,7 @@ namespace Hyperion::Editor {
 
         inline static bool s_overlay_enabled = true;
         inline static bool s_stats_enabled = true;
+        inline static bool s_physics_debug_draw = false;
     public:
         static Camera *GetCamera() { return s_camera; }
 
