@@ -17,16 +17,7 @@ namespace Hyperion {
     class Camera;
 
     struct WorldEnvironment {
-        struct Background {
-            enum class Mode {
-                Color,
-                Skybox
-            };
-
-            Mode mode = Mode::Color;
-            Color color = Color::Black();
-            Ref<Rendering::TextureCubemap> skybox;
-        } background;
+        Ref<Rendering::TextureCubemap> skybox;
 
         struct AmbientLight {
             f32 intensity = 0.2f;

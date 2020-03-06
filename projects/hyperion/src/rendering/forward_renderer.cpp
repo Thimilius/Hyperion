@@ -36,9 +36,8 @@ namespace Hyperion::Rendering {
         RenderCommand::GetRasterizerState()->SetCullingEnabled(culling_enabled);
     }
 
-    void ForwardRenderer::DrawWorld(World *world) {
+    void ForwardRenderer::DrawEntities(World *world) {
         WorldEnvironment environment = world->GetEnvironment();
-        RenderCommand::Clear(ClearMask::Color | ClearMask::Depth | ClearMask::Stencil, environment.background.color);
         
         const Vector<MeshRenderer *> &renderers = world->GetMeshRenderers();
         const Vector<Light *> &lights = world->GetLights();
@@ -75,12 +74,6 @@ namespace Hyperion::Rendering {
 
             Transform *transform = renderer->GetTransform();
             DrawMesh(renderer->GetRenderMesh(), renderer->GetRenderMaterial(), transform->GetLocalToWorldMatrix(), transform->GetWorldToLocalMatrix());
-        }
-
-        if (environment.background.mode == WorldEnvironment::Background::Mode::Skybox) {
-            if (environment.background.skybox != nullptr) {
-                DrawSkybox(environment.background.skybox);
-            }
         }
     }
 
