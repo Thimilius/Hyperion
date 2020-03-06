@@ -26,6 +26,7 @@ namespace Hyperion {
     using EntityTag = String;
 
     // NOTE: Should we allow multiple components of the same type?
+    // Currently the GetComponents implementations assume only one component of a certain type
     class Entity : public Object {
         HYP_OBJECT(Entity, Object);
     private:
@@ -65,55 +66,50 @@ namespace Hyperion {
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         T *GetComponent() const {
             ObjectType type = T::GetTypeStatic();
-            auto iterator = m_components.find(type);
-            if (iterator != m_components.end()) {
-                return static_cast<T *>(iterator->second);
-            } else {
-                return nullptr;
+
+            for (auto pair : m_components) {
+                if (pair.second->IsBase(type)) {
+                    return static_cast<T *>(pair.second);
+                }
             }
+
+            return nullptr;
         }
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         T *GetComponentInChildren() const {
             ObjectType type = T::GetTypeStatic();
-            T *component = nullptr;
 
-            auto iterator = m_components.find(type);
-            if (iterator != m_components.end()) {
-                component = static_cast<T *>(iterator->second);
+            T *component = GetComponent<T>();
+            if (component) {
+                return component;
             } else {
                 for (Transform *child : m_transform.m_children) {
                     component = child->GetEntity()->GetComponentInChildren<T>();
-                    if (component) break;
+                    if (component) {
+                        return component;
+                    }
                 }
             }
 
-            return component;
+            return nullptr;
         }
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         T *GetComponentInParent() const {
             ObjectType type = T::GetTypeStatic();
-            T *component = nullptr;
             
-            auto iterator = m_components.find(type);
-            if (iterator != m_components.end()) {
-                component = static_cast<T *>(iterator->second);
+            Component *component = GetComponent<T>();
+            if (component) {
+                return component;
             } else {
                 Transform *parent = m_transform.m_parent;
-                while (parent != nullptr) {
-                    auto &parent_components = parent->GetEntity()->m_components;
-                    iterator = parent_components.find(type);
-                    if (iterator != parent_components.end()) {
-                        component = static_cast<T *>(iterator->second);
-                        break;
-                    }
-
-                    parent = parent->m_parent;
+                if (parent != nullptr) {
+                    return parent->GetEntity()->GetComponentInParent<T>();
                 }
             }
-            
-            return component;
+
+            return nullptr;
         }
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
@@ -121,9 +117,10 @@ namespace Hyperion {
             ObjectType type = T::GetTypeStatic();
             Vector<T *> components;
 
-            auto iterator = m_components.find(type);
-            if (iterator != m_components.end()) {
-                components.push_back(static_cast<T *>(iterator->second););
+            for (auto pair : m_components) {
+                if (pair.second->IsBase(type)) {
+                    components.push_back(static_cast<T *>(pair.second));
+                }
             }
             for (Transform *child : m_transform.m_children) {
                 Vector<T *> child_components = child->GetEntity()->GetComponentsInChildren<T>();
@@ -138,21 +135,17 @@ namespace Hyperion {
             ObjectType type = T::GetTypeStatic();
             Vector<T *> components;
 
-            auto iterator = m_components.find(type);
-            if (iterator != m_components.end()) {
-                components.push_back(static_cast<T *>(iterator->second););
+            for (auto pair : m_components) {
+                if (pair.second->IsBase(type)) {
+                    components.push_back(static_cast<T *>(pair.second));
+                }
             }
             Transform *parent = m_transform.m_parent;
-            while (parent != nullptr) {
-                auto &parent_components = parent->GetEntity()->m_components;
-                iterator = parent_components.find(type);
-                if (iterator != parent_components.end()) {
-                    components.push_back(static_cast<T *>(iterator->second););
-                }
-
-                parent = parent->m_parent;
-            }
-
+            if (parent != nullptr) {
+                Vector<T *> parent_components = parent->GetEntity()->GetComponentsInParent<T>();
+                components.insert(components.end(), parent_components.begin(), parent_components.end());
+            } 
+            
             return components;
         }
 
