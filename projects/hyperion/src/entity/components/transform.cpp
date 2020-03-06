@@ -51,7 +51,7 @@ namespace Hyperion {
     void Transform::NotifyTransformChange() {
         RecalculateTransform();
 
-        GetEntity()->OnMessage({ EntityMessageType::TransformChanged, nullptr });
+        GetEntity()->DispatchMessage({ EntityMessageType::TransformChanged, nullptr });
     }
 
     void Transform::RecalculateTransform() {

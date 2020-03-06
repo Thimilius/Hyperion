@@ -20,7 +20,7 @@ namespace Hyperion {
     }
 
     void Component::OnDestroy() {
-        GetEntity()->OnMessage({ EntityMessageType::ComponentDestroyed, this });
+        GetEntity()->DispatchMessage({ EntityMessageType::ComponentDestroyed, this });
 
         ObjectManager::UnregisterComponentForUpdate(this);
     }

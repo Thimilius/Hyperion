@@ -12,7 +12,7 @@
 
 namespace Hyperion {
 
-    void Entity::OnMessage(EntityMessage message) {
+    void Entity::DispatchMessage(EntityMessage message) {
         switch (message.type) {
             case EntityMessageType::ComponentDestroyed: {
                 Component *component = static_cast<Component *>(message.parameter);

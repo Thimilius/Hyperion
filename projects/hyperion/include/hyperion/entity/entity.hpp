@@ -3,12 +3,12 @@
 #include <type_traits>
 #include <typeindex>
 
-#include "hyperion/entity/entity_message.hpp"
 #include "hyperion/entity/components/transform.hpp"
 
 namespace Hyperion {
 
     class World;
+    class EntityMessageListener;
 
     enum class EntityPrimitive {
         Quad,
@@ -26,7 +26,7 @@ namespace Hyperion {
     using EntityTag = String;
 
     // NOTE: Should we allow multiple components of the same type?
-    class Entity : public Object, public EntityMessageListener {
+    class Entity : public Object {
         HYP_OBJECT(Entity, Object);
     private:
         Transform m_transform;
@@ -40,7 +40,7 @@ namespace Hyperion {
         inline World *GetWorld() const { return m_world; }
         inline Transform *GetTransform() { return &m_transform; }
 
-        void OnMessage(EntityMessage message) override;
+        void DispatchMessage(EntityMessage message);
 
         template<typename T, typename =
             std::enable_if_t<std::is_base_of<Component, T>::value &&
