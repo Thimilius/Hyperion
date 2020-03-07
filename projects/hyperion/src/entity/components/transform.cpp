@@ -16,8 +16,19 @@ namespace Hyperion {
     }
 
     void Transform::SetParent(Transform *parent) {
-        if (m_parent == parent) {
-            return;
+        // Handle special edge cases and for now just silently abandon
+        {
+            if (m_parent == parent || parent == this) {
+                return;
+            }
+            Transform *p = parent;
+            while (p != nullptr) {
+                // We can not set a child from us as a new parent
+                if (p->m_parent == this) {
+                    return;
+                }
+                p = p->m_parent;
+            }
         }
         
         Entity *entity = GetEntity();
