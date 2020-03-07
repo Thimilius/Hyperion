@@ -11,6 +11,12 @@ namespace Hyperion {
 
 namespace Hyperion::Rendering {
 
+    enum class FontCharacterSet {
+        All,
+        ASCII,
+        LatinSupplement
+    };
+
     struct FontGlyph {
         u32 codepoint;
 
@@ -24,6 +30,7 @@ namespace Hyperion::Rendering {
     class Font : public Asset {
     private:
         u32 m_size;
+        FontCharacterSet m_character_set;
         Map<u32, FontGlyph> m_glyphs;
 
         inline static FT_LibraryRec_ *s_freetype_library;
@@ -33,9 +40,9 @@ namespace Hyperion::Rendering {
         inline u32 GetSize() const { return m_size; }
         FontGlyph GetGlyph(u32 codepoint) const;
 
-        static Ref<Font> Create(const String &path, u32 size);
+        static Ref<Font> Create(const String &path, u32 size, FontCharacterSet character_set = FontCharacterSet::All);
     private:
-        Font(const String &path, u32 size);
+        Font(const String &path, u32 size, FontCharacterSet character_set);
 
         static void Init();
 

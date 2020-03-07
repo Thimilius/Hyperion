@@ -30,7 +30,7 @@ namespace Hyperion::Editor {
         s_icon_mesh = MeshFactory::CreateQuad(0.5f, 0.5f);
         s_icon_material = Material::Create(AssetManager::GetShader("standard_unlit_texture"));
 
-        s_font = Font::Create("data/fonts/robotomono_regular.ttf", 16);
+        s_font = Font::Create("data/fonts/robotomono_regular.ttf", 16, FontCharacterSet::All);
 
         InitGridVertexArray();
         UpdateStats();
@@ -139,7 +139,7 @@ namespace Hyperion::Editor {
 
     void EditorEngine::UpdateStats() {
         f64 memory = static_cast<f64>(OperatingSystem::GetInstance()->GetMemoryUsage() / 1024.0 / 1024.0);
-        s_stats = StringUtils::Format(u8"FPS: {} ({:.2f} ms) | VSync: {} | Memory: {:.2f} MiB",
+        s_stats = StringUtils::Format("FPS: {} ({:.2f} ms) | VSync: {} | Memory: {:.2f} MiB",
             Time::GetFPS(),
             Time::GetFrameTime(),
             Application::GetInstance()->GetWindow()->GetVSyncMode() != VSyncMode::DontSync,

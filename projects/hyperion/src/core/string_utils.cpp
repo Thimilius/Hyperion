@@ -19,8 +19,7 @@ namespace Hyperion {
             u32 codepoint;
             if (0xf0 == (0xf8 & s[0])) {
                 // 4 byte utf8 codepoint
-                codepoint = ((0x07 & s[0]) << 18) | ((0x3f & s[1]) << 12) |
-                    ((0x3f & s[2]) << 6) | (0x3f & s[3]);
+                codepoint = ((0x07 & s[0]) << 18) | ((0x3f & s[1]) << 12) | ((0x3f & s[2]) << 6) | (0x3f & s[3]);
                 s += 4;
             } else if (0xe0 == (0xf0 & s[0])) {
                 // 3 byte utf8 codepoint
