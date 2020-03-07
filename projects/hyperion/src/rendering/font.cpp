@@ -7,8 +7,15 @@
 
 namespace Hyperion::Rendering {
 
-    bool g_freetype_library_initialized = false;
-    FT_Library g_freetype_library;
+    FontGlyph Font::GetGlyph(u32 codepoint) const {
+        auto glyph = m_glyphs.find(codepoint);
+        if (glyph != m_glyphs.end()) {
+            return (*glyph).second;
+        } else {
+            // FIXME: What happens if the font does not have '?' as a glyph?
+            return m_glyphs.at('?');
+        }
+    }
 
     Ref<Font> Font::Create(const String &path, u32 size) {
         return Ref<Font>(new Font(path, size));
@@ -20,7 +27,7 @@ namespace Hyperion::Rendering {
         m_size = size;
 
         FT_Face font_face;
-        if (FT_New_Face(g_freetype_library, path.c_str(), 0, &font_face)) {
+        if (FT_New_Face(s_freetype_library, path.c_str(), 0, &font_face)) {
             HYP_LOG_ERROR("Engine", "Failed to load font from path: '{}'!", path);
         }
 
@@ -43,7 +50,7 @@ namespace Hyperion::Rendering {
             Ref<Texture2D> texture = Texture2D::Create(bitmap_width, bitmap_height, TextureFormat::R8, texture_parameters, buffer);
 
             FontGlyph glyph;
-            glyph.character = static_cast<u32>(character);
+            glyph.codepoint = static_cast<u32>(character);
             glyph.texture = texture;
             glyph.size = Vec2(static_cast<f32>(bitmap_width), static_cast<f32>(bitmap_height));
             glyph.bearing = Vec2(static_cast<f32>(font_face->glyph->bitmap_left), static_cast<f32>(font_face->glyph->bitmap_top));
@@ -61,7 +68,7 @@ namespace Hyperion::Rendering {
     }
 
     void Font::Init() {
-        if (FT_Init_FreeType(&g_freetype_library)) {
+        if (FT_Init_FreeType(&s_freetype_library)) {
             HYP_LOG_ERROR("Engine", "Failed to initialize freetype library!");
         }
     }

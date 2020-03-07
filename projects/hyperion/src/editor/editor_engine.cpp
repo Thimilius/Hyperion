@@ -24,8 +24,8 @@ namespace Hyperion::Editor {
         s_camera_controller = EditorCameraController(s_camera);
         
         s_world = WorldManager::CreateWorld();
-        s_gizmo = Entity::Create("Gizmo", Vec3::Zero(), Quaternion::Identity(), nullptr, s_world)->AddComponent<EditorGizmo>();
-        s_gizmo->SetCamera(s_camera);
+        //s_gizmo = Entity::Create("Gizmo", Vec3::Zero(), Quaternion::Identity(), nullptr, s_world)->AddComponent<EditorGizmo>();
+        //s_gizmo->SetCamera(s_camera);
 
         s_icon_mesh = MeshFactory::CreateQuad(0.5f, 0.5f);
         s_icon_material = Material::Create(AssetManager::GetShader("standard_unlit_texture"));
@@ -139,7 +139,7 @@ namespace Hyperion::Editor {
 
     void EditorEngine::UpdateStats() {
         f64 memory = static_cast<f64>(OperatingSystem::GetInstance()->GetMemoryUsage() / 1024.0 / 1024.0);
-        s_stats = StringUtils::Format("FPS: {} ({:.2f} ms) | VSync: {} | Memory: {:.2f} MiB",
+        s_stats = StringUtils::Format(u8"FPS: {} ({:.2f} ms) | VSync: {} | Memory: {:.2f} MiB",
             Time::GetFPS(),
             Time::GetFrameTime(),
             Application::GetInstance()->GetWindow()->GetVSyncMode() != VSyncMode::DontSync,

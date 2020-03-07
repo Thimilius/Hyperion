@@ -4,6 +4,7 @@
 #include "hyperion/core/math/vec2.hpp"
 #include "hyperion/rendering/texture_2d.hpp"
 
+struct FT_LibraryRec_;
 namespace Hyperion {
     class Engine;
 }
@@ -11,7 +12,7 @@ namespace Hyperion {
 namespace Hyperion::Rendering {
 
     struct FontGlyph {
-        char character;
+        u32 codepoint;
 
         Ref<Texture2D> texture;
 
@@ -24,11 +25,13 @@ namespace Hyperion::Rendering {
     private:
         u32 m_size;
         Map<u32, FontGlyph> m_glyphs;
+
+        inline static FT_LibraryRec_ *s_freetype_library;
     public:
         inline AssetType GetAssetType() const { return AssetType::Font; };
 
         inline u32 GetSize() const { return m_size; }
-        inline FontGlyph GetGlyph(u32 c) const { return m_glyphs.at(c); }
+        FontGlyph GetGlyph(u32 codepoint) const;
 
         static Ref<Font> Create(const String &path, u32 size);
     private:

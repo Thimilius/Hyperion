@@ -22,7 +22,8 @@ namespace Hyperion::Rendering {
 
         s_font_resources.vertex_array->Bind();
 
-        for (char c : text) {
+        Vector<u32> codepoints = StringUtils::GetCodepointsUtf8(text);
+        for (u32 c : codepoints) {
             FontGlyph glyph = font->GetGlyph(c);
 
             f32 xpos = x + glyph.bearing.x * scale;

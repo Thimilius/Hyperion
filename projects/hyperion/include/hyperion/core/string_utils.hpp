@@ -30,6 +30,8 @@ namespace Hyperion {
             }
         }
 
+        static Vector<u32> GetCodepointsUtf8(const String &string);
+
         static WideString Utf8ToUtf16(const String &string);
         static String Utf16ToUtf8(const WideString &string);
     private:

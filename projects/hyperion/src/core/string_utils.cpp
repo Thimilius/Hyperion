@@ -8,6 +8,39 @@
 
 namespace Hyperion {
 
+    Vector<u32> StringUtils::GetCodepointsUtf8(const String &string) {
+        // Implementation from https://github.com/sheredom/utf8.h/blob/master/utf8.h
+        const char *s = (const char *)string.c_str();
+
+        Vector<u32> codepoints;
+
+        // This assumes a valid utf8 string
+        while (*s != '\0') {
+            u32 codepoint;
+            if (0xf0 == (0xf8 & s[0])) {
+                // 4 byte utf8 codepoint
+                codepoint = ((0x07 & s[0]) << 18) | ((0x3f & s[1]) << 12) |
+                    ((0x3f & s[2]) << 6) | (0x3f & s[3]);
+                s += 4;
+            } else if (0xe0 == (0xf0 & s[0])) {
+                // 3 byte utf8 codepoint
+                codepoint = ((0x0f & s[0]) << 12) | ((0x3f & s[1]) << 6) | (0x3f & s[2]);
+                s += 3;
+            } else if (0xc0 == (0xe0 & s[0])) {
+                // 2 byte utf8 codepoint
+                codepoint = ((0x1f & s[0]) << 6) | (0x3f & s[1]);
+                s += 2;
+            } else {
+                // 1 byte utf8 codepoint otherwise
+                codepoint = s[0];
+                s += 1;
+            }
+            codepoints.push_back(codepoint);
+        }
+
+        return codepoints;
+    }
+
     WideString StringUtils::Utf8ToUtf16(const String &string) {
 #ifdef HYP_PLATFORM_WINDOWS
         s32 string_length = static_cast<s32>(string.length());
