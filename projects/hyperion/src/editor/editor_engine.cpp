@@ -73,8 +73,19 @@ namespace Hyperion::Editor {
                 ImmediateRenderer::DrawWire(MeshTopology::Lines, s_grid_vertex_array, s_grid_vertex_count);
             }
             ImmediateRenderer::End();
+        }
 
+        if (s_physics_debug_draw) {
+            RenderCommand::Clear(ClearMask::Depth);
 
+            ImmediateRenderer::Begin(s_camera->GetData(), MeshTopology::Lines);
+            {
+                WorldManager::GetActiveWorld()->GetPhysicsWorld()->DebugDraw();
+            }
+            ImmediateRenderer::End();
+        }
+
+        if (s_overlay_enabled) {
             RenderCommand::Clear(ClearMask::Depth);
 
             ForwardRenderer::Begin(s_camera->GetData());
@@ -117,14 +128,6 @@ namespace Hyperion::Editor {
         if (s_stats_enabled) {
             f32 y = static_cast<f32>(Display::GetHeight() - s_font->GetSize());
             ImmediateRenderer::DrawText(s_stats, s_font, 0, y, 1.0f, Color::White());
-        }
-
-        if (s_physics_debug_draw) {
-            ImmediateRenderer::Begin(s_camera->GetData(), MeshTopology::Lines);
-            {
-                WorldManager::GetActiveWorld()->GetPhysicsWorld()->DebugDraw();
-            }
-            ImmediateRenderer::End();
         }
 
         RenderCommand::GetRasterizerState()->SetBlendingEnabled(blending_enabled);

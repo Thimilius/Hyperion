@@ -168,7 +168,11 @@ namespace Hyperion::Rendering {
 
     void ImmediateRenderer::AddVertex(Vec3 position, Color color) {
         u32 vertex_offset = s_state.vertex_offset;
-        HYP_ASSERT_MESSAGE(vertex_offset < s_immediate_resources.DATA_BUFFER_SIZE, "Immediate vertex buffer is full!");
+        if (vertex_offset >= s_immediate_resources.DATA_BUFFER_SIZE) {
+            Flush(s_state.topology);
+            s_state.vertex_offset = 0;
+            vertex_offset = 0;
+        }
 
         s_immediate_resources.data_buffer[vertex_offset].position = position;
         s_immediate_resources.data_buffer[vertex_offset].color = color;
