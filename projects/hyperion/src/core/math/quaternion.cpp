@@ -90,6 +90,11 @@ namespace Hyperion {
         );
     }
 
+    Quaternion Quaternion::FromAxisAngle(const Vec3 &axis, f32 angle) {
+        angle = Math::DegToRad(angle) * 0.5f;
+        return Quaternion((axis * Math::Sin(angle)), Math::Cos(angle));
+    }
+
     Quaternion Quaternion::FromEulerAngles(const Vec3 &angles) {
         return FromEulerAngles(angles.x, angles.y, angles.z);
     }

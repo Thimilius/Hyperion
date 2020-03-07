@@ -15,10 +15,8 @@ private:
     }
 
     void OnUpdate(f32 delta_time) override {
-        Transform *transform = GetTransform();
-        Vec3 rotation = transform->GetEulerAngles();
-        rotation.y += delta_time * m_rotation_speed;
-        transform->SetEulerAngles(rotation);
+        f32 angle = static_cast<f32>(Time::GetTime()) * m_rotation_speed;
+        GetTransform()->SetRotation(Quaternion::FromAxisAngle(Vec3::Up(), angle));
 
         if (Input::GetKeyDown(KeyCode::K)) {
             Destroy(GetEntity());
