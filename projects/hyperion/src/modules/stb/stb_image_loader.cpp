@@ -26,7 +26,7 @@ namespace Hyperion {
             channels = 0;
         }
 
-        return Image::Create(width, height, channels, pixels, true);
+        return Image::Create(width, height, channels, pixels);
     }
 
 }

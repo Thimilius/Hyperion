@@ -30,6 +30,14 @@ namespace Hyperion {
             }
         }
 
+        inline static String GetExtension(const String &string) {
+            size_t position = string.find_last_of('.');
+            if (position != string.npos) {
+                return string.substr(position);
+            }
+            return string;
+        }
+
         static Vector<u32> GetCodepointsUtf8(const String &string);
 
         static WideString Utf8ToUtf16(const String &string);

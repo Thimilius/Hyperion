@@ -6,18 +6,42 @@
 
 namespace Hyperion {
 
-    Scope<ImageFormatLoader> ImageLoader::m_loader = std::make_unique<StbImageFormatLoader>();
+    Vector<String> ImageLoader::GetSupportedExtensions() {
+        Vector<String> extensions;
 
-    const Vector<String> &ImageLoader::GetSupportedExtensions() {
-        return m_loader->GetSupportedExtensions();
+        return extensions;
     }
 
     bool ImageLoader::SupportsExtension(const String &extension) {
-        return m_loader->SupportsExtension(extension);
+        for (ImageFormatLoader *image_format_loader : s_loaders) {
+            if (image_format_loader->SupportsExtension(extension)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     Ref<Image> ImageLoader::Load(const String &path, bool flip_vertically) {
-        return m_loader->Load(path, flip_vertically);
+        for (ImageFormatLoader *image_format_loader : s_loaders) {
+            if (image_format_loader->SupportsExtension(StringUtils::GetExtension(path))) {
+                return image_format_loader->Load(path, flip_vertically);
+            }
+        }
+        return nullptr;
+    }
+
+    void ImageLoader::AddFormatLoader(ImageFormatLoader *image_format_loader) {
+        s_loaders.push_back(image_format_loader);
+    }
+
+    void ImageLoader::Init() {
+        AddFormatLoader(new StbImageFormatLoader());
+    }
+
+    void ImageLoader::Shutdown() {
+        for (ImageFormatLoader *image_format_loader : s_loaders) {
+            delete image_format_loader;
+        }
     }
 
 }

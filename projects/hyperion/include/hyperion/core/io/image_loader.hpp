@@ -16,15 +16,21 @@ namespace Hyperion {
 
     class ImageLoader {
     private:
-        // TODO: Support multiple loaders
-        static Scope<ImageFormatLoader> m_loader;
+        inline static Vector<ImageFormatLoader*> s_loaders;
     public:
-        static const Vector<String> &GetSupportedExtensions();
+        static Vector<String> GetSupportedExtensions();
         static bool SupportsExtension(const String &extension);
 
         static Ref<Image> Load(const String &path, bool flip_vertically = true);
-    protected:
-        ImageLoader() = default;
+        static void AddFormatLoader(ImageFormatLoader *image_format_loader);
+    private:
+        ImageLoader() = delete;
+        ~ImageLoader() = delete;
+
+        static void Init();
+        static void Shutdown();
+
+        friend class AssetManager;
     };
 
 }

@@ -111,6 +111,8 @@ namespace Hyperion {
             HYP_PANIC_MESSAGE("AssetLibrary", "Texture path: '{}' does not exist!", std::filesystem::absolute(settings.texture_path).u8string());
         }
 
+        ImageLoader::Init();
+
         InitShaders(settings.shader_path);
         InitTextures2D(settings.texture_path);
         InitMeshPrimitives();
@@ -132,7 +134,7 @@ namespace Hyperion {
     }
 
     void AssetManager::Shutdown() {
-
+        ImageLoader::Shutdown();
     }
 
     void AssetManager::InitShaders(const String &shader_path) {
