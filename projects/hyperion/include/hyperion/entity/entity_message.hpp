@@ -6,8 +6,6 @@ namespace Hyperion {
         ComponentDestroyed,
 
         TransformChanged,
-
-        BehaviourEnabledChanged,
     };
 
     struct EntityMessage {

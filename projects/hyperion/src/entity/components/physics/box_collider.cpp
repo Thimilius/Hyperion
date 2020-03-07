@@ -8,8 +8,6 @@
 namespace Hyperion {
 
     void BoxCollider::OnMessage(EntityMessage message) {
-        Collider::OnMessage(message);
-
         if (message.type == EntityMessageType::TransformChanged) {
             if (IsEnabled()) {
                 GetWorld()->GetPhysicsWorld()->UpdateBoxColliderTransform(this);

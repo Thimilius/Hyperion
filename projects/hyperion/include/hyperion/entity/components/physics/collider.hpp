@@ -13,9 +13,11 @@ namespace Hyperion {
     class Collider : public Behaviour, public EntityMessageListener {
         HYP_OBJECT(Collider, Behaviour);
     public:
+        void SetEnabled(bool enabled) override;
+
         virtual ColliderType GetColliderType() const = 0;
 
-        void OnMessage(EntityMessage message) override;
+        virtual void OnMessage(EntityMessage message) = 0;
     protected:
         Collider() = default;
         Collider(const String & name) : Behaviour(name) {}

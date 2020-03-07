@@ -8,10 +8,8 @@
 
 namespace Hyperion {
 
-    void Collider::OnMessage(EntityMessage message) {
-        if (message.type == EntityMessageType::BehaviourEnabledChanged) {
-            GetWorld()->GetPhysicsWorld()->UpdateColliderActivation(this);
-        }
+    void Collider::SetEnabled(bool enabled) {
+        GetWorld()->GetPhysicsWorld()->UpdateColliderActivation(this);
     }
 
     void Collider::OnCreate() {
