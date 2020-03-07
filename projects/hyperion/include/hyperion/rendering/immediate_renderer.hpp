@@ -1,7 +1,5 @@
 #pragma once
 
-#include "hyperion/common.hpp"
-#include "hyperion/core/math/mat4.hpp"
 #include "hyperion/rendering/shader.hpp"
 #include "hyperion/rendering/font.hpp"
 #include "hyperion/rendering/mesh.hpp"
@@ -61,7 +59,7 @@ namespace Hyperion::Rendering {
         static void AddVertex(Vec3 position, Color color);
         static void Flush(MeshTopology topology);
 
-        friend class Hyperion::Engine;
+        friend class RenderEngine;
     };
 
 }

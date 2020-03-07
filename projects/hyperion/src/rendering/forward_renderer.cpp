@@ -5,6 +5,7 @@
 #include "hyperion/rendering/render_command.hpp"
 #include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/assets/mesh_factory.hpp"
+#include "hyperion/entity/world.hpp"
 #include "hyperion/entity/components/transform.hpp"
 #include "hyperion/entity/components/rendering/mesh_renderer.hpp"
 #include "hyperion/entity/components/rendering/light.hpp"

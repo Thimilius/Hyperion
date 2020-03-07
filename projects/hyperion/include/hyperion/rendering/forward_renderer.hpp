@@ -1,13 +1,15 @@
 #pragma once
 
-#include "hyperion/common.hpp"
-#include "hyperion/core/math/mat4.hpp"
 #include "hyperion/rendering/shader.hpp"
 #include "hyperion/rendering/material.hpp"
 #include "hyperion/rendering/mesh.hpp"
 #include "hyperion/rendering/camera_data.hpp"
 #include "hyperion/rendering/texture_cubemap.hpp"
-#include "hyperion/entity/world.hpp"
+
+namespace Hyperion {
+    class World;
+    class Light;
+}
 
 namespace Hyperion::Rendering {
 
@@ -63,7 +65,7 @@ namespace Hyperion::Rendering {
         static void PrepareShader(const Ref<Shader> &shader, const Mat4 &transform, const Mat4 &inverse_transform);
         static void DrawCall(const Ref<Mesh> &mesh);
 
-        friend class Hyperion::Engine;
+        friend class RenderEngine;
     };
 
 }

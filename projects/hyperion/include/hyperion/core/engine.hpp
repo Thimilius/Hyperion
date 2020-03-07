@@ -20,6 +20,7 @@ namespace Hyperion {
         ~Engine() = delete;
 
         static void Setup();
+        static void PreInit(const ApplicationSettings &settings);
         static void Init(const ApplicationSettings &settings);
         static void Update(f32 delta_time);
         static void LateUpdate();

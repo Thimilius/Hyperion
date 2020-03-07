@@ -5,8 +5,6 @@
 #include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/audio/audio_engine.hpp"
 #include "hyperion/rendering/render_engine.hpp"
-#include "hyperion/rendering/forward_renderer.hpp"
-#include "hyperion/rendering/immediate_renderer.hpp"
 #include "hyperion/entity/object_manager.hpp"
 #include "hyperion/entity/world_manager.hpp"
 #include "hyperion/editor/editor_engine.hpp"
@@ -30,22 +28,17 @@ namespace Hyperion {
         HYP_LOG_INFO("Engine", "Primary display: {}x{} @{} Hz", mode_info.width, mode_info.height, mode_info.refresh_rate);
     }
 
+    void Engine::PreInit(const ApplicationSettings &settings) {
+        Rendering::RenderEngine::PreInit(settings.render);
+    }
+
     void Engine::Init(const ApplicationSettings &settings) {
-        Rendering::RenderEngine::Init(settings.render);
-
         AssetManager::Init(settings.assets);
-
-        // TODO: This should be moved into render engine but cant because we need the assets
-        Rendering::ForwardRenderer::Init();
-        Rendering::ImmediateRenderer::Init();
-
+        Rendering::RenderEngine::Init(settings.render);
         Rendering::Font::Init();
-
         Physics::PhysicsEngine::Init(settings.physics);
         Audio::AudioEngine::Init(settings.audio);
-
         WorldManager::Init(settings.entity);
-
         Editor::EditorEngine::Init();
     }
 
@@ -70,10 +63,10 @@ namespace Hyperion {
 
     void Engine::Shutdown() {
         WorldManager::Shutdown();
-        AssetManager::Shutdown();
         Audio::AudioEngine::Shutdown();
         Physics::PhysicsEngine::Shutdown();
         Rendering::RenderEngine::Shutdown();
+        AssetManager::Shutdown();
     }
 
 }

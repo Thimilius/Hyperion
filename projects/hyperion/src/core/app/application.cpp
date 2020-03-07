@@ -35,7 +35,6 @@ namespace Hyperion {
     u32 Application::Run() {
         m_running = true;
 
-        Engine::Init(m_starting_settings);
         OnInit();
         m_window->Show();
 
