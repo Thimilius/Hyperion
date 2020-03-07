@@ -21,45 +21,77 @@ namespace Hyperion::Editor {
         Ref<Mesh> mesh = MeshFactory::CreateFromFile("data/models/gizmo.obj");
 
         m_gimzo_x = Entity::Create("GizmoPartX", Vec3::Zero(), Quaternion::Identity(), GetTransform());
+        m_gimzo_x->AddTag("X");
+        m_gimzo_x->GetTransform()->SetEulerAngles(Vec3(0.0f, 0.0f, -90.0));
         BoxCollider *collider = m_gimzo_x->AddComponent<BoxCollider>();
-        collider->SetOrigin(Vec3(0.5f, 0.0f, 0.0f));
-        collider->SetSize(Vec3(1.0f, 0.1f, 0.1f));
-        Entity *child = Entity::Create("", Vec3::Zero(), Quaternion::FromEulerAngles(Vec3(0, 0, -90.0f)), m_gimzo_x->GetTransform());
-        MeshRenderer *renderer = child->AddComponent<MeshRenderer>();
+        collider->SetOrigin(Vec3(0.0f, 0.5f, 0.0f));
+        collider->SetSize(Vec3(0.1f, 1.0f, 0.1f));
+        MeshRenderer *renderer = m_gimzo_x->AddComponent<MeshRenderer>();
         renderer->SetMesh(mesh);
         renderer->SetMaterial(material);
         renderer->GetMaterial()->SetColor("u_color", Color::Red());
 
         m_gimzo_y = Entity::Create("GizmoPartY", Vec3::Zero(), Quaternion::Identity(), GetTransform());
+        m_gimzo_y->AddTag("Y");
         collider = m_gimzo_y->AddComponent<BoxCollider>();
         collider->SetOrigin(Vec3(0.0f, 0.5f, 0.0f));
         collider->SetSize(Vec3(0.1f, 1.0f, 0.1f));
-        child = Entity::Create("", Vec3::Zero(), Quaternion::FromEulerAngles(Vec3(0, 0, 0)), m_gimzo_y->GetTransform());
-        renderer = child->AddComponent<MeshRenderer>();
+        renderer = m_gimzo_y->AddComponent<MeshRenderer>();
         renderer->SetMesh(mesh);
         renderer->SetMaterial(material);
         renderer->GetMaterial()->SetColor("u_color", Color::Green());
 
         m_gimzo_z = Entity::Create("GizmoPartZ", Vec3::Zero(), Quaternion::Identity(), GetTransform());
+        m_gimzo_z->AddTag("Z");
+        m_gimzo_z->GetTransform()->SetEulerAngles(Vec3(90.0f, 0.0f, 0.0f));
         collider = m_gimzo_z->AddComponent<BoxCollider>();
-        collider->SetOrigin(Vec3(0.0f, 0.0f, 0.5f));
-        collider->SetSize(Vec3(0.1f, 0.1f, 1.0f));
-        child = Entity::Create("", Vec3::Zero(), Quaternion::FromEulerAngles(Vec3(90.0f, 0, 0)), m_gimzo_z->GetTransform());
-        renderer = child->AddComponent<MeshRenderer>();
+        collider->SetOrigin(Vec3(0.0f, 0.5f, 0.0f));
+        collider->SetSize(Vec3(0.1f, 1.0f, 0.1f));
+        renderer = m_gimzo_z->AddComponent<MeshRenderer>();
         renderer->SetMesh(mesh);
         renderer->SetMaterial(material);
         renderer->GetMaterial()->SetColor("u_color", Color::Blue());
     }
 
     void EditorGizmo::OnUpdate(f32 delta_time) {
-        f32 scale_factor = m_camera->GetTransform()->GetPosition().Magnitude() * m_camera->GetFOV() * m_gizmo_scale;
+        Transform *transform = GetTransform();
+        Vec3 position = transform->GetPosition();
+
+        f32 scale_factor = (m_camera->GetTransform()->GetPosition() - position).Magnitude() * m_camera->GetFOV() * m_gizmo_scale;
         Vec3 scale = Vec3(scale_factor, scale_factor, scale_factor);
+        transform->SetLocalScale(scale);
 
         Ray ray = m_camera->ScreenPointToRay(Input::GetMousePosition());
         Physics::RaycastResult result;
         if (GetWorld()->GetPhysicsWorld()->Raycast(ray, result, 1000)) {
-            HYP_TRACE("{}", result.collider->GetEntity()->GetName());
+            Entity *entity = result.collider->GetEntity();
+            MeshRenderer *renderer = entity->GetComponent<MeshRenderer>();
+
+            if (m_last_entity != nullptr && m_last_entity != entity) {
+                ResetColor();
+            }
+            
+            result.collider->GetEntity()->GetComponent<MeshRenderer>()->GetMaterial()->SetColor("u_color", Color::White());
+
+            m_last_entity = entity;
+        } else {
+            if (m_last_entity != nullptr) {
+                ResetColor();
+                m_last_entity = nullptr;
+            }
         }
+    }
+
+    void EditorGizmo::ResetColor() {
+        Color color;
+        if (m_last_entity->HasTag("X")) {
+            color = Color::Red();
+        } else if (m_last_entity->HasTag("Y")) {
+            color = Color::Green();
+        } else if (m_last_entity->HasTag("Z")) {
+            color = Color::Blue();
+        }
+        m_last_entity->GetComponent<MeshRenderer>()->GetMaterial()->SetColor("u_color", color);
     }
 
 }
