@@ -21,6 +21,11 @@ private:
         if (Input::GetKeyDown(KeyCode::K)) {
             Destroy(GetEntity());
         }
+
+        // TODO: Make colliders respond to active state
+        if (Input::GetKeyDown(KeyCode::B)) {
+            GetEntity()->SetActive(!GetEntity()->IsActive());
+        }
     }
 };
 

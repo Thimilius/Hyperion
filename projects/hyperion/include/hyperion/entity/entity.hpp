@@ -35,11 +35,16 @@ namespace Hyperion {
         
         World *m_world = nullptr;
         Set<EntityTag> m_tags;
+        bool m_active = true;
 
         Vector<EntityMessageListener *> m_message_listeners;
     public:
         inline World *GetWorld() const { return m_world; }
         inline Transform *GetTransform() { return &m_transform; }
+
+        inline bool IsActive() const { return m_active; }
+        inline void SetActive(bool active) { m_active = active; }
+        bool IsActiveInHierarchy() const;
 
         void DispatchMessage(EntityMessage message);
 

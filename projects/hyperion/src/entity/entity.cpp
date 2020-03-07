@@ -12,6 +12,23 @@
 
 namespace Hyperion {
 
+    bool Entity::IsActiveInHierarchy() const {
+        bool active_self = m_active;
+        if (!active_self) {
+            return false;
+        }
+
+        Transform *parent = m_transform.m_parent;
+        while (parent != nullptr) {
+            if (!parent->GetEntity()->m_active) {
+                return false;
+            }
+            parent = parent->m_parent;
+        }
+
+        return true;
+    }
+
     void Entity::DispatchMessage(EntityMessage message) {
         switch (message.type) {
             case EntityMessageType::ComponentDestroyed: {

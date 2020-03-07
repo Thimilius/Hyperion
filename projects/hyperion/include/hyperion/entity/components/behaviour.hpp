@@ -11,6 +11,7 @@ namespace Hyperion {
     public:
         inline bool IsEnabled() const { return m_enabled; }
         virtual inline void SetEnabled(bool enabled) { m_enabled = enabled; }
+        bool IsActiveAndEnabled();
     protected:
         Behaviour() = default;
         Behaviour(const String &name) : Component(name) { }

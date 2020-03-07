@@ -49,20 +49,20 @@ namespace Hyperion::Rendering {
 
         // Set the main light to be the first directional light we can find
         auto main_light_pos = std::find_if(lights.begin(), lights.end(), [](Light *light) {
-            return light->IsEnabled() && light->GetLightType() == LightType::Directional;
+            return light->IsActiveAndEnabled() && light->GetLightType() == LightType::Directional;
         });
         s_state.lighting.main_light = main_light_pos != lights.end() ? *main_light_pos : nullptr;
 
         Vector<Light *> point_lights;
         s_state.lighting.point_lights = &point_lights;
         for (Light *light : lights) {
-            if (light->IsEnabled() && light->GetLightType() == LightType::Point) {
+            if (light->IsActiveAndEnabled() && light->GetLightType() == LightType::Point) {
                 point_lights.push_back(light);
             }
         }
 
         for (MeshRenderer *renderer : renderers) {
-            if (!renderer->IsEnabled() || !renderer->GetRenderMesh() || !renderer->GetRenderMaterial()) {
+            if (!renderer->IsActiveAndEnabled() || !renderer->GetRenderMesh() || !renderer->GetRenderMaterial()) {
                 continue;
             }
 

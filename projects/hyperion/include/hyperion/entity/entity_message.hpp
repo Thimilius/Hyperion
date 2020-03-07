@@ -5,7 +5,7 @@ namespace Hyperion {
     enum class EntityMessageType {
         ComponentDestroyed,
 
-        TransformChanged,
+        TransformChanged
     };
 
     struct EntityMessage {
