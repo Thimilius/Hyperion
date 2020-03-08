@@ -51,18 +51,14 @@ namespace Hyperion {
         NotifyTransformChange();
     }
 
-    void Transform::OnMessage(EntityMessage message) {
-        if (message.type == EntityMessageType::TransformChanged) {
-            for (Transform *child : m_children) {
-                child->NotifyTransformChange();
-            }
-        }
-    }
-
     void Transform::NotifyTransformChange() {
         RecalculateTransform();
 
         GetEntity()->DispatchMessage({ EntityMessageType::TransformChanged, nullptr });
+
+        for (Transform *child : m_children) {
+            child->NotifyTransformChange();
+        }
     }
 
     void Transform::RecalculateTransform() {
@@ -82,16 +78,8 @@ namespace Hyperion {
         m_world_to_local_matrix = m_local_to_world_matrix.Inverted();
     }
 
-    void Transform::OnCreate() {
-        Component::OnCreate();
-
-        GetEntity()->RegisterMessageListener(this);
-    }
-
     void Transform::OnDestroy() {
         Entity *entity = GetEntity();
-        entity->UnregisterMessageListener(this);
-
         if (m_parent == nullptr) {
             entity->GetWorld()->RemoveRootEntity(entity);
         } else {

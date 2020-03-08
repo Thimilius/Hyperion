@@ -156,10 +156,10 @@ namespace Hyperion {
         m_transform.m_local_position = position;
         m_transform.m_local_rotation = rotation;
 
-        if (parent == nullptr) {
-            m_world->AddRootEntity(this);
-        } else {
+        if (parent) {
             m_transform.SetParent(parent);
+        } else {
+            m_world->AddRootEntity(this);
         }
     }
 

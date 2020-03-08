@@ -16,7 +16,7 @@ namespace Hyperion {
 
     class ImageLoader {
     private:
-        inline static Vector<ImageFormatLoader*> s_loaders;
+        inline static Vector<ImageFormatLoader *> s_loaders;
     public:
         static Vector<String> GetSupportedExtensions();
         static bool SupportsExtension(const String &extension);

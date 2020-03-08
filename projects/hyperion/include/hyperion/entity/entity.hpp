@@ -3,12 +3,12 @@
 #include <type_traits>
 #include <typeindex>
 
+#include "hyperion/entity/entity_message.hpp"
 #include "hyperion/entity/components/transform.hpp"
 
 namespace Hyperion {
 
     class World;
-    class EntityMessageListener;
 
     enum class EntityPrimitive {
         Quad,
