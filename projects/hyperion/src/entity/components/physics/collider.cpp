@@ -9,7 +9,15 @@
 namespace Hyperion {
 
     void Collider::SetEnabled(bool enabled) {
+        Behaviour::SetEnabled(enabled);
+
         GetWorld()->GetPhysicsWorld()->UpdateColliderActivation(this);
+    }
+
+    void Collider::OnMessage(EntityMessage message) {
+        if (message.type == EntityMessageType::ActivationChanged) {
+            GetWorld()->GetPhysicsWorld()->UpdateColliderActivation(this);
+        }
     }
 
     void Collider::OnCreate() {

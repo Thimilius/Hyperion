@@ -8,8 +8,10 @@
 namespace Hyperion {
 
     void BoxCollider::OnMessage(EntityMessage message) {
+        Collider::OnMessage(message);
+
         if (message.type == EntityMessageType::TransformChanged) {
-            if (IsEnabled()) {
+            if (IsActiveAndEnabled()) {
                 GetWorld()->GetPhysicsWorld()->UpdateBoxColliderTransform(this);
             }
         }
@@ -28,7 +30,9 @@ namespace Hyperion {
     }
 
     void BoxCollider::NotifyColliderChange() {
-        GetWorld()->GetPhysicsWorld()->UpdateBoxCollider(this);
+        if (IsActiveAndEnabled()) {
+            GetWorld()->GetPhysicsWorld()->UpdateBoxCollider(this);
+        }
     }
 
 }

@@ -43,7 +43,10 @@ namespace Hyperion {
         inline Transform *GetTransform() { return &m_transform; }
 
         inline bool IsActive() const { return m_active; }
-        inline void SetActive(bool active) { m_active = active; }
+        inline void SetActive(bool active) {
+            m_active = active;
+            NotifyActivationChanged();
+        }
         bool IsActiveInHierarchy() const;
 
         void DispatchMessage(EntityMessage message);
@@ -169,6 +172,8 @@ namespace Hyperion {
     private:
         Entity(const String &name) : Object(name) { }
         ~Entity() = default;
+
+        void NotifyActivationChanged();
 
         void OnCreate(Vec3 position, Quaternion rotation, Transform *parent, World *world);
 

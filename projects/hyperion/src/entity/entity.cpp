@@ -13,6 +13,7 @@
 namespace Hyperion {
 
     bool Entity::IsActiveInHierarchy() const {
+        // TODO: Maybe this is something we should cache instead of recomputing it every time
         bool active_self = m_active;
         if (!active_self) {
             return false;
@@ -130,6 +131,14 @@ namespace Hyperion {
                     DestroyImmediate(child);
                 }
             }
+        }
+    }
+
+    void Entity::NotifyActivationChanged() {
+        DispatchMessage({ EntityMessageType::ActivationChanged, nullptr });
+
+        for (Transform *child : m_transform.m_children) {
+            child->GetEntity()->NotifyActivationChanged();
         }
     }
 

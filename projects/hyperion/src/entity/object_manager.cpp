@@ -7,6 +7,8 @@
 
 namespace Hyperion {
 
+    // TODO: The object manager is currently global and not able to differentiate between worlds
+
     void ObjectManager::Update(f32 delta_time) {
         for (Component *component : s_components_to_update) {
             component->OnUpdate(delta_time);

@@ -17,7 +17,7 @@ namespace Hyperion {
 
         virtual ColliderType GetColliderType() const = 0;
 
-        virtual void OnMessage(EntityMessage message) = 0;
+        virtual void OnMessage(EntityMessage message);
     protected:
         Collider() = default;
         Collider(const String & name) : Behaviour(name) {}

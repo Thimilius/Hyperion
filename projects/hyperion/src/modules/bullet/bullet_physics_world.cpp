@@ -139,8 +139,26 @@ namespace Hyperion::Physics {
 
     void BulletPhysicsWorld::UpdateColliderActivation(Collider *collider) {
         btCollisionObject *collision_object = m_collision_objects.at(collider);
-        if (collider->IsEnabled()) {
+        if (collider->IsActiveAndEnabled()) {
             m_collision_world->addCollisionObject(collision_object);
+
+            // When reactivating the collider we need it to update to its current state
+            // FIXME: This is probably not the most elegant solution
+            switch (collider->GetColliderType()) {
+                case ColliderType::BoxCollider: {
+                    BoxCollider *box_collider = static_cast<BoxCollider *>(collider);
+                    UpdateBoxCollider(box_collider);
+                    UpdateBoxColliderTransform(box_collider);
+                    break;
+                }
+                case ColliderType::SphereCollider: {
+                    SphereCollider *sphere_collider = static_cast<SphereCollider *>(collider);
+                    UpdateSphereCollider(sphere_collider);
+                    UpdateSphereColliderTransform(sphere_collider);
+                    break;
+                }
+                default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+            }
         } else {
             m_collision_world->removeCollisionObject(collision_object);
         }
