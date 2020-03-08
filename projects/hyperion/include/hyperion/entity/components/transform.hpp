@@ -43,7 +43,7 @@ namespace Hyperion {
         }
 
         inline Vec3 GetPosition() const { return m_derived_position; }
-        inline void SetPosition(const Vec3 position) {
+        inline void SetPosition(const Vec3 &position) {
             m_local_position = m_parent ? m_parent->WorldToLocalPosition(position) : position;
             NotifyTransformChange();
         }

@@ -56,15 +56,6 @@ protected:
         Light *point_light_3 = Entity::CreatePrimitive(EntityPrimitive::PointLight)->GetComponent<Light>();
         point_light_3->GetTransform()->SetPosition(Vec3(0, 1, -1));
         point_light_3->SetColor(Color::Yellow());
-
-        for (f32 x = 0; x < 10; x++) {
-            for (f32 z = 0; z < 10; z++) {
-                Entity *e = Entity::CreatePrimitive(EntityPrimitive::Sphere);
-                e->AddComponent<Rotator>();
-                e->GetTransform()->SetPosition(Vec3(x + 1, 0, z + 1));
-                e->GetTransform()->SetParent(entity->GetTransform());
-            }
-        }
     }
 };
 

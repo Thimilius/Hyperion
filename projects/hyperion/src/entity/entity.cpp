@@ -62,8 +62,8 @@ namespace Hyperion {
         return entity;
     }
 
-    Entity *Entity::CreatePrimitive(EntityPrimitive primitive) {
-        Entity *entity = Create(GetPrimitiveName(primitive));
+    Entity *Entity::CreatePrimitive(EntityPrimitive primitive, Vec3 position, Quaternion rotation, Transform *parent, World *world) {
+        Entity *entity = Create(GetPrimitiveName(primitive), position, rotation, parent, world);
         
         if (primitive == EntityPrimitive::Quad || primitive == EntityPrimitive::Plane || primitive == EntityPrimitive::Cube || primitive == EntityPrimitive::Sphere) {
             MeshRenderer *renderer = entity->AddComponent<MeshRenderer>();
@@ -154,7 +154,9 @@ namespace Hyperion {
         m_transform.m_entity = this;
         m_transform.OnCreate();
         m_transform.m_local_position = position;
+        m_transform.m_derived_position = position;
         m_transform.m_local_rotation = rotation;
+        m_transform.m_derived_rotation = rotation;
 
         if (parent) {
             m_transform.SetParent(parent);
