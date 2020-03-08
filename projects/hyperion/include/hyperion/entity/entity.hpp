@@ -165,8 +165,8 @@ namespace Hyperion {
         void RegisterMessageListener(EntityMessageListener *listener);
         void UnregisterMessageListener(EntityMessageListener *listener);
 
-        static Entity *Create(const String &name = "New Entity", Vec3 position = Vec3::Zero(), Quaternion rotation = Quaternion::Identity(), Transform *parent = nullptr, World *world = nullptr);
-        static Entity *CreatePrimitive(EntityPrimitive primitive, Vec3 position = Vec3::Zero(), Quaternion rotation = Quaternion::Identity(), Transform *parent = nullptr, World *world = nullptr);
+        static Entity *Create(const String &name = "New Entity", const Vec3 &position = Vec3::Zero(), const Quaternion &rotation = Quaternion::Identity(), Transform *parent = nullptr, World *world = nullptr);
+        static Entity *CreatePrimitive(EntityPrimitive primitive, const Vec3 &position = Vec3::Zero(), const Quaternion &rotation = Quaternion::Identity(), Transform *parent = nullptr, World *world = nullptr);
     protected:
         void OnDestroy() override;
     private:
@@ -175,7 +175,7 @@ namespace Hyperion {
 
         void NotifyActivationChanged();
 
-        void OnCreate(Vec3 position, Quaternion rotation, Transform *parent, World *world);
+        void OnCreate(const Vec3 &position, const Quaternion &rotation, Transform *parent, World *world);
 
         static String GetPrimitiveName(EntityPrimitive primitive);
 

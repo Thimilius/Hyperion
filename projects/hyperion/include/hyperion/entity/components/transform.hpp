@@ -58,6 +58,12 @@ namespace Hyperion {
 
         inline Vec3 GetScale() const { return m_derived_scale; }
 
+        inline void SetPositionAndRotation(const Vec3 &position, const Quaternion &rotation) {
+            m_local_position = m_parent ? m_parent->WorldToLocalPosition(position) : position;
+            m_local_rotation = m_parent ? m_parent->WorldToLocalRotation(rotation) : rotation;
+            NotifyTransformChange();
+        }
+
         inline Vec3 GetRight() const {
             return m_derived_rotation * Vec3::Right();
         }
@@ -87,9 +93,10 @@ namespace Hyperion {
 
         inline u32 GetChildCount() const { return static_cast<u32>(m_children.size()); }
         inline Transform *GetChild(u32 index) { return m_children[index]; }
-        Transform *GetRoot() const;
 
+        Transform *GetRoot() const;
         void SetParent(Transform *parent);
+        bool IsChildOf(Transform *parent) const;
     protected:
         void OnDestroy() override;
     private:

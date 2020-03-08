@@ -56,13 +56,13 @@ namespace Hyperion {
         }
     }
 
-    Entity *Entity::Create(const String &name, Vec3 position, Quaternion rotation, Transform *parent, World *world) {
+    Entity *Entity::Create(const String &name, const Vec3 &position, const Quaternion &rotation, Transform *parent, World *world) {
         Entity *entity = new Entity(name);
         entity->OnCreate(position, rotation, parent, world);
         return entity;
     }
 
-    Entity *Entity::CreatePrimitive(EntityPrimitive primitive, Vec3 position, Quaternion rotation, Transform *parent, World *world) {
+    Entity *Entity::CreatePrimitive(EntityPrimitive primitive, const Vec3 &position, const Quaternion &rotation, Transform *parent, World *world) {
         Entity *entity = Create(GetPrimitiveName(primitive), position, rotation, parent, world);
         
         if (primitive == EntityPrimitive::Quad || primitive == EntityPrimitive::Plane || primitive == EntityPrimitive::Cube || primitive == EntityPrimitive::Sphere) {
@@ -142,7 +142,7 @@ namespace Hyperion {
         }
     }
 
-    void Entity::OnCreate(Vec3 position, Quaternion rotation, Transform *parent, World *world) {
+    void Entity::OnCreate(const Vec3 &position, const Quaternion &rotation, Transform *parent, World *world) {
         if (parent) {
             world = parent->GetWorld();
         } else if (!world) {
