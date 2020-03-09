@@ -34,8 +34,8 @@ namespace Hyperion {
 
         inline f32 GetFOV() const { return m_data.fov; }
         inline void SetFOV(f32 fov) { m_data.fov = fov; }
-        inline f32 GetSize() const { return m_data.size; }
-        inline void SetSize(f32 size) { m_data.size = size; }
+        inline f32 GetOrthographicSize() const { return m_data.orthographic_size; }
+        inline void SetOrthographicSize(f32 orthographic_size) { m_data.orthographic_size = orthographic_size; }
 
         inline const Mat4 &GetViewMatrix() const { return m_data.view_matrix; }
         inline const Mat4 &GetProjectionMatrix() const { return m_data.projection_matrix; }
@@ -48,7 +48,7 @@ namespace Hyperion {
         inline void SetBackgroundColor(Color background_color) { m_background_color = background_color; }
         inline Color GetBackgroundColor() const { return m_background_color; }
 
-        Rendering::CameraData GetData() const;
+        Rendering::CameraData GetCameraData() const;
 
         Ray ScreenPointToRay(Vec2 screen_point) const;
 

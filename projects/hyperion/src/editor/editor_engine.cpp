@@ -68,7 +68,7 @@ namespace Hyperion::Editor {
         RenderCommand::GetRasterizerState()->SetBlendingEnabled(true);
 
         if (s_overlay_enabled) {
-            ImmediateRenderer::Begin(s_camera->GetData());
+            ImmediateRenderer::Begin(s_camera->GetCameraData());
             {
                 ImmediateRenderer::DrawWire(MeshTopology::Lines, s_grid_vertex_array, s_grid_vertex_count);
             }
@@ -78,7 +78,7 @@ namespace Hyperion::Editor {
         if (s_physics_debug_draw) {
             RenderCommand::Clear(ClearMask::Depth);
 
-            ImmediateRenderer::Begin(s_camera->GetData(), MeshTopology::Lines);
+            ImmediateRenderer::Begin(s_camera->GetCameraData(), MeshTopology::Lines);
             {
                 WorldManager::GetActiveWorld()->GetPhysicsWorld()->DebugDraw();
             }
@@ -88,7 +88,7 @@ namespace Hyperion::Editor {
         if (s_overlay_enabled) {
             RenderCommand::Clear(ClearMask::Depth);
 
-            ForwardRenderer::Begin(s_camera->GetData());
+            ForwardRenderer::Begin(s_camera->GetCameraData());
             {
                 // Draw light icons
                 {

@@ -1,6 +1,8 @@
 ﻿#include <hyperion/hyperion.hpp>
 #include <hyperion/entry_point.hpp>
 
+#include <hyperion/rendering/immediate_renderer.hpp>
+
 using namespace Hyperion;
 using namespace Hyperion::Rendering;
 using namespace Hyperion::Physics;

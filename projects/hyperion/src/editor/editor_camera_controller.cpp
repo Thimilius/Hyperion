@@ -15,7 +15,7 @@ namespace Hyperion::Editor {
         Vec3 rotation = transform->GetEulerAngles();
 
         f32 fov = m_camera->GetFOV();
-        f32 size = m_camera->GetSize();
+        f32 orthographic_size = m_camera->GetOrthographicSize();
 
         // Rotation
         {
@@ -76,15 +76,15 @@ namespace Hyperion::Editor {
                     break;
                 }
                 case CameraMode::Orthographic: {
-                    m_size_target -= wheel * 0.25f;
-                    m_size_target = Math::Clamp(m_size_target, 0.1f, 10);
+                    m_orthographic_size_target -= wheel * 0.25f;
+                    m_orthographic_size_target = Math::Clamp(m_orthographic_size_target, 0.1f, 10);
                     break;
                 }
                 default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
             }
          
             fov = Math::Lerp(fov, m_fov_target, delta_time * 15);
-            size = Math::Lerp(size, m_size_target, delta_time * 15);
+            orthographic_size = Math::Lerp(orthographic_size, m_orthographic_size_target, delta_time * 15);
         }
 
         // Movement
@@ -138,14 +138,14 @@ namespace Hyperion::Editor {
 
             fov = 90.0f;
             m_fov_target = fov;
-            size = 2.75f;
-            m_size_target = size;
+            orthographic_size = 2.75f;
+            m_orthographic_size_target = orthographic_size;
         }
 
         m_camera->GetTransform()->SetPosition(position);
         m_camera->GetTransform()->SetEulerAngles(rotation);
         m_camera->SetFOV(fov);
-        m_camera->SetSize(size);
+        m_camera->SetOrthographicSize(orthographic_size);
     }
 
     EditorCameraController::EditorCameraController(Camera *camera) {
@@ -156,8 +156,8 @@ namespace Hyperion::Editor {
 
         m_camera->SetFOV(90.0f);
         m_fov_target = m_camera->GetFOV();
-        m_camera->SetSize(2.75f);
-        m_size_target = m_camera->GetSize();
+        m_camera->SetOrthographicSize(2.75f);
+        m_orthographic_size_target = m_camera->GetOrthographicSize();
     }
 
 }

@@ -25,7 +25,7 @@ namespace Hyperion::Rendering {
                 RenderCommand::Clear(ClearMask::Depth | ClearMask::Stencil, Color::Black());
             }
 
-            ForwardRenderer::Begin(camera->GetData());
+            ForwardRenderer::Begin(camera->GetCameraData());
             {
                 ForwardRenderer::DrawEntities(world);
 

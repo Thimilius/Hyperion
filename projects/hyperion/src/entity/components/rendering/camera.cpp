@@ -10,7 +10,7 @@ using namespace Hyperion::Rendering;
 
 namespace Hyperion {
 
-    Rendering::CameraData Camera::GetData() const {
+    Rendering::CameraData Camera::GetCameraData() const {
         Transform *transform = GetTransform();
         m_data.position = transform->GetPosition();
         m_data.forward = transform->GetForward();
@@ -19,32 +19,42 @@ namespace Hyperion {
     }
 
     Ray Camera::ScreenPointToRay(Vec2 screen_point) const {
-        Vec3 position;
-        Vec3 direction;
+        f32 display_width = static_cast<f32>(Display::GetWidth());
+        f32 display_height = static_cast<f32>(Display::GetHeight());
+
         switch (m_data.mode) {
             case CameraMode::Perspective: {
-                f32 x = (2.0f * screen_point.x) / Display::GetWidth() - 1;
-                f32 y = (2.0f * screen_point.y) / Display::GetHeight() - 1;
-                Vec2 ndc = Vec2(x, -y);
-                Vec4 clip = Vec4(ndc.x, ndc.y, -1.0f, 1.0f);
+                f32 ndc_x = (2.0f * screen_point.x) / display_width - 1;
+                f32 ndc_y = -(2.0f * screen_point.y) / display_height - 1;
+                Vec4 clip = Vec4(ndc_x, ndc_y, -1.0f, 1.0f);
                 Vec4 view = m_data.inverse_projection_matrix * clip;
                 view.z = -1.0f;
                 view.w = 0.0f;
                 Vec4 world = m_data.inverse_view_matrix * view;
 
-                position = GetTransform()->GetPosition();
-                direction = Vec3(world.x, world.y, world.z);
-                break;
+                return Ray(GetTransform()->GetPosition(), Vec3(world.x, world.y, world.z));
             }
             case CameraMode::Orthographic: {
-                // TODO: Implement correct orthographic ray projection!
-                //position = (screen_point.x / window_width) * (right_bottom - left_bottom) + (screen_point.y / window_height) * (left_top - left_bottom);
-                break;
-            }
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-        }
+                f32 aspect_ratio = display_width / display_height;
 
-        return Ray(position, direction);
+                f32 l = -m_data.orthographic_size * aspect_ratio;
+                f32 r = m_data.orthographic_size * aspect_ratio;
+                f32 t = m_data.orthographic_size;
+                f32 b = -m_data.orthographic_size;
+
+                f32 ray_x = (screen_point.x - (display_width / 2.0f)) / display_width * (r - l);
+                f32 ray_y = -(screen_point.y - (display_height / 2.0f)) / display_height * (t - b);
+
+                Transform *transform = GetTransform();
+                Vec3 forward = transform->GetForward();
+
+                m_data.near_plane = -100;
+
+                Vec3 position = transform->GetPosition() + (transform->GetRight() * ray_x) + (transform->GetUp() * ray_y) + (forward * m_data.near_plane);
+                return Ray(position, forward);
+            }
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return Ray(Vec3(), Vec3());
+        }
     }
 
     void Camera::OnMessage(EntityMessage message) {
@@ -72,7 +82,6 @@ namespace Hyperion {
     void Camera::RecalculateMatricies() {
         f32 aspect_ratio = static_cast<f32>(Display::GetWidth() / static_cast<f32>(Display::GetHeight()));
         Vec3 position = GetTransform()->GetPosition();
-        f32 size = m_data.size;
 
         m_data.view_matrix = Mat4::LookAt(position, position + GetTransform()->GetForward(), GetTransform()->GetUp());
         switch (m_data.mode) {
@@ -81,6 +90,7 @@ namespace Hyperion {
                 break;
             }
             case CameraMode::Orthographic: {
+                f32 size = m_data.orthographic_size;
                 m_data.projection_matrix = Mat4::Orthographic(-size * aspect_ratio, size * aspect_ratio, -size, size, m_data.near_plane, m_data.far_plane);
                 break;
             }

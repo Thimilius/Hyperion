@@ -21,7 +21,7 @@ namespace Hyperion::Editor {
         Vec2 m_last_mouse_position;
 
         f32 m_fov_target;
-        f32 m_size_target;
+        f32 m_orthographic_size_target;
     public:
         EditorCameraController() = default;
         EditorCameraController(Camera *camera);

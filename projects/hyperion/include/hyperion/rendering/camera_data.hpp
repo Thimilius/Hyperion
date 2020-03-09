@@ -21,7 +21,7 @@ namespace Hyperion::Rendering {
         f32 far_plane = 1000.0f;
 
         f32 fov = 90.0f;
-        f32 size = 2.75f;
+        f32 orthographic_size = 2.75f;
 
         Mat4 view_matrix;
         Mat4 projection_matrix;
