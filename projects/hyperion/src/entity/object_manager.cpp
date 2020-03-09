@@ -3,14 +3,13 @@
 #include "hyperion/entity/object_manager.hpp"
 
 #include "hyperion/entity/entity.hpp"
+#include "hyperion/entity/world_manager.hpp"
 #include "hyperion/entity/components/transform.hpp"
 
 namespace Hyperion {
-
-    // TODO: The object manager is currently global and not able to differentiate between worlds
-
+    
     void ObjectManager::Update(f32 delta_time) {
-        for (Component *component : s_components_to_update) {
+        for (Component *component : s_components_to_update.at(WorldManager::GetActiveWorld())) {
             component->OnUpdate(delta_time);
         }
     }
@@ -23,14 +22,15 @@ namespace Hyperion {
     }
 
     void ObjectManager::RegisterComponentForUpdate(Component *component) {
-        s_components_to_update.push_back(component);
+        s_components_to_update[component->GetWorld()].push_back(component);
     }
 
     void ObjectManager::UnregisterComponentForUpdate(Component *component) {
-        auto begin = s_components_to_update.begin();
-        auto end = s_components_to_update.end();
+        World *world = component->GetWorld();
+        auto begin = s_components_to_update.at(world).begin();
+        auto end = s_components_to_update.at(world).end();
         if (std::find(begin, end, component) != end) {
-            s_components_to_update.erase(std::remove(begin, end, component));
+            s_components_to_update.at(world).erase(std::remove(begin, end, component));
         }
     }
 

@@ -7,7 +7,7 @@ namespace Hyperion {
 
     class ObjectManager {
     private:
-        inline static Vector<Component *> s_components_to_update;
+        inline static Map<World *, Vector<Component *>> s_components_to_update;
         inline static Vector<Object *> s_objects_to_destroy;
     private:
         ObjectManager() = delete;
