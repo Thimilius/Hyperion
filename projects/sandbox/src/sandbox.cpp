@@ -39,27 +39,17 @@ protected:
         entity->AddComponent<Rotator>();
         entity->GetComponent<MeshRenderer>()->GetMaterial()->SetTexture2D("u_texture", AssetManager::GetTexture2D("earth"));
 
-        Light *light = Entity::CreatePrimitive(EntityPrimitive::DirectionalLight)->GetComponent<Light>();
-        light->SetColor(Color::White());
-        light->GetTransform()->SetEulerAngles(Vec3(0, -45.0f, 0));
-        
-        Light *point_light_0 = Entity::CreatePrimitive(EntityPrimitive::PointLight)->GetComponent<Light>();
-        point_light_0->GetTransform()->SetPosition(Vec3(-1, 2, 2));
-        point_light_0->SetColor(Color::Red());
-        
-        Light *point_light_1 = Entity::CreatePrimitive(EntityPrimitive::PointLight)->GetComponent<Light>();
-        point_light_1->GetTransform()->SetPosition(Vec3(1, 1, 2));
-        point_light_1->SetColor(Color::Green());
-        
-        Light *point_light_2 = Entity::CreatePrimitive(EntityPrimitive::PointLight)->GetComponent<Light>();
-        point_light_2->GetTransform()->SetPosition(Vec3(0, 1, -2));
-        point_light_2->SetColor(Color::Blue());
-        
-        Light *point_light_3 = Entity::CreatePrimitive(EntityPrimitive::PointLight)->GetComponent<Light>();
-        point_light_3->GetTransform()->SetPosition(Vec3(0, 1, -1));
-        point_light_3->SetColor(Color::Yellow());
+        Entity::CreatePrimitive(EntityPrimitive::DirectionalLight, Vec3(), Quaternion::FromEulerAngles(Vec3(0, -45.0f, 0)))->GetComponent<Light>()->SetColor(Color::White());
+        Entity::CreatePrimitive(EntityPrimitive::PointLight, Vec3(-1, 2, 2))->GetComponent<Light>()->SetColor(Color::Red());
+        Entity::CreatePrimitive(EntityPrimitive::PointLight, Vec3(1, 1, 2))->GetComponent<Light>()->SetColor(Color::Green());
+        Entity::CreatePrimitive(EntityPrimitive::PointLight, Vec3(0, 1, -2))->GetComponent<Light>()->SetColor(Color::Blue());
+        Entity::CreatePrimitive(EntityPrimitive::PointLight, Vec3(0, 1, -1))->GetComponent<Light>()->SetColor(Color::Yellow());
     }
 };
+
+void Hyperion::RegisterApplicationTypes() {
+
+}
 
 Hyperion::Application *Hyperion::CreateApplication() {
     return new SandboxApp(ApplicationSettings::FromJsonFile("app.json"));

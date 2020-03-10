@@ -2,6 +2,7 @@
 
 #include "hyperion/core/engine.hpp"
 
+#include "hyperion/core/reflection.hpp"
 #include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/audio/audio_engine.hpp"
 #include "hyperion/rendering/render_engine.hpp"
@@ -16,6 +17,8 @@ namespace Hyperion {
         // We initialize the operating system first to get logging ability
         OperatingSystem::GetInstance()->Init();
 
+        RegisterEngineTypes();
+
         HYP_LOG_INFO("Engine", "Initializing...");
         SystemInfo system_info = OperatingSystem::GetInstance()->GetSystemInfo();
         HYP_LOG_INFO("Engine", "Processor Count: {} | Processor Frequency: {:.2f} Ghz | Physical Memory: {:.2f} GB",
@@ -26,6 +29,8 @@ namespace Hyperion {
         Display::UpdateDisplayInfos();
         DisplayInfo::DisplayModeInfo mode_info = Display::GetCurrentDisplayModeInfo();
         HYP_LOG_INFO("Engine", "Primary display: {}x{} @{} Hz", mode_info.width, mode_info.height, mode_info.refresh_rate);
+
+        RegisterApplicationTypes();
     }
 
     void Engine::PreInit(const ApplicationSettings &settings) {

@@ -13,14 +13,14 @@ namespace Hyperion {
 
         inline static Application *s_instance;
     public:
-        Application(const ApplicationSettings &settings);
-
         inline Window *GetWindow() const { return m_window.get(); }
 
         void Exit();
 
         inline static Application *GetInstance() { return s_instance; }
     protected:
+        Application(const ApplicationSettings &settings);
+
         virtual void OnInit() { }
         virtual void OnEvent(Event &event) { }
         virtual void OnUpdate(f32 delta_time) { }
