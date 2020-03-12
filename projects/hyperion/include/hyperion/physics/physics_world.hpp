@@ -37,6 +37,8 @@ namespace Hyperion::Physics {
         virtual void UpdateSphereColliderTransform(SphereCollider *sphere_collider) { }
         virtual void UpdateColliderActivation(Collider *collider) { }
 
+        virtual BoundingBox GetBounds(Collider *collider) { return BoundingBox(); }
+
         friend class Collider;
         friend class BoxCollider;
         friend class SphereCollider;

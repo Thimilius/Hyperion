@@ -35,6 +35,8 @@ namespace Hyperion::Physics {
         void UpdateSphereColliderTransform(SphereCollider *sphere_collider) override;
         void UpdateColliderActivation(Collider *collider) override;
 
+        BoundingBox GetBounds(Collider *collider) override;
+
         void AddCollider(Collider *collider, btCollisionObject *collision_object);
         void UpdateTransform(Transform *tranform, btCollisionObject *collision_object, Vec3 position);
     };

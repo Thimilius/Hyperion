@@ -164,6 +164,19 @@ namespace Hyperion::Physics {
         }
     }
 
+    BoundingBox BulletPhysicsWorld::GetBounds(Collider *collider) {
+        btCollisionObject *collision_object = m_collision_objects.at(collider);
+        if (collider->IsActiveAndEnabled()) {
+            btVector3 min;
+            btVector3 max;
+            collision_object->getCollisionShape()->getAabb(collision_object->getWorldTransform(), min, max);
+            return BoundingBox(Vec3(min.x(), min.y(), min.z()), Vec3(max.x(), max.y(), max.z()));
+        } else {
+            // NOTE: Do we really want to return empty bounds when the collider is not active?
+            return BoundingBox();
+        }
+    }
+
     void BulletPhysicsWorld::AddCollider(Collider *collider, btCollisionObject *collision_object) {
         m_collision_world->addCollisionObject(collision_object);
         m_collision_objects[collider] = collision_object;

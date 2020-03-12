@@ -14,6 +14,10 @@ namespace Hyperion {
         GetWorld()->GetPhysicsWorld()->UpdateColliderActivation(this);
     }
 
+    BoundingBox Collider::GetBounds() {
+        return GetWorld()->GetPhysicsWorld()->GetBounds(this);
+    }
+
     void Collider::OnMessage(EntityMessage message) {
         if (message.type == EntityMessageType::ActivationChanged) {
             GetWorld()->GetPhysicsWorld()->UpdateColliderActivation(this);
