@@ -31,7 +31,7 @@ workspace "hyperion"
 		optimize "On"
 	
 	filter "system:windows"
-		defines { "HYP_PLATFORM_WINDOWS", "_CRT_SECURE_NO_WARNINGS" }
+		defines { "HYP_PLATFORM_WINDOWS", "_CRT_SECURE_NO_WARNINGS", "_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS" }
 		systemversion "latest"
 	
 project "hyperion"
