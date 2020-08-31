@@ -25,7 +25,7 @@ namespace Hyperion {
         switch (m_data.mode) {
             case CameraMode::Perspective: {
                 f32 ndc_x = (2.0f * screen_point.x) / display_width - 1;
-                f32 ndc_y = -(2.0f * screen_point.y) / display_height - 1;
+                f32 ndc_y = 1.0f - (2.0f * screen_point.y) / display_height;
                 Vec4 clip = Vec4(ndc_x, ndc_y, -1.0f, 1.0f);
                 Vec4 view = m_data.inverse_projection_matrix * clip;
                 view.z = -1.0f;
@@ -47,8 +47,6 @@ namespace Hyperion {
 
                 Transform *transform = GetTransform();
                 Vec3 forward = transform->GetForward();
-
-                m_data.near_plane = -100;
 
                 Vec3 position = transform->GetPosition() + (transform->GetRight() * ray_x) + (transform->GetUp() * ray_y) + (forward * m_data.near_plane);
                 return Ray(position, forward);
