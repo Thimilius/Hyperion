@@ -59,6 +59,7 @@ project "hyperion"
 		"projects/hyperion/vendor/fmt/include",
 		"projects/hyperion/vendor/freetype/include",
 		"projects/hyperion/vendor/glad/include",
+		"projects/hyperion/vendor/nameof/include",
 		"projects/hyperion/vendor/nlohmann/include",
 		"projects/hyperion/vendor/stb/include",
 	}
@@ -93,6 +94,7 @@ project "sandbox"
 		"projects/hyperion/include",
 		
 		"projects/hyperion/vendor/fmt/include",
+		"projects/hyperion/vendor/nameof/include",
 	}
 		
 	filter "kind:ConsoleApp"

@@ -44,7 +44,7 @@ protected:
 };
 
 void Hyperion::RegisterApplicationTypes() {
-
+    
 }
 
 Hyperion::Application *Hyperion::CreateApplication() {

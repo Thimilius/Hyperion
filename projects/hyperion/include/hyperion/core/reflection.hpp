@@ -19,8 +19,8 @@ namespace Hyperion {
     class TypeDatabase {
     public:
         template<typename T>
-        static void Register() {
-
+        static void Register(const char* name) {
+            
         }
     };
 
