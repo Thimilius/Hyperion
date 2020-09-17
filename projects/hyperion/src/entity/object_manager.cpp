@@ -35,7 +35,7 @@ namespace Hyperion {
     }
 
     void ObjectManager::Destroy(Object *object) {
-        s_objects_to_destroy.push_back(object);
+        s_objects_to_destroy.push_back(object); 
     }
 
     void ObjectManager::DestroyImmediate(Object *object) {

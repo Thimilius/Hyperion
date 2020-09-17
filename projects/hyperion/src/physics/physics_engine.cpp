@@ -3,8 +3,13 @@
 #include "hyperion/physics/physics_engine.hpp"
 
 #include "hyperion/modules/bullet/bullet_physics_driver.hpp"
+#include "hyperion/entity/world_manager.hpp"
 
 namespace Hyperion::Physics {
+
+    bool PhysicsEngine::Raycast(Ray ray, RaycastResult &result, f32 distance) {
+        return WorldManager::GetActiveWorld()->GetPhysicsWorld()->Raycast(ray, result, distance);
+    }
 
     void PhysicsEngine::Init(const PhysicsSettings &settings) {
         s_physics_backend = settings.backend;

@@ -7,9 +7,7 @@ namespace Hyperion::Physics {
     class PhysicsDriver {
     public:
         virtual ~PhysicsDriver() = default;
-
-        virtual bool Raycast(Ray ray, RaycastResult &result, f32 distance) = 0;
-
+        
         virtual PhysicsWorld *CreatePhysicsWorld() = 0;
         virtual void DestroyPhysicsWorld(PhysicsWorld *world) = 0;
 
@@ -20,8 +18,6 @@ namespace Hyperion::Physics {
 
     class DummyPhysicsDriver : public PhysicsDriver {
     public:
-        bool Raycast(Ray ray, RaycastResult &result, f32 distance) { return false; }
-
         PhysicsWorld *CreatePhysicsWorld() { return new PhysicsWorld(); };
         void DestroyPhysicsWorld(PhysicsWorld *world) { delete world; }
 

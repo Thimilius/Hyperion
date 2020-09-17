@@ -7,10 +7,6 @@
 
 namespace Hyperion::Physics {
 
-    bool BulletPhysicsDriver::Raycast(Ray ray, RaycastResult &result, f32 distance) {
-        return WorldManager::GetActiveWorld()->GetPhysicsWorld()->Raycast(ray, result, distance);
-    }
-
     PhysicsWorld *BulletPhysicsDriver::CreatePhysicsWorld() {
         return new BulletPhysicsWorld(this);
     }

@@ -18,7 +18,7 @@ namespace Hyperion::Physics {
     public:
         inline static PhysicsBackend GetBackend() { return s_physics_backend; }
 
-        inline static bool Raycast(Ray ray, RaycastResult &result, f32 distance = 10000.0f) { return s_physics_driver->Raycast(ray, result, distance); }
+        static bool Raycast(Ray ray, RaycastResult &result, f32 distance = 10000.0f);
     private:
         PhysicsEngine() = delete;
         ~PhysicsEngine() = delete;

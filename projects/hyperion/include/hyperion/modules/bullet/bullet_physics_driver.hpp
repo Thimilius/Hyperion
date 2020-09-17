@@ -12,8 +12,6 @@ namespace Hyperion::Physics {
         btCollisionDispatcher *m_collision_dispatcher;
         btBroadphaseInterface *m_collision_broadphase_interface;
     public:
-        bool Raycast(Ray ray, RaycastResult &result, f32 distance) override;
-
         PhysicsWorld *CreatePhysicsWorld() override;
         void DestroyPhysicsWorld(PhysicsWorld *world) override;
 
