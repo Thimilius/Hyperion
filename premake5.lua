@@ -79,7 +79,7 @@ project "hyperion"
 		}
 		
 	    postbuildcommands {
-		    "{COPY} vendor/fmod/lib/x64/fmod.dll %{cfg.targetdir}",
+		    "{COPY} vendor/fmod/lib/windows/fmod.dll %{cfg.targetdir}",
 		    "{COPY} vendor/assimp/lib/windows/assimp.dll %{cfg.targetdir}",
 			"{COPY} vendor/mono/lib/windows/mono.dll %{cfg.targetdir}"
 	    }
