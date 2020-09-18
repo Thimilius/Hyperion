@@ -34,6 +34,8 @@ workspace "hyperion"
 		defines { "HYP_PLATFORM_WINDOWS", "_CRT_SECURE_NO_WARNINGS", "_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS" }
 		systemversion "latest"
 	
+group "Native"	
+	
 project "hyperion"
 	location "projects/hyperion"
 	kind "StaticLib"
@@ -128,7 +130,7 @@ project "sandbox"
 		    
 		    "{COPY} %{cfg.targetdir}/fmod.dll ../../run_tree/",
 		    "{COPY} %{cfg.targetdir}/assimp.dll ../../run_tree/",
-			"{COPY} %{cfg.targetdir}/mono.dll ../../run_tree/"
+			"{COPY} %{cfg.targetdir}/mono.dll ../../run_tree/",
 	    }
 
 	filter { "system:windows", "configurations:debug" }
@@ -138,3 +140,17 @@ project "sandbox"
 	filter { "system:windows", "configurations:release" }
 		libdirs { "projects/hyperion/vendor/freetype/lib/windows/release" }
 		libdirs { "projects/hyperion/vendor/bullet/lib/windows/release" }
+
+group "Managed"
+
+project "HyperionEngine"
+	location "projects/hyperion_engine"
+	kind "SharedLib"
+	
+	language "C#"
+	
+	files { "projects/hyperion_engine/*" }
+	
+	postbuildcommands {
+		"{COPY} $(TargetDir)$(TargetFileName) $(ProjectDir)/../../run_tree/data/managed/"
+	}
