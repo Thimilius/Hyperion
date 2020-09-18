@@ -10,6 +10,7 @@
 #include "hyperion/entity/world_manager.hpp"
 #include "hyperion/editor/editor_engine.hpp"
 #include "hyperion/physics/physics_engine.hpp"
+#include "hyperion/scripting/scripting_engine.hpp"
 
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
@@ -47,6 +48,7 @@ namespace Hyperion {
         Rendering::Font::Init();
         Physics::PhysicsEngine::Init(settings.physics);
         Audio::AudioEngine::Init(settings.audio);
+        ScriptingEngine::Init();
         WorldManager::Init(settings.entity);
         Editor::EditorEngine::Init();
     }
@@ -72,6 +74,7 @@ namespace Hyperion {
 
     void Engine::Shutdown() {
         WorldManager::Shutdown();
+        ScriptingEngine::Shutdown();
         Audio::AudioEngine::Shutdown();
         Physics::PhysicsEngine::Shutdown();
         Rendering::RenderEngine::Shutdown();

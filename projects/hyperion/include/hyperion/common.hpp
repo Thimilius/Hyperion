@@ -24,7 +24,7 @@
 #include "hyperion/core/enum.hpp"
 #include "hyperion/core/log.hpp"
 
-#include "nameof/nameof.hpp"
+#include <nameof/nameof.hpp>
 
 #define HYP_PANIC do {                                                \
             HYP_LOG_ERROR("Engine", "Engine encountered an error!");  \
