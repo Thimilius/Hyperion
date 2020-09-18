@@ -139,8 +139,6 @@ static_assert(NAMEOF_ENUM_RANGE_MAX > NAMEOF_ENUM_RANGE_MIN, "NAMEOF_ENUM_RANGE_
 
 template <std::size_t N>
 class [[nodiscard]] cstring {
-  static_assert(N > 0, "nameof::cstring requires size greater than 0.");
-
   std::array<char, N + 1> chars_;
 
   template <std::size_t... I>

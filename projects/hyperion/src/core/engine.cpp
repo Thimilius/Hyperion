@@ -11,6 +11,10 @@
 #include "hyperion/editor/editor_engine.hpp"
 #include "hyperion/physics/physics_engine.hpp"
 
+#include <mono/jit/jit.h>
+#include <mono/metadata/assembly.h>
+#include <mono/metadata/debug-helpers.h>
+
 namespace Hyperion {
     
     void Engine::Setup() {

@@ -61,6 +61,7 @@ project "hyperion"
 		"projects/hyperion/vendor/glad/include",
 		"projects/hyperion/vendor/nameof/include",
 		"projects/hyperion/vendor/nlohmann/include",
+		"projects/hyperion/vendor/mono/include",
 		"projects/hyperion/vendor/stb/include",
 	}
 	
@@ -77,7 +78,8 @@ project "hyperion"
 		
 	    postbuildcommands {
 		    "{COPY} vendor/fmod/lib/x64/fmod.dll %{cfg.targetdir}",
-		    "{COPY} vendor/assimp/lib/windows/assimp.dll %{cfg.targetdir}"
+		    "{COPY} vendor/assimp/lib/windows/assimp.dll %{cfg.targetdir}",
+			"{COPY} vendor/mono/lib/windows/mono.dll %{cfg.targetdir}"
 	    }
 
 project "sandbox"
@@ -105,7 +107,8 @@ project "sandbox"
 
 		libdirs {
 			"projects/hyperion/vendor/fmod/lib/windows",
-			"projects/hyperion/vendor/assimp/lib/windows"
+			"projects/hyperion/vendor/assimp/lib/windows",
+			"projects/hyperion/vendor/mono/lib/windows"
 		}
 
 		links {
@@ -114,16 +117,18 @@ project "sandbox"
 		
 			"fmod_vc",
 			"assimp",
+			"mono",
 			
 			"freetype",
-			"bullet"
+			"bullet",
 		}
 
 	    postbuildcommands {
 		    "{COPY} %{cfg.targetdir}/%{prj.name}.exe ../../run_tree/",
 		    
 		    "{COPY} %{cfg.targetdir}/fmod.dll ../../run_tree/",
-		    "{COPY} %{cfg.targetdir}/assimp.dll ../../run_tree/"
+		    "{COPY} %{cfg.targetdir}/assimp.dll ../../run_tree/",
+			"{COPY} %{cfg.targetdir}/mono.dll ../../run_tree/"
 	    }
 
 	filter { "system:windows", "configurations:debug" }
