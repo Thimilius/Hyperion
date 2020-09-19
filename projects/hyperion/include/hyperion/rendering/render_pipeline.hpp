@@ -6,7 +6,8 @@ namespace Hyperion::Rendering {
     public:
         virtual ~RenderPipeline() = default;
 
-        virtual void Render() = 0;
+        virtual void Init() { }
+        virtual void Render() { }
     };
 
 }

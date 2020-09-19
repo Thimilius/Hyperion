@@ -36,11 +36,6 @@ namespace Hyperion {
         Audio::AudioBackend backend = Audio::AudioBackend::FMod;
     };
 
-    struct EntitySettings {
-        // FIXME: An actual world pointer is probably not the right way to determine the starting world
-        World *start_world = nullptr;
-    };
-
     struct ApplicationSettings {
         TimeSettings time;
         WindowSettings window;
@@ -48,7 +43,6 @@ namespace Hyperion {
         RenderSettings render;
         PhysicsSettings physics;
         AudioSettings audio;
-        EntitySettings entity;
 
         static ApplicationSettings FromJsonFile(const String &path);
     };

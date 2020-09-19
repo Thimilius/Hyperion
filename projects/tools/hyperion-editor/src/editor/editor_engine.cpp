@@ -20,12 +20,12 @@ using namespace Hyperion::Rendering;
 namespace Hyperion::Editor {
 
     void EditorEngine::Init() {
-        s_camera = WorldManager::GetActiveWorld()->GetCameras()[0];
+        s_editor_world = WorldManager::CreateWorld();
+
+        s_game_world = WorldManager::CreateWorld();
+
+        s_camera = Entity::Create("Camera", Vec3(), Quaternion::Identity(), nullptr, s_editor_world)->AddComponent<Camera>();
         s_camera_controller = EditorCameraController(s_camera);
-        
-        s_world = WorldManager::CreateWorld();
-        //s_gizmo = Entity::Create("Gizmo", Vec3::Zero(), Quaternion::Identity(), nullptr, s_world)->AddComponent<EditorGizmo>();
-        //s_gizmo->SetCamera(s_camera);
 
         s_icon_mesh = MeshFactory::CreateQuad(0.5f, 0.5f);
         s_icon_material = Material::Create(AssetManager::GetShader("standard_unlit_texture"));
@@ -80,7 +80,7 @@ namespace Hyperion::Editor {
 
             ImmediateRenderer::Begin(s_camera->GetCameraData(), MeshTopology::Lines);
             {
-                WorldManager::GetActiveWorld()->GetPhysicsWorld()->DebugDraw();
+                s_game_world->GetPhysicsWorld()->DebugDraw();
             }
             ImmediateRenderer::End();
         }
@@ -96,7 +96,7 @@ namespace Hyperion::Editor {
                     Mat4 camera_rotation = Mat4::Rotate(s_camera->GetTransform()->GetRotation());
                     Vec3 camera_position = s_camera->GetTransform()->GetPosition();
 
-                    Vector<Light *> lights = WorldManager::GetActiveWorld()->GetLights();
+                    Vector<Light *> lights = s_game_world->GetLights();
                     std::sort(lights.begin(), lights.end(), [camera_position](Light *first, Light *second) {
                         f32 distance_first = (camera_position - first->GetTransform()->GetPosition()).SqrMagnitude();
                         f32 distance_second = (camera_position - second->GetTransform()->GetPosition()).SqrMagnitude();
@@ -119,7 +119,7 @@ namespace Hyperion::Editor {
 
                 {
                     RenderCommand::Clear(ClearMask::Depth);
-                    ForwardRenderer::DrawEntities(s_world);
+                    ForwardRenderer::DrawEntities(s_game_world);
                 }
             }
             ForwardRenderer::End();

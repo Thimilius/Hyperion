@@ -45,7 +45,6 @@ namespace Hyperion {
         Physics::PhysicsEngine::Init(settings.physics);
         Audio::AudioEngine::Init(settings.audio);
         ScriptingEngine::Init();
-        WorldManager::Init(settings.entity);
     }
 
     void Engine::Update(f32 delta_time) {

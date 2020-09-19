@@ -9,8 +9,12 @@
 namespace Hyperion {
     
     void ObjectManager::Update(f32 delta_time) {
-        for (Component *component : s_components_to_update.at(WorldManager::GetActiveWorld())) {
-            component->OnUpdate(delta_time);
+        World *world = WorldManager::GetActiveWorld();
+        if (s_components_to_update.find(world) != s_components_to_update.end()) {
+            Vector<Component *> components = s_components_to_update.at(world);
+            for (Component *component : components) {
+                component->OnUpdate(delta_time);
+            }
         }
     }
 
@@ -27,10 +31,14 @@ namespace Hyperion {
 
     void ObjectManager::UnregisterComponentForUpdate(Component *component) {
         World *world = component->GetWorld();
-        auto begin = s_components_to_update.at(world).begin();
-        auto end = s_components_to_update.at(world).end();
-        if (std::find(begin, end, component) != end) {
-            s_components_to_update.at(world).erase(std::remove(begin, end, component));
+
+        if (s_components_to_update.find(world) != s_components_to_update.end()) {
+            Vector<Component *> &components = s_components_to_update.at(world);
+            auto begin = components.begin();
+            auto end = components.end();
+            if (std::find(begin, end, component) != end) {
+                components.erase(std::remove(begin, end, component));
+            }
         }
     }
 

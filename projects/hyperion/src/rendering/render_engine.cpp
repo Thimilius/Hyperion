@@ -14,8 +14,7 @@ namespace Hyperion::Rendering {
         s_render_backend = settings.backend;
 
         switch (settings.backend) {
-            case RenderBackend::OpenGL:
-            {
+            case RenderBackend::OpenGL: {
                 RenderCommand::s_render_driver.reset(new OpenGLRenderDriver());
                 break;
             }
@@ -39,6 +38,8 @@ namespace Hyperion::Rendering {
 
         ForwardRenderer::Init();
         ImmediateRenderer::Init();
+
+        s_render_pipeline->Init();
     }
 
     void RenderEngine::Render() {

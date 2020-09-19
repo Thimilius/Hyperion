@@ -12,10 +12,7 @@ namespace Hyperion {
         inline static Vector<World *> s_worlds;
     public:
         inline static World *GetActiveWorld() { return s_active_world; }
-        inline static void SetActiveWorld(World *world) { 
-            HYP_ASSERT_MESSAGE(world, "Active world can not be null!");
-            s_active_world = world;
-        }
+        inline static void SetActiveWorld(World *world) { s_active_world = world; }
 
         static World *CreateWorld(); 
         static void DestroyWorld(World *world);
@@ -23,7 +20,6 @@ namespace Hyperion {
         WorldManager() = delete;
         ~WorldManager() = delete;
 
-        static void Init(EntitySettings settings);
         static void Shutdown();
 
         friend class Engine;

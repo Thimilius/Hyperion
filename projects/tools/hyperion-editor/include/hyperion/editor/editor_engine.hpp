@@ -12,7 +12,8 @@ namespace Hyperion::Editor {
 
     class EditorEngine {
     private:
-        inline static World *s_world;
+        inline static World *s_editor_world;
+        inline static World *s_game_world;
         inline static EditorGizmo *s_gizmo;
         
         inline static Camera *s_camera;

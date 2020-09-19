@@ -25,16 +25,6 @@ namespace Hyperion {
         delete world;
     }
 
-    void WorldManager::Init(EntitySettings settings) {
-        World *world = settings.start_world;
-        if (!world) {
-            // We are currently forcing a new world with a camera
-            world = WorldManager::CreateWorld();
-            Entity::Create("Camera", Vec3(), Quaternion::Identity(), nullptr, world)->AddComponent<Camera>();
-        }
-        WorldManager::SetActiveWorld(world);
-    }
-
     void WorldManager::Shutdown() {
         for (World *world : s_worlds) {
             delete world;
