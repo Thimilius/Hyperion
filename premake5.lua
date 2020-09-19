@@ -41,7 +41,12 @@ project "hyperion"
 	pchheader "hyppch.hpp"
 	pchsource "projects/hyperion/src/hyppch.cpp"
 
-	files { "projects/hyperion/**" }
+	files {
+		"projects/hyperion/**.hpp",
+		"projects/hyperion/**.h",
+		"projects/hyperion/**.c",
+		"projects/hyperion/**.cpp",
+	}
 
 	excludes {
 		"projects/hyperion/src/platform/**",
@@ -70,8 +75,8 @@ project "hyperion"
 
 	filter "system:windows"
 		files {
-			"projects/hyperion/include/hyperion/platform/windows/**",
-			"projects/hyperion/src/platform/windows/**",
+			"projects/hyperion/include/hyperion/platform/windows/**.hpp",
+			"projects/hyperion/src/platform/windows/**.cpp",
 
             "projects/hyperion/vendor/glad/src/glad_wgl.c"
 		}
@@ -90,7 +95,12 @@ project "hyperion-editor"
 	
 	links { "hyperion" }
 	
-	files { "projects/tools/hyperion-editor/**" }	
+	files {
+		"projects/tools/hyperion-editor/**.hpp",
+		"projects/tools/hyperion-editor/**.h",
+		"projects/tools/hyperion-editor/**.c",
+		"projects/tools/hyperion-editor/**.cpp",
+	}
 	
     excludes { "projects/tools/hyperion-editor/resource.rc" }
 
@@ -151,7 +161,7 @@ project "HyperionEngine"
 	
 	language "C#"
 	
-	files { "projects/managed/HyperionEngine/*" }
+	files { "projects/managed/HyperionEngine/**.cs" }
 	
 	postbuildcommands {
 		"{COPY} $(TargetDir)$(TargetFileName) $(ProjectDir)../../../run_tree/data/managed/"
