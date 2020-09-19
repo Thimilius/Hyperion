@@ -58,7 +58,6 @@ namespace Hyperion {
             Engine::LateUpdate();
 
             Engine::Render();
-            OnRender();
 
             if (tick_timer > 1.0f) {
                 u32 fps = static_cast<u32>(frame_counter * (1.0 / tick_timer));

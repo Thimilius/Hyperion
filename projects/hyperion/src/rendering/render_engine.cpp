@@ -47,7 +47,7 @@ namespace Hyperion::Rendering {
     }
 
     void RenderEngine::Shutdown() {
-
+        s_render_pipeline.release();
     }
 
 }

@@ -2,6 +2,7 @@
 #include <hyperion/entry_point.hpp>
 
 #include "hyperion/editor/editor_engine.hpp"
+#include "hyperion/editor/editor_render_pipeline.hpp"
 
 namespace Hyperion::Editor {
 
@@ -17,10 +18,6 @@ namespace Hyperion::Editor {
             EditorEngine::Update(delta_time);
         }
 
-        void OnRender() override {
-            EditorEngine::Render();
-        }
-
         void OnTick() override {
             EditorEngine::Tick();
         }
@@ -33,5 +30,9 @@ void Hyperion::RegisterApplicationTypes() {
 }
 
 Hyperion::Application *Hyperion::CreateApplication() {
-    return new Hyperion::Editor::EditorApplication(ApplicationSettings::FromJsonFile("app.json"));
+    ApplicationSettings settings = ApplicationSettings::FromJsonFile("app.json");
+    settings.render.path = Rendering::RenderPath::Custom;
+    settings.render.custom_pipeline = new Editor::EditorRenderPipeline();
+
+    return new Hyperion::Editor::EditorApplication(settings);
 }
