@@ -1,19 +1,19 @@
-#include "hyppch.hpp"
-
 #include "hyperion/editor/editor_engine.hpp"
 
-#include "hyperion/core/app/time.hpp"
-#include "hyperion/rendering/render_command.hpp"
-#include "hyperion/rendering/immediate_renderer.hpp"
-#include "hyperion/rendering/forward_renderer.hpp"
-#include "hyperion/rendering/font.hpp"
-#include "hyperion/assets/asset_manager.hpp"
-#include "hyperion/assets/mesh_factory.hpp"
-#include "hyperion/entity/entity.hpp"
-#include "hyperion/entity/world_manager.hpp"
-#include "hyperion/entity/components/rendering/camera.hpp"
-#include "hyperion/entity/components/rendering/light.hpp"
-#include "hyperion/entity/components/physics/collider.hpp"
+#include <hyperion/core/operating_system.hpp>
+#include <hyperion/core/app/application.hpp>
+#include <hyperion/core/app/time.hpp>
+#include <hyperion/rendering/render_command.hpp>
+#include <hyperion/rendering/immediate_renderer.hpp>
+#include <hyperion/rendering/forward_renderer.hpp>
+#include <hyperion/rendering/font.hpp>
+#include <hyperion/assets/asset_manager.hpp>
+#include <hyperion/assets/mesh_factory.hpp>
+#include <hyperion/entity/entity.hpp>
+#include <hyperion/entity/world_manager.hpp>
+#include <hyperion/entity/components/rendering/camera.hpp>
+#include <hyperion/entity/components/rendering/light.hpp>
+#include <hyperion/entity/components/physics/collider.hpp>
 
 using namespace Hyperion::Rendering;
 

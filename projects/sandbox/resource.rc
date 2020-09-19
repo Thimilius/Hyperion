@@ -1,6 +1,0 @@
-#ifndef SANDBOX_RESOURCES
-#define SANDBOX_RESOURCES
-
-MAINICON ICON "../../run_tree/icon/icon.ico"
-
-#endif

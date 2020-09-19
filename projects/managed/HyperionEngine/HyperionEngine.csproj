@@ -18,8 +18,8 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\build\bin\debug-windows-x86_64\</OutputPath>
-    <BaseIntermediateOutputPath>..\..\build\obj\debug-windows-x86_64\debug\HyperionEngine\</BaseIntermediateOutputPath>
+    <OutputPath>..\..\..\build\bin\debug-windows-x86_64\</OutputPath>
+    <BaseIntermediateOutputPath>..\..\..\build\obj\debug-windows-x86_64\debug\HyperionEngine\</BaseIntermediateOutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
     <DefineConstants>HYP_DEBUG;HYP_ENABLE_ASSERTS;HYP_BREAK_ON_ASSERT;HYP_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -30,8 +30,8 @@
     <PlatformTarget>x64</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\build\bin\release-windows-x86_64\</OutputPath>
-    <BaseIntermediateOutputPath>..\..\build\obj\release-windows-x86_64\release\HyperionEngine\</BaseIntermediateOutputPath>
+    <OutputPath>..\..\..\build\bin\release-windows-x86_64\</OutputPath>
+    <BaseIntermediateOutputPath>..\..\..\build\obj\release-windows-x86_64\release\HyperionEngine\</BaseIntermediateOutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
     <DefineConstants>HYP_RELEASE;HYP_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Application.cs" />
     <None Include="HyperionEngine.csproj" />
+    <None Include="HyperionEngine.csproj.user" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
@@ -55,6 +56,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>IF EXIST $(TargetDir)$(TargetFileName)\ (xcopy /Q /E /Y /I $(TargetDir)$(TargetFileName) $(ProjectDir)\..\..\run_tree\data\managed &gt; nul) ELSE (xcopy /Q /Y /I $(TargetDir)$(TargetFileName) $(ProjectDir)\..\..\run_tree\data\managed &gt; nul)</PostBuildEvent>
+    <PostBuildEvent>IF EXIST $(TargetDir)$(TargetFileName)\ (xcopy /Q /E /Y /I $(TargetDir)$(TargetFileName) $(ProjectDir)..\..\..\run_tree\data\managed &gt; nul) ELSE (xcopy /Q /Y /I $(TargetDir)$(TargetFileName) $(ProjectDir)..\..\..\run_tree\data\managed &gt; nul)</PostBuildEvent>
   </PropertyGroup>
 </Project>

@@ -1,14 +1,13 @@
-#include "hyppch.hpp"
-
 #include "hyperion/editor/editor_gizmo.hpp"
 
-#include "hyperion/assets/asset_manager.hpp"
-#include "hyperion/assets/mesh_factory.hpp"
-#include "hyperion/entity/entity.hpp"
-#include "hyperion/entity/world.hpp"
-#include "hyperion/entity/components/rendering/mesh_renderer.hpp"
-#include "hyperion/entity/components/physics/box_collider.hpp"
-#include "hyperion/physics/physics_world.hpp"
+#include <hyperion/core/app/input.hpp>
+#include <hyperion/assets/asset_manager.hpp>
+#include <hyperion/assets/mesh_factory.hpp>
+#include <hyperion/entity/entity.hpp>
+#include <hyperion/entity/world.hpp>
+#include <hyperion/entity/components/rendering/mesh_renderer.hpp>
+#include <hyperion/entity/components/physics/box_collider.hpp>
+#include <hyperion/physics/physics_world.hpp>
 
 using namespace Hyperion::Rendering;
 

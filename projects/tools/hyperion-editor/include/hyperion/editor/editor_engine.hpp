@@ -1,11 +1,12 @@
 #pragma once
 
+#include <hyperion/rendering/vertex_array.hpp>
+#include <hyperion/rendering/mesh.hpp>
+#include <hyperion/rendering/material.hpp>
+#include <hyperion/rendering/font.hpp>
+
 #include "hyperion/editor/editor_camera_controller.hpp"
 #include "hyperion/editor/editor_gizmo.hpp"
-#include "hyperion/rendering/vertex_array.hpp"
-#include "hyperion/rendering/mesh.hpp"
-#include "hyperion/rendering/material.hpp"
-#include "hyperion/rendering/font.hpp"
 
 namespace Hyperion::Editor {
 

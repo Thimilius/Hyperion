@@ -25,7 +25,6 @@ namespace Hyperion {
         static void Update(f32 delta_time);
         static void LateUpdate();
         static void Render();
-        static void Tick();
         static void Shutdown();
 
         friend class Main;

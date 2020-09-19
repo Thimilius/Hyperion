@@ -6,9 +6,9 @@
 #include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/audio/audio_engine.hpp"
 #include "hyperion/rendering/render_engine.hpp"
+#include "hyperion/rendering/font.hpp"
 #include "hyperion/entity/object_manager.hpp"
 #include "hyperion/entity/world_manager.hpp"
-#include "hyperion/editor/editor_engine.hpp"
 #include "hyperion/physics/physics_engine.hpp"
 #include "hyperion/scripting/scripting_engine.hpp"
 
@@ -46,14 +46,12 @@ namespace Hyperion {
         Audio::AudioEngine::Init(settings.audio);
         ScriptingEngine::Init();
         WorldManager::Init(settings.entity);
-        Editor::EditorEngine::Init();
     }
 
     void Engine::Update(f32 delta_time) {
         AssetManager::Update();
         Physics::PhysicsEngine::Update(delta_time);
         ObjectManager::Update(delta_time);
-        Editor::EditorEngine::Update(delta_time);
     }
 
     void Engine::LateUpdate() {
@@ -62,10 +60,6 @@ namespace Hyperion {
 
     void Engine::Render() {
         Rendering::RenderEngine::Render();
-    }
-
-    void Engine::Tick() {
-        Editor::EditorEngine::Tick();
     }
 
     void Engine::Shutdown() {

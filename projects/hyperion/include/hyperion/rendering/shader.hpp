@@ -3,6 +3,7 @@
 #include "hyperion/common.hpp"
 #include "hyperion/assets/asset.hpp"
 #include "hyperion/core/math/math.hpp"
+#include "hyperion/core/math/mat3.hpp"
 
 namespace Hyperion::Rendering {
 

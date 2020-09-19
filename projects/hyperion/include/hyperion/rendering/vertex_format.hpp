@@ -1,8 +1,9 @@
 #pragma once
 
 #include "hyperion/common.hpp"
-#include "hyperion/rendering/buffer.hpp"
 #include "hyperion/core/color.hpp"
+#include "hyperion/core/math/vec2.hpp"
+#include "hyperion/rendering/buffer.hpp"
 
 namespace Hyperion::Rendering {
 

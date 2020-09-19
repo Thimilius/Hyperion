@@ -1,6 +1,7 @@
 #pragma once
 
 #include "hyperion/core/image.hpp"
+#include "hyperion/core/app/application_settings.hpp"
 #include "hyperion/core/io/file_watcher.hpp"
 #include "hyperion/rendering/shader.hpp"
 #include "hyperion/rendering/texture_2d.hpp"

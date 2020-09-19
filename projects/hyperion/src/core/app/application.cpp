@@ -10,7 +10,6 @@
 #include "hyperion/core/app/events/app_events.hpp"
 #include "hyperion/core/app/events/window_events.hpp"
 #include "hyperion/core/app/events/key_events.hpp"
-#include "hyperion/editor/editor_engine.hpp"
 
 namespace Hyperion {
 
@@ -59,13 +58,13 @@ namespace Hyperion {
             Engine::LateUpdate();
 
             Engine::Render();
+            OnRender();
 
             if (tick_timer > 1.0f) {
                 u32 fps = static_cast<u32>(frame_counter * (1.0 / tick_timer));
                 Time::s_fps = fps;
                 Time::s_frame_time = 1000.0 / fps;
 
-                Engine::Tick();
                 OnTick();
 
                 frame_counter = 0;

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "hyperion/entity/components/component.hpp"
-#include "hyperion/entity/components/rendering/camera.hpp"
+#include <hyperion/entity/components/component.hpp>
+#include <hyperion/entity/components/rendering/camera.hpp>
 
 namespace Hyperion::Editor {
 

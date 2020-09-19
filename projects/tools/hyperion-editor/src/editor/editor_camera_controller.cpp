@@ -1,9 +1,8 @@
-#include "hyppch.hpp"
-
 #include "hyperion/editor/editor_camera_controller.hpp"
 
-#include "hyperion/core/app/input.hpp"
-#include "hyperion/entity/components/transform.hpp"
+#include <hyperion/core/math/math.hpp>
+#include <hyperion/core/app/input.hpp>
+#include <hyperion/entity/components/transform.hpp>
 
 using namespace Hyperion::Rendering;
 

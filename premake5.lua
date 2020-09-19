@@ -1,5 +1,5 @@
 workspace "hyperion"
-	startproject "sandbox"
+	startproject "hyperion-editor"
 
 	language "C++"
 	cppdialect "C++17"
@@ -33,8 +33,6 @@ workspace "hyperion"
 	filter "system:windows"
 		defines { "HYP_PLATFORM_WINDOWS", "_CRT_SECURE_NO_WARNINGS", "_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS" }
 		systemversion "latest"
-	
-group "Native"	
 	
 project "hyperion"
 	location "projects/hyperion"
@@ -84,17 +82,21 @@ project "hyperion"
 			"{COPY} vendor/mono/lib/windows/mono.dll %{cfg.targetdir}"
 	    }
 
-project "sandbox"
-	location "projects/sandbox"
+group "tools"	
+
+project "hyperion-editor"
+	location "projects/tools/hyperion-editor"
 	kind "ConsoleApp"
 	
 	links { "hyperion" }
 	
-	files { "projects/sandbox/**" }	
+	files { "projects/tools/hyperion-editor/**" }	
 	
-    excludes { "projects/sandbox/resource.rc" }
+    excludes { "projects/tools/hyperion-editor/resource.rc" }
 
 	includedirs {
+		"projects/tools/hyperion-editor/include",
+	
 		"projects/hyperion/include",
 		
 		"projects/hyperion/vendor/fmt/include",
@@ -105,7 +107,7 @@ project "sandbox"
 		defines { "HYP_CONSOLE" }
 
     filter "system:windows"
-        files { "projects/sandbox/resource.rc" }
+        files { "projects/tools/hyperion-editor/resource.rc" }
 
 		libdirs {
 			"projects/hyperion/vendor/fmod/lib/windows",
@@ -126,11 +128,11 @@ project "sandbox"
 		}
 
 	    postbuildcommands {
-		    "{COPY} %{cfg.targetdir}/%{prj.name}.exe ../../run_tree/",
+		    "{COPY} %{cfg.targetdir}/%{prj.name}.exe ../../../run_tree/",
 		    
-		    "{COPY} %{cfg.targetdir}/fmod.dll ../../run_tree/",
-		    "{COPY} %{cfg.targetdir}/assimp.dll ../../run_tree/",
-			"{COPY} %{cfg.targetdir}/mono.dll ../../run_tree/",
+		    "{COPY} %{cfg.targetdir}/fmod.dll ../../../run_tree/",
+		    "{COPY} %{cfg.targetdir}/assimp.dll ../../../run_tree/",
+			"{COPY} %{cfg.targetdir}/mono.dll ../../../run_tree/",
 	    }
 
 	filter { "system:windows", "configurations:debug" }
@@ -141,16 +143,16 @@ project "sandbox"
 		libdirs { "projects/hyperion/vendor/freetype/lib/windows/release" }
 		libdirs { "projects/hyperion/vendor/bullet/lib/windows/release" }
 
-group "Managed"
+group "managed"
 
 project "HyperionEngine"
-	location "projects/hyperion_engine"
+	location "projects/managed/HyperionEngine"
 	kind "SharedLib"
 	
 	language "C#"
 	
-	files { "projects/hyperion_engine/*" }
+	files { "projects/managed/HyperionEngine/*" }
 	
 	postbuildcommands {
-		"{COPY} $(TargetDir)$(TargetFileName) $(ProjectDir)/../../run_tree/data/managed/"
+		"{COPY} $(TargetDir)$(TargetFileName) $(ProjectDir)../../../run_tree/data/managed/"
 	}

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "hyperion/core/math/vec2.hpp"
-#include "hyperion/entity/components/rendering/camera.hpp"
+#include <hyperion/core/math/vec2.hpp>
+#include <hyperion/entity/components/rendering/camera.hpp>
 
 namespace Hyperion::Editor {
 

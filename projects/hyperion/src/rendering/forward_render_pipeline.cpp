@@ -5,7 +5,7 @@
 #include "hyperion/rendering/render_command.hpp"
 #include "hyperion/rendering/forward_renderer.hpp"
 #include "hyperion/entity/world_manager.hpp"
-#include "hyperion/editor/editor_engine.hpp"
+#include "hyperion/entity/components/rendering/camera.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -37,8 +37,6 @@ namespace Hyperion::Rendering {
             }
             ForwardRenderer::End();
         }
-
-        Editor::EditorEngine::Render();
     }
 
 }
