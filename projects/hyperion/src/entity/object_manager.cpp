@@ -9,9 +9,7 @@
 namespace Hyperion {
     
     void ObjectManager::Update(f32 delta_time) {
-        World *world = WorldManager::GetActiveWorld();
-        if (s_components_to_update.find(world) != s_components_to_update.end()) {
-            Vector<Component *> components = s_components_to_update.at(world);
+        for (auto &[world, components] : s_components_to_update) {
             for (Component *component : components) {
                 component->OnUpdate(delta_time);
             }

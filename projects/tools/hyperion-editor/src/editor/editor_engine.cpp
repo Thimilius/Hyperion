@@ -71,6 +71,13 @@ namespace Hyperion::Editor {
     }
 
     void EditorEngine::Render() {
+        ForwardRenderer::Begin(s_camera->GetCameraData());
+        {
+            RenderCommand::Clear(ClearMask::Depth);
+            ForwardRenderer::DrawEntities(s_game_world);
+        }
+        ForwardRenderer::End();
+
         bool blending_enabled = RenderCommand::GetRasterizerState()->IsBlendingEnabled();
         RenderCommand::GetRasterizerState()->SetBlendingEnabled(true);
 
@@ -91,8 +98,6 @@ namespace Hyperion::Editor {
             }
             ImmediateRenderer::End();
         }
-
-        ForwardRenderer::DrawEntities(s_editor_world);
 
         if (s_overlay_enabled) {
             RenderCommand::Clear(ClearMask::Depth);
@@ -125,11 +130,15 @@ namespace Hyperion::Editor {
                         ForwardRenderer::DrawMesh(s_icon_mesh, s_icon_material, model);
                     }
                 }
+            }
+            ForwardRenderer::End();
+        }
 
-                {
-                    RenderCommand::Clear(ClearMask::Depth);
-                    ForwardRenderer::DrawEntities(s_game_world);
-                }
+        if (s_overlay_enabled) {
+            ForwardRenderer::Begin(s_camera->GetCameraData());
+            {
+                RenderCommand::Clear(ClearMask::Depth);
+                ForwardRenderer::DrawEntities(s_editor_world);
             }
             ForwardRenderer::End();
         }

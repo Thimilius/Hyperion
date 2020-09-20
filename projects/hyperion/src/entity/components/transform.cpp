@@ -84,6 +84,12 @@ namespace Hyperion {
         m_world_to_local_matrix = m_local_to_world_matrix.Inverted();
     }
 
+    void Hyperion::Transform::OnCreate() {
+        Component::OnCreate();
+
+        RecalculateTransform();
+    }
+
     void Transform::OnDestroy() {
         Entity *entity = GetEntity();
         if (m_parent == nullptr) {

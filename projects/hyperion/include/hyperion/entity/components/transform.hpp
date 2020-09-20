@@ -98,6 +98,7 @@ namespace Hyperion {
         void SetParent(Transform *parent);
         bool IsChildOf(Transform *parent) const;
     protected:
+        void OnCreate() override;
         void OnDestroy() override;
     private:
         Transform() : Component("Transform") { }
