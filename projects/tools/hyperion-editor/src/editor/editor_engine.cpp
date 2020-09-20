@@ -21,8 +21,7 @@ namespace Hyperion::Editor {
 
     void EditorEngine::Init() {
         s_editor_world = WorldManager::CreateWorld();
-
-        s_game_world = WorldManager::CreateWorld();
+        WorldManager::SetActiveWorld(s_editor_world);
 
         s_camera = Entity::Create("Camera", Vec3(), Quaternion::Identity(), nullptr, s_editor_world)->AddComponent<Camera>();
         s_camera_controller = EditorCameraController(s_camera);
@@ -31,6 +30,10 @@ namespace Hyperion::Editor {
         s_icon_material = Material::Create(AssetManager::GetShader("standard_unlit_texture"));
 
         s_font = Font::Create("data/fonts/robotomono_regular.ttf", 16, FontCharacterSet::All);
+
+        s_game_world = WorldManager::CreateWorld();
+        s_gizmo = Entity::Create("Gizmo", Vec3::Zero(), Quaternion::Identity(), nullptr, s_editor_world)->AddComponent<EditorGizmo>();
+        s_gizmo->SetCamera(s_camera);
 
         InitGridVertexArray();
         UpdateStats();
@@ -84,6 +87,8 @@ namespace Hyperion::Editor {
             }
             ImmediateRenderer::End();
         }
+
+        ForwardRenderer::DrawEntities(s_editor_world);
 
         if (s_overlay_enabled) {
             RenderCommand::Clear(ClearMask::Depth);
