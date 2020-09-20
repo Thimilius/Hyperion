@@ -19,7 +19,7 @@ namespace Hyperion {
             return false;
         }
 
-        Transform *parent = m_transform.m_parent;
+        Transform *parent = m_transform->m_parent;
         while (parent != nullptr) {
             if (!parent->GetEntity()->m_active) {
                 return false;
@@ -118,26 +118,28 @@ namespace Hyperion {
                 ++it;
             }
         }
-        m_transform.OnDestroy();
+        m_transform->OnDestroy();
 
-        if (!m_transform.m_children.empty()) {
-            for (s32 i = ((s32)m_transform.m_children.size()) - 1; i >= 0; i--) {
-                Entity *child = m_transform.m_children[i]->m_entity;
+        if (!m_transform->m_children.empty()) {
+            for (s32 i = ((s32)m_transform->m_children.size()) - 1; i >= 0; i--) {
+                Entity *child = m_transform->m_children[i]->m_entity;
                 // Children already scheduled for destruction get seperated from us by removing the parent reference.
                 // This way the order of destruction is not important.
                 if (child->m_destroyed) {
-                    child->m_transform.m_parent = nullptr;
+                    child->m_transform->m_parent = nullptr;
                 } else {
                     DestroyImmediate(child);
                 }
             }
         }
+
+        DestroyImmediate(m_transform);
     }
 
     void Entity::NotifyActivationChanged() {
         DispatchMessage({ EntityMessageType::ActivationChanged, nullptr });
 
-        for (Transform *child : m_transform.m_children) {
+        for (Transform *child : m_transform->m_children) {
             child->GetEntity()->NotifyActivationChanged();
         }
     }
@@ -150,16 +152,19 @@ namespace Hyperion {
         }
         m_world = world;
 
-        m_components[Transform::GetTypeStatic()] = &m_transform;
-        m_transform.m_entity = this;
-        m_transform.OnCreate();
-        m_transform.m_local_position = position;
-        m_transform.m_derived_position = position;
-        m_transform.m_local_rotation = rotation;
-        m_transform.m_derived_rotation = rotation;
+        m_transform = new Transform();
+
+        m_transform->m_entity = this;
+        m_transform->m_local_position = position;
+        m_transform->m_derived_position = position;
+        m_transform->m_local_rotation = rotation;
+        m_transform->m_derived_rotation = rotation;
+        m_transform->OnCreate();
+
+        m_components[Transform::GetTypeStatic()] = m_transform;
 
         if (parent) {
-            m_transform.SetParent(parent);
+            m_transform->SetParent(parent);
         } else {
             m_world->AddRootEntity(this);
         }

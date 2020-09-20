@@ -21,7 +21,7 @@ namespace Hyperion {
 
         static void Destroy(Object *object);
         static void DestroyImmediate(Object *object);
-        
+
         friend class Object;
         friend class Component;
         friend class Engine;

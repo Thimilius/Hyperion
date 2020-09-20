@@ -30,7 +30,7 @@ namespace Hyperion {
     class Entity : public Object {
         HYP_OBJECT(Entity, Object);
     private:
-        Transform m_transform;
+        Transform *m_transform;
         Map<ObjectType, Component *> m_components;
         
         World *m_world = nullptr;
@@ -40,7 +40,7 @@ namespace Hyperion {
         Vector<EntityMessageListener *> m_message_listeners;
     public:
         inline World *GetWorld() const { return m_world; }
-        inline Transform *GetTransform() { return &m_transform; }
+        inline Transform *GetTransform() { return m_transform; }
 
         inline bool IsActive() const { return m_active; }
         inline void SetActive(bool active) {
@@ -54,7 +54,7 @@ namespace Hyperion {
         template<typename T, typename =
             std::enable_if_t<std::is_base_of<Component, T>::value &&
             !std::is_same<Component, T>::value &&
-            !std::is_base_of<Transform, T>::value &&
+            !std::is_same<Transform, T>::value &&
             std::is_default_constructible<T>::value>>
         T *AddComponent() {
             ObjectType type = T::GetTypeStatic();
