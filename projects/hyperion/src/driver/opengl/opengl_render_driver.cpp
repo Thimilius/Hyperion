@@ -58,7 +58,7 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLRenderDriver::DrawIndexed(MeshTopology topology, IndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) {
-        glDrawElementsBaseVertex(GetGLMeshTopology(topology), index_count, GetGLIndexFormat(format), (void*)(GetGLIndexSize(format) * index_offset), vertex_offset);
+        glDrawElementsBaseVertex(GetGLMeshTopology(topology), index_count, GetGLIndexFormat(format), reinterpret_cast<void*>(GetGLIndexSize(format) * index_offset), vertex_offset);
     }
 
     void OpenGLRenderDriver::Draw(MeshTopology topology, u32 vertex_count, u32 vertex_offset) {

@@ -71,8 +71,8 @@ namespace Hyperion {
         TextureFormat format = GetTextureFormatFromImage(sample_image);
 
         Map<TextureCubemapFace, const u8 *> pixels;
-        for (auto pair : images) {
-            pixels[pair.first] = pair.second->GetPixels();
+        for (auto [face, image] : images) {
+            pixels[face] = image->GetPixels();
         }
 
         Ref<TextureCubemap> texture_cubemap = TextureCubemap::Create(width, height, format, parameters, pixels);

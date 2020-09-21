@@ -17,8 +17,7 @@ namespace Hyperion::Physics {
     }
 
     BulletPhysicsWorld::~BulletPhysicsWorld() {
-        for (auto pair : m_collision_objects) {
-            btCollisionObject *collision_object = pair.second;
+        for (auto [collider, collision_object] : m_collision_objects) {
             m_collision_world->removeCollisionObject(collision_object);
             delete collision_object->getCollisionShape();
             delete collision_object;

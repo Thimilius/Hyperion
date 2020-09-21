@@ -94,8 +94,8 @@ namespace Hyperion::Rendering {
         glTextureStorage2D(m_texture_id, m_parameters.use_mipmaps ? m_mipmap_count : 1, GetGLInternalFormat(m_format), m_width, m_height);
 
         if (valid_pixels) {
-            for (auto &pair : pixels) {
-                SetPixels(pair.first, pair.second, false);
+            for (auto [face, pixel_data] : pixels) {
+                SetPixels(face, pixel_data, false);
             }
 
             GenerateMipmaps();

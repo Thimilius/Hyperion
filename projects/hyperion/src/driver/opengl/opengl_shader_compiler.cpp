@@ -20,10 +20,10 @@ namespace Hyperion::Rendering {
 
         // Compile shaders
         Vector<u32> shaders;
-        for (auto pair : pre_process_result.sources) {
-            u32 shader = glCreateShader(GetGLShaderType(pair.first));
+        for (auto [shader_type, shader_source] : pre_process_result.sources) {
+            u32 shader = glCreateShader(GetGLShaderType(shader_type));
 
-            const GLchar *source = pair.second.c_str();
+            const GLchar *source = shader_source.c_str();
             glShaderSource(shader, 1, &source, 0);
 
             glCompileShader(shader);

@@ -75,9 +75,9 @@ namespace Hyperion {
         T *GetComponent() const {
             ObjectType type = T::GetTypeStatic();
 
-            for (auto pair : m_components) {
-                if (pair.second->IsBase(type)) {
-                    return static_cast<T *>(pair.second);
+            for (auto [component_type, component] : m_components) {
+                if (component->IsBase(type)) {
+                    return static_cast<T *>(component);
                 }
             }
 
@@ -125,9 +125,9 @@ namespace Hyperion {
             ObjectType type = T::GetTypeStatic();
             Vector<T *> components;
 
-            for (auto pair : m_components) {
-                if (pair.second->IsBase(type)) {
-                    components.push_back(static_cast<T *>(pair.second));
+            for (auto [component_type, component] : m_components) {
+                if (component->IsBase(type)) {
+                    components.push_back(static_cast<T *>(component));
                 }
             }
             for (Transform *child : m_transform.m_children) {
@@ -143,9 +143,9 @@ namespace Hyperion {
             ObjectType type = T::GetTypeStatic();
             Vector<T *> components;
 
-            for (auto pair : m_components) {
-                if (pair.second->IsBase(type)) {
-                    components.push_back(static_cast<T *>(pair.second));
+            for (auto [component_type, component] : m_components) {
+                if (component->IsBase(type)) {
+                    components.push_back(static_cast<T *>(component));
                 }
             }
             Transform *parent = m_transform.m_parent;
