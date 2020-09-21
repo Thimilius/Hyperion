@@ -94,7 +94,7 @@ namespace Hyperion::Editor {
 
             ImmediateRenderer::Begin(s_camera->GetCameraData(), MeshTopology::Lines);
             {
-                s_game_world->GetPhysicsWorld()->DebugDraw();
+                s_editor_world->GetPhysicsWorld()->DebugDraw();
             }
             ImmediateRenderer::End();
         }
@@ -137,8 +137,13 @@ namespace Hyperion::Editor {
         if (s_overlay_enabled) {
             ForwardRenderer::Begin(s_camera->GetCameraData());
             {
+                bool culling_enabled = RenderCommand::GetRasterizerState()->IsCullingEnabled();
+                RenderCommand::GetRasterizerState()->SetCullingEnabled(false);
+
                 RenderCommand::Clear(ClearMask::Depth);
                 ForwardRenderer::DrawEntities(s_editor_world);
+
+                RenderCommand::GetRasterizerState()->SetCullingEnabled(culling_enabled);
             }
             ForwardRenderer::End();
         }

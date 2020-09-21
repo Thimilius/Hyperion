@@ -21,7 +21,7 @@ namespace Hyperion::Editor {
         Ref<Material> material = Material::Create(AssetManager::GetShader("standard_unlit"));
         Ref<Mesh> mesh = MeshFactory::CreateFromFile("data/models/gizmo.obj");
 
-        m_gimzo_x = Entity::Create("GizmoPartX", Vec3::Zero(), Quaternion::Identity(), GetTransform());
+        m_gimzo_x = Entity::Create("Gizmo_Part_X", Vec3::Zero(), Quaternion::Identity(), GetTransform());
         m_gimzo_x->AddTag("X");
         m_gimzo_x->GetTransform()->SetEulerAngles(Vec3(0.0f, 0.0f, -90.0));
         BoxCollider *collider = m_gimzo_x->AddComponent<BoxCollider>();
@@ -32,7 +32,7 @@ namespace Hyperion::Editor {
         renderer->SetMaterial(material);
         renderer->GetMaterial()->SetColor("u_color", Color::Red());
 
-        m_gimzo_y = Entity::Create("GizmoPartY", Vec3::Zero(), Quaternion::Identity(), GetTransform());
+        m_gimzo_y = Entity::Create("Gizmo_Part_Y", Vec3::Zero(), Quaternion::Identity(), GetTransform());
         m_gimzo_y->AddTag("Y");
         collider = m_gimzo_y->AddComponent<BoxCollider>();
         collider->SetOrigin(Vec3(0.0f, 0.5f, 0.0f));
@@ -42,7 +42,7 @@ namespace Hyperion::Editor {
         renderer->SetMaterial(material);
         renderer->GetMaterial()->SetColor("u_color", Color::Green());
 
-        m_gimzo_z = Entity::Create("GizmoPartZ", Vec3::Zero(), Quaternion::Identity(), GetTransform());
+        m_gimzo_z = Entity::Create("Gizmo_Part_Z", Vec3::Zero(), Quaternion::Identity(), GetTransform());
         m_gimzo_z->AddTag("Z");
         m_gimzo_z->GetTransform()->SetEulerAngles(Vec3(90.0f, 0.0f, 0.0f));
         collider = m_gimzo_z->AddComponent<BoxCollider>();
@@ -52,6 +52,47 @@ namespace Hyperion::Editor {
         renderer->SetMesh(mesh);
         renderer->SetMaterial(material);
         renderer->GetMaterial()->SetColor("u_color", Color::Blue());
+
+        Ref<Mesh> plane_mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Quad);
+
+        m_gizmo_xy = Entity::Create("Gizmo_Part_XY", Vec3::Zero(), Quaternion::Identity(), GetTransform());
+        m_gizmo_xy->AddTag("XY");
+        m_gizmo_xy->GetTransform()->SetEulerAngles(Vec3(0.0f, 0.0f, 0.0f));
+        m_gizmo_xy->GetTransform()->SetPosition(Vec3(0.25f, 0.25f, 0.0f));
+        m_gizmo_xy->GetTransform()->SetLocalScale(Vec3(0.25f, 0.25f, 0.25f));
+        collider = m_gizmo_xy->AddComponent<BoxCollider>();
+        collider->SetOrigin(Vec3(0.0f, 0.0f, 0.0f));
+        collider->SetSize(Vec3(1.0f, 1.0f, 0.01f));
+        renderer = m_gizmo_xy->AddComponent<MeshRenderer>();
+        renderer->SetMesh(plane_mesh);
+        renderer->SetMaterial(material);
+        renderer->GetMaterial()->SetColor("u_color", Color::Blue());
+
+        m_gizmo_xz = Entity::Create("Gizmo_Part_XZ", Vec3::Zero(), Quaternion::Identity(), GetTransform());
+        m_gizmo_xz->AddTag("XZ");
+        m_gizmo_xz->GetTransform()->SetEulerAngles(Vec3(90.0f, 0.0f, 0.0f));
+        m_gizmo_xz->GetTransform()->SetPosition(Vec3(0.25f, 0.0f, 0.25f));
+        m_gizmo_xz->GetTransform()->SetLocalScale(Vec3(0.25f, 0.25f, 0.25f));
+        collider = m_gizmo_xz->AddComponent<BoxCollider>();
+        collider->SetOrigin(Vec3(0.0f, 0.0f, 0.0f));
+        collider->SetSize(Vec3(1.0f, 1.0f, 0.01f));
+        renderer = m_gizmo_xz->AddComponent<MeshRenderer>();
+        renderer->SetMesh(plane_mesh);
+        renderer->SetMaterial(material);
+        renderer->GetMaterial()->SetColor("u_color", Color::Green());
+
+        m_gizmo_xz = Entity::Create("Gizmo_Part_YZ", Vec3::Zero(), Quaternion::Identity(), GetTransform());
+        m_gizmo_xz->AddTag("YZ");
+        m_gizmo_xz->GetTransform()->SetEulerAngles(Vec3(0.0f, 90.0f, 0.0f));
+        m_gizmo_xz->GetTransform()->SetPosition(Vec3(0.0f, 0.25f, 0.25f));
+        m_gizmo_xz->GetTransform()->SetLocalScale(Vec3(0.25f, 0.25f, 0.25f));
+        collider = m_gizmo_xz->AddComponent<BoxCollider>();
+        collider->SetOrigin(Vec3(0.0f, 0.0f, 0.0f));
+        collider->SetSize(Vec3(1.0f, 1.0f, 0.01f));
+        renderer = m_gizmo_xz->AddComponent<MeshRenderer>();
+        renderer->SetMesh(plane_mesh);
+        renderer->SetMaterial(material);
+        renderer->GetMaterial()->SetColor("u_color", Color::Red());
     }
 
     void EditorGizmo::OnUpdate(f32 delta_time) {
@@ -75,13 +116,15 @@ namespace Hyperion::Editor {
             Entity *entity = result.collider->GetEntity();
             MeshRenderer *renderer = entity->GetComponent<MeshRenderer>();
 
-            if (m_last_gizmo != nullptr && m_last_gizmo != entity) {
-                ResetColor();
-            }
-            
-            result.collider->GetEntity()->GetComponent<MeshRenderer>()->GetMaterial()->SetColor("u_color", Color::White());
+            if (m_move_type == MoveType::None) {
+                if (m_last_gizmo != nullptr && m_last_gizmo != entity) {
+                    ResetColor();
+                }
 
-            m_last_gizmo = entity;
+                result.collider->GetEntity()->GetComponent<MeshRenderer>()->GetMaterial()->SetColor("u_color", Color::White());
+
+                m_last_gizmo = entity;
+            }
 
             if (Input::GetMouseButtonDown(MouseButtonCode::Left)) {
                 if (entity->HasTag("X")) {
@@ -90,6 +133,12 @@ namespace Hyperion::Editor {
                     m_move_type = MoveType::YAxis;
                 } else if (entity->HasTag("Z")) {
                     m_move_type = MoveType::ZAxis;
+                } else if (entity->HasTag("XY")) {
+                    m_move_type = MoveType::XYAxis;
+                } else if (entity->HasTag("XZ")) {
+                    m_move_type = MoveType::XZAxis;
+                } else if (entity->HasTag("YZ")) {
+                    m_move_type = MoveType::YZAxis;
                 }
 
                 switch (m_move_type) {
@@ -108,10 +157,31 @@ namespace Hyperion::Editor {
                         m_offset.z = position.z - ray.GetPoint(hit_distance).z;
                         break;
                     }
+                    case MoveType::XYAxis: {
+                        xy_plane.Intersects(ray, hit_distance);
+                        Vec3 hit = ray.GetPoint(hit_distance);
+                        m_offset.x = position.x - hit.x;
+                        m_offset.y = position.y - hit.y;
+                        break;
+                    }
+                    case MoveType::XZAxis: {
+                        xz_plane.Intersects(ray, hit_distance);
+                        Vec3 hit = ray.GetPoint(hit_distance);
+                        m_offset.x = position.x - hit.x;
+                        m_offset.z = position.z - hit.z;
+                        break;
+                    }
+                    case MoveType::YZAxis: {
+                        yz_plane.Intersects(ray, hit_distance);
+                        Vec3 hit = ray.GetPoint(hit_distance);
+                        m_offset.y = position.y - hit.y;
+                        m_offset.z = position.z - hit.z;
+                        break;
+                    }
                 }
             }
         } else {
-            if (m_last_gizmo != nullptr) {
+            if (m_last_gizmo != nullptr && m_move_type == MoveType::None) {
                 ResetColor();
                 m_last_gizmo = nullptr;
             }
@@ -146,6 +216,54 @@ namespace Hyperion::Editor {
                 position.z = z;
                 break;
             }
+            case MoveType::XYAxis: {
+                xy_plane.Intersects(ray, hit_distance);
+                Vec3 hit = ray.GetPoint(hit_distance);
+
+                f32 x = hit.x + m_offset.x;
+                f32 y = hit.y + m_offset.y;
+
+                if (snapping) {
+                    x = Math::Round(x);
+                    y = Math::Round(y);
+                }
+
+                position.x = x;
+                position.y = y;
+                break;
+            }
+            case MoveType::XZAxis: {
+                xz_plane.Intersects(ray, hit_distance);
+                Vec3 hit = ray.GetPoint(hit_distance);
+
+                f32 x = hit.x + m_offset.x;
+                f32 z = hit.z + m_offset.z;
+
+                if (snapping) {
+                    x = Math::Round(x);
+                    z = Math::Round(z);
+                }
+
+                position.x = x;
+                position.z = z;
+                break;
+            }
+            case MoveType::YZAxis: {
+                yz_plane.Intersects(ray, hit_distance);
+                Vec3 hit = ray.GetPoint(hit_distance);
+
+                f32 y = hit.y + m_offset.y;
+                f32 z = hit.z + m_offset.z;
+
+                if (snapping) {
+                    y = Math::Round(y);
+                    z = Math::Round(z);
+                }
+
+                position.y = y;
+                position.z = z;
+                break;
+            }
         }
 
         GetTransform()->SetPosition(position);
@@ -159,6 +277,12 @@ namespace Hyperion::Editor {
             color = Color::Green();
         } else if (m_last_gizmo->HasTag("Z")) {
             color = Color::Blue();
+        } else if (m_last_gizmo->HasTag("XY")) {
+            color = Color::Blue();
+        } else if (m_last_gizmo->HasTag("XZ")) {
+            color = Color::Green();
+        } else if (m_last_gizmo->HasTag("YZ")) {
+            color = Color::Red();
         }
         m_last_gizmo->GetComponent<MeshRenderer>()->GetMaterial()->SetColor("u_color", color);
     }

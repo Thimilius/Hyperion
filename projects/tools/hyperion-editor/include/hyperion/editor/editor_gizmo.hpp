@@ -15,6 +15,10 @@ namespace Hyperion::Editor {
             XAxis,
             YAxis,
             ZAxis,
+
+            XYAxis,
+            XZAxis,
+            YZAxis
         };
 
         MoveType m_move_type = MoveType::None;
@@ -23,6 +27,10 @@ namespace Hyperion::Editor {
         Entity *m_gimzo_x;
         Entity *m_gimzo_y;
         Entity *m_gimzo_z;
+        Entity *m_gizmo_xy;
+        Entity *m_gizmo_xz;
+        Entity *m_gizmo_yz;
+
         f32 m_gizmo_scale = 0.002f;
         Entity *m_last_gizmo = nullptr;
 
