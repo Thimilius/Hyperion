@@ -33,6 +33,8 @@ namespace Hyperion::Editor {
 
         s_icon_mesh = MeshFactory::CreateQuad(0.5f, 0.5f);
         s_icon_material = Material::Create(AssetManager::GetShader("standard_unlit_texture"));
+        
+        s_selection_material = Material::Create(AssetManager::GetShader("standard_unlit"));
 
         s_font = Font::Create("data/fonts/robotomono_regular.ttf", 16, FontCharacterSet::All);
 
@@ -99,6 +101,9 @@ namespace Hyperion::Editor {
             }
         }
 
+        s_selection_color.a = Math::Cos(static_cast<f32>(Time::GetTime()) * 4.0f) * 0.4f + 0.6f;
+        s_selection_material->SetColor("u_color", s_selection_color);
+
         s_camera_controller.Update(delta_time);
     }
 
@@ -164,6 +169,29 @@ namespace Hyperion::Editor {
                 }
             }
             ForwardRenderer::End();
+        }
+
+        if ((s_overlay_flags & EditorOverlayFlags::Selection) == EditorOverlayFlags::Selection) {
+            ForwardRenderer::Begin(s_camera->GetCameraData());
+            {
+                PolygonMode polygon_mode = RenderCommand::GetRasterizerState()->GetPolygonMode();
+                RenderCommand::GetRasterizerState()->SetPolygonMode(PolygonMode::Line);
+
+                Object *selection = EditorSelection::GetSelection();
+                if (selection != nullptr && selection->IsBase(Entity::GetTypeStatic())) {
+                    Entity *entity = static_cast<Entity *>(selection);
+                    MeshRenderer *renderer = entity->GetComponent<MeshRenderer>();
+                    if (renderer != nullptr) {
+                        Transform *transform = entity->GetTransform();
+                        Mat4 local_to_world = transform->GetLocalToWorldMatrix();
+                        Mat4 world_to_local = transform->GetWorldToLocalMatrix();
+
+                        ForwardRenderer::DrawMesh(renderer->GetRenderMesh(), s_selection_material, local_to_world, world_to_local);
+                    }
+                }
+
+                RenderCommand::GetRasterizerState()->SetPolygonMode(polygon_mode);
+            }
         }
 
         if ((s_overlay_flags & EditorOverlayFlags::Gizmo) == EditorOverlayFlags::Gizmo) {

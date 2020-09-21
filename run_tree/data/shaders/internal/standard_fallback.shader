@@ -16,5 +16,5 @@ void main() {
 #import standard_fragment
 
 void main() {
-	o_color = vec4(0, 1, 1, 1);
+	o_color = vec4(1, 0, 1, 1);
 }

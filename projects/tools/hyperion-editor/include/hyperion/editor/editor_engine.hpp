@@ -15,11 +15,12 @@ namespace Hyperion::Editor {
 
         Stats        = BIT(1),
 
-        Grid         = BIT(2),
-        Gizmo        = BIT(3),
-        Lights       = BIT(4),
+        Selection    = BIT(2),
+        Grid         = BIT(3),
+        Gizmo        = BIT(4),
+        Lights       = BIT(5),
 
-        PhysicsDebug = BIT(5),
+        PhysicsDebug = BIT(6),
     };
     HYP_CREATE_ENUM_FLAG_OPERATORS(EditorOverlayFlags);
 
@@ -38,11 +39,13 @@ namespace Hyperion::Editor {
 
         inline static Ref<Rendering::Mesh> s_icon_mesh;
         inline static Ref<Rendering::Material> s_icon_material;
+        inline static Ref<Rendering::Material> s_selection_material;
+        inline static Color s_selection_color = Color(0.0f, 1.0f, 1.0f, 1.0f);
 
         inline static String s_stats;
         inline static Ref<Rendering::Font> s_font;
 
-        inline static EditorOverlayFlags s_overlay_flags = EditorOverlayFlags::Stats | EditorOverlayFlags::Grid | EditorOverlayFlags::Gizmo | EditorOverlayFlags::Lights;
+        inline static EditorOverlayFlags s_overlay_flags = EditorOverlayFlags::Stats | EditorOverlayFlags::Selection | EditorOverlayFlags::Grid | EditorOverlayFlags::Gizmo | EditorOverlayFlags::Lights;
     public:
         static Camera *GetCamera() { return s_camera; }
 
