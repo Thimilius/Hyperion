@@ -23,6 +23,7 @@
 #include "hyperion/core/string_utils.hpp"
 #include "hyperion/core/enum.hpp"
 #include "hyperion/core/log.hpp"
+#include "hyperion/core/result.hpp"
 
 #include <nameof/nameof.hpp>
 

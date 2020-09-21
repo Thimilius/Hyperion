@@ -8,6 +8,7 @@
 #include "hyperion/core/engine.hpp"
 #include "hyperion/core/color.hpp"
 #include "hyperion/core/image.hpp"
+#include "hyperion/core/result.hpp"
 #include "hyperion/core/io/file_utilities.hpp"
 #include "hyperion/core/io/image_loader.hpp"
 #include "hyperion/core/math/math.hpp"

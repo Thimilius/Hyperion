@@ -25,6 +25,7 @@
 #include "hyperion/core/string_utils.hpp"
 #include "hyperion/core/operating_system.hpp"
 #include "hyperion/core/engine.hpp"
+#include "hyperion/core/result.hpp"
 #include "hyperion/core/app/application.hpp"
 #include "hyperion/core/app/display.hpp"
 #include "hyperion/core/math/math.hpp"

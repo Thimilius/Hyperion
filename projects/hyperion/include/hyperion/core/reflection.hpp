@@ -20,7 +20,7 @@ namespace Hyperion {
     public:
         template<typename T>
         static void Register(const char* name) {
-            
+
         }
     };
 
