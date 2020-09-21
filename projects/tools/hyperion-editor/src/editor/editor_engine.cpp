@@ -13,7 +13,11 @@
 #include <hyperion/entity/world_manager.hpp>
 #include <hyperion/entity/components/rendering/camera.hpp>
 #include <hyperion/entity/components/rendering/light.hpp>
+#include <hyperion/entity/components/rendering/mesh_renderer.hpp>
 #include <hyperion/entity/components/physics/collider.hpp>
+#include <hyperion/physics/physics_world.hpp>
+
+#include "hyperion/editor/editor_selection.hpp"
 
 using namespace Hyperion::Rendering;
 
@@ -34,6 +38,7 @@ namespace Hyperion::Editor {
 
         s_gizmo = Entity::Create("Gizmo", Vec3::Zero(), Quaternion::Identity(), nullptr, s_editor_world)->AddComponent<EditorGizmo>();
         s_gizmo->SetCamera(s_camera);
+        s_gizmo->GetEntity()->SetActive(false);
 
         InitGridVertexArray();
         UpdateStats();
@@ -54,17 +59,44 @@ namespace Hyperion::Editor {
             UpdateStats();
         }
         if (Input::GetKeyDown(KeyCode::F3)) {
-            s_overlay_enabled = !s_overlay_enabled;
+            if ((s_overlay_flags & EditorOverlayFlags::Grid) == EditorOverlayFlags::Grid) {
+                s_overlay_flags = s_overlay_flags & ~EditorOverlayFlags::Grid;
+            } else {
+                s_overlay_flags |= EditorOverlayFlags::Grid;
+            }
         }
         if (Input::GetKeyDown(KeyCode::F4)) {
-            s_stats_enabled = !s_stats_enabled;
+            if ((s_overlay_flags & EditorOverlayFlags::Stats) == EditorOverlayFlags::Stats) {
+                s_overlay_flags = s_overlay_flags & ~EditorOverlayFlags::Stats;
+            } else {
+                s_overlay_flags |= EditorOverlayFlags::Stats;
+            }
         }
         if (Input::GetKeyDown(KeyCode::F5)) {
-            s_physics_debug_draw = !s_physics_debug_draw;
+            if ((s_overlay_flags & EditorOverlayFlags::PhysicsDebug) == EditorOverlayFlags::PhysicsDebug) {
+                s_overlay_flags = s_overlay_flags & ~EditorOverlayFlags::PhysicsDebug;
+            } else {
+                s_overlay_flags |= EditorOverlayFlags::PhysicsDebug;
+            }
         }
 
-        if (Input::GetKeyDown(KeyCode::F)) {
-            s_gizmo->GetTransform()->SetPosition(Vec3::Zero());
+        if (Input::GetMouseButtonDown(MouseButtonCode::Left)) {
+            Ray ray = s_camera->ScreenPointToRay(Input::GetMousePosition());
+            Physics::RaycastResult result;
+            if (s_game_world->GetPhysicsWorld()->Raycast(ray, result, 1000)) {
+                Entity *entity = result.collider->GetEntity();
+                s_gizmo->GetEntity()->SetActive(true);
+                s_gizmo->GetTransform()->SetPosition(entity->GetTransform()->GetPosition());
+                s_gizmo->SetSelection(entity);
+                EditorSelection::SetSelection(entity);
+            } else {
+                // HACK
+                if (!s_editor_world->GetPhysicsWorld()->Raycast(ray, result, 1000)) {
+                    s_gizmo->GetEntity()->SetActive(false);
+                    s_gizmo->SetSelection(nullptr);
+                    EditorSelection::SetSelection(nullptr);
+                }
+            }
         }
 
         s_camera_controller.Update(delta_time);
@@ -81,7 +113,7 @@ namespace Hyperion::Editor {
         bool blending_enabled = RenderCommand::GetRasterizerState()->IsBlendingEnabled();
         RenderCommand::GetRasterizerState()->SetBlendingEnabled(true);
 
-        if (s_overlay_enabled) {
+        if ((s_overlay_flags & EditorOverlayFlags::Grid) == EditorOverlayFlags::Grid) {
             ImmediateRenderer::Begin(s_camera->GetCameraData());
             {
                 ImmediateRenderer::DrawWire(MeshTopology::Lines, s_grid_vertex_array, s_grid_vertex_count);
@@ -89,7 +121,7 @@ namespace Hyperion::Editor {
             ImmediateRenderer::End();
         }
 
-        if (s_physics_debug_draw) {
+        if ((s_overlay_flags & EditorOverlayFlags::PhysicsDebug) == EditorOverlayFlags::PhysicsDebug) {
             RenderCommand::Clear(ClearMask::Depth);
 
             ImmediateRenderer::Begin(s_camera->GetCameraData(), MeshTopology::Lines);
@@ -99,7 +131,7 @@ namespace Hyperion::Editor {
             ImmediateRenderer::End();
         }
 
-        if (s_overlay_enabled) {
+        if ((s_overlay_flags & EditorOverlayFlags::Lights) == EditorOverlayFlags::Lights) {
             RenderCommand::Clear(ClearMask::Depth);
 
             ForwardRenderer::Begin(s_camera->GetCameraData());
@@ -134,7 +166,7 @@ namespace Hyperion::Editor {
             ForwardRenderer::End();
         }
 
-        if (s_overlay_enabled) {
+        if ((s_overlay_flags & EditorOverlayFlags::Gizmo) == EditorOverlayFlags::Gizmo) {
             ForwardRenderer::Begin(s_camera->GetCameraData());
             {
                 bool culling_enabled = RenderCommand::GetRasterizerState()->IsCullingEnabled();
@@ -148,7 +180,7 @@ namespace Hyperion::Editor {
             ForwardRenderer::End();
         }
 
-        if (s_stats_enabled) {
+        if ((s_overlay_flags & EditorOverlayFlags::Stats) == EditorOverlayFlags::Stats) {
             f32 y = static_cast<f32>(Display::GetHeight() - s_font->GetSize());
             ImmediateRenderer::DrawText(s_stats, s_font, 0, y, 1.0f, Color::White());
         }

@@ -35,8 +35,10 @@ namespace Hyperion::Editor {
         Entity *m_last_gizmo = nullptr;
 
         Camera *m_camera;
+        Entity *m_selection;
     public:
         void SetCamera(Camera *camera) { m_camera = camera; }
+        void SetSelection(Entity *selection) { m_selection = selection; }
     protected:
         void OnCreate() override;
         void OnUpdate(f32 delta_time) override;

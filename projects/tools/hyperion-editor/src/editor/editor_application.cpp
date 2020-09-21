@@ -2,6 +2,7 @@
 #include <hyperion/entry_point.hpp>
 
 #include "hyperion/editor/editor_engine.hpp"
+#include "hyperion/editor/editor_selection.hpp"
 #include "hyperion/editor/editor_render_pipeline.hpp"
 
 namespace Hyperion::Editor {
@@ -12,10 +13,18 @@ namespace Hyperion::Editor {
     protected:
         void OnInit() override {
             EditorEngine::Init();
+
+            Entity::CreatePrimitive(EntityPrimitive::DirectionalLight);
+            Entity::CreatePrimitive(EntityPrimitive::PointLight);
+            Entity::CreatePrimitive(EntityPrimitive::Cube);
         }
 
         void OnUpdate(f32 delta_time) override {
             EditorEngine::Update(delta_time);
+
+            if (Input::GetKeyDown(KeyCode::N)) {
+                Entity::CreatePrimitive(EntityPrimitive::Cube);
+            }
         }
 
         void OnTick() override {

@@ -10,6 +10,19 @@
 
 namespace Hyperion::Editor {
 
+    enum class EditorOverlayFlags {
+        None         = BIT(0),
+
+        Stats        = BIT(1),
+
+        Grid         = BIT(2),
+        Gizmo        = BIT(3),
+        Lights       = BIT(4),
+
+        PhysicsDebug = BIT(5),
+    };
+    HYP_CREATE_ENUM_FLAG_OPERATORS(EditorOverlayFlags);
+
     class EditorEngine {
     private:
         inline static World *s_editor_world;
@@ -29,9 +42,7 @@ namespace Hyperion::Editor {
         inline static String s_stats;
         inline static Ref<Rendering::Font> s_font;
 
-        inline static bool s_overlay_enabled = true;
-        inline static bool s_stats_enabled = true;
-        inline static bool s_physics_debug_draw = false;
+        inline static EditorOverlayFlags s_overlay_flags = EditorOverlayFlags::Stats | EditorOverlayFlags::Grid | EditorOverlayFlags::Gizmo | EditorOverlayFlags::Lights;
     public:
         static Camera *GetCamera() { return s_camera; }
 

@@ -267,6 +267,9 @@ namespace Hyperion::Editor {
         }
 
         GetTransform()->SetPosition(position);
+        if (m_selection != nullptr) {
+            m_selection->GetTransform()->SetPosition(position);
+        }
     }
 
     void EditorGizmo::ResetColor() {

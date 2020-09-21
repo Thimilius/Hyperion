@@ -44,8 +44,10 @@ namespace Hyperion {
 
         inline bool IsActive() const { return m_active; }
         inline void SetActive(bool active) {
-            m_active = active;
-            NotifyActivationChanged();
+            if (active != m_active) {
+                m_active = active;
+                NotifyActivationChanged();
+            }
         }
         bool IsActiveInHierarchy() const;
 
