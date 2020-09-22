@@ -5,8 +5,6 @@
 namespace Hyperion::Rendering {
 
     class OpenGLVertexBuffer : public VertexBuffer {
-    private:
-        u32 m_vertex_buffer_id;
     public:
         OpenGLVertexBuffer(const u8 *vertices, u32 size);
         OpenGLVertexBuffer(const u8 *vertices, u32 size, BufferUsage usage);
@@ -20,11 +18,11 @@ namespace Hyperion::Rendering {
         void SetData(u32 offset, u32 size, const u8 *verticies) override;
     private:
         u32 GetGLBufferUsage(BufferUsage usage);
+    private:
+        u32 m_vertex_buffer_id;
     };
 
     class OpenGLIndexBuffer : public IndexBuffer {
-    private:
-        u32 m_index_buffer_id;
     public:
         OpenGLIndexBuffer(const u16 *indices, u32 count);
         OpenGLIndexBuffer(const u32 *indices, u32 count);
@@ -34,6 +32,8 @@ namespace Hyperion::Rendering {
         void Unbind() const override;
 
         u32 GetID() const override { return m_index_buffer_id; }
+    private:
+        u32 m_index_buffer_id;
     };
 
 }

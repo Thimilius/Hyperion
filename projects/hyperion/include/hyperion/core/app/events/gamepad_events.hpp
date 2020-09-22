@@ -6,23 +6,23 @@
 namespace Hyperion {
 
     class GamepadEvent : public Event {
-    private:
-        Gamepad m_gamepad;
     public:
         GamepadEvent(Gamepad gamepad) : m_gamepad(gamepad) { }
 
         inline Gamepad GetGamepad() const { return m_gamepad; }
 
         EventCategory GetCategory() const override { return EventCategory::Input & EventCategory::Gamepad; }
+    private:
+        Gamepad m_gamepad;
     };
 
     class GamepadButtonEvent : public GamepadEvent {
-    private:
-        GamepadButtonCode m_button_code;
     public:
         GamepadButtonEvent(Gamepad gamepad, GamepadButtonCode button_code) : GamepadEvent(gamepad), m_button_code(button_code) { }
 
         inline GamepadButtonCode GetGamepadButtonCode() const { return m_button_code; }
+    private:
+        GamepadButtonCode m_button_code;
     };
 
     class GamepadButtonPressedEvent : public GamepadButtonEvent {
@@ -44,8 +44,6 @@ namespace Hyperion {
     };
 
     class GamepadConnectionChangedEvent : public GamepadEvent {
-    private:
-        bool m_connected;
     public:
         GamepadConnectionChangedEvent(Gamepad gamepad, bool connected) : GamepadEvent(gamepad), m_connected(connected) { }
 
@@ -54,6 +52,8 @@ namespace Hyperion {
         EventType GetType() const override { return EventType::GamepadConnectionChanged; }
 
         static EventType GetStaticType() { return EventType::GamepadConnectionChanged; }
+    private:
+        bool m_connected;
     };
 
 }

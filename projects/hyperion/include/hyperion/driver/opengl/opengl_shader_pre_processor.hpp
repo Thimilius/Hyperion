@@ -16,14 +16,6 @@ namespace Hyperion::Rendering {
     };
 
     class OpenGLShaderPreProcessor {
-    private:
-        String m_source;
-        u64 m_position;
-
-        ShaderType m_current_shader_type = ShaderType::Unknown;
-        u64 m_current_shader_type_directive_end;
-
-        bool m_property_light_mode_set = false;
     public:
         OpenGLShaderPreProcessor(const String &source);
 
@@ -49,6 +41,14 @@ namespace Hyperion::Rendering {
 
         static ShaderType GetShaderTypeFromString(const String &string);
         static ShaderLightMode GetShaderLightModeFromString(const String &string);
+    private:
+        String m_source;
+        u64 m_position;
+
+        ShaderType m_current_shader_type = ShaderType::Unknown;
+        u64 m_current_shader_type_directive_end;
+
+        bool m_property_light_mode_set = false;
     };
 
 }

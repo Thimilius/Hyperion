@@ -5,6 +5,11 @@
 namespace Hyperion {
 
     class StbImageFormatLoader : public ImageFormatLoader {
+    public:
+        inline const Vector<String> &GetSupportedExtensions() const override { return s_supported_extensions; }
+        bool SupportsExtension(const String &extension) const override;
+
+        Ref<Image> Load(const String &path, bool flip_vertically) override;
     private:
         inline static Vector<String> s_supported_extensions = {
             ".png",
@@ -15,11 +20,6 @@ namespace Hyperion {
             ".tga",
             ".psd"
         };
-    public:
-        inline const Vector<String> &GetSupportedExtensions() const override { return s_supported_extensions; }
-        bool SupportsExtension(const String &extension) const override;
-
-        Ref<Image> Load(const String &path, bool flip_vertically) override;
     };
 
 }

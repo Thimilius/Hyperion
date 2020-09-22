@@ -7,10 +7,12 @@
 #include "hyperion/rendering/buffer.hpp"
 
 namespace Hyperion::Rendering {
+    class RenderEngine;
+}
+
+namespace Hyperion::Rendering {
 
     class RenderCommand {
-    private:
-        inline static Scope<RenderDriver> s_render_driver;
     public:
         inline static RasterizerState *GetRasterizerState() {
             return s_render_driver->GetRasterizerState();
@@ -53,7 +55,9 @@ namespace Hyperion::Rendering {
             s_render_driver->Draw(topology, vertex_count, vertex_offset);
         }
     private:
-        friend class RenderEngine;
+        inline static Scope<RenderDriver> s_render_driver;
+    private:
+        friend class Hyperion::Rendering::RenderEngine;
     };
 
 }

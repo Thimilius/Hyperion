@@ -6,11 +6,6 @@
 namespace Hyperion::Rendering {
 
     class OpenGLRenderTexture : public RenderTexture {
-    private:
-        u32 m_framebuffer_id;
-        u32 m_depth_attachment_id;
-
-        Ref<Texture2D> m_color_attachment;
     public:
         OpenGLRenderTexture(u32 width, u32 height, RenderTextureFormat format, TextureParameters parameters);
         ~OpenGLRenderTexture() override;
@@ -25,6 +20,11 @@ namespace Hyperion::Rendering {
 
         void BindTexture(u32 slot = 0) override;
         void Resize(u32 width, u32 height) override;
+    private:
+        u32 m_framebuffer_id;
+        u32 m_depth_attachment_id;
+
+        Ref<Texture2D> m_color_attachment;
     };
 
 }

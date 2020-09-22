@@ -15,15 +15,15 @@ namespace Hyperion {
 
     class FileWatcher {
         using WatcherCallbackFunc = std::function<void(FileStatus, const String &, const String &, const String &)>;
-    protected:
-        String m_path;
-        WatcherCallbackFunc m_callback;
-        bool m_recursive;
     public:
         virtual ~FileWatcher() = default;
 
         virtual void Update() = 0;
 
         static Ref<FileWatcher> Create(const String &path, WatcherCallbackFunc callback, bool recursive);
+    protected:
+        String m_path;
+        WatcherCallbackFunc m_callback;
+        bool m_recursive;
     };
 }

@@ -14,9 +14,6 @@ namespace Hyperion::Rendering {
     };
 
     class TextureCubemap : public Texture {
-    protected:
-        u32 m_width;
-        u32 m_height;
     public:
         virtual ~TextureCubemap() = default;
         
@@ -32,6 +29,9 @@ namespace Hyperion::Rendering {
 
         static Ref<TextureCubemap> Create(u32 width, u32 height, TextureFormat format, TextureParameters parameters);
         static Ref<TextureCubemap> Create(u32 width, u32 height, TextureFormat format, TextureParameters parameters, const Map<TextureCubemapFace, const u8 *> &pixels);
+    protected:
+        u32 m_width;
+        u32 m_height;
     };
 
 }

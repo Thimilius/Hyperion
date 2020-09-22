@@ -37,9 +37,6 @@ namespace Hyperion::Rendering {
             String name;
             MaterialPropertyStorage storage;
         };
-
-        Ref<Shader> m_shader;
-        Vector<MaterialProperty> m_properties;
     public:
         AssetType GetAssetType() const override { return AssetType::Material; }
 
@@ -65,6 +62,9 @@ namespace Hyperion::Rendering {
         Material(const Ref<Shader> &shader);
 
         u32 FindOrAddProperty(const String &name, MaterialPropertyType type);
+    private:
+        Ref<Shader> m_shader;
+        Vector<MaterialProperty> m_properties;
     };
 
 }

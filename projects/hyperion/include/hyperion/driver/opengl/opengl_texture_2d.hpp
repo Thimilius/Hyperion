@@ -6,8 +6,6 @@
 namespace Hyperion::Rendering {
 
     class OpenGLTexture2D : public Texture2D, public OpenGLTexture {
-    private:
-        u32 m_texture_id;
     public:
         OpenGLTexture2D(u32 width, u32 height, TextureFormat format, TextureParameters parameters);
         OpenGLTexture2D(u32 width, u32 height, TextureFormat format, TextureParameters parameters, const u8 *pixels);
@@ -31,6 +29,8 @@ namespace Hyperion::Rendering {
         u8 *GetPixels() const override;
     private:
         void CreateTexture(const u8 *pixels);
+    private:
+        u32 m_texture_id;
     };
 
 }

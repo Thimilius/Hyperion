@@ -3,6 +3,10 @@
 #include "hyperion/common.hpp"
 
 namespace Hyperion {
+    class Engine;
+}
+
+namespace Hyperion {
 
     enum class OperatingSystemType {
         Windows
@@ -82,8 +86,6 @@ namespace Hyperion {
     };
 
     class OperatingSystem {
-    private:
-        static OperatingSystem *s_instance;
     public:
         virtual OperatingSystemType GetType() const = 0;
         virtual SystemInfo GetSystemInfo() const = 0;
@@ -100,8 +102,10 @@ namespace Hyperion {
         inline static OperatingSystem* GetInstance() { return s_instance; }
     private:
         virtual void Init() = 0;
+    private:
+        static OperatingSystem *s_instance;
 
-        friend class Engine;
+        friend class Hyperion::Engine;
     };
 
 }

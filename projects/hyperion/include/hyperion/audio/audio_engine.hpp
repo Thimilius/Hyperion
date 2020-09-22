@@ -11,10 +11,6 @@ namespace Hyperion {
 namespace Hyperion::Audio {
 
     class AudioEngine {
-    private:
-        inline static AudioBackend s_audio_backend;
-
-        inline static Scope<AudioDriver> s_audio_driver;
     public:
         inline static AudioBackend GetBackend() { return s_audio_backend; }
 
@@ -26,7 +22,11 @@ namespace Hyperion::Audio {
 
         static void Init(const AudioSettings &settings);
         static void Shutdown() { s_audio_driver->Shutdown(); }
+    private:
+        inline static AudioBackend s_audio_backend;
 
+        inline static Scope<AudioDriver> s_audio_driver;
+    private:
         friend class Hyperion::Engine;
     };
 

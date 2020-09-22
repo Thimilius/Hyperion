@@ -4,6 +4,11 @@
 #include "hyperion/core/operating_system.hpp"
 
 namespace Hyperion {
+    class Application;
+    class Main;
+}
+
+namespace Hyperion {
 
     class Engine {
     public:
@@ -26,9 +31,9 @@ namespace Hyperion {
         static void LateUpdate();
         static void Render();
         static void Shutdown();
-
-        friend class Main;
-        friend class Application;
+    private:
+        friend class Hyperion::Application;
+        friend class Hyperion::Main;
     };
 
 }

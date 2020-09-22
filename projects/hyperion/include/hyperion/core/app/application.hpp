@@ -4,14 +4,12 @@
 #include "hyperion/core/app/window.hpp"
 
 namespace Hyperion {
+    class Main;
+}
+
+namespace Hyperion {
 
     class Application {
-    private:
-        Scope<Window> m_window;
-        bool m_running;
-        ApplicationSettings m_starting_settings;
-
-        inline static Application *s_instance;
     public:
         inline Window *GetWindow() const { return m_window.get(); }
 
@@ -29,8 +27,14 @@ namespace Hyperion {
         u32 Run();
 
         void OnEventInternal(Event &event);
+    private:
+        Scope<Window> m_window;
+        bool m_running;
+        ApplicationSettings m_starting_settings;
 
-        friend class Main;
+        inline static Application *s_instance;
+    private:
+        friend class Hyperion::Main;
     };
 
     // This is a function to be defined by the client

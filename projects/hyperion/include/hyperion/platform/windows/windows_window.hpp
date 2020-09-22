@@ -10,19 +10,6 @@ namespace Hyperion {
 
     class WindowsWindow : public Window {
         using EventCallbackFunction = std::function<void(Event &)>;
-    private:
-        WindowsInput *m_input;
-
-        HWND m_window_handle;
-        
-        // We store the last window placement in order to switch correctly
-        // between windowed and borderless mode
-        WINDOWPLACEMENT m_previous_placement;
-        
-        // To distinguish the two shift keys we explicily store their previous state
-        // so that we can send out the correct key released events when appropriate
-        mutable bool m_left_shift_last_down = false;
-        mutable bool m_right_shift_last_down = false;
     public:
         WindowsWindow(const WindowSettings &settings, Rendering::RenderBackend render_backend);
         ~WindowsWindow();
@@ -57,6 +44,19 @@ namespace Hyperion {
         u32 GetMouseButtonFromMessage(u32 message, u32 w_param) const;
 
         static LRESULT CALLBACK MessageCallback(HWND window_handle, u32 message, WPARAM first_message_param, LPARAM second_message_param);
+    private:
+        WindowsInput *m_input;
+
+        HWND m_window_handle;
+        
+        // We store the last window placement in order to switch correctly
+        // between windowed and borderless mode
+        WINDOWPLACEMENT m_previous_placement;
+        
+        // To distinguish the two shift keys we explicily store their previous state
+        // so that we can send out the correct key released events when appropriate
+        mutable bool m_left_shift_last_down = false;
+        mutable bool m_right_shift_last_down = false;
     };
 
 }

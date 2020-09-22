@@ -5,11 +5,6 @@
 namespace Hyperion {
 
     class Image {
-    private:
-        u32 m_width;
-        u32 m_height;
-        u32 m_channels;
-        u8 *m_pixels;
     public:
         ~Image();
 
@@ -23,6 +18,11 @@ namespace Hyperion {
         static Ref<Image> Create(u32 width, u32 height, u32 channels, u8 *pixels);
     private:
         Image(u32 width, u32 height, u32 channels, u8 *pixels);
+    private:
+        u32 m_width;
+        u32 m_height;
+        u32 m_channels;
+        u8 *m_pixels;
     };
 
 }

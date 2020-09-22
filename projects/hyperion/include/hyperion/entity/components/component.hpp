@@ -3,15 +3,16 @@
 #include "hyperion/entity/object.hpp"
 
 namespace Hyperion {
-
     class Entity;
+    class ObjectManager;
     class Transform;
     class World;
+}
+
+namespace Hyperion {
 
     class Component : public Object {
         HYP_OBJECT(Component, Object);
-    private:
-        Entity *m_entity;
     public:
         inline Entity *GetEntity() const { return m_entity; }
 
@@ -28,8 +29,10 @@ namespace Hyperion {
         virtual void OnUpdate(f32 delta_time) { }
         virtual void OnDestroy() override;
     private:
-        friend class Entity;
-        friend class ObjectManager;
+        Entity *m_entity;
+    private:
+        friend class Hyperion::Entity;
+        friend class Hyperion::ObjectManager;
     };
 
 }

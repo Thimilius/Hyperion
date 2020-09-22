@@ -5,9 +5,6 @@
 namespace Hyperion::Rendering {
 
     class Texture2D : public Texture {
-    protected:
-        u32 m_width;
-        u32 m_height;
     public:
         virtual ~Texture2D() = default;
 
@@ -29,6 +26,9 @@ namespace Hyperion::Rendering {
         static Ref<Texture2D> Create(u32 width, u32 height, TextureFormat format, TextureParameters parameters, const u8 *pixels);
         static Ref<Texture2D> Create(u32 width, u32 height, TextureFormat format, TextureWrapMode wrap_mode, TextureFilter filter, TextureAnisotropicFilter anisotropic_filter);
         static Ref<Texture2D> Create(u32 width, u32 height, TextureFormat format, TextureWrapMode wrap_mode, TextureFilter filter, TextureAnisotropicFilter anisotropic_filter, const u8 *pixels);
+    protected:
+        u32 m_width;
+        u32 m_height;
     };
 
 }

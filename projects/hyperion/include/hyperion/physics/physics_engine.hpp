@@ -11,10 +11,6 @@ namespace Hyperion {
 namespace Hyperion::Physics {
 
     class PhysicsEngine {
-    private:
-        inline static PhysicsBackend s_physics_backend;
-
-        inline static Scope<PhysicsDriver> s_physics_driver;
     public:
         inline static PhysicsBackend GetBackend() { return s_physics_backend; }
 
@@ -29,7 +25,11 @@ namespace Hyperion::Physics {
 
         inline static PhysicsWorld *CreatePhysicsWorld() { return s_physics_driver->CreatePhysicsWorld(); }
         inline static void DestroyPhysicsWorld(PhysicsWorld *world) { return s_physics_driver->DestroyPhysicsWorld(world); }
+    private:
+        inline static PhysicsBackend s_physics_backend;
 
+        inline static Scope<PhysicsDriver> s_physics_driver;
+    private:
         friend class Hyperion::Engine;
         friend class Hyperion::World;
     };

@@ -38,10 +38,10 @@ namespace Hyperion::Physics {
         virtual void UpdateColliderActivation(Collider *collider) { }
 
         virtual BoundingBox GetBounds(Collider *collider) { return BoundingBox(); }
-
-        friend class Collider;
-        friend class BoxCollider;
-        friend class SphereCollider;
+    private:
+        friend class Hyperion::Collider;
+        friend class Hyperion::BoxCollider;
+        friend class Hyperion::SphereCollider;
     };
 
 }

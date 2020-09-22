@@ -6,9 +6,6 @@ namespace Hyperion {
 
     class BoxCollider : public Collider {
         HYP_OBJECT(BoxCollider, Collider);
-    private:
-        Vec3 m_origin = Vec3::Zero();
-        Vec3 m_size = Vec3::One();
     public:
         BoxCollider() : Collider("BoxCollider") { }
 
@@ -31,6 +28,9 @@ namespace Hyperion {
         void OnDestroy() override;
     private:
         void NotifyColliderChange();
+    private:
+        Vec3 m_origin = Vec3::Zero();
+        Vec3 m_size = Vec3::One();
     };
 
 }

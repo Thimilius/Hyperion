@@ -14,9 +14,6 @@ namespace Hyperion {
     };
 
     class WindowResizeEvent : public Event {
-    private:
-        u32 m_width;
-        u32 m_height;
     public:
         WindowResizeEvent(u32 width, u32 height) : m_width(width), m_height(height) { }
 
@@ -27,11 +24,12 @@ namespace Hyperion {
         EventCategory GetCategory() const override { return EventCategory::Window; }
 
         static EventType GetStaticType() { return EventType::WindowResize; }
+    private:
+        u32 m_width;
+        u32 m_height;
     };
 
     class WindowFocusEvent : public Event {
-    private:
-        bool m_focus;
     public:
         WindowFocusEvent(bool focus) : m_focus(focus) { }
 
@@ -41,6 +39,8 @@ namespace Hyperion {
         EventCategory GetCategory() const override { return EventCategory::Window; }
 
         static EventType GetStaticType() { return EventType::WindowFocus; }
+    private:
+        bool m_focus;
     };
 
     class WindowMovedEvent : public Event {
@@ -52,8 +52,6 @@ namespace Hyperion {
     };
 
     class WindowStateChangedEvent : public Event {
-    private:
-        WindowState m_state;
     public:
         WindowStateChangedEvent(WindowState state) : m_state(state) { }
 
@@ -63,6 +61,8 @@ namespace Hyperion {
         EventCategory GetCategory() const override { return EventCategory::Window; }
 
         static EventType GetStaticType() { return EventType::WindowStateChanged; }
+    private:
+        WindowState m_state;
     };
 
 }

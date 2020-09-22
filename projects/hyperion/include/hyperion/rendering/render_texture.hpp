@@ -10,10 +10,6 @@ namespace Hyperion::Rendering {
     };
 
     class RenderTexture : public Texture {
-    protected:
-        u32 m_width;
-        u32 m_height;
-        RenderTextureFormat m_render_format;
     public:
         virtual ~RenderTexture() = default;
 
@@ -30,6 +26,10 @@ namespace Hyperion::Rendering {
         static Ref<RenderTexture> Create(u32 width, u32 height, RenderTextureFormat format, TextureParameters parameters);
     protected:
         static TextureFormat GetTextureFormat(RenderTextureFormat format);
+    protected:
+        u32 m_width;
+        u32 m_height;
+        RenderTextureFormat m_render_format;
     };
 
 }

@@ -9,6 +9,16 @@ namespace Hyperion {
 
     class WindowsFileWatcher : public FileWatcher {
         using WatcherCallbackFunc = std::function<void(FileStatus, const String &, const String &, const String &)>;
+    public:
+        WindowsFileWatcher(const String &path, WatcherCallbackFunc callback, bool recursive);
+        ~WindowsFileWatcher() override;
+
+        void Update() override;
+    private:
+        bool RefreshWatch(bool clear);
+        void HandleAction(u32 action, const String &path, const String &filename, const String &extension);
+
+        static void CALLBACK WatchCallback(DWORD error_code, DWORD number_of_bytes_transfered, LPOVERLAPPED overlapped);
     private:
         struct WatchStruct {
             OVERLAPPED overlapped;
@@ -20,16 +30,6 @@ namespace Hyperion {
         };
 
         WatchStruct watch_struct;
-    public:
-        WindowsFileWatcher(const String &path, WatcherCallbackFunc callback, bool recursive);
-        ~WindowsFileWatcher() override;
-
-        void Update() override;
-    private:
-        bool RefreshWatch(bool clear);
-        void HandleAction(u32 action, const String &path, const String &filename, const String &extension);
-
-        static void CALLBACK WatchCallback(DWORD error_code, DWORD number_of_bytes_transfered, LPOVERLAPPED overlapped);
     };
 
 }

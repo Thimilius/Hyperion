@@ -4,12 +4,12 @@
 #include "hyperion/entity/world.hpp"
 
 namespace Hyperion {
+    class Engine;
+}
+
+namespace Hyperion {
 
     class WorldManager {
-    private:
-        inline static World *s_active_world;
-
-        inline static Vector<World *> s_worlds;
     public:
         inline static World *GetActiveWorld() { return s_active_world; }
         inline static void SetActiveWorld(World *world) { s_active_world = world; }
@@ -21,8 +21,12 @@ namespace Hyperion {
         ~WorldManager() = delete;
 
         static void Shutdown();
+    private:
+        inline static World *s_active_world;
 
-        friend class Engine;
+        inline static Vector<World *> s_worlds;
+    private:
+        friend class Hyperion::Engine;
     };
 
 }

@@ -10,6 +10,10 @@
 #include "hyperion/rendering/material.hpp"
 
 namespace Hyperion {
+    class Engine;
+}
+
+namespace Hyperion {
 
     enum class MeshPrimitive {
         Quad,
@@ -19,31 +23,6 @@ namespace Hyperion {
     };
 
     class AssetManager {
-    private:
-        template<typename T>
-        struct AssetEntry {
-            Ref<T> asset;
-            String filepath;
-        };
-
-        struct MeshPrimitives {
-            Ref<Rendering::Mesh> quad;
-            Ref<Rendering::Mesh> plane;
-            Ref<Rendering::Mesh> cube;
-            Ref<Rendering::Mesh> sphere;
-        };
-
-        inline static AssetSettings s_settings;
-        
-        inline static Map<String, AssetEntry<Rendering::Shader>> s_shaders;
-        inline static Ref<FileWatcher> s_shader_watcher;
-        inline static Map<String, AssetEntry<Rendering::Texture2D>> s_textures;
-        inline static Ref<FileWatcher> s_texture_watcher;
-        inline static Map<String, AssetEntry<Rendering::TextureCubemap>> s_texture_cubemaps;
-        
-        inline static MeshPrimitives s_mesh_primitives;
-        inline static Ref<Rendering::Texture2D> s_texture_primitive;
-        inline static Ref<Rendering::Material> s_default_material;
     public:
         inline static const AssetSettings &GetSettings() { return s_settings; }
 
@@ -80,8 +59,33 @@ namespace Hyperion {
         static void InitMeshPrimitives();
 
         static Rendering::TextureFormat GetTextureFormatFromImage(const Ref<Image> &image);
+    private:
+        template<typename T>
+        struct AssetEntry {
+            Ref<T> asset;
+            String filepath;
+        };
 
-        friend class Engine;
+        struct MeshPrimitives {
+            Ref<Rendering::Mesh> quad;
+            Ref<Rendering::Mesh> plane;
+            Ref<Rendering::Mesh> cube;
+            Ref<Rendering::Mesh> sphere;
+        };
+
+        inline static AssetSettings s_settings;
+
+        inline static Map<String, AssetEntry<Rendering::Shader>> s_shaders;
+        inline static Ref<FileWatcher> s_shader_watcher;
+        inline static Map<String, AssetEntry<Rendering::Texture2D>> s_textures;
+        inline static Ref<FileWatcher> s_texture_watcher;
+        inline static Map<String, AssetEntry<Rendering::TextureCubemap>> s_texture_cubemaps;
+
+        inline static MeshPrimitives s_mesh_primitives;
+        inline static Ref<Rendering::Texture2D> s_texture_primitive;
+        inline static Ref<Rendering::Material> s_default_material;
+    private:
+        friend class Hyperion::Engine;
     };
 
 }

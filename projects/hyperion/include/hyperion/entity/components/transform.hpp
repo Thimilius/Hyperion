@@ -4,23 +4,13 @@
 #include "hyperion/core/math/quaternion.hpp"
 
 namespace Hyperion {
+    class Entity;
+}
+
+namespace Hyperion {
 
     class Transform : public Component {
         HYP_OBJECT(Transform, Component);
-    private:
-        Vec3 m_local_position = Vec3::Zero();
-        Quaternion m_local_rotation = Quaternion::Identity();
-        Vec3 m_local_scale = Vec3::One();
-
-        Vec3 m_derived_position = Vec3::Zero();
-        Quaternion m_derived_rotation = Quaternion::Identity();
-        Vec3 m_derived_scale = Vec3::One();
-
-        Mat4 m_local_to_world_matrix = Mat4::Identity();
-        Mat4 m_world_to_local_matrix = Mat4::Identity();
-
-        Transform *m_parent = nullptr;
-        Vector<Transform *> m_children;
     public:
         inline Vec3 GetLocalPosition() const { return m_local_position; }
         inline void SetLocalPosition(const Vec3 &position) {
@@ -105,8 +95,22 @@ namespace Hyperion {
 
         void NotifyTransformChange();
         void RecalculateTransform();
+    private:
+        Vec3 m_local_position = Vec3::Zero();
+        Quaternion m_local_rotation = Quaternion::Identity();
+        Vec3 m_local_scale = Vec3::One();
 
-        friend class Entity;
+        Vec3 m_derived_position = Vec3::Zero();
+        Quaternion m_derived_rotation = Quaternion::Identity();
+        Vec3 m_derived_scale = Vec3::One();
+
+        Mat4 m_local_to_world_matrix = Mat4::Identity();
+        Mat4 m_world_to_local_matrix = Mat4::Identity();
+
+        Transform *m_parent = nullptr;
+        Vector<Transform *> m_children;
+    private:
+        friend class Hyperion::Entity;
     };
 
 }

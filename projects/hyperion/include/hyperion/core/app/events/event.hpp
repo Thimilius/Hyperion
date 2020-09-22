@@ -39,8 +39,6 @@ namespace Hyperion {
     HYP_CREATE_ENUM_FLAG_OPERATORS(EventCategory)
 
     class Event {
-    private:
-        bool m_handled = false;
     public:
         inline bool IsHandled() const { return m_handled; }
         inline void Handle() { m_handled = false; }
@@ -49,13 +47,13 @@ namespace Hyperion {
         virtual EventCategory GetCategory() const = 0;
 
         inline bool IsInCategory(EventCategory category) const { return (GetCategory() & category) == category; }
+    private:
+        bool m_handled = false;
     };
 
     class EventDispatcher {
         template<typename T>
         using EventFunction = std::function<void(T &)>;
-    private:
-        Event &m_event;
     public:
         EventDispatcher(Event &event)
             : m_event(event) {
@@ -69,6 +67,8 @@ namespace Hyperion {
             }
             return false;
         }
+    private:
+        Event &m_event;
     };
     
 }

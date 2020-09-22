@@ -3,6 +3,10 @@
 #include "hyperion/core/app/window.hpp"
 
 namespace Hyperion::Rendering {
+    class RenderEngine;
+}
+
+namespace Hyperion::Rendering {
 
     struct ContextProperties {
         String vendor;
@@ -16,11 +20,6 @@ namespace Hyperion::Rendering {
     };
 
     class GraphicsContext {
-    protected:
-        ContextProperties m_properties;
-        ContextLimits m_limits;
-
-        inline static GraphicsContext *s_instance;
     public:
         virtual ~GraphicsContext() = default;
         
@@ -34,8 +33,13 @@ namespace Hyperion::Rendering {
         virtual void Init() = 0;
         virtual void SwapBuffers() = 0;
         virtual void SetVSyncMode(VSyncMode vsync_mode) = 0;
+    protected:
+        ContextProperties m_properties;
+        ContextLimits m_limits;
 
-        friend class WindowsWindow;
+        inline static GraphicsContext *s_instance;
+    private:
+        friend class Hyperion::WindowsWindow;
     };
 
 }

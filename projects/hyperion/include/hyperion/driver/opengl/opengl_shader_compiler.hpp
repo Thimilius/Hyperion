@@ -3,6 +3,11 @@
 #include "hyperion/rendering/shader.hpp"
 
 namespace Hyperion::Rendering {
+    class OpenGLRenderDriver;
+    class OpenGLShaderPreProcessor;
+}
+
+namespace Hyperion::Rendering {
     
     struct OpenGLShaderCompilerResult {
         ShaderAttributes properties;
@@ -10,9 +15,6 @@ namespace Hyperion::Rendering {
     };
 
     class OpenGLShaderCompiler {
-    private:
-        inline static OpenGLShaderCompilerResult s_fallback_shader;
-        inline static Map<String, String> s_modules;
     public:
         static OpenGLShaderCompilerResult Compile(const String &source);
     private:
@@ -23,9 +25,12 @@ namespace Hyperion::Rendering {
 
         static String GetShaderModuleFromName(const String &name);
         static u32 GetGLShaderType(ShaderType type);
-
-        friend class OpenGLShaderPreProcessor;
-        friend class OpenGLRenderDriver;
+    private:
+        inline static OpenGLShaderCompilerResult s_fallback_shader;
+        inline static Map<String, String> s_modules;
+    private:
+        friend class Hyperion::Rendering::OpenGLRenderDriver;
+        friend class Hyperion::Rendering::OpenGLShaderPreProcessor;
     };
 
 }

@@ -24,8 +24,6 @@ namespace Hyperion::Rendering {
     };
 
     class Shader : public Asset {
-    protected:
-        ShaderAttributes m_attributes;
     public:
         virtual ~Shader() = default;
 
@@ -51,6 +49,8 @@ namespace Hyperion::Rendering {
         static Ref<Shader> Create(const String &name, const String &source);
     protected:
         Shader(const String &name) : Asset(name) { }
+    protected:
+        ShaderAttributes m_attributes;
     };
 
 }

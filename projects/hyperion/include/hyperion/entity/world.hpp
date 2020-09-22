@@ -8,14 +8,20 @@
 #include "hyperion/physics/physics_world.hpp"
 
 namespace Hyperion {
+    class Camera;
+    class Entity;
+    class Light;
+    class MeshRenderer;
+    class Transform;
+    class WorldManager;
 
     namespace Rendering {
         class TextureCubemap;
     }
-    class MeshRenderer;
-    class Light;
-    class Camera;
+}
 
+namespace Hyperion {
+    
     struct WorldEnvironment {
         Ref<Rendering::TextureCubemap> skybox;
 
@@ -26,16 +32,6 @@ namespace Hyperion {
     };
 
     class World {
-    private:
-        WorldEnvironment m_environment;
-
-        Physics::PhysicsWorld *m_physics_world;
-
-        Vector<Entity *> m_root_entities;
-
-        Vector<Camera *> m_cameras;
-        Vector<MeshRenderer *> m_mesh_renderers;
-        Vector<Light *> m_lights;
     public:
         inline WorldEnvironment &GetEnvironment() { return m_environment; }
 
@@ -89,13 +85,23 @@ namespace Hyperion {
         void RemoveMeshRenderer(MeshRenderer *mesh_renderer);
         void AddLight(Light *light);
         void RemoveLight(Light *light);
+    private:
+        WorldEnvironment m_environment;
 
-        friend class Entity;
-        friend class WorldManager;
-        friend class Transform;
-        friend class MeshRenderer;
-        friend class Light;
-        friend class Camera;
+        Physics::PhysicsWorld *m_physics_world;
+
+        Vector<Entity *> m_root_entities;
+
+        Vector<Camera *> m_cameras;
+        Vector<MeshRenderer *> m_mesh_renderers;
+        Vector<Light *> m_lights;
+    private:
+        friend class Hyperion::Camera;
+        friend class Hyperion::Entity;
+        friend class Hyperion::Light;
+        friend class Hyperion::MeshRenderer;
+        friend class Hyperion::Transform;
+        friend class Hyperion::WorldManager;
     };
 
 }

@@ -30,11 +30,6 @@ namespace Hyperion {
 
     template<typename T, typename E>
     class Result {
-    private:
-        Ok<T> m_okay_value;
-        Err<E> m_error_value;
-
-        bool m_okay_contains_value;
     public:
         Result() = default;
         ~Result() = default;
@@ -142,6 +137,11 @@ namespace Hyperion {
         bool operator !=(const Err<E> &error) const {
             return m_error_value.error != error.error;
         }
+    private:
+        Ok<T> m_okay_value;
+        Err<E> m_error_value;
+
+        bool m_okay_contains_value;
     };
 
 }

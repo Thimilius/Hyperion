@@ -6,6 +6,13 @@
 namespace Hyperion::Editor {
 
     class EditorCameraController {
+    public:
+        EditorCameraController() = default;
+        EditorCameraController(Camera *camera);
+
+        inline const Camera *GetCamera() const { return m_camera; }
+
+        void Update(f32 delta_time);
     private:
         Camera *m_camera;
 
@@ -22,13 +29,6 @@ namespace Hyperion::Editor {
 
         f32 m_fov_target;
         f32 m_orthographic_size_target;
-    public:
-        EditorCameraController() = default;
-        EditorCameraController(Camera *camera);
-
-        inline const Camera *GetCamera() const { return m_camera; }
-
-        void Update(f32 delta_time);
     };
 
 }

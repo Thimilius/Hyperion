@@ -7,10 +7,6 @@ namespace Hyperion {
 
     class MeshRenderer : public Renderer {
         HYP_OBJECT(MeshRenderer, Renderer);
-    private:
-        Ref<Rendering::Mesh> m_shared_mesh;
-        mutable Ref<Rendering::Mesh> m_mesh;
-        mutable bool m_using_shared_mesh = true;
     public:
         MeshRenderer() : Renderer("MeshRenderer") { }
 
@@ -38,6 +34,10 @@ namespace Hyperion {
     protected:
         void OnCreate() override;
         void OnDestroy() override;
+    private:
+        Ref<Rendering::Mesh> m_shared_mesh;
+        mutable Ref<Rendering::Mesh> m_mesh;
+        mutable bool m_using_shared_mesh = true;
     };
 
 }

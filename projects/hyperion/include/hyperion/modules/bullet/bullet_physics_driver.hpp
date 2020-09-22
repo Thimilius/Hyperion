@@ -5,12 +5,12 @@
 #include <bullet/btBulletCollisionCommon.h>
 
 namespace Hyperion::Physics {
+    class BulletPhysicsWorld;
+}
+
+namespace Hyperion::Physics {
 
     class BulletPhysicsDriver : public PhysicsDriver {
-    private:
-        btDefaultCollisionConfiguration *m_collision_configuration;
-        btCollisionDispatcher *m_collision_dispatcher;
-        btBroadphaseInterface *m_collision_broadphase_interface;
     public:
         PhysicsWorld *CreatePhysicsWorld() override;
         void DestroyPhysicsWorld(PhysicsWorld *world) override;
@@ -18,8 +18,12 @@ namespace Hyperion::Physics {
         void Init() override;
         void Update(f32 delta_time) override;
         void Shutdown() override;
-
-        friend class BulletPhysicsWorld;
+    private:
+        btDefaultCollisionConfiguration *m_collision_configuration;
+        btCollisionDispatcher *m_collision_dispatcher;
+        btBroadphaseInterface *m_collision_broadphase_interface;
+    private:
+        friend class Hyperion::Physics::BulletPhysicsWorld;
     };
 
 }

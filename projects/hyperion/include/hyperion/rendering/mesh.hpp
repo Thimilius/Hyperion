@@ -33,13 +33,6 @@ namespace Hyperion::Rendering {
     };
 
     class Mesh : public Asset, public Copyable<Mesh> {
-    private:
-        MeshData m_mesh_data;
-        BoundingBox m_bounds;
-
-        Vector<SubMesh> m_sub_meshes;
-
-        Ref<VertexArray> m_vertex_array;
     public:
         inline AssetType GetAssetType() const override { return AssetType::Mesh; }
 
@@ -55,6 +48,13 @@ namespace Hyperion::Rendering {
         Mesh(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes);
 
         void RecalculateBounds();
+    private:
+        MeshData m_mesh_data;
+        BoundingBox m_bounds;
+
+        Vector<SubMesh> m_sub_meshes;
+
+        Ref<VertexArray> m_vertex_array;
     };
 
 }

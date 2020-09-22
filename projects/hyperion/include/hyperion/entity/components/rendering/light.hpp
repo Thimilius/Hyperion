@@ -13,16 +13,6 @@ namespace Hyperion {
 
     class Light : public Behaviour {
         HYP_OBJECT(Light, Behaviour);
-    private:
-        LightType m_type = LightType::Point;
-
-        Color m_color = Color::White();
-        f32 m_intensity = 1.0f;
-
-        f32 m_range = 10.0f;
-
-        f32 m_inner_spot_radius = 1.0f;
-        f32 m_outer_spot_radius = 1.0f;
     public:
         Light() : Behaviour("Light") { }
 
@@ -41,6 +31,16 @@ namespace Hyperion {
     protected:
         void OnCreate() override;
         void OnDestroy() override;
+    private:
+        LightType m_type = LightType::Point;
+
+        Color m_color = Color::White();
+        f32 m_intensity = 1.0f;
+
+        f32 m_range = 10.0f;
+
+        f32 m_inner_spot_radius = 1.0f;
+        f32 m_outer_spot_radius = 1.0f;
     };
 
 }

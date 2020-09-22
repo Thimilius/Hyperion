@@ -5,6 +5,10 @@
 #include "hyperion/core/app/events/event.hpp"
 
 namespace Hyperion {
+    class WindowsWindow;
+}
+
+namespace Hyperion {
 
     enum class KeyCode {
         None,
@@ -206,8 +210,6 @@ namespace Hyperion {
 
     class InputImplementation {
         using EventCallbackFunction = std::function<void(Event &)>;
-    private:
-        EventCallbackFunction m_event_callback;
     public:
         virtual ~InputImplementation() = default;
 
@@ -240,11 +242,11 @@ namespace Hyperion {
         }
 
         void SetEventCallbackFunction(const EventCallbackFunction &event_callback) { m_event_callback = event_callback; }
+    private:
+        EventCallbackFunction m_event_callback;
     };
 
     class Input {
-    private:
-        static Scope<InputImplementation> s_input_implementation;
     public:
         inline static bool GetKeyDown(KeyCode key_code) { return s_input_implementation->GetKeyDown(key_code); }
         inline static bool GetKey(KeyCode key_code) { return s_input_implementation->GetKey(key_code); }
@@ -270,8 +272,10 @@ namespace Hyperion {
     private:
         Input() = delete;
         ~Input() = delete;
-
-        friend class WindowsWindow;
+    private:
+        static Scope<InputImplementation> s_input_implementation;
+    private:
+        friend class Hyperion::WindowsWindow;
     };
 
 }

@@ -7,10 +7,6 @@ namespace Hyperion {
 
     class Renderer : public Behaviour {
         HYP_OBJECT(Renderer, Behaviour);
-    private:
-        Ref<Rendering::Material> m_shared_material;
-        mutable Ref<Rendering::Material> m_material;
-        mutable bool m_using_shared_material = true;
     public:
         inline Ref<Rendering::Material> GetSharedMaterial() const { return m_shared_material; }
         inline void SetSharedMaterial(const Ref<Rendering::Material> &shared_material) {
@@ -39,6 +35,10 @@ namespace Hyperion {
         Renderer() = default;
         Renderer(const String & name) : Behaviour(name) {}
         virtual ~Renderer() = default;
+    private:
+        Ref<Rendering::Material> m_shared_material;
+        mutable Ref<Rendering::Material> m_material;
+        mutable bool m_using_shared_material = true;
     };
 
 }

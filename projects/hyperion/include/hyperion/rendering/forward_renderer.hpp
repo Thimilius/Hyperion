@@ -7,13 +7,32 @@
 #include "hyperion/rendering/texture_cubemap.hpp"
 
 namespace Hyperion {
-    class World;
     class Light;
+    class World;
+
+    namespace Rendering {
+        class RenderEngine;
+    }
 }
 
 namespace Hyperion::Rendering {
 
     class ForwardRenderer {
+    public:
+        static void Begin(const CameraData &camera);
+        static void DrawSkybox(const Ref<TextureCubemap> &skybox);
+        static void DrawEntities(World *world);
+        static void DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform);
+        static void DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform, const Mat4 &inverse_transform);
+        static void End();
+    private:
+        ForwardRenderer() = delete;
+        ~ForwardRenderer() = delete;
+
+        static void Init();
+
+        static void PrepareShader(const Ref<Shader> &shader, const Mat4 &transform, const Mat4 &inverse_transform);
+        static void DrawCall(const Ref<Mesh> &mesh);
     private:
         struct State {
             struct Transform {
@@ -49,23 +68,8 @@ namespace Hyperion::Rendering {
 
         inline static State s_state;
         inline static Skybox s_skybox;
-    public:
-        static void Begin(const CameraData &camera);
-        static void DrawSkybox(const Ref<TextureCubemap> &skybox);
-        static void DrawEntities(World *world);
-        static void DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform);
-        static void DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform, const Mat4 &inverse_transform);
-        static void End();
     private:
-        ForwardRenderer() = delete;
-        ~ForwardRenderer() = delete;
-
-        static void Init();
-
-        static void PrepareShader(const Ref<Shader> &shader, const Mat4 &transform, const Mat4 &inverse_transform);
-        static void DrawCall(const Ref<Mesh> &mesh);
-
-        friend class RenderEngine;
+        friend class Hyperion::Rendering::RenderEngine;
     };
 
 }

@@ -8,29 +8,17 @@
 #include "hyperion/rendering/render_backend.hpp"
 
 namespace Hyperion {
+    class Application;
 
     namespace Rendering {
         class GraphicsContext;
     }
+}
+
+namespace Hyperion {
 
     class Window {
         using EventCallbackFunction = std::function<void(Event &)>;
-    protected:
-        String m_title;
-
-        u32 m_width;
-        u32 m_height;
-
-        u32 m_min_width;
-        u32 m_min_height;
-
-        WindowMode m_window_mode;
-        WindowState m_window_state;
-        VSyncMode m_vsync_mode;
-
-        EventCallbackFunction m_event_callback;
-
-        Ref<Rendering::GraphicsContext> m_graphics_context;
     public:
         virtual ~Window() = default;
 
@@ -65,8 +53,24 @@ namespace Hyperion {
         virtual void SetEventCallbackFunction(const EventCallbackFunction &event_callback) { m_event_callback = event_callback; }
 
         static Window *Create(const WindowSettings &settings, Rendering::RenderBackend render_backend);
+    protected:
+        String m_title;
 
-        friend class Application;
+        u32 m_width;
+        u32 m_height;
+
+        u32 m_min_width;
+        u32 m_min_height;
+
+        WindowMode m_window_mode;
+        WindowState m_window_state;
+        VSyncMode m_vsync_mode;
+
+        EventCallbackFunction m_event_callback;
+
+        Ref<Rendering::GraphicsContext> m_graphics_context;
+    private:
+        friend class Hyperion::Application;
     };
 
 }

@@ -7,8 +7,6 @@
 namespace Hyperion {
 
     class WindowsOperatingSystem : public OperatingSystem {
-    private:
-        HANDLE m_console_handle;
     public:
         void Init() override;
 
@@ -24,6 +22,8 @@ namespace Hyperion {
         // TODO: Make the filter work
         String OpenFileDialog(const String &title, const String &filter) override;
         String SaveFileDialog(const String &title, const String &filter) override;
+    private:
+        HANDLE m_console_handle;
     };
 
 }

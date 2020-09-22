@@ -45,10 +45,6 @@ namespace Hyperion::Rendering {
     };
 
     class Texture : public Asset {
-    protected:
-        TextureFormat m_format;
-        TextureParameters m_parameters;
-        u32 m_mipmap_count;
     public:
         virtual ~Texture() = default;
 
@@ -75,6 +71,10 @@ namespace Hyperion::Rendering {
     protected:
         static u32 GetBytesPerPixel(TextureFormat format);
         static u32 CalculateMipmapCount(u32 width, u32 height);
+    protected:
+        TextureFormat m_format;
+        TextureParameters m_parameters;
+        u32 m_mipmap_count;
     };
 
 }

@@ -25,11 +25,24 @@ namespace Hyperion::Editor {
     HYP_CREATE_ENUM_FLAG_OPERATORS(EditorOverlayFlags);
 
     class EditorEngine {
+    public:
+        static Camera *GetCamera() { return s_camera; }
+
+        static void Init();
+        static void Update(f32 delta_time);
+        static void Render();
+        static void Tick();
+    private:
+        EditorEngine() = delete;
+        ~EditorEngine() = delete;
+
+        static void UpdateStats();
+        static void InitGridVertexArray();
     private:
         inline static World *s_editor_world;
         inline static World *s_game_world;
         inline static EditorGizmo *s_gizmo;
-        
+
         inline static Camera *s_camera;
         inline static EditorCameraController s_camera_controller;
 
@@ -46,19 +59,6 @@ namespace Hyperion::Editor {
         inline static Ref<Rendering::Font> s_font;
 
         inline static EditorOverlayFlags s_overlay_flags = EditorOverlayFlags::Stats | EditorOverlayFlags::Selection | EditorOverlayFlags::Grid | EditorOverlayFlags::Gizmo | EditorOverlayFlags::Lights;
-    public:
-        static Camera *GetCamera() { return s_camera; }
-
-        static void Init();
-        static void Update(f32 delta_time);
-        static void Render();
-        static void Tick();
-    private:
-        EditorEngine() = delete;
-        ~EditorEngine() = delete;
-
-        static void UpdateStats();
-        static void InitGridVertexArray();
     };
 
 }

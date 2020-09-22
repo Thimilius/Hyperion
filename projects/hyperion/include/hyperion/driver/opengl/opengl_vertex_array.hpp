@@ -5,11 +5,6 @@
 namespace Hyperion::Rendering {
 
     class OpenGLVertexArray : public VertexArray {
-    private:
-        u32 m_vertex_array_id;
-
-        Vector<Ref<VertexBuffer>> m_vertex_buffers;
-        Ref<IndexBuffer> m_index_buffer;
     public:
         OpenGLVertexArray();
         ~OpenGLVertexArray() override;
@@ -26,6 +21,11 @@ namespace Hyperion::Rendering {
         virtual const Ref<IndexBuffer> &GetIndexBuffer() const { return m_index_buffer; }
 
         static u32 BufferDataTypeToOpenGLBaseType(BufferDataType type);
+    private:
+        u32 m_vertex_array_id;
+
+        Vector<Ref<VertexBuffer>> m_vertex_buffers;
+        Ref<IndexBuffer> m_index_buffer;
     };
 
 }

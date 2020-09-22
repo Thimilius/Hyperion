@@ -3,6 +3,12 @@
 #include "hyperion/common.hpp"
 
 namespace Hyperion {
+    class Application;
+    class Display;
+    class Engine;
+}
+
+namespace Hyperion {
 
     class DisplayInfo {
     public:
@@ -16,24 +22,19 @@ namespace Hyperion {
                 return width == other.width && height == other.height && bits_per_pixel == other.bits_per_pixel && refresh_rate == other.refresh_rate;
             }
         };
-    private:
-        String m_name;
-        bool m_is_primary;
-        Vector<DisplayModeInfo> m_mode_infos;
     public:
         inline const String &GetName() const { return m_name; }
         inline bool IsPrimary() const { return m_is_primary; }
         inline const Vector<DisplayModeInfo> &GetModeInfos() const { return m_mode_infos; }
-
-        friend class Display;
+    private:
+        String m_name;
+        bool m_is_primary;
+        Vector<DisplayModeInfo> m_mode_infos;
+    private:
+        friend class Hyperion::Display;
     };
 
     class Display {
-    private:
-        inline static Vector<DisplayInfo> s_display_infos;
-
-        inline static u32 s_cached_width;
-        inline static u32 s_cached_height;
     public:
         inline static const Vector<DisplayInfo> &GetDisplayInfos() { return s_display_infos; }
         static DisplayInfo::DisplayModeInfo GetCurrentDisplayModeInfo();
@@ -50,9 +51,14 @@ namespace Hyperion {
             s_cached_width = width;
             s_cached_height = height;
         }
+    private:
+        inline static Vector<DisplayInfo> s_display_infos;
 
-        friend class Engine;
-        friend class Application;
+        inline static u32 s_cached_width;
+        inline static u32 s_cached_height;
+    private:
+        friend class Hyperion::Application;
+        friend class Hyperion::Engine;
     };
 
 }

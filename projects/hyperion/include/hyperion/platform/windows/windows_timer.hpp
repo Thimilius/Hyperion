@@ -7,9 +7,6 @@
 namespace Hyperion {
 
     class WindowsTimer : public Timer {
-    private:
-        LARGE_INTEGER m_start;
-        f64 m_frequency;
     public:
         WindowsTimer();
 
@@ -17,6 +14,9 @@ namespace Hyperion {
         f32 ElapsedMilliSeconds() const override;
 
         void Reset() override;
+    private:
+        LARGE_INTEGER m_start;
+        f64 m_frequency;
     };
 
 }

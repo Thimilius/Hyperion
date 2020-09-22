@@ -13,8 +13,6 @@ namespace Hyperion {
     };
 
     class Asset {
-    private:
-        String m_name;
     public:
         virtual ~Asset() = default;
 
@@ -25,6 +23,8 @@ namespace Hyperion {
     protected:
         Asset() { }
         Asset(const String &name) : m_name(name) { }
+    private:
+        String m_name;
     };
 
 }

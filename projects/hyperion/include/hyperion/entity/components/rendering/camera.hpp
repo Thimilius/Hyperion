@@ -16,11 +16,6 @@ namespace Hyperion {
 
     class Camera : public Component, EntityMessageListener {
         HYP_OBJECT(Camera, Component);
-    private:
-        mutable Rendering::CameraData m_data;
-
-        CameraClearMode m_clear_mode = CameraClearMode::Color;
-        Color m_background_color = Color::Black();
     public:
         Camera() : Component("Camera") { }
         
@@ -58,6 +53,11 @@ namespace Hyperion {
         void OnDestroy() override;
     private:
         void RecalculateMatricies();
+    private:
+        mutable Rendering::CameraData m_data;
+
+        CameraClearMode m_clear_mode = CameraClearMode::Color;
+        Color m_background_color = Color::Black();
     };
 
 }

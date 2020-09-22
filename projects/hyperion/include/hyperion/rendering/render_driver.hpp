@@ -24,8 +24,6 @@ namespace Hyperion::Rendering {
     };
 
     class RenderDriver {
-    protected:
-        Scope<RasterizerState> m_rasterizer_state;
     public:
         RasterizerState *GetRasterizerState() { return m_rasterizer_state.get(); }
         
@@ -39,6 +37,8 @@ namespace Hyperion::Rendering {
 
         virtual void DrawIndexed(MeshTopology topology, IndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) = 0;
         virtual void Draw(MeshTopology topology, u32 vertex_count, u32 vertex_offset) = 0;
+    protected:
+        Scope<RasterizerState> m_rasterizer_state;
     };
 
 }

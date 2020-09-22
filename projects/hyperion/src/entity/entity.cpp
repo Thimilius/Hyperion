@@ -111,7 +111,7 @@ namespace Hyperion {
     void Entity::OnDestroy() {
         // First destroy all our components except transform
         for (auto it = m_components.begin(); it != m_components.end(); ) {
-            if (it->first != Transform::GetTypeStatic()) {
+            if (it->first != Transform::GetStaticType()) {
                 Component *component = it->second;
                 it = m_components.erase(it);
                 DestroyImmediate(component);
@@ -163,7 +163,7 @@ namespace Hyperion {
         m_transform->m_derived_rotation = rotation;
         m_transform->OnCreate();
 
-        m_components[Transform::GetTypeStatic()] = m_transform;
+        m_components[Transform::GetStaticType()] = m_transform;
 
         if (parent) {
             m_transform->SetParent(parent);

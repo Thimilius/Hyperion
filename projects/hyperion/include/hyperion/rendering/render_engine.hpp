@@ -2,13 +2,13 @@
 
 #include "hyperion/core/app/application_settings.hpp"
 
+namespace Hyperion {
+    class Engine;
+}
+
 namespace Hyperion::Rendering {
 
     class RenderEngine {
-    private: 
-        inline static RenderBackend s_render_backend;
-
-        inline static Scope<Rendering::RenderPipeline> s_render_pipeline;
     public:
         inline static RenderBackend GetBackend() { return s_render_backend; }
     private:
@@ -19,7 +19,11 @@ namespace Hyperion::Rendering {
         static void Init(const RenderSettings &settings);
         static void Render();
         static void Shutdown();
+    private: 
+        inline static RenderBackend s_render_backend;
 
+        inline static Scope<Rendering::RenderPipeline> s_render_pipeline;
+    private:
         friend class Hyperion::Engine;
     };
 

@@ -53,23 +53,6 @@ namespace Hyperion::Rendering {
     };
 
     class RasterizerState {
-    protected:
-        bool m_depth_test_enabled;
-        bool m_depth_mask_enabled;
-        DepthEquation m_depth_equation;
-
-        bool m_stencil_test_enabled;
-
-        bool m_culling_enabled;
-        CullingMode m_culling_mode;
-        FrontFaceMode m_front_face_mode;
-
-        bool m_blending_enabled;
-        BlendFactor m_blending_source_factor;
-        BlendFactor m_blending_destination_factor;
-        BlendEquation m_blending_equation;
-
-        PolygonMode m_polygon_mode;
     public:
         virtual ~RasterizerState() = default;
 
@@ -100,6 +83,23 @@ namespace Hyperion::Rendering {
 
         PolygonMode GetPolygonMode() const { return m_polygon_mode; }
         virtual void SetPolygonMode(PolygonMode polygon_mode) = 0;
+    protected:
+        bool m_depth_test_enabled;
+        bool m_depth_mask_enabled;
+        DepthEquation m_depth_equation;
+
+        bool m_stencil_test_enabled;
+
+        bool m_culling_enabled;
+        CullingMode m_culling_mode;
+        FrontFaceMode m_front_face_mode;
+
+        bool m_blending_enabled;
+        BlendFactor m_blending_source_factor;
+        BlendFactor m_blending_destination_factor;
+        BlendEquation m_blending_equation;
+
+        PolygonMode m_polygon_mode;
     };
 
 }

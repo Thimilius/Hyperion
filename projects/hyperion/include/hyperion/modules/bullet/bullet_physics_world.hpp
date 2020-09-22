@@ -13,9 +13,6 @@ namespace Hyperion::Physics {
     class BulletPhysicsDriver;
 
     class BulletPhysicsWorld : public PhysicsWorld {
-    private:
-        btCollisionWorld *m_collision_world;
-        Map<Collider *, btCollisionObject *> m_collision_objects;
     public:
         BulletPhysicsWorld(BulletPhysicsDriver *driver);
         ~BulletPhysicsWorld() override;
@@ -39,6 +36,9 @@ namespace Hyperion::Physics {
 
         void AddCollider(Collider *collider, btCollisionObject *collision_object);
         void UpdateTransform(Transform *tranform, btCollisionObject *collision_object, Vec3 position);
+    private:
+        btCollisionWorld *m_collision_world;
+        Map<Collider *, btCollisionObject *> m_collision_objects;
     };
 
 }

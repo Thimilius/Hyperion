@@ -5,9 +5,6 @@
 namespace Hyperion::Rendering {
 
     class OpenGLShader : public Shader {
-    private:
-        u32 m_shader_program_id;
-        Map<String, s32> m_uniforms;
     public:
         OpenGLShader(const String &name, const String &source);
         ~OpenGLShader() override;
@@ -26,6 +23,9 @@ namespace Hyperion::Rendering {
         void SetMat4(const String &name, const Mat4 &matrix) override;
 
         void Recompile(const String &source) override;
+    private:
+        u32 m_shader_program_id;
+        Map<String, s32> m_uniforms;
     };
 
 }

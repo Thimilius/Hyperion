@@ -3,6 +3,10 @@
 #include "hyperion/core/image.hpp"
 
 namespace Hyperion {
+    class AssetManager;
+}
+
+namespace Hyperion {
 
     class ImageFormatLoader {
     public:
@@ -15,8 +19,6 @@ namespace Hyperion {
     };
 
     class ImageLoader {
-    private:
-        inline static Vector<ImageFormatLoader *> s_loaders;
     public:
         static Vector<String> GetSupportedExtensions();
         static bool SupportsExtension(const String &extension);
@@ -29,8 +31,10 @@ namespace Hyperion {
 
         static void Init();
         static void Shutdown();
-
-        friend class AssetManager;
+    private:
+        inline static Vector<ImageFormatLoader *> s_loaders;
+    private:
+        friend class Hyperion::AssetManager;
     };
 
 }

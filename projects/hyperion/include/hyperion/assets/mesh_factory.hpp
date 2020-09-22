@@ -5,8 +5,6 @@
 namespace Hyperion {
 
     class MeshFactory {
-    private:
-        static Scope<MeshLoader> s_mesh_loader;
     public:
         static Ref<Rendering::Mesh> CreateQuad(f32 width, f32 height);
         static Ref<Rendering::Mesh> CreatePlane(f32 width, f32 height);
@@ -15,6 +13,8 @@ namespace Hyperion {
     private:
         MeshFactory() = delete;
         ~MeshFactory() = delete;
+    private:
+        static Scope<MeshLoader> s_mesh_loader;
     };
 
 }

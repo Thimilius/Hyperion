@@ -41,9 +41,6 @@ namespace Hyperion::Rendering {
     };
 
     class BufferLayout {
-    private:
-        Vector<BufferElement> m_elements;
-        u32 m_stride = 0;
     public:
         BufferLayout() { }
 
@@ -56,12 +53,12 @@ namespace Hyperion::Rendering {
         inline const Vector<BufferElement> &GetElements() const { return m_elements; }
     private:
         void CalculateOffsetsAndStride();
+    private:
+        Vector<BufferElement> m_elements;
+        u32 m_stride = 0;
     };
 
     class VertexBuffer {
-    protected:
-        u32 m_size;
-        BufferLayout m_layout;
     public:
         VertexBuffer(u32 size) : m_size(size) { }
         virtual ~VertexBuffer() = default;
@@ -80,12 +77,12 @@ namespace Hyperion::Rendering {
 
         static Ref<VertexBuffer> Create(const u8 *vertices, u32 size);
         static Ref<VertexBuffer> Create(const u8 *vertices, u32 size, BufferUsage usage);
+    protected:
+        u32 m_size;
+        BufferLayout m_layout;
     };
 
     class IndexBuffer {
-    protected:
-        IndexFormat m_format;
-        u32 m_count;
     public:
         IndexBuffer(IndexFormat format, u32 count) : m_format(format), m_count(count) { }
         virtual ~IndexBuffer() = default;
@@ -100,6 +97,9 @@ namespace Hyperion::Rendering {
 
         static Ref<IndexBuffer> Create(const u16 *indices, u32 count);
         static Ref<IndexBuffer> Create(const u32 *indices, u32 count);
+    protected:
+        IndexFormat m_format;
+        u32 m_count;
     };
 
 }

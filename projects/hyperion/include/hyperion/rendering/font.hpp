@@ -28,12 +28,6 @@ namespace Hyperion::Rendering {
     };
 
     class Font : public Asset {
-    private:
-        u32 m_size;
-        FontCharacterSet m_character_set;
-        Map<u32, FontGlyph> m_glyphs;
-
-        inline static FT_LibraryRec_ *s_freetype_library;
     public:
         inline AssetType GetAssetType() const { return AssetType::Font; };
 
@@ -45,7 +39,13 @@ namespace Hyperion::Rendering {
         Font(const String &path, u32 size, FontCharacterSet character_set);
 
         static void Init();
+    private:
+        u32 m_size;
+        FontCharacterSet m_character_set;
+        Map<u32, FontGlyph> m_glyphs;
 
+        inline static FT_LibraryRec_ *s_freetype_library;
+    private:
         friend class Hyperion::Engine;
     };
 

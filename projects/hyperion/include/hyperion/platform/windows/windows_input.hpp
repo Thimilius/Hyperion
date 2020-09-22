@@ -6,35 +6,12 @@
 #include "hyperion/core/app/events/gamepad_events.hpp"
 
 namespace Hyperion {
+    class WindowsWindow;
+}
+
+namespace Hyperion {
 
     class WindowsInput : public InputImplementation {
-    private:
-        bool m_keys_down[(s32)KeyCode::Last];
-        bool m_keys[(s32)KeyCode::Last];
-        bool m_keys_last[(s32)KeyCode::Last];
-        bool m_keys_up[(s32)KeyCode::Last];
-
-        bool m_mouse_buttons_down[(s32)MouseButtonCode::Last];
-        bool m_mouse_buttons[(s32)MouseButtonCode::Last];
-        bool m_mouse_buttons_last[(s32)MouseButtonCode::Last];
-        bool m_mouse_buttons_up[(s32)MouseButtonCode::Last];
-
-        Vec2 m_mouse_position;
-        f32 m_mouse_scroll;
-
-        struct GamepadState {
-            bool buttons_down[(s32)GamepadButtonCode::Last];
-            bool buttons[(s32)GamepadButtonCode::Last];
-            bool buttons_last[(s32)GamepadButtonCode::Last];
-            bool buttons_up[(s32)GamepadButtonCode::Last];
-
-            Vec2 axes[(s32)GamepadAxis::Last];
-        };
-
-        bool m_gamepad_input_active = true;
-        Vector<Gamepad> m_gamepads_connected;
-        GamepadState m_gamepads[(s32)Gamepad::Last];
-        f32 m_gamepad_dead_zone = 0.25f;
     public:
         WindowsInput();
         ~WindowsInput();
@@ -74,8 +51,35 @@ namespace Hyperion {
         Gamepad GetGamepadFromId(u32 id);
         u32 GetIdFromGamepad(Gamepad gamepad);
         Vec2 ApplyGamepadDeadzone(f32 x, f32 y);
+    private:
+        bool m_keys_down[(s32)KeyCode::Last];
+        bool m_keys[(s32)KeyCode::Last];
+        bool m_keys_last[(s32)KeyCode::Last];
+        bool m_keys_up[(s32)KeyCode::Last];
 
-        friend class WindowsWindow;
+        bool m_mouse_buttons_down[(s32)MouseButtonCode::Last];
+        bool m_mouse_buttons[(s32)MouseButtonCode::Last];
+        bool m_mouse_buttons_last[(s32)MouseButtonCode::Last];
+        bool m_mouse_buttons_up[(s32)MouseButtonCode::Last];
+
+        Vec2 m_mouse_position;
+        f32 m_mouse_scroll;
+
+        struct GamepadState {
+            bool buttons_down[(s32)GamepadButtonCode::Last];
+            bool buttons[(s32)GamepadButtonCode::Last];
+            bool buttons_last[(s32)GamepadButtonCode::Last];
+            bool buttons_up[(s32)GamepadButtonCode::Last];
+
+            Vec2 axes[(s32)GamepadAxis::Last];
+        };
+
+        bool m_gamepad_input_active = true;
+        Vector<Gamepad> m_gamepads_connected;
+        GamepadState m_gamepads[(s32)Gamepad::Last];
+        f32 m_gamepad_dead_zone = 0.25f;
+    private:
+        friend class Hyperion::WindowsWindow;
     };
 
 }

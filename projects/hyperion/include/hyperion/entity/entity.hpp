@@ -7,8 +7,12 @@
 #include "hyperion/entity/components/transform.hpp"
 
 namespace Hyperion {
-
+    class Component;
+    class Object;
     class World;
+}
+
+namespace Hyperion {
 
     enum class EntityPrimitive {
         Quad,
@@ -29,15 +33,6 @@ namespace Hyperion {
     // Currently the GetComponents implementations assume only one component of a certain type
     class Entity : public Object {
         HYP_OBJECT(Entity, Object);
-    private:
-        Transform *m_transform;
-        Map<ObjectType, Component *> m_components;
-        
-        World *m_world = nullptr;
-        Set<EntityTag> m_tags;
-        bool m_active = true;
-
-        Vector<EntityMessageListener *> m_message_listeners;
     public:
         inline World *GetWorld() const { return m_world; }
         inline Transform *GetTransform() { return m_transform; }
@@ -59,7 +54,7 @@ namespace Hyperion {
             !std::is_same<Transform, T>::value &&
             std::is_default_constructible<T>::value>>
         T *AddComponent() {
-            ObjectType type = T::GetTypeStatic();
+            ObjectType type = T::GetStaticType();
             HYP_ASSERT_MESSAGE(m_components.find(type) == m_components.end(), "Failed to add component because a component with the same type already exists!");
 
             T *component = new T();
@@ -75,7 +70,7 @@ namespace Hyperion {
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         T *GetComponent() const {
-            ObjectType type = T::GetTypeStatic();
+            ObjectType type = T::GetStaticType();
 
             for (auto [component_type, component] : m_components) {
                 if (component->IsBase(type)) {
@@ -88,7 +83,7 @@ namespace Hyperion {
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         T *GetComponentInChildren() const {
-            ObjectType type = T::GetTypeStatic();
+            ObjectType type = T::GetStaticType();
 
             T *component = GetComponent<T>();
             if (component) {
@@ -107,7 +102,7 @@ namespace Hyperion {
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         T *GetComponentInParent() const {
-            ObjectType type = T::GetTypeStatic();
+            ObjectType type = T::GetStaticType();
             
             Component *component = GetComponent<T>();
             if (component) {
@@ -124,7 +119,7 @@ namespace Hyperion {
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         Vector<T *> GetComponentsInChildren() const {
-            ObjectType type = T::GetTypeStatic();
+            ObjectType type = T::GetStaticType();
             Vector<T *> components;
 
             for (auto [component_type, component] : m_components) {
@@ -142,7 +137,7 @@ namespace Hyperion {
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         Vector<T *> GetComponentsInParent() const {
-            ObjectType type = T::GetTypeStatic();
+            ObjectType type = T::GetStaticType();
             Vector<T *> components;
 
             for (auto [component_type, component] : m_components) {
@@ -180,9 +175,18 @@ namespace Hyperion {
         void OnCreate(const Vec3 &position, const Quaternion &rotation, Transform *parent, World *world);
 
         static String GetPrimitiveName(EntityPrimitive primitive);
+    private:
+        Transform *m_transform;
+        Map<ObjectType, Component *> m_components;
+        
+        World *m_world = nullptr;
+        Set<EntityTag> m_tags;
+        bool m_active = true;
 
-        friend class Object;
-        friend class Component;
+        Vector<EntityMessageListener *> m_message_listeners;
+    private:
+        friend class Hyperion::Component;
+        friend class Hyperion::Object;
     };
 
 }

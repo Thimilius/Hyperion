@@ -178,7 +178,7 @@ namespace Hyperion::Editor {
                 RenderCommand::GetRasterizerState()->SetPolygonMode(PolygonMode::Line);
 
                 Object *selection = EditorSelection::GetSelection();
-                if (selection != nullptr && selection->IsBase(Entity::GetTypeStatic())) {
+                if (selection != nullptr && selection->IsBase(Entity::GetStaticType())) {
                     Entity *entity = static_cast<Entity *>(selection);
                     MeshRenderer *renderer = entity->GetComponent<MeshRenderer>();
                     if (renderer != nullptr) {

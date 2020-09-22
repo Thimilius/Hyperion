@@ -42,8 +42,6 @@ namespace Hyperion {
     };
 
     class Log {
-    private:
-        inline static LogLevel m_level;
     public:
         inline static void SetLevel(LogLevel level) { m_level = level; }
         
@@ -62,6 +60,8 @@ namespace Hyperion {
         static void LogMessageInternal(LogLevel level, String message);
 
         static LogColor GetLogColor(LogLevel level);
+    private:
+        inline static LogLevel m_level;
     };
 
 }

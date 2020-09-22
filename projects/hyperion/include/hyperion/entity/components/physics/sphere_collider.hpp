@@ -6,8 +6,6 @@ namespace Hyperion {
 
     class SphereCollider : public Collider {
         HYP_OBJECT(SphereCollider, Collider);
-    private:
-        f32 m_radius = 0.5f;
     public:
         SphereCollider() : Collider("SphereCollider") {}
 
@@ -25,6 +23,8 @@ namespace Hyperion {
         void OnDestroy() override;
     private:
         void NotifyColliderChange();
+    private:
+        f32 m_radius = 0.5f;
     };
 
 }
