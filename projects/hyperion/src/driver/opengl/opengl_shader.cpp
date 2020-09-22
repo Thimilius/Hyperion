@@ -57,25 +57,56 @@ namespace Hyperion::Rendering {
         m_shader_program_id = result.id;
         m_attributes = result.properties;
 
-        {
-            m_uniforms.clear();
-            
-            s32 uniform_count;
-            glGetProgramiv(m_shader_program_id, GL_ACTIVE_UNIFORMS, &uniform_count);
-            
-            for (s32 i = 0; i < uniform_count; i++) {
-                s32 uniform_name_length;
-                char uniform_name[128];
-                s32 uniform_size;
-                u32 uniform_type;
-                glGetActiveUniform(m_shader_program_id, i, 128, &uniform_name_length, &uniform_size, &uniform_type, uniform_name);
+        CollectUniformDeclarations();
+    }
 
-                s32 location = glGetUniformLocation(m_shader_program_id, uniform_name);
-                if (location < 0) {
-                    HYP_LOG_ERROR("OpenGL", "Failed to introspection location for uniform: '{}'!", uniform_name);
-                }
-                m_uniforms[uniform_name] = location;
+    void OpenGLShader::CollectUniformDeclarations() {
+        m_uniforms.clear();
+        m_uniform_declarations.clear();
+
+        s32 uniform_count;
+        glGetProgramiv(m_shader_program_id, GL_ACTIVE_UNIFORMS, &uniform_count);
+
+        m_uniforms.reserve(uniform_count);
+        m_uniform_declarations.reserve(uniform_count);
+
+        const u32 uniform_name_buffer_length = 128;
+        for (s32 i = 0; i < uniform_count; i++) {
+            s32 uniform_name_length;
+            char uniform_name[uniform_name_buffer_length];
+            s32 uniform_size;
+            u32 uniform_type;
+            glGetActiveUniform(m_shader_program_id, i, uniform_name_buffer_length, &uniform_name_length, &uniform_size, &uniform_type, uniform_name);
+
+            if (uniform_name_length > uniform_name_buffer_length) {
+                HYP_LOG_WARN("OpenGL", "The name of a shader uniform is longer than the buffer for the name and is therefore cut off!");
             }
+
+            ShaderUniformDeclaration uniform_declaration;
+            uniform_declaration.name = uniform_name;
+            uniform_declaration.type = GetShaderDataType(uniform_type);
+            m_uniform_declarations.push_back(uniform_declaration);
+
+            s32 location = glGetUniformLocation(m_shader_program_id, uniform_name);
+            if (location < 0) {
+                HYP_LOG_ERROR("OpenGL", "Failed to introspection location for uniform: '{}'!", uniform_name);
+            }
+            m_uniforms[uniform_name] = location;
+        }
+    }
+
+    ShaderDataType OpenGLShader::GetShaderDataType(u32 gl_type) {
+        switch (gl_type) {
+            case GL_INT: return ShaderDataType::Int;
+            case GL_FLOAT: return ShaderDataType::Float;
+            case GL_FLOAT_VEC2: return ShaderDataType::Vec2;
+            case GL_FLOAT_VEC3: return ShaderDataType::Vec3;
+            case GL_FLOAT_VEC4: return ShaderDataType::Vec4;
+            case GL_FLOAT_MAT3: return ShaderDataType::Mat3;
+            case GL_FLOAT_MAT4: return ShaderDataType::Mat4;
+            case GL_SAMPLER_2D: return ShaderDataType::Texture2D;
+            case GL_SAMPLER_CUBE: return ShaderDataType::TextureCubemap;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return ShaderDataType::Unknown;
         }
     }
 

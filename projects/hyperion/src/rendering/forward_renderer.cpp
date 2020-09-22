@@ -83,7 +83,7 @@ namespace Hyperion::Rendering {
     }
 
     void ForwardRenderer::DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform, const Mat4 &inverse_transform) {
-        PrepareShader(material->GetShader(), transform, inverse_transform);
+        PrepareMaterial(material, transform, inverse_transform);
         material->Bind();
         DrawCall(mesh);
     }
@@ -104,42 +104,42 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void ForwardRenderer::PrepareShader(const Ref<Shader> &shader, const Mat4 &transform, const Mat4 &inverse_transform) {
-        shader->SetMat4("u_transform.mvp", s_state.transform.view_projection * transform);
+    void ForwardRenderer::PrepareMaterial(const Ref<Material> &material, const Mat4 &transform, const Mat4 &inverse_transform) {
+        material->SetMat4("u_transform.mvp", s_state.transform.view_projection * transform);
 
-        if (shader->GetAttributes().light_mode == ShaderLightMode::Forward) {
+        if (material->GetShader()->GetAttributes().light_mode == ShaderLightMode::Forward) {
             // TODO: There needs to be a better way of "not setting" shader uniforms
             // when we are not sure if the shader has them to avoid unnecessary log messages
-            shader->SetMat4("u_transform.model", transform);
-            shader->SetMat3("u_transform.model_normal", Mat3(inverse_transform.Transposed()));
-            shader->SetVec3("u_camera.position", s_state.camera.position);
+            material->SetMat4("u_transform.model", transform);
+            material->SetMat3("u_transform.model_normal", Mat3(inverse_transform.Transposed()));
+            material->SetVec3("u_camera.position", s_state.camera.position);
 
             // Setup lighting
             {
                 State::Lighting &lighting = s_state.lighting;
 
-                shader->SetVec3("u_lighting.ambient_color", lighting.ambient_color);
+                material->SetVec3("u_lighting.ambient_color", lighting.ambient_color);
 
                 Light *main_light = lighting.main_light;
                 if (main_light) {
-                    shader->SetFloat("u_lighting.main_light.intensity", main_light->GetIntensity());
-                    shader->SetVec4("u_lighting.main_light.color", main_light->GetColor());
-                    shader->SetVec3("u_lighting.main_light.direction", main_light->GetTransform()->GetForward());
+                    material->SetFloat("u_lighting.main_light.intensity", main_light->GetIntensity());
+                    material->SetVec4("u_lighting.main_light.color", main_light->GetColor());
+                    material->SetVec3("u_lighting.main_light.direction", main_light->GetTransform()->GetForward());
                 } else {
-                    shader->SetVec4("u_lighting.main_light.color", Color::Black());
+                    material->SetVec4("u_lighting.main_light.color", Color::Black());
                 }
 
                 if (lighting.point_lights) {
                     u32 full_point_light_count = static_cast<u32>(lighting.point_lights->size());
                     u32 max_point_light_count = lighting.MAX_POINT_LIGHT_COUNT;
                     u32 light_count = full_point_light_count <= max_point_light_count ? full_point_light_count : max_point_light_count;
-                    shader->SetInt("u_lighting.point_light_count", light_count);
+                    material->SetInt("u_lighting.point_light_count", light_count);
                     for (u32 i = 0; i < light_count && i < lighting.MAX_POINT_LIGHT_COUNT; i++) {
                         Light *light = lighting.point_lights->at(i);
-                        shader->SetFloat(lighting.point_light_uniforms[i].intensity, light->GetIntensity());
-                        shader->SetVec4(lighting.point_light_uniforms[i].color, light->GetColor());
-                        shader->SetVec3(lighting.point_light_uniforms[i].position, light->GetTransform()->GetPosition());
-                        shader->SetFloat(lighting.point_light_uniforms[i].range, light->GetRange());
+                        material->SetFloat(lighting.point_light_uniforms[i].intensity, light->GetIntensity());
+                        material->SetVec4(lighting.point_light_uniforms[i].color, light->GetColor());
+                        material->SetVec3(lighting.point_light_uniforms[i].position, light->GetTransform()->GetPosition());
+                        material->SetFloat(lighting.point_light_uniforms[i].range, light->GetRange());
                     }
                 }
             }

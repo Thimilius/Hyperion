@@ -14,26 +14,10 @@
 namespace Hyperion::Rendering {
 
     class Material : public Asset, public Copyable<Material> {
-        using MaterialPropertyStorage = std::variant<u32, f32, Vec2, Vec3, Vec4, Mat3, Mat4, Color, Ref<Texture2D>>;
+        using MaterialPropertyStorage = std::variant<u32, f32, Vec2, Vec3, Vec4, Mat3, Mat4, Ref<Texture2D>, Ref<TextureCubemap>>;
     private:
-        enum class MaterialPropertyType {
-            Int,
-            Float,
-
-            Vec2,
-            Vec3,
-            Vec4,
-
-            Mat3,
-            Mat4,
-
-            Color,
-
-            Texture2D
-        };
-
         struct MaterialProperty {
-            MaterialPropertyType type;
+            ShaderDataType type;
             String name;
             MaterialPropertyStorage storage;
         };
@@ -61,7 +45,7 @@ namespace Hyperion::Rendering {
     private:
         Material(const Ref<Shader> &shader);
 
-        u32 FindOrAddProperty(const String &name, MaterialPropertyType type);
+        s32 FindProperty(const String &name, ShaderDataType type);
     private:
         Ref<Shader> m_shader;
         Vector<MaterialProperty> m_properties;

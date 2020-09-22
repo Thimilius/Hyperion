@@ -9,18 +9,42 @@ namespace Hyperion::Rendering {
 
     enum class ShaderType {
         Unknown,
+
         Vertex,
         Fragment
     };
 
     enum class ShaderLightMode {
         Unknown,
+
         None,
         Forward,
     };
 
     struct ShaderAttributes {
         ShaderLightMode light_mode = ShaderLightMode::None;
+    };
+
+    enum class ShaderDataType {
+        Unknown,
+
+        Int,
+        Float,
+
+        Vec2,
+        Vec3,
+        Vec4,
+
+        Mat3,
+        Mat4,
+
+        Texture2D,
+        TextureCubemap,
+    };
+
+    struct ShaderUniformDeclaration {
+        String name;
+        ShaderDataType type;
     };
 
     class Shader : public Asset {
@@ -35,6 +59,8 @@ namespace Hyperion::Rendering {
         virtual void Unbind() const = 0;
 
         virtual u32 GetID() const = 0;
+
+        virtual const Vector<ShaderUniformDeclaration> &GetUniformDeclarations() const = 0;
 
         virtual void SetInt(const String &name, u32 value) = 0;
         virtual void SetFloat(const String &name, f32 value) = 0;

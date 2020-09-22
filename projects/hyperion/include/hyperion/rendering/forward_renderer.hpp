@@ -31,7 +31,7 @@ namespace Hyperion::Rendering {
 
         static void Init();
 
-        static void PrepareShader(const Ref<Shader> &shader, const Mat4 &transform, const Mat4 &inverse_transform);
+        static void PrepareMaterial(const Ref<Material> &material, const Mat4 &transform, const Mat4 &inverse_transform);
         static void DrawCall(const Ref<Mesh> &mesh);
     private:
         struct State {

@@ -22,8 +22,6 @@ namespace Hyperion::Rendering {
         DynamicDraw
     };
 
-    
-
     struct BufferElement {
         String name;
         BufferDataType type;
