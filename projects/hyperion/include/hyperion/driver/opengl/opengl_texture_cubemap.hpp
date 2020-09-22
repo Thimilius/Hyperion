@@ -1,11 +1,10 @@
 #pragma once
 
-#include "hyperion/driver/opengl/opengl_texture.hpp"
 #include "hyperion/rendering/texture_cubemap.hpp"
 
 namespace Hyperion::Rendering {
 
-    class OpenGLTextureCubemap : public TextureCubemap, public OpenGLTexture {
+    class OpenGLTextureCubemap : public TextureCubemap {
     public:
         OpenGLTextureCubemap(u32 width, u32 height, TextureFormat format, TextureParameters parameters);
         OpenGLTextureCubemap(u32 width, u32 height, TextureFormat format, TextureParameters parameters, const Map<TextureCubemapFace, const u8 *> &pixels);

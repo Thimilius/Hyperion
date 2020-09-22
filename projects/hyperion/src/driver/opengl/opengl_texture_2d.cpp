@@ -4,6 +4,8 @@
 
 #include <glad/glad.h>
 
+#include "hyperion/driver/opengl/opengl_texture_utilities.hpp"
+
 namespace Hyperion::Rendering {
 
     OpenGLTexture2D::OpenGLTexture2D(u32 width, u32 height, TextureFormat format, TextureParameters parameters)
@@ -40,7 +42,7 @@ namespace Hyperion::Rendering {
     void OpenGLTexture2D::SetWrapMode(TextureWrapMode wrap_mode) {
         m_parameters.wrap_mode = wrap_mode;
 
-        u32 wrap = GetGLWrapMode(wrap_mode);
+        u32 wrap = OpenGLTextureUtilities::GetGLWrapMode(wrap_mode);
         glTextureParameteri(m_texture_id, GL_TEXTURE_WRAP_S, wrap);
         glTextureParameteri(m_texture_id, GL_TEXTURE_WRAP_T, wrap);
     }
@@ -48,8 +50,8 @@ namespace Hyperion::Rendering {
     void OpenGLTexture2D::SetFilter(TextureFilter filter) {
         m_parameters.filter = filter;
 
-        u32 min_filter = GetGLMinFilter(filter);
-        u32 mag_filter = GetGLMaxFilter(filter);
+        u32 min_filter = OpenGLTextureUtilities::GetGLMinFilter(filter);
+        u32 mag_filter = OpenGLTextureUtilities::GetGLMaxFilter(filter);
         glTextureParameteri(m_texture_id, GL_TEXTURE_MIN_FILTER, min_filter);
         glTextureParameteri(m_texture_id, GL_TEXTURE_MAG_FILTER, mag_filter);
     }
@@ -57,7 +59,8 @@ namespace Hyperion::Rendering {
     void OpenGLTexture2D::SetAnisotropicFilter(TextureAnisotropicFilter anisotropic_filter) {
         m_parameters.anisotropic_filter = anisotropic_filter;
 
-        glTextureParameterf(m_texture_id, GL_TEXTURE_MAX_ANISOTROPY, GetGLAnisotropicFilter(anisotropic_filter));
+        f32 anisotropic_filter_value = OpenGLTextureUtilities::GetGLAnisotropicFilter(anisotropic_filter);
+        glTextureParameterf(m_texture_id, GL_TEXTURE_MAX_ANISOTROPY, anisotropic_filter_value);
     }
 
     void OpenGLTexture2D::Resize(u32 width, u32 height) {
@@ -84,10 +87,14 @@ namespace Hyperion::Rendering {
 
         CreateTexture(nullptr);
 
+        OpenGLTextureUtilities::SetUnpackAlignmentForFormat(m_format);
+
         u32 sub_image_width = old_width > width ? width : old_width;
         u32 sub_image_height = old_height > height ? height : old_height;
-        SetUnpackAlignmentForFormat(m_format);
-        glTextureSubImage2D(m_texture_id, 0, 0, 0, sub_image_width, sub_image_height, GetGLFormat(m_format), GetGLFormatType(m_format), pixels);
+        u32 format_value = OpenGLTextureUtilities::GetGLFormat(m_format);
+        u32 format_type = OpenGLTextureUtilities::GetGLFormatType(m_format);
+
+        glTextureSubImage2D(m_texture_id, 0, 0, 0, sub_image_width, sub_image_height, format_value, format_type, pixels);
         
         GenerateMipmaps();
 
@@ -96,8 +103,12 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLTexture2D::SetPixels(const u8 *pixels, bool generate_mipmaps) {
-        SetUnpackAlignmentForFormat(m_format);
-        glTextureSubImage2D(m_texture_id, 0, 0, 0, m_width, m_height, GetGLFormat(m_format), GetGLFormatType(m_format), pixels);
+        OpenGLTextureUtilities::SetUnpackAlignmentForFormat(m_format);
+
+        u32 format_value = OpenGLTextureUtilities::GetGLFormat(m_format);
+        u32 format_type = OpenGLTextureUtilities::GetGLFormatType(m_format);
+
+        glTextureSubImage2D(m_texture_id, 0, 0, 0, m_width, m_height, format_value, format_type, pixels);
 
         if (generate_mipmaps) {
             GenerateMipmaps();
@@ -109,8 +120,11 @@ namespace Hyperion::Rendering {
         u32 size = m_width * m_height * GetBytesPerPixel(m_format);
         u8 *pixels = new u8[size];
 
+        u32 format_value = OpenGLTextureUtilities::GetGLFormat(m_format);
+        u32 format_type = OpenGLTextureUtilities::GetGLFormatType(m_format);
+
         // TODO: Provide ability to get pixels from other mipmaps
-        glGetTextureImage(m_texture_id, 0, GetGLFormat(m_format), GetGLFormatType(m_format), size, pixels);
+        glGetTextureImage(m_texture_id, 0, format_value, format_type, size, pixels);
 
         return pixels;
     }
@@ -122,10 +136,16 @@ namespace Hyperion::Rendering {
         SetFilter(m_parameters.filter);
         SetAnisotropicFilter(m_parameters.anisotropic_filter);
 
-        glTextureStorage2D(m_texture_id, m_parameters.use_mipmaps ? m_mipmap_count : 1, GetGLInternalFormat(m_format), m_width, m_height);
+        u32 internal_format = OpenGLTextureUtilities::GetGLInternalFormat(m_format);
+        glTextureStorage2D(m_texture_id, m_parameters.use_mipmaps ? m_mipmap_count : 1, internal_format, m_width, m_height);
+
         if (pixels != nullptr) {
-            SetUnpackAlignmentForFormat(m_format);
-            glTextureSubImage2D(m_texture_id, 0, 0, 0, m_width, m_height, GetGLFormat(m_format), GetGLFormatType(m_format), pixels);
+            OpenGLTextureUtilities::SetUnpackAlignmentForFormat(m_format);
+
+            u32 format_value = OpenGLTextureUtilities::GetGLFormat(m_format);
+            u32 format_type = OpenGLTextureUtilities::GetGLFormatType(m_format);
+
+            glTextureSubImage2D(m_texture_id, 0, 0, 0, m_width, m_height, format_value, format_type, pixels);
 
             GenerateMipmaps();
         }

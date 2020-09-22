@@ -4,11 +4,8 @@
 
 namespace Hyperion::Rendering {
 
-    class OpenGLTexture {
-    protected:
-        OpenGLTexture() = default;
-        virtual ~OpenGLTexture() = default;
-
+    class OpenGLTextureUtilities {
+    public:
         static void SetUnpackAlignmentForFormat(TextureFormat format);
 
         static u32 GetGLFormat(TextureFormat format);
@@ -18,6 +15,9 @@ namespace Hyperion::Rendering {
         static u32 GetGLMinFilter(TextureFilter filter);
         static u32 GetGLMaxFilter(TextureFilter filter);
         static f32 GetGLAnisotropicFilter(TextureAnisotropicFilter anisotropic_filter);
+    private:
+        OpenGLTextureUtilities() = delete;
+        ~OpenGLTextureUtilities() = delete;
     };
 
 }

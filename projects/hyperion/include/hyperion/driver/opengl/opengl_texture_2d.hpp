@@ -1,11 +1,10 @@
 #pragma once
 
-#include "hyperion/driver/opengl/opengl_texture.hpp"
 #include "hyperion/rendering/texture_2d.hpp"
 
 namespace Hyperion::Rendering {
 
-    class OpenGLTexture2D : public Texture2D, public OpenGLTexture {
+    class OpenGLTexture2D : public Texture2D {
     public:
         OpenGLTexture2D(u32 width, u32 height, TextureFormat format, TextureParameters parameters);
         OpenGLTexture2D(u32 width, u32 height, TextureFormat format, TextureParameters parameters, const u8 *pixels);

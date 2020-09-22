@@ -4,6 +4,8 @@
 
 #include "glad/glad.h"
 
+#include "hyperion/driver/opengl/opengl_texture_utilities.hpp"
+
 namespace Hyperion::Rendering {
 
     OpenGLTextureCubemap::OpenGLTextureCubemap(u32 width, u32 height, TextureFormat format, TextureParameters parameters)
@@ -38,7 +40,7 @@ namespace Hyperion::Rendering {
     void OpenGLTextureCubemap::SetWrapMode(TextureWrapMode wrap_mode) {
         m_parameters.wrap_mode = wrap_mode;
 
-        u32 wrap = GetGLWrapMode(wrap_mode);
+        u32 wrap = OpenGLTextureUtilities::GetGLWrapMode(wrap_mode);
         glTextureParameteri(m_texture_id, GL_TEXTURE_WRAP_S, wrap);
         glTextureParameteri(m_texture_id, GL_TEXTURE_WRAP_T, wrap);
         glTextureParameteri(m_texture_id, GL_TEXTURE_WRAP_R, wrap);
@@ -47,8 +49,8 @@ namespace Hyperion::Rendering {
     void OpenGLTextureCubemap::SetFilter(TextureFilter filter) {
         m_parameters.filter = filter;
 
-        u32 min_filter = GetGLMinFilter(filter);
-        u32 mag_filter = GetGLMaxFilter(filter);
+        u32 min_filter = OpenGLTextureUtilities::GetGLMinFilter(filter);
+        u32 mag_filter = OpenGLTextureUtilities::GetGLMaxFilter(filter);
         glTextureParameteri(m_texture_id, GL_TEXTURE_MIN_FILTER, min_filter);
         glTextureParameteri(m_texture_id, GL_TEXTURE_MAG_FILTER, mag_filter);
     }
@@ -56,7 +58,8 @@ namespace Hyperion::Rendering {
     void OpenGLTextureCubemap::SetAnisotropicFilter(TextureAnisotropicFilter anisotropic_filter) {
         m_parameters.anisotropic_filter = anisotropic_filter;
 
-        glTextureParameterf(m_texture_id, GL_TEXTURE_MAX_ANISOTROPY, GetGLAnisotropicFilter(anisotropic_filter));
+        f32 anisotropic_filter_value = OpenGLTextureUtilities::GetGLAnisotropicFilter(anisotropic_filter);
+        glTextureParameterf(m_texture_id, GL_TEXTURE_MAX_ANISOTROPY, anisotropic_filter_value);
     }
 
     void OpenGLTextureCubemap::SetPixels(TextureCubemapFace face, const u8 *pixels, bool generate_mipmaps) {
@@ -71,8 +74,12 @@ namespace Hyperion::Rendering {
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
 
-        SetUnpackAlignmentForFormat(m_format);
-        glTextureSubImage3D(m_texture_id, 0, 0, 0, face_offset, m_width, m_height, 1, GetGLFormat(m_format), GetGLFormatType(m_format), pixels);
+        OpenGLTextureUtilities::SetUnpackAlignmentForFormat(m_format);
+
+        u32 format_value = OpenGLTextureUtilities::GetGLFormat(m_format);
+        u32 format_type = OpenGLTextureUtilities::GetGLFormatType(m_format);
+
+        glTextureSubImage3D(m_texture_id, 0, 0, 0, face_offset, m_width, m_height, 1, format_value, format_type, pixels);
 
         if (generate_mipmaps) {
             GenerateMipmaps();
@@ -91,7 +98,8 @@ namespace Hyperion::Rendering {
         SetWrapMode(m_parameters.wrap_mode);
         SetAnisotropicFilter(m_parameters.anisotropic_filter);
 
-        glTextureStorage2D(m_texture_id, m_parameters.use_mipmaps ? m_mipmap_count : 1, GetGLInternalFormat(m_format), m_width, m_height);
+        u32 internal_format = OpenGLTextureUtilities::GetGLInternalFormat(m_format);
+        glTextureStorage2D(m_texture_id, m_parameters.use_mipmaps ? m_mipmap_count : 1, internal_format, m_width, m_height);
 
         if (valid_pixels) {
             for (auto [face, pixel_data] : pixels) {
