@@ -93,6 +93,8 @@ namespace Hyperion::Editor {
         renderer->SetMesh(plane_mesh);
         renderer->SetMaterial(material);
         renderer->GetMaterial()->SetColor("u_color", Color::Red());
+
+        EditorSelection::RegisterSelectionListener(this);
     }
 
     void EditorGizmo::OnUpdate(f32 delta_time) {
@@ -288,6 +290,18 @@ namespace Hyperion::Editor {
             color = Color::Red();
         }
         m_last_gizmo->GetComponent<MeshRenderer>()->GetMaterial()->SetColor("u_color", color);
+    }
+
+    void EditorGizmo::OnSelection(Object *selection) {
+        if (selection != nullptr && selection->GetType() == Entity::GetStaticType()) {
+            Entity *entity = static_cast<Entity *>(selection);
+            m_selection = entity;
+            GetEntity()->SetActive(true);
+            GetTransform()->SetPosition(entity->GetTransform()->GetPosition());
+        } else {
+            m_selection = nullptr;
+            GetEntity()->SetActive(false);
+        }
     }
 
 }

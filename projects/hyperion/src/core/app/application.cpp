@@ -24,7 +24,7 @@ namespace Hyperion {
         Display::UpdateSize(settings.window.width, settings.window.height);
 
         m_window.reset(Window::Create(settings.window, settings.render.backend));
-        m_window->SetEventCallbackFunction(std::bind(&Application::OnEventInternal, this, std::placeholders::_1));
+        m_window->SetEventCallback(std::bind(&Application::OnEventInternal, this, std::placeholders::_1));
     }
     
     void Application::Exit() {

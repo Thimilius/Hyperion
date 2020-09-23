@@ -31,7 +31,7 @@ namespace Hyperion {
         void SetupWindow(const WindowSettings &settings);
 
         InputImplementation *GetInput() const override { return m_input; }
-        void SetEventCallbackFunction(const EventCallbackFunction &event_callback) override;
+        void SetEventCallback(const EventCallbackFunction &event_callback) override;
 
         Vec2 GetActualWindowSize(u32 client_width, u32 client_height);
 

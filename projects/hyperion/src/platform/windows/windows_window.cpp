@@ -245,9 +245,9 @@ namespace Hyperion {
         }
     }
 
-    void WindowsWindow::SetEventCallbackFunction(const EventCallbackFunction &event_callback) {
+    void WindowsWindow::SetEventCallback(const EventCallbackFunction &event_callback) {
         m_event_callback = event_callback;
-        m_input->SetEventCallbackFunction(event_callback);
+        m_input->SetEventCallback(event_callback);
     }
 
     Vec2 WindowsWindow::GetActualWindowSize(u32 client_width, u32 client_height) {

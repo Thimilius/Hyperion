@@ -241,7 +241,7 @@ namespace Hyperion {
             }
         }
 
-        void SetEventCallbackFunction(const EventCallbackFunction &event_callback) { m_event_callback = event_callback; }
+        void SetEventCallback(const EventCallbackFunction &event_callback) { m_event_callback = event_callback; }
     private:
         EventCallbackFunction m_event_callback;
     };

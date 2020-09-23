@@ -42,6 +42,10 @@ namespace Hyperion::Editor {
         s_gizmo->SetCamera(s_camera);
         s_gizmo->GetEntity()->SetActive(false);
 
+        Entity::CreatePrimitive(EntityPrimitive::DirectionalLight);
+        Entity::CreatePrimitive(EntityPrimitive::PointLight);
+        Entity::CreatePrimitive(EntityPrimitive::Cube);
+
         InitGridVertexArray();
         UpdateStats();
     }
@@ -85,20 +89,24 @@ namespace Hyperion::Editor {
         if (Input::GetMouseButtonDown(MouseButtonCode::Left)) {
             Ray ray = s_camera->ScreenPointToRay(Input::GetMousePosition());
             Physics::RaycastResult result;
-            if (s_game_world->GetPhysicsWorld()->Raycast(ray, result, 1000)) {
-                Entity *entity = result.collider->GetEntity();
-                s_gizmo->GetEntity()->SetActive(true);
-                s_gizmo->GetTransform()->SetPosition(entity->GetTransform()->GetPosition());
-                s_gizmo->SetSelection(entity);
-                EditorSelection::SetSelection(entity);
-            } else {
-                // HACK
-                if (!s_editor_world->GetPhysicsWorld()->Raycast(ray, result, 1000)) {
-                    s_gizmo->GetEntity()->SetActive(false);
-                    s_gizmo->SetSelection(nullptr);
+
+            if (!s_editor_world->GetPhysicsWorld()->Raycast(ray, result, 1000)) {
+                if (s_game_world->GetPhysicsWorld()->Raycast(ray, result, 1000)) {
+                    Entity *entity = result.collider->GetEntity();
+                    EditorSelection::SetSelection(entity);
+                } else {
                     EditorSelection::SetSelection(nullptr);
                 }
             }
+        }
+
+        if (Input::GetKeyDown(KeyCode::N)) {
+            EditorSelection::SetSelection(Entity::CreatePrimitive(EntityPrimitive::Cube));
+        }
+        if (Input::GetKeyDown(KeyCode::Delete)) {
+            Object *selection = EditorSelection::GetSelection();
+            EditorSelection::SetSelection(nullptr);
+            Object::Destroy(selection);
         }
 
         s_selection_color.a = Math::Cos(static_cast<f32>(Time::GetTime()) * 4.0f) * 0.4f + 0.6f;

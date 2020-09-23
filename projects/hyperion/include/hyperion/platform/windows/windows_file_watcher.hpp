@@ -8,9 +8,8 @@
 namespace Hyperion {
 
     class WindowsFileWatcher : public FileWatcher {
-        using WatcherCallbackFunc = std::function<void(FileStatus, const String &, const String &, const String &)>;
     public:
-        WindowsFileWatcher(const String &path, WatcherCallbackFunc callback, bool recursive);
+        WindowsFileWatcher(const String &path, FileWatcher::WatcherCallbackFunction callback, bool recursive);
         ~WindowsFileWatcher() override;
 
         void Update() override;

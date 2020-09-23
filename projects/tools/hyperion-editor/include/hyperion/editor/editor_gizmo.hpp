@@ -4,18 +4,21 @@
 #include <hyperion/entity/components/component.hpp>
 #include <hyperion/entity/components/rendering/camera.hpp>
 
+#include "hyperion/editor/editor_selection.hpp"
+
 namespace Hyperion::Editor {
 
-    class EditorGizmo : public Component {
+    class EditorGizmo : public Component, public EditorSelectionListener {
         HYP_OBJECT(EditorGizmo, Component);
     public:
         void SetCamera(Camera *camera) { m_camera = camera; }
-        void SetSelection(Entity *selection) { m_selection = selection; }
     protected:
         void OnCreate() override;
         void OnUpdate(f32 delta_time) override;
     private:
         void ResetColor();
+
+        void OnSelection(Object *selection) override;
     private:
         enum class MoveType {
             None,
