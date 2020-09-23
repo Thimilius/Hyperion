@@ -15,14 +15,14 @@ namespace Hyperion::Rendering {
         m_sub_meshes = sub_meshes;
 
         u32 vertex_count = static_cast<u32>(mesh_data.positions.size());
-        Vector<VertexPNU> verticies(vertex_count);
+        Vector<VertexMesh> verticies(vertex_count);
         for (u32 i = 0; i < vertex_count; i++) {
             verticies[i].position = mesh_data.positions[i];
             verticies[i].normal = mesh_data.normals[i];
             verticies[i].uv = mesh_data.uvs[i];
         }
-        Ref<VertexBuffer> vertex_buffer = VertexBuffer::Create((u8*)verticies.data(), vertex_count * sizeof(VertexPNU));
-        vertex_buffer->SetLayout(VertexPNU::GetBufferLayout());
+        Ref<VertexBuffer> vertex_buffer = VertexBuffer::Create((u8*)verticies.data(), vertex_count * sizeof(VertexMesh));
+        vertex_buffer->SetLayout(VertexMesh::GetBufferLayout());
 
         u32 index_count = static_cast<u32>(mesh_data.indicies.size());
         Ref<IndexBuffer> index_buffer = IndexBuffer::Create(mesh_data.indicies.data(), index_count);

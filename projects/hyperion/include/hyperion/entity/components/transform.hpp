@@ -1,6 +1,8 @@
 #pragma once
 
 #include "hyperion/entity/components/component.hpp"
+#include "hyperion/core/math/vec3.hpp"
+#include "hyperion/core/math/mat4.hpp"
 #include "hyperion/core/math/quaternion.hpp"
 
 namespace Hyperion {
@@ -88,6 +90,8 @@ namespace Hyperion {
         void SetParent(Transform *parent);
         bool IsChildOf(Transform *parent) const;
     protected:
+        Transform(const String &name) : Component(name) { }
+
         void OnCreate() override;
         void OnDestroy() override;
     private:

@@ -7,7 +7,7 @@
 
 namespace Hyperion::Rendering {
 
-    struct VertexPNU {
+    struct VertexMesh {
         Vec3 position;
         Vec3 normal;
         Vec2 uv;
@@ -16,6 +16,20 @@ namespace Hyperion::Rendering {
             return BufferLayout({
                 BufferElement("a_position", BufferDataType::Float3),
                 BufferElement("a_normal", BufferDataType::Float3),
+                BufferElement("a_uv", BufferDataType::Float2)
+            });
+        }
+    };
+
+    struct VertexUI {
+        Vec3 position;
+        Color color;
+        Vec2 uv;
+
+        static BufferLayout GetBufferLayout() {
+            return BufferLayout({
+                BufferElement("a_position", BufferDataType::Float3),
+                BufferElement("a_color", BufferDataType::Float4),
                 BufferElement("a_uv", BufferDataType::Float2)
             });
         }
