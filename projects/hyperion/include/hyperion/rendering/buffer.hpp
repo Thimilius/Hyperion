@@ -61,7 +61,7 @@ namespace Hyperion::Rendering {
         VertexBuffer(u32 size) : m_size(size) { }
         virtual ~VertexBuffer() = default;
 
-        inline const u32 GetSize() const { return m_size; }
+        inline u32 GetSize() const { return m_size; }
 
         inline const BufferLayout &GetLayout() const { return m_layout; }
         inline void SetLayout(const BufferLayout &layout) { m_layout = layout; }
@@ -98,6 +98,26 @@ namespace Hyperion::Rendering {
     protected:
         IndexFormat m_format;
         u32 m_count;
+    };
+
+    class UniformBuffer {
+    public:
+        UniformBuffer(u32 size) : m_size(size) { }
+        virtual ~UniformBuffer() = default;
+
+        inline u32 GetSize() const { return m_size; }
+
+        virtual void Bind(u32 binding_point) const = 0;
+        virtual void Unbind(u32 binding_point) const = 0;
+
+        virtual u32 GetID() const = 0;
+
+        virtual void SetData(u32 offset, u32 size, const u8 *data) = 0;
+
+        static Ref<UniformBuffer> Create(const u8 *data, u32 size);
+        static Ref<UniformBuffer> Create(const u8 *data, u32 size, BufferUsage usage);
+    protected:
+        u32 m_size;
     };
 
 }

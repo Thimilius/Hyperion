@@ -118,7 +118,7 @@ namespace Hyperion::Rendering {
 
     u32 OpenGLShaderCompiler::GetGLShaderType(ShaderType type) {
         switch (type) {
-            case ShaderType::Vertex: return GL_VERTEX_SHADER;
+            case ShaderType::Vertex:   return GL_VERTEX_SHADER;
             case ShaderType::Fragment: return GL_FRAGMENT_SHADER;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }

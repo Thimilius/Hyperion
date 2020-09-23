@@ -10,8 +10,8 @@ namespace Hyperion::Rendering {
         OpenGLTexture2D(u32 width, u32 height, TextureFormat format, TextureParameters parameters, const u8 *pixels);
         ~OpenGLTexture2D() override;
 
-        void Bind(u32 slot = 0) const override;
-        void Unbind(u32 slot = 0) const override;
+        void Bind(u32 slot) const override;
+        void Unbind(u32 slot) const override;
 
         u32 GetID() const override { return m_texture_id; }
 

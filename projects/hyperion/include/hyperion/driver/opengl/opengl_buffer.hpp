@@ -17,8 +17,6 @@ namespace Hyperion::Rendering {
 
         void SetData(u32 offset, u32 size, const u8 *verticies) override;
     private:
-        u32 GetGLBufferUsage(BufferUsage usage);
-    private:
         u32 m_vertex_buffer_id;
     };
 
@@ -34,6 +32,22 @@ namespace Hyperion::Rendering {
         u32 GetID() const override { return m_index_buffer_id; }
     private:
         u32 m_index_buffer_id;
+    };
+
+    class OpenGLUniformBuffer : public UniformBuffer {
+    public:
+        OpenGLUniformBuffer(const u8 *data, u32 size);
+        OpenGLUniformBuffer(const u8 *data, u32 size, BufferUsage usage);
+        ~OpenGLUniformBuffer() override;
+
+        void Bind(u32 binding_point) const override;
+        void Unbind(u32 binding_point) const override;
+
+        u32 GetID() const override { return m_uniform_buffer_id; }
+
+        void SetData(u32 offset, u32 size, const u8 *data) override;
+    private:
+        u32 m_uniform_buffer_id;
     };
 
 }

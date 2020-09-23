@@ -10,8 +10,8 @@ namespace Hyperion::Rendering {
         OpenGLTextureCubemap(u32 width, u32 height, TextureFormat format, TextureParameters parameters, const Map<TextureCubemapFace, const u8 *> &pixels);
         ~OpenGLTextureCubemap() override;
 
-        void Bind(u32 slot = 0) const;
-        void Unbind(u32 slot = 0) const;
+        void Bind(u32 slot) const;
+        void Unbind(u32 slot) const;
 
         u32 GetID() const override { return m_texture_id; }
 

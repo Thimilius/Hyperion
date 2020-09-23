@@ -13,8 +13,8 @@ namespace Hyperion::Rendering {
         inline u32 GetWidth() const { return m_width; }
         inline u32 GetHeight() const { return m_height; }
 
-        virtual void Bind(u32 slot = 0) const = 0;
-        virtual void Unbind(u32 slot = 0) const = 0;
+        virtual void Bind(u32 slot) const = 0;
+        virtual void Unbind(u32 slot) const = 0;
 
         virtual void Resize(u32 width, u32 height) = 0;
         virtual void Resize(u32 width, u32 height, TextureFormat format) = 0;

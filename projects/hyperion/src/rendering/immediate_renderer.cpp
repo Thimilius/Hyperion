@@ -43,7 +43,7 @@ namespace Hyperion::Rendering {
                 { xpos,     ypos + h,   0.0, 0.0 },
             };
 
-            glyph.texture->Bind();
+            glyph.texture->Bind(0);
             s_font_resources.vertex_buffer->SetData(0, sizeof(vertices), (u8 *)vertices);
 
             RenderCommand::Draw(MeshTopology::Triangles, 6, 0);

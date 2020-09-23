@@ -81,4 +81,18 @@ namespace Hyperion::Rendering {
         }
     }
 
+    Ref<UniformBuffer> UniformBuffer::Create(const u8 *data, u32 size) {
+        switch (RenderEngine::GetBackend()) {
+            case RenderBackend::OpenGL: return std::make_shared<OpenGLUniformBuffer>(data, size);
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
+        }
+    }
+
+    Ref<UniformBuffer> UniformBuffer::Create(const u8 *data, u32 size, BufferUsage usage) {
+        switch (RenderEngine::GetBackend()) {
+            case RenderBackend::OpenGL: return std::make_shared<OpenGLUniformBuffer>(data, size, usage);
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
+        }
+    }
+
 }
