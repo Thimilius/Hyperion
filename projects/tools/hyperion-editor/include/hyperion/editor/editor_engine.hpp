@@ -36,6 +36,13 @@ namespace Hyperion::Editor {
         EditorEngine() = delete;
         ~EditorEngine() = delete;
 
+        static void RenderGizmo();
+        static void RenderSelection();
+        static void RenderStats();
+        static void RenderGrid();
+        static void RenderIcons();
+        static void RenderPhysicsDebug();
+
         static void UpdateStats();
         static void InitGridVertexArray();
     private:

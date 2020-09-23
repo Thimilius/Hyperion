@@ -28,17 +28,15 @@ namespace Hyperion::Rendering {
                         RenderCommand::Clear(ClearMask::Depth | ClearMask::Stencil, Color::Black());
                     }
 
-                    ForwardRenderer::Begin(camera->GetCameraData());
-                    {
-                        ForwardRenderer::DrawEntities(world);
+                    ForwardRenderer::SetCameraData(camera->GetCameraData());
 
-                        if (clear_mode == CameraClearMode::Skybox) {
-                            if (world_environment.skybox) {
-                                ForwardRenderer::DrawSkybox(world_environment.skybox);
-                            }
+                    ForwardRenderer::DrawEntities(world);
+
+                    if (clear_mode == CameraClearMode::Skybox) {
+                        if (world_environment.skybox) {
+                            ForwardRenderer::DrawSkybox(world_environment.skybox);
                         }
                     }
-                    ForwardRenderer::End();
                 }
             } else {
                 RenderCommand::Clear(ClearMask::Color | ClearMask::Depth | ClearMask::Stencil, Color::Black());
@@ -46,7 +44,6 @@ namespace Hyperion::Rendering {
         } else {
             RenderCommand::Clear(ClearMask::Color | ClearMask::Depth | ClearMask::Stencil, Color::Black());
         }
-        
     }
 
 }

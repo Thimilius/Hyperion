@@ -116,109 +116,37 @@ namespace Hyperion::Editor {
     }
 
     void EditorEngine::Render() {
-        ForwardRenderer::Begin(s_camera->GetCameraData());
-        {
-            RenderCommand::Clear(ClearMask::Depth);
-            ForwardRenderer::DrawEntities(s_game_world);
-        }
-        ForwardRenderer::End();
+        ForwardRenderer::SetCameraData(s_camera->GetCameraData());
+        ImmediateRenderer::SetCameraData(s_camera->GetCameraData());
+
+        RenderCommand::Clear(ClearMask::Depth);
+        ForwardRenderer::DrawEntities(s_game_world);
 
         bool blending_enabled = RenderCommand::GetRasterizerState()->IsBlendingEnabled();
         RenderCommand::GetRasterizerState()->SetBlendingEnabled(true);
 
         if ((s_overlay_flags & EditorOverlayFlags::Grid) == EditorOverlayFlags::Grid) {
-            ImmediateRenderer::Begin(s_camera->GetCameraData());
-            {
-                ImmediateRenderer::DrawWire(MeshTopology::Lines, s_grid_vertex_array, s_grid_vertex_count);
-            }
-            ImmediateRenderer::End();
+            RenderGrid();
         }
 
         if ((s_overlay_flags & EditorOverlayFlags::PhysicsDebug) == EditorOverlayFlags::PhysicsDebug) {
-            RenderCommand::Clear(ClearMask::Depth);
-
-            ImmediateRenderer::Begin(s_camera->GetCameraData(), MeshTopology::Lines);
-            {
-                s_editor_world->GetPhysicsWorld()->DebugDraw();
-            }
-            ImmediateRenderer::End();
+            RenderPhysicsDebug();
         }
 
         if ((s_overlay_flags & EditorOverlayFlags::Lights) == EditorOverlayFlags::Lights) {
-            RenderCommand::Clear(ClearMask::Depth);
-
-            ForwardRenderer::Begin(s_camera->GetCameraData());
-            {
-                // Draw light icons
-                {
-                    s_icon_material->SetTexture2D("u_texture", AssetManager::GetTexture2D("icon_light"));
-                    Mat4 camera_rotation = Mat4::Rotate(s_camera->GetTransform()->GetRotation());
-                    Vec3 camera_position = s_camera->GetTransform()->GetPosition();
-
-                    Vector<Light *> lights = s_game_world->GetLights();
-                    std::sort(lights.begin(), lights.end(), [camera_position](Light *first, Light *second) {
-                        f32 distance_first = (camera_position - first->GetTransform()->GetPosition()).SqrMagnitude();
-                        f32 distance_second = (camera_position - second->GetTransform()->GetPosition()).SqrMagnitude();
-                        return distance_first > distance_second;
-                    });
-
-                    for (Light *light : lights) {
-                        Transform *transform = light->GetTransform();
-                        Vec3 position = transform->GetPosition();
-                        Vec3 forward = transform->GetForward();
-                        Mat4 model = Mat4::Translate(position) * camera_rotation;
-
-                        Color color = light->GetColor();
-                        color.a = Math::Clamp01((camera_position - position).SqrMagnitude() - 0.15f);
-                        s_icon_material->SetColor("u_color", color);
-
-                        ForwardRenderer::DrawMesh(s_icon_mesh, s_icon_material, model);
-                    }
-                }
-            }
-            ForwardRenderer::End();
+            RenderIcons();
         }
 
         if ((s_overlay_flags & EditorOverlayFlags::Selection) == EditorOverlayFlags::Selection) {
-            ForwardRenderer::Begin(s_camera->GetCameraData());
-            {
-                PolygonMode polygon_mode = RenderCommand::GetRasterizerState()->GetPolygonMode();
-                RenderCommand::GetRasterizerState()->SetPolygonMode(PolygonMode::Line);
-
-                Object *selection = EditorSelection::GetSelection();
-                if (selection != nullptr && selection->IsBase(Entity::GetStaticType())) {
-                    Entity *entity = static_cast<Entity *>(selection);
-                    MeshRenderer *renderer = entity->GetComponent<MeshRenderer>();
-                    if (renderer != nullptr) {
-                        Transform *transform = entity->GetTransform();
-                        Mat4 local_to_world = transform->GetLocalToWorldMatrix();
-                        Mat4 world_to_local = transform->GetWorldToLocalMatrix();
-
-                        ForwardRenderer::DrawMesh(renderer->GetRenderMesh(), s_selection_material, local_to_world, world_to_local);
-                    }
-                }
-
-                RenderCommand::GetRasterizerState()->SetPolygonMode(polygon_mode);
-            }
+            RenderSelection();
         }
 
         if ((s_overlay_flags & EditorOverlayFlags::Gizmo) == EditorOverlayFlags::Gizmo) {
-            ForwardRenderer::Begin(s_camera->GetCameraData());
-            {
-                bool culling_enabled = RenderCommand::GetRasterizerState()->IsCullingEnabled();
-                RenderCommand::GetRasterizerState()->SetCullingEnabled(false);
-
-                RenderCommand::Clear(ClearMask::Depth);
-                ForwardRenderer::DrawEntities(s_editor_world);
-
-                RenderCommand::GetRasterizerState()->SetCullingEnabled(culling_enabled);
-            }
-            ForwardRenderer::End();
+            RenderGizmo();
         }
 
         if ((s_overlay_flags & EditorOverlayFlags::Stats) == EditorOverlayFlags::Stats) {
-            f32 y = static_cast<f32>(Display::GetHeight() - s_font->GetSize());
-            ImmediateRenderer::DrawText(s_stats, s_font, 0, y, 1.0f, Color::White());
+            RenderStats();
         }
 
         RenderCommand::GetRasterizerState()->SetBlendingEnabled(blending_enabled);
@@ -226,6 +154,83 @@ namespace Hyperion::Editor {
 
     void EditorEngine::Tick() {
         UpdateStats();
+    }
+
+    void EditorEngine::RenderGizmo() {
+        bool culling_enabled = RenderCommand::GetRasterizerState()->IsCullingEnabled();
+        RenderCommand::GetRasterizerState()->SetCullingEnabled(false);
+
+        RenderCommand::Clear(ClearMask::Depth);
+        ForwardRenderer::DrawEntities(s_editor_world);
+
+        RenderCommand::GetRasterizerState()->SetCullingEnabled(culling_enabled);
+    }
+
+    void EditorEngine::RenderSelection() {
+        PolygonMode polygon_mode = RenderCommand::GetRasterizerState()->GetPolygonMode();
+        RenderCommand::GetRasterizerState()->SetPolygonMode(PolygonMode::Line);
+
+        Object *selection = EditorSelection::GetSelection();
+        if (selection != nullptr && selection->IsBase(Entity::GetStaticType())) {
+            Entity *entity = static_cast<Entity *>(selection);
+            MeshRenderer *renderer = entity->GetComponent<MeshRenderer>();
+            if (renderer != nullptr) {
+                Transform *transform = entity->GetTransform();
+                Mat4 local_to_world = transform->GetLocalToWorldMatrix();
+                Mat4 world_to_local = transform->GetWorldToLocalMatrix();
+
+                ForwardRenderer::DrawMesh(renderer->GetRenderMesh(), s_selection_material, local_to_world, world_to_local);
+            }
+        }
+
+        RenderCommand::GetRasterizerState()->SetPolygonMode(polygon_mode);
+    }
+
+    void EditorEngine::RenderStats() {
+        f32 y = static_cast<f32>(Display::GetHeight() - s_font->GetSize());
+        ImmediateRenderer::DrawText(s_stats, s_font, 0, y, 1.0f, Color::White());
+    }
+
+    void EditorEngine::RenderGrid() {
+        ImmediateRenderer::DrawVertexArray(MeshTopology::Lines, s_grid_vertex_array, s_grid_vertex_count);
+    }
+
+    void EditorEngine::RenderIcons() {
+        RenderCommand::Clear(ClearMask::Depth);
+
+        s_icon_material->SetTexture2D("u_texture", AssetManager::GetTexture2D("icon_light"));
+        Mat4 camera_rotation = Mat4::Rotate(s_camera->GetTransform()->GetRotation());
+        Vec3 camera_position = s_camera->GetTransform()->GetPosition();
+
+        Vector<Light *> lights = s_game_world->GetLights();
+        std::sort(lights.begin(), lights.end(), [camera_position](Light *first, Light *second) {
+            f32 distance_first = (camera_position - first->GetTransform()->GetPosition()).SqrMagnitude();
+            f32 distance_second = (camera_position - second->GetTransform()->GetPosition()).SqrMagnitude();
+            return distance_first > distance_second;
+        });
+
+        for (Light *light : lights) {
+            Transform *transform = light->GetTransform();
+            Vec3 position = transform->GetPosition();
+            Vec3 forward = transform->GetForward();
+            Mat4 model = Mat4::Translate(position) * camera_rotation;
+
+            Color color = light->GetColor();
+            color.a = Math::Clamp01((camera_position - position).SqrMagnitude() - 0.15f);
+            s_icon_material->SetColor("u_color", color);
+
+            ForwardRenderer::DrawMesh(s_icon_mesh, s_icon_material, model);
+        }
+    }
+
+    void EditorEngine::RenderPhysicsDebug() {
+        RenderCommand::Clear(ClearMask::Depth);
+
+        ImmediateRenderer::Begin(MeshTopology::Lines);
+        {
+            s_editor_world->GetPhysicsWorld()->DebugDraw();
+        }
+        ImmediateRenderer::End();
     }
 
     void EditorEngine::UpdateStats() {

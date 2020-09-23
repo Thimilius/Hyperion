@@ -19,12 +19,13 @@ namespace Hyperion::Rendering {
 
     class ForwardRenderer {
     public:
-        static void Begin(const CameraData &camera);
+        static void SetCameraData(const CameraData &camera);
+
         static void DrawSkybox(const Ref<TextureCubemap> &skybox);
         static void DrawEntities(World *world);
+
         static void DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform);
         static void DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform, const Mat4 &inverse_transform);
-        static void End();
     private:
         ForwardRenderer() = delete;
         ~ForwardRenderer() = delete;

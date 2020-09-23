@@ -7,10 +7,13 @@
 
 namespace Hyperion::Rendering {
 
-    void ImmediateRenderer::Begin(const CameraData &camera, MeshTopology topology) {
+    void ImmediateRenderer::SetCameraData(const CameraData &camera) {
         s_state.transform.view = camera.view_matrix;
         s_state.transform.projection = camera.projection_matrix;
         s_state.transform.view_projection = camera.view_projection_matrix;
+    }
+
+    void ImmediateRenderer::Begin(MeshTopology topology) {
         s_state.topology = topology;
     }
 
@@ -32,7 +35,7 @@ namespace Hyperion::Rendering {
             f32 w = glyph.size.x * scale;
             f32 h = glyph.size.y * scale;
 
-            // NOTE: The uvs are flipped horizontaly because the textures are loaded in flipped
+            // NOTE: The uvs are flipped horizontally because the textures are loaded in flipped
             f32 vertices[6][4] = {
                 { xpos + w, ypos + h,   1.0, 0.0 },
                 { xpos + w, ypos,       1.0, 1.0 },
@@ -109,7 +112,7 @@ namespace Hyperion::Rendering {
         AddVertex(b, color);
     }
 
-    void ImmediateRenderer::DrawWire(MeshTopology topology, const Ref<VertexArray> &vertex_array, u32 vertex_count) {
+    void ImmediateRenderer::DrawVertexArray(MeshTopology topology, const Ref<VertexArray> &vertex_array, u32 vertex_count) {
         s_immediate_resources.shader->Bind();
         s_immediate_resources.shader->SetMat4("u_transform.view", s_state.transform.view);
         s_immediate_resources.shader->SetMat4("u_transform.projection", s_state.transform.projection);
@@ -193,7 +196,7 @@ namespace Hyperion::Rendering {
 
         s_immediate_resources.vertex_buffer->SetData(0, s_state.vertex_offset * sizeof(VertexImmediate), (u8*)s_immediate_resources.data_buffer);
 
-        DrawWire(topology, s_immediate_resources.vertex_array, s_state.vertex_offset);
+        DrawVertexArray(topology, s_immediate_resources.vertex_array, s_state.vertex_offset);
 
         s_state.vertex_offset = 0;
     }

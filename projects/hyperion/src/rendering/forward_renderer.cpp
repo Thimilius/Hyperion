@@ -12,7 +12,7 @@
 
 namespace Hyperion::Rendering {
 
-    void ForwardRenderer::Begin(const CameraData &camera) {
+    void ForwardRenderer::SetCameraData(const CameraData &camera) {
         s_state.transform.view = camera.view_matrix;
         s_state.transform.projection = camera.projection_matrix;
         s_state.transform.view_projection = camera.view_projection_matrix;
@@ -86,10 +86,6 @@ namespace Hyperion::Rendering {
         PrepareMaterial(material, transform, inverse_transform);
         material->Bind();
         DrawCall(mesh);
-    }
-
-    void ForwardRenderer::End() {
-        
     }
 
     void ForwardRenderer::Init() {

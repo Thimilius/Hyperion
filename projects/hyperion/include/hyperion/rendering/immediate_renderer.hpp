@@ -15,11 +15,14 @@ namespace Hyperion::Rendering {
 
     class ImmediateRenderer {
     public:
-        static void Begin(const CameraData &camera, MeshTopology topology = MeshTopology::Triangles);
+        static void SetCameraData(const CameraData &camera);
+
         static void DrawText(const String &text, const Ref<Font> &font, f32 x, f32 y, f32 scale, Color color);
+        static void DrawVertexArray(MeshTopology topology, const Ref<VertexArray> &vertex_array, u32 vertex_count);
+
+        static void Begin(MeshTopology topology = MeshTopology::Triangles);
         static void DrawCube(Vec3 center, Vec3 size, Color color);
         static void DrawLine(Vec3 a, Vec3 b, Color color);
-        static void DrawWire(MeshTopology topology, const Ref<VertexArray> &vertex_array, u32 vertex_count);
         static void DrawWireCube(Vec3 center, Vec3 size, Color color);
         static void End();
     private:
