@@ -39,16 +39,16 @@ namespace Hyperion {
             }
         }
 
-        for (EntityMessageListener *listener : m_message_listeners) {
+        for (IEntityMessageListener *listener : m_message_listeners) {
             listener->OnMessage(message);
         }
     }
 
-    void Entity::RegisterMessageListener(EntityMessageListener *listener) {
+    void Entity::RegisterMessageListener(IEntityMessageListener *listener) {
         m_message_listeners.push_back(listener);
     }
 
-    void Entity::UnregisterMessageListener(EntityMessageListener *listener) {
+    void Entity::UnregisterMessageListener(IEntityMessageListener *listener) {
         auto begin = m_message_listeners.begin();
         auto end = m_message_listeners.end();
         if (std::find(begin, end, listener) != end) {

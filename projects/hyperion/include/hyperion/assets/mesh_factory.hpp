@@ -14,7 +14,7 @@ namespace Hyperion {
         MeshFactory() = delete;
         ~MeshFactory() = delete;
     private:
-        static Scope<MeshLoader> s_mesh_loader;
+        static Scope<IMeshLoader> s_mesh_loader;
     };
 
 }

@@ -9,7 +9,7 @@ namespace FMOD {
 
 namespace Hyperion::Audio {
 
-    class FModAudioDriver : public AudioDriver {
+    class FModAudioDriver : public IAudioDriver {
     public:
         void Init() override;
         void Shutdown() override;

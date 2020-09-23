@@ -10,7 +10,7 @@ namespace Hyperion::Physics {
 
 namespace Hyperion::Physics {
 
-    class BulletPhysicsDriver : public PhysicsDriver {
+    class BulletPhysicsDriver : public IPhysicsDriver {
     public:
         PhysicsWorld *CreatePhysicsWorld() override;
         void DestroyPhysicsWorld(PhysicsWorld *world) override;

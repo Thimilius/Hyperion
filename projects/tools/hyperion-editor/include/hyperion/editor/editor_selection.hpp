@@ -4,9 +4,9 @@
 
 namespace Hyperion::Editor {
 
-    class EditorSelectionListener {
+    class IEditorSelectionListener {
     public:
-        virtual ~EditorSelectionListener() = default;
+        virtual ~IEditorSelectionListener() = default;
 
         virtual void OnSelection(Object *selection) = 0;
     };
@@ -17,15 +17,15 @@ namespace Hyperion::Editor {
         inline static Object *GetSelection() { return s_selection; }
         static void SetSelection(Object *selection);
 
-        static void RegisterSelectionListener(EditorSelectionListener *selection_listener);
-        static void UnregisterSelectionListener(EditorSelectionListener *selection_listener);
+        static void RegisterSelectionListener(IEditorSelectionListener *selection_listener);
+        static void UnregisterSelectionListener(IEditorSelectionListener *selection_listener);
     private:
         EditorSelection() = delete;
         ~EditorSelection() = delete;
     private:
         inline static Object *s_selection;
 
-        inline static Vector<EditorSelectionListener *> s_selection_listeners;
+        inline static Vector<IEditorSelectionListener *> s_selection_listeners;
     };
 
 }

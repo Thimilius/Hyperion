@@ -6,7 +6,7 @@ struct aiMesh;
 
 namespace Hyperion {
 
-    class AssimpMeshLoader : public MeshLoader {
+    class AssimpMeshLoader : public IMeshLoader {
     public:
         Ref<Rendering::Mesh> LoadMesh(const String &path) override;
     private:

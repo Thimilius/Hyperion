@@ -13,7 +13,7 @@
 
 namespace Hyperion::Rendering {
 
-    class Material : public Asset, public Copyable<Material> {
+    class Material : public Asset, public ICopyable<Material> {
         using MaterialPropertyStorage = std::variant<u32, f32, Vec2, Vec3, Vec4, Mat3, Mat4, Ref<Texture2D>, Ref<TextureCubemap>>;
     private:
         struct MaterialProperty {

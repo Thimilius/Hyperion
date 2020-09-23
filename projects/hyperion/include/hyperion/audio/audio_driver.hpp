@@ -4,9 +4,9 @@
 
 namespace Hyperion::Audio {
 
-    class AudioDriver {
+    class IAudioDriver {
     public:
-        virtual ~AudioDriver() = default;
+        virtual ~IAudioDriver() = default;
 
         virtual void Load(const String &name, const String &path) = 0;
         virtual void Play(const String &name) = 0;
@@ -15,7 +15,7 @@ namespace Hyperion::Audio {
         virtual void Shutdown() = 0;
     };
 
-    class DummyAudioDriver : public AudioDriver {
+    class DummyAudioDriver : public IAudioDriver {
     public:
         virtual void Load(const String &name, const String &path) override { }
         virtual void Play(const String &name) override { }

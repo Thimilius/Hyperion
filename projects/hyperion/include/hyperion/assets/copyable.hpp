@@ -5,9 +5,9 @@
 namespace Hyperion {
 
     template<typename T>
-    class Copyable {
+    class ICopyable {
     public:
-        virtual ~Copyable() = default;
+        virtual ~ICopyable() = default;
 
         virtual Ref<T> Copy() const = 0;
     };

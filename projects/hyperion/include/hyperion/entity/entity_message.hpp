@@ -14,9 +14,9 @@ namespace Hyperion {
         void *parameter;
     };
 
-    class EntityMessageListener {
+    class IEntityMessageListener {
     public:
-        virtual ~EntityMessageListener() = default;
+        virtual ~IEntityMessageListener() = default;
 
         virtual void OnMessage(EntityMessage message) = 0;
     };

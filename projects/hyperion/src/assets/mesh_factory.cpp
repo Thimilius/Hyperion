@@ -8,7 +8,7 @@ using namespace Hyperion::Rendering;
 
 namespace Hyperion {
 
-    Scope<MeshLoader> MeshFactory::s_mesh_loader = std::make_unique<AssimpMeshLoader>();
+    Scope<IMeshLoader> MeshFactory::s_mesh_loader = std::make_unique<AssimpMeshLoader>();
 
 
     Ref<Rendering::Mesh> MeshFactory::CreateQuad(f32 width, f32 height) {

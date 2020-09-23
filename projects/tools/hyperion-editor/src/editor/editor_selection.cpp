@@ -6,17 +6,17 @@ namespace Hyperion::Editor {
         if (s_selection != selection) {
             s_selection = selection;
 
-            for (EditorSelectionListener *listener : s_selection_listeners) {
+            for (IEditorSelectionListener *listener : s_selection_listeners) {
                 listener->OnSelection(selection);
             }
         }
     }
 
-    void EditorSelection::RegisterSelectionListener(EditorSelectionListener *selection_listener) {
+    void EditorSelection::RegisterSelectionListener(IEditorSelectionListener *selection_listener) {
         s_selection_listeners.push_back(selection_listener);
     }
 
-    void EditorSelection::UnregisterSelectionListener(EditorSelectionListener *selection_listener) {
+    void EditorSelection::UnregisterSelectionListener(IEditorSelectionListener *selection_listener) {
         auto begin = s_selection_listeners.begin();
         auto end = s_selection_listeners.end();
         if (std::find(begin, end, selection_listener) != end) {

@@ -10,7 +10,7 @@ namespace Hyperion {
         SphereCollider
     };
 
-    class Collider : public Behaviour, public EntityMessageListener {
+    class Collider : public Behaviour, public IEntityMessageListener {
         HYP_OBJECT(Collider, Behaviour);
     public:
         void SetEnabled(bool enabled) override;

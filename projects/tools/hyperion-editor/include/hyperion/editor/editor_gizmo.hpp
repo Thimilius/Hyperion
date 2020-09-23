@@ -8,7 +8,7 @@
 
 namespace Hyperion::Editor {
 
-    class EditorGizmo : public Component, public EditorSelectionListener {
+    class EditorGizmo : public Component, public IEditorSelectionListener {
         HYP_OBJECT(EditorGizmo, Component);
     public:
         void SetCamera(Camera *camera) { m_camera = camera; }

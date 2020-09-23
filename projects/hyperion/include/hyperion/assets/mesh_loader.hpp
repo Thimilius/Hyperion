@@ -4,9 +4,9 @@
 
 namespace Hyperion {
 
-    class MeshLoader {
+    class IMeshLoader {
     public:
-        virtual ~MeshLoader() = default;
+        virtual ~IMeshLoader() = default;
 
         virtual Ref<Rendering::Mesh> LoadMesh(const String &path) = 0;
     };

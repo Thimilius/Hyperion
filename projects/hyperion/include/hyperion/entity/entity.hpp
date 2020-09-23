@@ -159,8 +159,8 @@ namespace Hyperion {
         inline bool AddTag(const EntityTag &tag) { return m_tags.insert(tag).second; }
         inline void RemoveTag(const EntityTag &tag) { m_tags.erase(tag); }
 
-        void RegisterMessageListener(EntityMessageListener *listener);
-        void UnregisterMessageListener(EntityMessageListener *listener);
+        void RegisterMessageListener(IEntityMessageListener *listener);
+        void UnregisterMessageListener(IEntityMessageListener *listener);
 
         static Entity *Create(const String &name = "New Entity", const Vec3 &position = Vec3::Zero(), const Quaternion &rotation = Quaternion::Identity(), Transform *parent = nullptr, World *world = nullptr);
         static Entity *CreatePrimitive(EntityPrimitive primitive, const Vec3 &position = Vec3::Zero(), const Quaternion &rotation = Quaternion::Identity(), Transform *parent = nullptr, World *world = nullptr);
@@ -183,7 +183,7 @@ namespace Hyperion {
         Set<EntityTag> m_tags;
         bool m_active = true;
 
-        Vector<EntityMessageListener *> m_message_listeners;
+        Vector<IEntityMessageListener *> m_message_listeners;
     private:
         friend class Hyperion::Component;
         friend class Hyperion::Object;
