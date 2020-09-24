@@ -20,7 +20,7 @@ namespace Hyperion::Rendering {
     struct FontGlyph {
         u32 codepoint;
 
-        Ref<Texture2D> texture;
+        Texture2D *texture;
 
         Vec2 size;
         Vec2 bearing;
@@ -34,7 +34,7 @@ namespace Hyperion::Rendering {
         inline u32 GetSize() const { return m_size; }
         FontGlyph GetGlyph(u32 codepoint) const;
 
-        static Ref<Font> Create(const String &path, u32 size, FontCharacterSet character_set = FontCharacterSet::All);
+        static Font *Create(const String &path, u32 size, FontCharacterSet character_set = FontCharacterSet::All);
     private:
         Font(const String &path, u32 size, FontCharacterSet character_set);
 

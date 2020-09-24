@@ -8,7 +8,7 @@ namespace Hyperion {
     public:
         virtual ~IMeshLoader() = default;
 
-        virtual Ref<Rendering::Mesh> LoadMesh(const String &path) = 0;
+        virtual Rendering::Mesh *LoadMesh(const String &path) = 0;
     };
 
 }

@@ -13,7 +13,7 @@ namespace Hyperion {
 
         virtual void Reset() = 0;
 
-        static Ref<Timer> Create();
+        static Timer *Create();
     };
 
 }

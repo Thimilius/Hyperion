@@ -23,7 +23,7 @@ namespace Hyperion {
 
         Display::UpdateSize(settings.window.width, settings.window.height);
 
-        m_window.reset(Window::Create(settings.window, settings.render.backend));
+        m_window = Window::Create(settings.window, settings.render.backend);
         m_window->SetEventCallback(std::bind(&Application::OnEventInternal, this, std::placeholders::_1));
     }
     
@@ -37,7 +37,7 @@ namespace Hyperion {
         OnInit();
         m_window->Show();
 
-        Ref<Timer> timer = Timer::Create();
+        Timer *timer = Timer::Create();
         f64 last_time = 0, tick_timer = 0, accumulated_time = 0;
         u64 frame_counter = 0;
         while (m_running) {

@@ -72,7 +72,7 @@ namespace Hyperion::Rendering {
 
         virtual void Recompile(const String &source) = 0;
 
-        static Ref<Shader> Create(const String &name, const String &source);
+        static Shader *Create(const String &name, const String &source);
     protected:
         Shader(const String &name) : Asset(name) { }
     protected:

@@ -22,7 +22,7 @@ namespace Hyperion::Rendering {
     private: 
         inline static RenderBackend s_render_backend;
 
-        inline static Scope<Rendering::RenderPipeline> s_render_pipeline;
+        inline static Rendering::RenderPipeline *s_render_pipeline;
     private:
         friend class Hyperion::Engine;
     };

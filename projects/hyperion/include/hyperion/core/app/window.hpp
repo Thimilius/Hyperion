@@ -68,7 +68,7 @@ namespace Hyperion {
 
         EventCallbackFunction m_event_callback;
 
-        Ref<Rendering::GraphicsContext> m_graphics_context;
+        Rendering::GraphicsContext *m_graphics_context;
     private:
         friend class Hyperion::Application;
     };

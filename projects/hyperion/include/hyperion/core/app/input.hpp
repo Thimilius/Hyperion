@@ -273,7 +273,7 @@ namespace Hyperion {
         Input() = delete;
         ~Input() = delete;
     private:
-        static Scope<InputImplementation> s_input_implementation;
+        static InputImplementation *s_input_implementation;
     private:
         friend class Hyperion::WindowsWindow;
     };

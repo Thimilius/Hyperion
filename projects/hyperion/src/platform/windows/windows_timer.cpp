@@ -4,8 +4,8 @@
 
 namespace Hyperion {
 
-    Ref<Timer> Timer::Create() {
-        return std::make_shared<WindowsTimer>();
+    Timer *Timer::Create() {
+        return new WindowsTimer();
     }
 
     WindowsTimer::WindowsTimer() {

@@ -11,7 +11,7 @@
 namespace Hyperion::Rendering {
 
     OpenGLRenderDriver::OpenGLRenderDriver() {
-        m_rasterizer_state = std::make_unique<OpenGLRasterizerState>();
+        m_rasterizer_state = new OpenGLRasterizerState();
 
         // FIXME: Is this the right place to call that?
         OpenGLShaderCompiler::Init();
@@ -30,7 +30,7 @@ namespace Hyperion::Rendering {
         glViewport(x, y, width, height);
     }
     
-    void OpenGLRenderDriver::SetActiveRenderTarget(const Ref<RenderTexture> &texture, RenderTextureTarget target) {
+    void OpenGLRenderDriver::SetActiveRenderTarget(RenderTexture *texture, RenderTextureTarget target) {
         u32 id = 0;
         if (texture != nullptr) {
             id = texture->GetID();
@@ -50,7 +50,7 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void OpenGLRenderDriver::Blit(const Ref<RenderTexture> &destination, u32 dstX0, u32 dstY0, u32 dstX1, u32 dstY1, const Ref<RenderTexture> &source, u32 srcX0, u32 srcY0, u32 srcX1, u32 srcY1) {
+    void OpenGLRenderDriver::Blit(RenderTexture *destination, u32 dstX0, u32 dstY0, u32 dstX1, u32 dstY1, RenderTexture *source, u32 srcX0, u32 srcY0, u32 srcX1, u32 srcY1) {
         u32 draw_id = destination ? destination->GetID() : 0;
         s32 read_id = source ? source->GetID() : 0;
         // TODO: The clear mask of the blitting operation should get exposed

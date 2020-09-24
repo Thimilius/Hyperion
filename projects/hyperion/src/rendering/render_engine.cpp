@@ -15,7 +15,7 @@ namespace Hyperion::Rendering {
 
         switch (settings.backend) {
             case RenderBackend::OpenGL: {
-                RenderCommand::s_render_driver.reset(new OpenGLRenderDriver());
+                RenderCommand::s_render_driver = new OpenGLRenderDriver();
                 break;
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
@@ -25,12 +25,12 @@ namespace Hyperion::Rendering {
     void RenderEngine::Init(const RenderSettings &settings) {
         switch (settings.path) {
             case Rendering::RenderPath::Forward: {
-                s_render_pipeline.reset(new Rendering::ForwardRenderPipeline());
+                s_render_pipeline = new Rendering::ForwardRenderPipeline();
                 break;
             }
             case Rendering::RenderPath::Custom: {
                 HYP_ASSERT_MESSAGE(settings.custom_pipeline, "When using a custom render path, a custom render pipeline must be provided!");
-                s_render_pipeline.reset(settings.custom_pipeline);
+                s_render_pipeline = settings.custom_pipeline;
                 break;
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
@@ -47,7 +47,7 @@ namespace Hyperion::Rendering {
     }
 
     void RenderEngine::Shutdown() {
-        s_render_pipeline.release();
+        delete s_render_pipeline;
     }
 
 }

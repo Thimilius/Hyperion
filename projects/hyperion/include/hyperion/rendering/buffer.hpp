@@ -73,8 +73,8 @@ namespace Hyperion::Rendering {
 
         virtual void SetData(u32 offset, u32 size, const u8 *verticies) = 0;
 
-        static Ref<VertexBuffer> Create(const u8 *vertices, u32 size);
-        static Ref<VertexBuffer> Create(const u8 *vertices, u32 size, BufferUsage usage);
+        static VertexBuffer *Create(const u8 *vertices, u32 size);
+        static VertexBuffer *Create(const u8 *vertices, u32 size, BufferUsage usage);
     protected:
         u32 m_size;
         BufferLayout m_layout;
@@ -93,8 +93,8 @@ namespace Hyperion::Rendering {
 
         virtual u32 GetID() const = 0;
 
-        static Ref<IndexBuffer> Create(const u16 *indices, u32 count);
-        static Ref<IndexBuffer> Create(const u32 *indices, u32 count);
+        static IndexBuffer *Create(const u16 *indices, u32 count);
+        static IndexBuffer *Create(const u32 *indices, u32 count);
     protected:
         IndexFormat m_format;
         u32 m_count;
@@ -114,8 +114,8 @@ namespace Hyperion::Rendering {
 
         virtual void SetData(u32 offset, u32 size, const u8 *data) = 0;
 
-        static Ref<UniformBuffer> Create(const u8 *data, u32 size);
-        static Ref<UniformBuffer> Create(const u8 *data, u32 size, BufferUsage usage);
+        static UniformBuffer *Create(const u8 *data, u32 size);
+        static UniformBuffer *Create(const u8 *data, u32 size, BufferUsage usage);
     protected:
         u32 m_size;
     };

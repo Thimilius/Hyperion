@@ -10,9 +10,9 @@
 
 namespace Hyperion::Rendering {
 
-    Ref<Shader> Shader::Create(const String &name, const String &source) {
+    Shader *Shader::Create(const String &name, const String &source) {
         switch (RenderEngine::GetBackend()) {
-            case RenderBackend::OpenGL: return std::make_shared<OpenGLShader>(name, source);
+            case RenderBackend::OpenGL: return new OpenGLShader(name, source);
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }

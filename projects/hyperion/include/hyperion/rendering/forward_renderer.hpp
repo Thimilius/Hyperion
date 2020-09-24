@@ -21,19 +21,19 @@ namespace Hyperion::Rendering {
     public:
         static void SetCameraData(const CameraData &camera);
 
-        static void DrawSkybox(const Ref<TextureCubemap> &skybox);
+        static void DrawSkybox(TextureCubemap *skybox);
         static void DrawEntities(World *world);
 
-        static void DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform);
-        static void DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform, const Mat4 &inverse_transform);
+        static void DrawMesh(Mesh *mesh, Material *material, const Mat4 &transform);
+        static void DrawMesh(Mesh *mesh, Material *material, const Mat4 &transform, const Mat4 &inverse_transform);
     private:
         ForwardRenderer() = delete;
         ~ForwardRenderer() = delete;
 
         static void Init();
 
-        static void PrepareMaterial(const Ref<Material> &material, const Mat4 &transform, const Mat4 &inverse_transform);
-        static void DrawCall(const Ref<Mesh> &mesh);
+        static void PrepareMaterial(Material *material, const Mat4 &transform, const Mat4 &inverse_transform);
+        static void DrawCall(Mesh *mesh);
     private:
         struct State {
             struct Transform {
@@ -63,8 +63,8 @@ namespace Hyperion::Rendering {
         };
 
         struct Skybox {
-            Ref<Shader> shader;
-            Ref<Mesh> mesh;
+            Shader *shader;
+            Mesh *mesh;
         };
 
         inline static State s_state;

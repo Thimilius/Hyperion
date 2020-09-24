@@ -10,26 +10,26 @@ using namespace Hyperion::Rendering;
 
 namespace Hyperion {
 
-    Ref<Shader> AssetManager::LoadShader(const String &name, const String &filepath) {
+    Shader *AssetManager::LoadShader(const String &name, const String &filepath) {
         String source = FileUtilities::ReadAllText(filepath);
-        Ref<Shader> shader = Shader::Create(name, source);
+        Shader *shader = Shader::Create(name, source);
         AddShader(name, filepath, shader);
         return shader;
     }
 
-    void AssetManager::AddShader(const String &name, const String &filepath, const Ref<Shader> &shader) {
+    void AssetManager::AddShader(const String &name, const String &filepath, Shader *shader) {
         HYP_ASSERT_MESSAGE(s_shaders.find(name) == s_shaders.end(), "Trying to add shader that is already in the library!");
         s_shaders[name] = { shader, filepath };
     }
 
-    Ref<Shader> AssetManager::GetShader(const String &name) {
+    Shader *AssetManager::GetShader(const String &name) {
         HYP_ASSERT_MESSAGE(s_shaders.find(name) != s_shaders.end(), "Trying to get shader that is not in the library!");
         return s_shaders[name].asset;
     }
 
-    Ref<Texture2D> AssetManager::LoadTexture2D(const String &name, const String &filepath, TextureParameters parameters) {
-        Ref<Image> image = ImageLoader::Load(filepath);
-        Ref<Texture2D> texture;
+    Texture2D *AssetManager::LoadTexture2D(const String &name, const String &filepath, TextureParameters parameters) {
+        Image *image = ImageLoader::Load(filepath);
+        Texture2D *texture;
         if (!image->IsEmpty()) {
             texture = Texture2D::Create(image->GetWidth(), image->GetHeight(), GetTextureFormatFromImage(image), parameters, image->GetPixels());
         }
@@ -39,24 +39,24 @@ namespace Hyperion {
         return texture;
     }
 
-    void AssetManager::AddTexture2D(const String &name, const String &filepath, const Ref<Texture2D> &texture) {
+    void AssetManager::AddTexture2D(const String &name, const String &filepath, Texture2D *texture) {
         HYP_ASSERT_MESSAGE(s_textures.find(name) == s_textures.end(), "Trying to add 2D texture that is already in the library!");
         s_textures[name] = { texture, filepath };
     }
 
-    Ref<Texture2D> AssetManager::GetTexture2D(const String &name) {
+    Texture2D *AssetManager::GetTexture2D(const String &name) {
         HYP_ASSERT_MESSAGE(s_textures.find(name) != s_textures.end(), "Trying to get 2D texture that is not in the library!");
         return s_textures[name].asset;
     }
 
-    Ref<TextureCubemap> AssetManager::LoadTextureCubemap(const String &name, const String &directory, const String &extension, TextureParameters parameters) {
+    TextureCubemap *AssetManager::LoadTextureCubemap(const String &name, const String &directory, const String &extension, TextureParameters parameters) {
         // Make sure directory has a seperator at the end
         String dir;
         if (directory.back() != '\\' || directory.back() != '/') {
             dir = directory + "/";
         }
 
-        Map<TextureCubemapFace, Ref<Image>> images = {
+        Map<TextureCubemapFace, Image *> images = {
             { TextureCubemapFace::PositiveX, ImageLoader::Load(dir + "right" + extension, false) },
             { TextureCubemapFace::NegativeX, ImageLoader::Load(dir + "left" + extension, false) },
             { TextureCubemapFace::PositiveY, ImageLoader::Load(dir + "top" + extension, false) },
@@ -65,7 +65,7 @@ namespace Hyperion {
             { TextureCubemapFace::NegativeZ, ImageLoader::Load(dir + "front" + extension, false) }
         };
 
-        Ref<Image> &sample_image = images.begin()->second;
+        Image *sample_image = images.begin()->second;
         u32 width = sample_image->GetWidth();
         u32 height = sample_image->GetHeight();
         TextureFormat format = GetTextureFormatFromImage(sample_image);
@@ -75,23 +75,23 @@ namespace Hyperion {
             pixels[face] = image->GetPixels();
         }
 
-        Ref<TextureCubemap> texture_cubemap = TextureCubemap::Create(width, height, format, parameters, pixels);
+        TextureCubemap *texture_cubemap = TextureCubemap::Create(width, height, format, parameters, pixels);
 
         return texture_cubemap;
     }
 
-    void AssetManager::AddTextureCubemap(const String &name, const Ref<Rendering::TextureCubemap> &texture_cubemap) {
+    void AssetManager::AddTextureCubemap(const String &name, TextureCubemap *texture_cubemap) {
         HYP_ASSERT_MESSAGE(s_texture_cubemaps.find(name) == s_texture_cubemaps.end(), "Trying to add cube texture that is already in the library!");
         // NOTE: The corresponding cubemap files currently get ignored which means they can not be hotloaded
         s_texture_cubemaps[name] = { texture_cubemap, "" };
     }
 
-    Ref<TextureCubemap> AssetManager::GetTextureCubemap(const String &name) {
+    TextureCubemap *AssetManager::GetTextureCubemap(const String &name) {
         HYP_ASSERT_MESSAGE(s_textures.find(name) != s_textures.end(), "Trying to get cubemap texture that is not in the library!");
         return s_texture_cubemaps[name].asset;
     }
 
-    Ref<Mesh> AssetManager::GetMeshPrimitive(MeshPrimitive mesh_primitive) {
+    Mesh *AssetManager::GetMeshPrimitive(MeshPrimitive mesh_primitive) {
         switch (mesh_primitive) {
             case MeshPrimitive::Quad: return s_mesh_primitives.quad;
             case MeshPrimitive::Plane: return s_mesh_primitives.plane;
@@ -199,7 +199,7 @@ namespace Hyperion {
         
         AssetEntry entry = s_textures[name];
 
-        Ref<Image> image = ImageLoader::Load(entry.filepath);
+        Image *image = ImageLoader::Load(entry.filepath);
 
         if (!image->IsEmpty()) {
             entry.asset->Resize(image->GetWidth(), image->GetHeight());
@@ -214,7 +214,7 @@ namespace Hyperion {
         s_mesh_primitives.sphere = MeshFactory::CreateFromFile("data/models/sphere.obj"); // TODO: Procedurally create sphere
     }
 
-    TextureFormat AssetManager::GetTextureFormatFromImage(const Ref<Image> &image) {
+    TextureFormat AssetManager::GetTextureFormatFromImage(Image *image) {
         switch (image->GetChannels()) {
             case 3: return TextureFormat::RGB24;
             case 4: return TextureFormat::RGBA32;

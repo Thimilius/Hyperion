@@ -21,7 +21,7 @@ namespace Hyperion {
         return false;
     }
 
-    Ref<Image> ImageLoader::Load(const String &path, bool flip_vertically) {
+    Image *ImageLoader::Load(const String &path, bool flip_vertically) {
         for (IImageFormatLoader *image_format_loader : s_loaders) {
             if (image_format_loader->SupportsExtension(StringUtils::GetExtension(path))) {
                 return image_format_loader->Load(path, flip_vertically);

@@ -14,7 +14,7 @@
 namespace Hyperion::Rendering {
 
     class Material : public Asset, public ICopyable<Material> {
-        using MaterialPropertyStorage = std::variant<u32, f32, Vec2, Vec3, Vec4, Mat3, Mat4, Ref<Texture2D>, Ref<TextureCubemap>>;
+        using MaterialPropertyStorage = std::variant<u32, f32, Vec2, Vec3, Vec4, Mat3, Mat4, Texture2D *, TextureCubemap *>;
     private:
         struct MaterialProperty {
             ShaderDataType type;
@@ -24,9 +24,9 @@ namespace Hyperion::Rendering {
     public:
         AssetType GetAssetType() const override { return AssetType::Material; }
 
-        Ref<Material> Copy() const override;
+        Material *Copy() const override;
 
-        Ref<Shader> GetShader() const { return m_shader; }
+        Shader* GetShader() const { return m_shader; }
 
         void SetInt(const String &name, u32 value);
         void SetFloat(const String &name, f32 value);
@@ -36,18 +36,18 @@ namespace Hyperion::Rendering {
         void SetMat3(const String &name, const Mat3 &value);
         void SetMat4(const String &name, const Mat4 &value);
         void SetColor(const String &name, const Color &color);
-        void SetTexture2D(const String &name, const Ref<Texture2D> &texture);
+        void SetTexture2D(const String &name, Texture2D *texture);
 
         void Bind();
         void Unbind();
 
-        static Ref<Material> Create(const Ref<Shader> &shader);
+        static Material *Create(Shader *shader);
     private:
-        Material(const Ref<Shader> &shader);
+        Material(Shader *shader);
 
         s32 FindProperty(const String &name, ShaderDataType type);
     private:
-        Ref<Shader> m_shader;
+        Shader *m_shader;
         Vector<MaterialProperty> m_properties;
     };
 

@@ -25,20 +25,20 @@ namespace Hyperion::Rendering {
 
     class RenderDriver {
     public:
-        RasterizerState *GetRasterizerState() { return m_rasterizer_state.get(); }
+        RasterizerState *GetRasterizerState() { return m_rasterizer_state; }
         
         virtual void Clear(ClearMask mask) = 0;
         virtual void Clear(ClearMask mask, Color color) = 0;
 
         virtual void SetViewport(u32 x, u32 y, u32 width, u32 height) = 0;
 
-        virtual void SetActiveRenderTarget(const Ref<RenderTexture> &texture, RenderTextureTarget target) = 0;
-        virtual void Blit(const Ref<RenderTexture> &destination, u32 dstX0, u32 dstY0, u32 dstX1, u32 dstY1, const Ref<RenderTexture> &source, u32 srcX0, u32 srcY0, u32 srcX1, u32 srcY1) = 0;
+        virtual void SetActiveRenderTarget(RenderTexture *texture, RenderTextureTarget target) = 0;
+        virtual void Blit(RenderTexture *destination, u32 dstX0, u32 dstY0, u32 dstX1, u32 dstY1, RenderTexture *source, u32 srcX0, u32 srcY0, u32 srcX1, u32 srcY1) = 0;
 
         virtual void DrawIndexed(MeshTopology topology, IndexFormat format, u32 index_count, u32 index_offset, u32 vertex_offset) = 0;
         virtual void Draw(MeshTopology topology, u32 vertex_count, u32 vertex_offset) = 0;
     protected:
-        Scope<RasterizerState> m_rasterizer_state;
+        RasterizerState *m_rasterizer_state;
     };
 
 }

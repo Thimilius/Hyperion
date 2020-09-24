@@ -18,8 +18,8 @@ namespace Hyperion::Editor {
     void EditorGizmo::OnCreate() {
         RegisterUpdate();
 
-        Ref<Material> material = Material::Create(AssetManager::GetShader("standard_unlit"));
-        Ref<Mesh> mesh = MeshFactory::CreateFromFile("data/models/gizmo.obj");
+        Material *material = Material::Create(AssetManager::GetShader("standard_unlit"));
+        Mesh *mesh = MeshFactory::CreateFromFile("data/models/gizmo.obj");
 
         m_gimzo_x = Entity::Create("Gizmo_Part_X", Vec3::Zero(), Quaternion::Identity(), GetTransform());
         m_gimzo_x->AddTag("X");
@@ -53,7 +53,7 @@ namespace Hyperion::Editor {
         renderer->SetMaterial(material);
         renderer->GetMaterial()->SetColor("u_color", Color::Blue());
 
-        Ref<Mesh> plane_mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Quad);
+        Mesh *plane_mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Quad);
 
         m_gizmo_xy = Entity::Create("Gizmo_Part_XY", Vec3::Zero(), Quaternion::Identity(), GetTransform());
         m_gizmo_xy->AddTag("XY");

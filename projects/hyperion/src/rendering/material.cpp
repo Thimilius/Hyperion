@@ -6,9 +6,9 @@
 
 namespace Hyperion::Rendering {
 
-    Ref<Material> Material::Copy() const {
+    Material *Material::Copy() const {
         // TODO: We are doing an unnecessary default initilization of material properties when creating the copy.
-        Ref<Material> copy = Create(m_shader);
+        Material *copy = Create(m_shader);
         copy->m_properties = m_properties;
         return copy;
     }
@@ -69,7 +69,7 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void Material::SetTexture2D(const String &name, const Ref<Texture2D> &texture) {
+    void Material::SetTexture2D(const String &name, Texture2D *texture) {
         s32 property_index = FindProperty(name, ShaderDataType::Texture2D);
         if (property_index >= 0) {
             m_properties[property_index].storage = texture;
@@ -94,7 +94,7 @@ namespace Hyperion::Rendering {
 
                 case ShaderDataType::Texture2D: {
                     m_shader->SetInt(name, texture_index);
-                    std::get<Ref<Texture2D>>(storage)->Bind(texture_index);
+                    std::get<Texture2D *>(storage)->Bind(texture_index);
                     texture_index++;
                     break;
                 }
@@ -108,11 +108,11 @@ namespace Hyperion::Rendering {
         m_shader->Unbind();
     }
 
-    Ref<Material> Material::Create(const Ref<Shader> &shader) {
-        return Ref<Material>(new Material(shader));
+    Material *Material::Create(Shader *shader) {
+        return new Material(shader);
     }
 
-    Material::Material(const Ref<Shader> &shader) {
+    Material::Material(Shader *shader) {
         m_shader = shader;
 
         const Vector<ShaderUniformDeclaration> &uniform_declarations = shader->GetUniformDeclarations();
@@ -133,7 +133,7 @@ namespace Hyperion::Rendering {
                 case ShaderDataType::Mat4: property.storage = Mat4::Identity(); break;
                 // TODO: The textures should be white as a default.
                 case ShaderDataType::Texture2D: property.storage = AssetManager::GetTexture2D("checkerboard"); break;
-                case ShaderDataType::TextureCubemap: property.storage = (Ref<TextureCubemap>)nullptr; break;
+                case ShaderDataType::TextureCubemap: property.storage = static_cast<TextureCubemap *>(nullptr); break;
                 default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
             }
 

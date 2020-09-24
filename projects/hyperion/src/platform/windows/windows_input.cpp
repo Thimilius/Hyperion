@@ -25,7 +25,7 @@ namespace Hyperion {
     XInputGetStateFunc g_xinput_get_state = XInputGetStateStub;
     XInputSetStateFunc g_xinput_set_state = XInputSetStateStub;
 
-    Scope<InputImplementation> Input::s_input_implementation = std::make_unique<WindowsInput>();
+    InputImplementation *Input::s_input_implementation = new WindowsInput();
 
     WindowsInput::WindowsInput() {
         // Try to load XInput as a dll

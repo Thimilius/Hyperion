@@ -11,10 +11,10 @@ namespace Hyperion::Audio {
 
         switch (settings.backend) {
             case AudioBackend::None:
-                s_audio_driver.reset(new DummyAudioDriver());
+                s_audio_driver = new DummyAudioDriver();
                 break;
             case AudioBackend::FMod:
-                s_audio_driver.reset(new FModAudioDriver());
+                s_audio_driver = new FModAudioDriver();
                 break;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return;
         }

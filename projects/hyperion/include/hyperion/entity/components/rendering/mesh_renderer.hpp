@@ -10,23 +10,23 @@ namespace Hyperion {
     public:
         MeshRenderer() : Renderer("MeshRenderer") { }
 
-        inline Ref<Rendering::Mesh> GetSharedMesh() const { return m_shared_mesh; }
-        inline void SetSharedMesh(const Ref<Rendering::Mesh> &shared_mesh) { m_shared_mesh = shared_mesh; }
+        inline Rendering::Mesh *GetSharedMesh() const { return m_shared_mesh; }
+        inline void SetSharedMesh(Rendering::Mesh *shared_mesh) { m_shared_mesh = shared_mesh; }
 
-        inline Ref<Rendering::Mesh> GetMesh() const {
+        inline Rendering::Mesh *GetMesh() const {
             if (m_using_shared_mesh) {
                 m_mesh = m_shared_mesh->Copy();
                 m_using_shared_mesh = false;
             }
             return m_mesh;
         }
-        inline void SetMesh(const Ref<Rendering::Mesh> &material) {
+        inline void SetMesh(Rendering::Mesh *material) {
             m_mesh = material;
             m_shared_mesh = material;
             m_using_shared_mesh = false;
         }
 
-        inline Ref<Rendering::Mesh> GetRenderMesh() const {
+        inline Rendering::Mesh *GetRenderMesh() const {
             return m_using_shared_mesh ? m_shared_mesh : m_mesh;
         }
 
@@ -35,8 +35,8 @@ namespace Hyperion {
         void OnCreate() override;
         void OnDestroy() override;
     private:
-        Ref<Rendering::Mesh> m_shared_mesh;
-        mutable Ref<Rendering::Mesh> m_mesh;
+        Rendering::Mesh *m_shared_mesh;
+        mutable Rendering::Mesh *m_mesh;
         mutable bool m_using_shared_mesh = true;
     };
 

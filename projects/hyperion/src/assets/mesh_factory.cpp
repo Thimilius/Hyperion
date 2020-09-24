@@ -8,9 +8,9 @@ using namespace Hyperion::Rendering;
 
 namespace Hyperion {
 
-    Scope<IMeshLoader> MeshFactory::s_mesh_loader = std::make_unique<AssimpMeshLoader>();
+    IMeshLoader *MeshFactory::s_mesh_loader = new AssimpMeshLoader();
 
-    Ref<Rendering::Mesh> MeshFactory::CreateQuad(f32 width, f32 height) {
+    Rendering::Mesh *MeshFactory::CreateQuad(f32 width, f32 height) {
         f32 half_width = width / 2.0f;
         f32 half_height = height / 2.0f;
 
@@ -47,7 +47,7 @@ namespace Hyperion {
         return Mesh::Create(mesh_data, { { MeshTopology::Triangles, 6, 0, 0 } });
     }
 
-    Ref<Mesh> MeshFactory::CreatePlane(f32 width, f32 height) {
+    Mesh *MeshFactory::CreatePlane(f32 width, f32 height) {
         f32 half_width = width / 2.0f;
         f32 half_height = height / 2.0f;
 
@@ -86,7 +86,7 @@ namespace Hyperion {
         return Mesh::Create(mesh_data, { { MeshTopology::Triangles, 6, 0, 0 } });
     }
 
-    Ref<Mesh> MeshFactory::CreateCube(f32 size) {
+    Mesh *MeshFactory::CreateCube(f32 size) {
         MeshData mesh_data;
         mesh_data.positions.resize(24);
         mesh_data.normals.resize(24);
@@ -229,7 +229,7 @@ namespace Hyperion {
         return Mesh::Create(mesh_data, { { MeshTopology::Triangles, 36, 0, 0 } });
     }
 
-    Ref<Mesh> MeshFactory::CreateFromFile(const String &path) {
+    Mesh *MeshFactory::CreateFromFile(const String &path) {
         return s_mesh_loader->LoadMesh(path);
     }
 

@@ -26,7 +26,7 @@ namespace Hyperion {
         m_min_height = settings.min_height;
         m_window_state = WindowState::Normal;
 
-        m_input = static_cast<WindowsInput *>(Input::s_input_implementation.get());
+        m_input = static_cast<WindowsInput *>(Input::s_input_implementation);
 
         SetupWindow(settings);
         
@@ -263,7 +263,7 @@ namespace Hyperion {
     void WindowsWindow::CreateContext(Rendering::RenderBackend backend_api) {
         switch (backend_api) {
             case Rendering::RenderBackend::OpenGL: {
-                m_graphics_context.reset(new Rendering::WindowsOpenGLGraphicsContext(m_window_handle));
+                m_graphics_context = new Rendering::WindowsOpenGLGraphicsContext(m_window_handle);
                 break;
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;

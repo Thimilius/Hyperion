@@ -26,22 +26,22 @@ namespace Hyperion {
     public:
         inline static const AssetSettings &GetSettings() { return s_settings; }
 
-        static Ref<Rendering::Shader> LoadShader(const String &name, const String &filepath);
-        static void AddShader(const String &name, const String &filepath, const Ref<Rendering::Shader> &shader);
-        static Ref<Rendering::Shader> GetShader(const String &name);
+        static Rendering::Shader *LoadShader(const String &name, const String &filepath);
+        static void AddShader(const String &name, const String &filepath, Rendering::Shader *shader);
+        static Rendering::Shader *GetShader(const String &name);
 
-        static Ref<Rendering::Texture2D> LoadTexture2D(const String &name, const String &filepath, Rendering::TextureParameters parameters = Rendering::TextureParameters());
-        static void AddTexture2D(const String &name, const String &filepath, const Ref<Rendering::Texture2D> &texture);
-        static Ref<Rendering::Texture2D> GetTexture2D(const String &name);
+        static Rendering::Texture2D *LoadTexture2D(const String &name, const String &filepath, Rendering::TextureParameters parameters = Rendering::TextureParameters());
+        static void AddTexture2D(const String &name, const String &filepath, Rendering::Texture2D *texture);
+        static Rendering::Texture2D *GetTexture2D(const String &name);
 
-        static Ref<Rendering::TextureCubemap> LoadTextureCubemap(const String &name, const String &directory, const String &extension, Rendering::TextureParameters parameters = Rendering::TextureParameters());
-        static void AddTextureCubemap(const String &name, const Ref<Rendering::TextureCubemap> &texture_cubemap);
-        static Ref<Rendering::TextureCubemap> GetTextureCubemap(const String &name);
+        static Rendering::TextureCubemap *LoadTextureCubemap(const String &name, const String &directory, const String &extension, Rendering::TextureParameters parameters = Rendering::TextureParameters());
+        static void AddTextureCubemap(const String &name, Rendering::TextureCubemap *texture_cubemap);
+        static Rendering::TextureCubemap *GetTextureCubemap(const String &name);
 
-        static Ref<Rendering::Mesh> GetMeshPrimitive(MeshPrimitive mesh_primitive);
-        inline static Ref<Rendering::Texture2D> GetTexturePrimitive() { return s_texture_primitive; }
+        static Rendering::Mesh *GetMeshPrimitive(MeshPrimitive mesh_primitive);
+        inline static Rendering::Texture2D *GetTexturePrimitive() { return s_texture_primitive; }
 
-        inline static Ref<Rendering::Material> GetDefaultMaterial() { return s_default_material; }
+        inline static Rendering::Material *GetDefaultMaterial() { return s_default_material; }
     private:
         AssetManager() = delete;
         ~AssetManager() = delete;
@@ -58,32 +58,32 @@ namespace Hyperion {
 
         static void InitMeshPrimitives();
 
-        static Rendering::TextureFormat GetTextureFormatFromImage(const Ref<Image> &image);
+        static Rendering::TextureFormat GetTextureFormatFromImage(Image *image);
     private:
         template<typename T>
         struct AssetEntry {
-            Ref<T> asset;
+            T *asset;
             String filepath;
         };
 
         struct MeshPrimitives {
-            Ref<Rendering::Mesh> quad;
-            Ref<Rendering::Mesh> plane;
-            Ref<Rendering::Mesh> cube;
-            Ref<Rendering::Mesh> sphere;
+            Rendering::Mesh *quad;
+            Rendering::Mesh *plane;
+            Rendering::Mesh *cube;
+            Rendering::Mesh *sphere;
         };
 
         inline static AssetSettings s_settings;
 
         inline static Map<String, AssetEntry<Rendering::Shader>> s_shaders;
-        inline static Ref<FileWatcher> s_shader_watcher;
+        inline static FileWatcher *s_shader_watcher;
         inline static Map<String, AssetEntry<Rendering::Texture2D>> s_textures;
-        inline static Ref<FileWatcher> s_texture_watcher;
+        inline static FileWatcher *s_texture_watcher;
         inline static Map<String, AssetEntry<Rendering::TextureCubemap>> s_texture_cubemaps;
 
         inline static MeshPrimitives s_mesh_primitives;
-        inline static Ref<Rendering::Texture2D> s_texture_primitive;
-        inline static Ref<Rendering::Material> s_default_material;
+        inline static Rendering::Texture2D *s_texture_primitive;
+        inline static Rendering::Material *s_default_material;
     private:
         friend class Hyperion::Engine;
     };

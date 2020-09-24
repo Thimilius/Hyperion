@@ -23,7 +23,7 @@ namespace Hyperion::Rendering {
         virtual void BindTexture(u32 slot = 0) = 0;
         virtual void Resize(u32 width, u32 height) = 0;
 
-        static Ref<RenderTexture> Create(u32 width, u32 height, RenderTextureFormat format, TextureParameters parameters);
+        static RenderTexture *Create(u32 width, u32 height, RenderTextureFormat format, TextureParameters parameters);
     protected:
         static TextureFormat GetTextureFormat(RenderTextureFormat format);
     protected:

@@ -20,7 +20,7 @@ namespace Hyperion::Rendering {
         s_state.camera = camera;
     }
 
-    void ForwardRenderer::DrawSkybox(const Ref<TextureCubemap> &skybox) {
+    void ForwardRenderer::DrawSkybox(TextureCubemap *skybox) {
         bool culling_enabled = RenderCommand::GetRasterizerState()->IsCullingEnabled();
         RenderCommand::GetRasterizerState()->SetCullingEnabled(false);
         DepthEquation depth_equation = RenderCommand::GetRasterizerState()->GetDepthEquation();
@@ -78,11 +78,11 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void ForwardRenderer::DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform) {
+    void ForwardRenderer::DrawMesh(Mesh *mesh, Material *material, const Mat4 &transform) {
         DrawMesh(mesh, material, transform, transform.Inverted());
     }
 
-    void ForwardRenderer::DrawMesh(const Ref<Mesh> &mesh, const Ref<Material> &material, const Mat4 &transform, const Mat4 &inverse_transform) {
+    void ForwardRenderer::DrawMesh(Mesh *mesh, Material *material, const Mat4 &transform, const Mat4 &inverse_transform) {
         PrepareMaterial(material, transform, inverse_transform);
         material->Bind();
         DrawCall(mesh);
@@ -100,7 +100,7 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void ForwardRenderer::PrepareMaterial(const Ref<Material> &material, const Mat4 &transform, const Mat4 &inverse_transform) {
+    void ForwardRenderer::PrepareMaterial(Material *material, const Mat4 &transform, const Mat4 &inverse_transform) {
         material->SetMat4("u_transform.mvp", s_state.transform.view_projection * transform);
 
         if (material->GetShader()->GetAttributes().light_mode == ShaderLightMode::Forward) {
@@ -142,8 +142,8 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void ForwardRenderer::DrawCall(const Ref<Mesh> &mesh) {
-        const Ref<VertexArray> &vertex_array = mesh->GetVertexArray();
+    void ForwardRenderer::DrawCall(Mesh *mesh) {
+        VertexArray *vertex_array = mesh->GetVertexArray();
         vertex_array->Bind();
 
         IndexFormat format = vertex_array->GetIndexBuffer()->GetFormat();

@@ -28,7 +28,7 @@ namespace Hyperion::Physics {
     private:
         inline static PhysicsBackend s_physics_backend;
 
-        inline static Scope<IPhysicsDriver> s_physics_driver;
+        inline static IPhysicsDriver *s_physics_driver;
     private:
         friend class Hyperion::Engine;
         friend class Hyperion::World;

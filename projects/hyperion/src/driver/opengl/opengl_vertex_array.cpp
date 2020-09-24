@@ -22,7 +22,7 @@ namespace Hyperion::Rendering {
         glBindVertexArray(0);
     }
 
-    void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer> &vertex_buffer) {
+    void OpenGLVertexArray::AddVertexBuffer(VertexBuffer *vertex_buffer) {
         const auto &layout = vertex_buffer->GetLayout();
         const auto &elements = layout.GetElements();
         for (s32 index = 0; index < elements.size(); index++) {
@@ -43,7 +43,7 @@ namespace Hyperion::Rendering {
         m_vertex_buffers.push_back(vertex_buffer);
     }
 
-    void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer> &index_buffer) {
+    void OpenGLVertexArray::SetIndexBuffer(IndexBuffer *index_buffer) {
         m_index_buffer = index_buffer;
         glVertexArrayElementBuffer(m_vertex_array_id, index_buffer->GetID());
     }

@@ -17,8 +17,8 @@ namespace Hyperion::Rendering {
         }
     }
 
-    Ref<Font> Font::Create(const String &path, u32 size, FontCharacterSet character_set) {
-        return Ref<Font>(new Font(path, size, character_set));
+    Font *Font::Create(const String &path, u32 size, FontCharacterSet character_set) {
+        return new Font(path, size, character_set);
     }
 
     // TODO: Generate font atlas instead of individual textures
@@ -58,7 +58,7 @@ namespace Hyperion::Rendering {
                 u32 bitmap_height = font_face->glyph->bitmap.width == 0 ? 1 : font_face->glyph->bitmap.rows;
                 auto *buffer = font_face->glyph->bitmap.buffer;
 
-                Ref<Texture2D> texture = Texture2D::Create(bitmap_width, bitmap_height, TextureFormat::R8, texture_parameters, buffer);
+                Texture2D *texture = Texture2D::Create(bitmap_width, bitmap_height, TextureFormat::R8, texture_parameters, buffer);
 
                 FontGlyph glyph;
                 glyph.codepoint = static_cast<u32>(character);

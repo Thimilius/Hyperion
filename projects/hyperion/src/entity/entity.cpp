@@ -67,7 +67,7 @@ namespace Hyperion {
         
         if (primitive == EntityPrimitive::Quad || primitive == EntityPrimitive::Plane || primitive == EntityPrimitive::Cube || primitive == EntityPrimitive::Sphere) {
             MeshRenderer *renderer = entity->AddComponent<MeshRenderer>();
-            Ref<Rendering::Mesh> mesh;
+            Rendering::Mesh *mesh;
             switch (primitive) {
                 case EntityPrimitive::Quad: {
                     mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Quad);

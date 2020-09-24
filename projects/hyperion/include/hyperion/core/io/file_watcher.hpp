@@ -21,7 +21,7 @@ namespace Hyperion {
 
         virtual void Update() = 0;
 
-        static Ref<FileWatcher> Create(const String &path, WatcherCallbackFunction callback, bool recursive);
+        static FileWatcher *Create(const String &path, WatcherCallbackFunction callback, bool recursive);
     protected:
         String m_path;
         WatcherCallbackFunction m_callback;

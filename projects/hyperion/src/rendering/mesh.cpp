@@ -4,7 +4,7 @@
 
 namespace Hyperion::Rendering {
 
-    Ref<Mesh> Mesh::Copy() const {
+    Mesh *Mesh::Copy() const {
         return Mesh::Create(m_mesh_data, m_sub_meshes);
     }
 
@@ -21,11 +21,11 @@ namespace Hyperion::Rendering {
             verticies[i].normal = mesh_data.normals[i];
             verticies[i].uv = mesh_data.uvs[i];
         }
-        Ref<VertexBuffer> vertex_buffer = VertexBuffer::Create((u8*)verticies.data(), vertex_count * sizeof(VertexMesh));
+        VertexBuffer *vertex_buffer = VertexBuffer::Create((u8*)verticies.data(), vertex_count * sizeof(VertexMesh));
         vertex_buffer->SetLayout(VertexMesh::GetBufferLayout());
 
         u32 index_count = static_cast<u32>(mesh_data.indicies.size());
-        Ref<IndexBuffer> index_buffer = IndexBuffer::Create(mesh_data.indicies.data(), index_count);
+        IndexBuffer *index_buffer = IndexBuffer::Create(mesh_data.indicies.data(), index_count);
 
         m_vertex_array = VertexArray::Create();
         m_vertex_array->AddVertexBuffer(vertex_buffer);
@@ -34,8 +34,8 @@ namespace Hyperion::Rendering {
         RecalculateBounds();
     }
 
-    Ref<Mesh> Mesh::Create(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes) {
-        return Ref<Mesh>(new Mesh(mesh_data, sub_meshes));
+    Mesh *Mesh::Create(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes) {
+        return new Mesh(mesh_data, sub_meshes);
     }
 
     void Mesh::RecalculateBounds() {

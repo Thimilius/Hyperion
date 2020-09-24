@@ -11,8 +11,8 @@ namespace Hyperion {
         delete[] m_pixels;
     }
 
-    Ref<Image> Image::Create(u32 width, u32 height, u32 channels, u8 *pixels) {
-        return Ref<Image>(new Image(width, height, channels, pixels));
+    Image *Image::Create(u32 width, u32 height, u32 channels, u8 *pixels) {
+        return new Image(width, height, channels, pixels);
     }
 
 }

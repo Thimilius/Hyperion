@@ -17,7 +17,7 @@ namespace Hyperion::Rendering {
         s_state.topology = topology;
     }
 
-    void ImmediateRenderer::DrawText(const String &text, const Ref<Font> &font, f32 x, f32 y, f32 scale, Color color) {
+    void ImmediateRenderer::DrawText(const String &text, Font *font, f32 x, f32 y, f32 scale, Color color) {
         s_font_resources.shader->Bind();
         s_font_resources.shader->SetVec4("u_color", color);
         Mat4 projection = Mat4::Orthographic(0, static_cast<f32>(Display::GetWidth()), 0, static_cast<f32>(Display::GetHeight()), -1.0f, 1.0f);
@@ -112,7 +112,7 @@ namespace Hyperion::Rendering {
         AddVertex(b, color);
     }
 
-    void ImmediateRenderer::DrawVertexArray(MeshTopology topology, const Ref<VertexArray> &vertex_array, u32 vertex_count) {
+    void ImmediateRenderer::DrawVertexArray(MeshTopology topology, VertexArray *vertex_array, u32 vertex_count) {
         s_immediate_resources.shader->Bind();
         s_immediate_resources.shader->SetMat4("u_transform.view", s_state.transform.view);
         s_immediate_resources.shader->SetMat4("u_transform.projection", s_state.transform.projection);

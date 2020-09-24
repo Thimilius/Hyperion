@@ -11,13 +11,14 @@ out V2F {
 } o_v2f;
 
 uniform struct Transform {
+	mat4 view;
 	mat4 projection;
 } u_transform;
 
 void main() {
 	o_v2f.color = a_color;
 
-	gl_Position = u_transform.projection * vec4(a_position, 1.0);
+	gl_Position = u_transform.projection * u_transform.view * vec4(a_position, 1.0);
 }
 
 #type fragment

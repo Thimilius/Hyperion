@@ -9,7 +9,7 @@ namespace Hyperion {
     public:
         virtual ~ICopyable() = default;
 
-        virtual Ref<T> Copy() const = 0;
+        virtual T *Copy() const = 0;
     };
 
 }

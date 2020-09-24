@@ -11,7 +11,7 @@ namespace Hyperion {
 
     class Application {
     public:
-        inline Window *GetWindow() const { return m_window.get(); }
+        inline Window *GetWindow() const { return m_window; }
 
         void Exit();
 
@@ -28,7 +28,7 @@ namespace Hyperion {
 
         void OnEventInternal(Event &event);
     private:
-        Scope<Window> m_window;
+        Window *m_window;
         bool m_running;
         ApplicationSettings m_starting_settings;
 

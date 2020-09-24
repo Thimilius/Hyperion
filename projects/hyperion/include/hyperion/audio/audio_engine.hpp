@@ -25,7 +25,7 @@ namespace Hyperion::Audio {
     private:
         inline static AudioBackend s_audio_backend;
 
-        inline static Scope<IAudioDriver> s_audio_driver;
+        inline static IAudioDriver *s_audio_driver;
     private:
         friend class Hyperion::Engine;
     };

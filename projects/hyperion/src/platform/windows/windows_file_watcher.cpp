@@ -4,8 +4,8 @@
 
 namespace Hyperion {
 
-    Ref<FileWatcher> FileWatcher::Create(const String &path, WatcherCallbackFunction callback, bool recursive) {
-        return std::make_shared<WindowsFileWatcher>(path, callback, recursive);
+    FileWatcher *FileWatcher::Create(const String &path, WatcherCallbackFunction callback, bool recursive) {
+        return new WindowsFileWatcher(path, callback, recursive);
     }
 
     WindowsFileWatcher::WindowsFileWatcher(const String &path, WatcherCallbackFunction callback, bool recursive) {

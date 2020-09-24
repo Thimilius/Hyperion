@@ -16,10 +16,10 @@ namespace Hyperion::Physics {
 
         switch (settings.backend) {
             case PhysicsBackend::None:
-                s_physics_driver.reset(new DummyPhysicsDriver());
+                s_physics_driver = new DummyPhysicsDriver();
                 break;
             case PhysicsBackend::Bullet:
-                s_physics_driver.reset(new BulletPhysicsDriver());
+                s_physics_driver = new BulletPhysicsDriver();
                 break;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return;
         }

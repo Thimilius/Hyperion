@@ -9,7 +9,7 @@ namespace Hyperion {
         inline const Vector<String> &GetSupportedExtensions() const override { return s_supported_extensions; }
         bool SupportsExtension(const String &extension) const override;
 
-        Ref<Image> Load(const String &path, bool flip_vertically) override;
+        Image *Load(const String &path, bool flip_vertically) override;
     private:
         inline static Vector<String> s_supported_extensions = {
             ".png",

@@ -7,9 +7,9 @@
 
 namespace Hyperion::Rendering {
 
-    Ref<VertexArray> VertexArray::Create() {
+    VertexArray *VertexArray::Create() {
         switch (RenderEngine::GetBackend()) {
-            case RenderBackend::OpenGL: return std::make_shared<OpenGLVertexArray>();
+            case RenderBackend::OpenGL: return new OpenGLVertexArray();
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }

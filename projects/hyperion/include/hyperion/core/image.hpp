@@ -15,7 +15,7 @@ namespace Hyperion {
 
         inline bool IsEmpty() const { return m_width == 0 && m_height == 0 && m_channels == 0 && m_pixels == nullptr; }
 
-        static Ref<Image> Create(u32 width, u32 height, u32 channels, u8 *pixels);
+        static Image *Create(u32 width, u32 height, u32 channels, u8 *pixels);
     private:
         Image(u32 width, u32 height, u32 channels, u8 *pixels);
     private:

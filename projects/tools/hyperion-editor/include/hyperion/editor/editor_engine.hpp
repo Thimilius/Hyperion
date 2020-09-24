@@ -55,15 +55,15 @@ namespace Hyperion::Editor {
 
         inline static u32 s_grid_size = 100;
         inline static u32 s_grid_vertex_count;
-        inline static Ref<Rendering::VertexArray> s_grid_vertex_array;
+        inline static Rendering::VertexArray *s_grid_vertex_array;
 
-        inline static Ref<Rendering::Mesh> s_icon_mesh;
-        inline static Ref<Rendering::Material> s_icon_material;
-        inline static Ref<Rendering::Material> s_selection_material;
+        inline static Rendering::Mesh *s_icon_mesh;
+        inline static Rendering::Material *s_icon_material;
+        inline static Rendering::Material *s_selection_material;
         inline static Color s_selection_color = Color(0.0f, 1.0f, 1.0f, 1.0f);
 
         inline static String s_stats;
-        inline static Ref<Rendering::Font> s_font;
+        inline static Rendering::Font *s_font;
 
         inline static EditorOverlayFlags s_overlay_flags = EditorOverlayFlags::Stats | EditorOverlayFlags::Selection | EditorOverlayFlags::Grid | EditorOverlayFlags::Gizmo | EditorOverlayFlags::Lights;
     };

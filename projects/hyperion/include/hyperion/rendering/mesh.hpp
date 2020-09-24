@@ -36,14 +36,14 @@ namespace Hyperion::Rendering {
     public:
         inline AssetType GetAssetType() const override { return AssetType::Mesh; }
 
-        Ref<Mesh> Copy() const override;
+        Mesh *Copy() const override;
 
         inline const MeshData &GetMeshData() const { return m_mesh_data; }
         inline BoundingBox GetBounds() const { return m_bounds; }
-        inline const Ref<VertexArray> GetVertexArray() const { return m_vertex_array; }
+        inline VertexArray *GetVertexArray() const { return m_vertex_array; }
         inline const Vector<SubMesh> &GetSubMeshes() const { return m_sub_meshes; }
 
-        static Ref<Mesh> Create(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes);
+        static Mesh *Create(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes);
     private:
         Mesh(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes);
 
@@ -54,7 +54,7 @@ namespace Hyperion::Rendering {
 
         Vector<SubMesh> m_sub_meshes;
 
-        Ref<VertexArray> m_vertex_array;
+        VertexArray *m_vertex_array;
     };
 
 }

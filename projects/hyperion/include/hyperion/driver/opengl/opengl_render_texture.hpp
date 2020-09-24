@@ -24,7 +24,7 @@ namespace Hyperion::Rendering {
         u32 m_framebuffer_id;
         u32 m_depth_attachment_id;
 
-        Ref<Texture2D> m_color_attachment;
+        Texture2D *m_color_attachment;
     };
 
 }

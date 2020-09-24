@@ -8,25 +8,25 @@ namespace Hyperion {
     class Renderer : public Behaviour {
         HYP_OBJECT(Renderer, Behaviour);
     public:
-        inline Ref<Rendering::Material> GetSharedMaterial() const { return m_shared_material; }
-        inline void SetSharedMaterial(const Ref<Rendering::Material> &shared_material) {
+        inline Rendering::Material *GetSharedMaterial() const { return m_shared_material; }
+        inline void SetSharedMaterial(Rendering::Material *shared_material) {
             m_shared_material = shared_material;
             m_using_shared_material = true;
         }
 
-        inline Ref<Rendering::Material> GetMaterial() const {
+        inline Rendering::Material *GetMaterial() const {
             if (m_using_shared_material) {
                 m_material = m_shared_material->Copy();
                 m_using_shared_material = false;
             }
             return m_material;
         }
-        inline void SetMaterial(const Ref<Rendering::Material> &material) {
+        inline void SetMaterial(Rendering::Material *material) {
             m_material = material;
             m_shared_material = material;
         }
 
-        inline Ref<Rendering::Material> GetRenderMaterial() const {
+        inline Rendering::Material *GetRenderMaterial() const {
             return m_using_shared_material ? m_shared_material : m_material;
         }
 
@@ -36,8 +36,8 @@ namespace Hyperion {
         Renderer(const String & name) : Behaviour(name) {}
         virtual ~Renderer() = default;
     private:
-        Ref<Rendering::Material> m_shared_material;
-        mutable Ref<Rendering::Material> m_material;
+        Rendering::Material *m_shared_material;
+        mutable Rendering::Material *m_material;
         mutable bool m_using_shared_material = true;
     };
 

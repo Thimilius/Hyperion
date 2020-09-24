@@ -53,44 +53,44 @@ namespace Hyperion::Rendering {
         }
     }
 
-    Ref<VertexBuffer> VertexBuffer::Create(const u8 *vertices, u32 size) {
+    VertexBuffer *VertexBuffer::Create(const u8 *vertices, u32 size) {
         switch (RenderEngine::GetBackend()) {
-            case RenderBackend::OpenGL: return std::make_shared<OpenGLVertexBuffer>(vertices, size);
+            case RenderBackend::OpenGL: return new OpenGLVertexBuffer(vertices, size);
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }
 
-    Ref<VertexBuffer> VertexBuffer::Create(const u8 *vertices, u32 size, BufferUsage usage) {
+    VertexBuffer *VertexBuffer::Create(const u8 *vertices, u32 size, BufferUsage usage) {
         switch (RenderEngine::GetBackend()) {
-            case RenderBackend::OpenGL: return std::make_shared<OpenGLVertexBuffer>(vertices, size, usage);
+            case RenderBackend::OpenGL: return new OpenGLVertexBuffer(vertices, size, usage);
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }
 
-    Ref<IndexBuffer> IndexBuffer::Create(const u16 *indices, u32 count) {
+    IndexBuffer *IndexBuffer::Create(const u16 *indices, u32 count) {
         switch (RenderEngine::GetBackend()) {
-            case RenderBackend::OpenGL: return std::make_shared<OpenGLIndexBuffer>(indices, count);
+            case RenderBackend::OpenGL: return new OpenGLIndexBuffer(indices, count);
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }
 
-    Ref<IndexBuffer> IndexBuffer::Create(const u32 *indices, u32 count) {
+    IndexBuffer *IndexBuffer::Create(const u32 *indices, u32 count) {
         switch (RenderEngine::GetBackend()) {
-            case RenderBackend::OpenGL: return std::make_shared<OpenGLIndexBuffer>(indices, count);
+            case RenderBackend::OpenGL: return new OpenGLIndexBuffer(indices, count);
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }
 
-    Ref<UniformBuffer> UniformBuffer::Create(const u8 *data, u32 size) {
+    UniformBuffer *UniformBuffer::Create(const u8 *data, u32 size) {
         switch (RenderEngine::GetBackend()) {
-            case RenderBackend::OpenGL: return std::make_shared<OpenGLUniformBuffer>(data, size);
+            case RenderBackend::OpenGL: return new OpenGLUniformBuffer(data, size);
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }
 
-    Ref<UniformBuffer> UniformBuffer::Create(const u8 *data, u32 size, BufferUsage usage) {
+    UniformBuffer *UniformBuffer::Create(const u8 *data, u32 size, BufferUsage usage) {
         switch (RenderEngine::GetBackend()) {
-            case RenderBackend::OpenGL: return std::make_shared<OpenGLUniformBuffer>(data, size, usage);
+            case RenderBackend::OpenGL: return new OpenGLUniformBuffer(data, size, usage);
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }

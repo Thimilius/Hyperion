@@ -17,8 +17,8 @@ namespace Hyperion::Rendering {
     public:
         static void SetCameraData(const CameraData &camera);
 
-        static void DrawText(const String &text, const Ref<Font> &font, f32 x, f32 y, f32 scale, Color color);
-        static void DrawVertexArray(MeshTopology topology, const Ref<VertexArray> &vertex_array, u32 vertex_count);
+        static void DrawText(const String &text, Font *font, f32 x, f32 y, f32 scale, Color color);
+        static void DrawVertexArray(MeshTopology topology, VertexArray *vertex_array, u32 vertex_count);
 
         static void Begin(MeshTopology topology = MeshTopology::Triangles);
         static void DrawCube(Vec3 center, Vec3 size, Color color);
@@ -49,17 +49,17 @@ namespace Hyperion::Rendering {
         struct ImmediateResources {
             inline static const u32 DATA_BUFFER_SIZE = 2048;
 
-            Ref<Shader> shader;
-            Ref<VertexArray> vertex_array;
-            Ref<VertexBuffer> vertex_buffer;
+            Shader *shader;
+            VertexArray *vertex_array;
+            VertexBuffer *vertex_buffer;
 
             VertexImmediate data_buffer[DATA_BUFFER_SIZE];
         };
         
         struct FontResources {
-            Ref<Shader> shader;
-            Ref<VertexArray> vertex_array;
-            Ref<VertexBuffer> vertex_buffer;
+            Shader *shader;
+            VertexArray *vertex_array;
+            VertexBuffer *vertex_buffer;
         };
         
         inline static State s_state;

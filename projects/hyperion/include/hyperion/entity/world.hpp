@@ -23,7 +23,7 @@ namespace Hyperion {
 namespace Hyperion {
     
     struct WorldEnvironment {
-        Ref<Rendering::TextureCubemap> skybox;
+        Rendering::TextureCubemap *skybox;
 
         struct AmbientLight {
             f32 intensity = 0.2f;
