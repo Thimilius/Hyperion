@@ -10,7 +10,6 @@ namespace Hyperion {
 
     Scope<IMeshLoader> MeshFactory::s_mesh_loader = std::make_unique<AssimpMeshLoader>();
 
-
     Ref<Rendering::Mesh> MeshFactory::CreateQuad(f32 width, f32 height) {
         f32 half_width = width / 2.0f;
         f32 half_height = height / 2.0f;

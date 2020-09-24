@@ -12,6 +12,9 @@ namespace Hyperion {
 
         Vec2 GetSize() const { return m_size; }
         void SetSize(Vec2 size) { m_size = size; }
+    protected:
+        void OnCreate() override;
+        void OnDestroy() override;
     private:
         Vec2 m_size;
     };

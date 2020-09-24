@@ -4,11 +4,11 @@
 
 #define HYP_OBJECT(TYPE, BASE_TYPE)                                                                                            \
     private:                                                                                                                   \
-        inline static ObjectType s_type = std::hash<String>()(String(#TYPE));                                                  \
+        inline static constexpr ObjectType s_type = StringUtils::Hash(#TYPE);                                                  \
     public:                                                                                                                    \
         inline virtual ObjectType GetType() const override { return s_type; }                                                  \
         inline virtual bool IsBase(ObjectType type) const override { return type == s_type ? true : BASE_TYPE::IsBase(type); } \
-        inline static ObjectType GetStaticType() { return s_type; }                                                            \
+        inline static constexpr ObjectType GetStaticType() { return s_type; }                                                  \
     private:
     
 namespace Hyperion {
@@ -19,11 +19,11 @@ namespace Hyperion {
 
 namespace Hyperion {
 
-    using ObjectType = u64;
+    using ObjectType = u32;
 
     class Object {
     public:
-        inline static ObjectType GetStaticType() { return s_type; }
+        inline static constexpr ObjectType GetStaticType() { return s_type; }
         inline virtual ObjectType GetType() const { return s_type; }
         inline virtual bool IsBase(ObjectType type) const { return type == s_type; }
 
@@ -48,8 +48,8 @@ namespace Hyperion {
     private:
         String m_name;
         bool m_destroyed = false;
-
-        inline static ObjectType s_type = std::hash<String>()(String("Object"));
+        
+        inline static constexpr ObjectType s_type = StringUtils::Hash("Object");
     private:
         friend class Hyperion::Entity;
         friend class Hyperion::ObjectManager;

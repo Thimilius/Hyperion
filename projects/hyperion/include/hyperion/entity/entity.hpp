@@ -5,11 +5,13 @@
 
 #include "hyperion/entity/entity_message.hpp"
 #include "hyperion/entity/components/transform.hpp"
+#include "hyperion/entity/components/ui/ui_transform.hpp"
 
 namespace Hyperion {
     class Component;
     class Object;
     class World;
+    class UITransform;
 }
 
 namespace Hyperion {
@@ -187,6 +189,7 @@ namespace Hyperion {
     private:
         friend class Hyperion::Component;
         friend class Hyperion::Object;
+        friend class Hyperion::UITransform;
     };
 
 }
