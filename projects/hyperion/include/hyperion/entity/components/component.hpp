@@ -5,6 +5,7 @@
 namespace Hyperion {
     class Entity;
     class Transform;
+    class UITransform;
     class World;
     class WorldManager;
 }
@@ -33,6 +34,7 @@ namespace Hyperion {
         Entity *m_entity;
     private:
         friend class Hyperion::Entity;
+        friend class Hyperion::UITransform;
         friend class Hyperion::WorldManager;
     };
 

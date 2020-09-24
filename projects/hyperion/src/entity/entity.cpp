@@ -111,8 +111,8 @@ namespace Hyperion {
     void Entity::OnDestroy() {
         // First destroy all our components except transform
         for (auto it = m_components.begin(); it != m_components.end(); ) {
-            if (it->first != Transform::GetStaticType()) {
-                Component *component = it->second;
+            auto [component_type, component] = *it;
+            if (!component->IsBase(Transform::GetStaticType())) {
                 it = m_components.erase(it);
                 DestroyImmediate(component);
             } else {
@@ -135,6 +135,9 @@ namespace Hyperion {
         }
 
         // At the very end we can destroy the transform
+        if (m_transform->GetType() == UITransform::GetStaticType()) {
+            static_cast<UITransform *>(m_transform)->m_replace_on_destroy = false;
+        }
         DestroyImmediate(m_transform);
     }
 

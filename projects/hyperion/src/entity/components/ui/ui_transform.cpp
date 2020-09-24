@@ -7,6 +7,7 @@
 namespace Hyperion {
 
     void UITransform::OnCreate() {
+        // Creating a ui transform means replacing the current one
         Transform *obsolete = GetEntity()->m_transform;
 
         // We need to copy everything over from the now obsolete transform we are about to destroy
@@ -21,11 +22,52 @@ namespace Hyperion {
         m_parent = obsolete->m_parent;
         m_children = std::move(obsolete->m_children);
 
-        GetEntity()->m_transform = this;
+        // Update the entity
+        Entity *entity = GetEntity();
+        entity->m_transform = this;
+        entity->m_components.erase(Transform::GetStaticType());
+        entity->m_components[UITransform::GetStaticType()] = this;
+
+        // Update the children
+        for (Transform *child : m_children) {
+            child->m_parent = this;
+        }
+
+        // We can now delete the obsolete transform component that is no longer being used
+        // NOTE: This is propbably a little unsafe just deleting the component like that but works for now
+        delete obsolete;
     }
 
     void UITransform::OnDestroy() {
+        if (m_replace_on_destroy) {
+            Transform *transform = new Transform();
 
+            // We need to copy everything over from the now obsolete transform we are about to destroy
+            transform->m_local_position = m_local_position;
+            transform->m_local_rotation = m_local_rotation;
+            transform->m_local_scale = m_local_scale;
+            transform->m_derived_position = m_derived_position;
+            transform->m_derived_rotation = m_derived_rotation;
+            transform->m_derived_scale = m_derived_scale;
+            transform->m_local_to_world_matrix = m_local_to_world_matrix;
+            transform->m_world_to_local_matrix = m_world_to_local_matrix;
+            transform->m_parent = m_parent;
+            transform->m_children = std::move(m_children);
+
+            // Update the entity
+            Entity *entity = GetEntity();
+            transform->m_entity = entity;
+            entity->m_transform = transform;
+            entity->m_components.erase(UITransform::GetStaticType());
+            entity->m_components[Transform::GetStaticType()] = transform;
+
+            // Update the children
+            for (Transform *child : m_children) {
+                child->m_parent = transform;
+            }
+        } else {
+            Transform::OnDestroy();
+        }
     }
 
 }

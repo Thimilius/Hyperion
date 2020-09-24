@@ -4,6 +4,10 @@
 #include "hyperion/core/math/vec2.hpp"
 
 namespace Hyperion {
+    class Entity;
+}
+
+namespace Hyperion {
 
     class UITransform : public Transform {
         HYP_OBJECT(UITransform, Transform);
@@ -17,6 +21,10 @@ namespace Hyperion {
         void OnDestroy() override;
     private:
         Vec2 m_size;
+
+        bool m_replace_on_destroy = true;
+    private:
+        friend class Hyperion::Entity;
     };
 
 }
