@@ -47,7 +47,13 @@ namespace Hyperion::Rendering {
     }
 
     void RenderEngine::Shutdown() {
+        s_render_pipeline->Shutdown();
         delete s_render_pipeline;
+
+        ForwardRenderer::Shutdown();
+        ImmediateRenderer::Shutdown();
+
+        delete RenderCommand::s_render_driver;
     }
 
 }

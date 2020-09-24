@@ -20,8 +20,8 @@ namespace Hyperion::Physics {
         ~PhysicsEngine() = delete;
 
         static void Init(const PhysicsSettings &settings);
-        static void Update(f32 delta_time) { s_physics_driver->Update(delta_time); }
-        static void Shutdown() { s_physics_driver->Shutdown(); }
+        static void Update(f32 delta_time);
+        static void Shutdown();
 
         inline static PhysicsWorld *CreatePhysicsWorld() { return s_physics_driver->CreatePhysicsWorld(); }
         inline static void DestroyPhysicsWorld(PhysicsWorld *world) { return s_physics_driver->DestroyPhysicsWorld(world); }

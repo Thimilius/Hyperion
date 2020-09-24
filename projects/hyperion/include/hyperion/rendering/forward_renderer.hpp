@@ -31,6 +31,7 @@ namespace Hyperion::Rendering {
         ~ForwardRenderer() = delete;
 
         static void Init();
+        static void Shutdown();
 
         static void PrepareMaterial(Material *material, const Mat4 &transform, const Mat4 &inverse_transform);
         static void DrawCall(Mesh *mesh);

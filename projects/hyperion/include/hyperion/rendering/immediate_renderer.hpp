@@ -30,6 +30,7 @@ namespace Hyperion::Rendering {
         ~ImmediateRenderer() = delete;
 
         static void Init();
+        static void Shutdown();
 
         static void AddVertex(Vec3 position, Color color);
         static void Flush(MeshTopology topology);

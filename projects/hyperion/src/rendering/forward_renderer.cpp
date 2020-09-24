@@ -100,6 +100,10 @@ namespace Hyperion::Rendering {
         }
     }
 
+    void ForwardRenderer::Shutdown() {
+        
+    }
+
     void ForwardRenderer::PrepareMaterial(Material *material, const Mat4 &transform, const Mat4 &inverse_transform) {
         material->SetMat4("u_transform.mvp", s_state.transform.view_projection * transform);
 

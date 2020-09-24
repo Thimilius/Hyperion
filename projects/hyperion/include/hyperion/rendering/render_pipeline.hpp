@@ -8,6 +8,7 @@ namespace Hyperion::Rendering {
 
         virtual void Init() { }
         virtual void Render() { }
+        virtual void Shutdown() { }
     };
 
 }

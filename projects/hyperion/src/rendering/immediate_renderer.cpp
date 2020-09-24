@@ -170,6 +170,10 @@ namespace Hyperion::Rendering {
         s_font_resources.vertex_array->AddVertexBuffer(s_font_resources.vertex_buffer);
     }
 
+    void ImmediateRenderer::Shutdown() {
+
+    }
+
     void ImmediateRenderer::AddVertex(Vec3 position, Color color) {
         u32 vertex_offset = s_state.vertex_offset;
         if (vertex_offset >= s_immediate_resources.DATA_BUFFER_SIZE) {

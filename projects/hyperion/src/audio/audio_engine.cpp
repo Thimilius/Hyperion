@@ -22,4 +22,9 @@ namespace Hyperion::Audio {
         s_audio_driver->Init();
     }
 
+    void AudioEngine::Shutdown() {
+        s_audio_driver->Shutdown();
+        delete s_audio_driver;
+    }
+
 }

@@ -41,6 +41,8 @@ namespace Hyperion {
     }
 
     WindowsWindow::~WindowsWindow() {
+        delete m_graphics_context;
+
         DestroyWindow(m_window_handle);
     }
 

@@ -21,7 +21,7 @@ namespace Hyperion::Audio {
         ~AudioEngine() = delete;
 
         static void Init(const AudioSettings &settings);
-        static void Shutdown() { s_audio_driver->Shutdown(); }
+        static void Shutdown();
     private:
         inline static AudioBackend s_audio_backend;
 

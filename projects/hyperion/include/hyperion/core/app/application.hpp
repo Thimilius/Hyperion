@@ -11,6 +11,8 @@ namespace Hyperion {
 
     class Application {
     public:
+        virtual ~Application();
+
         inline Window *GetWindow() const { return m_window; }
 
         void Exit();

@@ -27,6 +27,10 @@ namespace Hyperion {
         m_window->SetEventCallback(std::bind(&Application::OnEventInternal, this, std::placeholders::_1));
     }
     
+    Application::~Application() {
+        delete m_window;
+    }
+
     void Application::Exit() {
         m_running = false;
     }
