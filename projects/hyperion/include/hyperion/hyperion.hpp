@@ -5,6 +5,7 @@
 #include "hyperion/core/string_utils.hpp"
 #include "hyperion/core/timer.hpp"
 #include "hyperion/core/log.hpp"
+#include "hyperion/core/object.hpp"
 #include "hyperion/core/engine.hpp"
 #include "hyperion/core/color.hpp"
 #include "hyperion/core/image.hpp"
@@ -30,7 +31,6 @@
 #include "hyperion/core/app/time.hpp"
 
 // Entity
-#include "hyperion/entity/object.hpp"
 #include "hyperion/entity/world.hpp"
 #include "hyperion/entity/world_manager.hpp"
 #include "hyperion/entity/entity.hpp"

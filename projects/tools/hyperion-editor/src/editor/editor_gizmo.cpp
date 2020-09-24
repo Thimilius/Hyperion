@@ -16,7 +16,7 @@ using namespace Hyperion::Rendering;
 namespace Hyperion::Editor {
 
     void EditorGizmo::OnCreate() {
-        RegisterUpdate();
+        RegisterForUpdate();
 
         Material *material = Material::Create(AssetManager::GetShader("standard_unlit"));
         Mesh *mesh = MeshFactory::CreateFromFile("data/models/gizmo.obj");

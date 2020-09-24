@@ -1,6 +1,6 @@
 #pragma once
 
-#include <hyperion/entity/object.hpp>
+#include <hyperion/core/object.hpp>
 
 namespace Hyperion::Editor {
 

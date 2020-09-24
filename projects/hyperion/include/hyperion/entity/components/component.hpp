@@ -1,12 +1,12 @@
 #pragma once
 
-#include "hyperion/entity/object.hpp"
+#include "hyperion/core/object.hpp"
 
 namespace Hyperion {
     class Entity;
-    class ObjectManager;
     class Transform;
     class World;
+    class WorldManager;
 }
 
 namespace Hyperion {
@@ -23,7 +23,8 @@ namespace Hyperion {
         Component(const String &name) : Object(name) { }
         virtual ~Component() = default;
 
-        void RegisterUpdate();
+        void RegisterForUpdate();
+        void UnregisterForUpdate();
 
         virtual void OnCreate() { }
         virtual void OnUpdate(f32 delta_time) { }
@@ -32,7 +33,7 @@ namespace Hyperion {
         Entity *m_entity;
     private:
         friend class Hyperion::Entity;
-        friend class Hyperion::ObjectManager;
+        friend class Hyperion::WorldManager;
     };
 
 }

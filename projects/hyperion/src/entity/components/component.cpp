@@ -3,7 +3,7 @@
 #include "hyperion/entity/components/component.hpp"
 
 #include "hyperion/entity/entity.hpp"
-#include "hyperion/entity/object_manager.hpp"
+#include "hyperion/entity/world_manager.hpp"
 
 namespace Hyperion {
 
@@ -15,14 +15,18 @@ namespace Hyperion {
         return m_entity->GetWorld();
     }
 
-    void Component::RegisterUpdate() {
-        ObjectManager::RegisterComponentForUpdate(this);
+    void Component::RegisterForUpdate() {
+        WorldManager::RegisterComponentForUpdate(this);
+    }
+
+    void Component::UnregisterForUpdate() {
+        WorldManager::UnregisterComponentForUpdate(this);
     }
 
     void Component::OnDestroy() {
         GetEntity()->DispatchMessage({ EntityMessageType::ComponentDestroyed, this });
 
-        ObjectManager::UnregisterComponentForUpdate(this);
+        UnregisterForUpdate();
     }
 
 }

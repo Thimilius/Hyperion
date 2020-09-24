@@ -1,6 +1,9 @@
 #pragma once
 
 #include <cstdint>
+#include <vector>
+#include <unordered_map>
+#include <unordered_set>
 
 using s8 = int8_t;
 using s16 = int16_t;
@@ -22,4 +25,4 @@ template<typename Key, typename Value>
 using Map = std::unordered_map<Key, Value>;
 
 template<typename T>
-using Set = std::set<T>;
+using Set = std::unordered_set<T>;
