@@ -30,7 +30,7 @@ namespace Hyperion::Editor {
         MeshRenderer *renderer = m_gimzo_x->AddComponent<MeshRenderer>();
         renderer->SetMesh(mesh);
         renderer->SetMaterial(material);
-        renderer->GetMaterial()->SetColor("u_color", Color::Red());
+        renderer->GetMaterial()->SetColor("u_color", m_x_axis_color);
 
         m_gimzo_y = Entity::Create("Gizmo_Part_Y", Vec3::Zero(), Quaternion::Identity(), GetTransform());
         m_gimzo_y->AddTag("Y");
@@ -40,7 +40,7 @@ namespace Hyperion::Editor {
         renderer = m_gimzo_y->AddComponent<MeshRenderer>();
         renderer->SetMesh(mesh);
         renderer->SetMaterial(material);
-        renderer->GetMaterial()->SetColor("u_color", Color::Green());
+        renderer->GetMaterial()->SetColor("u_color", m_y_axis_color);
 
         m_gimzo_z = Entity::Create("Gizmo_Part_Z", Vec3::Zero(), Quaternion::Identity(), GetTransform());
         m_gimzo_z->AddTag("Z");
@@ -51,14 +51,14 @@ namespace Hyperion::Editor {
         renderer = m_gimzo_z->AddComponent<MeshRenderer>();
         renderer->SetMesh(mesh);
         renderer->SetMaterial(material);
-        renderer->GetMaterial()->SetColor("u_color", Color::Blue());
+        renderer->GetMaterial()->SetColor("u_color", m_z_axis_color);
 
         Mesh *plane_mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Quad);
 
         m_gizmo_xy = Entity::Create("Gizmo_Part_XY", Vec3::Zero(), Quaternion::Identity(), GetTransform());
         m_gizmo_xy->AddTag("XY");
         m_gizmo_xy->GetTransform()->SetEulerAngles(Vec3(0.0f, 0.0f, 0.0f));
-        m_gizmo_xy->GetTransform()->SetPosition(Vec3(0.25f, 0.25f, 0.0f));
+        m_gizmo_xy->GetTransform()->SetPosition(Vec3(0.5f, 0.5f, 0.0f));
         m_gizmo_xy->GetTransform()->SetLocalScale(Vec3(0.25f, 0.25f, 0.25f));
         collider = m_gizmo_xy->AddComponent<BoxCollider>();
         collider->SetOrigin(Vec3(0.0f, 0.0f, 0.0f));
@@ -66,12 +66,12 @@ namespace Hyperion::Editor {
         renderer = m_gizmo_xy->AddComponent<MeshRenderer>();
         renderer->SetMesh(plane_mesh);
         renderer->SetMaterial(material);
-        renderer->GetMaterial()->SetColor("u_color", Color::Blue());
+        renderer->GetMaterial()->SetColor("u_color", m_z_axis_color);
 
         m_gizmo_xz = Entity::Create("Gizmo_Part_XZ", Vec3::Zero(), Quaternion::Identity(), GetTransform());
         m_gizmo_xz->AddTag("XZ");
         m_gizmo_xz->GetTransform()->SetEulerAngles(Vec3(90.0f, 0.0f, 0.0f));
-        m_gizmo_xz->GetTransform()->SetPosition(Vec3(0.25f, 0.0f, 0.25f));
+        m_gizmo_xz->GetTransform()->SetPosition(Vec3(0.5f, 0.0f, 0.5f));
         m_gizmo_xz->GetTransform()->SetLocalScale(Vec3(0.25f, 0.25f, 0.25f));
         collider = m_gizmo_xz->AddComponent<BoxCollider>();
         collider->SetOrigin(Vec3(0.0f, 0.0f, 0.0f));
@@ -79,20 +79,20 @@ namespace Hyperion::Editor {
         renderer = m_gizmo_xz->AddComponent<MeshRenderer>();
         renderer->SetMesh(plane_mesh);
         renderer->SetMaterial(material);
-        renderer->GetMaterial()->SetColor("u_color", Color::Green());
+        renderer->GetMaterial()->SetColor("u_color", m_y_axis_color);
 
-        m_gizmo_xz = Entity::Create("Gizmo_Part_YZ", Vec3::Zero(), Quaternion::Identity(), GetTransform());
-        m_gizmo_xz->AddTag("YZ");
-        m_gizmo_xz->GetTransform()->SetEulerAngles(Vec3(0.0f, 90.0f, 0.0f));
-        m_gizmo_xz->GetTransform()->SetPosition(Vec3(0.0f, 0.25f, 0.25f));
-        m_gizmo_xz->GetTransform()->SetLocalScale(Vec3(0.25f, 0.25f, 0.25f));
-        collider = m_gizmo_xz->AddComponent<BoxCollider>();
+        m_gizmo_yz = Entity::Create("Gizmo_Part_YZ", Vec3::Zero(), Quaternion::Identity(), GetTransform());
+        m_gizmo_yz->AddTag("YZ");
+        m_gizmo_yz->GetTransform()->SetEulerAngles(Vec3(0.0f, 90.0f, 0.0f));
+        m_gizmo_yz->GetTransform()->SetPosition(Vec3(0.0f, 0.5f, 0.5f));
+        m_gizmo_yz->GetTransform()->SetLocalScale(Vec3(0.25f, 0.25f, 0.25f));
+        collider = m_gizmo_yz->AddComponent<BoxCollider>();
         collider->SetOrigin(Vec3(0.0f, 0.0f, 0.0f));
         collider->SetSize(Vec3(1.0f, 1.0f, 0.01f));
-        renderer = m_gizmo_xz->AddComponent<MeshRenderer>();
+        renderer = m_gizmo_yz->AddComponent<MeshRenderer>();
         renderer->SetMesh(plane_mesh);
         renderer->SetMaterial(material);
-        renderer->GetMaterial()->SetColor("u_color", Color::Red());
+        renderer->GetMaterial()->SetColor("u_color", m_x_axis_color);
 
         EditorSelection::RegisterSelectionListener(this);
     }
@@ -277,17 +277,17 @@ namespace Hyperion::Editor {
     void EditorGizmo::ResetColor() {
         Color color;
         if (m_last_gizmo->HasTag("X")) {
-            color = Color::Red();
+            color = m_x_axis_color;
         } else if (m_last_gizmo->HasTag("Y")) {
-            color = Color::Green();
+            color = m_y_axis_color;
         } else if (m_last_gizmo->HasTag("Z")) {
-            color = Color::Blue();
+            color = m_z_axis_color;
         } else if (m_last_gizmo->HasTag("XY")) {
-            color = Color::Blue();
+            color = m_z_axis_color;
         } else if (m_last_gizmo->HasTag("XZ")) {
-            color = Color::Green();
+            color = m_y_axis_color;
         } else if (m_last_gizmo->HasTag("YZ")) {
-            color = Color::Red();
+            color = m_x_axis_color;
         }
         m_last_gizmo->GetComponent<MeshRenderer>()->GetMaterial()->SetColor("u_color", color);
     }

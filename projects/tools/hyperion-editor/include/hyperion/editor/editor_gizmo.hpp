@@ -1,5 +1,6 @@
 #pragma once
 
+#include <hyperion/core/color.hpp>
 #include <hyperion/core/math/plane.hpp>
 #include <hyperion/entity/components/component.hpp>
 #include <hyperion/entity/components/rendering/camera.hpp>
@@ -47,6 +48,10 @@ namespace Hyperion::Editor {
 
         Camera *m_camera;
         Entity *m_selection;
+
+        Color m_x_axis_color = Color::Red();
+        Color m_y_axis_color = Color::Green();
+        Color m_z_axis_color = Color::Blue();
     };
 
 }
