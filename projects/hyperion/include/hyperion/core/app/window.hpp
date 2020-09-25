@@ -17,6 +17,11 @@ namespace Hyperion {
 
 namespace Hyperion {
 
+    enum class CursorMode {
+        Default,
+        Confined
+    };
+
     class Window {
         using EventCallbackFunction = std::function<void(Event &)>;
     public:
@@ -37,13 +42,16 @@ namespace Hyperion {
 
         inline WindowMode GetWindowMode() const { return m_window_mode; }
         virtual void SetWindowMode(WindowMode window_mode) = 0;
-
         inline WindowState GetWindowState() const { return m_window_state; }
         virtual void SetWindowState(WindowState window_state) = 0;
-
         inline VSyncMode GetVSyncMode() const { return m_vsync_mode; }
         virtual void SetVSyncMode(VSyncMode vsync_mode) = 0;
         
+        inline bool IsCursorVisible() const { return m_cursor_is_visible; }
+        virtual void SetCursorVisible(bool visible) = 0;
+        inline CursorMode GetCursorMode() const { return m_cursor_mode; }
+        virtual void SetCursorMode(CursorMode mode) = 0;
+
         virtual void SetIcon(const String &path) = 0;
     protected:
         virtual void Update() = 0;
@@ -65,6 +73,11 @@ namespace Hyperion {
         WindowMode m_window_mode;
         WindowState m_window_state;
         VSyncMode m_vsync_mode;
+
+        bool m_is_focused;
+
+        CursorMode m_cursor_mode;
+        bool m_cursor_is_visible;
 
         EventCallbackFunction m_event_callback;
 

@@ -26,6 +26,8 @@ namespace Hyperion {
         m_min_width = settings.min_width;
         m_min_height = settings.min_height;
         m_window_state = WindowState::Normal;
+        m_cursor_is_visible = true;
+        m_cursor_mode = CursorMode::Default;
 
         m_input = static_cast<WindowsInput *>(Input::s_input_implementation);
 
@@ -173,6 +175,16 @@ namespace Hyperion {
         }
     }
 
+    void WindowsWindow::SetCursorVisible(bool visible) {
+        m_cursor_is_visible = visible;
+
+        ShowCursor(visible);
+    }
+
+    void WindowsWindow::SetCursorMode(CursorMode mode) {
+        m_cursor_mode = mode;
+    }
+
     void WindowsWindow::SetIcon(const String &path) {
         HICON icon = (HICON)LoadImageW(nullptr, StringUtils::Utf8ToUtf16(path).c_str(), IMAGE_ICON, 64, 64, LR_LOADFROMFILE);
         SendMessageW(m_window_handle, WM_SETICON, ICON_SMALL, (LPARAM)icon);
@@ -188,6 +200,22 @@ namespace Hyperion {
 
     void WindowsWindow::Update() {
         m_graphics_context->SwapBuffers();
+
+        if (m_is_focused) {
+            switch (m_cursor_mode) {
+                case CursorMode::Default: {
+                    ClipCursor(nullptr);
+                    break;
+                }
+                case CursorMode::Confined: {
+                    RECT window_rect;
+                    GetWindowRect(m_window_handle, &window_rect);
+                    ClipCursor(&window_rect);
+                    break;
+                }
+                default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+            }
+        }
 
         m_input->Update();
 
@@ -663,7 +691,13 @@ namespace Hyperion {
 
             case WM_SETFOCUS: 
             case WM_KILLFOCUS: {
-                WindowFocusEvent event(message == WM_SETFOCUS);
+                bool focused = message == WM_SETFOCUS;
+                window->m_is_focused = focused;
+
+                // We need to reset the cursor clip state when losing focus
+                ClipCursor(nullptr);
+
+                WindowFocusEvent event(focused);
                 window->DispatchEvent(event);
                 break;
             }

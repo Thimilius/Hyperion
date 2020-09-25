@@ -23,6 +23,9 @@ namespace Hyperion {
         void SetWindowState(WindowState window_state) override;
         void SetVSyncMode(VSyncMode vsync_mode) override;
 
+        void SetCursorVisible(bool visible) override;
+        void SetCursorMode(CursorMode mode) override;
+
         void SetIcon(const String &path) override;
     private:
         void Update() override;

@@ -15,10 +15,10 @@
     #define HYP_DEBUG_BREAK
 #endif
 
-#include "hyperion/core/types.hpp"
 #include "hyperion/core/assert.hpp"
-#include "hyperion/core/string_utils.hpp"
 #include "hyperion/core/enum.hpp"
+#include "hyperion/core/types.hpp"
+#include "hyperion/core/string_utils.hpp"
 #include "hyperion/core/log.hpp"
 #include "hyperion/core/result.hpp"
 
