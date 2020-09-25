@@ -17,17 +17,17 @@ namespace Hyperion {
         // This assumes a valid utf8 string
         while (*s != '\0') {
             u32 codepoint;
-            if (0xf0 == (0xf8 & s[0])) {
+            if (0xF0 == (0xF8 & s[0])) {
                 // 4 byte utf8 codepoint
-                codepoint = ((0x07 & s[0]) << 18) | ((0x3f & s[1]) << 12) | ((0x3f & s[2]) << 6) | (0x3f & s[3]);
+                codepoint = ((0x07 & s[0]) << 18) | ((0x3F & s[1]) << 12) | ((0x3F & s[2]) << 6) | (0x3F & s[3]);
                 s += 4;
-            } else if (0xe0 == (0xf0 & s[0])) {
+            } else if (0xE0 == (0xF0 & s[0])) {
                 // 3 byte utf8 codepoint
-                codepoint = ((0x0f & s[0]) << 12) | ((0x3f & s[1]) << 6) | (0x3f & s[2]);
+                codepoint = ((0x0F & s[0]) << 12) | ((0x3F & s[1]) << 6) | (0x3F & s[2]);
                 s += 3;
-            } else if (0xc0 == (0xe0 & s[0])) {
+            } else if (0xC0 == (0xE0 & s[0])) {
                 // 2 byte utf8 codepoint
-                codepoint = ((0x1f & s[0]) << 6) | (0x3f & s[1]);
+                codepoint = ((0x1F & s[0]) << 6) | (0x3F & s[1]);
                 s += 2;
             } else {
                 // 1 byte utf8 codepoint otherwise

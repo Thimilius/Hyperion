@@ -34,6 +34,7 @@
 #include "hyperion/entity/world.hpp"
 #include "hyperion/entity/world_manager.hpp"
 #include "hyperion/entity/entity.hpp"
+#include "hyperion/entity/layer.hpp"
 #include "hyperion/entity/components/transform.hpp"
 #include "hyperion/entity/components/rendering/mesh_renderer.hpp"
 #include "hyperion/entity/components/rendering/light.hpp"
@@ -51,7 +52,6 @@
 #include "hyperion/rendering/vertex_array.hpp"
 #include "hyperion/rendering/render_texture.hpp"
 #include "hyperion/rendering/camera_data.hpp"
-#include "hyperion/rendering/layer.hpp"
 
 // Assets
 #include "hyperion/assets/asset.hpp"

@@ -57,7 +57,6 @@ namespace Hyperion::Physics {
 
     void BulletPhysicsWorld::AddBoxCollider(BoxCollider *box_collider) {
         btCollisionObject *collision_object = new btCollisionObject();
-        collision_object->setUserPointer(box_collider);
         Vec3 half_extends = 0.5f * box_collider->GetSize();
         collision_object->setCollisionShape(new btBoxShape(btVector3(half_extends.x, half_extends.y, half_extends.z)));
 
@@ -70,7 +69,6 @@ namespace Hyperion::Physics {
 
     void BulletPhysicsWorld::AddSphereCollider(SphereCollider *sphere_collider) {
         btCollisionObject *collision_object = new btCollisionObject();
-        collision_object->setUserPointer(sphere_collider);
         collision_object->setCollisionShape(new btSphereShape(sphere_collider->GetRadius()));
 
         Transform *transform = sphere_collider->GetTransform();
@@ -177,6 +175,7 @@ namespace Hyperion::Physics {
     }
 
     void BulletPhysicsWorld::AddCollider(Collider *collider, btCollisionObject *collision_object) {
+        collision_object->setUserPointer(collider);
         m_collision_world->addCollisionObject(collision_object);
         m_collision_objects[collider] = collision_object;
     }

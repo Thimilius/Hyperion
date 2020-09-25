@@ -136,7 +136,7 @@ namespace Hyperion::Editor {
                     ResetColor();
                 }
 
-                result.collider->GetEntity()->GetComponent<MeshRenderer>()->GetMaterial()->SetColor("u_color", Color::White());
+                result.collider->GetEntity()->GetComponent<MeshRenderer>()->GetMaterial()->SetColor("u_color", m_highlight_color);
 
                 m_last_gizmo = entity;
             }

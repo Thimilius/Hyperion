@@ -54,10 +54,11 @@ namespace Hyperion::Editor {
 
         Plane m_grabbing_plane;
 
+        Color m_highlight_color = Color::Yellow();
         Color m_x_axis_color = Color::Red();
         Color m_y_axis_color = Color::Green();
         Color m_z_axis_color = Color::Blue();
-        Color m_xyz_axis_color = Color::Grey();
+        Color m_xyz_axis_color = Color::White();
     };
 
 }

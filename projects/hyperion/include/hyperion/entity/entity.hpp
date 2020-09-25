@@ -3,6 +3,7 @@
 #include <type_traits>
 #include <typeindex>
 
+#include "hyperion/entity/layer.hpp"
 #include "hyperion/entity/entity_message.hpp"
 #include "hyperion/entity/components/transform.hpp"
 #include "hyperion/entity/components/ui/ui_transform.hpp"
@@ -32,12 +33,11 @@ namespace Hyperion {
     using EntityTag = String;
 
     // NOTE: Should we allow multiple components of the same type?
-    // Currently the GetComponents implementations assume only one component of a certain type
+    // Currently the GetComponent implementations assume only one component of a certain type
     class Entity : public Object {
         HYP_OBJECT(Entity, Object);
     public:
         inline World *GetWorld() const { return m_world; }
-        inline Transform *GetTransform() { return m_transform; }
 
         inline bool IsActive() const { return m_active; }
         inline void SetActive(bool active) {
@@ -47,6 +47,9 @@ namespace Hyperion {
             }
         }
         bool IsActiveInHierarchy() const;
+
+        inline LayerMask GetLayer() const { return m_layer; }
+        inline void SetLayer(LayerMask layer) { m_layer = layer; }
 
         void DispatchMessage(EntityMessage message);
 
@@ -156,6 +159,8 @@ namespace Hyperion {
             return components;
         }
 
+        inline Transform *GetTransform() { return m_transform; }
+
         inline const Set<EntityTag> &GetTags() const { return m_tags; }
         inline bool HasTag(const EntityTag &tag) const { return m_tags.find(tag) != m_tags.end(); }
         inline bool AddTag(const EntityTag &tag) { return m_tags.insert(tag).second; }
@@ -178,12 +183,14 @@ namespace Hyperion {
 
         static String GetPrimitiveName(EntityPrimitive primitive);
     private:
-        Transform *m_transform;
-        Map<ObjectType, Component *> m_components;
-        
         World *m_world = nullptr;
-        Set<EntityTag> m_tags;
         bool m_active = true;
+
+        LayerMask m_layer = LayerMask::Default;
+
+        Map<ObjectType, Component *> m_components;
+        Transform *m_transform = nullptr;
+        Set<EntityTag> m_tags;
 
         Vector<IEntityMessageListener *> m_message_listeners;
     private:
