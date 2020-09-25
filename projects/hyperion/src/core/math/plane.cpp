@@ -25,6 +25,15 @@ namespace Hyperion {
         distance = -distance;
     }
 
+    Vec3 Plane::GetClosestPoint(Vec3 point) const {
+        f32 d = normal.Dot(point) + distance;
+        return point - normal * d;
+    }
+
+    f32 Plane::GetDistanceToPoint(Vec3 point) const {
+        return normal.Dot(point) + distance;
+    }
+
     bool Plane::Intersects(Ray ray, f32 &hit_distance) const {
         f32 angle = ray.direction.Dot(normal);
         f32 origin_to_plane = -ray.origin.Dot(normal) - this->distance;

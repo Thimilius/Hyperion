@@ -16,6 +16,9 @@ namespace Hyperion {
 
         void Flip();
 
+        Vec3 GetClosestPoint(Vec3 point) const;
+        f32 GetDistanceToPoint(Vec3 point) const;
+
         bool Intersects(Ray ray, f32 &hit_distance) const;
 
         String ToString() const;

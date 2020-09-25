@@ -18,6 +18,7 @@ namespace Hyperion::Editor {
         void OnUpdate(f32 delta_time) override;
     private:
         void ResetColor();
+        void UpdateScale();
 
         void OnSelection(Object *selection) override;
     private:

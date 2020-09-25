@@ -109,8 +109,9 @@ namespace Hyperion::Editor {
 
     void EditorGizmo::OnUpdate(f32 delta_time) {
         Transform *transform = GetTransform();
-        Vec3 position = transform->GetPosition();
         f32 hit_distance = 0.0f;
+
+        Vec3 position = transform->GetPosition();
 
         Plane xy_plane = Plane(Vec3::Forward(), position.z);
         Plane xz_plane = Plane(Vec3::Up(), -position.y);
@@ -121,6 +122,8 @@ namespace Hyperion::Editor {
 
             m_offset = Vec3::Zero();
         }
+
+        UpdateScale();
 
         Ray ray = m_camera->ScreenPointToRay(Input::GetMousePosition());
         Physics::RaycastResult result;
@@ -319,12 +322,22 @@ namespace Hyperion::Editor {
         m_last_gizmo->GetComponent<MeshRenderer>()->GetMaterial()->SetColor("u_color", color);
     }
 
+    void EditorGizmo::UpdateScale() {
+        Plane camera_plane = Plane(m_camera->GetTransform()->GetForward(), m_camera->GetTransform()->GetPosition());
+
+        f32 scale_factor = camera_plane.GetDistanceToPoint(GetTransform()->GetPosition()) * m_camera->GetFOV() * m_gizmo_scale;
+        Vec3 scale = Vec3(scale_factor, scale_factor, scale_factor);
+        GetTransform()->SetLocalScale(scale);
+    }
+
     void EditorGizmo::OnSelection(Object *selection) {
         if (selection != nullptr && selection->GetType() == Entity::GetStaticType()) {
             Entity *entity = static_cast<Entity *>(selection);
             m_selection = entity;
             GetEntity()->SetActive(true);
             GetTransform()->SetPosition(entity->GetTransform()->GetPosition());
+
+            UpdateScale();
         } else {
             m_selection = nullptr;
             GetEntity()->SetActive(false);
