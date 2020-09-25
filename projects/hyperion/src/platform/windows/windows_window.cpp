@@ -3,6 +3,7 @@
 #include "hyperion/platform/windows/windows_window.hpp"
 
 #include <Dbt.h>
+#include <Windowsx.h>
 
 #include "hyperion/core/app/events/event.hpp"
 #include "hyperion/core/app/events/app_events.hpp"
@@ -518,7 +519,7 @@ namespace Hyperion {
         LRESULT result = 0;
 
         // This will be null on WM_CREATE
-        WindowsWindow *window = static_cast<WindowsWindow *>((void *)(GetWindowLongPtrW(window_handle, GWLP_USERDATA)));
+        WindowsWindow *window = static_cast<WindowsWindow *>(reinterpret_cast<void *>(GetWindowLongPtrW(window_handle, GWLP_USERDATA)));
 
         switch (message) {
             case WM_CREATE: {
@@ -596,8 +597,9 @@ namespace Hyperion {
             }
 
             case WM_MOUSEMOVE: {
-                u32 x = LOWORD(l_param);
-                u32 y = HIWORD(l_param);
+                s32 x = GET_X_LPARAM(l_param);
+                s32 y = GET_Y_LPARAM(l_param);
+                
                 MouseMovedEvent event(static_cast<f32>(x), static_cast<f32>(y));
                 window->DispatchEvent(event);
                 break;
