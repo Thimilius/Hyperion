@@ -5,7 +5,8 @@
 namespace Hyperion {
 
     enum class LayerMask : u32 {
-        None = 0,
+        Nothing = 0,
+
         Layer1 = BIT(1),
         Layer2 = BIT(2),
         Layer3 = BIT(3),

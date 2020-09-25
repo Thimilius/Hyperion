@@ -34,7 +34,6 @@
 #include "hyperion/entity/world.hpp"
 #include "hyperion/entity/world_manager.hpp"
 #include "hyperion/entity/entity.hpp"
-#include "hyperion/entity/layer.hpp"
 #include "hyperion/entity/components/transform.hpp"
 #include "hyperion/entity/components/rendering/mesh_renderer.hpp"
 #include "hyperion/entity/components/rendering/light.hpp"

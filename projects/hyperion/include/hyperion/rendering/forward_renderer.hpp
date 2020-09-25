@@ -1,5 +1,6 @@
 #pragma once
 
+#include "hyperion/core/layer.hpp"
 #include "hyperion/rendering/shader.hpp"
 #include "hyperion/rendering/material.hpp"
 #include "hyperion/rendering/mesh.hpp"
@@ -22,7 +23,7 @@ namespace Hyperion::Rendering {
         static void SetCameraData(const CameraData &camera);
 
         static void DrawSkybox(TextureCubemap *skybox);
-        static void DrawEntities(World *world);
+        static void DrawEntities(World *world, LayerMask layers = LayerMask::Everything);
 
         static void DrawMesh(Mesh *mesh, Material *material, const Mat4 &transform);
         static void DrawMesh(Mesh *mesh, Material *material, const Mat4 &transform, const Mat4 &inverse_transform);

@@ -119,7 +119,6 @@ namespace Hyperion::Editor {
         ForwardRenderer::SetCameraData(s_camera->GetCameraData());
         ImmediateRenderer::SetCameraData(s_camera->GetCameraData());
 
-        RenderCommand::Clear(ClearMask::Depth);
         ForwardRenderer::DrawEntities(s_game_world);
 
         bool blending_enabled = RenderCommand::GetRasterizerState()->IsBlendingEnabled();

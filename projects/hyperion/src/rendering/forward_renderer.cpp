@@ -37,35 +37,38 @@ namespace Hyperion::Rendering {
         RenderCommand::GetRasterizerState()->SetCullingEnabled(culling_enabled);
     }
 
-    void ForwardRenderer::DrawEntities(World *world) {
+    void ForwardRenderer::DrawEntities(World *world, LayerMask layers) {
+        const Vector<MeshRenderer *> &world_renderers = world->GetMeshRenderers();
+        Set<MeshRenderer *> renderers;
+        std::copy_if(world_renderers.begin(), world_renderers.end(), std::inserter(renderers, renderers.begin()), [layers](MeshRenderer *renderer) {
+            if (!renderer->IsActiveAndEnabled() || !renderer->GetRenderMesh() || !renderer->GetRenderMaterial()) {
+                return false;
+            }
+
+            LayerMask layer = renderer->GetEntity()->GetLayer();
+            return (layer & layers) == layer;
+        });
+
         WorldEnvironment environment = world->GetEnvironment();
-        
-        const Vector<MeshRenderer *> &renderers = world->GetMeshRenderers();
-        const Vector<Light *> &lights = world->GetLights();
+        const Vector<Light *> &world_lights = world->GetLights();
 
         f32 intensity = environment.ambient_light.intensity;
         Color color = environment.ambient_light.color;
         s_state.lighting.ambient_color = Vec3(intensity * color.r, intensity * color.g, intensity * color.b);
 
         // Set the main light to be the first directional light we can find
-        auto main_light_pos = std::find_if(lights.begin(), lights.end(), [](Light *light) {
+        auto main_light_pos = std::find_if(world_lights.begin(), world_lights.end(), [](Light *light) {
             return light->IsActiveAndEnabled() && light->GetLightType() == LightType::Directional;
         });
-        s_state.lighting.main_light = main_light_pos != lights.end() ? *main_light_pos : nullptr;
+        s_state.lighting.main_light = main_light_pos != world_lights.end() ? *main_light_pos : nullptr;
 
         Vector<Light *> point_lights;
+        std::copy_if(world_lights.begin(), world_lights.end(), std::back_inserter(point_lights), [](Light *light) {
+            return light->IsActiveAndEnabled() && light->GetLightType() == LightType::Point;
+        });
         s_state.lighting.point_lights = &point_lights;
-        for (Light *light : lights) {
-            if (light->IsActiveAndEnabled() && light->GetLightType() == LightType::Point) {
-                point_lights.push_back(light);
-            }
-        }
 
         for (MeshRenderer *renderer : renderers) {
-            if (!renderer->IsActiveAndEnabled() || !renderer->GetRenderMesh() || !renderer->GetRenderMaterial()) {
-                continue;
-            }
-
             Vec3 position = renderer->GetTransform()->GetPosition();
             std::sort(point_lights.begin(), point_lights.end(), [position](Light *first, Light *second) {
                 f32 first_distance = (first->GetTransform()->GetPosition() - position).SqrMagnitude();
