@@ -9,6 +9,7 @@
 #include <hyperion/entity/world.hpp>
 #include <hyperion/entity/components/rendering/mesh_renderer.hpp>
 #include <hyperion/entity/components/physics/box_collider.hpp>
+#include <hyperion/entity/components/physics/sphere_collider.hpp>
 #include <hyperion/physics/physics_world.hpp>
 
 using namespace Hyperion::Rendering;
@@ -94,6 +95,15 @@ namespace Hyperion::Editor {
         renderer->SetMaterial(material);
         renderer->GetMaterial()->SetColor("u_color", m_x_axis_color);
 
+        m_gizmo_yz = Entity::Create("Gizmo_Part_XYZ", Vec3::Zero(), Quaternion::Identity(), GetTransform());
+        m_gizmo_yz->AddTag("XYZ");
+        m_gizmo_yz->GetTransform()->SetLocalScale(Vec3(0.25f, 0.25f, 0.25f));
+        m_gizmo_yz->AddComponent<SphereCollider>();
+        renderer = m_gizmo_yz->AddComponent<MeshRenderer>();
+        renderer->SetMesh(AssetManager::GetMeshPrimitive(MeshPrimitive::Sphere));
+        renderer->SetMaterial(material);
+        renderer->GetMaterial()->SetColor("u_color", m_xyz_axis_color);
+
         EditorSelection::RegisterSelectionListener(this);
     }
 
@@ -141,6 +151,9 @@ namespace Hyperion::Editor {
                     m_move_type = MoveType::XZAxis;
                 } else if (entity->HasTag("YZ")) {
                     m_move_type = MoveType::YZAxis;
+                } else if (entity->HasTag("XYZ")) {
+                    m_move_type = MoveType::XYZAxis;
+                    m_grabbing_plane = Plane(m_camera->GetTransform()->GetForward(), position);
                 }
 
                 switch (m_move_type) {
@@ -178,6 +191,12 @@ namespace Hyperion::Editor {
                         Vec3 hit = ray.GetPoint(hit_distance);
                         m_offset.y = position.y - hit.y;
                         m_offset.z = position.z - hit.z;
+                        break;
+                    }
+                    case MoveType::XYZAxis: {
+                        m_grabbing_plane.Intersects(ray, hit_distance);
+                        Vec3 hit = ray.GetPoint(hit_distance);
+                        m_offset = position - hit;
                         break;
                     }
                 }
@@ -266,6 +285,12 @@ namespace Hyperion::Editor {
                 position.z = z;
                 break;
             }
+            case MoveType::XYZAxis: {
+                m_grabbing_plane.Intersects(ray, hit_distance);
+                Vec3 hit = ray.GetPoint(hit_distance);
+                position = hit + m_offset;
+                break;
+            }
         }
 
         GetTransform()->SetPosition(position);
@@ -288,6 +313,8 @@ namespace Hyperion::Editor {
             color = m_y_axis_color;
         } else if (m_last_gizmo->HasTag("YZ")) {
             color = m_x_axis_color;
+        } else if (m_last_gizmo->HasTag("XYZ")) {
+            color = m_xyz_axis_color;
         }
         m_last_gizmo->GetComponent<MeshRenderer>()->GetMaterial()->SetColor("u_color", color);
     }

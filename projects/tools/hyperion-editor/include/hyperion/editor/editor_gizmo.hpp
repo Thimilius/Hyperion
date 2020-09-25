@@ -30,7 +30,9 @@ namespace Hyperion::Editor {
 
             XYAxis,
             XZAxis,
-            YZAxis
+            YZAxis,
+
+            XYZAxis
         };
 
         MoveType m_move_type = MoveType::None;
@@ -49,9 +51,12 @@ namespace Hyperion::Editor {
         Camera *m_camera;
         Entity *m_selection;
 
+        Plane m_grabbing_plane;
+
         Color m_x_axis_color = Color::Red();
         Color m_y_axis_color = Color::Green();
         Color m_z_axis_color = Color::Blue();
+        Color m_xyz_axis_color = Color::Grey();
     };
 
 }
