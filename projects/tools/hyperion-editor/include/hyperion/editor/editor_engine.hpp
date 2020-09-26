@@ -62,7 +62,8 @@ namespace Hyperion::Editor {
         inline static Rendering::Material *s_selection_material;
         inline static Color s_selection_color = Color(0.0f, 1.0f, 1.0f, 1.0f);
 
-        inline static String s_stats;
+        inline static String s_general_stats;
+        inline static String s_frame_stats;
         inline static Rendering::Font *s_font;
 
         inline static EditorOverlayFlags s_overlay_flags = EditorOverlayFlags::Stats | EditorOverlayFlags::Selection | EditorOverlayFlags::Grid | EditorOverlayFlags::Gizmo;

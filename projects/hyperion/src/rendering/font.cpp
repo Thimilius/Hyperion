@@ -17,6 +17,18 @@ namespace Hyperion::Rendering {
         }
     }
 
+    f32 Font::GetTextWidth(const String &text, f32 scale) const {
+        f32 width = 0.0f;
+        Vector<u32> codepoints = StringUtils::GetCodepointsUtf8(text);
+        u32 codepoints_count = static_cast<u32>(codepoints.size());
+
+        for (u32 i = 0; i < codepoints_count; i++) {
+            FontGlyph glyph = GetGlyph(codepoints[i]);
+            width += glyph.advance * scale;
+        }
+        return width;
+    }
+
     Font *Font::Create(const String &path, u32 size, FontCharacterSet character_set) {
         return new Font(path, size, character_set);
     }
@@ -40,7 +52,15 @@ namespace Hyperion::Rendering {
         FT_UInt index;
         FT_ULong character = FT_Get_First_Char(font_face, &index);
         while (true) {
-            if (FT_Load_Char(font_face, character, FT_LOAD_RENDER | FT_LOAD_FORCE_AUTOHINT | FT_LOAD_TARGET_LIGHT)) {
+            s32 error = FT_Load_Char(font_face, character, FT_LOAD_RENDER | FT_LOAD_FORCE_AUTOHINT | FT_LOAD_TARGET_LIGHT);
+            if (error) {
+                // NOTE: Some fonts contain characters that freetype can not load and returns -1 as a non defined error code
+                // We just ignore all those for now
+                if (error == -1) {
+                    character = FT_Get_Next_Char(font_face, character, &index);
+                    continue;   
+                }
+
                 HYP_LOG_ERROR("Engine", "Failed to load font glyph '{}'!", character);
             }
 
@@ -65,8 +85,9 @@ namespace Hyperion::Rendering {
                 glyph.texture = texture;
                 glyph.size = Vec2(static_cast<f32>(bitmap_width), static_cast<f32>(bitmap_height));
                 glyph.bearing = Vec2(static_cast<f32>(font_face->glyph->bitmap_left), static_cast<f32>(font_face->glyph->bitmap_top));
-                glyph.advance = font_face->glyph->advance.x >> 6;
 
+                glyph.advance = font_face->glyph->advance.x >> 6;
+                
                 m_glyphs[static_cast<u32>(character)] = glyph;
             }
 

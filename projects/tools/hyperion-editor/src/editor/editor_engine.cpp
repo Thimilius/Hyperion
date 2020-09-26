@@ -36,7 +36,7 @@ namespace Hyperion::Editor {
         
         s_selection_material = Material::Create(AssetManager::GetShader("standard_unlit"));
 
-        s_font = Font::Create("data/fonts/robotomono_regular.ttf", 16, FontCharacterSet::All);
+        s_font = Font::Create("data/fonts/robotomono_regular.ttf", 18, FontCharacterSet::All);
 
         s_gizmo = Entity::Create("Gizmo", Vec3::Zero(), Quaternion::Identity(), nullptr, s_editor_world)->AddComponent<EditorGizmo>();
         s_gizmo->SetCamera(s_camera);
@@ -196,8 +196,18 @@ namespace Hyperion::Editor {
     }
 
     void EditorEngine::RenderStats() {
-        f32 y = static_cast<f32>(Display::GetHeight() - s_font->GetSize());
-        ImmediateRenderer::DrawText(s_stats, s_font, 0, y, 1.0f, Color::White());
+        f32 display_width = static_cast<f32>(Display::GetWidth());
+        f32 display_height = static_cast<f32>(Display::GetHeight());
+        f32 log_base = Math::Log(2);
+        Vec2 reference_resolution = Vec2(1920, 1080);
+
+        f32 scale_factor = Math::Min(display_width / reference_resolution.x, display_height / reference_resolution.y);
+
+        f32 y = static_cast<f32>(Display::GetHeight() - (scale_factor * s_font->GetSize()));
+        ImmediateRenderer::DrawText(s_general_stats, s_font, 0,  y, scale_factor, Color::White());
+
+        f32 x = static_cast<f32>(Display::GetWidth() - s_font->GetTextWidth(s_frame_stats, scale_factor));
+        ImmediateRenderer::DrawText(s_frame_stats, s_font, x, y, scale_factor, Color::White());
     }
 
     void EditorEngine::RenderGrid() {
@@ -244,12 +254,11 @@ namespace Hyperion::Editor {
 
     void EditorEngine::UpdateStats() {
         f64 memory = static_cast<f64>(OperatingSystem::GetInstance()->GetMemoryUsage() / 1024.0 / 1024.0);
-        s_stats = StringUtils::Format("FPS: {} ({:.2f} ms) | VSync: {} | Memory: {:.2f} MiB",
-            Time::GetFPS(),
-            Time::GetFrameTime(),
+        s_general_stats = StringUtils::Format("VSync: {} | Memory: {:.2f} MiB",
             Application::GetInstance()->GetWindow()->GetVSyncMode() != VSyncMode::DontSync,
             memory
         );
+        s_frame_stats = StringUtils::Format("FPS: {} ({:.2f} ms)", Time::GetFPS(), Time::GetFrameTime());
     }
 
     void EditorEngine::InitGridVertexArray() {

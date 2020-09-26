@@ -34,6 +34,8 @@ namespace Hyperion::Rendering {
         inline u32 GetSize() const { return m_size; }
         FontGlyph GetGlyph(u32 codepoint) const;
 
+        f32 GetTextWidth(const String &text, f32 scale) const;
+
         static Font *Create(const String &path, u32 size, FontCharacterSet character_set = FontCharacterSet::All);
     private:
         Font(const String &path, u32 size, FontCharacterSet character_set);
