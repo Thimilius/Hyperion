@@ -7,6 +7,7 @@
 #include "hyperion/entity/components/transform.hpp"
 #include "hyperion/entity/components/physics/box_collider.hpp"
 #include "hyperion/entity/components/physics/sphere_collider.hpp"
+#include "hyperion/entity/components/physics/mesh_collider.hpp"
 
 namespace Hyperion::Physics {
 
@@ -77,11 +78,40 @@ namespace Hyperion::Physics {
         AddCollider(sphere_collider, collision_object);
     }
 
+    void BulletPhysicsWorld::AddMeshCollider(MeshCollider *mesh_collider) {
+        btCollisionObject *collision_object = new btCollisionObject();
+        btTriangleMesh *triangle_mesh = new btTriangleMesh();
+
+        const Rendering::MeshData &mesh_data = mesh_collider->GetMesh()->GetMeshData();
+        u32 indicies_count = static_cast<u32>(mesh_data.indicies.size());
+        u32 index = 0;
+        while (index < indicies_count) {
+            Vec3 vertex0 = mesh_data.positions[mesh_data.indicies[index++]];
+            Vec3 vertex1 = mesh_data.positions[mesh_data.indicies[index++]];
+            Vec3 vertex2 = mesh_data.positions[mesh_data.indicies[index++]];
+
+            triangle_mesh->addTriangle(btVector3(vertex0.x, vertex0.y, vertex0.z), btVector3(vertex1.x, vertex1.y, vertex1.z), btVector3(vertex2.x, vertex2.y, vertex2.z));
+        }
+        collision_object->setCollisionShape(new btBvhTriangleMeshShape(triangle_mesh, true));
+        u32 num = triangle_mesh->getNumTriangles();
+
+        Transform *transform = mesh_collider->GetTransform();
+        UpdateTransform(transform, collision_object, transform->GetPosition());
+
+        AddCollider(mesh_collider, collision_object);
+    }
+
     void BulletPhysicsWorld::RemoveCollider(Collider *collider) {
         btCollisionObject *collision_object = m_collision_objects.at(collider);
         m_collision_objects.erase(collider);
 
         m_collision_world->removeCollisionObject(collision_object);
+
+        // We need to clear the mesh of a mesh collider
+        if (collider->GetColliderType() == ColliderType::MeshCollider) {
+            btBvhTriangleMeshShape *mesh_shape = static_cast<btBvhTriangleMeshShape *>(collision_object->getCollisionShape());
+            delete mesh_shape->getMeshInterface();
+        }
 
         delete collision_object->getCollisionShape();
         delete collision_object;
@@ -134,6 +164,15 @@ namespace Hyperion::Physics {
         m_collision_world->updateSingleAabb(collision_object);
     }
 
+    void BulletPhysicsWorld::UpdateMeshColliderTransform(MeshCollider *mesh_collider) {
+        btCollisionObject *collision_object = m_collision_objects.at(mesh_collider);
+
+        Transform *transform = mesh_collider->GetTransform();
+        UpdateTransform(transform, collision_object, transform->GetPosition());
+
+        m_collision_world->updateSingleAabb(collision_object);
+    }
+
     void BulletPhysicsWorld::UpdateColliderActivation(Collider *collider) {
         btCollisionObject *collision_object = m_collision_objects.at(collider);
         if (collider->IsActiveAndEnabled()) {
@@ -154,6 +193,11 @@ namespace Hyperion::Physics {
                     UpdateSphereColliderTransform(sphere_collider);
                     break;
                 }
+                case ColliderType::MeshCollider: {
+                    MeshCollider *mesh_collider = static_cast<MeshCollider *>(collider);
+                    UpdateMeshColliderTransform(mesh_collider);
+                    break;
+                }
                 default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
             }
         } else {
@@ -162,14 +206,20 @@ namespace Hyperion::Physics {
     }
 
     BoundingBox BulletPhysicsWorld::GetBounds(Collider *collider) {
-        btCollisionObject *collision_object = m_collision_objects.at(collider);
-        if (collider->IsActiveAndEnabled()) {
-            btVector3 min;
-            btVector3 max;
-            collision_object->getCollisionShape()->getAabb(collision_object->getWorldTransform(), min, max);
-            return BoundingBox(Vec3(min.x(), min.y(), min.z()), Vec3(max.x(), max.y(), max.z()));
+        auto collision_object_pos = m_collision_objects.find(collider);
+        if (collision_object_pos != m_collision_objects.end()) {
+            btCollisionObject *collision_object = collision_object_pos->second;
+
+            if (collider->IsActiveAndEnabled()) {
+                btVector3 min;
+                btVector3 max;
+                collision_object->getCollisionShape()->getAabb(collision_object->getWorldTransform(), min, max);
+                return BoundingBox(Vec3(min.x(), min.y(), min.z()), Vec3(max.x(), max.y(), max.z()));
+            } else {
+                // NOTE: Do we really want to return empty bounds when the collider is not active?
+                return BoundingBox();
+            }
         } else {
-            // NOTE: Do we really want to return empty bounds when the collider is not active?
             return BoundingBox();
         }
     }

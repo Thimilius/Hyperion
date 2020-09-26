@@ -1,5 +1,6 @@
 #pragma once
 
+#include "hyperion/core/math/bounding_box.hpp"
 #include "hyperion/entity/entity_message.hpp"
 #include "hyperion/entity/components/behaviour.hpp"
 
@@ -7,7 +8,8 @@ namespace Hyperion {
 
     enum class ColliderType {
         BoxCollider,
-        SphereCollider
+        SphereCollider,
+        MeshCollider
     };
 
     class Collider : public Behaviour, public IEntityMessageListener {

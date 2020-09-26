@@ -31,6 +31,7 @@ namespace Hyperion {
     }
 
     void Collider::OnDestroy() {
+        GetWorld()->GetPhysicsWorld()->RemoveCollider(this);
         GetEntity()->UnregisterMessageListener(this);
 
         Behaviour::OnDestroy();

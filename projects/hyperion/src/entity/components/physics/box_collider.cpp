@@ -23,12 +23,6 @@ namespace Hyperion {
         GetWorld()->GetPhysicsWorld()->AddBoxCollider(this);
     }
 
-    void BoxCollider::OnDestroy() {
-        GetWorld()->GetPhysicsWorld()->RemoveCollider(this);
-
-        Collider::OnDestroy();
-    }
-
     void BoxCollider::NotifyColliderChange() {
         if (IsActiveAndEnabled()) {
             GetWorld()->GetPhysicsWorld()->UpdateBoxCollider(this);
