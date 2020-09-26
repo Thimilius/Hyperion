@@ -2,6 +2,7 @@
 
 #include <hyperion/core/color.hpp>
 #include <hyperion/core/math/plane.hpp>
+#include <hyperion/core/math/vec2.hpp>
 #include <hyperion/entity/components/component.hpp>
 #include <hyperion/entity/components/rendering/camera.hpp>
 
@@ -59,10 +60,12 @@ namespace Hyperion::Editor {
 
         Plane m_grabbing_plane;
         Vec3 m_position_offset;
-        Vec3 m_rotation_start;
-        Vec3 m_rotation_offset;
+        Vec3 m_rotation_start_angles;
+        Vec2 m_rotation_offset;
         Vec3 m_scale_start;
         Vec3 m_scale_offset;
+        Quaternion m_rotation_start;
+        f32 m_rotation_speed = 0.2f;
 
         Entity *m_gizmo_position_axis;
         Entity *m_gimzo_position_x;

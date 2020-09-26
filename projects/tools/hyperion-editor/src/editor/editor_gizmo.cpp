@@ -225,7 +225,7 @@ namespace Hyperion::Editor {
         f32 hit_distance = 0.0f;
 
         Vec3 position = m_selection->GetTransform()->GetPosition();
-        Vec3 rotation = m_selection->GetTransform()->GetEulerAngles();
+        Quaternion rotation = m_selection->GetTransform()->GetRotation();
         Vec3 scale = m_selection->GetTransform()->GetLocalScale();
 
         Plane xy_plane = Plane(Vec3::Forward(), position.z);
@@ -303,19 +303,21 @@ namespace Hyperion::Editor {
                         break;
                     }
                     case GizmoMode::RotationXAxis: {
-                        yz_plane.Intersects(ray, hit_distance);
-                        m_rotation_offset.y = ray.GetPoint(hit_distance).y;
-                        m_rotation_offset.z = ray.GetPoint(hit_distance).z;
+                        Vec2 screen_point = m_camera->WorldToScreenPoint(position);
+                        Vec2 diff = screen_point - Input::GetMousePosition();
+                        m_rotation_offset = diff;
                         break;
                     }
                     case GizmoMode::RotationYAxis: {
-                        xz_plane.Intersects(ray, hit_distance);
-                        m_rotation_offset.y = ray.GetPoint(hit_distance).y;
+                        Vec2 screen_point = m_camera->WorldToScreenPoint(position);
+                        Vec2 diff = screen_point - Input::GetMousePosition();
+                        m_rotation_offset = diff;
                         break;
                     }
                     case GizmoMode::RotationZAxis: {
-                        xy_plane.Intersects(ray, hit_distance);
-                        m_rotation_offset.z = ray.GetPoint(hit_distance).z;
+                        Vec2 screen_point = m_camera->WorldToScreenPoint(position);
+                        Vec2 diff = screen_point - Input::GetMousePosition();
+                        m_rotation_offset = diff;
                         break;
                     }
                     case GizmoMode::ScaleXAxis: {
@@ -431,19 +433,36 @@ namespace Hyperion::Editor {
                 break;
             }
             case GizmoMode::RotationXAxis: {
-                yz_plane.Intersects(ray, hit_distance);
-                Vec3 hit = ray.GetPoint(hit_distance);
+                Vec2 screen_point = m_camera->WorldToScreenPoint(position);
+                Vec2 diff = screen_point - Input::GetMousePosition();
 
-                f32 diff = hit.y - m_scale_offset.y;
-                diff += hit.z - m_scale_offset.z;
+                f32 x = diff.x - m_rotation_offset.x;
+                f32 rot = x * m_rotation_speed;
+                Quaternion r = Quaternion::FromAxisAngle(Vec3::Right(), rot);
 
-                rotation.x = m_rotation_start.x + diff;
+                rotation = m_rotation_start * r;
                 break;
             }
             case GizmoMode::RotationYAxis: {
+                Vec2 screen_point = m_camera->WorldToScreenPoint(position);
+                Vec2 diff = screen_point - Input::GetMousePosition();
+
+                f32 y = diff.x - m_rotation_offset.x;
+                f32 rot = y * m_rotation_speed;
+                Quaternion r = Quaternion::FromAxisAngle(Vec3::Up(), rot);
+
+                rotation = m_rotation_start * r;
                 break;
             }
             case GizmoMode::RotationZAxis: {
+                Vec2 screen_point = m_camera->WorldToScreenPoint(position);
+                Vec2 diff = screen_point - Input::GetMousePosition();
+
+                f32 z = diff.x - m_rotation_offset.x;
+                f32 rot = z * m_rotation_speed;
+                Quaternion r = Quaternion::FromAxisAngle(Vec3::Forward(), rot);
+
+                rotation = m_rotation_start * r;
                 break;
             }
             case GizmoMode::ScaleXAxis: {
@@ -487,7 +506,7 @@ namespace Hyperion::Editor {
         GetTransform()->SetPosition(position);
 
         m_selection->GetTransform()->SetPosition(position);
-        m_selection->GetTransform()->SetEulerAngles(rotation);
+        m_selection->GetTransform()->SetRotation(rotation);
         m_selection->GetTransform()->SetLocalScale(scale);
     }
 
@@ -522,7 +541,8 @@ namespace Hyperion::Editor {
             m_gizmo_mode = GizmoMode::ScaleXYZAxis;
         }
 
-        m_rotation_start = m_selection->GetTransform()->GetEulerAngles();
+        m_rotation_start_angles = m_selection->GetTransform()->GetEulerAngles();
+        m_rotation_start = m_selection->GetTransform()->GetRotation();
         m_scale_start = m_selection->GetTransform()->GetLocalScale();
         m_grabbing_plane = Plane(m_camera->GetTransform()->GetForward(), position);
     }
