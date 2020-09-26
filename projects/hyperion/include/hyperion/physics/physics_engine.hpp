@@ -10,7 +10,7 @@ namespace Hyperion {
 
 namespace Hyperion::Physics {
 
-    class PhysicsEngine {
+    class PhysicsEngine final {
     public:
         inline static PhysicsBackend GetBackend() { return s_physics_backend; }
 

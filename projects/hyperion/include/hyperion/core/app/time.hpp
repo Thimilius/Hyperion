@@ -8,7 +8,7 @@ namespace Hyperion {
 
 namespace Hyperion {
 
-    class Time {
+    class Time final {
     public:
         inline static f32 GetMaxDeltaTime() { return s_max_delta_time; }
 

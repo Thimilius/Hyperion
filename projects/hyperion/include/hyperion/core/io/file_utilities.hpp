@@ -4,7 +4,7 @@
 
 namespace Hyperion {
 
-    class FileUtilities {
+    class FileUtilities final {
     public:
         static String ReadAllText(const String &path);
         static Vector<String> ReadAllLines(const String &path);

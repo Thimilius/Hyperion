@@ -10,7 +10,7 @@ namespace Hyperion {
 
 namespace Hyperion {
 
-    class DisplayInfo {
+    class DisplayInfo final {
     public:
         struct DisplayModeInfo {
             u32 width;
@@ -34,7 +34,7 @@ namespace Hyperion {
         friend class Hyperion::Display;
     };
 
-    class Display {
+    class Display final {
     public:
         inline static const Vector<DisplayInfo> &GetDisplayInfos() { return s_display_infos; }
         static DisplayInfo::DisplayModeInfo GetCurrentDisplayModeInfo();

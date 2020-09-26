@@ -246,7 +246,7 @@ namespace Hyperion {
         EventCallbackFunction m_event_callback;
     };
 
-    class Input {
+    class Input final {
     public:
         inline static bool GetKeyDown(KeyCode key_code) { return s_input_implementation->GetKeyDown(key_code); }
         inline static bool GetKey(KeyCode key_code) { return s_input_implementation->GetKey(key_code); }

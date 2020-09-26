@@ -22,7 +22,7 @@ namespace Hyperion {
         Sphere
     };
 
-    class AssetManager {
+    class AssetManager final {
     public:
         inline static const AssetSettings &GetSettings() { return s_settings; }
 

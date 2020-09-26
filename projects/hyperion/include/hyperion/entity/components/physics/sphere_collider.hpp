@@ -4,7 +4,7 @@
 
 namespace Hyperion {
 
-    class SphereCollider : public Collider {
+    class SphereCollider final : public Collider {
         HYP_OBJECT(SphereCollider, Collider);
     public:
         SphereCollider() : Collider("SphereCollider") {}

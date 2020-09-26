@@ -8,7 +8,7 @@ namespace Hyperion {
 
 namespace Hyperion::Rendering {
 
-    class RenderEngine {
+    class RenderEngine final {
     public:
         inline static RenderBackend GetBackend() { return s_render_backend; }
     private:

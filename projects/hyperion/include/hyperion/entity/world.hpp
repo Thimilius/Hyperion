@@ -31,7 +31,7 @@ namespace Hyperion {
         } ambient_light;
     };
 
-    class World {
+    class World final {
     public:
         inline WorldEnvironment &GetEnvironment() { return m_environment; }
 

@@ -10,7 +10,7 @@ namespace Hyperion {
 
 namespace Hyperion {
 
-    class Engine {
+    class Engine final {
     public:
         template<typename ...Args>
         static void Panic(const String &system, const String &message_format, Args... args) {

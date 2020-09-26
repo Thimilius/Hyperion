@@ -4,7 +4,7 @@
 
 namespace Hyperion {
 
-    class MeshFactory {
+    class MeshFactory final {
     public:
         static Rendering::Mesh *CreateQuad(f32 width, f32 height);
         static Rendering::Mesh *CreatePlane(f32 width, f32 height);

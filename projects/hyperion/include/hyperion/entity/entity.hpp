@@ -34,7 +34,7 @@ namespace Hyperion {
 
     // NOTE: Should we allow multiple components of the same type?
     // Currently the GetComponent implementations assume only one component of a certain type
-    class Entity : public Object {
+    class Entity final : public Object {
         HYP_OBJECT(Entity, Object);
     public:
         inline World *GetWorld() const { return m_world; }

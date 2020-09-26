@@ -18,7 +18,7 @@ namespace Hyperion {
         virtual Image *Load(const String &path, bool flip_vertically) = 0;
     };
 
-    class ImageLoader {
+    class ImageLoader final {
     public:
         static Vector<String> GetSupportedExtensions();
         static bool SupportsExtension(const String &extension);

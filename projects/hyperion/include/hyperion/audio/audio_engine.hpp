@@ -10,7 +10,7 @@ namespace Hyperion {
 
 namespace Hyperion::Audio {
 
-    class AudioEngine {
+    class AudioEngine final {
     public:
         inline static AudioBackend GetBackend() { return s_audio_backend; }
 

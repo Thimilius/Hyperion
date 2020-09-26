@@ -11,7 +11,7 @@ namespace Hyperion {
         Spot
     };
 
-    class Light : public Behaviour {
+    class Light final : public Behaviour {
         HYP_OBJECT(Light, Behaviour);
     public:
         Light() : Behaviour("Light") { }

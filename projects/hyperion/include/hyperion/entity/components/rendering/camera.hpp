@@ -15,7 +15,7 @@ namespace Hyperion {
         Nothing
     };
 
-    class Camera : public Component, public IEntityMessageListener {
+    class Camera final : public Component, public IEntityMessageListener {
         HYP_OBJECT(Camera, Component);
     public:
         Camera() : Component("Camera") { }

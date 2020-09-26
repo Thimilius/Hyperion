@@ -11,7 +11,7 @@ namespace Hyperion {
 
 namespace Hyperion {
 
-    class ObjectManager {
+    class ObjectManager final {
     private:
         ObjectManager() = delete;
         ~ObjectManager() = delete;

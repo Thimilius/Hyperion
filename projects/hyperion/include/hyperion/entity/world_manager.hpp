@@ -10,7 +10,7 @@ namespace Hyperion {
 
 namespace Hyperion {
 
-    class WorldManager {
+    class WorldManager final {
     public:
         inline static World *GetActiveWorld() { return s_active_world; }
         inline static void SetActiveWorld(World *world) { s_active_world = world; }
