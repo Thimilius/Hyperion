@@ -12,11 +12,19 @@ namespace Hyperion::Editor {
     class EditorGizmo : public Component, public IEditorSelectionListener {
         HYP_OBJECT(EditorGizmo, Component);
     public:
+        enum class GizmoType {
+            Position,
+            Rotation,
+            Scale
+        };
+    public:
+        void SetGizmoType(GizmoType type);
         void SetCamera(Camera *camera) { m_camera = camera; }
     protected:
         void OnCreate() override;
         void OnUpdate(f32 delta_time) override;
     private:
+        void SetGizmoMode(Entity *entity, Vec3 position);
         void ResetColor();
         void UpdateScale();
 
@@ -40,8 +48,10 @@ namespace Hyperion::Editor {
             ScaleXAxis,
             ScaleYAxis,
             ScaleZAxis,
+            ScaleXYZAxis
         };
 
+        GizmoType m_gizmo_type = GizmoType::Position;
         GizmoMode m_gizmo_mode = GizmoMode::None;
 
         f32 m_gizmo_scale_factor = 0.002f;
@@ -49,6 +59,8 @@ namespace Hyperion::Editor {
 
         Plane m_grabbing_plane;
         Vec3 m_position_offset;
+        Vec3 m_scale_start;
+        Vec3 m_scale_offset;
 
         Entity *m_gizmo_position_axis;
         Entity *m_gimzo_position_x;
@@ -68,6 +80,8 @@ namespace Hyperion::Editor {
         Entity *m_gizmo_scale_x;
         Entity *m_gizmo_scale_y;
         Entity *m_gizmo_scale_z;
+        Entity *m_gizmo_scale_full;
+        Entity *m_gizmo_scale_xyz;
 
         Camera *m_camera;
         Entity *m_selection;
@@ -91,6 +105,7 @@ namespace Hyperion::Editor {
         const char *SCALE_X_TAG = "Scale_X";
         const char *SCALE_Y_TAG = "Scale_Y";
         const char *SCALE_Z_TAG = "Scale_Z";
+        const char *SCALE_XYZ_TAG = "Scale_XYZ";
     };
 
 }

@@ -86,6 +86,16 @@ namespace Hyperion::Editor {
             }
         }
 
+        if (Input::GetKeyDown(KeyCode::Alpha1)) {
+            s_gizmo->SetGizmoType(EditorGizmo::GizmoType::Position);
+        }
+        if (Input::GetKeyDown(KeyCode::Alpha2)) {
+            s_gizmo->SetGizmoType(EditorGizmo::GizmoType::Rotation);
+        }
+        if (Input::GetKeyDown(KeyCode::Alpha3)) {
+            s_gizmo->SetGizmoType(EditorGizmo::GizmoType::Scale);
+        }
+
         if (Input::GetMouseButtonDown(MouseButtonCode::Left)) {
             Ray ray = s_camera->ScreenPointToRay(Input::GetMousePosition());
             Physics::RaycastResult result;
