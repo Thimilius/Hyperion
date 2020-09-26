@@ -48,6 +48,8 @@ namespace Hyperion {
 
         Rendering::CameraData GetCameraData() const;
 
+        Vec3 ScreenToWorldPoint(Vec3 screen_point) const;
+        Vec2 WorldToScreenPoint(Vec3 world_point) const;
         Ray ScreenPointToRay(Vec2 screen_point) const;
 
         void OnMessage(EntityMessage message);

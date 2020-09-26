@@ -18,13 +18,38 @@ namespace Hyperion {
         return m_data;
     }
 
+    Vec3 Camera::ScreenToWorldPoint(Vec3 screen_point) const {
+        f32 display_width = static_cast<f32>(Display::GetWidth());
+        f32 display_height = static_cast<f32>(Display::GetHeight());
+
+        f32 x = screen_point.x / display_width * 2.0f - 1.0f;
+        f32 y = (1.0f - screen_point.y) / display_width * 2.0f - 1.0f;
+        Vec4 world = Vec4(x, y, screen_point.z * 2.0f - 1.0f, 1.0f);
+        world = m_data.inverse_view_projection_matrix * world;
+        world = world * (1.0f / world.w);
+
+        return world;
+    }
+
+    Vec2 Camera::WorldToScreenPoint(Vec3 world_point) const {
+        f32 display_width = static_cast<f32>(Display::GetWidth());
+        f32 display_height = static_cast<f32>(Display::GetHeight());
+
+        Vec4 ndc = m_data.view_projection_matrix * Vec4(world_point, 1);
+        ndc = ndc * (1.0f / ndc.w);
+        f32 x = Math::Round(((ndc.x + 1.0f) / 2.0f) * display_width);
+        f32 y = Math::Round(((1.0f - ndc.y) / 2.0f) * display_height);
+
+        return Vec2(x, y);
+    }
+
     Ray Camera::ScreenPointToRay(Vec2 screen_point) const {
         f32 display_width = static_cast<f32>(Display::GetWidth());
         f32 display_height = static_cast<f32>(Display::GetHeight());
 
         switch (m_data.mode) {
             case CameraMode::Perspective: {
-                f32 ndc_x = (2.0f * screen_point.x) / display_width - 1;
+                f32 ndc_x = (2.0f * screen_point.x) / display_width - 1.0f;
                 f32 ndc_y = 1.0f - (2.0f * screen_point.y) / display_height;
                 Vec4 clip = Vec4(ndc_x, ndc_y, -1.0f, 1.0f);
                 Vec4 view = m_data.inverse_projection_matrix * clip;
@@ -98,6 +123,7 @@ namespace Hyperion {
 
         m_data.inverse_view_matrix = m_data.view_matrix.Inverted();
         m_data.inverse_projection_matrix = m_data.projection_matrix.Inverted();
+        m_data.inverse_view_projection_matrix = m_data.view_projection_matrix.Inverted();
     }
 
 }

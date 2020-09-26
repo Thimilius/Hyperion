@@ -49,7 +49,7 @@ namespace Hyperion::Editor {
         Material *material = Material::Create(AssetManager::GetShader("standard_unlit"));
         Mesh *position_mesh = MeshFactory::CreateFromFile("data/models/gizmo/gizmo_position.obj");
         Mesh *position_plane_mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Quad);
-        Mesh *rotation_mesh = MeshFactory::CreateFromFile("data/models/gizmo/gizmo_rotation.obj");
+        Mesh *rotation_mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Quad);
         Mesh *scale_mesh = MeshFactory::CreateFromFile("data/models/gizmo/gizmo_scale.obj");
 
         m_gizmo_position_axis = Entity::Create("Gizmo_Position_Axis", Vec3::Zero(), Quaternion::Identity(), GetTransform());
@@ -138,7 +138,11 @@ namespace Hyperion::Editor {
 
         m_gizmo_rotation_x = Entity::Create("Gizmo_Rotation_X", Vec3::Zero(), Quaternion::Identity(), m_gizmo_rotation->GetTransform());
         m_gizmo_rotation_x->AddTag(ROTATION_X_TAG);
-        m_gizmo_rotation_x->GetTransform()->SetEulerAngles(Vec3(90.0f, 90.0f, 0.0f));
+        m_gizmo_rotation_x->GetTransform()->SetEulerAngles(Vec3(0.0f, 90.0f, 0.0f));
+        m_gizmo_rotation_x->GetTransform()->SetPosition(Vec3(0.0f, 0.375f, 0.375f));
+        m_gizmo_rotation_x->GetTransform()->SetLocalScale(Vec3(0.75f, 0.75f, 0.75f));
+        collider = m_gizmo_rotation_x->AddComponent<BoxCollider>();
+        collider->SetSize(Vec3(1.0f, 1.0f, 0.01f));
         renderer = m_gizmo_rotation_x->AddComponent<MeshRenderer>();
         renderer->SetMesh(rotation_mesh);
         renderer->SetMaterial(material);
@@ -146,6 +150,11 @@ namespace Hyperion::Editor {
 
         m_gizmo_rotation_y = Entity::Create("Gizmo_Rotation_Y", Vec3::Zero(), Quaternion::Identity(), m_gizmo_rotation->GetTransform());
         m_gizmo_rotation_y->AddTag(ROTATION_Y_TAG);
+        m_gizmo_rotation_y->GetTransform()->SetEulerAngles(Vec3(90.0f, 0.0f, 0.0f));
+        m_gizmo_rotation_y->GetTransform()->SetPosition(Vec3(0.375f, 0.0f, 0.375f));
+        m_gizmo_rotation_y->GetTransform()->SetLocalScale(Vec3(0.75f, 0.75f, 0.75f));
+        collider = m_gizmo_rotation_y->AddComponent<BoxCollider>();
+        collider->SetSize(Vec3(1.0f, 1.0f, 0.01f));
         renderer = m_gizmo_rotation_y->AddComponent<MeshRenderer>();
         renderer->SetMesh(rotation_mesh);
         renderer->SetMaterial(material);
@@ -153,7 +162,10 @@ namespace Hyperion::Editor {
 
         m_gizmo_rotation_z = Entity::Create("Gizmo_Rotation_Z", Vec3::Zero(), Quaternion::Identity(), m_gizmo_rotation->GetTransform());
         m_gizmo_rotation_z->AddTag(ROTATION_Z_TAG);
-        m_gizmo_rotation_z->GetTransform()->SetEulerAngles(Vec3(90.0f, 0.0f, 0.0f));
+        m_gizmo_rotation_z->GetTransform()->SetPosition(Vec3(0.375f, 0.375f, 0.0f));
+        m_gizmo_rotation_z->GetTransform()->SetLocalScale(Vec3(0.75f, 0.75f, 0.75f));
+        collider = m_gizmo_rotation_z->AddComponent<BoxCollider>();
+        collider->SetSize(Vec3(1.0f, 1.0f, 0.01f));
         renderer = m_gizmo_rotation_z->AddComponent<MeshRenderer>();
         renderer->SetMesh(rotation_mesh);
         renderer->SetMaterial(material);
@@ -213,6 +225,7 @@ namespace Hyperion::Editor {
         f32 hit_distance = 0.0f;
 
         Vec3 position = m_selection->GetTransform()->GetPosition();
+        Vec3 rotation = m_selection->GetTransform()->GetEulerAngles();
         Vec3 scale = m_selection->GetTransform()->GetLocalScale();
 
         Plane xy_plane = Plane(Vec3::Forward(), position.z);
@@ -290,12 +303,19 @@ namespace Hyperion::Editor {
                         break;
                     }
                     case GizmoMode::RotationXAxis: {
+                        yz_plane.Intersects(ray, hit_distance);
+                        m_rotation_offset.y = ray.GetPoint(hit_distance).y;
+                        m_rotation_offset.z = ray.GetPoint(hit_distance).z;
                         break;
                     }
                     case GizmoMode::RotationYAxis: {
+                        xz_plane.Intersects(ray, hit_distance);
+                        m_rotation_offset.y = ray.GetPoint(hit_distance).y;
                         break;
                     }
                     case GizmoMode::RotationZAxis: {
+                        xy_plane.Intersects(ray, hit_distance);
+                        m_rotation_offset.z = ray.GetPoint(hit_distance).z;
                         break;
                     }
                     case GizmoMode::ScaleXAxis: {
@@ -410,6 +430,22 @@ namespace Hyperion::Editor {
                 position = hit + m_position_offset;
                 break;
             }
+            case GizmoMode::RotationXAxis: {
+                yz_plane.Intersects(ray, hit_distance);
+                Vec3 hit = ray.GetPoint(hit_distance);
+
+                f32 diff = hit.y - m_scale_offset.y;
+                diff += hit.z - m_scale_offset.z;
+
+                rotation.x = m_rotation_start.x + diff;
+                break;
+            }
+            case GizmoMode::RotationYAxis: {
+                break;
+            }
+            case GizmoMode::RotationZAxis: {
+                break;
+            }
             case GizmoMode::ScaleXAxis: {
                 xz_plane.Intersects(ray, hit_distance);
                 Vec3 hit = ray.GetPoint(hit_distance);
@@ -451,6 +487,7 @@ namespace Hyperion::Editor {
         GetTransform()->SetPosition(position);
 
         m_selection->GetTransform()->SetPosition(position);
+        m_selection->GetTransform()->SetEulerAngles(rotation);
         m_selection->GetTransform()->SetLocalScale(scale);
     }
 
@@ -485,6 +522,7 @@ namespace Hyperion::Editor {
             m_gizmo_mode = GizmoMode::ScaleXYZAxis;
         }
 
+        m_rotation_start = m_selection->GetTransform()->GetEulerAngles();
         m_scale_start = m_selection->GetTransform()->GetLocalScale();
         m_grabbing_plane = Plane(m_camera->GetTransform()->GetForward(), position);
     }

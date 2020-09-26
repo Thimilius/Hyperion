@@ -29,6 +29,7 @@ namespace Hyperion::Rendering {
 
         Mat4 inverse_view_matrix;
         Mat4 inverse_projection_matrix;
+        Mat4 inverse_view_projection_matrix;
     };
 
 }

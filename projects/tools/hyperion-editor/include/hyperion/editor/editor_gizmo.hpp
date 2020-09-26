@@ -59,6 +59,8 @@ namespace Hyperion::Editor {
 
         Plane m_grabbing_plane;
         Vec3 m_position_offset;
+        Vec3 m_rotation_start;
+        Vec3 m_rotation_offset;
         Vec3 m_scale_start;
         Vec3 m_scale_offset;
 
