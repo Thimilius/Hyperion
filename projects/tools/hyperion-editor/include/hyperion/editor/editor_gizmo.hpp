@@ -65,28 +65,16 @@ namespace Hyperion::Editor {
         Vec3 m_scale_start;
         Vec3 m_scale_offset;
         Quaternion m_rotation_start;
+        
         f32 m_rotation_speed = 0.2f;
+        f32 m_rotation_snap = 15.0f;
 
         Entity *m_gizmo_position_axis;
-        Entity *m_gimzo_position_x;
-        Entity *m_gimzo_position_y;
-        Entity *m_gimzo_position_z;
         Entity *m_gizmo_position_plane;
-        Entity *m_gizmo_position_xy;
-        Entity *m_gizmo_position_xz;
-        Entity *m_gizmo_position_yz;
         Entity *m_gizmo_position_full;
-        Entity *m_gizmo_position_xyz;
         Entity *m_gizmo_rotation;
-        Entity *m_gizmo_rotation_x;
-        Entity *m_gizmo_rotation_y;
-        Entity *m_gizmo_rotation_z;
         Entity *m_gizmo_scale;
-        Entity *m_gizmo_scale_x;
-        Entity *m_gizmo_scale_y;
-        Entity *m_gizmo_scale_z;
         Entity *m_gizmo_scale_full;
-        Entity *m_gizmo_scale_xyz;
 
         Camera *m_camera;
         Entity *m_selection;

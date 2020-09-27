@@ -44,7 +44,9 @@ namespace Hyperion::Editor {
 
         Entity::CreatePrimitive(EntityPrimitive::DirectionalLight);
         Entity::CreatePrimitive(EntityPrimitive::PointLight);
-        Entity::CreatePrimitive(EntityPrimitive::Cube);
+        Entity *parent = Entity::CreatePrimitive(EntityPrimitive::Cube);
+
+        Entity::CreatePrimitive(EntityPrimitive::Cube, Vec3(2, 0, 0), Quaternion::Identity(), parent->GetTransform());
 
         InitGridVertexArray();
         UpdateStats();
@@ -247,7 +249,7 @@ namespace Hyperion::Editor {
 
         ImmediateRenderer::Begin(MeshTopology::Lines);
         {
-            s_game_world->GetPhysicsWorld()->DebugDraw();
+            s_editor_world->GetPhysicsWorld()->DebugDraw();
         }
         ImmediateRenderer::End();
     }

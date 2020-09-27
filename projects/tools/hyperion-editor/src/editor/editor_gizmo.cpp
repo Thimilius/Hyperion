@@ -49,7 +49,7 @@ namespace Hyperion::Editor {
         Material *material = Material::Create(AssetManager::GetShader("standard_unlit"));
         Mesh *position_mesh = MeshFactory::CreateFromFile("data/models/gizmo/gizmo_position.obj");
         Mesh *position_plane_mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Quad);
-        Mesh *rotation_mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Quad);
+        Mesh *rotation_mesh = MeshFactory::CreateFromFile("data/models/gizmo/gizmo_rotation.obj");
         Mesh *scale_mesh = MeshFactory::CreateFromFile("data/models/gizmo/gizmo_scale.obj");
 
         m_gizmo_position_axis = Entity::Create("Gizmo_Position_Axis", Vec3::Zero(), Quaternion::Identity(), GetTransform());
@@ -59,155 +59,152 @@ namespace Hyperion::Editor {
         m_gizmo_scale = Entity::Create("Gizmo_Scale", Vec3::Zero(), Quaternion::Identity(), GetTransform());
         m_gizmo_scale_full = Entity::Create("Gizmo_Scale_Full", Vec3::Zero(), Quaternion::Identity(), GetTransform());
 
-        m_gimzo_position_x = Entity::Create("Gizmo_Position_X", Vec3::Zero(), Quaternion::Identity(), m_gizmo_position_axis->GetTransform());
-        m_gimzo_position_x->AddTag(POSITION_X_TAG);
-        m_gimzo_position_x->GetTransform()->SetEulerAngles(Vec3(0.0f, 0.0f, -90.0));
-        BoxCollider *collider = m_gimzo_position_x->AddComponent<BoxCollider>();
+        Entity *entity = Entity::Create("Gizmo_Position_X", Vec3::Zero(), Quaternion::Identity(), m_gizmo_position_axis->GetTransform());
+        entity->AddTag(POSITION_X_TAG);
+        entity->GetTransform()->SetEulerAngles(Vec3(0.0f, 0.0f, -90.0));
+        BoxCollider *collider = entity->AddComponent<BoxCollider>();
         collider->SetOrigin(Vec3(0.0f, 0.5f, 0.0f));
         collider->SetSize(Vec3(0.1f, 1.0f, 0.1f));
-        MeshRenderer *renderer = m_gimzo_position_x->AddComponent<MeshRenderer>();
+        MeshRenderer *renderer = entity->AddComponent<MeshRenderer>();
         renderer->SetMesh(position_mesh);
         renderer->SetMaterial(material);
         renderer->GetMaterial()->SetColor("u_color", m_x_axis_color);
 
-        m_gimzo_position_y = Entity::Create("Gizmo_Position_Y", Vec3::Zero(), Quaternion::Identity(), m_gizmo_position_axis->GetTransform());
-        m_gimzo_position_y->AddTag(POSITION_Y_TAG);
-        collider = m_gimzo_position_y->AddComponent<BoxCollider>();
+        entity = Entity::Create("Gizmo_Position_Y", Vec3::Zero(), Quaternion::Identity(), m_gizmo_position_axis->GetTransform());
+        entity->AddTag(POSITION_Y_TAG);
+        collider = entity->AddComponent<BoxCollider>();
         collider->SetOrigin(Vec3(0.0f, 0.5f, 0.0f));
         collider->SetSize(Vec3(0.1f, 1.0f, 0.1f));
-        renderer = m_gimzo_position_y->AddComponent<MeshRenderer>();
+        renderer = entity->AddComponent<MeshRenderer>();
         renderer->SetMesh(position_mesh);
         renderer->SetMaterial(material);
         renderer->GetMaterial()->SetColor("u_color", m_y_axis_color);
         
-        m_gimzo_position_z = Entity::Create("Gizmo_Position_Z", Vec3::Zero(), Quaternion::Identity(), m_gizmo_position_axis->GetTransform());
-        m_gimzo_position_z->AddTag(POSITION_Z_TAG);
-        m_gimzo_position_z->GetTransform()->SetEulerAngles(Vec3(90.0f, 0.0f, 0.0f));
-        collider = m_gimzo_position_z->AddComponent<BoxCollider>();
+        entity = Entity::Create("Gizmo_Position_Z", Vec3::Zero(), Quaternion::Identity(), m_gizmo_position_axis->GetTransform());
+        entity->AddTag(POSITION_Z_TAG);
+        entity->GetTransform()->SetEulerAngles(Vec3(90.0f, 0.0f, 0.0f));
+        collider = entity->AddComponent<BoxCollider>();
         collider->SetOrigin(Vec3(0.0f, 0.5f, 0.0f));
         collider->SetSize(Vec3(0.1f, 1.0f, 0.1f));
-        renderer = m_gimzo_position_z->AddComponent<MeshRenderer>();
+        renderer = entity->AddComponent<MeshRenderer>();
         renderer->SetMesh(position_mesh);
         renderer->SetMaterial(material);
         renderer->GetMaterial()->SetColor("u_color", m_z_axis_color);
 
-        m_gizmo_position_xy = Entity::Create("Gizmo_Position_XY", Vec3::Zero(), Quaternion::Identity(), m_gizmo_position_plane->GetTransform());
-        m_gizmo_position_xy->AddTag(POSITION_XY_TAG);
-        m_gizmo_position_xy->GetTransform()->SetEulerAngles(Vec3(0.0f, 0.0f, 0.0f));
-        m_gizmo_position_xy->GetTransform()->SetPosition(Vec3(0.5f, 0.5f, 0.0f));
-        m_gizmo_position_xy->GetTransform()->SetLocalScale(Vec3(0.25f, 0.25f, 0.25f));
-        collider = m_gizmo_position_xy->AddComponent<BoxCollider>();
+        entity = Entity::Create("Gizmo_Position_XY", Vec3::Zero(), Quaternion::Identity(), m_gizmo_position_plane->GetTransform());
+        entity->AddTag(POSITION_XY_TAG);
+        entity->GetTransform()->SetEulerAngles(Vec3(0.0f, 0.0f, 0.0f));
+        entity->GetTransform()->SetPosition(Vec3(0.5f, 0.5f, 0.0f));
+        entity->GetTransform()->SetLocalScale(Vec3(0.25f, 0.25f, 0.25f));
+        collider = entity->AddComponent<BoxCollider>();
         collider->SetSize(Vec3(1.0f, 1.0f, 0.01f));
-        renderer = m_gizmo_position_xy->AddComponent<MeshRenderer>();
+        renderer = entity->AddComponent<MeshRenderer>();
         renderer->SetMesh(position_plane_mesh);
         renderer->SetMaterial(material);
         renderer->GetMaterial()->SetColor("u_color", m_z_axis_color);
 
-        m_gizmo_position_xz = Entity::Create("Gizmo_Position_XZ", Vec3::Zero(), Quaternion::Identity(), m_gizmo_position_plane->GetTransform());
-        m_gizmo_position_xz->AddTag(POSITION_XZ_TAG);
-        m_gizmo_position_xz->GetTransform()->SetEulerAngles(Vec3(90.0f, 0.0f, 0.0f));
-        m_gizmo_position_xz->GetTransform()->SetPosition(Vec3(0.5f, 0.0f, 0.5f));
-        m_gizmo_position_xz->GetTransform()->SetLocalScale(Vec3(0.25f, 0.25f, 0.25f));
-        collider = m_gizmo_position_xz->AddComponent<BoxCollider>();
+        entity = Entity::Create("Gizmo_Position_XZ", Vec3::Zero(), Quaternion::Identity(), m_gizmo_position_plane->GetTransform());
+        entity->AddTag(POSITION_XZ_TAG);
+        entity->GetTransform()->SetEulerAngles(Vec3(90.0f, 0.0f, 0.0f));
+        entity->GetTransform()->SetPosition(Vec3(0.5f, 0.0f, 0.5f));
+        entity->GetTransform()->SetLocalScale(Vec3(0.25f, 0.25f, 0.25f));
+        collider = entity->AddComponent<BoxCollider>();
         collider->SetSize(Vec3(1.0f, 1.0f, 0.01f));
-        renderer = m_gizmo_position_xz->AddComponent<MeshRenderer>();
+        renderer = entity->AddComponent<MeshRenderer>();
         renderer->SetMesh(position_plane_mesh);
         renderer->SetMaterial(material);
         renderer->GetMaterial()->SetColor("u_color", m_y_axis_color);
 
-        m_gizmo_position_yz = Entity::Create("Gizmo_Position_YZ", Vec3::Zero(), Quaternion::Identity(), m_gizmo_position_plane->GetTransform());
-        m_gizmo_position_yz->AddTag(POSITION_YZ_TAG);
-        m_gizmo_position_yz->GetTransform()->SetEulerAngles(Vec3(0.0f, 90.0f, 0.0f));
-        m_gizmo_position_yz->GetTransform()->SetPosition(Vec3(0.0f, 0.5f, 0.5f));
-        m_gizmo_position_yz->GetTransform()->SetLocalScale(Vec3(0.25f, 0.25f, 0.25f));
-        collider = m_gizmo_position_yz->AddComponent<BoxCollider>();
+        entity = Entity::Create("Gizmo_Position_YZ", Vec3::Zero(), Quaternion::Identity(), m_gizmo_position_plane->GetTransform());
+        entity->AddTag(POSITION_YZ_TAG);
+        entity->GetTransform()->SetEulerAngles(Vec3(0.0f, 90.0f, 0.0f));
+        entity->GetTransform()->SetPosition(Vec3(0.0f, 0.5f, 0.5f));
+        entity->GetTransform()->SetLocalScale(Vec3(0.25f, 0.25f, 0.25f));
+        collider = entity->AddComponent<BoxCollider>();
         collider->SetSize(Vec3(1.0f, 1.0f, 0.01f));
-        renderer = m_gizmo_position_yz->AddComponent<MeshRenderer>();
+        renderer = entity->AddComponent<MeshRenderer>();
         renderer->SetMesh(position_plane_mesh);
         renderer->SetMaterial(material);
         renderer->GetMaterial()->SetColor("u_color", m_x_axis_color);
 
-        m_gizmo_position_yz = Entity::Create("Gizmo_Position_XYZ", Vec3::Zero(), Quaternion::Identity(), m_gizmo_position_full->GetTransform());
-        m_gizmo_position_yz->AddTag(POSITION_XYZ_TAG);
-        m_gizmo_position_yz->GetTransform()->SetLocalScale(Vec3(0.25f, 0.25f, 0.25f));
-        m_gizmo_position_yz->AddComponent<SphereCollider>();
-        renderer = m_gizmo_position_yz->AddComponent<MeshRenderer>();
+        entity = Entity::Create("Gizmo_Position_XYZ", Vec3::Zero(), Quaternion::Identity(), m_gizmo_position_full->GetTransform());
+        entity->AddTag(POSITION_XYZ_TAG);
+        entity->GetTransform()->SetLocalScale(Vec3(0.25f, 0.25f, 0.25f));
+        entity->AddComponent<SphereCollider>();
+        renderer = entity->AddComponent<MeshRenderer>();
         renderer->SetMesh(AssetManager::GetMeshPrimitive(MeshPrimitive::Sphere));
         renderer->SetMaterial(material);
         renderer->GetMaterial()->SetColor("u_color", m_xyz_axis_color);
 
-        m_gizmo_rotation_x = Entity::Create("Gizmo_Rotation_X", Vec3::Zero(), Quaternion::Identity(), m_gizmo_rotation->GetTransform());
-        m_gizmo_rotation_x->AddTag(ROTATION_X_TAG);
-        m_gizmo_rotation_x->GetTransform()->SetEulerAngles(Vec3(0.0f, 90.0f, 0.0f));
-        m_gizmo_rotation_x->GetTransform()->SetPosition(Vec3(0.0f, 0.375f, 0.375f));
-        m_gizmo_rotation_x->GetTransform()->SetLocalScale(Vec3(0.75f, 0.75f, 0.75f));
-        collider = m_gizmo_rotation_x->AddComponent<BoxCollider>();
-        collider->SetSize(Vec3(1.0f, 1.0f, 0.01f));
-        renderer = m_gizmo_rotation_x->AddComponent<MeshRenderer>();
+        entity = Entity::Create("Gizmo_Rotation_X", Vec3::Zero(), Quaternion::Identity(), m_gizmo_rotation->GetTransform());
+        entity->AddTag(ROTATION_X_TAG);
+        entity->GetTransform()->SetEulerAngles(Vec3(0.0f, 0.0f, 90.0f));
+        collider = entity->AddComponent<BoxCollider>();
+        collider->SetSize(Vec3(0.8f, 0.01f, 0.8f));
+        collider->SetOrigin(Vec3(0.4f, 0.0f, 0.4f));
+        renderer = entity->AddComponent<MeshRenderer>();
         renderer->SetMesh(rotation_mesh);
         renderer->SetMaterial(material);
         renderer->GetMaterial()->SetColor("u_color", m_x_axis_color);
 
-        m_gizmo_rotation_y = Entity::Create("Gizmo_Rotation_Y", Vec3::Zero(), Quaternion::Identity(), m_gizmo_rotation->GetTransform());
-        m_gizmo_rotation_y->AddTag(ROTATION_Y_TAG);
-        m_gizmo_rotation_y->GetTransform()->SetEulerAngles(Vec3(90.0f, 0.0f, 0.0f));
-        m_gizmo_rotation_y->GetTransform()->SetPosition(Vec3(0.375f, 0.0f, 0.375f));
-        m_gizmo_rotation_y->GetTransform()->SetLocalScale(Vec3(0.75f, 0.75f, 0.75f));
-        collider = m_gizmo_rotation_y->AddComponent<BoxCollider>();
-        collider->SetSize(Vec3(1.0f, 1.0f, 0.01f));
-        renderer = m_gizmo_rotation_y->AddComponent<MeshRenderer>();
+        entity = Entity::Create("Gizmo_Rotation_Y", Vec3::Zero(), Quaternion::Identity(), m_gizmo_rotation->GetTransform());
+        entity->AddTag(ROTATION_Y_TAG);
+        collider = entity->AddComponent<BoxCollider>();
+        collider->SetSize(Vec3(0.8f, 0.01f, 0.8f));
+        collider->SetOrigin(Vec3(0.4f, 0.0f, 0.4f));
+        renderer = entity->AddComponent<MeshRenderer>();
         renderer->SetMesh(rotation_mesh);
         renderer->SetMaterial(material);
         renderer->GetMaterial()->SetColor("u_color", m_y_axis_color);
 
-        m_gizmo_rotation_z = Entity::Create("Gizmo_Rotation_Z", Vec3::Zero(), Quaternion::Identity(), m_gizmo_rotation->GetTransform());
-        m_gizmo_rotation_z->AddTag(ROTATION_Z_TAG);
-        m_gizmo_rotation_z->GetTransform()->SetPosition(Vec3(0.375f, 0.375f, 0.0f));
-        m_gizmo_rotation_z->GetTransform()->SetLocalScale(Vec3(0.75f, 0.75f, 0.75f));
-        collider = m_gizmo_rotation_z->AddComponent<BoxCollider>();
-        collider->SetSize(Vec3(1.0f, 1.0f, 0.01f));
-        renderer = m_gizmo_rotation_z->AddComponent<MeshRenderer>();
+        entity = Entity::Create("Gizmo_Rotation_Z", Vec3::Zero(), Quaternion::Identity(), m_gizmo_rotation->GetTransform());
+        entity->AddTag(ROTATION_Z_TAG);
+        entity->GetTransform()->SetEulerAngles(Vec3(-90.0f, 0.0f, 0.0f));
+        collider = entity->AddComponent<BoxCollider>();
+        collider->SetSize(Vec3(0.8f, 0.01f, 0.8f));
+        collider->SetOrigin(Vec3(0.4f, 0.0f, 0.4f));
+        renderer = entity->AddComponent<MeshRenderer>();
         renderer->SetMesh(rotation_mesh);
         renderer->SetMaterial(material);
         renderer->GetMaterial()->SetColor("u_color", m_z_axis_color);
 
-        m_gizmo_scale_x = Entity::Create("Gizmo_Scale_X", Vec3::Zero(), Quaternion::Identity(), m_gizmo_scale->GetTransform());
-        m_gizmo_scale_x->AddTag(SCALE_X_TAG);
-        m_gizmo_scale_x->GetTransform()->SetEulerAngles(Vec3(0.0f, 0.0f, -90.0f));
-        collider = m_gizmo_scale_x->AddComponent<BoxCollider>();
+        entity = Entity::Create("Gizmo_Scale_X", Vec3::Zero(), Quaternion::Identity(), m_gizmo_scale->GetTransform());
+        entity->AddTag(SCALE_X_TAG);
+        entity->GetTransform()->SetEulerAngles(Vec3(0.0f, 0.0f, -90.0f));
+        collider = entity->AddComponent<BoxCollider>();
         collider->SetOrigin(Vec3(0.0f, 0.9f, 0.0f));
         collider->SetSize(Vec3(0.2f, 0.2f, 0.2f));
-        renderer = m_gizmo_scale_x->AddComponent<MeshRenderer>();
+        renderer = entity->AddComponent<MeshRenderer>();
         renderer->SetMesh(scale_mesh);
         renderer->SetMaterial(material);
         renderer->GetMaterial()->SetColor("u_color", m_x_axis_color);
 
-        m_gizmo_scale_y = Entity::Create("Gizmo_Scale_Y", Vec3::Zero(), Quaternion::Identity(), m_gizmo_scale->GetTransform());
-        m_gizmo_scale_y->AddTag(SCALE_Y_TAG);
-        collider = m_gizmo_scale_y->AddComponent<BoxCollider>();
+        entity = Entity::Create("Gizmo_Scale_Y", Vec3::Zero(), Quaternion::Identity(), m_gizmo_scale->GetTransform());
+        entity->AddTag(SCALE_Y_TAG);
+        collider = entity->AddComponent<BoxCollider>();
         collider->SetOrigin(Vec3(0.0f, 0.9f, 0.0f));
         collider->SetSize(Vec3(0.2f, 0.2f, 0.2f));
-        renderer = m_gizmo_scale_y->AddComponent<MeshRenderer>();
+        renderer = entity->AddComponent<MeshRenderer>();
         renderer->SetMesh(scale_mesh);
         renderer->SetMaterial(material);
         renderer->GetMaterial()->SetColor("u_color", m_y_axis_color);
 
-        m_gizmo_scale_z = Entity::Create("Gizmo_Scale_Z", Vec3::Zero(), Quaternion::Identity(), m_gizmo_scale->GetTransform());
-        m_gizmo_scale_z->AddTag(SCALE_Z_TAG);
-        m_gizmo_scale_z->GetTransform()->SetEulerAngles(Vec3(90.0f, 0.0f, 0.0f));
-        collider = m_gizmo_scale_z->AddComponent<BoxCollider>();
+        entity = Entity::Create("Gizmo_Scale_Z", Vec3::Zero(), Quaternion::Identity(), m_gizmo_scale->GetTransform());
+        entity->AddTag(SCALE_Z_TAG);
+        entity->GetTransform()->SetEulerAngles(Vec3(90.0f, 0.0f, 0.0f));
+        collider = entity->AddComponent<BoxCollider>();
         collider->SetOrigin(Vec3(0.0f, 0.9f, 0.0f));
         collider->SetSize(Vec3(0.2f, 0.2f, 0.2f));
-        renderer = m_gizmo_scale_z->AddComponent<MeshRenderer>();
+        renderer = entity->AddComponent<MeshRenderer>();
         renderer->SetMesh(scale_mesh);
         renderer->SetMaterial(material);
         renderer->GetMaterial()->SetColor("u_color", m_z_axis_color);
 
-        m_gizmo_scale_xyz = Entity::Create("Gizmo_Scale_XYZ", Vec3::Zero(), Quaternion::Identity(), m_gizmo_scale->GetTransform());
-        m_gizmo_scale_xyz->AddTag(SCALE_XYZ_TAG);
-        m_gizmo_scale_xyz->GetTransform()->SetLocalScale(Vec3(0.2f, 0.2f, 0.2f));
-        collider = m_gizmo_scale_xyz->AddComponent<BoxCollider>();
-        renderer = m_gizmo_scale_xyz->AddComponent<MeshRenderer>();
+        entity = Entity::Create("Gizmo_Scale_XYZ", Vec3::Zero(), Quaternion::Identity(), m_gizmo_scale->GetTransform());
+        entity->AddTag(SCALE_XYZ_TAG);
+        entity->GetTransform()->SetLocalScale(Vec3(0.2f, 0.2f, 0.2f));
+        collider = entity->AddComponent<BoxCollider>();
+        renderer = entity->AddComponent<MeshRenderer>();
         renderer->SetMesh(AssetManager::GetMeshPrimitive(MeshPrimitive::Cube));
         renderer->SetMaterial(material);
         renderer->GetMaterial()->SetColor("u_color", m_xyz_axis_color);
@@ -438,9 +435,14 @@ namespace Hyperion::Editor {
 
                 f32 x = diff.x - m_rotation_offset.x;
                 f32 rot = x * m_rotation_speed;
+                
+                if (snapping) {
+                    rot = Math::Round(rot / m_rotation_snap) * m_rotation_snap;
+                }
+
                 Quaternion r = Quaternion::FromAxisAngle(Vec3::Right(), rot);
 
-                rotation = m_rotation_start * r;
+                rotation = r * m_rotation_start;
                 break;
             }
             case GizmoMode::RotationYAxis: {
@@ -449,9 +451,14 @@ namespace Hyperion::Editor {
 
                 f32 y = diff.x - m_rotation_offset.x;
                 f32 rot = y * m_rotation_speed;
+
+                if (snapping) {
+                    rot = Math::Round(rot / m_rotation_snap) * m_rotation_snap;
+                }
+
                 Quaternion r = Quaternion::FromAxisAngle(Vec3::Down(), rot);
 
-                rotation = m_rotation_start * r;
+                rotation = r * m_rotation_start;
                 break;
             }
             case GizmoMode::RotationZAxis: {
@@ -460,9 +467,14 @@ namespace Hyperion::Editor {
 
                 f32 z = diff.x - m_rotation_offset.x;
                 f32 rot = z * m_rotation_speed;
+
+                if (snapping) {
+                    rot = Math::Round(rot / m_rotation_snap) * m_rotation_snap;
+                }
+
                 Quaternion r = Quaternion::FromAxisAngle(Vec3::Back(), rot);
 
-                rotation = m_rotation_start * r;
+                rotation = r * m_rotation_start;
                 break;
             }
             case GizmoMode::ScaleXAxis: {
