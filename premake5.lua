@@ -67,6 +67,7 @@ project "hyperion"
 		"projects/hyperion/vendor/nameof/include",
 		"projects/hyperion/vendor/nlohmann/include",
 		"projects/hyperion/vendor/mono/include",
+		"projects/hyperion/vendor/rttr/include",
 		"projects/hyperion/vendor/stb/include",
 	}
 	
@@ -111,6 +112,7 @@ project "hyperion-editor"
 		
 		"projects/hyperion/vendor/fmt/include",
 		"projects/hyperion/vendor/nameof/include",
+		"projects/hyperion/vendor/rttr/include",
 	}
 		
 	filter "kind:ConsoleApp"
@@ -129,12 +131,13 @@ project "hyperion-editor"
 			"opengl32",
 			"PowrProf",
 		
-			"fmod_vc",
-			"assimp",
-			"mono",
-			
+			"rttr",
 			"freetype",
 			"bullet",
+		
+			"fmod_vc",
+			"assimp",
+			"mono",	
 		}
 
 	    postbuildcommands {
@@ -146,12 +149,14 @@ project "hyperion-editor"
 	    }
 
 	filter { "system:windows", "configurations:debug" }
-		libdirs { "projects/hyperion/vendor/freetype/lib/windows/debug" }
 		libdirs { "projects/hyperion/vendor/bullet/lib/windows/debug" }
+		libdirs { "projects/hyperion/vendor/freetype/lib/windows/debug" }
+		libdirs { "projects/hyperion/vendor/rttr/lib/windows/debug" }
 		
 	filter { "system:windows", "configurations:release" }
-		libdirs { "projects/hyperion/vendor/freetype/lib/windows/release" }
 		libdirs { "projects/hyperion/vendor/bullet/lib/windows/release" }
+		libdirs { "projects/hyperion/vendor/freetype/lib/windows/release" }
+		libdirs { "projects/hyperion/vendor/rttr/lib/windows/release" }
 
 group "managed"
 
