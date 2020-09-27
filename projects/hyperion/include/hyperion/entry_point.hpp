@@ -1,11 +1,9 @@
 #pragma once
 
 #include "hyperion/core/main.hpp"
-#include "hyperion/core/reflection.hpp"
 #include "hyperion/core/app/application.hpp"
 
 // Those are the two functions that are required to be defined by the application program
-extern void Hyperion::RegisterApplicationTypes();
 extern Hyperion::Application *Hyperion::CreateApplication();
 
 #if !defined HYP_PLATFORM_WINDOWS || HYP_CONSOLE

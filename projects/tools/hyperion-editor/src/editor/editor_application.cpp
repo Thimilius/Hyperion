@@ -26,10 +26,6 @@ namespace Hyperion::Editor {
 
 }
 
-void Hyperion::RegisterApplicationTypes() {
-
-}
-
 Hyperion::Application *Hyperion::CreateApplication() {
     ApplicationSettings settings = ApplicationSettings::FromJsonFile("app.json");
     settings.render.path = Rendering::RenderPath::Custom;
