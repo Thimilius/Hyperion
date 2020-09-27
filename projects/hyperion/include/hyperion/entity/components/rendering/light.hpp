@@ -12,7 +12,7 @@ namespace Hyperion {
     };
 
     class Light final : public Behaviour {
-        HYP_OBJECT(Light, Behaviour);
+        RTTR_ENABLE(Behaviour);
     public:
         Light() : Behaviour("Light") { }
 

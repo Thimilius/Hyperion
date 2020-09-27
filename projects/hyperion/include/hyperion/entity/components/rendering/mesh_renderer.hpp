@@ -6,7 +6,7 @@
 namespace Hyperion {
 
     class MeshRenderer final : public Renderer {
-        HYP_OBJECT(MeshRenderer, Renderer);
+        RTTR_ENABLE(Renderer);
     public:
         MeshRenderer() : Renderer("MeshRenderer") { }
 

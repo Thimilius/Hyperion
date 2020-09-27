@@ -590,7 +590,7 @@ namespace Hyperion::Editor {
     }
 
     void EditorGizmo::OnSelection(Object *selection) {
-        if (selection != nullptr && selection->GetType() == Entity::GetStaticType()) {
+        if (selection != nullptr && selection->GetType() == rttr::type::get<Entity>()) {
             Entity *entity = static_cast<Entity *>(selection);
             m_selection = entity;
             GetEntity()->SetActive(true);

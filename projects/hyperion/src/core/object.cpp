@@ -9,7 +9,7 @@ namespace Hyperion {
 
     void Object::Destroy(Object *object) {
         if (object && !object->m_destroyed) {
-            HYP_ASSERT_MESSAGE(object->GetType() != Transform::GetStaticType(), "Destroying a transform component is not allowed");
+            HYP_ASSERT_MESSAGE(object->GetType() != rttr::type::get<Transform>(), "Destroying a transform component is not allowed!");
 
             object->m_destroyed = true;
             ObjectManager::Destroy(object);
@@ -23,4 +23,13 @@ namespace Hyperion {
         }
     }
 
+}
+
+RTTR_REGISTRATION
+{
+    using namespace rttr;
+    using namespace Hyperion;
+
+    registration::class_<Object>(String(NAMEOF_SHORT_TYPE(Object)))
+        .property("name", &Object::m_name);
 }

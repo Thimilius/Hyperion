@@ -11,7 +11,7 @@
 namespace Hyperion::Editor {
 
     class EditorGizmo : public Component, public IEditorSelectionListener {
-        HYP_OBJECT(EditorGizmo, Component);
+        RTTR_ENABLE(Component);
     public:
         enum class GizmoType {
             Position,

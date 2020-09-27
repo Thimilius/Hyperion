@@ -21,6 +21,8 @@
 // Vendors
 #include <nlohmann/json.hpp>
 #include <fmt/format.h>
+#include <rttr/type>
+#include <rttr/registration>
 
 // Hyperion
 #include "hyperion/common.hpp"

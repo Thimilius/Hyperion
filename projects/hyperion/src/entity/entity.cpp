@@ -112,7 +112,7 @@ namespace Hyperion {
         // First destroy all our components except transform
         for (auto it = m_components.begin(); it != m_components.end(); ) {
             auto [component_type, component] = *it;
-            if (!component->IsBase(Transform::GetStaticType())) {
+            if (!component_type.is_derived_from<Transform>()) {
                 it = m_components.erase(it);
                 DestroyImmediate(component);
             } else {
@@ -135,7 +135,7 @@ namespace Hyperion {
         }
 
         // At the very end we can destroy the transform
-        if (m_transform->GetType() == UITransform::GetStaticType()) {
+        if (m_transform->GetType() == rttr::type::get<UITransform>()) {
             static_cast<UITransform *>(m_transform)->m_replace_on_destroy = false;
         }
         DestroyImmediate(m_transform);
@@ -166,7 +166,7 @@ namespace Hyperion {
         m_transform->m_derived_rotation = rotation;
         m_transform->OnCreate();
 
-        m_components[Transform::GetStaticType()] = m_transform;
+        m_components[rttr::type::get<Transform>()] = m_transform;
 
         if (parent) {
             m_transform->SetParent(parent);
@@ -189,4 +189,12 @@ namespace Hyperion {
         }
     }
 
+}
+
+RTTR_REGISTRATION
+{
+    using namespace rttr;
+    using namespace Hyperion;
+
+    registration::class_<Entity>(String(NAMEOF_SHORT_TYPE(Entity)));
 }

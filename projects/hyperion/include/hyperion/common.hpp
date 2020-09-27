@@ -23,6 +23,8 @@
 #include "hyperion/core/result.hpp"
 
 #include <nameof/nameof.hpp>
+#include <rttr/registration_friend>
+#include <rttr/type>
 
 #define HYP_PANIC do {                                                \
             HYP_LOG_ERROR("Engine", "Engine encountered an error!");  \

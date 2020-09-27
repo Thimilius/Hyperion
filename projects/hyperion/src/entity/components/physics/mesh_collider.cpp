@@ -27,3 +27,11 @@ namespace Hyperion {
     }
 
 }
+
+RTTR_REGISTRATION
+{
+    using namespace rttr;
+    using namespace Hyperion;
+
+    registration::class_<MeshCollider>(String(NAMEOF_SHORT_TYPE(MeshCollider)));
+}

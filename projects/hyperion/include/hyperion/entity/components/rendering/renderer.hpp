@@ -6,7 +6,7 @@
 namespace Hyperion {
 
     class Renderer : public Behaviour {
-        HYP_OBJECT(Renderer, Behaviour);
+        RTTR_ENABLE(Behaviour);
     public:
         inline Rendering::Material *GetSharedMaterial() const { return m_shared_material; }
         inline void SetSharedMaterial(Rendering::Material *shared_material) {
@@ -35,6 +35,9 @@ namespace Hyperion {
         Renderer() = default;
         Renderer(const String & name) : Behaviour(name) {}
         virtual ~Renderer() = default;
+
+        void OnCreate() override;
+        void OnDestroy() override;
     private:
         Rendering::Material *m_shared_material;
         mutable Rendering::Material *m_material;

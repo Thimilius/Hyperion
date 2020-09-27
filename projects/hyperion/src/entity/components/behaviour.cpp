@@ -12,3 +12,11 @@ namespace Hyperion {
     }
 
 }
+
+RTTR_REGISTRATION
+{
+    using namespace rttr;
+    using namespace Hyperion;
+
+    registration::class_<Behaviour>(String(NAMEOF_SHORT_TYPE(Behaviour)));
+}

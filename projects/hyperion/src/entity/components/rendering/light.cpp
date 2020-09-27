@@ -20,3 +20,11 @@ namespace Hyperion {
     }
 
 }
+
+RTTR_REGISTRATION
+{
+    using namespace rttr;
+    using namespace Hyperion;
+
+    registration::class_<Light>(String(NAMEOF_SHORT_TYPE(Light)));
+}

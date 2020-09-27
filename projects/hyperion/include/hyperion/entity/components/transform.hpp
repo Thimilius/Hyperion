@@ -13,7 +13,7 @@ namespace Hyperion {
 namespace Hyperion {
 
     class Transform : public Component {
-        HYP_OBJECT(Transform, Component);
+        RTTR_ENABLE(Component);
     public:
         inline Vec3 GetLocalPosition() const { return m_local_position; }
         inline void SetLocalPosition(const Vec3 &position) {
@@ -80,7 +80,7 @@ namespace Hyperion {
         inline Quaternion LocalToWorldRotation(const Quaternion &rotation) const {
             return m_derived_rotation * rotation;
         }
-
+        
         inline Mat4 GetLocalToWorldMatrix() const { return m_local_to_world_matrix; }
         inline Mat4 GetWorldToLocalMatrix() const { return m_world_to_local_matrix; }
 

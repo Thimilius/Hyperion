@@ -25,8 +25,8 @@ namespace Hyperion {
         // Update the entity
         Entity *entity = GetEntity();
         entity->m_transform = this;
-        entity->m_components.erase(Transform::GetStaticType());
-        entity->m_components[UITransform::GetStaticType()] = this;
+        entity->m_components.erase(rttr::type::get<Transform>());
+        entity->m_components[rttr::type::get<UITransform>()] = this;
 
         // Update the children
         for (Transform *child : m_children) {
@@ -58,8 +58,8 @@ namespace Hyperion {
             Entity *entity = GetEntity();
             transform->m_entity = entity;
             entity->m_transform = transform;
-            entity->m_components.erase(UITransform::GetStaticType());
-            entity->m_components[Transform::GetStaticType()] = transform;
+            entity->m_components.erase(rttr::type::get<UITransform>());
+            entity->m_components[rttr::type::get<Transform>()] = transform;
 
             // Update the children
             for (Transform *child : m_children) {
@@ -70,4 +70,12 @@ namespace Hyperion {
         }
     }
 
+}
+
+RTTR_REGISTRATION
+{
+    using namespace rttr;
+    using namespace Hyperion;
+
+    registration::class_<UITransform>(String(NAMEOF_SHORT_TYPE(UITransform)));
 }

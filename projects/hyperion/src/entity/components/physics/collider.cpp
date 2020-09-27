@@ -38,3 +38,11 @@ namespace Hyperion {
     }
 
 }
+
+RTTR_REGISTRATION
+{
+    using namespace rttr;
+    using namespace Hyperion;
+
+    registration::class_<Collider>(String(NAMEOF_SHORT_TYPE(Collider)));
+}

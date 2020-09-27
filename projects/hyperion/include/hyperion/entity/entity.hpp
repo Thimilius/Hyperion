@@ -35,7 +35,7 @@ namespace Hyperion {
     // NOTE: Should we allow multiple components of the same type?
     // Currently the GetComponent implementations assume only one component of a certain type
     class Entity final : public Object {
-        HYP_OBJECT(Entity, Object);
+        RTTR_ENABLE(Object);
     public:
         inline World *GetWorld() const { return m_world; }
 
@@ -59,7 +59,7 @@ namespace Hyperion {
             !std::is_same<Transform, T>::value &&
             std::is_default_constructible<T>::value>>
         T *AddComponent() {
-            ObjectType type = T::GetStaticType();
+            rttr::type type = rttr::type::get<T>();
             HYP_ASSERT_MESSAGE(m_components.find(type) == m_components.end(), "Failed to add component because a component with the same type already exists!");
 
             T *component = new T();
@@ -75,10 +75,8 @@ namespace Hyperion {
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         T *GetComponent() const {
-            ObjectType type = T::GetStaticType();
-
             for (auto [component_type, component] : m_components) {
-                if (component->IsBase(type)) {
+                if (component_type.is_derived_from<T>()) {
                     return static_cast<T *>(component);
                 }
             }
@@ -88,8 +86,6 @@ namespace Hyperion {
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         T *GetComponentInChildren() const {
-            ObjectType type = T::GetStaticType();
-
             T *component = GetComponent<T>();
             if (component) {
                 return component;
@@ -107,8 +103,6 @@ namespace Hyperion {
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         T *GetComponentInParent() const {
-            ObjectType type = T::GetStaticType();
-            
             Component *component = GetComponent<T>();
             if (component) {
                 return component;
@@ -124,11 +118,10 @@ namespace Hyperion {
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         Vector<T *> GetComponentsInChildren() const {
-            ObjectType type = T::GetStaticType();
             Vector<T *> components;
 
             for (auto [component_type, component] : m_components) {
-                if (component->IsBase(type)) {
+                if (component_type.is_derived_from<T>()) {
                     components.push_back(static_cast<T *>(component));
                 }
             }
@@ -142,11 +135,10 @@ namespace Hyperion {
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         Vector<T *> GetComponentsInParent() const {
-            ObjectType type = T::GetStaticType();
             Vector<T *> components;
 
             for (auto [component_type, component] : m_components) {
-                if (component->IsBase(type)) {
+                if (component_type.is_derived_from<T>()) {
                     components.push_back(static_cast<T *>(component));
                 }
             }
@@ -188,7 +180,7 @@ namespace Hyperion {
 
         LayerMask m_layer = LayerMask::Default;
 
-        Map<ObjectType, Component *> m_components;
+        Map<rttr::type, Component *> m_components;
         Transform *m_transform = nullptr;
         Set<EntityTag> m_tags;
 
@@ -197,6 +189,8 @@ namespace Hyperion {
         friend class Hyperion::Component;
         friend class Hyperion::Object;
         friend class Hyperion::UITransform;
+
+        RTTR_REGISTRATION_FRIEND;
     };
 
 }

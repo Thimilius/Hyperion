@@ -10,7 +10,7 @@ namespace Hyperion {
 namespace Hyperion {
 
     class UITransform : public Transform {
-        HYP_OBJECT(UITransform, Transform);
+        RTTR_ENABLE(Transform);
     public:
         UITransform() : Transform("UITransform") { }
 

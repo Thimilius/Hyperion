@@ -5,7 +5,7 @@
 namespace Hyperion {
 
     class Behaviour : public Component {
-        HYP_OBJECT(Behaviour, Component);
+        RTTR_ENABLE(Component);
     public:
         inline bool IsEnabled() const { return m_enabled; }
         virtual inline void SetEnabled(bool enabled) { m_enabled = enabled; }

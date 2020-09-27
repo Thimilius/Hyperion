@@ -30,3 +30,11 @@ namespace Hyperion {
     }
 
 }
+
+RTTR_REGISTRATION
+{
+    using namespace rttr;
+    using namespace Hyperion;
+
+    registration::class_<Component>(String(NAMEOF_SHORT_TYPE(Component)));
+}

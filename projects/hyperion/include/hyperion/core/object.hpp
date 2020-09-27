@@ -2,15 +2,6 @@
 
 #include "hyperion/common.hpp"
 
-#define HYP_OBJECT(TYPE, BASE_TYPE)                                                                                            \
-    private:                                                                                                                   \
-        inline static constexpr ObjectType s_type = StringUtils::Hash(#TYPE);                                                  \
-    public:                                                                                                                    \
-        inline virtual ObjectType GetType() const override { return s_type; }                                                  \
-        inline virtual bool IsBase(ObjectType type) const override { return type == s_type ? true : BASE_TYPE::IsBase(type); } \
-        inline static constexpr ObjectType GetStaticType() { return s_type; }                                                  \
-    private:
-    
 namespace Hyperion {
     class Entity;
     class ObjectManager;
@@ -19,14 +10,9 @@ namespace Hyperion {
 
 namespace Hyperion {
 
-    using ObjectType = u32;
-
     class Object {
+        RTTR_ENABLE();
     public:
-        inline static constexpr ObjectType GetStaticType() { return s_type; }
-        inline virtual ObjectType GetType() const { return s_type; }
-        inline virtual bool IsBase(ObjectType type) const { return type == s_type; }
-
         inline String GetName() const { return m_name; }
         inline void SetName(const String &name) { m_name = name; }
 
@@ -48,12 +34,12 @@ namespace Hyperion {
     private:
         String m_name;
         bool m_destroyed = false;
-        
-        inline static constexpr ObjectType s_type = StringUtils::Hash("Object");
     private:
         friend class Hyperion::Entity;
         friend class Hyperion::ObjectManager;
         friend class Hyperion::World;
+
+        RTTR_REGISTRATION_FRIEND;
     };
 
 }

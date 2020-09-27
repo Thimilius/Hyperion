@@ -6,7 +6,7 @@
 namespace Hyperion {
 
     class MeshCollider final : public Collider {
-        HYP_OBJECT(MeshCollider, Collider);
+        RTTR_ENABLE(Collider);
     public:
         MeshCollider() : Collider("MeshCollider") { }
 
