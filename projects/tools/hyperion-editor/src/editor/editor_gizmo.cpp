@@ -449,7 +449,7 @@ namespace Hyperion::Editor {
 
                 f32 y = diff.x - m_rotation_offset.x;
                 f32 rot = y * m_rotation_speed;
-                Quaternion r = Quaternion::FromAxisAngle(Vec3::Up(), rot);
+                Quaternion r = Quaternion::FromAxisAngle(Vec3::Down(), rot);
 
                 rotation = m_rotation_start * r;
                 break;
@@ -460,7 +460,7 @@ namespace Hyperion::Editor {
 
                 f32 z = diff.x - m_rotation_offset.x;
                 f32 rot = z * m_rotation_speed;
-                Quaternion r = Quaternion::FromAxisAngle(Vec3::Forward(), rot);
+                Quaternion r = Quaternion::FromAxisAngle(Vec3::Back(), rot);
 
                 rotation = m_rotation_start * r;
                 break;

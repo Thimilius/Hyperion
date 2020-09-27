@@ -247,7 +247,7 @@ namespace Hyperion::Editor {
 
         ImmediateRenderer::Begin(MeshTopology::Lines);
         {
-            s_editor_world->GetPhysicsWorld()->DebugDraw();
+            s_game_world->GetPhysicsWorld()->DebugDraw();
         }
         ImmediateRenderer::End();
     }
