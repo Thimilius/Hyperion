@@ -33,5 +33,5 @@ RTTR_REGISTRATION
     using namespace rttr;
     using namespace Hyperion;
 
-    registration::class_<MeshCollider>(String(NAMEOF_SHORT_TYPE(MeshCollider)));
+    registration::class_<MeshCollider>(HYP_NAME_OF_TYPE(MeshCollider));
 }

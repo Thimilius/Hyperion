@@ -36,5 +36,5 @@ RTTR_REGISTRATION
     using namespace rttr;
     using namespace Hyperion;
 
-    registration::class_<Component>(String(NAMEOF_SHORT_TYPE(Component)));
+    registration::class_<Component>(HYP_NAME_OF_TYPE(Component));
 }

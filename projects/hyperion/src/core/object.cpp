@@ -30,6 +30,6 @@ RTTR_REGISTRATION
     using namespace rttr;
     using namespace Hyperion;
 
-    registration::class_<Object>(String(NAMEOF_SHORT_TYPE(Object)))
+    registration::class_<Object>(HYP_NAME_OF_TYPE(Object))
         .property("name", &Object::m_name);
 }

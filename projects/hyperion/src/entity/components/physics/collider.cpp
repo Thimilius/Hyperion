@@ -44,5 +44,5 @@ RTTR_REGISTRATION
     using namespace rttr;
     using namespace Hyperion;
 
-    registration::class_<Collider>(String(NAMEOF_SHORT_TYPE(Collider)));
+    registration::class_<Collider>(HYP_NAME_OF_TYPE(Collider));
 }

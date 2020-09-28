@@ -18,5 +18,5 @@ RTTR_REGISTRATION
     using namespace rttr;
     using namespace Hyperion;
 
-    registration::class_<Behaviour>(String(NAMEOF_SHORT_TYPE(Behaviour)));
+    registration::class_<Behaviour>(HYP_NAME_OF_TYPE(Behaviour));
 }

@@ -10,11 +10,11 @@ namespace Hyperion {
     void Light::OnCreate() {
         Behaviour::OnCreate();
 
-        GetEntity()->GetWorld()->AddLight(this);
+        GetWorld()->AddLight(this);
     }
 
     void Light::OnDestroy() {
-        GetEntity()->GetWorld()->RemoveLight(this);
+        GetWorld()->RemoveLight(this);
 
         Behaviour::OnDestroy();
     }
@@ -26,5 +26,5 @@ RTTR_REGISTRATION
     using namespace rttr;
     using namespace Hyperion;
 
-    registration::class_<Light>(String(NAMEOF_SHORT_TYPE(Light)));
+    registration::class_<Light>(HYP_NAME_OF_TYPE(Light));
 }

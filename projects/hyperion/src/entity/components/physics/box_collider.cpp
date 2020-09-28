@@ -36,5 +36,5 @@ RTTR_REGISTRATION
     using namespace rttr;
     using namespace Hyperion;
 
-    registration::class_<BoxCollider>(String(NAMEOF_SHORT_TYPE(BoxCollider)));
+    registration::class_<BoxCollider>(HYP_NAME_OF_TYPE(BoxCollider));
 }

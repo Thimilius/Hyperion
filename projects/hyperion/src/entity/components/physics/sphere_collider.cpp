@@ -36,5 +36,5 @@ RTTR_REGISTRATION
     using namespace rttr;
     using namespace Hyperion;
 
-    registration::class_<SphereCollider>(String(NAMEOF_SHORT_TYPE(SphereCollider)));
+    registration::class_<SphereCollider>(HYP_NAME_OF_TYPE(SphereCollider));
 }

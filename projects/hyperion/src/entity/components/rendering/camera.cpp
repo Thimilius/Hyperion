@@ -91,12 +91,12 @@ namespace Hyperion {
 
         RecalculateMatricies();
 
-        GetEntity()->GetWorld()->AddCamera(this);
+        GetWorld()->AddCamera(this);
         GetEntity()->RegisterMessageListener(this);
     }
 
     void Camera::OnDestroy() {
-        GetEntity()->GetWorld()->RemoveCamera(this);
+        GetWorld()->RemoveCamera(this);
         GetEntity()->UnregisterMessageListener(this);
 
         Component::OnDestroy();
@@ -133,5 +133,5 @@ RTTR_REGISTRATION
     using namespace rttr;
     using namespace Hyperion;
 
-    registration::class_<Camera>(String(NAMEOF_SHORT_TYPE(Camera)));
+    registration::class_<Camera>(HYP_NAME_OF_TYPE(Camera));
 }

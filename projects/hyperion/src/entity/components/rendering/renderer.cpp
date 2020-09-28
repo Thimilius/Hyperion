@@ -19,5 +19,5 @@ RTTR_REGISTRATION
     using namespace rttr;
     using namespace Hyperion;
 
-    registration::class_<Renderer>(String(NAMEOF_SHORT_TYPE(Renderer)));
+    registration::class_<Renderer>(HYP_NAME_OF_TYPE(Renderer));
 }

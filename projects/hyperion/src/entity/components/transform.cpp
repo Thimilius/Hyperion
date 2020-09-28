@@ -112,5 +112,5 @@ RTTR_REGISTRATION
     using namespace rttr;
     using namespace Hyperion;
 
-    registration::class_<Transform>(String(NAMEOF_SHORT_TYPE(Transform)));
+    registration::class_<Transform>(HYP_NAME_OF_TYPE(Transform));
 }

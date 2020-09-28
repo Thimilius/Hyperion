@@ -13,6 +13,7 @@ namespace Hyperion {
     class Light;
     class MeshRenderer;
     class Transform;
+    class UICanvas;
     class WorldManager;
 
     namespace Rendering {
@@ -31,7 +32,8 @@ namespace Hyperion {
         } ambient_light;
     };
 
-    class World final {
+    class World final : public Object {
+        RTTR_ENABLE(Object);
     public:
         inline WorldEnvironment &GetEnvironment() { return m_environment; }
 
@@ -69,12 +71,9 @@ namespace Hyperion {
             return components;
         }
     private:
-        World();
+        World() : World("World") {}
+        World(const String &name);
         ~World();
-
-        // Worlds can not be copied
-        World(const World &other) = delete;
-        World &operator=(const World &other) = delete;
 
         void AddRootEntity(Entity *entity);
         void RemoveRootEntity(Entity *entity);
@@ -85,6 +84,8 @@ namespace Hyperion {
         void RemoveMeshRenderer(MeshRenderer *mesh_renderer);
         void AddLight(Light *light);
         void RemoveLight(Light *light);
+        void AddUICanvas(UICanvas *ui_canvas);
+        void RemoveUICanvas(UICanvas *ui_canvas);
     private:
         WorldEnvironment m_environment;
 
@@ -95,12 +96,14 @@ namespace Hyperion {
         Vector<Camera *> m_cameras;
         Vector<MeshRenderer *> m_mesh_renderers;
         Vector<Light *> m_lights;
+        Vector<UICanvas *> m_ui_canvases;
     private:
         friend class Hyperion::Camera;
         friend class Hyperion::Entity;
         friend class Hyperion::Light;
         friend class Hyperion::MeshRenderer;
         friend class Hyperion::Transform;
+        friend class Hyperion::UICanvas;
         friend class Hyperion::WorldManager;
     };
 

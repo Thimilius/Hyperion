@@ -26,6 +26,9 @@
 #include <rttr/registration_friend>
 #include <rttr/type>
 
+#define HYP_NAME_OF(...) (String(NAMEOF(__VA_ARGS__)))
+#define HYP_NAME_OF_TYPE(...) (String(NAMEOF_SHORT_TYPE(__VA_ARGS__)))
+
 #define HYP_PANIC do {                                                \
             HYP_LOG_ERROR("Engine", "Engine encountered an error!");  \
             HYP_DEBUG_BREAK;                                          \

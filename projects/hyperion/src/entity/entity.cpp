@@ -196,5 +196,5 @@ RTTR_REGISTRATION
     using namespace rttr;
     using namespace Hyperion;
 
-    registration::class_<Entity>(String(NAMEOF_SHORT_TYPE(Entity)));
+    registration::class_<Entity>(HYP_NAME_OF_TYPE(Entity));
 }

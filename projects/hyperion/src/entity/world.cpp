@@ -7,7 +7,7 @@
 
 namespace Hyperion {
 
-    World::World() {
+    World::World(const String &name) {
         m_physics_world = Physics::PhysicsEngine::CreatePhysicsWorld();
     }
 
@@ -69,4 +69,24 @@ namespace Hyperion {
         }
     }
 
+    void World::AddUICanvas(UICanvas *ui_canvas) {
+        m_ui_canvases.push_back(ui_canvas);
+    }
+
+    void World::RemoveUICanvas(UICanvas *ui_canvas) {
+        auto begin = m_ui_canvases.begin();
+        auto end = m_ui_canvases.end();
+        if (std::find(begin, end, ui_canvas) != end) {
+            m_ui_canvases.erase(std::remove(begin, end, ui_canvas));
+        }
+    }
+
+}
+
+RTTR_REGISTRATION
+{
+    using namespace rttr;
+    using namespace Hyperion;
+
+    registration::class_<World>(HYP_NAME_OF_TYPE(World));
 }

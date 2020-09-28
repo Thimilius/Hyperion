@@ -54,11 +54,11 @@ namespace Hyperion {
     void MeshRenderer::OnCreate() {
         Renderer::OnCreate();
 
-        GetEntity()->GetWorld()->AddMeshRenderer(this);
+        GetWorld()->AddMeshRenderer(this);
     }
 
     void MeshRenderer::OnDestroy() {
-        GetEntity()->GetWorld()->RemoveMeshRenderer(this);
+        GetWorld()->RemoveMeshRenderer(this);
 
         Renderer::OnDestroy();
     }
@@ -70,5 +70,5 @@ RTTR_REGISTRATION
     using namespace rttr;
     using namespace Hyperion;
 
-    registration::class_<MeshRenderer>(String(NAMEOF_SHORT_TYPE(MeshRenderer)));
+    registration::class_<MeshRenderer>(HYP_NAME_OF_TYPE(MeshRenderer));
 }

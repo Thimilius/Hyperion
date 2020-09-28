@@ -44,9 +44,7 @@ namespace Hyperion::Editor {
 
         Entity::CreatePrimitive(EntityPrimitive::DirectionalLight);
         Entity::CreatePrimitive(EntityPrimitive::PointLight);
-        Entity *parent = Entity::CreatePrimitive(EntityPrimitive::Cube);
-
-        Entity::CreatePrimitive(EntityPrimitive::Cube, Vec3(2, 0, 0), Quaternion::Identity(), parent->GetTransform());
+        Entity::CreatePrimitive(EntityPrimitive::Cube);
 
         InitGridVertexArray();
         UpdateStats();
