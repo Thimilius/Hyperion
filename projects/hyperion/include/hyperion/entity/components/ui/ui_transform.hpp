@@ -20,7 +20,7 @@ namespace Hyperion {
         void OnCreate() override;
         void OnDestroy() override;
     private:
-        Vec2 m_size;
+        Vec2 m_size = Vec2(100, 100);
 
         bool m_replace_on_destroy = true;
     private:

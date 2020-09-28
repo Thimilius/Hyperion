@@ -15,6 +15,9 @@
 #include <hyperion/entity/components/rendering/light.hpp>
 #include <hyperion/entity/components/rendering/mesh_renderer.hpp>
 #include <hyperion/entity/components/physics/collider.hpp>
+#include <hyperion/entity/components/ui/ui_canvas.hpp>
+#include <hyperion/entity/components/ui/ui_graphic.hpp>
+#include <hyperion/entity/components/ui/ui_transform.hpp>
 #include <hyperion/physics/physics_world.hpp>
 
 #include "hyperion/editor/editor_selection.hpp"
@@ -45,6 +48,16 @@ namespace Hyperion::Editor {
         Entity::CreatePrimitive(EntityPrimitive::DirectionalLight);
         Entity::CreatePrimitive(EntityPrimitive::PointLight);
         Entity::CreatePrimitive(EntityPrimitive::Cube);
+
+        {
+            Entity *canvas = Entity::Create("Canvas", Vec3::Zero(), Quaternion::Identity(), nullptr, s_editor_world);
+            canvas->AddComponent<UITransform>();
+            canvas->AddComponent<UICanvas>();
+
+            Entity *graphic = Entity::Create("Graphic", Vec3::Zero(), Quaternion::Identity(), canvas->GetTransform(), s_editor_world);
+            graphic->AddComponent<UITransform>();
+            graphic->AddComponent<UIGraphic>();
+        }
 
         InitGridVertexArray();
         UpdateStats();
@@ -157,6 +170,8 @@ namespace Hyperion::Editor {
         if ((s_overlay_flags & EditorOverlayFlags::Stats) == EditorOverlayFlags::Stats) {
             RenderStats();
         }
+
+        ImmediateRenderer::DrawUI(s_editor_world);
 
         RenderCommand::GetRasterizerState()->SetBlendingEnabled(blending_enabled);
     }

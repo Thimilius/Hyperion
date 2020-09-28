@@ -18,8 +18,9 @@ uniform struct Transform {
 
 void main() {
 	o_v2f.color = a_color;
+	o_v2f.uv    = a_uv;
 
-	gl_Position = u_transform.projection * vec4(a_position, 1.0);
+	gl_Position = u_transform.projection * vec4(a_position.x, a_position.y, 0.0, 1.0);
 }
 
 #type fragment
@@ -35,5 +36,5 @@ in V2F {
 uniform sampler2D u_texture;
 
 void main() {
-	o_color = i_v2f.color * texture(u_texture, i_v2f.uv);
+	o_color = i_v2f.color;
 }

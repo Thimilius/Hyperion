@@ -4,6 +4,10 @@
 
 #include "hyperion/rendering/render_command.hpp"
 #include "hyperion/assets/asset_manager.hpp"
+#include "hyperion/entity/world.hpp"
+#include "hyperion/entity/components/ui/ui_canvas.hpp"
+#include "hyperion/entity/components/ui/ui_graphic.hpp"
+#include "hyperion/entity/components/ui/ui_transform.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -11,6 +15,48 @@ namespace Hyperion::Rendering {
         s_state.transform.view = camera.view_matrix;
         s_state.transform.projection = camera.projection_matrix;
         s_state.transform.view_projection = camera.view_projection_matrix;
+    }
+
+    void ImmediateRenderer::DrawUI(World *world) {
+        const Vector<UICanvas *> &ui_canvases = world->GetUICanvases();
+
+        s_ui_resources.shader->Bind();
+        Mat4 projection = Mat4::Orthographic(0, static_cast<f32>(Display::GetWidth()), 0, static_cast<f32>(Display::GetHeight()), -1.0f, 1.0f);
+        s_ui_resources.shader->SetMat4("u_transform.projection", projection);
+        s_ui_resources.vertex_array->Bind();
+
+        for (UICanvas *ui_canvas : ui_canvases) {
+            const Vector<UIGraphic *> ui_graphics = ui_canvas->GetUIGraphics();
+            for (UIGraphic *ui_graphic : ui_graphics) {
+                UITransform *ui_transform = ui_graphic->GetEntity()->GetComponent<UITransform>();
+                if (!ui_transform) {
+                    continue;
+                }
+
+                Vec2 size = ui_transform->GetSize();
+                Vec2 position = ui_transform->GetPosition();
+                Color color = ui_graphic->GetColor();
+
+                f32 x = position.x;
+                f32 y = position.y;
+                f32 w = size.x;
+                f32 h = size.y;
+
+                VertexUI vertices[6] = {
+                    { Vec3(x + w, y + h, 0.0f), color, Vec2(1.0f, 1.0f) },
+                    { Vec3(x + w, y    , 0.0f), color, Vec2(1.0f, 0.0f) },
+                    { Vec3(x    , y    , 0.0f), color, Vec2(0.0f, 0.0f) },
+
+                    { Vec3(x + w, y + h, 0.0f), color, Vec2(1.0f, 1.0f) },
+                    { Vec3(x    , y    , 0.0f), color, Vec2(0.0f, 0.0f) },
+                    { Vec3(x    , y + h, 0.0f), color, Vec2(0.0f, 1.0f) },
+                };
+
+                s_ui_resources.vertex_buffer->SetData(0, sizeof(vertices), (u8 *)vertices);
+
+                RenderCommand::Draw(MeshTopology::Triangles, 6, 0);
+            }
+        }
     }
 
     void ImmediateRenderer::Begin(MeshTopology topology) {
@@ -164,10 +210,16 @@ namespace Hyperion::Rendering {
         s_immediate_resources.vertex_array->AddVertexBuffer(s_immediate_resources.vertex_buffer);
 
         s_font_resources.shader = AssetManager::GetShader("standard_font");
-        s_font_resources.vertex_buffer = VertexBuffer::Create(nullptr, 6 * 4 * sizeof(f32), BufferUsage::DynamicDraw);
+        s_font_resources.vertex_buffer = VertexBuffer::Create(nullptr, 6 * sizeof(VertexFont), BufferUsage::DynamicDraw);
         s_font_resources.vertex_buffer->SetLayout(VertexFont::GetBufferLayout());
         s_font_resources.vertex_array = VertexArray::Create();
         s_font_resources.vertex_array->AddVertexBuffer(s_font_resources.vertex_buffer);
+
+        s_ui_resources.shader = AssetManager::GetShader("standard_ui");
+        s_ui_resources.vertex_buffer = VertexBuffer::Create(nullptr, 6 * sizeof(VertexUI), BufferUsage::DynamicDraw);
+        s_ui_resources.vertex_buffer->SetLayout(VertexUI::GetBufferLayout());
+        s_ui_resources.vertex_array = VertexArray::Create();
+        s_ui_resources.vertex_array->AddVertexBuffer(s_ui_resources.vertex_buffer);
     }
 
     void ImmediateRenderer::Shutdown() {

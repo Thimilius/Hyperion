@@ -109,18 +109,7 @@ namespace Hyperion {
     }
 
     void Entity::OnDestroy() {
-        // First destroy all our components except transform
-        for (auto it = m_components.begin(); it != m_components.end(); ) {
-            auto [component_type, component] = *it;
-            if (!component_type.is_derived_from<Transform>()) {
-                it = m_components.erase(it);
-                DestroyImmediate(component);
-            } else {
-                ++it;
-            }
-        }
-
-        // Now destroy every child
+        // First destroy every child
         if (!m_transform->m_children.empty()) {
             for (s32 i = ((s32)m_transform->m_children.size()) - 1; i >= 0; i--) {
                 Entity *child = m_transform->m_children[i]->m_entity;
@@ -131,6 +120,17 @@ namespace Hyperion {
                 } else {
                     DestroyImmediate(child);
                 }
+            }
+        }
+
+        // Now destroy all our components except transform
+        for (auto it = m_components.begin(); it != m_components.end(); ) {
+            auto [component_type, component] = *it;
+            if (!component_type.is_derived_from<Transform>()) {
+                it = m_components.erase(it);
+                DestroyImmediate(component);
+            } else {
+                ++it;
             }
         }
 

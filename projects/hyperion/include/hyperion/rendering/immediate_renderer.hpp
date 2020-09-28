@@ -19,6 +19,7 @@ namespace Hyperion::Rendering {
 
         static void DrawText(const String &text, Font *font, f32 x, f32 y, f32 scale, Color color);
         static void DrawVertexArray(MeshTopology topology, VertexArray *vertex_array, u32 vertex_count);
+        static void DrawUI(World *world);
 
         static void Begin(MeshTopology topology = MeshTopology::Triangles);
         static void DrawCube(Vec3 center, Vec3 size, Color color);
@@ -63,9 +64,16 @@ namespace Hyperion::Rendering {
             VertexBuffer *vertex_buffer;
         };
         
+        struct UIResources {
+            Shader *shader;
+            VertexArray *vertex_array;
+            VertexBuffer *vertex_buffer;
+        };
+
         inline static State s_state;
         inline static ImmediateResources s_immediate_resources;
         inline static FontResources s_font_resources;
+        inline static UIResources s_ui_resources;
     private:
         friend class Hyperion::Rendering::RenderEngine;
     };

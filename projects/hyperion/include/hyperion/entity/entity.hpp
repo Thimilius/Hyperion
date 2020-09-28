@@ -90,7 +90,7 @@ namespace Hyperion {
             if (component) {
                 return component;
             } else {
-                for (Transform *child : m_transform.m_children) {
+                for (Transform *child : m_transform->m_children) {
                     component = child->GetEntity()->GetComponentInChildren<T>();
                     if (component) {
                         return component;
@@ -103,11 +103,11 @@ namespace Hyperion {
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         T *GetComponentInParent() const {
-            Component *component = GetComponent<T>();
+            T *component = GetComponent<T>();
             if (component) {
                 return component;
             } else {
-                Transform *parent = m_transform.m_parent;
+                Transform *parent = m_transform->m_parent;
                 if (parent != nullptr) {
                     return parent->GetEntity()->GetComponentInParent<T>();
                 }
@@ -125,7 +125,7 @@ namespace Hyperion {
                     components.push_back(static_cast<T *>(component));
                 }
             }
-            for (Transform *child : m_transform.m_children) {
+            for (Transform *child : m_transform->m_children) {
                 Vector<T *> child_components = child->GetEntity()->GetComponentsInChildren<T>();
                 components.insert(components.end(), child_components.begin(), child_components.end());
             }
@@ -142,7 +142,7 @@ namespace Hyperion {
                     components.push_back(static_cast<T *>(component));
                 }
             }
-            Transform *parent = m_transform.m_parent;
+            Transform *parent = m_transform->m_parent;
             if (parent != nullptr) {
                 Vector<T *> parent_components = parent->GetEntity()->GetComponentsInParent<T>();
                 components.insert(components.end(), parent_components.begin(), parent_components.end());

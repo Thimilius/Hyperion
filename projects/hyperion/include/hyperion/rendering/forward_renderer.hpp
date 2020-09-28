@@ -64,13 +64,13 @@ namespace Hyperion::Rendering {
             } lighting;
         };
 
-        struct Skybox {
+        struct SkyboxResources {
             Shader *shader;
             Mesh *mesh;
         };
 
         inline static State s_state;
-        inline static Skybox s_skybox;
+        inline static SkyboxResources s_skybox_resources;
     private:
         friend class Hyperion::Rendering::RenderEngine;
     };

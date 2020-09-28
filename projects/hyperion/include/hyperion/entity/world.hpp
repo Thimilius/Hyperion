@@ -44,6 +44,7 @@ namespace Hyperion {
         inline const Vector<Camera *> &GetCameras() const { return m_cameras; }
         inline const Vector<MeshRenderer *> &GetMeshRenderers() const { return m_mesh_renderers; }
         inline const Vector<Light *> &GetLights() const { return m_lights; }
+        inline const Vector<UICanvas *> &GetUICanvases() const { return m_ui_canvases; }
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         T *FindComponentOfType() {

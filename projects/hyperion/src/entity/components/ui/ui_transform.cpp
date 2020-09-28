@@ -28,6 +28,18 @@ namespace Hyperion {
         entity->m_components.erase(rttr::type::get<Transform>());
         entity->m_components[rttr::type::get<UITransform>()] = this;
 
+        // Update the parent
+        Transform *parent = entity->m_transform->m_parent;
+        if (parent) {
+            auto begin = parent->m_children.begin();
+            auto end = parent->m_children.end();
+            auto pos = std::find(begin, end, obsolete);
+            if (pos != end) {
+                u64 index = std::distance(begin, pos);
+                parent->m_children[index] = this;
+            }
+        }
+
         // Update the children
         for (Transform *child : m_children) {
             child->m_parent = this;

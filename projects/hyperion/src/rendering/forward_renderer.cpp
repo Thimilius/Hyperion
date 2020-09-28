@@ -26,12 +26,12 @@ namespace Hyperion::Rendering {
         DepthEquation depth_equation = RenderCommand::GetRasterizerState()->GetDepthEquation();
         RenderCommand::GetRasterizerState()->SetDepthEquation(DepthEquation::LessEqual);
 
-        s_skybox.shader->Bind();
-        s_skybox.shader->SetMat4("u_transform.view", s_state.transform.view);
-        s_skybox.shader->SetMat4("u_transform.projection", s_state.transform.projection);
-        s_skybox.shader->SetInt("u_skybox", 0);
+        s_skybox_resources.shader->Bind();
+        s_skybox_resources.shader->SetMat4("u_transform.view", s_state.transform.view);
+        s_skybox_resources.shader->SetMat4("u_transform.projection", s_state.transform.projection);
+        s_skybox_resources.shader->SetInt("u_skybox", 0);
         skybox->Bind(0);
-        DrawCall(s_skybox.mesh);
+        DrawCall(s_skybox_resources.mesh);
 
         RenderCommand::GetRasterizerState()->SetDepthEquation(depth_equation);
         RenderCommand::GetRasterizerState()->SetCullingEnabled(culling_enabled);
@@ -92,15 +92,15 @@ namespace Hyperion::Rendering {
     }
 
     void ForwardRenderer::Init() {
-        s_skybox.shader = AssetManager::GetShader("standard_skybox");
-        s_skybox.mesh = MeshFactory::CreateCube(1);
-
         for (u32 i = 0; i < s_state.lighting.MAX_POINT_LIGHT_COUNT; i++) {
             s_state.lighting.point_light_uniforms[i].intensity = StringUtils::Format("u_lighting.point_lights[{}].intensity", i);
             s_state.lighting.point_light_uniforms[i].color = StringUtils::Format("u_lighting.point_lights[{}].color", i);
             s_state.lighting.point_light_uniforms[i].position = StringUtils::Format("u_lighting.point_lights[{}].position", i);
             s_state.lighting.point_light_uniforms[i].range = StringUtils::Format("u_lighting.point_lights[{}].range", i);
         }
+
+        s_skybox_resources.shader = AssetManager::GetShader("standard_skybox");
+        s_skybox_resources.mesh = MeshFactory::CreateCube(1);
     }
 
     void ForwardRenderer::Shutdown() {
