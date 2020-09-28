@@ -26,6 +26,17 @@ namespace Hyperion::Rendering {
         s_ui_resources.vertex_array->Bind();
 
         for (UICanvas *ui_canvas : ui_canvases) {
+            f32 display_width = static_cast<f32>(Display::GetWidth());
+            f32 display_height = static_cast<f32>(Display::GetHeight());
+            Vec2 reference_resolution = ui_canvas->GetReferenceResoultion();
+            f32 kLogBase = 2;
+            f32 logWidth = Math::Log(display_width / reference_resolution.x) / Math::Log(kLogBase);
+            f32 logHeight = Math::Log(display_height / reference_resolution.y) / Math::Log(kLogBase);
+            f32 logWeightedAverage = Math::Lerp(logWidth, logHeight, 0.5f);
+            f32 scale_factor = Math::Pow(kLogBase, logWeightedAverage);
+
+            scale_factor = ui_canvas->GetScale() * scale_factor;
+
             const Vector<UIGraphic *> ui_graphics = ui_canvas->GetUIGraphics();
             for (UIGraphic *ui_graphic : ui_graphics) {
                 UITransform *ui_transform = ui_graphic->GetEntity()->GetComponent<UITransform>();
@@ -37,10 +48,10 @@ namespace Hyperion::Rendering {
                 Vec2 position = ui_transform->GetPosition();
                 Color color = ui_graphic->GetColor();
 
-                f32 x = position.x;
-                f32 y = position.y;
-                f32 w = size.x;
-                f32 h = size.y;
+                f32 x = scale_factor * position.x;
+                f32 y = scale_factor * position.y;
+                f32 w = scale_factor * size.x;
+                f32 h = scale_factor * size.y;
 
                 VertexUI vertices[6] = {
                     { Vec3(x + w, y + h, 0.0f), color, Vec2(1.0f, 1.0f) },

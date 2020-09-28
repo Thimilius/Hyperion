@@ -213,7 +213,6 @@ namespace Hyperion::Editor {
     void EditorEngine::RenderStats() {
         f32 display_width = static_cast<f32>(Display::GetWidth());
         f32 display_height = static_cast<f32>(Display::GetHeight());
-        f32 log_base = Math::Log(2);
         Vec2 reference_resolution = Vec2(1920, 1080);
 
         f32 scale_factor = Math::Min(display_width / reference_resolution.x, display_height / reference_resolution.y);
