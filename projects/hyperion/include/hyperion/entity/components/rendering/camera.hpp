@@ -20,8 +20,8 @@ namespace Hyperion {
     public:
         Camera() : Component("Camera") { }
         
-        inline Rendering::CameraMode GetMode() const { return m_data.mode; }
-        inline void SetMode(Rendering::CameraMode type) { m_data.mode = type; }
+        inline Rendering::CameraProjectionMode GetProjectionMode() const { return m_data.projection_mode; }
+        inline void SetProjectionMode(Rendering::CameraProjectionMode type) { m_data.projection_mode = type; }
 
         inline f32 GetNearPlane() const { return m_data.near_plane; }
         inline void SetNearPlane(f32 near_plane) { m_data.near_plane = near_plane; }

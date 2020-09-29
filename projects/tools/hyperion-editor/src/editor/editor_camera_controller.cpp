@@ -27,7 +27,7 @@ namespace Hyperion::Editor {
             if (Input::GetMouseButton(MouseButtonCode::Right) || Input::GetMouseButton(MouseButtonCode::Middle)) {
                 Vec2 mouse_position = Input::GetMousePosition();
                 x_offset = mouse_position.x - m_last_mouse_position.x;
-                y_offset = m_last_mouse_position.y - mouse_position.y;
+                y_offset = mouse_position.y - m_last_mouse_position.y;
                 m_last_mouse_position.x = mouse_position.x;
                 m_last_mouse_position.y = mouse_position.y;
             }
@@ -68,13 +68,13 @@ namespace Hyperion::Editor {
         // Zoom
         {
             f32 wheel = Input::GetMouseScroll();
-            switch (m_camera->GetMode()) {
-                case CameraMode::Perspective: {
+            switch (m_camera->GetProjectionMode()) {
+                case CameraProjectionMode::Perspective: {
                     m_fov_target -= wheel * 5.0f;
                     m_fov_target = Math::Clamp(m_fov_target, 25, 120);
                     break;
                 }
-                case CameraMode::Orthographic: {
+                case CameraProjectionMode::Orthographic: {
                     m_orthographic_size_target -= wheel * 0.25f;
                     m_orthographic_size_target = Math::Clamp(m_orthographic_size_target, 0.1f, 10);
                     break;

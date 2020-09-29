@@ -6,6 +6,31 @@
 
 namespace Hyperion {
 
+    void UITransform::GetWorldCorners(Vec3 corners[4]) {
+        f32 w = m_size.x;
+        f32 h = m_size.y;
+        f32 p_x = m_pivot.x;
+        f32 p_y = m_pivot.y;
+
+        corners[0] = m_local_to_world_matrix * Vec4((1.0f - p_x) * w, (1.0f - p_y) * h, 0.0f, 1.0f);
+        corners[1] = m_local_to_world_matrix * Vec4((1.0f - p_x) * w, -p_y * h        , 0.0f, 1.0f);
+        corners[2] = m_local_to_world_matrix * Vec4(-p_x * w        , -p_y * h        , 0.0f, 1.0f);
+        corners[3] = m_local_to_world_matrix * Vec4(-p_x * w        , (1.0f - p_y) * h, 0.0f, 1.0f);
+    }
+
+    bool UITransform::IsPointInRect(Vec2 point) {
+        Vec3 world_corners[4];
+        GetWorldCorners(world_corners);
+
+        Vec2 p1 = world_corners[0];
+        Vec2 p2 = world_corners[1];
+        Vec2 p3 = world_corners[2];
+        Vec2 p4 = world_corners[3];
+
+        // NOTE: Counter clockwise order of points is important
+        return (IsLeft(p1, p4, point) > 0 && IsLeft(p4, p3, point) > 0 && IsLeft(p3, p2, point) > 0 && IsLeft(p2, p1, point) > 0);
+    }
+
     void UITransform::OnCreate() {
         // Creating a ui transform means replacing the current one
         Transform *obsolete = GetEntity()->m_transform;
@@ -80,6 +105,10 @@ namespace Hyperion {
         } else {
             Transform::OnDestroy();
         }
+    }
+
+    f32 UITransform::IsLeft(Vec2 p0, Vec2 p1, Vec2 p2) {
+        return ((p1.x - p0.x) * (p2.y - p0.y) - (p2.x - p0.x) * (p1.y - p0.y));
     }
 
 }

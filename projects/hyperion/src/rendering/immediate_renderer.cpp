@@ -26,16 +26,7 @@ namespace Hyperion::Rendering {
         s_ui_resources.vertex_array->Bind();
 
         for (UICanvas *ui_canvas : ui_canvases) {
-            f32 display_width = static_cast<f32>(Display::GetWidth());
-            f32 display_height = static_cast<f32>(Display::GetHeight());
-            Vec2 reference_resolution = ui_canvas->GetReferenceResoultion();
-            f32 kLogBase = 2;
-            f32 logWidth = Math::Log(display_width / reference_resolution.x) / Math::Log(kLogBase);
-            f32 logHeight = Math::Log(display_height / reference_resolution.y) / Math::Log(kLogBase);
-            f32 logWeightedAverage = Math::Lerp(logWidth, logHeight, 0.5f);
-            f32 scale_factor = Math::Pow(kLogBase, logWeightedAverage);
-
-            scale_factor = ui_canvas->GetScale() * scale_factor;
+            f32 scale = ui_canvas->GetFullScale();
 
             const Vector<UIGraphic *> ui_graphics = ui_canvas->GetUIGraphics();
             for (UIGraphic *ui_graphic : ui_graphics) {
@@ -44,23 +35,22 @@ namespace Hyperion::Rendering {
                     continue;
                 }
 
-                Vec2 size = ui_transform->GetSize();
-                Vec2 position = ui_transform->GetPosition();
+                Vec3 world_corners[4];
+                ui_transform->GetWorldCorners(world_corners);
                 Color color = ui_graphic->GetColor();
 
-                f32 x = scale_factor * position.x;
-                f32 y = scale_factor * position.y;
-                f32 w = scale_factor * size.x;
-                f32 h = scale_factor * size.y;
+                if (ui_transform->IsPointInRect(Input::GetMousePosition())) {
+                    color = Color::Red();
+                }
 
                 VertexUI vertices[6] = {
-                    { Vec3(x + w, y + h, 0.0f), color, Vec2(1.0f, 1.0f) },
-                    { Vec3(x + w, y    , 0.0f), color, Vec2(1.0f, 0.0f) },
-                    { Vec3(x    , y    , 0.0f), color, Vec2(0.0f, 0.0f) },
+                    { world_corners[0], color, Vec2(1.0f, 1.0f) },
+                    { world_corners[1], color, Vec2(1.0f, 0.0f) },
+                    { world_corners[2], color, Vec2(0.0f, 0.0f) },
 
-                    { Vec3(x + w, y + h, 0.0f), color, Vec2(1.0f, 1.0f) },
-                    { Vec3(x    , y    , 0.0f), color, Vec2(0.0f, 0.0f) },
-                    { Vec3(x    , y + h, 0.0f), color, Vec2(0.0f, 1.0f) },
+                    { world_corners[0], color, Vec2(1.0f, 1.0f) },
+                    { world_corners[2], color, Vec2(0.0f, 0.0f) },
+                    { world_corners[3], color, Vec2(0.0f, 1.0f) },
                 };
 
                 s_ui_resources.vertex_buffer->SetData(0, sizeof(vertices), (u8 *)vertices);

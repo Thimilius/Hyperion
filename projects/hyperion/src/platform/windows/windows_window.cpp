@@ -628,7 +628,9 @@ namespace Hyperion {
                 s32 x = GET_X_LPARAM(l_param);
                 s32 y = GET_Y_LPARAM(l_param);
                 
-                MouseMovedEvent event(static_cast<f32>(x), static_cast<f32>(y));
+                f32 height = static_cast<f32>(window->m_height);
+
+                MouseMovedEvent event(static_cast<f32>(x), height - static_cast<f32>(y));
                 window->DispatchEvent(event);
                 break;
             }

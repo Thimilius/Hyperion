@@ -5,13 +5,13 @@
 
 namespace Hyperion::Rendering {
 
-    enum class CameraMode {
+    enum class CameraProjectionMode {
         Perspective,
         Orthographic
     };
 
     struct CameraData {
-        CameraMode mode = CameraMode::Perspective;
+        CameraProjectionMode projection_mode = CameraProjectionMode::Perspective;
 
         Vec3 position = Vec3(0, 0, 0);
         Vec3 forward = Vec3(0, 0, -1);
@@ -23,13 +23,13 @@ namespace Hyperion::Rendering {
         f32 fov = 90.0f;
         f32 orthographic_size = 2.75f;
 
-        Mat4 view_matrix;
-        Mat4 projection_matrix;
-        Mat4 view_projection_matrix;
+        Mat4 view_matrix = Mat4::Identity();
+        Mat4 projection_matrix = Mat4::Identity();
+        Mat4 view_projection_matrix = Mat4::Identity();
 
-        Mat4 inverse_view_matrix;
-        Mat4 inverse_projection_matrix;
-        Mat4 inverse_view_projection_matrix;
+        Mat4 inverse_view_matrix = Mat4::Identity();
+        Mat4 inverse_projection_matrix = Mat4::Identity();
+        Mat4 inverse_view_projection_matrix = Mat4::Identity();
     };
 
 }
