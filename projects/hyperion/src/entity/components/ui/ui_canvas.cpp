@@ -43,6 +43,9 @@ namespace Hyperion {
         m_cached_display_height = display_height;
         m_full_scale = m_scale * scale_factor;
 
+        UITransform *transform = GetEntity()->GetComponent<UITransform>();
+        transform->SetSize(Vec2(display_width, display_height));
+
         GetTransform()->SetLocalScale(Vec3(m_full_scale, m_full_scale, m_full_scale));
     }
 

@@ -19,6 +19,11 @@ namespace Hyperion {
         Vec2 GetPivot() const { return m_pivot; }
         void SetPivot(Vec2 pivot) { m_pivot = pivot; }
 
+        Vec2 GetAnchorMin() const { return m_anchor_min; }
+        void SetAnchorMin(Vec2 anchor_min) { m_anchor_min = anchor_min; }
+        Vec2 GetAnchorMax() const { return m_anchor_max; }
+        void SetAnchorMax(Vec2 anchor_max) { m_anchor_max = anchor_max; }
+
         void GetWorldCorners(Vec3 corners[4]);
         bool IsPointInRect(Vec2 point);
     protected:
@@ -29,6 +34,9 @@ namespace Hyperion {
     private:
         Vec2 m_size = Vec2(100, 100);
         Vec2 m_pivot = Vec2(0.0f, 0.0f);
+
+        Vec2 m_anchor_min = Vec2(0.5f, 0.5f);
+        Vec2 m_anchor_max = Vec2(0.5f, 0.5f);
 
         bool m_replace_on_destroy = true;
     private:
