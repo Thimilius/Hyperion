@@ -20,8 +20,11 @@ namespace Hyperion::Rendering {
     void ImmediateRenderer::DrawUI(World *world) {
         const Vector<UICanvas *> &ui_canvases = world->GetUICanvases();
 
+        f32 half_width = static_cast<f32>(Display::GetWidth()) / 2.0f;
+        f32 half_height = static_cast<f32>(Display::GetHeight()) / 2.0f;
+
+        Mat4 projection = Mat4::Orthographic(-half_width, half_width, -half_height, half_height, -1.0f, 1.0f);
         s_ui_resources.shader->Bind();
-        Mat4 projection = Mat4::Orthographic(0, static_cast<f32>(Display::GetWidth()), 0, static_cast<f32>(Display::GetHeight()), -1.0f, 1.0f);
         s_ui_resources.shader->SetMat4("u_transform.projection", projection);
         s_ui_resources.vertex_array->Bind();
 
@@ -39,7 +42,9 @@ namespace Hyperion::Rendering {
                 ui_transform->GetWorldCorners(world_corners);
                 Color color = ui_graphic->GetColor();
 
-                if (ui_transform->IsPointInRect(Input::GetMousePosition())) {
+                Vec2 mouse_position = Input::GetMousePosition();
+                Vec2 screen_point = Vec2(mouse_position.x - half_width, mouse_position.y - half_height);
+                if (ui_transform->IsPointInRect(screen_point)) {
                     color = Color::Red();
                 }
 

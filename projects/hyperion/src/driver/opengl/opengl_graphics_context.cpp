@@ -21,7 +21,7 @@ namespace Hyperion::Rendering {
         s32 extension_count;
         glGetIntegerv(GL_NUM_EXTENSIONS, &extension_count);
         for (s32 i = 0; i < extension_count; i++) {
-            String extension = (const char *)glGetStringi(GL_EXTENSIONS, i);
+            String extension = reinterpret_cast<const char *>(glGetStringi(GL_EXTENSIONS, i));
             m_extensions.push_back(extension);
             if (HYP_OPENGL_LOG_EXTENSIONS) {
                 HYP_LOG_INFO("OpenGL", "Extension: '{}' available!", extension);
@@ -31,9 +31,9 @@ namespace Hyperion::Rendering {
 
         // Query properties
         {
-            m_properties.vendor = (const char *)glGetString(GL_VENDOR);
-            m_properties.renderer = (const char *)glGetString(GL_RENDERER);
-            m_properties.version = (const char *)glGetString(GL_VERSION);
+            m_properties.vendor = reinterpret_cast<const char *>(glGetString(GL_VENDOR));
+            m_properties.renderer = reinterpret_cast<const char *>(glGetString(GL_RENDERER));
+            m_properties.version = reinterpret_cast<const char *>(glGetString(GL_VERSION));
         }
         
         // Query limits

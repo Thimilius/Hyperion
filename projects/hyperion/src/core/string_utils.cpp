@@ -10,7 +10,7 @@ namespace Hyperion {
 
     Vector<u32> StringUtils::GetCodepointsUtf8(const String &string) {
         // Implementation from https://github.com/sheredom/utf8.h/blob/master/utf8.h
-        const char *s = (const char *)string.c_str();
+        const char *s = string.c_str();
 
         Vector<u32> codepoints;
 

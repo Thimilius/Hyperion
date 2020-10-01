@@ -12,18 +12,6 @@ namespace Hyperion {
         f32 p_x = m_pivot.x;
         f32 p_y = m_pivot.y;
 
-        if (m_parent) {
-            UITransform *parent_transform = m_parent->GetEntity()->GetComponent<UITransform>();
-            if (parent_transform) {
-                Vec2 size = parent_transform->GetSize();
-
-                f32 x = m_anchor_min.x * size.x;
-                f32 y = m_anchor_min.y * size.y;
-
-                SetPosition(Vec3(x, y, 0));
-            }
-        }
-
         corners[0] = m_local_to_world_matrix * Vec4((1.0f - p_x) * w, (1.0f - p_y) * h, 0.0f, 1.0f);
         corners[1] = m_local_to_world_matrix * Vec4((1.0f - p_x) * w, -p_y * h        , 0.0f, 1.0f);
         corners[2] = m_local_to_world_matrix * Vec4(-p_x * w        , -p_y * h        , 0.0f, 1.0f);
