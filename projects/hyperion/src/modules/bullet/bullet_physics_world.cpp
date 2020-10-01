@@ -83,12 +83,12 @@ namespace Hyperion::Physics {
         btTriangleMesh *triangle_mesh = new btTriangleMesh();
 
         const Rendering::MeshData &mesh_data = mesh_collider->GetMesh()->GetMeshData();
-        u32 indicies_count = static_cast<u32>(mesh_data.indicies.size());
+        u32 indices_count = static_cast<u32>(mesh_data.indices.size());
         u32 index = 0;
-        while (index < indicies_count) {
-            Vec3 vertex0 = mesh_data.positions[mesh_data.indicies[index++]];
-            Vec3 vertex1 = mesh_data.positions[mesh_data.indicies[index++]];
-            Vec3 vertex2 = mesh_data.positions[mesh_data.indicies[index++]];
+        while (index < indices_count) {
+            Vec3 vertex0 = mesh_data.positions[mesh_data.indices[index++]];
+            Vec3 vertex1 = mesh_data.positions[mesh_data.indices[index++]];
+            Vec3 vertex2 = mesh_data.positions[mesh_data.indices[index++]];
 
             triangle_mesh->addTriangle(btVector3(vertex0.x, vertex0.y, vertex0.z), btVector3(vertex1.x, vertex1.y, vertex1.z), btVector3(vertex2.x, vertex2.y, vertex2.z));
         }

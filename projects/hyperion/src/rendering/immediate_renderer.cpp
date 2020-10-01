@@ -53,7 +53,7 @@ namespace Hyperion::Rendering {
                     { world_corners[3], color, Vec2(0.0f, 1.0f) },
                 };
 
-                s_ui_resources.vertex_buffer->SetData(0, sizeof(vertices), (u8 *)vertices);
+                s_ui_resources.vertex_buffer->SetData(0, sizeof(vertices), reinterpret_cast<u8 *>(vertices));
 
                 RenderCommand::Draw(MeshTopology::Triangles, 6, 0);
             }
@@ -94,7 +94,7 @@ namespace Hyperion::Rendering {
             };
 
             glyph.texture->Bind(0);
-            s_font_resources.vertex_buffer->SetData(0, sizeof(vertices), (u8 *)vertices);
+            s_font_resources.vertex_buffer->SetData(0, sizeof(vertices), reinterpret_cast<u8 *>(vertices));
 
             RenderCommand::Draw(MeshTopology::Triangles, 6, 0);
 

@@ -65,16 +65,16 @@ namespace Hyperion {
             mesh_data.uvs.emplace_back(Vec2(uv.x, uv.y));
         }
 
-        // Handle indicies
-        u32 index_offset = static_cast<u32>(mesh_data.indicies.size());
+        // Handle indices
+        u32 index_offset = static_cast<u32>(mesh_data.indices.size());
         u32 index_count = mesh->mNumFaces * 3;
-        mesh_data.indicies.reserve(index_offset + index_count);
+        mesh_data.indices.reserve(index_offset + index_count);
         for (u32 i = 0; i < mesh->mNumFaces; i++) {
             aiFace face = mesh->mFaces[i];
 
-            mesh_data.indicies.emplace_back(face.mIndices[0]);
-            mesh_data.indicies.emplace_back(face.mIndices[1]);
-            mesh_data.indicies.emplace_back(face.mIndices[2]);
+            mesh_data.indices.emplace_back(face.mIndices[0]);
+            mesh_data.indices.emplace_back(face.mIndices[1]);
+            mesh_data.indices.emplace_back(face.mIndices[2]);
         }
 
         sub_meshes.push_back({ GetMeshTopologyForPrimitiveType(mesh->mPrimitiveTypes), index_count, index_offset, vertex_offset });

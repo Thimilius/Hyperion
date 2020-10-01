@@ -312,7 +312,7 @@ namespace Hyperion::Editor {
         verticies[index++] = { Vec3(0, 0, -1000), Color::Blue() };
         verticies[index++] = { Vec3(0, 0, 1000), Color::Blue() };
 
-        VertexBuffer *vertex_buffer = VertexBuffer::Create((u8 *)verticies.data(), s_grid_vertex_count * sizeof(VertexImmediate));
+        VertexBuffer *vertex_buffer = VertexBuffer::Create(reinterpret_cast<u8 *>(verticies.data()), s_grid_vertex_count * sizeof(VertexImmediate));
         vertex_buffer->SetLayout(VertexImmediate::GetBufferLayout());
         s_grid_vertex_array = VertexArray::Create();
         s_grid_vertex_array->AddVertexBuffer(vertex_buffer);

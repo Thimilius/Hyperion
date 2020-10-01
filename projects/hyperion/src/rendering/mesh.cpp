@@ -24,8 +24,8 @@ namespace Hyperion::Rendering {
         VertexBuffer *vertex_buffer = VertexBuffer::Create((u8*)verticies.data(), vertex_count * sizeof(VertexMesh));
         vertex_buffer->SetLayout(VertexMesh::GetBufferLayout());
 
-        u32 index_count = static_cast<u32>(mesh_data.indicies.size());
-        IndexBuffer *index_buffer = IndexBuffer::Create(mesh_data.indicies.data(), index_count);
+        u32 index_count = static_cast<u32>(mesh_data.indices.size());
+        IndexBuffer *index_buffer = IndexBuffer::Create(mesh_data.indices.data(), index_count);
 
         m_vertex_array = VertexArray::Create();
         m_vertex_array->AddVertexBuffer(vertex_buffer);

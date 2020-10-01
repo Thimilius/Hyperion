@@ -9,6 +9,7 @@ namespace Hyperion {
         static Rendering::Mesh *CreateQuad(f32 width, f32 height);
         static Rendering::Mesh *CreatePlane(f32 width, f32 height);
         static Rendering::Mesh *CreateCube(f32 size);
+        static Rendering::Mesh *CreateSphere(f32 radius);
         static Rendering::Mesh *CreateFromFile(const String &path);
     private:
         MeshFactory() = delete;

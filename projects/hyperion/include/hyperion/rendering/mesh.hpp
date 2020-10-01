@@ -21,7 +21,7 @@ namespace Hyperion::Rendering {
         Vector<Vec3> normals;
         Vector<Vec2> uvs;
 
-        Vector<u32> indicies;
+        Vector<u32> indices;
     };
 
     struct SubMesh {

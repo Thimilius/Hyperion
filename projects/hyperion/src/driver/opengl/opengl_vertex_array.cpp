@@ -28,7 +28,7 @@ namespace Hyperion::Rendering {
         for (s32 index = 0; index < elements.size(); index++) {
             auto &element = elements[index];
 
-            // To better distinguish the different indicies used
+            // To better distinguish the different indices used
             s32 attribute_index = index;
             s32 binding_index = static_cast<s32>(m_vertex_buffers.size());
 

@@ -181,7 +181,6 @@ namespace Hyperion {
 
     void AssetManager::ReloadShader(const String &name) {
         if (s_shaders.find(name) == s_shaders.end()) {
-            // Apparently we are trying to reload a shader that is not part of the 
             HYP_LOG_WARN("AssetLibrary", "Trying to reload a shader that is not in the library!");
             return;
         }
@@ -208,10 +207,10 @@ namespace Hyperion {
     }
 
     void AssetManager::InitMeshPrimitives() {
-        s_mesh_primitives.quad = MeshFactory::CreateQuad(1, 1);
-        s_mesh_primitives.plane = MeshFactory::CreatePlane(10, 10);
-        s_mesh_primitives.cube = MeshFactory::CreateCube(1);
-        s_mesh_primitives.sphere = MeshFactory::CreateFromFile("data/models/sphere.obj"); // TODO: Procedurally create sphere
+        s_mesh_primitives.quad = MeshFactory::CreateQuad(1.0f, 1.0f);
+        s_mesh_primitives.plane = MeshFactory::CreatePlane(10.0f, 10.0f);
+        s_mesh_primitives.cube = MeshFactory::CreateCube(1.0f);
+        s_mesh_primitives.sphere = MeshFactory::CreateSphere(0.5f);
     }
 
     TextureFormat AssetManager::GetTextureFormatFromImage(Image *image) {

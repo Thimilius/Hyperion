@@ -21,7 +21,7 @@ namespace Hyperion {
         mesh_data.positions.resize(4);
         mesh_data.normals.resize(4);
         mesh_data.uvs.resize(4);
-        mesh_data.indicies.resize(6);
+        mesh_data.indices.resize(6);
 
         mesh_data.positions[0] = Vec3(half_width, half_height, 0);
         mesh_data.normals[0] = normal;
@@ -39,7 +39,7 @@ namespace Hyperion {
         mesh_data.uvs[3] = Vec2(0.0f, 1.0f);
         mesh_data.positions[3] = Vec3(-half_width, half_height, 0);
 
-        mesh_data.indicies = {
+        mesh_data.indices = {
             0, 1, 2,
             0, 2, 3
         };
@@ -58,7 +58,7 @@ namespace Hyperion {
         mesh_data.positions.resize(4);
         mesh_data.normals.resize(4);
         mesh_data.uvs.resize(4);
-        mesh_data.indicies.resize(6);
+        mesh_data.indices.resize(6);
 
         // Remember that we are right-handed and therefore -z is into the screen!
 
@@ -78,7 +78,7 @@ namespace Hyperion {
         mesh_data.normals[3] = normal;
         mesh_data.uvs[3] = Vec2(1.0f, 0.0f);
 
-        mesh_data.indicies = {
+        mesh_data.indices = {
             0, 1, 2,
             0, 2, 3
         };
@@ -91,7 +91,7 @@ namespace Hyperion {
         mesh_data.positions.resize(24);
         mesh_data.normals.resize(24);
         mesh_data.uvs.resize(24);
-        mesh_data.indicies.resize(36);
+        mesh_data.indices.resize(36);
 
         f32 half_size = size / 2.0f;
 
@@ -200,7 +200,7 @@ namespace Hyperion {
             mesh_data.uvs[23] = Vec2(1, 0);
         }
 
-        mesh_data.indicies = {
+        mesh_data.indices = {
             // Back
             0, 1, 2,
             0, 2, 3,
@@ -227,6 +227,61 @@ namespace Hyperion {
         };
 
         return Mesh::Create(mesh_data, { { MeshTopology::Triangles, 36, 0, 0 } });
+    }
+
+    Rendering::Mesh *MeshFactory::CreateSphere(f32 radius) {
+        MeshData mesh_data;
+
+        const u32 SECTOR_COUNT = 36;
+        const u32 STACK_COUNT = 18;
+        const f32 SECTOR_STEP = 2 * Math::PI / SECTOR_COUNT;
+        const f32 STACK_STEP = Math::PI / STACK_COUNT;
+
+        f32 length_inverse = 1.0f / radius;
+
+        for (u32 i = 0; i <= STACK_COUNT; ++i) {
+            f32 stack_angle = Math::PI / 2 - i * STACK_STEP;
+            f32 xy = radius * Math::Cos(stack_angle);
+            f32 y = radius * Math::Sin(stack_angle);
+
+            for (int j = 0; j <= SECTOR_COUNT; ++j) {
+                f32 sector_angle = j * SECTOR_STEP;
+
+                f32 x = xy * Math::Cos(sector_angle);
+                f32 z = xy * Math::Sin(sector_angle);
+                mesh_data.positions.push_back(Vec3(x, y, z));
+
+                f32 nx = x * length_inverse;
+                f32 ny = y * length_inverse;
+                f32 nz = z * length_inverse;
+                mesh_data.normals.push_back(Vec3(nx, ny, nz));
+
+                f32 u = static_cast<f32>(j) / SECTOR_COUNT;
+                f32 v = static_cast<f32>(i) / STACK_COUNT;
+                mesh_data.uvs.push_back(Vec2(u, v));
+            }
+        }
+
+        for (u32 i = 0; i < STACK_COUNT; ++i) {
+            u32 k1 = i * (SECTOR_COUNT + 1);
+            u32 k2 = k1 + SECTOR_COUNT + 1;
+
+            for (u32 j = 0; j < SECTOR_COUNT; ++j, ++k1, ++k2) {
+                if (i != 0) {
+                    mesh_data.indices.push_back(k1);
+                    mesh_data.indices.push_back(k2);
+                    mesh_data.indices.push_back(k1 + 1);
+                }
+
+                if (i != (STACK_COUNT - 1)) {
+                    mesh_data.indices.push_back(k1 + 1);
+                    mesh_data.indices.push_back(k2);
+                    mesh_data.indices.push_back(k2 + 1);
+                }
+            }
+        }
+
+        return Mesh::Create(mesh_data, { { MeshTopology::Triangles, static_cast<u32>(mesh_data.indices.size()), 0, 0 } });
     }
 
     Mesh *MeshFactory::CreateFromFile(const String &path) {
