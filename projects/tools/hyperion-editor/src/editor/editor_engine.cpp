@@ -6,7 +6,6 @@
 #include <hyperion/rendering/render_command.hpp>
 #include <hyperion/rendering/immediate_renderer.hpp>
 #include <hyperion/rendering/forward_renderer.hpp>
-#include <hyperion/rendering/font.hpp>
 #include <hyperion/assets/asset_manager.hpp>
 #include <hyperion/assets/mesh_factory.hpp>
 #include <hyperion/entity/entity.hpp>
@@ -26,7 +25,7 @@ using namespace Hyperion::Rendering;
 
 namespace Hyperion::Editor {
 
-    void EditorEngine::Init() {
+    void EditorEngine::OnInit() {
         s_editor_world = WorldManager::CreateWorld();
         s_game_world = WorldManager::CreateWorld();
         WorldManager::SetActiveWorld(s_game_world);
@@ -37,6 +36,12 @@ namespace Hyperion::Editor {
         s_icon_mesh = MeshFactory::CreateQuad(0.5f, 0.5f);
         s_icon_material = Material::Create(AssetManager::GetShader("standard_unlit_texture"));
         
+        TextureParameters render_texture_parameters;
+        render_texture_parameters.use_mipmaps = false;
+        s_render_texture = RenderTexture::Create(Display::GetWidth(), Display::GetHeight(), RenderTextureFormat::RGBA8, render_texture_parameters);
+        s_fullscreen_shader = AssetManager::GetShader("standard_fullscreen");
+        s_fullscreen_shader->SetInt("u_texture", 0);
+
         s_selection_material = Material::Create(AssetManager::GetShader("standard_unlit"));
 
         s_font = Font::Create("data/fonts/robotomono_regular.ttf", 18, FontCharacterSet::All);
@@ -64,7 +69,7 @@ namespace Hyperion::Editor {
         UpdateStats();
     }
 
-    void EditorEngine::Update(f32 delta_time) {
+    void EditorEngine::OnUpdate(f32 delta_time) {
         Window *window = Application::GetInstance()->GetWindow();
 
         if (Input::GetKeyDown(KeyCode::Escape) || ((Input::GetKey(KeyCode::LeftControl) || Input::GetKey(KeyCode::RightControl)) && Input::GetKeyDown(KeyCode::W))) {
@@ -142,6 +147,9 @@ namespace Hyperion::Editor {
     void EditorEngine::Render() {
         ForwardRenderer::SetCameraData(s_camera->GetCameraData());
         ImmediateRenderer::SetCameraData(s_camera->GetCameraData());
+        
+        RenderCommand::SetActiveRenderTarget(s_render_texture);
+        RenderCommand::Clear(ClearMask::Color | ClearMask::Depth | ClearMask::Stencil);
 
         ForwardRenderer::DrawEntities(s_game_world);
 
@@ -175,10 +183,22 @@ namespace Hyperion::Editor {
         ImmediateRenderer::DrawUI(s_editor_world);
 
         RenderCommand::GetRasterizerState()->SetBlendingEnabled(blending_enabled);
+
+        RenderCommand::SetActiveRenderTarget(nullptr);
+        s_fullscreen_shader->Bind();
+        s_render_texture->BindTexture(0);
+        RenderCommand::Draw(MeshTopology::Triangles, 3, 0);
     }
 
-    void EditorEngine::Tick() {
+    void EditorEngine::OnTick() {
         UpdateStats();
+    }
+
+    void EditorEngine::OnEvent(Event &event) {
+        if (event.GetType() == EventType::WindowResize) {
+            WindowResizeEvent resize_event = static_cast<WindowResizeEvent &>(event);
+            s_render_texture->Resize(resize_event.GetWidth(), resize_event.GetHeight());
+        }
     }
 
     void EditorEngine::RenderGizmo() {

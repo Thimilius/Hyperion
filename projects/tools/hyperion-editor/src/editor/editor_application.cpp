@@ -12,15 +12,19 @@ namespace Hyperion::Editor {
         EditorApplication(const ApplicationSettings &settings) : Application(settings) { }
     protected:
         void OnInit() override {
-            EditorEngine::Init();
+            EditorEngine::OnInit();
         }
 
         void OnUpdate(f32 delta_time) override {
-            EditorEngine::Update(delta_time);
+            EditorEngine::OnUpdate(delta_time);
         }
 
         void OnTick() override {
-            EditorEngine::Tick();
+            EditorEngine::OnTick();
+        }
+
+        void OnEvent(Event &event) override {
+            EditorEngine::OnEvent(event);
         }
     };
 

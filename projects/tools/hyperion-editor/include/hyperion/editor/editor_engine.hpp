@@ -1,8 +1,10 @@
 #pragma once
 
+#include <hyperion/core/app/events/window_events.hpp>
 #include <hyperion/rendering/vertex_array.hpp>
 #include <hyperion/rendering/mesh.hpp>
 #include <hyperion/rendering/material.hpp>
+#include <hyperion/rendering/render_texture.hpp>
 #include <hyperion/rendering/font.hpp>
 
 #include "hyperion/editor/editor_camera_controller.hpp"
@@ -28,10 +30,11 @@ namespace Hyperion::Editor {
     public:
         static Camera *GetCamera() { return s_camera; }
 
-        static void Init();
-        static void Update(f32 delta_time);
+        static void OnInit();
+        static void OnUpdate(f32 delta_time);
         static void Render();
-        static void Tick();
+        static void OnTick();
+        static void OnEvent(Event &event);
     private:
         EditorEngine() = delete;
         ~EditorEngine() = delete;
@@ -56,6 +59,9 @@ namespace Hyperion::Editor {
         inline static u32 s_grid_size = 100;
         inline static u32 s_grid_vertex_count;
         inline static Rendering::VertexArray *s_grid_vertex_array;
+
+        inline static Rendering::RenderTexture *s_render_texture;
+        inline static Rendering::Shader *s_fullscreen_shader;
 
         inline static Rendering::Mesh *s_icon_mesh;
         inline static Rendering::Material *s_icon_material;
