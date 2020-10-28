@@ -24,6 +24,9 @@ namespace Hyperion {
         Vec2 GetAnchorMax() const { return m_anchor_max; }
         void SetAnchorMax(Vec2 anchor_max) { m_anchor_max = anchor_max; }
 
+        Vec3 GetAnchoredPosition() const { return m_anchored_position; }
+        void SetAnchoredPosition(Vec3 anchored_position) { m_anchored_position = anchored_position; }
+
         void GetWorldCorners(Vec3 corners[4]);
         bool IsPointInRect(Vec2 point);
     protected:
@@ -37,6 +40,8 @@ namespace Hyperion {
 
         Vec2 m_anchor_min = Vec2(0.5f, 0.5f);
         Vec2 m_anchor_max = Vec2(0.5f, 0.5f);
+
+        Vec3 m_anchored_position = Vec3(0.0f, 0.0f, 0.0f);
 
         bool m_replace_on_destroy = true;
     private:

@@ -12,6 +12,27 @@ namespace Hyperion {
         f32 p_x = m_pivot.x;
         f32 p_y = m_pivot.y;
 
+        Vec2 parent_size;
+        if (m_parent && m_parent->GetType() == rttr::type::get<UITransform>()) {
+            UITransform *parent_transform = static_cast<UITransform *>(m_parent);
+            parent_size = parent_transform->m_size;
+        } else {
+            parent_size = Vec2(static_cast<f32>(Display::GetWidth()), static_cast<f32>(Display::GetHeight()));
+        }
+        Vec2 half_parent_size = parent_size / 2.0f;
+
+        // This comparison is most likely very unreliable
+        bool stretching = m_anchor_min != m_anchor_max;
+        if (!stretching) {
+            f32 x = m_anchor_min.x * parent_size.x - half_parent_size.x;
+            f32 y = m_anchor_min.y * parent_size.y - half_parent_size.y;
+
+            f32 offset_x = m_derived_scale.x * m_anchored_position.x;
+            f32 offset_y = m_derived_scale.y * m_anchored_position.y;
+
+            SetPosition(Vec3(x + offset_x, y + offset_y, 0.0f));
+        }
+
         corners[0] = m_local_to_world_matrix * Vec4((1.0f - p_x) * w, (1.0f - p_y) * h, 0.0f, 1.0f);
         corners[1] = m_local_to_world_matrix * Vec4((1.0f - p_x) * w, -p_y * h        , 0.0f, 1.0f);
         corners[2] = m_local_to_world_matrix * Vec4(-p_x * w        , -p_y * h        , 0.0f, 1.0f);

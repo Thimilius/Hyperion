@@ -29,8 +29,6 @@ namespace Hyperion::Rendering {
         s_ui_resources.vertex_array->Bind();
 
         for (UICanvas *ui_canvas : ui_canvases) {
-            f32 scale = ui_canvas->GetFullScale();
-
             const Vector<UIGraphic *> ui_graphics = ui_canvas->GetUIGraphics();
             for (UIGraphic *ui_graphic : ui_graphics) {
                 UITransform *ui_transform = ui_graphic->GetEntity()->GetComponent<UITransform>();
