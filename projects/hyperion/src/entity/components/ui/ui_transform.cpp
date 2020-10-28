@@ -6,6 +6,67 @@
 
 namespace Hyperion {
 
+    void UITransform::SetAnchoringPreset(AnchoringPreset anchoring_preset) {
+        switch (anchoring_preset) {
+            case AnchoringPreset::Center: {
+                m_anchor_min = Vec2(0.5f, 0.5f);
+                m_anchor_max = Vec2(0.5f, 0.5f);
+                m_pivot = Vec2(0.5f, 0.5f);
+                break;
+            }
+            case AnchoringPreset::RightCenter: {
+                m_anchor_min = Vec2(1.0f, 0.5f);
+                m_anchor_max = Vec2(1.0f, 0.5f);
+                m_pivot = Vec2(1.0f, 0.5f);
+                break;
+            }
+            case AnchoringPreset::LeftCenter: {
+                m_anchor_min = Vec2(0.0f, 0.5f);
+                m_anchor_max = Vec2(0.0f, 0.5f);
+                m_pivot = Vec2(0.0f, 0.5f);
+                break;
+            }
+            case AnchoringPreset::TopCenter: {
+                m_anchor_min = Vec2(0.5f, 1.0f);
+                m_anchor_max = Vec2(0.5f, 1.0f);
+                m_pivot = Vec2(0.5f, 1.0f);
+                break;
+            }
+            case AnchoringPreset::BottomCenter: {
+                m_anchor_min = Vec2(0.5f, 0.0f);
+                m_anchor_max = Vec2(0.5f, 0.0f);
+                m_pivot = Vec2(0.5f, 0.0f);
+                break;
+            }
+            case AnchoringPreset::TopRightCorner: {
+                m_anchor_min = Vec2(1.0f, 1.0f);
+                m_anchor_max = Vec2(1.0f, 1.0f);
+                m_pivot = Vec2(1.0f, 1.0f);
+                break;
+            }
+            case AnchoringPreset::TopLeftCorner: {
+                m_anchor_min = Vec2(0.0f, 1.0f);
+                m_anchor_max = Vec2(0.0f, 1.0f);
+                m_pivot = Vec2(0.0f, 1.0f);
+                break;
+            }
+            case AnchoringPreset::BottomRightCorner: {
+                m_anchor_min = Vec2(1.0f, 0.0f);
+                m_anchor_max = Vec2(1.0f, 0.0f);
+                m_pivot = Vec2(1.0f, 0.0f);
+                break;
+            }
+            case AnchoringPreset::BottomLeftCorner: {
+                m_anchor_min = Vec2(0.0f, 0.0f);
+                m_anchor_max = Vec2(0.0f, 0.0f);
+                m_pivot = Vec2(0.0f, 0.0f);
+                break;
+            }
+            default:
+                HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        }
+    }
+
     void UITransform::GetWorldCorners(Vec3 corners[4]) {
         f32 w = m_size.x;
         f32 h = m_size.y;

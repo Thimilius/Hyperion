@@ -9,6 +9,20 @@ namespace Hyperion {
 
 namespace Hyperion {
 
+    enum class AnchoringPreset {
+        Center,
+
+        RightCenter,
+        LeftCenter,
+        TopCenter,
+        BottomCenter,
+
+        TopRightCorner,
+        TopLeftCorner,
+        BottomRightCorner,
+        BottomLeftCorner
+    };
+
     class UITransform : public Transform {
         RTTR_ENABLE(Transform);
     public:
@@ -26,6 +40,8 @@ namespace Hyperion {
 
         Vec3 GetAnchoredPosition() const { return m_anchored_position; }
         void SetAnchoredPosition(Vec3 anchored_position) { m_anchored_position = anchored_position; }
+
+        void SetAnchoringPreset(AnchoringPreset anchoring_preset);
 
         void GetWorldCorners(Vec3 corners[4]);
         bool IsPointInRect(Vec2 point);

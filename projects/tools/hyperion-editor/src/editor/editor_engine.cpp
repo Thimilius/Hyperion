@@ -60,11 +60,9 @@ namespace Hyperion::Editor {
             canvas->AddComponent<UICanvas>();
 
             Entity *graphic = Entity::Create("Graphic", Vec3::Zero(), Quaternion::Identity(), canvas->GetTransform(), s_editor_world);
-            graphic->GetTransform()->SetEulerAngles(Vec3(0.0f, 0.0f, 0));
             UITransform *ui_transform = graphic->AddComponent<UITransform>();
-            ui_transform->SetPivot(Vec2(0.5f, 0.0f));
-            ui_transform->SetAnchorMin(Vec2(0.5f, 0.0f));
-            ui_transform->SetAnchorMax(Vec2(0.5f, 0.0f));
+            ui_transform->SetAnchoringPreset(AnchoringPreset::BottomCenter);
+            ui_transform->SetSize(Vec2(250.0f, 50.0f));
             graphic->AddComponent<UIGraphic>();
         }
 
