@@ -5,22 +5,6 @@
 #include "hyperion/entity/entity.hpp"
 #include "hyperion/entity/components/ui/ui_canvas.hpp"
 
-namespace Hyperion {
-
-    void UIGraphic::OnCreate() {
-        Component::OnCreate();
-
-        GetEntity()->GetComponentInParent<UICanvas>()->AddUIGraphic(this);
-    }
-
-    void UIGraphic::OnDestroy() {
-        GetEntity()->GetComponentInParent<UICanvas>()->RemoveUIGraphic(this);
-
-        Component::OnDestroy();
-    }
-
-}
-
 RTTR_REGISTRATION
 {
     using namespace rttr;

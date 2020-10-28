@@ -3,8 +3,13 @@
 #include "hyperion/entity/components/ui/ui_canvas.hpp"
 
 #include "hyperion/entity/world.hpp"
+#include "hyperion/entity/components/ui/ui_graphic.hpp"
 
 namespace Hyperion {
+
+    void UICanvas::GetUIGraphics(Vector<UIGraphic *> &graphics) const {
+        GetUIGraphicsInChildren(GetTransform(), graphics);
+    }
 
     void UICanvas::OnCreate() {
         Component::OnCreate();
@@ -49,15 +54,14 @@ namespace Hyperion {
         GetTransform()->SetLocalScale(Vec3(m_full_scale, m_full_scale, m_full_scale));
     }
 
-    void UICanvas::AddUIGraphic(UIGraphic *ui_graphic) {
-        m_ui_graphics.push_back(ui_graphic);
-    }
-
-    void UICanvas::RemoveUIGraphic(UIGraphic *ui_graphic) {
-        auto begin = m_ui_graphics.begin();
-        auto end = m_ui_graphics.end();
-        if (std::find(begin, end, ui_graphic) != end) {
-            m_ui_graphics.erase(std::remove(begin, end, ui_graphic));
+    void UICanvas::GetUIGraphicsInChildren(Transform *transform, Vector<UIGraphic *> &graphics) const {
+        UIGraphic *graphic = transform->GetEntity()->GetComponent<UIGraphic>();
+        if (graphic != nullptr) {
+            graphics.push_back(graphic);
+        }
+        
+        for (u32 i = 0; i < transform->GetChildCount(); i++) {
+            GetUIGraphicsInChildren(transform->GetChild(i), graphics);
         }
     }
 

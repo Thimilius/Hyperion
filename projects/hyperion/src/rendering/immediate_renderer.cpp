@@ -18,6 +18,9 @@ namespace Hyperion::Rendering {
     }
 
     void ImmediateRenderer::DrawUI(World *world) {
+        bool depth_test = RenderCommand::GetRasterizerState()->IsDepthTestEnabled();
+        RenderCommand::GetRasterizerState()->SetDepthTestEnabled(false);
+
         const Vector<UICanvas *> &ui_canvases = world->GetUICanvases();
 
         f32 half_width = static_cast<f32>(Display::GetWidth()) / 2.0f;
@@ -28,8 +31,10 @@ namespace Hyperion::Rendering {
         s_ui_resources.shader->SetMat4("u_transform.projection", projection);
         s_ui_resources.vertex_array->Bind();
 
+        // There is currently no way to sort the canvases
         for (UICanvas *ui_canvas : ui_canvases) {
-            const Vector<UIGraphic *> ui_graphics = ui_canvas->GetUIGraphics();
+            Vector<UIGraphic *> ui_graphics;
+            ui_canvas->GetUIGraphics(ui_graphics);
             for (UIGraphic *ui_graphic : ui_graphics) {
                 UITransform *ui_transform = ui_graphic->GetEntity()->GetComponent<UITransform>();
                 if (!ui_transform) {
@@ -61,6 +66,8 @@ namespace Hyperion::Rendering {
                 RenderCommand::Draw(MeshTopology::Triangles, 6, 0);
             }
         }
+
+        RenderCommand::GetRasterizerState()->SetDepthTestEnabled(depth_test);
     }
 
     void ImmediateRenderer::Begin(MeshTopology topology) {

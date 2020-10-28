@@ -59,7 +59,7 @@ namespace Hyperion::Editor {
             canvas->AddComponent<UITransform>();
             canvas->AddComponent<UICanvas>();
 
-            Entity *graphic = Entity::Create("Graphic", Vec3::Zero(), Quaternion::Identity(), canvas->GetTransform(), s_editor_world);
+            Entity *graphic = Entity::Create("Graphic White", Vec3::Zero(), Quaternion::Identity(), canvas->GetTransform(), s_editor_world);
             UITransform *ui_transform = graphic->AddComponent<UITransform>();
             ui_transform->SetAnchoringPreset(AnchoringPreset::BottomCenter);
             ui_transform->SetSize(Vec2(250.0f, 50.0f));

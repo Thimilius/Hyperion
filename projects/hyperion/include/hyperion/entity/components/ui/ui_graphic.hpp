@@ -10,9 +10,6 @@ namespace Hyperion {
     public:
         inline Color GetColor() const { return m_color; }
         inline void SetColor(Color color) { m_color = color; }
-    protected:
-        void OnCreate() override;
-        void OnDestroy() override;
     private:
         Color m_color = Color::White();
     };
