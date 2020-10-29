@@ -9,7 +9,7 @@ namespace Hyperion::UI {
 
 namespace Hyperion::UI {
 
-    class Canvas : public Component {
+    class Canvas final : public Component {
         RTTR_ENABLE(Component);
     public:
         Canvas() : Component("Canvas") { }

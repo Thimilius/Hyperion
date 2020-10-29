@@ -50,7 +50,7 @@ namespace Hyperion::Rendering {
                 ui_transform->GetWorldCorners(world_corners);
                 Color color = ui_graphic->GetColor();
 
-                if (RectTransform::RectContainsScreenPoint(ui_transform, Input::GetMousePosition())) {
+                if (RectTransformUtility::RectangleContainsScreenPoint(ui_transform, Input::GetMousePosition())) {
                     color = Color::Red();
                 }
 

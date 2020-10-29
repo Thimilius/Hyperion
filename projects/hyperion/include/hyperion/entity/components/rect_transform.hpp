@@ -23,7 +23,7 @@ namespace Hyperion {
         BottomLeftCorner
     };
 
-    class RectTransform : public Transform {
+    class RectTransform final : public Transform {
         RTTR_ENABLE(Transform);
     public:
         RectTransform() : Transform("RectTransform") { }
@@ -44,13 +44,9 @@ namespace Hyperion {
         void SetAnchoringPreset(AnchoringPreset anchoring_preset);
 
         void GetWorldCorners(Vec3 corners[4]);
-
-        static bool RectContainsScreenPoint(RectTransform *ui_transform, Vec2 point);
     protected:
         void OnCreate() override;
         void OnDestroy() override;
-    private:
-        static f32 IsLeft(Vec2 p0, Vec2 p1, Vec2 p2);
     private:
         Vec2 m_size = Vec2(100, 100);
         Vec2 m_pivot = Vec2(0.0f, 0.0f);
@@ -63,6 +59,16 @@ namespace Hyperion {
         bool m_replace_on_destroy = true;
     private:
         friend class Hyperion::Entity;
+    };
+
+    class RectTransformUtility final {
+    public:
+        static bool RectangleContainsScreenPoint(RectTransform *ui_transform, Vec2 point);
+    private:
+        RectTransformUtility() = delete;
+        ~RectTransformUtility() = delete;
+    private:
+        static f32 IsLeft(Vec2 p0, Vec2 p1, Vec2 p2);
     };
 
 }
