@@ -44,7 +44,8 @@ namespace Hyperion {
         void SetAnchoringPreset(AnchoringPreset anchoring_preset);
 
         void GetWorldCorners(Vec3 corners[4]);
-        bool IsPointInRect(Vec2 point);
+
+        static bool RectContainsScreenPoint(UITransform *ui_transform, Vec2 point);
     protected:
         void OnCreate() override;
         void OnDestroy() override;

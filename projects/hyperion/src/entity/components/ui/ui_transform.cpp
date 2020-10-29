@@ -100,9 +100,14 @@ namespace Hyperion {
         corners[3] = m_local_to_world_matrix * Vec4(-p_x * w        , (1.0f - p_y) * h, 0.0f, 1.0f);
     }
 
-    bool UITransform::IsPointInRect(Vec2 point) {
+    bool UITransform::RectContainsScreenPoint(UITransform *ui_transform, Vec2 screen_point) {
+        // First we need to transform the screen point so that the origin is in the center
+        f32 display_half_width = static_cast<f32>(Display::GetWidth()) / 2.0f;
+        f32 display_half_height = static_cast<f32>(Display::GetHeight()) / 2.0f;
+        screen_point = Vec2(screen_point.x - display_half_width, screen_point.y - display_half_height);
+
         Vec3 world_corners[4];
-        GetWorldCorners(world_corners);
+        ui_transform->GetWorldCorners(world_corners);
 
         Vec2 p1 = world_corners[0];
         Vec2 p2 = world_corners[1];
@@ -110,7 +115,7 @@ namespace Hyperion {
         Vec2 p4 = world_corners[3];
 
         // NOTE: Counter clockwise order of points is important
-        return (IsLeft(p1, p4, point) > 0 && IsLeft(p4, p3, point) > 0 && IsLeft(p3, p2, point) > 0 && IsLeft(p2, p1, point) > 0);
+        return (IsLeft(p1, p4, screen_point) > 0 && IsLeft(p4, p3, screen_point) > 0 && IsLeft(p3, p2, screen_point) > 0 && IsLeft(p2, p1, screen_point) > 0);
     }
 
     void UITransform::OnCreate() {
