@@ -14,14 +14,14 @@
 #include <hyperion/entity/components/rendering/light.hpp>
 #include <hyperion/entity/components/rendering/mesh_renderer.hpp>
 #include <hyperion/entity/components/physics/collider.hpp>
-#include <hyperion/entity/components/ui/ui_canvas.hpp>
-#include <hyperion/entity/components/ui/ui_graphic.hpp>
-#include <hyperion/entity/components/ui/ui_transform.hpp>
+#include <hyperion/entity/components/ui/canvas.hpp>
+#include <hyperion/entity/components/ui/graphic.hpp>
 #include <hyperion/physics/physics_world.hpp>
 
 #include "hyperion/editor/editor_selection.hpp"
 
 using namespace Hyperion::Rendering;
+using namespace Hyperion::UI;
 
 namespace Hyperion::Editor {
 
@@ -58,21 +58,21 @@ namespace Hyperion::Editor {
 
         {
             Entity *canvas = Entity::Create("Canvas", Vec3::Zero(), Quaternion::Identity(), nullptr, s_editor_world);
-            canvas->AddComponent<UITransform>();
-            canvas->AddComponent<UICanvas>();
+            canvas->AddComponent<RectTransform>();
+            canvas->AddComponent<Canvas>();
 
             Entity *graphic = Entity::Create("Graphic White", Vec3::Zero(), Quaternion::Identity(), canvas->GetTransform(), s_editor_world);
-            UITransform *ui_transform = graphic->AddComponent<UITransform>();
+            RectTransform *ui_transform = graphic->AddComponent<RectTransform>();
             ui_transform->SetAnchoringPreset(AnchoringPreset::BottomCenter);
             ui_transform->SetSize(Vec2(250.0f, 50.0f));
-            graphic->AddComponent<UIGraphic>();
+            graphic->AddComponent<Graphic>();
             ui_entity = graphic;
 
             Entity *graphic2 = Entity::Create("Graphic Green", Vec3::Zero(), Quaternion::Identity(), canvas->GetTransform(), s_editor_world);
-            UITransform *ui_transform2 = graphic2->AddComponent<UITransform>();
+            RectTransform *ui_transform2 = graphic2->AddComponent<RectTransform>();
             ui_transform2->SetAnchoringPreset(AnchoringPreset::BottomCenter);
             ui_transform2->SetSize(Vec2(150.0f, 25.0f));
-            graphic2->AddComponent<UIGraphic>()->SetColor(Color::Green());
+            graphic2->AddComponent<Graphic>()->SetColor(Color::Green());
         }
 
         InitGridVertexArray();

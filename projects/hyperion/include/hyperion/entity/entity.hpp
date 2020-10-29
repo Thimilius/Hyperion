@@ -6,13 +6,13 @@
 #include "hyperion/core/layer.hpp"
 #include "hyperion/entity/entity_message.hpp"
 #include "hyperion/entity/components/transform.hpp"
-#include "hyperion/entity/components/ui/ui_transform.hpp"
+#include "hyperion/entity/components/rect_transform.hpp"
 
 namespace Hyperion {
     class Component;
     class Object;
     class World;
-    class UITransform;
+    class RectTransform;
 }
 
 namespace Hyperion {
@@ -188,7 +188,7 @@ namespace Hyperion {
     private:
         friend class Hyperion::Component;
         friend class Hyperion::Object;
-        friend class Hyperion::UITransform;
+        friend class Hyperion::RectTransform;
 
         RTTR_REGISTRATION_FRIEND;
     };

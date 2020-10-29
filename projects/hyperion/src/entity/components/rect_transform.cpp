@@ -1,12 +1,12 @@
 #include "hyppch.hpp"
 
-#include "hyperion/entity/components/ui/ui_transform.hpp"
+#include "hyperion/entity/components/rect_transform.hpp"
 
 #include "hyperion/entity/entity.hpp"
 
 namespace Hyperion {
 
-    void UITransform::SetAnchoringPreset(AnchoringPreset anchoring_preset) {
+    void RectTransform::SetAnchoringPreset(AnchoringPreset anchoring_preset) {
         switch (anchoring_preset) {
             case AnchoringPreset::Center: {
                 m_anchor_min = Vec2(0.5f, 0.5f);
@@ -67,15 +67,15 @@ namespace Hyperion {
         }
     }
 
-    void UITransform::GetWorldCorners(Vec3 corners[4]) {
+    void RectTransform::GetWorldCorners(Vec3 corners[4]) {
         f32 w = m_size.x;
         f32 h = m_size.y;
         f32 p_x = m_pivot.x;
         f32 p_y = m_pivot.y;
 
         Vec2 parent_size;
-        if (m_parent && m_parent->GetType() == rttr::type::get<UITransform>()) {
-            UITransform *parent_transform = static_cast<UITransform *>(m_parent);
+        if (m_parent && m_parent->GetType() == rttr::type::get<RectTransform>()) {
+            RectTransform *parent_transform = static_cast<RectTransform *>(m_parent);
             parent_size = parent_transform->m_size;
         } else {
             parent_size = Vec2(static_cast<f32>(Display::GetWidth()), static_cast<f32>(Display::GetHeight()));
@@ -100,7 +100,7 @@ namespace Hyperion {
         corners[3] = m_local_to_world_matrix * Vec4(-p_x * w        , (1.0f - p_y) * h, 0.0f, 1.0f);
     }
 
-    bool UITransform::RectContainsScreenPoint(UITransform *ui_transform, Vec2 screen_point) {
+    bool RectTransform::RectContainsScreenPoint(RectTransform *ui_transform, Vec2 screen_point) {
         // First we need to transform the screen point so that the origin is in the center
         f32 display_half_width = static_cast<f32>(Display::GetWidth()) / 2.0f;
         f32 display_half_height = static_cast<f32>(Display::GetHeight()) / 2.0f;
@@ -118,7 +118,7 @@ namespace Hyperion {
         return (IsLeft(p1, p4, screen_point) > 0 && IsLeft(p4, p3, screen_point) > 0 && IsLeft(p3, p2, screen_point) > 0 && IsLeft(p2, p1, screen_point) > 0);
     }
 
-    void UITransform::OnCreate() {
+    void RectTransform::OnCreate() {
         // Creating a ui transform means replacing the current one
         Transform *obsolete = GetEntity()->m_transform;
 
@@ -138,7 +138,7 @@ namespace Hyperion {
         Entity *entity = GetEntity();
         entity->m_transform = this;
         entity->m_components.erase(rttr::type::get<Transform>());
-        entity->m_components[rttr::type::get<UITransform>()] = this;
+        entity->m_components[rttr::type::get<RectTransform>()] = this;
 
         // Update the parent
         Transform *parent = entity->m_transform->m_parent;
@@ -162,7 +162,7 @@ namespace Hyperion {
         delete obsolete;
     }
 
-    void UITransform::OnDestroy() {
+    void RectTransform::OnDestroy() {
         if (m_replace_on_destroy) {
             Transform *transform = new Transform();
 
@@ -182,7 +182,7 @@ namespace Hyperion {
             Entity *entity = GetEntity();
             transform->m_entity = entity;
             entity->m_transform = transform;
-            entity->m_components.erase(rttr::type::get<UITransform>());
+            entity->m_components.erase(rttr::type::get<RectTransform>());
             entity->m_components[rttr::type::get<Transform>()] = transform;
 
             // Update the children
@@ -194,7 +194,7 @@ namespace Hyperion {
         }
     }
 
-    f32 UITransform::IsLeft(Vec2 p0, Vec2 p1, Vec2 p2) {
+    f32 RectTransform::IsLeft(Vec2 p0, Vec2 p1, Vec2 p2) {
         return ((p1.x - p0.x) * (p2.y - p0.y) - (p2.x - p0.x) * (p1.y - p0.y));
     }
 
@@ -205,5 +205,5 @@ RTTR_REGISTRATION
     using namespace rttr;
     using namespace Hyperion;
 
-    registration::class_<UITransform>(HYP_NAME_OF_TYPE(UITransform));
+    registration::class_<RectTransform>(HYP_NAME_OF_TYPE(RectTransform));
 }

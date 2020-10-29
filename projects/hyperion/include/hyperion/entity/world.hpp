@@ -13,11 +13,14 @@ namespace Hyperion {
     class Light;
     class MeshRenderer;
     class Transform;
-    class UICanvas;
     class WorldManager;
 
     namespace Rendering {
         class TextureCubemap;
+    }
+
+    namespace UI {
+        class Canvas;
     }
 }
 
@@ -44,7 +47,7 @@ namespace Hyperion {
         inline const Vector<Camera *> &GetCameras() const { return m_cameras; }
         inline const Vector<MeshRenderer *> &GetMeshRenderers() const { return m_mesh_renderers; }
         inline const Vector<Light *> &GetLights() const { return m_lights; }
-        inline const Vector<UICanvas *> &GetUICanvases() const { return m_ui_canvases; }
+        inline const Vector<UI::Canvas *> &GetUICanvases() const { return m_ui_canvases; }
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         T *FindComponentOfType() {
@@ -85,8 +88,8 @@ namespace Hyperion {
         void RemoveMeshRenderer(MeshRenderer *mesh_renderer);
         void AddLight(Light *light);
         void RemoveLight(Light *light);
-        void AddUICanvas(UICanvas *ui_canvas);
-        void RemoveUICanvas(UICanvas *ui_canvas);
+        void AddUICanvas(UI::Canvas *ui_canvas);
+        void RemoveUICanvas(UI::Canvas *ui_canvas);
     private:
         WorldEnvironment m_environment;
 
@@ -97,15 +100,15 @@ namespace Hyperion {
         Vector<Camera *> m_cameras;
         Vector<MeshRenderer *> m_mesh_renderers;
         Vector<Light *> m_lights;
-        Vector<UICanvas *> m_ui_canvases;
+        Vector<UI::Canvas *> m_ui_canvases;
     private:
         friend class Hyperion::Camera;
         friend class Hyperion::Entity;
         friend class Hyperion::Light;
         friend class Hyperion::MeshRenderer;
         friend class Hyperion::Transform;
-        friend class Hyperion::UICanvas;
         friend class Hyperion::WorldManager;
+        friend class Hyperion::UI::Canvas;
     };
 
 }

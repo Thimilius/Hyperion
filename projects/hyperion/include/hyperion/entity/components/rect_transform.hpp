@@ -23,10 +23,10 @@ namespace Hyperion {
         BottomLeftCorner
     };
 
-    class UITransform : public Transform {
+    class RectTransform : public Transform {
         RTTR_ENABLE(Transform);
     public:
-        UITransform() : Transform("UITransform") { }
+        RectTransform() : Transform("RectTransform") { }
 
         Vec2 GetSize() const { return m_size; }
         void SetSize(Vec2 size) { m_size = size; }
@@ -45,7 +45,7 @@ namespace Hyperion {
 
         void GetWorldCorners(Vec3 corners[4]);
 
-        static bool RectContainsScreenPoint(UITransform *ui_transform, Vec2 point);
+        static bool RectContainsScreenPoint(RectTransform *ui_transform, Vec2 point);
     protected:
         void OnCreate() override;
         void OnDestroy() override;

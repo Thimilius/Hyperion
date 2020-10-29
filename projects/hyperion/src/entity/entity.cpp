@@ -135,8 +135,8 @@ namespace Hyperion {
         }
 
         // At the very end we can destroy the transform
-        if (m_transform->GetType() == rttr::type::get<UITransform>()) {
-            static_cast<UITransform *>(m_transform)->m_replace_on_destroy = false;
+        if (m_transform->GetType() == rttr::type::get<RectTransform>()) {
+            static_cast<RectTransform *>(m_transform)->m_replace_on_destroy = false;
         }
         DestroyImmediate(m_transform);
     }

@@ -5,9 +5,11 @@
 #include "hyperion/rendering/render_command.hpp"
 #include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/entity/world.hpp"
-#include "hyperion/entity/components/ui/ui_canvas.hpp"
-#include "hyperion/entity/components/ui/ui_graphic.hpp"
-#include "hyperion/entity/components/ui/ui_transform.hpp"
+#include "hyperion/entity/components/rect_transform.hpp"
+#include "hyperion/entity/components/ui/canvas.hpp"
+#include "hyperion/entity/components/ui/graphic.hpp"
+
+using namespace Hyperion::UI;
 
 namespace Hyperion::Rendering {
 
@@ -21,7 +23,7 @@ namespace Hyperion::Rendering {
         bool depth_test = RenderCommand::GetRasterizerState()->IsDepthTestEnabled();
         RenderCommand::GetRasterizerState()->SetDepthTestEnabled(false);
 
-        const Vector<UICanvas *> &ui_canvases = world->GetUICanvases();
+        const Vector<Canvas *> &ui_canvases = world->GetUICanvases();
 
         f32 half_width = static_cast<f32>(Display::GetWidth()) / 2.0f;
         f32 half_height = static_cast<f32>(Display::GetHeight()) / 2.0f;
@@ -32,14 +34,14 @@ namespace Hyperion::Rendering {
         s_ui_resources.vertex_array->Bind();
 
         // There is currently no way to sort the canvases
-        for (UICanvas *ui_canvas : ui_canvases) {
-            Vector<UIGraphic *> ui_graphics = ui_canvas->GetUIGraphics();
-            std::sort(ui_graphics.begin(), ui_graphics.end(), [](UIGraphic *first, UIGraphic *second) {
+        for (Canvas *ui_canvas : ui_canvases) {
+            Vector<Graphic *> ui_graphics = ui_canvas->GetUIGraphics();
+            std::sort(ui_graphics.begin(), ui_graphics.end(), [](Graphic *first, Graphic *second) {
                 return first->GetDepth() < second->GetDepth();
             });
 
-            for (UIGraphic *ui_graphic : ui_graphics) {
-                UITransform *ui_transform = ui_graphic->GetEntity()->GetComponent<UITransform>();
+            for (Graphic *ui_graphic : ui_graphics) {
+                RectTransform *ui_transform = ui_graphic->GetEntity()->GetComponent<RectTransform>();
                 if (!ui_transform) {
                     continue;
                 }
@@ -48,7 +50,7 @@ namespace Hyperion::Rendering {
                 ui_transform->GetWorldCorners(world_corners);
                 Color color = ui_graphic->GetColor();
 
-                if (UITransform::RectContainsScreenPoint(ui_transform, Input::GetMousePosition())) {
+                if (RectTransform::RectContainsScreenPoint(ui_transform, Input::GetMousePosition())) {
                     color = Color::Red();
                 }
 

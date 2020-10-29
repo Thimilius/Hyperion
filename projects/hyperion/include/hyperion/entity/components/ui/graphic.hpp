@@ -3,15 +3,17 @@
 #include "hyperion/core/color.hpp"
 #include "hyperion/entity/components/component.hpp"
 
-namespace Hyperion {
-    class UICanvas;
+namespace Hyperion::UI {
+    class Canvas;
 }
 
-namespace Hyperion {
+namespace Hyperion::UI {
 
-    class UIGraphic : public Component {
+    class Graphic : public Component {
         RTTR_ENABLE(Component);
     public:
+        Graphic() : Component("Graphic") {}
+
         inline Color GetColor() const { return m_color; }
         inline void SetColor(Color color) { m_color = color; }
 
@@ -23,7 +25,7 @@ namespace Hyperion {
         Color m_color = Color::White();
         s32 m_depth = -1;
     private:
-        friend class Hyperion::UICanvas;
+        friend class Hyperion::UI::Canvas;
     };
 
 }

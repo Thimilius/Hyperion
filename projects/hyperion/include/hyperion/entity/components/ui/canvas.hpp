@@ -3,15 +3,17 @@
 #include "hyperion/core/math/vec2.hpp"
 #include "hyperion/entity/components/component.hpp"
 
-namespace Hyperion {
-    class UIGraphic;
+namespace Hyperion::UI {
+    class Graphic;
 }
 
-namespace Hyperion {
+namespace Hyperion::UI {
 
-    class UICanvas : public Component {
+    class Canvas : public Component {
         RTTR_ENABLE(Component);
     public:
+        Canvas() : Component("Canvas") { }
+
         inline f32 GetScale() const {return m_scale; }
         inline void SetScale(f32 scale) { 
             m_scale = scale;
@@ -25,7 +27,7 @@ namespace Hyperion {
 
         inline f32 GetFullScale() const { return m_full_scale; }
 
-        inline const Vector<UIGraphic *> &GetUIGraphics() { return m_ui_graphics; }
+        inline const Vector<Graphic *> &GetUIGraphics() { return m_ui_graphics; }
     protected:
         void OnCreate() override;
         void OnUpdate(f32 delta_time) override;
@@ -33,8 +35,8 @@ namespace Hyperion {
     private:
         void UpdateScale();
 
-        void AddUIGraphic(UIGraphic *ui_graphic);
-        void RemoveUIGraphic(UIGraphic *ui_graphic);
+        void AddUIGraphic(Graphic *ui_graphic);
+        void RemoveUIGraphic(Graphic *ui_graphic);
         void UpdateUIGraphicDepths();
     private:
         f32 m_scale = 1.0f;
@@ -44,9 +46,9 @@ namespace Hyperion {
         f32 m_cached_display_width = 0;
         f32 m_cached_display_height = 0;
 
-        Vector<UIGraphic *> m_ui_graphics;
+        Vector<Graphic *> m_ui_graphics;
     private:
-        friend class Hyperion::UIGraphic;
+        friend class Hyperion::UI::Graphic;
     };
 
 }

@@ -7,7 +7,7 @@
 
 namespace Hyperion {
     class Entity;
-    class UITransform;
+    class RectTransform;
 }
 
 namespace Hyperion {
@@ -116,7 +116,7 @@ namespace Hyperion {
         Vector<Transform *> m_children;
     private:
         friend class Hyperion::Entity;
-        friend class Hyperion::UITransform;
+        friend class Hyperion::RectTransform;
     };
 
 }
