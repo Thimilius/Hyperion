@@ -25,6 +25,8 @@ using namespace Hyperion::Rendering;
 
 namespace Hyperion::Editor {
 
+    Entity *ui_entity;
+
     void EditorEngine::OnInit() {
         s_editor_world = WorldManager::CreateWorld();
         s_game_world = WorldManager::CreateWorld();
@@ -64,6 +66,13 @@ namespace Hyperion::Editor {
             ui_transform->SetAnchoringPreset(AnchoringPreset::BottomCenter);
             ui_transform->SetSize(Vec2(250.0f, 50.0f));
             graphic->AddComponent<UIGraphic>();
+            ui_entity = graphic;
+
+            Entity *graphic2 = Entity::Create("Graphic Green", Vec3::Zero(), Quaternion::Identity(), canvas->GetTransform(), s_editor_world);
+            UITransform *ui_transform2 = graphic2->AddComponent<UITransform>();
+            ui_transform2->SetAnchoringPreset(AnchoringPreset::BottomCenter);
+            ui_transform2->SetSize(Vec2(150.0f, 25.0f));
+            graphic2->AddComponent<UIGraphic>()->SetColor(Color::Green());
         }
 
         InitGridVertexArray();
@@ -72,6 +81,13 @@ namespace Hyperion::Editor {
 
     void EditorEngine::OnUpdate(f32 delta_time) {
         Window *window = Application::GetInstance()->GetWindow();
+
+        if (Input::GetKeyDown(KeyCode::K)) {
+            if (ui_entity) {
+                Object::Destroy(ui_entity);
+                ui_entity = nullptr;
+            }
+        }
 
         if (Input::GetKeyDown(KeyCode::Escape) || ((Input::GetKey(KeyCode::LeftControl) || Input::GetKey(KeyCode::RightControl)) && Input::GetKeyDown(KeyCode::W))) {
             Application::GetInstance()->Exit();

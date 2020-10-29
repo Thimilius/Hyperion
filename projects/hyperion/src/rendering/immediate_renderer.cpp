@@ -33,8 +33,11 @@ namespace Hyperion::Rendering {
 
         // There is currently no way to sort the canvases
         for (UICanvas *ui_canvas : ui_canvases) {
-            Vector<UIGraphic *> ui_graphics;
-            ui_canvas->GetUIGraphics(ui_graphics);
+            Vector<UIGraphic *> ui_graphics = ui_canvas->GetUIGraphics();
+            std::sort(ui_graphics.begin(), ui_graphics.end(), [](UIGraphic *first, UIGraphic *second) {
+                return first->GetDepth() < second->GetDepth();
+            });
+
             for (UIGraphic *ui_graphic : ui_graphics) {
                 UITransform *ui_transform = ui_graphic->GetEntity()->GetComponent<UITransform>();
                 if (!ui_transform) {
