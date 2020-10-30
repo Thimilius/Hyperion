@@ -50,23 +50,23 @@ namespace Hyperion::UI {
         GetTransform()->SetLocalScale(Vec3(m_full_scale, m_full_scale, m_full_scale));
     }
 
-    void Canvas::AddUIGraphic(Graphic *ui_graphic) {
-        m_ui_graphics.push_back(ui_graphic);
+    void Canvas::AddGraphic(Graphic *graphic) {
+        m_graphics.push_back(graphic);
 
-        UpdateUIGraphicDepths();
+        UpdateGraphicDepths();
     }
 
-    void Canvas::RemoveUIGraphic(Graphic *ui_graphic) {
-        auto begin = m_ui_graphics.begin();
-        auto end = m_ui_graphics.end();
-        if (std::find(begin, end, ui_graphic) != end) {
-            m_ui_graphics.erase(std::remove(begin, end, ui_graphic));
+    void Canvas::RemoveGraphic(Graphic *graphic) {
+        auto begin = m_graphics.begin();
+        auto end = m_graphics.end();
+        if (std::find(begin, end, graphic) != end) {
+            m_graphics.erase(std::remove(begin, end, graphic));
         }
 
-        UpdateUIGraphicDepths();
+        UpdateGraphicDepths();
     }
 
-    void Canvas::UpdateUIGraphicDepths() {
+    void Canvas::UpdateGraphicDepths() {
         Vector<Graphic *> graphics = GetEntity()->GetComponentsInChildren<Graphic>();
         s32 depth = 0;
         for (Graphic *graphic : graphics) {

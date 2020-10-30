@@ -62,17 +62,17 @@ namespace Hyperion::Editor {
             canvas->AddComponent<Canvas>();
 
             Entity *graphic = Entity::Create("Graphic White", Vec3::Zero(), Quaternion::Identity(), canvas->GetTransform(), s_editor_world);
-            RectTransform *ui_transform = graphic->AddComponent<RectTransform>();
-            ui_transform->SetAnchoringPreset(AnchoringPreset::BottomCenter);
-            ui_transform->SetSize(Vec2(250.0f, 50.0f));
+            RectTransform *rect_transform = graphic->AddComponent<RectTransform>();
+            rect_transform->SetAnchoringPreset(AnchoringPreset::BottomCenter);
+            rect_transform->SetSize(Vec2(250.0f, 50.0f));
             graphic->AddComponent<Graphic>();
             ui_entity = graphic;
 
-            Entity *graphic2 = Entity::Create("Graphic Green", Vec3::Zero(), Quaternion::Identity(), canvas->GetTransform(), s_editor_world);
-            RectTransform *ui_transform2 = graphic2->AddComponent<RectTransform>();
-            ui_transform2->SetAnchoringPreset(AnchoringPreset::BottomCenter);
-            ui_transform2->SetSize(Vec2(150.0f, 25.0f));
-            graphic2->AddComponent<Graphic>()->SetColor(Color::Green());
+            Entity *graphic_2 = Entity::Create("Graphic Green", Vec3::Zero(), Quaternion::Identity(), canvas->GetTransform(), s_editor_world);
+            RectTransform *rect_transform_2 = graphic_2->AddComponent<RectTransform>();
+            rect_transform_2->SetAnchoringPreset(AnchoringPreset::BottomCenter);
+            rect_transform_2->SetSize(Vec2(150.0f, 25.0f));
+            graphic_2->AddComponent<Graphic>()->SetColor(Color::Green());
         }
 
         InitGridVertexArray();

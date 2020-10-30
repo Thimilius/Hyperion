@@ -13,11 +13,11 @@ namespace Hyperion::UI {
     void Graphic::OnCreate() {
         Component::OnCreate();
 
-        GetEntity()->GetComponentInParent<Canvas>()->AddUIGraphic(this);
+        GetEntity()->GetComponentInParent<Canvas>()->AddGraphic(this);
     }
 
     void Graphic::OnDestroy() {
-        GetEntity()->GetComponentInParent<Canvas>()->RemoveUIGraphic(this);
+        GetEntity()->GetComponentInParent<Canvas>()->RemoveGraphic(this);
 
         Component::OnDestroy();
     }

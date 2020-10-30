@@ -63,7 +63,7 @@ namespace Hyperion {
 
     class RectTransformUtility final {
     public:
-        static bool RectangleContainsScreenPoint(RectTransform *ui_transform, Vec2 point);
+        static bool RectangleContainsScreenPoint(RectTransform *rect_transform, Vec2 point);
     private:
         RectTransformUtility() = delete;
         ~RectTransformUtility() = delete;

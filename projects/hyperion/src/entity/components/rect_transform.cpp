@@ -101,7 +101,7 @@ namespace Hyperion {
     }
 
     void RectTransform::OnCreate() {
-        // Creating a ui transform means replacing the current one
+        // Creating a rect transform means replacing the current one
         Transform *obsolete = GetEntity()->m_transform;
 
         // We need to copy everything over from the now obsolete transform we are about to destroy
@@ -176,14 +176,14 @@ namespace Hyperion {
         }
     }
 
-    bool RectTransformUtility::RectangleContainsScreenPoint(RectTransform *ui_transform, Vec2 screen_point) {
+    bool RectTransformUtility::RectangleContainsScreenPoint(RectTransform *rect_transform, Vec2 screen_point) {
         // First we need to transform the screen point so that the origin is in the center
         f32 display_half_width = static_cast<f32>(Display::GetWidth()) / 2.0f;
         f32 display_half_height = static_cast<f32>(Display::GetHeight()) / 2.0f;
         screen_point = Vec2(screen_point.x - display_half_width, screen_point.y - display_half_height);
 
         Vec3 world_corners[4];
-        ui_transform->GetWorldCorners(world_corners);
+        rect_transform->GetWorldCorners(world_corners);
 
         Vec2 p1 = world_corners[0];
         Vec2 p2 = world_corners[1];

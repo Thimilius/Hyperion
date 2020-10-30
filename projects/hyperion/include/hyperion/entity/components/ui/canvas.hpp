@@ -27,7 +27,7 @@ namespace Hyperion::UI {
 
         inline f32 GetFullScale() const { return m_full_scale; }
 
-        inline const Vector<Graphic *> &GetUIGraphics() { return m_ui_graphics; }
+        inline const Vector<Graphic *> &GetGraphics() { return m_graphics; }
     protected:
         void OnCreate() override;
         void OnUpdate(f32 delta_time) override;
@@ -35,9 +35,9 @@ namespace Hyperion::UI {
     private:
         void UpdateScale();
 
-        void AddUIGraphic(Graphic *ui_graphic);
-        void RemoveUIGraphic(Graphic *ui_graphic);
-        void UpdateUIGraphicDepths();
+        void AddGraphic(Graphic *graphic);
+        void RemoveGraphic(Graphic *graphic);
+        void UpdateGraphicDepths();
     private:
         f32 m_scale = 1.0f;
         f32 m_full_scale = 1.0f;
@@ -46,7 +46,7 @@ namespace Hyperion::UI {
         f32 m_cached_display_width = 0;
         f32 m_cached_display_height = 0;
 
-        Vector<Graphic *> m_ui_graphics;
+        Vector<Graphic *> m_graphics;
     private:
         friend class Hyperion::UI::Graphic;
     };

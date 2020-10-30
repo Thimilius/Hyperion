@@ -35,22 +35,22 @@ namespace Hyperion::Rendering {
 
         // There is currently no way to sort the canvases
         for (Canvas *ui_canvas : ui_canvases) {
-            Vector<Graphic *> ui_graphics = ui_canvas->GetUIGraphics();
-            std::sort(ui_graphics.begin(), ui_graphics.end(), [](Graphic *first, Graphic *second) {
+            Vector<Graphic *> graphics = ui_canvas->GetGraphics();
+            std::sort(graphics.begin(), graphics.end(), [](Graphic *first, Graphic *second) {
                 return first->GetDepth() < second->GetDepth();
             });
 
-            for (Graphic *ui_graphic : ui_graphics) {
-                RectTransform *ui_transform = ui_graphic->GetEntity()->GetComponent<RectTransform>();
-                if (!ui_transform) {
+            for (Graphic *graphic : graphics) {
+                RectTransform *rect_transform = graphic->GetEntity()->GetComponent<RectTransform>();
+                if (!rect_transform) {
                     continue;
                 }
 
                 Vec3 world_corners[4];
-                ui_transform->GetWorldCorners(world_corners);
-                Color color = ui_graphic->GetColor();
+                rect_transform->GetWorldCorners(world_corners);
+                Color color = graphic->GetColor();
 
-                if (RectTransformUtility::RectangleContainsScreenPoint(ui_transform, Input::GetMousePosition())) {
+                if (RectTransformUtility::RectangleContainsScreenPoint(rect_transform, Input::GetMousePosition())) {
                     color = Color::Red();
                 }
 
