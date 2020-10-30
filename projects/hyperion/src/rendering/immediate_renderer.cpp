@@ -50,10 +50,6 @@ namespace Hyperion::Rendering {
                 rect_transform->GetWorldCorners(world_corners);
                 Color color = graphic->GetColor();
 
-                if (RectTransformUtility::RectangleContainsScreenPoint(rect_transform, Input::GetMousePosition())) {
-                    color = Color::Red();
-                }
-
                 VertexUI vertices[6] = {
                     { world_corners[0], color, Vec2(1.0f, 1.0f) },
                     { world_corners[1], color, Vec2(1.0f, 0.0f) },

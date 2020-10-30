@@ -21,6 +21,24 @@ namespace Hyperion::UI {
         if (display_width != m_cached_display_width || display_height != m_cached_display_height) {
             UpdateScale();
         }
+
+        Vector<Graphic *> graphics;
+        Vec2 mouse_position = Input::GetMousePosition();
+        for (Graphic *graphic : m_graphics) {
+            RectTransform *rect_transform = static_cast<RectTransform *>(graphic->GetTransform());
+            if (RectTransformUtility::RectangleContainsScreenPoint(rect_transform, mouse_position)) {
+                graphics.push_back(graphic);
+            }
+            graphic->SetColor(Color::White());
+        }
+        std::sort(graphics.begin(), graphics.end(), [](Graphic *first, Graphic *second) {
+            return first->GetDepth() > second->GetDepth();
+        });
+
+        if (graphics.size() > 0) {
+            Graphic *graphic = graphics[0];
+            graphic->SetColor(Color::Red());
+        }
     }
 
     void Canvas::OnDestroy() {
