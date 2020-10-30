@@ -15,7 +15,7 @@
 #include <hyperion/entity/components/rendering/mesh_renderer.hpp>
 #include <hyperion/entity/components/physics/collider.hpp>
 #include <hyperion/entity/components/ui/canvas.hpp>
-#include <hyperion/entity/components/ui/graphic.hpp>
+#include <hyperion/entity/components/ui/widget.hpp>
 #include <hyperion/physics/physics_world.hpp>
 
 #include "hyperion/editor/editor_selection.hpp"
@@ -61,18 +61,18 @@ namespace Hyperion::Editor {
             canvas->AddComponent<RectTransform>();
             canvas->AddComponent<Canvas>();
 
-            Entity *graphic = Entity::Create("Graphic White", Vec3::Zero(), Quaternion::Identity(), canvas->GetTransform(), s_editor_world);
-            RectTransform *rect_transform = graphic->AddComponent<RectTransform>();
+            Entity *widget = Entity::Create("Widget White", Vec3::Zero(), Quaternion::Identity(), canvas->GetTransform(), s_editor_world);
+            RectTransform *rect_transform = widget->AddComponent<RectTransform>();
             rect_transform->SetAnchoringPreset(AnchoringPreset::BottomCenter);
             rect_transform->SetSize(Vec2(250.0f, 50.0f));
-            graphic->AddComponent<Graphic>();
-            ui_entity = graphic;
+            widget->AddComponent<Widget>();
+            ui_entity = widget;
 
-            Entity *graphic_2 = Entity::Create("Graphic Green", Vec3::Zero(), Quaternion::Identity(), canvas->GetTransform(), s_editor_world);
-            RectTransform *rect_transform_2 = graphic_2->AddComponent<RectTransform>();
+            Entity *widget_2 = Entity::Create("Widget Green", Vec3::Zero(), Quaternion::Identity(), canvas->GetTransform(), s_editor_world);
+            RectTransform *rect_transform_2 = widget_2->AddComponent<RectTransform>();
             rect_transform_2->SetAnchoringPreset(AnchoringPreset::BottomCenter);
             rect_transform_2->SetSize(Vec2(150.0f, 25.0f));
-            graphic_2->AddComponent<Graphic>()->SetColor(Color::Green());
+            widget_2->AddComponent<Widget>()->SetColor(Color::Green());
         }
 
         InitGridVertexArray();
@@ -81,13 +81,6 @@ namespace Hyperion::Editor {
 
     void EditorEngine::OnUpdate(f32 delta_time) {
         Window *window = Application::GetInstance()->GetWindow();
-
-        if (Input::GetKeyDown(KeyCode::K)) {
-            if (ui_entity) {
-                Object::Destroy(ui_entity);
-                ui_entity = nullptr;
-            }
-        }
 
         if (Input::GetKeyDown(KeyCode::Escape) || ((Input::GetKey(KeyCode::LeftControl) || Input::GetKey(KeyCode::RightControl)) && Input::GetKeyDown(KeyCode::W))) {
             Application::GetInstance()->Exit();

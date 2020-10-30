@@ -4,7 +4,7 @@
 #include "hyperion/entity/components/component.hpp"
 
 namespace Hyperion::UI {
-    class Graphic;
+    class Widget;
 }
 
 namespace Hyperion::UI {
@@ -27,7 +27,7 @@ namespace Hyperion::UI {
 
         inline f32 GetFullScale() const { return m_full_scale; }
 
-        inline const Vector<Graphic *> &GetGraphics() { return m_graphics; }
+        inline const Vector<Widget *> &GetWidgets() { return m_widgets; }
     protected:
         void OnCreate() override;
         void OnUpdate(f32 delta_time) override;
@@ -35,9 +35,9 @@ namespace Hyperion::UI {
     private:
         void UpdateScale();
 
-        void AddGraphic(Graphic *graphic);
-        void RemoveGraphic(Graphic *graphic);
-        void UpdateGraphicDepths();
+        void AddWidget(Widget *graphic);
+        void RemoveWidget(Widget *graphic);
+        void UpdateWidgetDepths();
     private:
         f32 m_scale = 1.0f;
         f32 m_full_scale = 1.0f;
@@ -46,9 +46,9 @@ namespace Hyperion::UI {
         f32 m_cached_display_width = 0;
         f32 m_cached_display_height = 0;
 
-        Vector<Graphic *> m_graphics;
+        Vector<Widget *> m_widgets;
     private:
-        friend class Hyperion::UI::Graphic;
+        friend class Hyperion::UI::Widget;
     };
 
 }

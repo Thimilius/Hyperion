@@ -3,7 +3,7 @@
 #include "hyperion/entity/components/ui/canvas.hpp"
 
 #include "hyperion/entity/world.hpp"
-#include "hyperion/entity/components/ui/graphic.hpp"
+#include "hyperion/entity/components/ui/widget.hpp"
 
 namespace Hyperion::UI {
 
@@ -22,22 +22,22 @@ namespace Hyperion::UI {
             UpdateScale();
         }
 
-        Vector<Graphic *> graphics;
+        Vector<Widget *> widgets;
         Vec2 mouse_position = Input::GetMousePosition();
-        for (Graphic *graphic : m_graphics) {
-            RectTransform *rect_transform = static_cast<RectTransform *>(graphic->GetTransform());
+        for (Widget *widget : m_widgets) {
+            RectTransform *rect_transform = static_cast<RectTransform *>(widget->GetTransform());
             if (RectTransformUtility::RectangleContainsScreenPoint(rect_transform, mouse_position)) {
-                graphics.push_back(graphic);
+                widgets.push_back(widget);
             }
-            graphic->SetColor(Color::White());
+            widget->SetColor(Color::White());
         }
-        std::sort(graphics.begin(), graphics.end(), [](Graphic *first, Graphic *second) {
+        std::sort(widgets.begin(), widgets.end(), [](Widget *first, Widget *second) {
             return first->GetDepth() > second->GetDepth();
         });
 
-        if (graphics.size() > 0) {
-            Graphic *graphic = graphics[0];
-            graphic->SetColor(Color::Red());
+        if (widgets.size() > 0) {
+            Widget *widget = widgets[0];
+            widget->SetColor(Color::Red());
         }
     }
 
@@ -68,27 +68,27 @@ namespace Hyperion::UI {
         GetTransform()->SetLocalScale(Vec3(m_full_scale, m_full_scale, m_full_scale));
     }
 
-    void Canvas::AddGraphic(Graphic *graphic) {
-        m_graphics.push_back(graphic);
+    void Canvas::AddWidget(Widget *graphic) {
+        m_widgets.push_back(graphic);
 
-        UpdateGraphicDepths();
+        UpdateWidgetDepths();
     }
 
-    void Canvas::RemoveGraphic(Graphic *graphic) {
-        auto begin = m_graphics.begin();
-        auto end = m_graphics.end();
+    void Canvas::RemoveWidget(Widget *graphic) {
+        auto begin = m_widgets.begin();
+        auto end = m_widgets.end();
         if (std::find(begin, end, graphic) != end) {
-            m_graphics.erase(std::remove(begin, end, graphic));
+            m_widgets.erase(std::remove(begin, end, graphic));
         }
 
-        UpdateGraphicDepths();
+        UpdateWidgetDepths();
     }
 
-    void Canvas::UpdateGraphicDepths() {
-        Vector<Graphic *> graphics = GetEntity()->GetComponentsInChildren<Graphic>();
+    void Canvas::UpdateWidgetDepths() {
+        Vector<Widget *> widgets = GetEntity()->GetComponentsInChildren<Widget>();
         s32 depth = 0;
-        for (Graphic *graphic : graphics) {
-            graphic->m_depth = depth++;
+        for (Widget *widget : widgets) {
+            widget->m_depth = depth++;
         }
     }
 

@@ -9,10 +9,10 @@ namespace Hyperion::UI {
 
 namespace Hyperion::UI {
 
-    class Graphic : public Component {
+    class Widget : public Component {
         RTTR_ENABLE(Component);
     public:
-        Graphic() : Component("Graphic") {}
+        Widget() : Component("Widget") {}
 
         inline Color GetColor() const { return m_color; }
         inline void SetColor(Color color) { m_color = color; }

@@ -7,7 +7,7 @@
 #include "hyperion/entity/world.hpp"
 #include "hyperion/entity/components/rect_transform.hpp"
 #include "hyperion/entity/components/ui/canvas.hpp"
-#include "hyperion/entity/components/ui/graphic.hpp"
+#include "hyperion/entity/components/ui/widget.hpp"
 
 using namespace Hyperion::UI;
 
@@ -35,20 +35,20 @@ namespace Hyperion::Rendering {
 
         // There is currently no way to sort the canvases
         for (Canvas *ui_canvas : ui_canvases) {
-            Vector<Graphic *> graphics = ui_canvas->GetGraphics();
-            std::sort(graphics.begin(), graphics.end(), [](Graphic *first, Graphic *second) {
+            Vector<Widget *> widgets = ui_canvas->GetWidgets();
+            std::sort(widgets.begin(), widgets.end(), [](Widget *first, Widget *second) {
                 return first->GetDepth() < second->GetDepth();
             });
 
-            for (Graphic *graphic : graphics) {
-                RectTransform *rect_transform = graphic->GetEntity()->GetComponent<RectTransform>();
+            for (Widget *widget : widgets) {
+                RectTransform *rect_transform = widget->GetEntity()->GetComponent<RectTransform>();
                 if (!rect_transform) {
                     continue;
                 }
 
                 Vec3 world_corners[4];
                 rect_transform->GetWorldCorners(world_corners);
-                Color color = graphic->GetColor();
+                Color color = widget->GetColor();
 
                 VertexUI vertices[6] = {
                     { world_corners[0], color, Vec2(1.0f, 1.0f) },
