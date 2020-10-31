@@ -15,6 +15,7 @@
 #include <hyperion/entity/components/rendering/mesh_renderer.hpp>
 #include <hyperion/entity/components/physics/collider.hpp>
 #include <hyperion/entity/components/ui/canvas.hpp>
+#include <hyperion/entity/components/ui/text.hpp>
 #include <hyperion/entity/components/ui/widget.hpp>
 #include <hyperion/physics/physics_world.hpp>
 
@@ -73,6 +74,12 @@ namespace Hyperion::Editor {
             rect_transform_2->SetAnchoringPreset(AnchoringPreset::BottomCenter);
             rect_transform_2->SetSize(Vec2(150.0f, 25.0f));
             widget_2->AddComponent<Widget>()->SetColor(Color::Green());
+
+            Entity *widget_3 = Entity::Create("Widget Text", Vec3::Zero(), Quaternion::Identity(), canvas->GetTransform(), s_editor_world);
+            RectTransform *rect_transform_3 = widget_3->AddComponent<RectTransform>();
+            rect_transform_3->SetAnchoringPreset(AnchoringPreset::BottomCenter);
+            rect_transform_3->SetSize(Vec2(150.0f, 25.0f));
+            widget_3->AddComponent<Text>();
         }
 
         InitGridVertexArray();
