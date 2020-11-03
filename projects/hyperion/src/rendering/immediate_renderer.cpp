@@ -23,7 +23,7 @@ namespace Hyperion::Rendering {
         bool depth_test = RenderCommand::GetRasterizerState()->IsDepthTestEnabled();
         RenderCommand::GetRasterizerState()->SetDepthTestEnabled(false);
 
-        const Vector<Canvas *> &ui_canvases = world->GetUICanvases();
+        const Vector<Canvas *> &canvases = world->GetCanvases();
 
         f32 half_width = static_cast<f32>(Display::GetWidth()) / 2.0f;
         f32 half_height = static_cast<f32>(Display::GetHeight()) / 2.0f;
@@ -34,8 +34,8 @@ namespace Hyperion::Rendering {
         s_ui_resources.vertex_array->Bind();
 
         // There is currently no way to sort the canvases
-        for (Canvas *ui_canvas : ui_canvases) {
-            Vector<Widget *> widgets = ui_canvas->GetWidgets();
+        for (Canvas *canvas : canvases) {
+            Vector<Widget *> widgets = WidgetRegistry::GetWidgetsForCanvas(canvas);
             std::sort(widgets.begin(), widgets.end(), [](Widget *first, Widget *second) {
                 return first->GetDepth() < second->GetDepth();
             });

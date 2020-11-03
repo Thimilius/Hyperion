@@ -26,8 +26,6 @@ namespace Hyperion::UI {
         }
 
         inline f32 GetFullScale() const { return m_full_scale; }
-
-        inline const Vector<Widget *> &GetWidgets() { return m_widgets; }
     protected:
         void OnCreate() override;
         void OnUpdate(f32 delta_time) override;
@@ -49,6 +47,19 @@ namespace Hyperion::UI {
         Vector<Widget *> m_widgets;
     private:
         friend class Hyperion::UI::Widget;
+    };
+
+    class WidgetRegistry final {
+    public:
+        static void RegisterWidget(Canvas *canvas, Widget *widget);
+        static void UnregisterWidget(Canvas *canvas, Widget *widget);
+        static const Vector<Widget *> &GetWidgetsForCanvas(Canvas *canvas);
+    private:
+        WidgetRegistry() = delete;
+        ~WidgetRegistry() = delete;
+    private:
+        inline static Map<Canvas *, Vector<Widget *>> s_widgets;
+        inline static Vector<Widget *> s_empty_widgets;
     };
 
 }

@@ -69,15 +69,15 @@ namespace Hyperion {
         }
     }
 
-    void World::AddUICanvas(UI::Canvas *ui_canvas) {
-        m_ui_canvases.push_back(ui_canvas);
+    void World::AddCanvas(UI::Canvas *ui_canvas) {
+        m_canvases.push_back(ui_canvas);
     }
 
-    void World::RemoveUICanvas(UI::Canvas *ui_canvas) {
-        auto begin = m_ui_canvases.begin();
-        auto end = m_ui_canvases.end();
+    void World::RemoveCanvas(UI::Canvas *ui_canvas) {
+        auto begin = m_canvases.begin();
+        auto end = m_canvases.end();
         if (std::find(begin, end, ui_canvas) != end) {
-            m_ui_canvases.erase(std::remove(begin, end, ui_canvas));
+            m_canvases.erase(std::remove(begin, end, ui_canvas));
         }
     }
 

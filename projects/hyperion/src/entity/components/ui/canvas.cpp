@@ -11,7 +11,7 @@ namespace Hyperion::UI {
         Component::OnCreate();
 
         RegisterForUpdate();
-        GetWorld()->AddUICanvas(this);
+        GetWorld()->AddCanvas(this);
     }
 
     void Canvas::OnUpdate(f32 delta_time) {
@@ -21,28 +21,10 @@ namespace Hyperion::UI {
         if (display_width != m_cached_display_width || display_height != m_cached_display_height) {
             UpdateScale();
         }
-
-        Vector<Widget *> widgets;
-        Vec2 mouse_position = Input::GetMousePosition();
-        for (Widget *widget : m_widgets) {
-            RectTransform *rect_transform = static_cast<RectTransform *>(widget->GetTransform());
-            if (RectTransformUtility::RectangleContainsScreenPoint(rect_transform, mouse_position)) {
-                widgets.push_back(widget);
-            }
-            widget->SetColor(Color::White());
-        }
-        std::sort(widgets.begin(), widgets.end(), [](Widget *first, Widget *second) {
-            return first->GetDepth() > second->GetDepth();
-        });
-
-        if (widgets.size() > 0) {
-            Widget *widget = widgets[0];
-            widget->SetColor(Color::Red());
-        }
     }
 
     void Canvas::OnDestroy() {
-        GetWorld()->RemoveUICanvas(this);
+        GetWorld()->RemoveCanvas(this);
         UnregisterForUpdate();
 
         Component::OnDestroy();
@@ -89,6 +71,28 @@ namespace Hyperion::UI {
         s32 depth = 0;
         for (Widget *widget : widgets) {
             widget->m_depth = depth++;
+        }
+    }
+
+    void WidgetRegistry::RegisterWidget(Canvas *canvas, Widget *widget) {
+        s_widgets[canvas].push_back(widget);
+    }
+
+    void WidgetRegistry::UnregisterWidget(Canvas *canvas, Widget *widget) {
+        auto &widgets = s_widgets[canvas];
+        auto begin = widgets.begin();
+        auto end = widgets.end();
+        if (std::find(begin, end, widget) != end) {
+            widgets.erase(std::remove(begin, end, widget));
+        }
+    }
+
+    const Vector<Widget *> &WidgetRegistry::GetWidgetsForCanvas(Canvas *canvas) {
+        auto it = s_widgets.find(canvas);
+        if (it != s_widgets.end()) {
+            return it->second;
+        } else {
+            return s_empty_widgets;
         }
     }
 

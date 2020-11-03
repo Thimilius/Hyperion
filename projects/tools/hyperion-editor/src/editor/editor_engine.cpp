@@ -15,6 +15,7 @@
 #include <hyperion/entity/components/rendering/mesh_renderer.hpp>
 #include <hyperion/entity/components/physics/collider.hpp>
 #include <hyperion/entity/components/ui/canvas.hpp>
+#include <hyperion/entity/components/ui/event_system.hpp>
 #include <hyperion/entity/components/ui/text.hpp>
 #include <hyperion/entity/components/ui/widget.hpp>
 #include <hyperion/physics/physics_world.hpp>
@@ -61,6 +62,7 @@ namespace Hyperion::Editor {
             Entity *canvas = Entity::Create("Canvas", Vec3::Zero(), Quaternion::Identity(), nullptr, s_editor_world);
             canvas->AddComponent<RectTransform>();
             canvas->AddComponent<Canvas>();
+            canvas->AddComponent<EventSystem>();
 
             Entity *widget = Entity::Create("Widget White", Vec3::Zero(), Quaternion::Identity(), canvas->GetTransform(), s_editor_world);
             RectTransform *rect_transform = widget->AddComponent<RectTransform>();

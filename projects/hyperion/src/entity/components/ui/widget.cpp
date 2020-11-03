@@ -13,11 +13,15 @@ namespace Hyperion::UI {
     void Widget::OnCreate() {
         Component::OnCreate();
 
-        GetEntity()->GetComponentInParent<Canvas>()->AddWidget(this);
+        Canvas *canvas = GetEntity()->GetComponentInParent<Canvas>();
+        canvas->AddWidget(this);
+        WidgetRegistry::RegisterWidget(canvas, this);
     }
 
     void Widget::OnDestroy() {
-        GetEntity()->GetComponentInParent<Canvas>()->RemoveWidget(this);
+        Canvas *canvas = GetEntity()->GetComponentInParent<Canvas>();
+        canvas->RemoveWidget(this);
+        WidgetRegistry::UnregisterWidget(canvas, this);
 
         Component::OnDestroy();
     }
