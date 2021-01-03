@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace HyperionEngine {
     public static class Application {

@@ -9,12 +9,14 @@ namespace Hyperion {
 namespace Hyperion {
 
     class ScriptingEngine {
-    public:
-        static void Init();
-        static void Shutdown();
     private:
         ScriptingEngine() = delete;
         ~ScriptingEngine() = delete;
+
+        static void Init();
+        static void Shutdown();
+
+        static void TestFunctions();
     private:
         inline static MonoDomain *s_root_domain;
     private:
