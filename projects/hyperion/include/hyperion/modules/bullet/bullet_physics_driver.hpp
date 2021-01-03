@@ -12,6 +12,8 @@ namespace Hyperion::Physics {
 
     class BulletPhysicsDriver : public IPhysicsDriver {
     public:
+        PhysicsBackend GetBackend() const override { return PhysicsBackend::Bullet; }
+
         PhysicsWorld *CreatePhysicsWorld() override;
         void DestroyPhysicsWorld(PhysicsWorld *world) override;
 

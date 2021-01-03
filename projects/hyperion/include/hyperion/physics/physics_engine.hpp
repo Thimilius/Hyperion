@@ -12,22 +12,18 @@ namespace Hyperion::Physics {
 
     class PhysicsEngine final {
     public:
-        inline static PhysicsBackend GetBackend() { return s_physics_backend; }
-
         static bool Raycast(Ray ray, RaycastResult &result, f32 distance = 10000.0f);
     private:
         PhysicsEngine() = delete;
         ~PhysicsEngine() = delete;
 
-        static void Init(const PhysicsSettings &settings);
+        static void Init();
         static void Update(f32 delta_time);
         static void Shutdown();
 
         inline static PhysicsWorld *CreatePhysicsWorld() { return s_physics_driver->CreatePhysicsWorld(); }
         inline static void DestroyPhysicsWorld(PhysicsWorld *world) { return s_physics_driver->DestroyPhysicsWorld(world); }
     private:
-        inline static PhysicsBackend s_physics_backend;
-
         inline static IPhysicsDriver *s_physics_driver;
     private:
         friend class Hyperion::Engine;

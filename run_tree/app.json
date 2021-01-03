@@ -1,5 +1,5 @@
 {
-	"time": {
+	"core": {
 		"max_delta_time": 0.15
 	},
 	"window": {
@@ -20,11 +20,5 @@
 		
 		"shader_path": "data/shaders",
 		"texture_path": "data/textures"
-	},
-	"physics": {
-		"backend": "bullet"
-	},
-	"audio": {
-		"backend": "none"
-	}	
+	}
 }

@@ -18,8 +18,8 @@ namespace Hyperion {
         s_instance = this;
         m_starting_settings = settings;
         
-        HYP_ASSERT_MESSAGE(settings.time.max_delta_time > 0, "Max delta time must be greater than zero!");
-        Time::s_max_delta_time = settings.time.max_delta_time;
+        HYP_ASSERT_MESSAGE(settings.core.max_delta_time > 0, "Max delta time must be greater than zero!");
+        Time::s_max_delta_time = settings.core.max_delta_time;
 
         Display::UpdateSize(settings.window.width, settings.window.height);
 

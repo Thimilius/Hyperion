@@ -14,10 +14,7 @@ namespace Hyperion::Physics {
         return WorldManager::GetActiveWorld()->GetPhysicsWorld()->Raycast(ray, result, distance);
     }
 
-    void PhysicsEngine::Init(const PhysicsSettings &settings) {
-        // TODO: Move physics backend into physics driver
-        s_physics_backend = settings.backend;
-
+    void PhysicsEngine::Init() {
 #if HYP_PHYSICS_BULLET
         s_physics_driver = new BulletPhysicsDriver();
 #else

@@ -18,7 +18,7 @@ namespace Hyperion::Physics {
     void BulletPhysicsDriver::Init() {
         m_collision_configuration = new btDefaultCollisionConfiguration();
 
-        HYP_LOG_INFO("Physics", "Initialized Bullet physics engine!");
+        HYP_LOG_INFO("Physics", "Initialized Bullet physics driver!");
     }
 
     void BulletPhysicsDriver::Update(f32 delta_time) {

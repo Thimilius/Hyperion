@@ -9,7 +9,7 @@
 
 namespace Hyperion {
 
-    struct TimeSettings {
+    struct CoreSettings {
         f32 max_delta_time = 0.15f;
     };
 
@@ -26,21 +26,11 @@ namespace Hyperion {
         Rendering::RenderPipeline *custom_pipeline = nullptr;
     };
 
-    struct PhysicsSettings {
-        Physics::PhysicsBackend backend = Physics::PhysicsBackend::Bullet;
-    };
-
-    struct AudioSettings {
-        Audio::AudioBackend backend = Audio::AudioBackend::FMod;
-    };
-
     struct ApplicationSettings {
-        TimeSettings time;
+        CoreSettings core;
         WindowSettings window;
         AssetSettings assets;
         RenderSettings render;
-        PhysicsSettings physics;
-        AudioSettings audio;
 
         static ApplicationSettings FromJsonFile(const String &path);
     };

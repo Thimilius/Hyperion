@@ -1,5 +1,6 @@
 #pragma once
 
+#include "hyperion/physics/physics_backend.hpp"
 #include "hyperion/physics/physics_world.hpp"
 
 namespace Hyperion::Physics {
@@ -8,6 +9,8 @@ namespace Hyperion::Physics {
     public:
         virtual ~IPhysicsDriver() = default;
         
+        virtual PhysicsBackend GetBackend() const = 0;
+
         virtual PhysicsWorld *CreatePhysicsWorld() = 0;
         virtual void DestroyPhysicsWorld(PhysicsWorld *world) = 0;
 
@@ -18,6 +21,8 @@ namespace Hyperion::Physics {
 
     class DummyPhysicsDriver : public IPhysicsDriver {
     public:
+        PhysicsBackend GetBackend() const override { return PhysicsBackend::None; }
+
         PhysicsWorld *CreatePhysicsWorld() { return new PhysicsWorld(); };
         void DestroyPhysicsWorld(PhysicsWorld *world) { delete world; }
 

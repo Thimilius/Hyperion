@@ -30,7 +30,7 @@ workspace "hyperion"
 		}
 	}
 	if not _OPTIONS[audio_backend_option] then
-		_OPTIONS[audio_backend_option] = "none"
+		_OPTIONS[audio_backend_option] = "fmod"
 	end
 
 	newoption {
@@ -43,7 +43,7 @@ workspace "hyperion"
 		}
 	}
 	if not _OPTIONS[physics_backend_option] then
-		_OPTIONS[physics_backend_option] = "none"
+		_OPTIONS[physics_backend_option] = "bullet"
 	end
 
 	filter "configurations:debug"
@@ -196,8 +196,6 @@ function linkhyperion()
 	filter { }
 
 end
-
-group "tools"	
 
 project "hyperion-editor"
 	location "projects/tools/hyperion-editor"

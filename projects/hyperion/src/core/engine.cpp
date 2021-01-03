@@ -37,8 +37,8 @@ namespace Hyperion {
         AssetManager::Init(settings.assets);
         Rendering::RenderEngine::Init(settings.render);
         Rendering::Font::Init();
-        Physics::PhysicsEngine::Init(settings.physics);
-        Audio::AudioEngine::Init(settings.audio);
+        Physics::PhysicsEngine::Init();
+        Audio::AudioEngine::Init();
         ScriptingEngine::Init();
     }
 

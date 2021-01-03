@@ -8,10 +8,7 @@
 
 namespace Hyperion::Audio {
 
-    void AudioEngine::Init(const AudioSettings &settings) {
-        // TODO: Move audio backend into audio driver
-        s_audio_backend = settings.backend;
-
+    void AudioEngine::Init() {
 #if HYP_AUDIO_FMOD
         s_audio_driver = new FModAudioDriver();
 #else

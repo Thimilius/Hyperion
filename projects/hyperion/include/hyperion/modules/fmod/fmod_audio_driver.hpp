@@ -11,6 +11,8 @@ namespace Hyperion::Audio {
 
     class FModAudioDriver : public IAudioDriver {
     public:
+        AudioBackend GetBackend() const override { return AudioBackend::FMod; }
+
         void Init() override;
         void Shutdown() override;
 
