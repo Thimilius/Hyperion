@@ -7,8 +7,12 @@
 #include "hyperion/rendering/vertex_format.hpp"
 #include "hyperion/rendering/vertex_array.hpp"
 
-namespace Hyperion::Rendering {
-    class RenderEngine;
+namespace Hyperion {
+    class World;
+
+    namespace Rendering {
+        class RenderEngine;
+    }
 }
 
 namespace Hyperion::Rendering {

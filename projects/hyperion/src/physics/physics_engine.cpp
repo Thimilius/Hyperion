@@ -2,8 +2,11 @@
 
 #include "hyperion/physics/physics_engine.hpp"
 
-#include "hyperion/modules/bullet/bullet_physics_driver.hpp"
 #include "hyperion/entity/world_manager.hpp"
+
+#if HYP_PHYSICS_BULLET
+#include "hyperion/modules/bullet/bullet_physics_driver.hpp"
+#endif
 
 namespace Hyperion::Physics {
 
@@ -12,17 +15,14 @@ namespace Hyperion::Physics {
     }
 
     void PhysicsEngine::Init(const PhysicsSettings &settings) {
+        // TODO: Move physics backend into physics driver
         s_physics_backend = settings.backend;
 
-        switch (settings.backend) {
-            case PhysicsBackend::None:
-                s_physics_driver = new DummyPhysicsDriver();
-                break;
-            case PhysicsBackend::Bullet:
-                s_physics_driver = new BulletPhysicsDriver();
-                break;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return;
-        }
+#if HYP_PHYSICS_BULLET
+        s_physics_driver = new BulletPhysicsDriver();
+#else
+        s_physics_driver = new DummyPhysicsDriver();
+#endif
 
         s_physics_driver->Init();
     }

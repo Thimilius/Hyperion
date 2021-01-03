@@ -21,7 +21,7 @@ namespace Hyperion::Audio {
         }
 
         m_system->init(36, FMOD_INIT_NORMAL, nullptr);
-        HYP_LOG_INFO("Audio", "Initialized FMOD audio engine!");
+        HYP_LOG_INFO("Audio", "Initialized FMOD audio driver!");
     }
 
     void FModAudioDriver::Shutdown() {

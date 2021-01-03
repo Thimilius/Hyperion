@@ -1,3 +1,7 @@
+output_directory_format = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+audio_backend_option = "audio"
+physics_backend_option = "physics"
+
 workspace "hyperion"
 	startproject "hyperion-editor"
 
@@ -6,25 +10,46 @@ workspace "hyperion"
 	architecture "x86_64"
 	
 	staticruntime "On"
-	
-	exceptionhandling ("Off")
-	rtti ("Off")
-	
+	exceptionhandling "Off"
+	rtti "Off"
 	flags { "FatalCompileWarnings" }
 	
+	targetdir ("build/bin/" .. output_directory_format)
+	objdir ("build/obj/" .. output_directory_format)
 	debugdir "run_tree/"
-	
-	outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
-	targetdir ("build/bin/" .. outputdir)
-	objdir ("build/obj/" .. outputdir)
 
 	configurations { "debug", "release" }
+
+	newoption {
+		trigger = audio_backend_option,
+		value = "API",
+		description = "Specifies the audio backend",
+		allowed = {
+			{ "none", "None" },
+			{ "fmod", "FMOD" }
+		}
+	}
+	if not _OPTIONS[audio_backend_option] then
+		_OPTIONS[audio_backend_option] = "none"
+	end
+
+	newoption {
+		trigger = physics_backend_option,
+		value = "API",
+		description = "Specifies the physics backend",
+		allowed = {
+			{ "none", "None" },
+			{ "bullet", "Bullet" }
+		}
+	}
+	if not _OPTIONS[physics_backend_option] then
+		_OPTIONS[physics_backend_option] = "none"
+	end
 
 	filter "configurations:debug"
 		defines { "HYP_DEBUG", "HYP_ENABLE_ASSERTS", "HYP_BREAK_ON_ASSERT" }
 		runtime "Debug"
 		symbols "On"
-
 	filter "configurations:release"
 		defines { "HYP_RELEASE" }
 		runtime "Release"
@@ -33,53 +58,78 @@ workspace "hyperion"
 	filter "system:windows"
 		defines { "HYP_PLATFORM_WINDOWS", "_CRT_SECURE_NO_WARNINGS", "_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS" }
 		systemversion "latest"
-	
+
+	filter "options:audio=none"
+		defines { "HYP_AUDIO_NONE" }
+	filter "options:audio=fmod"
+		defines { "HYP_AUDIO_FMOD" }
+
+	filter "options:physics=none"
+		defines { "HYP_PHYSICS_NONE" }
+	filter "options:physics=bullet"
+		defines { "HYP_PHYSICS_BULLET" }
+
 project "hyperion"
 	location "projects/hyperion"
 	kind "StaticLib"
 	
 	pchheader "hyppch.hpp"
-	pchsource "projects/hyperion/src/hyppch.cpp"
+	pchsource "%{prj.location}/src/hyppch.cpp"
 
 	files {
-		"projects/hyperion/**.hpp",
-		"projects/hyperion/**.h",
-		"projects/hyperion/**.c",
-		"projects/hyperion/**.cpp",
+		"%{prj.location}/**.hpp",
+		"%{prj.location}/**.h",
+		"%{prj.location}/**.c",
+		"%{prj.location}/**.cpp"
 	}
-
 	excludes {
-		"projects/hyperion/src/platform/**",
-		"projects/hyperion/include/hyperion/platform/**",
+		"%{prj.location}/include/hyperion/platform/**",
+		"%{prj.location}/src/platform/**",
 
-        "projects/hyperion/vendor/glad/src/glad_wgl.c"
+		"%{prj.location}/include/hyperion/modules/bullet/**",
+		"%{prj.location}/src/modules/bullet/**",
+		"%{prj.location}/include/hyperion/modules/fmod/**",
+		"%{prj.location}/src/modules/fmod/**",
+
+        "%{prj.location}/vendor/glad/src/glad_wgl.c"
 	}
 
 	includedirs {
-		"projects/hyperion/include",
+		"%{prj.location}/include",
 		
-		"projects/hyperion/vendor/assimp/include",
-		"projects/hyperion/vendor/bullet/include",
-		"projects/hyperion/vendor/fmod/include",
-		"projects/hyperion/vendor/fmt/include",
-		"projects/hyperion/vendor/freetype/include",
-		"projects/hyperion/vendor/glad/include",
-		"projects/hyperion/vendor/nameof/include",
-		"projects/hyperion/vendor/nlohmann/include",
-		"projects/hyperion/vendor/mono/include",
-		"projects/hyperion/vendor/rttr/include",
-		"projects/hyperion/vendor/stb/include",
+		"%{prj.location}/vendor/assimp/include",
+		"%{prj.location}/vendor/fmt/include",
+		"%{prj.location}/vendor/freetype/include",
+		"%{prj.location}/vendor/glad/include",
+		"%{prj.location}/vendor/nameof/include",
+		"%{prj.location}/vendor/nlohmann/include",
+		"%{prj.location}/vendor/mono/include",
+		"%{prj.location}/vendor/rttr/include",
+		"%{prj.location}/vendor/stb/include"
 	}
 	
 	filter "files:projects/hyperion/vendor/**"
 		flags { "NoPCH" }
 
+	filter "options:audio=fmod"
+		files { 
+			"%{prj.location}/include/hyperion/modules/fmod/**",
+			"%{prj.location}/src/modules/fmod/**"
+		}
+		includedirs { "%{prj.location}/vendor/fmod/include" }
+	filter "options:physics=bullet"
+		files { 
+			"%{prj.location}/include/hyperion/modules/bullet/**",
+			"%{prj.location}/src/modules/bullet/**"
+		}
+		includedirs { "%{prj.location}/vendor/bullet/include" }
+
 	filter "system:windows"
 		files {
-			"projects/hyperion/include/hyperion/platform/windows/**.hpp",
-			"projects/hyperion/src/platform/windows/**.cpp",
+			"%{prj.location}/include/hyperion/platform/windows/**.hpp",
+			"%{prj.location}/src/platform/windows/**.cpp",
 
-            "projects/hyperion/vendor/glad/src/glad_wgl.c"
+            "%{prj.location}/vendor/glad/src/glad_wgl.c"
 		}
 		
 	    postbuildcommands {
@@ -88,41 +138,24 @@ project "hyperion"
 			"{COPY} vendor/mono/lib/windows/mono.dll %{cfg.targetdir}"
 	    }
 
-group "tools"	
+function linkhyperion()
+	filter { }
 
-project "hyperion-editor"
-	location "projects/tools/hyperion-editor"
-	kind "ConsoleApp"
-	
 	links { "hyperion" }
 	
-	files {
-		"projects/tools/hyperion-editor/**.hpp",
-		"projects/tools/hyperion-editor/**.h",
-		"projects/tools/hyperion-editor/**.c",
-		"projects/tools/hyperion-editor/**.cpp",
-	}
-	
-    excludes { "projects/tools/hyperion-editor/resource.rc" }
-
 	includedirs {
-		"projects/tools/hyperion-editor/include",
-	
 		"projects/hyperion/include",
 		
 		"projects/hyperion/vendor/fmt/include",
 		"projects/hyperion/vendor/nameof/include",
-		"projects/hyperion/vendor/rttr/include",
+		"projects/hyperion/vendor/rttr/include"
 	}
-		
+
 	filter "kind:ConsoleApp"
 		defines { "HYP_CONSOLE" }
 
-    filter "system:windows"
-        files { "projects/tools/hyperion-editor/resource.rc" }
-
+	filter "system:windows"
 		libdirs {
-			"projects/hyperion/vendor/fmod/lib/windows",
 			"projects/hyperion/vendor/assimp/lib/windows",
 			"projects/hyperion/vendor/mono/lib/windows"
 		}
@@ -133,30 +166,65 @@ project "hyperion-editor"
 		
 			"rttr",
 			"freetype",
-			"bullet",
 		
-			"fmod_vc",
 			"assimp",
 			"mono",	
 		}
+	
+	filter { "system:windows", "configurations:debug" }
+		libdirs {
+			"projects/hyperion/vendor/freetype/lib/windows/debug",
+			"projects/hyperion/vendor/rttr/lib/windows/debug"
+		}
+	filter { "system:windows", "configurations:release" }
+		libdirs {
+			"projects/hyperion/vendor/freetype/lib/windows/release",
+			"projects/hyperion/vendor/rttr/lib/windows/release"
+		}
 
-	    postbuildcommands {
+	filter { "system:windows", "options:audio=fmod" }
+		links { "fmod_vc" }
+		libdirs { "projects/hyperion/vendor/fmod/lib/windows" }
+
+	filter { "system:windows", "options:physics=bullet" }
+		links { "bullet" }
+	filter { "system:windows", "configurations:debug", "options:physics=bullet" }
+		libdirs { "projects/hyperion/vendor/bullet/lib/windows/debug" }
+	filter { "system:windows", "configurations:release", "options:physics=bullet" }
+		libdirs { "projects/hyperion/vendor/bullet/lib/windows/release" }
+
+	filter { }
+
+end
+
+group "tools"	
+
+project "hyperion-editor"
+	location "projects/tools/hyperion-editor"
+	kind "ConsoleApp"
+	
+	linkhyperion()
+
+	files {
+		"%{prj.location}/**.hpp",
+		"%{prj.location}/**.h",
+		"%{prj.location}/**.c",
+		"%{prj.location}/**.cpp"
+	}
+    excludes { "%{prj.location}/resource.rc" }
+	
+	includedirs { "%{prj.location}/include" }
+		
+    filter "system:windows"
+        files { "projects/tools/hyperion-editor/resource.rc" }
+
+		postbuildcommands {
 		    "{COPY} %{cfg.targetdir}/%{prj.name}.exe ../../../run_tree/",
 		    
 		    "{COPY} %{cfg.targetdir}/fmod.dll ../../../run_tree/",
 		    "{COPY} %{cfg.targetdir}/assimp.dll ../../../run_tree/",
-			"{COPY} %{cfg.targetdir}/mono.dll ../../../run_tree/",
+			"{COPY} %{cfg.targetdir}/mono.dll ../../../run_tree/"
 	    }
-
-	filter { "system:windows", "configurations:debug" }
-		libdirs { "projects/hyperion/vendor/bullet/lib/windows/debug" }
-		libdirs { "projects/hyperion/vendor/freetype/lib/windows/debug" }
-		libdirs { "projects/hyperion/vendor/rttr/lib/windows/debug" }
-		
-	filter { "system:windows", "configurations:release" }
-		libdirs { "projects/hyperion/vendor/bullet/lib/windows/release" }
-		libdirs { "projects/hyperion/vendor/freetype/lib/windows/release" }
-		libdirs { "projects/hyperion/vendor/rttr/lib/windows/release" }
 
 group "managed"
 
@@ -166,7 +234,7 @@ project "HyperionEngine"
 	
 	language "C#"
 	
-	files { "projects/managed/HyperionEngine/**.cs" }
+	files { "%{prj.location}/**.cs" }
 	
 	postbuildcommands {
 		"{COPY} $(TargetDir)$(TargetFileName) $(ProjectDir)../../../run_tree/data/managed/"

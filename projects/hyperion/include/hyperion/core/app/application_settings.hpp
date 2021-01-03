@@ -9,8 +9,6 @@
 
 namespace Hyperion {
 
-    class World;
-
     struct TimeSettings {
         f32 max_delta_time = 0.15f;
     };

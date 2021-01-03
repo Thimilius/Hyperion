@@ -2,22 +2,21 @@
 
 #include "hyperion/audio/audio_engine.hpp"
 
+#if HYP_AUDIO_FMOD
 #include "hyperion/modules/fmod/fmod_audio_driver.hpp"
+#endif
 
 namespace Hyperion::Audio {
 
     void AudioEngine::Init(const AudioSettings &settings) {
+        // TODO: Move audio backend into audio driver
         s_audio_backend = settings.backend;
 
-        switch (settings.backend) {
-            case AudioBackend::None:
-                s_audio_driver = new DummyAudioDriver();
-                break;
-            case AudioBackend::FMod:
-                s_audio_driver = new FModAudioDriver();
-                break;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return;
-        }
+#if HYP_AUDIO_FMOD
+        s_audio_driver = new FModAudioDriver();
+#else
+        s_audio_driver = new DummyAudioDriver();
+#endif
 
         s_audio_driver->Init();
     }
