@@ -6,7 +6,7 @@
 
 namespace Hyperion {
 
-    class Math {
+    class Math final {
     public:
         inline static const f32 PI = 3.1415926535897932384626433833f;
         inline static const f32 TAU = PI * 2.0f;

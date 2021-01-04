@@ -10,14 +10,20 @@
 #include "hyperion/core/string_utils.hpp"
 #include "hyperion/core/timer.hpp"
 #include "hyperion/core/types.hpp"
+
+// App
 #include "hyperion/core/app/application.hpp"
 #include "hyperion/core/app/application_settings.hpp"
 #include "hyperion/core/app/display.hpp"
 #include "hyperion/core/app/input.hpp"
 #include "hyperion/core/app/time.hpp"
 #include "hyperion/core/app/window.hpp"
+
+// IO
 #include "hyperion/core/io/file_utilities.hpp"
 #include "hyperion/core/io/image_loader.hpp"
+
+// Math
 #include "hyperion/core/math/bounding_box.hpp"
 #include "hyperion/core/math/bounding_sphere.hpp"
 #include "hyperion/core/math/math.hpp"

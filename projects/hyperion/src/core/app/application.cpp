@@ -77,6 +77,8 @@ namespace Hyperion {
             m_window->Update();
         }
 
+        OnShutdown();
+
         Engine::Shutdown();
 
         return 0;

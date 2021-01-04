@@ -2,7 +2,7 @@
 
 namespace Hyperion {
 
-    class Main {
+    class Main final {
     public:
         static u32 Run();
     private:

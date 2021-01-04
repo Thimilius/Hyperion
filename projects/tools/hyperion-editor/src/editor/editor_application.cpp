@@ -12,7 +12,7 @@ namespace Hyperion::Editor {
         }
 
         void OnUpdate(f32 delta_time) override {
-
+            
         }
 
         void OnTick() override {
@@ -20,6 +20,10 @@ namespace Hyperion::Editor {
         }
 
         void OnEvent(Event &event) override {
+            
+        }
+
+        void OnShutdown() override {
 
         }
     };
