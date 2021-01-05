@@ -5,9 +5,9 @@
 #include <glad/glad.h>
 #include <sstream>
 
+#include "hyperion/core/io/file_system.hpp"
 #include "hyperion/driver/opengl/opengl_shader_pre_processor.hpp"
 #include "hyperion/assets/asset_manager.hpp"
-#include "hyperion/core/io/file_utilities.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -101,11 +101,11 @@ namespace Hyperion::Rendering {
             if (path.extension() == ".shader_module") {
                 String filename = path.filename().u8string();
                 String module_name = filename.substr(0, filename.find_last_of('.'));
-                s_modules[module_name] = FileUtilities::ReadAllText(path.u8string());
+                s_modules[module_name] = FileSystem::ReadAllText(path.u8string());
             }
         }
 
-        s_fallback_shader = Compile(FileUtilities::ReadAllText(shader_path + "/internal/standard_fallback.shader"));
+        s_fallback_shader = Compile(FileSystem::ReadAllText(shader_path + "/internal/standard_fallback.shader"));
     }
 
     String OpenGLShaderCompiler::GetShaderModuleFromName(const String &name) {

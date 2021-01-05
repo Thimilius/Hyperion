@@ -1,12 +1,12 @@
 #include "hyppch.hpp"
 
-#include "hyperion/core/io/file_utilities.hpp"
+#include "hyperion/core/io/file_system.hpp"
 
 #include <fstream>
 
 namespace Hyperion {
 
-    String FileUtilities::ReadAllText(const String &path) {
+    String FileSystem::ReadAllText(const String &path) {
         std::ifstream file(path);
         if (!file.is_open()) {
             HYP_LOG_ERROR("Engine", "Failed to open file: '{}'!", std::filesystem::absolute(path).u8string());
@@ -22,7 +22,7 @@ namespace Hyperion {
         return buffer;
     }
 
-    Vector<String> FileUtilities::ReadAllLines(const String &path) {
+    Vector<String> FileSystem::ReadAllLines(const String &path) {
         Vector<String> result;
 
         std::ifstream file(path);

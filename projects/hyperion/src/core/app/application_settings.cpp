@@ -2,7 +2,7 @@
 
 #include "hyperion/core/app/application_settings.hpp"
 
-#include "hyperion/core/io/file_utilities.hpp"
+#include "hyperion/core/io/file_system.hpp"
 
 namespace Hyperion {
 
@@ -33,7 +33,7 @@ namespace Hyperion {
     }
 
     ApplicationSettings ApplicationSettings::FromJsonFile(const String &path) {
-        String json_text = FileUtilities::ReadAllText(path);
+        String json_text = FileSystem::ReadAllText(path);
         auto json = nlohmann::json::parse(json_text, nullptr, false);
 
         ApplicationSettings settings;

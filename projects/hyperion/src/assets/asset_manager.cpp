@@ -3,7 +3,7 @@
 #include "hyperion/assets/asset_manager.hpp"
 
 #include "hyperion/assets/mesh_factory.hpp"
-#include "hyperion/core/io/file_utilities.hpp"
+#include "hyperion/core/io/file_system.hpp"
 #include "hyperion/core/io/image_loader.hpp"
 
 using namespace Hyperion::Rendering;
@@ -11,7 +11,7 @@ using namespace Hyperion::Rendering;
 namespace Hyperion {
 
     Shader *AssetManager::LoadShader(const String &name, const String &filepath) {
-        String source = FileUtilities::ReadAllText(filepath);
+        String source = FileSystem::ReadAllText(filepath);
         Shader *shader = Shader::Create(name, source);
         AddShader(name, filepath, shader);
         return shader;
@@ -186,7 +186,7 @@ namespace Hyperion {
         }
 
         AssetEntry entry = s_shaders[name];
-        String source = FileUtilities::ReadAllText(entry.filepath);
+        String source = FileSystem::ReadAllText(entry.filepath);
         entry.asset->Recompile(source);
     }
 

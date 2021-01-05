@@ -4,13 +4,13 @@
 
 namespace Hyperion {
 
-    class FileUtilities final {
+    class FileSystem final {
     public:
         static String ReadAllText(const String &path);
         static Vector<String> ReadAllLines(const String &path);
     private:
-        FileUtilities() = delete;
-        ~FileUtilities() = delete;
+        FileSystem() = delete;
+        ~FileSystem() = delete;
     };
 
 }

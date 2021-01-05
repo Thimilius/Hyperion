@@ -20,7 +20,7 @@
 #include "hyperion/core/app/window.hpp"
 
 // IO
-#include "hyperion/core/io/file_utilities.hpp"
+#include "hyperion/core/io/file_system.hpp"
 #include "hyperion/core/io/image_loader.hpp"
 
 // Math
