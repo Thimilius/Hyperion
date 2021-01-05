@@ -39,4 +39,9 @@ namespace Hyperion {
         return result;
     }
 
+    void FileSystem::WriteAllText(const String &path, const String &text) {
+        std::ofstream file(path);
+        file.write(text.data(), text.length());
+    }
+
 }
