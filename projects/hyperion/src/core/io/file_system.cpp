@@ -3,6 +3,7 @@
 #include "hyperion/core/io/file_system.hpp"
 
 #include <fstream>
+#include <filesystem>
 
 namespace Hyperion {
 
@@ -42,6 +43,10 @@ namespace Hyperion {
     void FileSystem::WriteAllText(const String &path, const String &text) {
         std::ofstream file(path);
         file.write(text.data(), text.length());
+    }
+
+    void FileSystem::Delete(const String &path) {
+        std::filesystem::remove(path);
     }
 
 }
