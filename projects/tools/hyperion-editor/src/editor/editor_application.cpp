@@ -1,6 +1,7 @@
 ﻿#include <hyperion/hyperion.hpp>
 #include <hyperion/entry_point.hpp>
 
+#include <hyperion/core/threading/thread.hpp>
 #include <hyperion/core/serialization/json_serializer.hpp>
 
 namespace Hyperion::Editor {
@@ -13,8 +14,6 @@ namespace Hyperion::Editor {
 
         RTTR_REGISTRATION_FRIEND;
     };
-
-    
 
     class EditorApplication : public Application {
     public:
