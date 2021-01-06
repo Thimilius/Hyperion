@@ -5,7 +5,7 @@
 namespace Hyperion {
 
     class SphereCollider final : public Collider {
-        RTTR_ENABLE(Collider);
+        HYP_REFLECT(Collider);
     public:
         SphereCollider() : Collider("SphereCollider") {}
 

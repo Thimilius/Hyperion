@@ -31,10 +31,8 @@ namespace Hyperion {
 
 }
 
-RTTR_REGISTRATION
+HYP_REFLECT_REGISTER_BEGIN
 {
-    using namespace rttr;
-    using namespace Hyperion;
-
-    registration::class_<BoxCollider>(HYP_NAME_OF_TYPE(BoxCollider));
+    registration::class_<BoxCollider>("BoxCollider");
 }
+HYP_REFLECT_REGISTER_END

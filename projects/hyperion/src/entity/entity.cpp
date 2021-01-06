@@ -191,10 +191,8 @@ namespace Hyperion {
 
 }
 
-RTTR_REGISTRATION
+HYP_REFLECT_REGISTER_BEGIN
 {
-    using namespace rttr;
-    using namespace Hyperion;
-
-    registration::class_<Entity>(HYP_NAME_OF_TYPE(Entity));
+    registration::class_<Entity>("Entity");
 }
+HYP_REFLECT_REGISTER_END

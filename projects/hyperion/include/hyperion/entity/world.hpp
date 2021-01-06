@@ -36,7 +36,7 @@ namespace Hyperion {
     };
 
     class World final : public Object {
-        RTTR_ENABLE(Object);
+        HYP_REFLECT(Object);
     public:
         inline WorldEnvironment &GetEnvironment() { return m_environment; }
 

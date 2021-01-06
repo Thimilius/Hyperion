@@ -21,13 +21,7 @@
 #include "hyperion/core/string_utils.hpp"
 #include "hyperion/core/log.hpp"
 #include "hyperion/core/result.hpp"
-
-#include <nameof/nameof.hpp>
-#include <rttr/registration_friend>
-#include <rttr/type>
-
-#define HYP_NAME_OF(...) (String(NAMEOF(__VA_ARGS__)))
-#define HYP_NAME_OF_TYPE(...) (String(NAMEOF_SHORT_TYPE(__VA_ARGS__)))
+#include "hyperion/core/reflection.hpp"
 
 #define HYP_PANIC do {                                                \
             HYP_LOG_ERROR("Engine", "Engine encountered an error!");  \

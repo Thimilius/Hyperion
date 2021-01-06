@@ -13,7 +13,7 @@ namespace Hyperion {
 namespace Hyperion {
 
     class Transform : public Component {
-        RTTR_ENABLE(Component);
+        HYP_REFLECT(Component);
     public:
         inline Vec3 GetLocalPosition() const { return m_local_position; }
         inline void SetLocalPosition(const Vec3 &position) {

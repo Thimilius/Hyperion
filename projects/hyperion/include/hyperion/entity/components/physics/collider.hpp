@@ -13,7 +13,7 @@ namespace Hyperion {
     };
 
     class Collider : public Behaviour, public IEntityMessageListener {
-        RTTR_ENABLE(Behaviour);
+        HYP_REFLECT(Behaviour);
     public:
         void SetEnabled(bool enabled) override;
 

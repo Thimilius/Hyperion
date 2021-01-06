@@ -7,12 +7,10 @@
 namespace Hyperion::Editor {
 
     struct MyStruct {
-        RTTR_ENABLE();
-    public:
+        HYP_REFLECT();
+
         String string;
         s32 number;
-
-        RTTR_REGISTRATION_FRIEND;
     };
 
     class EditorApplication : public Application {
@@ -51,17 +49,14 @@ namespace Hyperion::Editor {
 
 }
 
-RTTR_REGISTRATION
+HYP_REFLECT_REGISTER_BEGIN
 {
-    using namespace rttr;
-    using namespace Hyperion;
-    using namespace Hyperion::Editor;
-
-    registration::class_<MyStruct>(HYP_NAME_OF_TYPE(MyStruct))
-        .constructor<>() 
-        .property("string" , &MyStruct::string)
-        .property("number", &MyStruct::number);
+    registration::class_<Editor::MyStruct>("MyStruct")
+        .constructor<>()
+        .property("string", &Editor::MyStruct::string)
+        .property("number", &Editor::MyStruct::number);
 }
+HYP_REFLECT_REGISTER_END
 
 Hyperion::Application *Hyperion::CreateApplication() {
     ApplicationSettings settings = ApplicationSettings::FromJsonFile("app.json");

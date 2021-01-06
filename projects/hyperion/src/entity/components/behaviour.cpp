@@ -13,10 +13,8 @@ namespace Hyperion {
 
 }
 
-RTTR_REGISTRATION
+HYP_REFLECT_REGISTER_BEGIN
 {
-    using namespace rttr;
-    using namespace Hyperion;
-
-    registration::class_<Behaviour>(HYP_NAME_OF_TYPE(Behaviour));
+    registration::class_<Behaviour>("Behaviour");
 }
+HYP_REFLECT_REGISTER_END

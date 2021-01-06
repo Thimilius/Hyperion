@@ -11,7 +11,7 @@ namespace Hyperion {
 namespace Hyperion {
 
     class Object {
-        RTTR_ENABLE();
+        HYP_REFLECT();
     public:
         inline String GetName() const { return m_name; }
         inline void SetName(const String &name) { m_name = name; }
@@ -38,8 +38,6 @@ namespace Hyperion {
         friend class Hyperion::Entity;
         friend class Hyperion::ObjectManager;
         friend class Hyperion::World;
-
-        RTTR_REGISTRATION_FRIEND;
     };
 
 }

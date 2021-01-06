@@ -107,10 +107,8 @@ namespace Hyperion {
 
 }
 
-RTTR_REGISTRATION
+HYP_REFLECT_REGISTER_BEGIN
 {
-    using namespace rttr;
-    using namespace Hyperion;
-
-    registration::class_<Transform>(HYP_NAME_OF_TYPE(Transform));
+    registration::class_<Transform>("Transform");
 }
+HYP_REFLECT_REGISTER_END

@@ -5,7 +5,7 @@
 namespace Hyperion::UI {
 
     class EventSystem final : public Component {
-        RTTR_ENABLE(Component);
+        HYP_REFLECT(Component);
     public:
         static EventSystem *GetCurrent() { return s_current; }
     protected:

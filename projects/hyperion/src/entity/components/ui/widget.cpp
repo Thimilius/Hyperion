@@ -28,11 +28,8 @@ namespace Hyperion::UI {
 
 }
 
-RTTR_REGISTRATION
+HYP_REFLECT_REGISTER_BEGIN
 {
-    using namespace rttr;
-    using namespace Hyperion;
-    using namespace Hyperion::UI;
-
-    registration::class_<Widget>(HYP_NAME_OF_TYPE(Widget));
+    registration::class_<UI::Widget>("Widget");
 }
+HYP_REFLECT_REGISTER_END

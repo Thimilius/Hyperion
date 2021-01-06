@@ -16,7 +16,7 @@ namespace Hyperion {
     };
 
     class Camera final : public Component, public IEntityMessageListener {
-        RTTR_ENABLE(Component);
+        HYP_REFLECT(Component);
     public:
         Camera() : Component("Camera") { }
         

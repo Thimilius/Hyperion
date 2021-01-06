@@ -18,11 +18,8 @@ namespace Hyperion::UI {
 
 }
 
-RTTR_REGISTRATION
+HYP_REFLECT_REGISTER_BEGIN
 {
-    using namespace rttr;
-    using namespace Hyperion;
-    using namespace Hyperion::UI;
-
-    registration::class_<Text>(HYP_NAME_OF_TYPE(Text));
+    registration::class_<UI::Text>("Text");
 }
+HYP_REFLECT_REGISTER_END

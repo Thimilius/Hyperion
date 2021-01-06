@@ -31,10 +31,8 @@ namespace Hyperion {
 
 }
 
-RTTR_REGISTRATION
+HYP_REFLECT_REGISTER_BEGIN
 {
-    using namespace rttr;
-    using namespace Hyperion;
-
-    registration::class_<SphereCollider>(HYP_NAME_OF_TYPE(SphereCollider));
+    registration::class_<SphereCollider>("SphereCollider");
 }
+HYP_REFLECT_REGISTER_END

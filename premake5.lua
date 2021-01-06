@@ -101,7 +101,6 @@ project "hyperion"
 		"%{prj.location}/vendor/fmt/include",
 		"%{prj.location}/vendor/freetype/include",
 		"%{prj.location}/vendor/glad/include",
-		"%{prj.location}/vendor/nameof/include",
 		"%{prj.location}/vendor/nlohmann/include",
 		"%{prj.location}/vendor/mono/include",
 		"%{prj.location}/vendor/rttr/include",
@@ -147,7 +146,6 @@ function linkhyperion()
 		"projects/hyperion/include",
 		
 		"projects/hyperion/vendor/fmt/include",
-		"projects/hyperion/vendor/nameof/include",
 		"projects/hyperion/vendor/rttr/include"
 	}
 

@@ -35,7 +35,7 @@ namespace Hyperion {
     // NOTE: Should we allow multiple components of the same type?
     // Currently the GetComponent implementations assume only one component of a certain type
     class Entity final : public Object {
-        RTTR_ENABLE(Object);
+        HYP_REFLECT(Object);
     public:
         inline World *GetWorld() const { return m_world; }
 
@@ -189,8 +189,6 @@ namespace Hyperion {
         friend class Hyperion::Component;
         friend class Hyperion::Object;
         friend class Hyperion::RectTransform;
-
-        RTTR_REGISTRATION_FRIEND;
     };
 
 }

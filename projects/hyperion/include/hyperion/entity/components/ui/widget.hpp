@@ -10,7 +10,7 @@ namespace Hyperion::UI {
 namespace Hyperion::UI {
 
     class Widget : public Component {
-        RTTR_ENABLE(Component);
+        HYP_REFLECT(Component);
     public:
         Widget() : Component("Widget") {}
 

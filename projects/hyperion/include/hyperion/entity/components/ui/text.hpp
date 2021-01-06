@@ -20,7 +20,7 @@ namespace Hyperion::UI {
     };
 
     class Text : public Widget {
-        RTTR_ENABLE(Widget);
+        HYP_REFLECT(Widget);
     public:
         inline String GetText() const { return m_text; }
         inline void SetText(const String &text) { m_text = text; }

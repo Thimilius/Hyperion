@@ -28,10 +28,8 @@ namespace Hyperion {
 
 }
 
-RTTR_REGISTRATION
+HYP_REFLECT_REGISTER_BEGIN
 {
-    using namespace rttr;
-    using namespace Hyperion;
-
-    registration::class_<MeshCollider>(HYP_NAME_OF_TYPE(MeshCollider));
+    registration::class_<MeshCollider>("MeshCollider");
 }
+HYP_REFLECT_REGISTER_END

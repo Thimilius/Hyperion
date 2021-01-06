@@ -10,7 +10,7 @@ namespace Hyperion::UI {
 namespace Hyperion::UI {
 
     class Canvas final : public Component {
-        RTTR_ENABLE(Component);
+        HYP_REFLECT(Component);
     public:
         Canvas() : Component("Canvas") { }
 

@@ -5,7 +5,7 @@
 namespace Hyperion {
 
     class BoxCollider final : public Collider {
-        RTTR_ENABLE(Collider);
+        HYP_REFLECT(Collider);
     public:
         BoxCollider() : Collider("BoxCollider") { }
 

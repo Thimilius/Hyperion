@@ -83,10 +83,8 @@ namespace Hyperion {
 
 }
 
-RTTR_REGISTRATION
+HYP_REFLECT_REGISTER_BEGIN
 {
-    using namespace rttr;
-    using namespace Hyperion;
-
-    registration::class_<World>(HYP_NAME_OF_TYPE(World));
+    registration::class_<World>("World");
 }
+HYP_REFLECT_REGISTER_END

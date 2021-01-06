@@ -24,7 +24,7 @@ namespace Hyperion {
     };
 
     class RectTransform final : public Transform {
-        RTTR_ENABLE(Transform);
+        HYP_REFLECT(Transform);
     public:
         RectTransform() : Transform("RectTransform") { }
 

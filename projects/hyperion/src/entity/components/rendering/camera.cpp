@@ -130,10 +130,8 @@ namespace Hyperion {
 
 }
 
-RTTR_REGISTRATION
+HYP_REFLECT_REGISTER_BEGIN
 {
-    using namespace rttr;
-    using namespace Hyperion;
-
-    registration::class_<Camera>(HYP_NAME_OF_TYPE(Camera));
+    registration::class_<Camera>("Camera");
 }
+HYP_REFLECT_REGISTER_END

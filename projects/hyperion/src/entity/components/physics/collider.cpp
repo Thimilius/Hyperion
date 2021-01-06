@@ -39,10 +39,8 @@ namespace Hyperion {
 
 }
 
-RTTR_REGISTRATION
+HYP_REFLECT_REGISTER_BEGIN
 {
-    using namespace rttr;
-    using namespace Hyperion;
-
-    registration::class_<Collider>(HYP_NAME_OF_TYPE(Collider));
+    registration::class_<Collider>("Collider");
 }
+HYP_REFLECT_REGISTER_END

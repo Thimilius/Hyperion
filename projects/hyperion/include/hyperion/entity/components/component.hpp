@@ -13,7 +13,7 @@ namespace Hyperion {
 namespace Hyperion {
 
     class Component : public Object {
-        RTTR_ENABLE(Object);
+        HYP_REFLECT(Object);
     public:
         inline Entity *GetEntity() const { return m_entity; }
 

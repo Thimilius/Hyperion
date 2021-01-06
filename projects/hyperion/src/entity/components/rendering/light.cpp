@@ -21,10 +21,8 @@ namespace Hyperion {
 
 }
 
-RTTR_REGISTRATION
+HYP_REFLECT_REGISTER_BEGIN
 {
-    using namespace rttr;
-    using namespace Hyperion;
-
-    registration::class_<Light>(HYP_NAME_OF_TYPE(Light));
+    registration::class_<Light>("Light");
 }
+HYP_REFLECT_REGISTER_END

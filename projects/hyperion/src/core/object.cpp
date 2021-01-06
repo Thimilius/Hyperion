@@ -25,11 +25,9 @@ namespace Hyperion {
 
 }
 
-RTTR_REGISTRATION
+HYP_REFLECT_REGISTER_BEGIN
 {
-    using namespace rttr;
-    using namespace Hyperion;
-
-    registration::class_<Object>(HYP_NAME_OF_TYPE(Object))
+    registration::class_<Object>("Object")
         .property("name", &Object::m_name);
 }
+HYP_REFLECT_REGISTER_END
