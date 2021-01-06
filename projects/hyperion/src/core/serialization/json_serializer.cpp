@@ -23,7 +23,7 @@ namespace Hyperion {
             }
         }
 
-        FileSystem::WriteAllText(filepath, json.dump(4));
+        FileSystem::WriteAllText(filepath, json.dump(m_settings.indent_width));
     }
 
     void JsonSerializer::DeserializeInternal(const String &filepath, rttr::instance object, rttr::type type) {

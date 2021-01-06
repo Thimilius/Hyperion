@@ -6,8 +6,14 @@
 
 namespace Hyperion {
 
+    struct JsonSerializerSettings {
+        u32 indent_width = 4;
+    };
+
     class JsonSerializer {
     public:
+        JsonSerializer(JsonSerializerSettings settings = JsonSerializerSettings()) : m_settings(settings) { }
+
         template<typename T>
         void Serialize(const String &filepath, const T &object) {
             rttr::type type = rttr::type::get<T>();
@@ -32,6 +38,8 @@ namespace Hyperion {
     private:
         void SerializeInternal(const String &filepath, rttr::instance object, rttr::type type);
         void DeserializeInternal(const String &filepath, rttr::instance object, rttr::type type);
+    private:
+        JsonSerializerSettings m_settings;
     };
 
 }
