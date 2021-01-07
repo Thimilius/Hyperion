@@ -11,6 +11,7 @@ namespace Hyperion {
 
     struct CoreSettings {
         f32 max_delta_time = 0.15f;
+        bool allow_altf4 = true;
     };
 
     struct AssetSettings {

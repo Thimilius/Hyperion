@@ -163,9 +163,11 @@ namespace Hyperion {
 
         // Handle key events
         dispatcher.Dispatch<KeyPressedEvent>([](KeyPressedEvent &key_pressed_event) {
-            // Explicitly handle alt-f4 for closing
-            if (key_pressed_event.HasKeyModifier(KeyModifier::Alt) && key_pressed_event.GetKeyCode() == KeyCode::F4) {
-                Exit();
+            if (s_settings.core.allow_altf4) {
+                // Explicitly handle alt-f4 for closing
+                if (key_pressed_event.HasKeyModifier(KeyModifier::Alt) && key_pressed_event.GetKeyCode() == KeyCode::F4) {
+                    Exit();
+                }
             }
         });
 
