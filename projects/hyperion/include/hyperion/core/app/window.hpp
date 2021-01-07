@@ -8,7 +8,8 @@
 #include "hyperion/rendering/render_backend.hpp"
 
 namespace Hyperion {
-    class Application;
+    class Engine;
+    class EngineLoop;
 
     namespace Rendering {
         class GraphicsContext;
@@ -83,7 +84,8 @@ namespace Hyperion {
 
         Rendering::GraphicsContext *m_graphics_context;
     private:
-        friend class Hyperion::Application;
+        friend class Hyperion::Engine;
+        friend class Hyperion::EngineLoop;
     };
 
 }

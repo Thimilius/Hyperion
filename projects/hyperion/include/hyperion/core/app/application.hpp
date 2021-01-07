@@ -11,7 +11,7 @@ namespace Hyperion {
 
     class Application {
     public:
-        virtual ~Application();
+        virtual ~Application() = default;
 
         inline Window *GetWindow() const { return m_window; }
 
@@ -27,17 +27,12 @@ namespace Hyperion {
         virtual void OnTick() { }
         virtual void OnShutdown() { }
     private:
-        u32 Run();
-
-        void OnEventInternal(Event &event);
-    private:
         Window *m_window;
-        bool m_running;
-        ApplicationSettings m_starting_settings;
 
         inline static Application *s_instance;
     private:
-        friend class Hyperion::Main;
+        friend class Hyperion::Engine;
+        friend class Hyperion::EngineLoop;
     };
 
     // This is a function to be defined by the client

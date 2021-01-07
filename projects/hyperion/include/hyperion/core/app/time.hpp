@@ -3,7 +3,8 @@
 #include "hyperion/common.hpp"
 
 namespace Hyperion {
-    class Application;
+    class Engine;
+    class EngineLoop;
 }
 
 namespace Hyperion {
@@ -29,7 +30,8 @@ namespace Hyperion {
         inline static u32 s_fps = 0;
         inline static f64 s_frame_time = 0;
     private:
-        friend class Hyperion::Application;
+        friend class Hyperion::Engine;
+        friend class Hyperion::EngineLoop;
     };
 
 }

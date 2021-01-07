@@ -35,7 +35,8 @@ namespace Hyperion::Editor {
         }
 
         void OnTick() override {
-
+            String title = StringUtils::Format("Hyperion - FPS: {} ({:.2f}ms)", Time::GetFPS(), Time::GetFrameTime());
+            GetWindow()->SetTitle(title);
         }
 
         void OnEvent(Event &event) override {

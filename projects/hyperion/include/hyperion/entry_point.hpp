@@ -3,7 +3,7 @@
 #include "hyperion/core/main.hpp"
 #include "hyperion/core/app/application.hpp"
 
-// Those are the two functions that are required to be defined by the application program
+// This is the function required to be defined by the application program
 extern Hyperion::Application *Hyperion::CreateApplication();
 
 #if !defined HYP_PLATFORM_WINDOWS || HYP_CONSOLE
