@@ -196,7 +196,7 @@ function linkhyperion()
 end
 
 project "hyperion-editor"
-	location "projects/tools/hyperion-editor"
+	location "projects/hyperion-editor"
 	kind "ConsoleApp"
 	
 	linkhyperion()
@@ -212,7 +212,7 @@ project "hyperion-editor"
 	includedirs { "%{prj.location}/include" }
 		
     filter "system:windows"
-        files { "projects/tools/hyperion-editor/resource.rc" }
+        files { "projects/hyperion-editor/resource.rc" }
 
 		postbuildcommands {
 		    "{COPY} %{cfg.targetdir}/%{prj.name}.exe ../../../run_tree/",

@@ -3,7 +3,6 @@
 #include "hyperion/entity/world_manager.hpp"
 
 #include "hyperion/entity/entity.hpp"
-#include "hyperion/entity/components/rendering/camera.hpp"
 
 namespace Hyperion {
 

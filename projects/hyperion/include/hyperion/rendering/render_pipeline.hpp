@@ -2,9 +2,9 @@
 
 namespace Hyperion::Rendering {
 
-    class RenderPipeline {
+    class IRenderPipeline {
     public:
-        virtual ~RenderPipeline() = default;
+        virtual ~IRenderPipeline() = default;
 
         virtual void Init() { }
         virtual void Render() { }

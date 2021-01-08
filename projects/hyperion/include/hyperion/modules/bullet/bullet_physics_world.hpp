@@ -23,7 +23,6 @@ namespace Hyperion::Physics {
     private:
         void AddBoxCollider(BoxCollider *box_collider) override;
         void AddSphereCollider(SphereCollider *sphere_collider) override;
-        void AddMeshCollider(MeshCollider *mesh_collider) override;
 
         void RemoveCollider(Collider *collider) override;
 
@@ -31,7 +30,6 @@ namespace Hyperion::Physics {
         void UpdateSphereCollider(SphereCollider *sphere_collider) override;
         void UpdateBoxColliderTransform(BoxCollider *box_collider) override;
         void UpdateSphereColliderTransform(SphereCollider *sphere_collider) override;
-        void UpdateMeshColliderTransform(MeshCollider *mesh_collider) override;
         void UpdateColliderActivation(Collider *collider) override;
 
         BoundingBox GetBounds(Collider *collider) override;

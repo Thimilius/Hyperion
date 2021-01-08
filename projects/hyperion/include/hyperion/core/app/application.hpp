@@ -32,7 +32,7 @@ namespace Hyperion {
         inline static Application *s_instance;
     private:
         friend class Hyperion::Engine;
-        friend class Hyperion::EngineLoop;
+        friend class Hyperion::EngineMainLoop;
     };
 
     // This is a function to be defined by the client

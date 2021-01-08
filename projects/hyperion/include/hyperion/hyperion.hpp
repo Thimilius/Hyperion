@@ -43,25 +43,9 @@
 #include "hyperion/entity/components/transform.hpp"
 #include "hyperion/entity/components/physics/box_collider.hpp"
 #include "hyperion/entity/components/physics/sphere_collider.hpp"
-#include "hyperion/entity/components/rendering/camera.hpp"
-#include "hyperion/entity/components/rendering/light.hpp"
-#include "hyperion/entity/components/rendering/mesh_renderer.hpp"
 
 // Rendering
-#include "hyperion/rendering/buffer.hpp"
 #include "hyperion/rendering/camera_data.hpp"
-#include "hyperion/rendering/material.hpp"
-#include "hyperion/rendering/render_texture.hpp"
-#include "hyperion/rendering/shader.hpp"
-#include "hyperion/rendering/texture.hpp"
-#include "hyperion/rendering/texture_2d.hpp"
-#include "hyperion/rendering/texture_cubemap.hpp"
-#include "hyperion/rendering/vertex_array.hpp"
-
-// Assets
-#include "hyperion/assets/asset.hpp"
-#include "hyperion/assets/asset_manager.hpp"
-#include "hyperion/assets/mesh_factory.hpp"
 
 // Physics
 #include "hyperion/physics/physics_engine.hpp"

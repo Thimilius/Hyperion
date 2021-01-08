@@ -29,7 +29,6 @@ namespace Hyperion::Physics {
     private:
         virtual void AddBoxCollider(BoxCollider *box_collider) { }
         virtual void AddSphereCollider(SphereCollider *sphere_collider) { }
-        virtual void AddMeshCollider(MeshCollider *mesh_collider) { }
 
         virtual void RemoveCollider(Collider *collider) { }
 
@@ -37,7 +36,6 @@ namespace Hyperion::Physics {
         virtual void UpdateSphereCollider(SphereCollider *sphere_collider) { }
         virtual void UpdateBoxColliderTransform(BoxCollider *box_collider) { }
         virtual void UpdateSphereColliderTransform(SphereCollider *sphere_collider) { }
-        virtual void UpdateMeshColliderTransform(MeshCollider *mesh_collider) { }
         virtual void UpdateColliderActivation(Collider *collider) { }
 
         virtual BoundingBox GetBounds(Collider *collider) { return BoundingBox(); }

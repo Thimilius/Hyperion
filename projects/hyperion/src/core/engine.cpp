@@ -11,25 +11,23 @@
 #include "hyperion/core/app/events/app_events.hpp"
 #include "hyperion/core/app/events/window_events.hpp"
 #include "hyperion/core/app/events/key_events.hpp"
-#include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/audio/audio_engine.hpp"
 #include "hyperion/rendering/render_engine.hpp"
-#include "hyperion/rendering/font.hpp"
 #include "hyperion/entity/world_manager.hpp"
 #include "hyperion/physics/physics_engine.hpp"
 #include "hyperion/scripting/scripting_engine.hpp"
 
 namespace Hyperion {
     
-    EngineLoop::EngineLoop() {
+    EngineMainLoop::EngineMainLoop() {
         m_timer = Timer::Create();
     }
 
-    EngineLoop::~EngineLoop() {
+    EngineMainLoop::~EngineMainLoop() {
         delete m_timer;
     }
 
-    void EngineLoop::Iterate() {
+    void EngineMainLoop::Iterate() {
         Application *application = Application::GetInstance();
 
         f32 now = m_timer->ElapsedSeconds();
@@ -81,7 +79,7 @@ namespace Hyperion {
     }
 
     void Engine::PreInit() {
-        s_loop = new EngineLoop();
+        s_main_loop = new EngineMainLoop();
 
         HYP_ASSERT_MESSAGE(s_settings.core.max_delta_time > 0, "Max delta time must be greater than zero!");
         Time::s_max_delta_time = s_settings.core.max_delta_time;
@@ -96,9 +94,7 @@ namespace Hyperion {
     }
 
     void Engine::Init() {
-        AssetManager::Init(s_settings.assets);
         Rendering::RenderEngine::Init(s_settings.render);
-        Rendering::Font::Init();
         Physics::PhysicsEngine::Init();
         Audio::AudioEngine::Init();
         ScriptingEngine::Init();
@@ -117,7 +113,7 @@ namespace Hyperion {
         application->GetWindow()->Show();
 
         while (s_running) {
-            s_loop->Iterate();
+            s_main_loop->Iterate();
         }
 
         application->OnShutdown();
@@ -136,10 +132,9 @@ namespace Hyperion {
         Audio::AudioEngine::Shutdown();
         Physics::PhysicsEngine::Shutdown();
         Rendering::RenderEngine::Shutdown();
-        AssetManager::Shutdown();
 
         delete Application::GetInstance()->GetWindow();
-        delete s_loop;
+        delete s_main_loop;
     }
 
     void Engine::OnEvent(Event &event) {
@@ -176,7 +171,6 @@ namespace Hyperion {
     }
 
     void Engine::Update(f32 delta_time) {
-        AssetManager::Update();
         Physics::PhysicsEngine::Update(delta_time);
         WorldManager::Update(delta_time);
     }

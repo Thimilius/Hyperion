@@ -9,7 +9,7 @@
 
 namespace Hyperion {
     class Engine;
-    class EngineLoop;
+    class EngineMainLoop;
 
     namespace Rendering {
         class GraphicsContext;
@@ -85,7 +85,7 @@ namespace Hyperion {
         Rendering::GraphicsContext *m_graphics_context;
     private:
         friend class Hyperion::Engine;
-        friend class Hyperion::EngineLoop;
+        friend class Hyperion::EngineMainLoop;
     };
 
 }

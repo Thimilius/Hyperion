@@ -7,7 +7,6 @@
 #include "hyperion/entity/components/transform.hpp"
 #include "hyperion/entity/components/physics/box_collider.hpp"
 #include "hyperion/entity/components/physics/sphere_collider.hpp"
-#include "hyperion/entity/components/physics/mesh_collider.hpp"
 
 namespace Hyperion::Physics {
 
@@ -78,29 +77,6 @@ namespace Hyperion::Physics {
         AddCollider(sphere_collider, collision_object);
     }
 
-    void BulletPhysicsWorld::AddMeshCollider(MeshCollider *mesh_collider) {
-        btCollisionObject *collision_object = new btCollisionObject();
-        btTriangleMesh *triangle_mesh = new btTriangleMesh();
-
-        const Rendering::MeshData &mesh_data = mesh_collider->GetMesh()->GetMeshData();
-        u32 indices_count = static_cast<u32>(mesh_data.indices.size());
-        u32 index = 0;
-        while (index < indices_count) {
-            Vec3 vertex0 = mesh_data.positions[mesh_data.indices[index++]];
-            Vec3 vertex1 = mesh_data.positions[mesh_data.indices[index++]];
-            Vec3 vertex2 = mesh_data.positions[mesh_data.indices[index++]];
-
-            triangle_mesh->addTriangle(btVector3(vertex0.x, vertex0.y, vertex0.z), btVector3(vertex1.x, vertex1.y, vertex1.z), btVector3(vertex2.x, vertex2.y, vertex2.z));
-        }
-        collision_object->setCollisionShape(new btBvhTriangleMeshShape(triangle_mesh, true));
-        u32 num = triangle_mesh->getNumTriangles();
-
-        Transform *transform = mesh_collider->GetTransform();
-        UpdateTransform(transform, collision_object, transform->GetPosition());
-
-        AddCollider(mesh_collider, collision_object);
-    }
-
     void BulletPhysicsWorld::RemoveCollider(Collider *collider) {
         btCollisionObject *collision_object = m_collision_objects.at(collider);
         m_collision_objects.erase(collider);
@@ -164,15 +140,6 @@ namespace Hyperion::Physics {
         m_collision_world->updateSingleAabb(collision_object);
     }
 
-    void BulletPhysicsWorld::UpdateMeshColliderTransform(MeshCollider *mesh_collider) {
-        btCollisionObject *collision_object = m_collision_objects.at(mesh_collider);
-
-        Transform *transform = mesh_collider->GetTransform();
-        UpdateTransform(transform, collision_object, transform->GetPosition());
-
-        m_collision_world->updateSingleAabb(collision_object);
-    }
-
     void BulletPhysicsWorld::UpdateColliderActivation(Collider *collider) {
         btCollisionObject *collision_object = m_collision_objects.at(collider);
         if (collider->IsActiveAndEnabled()) {
@@ -191,11 +158,6 @@ namespace Hyperion::Physics {
                     SphereCollider *sphere_collider = static_cast<SphereCollider *>(collider);
                     UpdateSphereCollider(sphere_collider);
                     UpdateSphereColliderTransform(sphere_collider);
-                    break;
-                }
-                case ColliderType::MeshCollider: {
-                    MeshCollider *mesh_collider = static_cast<MeshCollider *>(collider);
-                    UpdateMeshColliderTransform(mesh_collider);
                     break;
                 }
                 default: HYP_ASSERT_ENUM_OUT_OF_RANGE;

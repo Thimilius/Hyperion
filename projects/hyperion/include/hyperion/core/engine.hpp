@@ -1,7 +1,8 @@
 #pragma once
 
-#include "hyperion/core/app/application_settings.hpp"
 #include "hyperion/core/operating_system.hpp"
+#include "hyperion/core/threading/thread.hpp"
+#include "hyperion/core/app/application_settings.hpp"
 
 namespace Hyperion {
     class Application;
@@ -12,10 +13,10 @@ namespace Hyperion {
 
 namespace Hyperion {
 
-    class EngineLoop {
+    class EngineMainLoop {
     protected:
-        EngineLoop();
-        ~EngineLoop();
+        EngineMainLoop();
+        ~EngineMainLoop();
 
         virtual void Iterate();
     private:
@@ -58,10 +59,10 @@ namespace Hyperion {
     private:
         inline static ApplicationSettings s_settings;
         inline static bool s_running = false;
-        inline static EngineLoop *s_loop;
+        inline static EngineMainLoop *s_main_loop;
     private:
         friend class Hyperion::Application;
-        friend class Hyperion::EngineLoop;
+        friend class Hyperion::EngineMainLoop;
         friend class Hyperion::Main;
     };
 

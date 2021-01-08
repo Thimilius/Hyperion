@@ -3,12 +3,8 @@
 #include "hyperion/entity/entity.hpp"
 
 #include "hyperion/entity/world_manager.hpp"
-#include "hyperion/entity/components/rendering/mesh_renderer.hpp"
-#include "hyperion/entity/components/rendering/light.hpp"
-#include "hyperion/entity/components/rendering/camera.hpp"
 #include "hyperion/entity/components/physics/box_collider.hpp"
 #include "hyperion/entity/components/physics/sphere_collider.hpp"
-#include "hyperion/assets/asset_manager.hpp"
 
 namespace Hyperion {
 
@@ -65,46 +61,6 @@ namespace Hyperion {
     Entity *Entity::CreatePrimitive(EntityPrimitive primitive, const Vec3 &position, const Quaternion &rotation, Transform *parent, World *world) {
         Entity *entity = Create(GetPrimitiveName(primitive), position, rotation, parent, world);
         
-        if (primitive == EntityPrimitive::Quad || primitive == EntityPrimitive::Plane || primitive == EntityPrimitive::Cube || primitive == EntityPrimitive::Sphere) {
-            MeshRenderer *renderer = entity->AddComponent<MeshRenderer>();
-            Rendering::Mesh *mesh;
-            switch (primitive) {
-                case EntityPrimitive::Quad: {
-                    mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Quad);
-                    break;
-                }
-                case EntityPrimitive::Plane: {
-                    mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Plane);
-                    break;
-                }
-                case EntityPrimitive::Cube: {
-                    entity->AddComponent<BoxCollider>();
-                    mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Cube);
-                    break;
-                }
-                case EntityPrimitive::Sphere: {
-                    entity->AddComponent<SphereCollider>();
-                    mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Sphere);
-                    break;
-                }
-                default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-            }
-            renderer->SetSharedMesh(mesh);
-            renderer->SetSharedMaterial(AssetManager::GetDefaultMaterial());
-        } else if (primitive == EntityPrimitive::PointLight || primitive == EntityPrimitive::DirectionalLight || primitive == EntityPrimitive::SpotLight) {
-            Light *light = entity->AddComponent<Light>();
-            LightType light_type;
-            switch (primitive) {
-                case Hyperion::EntityPrimitive::DirectionalLight: light_type = LightType::Directional; break;
-                case Hyperion::EntityPrimitive::PointLight: light_type = LightType::Point; break;
-                case Hyperion::EntityPrimitive::SpotLight: light_type = LightType::Spot; break;
-                default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-            }
-            light->SetLightType(light_type);
-        } else if (primitive == EntityPrimitive::Camera) {
-            entity->AddComponent<Camera>();
-        }
-
         return entity;
     }
 
