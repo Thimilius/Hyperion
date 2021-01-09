@@ -51,13 +51,13 @@ namespace Hyperion {
         bool m_handled = false;
     };
 
+    using EventCallbackFunction = std::function<void(Event &)>;
+
     class EventDispatcher {
         template<typename T>
         using EventFunction = std::function<void(T &)>;
     public:
-        EventDispatcher(Event &event)
-            : m_event(event) {
-        }
+        EventDispatcher(Event &event) : m_event(event) { }
 
         template<typename T>
         bool Dispatch(EventFunction<T> func) {

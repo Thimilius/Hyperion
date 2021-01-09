@@ -23,8 +23,6 @@ namespace Hyperion {
         Confined
     };
 
-    using WindowEventCallbackFunction = std::function<void(Event &)>;
-
     class Window {
     public:
         virtual ~Window() = default;
@@ -60,7 +58,7 @@ namespace Hyperion {
         virtual void Show() = 0;
 
         virtual InputImplementation *GetInput() const = 0;
-        virtual void SetEventCallback(const WindowEventCallbackFunction &event_callback) { m_event_callback = event_callback; }
+        virtual void SetEventCallback(const EventCallbackFunction &event_callback) { m_event_callback = event_callback; }
 
         static Window *Create(const WindowSettings &settings);
     protected:
@@ -80,7 +78,7 @@ namespace Hyperion {
         CursorMode m_cursor_mode;
         bool m_cursor_is_visible;
 
-        WindowEventCallbackFunction m_event_callback;
+        EventCallbackFunction m_event_callback;
     private:
         friend class Hyperion::Engine;
         friend class Hyperion::EngineMainLoop;

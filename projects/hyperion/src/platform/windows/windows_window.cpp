@@ -225,7 +225,7 @@ namespace Hyperion {
         ShowWindow(m_window_handle, SW_SHOWNORMAL);
     }
 
-    void WindowsWindow::SetEventCallback(const WindowEventCallbackFunction &event_callback) {
+    void WindowsWindow::SetEventCallback(const EventCallbackFunction &event_callback) {
         m_event_callback = event_callback;
         m_input->SetEventCallback(event_callback);
     }

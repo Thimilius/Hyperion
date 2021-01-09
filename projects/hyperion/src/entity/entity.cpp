@@ -67,7 +67,7 @@ namespace Hyperion {
     void Entity::OnDestroy() {
         // First destroy every child
         if (!m_transform->m_children.empty()) {
-            for (s32 i = ((s32)m_transform->m_children.size()) - 1; i >= 0; i--) {
+            for (s32 i = (static_cast<s32>(m_transform->m_children.size())) - 1; i >= 0; i--) {
                 Entity *child = m_transform->m_children[i]->m_entity;
                 // Children already scheduled for destruction get seperated from us by removing the parent reference.
                 // This way the order of destruction is not important.

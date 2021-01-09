@@ -161,11 +161,11 @@ namespace Hyperion {
                     f32 left_trigger = state.Gamepad.bLeftTrigger / 255.0f;
                     f32 right_trigger = state.Gamepad.bRightTrigger / 255.0f;
 
-                    m_gamepads[(s32)gamepad].axes[(s32)GamepadAxis::LeftStick] = ApplyGamepadDeadzone(left_stick_x, left_stick_y);
-                    m_gamepads[(s32)gamepad].axes[(s32)GamepadAxis::RightStick] = ApplyGamepadDeadzone(right_stick_x, right_stick_y);
+                    m_gamepads[static_cast<s32>(gamepad)].axes[static_cast<s32>(GamepadAxis::LeftStick)] = ApplyGamepadDeadzone(left_stick_x, left_stick_y);
+                    m_gamepads[static_cast<s32>(gamepad)].axes[static_cast<s32>(GamepadAxis::RightStick)] = ApplyGamepadDeadzone(right_stick_x, right_stick_y);
                     // Left and right trigger are treated as if they had the same two x and y axes
-                    m_gamepads[(s32)gamepad].axes[(s32)GamepadAxis::LeftTrigger] = Vec2(left_trigger, left_trigger);
-                    m_gamepads[(s32)gamepad].axes[(s32)GamepadAxis::RightTrigger] = Vec2(right_trigger, right_trigger);
+                    m_gamepads[static_cast<s32>(gamepad)].axes[static_cast<s32>(GamepadAxis::LeftTrigger)] = Vec2(left_trigger, left_trigger);
+                    m_gamepads[static_cast<s32>(gamepad)].axes[static_cast<s32>(GamepadAxis::RightTrigger)] = Vec2(right_trigger, right_trigger);
                 }
             }
         }
@@ -227,28 +227,28 @@ namespace Hyperion {
     }
 
     void WindowsInput::OnKeyEvent(KeyEvent &event, bool down) {
-        s32 key_code = (s32)event.GetKeyCode();
+        s32 key_code = static_cast<s32>(event.GetKeyCode());
         m_keys_down[key_code] = !m_keys_last[key_code] && down;
         m_keys[key_code] = down;
         m_keys_up[key_code] = m_keys_last[key_code] && !down;
     }
 
     void WindowsInput::OnMouseButtonEvent(MouseButtonEvent &event, bool down) {
-        s32 mouse_button_code = (s32)event.GetMouseButtonCode();
+        s32 mouse_button_code = static_cast<s32>(event.GetMouseButtonCode());
         m_mouse_buttons_down[mouse_button_code] = !m_mouse_buttons_last[mouse_button_code] && down;
         m_mouse_buttons[mouse_button_code] = down;
         m_mouse_buttons_up[mouse_button_code] = m_mouse_buttons_last[mouse_button_code] && !down;
     }
 
     void WindowsInput::HandleGamepadButtonCode(Gamepad gamepad, GamepadButtonCode button_code, bool down) {
-        m_gamepads[(s32)gamepad].buttons_down[(s32)button_code] = !m_gamepads[(s32)gamepad].buttons_last[(s32)button_code] && down;
-        m_gamepads[(s32)gamepad].buttons[(s32)button_code] = down;
+        m_gamepads[static_cast<s32>(gamepad)].buttons_down[static_cast<s32>(button_code)] = !m_gamepads[static_cast<s32>(gamepad)].buttons_last[static_cast<s32>(button_code)] && down;
+        m_gamepads[static_cast<s32>(gamepad)].buttons[static_cast<s32>(button_code)] = down;
         if (down) {
             GamepadButtonPressedEvent event(gamepad, button_code);
             DispatchEvent(event);
         }
-        if (m_gamepads[(s32)gamepad].buttons_last[(s32)button_code] && !down) {
-            m_gamepads[(s32)gamepad].buttons_up[(s32)button_code] = true;
+        if (m_gamepads[static_cast<s32>(gamepad)].buttons_last[static_cast<s32>(button_code)] && !down) {
+            m_gamepads[static_cast<s32>(gamepad)].buttons_up[static_cast<s32>(button_code)] = true;
 
             GamepadButtonReleasedEvent event(gamepad, button_code);
             DispatchEvent(event);
