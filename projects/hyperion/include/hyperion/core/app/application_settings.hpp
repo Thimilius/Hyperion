@@ -24,7 +24,7 @@ namespace Hyperion {
 
     struct RenderSettings {
         Rendering::RenderBackend backend = Rendering::RenderBackend::OpenGL;
-        Rendering::RenderThreadingMode threading_mode = Rendering::RenderThreadingMode::SingleThreaded;
+        Rendering::RenderThreadingMode threading_mode = Rendering::RenderThreadingMode::MultiThreaded;
         Rendering::RenderPath path = Rendering::RenderPath::Forward;
         Rendering::IRenderPipeline *custom_pipeline = nullptr;
     };

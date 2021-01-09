@@ -61,5 +61,6 @@ HYP_REFLECT_REGISTER_END
 
 Hyperion::Application *Hyperion::CreateApplication() {
     ApplicationSettings settings = ApplicationSettings::FromJsonFile("app.json");
+    settings.render.threading_mode = Rendering::RenderThreadingMode::MultiThreaded;
     return new Hyperion::Editor::EditorApplication(settings);
 }

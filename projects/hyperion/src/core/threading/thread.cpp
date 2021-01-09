@@ -10,10 +10,6 @@
 
 namespace Hyperion::Threading {
 
-    Thread::~Thread() {
-        Join();
-    }
-
     ThreadId Thread::GetId() {
 #if HYP_PLATFORM_WINDOWS
         return GetThreadId(m_thread.native_handle());

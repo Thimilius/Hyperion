@@ -4,7 +4,6 @@
 
 namespace Hyperion {
     class Engine;
-    class EngineMainLoop;
 }
 
 namespace Hyperion {
@@ -31,7 +30,6 @@ namespace Hyperion {
         inline static f64 s_frame_time = 0;
     private:
         friend class Hyperion::Engine;
-        friend class Hyperion::EngineMainLoop;
     };
 
 }

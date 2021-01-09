@@ -9,10 +9,10 @@
 
 namespace Hyperion {
     class Engine;
-    class EngineMainLoop;
 
     namespace Rendering {
         class GraphicsContext;
+        class RenderEngine;
     }
 }
 
@@ -81,7 +81,7 @@ namespace Hyperion {
         EventCallbackFunction m_event_callback;
     private:
         friend class Hyperion::Engine;
-        friend class Hyperion::EngineMainLoop;
+        friend class Hyperion::Rendering::RenderEngine;
     };
 
 }

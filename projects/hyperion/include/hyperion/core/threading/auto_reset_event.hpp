@@ -4,9 +4,9 @@
 
 namespace Hyperion::Threading {
 
-    class AutoResetEvent {
+    class AutoResetEvent final {
     public:
-        AutoResetEvent() = default;
+        AutoResetEvent(bool start_value = false);
 
         void Notify();
         void Wait();

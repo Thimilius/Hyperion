@@ -4,6 +4,7 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <queue>
 
 #include <rttr/type.h>
 
@@ -28,5 +29,8 @@ using Map = std::unordered_map<Key, Value>;
 
 template<typename T>
 using Set = std::unordered_set<T>;
+
+template<typename T>
+using Queue = std::queue<T>;
 
 using Type = rttr::type;

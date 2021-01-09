@@ -10,10 +10,8 @@ namespace Hyperion::Threading {
     using ThreadStartFunction = std::function<void()>;
     using ParameterizedThreadStartFunction = std::function<void(void *)>;
 
-    class Thread {
+    class Thread final {
     public:
-        virtual ~Thread();
-
         ThreadId GetId();
 
         void Start(const ThreadStartFunction &start_function);

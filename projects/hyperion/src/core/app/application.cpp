@@ -8,7 +8,7 @@ namespace Hyperion {
         HYP_ASSERT_MESSAGE(!s_instance, "Trying to create application more than once!");
         s_instance = this;
 
-        Engine::SetSettings(settings);
+        Engine::s_settings = settings;
     }
 
     void Application::Exit() {

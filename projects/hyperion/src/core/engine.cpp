@@ -18,49 +18,6 @@
 #include "hyperion/scripting/scripting_engine.hpp"
 
 namespace Hyperion {
-    
-    EngineMainLoop::EngineMainLoop() {
-        m_timer = Timer::Create();
-    }
-
-    EngineMainLoop::~EngineMainLoop() {
-        delete m_timer;
-    }
-
-    void EngineMainLoop::Iterate() {
-        Application *application = Application::GetInstance();
-
-        f32 now = m_timer->ElapsedSeconds();
-        f32 delta_time = static_cast<f32>(now - m_last_time);
-        if (delta_time > Time::GetMaxDeltaTime()) {
-            delta_time = Time::GetMaxDeltaTime();
-        }
-        m_last_time = now;
-        m_tick_timer += delta_time;
-        Time::s_delta_time = delta_time;
-        Time::s_time += delta_time;
-
-        m_frame_counter++;
-
-        Engine::Update(delta_time);
-        application->OnUpdate(delta_time);
-        Engine::LateUpdate();
-
-        if (m_tick_timer > 1.0f) {
-            u32 fps = static_cast<u32>(m_frame_counter * (1.0 / m_tick_timer));
-            Time::s_fps = fps;
-            Time::s_frame_time = 1000.0 / fps;
-
-            application->OnTick();
-
-            m_frame_counter = 0;
-            m_tick_timer = 0;
-        }
-
-        Engine::Render();
-
-        application->GetWindow()->Update();
-    }
 
     void Engine::Setup() {
         // We initialize the operating system first to get logging ability
@@ -79,8 +36,6 @@ namespace Hyperion {
     }
 
     void Engine::PreInit() {
-        s_main_loop = new EngineMainLoop();
-
         HYP_ASSERT_MESSAGE(s_settings.core.max_delta_time > 0, "Max delta time must be greater than zero!");
         Time::s_max_delta_time = s_settings.core.max_delta_time;
 
@@ -90,12 +45,10 @@ namespace Hyperion {
         window->SetEventCallback(Engine::OnEvent);
         Application::GetInstance()->m_window = window;
 
-        Rendering::GraphicsContext *graphics_context = window->CreateGraphicsContext(s_settings.render.backend);
-        Rendering::RenderEngine::PreInit(s_settings.render, graphics_context);
+        Rendering::RenderEngine::PreInit(s_settings.render, window);
     }
 
     void Engine::Init() {
-        Rendering::RenderEngine::Init(s_settings.render);
         Physics::PhysicsEngine::Init();
         Audio::AudioEngine::Init();
         ScriptingEngine::Init();
@@ -109,13 +62,51 @@ namespace Hyperion {
 
         PreInit();
         Init();
+
+        Window *window = application->GetWindow();
         application->OnInit();
+        window->Show();
 
-        application->GetWindow()->Show();
-
-        while (s_running) {
-            s_main_loop->Iterate();
+        if (s_settings.render.threading_mode == Rendering::RenderThreadingMode::MultiThreaded) {
+            EngineSync::NotifyUpdateReady();
+            EngineSync::WaitForRenderReady();
         }
+
+        Timer *timer = Timer::Create();
+        f64 last_time = 0.0;
+        f64 tick_timer = 0.0;
+        while (s_running) {
+            u64 this_frame = s_update_frame++;
+
+            window->Update();
+
+            f32 now = timer->ElapsedSeconds();
+            f32 delta_time = static_cast<f32>(now - last_time);
+            if (delta_time > Time::GetMaxDeltaTime()) {
+                delta_time = Time::GetMaxDeltaTime();
+            }
+            last_time = now;
+            tick_timer += delta_time;
+            Time::s_delta_time = delta_time;
+            Time::s_time += delta_time;
+
+            Update(delta_time);
+            application->OnUpdate(delta_time);
+            LateUpdate();
+
+            if (tick_timer > 1.0f) {
+                u32 fps = static_cast<u32>(1.0 / delta_time);
+                Time::s_fps = fps;
+                Time::s_frame_time = 1000.0 / fps;
+                
+                application->OnTick();
+
+                tick_timer = 0;
+            }
+
+            Render();
+        }
+        delete timer;
 
         application->OnShutdown();
         Shutdown();
@@ -125,6 +116,7 @@ namespace Hyperion {
 
     void Engine::Exit() {
         s_running = false;
+        Rendering::RenderEngine::s_update_queue.push(Rendering::RenderCommand::Exit);
     }
 
     void Engine::Shutdown() {
@@ -135,7 +127,6 @@ namespace Hyperion {
         Rendering::RenderEngine::Shutdown();
 
         delete Application::GetInstance()->GetWindow();
-        delete s_main_loop;
     }
 
     void Engine::OnEvent(Event &event) {
@@ -182,6 +173,11 @@ namespace Hyperion {
 
     void Engine::Render() {
         Rendering::RenderEngine::Render();
+    }
+
+    void Engine::PanicInternal(const String &title, const String &message) {
+        OperatingSystem::GetInstance()->DisplayError(title, message);
+        Exit();
     }
 
 }

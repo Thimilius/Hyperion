@@ -4,6 +4,10 @@
 
 namespace Hyperion::Threading {
 
+    AutoResetEvent::AutoResetEvent(bool start_value) {
+        m_signalled = start_value;
+    }
+
     void AutoResetEvent::Notify() {
         std::unique_lock<std::mutex> lock(m_mutex);
 
