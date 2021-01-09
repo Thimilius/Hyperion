@@ -13,6 +13,7 @@ namespace Hyperion::Rendering {
             InitGraphicsContext(window);
         } else {
             s_render_thread.Start(RenderThreadLoop, window);
+            s_render_thread.SetName("Render Thread");
         }
     }
 

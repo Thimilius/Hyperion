@@ -18,6 +18,8 @@ namespace Hyperion::Threading {
         void Start(const ParameterizedThreadStartFunction &parameterized_start_function, void *parameter);
         void Join();
 
+        void SetName(const String &name);
+
         static u32 GetSupportedThreadCount();
         static ThreadId GetCurrentThreadId();
         static void Sleep(u32 milliseconds);

@@ -28,6 +28,13 @@ namespace Hyperion::Threading {
         m_thread.join();
     }
 
+    void Thread::SetName(const String &name) {
+#if HYP_PLATFORM_WINDOWS
+        WideString name_wide = StringUtils::Utf8ToUtf16(name);
+        SetThreadDescription(m_thread.native_handle(), name_wide.data());
+#endif
+    }
+
     u32 Thread::GetSupportedThreadCount() {
         return std::thread::hardware_concurrency();
     }
