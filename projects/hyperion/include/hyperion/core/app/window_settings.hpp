@@ -15,12 +15,6 @@ namespace Hyperion {
         Maximized
     };
 
-    enum class VSyncMode {
-        DontSync,
-        EveryVBlank,
-        EverySecondVBlank
-    };
-
     struct WindowSettings {
         String title = "Hyperion";
         String icon = "icon/icon.ico";
@@ -32,7 +26,6 @@ namespace Hyperion {
         u32 min_height = 360;
 
         WindowMode window_mode = WindowMode::Windowed;
-        VSyncMode vsync_mode = VSyncMode::EveryVBlank;
     };
 
 }

@@ -46,8 +46,6 @@ namespace Hyperion {
         application->OnUpdate(delta_time);
         Engine::LateUpdate();
 
-        Engine::Render();
-
         if (m_tick_timer > 1.0f) {
             u32 fps = static_cast<u32>(m_frame_counter * (1.0 / m_tick_timer));
             Time::s_fps = fps;
@@ -58,6 +56,8 @@ namespace Hyperion {
             m_frame_counter = 0;
             m_tick_timer = 0;
         }
+
+        Engine::Render();
 
         application->GetWindow()->Update();
     }
@@ -86,11 +86,12 @@ namespace Hyperion {
 
         Display::UpdateSize(s_settings.window.width, s_settings.window.height);
 
-        Window *window = Window::Create(s_settings.window, s_settings.render.backend);
+        Window *window = Window::Create(s_settings.window);
         window->SetEventCallback(Engine::OnEvent);
         Application::GetInstance()->m_window = window;
 
-        Rendering::RenderEngine::PreInit(s_settings.render);
+        Rendering::GraphicsContext *graphics_context = window->CreateGraphicsContext(s_settings.render.backend);
+        Rendering::RenderEngine::PreInit(s_settings.render, graphics_context);
     }
 
     void Engine::Init() {

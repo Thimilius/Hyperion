@@ -23,8 +23,9 @@ namespace Hyperion {
         Confined
     };
 
+    using WindowEventCallbackFunction = std::function<void(Event &)>;
+
     class Window {
-        using EventCallbackFunction = std::function<void(Event &)>;
     public:
         virtual ~Window() = default;
 
@@ -45,8 +46,6 @@ namespace Hyperion {
         virtual void SetWindowMode(WindowMode window_mode) = 0;
         inline WindowState GetWindowState() const { return m_window_state; }
         virtual void SetWindowState(WindowState window_state) = 0;
-        inline VSyncMode GetVSyncMode() const { return m_vsync_mode; }
-        virtual void SetVSyncMode(VSyncMode vsync_mode) = 0;
         
         inline bool IsCursorVisible() const { return m_cursor_is_visible; }
         virtual void SetCursorVisible(bool visible) = 0;
@@ -55,13 +54,15 @@ namespace Hyperion {
 
         virtual void SetIcon(const String &path) = 0;
     protected:
+        virtual Rendering::GraphicsContext *CreateGraphicsContext(Rendering::RenderBackend render_backend) = 0;
+
         virtual void Update() = 0;
         virtual void Show() = 0;
 
         virtual InputImplementation *GetInput() const = 0;
-        virtual void SetEventCallback(const EventCallbackFunction &event_callback) { m_event_callback = event_callback; }
+        virtual void SetEventCallback(const WindowEventCallbackFunction &event_callback) { m_event_callback = event_callback; }
 
-        static Window *Create(const WindowSettings &settings, Rendering::RenderBackend render_backend);
+        static Window *Create(const WindowSettings &settings);
     protected:
         String m_title;
 
@@ -73,16 +74,13 @@ namespace Hyperion {
 
         WindowMode m_window_mode;
         WindowState m_window_state;
-        VSyncMode m_vsync_mode;
 
         bool m_is_focused;
 
         CursorMode m_cursor_mode;
         bool m_cursor_is_visible;
 
-        EventCallbackFunction m_event_callback;
-
-        Rendering::GraphicsContext *m_graphics_context;
+        WindowEventCallbackFunction m_event_callback;
     private:
         friend class Hyperion::Engine;
         friend class Hyperion::EngineMainLoop;

@@ -12,8 +12,7 @@
 		"min_width": 640,
 		"min_height": 360,
 		
-		"window_mode": "windowed",
-		"vsync_mode": "every_v_blank"
+		"window_mode": "windowed"
 	},
 	"assets": {
 		"hot_loading": true,

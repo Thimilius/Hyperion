@@ -9,9 +9,8 @@
 namespace Hyperion {
 
     class WindowsWindow : public Window {
-        using EventCallbackFunction = std::function<void(Event &)>;
     public:
-        WindowsWindow(const WindowSettings &settings, Rendering::RenderBackend render_backend);
+        WindowsWindow(const WindowSettings &settings);
         ~WindowsWindow();
 
         void *GetNativePointer() const override { return m_window_handle; }
@@ -21,24 +20,22 @@ namespace Hyperion {
         void SetMinimumSize(u32 min_width, u32 min_height) override;
         void SetWindowMode(WindowMode window_mode) override;
         void SetWindowState(WindowState window_state) override;
-        void SetVSyncMode(VSyncMode vsync_mode) override;
 
         void SetCursorVisible(bool visible) override;
         void SetCursorMode(CursorMode mode) override;
 
         void SetIcon(const String &path) override;
     private:
+        Rendering::GraphicsContext *CreateGraphicsContext(Rendering::RenderBackend render_backend) override;
+
         void Update() override;
         void Show() override;
         
-        void SetupWindow(const WindowSettings &settings);
-
         InputImplementation *GetInput() const override { return m_input; }
-        void SetEventCallback(const EventCallbackFunction &event_callback) override;
+        void SetEventCallback(const WindowEventCallbackFunction &event_callback) override;
 
-        Vec2 GetActualWindowSize(u32 client_width, u32 client_height);
-
-        void CreateContext(Rendering::RenderBackend backend_api);
+        void SetupWindow(const WindowSettings &settings);
+        Vec2 GetActualWindowSize(u32 client_width, u32 client_height) const;
         void DispatchEvent(Event &event) const;
 
         KeyCode TranslateKeyCode(u32 w_param, u32 l_param) const;

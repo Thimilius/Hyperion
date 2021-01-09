@@ -15,11 +15,11 @@
 
 namespace Hyperion {
 
-    Window *Window::Create(const WindowSettings &settings, Rendering::RenderBackend render_backend) {
-        return new WindowsWindow(settings, render_backend);
+    Window *Window::Create(const WindowSettings &settings) {
+        return new WindowsWindow(settings);
     }
 
-    WindowsWindow::WindowsWindow(const WindowSettings &settings, Rendering::RenderBackend render_backend) {
+    WindowsWindow::WindowsWindow(const WindowSettings &settings) {
         m_title = settings.title;
         m_width = settings.width;
         m_height = settings.height;
@@ -37,15 +37,10 @@ namespace Hyperion {
         SetIcon(settings.icon);
         SetWindowMode(settings.window_mode);
 
-        CreateContext(render_backend);
-        SetVSyncMode(settings.vsync_mode);
-
         m_input->QueryConnectedGamepads();
     }
 
     WindowsWindow::~WindowsWindow() {
-        delete m_graphics_context;
-
         DestroyWindow(m_window_handle);
     }
 
@@ -168,13 +163,6 @@ namespace Hyperion {
         m_window_state = window_state;
     }
 
-    void WindowsWindow::SetVSyncMode(VSyncMode vsync_mode) {
-        if (m_vsync_mode != vsync_mode) {
-            m_vsync_mode = vsync_mode;
-            m_graphics_context->SetVSyncMode(vsync_mode);
-        }
-    }
-
     void WindowsWindow::SetCursorVisible(bool visible) {
         m_cursor_is_visible = visible;
 
@@ -198,9 +186,17 @@ namespace Hyperion {
         }
     }
 
-    void WindowsWindow::Update() {
-        m_graphics_context->SwapBuffers();
+    Rendering::GraphicsContext *WindowsWindow::CreateGraphicsContext(Rendering::RenderBackend render_backend) {
+        switch (render_backend) {
+            case Rendering::RenderBackend::OpenGL: {
+                return new Rendering::WindowsOpenGLGraphicsContext(m_window_handle);
+                break;
+            }
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
+        }
+    }
 
+    void WindowsWindow::Update() {
         if (m_is_focused) {
             switch (m_cursor_mode) {
                 case CursorMode::Default: {
@@ -217,17 +213,21 @@ namespace Hyperion {
             }
         }
 
-        m_input->Update();
-
         MSG message;
         while (PeekMessageW(&message, nullptr, 0, 0, PM_REMOVE)) {
             TranslateMessage(&message);
             DispatchMessageW(&message);
         }
+        m_input->Update();
     }
 
     void WindowsWindow::Show() {
         ShowWindow(m_window_handle, SW_SHOWNORMAL);
+    }
+
+    void WindowsWindow::SetEventCallback(const WindowEventCallbackFunction &event_callback) {
+        m_event_callback = event_callback;
+        m_input->SetEventCallback(event_callback);
     }
 
     void WindowsWindow::SetupWindow(const WindowSettings &settings) {
@@ -276,12 +276,7 @@ namespace Hyperion {
         }
     }
 
-    void WindowsWindow::SetEventCallback(const EventCallbackFunction &event_callback) {
-        m_event_callback = event_callback;
-        m_input->SetEventCallback(event_callback);
-    }
-
-    Vec2 WindowsWindow::GetActualWindowSize(u32 client_width, u32 client_height) {
+    Vec2 WindowsWindow::GetActualWindowSize(u32 client_width, u32 client_height) const {
         RECT window_rect = { 0 };
         window_rect.right = static_cast<LONG>(client_width);
         window_rect.bottom = static_cast<LONG>(client_height);
@@ -289,18 +284,6 @@ namespace Hyperion {
             HYP_PANIC_MESSAGE("Engine", "Failed to calculate window size!");
         }
         return Vec2(static_cast<f32>(window_rect.right - window_rect.left), static_cast<f32>(window_rect.bottom - window_rect.top));
-    }
-
-    void WindowsWindow::CreateContext(Rendering::RenderBackend backend_api) {
-        switch (backend_api) {
-            case Rendering::RenderBackend::OpenGL: {
-                m_graphics_context = new Rendering::WindowsOpenGLGraphicsContext(m_window_handle);
-                break;
-            }
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-        }
-
-        m_graphics_context->Init();
     }
 
     void WindowsWindow::DispatchEvent(Event &event) const {

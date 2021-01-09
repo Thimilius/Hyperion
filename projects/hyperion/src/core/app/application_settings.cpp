@@ -19,19 +19,6 @@ namespace Hyperion {
         }
     }
 
-    VSyncMode VSyncModeFromString(const String &string, const String &path) {
-        if (string == "dont_sync") {
-            return VSyncMode::DontSync;
-        } else if (string == "every_v_blank") {
-            return VSyncMode::EveryVBlank;
-        } else if (string == "every_second_v_blank") {
-            return VSyncMode::EverySecondVBlank;
-        } else {
-            HYP_LOG_ERROR("Engine", "Failed to read '{}' in '{}' as vsync mode!", string, path);
-            return VSyncMode::EveryVBlank;
-        }
-    }
-
     ApplicationSettings ApplicationSettings::FromJsonFile(const String &path) {
         String json_text = FileSystem::ReadAllText(path);
         auto json = nlohmann::json::parse(json_text, nullptr, false);
@@ -80,10 +67,6 @@ namespace Hyperion {
             auto &json_window_window_mode = json_window["window_mode"];
             if (json_window_window_mode.is_string()) {
                 settings.window.window_mode = WindowModeFromString(json_window_window_mode.get<String>(), path);
-            }
-            auto &json_window_vsync_mode = json_window["vsync_mode"];
-            if (json_window_vsync_mode.is_string()) {
-                settings.window.vsync_mode = VSyncModeFromString(json_window_vsync_mode.get<String>(), path);
             }
         }
 

@@ -1,12 +1,16 @@
 #pragma once
 
-#include "hyperion/core/app/window.hpp"
-
 namespace Hyperion::Rendering {
     class RenderEngine;
 }
 
 namespace Hyperion::Rendering {
+
+    enum class VSyncMode {
+        DontSync,
+        EveryVBlank,
+        EverySecondVBlank
+    };
 
     struct ContextProperties {
         String vendor;
@@ -25,10 +29,8 @@ namespace Hyperion::Rendering {
         
         inline const ContextProperties &GetProperties() const { return m_properties; }
         inline const ContextLimits &GetLimits() const { return m_limits; }
-
-        inline static GraphicsContext *GetInstance() { return s_instance; }
     protected:
-        GraphicsContext();
+        GraphicsContext() = default;
 
         virtual void Init() = 0;
         virtual void SwapBuffers() = 0;
@@ -36,10 +38,9 @@ namespace Hyperion::Rendering {
     protected:
         ContextProperties m_properties;
         ContextLimits m_limits;
-
-        inline static GraphicsContext *s_instance;
     private:
         friend class Hyperion::WindowsWindow;
+        friend class Hyperion::Rendering::RenderEngine;
     };
 
 }

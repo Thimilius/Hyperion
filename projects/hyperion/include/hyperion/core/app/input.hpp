@@ -209,6 +209,7 @@ namespace Hyperion {
     };
 
     class InputImplementation {
+        // TODO: Add using to own hyperion/core/app/events/event_callback_function.hpp header
         using EventCallbackFunction = std::function<void(Event &)>;
     public:
         virtual ~InputImplementation() = default;
