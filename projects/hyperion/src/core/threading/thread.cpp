@@ -8,15 +8,7 @@
 #error
 #endif
 
-namespace Hyperion {
-
-    Thread::Thread(const ThreadStartFunction &start_function) {
-        m_thread = std::thread(start_function);
-    }
-
-    Thread::Thread(const ParameterizedThreadStartFunction &parameterized_start_function, void *parameter) {
-        m_thread = std::thread(parameterized_start_function, parameter);
-    }
+namespace Hyperion::Threading {
 
     Thread::~Thread() {
         Join();
@@ -26,6 +18,14 @@ namespace Hyperion {
 #if HYP_PLATFORM_WINDOWS
         return GetThreadId(m_thread.native_handle());
 #endif
+    }
+
+    void Thread::Start(const ThreadStartFunction &start_function) {
+        m_thread = std::thread(start_function);
+    }
+
+    void Thread::Start(const ParameterizedThreadStartFunction &parameterized_start_function, void *parameter) {
+        m_thread = std::thread(parameterized_start_function, parameter);
     }
 
     void Thread::Join() {

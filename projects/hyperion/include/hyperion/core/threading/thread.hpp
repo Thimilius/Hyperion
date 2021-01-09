@@ -4,7 +4,7 @@
 
 #include "hyperion/common.hpp"
 
-namespace Hyperion {
+namespace Hyperion::Threading {
 
     using ThreadId = u32;
     using ThreadStartFunction = std::function<void()>;
@@ -12,12 +12,12 @@ namespace Hyperion {
 
     class Thread {
     public:
-        Thread(const ThreadStartFunction &start_function);
-        Thread(const ParameterizedThreadStartFunction &parameterized_start_function, void *parameter);
         virtual ~Thread();
 
         ThreadId GetId();
 
+        void Start(const ThreadStartFunction &start_function);
+        void Start(const ParameterizedThreadStartFunction &parameterized_start_function, void *parameter);
         void Join();
 
         static u32 GetSupportedThreadCount();
