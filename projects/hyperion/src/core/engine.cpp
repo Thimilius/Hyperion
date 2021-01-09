@@ -73,46 +73,51 @@ namespace Hyperion {
             EngineSync::WaitForRenderReady();
         }
 
-        Timer *timer = Timer::Create();
-        f64 last_time = 0.0;
-        f64 tick_timer = 0.0;
+        s_loop_state.timer = Timer::Create();
         while (s_running) {
-            u64 this_frame = s_update_frame++;
-
-            window->Update();
-
-            f32 now = timer->ElapsedSeconds();
-            f32 delta_time = static_cast<f32>(now - last_time);
-            if (delta_time > Time::GetMaxDeltaTime()) {
-                delta_time = Time::GetMaxDeltaTime();
-            }
-            last_time = now;
-            tick_timer += delta_time;
-            Time::s_delta_time = delta_time;
-            Time::s_time += delta_time;
-
-            Update(delta_time);
-            application->OnUpdate(delta_time);
-            LateUpdate();
-
-            if (tick_timer > 1.0f) {
-                u32 fps = static_cast<u32>(1.0 / delta_time);
-                Time::s_fps = fps;
-                Time::s_frame_time = 1000.0 / fps;
-                
-                application->OnTick();
-
-                tick_timer = 0;
-            }
-
-            Render();
+            Iterate();
         }
-        delete timer;
+        delete s_loop_state.timer;
 
         application->OnShutdown();
         Shutdown();
 
         return 0;
+    }
+
+    void Engine::Iterate() {
+        Application *application = Application::GetInstance();
+        Window *window = application->GetWindow();
+
+        u64 this_frame = s_update_frame++;
+
+        window->Update();
+
+        f32 now = s_loop_state.timer->ElapsedSeconds();
+        f32 delta_time = static_cast<f32>(now - s_loop_state.last_time);
+        if (delta_time > Time::GetMaxDeltaTime()) {
+            delta_time = Time::GetMaxDeltaTime();
+        }
+        s_loop_state.last_time = now;
+        s_loop_state.tick_timer += delta_time;
+        Time::s_delta_time = delta_time;
+        Time::s_time += delta_time;
+
+        Update(delta_time);
+        application->OnUpdate(delta_time);
+        LateUpdate();
+
+        if (s_loop_state.tick_timer > 1.0f) {
+            u32 fps = static_cast<u32>(1.0 / delta_time);
+            Time::s_fps = fps;
+            Time::s_frame_time = 1000.0 / fps;
+
+            application->OnTick();
+
+            s_loop_state.tick_timer = 0.0;
+        }
+
+        Render();
     }
 
     void Engine::Exit() {

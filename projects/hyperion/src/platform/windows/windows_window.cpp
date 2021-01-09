@@ -197,6 +197,8 @@ namespace Hyperion {
     }
 
     void WindowsWindow::Update() {
+        m_input->Update();
+
         if (m_is_focused) {
             switch (m_cursor_mode) {
                 case CursorMode::Default: {
@@ -218,7 +220,6 @@ namespace Hyperion {
             TranslateMessage(&message);
             DispatchMessageW(&message);
         }
-        m_input->Update();
     }
 
     void WindowsWindow::Show() {
@@ -684,6 +685,21 @@ namespace Hyperion {
 
                 WindowFocusEvent event(focused);
                 window->DispatchEvent(event);
+                break;
+            }
+
+            case WM_ENTERSIZEMOVE: {
+                window->m_timer = SetTimer(window->m_window_handle, 1, USER_TIMER_MINIMUM, nullptr);
+                break;
+            }
+            case WM_EXITSIZEMOVE: {
+                KillTimer(window->m_window_handle, window->m_timer);
+                break;
+            }
+            case WM_TIMER: {
+                if (w_param == window->m_timer) {
+                    Engine::Iterate();
+                }
                 break;
             }
 

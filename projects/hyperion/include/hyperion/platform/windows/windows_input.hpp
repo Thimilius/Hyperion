@@ -16,7 +16,9 @@ namespace Hyperion {
         WindowsInput();
         ~WindowsInput();
 
-        bool GetKeyDown(KeyCode key_code) const override { return m_keys_down[static_cast<s32>(key_code)]; }
+        bool GetKeyDown(KeyCode key_code) const override {
+            return m_keys_down[static_cast<s32>(key_code)];
+        }
         bool GetKey(KeyCode key_code) const override { return m_keys[static_cast<s32>(key_code)]; }
         bool GetKeyUp(KeyCode key_code) const override { return m_keys_up[static_cast<s32>(key_code)]; }
 

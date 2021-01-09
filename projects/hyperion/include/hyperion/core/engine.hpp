@@ -7,9 +7,10 @@
 
 namespace Hyperion {
     class Application;
+    class Event;
     class Main;
     class Timer;
-    class Event;
+    class WindowsWindow;
 
     namespace Rendering {
         class RenderEngine;
@@ -58,6 +59,7 @@ namespace Hyperion {
         static void PreInit();
         static void Init();
         static u32 Run();
+        static void Iterate();
         static void Exit();
         static void Shutdown();
 
@@ -71,9 +73,16 @@ namespace Hyperion {
         inline static ApplicationSettings s_settings;
         inline static u64 s_update_frame = 0;
         inline static bool s_running = false;
+
+        inline static struct LoopState {
+            Timer *timer;
+            f64 last_time = 0.0;
+            f64 tick_timer = 0.0;
+        } s_loop_state;
     private:
         friend class Hyperion::Application;
         friend class Hyperion::Main;
+        friend class Hyperion::WindowsWindow;
     };
 
 }
