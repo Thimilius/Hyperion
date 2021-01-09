@@ -49,6 +49,7 @@ namespace Hyperion {
     }
 
     void Engine::Init() {
+        Rendering::RenderEngine::Init();
         Physics::PhysicsEngine::Init();
         Audio::AudioEngine::Init();
         ScriptingEngine::Init();
@@ -116,7 +117,7 @@ namespace Hyperion {
 
     void Engine::Exit() {
         s_running = false;
-        Rendering::RenderEngine::s_update_queue.push(Rendering::RenderCommand::Exit);
+        Rendering::RenderEngine::Exit();
     }
 
     void Engine::Shutdown() {

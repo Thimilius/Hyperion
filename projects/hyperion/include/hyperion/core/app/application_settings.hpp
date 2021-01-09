@@ -2,9 +2,8 @@
 
 #include "hyperion/core/app/window_settings.hpp"
 #include "hyperion/rendering/render_backend.hpp"
-#include "hyperion/rendering/render_path.hpp"
-#include "hyperion/rendering/render_pipeline.hpp"
 #include "hyperion/rendering/render_threading_mode.hpp"
+#include "hyperion/rendering/pipelines/render_pipeline.hpp"
 #include "hyperion/audio/audio_backend.hpp"
 #include "hyperion/physics/physics_backend.hpp"
 
@@ -25,7 +24,7 @@ namespace Hyperion {
     struct RenderSettings {
         Rendering::RenderBackend backend = Rendering::RenderBackend::OpenGL;
         Rendering::RenderThreadingMode threading_mode = Rendering::RenderThreadingMode::MultiThreaded;
-        Rendering::RenderPath path = Rendering::RenderPath::Forward;
+        Rendering::RenderPipeline pipeline = Rendering::RenderPipeline::Forward;
         Rendering::IRenderPipeline *custom_pipeline = nullptr;
     };
 
