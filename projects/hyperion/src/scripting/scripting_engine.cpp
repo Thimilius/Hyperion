@@ -34,14 +34,14 @@ namespace Hyperion {
     }
 
     void ScriptingEngine::TestFunctions() {
-        char *assembly_path = "data/managed/HyperionEngine.dll";
+        char *assembly_path = "data/managed/Hyperion.dll";
         MonoAssembly *assembly = mono_domain_assembly_open(s_root_domain, assembly_path);
         MonoImage *image = mono_assembly_get_image(assembly);
 
-        MonoMethodDesc *description = mono_method_desc_new("HyperionEngine.Application::Do()", true);
+        MonoMethodDesc *description = mono_method_desc_new("Hyperion.Application::Do()", true);
         MonoMethod *method = mono_method_desc_search_in_image(description, image);
 
-        mono_add_internal_call("HyperionEngine.Application::Log", Log);
+        mono_add_internal_call("Hyperion.Application::Log", Log);
 
         mono_runtime_invoke(method, nullptr, nullptr, nullptr);
     }

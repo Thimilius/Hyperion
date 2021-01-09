@@ -13,6 +13,8 @@ namespace Hyperion {
     class Object {
         HYP_REFLECT();
     public:
+        inline Type GetType() const { return get_type(); }
+        
         inline String GetName() const { return m_name; }
         inline void SetName(const String &name) { m_name = name; }
 

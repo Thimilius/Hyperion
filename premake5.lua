@@ -1,6 +1,8 @@
-output_directory_format = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+output_directory_format = "%{cfg.system}-%{cfg.architecture}"
 audio_backend_option = "audio"
 physics_backend_option = "physics"
+
+include "packages.lua"
 
 workspace "hyperion"
 	startproject "hyperion-editor"
@@ -14,8 +16,8 @@ workspace "hyperion"
 	rtti "Off"
 	flags { "FatalCompileWarnings" }
 	
-	targetdir ("build/bin/" .. output_directory_format)
-	objdir ("build/obj/" .. output_directory_format)
+	targetdir ("build/%{cfg.buildcfg}/bin/" .. output_directory_format)
+	objdir ("build/%{cfg.buildcfg}/obj/" .. output_directory_format)
 	debugdir "run_tree/"
 
 	configurations { "debug", "release" }
@@ -47,6 +49,7 @@ workspace "hyperion"
 	end
 
 	filter "configurations:debug"
+		
 		defines { "HYP_DEBUG", "HYP_ENABLE_ASSERTS", "HYP_BREAK_ON_ASSERT" }
 		runtime "Debug"
 		symbols "On"
@@ -97,16 +100,16 @@ project "hyperion"
 	includedirs {
 		"%{prj.location}/include",
 		
-		"%{prj.location}/vendor/assimp/include",
-		"%{prj.location}/vendor/fmt/include",
-		"%{prj.location}/vendor/freetype/include",
 		"%{prj.location}/vendor/glad/include",
-		"%{prj.location}/vendor/nlohmann/include",
-		"%{prj.location}/vendor/mono/include",
-		"%{prj.location}/vendor/rttr/include",
-		"%{prj.location}/vendor/stb/include"
+		"%{prj.location}/vendor/mono/include"
 	}
-	
+	includedirs { package_assimp_includedirs }
+	includedirs { package_nlohmann_includedirs }
+	includedirs { package_fmt_includedirs }
+	includedirs { package_freetype_includedirs }
+	includedirs { package_rttr_includedirs }
+	includedirs { package_stb_includedirs }
+			
 	filter "files:projects/hyperion/vendor/**"
 		flags { "NoPCH" }
 
@@ -121,7 +124,7 @@ project "hyperion"
 			"%{prj.location}/include/hyperion/modules/bullet/**",
 			"%{prj.location}/src/modules/bullet/**"
 		}
-		includedirs { "%{prj.location}/vendor/bullet/include" }
+		includedirs { package_bullet_includedirs }
 
 	filter "system:windows"
 		files {
@@ -132,64 +135,63 @@ project "hyperion"
 		}
 		
 	    postbuildcommands {
-		    "{COPY} vendor/fmod/lib/windows/fmod.dll %{cfg.targetdir}",
-		    "{COPY} vendor/assimp/lib/windows/assimp.dll %{cfg.targetdir}",
-			"{COPY} vendor/mono/lib/windows/mono.dll %{cfg.targetdir}"
+		    "{COPY} vendor/fmod/lib/windows/fmod.dll %{cfg.targetdir}/fmod.dll*",
+			"{COPY} vendor/mono/lib/windows/mono.dll %{cfg.targetdir}/mono.dll*"
 	    }
 
 function linkhyperion()
 	filter { }
 
+	includedirs { "projects/hyperion/include" }
+	includedirs { package_rttr_includedirs }
+	includedirs { package_fmt_includedirs }
+
 	links { "hyperion" }
 	
-	includedirs {
-		"projects/hyperion/include",
-		
-		"projects/hyperion/vendor/fmt/include",
-		"projects/hyperion/vendor/rttr/include"
-	}
-
 	filter "kind:ConsoleApp"
 		defines { "HYP_CONSOLE" }
 
 	filter "system:windows"
 		libdirs {
-			"projects/hyperion/vendor/assimp/lib/windows",
 			"projects/hyperion/vendor/mono/lib/windows"
 		}
-
+		
 		links {
 			"opengl32",
 			"PowrProf",
 		
-			"rttr",
-			"freetype",
-		
-			"assimp",
 			"mono",	
 		}
 	
 	filter { "system:windows", "configurations:debug" }
-		libdirs {
-			"projects/hyperion/vendor/freetype/lib/windows/debug",
-			"projects/hyperion/vendor/rttr/lib/windows/debug"
-		}
+		libdirs { package_assimp_debug_libdirs }
+		libdirs { package_fmt_debug_libdirs }
+		libdirs { package_freetype_debug_libdirs }
+		libdirs { package_rttr_debug_libdirs }
+		links { package_assimp_debug_links }
+		links { package_fmt_debug_links }
+		links { package_freetype_debug_links }
+		links { package_rttr_debug_links }
 	filter { "system:windows", "configurations:release" }
-		libdirs {
-			"projects/hyperion/vendor/freetype/lib/windows/release",
-			"projects/hyperion/vendor/rttr/lib/windows/release"
-		}
+		libdirs { package_assimp_release_libdirs }
+		libdirs { package_fmt_release_libdirs }
+		libdirs { package_freetype_release_libdirs }
+		libdirs { package_rttr_release_libdirs }
+		links { package_assimp_release_links }
+		links { package_fmt_release_links }
+		links { package_freetype_release_links }
+		links { package_rttr_release_links }
 
 	filter { "system:windows", "options:audio=fmod" }
 		links { "fmod_vc" }
 		libdirs { "projects/hyperion/vendor/fmod/lib/windows" }
 
-	filter { "system:windows", "options:physics=bullet" }
-		links { "bullet" }
 	filter { "system:windows", "configurations:debug", "options:physics=bullet" }
-		libdirs { "projects/hyperion/vendor/bullet/lib/windows/debug" }
+		libdirs { package_bullet_debug_libdirs }
+		links { package_bullet_debug_links }
 	filter { "system:windows", "configurations:release", "options:physics=bullet" }
-		libdirs { "projects/hyperion/vendor/bullet/lib/windows/release" }
+		libdirs { package_bullet_release_libdirs }
+		links { package_bullet_release_links }
 
 	filter { }
 
@@ -215,17 +217,16 @@ project "hyperion-editor"
         files { "projects/hyperion-editor/resource.rc" }
 
 		postbuildcommands {
-		    "{COPY} %{cfg.targetdir}/%{prj.name}.exe ../../../run_tree/",
+		    "{COPY} %{cfg.targetdir}/%{prj.name}.exe ../../run_tree/hyperion.exe*",
 		    
-		    "{COPY} %{cfg.targetdir}/fmod.dll ../../../run_tree/",
-		    "{COPY} %{cfg.targetdir}/assimp.dll ../../../run_tree/",
-			"{COPY} %{cfg.targetdir}/mono.dll ../../../run_tree/"
+		    "{COPY} %{cfg.targetdir}/fmod.dll ../../run_tree/fmod.dll*",
+			"{COPY} %{cfg.targetdir}/mono.dll ../../run_tree/mono.dll*"
 	    }
 
 group "managed"
 
-project "HyperionEngine"
-	location "projects/managed/HyperionEngine"
+project "Hyperion"
+	location "projects/managed/Hyperion"
 	kind "SharedLib"
 	
 	language "C#"

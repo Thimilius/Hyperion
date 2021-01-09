@@ -5,6 +5,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include <rttr/type.h>
+
 using s8 = int8_t;
 using s16 = int16_t;
 using s32 = int32_t;
@@ -26,3 +28,5 @@ using Map = std::unordered_map<Key, Value>;
 
 template<typename T>
 using Set = std::unordered_set<T>;
+
+using Type = rttr::type;

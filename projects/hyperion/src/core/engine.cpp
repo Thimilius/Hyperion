@@ -102,7 +102,7 @@ namespace Hyperion {
 
     u32 Engine::Run() {
         Application *application = Application::GetInstance();
-        HYP_ASSERT_NO_MESSAGE(application);
+        HYP_ASSERT(application);
 
         s_running = true;
 
