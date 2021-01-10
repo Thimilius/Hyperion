@@ -36,6 +36,6 @@ namespace Hyperion::Editor {
 
 Hyperion::Application *Hyperion::CreateApplication() {
     ApplicationSettings settings = ApplicationSettings::FromJsonFile("app.json");
-    settings.render.threading_mode = Rendering::RenderThreadingMode::SingleThreaded;
+    settings.render.threading_mode = Rendering::RenderThreadingMode::MultiThreaded;
     return new Hyperion::Editor::EditorApplication(settings);
 }

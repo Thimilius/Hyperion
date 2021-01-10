@@ -18,7 +18,7 @@ namespace Hyperion::Physics {
         ~PhysicsEngine() = delete;
 
         static void Init();
-        static void Update(f32 delta_time);
+        static void FixedUpdate(f32 delta_time);
         static void Shutdown();
 
         inline static PhysicsWorld *CreatePhysicsWorld() { return s_physics_driver->CreatePhysicsWorld(); }

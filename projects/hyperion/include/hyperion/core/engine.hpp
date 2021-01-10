@@ -65,20 +65,24 @@ namespace Hyperion {
 
         static void OnEvent(Event &event);
         static void Update(f32 delta_time);
+        static void FixedUpdate(f32 delta_time);
         static void LateUpdate();
         static void Render();
 
         static void PanicInternal(const String &title, const String &message);
     private:
         inline static ApplicationSettings s_settings;
-        inline static u64 s_update_frame = 0;
         inline static bool s_running = false;
 
-        inline static struct LoopState {
+        inline static struct Stats {
             Timer *timer;
+
             f64 last_time = 0.0;
             f64 tick_timer = 0.0;
-        } s_loop_state;
+            f64 accumulator = 0.0;
+
+            u64 frame = 0;
+        } s_stats;
     private:
         friend class Hyperion::Application;
         friend class Hyperion::Main;

@@ -24,6 +24,7 @@ namespace Hyperion {
         virtual void OnInit() { }
         virtual void OnEvent(Event &event) { }
         virtual void OnUpdate(f32 delta_time) { }
+        virtual void OnFixedUpdate(f32 delta_time) { }
         virtual void OnTick() { }
         virtual void OnShutdown() { }
     private:

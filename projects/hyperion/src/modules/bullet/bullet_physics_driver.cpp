@@ -21,7 +21,7 @@ namespace Hyperion::Physics {
         HYP_LOG_INFO("Physics", "Initialized Bullet physics driver!");
     }
 
-    void BulletPhysicsDriver::Update(f32 delta_time) {
+    void BulletPhysicsDriver::FixedUpdate(f32 delta_time) {
 
     }
 

@@ -38,6 +38,8 @@ namespace Hyperion {
     void Engine::PreInit() {
         HYP_ASSERT_MESSAGE(s_settings.core.max_delta_time > 0, "Max delta time must be greater than zero!");
         Time::s_max_delta_time = s_settings.core.max_delta_time;
+        HYP_ASSERT_MESSAGE(s_settings.core.fixed_delta_time > 0, "Fixed delta time must be greater than zero!");
+        Time::s_fixed_delta_time = s_settings.core.fixed_delta_time;
 
         Display::UpdateSize(s_settings.window.width, s_settings.window.height);
 
@@ -73,11 +75,11 @@ namespace Hyperion {
             EngineSync::WaitForRenderReady();
         }
 
-        s_loop_state.timer = Timer::Create();
+        s_stats.timer = Timer::Create();
         while (s_running) {
             Iterate();
         }
-        delete s_loop_state.timer;
+        delete s_stats.timer;
 
         application->OnShutdown();
         Shutdown();
@@ -89,17 +91,18 @@ namespace Hyperion {
         Application *application = Application::GetInstance();
         Window *window = application->GetWindow();
 
-        u64 this_frame = s_update_frame++;
+        s_stats.frame++;
 
         window->Update();
 
-        f32 now = s_loop_state.timer->ElapsedSeconds();
-        f32 delta_time = static_cast<f32>(now - s_loop_state.last_time);
+        f32 now = s_stats.timer->ElapsedSeconds();
+        f32 delta_time = static_cast<f32>(now - s_stats.last_time);
         if (delta_time > Time::GetMaxDeltaTime()) {
             delta_time = Time::GetMaxDeltaTime();
         }
-        s_loop_state.last_time = now;
-        s_loop_state.tick_timer += delta_time;
+        s_stats.last_time = now;
+        s_stats.tick_timer += delta_time;
+        s_stats.accumulator += delta_time;
         Time::s_delta_time = delta_time;
         Time::s_time += delta_time;
 
@@ -107,14 +110,22 @@ namespace Hyperion {
         application->OnUpdate(delta_time);
         LateUpdate();
 
-        if (s_loop_state.tick_timer > 1.0f) {
+        f32 fixed_delta_time = Time::GetFixedDeltaTime();
+        while (s_stats.accumulator > fixed_delta_time) {
+            FixedUpdate(fixed_delta_time);
+            application->OnFixedUpdate(fixed_delta_time);
+
+            s_stats.accumulator -= fixed_delta_time;
+        }
+
+        if (s_stats.tick_timer > 1.0f) {
             u32 fps = static_cast<u32>(1.0 / delta_time);
             Time::s_fps = fps;
             Time::s_frame_time = 1000.0 / fps;
 
             application->OnTick();
 
-            s_loop_state.tick_timer = 0.0;
+            s_stats.tick_timer = 0.0;
         }
 
         Render();
@@ -169,8 +180,11 @@ namespace Hyperion {
     }
 
     void Engine::Update(f32 delta_time) {
-        Physics::PhysicsEngine::Update(delta_time);
         WorldManager::Update(delta_time);
+    }
+
+    void Engine::FixedUpdate(f32 delta_time) {
+        Physics::PhysicsEngine::FixedUpdate(delta_time);
     }
 
     void Engine::LateUpdate() {

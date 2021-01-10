@@ -24,8 +24,8 @@ namespace Hyperion::Physics {
         s_physics_driver->Init();
     }
 
-    void PhysicsEngine::Update(f32 delta_time) {
-        s_physics_driver->Update(delta_time);
+    void PhysicsEngine::FixedUpdate(f32 delta_time) {
+        s_physics_driver->FixedUpdate(delta_time);
     }
 
     void PhysicsEngine::Shutdown() {

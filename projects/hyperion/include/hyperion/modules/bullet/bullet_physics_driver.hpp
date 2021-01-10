@@ -18,7 +18,7 @@ namespace Hyperion::Physics {
         void DestroyPhysicsWorld(PhysicsWorld *world) override;
 
         void Init() override;
-        void Update(f32 delta_time) override;
+        void FixedUpdate(f32 delta_time) override;
         void Shutdown() override;
     private:
         btDefaultCollisionConfiguration *m_collision_configuration;
