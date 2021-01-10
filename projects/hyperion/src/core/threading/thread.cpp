@@ -4,14 +4,12 @@
 
 #ifdef HYP_PLATFORM_WINDOWS
 #include <Windows.h>
-#else
-#error
 #endif
 
 namespace Hyperion::Threading {
 
     ThreadId Thread::GetId() {
-#if HYP_PLATFORM_WINDOWS
+#ifdef HYP_PLATFORM_WINDOWS
         return GetThreadId(m_thread.native_handle());
 #endif
     }
@@ -29,7 +27,7 @@ namespace Hyperion::Threading {
     }
 
     void Thread::SetName(const String &name) {
-#if HYP_PLATFORM_WINDOWS
+#ifdef HYP_PLATFORM_WINDOWS
         WideString name_wide = StringUtils::Utf8ToUtf16(name);
         SetThreadDescription(m_thread.native_handle(), name_wide.data());
 #endif
