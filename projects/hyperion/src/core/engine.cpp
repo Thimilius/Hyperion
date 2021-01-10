@@ -11,6 +11,7 @@
 #include "hyperion/core/app/events/app_events.hpp"
 #include "hyperion/core/app/events/window_events.hpp"
 #include "hyperion/core/app/events/key_events.hpp"
+#include "hyperion/core/threading/synchronization.hpp"
 #include "hyperion/audio/audio_engine.hpp"
 #include "hyperion/rendering/render_engine.hpp"
 #include "hyperion/entity/world_manager.hpp"
@@ -71,8 +72,8 @@ namespace Hyperion {
         window->Show();
 
         if (s_settings.render.threading_mode == Rendering::RenderThreadingMode::MultiThreaded) {
-            EngineSync::NotifyUpdateReady();
-            EngineSync::WaitForRenderReady();
+            Synchronization::NotifyUpdateReady();
+            Synchronization::WaitForRenderReady();
         }
 
         s_stats.timer = Timer::Create();

@@ -2,6 +2,7 @@
 
 #include "hyperion/rendering/render_engine.hpp"
 
+#include "hyperion/core/threading/synchronization.hpp"
 #include "hyperion/driver/opengl/opengl_render_driver.hpp"
 #include "hyperion/rendering/graphics_context.hpp"
 #include "hyperion/rendering/multithreaded_render_driver.hpp"
@@ -53,9 +54,9 @@ namespace Hyperion::Rendering {
                 // Only in single threaded mode are we swaping the buffers here on the Main Thread.
                 s_graphics_context->SwapBuffers();
             } else {
-                EngineSync::WaitForRenderDone();
+                Synchronization::WaitForRenderDone();
                 SwapBufferedState();
-                EngineSync::NotifySwapDone();
+                Synchronization::NotifySwapDone();
             }
 
             s_render_frame++;
@@ -83,8 +84,8 @@ namespace Hyperion::Rendering {
     void RenderEngine::InitRenderThread(Window *window) {
         InitGraphicsContext(window);
 
-        EngineSync::NotifyRenderReady();
-        EngineSync::WaitForUpdateReady();
+        Synchronization::NotifyRenderReady();
+        Synchronization::WaitForUpdateReady();
     }
 
     void RenderEngine::RenderThreadLoop(void *parameter) {
@@ -111,8 +112,8 @@ namespace Hyperion::Rendering {
 
             s_graphics_context->SwapBuffers();
 
-            EngineSync::NotifyRenderDone();
-            EngineSync::WaitForSwapDone();
+            Synchronization::NotifyRenderDone();
+            Synchronization::WaitForSwapDone();
         }
 
         ShutdownRenderThread();
