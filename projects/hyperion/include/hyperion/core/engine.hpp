@@ -52,7 +52,6 @@ namespace Hyperion {
             Timer *timer;
 
             f64 last_time = 0.0;
-            f64 tick_timer = 0.0;
             f64 accumulator = 0.0;
 
             u64 frame = 0;

@@ -54,7 +54,7 @@ namespace Hyperion {
     protected:
         virtual Rendering::GraphicsContext *CreateGraphicsContext(Rendering::RenderBackend render_backend) = 0;
 
-        virtual void Update() = 0;
+        virtual void Poll() = 0;
         virtual void Show() = 0;
 
         virtual InputImplementation *GetInput() const = 0;

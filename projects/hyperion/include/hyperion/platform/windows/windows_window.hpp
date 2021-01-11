@@ -28,7 +28,7 @@ namespace Hyperion {
     private:
         Rendering::GraphicsContext *CreateGraphicsContext(Rendering::RenderBackend render_backend) override;
 
-        void Update() override;
+        void Poll() override;
         void Show() override;
         
         InputImplementation *GetInput() const override { return m_input; }

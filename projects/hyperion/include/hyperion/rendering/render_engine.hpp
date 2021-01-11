@@ -17,6 +17,8 @@ namespace Hyperion {
 
 namespace Hyperion::Rendering {
 
+    // TODO: Better abstract render thread
+
     class RenderEngine final {
     public:
         inline static RenderBackend GetBackend() { return s_render_settings.backend; }
@@ -34,8 +36,8 @@ namespace Hyperion::Rendering {
         static void RenderThreadLoop(void *parameter);
         static void ExecuteRenderCommand(const RenderCommand &render_command);
         static void ShutdownRenderThread();
-        static void InitGraphicsContext(Window *window);
-        static void SwapBufferedState();
+        static void InitGraphicsContextAndBackend(Window *window);
+        static void SwapBuffers();
     private: 
         inline static RenderSettings s_render_settings;
         inline static IRenderPipeline *s_render_pipeline;

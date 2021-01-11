@@ -196,7 +196,7 @@ namespace Hyperion {
         }
     }
 
-    void WindowsWindow::Update() {
+    void WindowsWindow::Poll() {
         m_input->Update();
 
         if (m_is_focused) {

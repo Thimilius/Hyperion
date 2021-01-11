@@ -93,7 +93,7 @@ namespace Hyperion::Rendering {
         OpenGLGraphicsContext::Init();
     }
 
-    void WindowsOpenGLGraphicsContext::SwapBuffers() {
+    void WindowsOpenGLGraphicsContext::Present() {
         ::SwapBuffers(m_device_context);
     }
 

@@ -8,10 +8,10 @@ namespace Hyperion {
 
     class Math final {
     public:
-        inline static const f32 PI = 3.1415926535897932384626433833f;
-        inline static const f32 TAU = PI * 2.0f;
-        inline static const f32 EPSILON = 0.001f;
-        inline static const f32 E = 2.7182818284590452353602874714f;
+        inline static constexpr f32 PI = 3.1415926535897932384626433833f;
+        inline static constexpr f32 TAU = PI * 2.0f;
+        inline static constexpr f32 EPSILON = 0.001f;
+        inline static constexpr f32 E = 2.7182818284590452353602874714f;
 
         inline static f32 Max(f32 a, f32 b) { return a > b ? a : b; }
         inline static f32 Min(f32 a, f32 b) { return a < b ? a : b; }
@@ -31,7 +31,8 @@ namespace Hyperion {
         inline static f32 Ceil(f32 p_val) { return std::ceil(p_val); }
 
         inline static f32 Sqrt(f32 p_val) { return std::sqrt(p_val); }
-        inline static f32 Fmod(f32 p_a, f32 p_b) { return std::fmod(p_a, p_b); }
+        inline static f32 FMod(f32 p_a, f32 p_b) { return std::fmod(p_a, p_b); }
+        inline static f32 ModF(f32 x, f32 m) { return x - static_cast<u32>(x / m) * m; }
 
         inline static f32 Pow(f32 p_base, f32 p_expo) { return std::pow(p_base, p_expo); }
         inline static f32 Log(f32 p_val) { return std::log(p_val); }

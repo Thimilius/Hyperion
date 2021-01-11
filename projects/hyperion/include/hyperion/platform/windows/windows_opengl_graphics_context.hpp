@@ -12,7 +12,7 @@ namespace Hyperion::Rendering {
         ~WindowsOpenGLGraphicsContext() override;
     private:
         void Init() override;
-        void SwapBuffers() override;
+        void Present() override;
         void SetVSyncMode(VSyncMode vsync_mode) override;
     private:
         HDC m_device_context;

@@ -16,7 +16,7 @@ namespace Hyperion::Rendering {
         
         switch (s_render_settings.threading_mode) {
             case RenderThreadingMode::SingleThreaded: {
-                InitGraphicsContext(window);
+                InitGraphicsContextAndBackend(window);
                 RenderOperation::s_render_driver = s_render_driver_backend;
                 break;
             }
@@ -51,11 +51,10 @@ namespace Hyperion::Rendering {
         // The following block ends a frame on the Main Thread:
         {
             if (s_render_settings.threading_mode == RenderThreadingMode::SingleThreaded) {
-                // Only in single threaded mode are we swaping the buffers here on the Main Thread.
-                s_graphics_context->SwapBuffers();
+                s_graphics_context->Present();
             } else {
                 Synchronization::WaitForRenderDone();
-                SwapBufferedState();
+                SwapBuffers();
                 Synchronization::NotifySwapDone();
             }
 
@@ -82,7 +81,7 @@ namespace Hyperion::Rendering {
     }
 
     void RenderEngine::InitRenderThread(Window *window) {
-        InitGraphicsContext(window);
+        InitGraphicsContextAndBackend(window);
 
         Synchronization::NotifyRenderReady();
         Synchronization::WaitForUpdateReady();
@@ -110,7 +109,7 @@ namespace Hyperion::Rendering {
                 break;
             }
 
-            s_graphics_context->SwapBuffers();
+            s_graphics_context->Present();
 
             Synchronization::NotifyRenderDone();
             Synchronization::WaitForSwapDone();
@@ -133,7 +132,7 @@ namespace Hyperion::Rendering {
         delete s_graphics_context;
     }
 
-    void RenderEngine::InitGraphicsContext(Window *window) {
+    void RenderEngine::InitGraphicsContextAndBackend(Window *window) {
         // The graphics context is the very first thing we need to initialize so that resources can be created properly.
         s_graphics_context = window->CreateGraphicsContext(s_render_settings.backend);
         s_graphics_context->Init();
@@ -148,7 +147,7 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void RenderEngine::SwapBufferedState() {
+    void RenderEngine::SwapBuffers() {
         std::swap(s_update_queue, s_render_queue);
     }
 

@@ -94,7 +94,7 @@ namespace Hyperion {
 
         s_stats.frame++;
 
-        window->Update();
+        window->Poll();
 
         f32 now = s_stats.timer->ElapsedSeconds();
         f32 delta_time = static_cast<f32>(now - s_stats.last_time);
@@ -102,10 +102,11 @@ namespace Hyperion {
             delta_time = Time::GetMaxDeltaTime();
         }
         s_stats.last_time = now;
-        s_stats.tick_timer += delta_time;
         s_stats.accumulator += delta_time;
         Time::s_delta_time = delta_time;
         Time::s_time += delta_time;
+        Time::s_fps = static_cast<u32>(1.0f / delta_time);
+        Time::s_frame_time = delta_time * 1000.0f;
 
         Update(delta_time);
         application->OnUpdate(delta_time);
@@ -115,18 +116,11 @@ namespace Hyperion {
         while (s_stats.accumulator > fixed_delta_time) {
             FixedUpdate(fixed_delta_time);
             application->OnFixedUpdate(fixed_delta_time);
-
             s_stats.accumulator -= fixed_delta_time;
         }
 
-        if (s_stats.tick_timer > 1.0f) {
-            u32 fps = static_cast<u32>(1.0 / delta_time);
-            Time::s_fps = fps;
-            Time::s_frame_time = 1000.0 / fps;
-
+        if (Time::OnInterval(1.0f)) {
             application->OnTick();
-
-            s_stats.tick_timer = 0.0;
         }
 
         Render();
