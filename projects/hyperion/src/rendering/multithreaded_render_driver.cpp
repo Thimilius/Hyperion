@@ -11,7 +11,7 @@ namespace Hyperion::Rendering {
         command.type = RenderCommandType::Clear;
         command.clear.clear_mask = clear_mask;
         command.clear.color = color;
-        RenderEngine::s_update_queue.push(command);
+        RenderEngine::PushRenderCommand(command);
     }
 
 }

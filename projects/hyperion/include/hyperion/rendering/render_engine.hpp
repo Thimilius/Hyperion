@@ -2,7 +2,7 @@
 
 #include "hyperion/core/app/application_settings.hpp"
 #include "hyperion/core/threading/thread.hpp"
-#include "hyperion/rendering/render_command.hpp"
+#include "hyperion/rendering/render_command_queue.hpp"
 
 namespace Hyperion {
     class Engine;
@@ -17,8 +17,6 @@ namespace Hyperion {
 
 namespace Hyperion::Rendering {
 
-    // TODO: Better abstract render thread
-
     class RenderEngine final {
     public:
         inline static RenderBackend GetBackend() { return s_render_settings.backend; }
@@ -32,9 +30,11 @@ namespace Hyperion::Rendering {
         static void Shutdown();
         static void Exit();
 
+        static void PushRenderCommand(const RenderCommand &command);
+
         static void InitRenderThread(Window *window);
         static void RenderThreadLoop(void *parameter);
-        static void ExecuteRenderCommand(const RenderCommand &render_command);
+        static void ExecuteRenderCommand(const RenderCommand &command);
         static void ShutdownRenderThread();
         static void InitGraphicsContextAndBackend(Window *window);
         static void SwapBuffers();
@@ -50,9 +50,8 @@ namespace Hyperion::Rendering {
 
         inline static Threading::Thread s_render_thread;
         inline static bool s_exit_requested;
-        // TODO: Abstract into RenderCommandQueue
-        inline static Queue<RenderCommand> s_update_queue;
-        inline static Queue<RenderCommand> s_render_queue;
+        inline static RenderCommandQueue s_update_queue;
+        inline static RenderCommandQueue s_render_queue;
     private:
         friend class Hyperion::Engine;
         friend class Hyperion::Rendering::MultithreadedRenderDriver;

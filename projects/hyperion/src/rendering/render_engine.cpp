@@ -77,7 +77,11 @@ namespace Hyperion::Rendering {
     void RenderEngine::Exit() {
         RenderCommand command = { };
         command.type = RenderCommandType::Exit;
-        s_update_queue.push(command);
+        PushRenderCommand(command);
+    }
+
+    void RenderEngine::PushRenderCommand(const RenderCommand &command) {
+        s_update_queue.Push(command);
     }
 
     void RenderEngine::InitRenderThread(Window *window) {
@@ -92,10 +96,9 @@ namespace Hyperion::Rendering {
 
         while (true) {
             // Execute render commands...
-            Queue<RenderCommand> &queue = s_render_queue;
-            while (!s_exit_requested && !queue.empty()) {
-                RenderCommand command = queue.front();
-                queue.pop();
+            RenderCommandQueue &queue = s_render_queue;
+            while (!s_exit_requested && !queue.IsEmpty()) {
+                RenderCommand command = queue.Pop();
 
                 s_exit_requested = command.type == RenderCommandType::Exit;
                 if (s_exit_requested) {
@@ -118,10 +121,10 @@ namespace Hyperion::Rendering {
         ShutdownRenderThread();
     }
 
-    void RenderEngine::ExecuteRenderCommand(const RenderCommand &render_command) {
-        switch (render_command.type) {
+    void RenderEngine::ExecuteRenderCommand(const RenderCommand &command) {
+        switch (command.type) {
             case RenderCommandType::Clear: {
-                s_render_driver_backend->Clear(render_command.clear.clear_mask, render_command.clear.color);
+                s_render_driver_backend->Clear(command.clear.clear_mask, command.clear.color);
                 break;
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
