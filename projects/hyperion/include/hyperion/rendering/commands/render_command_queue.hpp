@@ -1,16 +1,16 @@
 #pragma once
 
 #include "hyperion/common.hpp"
-#include "hyperion/rendering/render_command.hpp"
+#include "hyperion/rendering/commands/render_commands.hpp"
 
 namespace Hyperion::Rendering {
-
-    using RenderCommandVisitorFunction = std::function<u64(RenderCommandType, const void *)>;
 
     class RenderCommandQueue {
     public:
         inline bool IsEmpty() const { return m_buffer.empty(); }
         inline void Clear() { m_buffer.clear(); }
+        inline u64 GetSize() const { return m_buffer.size(); }
+        inline u8 *GetData() { return m_buffer.data(); }
 
         template<typename T>
         inline T *Allocate(RenderCommandType command_type) {
@@ -25,8 +25,6 @@ namespace Hyperion::Rendering {
         }
     private:
         Vector<u8> m_buffer;
-
-        friend class Hyperion::Rendering::RenderEngine;
     };
 
 }

@@ -4,9 +4,10 @@
 
 #include "hyperion/core/threading/synchronization.hpp"
 #include "hyperion/driver/opengl/opengl_render_driver.hpp"
-#include "hyperion/rendering/render_command.hpp"
 #include "hyperion/rendering/graphics_context.hpp"
 #include "hyperion/rendering/multithreaded_render_driver.hpp"
+#include "hyperion/rendering/commands/render_commands.hpp"
+#include "hyperion/rendering/commands/render_command_executor.hpp"
 #include "hyperion/rendering/pipelines/forward_render_pipeline.hpp"
 
 namespace Hyperion::Rendering {
@@ -113,9 +114,9 @@ namespace Hyperion::Rendering {
         InitRenderThread(static_cast<Window *>(parameter));
 
         while (true) {
-            // Execute render commands...
-            auto program_counter = s_render_queue.m_buffer.data();
-            auto program_counter_end = s_render_queue.m_buffer.data() + s_render_queue.m_buffer.size();
+            // Execute render commands like a virtual machine...
+            auto program_counter = s_render_queue.GetData();
+            auto program_counter_end = s_render_queue.GetData() + s_render_queue.GetSize();
             RenderCommandType command_type;
             while (program_counter < program_counter_end) {
                 command_type = *reinterpret_cast<RenderCommandType *>(program_counter);
@@ -125,7 +126,7 @@ namespace Hyperion::Rendering {
                 }
 
                 program_counter += sizeof(RenderCommandType);
-                program_counter += static_cast<size_t>(ExecuteRenderCommand(command_type, program_counter));
+                program_counter += static_cast<size_t>(RenderCommandExecutor::ExecuteRenderCommand(command_type, program_counter, s_render_driver_backend));
             }
 
             if (s_exit_requested) {
@@ -144,21 +145,6 @@ namespace Hyperion::Rendering {
 
     void RenderEngine::ShutdownRenderThread() {
         delete s_graphics_context;
-    }
-
-    u64 RenderEngine::ExecuteRenderCommand(RenderCommandType command_type, const void *data) {
-        switch (command_type) {
-            case RenderCommandType::Exit: {
-                s_exit_requested = true;
-                return sizeof(RenderCommandExit);
-            }
-            case RenderCommandType::Clear: {
-                auto command = reinterpret_cast<const RenderCommandClear *>(data);
-                s_render_driver_backend->Clear(command->clear_mask, command->color);
-                return sizeof(*command);
-            }
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
-        }
     }
 
 }
