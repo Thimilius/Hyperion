@@ -61,6 +61,7 @@ workspace "hyperion"
 	filter "system:windows"
 		defines { "HYP_PLATFORM_WINDOWS", "_CRT_SECURE_NO_WARNINGS", "_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS" }
 		systemversion "latest"
+		linkoptions { "/IGNORE:4099" }
 
 	filter "options:audio=none"
 		defines { "HYP_AUDIO_NONE" }
