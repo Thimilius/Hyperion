@@ -7,11 +7,9 @@
 namespace Hyperion::Rendering {
 
     void MultithreadedRenderDriver::Clear(ClearMask clear_mask, Color color) {
-        RenderCommand command = { };
-        command.type = RenderCommandType::Clear;
-        command.clear.clear_mask = clear_mask;
-        command.clear.color = color;
-        RenderEngine::PushRenderCommand(command);
+        RenderCommandClear *clear = RenderEngine::GetCommandQueue().Allocate<RenderCommandClear>(RenderCommandType::Clear);
+        clear->clear_mask = clear_mask;
+        clear->color = color;
     }
 
 }

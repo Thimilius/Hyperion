@@ -3,7 +3,7 @@
 #include "hyperion/rendering/pipelines/forward_render_pipeline.hpp"
 
 #include "hyperion/core/app/time.hpp"
-#include "hyperion/rendering/render_operation.hpp"
+#include "hyperion/rendering/render_engine.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -11,7 +11,7 @@ namespace Hyperion::Rendering {
         Color color = Color::Cyan();
         f32 value = Math::Sin(Time::GetTime() * 2.0f) / 2.0f + 0.5f;
         color *= value;
-        RenderOperation::Clear(ClearMask::Color | ClearMask::Depth | ClearMask::Stencil, color);
+        RenderEngine::GetRenderDriver()->Clear(ClearMask::Color | ClearMask::Depth | ClearMask::Stencil, color);
     }
 
 }

@@ -10,16 +10,11 @@ namespace Hyperion::Rendering {
         Clear,
     };
 
+    struct RenderCommandExit { };
+
     struct RenderCommandClear {
         ClearMask clear_mask;
         Color color;
-    };
-
-    struct RenderCommand {
-        RenderCommandType type;
-        union {
-            RenderCommandClear clear;
-        };
     };
 
 }

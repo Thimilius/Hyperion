@@ -4,9 +4,9 @@
 
 #include "hyperion/core/threading/synchronization.hpp"
 #include "hyperion/driver/opengl/opengl_render_driver.hpp"
+#include "hyperion/rendering/render_command.hpp"
 #include "hyperion/rendering/graphics_context.hpp"
 #include "hyperion/rendering/multithreaded_render_driver.hpp"
-#include "hyperion/rendering/render_operation.hpp"
 #include "hyperion/rendering/pipelines/forward_render_pipeline.hpp"
 
 namespace Hyperion::Rendering {
@@ -17,13 +17,9 @@ namespace Hyperion::Rendering {
         switch (s_render_settings.threading_mode) {
             case RenderThreadingMode::SingleThreaded: {
                 InitGraphicsContextAndBackend(window);
-                RenderOperation::s_render_driver = s_render_driver_backend;
                 break;
             }
             case RenderThreadingMode::MultiThreaded: {
-                s_render_driver_multithreaded = new MultithreadedRenderDriver();
-                RenderOperation::s_render_driver = s_render_driver_multithreaded;
-
                 s_render_thread.Start(RenderThreadLoop, window);
                 s_render_thread.SetName("Render Thread");
                 break;
@@ -66,73 +62,18 @@ namespace Hyperion::Rendering {
         s_render_pipeline->Shutdown();
 
         delete s_render_pipeline;
-        delete s_render_driver_multithreaded;
+        delete s_render_driver_wrapper;
         delete s_render_driver_backend;
 
         if (s_render_settings.threading_mode == RenderThreadingMode::MultiThreaded) {
             s_render_thread.Join();
+        } else {
+            delete s_graphics_context;
         }
     }
 
     void RenderEngine::Exit() {
-        RenderCommand command = { };
-        command.type = RenderCommandType::Exit;
-        PushRenderCommand(command);
-    }
-
-    void RenderEngine::PushRenderCommand(const RenderCommand &command) {
-        s_update_queue.Push(command);
-    }
-
-    void RenderEngine::InitRenderThread(Window *window) {
-        InitGraphicsContextAndBackend(window);
-
-        Synchronization::NotifyRenderReady();
-        Synchronization::WaitForUpdateReady();
-    }
-
-    void RenderEngine::RenderThreadLoop(void *parameter) {
-        InitRenderThread(static_cast<Window *>(parameter));
-
-        while (true) {
-            // Execute render commands...
-            RenderCommandQueue &queue = s_render_queue;
-            while (!s_exit_requested && !queue.IsEmpty()) {
-                RenderCommand command = queue.Pop();
-
-                s_exit_requested = command.type == RenderCommandType::Exit;
-                if (s_exit_requested) {
-                    break;
-                } else {
-                    ExecuteRenderCommand(command);
-                }
-            }
-
-            if (s_exit_requested) {
-                break;
-            }
-
-            s_graphics_context->Present();
-
-            Synchronization::NotifyRenderDone();
-            Synchronization::WaitForSwapDone();
-        }
-
-        ShutdownRenderThread();
-    }
-
-    void RenderEngine::ExecuteRenderCommand(const RenderCommand &command) {
-        switch (command.type) {
-            case RenderCommandType::Clear: {
-                s_render_driver_backend->Clear(command.clear.clear_mask, command.clear.color);
-                break;
-            }
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-        }
-    }
-
-    void RenderEngine::ShutdownRenderThread() {
-        delete s_graphics_context;
+        GetCommandQueue().Allocate<RenderCommandExit>(RenderCommandType::Exit);
     }
 
     void RenderEngine::InitGraphicsContextAndBackend(Window *window) {
@@ -148,10 +89,76 @@ namespace Hyperion::Rendering {
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
+
+        if (s_render_settings.threading_mode == RenderThreadingMode::MultiThreaded) {
+            s_render_driver_wrapper = new MultithreadedRenderDriver();
+            s_render_driver = s_render_driver_wrapper;
+        } else {
+            s_render_driver = s_render_driver_backend;
+        }
     }
 
     void RenderEngine::SwapBuffers() {
         std::swap(s_update_queue, s_render_queue);
+    }
+
+    void RenderEngine::InitRenderThread(Window *window) {
+        InitGraphicsContextAndBackend(window);
+
+        Synchronization::NotifyRenderReady();
+        Synchronization::WaitForUpdateReady();
+    }
+
+    void RenderEngine::RenderThreadLoop(void *parameter) {
+        InitRenderThread(static_cast<Window *>(parameter));
+
+        while (true) {
+            // Execute render commands...
+            auto program_counter = s_render_queue.m_buffer.data();
+            auto program_counter_end = s_render_queue.m_buffer.data() + s_render_queue.m_buffer.size();
+            RenderCommandType command_type;
+            while (program_counter < program_counter_end) {
+                command_type = *reinterpret_cast<RenderCommandType *>(program_counter);
+                s_exit_requested = command_type == RenderCommandType::Exit;
+                if (s_exit_requested) {
+                    break;
+                }
+
+                program_counter += sizeof(RenderCommandType);
+                program_counter += static_cast<size_t>(ExecuteRenderCommand(command_type, program_counter));
+            }
+
+            if (s_exit_requested) {
+                break;
+            }
+
+            s_render_queue.Clear();
+            s_graphics_context->Present();
+
+            Synchronization::NotifyRenderDone();
+            Synchronization::WaitForSwapDone();
+        }
+
+        ShutdownRenderThread();
+    }
+
+    void RenderEngine::ShutdownRenderThread() {
+        delete s_graphics_context;
+    }
+
+    u64 RenderEngine::ExecuteRenderCommand(RenderCommandType command_type, const void *data) {
+        switch (command_type) {
+            case RenderCommandType::Exit: {
+                s_exit_requested = true;
+                return sizeof(RenderCommandExit);
+            }
+            case RenderCommandType::Clear: {
+                auto command = reinterpret_cast<const RenderCommandClear *>(data);
+                s_render_driver_backend->Clear(command->clear_mask, command->color);
+                return sizeof(*command);
+            }
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
     }
 
 }
