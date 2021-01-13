@@ -1,6 +1,7 @@
 #pragma once
 
 #include "hyperion/common.hpp"
+#include "hyperion/core/guid.hpp"
 
 namespace Hyperion {
     class Entity;
@@ -10,21 +11,29 @@ namespace Hyperion {
 
 namespace Hyperion {
 
+    using ObjectId = Guid;
+
     class Object {
         HYP_REFLECT();
     public:
         inline Type GetType() const { return get_type(); }
         
+        inline ObjectId GetId() const { return m_id; }
+
         inline String GetName() const { return m_name; }
         inline void SetName(const String &name) { m_name = name; }
 
         inline virtual String ToString() const { return m_name; }
 
+        static Object *Clone(Object *object);
         static void Destroy(Object *object);
     protected:
         Object() = default;
         Object(const String &name) { m_name = name; }
         virtual ~Object() = default;
+
+        inline virtual Object *CreateClone() const { return new Object(); }
+        virtual void HandleClone(Object *clone) const;
 
         virtual void OnDestroy() { }
     private:
@@ -34,7 +43,8 @@ namespace Hyperion {
 
         static void DestroyImmediate(Object *object);
     private:
-        String m_name;
+        ObjectId m_id = Guid::Create();
+        String m_name = "Object";
         bool m_destroyed = false;
     private:
         friend class Hyperion::Entity;
