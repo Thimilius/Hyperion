@@ -13,7 +13,7 @@ namespace Hyperion::Rendering {
     struct RenderCommandExit { };
 
     struct RenderCommandClear {
-        ClearMask clear_mask;
+        ClearFlags clear_flags;
         Color color;
     };
 

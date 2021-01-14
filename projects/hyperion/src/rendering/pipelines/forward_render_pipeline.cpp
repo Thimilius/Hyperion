@@ -11,7 +11,7 @@ namespace Hyperion::Rendering {
         Color color = Color::Cyan();
         f32 value = Math::Sin(Time::GetTime() * 2.0f) / 2.0f + 0.5f;
         color *= value;
-        RenderEngine::GetRenderDriver()->Clear(ClearMask::Color | ClearMask::Depth | ClearMask::Stencil, color);
+        RenderEngine::GetRenderDriver()->Clear(ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, color);
     }
 
 }

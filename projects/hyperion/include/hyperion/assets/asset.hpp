@@ -1,10 +1,9 @@
 #pragma once
 
 #include "hyperion/core/object.hpp"
+#include "hyperion/core/resource_id.hpp"
 
 namespace Hyperion {
-
-    using ResourceId = u64;
 
     enum class AssetType {
         Mesh,
@@ -25,15 +24,6 @@ namespace Hyperion {
         virtual ~Asset() = default;
     protected:
         ResourceId m_resource_id;
-    };
-
-    class Resource final {
-    private:
-        inline static ResourceId GetNextResourceId() { return s_resource_id_counter++; }
-    private:
-        inline static ResourceId s_resource_id_counter = 0;
-    private:
-        friend class Hyperion::Asset;
     };
 
 }

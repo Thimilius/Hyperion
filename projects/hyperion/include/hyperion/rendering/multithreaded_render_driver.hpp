@@ -6,7 +6,7 @@ namespace Hyperion::Rendering {
 
     class MultithreadedRenderDriver final : public IRenderDriver {
     public:
-        void Clear(ClearMask clear_mask, Color color) override;
+        void Clear(ClearFlags clear_flags, Color color) override;
     };
 
 }

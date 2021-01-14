@@ -10,7 +10,7 @@ namespace Hyperion::Rendering {
         switch (command_type) {
             case RenderCommandType::Clear: {
                 auto render_command = reinterpret_cast<const RenderCommandClear *>(command);
-                render_driver->Clear(render_command->clear_mask, render_command->color);
+                render_driver->Clear(render_command->clear_flags, render_command->color);
                 return sizeof(*render_command);
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;

@@ -4,20 +4,20 @@
 
 namespace Hyperion::Rendering {
 
-    enum class ClearMask {
+    enum class ClearFlags {
         None,
 
         Color   = BIT(0),
         Depth   = BIT(1),
         Stencil = BIT(2)
     };
-    HYP_CREATE_ENUM_FLAG_OPERATORS(ClearMask);
+    HYP_CREATE_ENUM_FLAG_OPERATORS(ClearFlags);
 
     class IRenderDriver {
     public:
         virtual ~IRenderDriver() = default;
 
-        virtual void Clear(ClearMask clear_mask, Color color) = 0;
+        virtual void Clear(ClearFlags clear_flags, Color color) = 0;
     };
 
 }
