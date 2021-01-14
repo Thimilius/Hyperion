@@ -1,12 +1,14 @@
 #pragma once
 
-#include "hyperion/core/resource_id.hpp"
+#include "hyperion/common.hpp"
 
 namespace Hyperion {
     class Asset;
 }
 
-namespace Hyperion::Rendering {
+namespace Hyperion {
+
+    using ResourceId = u64;
 
     class Resource final {
     private:

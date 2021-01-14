@@ -13,11 +13,13 @@ namespace Hyperion::Rendering {
         FreeMesh
     };
 
-    struct RenderCommandExit { };
-
     struct RenderCommandClear {
         ClearFlags clear_flags;
         Color color;
+    };
+
+    struct RenderCommandId {
+        ResourceId id;
     };
 
     struct RenderCommandCreateMesh {

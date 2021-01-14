@@ -1,7 +1,7 @@
 #pragma once
 
 #include "hyperion/core/object.hpp"
-#include "hyperion/core/resource_id.hpp"
+#include "hyperion/core/resource.hpp"
 
 namespace Hyperion {
 

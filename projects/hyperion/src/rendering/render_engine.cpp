@@ -74,7 +74,7 @@ namespace Hyperion::Rendering {
     }
 
     void RenderEngine::Exit() {
-        GetCommandQueue().Allocate<RenderCommandExit>(RenderCommandType::Exit);
+        GetCommandQueue().Allocate(RenderCommandType::Exit);
     }
 
     void RenderEngine::InitGraphicsContextAndBackend(Window *window) {
