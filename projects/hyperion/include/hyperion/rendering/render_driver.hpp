@@ -1,6 +1,9 @@
 #pragma once
 
 #include "hyperion/core/color.hpp"
+#include "hyperion/core/resource_id.hpp"
+#include "hyperion/core/math/vec2.hpp"
+#include "hyperion/core/math/vec3.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -13,11 +16,19 @@ namespace Hyperion::Rendering {
     };
     HYP_CREATE_ENUM_FLAG_OPERATORS(ClearFlags);
 
+    struct VertexMesh {
+        Vec3 position;
+        Vec3 normal;
+        Vec2 uv;
+    };
+
     class IRenderDriver {
     public:
         virtual ~IRenderDriver() = default;
 
         virtual void Clear(ClearFlags clear_flags, Color color) = 0;
+
+        virtual void CreateMesh(ResourceId id, const Vector<VertexMesh> &vertices, const Vector<u32> &indices) = 0;
     };
 
 }

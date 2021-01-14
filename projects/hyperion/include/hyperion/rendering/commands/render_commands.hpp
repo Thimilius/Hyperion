@@ -8,6 +8,9 @@ namespace Hyperion::Rendering {
         Exit = -1,
 
         Clear,
+
+        CreateMesh,
+        FreeMesh
     };
 
     struct RenderCommandExit { };
@@ -15,6 +18,12 @@ namespace Hyperion::Rendering {
     struct RenderCommandClear {
         ClearFlags clear_flags;
         Color color;
+    };
+
+    struct RenderCommandCreateMesh {
+        ResourceId id;
+        Vector<VertexMesh> verticies;
+        Vector<u32> indicies;
     };
 
 }

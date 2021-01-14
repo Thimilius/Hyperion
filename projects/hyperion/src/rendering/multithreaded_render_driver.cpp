@@ -12,4 +12,11 @@ namespace Hyperion::Rendering {
         clear->color = color;
     }
 
+    void MultithreadedRenderDriver::CreateMesh(ResourceId id, const Vector<VertexMesh> &vertices, const Vector<u32> &indices) {
+        RenderCommandCreateMesh *create_mesh = RenderEngine::GetCommandQueue().Allocate<RenderCommandCreateMesh>(RenderCommandType::CreateMesh);
+        create_mesh->id = id;
+        create_mesh->verticies = vertices;
+        create_mesh->indicies = indices;
+    }
+
 }
