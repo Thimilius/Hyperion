@@ -36,4 +36,10 @@ namespace Hyperion::Rendering {
         command->id = id;
     }
 
+    void MultithreadedRenderDriver::DrawIndexed(ResourceId shader_id, ResourceId mesh_id) {
+        RenderCommandDrawIndexed *command = RenderEngine::GetCommandQueue().Allocate<RenderCommandDrawIndexed>(RenderCommandType::DrawIndexed);
+        command->shader_id = shader_id;
+        command->mesh_id = mesh_id;
+    }
+
 }

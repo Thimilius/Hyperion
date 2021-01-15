@@ -33,6 +33,11 @@ namespace Hyperion::Rendering {
                 render_driver->FreeMesh(render_command->id);
                 return sizeof(*render_command);
             }
+            case RenderCommandType::DrawIndexed: {
+                auto render_command = reinterpret_cast<const RenderCommandDrawIndexed *>(command);
+                render_driver->DrawIndexed(render_command->shader_id, render_command->mesh_id);
+                return sizeof(*render_command);
+            }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }

@@ -40,6 +40,8 @@ namespace Hyperion::Rendering {
 
         virtual void CreateMesh(ResourceId id, const Vector<VertexMesh> &vertices, const Vector<u32> &indices) = 0;
         virtual void FreeMesh(ResourceId id) = 0;
+
+        virtual void DrawIndexed(ResourceId shader_id, ResourceId mesh_id) = 0;
     };
 
 }

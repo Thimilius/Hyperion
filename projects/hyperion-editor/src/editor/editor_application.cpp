@@ -1,8 +1,6 @@
 ﻿#include <hyperion/hyperion.hpp>
 #include <hyperion/entry_point.hpp>
 
-#include <hyperion/assets/shader.hpp>
-
 namespace Hyperion::Editor {
 
     class EditorApplication : public Application {

@@ -6,7 +6,7 @@ namespace Hyperion::Rendering {
 
     class ForwardRenderPipeline : public IRenderPipeline {
     public:
-        void Init() override { }
+        void Init() override;
         void Render() override;
         void Shutdown() override { }
     };

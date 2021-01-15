@@ -13,7 +13,9 @@ namespace Hyperion::Rendering {
         FreeShader,
 
         CreateMesh,
-        FreeMesh
+        FreeMesh,
+
+        DrawIndexed
     };
 
     struct RenderCommandClear {
@@ -35,6 +37,11 @@ namespace Hyperion::Rendering {
         ResourceId id;
         Vector<VertexMesh> verticies;
         Vector<u32> indicies;
+    };
+
+    struct RenderCommandDrawIndexed {
+        ResourceId shader_id;
+        ResourceId mesh_id;
     };
 
 }
