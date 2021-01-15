@@ -26,8 +26,20 @@ namespace Hyperion {
         }
     }
 
+    Object::Object() {
+        m_id = ObjectManager::RegisterObject(this);
+    }
+
+    Object::Object(const String &name) : Object() {
+        m_name = name;
+    }
+
     void Object::HandleClone(Object *clone) const {
         clone->m_name = m_name;
+    }
+
+    Object::~Object() {
+        ObjectManager::UnregisterObject(this);
     }
 
     void Object::DestroyImmediate(Object *object) {
@@ -42,7 +54,7 @@ namespace Hyperion {
 HYP_REFLECT_REGISTER_BEGIN
 {
     registration::class_<Object>("Object")
-        .property("id", &Object::m_id)
+        .property("guid", &Object::m_guid)
         .property("name", &Object::m_name);
 }
 HYP_REFLECT_REGISTER_END

@@ -11,7 +11,8 @@ namespace Hyperion {
 
 namespace Hyperion {
 
-    using ObjectId = Guid;
+    using ObjectId = u64;
+    using ObjectGuid = Guid;
 
     class Object {
         HYP_REFLECT();
@@ -19,6 +20,7 @@ namespace Hyperion {
         inline Type GetType() const { return get_type(); }
         
         inline ObjectId GetId() const { return m_id; }
+        inline ObjectGuid GetGuid() const { return m_guid; }
 
         inline String GetName() const { return m_name; }
         inline void SetName(const String &name) { m_name = name; }
@@ -28,9 +30,9 @@ namespace Hyperion {
         static Object *Clone(Object *object);
         static void Destroy(Object *object);
     protected:
-        Object() = default;
-        Object(const String &name) { m_name = name; }
-        virtual ~Object() = default;
+        Object();
+        Object(const String &name);
+        virtual ~Object();
 
         inline virtual Object *CreateClone() const { return new Object(); }
         virtual void HandleClone(Object *clone) const;
@@ -43,7 +45,8 @@ namespace Hyperion {
 
         static void DestroyImmediate(Object *object);
     private:
-        ObjectId m_id = Guid::Create();
+        ObjectId m_id = 0;
+        ObjectGuid m_guid = Guid::Create();
         String m_name = "Object";
         bool m_destroyed = false;
     private:

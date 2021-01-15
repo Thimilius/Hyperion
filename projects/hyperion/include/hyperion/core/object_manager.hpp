@@ -20,8 +20,13 @@ namespace Hyperion {
 
         static void Destroy(Object *object);
         static void DestroyImmediate(Object *object);
+
+        static ObjectId RegisterObject(Object *object);
+        static void UnregisterObject(Object *object);
     private:
+        inline static Map<ObjectId, Object *> s_objects;
         inline static Set<Object *> s_objects_to_destroy;
+        inline static ObjectId s_object_id_counter;
     private:
         friend class Hyperion::Engine;
         friend class Hyperion::Object;
