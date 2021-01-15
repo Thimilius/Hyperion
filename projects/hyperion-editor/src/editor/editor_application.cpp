@@ -1,7 +1,7 @@
 ﻿#include <hyperion/hyperion.hpp>
 #include <hyperion/entry_point.hpp>
 
-#include <hyperion/assets/mesh.hpp>
+#include <hyperion/assets/shader.hpp>
 
 namespace Hyperion::Editor {
 
@@ -10,7 +10,7 @@ namespace Hyperion::Editor {
         EditorApplication(const ApplicationSettings &settings) : Application(settings) { }
     protected:
         void OnInit() override {
-
+            
         }
 
         void OnUpdate(f32 delta_time) override {
@@ -40,6 +40,6 @@ namespace Hyperion::Editor {
 
 Hyperion::Application *Hyperion::CreateApplication() {
     ApplicationSettings settings = ApplicationSettings::FromJsonFile("app.json");
-    settings.render.threading_mode = Rendering::RenderThreadingMode::MultiThreaded;
+    settings.render.threading_mode = Rendering::RenderThreadingMode::SingleThreaded;
     return new Hyperion::Editor::EditorApplication(settings);
 }

@@ -21,7 +21,7 @@ namespace Hyperion {
         inline ResourceId GetResourceId() const { return m_resource_id; }
     protected:
         Asset();
-        virtual ~Asset() = default;
+        virtual ~Asset() override = default;
     protected:
         ResourceId m_resource_id;
     };

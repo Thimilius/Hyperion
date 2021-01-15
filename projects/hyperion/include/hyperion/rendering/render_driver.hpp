@@ -16,6 +16,13 @@ namespace Hyperion::Rendering {
     };
     HYP_CREATE_ENUM_FLAG_OPERATORS(ClearFlags);
 
+    enum class ShaderStage {
+        Unknown,
+
+        Vertex,
+        Fragment
+    };
+
     struct VertexMesh {
         Vec3 position;
         Vec3 normal;
@@ -27,6 +34,9 @@ namespace Hyperion::Rendering {
         virtual ~IRenderDriver() = default;
 
         virtual void Clear(ClearFlags clear_flags, Color color) = 0;
+
+        virtual void CreateShader(ResourceId id, const String &vertex, const String &fragment) = 0;
+        virtual void FreeShader(ResourceId id) = 0;
 
         virtual void CreateMesh(ResourceId id, const Vector<VertexMesh> &vertices, const Vector<u32> &indices) = 0;
         virtual void FreeMesh(ResourceId id) = 0;

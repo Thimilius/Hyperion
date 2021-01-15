@@ -8,6 +8,9 @@ namespace Hyperion::Rendering {
     public:
         void Clear(ClearFlags clear_flags, Color color) override;
 
+        void CreateShader(ResourceId id, const String &vertex, const String &fragment) override;
+        void FreeShader(ResourceId id) override;
+
         void CreateMesh(ResourceId id, const Vector<VertexMesh> &vertices, const Vector<u32> &indices) override;
         void FreeMesh(ResourceId id) override;
     };

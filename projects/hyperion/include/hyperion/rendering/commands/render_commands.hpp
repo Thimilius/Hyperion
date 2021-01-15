@@ -9,6 +9,9 @@ namespace Hyperion::Rendering {
 
         Clear,
 
+        CreateShader,
+        FreeShader,
+
         CreateMesh,
         FreeMesh
     };
@@ -20,6 +23,12 @@ namespace Hyperion::Rendering {
 
     struct RenderCommandId {
         ResourceId id;
+    };
+
+    struct RenderCommandCreateShader {
+        ResourceId id;
+        String vertex;
+        String fragment;
     };
 
     struct RenderCommandCreateMesh {

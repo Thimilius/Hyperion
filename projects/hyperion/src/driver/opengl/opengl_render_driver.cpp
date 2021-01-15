@@ -2,6 +2,7 @@
 
 #include "hyperion/driver/opengl/opengl_render_driver.hpp"
 
+#include "hyperion/driver/opengl/opengl_shader_compiler.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -10,11 +11,31 @@ namespace Hyperion::Rendering {
         glClear(GetGLClearFlags(clear_mask));
     }
 
+    void OpenGLRenderDriver::CreateShader(ResourceId id, const String &vertex, const String &fragment) {
+        HYP_ASSERT(s_shaders.find(id) == s_shaders.end());
+
+        OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(vertex, fragment);
+        if (compilation_result.succes) {
+            OpenGLShader &shader = s_shaders[id];
+            shader.program = compilation_result.program;
+        } else {
+            // TODO: How do we handle shader errors here?
+        }
+    }
+
+    void OpenGLRenderDriver::FreeShader(ResourceId id) {
+        HYP_ASSERT(s_shaders.find(id) != s_shaders.end());
+
+        OpenGLShader &shader = s_shaders[id];
+        glDeleteProgram(shader.program);
+        
+        s_shaders.erase(id);
+    }
+
     void OpenGLRenderDriver::CreateMesh(ResourceId id, const Vector<VertexMesh> &vertices, const Vector<u32> &indices) {
         HYP_ASSERT(s_meshes.find(id) == s_meshes.end());
 
-        OpenGLMesh mesh;
-        mesh.id = id;
+        OpenGLMesh &mesh = s_meshes[id];
 
         glCreateBuffers(2, &mesh.vertex_buffer);
         glNamedBufferData(mesh.vertex_buffer, vertices.size() * sizeof(vertices[0]), vertices.data(), GL_STATIC_DRAW);
@@ -23,8 +44,6 @@ namespace Hyperion::Rendering {
         glCreateVertexArrays(1, &mesh.vertex_array);
 
         // TODO: Setup buffer layout
-
-        s_meshes[id] = mesh;
     }
 
     void OpenGLRenderDriver::FreeMesh(ResourceId id) {

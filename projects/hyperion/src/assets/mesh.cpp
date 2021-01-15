@@ -26,6 +26,10 @@ namespace Hyperion {
         Rendering::RenderEngine::GetRenderDriver()->CreateMesh(m_resource_id, verticies, mesh_data.indices);
     }
 
+    Mesh::~Mesh() {
+        Rendering::RenderEngine::GetRenderDriver()->FreeMesh(m_resource_id);
+    }
+
     Mesh *Mesh::Create(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes) {
         return new Mesh(mesh_data, sub_meshes);
     }

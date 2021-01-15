@@ -65,16 +65,16 @@ namespace Hyperion {
         s_running = true;
 
         PreInit();
-        Init();
-
-        Window *window = application->GetWindow();
-        application->OnInit();
-        window->Show();
 
         if (s_settings.render.threading_mode == Rendering::RenderThreadingMode::MultiThreaded) {
             Synchronization::NotifyUpdateReady();
             Synchronization::WaitForRenderReady();
         }
+
+        Init();
+        Window *window = application->GetWindow();
+        application->OnInit();
+        window->Show();
 
         s_stats.timer = Timer::Create();
         while (s_running) {

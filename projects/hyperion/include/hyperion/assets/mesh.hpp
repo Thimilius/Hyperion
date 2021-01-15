@@ -41,6 +41,7 @@ namespace Hyperion {
         static Mesh *Create(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes);
     private:
         Mesh(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes);
+        ~Mesh() override;
 
         void RecalculateBounds();
     private:
