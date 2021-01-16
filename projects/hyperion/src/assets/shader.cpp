@@ -8,7 +8,11 @@
 namespace Hyperion {
 
     Shader::Shader(const String &vertex, const String &fragment) {
-        Rendering::RenderEngine::GetRenderDriver()->CreateShader(m_resource_id, vertex, fragment);
+        Rendering::ShaderDescriptor descriptor;
+        descriptor.stage_flags = Rendering::ShaderStageFlags::Vertex | Rendering::ShaderStageFlags::Fragment;
+        descriptor.vertex = vertex;
+        descriptor.fragment = fragment;
+        Rendering::RenderEngine::GetRenderDriver()->CreateShader(m_resource_id, descriptor);
     }
 
     Shader::~Shader() {

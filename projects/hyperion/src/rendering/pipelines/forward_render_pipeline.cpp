@@ -28,7 +28,7 @@ namespace Hyperion::Rendering {
                 out vec4 o_color;
 
                 void main() {
-	                o_color = vec4(1, 0, 1, 1);
+	                o_color = vec4(0.9, 0.5, 0, 1);
                 }
             )";
 
@@ -59,12 +59,17 @@ namespace Hyperion::Rendering {
     }
 
     void ForwardRenderPipeline::Render() {
+        Viewport viewport = { 0, 0, static_cast<s32>(Display::GetWidth()), static_cast<s32>(Display::GetHeight()) };
+        RenderEngine::GetRenderDriver()->Viewport(viewport);
+
         Color color = Color::Cyan();
         f32 value = Math::Sin(Time::GetTime() * 2.0f) / 2.0f + 0.5f;
         color *= value;
         RenderEngine::GetRenderDriver()->Clear(ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, color);
 
-        RenderEngine::GetRenderDriver()->DrawIndexed(shader->GetResourceId(), mesh->GetResourceId());
+        for (size_t i = 0; i < 1000; i++) {
+            RenderEngine::GetRenderDriver()->DrawIndexed(shader->GetResourceId(), mesh->GetResourceId());
+        }
     }
 
 }

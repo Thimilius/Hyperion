@@ -12,11 +12,15 @@ namespace Hyperion::Rendering {
         command->color = color;
     }
 
-    void MultithreadedRenderDriver::CreateShader(ResourceId id, const String &vertex, const String &fragment) {
+    void MultithreadedRenderDriver::Viewport(const Rendering::Viewport &viewport) {
+        RenderCommandViewport *command = RenderEngine::GetCommandQueue().Allocate<RenderCommandViewport>(RenderCommandType::Viewport);
+        command->viewport = viewport;
+    }
+
+    void MultithreadedRenderDriver::CreateShader(ResourceId id, const ShaderDescriptor &descriptor) {
         RenderCommandCreateShader *command = RenderEngine::GetCommandQueue().Allocate<RenderCommandCreateShader>(RenderCommandType::CreateShader);
         command->id = id;
-        command->vertex = vertex;
-        command->fragment = fragment;
+        command->descriptor = descriptor;
     }
 
     void MultithreadedRenderDriver::FreeShader(ResourceId id) {
@@ -24,11 +28,10 @@ namespace Hyperion::Rendering {
         command->id = id;
     }
 
-    void MultithreadedRenderDriver::CreateMesh(ResourceId id, const Vector<VertexMesh> &vertices, const Vector<u32> &indices) {
+    void MultithreadedRenderDriver::CreateMesh(ResourceId id, const MeshDescriptor &descriptor) {
         RenderCommandCreateMesh *command = RenderEngine::GetCommandQueue().Allocate<RenderCommandCreateMesh>(RenderCommandType::CreateMesh);
         command->id = id;
-        command->verticies = vertices;
-        command->indicies = indices;
+        command->descriptor = descriptor;
     }
 
     void MultithreadedRenderDriver::FreeMesh(ResourceId id) {

@@ -8,6 +8,7 @@ namespace Hyperion::Rendering {
         Exit = -1,
 
         Clear,
+        Viewport,
 
         CreateShader,
         FreeShader,
@@ -23,20 +24,22 @@ namespace Hyperion::Rendering {
         Color color;
     };
 
+    struct RenderCommandViewport {
+        Viewport viewport;
+    };
+
     struct RenderCommandId {
         ResourceId id;
     };
 
     struct RenderCommandCreateShader {
         ResourceId id;
-        String vertex;
-        String fragment;
+        ShaderDescriptor descriptor;
     };
 
     struct RenderCommandCreateMesh {
         ResourceId id;
-        Vector<VertexMesh> verticies;
-        Vector<u32> indicies;
+        MeshDescriptor descriptor;
     };
 
     struct RenderCommandDrawIndexed {

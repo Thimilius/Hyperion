@@ -6,15 +6,19 @@
 
 namespace Hyperion::Rendering {
 
-    void OpenGLRenderDriver::Clear(ClearFlags clear_mask, Color color) {
+    void OpenGLRenderDriver::Clear(ClearFlags clear_flags, Color color) {
         glClearColor(color.r, color.g, color.b, color.a);
-        glClear(GetGLClearFlags(clear_mask));
+        glClear(GetGLClearFlags(clear_flags));
     }
 
-    void OpenGLRenderDriver::CreateShader(ResourceId id, const String &vertex, const String &fragment) {
+    void OpenGLRenderDriver::Viewport(const Rendering::Viewport &viewport) {
+        glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+    }
+
+    void OpenGLRenderDriver::CreateShader(ResourceId id, const ShaderDescriptor &descriptor) {
         HYP_ASSERT(s_shaders.find(id) == s_shaders.end());
 
-        OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(vertex, fragment);
+        OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(descriptor.vertex, descriptor.fragment);
         if (compilation_result.succes) {
             OpenGLShader &shader = s_shaders[id];
             shader.program = compilation_result.program;
@@ -32,16 +36,16 @@ namespace Hyperion::Rendering {
         s_shaders.erase(id);
     }
 
-    void OpenGLRenderDriver::CreateMesh(ResourceId id, const Vector<VertexMesh> &vertices, const Vector<u32> &indices) {
+    void OpenGLRenderDriver::CreateMesh(ResourceId id, const MeshDescriptor &descriptor) {
         HYP_ASSERT(s_meshes.find(id) == s_meshes.end());
 
         OpenGLMesh &mesh = s_meshes[id];
 
         glCreateBuffers(2, &mesh.vertex_buffer);
-        glNamedBufferData(mesh.vertex_buffer, vertices.size() * sizeof(vertices[0]), vertices.data(), GL_STATIC_DRAW);
-        glNamedBufferData(mesh.index_buffer, indices.size() * sizeof(indices[0]), indices.data(), GL_STATIC_DRAW);
+        glNamedBufferData(mesh.vertex_buffer, descriptor.vertices.size() * sizeof(descriptor.vertices[0]), descriptor.vertices.data(), GL_STATIC_DRAW);
+        glNamedBufferData(mesh.index_buffer, descriptor.indices.size() * sizeof(descriptor.indices[0]), descriptor.indices.data(), GL_STATIC_DRAW);
 
-        mesh.indices_count = static_cast<s32>(indices.size());
+        mesh.indices_count = static_cast<s32>(descriptor.indices.size());
 
         glCreateVertexArrays(1, &mesh.vertex_array);
 
@@ -71,28 +75,23 @@ namespace Hyperion::Rendering {
         OpenGLShader &shader = s_shaders[shader_id];
         OpenGLMesh &mesh = s_meshes[mesh_id];
 
-        GLsizei width = static_cast<GLsizei>(Display::GetWidth());
-        GLsizei height = static_cast<GLsizei>(Display::GetHeight());
-        glViewport(0, 0, width, height);
-
         glFrontFace(GL_CW);
-
         glUseProgram(shader.program);
         glBindVertexArray(mesh.vertex_array);
 
         glDrawElements(GL_TRIANGLES, mesh.indices_count, GL_UNSIGNED_INT, nullptr);
     }
 
-    u32 OpenGLRenderDriver::GetGLClearFlags(ClearFlags clear_mask) {
+    u32 OpenGLRenderDriver::GetGLClearFlags(ClearFlags clear_flags) {
         u32 result = 0;
 
-        if ((clear_mask & ClearFlags::Color) == ClearFlags::Color) {
+        if ((clear_flags & ClearFlags::Color) == ClearFlags::Color) {
             result |= GL_COLOR_BUFFER_BIT;
         }
-        if ((clear_mask & ClearFlags::Depth) == ClearFlags::Depth) {
+        if ((clear_flags & ClearFlags::Depth) == ClearFlags::Depth) {
             result |= GL_DEPTH_BUFFER_BIT;
         }
-        if ((clear_mask & ClearFlags::Stencil) == ClearFlags::Stencil) {
+        if ((clear_flags & ClearFlags::Stencil) == ClearFlags::Stencil) {
             result |= GL_STENCIL_BUFFER_BIT;
         }
 

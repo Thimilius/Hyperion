@@ -13,17 +13,20 @@ namespace Hyperion {
         m_mesh_data = mesh_data;
         m_sub_meshes = sub_meshes;
 
-        u32 vertex_count = static_cast<u32>(mesh_data.positions.size());
-        Vector<Rendering::VertexMesh> verticies(vertex_count);
-        for (u32 i = 0; i < vertex_count; i++) {
-            verticies[i].position = mesh_data.positions[i];
-            verticies[i].normal = mesh_data.normals[i];
-            verticies[i].uv = mesh_data.uvs[i];
-        }
-
         RecalculateBounds();
 
-        Rendering::RenderEngine::GetRenderDriver()->CreateMesh(m_resource_id, verticies, mesh_data.indices);
+        Rendering::MeshDescriptor descriptor;
+        u32 vertex_count = static_cast<u32>(mesh_data.positions.size());
+        descriptor.vertices.resize(vertex_count);
+        descriptor.indices = mesh_data.indices;
+
+        for (u32 i = 0; i < vertex_count; i++) {
+            descriptor.vertices[i].position = mesh_data.positions[i];
+            descriptor.vertices[i].normal = mesh_data.normals[i];
+            descriptor.vertices[i].uv = mesh_data.uvs[i];
+        }
+        
+        Rendering::RenderEngine::GetRenderDriver()->CreateMesh(m_resource_id, descriptor);
     }
 
     Mesh::~Mesh() {

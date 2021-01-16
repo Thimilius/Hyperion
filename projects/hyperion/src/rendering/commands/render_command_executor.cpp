@@ -13,9 +13,14 @@ namespace Hyperion::Rendering {
                 render_driver->Clear(render_command->clear_flags, render_command->color);
                 return sizeof(*render_command);
             }
+            case RenderCommandType::Viewport: {
+                auto render_command = reinterpret_cast<const RenderCommandViewport *>(command);
+                render_driver->Viewport(render_command->viewport);
+                return sizeof(*render_command);
+            }
             case RenderCommandType::CreateShader: {
                 auto render_command = reinterpret_cast<const RenderCommandCreateShader *>(command);
-                render_driver->CreateShader(render_command->id, render_command->vertex, render_command->fragment);
+                render_driver->CreateShader(render_command->id, render_command->descriptor);
                 return sizeof(*render_command);
             }
             case RenderCommandType::FreeShader: {
@@ -25,7 +30,7 @@ namespace Hyperion::Rendering {
             }
             case RenderCommandType::CreateMesh: {
                 auto render_command = reinterpret_cast<const RenderCommandCreateMesh *>(command);
-                render_driver->CreateMesh(render_command->id, render_command->verticies, render_command->indicies);
+                render_driver->CreateMesh(render_command->id, render_command->descriptor);
                 return sizeof(*render_command);
             }
             case RenderCommandType::FreeMesh: {

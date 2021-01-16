@@ -8,17 +8,18 @@ namespace Hyperion::Rendering {
 
     class OpenGLRenderDriver : public IRenderDriver {
     public:
-        void Clear(ClearFlags clear_mask, Color color) override;
+        void Clear(ClearFlags clear_flags, Color color) override;
+        void Viewport(const Rendering::Viewport &viewport) override;
 
-        void CreateShader(ResourceId id, const String &vertex, const String &fragment) override;
+        void CreateShader(ResourceId id, const ShaderDescriptor &descriptor) override;
         void FreeShader(ResourceId id) override;
 
-        void CreateMesh(ResourceId id, const Vector<VertexMesh> &vertices, const Vector<u32> &indices) override;
+        void CreateMesh(ResourceId id, const MeshDescriptor &descriptor) override;
         void FreeMesh(ResourceId id) override;
 
         void DrawIndexed(ResourceId shader_id, ResourceId mesh_id) override;
     private:
-        static u32 GetGLClearFlags(ClearFlags clear_mask);
+        static u32 GetGLClearFlags(ClearFlags clear_flags);
     private:
         struct OpenGLShader {
             GLuint program;
