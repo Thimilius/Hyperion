@@ -4,6 +4,7 @@
 
 #include "hyperion/core/timer.hpp"
 #include "hyperion/core/object_manager.hpp"
+#include "hyperion/core/memory.hpp"
 #include "hyperion/core/app/display.hpp"
 #include "hyperion/core/app/input.hpp"
 #include "hyperion/core/app/time.hpp"
@@ -78,6 +79,8 @@ namespace Hyperion {
 
         s_stats.timer = Timer::Create();
         while (s_running) {
+            MemoryStats::ResetFrameMemory();
+
             Iterate();
         }
         delete s_stats.timer;

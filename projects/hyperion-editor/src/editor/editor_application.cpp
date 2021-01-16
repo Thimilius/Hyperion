@@ -1,6 +1,8 @@
 ﻿#include <hyperion/hyperion.hpp>
 #include <hyperion/entry_point.hpp>
 
+#include "hyperion/core/memory.hpp"
+
 namespace Hyperion::Editor {
 
     class EditorApplication : public Application {
@@ -21,7 +23,8 @@ namespace Hyperion::Editor {
         }
 
         void OnTick() override {
-            String title = StringUtils::Format("Hyperion - FPS: {} ({:.2f}ms)", Time::GetFPS(), Time::GetFrameTime());
+            float32 memory = static_cast<float32>(MemoryStats::GetGlobalMemory()) / 1000.0f;
+            String title = StringUtils::Format("Hyperion - FPS: {} ({:.2f}ms) - Memory: {:.2f}KB", Time::GetFPS(), Time::GetFrameTime(), memory);
             GetWindow()->SetTitle(title);
         }
 

@@ -36,11 +36,10 @@ namespace Hyperion {
         SYSTEM_INFO system_info;
         GetNativeSystemInfo(&system_info);
         uint32 processor_count = system_info.dwNumberOfProcessors;
-        PROCESSOR_POWER_INFORMATION *processor_info = new PROCESSOR_POWER_INFORMATION[processor_count];
-        CallNtPowerInformation(ProcessorInformation, nullptr, 0, processor_info, static_cast<uint32>(sizeof(*processor_info) * processor_count));
+        Vector<PROCESSOR_POWER_INFORMATION> processor_info(processor_count);
+        CallNtPowerInformation(ProcessorInformation, nullptr, 0, processor_info.data(), static_cast<uint32>(sizeof(processor_info[0]) * processor_count));
         result.processor_info.processor_count = processor_count;
         result.processor_info.processor_mhz_frequency = processor_info[0].MaxMhz;
-        delete[] processor_info;
 
         // Gather memory info
         MEMORYSTATUSEX memory_status;
