@@ -7,7 +7,7 @@
 namespace Hyperion {
 
     struct JsonSerializerSettings {
-        u32 indent_width = 4;
+        uint32 indent_width = 4;
     };
 
     class JsonSerializer {

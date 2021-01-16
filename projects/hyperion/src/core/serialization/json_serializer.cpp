@@ -18,7 +18,7 @@ namespace Hyperion {
 
             if (property_type == rttr::type::get<String>()) {
                 json[property.get_name().to_string()] = variant.to_string();
-            } else if (property_type == rttr::type::get<s32>()) {
+            } else if (property_type == rttr::type::get<int32>()) {
                 json[property.get_name().to_string()] = variant.to_int32();
             }
         }
@@ -43,9 +43,9 @@ namespace Hyperion {
                 if (json_property.is_string()) {
                     property_variant = json_property.get<String>();
                 }
-            } else if (property_type == rttr::type::get<s32>()) {
+            } else if (property_type == rttr::type::get<int32>()) {
                 if (json_property.is_number_integer()) {
-                    property_variant  = json_property.get<s32>();
+                    property_variant  = json_property.get<int32>();
                 }
             }
 

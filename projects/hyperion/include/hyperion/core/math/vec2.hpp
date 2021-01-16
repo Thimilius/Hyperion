@@ -7,11 +7,11 @@ namespace Hyperion {
     struct Vec3;
 
     struct Vec2 {
-        f32 x;
-        f32 y;
+        float32 x;
+        float32 y;
 
         Vec2();
-        Vec2(f32 x, f32 y);
+        Vec2(float32 x, float32 y);
         Vec2(const Vec3 &vec3);
 
         Vec2 &Add(const Vec2 &other);
@@ -19,10 +19,10 @@ namespace Hyperion {
         Vec2 &Multiply(const Vec2 &other);
         Vec2 &Divide(const Vec2 &other);
 
-        Vec2 &Add(f32 value);
-        Vec2 &Subtract(f32 value);
-        Vec2 &Multiply(f32 value);
-        Vec2 &Divide(f32 value);
+        Vec2 &Add(float32 value);
+        Vec2 &Subtract(float32 value);
+        Vec2 &Multiply(float32 value);
+        Vec2 &Divide(float32 value);
 
         String ToString() const;
 
@@ -41,29 +41,29 @@ namespace Hyperion {
         bool operator>(const Vec2 &other) const;
         bool operator>=(const Vec2 &other) const;
 
-        f32 Dot(const Vec2 &other) const;
+        float32 Dot(const Vec2 &other) const;
 
         Vec2 Normalized() const;
 
-        f32 Magnitude() const;
-        f32 SqrMagnitude() const;
+        float32 Magnitude() const;
+        float32 SqrMagnitude() const;
 
-        f32 Distance(const Vec2 &other) const;
+        float32 Distance(const Vec2 &other) const;
 
         friend Vec2 operator+(Vec2 left, const Vec2 &right);
         friend Vec2 operator-(Vec2 left, const Vec2 &right);
         friend Vec2 operator*(Vec2 left, const Vec2 &right);
         friend Vec2 operator/(Vec2 left, const Vec2 &right);
 
-        friend Vec2 operator+(Vec2 left, f32 right);
-        friend Vec2 operator-(Vec2 left, f32 right);
-        friend Vec2 operator*(Vec2 left, f32 right);
-        friend Vec2 operator/(Vec2 left, f32 right);
+        friend Vec2 operator+(Vec2 left, float32 right);
+        friend Vec2 operator-(Vec2 left, float32 right);
+        friend Vec2 operator*(Vec2 left, float32 right);
+        friend Vec2 operator/(Vec2 left, float32 right);
 
-        friend Vec2 operator+(f32 left, Vec2 right);
-        friend Vec2 operator-(f32 left, Vec2 right);
-        friend Vec2 operator*(f32 left, Vec2 right);
-        friend Vec2 operator/(f32 left, Vec2 right);
+        friend Vec2 operator+(float32 left, Vec2 right);
+        friend Vec2 operator-(float32 left, Vec2 right);
+        friend Vec2 operator*(float32 left, Vec2 right);
+        friend Vec2 operator/(float32 left, Vec2 right);
     };
 
 }

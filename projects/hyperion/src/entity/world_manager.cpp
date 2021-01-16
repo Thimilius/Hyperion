@@ -31,7 +31,7 @@ namespace Hyperion {
     }
 
 
-    void WorldManager::Update(f32 delta_time) {
+    void WorldManager::Update(float32 delta_time) {
         for (auto &[world, components] : s_components_to_update) {
             for (Component *component : components) {
                 component->OnUpdate(delta_time);

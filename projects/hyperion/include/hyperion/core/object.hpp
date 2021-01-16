@@ -11,7 +11,7 @@ namespace Hyperion {
 
 namespace Hyperion {
 
-    using ObjectId = u64;
+    using ObjectId = uint64;
     using ObjectGuid = Guid;
 
     class Object {

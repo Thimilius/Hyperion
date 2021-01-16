@@ -56,7 +56,7 @@ namespace Hyperion {
         }
     }
 
-    void WindowsWindow::SetSize(u32 width, u32 height) {
+    void WindowsWindow::SetSize(uint32 width, uint32 height) {
         if (m_width == width && m_height == height) {
             return;
         }
@@ -70,8 +70,8 @@ namespace Hyperion {
 
                 Vec2 size = GetActualWindowSize(width, height);
 
-                u32 flags = SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER;
-                SetWindowPos(m_window_handle, nullptr, 0, 0, static_cast<u32>(size.x), static_cast<u32>(size.y), flags);
+                uint32 flags = SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER;
+                SetWindowPos(m_window_handle, nullptr, 0, 0, static_cast<uint32>(size.x), static_cast<uint32>(size.y), flags);
                 break;
             }
             case Hyperion::WindowMode::Borderless: {
@@ -85,7 +85,7 @@ namespace Hyperion {
         m_height = height;
     }
 
-    void WindowsWindow::SetMinimumSize(u32 min_width, u32 min_height) {
+    void WindowsWindow::SetMinimumSize(uint32 min_width, uint32 min_height) {
         m_min_width = min_width;
         m_min_height = min_height;
     }
@@ -108,8 +108,8 @@ namespace Hyperion {
 
                 Vec2 size = GetActualWindowSize(m_width, m_height);
 
-                u32 flags = SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED;
-                SetWindowPos(m_window_handle, nullptr, 0, 0, static_cast<u32>(size.x), static_cast<u32>(size.y), flags);
+                uint32 flags = SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED;
+                SetWindowPos(m_window_handle, nullptr, 0, 0, static_cast<uint32>(size.x), static_cast<uint32>(size.y), flags);
                 break;
             }
             case Hyperion::WindowMode::Borderless: {
@@ -232,7 +232,7 @@ namespace Hyperion {
     }
 
     void WindowsWindow::SetupWindow(const WindowSettings &settings) {
-        u32 window_styles = WS_OVERLAPPEDWINDOW;
+        uint32 window_styles = WS_OVERLAPPEDWINDOW;
         auto window_class_name = L"HYPERION_WINDOW_CLASS";
         HINSTANCE instance = GetModuleHandleW(nullptr);
         if (!instance) {
@@ -260,8 +260,8 @@ namespace Hyperion {
             window_styles,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
-            static_cast<u32>(size.x),
-            static_cast<u32>(size.y),
+            static_cast<uint32>(size.x),
+            static_cast<uint32>(size.y),
             nullptr,
             nullptr,
             instance,
@@ -277,14 +277,14 @@ namespace Hyperion {
         }
     }
 
-    Vec2 WindowsWindow::GetActualWindowSize(u32 client_width, u32 client_height) const {
+    Vec2 WindowsWindow::GetActualWindowSize(uint32 client_width, uint32 client_height) const {
         RECT window_rect = { 0 };
         window_rect.right = static_cast<LONG>(client_width);
         window_rect.bottom = static_cast<LONG>(client_height);
         if (!AdjustWindowRect(&window_rect, GetWindowLongW(m_window_handle, GWL_STYLE), false)) {
             HYP_PANIC_MESSAGE("Engine", "Failed to calculate window size!");
         }
-        return Vec2(static_cast<f32>(window_rect.right - window_rect.left), static_cast<f32>(window_rect.bottom - window_rect.top));
+        return Vec2(static_cast<float32>(window_rect.right - window_rect.left), static_cast<float32>(window_rect.bottom - window_rect.top));
     }
 
     void WindowsWindow::DispatchEvent(Event &event) const {
@@ -295,7 +295,7 @@ namespace Hyperion {
         }
     }
 
-    MouseButtonCode WindowsWindow::TranslateMouseButtonCode(u32 code) const {
+    MouseButtonCode WindowsWindow::TranslateMouseButtonCode(uint32 code) const {
         code = code & ~(MK_CONTROL & MK_SHIFT);
 
         switch (code) {
@@ -310,7 +310,7 @@ namespace Hyperion {
         }
     }
 
-    KeyCode WindowsWindow::TranslateKeyCode(u32 w_param, u32 l_param) const {
+    KeyCode WindowsWindow::TranslateKeyCode(uint32 w_param, uint32 l_param) const {
         // Left and right keys need to be distinguished as extended keys
         if (w_param == VK_CONTROL) {
             if (l_param & 0x01000000) {
@@ -507,7 +507,7 @@ namespace Hyperion {
         return key_modifier;
     }
 
-    u32 WindowsWindow::GetMouseButtonFromMessage(u32 message, u32 w_param) const {
+    uint32 WindowsWindow::GetMouseButtonFromMessage(uint32 message, uint32 w_param) const {
         if (message == WM_LBUTTONDOWN || message == WM_LBUTTONUP) {
             return MK_LBUTTON;
         } else if (message == WM_RBUTTONDOWN || message == WM_RBUTTONUP) {
@@ -527,7 +527,7 @@ namespace Hyperion {
         }
     }
 
-    LRESULT WindowsWindow::MessageCallback(HWND window_handle, u32 message, WPARAM w_param, LPARAM l_param) {
+    LRESULT WindowsWindow::MessageCallback(HWND window_handle, uint32 message, WPARAM w_param, LPARAM l_param) {
         LRESULT result = 0;
 
         // This will be null on WM_CREATE
@@ -558,7 +558,7 @@ namespace Hyperion {
 
             case WM_CHAR: 
             case WM_SYSCHAR: {
-                u32 character = static_cast<u32>(w_param);
+                uint32 character = static_cast<uint32>(w_param);
                 KeyTypedEvent event(character, window->GetKeyModifier());
                 window->DispatchEvent(event);
                 break;
@@ -566,7 +566,7 @@ namespace Hyperion {
 
             case WM_KEYDOWN: 
             case WM_SYSKEYDOWN: {
-                KeyCode key_code = window->TranslateKeyCode(static_cast<u32>(w_param), static_cast<u32>(l_param));
+                KeyCode key_code = window->TranslateKeyCode(static_cast<uint32>(w_param), static_cast<uint32>(l_param));
                 if (key_code != KeyCode::None) {
                     KeyPressedEvent event(key_code, window->GetKeyModifier());
                     window->DispatchEvent(event);
@@ -576,7 +576,7 @@ namespace Hyperion {
 
             case WM_KEYUP:
             case WM_SYSKEYUP: {
-                KeyCode key_code = window->TranslateKeyCode(static_cast<u32>(w_param), static_cast<u32>(l_param));
+                KeyCode key_code = window->TranslateKeyCode(static_cast<uint32>(w_param), static_cast<uint32>(l_param));
                 if (key_code != KeyCode::None) {
                     KeyReleasedEvent event(key_code, window->GetKeyModifier());
                     window->DispatchEvent(event);
@@ -590,7 +590,7 @@ namespace Hyperion {
             case WM_XBUTTONDOWN: {
                 SetCapture(window->m_window_handle);
 
-                u32 code = window->GetMouseButtonFromMessage(static_cast<u32>(message), static_cast<u32>(w_param));
+                uint32 code = window->GetMouseButtonFromMessage(static_cast<uint32>(message), static_cast<uint32>(w_param));
                 MouseButtonPressedEvent event(window->TranslateMouseButtonCode(code), window->GetKeyModifier());
                 window->DispatchEvent(event);
                 break;
@@ -602,26 +602,26 @@ namespace Hyperion {
             case WM_XBUTTONUP: {
                 ReleaseCapture();
                 
-                u32 code = window->GetMouseButtonFromMessage(static_cast<u32>(message), static_cast<u32>(w_param));
+                uint32 code = window->GetMouseButtonFromMessage(static_cast<uint32>(message), static_cast<uint32>(w_param));
                 MouseButtonReleasedEvent event(window->TranslateMouseButtonCode(code), window->GetKeyModifier());
                 window->DispatchEvent(event);
                 break;
             }
 
             case WM_MOUSEMOVE: {
-                s32 x = GET_X_LPARAM(l_param);
-                s32 y = GET_Y_LPARAM(l_param);
+                int32 x = GET_X_LPARAM(l_param);
+                int32 y = GET_Y_LPARAM(l_param);
                 
-                f32 height = static_cast<f32>(window->m_height);
+                float32 height = static_cast<float32>(window->m_height);
 
-                MouseMovedEvent event(static_cast<f32>(x), height - static_cast<f32>(y));
+                MouseMovedEvent event(static_cast<float32>(x), height - static_cast<float32>(y));
                 window->DispatchEvent(event);
                 break;
             }
 
             case WM_MOUSEWHEEL: {
-                s16 scroll = GET_WHEEL_DELTA_WPARAM(w_param);
-                MouseScrolledEvent event(scroll / static_cast<f32>(WHEEL_DELTA));
+                int16 scroll = GET_WHEEL_DELTA_WPARAM(w_param);
+                MouseScrolledEvent event(scroll / static_cast<float32>(WHEEL_DELTA));
                 window->DispatchEvent(event);
                 break;
             };
@@ -635,8 +635,8 @@ namespace Hyperion {
                     default: window_state = WindowState::Normal; break;
                 }
 
-                u32 width = LOWORD(l_param);
-                u32 height = HIWORD(l_param);
+                uint32 width = LOWORD(l_param);
+                uint32 height = HIWORD(l_param);
 
                 window->m_width = width;
                 window->m_height = height;

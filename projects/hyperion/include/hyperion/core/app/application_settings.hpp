@@ -10,8 +10,8 @@
 namespace Hyperion {
 
     struct CoreSettings {
-        f32 max_delta_time = 0.15f;
-        f32 fixed_delta_time = 1.0f / 60.0f;
+        float32 max_delta_time = 0.15f;
+        float32 fixed_delta_time = 1.0f / 60.0f;
         bool allow_altf4 = true;
     };
 

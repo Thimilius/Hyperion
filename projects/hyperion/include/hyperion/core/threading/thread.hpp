@@ -6,7 +6,7 @@
 
 namespace Hyperion::Threading {
 
-    using ThreadId = u32;
+    using ThreadId = uint32;
     using ThreadStartFunction = std::function<void()>;
     using ParameterizedThreadStartFunction = std::function<void(void *)>;
 
@@ -20,9 +20,9 @@ namespace Hyperion::Threading {
 
         void SetName(const String &name);
 
-        static u32 GetSupportedThreadCount();
+        static uint32 GetSupportedThreadCount();
         static ThreadId GetCurrentThreadId();
-        static void Sleep(u32 milliseconds);
+        static void Sleep(uint32 milliseconds);
     private:
         std::thread m_thread;
     };

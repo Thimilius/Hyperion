@@ -15,7 +15,7 @@ namespace Hyperion {
         void Update() override;
     private:
         bool RefreshWatch(bool clear);
-        void HandleAction(u32 action, const String &path, const String &filename, const String &extension);
+        void HandleAction(uint32 action, const String &path, const String &filename, const String &extension);
 
         static void CALLBACK WatchCallback(DWORD error_code, DWORD number_of_bytes_transfered, LPOVERLAPPED overlapped);
     private:

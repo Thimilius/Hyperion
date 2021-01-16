@@ -14,16 +14,16 @@ namespace Hyperion {
 
     struct SystemInfo {
         struct ProcessorInfo {
-            u32 processor_count;
-            u32 processor_mhz_frequency;
+            uint32 processor_count;
+            uint32 processor_mhz_frequency;
         } processor_info;
 
         struct MemoryInfo {
-            u64 available_physical_memory;
-            u64 total_physical_memory;
+            uint64 available_physical_memory;
+            uint64 total_physical_memory;
 
-            u64 available_virtual_memory;
-            u64 total_virtual_memory;
+            uint64 available_virtual_memory;
+            uint64 total_virtual_memory;
         } memory_info;
     };
 
@@ -89,7 +89,7 @@ namespace Hyperion {
     public:
         virtual OperatingSystemType GetType() const = 0;
         virtual SystemInfo GetSystemInfo() const = 0;
-        virtual u64 GetMemoryUsage() const = 0;
+        virtual uint64 GetMemoryUsage() const = 0;
         virtual SystemLanguage GetSystemLanguage() const = 0;
         virtual String GetSystemFolder(SystemFolder system_folder) const = 0;
 

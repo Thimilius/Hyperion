@@ -12,13 +12,13 @@ namespace Hyperion::Physics {
 
     class PhysicsEngine final {
     public:
-        static bool Raycast(Ray ray, RaycastResult &result, f32 distance = 10000.0f);
+        static bool Raycast(Ray ray, RaycastResult &result, float32 distance = 10000.0f);
     private:
         PhysicsEngine() = delete;
         ~PhysicsEngine() = delete;
 
         static void Init();
-        static void FixedUpdate(f32 delta_time);
+        static void FixedUpdate(float32 delta_time);
         static void Shutdown();
 
         inline static PhysicsWorld *CreatePhysicsWorld() { return s_physics_driver->CreatePhysicsWorld(); }

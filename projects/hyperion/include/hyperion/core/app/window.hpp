@@ -32,13 +32,13 @@ namespace Hyperion {
         inline const String &GetTitle() const { return m_title; }
         virtual void SetTitle(const String &title) = 0;
 
-        inline u32 GetWidth() const { return m_width; }
-        inline u32 GetHeight() const { return m_height; }
-        virtual void SetSize(u32 width, u32 height) = 0;
+        inline uint32 GetWidth() const { return m_width; }
+        inline uint32 GetHeight() const { return m_height; }
+        virtual void SetSize(uint32 width, uint32 height) = 0;
 
-        inline u32 GetMinWidth() const { return m_min_width; }
-        inline u32 GetMinHeight() const { return m_min_height; }
-        virtual void SetMinimumSize(u32 min_width, u32 min_height) = 0;
+        inline uint32 GetMinWidth() const { return m_min_width; }
+        inline uint32 GetMinHeight() const { return m_min_height; }
+        virtual void SetMinimumSize(uint32 min_width, uint32 min_height) = 0;
 
         inline WindowMode GetWindowMode() const { return m_window_mode; }
         virtual void SetWindowMode(WindowMode window_mode) = 0;
@@ -64,11 +64,11 @@ namespace Hyperion {
     protected:
         String m_title;
 
-        u32 m_width;
-        u32 m_height;
+        uint32 m_width;
+        uint32 m_height;
 
-        u32 m_min_width;
-        u32 m_min_height;
+        uint32 m_min_width;
+        uint32 m_min_height;
 
         WindowMode m_window_mode;
         WindowState m_window_state;

@@ -16,8 +16,8 @@ namespace Hyperion {
         void *GetNativePointer() const override { return m_window_handle; }
 
         void SetTitle(const String &title) override;
-        void SetSize(u32 width, u32 height) override;
-        void SetMinimumSize(u32 min_width, u32 min_height) override;
+        void SetSize(uint32 width, uint32 height) override;
+        void SetMinimumSize(uint32 min_width, uint32 min_height) override;
         void SetWindowMode(WindowMode window_mode) override;
         void SetWindowState(WindowState window_state) override;
 
@@ -35,15 +35,15 @@ namespace Hyperion {
         void SetEventCallback(const EventCallbackFunction &event_callback) override;
 
         void SetupWindow(const WindowSettings &settings);
-        Vec2 GetActualWindowSize(u32 client_width, u32 client_height) const;
+        Vec2 GetActualWindowSize(uint32 client_width, uint32 client_height) const;
         void DispatchEvent(Event &event) const;
 
-        KeyCode TranslateKeyCode(u32 w_param, u32 l_param) const;
-        MouseButtonCode TranslateMouseButtonCode(u32 code) const;
+        KeyCode TranslateKeyCode(uint32 w_param, uint32 l_param) const;
+        MouseButtonCode TranslateMouseButtonCode(uint32 code) const;
         KeyModifier GetKeyModifier() const;
-        u32 GetMouseButtonFromMessage(u32 message, u32 w_param) const;
+        uint32 GetMouseButtonFromMessage(uint32 message, uint32 w_param) const;
 
-        static LRESULT CALLBACK MessageCallback(HWND window_handle, u32 message, WPARAM first_message_param, LPARAM second_message_param);
+        static LRESULT CALLBACK MessageCallback(HWND window_handle, uint32 message, WPARAM first_message_param, LPARAM second_message_param);
     private:
         WindowsInput *m_input;
 

@@ -13,13 +13,13 @@ namespace Hyperion {
 
     struct Mat3 {
         union {
-            f32 elements[9];
+            float32 elements[9];
             Vec3 columns[3];
         };
 
         Mat3();
-        Mat3(f32 diagonal);
-        Mat3(f32 *elements);
+        Mat3(float32 diagonal);
+        Mat3(float32 *elements);
         Mat3(const Vec3 &column0, const Vec3 &column1, const Vec3 &column2);
         Mat3(const Mat4 &mat4);
 

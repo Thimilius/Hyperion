@@ -8,21 +8,21 @@ namespace Hyperion {
     public:
         ~Image();
 
-        inline u32 GetWidth() const { return m_width; }
-        inline u32 GetHeight() const { return m_height; }
-        inline u32 GetChannels() const { return m_channels; }
-        inline u8 *GetPixels() const { return m_pixels; }
+        inline uint32 GetWidth() const { return m_width; }
+        inline uint32 GetHeight() const { return m_height; }
+        inline uint32 GetChannels() const { return m_channels; }
+        inline uint8 *GetPixels() const { return m_pixels; }
 
         inline bool IsEmpty() const { return m_width == 0 && m_height == 0 && m_channels == 0 && m_pixels == nullptr; }
 
-        static Image *Create(u32 width, u32 height, u32 channels, u8 *pixels);
+        static Image *Create(uint32 width, uint32 height, uint32 channels, uint8 *pixels);
     private:
-        Image(u32 width, u32 height, u32 channels, u8 *pixels);
+        Image(uint32 width, uint32 height, uint32 channels, uint8 *pixels);
     private:
-        u32 m_width;
-        u32 m_height;
-        u32 m_channels;
-        u8 *m_pixels;
+        uint32 m_width;
+        uint32 m_height;
+        uint32 m_channels;
+        uint8 *m_pixels;
     };
 
 }

@@ -4,14 +4,14 @@
 
 namespace Hyperion {
 
-    Image::Image(u32 width, u32 height, u32 channels, u8 *pixels)
+    Image::Image(uint32 width, uint32 height, uint32 channels, uint8 *pixels)
         : m_width(width), m_height(height), m_channels(channels), m_pixels(pixels) { }
 
     Image::~Image() {
         delete[] m_pixels;
     }
 
-    Image *Image::Create(u32 width, u32 height, u32 channels, u8 *pixels) {
+    Image *Image::Create(uint32 width, uint32 height, uint32 channels, uint8 *pixels) {
         return new Image(width, height, channels, pixels);
     }
 

@@ -4,11 +4,11 @@
 
 namespace Hyperion {
 
-    u32 Main::Run() {
+    uint32 Main::Run() {
         Engine::Setup();
 
         Application *application = Hyperion::CreateApplication();
-        u32 exit_code = Engine::Run();
+        uint32 exit_code = Engine::Run();
         delete application;
 
         return exit_code;

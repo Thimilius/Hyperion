@@ -7,7 +7,7 @@ namespace Hyperion {
     Vec2::Vec2()
         : x(0), y(0) { }
 
-    Vec2::Vec2(f32 x, f32 y)
+    Vec2::Vec2(float32 x, float32 y)
         : x(x), y(y) { }
 
     Vec2::Vec2(const Vec3 &vec3) 
@@ -41,28 +41,28 @@ namespace Hyperion {
         return *this;
     }
 
-    Vec2 &Vec2::Add(f32 value) {
+    Vec2 &Vec2::Add(float32 value) {
         x += value;
         y += value;
 
         return *this;
     }
 
-    Vec2 &Vec2::Subtract(f32 value) {
+    Vec2 &Vec2::Subtract(float32 value) {
         x -= value;
         y -= value;
 
         return *this;
     }
 
-    Vec2 &Vec2::Multiply(f32 value) {
+    Vec2 &Vec2::Multiply(float32 value) {
         x *= value;
         y *= value;
 
         return *this;
     }
 
-    Vec2 &Vec2::Divide(f32 value) {
+    Vec2 &Vec2::Divide(float32 value) {
         x /= value;
         y /= value;
 
@@ -120,12 +120,12 @@ namespace Hyperion {
         return x >= other.x && y >= other.y;
     }
 
-    f32 Vec2::Dot(const Vec2 &other) const {
+    float32 Vec2::Dot(const Vec2 &other) const {
         return x * other.x + y * other.y;
     }
 
     Vec2 Vec2::Normalized() const {
-        f32 magnitude = Magnitude();
+        float32 magnitude = Magnitude();
         if (magnitude == 0) {
             return Vec2();
         } else {
@@ -133,17 +133,17 @@ namespace Hyperion {
         }
     }
 
-    f32 Vec2::Magnitude() const {
+    float32 Vec2::Magnitude() const {
         return Math::Sqrt(x * x + y * y);
     }
 
-    f32 Vec2::SqrMagnitude() const {
+    float32 Vec2::SqrMagnitude() const {
         return x * x + y * y;
     }
 
-    f32 Vec2::Distance(const Vec2 &other) const {
-        f32 x = this->x - other.x;
-        f32 y = this->y - other.y;
+    float32 Vec2::Distance(const Vec2 &other) const {
+        float32 x = this->x - other.x;
+        float32 y = this->y - other.y;
 
         return Math::Sqrt(x * x + y * y);
     }
@@ -164,35 +164,35 @@ namespace Hyperion {
         return left.Divide(right);
     }
 
-    Vec2 operator+(Vec2 left, f32 right) {
+    Vec2 operator+(Vec2 left, float32 right) {
         return left.Add(right);
     }
 
-    Vec2 operator-(Vec2 left, f32 right) {
+    Vec2 operator-(Vec2 left, float32 right) {
         return left.Subtract(right);
     }
 
-    Vec2 operator*(Vec2 left, f32 right) {
+    Vec2 operator*(Vec2 left, float32 right) {
         return left.Multiply(right);
     }
 
-    Vec2 operator/(Vec2 left, f32 right) {
+    Vec2 operator/(Vec2 left, float32 right) {
         return left.Divide(right);
     }
 
-    Vec2 operator+(f32 left, Vec2 right) {
+    Vec2 operator+(float32 left, Vec2 right) {
         return right.Add(left);
     }
 
-    Vec2 operator-(f32 left, Vec2 right) {
+    Vec2 operator-(float32 left, Vec2 right) {
         return right.Subtract(left);
     }
 
-    Vec2 operator*(f32 left, Vec2 right) {
+    Vec2 operator*(float32 left, Vec2 right) {
         return right.Multiply(left);
     }
 
-    Vec2 operator/(f32 left, Vec2 right) {
+    Vec2 operator/(float32 left, Vec2 right) {
         return right.Divide(left);
     }
 

@@ -12,7 +12,7 @@ namespace Hyperion::Audio {
             return;
         }
 
-        s32 driver_count = 0;
+        int32 driver_count = 0;
         m_system->getNumDrivers(&driver_count);
 
         if (driver_count == 0) {

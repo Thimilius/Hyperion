@@ -28,7 +28,7 @@ namespace Hyperion {
         void UnregisterForUpdate();
 
         virtual void OnCreate() { }
-        virtual void OnUpdate(f32 delta_time) { }
+        virtual void OnUpdate(float32 delta_time) { }
         virtual void OnDestroy() override;
     private:
         Entity *m_entity;

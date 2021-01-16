@@ -15,18 +15,18 @@ namespace Hyperion {
 
     class WindowResizeEvent : public Event {
     public:
-        WindowResizeEvent(u32 width, u32 height) : m_width(width), m_height(height) { }
+        WindowResizeEvent(uint32 width, uint32 height) : m_width(width), m_height(height) { }
 
-        inline u32 GetWidth() const { return m_width; }
-        inline u32 GetHeight() const { return m_height; }
+        inline uint32 GetWidth() const { return m_width; }
+        inline uint32 GetHeight() const { return m_height; }
 
         EventType GetType() const override { return EventType::WindowResize; }
         EventCategory GetCategory() const override { return EventCategory::Window; }
 
         static EventType GetStaticType() { return EventType::WindowResize; }
     private:
-        u32 m_width;
-        u32 m_height;
+        uint32 m_width;
+        uint32 m_height;
     };
 
     class WindowFocusEvent : public Event {

@@ -9,13 +9,13 @@ namespace Hyperion {
     struct Mat4;
 
     struct Vec3 {
-        f32 x;
-        f32 y;
-        f32 z;
+        float32 x;
+        float32 y;
+        float32 z;
 
         Vec3();
-        Vec3(f32 x, f32 y, f32 z);
-        Vec3(const Vec2 &vec2, f32 z);
+        Vec3(float32 x, float32 y, float32 z);
+        Vec3(const Vec2 &vec2, float32 z);
         Vec3(const Vec4 &vec4);
 
         Vec3 &Add(const Vec3 &other);
@@ -23,21 +23,21 @@ namespace Hyperion {
         Vec3 &Multiply(const Vec3 &other);
         Vec3 &Divide(const Vec3 &other);
 
-        Vec3 &Add(f32 value);
-        Vec3 &Subtract(f32 value);
-        Vec3 &Multiply(f32 value);
-        Vec3 &Divide(f32 value);
+        Vec3 &Add(float32 value);
+        Vec3 &Subtract(float32 value);
+        Vec3 &Multiply(float32 value);
+        Vec3 &Divide(float32 value);
 
         Vec3 Multiply(const Mat4 &transform) const;
 
-        f32 Dot(const Vec3 &other) const;
+        float32 Dot(const Vec3 &other) const;
 
         Vec3 Normalized() const;
 
-        f32 Magnitude() const;
-        f32 SqrMagnitude() const;
+        float32 Magnitude() const;
+        float32 SqrMagnitude() const;
 
-        f32 Distance(const Vec3 &other) const;
+        float32 Distance(const Vec3 &other) const;
 
         String ToString() const;
 
@@ -72,15 +72,15 @@ namespace Hyperion {
         friend Vec3 operator*(Vec3 left, const Vec3 &right);
         friend Vec3 operator/(Vec3 left, const Vec3 &right);
 
-        friend Vec3 operator+(Vec3 left, f32 right);
-        friend Vec3 operator-(Vec3 left, f32 right);
-        friend Vec3 operator*(Vec3 left, f32 right);
-        friend Vec3 operator/(Vec3 left, f32 right);
+        friend Vec3 operator+(Vec3 left, float32 right);
+        friend Vec3 operator-(Vec3 left, float32 right);
+        friend Vec3 operator*(Vec3 left, float32 right);
+        friend Vec3 operator/(Vec3 left, float32 right);
 
-        friend Vec3 operator+(f32 left, Vec3 right);
-        friend Vec3 operator-(f32 left, Vec3 right);
-        friend Vec3 operator*(f32 left, Vec3 right);
-        friend Vec3 operator/(f32 left, Vec3 right);
+        friend Vec3 operator+(float32 left, Vec3 right);
+        friend Vec3 operator-(float32 left, Vec3 right);
+        friend Vec3 operator*(float32 left, Vec3 right);
+        friend Vec3 operator/(float32 left, Vec3 right);
     };
 
 }

@@ -34,7 +34,7 @@ namespace Hyperion {
         if (!json_time.is_null()) {
             auto &json_time_max_delta_time = json_time["max_delta_time"];
             if (json_time_max_delta_time.is_number()) {
-                settings.core.max_delta_time = json_time_max_delta_time.get<f32>();
+                settings.core.max_delta_time = json_time_max_delta_time.get<float32>();
             }
         }
         
@@ -50,19 +50,19 @@ namespace Hyperion {
             }
             auto &json_window_width = json_window["width"];
             if (json_window_width.is_number_unsigned()) {
-                settings.window.width = json_window_width.get<u32>();
+                settings.window.width = json_window_width.get<uint32>();
             }
             auto &json_window_height = json_window["height"];
             if (json_window_height.is_number_unsigned()) {
-                settings.window.height = json_window_height.get<u32>();
+                settings.window.height = json_window_height.get<uint32>();
             }
             auto &json_window_min_width = json_window["min_width"];
             if (json_window_min_width.is_number_unsigned()) {
-                settings.window.min_width = json_window_min_width.get<u32>();
+                settings.window.min_width = json_window_min_width.get<uint32>();
             }
             auto &json_window_min_height = json_window["min_height"];
             if (json_window_min_height.is_number_unsigned()) {
-                settings.window.min_height = json_window_min_height.get<u32>();
+                settings.window.min_height = json_window_min_height.get<uint32>();
             }
             auto &json_window_window_mode = json_window["window_mode"];
             if (json_window_window_mode.is_string()) {

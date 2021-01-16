@@ -217,7 +217,7 @@ namespace Hyperion {
         virtual bool GetKeyUp(KeyCode key_code) const = 0;
 
         virtual Vec2 GetMousePosition() const = 0;
-        virtual f32 GetMouseScroll() const = 0;
+        virtual float32 GetMouseScroll() const = 0;
 
         virtual bool GetMouseButtonDown(MouseButtonCode mouse_button_code) const = 0;
         virtual bool GetMouseButton(MouseButtonCode mouse_button_code) const = 0;
@@ -225,10 +225,10 @@ namespace Hyperion {
 
         virtual const Vector<Gamepad> &GetConnectedGamepads() const = 0;
         virtual Vec2 GetGamepadAxis(Gamepad gamepad, GamepadAxis axis) const = 0;
-        virtual void SetGamepadVibration(Gamepad gamepad, f32 left_vibration, f32 right_vibration) = 0;
+        virtual void SetGamepadVibration(Gamepad gamepad, float32 left_vibration, float32 right_vibration) = 0;
 
-        virtual f32 GetGamepadDeadZone() const = 0;
-        virtual void SetGamepadDeadZone(f32 gamepad_dead_zone) = 0;
+        virtual float32 GetGamepadDeadZone() const = 0;
+        virtual void SetGamepadDeadZone(float32 gamepad_dead_zone) = 0;
 
         virtual bool GetGamepadButtonDown(Gamepad gamepad, GamepadButtonCode gamepad_button_code) const = 0;
         virtual bool GetGamepadButton(Gamepad gamepad, GamepadButtonCode gamepad_button_code) const = 0;
@@ -252,7 +252,7 @@ namespace Hyperion {
         inline static bool GetKeyUp(KeyCode key_code) { return s_input_implementation->GetKeyUp(key_code); }
 
         inline static Vec2 GetMousePosition() { return s_input_implementation->GetMousePosition(); }
-        inline static f32 GetMouseScroll() { return s_input_implementation->GetMouseScroll(); }
+        inline static float32 GetMouseScroll() { return s_input_implementation->GetMouseScroll(); }
 
         inline static bool GetMouseButtonDown(MouseButtonCode mouse_button_code) { return s_input_implementation->GetMouseButtonDown(mouse_button_code); }
         inline static bool GetMouseButton(MouseButtonCode mouse_button_code) { return s_input_implementation->GetMouseButton(mouse_button_code); }
@@ -260,10 +260,10 @@ namespace Hyperion {
 
         inline static const Vector<Gamepad> &GetConnectedGamepads() { return s_input_implementation->GetConnectedGamepads(); }
         inline static Vec2 GetGamepadAxis(Gamepad gamepad, GamepadAxis axis) { return s_input_implementation->GetGamepadAxis(gamepad, axis); }
-        inline static void SetGamepadVibration(Gamepad gamepad, f32 left_vibration, f32 right_vibration) { s_input_implementation->SetGamepadVibration(gamepad, left_vibration, right_vibration); }
+        inline static void SetGamepadVibration(Gamepad gamepad, float32 left_vibration, float32 right_vibration) { s_input_implementation->SetGamepadVibration(gamepad, left_vibration, right_vibration); }
 
-        inline static f32 GetGamepadDeadZone() { return s_input_implementation->GetGamepadDeadZone(); }
-        inline static void GetGamepadDeadZone(f32 gamepad_dead_zone) { s_input_implementation->SetGamepadDeadZone(gamepad_dead_zone); }
+        inline static float32 GetGamepadDeadZone() { return s_input_implementation->GetGamepadDeadZone(); }
+        inline static void GetGamepadDeadZone(float32 gamepad_dead_zone) { s_input_implementation->SetGamepadDeadZone(gamepad_dead_zone); }
 
         inline static bool GetGamepadButtonDown(Gamepad gamepad, GamepadButtonCode gamepad_button_code) { return s_input_implementation->GetGamepadButtonDown(gamepad, gamepad_button_code); }
         inline static bool GetGamepadButton(Gamepad gamepad, GamepadButtonCode gamepad_button_code) { return s_input_implementation->GetGamepadButton(gamepad, gamepad_button_code); }

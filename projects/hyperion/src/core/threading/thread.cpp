@@ -33,7 +33,7 @@ namespace Hyperion::Threading {
 #endif
     }
 
-    u32 Thread::GetSupportedThreadCount() {
+    uint32 Thread::GetSupportedThreadCount() {
         return std::thread::hardware_concurrency();
     }
 
@@ -43,7 +43,7 @@ namespace Hyperion::Threading {
 #endif
     }
 
-    void Thread::Sleep(u32 milliseconds) {
+    void Thread::Sleep(uint32 milliseconds) {
         std::chrono::milliseconds duration(milliseconds);
         std::this_thread::sleep_for(duration);
     }

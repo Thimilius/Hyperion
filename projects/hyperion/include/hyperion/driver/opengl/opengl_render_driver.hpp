@@ -19,7 +19,7 @@ namespace Hyperion::Rendering {
 
         void DrawIndexed(ResourceId shader_id, ResourceId mesh_id) override;
     private:
-        static u32 GetGLClearFlags(ClearFlags clear_flags);
+        static uint32 GetGLClearFlags(ClearFlags clear_flags);
     private:
         struct OpenGLShader {
             GLuint program;
@@ -33,7 +33,7 @@ namespace Hyperion::Rendering {
 
             GLuint vertex_array;
 
-            s32 indices_count;
+            int32 indices_count;
         };
         inline static Map<ResourceId, OpenGLMesh> s_meshes;
     };

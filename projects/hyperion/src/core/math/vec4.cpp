@@ -9,10 +9,10 @@ namespace Hyperion {
     Vec4::Vec4()
         : x(0), y(0), z(0), w(0) { }
 
-    Vec4::Vec4(f32 x, f32 y, f32 z, f32 w)
+    Vec4::Vec4(float32 x, float32 y, float32 z, float32 w)
         : x(x), y(y), z(z), w(w) { }
 
-    Vec4::Vec4(const Vec3 &vec3, f32 w)
+    Vec4::Vec4(const Vec3 &vec3, float32 w)
         : x(vec3.x), y(vec3.y), z(vec3.z), w(w) { }
 
     Vec4 &Vec4::Add(const Vec4 &other) {
@@ -51,7 +51,7 @@ namespace Hyperion {
         return *this;
     }
 
-    Vec4 &Vec4::Add(f32 value) {
+    Vec4 &Vec4::Add(float32 value) {
         x += value;
         y += value;
         z += value;
@@ -60,7 +60,7 @@ namespace Hyperion {
         return *this;
     }
 
-    Vec4 &Vec4::Subtract(f32 value) {
+    Vec4 &Vec4::Subtract(float32 value) {
         x -= value;
         y -= value;
         z -= value;
@@ -69,7 +69,7 @@ namespace Hyperion {
         return *this;
     }
 
-    Vec4 &Vec4::Multiply(f32 value) {
+    Vec4 &Vec4::Multiply(float32 value) {
         x *= value;
         y *= value;
         z *= value;
@@ -78,7 +78,7 @@ namespace Hyperion {
         return *this;
     }
 
-    Vec4 &Vec4::Divide(f32 value) {
+    Vec4 &Vec4::Divide(float32 value) {
         x /= value;
         y /= value;
         z /= value;
@@ -153,7 +153,7 @@ namespace Hyperion {
         return Color(x, y, z, w);
     }
 
-    f32 Vec4::Dot(const Vec4 &other) const {
+    float32 Vec4::Dot(const Vec4 &other) const {
         return x * other.x + y * other.y + z * other.z + w * other.w;
     }
 
@@ -173,35 +173,35 @@ namespace Hyperion {
         return left.Divide(right);
     }
 
-    Vec4 operator+(Vec4 left, f32 right) {
+    Vec4 operator+(Vec4 left, float32 right) {
         return left.Add(right);
     }
 
-    Vec4 operator-(Vec4 left, f32 right) {
+    Vec4 operator-(Vec4 left, float32 right) {
         return left.Subtract(right);
     }
 
-    Vec4 operator*(Vec4 left, f32 right) {
+    Vec4 operator*(Vec4 left, float32 right) {
         return left.Multiply(right);
     }
 
-    Vec4 operator/(Vec4 left, f32 right) {
+    Vec4 operator/(Vec4 left, float32 right) {
         return left.Divide(right);
     }
 
-    Vec4 operator+(f32 left, Vec4 right) {
+    Vec4 operator+(float32 left, Vec4 right) {
         return right.Add(left);
     }
 
-    Vec4 operator-(f32 left, Vec4 right) {
+    Vec4 operator-(float32 left, Vec4 right) {
         return right.Subtract(left);
     }
 
-    Vec4 operator*(f32 left, Vec4 right) {
+    Vec4 operator*(float32 left, Vec4 right) {
         return right.Multiply(left);
     }
 
-    Vec4 operator/(f32 left, Vec4 right) {
+    Vec4 operator/(float32 left, Vec4 right) {
         return right.Divide(left);
     }
 

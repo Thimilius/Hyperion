@@ -17,10 +17,10 @@ namespace Hyperion::Rendering {
     HYP_CREATE_ENUM_FLAG_OPERATORS(ClearFlags);
 
     struct Viewport {
-        s32 x;
-        s32 y;
-        s32 width;
-        s32 height;
+        int32 x;
+        int32 y;
+        int32 width;
+        int32 height;
     };
 
     enum class ShaderStageFlags {
@@ -46,7 +46,7 @@ namespace Hyperion::Rendering {
 
     struct MeshDescriptor {
         Vector<VertexMesh> vertices;
-        Vector<u32> indices;
+        Vector<uint32> indices;
     };
 
     class IRenderDriver {

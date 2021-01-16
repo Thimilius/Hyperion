@@ -19,11 +19,11 @@ namespace Hyperion {
         String title = "Hyperion";
         String icon = "icon/icon.ico";
 
-        u32 width = 1280;
-        u32 height = 720;
+        uint32 width = 1280;
+        uint32 height = 720;
 
-        u32 min_width = 640;
-        u32 min_height = 360;
+        uint32 min_width = 640;
+        uint32 min_height = 360;
 
         WindowMode window_mode = WindowMode::Windowed;
     };

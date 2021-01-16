@@ -67,7 +67,7 @@ namespace Hyperion {
         return result != 0;
     }
 
-    void WindowsFileWatcher::HandleAction(u32 action, const String &path, const String &filename, const String &extension) {
+    void WindowsFileWatcher::HandleAction(uint32 action, const String &path, const String &filename, const String &extension) {
         FileStatus status;
         switch (action) {
             case FILE_ACTION_RENAMED_NEW_NAME:

@@ -8,7 +8,7 @@ namespace Hyperion {
 
     Color::Color() { }
 
-    Color::Color(f32 r, f32 g, f32 b, f32 a) 
+    Color::Color(float32 r, float32 g, float32 b, float32 a) 
         : r(r), g(g), b(b), a(a) { }
 
     String Color::ToString() const {
@@ -23,7 +23,7 @@ namespace Hyperion {
         return !(*this == other);
     }
 
-    Color &Color::operator+=(const f32 &value) {
+    Color &Color::operator+=(const float32 &value) {
         r += value;
         g += value;
         b += value;
@@ -32,7 +32,7 @@ namespace Hyperion {
         return *this;
     }
 
-    Color &Color::operator-=(const f32 &value) {
+    Color &Color::operator-=(const float32 &value) {
         r -= value;
         g -= value;
         b -= value;
@@ -41,7 +41,7 @@ namespace Hyperion {
         return *this;
     }
 
-    Color &Color::operator*=(const f32 &value) {
+    Color &Color::operator*=(const float32 &value) {
         r *= value;
         g *= value;
         b *= value;
@@ -50,7 +50,7 @@ namespace Hyperion {
         return *this;
     }
 
-    Color &Color::operator/=(const f32 &value) {
+    Color &Color::operator/=(const float32 &value) {
         r /= value;
         g /= value;
         b /= value;
@@ -63,35 +63,35 @@ namespace Hyperion {
         return Vec4(r, g, b, a);
     }
 
-    Color operator+(Color left, f32 right) {
+    Color operator+(Color left, float32 right) {
         return left += right;
     }
 
-    Color operator-(Color left, f32 right) {
+    Color operator-(Color left, float32 right) {
         return left -= right;
     }
 
-    Color operator*(Color left, f32 right) {
+    Color operator*(Color left, float32 right) {
         return left *= right;
     }
 
-    Color operator/(Color left, f32 right) {
+    Color operator/(Color left, float32 right) {
         return left /= right;
     }
 
-    Color operator+(f32 left, Color right) {
+    Color operator+(float32 left, Color right) {
         return right += left;
     }
 
-    Color operator-(f32 left, Color right) {
+    Color operator-(float32 left, Color right) {
         return right -= left;
     }
 
-    Color operator*(f32 left, Color right) {
+    Color operator*(float32 left, Color right) {
         return right *= left;
     }
 
-    Color operator/(f32 left, Color right) {
+    Color operator/(float32 left, Color right) {
         return right /= left;
     }
 

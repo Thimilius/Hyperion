@@ -5,19 +5,19 @@
 namespace Hyperion {
 
     Mat4::Mat4() {
-        std::memset(elements, 0, 16 * sizeof(f32));
+        std::memset(elements, 0, 16 * sizeof(float32));
     }
 
-    Mat4::Mat4(f32 diagonal) {
-        std::memset(elements, 0, 16 * sizeof(f32));
+    Mat4::Mat4(float32 diagonal) {
+        std::memset(elements, 0, 16 * sizeof(float32));
         elements[0 + 0 * 4] = diagonal;
         elements[1 + 1 * 4] = diagonal;
         elements[2 + 2 * 4] = diagonal;
         elements[3 + 3 * 4] = diagonal;
     }
 
-    Mat4::Mat4(f32 *elements) {
-        std::memcpy(this->elements, elements, 16 * sizeof(f32));
+    Mat4::Mat4(float32 *elements) {
+        std::memcpy(this->elements, elements, 16 * sizeof(float32));
     }
 
     Mat4::Mat4(const Vec4 &column0, const Vec4 &column1, const Vec4 &column2, const Vec4 &column3) {
@@ -28,17 +28,17 @@ namespace Hyperion {
     }
 
     Mat4 &Mat4::Multiply(const Mat4 &other) {
-        f32 data[16];
+        float32 data[16];
         for (int y = 0; y < 4; y++) {
             for (int x = 0; x < 4; x++) {
-                f32 sum = 0.0f;
+                float32 sum = 0.0f;
                 for (int e = 0; e < 4; e++) {
                     sum += elements[x + e * 4] * other.elements[e + y * 4];
                 }
                 data[x + y * 4] = sum;
             }
         }
-        std::memcpy(elements, data, 16 * sizeof(f32));
+        std::memcpy(elements, data, 16 * sizeof(float32));
         return *this;
     }
 
@@ -55,7 +55,7 @@ namespace Hyperion {
     }
 
     Mat4 Mat4::Inverted() const {
-        f32 temp[16];
+        float32 temp[16];
 
         temp[0] = elements[5] * elements[10] * elements[15] -
             elements[5] * elements[11] * elements[14] -
@@ -169,7 +169,7 @@ namespace Hyperion {
             elements[8] * elements[1] * elements[6] -
             elements[8] * elements[2] * elements[5];
 
-        f32 determinant = elements[0] * temp[0] + elements[1] * temp[4] + elements[2] * temp[8] + elements[3] * temp[12];
+        float32 determinant = elements[0] * temp[0] + elements[1] * temp[4] + elements[2] * temp[8] + elements[3] * temp[12];
         determinant = 1.0f / determinant;
 
         Mat4 result;
@@ -218,7 +218,7 @@ namespace Hyperion {
         return Translate(position.x, position.y, position.z);
     }
 
-    Mat4 Mat4::Translate(f32 x, f32 y, f32 z) {
+    Mat4 Mat4::Translate(float32 x, float32 y, float32 z) {
         Mat4 result(1.0f);
 
         result.elements[0 + 3 * 4] = x;
@@ -228,17 +228,17 @@ namespace Hyperion {
         return result;
     }
 
-    Mat4 Mat4::Rotate(const Vec3 &axis, f32 angle) {
+    Mat4 Mat4::Rotate(const Vec3 &axis, float32 angle) {
         Mat4 result(1.0f);
 
-        f32 radians = Math::DegToRad(angle);
-        f32 cos = Math::Cos(radians);
-        f32 sin = Math::Sin(radians);
-        f32 omc = 1.0f - cos;
+        float32 radians = Math::DegToRad(angle);
+        float32 cos = Math::Cos(radians);
+        float32 sin = Math::Sin(radians);
+        float32 omc = 1.0f - cos;
 
-        f32 x = axis.x;
-        f32 y = axis.y;
-        f32 z = axis.z;
+        float32 x = axis.x;
+        float32 y = axis.y;
+        float32 z = axis.z;
 
         result.elements[0 + 0 * 4] = x * x * omc + cos;
         result.elements[1 + 0 * 4] = y * x * omc + z * sin;
@@ -258,22 +258,22 @@ namespace Hyperion {
     Mat4 Mat4::Rotate(const Quaternion &quaternion) {
         Mat4 result = Identity();
 
-        f32 qx = quaternion.x;
-        f32 qy = quaternion.y;
-        f32 qz = quaternion.z;
-        f32 qw = quaternion.w;
-        f32 qx2 = (qx + qx);
-        f32 qy2 = (qy + qy);
-        f32 qz2 = (qz + qz);
-        f32 qxqx2 = (qx * qx2);
-        f32 qxqy2 = (qx * qy2);
-        f32 qxqz2 = (qx * qz2);
-        f32 qxqw2 = (qw * qx2);
-        f32 qyqy2 = (qy * qy2);
-        f32 qyqz2 = (qy * qz2);
-        f32 qyqw2 = (qw * qy2);
-        f32 qzqz2 = (qz * qz2);
-        f32 qzqw2 = (qw * qz2);
+        float32 qx = quaternion.x;
+        float32 qy = quaternion.y;
+        float32 qz = quaternion.z;
+        float32 qw = quaternion.w;
+        float32 qx2 = (qx + qx);
+        float32 qy2 = (qy + qy);
+        float32 qz2 = (qz + qz);
+        float32 qxqx2 = (qx * qx2);
+        float32 qxqy2 = (qx * qy2);
+        float32 qxqz2 = (qx * qz2);
+        float32 qxqw2 = (qw * qx2);
+        float32 qyqy2 = (qy * qy2);
+        float32 qyqz2 = (qy * qz2);
+        float32 qyqw2 = (qw * qy2);
+        float32 qzqz2 = (qz * qz2);
+        float32 qzqw2 = (qw * qz2);
 
         result.columns[0] = Vec4((1.0f - qyqy2) - qzqz2, qxqy2 + qzqw2, qxqz2 - qyqw2, 0.0f);
         result.columns[1] = Vec4(qxqy2 - qzqw2, (1.0f - qxqx2) - qzqz2, qyqz2 + qxqw2, 0.0f);
@@ -286,7 +286,7 @@ namespace Hyperion {
         return Scale(scale.x, scale.y, scale.z);
     }
 
-    Mat4 Mat4::Scale(f32 x, f32 y, f32 z) {
+    Mat4 Mat4::Scale(float32 x, float32 y, float32 z) {
         Mat4 result(1.0f);
 
         result.elements[0 + 0 * 4] = x;
@@ -300,7 +300,7 @@ namespace Hyperion {
         return Translate(position) * Rotate(rotation) * Scale(scale);
     }
 
-    Mat4 Mat4::Orthographic(f32 left, f32 right, f32 bottom, f32 top, f32 z_near, f32 z_far) {
+    Mat4 Mat4::Orthographic(float32 left, float32 right, float32 bottom, float32 top, float32 z_near, float32 z_far) {
         Mat4 result(1.0f);
 
         result.elements[0 + 0 * 4] = 2.0f / (right - left);
@@ -314,13 +314,13 @@ namespace Hyperion {
         return result;
     }
 
-    Mat4 Mat4::Perspective(f32 fov, f32 aspect_ratio, f32 z_near, f32 z_far) {
+    Mat4 Mat4::Perspective(float32 fov, float32 aspect_ratio, float32 z_near, float32 z_far) {
         Mat4 result(0.0f);
 
-        f32 t = Math::Tan(0.5f * Math::DegToRad(fov)) * z_near;
-        f32 b = -t;
-        f32 r = t * aspect_ratio;
-        f32 l = -r;
+        float32 t = Math::Tan(0.5f * Math::DegToRad(fov)) * z_near;
+        float32 b = -t;
+        float32 r = t * aspect_ratio;
+        float32 l = -r;
 
         result.elements[0 + 0 * 4] = 2.0f * z_near / (r - l);
         result.elements[1 + 1 * 4] = 2.0f * z_near / (t - b);

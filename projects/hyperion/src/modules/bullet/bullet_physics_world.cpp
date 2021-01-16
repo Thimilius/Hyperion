@@ -28,7 +28,7 @@ namespace Hyperion::Physics {
         delete m_collision_world;
     }
 
-    bool BulletPhysicsWorld::Raycast(Ray ray, RaycastResult &result, f32 distance) {
+    bool BulletPhysicsWorld::Raycast(Ray ray, RaycastResult &result, float32 distance) {
         btVector3 from = btVector3(ray.origin.x, ray.origin.y, ray.origin.z);
         btVector3 to = from + (distance * btVector3(ray.direction.x, ray.direction.y, ray.direction.z));
 

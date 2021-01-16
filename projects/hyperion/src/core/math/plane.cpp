@@ -7,7 +7,7 @@ namespace Hyperion {
     Plane::Plane()
         : normal(Vec3::Up()), distance(0) { }
 
-    Plane::Plane(Vec3 normal, f32 distance)
+    Plane::Plane(Vec3 normal, float32 distance)
         : normal(normal.Normalized()), distance(distance) { }
 
     Plane::Plane(Vec3 normal, Vec3 point) {
@@ -26,23 +26,23 @@ namespace Hyperion {
     }
 
     Vec3 Plane::GetClosestPoint(Vec3 point) const {
-        f32 d = normal.Dot(point) + distance;
+        float32 d = normal.Dot(point) + distance;
         return point - normal * d;
     }
 
-    f32 Plane::GetDistanceToPoint(Vec3 point) const {
+    float32 Plane::GetDistanceToPoint(Vec3 point) const {
         return normal.Dot(point) + distance;
     }
 
-    bool Plane::Intersects(Ray ray, f32 &hit_distance) const {
-        f32 angle = ray.direction.Dot(normal);
-        f32 origin_to_plane = -ray.origin.Dot(normal) - this->distance;
+    bool Plane::Intersects(Ray ray, float32 &hit_distance) const {
+        float32 angle = ray.direction.Dot(normal);
+        float32 origin_to_plane = -ray.origin.Dot(normal) - this->distance;
         bool hit;
         if (angle == 0.0f) {
             hit_distance = 0.0f;
             hit = false;
         } else {
-            f32 dis = origin_to_plane / angle;
+            float32 dis = origin_to_plane / angle;
             hit_distance = dis;
             hit = dis > 0.0f;
         }

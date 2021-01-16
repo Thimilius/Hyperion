@@ -45,7 +45,7 @@ namespace Hyperion::Rendering {
         glNamedBufferData(mesh.vertex_buffer, descriptor.vertices.size() * sizeof(descriptor.vertices[0]), descriptor.vertices.data(), GL_STATIC_DRAW);
         glNamedBufferData(mesh.index_buffer, descriptor.indices.size() * sizeof(descriptor.indices[0]), descriptor.indices.data(), GL_STATIC_DRAW);
 
-        mesh.indices_count = static_cast<s32>(descriptor.indices.size());
+        mesh.indices_count = static_cast<int32>(descriptor.indices.size());
 
         glCreateVertexArrays(1, &mesh.vertex_array);
 
@@ -82,8 +82,8 @@ namespace Hyperion::Rendering {
         glDrawElements(GL_TRIANGLES, mesh.indices_count, GL_UNSIGNED_INT, nullptr);
     }
 
-    u32 OpenGLRenderDriver::GetGLClearFlags(ClearFlags clear_flags) {
-        u32 result = 0;
+    uint32 OpenGLRenderDriver::GetGLClearFlags(ClearFlags clear_flags) {
+        uint32 result = 0;
 
         if ((clear_flags & ClearFlags::Color) == ClearFlags::Color) {
             result |= GL_COLOR_BUFFER_BIT;

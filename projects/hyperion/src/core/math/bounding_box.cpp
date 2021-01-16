@@ -23,9 +23,9 @@ namespace Hyperion {
         return (max > bounds_min && min < bounds_max) || (min > bounds_max && max < bounds_min);
     }
 
-    bool BoundingBox::Intersects(Ray ray, f32 &hit_distance) const {
+    bool BoundingBox::Intersects(Ray ray, float32 &hit_distance) const {
         Vec3 inv_dir = Vec3(1.0f / ray.direction.x, 1.0f / ray.direction.y, 1.0f / ray.direction.z);
-        u32 sign[3];
+        uint32 sign[3];
         sign[0] = (inv_dir.x < 0);
         sign[1] = (inv_dir.y < 0);
         sign[2] = (inv_dir.z < 0);
@@ -34,7 +34,7 @@ namespace Hyperion {
         bounds[0] = min;
         bounds[1] = max;
 
-        f32 tmin, tmax, tymin, tymax, tzmin, tzmax;
+        float32 tmin, tmax, tymin, tymax, tzmin, tzmax;
 
         tmin = (bounds[sign[0]].x - ray.origin.x) * inv_dir.x;
         tmax = (bounds[1 - sign[0]].x - ray.origin.x) * inv_dir.x;

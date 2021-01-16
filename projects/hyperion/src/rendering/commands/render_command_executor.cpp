@@ -6,7 +6,7 @@
 
 namespace Hyperion::Rendering {
 
-    u64 RenderCommandExecutor::ExecuteRenderCommand(RenderCommandType command_type, const void *command, IRenderDriver *render_driver) {
+    uint64 RenderCommandExecutor::ExecuteRenderCommand(RenderCommandType command_type, const void *command, IRenderDriver *render_driver) {
         switch (command_type) {
             case RenderCommandType::Clear: {
                 auto render_command = reinterpret_cast<const RenderCommandClear *>(command);

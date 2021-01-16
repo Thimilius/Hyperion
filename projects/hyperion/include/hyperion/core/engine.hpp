@@ -32,14 +32,14 @@ namespace Hyperion {
         static void Setup();
         static void PreInit();
         static void Init();
-        static u32 Run();
+        static uint32 Run();
         static void Iterate();
         static void Exit();
         static void Shutdown();
 
         static void OnEvent(Event &event);
-        static void Update(f32 delta_time);
-        static void FixedUpdate(f32 delta_time);
+        static void Update(float32 delta_time);
+        static void FixedUpdate(float32 delta_time);
         static void LateUpdate();
         static void Render();
 
@@ -51,10 +51,10 @@ namespace Hyperion {
         inline static struct Stats {
             Timer *timer;
 
-            f64 last_time = 0.0;
-            f64 accumulator = 0.0;
+            float64 last_time = 0.0;
+            float64 accumulator = 0.0;
 
-            u64 frame = 0;
+            uint64 frame = 0;
         } s_stats;
     private:
         friend class Hyperion::Application;

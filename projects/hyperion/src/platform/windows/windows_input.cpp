@@ -49,8 +49,8 @@ namespace Hyperion {
         FreeLibrary(g_xinput_library);
     }
 
-    void WindowsInput::SetGamepadVibration(Gamepad gamepad, f32 left_vibration, f32 right_vibration) {
-        u32 gamepad_id = GetIdFromGamepad(gamepad);
+    void WindowsInput::SetGamepadVibration(Gamepad gamepad, float32 left_vibration, float32 right_vibration) {
+        uint32 gamepad_id = GetIdFromGamepad(gamepad);
 
         XINPUT_VIBRATION vibration;
         vibration.wLeftMotorSpeed = (WORD)(Math::Clamp01(left_vibration) * 65535.0f);
@@ -102,7 +102,7 @@ namespace Hyperion {
             memset(&m_mouse_buttons_up, false, sizeof(m_mouse_buttons_up));
             memcpy(&m_mouse_buttons_last, &m_mouse_buttons, sizeof(m_mouse_buttons_last));
 
-            for (u32 i = 0; i < static_cast<u32>(Gamepad::Last); i++) {
+            for (uint32 i = 0; i < static_cast<uint32>(Gamepad::Last); i++) {
                 GamepadState &gamepad = m_gamepads[i];
 
                 memset(&gamepad.buttons_down, false, sizeof(gamepad.buttons_down));
@@ -154,18 +154,18 @@ namespace Hyperion {
 
                 // Handle axes
                 {
-                    f32 left_stick_x = (state.Gamepad.sThumbLX + 0.5f) / 32767.5f;
-                    f32 left_stick_y = (state.Gamepad.sThumbLY + 0.5f) / 32767.5f;
-                    f32 right_stick_x = (state.Gamepad.sThumbRX + 0.5f) / 32767.5f;
-                    f32 right_stick_y = (state.Gamepad.sThumbRY + 0.5f) / 32767.5f;
-                    f32 left_trigger = state.Gamepad.bLeftTrigger / 255.0f;
-                    f32 right_trigger = state.Gamepad.bRightTrigger / 255.0f;
+                    float32 left_stick_x = (state.Gamepad.sThumbLX + 0.5f) / 32767.5f;
+                    float32 left_stick_y = (state.Gamepad.sThumbLY + 0.5f) / 32767.5f;
+                    float32 right_stick_x = (state.Gamepad.sThumbRX + 0.5f) / 32767.5f;
+                    float32 right_stick_y = (state.Gamepad.sThumbRY + 0.5f) / 32767.5f;
+                    float32 left_trigger = state.Gamepad.bLeftTrigger / 255.0f;
+                    float32 right_trigger = state.Gamepad.bRightTrigger / 255.0f;
 
-                    m_gamepads[static_cast<s32>(gamepad)].axes[static_cast<s32>(GamepadAxis::LeftStick)] = ApplyGamepadDeadzone(left_stick_x, left_stick_y);
-                    m_gamepads[static_cast<s32>(gamepad)].axes[static_cast<s32>(GamepadAxis::RightStick)] = ApplyGamepadDeadzone(right_stick_x, right_stick_y);
+                    m_gamepads[static_cast<int32>(gamepad)].axes[static_cast<int32>(GamepadAxis::LeftStick)] = ApplyGamepadDeadzone(left_stick_x, left_stick_y);
+                    m_gamepads[static_cast<int32>(gamepad)].axes[static_cast<int32>(GamepadAxis::RightStick)] = ApplyGamepadDeadzone(right_stick_x, right_stick_y);
                     // Left and right trigger are treated as if they had the same two x and y axes
-                    m_gamepads[static_cast<s32>(gamepad)].axes[static_cast<s32>(GamepadAxis::LeftTrigger)] = Vec2(left_trigger, left_trigger);
-                    m_gamepads[static_cast<s32>(gamepad)].axes[static_cast<s32>(GamepadAxis::RightTrigger)] = Vec2(right_trigger, right_trigger);
+                    m_gamepads[static_cast<int32>(gamepad)].axes[static_cast<int32>(GamepadAxis::LeftTrigger)] = Vec2(left_trigger, left_trigger);
+                    m_gamepads[static_cast<int32>(gamepad)].axes[static_cast<int32>(GamepadAxis::RightTrigger)] = Vec2(right_trigger, right_trigger);
                 }
             }
         }
@@ -184,7 +184,7 @@ namespace Hyperion {
         memset(&m_mouse_buttons, false, sizeof(m_mouse_buttons));
         memset(&m_mouse_buttons_last, false, sizeof(m_mouse_buttons_last));
 
-        for (u32 i = 0; i < static_cast<u32>(Gamepad::Last); i++) {
+        for (uint32 i = 0; i < static_cast<uint32>(Gamepad::Last); i++) {
             GamepadState &gamepad = m_gamepads[i];
 
             memset(&gamepad.buttons_down, false, sizeof(gamepad.buttons_down));
@@ -192,7 +192,7 @@ namespace Hyperion {
             memset(&gamepad.buttons, false, sizeof(gamepad.buttons));
             memset(&gamepad.buttons_last, false, sizeof(gamepad.buttons_last));
 
-            for (u32 j = 0; j < static_cast<u32>(GamepadAxis::Last); j++) {
+            for (uint32 j = 0; j < static_cast<uint32>(GamepadAxis::Last); j++) {
                 gamepad.axes[j] = Vec2();
             }
         }
@@ -227,35 +227,35 @@ namespace Hyperion {
     }
 
     void WindowsInput::OnKeyEvent(KeyEvent &event, bool down) {
-        s32 key_code = static_cast<s32>(event.GetKeyCode());
+        int32 key_code = static_cast<int32>(event.GetKeyCode());
         m_keys_down[key_code] = !m_keys_last[key_code] && down;
         m_keys[key_code] = down;
         m_keys_up[key_code] = m_keys_last[key_code] && !down;
     }
 
     void WindowsInput::OnMouseButtonEvent(MouseButtonEvent &event, bool down) {
-        s32 mouse_button_code = static_cast<s32>(event.GetMouseButtonCode());
+        int32 mouse_button_code = static_cast<int32>(event.GetMouseButtonCode());
         m_mouse_buttons_down[mouse_button_code] = !m_mouse_buttons_last[mouse_button_code] && down;
         m_mouse_buttons[mouse_button_code] = down;
         m_mouse_buttons_up[mouse_button_code] = m_mouse_buttons_last[mouse_button_code] && !down;
     }
 
     void WindowsInput::HandleGamepadButtonCode(Gamepad gamepad, GamepadButtonCode button_code, bool down) {
-        m_gamepads[static_cast<s32>(gamepad)].buttons_down[static_cast<s32>(button_code)] = !m_gamepads[static_cast<s32>(gamepad)].buttons_last[static_cast<s32>(button_code)] && down;
-        m_gamepads[static_cast<s32>(gamepad)].buttons[static_cast<s32>(button_code)] = down;
+        m_gamepads[static_cast<int32>(gamepad)].buttons_down[static_cast<int32>(button_code)] = !m_gamepads[static_cast<int32>(gamepad)].buttons_last[static_cast<int32>(button_code)] && down;
+        m_gamepads[static_cast<int32>(gamepad)].buttons[static_cast<int32>(button_code)] = down;
         if (down) {
             GamepadButtonPressedEvent event(gamepad, button_code);
             DispatchEvent(event);
         }
-        if (m_gamepads[static_cast<s32>(gamepad)].buttons_last[static_cast<s32>(button_code)] && !down) {
-            m_gamepads[static_cast<s32>(gamepad)].buttons_up[static_cast<s32>(button_code)] = true;
+        if (m_gamepads[static_cast<int32>(gamepad)].buttons_last[static_cast<int32>(button_code)] && !down) {
+            m_gamepads[static_cast<int32>(gamepad)].buttons_up[static_cast<int32>(button_code)] = true;
 
             GamepadButtonReleasedEvent event(gamepad, button_code);
             DispatchEvent(event);
         }
     }
 
-    Gamepad WindowsInput::GetGamepadFromId(u32 id) {
+    Gamepad WindowsInput::GetGamepadFromId(uint32 id) {
         switch (id) {
             case 0: return Gamepad::Gamepad1;
             case 1: return Gamepad::Gamepad2;
@@ -265,7 +265,7 @@ namespace Hyperion {
         }
     }
 
-    u32 WindowsInput::GetIdFromGamepad(Gamepad gamepad) {
+    uint32 WindowsInput::GetIdFromGamepad(Gamepad gamepad) {
         switch (gamepad) {
             case Hyperion::Gamepad::Gamepad1: return 0;
             case Hyperion::Gamepad::Gamepad2: return 1;
@@ -275,9 +275,9 @@ namespace Hyperion {
         }
     }
 
-    Vec2 WindowsInput::ApplyGamepadDeadzone(f32 x, f32 y) {
+    Vec2 WindowsInput::ApplyGamepadDeadzone(float32 x, float32 y) {
         // Deadzone logic from: https://www.gamasutra.com/blogs/JoshSutphin/20130416/190541/Doing_Thumbstick_Dead_Zones_Right.php
-        f32 dead_zone = m_gamepad_dead_zone;
+        float32 dead_zone = m_gamepad_dead_zone;
         Vec2 left_stick = Vec2(x, y);
 
         if (left_stick.Magnitude() < dead_zone) {

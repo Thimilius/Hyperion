@@ -5,18 +5,18 @@
 namespace Hyperion {
 
     Mat3::Mat3() {
-        std::memset(elements, 0, 9 * sizeof(f32));
+        std::memset(elements, 0, 9 * sizeof(float32));
     }
 
-    Mat3::Mat3(f32 diagonal) {
-        std::memset(elements, 0, 9 * sizeof(f32));
+    Mat3::Mat3(float32 diagonal) {
+        std::memset(elements, 0, 9 * sizeof(float32));
         elements[0 + 0 * 3] = diagonal;
         elements[1 + 1 * 3] = diagonal;
         elements[2 + 2 * 3] = diagonal;
     }
 
-    Mat3::Mat3(f32 *elements) {
-        std::memcpy(this->elements, elements, 9 * sizeof(f32));
+    Mat3::Mat3(float32 *elements) {
+        std::memcpy(this->elements, elements, 9 * sizeof(float32));
     }
 
     Mat3::Mat3(const Vec3 &column0, const Vec3 &column1, const Vec3 &column2) {

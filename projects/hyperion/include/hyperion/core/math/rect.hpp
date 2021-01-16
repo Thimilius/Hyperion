@@ -8,22 +8,22 @@ namespace Hyperion {
         union {
             Vec2 position;
             struct {
-                f32 x;
-                f32 y;
+                float32 x;
+                float32 y;
             };
         };
 
         union {
             Vec2 size;
             struct {
-                f32 width;
-                f32 height;
+                float32 width;
+                float32 height;
             };
         };
 
         Rect();
         Rect(Vec2 position, Vec2 size);
-        Rect(f32 x, f32 y, f32 width, f32 height);
+        Rect(float32 x, float32 y, float32 width, float32 height);
 
         Vec2 GetMin() const;
         Vec2 GetMax() const;

@@ -59,17 +59,15 @@ namespace Hyperion::Rendering {
     }
 
     void ForwardRenderPipeline::Render() {
-        Viewport viewport = { 0, 0, static_cast<s32>(Display::GetWidth()), static_cast<s32>(Display::GetHeight()) };
+        Viewport viewport = { 0, 0, static_cast<int32>(Display::GetWidth()), static_cast<int32>(Display::GetHeight()) };
         RenderEngine::GetRenderDriver()->Viewport(viewport);
 
         Color color = Color::Cyan();
-        f32 value = Math::Sin(Time::GetTime() * 2.0f) / 2.0f + 0.5f;
+        float32 value = Math::Sin(Time::GetTime() * 2.0f) / 2.0f + 0.5f;
         color *= value;
         RenderEngine::GetRenderDriver()->Clear(ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, color);
 
-        for (size_t i = 0; i < 1000; i++) {
-            RenderEngine::GetRenderDriver()->DrawIndexed(shader->GetResourceId(), mesh->GetResourceId());
-        }
+        RenderEngine::GetRenderDriver()->DrawIndexed(shader->GetResourceId(), mesh->GetResourceId());
     }
 
 }

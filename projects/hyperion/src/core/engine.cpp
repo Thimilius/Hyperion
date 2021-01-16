@@ -28,8 +28,8 @@ namespace Hyperion {
         SystemInfo system_info = OperatingSystem::GetInstance()->GetSystemInfo();
         HYP_LOG_INFO("Engine", "Processor Count: {} | Processor Frequency: {:.2f} Ghz | Physical Memory: {:.2f} GB",
             system_info.processor_info.processor_count,
-            static_cast<f32>(system_info.processor_info.processor_mhz_frequency / 1000.0f),
-            static_cast<f32>(system_info.memory_info.total_physical_memory / (1024.0f * 1024.0f * 1024.0f)));
+            static_cast<float32>(system_info.processor_info.processor_mhz_frequency / 1000.0f),
+            static_cast<float32>(system_info.memory_info.total_physical_memory / (1024.0f * 1024.0f * 1024.0f)));
 
         Display::UpdateDisplayInfos();
         DisplayInfo::DisplayModeInfo mode_info = Display::GetCurrentDisplayModeInfo();
@@ -58,7 +58,7 @@ namespace Hyperion {
         ScriptingEngine::Init();
     }
 
-    u32 Engine::Run() {
+    uint32 Engine::Run() {
         Application *application = Application::GetInstance();
         HYP_ASSERT(application);
 
@@ -96,8 +96,8 @@ namespace Hyperion {
 
         window->Poll();
 
-        f32 now = s_stats.timer->ElapsedSeconds();
-        f32 delta_time = static_cast<f32>(now - s_stats.last_time);
+        float32 now = s_stats.timer->ElapsedSeconds();
+        float32 delta_time = static_cast<float32>(now - s_stats.last_time);
         if (delta_time > Time::GetMaxDeltaTime()) {
             delta_time = Time::GetMaxDeltaTime();
         }
@@ -105,14 +105,14 @@ namespace Hyperion {
         s_stats.accumulator += delta_time;
         Time::s_delta_time = delta_time;
         Time::s_time += delta_time;
-        Time::s_fps = static_cast<u32>(1.0f / delta_time);
+        Time::s_fps = static_cast<uint32>(1.0f / delta_time);
         Time::s_frame_time = delta_time * 1000.0f;
 
         Update(delta_time);
         application->OnUpdate(delta_time);
         LateUpdate();
 
-        f32 fixed_delta_time = Time::GetFixedDeltaTime();
+        float32 fixed_delta_time = Time::GetFixedDeltaTime();
         while (s_stats.accumulator > fixed_delta_time) {
             FixedUpdate(fixed_delta_time);
             application->OnFixedUpdate(fixed_delta_time);
@@ -155,8 +155,8 @@ namespace Hyperion {
             Exit();
         });
         dispatcher.Dispatch<WindowResizeEvent>([](WindowResizeEvent &window_resize_event) {
-            u32 width = window_resize_event.GetWidth();
-            u32 height = window_resize_event.GetHeight();
+            uint32 width = window_resize_event.GetWidth();
+            uint32 height = window_resize_event.GetHeight();
             Display::UpdateSize(width, height);
         });
 
@@ -174,11 +174,11 @@ namespace Hyperion {
         Application::GetInstance()->OnEvent(event);
     }
 
-    void Engine::Update(f32 delta_time) {
+    void Engine::Update(float32 delta_time) {
         WorldManager::Update(delta_time);
     }
 
-    void Engine::FixedUpdate(f32 delta_time) {
+    void Engine::FixedUpdate(float32 delta_time) {
         Physics::PhysicsEngine::FixedUpdate(delta_time);
     }
 

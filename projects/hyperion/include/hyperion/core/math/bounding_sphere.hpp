@@ -6,12 +6,12 @@ namespace Hyperion {
 
     struct BoundingSphere {
         Vec3 origin;
-        f32 radius;
+        float32 radius;
 
         BoundingSphere();
-        BoundingSphere(Vec3 origin, f32 radius);
+        BoundingSphere(Vec3 origin, float32 radius);
 
-        bool Intersects(Ray ray, f32 &hit_distance) const;
+        bool Intersects(Ray ray, float32 &hit_distance) const;
 
         String ToString() const;
 

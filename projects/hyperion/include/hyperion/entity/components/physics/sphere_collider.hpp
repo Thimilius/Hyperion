@@ -11,8 +11,8 @@ namespace Hyperion {
 
         ColliderType GetColliderType() const { return ColliderType::SphereCollider; }
 
-        inline f32 GetRadius() const { return m_radius; }
-        inline void SetRadius(f32 radius) {
+        inline float32 GetRadius() const { return m_radius; }
+        inline void SetRadius(float32 radius) {
             m_radius = radius;
             NotifyColliderChange();
         }
@@ -23,7 +23,7 @@ namespace Hyperion {
     private:
         void NotifyColliderChange();
     private:
-        f32 m_radius = 0.5f;
+        float32 m_radius = 0.5f;
     };
 
 }

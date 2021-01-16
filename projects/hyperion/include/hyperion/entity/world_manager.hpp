@@ -23,7 +23,7 @@ namespace Hyperion {
 
         static void Shutdown();
 
-        static void Update(f32 delta_time);
+        static void Update(float32 delta_time);
 
         static void RegisterComponentForUpdate(Component *component);
         static void UnregisterComponentForUpdate(Component *component);

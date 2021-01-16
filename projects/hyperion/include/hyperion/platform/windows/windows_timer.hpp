@@ -10,13 +10,13 @@ namespace Hyperion {
     public:
         WindowsTimer();
 
-        f32 ElapsedSeconds() const override;
-        f32 ElapsedMilliSeconds() const override;
+        float32 ElapsedSeconds() const override;
+        float32 ElapsedMilliSeconds() const override;
 
         void Reset() override;
     private:
         LARGE_INTEGER m_start;
-        f64 m_frequency;
+        float64 m_frequency;
     };
 
 }

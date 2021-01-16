@@ -26,7 +26,7 @@ namespace Hyperion::Rendering {
             pixel_format_descriptor.cDepthBits = 24;
             pixel_format_descriptor.cStencilBits = 8;
 
-            s32 pixel_format = ChoosePixelFormat(m_device_context, &pixel_format_descriptor);
+            int32 pixel_format = ChoosePixelFormat(m_device_context, &pixel_format_descriptor);
             SetPixelFormat(m_device_context, pixel_format, &pixel_format_descriptor);
 
             HGLRC temp_context = wglCreateContext(m_device_context);
@@ -47,7 +47,7 @@ namespace Hyperion::Rendering {
 
         // Create real context
         {
-            const s32 pixel_attributes[] = {
+            const int32 pixel_attributes[] = {
                 WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
                 WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
                 WGL_DOUBLE_BUFFER_ARB, GL_TRUE,
@@ -58,8 +58,8 @@ namespace Hyperion::Rendering {
                 WGL_STENCIL_BITS_ARB, 8,
                 0
             };
-            s32 pixel_format;
-            u32 formats_count;
+            int32 pixel_format;
+            uint32 formats_count;
             wglChoosePixelFormatARB(m_device_context, pixel_attributes, nullptr, 1, &pixel_format, &formats_count);
 
             PIXELFORMATDESCRIPTOR pixel_format_descriptor;
@@ -67,7 +67,7 @@ namespace Hyperion::Rendering {
             SetPixelFormat(m_device_context, pixel_format, &pixel_format_descriptor);
 
 #ifdef HYP_DEBUG
-            const s32 context_attributes[] = {
+            const int32 context_attributes[] = {
                 WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
                 WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_DEBUG_BIT_ARB,
                 0
@@ -98,7 +98,7 @@ namespace Hyperion::Rendering {
     }
 
     void WindowsOpenGLGraphicsContext::SetVSyncMode(VSyncMode vsync_mode) {
-        s32 swap_interval = 0;
+        int32 swap_interval = 0;
         switch (vsync_mode) {
             case VSyncMode::DontSync: swap_interval = 0; break;
             case VSyncMode::EveryVBlank: swap_interval = 1; break;

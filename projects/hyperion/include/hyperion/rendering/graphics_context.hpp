@@ -19,8 +19,8 @@ namespace Hyperion::Rendering {
     };
     
     struct ContextLimits {
-        s32 max_msaa_samples;
-        s32 max_texture_units;
+        int32 max_msaa_samples;
+        int32 max_texture_units;
     };
 
     class GraphicsContext {

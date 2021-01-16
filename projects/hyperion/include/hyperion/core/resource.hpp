@@ -8,7 +8,7 @@ namespace Hyperion {
 
 namespace Hyperion {
 
-    using ResourceId = u64;
+    using ResourceId = uint64;
 
     class Resource final {
     private:

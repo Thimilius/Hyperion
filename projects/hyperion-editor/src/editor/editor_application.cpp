@@ -11,7 +11,7 @@ namespace Hyperion::Editor {
             
         }
 
-        void OnUpdate(f32 delta_time) override {
+        void OnUpdate(float32 delta_time) override {
             if ((Input::GetKey(KeyCode::LeftControl) || Input::GetKey(KeyCode::RightControl)) && Input::GetKeyDown(KeyCode::W)) {
                 Exit();
             }

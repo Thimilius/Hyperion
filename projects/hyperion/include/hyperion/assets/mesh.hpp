@@ -19,15 +19,15 @@ namespace Hyperion {
         Vector<Vec3> normals;
         Vector<Vec2> uvs;
 
-        Vector<u32> indices;
+        Vector<uint32> indices;
     };
 
     struct SubMesh {
         MeshTopology topology;
 
-        u32 index_count;
-        u32 index_offset;
-        u32 vertex_offset;
+        uint32 index_count;
+        uint32 index_offset;
+        uint32 vertex_offset;
     };
 
     class Mesh : public Asset {

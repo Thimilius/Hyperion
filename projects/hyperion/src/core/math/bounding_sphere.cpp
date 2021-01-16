@@ -6,26 +6,26 @@ namespace Hyperion {
 
     BoundingSphere::BoundingSphere() { }
 
-    BoundingSphere::BoundingSphere(Vec3 origin, f32 radius)
+    BoundingSphere::BoundingSphere(Vec3 origin, float32 radius)
         : origin(origin), radius(radius) { }
 
-    bool BoundingSphere::Intersects(Ray ray, f32 &hit_distance) const {
+    bool BoundingSphere::Intersects(Ray ray, float32 &hit_distance) const {
         Vec3 distance = origin - ray.origin;
-        f32 radius_squared = radius * radius;
+        float32 radius_squared = radius * radius;
 
-        f32 tca = distance.Dot(ray.direction);
+        float32 tca = distance.Dot(ray.direction);
         if (tca < 0) {
             return false;
         }
 
-        f32 d2 = distance.Dot(distance) - tca * tca;
+        float32 d2 = distance.Dot(distance) - tca * tca;
         if (d2 > radius_squared) {
             return false;
         }
 
-        f32 thc = Math::Sqrt(radius_squared - d2);
-        f32 t0 = tca - thc;
-        f32 t1 = tca + thc;
+        float32 thc = Math::Sqrt(radius_squared - d2);
+        float32 t0 = tca - thc;
+        float32 t1 = tca + thc;
         if (t0 > t1) {
             std::swap(t0, t1);
         }

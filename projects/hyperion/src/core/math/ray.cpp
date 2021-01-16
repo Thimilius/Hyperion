@@ -7,7 +7,7 @@ namespace Hyperion {
     Ray::Ray(Vec3 origin, Vec3 direction) :
         origin(origin), direction(direction.Normalized()) { }
 
-    Vec3 Ray::GetPoint(f32 t) const {
+    Vec3 Ray::GetPoint(float32 t) const {
         return origin + direction * t;
     }
 

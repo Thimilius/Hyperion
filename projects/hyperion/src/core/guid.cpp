@@ -45,15 +45,15 @@ namespace Hyperion {
         CoCreateGuid(&guid_native);
 
         Guid guid;
-        guid.data[0] = (static_cast<u64>(guid_native.Data1) << 32) | (static_cast<u64>(guid_native.Data2) << 16) | (static_cast<u64>(guid_native.Data3));
-        guid.data[1] = (static_cast<u64>(guid_native.Data4[0]) << 56) |
-            (static_cast<u64>(guid_native.Data4[1]) << 48) |
-            (static_cast<u64>(guid_native.Data4[2]) << 40) |
-            (static_cast<u64>(guid_native.Data4[3]) << 32) |
-            (static_cast<u64>(guid_native.Data4[4]) << 24) |
-            (static_cast<u64>(guid_native.Data4[5]) << 16) |
-            (static_cast<u64>(guid_native.Data4[6]) << 8) |
-            (static_cast<u64>(guid_native.Data4[7]));
+        guid.data[0] = (static_cast<uint64>(guid_native.Data1) << 32) | (static_cast<uint64>(guid_native.Data2) << 16) | (static_cast<uint64>(guid_native.Data3));
+        guid.data[1] = (static_cast<uint64>(guid_native.Data4[0]) << 56) |
+            (static_cast<uint64>(guid_native.Data4[1]) << 48) |
+            (static_cast<uint64>(guid_native.Data4[2]) << 40) |
+            (static_cast<uint64>(guid_native.Data4[3]) << 32) |
+            (static_cast<uint64>(guid_native.Data4[4]) << 24) |
+            (static_cast<uint64>(guid_native.Data4[5]) << 16) |
+            (static_cast<uint64>(guid_native.Data4[6]) << 8) |
+            (static_cast<uint64>(guid_native.Data4[7]));
 
         return guid;
 #endif
@@ -66,15 +66,15 @@ namespace Hyperion {
         IIDFromString(wide_string.c_str(), &guid_native);
 
         Guid guid;
-        guid.data[0] = (static_cast<u64>(guid_native.Data1) << 32) | (static_cast<u64>(guid_native.Data2) << 16) | (static_cast<u64>(guid_native.Data3));
-        guid.data[1] = (static_cast<u64>(guid_native.Data4[0]) << 56) |
-            (static_cast<u64>(guid_native.Data4[1]) << 48) |
-            (static_cast<u64>(guid_native.Data4[2]) << 40) |
-            (static_cast<u64>(guid_native.Data4[3]) << 32) |
-            (static_cast<u64>(guid_native.Data4[4]) << 24) |
-            (static_cast<u64>(guid_native.Data4[5]) << 16) |
-            (static_cast<u64>(guid_native.Data4[6]) << 8) |
-            (static_cast<u64>(guid_native.Data4[7]));
+        guid.data[0] = (static_cast<uint64>(guid_native.Data1) << 32) | (static_cast<uint64>(guid_native.Data2) << 16) | (static_cast<uint64>(guid_native.Data3));
+        guid.data[1] = (static_cast<uint64>(guid_native.Data4[0]) << 56) |
+            (static_cast<uint64>(guid_native.Data4[1]) << 48) |
+            (static_cast<uint64>(guid_native.Data4[2]) << 40) |
+            (static_cast<uint64>(guid_native.Data4[3]) << 32) |
+            (static_cast<uint64>(guid_native.Data4[4]) << 24) |
+            (static_cast<uint64>(guid_native.Data4[5]) << 16) |
+            (static_cast<uint64>(guid_native.Data4[6]) << 8) |
+            (static_cast<uint64>(guid_native.Data4[7]));
 
         return guid;
 #endif

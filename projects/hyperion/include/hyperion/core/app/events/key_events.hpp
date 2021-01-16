@@ -38,9 +38,9 @@ namespace Hyperion {
 
     class KeyTypedEvent : public Event {
     public:
-        KeyTypedEvent(u32 character, KeyModifier key_modifier) : m_character(character), m_key_modifier(key_modifier) { }
+        KeyTypedEvent(uint32 character, KeyModifier key_modifier) : m_character(character), m_key_modifier(key_modifier) { }
 
-        inline u32 GetCharacter() const { return m_character; }
+        inline uint32 GetCharacter() const { return m_character; }
         inline bool HasKeyModifier(KeyModifier key_modifier) const { return (m_key_modifier & key_modifier) == key_modifier; }
 
         EventType GetType() const override { return EventType::KeyTyped; }
@@ -48,7 +48,7 @@ namespace Hyperion {
 
         static EventType GetStaticType() { return EventType::KeyTyped; }
     private:
-        u32 m_character;
+        uint32 m_character;
         KeyModifier m_key_modifier;
     };
 

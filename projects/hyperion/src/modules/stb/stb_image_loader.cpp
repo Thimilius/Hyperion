@@ -14,10 +14,10 @@ namespace Hyperion {
     Image *StbImageFormatLoader::Load(const String &path, bool flip_vertically) {
         stbi_set_flip_vertically_on_load(flip_vertically);
 
-        s32 width;
-        s32 height;
-        s32 channels;
-        u8 *pixels = stbi_load(path.c_str(), &width, &height, &channels, 0);
+        int32 width;
+        int32 height;
+        int32 channels;
+        uint8 *pixels = stbi_load(path.c_str(), &width, &height, &channels, 0);
 
         if (!pixels) {
             HYP_LOG_ERROR("Engine", "Failed to load image from path: {}", std::filesystem::absolute(path).u8string());

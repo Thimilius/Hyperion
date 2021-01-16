@@ -38,32 +38,32 @@ namespace Hyperion {
 
     class MouseMovedEvent : public Event {
     public:
-        MouseMovedEvent(f32 x, f32 y) : m_x(x), m_y(y) { }
+        MouseMovedEvent(float32 x, float32 y) : m_x(x), m_y(y) { }
 
-        inline f32 GetX() const { return m_x; }
-        inline f32 GetY() const { return m_y; }
+        inline float32 GetX() const { return m_x; }
+        inline float32 GetY() const { return m_y; }
 
         EventType GetType() const override { return EventType::MouseMoved; }
         EventCategory GetCategory() const override { return EventCategory::Input & EventCategory::Mouse; }
 
         static EventType GetStaticType() { return EventType::MouseMoved; }
     private:
-        f32 m_x;
-        f32 m_y;
+        float32 m_x;
+        float32 m_y;
     };
 
     class MouseScrolledEvent : public Event {
     public:
-        MouseScrolledEvent(f32 scroll) : m_scroll(scroll) { }
+        MouseScrolledEvent(float32 scroll) : m_scroll(scroll) { }
 
-        inline f32 GetScroll() const { return m_scroll; }
+        inline float32 GetScroll() const { return m_scroll; }
 
         EventType GetType() const override { return EventType::MouseScrolled; }
         EventCategory GetCategory() const override { return EventCategory::Input & EventCategory::Mouse; }
 
         static EventType GetStaticType() { return EventType::MouseScrolled; }
     private:
-        f32 m_scroll;
+        float32 m_scroll;
     };
 
 }

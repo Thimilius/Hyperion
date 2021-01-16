@@ -38,11 +38,11 @@ namespace Hyperion {
             return string;
         }
 
-        inline static constexpr u32 Hash(char const *input) {
-            return *input ? static_cast<u32>(*input) + 33 * Hash(input + 1) : 5381;
+        inline static constexpr uint32 Hash(char const *input) {
+            return *input ? static_cast<uint32>(*input) + 33 * Hash(input + 1) : 5381;
         }
 
-        static Vector<u32> GetCodepointsUtf8(const String &string);
+        static Vector<uint32> GetCodepointsUtf8(const String &string);
 
         static WideString Utf8ToUtf16(const String &string);
         static String Utf16ToUtf8(const WideString &string);

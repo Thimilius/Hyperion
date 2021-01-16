@@ -9,7 +9,7 @@ namespace Hyperion {
     Rect::Rect(Vec2 position, Vec2 size)
         : position(position), size(size) { }
 
-    Rect::Rect(f32 x, f32 y, f32 width, f32 height) 
+    Rect::Rect(float32 x, float32 y, float32 width, float32 height) 
         : position(Vec2(x, y)), size(Vec2(width, height)) { }
 
     Vec2 Rect::GetMin() const {

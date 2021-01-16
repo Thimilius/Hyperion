@@ -16,13 +16,13 @@ namespace Hyperion {
 
     struct Mat4 {
         union {
-            f32 elements[16];
+            float32 elements[16];
             Vec4 columns[4];
         };
 
         Mat4();
-        Mat4(f32 diagonal);
-        Mat4(f32 *elements);
+        Mat4(float32 diagonal);
+        Mat4(float32 *elements);
         Mat4(const Vec4 &column0, const Vec4 &column1, const Vec4 &column2, const Vec4 &column3);
 
         Mat4 &Multiply(const Mat4 &other);
@@ -41,15 +41,15 @@ namespace Hyperion {
 
         static Mat4 Identity();
         static Mat4 Translate(const Vec3 &position);
-        static Mat4 Translate(f32 x, f32 y, f32 z);
-        static Mat4 Rotate(const Vec3 &axis, f32 angle);
+        static Mat4 Translate(float32 x, float32 y, float32 z);
+        static Mat4 Rotate(const Vec3 &axis, float32 angle);
         static Mat4 Rotate(const Quaternion &quaternion);
         static Mat4 Scale(const Vec3 &scale);
-        static Mat4 Scale(f32 x, f32 y, f32 z);
+        static Mat4 Scale(float32 x, float32 y, float32 z);
         static Mat4 TRS(const Vec3 &position, const Quaternion &rotation, const Vec3 &scale);
 
-        static Mat4 Orthographic(f32 left, f32 right, f32 bottom, f32 top, f32 z_near, f32 z_far);
-        static Mat4 Perspective(f32 fov, f32 aspect_ratio, f32 z_near, f32 z_far);
+        static Mat4 Orthographic(float32 left, float32 right, float32 bottom, float32 top, float32 z_near, float32 z_far);
+        static Mat4 Perspective(float32 fov, float32 aspect_ratio, float32 z_near, float32 z_far);
         static Mat4 LookAt(const Vec3 &from, const Vec3 &to, const Vec3 &up);
 
         friend Mat4 operator*(Mat4 left, const Mat4 &right);

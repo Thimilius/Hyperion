@@ -68,7 +68,7 @@ namespace Hyperion {
         RectTransformUtility() = delete;
         ~RectTransformUtility() = delete;
     private:
-        static f32 IsLeft(Vec2 p0, Vec2 p1, Vec2 p2);
+        static float32 IsLeft(Vec2 p0, Vec2 p1, Vec2 p2);
     };
 
 }

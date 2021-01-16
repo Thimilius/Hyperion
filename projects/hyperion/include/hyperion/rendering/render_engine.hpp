@@ -43,7 +43,7 @@ namespace Hyperion::Rendering {
     private: 
         inline static RenderSettings s_render_settings;
         inline static IRenderPipeline *s_render_pipeline;
-        inline static u64 s_render_frame = 0;
+        inline static uint64 s_render_frame = 0;
 
         inline static GraphicsContext *s_graphics_context;
 

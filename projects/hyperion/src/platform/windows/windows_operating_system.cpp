@@ -35,9 +35,9 @@ namespace Hyperion {
         // Gather processor info
         SYSTEM_INFO system_info;
         GetNativeSystemInfo(&system_info);
-        u32 processor_count = system_info.dwNumberOfProcessors;
+        uint32 processor_count = system_info.dwNumberOfProcessors;
         PROCESSOR_POWER_INFORMATION *processor_info = new PROCESSOR_POWER_INFORMATION[processor_count];
-        CallNtPowerInformation(ProcessorInformation, nullptr, 0, processor_info, static_cast<u32>(sizeof(*processor_info) * processor_count));
+        CallNtPowerInformation(ProcessorInformation, nullptr, 0, processor_info, static_cast<uint32>(sizeof(*processor_info) * processor_count));
         result.processor_info.processor_count = processor_count;
         result.processor_info.processor_mhz_frequency = processor_info[0].MaxMhz;
         delete[] processor_info;
@@ -54,7 +54,7 @@ namespace Hyperion {
         return result;
     }
 
-    u64 WindowsOperatingSystem::GetMemoryUsage() const {
+    uint64 WindowsOperatingSystem::GetMemoryUsage() const {
         PROCESS_MEMORY_COUNTERS process_memory;
         BOOL success = GetProcessMemoryInfo(GetCurrentProcess(), &process_memory, sizeof(process_memory));
         return success ? process_memory.WorkingSetSize : 0;
@@ -62,7 +62,7 @@ namespace Hyperion {
 
     SystemLanguage WindowsOperatingSystem::GetSystemLanguage() const {
         LANGID language_id = GetUserDefaultUILanguage();
-        u32 main_language  = language_id & 0xff;
+        uint32 main_language  = language_id & 0xff;
 
         SystemLanguage result = SystemLanguage::Unknown;
 		switch (main_language) {
@@ -143,7 +143,7 @@ namespace Hyperion {
     }
 
     void WindowsOperatingSystem::PrintToConsole(LogColor color, const String &message) {
-        s16 console_color = 0;
+        int16 console_color = 0;
         switch (color) {
             case Hyperion::LogColor::Black: console_color = 0; break;
             case Hyperion::LogColor::Red: console_color = FOREGROUND_INTENSITY | FOREGROUND_RED; break;

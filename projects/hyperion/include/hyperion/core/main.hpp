@@ -4,7 +4,7 @@ namespace Hyperion {
 
     class Main final {
     public:
-        static u32 Run();
+        static uint32 Run();
     private:
         Main() = delete;
         ~Main() = delete;

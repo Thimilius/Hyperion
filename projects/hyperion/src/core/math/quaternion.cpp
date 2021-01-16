@@ -6,26 +6,26 @@ namespace Hyperion {
 
     Quaternion::Quaternion() { }
 
-    Quaternion::Quaternion(f32 x, f32 y, f32 z, f32 w) 
+    Quaternion::Quaternion(float32 x, float32 y, float32 z, float32 w) 
         : x(x), y(y), z(z), w(w) { }
 
-    Quaternion::Quaternion(Vec3 xyz, f32 w) 
+    Quaternion::Quaternion(Vec3 xyz, float32 w) 
         : x(xyz.x), y(xyz.y), z(xyz.z), w(w) { }
 
     Vec3 Quaternion::ToEulerAngles() const {
-        f32 x_value = Math::RadToDeg(Math::ATan2(2 * x * w - 2 * y * z, 1 - 2 * x * x - 2 * z * z));
-        f32 y_value = Math::RadToDeg(Math::ATan2(2 * y * w - 2 * x * z, 1 - 2 * y * y - 2 * z * z));
-        f32 z_value = Math::RadToDeg(Math::ASin(2 * x * y + 2 * z * w));
+        float32 x_value = Math::RadToDeg(Math::ATan2(2 * x * w - 2 * y * z, 1 - 2 * x * x - 2 * z * z));
+        float32 y_value = Math::RadToDeg(Math::ATan2(2 * y * w - 2 * x * z, 1 - 2 * y * y - 2 * z * z));
+        float32 z_value = Math::RadToDeg(Math::ASin(2 * x * y + 2 * z * w));
         return Vec3(x_value, y_value, z_value);
     }
 
     Quaternion Quaternion::Normalized() const {
-        f32 length_sqr = (x * x);
+        float32 length_sqr = (x * x);
         length_sqr += (y * y);
         length_sqr += (z * z);
         length_sqr += (w * w);
 
-        f32 length_inverse = 1.0f / Math::Sqrt(length_sqr);
+        float32 length_inverse = 1.0f / Math::Sqrt(length_sqr);
         return *this * length_inverse;
     }
 
@@ -70,19 +70,19 @@ namespace Hyperion {
         return Rotate(*this, other);
     }
 
-    Quaternion Quaternion::operator*(f32 value) const {
+    Quaternion Quaternion::operator*(float32 value) const {
         return Quaternion(x * value, y * value, z * value, w * value);
     }
 
-    Quaternion Quaternion::operator/(f32 value) const {
+    Quaternion Quaternion::operator/(float32 value) const {
         return Quaternion(x / value, y / value, z / value, w / value);
     }
 
     Vec3 Quaternion::Rotate(const Quaternion &quaternion, const Vec3 &vec) {
-        f32 x = (((quaternion.w * vec.x) + (quaternion.y * vec.z)) - (quaternion.z * vec.y));
-        f32 y = (((quaternion.w * vec.y) + (quaternion.z * vec.x)) - (quaternion.x * vec.z));
-        f32 z = (((quaternion.w * vec.z) + (quaternion.x * vec.y)) - (quaternion.y * vec.x));
-        f32 w = (((quaternion.x * vec.x) + (quaternion.y * vec.y)) + (quaternion.z * vec.z));
+        float32 x = (((quaternion.w * vec.x) + (quaternion.y * vec.z)) - (quaternion.z * vec.y));
+        float32 y = (((quaternion.w * vec.y) + (quaternion.z * vec.x)) - (quaternion.x * vec.z));
+        float32 z = (((quaternion.w * vec.z) + (quaternion.x * vec.y)) - (quaternion.y * vec.x));
+        float32 w = (((quaternion.x * vec.x) + (quaternion.y * vec.y)) + (quaternion.z * vec.z));
         return Vec3(
             ((((w * quaternion.x) + (x * quaternion.w)) - (y * quaternion.z)) + (z * quaternion.y)),
             ((((w * quaternion.y) + (y * quaternion.w)) - (z * quaternion.x)) + (x * quaternion.z)),
@@ -90,7 +90,7 @@ namespace Hyperion {
         );
     }
 
-    Quaternion Quaternion::FromAxisAngle(const Vec3 &axis, f32 angle) {
+    Quaternion Quaternion::FromAxisAngle(const Vec3 &axis, float32 angle) {
         angle = Math::DegToRad(angle) * 0.5f;
         return Quaternion((axis * Math::Sin(angle)), Math::Cos(angle));
     }
@@ -99,17 +99,17 @@ namespace Hyperion {
         return FromEulerAngles(angles.x, angles.y, angles.z);
     }
 
-    Quaternion Quaternion::FromEulerAngles(f32 x, f32 y, f32 z) {
+    Quaternion Quaternion::FromEulerAngles(float32 x, float32 y, float32 z) {
         x = Math::DegToRad(x) * 0.5f;
         y = Math::DegToRad(y) * 0.5f;
         z = Math::DegToRad(z) * 0.5f;
 
-        f32 cr = Math::Cos(x);
-        f32 sr = Math::Sin(x);
-        f32 cp = Math::Cos(y);
-        f32 sp = Math::Sin(y);
-        f32 cy = Math::Cos(z);
-        f32 sy = Math::Sin(z);
+        float32 cr = Math::Cos(x);
+        float32 sr = Math::Sin(x);
+        float32 cp = Math::Cos(y);
+        float32 sp = Math::Sin(y);
+        float32 cy = Math::Cos(z);
+        float32 sy = Math::Sin(z);
 
         Quaternion result;
         result.x = cy * cp * sr - sy * sp * cr;

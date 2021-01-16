@@ -4,7 +4,7 @@
 
 namespace Hyperion {
 
-    enum class LayerMask : u32 {
+    enum class LayerMask : uint32 {
         Nothing = 0,
 
         Layer1 = BIT(1),

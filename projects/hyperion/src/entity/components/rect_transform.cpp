@@ -68,28 +68,28 @@ namespace Hyperion {
     }
 
     void RectTransform::GetWorldCorners(Vec3 corners[4]) {
-        f32 w = m_size.x;
-        f32 h = m_size.y;
-        f32 p_x = m_pivot.x;
-        f32 p_y = m_pivot.y;
+        float32 w = m_size.x;
+        float32 h = m_size.y;
+        float32 p_x = m_pivot.x;
+        float32 p_y = m_pivot.y;
 
         Vec2 parent_size;
         if (m_parent && m_parent->GetType() == rttr::type::get<RectTransform>()) {
             RectTransform *parent_transform = static_cast<RectTransform *>(m_parent);
             parent_size = parent_transform->m_size;
         } else {
-            parent_size = Vec2(static_cast<f32>(Display::GetWidth()), static_cast<f32>(Display::GetHeight()));
+            parent_size = Vec2(static_cast<float32>(Display::GetWidth()), static_cast<float32>(Display::GetHeight()));
         }
         Vec2 half_parent_size = parent_size / 2.0f;
 
         // This comparison is most likely very unreliable
         bool stretching = m_anchor_min != m_anchor_max;
         if (!stretching) {
-            f32 x = m_anchor_min.x * parent_size.x - half_parent_size.x;
-            f32 y = m_anchor_min.y * parent_size.y - half_parent_size.y;
+            float32 x = m_anchor_min.x * parent_size.x - half_parent_size.x;
+            float32 y = m_anchor_min.y * parent_size.y - half_parent_size.y;
 
-            f32 offset_x = m_derived_scale.x * m_anchored_position.x;
-            f32 offset_y = m_derived_scale.y * m_anchored_position.y;
+            float32 offset_x = m_derived_scale.x * m_anchored_position.x;
+            float32 offset_y = m_derived_scale.y * m_anchored_position.y;
 
             SetPosition(Vec3(x + offset_x, y + offset_y, 0.0f));
         }
@@ -129,7 +129,7 @@ namespace Hyperion {
             auto end = parent->m_children.end();
             auto pos = std::find(begin, end, obsolete);
             if (pos != end) {
-                u64 index = std::distance(begin, pos);
+                uint64 index = std::distance(begin, pos);
                 parent->m_children[index] = this;
             }
         }
@@ -178,8 +178,8 @@ namespace Hyperion {
 
     bool RectTransformUtility::RectangleContainsScreenPoint(RectTransform *rect_transform, Vec2 screen_point) {
         // First we need to transform the screen point so that the origin is in the center
-        f32 display_half_width = static_cast<f32>(Display::GetWidth()) / 2.0f;
-        f32 display_half_height = static_cast<f32>(Display::GetHeight()) / 2.0f;
+        float32 display_half_width = static_cast<float32>(Display::GetWidth()) / 2.0f;
+        float32 display_half_height = static_cast<float32>(Display::GetHeight()) / 2.0f;
         screen_point = Vec2(screen_point.x - display_half_width, screen_point.y - display_half_height);
 
         Vec3 world_corners[4];
@@ -194,7 +194,7 @@ namespace Hyperion {
         return (IsLeft(p1, p4, screen_point) > 0 && IsLeft(p4, p3, screen_point) > 0 && IsLeft(p3, p2, screen_point) > 0 && IsLeft(p2, p1, screen_point) > 0);
     }
 
-    f32 RectTransformUtility::IsLeft(Vec2 p0, Vec2 p1, Vec2 p2) {
+    float32 RectTransformUtility::IsLeft(Vec2 p0, Vec2 p1, Vec2 p2) {
         return ((p1.x - p0.x) * (p2.y - p0.y) - (p2.x - p0.x) * (p1.y - p0.y));
     }
 

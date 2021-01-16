@@ -18,9 +18,9 @@ namespace Hyperion::Rendering {
         }
 
         // Query extensions
-        s32 extension_count;
+        int32 extension_count;
         glGetIntegerv(GL_NUM_EXTENSIONS, &extension_count);
-        for (s32 i = 0; i < extension_count; i++) {
+        for (int32 i = 0; i < extension_count; i++) {
             String extension = reinterpret_cast<const char *>(glGetStringi(GL_EXTENSIONS, i));
             m_extensions.push_back(extension);
             if (HYP_OPENGL_LOG_EXTENSIONS) {

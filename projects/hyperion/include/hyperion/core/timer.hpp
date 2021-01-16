@@ -8,8 +8,8 @@ namespace Hyperion {
     public:
         virtual ~Timer() = default;
 
-        virtual f32 ElapsedSeconds() const = 0;
-        virtual f32 ElapsedMilliSeconds() const = 0;
+        virtual float32 ElapsedSeconds() const = 0;
+        virtual float32 ElapsedMilliSeconds() const = 0;
 
         virtual void Reset() = 0;
 

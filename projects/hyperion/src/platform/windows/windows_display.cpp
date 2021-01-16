@@ -10,14 +10,14 @@ namespace Hyperion {
         DISPLAY_DEVICEA display_device = { 0 };
         display_device.cb = sizeof(display_device);
 
-        s32 device_number = 0;
+        int32 device_number = 0;
         while (EnumDisplayDevicesA(nullptr, device_number, &display_device, 0)) {
             device_number++;
 
             if (display_device.StateFlags & DISPLAY_DEVICE_ATTACHED_TO_DESKTOP && display_device.StateFlags & DISPLAY_DEVICE_PRIMARY_DEVICE) {
                 DEVMODEA dev_mode = { 0 };
                 dev_mode.dmSize = sizeof(dev_mode);
-                u32 display_mode_number = 0;
+                uint32 display_mode_number = 0;
 
                 if (EnumDisplaySettingsA(display_device.DeviceName, ENUM_CURRENT_SETTINGS, &dev_mode)) {
                     DisplayInfo::DisplayModeInfo result;
@@ -42,7 +42,7 @@ namespace Hyperion {
 
         s_display_infos.clear();
 
-        s32 device_number = 0;
+        int32 device_number = 0;
         while (EnumDisplayDevicesA(nullptr, device_number, &display_device, 0)) {
             device_number++;
 
@@ -53,7 +53,7 @@ namespace Hyperion {
 
                 DEVMODEA dev_mode = { 0 };
                 dev_mode.dmSize = sizeof(dev_mode);
-                u32 display_mode_number = 0;
+                uint32 display_mode_number = 0;
                 while (EnumDisplaySettingsA(display_device.DeviceName, display_mode_number, &dev_mode)) {
                     display_mode_number++;
 

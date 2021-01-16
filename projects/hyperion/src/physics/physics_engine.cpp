@@ -10,7 +10,7 @@
 
 namespace Hyperion::Physics {
 
-    bool PhysicsEngine::Raycast(Ray ray, RaycastResult &result, f32 distance) {
+    bool PhysicsEngine::Raycast(Ray ray, RaycastResult &result, float32 distance) {
         return WorldManager::GetActiveWorld()->GetPhysicsWorld()->Raycast(ray, result, distance);
     }
 
@@ -24,7 +24,7 @@ namespace Hyperion::Physics {
         s_physics_driver->Init();
     }
 
-    void PhysicsEngine::FixedUpdate(f32 delta_time) {
+    void PhysicsEngine::FixedUpdate(float32 delta_time) {
         s_physics_driver->FixedUpdate(delta_time);
     }
 
