@@ -40,12 +40,12 @@ namespace Hyperion::Rendering {
         HYP_ASSERT(s_meshes.find(id) == s_meshes.end());
 
         OpenGLMesh &mesh = s_meshes[id];
+        mesh.index_format = descriptor.index_format;
+        mesh.indices_count = descriptor.index_count;
 
         glCreateBuffers(2, &mesh.vertex_buffer);
-        glNamedBufferData(mesh.vertex_buffer, descriptor.vertices.size() * sizeof(descriptor.vertices[0]), descriptor.vertices.data(), GL_STATIC_DRAW);
-        glNamedBufferData(mesh.index_buffer, descriptor.indices.size() * sizeof(descriptor.indices[0]), descriptor.indices.data(), GL_STATIC_DRAW);
-
-        mesh.indices_count = static_cast<int32>(descriptor.indices.size());
+        glNamedBufferData(mesh.vertex_buffer, descriptor.vertex_data.size(), descriptor.vertex_data.data(), GL_STATIC_DRAW);
+        glNamedBufferData(mesh.index_buffer, descriptor.index_data.size(), descriptor.index_data.data(), GL_STATIC_DRAW);
 
         glCreateVertexArrays(1, &mesh.vertex_array);
 
@@ -56,6 +56,8 @@ namespace Hyperion::Rendering {
         glVertexArrayAttribFormat(mesh.vertex_array, 0, 3, GL_FLOAT, false, 0);
         glVertexArrayVertexBuffer(mesh.vertex_array, 0, mesh.vertex_buffer, 0, 32);
         glVertexArrayAttribBinding(mesh.vertex_array, 0, 0);
+
+        glEnableVertexArrayAttrib(mesh.vertex_array, 1);
     }
 
     void OpenGLRenderDriver::FreeMesh(ResourceId id) {
@@ -79,7 +81,7 @@ namespace Hyperion::Rendering {
         glUseProgram(shader.program);
         glBindVertexArray(mesh.vertex_array);
 
-        glDrawElements(GL_TRIANGLES, mesh.indices_count, GL_UNSIGNED_INT, nullptr);
+        glDrawElements(GL_TRIANGLES, mesh.indices_count, GetGLIndexFormat(mesh.index_format), nullptr);
     }
 
     uint32 OpenGLRenderDriver::GetGLClearFlags(ClearFlags clear_flags) {
@@ -96,6 +98,14 @@ namespace Hyperion::Rendering {
         }
 
         return result;
+    }
+
+    uint32 OpenGLRenderDriver::GetGLIndexFormat(IndexFormat index_format) {
+        switch (index_format) {
+            case IndexFormat::UInt16: return GL_UNSIGNED_SHORT;
+            case IndexFormat::UInt32: return GL_UNSIGNED_INT;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
     }
 
 }

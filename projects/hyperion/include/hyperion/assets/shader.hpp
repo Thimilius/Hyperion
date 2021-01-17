@@ -1,6 +1,7 @@
 #pragma once
 
 #include "hyperion/assets/asset.hpp"
+#include "hyperion/assets/shader_descriptor.hpp"
 
 namespace Hyperion {
 
@@ -8,9 +9,9 @@ namespace Hyperion {
     public:
         inline AssetType GetAssetType() const override { return AssetType::Shader; }
 
-        static Shader *Create(const String &vertex, const String &fragment);
+        static Shader *Create(const Map<ShaderStageFlags, String> &sources);
     private:
-        Shader(const String &vertex, const String &fragment);
+        Shader(const Map<ShaderStageFlags, String> &sources);
         ~Shader() override;
     };
 

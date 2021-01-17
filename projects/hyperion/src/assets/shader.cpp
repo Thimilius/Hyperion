@@ -7,11 +7,18 @@
 
 namespace Hyperion {
 
-    Shader::Shader(const String &vertex, const String &fragment) {
-        Rendering::ShaderDescriptor descriptor;
-        descriptor.stage_flags = Rendering::ShaderStageFlags::Vertex | Rendering::ShaderStageFlags::Fragment;
-        descriptor.vertex = vertex;
-        descriptor.fragment = fragment;
+    Shader::Shader(const Map<ShaderStageFlags, String> &sources) {
+        ShaderDescriptor descriptor;
+        for (auto &[stage_flags, source] : sources) {
+            descriptor.stage_flags |= stage_flags;
+
+            if ((stage_flags & ShaderStageFlags::Vertex) == ShaderStageFlags::Vertex) {
+                descriptor.vertex = source;
+            } else if ((stage_flags & ShaderStageFlags::Fragment) == ShaderStageFlags::Fragment) {
+                descriptor.fragment = source;
+            }
+        }
+
         Rendering::RenderEngine::GetRenderDriver()->CreateShader(m_resource_id, descriptor);
     }
 
@@ -19,8 +26,8 @@ namespace Hyperion {
         Rendering::RenderEngine::GetRenderDriver()->FreeShader(m_resource_id);
     }
 
-    Shader *Shader::Create(const String &vertex, const String &fragment) {
-        return new Shader(vertex, fragment);
+    Shader *Shader::Create(const Map<ShaderStageFlags, String> &sources) {
+        return new Shader(sources);
     }
 
 }

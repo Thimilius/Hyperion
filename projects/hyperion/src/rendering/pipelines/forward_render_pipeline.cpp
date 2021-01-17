@@ -13,7 +13,8 @@ namespace Hyperion::Rendering {
     Mesh *mesh;
 
     void ForwardRenderPipeline::Init() {
-        String vertex = R"(
+        Map<ShaderStageFlags, String> sources = {
+            { ShaderStageFlags::Vertex, R"(
                 #version 410 core
                 
                 layout(location = 0) in vec3 a_position;
@@ -21,8 +22,8 @@ namespace Hyperion::Rendering {
                 void main() {
 	                gl_Position = vec4(a_position, 1.0);
                 }
-            )";
-        String fragment = R"(
+            )" },
+            { ShaderStageFlags::Fragment, R"(
                 #version 410 core
 
                 out vec4 o_color;
@@ -30,19 +31,19 @@ namespace Hyperion::Rendering {
                 void main() {
 	                o_color = vec4(0.9, 0.5, 0, 1);
                 }
-            )";
-
-        shader = Shader::Create(vertex, fragment);
+            )" }
+        };
+        shader = Shader::Create(sources);
 
         MeshData mesh_data;
         mesh_data.positions = {
             Vec3(-0.5f,  0.5f, 0.0f),
-            Vec3(0.5f,  0.5f, 0.0f),
-            Vec3(0.5f, -0.5f, 0.0f),
+            Vec3( 0.5f,  0.5f, 0.0f),
+            Vec3( 0.5f, -0.5f, 0.0f),
             Vec3(-0.5f, -0.5f, 0.0f),
         };
         mesh_data.normals.resize(4);
-        mesh_data.uvs.resize(4);
+        mesh_data.texture0.resize(4);
         mesh_data.indices = {
             0, 1, 2,
             0, 2, 3

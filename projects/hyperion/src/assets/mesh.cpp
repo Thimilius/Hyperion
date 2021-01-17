@@ -16,16 +16,35 @@ namespace Hyperion {
         RecalculateBounds();
 
         Rendering::MeshDescriptor descriptor;
-        uint32 vertex_count = static_cast<uint32>(mesh_data.positions.size());
-        descriptor.vertices.resize(vertex_count);
-        descriptor.indices = mesh_data.indices;
 
+        bool has_positions = mesh_data.positions.size() > 0;
+        bool has_normals = mesh_data.normals.size() > 0;
+        bool has_texture0 = mesh_data.texture0.size() > 0;
+
+        uint32 vertex_count = static_cast<uint32>(mesh_data.positions.size());
+        descriptor.vertex_data.resize(vertex_count * sizeof(VertexMesh));
+        VertexMesh *vertex_data = reinterpret_cast<VertexMesh *>(descriptor.vertex_data.data());
         for (uint32 i = 0; i < vertex_count; i++) {
-            descriptor.vertices[i].position = mesh_data.positions[i];
-            descriptor.vertices[i].normal = mesh_data.normals[i];
-            descriptor.vertices[i].uv = mesh_data.uvs[i];
+            vertex_data[i].position = mesh_data.positions[i];
+            vertex_data[i].normal = mesh_data.normals[i];
+            vertex_data[i].texture0 = mesh_data.texture0[i];
         }
-        
+        descriptor.vertex_attributes = {
+            { VertexAttribute::Position, VertexAttributeFormat::Float32, 3 },
+            { VertexAttribute::Normal, VertexAttributeFormat::Float32, 3 },
+            { VertexAttribute::Texture0, VertexAttributeFormat::Float32, 2 },
+        };
+
+        // FIXME: This is hardcoded for 32-Bit indices!
+        descriptor.index_format = IndexFormat::UInt32;
+        uint32 index_count = static_cast<uint32>(mesh_data.indices.size());
+        descriptor.index_count = index_count;
+        descriptor.index_data.resize(index_count * sizeof(uint32));
+        uint32 *index_data = reinterpret_cast<uint32 *>(descriptor.index_data.data());
+        for (uint32 i = 0; i < index_count; i++) {
+            index_data[i] = mesh_data.indices[i];
+        }
+
         Rendering::RenderEngine::GetRenderDriver()->CreateMesh(m_resource_id, descriptor);
     }
 

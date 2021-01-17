@@ -1,5 +1,7 @@
 #pragma once
 
+#include "hyperion/assets/mesh_descriptor.hpp"
+#include "hyperion/assets/shader_descriptor.hpp"
 #include "hyperion/core/color.hpp"
 #include "hyperion/core/resource.hpp"
 #include "hyperion/core/math/vec2.hpp"
@@ -23,30 +25,14 @@ namespace Hyperion::Rendering {
         int32 height;
     };
 
-    enum class ShaderStageFlags {
-        Unknown,
-
-        Vertex   = BIT(0),
-        Fragment = BIT(1)
-    };
-    HYP_CREATE_ENUM_FLAG_OPERATORS(ShaderStageFlags);
-
-    struct ShaderDescriptor {
-        ShaderStageFlags stage_flags;
-
-        String vertex;
-        String fragment;
-    };
-
-    struct VertexMesh {
-        Vec3 position;
-        Vec3 normal;
-        Vec2 uv;
-    };
-
     struct MeshDescriptor {
-        Vector<VertexMesh> vertices;
-        Vector<uint32> indices;
+        Vector<VertexAttributeDescriptor> vertex_attributes;
+
+        IndexFormat index_format;
+        uint32 index_count;
+
+        Vector<uint8> vertex_data;
+        Vector<uint8> index_data;
     };
 
     class IRenderDriver {

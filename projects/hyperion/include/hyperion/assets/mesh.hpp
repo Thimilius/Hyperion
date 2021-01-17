@@ -1,33 +1,25 @@
 #pragma once
 
 #include "hyperion/assets/asset.hpp"
+#include "hyperion/assets/mesh_descriptor.hpp"
 #include "hyperion/core/math/bounding_box.hpp"
 #include "hyperion/core/math/vec2.hpp"
 #include "hyperion/core/math/vec3.hpp"
 
 namespace Hyperion {
 
-    enum class MeshTopology {
-        Triangles,
-        Lines,
-        LineStrip,
-        Points
-    };
-
     struct MeshData {
         Vector<Vec3> positions;
         Vector<Vec3> normals;
-        Vector<Vec2> uvs;
+        Vector<Vec2> texture0;
 
         Vector<uint32> indices;
     };
 
-    struct SubMesh {
-        MeshTopology topology;
-
-        uint32 index_count;
-        uint32 index_offset;
-        uint32 vertex_offset;
+    struct VertexMesh {
+        Vec3 position;
+        Vec3 normal;
+        Vec2 texture0;
     };
 
     class Mesh : public Asset {
