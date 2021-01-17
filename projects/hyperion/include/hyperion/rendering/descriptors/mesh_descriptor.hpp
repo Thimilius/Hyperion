@@ -2,13 +2,13 @@
 
 #include "hyperion/core/types.hpp"
 
-namespace Hyperion {
+namespace Hyperion::Rendering {
 
     enum class MeshTopology {
-        Triangles,
+        Points,
         Lines,
         LineStrip,
-        Points
+        Triangles
     };
 
     enum class VertexAttribute {
@@ -37,12 +37,27 @@ namespace Hyperion {
         uint32 dimension;
     };
 
+    struct VertexFormat {
+        Vector<VertexAttributeDescriptor> vertex_attributes;
+        uint32 stride;
+    };
+
     struct SubMesh {
         MeshTopology topology;
 
         uint32 index_count;
         uint32 index_offset;
         uint32 vertex_offset;
+    };
+
+    struct MeshDescriptor {
+        Vector<SubMesh> sub_meshes;
+
+        VertexFormat vertex_format;
+        IndexFormat index_format;
+
+        Vector<uint8> vertex_data;
+        Vector<uint8> index_data;
     };
 
 }

@@ -8,7 +8,7 @@
 
 namespace Hyperion {
 
-    // Apparently microsoft forgot to include this definition in their header files. What the hell!?!?
+    // RANT: Apparently Microsoft forgot to include this definition in their header files. What the hell!?!?
     typedef struct _PROCESSOR_POWER_INFORMATION {
         ULONG Number;
         ULONG MaxMhz;

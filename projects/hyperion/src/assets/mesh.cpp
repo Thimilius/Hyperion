@@ -5,17 +5,22 @@
 #include "hyperion/rendering/render_engine.hpp"
 #include "hyperion/rendering/render_driver.hpp"
 
+using namespace Hyperion::Rendering;
+
 namespace Hyperion {
 
     Mesh::Mesh(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes) {
         HYP_ASSERT_MESSAGE(sub_meshes.size() > 0, "Must provide at least one submesh when creating a mesh!");
+
+        // NOTE: Currently we don't really do a lot of data validation.
 
         m_mesh_data = mesh_data;
         m_sub_meshes = sub_meshes;
 
         RecalculateBounds();
 
-        Rendering::MeshDescriptor descriptor;
+        MeshDescriptor descriptor;
+        descriptor.sub_meshes = sub_meshes;
 
         bool has_positions = mesh_data.positions.size() > 0;
         bool has_normals = mesh_data.normals.size() > 0;
@@ -29,16 +34,15 @@ namespace Hyperion {
             vertex_data[i].normal = mesh_data.normals[i];
             vertex_data[i].texture0 = mesh_data.texture0[i];
         }
-        descriptor.vertex_attributes = {
+        descriptor.vertex_format = { {
             { VertexAttribute::Position, VertexAttributeFormat::Float32, 3 },
             { VertexAttribute::Normal, VertexAttributeFormat::Float32, 3 },
             { VertexAttribute::Texture0, VertexAttributeFormat::Float32, 2 },
-        };
+        } };
 
         // FIXME: This is hardcoded for 32-Bit indices!
         descriptor.index_format = IndexFormat::UInt32;
         uint32 index_count = static_cast<uint32>(mesh_data.indices.size());
-        descriptor.index_count = index_count;
         descriptor.index_data.resize(index_count * sizeof(uint32));
         uint32 *index_data = reinterpret_cast<uint32 *>(descriptor.index_data.data());
         for (uint32 i = 0; i < index_count; i++) {

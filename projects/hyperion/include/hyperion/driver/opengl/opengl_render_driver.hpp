@@ -2,7 +2,6 @@
 
 #include <glad/glad.h>
 
-#include "hyperion/assets/mesh_descriptor.hpp"
 #include "hyperion/rendering/render_driver.hpp"
 
 namespace Hyperion::Rendering {
@@ -20,8 +19,10 @@ namespace Hyperion::Rendering {
 
         void DrawIndexed(ResourceId shader_id, ResourceId mesh_id) override;
     private:
-        static uint32 GetGLClearFlags(ClearFlags clear_flags);
-        static uint32 GetGLIndexFormat(IndexFormat index_format);
+        static GLbitfield GetGLClearFlags(ClearFlags clear_flags);
+        static GLenum GetGLIndexFormat(IndexFormat index_format);
+        static GLsizei GetGLIndexFormatSize(IndexFormat index_format);
+        static GLenum GetGLMeshTopology(MeshTopology mesh_topology);
     private:
         struct OpenGLShader {
             GLuint program;
@@ -32,11 +33,10 @@ namespace Hyperion::Rendering {
             // Vertex and index buffer have to be next to each other to support efficient creation and destruction
             GLuint vertex_buffer;
             GLuint index_buffer;
-
             GLuint vertex_array;
 
             IndexFormat index_format;
-            int32 indices_count;
+            Vector<SubMesh> sub_meshes;
         };
         inline static Map<ResourceId, OpenGLMesh> s_meshes;
     };

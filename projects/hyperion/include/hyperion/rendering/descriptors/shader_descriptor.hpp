@@ -2,7 +2,7 @@
 
 #include "hyperion/common.hpp"
 
-namespace Hyperion {
+namespace Hyperion::Rendering {
 
     enum class ShaderStageFlags {
         Unknown,

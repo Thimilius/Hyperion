@@ -5,6 +5,8 @@
 #include "hyperion/rendering/render_engine.hpp"
 #include "hyperion/rendering/render_driver.hpp"
 
+using namespace Hyperion::Rendering;
+
 namespace Hyperion {
 
     Shader::Shader(const Map<ShaderStageFlags, String> &sources) {

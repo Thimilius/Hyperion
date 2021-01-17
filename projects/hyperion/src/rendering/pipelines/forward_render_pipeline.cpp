@@ -9,8 +9,8 @@
 
 namespace Hyperion::Rendering {
 
-    Shader *shader;
-    Mesh *mesh;
+    Shader *g_shader;
+    Mesh *g_mesh;
 
     void ForwardRenderPipeline::Init() {
         Map<ShaderStageFlags, String> sources = {
@@ -33,7 +33,7 @@ namespace Hyperion::Rendering {
                 }
             )" }
         };
-        shader = Shader::Create(sources);
+        g_shader = Shader::Create(sources);
 
         MeshData mesh_data;
         mesh_data.positions = {
@@ -48,15 +48,12 @@ namespace Hyperion::Rendering {
             0, 1, 2,
             0, 2, 3
         };
+        Vector<SubMesh> sub_meshes = {
+            { MeshTopology::Triangles, 3, 0, 0 },
+            { MeshTopology::Triangles, 3, 3, 0 }
+        };
 
-        SubMesh sub_mesh;
-        sub_mesh.topology = MeshTopology::Triangles;
-        sub_mesh.index_count = 6;
-        sub_mesh.index_offset = 0;
-        sub_mesh.vertex_offset = 0;
-        Vector<SubMesh> sub_meshes = { sub_mesh };
-
-        mesh = Mesh::Create(mesh_data, sub_meshes);
+        g_mesh = Mesh::Create(mesh_data, sub_meshes);
     }
 
     void ForwardRenderPipeline::Render() {
@@ -68,7 +65,7 @@ namespace Hyperion::Rendering {
         color *= value;
         RenderEngine::GetRenderDriver()->Clear(ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, color);
 
-        RenderEngine::GetRenderDriver()->DrawIndexed(shader->GetResourceId(), mesh->GetResourceId());
+        RenderEngine::GetRenderDriver()->DrawIndexed(g_shader->GetResourceId(), g_mesh->GetResourceId());
     }
 
 }

@@ -41,7 +41,7 @@ namespace Hyperion::Rendering {
 
         OpenGLMesh &mesh = s_meshes[id];
         mesh.index_format = descriptor.index_format;
-        mesh.indices_count = descriptor.index_count;
+        mesh.sub_meshes = descriptor.sub_meshes;
 
         glCreateBuffers(2, &mesh.vertex_buffer);
         glNamedBufferData(mesh.vertex_buffer, descriptor.vertex_data.size(), descriptor.vertex_data.data(), GL_STATIC_DRAW);
@@ -56,8 +56,6 @@ namespace Hyperion::Rendering {
         glVertexArrayAttribFormat(mesh.vertex_array, 0, 3, GL_FLOAT, false, 0);
         glVertexArrayVertexBuffer(mesh.vertex_array, 0, mesh.vertex_buffer, 0, 32);
         glVertexArrayAttribBinding(mesh.vertex_array, 0, 0);
-
-        glEnableVertexArrayAttrib(mesh.vertex_array, 1);
     }
 
     void OpenGLRenderDriver::FreeMesh(ResourceId id) {
@@ -77,15 +75,21 @@ namespace Hyperion::Rendering {
         OpenGLShader &shader = s_shaders[shader_id];
         OpenGLMesh &mesh = s_meshes[mesh_id];
 
+        glEnable(GL_CULL_FACE);
         glFrontFace(GL_CW);
         glUseProgram(shader.program);
         glBindVertexArray(mesh.vertex_array);
 
-        glDrawElements(GL_TRIANGLES, mesh.indices_count, GetGLIndexFormat(mesh.index_format), nullptr);
+        GLenum index_format = GetGLIndexFormat(mesh.index_format);
+        GLsizei index_format_size = GetGLIndexFormatSize(mesh.index_format);
+        for (SubMesh &sub_mesh : mesh.sub_meshes) {
+            const void *offset = reinterpret_cast<const void *>(static_cast<uint64>(sub_mesh.index_offset) * index_format_size);
+            glDrawElementsBaseVertex(GetGLMeshTopology(sub_mesh.topology), sub_mesh.index_count, index_format, offset, sub_mesh.vertex_offset);
+        }
     }
 
-    uint32 OpenGLRenderDriver::GetGLClearFlags(ClearFlags clear_flags) {
-        uint32 result = 0;
+    GLbitfield OpenGLRenderDriver::GetGLClearFlags(ClearFlags clear_flags) {
+        GLbitfield result = 0;
 
         if ((clear_flags & ClearFlags::Color) == ClearFlags::Color) {
             result |= GL_COLOR_BUFFER_BIT;
@@ -100,10 +104,28 @@ namespace Hyperion::Rendering {
         return result;
     }
 
-    uint32 OpenGLRenderDriver::GetGLIndexFormat(IndexFormat index_format) {
+    GLenum OpenGLRenderDriver::GetGLIndexFormat(IndexFormat index_format) {
         switch (index_format) {
             case IndexFormat::UInt16: return GL_UNSIGNED_SHORT;
             case IndexFormat::UInt32: return GL_UNSIGNED_INT;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    GLsizei OpenGLRenderDriver::GetGLIndexFormatSize(IndexFormat index_format) {
+        switch (index_format) {
+            case IndexFormat::UInt16: return sizeof(uint16);
+            case IndexFormat::UInt32: return sizeof(uint32);
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    GLenum OpenGLRenderDriver::GetGLMeshTopology(MeshTopology mesh_topology) {
+        switch (mesh_topology) {
+            case MeshTopology::Points: return GL_POINTS;
+            case MeshTopology::Lines: return GL_LINES;
+            case MeshTopology::LineStrip: return GL_LINE_STRIP;
+            case MeshTopology::Triangles: return GL_TRIANGLES;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }

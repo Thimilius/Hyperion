@@ -1,11 +1,11 @@
 #pragma once
 
-#include "hyperion/assets/mesh_descriptor.hpp"
-#include "hyperion/assets/shader_descriptor.hpp"
 #include "hyperion/core/color.hpp"
 #include "hyperion/core/resource.hpp"
 #include "hyperion/core/math/vec2.hpp"
 #include "hyperion/core/math/vec3.hpp"
+#include "hyperion/rendering/descriptors/mesh_descriptor.hpp"
+#include "hyperion/rendering/descriptors/shader_descriptor.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -23,16 +23,6 @@ namespace Hyperion::Rendering {
         int32 y;
         int32 width;
         int32 height;
-    };
-
-    struct MeshDescriptor {
-        Vector<VertexAttributeDescriptor> vertex_attributes;
-
-        IndexFormat index_format;
-        uint32 index_count;
-
-        Vector<uint8> vertex_data;
-        Vector<uint8> index_data;
     };
 
     class IRenderDriver {

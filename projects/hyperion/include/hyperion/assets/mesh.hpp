@@ -1,10 +1,10 @@
 #pragma once
 
 #include "hyperion/assets/asset.hpp"
-#include "hyperion/assets/mesh_descriptor.hpp"
 #include "hyperion/core/math/bounding_box.hpp"
 #include "hyperion/core/math/vec2.hpp"
 #include "hyperion/core/math/vec3.hpp"
+#include "hyperion/rendering/descriptors/mesh_descriptor.hpp"
 
 namespace Hyperion {
 
@@ -28,11 +28,11 @@ namespace Hyperion {
 
         inline const MeshData &GetMeshData() const { return m_mesh_data; }
         inline BoundingBox GetBounds() const { return m_bounds; }
-        inline const Vector<SubMesh> &GetSubMeshes() const { return m_sub_meshes; }
+        inline const Vector<Rendering::SubMesh> &GetSubMeshes() const { return m_sub_meshes; }
         
-        static Mesh *Create(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes);
+        static Mesh *Create(const MeshData &mesh_data, const Vector<Rendering::SubMesh> &sub_meshes);
     private:
-        Mesh(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes);
+        Mesh(const MeshData &mesh_data, const Vector<Rendering::SubMesh> &sub_meshes);
         ~Mesh() override;
 
         void RecalculateBounds();
@@ -40,7 +40,7 @@ namespace Hyperion {
         MeshData m_mesh_data;
         BoundingBox m_bounds;
 
-        Vector<SubMesh> m_sub_meshes;
+        Vector<Rendering::SubMesh> m_sub_meshes;
     };
 
 }
