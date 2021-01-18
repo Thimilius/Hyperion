@@ -43,4 +43,15 @@ namespace Hyperion {
         Vector<Rendering::SubMesh> m_sub_meshes;
     };
 
+    class MeshFactory final {
+    public:
+        static Mesh *CreateQuad(float32 width, float32 height);
+        static Mesh *CreatePlane(float32 width, float32 height);
+        static Mesh *CreateCube(float32 size);
+        static Mesh *CreateSphere(float32 radius);
+    private:
+        MeshFactory() = delete;
+        ~MeshFactory() = delete;
+    };
+
 }
