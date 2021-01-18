@@ -4,6 +4,7 @@
 #include "hyperion/core/resource.hpp"
 #include "hyperion/core/math/vec2.hpp"
 #include "hyperion/core/math/vec3.hpp"
+#include "hyperion/rendering/rasterizer_state.hpp"
 #include "hyperion/rendering/descriptors/mesh_descriptor.hpp"
 #include "hyperion/rendering/descriptors/shader_descriptor.hpp"
 
@@ -31,6 +32,7 @@ namespace Hyperion::Rendering {
 
         virtual void Clear(ClearFlags clear_flags, Color color) = 0;
         virtual void Viewport(const Viewport &viewport) = 0;
+        virtual void SetRasterizerState(const RasterizerState &rasterizer_state) = 0;
 
         virtual void CreateShader(ResourceId id, const ShaderDescriptor &descriptor) = 0;
         virtual void FreeShader(ResourceId id) = 0;

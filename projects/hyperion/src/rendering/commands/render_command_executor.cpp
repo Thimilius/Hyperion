@@ -18,6 +18,11 @@ namespace Hyperion::Rendering {
                 render_driver->Viewport(render_command->viewport);
                 return sizeof(*render_command);
             }
+            case RenderCommandType::SetRasterizerState: {
+                auto render_command = reinterpret_cast<const RenderCommandSetRasterizerState *>(command);
+                render_driver->SetRasterizerState(render_command->rasterizer_state);
+                return sizeof(*render_command);
+            }
             case RenderCommandType::CreateShader: {
                 auto render_command = reinterpret_cast<const RenderCommandCreateShader *>(command);
                 render_driver->CreateShader(render_command->id, render_command->descriptor);

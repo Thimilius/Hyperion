@@ -54,6 +54,8 @@ namespace Hyperion::Rendering {
         };
 
         g_mesh = Mesh::Create(mesh_data, sub_meshes);
+
+        RenderEngine::GetRenderDriver()->SetRasterizerState(RasterizerState());
     }
 
     void ForwardRenderPipeline::Render() {

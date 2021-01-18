@@ -10,6 +10,7 @@ namespace Hyperion::Rendering {
     public:
         void Clear(ClearFlags clear_flags, Color color) override;
         void Viewport(const Rendering::Viewport &viewport) override;
+        void SetRasterizerState(const RasterizerState &rasterizer_state) override;
 
         void CreateShader(ResourceId id, const ShaderDescriptor &descriptor) override;
         void FreeShader(ResourceId id) override;
@@ -20,6 +21,12 @@ namespace Hyperion::Rendering {
         void DrawIndexed(ResourceId shader_id, ResourceId mesh_id) override;
     private:
         static GLbitfield GetGLClearFlags(ClearFlags clear_flags);
+        static GLenum GetGLDepthEquation(DepthEquation depth_equation);
+        static GLenum GetGLBlendingFactor(BlendingFactor blending_factor);
+        static GLenum GetGLBlendingEquation(BlendingEquation blending_equation);
+        static GLenum GetGLCullingMode(CullingMode culling_mode);
+        static GLenum GetGLCullingFrontFaceMode(CullingFrontFaceMode culling_front_face_mode);
+        static GLenum GetGLPolygonMode(PolygonMode polygon_mode);
         static GLenum GetGLIndexFormat(IndexFormat index_format);
         static GLsizei GetGLIndexFormatSize(IndexFormat index_format);
         static GLenum GetGLMeshTopology(MeshTopology mesh_topology);

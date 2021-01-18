@@ -15,6 +15,63 @@ namespace Hyperion::Rendering {
         glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
     }
 
+    void OpenGLRenderDriver::SetRasterizerState(const RasterizerState &rasterizer_state) {
+        // NOTE: Currently we are setting the whole rasterizer state at once,
+        // regardless of wether or not we actually have new values we want to change.
+        // So this is very expensive.
+
+        // Depth
+        {
+            if (rasterizer_state.depth_test_enabled) {
+                glEnable(GL_DEPTH_TEST);
+            } else {
+                glDisable(GL_DEPTH_TEST);
+            }
+            if (rasterizer_state.depth_mask_enabled) {
+                glDepthMask(GL_TRUE);
+            } else {
+                glDepthMask(GL_FALSE);
+            }
+            glDepthFunc(GetGLDepthEquation(rasterizer_state.depth_equation));
+        }
+        
+        // Stencil
+        {
+            if (rasterizer_state.stencil_test_enabled) {
+                glEnable(GL_STENCIL_TEST);
+            } else {
+                glDisable(GL_STENCIL_TEST);
+            }
+        }
+
+        // Blending
+        {
+            if (rasterizer_state.blending_enabled) {
+                glEnable(GL_BLEND);
+            } else {
+                glDisable(GL_BLEND);
+            }
+            glBlendFunc(GetGLBlendingFactor(rasterizer_state.blending_function.source_factor), GetGLBlendingFactor(rasterizer_state.blending_function.destination_factor));
+            glBlendEquation(GetGLBlendingEquation(rasterizer_state.blending_equation));
+        }
+
+        // Culling
+        {
+            if (rasterizer_state.culling_enabled) {
+                glEnable(GL_CULL_FACE);
+            } else {
+                glDisable(GL_CULL_FACE);
+            }
+            glCullFace(GetGLCullingMode(rasterizer_state.culling_mode));
+            glFrontFace(GetGLCullingFrontFaceMode(rasterizer_state.culling_front_face_mode));
+        }
+
+        // Misc
+        {
+            glPolygonMode(GL_FRONT_AND_BACK, GetGLPolygonMode(rasterizer_state.polygon_mode));
+        }
+    }
+
     void OpenGLRenderDriver::CreateShader(ResourceId id, const ShaderDescriptor &descriptor) {
         HYP_ASSERT(s_shaders.find(id) == s_shaders.end());
 
@@ -75,8 +132,6 @@ namespace Hyperion::Rendering {
         OpenGLShader &shader = s_shaders[shader_id];
         OpenGLMesh &mesh = s_meshes[mesh_id];
 
-        glEnable(GL_CULL_FACE);
-        glFrontFace(GL_CW);
         glUseProgram(shader.program);
         glBindVertexArray(mesh.vertex_array);
 
@@ -102,6 +157,70 @@ namespace Hyperion::Rendering {
         }
 
         return result;
+    }
+
+    GLenum OpenGLRenderDriver::GetGLDepthEquation(DepthEquation depth_equation) {
+        switch (depth_equation) {
+            case DepthEquation::Never: return GL_NEVER;
+            case DepthEquation::Always: return GL_ALWAYS;
+            case DepthEquation::Less: return GL_LESS;
+            case DepthEquation::LessEqual: return GL_LEQUAL;
+            case DepthEquation::Greater: return GL_GREATER;
+            case DepthEquation::GreaterEqual: return GL_GEQUAL;
+            case DepthEquation::Equal: return GL_EQUAL;
+            case DepthEquation::NotEqual: return GL_NOTEQUAL;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    GLenum OpenGLRenderDriver::GetGLBlendingFactor(BlendingFactor blending_factor) {
+        switch (blending_factor) {
+            case BlendingFactor::Zero: return GL_ZERO;
+            case BlendingFactor::One: return GL_ONE;
+            case BlendingFactor::SourceAlpha: return GL_SRC_ALPHA;
+            case BlendingFactor::SourceColor: return GL_SRC_COLOR;
+            case BlendingFactor::DestinationAlpha: return GL_DST_ALPHA;
+            case BlendingFactor::DestinationColor: return GL_DST_COLOR;
+            case BlendingFactor::InverseSourceAlpha: return GL_ONE_MINUS_SRC_ALPHA;
+            case BlendingFactor::InverseSourceColor: return GL_ONE_MINUS_SRC_COLOR;
+            case BlendingFactor::InverseDestinationAlpha: return GL_ONE_MINUS_DST_ALPHA;
+            case BlendingFactor::InverseDestinationColor: return GL_ONE_MINUS_DST_COLOR;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    GLenum OpenGLRenderDriver::GetGLBlendingEquation(BlendingEquation blending_equation) {
+        switch (blending_equation) {
+            case BlendingEquation::Add: return GL_FUNC_ADD;
+            case BlendingEquation::Subtract: return GL_FUNC_SUBTRACT;
+            case BlendingEquation::ReverseSubract: return GL_FUNC_REVERSE_SUBTRACT;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    GLenum OpenGLRenderDriver::GetGLCullingMode(CullingMode culling_mode) {
+        switch (culling_mode) {
+            case CullingMode::Back: return GL_BACK;
+            case CullingMode::Front: return GL_FRONT;
+            case CullingMode::FrontAndBack: return GL_FRONT_AND_BACK;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    GLenum OpenGLRenderDriver::GetGLCullingFrontFaceMode(CullingFrontFaceMode culling_front_face_mode) {
+        switch (culling_front_face_mode) {
+            case CullingFrontFaceMode::Clockwise: return GL_CW;
+            case CullingFrontFaceMode::CounterClockwise: return GL_CCW;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    GLenum OpenGLRenderDriver::GetGLPolygonMode(PolygonMode polygon_mode) {
+        switch (polygon_mode) {
+            case PolygonMode::Fill: return GL_FILL;
+            case PolygonMode::Line: return GL_LINE;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
     }
 
     GLenum OpenGLRenderDriver::GetGLIndexFormat(IndexFormat index_format) {

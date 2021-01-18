@@ -17,6 +17,11 @@ namespace Hyperion::Rendering {
         command->viewport = viewport;
     }
 
+    void MultithreadedRenderDriver::SetRasterizerState(const RasterizerState &rasterizer_state) {
+        RenderCommandSetRasterizerState *command = RenderEngine::GetCommandQueue().Allocate<RenderCommandSetRasterizerState>(RenderCommandType::SetRasterizerState);
+        command->rasterizer_state = rasterizer_state;
+    }
+
     void MultithreadedRenderDriver::CreateShader(ResourceId id, const ShaderDescriptor &descriptor) {
         RenderCommandCreateShader *command = RenderEngine::GetCommandQueue().Allocate<RenderCommandCreateShader>(RenderCommandType::CreateShader);
         command->id = id;

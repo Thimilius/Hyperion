@@ -9,6 +9,7 @@ namespace Hyperion::Rendering {
 
         Clear,
         Viewport,
+        SetRasterizerState,
 
         CreateShader,
         FreeShader,
@@ -26,6 +27,10 @@ namespace Hyperion::Rendering {
 
     struct RenderCommandViewport {
         Viewport viewport;
+    };
+
+    struct RenderCommandSetRasterizerState {
+        RasterizerState rasterizer_state;
     };
 
     struct RenderCommandId {

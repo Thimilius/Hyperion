@@ -8,6 +8,7 @@ namespace Hyperion::Rendering {
     public:
         void Clear(ClearFlags clear_flags, Color color) override;
         void Viewport(const Rendering::Viewport &viewport) override;
+        void SetRasterizerState(const RasterizerState &rasterizer_state) override;
 
         void CreateShader(ResourceId id, const ShaderDescriptor &descriptor) override;
         void FreeShader(ResourceId id) override;
