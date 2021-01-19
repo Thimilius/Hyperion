@@ -73,7 +73,7 @@ namespace Hyperion::Rendering {
                 0
             };
 #else
-            const s32 context_attributes[] = {
+            const int32 context_attributes[] = {
                 WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
                 0
         };
