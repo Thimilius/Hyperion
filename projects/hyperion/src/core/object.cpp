@@ -2,7 +2,6 @@
 
 #include "hyperion/core/object.hpp"
 
-#include "hyperion/core/object_manager.hpp"
 #include "hyperion/entity/components/transform.hpp"
 
 namespace Hyperion {
@@ -47,6 +46,56 @@ namespace Hyperion {
             object->m_destroyed = true;
             ObjectManager::DestroyImmediate(object);
         }
+    }
+
+    Object *ObjectManager::Get(ObjectId object_id) {
+        HYP_ASSERT(s_objects.find(object_id) != s_objects.end());
+        return s_objects[object_id];
+    }
+
+    void ObjectManager::LateUpdate() {
+        DestroyPendingObjects();
+    }
+
+    void ObjectManager::Shutdown() {
+        for (auto &[object_id, object] : s_objects) {
+            Object::Destroy(object);
+        }
+        DestroyPendingObjects();
+    }
+
+    void ObjectManager::Destroy(Object *object) {
+        s_objects_to_destroy.insert(object);
+    }
+
+    void ObjectManager::DestroyImmediate(Object *object) {
+        object->OnDestroy();
+
+        delete object;
+    }
+
+    void ObjectManager::DestroyPendingObjects() {
+        for (Object *object : s_objects_to_destroy) {
+            ObjectManager::DestroyImmediate(object);
+        }
+        s_objects_to_destroy.clear();
+    }
+
+    ObjectId ObjectManager::RegisterObject(Object *object) {
+        // 0 is not a valid object id, so we preincrement
+        ObjectId id = ++s_object_id_counter;
+        s_objects[id] = object;
+        return id;
+    }
+
+    void ObjectManager::UnregisterObject(Object *object) {
+        HYP_ASSERT(object);
+
+        ObjectId id = object->GetId();
+
+        HYP_ASSERT(s_objects.find(id) != s_objects.end());
+
+        s_objects.erase(id);
     }
 
 }

@@ -3,8 +3,8 @@
 #include "hyperion/core/engine.hpp"
 
 #include "hyperion/core/timer.hpp"
-#include "hyperion/core/object_manager.hpp"
 #include "hyperion/core/memory.hpp"
+#include "hyperion/core/object.hpp"
 #include "hyperion/core/app/display.hpp"
 #include "hyperion/core/app/input.hpp"
 #include "hyperion/core/app/time.hpp"
@@ -136,6 +136,7 @@ namespace Hyperion {
 
     void Engine::Shutdown() {
         WorldManager::Shutdown();
+        ObjectManager::Shutdown();
         ScriptingEngine::Shutdown();
         Audio::AudioEngine::Shutdown();
         Physics::PhysicsEngine::Shutdown();

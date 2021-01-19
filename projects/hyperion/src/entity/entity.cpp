@@ -81,7 +81,7 @@ namespace Hyperion {
 
         // Now destroy all our components except transform
         for (auto it = m_components.begin(); it != m_components.end(); ) {
-            auto [component_type, component] = *it;
+            auto& [component_type, component] = *it;
             if (component_type.is_derived_from<Transform>()) {
                 ++it;
             } else {

@@ -4,9 +4,11 @@
 #include "hyperion/core/guid.hpp"
 
 namespace Hyperion {
+    class Engine;
     class Entity;
     class ObjectManager;
     class World;
+    class WorldManager;
 }
 
 namespace Hyperion {
@@ -53,6 +55,32 @@ namespace Hyperion {
         friend class Hyperion::Entity;
         friend class Hyperion::ObjectManager;
         friend class Hyperion::World;
+    };
+
+    class ObjectManager final {
+    public:
+        static Object *Get(ObjectId object_id);
+    private:
+        ObjectManager() = delete;
+        ~ObjectManager() = delete;
+
+        static void LateUpdate();
+        static void Shutdown();
+
+        static void Destroy(Object *object);
+        static void DestroyImmediate(Object *object);
+        static void DestroyPendingObjects();
+
+        static ObjectId RegisterObject(Object *object);
+        static void UnregisterObject(Object *object);
+    private:
+        inline static Map<ObjectId, Object *> s_objects;
+        inline static Set<Object *> s_objects_to_destroy;
+        inline static ObjectId s_object_id_counter;
+    private:
+        friend class Hyperion::Engine;
+        friend class Hyperion::Object;
+        friend class Hyperion::WorldManager;
     };
 
 }
