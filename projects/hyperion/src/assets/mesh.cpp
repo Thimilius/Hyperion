@@ -2,6 +2,7 @@
 
 #include "hyperion/assets/mesh.hpp"
 
+#include "hyperion/modules/assimp/assimp_mesh_loader.hpp"
 #include "hyperion/rendering/render_engine.hpp"
 #include "hyperion/rendering/render_driver.hpp"
 
@@ -361,6 +362,12 @@ namespace Hyperion {
         }
 
         return Mesh::Create(mesh_data, { { MeshTopology::Triangles, static_cast<uint32>(mesh_data.indices.size()), 0, 0 } });
+    }
+
+    IMeshLoader *MeshFactory::s_mesh_loader = new AssimpMeshLoader();
+
+    Mesh *MeshFactory::CreateFromFile(const String &path) {
+        return s_mesh_loader->LoadMesh(path);
     }
 
 }

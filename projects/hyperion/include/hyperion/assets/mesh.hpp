@@ -43,15 +43,25 @@ namespace Hyperion {
         Vector<Rendering::SubMesh> m_sub_meshes;
     };
 
+    class IMeshLoader {
+    public:
+        virtual ~IMeshLoader() = default;
+
+        virtual Mesh *LoadMesh(const String &path) = 0;
+    };
+
     class MeshFactory final {
     public:
         static Mesh *CreateQuad(float32 width, float32 height);
         static Mesh *CreatePlane(float32 width, float32 height);
         static Mesh *CreateCube(float32 size);
         static Mesh *CreateSphere(float32 radius);
+        static Mesh *CreateFromFile(const String &path);
     private:
         MeshFactory() = delete;
         ~MeshFactory() = delete;
+    private:
+        static IMeshLoader *s_mesh_loader;
     };
 
 }
