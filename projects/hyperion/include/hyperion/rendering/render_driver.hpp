@@ -7,6 +7,7 @@
 #include "hyperion/rendering/rasterizer_state.hpp"
 #include "hyperion/rendering/descriptors/mesh_descriptor.hpp"
 #include "hyperion/rendering/descriptors/shader_descriptor.hpp"
+#include "hyperion/rendering/descriptors/texture_descriptor.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -39,6 +40,9 @@ namespace Hyperion::Rendering {
 
         virtual void CreateMesh(ResourceId id, const MeshDescriptor &descriptor) = 0;
         virtual void FreeMesh(ResourceId id) = 0;
+
+        virtual void CreateTexture(ResourceId id, const TextureDescriptor &descriptor) = 0;
+        virtual void FreeTexture(ResourceId id) = 0;
 
         virtual void DrawIndexed(ResourceId shader_id, ResourceId mesh_id) = 0;
     };

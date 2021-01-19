@@ -4,6 +4,7 @@
 
 #include "hyperion/assets/mesh.hpp"
 #include "hyperion/assets/shader.hpp"
+#include "hyperion/assets/texture.hpp"
 #include "hyperion/core/app/time.hpp"
 #include "hyperion/rendering/render_engine.hpp"
 
@@ -11,6 +12,7 @@ namespace Hyperion::Rendering {
 
     Shader *g_shader;
     Mesh *g_mesh;
+    Texture *g_texture;
 
     void ForwardRenderPipeline::Init() {
         Map<ShaderStageFlags, String> sources = {
@@ -54,6 +56,20 @@ namespace Hyperion::Rendering {
         };
 
         g_mesh = Mesh::Create(mesh_data, sub_meshes);
+
+        uint32 width = 1024;
+        uint32 height = 1024;
+        Vector<uint8> pixels(width * height * 32);
+        uint8 *data = pixels.data();
+        for (uint32 x = 0; x < width; x++) {
+            for (uint32 y = 0; y < height; y++) {
+                uint32 *pixel = reinterpret_cast<uint32 *>(&data[(x + (y * width)) * 4]);
+                // NOTE: The pixel format is: 0xAABBGGRR
+                *pixel = 0xFF00FFFF;
+            }
+        }
+
+        g_texture = Texture2D::Create(width, height, TextureFormat::RGBA32, TextureParameters(), pixels);
 
         RenderEngine::GetRenderDriver()->SetRasterizerState(RasterizerState());
     }

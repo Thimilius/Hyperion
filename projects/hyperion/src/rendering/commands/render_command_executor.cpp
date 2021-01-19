@@ -43,6 +43,16 @@ namespace Hyperion::Rendering {
                 render_driver->FreeMesh(render_command->id);
                 return sizeof(*render_command);
             }
+            case RenderCommandType::CreateTexture: {
+                auto render_command = reinterpret_cast<const RenderCommandCreateTexture *>(command);
+                render_driver->CreateTexture(render_command->id, render_command->descriptor);
+                return sizeof(*render_command);
+            }
+            case RenderCommandType::FreeTexture: {
+                auto render_command = reinterpret_cast<const RenderCommandId *>(command);
+                render_driver->FreeTexture(render_command->id);
+                return sizeof(*render_command);
+            }
             case RenderCommandType::DrawIndexed: {
                 auto render_command = reinterpret_cast<const RenderCommandDrawIndexed *>(command);
                 render_driver->DrawIndexed(render_command->shader_id, render_command->mesh_id);

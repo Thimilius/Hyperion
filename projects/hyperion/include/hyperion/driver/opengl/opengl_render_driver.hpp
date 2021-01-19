@@ -7,6 +7,7 @@
 namespace Hyperion::Rendering {
 
     class OpenGLRenderDriver : public IRenderDriver {
+        struct OpenGLTexture;
     public:
         void Clear(ClearFlags clear_flags, Color color) override;
         void Viewport(const Rendering::Viewport &viewport) override;
@@ -18,18 +19,13 @@ namespace Hyperion::Rendering {
         void CreateMesh(ResourceId id, const MeshDescriptor &descriptor) override;
         void FreeMesh(ResourceId id) override;
 
+        void CreateTexture(ResourceId id, const TextureDescriptor &descriptor) override;
+        void FreeTexture(ResourceId id) override;
+
         void DrawIndexed(ResourceId shader_id, ResourceId mesh_id) override;
     private:
-        static GLbitfield GetGLClearFlags(ClearFlags clear_flags);
-        static GLenum GetGLDepthEquation(DepthEquation depth_equation);
-        static GLenum GetGLBlendingFactor(BlendingFactor blending_factor);
-        static GLenum GetGLBlendingEquation(BlendingEquation blending_equation);
-        static GLenum GetGLCullingMode(CullingMode culling_mode);
-        static GLenum GetGLCullingFrontFaceMode(CullingFrontFaceMode culling_front_face_mode);
-        static GLenum GetGLPolygonMode(PolygonMode polygon_mode);
-        static GLenum GetGLIndexFormat(IndexFormat index_format);
-        static GLsizei GetGLIndexFormatSize(IndexFormat index_format);
-        static GLenum GetGLMeshTopology(MeshTopology mesh_topology);
+        void CreateTexture2D(OpenGLTexture &texture, const TextureDescriptor &descriptor);
+        void CreateTextureCubemap(OpenGLTexture &texture, const TextureDescriptor &descriptor);
     private:
         struct OpenGLShader {
             GLuint program;
@@ -46,6 +42,15 @@ namespace Hyperion::Rendering {
             Vector<SubMesh> sub_meshes;
         };
         inline static Map<ResourceId, OpenGLMesh> s_meshes;
+
+        struct OpenGLTexture {
+            GLuint texture;
+
+            TextureDimension dimension;
+            TextureFormat format;
+            TextureParameters parameters;
+        };
+        inline static Map<ResourceId, OpenGLTexture> s_textures;
     };
 
 }

@@ -17,6 +17,9 @@ namespace Hyperion::Rendering {
         CreateMesh,
         FreeMesh,
 
+        CreateTexture,
+        FreeTexture,
+
         DrawIndexed
     };
 
@@ -45,6 +48,11 @@ namespace Hyperion::Rendering {
     struct RenderCommandCreateMesh {
         ResourceId id;
         MeshDescriptor descriptor;
+    };
+
+    struct RenderCommandCreateTexture {
+        ResourceId id;
+        TextureDescriptor descriptor;
     };
 
     struct RenderCommandDrawIndexed {

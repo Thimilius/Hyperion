@@ -44,6 +44,17 @@ namespace Hyperion::Rendering {
         command->id = id;
     }
 
+    void MultithreadedRenderDriver::CreateTexture(ResourceId id, const TextureDescriptor &descriptor) {
+        RenderCommandCreateTexture *command = RenderEngine::GetCommandQueue().Allocate<RenderCommandCreateTexture>(RenderCommandType::CreateTexture);
+        command->id = id;
+        command->descriptor = descriptor;
+    }
+
+    void MultithreadedRenderDriver::FreeTexture(ResourceId id) {
+        RenderCommandId *command = RenderEngine::GetCommandQueue().Allocate<RenderCommandId>(RenderCommandType::FreeTexture);
+        command->id = id;
+    }
+
     void MultithreadedRenderDriver::DrawIndexed(ResourceId shader_id, ResourceId mesh_id) {
         RenderCommandDrawIndexed *command = RenderEngine::GetCommandQueue().Allocate<RenderCommandDrawIndexed>(RenderCommandType::DrawIndexed);
         command->shader_id = shader_id;

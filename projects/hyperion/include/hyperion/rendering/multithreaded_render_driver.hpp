@@ -16,6 +16,9 @@ namespace Hyperion::Rendering {
         void CreateMesh(ResourceId id, const MeshDescriptor &descriptor) override;
         void FreeMesh(ResourceId id) override;
 
+        void CreateTexture(ResourceId id, const TextureDescriptor &descriptor) override;
+        void FreeTexture(ResourceId id) override;
+
         void DrawIndexed(ResourceId shader_id, ResourceId mesh_id) override;
     };
 

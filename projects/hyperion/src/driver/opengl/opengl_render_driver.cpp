@@ -3,12 +3,13 @@
 #include "hyperion/driver/opengl/opengl_render_driver.hpp"
 
 #include "hyperion/driver/opengl/opengl_shader_compiler.hpp"
+#include "hyperion/driver/opengl/opengl_utilities.hpp"
 
 namespace Hyperion::Rendering {
 
     void OpenGLRenderDriver::Clear(ClearFlags clear_flags, Color color) {
         glClearColor(color.r, color.g, color.b, color.a);
-        glClear(GetGLClearFlags(clear_flags));
+        glClear(OpenGLUtilities::GetGLClearFlags(clear_flags));
     }
 
     void OpenGLRenderDriver::Viewport(const Rendering::Viewport &viewport) {
@@ -32,7 +33,7 @@ namespace Hyperion::Rendering {
             } else {
                 glDepthMask(GL_FALSE);
             }
-            glDepthFunc(GetGLDepthEquation(rasterizer_state.depth_equation));
+            glDepthFunc(OpenGLUtilities::GetGLDepthEquation(rasterizer_state.depth_equation));
         }
         
         // Stencil
@@ -51,8 +52,10 @@ namespace Hyperion::Rendering {
             } else {
                 glDisable(GL_BLEND);
             }
-            glBlendFunc(GetGLBlendingFactor(rasterizer_state.blending_function.source_factor), GetGLBlendingFactor(rasterizer_state.blending_function.destination_factor));
-            glBlendEquation(GetGLBlendingEquation(rasterizer_state.blending_equation));
+            GLuint source_factor = OpenGLUtilities::GetGLBlendingFactor(rasterizer_state.blending_function.source_factor);
+            GLuint destination_factor = OpenGLUtilities::GetGLBlendingFactor(rasterizer_state.blending_function.destination_factor);
+            glBlendFunc(source_factor, destination_factor);
+            glBlendEquation(OpenGLUtilities::GetGLBlendingEquation(rasterizer_state.blending_equation));
         }
 
         // Culling
@@ -62,13 +65,13 @@ namespace Hyperion::Rendering {
             } else {
                 glDisable(GL_CULL_FACE);
             }
-            glCullFace(GetGLCullingMode(rasterizer_state.culling_mode));
-            glFrontFace(GetGLCullingFrontFaceMode(rasterizer_state.culling_front_face_mode));
+            glCullFace(OpenGLUtilities::GetGLCullingMode(rasterizer_state.culling_mode));
+            glFrontFace(OpenGLUtilities::GetGLCullingFrontFaceMode(rasterizer_state.culling_front_face_mode));
         }
 
         // Misc
         {
-            glPolygonMode(GL_FRONT_AND_BACK, GetGLPolygonMode(rasterizer_state.polygon_mode));
+            glPolygonMode(GL_FRONT_AND_BACK, OpenGLUtilities::GetGLPolygonMode(rasterizer_state.polygon_mode));
         }
     }
 
@@ -105,14 +108,15 @@ namespace Hyperion::Rendering {
         glNamedBufferData(mesh.index_buffer, descriptor.index_data.size(), descriptor.index_data.data(), GL_STATIC_DRAW);
 
         glCreateVertexArrays(1, &mesh.vertex_array);
+        GLuint vertex_array_id = mesh.vertex_array;
 
-        glVertexArrayElementBuffer(mesh.vertex_array, mesh.index_buffer);
+        glVertexArrayElementBuffer(vertex_array_id, mesh.index_buffer);
 
         // FIXME: These are hardcoded attribute bindings
-        glEnableVertexArrayAttrib(mesh.vertex_array, 0);
-        glVertexArrayAttribFormat(mesh.vertex_array, 0, 3, GL_FLOAT, false, 0);
-        glVertexArrayVertexBuffer(mesh.vertex_array, 0, mesh.vertex_buffer, 0, 32);
-        glVertexArrayAttribBinding(mesh.vertex_array, 0, 0);
+        glEnableVertexArrayAttrib(vertex_array_id, 0);
+        glVertexArrayAttribFormat(vertex_array_id, 0, 3, GL_FLOAT, false, 0);
+        glVertexArrayVertexBuffer(vertex_array_id, 0, mesh.vertex_buffer, 0, 32);
+        glVertexArrayAttribBinding(vertex_array_id, 0, 0);
     }
 
     void OpenGLRenderDriver::FreeMesh(ResourceId id) {
@@ -125,6 +129,30 @@ namespace Hyperion::Rendering {
         s_meshes.erase(id);
     }
 
+    void OpenGLRenderDriver::CreateTexture(ResourceId id, const TextureDescriptor &descriptor) {
+        HYP_ASSERT(s_textures.find(id) == s_textures.end());
+
+        OpenGLTexture &texture = s_textures[id];
+        texture.dimension = descriptor.dimension;
+        texture.format = descriptor.format;
+        texture.parameters = descriptor.parameters;
+
+        switch (descriptor.dimension) {
+            case TextureDimension::Texture2D: CreateTexture2D(texture, descriptor); break;
+            case TextureDimension::TextureCubemap: CreateTextureCubemap(texture, descriptor); break;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        }
+    }
+
+    void OpenGLRenderDriver::FreeTexture(ResourceId id) {
+        HYP_ASSERT(s_meshes.find(id) != s_meshes.end());
+
+        OpenGLTexture &texture = s_textures[id];
+        glDeleteTextures(1, &texture.texture);
+
+        s_textures.erase(id);
+    }
+
     void OpenGLRenderDriver::DrawIndexed(ResourceId shader_id, ResourceId mesh_id) {
         HYP_ASSERT(s_shaders.find(shader_id) != s_shaders.end());
         HYP_ASSERT(s_meshes.find(mesh_id) != s_meshes.end());
@@ -135,118 +163,62 @@ namespace Hyperion::Rendering {
         glUseProgram(shader.program);
         glBindVertexArray(mesh.vertex_array);
 
-        GLenum index_format = GetGLIndexFormat(mesh.index_format);
-        GLsizei index_format_size = GetGLIndexFormatSize(mesh.index_format);
+        GLenum index_format = OpenGLUtilities::GetGLIndexFormat(mesh.index_format);
+        GLsizei index_format_size = OpenGLUtilities::GetGLIndexFormatSize(mesh.index_format);
         for (SubMesh &sub_mesh : mesh.sub_meshes) {
             const void *offset = reinterpret_cast<const void *>(static_cast<uint64>(sub_mesh.index_offset) * index_format_size);
-            glDrawElementsBaseVertex(GetGLMeshTopology(sub_mesh.topology), sub_mesh.index_count, index_format, offset, sub_mesh.vertex_offset);
+            glDrawElementsBaseVertex(OpenGLUtilities::GetGLMeshTopology(sub_mesh.topology), sub_mesh.index_count, index_format, offset, sub_mesh.vertex_offset);
         }
     }
 
-    GLbitfield OpenGLRenderDriver::GetGLClearFlags(ClearFlags clear_flags) {
-        GLbitfield result = 0;
+    void OpenGLRenderDriver::CreateTexture2D(OpenGLTexture &texture, const TextureDescriptor &descriptor) {
+        glCreateTextures(GL_TEXTURE_2D, 1, &texture.texture);
+        GLuint texture_id = texture.texture;
 
-        if ((clear_flags & ClearFlags::Color) == ClearFlags::Color) {
-            result |= GL_COLOR_BUFFER_BIT;
-        }
-        if ((clear_flags & ClearFlags::Depth) == ClearFlags::Depth) {
-            result |= GL_DEPTH_BUFFER_BIT;
-        }
-        if ((clear_flags & ClearFlags::Stencil) == ClearFlags::Stencil) {
-            result |= GL_STENCIL_BUFFER_BIT;
+        TextureParameters parameters = descriptor.parameters;
+
+        // Wrap mode
+        {
+            GLint wrap_mode = OpenGLUtilities::GetGLTextureWrapMode(parameters.wrap_mode);
+            glTextureParameteri(texture_id, GL_TEXTURE_WRAP_S, wrap_mode);
+            glTextureParameteri(texture_id, GL_TEXTURE_WRAP_T, wrap_mode);
         }
 
-        return result;
-    }
-
-    GLenum OpenGLRenderDriver::GetGLDepthEquation(DepthEquation depth_equation) {
-        switch (depth_equation) {
-            case DepthEquation::Never: return GL_NEVER;
-            case DepthEquation::Always: return GL_ALWAYS;
-            case DepthEquation::Less: return GL_LESS;
-            case DepthEquation::LessEqual: return GL_LEQUAL;
-            case DepthEquation::Greater: return GL_GREATER;
-            case DepthEquation::GreaterEqual: return GL_GEQUAL;
-            case DepthEquation::Equal: return GL_EQUAL;
-            case DepthEquation::NotEqual: return GL_NOTEQUAL;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        // Filter
+        {
+            GLint min_filter = OpenGLUtilities::GetGLTextureMinFilter(parameters.filter);
+            GLint mag_filter = OpenGLUtilities::GetGLTextureMaxFilter(parameters.filter);
+            glTextureParameteri(texture_id, GL_TEXTURE_MIN_FILTER, min_filter);
+            glTextureParameteri(texture_id, GL_TEXTURE_MAG_FILTER, mag_filter);
         }
-    }
 
-    GLenum OpenGLRenderDriver::GetGLBlendingFactor(BlendingFactor blending_factor) {
-        switch (blending_factor) {
-            case BlendingFactor::Zero: return GL_ZERO;
-            case BlendingFactor::One: return GL_ONE;
-            case BlendingFactor::SourceAlpha: return GL_SRC_ALPHA;
-            case BlendingFactor::SourceColor: return GL_SRC_COLOR;
-            case BlendingFactor::DestinationAlpha: return GL_DST_ALPHA;
-            case BlendingFactor::DestinationColor: return GL_DST_COLOR;
-            case BlendingFactor::InverseSourceAlpha: return GL_ONE_MINUS_SRC_ALPHA;
-            case BlendingFactor::InverseSourceColor: return GL_ONE_MINUS_SRC_COLOR;
-            case BlendingFactor::InverseDestinationAlpha: return GL_ONE_MINUS_DST_ALPHA;
-            case BlendingFactor::InverseDestinationColor: return GL_ONE_MINUS_DST_COLOR;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        // Anisotropic filter
+        {
+            GLfloat anisotropic_filter_value = OpenGLUtilities::GetGLTextureAnisotropicFilter(parameters.anisotropic_filter);
+            glTextureParameterf(texture_id, GL_TEXTURE_MAX_ANISOTROPY, anisotropic_filter_value);
         }
-    }
 
-    GLenum OpenGLRenderDriver::GetGLBlendingEquation(BlendingEquation blending_equation) {
-        switch (blending_equation) {
-            case BlendingEquation::Add: return GL_FUNC_ADD;
-            case BlendingEquation::Subtract: return GL_FUNC_SUBTRACT;
-            case BlendingEquation::ReverseSubract: return GL_FUNC_REVERSE_SUBTRACT;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        TextureFormat format = descriptor.format;
+        GLsizei width = descriptor.size.width;
+        GLsizei height = descriptor.size.height;
+        GLenum internal_format = OpenGLUtilities::GetGLTextureInternalFormat(format);
+        glTextureStorage2D(texture_id, parameters.use_mipmaps ? descriptor.mipmap_count : 1, internal_format, width, height);
+
+        if (descriptor.pixels.size() > 0) {
+            OpenGLUtilities::SetUnpackAlignmentForTextureFormat(descriptor.format);
+
+            GLenum format_value = OpenGLUtilities::GetGLTextureFormat(format);
+            GLenum format_type = OpenGLUtilities::GetGLTextureFormatType(format);
+            glTextureSubImage2D(texture_id, 0, 0, 0, width, height, format_value, format_type, descriptor.pixels.data());
+
+            if (parameters.use_mipmaps) {
+                glGenerateTextureMipmap(texture_id);
+            }
         }
     }
 
-    GLenum OpenGLRenderDriver::GetGLCullingMode(CullingMode culling_mode) {
-        switch (culling_mode) {
-            case CullingMode::Back: return GL_BACK;
-            case CullingMode::Front: return GL_FRONT;
-            case CullingMode::FrontAndBack: return GL_FRONT_AND_BACK;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
-        }
-    }
-
-    GLenum OpenGLRenderDriver::GetGLCullingFrontFaceMode(CullingFrontFaceMode culling_front_face_mode) {
-        switch (culling_front_face_mode) {
-            case CullingFrontFaceMode::Clockwise: return GL_CW;
-            case CullingFrontFaceMode::CounterClockwise: return GL_CCW;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
-        }
-    }
-
-    GLenum OpenGLRenderDriver::GetGLPolygonMode(PolygonMode polygon_mode) {
-        switch (polygon_mode) {
-            case PolygonMode::Fill: return GL_FILL;
-            case PolygonMode::Line: return GL_LINE;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
-        }
-    }
-
-    GLenum OpenGLRenderDriver::GetGLIndexFormat(IndexFormat index_format) {
-        switch (index_format) {
-            case IndexFormat::UInt16: return GL_UNSIGNED_SHORT;
-            case IndexFormat::UInt32: return GL_UNSIGNED_INT;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
-        }
-    }
-
-    GLsizei OpenGLRenderDriver::GetGLIndexFormatSize(IndexFormat index_format) {
-        switch (index_format) {
-            case IndexFormat::UInt16: return sizeof(uint16);
-            case IndexFormat::UInt32: return sizeof(uint32);
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
-        }
-    }
-
-    GLenum OpenGLRenderDriver::GetGLMeshTopology(MeshTopology mesh_topology) {
-        switch (mesh_topology) {
-            case MeshTopology::Points: return GL_POINTS;
-            case MeshTopology::Lines: return GL_LINES;
-            case MeshTopology::LineStrip: return GL_LINE_STRIP;
-            case MeshTopology::Triangles: return GL_TRIANGLES;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
-        }
+    void OpenGLRenderDriver::CreateTextureCubemap(OpenGLTexture &texture, const TextureDescriptor &descriptor) {
+        // TODO: Implement
     }
 
 }
