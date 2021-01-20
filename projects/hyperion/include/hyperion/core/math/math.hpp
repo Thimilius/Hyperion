@@ -14,7 +14,9 @@ namespace Hyperion {
         inline static constexpr float32 E = 2.7182818284590452353602874714f;
 
         inline static float32 Max(float32 a, float32 b) { return a > b ? a : b; }
+        inline static uint32 Max(uint32 a, uint32 b) { return a > b ? a : b; }
         inline static float32 Min(float32 a, float32 b) { return a < b ? a : b; }
+        inline static uint32 Min(uint32 a, uint32 b) { return a < b ? a : b; }
         inline static float32 Abs(float32 p_val) { return std::abs(p_val); }
 
         inline static float32 Sin(float32 p_rad) { return std::sin(p_rad); }

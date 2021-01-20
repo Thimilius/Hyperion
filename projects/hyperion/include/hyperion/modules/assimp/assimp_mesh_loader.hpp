@@ -1,7 +1,7 @@
 #pragma once
 
 #include "hyperion/assets/mesh.hpp"
-#include "hyperion/rendering/descriptors/mesh_descriptor.hpp"
+#include "hyperion/rendering/attributes/mesh_attributes.hpp"
 
 struct aiMesh;
 

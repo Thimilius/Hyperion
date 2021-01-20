@@ -2,6 +2,8 @@
 
 #include "hyperion/rendering/render_driver.hpp"
 
+// FIXME: Currently we have a very heavy memory leak as destructors for the render commands do not get called
+
 namespace Hyperion::Rendering {
 
     enum class RenderCommandType {

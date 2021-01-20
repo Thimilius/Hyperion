@@ -4,7 +4,7 @@
 #include "hyperion/core/math/bounding_box.hpp"
 #include "hyperion/core/math/vec2.hpp"
 #include "hyperion/core/math/vec3.hpp"
-#include "hyperion/rendering/descriptors/mesh_descriptor.hpp"
+#include "hyperion/rendering/attributes/mesh_attributes.hpp"
 
 namespace Hyperion {
 

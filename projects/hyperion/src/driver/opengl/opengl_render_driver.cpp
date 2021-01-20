@@ -145,7 +145,7 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLRenderDriver::FreeTexture(ResourceId id) {
-        HYP_ASSERT(s_meshes.find(id) != s_meshes.end());
+        HYP_ASSERT(s_textures.find(id) != s_textures.end());
 
         OpenGLTexture &texture = s_textures[id];
         glDeleteTextures(1, &texture.texture);
@@ -202,7 +202,7 @@ namespace Hyperion::Rendering {
         GLsizei width = descriptor.size.width;
         GLsizei height = descriptor.size.height;
         GLenum internal_format = OpenGLUtilities::GetGLTextureInternalFormat(format);
-        glTextureStorage2D(texture_id, parameters.use_mipmaps ? descriptor.mipmap_count : 1, internal_format, width, height);
+        glTextureStorage2D(texture_id, parameters.use_mipmaps ? Math::Max(descriptor.mipmap_count, 1) : 1, internal_format, width, height);
 
         if (descriptor.pixels.size() > 0) {
             OpenGLUtilities::SetUnpackAlignmentForTextureFormat(descriptor.format);

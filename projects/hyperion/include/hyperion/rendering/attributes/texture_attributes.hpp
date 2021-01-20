@@ -1,5 +1,7 @@
 #pragma once
 
+#include "hyperion/common.hpp"
+
 namespace Hyperion::Rendering {
 
     enum class TextureDimension {
@@ -8,8 +10,8 @@ namespace Hyperion::Rendering {
     };
 
     enum class TextureFormat {
-        RGB24,
         RGBA32,
+        RGB24,
         R8
     };
 
@@ -45,15 +47,6 @@ namespace Hyperion::Rendering {
         uint32 width; // Width for 2D and cubemap textures
         uint32 height; // Height for 2D and cubemap textures
         // NOTE: For other supported texture types we can add more required values here (3D textures and texture arrays)
-    };
-
-    struct TextureDescriptor {
-        TextureDimension dimension = TextureDimension::Texture2D;
-        TextureFormat format = TextureFormat::RGBA32;
-        TextureParameters parameters;
-        uint32 mipmap_count = 1;
-        TextureSize size;
-        Vector<uint8> pixels;
     };
 
 }

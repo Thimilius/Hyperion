@@ -1,7 +1,7 @@
 #pragma once
 
 #include "hyperion/assets/asset.hpp"
-#include "hyperion/rendering/descriptors/shader_descriptor.hpp"
+#include "hyperion/rendering/attributes/shader_attributes.hpp"
 
 namespace Hyperion {
 

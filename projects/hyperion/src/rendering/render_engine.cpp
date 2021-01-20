@@ -100,6 +100,7 @@ namespace Hyperion::Rendering {
     }
 
     void RenderEngine::SwapBuffers() {
+        s_render_queue.Clear();
         std::swap(s_update_queue, s_render_queue);
     }
 
@@ -133,7 +134,6 @@ namespace Hyperion::Rendering {
                 break;
             }
 
-            s_render_queue.Clear();
             s_graphics_context->Present();
 
             Synchronization::NotifyRenderDone();

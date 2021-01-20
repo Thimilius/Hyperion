@@ -1,6 +1,6 @@
 #pragma once
 
-#include "hyperion/core/types.hpp"
+#include "hyperion/common.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -48,16 +48,6 @@ namespace Hyperion::Rendering {
         uint32 index_count;
         uint32 index_offset;
         uint32 vertex_offset;
-    };
-
-    struct MeshDescriptor {
-        Vector<SubMesh> sub_meshes;
-
-        VertexFormat vertex_format;
-        IndexFormat index_format;
-
-        Vector<uint8> vertex_data;
-        Vector<uint8> index_data;
     };
 
 }

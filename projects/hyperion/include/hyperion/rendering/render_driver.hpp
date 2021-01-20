@@ -5,9 +5,9 @@
 #include "hyperion/core/math/vec2.hpp"
 #include "hyperion/core/math/vec3.hpp"
 #include "hyperion/rendering/rasterizer_state.hpp"
-#include "hyperion/rendering/descriptors/mesh_descriptor.hpp"
-#include "hyperion/rendering/descriptors/shader_descriptor.hpp"
-#include "hyperion/rendering/descriptors/texture_descriptor.hpp"
+#include "hyperion/rendering/attributes/mesh_attributes.hpp"
+#include "hyperion/rendering/attributes/shader_attributes.hpp"
+#include "hyperion/rendering/attributes/texture_attributes.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -25,6 +25,32 @@ namespace Hyperion::Rendering {
         int32 y;
         int32 width;
         int32 height;
+    };
+
+    struct ShaderDescriptor {
+        ShaderStageFlags stage_flags;
+
+        String vertex;
+        String fragment;
+    };
+
+    struct MeshDescriptor {
+        Vector<SubMesh> sub_meshes;
+
+        VertexFormat vertex_format;
+        IndexFormat index_format;
+
+        Vector<uint8> vertex_data;
+        Vector<uint8> index_data;
+    };
+
+    struct TextureDescriptor {
+        TextureDimension dimension;
+        TextureFormat format;
+        TextureParameters parameters;
+        uint32 mipmap_count;
+        TextureSize size;
+        Vector<uint8> pixels;
     };
 
     class IRenderDriver {

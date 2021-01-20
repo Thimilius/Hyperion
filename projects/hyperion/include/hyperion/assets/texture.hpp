@@ -2,7 +2,7 @@
 
 #include "hyperion/assets/asset.hpp"
 #include "hyperion/core/image.hpp"
-#include "hyperion/rendering/descriptors/texture_descriptor.hpp"
+#include "hyperion/rendering/attributes/texture_attributes.hpp"
 
 namespace Hyperion {
 

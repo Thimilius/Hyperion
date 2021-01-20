@@ -12,11 +12,4 @@ namespace Hyperion::Rendering {
     };
     HYP_CREATE_ENUM_FLAG_OPERATORS(ShaderStageFlags);
 
-    struct ShaderDescriptor {
-        ShaderStageFlags stage_flags;
-
-        String vertex;
-        String fragment;
-    };
-
 }

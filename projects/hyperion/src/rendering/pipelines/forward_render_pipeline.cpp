@@ -70,6 +70,7 @@ namespace Hyperion::Rendering {
         }
 
         g_texture = Texture2D::Create(width, height, TextureFormat::RGBA32, TextureParameters(), pixels);
+        //Object::Destroy(g_texture);
 
         RenderEngine::GetRenderDriver()->SetRasterizerState(RasterizerState());
     }
