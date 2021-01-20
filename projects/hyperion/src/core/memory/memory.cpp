@@ -1,6 +1,6 @@
 #include "hyppch.hpp"
 
-#include "hyperion/core/memory.hpp"
+#include "hyperion/core/memory/memory.hpp"
 
 // RANT: We would really like to replace the global new[]/delete[] operators as well,
 // but it seems the delete overloads excepting a second size_t argument are broken in multiple compilers

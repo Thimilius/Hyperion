@@ -1,7 +1,7 @@
 ﻿#include <hyperion/hyperion.hpp>
 #include <hyperion/entry_point.hpp>
 
-#include "hyperion/core/memory.hpp"
+#include "hyperion/core/memory/memory.hpp"
 
 namespace Hyperion::Editor {
 
