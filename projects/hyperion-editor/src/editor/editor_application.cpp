@@ -23,13 +23,13 @@ namespace Hyperion::Editor {
         }
 
         void OnTick() override {
-            float32 memory = static_cast<float32>(MemoryStats::GetGlobalMemory()) / 1000.0f;
-            String title = StringUtils::Format("Hyperion - FPS: {} ({:.2f}ms) - Memory: {:.2f}KB", Time::GetFPS(), Time::GetFrameTime(), memory);
+            float32 memory = static_cast<float32>(MemoryStats::GetGlobalMemory()) / 1000.0f / 1000.0f;
+            String title = StringUtils::Format("Hyperion - FPS: {} ({:.2f}ms) - Memory: {:.2f}MB", Time::GetFPS(), Time::GetFrameTime(), memory);
             GetWindow()->SetTitle(title);
         }
 
         void OnEvent(Event &event) override {
-
+            
         }
 
         void OnShutdown() override {

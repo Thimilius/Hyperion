@@ -59,7 +59,7 @@ namespace Hyperion::Rendering {
 
         uint32 width = 1024;
         uint32 height = 1024;
-        Vector<uint8> pixels(width * height * 32);
+        Vector<uint8> pixels(width * height * 4);
         uint8 *data = pixels.data();
         for (uint32 x = 0; x < width; x++) {
             for (uint32 y = 0; y < height; y++) {
@@ -70,7 +70,6 @@ namespace Hyperion::Rendering {
         }
 
         g_texture = Texture2D::Create(width, height, TextureFormat::RGBA32, TextureParameters(), pixels);
-        //Object::Destroy(g_texture);
 
         RenderEngine::GetRenderDriver()->SetRasterizerState(RasterizerState());
     }

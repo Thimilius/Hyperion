@@ -78,7 +78,7 @@ namespace Hyperion::Rendering {
     void OpenGLRenderDriver::CreateShader(ResourceId id, const ShaderDescriptor &descriptor) {
         HYP_ASSERT(s_shaders.find(id) == s_shaders.end());
 
-        OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(descriptor.vertex, descriptor.fragment);
+        OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(descriptor.source_vertex.data, descriptor.source_fragment.data);
         if (compilation_result.succes) {
             OpenGLShader &shader = s_shaders[id];
             shader.program = compilation_result.program;
@@ -101,11 +101,11 @@ namespace Hyperion::Rendering {
 
         OpenGLMesh &mesh = s_meshes[id];
         mesh.index_format = descriptor.index_format;
-        mesh.sub_meshes = descriptor.sub_meshes;
+        mesh.sub_meshes.assign(descriptor.sub_meshes.data, descriptor.sub_meshes.data + (descriptor.sub_meshes.size / sizeof(*descriptor.sub_meshes.data)));
 
         glCreateBuffers(2, &mesh.vertex_buffer);
-        glNamedBufferData(mesh.vertex_buffer, descriptor.vertex_data.size(), descriptor.vertex_data.data(), GL_STATIC_DRAW);
-        glNamedBufferData(mesh.index_buffer, descriptor.index_data.size(), descriptor.index_data.data(), GL_STATIC_DRAW);
+        glNamedBufferData(mesh.vertex_buffer, descriptor.vertices.size, descriptor.vertices.data, GL_STATIC_DRAW);
+        glNamedBufferData(mesh.index_buffer, descriptor.indices.size, descriptor.indices.data, GL_STATIC_DRAW);
 
         glCreateVertexArrays(1, &mesh.vertex_array);
         GLuint vertex_array_id = mesh.vertex_array;
@@ -204,12 +204,12 @@ namespace Hyperion::Rendering {
         GLenum internal_format = OpenGLUtilities::GetGLTextureInternalFormat(format);
         glTextureStorage2D(texture_id, parameters.use_mipmaps ? Math::Max(descriptor.mipmap_count, 1) : 1, internal_format, width, height);
 
-        if (descriptor.pixels.size() > 0) {
+        if (descriptor.pixels.size > 0) {
             OpenGLUtilities::SetUnpackAlignmentForTextureFormat(descriptor.format);
 
             GLenum format_value = OpenGLUtilities::GetGLTextureFormat(format);
             GLenum format_type = OpenGLUtilities::GetGLTextureFormatType(format);
-            glTextureSubImage2D(texture_id, 0, 0, 0, width, height, format_value, format_type, descriptor.pixels.data());
+            glTextureSubImage2D(texture_id, 0, 0, 0, width, height, format_value, format_type, descriptor.pixels.data);
 
             if (parameters.use_mipmaps) {
                 glGenerateTextureMipmap(texture_id);

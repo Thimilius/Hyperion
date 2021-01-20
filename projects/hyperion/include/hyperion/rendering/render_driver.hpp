@@ -27,21 +27,48 @@ namespace Hyperion::Rendering {
         int32 height;
     };
 
+    template<typename T>
+    struct ArrayDescriptor {
+        uint64 size; // This size is always in bytes!
+        const T *data;
+
+        ArrayDescriptor() = default;
+
+        ArrayDescriptor(const Vector<T> &vector) {
+            size = vector.size() * sizeof(vector[0]);
+            data = vector.data();
+        }
+
+        ArrayDescriptor(const String &string) {
+            size = string.size() + 1; // We have to take into account the null termination character
+            data = string.data();
+        }
+    };
+
     struct ShaderDescriptor {
         ShaderStageFlags stage_flags;
 
-        String vertex;
-        String fragment;
+        ArrayDescriptor<char> source_vertex;
+        ArrayDescriptor<char> source_fragment;
+    };
+
+    struct VertexAttributeDescriptor {
+        VertexAttribute attribute;
+        VertexAttributeFormat format;
+        uint32 dimension;
     };
 
     struct MeshDescriptor {
-        Vector<SubMesh> sub_meshes;
+        ArrayDescriptor<SubMesh> sub_meshes;
 
-        VertexFormat vertex_format;
+        struct {
+            ArrayDescriptor<VertexAttributeDescriptor> attributes;
+            uint32 stride;
+        } vertex_format;
         IndexFormat index_format;
 
-        Vector<uint8> vertex_data;
-        Vector<uint8> index_data;
+        ArrayDescriptor<uint8> vertices;
+        ArrayDescriptor<uint8> indices;
     };
 
     struct TextureDescriptor {
@@ -50,7 +77,8 @@ namespace Hyperion::Rendering {
         TextureParameters parameters;
         uint32 mipmap_count;
         TextureSize size;
-        Vector<uint8> pixels;
+
+        ArrayDescriptor<uint8> pixels;
     };
 
     class IRenderDriver {

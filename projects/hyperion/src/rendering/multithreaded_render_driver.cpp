@@ -23,9 +23,15 @@ namespace Hyperion::Rendering {
     }
 
     void MultithreadedRenderDriver::CreateShader(ResourceId id, const ShaderDescriptor &descriptor) {
-        RenderCommandCreateShader *command = RenderEngine::GetCommandQueue().Allocate<RenderCommandCreateShader>(RenderCommandType::CreateShader);
+        uint64 extra_size = descriptor.source_vertex.size + descriptor.source_fragment.size;
+        RenderCommandCreateShader *command = RenderEngine::GetCommandQueue().Allocate<RenderCommandCreateShader>(RenderCommandType::CreateShader, extra_size);
         command->id = id;
         command->descriptor = descriptor;
+
+        uint8 *data = reinterpret_cast<uint8 *>(command + 1);
+        std::memcpy(data, descriptor.source_vertex.data, descriptor.source_vertex.size);
+        data += descriptor.source_vertex.size;
+        std::memcpy(data, descriptor.source_fragment.data, descriptor.source_fragment.size);
     }
 
     void MultithreadedRenderDriver::FreeShader(ResourceId id) {
@@ -34,9 +40,17 @@ namespace Hyperion::Rendering {
     }
 
     void MultithreadedRenderDriver::CreateMesh(ResourceId id, const MeshDescriptor &descriptor) {
-        RenderCommandCreateMesh *command = RenderEngine::GetCommandQueue().Allocate<RenderCommandCreateMesh>(RenderCommandType::CreateMesh);
+        uint64 extra_size = descriptor.sub_meshes.size + descriptor.vertices.size + descriptor.indices.size;
+        RenderCommandCreateMesh *command = RenderEngine::GetCommandQueue().Allocate<RenderCommandCreateMesh>(RenderCommandType::CreateMesh, extra_size);
         command->id = id;
         command->descriptor = descriptor;
+
+        uint8 *data = reinterpret_cast<uint8 *>(command + 1);
+        std::memcpy(data, descriptor.sub_meshes.data, descriptor.sub_meshes.size);
+        data += descriptor.sub_meshes.size;
+        std::memcpy(data, descriptor.vertices.data, descriptor.vertices.size);
+        data += descriptor.vertices.size;
+        std::memcpy(data, descriptor.indices.data, descriptor.indices.size);
     }
 
     void MultithreadedRenderDriver::FreeMesh(ResourceId id) {
@@ -45,9 +59,13 @@ namespace Hyperion::Rendering {
     }
 
     void MultithreadedRenderDriver::CreateTexture(ResourceId id, const TextureDescriptor &descriptor) {
-        RenderCommandCreateTexture *command = RenderEngine::GetCommandQueue().Allocate<RenderCommandCreateTexture>(RenderCommandType::CreateTexture);
+        uint64 extra_size = descriptor.pixels.size;
+        RenderCommandCreateTexture *command = RenderEngine::GetCommandQueue().Allocate<RenderCommandCreateTexture>(RenderCommandType::CreateTexture, extra_size);
         command->id = id;
         command->descriptor = descriptor;
+
+        uint8 *data = reinterpret_cast<uint8 *>(command + 1);
+        std::memcpy(data, descriptor.pixels.data, descriptor.pixels.size);
     }
 
     void MultithreadedRenderDriver::FreeTexture(ResourceId id) {

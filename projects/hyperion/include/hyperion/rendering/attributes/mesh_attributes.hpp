@@ -31,17 +31,6 @@ namespace Hyperion::Rendering {
         UInt32
     };
 
-    struct VertexAttributeDescriptor {
-        VertexAttribute attribute;
-        VertexAttributeFormat format;
-        uint32 dimension;
-    };
-
-    struct VertexFormat {
-        Vector<VertexAttributeDescriptor> vertex_attributes;
-        uint32 stride;
-    };
-
     struct SubMesh {
         MeshTopology topology;
 

@@ -13,7 +13,7 @@ namespace Hyperion::Rendering {
 
     class OpenGLShaderCompiler {
     public:
-        static OpenGLShaderCompilationResult Compile(const String &vertex, const String &fragment);
+        static OpenGLShaderCompilationResult Compile(const char *vertex, const char *fragment);
     private:
         OpenGLShaderCompiler() = delete;
         ~OpenGLShaderCompiler() = delete;

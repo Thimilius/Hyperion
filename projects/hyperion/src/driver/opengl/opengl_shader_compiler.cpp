@@ -4,12 +4,12 @@
 
 namespace Hyperion::Rendering {
 
-    OpenGLShaderCompilationResult OpenGLShaderCompiler::Compile(const String &vertex, const String &fragment) {
+    OpenGLShaderCompilationResult OpenGLShaderCompiler::Compile(const char *vertex, const char *fragment) {
         OpenGLShaderCompilationResult result;
 
         GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
         {
-            const GLchar *vertex_source = vertex.c_str();
+            const GLchar *vertex_source = vertex;
             glShaderSource(vertex_shader, 1, &vertex_source, 0);
             glCompileShader(vertex_shader);
 
@@ -33,7 +33,7 @@ namespace Hyperion::Rendering {
 
         GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
         {
-            const GLchar *fragment_source = fragment.c_str();
+            const GLchar *fragment_source = fragment;
             glShaderSource(fragment_shader, 1, &fragment_source, 0);
             glCompileShader(fragment_shader);
 

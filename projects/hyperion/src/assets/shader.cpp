@@ -15,9 +15,9 @@ namespace Hyperion {
             descriptor.stage_flags |= stage_flags;
 
             if ((stage_flags & ShaderStageFlags::Vertex) == ShaderStageFlags::Vertex) {
-                descriptor.vertex = source;
+                descriptor.source_vertex = source;
             } else if ((stage_flags & ShaderStageFlags::Fragment) == ShaderStageFlags::Fragment) {
-                descriptor.fragment = source;
+                descriptor.source_fragment = source;
             }
         }
 
