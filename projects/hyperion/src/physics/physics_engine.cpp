@@ -4,7 +4,7 @@
 
 #include "hyperion/entity/world_manager.hpp"
 
-#if HYP_PHYSICS_BULLET
+#ifdef HYP_PHYSICS_BULLET
 #include "hyperion/modules/bullet/bullet_physics_driver.hpp"
 #endif
 
@@ -15,7 +15,7 @@ namespace Hyperion::Physics {
     }
 
     void PhysicsEngine::Init() {
-#if HYP_PHYSICS_BULLET
+#ifdef HYP_PHYSICS_BULLET
         s_physics_driver = new BulletPhysicsDriver();
 #else
         s_physics_driver = new DummyPhysicsDriver();

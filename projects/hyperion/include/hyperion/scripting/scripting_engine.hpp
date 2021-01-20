@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mono/jit/jit.h>
+#include "hyperion/scripting/scripting_driver.hpp"
 
 namespace Hyperion {
     class Engine;
@@ -15,10 +15,8 @@ namespace Hyperion {
 
         static void Init();
         static void Shutdown();
-
-        static void TestFunctions();
     private:
-        inline static MonoDomain *s_root_domain;
+        inline static IScriptingDriver *s_scripting_driver;
     private:
         friend class Hyperion::Engine;
     };

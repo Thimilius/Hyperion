@@ -1,6 +1,7 @@
 output_directory_format = "%{cfg.system}-%{cfg.architecture}"
 audio_backend_option = "audio"
 physics_backend_option = "physics"
+with_mono_option = "with-mono"
 
 include "packages.lua"
 
@@ -48,8 +49,12 @@ workspace "hyperion"
 		_OPTIONS[physics_backend_option] = "bullet"
 	end
 
-	filter "configurations:debug"
-		
+	newoption {
+		trigger = with_mono_option,
+		description = "Specifies that the Mono scripting driver should be included",
+	}
+
+	filter "configurations:debug"	
 		defines { "HYP_DEBUG", "HYP_ENABLE_ASSERTS", "HYP_BREAK_ON_ASSERT" }
 		runtime "Debug"
 		symbols "On"
@@ -73,6 +78,9 @@ workspace "hyperion"
 	filter "options:physics=bullet"
 		defines { "HYP_PHYSICS_BULLET" }
 
+	filter "options:with-mono"
+		defines { "HYP_SCRIPTING_MONO" }
+
 project "hyperion"
 	location "projects/hyperion"
 	kind "StaticLib"
@@ -94,6 +102,8 @@ project "hyperion"
 		"%{prj.location}/src/modules/bullet/**",
 		"%{prj.location}/include/hyperion/modules/fmod/**",
 		"%{prj.location}/src/modules/fmod/**",
+		"%{prj.location}/include/hyperion/modules/mono/**",
+		"%{prj.location}/src/modules/mono/**",
 
         "%{prj.location}/vendor/glad/src/glad_wgl.c"
 	}
@@ -101,8 +111,7 @@ project "hyperion"
 	includedirs {
 		"%{prj.location}/include",
 		
-		"%{prj.location}/vendor/glad/include",
-		"%{prj.location}/vendor/mono/include"
+		"%{prj.location}/vendor/glad/include"
 	}
 	includedirs { package_assimp_includedirs }
 	includedirs { package_nlohmann_includedirs }
@@ -126,6 +135,12 @@ project "hyperion"
 			"%{prj.location}/src/modules/bullet/**"
 		}
 		includedirs { package_bullet_includedirs }
+	filter "options:with-mono"
+		files {
+			"%{prj.location}/include/hyperion/modules/mono/**",
+			"%{prj.location}/src/modules/mono/**",
+		}
+		includedirs { "%{prj.location}/vendor/mono/include" }
 
 	filter "system:windows"
 		files {
@@ -153,16 +168,7 @@ function linkhyperion()
 		defines { "HYP_CONSOLE" }
 
 	filter "system:windows"
-		libdirs {
-			"projects/hyperion/vendor/mono/lib/windows"
-		}
-		
-		links {
-			"opengl32",
-			"PowrProf",
-		
-			"mono",	
-		}
+		links { "opengl32", "PowrProf" }
 	
 	filter { "system:windows", "configurations:debug" }
 		libdirs { package_assimp_debug_libdirs }
@@ -186,14 +192,16 @@ function linkhyperion()
 	filter { "system:windows", "options:audio=fmod" }
 		links { "fmod_vc" }
 		libdirs { "projects/hyperion/vendor/fmod/lib/windows" }
-
 	filter { "system:windows", "configurations:debug", "options:physics=bullet" }
 		libdirs { package_bullet_debug_libdirs }
 		links { package_bullet_debug_links }
 	filter { "system:windows", "configurations:release", "options:physics=bullet" }
 		libdirs { package_bullet_release_libdirs }
 		links { package_bullet_release_links }
-
+	filter { "system:windows", "options:with-mono" }
+		links { "mono" }
+		libdirs { "projects/hyperion/vendor/mono/lib/windows" }
+		
 	filter { }
 
 end

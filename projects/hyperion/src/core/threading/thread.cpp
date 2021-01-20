@@ -38,7 +38,7 @@ namespace Hyperion::Threading {
     }
 
     ThreadId Thread::GetCurrentThreadId() {
-#if HYP_PLATFORM_WINDOWS
+#ifdef HYP_PLATFORM_WINDOWS
         return ::GetCurrentThreadId();
 #endif
     }
