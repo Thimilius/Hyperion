@@ -9,6 +9,7 @@
 #include "hyperion/rendering/commands/render_commands.hpp"
 #include "hyperion/rendering/commands/render_command_executor.hpp"
 #include "hyperion/rendering/pipelines/forward_render_pipeline.hpp"
+#include "hyperion/rendering/pipelines/render_context.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -43,7 +44,7 @@ namespace Hyperion::Rendering {
 
     void RenderEngine::Render() {
         // Depending on render threading mode either create and enqueue render commands or just execute them directly...
-        s_render_pipeline->Render();
+        s_render_pipeline->Render(RenderContext());
 
         // The following block ends a frame on the Main Thread:
         {

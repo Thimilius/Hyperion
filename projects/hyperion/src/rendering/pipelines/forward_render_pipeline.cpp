@@ -74,7 +74,7 @@ namespace Hyperion::Rendering {
         RenderEngine::GetRenderDriver()->SetRasterizerState(RasterizerState());
     }
 
-    void ForwardRenderPipeline::Render() {
+    void ForwardRenderPipeline::Render(const RenderContext &context) {
         Viewport viewport = { 0, 0, static_cast<int32>(Display::GetWidth()), static_cast<int32>(Display::GetHeight()) };
         RenderEngine::GetRenderDriver()->Viewport(viewport);
 
