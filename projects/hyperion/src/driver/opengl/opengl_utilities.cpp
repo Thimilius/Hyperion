@@ -110,6 +110,20 @@ namespace Hyperion::Rendering {
         }
     }
 
+    GLenum OpenGLUtilities::GetGLVertexAttributeType(VertexAttributeType vertex_attribute_type) {
+        switch (vertex_attribute_type) {
+            case VertexAttributeType::Float32: return GL_FLOAT;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    GLuint OpenGLUtilities::GetGLSizeForVertexAttribute(VertexAttributeType vertex_attribute_type, uint32 dimension) {
+        switch (vertex_attribute_type) {
+            case VertexAttributeType::Float32: return sizeof(float32) * dimension;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
     void OpenGLUtilities::SetUnpackAlignmentForTextureFormat(TextureFormat format) {
         GLint alignment = 4;
         switch (format) {

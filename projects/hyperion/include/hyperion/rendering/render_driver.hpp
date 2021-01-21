@@ -54,14 +54,14 @@ namespace Hyperion::Rendering {
 
     struct VertexAttributeDescriptor {
         VertexAttribute attribute;
-        VertexAttributeFormat format;
+        VertexAttributeType type;
         uint32 dimension;
     };
 
     struct MeshDescriptor {
         ArrayDescriptor<SubMesh> sub_meshes;
 
-        struct {
+        struct VertexFormat {
             ArrayDescriptor<VertexAttributeDescriptor> attributes;
             uint32 stride;
         } vertex_format;

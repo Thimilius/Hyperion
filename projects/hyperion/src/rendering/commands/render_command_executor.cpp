@@ -42,11 +42,12 @@ namespace Hyperion::Rendering {
             case RenderCommandType::CreateMesh: {
                 auto render_command = reinterpret_cast<RenderCommandCreateMesh *>(command);
 
-                uint64 extra_size = render_command->descriptor.sub_meshes.size + render_command->descriptor.vertices.size + render_command->descriptor.indices.size;
+                uint64 extra_size = render_command->descriptor.sub_meshes.size + render_command->descriptor.vertex_format.attributes.size + render_command->descriptor.vertices.size + render_command->descriptor.indices.size;
                 uint8 *data = reinterpret_cast<uint8 *>(render_command + 1);
                 render_command->descriptor.sub_meshes.data = reinterpret_cast<SubMesh *>(data);
-                render_command->descriptor.vertices.data = data + render_command->descriptor.sub_meshes.size;
-                render_command->descriptor.indices.data = data + render_command->descriptor.sub_meshes.size + render_command->descriptor.vertices.size;
+                render_command->descriptor.vertex_format.attributes.data = reinterpret_cast<VertexAttributeDescriptor *>(data + render_command->descriptor.sub_meshes.size);
+                render_command->descriptor.vertices.data = data + render_command->descriptor.sub_meshes.size + render_command->descriptor.vertex_format.attributes.size;
+                render_command->descriptor.indices.data = data + render_command->descriptor.sub_meshes.size + render_command->descriptor.vertex_format.attributes.size + render_command->descriptor.vertices.size;
 
                 render_driver->CreateMesh(render_command->id, render_command->descriptor);
                 return sizeof(*render_command) + extra_size;

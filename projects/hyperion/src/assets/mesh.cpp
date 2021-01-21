@@ -40,11 +40,12 @@ namespace Hyperion {
         }
         descriptor.vertices = vertices;
         Vector<VertexAttributeDescriptor> vertex_attributes = {
-            { VertexAttribute::Position, VertexAttributeFormat::Float32, 3 },
-            { VertexAttribute::Normal, VertexAttributeFormat::Float32, 3 },
-            { VertexAttribute::Texture0, VertexAttributeFormat::Float32, 2 },
+            { VertexAttribute::Position, VertexAttributeType::Float32, 3 },
+            { VertexAttribute::Normal, VertexAttributeType::Float32, 3 },
+            { VertexAttribute::Texture0, VertexAttributeType::Float32, 2 },
         };
         descriptor.vertex_format.attributes = vertex_attributes;
+        descriptor.vertex_format.stride = 32;
 
         // FIXME: This is hardcoded for 32-Bit indices!
         descriptor.index_format = IndexFormat::UInt32;

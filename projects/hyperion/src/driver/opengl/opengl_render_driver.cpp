@@ -103,6 +103,7 @@ namespace Hyperion::Rendering {
         mesh.index_format = descriptor.index_format;
         mesh.sub_meshes.assign(descriptor.sub_meshes.data, descriptor.sub_meshes.data + (descriptor.sub_meshes.size / sizeof(*descriptor.sub_meshes.data)));
 
+        // TODO: Add ability to mark meshes dynamic
         glCreateBuffers(2, &mesh.vertex_buffer);
         glNamedBufferData(mesh.vertex_buffer, descriptor.vertices.size, descriptor.vertices.data, GL_STATIC_DRAW);
         glNamedBufferData(mesh.index_buffer, descriptor.indices.size, descriptor.indices.data, GL_STATIC_DRAW);
@@ -112,11 +113,24 @@ namespace Hyperion::Rendering {
 
         glVertexArrayElementBuffer(vertex_array_id, mesh.index_buffer);
 
-        // FIXME: These are hardcoded attribute bindings
-        glEnableVertexArrayAttrib(vertex_array_id, 0);
-        glVertexArrayAttribFormat(vertex_array_id, 0, 3, GL_FLOAT, false, 0);
-        glVertexArrayVertexBuffer(vertex_array_id, 0, mesh.vertex_buffer, 0, 32);
-        glVertexArrayAttribBinding(vertex_array_id, 0, 0);
+        GLsizei stride = descriptor.vertex_format.stride;
+        GLuint relative_offset = 0;
+        uint64 vertex_attribute_count = descriptor.vertex_format.attributes.size / sizeof(descriptor.vertex_format.attributes.data[0]);
+        for (uint32 i = 0; i < vertex_attribute_count; i++) {
+            const VertexAttributeDescriptor &vertex_attribute = descriptor.vertex_format.attributes.data[i];
+
+            GLuint attribute_index = i;
+            GLuint binding_index = 0;
+            GLint size = vertex_attribute.dimension;
+            GLenum type = OpenGLUtilities::GetGLVertexAttributeType(vertex_attribute.type);
+
+            glEnableVertexArrayAttrib(vertex_array_id, attribute_index);
+            glVertexArrayAttribFormat(vertex_array_id, attribute_index, size, type, false, relative_offset);
+            glVertexArrayVertexBuffer(vertex_array_id, binding_index, mesh.vertex_buffer, 0, stride);
+            glVertexArrayAttribBinding(vertex_array_id, attribute_index, binding_index);
+
+            relative_offset += OpenGLUtilities::GetGLSizeForVertexAttribute(vertex_attribute.type, vertex_attribute.dimension);
+        }
     }
 
     void OpenGLRenderDriver::FreeMesh(ResourceId id) {

@@ -40,7 +40,7 @@ namespace Hyperion::Rendering {
     }
 
     void MultithreadedRenderDriver::CreateMesh(ResourceId id, const MeshDescriptor &descriptor) {
-        uint64 extra_size = descriptor.sub_meshes.size + descriptor.vertices.size + descriptor.indices.size;
+        uint64 extra_size = descriptor.sub_meshes.size + descriptor.vertex_format.attributes.size + descriptor.vertices.size + descriptor.indices.size;
         RenderCommandCreateMesh *command = RenderEngine::GetCommandQueue().Allocate<RenderCommandCreateMesh>(RenderCommandType::CreateMesh, extra_size);
         command->id = id;
         command->descriptor = descriptor;
@@ -48,6 +48,8 @@ namespace Hyperion::Rendering {
         uint8 *data = reinterpret_cast<uint8 *>(command + 1);
         std::memcpy(data, descriptor.sub_meshes.data, descriptor.sub_meshes.size);
         data += descriptor.sub_meshes.size;
+        std::memcpy(data, descriptor.vertex_format.attributes.data, descriptor.vertex_format.attributes.size);
+        data += descriptor.vertex_format.attributes.size;
         std::memcpy(data, descriptor.vertices.data, descriptor.vertices.size);
         data += descriptor.vertices.size;
         std::memcpy(data, descriptor.indices.data, descriptor.indices.size);

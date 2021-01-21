@@ -20,6 +20,8 @@ namespace Hyperion::Rendering {
         static GLenum GetGLIndexFormat(IndexFormat index_format);
         static GLsizei GetGLIndexFormatSize(IndexFormat index_format);
         static GLenum GetGLMeshTopology(MeshTopology mesh_topology);
+        static GLenum GetGLVertexAttributeType(VertexAttributeType vertex_attribute_type);
+        static GLuint GetGLSizeForVertexAttribute(VertexAttributeType vertex_attribute_type, uint32 dimension);
 
         static void SetUnpackAlignmentForTextureFormat(TextureFormat format);
         static GLenum GetGLTextureFormat(TextureFormat format);

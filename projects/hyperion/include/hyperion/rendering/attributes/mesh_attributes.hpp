@@ -22,7 +22,7 @@ namespace Hyperion::Rendering {
         Texture3,
     };
 
-    enum class VertexAttributeFormat {
+    enum class VertexAttributeType {
         Float32,
     };
 
