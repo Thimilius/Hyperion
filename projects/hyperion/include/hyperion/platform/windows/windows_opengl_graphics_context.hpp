@@ -8,12 +8,14 @@ namespace Hyperion::Rendering {
 
     class WindowsOpenGLGraphicsContext : public OpenGLGraphicsContext {
     public:
-        WindowsOpenGLGraphicsContext(HWND window_handle);
+        WindowsOpenGLGraphicsContext(HDC device_context, HDC helper_device_context);
         ~WindowsOpenGLGraphicsContext() override;
     private:
         void Init() override;
         void Present() override;
         void SetVSyncMode(VSyncMode vsync_mode) override;
+
+        static void LoadOpenGLExtensions(HDC helper_device_context);
     private:
         HDC m_device_context;
         HGLRC m_opengl_context;

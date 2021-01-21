@@ -189,8 +189,46 @@ namespace Hyperion {
     Rendering::GraphicsContext *WindowsWindow::CreateGraphicsContext(Rendering::RenderBackend render_backend) {
         switch (render_backend) {
             case Rendering::RenderBackend::OpenGL: {
-                return new Rendering::WindowsOpenGLGraphicsContext(m_window_handle);
-                break;
+                // To create a proper OpenGL context we need a second helper window
+                auto helper_window_class_name = L"HYPERION_HELPER_WINDOW_CLASS";
+                HINSTANCE instance = GetModuleHandleW(nullptr);
+                if (!instance) {
+                    HYP_PANIC_MESSAGE("Engine", "Failed to get windows application instance!");
+                }
+
+                WNDCLASSEXW window_class = { 0 };
+                window_class.cbSize = sizeof(window_class);
+                window_class.lpszClassName = helper_window_class_name;
+                window_class.style = CS_HREDRAW | CS_VREDRAW;
+                window_class.hInstance = instance;
+                window_class.lpfnWndProc = &DefWindowProcW;
+
+                if (!RegisterClassExW(&window_class)) {
+                    HYP_PANIC_MESSAGE("Engine", "Failed to register windows window class!");
+                }
+
+                HWND helper_window = CreateWindowExW(
+                    0,
+                    helper_window_class_name,
+                    L"Hyperion helper window",
+                    0,
+                    CW_USEDEFAULT,
+                    CW_USEDEFAULT,
+                    CW_USEDEFAULT,
+                    CW_USEDEFAULT,
+                    nullptr,
+                    nullptr,
+                    instance,
+                    nullptr
+                );
+
+                Rendering::GraphicsContext *graphics_context = new Rendering::WindowsOpenGLGraphicsContext(GetDC(m_window_handle), GetDC(helper_window));
+
+                // We can destroy the helper window now
+                UnregisterClassW(helper_window_class_name, instance);
+                DestroyWindow(helper_window);
+
+                return graphics_context;
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }

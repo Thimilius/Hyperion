@@ -54,7 +54,7 @@ namespace Hyperion::Rendering {
         };
         Vector<SubMesh> sub_meshes = {
             { MeshTopology::Triangles, 3, 0, 0 },
-            { MeshTopology::Triangles, 3, 3, 0 }
+            //{ MeshTopology::Triangles, 3, 3, 0 }
         };
         g_mesh = Mesh::Create(mesh_data, sub_meshes);
 
