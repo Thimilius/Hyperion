@@ -81,7 +81,7 @@ namespace Hyperion::Rendering {
     void RenderEngine::InitGraphicsContextAndBackend(Window *window) {
         // The graphics context is the very first thing we need to initialize so that resources can be created properly.
         s_graphics_context = window->CreateGraphicsContext(s_render_settings.backend);
-        s_graphics_context->Init();
+        s_graphics_context->Init(GraphicsContextDescriptor());
         s_graphics_context->SetVSyncMode(VSyncMode::DontSync);
 
         switch (s_render_settings.backend) {

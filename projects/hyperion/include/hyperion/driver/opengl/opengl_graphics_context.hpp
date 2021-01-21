@@ -13,7 +13,7 @@ namespace Hyperion::Rendering {
 
         inline const Vector<String> &GetExtensions() const { return m_extensions; }
     protected:
-        void Init() override;
+        void Init(const GraphicsContextDescriptor &descriptor) override;
     private:
         void CheckExtensions();
         void CheckExtension(const String &extension);
