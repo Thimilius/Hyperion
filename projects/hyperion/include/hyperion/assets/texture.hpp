@@ -15,6 +15,8 @@ namespace Hyperion {
         virtual Rendering::TextureDimension GetDimension() const = 0;
     protected:
         static uint32 CalculateMipmapCount(uint32 width, uint32 height);
+    protected:
+        bool m_read_and_write_enabled;
     };
 
     class Texture2D : public Texture {
@@ -25,9 +27,9 @@ namespace Hyperion {
         inline uint32 GetHeight() const { return m_height; }
         inline const Rendering::TextureParameters &GetParamters() const { return m_parameters; }
 
-        static Texture2D *Create(uint32 width, uint32 height, Rendering::TextureFormat format, Rendering::TextureParameters parameters, const Vector<uint8> &pixels);
+        static Texture2D *Create(uint32 width, uint32 height, Rendering::TextureFormat format, Rendering::TextureParameters parameters, const Vector<uint8> &pixels, bool read_and_write_enabled = false);
     private:
-        Texture2D(uint32 width, uint32 height, Rendering::TextureFormat format, Rendering::TextureParameters parameters, const Vector<uint8> &pixels);
+        Texture2D(uint32 width, uint32 height, Rendering::TextureFormat format, Rendering::TextureParameters parameters, const Vector<uint8> &pixels, bool read_and_write_enabled);
     private:
         uint32 m_width;
         uint32 m_height;

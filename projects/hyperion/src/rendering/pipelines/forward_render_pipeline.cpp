@@ -54,7 +54,6 @@ namespace Hyperion::Rendering {
             { MeshTopology::Triangles, 3, 0, 0 },
             { MeshTopology::Triangles, 3, 3, 0 }
         };
-
         g_mesh = Mesh::Create(mesh_data, sub_meshes);
 
         uint32 width = 1024;
@@ -68,7 +67,6 @@ namespace Hyperion::Rendering {
                 *pixel = 0xFF00FFFF;
             }
         }
-
         g_texture = Texture2D::Create(width, height, TextureFormat::RGBA32, TextureParameters(), pixels);
 
         RenderEngine::GetRenderDriver()->SetRasterizerState(RasterizerState());

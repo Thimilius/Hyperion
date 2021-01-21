@@ -10,15 +10,18 @@ using namespace Hyperion::Rendering;
 
 namespace Hyperion {
 
-    Mesh::Mesh(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes) {
+    Mesh::Mesh(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes, bool read_and_write_enabled) {
         HYP_ASSERT_MESSAGE(sub_meshes.size() > 0, "Must provide at least one submesh when creating a mesh!");
 
+        m_read_and_write_enabled = read_and_write_enabled;
+        m_bounds = CalculateBounds(mesh_data.positions);
+
+        if (read_and_write_enabled) {
+            m_mesh_data = mesh_data;
+            m_sub_meshes = sub_meshes;
+        }
+
         // NOTE: Currently we don't really do a lot of data validation.
-
-        m_mesh_data = mesh_data;
-        m_sub_meshes = sub_meshes;
-
-        RecalculateBounds();
 
         MeshDescriptor descriptor;
         descriptor.sub_meshes = sub_meshes;
@@ -60,16 +63,30 @@ namespace Hyperion {
         Rendering::RenderEngine::GetRenderDriver()->FreeMesh(m_resource_id);
     }
 
-    Mesh *Mesh::Create(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes) {
-        return new Mesh(mesh_data, sub_meshes);
+    const MeshData &Mesh::GetMeshData() const {
+        if (!m_read_and_write_enabled) {
+            HYP_LOG_WARN("Mesh", "The data of a mesh that is not read and write enabled will not exist when queried!");
+        }
+        return m_mesh_data;
     }
 
-    void Mesh::RecalculateBounds() {
+    const Vector<Rendering::SubMesh> &Mesh::GetSubMeshes() const {
+        if (!m_read_and_write_enabled) {
+            HYP_LOG_WARN("Mesh", "The data of a mesh that is not read and write enabled will not exist when queried!");
+        }
+        return m_sub_meshes;
+    }
+
+    Mesh *Mesh::Create(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes, bool read_and_write_enabled) {
+        return new Mesh(mesh_data, sub_meshes, read_and_write_enabled);
+    }
+
+    BoundingBox Mesh::CalculateBounds(const Vector<Vec3> &positions) {
         Vec3 min = Vec3(FLT_MAX, FLT_MAX, FLT_MAX);
         Vec3 max = Vec3(FLT_MIN, FLT_MIN, FLT_MIN);
 
-        for (uint32 i = 0; i < m_mesh_data.positions.size(); i++) {
-            Vec3 position = m_mesh_data.positions[i];
+        for (uint32 i = 0; i < positions.size(); i++) {
+            Vec3 position = positions[i];
             if (position.x < min.x) {
                 min.x = position.x;
             }
@@ -90,7 +107,7 @@ namespace Hyperion {
             }
         }
 
-        m_bounds = BoundingBox(min, max);
+        return BoundingBox(min, max);
     }
 
     Mesh *MeshFactory::CreateQuad(float32 width, float32 height) {

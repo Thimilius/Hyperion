@@ -26,21 +26,24 @@ namespace Hyperion {
     public:
         inline AssetType GetAssetType() const override { return AssetType::Mesh; }
 
-        inline const MeshData &GetMeshData() const { return m_mesh_data; }
+        const MeshData &GetMeshData() const;
+        const Vector<Rendering::SubMesh> &GetSubMeshes() const;
+
+        inline bool IsReadAndWriteEnabled() const { return m_read_and_write_enabled; }
         inline BoundingBox GetBounds() const { return m_bounds; }
-        inline const Vector<Rendering::SubMesh> &GetSubMeshes() const { return m_sub_meshes; }
         
-        static Mesh *Create(const MeshData &mesh_data, const Vector<Rendering::SubMesh> &sub_meshes);
+        static Mesh *Create(const MeshData &mesh_data, const Vector<Rendering::SubMesh> &sub_meshes, bool read_and_write_enabled = false);
     private:
-        Mesh(const MeshData &mesh_data, const Vector<Rendering::SubMesh> &sub_meshes);
+        Mesh(const MeshData &mesh_data, const Vector<Rendering::SubMesh> &sub_meshes, bool read_and_write_enabled);
         ~Mesh() override;
 
-        void RecalculateBounds();
+        static BoundingBox CalculateBounds(const Vector<Vec3> &positions);
     private:
         MeshData m_mesh_data;
-        BoundingBox m_bounds;
-
         Vector<Rendering::SubMesh> m_sub_meshes;
+
+        bool m_read_and_write_enabled;
+        BoundingBox m_bounds;
     };
 
     class IMeshLoader {
