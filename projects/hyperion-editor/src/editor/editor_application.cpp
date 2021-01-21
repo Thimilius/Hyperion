@@ -14,10 +14,10 @@ namespace Hyperion::Editor {
         }
 
         void OnUpdate(float32 delta_time) override {
-            if ((Input::GetKey(KeyCode::LeftControl) || Input::GetKey(KeyCode::RightControl)) && Input::GetKeyDown(KeyCode::W)) {
+            if ((Input::IsKeyHold(KeyCode::LeftControl) || Input::IsKeyHold(KeyCode::RightControl)) && Input::IsKeyDown(KeyCode::W)) {
                 Exit();
             }
-            if (Input::GetKeyDown(KeyCode::F1)) {
+            if (Input::IsKeyDown(KeyCode::F1)) {
                 GetWindow()->SetWindowMode(GetWindow()->GetWindowMode() == WindowMode::Borderless ? WindowMode::Windowed : WindowMode::Borderless);
             }
         }
