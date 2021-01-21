@@ -18,8 +18,8 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\build\debug\bin\windows-x86_64\</OutputPath>
-    <BaseIntermediateOutputPath>..\..\..\build\debug\obj\windows-x86_64\debug\Hyperion\</BaseIntermediateOutputPath>
+    <OutputPath>..\..\..\build\debug\bin\managed\</OutputPath>
+    <BaseIntermediateOutputPath>..\..\..\build\debug\obj\managed\</BaseIntermediateOutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
     <DefineConstants>HYP_DEBUG;HYP_ENABLE_ASSERTS;HYP_BREAK_ON_ASSERT;HYP_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;HYP_AUDIO_FMOD;HYP_PHYSICS_BULLET;HYP_SCRIPTING_MONO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -30,8 +30,8 @@
     <PlatformTarget>x64</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\build\release\bin\windows-x86_64\</OutputPath>
-    <BaseIntermediateOutputPath>..\..\..\build\release\obj\windows-x86_64\release\Hyperion\</BaseIntermediateOutputPath>
+    <OutputPath>..\..\..\build\release\bin\managed\</OutputPath>
+    <BaseIntermediateOutputPath>..\..\..\build\release\obj\managed\</BaseIntermediateOutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
     <DefineConstants>HYP_RELEASE;HYP_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;HYP_AUDIO_FMOD;HYP_PHYSICS_BULLET;HYP_SCRIPTING_MONO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />
+    <Compile Include="Object.cs" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

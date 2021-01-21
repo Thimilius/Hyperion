@@ -19,6 +19,9 @@ namespace Hyperion {
     class Object {
         HYP_REFLECT();
     public:
+        Object();
+        Object(const String &name);
+
         inline Type GetType() const { return get_type(); }
         
         inline ObjectId GetId() const { return m_id; }
@@ -32,8 +35,6 @@ namespace Hyperion {
         static Object *Clone(Object *object);
         static void Destroy(Object *object);
     protected:
-        Object();
-        Object(const String &name);
         virtual ~Object();
 
         inline virtual Object *CreateClone() const { return new Object(); }

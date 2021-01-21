@@ -240,6 +240,9 @@ project "Hyperion"
 	
 	language "C#"
 	
+	targetdir ("build/%{cfg.buildcfg}/bin/managed/")
+	objdir ("build/%{cfg.buildcfg}/obj/managed/")
+	
 	files { "%{prj.location}/**.cs" }
 	
 	postbuildcommands {

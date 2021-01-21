@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 
 namespace Hyperion {
     public static class Application {
-        public static void Do() {
-            Console.WriteLine("Hello from managed!");
-
-            Log("String passed from managed");
+        public static void Run() {
+            Object obj = new Object("My Object");
+            Console.WriteLine(obj.Name);
+            Object.Destroy(obj);
         }
-
-        [MethodImpl(MethodImplOptions.InternalCall)]
-        public extern static void Log(string message);
     }
 }

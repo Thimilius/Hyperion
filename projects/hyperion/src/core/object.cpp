@@ -103,7 +103,7 @@ namespace Hyperion {
 HYP_REFLECT_REGISTER_BEGIN
 {
     registration::class_<Object>("Object")
-        .property("guid", &Object::m_guid)
+        .property_readonly("guid", &Object::m_guid)
         .property("name", &Object::m_name);
 }
 HYP_REFLECT_REGISTER_END

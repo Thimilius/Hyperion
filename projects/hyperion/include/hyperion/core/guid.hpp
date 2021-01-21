@@ -14,7 +14,7 @@ namespace Hyperion {
         static Guid Create();
         static Guid Create(const String &string);
     private:
-        uint64 data[2];
+        uint64 data[2] = { 0 };
     };
 
 }
