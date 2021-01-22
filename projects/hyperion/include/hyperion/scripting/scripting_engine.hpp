@@ -1,5 +1,6 @@
 #pragma once
 
+#include "hyperion/core/app/application_settings.hpp"
 #include "hyperion/scripting/scripting_driver.hpp"
 
 namespace Hyperion {
@@ -13,7 +14,7 @@ namespace Hyperion {
         ScriptingEngine() = delete;
         ~ScriptingEngine() = delete;
 
-        static void Init();
+        static void Init(const ScriptingSettings &settings);
         static void Shutdown();
     private:
         inline static IScriptingDriver *s_scripting_driver;

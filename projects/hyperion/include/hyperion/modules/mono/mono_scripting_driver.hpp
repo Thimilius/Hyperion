@@ -9,7 +9,7 @@ namespace Hyperion {
 
     class MonoScriptingDriver : public IScriptingDriver {
     public:
-        void Init() override;
+        void Init(const ScriptingSettings &settings) override;
         void Shutdown() override;
 
         inline static MonoDomain *GetDomain() { return s_root_domain; }
@@ -19,7 +19,10 @@ namespace Hyperion {
         static void RegisterObject(MonoObject *managed_object, Object *native_object);
         static void UnregisterObject(MonoObject *managed_object);
     private:
-        void SetupBindings();
+        void InitDebugger(const ScriptingSettings &settings);
+        void InitDomain();
+
+        void InitBindings();
         void TestFunctions();
     private:
         inline static MonoDomain *s_root_domain;

@@ -246,5 +246,11 @@ project "Hyperion"
 	files { "%{prj.location}/**.cs" }
 	
 	postbuildcommands {
-		"{COPY} $(TargetDir)$(TargetFileName) $(ProjectDir)../../../run_tree/data/managed/"
+		"{COPY} $(TargetDir)$(TargetFileName) $(ProjectDir)../../../run_tree/data/managed/",
+		"{COPY} $(TargetDir)$(TargetName).pdb $(ProjectDir)../../../run_tree/data/managed/"
 	}
+	
+	filter "system:windows"
+		postbuildcommands {
+			"$(ProjectDir)../../../run_tree/data/tools/pdb2mdb.exe $(ProjectDir)../../../run_tree/data/managed/$(TargetFileName)"
+		}

@@ -42,7 +42,7 @@ namespace Hyperion {
         Time::s_max_delta_time = s_settings.core.max_delta_time;
         HYP_ASSERT_MESSAGE(s_settings.core.fixed_delta_time > 0, "Fixed delta time must be greater than zero!");
         Time::s_fixed_delta_time = s_settings.core.fixed_delta_time;
-
+        
         Display::UpdateSize(s_settings.window.width, s_settings.window.height);
 
         Window *window = Window::Create(s_settings.window);
@@ -56,7 +56,7 @@ namespace Hyperion {
         Rendering::RenderEngine::Init();
         Physics::PhysicsEngine::Init();
         Audio::AudioEngine::Init();
-        ScriptingEngine::Init();
+        ScriptingEngine::Init(s_settings.scripting);
     }
 
     uint32 Engine::Run() {

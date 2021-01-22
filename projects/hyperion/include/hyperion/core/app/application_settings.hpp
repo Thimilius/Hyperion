@@ -29,11 +29,18 @@ namespace Hyperion {
         Rendering::IRenderPipeline *custom_pipeline = nullptr;
     };
 
+    struct ScriptingSettings {
+        bool wait_for_debugger = false;
+        uint32 debugger_port = 12345;
+        uint32 debugger_wait_timeout = 3000;
+    };
+
     struct ApplicationSettings {
         CoreSettings core;
         WindowSettings window;
         AssetSettings assets;
         RenderSettings render;
+        ScriptingSettings scripting;
 
         static ApplicationSettings FromJsonFile(const String &path);
     };

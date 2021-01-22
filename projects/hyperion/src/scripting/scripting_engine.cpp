@@ -8,14 +8,14 @@
 
 namespace Hyperion {
 
-    void ScriptingEngine::Init() {
+    void ScriptingEngine::Init(const ScriptingSettings &settings) {
 #ifdef HYP_SCRIPTING_MONO
         s_scripting_driver = new MonoScriptingDriver();
 #else
         s_scripting_driver = new DummyScriptingDriver();
 #endif
 
-        s_scripting_driver->Init();
+        s_scripting_driver->Init(settings);
     }
 
     void ScriptingEngine::Shutdown() {

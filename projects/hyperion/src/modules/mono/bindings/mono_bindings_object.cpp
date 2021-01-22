@@ -29,21 +29,26 @@ namespace Hyperion {
     }
 
     MonoString *MonoBindingsObject::Binding_GetName(MonoObject *object) {
-        Object *native_object = MonoScriptingDriver::GetNativeObject(object);
-        return mono_string_new(MonoScriptingDriver::GetDomain(), native_object->GetName().c_str());
+        if (Object *native_object = MonoScriptingDriver::GetNativeObject(object)) {
+            return mono_string_new(MonoScriptingDriver::GetDomain(), native_object->GetName().c_str());
+        } else {
+            return nullptr;
+        }
     }
 
     void MonoBindingsObject::Binding_SetName(MonoObject *object, MonoString *name) {
-        Object *native_object = MonoScriptingDriver::GetNativeObject(object);
-        char *native_name = mono_string_to_utf8(name);
-        native_object->SetName(native_name);
-        mono_free(native_name);
+        if (Object *native_object = MonoScriptingDriver::GetNativeObject(object)) {
+            char *native_name = mono_string_to_utf8(name);
+            native_object->SetName(native_name);
+            mono_free(native_name);
+        }
     }
 
     void MonoBindingsObject::Binding_Destroy(MonoObject *object) {
-        Object *native_object = MonoScriptingDriver::GetNativeObject(object);
-        MonoScriptingDriver::UnregisterObject(object);
-        Object::Destroy(native_object);
+        if (Object *native_object = MonoScriptingDriver::GetNativeObject(object)) {
+            MonoScriptingDriver::UnregisterObject(object);
+            Object::Destroy(native_object);
+        }
     }
 
     bool MonoBindingsObject::Binding_IsNativeAlive(MonoObject *object) {

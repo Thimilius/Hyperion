@@ -55,6 +55,8 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>IF EXIST $(TargetDir)$(TargetFileName)\ (xcopy /Q /E /Y /I $(TargetDir)$(TargetFileName) $(ProjectDir)..\..\..\run_tree\data\managed &gt; nul) ELSE (xcopy /Q /Y /I $(TargetDir)$(TargetFileName) $(ProjectDir)..\..\..\run_tree\data\managed &gt; nul)</PostBuildEvent>
+    <PostBuildEvent>IF EXIST $(TargetDir)$(TargetFileName)\ (xcopy /Q /E /Y /I $(TargetDir)$(TargetFileName) $(ProjectDir)..\..\..\run_tree\data\managed &gt; nul) ELSE (xcopy /Q /Y /I $(TargetDir)$(TargetFileName) $(ProjectDir)..\..\..\run_tree\data\managed &gt; nul)
+IF EXIST $(TargetDir)$(TargetName).pdb\ (xcopy /Q /E /Y /I $(TargetDir)$(TargetName).pdb $(ProjectDir)..\..\..\run_tree\data\managed &gt; nul) ELSE (xcopy /Q /Y /I $(TargetDir)$(TargetName).pdb $(ProjectDir)..\..\..\run_tree\data\managed &gt; nul)
+$(ProjectDir)../../../run_tree/data/tools/pdb2mdb.exe $(ProjectDir)../../../run_tree/data/managed/$(TargetFileName)</PostBuildEvent>
   </PropertyGroup>
 </Project>
