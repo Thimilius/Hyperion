@@ -59,7 +59,7 @@ namespace Hyperion {
             !std::is_same<Transform, T>::value &&
             std::is_default_constructible<T>::value>>
         T *AddComponent() {
-            rttr::type type = rttr::type::get<T>();
+            Type type = Type::get<T>();
             HYP_ASSERT_MESSAGE(m_components.find(type) == m_components.end(), "Failed to add component because a component with the same type already exists!");
 
             T *component = new T();
@@ -167,7 +167,6 @@ namespace Hyperion {
         void OnDestroy() override;
     private:
         Entity(const String &name) : Object(name) { }
-        ~Entity() = default;
 
         void NotifyActivationChanged();
 
@@ -180,7 +179,7 @@ namespace Hyperion {
 
         LayerMask m_layer = LayerMask::Default;
 
-        Map<rttr::type, Component *> m_components;
+        Map<Type, Component *> m_components;
         Transform *m_transform = nullptr;
         Set<EntityTag> m_tags;
 

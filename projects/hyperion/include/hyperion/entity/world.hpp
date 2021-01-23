@@ -59,7 +59,7 @@ namespace Hyperion {
     private:
         World() : World("World") {}
         World(const String &name);
-        ~World();
+        ~World() override;
 
         void AddRootEntity(Entity *entity);
         void RemoveRootEntity(Entity *entity);

@@ -6,6 +6,7 @@
 namespace Hyperion {
 
     class Shader : public Asset {
+        HYP_REFLECT(Asset);
     public:
         inline AssetType GetAssetType() const override { return AssetType::Shader; }
 

@@ -7,6 +7,7 @@
 namespace Hyperion {
 
     class Texture : public Asset {
+        HYP_REFLECT(Asset);
     public:
         virtual ~Texture() override;
 
@@ -20,6 +21,7 @@ namespace Hyperion {
     };
 
     class Texture2D : public Texture {
+        HYP_REFLECT(Texture);
     public:
         inline Rendering::TextureDimension GetDimension() const { return Rendering::TextureDimension::Texture2D; }
 
@@ -38,6 +40,7 @@ namespace Hyperion {
     };
 
     class TextureCubemap : public Texture {
+        HYP_REFLECT(Texture);
     public:
         inline Rendering::TextureDimension GetDimension() const { return Rendering::TextureDimension::TextureCubemap; }
     };

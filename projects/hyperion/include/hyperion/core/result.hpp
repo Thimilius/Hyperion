@@ -67,13 +67,13 @@ namespace Hyperion {
         }
 
         T &Unwrap() {
-            HYP_ASSERT_NO_MESSAGE(m_okay_contains_value);
+            HYP_ASSERT(m_okay_contains_value);
 
             return m_okay_value.value;
         }
 
         const T &Unwrap() const {
-            HYP_ASSERT_NO_MESSAGE(m_okay_contains_value);
+            HYP_ASSERT(m_okay_contains_value);
 
             return m_okay_value.value;
         }
@@ -95,46 +95,46 @@ namespace Hyperion {
         }
 
         E &UnwrapError() {
-            HYP_ASSERT_NO_MESSAGE(!m_okay_contains_value);
+            HYP_ASSERT(!m_okay_contains_value);
 
             return m_error_value.error;
         }
 
         const E &UnwrapError() const {
-            HYP_ASSERT_NO_MESSAGE(!m_okay_contains_value);
+            HYP_ASSERT(!m_okay_contains_value);
 
             return m_error_value.error;
         }
 
-        bool operator ==(const Ok<T> &value) {
+        bool operator==(const Ok<T> &value) {
             return m_okay_value.value == value.value;
         }
 
-        bool operator ==(const Ok<T> &value) const {
+        bool operator==(const Ok<T> &value) const {
             return m_okay_value.value == value.value;
         }
 
-        bool operator ==(const Err<E> &error) {
+        bool operator==(const Err<E> &error) {
             return m_error_value.error == error.error;
         }
 
-        bool operator ==(const Err<E> &error) const {
+        bool operator==(const Err<E> &error) const {
             return m_error_value.error == error.error;
         }
 
-        bool operator !=(const Ok<T> &value) {
+        bool operator!=(const Ok<T> &value) {
             return m_okay_value.value != value.value;
         }
 
-        bool operator !=(const Ok<T> &value) const {
+        bool operator!=(const Ok<T> &value) const {
             return m_okay_value.value != value.value;
         }
 
-        bool operator !=(const Err<E> &error) {
+        bool operator!=(const Err<E> &error) {
             return m_error_value.error != error.error;
         }
 
-        bool operator !=(const Err<E> &error) const {
+        bool operator!=(const Err<E> &error) const {
             return m_error_value.error != error.error;
         }
     private:

@@ -13,7 +13,7 @@ namespace Hyperion {
     protected:
         Behaviour() = default;
         Behaviour(const String &name) : Component(name) { }
-        virtual ~Behaviour() = default;
+        virtual ~Behaviour() override = default;
     private:
         bool m_enabled = true;
     };

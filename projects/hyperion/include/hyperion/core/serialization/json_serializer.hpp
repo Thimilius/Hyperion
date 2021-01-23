@@ -16,7 +16,7 @@ namespace Hyperion {
 
         template<typename T>
         void Serialize(const String &filepath, const T &object) {
-            rttr::type type = rttr::type::get<T>();
+            Type type = Type::get<T>();
             if (!type.is_valid()) {
                 return;
             }
@@ -26,7 +26,7 @@ namespace Hyperion {
 
         template<typename T>
         T Deserialize(const String &filepath) {
-            rttr::type type = rttr::type::get<T>();
+            Type type = Type::get<T>();
             if (!type.is_valid()) {
                 return T();
             }
