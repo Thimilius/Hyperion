@@ -12,7 +12,7 @@ namespace Hyperion {
 
     class Resource final {
     private:
-        inline static ResourceId GetNextResourceId() { return s_resource_id_counter++; }
+        inline static ResourceId GetNextResourceId() { return ++s_resource_id_counter; }
     private:
         inline static ResourceId s_resource_id_counter = 0;
     private:

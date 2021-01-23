@@ -14,13 +14,16 @@ namespace Hyperion::Rendering {
         void SetRasterizerState(const RasterizerState &rasterizer_state) override;
 
         void CreateShader(ResourceId id, const ShaderDescriptor &descriptor) override;
-        void FreeShader(ResourceId id) override;
+        void DestroyShader(ResourceId id) override;
 
         void CreateMesh(ResourceId id, const MeshDescriptor &descriptor) override;
-        void FreeMesh(ResourceId id) override;
+        void DestroyMesh(ResourceId id) override;
 
         void CreateTexture(ResourceId id, const TextureDescriptor &descriptor) override;
-        void FreeTexture(ResourceId id) override;
+        void DestroyTexture(ResourceId id) override;
+
+        void CreateMaterial(ResourceId id, const MaterialDescriptor &descriptor) override;
+        void DestroyMaterial(ResourceId id) override;
 
         void DrawIndexed(ResourceId shader_id, ResourceId mesh_id) override;
     private:
@@ -51,6 +54,11 @@ namespace Hyperion::Rendering {
             TextureParameters parameters;
         };
         inline static Map<ResourceId, OpenGLTexture> s_textures;
+
+        struct OpenGLMaterial {
+            ResourceId shader;
+        };
+        inline static Map<ResourceId, OpenGLMaterial> s_materials;
     };
 
 }

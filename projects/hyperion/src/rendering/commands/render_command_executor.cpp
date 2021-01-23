@@ -34,9 +34,9 @@ namespace Hyperion::Rendering {
                 render_driver->CreateShader(render_command->id, render_command->descriptor);
                 return sizeof(*render_command) + extra_size;
             }
-            case RenderCommandType::FreeShader: {
+            case RenderCommandType::DestroyShader: {
                 auto render_command = reinterpret_cast<RenderCommandId *>(command);
-                render_driver->FreeShader(render_command->id);
+                render_driver->DestroyShader(render_command->id);
                 return sizeof(*render_command);
             }
             case RenderCommandType::CreateMesh: {
@@ -52,9 +52,9 @@ namespace Hyperion::Rendering {
                 render_driver->CreateMesh(render_command->id, render_command->descriptor);
                 return sizeof(*render_command) + extra_size;
             }
-            case RenderCommandType::FreeMesh: {
+            case RenderCommandType::DestroyMesh: {
                 auto render_command = reinterpret_cast<RenderCommandId *>(command);
-                render_driver->FreeMesh(render_command->id);
+                render_driver->DestroyMesh(render_command->id);
                 return sizeof(*render_command);
             }
             case RenderCommandType::CreateTexture: {
@@ -67,14 +67,24 @@ namespace Hyperion::Rendering {
                 render_driver->CreateTexture(render_command->id, render_command->descriptor);
                 return sizeof(*render_command) + extra_size;
             }
-            case RenderCommandType::FreeTexture: {
+            case RenderCommandType::DestroyTexture: {
                 auto render_command = reinterpret_cast<RenderCommandId *>(command);
-                render_driver->FreeTexture(render_command->id);
+                render_driver->DestroyTexture(render_command->id);
+                return sizeof(*render_command);
+            }
+            case RenderCommandType::CreateMaterial: {
+                auto render_command = reinterpret_cast<RenderCommandCreateMaterial *>(command);
+                render_driver->CreateMaterial(render_command->id, render_command->descriptor);
+                return sizeof(*render_command);
+            }
+            case RenderCommandType::DestroyMaterial: {
+                auto render_command = reinterpret_cast<RenderCommandId *>(command);
+                render_driver->DestroyMaterial(render_command->id);
                 return sizeof(*render_command);
             }
             case RenderCommandType::DrawIndexed: {
                 auto render_command = reinterpret_cast<RenderCommandDrawIndexed *>(command);
-                render_driver->DrawIndexed(render_command->shader_id, render_command->mesh_id);
+                render_driver->DrawIndexed(render_command->mesh_id, render_command->material_id);
                 return sizeof(*render_command);
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;

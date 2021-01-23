@@ -61,7 +61,7 @@ namespace Hyperion {
     }
 
     Mesh::~Mesh() {
-        Rendering::RenderEngine::GetRenderDriver()->FreeMesh(m_resource_id);
+        Rendering::RenderEngine::GetRenderDriver()->DestroyMesh(m_resource_id);
     }
 
     const MeshData &Mesh::GetMeshData() const {

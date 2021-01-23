@@ -34,8 +34,8 @@ namespace Hyperion::Rendering {
         std::memcpy(data, descriptor.source_fragment.data, descriptor.source_fragment.size);
     }
 
-    void MultithreadedRenderDriver::FreeShader(ResourceId id) {
-        RenderCommandId *command = RenderEngine::GetCommandQueue().Allocate<RenderCommandId>(RenderCommandType::FreeShader);
+    void MultithreadedRenderDriver::DestroyShader(ResourceId id) {
+        RenderCommandId *command = RenderEngine::GetCommandQueue().Allocate<RenderCommandId>(RenderCommandType::DestroyShader);
         command->id = id;
     }
 
@@ -55,8 +55,8 @@ namespace Hyperion::Rendering {
         std::memcpy(data, descriptor.indices.data, descriptor.indices.size);
     }
 
-    void MultithreadedRenderDriver::FreeMesh(ResourceId id) {
-        RenderCommandId *command = RenderEngine::GetCommandQueue().Allocate<RenderCommandId>(RenderCommandType::FreeMesh);
+    void MultithreadedRenderDriver::DestroyMesh(ResourceId id) {
+        RenderCommandId *command = RenderEngine::GetCommandQueue().Allocate<RenderCommandId>(RenderCommandType::DestroyMesh);
         command->id = id;
     }
 
@@ -70,15 +70,26 @@ namespace Hyperion::Rendering {
         std::memcpy(data, descriptor.pixels.data, descriptor.pixels.size);
     }
 
-    void MultithreadedRenderDriver::FreeTexture(ResourceId id) {
-        RenderCommandId *command = RenderEngine::GetCommandQueue().Allocate<RenderCommandId>(RenderCommandType::FreeTexture);
+    void MultithreadedRenderDriver::DestroyTexture(ResourceId id) {
+        RenderCommandId *command = RenderEngine::GetCommandQueue().Allocate<RenderCommandId>(RenderCommandType::DestroyTexture);
         command->id = id;
     }
 
-    void MultithreadedRenderDriver::DrawIndexed(ResourceId shader_id, ResourceId mesh_id) {
+    void MultithreadedRenderDriver::CreateMaterial(ResourceId id, const MaterialDescriptor &descriptor) {
+        RenderCommandCreateMaterial *command = RenderEngine::GetCommandQueue().Allocate<RenderCommandCreateMaterial>(RenderCommandType::CreateMaterial);
+        command->id = id;
+        command->descriptor = descriptor;
+    }
+
+    void MultithreadedRenderDriver::DestroyMaterial(ResourceId id) {
+        RenderCommandId *command = RenderEngine::GetCommandQueue().Allocate<RenderCommandId>(RenderCommandType::DestroyMaterial);
+        command->id = id;
+    }
+
+    void MultithreadedRenderDriver::DrawIndexed(ResourceId mesh_id, ResourceId material_id) {
         RenderCommandDrawIndexed *command = RenderEngine::GetCommandQueue().Allocate<RenderCommandDrawIndexed>(RenderCommandType::DrawIndexed);
-        command->shader_id = shader_id;
         command->mesh_id = mesh_id;
+        command->material_id = material_id;
     }
 
 }

@@ -35,7 +35,7 @@ namespace Hyperion {
     }
 
     Texture::~Texture() {
-        RenderEngine::GetRenderDriver()->FreeTexture(m_resource_id);
+        RenderEngine::GetRenderDriver()->DestroyTexture(m_resource_id);
     }
 
     Texture2D *Texture2D::Create(uint32 width, uint32 height, TextureFormat format, TextureParameters parameters, const Vector<uint8> &pixels, bool read_and_write_enabled) {

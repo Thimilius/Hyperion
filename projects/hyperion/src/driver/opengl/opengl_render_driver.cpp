@@ -87,7 +87,7 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void OpenGLRenderDriver::FreeShader(ResourceId id) {
+    void OpenGLRenderDriver::DestroyShader(ResourceId id) {
         HYP_ASSERT(s_shaders.find(id) != s_shaders.end());
 
         OpenGLShader &shader = s_shaders[id];
@@ -133,7 +133,7 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void OpenGLRenderDriver::FreeMesh(ResourceId id) {
+    void OpenGLRenderDriver::DestroyMesh(ResourceId id) {
         HYP_ASSERT(s_meshes.find(id) != s_meshes.end());
 
         OpenGLMesh &mesh = s_meshes[id];
@@ -158,7 +158,7 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void OpenGLRenderDriver::FreeTexture(ResourceId id) {
+    void OpenGLRenderDriver::DestroyTexture(ResourceId id) {
         HYP_ASSERT(s_textures.find(id) != s_textures.end());
 
         OpenGLTexture &texture = s_textures[id];
@@ -167,16 +167,31 @@ namespace Hyperion::Rendering {
         s_textures.erase(id);
     }
 
-    void OpenGLRenderDriver::DrawIndexed(ResourceId shader_id, ResourceId mesh_id) {
-        HYP_ASSERT(s_shaders.find(shader_id) != s_shaders.end());
-        HYP_ASSERT(s_meshes.find(mesh_id) != s_meshes.end());
+    void OpenGLRenderDriver::CreateMaterial(ResourceId id, const MaterialDescriptor &descriptor) {
+        HYP_ASSERT(s_materials.find(id) == s_materials.end());
 
-        OpenGLShader &shader = s_shaders[shader_id];
+        OpenGLMaterial &material = s_materials[id];
+        material.shader = descriptor.shader;
+    }
+
+    void OpenGLRenderDriver::DestroyMaterial(ResourceId id) {
+        HYP_ASSERT(s_materials.find(id) != s_materials.end());
+        s_materials.erase(id);
+    }
+
+    void OpenGLRenderDriver::DrawIndexed(ResourceId mesh_id, ResourceId material_id) {
+        HYP_ASSERT(s_meshes.find(mesh_id) != s_meshes.end());
+        HYP_ASSERT(s_materials.find(material_id) != s_materials.end());
+
         OpenGLMesh &mesh = s_meshes[mesh_id];
+        OpenGLMaterial &material = s_materials[material_id];
+
+        ResourceId shader_id = material.shader;
+        HYP_ASSERT(s_shaders.find(shader_id) != s_shaders.end());
+        OpenGLShader &shader = s_shaders[shader_id];
 
         glUseProgram(shader.program);
         glBindVertexArray(mesh.vertex_array);
-
         GLenum index_format = OpenGLUtilities::GetGLIndexFormat(mesh.index_format);
         GLsizei index_format_size = OpenGLUtilities::GetGLIndexFormatSize(mesh.index_format);
         for (SubMesh &sub_mesh : mesh.sub_meshes) {

@@ -16,13 +16,16 @@ namespace Hyperion::Rendering {
         SetRasterizerState,
 
         CreateShader,
-        FreeShader,
+        DestroyShader,
 
         CreateMesh,
-        FreeMesh,
+        DestroyMesh,
 
         CreateTexture,
-        FreeTexture,
+        DestroyTexture,
+
+        CreateMaterial,
+        DestroyMaterial,
 
         DrawIndexed
     };
@@ -59,9 +62,14 @@ namespace Hyperion::Rendering {
         TextureDescriptor descriptor;
     };
 
+    struct RenderCommandCreateMaterial {
+        ResourceId id;
+        MaterialDescriptor descriptor;
+    };
+
     struct RenderCommandDrawIndexed {
-        ResourceId shader_id;
         ResourceId mesh_id;
+        ResourceId material_id;
     };
 
 }

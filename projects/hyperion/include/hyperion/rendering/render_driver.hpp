@@ -81,6 +81,10 @@ namespace Hyperion::Rendering {
         ArrayDescriptor<uint8> pixels;
     };
 
+    struct MaterialDescriptor {
+        ResourceId shader;
+    };
+
     class IRenderDriver {
     public:
         virtual ~IRenderDriver() = default;
@@ -90,15 +94,18 @@ namespace Hyperion::Rendering {
         virtual void SetRasterizerState(const RasterizerState &rasterizer_state) = 0;
 
         virtual void CreateShader(ResourceId id, const ShaderDescriptor &descriptor) = 0;
-        virtual void FreeShader(ResourceId id) = 0;
+        virtual void DestroyShader(ResourceId id) = 0;
 
         virtual void CreateMesh(ResourceId id, const MeshDescriptor &descriptor) = 0;
-        virtual void FreeMesh(ResourceId id) = 0;
+        virtual void DestroyMesh(ResourceId id) = 0;
 
         virtual void CreateTexture(ResourceId id, const TextureDescriptor &descriptor) = 0;
-        virtual void FreeTexture(ResourceId id) = 0;
+        virtual void DestroyTexture(ResourceId id) = 0;
 
-        virtual void DrawIndexed(ResourceId shader_id, ResourceId mesh_id) = 0;
+        virtual void CreateMaterial(ResourceId id, const MaterialDescriptor &descriptor) = 0;
+        virtual void DestroyMaterial(ResourceId id) = 0;
+
+        virtual void DrawIndexed(ResourceId mesh_id, ResourceId material_id) = 0;
     };
 
 }

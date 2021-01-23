@@ -2,6 +2,7 @@
 
 #include "hyperion/rendering/pipelines/forward_render_pipeline.hpp"
 
+#include "hyperion/assets/material.hpp"
 #include "hyperion/assets/mesh.hpp"
 #include "hyperion/assets/shader.hpp"
 #include "hyperion/assets/texture.hpp"
@@ -11,6 +12,7 @@
 namespace Hyperion::Rendering {
 
     Shader *g_shader;
+    Material *g_material;
     Mesh *g_mesh;
     Texture *g_texture;
 
@@ -38,6 +40,8 @@ namespace Hyperion::Rendering {
             )" }
         };
         g_shader = Shader::Create(sources);
+
+        g_material = Material::Create(g_shader);
 
         MeshData mesh_data;
         mesh_data.positions = {
@@ -83,7 +87,7 @@ namespace Hyperion::Rendering {
         color *= value;
         RenderEngine::GetRenderDriver()->Clear(ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, color);
 
-        RenderEngine::GetRenderDriver()->DrawIndexed(g_shader->GetResourceId(), g_mesh->GetResourceId());
+        RenderEngine::GetRenderDriver()->DrawIndexed(g_mesh->GetResourceId(), g_material->GetResourceId());
     }
 
 }

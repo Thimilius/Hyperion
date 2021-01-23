@@ -25,7 +25,7 @@ namespace Hyperion {
     }
 
     Shader::~Shader() {
-        Rendering::RenderEngine::GetRenderDriver()->FreeShader(m_resource_id);
+        Rendering::RenderEngine::GetRenderDriver()->DestroyShader(m_resource_id);
     }
 
     Shader *Shader::Create(const Map<ShaderStageFlags, String> &sources) {
