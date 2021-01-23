@@ -37,8 +37,9 @@ namespace Hyperion {
         void SetupWindow(const WindowSettings &settings);
         Vec2 GetActualWindowSize(uint32 client_width, uint32 client_height) const;
         void DispatchEvent(Event &event) const;
+        void DispatchKeyEvent(KeyCode key_code, bool is_down) const;
 
-        KeyCode TranslateKeyCode(uint32 w_param, uint32 l_param) const;
+        KeyCode TranslateKeyCode(uint32 w_param, uint32 l_param, bool is_down) const;
         MouseButtonCode TranslateMouseButtonCode(uint32 code) const;
         KeyModifier GetKeyModifier() const;
         uint32 GetMouseButtonFromMessage(uint32 message, uint32 w_param) const;

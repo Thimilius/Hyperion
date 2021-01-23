@@ -333,6 +333,18 @@ namespace Hyperion {
         }
     }
 
+    void WindowsWindow::DispatchKeyEvent(KeyCode key_code, bool is_down) const {
+        if (key_code != KeyCode::None) {
+            if (is_down) {
+                KeyPressedEvent event(key_code, GetKeyModifier());
+                DispatchEvent(event);
+            } else {
+                KeyReleasedEvent event(key_code, GetKeyModifier());
+                DispatchEvent(event);
+            }
+        }
+    }
+
     MouseButtonCode WindowsWindow::TranslateMouseButtonCode(uint32 code) const {
         code = code & ~(MK_CONTROL & MK_SHIFT);
 
@@ -348,29 +360,35 @@ namespace Hyperion {
         }
     }
 
-    KeyCode WindowsWindow::TranslateKeyCode(uint32 w_param, uint32 l_param) const {
+    KeyCode WindowsWindow::TranslateKeyCode(uint32 w_param, uint32 l_param, bool is_down) const {
         // Left and right keys need to be distinguished as extended keys
         if (w_param == VK_CONTROL) {
-            if (l_param & 0x01000000) {
-                return KeyCode::RightControl;
-            }
-
             // Alt-Gr sends both left control and alt right messages.
             // We are only interested in the alt right message,
             // so we need to discard the left control message.
-            DWORD message_time = GetMessageTime();
             MSG next_message;
             if (PeekMessageW(&next_message, nullptr, 0, 0, PM_NOREMOVE)) {
                 if (next_message.message == WM_KEYDOWN || next_message.message == WM_SYSKEYDOWN || next_message.message == WM_KEYUP || next_message.message == WM_SYSKEYUP) {
+                    DWORD message_time = GetMessageTime();
                     if (next_message.wParam == VK_MENU && (next_message.lParam & 0x01000000) && next_message.time == message_time) {
+                        DispatchKeyEvent(KeyCode::AltGr, is_down);
+
                         // Next message is right alt down so discard this
                         return KeyCode::None;
                     }
                 }
             }
 
-            return KeyCode::LeftControl;
+            DispatchKeyEvent(KeyCode::Control, is_down);
+
+            if (l_param & 0x01000000) {
+                return KeyCode::RightControl;
+            } else {
+                return KeyCode::LeftControl;
+            }
         } else if (w_param == VK_SHIFT) {
+            DispatchKeyEvent(KeyCode::Shift, is_down);
+
             // Left and right shift keys are not send as extended keys
             // and therefore need to be queried explicitly
             bool previous_left_shift_down = m_left_shift_last_down;
@@ -394,6 +412,8 @@ namespace Hyperion {
                 }
             }
         } else if (w_param == VK_MENU) {
+            DispatchKeyEvent(KeyCode::Alt, is_down);
+
             if (l_param & 0x01000000) {
                 return KeyCode::RightAlt;
             } else {
@@ -604,21 +624,15 @@ namespace Hyperion {
 
             case WM_KEYDOWN: 
             case WM_SYSKEYDOWN: {
-                KeyCode key_code = window->TranslateKeyCode(static_cast<uint32>(w_param), static_cast<uint32>(l_param));
-                if (key_code != KeyCode::None) {
-                    KeyPressedEvent event(key_code, window->GetKeyModifier());
-                    window->DispatchEvent(event);
-                }
+                KeyCode key_code = window->TranslateKeyCode(static_cast<uint32>(w_param), static_cast<uint32>(l_param), true);
+                window->DispatchKeyEvent(key_code, true);
                 break;
             }
 
             case WM_KEYUP:
             case WM_SYSKEYUP: {
-                KeyCode key_code = window->TranslateKeyCode(static_cast<uint32>(w_param), static_cast<uint32>(l_param));
-                if (key_code != KeyCode::None) {
-                    KeyReleasedEvent event(key_code, window->GetKeyModifier());
-                    window->DispatchEvent(event);
-                }
+                KeyCode key_code = window->TranslateKeyCode(static_cast<uint32>(w_param), static_cast<uint32>(l_param), false);
+                window->DispatchKeyEvent(key_code, false);
                 break;
             }
 
