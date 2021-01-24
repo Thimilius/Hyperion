@@ -1,6 +1,6 @@
 #pragma once
 
-#include "hyperion/common.hpp"
+#include "hyperion/core/system/log.hpp"
 
 #include <utility>
 
@@ -56,10 +56,10 @@ namespace Hyperion {
 
         T &Expect(const String &msg) {
             HYP_ASSERT_MESSAGE(m_okay_contains_value, msg);
-
+        
             return m_okay_value.value;
         }
-
+        
         const T &Expect(const String &msg) const {
             HYP_ASSERT_MESSAGE(m_okay_contains_value, msg);
             

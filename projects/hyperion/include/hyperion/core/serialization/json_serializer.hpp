@@ -15,20 +15,20 @@ namespace Hyperion {
         JsonSerializer(JsonSerializerSettings settings = JsonSerializerSettings()) : m_settings(settings) { }
 
         template<typename T>
-        String Serialize(const T &object) {
+        Result<String, Error> Serialize(const T &object) {
             Type type = Type::get<T>();
             if (!type.is_valid()) {
-                return String();
+                return Error::TypeInvalidForSerialization;
             }
 
             return SerializeInternal(object, type);
         }
 
         template<typename T>
-        T DeserializeCopy(const String &json) {
+        Result<T, Error> DeserializeCopy(const String &json) {
             Type type = Type::get<T>();
             if (!type.is_valid()) {
-                return T();
+                return Error::TypeInvalidForSerialization;
             }
             
             T object = { };
@@ -37,15 +37,15 @@ namespace Hyperion {
         }
 
         template<typename T>
-        T *DeserializeRaw(const String &json) {
+        Result<T *, Error> DeserializeRaw(const String &json) {
             Type type = Type::get<T>();
             if (!type.is_valid()) {
-                return nullptr;
+                return Error::TypeInvalidForSerialization;
             }
 
             Variant object = type.create();
             DeserializeInternal(json, object, type);
-            return object.get_value<T*>();
+            return object.get_value<T *>();
         }
     private:
         String SerializeInternal(Instance object, Type type);

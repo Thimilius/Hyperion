@@ -4,6 +4,8 @@
 
 #include <fmt/format.h>
 
+#include "hyperion/core/types.hpp"
+
 namespace Hyperion {
 
     using String = std::string;

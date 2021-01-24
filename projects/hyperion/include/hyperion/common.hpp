@@ -17,9 +17,10 @@
 
 #include "hyperion/core/assert.hpp"
 #include "hyperion/core/enum.hpp"
+#include "hyperion/core/error.hpp"
 #include "hyperion/core/types.hpp"
-#include "hyperion/core/string_utils.hpp"
 #include "hyperion/core/result.hpp"
+#include "hyperion/core/string_utils.hpp"
 #include "hyperion/core/object/reflection.hpp"
 #include "hyperion/core/system/log.hpp"
 
