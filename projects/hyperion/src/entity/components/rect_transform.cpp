@@ -176,6 +176,10 @@ namespace Hyperion {
         }
     }
 
+    RectTransform *RectTransform::Create() {
+        return new RectTransform();
+    }
+
     bool RectTransformUtility::RectangleContainsScreenPoint(RectTransform *rect_transform, Vec2 screen_point) {
         // First we need to transform the screen point so that the origin is in the center
         float32 display_half_width = static_cast<float32>(Display::GetWidth()) / 2.0f;
@@ -202,7 +206,7 @@ namespace Hyperion {
 
 HYP_REFLECT_REGISTER_BEGIN
 {
-    registration::class_<RectTransform>("RectTransform")
-        .constructor(DefaultConstructorPolicy);
+    Registration<RectTransform>("RectTransform")
+        .constructor(select_overload<RectTransform *()>(&RectTransform::Create))(DefaultConstructorPolicy);
 }
 HYP_REFLECT_REGISTER_END

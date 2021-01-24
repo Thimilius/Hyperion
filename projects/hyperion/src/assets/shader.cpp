@@ -24,12 +24,24 @@ namespace Hyperion {
         Rendering::RenderEngine::GetRenderDriver()->CreateShader(m_resource_id, descriptor);
     }
 
-    Shader::~Shader() {
-        Rendering::RenderEngine::GetRenderDriver()->DestroyShader(m_resource_id);
+    Shader *Shader::Create() {
+        return new Shader();
     }
 
     Shader *Shader::Create(const Map<ShaderStageFlags, String> &sources) {
         return new Shader(sources);
     }
 
+    void Shader::OnDestroy() {
+        Rendering::RenderEngine::GetRenderDriver()->DestroyShader(m_resource_id);
+    }
+
 }
+
+HYP_REFLECT_REGISTER_BEGIN
+{
+    Registration<Shader>("Shader")
+        .constructor(select_overload<Shader *()>(&Shader::Create))(DefaultConstructorPolicy)
+        .constructor(select_overload<Shader *(const Map<Rendering::ShaderStageFlags, String> &)>(&Shader::Create))(DefaultConstructorPolicy);
+}
+HYP_REFLECT_REGISTER_END

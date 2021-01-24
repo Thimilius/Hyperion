@@ -7,7 +7,7 @@
 namespace Hyperion {
 
     World *WorldManager::CreateWorld() {
-        World *world = new World();
+        World *world = new World("World");
         s_worlds.push_back(world);
         return world;
     }

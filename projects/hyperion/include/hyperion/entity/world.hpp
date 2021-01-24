@@ -56,13 +56,16 @@ namespace Hyperion {
 
             return components;
         }
+    protected:
+        void OnDestroy() override;
     private:
-        World() : World("World") {}
+        World() = default;
         World(const String &name);
-        ~World() override;
 
         void AddRootEntity(Entity *entity);
         void RemoveRootEntity(Entity *entity);
+
+        static World *Create();
     private:
         WorldEnvironment m_environment;
 

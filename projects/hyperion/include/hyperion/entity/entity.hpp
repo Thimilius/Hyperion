@@ -166,12 +166,14 @@ namespace Hyperion {
     protected:
         void OnDestroy() override;
     private:
+        Entity() = default;
         Entity(const String &name) : Object(name) { }
 
         void NotifyActivationChanged();
 
         void OnCreate(const Vec3 &position, const Quaternion &rotation, Transform *parent, World *world);
 
+        static Entity *Create();
         static String GetPrimitiveName(EntityPrimitive primitive);
     private:
         World *m_world = nullptr;

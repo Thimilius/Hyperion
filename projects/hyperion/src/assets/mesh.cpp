@@ -60,10 +60,6 @@ namespace Hyperion {
         Rendering::RenderEngine::GetRenderDriver()->CreateMesh(m_resource_id, descriptor);
     }
 
-    Mesh::~Mesh() {
-        Rendering::RenderEngine::GetRenderDriver()->DestroyMesh(m_resource_id);
-    }
-
     const MeshData &Mesh::GetMeshData() const {
         if (!m_read_and_write_enabled) {
             HYP_LOG_WARN("Mesh", "The data of a mesh that is not read and write enabled will not exist when queried!");
@@ -78,8 +74,16 @@ namespace Hyperion {
         return m_sub_meshes;
     }
 
+    Mesh *Mesh::Create() {
+        return new Mesh();
+    }
+
     Mesh *Mesh::Create(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes, bool read_and_write_enabled) {
         return new Mesh(mesh_data, sub_meshes, read_and_write_enabled);
+    }
+
+    void Mesh::OnDestroy() {
+        Rendering::RenderEngine::GetRenderDriver()->DestroyMesh(m_resource_id);
     }
 
     BoundingBox Mesh::CalculateBounds(const Vector<Vec3> &positions) {
@@ -392,3 +396,11 @@ namespace Hyperion {
     }
 
 }
+
+HYP_REFLECT_REGISTER_BEGIN
+{
+    Registration<Mesh>("Mesh")
+        .constructor(select_overload<Mesh *()>(&Mesh::Create))(DefaultConstructorPolicy)
+        .constructor(select_overload<Mesh *(const MeshData &, const Vector<Rendering::SubMesh> &, bool)>(&Mesh::Create))(DefaultConstructorPolicy);
+}
+HYP_REFLECT_REGISTER_END

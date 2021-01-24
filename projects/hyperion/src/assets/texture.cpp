@@ -9,6 +9,10 @@ using namespace Hyperion::Rendering;
 
 namespace Hyperion {
 
+    void Texture::OnDestroy() {
+        RenderEngine::GetRenderDriver()->DestroyTexture(m_resource_id);
+    }
+
     uint32 Texture::CalculateMipmapCount(uint32 width, uint32 height) {
         return static_cast<uint32>(1 + Math::Floor(Math::Log2(Math::Max(static_cast<float32>(width), static_cast<float32>(height)))));
     }
@@ -34,12 +38,29 @@ namespace Hyperion {
         RenderEngine::GetRenderDriver()->CreateTexture(m_resource_id, descriptor);
     }
 
-    Texture::~Texture() {
-        RenderEngine::GetRenderDriver()->DestroyTexture(m_resource_id);
+    Texture2D *Texture2D::Create() {
+        return new Texture2D();
     }
 
     Texture2D *Texture2D::Create(uint32 width, uint32 height, TextureFormat format, TextureParameters parameters, const Vector<uint8> &pixels, bool read_and_write_enabled) {
         return new Texture2D(width, height, format, parameters, pixels, read_and_write_enabled);
     }
 
+    TextureCubemap *TextureCubemap::Create() {
+        return new TextureCubemap();
+    }
+
 }
+
+HYP_REFLECT_REGISTER_BEGIN
+{
+    Registration<Texture>("Texture");
+
+    Registration<Texture2D>("Texture2D")
+        .constructor(select_overload<Texture2D *()>(&Texture2D::Create))(DefaultConstructorPolicy)
+        .constructor(select_overload<Texture2D *(uint32, uint32, Rendering::TextureFormat, Rendering::TextureParameters, const Vector<uint8> &, bool)>(&Texture2D::Create))(DefaultConstructorPolicy);
+
+    Registration<TextureCubemap>("TextureCubemap")
+        .constructor(select_overload<TextureCubemap *()>(&TextureCubemap::Create))(DefaultConstructorPolicy);
+}
+HYP_REFLECT_REGISTER_END

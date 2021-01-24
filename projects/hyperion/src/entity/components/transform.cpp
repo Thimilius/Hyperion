@@ -84,6 +84,10 @@ namespace Hyperion {
         m_world_to_local_matrix = m_local_to_world_matrix.Inverted();
     }
 
+    Transform *Hyperion::Transform::Create() {
+        return new Transform();
+    }
+
     void Hyperion::Transform::OnCreate() {
         Component::OnCreate();
 
@@ -109,7 +113,7 @@ namespace Hyperion {
 
 HYP_REFLECT_REGISTER_BEGIN
 {
-    registration::class_<Transform>("Transform")
-        .constructor(DefaultConstructorPolicy);
+    Registration<Transform>("Transform")
+        .constructor(select_overload<Transform *()>(&Transform::Create))(DefaultConstructorPolicy);
 }
 HYP_REFLECT_REGISTER_END

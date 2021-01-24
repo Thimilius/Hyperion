@@ -6,37 +6,17 @@
 
 namespace Hyperion::Editor {
 
-    struct MyStruct {
-        HYP_REFLECT();
-
-        String s;
-        int32 i;
-    };
-
-    HYP_REFLECT_REGISTER_BEGIN
-    {
-        Registration<MyStruct>("MyStruct")
-            .constructor()(DefaultConstructorPolicy)
-            .property("s", &MyStruct::s)
-            .property("i", &MyStruct::i);
-    }
-    HYP_REFLECT_REGISTER_END
-
     class EditorApplication : public Application {
     public:
         EditorApplication(const ApplicationSettings &settings) : Application(settings) { }
     protected:
         void OnInit() override {
-            MyStruct *before_serialize = new MyStruct();
-            before_serialize->s = "Hello there!";
-            before_serialize->i = 17;
-            
-            JsonSerializer serializer;
-            FileSystem::WriteAllText("file.json", serializer.Serialize(before_serialize));
-            MyStruct *after_serialize = serializer.DeserializeRaw<MyStruct>(FileSystem::ReadAllText("file.json"));
-            FileSystem::Delete("file.json");
+            World *world = WorldManager::CreateWorld();
+            WorldManager::SetActiveWorld(world);
 
-            after_serialize->i;
+            Entity *entity = Entity::Create("My Entity");
+            entity->AddComponent<BoxCollider>();
+            Object::Destroy(entity);
         }
 
         void OnUpdate(float32 delta_time) override {

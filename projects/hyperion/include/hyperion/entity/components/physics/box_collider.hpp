@@ -27,6 +27,8 @@ namespace Hyperion {
         void OnCreate() override;
     private:
         void NotifyColliderChange();
+
+        static BoxCollider *Create();
     private:
         Vec3 m_origin = Vec3::Zero();
         Vec3 m_size = Vec3::One();

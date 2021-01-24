@@ -7,11 +7,7 @@
 
 namespace Hyperion {
 
-    World::World(const String &name) {
-        m_physics_world = Physics::PhysicsEngine::CreatePhysicsWorld();
-    }
-
-    World::~World() {
+    void World::OnDestroy() {
         for (auto it = m_root_entities.begin(); it != m_root_entities.end(); ) {
             Entity *entity = *it;
             it = m_root_entities.erase(it);
@@ -21,6 +17,10 @@ namespace Hyperion {
         Physics::PhysicsEngine::DestroyPhysicsWorld(m_physics_world);
     }
 
+    World::World(const String &name) {
+        m_physics_world = Physics::PhysicsEngine::CreatePhysicsWorld();
+    }
+    
     void World::AddRootEntity(Entity *entity) {
         m_root_entities.push_back(entity);
     }
@@ -33,11 +33,15 @@ namespace Hyperion {
         }
     }
 
+    World *World::Create() {
+        return new World();
+    }
+
 }
 
 HYP_REFLECT_REGISTER_BEGIN
 {
-    registration::class_<World>("World")
-        .constructor(DefaultConstructorPolicy);
+    Registration<World>("World")
+        .constructor(select_overload<World *()>(&World::Create))(DefaultConstructorPolicy);
 }
 HYP_REFLECT_REGISTER_END

@@ -6,6 +6,14 @@
 
 namespace Hyperion {
 
+    Object *Object::Create() {
+        return new Object();
+    }
+
+    Object *Object::Create(const String &name) {
+        return new Object(name);
+    }
+
     Object *Object::Clone(Object *object) {
         if (object) {
             Object *clone = object->CreateClone();
@@ -58,7 +66,7 @@ namespace Hyperion {
     }
 
     void ObjectManager::Shutdown() {
-        for (auto &[object_id, object] : s_objects) {
+        for (auto [object_id, object] : s_objects) {
             Object::Destroy(object);
         }
         DestroyPendingObjects();
@@ -102,9 +110,11 @@ namespace Hyperion {
 
 HYP_REFLECT_REGISTER_BEGIN
 {
-    registration::class_<Object>("Object")
-        .constructor(DefaultConstructorPolicy)
-        .property_readonly("guid", &Object::m_guid)
-        .property("name", &Object::m_name);
+    Registration<Object>("Object")
+        .constructor(select_overload<Object *()>(&Object::Create))(DefaultConstructorPolicy)
+        .constructor(select_overload<Object *(const String &)>(&Object::Create))(DefaultConstructorPolicy)
+        .property_readonly("id", &Object::m_id)(metadata(Metadata::Serialize, false))
+        .property_readonly("guid", &Object::m_guid)(metadata(Metadata::Serialize, true))
+        .property("name", &Object::m_name)(metadata(Metadata::Serialize, true));
 }
 HYP_REFLECT_REGISTER_END

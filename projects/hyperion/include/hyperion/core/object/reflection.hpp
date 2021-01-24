@@ -4,6 +4,8 @@
 #include <rttr/registration_friend>
 #include <rttr/type>
 
+#include "hyperion/core/object/metadata.hpp"
+
 namespace Hyperion {
     using Instance = rttr::instance;
     template<typename T>

@@ -19,10 +19,10 @@ namespace Hyperion {
     void MonoBindingsObject::Binding_ObjectCtor(MonoObject *object, MonoString *name) {
         Object *native_object;
         if (name == nullptr) {
-            native_object = new Object();
+            native_object = Object::Create();
         } else {
             char *native_name = mono_string_to_utf8(name);
-            native_object = new Object(native_name);
+            native_object = Object::Create(native_name);
             mono_free(native_name);
         }
         MonoScriptingDriver::RegisterObject(object, native_object);

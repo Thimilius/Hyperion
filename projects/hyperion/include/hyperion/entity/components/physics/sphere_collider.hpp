@@ -22,6 +22,8 @@ namespace Hyperion {
         void OnCreate() override;
     private:
         void NotifyColliderChange();
+
+        static SphereCollider *Create();
     private:
         float32 m_radius = 0.5f;
     };

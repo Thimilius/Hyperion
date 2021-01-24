@@ -11,9 +11,13 @@ namespace Hyperion {
         inline AssetType GetAssetType() const override { return AssetType::Shader; }
 
         static Shader *Create(const Map<Rendering::ShaderStageFlags, String> &sources);
+    protected:
+        void OnDestroy() override;
     private:
+        Shader() = default;
         Shader(const Map<Rendering::ShaderStageFlags, String> &sources);
-        ~Shader() override;
+
+        static Shader *Create();
     };
 
 }

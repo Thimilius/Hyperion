@@ -100,6 +100,8 @@ namespace Hyperion {
 
         void NotifyTransformChange();
         void RecalculateTransform();
+
+        static Transform *Create();
     protected:
         Vec3 m_local_position = Vec3::Zero();
         Quaternion m_local_rotation = Quaternion::Identity();

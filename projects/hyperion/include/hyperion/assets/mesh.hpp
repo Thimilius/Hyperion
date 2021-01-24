@@ -34,10 +34,13 @@ namespace Hyperion {
         inline BoundingBox GetBounds() const { return m_bounds; }
         
         static Mesh *Create(const MeshData &mesh_data, const Vector<Rendering::SubMesh> &sub_meshes, bool read_and_write_enabled = false);
+    protected:
+        void OnDestroy() override;
     private:
+        Mesh() = default;
         Mesh(const MeshData &mesh_data, const Vector<Rendering::SubMesh> &sub_meshes, bool read_and_write_enabled);
-        ~Mesh() override;
 
+        static Mesh *Create();
         static BoundingBox CalculateBounds(const Vector<Vec3> &positions);
     private:
         MeshData m_mesh_data;

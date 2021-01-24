@@ -18,12 +18,24 @@ namespace Hyperion {
         RenderEngine::GetRenderDriver()->CreateMaterial(m_resource_id, descriptor);
     }
 
+    Material *Material::Create() {
+        return new Material();
+    }
+
     Material *Material::Create(Shader *shader) {
         return new Material(shader);
     }
 
-    Material::~Material() {
+    void Material::OnDestroy() {
         RenderEngine::GetRenderDriver()->DestroyMaterial(m_resource_id);
     }
 
 }
+
+HYP_REFLECT_REGISTER_BEGIN
+{
+    Registration<Material>("Material")
+        .constructor(select_overload<Material *()>(&Material::Create))(DefaultConstructorPolicy)
+        .constructor(select_overload<Material *(Shader *)>(&Material::Create))(DefaultConstructorPolicy);
+}
+HYP_REFLECT_REGISTER_END

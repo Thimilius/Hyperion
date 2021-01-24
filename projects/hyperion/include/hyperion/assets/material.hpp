@@ -11,9 +11,13 @@ namespace Hyperion {
         inline AssetType GetAssetType() const override { return AssetType::Material; }
 
         static Material *Create(Shader *shader);
+    protected:
+        void OnDestroy() override;
     private:
+        Material() = default;
         Material(Shader *shader);
-        ~Material() override;
+
+        static Material *Create();
     private:
         Shader *m_shader;
     };

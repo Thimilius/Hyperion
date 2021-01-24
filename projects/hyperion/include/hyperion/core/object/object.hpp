@@ -19,8 +19,9 @@ namespace Hyperion {
     class Object {
         HYP_REFLECT();
     public:
-        Object();
-        Object(const String &name);
+        // We would like to have the destructor private, but RTTR does not let us.
+        // All objects should be destroyed through the static Object::Destroy function.
+        virtual ~Object();
 
         inline Type GetType() const { return get_type(); }
         
@@ -32,17 +33,20 @@ namespace Hyperion {
 
         inline virtual String ToString() const { return m_name; }
 
+        static Object *Create();
+        static Object *Create(const String &name);
         static Object *Clone(Object *object);
         static void Destroy(Object *object);
     protected:
-        virtual ~Object();
+        Object();
+        Object(const String &name);
 
         inline virtual Object *CreateClone() const { return new Object(); }
         virtual void HandleClone(Object *clone) const;
 
         virtual void OnDestroy() { }
     private:
-        // Objects can not be copied
+        // Objects can not be copied.
         Object(const Object &other) = delete;
         Object &operator=(const Object &other) = delete;
 

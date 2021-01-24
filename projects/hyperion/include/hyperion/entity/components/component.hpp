@@ -22,7 +22,6 @@ namespace Hyperion {
     protected:
         Component() = default;
         Component(const String &name) : Object(name) { }
-        virtual ~Component() override = default;
 
         void RegisterForUpdate();
         void UnregisterForUpdate();

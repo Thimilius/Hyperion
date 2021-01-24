@@ -29,11 +29,15 @@ namespace Hyperion {
         }
     }
 
+    BoxCollider *BoxCollider::Create() {
+        return new BoxCollider();
+    }
+
 }
 
 HYP_REFLECT_REGISTER_BEGIN
 {
-    registration::class_<BoxCollider>("BoxCollider")
-        .constructor(DefaultConstructorPolicy);
+    Registration<BoxCollider>("BoxCollider")
+        .constructor(select_overload<BoxCollider *()>(&BoxCollider::Create))(DefaultConstructorPolicy);
 }
 HYP_REFLECT_REGISTER_END

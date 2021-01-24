@@ -48,6 +48,8 @@ namespace Hyperion {
         void OnCreate() override;
         void OnDestroy() override;
     private:
+        static RectTransform *Create();
+    private:
         Vec2 m_size = Vec2(100, 100);
         Vec2 m_pivot = Vec2(0.0f, 0.0f);
 

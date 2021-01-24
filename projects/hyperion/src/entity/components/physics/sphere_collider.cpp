@@ -29,11 +29,15 @@ namespace Hyperion {
         }
     }
 
+    SphereCollider *SphereCollider::Create() {
+        return new SphereCollider();
+    }
+
 }
 
 HYP_REFLECT_REGISTER_BEGIN
 {
-    registration::class_<SphereCollider>("SphereCollider")
-        .constructor(DefaultConstructorPolicy);
+    Registration<SphereCollider>("SphereCollider")
+        .constructor(select_overload<SphereCollider *()>(&SphereCollider::Create))(DefaultConstructorPolicy);
 }
 HYP_REFLECT_REGISTER_END
