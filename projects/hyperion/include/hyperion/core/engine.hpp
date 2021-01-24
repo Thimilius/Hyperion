@@ -34,18 +34,27 @@ namespace Hyperion {
         static void Init();
         static uint32 Run();
         static void Iterate();
+        static void OnEvent(Event &event);
         static void Exit();
         static void Shutdown();
 
-        static void OnEvent(Event &event);
-        static void Update(float32 delta_time);
-        static void FixedUpdate(float32 delta_time);
-        static void LateUpdate();
-        static void Render();
+        static void ExecuteEngineLoopSubSystem(const EngineLoopSubSystem &engine_loop_sub_system);
+
+        static void TimeInitilization();
+        static void InputInitilization();
+        static void WorldManagerUpdate();
+        static void PhysicsEngineFixedUpdate();
+        static void ApplicationFixedUpdate();
+        static void TimeFixedUpdate();
+        static void ApplicationTick();
+        static void ApplicationUpdate();
+        static void ObjectManagerLateUpdate();
+        static void RenderEngineLateUpdate();
 
         static void PanicInternal(const String &title, const String &message);
     private:
         inline static ApplicationSettings s_settings;
+        inline static Application *s_application;
         inline static bool s_running = false;
 
         inline static struct Stats {
@@ -58,6 +67,7 @@ namespace Hyperion {
         } s_stats;
     private:
         friend class Hyperion::Application;
+        friend struct Hyperion::EngineLoopSystem;
         friend class Hyperion::Main;
         friend class Hyperion::WindowsWindow;
     };

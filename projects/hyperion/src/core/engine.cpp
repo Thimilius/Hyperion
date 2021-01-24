@@ -45,9 +45,10 @@ namespace Hyperion {
         
         Display::UpdateSize(s_settings.window.width, s_settings.window.height);
 
+        s_application = Application::GetInstance();
         Window *window = Window::Create(s_settings.window);
         window->SetEventCallback(Engine::OnEvent);
-        Application::GetInstance()->m_window = window;
+        s_application->m_window = window;
 
         Rendering::RenderEngine::PreInit(s_settings.render, window);
     }
@@ -60,9 +61,6 @@ namespace Hyperion {
     }
 
     uint32 Engine::Run() {
-        Application *application = Application::GetInstance();
-        HYP_ASSERT(application);
-
         s_running = true;
 
         PreInit();
@@ -73,76 +71,33 @@ namespace Hyperion {
         }
 
         Init();
-        Window *window = application->GetWindow();
-        application->OnInit();
-        window->Show();
+        s_application->OnInit();
+        s_application->GetWindow()->Show();
 
         s_stats.timer = Timer::Create();
         while (s_running) {
-            MemoryStats::ResetFrameMemory();
-
             Iterate();
         }
         delete s_stats.timer;
 
-        application->OnShutdown();
+        s_application->OnShutdown();
         Shutdown();
 
         return 0;
     }
 
     void Engine::Iterate() {
-        Application *application = Application::GetInstance();
-        Window *window = application->GetWindow();
-
-        s_stats.frame++;
-
-        window->Poll();
-
-        float32 now = s_stats.timer->ElapsedSeconds();
-        float32 delta_time = static_cast<float32>(now - s_stats.last_time);
-        if (delta_time > Time::GetMaxDeltaTime()) {
-            delta_time = Time::GetMaxDeltaTime();
+        const EngineLoopSystem &engine_loop = s_settings.core.engine_loop;
+        ExecuteEngineLoopSubSystem(engine_loop.initilization);
+        while (s_stats.accumulator > Time::GetFixedDeltaTime()) {
+            ExecuteEngineLoopSubSystem(engine_loop.fixed_update);
         }
-        s_stats.last_time = now;
-        s_stats.accumulator += delta_time;
-        Time::s_delta_time = delta_time;
-        Time::s_time += delta_time;
-        Time::s_fps = static_cast<uint32>(1.0f / delta_time);
-        Time::s_frame_time = delta_time * 1000.0f;
-
-        Update(delta_time);
-        application->OnUpdate(delta_time);
-        LateUpdate();
-
-        float32 fixed_delta_time = Time::GetFixedDeltaTime();
-        while (s_stats.accumulator > fixed_delta_time) {
-            FixedUpdate(fixed_delta_time);
-            application->OnFixedUpdate(fixed_delta_time);
-            s_stats.accumulator -= fixed_delta_time;
-        }
-
         if (Time::OnInterval(1.0f)) {
-            application->OnTick();
+            ExecuteEngineLoopSubSystem(engine_loop.tick);
         }
-
-        Render();
-    }
-
-    void Engine::Exit() {
-        s_running = false;
-        Rendering::RenderEngine::Exit();
-    }
-
-    void Engine::Shutdown() {
-        WorldManager::Shutdown();
-        ObjectManager::Shutdown();
-        ScriptingEngine::Shutdown();
-        Audio::AudioEngine::Shutdown();
-        Physics::PhysicsEngine::Shutdown();
-        Rendering::RenderEngine::Shutdown();
-
-        delete Application::GetInstance()->GetWindow();
+        ExecuteEngineLoopSubSystem(engine_loop.pre_update);
+        ExecuteEngineLoopSubSystem(engine_loop.update);
+        ExecuteEngineLoopSubSystem(engine_loop.late_update);
     }
 
     void Engine::OnEvent(Event &event) {
@@ -178,19 +133,83 @@ namespace Hyperion {
         Application::GetInstance()->OnEvent(event);
     }
 
-    void Engine::Update(float32 delta_time) {
-        WorldManager::Update(delta_time);
+    void Engine::Exit() {
+        s_running = false;
+        Rendering::RenderEngine::Exit();
     }
 
-    void Engine::FixedUpdate(float32 delta_time) {
-        Physics::PhysicsEngine::FixedUpdate(delta_time);
+    void Engine::Shutdown() {
+        WorldManager::Shutdown();
+        ObjectManager::Shutdown();
+        ScriptingEngine::Shutdown();
+        Audio::AudioEngine::Shutdown();
+        Physics::PhysicsEngine::Shutdown();
+        Rendering::RenderEngine::Shutdown();
+
+        delete Application::GetInstance()->GetWindow();
     }
 
-    void Engine::LateUpdate() {
+    void Engine::ExecuteEngineLoopSubSystem(const EngineLoopSubSystem &engine_loop_sub_system) {
+        // We ignore the update function for systems that contain sub systems
+        if (engine_loop_sub_system.sub_systems.size() > 0) {
+            for (const EngineLoopSubSystem &sub_system : engine_loop_sub_system.sub_systems) {
+                ExecuteEngineLoopSubSystem(sub_system);
+            }
+        } else {
+            if (engine_loop_sub_system.update_function != nullptr) {
+                engine_loop_sub_system.update_function();
+            }
+        }
+    }
+
+    void Engine::TimeInitilization() {
+        s_stats.frame++;
+        float32 now = s_stats.timer->ElapsedSeconds();
+        float32 delta_time = static_cast<float32>(now - s_stats.last_time);
+        if (delta_time > Time::GetMaxDeltaTime()) {
+            delta_time = Time::GetMaxDeltaTime();
+        }
+        s_stats.last_time = now;
+        s_stats.accumulator += delta_time;
+        Time::s_delta_time = delta_time;
+        Time::s_time += delta_time;
+        Time::s_fps = static_cast<uint32>(1.0f / delta_time);
+        Time::s_frame_time = delta_time * 1000.0f;
+    }
+
+    void Engine::InputInitilization() {
+        s_application->GetWindow()->Poll();
+    }
+
+    void Engine::ApplicationFixedUpdate() {
+        s_application->OnFixedUpdate(Time::GetFixedDeltaTime());
+    }
+
+    void Engine::TimeFixedUpdate() {
+        s_stats.accumulator -= Time::GetFixedDeltaTime();
+    }
+
+    void Engine::ApplicationTick() {
+        s_application->OnTick();
+    }
+
+    void Engine::ApplicationUpdate() {
+        s_application->OnUpdate(Time::GetDeltaTime());
+    }
+
+    void Engine::WorldManagerUpdate() {
+        WorldManager::Update(Time::GetDeltaTime());
+    }
+
+    void Engine::PhysicsEngineFixedUpdate() {
+        Physics::PhysicsEngine::FixedUpdate(Time::GetFixedDeltaTime());
+    }
+
+    void Engine::ObjectManagerLateUpdate() {
         ObjectManager::LateUpdate();
     }
 
-    void Engine::Render() {
+    void Engine::RenderEngineLateUpdate() {
         Rendering::RenderEngine::Render();
     }
 

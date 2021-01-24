@@ -1,15 +1,18 @@
 #pragma once
 
+#include "hyperion/audio/audio_backend.hpp"
+#include "hyperion/core/engine_loop.hpp"
 #include "hyperion/core/app/window_settings.hpp"
+#include "hyperion/physics/physics_backend.hpp"
 #include "hyperion/rendering/render_backend.hpp"
 #include "hyperion/rendering/render_threading_mode.hpp"
 #include "hyperion/rendering/pipelines/render_pipeline.hpp"
-#include "hyperion/audio/audio_backend.hpp"
-#include "hyperion/physics/physics_backend.hpp"
 
 namespace Hyperion {
 
     struct CoreSettings {
+        EngineLoopSystem engine_loop = EngineLoopSystem::Default();
+
         float32 max_delta_time = 0.15f;
         float32 fixed_delta_time = 1.0f / 60.0f;
         bool allow_altf4 = true;

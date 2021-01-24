@@ -5,7 +5,7 @@
 #include "hyperion/core/types.hpp"
 
 namespace Hyperion {
-    class Engine;
+    struct EngineLoopSystem;
     class Main;
 }
 
@@ -24,7 +24,7 @@ namespace Hyperion {
         inline static std::atomic_uint64_t s_global_memory = 0;
         inline static std::atomic_uint64_t s_frame_memory = 0;
     private:
-        friend class Hyperion::Engine;
+        friend struct Hyperion::EngineLoopSystem;
         friend class Hyperion::Main;
 
         friend void *::operator new(size_t size);
