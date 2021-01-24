@@ -1,7 +1,18 @@
 #pragma once
 
+#include <rttr/registration>
 #include <rttr/registration_friend>
 #include <rttr/type>
+
+namespace Hyperion {
+    using Instance = rttr::instance;
+    template<typename T>
+    using Registration = rttr::registration::class_<T>;
+    using Type = rttr::type;
+    using Variant = rttr::variant;
+
+    const auto DefaultConstructorPolicy = rttr::policy::ctor::as_raw_ptr;
+}
 
 #define HYP_REFLECT(...) RTTR_ENABLE(__VA_ARGS__) \
         RTTR_REGISTRATION_FRIEND                  \

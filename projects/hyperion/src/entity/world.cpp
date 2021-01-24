@@ -37,6 +37,7 @@ namespace Hyperion {
 
 HYP_REFLECT_REGISTER_BEGIN
 {
-    registration::class_<World>("World");
+    registration::class_<World>("World")
+        .constructor(DefaultConstructorPolicy);
 }
 HYP_REFLECT_REGISTER_END

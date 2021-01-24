@@ -32,5 +32,3 @@ using Set = std::unordered_set<T>;
 
 template<typename T>
 using Queue = std::queue<T>;
-
-using Type = rttr::type;

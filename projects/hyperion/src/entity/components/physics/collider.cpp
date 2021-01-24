@@ -41,6 +41,7 @@ namespace Hyperion {
 
 HYP_REFLECT_REGISTER_BEGIN
 {
-    registration::class_<Collider>("Collider");
+    registration::class_<Collider>("Collider")
+        .constructor(DefaultConstructorPolicy);
 }
 HYP_REFLECT_REGISTER_END

@@ -33,6 +33,7 @@ namespace Hyperion {
 
 HYP_REFLECT_REGISTER_BEGIN
 {
-    registration::class_<Component>("Component");
+    registration::class_<Component>("Component")
+        .constructor(DefaultConstructorPolicy);
 }
 HYP_REFLECT_REGISTER_END

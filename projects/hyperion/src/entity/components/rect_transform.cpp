@@ -202,6 +202,7 @@ namespace Hyperion {
 
 HYP_REFLECT_REGISTER_BEGIN
 {
-    registration::class_<RectTransform>("RectTransform");
+    registration::class_<RectTransform>("RectTransform")
+        .constructor(DefaultConstructorPolicy);
 }
 HYP_REFLECT_REGISTER_END

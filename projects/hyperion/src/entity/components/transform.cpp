@@ -109,6 +109,7 @@ namespace Hyperion {
 
 HYP_REFLECT_REGISTER_BEGIN
 {
-    registration::class_<Transform>("Transform");
+    registration::class_<Transform>("Transform")
+        .constructor(DefaultConstructorPolicy);
 }
 HYP_REFLECT_REGISTER_END

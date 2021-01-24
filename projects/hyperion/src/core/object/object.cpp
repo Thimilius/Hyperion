@@ -103,6 +103,7 @@ namespace Hyperion {
 HYP_REFLECT_REGISTER_BEGIN
 {
     registration::class_<Object>("Object")
+        .constructor(DefaultConstructorPolicy)
         .property_readonly("guid", &Object::m_guid)
         .property("name", &Object::m_name);
 }

@@ -15,6 +15,7 @@ namespace Hyperion {
 
 HYP_REFLECT_REGISTER_BEGIN
 {
-    registration::class_<Behaviour>("Behaviour");
+    registration::class_<Behaviour>("Behaviour")
+        .constructor(DefaultConstructorPolicy);
 }
 HYP_REFLECT_REGISTER_END
