@@ -37,11 +37,3 @@ namespace Hyperion {
     }
 
 }
-
-HYP_REFLECT_REGISTER_BEGIN
-{
-    Registration<Shader>("Shader")
-        .constructor(select_overload<Shader *()>(&Shader::Create))(DefaultConstructorPolicy)
-        .constructor(select_overload<Shader *(const Map<Rendering::ShaderStageFlags, String> &)>(&Shader::Create))(DefaultConstructorPolicy);
-}
-HYP_REFLECT_REGISTER_END

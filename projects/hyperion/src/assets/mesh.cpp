@@ -396,11 +396,3 @@ namespace Hyperion {
     }
 
 }
-
-HYP_REFLECT_REGISTER_BEGIN
-{
-    Registration<Mesh>("Mesh")
-        .constructor(select_overload<Mesh *()>(&Mesh::Create))(DefaultConstructorPolicy)
-        .constructor(select_overload<Mesh *(const MeshData &, const Vector<Rendering::SubMesh> &, bool)>(&Mesh::Create))(DefaultConstructorPolicy);
-}
-HYP_REFLECT_REGISTER_END

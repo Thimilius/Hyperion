@@ -12,9 +12,3 @@ namespace Hyperion {
     }
 
 }
-
-HYP_REFLECT_REGISTER_BEGIN
-{
-    Registration<Behaviour>("Behaviour");
-}
-HYP_REFLECT_REGISTER_END

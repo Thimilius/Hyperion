@@ -40,6 +40,24 @@ namespace Hyperion {
         }
     }
 
+    Component *Entity::AddComponent(Type type) {
+        HYP_ASSERT(type.is_valid());
+        HYP_ASSERT_MESSAGE(m_components.find(type) == m_components.end(), "Failed to add component because a component with the same type already exists!");
+
+        auto constructor = type.get_constructor();
+        HYP_ASSERT_MESSAGE(constructor.is_valid(), "Failed to add component because the component does not have a valid default constructor!");
+        Variant variant = constructor.invoke();
+        HYP_ASSERT(variant.is_valid() && variant.get_type().is_derived_from<Component>());
+
+        Component *component = variant.get_value<Component *>();
+        component->m_entity = this;
+        m_components[type] = component;
+
+        component->OnCreate();
+
+        return component;
+    }
+
     void Entity::RegisterMessageListener(IEntityMessageListener *listener) {
         m_message_listeners.push_back(listener);
     }
@@ -150,11 +168,3 @@ namespace Hyperion {
     }
 
 }
-
-HYP_REFLECT_REGISTER_BEGIN
-{
-    Registration<Entity>("Entity")
-        .constructor(select_overload<Entity *()>(&Entity::Create))(DefaultConstructorPolicy)
-        .constructor(select_overload<Entity *(const String &, const Vec3 &, const Quaternion &, Transform *, World *)>(&Entity::Create))(DefaultConstructorPolicy);
-}
-HYP_REFLECT_REGISTER_END

@@ -53,6 +53,8 @@ namespace Hyperion {
 
         void DispatchMessage(EntityMessage message);
 
+        Component *AddComponent(Type type);
+
         template<typename T, typename =
             std::enable_if_t<std::is_base_of<Component, T>::value &&
             !std::is_same<Component, T>::value &&
@@ -60,17 +62,7 @@ namespace Hyperion {
             std::is_default_constructible<T>::value>>
         T *AddComponent() {
             Type type = Type::get<T>();
-            HYP_ASSERT_MESSAGE(m_components.find(type) == m_components.end(), "Failed to add component because a component with the same type already exists!");
-
-            T *component = new T();
-
-            Component *entity_component = component;
-            entity_component->m_entity = this;
-            m_components[type] = entity_component;
-
-            entity_component->OnCreate();
-
-            return component;
+            return static_cast<T *>(AddComponent(type));
         }
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>

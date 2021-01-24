@@ -31,11 +31,3 @@ namespace Hyperion {
     }
 
 }
-
-HYP_REFLECT_REGISTER_BEGIN
-{
-    Registration<Material>("Material")
-        .constructor(select_overload<Material *()>(&Material::Create))(DefaultConstructorPolicy)
-        .constructor(select_overload<Material *(Shader *)>(&Material::Create))(DefaultConstructorPolicy);
-}
-HYP_REFLECT_REGISTER_END

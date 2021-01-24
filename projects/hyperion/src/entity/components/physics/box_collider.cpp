@@ -34,10 +34,3 @@ namespace Hyperion {
     }
 
 }
-
-HYP_REFLECT_REGISTER_BEGIN
-{
-    Registration<BoxCollider>("BoxCollider")
-        .constructor(select_overload<BoxCollider *()>(&BoxCollider::Create))(DefaultConstructorPolicy);
-}
-HYP_REFLECT_REGISTER_END

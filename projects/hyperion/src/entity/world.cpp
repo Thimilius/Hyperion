@@ -38,10 +38,3 @@ namespace Hyperion {
     }
 
 }
-
-HYP_REFLECT_REGISTER_BEGIN
-{
-    Registration<World>("World")
-        .constructor(select_overload<World *()>(&World::Create))(DefaultConstructorPolicy);
-}
-HYP_REFLECT_REGISTER_END

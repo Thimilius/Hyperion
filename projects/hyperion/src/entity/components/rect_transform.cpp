@@ -203,10 +203,3 @@ namespace Hyperion {
     }
 
 }
-
-HYP_REFLECT_REGISTER_BEGIN
-{
-    Registration<RectTransform>("RectTransform")
-        .constructor(select_overload<RectTransform *()>(&RectTransform::Create))(DefaultConstructorPolicy);
-}
-HYP_REFLECT_REGISTER_END

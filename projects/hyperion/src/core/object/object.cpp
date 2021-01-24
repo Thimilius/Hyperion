@@ -2,7 +2,20 @@
 
 #include "hyperion/core/object/object.hpp"
 
+#include "hyperion/assets/asset.hpp"
+#include "hyperion/assets/material.hpp"
+#include "hyperion/assets/mesh.hpp"
+#include "hyperion/assets/shader.hpp"
+#include "hyperion/assets/texture.hpp"
+#include "hyperion/entity/entity.hpp"
+#include "hyperion/entity/world.hpp"
+#include "hyperion/entity/components/behaviour.hpp"
+#include "hyperion/entity/components/component.hpp"
+#include "hyperion/entity/components/rect_transform.hpp"
 #include "hyperion/entity/components/transform.hpp"
+#include "hyperion/entity/components/physics/box_collider.hpp"
+#include "hyperion/entity/components/physics/collider.hpp"
+#include "hyperion/entity/components/physics/sphere_collider.hpp"
 
 namespace Hyperion {
 
@@ -108,6 +121,11 @@ namespace Hyperion {
 
 }
 
+// NOTE: This is actually pretty ugly.
+// Ideally the types should register themselves in their corresponding .cpp file.
+// But unfortunately the linker may or may not optimize these registrations away
+// which obviously leads to very annoying bugs.
+// So before there is a better solution we just put everything in here.
 HYP_REFLECT_REGISTER_BEGIN
 {
     Registration<Object>("Object")
@@ -116,5 +134,44 @@ HYP_REFLECT_REGISTER_BEGIN
         .property_readonly("id", &Object::m_id)(metadata(Metadata::Serialize, false))
         .property_readonly("guid", &Object::m_guid)(metadata(Metadata::Serialize, true))
         .property("name", &Object::m_name)(metadata(Metadata::Serialize, true));
+
+    {
+        Registration<Asset>("Asset")
+            .property_readonly("resource_id", &Asset::m_resource_id)(metadata(Metadata::Serialize, false));
+        Registration<Material>("Material")
+            .constructor(select_overload<Material *()>(&Material::Create))(DefaultConstructorPolicy)
+            .constructor(select_overload<Material *(Shader *)>(&Material::Create))(DefaultConstructorPolicy);
+        Registration<Mesh>("Mesh")
+            .constructor(select_overload<Mesh *()>(&Mesh::Create))(DefaultConstructorPolicy)
+            .constructor(select_overload<Mesh *(const MeshData &, const Vector<Rendering::SubMesh> &, bool)>(&Mesh::Create))(DefaultConstructorPolicy);
+        Registration<Shader>("Shader")
+            .constructor(select_overload<Shader *()>(&Shader::Create))(DefaultConstructorPolicy)
+            .constructor(select_overload<Shader *(const Map<Rendering::ShaderStageFlags, String> &)>(&Shader::Create))(DefaultConstructorPolicy);
+        Registration<Texture>("Texture");
+        Registration<Texture2D>("Texture2D")
+            .constructor(select_overload<Texture2D *()>(&Texture2D::Create))(DefaultConstructorPolicy)
+            .constructor(select_overload<Texture2D *(uint32, uint32, Rendering::TextureFormat, Rendering::TextureParameters, const Vector<uint8> &, bool)>(&Texture2D::Create))(DefaultConstructorPolicy);
+        Registration<TextureCubemap>("TextureCubemap")
+            .constructor(select_overload<TextureCubemap *()>(&TextureCubemap::Create))(DefaultConstructorPolicy);
+    }
+
+    {
+        Registration<Entity>("Entity")
+            .constructor(select_overload<Entity *()>(&Entity::Create))(DefaultConstructorPolicy)
+            .constructor(select_overload<Entity *(const String &, const Vec3 &, const Quaternion &, Transform *, World *)>(&Entity::Create))(DefaultConstructorPolicy);
+        Registration<World>("World")
+            .constructor(select_overload<World *()>(&World::Create))(DefaultConstructorPolicy);
+        Registration<Behaviour>("Behaviour");
+        Registration<Component>("Component");
+        Registration<RectTransform>("RectTransform")
+            .constructor(select_overload<RectTransform *()>(&RectTransform::Create))(DefaultConstructorPolicy);
+        Registration<Transform>("Transform")
+            .constructor(select_overload<Transform *()>(&Transform::Create))(DefaultConstructorPolicy);
+        Registration<BoxCollider>("BoxCollider")
+            .constructor(select_overload<BoxCollider *()>(&BoxCollider::Create))(DefaultConstructorPolicy);
+        Registration<Collider>("Collider");
+        Registration<SphereCollider>("SphereCollider")
+            .constructor(select_overload<SphereCollider *()>(&SphereCollider::Create))(DefaultConstructorPolicy);
+    }
 }
 HYP_REFLECT_REGISTER_END

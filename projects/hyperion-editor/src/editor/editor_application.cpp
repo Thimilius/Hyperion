@@ -11,12 +11,7 @@ namespace Hyperion::Editor {
         EditorApplication(const ApplicationSettings &settings) : Application(settings) { }
     protected:
         void OnInit() override {
-            World *world = WorldManager::CreateWorld();
-            WorldManager::SetActiveWorld(world);
 
-            Entity *entity = Entity::Create("My Entity");
-            entity->AddComponent<BoxCollider>();
-            Object::Destroy(entity);
         }
 
         void OnUpdate(float32 delta_time) override {

@@ -34,10 +34,3 @@ namespace Hyperion {
     }
 
 }
-
-HYP_REFLECT_REGISTER_BEGIN
-{
-    Registration<SphereCollider>("SphereCollider")
-        .constructor(select_overload<SphereCollider *()>(&SphereCollider::Create))(DefaultConstructorPolicy);
-}
-HYP_REFLECT_REGISTER_END

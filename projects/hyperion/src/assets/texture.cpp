@@ -51,16 +51,3 @@ namespace Hyperion {
     }
 
 }
-
-HYP_REFLECT_REGISTER_BEGIN
-{
-    Registration<Texture>("Texture");
-
-    Registration<Texture2D>("Texture2D")
-        .constructor(select_overload<Texture2D *()>(&Texture2D::Create))(DefaultConstructorPolicy)
-        .constructor(select_overload<Texture2D *(uint32, uint32, Rendering::TextureFormat, Rendering::TextureParameters, const Vector<uint8> &, bool)>(&Texture2D::Create))(DefaultConstructorPolicy);
-
-    Registration<TextureCubemap>("TextureCubemap")
-        .constructor(select_overload<TextureCubemap *()>(&TextureCubemap::Create))(DefaultConstructorPolicy);
-}
-HYP_REFLECT_REGISTER_END

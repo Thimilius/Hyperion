@@ -38,9 +38,3 @@ namespace Hyperion {
     }
 
 }
-
-HYP_REFLECT_REGISTER_BEGIN
-{
-    Registration<Collider>("Collider");
-}
-HYP_REFLECT_REGISTER_END

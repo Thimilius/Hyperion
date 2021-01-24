@@ -110,10 +110,3 @@ namespace Hyperion {
     }
 
 }
-
-HYP_REFLECT_REGISTER_BEGIN
-{
-    Registration<Transform>("Transform")
-        .constructor(select_overload<Transform *()>(&Transform::Create))(DefaultConstructorPolicy);
-}
-HYP_REFLECT_REGISTER_END
