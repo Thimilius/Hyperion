@@ -56,7 +56,9 @@ namespace Hyperion::Rendering {
             WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
             WGL_CONTEXT_MAJOR_VERSION_ARB, 4,
             WGL_CONTEXT_MINOR_VERSION_ARB, 6,
-            WGL_CONTEXT_OPENGL_NO_ERROR_ARB, 1,
+            // NOTE: We would like to have the no error context
+            // but it does not seem supported by the Intel driver.
+            //WGL_CONTEXT_OPENGL_NO_ERROR_ARB, 1,
             0
         };
 #endif
@@ -115,6 +117,8 @@ namespace Hyperion::Rendering {
         if (!gladLoadWGLLoader(extension_loader, helper_device_context)) {
             HYP_PANIC_MESSAGE("OpenGL", "Failed to load windows OpenGL extensions!");
         }
+
+        // TODO: We should check here if all OpenGL extensions we want are actually available.
 
         wglMakeCurrent(helper_device_context, nullptr);
         wglDeleteContext(temp_context);
