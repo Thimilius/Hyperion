@@ -1,6 +1,6 @@
 #pragma once
 
-#include "hyperion/core/object.hpp"
+#include "hyperion/core/object/object.hpp"
 
 namespace Hyperion {
     class Entity;

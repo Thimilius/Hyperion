@@ -1,9 +1,9 @@
 #pragma once
 
 #include "hyperion/core/color.hpp"
-#include "hyperion/core/resource.hpp"
 #include "hyperion/core/math/vec2.hpp"
 #include "hyperion/core/math/vec3.hpp"
+#include "hyperion/core/object/resource.hpp"
 #include "hyperion/rendering/rasterizer_state.hpp"
 #include "hyperion/rendering/attributes/mesh_attributes.hpp"
 #include "hyperion/rendering/attributes/shader_attributes.hpp"

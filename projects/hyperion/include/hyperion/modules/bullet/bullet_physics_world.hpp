@@ -1,8 +1,8 @@
 #pragma once
 
-#include "hyperion/physics/physics_world.hpp"
-
 #include <bullet/btBulletCollisionCommon.h>
+
+#include "hyperion/physics/physics_world.hpp"
 
 namespace Hyperion {
     class Transform;

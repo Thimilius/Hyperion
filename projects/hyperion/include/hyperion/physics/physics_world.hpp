@@ -1,7 +1,8 @@
 #pragma once
 
-#include "hyperion/core/math/vec3.hpp"
+#include "hyperion/core/math/bounding_box.hpp"
 #include "hyperion/core/math/ray.hpp"
+#include "hyperion/core/math/vec3.hpp"
 
 namespace Hyperion {
     class Collider;

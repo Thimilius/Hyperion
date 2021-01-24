@@ -3,8 +3,8 @@
 #include "hyperion/platform/windows/windows_operating_system.hpp"
 
 #include <Powrprof.h>
-#include <Shlobj.h>
 #include <psapi.h>
+#include <Shlobj.h>
 
 namespace Hyperion {
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "hyperion/common.hpp"
+
 namespace Hyperion {
 
     class Main final {

@@ -1,9 +1,9 @@
 #include "hyppch.hpp"
 
-#include "hyperion/core/engine.hpp"
+#include "hyperion/core/system/engine.hpp"
 
+#include "hyperion/audio/audio_engine.hpp"
 #include "hyperion/core/timer.hpp"
-#include "hyperion/core/object.hpp"
 #include "hyperion/core/app/display.hpp"
 #include "hyperion/core/app/input.hpp"
 #include "hyperion/core/app/time.hpp"
@@ -11,12 +11,12 @@
 #include "hyperion/core/app/events/app_events.hpp"
 #include "hyperion/core/app/events/window_events.hpp"
 #include "hyperion/core/app/events/key_events.hpp"
+#include "hyperion/core/object/object.hpp"
 #include "hyperion/core/memory/memory.hpp"
 #include "hyperion/core/threading/synchronization.hpp"
-#include "hyperion/audio/audio_engine.hpp"
-#include "hyperion/rendering/render_engine.hpp"
 #include "hyperion/entity/world_manager.hpp"
 #include "hyperion/physics/physics_engine.hpp"
+#include "hyperion/rendering/render_engine.hpp"
 #include "hyperion/scripting/scripting_engine.hpp"
 
 namespace Hyperion {

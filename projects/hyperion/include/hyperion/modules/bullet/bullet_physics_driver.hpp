@@ -1,8 +1,8 @@
 #pragma once
 
-#include "hyperion/physics/physics_driver.hpp"
-
 #include <bullet/btBulletCollisionCommon.h>
+
+#include "hyperion/physics/physics_driver.hpp"
 
 namespace Hyperion::Physics {
     class BulletPhysicsWorld;

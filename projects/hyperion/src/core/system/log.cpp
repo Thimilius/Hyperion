@@ -1,6 +1,6 @@
 #include "hyppch.hpp"
 
-#include "hyperion/core/log.hpp"
+#include "hyperion/core/system/log.hpp"
 
 namespace Hyperion {
 

@@ -19,9 +19,9 @@
 #include "hyperion/core/enum.hpp"
 #include "hyperion/core/types.hpp"
 #include "hyperion/core/string_utils.hpp"
-#include "hyperion/core/log.hpp"
 #include "hyperion/core/result.hpp"
-#include "hyperion/core/reflection.hpp"
+#include "hyperion/core/object/reflection.hpp"
+#include "hyperion/core/system/log.hpp"
 
 #define HYP_PANIC do {                                                \
             HYP_LOG_ERROR("Engine", "Engine encountered an error!");  \

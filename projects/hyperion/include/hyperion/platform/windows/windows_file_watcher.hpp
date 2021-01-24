@@ -1,9 +1,9 @@
 #pragma once
 
+#include <Windows.h>
+
 #include "hyperion/common.hpp"
 #include "hyperion/core/io/file_watcher.hpp"
-
-#include <Windows.h>
 
 namespace Hyperion {
 

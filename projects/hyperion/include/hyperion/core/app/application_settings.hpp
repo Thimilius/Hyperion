@@ -1,8 +1,8 @@
 #pragma once
 
 #include "hyperion/audio/audio_backend.hpp"
-#include "hyperion/core/engine_loop.hpp"
 #include "hyperion/core/app/window_settings.hpp"
+#include "hyperion/core/system/engine_loop.hpp"
 #include "hyperion/physics/physics_backend.hpp"
 #include "hyperion/rendering/render_backend.hpp"
 #include "hyperion/rendering/render_threading_mode.hpp"

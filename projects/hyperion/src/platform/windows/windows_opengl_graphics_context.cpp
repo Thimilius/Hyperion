@@ -2,7 +2,7 @@
 
 #include "hyperion/platform/windows/windows_opengl_graphics_context.hpp"
 
-#include "glad/glad_wgl.h"
+#include <glad/glad_wgl.h>
 
 namespace Hyperion::Rendering {
 

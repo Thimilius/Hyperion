@@ -1,7 +1,7 @@
 #pragma once
 
 #include "hyperion/common.hpp"
-#include "hyperion/core/guid.hpp"
+#include "hyperion/core/object/guid.hpp"
 
 namespace Hyperion {
     class Engine;

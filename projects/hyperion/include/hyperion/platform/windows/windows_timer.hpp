@@ -1,8 +1,8 @@
 #pragma once
 
-#include "hyperion/core/timer.hpp"
-
 #include <Windows.h>
+
+#include "hyperion/core/timer.hpp"
 
 namespace Hyperion {
 

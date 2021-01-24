@@ -1,8 +1,8 @@
 #pragma once
 
 #include "hyperion/common.hpp"
-#include "hyperion/core/app/application_settings.hpp"
 #include "hyperion/audio/audio_driver.hpp"
+#include "hyperion/core/app/application_settings.hpp"
 
 namespace Hyperion {
     class Engine;

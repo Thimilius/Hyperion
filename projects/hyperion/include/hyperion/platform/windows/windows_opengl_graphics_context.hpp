@@ -1,8 +1,8 @@
 #pragma once
 
-#include "hyperion/driver/opengl/opengl_graphics_context.hpp"
-
 #include <Windows.h>
+
+#include "hyperion/driver/opengl/opengl_graphics_context.hpp"
 
 namespace Hyperion::Rendering {
 

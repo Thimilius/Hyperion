@@ -1,6 +1,6 @@
 #include "hyppch.hpp"
 
-#include "hyperion/core/object.hpp"
+#include "hyperion/core/object/object.hpp"
 
 #include "hyperion/entity/components/transform.hpp"
 

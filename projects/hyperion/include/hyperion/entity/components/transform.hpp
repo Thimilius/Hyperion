@@ -1,9 +1,9 @@
 #pragma once
 
-#include "hyperion/entity/components/component.hpp"
-#include "hyperion/core/math/vec3.hpp"
 #include "hyperion/core/math/mat4.hpp"
 #include "hyperion/core/math/quaternion.hpp"
+#include "hyperion/core/math/vec3.hpp"
+#include "hyperion/entity/components/component.hpp"
 
 namespace Hyperion {
     class Entity;

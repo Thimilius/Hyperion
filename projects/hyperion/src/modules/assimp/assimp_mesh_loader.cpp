@@ -3,8 +3,8 @@
 #include "hyperion/modules/assimp/assimp_mesh_loader.hpp"
 
 #include <assimp/Importer.hpp>
-#include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <assimp/scene.h>
 
 using namespace Hyperion::Rendering;
 

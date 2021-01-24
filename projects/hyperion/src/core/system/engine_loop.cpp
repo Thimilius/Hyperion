@@ -1,6 +1,6 @@
 #include "hyppch.hpp"
 
-#include "hyperion/core/engine_loop.hpp"
+#include "hyperion/core/system/engine_loop.hpp"
 
 #include "hyperion/core/memory/memory.hpp"
 

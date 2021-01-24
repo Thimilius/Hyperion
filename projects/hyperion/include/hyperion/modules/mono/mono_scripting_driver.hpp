@@ -2,7 +2,7 @@
 
 #include <mono/jit/jit.h>
 
-#include "hyperion/core/object.hpp"
+#include "hyperion/core/object/object.hpp"
 #include "hyperion/scripting/scripting_driver.hpp"
 
 namespace Hyperion {

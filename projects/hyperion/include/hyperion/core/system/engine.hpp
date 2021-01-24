@@ -1,7 +1,7 @@
 #pragma once
 
-#include "hyperion/core/operating_system.hpp"
 #include "hyperion/core/app/application_settings.hpp"
+#include "hyperion/core/system/operating_system.hpp"
 
 namespace Hyperion {
     class Application;

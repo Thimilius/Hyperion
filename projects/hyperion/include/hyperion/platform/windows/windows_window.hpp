@@ -1,10 +1,10 @@
 #pragma once
 
+#include <Windows.h>
+
 #include "hyperion/core/app/window.hpp"
 #include "hyperion/core/math/vec2.hpp"
 #include "hyperion/platform/windows/windows_input.hpp"
-
-#include <Windows.h>
 
 namespace Hyperion {
 

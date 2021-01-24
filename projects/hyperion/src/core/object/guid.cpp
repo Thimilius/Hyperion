@@ -1,10 +1,10 @@
 #include "hyppch.hpp"
 
-#include "hyperion/core/guid.hpp"
-
 #ifdef HYP_PLATFORM_WINDOWS
 #include <objbase.h>
 #endif
+
+#include "hyperion/core/object/guid.hpp"
 
 namespace Hyperion {
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "hyperion/core/main.hpp"
 #include "hyperion/core/app/application.hpp"
+#include "hyperion/core/system/main.hpp"
 
 // This is the function required to be defined by the application program
 extern Hyperion::Application *Hyperion::CreateApplication();

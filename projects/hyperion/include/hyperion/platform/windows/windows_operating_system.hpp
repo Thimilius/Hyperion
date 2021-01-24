@@ -1,8 +1,8 @@
 #pragma once
 
-#include "hyperion/core/operating_system.hpp"
-
 #include <Windows.h>
+
+#include "hyperion/core/system/operating_system.hpp"
 
 namespace Hyperion {
 
