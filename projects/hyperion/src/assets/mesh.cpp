@@ -39,10 +39,10 @@ namespace Hyperion {
             vertex_data[i].texture0 = mesh_data.texture0[i];
         }
         descriptor.vertices = vertices;
-        Vector<VertexAttributeDescriptor> vertex_attributes = {
-            { VertexAttribute::Position, VertexAttributeType::Float32, 3 },
-            { VertexAttribute::Normal, VertexAttributeType::Float32, 3 },
-            { VertexAttribute::Texture0, VertexAttributeType::Float32, 2 },
+        Vector<VertexAttribute> vertex_attributes = {
+            { VertexAttributeKind::Position, VertexAttributeType::Float32, 3 },
+            { VertexAttributeKind::Normal, VertexAttributeType::Float32, 3 },
+            { VertexAttributeKind::Texture0, VertexAttributeType::Float32, 2 },
         };
         descriptor.vertex_format.attributes = vertex_attributes;
         descriptor.vertex_format.stride = 32;

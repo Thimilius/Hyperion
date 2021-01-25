@@ -117,7 +117,7 @@ namespace Hyperion::Rendering {
         GLuint relative_offset = 0;
         uint64 vertex_attribute_count = descriptor.vertex_format.attributes.size / sizeof(descriptor.vertex_format.attributes.data[0]);
         for (uint32 i = 0; i < vertex_attribute_count; i++) {
-            const VertexAttributeDescriptor &vertex_attribute = descriptor.vertex_format.attributes.data[i];
+            const VertexAttribute &vertex_attribute = descriptor.vertex_format.attributes.data[i];
 
             GLuint attribute_index = i;
             GLuint binding_index = 0;
@@ -172,6 +172,26 @@ namespace Hyperion::Rendering {
 
         OpenGLMaterial &material = s_materials[id];
         material.shader = descriptor.shader;
+    }
+
+    void OpenGLRenderDriver::SetMaterialProperty(ResourceId id, const MaterialProperty &property) {
+        HYP_ASSERT(s_materials.find(id) != s_materials.end());
+        OpenGLMaterial &material = s_materials[id];
+        
+        ResourceId shader_id = material.shader;
+        HYP_ASSERT(s_shaders.find(shader_id) != s_shaders.end());
+        OpenGLShader &shader = s_shaders[shader_id];
+
+        GLuint program = shader.program;
+        switch (property.type) {
+            case MaterialPropertyType::Vec4: {
+                GLint location = glGetUniformLocation(program, property.name.data);
+                Vec4 vec4 = property.storage.vec4;
+                glProgramUniform4f(program, location, vec4.x, vec4.y, vec4.z, vec4.w);
+                break;
+            }
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+        }
     }
 
     void OpenGLRenderDriver::DestroyMaterial(ResourceId id) {

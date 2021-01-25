@@ -25,6 +25,7 @@ namespace Hyperion::Rendering {
         DestroyTexture,
 
         CreateMaterial,
+        SetMaterialProperty,
         DestroyMaterial,
 
         DrawIndexed
@@ -65,6 +66,11 @@ namespace Hyperion::Rendering {
     struct RenderCommandCreateMaterial {
         ResourceId id;
         MaterialDescriptor descriptor;
+    };
+
+    struct RenderCommandSetMaterialProperty {
+        ResourceId id;
+        MaterialProperty property;
     };
 
     struct RenderCommandDrawIndexed {

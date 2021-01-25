@@ -23,6 +23,7 @@ namespace Hyperion::Rendering {
         void DestroyTexture(ResourceId id) override;
 
         void CreateMaterial(ResourceId id, const MaterialDescriptor &descriptor) override;
+        void SetMaterialProperty(ResourceId id, const MaterialProperty &property) override;
         void DestroyMaterial(ResourceId id) override;
 
         void DrawIndexed(ResourceId shader_id, ResourceId mesh_id) override;

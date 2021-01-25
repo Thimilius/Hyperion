@@ -1,17 +1,10 @@
 #pragma once
 
-#include "hyperion/common.hpp"
+#include "hyperion/rendering/attributes/common_attributes.hpp"
 
 namespace Hyperion::Rendering {
 
-    enum class MeshTopology {
-        Points,
-        Lines,
-        LineStrip,
-        Triangles
-    };
-
-    enum class VertexAttribute {
+    enum class VertexAttributeKind {
         Position,
         Normal,
         Tangent,
@@ -26,9 +19,27 @@ namespace Hyperion::Rendering {
         Float32,
     };
 
+    struct VertexAttribute {
+        VertexAttributeKind kind;
+        VertexAttributeType type;
+        uint32 dimension;
+    };
+
+    struct VertexFormat {
+        ArrayDescriptor<VertexAttribute> attributes;
+        uint32 stride;
+    };
+
     enum class IndexFormat {
         UInt16,
         UInt32
+    };
+
+    enum class MeshTopology {
+        Points,
+        Lines,
+        LineStrip,
+        Triangles
     };
 
     struct SubMesh {

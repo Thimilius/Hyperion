@@ -34,8 +34,10 @@ namespace Hyperion::Rendering {
 
                 out vec4 o_color;
 
+                uniform vec4 u_color;
+
                 void main() {
-	                o_color = vec4(0.9, 0.5, 0, 1);
+	                o_color = u_color;
                 }
             )" }
         };
@@ -87,6 +89,10 @@ namespace Hyperion::Rendering {
         color *= value;
         RenderEngine::GetRenderDriver()->Clear(ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, color);
 
+        color = Color::Green();
+        value = Math::Sin(Time::GetTime() * 2.0f + Math::PI) / 2.0f + 0.5f;
+        color *= value;
+        g_material->SetVec4("u_color", color);
         RenderEngine::GetRenderDriver()->DrawIndexed(g_mesh->GetResourceId(), g_material->GetResourceId());
     }
 

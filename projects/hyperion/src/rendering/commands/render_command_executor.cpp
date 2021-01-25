@@ -45,7 +45,7 @@ namespace Hyperion::Rendering {
                 uint64 extra_size = render_command->descriptor.sub_meshes.size + render_command->descriptor.vertex_format.attributes.size + render_command->descriptor.vertices.size + render_command->descriptor.indices.size;
                 uint8 *data = reinterpret_cast<uint8 *>(render_command + 1);
                 render_command->descriptor.sub_meshes.data = reinterpret_cast<SubMesh *>(data);
-                render_command->descriptor.vertex_format.attributes.data = reinterpret_cast<VertexAttributeDescriptor *>(data + render_command->descriptor.sub_meshes.size);
+                render_command->descriptor.vertex_format.attributes.data = reinterpret_cast<VertexAttribute *>(data + render_command->descriptor.sub_meshes.size);
                 render_command->descriptor.vertices.data = data + render_command->descriptor.sub_meshes.size + render_command->descriptor.vertex_format.attributes.size;
                 render_command->descriptor.indices.data = data + render_command->descriptor.sub_meshes.size + render_command->descriptor.vertex_format.attributes.size + render_command->descriptor.vertices.size;
 
@@ -76,6 +76,16 @@ namespace Hyperion::Rendering {
                 auto render_command = reinterpret_cast<RenderCommandCreateMaterial *>(command);
                 render_driver->CreateMaterial(render_command->id, render_command->descriptor);
                 return sizeof(*render_command);
+            }
+            case RenderCommandType::SetMaterialProperty: {
+                auto render_command = reinterpret_cast<RenderCommandSetMaterialProperty *>(command);
+
+                uint64 extra_size = render_command->property.name.size;
+                uint8 *data = reinterpret_cast<uint8 *>(render_command + 1);
+                render_command->property.name.data = reinterpret_cast<char *>(data);
+
+                render_driver->SetMaterialProperty(render_command->id, render_command->property);
+                return sizeof(*render_command) + extra_size;
             }
             case RenderCommandType::DestroyMaterial: {
                 auto render_command = reinterpret_cast<RenderCommandId *>(command);

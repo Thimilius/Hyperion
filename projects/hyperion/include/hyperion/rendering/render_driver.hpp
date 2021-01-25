@@ -5,6 +5,8 @@
 #include "hyperion/core/math/vec3.hpp"
 #include "hyperion/core/object/resource.hpp"
 #include "hyperion/rendering/rasterizer_state.hpp"
+#include "hyperion/rendering/attributes/common_attributes.hpp"
+#include "hyperion/rendering/attributes/material_attributes.hpp"
 #include "hyperion/rendering/attributes/mesh_attributes.hpp"
 #include "hyperion/rendering/attributes/shader_attributes.hpp"
 #include "hyperion/rendering/attributes/texture_attributes.hpp"
@@ -27,24 +29,6 @@ namespace Hyperion::Rendering {
         int32 height;
     };
 
-    template<typename T>
-    struct ArrayDescriptor {
-        uint64 size; // This size is always in bytes!
-        const T *data;
-
-        ArrayDescriptor() = default;
-
-        ArrayDescriptor(const Vector<T> &vector) {
-            size = vector.size() * sizeof(vector[0]);
-            data = vector.data();
-        }
-
-        ArrayDescriptor(const String &string) {
-            size = string.size() + 1; // We have to take into account the null termination character
-            data = string.data();
-        }
-    };
-
     struct ShaderDescriptor {
         ShaderStageFlags stage_flags;
 
@@ -52,19 +36,10 @@ namespace Hyperion::Rendering {
         ArrayDescriptor<char> source_fragment;
     };
 
-    struct VertexAttributeDescriptor {
-        VertexAttribute attribute;
-        VertexAttributeType type;
-        uint32 dimension;
-    };
-
     struct MeshDescriptor {
         ArrayDescriptor<SubMesh> sub_meshes;
 
-        struct VertexFormat {
-            ArrayDescriptor<VertexAttributeDescriptor> attributes;
-            uint32 stride;
-        } vertex_format;
+        VertexFormat vertex_format;
         IndexFormat index_format;
 
         ArrayDescriptor<uint8> vertices;
@@ -103,6 +78,7 @@ namespace Hyperion::Rendering {
         virtual void DestroyTexture(ResourceId id) = 0;
 
         virtual void CreateMaterial(ResourceId id, const MaterialDescriptor &descriptor) = 0;
+        virtual void SetMaterialProperty(ResourceId id, const MaterialProperty &property) = 0;
         virtual void DestroyMaterial(ResourceId id) = 0;
 
         virtual void DrawIndexed(ResourceId mesh_id, ResourceId material_id) = 0;
