@@ -8,6 +8,8 @@
 
 namespace Hyperion::Rendering {
 
+    // Those specify all 'normal' render commands.
+    // Immediate render commands are handled seperately.
     enum class RenderCommandType {
         Exit = -1,
 
@@ -22,7 +24,6 @@ namespace Hyperion::Rendering {
         DestroyMesh,
 
         CreateTexture,
-        GetTextureData,
         DestroyTexture,
 
         CreateMaterial,
@@ -77,13 +78,6 @@ namespace Hyperion::Rendering {
     struct RenderCommandDrawIndexed {
         ResourceId mesh_id;
         ResourceId material_id;
-    };
-
-    struct RenderCommandImmediate {
-        RenderCommandType type;
-
-        ResourceId id;
-        Vector<uint8> pixels;
     };
 
 }

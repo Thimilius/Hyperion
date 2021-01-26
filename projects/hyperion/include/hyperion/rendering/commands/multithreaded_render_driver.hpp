@@ -17,7 +17,7 @@ namespace Hyperion::Rendering {
         void DestroyMesh(ResourceId id) override;
 
         void CreateTexture(ResourceId id, const TextureDescriptor &descriptor) override;
-        Vector<uint8> GetTextureData(ResourceId id) override;
+        void GetTextureData(ResourceId id, Vector<uint8> &data) override;
         void DestroyTexture(ResourceId id) override;
 
         void CreateMaterial(ResourceId id, const MaterialDescriptor &descriptor) override;

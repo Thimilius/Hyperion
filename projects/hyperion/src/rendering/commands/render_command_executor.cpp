@@ -101,4 +101,15 @@ namespace Hyperion::Rendering {
         }
     }
 
+    void RenderCommandExecutor::ExecuteImmediateRenderCommand(ImmediateRenderCommand &immediate_render_command, IRenderDriver *render_driver) {
+        switch (immediate_render_command.type) {
+            case ImmediateRenderCommandType::GetTextureData: {
+                auto &command = std::get<ImmediateRenderCommandGetTextureData>(immediate_render_command.command);
+                render_driver->GetTextureData(command.id, *command.data);
+                break;
+            }
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        }
+    }
+
 }

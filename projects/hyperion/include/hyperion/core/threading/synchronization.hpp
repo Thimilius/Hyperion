@@ -25,7 +25,7 @@ namespace Hyperion {
         inline static void WaitForRenderDone() { s_render_done_event.Wait(); }
 
         inline static void NotifySwapDone() { s_swap_done_event.Notify(); }
-        inline static void WaitForSwapDone() { s_swap_done_event.Wait(); }
+        inline static bool WaitUnblockedForSwapDone() { return s_swap_done_event.WaitUnblocked(); }
 
         inline static void NotifyImmediateCommandDone() { s_immediate_command_done_event.Notify(); }
         inline static void WaitForImmediateCommandDone() { s_immediate_command_done_event.Wait(); }

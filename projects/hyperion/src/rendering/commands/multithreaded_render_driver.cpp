@@ -1,6 +1,6 @@
 #include "hyppch.hpp"
 
-#include "hyperion/rendering/multithreaded_render_driver.hpp"
+#include "hyperion/rendering/commands/multithreaded_render_driver.hpp"
 
 #include "hyperion/core/threading/synchronization.hpp"
 #include "hyperion/rendering/render_engine.hpp"
@@ -71,11 +71,18 @@ namespace Hyperion::Rendering {
         std::memcpy(data, descriptor.pixels.data, descriptor.pixels.size);
     }
 
-    Vector<uint8> MultithreadedRenderDriver::GetTextureData(ResourceId id) {
-        RenderEngine::GetImmediateCommand().id = id;
+    void MultithreadedRenderDriver::GetTextureData(ResourceId id, Vector<uint8> &data) {
+        // NOTE: Getting the data of a texture is an immediate render command and needs to be handled appropriately.
+        ImmediateRenderCommandGetTextureData command;
+        command.id = id;
+        command.data = &data;
+
+        ImmediateRenderCommand &immediate_command = RenderEngine::GetImmediateCommand();
+        immediate_command.type = ImmediateRenderCommandType::GetTextureData;
+        immediate_command.command = command;
+
         RenderEngine::SetImmediateCommandPending();
         Synchronization::WaitForImmediateCommandDone();
-        return RenderEngine::GetImmediateCommand().pixels;
     }
 
     void MultithreadedRenderDriver::DestroyTexture(ResourceId id) {

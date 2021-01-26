@@ -10,7 +10,7 @@ namespace Hyperion::Threading {
 
         void Notify();
         void Wait();
-        bool WaitOne();
+        bool WaitUnblocked();
     private:
         AutoResetEvent(const AutoResetEvent &other) = delete;
         AutoResetEvent &operator=(const AutoResetEvent &other) = delete;

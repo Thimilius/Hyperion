@@ -5,7 +5,7 @@
 #include "hyperion/core/threading/synchronization.hpp"
 #include "hyperion/driver/opengl/opengl_render_driver.hpp"
 #include "hyperion/rendering/graphics_context.hpp"
-#include "hyperion/rendering/multithreaded_render_driver.hpp"
+#include "hyperion/rendering/commands/multithreaded_render_driver.hpp"
 #include "hyperion/rendering/commands/render_commands.hpp"
 #include "hyperion/rendering/commands/render_command_executor.hpp"
 #include "hyperion/rendering/pipelines/forward_render_pipeline.hpp"
@@ -138,12 +138,14 @@ namespace Hyperion::Rendering {
             }
 
             s_graphics_context->Present();
-
             Synchronization::NotifyRenderDone();
+
+            // While we are waiting for the main thread to give us the new set of commands,
+            // we want to execute all potentially incoming immediate render commands.
             while (true) {
                 ExecutePotentialImmediateRenderCommand();
-
-                if (Synchronization::s_swap_done_event.WaitOne()) {
+            
+                if (Synchronization::WaitUnblockedForSwapDone()) {
                     break;
                 }
             }
@@ -152,18 +154,16 @@ namespace Hyperion::Rendering {
         ShutdownRenderThread();
     }
 
-    void RenderEngine::ExecutePotentialImmediateRenderCommand() {
-        //HYP_TRACE("ExecutePotentialImmediateRenderCommand");
-        if (s_immediate_command_pending) {
-            HYP_TRACE("EXECUTE");
-            s_immediate_command_pending = false;
-            s_immediate_command.pixels = s_render_driver_backend->GetTextureData(s_immediate_command.id);
-            Synchronization::NotifyImmediateCommandDone();
-        }
-    }
-
     void RenderEngine::ShutdownRenderThread() {
         delete s_graphics_context;
+    }
+
+    void RenderEngine::ExecutePotentialImmediateRenderCommand() {
+        if (s_is_immediate_render_command_pending) {
+            s_is_immediate_render_command_pending = false;
+            RenderCommandExecutor::ExecuteImmediateRenderCommand(s_immediate_render_command, s_render_driver_backend);
+            Synchronization::NotifyImmediateCommandDone();
+        }
     }
 
 }

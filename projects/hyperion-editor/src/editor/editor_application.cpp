@@ -1,8 +1,8 @@
 ﻿#include <hyperion/hyperion.hpp>
 #include <hyperion/entry_point.hpp>
 
-#include "hyperion/core/memory/memory.hpp"
-#include "hyperion/core/serialization/json_serializer.hpp"
+#include <hyperion/core/memory/memory.hpp>
+#include <hyperion/core/serialization/json_serializer.hpp>
 
 namespace Hyperion::Editor {
 
@@ -11,7 +11,7 @@ namespace Hyperion::Editor {
         EditorApplication(const ApplicationSettings &settings) : Application(settings) { }
     protected:
         void OnInit() override {
-
+            WorldManager::SetActiveWorld(WorldManager::CreateWorld());
         }
 
         void OnUpdate(float32 delta_time) override {
