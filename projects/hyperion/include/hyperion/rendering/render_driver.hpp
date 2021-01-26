@@ -75,6 +75,7 @@ namespace Hyperion::Rendering {
         virtual void DestroyMesh(ResourceId id) = 0;
 
         virtual void CreateTexture(ResourceId id, const TextureDescriptor &descriptor) = 0;
+        virtual Vector<uint8> GetTextureData(ResourceId id) = 0;
         virtual void DestroyTexture(ResourceId id) = 0;
 
         virtual void CreateMaterial(ResourceId id, const MaterialDescriptor &descriptor) = 0;

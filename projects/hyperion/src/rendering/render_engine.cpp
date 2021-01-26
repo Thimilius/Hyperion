@@ -121,6 +121,8 @@ namespace Hyperion::Rendering {
             auto program_counter_end = s_render_queue.GetData() + s_render_queue.GetSize();
             RenderCommandType command_type;
             while (program_counter < program_counter_end) {
+                ExecutePotentialImmediateRenderCommand();
+
                 command_type = *reinterpret_cast<RenderCommandType *>(program_counter);
                 s_exit_requested = command_type == RenderCommandType::Exit;
                 if (s_exit_requested) {
@@ -138,10 +140,26 @@ namespace Hyperion::Rendering {
             s_graphics_context->Present();
 
             Synchronization::NotifyRenderDone();
-            Synchronization::WaitForSwapDone();
+            while (true) {
+                ExecutePotentialImmediateRenderCommand();
+
+                if (Synchronization::s_swap_done_event.WaitOne()) {
+                    break;
+                }
+            }
         }
 
         ShutdownRenderThread();
+    }
+
+    void RenderEngine::ExecutePotentialImmediateRenderCommand() {
+        //HYP_TRACE("ExecutePotentialImmediateRenderCommand");
+        if (s_immediate_command_pending) {
+            HYP_TRACE("EXECUTE");
+            s_immediate_command_pending = false;
+            s_immediate_command.pixels = s_render_driver_backend->GetTextureData(s_immediate_command.id);
+            Synchronization::NotifyImmediateCommandDone();
+        }
     }
 
     void RenderEngine::ShutdownRenderThread() {

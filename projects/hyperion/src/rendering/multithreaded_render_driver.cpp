@@ -2,6 +2,7 @@
 
 #include "hyperion/rendering/multithreaded_render_driver.hpp"
 
+#include "hyperion/core/threading/synchronization.hpp"
 #include "hyperion/rendering/render_engine.hpp"
 
 namespace Hyperion::Rendering {
@@ -68,6 +69,13 @@ namespace Hyperion::Rendering {
 
         uint8 *data = reinterpret_cast<uint8 *>(command + 1);
         std::memcpy(data, descriptor.pixels.data, descriptor.pixels.size);
+    }
+
+    Vector<uint8> MultithreadedRenderDriver::GetTextureData(ResourceId id) {
+        RenderEngine::GetImmediateCommand().id = id;
+        RenderEngine::SetImmediateCommandPending();
+        Synchronization::WaitForImmediateCommandDone();
+        return RenderEngine::GetImmediateCommand().pixels;
     }
 
     void MultithreadedRenderDriver::DestroyTexture(ResourceId id) {

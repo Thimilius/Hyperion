@@ -150,12 +150,31 @@ namespace Hyperion::Rendering {
         texture.dimension = descriptor.dimension;
         texture.format = descriptor.format;
         texture.parameters = descriptor.parameters;
+        texture.size = descriptor.size;
 
         switch (descriptor.dimension) {
             case TextureDimension::Texture2D: CreateTexture2D(texture, descriptor); break;
             case TextureDimension::TextureCubemap: CreateTextureCubemap(texture, descriptor); break;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
+    }
+
+    Vector<uint8> OpenGLRenderDriver::GetTextureData(ResourceId id) {
+        HYP_ASSERT(s_textures.find(id) != s_textures.end());
+
+        OpenGLTexture &texture = s_textures[id];
+        
+        // FIXME: This is hardcoded for 2D textures.
+        // Maybe store the complete size beforehand.
+        GLsizei size = texture.size.height * texture.size.width * 4;
+        Vector<uint8> pixels(size);
+
+        GLenum format = OpenGLUtilities::GetGLTextureFormat(texture.format);
+        GLenum format_type = OpenGLUtilities::GetGLTextureFormatType(texture.format);
+
+        glGetTextureImage(texture.texture, 0, format, format_type, size, pixels.data());
+
+        return pixels;
     }
 
     void OpenGLRenderDriver::DestroyTexture(ResourceId id) {

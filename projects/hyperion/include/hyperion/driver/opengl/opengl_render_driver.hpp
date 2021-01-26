@@ -20,6 +20,7 @@ namespace Hyperion::Rendering {
         void DestroyMesh(ResourceId id) override;
 
         void CreateTexture(ResourceId id, const TextureDescriptor &descriptor) override;
+        Vector<uint8> GetTextureData(ResourceId id) override;
         void DestroyTexture(ResourceId id) override;
 
         void CreateMaterial(ResourceId id, const MaterialDescriptor &descriptor) override;
@@ -53,6 +54,7 @@ namespace Hyperion::Rendering {
             TextureDimension dimension;
             TextureFormat format;
             TextureParameters parameters;
+            TextureSize size;
         };
         inline static Map<ResourceId, OpenGLTexture> s_textures;
 

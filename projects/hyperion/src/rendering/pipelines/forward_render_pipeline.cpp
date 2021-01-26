@@ -81,6 +81,12 @@ namespace Hyperion::Rendering {
     }
 
     void ForwardRenderPipeline::Render(const RenderContext &context) {
+        if (Input::IsKeyDown(KeyCode::A)) {
+            HYP_TRACE("GET");
+            Vector<uint8> texture_data = RenderEngine::GetRenderDriver()->GetTextureData(g_texture->GetResourceId());
+            HYP_TRACE("{}", texture_data.size());
+        }
+
         Viewport viewport = { 0, 0, static_cast<int32>(Display::GetWidth()), static_cast<int32>(Display::GetHeight()) };
         RenderEngine::GetRenderDriver()->Viewport(viewport);
 

@@ -10,13 +10,14 @@ namespace Hyperion::Threading {
 
         void Notify();
         void Wait();
+        bool WaitOne();
     private:
         AutoResetEvent(const AutoResetEvent &other) = delete;
         AutoResetEvent &operator=(const AutoResetEvent &other) = delete;
 
         std::mutex m_mutex;
         std::condition_variable m_condition_variable;
-        bool m_signalled = false;
+        bool m_signaled = false;
     };
 
 }

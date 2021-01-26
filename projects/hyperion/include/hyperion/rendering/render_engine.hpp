@@ -24,6 +24,8 @@ namespace Hyperion::Rendering {
         inline static RenderBackend GetBackend() { return s_render_settings.backend; }
         inline static IRenderDriver *GetRenderDriver() { return s_render_driver; }
         inline static RenderCommandQueue &GetCommandQueue() { return s_update_queue; }
+        inline static RenderCommandImmediate &GetImmediateCommand() { return s_immediate_command; }
+        inline static void SetImmediateCommandPending() { s_immediate_command_pending = true; }
     private:
         RenderEngine() = delete;
         ~RenderEngine() = delete;
@@ -39,6 +41,7 @@ namespace Hyperion::Rendering {
 
         static void InitRenderThread(Window *window);
         static void RenderThreadLoop(void *parameter);
+        static void ExecutePotentialImmediateRenderCommand();
         static void ShutdownRenderThread();
     private: 
         inline static RenderSettings s_render_settings;
@@ -55,6 +58,8 @@ namespace Hyperion::Rendering {
         inline static Threading::Thread s_render_thread;
         inline static RenderCommandQueue s_update_queue;
         inline static RenderCommandQueue s_render_queue;
+        inline static RenderCommandImmediate s_immediate_command;
+        inline static std::atomic<bool> s_immediate_command_pending;
     private:
         friend class Hyperion::Engine;
     };
