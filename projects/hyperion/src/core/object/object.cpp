@@ -3,6 +3,7 @@
 #include "hyperion/core/object/object.hpp"
 
 #include "hyperion/assets/asset.hpp"
+#include "hyperion/assets/font.hpp"
 #include "hyperion/assets/material.hpp"
 #include "hyperion/assets/mesh.hpp"
 #include "hyperion/assets/shader.hpp"
@@ -138,6 +139,8 @@ HYP_REFLECT_REGISTER_BEGIN
     {
         Registration<Asset>("Asset")
             .property_readonly("resource_id", &Asset::m_resource_id)(metadata(Metadata::Serialize, false));
+        Registration<Font>("Font")
+            .constructor(select_overload<Font *()>(&Font::Create))(DefaultConstructorPolicy);
         Registration<Material>("Material")
             .constructor(select_overload<Material *()>(&Material::Create))(DefaultConstructorPolicy)
             .constructor(select_overload<Material *(Shader *)>(&Material::Create))(DefaultConstructorPolicy);

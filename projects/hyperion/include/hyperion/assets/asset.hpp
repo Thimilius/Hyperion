@@ -4,6 +4,10 @@
 #include "hyperion/core/object/resource.hpp"
 
 namespace Hyperion {
+    class Engine;
+}
+
+namespace Hyperion {
 
     enum class AssetType {
         Mesh,
@@ -27,4 +31,15 @@ namespace Hyperion {
         ResourceId m_resource_id;
     };
 
+    class AssetManager final {
+    private:
+        ~AssetManager() = delete;
+        AssetManager() = delete;
+
+        static void Init();
+        static void Shutdown();
+    private:
+        friend class Engine;
+    };
+    
 }

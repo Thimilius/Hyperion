@@ -2,6 +2,7 @@
 
 #include "hyperion/core/system/engine.hpp"
 
+#include "hyperion/assets/asset.hpp"
 #include "hyperion/audio/audio_engine.hpp"
 #include "hyperion/core/timer.hpp"
 #include "hyperion/core/app/display.hpp"
@@ -57,6 +58,7 @@ namespace Hyperion {
         Rendering::RenderEngine::Init();
         Physics::PhysicsEngine::Init();
         Audio::AudioEngine::Init();
+        AssetManager::Init();
         ScriptingEngine::Init(s_settings.scripting);
     }
 
@@ -141,6 +143,7 @@ namespace Hyperion {
     void Engine::Shutdown() {
         WorldManager::Shutdown();
         ObjectManager::Shutdown();
+        AssetManager::Shutdown();
         ScriptingEngine::Shutdown();
         Audio::AudioEngine::Shutdown();
         Physics::PhysicsEngine::Shutdown();

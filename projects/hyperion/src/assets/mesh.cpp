@@ -389,10 +389,16 @@ namespace Hyperion {
         return Mesh::Create(mesh_data, { { MeshTopology::Triangles, static_cast<uint32>(mesh_data.indices.size()), 0, 0 } });
     }
 
-    IMeshLoader *MeshFactory::s_mesh_loader = new AssimpMeshLoader();
-
     Mesh *MeshFactory::CreateFromFile(const String &path) {
         return s_mesh_loader->LoadMesh(path);
+    }
+
+    void MeshFactory::Init() {
+        s_mesh_loader = new AssimpMeshLoader();
+    }
+
+    void MeshFactory::Shutdown() {
+        delete s_mesh_loader;
     }
 
 }

@@ -8,9 +8,9 @@ namespace Hyperion {
 
 namespace Hyperion {
 
-    class IImageFormatLoader {
+    class IImageLoader {
     public:
-        virtual ~IImageFormatLoader() = default;
+        virtual ~IImageLoader() = default;
 
         virtual const Vector<String> &GetSupportedExtensions() const = 0;
         virtual bool SupportsExtension(const String &extension) const = 0;
@@ -24,7 +24,7 @@ namespace Hyperion {
         static bool SupportsExtension(const String &extension);
 
         static Image *Load(const String &path, bool flip_vertically = true);
-        static void AddFormatLoader(IImageFormatLoader *image_format_loader);
+        static void AddFormatLoader(IImageLoader *image_loader);
     private:
         ImageLoader() = delete;
         ~ImageLoader() = delete;
@@ -32,7 +32,7 @@ namespace Hyperion {
         static void Init();
         static void Shutdown();
     private:
-        inline static Vector<IImageFormatLoader *> s_loaders;
+        inline static Vector<IImageLoader *> s_loaders;
     private:
         friend class Hyperion::AssetManager;
     };

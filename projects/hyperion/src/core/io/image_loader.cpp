@@ -13,8 +13,8 @@ namespace Hyperion {
     }
 
     bool ImageLoader::SupportsExtension(const String &extension) {
-        for (IImageFormatLoader *image_format_loader : s_loaders) {
-            if (image_format_loader->SupportsExtension(extension)) {
+        for (IImageLoader *image_loader : s_loaders) {
+            if (image_loader->SupportsExtension(extension)) {
                 return true;
             }
         }
@@ -22,16 +22,16 @@ namespace Hyperion {
     }
 
     Image *ImageLoader::Load(const String &path, bool flip_vertically) {
-        for (IImageFormatLoader *image_format_loader : s_loaders) {
-            if (image_format_loader->SupportsExtension(StringUtils::GetExtension(path))) {
-                return image_format_loader->Load(path, flip_vertically);
+        for (IImageLoader *image_loader : s_loaders) {
+            if (image_loader->SupportsExtension(StringUtils::GetExtension(path))) {
+                return image_loader->Load(path, flip_vertically);
             }
         }
         return nullptr;
     }
 
-    void ImageLoader::AddFormatLoader(IImageFormatLoader *image_format_loader) {
-        s_loaders.push_back(image_format_loader);
+    void ImageLoader::AddFormatLoader(IImageLoader *image_loader) {
+        s_loaders.push_back(image_loader);
     }
 
     void ImageLoader::Init() {
@@ -39,8 +39,8 @@ namespace Hyperion {
     }
 
     void ImageLoader::Shutdown() {
-        for (IImageFormatLoader *image_format_loader : s_loaders) {
-            delete image_format_loader;
+        for (IImageLoader *image_loader : s_loaders) {
+            delete image_loader;
         }
     }
 
