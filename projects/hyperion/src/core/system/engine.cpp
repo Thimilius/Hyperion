@@ -55,10 +55,10 @@ namespace Hyperion {
     }
 
     void Engine::Init() {
-        Rendering::RenderEngine::Init();
-        Physics::PhysicsEngine::Init();
         Audio::AudioEngine::Init();
         AssetManager::Init();
+        Rendering::RenderEngine::Init();
+        Physics::PhysicsEngine::Init();
         ScriptingEngine::Init(s_settings.scripting);
     }
 
@@ -143,11 +143,11 @@ namespace Hyperion {
     void Engine::Shutdown() {
         WorldManager::Shutdown();
         ObjectManager::Shutdown();
-        AssetManager::Shutdown();
         ScriptingEngine::Shutdown();
-        Audio::AudioEngine::Shutdown();
         Physics::PhysicsEngine::Shutdown();
         Rendering::RenderEngine::Shutdown();
+        AssetManager::Shutdown();
+        Audio::AudioEngine::Shutdown();
 
         delete Application::GetInstance()->GetWindow();
     }

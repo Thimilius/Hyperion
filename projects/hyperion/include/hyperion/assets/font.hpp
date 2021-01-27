@@ -1,29 +1,61 @@
 #pragma once
 
 #include "hyperion/assets/asset.hpp"
+#include "hyperion/assets/texture.hpp"
 
 namespace Hyperion {
+
+    enum class FontCharacterSet {
+        All,
+        ASCII,
+        LatinSupplement
+    };
+
+    struct FontGlyph {
+        uint32 codepoint;
+
+        Texture2D *texture;
+
+        Vec2 size;
+        Vec2 bearing;
+        uint32 advance;
+    };
 
     class Font : public Asset {
         HYP_REFLECT(Asset);
     public:
         AssetType GetAssetType() const override { return AssetType::Font; }
 
-        static Font *Create();
+        inline uint32 GetSize() const { return m_size; }
+        FontGlyph GetGlyph(uint32 codepoint) const;
+
+        float32 GetTextWidth(const String &text, float32 scale) const;
+
+        static Font *Create(uint32 size, FontCharacterSet character_set, Map<uint32, FontGlyph> glyphs);
     private:
         Font() = default;
+        Font(uint32 size, FontCharacterSet character_set, Map<uint32, FontGlyph> glyphs);
+
+        static Font *Create();
+    private:
+        uint32 m_size;
+        FontCharacterSet m_character_set;
+        Map<uint32, FontGlyph> m_glyphs;
     };
 
     class IFontLoader {
     public:
         virtual ~IFontLoader() = default;
 
-        virtual Font *LoadFont(const String &path) = 0;
+        virtual Font *LoadFont(const String &path, uint32 size, FontCharacterSet character_set) = 0;
+
+        virtual void Init() = 0;
+        virtual void Shutdown() = 0;
     };
 
     class FontLoader final {
     public:
-        static void LoadFont(const String &path) { s_font_loader->LoadFont(path); }
+        static Font *LoadFont(const String &path, uint32 size, FontCharacterSet character_set) { return s_font_loader->LoadFont(path, size, character_set); }
     private:
         FontLoader() = delete;
         ~FontLoader() = delete;

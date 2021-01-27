@@ -2,6 +2,7 @@
 
 #include "hyperion/rendering/pipelines/forward_render_pipeline.hpp"
 
+#include "hyperion/assets/font.hpp"
 #include "hyperion/assets/material.hpp"
 #include "hyperion/assets/mesh.hpp"
 #include "hyperion/assets/shader.hpp"
@@ -15,6 +16,7 @@ namespace Hyperion::Rendering {
     Material *g_material;
     Mesh *g_mesh;
     Texture *g_texture;
+    Font *g_font;
 
     void ForwardRenderPipeline::Init() {
         Map<ShaderStageFlags, String> sources = {
@@ -64,18 +66,7 @@ namespace Hyperion::Rendering {
         };
         g_mesh = Mesh::Create(mesh_data, sub_meshes);
 
-        uint32 width = 1024;
-        uint32 height = 1024;
-        Vector<uint8> pixels(width * height * 4);
-        uint8 *data = pixels.data();
-        for (uint32 x = 0; x < width; x++) {
-            for (uint32 y = 0; y < height; y++) {
-                uint32 *pixel = reinterpret_cast<uint32 *>(&data[(x + (y * width)) * 4]);
-                // NOTE: The pixel format is: 0xAABBGGRR
-                *pixel = 0xFF00FFFF;
-            }
-        }
-        g_texture = Texture2D::Create(width, height, TextureFormat::RGBA32, TextureParameters(), pixels);
+        g_font = FontLoader::LoadFont("data/fonts/consola.ttf", 16, FontCharacterSet::ASCII);
 
         RenderEngine::GetRenderDriver()->SetRasterizerState(RasterizerState());
     }
