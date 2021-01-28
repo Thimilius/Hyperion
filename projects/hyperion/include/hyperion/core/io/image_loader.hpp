@@ -23,7 +23,7 @@ namespace Hyperion {
         static Vector<String> GetSupportedExtensions();
         static bool SupportsExtension(const String &extension);
 
-        static Image *Load(const String &path, bool flip_vertically = true);
+        static Image *Load(const String &path, bool flip_vertically = false);
         static void AddFormatLoader(IImageLoader *image_loader);
     private:
         ImageLoader() = delete;

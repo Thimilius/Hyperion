@@ -51,6 +51,50 @@ namespace Hyperion {
         }
     }
 
+    void Material::SetMat4(const String &name, const Mat4 &value) {
+        auto it = std::find_if(m_properties.begin(), m_properties.end(), [&name](const MaterialProperty property) {
+            return property.name == name;
+        });
+
+        if (it != m_properties.end()) {
+            HYP_ASSERT_MESSAGE(it->type == MaterialPropertyType::Mat4, "The property can not change it's type when setting");
+            it->storage.mat4 = value;
+
+            SetProperty(*it);
+        } else {
+            MaterialProperty property{ };
+            property.name = name;
+            property.type = MaterialPropertyType::Mat4;
+            property.storage.mat4 = value;
+
+            m_properties.push_back(property);
+
+            SetProperty(property);
+        }
+    }
+
+    void Material::SetTexture(const String &name, const Texture *value) {
+        auto it = std::find_if(m_properties.begin(), m_properties.end(), [&name](const MaterialProperty property) {
+            return property.name == name;
+        });
+
+        if (it != m_properties.end()) {
+            HYP_ASSERT_MESSAGE(it->type == MaterialPropertyType::Texture, "The property can not change it's type when setting");
+            it->storage.texture = value;
+
+            SetProperty(*it);
+        } else {
+            MaterialProperty property{ };
+            property.name = name;
+            property.type = MaterialPropertyType::Texture;
+            property.storage.texture = value;
+
+            m_properties.push_back(property);
+
+            SetProperty(property);
+        }
+    }
+
     void Material::SetProperty(const MaterialProperty &property) {
         Rendering::MaterialProperty rendering_property { };
         rendering_property.name = property.name;

@@ -21,7 +21,7 @@ namespace Hyperion {
             Mat3 mat3;
             Mat4 mat4;
 
-            Texture *texture;
+            const Texture *texture;
         };
 
         struct MaterialProperty {
@@ -34,6 +34,12 @@ namespace Hyperion {
 
         Vec4 GetVec4(const String &name) const;
         void SetVec4(const String &name, Vec4 value);
+
+        //Mat4 GetMat4(const String &name) const;
+        void SetMat4(const String &name, const Mat4 &value);
+
+        //Texture *GetTexture(const String &name) const;
+        void SetTexture(const String &name, const Texture *value);
 
         static Material *Create(Shader *shader);
     protected:

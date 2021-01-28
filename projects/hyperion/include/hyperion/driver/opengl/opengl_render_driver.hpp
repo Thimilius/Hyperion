@@ -32,6 +32,7 @@ namespace Hyperion::Rendering {
         void CreateTexture2D(OpenGLTexture &texture, const TextureDescriptor &descriptor);
         void CreateTextureCubemap(OpenGLTexture &texture, const TextureDescriptor &descriptor);
 
+        static void FlipTextureHorizontally(uint8 *data, uint32 texture_height, uint32 texture_stride);
         static uint32 GetBytesPerPixelForTextureFormat(TextureFormat format);
     private:
         struct OpenGLShader {

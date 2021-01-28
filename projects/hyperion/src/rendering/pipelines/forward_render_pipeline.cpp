@@ -8,6 +8,7 @@
 #include "hyperion/assets/shader.hpp"
 #include "hyperion/assets/texture.hpp"
 #include "hyperion/core/app/time.hpp"
+#include "hyperion/core/io/image_loader.hpp"
 #include "hyperion/rendering/render_engine.hpp"
 
 namespace Hyperion::Rendering {
@@ -27,7 +28,13 @@ namespace Hyperion::Rendering {
                 layout(location = 1) in vec3 a_normal;
                 layout(location = 2) in vec2 a_texture0;
 
+                out V2F {
+	                vec2 texture0;
+                } o_v2f;
+
                 void main() {
+                    o_v2f.texture0 = a_texture0;
+
 	                gl_Position = vec4(a_position, 1.0);
                 }
             )" },
@@ -36,16 +43,25 @@ namespace Hyperion::Rendering {
 
                 out vec4 o_color;
 
+                in V2F {
+	                vec2 texture0;
+                } i_v2f;
+
                 uniform vec4 u_color;
+                uniform sampler2D u_texture;
 
                 void main() {
-	                o_color = u_color;
+                    vec4 texture_color = texture(u_texture, i_v2f.texture0);
+	                o_color = texture_color;
                 }
             )" }
         };
         g_shader = Shader::Create(sources);
-
         g_material = Material::Create(g_shader);
+
+        g_font = FontLoader::LoadFont("data/fonts/consola.ttf", 16, FontCharacterSet::ASCII);
+        g_material->SetTexture("u_texture", g_font->GetTextureAtlas());
+        const FontGlyph &glyph = g_font->GetGlyph('9');
 
         MeshData mesh_data;
         mesh_data.positions = {
@@ -55,18 +71,15 @@ namespace Hyperion::Rendering {
             Vec3(-0.5f, -0.5f, 0.0f),
         };
         mesh_data.normals.resize(4);
-        mesh_data.texture0.resize(4);
+        mesh_data.texture0 = Vector<Vec2>(glyph.uv, glyph.uv + 4);
         mesh_data.indices = {
             0, 1, 2,
-            0, 2, 3
+            0, 2, 3,
         };
         Vector<SubMesh> sub_meshes = {
-            { MeshTopology::Triangles, 3, 0, 0 },
-            { MeshTopology::Triangles, 3, 3, 0 }
+            { MeshTopology::Triangles, 6, 0, 0 },
         };
         g_mesh = Mesh::Create(mesh_data, sub_meshes);
-
-        g_font = FontLoader::LoadFont("data/fonts/consola.ttf", 16, FontCharacterSet::ASCII);
 
         RenderEngine::GetRenderDriver()->SetRasterizerState(RasterizerState());
     }

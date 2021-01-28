@@ -15,16 +15,17 @@ namespace Hyperion {
             HYP_LOG_ERROR("Engine", "Failed to load font from path: '{}'!", path);
         }
 
-        size = 32;
+        size = 48;
         FT_Set_Pixel_Sizes(font_face, 0, size);
         
         Rendering::TextureParameters texture_parameters;
         texture_parameters.use_mipmaps = false;
+        texture_parameters.filter = Rendering::TextureFilter::Point;
 
         const uint32 texture_atlas_size = 512;
-        const uint32 padding = 0;
+        const uint32 padding = 4;
         Vector<uint8> texture_atlas(texture_atlas_size * texture_atlas_size);
-        uint8 *texture_atlas_data = texture_atlas.data();
+        uint8 *texture_atlas_buffer = texture_atlas.data();
         uint32 texture_atlas_column = 0;
         uint32 texture_atlas_row = 0;
 
@@ -56,8 +57,8 @@ namespace Hyperion {
                 if (font_face->glyph->bitmap.width == 0 || font_face->glyph->bitmap.rows == 0) {
                     goto continue_loop;
                 }
-                uint8 *buffer = font_face->glyph->bitmap.buffer;
-                if (buffer == nullptr) {
+                uint8 *character_bitmap_buffer = font_face->glyph->bitmap.buffer;
+                if (character_bitmap_buffer == nullptr) {
                     goto continue_loop;
                 }
 
@@ -68,7 +69,6 @@ namespace Hyperion {
 
                 uint32 bitmap_width = font_face->glyph->bitmap.width;
                 uint32 bitmap_height = font_face->glyph->bitmap.rows;
-                uint32 bitmap_size = bitmap_width * bitmap_height;
 
                 FontGlyph glyph;
                 glyph.codepoint = static_cast<uint32>(character);
@@ -89,23 +89,34 @@ namespace Hyperion {
                         }
                     }
 
-                    float32 x = static_cast<float32>(texture_atlas_column);
-                    float32 y = static_cast<float32>(texture_atlas_row);
-                    float32 divide = static_cast<float32>(texture_atlas_size);
+                    // Create the uvs that point to the corresponding location inside the texture atlas.
+                    // We have to remember that the origin of the font atlas is at the top left corner just like a regular image.
+                    // This means the y-coordinate (v) of the uvs starts at 1 and goes down instead of starting at 0 and going up.
+                    {
+                        float32 u = static_cast<float32>(texture_atlas_column);
+                        float32 v = static_cast<float32>(texture_atlas_size - texture_atlas_row);
+                        float32 divide = static_cast<float32>(texture_atlas_size);
 
-                    glyph.uv[0] = Vec2((x + bitmap_width) / divide, y / divide);
-                    glyph.uv[1] = Vec2((x + bitmap_width) / divide, (y + bitmap_height) / divide);
-                    glyph.uv[2] = Vec2(x / divide, (y + bitmap_height) / divide);
-                    glyph.uv[3] = Vec2(x / divide, y / divide);
+                        float32 left = u / divide;
+                        float32 right = (u + bitmap_width) / divide;
+                        float32 top = v / divide;
+                        float32 bottom = (v - bitmap_height) / divide;
 
+                        glyph.uv[static_cast<uint32>(FontGlyph::UVCorner::TopLeft)] = Vec2(left, top);
+                        glyph.uv[static_cast<uint32>(FontGlyph::UVCorner::TopRight)] = Vec2(right, top);
+                        glyph.uv[static_cast<uint32>(FontGlyph::UVCorner::BottomRight)] = Vec2(right, bottom);
+                        glyph.uv[static_cast<uint32>(FontGlyph::UVCorner::BottomLeft)] = Vec2(left, bottom);
+                    }
+
+                    // Now put the actual bitmap data into the texture atlas.
+                    // At this point we know we have enough space and we should therefore not overflow the buffer.
                     uint32 texture_data_index = texture_atlas_column + (texture_atlas_row * texture_atlas_size);
                     for (uint32 y = 0; y < bitmap_height; y++) {
                         for (uint32 x = 0; x < bitmap_width; x++) {
-                            texture_atlas_data[texture_data_index + x] = buffer[x + (y * bitmap_width)];
+                            texture_atlas_buffer[texture_data_index + x] = character_bitmap_buffer[x + (y * bitmap_width)];
                         }
                         texture_data_index += texture_atlas_size;
                     }
-
                     texture_atlas_column += bitmap_width + padding;
                 }
 
