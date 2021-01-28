@@ -23,7 +23,7 @@ namespace Hyperion {
 
         // NOTE: Currently we don't really do a lot of data validation.
 
-        MeshDescriptor descriptor;
+        MeshDescriptor descriptor = { };
         descriptor.sub_meshes = sub_meshes;
 
         bool has_positions = mesh_data.positions.size() > 0;

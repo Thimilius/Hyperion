@@ -44,4 +44,33 @@ namespace Hyperion::Rendering {
         Vector<uint8> m_buffer;
     };
 
+    // This could probably be implemented inside the render command queue itself!?
+    // NOTE: We have to remember that the array descriptors have to be handled very carefully.
+    // Because they contain a pointer to the data and the whole command queue might be reallocated,
+    // we have to update that pointer in the Render Thread before usage with the Read operation and
+    // can not do it beforehand when copying with the Write operation.
+    template<typename Command>
+    class RenderCommandQueueHelper {
+    public:
+        RenderCommandQueueHelper(Command *data) {
+            m_data_pointer = reinterpret_cast<uint8 *>(data + 1);
+        }
+
+        template<typename T>
+        inline void Write(const ArrayDescriptor<T> &source) {
+            uint64 size = source.size;
+            std::memcpy(m_data_pointer, source.data, size);
+            m_data_pointer += size;
+        }
+
+        template<typename T>
+        inline void Read(ArrayDescriptor<T> &destination) {
+            uint64 size = destination.size;
+            destination.data = reinterpret_cast<T *>(m_data_pointer);
+            m_data_pointer += size;
+        }
+    private:
+        uint8 *m_data_pointer;
+    };
+
 }

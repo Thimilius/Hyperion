@@ -63,7 +63,7 @@ namespace Hyperion::Rendering {
         g_material->SetTexture("u_texture", g_font->GetTextureAtlas());
         const FontGlyph &glyph = g_font->GetGlyph('#');
         float32 width = g_font->GetTextWidth("#", 1.0f) / Display::GetWidth();
-        float32 height = static_cast<float32>(g_font->GetSize()) / Display::GetHeight();
+        float32 height = glyph.bearing.y / Display::GetHeight();
         MeshData mesh_data;
         mesh_data.positions = {
             Vec3(-width,  height, 0.0f),

@@ -27,7 +27,7 @@ namespace Hyperion {
             m_pixels = pixels;
         }
 
-        TextureDescriptor descriptor;
+        TextureDescriptor descriptor = { };
         descriptor.dimension = GetDimension();
         descriptor.format = format;
         descriptor.parameters = parameters;

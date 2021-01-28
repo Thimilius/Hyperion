@@ -10,7 +10,7 @@ using namespace Hyperion::Rendering;
 namespace Hyperion {
 
     Shader::Shader(const Map<ShaderStageFlags, String> &sources) {
-        ShaderDescriptor descriptor;
+        ShaderDescriptor descriptor = { };
         for (auto &[stage_flags, source] : sources) {
             descriptor.stage_flags |= stage_flags;
 

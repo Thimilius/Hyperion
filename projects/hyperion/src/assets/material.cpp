@@ -12,7 +12,7 @@ namespace Hyperion {
     Material::Material(Shader *shader) {
         m_shader = shader;
 
-        MaterialDescriptor descriptor;
+        MaterialDescriptor descriptor = { };
         descriptor.shader = shader->GetResourceId();
 
         RenderEngine::GetRenderDriver()->CreateMaterial(m_resource_id, descriptor);
