@@ -12,7 +12,7 @@ namespace Hyperion::Rendering {
         glClear(OpenGLUtilities::GetGLClearFlags(clear_flags));
     }
 
-    void OpenGLRenderDriver::Viewport(const Rendering::Viewport &viewport) {
+    void OpenGLRenderDriver::SetViewport(const Viewport &viewport) {
         glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
     }
 
@@ -94,53 +94,6 @@ namespace Hyperion::Rendering {
         glDeleteProgram(shader.program);
         
         s_shaders.erase(id);
-    }
-
-    void OpenGLRenderDriver::CreateMesh(ResourceId id, const MeshDescriptor &descriptor) {
-        HYP_ASSERT(s_meshes.find(id) == s_meshes.end());
-
-        OpenGLMesh &mesh = s_meshes[id];
-        mesh.index_format = descriptor.index_format;
-        mesh.sub_meshes.assign(descriptor.sub_meshes.data, descriptor.sub_meshes.data + (descriptor.sub_meshes.size / sizeof(*descriptor.sub_meshes.data)));
-
-        // TODO: Add ability to mark meshes dynamic
-        glCreateBuffers(2, &mesh.vertex_buffer);
-        glNamedBufferData(mesh.vertex_buffer, descriptor.vertices.size, descriptor.vertices.data, GL_STATIC_DRAW);
-        glNamedBufferData(mesh.index_buffer, descriptor.indices.size, descriptor.indices.data, GL_STATIC_DRAW);
-
-        glCreateVertexArrays(1, &mesh.vertex_array);
-        GLuint vertex_array_id = mesh.vertex_array;
-
-        glVertexArrayElementBuffer(vertex_array_id, mesh.index_buffer);
-
-        GLsizei stride = descriptor.vertex_format.stride;
-        GLuint relative_offset = 0;
-        uint64 vertex_attribute_count = descriptor.vertex_format.attributes.size / sizeof(descriptor.vertex_format.attributes.data[0]);
-        for (uint32 i = 0; i < vertex_attribute_count; i++) {
-            const VertexAttribute &vertex_attribute = descriptor.vertex_format.attributes.data[i];
-
-            GLuint attribute_index = i;
-            GLuint binding_index = 0;
-            GLint size = vertex_attribute.dimension;
-            GLenum type = OpenGLUtilities::GetGLVertexAttributeType(vertex_attribute.type);
-
-            glEnableVertexArrayAttrib(vertex_array_id, attribute_index);
-            glVertexArrayAttribFormat(vertex_array_id, attribute_index, size, type, false, relative_offset);
-            glVertexArrayVertexBuffer(vertex_array_id, binding_index, mesh.vertex_buffer, 0, stride);
-            glVertexArrayAttribBinding(vertex_array_id, attribute_index, binding_index);
-
-            relative_offset += OpenGLUtilities::GetGLSizeForVertexAttribute(vertex_attribute.type, vertex_attribute.dimension);
-        }
-    }
-
-    void OpenGLRenderDriver::DestroyMesh(ResourceId id) {
-        HYP_ASSERT(s_meshes.find(id) != s_meshes.end());
-
-        OpenGLMesh &mesh = s_meshes[id];
-        glDeleteBuffers(2, &mesh.vertex_buffer);
-        glDeleteVertexArrays(1, &mesh.vertex_array);
-
-        s_meshes.erase(id);
     }
 
     void OpenGLRenderDriver::CreateTexture(ResourceId id, const TextureDescriptor &descriptor) {
@@ -236,25 +189,72 @@ namespace Hyperion::Rendering {
         s_materials.erase(id);
     }
 
-    void OpenGLRenderDriver::DrawIndexed(ResourceId mesh_id, ResourceId material_id) {
+    void OpenGLRenderDriver::CreateMesh(ResourceId id, const MeshDescriptor &descriptor) {
+        HYP_ASSERT(s_meshes.find(id) == s_meshes.end());
+
+        OpenGLMesh &mesh = s_meshes[id];
+        mesh.index_format = descriptor.index_format;
+        mesh.sub_meshes.assign(descriptor.sub_meshes.data, descriptor.sub_meshes.data + (descriptor.sub_meshes.size / sizeof(*descriptor.sub_meshes.data)));
+
+        // TODO: Add ability to mark meshes dynamic
+        glCreateBuffers(2, &mesh.vertex_buffer);
+        glNamedBufferData(mesh.vertex_buffer, descriptor.vertices.size, descriptor.vertices.data, GL_STATIC_DRAW);
+        glNamedBufferData(mesh.index_buffer, descriptor.indices.size, descriptor.indices.data, GL_STATIC_DRAW);
+
+        glCreateVertexArrays(1, &mesh.vertex_array);
+        GLuint vertex_array_id = mesh.vertex_array;
+
+        glVertexArrayElementBuffer(vertex_array_id, mesh.index_buffer);
+
+        GLsizei stride = descriptor.vertex_format.stride;
+        GLuint relative_offset = 0;
+        uint64 vertex_attribute_count = descriptor.vertex_format.attributes.size / sizeof(descriptor.vertex_format.attributes.data[0]);
+        for (uint32 i = 0; i < vertex_attribute_count; i++) {
+            const VertexAttribute &vertex_attribute = descriptor.vertex_format.attributes.data[i];
+
+            GLuint attribute_index = i;
+            GLuint binding_index = 0;
+            GLint size = vertex_attribute.dimension;
+            GLenum type = OpenGLUtilities::GetGLVertexAttributeType(vertex_attribute.type);
+
+            glEnableVertexArrayAttrib(vertex_array_id, attribute_index);
+            glVertexArrayAttribFormat(vertex_array_id, attribute_index, size, type, false, relative_offset);
+            glVertexArrayVertexBuffer(vertex_array_id, binding_index, mesh.vertex_buffer, 0, stride);
+            glVertexArrayAttribBinding(vertex_array_id, attribute_index, binding_index);
+
+            relative_offset += OpenGLUtilities::GetGLSizeForVertexAttribute(vertex_attribute.type, vertex_attribute.dimension);
+        }
+    }
+
+    void OpenGLRenderDriver::DrawMesh(ResourceId mesh_id, ResourceId material_id, uint32 sub_mesh_index) {
         HYP_ASSERT(s_meshes.find(mesh_id) != s_meshes.end());
-        HYP_ASSERT(s_materials.find(material_id) != s_materials.end());
-
         OpenGLMesh &mesh = s_meshes[mesh_id];
+        HYP_ASSERT(s_materials.find(material_id) != s_materials.end());
         OpenGLMaterial &material = s_materials[material_id];
-
+        
         ResourceId shader_id = material.shader;
         HYP_ASSERT(s_shaders.find(shader_id) != s_shaders.end());
         OpenGLShader &shader = s_shaders[shader_id];
-
         glUseProgram(shader.program);
-        glBindVertexArray(mesh.vertex_array);
+
+        HYP_ASSERT(sub_mesh_index < mesh.sub_meshes.size());
+        SubMesh &sub_mesh = mesh.sub_meshes[sub_mesh_index];
+
         GLenum index_format = OpenGLUtilities::GetGLIndexFormat(mesh.index_format);
         GLsizei index_format_size = OpenGLUtilities::GetGLIndexFormatSize(mesh.index_format);
-        for (SubMesh &sub_mesh : mesh.sub_meshes) {
-            const void *offset = reinterpret_cast<const void *>(static_cast<uint64>(sub_mesh.index_offset) * index_format_size);
-            glDrawElementsBaseVertex(OpenGLUtilities::GetGLMeshTopology(sub_mesh.topology), sub_mesh.index_count, index_format, offset, sub_mesh.vertex_offset);
-        }
+        const void *offset = reinterpret_cast<const void *>(static_cast<uint64>(sub_mesh.index_offset) * index_format_size);
+        glBindVertexArray(mesh.vertex_array);
+        glDrawElementsBaseVertex(OpenGLUtilities::GetGLMeshTopology(sub_mesh.topology), sub_mesh.index_count, index_format, offset, sub_mesh.vertex_offset);
+    }
+
+    void OpenGLRenderDriver::DestroyMesh(ResourceId id) {
+        HYP_ASSERT(s_meshes.find(id) != s_meshes.end());
+
+        OpenGLMesh &mesh = s_meshes[id];
+        glDeleteBuffers(2, &mesh.vertex_buffer);
+        glDeleteVertexArrays(1, &mesh.vertex_array);
+
+        s_meshes.erase(id);
     }
 
     void OpenGLRenderDriver::CreateTexture2D(OpenGLTexture &texture, const TextureDescriptor &descriptor) {

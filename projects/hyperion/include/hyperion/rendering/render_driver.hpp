@@ -65,24 +65,23 @@ namespace Hyperion::Rendering {
         virtual ~IRenderDriver() = default;
 
         virtual void Clear(ClearFlags clear_flags, Color color) = 0;
-        virtual void Viewport(const Viewport &viewport) = 0;
+        virtual void SetViewport(const Viewport &viewport) = 0;
         virtual void SetRasterizerState(const RasterizerState &rasterizer_state) = 0;
 
-        virtual void CreateShader(ResourceId id, const ShaderDescriptor &descriptor) = 0;
-        virtual void DestroyShader(ResourceId id) = 0;
+        virtual void CreateShader(ResourceId shader_id, const ShaderDescriptor &descriptor) = 0;
+        virtual void DestroyShader(ResourceId shader_id) = 0;
 
-        virtual void CreateMesh(ResourceId id, const MeshDescriptor &descriptor) = 0;
-        virtual void DestroyMesh(ResourceId id) = 0;
+        virtual void CreateTexture(ResourceId texture_id, const TextureDescriptor &descriptor) = 0;
+        virtual void GetTextureData(ResourceId texture_id, Vector<uint8> &data) = 0;
+        virtual void DestroyTexture(ResourceId texture_id) = 0;
 
-        virtual void CreateTexture(ResourceId id, const TextureDescriptor &descriptor) = 0;
-        virtual void GetTextureData(ResourceId id, Vector<uint8> &data) = 0;
-        virtual void DestroyTexture(ResourceId id) = 0;
+        virtual void CreateMaterial(ResourceId material_id, const MaterialDescriptor &descriptor) = 0;
+        virtual void SetMaterialProperty(ResourceId material_id, const MaterialProperty &property) = 0;
+        virtual void DestroyMaterial(ResourceId material_id) = 0;
 
-        virtual void CreateMaterial(ResourceId id, const MaterialDescriptor &descriptor) = 0;
-        virtual void SetMaterialProperty(ResourceId id, const MaterialProperty &property) = 0;
-        virtual void DestroyMaterial(ResourceId id) = 0;
-
-        virtual void DrawIndexed(ResourceId mesh_id, ResourceId material_id) = 0;
+        virtual void CreateMesh(ResourceId mesh_id, const MeshDescriptor &descriptor) = 0;
+        virtual void DrawMesh(ResourceId mesh_id, ResourceId material_id, uint32 sub_mesh_index) = 0;
+        virtual void DestroyMesh(ResourceId mesh_id) = 0;
     };
 
 }

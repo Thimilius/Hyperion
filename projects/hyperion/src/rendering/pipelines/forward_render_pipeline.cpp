@@ -51,7 +51,7 @@ namespace Hyperion::Rendering {
                 uniform sampler2D u_texture;
 
                 void main() {
-                    vec4 texture_color = texture(u_texture, i_v2f.texture0);
+                    vec4 texture_color = vec4(1.0, 1.0, 1.0, texture(u_texture, i_v2f.texture0).r);
 	                o_color = texture_color;
                 }
             )" }
@@ -59,16 +59,17 @@ namespace Hyperion::Rendering {
         g_shader = Shader::Create(sources);
         g_material = Material::Create(g_shader);
 
-        g_font = FontLoader::LoadFont("data/fonts/consola.ttf", 16, FontCharacterSet::ASCII);
+        g_font = FontLoader::LoadFont("data/fonts/consola.ttf", 48, FontCharacterSet::ASCII);
         g_material->SetTexture("u_texture", g_font->GetTextureAtlas());
-        const FontGlyph &glyph = g_font->GetGlyph('9');
-
+        const FontGlyph &glyph = g_font->GetGlyph('#');
+        float32 width = g_font->GetTextWidth("#", 1.0f) / Display::GetWidth();
+        float32 height = static_cast<float32>(g_font->GetSize()) / Display::GetHeight();
         MeshData mesh_data;
         mesh_data.positions = {
-            Vec3(-0.5f,  0.5f, 0.0f),
-            Vec3( 0.5f,  0.5f, 0.0f),
-            Vec3( 0.5f, -0.5f, 0.0f),
-            Vec3(-0.5f, -0.5f, 0.0f),
+            Vec3(-width,  height, 0.0f),
+            Vec3( width,  height, 0.0f),
+            Vec3( width, -height, 0.0f),
+            Vec3(-width, -height, 0.0f),
         };
         mesh_data.normals.resize(4);
         mesh_data.texture0 = Vector<Vec2>(glyph.uv, glyph.uv + 4);
@@ -81,12 +82,14 @@ namespace Hyperion::Rendering {
         };
         g_mesh = Mesh::Create(mesh_data, sub_meshes);
 
-        RenderEngine::GetRenderDriver()->SetRasterizerState(RasterizerState());
+        RasterizerState rasterizer_state;
+        rasterizer_state.blending_enabled = true;
+        RenderEngine::GetRenderDriver()->SetRasterizerState(rasterizer_state);
     }
 
     void ForwardRenderPipeline::Render(const RenderContext &context) {
         Viewport viewport = { 0, 0, static_cast<int32>(Display::GetWidth()), static_cast<int32>(Display::GetHeight()) };
-        RenderEngine::GetRenderDriver()->Viewport(viewport);
+        RenderEngine::GetRenderDriver()->SetViewport(viewport);
 
         Color color = Color::Cyan();
         float32 value = Math::Sin(Time::GetTime() * 2.0f) / 2.0f + 0.5f;
@@ -97,7 +100,8 @@ namespace Hyperion::Rendering {
         value = Math::Sin(Time::GetTime() * 2.0f + Math::PI) / 2.0f + 0.5f;
         color *= value;
         g_material->SetVec4("u_color", color);
-        RenderEngine::GetRenderDriver()->DrawIndexed(g_mesh->GetResourceId(), g_material->GetResourceId());
+
+        RenderEngine::GetRenderDriver()->DrawMesh(g_mesh->GetResourceId(), g_material->GetResourceId(), 0);
     }
 
 }

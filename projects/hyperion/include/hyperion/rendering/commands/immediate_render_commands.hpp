@@ -16,7 +16,7 @@ namespace Hyperion::Rendering {
     };
 
     struct ImmediateRenderCommandGetTextureData {
-        ResourceId id;
+        ResourceId texture_id;
         Vector<uint8> *data;
     };
 

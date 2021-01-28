@@ -13,9 +13,9 @@ namespace Hyperion::Rendering {
                 render_driver->Clear(render_command->clear_flags, render_command->color);
                 return sizeof(*render_command);
             }
-            case RenderCommandType::Viewport: {
+            case RenderCommandType::SetViewport: {
                 auto render_command = reinterpret_cast<RenderCommandViewport *>(command);
-                render_driver->Viewport(render_command->viewport);
+                render_driver->SetViewport(render_command->viewport);
                 return sizeof(*render_command);
             }
             case RenderCommandType::SetRasterizerState: {
@@ -31,7 +31,7 @@ namespace Hyperion::Rendering {
                 render_command->descriptor.source_vertex.data = reinterpret_cast<char *>(data);
                 render_command->descriptor.source_fragment.data = reinterpret_cast<char *>(data) + render_command->descriptor.source_vertex.size;
                 
-                render_driver->CreateShader(render_command->id, render_command->descriptor);
+                render_driver->CreateShader(render_command->shader_id, render_command->descriptor);
                 return sizeof(*render_command) + extra_size;
             }
             case RenderCommandType::DestroyShader: {
@@ -49,8 +49,13 @@ namespace Hyperion::Rendering {
                 render_command->descriptor.vertices.data = data + render_command->descriptor.sub_meshes.size + render_command->descriptor.vertex_format.attributes.size;
                 render_command->descriptor.indices.data = data + render_command->descriptor.sub_meshes.size + render_command->descriptor.vertex_format.attributes.size + render_command->descriptor.vertices.size;
 
-                render_driver->CreateMesh(render_command->id, render_command->descriptor);
+                render_driver->CreateMesh(render_command->mesh_id, render_command->descriptor);
                 return sizeof(*render_command) + extra_size;
+            }
+            case RenderCommandType::DrawMesh: {
+                auto render_command = reinterpret_cast<RenderCommandDrawMesh *>(command);
+                render_driver->DrawMesh(render_command->mesh_id, render_command->material_id, render_command->sub_mesh_index);
+                return sizeof(*render_command);
             }
             case RenderCommandType::DestroyMesh: {
                 auto render_command = reinterpret_cast<RenderCommandId *>(command);
@@ -64,7 +69,7 @@ namespace Hyperion::Rendering {
                 uint8 *data = reinterpret_cast<uint8 *>(render_command + 1);
                 render_command->descriptor.pixels.data = data;
 
-                render_driver->CreateTexture(render_command->id, render_command->descriptor);
+                render_driver->CreateTexture(render_command->texture_id, render_command->descriptor);
                 return sizeof(*render_command) + extra_size;
             }
             case RenderCommandType::DestroyTexture: {
@@ -74,7 +79,7 @@ namespace Hyperion::Rendering {
             }
             case RenderCommandType::CreateMaterial: {
                 auto render_command = reinterpret_cast<RenderCommandCreateMaterial *>(command);
-                render_driver->CreateMaterial(render_command->id, render_command->descriptor);
+                render_driver->CreateMaterial(render_command->material_id, render_command->descriptor);
                 return sizeof(*render_command);
             }
             case RenderCommandType::SetMaterialProperty: {
@@ -84,17 +89,12 @@ namespace Hyperion::Rendering {
                 uint8 *data = reinterpret_cast<uint8 *>(render_command + 1);
                 render_command->property.name.data = reinterpret_cast<char *>(data);
 
-                render_driver->SetMaterialProperty(render_command->id, render_command->property);
+                render_driver->SetMaterialProperty(render_command->material_id, render_command->property);
                 return sizeof(*render_command) + extra_size;
             }
             case RenderCommandType::DestroyMaterial: {
                 auto render_command = reinterpret_cast<RenderCommandId *>(command);
                 render_driver->DestroyMaterial(render_command->id);
-                return sizeof(*render_command);
-            }
-            case RenderCommandType::DrawIndexed: {
-                auto render_command = reinterpret_cast<RenderCommandDrawIndexed *>(command);
-                render_driver->DrawIndexed(render_command->mesh_id, render_command->material_id);
                 return sizeof(*render_command);
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
@@ -105,7 +105,7 @@ namespace Hyperion::Rendering {
         switch (immediate_render_command.type) {
             case ImmediateRenderCommandType::GetTextureData: {
                 auto &command = std::get<ImmediateRenderCommandGetTextureData>(immediate_render_command.command);
-                render_driver->GetTextureData(command.id, *command.data);
+                render_driver->GetTextureData(command.texture_id, *command.data);
                 break;
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;

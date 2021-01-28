@@ -2,9 +2,9 @@
 
 #include "hyperion/rendering/render_driver.hpp"
 
-// NOTE: Everything inside a render command has to be trivially destructable.
+// NOTE: Everything inside a render command has to be trivially destructable (POD).
 // The reason is that only their storage gets deallocated and the destructor will never be called.
-// Using a type which is not trivially destructable is therefore a memory leak!
+// Using a type which is not trivially destructable would be a memory leak!
 
 namespace Hyperion::Rendering {
 
@@ -14,14 +14,11 @@ namespace Hyperion::Rendering {
         Exit = -1,
 
         Clear,
-        Viewport,
+        SetViewport,
         SetRasterizerState,
 
         CreateShader,
         DestroyShader,
-
-        CreateMesh,
-        DestroyMesh,
 
         CreateTexture,
         DestroyTexture,
@@ -30,7 +27,15 @@ namespace Hyperion::Rendering {
         SetMaterialProperty,
         DestroyMaterial,
 
-        DrawIndexed
+        CreateMesh,
+        DrawMesh,
+        DestroyMesh,
+    };
+
+    // This is a generic render command containing just an id.
+    // Can be reused for different command types.
+    struct RenderCommandId {
+        ResourceId id;
     };
 
     struct RenderCommandClear {
@@ -46,38 +51,35 @@ namespace Hyperion::Rendering {
         RasterizerState rasterizer_state;
     };
 
-    struct RenderCommandId {
-        ResourceId id;
-    };
-
     struct RenderCommandCreateShader {
-        ResourceId id;
+        ResourceId shader_id;
         ShaderDescriptor descriptor;
     };
 
-    struct RenderCommandCreateMesh {
-        ResourceId id;
-        MeshDescriptor descriptor;
-    };
-
     struct RenderCommandCreateTexture {
-        ResourceId id;
+        ResourceId texture_id;
         TextureDescriptor descriptor;
     };
 
     struct RenderCommandCreateMaterial {
-        ResourceId id;
+        ResourceId material_id;
         MaterialDescriptor descriptor;
     };
 
     struct RenderCommandSetMaterialProperty {
-        ResourceId id;
+        ResourceId material_id;
         MaterialProperty property;
     };
 
-    struct RenderCommandDrawIndexed {
+    struct RenderCommandCreateMesh {
+        ResourceId mesh_id;
+        MeshDescriptor descriptor;
+    };
+
+    struct RenderCommandDrawMesh {
         ResourceId mesh_id;
         ResourceId material_id;
+        uint32 sub_mesh_index;
     };
 
 }

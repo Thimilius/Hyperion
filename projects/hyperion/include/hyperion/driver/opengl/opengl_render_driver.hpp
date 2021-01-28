@@ -10,24 +10,23 @@ namespace Hyperion::Rendering {
         struct OpenGLTexture;
     public:
         void Clear(ClearFlags clear_flags, Color color) override;
-        void Viewport(const Rendering::Viewport &viewport) override;
+        void SetViewport(const Viewport &viewport) override;
         void SetRasterizerState(const RasterizerState &rasterizer_state) override;
 
-        void CreateShader(ResourceId id, const ShaderDescriptor &descriptor) override;
-        void DestroyShader(ResourceId id) override;
+        void CreateShader(ResourceId shader_id, const ShaderDescriptor &descriptor) override;
+        void DestroyShader(ResourceId shader_id) override;
 
-        void CreateMesh(ResourceId id, const MeshDescriptor &descriptor) override;
-        void DestroyMesh(ResourceId id) override;
+        void CreateTexture(ResourceId texture_id, const TextureDescriptor &descriptor) override;
+        void GetTextureData(ResourceId texture_id, Vector<uint8> &data) override;
+        void DestroyTexture(ResourceId texture_id) override;
 
-        void CreateTexture(ResourceId id, const TextureDescriptor &descriptor) override;
-        void GetTextureData(ResourceId id, Vector<uint8> &data) override;
-        void DestroyTexture(ResourceId id) override;
+        void CreateMaterial(ResourceId material_id, const MaterialDescriptor &descriptor) override;
+        void SetMaterialProperty(ResourceId material_id, const MaterialProperty &property) override;
+        void DestroyMaterial(ResourceId material_id) override;
 
-        void CreateMaterial(ResourceId id, const MaterialDescriptor &descriptor) override;
-        void SetMaterialProperty(ResourceId id, const MaterialProperty &property) override;
-        void DestroyMaterial(ResourceId id) override;
-
-        void DrawIndexed(ResourceId shader_id, ResourceId mesh_id) override;
+        void CreateMesh(ResourceId mesh_id, const MeshDescriptor &descriptor) override;
+        void DrawMesh(ResourceId mesh_id, ResourceId material_id, uint32 sub_mesh_index) override;
+        void DestroyMesh(ResourceId mesh_id) override;
     private:
         void CreateTexture2D(OpenGLTexture &texture, const TextureDescriptor &descriptor);
         void CreateTextureCubemap(OpenGLTexture &texture, const TextureDescriptor &descriptor);

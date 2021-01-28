@@ -15,12 +15,7 @@ namespace Hyperion {
             HYP_LOG_ERROR("Engine", "Failed to load font from path: '{}'!", path);
         }
 
-        size = 48;
         FT_Set_Pixel_Sizes(font_face, 0, size);
-        
-        Rendering::TextureParameters texture_parameters;
-        texture_parameters.use_mipmaps = false;
-        texture_parameters.filter = Rendering::TextureFilter::Point;
 
         const uint32 texture_atlas_size = 512;
         const uint32 padding = 4;
@@ -131,6 +126,8 @@ namespace Hyperion {
         }
         FT_Done_Face(font_face);
 
+        Rendering::TextureParameters texture_parameters;
+        texture_parameters.use_mipmaps = false;
         Texture2D *texture = Texture2D::Create(texture_atlas_size, texture_atlas_size, Rendering::TextureFormat::R8, texture_parameters, texture_atlas);
 
         return Font::Create(size, character_set, glyphs, texture);
