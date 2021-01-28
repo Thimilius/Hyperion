@@ -1,5 +1,6 @@
 #pragma once
 
+#include <atomic>
 #include <condition_variable>
 
 namespace Hyperion::Threading {
@@ -14,10 +15,10 @@ namespace Hyperion::Threading {
     private:
         AutoResetEvent(const AutoResetEvent &other) = delete;
         AutoResetEvent &operator=(const AutoResetEvent &other) = delete;
-
+    private:
         std::mutex m_mutex;
         std::condition_variable m_condition_variable;
-        bool m_signaled = false;
+        std::atomic<bool> m_signaled = false;
     };
 
 }
