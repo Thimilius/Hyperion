@@ -25,6 +25,7 @@ namespace Hyperion {
 
         result.tick.name = "Tick";
         result.tick.sub_systems = {
+            { "TimeTick", Engine::TimeTick },
             { "ApplicationTick", Engine::ApplicationTick }
         };
 

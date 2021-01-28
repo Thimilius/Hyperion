@@ -167,6 +167,7 @@ namespace Hyperion {
 
     void Engine::TimeInitilization() {
         s_stats.frame++;
+        s_stats.fps_counter++;
         float32 now = s_stats.timer->ElapsedSeconds();
         float32 delta_time = static_cast<float32>(now - s_stats.last_time);
         if (delta_time > Time::GetMaxDeltaTime()) {
@@ -176,8 +177,6 @@ namespace Hyperion {
         s_stats.accumulator += delta_time;
         Time::s_delta_time = delta_time;
         Time::s_time += delta_time;
-        Time::s_fps = static_cast<uint32>(1.0f / delta_time);
-        Time::s_frame_time = delta_time * 1000.0f;
     }
 
     void Engine::InputInitilization() {
@@ -190,6 +189,12 @@ namespace Hyperion {
 
     void Engine::TimeFixedUpdate() {
         s_stats.accumulator -= Time::GetFixedDeltaTime();
+    }
+
+    void Engine::TimeTick() {
+        Time::s_fps = s_stats.fps_counter;
+        Time::s_frame_time = 1000.0f / s_stats.fps_counter;
+        s_stats.fps_counter = 0;
     }
 
     void Engine::ApplicationTick() {
