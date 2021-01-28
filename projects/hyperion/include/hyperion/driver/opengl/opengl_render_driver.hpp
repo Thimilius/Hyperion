@@ -31,6 +31,8 @@ namespace Hyperion::Rendering {
     private:
         void CreateTexture2D(OpenGLTexture &texture, const TextureDescriptor &descriptor);
         void CreateTextureCubemap(OpenGLTexture &texture, const TextureDescriptor &descriptor);
+
+        static uint32 GetBytesPerPixelForTextureFormat(TextureFormat format);
     private:
         struct OpenGLShader {
             GLuint program;

@@ -14,7 +14,8 @@ namespace Hyperion {
     struct FontGlyph {
         uint32 codepoint;
 
-        Texture2D *texture;
+        // Top Right - Bottom Right - Bottom Left - Top Left
+        Vec2 uv[4];
 
         Vec2 size;
         Vec2 bearing;
@@ -27,20 +28,23 @@ namespace Hyperion {
         AssetType GetAssetType() const override { return AssetType::Font; }
 
         inline uint32 GetSize() const { return m_size; }
-        FontGlyph GetGlyph(uint32 codepoint) const;
+        const FontGlyph &GetGlyph(uint32 codepoint) const;
 
         float32 GetTextWidth(const String &text, float32 scale) const;
 
-        static Font *Create(uint32 size, FontCharacterSet character_set, Map<uint32, FontGlyph> glyphs);
+        static Font *Create(uint32 size, FontCharacterSet character_set, Map<uint32, FontGlyph> glyphs, Texture2D *texture_atlas);
+    protected:
+        void OnDestroy() override;
     private:
         Font() = default;
-        Font(uint32 size, FontCharacterSet character_set, Map<uint32, FontGlyph> glyphs);
+        Font(uint32 size, FontCharacterSet character_set, Map<uint32, FontGlyph> glyphs, Texture2D *texture_atlas);
 
         static Font *Create();
     private:
         uint32 m_size;
         FontCharacterSet m_character_set;
         Map<uint32, FontGlyph> m_glyphs;
+        Texture2D *m_texture_atlas;
     };
 
     class IFontLoader {

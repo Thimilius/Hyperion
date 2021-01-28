@@ -6,13 +6,14 @@
 
 namespace Hyperion {
 
-    Font::Font(uint32 size, FontCharacterSet character_set, Map<uint32, FontGlyph> glyphs) {
+    Font::Font(uint32 size, FontCharacterSet character_set, Map<uint32, FontGlyph> glyphs, Texture2D *texture_atlas) {
         m_size = size;
         m_character_set = character_set;
         m_glyphs = glyphs;
+        m_texture_atlas = texture_atlas;
     }
 
-    FontGlyph Font::GetGlyph(uint32 codepoint) const {
+    const FontGlyph &Font::GetGlyph(uint32 codepoint) const {
         auto glyph = m_glyphs.find(codepoint);
         if (glyph != m_glyphs.end()) {
             return glyph->second;
@@ -34,8 +35,12 @@ namespace Hyperion {
         return width;
     }
 
-    Font *Font::Create(uint32 size, FontCharacterSet character_set, Map<uint32, FontGlyph> glyphs) {
-        return new Font(size, character_set, glyphs);
+    void Font::OnDestroy() {
+        Destroy(m_texture_atlas);
+    }
+
+    Font *Font::Create(uint32 size, FontCharacterSet character_set, Map<uint32, FontGlyph> glyphs, Texture2D *texture_atlas) {
+        return new Font(size, character_set, glyphs, texture_atlas);
     }
 
     Font *Font::Create() {

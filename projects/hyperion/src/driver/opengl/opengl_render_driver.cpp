@@ -273,6 +273,25 @@ namespace Hyperion::Rendering {
         if (descriptor.pixels.size > 0) {
             OpenGLUtilities::SetUnpackAlignmentForTextureFormat(descriptor.format);
 
+            // RANT: Because OpenGL is retarded and the texture origin is in the bottom left corner,
+            // we have to flip the image before uploading to the GPU.
+
+            // Allocate a temp buffer to hold a pixel line.
+            uint64 pixel_line_size = width * GetBytesPerPixelForTextureFormat(format);
+            Vector<uint8> temp_buffer(pixel_line_size);
+            uint8 *temp_buffer_data = temp_buffer.data();
+
+            // This is a little ugly but works for now...
+            uint8 *pixel_data = const_cast<uint8 *>(descriptor.pixels.data);
+            for (uint32 row = 0; row < descriptor.size.height / 2; row++) {
+                uint8 *source = pixel_data + (row * pixel_line_size);
+                uint8 *destination = pixel_data + (((height - 1) - row) * pixel_line_size);
+
+                std::memcpy(temp_buffer_data, source, pixel_line_size);
+                std::memcpy(source, destination, pixel_line_size);
+                std::memcpy(destination, temp_buffer_data, pixel_line_size);
+            }
+
             GLenum format_value = OpenGLUtilities::GetGLTextureFormat(format);
             GLenum format_type = OpenGLUtilities::GetGLTextureFormatType(format);
             glTextureSubImage2D(texture_id, 0, 0, 0, width, height, format_value, format_type, descriptor.pixels.data);
@@ -285,6 +304,15 @@ namespace Hyperion::Rendering {
 
     void OpenGLRenderDriver::CreateTextureCubemap(OpenGLTexture &texture, const TextureDescriptor &descriptor) {
         // TODO: Implement
+    }
+
+    uint32 OpenGLRenderDriver::GetBytesPerPixelForTextureFormat(TextureFormat format) {
+        switch (format) {
+            case TextureFormat::RGBA32: return 4;
+            case TextureFormat::RGB24: return 3;
+            case TextureFormat::R8: return 1;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
     }
 
 }
