@@ -8,8 +8,8 @@
 #include "hyperion/rendering/commands/multithreaded_render_driver.hpp"
 #include "hyperion/rendering/commands/render_commands.hpp"
 #include "hyperion/rendering/commands/render_command_executor.hpp"
-#include "hyperion/rendering/pipelines/forward_render_pipeline.hpp"
 #include "hyperion/rendering/pipelines/render_context.hpp"
+#include "hyperion/rendering/pipelines/forward/forward_render_pipeline.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -39,12 +39,12 @@ namespace Hyperion::Rendering {
     }
 
     void RenderEngine::Init() {
-        s_render_pipeline->Init();
+        s_render_pipeline->Init(s_render_driver);
     }
 
     void RenderEngine::Render() {
         // Depending on render threading mode either create and enqueue render commands or just execute them directly...
-        s_render_pipeline->Render(RenderContext());
+        s_render_pipeline->Render(s_render_driver, RenderContext());
 
         // The following block ends a frame on the Main Thread:
         {
@@ -60,16 +60,24 @@ namespace Hyperion::Rendering {
         }
     }
 
+    void RenderEngine::PreShutdown() {
+        s_render_pipeline->Shutdown(s_render_driver);
+    }
+
     void RenderEngine::Shutdown() {
-        s_render_pipeline->Shutdown();
+        if (s_render_settings.threading_mode == RenderThreadingMode::MultiThreaded) {
+            // To properly destroy all resources, we have to send all render commands to the Render Thread one last time
+            // and wait for them to execute, so that the Render Thread is finally shut down.
+            SwapBuffers();
+            Synchronization::NotifySwapDone();
+            s_render_thread.Join();
+        } 
 
         delete s_render_pipeline;
         delete s_render_driver_wrapper;
         delete s_render_driver_backend;
 
-        if (s_render_settings.threading_mode == RenderThreadingMode::MultiThreaded) {
-            s_render_thread.Join();
-        } else {
+        if (s_render_settings.threading_mode == RenderThreadingMode::SingleThreaded) {
             delete s_graphics_context;
         }
     }
@@ -116,22 +124,7 @@ namespace Hyperion::Rendering {
         InitRenderThread(static_cast<Window *>(parameter));
 
         while (true) {
-            // Execute render commands like a virtual machine...
-            auto program_counter = s_render_queue.GetData();
-            auto program_counter_end = s_render_queue.GetData() + s_render_queue.GetSize();
-            RenderCommandType command_type;
-            while (program_counter < program_counter_end) {
-                ExecutePotentialImmediateRenderCommand();
-
-                command_type = *reinterpret_cast<RenderCommandType *>(program_counter);
-                s_exit_requested = command_type == RenderCommandType::Exit;
-                if (s_exit_requested) {
-                    break;
-                }
-
-                program_counter += sizeof(RenderCommandType);
-                program_counter += static_cast<size_t>(RenderCommandExecutor::ExecuteRenderCommand(command_type, program_counter, s_render_driver_backend));
-            }
+            ExecuteRenderCommands();
 
             if (s_exit_requested) {
                 break;
@@ -155,7 +148,30 @@ namespace Hyperion::Rendering {
     }
 
     void RenderEngine::ShutdownRenderThread() {
+        // We have to wait for all last render commands to properly destroy all GPU resources.
+        Synchronization::WaitForSwapDone();
+        ExecuteRenderCommands();
+
         delete s_graphics_context;
+    }
+
+    void RenderEngine::ExecuteRenderCommands() {
+        // Execute render commands like a virtual machine...
+        auto program_counter = s_render_queue.GetData();
+        auto program_counter_end = s_render_queue.GetData() + s_render_queue.GetSize();
+        RenderCommandType command_type;
+        while (program_counter < program_counter_end) {
+            ExecutePotentialImmediateRenderCommand();
+
+            command_type = *reinterpret_cast<RenderCommandType *>(program_counter);
+            program_counter += sizeof(RenderCommandType);
+
+            if (command_type == RenderCommandType::Exit) {
+                s_exit_requested = true;
+            } else {
+                program_counter += static_cast<size_t>(RenderCommandExecutor::ExecuteRenderCommand(command_type, program_counter, s_render_driver_backend));
+            }
+        }
     }
 
     void RenderEngine::ExecutePotentialImmediateRenderCommand() {

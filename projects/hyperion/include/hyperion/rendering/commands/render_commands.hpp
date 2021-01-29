@@ -11,7 +11,7 @@ namespace Hyperion::Rendering {
     // Those specify all 'normal' render commands.
     // Immediate render commands are handled seperately.
     enum class RenderCommandType {
-        Exit = -1,
+        Exit,
 
         Clear,
         SetViewport,

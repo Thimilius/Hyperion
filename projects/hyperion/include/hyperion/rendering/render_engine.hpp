@@ -33,6 +33,7 @@ namespace Hyperion::Rendering {
         static void PreInit(const RenderSettings &settings, Window *window);
         static void Init();
         static void Render();
+        static void PreShutdown();
         static void Shutdown();
         static void Exit();
 
@@ -45,6 +46,7 @@ namespace Hyperion::Rendering {
 
         inline static ImmediateRenderCommand &GetImmediateCommand() { return s_immediate_render_command; }
         inline static void SetImmediateCommandPending() { s_is_immediate_render_command_pending = true; }
+        static void ExecuteRenderCommands();
         static void ExecutePotentialImmediateRenderCommand();
     private: 
         inline static RenderSettings s_render_settings;

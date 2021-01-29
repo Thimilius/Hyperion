@@ -103,15 +103,12 @@ namespace Hyperion {
     }
 
     void Engine::OnEvent(Event &event) {
-        // Events dispatched internally should probably never be set as handled
         EventDispatcher dispatcher(event);
 
-        // Handle app events
         dispatcher.Dispatch<AppDisplayChangeEvent>([](AppDisplayChangeEvent &app_display_change_event) {
             Display::UpdateDisplayInfos();
         });
 
-        // Handle window events
         dispatcher.Dispatch<WindowCloseEvent>([](WindowCloseEvent &window_close_event) {
             Exit();
         });
@@ -121,7 +118,6 @@ namespace Hyperion {
             Display::UpdateSize(width, height);
         });
 
-        // Handle key events
         dispatcher.Dispatch<KeyPressedEvent>([](KeyPressedEvent &key_pressed_event) {
             if (s_settings.core.allow_altf4) {
                 // Explicitly handle alt-f4 for closing
@@ -131,7 +127,6 @@ namespace Hyperion {
             }
         });
 
-        // Forward event to client
         Application::GetInstance()->OnEvent(event);
     }
 
@@ -141,13 +136,17 @@ namespace Hyperion {
     }
 
     void Engine::Shutdown() {
+        // When shutting down we have to be very careful about the order.
+        // The render engine needs seperate phases in which it has to shut down.
         WorldManager::Shutdown();
-        ObjectManager::Shutdown();
         ScriptingEngine::Shutdown();
         Physics::PhysicsEngine::Shutdown();
-        Rendering::RenderEngine::Shutdown();
         AssetManager::Shutdown();
         Audio::AudioEngine::Shutdown();
+
+        Rendering::RenderEngine::PreShutdown();
+        ObjectManager::Shutdown();
+        Rendering::RenderEngine::Shutdown();
 
         delete Application::GetInstance()->GetWindow();
     }

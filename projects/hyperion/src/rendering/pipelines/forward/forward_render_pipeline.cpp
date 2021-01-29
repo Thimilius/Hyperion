@@ -1,25 +1,13 @@
 #include "hyppch.hpp"
 
-#include "hyperion/rendering/pipelines/forward_render_pipeline.hpp"
+#include "hyperion/rendering/pipelines/forward/forward_render_pipeline.hpp"
 
-#include "hyperion/assets/font.hpp"
-#include "hyperion/assets/material.hpp"
-#include "hyperion/assets/mesh.hpp"
-#include "hyperion/assets/shader.hpp"
-#include "hyperion/assets/texture.hpp"
 #include "hyperion/core/app/time.hpp"
 #include "hyperion/core/io/image_loader.hpp"
-#include "hyperion/rendering/render_engine.hpp"
 
 namespace Hyperion::Rendering {
 
-    Shader *g_shader;
-    Material *g_material;
-    Mesh *g_mesh;
-    Texture *g_texture;
-    Font *g_font;
-
-    void ForwardRenderPipeline::Init() {
+    void ForwardRenderPipeline::Init(IRenderDriver *render_driver) {
         Map<ShaderStageFlags, String> sources = {
             { ShaderStageFlags::Vertex, R"(
                 #version 410 core
@@ -56,13 +44,13 @@ namespace Hyperion::Rendering {
                 }
             )" }
         };
-        g_shader = Shader::Create(sources);
-        g_material = Material::Create(g_shader);
+        m_shader = Shader::Create(sources);
+        m_material = Material::Create(m_shader);
 
-        g_font = FontLoader::LoadFont("data/fonts/consola.ttf", 48, FontCharacterSet::ASCII);
-        g_material->SetTexture("u_texture", g_font->GetTextureAtlas());
-        const FontGlyph &glyph = g_font->GetGlyph('#');
-        float32 width = g_font->GetTextWidth("#", 1.0f) / Display::GetWidth();
+        m_font = FontLoader::LoadFont("data/fonts/consola.ttf", 48, FontCharacterSet::ASCII);
+        m_material->SetTexture("u_texture", m_font->GetTextureAtlas());
+        const FontGlyph &glyph = m_font->GetGlyph('#');
+        float32 width = m_font->GetTextWidth("#", 1.0f) / Display::GetWidth();
         float32 height = glyph.bearing.y / Display::GetHeight();
         MeshData mesh_data;
         mesh_data.positions = {
@@ -80,28 +68,35 @@ namespace Hyperion::Rendering {
         Vector<SubMesh> sub_meshes = {
             { MeshTopology::Triangles, 6, 0, 0 },
         };
-        g_mesh = Mesh::Create(mesh_data, sub_meshes);
+        m_mesh = Mesh::Create(mesh_data, sub_meshes);
 
         RasterizerState rasterizer_state;
         rasterizer_state.blending_enabled = true;
-        RenderEngine::GetRenderDriver()->SetRasterizerState(rasterizer_state);
+        render_driver->SetRasterizerState(rasterizer_state);
     }
 
-    void ForwardRenderPipeline::Render(const RenderContext &context) {
+    void ForwardRenderPipeline::Render(IRenderDriver *render_driver, const RenderContext &context) {
         Viewport viewport = { 0, 0, static_cast<int32>(Display::GetWidth()), static_cast<int32>(Display::GetHeight()) };
-        RenderEngine::GetRenderDriver()->SetViewport(viewport);
+        render_driver->SetViewport(viewport);
 
         Color color = Color::Cyan();
         float32 value = Math::Sin(Time::GetTime() * 2.0f) / 2.0f + 0.5f;
         color *= value;
-        RenderEngine::GetRenderDriver()->Clear(ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, color);
+        render_driver->Clear(ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, color);
 
         color = Color::Green();
         value = Math::Sin(Time::GetTime() * 2.0f + Math::PI) / 2.0f + 0.5f;
         color *= value;
-        g_material->SetVec4("u_color", color);
+        m_material->SetVec4("u_color", color);
 
-        RenderEngine::GetRenderDriver()->DrawMesh(g_mesh->GetResourceId(), g_material->GetResourceId(), 0);
+        render_driver->DrawMesh(m_mesh->GetResourceId(), m_material->GetResourceId(), 0);
+    }
+
+    void ForwardRenderPipeline::Shutdown(IRenderDriver *render_driver) {
+        Object::Destroy(m_mesh);
+        Object::Destroy(m_font);
+        Object::Destroy(m_material);
+        Object::Destroy(m_shader);
     }
 
 }
