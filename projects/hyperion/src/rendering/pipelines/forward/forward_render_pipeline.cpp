@@ -35,11 +35,12 @@ namespace Hyperion::Rendering {
 	                vec2 texture0;
                 } i_v2f;
 
+                uniform vec4 u_color;
                 uniform sampler2D u_texture;
 
                 void main() {
                     vec4 texture_color = vec4(1.0, 1.0, 1.0, texture(u_texture, i_v2f.texture0).r);
-	                o_color = texture_color;
+	                o_color = u_color * texture_color;
                 }
             )" }
         };

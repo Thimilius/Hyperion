@@ -6,6 +6,9 @@ namespace Hyperion::Rendering {
 
     class MultithreadedRenderDriver final : public IRenderDriver {
     public:
+        void Initialize(GraphicsContext *graphics_context) override { }
+        void Shutdown() override { }
+
         void Clear(ClearFlags clear_flags, Color color) override;
         void SetViewport(const Viewport &viewport) override;
         void SetRasterizerState(const RasterizerState &rasterizer_state) override;

@@ -2,8 +2,12 @@
 
 #include "hyperion/common.hpp"
 
-namespace Hyperion::Rendering {
-    class RenderEngine;
+namespace Hyperion {
+    class WindowsWindow;
+
+    namespace Rendering {
+        class RenderEngine;
+    }
 }
 
 namespace Hyperion::Rendering {

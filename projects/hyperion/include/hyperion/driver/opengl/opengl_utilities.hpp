@@ -27,6 +27,8 @@ namespace Hyperion::Rendering {
         static GLint GetGLTextureMaxFilter(TextureFilter filter);
         static GLfloat GetGLTextureAnisotropicFilter(TextureAnisotropicFilter anisotropic_filter);
 
+        static MaterialPropertyType GetMaterialPropertyTypeForGLShaderType(GLint type);
+
         static GLenum GetGLIndexFormat(IndexFormat index_format);
         static GLsizei GetGLIndexFormatSize(IndexFormat index_format);
         static GLenum GetGLMeshTopology(MeshTopology mesh_topology);

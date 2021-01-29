@@ -2,6 +2,7 @@
 
 #include <glad/glad.h>
 
+#include "hyperion/driver/opengl/opengl_graphics_context.hpp"
 #include "hyperion/rendering/render_driver.hpp"
 
 namespace Hyperion::Rendering {
@@ -10,6 +11,9 @@ namespace Hyperion::Rendering {
         struct OpenGLTexture;
         struct OpenGLMaterial;
     public:
+        void Initialize(GraphicsContext *graphics_context) override;
+        void Shutdown() override { }
+
         void Clear(ClearFlags clear_flags, Color color) override;
         void SetViewport(const Viewport &viewport) override;
         void SetRasterizerState(const RasterizerState &rasterizer_state) override;
@@ -29,17 +33,18 @@ namespace Hyperion::Rendering {
         void DrawMesh(ResourceId mesh_id, ResourceId material_id, uint32 sub_mesh_index) override;
         void DestroyMesh(ResourceId mesh_id) override;
     private:
-        static void CreateTexture2D(OpenGLTexture &texture, const TextureDescriptor &descriptor);
-        static void CreateTextureCubemap(OpenGLTexture &texture, const TextureDescriptor &descriptor);
+        void CreateTexture2D(OpenGLTexture &texture, const TextureDescriptor &descriptor);
+        void CreateTextureCubemap(OpenGLTexture &texture, const TextureDescriptor &descriptor);
 
-        static void CollectMaterialProperties(OpenGLMaterial &material);
-
-        static void UseMaterial(const OpenGLMaterial &material);
+        void CollectMaterialProperties(OpenGLMaterial &material);
+        void UseMaterial(const OpenGLMaterial &material);
     private:
+        OpenGLGraphicsContext *m_graphics_context;
+
         struct OpenGLShader {
             GLuint program;
         };
-        inline static Map<ResourceId, OpenGLShader> s_shaders;
+        Map<ResourceId, OpenGLShader> s_shaders;
 
         struct OpenGLMesh {
             // Vertex and index buffer have to be next to each other to support efficient creation and destruction
@@ -50,7 +55,7 @@ namespace Hyperion::Rendering {
             IndexFormat index_format;
             Vector<SubMesh> sub_meshes;
         };
-        inline static Map<ResourceId, OpenGLMesh> s_meshes;
+        Map<ResourceId, OpenGLMesh> s_meshes;
 
         struct OpenGLTexture {
             GLuint texture;
@@ -60,15 +65,21 @@ namespace Hyperion::Rendering {
             TextureParameters parameters;
             TextureSize size;
         };
-        inline static Map<ResourceId, OpenGLTexture> s_textures;
+        Map<ResourceId, OpenGLTexture> s_textures;
 
+        struct OpenGLMaterialProperty {
+            MaterialPropertyType type;
+            String name;
+
+            GLint location;
+        };
         struct OpenGLMaterial {
             ResourceId shader_id;
 
-            Map<MaterialPropertyId, GLint> locations;
+            Map<MaterialPropertyId, OpenGLMaterialProperty> properties;
             Map<MaterialPropertyId, GLuint> textures;
         };
-        inline static Map<ResourceId, OpenGLMaterial> s_materials;
+        Map<ResourceId, OpenGLMaterial> s_materials;
     };
 
 }

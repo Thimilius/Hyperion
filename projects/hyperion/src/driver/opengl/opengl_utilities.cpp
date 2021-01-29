@@ -178,6 +178,23 @@ namespace Hyperion::Rendering {
         }
     }
 
+    MaterialPropertyType OpenGLUtilities::GetMaterialPropertyTypeForGLShaderType(GLint type) {
+        switch (type) {
+            case GL_FLOAT: return MaterialPropertyType::Float32;
+            case GL_INT: return MaterialPropertyType::Int32;
+            case GL_FLOAT_VEC2: return MaterialPropertyType::Vec2;
+            case GL_FLOAT_VEC3: return MaterialPropertyType::Vec3;
+            case GL_FLOAT_VEC4: return MaterialPropertyType::Vec4;
+            case GL_FLOAT_MAT3: return MaterialPropertyType::Mat3;
+            case GL_FLOAT_MAT4: return MaterialPropertyType::Mat4;
+            case GL_SAMPLER_1D:
+            case GL_SAMPLER_2D:
+            case GL_SAMPLER_3D:
+            case GL_SAMPLER_CUBE: return MaterialPropertyType::Texture;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return MaterialPropertyType::Float32;
+        }
+    }
+
     GLenum OpenGLUtilities::GetGLIndexFormat(IndexFormat index_format) {
         switch (index_format) {
             case IndexFormat::UInt16: return GL_UNSIGNED_SHORT;

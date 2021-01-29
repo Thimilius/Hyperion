@@ -7,6 +7,10 @@
 
 namespace Hyperion::Rendering {
 
+    void OpenGLRenderDriver::Initialize(GraphicsContext *graphics_context) {
+        m_graphics_context = static_cast<OpenGLGraphicsContext *>(graphics_context);
+    }
+
     void OpenGLRenderDriver::Clear(ClearFlags clear_flags, Color color) {
         glClearColor(color.r, color.g, color.b, color.a);
         glClear(OpenGLUtilities::GetGLClearFlags(clear_flags));
@@ -157,17 +161,45 @@ namespace Hyperion::Rendering {
         GLuint program = shader.program;
 
         MaterialPropertyId property_id = property.id;
-        auto it = material.locations.find(property_id);
-        if (it == material.locations.end()) {
+        auto it = material.properties.find(property_id);
+        if (it == material.properties.end()) {
             // We simply ignore a property if it does not actually exist on the shader.
             return;
         }
-        GLint location = it->second;
+        // We still have to check that the types actually match.
+        if (it->second.type != property.type) {
+            HYP_LOG_ERROR("OpenGL", "Trying to assign material property '{}' a wrong type!", it->second.name);
+            return;
+        }
+
+        GLint location = it->second.location;
 
         switch (property.type) {
+            case MaterialPropertyType::Float32: {
+                glProgramUniform1f(program, location, property.storage.float32);
+                break;
+            }
+            case MaterialPropertyType::Int32: {
+                glProgramUniform1i(program, location, property.storage.int32);
+                break;
+            }
+            case MaterialPropertyType::Vec2: {
+                Vec2 vec2 = property.storage.vec2;
+                glProgramUniform2f(program, location, vec2.x, vec2.y);
+                break;
+            }
+            case MaterialPropertyType::Vec3: {
+                Vec3 vec3 = property.storage.vec3;
+                glProgramUniform3f(program, location, vec3.x, vec3.y, vec3.z);
+                break;
+            }
             case MaterialPropertyType::Vec4: {
                 Vec4 vec4 = property.storage.vec4;
                 glProgramUniform4f(program, location, vec4.x, vec4.y, vec4.z, vec4.w);
+                break;
+            }
+            case MaterialPropertyType::Mat3: {
+                glProgramUniformMatrix3fv(program, location, 1, GL_FALSE, property.storage.mat3.elements);
                 break;
             }
             case MaterialPropertyType::Mat4: {
@@ -179,8 +211,8 @@ namespace Hyperion::Rendering {
                 HYP_ASSERT(s_textures.find(texture_id) != s_textures.end());
                 OpenGLTexture &texture = s_textures[texture_id];
 
-                // TODO: Make sure we are not putting in more textures than we have units.
                 GLuint texture_unit = static_cast<GLuint>(material.textures.size());
+                HYP_ASSERT(texture_unit < static_cast<GLuint>(m_graphics_context->GetLimits().max_texture_units));
                 glProgramUniform1i(program, location, texture_unit);
                 material.textures[property_id] = texture.texture;
                 break;
@@ -315,25 +347,33 @@ namespace Hyperion::Rendering {
         ResourceId shader_id = material.shader_id;
         HYP_ASSERT(s_shaders.find(shader_id) != s_shaders.end());
         OpenGLShader &shader = s_shaders[shader_id];
+        GLuint program = shader.program;
 
         GLint active_uniform_count;
-        glGetProgramInterfaceiv(shader.program, GL_UNIFORM, GL_ACTIVE_RESOURCES, &active_uniform_count);
+        glGetProgramInterfaceiv(program, GL_UNIFORM, GL_ACTIVE_RESOURCES, &active_uniform_count);
 
         for (GLint uniform_index = 0; uniform_index < active_uniform_count; uniform_index++) {
             const uint64 NAME_BUFFER_COUNT = 50;
             String name_buffer;
             name_buffer.resize(NAME_BUFFER_COUNT);
             GLsizei name_length;
-            glGetProgramResourceName(shader.program, GL_UNIFORM, uniform_index, NAME_BUFFER_COUNT, &name_length, name_buffer.data());
+            glGetProgramResourceName(program, GL_UNIFORM, uniform_index, NAME_BUFFER_COUNT, &name_length, name_buffer.data());
             name_buffer.resize(name_length);
 
             MaterialPropertyId material_id = MaterialProperty::NameToId(name_buffer);
-            HYP_ASSERT(material.locations.find(material_id) == material.locations.end());
-            GLint location = glGetProgramResourceLocation(shader.program, GL_UNIFORM, name_buffer.c_str());
+            HYP_ASSERT(material.properties.find(material_id) == material.properties.end());
+            GLint location = glGetProgramResourceLocation(program, GL_UNIFORM, name_buffer.c_str());
             if (location < 0) {
                 HYP_LOG_ERROR("OpenGL", "Failed to get location for active uniform: '{}'!", name_buffer);
             } else {
-                material.locations[material_id] = location;
+                GLenum resource_property = GL_TYPE;
+                GLint type;
+                glGetProgramResourceiv(program, GL_UNIFORM, uniform_index, 1, &resource_property, 1, nullptr, &type);
+
+                OpenGLMaterialProperty &property = material.properties[material_id];
+                property.name = name_buffer;
+                property.type = OpenGLUtilities::GetMaterialPropertyTypeForGLShaderType(type);
+                property.location = location;
             }
         }
     }

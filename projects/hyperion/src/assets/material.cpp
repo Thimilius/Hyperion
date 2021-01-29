@@ -18,86 +18,209 @@ namespace Hyperion {
         RenderEngine::GetRenderDriver()->CreateMaterial(m_resource_id, descriptor);
     }
 
-    Vec4 Material::GetVec4(const String &name) const {
-        auto it = std::find_if(m_properties.begin(), m_properties.end(), [&name](const MaterialProperty property) {
-            return property.name == name;
-        });
-        if (it != m_properties.end() && it->type == MaterialPropertyType::Vec4) {
-            return it->storage.vec4;
+    float32 Material::GetFloat32(Rendering::MaterialPropertyId id) const {
+        auto it = m_properties.find(id);
+        if (it != m_properties.end() && it->second.type == MaterialPropertyType::Float32) {
+            return it->second.storage.float32;
+        } else {
+            return float32();
+        }
+    }
+
+    void Material::SetFloat32(Rendering::MaterialPropertyId id, float32 value) {
+        auto it = m_properties.find(id);
+        if (it != m_properties.end()) {
+            HYP_ASSERT_MESSAGE(it->second.type == MaterialPropertyType::Float32, "The property can not change it's type when setting");
+            it->second.storage.float32 = value;
+
+            SetProperty(id, it->second);
+        } else {
+            MaterialProperty &property = m_properties[id];
+            property.type = MaterialPropertyType::Float32;
+            property.storage.float32 = value;
+
+            SetProperty(id, property);
+        }
+    }
+
+    int32 Material::GetInt32(Rendering::MaterialPropertyId id) const {
+        auto it = m_properties.find(id);
+        if (it != m_properties.end() && it->second.type == MaterialPropertyType::Int32) {
+            return it->second.storage.int32;
+        } else {
+            return int32();
+        }
+    }
+
+    void Material::SetInt32(Rendering::MaterialPropertyId id, int32 value) {
+        auto it = m_properties.find(id);
+        if (it != m_properties.end()) {
+            HYP_ASSERT_MESSAGE(it->second.type == MaterialPropertyType::Int32, "The property can not change it's type when setting");
+            it->second.storage.int32 = value;
+
+            SetProperty(id, it->second);
+        } else {
+            MaterialProperty &property = m_properties[id];
+            property.type = MaterialPropertyType::Int32;
+            property.storage.int32 = value;
+
+            SetProperty(id, property);
+        }
+    }
+
+    Vec2 Material::GetVec2(Rendering::MaterialPropertyId id) const {
+        auto it = m_properties.find(id);
+        if (it != m_properties.end() && it->second.type == MaterialPropertyType::Vec2) {
+            return it->second.storage.vec2;
+        } else {
+            return Vec2();
+        }
+    }
+
+    void Material::SetVec2(Rendering::MaterialPropertyId id, Vec2 value) {
+        auto it = m_properties.find(id);
+        if (it != m_properties.end()) {
+            HYP_ASSERT_MESSAGE(it->second.type == MaterialPropertyType::Vec2, "The property can not change it's type when setting");
+            it->second.storage.vec2 = value;
+
+            SetProperty(id, it->second);
+        } else {
+            MaterialProperty &property = m_properties[id];
+            property.type = MaterialPropertyType::Vec2;
+            property.storage.vec2 = value;
+
+            SetProperty(id, property);
+        }
+    }
+
+    Vec3 Material::GetVec3(Rendering::MaterialPropertyId id) const {
+        auto it = m_properties.find(id);
+        if (it != m_properties.end() && it->second.type == MaterialPropertyType::Vec3) {
+            return it->second.storage.vec3;
+        } else {
+            return Vec3();
+        }
+    }
+
+    void Material::SetVec3(Rendering::MaterialPropertyId id, Vec3 value) {
+        auto it = m_properties.find(id);
+        if (it != m_properties.end()) {
+            HYP_ASSERT_MESSAGE(it->second.type == MaterialPropertyType::Vec3, "The property can not change it's type when setting");
+            it->second.storage.vec3 = value;
+
+            SetProperty(id, it->second);
+        } else {
+            MaterialProperty &property = m_properties[id];
+            property.type = MaterialPropertyType::Vec3;
+            property.storage.vec3 = value;
+
+            SetProperty(id, property);
+        }
+    }
+
+    Vec4 Material::GetVec4(MaterialPropertyId id) const {
+        auto it = m_properties.find(id);
+        if (it != m_properties.end() && it->second.type == MaterialPropertyType::Vec4) {
+            return it->second.storage.vec4;
         } else {
             return Vec4();
         }
     }
 
-    void Material::SetVec4(const String &name, Vec4 value) {
-        auto it = std::find_if(m_properties.begin(), m_properties.end(), [&name](const MaterialProperty property) {
-            return property.name == name;
-        });
-
+    void Material::SetVec4(MaterialPropertyId id, Vec4 value) {
+        auto it = m_properties.find(id);
         if (it != m_properties.end()) {
-            HYP_ASSERT_MESSAGE(it->type == MaterialPropertyType::Vec4, "The property can not change it's type when setting");
-            it->storage.vec4 = value;
+            HYP_ASSERT_MESSAGE(it->second.type == MaterialPropertyType::Vec4, "The property can not change it's type when setting");
+            it->second.storage.vec4 = value;
 
-            SetProperty(*it);
+            SetProperty(id, it->second);
         } else {
-            MaterialProperty property { };
-            property.name = name;
+            MaterialProperty &property = m_properties[id];
             property.type = MaterialPropertyType::Vec4;
             property.storage.vec4 = value;
 
-            m_properties.push_back(property);
-
-            SetProperty(property);
+            SetProperty(id, property);
         }
     }
 
-    void Material::SetMat4(const String &name, const Mat4 &value) {
-        auto it = std::find_if(m_properties.begin(), m_properties.end(), [&name](const MaterialProperty property) {
-            return property.name == name;
-        });
-
-        if (it != m_properties.end()) {
-            HYP_ASSERT_MESSAGE(it->type == MaterialPropertyType::Mat4, "The property can not change it's type when setting");
-            it->storage.mat4 = value;
-
-            SetProperty(*it);
+    Mat3 Material::GetMat3(Rendering::MaterialPropertyId id) const {
+        auto it = m_properties.find(id);
+        if (it != m_properties.end() && it->second.type == MaterialPropertyType::Mat3) {
+            return it->second.storage.mat3;
         } else {
-            MaterialProperty property{ };
-            property.name = name;
+            return Mat3();
+        }
+    }
+
+    void Material::SetMat3(Rendering::MaterialPropertyId id, const Mat3 &value) {
+        auto it = m_properties.find(id);
+        if (it != m_properties.end()) {
+            HYP_ASSERT_MESSAGE(it->second.type == MaterialPropertyType::Mat3, "The property can not change it's type when setting");
+            it->second.storage.mat3 = value;
+
+            SetProperty(id, it->second);
+        } else {
+            MaterialProperty &property = m_properties[id];
+            property.type = MaterialPropertyType::Mat3;
+            property.storage.mat3 = value;
+
+            SetProperty(id, property);
+        }
+    }
+
+    Mat4 Material::GetMat4(Rendering::MaterialPropertyId id) const {
+        auto it = m_properties.find(id);
+        if (it != m_properties.end() && it->second.type == MaterialPropertyType::Mat4) {
+            return it->second.storage.mat4;
+        } else {
+            return Mat4();
+        }
+    }
+
+    void Material::SetMat4(Rendering::MaterialPropertyId id, const Mat4 &value) {
+        auto it = m_properties.find(id);
+        if (it != m_properties.end()) {
+            HYP_ASSERT_MESSAGE(it->second.type == MaterialPropertyType::Mat4, "The property can not change it's type when setting");
+            it->second.storage.mat4 = value;
+
+            SetProperty(id, it->second);
+        } else {
+            MaterialProperty &property = m_properties[id];
             property.type = MaterialPropertyType::Mat4;
             property.storage.mat4 = value;
 
-            m_properties.push_back(property);
-
-            SetProperty(property);
+            SetProperty(id, property);
         }
     }
 
-    void Material::SetTexture(const String &name, const Texture *value) {
-        auto it = std::find_if(m_properties.begin(), m_properties.end(), [&name](const MaterialProperty property) {
-            return property.name == name;
-        });
-
-        if (it != m_properties.end()) {
-            HYP_ASSERT_MESSAGE(it->type == MaterialPropertyType::Texture, "The property can not change it's type when setting");
-            it->storage.texture = value;
-
-            SetProperty(*it);
+    Texture *Material::GetTexture(Rendering::MaterialPropertyId id) const {
+        auto it = m_properties.find(id);
+        if (it != m_properties.end() && it->second.type == MaterialPropertyType::Texture) {
+            return it->second.storage.texture;
         } else {
-            MaterialProperty property{ };
-            property.name = name;
+            return nullptr;
+        }
+    }
+
+    void Material::SetTexture(Rendering::MaterialPropertyId id, Texture *value) {
+        auto it = m_properties.find(id);
+        if (it != m_properties.end()) {
+            HYP_ASSERT_MESSAGE(it->second.type == MaterialPropertyType::Texture, "The property can not change it's type when setting");
+            it->second.storage.texture = value;
+
+            SetProperty(id, it->second);
+        } else {
+            MaterialProperty &property = m_properties[id];
             property.type = MaterialPropertyType::Texture;
             property.storage.texture = value;
 
-            m_properties.push_back(property);
-
-            SetProperty(property);
+            SetProperty(id, property);
         }
     }
 
-    void Material::SetProperty(const MaterialProperty &property) {
+    void Material::SetProperty(MaterialPropertyId id, const MaterialProperty &property) {
         Rendering::MaterialProperty rendering_property { };
-        rendering_property.id = Rendering::MaterialProperty::NameToId(property.name);
+        rendering_property.id = id;
         rendering_property.type = property.type;
         
         switch (property.type) {

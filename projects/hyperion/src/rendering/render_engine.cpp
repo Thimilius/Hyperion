@@ -65,6 +65,9 @@ namespace Hyperion::Rendering {
     }
 
     void RenderEngine::Shutdown() {
+        delete s_render_pipeline;
+        delete s_render_driver_wrapper;
+
         if (s_render_settings.threading_mode == RenderThreadingMode::MultiThreaded) {
             // To properly destroy all resources, we have to send all render commands to the Render Thread one last time
             // and wait for them to execute, so that the Render Thread is finally shut down.
@@ -73,11 +76,8 @@ namespace Hyperion::Rendering {
             s_render_thread.Join();
         } 
 
-        delete s_render_pipeline;
-        delete s_render_driver_wrapper;
-        delete s_render_driver_backend;
-
         if (s_render_settings.threading_mode == RenderThreadingMode::SingleThreaded) {
+            delete s_render_driver_backend;
             delete s_graphics_context;
         }
     }
@@ -99,6 +99,7 @@ namespace Hyperion::Rendering {
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
+        s_render_driver_backend->Initialize(s_graphics_context);
 
         if (s_render_settings.threading_mode == RenderThreadingMode::MultiThreaded) {
             s_render_driver_wrapper = new MultithreadedRenderDriver();
@@ -152,6 +153,7 @@ namespace Hyperion::Rendering {
         Synchronization::WaitForSwapDone();
         ExecuteRenderCommands();
 
+        delete s_render_driver_backend;
         delete s_graphics_context;
     }
 

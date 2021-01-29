@@ -35,7 +35,7 @@ namespace Hyperion {
         AssetType GetAssetType() const override { return AssetType::Font; }
 
         inline uint32 GetSize() const { return m_size; }
-        inline const Texture2D *GetTextureAtlas() const { return m_texture_atlas; }
+        inline Texture2D *GetTextureAtlas() const { return m_texture_atlas; }
         const FontGlyph &GetGlyph(uint32 codepoint) const;
 
         float32 GetTextWidth(const String &text, float32 scale) const;

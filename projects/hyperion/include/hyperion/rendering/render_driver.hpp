@@ -4,6 +4,7 @@
 #include "hyperion/core/math/vec2.hpp"
 #include "hyperion/core/math/vec3.hpp"
 #include "hyperion/core/object/resource.hpp"
+#include "hyperion/rendering/graphics_context.hpp"
 #include "hyperion/rendering/rasterizer_state.hpp"
 #include "hyperion/rendering/attributes/common_attributes.hpp"
 #include "hyperion/rendering/attributes/material_attributes.hpp"
@@ -63,6 +64,9 @@ namespace Hyperion::Rendering {
     class IRenderDriver {
     public:
         virtual ~IRenderDriver() = default;
+
+        virtual void Initialize(GraphicsContext *graphics_context) = 0;
+        virtual void Shutdown() = 0;
 
         virtual void Clear(ClearFlags clear_flags, Color color) = 0;
         virtual void SetViewport(const Viewport &viewport) = 0;
