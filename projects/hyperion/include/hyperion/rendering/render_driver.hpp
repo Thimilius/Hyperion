@@ -57,7 +57,7 @@ namespace Hyperion::Rendering {
     };
 
     struct MaterialDescriptor {
-        ResourceId shader;
+        ResourceId shader_id;
     };
 
     class IRenderDriver {

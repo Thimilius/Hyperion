@@ -84,13 +84,8 @@ namespace Hyperion::Rendering {
             }
             case RenderCommandType::SetMaterialProperty: {
                 auto render_command = reinterpret_cast<RenderCommandSetMaterialProperty *>(command);
-                RenderCommandQueueHelper helper(render_command);
-                helper.Read(render_command->property.name);
-
                 render_driver->SetMaterialProperty(render_command->material_id, render_command->property);
-
-                uint64 extra_size = render_command->property.name.size;
-                return sizeof(*render_command) + extra_size;
+                return sizeof(*render_command);
             }
             case RenderCommandType::DestroyMaterial: {
                 auto render_command = reinterpret_cast<RenderCommandId *>(command);

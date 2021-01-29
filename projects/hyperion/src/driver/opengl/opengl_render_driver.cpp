@@ -141,22 +141,28 @@ namespace Hyperion::Rendering {
         HYP_ASSERT(s_materials.find(id) == s_materials.end());
 
         OpenGLMaterial &material = s_materials[id];
-        material.shader = descriptor.shader;
+        HYP_ASSERT(s_shaders.find(descriptor.shader_id) != s_shaders.end());
+        material.shader_id = descriptor.shader_id;
+
+        CollectMaterialProperties(material);
     }
 
     void OpenGLRenderDriver::SetMaterialProperty(ResourceId id, const MaterialProperty &property) {
         HYP_ASSERT(s_materials.find(id) != s_materials.end());
         OpenGLMaterial &material = s_materials[id];
         
-        ResourceId shader_id = material.shader;
+        ResourceId shader_id = material.shader_id;
         HYP_ASSERT(s_shaders.find(shader_id) != s_shaders.end());
         OpenGLShader &shader = s_shaders[shader_id];
-
         GLuint program = shader.program;
-        GLint location = glGetUniformLocation(program, property.name.data);
-        if (location < 0) {
+
+        MaterialPropertyId property_id = property.id;
+        auto it = material.locations.find(property_id);
+        if (it == material.locations.end()) {
+            // We simply ignore a property if it does not actually exist on the shader.
             return;
         }
+        GLint location = it->second;
 
         switch (property.type) {
             case MaterialPropertyType::Vec4: {
@@ -173,11 +179,10 @@ namespace Hyperion::Rendering {
                 HYP_ASSERT(s_textures.find(texture_id) != s_textures.end());
                 OpenGLTexture &texture = s_textures[texture_id];
 
-                // FIXME: This is hardcoded to only ever support one texture in a material.
-                // We have to store the textures and bind them on use.
-                GLuint slot = 0;
-                glProgramUniform1i(program, location, slot);
-                glBindTextureUnit(slot, texture.texture);
+                // TODO: Make sure we are not putting in more textures than we have units.
+                GLuint texture_unit = static_cast<GLuint>(material.textures.size());
+                glProgramUniform1i(program, location, texture_unit);
+                material.textures[property_id] = texture.texture;
                 break;
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
@@ -227,16 +232,12 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLRenderDriver::DrawMesh(ResourceId mesh_id, ResourceId material_id, uint32 sub_mesh_index) {
-        HYP_ASSERT(s_meshes.find(mesh_id) != s_meshes.end());
-        OpenGLMesh &mesh = s_meshes[mesh_id];
         HYP_ASSERT(s_materials.find(material_id) != s_materials.end());
         OpenGLMaterial &material = s_materials[material_id];
-        
-        ResourceId shader_id = material.shader;
-        HYP_ASSERT(s_shaders.find(shader_id) != s_shaders.end());
-        OpenGLShader &shader = s_shaders[shader_id];
-        glUseProgram(shader.program);
+        UseMaterial(material);
 
+        HYP_ASSERT(s_meshes.find(mesh_id) != s_meshes.end());
+        OpenGLMesh &mesh = s_meshes[mesh_id];
         HYP_ASSERT(sub_mesh_index < mesh.sub_meshes.size());
         SubMesh &sub_mesh = mesh.sub_meshes[sub_mesh_index];
 
@@ -293,8 +294,7 @@ namespace Hyperion::Rendering {
         if (descriptor.pixels.size > 0) {
             // RANT: Because OpenGL is retarded and the texture origin is in the bottom left corner,
             // we have to flip the image before uploading to the GPU.
-            uint32 stride = descriptor.size.width * GetBytesPerPixelForTextureFormat(format);
-            FlipTextureHorizontally(const_cast<uint8 *>(descriptor.pixels.data), descriptor.size.height, stride);
+            OpenGLUtilities::FlipTextureHorizontally(descriptor.size, format, descriptor.pixels);
             
             GLenum format_value = OpenGLUtilities::GetGLTextureFormat(format);
             GLenum format_type = OpenGLUtilities::GetGLTextureFormatType(format);
@@ -311,26 +311,46 @@ namespace Hyperion::Rendering {
         // TODO: Implement
     }
 
-    void OpenGLRenderDriver::FlipTextureHorizontally(uint8 *data, uint32 texture_height, uint32 texture_stride) {
-        Vector<uint8> temp_buffer(texture_stride);
-        uint8 *temp_buffer_data = temp_buffer.data();
+    void OpenGLRenderDriver::CollectMaterialProperties(OpenGLMaterial &material) {
+        ResourceId shader_id = material.shader_id;
+        HYP_ASSERT(s_shaders.find(shader_id) != s_shaders.end());
+        OpenGLShader &shader = s_shaders[shader_id];
 
-        for (uint32 row = 0; row < texture_height / 2; row++) {
-            uint8 *source = data + (row * texture_stride);
-            uint8 *destination = data + (((texture_height - 1) - row) * texture_stride);
+        GLint active_uniform_count;
+        glGetProgramInterfaceiv(shader.program, GL_UNIFORM, GL_ACTIVE_RESOURCES, &active_uniform_count);
 
-            std::memcpy(temp_buffer_data, source, texture_stride);
-            std::memcpy(source, destination, texture_stride);
-            std::memcpy(destination, temp_buffer_data, texture_stride);
+        for (GLint uniform_index = 0; uniform_index < active_uniform_count; uniform_index++) {
+            const uint64 NAME_BUFFER_COUNT = 50;
+            String name_buffer;
+            name_buffer.resize(NAME_BUFFER_COUNT);
+            GLsizei name_length;
+            glGetProgramResourceName(shader.program, GL_UNIFORM, uniform_index, NAME_BUFFER_COUNT, &name_length, name_buffer.data());
+            name_buffer.resize(name_length);
+
+            MaterialPropertyId material_id = MaterialProperty::NameToId(name_buffer);
+            HYP_ASSERT(material.locations.find(material_id) == material.locations.end());
+            GLint location = glGetProgramResourceLocation(shader.program, GL_UNIFORM, name_buffer.c_str());
+            if (location < 0) {
+                HYP_LOG_ERROR("OpenGL", "Failed to get location for active uniform: '{}'!", name_buffer);
+            } else {
+                material.locations[material_id] = location;
+            }
         }
     }
 
-    uint32 OpenGLRenderDriver::GetBytesPerPixelForTextureFormat(TextureFormat format) {
-        switch (format) {
-            case TextureFormat::RGBA32: return 4;
-            case TextureFormat::RGB24: return 3;
-            case TextureFormat::R8: return 1;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+    void OpenGLRenderDriver::UseMaterial(const OpenGLMaterial &material) {
+        // TODO: We should keep track of the currently used material.
+        // That way we can skip binding the shader and textures again.
+
+        ResourceId shader_id = material.shader_id;
+        HYP_ASSERT(s_shaders.find(shader_id) != s_shaders.end());
+        OpenGLShader &shader = s_shaders[shader_id];
+        glUseProgram(shader.program);
+
+        GLuint texture_unit = 0;
+        for (auto [property_id, texture] : material.textures) {
+            glBindTextureUnit(texture_unit, texture);
+            texture_unit++;
         }
     }
 

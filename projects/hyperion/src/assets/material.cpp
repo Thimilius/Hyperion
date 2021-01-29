@@ -13,7 +13,7 @@ namespace Hyperion {
         m_shader = shader;
 
         MaterialDescriptor descriptor = { };
-        descriptor.shader = shader->GetResourceId();
+        descriptor.shader_id = shader->GetResourceId();
 
         RenderEngine::GetRenderDriver()->CreateMaterial(m_resource_id, descriptor);
     }
@@ -97,7 +97,7 @@ namespace Hyperion {
 
     void Material::SetProperty(const MaterialProperty &property) {
         Rendering::MaterialProperty rendering_property { };
-        rendering_property.name = property.name;
+        rendering_property.id = Rendering::MaterialProperty::NameToId(property.name);
         rendering_property.type = property.type;
         
         switch (property.type) {

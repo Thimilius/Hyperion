@@ -84,46 +84,6 @@ namespace Hyperion::Rendering {
         }
     }
 
-    GLenum OpenGLUtilities::GetGLIndexFormat(IndexFormat index_format) {
-        switch (index_format) {
-            case IndexFormat::UInt16: return GL_UNSIGNED_SHORT;
-            case IndexFormat::UInt32: return GL_UNSIGNED_INT;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
-        }
-    }
-
-    GLsizei OpenGLUtilities::GetGLIndexFormatSize(IndexFormat index_format) {
-        switch (index_format) {
-            case IndexFormat::UInt16: return sizeof(uint16);
-            case IndexFormat::UInt32: return sizeof(uint32);
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
-        }
-    }
-
-    GLenum OpenGLUtilities::GetGLMeshTopology(MeshTopology mesh_topology) {
-        switch (mesh_topology) {
-            case MeshTopology::Points: return GL_POINTS;
-            case MeshTopology::Lines: return GL_LINES;
-            case MeshTopology::LineStrip: return GL_LINE_STRIP;
-            case MeshTopology::Triangles: return GL_TRIANGLES;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
-        }
-    }
-
-    GLenum OpenGLUtilities::GetGLVertexAttributeType(VertexAttributeType vertex_attribute_type) {
-        switch (vertex_attribute_type) {
-            case VertexAttributeType::Float32: return GL_FLOAT;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
-        }
-    }
-
-    GLuint OpenGLUtilities::GetGLSizeForVertexAttribute(VertexAttributeType vertex_attribute_type, uint32 dimension) {
-        switch (vertex_attribute_type) {
-            case VertexAttributeType::Float32: return sizeof(float32) * dimension;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
-        }
-    }
-
     void OpenGLUtilities::SetUnpackAlignmentForTextureFormat(TextureFormat format) {
         GLint alignment = 4;
         switch (format) {
@@ -133,6 +93,23 @@ namespace Hyperion::Rendering {
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
         glPixelStorei(GL_UNPACK_ALIGNMENT, alignment);
+    }
+
+    void OpenGLUtilities::FlipTextureHorizontally(TextureSize size, TextureFormat format, ArrayDescriptor<uint8> pixels) {
+        uint32 stride = size.width * OpenGLUtilities::GetBytesPerPixelForTextureFormat(format);
+        Vector<uint8> temp_buffer(stride);
+        uint8 *temp_buffer_data = temp_buffer.data();
+
+        uint8 *data = const_cast<uint8 *>(pixels.data);
+
+        for (uint32 row = 0; row < size.height / 2; row++) {
+            uint8 *source = data + (row * stride);
+            uint8 *destination = data + (((size.height - 1) - row) * stride);
+
+            std::memcpy(temp_buffer_data, source, stride);
+            std::memcpy(source, destination, stride);
+            std::memcpy(destination, temp_buffer_data, stride);
+        }
     }
 
     GLenum OpenGLUtilities::GetGLTextureFormat(TextureFormat format) {
@@ -198,6 +175,55 @@ namespace Hyperion::Rendering {
             case TextureAnisotropicFilter::Times8: return 8.0f;
             case TextureAnisotropicFilter::Times16: return 16.0f;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 1.0f;
+        }
+    }
+
+    GLenum OpenGLUtilities::GetGLIndexFormat(IndexFormat index_format) {
+        switch (index_format) {
+            case IndexFormat::UInt16: return GL_UNSIGNED_SHORT;
+            case IndexFormat::UInt32: return GL_UNSIGNED_INT;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    GLsizei OpenGLUtilities::GetGLIndexFormatSize(IndexFormat index_format) {
+        switch (index_format) {
+            case IndexFormat::UInt16: return sizeof(uint16);
+            case IndexFormat::UInt32: return sizeof(uint32);
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    GLenum OpenGLUtilities::GetGLMeshTopology(MeshTopology mesh_topology) {
+        switch (mesh_topology) {
+            case MeshTopology::Points: return GL_POINTS;
+            case MeshTopology::Lines: return GL_LINES;
+            case MeshTopology::LineStrip: return GL_LINE_STRIP;
+            case MeshTopology::Triangles: return GL_TRIANGLES;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    GLenum OpenGLUtilities::GetGLVertexAttributeType(VertexAttributeType vertex_attribute_type) {
+        switch (vertex_attribute_type) {
+            case VertexAttributeType::Float32: return GL_FLOAT;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    GLuint OpenGLUtilities::GetGLSizeForVertexAttribute(VertexAttributeType vertex_attribute_type, uint32 dimension) {
+        switch (vertex_attribute_type) {
+            case VertexAttributeType::Float32: return sizeof(float32) * dimension;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    uint32 OpenGLUtilities::GetBytesPerPixelForTextureFormat(TextureFormat format) {
+        switch (format) {
+            case TextureFormat::RGBA32: return 4;
+            case TextureFormat::RGB24: return 3;
+            case TextureFormat::R8: return 1;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }
 

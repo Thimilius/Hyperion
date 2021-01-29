@@ -10,25 +10,8 @@ namespace Hyperion {
     class Material : public Asset {
         HYP_REFLECT(Asset);
     private:
-        union MaterialPropertyStorage {
-            float32 float32;
-            int32 int32;
-
-            Vec2 vec2;
-            Vec3 vec3;
-            Vec4 vec4;
-
-            Mat3 mat3;
-            Mat4 mat4;
-
-            const Texture *texture;
-        };
-
-        struct MaterialProperty {
-            String name;
-            Rendering::MaterialPropertyType type;
-            MaterialPropertyStorage storage;
-        };
+        union MaterialPropertyStorage;
+        struct MaterialProperty;
     public:
         inline AssetType GetAssetType() const override { return AssetType::Material; }
 
@@ -57,6 +40,26 @@ namespace Hyperion {
         // RANT: The namespace 'Material' here is only necessary to shut up IntelliSense
         // that for some reason does not understand it properly otherwise.
         Vector<Material::MaterialProperty> m_properties;
+    private:
+        union MaterialPropertyStorage {
+            float32 float32;
+            int32 int32;
+
+            Vec2 vec2;
+            Vec3 vec3;
+            Vec4 vec4;
+
+            Mat3 mat3;
+            Mat4 mat4;
+
+            const Texture *texture;
+        };
+
+        struct MaterialProperty {
+            String name;
+            Rendering::MaterialPropertyType type;
+            MaterialPropertyStorage storage;
+        };
     };
 
 }

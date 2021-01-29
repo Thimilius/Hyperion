@@ -8,6 +8,7 @@ namespace Hyperion::Rendering {
 
     class OpenGLRenderDriver : public IRenderDriver {
         struct OpenGLTexture;
+        struct OpenGLMaterial;
     public:
         void Clear(ClearFlags clear_flags, Color color) override;
         void SetViewport(const Viewport &viewport) override;
@@ -28,11 +29,12 @@ namespace Hyperion::Rendering {
         void DrawMesh(ResourceId mesh_id, ResourceId material_id, uint32 sub_mesh_index) override;
         void DestroyMesh(ResourceId mesh_id) override;
     private:
-        void CreateTexture2D(OpenGLTexture &texture, const TextureDescriptor &descriptor);
-        void CreateTextureCubemap(OpenGLTexture &texture, const TextureDescriptor &descriptor);
+        static void CreateTexture2D(OpenGLTexture &texture, const TextureDescriptor &descriptor);
+        static void CreateTextureCubemap(OpenGLTexture &texture, const TextureDescriptor &descriptor);
 
-        static void FlipTextureHorizontally(uint8 *data, uint32 texture_height, uint32 texture_stride);
-        static uint32 GetBytesPerPixelForTextureFormat(TextureFormat format);
+        static void CollectMaterialProperties(OpenGLMaterial &material);
+
+        static void UseMaterial(const OpenGLMaterial &material);
     private:
         struct OpenGLShader {
             GLuint program;
@@ -61,7 +63,10 @@ namespace Hyperion::Rendering {
         inline static Map<ResourceId, OpenGLTexture> s_textures;
 
         struct OpenGLMaterial {
-            ResourceId shader;
+            ResourceId shader_id;
+
+            Map<MaterialPropertyId, GLint> locations;
+            Map<MaterialPropertyId, GLuint> textures;
         };
         inline static Map<ResourceId, OpenGLMaterial> s_materials;
     };

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "hyperion/rendering/attributes/common_attributes.hpp"
-
 #include "hyperion/core/math/vec2.hpp"
 #include "hyperion/core/math/vec3.hpp"
 #include "hyperion/core/math/vec4.hpp"
@@ -9,6 +7,8 @@
 #include "hyperion/core/math/mat4.hpp"
 
 namespace Hyperion::Rendering {
+
+    using MaterialPropertyId = uint64;
 
     enum class MaterialPropertyType {
         Float32,
@@ -39,9 +39,13 @@ namespace Hyperion::Rendering {
     };
 
     struct MaterialProperty {
-        ArrayDescriptor<char> name;
+        MaterialPropertyId id;
         MaterialPropertyType type;
         MaterialPropertyStorage storage;
+
+        static MaterialPropertyId NameToId(const String &name) {
+            return std::hash<String>{}(name);
+        }
     };
 
 }

@@ -35,7 +35,6 @@ namespace Hyperion::Rendering {
 	                vec2 texture0;
                 } i_v2f;
 
-                uniform vec4 u_color;
                 uniform sampler2D u_texture;
 
                 void main() {
@@ -49,6 +48,7 @@ namespace Hyperion::Rendering {
 
         m_font = FontLoader::LoadFont("data/fonts/consola.ttf", 48, FontCharacterSet::ASCII);
         m_material->SetTexture("u_texture", m_font->GetTextureAtlas());
+
         const FontGlyph &glyph = m_font->GetGlyph('#');
         float32 width = m_font->GetTextWidth("#", 1.0f) / Display::GetWidth();
         float32 height = glyph.bearing.y / Display::GetHeight();

@@ -75,13 +75,9 @@ namespace Hyperion::Rendering {
     }
 
     void MultithreadedRenderDriver::SetMaterialProperty(ResourceId material_id, const MaterialProperty &property) {
-        uint64 extra_size = property.name.size;
-        RenderCommandSetMaterialProperty *render_command = RenderEngine::GetCommandQueue().Allocate<RenderCommandSetMaterialProperty>(RenderCommandType::SetMaterialProperty, extra_size);
+        RenderCommandSetMaterialProperty *render_command = RenderEngine::GetCommandQueue().Allocate<RenderCommandSetMaterialProperty>(RenderCommandType::SetMaterialProperty);
         render_command->material_id = material_id;
         render_command->property = property;
-
-        RenderCommandQueueHelper helper(render_command);
-        helper.Write(property.name);
     }
 
     void MultithreadedRenderDriver::DestroyMaterial(ResourceId id) {
