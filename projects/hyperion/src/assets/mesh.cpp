@@ -393,7 +393,7 @@ namespace Hyperion {
         return s_mesh_loader->LoadMesh(path);
     }
 
-    void MeshFactory::Init() {
+    void MeshFactory::Initialize() {
         s_mesh_loader = new AssimpMeshLoader();
     }
 

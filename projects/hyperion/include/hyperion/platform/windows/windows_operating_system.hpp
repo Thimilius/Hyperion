@@ -8,7 +8,7 @@ namespace Hyperion {
 
     class WindowsOperatingSystem : public OperatingSystem {
     public:
-        void Init() override;
+        void Initialize() override;
 
         inline OperatingSystemType GetType() const override { return OperatingSystemType::Windows; }
         SystemInfo GetSystemInfo() const override;

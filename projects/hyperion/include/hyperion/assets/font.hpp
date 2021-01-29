@@ -61,7 +61,7 @@ namespace Hyperion {
 
         virtual Font *LoadFont(const String &path, uint32 size, FontCharacterSet character_set) = 0;
 
-        virtual void Init() = 0;
+        virtual void Initialize() = 0;
         virtual void Shutdown() = 0;
     };
 
@@ -72,7 +72,7 @@ namespace Hyperion {
         FontLoader() = delete;
         ~FontLoader() = delete;
 
-        static void Init();
+        static void Initialize();
         static void Shutdown();
     private:
         inline static IFontLoader *s_font_loader;

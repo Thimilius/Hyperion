@@ -47,9 +47,9 @@ namespace Hyperion {
         return new Font();
     }
 
-    void FontLoader::Init() {
+    void FontLoader::Initialize() {
         s_font_loader = new FreetypeFontLoader();
-        s_font_loader->Init();
+        s_font_loader->Initialize();
     }
 
     void FontLoader::Shutdown() {

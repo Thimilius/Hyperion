@@ -14,7 +14,7 @@ namespace Hyperion {
         ScriptingEngine() = delete;
         ~ScriptingEngine() = delete;
 
-        static void Init(const ScriptingSettings &settings);
+        static void Initialize(const ScriptingSettings &settings);
         static void Shutdown();
     private:
         inline static IScriptingDriver *s_scripting_driver;

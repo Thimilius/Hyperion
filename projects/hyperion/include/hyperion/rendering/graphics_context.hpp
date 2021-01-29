@@ -41,7 +41,7 @@ namespace Hyperion::Rendering {
     protected:
         GraphicsContext() = default;
 
-        virtual void Init(const GraphicsContextDescriptor &descriptor) = 0;
+        virtual void Initialize(const GraphicsContextDescriptor &descriptor) = 0;
         virtual void Present() = 0;
         virtual void SetVSyncMode(VSyncMode vsync_mode) = 0;
     protected:

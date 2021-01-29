@@ -24,7 +24,7 @@ namespace Hyperion {
 
     void Engine::Setup() {
         // We initialize the operating system first to get logging ability
-        OperatingSystem::GetInstance()->Init();
+        OperatingSystem::GetInstance()->Initialize();
 
         HYP_LOG_INFO("Engine", "Initializing...");
         SystemInfo system_info = OperatingSystem::GetInstance()->GetSystemInfo();
@@ -38,7 +38,7 @@ namespace Hyperion {
         HYP_LOG_INFO("Engine", "Primary display: {}x{} @{} Hz", mode_info.width, mode_info.height, mode_info.refresh_rate);
     }
 
-    void Engine::PreInit() {
+    void Engine::PreInitialize() {
         HYP_ASSERT_MESSAGE(s_settings.core.max_delta_time > 0, "Max delta time must be greater than zero!");
         Time::s_max_delta_time = s_settings.core.max_delta_time;
         HYP_ASSERT_MESSAGE(s_settings.core.fixed_delta_time > 0, "Fixed delta time must be greater than zero!");
@@ -51,28 +51,28 @@ namespace Hyperion {
         window->SetEventCallback(Engine::OnEvent);
         s_application->m_window = window;
 
-        Rendering::RenderEngine::PreInit(s_settings.render, window);
+        Rendering::RenderEngine::PreInitialize(s_settings.render, window);
     }
 
-    void Engine::Init() {
-        Audio::AudioEngine::Init();
-        AssetManager::Init();
-        Rendering::RenderEngine::Init();
-        Physics::PhysicsEngine::Init();
-        ScriptingEngine::Init(s_settings.scripting);
+    void Engine::Initialize() {
+        Audio::AudioEngine::Initialize();
+        AssetManager::Initialize();
+        Rendering::RenderEngine::Initialize();
+        Physics::PhysicsEngine::Initialize();
+        ScriptingEngine::Initialize(s_settings.scripting);
     }
 
     uint32 Engine::Run() {
         s_running = true;
 
-        PreInit();
+        PreInitialize();
 
         if (s_settings.render.threading_mode == Rendering::RenderThreadingMode::MultiThreaded) {
             Synchronization::NotifyUpdateReady();
             Synchronization::WaitForRenderReady();
         }
 
-        Init();
+        Initialize();
         s_application->OnInit();
         s_application->GetWindow()->Show();
 

@@ -11,7 +11,7 @@
 
 namespace Hyperion {
 
-    void MonoScriptingDriver::Init(const ScriptingSettings &settings) {
+    void MonoScriptingDriver::Initialize(const ScriptingSettings &settings) {
         InitDebugger(settings);
         InitDomain();
         InitBindings();

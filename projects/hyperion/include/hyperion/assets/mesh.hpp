@@ -68,7 +68,7 @@ namespace Hyperion {
         MeshFactory() = delete;
         ~MeshFactory() = delete;
 
-        static void Init();
+        static void Initialize();
         static void Shutdown();
     private:
         inline static IMeshLoader *s_mesh_loader;

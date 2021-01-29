@@ -101,7 +101,7 @@ namespace Hyperion {
 
         inline static OperatingSystem* GetInstance() { return s_instance; }
     private:
-        virtual void Init() = 0;
+        virtual void Initialize() = 0;
     private:
         static OperatingSystem *s_instance;
 

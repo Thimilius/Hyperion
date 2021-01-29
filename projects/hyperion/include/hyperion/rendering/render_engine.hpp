@@ -30,8 +30,8 @@ namespace Hyperion::Rendering {
         RenderEngine() = delete;
         ~RenderEngine() = delete;
 
-        static void PreInit(const RenderSettings &settings, Window *window);
-        static void Init();
+        static void PreInitialize(const RenderSettings &settings, Window *window);
+        static void Initialize();
         static void Render();
         static void PreShutdown();
         static void Shutdown();

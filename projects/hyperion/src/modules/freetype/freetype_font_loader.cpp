@@ -133,7 +133,7 @@ namespace Hyperion {
         return Font::Create(size, character_set, glyphs, texture);
     }
 
-    void FreetypeFontLoader::Init() {
+    void FreetypeFontLoader::Initialize() {
         if (FT_Init_FreeType(&s_freetype_library)) {
             HYP_LOG_ERROR("Engine", "Failed to initialize freetype library!");
         }

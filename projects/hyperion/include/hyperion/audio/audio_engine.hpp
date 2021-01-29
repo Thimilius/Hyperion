@@ -18,7 +18,7 @@ namespace Hyperion::Audio {
         AudioEngine() = delete;
         ~AudioEngine() = delete;
 
-        static void Init();
+        static void Initialize();
         static void Shutdown();
     private:
         inline static IAudioDriver *s_audio_driver;

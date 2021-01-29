@@ -8,14 +8,14 @@
 
 namespace Hyperion::Audio {
 
-    void AudioEngine::Init() {
+    void AudioEngine::Initialize() {
 #ifdef HYP_AUDIO_FMOD
         s_audio_driver = new FModAudioDriver();
 #else
         s_audio_driver = new DummyAudioDriver();
 #endif
 
-        s_audio_driver->Init();
+        s_audio_driver->Initialize();
     }
 
     void AudioEngine::Shutdown() {

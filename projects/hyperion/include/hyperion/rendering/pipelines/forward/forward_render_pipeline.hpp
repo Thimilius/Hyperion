@@ -11,7 +11,7 @@ namespace Hyperion::Rendering {
 
     class ForwardRenderPipeline : public IRenderPipeline {
     public:
-        void Init(IRenderDriver *render_driver) override;
+        void Initialize(IRenderDriver *render_driver) override;
         void Render(IRenderDriver *render_driver, const RenderContext &context) override;
         void Shutdown(IRenderDriver *render_driver) override;
     private:

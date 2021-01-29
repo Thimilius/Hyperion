@@ -13,7 +13,7 @@ namespace Hyperion::Audio {
     public:
         AudioBackend GetBackend() const override { return AudioBackend::FMod; }
 
-        void Init() override;
+        void Initialize() override;
         void Shutdown() override;
 
         void Load(const String &name, const String &path) override;

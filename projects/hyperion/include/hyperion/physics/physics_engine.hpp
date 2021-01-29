@@ -17,7 +17,7 @@ namespace Hyperion::Physics {
         PhysicsEngine() = delete;
         ~PhysicsEngine() = delete;
 
-        static void Init();
+        static void Initialize();
         static void FixedUpdate(float32 delta_time);
         static void Shutdown();
 

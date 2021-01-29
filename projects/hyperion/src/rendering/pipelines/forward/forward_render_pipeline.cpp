@@ -7,7 +7,7 @@
 
 namespace Hyperion::Rendering {
 
-    void ForwardRenderPipeline::Init(IRenderDriver *render_driver) {
+    void ForwardRenderPipeline::Initialize(IRenderDriver *render_driver) {
         Map<ShaderStageFlags, String> sources = {
             { ShaderStageFlags::Vertex, R"(
                 #version 410 core

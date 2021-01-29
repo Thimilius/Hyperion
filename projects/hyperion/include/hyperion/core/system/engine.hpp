@@ -30,8 +30,8 @@ namespace Hyperion {
         ~Engine() = delete;
 
         static void Setup();
-        static void PreInit();
-        static void Init();
+        static void PreInitialize();
+        static void Initialize();
         static uint32 Run();
         static void Iterate();
         static void OnEvent(Event &event);

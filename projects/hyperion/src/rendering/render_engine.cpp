@@ -13,7 +13,7 @@
 
 namespace Hyperion::Rendering {
 
-    void RenderEngine::PreInit(const RenderSettings &settings, Window *window) {
+    void RenderEngine::PreInitialize(const RenderSettings &settings, Window *window) {
         s_render_settings = settings;
         
         switch (s_render_settings.threading_mode) {
@@ -38,8 +38,8 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void RenderEngine::Init() {
-        s_render_pipeline->Init(s_render_driver);
+    void RenderEngine::Initialize() {
+        s_render_pipeline->Initialize(s_render_driver);
     }
 
     void RenderEngine::Render() {
@@ -89,7 +89,7 @@ namespace Hyperion::Rendering {
     void RenderEngine::InitGraphicsContextAndBackend(Window *window) {
         // The graphics context is the very first thing we need to initialize so that resources can be created properly.
         s_graphics_context = window->CreateGraphicsContext(s_render_settings.backend);
-        s_graphics_context->Init(GraphicsContextDescriptor());
+        s_graphics_context->Initialize(GraphicsContextDescriptor());
         s_graphics_context->SetVSyncMode(VSyncMode::DontSync);
 
         switch (s_render_settings.backend) {

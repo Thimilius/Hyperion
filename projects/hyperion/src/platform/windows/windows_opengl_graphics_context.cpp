@@ -16,7 +16,7 @@ namespace Hyperion::Rendering {
         wglDeleteContext(m_opengl_context);
     }
 
-    void WindowsOpenGLGraphicsContext::Init(const GraphicsContextDescriptor &descriptor) {
+    void WindowsOpenGLGraphicsContext::Initialize(const GraphicsContextDescriptor &descriptor) {
         const int32 pixel_attributes[] = {
                 WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
                 WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
@@ -73,7 +73,7 @@ namespace Hyperion::Rendering {
             HYP_PANIC_MESSAGE("OpenGL", "Failed to load OpenGL extensions!");
         }
 
-        OpenGLGraphicsContext::Init(descriptor);
+        OpenGLGraphicsContext::Initialize(descriptor);
     }
 
     void WindowsOpenGLGraphicsContext::Present() {

@@ -15,7 +15,7 @@ namespace Hyperion::Physics {
         delete world;
     }
 
-    void BulletPhysicsDriver::Init() {
+    void BulletPhysicsDriver::Initialize() {
         m_collision_configuration = new btDefaultCollisionConfiguration();
 
         HYP_LOG_INFO("Physics", "Initialized Bullet physics driver!");

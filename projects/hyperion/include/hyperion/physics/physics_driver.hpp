@@ -14,7 +14,7 @@ namespace Hyperion::Physics {
         virtual PhysicsWorld *CreatePhysicsWorld() = 0;
         virtual void DestroyPhysicsWorld(PhysicsWorld *world) = 0;
 
-        virtual void Init() = 0;
+        virtual void Initialize() = 0;
         virtual void FixedUpdate(float32 delta_time) = 0;
         virtual void Shutdown() = 0;
     };
@@ -26,7 +26,7 @@ namespace Hyperion::Physics {
         PhysicsWorld *CreatePhysicsWorld() { return new PhysicsWorld(); };
         void DestroyPhysicsWorld(PhysicsWorld *world) { delete world; }
 
-        void Init() override { HYP_LOG_INFO("Physics", "Initialized dummy physics driver!"); }
+        void Initialize() override { HYP_LOG_INFO("Physics", "Initialized dummy physics driver!"); }
         void FixedUpdate(float32 delta_time) override { }
         void Shutdown() override { }
     };

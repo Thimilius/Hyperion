@@ -36,7 +36,7 @@ namespace Hyperion {
         ~AssetManager() = delete;
         AssetManager() = delete;
 
-        static void Init();
+        static void Initialize();
         static void Shutdown();
     private:
         friend class Engine;

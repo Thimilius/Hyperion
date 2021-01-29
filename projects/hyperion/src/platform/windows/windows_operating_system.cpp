@@ -20,7 +20,7 @@ namespace Hyperion {
 
     OperatingSystem* OperatingSystem::s_instance = new WindowsOperatingSystem();
 
-    void WindowsOperatingSystem::Init() {
+    void WindowsOperatingSystem::Initialize() {
         // Initialize console
         m_console_handle = GetStdHandle(STD_OUTPUT_HANDLE);
         if (m_console_handle == INVALID_HANDLE_VALUE) {

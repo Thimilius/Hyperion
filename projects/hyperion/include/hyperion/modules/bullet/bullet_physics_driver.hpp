@@ -17,7 +17,7 @@ namespace Hyperion::Physics {
         PhysicsWorld *CreatePhysicsWorld() override;
         void DestroyPhysicsWorld(PhysicsWorld *world) override;
 
-        void Init() override;
+        void Initialize() override;
         void FixedUpdate(float32 delta_time) override;
         void Shutdown() override;
     private:

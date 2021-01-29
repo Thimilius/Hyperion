@@ -14,14 +14,14 @@ namespace Hyperion::Physics {
         return WorldManager::GetActiveWorld()->GetPhysicsWorld()->Raycast(ray, result, distance);
     }
 
-    void PhysicsEngine::Init() {
+    void PhysicsEngine::Initialize() {
 #ifdef HYP_PHYSICS_BULLET
         s_physics_driver = new BulletPhysicsDriver();
 #else
         s_physics_driver = new DummyPhysicsDriver();
 #endif
 
-        s_physics_driver->Init();
+        s_physics_driver->Initialize();
     }
 
     void PhysicsEngine::FixedUpdate(float32 delta_time) {

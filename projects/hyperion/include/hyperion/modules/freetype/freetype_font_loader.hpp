@@ -10,7 +10,7 @@ namespace Hyperion {
     public:
         Font *LoadFont(const String &path, uint32 size, FontCharacterSet character_set) override;
 
-        void Init() override;
+        void Initialize() override;
         void Shutdown() override;
     private:
         inline static FT_LibraryRec_ *s_freetype_library;

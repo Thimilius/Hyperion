@@ -6,7 +6,7 @@
 
 namespace Hyperion::Audio {
 
-    void FModAudioDriver::Init() {
+    void FModAudioDriver::Initialize() {
         if (FMOD::System_Create(&m_system) != FMOD_OK) {
             HYP_LOG_ERROR("Audio", "Failed to create FMOD system!");
             return;

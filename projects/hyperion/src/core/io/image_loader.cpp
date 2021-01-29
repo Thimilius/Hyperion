@@ -34,7 +34,7 @@ namespace Hyperion {
         s_loaders.push_back(image_loader);
     }
 
-    void ImageLoader::Init() {
+    void ImageLoader::Initialize() {
         AddFormatLoader(new StbImageFormatLoader());
     }
 

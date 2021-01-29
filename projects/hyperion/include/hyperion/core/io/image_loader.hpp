@@ -29,7 +29,7 @@ namespace Hyperion {
         ImageLoader() = delete;
         ~ImageLoader() = delete;
 
-        static void Init();
+        static void Initialize();
         static void Shutdown();
     private:
         inline static Vector<IImageLoader *> s_loaders;
