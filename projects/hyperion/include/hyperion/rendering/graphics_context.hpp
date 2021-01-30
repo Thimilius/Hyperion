@@ -24,11 +24,6 @@ namespace Hyperion::Rendering {
         String version;
     };
     
-    struct GraphicsContextLimits {
-        int32 max_msaa_samples;
-        int32 max_texture_units;
-    };
-
     struct GraphicsContextDescriptor {
         int32 color_bits = 32;
         int32 depth_bits = 24;
@@ -41,7 +36,6 @@ namespace Hyperion::Rendering {
         virtual ~GraphicsContext() = default;
         
         inline const GraphicsContextProperties &GetProperties() const { return m_properties; }
-        inline const GraphicsContextLimits &GetLimits() const { return m_limits; }
     protected:
         GraphicsContext() = default;
 
@@ -50,7 +44,6 @@ namespace Hyperion::Rendering {
         virtual void SetVSyncMode(VSyncMode vsync_mode) = 0;
     protected:
         GraphicsContextProperties m_properties;
-        GraphicsContextLimits m_limits;
     private:
         friend class Hyperion::WindowsWindow;
         friend class Hyperion::Rendering::RenderEngine;

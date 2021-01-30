@@ -118,8 +118,6 @@ namespace Hyperion::Rendering {
             HYP_PANIC_MESSAGE("OpenGL", "Failed to load windows OpenGL extensions!");
         }
 
-        // TODO: We should check here if all OpenGL extensions we want are actually available.
-
         wglMakeCurrent(helper_device_context, nullptr);
         wglDeleteContext(temp_context);
     }

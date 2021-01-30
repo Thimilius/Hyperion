@@ -2,49 +2,58 @@
 
 #include "hyperion/driver/opengl/opengl_graphics_context.hpp"
 
-#define HYP_OPENGL_DEBUG_LOG true
 #define HYP_OPENGL_BREAK_ON_ERROR true
 #define HYP_OPENGL_LOG_EXTENSIONS false
 #define HYP_OPENGL_LOG_NOTIFICATIONS false
 
 namespace Hyperion::Rendering {
 
-    void OpenGLGraphicsContext::Initialize(const GraphicsContextDescriptor &descriptor) {
-        // Enable debug messages
-        if (HYP_OPENGL_DEBUG_LOG) {
-            glDebugMessageCallback(DebugMessageCallback, nullptr);
-            glEnable(GL_DEBUG_OUTPUT);
-            glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-        }
+    constexpr bool g_break_on_error = true;
+    constexpr bool g_log_extensions = false;
+    constexpr bool g_log_notifications = false;
 
-        // Query extensions
+    void OpenGLGraphicsContext::Initialize(const GraphicsContextDescriptor &descriptor) {
+#if HYP_DEBUG
+        glDebugMessageCallback(DebugMessageCallback, nullptr);
+        glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+#endif
+
+        QueryExtensions();
+        CheckExtensions();
+
+        QueryProperties();
+        QueryLimits();
+
+        HYP_LOG_INFO("OpenGL", "Initialized OpenGL! ({})", m_properties.version);
+        HYP_LOG_INFO("OpenGL", "Renderer: {}", m_properties.renderer);
+    }
+
+    void OpenGLGraphicsContext::QueryExtensions() {
         int32 extension_count;
         glGetIntegerv(GL_NUM_EXTENSIONS, &extension_count);
         for (int32 i = 0; i < extension_count; i++) {
             String extension = reinterpret_cast<const char *>(glGetStringi(GL_EXTENSIONS, i));
             m_extensions.push_back(extension);
-            if (HYP_OPENGL_LOG_EXTENSIONS) {
+            if constexpr (g_log_extensions) {
                 HYP_LOG_INFO("OpenGL", "Extension: '{}' available!", extension);
             }
         }
-        CheckExtensions();
+    }
 
-        // Query properties
-        {
-            m_properties.vendor = reinterpret_cast<const char *>(glGetString(GL_VENDOR));
-            m_properties.renderer = reinterpret_cast<const char *>(glGetString(GL_RENDERER));
-            m_properties.version = reinterpret_cast<const char *>(glGetString(GL_VERSION));
-        }
-        
-        // Query limits
-        {
-            glGetIntegerv(GL_MAX_SAMPLES, &m_limits.max_msaa_samples);
-            glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &m_limits.max_texture_units);
-        }
+    void OpenGLGraphicsContext::QueryProperties() {
+        m_properties.vendor = reinterpret_cast<const char *>(glGetString(GL_VENDOR));
+        m_properties.renderer = reinterpret_cast<const char *>(glGetString(GL_RENDERER));
+        m_properties.version = reinterpret_cast<const char *>(glGetString(GL_VERSION));
+    }
 
-        HYP_LOG_INFO("OpenGL", "Initialized OpenGL! ({})", m_properties.version);
-        HYP_LOG_INFO("OpenGL", "Renderer: {}", m_properties.renderer);
-        HYP_LOG_INFO("OpenGL", "Max texture units: {} - Max MSAA samples: {}", m_limits.max_texture_units, m_limits.max_msaa_samples);
+    void OpenGLGraphicsContext::QueryLimits() {
+        glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, reinterpret_cast<GLint *>(&m_limits.max_texture_units));
+        glGetIntegerv(GL_MAX_TEXTURE_SIZE, reinterpret_cast<GLint *>(&m_limits.max_texture_size));
+        glGetIntegerv(GL_MAX_SAMPLES, reinterpret_cast<GLint *>(&m_limits.max_msaa_samples));
+        glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, reinterpret_cast<GLint *>(&m_limits.max_framebuffer_color_attachments));
+        glGetIntegerv(GL_MAX_FRAMEBUFFER_WIDTH, reinterpret_cast<GLint *>(&m_limits.max_framebuffer_width));
+        glGetIntegerv(GL_MAX_FRAMEBUFFER_HEIGHT, reinterpret_cast<GLint *>(&m_limits.max_framebuffer_height));
     }
 
     void OpenGLGraphicsContext::CheckExtensions() {
@@ -91,7 +100,7 @@ namespace Hyperion::Rendering {
             case GL_DEBUG_SEVERITY_MEDIUM: HYP_LOG_WARN("OpenGL", log_string_format, "Medium", source_string, type_string, id, message); break;
             case GL_DEBUG_SEVERITY_LOW: HYP_LOG_WARN("OpenGL", log_string_format, "Low", source_string, type_string, id, message); break;
             case GL_DEBUG_SEVERITY_NOTIFICATION: {
-                if (HYP_OPENGL_LOG_NOTIFICATIONS) {
+                if constexpr (g_log_notifications) {
                     HYP_LOG_INFO("OpenGL", log_string_format, "Notification", source_string, type_string, id, message);
                 }
                 break;
@@ -99,8 +108,8 @@ namespace Hyperion::Rendering {
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
         }
 
-        if (severity == GL_DEBUG_SEVERITY_HIGH) {
-            if (HYP_OPENGL_BREAK_ON_ERROR) {
+        if constexpr (g_break_on_error) {
+            if (severity == GL_DEBUG_SEVERITY_HIGH) {
                 HYP_DEBUG_BREAK;
             }
         }

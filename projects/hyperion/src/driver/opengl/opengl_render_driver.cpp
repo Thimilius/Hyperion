@@ -103,6 +103,9 @@ namespace Hyperion::Rendering {
     void OpenGLRenderDriver::CreateTexture(ResourceId id, const TextureDescriptor &descriptor) {
         HYP_ASSERT(m_textures.find(id) == m_textures.end());
 
+        HYP_ASSERT(descriptor.size.width <= m_graphics_context->GetLimits().max_texture_size);
+        HYP_ASSERT(descriptor.size.height <= m_graphics_context->GetLimits().max_texture_size);
+
         OpenGLTexture &texture = m_textures[id];
         texture.dimension = descriptor.dimension;
         texture.format = descriptor.format;
@@ -229,13 +232,16 @@ namespace Hyperion::Rendering {
     void OpenGLRenderDriver::CreateRenderTexture(ResourceId render_texture_id, const RenderTextureDescriptor &descriptor) {
         HYP_ASSERT(m_render_textures.find(render_texture_id) == m_render_textures.end());
 
+        HYP_ASSERT(descriptor.size.width <= m_graphics_context->GetLimits().max_framebuffer_width);
+        HYP_ASSERT(descriptor.size.height <= m_graphics_context->GetLimits().max_framebuffer_height);
+
         OpenGLRenderTexture &render_texture = m_render_textures[render_texture_id];
 
         glCreateFramebuffers(1, &render_texture.render_texture);
         
         TextureSize render_texture_size = descriptor.size;
         uint64 render_texture_attachment_count = descriptor.attachments.size / sizeof(descriptor.attachments.data[0]);
-        GLint color_attachment_index = 0;
+        GLenum color_attachment_index = 0;
         bool has_created_depth_stencil_attachment = false;
         for (uint32 i = 0; i < render_texture_attachment_count; i++) {
             const RenderTextureAttachment &render_texture_attachment = descriptor.attachments.data[i];
@@ -247,8 +253,8 @@ namespace Hyperion::Rendering {
                     HYP_LOG_ERROR("OpenGL", "Trying to add more than one depth and stencil attachment to a render texture!");
                     continue;
                 }
-
                 attachment.type = OpenGLRenderTextureAttachmentType::Renderbuffer;
+                has_created_depth_stencil_attachment = true;
 
                 glCreateRenderbuffers(1, &attachment.attachment);
                 glNamedRenderbufferStorage(attachment.attachment, GL_DEPTH24_STENCIL8, render_texture_size.width, render_texture_size.height);
@@ -268,8 +274,8 @@ namespace Hyperion::Rendering {
                 GLsizei mipmap_count = parameters.use_mipmaps ? Math::Max(descriptor.mipmap_count, 1) : 1;
                 glTextureStorage2D(attachment.attachment, mipmap_count, internal_format, width, height);
 
-                GLint attachment_index = GL_COLOR_ATTACHMENT0 + color_attachment_index;
-                //HYP_ASSERT(GL_COLOR_ATTACHMENT0 + color_attachment_index <= m_graphics_context->GetLimits().max_color_attachments);
+                GLenum attachment_index = GL_COLOR_ATTACHMENT0 + color_attachment_index;
+                HYP_ASSERT(color_attachment_index < m_graphics_context->GetLimits().max_framebuffer_color_attachments);
                 glNamedFramebufferTexture(render_texture.render_texture, attachment_index, attachment.attachment, 0);
                 color_attachment_index++;
             }

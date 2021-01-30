@@ -15,7 +15,7 @@ namespace Hyperion::Rendering {
         void Present() override;
         void SetVSyncMode(VSyncMode vsync_mode) override;
 
-        static void LoadOpenGLExtensions(HDC helper_device_context);
+        void LoadOpenGLExtensions(HDC helper_device_context);
     private:
         HDC m_device_context;
         HGLRC m_opengl_context;
