@@ -3,8 +3,8 @@
 #include "hyperion/core/app/application_settings.hpp"
 #include "hyperion/core/threading/thread.hpp"
 #include "hyperion/rendering/render_driver.hpp"
-#include "hyperion/rendering/commands/immediate_render_commands.hpp"
-#include "hyperion/rendering/commands/render_command_queue.hpp"
+#include "hyperion/rendering/threading/render_thread_commands.hpp"
+#include "hyperion/rendering/threading/render_thread_command_queue.hpp"
 
 namespace Hyperion {
     class Engine;
@@ -13,8 +13,8 @@ namespace Hyperion {
     namespace Rendering {
         class GraphicsContext;
         class IRenderPipeline;
-        class MultithreadedRenderDriver;
-        class RenderCommandExecutor;
+        class RenderThreadCommandExecutor;
+        class RenderThreadRenderDriver;
     }
 }
 
@@ -24,8 +24,6 @@ namespace Hyperion::Rendering {
     public:
         inline static RenderBackend GetBackend() { return s_render_settings.backend; }
         inline static IRenderDriver *GetRenderDriver() { return s_render_driver; }
-        inline static RenderCommandQueue &GetCommandQueue() { return s_update_queue; }
-        
     private:
         RenderEngine() = delete;
         ~RenderEngine() = delete;
@@ -44,7 +42,8 @@ namespace Hyperion::Rendering {
         static void RenderThreadLoop(void *parameter);
         static void ShutdownRenderThread();
 
-        inline static ImmediateRenderCommand &GetImmediateCommand() { return s_immediate_render_command; }
+        inline static RenderThreadCommandQueue &GetCommandQueue() { return s_update_queue; }
+        inline static ImmediateRenderThreadCommand &GetImmediateCommand() { return s_immediate_render_command; }
         inline static void SetImmediateCommandPending() { s_is_immediate_render_command_pending = true; }
         static void ExecuteRenderCommands();
         static void ExecutePotentialImmediateRenderCommand();
@@ -59,15 +58,15 @@ namespace Hyperion::Rendering {
         inline static IRenderDriver *s_render_driver_backend;
         inline static IRenderDriver *s_render_driver_wrapper;
 
-        inline static bool s_exit_requested; // TODO: Maybe we can just use one atomic bool in Engine?
+        inline static bool s_exit_requested; // TODO: Maybe we can just use an atomic bool in Engine?
         inline static Threading::Thread s_render_thread;
-        inline static RenderCommandQueue s_update_queue;
-        inline static RenderCommandQueue s_render_queue;
-        inline static ImmediateRenderCommand s_immediate_render_command;
+        inline static RenderThreadCommandQueue s_update_queue;
+        inline static RenderThreadCommandQueue s_render_queue;
+        inline static ImmediateRenderThreadCommand s_immediate_render_command;
         inline static std::atomic<bool> s_is_immediate_render_command_pending;
     private:
         friend class Hyperion::Engine;
-        friend class Hyperion::Rendering::MultithreadedRenderDriver;
+        friend class Hyperion::Rendering::RenderThreadRenderDriver;
     };
 
 }

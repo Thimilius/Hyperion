@@ -6,8 +6,8 @@ namespace Hyperion {
     class Engine;
 
     namespace Rendering {
-        class MultithreadedRenderDriver;
         class RenderEngine;
+        class RenderThreadRenderDriver;
     }
 }
 
@@ -38,8 +38,8 @@ namespace Hyperion {
         inline static Threading::AutoResetEvent s_immediate_command_done_event = Threading::AutoResetEvent(false);
     private:
         friend class Hyperion::Engine;
-        friend class Hyperion::Rendering::MultithreadedRenderDriver;
         friend class Hyperion::Rendering::RenderEngine;
+        friend class Hyperion::Rendering::RenderThreadRenderDriver;
     };
 
 }

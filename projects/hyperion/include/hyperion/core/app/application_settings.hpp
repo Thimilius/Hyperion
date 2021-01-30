@@ -5,8 +5,8 @@
 #include "hyperion/core/system/engine_loop.hpp"
 #include "hyperion/physics/physics_backend.hpp"
 #include "hyperion/rendering/render_backend.hpp"
-#include "hyperion/rendering/render_threading_mode.hpp"
 #include "hyperion/rendering/pipelines/render_pipeline.hpp"
+#include "hyperion/rendering/threading/render_threading_mode.hpp"
 
 namespace Hyperion {
 

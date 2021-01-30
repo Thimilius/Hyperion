@@ -4,7 +4,7 @@
 
 namespace Hyperion::Rendering {
 
-    class MultithreadedRenderDriver final : public IRenderDriver {
+    class RenderThreadRenderDriver final : public IRenderDriver {
     public:
         void Initialize(GraphicsContext *graphics_context) override { }
         void Shutdown() override { }

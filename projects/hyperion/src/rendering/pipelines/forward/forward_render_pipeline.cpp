@@ -82,7 +82,7 @@ namespace Hyperion::Rendering {
         RenderTexture *render_texture = RenderTexture::Create(Display::GetWidth(), Display::GetHeight(), attachments);
     }
 
-    void ForwardRenderPipeline::Render(IRenderDriver *render_driver, const RenderContext &context) {
+    void ForwardRenderPipeline::Render(IRenderDriver *render_driver, const RenderPipelineContext &context) {
         Viewport viewport = { 0, 0, static_cast<int32>(Display::GetWidth()), static_cast<int32>(Display::GetHeight()) };
         render_driver->SetViewport(viewport);
 
