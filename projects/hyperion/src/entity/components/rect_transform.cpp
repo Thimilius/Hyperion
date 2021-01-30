@@ -82,7 +82,7 @@ namespace Hyperion {
         }
         Vec2 half_parent_size = parent_size / 2.0f;
 
-        // This comparison is most likely very unreliable
+        // This comparison is most likely very unreliable.
         bool stretching = m_anchor_min != m_anchor_max;
         if (!stretching) {
             float32 x = m_anchor_min.x * parent_size.x - half_parent_size.x;
@@ -101,10 +101,10 @@ namespace Hyperion {
     }
 
     void RectTransform::OnCreate() {
-        // Creating a rect transform means replacing the current one
+        // Creating a rect transform means replacing the current one.
         Transform *obsolete = GetEntity()->m_transform;
 
-        // We need to copy everything over from the now obsolete transform we are about to destroy
+        // We need to copy everything over from the now obsolete transform we are about to destroy.
         m_local_position = obsolete->m_local_position;
         m_local_rotation = obsolete->m_local_rotation;
         m_local_scale = obsolete->m_local_scale;
@@ -116,13 +116,13 @@ namespace Hyperion {
         m_parent = obsolete->m_parent;
         m_children = std::move(obsolete->m_children);
 
-        // Update the entity
+        // Update the entity.
         Entity *entity = GetEntity();
         entity->m_transform = this;
         entity->m_components.erase(rttr::type::get<Transform>());
         entity->m_components[rttr::type::get<RectTransform>()] = this;
 
-        // Update the parent
+        // Update the parent.
         Transform *parent = entity->m_transform->m_parent;
         if (parent) {
             auto begin = parent->m_children.begin();
@@ -134,13 +134,13 @@ namespace Hyperion {
             }
         }
 
-        // Update the children
+        // Update the children.
         for (Transform *child : m_children) {
             child->m_parent = this;
         }
 
-        // We can now delete the obsolete transform component that is no longer being used
-        // NOTE: This is propbably a little unsafe just deleting the component like that but works for now
+        // We can now delete the obsolete transform component that is no longer being used.
+        // NOTE: This is propbably a little unsafe just deleting the component like that but works for now.
         delete obsolete;
     }
 
@@ -148,7 +148,7 @@ namespace Hyperion {
         if (m_replace_on_destroy) {
             Transform *transform = new Transform();
 
-            // We need to copy everything over from the now obsolete transform we are about to destroy
+            // We need to copy everything over from the now obsolete transform we are about to destroy.
             transform->m_local_position = m_local_position;
             transform->m_local_rotation = m_local_rotation;
             transform->m_local_scale = m_local_scale;
@@ -160,14 +160,14 @@ namespace Hyperion {
             transform->m_parent = m_parent;
             transform->m_children = std::move(m_children);
 
-            // Update the entity
+            // Update the entity.
             Entity *entity = GetEntity();
             transform->m_entity = entity;
             entity->m_transform = transform;
             entity->m_components.erase(rttr::type::get<RectTransform>());
             entity->m_components[rttr::type::get<Transform>()] = transform;
 
-            // Update the children
+            // Update the children.
             for (Transform *child : m_children) {
                 child->m_parent = transform;
             }
@@ -181,7 +181,7 @@ namespace Hyperion {
     }
 
     bool RectTransformUtility::RectangleContainsScreenPoint(RectTransform *rect_transform, Vec2 screen_point) {
-        // First we need to transform the screen point so that the origin is in the center
+        // First we need to transform the screen point so that the origin is in the center.
         float32 display_half_width = static_cast<float32>(Display::GetWidth()) / 2.0f;
         float32 display_half_height = static_cast<float32>(Display::GetHeight()) / 2.0f;
         screen_point = Vec2(screen_point.x - display_half_width, screen_point.y - display_half_height);
@@ -194,7 +194,7 @@ namespace Hyperion {
         Vec2 p3 = world_corners[2];
         Vec2 p4 = world_corners[3];
 
-        // NOTE: Counter clockwise order of points is important
+        // NOTE: Counter clockwise order of points is important.
         return (IsLeft(p1, p4, screen_point) > 0 && IsLeft(p4, p3, screen_point) > 0 && IsLeft(p3, p2, screen_point) > 0 && IsLeft(p2, p1, screen_point) > 0);
     }
 

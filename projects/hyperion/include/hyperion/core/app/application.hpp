@@ -35,7 +35,7 @@ namespace Hyperion {
         friend class Hyperion::Engine;
     };
 
-    // This is a function to be defined by the client
+    // This is a function to be defined by the client...
     Application *CreateApplication();
 
 }

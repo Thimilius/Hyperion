@@ -83,7 +83,7 @@ namespace Hyperion::Physics {
 
         m_collision_world->removeCollisionObject(collision_object);
 
-        // We need to clear the mesh of a mesh collider
+        // We need to clear the mesh of a mesh collider.
         if (collider->GetColliderType() == ColliderType::MeshCollider) {
             btBvhTriangleMeshShape *mesh_shape = static_cast<btBvhTriangleMeshShape *>(collision_object->getCollisionShape());
             delete mesh_shape->getMeshInterface();
@@ -123,7 +123,7 @@ namespace Hyperion::Physics {
     void BulletPhysicsWorld::UpdateBoxColliderTransform(BoxCollider *box_collider) {
         btCollisionObject *collision_object = m_collision_objects.at(box_collider);
 
-        // The box collider needs special transformation based on its origin
+        // The box collider needs special transformation based on its origin.
         Transform *transform = box_collider->GetTransform();
         Vec3 position = transform->LocalToWorldPosition(box_collider->GetOrigin());
         UpdateTransform(transform, collision_object, position);
@@ -145,8 +145,8 @@ namespace Hyperion::Physics {
         if (collider->IsActiveAndEnabled()) {
             m_collision_world->addCollisionObject(collision_object);
 
-            // When reactivating the collider we need it to update to its current state
-            // FIXME: This is probably not the most elegant solution
+            // When reactivating the collider we need it to update to its current state.
+            // FIXME: This is probably not the most elegant solution.
             switch (collider->GetColliderType()) {
                 case ColliderType::BoxCollider: {
                     BoxCollider *box_collider = static_cast<BoxCollider *>(collider);

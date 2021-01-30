@@ -33,7 +33,6 @@ namespace Hyperion {
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         T *FindComponentOfType() {
-            // This is a depth first search
             for (Entity *entity : m_root_entities) {
                 T *component = entity->GetComponentInChildren<T>();
                 if (component) {
@@ -48,7 +47,6 @@ namespace Hyperion {
         Vector<T *> FindComponentsOfType() {
             Vector<T *> components;
 
-            // This is a depth first search
             for (Entity *entity : m_root_entities) {
                 Vector<T *> child_components = entity->GetComponentsInChildren<T>();
                 components.insert(components.end(), child_components.begin(), child_components.end());

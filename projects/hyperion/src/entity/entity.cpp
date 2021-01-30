@@ -9,7 +9,7 @@
 namespace Hyperion {
 
     bool Entity::IsActiveInHierarchy() const {
-        // TODO: Maybe this is something we should cache instead of recomputing it every time
+        // TODO: Maybe this is something we should cache instead of recomputing it every time.
         bool active_self = m_active;
         if (!active_self) {
             return false;
@@ -87,7 +87,7 @@ namespace Hyperion {
     }
 
     void Entity::OnDestroy() {
-        // First destroy every child
+        // First destroy every child.
         if (!m_transform->m_children.empty()) {
             for (int32 i = (static_cast<int32>(m_transform->m_children.size())) - 1; i >= 0; i--) {
                 Entity *child = m_transform->m_children[i]->m_entity;
@@ -101,7 +101,7 @@ namespace Hyperion {
             }
         }
 
-        // Now destroy all our components except transform
+        // Now destroy all our components except transform.
         for (auto it = m_components.begin(); it != m_components.end(); ) {
             auto [component_type, component] = *it;
             if (component_type.is_derived_from<Transform>()) {
@@ -112,7 +112,7 @@ namespace Hyperion {
             }
         }
 
-        // At the very end we can destroy the transform
+        // At the very end we can destroy the transform.
         if (m_transform->GetType() == rttr::type::get<RectTransform>()) {
             static_cast<RectTransform *>(m_transform)->m_replace_on_destroy = false;
         }

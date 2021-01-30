@@ -11,7 +11,7 @@ namespace Hyperion {
         Deleted
     };
 
-    // Currently we only allow to watch one directory at a time which may or may not be changed in the future
+    // NOTE: Currently we only allow to watch one directory at a time which may or may not be changed in the future.
 
     class FileWatcher {
     public:

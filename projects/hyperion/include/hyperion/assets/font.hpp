@@ -21,7 +21,12 @@ namespace Hyperion {
 
         uint32 codepoint;
 
-        // Top Left - Top Right - Bottom Right - Bottom Left
+        // This stores the uvs that point inside the corresponding texture atlas of the font.
+        // They are stored in the following clockwise order:
+        //     uv[0] = Top Left
+        //     uv[1] = Top Right
+        //     uv[2] = Bottom Right
+        //     uv[3] = Bottom Left
         Vec2 uv[4];
 
         Vec2 size;

@@ -9,12 +9,12 @@
 namespace Hyperion {
 
     Vector<uint32> StringUtils::GetCodepointsUtf8(const String &string) {
-        // Implementation from https://github.com/sheredom/utf8.h/blob/master/utf8.h
+        // Implementation from https://github.com/sheredom/utf8.h/blob/master/utf8.h.
         const char *s = string.c_str();
 
         Vector<uint32> codepoints;
 
-        // This assumes a valid utf8 string
+        // This assumes a valid utf8 string.
         while (*s != '\0') {
             uint32 codepoint;
             if (0xF0 == (0xF8 & s[0])) {

@@ -23,7 +23,7 @@
 namespace Hyperion {
 
     void Engine::Setup() {
-        // We initialize the operating system first to get logging ability
+        // We initialize the operating system first to get logging ability.
         OperatingSystem::GetInstance()->Initialize();
 
         HYP_LOG_INFO("Engine", "Initializing...");
@@ -120,7 +120,6 @@ namespace Hyperion {
 
         dispatcher.Dispatch<KeyPressedEvent>([](KeyPressedEvent &key_pressed_event) {
             if (s_settings.core.allow_altf4) {
-                // Explicitly handle alt-f4 for closing
                 if (key_pressed_event.HasKeyModifier(KeyModifier::Alt) && key_pressed_event.GetKeyCode() == KeyCode::F4) {
                     Exit();
                 }
@@ -137,7 +136,7 @@ namespace Hyperion {
 
     void Engine::Shutdown() {
         // When shutting down we have to be very careful about the order.
-        // The render engine needs seperate phases in which it has to shut down.
+        // The render engine (render thread) needs seperate phases in which it has to shut down.
         WorldManager::Shutdown();
         ScriptingEngine::Shutdown();
         Physics::PhysicsEngine::Shutdown();
@@ -152,7 +151,7 @@ namespace Hyperion {
     }
 
     void Engine::ExecuteEngineLoopSubSystem(const EngineLoopSubSystem &engine_loop_sub_system) {
-        // We ignore the update function for systems that contain sub systems
+        // We explicitly ignore the update function for systems that contain sub systems.
         if (engine_loop_sub_system.sub_systems.size() > 0) {
             for (const EngineLoopSubSystem &sub_system : engine_loop_sub_system.sub_systems) {
                 ExecuteEngineLoopSubSystem(sub_system);

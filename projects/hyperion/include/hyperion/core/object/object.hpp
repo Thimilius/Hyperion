@@ -46,7 +46,6 @@ namespace Hyperion {
 
         virtual void OnDestroy() { }
     private:
-        // Objects can not be copied.
         Object(const Object &other) = delete;
         Object &operator=(const Object &other) = delete;
 

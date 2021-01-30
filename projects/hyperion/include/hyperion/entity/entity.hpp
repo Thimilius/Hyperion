@@ -33,7 +33,7 @@ namespace Hyperion {
     using EntityTag = String;
 
     // NOTE: Should we allow multiple components of the same type?
-    // Currently the GetComponent implementations assume only one component of a certain type
+    // Currently the GetComponent implementations assume only one component of a certain type.
     class Entity final : public Object {
         HYP_REFLECT(Object);
     public:

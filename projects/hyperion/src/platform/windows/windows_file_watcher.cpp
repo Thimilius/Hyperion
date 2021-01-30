@@ -100,11 +100,11 @@ namespace Hyperion {
                 notify = (FILE_NOTIFY_INFORMATION*)&watch_struct->buffer[notify_offset];
                 notify_offset += notify->NextEntryOffset;
                 
-                // File name length is in bytes and therefore needs to be converted
+                // File name length is in bytes and therefore needs to be converted.
                 auto filename_length = notify->FileNameLength / 2;
                 String filename = StringUtils::Utf16ToUtf8(WideString(notify->FileName).substr(0, filename_length));
 
-                // Format path to always include last directory seperator
+                // Format path to always include last directory seperator.
                 bool has_seperator = false;
                 if (watch_struct->watcher->m_path.back() == '\\' || watch_struct->watcher->m_path.back() == '/') {
                     has_seperator = true;
@@ -116,8 +116,7 @@ namespace Hyperion {
                 String extension = filename.substr(filename.find_last_of("."));
 
                 // HACK: This is a pretty nasty hack of trying to "wait" for long enough,
-                // so that file changes are actually written to disk and
-                // do not cause any weird errors when trying to load
+                // so that file changes are actually written to disk and do not cause any weird errors when trying to load.
                 Sleep(2);
                  
                 watch_struct->watcher->HandleAction(notify->Action, path, filename, extension);

@@ -17,7 +17,8 @@ namespace Hyperion::Rendering {
         }
 
         ArrayDescriptor(const String &string) {
-            size = string.size() + 1; // We have to take into account the null termination character
+            // For strings we have to take into account the null termination character.
+            size = string.size() + 1; 
             data = string.data();
         }
     };

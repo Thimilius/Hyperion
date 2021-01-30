@@ -104,7 +104,7 @@ namespace Hyperion {
     }
 
     ObjectId ObjectManager::RegisterObject(Object *object) {
-        // 0 is not a valid object id, so we preincrement
+        // 0 is not a valid object id, so we preincrement.
         ObjectId id = ++s_object_id_counter;
         s_objects[id] = object;
         return id;
@@ -124,8 +124,7 @@ namespace Hyperion {
 
 // NOTE: This is actually pretty ugly.
 // Ideally the types should register themselves in their corresponding .cpp file.
-// But unfortunately the linker may or may not optimize these registrations away
-// which obviously leads to very annoying bugs.
+// But unfortunately the linker may or may not optimize these registrations away which obviously leads to very annoying bugs.
 // So before there is a better solution we just put everything in here.
 HYP_REFLECT_REGISTER_BEGIN
 {

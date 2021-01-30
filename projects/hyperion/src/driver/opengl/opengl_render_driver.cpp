@@ -44,9 +44,8 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLRenderDriver::SetRasterizerState(const RasterizerState &rasterizer_state) {
-        // NOTE: Currently we are setting the whole rasterizer state at once,
-        // regardless of wether or not we actually have new values we want to change.
-        // So this is very expensive.
+        // NOTE: Currently we are setting the whole rasterizer state at once, regardless of wether or not we actually have new values we need to change.
+        // TLDR: This is very expensive.
 
         // Depth
         {
@@ -149,8 +148,8 @@ namespace Hyperion::Rendering {
         OpenGLTexture &texture = m_textures[id];
         
         // FIXME: This is hardcoded for 2D textures.
-        // Maybe store the complete size beforehand.
-        GLsizei size = texture.size.height * texture.size.width * 4;
+        // Maybe just store the complete size beforehand?
+        GLsizei size = texture.size.height * texture.size.width * 4; 
         data.resize(size);
 
         GLenum format = OpenGLUtilities::GetGLTextureFormat(texture.format);
@@ -193,7 +192,6 @@ namespace Hyperion::Rendering {
             // We simply ignore a property if it does not actually exist on the shader.
             return;
         }
-        // We still have to check that the types actually match.
         if (it->second.type != property.type) {
             HYP_LOG_ERROR("OpenGL", "Trying to assign material property '{}' a wrong type!", it->second.name);
             return;
@@ -333,7 +331,7 @@ namespace Hyperion::Rendering {
         mesh.index_format = descriptor.index_format;
         mesh.sub_meshes.assign(descriptor.sub_meshes.data, descriptor.sub_meshes.data + (descriptor.sub_meshes.size / sizeof(*descriptor.sub_meshes.data)));
 
-        // TODO: Add ability to mark meshes dynamic
+        // TODO: Add ability to mark meshes dynamic that get updated frequently.
         glCreateBuffers(2, &mesh.vertex_buffer);
         glNamedBufferData(mesh.vertex_buffer, descriptor.vertices.size, descriptor.vertices.data, GL_STATIC_DRAW);
         glNamedBufferData(mesh.index_buffer, descriptor.indices.size, descriptor.indices.data, GL_STATIC_DRAW);
@@ -405,8 +403,6 @@ namespace Hyperion::Rendering {
         glTextureStorage2D(texture_id, mipmap_count, internal_format, width, height);
 
         if (descriptor.pixels.size > 0) {
-            // RANT: Because OpenGL is retarded and the texture origin is in the bottom left corner,
-            // we have to flip the image before uploading to the GPU.
             OpenGLUtilities::FlipTextureHorizontally(descriptor.size, format, descriptor.pixels);
             
             GLenum format_value = OpenGLUtilities::GetGLTextureFormat(format);
@@ -421,7 +417,7 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLRenderDriver::CreateTextureCubemap(OpenGLTexture &texture, const TextureDescriptor &descriptor) {
-        // TODO: Implement
+        // TODO: Implement.
     }
 
     void OpenGLRenderDriver::SetTextureParameters(GLuint texture, const TextureParameters &parameters) {

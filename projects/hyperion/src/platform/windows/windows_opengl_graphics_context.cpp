@@ -56,8 +56,7 @@ namespace Hyperion::Rendering {
             WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
             WGL_CONTEXT_MAJOR_VERSION_ARB, 4,
             WGL_CONTEXT_MINOR_VERSION_ARB, 6,
-            // NOTE: We would like to have the no error context
-            // but it does not seem supported by the Intel driver.
+            // NOTE: We would like to have the no error context but it does not seem supported by the Intel driver.
             //WGL_CONTEXT_OPENGL_NO_ERROR_ARB, 1,
             0
         };

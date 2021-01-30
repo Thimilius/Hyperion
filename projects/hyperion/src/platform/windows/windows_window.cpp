@@ -63,7 +63,7 @@ namespace Hyperion {
 
         switch (m_window_mode) {
             case Hyperion::WindowMode::Windowed: {
-                // If we are maximized we first restore the window to be normal
+                // If we are maximized we first restore the window to be normal.
                 if (m_window_state == WindowState::Maximized) {
                     SetWindowState(WindowState::Normal);
                 }
@@ -75,7 +75,7 @@ namespace Hyperion {
                 break;
             }
             case Hyperion::WindowMode::Borderless: {
-                // In borderless mode we do not resize because we would probably not fill the screen anymore
+                // In borderless mode we do not resize because we would probably not fill the screen anymore.
                 break;
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
@@ -98,7 +98,7 @@ namespace Hyperion {
         DWORD window_styles = GetWindowLongW(m_window_handle, GWL_STYLE);
 
         WindowMode last_window_mode = m_window_mode;
-        // This already needs to be set here for all later message callbacks
+        // This already needs to be set here for all later message callbacks.
         m_window_mode = window_mode;
 
         switch (window_mode) {
@@ -147,7 +147,7 @@ namespace Hyperion {
                 break;
             }
             case Hyperion::WindowState::Maximized: {
-                // We only maximize in windowed mode
+                // We only maximize in windowed mode.
                 if (m_window_mode == WindowMode::Windowed) {
                     result = ShowWindow(m_window_handle, SW_MAXIMIZE);
                 }
@@ -178,7 +178,7 @@ namespace Hyperion {
         SendMessageW(m_window_handle, WM_SETICON, ICON_SMALL, (LPARAM)icon);
         SendMessageW(m_window_handle, WM_SETICON, ICON_BIG, (LPARAM)icon);
 
-        // We also set the icon for the console window
+        // We also set the icon for the console window.
         HWND console_window_handle = GetConsoleWindow();
         if (console_window_handle) {
             SendMessageW(console_window_handle, WM_SETICON, ICON_SMALL, (LPARAM)icon);
@@ -189,7 +189,7 @@ namespace Hyperion {
     Rendering::GraphicsContext *WindowsWindow::CreateGraphicsContext(Rendering::RenderBackend render_backend) {
         switch (render_backend) {
             case Rendering::RenderBackend::OpenGL: {
-                // To create a proper OpenGL context we need a second helper window
+                // To create a proper OpenGL context we need a second helper window.
                 auto helper_window_class_name = L"HYPERION_HELPER_WINDOW_CLASS";
                 HINSTANCE instance = GetModuleHandleW(nullptr);
                 if (!instance) {
@@ -224,7 +224,7 @@ namespace Hyperion {
 
                 Rendering::GraphicsContext *graphics_context = new Rendering::WindowsOpenGLGraphicsContext(GetDC(m_window_handle), GetDC(helper_window));
 
-                // We can destroy the helper window now
+                // We can destroy the helper window now that we have the proper context.
                 UnregisterClassW(helper_window_class_name, instance);
                 DestroyWindow(helper_window);
 
@@ -303,7 +303,7 @@ namespace Hyperion {
             nullptr,
             nullptr,
             instance,
-            this // Parameter to WM_CREATE that then stores the user pointer
+            this
         );
 
         if (!m_window_handle) {
@@ -361,11 +361,10 @@ namespace Hyperion {
     }
 
     KeyCode WindowsWindow::TranslateKeyCode(uint32 w_param, uint32 l_param, bool is_down) const {
-        // Left and right keys need to be distinguished as extended keys
+        // Left and right keys need to be distinguished as extended keys.
         if (w_param == VK_CONTROL) {
             // Alt-Gr sends both left control and alt right messages.
-            // We are only interested in the alt right message,
-            // so we need to discard the left control message.
+            // We are only interested in the alt right message, so we need to discard the left control message.
             MSG next_message;
             if (PeekMessageW(&next_message, nullptr, 0, 0, PM_NOREMOVE)) {
                 if (next_message.message == WM_KEYDOWN || next_message.message == WM_SYSKEYDOWN || next_message.message == WM_KEYUP || next_message.message == WM_SYSKEYUP) {
@@ -373,7 +372,7 @@ namespace Hyperion {
                     if (next_message.wParam == VK_MENU && (next_message.lParam & 0x01000000) && next_message.time == message_time) {
                         DispatchKeyEvent(KeyCode::AltGr, is_down);
 
-                        // Next message is right alt down so discard this
+                        // Next message is right alt down so discard this.
                         return KeyCode::None;
                     }
                 }
@@ -389,8 +388,7 @@ namespace Hyperion {
         } else if (w_param == VK_SHIFT) {
             DispatchKeyEvent(KeyCode::Shift, is_down);
 
-            // Left and right shift keys are not send as extended keys
-            // and therefore need to be queried explicitly
+            // Left and right shift keys are not send as extended keys and therefore need to be queried explicitly.
             bool previous_left_shift_down = m_left_shift_last_down;
             bool previous_right_shift_down = m_right_shift_last_down;
             m_left_shift_last_down = GetKeyState(VK_LSHIFT) & 0x8000;
@@ -401,8 +399,8 @@ namespace Hyperion {
             } else if (m_right_shift_last_down) {
                 return KeyCode::RightShift;
             } else {
-                // If neither the right nor the left shift key is down this means they just got released
-                // so send out the corresponding key released event
+                // If neither the right nor the left shift key is down this means they just got released.
+                // So send out the corresponding key released event.
                 if (previous_left_shift_down) {
                     return KeyCode::LeftShift;
                 } else if (previous_right_shift_down) {
@@ -588,20 +586,17 @@ namespace Hyperion {
     LRESULT WindowsWindow::MessageCallback(HWND window_handle, uint32 message, WPARAM w_param, LPARAM l_param) {
         LRESULT result = 0;
 
-        // This will be null on WM_CREATE
+        // This will be null on WM_CREATE.
         WindowsWindow *window = static_cast<WindowsWindow *>(reinterpret_cast<void *>(GetWindowLongPtrW(window_handle, GWLP_USERDATA)));
 
         switch (message) {
             case WM_CREATE: {
-                // Store user pointer
                 SetWindowLongPtrW(window_handle, GWLP_USERDATA, (LONG_PTR)((CREATESTRUCT *)l_param)->lpCreateParams);
                 SetWindowPos(window_handle, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
                 break;
             }
 
             case WM_DEVICECHANGE: {
-                // This querying is probably to frequently as there are device changes beeing detected
-                // that have pretty much nothing to do with a gameplay beeing added or removed
                 if (w_param == DBT_DEVNODES_CHANGED) {
                     window->m_input->QueryConnectedGamepads();
                 }
@@ -694,7 +689,7 @@ namespace Hyperion {
                 window->m_height = height;
                 window->m_window_state = window_state;
 
-                // We do not want to generate a window resize event when the size gets 0 because the window got minimized
+                // We do not want to generate a window resize event when the size gets 0 because the window got minimized.
                 if (width > 0 && height > 0) {
                     WindowResizeEvent event(width, height);
                     window->DispatchEvent(event);
@@ -705,8 +700,7 @@ namespace Hyperion {
 
             case WM_GETMINMAXINFO: {
                 MINMAXINFO *min_max_info = (MINMAXINFO *)l_param;
-                // We need the check for the window pointer here
-                // because we get the GETMINMAXINFO message before the CREATE message
+                // We need the check for the window pointer here because we get the GETMINMAXINFO message before the CREATE message.
                 if (window) {
                     Vec2 min_size = window->GetActualWindowSize(window->m_min_width, window->m_min_height);
                     min_max_info->ptMinTrackSize.x = static_cast<LONG>(min_size.x);
@@ -732,7 +726,7 @@ namespace Hyperion {
                 bool focused = message == WM_SETFOCUS;
                 window->m_is_focused = focused;
 
-                // We need to reset the cursor clip state when losing focus
+                // We need to reset the cursor clip state when losing focus.
                 ClipCursor(nullptr);
 
                 WindowFocusEvent event(focused);

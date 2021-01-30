@@ -57,7 +57,7 @@ namespace Hyperion {
                 while (EnumDisplaySettingsA(display_device.DeviceName, display_mode_number, &dev_mode)) {
                     display_mode_number++;
 
-                    // We only support a modes with a minimum of 24 bits per pixel
+                    // We only support a modes with a minimum of 24 bits per pixel.
                     if (dev_mode.dmPelsWidth < 24) {
                         continue;
                     }
@@ -68,7 +68,7 @@ namespace Hyperion {
                     display_mode_info.refresh_rate = dev_mode.dmDisplayFrequency;
                     display_mode_info.bits_per_pixel = dev_mode.dmBitsPerPel;
 
-                    // Skip duplicate modes
+                    // Skip duplicate modes.
                     if (std::find(display_info.m_mode_infos.begin(), display_info.m_mode_infos.end(), display_mode_info) != display_info.m_mode_infos.end()) {
                         continue;
                     }

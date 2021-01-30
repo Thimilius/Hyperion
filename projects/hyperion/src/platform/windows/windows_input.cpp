@@ -28,7 +28,6 @@ namespace Hyperion {
     InputImplementation *Input::s_input_implementation = new WindowsInput();
 
     WindowsInput::WindowsInput() {
-        // Try to load XInput as a dll
         g_xinput_library = LoadLibraryA("xinput1_4.dll");
         if (!g_xinput_library) {
             g_xinput_library = LoadLibraryA("xinput1_3.dll");
@@ -62,13 +61,11 @@ namespace Hyperion {
     void WindowsInput::OnEvent(Event &event) {
         EventDispatcher dispatcher(event);
 
-        // Handle window events
         dispatcher.Dispatch<WindowFocusEvent>([this](WindowFocusEvent &window_focus_event){
             Reset();
             m_gamepad_input_active = window_focus_event.GetFocus();
         });
 
-        // Handle key events
         dispatcher.Dispatch<KeyPressedEvent>([this](KeyPressedEvent &key_pressed_event) {
             OnKeyEvent(key_pressed_event, true);
         });
@@ -76,7 +73,6 @@ namespace Hyperion {
             OnKeyEvent(key_released_event, false);
         });
 
-        // Handle mouse events
         dispatcher.Dispatch<MouseScrolledEvent>([this](MouseScrolledEvent &mouse_scrolled_event) {
             m_mouse_scroll = mouse_scrolled_event.GetScroll();
         });
@@ -113,7 +109,6 @@ namespace Hyperion {
             m_mouse_scroll = 0.0f;
         }
         
-        // Query gamepad input
         if (m_gamepad_input_active) {
             for (DWORD i = 0; i < m_gamepads_connected.size(); i++) {
                 Gamepad gamepad = m_gamepads_connected[i];
@@ -123,7 +118,6 @@ namespace Hyperion {
                 auto begin = m_gamepads_connected.begin();
                 auto end = m_gamepads_connected.end();
 
-                // Handle disconnection
                 if (result != ERROR_SUCCESS) {
                     if (std::find(begin, end, gamepad) != end) {
                         m_gamepads_connected.erase(std::remove(begin, end, gamepad));
@@ -133,7 +127,6 @@ namespace Hyperion {
                     }
                 }
 
-                // Handle buttons
                 {
                     WORD buttons = state.Gamepad.wButtons;
                     HandleGamepadButtonCode(gamepad, GamepadButtonCode::Start, buttons & XINPUT_GAMEPAD_START);
@@ -152,7 +145,6 @@ namespace Hyperion {
                     HandleGamepadButtonCode(gamepad, GamepadButtonCode::RightThumb, buttons & XINPUT_GAMEPAD_RIGHT_THUMB);
                 }
 
-                // Handle axes
                 {
                     float32 left_stick_x = (state.Gamepad.sThumbLX + 0.5f) / 32767.5f;
                     float32 left_stick_y = (state.Gamepad.sThumbLY + 0.5f) / 32767.5f;
@@ -163,7 +155,7 @@ namespace Hyperion {
 
                     m_gamepads[static_cast<int32>(gamepad)].axes[static_cast<int32>(GamepadAxis::LeftStick)] = ApplyGamepadDeadzone(left_stick_x, left_stick_y);
                     m_gamepads[static_cast<int32>(gamepad)].axes[static_cast<int32>(GamepadAxis::RightStick)] = ApplyGamepadDeadzone(right_stick_x, right_stick_y);
-                    // Left and right trigger are treated as if they had the same two x and y axes
+                    // Left and right trigger are treated as if they had the same two x and y axes.
                     m_gamepads[static_cast<int32>(gamepad)].axes[static_cast<int32>(GamepadAxis::LeftTrigger)] = Vec2(left_trigger, left_trigger);
                     m_gamepads[static_cast<int32>(gamepad)].axes[static_cast<int32>(GamepadAxis::RightTrigger)] = Vec2(right_trigger, right_trigger);
                 }

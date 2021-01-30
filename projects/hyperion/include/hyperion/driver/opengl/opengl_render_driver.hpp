@@ -92,7 +92,7 @@ namespace Hyperion::Rendering {
         Map<ResourceId, OpenGLRenderTexture> m_render_textures;
 
         struct OpenGLMesh {
-            // Vertex and index buffer have to be next to each other to support efficient creation and destruction
+            // Vertex and index buffer have to be next to each other to support efficient creation and destruction.
             GLuint vertex_buffer;
             GLuint index_buffer;
             GLuint vertex_array;

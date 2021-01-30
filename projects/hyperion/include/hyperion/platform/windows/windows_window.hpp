@@ -51,12 +51,11 @@ namespace Hyperion {
         HWND m_window_handle;
         UINT_PTR m_timer;
         
-        // We store the last window placement in order to switch correctly
-        // between windowed and borderless mode
+        // We store the last window placement in order to switch correctly between windowed and borderless mode.
         WINDOWPLACEMENT m_previous_placement;
 
-        // To distinguish the two shift keys we explicily store their previous state
-        // so that we can send out the correct key released events when appropriate
+        // To distinguish the two shift keys we explicily store their previous state.
+        // That way we can send out the correct key released events when appropriate.
         mutable bool m_left_shift_last_down = false;
         mutable bool m_right_shift_last_down = false;
     };

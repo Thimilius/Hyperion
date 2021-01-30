@@ -119,7 +119,7 @@ namespace Hyperion {
         float32 half_width = width / 2.0f;
         float32 half_height = height / 2.0f;
 
-        // The quad should face the camera (right-haneded)
+        // The quad should face the camera (right-handed).
         Vec3 normal = Vec3::Back();
 
         MeshData mesh_data;
@@ -156,7 +156,7 @@ namespace Hyperion {
         float32 half_width = width / 2.0f;
         float32 half_height = height / 2.0f;
 
-        // The plane should face up
+        // The plane should face up.
         Vec3 normal = Vec3::Up();
 
         MeshData mesh_data;

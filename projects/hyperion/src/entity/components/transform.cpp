@@ -16,11 +16,11 @@ namespace Hyperion {
     }
 
     void Transform::SetParent(Transform *parent) {
-        // Handle special edge cases and for now just silently abandon
+        // Handle special edge cases and for now just silently abandon.
         if (m_parent == parent || parent == this) {
             return;
         }
-        // We can not set a child from us as a new parent
+        // We can not set a child from us as a new parent.
         if (IsChildOf(parent)) {
             return;
         }

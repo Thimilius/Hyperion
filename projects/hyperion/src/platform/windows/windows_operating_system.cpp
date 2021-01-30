@@ -21,7 +21,6 @@ namespace Hyperion {
     OperatingSystem* OperatingSystem::s_instance = new WindowsOperatingSystem();
 
     void WindowsOperatingSystem::Initialize() {
-        // Initialize console
         m_console_handle = GetStdHandle(STD_OUTPUT_HANDLE);
         if (m_console_handle == INVALID_HANDLE_VALUE) {
             AllocConsole();
@@ -32,7 +31,6 @@ namespace Hyperion {
     SystemInfo WindowsOperatingSystem::GetSystemInfo() const {
         SystemInfo result;
 
-        // Gather processor info
         SYSTEM_INFO system_info;
         GetNativeSystemInfo(&system_info);
         uint32 processor_count = system_info.dwNumberOfProcessors;
@@ -41,7 +39,6 @@ namespace Hyperion {
         result.processor_info.processor_count = processor_count;
         result.processor_info.processor_mhz_frequency = processor_info[0].MaxMhz;
 
-        // Gather memory info
         MEMORYSTATUSEX memory_status;
         memory_status.dwLength = sizeof(MEMORYSTATUSEX);
         GlobalMemoryStatusEx(&memory_status);

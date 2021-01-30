@@ -8,6 +8,12 @@
 
 namespace Hyperion {
 
+    // The data of meshes is expected to be interpreted in a specific way:
+    //     - For texture coordinates the origin (0, 0) is BOTTOM LEFT.
+    //       The top left corner where the origin for most images resides is therefore at (0, 1).
+    //       This means that when loading in textures they probably have to be flipped.
+    //     - To specify a front facing triangle, the indices have to be provided in CLOCKWISE order.
+
     struct MeshData {
         Vector<Vec3> positions;
         Vector<Vec3> normals;
