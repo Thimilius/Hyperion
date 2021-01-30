@@ -19,13 +19,12 @@ namespace Hyperion::Rendering {
                 GLint log_length = 0;
                 glGetShaderiv(vertex_shader, GL_INFO_LOG_LENGTH, &log_length);
 
-                GLchar *info_log = new GLchar[log_length];
-                glGetShaderInfoLog(vertex_shader, log_length, &log_length, info_log);
-
-                HYP_LOG_ERROR("OpenGL", "Shader compilation error in vertex shader:\n{}", info_log);
+                String info_log(log_length, '\0');
+                glGetShaderInfoLog(vertex_shader, log_length, &log_length, info_log.data());
 
                 glDeleteShader(vertex_shader);
-                delete[] info_log;
+
+                HYP_LOG_ERROR("OpenGL", "Shader compilation error in vertex shader:\n{}", info_log.c_str());
 
                 return result;
             }
@@ -43,14 +42,13 @@ namespace Hyperion::Rendering {
                 GLint log_length = 0;
                 glGetShaderiv(fragment_shader, GL_INFO_LOG_LENGTH, &log_length);
 
-                GLchar *info_log = new GLchar[log_length];
-                glGetShaderInfoLog(fragment_shader, log_length, &log_length, info_log);
-
-                HYP_LOG_ERROR("OpenGL", "Shader compilation error in fragment shader:\n{}", info_log);
+                String info_log(log_length, '\0');
+                glGetShaderInfoLog(fragment_shader, log_length, &log_length, info_log.data());
 
                 glDeleteShader(vertex_shader);
                 glDeleteShader(fragment_shader);
-                delete[] info_log;
+
+                HYP_LOG_ERROR("OpenGL", "Shader compilation error in fragment shader:\n{}", info_log.c_str());
 
                 return result;
             }
@@ -68,15 +66,14 @@ namespace Hyperion::Rendering {
                 GLint log_length = 0;
                 glGetProgramiv(program, GL_INFO_LOG_LENGTH, &log_length);
 
-                GLchar *info_log = new GLchar[log_length];
-                glGetProgramInfoLog(program, log_length, &log_length, info_log);
+                String info_log(log_length, '\0');
+                glGetProgramInfoLog(program, log_length, &log_length, info_log.data());
 
-                HYP_LOG_ERROR("OpenGL", "Shader linking error:\n{}", info_log);
+                HYP_LOG_ERROR("OpenGL", "Shader linking error:\n{}", info_log.c_str());
 
                 glDeleteShader(vertex_shader);
                 glDeleteShader(fragment_shader);
                 glDeleteProgram(program);
-                delete[] info_log;
 
                 return result;
             }
