@@ -29,12 +29,16 @@ namespace Hyperion::Rendering {
         void SetMaterialProperty(ResourceId material_id, const MaterialProperty &property) override;
         void DestroyMaterial(ResourceId material_id) override;
 
+        void CreateRenderTexture(ResourceId render_texture_id, const RenderTextureDescriptor &descriptor) override;
+        void DestroyRenderTexture(ResourceId render_texture_id) override;
+
         void CreateMesh(ResourceId mesh_id, const MeshDescriptor &descriptor) override;
         void DrawMesh(ResourceId mesh_id, ResourceId material_id, uint32 sub_mesh_index) override;
         void DestroyMesh(ResourceId mesh_id) override;
     private:
         void CreateTexture2D(OpenGLTexture &texture, const TextureDescriptor &descriptor);
         void CreateTextureCubemap(OpenGLTexture &texture, const TextureDescriptor &descriptor);
+        void SetTextureParameters(GLuint texture, const TextureParameters &parameters);
 
         void CollectMaterialProperties(OpenGLMaterial &material);
         void UseMaterial(const OpenGLMaterial &material);
@@ -44,18 +48,7 @@ namespace Hyperion::Rendering {
         struct OpenGLShader {
             GLuint program;
         };
-        Map<ResourceId, OpenGLShader> s_shaders;
-
-        struct OpenGLMesh {
-            // Vertex and index buffer have to be next to each other to support efficient creation and destruction
-            GLuint vertex_buffer;
-            GLuint index_buffer;
-            GLuint vertex_array;
-
-            IndexFormat index_format;
-            Vector<SubMesh> sub_meshes;
-        };
-        Map<ResourceId, OpenGLMesh> s_meshes;
+        Map<ResourceId, OpenGLShader> m_shaders;
 
         struct OpenGLTexture {
             GLuint texture;
@@ -65,7 +58,7 @@ namespace Hyperion::Rendering {
             TextureParameters parameters;
             TextureSize size;
         };
-        Map<ResourceId, OpenGLTexture> s_textures;
+        Map<ResourceId, OpenGLTexture> m_textures;
 
         struct OpenGLMaterialProperty {
             MaterialPropertyType type;
@@ -79,7 +72,33 @@ namespace Hyperion::Rendering {
             Map<MaterialPropertyId, OpenGLMaterialProperty> properties;
             Map<MaterialPropertyId, GLuint> textures;
         };
-        Map<ResourceId, OpenGLMaterial> s_materials;
+        Map<ResourceId, OpenGLMaterial> m_materials;
+
+        enum class OpenGLRenderTextureAttachmentType {
+            Texture,
+            Renderbuffer
+        };
+        struct OpenGLRenderTextureAttachment {
+            OpenGLRenderTextureAttachmentType type;
+            GLuint attachment;
+        };
+        struct OpenGLRenderTexture {
+            GLuint render_texture;
+
+            Vector<OpenGLRenderTextureAttachment> attachments;
+        };
+        Map<ResourceId, OpenGLRenderTexture> m_render_textures;
+
+        struct OpenGLMesh {
+            // Vertex and index buffer have to be next to each other to support efficient creation and destruction
+            GLuint vertex_buffer;
+            GLuint index_buffer;
+            GLuint vertex_array;
+
+            IndexFormat index_format;
+            Vector<SubMesh> sub_meshes;
+        };
+        Map<ResourceId, OpenGLMesh> m_meshes;
     };
 
 }

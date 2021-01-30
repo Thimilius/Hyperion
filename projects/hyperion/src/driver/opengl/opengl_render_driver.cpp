@@ -80,11 +80,11 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLRenderDriver::CreateShader(ResourceId id, const ShaderDescriptor &descriptor) {
-        HYP_ASSERT(s_shaders.find(id) == s_shaders.end());
+        HYP_ASSERT(m_shaders.find(id) == m_shaders.end());
 
         OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(descriptor.source_vertex.data, descriptor.source_fragment.data);
         if (compilation_result.succes) {
-            OpenGLShader &shader = s_shaders[id];
+            OpenGLShader &shader = m_shaders[id];
             shader.program = compilation_result.program;
         } else {
             // TODO: How do we handle shader errors here?
@@ -92,18 +92,18 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLRenderDriver::DestroyShader(ResourceId id) {
-        HYP_ASSERT(s_shaders.find(id) != s_shaders.end());
+        HYP_ASSERT(m_shaders.find(id) != m_shaders.end());
 
-        OpenGLShader &shader = s_shaders[id];
+        OpenGLShader &shader = m_shaders[id];
         glDeleteProgram(shader.program);
         
-        s_shaders.erase(id);
+        m_shaders.erase(id);
     }
 
     void OpenGLRenderDriver::CreateTexture(ResourceId id, const TextureDescriptor &descriptor) {
-        HYP_ASSERT(s_textures.find(id) == s_textures.end());
+        HYP_ASSERT(m_textures.find(id) == m_textures.end());
 
-        OpenGLTexture &texture = s_textures[id];
+        OpenGLTexture &texture = m_textures[id];
         texture.dimension = descriptor.dimension;
         texture.format = descriptor.format;
         texture.parameters = descriptor.parameters;
@@ -117,9 +117,9 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLRenderDriver::GetTextureData(ResourceId id, Vector<uint8> &data) {
-        HYP_ASSERT(s_textures.find(id) != s_textures.end());
+        HYP_ASSERT(m_textures.find(id) != m_textures.end());
 
-        OpenGLTexture &texture = s_textures[id];
+        OpenGLTexture &texture = m_textures[id];
         
         // FIXME: This is hardcoded for 2D textures.
         // Maybe store the complete size beforehand.
@@ -133,31 +133,31 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLRenderDriver::DestroyTexture(ResourceId id) {
-        HYP_ASSERT(s_textures.find(id) != s_textures.end());
+        HYP_ASSERT(m_textures.find(id) != m_textures.end());
 
-        OpenGLTexture &texture = s_textures[id];
+        OpenGLTexture &texture = m_textures[id];
         glDeleteTextures(1, &texture.texture);
 
-        s_textures.erase(id);
+        m_textures.erase(id);
     }
 
     void OpenGLRenderDriver::CreateMaterial(ResourceId id, const MaterialDescriptor &descriptor) {
-        HYP_ASSERT(s_materials.find(id) == s_materials.end());
+        HYP_ASSERT(m_materials.find(id) == m_materials.end());
 
-        OpenGLMaterial &material = s_materials[id];
-        HYP_ASSERT(s_shaders.find(descriptor.shader_id) != s_shaders.end());
+        OpenGLMaterial &material = m_materials[id];
+        HYP_ASSERT(m_shaders.find(descriptor.shader_id) != m_shaders.end());
         material.shader_id = descriptor.shader_id;
 
         CollectMaterialProperties(material);
     }
 
     void OpenGLRenderDriver::SetMaterialProperty(ResourceId id, const MaterialProperty &property) {
-        HYP_ASSERT(s_materials.find(id) != s_materials.end());
-        OpenGLMaterial &material = s_materials[id];
+        HYP_ASSERT(m_materials.find(id) != m_materials.end());
+        OpenGLMaterial &material = m_materials[id];
         
         ResourceId shader_id = material.shader_id;
-        HYP_ASSERT(s_shaders.find(shader_id) != s_shaders.end());
-        OpenGLShader &shader = s_shaders[shader_id];
+        HYP_ASSERT(m_shaders.find(shader_id) != m_shaders.end());
+        OpenGLShader &shader = m_shaders[shader_id];
         GLuint program = shader.program;
 
         MaterialPropertyId property_id = property.id;
@@ -208,8 +208,8 @@ namespace Hyperion::Rendering {
             }
             case MaterialPropertyType::Texture: {
                 ResourceId texture_id = property.storage.texture;
-                HYP_ASSERT(s_textures.find(texture_id) != s_textures.end());
-                OpenGLTexture &texture = s_textures[texture_id];
+                HYP_ASSERT(m_textures.find(texture_id) != m_textures.end());
+                OpenGLTexture &texture = m_textures[texture_id];
 
                 GLuint texture_unit = static_cast<GLuint>(material.textures.size());
                 HYP_ASSERT(texture_unit < static_cast<GLuint>(m_graphics_context->GetLimits().max_texture_units));
@@ -222,14 +222,84 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLRenderDriver::DestroyMaterial(ResourceId id) {
-        HYP_ASSERT(s_materials.find(id) != s_materials.end());
-        s_materials.erase(id);
+        HYP_ASSERT(m_materials.find(id) != m_materials.end());
+        m_materials.erase(id);
+    }
+
+    void OpenGLRenderDriver::CreateRenderTexture(ResourceId render_texture_id, const RenderTextureDescriptor &descriptor) {
+        HYP_ASSERT(m_render_textures.find(render_texture_id) == m_render_textures.end());
+
+        OpenGLRenderTexture &render_texture = m_render_textures[render_texture_id];
+
+        glCreateFramebuffers(1, &render_texture.render_texture);
+        
+        TextureSize render_texture_size = descriptor.size;
+        uint64 render_texture_attachment_count = descriptor.attachments.size / sizeof(descriptor.attachments.data[0]);
+        GLint color_attachment_index = 0;
+        bool has_created_depth_stencil_attachment = false;
+        for (uint32 i = 0; i < render_texture_attachment_count; i++) {
+            const RenderTextureAttachment &render_texture_attachment = descriptor.attachments.data[i];
+
+            OpenGLRenderTextureAttachment attachment = { };
+
+            if (render_texture_attachment.format == RenderTextureFormat::Depth24Stencil8) {
+                if (has_created_depth_stencil_attachment) {
+                    HYP_LOG_ERROR("OpenGL", "Trying to add more than one depth and stencil attachment to a render texture!");
+                    continue;
+                }
+
+                attachment.type = OpenGLRenderTextureAttachmentType::Renderbuffer;
+
+                glCreateRenderbuffers(1, &attachment.attachment);
+                glNamedRenderbufferStorage(attachment.attachment, GL_DEPTH24_STENCIL8, render_texture_size.width, render_texture_size.height);
+                glNamedFramebufferRenderbuffer(render_texture.render_texture, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, attachment.attachment);
+            } else {
+                attachment.type = OpenGLRenderTextureAttachmentType::Texture;
+
+                glCreateTextures(GL_TEXTURE_2D, 1, &attachment.attachment);
+
+                TextureParameters parameters = render_texture_attachment.parameters;
+                SetTextureParameters(attachment.attachment, parameters);
+
+                RenderTextureFormat format = render_texture_attachment.format;
+                GLsizei width = descriptor.size.width;
+                GLsizei height = descriptor.size.height;
+                GLenum internal_format = OpenGLUtilities::GetGLRenderTextureInternalFormat(format);
+                GLsizei mipmap_count = parameters.use_mipmaps ? Math::Max(descriptor.mipmap_count, 1) : 1;
+                glTextureStorage2D(attachment.attachment, mipmap_count, internal_format, width, height);
+
+                GLint attachment_index = GL_COLOR_ATTACHMENT0 + color_attachment_index;
+                //HYP_ASSERT(GL_COLOR_ATTACHMENT0 + color_attachment_index <= m_graphics_context->GetLimits().max_color_attachments);
+                glNamedFramebufferTexture(render_texture.render_texture, attachment_index, attachment.attachment, 0);
+                color_attachment_index++;
+            }
+        }
+
+        if (glCheckNamedFramebufferStatus(render_texture.render_texture, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            HYP_LOG_ERROR("OpenGL", "Failed to create framebuffer!");
+        }
+    }
+
+    void OpenGLRenderDriver::DestroyRenderTexture(ResourceId render_texture_id) {
+        HYP_ASSERT(m_render_textures.find(render_texture_id) != m_render_textures.end());
+
+        OpenGLRenderTexture &render_texture = m_render_textures[render_texture_id];
+        glDeleteFramebuffers(1, &render_texture.render_texture);
+        for (const OpenGLRenderTextureAttachment &attachment : render_texture.attachments) {
+            switch (attachment.type) {
+                case OpenGLRenderTextureAttachmentType::Texture: glDeleteTextures(1, &attachment.attachment); break;
+                case OpenGLRenderTextureAttachmentType::Renderbuffer: glDeleteRenderbuffers(1, &attachment.attachment); break;
+                default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+            }
+        }
+
+        m_render_textures.erase(render_texture_id);
     }
 
     void OpenGLRenderDriver::CreateMesh(ResourceId id, const MeshDescriptor &descriptor) {
-        HYP_ASSERT(s_meshes.find(id) == s_meshes.end());
+        HYP_ASSERT(m_meshes.find(id) == m_meshes.end());
 
-        OpenGLMesh &mesh = s_meshes[id];
+        OpenGLMesh &mesh = m_meshes[id];
         mesh.index_format = descriptor.index_format;
         mesh.sub_meshes.assign(descriptor.sub_meshes.data, descriptor.sub_meshes.data + (descriptor.sub_meshes.size / sizeof(*descriptor.sub_meshes.data)));
 
@@ -264,12 +334,12 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLRenderDriver::DrawMesh(ResourceId mesh_id, ResourceId material_id, uint32 sub_mesh_index) {
-        HYP_ASSERT(s_materials.find(material_id) != s_materials.end());
-        OpenGLMaterial &material = s_materials[material_id];
+        HYP_ASSERT(m_materials.find(material_id) != m_materials.end());
+        OpenGLMaterial &material = m_materials[material_id];
         UseMaterial(material);
 
-        HYP_ASSERT(s_meshes.find(mesh_id) != s_meshes.end());
-        OpenGLMesh &mesh = s_meshes[mesh_id];
+        HYP_ASSERT(m_meshes.find(mesh_id) != m_meshes.end());
+        OpenGLMesh &mesh = m_meshes[mesh_id];
         HYP_ASSERT(sub_mesh_index < mesh.sub_meshes.size());
         SubMesh &sub_mesh = mesh.sub_meshes[sub_mesh_index];
 
@@ -281,13 +351,13 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLRenderDriver::DestroyMesh(ResourceId id) {
-        HYP_ASSERT(s_meshes.find(id) != s_meshes.end());
+        HYP_ASSERT(m_meshes.find(id) != m_meshes.end());
 
-        OpenGLMesh &mesh = s_meshes[id];
+        OpenGLMesh &mesh = m_meshes[id];
         glDeleteBuffers(2, &mesh.vertex_buffer);
         glDeleteVertexArrays(1, &mesh.vertex_array);
 
-        s_meshes.erase(id);
+        m_meshes.erase(id);
     }
 
     void OpenGLRenderDriver::CreateTexture2D(OpenGLTexture &texture, const TextureDescriptor &descriptor) {
@@ -295,33 +365,14 @@ namespace Hyperion::Rendering {
         GLuint texture_id = texture.texture;
 
         TextureParameters parameters = descriptor.parameters;
-
-        // Wrap mode
-        {
-            GLint wrap_mode = OpenGLUtilities::GetGLTextureWrapMode(parameters.wrap_mode);
-            glTextureParameteri(texture_id, GL_TEXTURE_WRAP_S, wrap_mode);
-            glTextureParameteri(texture_id, GL_TEXTURE_WRAP_T, wrap_mode);
-        }
-
-        // Filter
-        {
-            GLint min_filter = OpenGLUtilities::GetGLTextureMinFilter(parameters.filter);
-            GLint mag_filter = OpenGLUtilities::GetGLTextureMaxFilter(parameters.filter);
-            glTextureParameteri(texture_id, GL_TEXTURE_MIN_FILTER, min_filter);
-            glTextureParameteri(texture_id, GL_TEXTURE_MAG_FILTER, mag_filter);
-        }
-
-        // Anisotropic filter
-        {
-            GLfloat anisotropic_filter_value = OpenGLUtilities::GetGLTextureAnisotropicFilter(parameters.anisotropic_filter);
-            glTextureParameterf(texture_id, GL_TEXTURE_MAX_ANISOTROPY, anisotropic_filter_value);
-        }
+        SetTextureParameters(texture_id, parameters);
 
         TextureFormat format = descriptor.format;
         GLsizei width = descriptor.size.width;
         GLsizei height = descriptor.size.height;
         GLenum internal_format = OpenGLUtilities::GetGLTextureInternalFormat(format);
-        glTextureStorage2D(texture_id, parameters.use_mipmaps ? Math::Max(descriptor.mipmap_count, 1) : 1, internal_format, width, height);
+        GLsizei mipmap_count = parameters.use_mipmaps ? Math::Max(descriptor.mipmap_count, 1) : 1;
+        glTextureStorage2D(texture_id, mipmap_count, internal_format, width, height);
 
         if (descriptor.pixels.size > 0) {
             // RANT: Because OpenGL is retarded and the texture origin is in the bottom left corner,
@@ -343,10 +394,24 @@ namespace Hyperion::Rendering {
         // TODO: Implement
     }
 
+    void OpenGLRenderDriver::SetTextureParameters(GLuint texture, const TextureParameters &parameters) {
+        GLint wrap_mode = OpenGLUtilities::GetGLTextureWrapMode(parameters.wrap_mode);
+        glTextureParameteri(texture, GL_TEXTURE_WRAP_S, wrap_mode);
+        glTextureParameteri(texture, GL_TEXTURE_WRAP_T, wrap_mode);
+
+        GLint min_filter = OpenGLUtilities::GetGLTextureMinFilter(parameters.filter);
+        GLint mag_filter = OpenGLUtilities::GetGLTextureMaxFilter(parameters.filter);
+        glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, min_filter);
+        glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, mag_filter);
+
+        GLfloat anisotropic_filter_value = OpenGLUtilities::GetGLTextureAnisotropicFilter(parameters.anisotropic_filter);
+        glTextureParameterf(texture, GL_TEXTURE_MAX_ANISOTROPY, anisotropic_filter_value);
+    }
+
     void OpenGLRenderDriver::CollectMaterialProperties(OpenGLMaterial &material) {
         ResourceId shader_id = material.shader_id;
-        HYP_ASSERT(s_shaders.find(shader_id) != s_shaders.end());
-        OpenGLShader &shader = s_shaders[shader_id];
+        HYP_ASSERT(m_shaders.find(shader_id) != m_shaders.end());
+        OpenGLShader &shader = m_shaders[shader_id];
         GLuint program = shader.program;
 
         GLint active_uniform_count;
@@ -383,8 +448,8 @@ namespace Hyperion::Rendering {
         // That way we can skip binding the shader and textures again.
 
         ResourceId shader_id = material.shader_id;
-        HYP_ASSERT(s_shaders.find(shader_id) != s_shaders.end());
-        OpenGLShader &shader = s_shaders[shader_id];
+        HYP_ASSERT(m_shaders.find(shader_id) != m_shaders.end());
+        OpenGLShader &shader = m_shaders[shader_id];
         glUseProgram(shader.program);
 
         GLuint texture_unit = 0;

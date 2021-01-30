@@ -39,29 +39,6 @@ namespace Hyperion::Rendering {
                 render_driver->DestroyShader(render_command->id);
                 return sizeof(*render_command);
             }
-            case RenderCommandType::CreateMesh: {
-                auto render_command = reinterpret_cast<RenderCommandCreateMesh *>(command);
-                RenderCommandQueueHelper helper(render_command);
-                helper.Read(render_command->descriptor.sub_meshes);
-                helper.Read(render_command->descriptor.vertex_format.attributes);
-                helper.Read(render_command->descriptor.vertices);
-                helper.Read(render_command->descriptor.indices);
-
-                render_driver->CreateMesh(render_command->mesh_id, render_command->descriptor);
-
-                uint64 extra_size = render_command->descriptor.sub_meshes.size + render_command->descriptor.vertex_format.attributes.size + render_command->descriptor.vertices.size + render_command->descriptor.indices.size;
-                return sizeof(*render_command) + extra_size;
-            }
-            case RenderCommandType::DrawMesh: {
-                auto render_command = reinterpret_cast<RenderCommandDrawMesh *>(command);
-                render_driver->DrawMesh(render_command->mesh_id, render_command->material_id, render_command->sub_mesh_index);
-                return sizeof(*render_command);
-            }
-            case RenderCommandType::DestroyMesh: {
-                auto render_command = reinterpret_cast<RenderCommandId *>(command);
-                render_driver->DestroyMesh(render_command->id);
-                return sizeof(*render_command);
-            }
             case RenderCommandType::CreateTexture: {
                 auto render_command = reinterpret_cast<RenderCommandCreateTexture *>(command);
                 RenderCommandQueueHelper helper(render_command);
@@ -90,6 +67,44 @@ namespace Hyperion::Rendering {
             case RenderCommandType::DestroyMaterial: {
                 auto render_command = reinterpret_cast<RenderCommandId *>(command);
                 render_driver->DestroyMaterial(render_command->id);
+                return sizeof(*render_command);
+            }
+            case RenderCommandType::CreateRenderTexture: {
+                auto render_command = reinterpret_cast<RenderCommandCreateRenderTexture *>(command);
+                RenderCommandQueueHelper<RenderCommandCreateRenderTexture> helper(render_command);
+                helper.Read(render_command->descriptor.attachments);
+
+                render_driver->CreateRenderTexture(render_command->render_texture_id, render_command->descriptor);
+
+                uint64 extra_size = render_command->descriptor.attachments.size;
+                return sizeof(*render_command) + extra_size;
+            }
+            case RenderCommandType::DestroyRenderTexture: {
+                auto render_command = reinterpret_cast<RenderCommandId *>(command);
+                render_driver->DestroyRenderTexture(render_command->id);
+                return sizeof(*render_command);
+            }
+            case RenderCommandType::CreateMesh: {
+                auto render_command = reinterpret_cast<RenderCommandCreateMesh *>(command);
+                RenderCommandQueueHelper helper(render_command);
+                helper.Read(render_command->descriptor.sub_meshes);
+                helper.Read(render_command->descriptor.vertex_format.attributes);
+                helper.Read(render_command->descriptor.vertices);
+                helper.Read(render_command->descriptor.indices);
+
+                render_driver->CreateMesh(render_command->mesh_id, render_command->descriptor);
+
+                uint64 extra_size = render_command->descriptor.sub_meshes.size + render_command->descriptor.vertex_format.attributes.size + render_command->descriptor.vertices.size + render_command->descriptor.indices.size;
+                return sizeof(*render_command) + extra_size;
+            }
+            case RenderCommandType::DrawMesh: {
+                auto render_command = reinterpret_cast<RenderCommandDrawMesh *>(command);
+                render_driver->DrawMesh(render_command->mesh_id, render_command->material_id, render_command->sub_mesh_index);
+                return sizeof(*render_command);
+            }
+            case RenderCommandType::DestroyMesh: {
+                auto render_command = reinterpret_cast<RenderCommandId *>(command);
+                render_driver->DestroyMesh(render_command->id);
                 return sizeof(*render_command);
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;

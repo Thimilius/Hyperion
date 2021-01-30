@@ -27,6 +27,9 @@ namespace Hyperion::Rendering {
         SetMaterialProperty,
         DestroyMaterial,
 
+        CreateRenderTexture,
+        DestroyRenderTexture,
+
         CreateMesh,
         DrawMesh,
         DestroyMesh,
@@ -69,6 +72,11 @@ namespace Hyperion::Rendering {
     struct RenderCommandSetMaterialProperty {
         ResourceId material_id;
         MaterialProperty property;
+    };
+
+    struct RenderCommandCreateRenderTexture {
+        ResourceId render_texture_id;
+        RenderTextureDescriptor descriptor;
     };
 
     struct RenderCommandCreateMesh {

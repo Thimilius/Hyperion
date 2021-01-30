@@ -29,6 +29,8 @@ namespace Hyperion::Rendering {
 
         static MaterialPropertyType GetMaterialPropertyTypeForGLShaderType(GLint type);
 
+        static GLenum GetGLRenderTextureInternalFormat(RenderTextureFormat format);
+
         static GLenum GetGLIndexFormat(IndexFormat index_format);
         static GLsizei GetGLIndexFormatSize(IndexFormat index_format);
         static GLenum GetGLMeshTopology(MeshTopology mesh_topology);

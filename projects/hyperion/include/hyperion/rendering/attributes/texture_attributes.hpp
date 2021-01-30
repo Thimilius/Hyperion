@@ -37,6 +37,7 @@ namespace Hyperion::Rendering {
     };
 
     struct TextureParameters {
+        // TODO: Implement specific wrap modes for the different axes.
         TextureWrapMode wrap_mode = TextureWrapMode::Clamp;
         TextureFilter filter = TextureFilter::Bilinear;
         TextureAnisotropicFilter anisotropic_filter = TextureAnisotropicFilter::None;
@@ -44,9 +45,20 @@ namespace Hyperion::Rendering {
     };
 
     struct TextureSize {
-        uint32 width; // Width for 2D and cubemap textures
-        uint32 height; // Height for 2D and cubemap textures
-        // NOTE: For other supported texture types we can add more required values here (3D textures and texture arrays)
+        uint32 width; // Width for 2D and cubemap textures.
+        uint32 height; // Height for 2D and cubemap textures.
+        // NOTE: For other supported texture types we can add more required values here (3D textures and texture arrays).
+    };
+
+    enum class RenderTextureFormat {
+        RGBA32,
+
+        Depth24Stencil8,
+    };
+
+    struct RenderTextureAttachment {
+        RenderTextureFormat format;
+        TextureParameters parameters;
     };
 
 }

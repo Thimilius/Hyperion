@@ -61,6 +61,14 @@ namespace Hyperion::Rendering {
         ResourceId shader_id;
     };
 
+    // TODO: Add support for msaa.
+    struct RenderTextureDescriptor {
+        TextureSize size;
+        uint32 mipmap_count;
+
+        ArrayDescriptor<RenderTextureAttachment> attachments;
+    };
+
     class IRenderDriver {
     public:
         virtual ~IRenderDriver() = default;
@@ -82,6 +90,9 @@ namespace Hyperion::Rendering {
         virtual void CreateMaterial(ResourceId material_id, const MaterialDescriptor &descriptor) = 0;
         virtual void SetMaterialProperty(ResourceId material_id, const MaterialProperty &property) = 0;
         virtual void DestroyMaterial(ResourceId material_id) = 0;
+
+        virtual void CreateRenderTexture(ResourceId render_texture_id, const RenderTextureDescriptor &descriptor) = 0;
+        virtual void DestroyRenderTexture(ResourceId render_texture_id) = 0;
 
         virtual void CreateMesh(ResourceId mesh_id, const MeshDescriptor &descriptor) = 0;
         virtual void DrawMesh(ResourceId mesh_id, ResourceId material_id, uint32 sub_mesh_index) = 0;

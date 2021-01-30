@@ -50,4 +50,29 @@ namespace Hyperion {
         return new TextureCubemap();
     }
 
+    void RenderTexture::OnDestroy() {
+        RenderEngine::GetRenderDriver()->DestroyRenderTexture(m_resource_id);
+    }
+
+    RenderTexture::RenderTexture(uint32 width, uint32 height, Vector<RenderTextureAttachment> attachments) {
+        m_width = width;
+        m_height = height;
+        m_attachments = attachments;
+
+        RenderTextureDescriptor descriptor = { };
+        descriptor.size = { width, height };
+        descriptor.mipmap_count = CalculateMipmapCount(width, height);
+        descriptor.attachments = attachments;
+
+        RenderEngine::GetRenderDriver()->CreateRenderTexture(m_resource_id, descriptor);
+    }
+
+    RenderTexture *RenderTexture::Create(uint32 width, uint32 height, Vector<RenderTextureAttachment> attachments) {
+        return new RenderTexture(width, height, attachments);
+    }
+
+    RenderTexture *RenderTexture::Create() {
+        return new RenderTexture();
+    }
+
 }

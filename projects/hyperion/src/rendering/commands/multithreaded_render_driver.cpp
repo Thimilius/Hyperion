@@ -80,9 +80,24 @@ namespace Hyperion::Rendering {
         render_command->property = property;
     }
 
-    void MultithreadedRenderDriver::DestroyMaterial(ResourceId id) {
+    void MultithreadedRenderDriver::DestroyMaterial(ResourceId material_id) {
         RenderCommandId *command = RenderEngine::GetCommandQueue().Allocate<RenderCommandId>(RenderCommandType::DestroyMaterial);
-        command->id = id;
+        command->id = material_id;
+    }
+
+    void MultithreadedRenderDriver::CreateRenderTexture(ResourceId render_texture_id, const RenderTextureDescriptor &descriptor) {
+        uint64 extra_size = descriptor.attachments.size;
+        RenderCommandCreateRenderTexture *render_command = RenderEngine::GetCommandQueue().Allocate<RenderCommandCreateRenderTexture>(RenderCommandType::CreateRenderTexture, extra_size);
+        render_command->render_texture_id = render_texture_id;
+        render_command->descriptor = descriptor;
+
+        RenderCommandQueueHelper<RenderCommandCreateRenderTexture> helper(render_command);
+        helper.Write(descriptor.attachments);
+    }
+
+    void MultithreadedRenderDriver::DestroyRenderTexture(ResourceId render_texture_id) {
+        RenderCommandId *command = RenderEngine::GetCommandQueue().Allocate<RenderCommandId>(RenderCommandType::DestroyRenderTexture);
+        command->id = render_texture_id;
     }
 
     void MultithreadedRenderDriver::CreateMesh(ResourceId mesh_id, const MeshDescriptor &descriptor) {

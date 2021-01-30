@@ -49,7 +49,7 @@ namespace Hyperion::Rendering {
 
         m_font = FontLoader::LoadFont("data/fonts/consola.ttf", 48, FontCharacterSet::ASCII);
         m_material->SetTexture("u_texture", m_font->GetTextureAtlas());
-
+        
         const FontGlyph &glyph = m_font->GetGlyph('#');
         float32 width = m_font->GetTextWidth("#", 1.0f) / Display::GetWidth();
         float32 height = glyph.bearing.y / Display::GetHeight();
@@ -74,6 +74,12 @@ namespace Hyperion::Rendering {
         RasterizerState rasterizer_state;
         rasterizer_state.blending_enabled = true;
         render_driver->SetRasterizerState(rasterizer_state);
+
+        Vector<RenderTextureAttachment> attachments = { 
+            { RenderTextureFormat::RGBA32, TextureParameters() },
+            { RenderTextureFormat::Depth24Stencil8, TextureParameters() },
+        };
+        RenderTexture *render_texture = RenderTexture::Create(Display::GetWidth(), Display::GetHeight(), attachments);
     }
 
     void ForwardRenderPipeline::Render(IRenderDriver *render_driver, const RenderContext &context) {

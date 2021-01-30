@@ -195,6 +195,13 @@ namespace Hyperion::Rendering {
         }
     }
 
+    GLenum OpenGLUtilities::GetGLRenderTextureInternalFormat(RenderTextureFormat format) {
+        switch (format) {
+            case RenderTextureFormat::RGBA32: return GL_RGBA8;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
     GLenum OpenGLUtilities::GetGLIndexFormat(IndexFormat index_format) {
         switch (index_format) {
             case IndexFormat::UInt16: return GL_UNSIGNED_SHORT;
