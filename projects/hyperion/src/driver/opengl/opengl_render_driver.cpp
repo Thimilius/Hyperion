@@ -474,18 +474,20 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLRenderDriver::UseMaterial(const OpenGLMaterial &material) {
-        // TODO: We should keep track of the currently used material.
-        // That way we can skip binding the shader and textures again.
+        if (m_current_material != &material) {
+            m_current_material = &material;
 
-        ResourceId shader_id = material.shader_id;
-        HYP_ASSERT(m_shaders.find(shader_id) != m_shaders.end());
-        OpenGLShader &shader = m_shaders[shader_id];
-        glUseProgram(shader.program);
+            ResourceId shader_id = material.shader_id;
+            HYP_ASSERT(m_shaders.find(shader_id) != m_shaders.end());
+            OpenGLShader &shader = m_shaders[shader_id];
 
-        GLuint texture_unit = 0;
-        for (auto [property_id, texture] : material.textures) {
-            glBindTextureUnit(texture_unit, texture);
-            texture_unit++;
+            glUseProgram(shader.program);
+
+            GLuint texture_unit = 0;
+            for (auto [property_id, texture] : material.textures) {
+                glBindTextureUnit(texture_unit, texture);
+                texture_unit++;
+            }
         }
     }
 

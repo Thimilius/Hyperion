@@ -74,6 +74,7 @@ namespace Hyperion::Rendering {
             Map<MaterialPropertyId, GLuint> textures;
         };
         Map<ResourceId, OpenGLMaterial> m_materials;
+        const OpenGLMaterial *m_current_material = nullptr;
 
         enum class OpenGLRenderTextureAttachmentType {
             Texture,
