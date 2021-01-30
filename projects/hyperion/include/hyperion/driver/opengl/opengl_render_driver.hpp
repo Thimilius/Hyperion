@@ -49,6 +49,7 @@ namespace Hyperion::Rendering {
             GLuint program;
         };
         Map<ResourceId, OpenGLShader> m_shaders;
+        OpenGLShader m_fallback_shader;
 
         struct OpenGLTexture {
             GLuint texture;

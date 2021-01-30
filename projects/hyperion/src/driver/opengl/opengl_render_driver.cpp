@@ -7,8 +7,31 @@
 
 namespace Hyperion::Rendering {
 
+    const char *g_fallback_shader_vertex = R"(
+        #version 410 core
+
+        layout(location = 0) in vec3 a_position;
+
+        void main() {
+	        gl_Position = vec4(a_position, 1.0);
+        }
+    )";
+    const char *g_fallback_shader_fragment = R"(
+        #version 410 core
+
+        layout(location = 0) out vec4 o_color;
+
+        void main() {
+	        o_color = vec4(1.0, 0, 1.0, 1.0);
+        }
+    )";
+
     void OpenGLRenderDriver::Initialize(GraphicsContext *graphics_context) {
         m_graphics_context = static_cast<OpenGLGraphicsContext *>(graphics_context);
+
+        OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(g_fallback_shader_vertex, g_fallback_shader_fragment);
+        HYP_ASSERT(compilation_result.succes);
+        m_fallback_shader.program = compilation_result.program;
     }
 
     void OpenGLRenderDriver::Clear(ClearFlags clear_flags, Color color) {
@@ -83,11 +106,12 @@ namespace Hyperion::Rendering {
         HYP_ASSERT(m_shaders.find(id) == m_shaders.end());
 
         OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(descriptor.source_vertex.data, descriptor.source_fragment.data);
+        OpenGLShader &shader = m_shaders[id];
         if (compilation_result.succes) {
-            OpenGLShader &shader = m_shaders[id];
             shader.program = compilation_result.program;
         } else {
-            // TODO: How do we handle shader errors here?
+            // If we could not compile the shader successfully, just use the fallback shader...
+            shader.program = m_fallback_shader.program;
         }
     }
 

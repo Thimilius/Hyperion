@@ -29,7 +29,7 @@ namespace Hyperion::Rendering {
             { ShaderStageFlags::Fragment, R"(
                 #version 410 core
 
-                out vec4 o_color;
+                layout(location = 0) out vec4 o_color;
 
                 in V2F {
 	                vec2 texture0;
