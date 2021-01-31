@@ -16,7 +16,10 @@ namespace Hyperion::Rendering {
         void SetViewport(const Viewport &viewport) override;
         void SetRasterizerState(const RasterizerState &rasterizer_state) override;
 
-        void DrawMesh(ResourceId mesh_id, ResourceId material_id, uint32 sub_mesh_index) override;
+        void SetRenderTexture(RenderTexture *render_texture) override;
+        void Blit(RenderTexture *destination, RenderTexture *source) override;
+
+        void DrawMesh(Mesh *mesh, Material *material, uint32 sub_mesh_index) override;
     private:
         template<typename T>
         inline T *Allocate(OpenGLCommandType command_type, uint64 extra_size = 0) {

@@ -58,6 +58,9 @@ namespace Hyperion {
     public:
         inline Rendering::TextureDimension GetDimension() const { return Rendering::TextureDimension::Texture2D; }
 
+        inline uint32 GetWidth() const { return m_width; }
+        inline uint32 GetHeight() const { return m_height; }
+
         static RenderTexture *Create(uint32 width, uint32 height, Vector<Rendering::RenderTextureAttachment> attachments);
     protected:
         void OnDestroy() override;

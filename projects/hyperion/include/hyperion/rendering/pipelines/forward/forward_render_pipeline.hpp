@@ -16,12 +16,12 @@ namespace Hyperion::Rendering {
         void Render(IRenderDriver *render_driver, const RenderPipelineContext &context) override;
         void Shutdown(IRenderDriver *render_driver) override;
     private:
-        CommandBuffer *m_command_buffer;
-
         Shader *m_shader;
         Material *m_material;
-        Mesh *m_mesh;
         Font *m_font;
+        Mesh *m_mesh;
+        CommandBuffer *m_command_buffer;
+        RenderTexture *m_render_texture;
     };
 
 }

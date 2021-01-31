@@ -1,5 +1,9 @@
 #pragma once
 
+#include "hyperion/assets/material.hpp"
+#include "hyperion/assets/mesh.hpp"
+#include "hyperion/assets/texture.hpp"
+#include "hyperion/core/color.hpp"
 #include "hyperion/rendering/rasterizer_state.hpp"
 
 namespace Hyperion::Rendering {
@@ -14,10 +18,10 @@ namespace Hyperion::Rendering {
     HYP_CREATE_ENUM_FLAG_OPERATORS(ClearFlags);
 
     struct Viewport {
-        int32 x;
-        int32 y;
-        int32 width;
-        int32 height;
+        uint32 x;
+        uint32 y;
+        uint32 width;
+        uint32 height;
     };
 
     class CommandBuffer {
@@ -30,7 +34,10 @@ namespace Hyperion::Rendering {
         virtual void SetViewport(const Viewport &viewport) = 0;
         virtual void SetRasterizerState(const RasterizerState &rasterizer_state) = 0;
 
-        virtual void DrawMesh(ResourceId mesh_id, ResourceId material_id, uint32 sub_mesh_index) = 0;
+        virtual void SetRenderTexture(RenderTexture *render_texture) = 0;
+        virtual void Blit(RenderTexture *destination, RenderTexture *source) = 0;
+
+        virtual void DrawMesh(Mesh *mesh, Material *material, uint32 sub_mesh_index) = 0;
     };
 
 }

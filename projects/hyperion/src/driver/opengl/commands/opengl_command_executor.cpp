@@ -23,6 +23,16 @@ namespace Hyperion::Rendering {
 				opengl_render_driver->SetRasterizerState(command->rasterizer_state);
 				return sizeof(*command);
 			}
+			case OpenGLCommandType::SetRenderTexture: {
+				auto command = reinterpret_cast<OpenGLCommandSetRenderTexture *>(opengl_command);
+				opengl_render_driver->SetRenderTexture(command->render_texture_id);
+				return sizeof(*command);
+			}
+			case OpenGLCommandType::Blit: {
+				auto command = reinterpret_cast<OpenGLCommandBlit *>(opengl_command);
+				opengl_render_driver->Blit(command->destination_id, command->destination_width, command->destination_height, command->source_id, command->source_width, command->source_height);
+				return sizeof(*command);
+			}
 			case OpenGLCommandType::DrawMesh: {
 				auto command = reinterpret_cast<OpenGLCommandDrawMesh *>(opengl_command);
 				opengl_render_driver->DrawMesh(command->mesh_id, command->material_id, command->sub_mesh_index);

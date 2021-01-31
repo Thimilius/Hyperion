@@ -4,6 +4,7 @@
 
 #include "hyperion/core/app/time.hpp"
 #include "hyperion/core/io/image_loader.hpp"
+#include "hyperion/rendering/render_driver.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -71,23 +72,25 @@ namespace Hyperion::Rendering {
         };
         m_mesh = Mesh::Create(mesh_data, sub_meshes);
 
-        Vector<RenderTextureAttachment> attachments = { 
-            { RenderTextureFormat::RGBA32, TextureParameters() },
-            { RenderTextureFormat::Depth24Stencil8, TextureParameters() },
-        };
-        RenderTexture *render_texture = RenderTexture::Create(Display::GetWidth(), Display::GetHeight(), attachments);
-
         m_command_buffer = render_driver->CreateCommandBuffer();
         RasterizerState rasterizer_state;
         rasterizer_state.blending_enabled = true;
         m_command_buffer->SetRasterizerState(rasterizer_state);
+
+        Vector<RenderTextureAttachment> attachments = { 
+            { RenderTextureFormat::RGBA32, TextureParameters() },
+            { RenderTextureFormat::Depth24Stencil8, TextureParameters() },
+        };
+        m_render_texture = RenderTexture::Create(Display::GetWidth(), Display::GetHeight(), attachments);
+
         render_driver->ExecuteCommandBuffer(m_command_buffer);
     }
 
     void ForwardRenderPipeline::Render(IRenderDriver *render_driver, const RenderPipelineContext &context) {
         m_command_buffer->ClearCommands();
 
-        Viewport viewport = { 0, 0, static_cast<int32>(Display::GetWidth()), static_cast<int32>(Display::GetHeight()) };
+        m_command_buffer->SetRenderTexture(m_render_texture);
+        Viewport viewport = { 0, 0, Display::GetWidth(), Display::GetHeight() };
         m_command_buffer->SetViewport(viewport);
 
         Color color = Color::Cyan();
@@ -99,15 +102,16 @@ namespace Hyperion::Rendering {
         value = Math::Sin(Time::GetTime() * 2.0f + Math::PI) / 2.0f + 0.5f;
         color *= value;
         m_material->SetVec4("u_color", color);
-        for (size_t i = 0; i < 1000; i++) {
-            m_command_buffer->DrawMesh(m_mesh->GetResourceId(), m_material->GetResourceId(), 0);
-        }
+        m_command_buffer->DrawMesh(m_mesh, m_material, 0);
+
+        m_command_buffer->Blit(nullptr, m_render_texture);
 
         render_driver->ExecuteCommandBuffer(m_command_buffer);
     }
 
     void ForwardRenderPipeline::Shutdown(IRenderDriver *render_driver) {
         render_driver->DestroyCommandBuffer(m_command_buffer);
+        Object::Destroy(m_render_texture);
         Object::Destroy(m_mesh);
         Object::Destroy(m_font);
         Object::Destroy(m_material);

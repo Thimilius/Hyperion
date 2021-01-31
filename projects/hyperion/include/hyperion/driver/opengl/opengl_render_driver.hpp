@@ -39,6 +39,8 @@ namespace Hyperion::Rendering {
         void Clear(ClearFlags clear_flags, Color color);
         void SetViewport(const Viewport &viewport);
         void SetRasterizerState(const RasterizerState &rasterizer_state);
+        void SetRenderTexture(ResourceId render_texture_id);
+        void Blit(ResourceId destination_id, uint32 destination_width, uint32 destination_height, ResourceId source_id, uint32 source_width, uint32 source_height);
         void DrawMesh(ResourceId mesh_id, ResourceId material_id, uint32 sub_mesh_index);
     private:
         void CreateTexture2D(OpenGLTexture &texture, const TextureDescriptor &descriptor);
@@ -95,6 +97,7 @@ namespace Hyperion::Rendering {
             Vector<OpenGLRenderTextureAttachment> attachments;
         };
         Map<ResourceId, OpenGLRenderTexture> m_render_textures;
+        const OpenGLRenderTexture *m_current_render_texture = nullptr;
 
         struct OpenGLMesh {
             // Vertex and index buffer have to be next to each other to support efficient creation and destruction.

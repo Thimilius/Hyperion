@@ -9,6 +9,9 @@ namespace Hyperion::Rendering {
         SetViewport,
         SetRasterizerState,
 
+        SetRenderTexture,
+        Blit,
+
         DrawMesh,
     };
 
@@ -23,6 +26,20 @@ namespace Hyperion::Rendering {
 
     struct OpenGLCommandSetRasterizerState {
         RasterizerState rasterizer_state;
+    };
+
+    struct OpenGLCommandSetRenderTexture {
+        ResourceId render_texture_id;
+    };
+
+    // TODO: Add support for full destination/source rectangle bounds.
+    struct OpenGLCommandBlit {
+        ResourceId destination_id;
+        uint32 destination_width;
+        uint32 destination_height;
+        ResourceId source_id;
+        uint32 source_width;
+        uint32 source_height;
     };
 
     struct OpenGLCommandDrawMesh {

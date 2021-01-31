@@ -399,6 +399,33 @@ namespace Hyperion::Rendering {
         }
     }
 
+    void OpenGLRenderDriver::SetRenderTexture(ResourceId render_texture_id) {
+        HYP_ASSERT(m_render_textures.find(render_texture_id) != m_render_textures.end());
+        OpenGLRenderTexture &render_texture = m_render_textures[render_texture_id];
+        if (m_current_render_texture != &render_texture) {
+            glBindFramebuffer(GL_FRAMEBUFFER, render_texture.render_texture);
+        }
+    }
+
+    void OpenGLRenderDriver::Blit(ResourceId destination_id, uint32 destination_width, uint32 destination_height, ResourceId source_id, uint32 source_width, uint32 source_height) {
+        GLuint destination_render_texture = 0;
+        if (destination_id != 0) {
+            HYP_ASSERT(m_render_textures.find(destination_id) != m_render_textures.end());
+            OpenGLRenderTexture &render_texture = m_render_textures[destination_id];
+            destination_render_texture = render_texture.render_texture;
+        }
+        GLuint source_render_texture = 0;
+        if (source_id != 0) {
+            HYP_ASSERT(m_render_textures.find(source_id) != m_render_textures.end());
+            OpenGLRenderTexture &render_texture = m_render_textures[source_id];
+            source_render_texture = render_texture.render_texture;
+        }
+
+        // Currently we always blit all buffers. Is this really what we always want?
+        GLbitfield mask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
+        glBlitNamedFramebuffer(source_render_texture, destination_render_texture, 0, 0, source_width, source_height, 0, 0, destination_width, destination_height, mask, GL_NEAREST);
+    }
+
     void OpenGLRenderDriver::DrawMesh(ResourceId mesh_id, ResourceId material_id, uint32 sub_mesh_index) {
         HYP_ASSERT(m_materials.find(material_id) != m_materials.end());
         OpenGLMaterial &material = m_materials[material_id];
