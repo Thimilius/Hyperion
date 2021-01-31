@@ -70,6 +70,11 @@ namespace Hyperion::Rendering {
                 uint64 extra_size = command->descriptor.attachments.size;
                 return sizeof(*command) + extra_size;
             }
+            case RenderThreadCommandType::ResizeRenderTexture: {
+                auto command = reinterpret_cast<RenderThreadCommandResizeRenderTexture *>(render_thread_command);
+                render_driver->ResizeRenderTexture(command->render_texture_id, command->width, command->height, command->mipmap_count);
+                return sizeof(*command);
+            }
             case RenderThreadCommandType::DestroyRenderTexture: {
                 auto command = reinterpret_cast<RenderThreadCommandId *>(render_thread_command);
                 render_driver->DestroyRenderTexture(command->id);

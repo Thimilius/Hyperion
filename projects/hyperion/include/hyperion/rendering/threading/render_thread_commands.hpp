@@ -26,6 +26,7 @@ namespace Hyperion::Rendering {
         DestroyMaterial,
 
         CreateRenderTexture,
+        ResizeRenderTexture,
         DestroyRenderTexture,
 
         CreateMesh,
@@ -67,6 +68,13 @@ namespace Hyperion::Rendering {
     struct RenderThreadCommandCreateRenderTexture {
         ResourceId render_texture_id;
         RenderTextureDescriptor descriptor;
+    };
+
+    struct RenderThreadCommandResizeRenderTexture {
+        ResourceId render_texture_id;
+        uint32 width;
+        uint32 height;
+        uint32 mipmap_count;
     };
 
     struct RenderThreadCommandCreateMesh {

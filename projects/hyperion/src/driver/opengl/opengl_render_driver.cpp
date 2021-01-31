@@ -61,8 +61,8 @@ namespace Hyperion::Rendering {
     void OpenGLRenderDriver::CreateTexture(ResourceId id, const TextureDescriptor &descriptor) {
         HYP_ASSERT(m_textures.find(id) == m_textures.end());
 
-        HYP_ASSERT(descriptor.size.width <= m_graphics_context->GetLimits().max_texture_size);
-        HYP_ASSERT(descriptor.size.height <= m_graphics_context->GetLimits().max_texture_size);
+        HYP_ASSERT(descriptor.size.width > 0 && descriptor.size.width <= m_graphics_context->GetLimits().max_texture_size);
+        HYP_ASSERT(descriptor.size.height > 0 && descriptor.size.height <= m_graphics_context->GetLimits().max_texture_size);
 
         OpenGLTexture &texture = m_textures[id];
         texture.dimension = descriptor.dimension;
@@ -189,14 +189,15 @@ namespace Hyperion::Rendering {
     void OpenGLRenderDriver::CreateRenderTexture(ResourceId render_texture_id, const RenderTextureDescriptor &descriptor) {
         HYP_ASSERT(m_render_textures.find(render_texture_id) == m_render_textures.end());
 
-        HYP_ASSERT(descriptor.size.width <= m_graphics_context->GetLimits().max_framebuffer_width);
-        HYP_ASSERT(descriptor.size.height <= m_graphics_context->GetLimits().max_framebuffer_height);
+        HYP_ASSERT(descriptor.size.width > 0 && descriptor.size.width <= m_graphics_context->GetLimits().max_framebuffer_width);
+        HYP_ASSERT(descriptor.size.height > 0 && descriptor.size.height <= m_graphics_context->GetLimits().max_framebuffer_height);
 
         OpenGLRenderTexture &render_texture = m_render_textures[render_texture_id];
+        render_texture.size = descriptor.size;
+        render_texture.mipmap_count = descriptor.mipmap_count;
 
         glCreateFramebuffers(1, &render_texture.render_texture);
         
-        TextureSize render_texture_size = descriptor.size;
         uint64 render_texture_attachment_count = descriptor.attachments.size / sizeof(descriptor.attachments.data[0]);
         GLenum color_attachment_index = 0;
         bool has_created_depth_stencil_attachment = false;
@@ -204,21 +205,20 @@ namespace Hyperion::Rendering {
             const RenderTextureAttachment &render_texture_attachment = descriptor.attachments.data[i];
 
             OpenGLRenderTextureAttachment attachment = { };
+            attachment.attributes.format = render_texture_attachment.format;
+            attachment.attributes.parameters = render_texture_attachment.parameters;
 
             if (render_texture_attachment.format == RenderTextureFormat::Depth24Stencil8) {
                 if (has_created_depth_stencil_attachment) {
                     HYP_LOG_ERROR("OpenGL", "Trying to add more than one depth and stencil attachment to a render texture!");
                     continue;
                 }
-                attachment.type = OpenGLRenderTextureAttachmentType::Renderbuffer;
                 has_created_depth_stencil_attachment = true;
 
                 glCreateRenderbuffers(1, &attachment.attachment);
-                glNamedRenderbufferStorage(attachment.attachment, GL_DEPTH24_STENCIL8, render_texture_size.width, render_texture_size.height);
+                glNamedRenderbufferStorage(attachment.attachment, GL_DEPTH24_STENCIL8, render_texture.size.width, render_texture.size.height);
                 glNamedFramebufferRenderbuffer(render_texture.render_texture, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, attachment.attachment);
             } else {
-                attachment.type = OpenGLRenderTextureAttachmentType::Texture;
-
                 glCreateTextures(GL_TEXTURE_2D, 1, &attachment.attachment);
 
                 TextureParameters parameters = render_texture_attachment.parameters;
@@ -236,10 +236,36 @@ namespace Hyperion::Rendering {
                 glNamedFramebufferTexture(render_texture.render_texture, attachment_index, attachment.attachment, 0);
                 color_attachment_index++;
             }
+
+            render_texture.attachments.push_back(attachment);
         }
 
         if (glCheckNamedFramebufferStatus(render_texture.render_texture, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
             HYP_LOG_ERROR("OpenGL", "Failed to create framebuffer!");
+        }
+    }
+
+    void OpenGLRenderDriver::ResizeRenderTexture(ResourceId render_texture_id, uint32 width, uint32 height, uint32 mipmap_count) {
+        HYP_ASSERT(m_render_textures.find(render_texture_id) != m_render_textures.end());
+
+        // We take an explicit copy of the render texture here, because a reference would point to a destroyed object later.
+        OpenGLRenderTexture render_texture = m_render_textures[render_texture_id];
+        if (render_texture.size.width != width || render_texture.size.height != height) {
+            // We first destroy the old render texture and then create a new one with the properties of the old.
+            // Not including the size and mipmap count of course.
+            DestroyRenderTexture(render_texture_id);
+
+            RenderTextureDescriptor descriptor = { };
+            descriptor.mipmap_count = mipmap_count;
+            descriptor.size = { width, height };
+            Vector<RenderTextureAttachment> attachments;
+            attachments.reserve(render_texture.attachments.size());
+            for (OpenGLRenderTextureAttachment attachment : render_texture.attachments) {
+                attachments.push_back(attachment.attributes);
+            }
+            descriptor.attachments = attachments;
+
+            CreateRenderTexture(render_texture_id, descriptor);
         }
     }
 
@@ -249,10 +275,10 @@ namespace Hyperion::Rendering {
         OpenGLRenderTexture &render_texture = m_render_textures[render_texture_id];
         glDeleteFramebuffers(1, &render_texture.render_texture);
         for (const OpenGLRenderTextureAttachment &attachment : render_texture.attachments) {
-            switch (attachment.type) {
-                case OpenGLRenderTextureAttachmentType::Texture: glDeleteTextures(1, &attachment.attachment); break;
-                case OpenGLRenderTextureAttachmentType::Renderbuffer: glDeleteRenderbuffers(1, &attachment.attachment); break;
-                default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+            if (attachment.attributes.format == RenderTextureFormat::Depth24Stencil8) {
+                glDeleteRenderbuffers(1, &attachment.attachment);
+            } else {
+                glDeleteTextures(1, &attachment.attachment);
             }
         }
 

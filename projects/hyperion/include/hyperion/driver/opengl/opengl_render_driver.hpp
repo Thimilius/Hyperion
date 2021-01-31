@@ -26,6 +26,7 @@ namespace Hyperion::Rendering {
         void DestroyMaterial(ResourceId material_id) override;
 
         void CreateRenderTexture(ResourceId render_texture_id, const RenderTextureDescriptor &descriptor) override;
+        void ResizeRenderTexture(ResourceId render_texture_id, uint32 width, uint32 height, uint32 mipmap_count) override;
         void DestroyRenderTexture(ResourceId render_texture_id) override;
 
         void CreateMesh(ResourceId mesh_id, const MeshDescriptor &descriptor) override;
@@ -88,12 +89,15 @@ namespace Hyperion::Rendering {
             Renderbuffer
         };
         struct OpenGLRenderTextureAttachment {
-            OpenGLRenderTextureAttachmentType type;
             GLuint attachment;
+
+            RenderTextureAttachment attributes;
         };
         struct OpenGLRenderTexture {
             GLuint render_texture;
 
+            TextureSize size;
+            uint32 mipmap_count;
             Vector<OpenGLRenderTextureAttachment> attachments;
         };
         Map<ResourceId, OpenGLRenderTexture> m_render_textures;

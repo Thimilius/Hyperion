@@ -67,6 +67,13 @@ namespace Hyperion {
         RenderEngine::GetRenderDriver()->CreateRenderTexture(m_resource_id, descriptor);
     }
 
+    void RenderTexture::Resize(uint32 width, uint32 height) {
+        m_width = width;
+        m_height = height;
+
+        RenderEngine::GetRenderDriver()->ResizeRenderTexture(m_resource_id, width, height, CalculateMipmapCount(width, height));
+    }
+
     RenderTexture *RenderTexture::Create(uint32 width, uint32 height, Vector<RenderTextureAttachment> attachments) {
         return new RenderTexture(width, height, attachments);
     }

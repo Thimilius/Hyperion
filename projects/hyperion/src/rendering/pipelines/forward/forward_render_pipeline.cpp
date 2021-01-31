@@ -89,6 +89,8 @@ namespace Hyperion::Rendering {
     void ForwardRenderPipeline::Render(IRenderDriver *render_driver, const RenderPipelineContext &context) {
         m_command_buffer->ClearCommands();
 
+        m_render_texture->Resize(Display::GetWidth(), Display::GetHeight());
+
         m_command_buffer->SetRenderTexture(m_render_texture);
         Viewport viewport = { 0, 0, Display::GetWidth(), Display::GetHeight() };
         m_command_buffer->SetViewport(viewport);

@@ -61,6 +61,8 @@ namespace Hyperion {
         inline uint32 GetWidth() const { return m_width; }
         inline uint32 GetHeight() const { return m_height; }
 
+        void Resize(uint32 width, uint32 height);
+
         static RenderTexture *Create(uint32 width, uint32 height, Vector<Rendering::RenderTextureAttachment> attachments);
     protected:
         void OnDestroy() override;

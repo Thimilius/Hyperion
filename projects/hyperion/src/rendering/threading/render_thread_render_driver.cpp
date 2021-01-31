@@ -13,7 +13,7 @@ namespace Hyperion::Rendering {
 
     void RenderThreadRenderDriver::CreateShader(ResourceId shader_id, const ShaderDescriptor &descriptor) {
         uint64 extra_size = descriptor.source_vertex.size + descriptor.source_fragment.size;
-        RenderThreadCommandCreateShader *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandCreateShader>(RenderThreadCommandType::CreateShader, extra_size);
+        auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandCreateShader>(RenderThreadCommandType::CreateShader, extra_size);
         command->shader_id = shader_id;
         command->descriptor = descriptor;
 
@@ -23,13 +23,13 @@ namespace Hyperion::Rendering {
     }
 
     void RenderThreadRenderDriver::DestroyShader(ResourceId shader_id) {
-        RenderThreadCommandId *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandId>(RenderThreadCommandType::DestroyShader);
+        auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandId>(RenderThreadCommandType::DestroyShader);
         command->id = shader_id;
     }
 
     void RenderThreadRenderDriver::CreateTexture(ResourceId texture_id, const TextureDescriptor &descriptor) {
         uint64 extra_size = descriptor.pixels.size;
-        RenderThreadCommandCreateTexture *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandCreateTexture>(RenderThreadCommandType::CreateTexture, extra_size);
+        auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandCreateTexture>(RenderThreadCommandType::CreateTexture, extra_size);
         command->texture_id = texture_id;
         command->descriptor = descriptor;
 
@@ -52,30 +52,30 @@ namespace Hyperion::Rendering {
     }
 
     void RenderThreadRenderDriver::DestroyTexture(ResourceId texture_id) {
-        RenderThreadCommandId *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandId>(RenderThreadCommandType::DestroyTexture);
+        auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandId>(RenderThreadCommandType::DestroyTexture);
         command->id = texture_id;
     }
 
     void RenderThreadRenderDriver::CreateMaterial(ResourceId material_id, const MaterialDescriptor &descriptor) {
-        RenderThreadCommandCreateMaterial *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandCreateMaterial>(RenderThreadCommandType::CreateMaterial);
+        auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandCreateMaterial>(RenderThreadCommandType::CreateMaterial);
         command->material_id = material_id;
         command->descriptor = descriptor;
     }
 
     void RenderThreadRenderDriver::SetMaterialProperty(ResourceId material_id, const MaterialProperty &property) {
-        RenderThreadCommandSetMaterialProperty *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandSetMaterialProperty>(RenderThreadCommandType::SetMaterialProperty);
+        auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandSetMaterialProperty>(RenderThreadCommandType::SetMaterialProperty);
         command->material_id = material_id;
         command->property = property;
     }
 
     void RenderThreadRenderDriver::DestroyMaterial(ResourceId material_id) {
-        RenderThreadCommandId *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandId>(RenderThreadCommandType::DestroyMaterial);
+        auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandId>(RenderThreadCommandType::DestroyMaterial);
         command->id = material_id;
     }
 
     void RenderThreadRenderDriver::CreateRenderTexture(ResourceId render_texture_id, const RenderTextureDescriptor &descriptor) {
         uint64 extra_size = descriptor.attachments.size;
-        RenderThreadCommandCreateRenderTexture *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandCreateRenderTexture>(RenderThreadCommandType::CreateRenderTexture, extra_size);
+        auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandCreateRenderTexture>(RenderThreadCommandType::CreateRenderTexture, extra_size);
         command->render_texture_id = render_texture_id;
         command->descriptor = descriptor;
 
@@ -83,14 +83,22 @@ namespace Hyperion::Rendering {
         helper.Write(descriptor.attachments);
     }
 
+    void RenderThreadRenderDriver::ResizeRenderTexture(ResourceId render_texture_id, uint32 width, uint32 height, uint32 mipmap_count) {
+        auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandResizeRenderTexture>(RenderThreadCommandType::ResizeRenderTexture);
+        command->render_texture_id = render_texture_id;
+        command->width = width;
+        command->height = height;
+        command->mipmap_count = mipmap_count;
+    }
+
     void RenderThreadRenderDriver::DestroyRenderTexture(ResourceId render_texture_id) {
-        RenderThreadCommandId *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandId>(RenderThreadCommandType::DestroyRenderTexture);
+        auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandId>(RenderThreadCommandType::DestroyRenderTexture);
         command->id = render_texture_id;
     }
 
     void RenderThreadRenderDriver::CreateMesh(ResourceId mesh_id, const MeshDescriptor &descriptor) {
         uint64 extra_size = descriptor.sub_meshes.size + descriptor.vertex_format.attributes.size + descriptor.vertices.size + descriptor.indices.size;
-        RenderThreadCommandCreateMesh *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandCreateMesh>(RenderThreadCommandType::CreateMesh, extra_size);
+        auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandCreateMesh>(RenderThreadCommandType::CreateMesh, extra_size);
         command->mesh_id = mesh_id;
         command->descriptor = descriptor;
 
@@ -102,7 +110,7 @@ namespace Hyperion::Rendering {
     }
 
     void RenderThreadRenderDriver::DestroyMesh(ResourceId mesh_id) {
-        RenderThreadCommandId *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandId>(RenderThreadCommandType::DestroyMesh);
+        auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandId>(RenderThreadCommandType::DestroyMesh);
         command->id = mesh_id;
     }
 
@@ -111,7 +119,7 @@ namespace Hyperion::Rendering {
     }
 
     void RenderThreadRenderDriver::ExecuteCommandBuffer(CommandBuffer *command_buffer) {
-        RenderThreadCommandExecuteCommandBuffer *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandExecuteCommandBuffer>(RenderThreadCommandType::ExecuteCommandBuffer);
+        auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandExecuteCommandBuffer>(RenderThreadCommandType::ExecuteCommandBuffer);
         command->command_buffer = m_backend_render_driver->CopyCommandBuffer(command_buffer);
     }
 
