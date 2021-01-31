@@ -15,6 +15,8 @@ namespace Hyperion::Rendering {
     enum class RenderThreadCommandType {
         Exit,
 
+        ExecuteCommandBuffer,
+
         Clear,
         SetViewport,
         SetRasterizerState,
@@ -43,12 +45,16 @@ namespace Hyperion::Rendering {
         ResourceId id;
     };
 
+    struct RenderThreadCommandExecuteCommandBuffer {
+        CommandBuffer *command_buffer;
+    };
+
     struct RenderThreadCommandClear {
         ClearFlags clear_flags;
         Color color;
     };
 
-    struct RenderThreadCommandViewport {
+    struct RenderThreadCommandSetViewport {
         Viewport viewport;
     };
 

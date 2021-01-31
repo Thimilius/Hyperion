@@ -6,8 +6,15 @@ namespace Hyperion::Rendering {
 
     class RenderThreadRenderDriver final : public IRenderDriver {
     public:
+        RenderThreadRenderDriver(IRenderDriver *backend_render_driver);
+
         void Initialize(GraphicsContext *graphics_context) override { }
         void Shutdown() override { }
+
+        CommandBuffer *CreateCommandBuffer() override;
+        CommandBuffer *CopyCommandBuffer(CommandBuffer *command_buffer) override;
+        void ExecuteCommandBuffer(CommandBuffer *command_buffer) override;
+        void DestroyCommandBuffer(CommandBuffer *command_buffer) override;
 
         void Clear(ClearFlags clear_flags, Color color) override;
         void SetViewport(const Viewport &viewport) override;
@@ -30,6 +37,8 @@ namespace Hyperion::Rendering {
         void CreateMesh(ResourceId mesh_id, const MeshDescriptor &descriptor) override;
         void DrawMesh(ResourceId mesh_id, ResourceId material_id, uint32 sub_mesh_index) override;
         void DestroyMesh(ResourceId mesh_id) override;
+    private:
+        IRenderDriver *m_backend_render_driver;
     };
 
 }

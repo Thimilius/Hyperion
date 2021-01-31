@@ -8,13 +8,19 @@ namespace Hyperion::Rendering {
 
     uint64 RenderThreadCommandExecutor::Execute(IRenderDriver *render_driver, RenderThreadCommandType command_type, void *render_thread_command) {
         switch (command_type) {
+            case RenderThreadCommandType::ExecuteCommandBuffer: {
+                auto command = reinterpret_cast<RenderThreadCommandExecuteCommandBuffer *>(render_thread_command);
+                render_driver->ExecuteCommandBuffer(command->command_buffer);
+                render_driver->DestroyCommandBuffer(command->command_buffer);
+                return sizeof(*command);
+            }
             case RenderThreadCommandType::Clear: {
                 auto command = reinterpret_cast<RenderThreadCommandClear *>(render_thread_command);
                 render_driver->Clear(command->clear_flags, command->color);
                 return sizeof(*command);
             }
             case RenderThreadCommandType::SetViewport: {
-                auto command = reinterpret_cast<RenderThreadCommandViewport *>(render_thread_command);
+                auto command = reinterpret_cast<RenderThreadCommandSetViewport *>(render_thread_command);
                 render_driver->SetViewport(command->viewport);
                 return sizeof(*command);
             }

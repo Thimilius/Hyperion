@@ -102,7 +102,7 @@ namespace Hyperion::Rendering {
         s_render_driver_backend->Initialize(s_graphics_context);
 
         if (s_render_settings.threading_mode == RenderThreadingMode::MultiThreaded) {
-            s_render_driver_wrapper = new RenderThreadRenderDriver();
+            s_render_driver_wrapper = new RenderThreadRenderDriver(s_render_driver_backend);
             s_render_driver = s_render_driver_wrapper;
         } else {
             s_render_driver = s_render_driver_backend;

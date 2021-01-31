@@ -7,6 +7,27 @@
 
 namespace Hyperion::Rendering {
 
+    RenderThreadRenderDriver::RenderThreadRenderDriver(IRenderDriver *backend_render_driver) {
+        m_backend_render_driver = backend_render_driver;
+    }
+
+    CommandBuffer *RenderThreadRenderDriver::CreateCommandBuffer() {
+        return m_backend_render_driver->CreateCommandBuffer();
+    }
+
+    void RenderThreadRenderDriver::ExecuteCommandBuffer(CommandBuffer *command_buffer) {
+        RenderThreadCommandExecuteCommandBuffer *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandExecuteCommandBuffer>(RenderThreadCommandType::ExecuteCommandBuffer);
+        command->command_buffer = m_backend_render_driver->CopyCommandBuffer(command_buffer);
+    }
+
+    CommandBuffer *RenderThreadRenderDriver::CopyCommandBuffer(CommandBuffer *command_buffer) {
+        return m_backend_render_driver->CopyCommandBuffer(command_buffer);
+    }
+
+    void RenderThreadRenderDriver::DestroyCommandBuffer(CommandBuffer *command_buffer) {
+        m_backend_render_driver->DestroyCommandBuffer(command_buffer);
+    }
+
     void RenderThreadRenderDriver::Clear(ClearFlags clear_flags, Color color) {
         RenderThreadCommandClear *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandClear>(RenderThreadCommandType::Clear);
         command->clear_flags = clear_flags;
@@ -14,7 +35,7 @@ namespace Hyperion::Rendering {
     }
 
     void RenderThreadRenderDriver::SetViewport(const Viewport &viewport) {
-        RenderThreadCommandViewport *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandViewport>(RenderThreadCommandType::SetViewport);
+        RenderThreadCommandSetViewport *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandSetViewport>(RenderThreadCommandType::SetViewport);
         command->viewport = viewport;
     }
 

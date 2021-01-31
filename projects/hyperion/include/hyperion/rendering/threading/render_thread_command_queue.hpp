@@ -11,10 +11,6 @@ namespace Hyperion::Rendering {
 
     class RenderThreadCommandQueue {
     public:
-        inline bool IsEmpty() const { return m_buffer.empty(); }
-        inline uint64 GetSize() const { return m_buffer.size(); }
-        inline uint8 *GetData() { return m_buffer.data(); }
-
         inline void Allocate(RenderThreadCommandType command_type) {
             AllocateInternal(command_type, sizeof(command_type));
         }
@@ -25,6 +21,9 @@ namespace Hyperion::Rendering {
             return reinterpret_cast<T *>(data);
         }
     private:
+        inline uint64 GetSize() const { return m_buffer.size(); }
+        inline uint8 *GetData() { return m_buffer.data(); }
+
         inline void Clear() {
             m_buffer.clear();
 

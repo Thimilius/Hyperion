@@ -14,6 +14,11 @@ namespace Hyperion::Rendering {
         void Initialize(GraphicsContext *graphics_context) override;
         void Shutdown() override { }
 
+        CommandBuffer *CreateCommandBuffer() override;
+        CommandBuffer *CopyCommandBuffer(CommandBuffer *command_buffer) override;
+        void ExecuteCommandBuffer(CommandBuffer *command_buffer) override;
+        void DestroyCommandBuffer(CommandBuffer *command_buffer) override;
+
         void Clear(ClearFlags clear_flags, Color color) override;
         void SetViewport(const Viewport &viewport) override;
         void SetRasterizerState(const RasterizerState &rasterizer_state) override;

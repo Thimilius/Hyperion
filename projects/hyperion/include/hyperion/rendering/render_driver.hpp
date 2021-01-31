@@ -13,6 +13,10 @@
 #include "hyperion/rendering/attributes/texture_attributes.hpp"
 
 namespace Hyperion::Rendering {
+    class CommandBuffer;
+}
+
+namespace Hyperion::Rendering {
 
     enum class ClearFlags {
         None,
@@ -75,6 +79,12 @@ namespace Hyperion::Rendering {
 
         virtual void Initialize(GraphicsContext *graphics_context) = 0;
         virtual void Shutdown() = 0;
+
+        // Command buffers are special in that they can be created/copied and destroyed directly and are therefore thread safe!
+        virtual CommandBuffer *CreateCommandBuffer() = 0;
+        virtual CommandBuffer *CopyCommandBuffer(CommandBuffer *command_buffer) = 0;
+        virtual void ExecuteCommandBuffer(CommandBuffer *command_buffer) = 0;
+        virtual void DestroyCommandBuffer(CommandBuffer *command_buffer) = 0;
 
         virtual void Clear(ClearFlags clear_flags, Color color) = 0;
         virtual void SetViewport(const Viewport &viewport) = 0;

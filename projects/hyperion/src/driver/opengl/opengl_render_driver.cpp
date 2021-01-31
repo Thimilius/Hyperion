@@ -4,6 +4,8 @@
 
 #include "hyperion/driver/opengl/opengl_shader_compiler.hpp"
 #include "hyperion/driver/opengl/opengl_utilities.hpp"
+#include "hyperion/driver/opengl/commands/opengl_command_buffer.hpp"
+#include "hyperion/driver/opengl/commands/opengl_command_executor.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -32,6 +34,32 @@ namespace Hyperion::Rendering {
         OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(g_fallback_shader_vertex, g_fallback_shader_fragment);
         HYP_ASSERT(compilation_result.succes);
         m_fallback_shader.program = compilation_result.program;
+    }
+
+    CommandBuffer *OpenGLRenderDriver::CreateCommandBuffer() {
+        return new OpenGLCommandBuffer();
+    }
+
+    CommandBuffer *OpenGLRenderDriver::CopyCommandBuffer(CommandBuffer *command_buffer) {
+        OpenGLCommandBuffer *opengl_command_buffer = static_cast<OpenGLCommandBuffer *>(command_buffer);
+        return new OpenGLCommandBuffer(*opengl_command_buffer);
+    }
+
+    void OpenGLRenderDriver::ExecuteCommandBuffer(CommandBuffer *command_buffer) {
+        OpenGLCommandBuffer *opengl_command_buffer = static_cast<OpenGLCommandBuffer *>(command_buffer);
+        auto program_counter = opengl_command_buffer->GetData();
+        auto program_counter_end = opengl_command_buffer->GetData() + opengl_command_buffer->GetSize();
+        OpenGLCommandType command_type;
+        while (program_counter < program_counter_end) {
+            command_type = *reinterpret_cast<OpenGLCommandType *>(program_counter);
+            program_counter += sizeof(OpenGLCommandType);
+
+            program_counter += static_cast<size_t>(OpenGLCommandExecutor::Execute(this, command_type, program_counter));
+        }
+    }
+
+    void OpenGLRenderDriver::DestroyCommandBuffer(CommandBuffer *command_buffer) {
+        delete command_buffer;
     }
 
     void OpenGLRenderDriver::Clear(ClearFlags clear_flags, Color color) {

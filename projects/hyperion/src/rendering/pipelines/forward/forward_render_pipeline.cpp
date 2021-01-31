@@ -4,8 +4,11 @@
 
 #include "hyperion/core/app/time.hpp"
 #include "hyperion/core/io/image_loader.hpp"
+#include "hyperion/rendering/command_buffer.hpp"
 
 namespace Hyperion::Rendering {
+
+    CommandBuffer *g_command_buffer;
 
     void ForwardRenderPipeline::Initialize(IRenderDriver *render_driver) {
         Map<ShaderStageFlags, String> sources = {
@@ -80,23 +83,28 @@ namespace Hyperion::Rendering {
             { RenderTextureFormat::Depth24Stencil8, TextureParameters() },
         };
         RenderTexture *render_texture = RenderTexture::Create(Display::GetWidth(), Display::GetHeight(), attachments);
+
+        g_command_buffer = render_driver->CreateCommandBuffer();
     }
 
     void ForwardRenderPipeline::Render(IRenderDriver *render_driver, const RenderPipelineContext &context) {
+        g_command_buffer->ClearCommands();
+
         Viewport viewport = { 0, 0, static_cast<int32>(Display::GetWidth()), static_cast<int32>(Display::GetHeight()) };
-        render_driver->SetViewport(viewport);
+        g_command_buffer->SetViewport(viewport);
 
         Color color = Color::Cyan();
         float32 value = Math::Sin(Time::GetTime() * 2.0f) / 2.0f + 0.5f;
         color *= value;
-        render_driver->Clear(ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, color);
+        g_command_buffer->Clear(ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, color);
 
         color = Color::Green();
         value = Math::Sin(Time::GetTime() * 2.0f + Math::PI) / 2.0f + 0.5f;
         color *= value;
         m_material->SetVec4("u_color", color);
+        g_command_buffer->DrawMesh(m_mesh->GetResourceId(), m_material->GetResourceId(), 0);
 
-        render_driver->DrawMesh(m_mesh->GetResourceId(), m_material->GetResourceId(), 0);
+        render_driver->ExecuteCommandBuffer(g_command_buffer);
     }
 
     void ForwardRenderPipeline::Shutdown(IRenderDriver *render_driver) {
