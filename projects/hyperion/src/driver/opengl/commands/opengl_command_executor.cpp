@@ -18,6 +18,11 @@ namespace Hyperion::Rendering {
 				opengl_render_driver->SetViewport(command->viewport);
 				return sizeof(*command);
 			}
+			case OpenGLCommandType::SetRasterizerState: {
+				auto command = reinterpret_cast<OpenGLCommandSetRasterizerState *>(opengl_command);
+				opengl_render_driver->SetRasterizerState(command->rasterizer_state);
+				return sizeof(*command);
+			}
 			case OpenGLCommandType::DrawMesh: {
 				auto command = reinterpret_cast<OpenGLCommandDrawMesh *>(opengl_command);
 				opengl_render_driver->DrawMesh(command->mesh_id, command->material_id, command->sub_mesh_index);

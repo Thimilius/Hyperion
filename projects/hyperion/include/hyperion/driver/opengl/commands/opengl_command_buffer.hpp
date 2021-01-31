@@ -14,6 +14,7 @@ namespace Hyperion::Rendering {
 
         void Clear(ClearFlags clear_flags, Color color) override;
         void SetViewport(const Viewport &viewport) override;
+        void SetRasterizerState(const RasterizerState &rasterizer_state) override;
 
         void DrawMesh(ResourceId mesh_id, ResourceId material_id, uint32 sub_mesh_index) override;
     private:

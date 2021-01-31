@@ -11,15 +11,6 @@ namespace Hyperion::Rendering {
         void Initialize(GraphicsContext *graphics_context) override { }
         void Shutdown() override { }
 
-        CommandBuffer *CreateCommandBuffer() override;
-        CommandBuffer *CopyCommandBuffer(CommandBuffer *command_buffer) override;
-        void ExecuteCommandBuffer(CommandBuffer *command_buffer) override;
-        void DestroyCommandBuffer(CommandBuffer *command_buffer) override;
-
-        void Clear(ClearFlags clear_flags, Color color) override;
-        void SetViewport(const Viewport &viewport) override;
-        void SetRasterizerState(const RasterizerState &rasterizer_state) override;
-
         void CreateShader(ResourceId shader_id, const ShaderDescriptor &descriptor) override;
         void DestroyShader(ResourceId shader_id) override;
 
@@ -35,8 +26,12 @@ namespace Hyperion::Rendering {
         void DestroyRenderTexture(ResourceId render_texture_id) override;
 
         void CreateMesh(ResourceId mesh_id, const MeshDescriptor &descriptor) override;
-        void DrawMesh(ResourceId mesh_id, ResourceId material_id, uint32 sub_mesh_index) override;
         void DestroyMesh(ResourceId mesh_id) override;
+
+        CommandBuffer *CreateCommandBuffer() override;
+        CommandBuffer *CopyCommandBuffer(CommandBuffer *command_buffer) override;
+        void ExecuteCommandBuffer(CommandBuffer *command_buffer) override;
+        void DestroyCommandBuffer(CommandBuffer *command_buffer) override;
     private:
         IRenderDriver *m_backend_render_driver;
     };

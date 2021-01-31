@@ -7,6 +7,7 @@ namespace Hyperion::Rendering {
     enum class OpenGLCommandType {
         Clear,
         SetViewport,
+        SetRasterizerState,
 
         DrawMesh,
     };
@@ -18,6 +19,10 @@ namespace Hyperion::Rendering {
 
     struct OpenGLCommandSetViewport {
         Viewport viewport;
+    };
+
+    struct OpenGLCommandSetRasterizerState {
+        RasterizerState rasterizer_state;
     };
 
     struct OpenGLCommandDrawMesh {

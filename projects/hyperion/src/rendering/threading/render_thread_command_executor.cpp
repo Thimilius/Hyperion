@@ -14,21 +14,6 @@ namespace Hyperion::Rendering {
                 render_driver->DestroyCommandBuffer(command->command_buffer);
                 return sizeof(*command);
             }
-            case RenderThreadCommandType::Clear: {
-                auto command = reinterpret_cast<RenderThreadCommandClear *>(render_thread_command);
-                render_driver->Clear(command->clear_flags, command->color);
-                return sizeof(*command);
-            }
-            case RenderThreadCommandType::SetViewport: {
-                auto command = reinterpret_cast<RenderThreadCommandSetViewport *>(render_thread_command);
-                render_driver->SetViewport(command->viewport);
-                return sizeof(*command);
-            }
-            case RenderThreadCommandType::SetRasterizerState: {
-                auto command = reinterpret_cast<RenderThreadCommandSetRasterizerState *>(render_thread_command);
-                render_driver->SetRasterizerState(command->rasterizer_state);
-                return sizeof(*command);
-            }
             case RenderThreadCommandType::CreateShader: {
                 auto command = reinterpret_cast<RenderThreadCommandCreateShader *>(render_thread_command);
                 RenderThreadCommandQueueHelper helper(command);
@@ -102,11 +87,6 @@ namespace Hyperion::Rendering {
 
                 uint64 extra_size = command->descriptor.sub_meshes.size + command->descriptor.vertex_format.attributes.size + command->descriptor.vertices.size + command->descriptor.indices.size;
                 return sizeof(*command) + extra_size;
-            }
-            case RenderThreadCommandType::DrawMesh: {
-                auto command = reinterpret_cast<RenderThreadCommandDrawMesh *>(render_thread_command);
-                render_driver->DrawMesh(command->mesh_id, command->material_id, command->sub_mesh_index);
-                return sizeof(*command);
             }
             case RenderThreadCommandType::DestroyMesh: {
                 auto command = reinterpret_cast<RenderThreadCommandId *>(render_thread_command);

@@ -19,6 +19,11 @@ namespace Hyperion::Rendering {
         command->viewport = viewport;
     }
 
+    void OpenGLCommandBuffer::SetRasterizerState(const RasterizerState &rasterizer_state) {
+        OpenGLCommandSetRasterizerState *command = Allocate<OpenGLCommandSetRasterizerState>(OpenGLCommandType::SetRasterizerState);
+        command->rasterizer_state = rasterizer_state;
+    }
+
     void OpenGLCommandBuffer::DrawMesh(ResourceId mesh_id, ResourceId material_id, uint32 sub_mesh_index) {
         OpenGLCommandDrawMesh *command = Allocate<OpenGLCommandDrawMesh>(OpenGLCommandType::DrawMesh);
         command->mesh_id = mesh_id;

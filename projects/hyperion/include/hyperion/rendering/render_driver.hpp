@@ -5,7 +5,7 @@
 #include "hyperion/core/math/vec3.hpp"
 #include "hyperion/core/object/resource.hpp"
 #include "hyperion/rendering/graphics_context.hpp"
-#include "hyperion/rendering/rasterizer_state.hpp"
+#include "hyperion/rendering/command_buffer.hpp"
 #include "hyperion/rendering/attributes/common_attributes.hpp"
 #include "hyperion/rendering/attributes/material_attributes.hpp"
 #include "hyperion/rendering/attributes/mesh_attributes.hpp"
@@ -13,26 +13,6 @@
 #include "hyperion/rendering/attributes/texture_attributes.hpp"
 
 namespace Hyperion::Rendering {
-    class CommandBuffer;
-}
-
-namespace Hyperion::Rendering {
-
-    enum class ClearFlags {
-        None,
-
-        Color   = BIT(0),
-        Depth   = BIT(1),
-        Stencil = BIT(2)
-    };
-    HYP_CREATE_ENUM_FLAG_OPERATORS(ClearFlags);
-
-    struct Viewport {
-        int32 x;
-        int32 y;
-        int32 width;
-        int32 height;
-    };
 
     struct ShaderDescriptor {
         ShaderStageFlags stage_flags;
@@ -80,16 +60,6 @@ namespace Hyperion::Rendering {
         virtual void Initialize(GraphicsContext *graphics_context) = 0;
         virtual void Shutdown() = 0;
 
-        // Command buffers are special in that they can be created/copied and destroyed directly and are therefore thread safe!
-        virtual CommandBuffer *CreateCommandBuffer() = 0;
-        virtual CommandBuffer *CopyCommandBuffer(CommandBuffer *command_buffer) = 0;
-        virtual void ExecuteCommandBuffer(CommandBuffer *command_buffer) = 0;
-        virtual void DestroyCommandBuffer(CommandBuffer *command_buffer) = 0;
-
-        virtual void Clear(ClearFlags clear_flags, Color color) = 0;
-        virtual void SetViewport(const Viewport &viewport) = 0;
-        virtual void SetRasterizerState(const RasterizerState &rasterizer_state) = 0;
-
         virtual void CreateShader(ResourceId shader_id, const ShaderDescriptor &descriptor) = 0;
         virtual void DestroyShader(ResourceId shader_id) = 0;
 
@@ -105,8 +75,13 @@ namespace Hyperion::Rendering {
         virtual void DestroyRenderTexture(ResourceId render_texture_id) = 0;
 
         virtual void CreateMesh(ResourceId mesh_id, const MeshDescriptor &descriptor) = 0;
-        virtual void DrawMesh(ResourceId mesh_id, ResourceId material_id, uint32 sub_mesh_index) = 0;
         virtual void DestroyMesh(ResourceId mesh_id) = 0;
+
+        // Command buffers are special in that they can be created/copied and destroyed directly and are therefore thread safe!
+        virtual CommandBuffer *CreateCommandBuffer() = 0;
+        virtual CommandBuffer *CopyCommandBuffer(CommandBuffer *command_buffer) = 0;
+        virtual void ExecuteCommandBuffer(CommandBuffer *command_buffer) = 0;
+        virtual void DestroyCommandBuffer(CommandBuffer *command_buffer) = 0;
     };
 
 }

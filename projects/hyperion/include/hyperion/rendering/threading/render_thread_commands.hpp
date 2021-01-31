@@ -15,12 +15,6 @@ namespace Hyperion::Rendering {
     enum class RenderThreadCommandType {
         Exit,
 
-        ExecuteCommandBuffer,
-
-        Clear,
-        SetViewport,
-        SetRasterizerState,
-
         CreateShader,
         DestroyShader,
 
@@ -35,8 +29,9 @@ namespace Hyperion::Rendering {
         DestroyRenderTexture,
 
         CreateMesh,
-        DrawMesh,
         DestroyMesh,
+
+        ExecuteCommandBuffer,
     };
 
     // This is a generic render thread command containing just an id.
@@ -47,19 +42,6 @@ namespace Hyperion::Rendering {
 
     struct RenderThreadCommandExecuteCommandBuffer {
         CommandBuffer *command_buffer;
-    };
-
-    struct RenderThreadCommandClear {
-        ClearFlags clear_flags;
-        Color color;
-    };
-
-    struct RenderThreadCommandSetViewport {
-        Viewport viewport;
-    };
-
-    struct RenderThreadCommandSetRasterizerState {
-        RasterizerState rasterizer_state;
     };
 
     struct RenderThreadCommandCreateShader {
@@ -90,12 +72,6 @@ namespace Hyperion::Rendering {
     struct RenderThreadCommandCreateMesh {
         ResourceId mesh_id;
         MeshDescriptor descriptor;
-    };
-
-    struct RenderThreadCommandDrawMesh {
-        ResourceId mesh_id;
-        ResourceId material_id;
-        uint32 sub_mesh_index;
     };
 
     // NOTE: Immediate render thread commands are special commands that get executed immediately by the Render Thread.
