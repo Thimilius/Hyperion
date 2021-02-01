@@ -15,6 +15,11 @@ namespace Hyperion::Rendering {
     enum class RenderThreadCommandType {
         Exit,
 
+        Clear,
+        SetViewport,
+        SetRasterizerState,
+        SetCameraData,
+
         CreateShader,
         DestroyShader,
 
@@ -27,12 +32,13 @@ namespace Hyperion::Rendering {
 
         CreateRenderTexture,
         ResizeRenderTexture,
+        SetRenderTexture,
+        BlitRenderTexture,
         DestroyRenderTexture,
 
         CreateMesh,
+        DrawMesh,
         DestroyMesh,
-
-        ExecuteCommandBuffer,
     };
 
     // This is a generic render thread command containing just an id.
@@ -41,8 +47,21 @@ namespace Hyperion::Rendering {
         ResourceId id;
     };
 
-    struct RenderThreadCommandExecuteCommandBuffer {
-        CommandBuffer *command_buffer;
+    struct RenderThreadCommandClear {
+        ClearFlags clear_flags;
+        Color color;
+    };
+
+    struct RenderThreadCommandSetViewport {
+        Viewport viewport;
+    };
+
+    struct RenderThreadCommandSetRasterizerState {
+        RasterizerState rasterizer_state;
+    };
+
+    struct RenderThreadCommandSetCameraData {
+        CameraData camera_data;
     };
 
     struct RenderThreadCommandCreateShader {
@@ -77,9 +96,26 @@ namespace Hyperion::Rendering {
         uint32 mipmap_count;
     };
 
+    // TODO: Add support for full destination/source rectangle bounds.
+    struct RenderThreadCommandBlitRenderTexture {
+        ResourceId destination_id;
+        uint32 destination_width;
+        uint32 destination_height;
+        ResourceId source_id;
+        uint32 source_width;
+        uint32 source_height;
+    };
+
     struct RenderThreadCommandCreateMesh {
         ResourceId mesh_id;
         MeshDescriptor descriptor;
+    };
+
+    struct RenderThreadCommandDrawMesh {
+        ResourceId mesh_id;
+        Mat4 model_matrix;
+        ResourceId material_id;
+        uint32 sub_mesh_index;
     };
 
     // NOTE: Immediate render thread commands are special commands that get executed immediately by the Render Thread.

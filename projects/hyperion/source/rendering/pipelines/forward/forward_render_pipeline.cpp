@@ -68,56 +68,42 @@ namespace Hyperion::Rendering {
 
         m_mesh = MeshFactory::CreateCube(1.0f);
 
-        m_command_buffer = render_driver->CreateCommandBuffer();
         RasterizerState rasterizer_state;
         rasterizer_state.blending_enabled = true;
-        m_command_buffer->SetRasterizerState(rasterizer_state);
+        render_driver->SetRasterizerState(rasterizer_state);
 
         Vector<RenderTextureAttachment> attachments = { 
             { RenderTextureFormat::RGBA32, TextureParameters() },
             { RenderTextureFormat::Depth24Stencil8, TextureParameters() },
         };
         m_render_texture = RenderTexture::Create(Display::GetWidth(), Display::GetHeight(), attachments);
-
-        render_driver->ExecuteCommandBuffer(m_command_buffer);
-
-        m_command_buffer2 = render_driver->CreateCommandBuffer();
-        for (float32 x = 0; x < 25; x++) {
-            for (float32 z = 0; z < 25; z++) {
-                m_command_buffer2->DrawMesh(m_mesh, Mat4::Translate(x * 2.0f, 0.0f, z * 2.0f), m_material, 0);
-            }
-        }
-        m_command_buffer2->Blit(nullptr, m_render_texture);
     }
 
     void ForwardRenderPipeline::Render(IRenderDriver *render_driver, const RenderPipelineContext &context) {
-        m_command_buffer->ClearCommands();
-
         m_render_texture->Resize(Display::GetWidth(), Display::GetHeight());
 
-        m_command_buffer->SetupCameraData(context.GetCameraData());
+        render_driver->SetCameraData(context.GetCameraData());
 
-        m_command_buffer->SetRenderTexture(m_render_texture);
+        render_driver->SetRenderTexture(m_render_texture->GetResourceId());
         Viewport viewport = { 0, 0, Display::GetWidth(), Display::GetHeight() };
-        m_command_buffer->SetViewport(viewport);
+        render_driver->SetViewport(viewport);
         
         Color color = Color::Cyan();
         float32 value = Math::Sin(Time::GetTime() * 2.0f) / 2.0f + 0.5f;
         color *= value;
-        m_command_buffer->Clear(ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, color);
+        render_driver->Clear(ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, color);
 
-        //for (float32 x = 0; x < 25; x++) {
-        //    for (float32 z = 0; z < 25; z++) {
-        //        m_command_buffer->DrawMesh(m_mesh, Mat4::Translate(x * 2.0f, 0.0f, z * 2.0f), m_material, 0);
-        //    }
-        //}
+        for (float32 x = 0; x < 100; x++) {
+            for (float32 z = 0; z < 100; z++) {
+                Mat4 model_matrix = Mat4::Translate(x * 2.0f, 0.0f, z * 2.0f) * Mat4::Rotate(Vec3::Up(), Time::GetTime() * 25.0f);
+                render_driver->DrawMesh(m_mesh->GetResourceId(), model_matrix, m_material->GetResourceId(), 0);
+            }
+        }
 
-        render_driver->ExecuteCommandBuffer(m_command_buffer);
-        render_driver->ExecuteCommandBuffer(m_command_buffer2);
+        render_driver->BlitRenderTexture(0, Display::GetWidth(), Display::GetHeight(), m_render_texture->GetResourceId(), m_render_texture->GetWidth(), m_render_texture->GetHeight());
     }
 
     void ForwardRenderPipeline::Shutdown(IRenderDriver *render_driver) {
-        render_driver->DestroyCommandBuffer(m_command_buffer);
         Object::Destroy(m_render_texture);
         Object::Destroy(m_mesh);
         Object::Destroy(m_material);

@@ -8,10 +8,24 @@ namespace Hyperion::Rendering {
 
     uint64 RenderThreadCommandExecutor::Execute(IRenderDriver *render_driver, RenderThreadCommandType command_type, void *render_thread_command) {
         switch (command_type) {
-            case RenderThreadCommandType::ExecuteCommandBuffer: {
-                auto command = reinterpret_cast<RenderThreadCommandExecuteCommandBuffer *>(render_thread_command);
-                render_driver->ExecuteCommandBuffer(command->command_buffer);
-                render_driver->DestroyCommandBuffer(command->command_buffer);
+            case RenderThreadCommandType::Clear: {
+                auto command = reinterpret_cast<RenderThreadCommandClear *>(render_thread_command);
+                render_driver->Clear(command->clear_flags, command->color);
+                return sizeof(*command);
+            }
+            case RenderThreadCommandType::SetViewport: {
+                auto command = reinterpret_cast<RenderThreadCommandSetViewport *>(render_thread_command);
+                render_driver->SetViewport(command->viewport);
+                return sizeof(*command);
+            }
+            case RenderThreadCommandType::SetRasterizerState: {
+                auto command = reinterpret_cast<RenderThreadCommandSetRasterizerState *>(render_thread_command);
+                render_driver->SetRasterizerState(command->rasterizer_state);
+                return sizeof(*command);
+            }
+            case RenderThreadCommandType::SetCameraData: {
+                auto command = reinterpret_cast<RenderThreadCommandSetCameraData *>(render_thread_command);
+                render_driver->SetCameraData(command->camera_data);
                 return sizeof(*command);
             }
             case RenderThreadCommandType::CreateShader: {
@@ -75,6 +89,16 @@ namespace Hyperion::Rendering {
                 render_driver->ResizeRenderTexture(command->render_texture_id, command->width, command->height, command->mipmap_count);
                 return sizeof(*command);
             }
+            case RenderThreadCommandType::SetRenderTexture: {
+                auto command = reinterpret_cast<RenderThreadCommandId *>(render_thread_command);
+                render_driver->SetRenderTexture(command->id);
+                return sizeof(*command);
+            }
+            case RenderThreadCommandType::BlitRenderTexture: {
+                auto command = reinterpret_cast<RenderThreadCommandBlitRenderTexture *>(render_thread_command);
+                render_driver->BlitRenderTexture(command->destination_id, command->destination_width, command->destination_height, command->source_id, command->source_width, command->source_height);
+                return sizeof(*command);
+            }
             case RenderThreadCommandType::DestroyRenderTexture: {
                 auto command = reinterpret_cast<RenderThreadCommandId *>(render_thread_command);
                 render_driver->DestroyRenderTexture(command->id);
@@ -92,6 +116,11 @@ namespace Hyperion::Rendering {
 
                 uint64 extra_size = command->descriptor.sub_meshes.size + command->descriptor.vertex_format.attributes.size + command->descriptor.vertices.size + command->descriptor.indices.size;
                 return sizeof(*command) + extra_size;
+            }
+            case RenderThreadCommandType::DrawMesh: {
+                auto command = reinterpret_cast<RenderThreadCommandDrawMesh *>(render_thread_command);
+                render_driver->DrawMesh(command->mesh_id, command->model_matrix, command->material_id, command->sub_mesh_index);
+                return sizeof(*command);
             }
             case RenderThreadCommandType::DestroyMesh: {
                 auto command = reinterpret_cast<RenderThreadCommandId *>(render_thread_command);

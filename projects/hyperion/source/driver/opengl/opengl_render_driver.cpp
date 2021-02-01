@@ -4,8 +4,6 @@
 
 #include "hyperion/driver/opengl/opengl_shader_compiler.hpp"
 #include "hyperion/driver/opengl/opengl_utilities.hpp"
-#include "hyperion/driver/opengl/commands/opengl_command_buffer.hpp"
-#include "hyperion/driver/opengl/commands/opengl_command_executor.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -44,6 +42,82 @@ namespace Hyperion::Rendering {
         OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(g_fallback_shader_vertex, g_fallback_shader_fragment);
         HYP_ASSERT(compilation_result.succes);
         m_fallback_shader.program = compilation_result.program;
+    }
+
+    void OpenGLRenderDriver::Clear(ClearFlags clear_flags, Color color) {
+        glClearColor(color.r, color.g, color.b, color.a);
+        glClear(OpenGLUtilities::GetGLClearFlags(clear_flags));
+    }
+
+    void OpenGLRenderDriver::SetViewport(const Viewport &viewport) {
+        glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+    }
+
+    void OpenGLRenderDriver::SetRasterizerState(const RasterizerState &rasterizer_state) {
+        // NOTE: Currently we are setting the whole rasterizer state at once, regardless of wether or not we actually have new values we need to change.
+        // TLDR: This is very expensive.
+
+        // Depth
+        {
+            if (rasterizer_state.depth_test_enabled) {
+                glEnable(GL_DEPTH_TEST);
+            } else {
+                glDisable(GL_DEPTH_TEST);
+            }
+            if (rasterizer_state.depth_mask_enabled) {
+                glDepthMask(GL_TRUE);
+            } else {
+                glDepthMask(GL_FALSE);
+            }
+            glDepthFunc(OpenGLUtilities::GetGLDepthEquation(rasterizer_state.depth_equation));
+        }
+
+        // Stencil
+        {
+            if (rasterizer_state.stencil_test_enabled) {
+                glEnable(GL_STENCIL_TEST);
+            } else {
+                glDisable(GL_STENCIL_TEST);
+            }
+        }
+
+        // Blending
+        {
+            if (rasterizer_state.blending_enabled) {
+                glEnable(GL_BLEND);
+            } else {
+                glDisable(GL_BLEND);
+            }
+            GLuint source_factor = OpenGLUtilities::GetGLBlendingFactor(rasterizer_state.blending_function.source_factor);
+            GLuint destination_factor = OpenGLUtilities::GetGLBlendingFactor(rasterizer_state.blending_function.destination_factor);
+            glBlendFunc(source_factor, destination_factor);
+            glBlendEquation(OpenGLUtilities::GetGLBlendingEquation(rasterizer_state.blending_equation));
+        }
+
+        // Culling
+        {
+            if (rasterizer_state.culling_enabled) {
+                glEnable(GL_CULL_FACE);
+            } else {
+                glDisable(GL_CULL_FACE);
+            }
+            glCullFace(OpenGLUtilities::GetGLCullingMode(rasterizer_state.culling_mode));
+            glFrontFace(OpenGLUtilities::GetGLCullingFrontFaceMode(rasterizer_state.culling_front_face_mode));
+        }
+
+        // Misc
+        {
+            glPolygonMode(GL_FRONT_AND_BACK, OpenGLUtilities::GetGLPolygonMode(rasterizer_state.polygon_mode));
+        }
+    }
+
+    void OpenGLRenderDriver::SetCameraData(const CameraData &camera_data) {
+        m_current_camera_data = camera_data;
+
+        // When setting a new camera data we want to invalidate the currently used material.
+        // This way we know we will set the new camera state to the currently used material when doing the next draw.
+        // TODO: This can and should be avoided when using uniform buffers.
+        m_current_material = nullptr;
     }
 
     void OpenGLRenderDriver::CreateShader(ResourceId id, const ShaderDescriptor &descriptor) {
@@ -280,6 +354,33 @@ namespace Hyperion::Rendering {
         }
     }
 
+    void OpenGLRenderDriver::SetRenderTexture(ResourceId render_texture_id) {
+        HYP_ASSERT(m_render_textures.find(render_texture_id) != m_render_textures.end());
+        OpenGLRenderTexture &render_texture = m_render_textures[render_texture_id];
+        if (m_current_render_texture != &render_texture) {
+            glBindFramebuffer(GL_FRAMEBUFFER, render_texture.render_texture);
+        }
+    }
+
+    void OpenGLRenderDriver::BlitRenderTexture(ResourceId destination_id, uint32 destination_width, uint32 destination_height, ResourceId source_id, uint32 source_width, uint32 source_height) {
+        GLuint destination_render_texture = 0;
+        if (destination_id != 0) {
+            HYP_ASSERT(m_render_textures.find(destination_id) != m_render_textures.end());
+            OpenGLRenderTexture &render_texture = m_render_textures[destination_id];
+            destination_render_texture = render_texture.render_texture;
+        }
+        GLuint source_render_texture = 0;
+        if (source_id != 0) {
+            HYP_ASSERT(m_render_textures.find(source_id) != m_render_textures.end());
+            OpenGLRenderTexture &render_texture = m_render_textures[source_id];
+            source_render_texture = render_texture.render_texture;
+        }
+
+        // Currently we always blit all buffers. Is this really what we always want?
+        GLbitfield mask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
+        glBlitNamedFramebuffer(source_render_texture, destination_render_texture, 0, 0, source_width, source_height, 0, 0, destination_width, destination_height, mask, GL_NEAREST);
+    }
+
     void OpenGLRenderDriver::DestroyRenderTexture(ResourceId render_texture_id) {
         HYP_ASSERT(m_render_textures.find(render_texture_id) != m_render_textures.end());
 
@@ -333,145 +434,6 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void OpenGLRenderDriver::DestroyMesh(ResourceId id) {
-        HYP_ASSERT(m_meshes.find(id) != m_meshes.end());
-
-        OpenGLMesh &mesh = m_meshes[id];
-        glDeleteBuffers(2, &mesh.vertex_buffer);
-        glDeleteVertexArrays(1, &mesh.vertex_array);
-
-        m_meshes.erase(id);
-    }
-
-    CommandBuffer *OpenGLRenderDriver::CreateCommandBuffer() {
-        return new OpenGLCommandBuffer();
-    }
-
-    CommandBuffer *OpenGLRenderDriver::CopyCommandBuffer(CommandBuffer *command_buffer) {
-        OpenGLCommandBuffer *opengl_command_buffer = static_cast<OpenGLCommandBuffer *>(command_buffer);
-        return new OpenGLCommandBuffer(*opengl_command_buffer);
-    }
-
-    void OpenGLRenderDriver::ExecuteCommandBuffer(CommandBuffer *command_buffer) {
-        OpenGLCommandBuffer *opengl_command_buffer = static_cast<OpenGLCommandBuffer *>(command_buffer);
-        auto program_counter = opengl_command_buffer->GetData();
-        auto program_counter_end = opengl_command_buffer->GetData() + opengl_command_buffer->GetSize();
-        OpenGLCommandType command_type;
-        while (program_counter < program_counter_end) {
-            command_type = *reinterpret_cast<OpenGLCommandType *>(program_counter);
-            program_counter += sizeof(OpenGLCommandType);
-
-            program_counter += static_cast<size_t>(OpenGLCommandExecutor::Execute(this, command_type, program_counter));
-        }
-    }
-
-    void OpenGLRenderDriver::DestroyCommandBuffer(CommandBuffer *command_buffer) {
-        delete command_buffer;
-    }
-
-    void OpenGLRenderDriver::Clear(ClearFlags clear_flags, Color color) {
-        glClearColor(color.r, color.g, color.b, color.a);
-        glClear(OpenGLUtilities::GetGLClearFlags(clear_flags));
-    }
-
-    void OpenGLRenderDriver::SetViewport(const Viewport &viewport) {
-        glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
-    }
-
-    void OpenGLRenderDriver::SetRasterizerState(const RasterizerState &rasterizer_state) {
-        // NOTE: Currently we are setting the whole rasterizer state at once, regardless of wether or not we actually have new values we need to change.
-        // TLDR: This is very expensive.
-
-        // Depth
-        {
-            if (rasterizer_state.depth_test_enabled) {
-                glEnable(GL_DEPTH_TEST);
-            } else {
-                glDisable(GL_DEPTH_TEST);
-            }
-            if (rasterizer_state.depth_mask_enabled) {
-                glDepthMask(GL_TRUE);
-            } else {
-                glDepthMask(GL_FALSE);
-            }
-            glDepthFunc(OpenGLUtilities::GetGLDepthEquation(rasterizer_state.depth_equation));
-        }
-
-        // Stencil
-        {
-            if (rasterizer_state.stencil_test_enabled) {
-                glEnable(GL_STENCIL_TEST);
-            } else {
-                glDisable(GL_STENCIL_TEST);
-            }
-        }
-
-        // Blending
-        {
-            if (rasterizer_state.blending_enabled) {
-                glEnable(GL_BLEND);
-            } else {
-                glDisable(GL_BLEND);
-            }
-            GLuint source_factor = OpenGLUtilities::GetGLBlendingFactor(rasterizer_state.blending_function.source_factor);
-            GLuint destination_factor = OpenGLUtilities::GetGLBlendingFactor(rasterizer_state.blending_function.destination_factor);
-            glBlendFunc(source_factor, destination_factor);
-            glBlendEquation(OpenGLUtilities::GetGLBlendingEquation(rasterizer_state.blending_equation));
-        }
-
-        // Culling
-        {
-            if (rasterizer_state.culling_enabled) {
-                glEnable(GL_CULL_FACE);
-            } else {
-                glDisable(GL_CULL_FACE);
-            }
-            glCullFace(OpenGLUtilities::GetGLCullingMode(rasterizer_state.culling_mode));
-            glFrontFace(OpenGLUtilities::GetGLCullingFrontFaceMode(rasterizer_state.culling_front_face_mode));
-        }
-
-        // Misc
-        {
-            glPolygonMode(GL_FRONT_AND_BACK, OpenGLUtilities::GetGLPolygonMode(rasterizer_state.polygon_mode));
-        }
-    }
-
-    void OpenGLRenderDriver::SetupCameraData(const CameraData &camera_data) {
-        m_current_camera_data = camera_data;
-
-        // When setting a new camera data we want to invalidate the currently used material.
-        // This way we know we will set the new camera state to the currently used material when doing the next draw.
-        // TODO: This can and should be avoided when using uniform buffers.
-        m_current_material = nullptr;
-    }
-
-    void OpenGLRenderDriver::SetRenderTexture(ResourceId render_texture_id) {
-        HYP_ASSERT(m_render_textures.find(render_texture_id) != m_render_textures.end());
-        OpenGLRenderTexture &render_texture = m_render_textures[render_texture_id];
-        if (m_current_render_texture != &render_texture) {
-            glBindFramebuffer(GL_FRAMEBUFFER, render_texture.render_texture);
-        }
-    }
-
-    void OpenGLRenderDriver::Blit(ResourceId destination_id, uint32 destination_width, uint32 destination_height, ResourceId source_id, uint32 source_width, uint32 source_height) {
-        GLuint destination_render_texture = 0;
-        if (destination_id != 0) {
-            HYP_ASSERT(m_render_textures.find(destination_id) != m_render_textures.end());
-            OpenGLRenderTexture &render_texture = m_render_textures[destination_id];
-            destination_render_texture = render_texture.render_texture;
-        }
-        GLuint source_render_texture = 0;
-        if (source_id != 0) {
-            HYP_ASSERT(m_render_textures.find(source_id) != m_render_textures.end());
-            OpenGLRenderTexture &render_texture = m_render_textures[source_id];
-            source_render_texture = render_texture.render_texture;
-        }
-
-        // Currently we always blit all buffers. Is this really what we always want?
-        GLbitfield mask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
-        glBlitNamedFramebuffer(source_render_texture, destination_render_texture, 0, 0, source_width, source_height, 0, 0, destination_width, destination_height, mask, GL_NEAREST);
-    }
-
     void OpenGLRenderDriver::DrawMesh(ResourceId mesh_id, const Mat4 &model_matrix, ResourceId material_id, uint32 sub_mesh_index) {
         HYP_ASSERT(m_materials.find(material_id) != m_materials.end());
         OpenGLMaterial &material = m_materials[material_id];
@@ -487,6 +449,16 @@ namespace Hyperion::Rendering {
         const void *offset = reinterpret_cast<const void *>(static_cast<uint64>(sub_mesh.index_offset) * index_format_size);
         glBindVertexArray(mesh.vertex_array);
         glDrawElementsBaseVertex(OpenGLUtilities::GetGLMeshTopology(sub_mesh.topology), sub_mesh.index_count, index_format, offset, sub_mesh.vertex_offset);
+    }
+
+    void OpenGLRenderDriver::DestroyMesh(ResourceId id) {
+        HYP_ASSERT(m_meshes.find(id) != m_meshes.end());
+
+        OpenGLMesh &mesh = m_meshes[id];
+        glDeleteBuffers(2, &mesh.vertex_buffer);
+        glDeleteVertexArrays(1, &mesh.vertex_array);
+
+        m_meshes.erase(id);
     }
 
     void OpenGLRenderDriver::CreateTexture2D(OpenGLTexture &texture, const TextureDescriptor &descriptor) {

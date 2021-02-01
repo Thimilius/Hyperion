@@ -7,8 +7,25 @@
 
 namespace Hyperion::Rendering {
 
-    RenderThreadRenderDriver::RenderThreadRenderDriver(IRenderDriver *backend_render_driver) {
-        m_backend_render_driver = backend_render_driver;
+    void RenderThreadRenderDriver::Clear(ClearFlags clear_flags, Color color) {
+        auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandClear>(RenderThreadCommandType::Clear);
+        command->clear_flags = clear_flags;
+        command->color = color;
+    }
+
+    void RenderThreadRenderDriver::SetViewport(const Viewport &viewport) {
+        auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandSetViewport>(RenderThreadCommandType::SetViewport);
+        command->viewport = viewport;
+    }
+
+    void RenderThreadRenderDriver::SetRasterizerState(const RasterizerState &rasterizer_state) {
+        auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandSetRasterizerState>(RenderThreadCommandType::SetRasterizerState);
+        command->rasterizer_state = rasterizer_state;
+    }
+
+    void RenderThreadRenderDriver::SetCameraData(const CameraData &camera_data) {
+        auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandSetCameraData>(RenderThreadCommandType::SetCameraData);
+        command->camera_data = camera_data;
     }
 
     void RenderThreadRenderDriver::CreateShader(ResourceId shader_id, const ShaderDescriptor &descriptor) {
@@ -91,6 +108,21 @@ namespace Hyperion::Rendering {
         command->mipmap_count = mipmap_count;
     }
 
+    void RenderThreadRenderDriver::SetRenderTexture(ResourceId render_texture_id) {
+        auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandId>(RenderThreadCommandType::SetRenderTexture);
+        command->id = render_texture_id;
+    }
+
+    void RenderThreadRenderDriver::BlitRenderTexture(ResourceId destination_id, uint32 destination_width, uint32 destination_height, ResourceId source_id, uint32 source_width, uint32 source_height) {
+        auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandBlitRenderTexture>(RenderThreadCommandType::BlitRenderTexture);
+        command->destination_id = destination_id;
+        command->destination_width = destination_width;
+        command->destination_height = destination_height;
+        command->source_id = source_id;
+        command->source_width = source_width;
+        command->source_height = source_height;
+    }
+
     void RenderThreadRenderDriver::DestroyRenderTexture(ResourceId render_texture_id) {
         auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandId>(RenderThreadCommandType::DestroyRenderTexture);
         command->id = render_texture_id;
@@ -109,26 +141,17 @@ namespace Hyperion::Rendering {
         helper.Write(descriptor.indices);
     }
 
+    void RenderThreadRenderDriver::DrawMesh(ResourceId mesh_id, const Mat4 &model_matrix, ResourceId material_id, uint32 sub_mesh_index) {
+        auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandDrawMesh>(RenderThreadCommandType::DrawMesh);
+        command->mesh_id = mesh_id;
+        command->model_matrix = model_matrix;
+        command->material_id = material_id;
+        command->sub_mesh_index = sub_mesh_index;
+    }
+
     void RenderThreadRenderDriver::DestroyMesh(ResourceId mesh_id) {
         auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandId>(RenderThreadCommandType::DestroyMesh);
         command->id = mesh_id;
-    }
-
-    CommandBuffer *RenderThreadRenderDriver::CreateCommandBuffer() {
-        return m_backend_render_driver->CreateCommandBuffer();
-    }
-
-    void RenderThreadRenderDriver::ExecuteCommandBuffer(CommandBuffer *command_buffer) {
-        auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandExecuteCommandBuffer>(RenderThreadCommandType::ExecuteCommandBuffer);
-        command->command_buffer = m_backend_render_driver->CopyCommandBuffer(command_buffer);
-    }
-
-    CommandBuffer *RenderThreadRenderDriver::CopyCommandBuffer(CommandBuffer *command_buffer) {
-        return m_backend_render_driver->CopyCommandBuffer(command_buffer);
-    }
-
-    void RenderThreadRenderDriver::DestroyCommandBuffer(CommandBuffer *command_buffer) {
-        m_backend_render_driver->DestroyCommandBuffer(command_buffer);
     }
 
 }

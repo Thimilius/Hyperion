@@ -5,7 +5,6 @@
 #include "hyperion/assets/mesh.hpp"
 #include "hyperion/assets/shader.hpp"
 #include "hyperion/assets/texture.hpp"
-#include "hyperion/rendering/command_buffer.hpp"
 #include "hyperion/rendering/pipelines/render_pipeline.hpp"
 
 namespace Hyperion::Rendering {
@@ -20,8 +19,6 @@ namespace Hyperion::Rendering {
         Texture2D *m_texture;
         Material *m_material;
         Mesh *m_mesh;
-        CommandBuffer *m_command_buffer;
-        CommandBuffer *m_command_buffer2;
         RenderTexture *m_render_texture;
     };
 
