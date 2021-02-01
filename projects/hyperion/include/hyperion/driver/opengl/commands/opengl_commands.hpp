@@ -44,6 +44,7 @@ namespace Hyperion::Rendering {
 
     struct OpenGLCommandDrawMesh {
         ResourceId mesh_id;
+        Mat4 transformation_matrix;
         ResourceId material_id;
         uint32 sub_mesh_index;
     };

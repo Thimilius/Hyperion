@@ -14,8 +14,18 @@ namespace Hyperion::Rendering {
 
         layout(location = 0) in vec3 a_position;
 
+        uniform struct Transform {
+            mat4 model;
+            mat4 view;
+            mat4 projection;
+        } u_transform;
+
+        vec4 obj_to_clip_space(vec3 position) {
+	        return u_transform.projection * u_transform.view * u_transform.model * vec4(position, 1.0);
+        }
+
         void main() {
-	        gl_Position = vec4(a_position, 1.0);
+	        gl_Position = obj_to_clip_space(a_position);
         }
     )";
     const char *g_fallback_shader_fragment = R"(
@@ -120,6 +130,7 @@ namespace Hyperion::Rendering {
         HYP_ASSERT(m_shaders.find(shader_id) != m_shaders.end());
         OpenGLShader &shader = m_shaders[shader_id];
         GLuint program = shader.program;
+
 
         MaterialPropertyId property_id = property.id;
         auto it = material.properties.find(property_id);
@@ -452,10 +463,10 @@ namespace Hyperion::Rendering {
         glBlitNamedFramebuffer(source_render_texture, destination_render_texture, 0, 0, source_width, source_height, 0, 0, destination_width, destination_height, mask, GL_NEAREST);
     }
 
-    void OpenGLRenderDriver::DrawMesh(ResourceId mesh_id, ResourceId material_id, uint32 sub_mesh_index) {
+    void OpenGLRenderDriver::DrawMesh(ResourceId mesh_id, const Mat4 &transformation_matrix, ResourceId material_id, uint32 sub_mesh_index) {
         HYP_ASSERT(m_materials.find(material_id) != m_materials.end());
         OpenGLMaterial &material = m_materials[material_id];
-        UseMaterial(material);
+        UseMaterial(material, transformation_matrix);
 
         HYP_ASSERT(m_meshes.find(mesh_id) != m_meshes.end());
         OpenGLMesh &mesh = m_meshes[mesh_id];
@@ -550,13 +561,13 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void OpenGLRenderDriver::UseMaterial(const OpenGLMaterial &material) {
+    void OpenGLRenderDriver::UseMaterial(OpenGLMaterial &material, const Mat4 &transformation_matrix) {
+        ResourceId shader_id = material.shader_id;
+        HYP_ASSERT(m_shaders.find(shader_id) != m_shaders.end());
+        OpenGLShader &shader = m_shaders[shader_id];
+
         if (m_current_material != &material) {
             m_current_material = &material;
-
-            ResourceId shader_id = material.shader_id;
-            HYP_ASSERT(m_shaders.find(shader_id) != m_shaders.end());
-            OpenGLShader &shader = m_shaders[shader_id];
 
             glUseProgram(shader.program);
 
@@ -565,7 +576,28 @@ namespace Hyperion::Rendering {
                 glBindTextureUnit(texture_unit, texture);
                 texture_unit++;
             }
+
+            static const MaterialPropertyId PROJECTION_TRANSFORM_PROPERTY_ID = std::hash<String>{}("u_transform.projection");
+            HYP_ASSERT(material.properties.find(PROJECTION_TRANSFORM_PROPERTY_ID) != material.properties.end());
+            OpenGLMaterialProperty &property = material.properties[PROJECTION_TRANSFORM_PROPERTY_ID];
+            GLint location = property.location;
+            glProgramUniformMatrix4fv(shader.program, location, 1, GL_FALSE, Mat4::Identity().elements);
+
+            static const MaterialPropertyId VIEW_TRANSFORM_PROPERTY_ID = std::hash<String>{}("u_transform.view");
+            HYP_ASSERT(material.properties.find(VIEW_TRANSFORM_PROPERTY_ID) != material.properties.end());
+            property = material.properties[VIEW_TRANSFORM_PROPERTY_ID];
+            location = property.location;
+            glProgramUniformMatrix4fv(shader.program, location, 1, GL_FALSE, Mat4::Identity().elements);
         }
+
+        // We will always need to set the transformation matrix.
+        // Currently we are going to assume that every shader has this specific property.
+        // TODO: Maybe we can cache that special property in the material directly.
+        static const MaterialPropertyId MODEL_TRANSFORM_PROPERTY_ID = std::hash<String>{}("u_transform.model");
+        HYP_ASSERT(material.properties.find(MODEL_TRANSFORM_PROPERTY_ID) != material.properties.end());
+        OpenGLMaterialProperty &property = material.properties[MODEL_TRANSFORM_PROPERTY_ID];
+        GLint location = property.location;
+        glProgramUniformMatrix4fv(shader.program, location, 1, GL_FALSE, transformation_matrix.elements);
     }
 
 }

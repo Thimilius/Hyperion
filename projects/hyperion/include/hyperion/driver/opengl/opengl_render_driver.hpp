@@ -42,14 +42,14 @@ namespace Hyperion::Rendering {
         void SetRasterizerState(const RasterizerState &rasterizer_state);
         void SetRenderTexture(ResourceId render_texture_id);
         void Blit(ResourceId destination_id, uint32 destination_width, uint32 destination_height, ResourceId source_id, uint32 source_width, uint32 source_height);
-        void DrawMesh(ResourceId mesh_id, ResourceId material_id, uint32 sub_mesh_index);
+        void DrawMesh(ResourceId mesh_id, const Mat4 &transformation_matrix, ResourceId material_id, uint32 sub_mesh_index);
     private:
         void CreateTexture2D(OpenGLTexture &texture, const TextureDescriptor &descriptor);
         void CreateTextureCubemap(OpenGLTexture &texture, const TextureDescriptor &descriptor);
         void SetTextureParameters(GLuint texture, const TextureParameters &parameters);
 
         void CollectMaterialProperties(OpenGLMaterial &material);
-        void UseMaterial(const OpenGLMaterial &material);
+        void UseMaterial(OpenGLMaterial &material, const Mat4 &transformation_matrix);
     private:
         OpenGLGraphicsContext *m_graphics_context;
 

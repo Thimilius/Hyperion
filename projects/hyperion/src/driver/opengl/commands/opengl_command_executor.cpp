@@ -35,7 +35,7 @@ namespace Hyperion::Rendering {
 			}
 			case OpenGLCommandType::DrawMesh: {
 				auto command = reinterpret_cast<OpenGLCommandDrawMesh *>(opengl_command);
-				opengl_render_driver->DrawMesh(command->mesh_id, command->material_id, command->sub_mesh_index);
+				opengl_render_driver->DrawMesh(command->mesh_id, command->transformation_matrix, command->material_id, command->sub_mesh_index);
 				return sizeof(*command);
 			}
 			default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;

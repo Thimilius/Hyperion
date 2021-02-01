@@ -19,7 +19,7 @@ namespace Hyperion::Rendering {
         void SetRenderTexture(RenderTexture *render_texture) override;
         void Blit(RenderTexture *destination, RenderTexture *source) override;
 
-        void DrawMesh(Mesh *mesh, Material *material, uint32 sub_mesh_index) override;
+        void DrawMesh(Mesh *mesh, const Mat4 &transformation_matrix, Material *material, uint32 sub_mesh_index) override;
     private:
         template<typename T>
         inline T *Allocate(OpenGLCommandType command_type, uint64 extra_size = 0) {

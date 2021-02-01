@@ -56,12 +56,13 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void OpenGLCommandBuffer::DrawMesh(Mesh *mesh, Material *material, uint32 sub_mesh_index) {
+    void OpenGLCommandBuffer::DrawMesh(Mesh *mesh, const Mat4 &transformation_matrix, Material *material, uint32 sub_mesh_index) {
         HYP_ASSERT(mesh);
         HYP_ASSERT(material);
 
         auto *command = Allocate<OpenGLCommandDrawMesh>(OpenGLCommandType::DrawMesh);
         command->mesh_id = mesh->GetResourceId();
+        command->transformation_matrix = transformation_matrix;
         command->material_id = material->GetResourceId();
         command->sub_mesh_index = sub_mesh_index;
     }

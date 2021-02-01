@@ -21,10 +21,20 @@ namespace Hyperion::Rendering {
 	                vec2 texture0;
                 } o_v2f;
 
+                uniform struct Transform {
+                    mat4 model;
+                    mat4 view;
+                    mat4 projection;
+                } u_transform;
+
+                vec4 obj_to_clip_space(vec3 position) {
+	                return u_transform.projection * u_transform.view * u_transform.model * vec4(position, 1.0);
+                }
+
                 void main() {
                     o_v2f.texture0 = a_texture0;
 
-	                gl_Position = vec4(a_position, 1.0);
+	                gl_Position = obj_to_clip_space(a_position);
                 }
             )" },
             { ShaderStageFlags::Fragment, R"(
@@ -75,6 +85,7 @@ namespace Hyperion::Rendering {
         m_command_buffer = render_driver->CreateCommandBuffer();
         RasterizerState rasterizer_state;
         rasterizer_state.blending_enabled = true;
+        rasterizer_state.depth_test_enabled = true;
         m_command_buffer->SetRasterizerState(rasterizer_state);
 
         Vector<RenderTextureAttachment> attachments = { 
@@ -104,7 +115,10 @@ namespace Hyperion::Rendering {
         value = Math::Sin(Time::GetTime() * 2.0f + Math::PI) / 2.0f + 0.5f;
         color *= value;
         m_material->SetVec4("u_color", color);
-        m_command_buffer->DrawMesh(m_mesh, m_material, 0);
+        for (size_t i = 0; i < 100; i++) {
+            float32 x = Math::Map(static_cast<float32>(i), 0, 100, -1.0f, 1.0f);
+            m_command_buffer->DrawMesh(m_mesh, Mat4::Translate(x, 0.0f, 0.0f), m_material, 0);
+        }
 
         m_command_buffer->Blit(nullptr, m_render_texture);
 

@@ -4,6 +4,7 @@
 #include "hyperion/assets/mesh.hpp"
 #include "hyperion/assets/texture.hpp"
 #include "hyperion/core/color.hpp"
+#include "hyperion/core/math/mat4.hpp"
 #include "hyperion/rendering/rasterizer_state.hpp"
 
 namespace Hyperion::Rendering {
@@ -36,8 +37,8 @@ namespace Hyperion::Rendering {
 
         virtual void SetRenderTexture(RenderTexture *render_texture) = 0;
         virtual void Blit(RenderTexture *destination, RenderTexture *source) = 0;
-
-        virtual void DrawMesh(Mesh *mesh, Material *material, uint32 sub_mesh_index) = 0;
+        
+        virtual void DrawMesh(Mesh *mesh, const Mat4 &transformation_matrix, Material *material, uint32 sub_mesh_index) = 0;
     };
 
 }

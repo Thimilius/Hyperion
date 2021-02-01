@@ -81,6 +81,10 @@ namespace Hyperion {
             p_t = Clamp01((p_t - p_from) / (p_to - p_from));
             return p_t * p_t * (3.0f - 2.0f * p_t);
         }
+
+        inline static float32 Map(float32 value, float32 input_start, float32 input_end, float32 output_start, float32 output_end) {
+            return output_start + ((output_end - output_start) / (input_end - input_start)) * (value - input_start);
+        }
     private:
         Math() = delete;
         ~Math() = delete;
