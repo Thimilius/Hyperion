@@ -23,6 +23,11 @@ namespace Hyperion::Rendering {
 				opengl_render_driver->SetRasterizerState(command->rasterizer_state);
 				return sizeof(*command);
 			}
+			case OpenGLCommandType::SetupCameraData: {
+				auto command = reinterpret_cast<OpenGLCommandSetupCameraData *>(opengl_command);
+				opengl_render_driver->SetupCameraData(command->camera_data);
+				return sizeof(*command);
+			}
 			case OpenGLCommandType::SetRenderTexture: {
 				auto command = reinterpret_cast<OpenGLCommandSetRenderTexture *>(opengl_command);
 				opengl_render_driver->SetRenderTexture(command->render_texture_id);
@@ -35,7 +40,7 @@ namespace Hyperion::Rendering {
 			}
 			case OpenGLCommandType::DrawMesh: {
 				auto command = reinterpret_cast<OpenGLCommandDrawMesh *>(opengl_command);
-				opengl_render_driver->DrawMesh(command->mesh_id, command->transformation_matrix, command->material_id, command->sub_mesh_index);
+				opengl_render_driver->DrawMesh(command->mesh_id, command->model_matrix, command->material_id, command->sub_mesh_index);
 				return sizeof(*command);
 			}
 			default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;

@@ -5,6 +5,7 @@
 #include "hyperion/assets/texture.hpp"
 #include "hyperion/core/color.hpp"
 #include "hyperion/core/math/mat4.hpp"
+#include "hyperion/rendering/camera_data.hpp"
 #include "hyperion/rendering/rasterizer_state.hpp"
 
 namespace Hyperion::Rendering {
@@ -35,10 +36,12 @@ namespace Hyperion::Rendering {
         virtual void SetViewport(const Viewport &viewport) = 0;
         virtual void SetRasterizerState(const RasterizerState &rasterizer_state) = 0;
 
+        virtual void SetupCameraData(const CameraData &camera_data) = 0;
+
         virtual void SetRenderTexture(RenderTexture *render_texture) = 0;
         virtual void Blit(RenderTexture *destination, RenderTexture *source) = 0;
         
-        virtual void DrawMesh(Mesh *mesh, const Mat4 &transformation_matrix, Material *material, uint32 sub_mesh_index) = 0;
+        virtual void DrawMesh(Mesh *mesh, const Mat4 &model_matrix, Material *material, uint32 sub_mesh_index) = 0;
     };
 
 }

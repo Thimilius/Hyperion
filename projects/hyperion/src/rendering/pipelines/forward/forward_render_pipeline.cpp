@@ -85,7 +85,7 @@ namespace Hyperion::Rendering {
         m_command_buffer = render_driver->CreateCommandBuffer();
         RasterizerState rasterizer_state;
         rasterizer_state.blending_enabled = true;
-        rasterizer_state.depth_test_enabled = true;
+        rasterizer_state.depth_test_enabled = false;
         m_command_buffer->SetRasterizerState(rasterizer_state);
 
         Vector<RenderTextureAttachment> attachments = { 
@@ -102,10 +102,12 @@ namespace Hyperion::Rendering {
 
         m_render_texture->Resize(Display::GetWidth(), Display::GetHeight());
 
+        m_command_buffer->SetupCameraData(CameraData());
+
         m_command_buffer->SetRenderTexture(m_render_texture);
         Viewport viewport = { 0, 0, Display::GetWidth(), Display::GetHeight() };
         m_command_buffer->SetViewport(viewport);
-
+        
         Color color = Color::Cyan();
         float32 value = Math::Sin(Time::GetTime() * 2.0f) / 2.0f + 0.5f;
         color *= value;
@@ -115,8 +117,8 @@ namespace Hyperion::Rendering {
         value = Math::Sin(Time::GetTime() * 2.0f + Math::PI) / 2.0f + 0.5f;
         color *= value;
         m_material->SetVec4("u_color", color);
-        for (size_t i = 0; i < 100; i++) {
-            float32 x = Math::Map(static_cast<float32>(i), 0, 100, -1.0f, 1.0f);
+        for (size_t i = 0; i < 25; i++) {
+            float32 x = Math::Map(static_cast<float32>(i), 0, 25, -1.0f, 1.0f);
             m_command_buffer->DrawMesh(m_mesh, Mat4::Translate(x, 0.0f, 0.0f), m_material, 0);
         }
 

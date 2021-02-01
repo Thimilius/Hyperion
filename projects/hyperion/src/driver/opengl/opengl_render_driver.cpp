@@ -436,6 +436,15 @@ namespace Hyperion::Rendering {
         }
     }
 
+    void OpenGLRenderDriver::SetupCameraData(const CameraData &camera_data) {
+        m_current_camera_data = camera_data;
+
+        // When setting a new camera data we want to invalidate the currently used material.
+        // This way we know we will set the new camera state to the currently used material when doing the next draw.
+        // TODO: This can and should be avoided when using uniform buffers.
+        m_current_material = nullptr;
+    }
+
     void OpenGLRenderDriver::SetRenderTexture(ResourceId render_texture_id) {
         HYP_ASSERT(m_render_textures.find(render_texture_id) != m_render_textures.end());
         OpenGLRenderTexture &render_texture = m_render_textures[render_texture_id];
@@ -463,10 +472,10 @@ namespace Hyperion::Rendering {
         glBlitNamedFramebuffer(source_render_texture, destination_render_texture, 0, 0, source_width, source_height, 0, 0, destination_width, destination_height, mask, GL_NEAREST);
     }
 
-    void OpenGLRenderDriver::DrawMesh(ResourceId mesh_id, const Mat4 &transformation_matrix, ResourceId material_id, uint32 sub_mesh_index) {
+    void OpenGLRenderDriver::DrawMesh(ResourceId mesh_id, const Mat4 &model_matrix, ResourceId material_id, uint32 sub_mesh_index) {
         HYP_ASSERT(m_materials.find(material_id) != m_materials.end());
         OpenGLMaterial &material = m_materials[material_id];
-        UseMaterial(material, transformation_matrix);
+        UseMaterial(material, model_matrix);
 
         HYP_ASSERT(m_meshes.find(mesh_id) != m_meshes.end());
         OpenGLMesh &mesh = m_meshes[mesh_id];
@@ -561,7 +570,7 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void OpenGLRenderDriver::UseMaterial(OpenGLMaterial &material, const Mat4 &transformation_matrix) {
+    void OpenGLRenderDriver::UseMaterial(OpenGLMaterial &material, const Mat4 &model_matrix) {
         ResourceId shader_id = material.shader_id;
         HYP_ASSERT(m_shaders.find(shader_id) != m_shaders.end());
         OpenGLShader &shader = m_shaders[shader_id];
@@ -581,13 +590,13 @@ namespace Hyperion::Rendering {
             HYP_ASSERT(material.properties.find(PROJECTION_TRANSFORM_PROPERTY_ID) != material.properties.end());
             OpenGLMaterialProperty &property = material.properties[PROJECTION_TRANSFORM_PROPERTY_ID];
             GLint location = property.location;
-            glProgramUniformMatrix4fv(shader.program, location, 1, GL_FALSE, Mat4::Identity().elements);
+            glProgramUniformMatrix4fv(shader.program, location, 1, GL_FALSE, m_current_camera_data.projection_matrix.elements);
 
             static const MaterialPropertyId VIEW_TRANSFORM_PROPERTY_ID = std::hash<String>{}("u_transform.view");
             HYP_ASSERT(material.properties.find(VIEW_TRANSFORM_PROPERTY_ID) != material.properties.end());
             property = material.properties[VIEW_TRANSFORM_PROPERTY_ID];
             location = property.location;
-            glProgramUniformMatrix4fv(shader.program, location, 1, GL_FALSE, Mat4::Identity().elements);
+            glProgramUniformMatrix4fv(shader.program, location, 1, GL_FALSE, m_current_camera_data.view_matrix.elements);
         }
 
         // We will always need to set the transformation matrix.
@@ -597,7 +606,7 @@ namespace Hyperion::Rendering {
         HYP_ASSERT(material.properties.find(MODEL_TRANSFORM_PROPERTY_ID) != material.properties.end());
         OpenGLMaterialProperty &property = material.properties[MODEL_TRANSFORM_PROPERTY_ID];
         GLint location = property.location;
-        glProgramUniformMatrix4fv(shader.program, location, 1, GL_FALSE, transformation_matrix.elements);
+        glProgramUniformMatrix4fv(shader.program, location, 1, GL_FALSE, model_matrix.elements);
     }
 
 }

@@ -40,16 +40,17 @@ namespace Hyperion::Rendering {
         void Clear(ClearFlags clear_flags, Color color);
         void SetViewport(const Viewport &viewport);
         void SetRasterizerState(const RasterizerState &rasterizer_state);
+        void SetupCameraData(const CameraData &camera_data);
         void SetRenderTexture(ResourceId render_texture_id);
         void Blit(ResourceId destination_id, uint32 destination_width, uint32 destination_height, ResourceId source_id, uint32 source_width, uint32 source_height);
-        void DrawMesh(ResourceId mesh_id, const Mat4 &transformation_matrix, ResourceId material_id, uint32 sub_mesh_index);
+        void DrawMesh(ResourceId mesh_id, const Mat4 &model_matrix, ResourceId material_id, uint32 sub_mesh_index);
     private:
         void CreateTexture2D(OpenGLTexture &texture, const TextureDescriptor &descriptor);
         void CreateTextureCubemap(OpenGLTexture &texture, const TextureDescriptor &descriptor);
         void SetTextureParameters(GLuint texture, const TextureParameters &parameters);
 
         void CollectMaterialProperties(OpenGLMaterial &material);
-        void UseMaterial(OpenGLMaterial &material, const Mat4 &transformation_matrix);
+        void UseMaterial(OpenGLMaterial &material, const Mat4 &model_matrix);
     private:
         OpenGLGraphicsContext *m_graphics_context;
 
@@ -82,7 +83,6 @@ namespace Hyperion::Rendering {
             Map<MaterialPropertyId, GLuint> textures;
         };
         Map<ResourceId, OpenGLMaterial> m_materials;
-        const OpenGLMaterial *m_current_material = nullptr;
 
         enum class OpenGLRenderTextureAttachmentType {
             Texture,
@@ -101,7 +101,6 @@ namespace Hyperion::Rendering {
             Vector<OpenGLRenderTextureAttachment> attachments;
         };
         Map<ResourceId, OpenGLRenderTexture> m_render_textures;
-        const OpenGLRenderTexture *m_current_render_texture = nullptr;
 
         struct OpenGLMesh {
             // Vertex and index buffer have to be next to each other to support efficient creation and destruction.
@@ -113,6 +112,11 @@ namespace Hyperion::Rendering {
             Vector<SubMesh> sub_meshes;
         };
         Map<ResourceId, OpenGLMesh> m_meshes;
+
+        // We want to keep track of the state of a few resources.
+        CameraData m_current_camera_data;
+        const OpenGLMaterial *m_current_material = nullptr;
+        const OpenGLRenderTexture *m_current_render_texture = nullptr;
     };
 
 }

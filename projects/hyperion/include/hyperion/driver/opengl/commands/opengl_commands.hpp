@@ -9,6 +9,8 @@ namespace Hyperion::Rendering {
         SetViewport,
         SetRasterizerState,
 
+        SetupCameraData,
+
         SetRenderTexture,
         Blit,
 
@@ -28,6 +30,10 @@ namespace Hyperion::Rendering {
         RasterizerState rasterizer_state;
     };
 
+    struct OpenGLCommandSetupCameraData {
+        CameraData camera_data;
+    };
+
     struct OpenGLCommandSetRenderTexture {
         ResourceId render_texture_id;
     };
@@ -44,7 +50,7 @@ namespace Hyperion::Rendering {
 
     struct OpenGLCommandDrawMesh {
         ResourceId mesh_id;
-        Mat4 transformation_matrix;
+        Mat4 model_matrix;
         ResourceId material_id;
         uint32 sub_mesh_index;
     };

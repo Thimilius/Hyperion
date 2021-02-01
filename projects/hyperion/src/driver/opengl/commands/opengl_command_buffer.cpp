@@ -24,6 +24,11 @@ namespace Hyperion::Rendering {
         command->rasterizer_state = rasterizer_state;
     }
 
+    void OpenGLCommandBuffer::SetupCameraData(const CameraData &camera_data) {
+        auto *command = Allocate<OpenGLCommandSetupCameraData>(OpenGLCommandType::SetupCameraData);
+        command->camera_data = camera_data;
+    }
+
     void OpenGLCommandBuffer::SetRenderTexture(RenderTexture *render_texture) {
         HYP_ASSERT(render_texture);
 
@@ -56,13 +61,13 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void OpenGLCommandBuffer::DrawMesh(Mesh *mesh, const Mat4 &transformation_matrix, Material *material, uint32 sub_mesh_index) {
+    void OpenGLCommandBuffer::DrawMesh(Mesh *mesh, const Mat4 &model_matrix, Material *material, uint32 sub_mesh_index) {
         HYP_ASSERT(mesh);
         HYP_ASSERT(material);
 
         auto *command = Allocate<OpenGLCommandDrawMesh>(OpenGLCommandType::DrawMesh);
         command->mesh_id = mesh->GetResourceId();
-        command->transformation_matrix = transformation_matrix;
+        command->model_matrix = model_matrix;
         command->material_id = material->GetResourceId();
         command->sub_mesh_index = sub_mesh_index;
     }
