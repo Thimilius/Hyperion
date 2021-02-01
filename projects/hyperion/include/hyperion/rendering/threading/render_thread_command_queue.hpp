@@ -10,7 +10,13 @@ namespace Hyperion::Rendering {
 namespace Hyperion::Rendering {
 
     class RenderThreadCommandQueue {
+    private:
+        inline static constexpr uint64 MINIMIUM_CAPACITY_BEFORE_SHRINK = 1024 * 1024 * 10;
     public:
+        RenderThreadCommandQueue() {
+            m_buffer.reserve(MINIMIUM_CAPACITY_BEFORE_SHRINK);
+        }
+
         inline void Allocate(RenderThreadCommandType command_type) {
             AllocateInternal(command_type, sizeof(command_type));
         }
@@ -27,9 +33,10 @@ namespace Hyperion::Rendering {
         inline void Clear() {
             m_buffer.clear();
 
-            constexpr uint64 MAX_CAPACITY_BEFORE_SHRINK = 1000 * 1000;
-            if (m_buffer.capacity() > MAX_CAPACITY_BEFORE_SHRINK) {
+            // The queue should always have a certain size reserved even when shrinking.
+            if (m_buffer.capacity() > MINIMIUM_CAPACITY_BEFORE_SHRINK) {
                 m_buffer.shrink_to_fit();
+                m_buffer.reserve(MINIMIUM_CAPACITY_BEFORE_SHRINK);
             }
         }
 

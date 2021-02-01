@@ -20,7 +20,10 @@ namespace Hyperion::Threading {
     void AutoResetEvent::Wait() {
         std::unique_lock<std::mutex> lock(m_mutex);
 
-        m_condition_variable.wait(lock, [&]() { return m_signaled.load(); });
+        m_condition_variable.wait(lock, [&]() {
+            bool signaled = m_signaled;
+            return signaled;
+        });
         m_signaled = false;
     }
 

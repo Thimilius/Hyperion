@@ -558,17 +558,20 @@ namespace Hyperion::Rendering {
                 texture_unit++;
             }
 
-            static const MaterialPropertyId PROJECTION_TRANSFORM_PROPERTY_ID = std::hash<String>{}("u_transform.projection");
-            HYP_ASSERT(material.properties.find(PROJECTION_TRANSFORM_PROPERTY_ID) != material.properties.end());
-            OpenGLMaterialProperty &property = material.properties[PROJECTION_TRANSFORM_PROPERTY_ID];
-            GLint location = property.location;
-            glProgramUniformMatrix4fv(shader.program, location, 1, GL_FALSE, m_current_camera_data.projection_matrix.elements);
-
-            static const MaterialPropertyId VIEW_TRANSFORM_PROPERTY_ID = std::hash<String>{}("u_transform.view");
-            HYP_ASSERT(material.properties.find(VIEW_TRANSFORM_PROPERTY_ID) != material.properties.end());
-            property = material.properties[VIEW_TRANSFORM_PROPERTY_ID];
-            location = property.location;
-            glProgramUniformMatrix4fv(shader.program, location, 1, GL_FALSE, m_current_camera_data.view_matrix.elements);
+            {
+                static const MaterialPropertyId PROJECTION_TRANSFORM_PROPERTY_ID = std::hash<String>{}("u_transform.projection");
+                HYP_ASSERT(material.properties.find(PROJECTION_TRANSFORM_PROPERTY_ID) != material.properties.end());
+                OpenGLMaterialProperty &property = material.properties[PROJECTION_TRANSFORM_PROPERTY_ID];
+                GLint location = property.location;
+                glProgramUniformMatrix4fv(shader.program, location, 1, GL_FALSE, m_current_camera_data.projection_matrix.elements);
+            }
+            {
+                static const MaterialPropertyId VIEW_TRANSFORM_PROPERTY_ID = std::hash<String>{}("u_transform.view");
+                HYP_ASSERT(material.properties.find(VIEW_TRANSFORM_PROPERTY_ID) != material.properties.end());
+                OpenGLMaterialProperty &property = material.properties[VIEW_TRANSFORM_PROPERTY_ID];
+                GLint location = property.location;
+                glProgramUniformMatrix4fv(shader.program, location, 1, GL_FALSE, m_current_camera_data.view_matrix.elements);
+            }
         }
 
         // We will always need to set the transformation matrix.

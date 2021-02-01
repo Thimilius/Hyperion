@@ -13,11 +13,9 @@ namespace Hyperion::Rendering {
     constexpr bool g_log_notifications = false;
 
     void OpenGLGraphicsContext::Initialize(const GraphicsContextDescriptor &descriptor) {
-#if HYP_DEBUG
         glDebugMessageCallback(DebugMessageCallback, nullptr);
         glEnable(GL_DEBUG_OUTPUT);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-#endif
 
         QueryExtensions();
         CheckExtensions();

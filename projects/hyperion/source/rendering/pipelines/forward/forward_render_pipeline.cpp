@@ -93,12 +93,7 @@ namespace Hyperion::Rendering {
         color *= value;
         render_driver->Clear(ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, color);
 
-        for (float32 x = 0; x < 100; x++) {
-            for (float32 z = 0; z < 100; z++) {
-                Mat4 model_matrix = Mat4::Translate(x * 2.0f, 0.0f, z * 2.0f) * Mat4::Rotate(Vec3::Up(), Time::GetTime() * 25.0f);
-                render_driver->DrawMesh(m_mesh->GetResourceId(), model_matrix, m_material->GetResourceId(), 0);
-            }
-        }
+        render_driver->DrawMesh(m_mesh->GetResourceId(), Mat4::Identity(), m_material->GetResourceId(), 0);
 
         render_driver->BlitRenderTexture(0, Display::GetWidth(), Display::GetHeight(), m_render_texture->GetResourceId(), m_render_texture->GetWidth(), m_render_texture->GetHeight());
     }

@@ -27,11 +27,6 @@ namespace Hyperion::Editor {
             if (Input::IsKeyDown(KeyCode::F1)) {
                 GetWindow()->SetWindowMode(GetWindow()->GetWindowMode() == WindowMode::Borderless ? WindowMode::Windowed : WindowMode::Borderless);
             }
-
-            for (size_t i = 0; i < 1000; i++) {
-                Entity *e = Entity::Create("Entity");
-                Object::Destroy(e);
-            }
         }
 
         void OnTick() override {

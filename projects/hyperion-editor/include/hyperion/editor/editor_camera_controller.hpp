@@ -27,7 +27,7 @@ namespace Hyperion::Editor {
 
         Vec2 m_last_mouse_position;
 
-        float32 m_fov_target;
+        float32 m_fov_target = 90.0f;
         float32 m_orthographic_size_target;
     };
 
