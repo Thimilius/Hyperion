@@ -14,11 +14,16 @@ namespace Hyperion::Editor {
         void Render(Rendering::IRenderDriver *render_driver, const Rendering::RenderPipelineContext &context) override;
         void Shutdown(Rendering::IRenderDriver *render_driver) override;
     private:
+        void InitializeGrid();
+    private:
         Material *m_material;
         Shader *m_shader;
         Texture2D *m_texture;
         Mesh *m_mesh;
         RenderTexture *m_render_texture;
+
+        Mesh *m_grid_mesh;
+        Material *m_grid_material;
     };
 
 }

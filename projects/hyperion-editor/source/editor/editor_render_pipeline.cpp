@@ -18,7 +18,7 @@ namespace Hyperion::Editor {
                 
                 layout(location = 0) in vec3 a_position;
                 layout(location = 1) in vec3 a_normal;
-                layout(location = 2) in vec2 a_texture0;
+                layout(location = 4) in vec2 a_texture0;
 
                 out V2F {
 	                vec2 texture0;
@@ -80,29 +80,147 @@ namespace Hyperion::Editor {
             { RenderTextureFormat::Depth24Stencil8, TextureParameters() },
         };
         m_render_texture = RenderTexture::Create(Display::GetWidth(), Display::GetHeight(), attachments);
+
+        InitializeGrid();
     }
 
     void EditorRenderPipeline::Render(Rendering::IRenderDriver *render_driver, const Rendering::RenderPipelineContext &context) {
-        m_render_texture->Resize(Display::GetWidth(), Display::GetHeight());
-
         render_driver->SetCameraData(context.GetCameraData());
 
-        render_driver->SetRenderTexture(m_render_texture->GetResourceId());
         Viewport viewport = { 0, 0, Display::GetWidth(), Display::GetHeight() };
         render_driver->SetViewport(viewport);
+        m_render_texture->Resize(Display::GetWidth(), Display::GetHeight());
+        render_driver->SetRenderTexture(m_render_texture->GetResourceId());
 
-        Color color = Color::Cyan();
-        float32 value = Math::Sin(Time::GetTime() * 2.0f) / 2.0f + 0.5f;
-        color *= value;
-        render_driver->Clear(ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, color);
-
+        render_driver->Clear(ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, Color::Black());
         render_driver->DrawMesh(m_mesh->GetResourceId(), Mat4::Identity(), m_material->GetResourceId(), 0);
+        render_driver->DrawMesh(m_grid_mesh->GetResourceId(), Mat4::Identity(), m_grid_material->GetResourceId(), 0);
 
         render_driver->BlitRenderTexture(0, Display::GetWidth(), Display::GetHeight(), m_render_texture->GetResourceId(), m_render_texture->GetWidth(), m_render_texture->GetHeight());
     }
 
     void EditorRenderPipeline::Shutdown(Rendering::IRenderDriver *render_driver) {
 
+    }
+
+    void EditorRenderPipeline::InitializeGrid() {
+        Map<ShaderStageFlags, String> sources = {
+            { ShaderStageFlags::Vertex, R"(
+                #version 410 core
+                
+                layout(location = 0) in vec3 a_position;
+                layout(location = 3) in vec4 a_color;
+
+                out V2F {
+	                vec4 color;
+                } o_v2f;
+
+                uniform struct Transform {
+                    mat4 model;
+                    mat4 view;
+                    mat4 projection;
+                } u_transform;
+
+                vec4 obj_to_clip_space(vec3 position) {
+	                return u_transform.projection * u_transform.view * u_transform.model * vec4(position, 1.0);
+                }
+
+                void main() {
+                    o_v2f.color = a_color;
+
+	                gl_Position = obj_to_clip_space(a_position);
+                }
+            )" },
+            { ShaderStageFlags::Fragment, R"(
+                #version 410 core
+
+                layout(location = 0) out vec4 o_color;
+
+                in V2F {
+	                vec4 color;
+                } i_v2f;
+
+                void main() {
+	                o_color = i_v2f.color;
+                }
+            )" }
+        };
+        Shader *grid_shader = Shader::Create(sources);
+        m_grid_material = Material::Create(grid_shader);
+
+        const Color default_grid_color = Color(0.25f, 0.25f, 0.25f, 0.25f);
+        const Color special_grid_color = Color(0.75f, 0.75f, 0.75f, 0.75f);
+        const int32 grid_size = 100;
+
+        int32 half_grid_size = grid_size / 2;
+        float32 to_point = static_cast<float32>(half_grid_size);
+
+        uint32 grid_vertex_count = ((grid_size) * 4) + 6;
+        MeshData mesh_data;
+        mesh_data.positions.resize(grid_vertex_count);
+        mesh_data.colors.resize(grid_vertex_count);
+        mesh_data.indices.resize(grid_vertex_count);
+
+        uint32 index = 0;
+        for (int32 x = -half_grid_size; x <= half_grid_size; x++) {
+            if (x == 0) continue; // Skip center line
+
+            float32 from_point = static_cast<float32>(x);
+            Color color = (x % 10) == 0 ? special_grid_color : default_grid_color;
+            mesh_data.positions[index] = Vec3(from_point, 0, to_point);
+            mesh_data.indices[index] = index;
+            mesh_data.colors[index] = color;
+            index++;
+            mesh_data.positions[index] = Vec3(from_point, 0, -to_point);
+            mesh_data.indices[index] = index;
+            mesh_data.colors[index] = color;
+            index++;
+        }
+        for (int32 z = -half_grid_size; z <= half_grid_size; z++) {
+            if (z == 0) continue; // Skip center line
+
+            float32 from_point = static_cast<float32>(z);
+            Color color = (z % 10) == 0 ? special_grid_color : default_grid_color;
+            mesh_data.positions[index] = Vec3(to_point, 0, from_point);
+            mesh_data.indices[index] = index;
+            mesh_data.colors[index] = color;
+            index++;
+            mesh_data.positions[index] = Vec3(-to_point, 0, from_point);
+            mesh_data.indices[index] = index;
+            mesh_data.colors[index] = color;
+            index++;
+        }
+
+        const float32 axis_length = 1000.0f;
+        {
+            mesh_data.positions[index] = Vec3(-axis_length, 0, 0);
+            mesh_data.indices[index] = index;
+            mesh_data.colors[index] = Color::Red();
+            index++;
+            mesh_data.positions[index] = Vec3(axis_length, 0, 0);
+            mesh_data.indices[index] = index;
+            mesh_data.colors[index] = Color::Red();
+            index++;
+            mesh_data.positions[index] = Vec3(0, -axis_length, 0);
+            mesh_data.indices[index] = index;
+            mesh_data.colors[index] = Color::Green();
+            index++;
+            mesh_data.positions[index] = Vec3(0, axis_length, 0);
+            mesh_data.indices[index] = index;
+            mesh_data.colors[index] = Color::Green();
+            index++;
+            mesh_data.positions[index] = Vec3(0, 0, -axis_length);
+            mesh_data.indices[index] = index;
+            mesh_data.colors[index] = Color::Blue();
+            index++;
+            mesh_data.positions[index] = Vec3(0, 0, axis_length);
+            mesh_data.indices[index] = index;
+            mesh_data.colors[index] = Color::Blue();
+            index++;
+        }
+
+        Vector<SubMesh> sub_meshes = { { MeshTopology::Lines, grid_vertex_count, 0, 0 } };
+        m_grid_mesh = Mesh::Create(mesh_data, sub_meshes);
     }
 
 }
