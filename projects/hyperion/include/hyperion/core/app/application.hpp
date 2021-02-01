@@ -21,7 +21,7 @@ namespace Hyperion {
     protected:
         Application(const ApplicationSettings &settings);
 
-        virtual void OnInit() { }
+        virtual void OnInitialize() { }
         virtual void OnEvent(Event &event) { }
         virtual void OnUpdate(float32 delta_time) { }
         virtual void OnFixedUpdate(float32 delta_time) { }

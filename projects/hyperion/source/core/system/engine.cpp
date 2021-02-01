@@ -73,7 +73,7 @@ namespace Hyperion {
         }
 
         Initialize();
-        s_application->OnInit();
+        s_application->OnInitialize();
         s_application->GetWindow()->Show();
 
         s_stats.timer = Timer::Create();

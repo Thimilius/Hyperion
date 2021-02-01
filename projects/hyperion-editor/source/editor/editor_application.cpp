@@ -12,7 +12,7 @@ namespace Hyperion::Editor {
     public:
         EditorApplication(const ApplicationSettings &settings) : Application(settings) { }
     protected:
-        void OnInit() override {
+        void OnInitialize() override {
             World *world = WorldManager::CreateWorld();
             WorldManager::SetActiveWorld(world);
 
