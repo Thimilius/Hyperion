@@ -86,7 +86,7 @@ project "hyperion"
 	kind "StaticLib"
 	
 	pchheader "hyppch.hpp"
-	pchsource "%{prj.location}/src/hyppch.cpp"
+	pchsource "%{prj.location}/source/hyppch.cpp"
 
 	files {
 		"%{prj.location}/**.hpp",
@@ -96,16 +96,16 @@ project "hyperion"
 	}
 	excludes {
 		"%{prj.location}/include/hyperion/platform/**",
-		"%{prj.location}/src/platform/**",
+		"%{prj.location}/source/platform/**",
 
 		"%{prj.location}/include/hyperion/modules/bullet/**",
-		"%{prj.location}/src/modules/bullet/**",
+		"%{prj.location}/source/modules/bullet/**",
 		"%{prj.location}/include/hyperion/modules/fmod/**",
-		"%{prj.location}/src/modules/fmod/**",
+		"%{prj.location}/source/modules/fmod/**",
 		"%{prj.location}/include/hyperion/modules/mono/**",
-		"%{prj.location}/src/modules/mono/**",
+		"%{prj.location}/source/modules/mono/**",
 
-        "%{prj.location}/vendor/glad/src/glad_wgl.c"
+        "%{prj.location}/vendor/glad/source/glad_wgl.c"
 	}
 
 	includedirs {
@@ -126,28 +126,28 @@ project "hyperion"
 	filter "options:audio=fmod"
 		files { 
 			"%{prj.location}/include/hyperion/modules/fmod/**",
-			"%{prj.location}/src/modules/fmod/**"
+			"%{prj.location}/source/modules/fmod/**"
 		}
 		includedirs { "%{prj.location}/vendor/fmod/include" }
 	filter "options:physics=bullet"
 		files { 
 			"%{prj.location}/include/hyperion/modules/bullet/**",
-			"%{prj.location}/src/modules/bullet/**"
+			"%{prj.location}/source/modules/bullet/**"
 		}
 		includedirs { package_bullet_includedirs }
 	filter "options:with-mono"
 		files {
 			"%{prj.location}/include/hyperion/modules/mono/**",
-			"%{prj.location}/src/modules/mono/**",
+			"%{prj.location}/source/modules/mono/**",
 		}
 		includedirs { "%{prj.location}/vendor/mono/include" }
 
 	filter "system:windows"
 		files {
 			"%{prj.location}/include/hyperion/platform/windows/**.hpp",
-			"%{prj.location}/src/platform/windows/**.cpp",
+			"%{prj.location}/source/platform/windows/**.cpp",
 
-            "%{prj.location}/vendor/glad/src/glad_wgl.c"
+            "%{prj.location}/vendor/glad/source/glad_wgl.c"
 		}
 		
 	    postbuildcommands {
