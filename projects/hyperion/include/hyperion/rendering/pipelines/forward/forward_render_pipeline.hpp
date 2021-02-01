@@ -17,10 +17,11 @@ namespace Hyperion::Rendering {
         void Shutdown(IRenderDriver *render_driver) override;
     private:
         Shader *m_shader;
+        Texture2D *m_texture;
         Material *m_material;
-        Font *m_font;
         Mesh *m_mesh;
         CommandBuffer *m_command_buffer;
+        CommandBuffer *m_command_buffer2;
         RenderTexture *m_render_texture;
     };
 

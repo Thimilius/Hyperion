@@ -17,6 +17,7 @@
 #include "hyperion/entity/components/physics/box_collider.hpp"
 #include "hyperion/entity/components/physics/collider.hpp"
 #include "hyperion/entity/components/physics/sphere_collider.hpp"
+#include "hyperion/entity/components/rendering/camera.hpp"
 
 namespace Hyperion {
 
@@ -155,6 +156,9 @@ HYP_REFLECT_REGISTER_BEGIN
             .constructor(select_overload<Texture2D *(uint32, uint32, Rendering::TextureFormat, Rendering::TextureParameters, const Vector<uint8> &, bool)>(&Texture2D::Create))(DefaultConstructorPolicy);
         Registration<TextureCubemap>("TextureCubemap")
             .constructor(select_overload<TextureCubemap *()>(&TextureCubemap::Create))(DefaultConstructorPolicy);
+        Registration<RenderTexture>("RenderTexture")
+            .constructor(select_overload<RenderTexture *()>(&RenderTexture::Create))(DefaultConstructorPolicy)
+            .constructor(select_overload<RenderTexture *(uint32, uint32, Vector<Rendering::RenderTextureAttachment>)>(&RenderTexture::Create))(DefaultConstructorPolicy);
     }
 
     {
@@ -174,6 +178,8 @@ HYP_REFLECT_REGISTER_BEGIN
         Registration<Collider>("Collider");
         Registration<SphereCollider>("SphereCollider")
             .constructor(select_overload<SphereCollider *()>(&SphereCollider::Create))(DefaultConstructorPolicy);
+        Registration<Camera>("Camera")
+            .constructor(select_overload<Camera *()>(&Camera::Create))(DefaultConstructorPolicy);
     }
 }
 HYP_REFLECT_REGISTER_END

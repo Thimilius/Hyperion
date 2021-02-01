@@ -1,7 +1,10 @@
 #pragma once
 
+#include "hyperion/rendering/camera_data.hpp"
+
 namespace Hyperion::Rendering {
     class IRenderDriver;
+    class RenderEngine;
 }
 
 namespace Hyperion::Rendering {
@@ -14,7 +17,12 @@ namespace Hyperion::Rendering {
     };
 
     class RenderPipelineContext {
-
+    public:
+        const CameraData &GetCameraData() const { return m_camera_data; }
+    private:
+        CameraData m_camera_data;
+    private:
+        friend class Hyperion::Rendering::RenderEngine;
     };
 
     class IRenderPipeline {

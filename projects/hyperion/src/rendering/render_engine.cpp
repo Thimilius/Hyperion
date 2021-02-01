@@ -4,6 +4,8 @@
 
 #include "hyperion/core/threading/synchronization.hpp"
 #include "hyperion/driver/opengl/opengl_render_driver.hpp"
+#include "hyperion/entity/world_manager.hpp"
+#include "hyperion/entity/components/rendering/camera.hpp"
 #include "hyperion/rendering/graphics_context.hpp"
 #include "hyperion/rendering/pipelines/forward/forward_render_pipeline.hpp"
 #include "hyperion/rendering/threading/render_thread_commands.hpp"
@@ -43,7 +45,8 @@ namespace Hyperion::Rendering {
 
     void RenderEngine::Render() {
         RenderPipelineContext render_pipeline_context;
-
+        Camera *camera = WorldManager::GetActiveWorld()->FindComponentOfType<Camera>();
+        render_pipeline_context.m_camera_data = camera->GetCameraData();
         s_render_pipeline->Render(s_render_driver, render_pipeline_context);
 
         // The following block ends a frame on the Main Thread:
