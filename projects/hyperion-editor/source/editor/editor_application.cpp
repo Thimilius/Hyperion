@@ -4,6 +4,7 @@
 #include <hyperion/entity/components/rendering/camera.hpp>
 
 #include "hyperion/editor/editor_camera_controller.hpp"
+#include "hyperion/editor/editor_render_pipeline.hpp"
 
 namespace Hyperion::Editor {
 
@@ -12,12 +13,12 @@ namespace Hyperion::Editor {
         EditorApplication(const ApplicationSettings &settings) : Application(settings) { }
     protected:
         void OnInit() override {
-            m_world = WorldManager::CreateWorld();
-            WorldManager::SetActiveWorld(m_world);
+            World *world = WorldManager::CreateWorld();
+            WorldManager::SetActiveWorld(world);
 
-            m_camera_entity = Entity::Create("Camera");
-            m_camera_entity->AddComponent<Camera>();
-            m_camera_entity->AddComponent<EditorCameraController>();
+            Entity *entity = Entity::Create("Camera");
+            entity->AddComponent<Camera>();
+            entity->AddComponent<EditorCameraController>();
         }
 
         void OnUpdate(float32 delta_time) override {
@@ -34,10 +35,6 @@ namespace Hyperion::Editor {
             String title = StringUtils::Format("Hyperion - FPS: {} ({:.2f}ms) - Memory: {:.2f}MB", Time::GetFPS(), Time::GetFrameTime(), memory);
             GetWindow()->SetTitle(title);
         }
-    private:
-        World *m_world;
-        Entity *m_camera_entity;
-        Camera *m_camera;
     };
 
 }
@@ -45,5 +42,7 @@ namespace Hyperion::Editor {
 Hyperion::Application *Hyperion::CreateApplication() {
     ApplicationSettings settings = ApplicationSettings::FromJsonFile("app.json");
     settings.render.threading_mode = Rendering::RenderThreadingMode::MultiThreaded;
+    settings.render.pipeline = Rendering::RenderPipeline::Custom;
+    settings.render.custom_pipeline = new Editor::EditorRenderPipeline();
     return new Hyperion::Editor::EditorApplication(settings);
 }

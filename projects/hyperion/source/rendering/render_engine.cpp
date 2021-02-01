@@ -31,10 +31,8 @@ namespace Hyperion::Rendering {
         }
 
         switch (s_render_settings.pipeline) {
-            case RenderPipeline::Forward: {
-                s_render_pipeline = new ForwardRenderPipeline();
-                break;
-            }
+            case RenderPipeline::Forward: s_render_pipeline = new ForwardRenderPipeline(); break;
+            case RenderPipeline::Custom: s_render_pipeline = s_render_settings.custom_pipeline; break;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
     }
