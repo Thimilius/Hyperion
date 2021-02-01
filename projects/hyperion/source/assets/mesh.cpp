@@ -21,31 +21,67 @@ namespace Hyperion {
             m_sub_meshes = sub_meshes;
         }
 
-        // NOTE: Currently we don't really do a lot of data validation.
-
         MeshDescriptor descriptor = { };
         descriptor.sub_meshes = sub_meshes;
 
-        bool has_positions = mesh_data.positions.size() > 0;
+        // The minimum a mesh must provide is positional data.
+        HYP_ASSERT(mesh_data.positions.size() > 0);
         bool has_normals = mesh_data.normals.size() > 0;
+        bool has_colors = mesh_data.colors.size() > 0;
         bool has_texture0 = mesh_data.texture0.size() > 0;
 
+        Vector<VertexAttribute> vertex_attributes;
+        constexpr uint32 VERTEX_ATTRIBUTE_SIZE_POSITION = sizeof(float32) * 3;
+        vertex_attributes.push_back({ VertexAttributeKind::Position, VertexAttributeType::Float32, 3 });
+        uint32 stride = VERTEX_ATTRIBUTE_SIZE_POSITION;
+
+        constexpr uint32 VERTEX_ATTRIBUTE_SIZE_NORMAL = sizeof(float32) * 3;
+        if (has_normals) {
+            HYP_ASSERT(mesh_data.normals.size() == mesh_data.positions.size());
+            vertex_attributes.push_back({ VertexAttributeKind::Normal, VertexAttributeType::Float32, 3 });
+            stride += VERTEX_ATTRIBUTE_SIZE_NORMAL;
+        }
+        constexpr uint32 VERTEX_ATTRIBUTE_SIZE_COLOR = sizeof(float32) * 4;
+        if (has_colors) {
+            HYP_ASSERT(mesh_data.colors.size() == mesh_data.positions.size());
+            vertex_attributes.push_back({ VertexAttributeKind::Color, VertexAttributeType::Float32, 4 });
+            stride += VERTEX_ATTRIBUTE_SIZE_COLOR;
+        }
+        constexpr uint32 VERTEX_ATTRIBUTE_SIZE_TEXTURE0 = sizeof(float32) * 2;
+        if (has_texture0) {
+            HYP_ASSERT(mesh_data.texture0.size() == mesh_data.positions.size());
+            vertex_attributes.push_back({ VertexAttributeKind::Texture0, VertexAttributeType::Float32, 2 });
+            stride += VERTEX_ATTRIBUTE_SIZE_TEXTURE0;
+        }
+        descriptor.vertex_format.attributes = vertex_attributes;
+        descriptor.vertex_format.stride = stride;
+
         uint32 vertex_count = static_cast<uint32>(mesh_data.positions.size());
-        Vector<uint8> vertices(vertex_count * sizeof(VertexMesh));
-        VertexMesh *vertex_data = reinterpret_cast<VertexMesh *>(vertices.data());
+        Vector<uint8> vertices(vertex_count * stride);
         for (uint32 i = 0; i < vertex_count; i++) {
-            vertex_data[i].position = mesh_data.positions[i];
-            vertex_data[i].normal = mesh_data.normals[i];
-            vertex_data[i].texture0 = mesh_data.texture0[i];
+            uint32 index = i * stride;
+            
+            Vec3 &position = reinterpret_cast<Vec3 &>(vertices[index]);
+            position = mesh_data.positions[i];
+            index += VERTEX_ATTRIBUTE_SIZE_POSITION;
+
+            if (has_normals) {
+                Vec3 &normal = reinterpret_cast<Vec3 &>(vertices[index]);
+                normal = mesh_data.normals[i];
+                index += VERTEX_ATTRIBUTE_SIZE_NORMAL;
+            }
+            if (has_colors) {
+                Vec4 &normal = reinterpret_cast<Vec4 &>(vertices[index]);
+                normal = mesh_data.colors[i];
+                index += VERTEX_ATTRIBUTE_SIZE_COLOR;
+            }
+            if (has_texture0) {
+                Vec2 &normal = reinterpret_cast<Vec2 &>(vertices[index]);
+                normal = mesh_data.texture0[i];
+                index += VERTEX_ATTRIBUTE_SIZE_TEXTURE0;
+            }
         }
         descriptor.vertices = vertices;
-        Vector<VertexAttribute> vertex_attributes = {
-            { VertexAttributeKind::Position, VertexAttributeType::Float32, 3 },
-            { VertexAttributeKind::Normal, VertexAttributeType::Float32, 3 },
-            { VertexAttributeKind::Texture0, VertexAttributeType::Float32, 2 },
-        };
-        descriptor.vertex_format.attributes = vertex_attributes;
-        descriptor.vertex_format.stride = 32;
 
         // FIXME: This is hardcoded for 32-Bit indices!
         descriptor.index_format = IndexFormat::UInt32;

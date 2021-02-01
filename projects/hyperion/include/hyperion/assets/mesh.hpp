@@ -17,15 +17,10 @@ namespace Hyperion {
     struct MeshData {
         Vector<Vec3> positions;
         Vector<Vec3> normals;
+        Vector<Vec4> colors;
         Vector<Vec2> texture0;
 
         Vector<uint32> indices;
-    };
-
-    struct VertexMesh {
-        Vec3 position;
-        Vec3 normal;
-        Vec2 texture0;
     };
 
     class Mesh : public Asset {

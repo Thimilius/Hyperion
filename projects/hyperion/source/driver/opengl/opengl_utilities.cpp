@@ -228,6 +228,20 @@ namespace Hyperion::Rendering {
         }
     }
 
+    GLuint OpenGLUtilities::GetGLAttributeIndexForVertextAttributeSize(VertexAttributeKind kind) {
+        switch (kind) {
+            case Hyperion::Rendering::VertexAttributeKind::Position: return 0;
+            case Hyperion::Rendering::VertexAttributeKind::Normal: return 1;
+            case Hyperion::Rendering::VertexAttributeKind::Tangent: return 2;
+            case Hyperion::Rendering::VertexAttributeKind::Color: return 3;
+            case Hyperion::Rendering::VertexAttributeKind::Texture0: return 4;
+            case Hyperion::Rendering::VertexAttributeKind::Texture1: return 5;
+            case Hyperion::Rendering::VertexAttributeKind::Texture2: return 6;
+            case Hyperion::Rendering::VertexAttributeKind::Texture3: return 7;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
     GLenum OpenGLUtilities::GetGLVertexAttributeType(VertexAttributeType vertex_attribute_type) {
         switch (vertex_attribute_type) {
             case VertexAttributeType::Float32: return GL_FLOAT;
@@ -235,7 +249,7 @@ namespace Hyperion::Rendering {
         }
     }
 
-    GLuint OpenGLUtilities::GetGLSizeForVertexAttribute(VertexAttributeType vertex_attribute_type, uint32 dimension) {
+    GLuint OpenGLUtilities::GetGLVertexAttributeSizeForVertexAttribute(VertexAttributeType vertex_attribute_type, uint32 dimension) {
         switch (vertex_attribute_type) {
             case VertexAttributeType::Float32: return sizeof(float32) * dimension;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;

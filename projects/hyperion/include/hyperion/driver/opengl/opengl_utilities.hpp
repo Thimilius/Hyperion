@@ -34,8 +34,9 @@ namespace Hyperion::Rendering {
         static GLenum GetGLIndexFormat(IndexFormat index_format);
         static GLsizei GetGLIndexFormatSize(IndexFormat index_format);
         static GLenum GetGLMeshTopology(MeshTopology mesh_topology);
+        static GLuint GetGLAttributeIndexForVertextAttributeSize(VertexAttributeKind kind);
         static GLenum GetGLVertexAttributeType(VertexAttributeType vertex_attribute_type);
-        static GLuint GetGLSizeForVertexAttribute(VertexAttributeType vertex_attribute_type, uint32 dimension);
+        static GLuint GetGLVertexAttributeSizeForVertexAttribute(VertexAttributeType vertex_attribute_type, uint32 dimension);
     private:
         static uint32 GetBytesPerPixelForTextureFormat(TextureFormat format);
     };

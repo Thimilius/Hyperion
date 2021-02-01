@@ -419,8 +419,8 @@ namespace Hyperion::Rendering {
         uint64 vertex_attribute_count = descriptor.vertex_format.attributes.size / sizeof(descriptor.vertex_format.attributes.data[0]);
         for (uint32 i = 0; i < vertex_attribute_count; i++) {
             const VertexAttribute &vertex_attribute = descriptor.vertex_format.attributes.data[i];
-
-            GLuint attribute_index = i;
+            
+            GLuint attribute_index = OpenGLUtilities::GetGLAttributeIndexForVertextAttributeSize(vertex_attribute.kind);
             GLuint binding_index = 0;
             GLint size = vertex_attribute.dimension;
             GLenum type = OpenGLUtilities::GetGLVertexAttributeType(vertex_attribute.type);
@@ -430,7 +430,7 @@ namespace Hyperion::Rendering {
             glVertexArrayVertexBuffer(vertex_array_id, binding_index, mesh.vertex_buffer, 0, stride);
             glVertexArrayAttribBinding(vertex_array_id, attribute_index, binding_index);
 
-            relative_offset += OpenGLUtilities::GetGLSizeForVertexAttribute(vertex_attribute.type, vertex_attribute.dimension);
+            relative_offset += OpenGLUtilities::GetGLVertexAttributeSizeForVertexAttribute(vertex_attribute.type, vertex_attribute.dimension);
         }
     }
 
