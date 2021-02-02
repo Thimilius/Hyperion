@@ -5,6 +5,7 @@
 
 #include "hyperion/editor/editor_camera_controller.hpp"
 #include "hyperion/editor/editor_render_pipeline.hpp"
+#include "hyperion/editor/editor_world_view.hpp"
 
 namespace Hyperion::Editor {
 
@@ -28,6 +29,8 @@ namespace Hyperion::Editor {
             if (Input::IsKeyDown(KeyCode::F1)) {
                 GetWindow()->SetWindowMode(GetWindow()->GetWindowMode() == WindowMode::Borderless ? WindowMode::Windowed : WindowMode::Borderless);
             }
+
+            EditorWorldView::OnUpdate(delta_time);
         }
 
         void OnTick() override {

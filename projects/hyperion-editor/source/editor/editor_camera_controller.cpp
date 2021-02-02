@@ -22,7 +22,7 @@ namespace Hyperion::Editor {
         float32 fov = m_camera->GetFOV();
         float32 orthographic_size = m_camera->GetOrthographicSize();
 
-        // Rotation
+        // Handle everything related to rotation.
         {
             if (Input::IsMouseButtonDown(MouseButtonCode::Right) || Input::IsMouseButtonDown(MouseButtonCode::Middle)) {
                 m_last_mouse_position = Input::GetMousePosition();
@@ -71,7 +71,7 @@ namespace Hyperion::Editor {
             rotation = Vec3(m_pitch, m_yaw, 0);
         }
 
-        // Zoom
+        // Handle everything related to zooming.
         {
             float32 wheel = Input::GetMouseScroll();
             switch (m_camera->GetProjectionMode()) {
@@ -92,9 +92,10 @@ namespace Hyperion::Editor {
             orthographic_size = Math::Lerp(orthographic_size, m_orthographic_size_target, delta_time * 15);
         }
 
-        // Movement
+        // Handle everything related to movement.
         {
-            float32 camera_acceleration = m_acceleration * delta_time;
+            float32 acceleration = Input::IsKeyHold(KeyCode::Alt) ? m_acceleration * 5.0f : m_acceleration;
+            float32 camera_acceleration = acceleration * delta_time;
 
             Vec3 forward = camera_acceleration * transform->GetForward();
             Vec3 right = camera_acceleration * transform->GetRight();
@@ -130,7 +131,7 @@ namespace Hyperion::Editor {
             m_velocity -= m_friction * delta_time * m_velocity;
         }
 
-        // Reset
+        // Handle resetting the camera state.
         if (Input::IsKeyDown(KeyCode::R) || Input::IsGamepadButtonDown(Gamepad::Gamepad1, GamepadButtonCode::RightThumb)) {
             position = Vec3(2, 2, 2);
 

@@ -7,6 +7,8 @@
 #include <hyperion/core/io/image_loader.hpp>
 #include <hyperion/rendering/render_driver.hpp>
 
+#include "hyperion/editor/editor_world_view.hpp"
+
 using namespace Hyperion::Rendering;
 
 namespace Hyperion::Editor {
@@ -85,7 +87,8 @@ namespace Hyperion::Editor {
     }
 
     void EditorRenderPipeline::Render(Rendering::IRenderDriver *render_driver, const Rendering::RenderPipelineContext &context) {
-        render_driver->SetCameraData(context.GetCameraData());
+        const CameraData &camera_data = context.GetCameraData();
+        render_driver->SetCameraData(camera_data);
 
         Viewport viewport = { 0, 0, Display::GetWidth(), Display::GetHeight() };
         render_driver->SetViewport(viewport);
@@ -94,7 +97,16 @@ namespace Hyperion::Editor {
 
         render_driver->Clear(ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, Color::Black());
         render_driver->DrawMesh(m_mesh->GetResourceId(), Mat4::Identity(), m_material->GetResourceId(), 0);
-        render_driver->DrawMesh(m_grid_mesh->GetResourceId(), Mat4::Identity(), m_grid_material->GetResourceId(), 0);
+
+        if (EditorWorldView::ShouldDrawGrid()) {
+            // We want to draw the grid at the center of the camera corresponding to the grid chunk size.
+            Vec3 camera_position = camera_data.position;
+            int32 x = static_cast<int32>(camera_position.x + 5.0f) / GRID_CHUNK_SIZE;
+            int32 z = static_cast<int32>(camera_position.z + 5.0f) / GRID_CHUNK_SIZE;
+            Vec3 grid_position = Vec3(static_cast<float32>(x * GRID_CHUNK_SIZE), 0.0f, static_cast<float32>(z * GRID_CHUNK_SIZE));
+
+            render_driver->DrawMesh(m_grid_mesh->GetResourceId(), Mat4::Translate(grid_position), m_grid_material->GetResourceId(), 0);
+        }
 
         render_driver->BlitRenderTexture(0, Display::GetWidth(), Display::GetHeight(), m_render_texture->GetResourceId(), m_render_texture->GetWidth(), m_render_texture->GetHeight());
     }
@@ -150,12 +162,12 @@ namespace Hyperion::Editor {
 
         const Color default_grid_color = Color(0.25f, 0.25f, 0.25f, 0.25f);
         const Color special_grid_color = Color(0.75f, 0.75f, 0.75f, 0.75f);
-        const int32 grid_size = 100;
 
-        int32 half_grid_size = grid_size / 2;
+        int32 half_grid_size = GRID_SIZE / 2;
         float32 to_point = static_cast<float32>(half_grid_size);
 
-        uint32 grid_vertex_count = ((grid_size) * 4) + 6;
+        // We have to remember that we are actually drawing always one more line that the actual size of the grid.
+        uint32 grid_vertex_count = ((GRID_SIZE + 1) * 4);
         MeshData mesh_data;
         mesh_data.positions.resize(grid_vertex_count);
         mesh_data.colors.resize(grid_vertex_count);
@@ -163,10 +175,8 @@ namespace Hyperion::Editor {
 
         uint32 index = 0;
         for (int32 x = -half_grid_size; x <= half_grid_size; x++) {
-            if (x == 0) continue; // Skip center line
-
             float32 from_point = static_cast<float32>(x);
-            Color color = (x % 10) == 0 ? special_grid_color : default_grid_color;
+            Color color = (x % GRID_CHUNK_SIZE) == 0 ? special_grid_color : default_grid_color;
             mesh_data.positions[index] = Vec3(from_point, 0, to_point);
             mesh_data.indices[index] = index;
             mesh_data.colors[index] = color;
@@ -177,10 +187,8 @@ namespace Hyperion::Editor {
             index++;
         }
         for (int32 z = -half_grid_size; z <= half_grid_size; z++) {
-            if (z == 0) continue; // Skip center line
-
             float32 from_point = static_cast<float32>(z);
-            Color color = (z % 10) == 0 ? special_grid_color : default_grid_color;
+            Color color = (z % GRID_CHUNK_SIZE) == 0 ? special_grid_color : default_grid_color;
             mesh_data.positions[index] = Vec3(to_point, 0, from_point);
             mesh_data.indices[index] = index;
             mesh_data.colors[index] = color;
@@ -188,34 +196,6 @@ namespace Hyperion::Editor {
             mesh_data.positions[index] = Vec3(-to_point, 0, from_point);
             mesh_data.indices[index] = index;
             mesh_data.colors[index] = color;
-            index++;
-        }
-
-        const float32 axis_length = 1000.0f;
-        {
-            mesh_data.positions[index] = Vec3(-axis_length, 0, 0);
-            mesh_data.indices[index] = index;
-            mesh_data.colors[index] = Color::Red();
-            index++;
-            mesh_data.positions[index] = Vec3(axis_length, 0, 0);
-            mesh_data.indices[index] = index;
-            mesh_data.colors[index] = Color::Red();
-            index++;
-            mesh_data.positions[index] = Vec3(0, -axis_length, 0);
-            mesh_data.indices[index] = index;
-            mesh_data.colors[index] = Color::Green();
-            index++;
-            mesh_data.positions[index] = Vec3(0, axis_length, 0);
-            mesh_data.indices[index] = index;
-            mesh_data.colors[index] = Color::Green();
-            index++;
-            mesh_data.positions[index] = Vec3(0, 0, -axis_length);
-            mesh_data.indices[index] = index;
-            mesh_data.colors[index] = Color::Blue();
-            index++;
-            mesh_data.positions[index] = Vec3(0, 0, axis_length);
-            mesh_data.indices[index] = index;
-            mesh_data.colors[index] = Color::Blue();
             index++;
         }
 

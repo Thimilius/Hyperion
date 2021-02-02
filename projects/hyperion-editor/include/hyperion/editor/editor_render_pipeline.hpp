@@ -24,6 +24,8 @@ namespace Hyperion::Editor {
 
         Mesh *m_grid_mesh;
         Material *m_grid_material;
+        inline static const int32 GRID_SIZE = 100;
+        inline static const int32 GRID_CHUNK_SIZE = 10;
     };
 
 }
