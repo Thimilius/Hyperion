@@ -325,6 +325,8 @@ namespace Hyperion::Rendering {
             render_texture.attachments.push_back(attachment);
         }
 
+        render_texture.color_attachment_count = color_attachment_index + 1;
+
         if (glCheckNamedFramebufferStatus(render_texture.render_texture, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
             HYP_LOG_ERROR("OpenGL", "Failed to create framebuffer!");
         }
@@ -355,10 +357,26 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLRenderDriver::SetRenderTexture(ResourceId render_texture_id) {
-        HYP_ASSERT(m_render_textures.find(render_texture_id) != m_render_textures.end());
-        OpenGLRenderTexture &render_texture = m_render_textures[render_texture_id];
-        if (m_current_render_texture != &render_texture) {
-            glBindFramebuffer(GL_FRAMEBUFFER, render_texture.render_texture);
+        // We might get passed a 0, meaning the default render texture.
+        if (render_texture_id == 0) {
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        } else {
+            HYP_ASSERT(m_render_textures.find(render_texture_id) != m_render_textures.end());
+            OpenGLRenderTexture &render_texture = m_render_textures[render_texture_id];
+
+            if (m_current_render_texture != &render_texture) {
+                m_current_render_texture = &render_texture;
+
+                // We have to specify that we want to draw into all color attachments of the render texture.          
+                uint32 color_attachment_count = render_texture.color_attachment_count;
+                Vector<GLenum> buffers(color_attachment_count);
+                for (GLenum i = 0; i < color_attachment_count; i++) {
+                    buffers[i] = GL_COLOR_ATTACHMENT0 + i;
+                }
+                glNamedFramebufferDrawBuffers(render_texture.render_texture, color_attachment_count, buffers.data());
+
+                glBindFramebuffer(GL_FRAMEBUFFER, render_texture.render_texture);
+            }
         }
     }
 

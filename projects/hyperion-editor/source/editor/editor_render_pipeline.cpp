@@ -101,8 +101,8 @@ namespace Hyperion::Editor {
         if (EditorWorldView::ShouldDrawGrid()) {
             // We want to draw the grid at the center of the camera corresponding to the grid chunk size.
             Vec3 camera_position = camera_data.position;
-            int32 x = static_cast<int32>(camera_position.x + 5.0f) / GRID_CHUNK_SIZE;
-            int32 z = static_cast<int32>(camera_position.z + 5.0f) / GRID_CHUNK_SIZE;
+            int32 x = static_cast<int32>(camera_position.x + (GRID_CHUNK_SIZE / 2.0f)) / GRID_CHUNK_SIZE;
+            int32 z = static_cast<int32>(camera_position.z + (GRID_CHUNK_SIZE / 2.0f)) / GRID_CHUNK_SIZE;
             Vec3 grid_position = Vec3(static_cast<float32>(x * GRID_CHUNK_SIZE), 0.0f, static_cast<float32>(z * GRID_CHUNK_SIZE));
 
             render_driver->DrawMesh(m_grid_mesh->GetResourceId(), Mat4::Translate(grid_position), m_grid_material->GetResourceId(), 0);
@@ -160,9 +160,6 @@ namespace Hyperion::Editor {
         Shader *grid_shader = Shader::Create(sources);
         m_grid_material = Material::Create(grid_shader);
 
-        const Color default_grid_color = Color(0.25f, 0.25f, 0.25f, 0.25f);
-        const Color special_grid_color = Color(0.75f, 0.75f, 0.75f, 0.75f);
-
         int32 half_grid_size = GRID_SIZE / 2;
         float32 to_point = static_cast<float32>(half_grid_size);
 
@@ -176,7 +173,7 @@ namespace Hyperion::Editor {
         uint32 index = 0;
         for (int32 x = -half_grid_size; x <= half_grid_size; x++) {
             float32 from_point = static_cast<float32>(x);
-            Color color = (x % GRID_CHUNK_SIZE) == 0 ? special_grid_color : default_grid_color;
+            Color color = (x % GRID_CHUNK_SIZE) == 0 ? GRID_SPECIAL_COLOR : GRID_COLOR;
             mesh_data.positions[index] = Vec3(from_point, 0, to_point);
             mesh_data.indices[index] = index;
             mesh_data.colors[index] = color;
@@ -188,7 +185,7 @@ namespace Hyperion::Editor {
         }
         for (int32 z = -half_grid_size; z <= half_grid_size; z++) {
             float32 from_point = static_cast<float32>(z);
-            Color color = (z % GRID_CHUNK_SIZE) == 0 ? special_grid_color : default_grid_color;
+            Color color = (z % GRID_CHUNK_SIZE) == 0 ? GRID_SPECIAL_COLOR : GRID_COLOR;
             mesh_data.positions[index] = Vec3(to_point, 0, from_point);
             mesh_data.indices[index] = index;
             mesh_data.colors[index] = color;

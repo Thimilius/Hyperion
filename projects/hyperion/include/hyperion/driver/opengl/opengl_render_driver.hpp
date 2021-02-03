@@ -93,6 +93,8 @@ namespace Hyperion::Rendering {
 
             TextureSize size;
             uint32 mipmap_count;
+
+            uint32 color_attachment_count;
             Vector<OpenGLRenderTextureAttachment> attachments;
         };
         Map<ResourceId, OpenGLRenderTexture> m_render_textures;
