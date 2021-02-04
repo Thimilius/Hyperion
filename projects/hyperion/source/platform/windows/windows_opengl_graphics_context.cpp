@@ -76,7 +76,7 @@ namespace Hyperion::Rendering {
     }
 
     void WindowsOpenGLGraphicsContext::Present() {
-        ::SwapBuffers(m_device_context);
+        SwapBuffers(m_device_context);
     }
 
     void WindowsOpenGLGraphicsContext::SetVSyncMode(VSyncMode vsync_mode) {

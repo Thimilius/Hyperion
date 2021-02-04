@@ -28,14 +28,14 @@ namespace Hyperion {
         inline static void WaitForSwapDone() { s_swap_done_event.Wait(); }
         inline static bool WaitUnblockedForSwapDone() { return s_swap_done_event.WaitUnblocked(); }
 
-        inline static void NotifyImmediateCommandDone() { s_immediate_command_done_event.Notify(); }
-        inline static void WaitForImmediateCommandDone() { s_immediate_command_done_event.Wait(); }
+        inline static void NotifyQueryCommandDone() { s_query_command_done_event.Notify(); }
+        inline static void WaitForQueryCommandDone() { s_query_command_done_event.Wait(); }
     private:
         inline static Threading::AutoResetEvent s_render_ready_event = Threading::AutoResetEvent(false);
         inline static Threading::AutoResetEvent s_update_ready_event = Threading::AutoResetEvent(false);
         inline static Threading::AutoResetEvent s_render_done_event = Threading::AutoResetEvent(false);
         inline static Threading::AutoResetEvent s_swap_done_event = Threading::AutoResetEvent(false);
-        inline static Threading::AutoResetEvent s_immediate_command_done_event = Threading::AutoResetEvent(false);
+        inline static Threading::AutoResetEvent s_query_command_done_event = Threading::AutoResetEvent(false);
     private:
         friend class Hyperion::Engine;
         friend class Hyperion::Rendering::RenderEngine;

@@ -7,6 +7,14 @@
 
 namespace Hyperion::Rendering {
 
+    // NOTE: So here is the thing...
+    // Because the actual creation and initialization of graphics resources gets delayed when using a Render Thread,
+    // it is possible to query buffer, texture and other data referencing a resource that is not yet actually created.
+    // For now we handle this by returning empty data in the appropriate functions.
+    // A better architecture in general would probably be to lazy initialize the graphics resources when creating them from the Main Thread.
+    // The actual initialization of the resources can then be executed later on the Render Thread.
+    // This would require quite some work though and the creation would probably need to be synchronized somehow.
+
     const char *g_fallback_shader_vertex = R"(
         #version 410 core
 
@@ -162,21 +170,28 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLRenderDriver::GetTextureData(ResourceId id, GetTextureDataCallback callback) {
-        HYP_ASSERT(m_textures.find(id) != m_textures.end());
+        // TODO: Make more performant by allowing to pass in a pointer to the data to fill.
 
-        OpenGLTexture &texture = m_textures[id];
-        
-        // FIXME: This is hardcoded for 2D textures.
-        // Maybe just store the complete size beforehand?
-        GLsizei size = texture.size.height * texture.size.width * 4; 
-        Vector<uint8> data(size);
+        // We need to remeber to handle the fact that the resource that gets queried is not actually created yet.
+        auto it = m_textures.find(id);
+        if (it != m_textures.end()) {
+            OpenGLTexture &texture = m_textures[id];
 
-        GLenum format = OpenGLUtilities::GetGLTextureFormat(texture.format);
-        GLenum format_type = OpenGLUtilities::GetGLTextureFormatType(texture.format);
+            // FIXME: This is hardcoded for 2D textures.
+            // Maybe just store the complete size beforehand?
+            GLsizei size = texture.size.height * texture.size.width * 4;
+            Vector<uint8> data(size);
 
-        glGetTextureImage(texture.texture, 0, format, format_type, size, data.data());
+            GLenum format = OpenGLUtilities::GetGLTextureFormat(texture.format);
+            GLenum format_type = OpenGLUtilities::GetGLTextureFormatType(texture.format);
 
-        callback(data);
+            glGetTextureImage(texture.texture, 0, format, format_type, size, data.data());
+
+            callback(data);
+        } else {
+            Vector<uint8> data;
+            callback(data);
+        }
     }
 
     void OpenGLRenderDriver::DestroyTexture(ResourceId id) {

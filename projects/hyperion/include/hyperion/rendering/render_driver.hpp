@@ -58,7 +58,7 @@ namespace Hyperion::Rendering {
         ArrayDescriptor<uint8> pixels;
     };
 
-    using GetTextureDataCallback = std::function<void(const Vector<uint8> &)>;
+    using GetTextureDataCallback = std::function<void(Vector<uint8> &)>;
 
     struct MaterialDescriptor {
         ResourceId shader_id;

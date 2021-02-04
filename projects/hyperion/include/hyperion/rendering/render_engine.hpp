@@ -36,7 +36,8 @@ namespace Hyperion::Rendering {
         static void Exit();
 
         static void InitGraphicsContextAndBackend(Window *window);
-        static void SwapBuffers();
+        static void HandleRenderThreadQueryCommands();
+        static void SwapRenderThreadCommandQueues();
 
         static void InitRenderThread(Window *window);
         static void RenderThreadLoop(void *parameter);
@@ -44,8 +45,9 @@ namespace Hyperion::Rendering {
 
         inline static RenderThreadCommandQueue<RenderThreadCommandType> &GetCommandQueue() { return s_update_queue; }
         static void ExecuteRenderCommands();
-        inline static RenderThreadCommandQueue<ImmediateRenderThreadCommandType> &GetImmediateCommandQueue() { return s_immediate_queue; }
-        static void ExecutePotentialImmediateRenderCommand();
+        inline static RenderThreadCommandQueue<RenderThreadQueryCommandType> &GetQueryCommandQueue() { return s_query_queue; }
+        inline static bool IsExecutingRenderThreadGetCommands() { return s_executing_render_thread_query_commands; }
+        static void ExecuteRenderThreadQueryCommand();
     private: 
         inline static RenderSettings s_render_settings;
         inline static IRenderPipeline *s_render_pipeline;
@@ -62,11 +64,12 @@ namespace Hyperion::Rendering {
         inline static RenderThreadCommandQueue<RenderThreadCommandType> s_update_queue;
         inline static RenderThreadCommandQueue<RenderThreadCommandType> s_render_queue;
 
-        inline static RenderThreadCommandQueue<ImmediateRenderThreadCommandType> s_immediate_queue;
-        inline static std::atomic<bool> s_current_immediate_command_pending;
-        inline static ImmediateRenderThreadCommandType s_current_immediate_command_type;
-        inline static void *s_current_immediate_command;
-        inline static uint64 s_current_immediate_command_size;
+        inline static RenderThreadCommandQueue<RenderThreadQueryCommandType> s_query_queue;
+        inline static bool s_executing_render_thread_query_commands;
+        inline static std::atomic<bool> s_is_current_query_command_pending;
+        inline static RenderThreadQueryCommandType s_current_query_command_type;
+        inline static void *s_current_query_command;
+        inline static uint64 s_current_query_command_size;
     private:
         friend class Hyperion::Engine;
         friend class Hyperion::Rendering::RenderThreadRenderDriver;

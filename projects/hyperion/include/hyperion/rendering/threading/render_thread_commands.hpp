@@ -4,14 +4,14 @@
 
 #include "hyperion/rendering/render_driver.hpp"
 
-// NOTE: Everything inside a (normal) render thread command has to be trivially destructable (POD).
+// NOTE: Everything inside a normal render thread command has to be trivially destructable (POD).
 // The reason is that only their storage gets deallocated and the destructor will never be called.
 // Using a type which is not trivially destructable would be a memory leak!
 
 namespace Hyperion::Rendering {
 
     // Those specify all 'normal' render thread commands.
-    // Immediate render thread commands are handled seperately.
+    // Render thread query commands are handled seperately.
     enum class RenderThreadCommandType {
         Exit,
 
@@ -118,15 +118,15 @@ namespace Hyperion::Rendering {
         uint32 sub_mesh_index;
     };
 
-    // NOTE: Immediate render thread commands are special commands that get executed immediately by the Render Thread.
-    // They are synchronized, meaning the Main Thread waits for the Render Thread to execute them.
+    // NOTE: Render thread query commands are special commands that get executed by the Render Thread at the end of the frame.
+    // They execute synchronously, meaning the Main Thread waits for the Render Thread to finish executing.
     // Their primary purpose is to return data from the Render Thread back to the Main Thread.
 
-    enum class ImmediateRenderThreadCommandType {
+    enum class RenderThreadQueryCommandType {
         GetTextureData
     };
 
-    struct ImmediateRenderThreadCommandGetTextureData {
+    struct RenderThreadQueryCommandGetTextureData {
         ResourceId texture_id;
         GetTextureDataCallback callback;
     };

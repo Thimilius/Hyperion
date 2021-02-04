@@ -9,6 +9,7 @@ namespace Hyperion::Rendering {
 
 namespace Hyperion::Rendering {
 
+    // TODO: Implement another queue for render thread query commands instead of using a template.
     template<typename CommandType>
     class RenderThreadCommandQueue {
     private:
@@ -37,8 +38,8 @@ namespace Hyperion::Rendering {
             }
         }
 
-        inline void Reserve() {
-            m_buffer.reserve(MINIMIUM_CAPACITY_BEFORE_SHRINK);
+        inline void Reserve(uint64 size = MINIMIUM_CAPACITY_BEFORE_SHRINK) {
+            m_buffer.reserve(size);
         }
 
         inline uint8 *AllocateInternal(CommandType command_type, uint64 size) {

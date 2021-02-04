@@ -25,6 +25,7 @@ namespace Hyperion::Rendering {
             case RenderThreadingMode::MultiThreaded: {
                 s_update_queue.Reserve();
                 s_render_queue.Reserve();
+                s_query_queue.Reserve(1024);
                 s_render_thread.Start(RenderThreadLoop, window);
                 s_render_thread.SetName("Render Thread");
                 break;
@@ -55,31 +56,8 @@ namespace Hyperion::Rendering {
                 s_graphics_context->Present();
             } else {
                 Synchronization::WaitForRenderDone();
-
-                // Before we actually swap the buffers we want to execute all immediate render thread commands.
-                {
-                    if (s_immediate_queue.GetSize() > 0) {
-                        auto program_counter = s_immediate_queue.GetData();
-                        auto program_counter_end = s_immediate_queue.GetData() + s_immediate_queue.GetSize();
-                        ImmediateRenderThreadCommandType command_type;
-                        while (program_counter < program_counter_end) {
-                            command_type = *reinterpret_cast<ImmediateRenderThreadCommandType *>(program_counter);
-                            program_counter += sizeof(ImmediateRenderThreadCommandType);
-                            
-                            s_current_immediate_command_type = command_type;
-                            s_current_immediate_command = program_counter;
-                            s_current_immediate_command_pending = true;
-
-                            Synchronization::WaitForImmediateCommandDone();
-
-                            program_counter += s_current_immediate_command_size;
-                        }
-
-                        s_immediate_queue.Clear();
-                    }
-                }
-
-                SwapBuffers();
+                HandleRenderThreadQueryCommands();
+                SwapRenderThreadCommandQueues();
                 Synchronization::NotifySwapDone();
             }
 
@@ -98,7 +76,7 @@ namespace Hyperion::Rendering {
         if (s_render_settings.threading_mode == RenderThreadingMode::MultiThreaded) {
             // To properly destroy all resources, we have to send all render thread commands to the Render Thread one last time
             // and wait for them to execute, so that the Render Thread is finally shut down.
-            SwapBuffers();
+            SwapRenderThreadCommandQueues();
             Synchronization::NotifySwapDone();
             s_render_thread.Join();
         } 
@@ -136,7 +114,48 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void RenderEngine::SwapBuffers() {
+    void RenderEngine::HandleRenderThreadQueryCommands() {
+        if (s_query_queue.GetSize() > 0) {
+            s_executing_render_thread_query_commands = true;
+
+            auto program_counter = s_query_queue.GetData();
+            auto program_counter_end = s_query_queue.GetData() + s_query_queue.GetSize();
+            RenderThreadQueryCommandType command_type;
+            while (program_counter < program_counter_end) {
+                command_type = *reinterpret_cast<RenderThreadQueryCommandType *>(program_counter);
+                program_counter += sizeof(RenderThreadQueryCommandType);
+
+                s_current_query_command_type = command_type;
+                switch (command_type) {
+                    case RenderThreadQueryCommandType::GetTextureData: {
+                        auto query_command = reinterpret_cast<RenderThreadQueryCommandGetTextureData *>(program_counter);
+                        GetTextureDataCallback callback = query_command->callback;
+                        Vector<uint8> real_data;
+
+                        // We put in a stub callback that gets the data from the Render Thread to the Main Thread.
+                        query_command->callback = [&real_data](Vector<uint8> &data) {
+                            real_data = std::move(data);
+                        };
+                        s_current_query_command = program_counter;
+                        s_is_current_query_command_pending = true;
+                        Synchronization::WaitForQueryCommandDone();
+
+                        // We can now execute the actual callback on the Main Thread.
+                        callback(real_data);
+                        break;
+                    }
+                    default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+                }
+
+                program_counter += s_current_query_command_size;
+            }
+
+            s_query_queue.Clear();
+            s_executing_render_thread_query_commands = false;
+        }
+    }
+
+    void RenderEngine::SwapRenderThreadCommandQueues() {
         s_render_queue.Clear();
         std::swap(s_update_queue, s_render_queue);
     }
@@ -161,10 +180,9 @@ namespace Hyperion::Rendering {
             s_graphics_context->Present();
             Synchronization::NotifyRenderDone();
 
-            // While we are waiting for the main thread to give us the new set of commands,
-            // we want to execute all potentially incoming immediate render thread commands.
+            // While we are waiting for the main thread to give us the new set of commands, we want to execute all render thread query commands.
             while (true) {
-                ExecutePotentialImmediateRenderCommand();
+                ExecuteRenderThreadQueryCommand();
             
                 if (Synchronization::WaitUnblockedForSwapDone()) {
                     break;
@@ -201,12 +219,12 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void RenderEngine::ExecutePotentialImmediateRenderCommand() {
-        if (s_current_immediate_command_pending) {
-            s_current_immediate_command_pending = false;
-            s_current_immediate_command_size = RenderThreadCommandExecutor::ExecuteImmediate(s_render_driver_backend, s_current_immediate_command_type, s_current_immediate_command);
+    void RenderEngine::ExecuteRenderThreadQueryCommand() {
+        if (s_is_current_query_command_pending) {
+            s_is_current_query_command_pending = false;
+            s_current_query_command_size = RenderThreadCommandExecutor::ExecuteQuery(s_render_driver_backend, s_current_query_command_type, s_current_query_command);
 
-            Synchronization::NotifyImmediateCommandDone();
+            Synchronization::NotifyQueryCommandDone();
         }
     }
 

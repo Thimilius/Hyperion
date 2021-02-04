@@ -131,12 +131,12 @@ namespace Hyperion::Rendering {
         }
     }
 
-    uint64 RenderThreadCommandExecutor::ExecuteImmediate(IRenderDriver *render_driver, ImmediateRenderThreadCommandType command_type, void *immediate_render_thread_command) {
+    uint64 RenderThreadCommandExecutor::ExecuteQuery(IRenderDriver *render_driver, RenderThreadQueryCommandType command_type, void *render_thread_query_command) {
         switch (command_type) {
-            case ImmediateRenderThreadCommandType::GetTextureData: {
-                auto immediate_command = reinterpret_cast<ImmediateRenderThreadCommandGetTextureData *>(immediate_render_thread_command);
-                render_driver->GetTextureData(immediate_command->texture_id, immediate_command->callback);
-                return sizeof(*immediate_command);
+            case RenderThreadQueryCommandType::GetTextureData: {
+                auto query_command = reinterpret_cast<RenderThreadQueryCommandGetTextureData *>(render_thread_query_command);
+                render_driver->GetTextureData(query_command->texture_id, query_command->callback);
+                return sizeof(*query_command);
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
