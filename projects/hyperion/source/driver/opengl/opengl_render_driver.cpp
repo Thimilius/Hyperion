@@ -169,28 +169,29 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void OpenGLRenderDriver::GetTextureData(ResourceId id, GetTextureDataCallback callback) {
-        // TODO: Make more performant by allowing to pass in a pointer to the data to fill.
-
-        // We need to remeber to handle the fact that the resource that gets queried is not actually created yet.
+    void OpenGLRenderDriver::GetTextureData(ResourceId id, Vector<uint8> *buffer, GetTextureDataCallback callback) {
+        // We need to remeber the fact that the resource that gets queried might not actually be created yet.
         auto it = m_textures.find(id);
         if (it != m_textures.end()) {
             OpenGLTexture &texture = m_textures[id];
 
-            // FIXME: This is hardcoded for 2D textures.
-            // Maybe just store the complete size beforehand?
+            // FIXME: This is hardcoded for 2D textures. Maybe just store the complete size beforehand?
             GLsizei size = texture.size.height * texture.size.width * 4;
-            Vector<uint8> data(size);
+
+            // We want to make sure that the buffer we got passed does actually have enough space.
+            buffer->resize(size);
 
             GLenum format = OpenGLUtilities::GetGLTextureFormat(texture.format);
             GLenum format_type = OpenGLUtilities::GetGLTextureFormatType(texture.format);
+            glGetTextureImage(texture.texture, 0, format, format_type, size, buffer->data());
 
-            glGetTextureImage(texture.texture, 0, format, format_type, size, data.data());
-
-            callback(data);
+            if (callback != nullptr) {
+                callback(buffer);
+            }
         } else {
-            Vector<uint8> data;
-            callback(data);
+            if (callback != nullptr) {
+                callback(buffer);
+            }
         }
     }
 

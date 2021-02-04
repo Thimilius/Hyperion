@@ -90,8 +90,9 @@ namespace Hyperion::Editor {
         const CameraData &camera_data = context.GetCameraData();
         render_driver->SetCameraData(camera_data);
 
-        render_driver->GetTextureData(m_texture->GetResourceId(), [](Vector<uint8> &data) { });
-        render_driver->GetTextureData(m_texture->GetResourceId(), [](Vector<uint8> &data) { });
+        static Vector<uint8> pixels;
+        render_driver->GetTextureData(m_texture->GetResourceId(), &pixels, [](Vector<uint8> *data) { });
+        render_driver->GetTextureData(m_texture->GetResourceId(), &pixels, [](Vector<uint8> *data) { });
 
         Viewport viewport = { 0, 0, Display::GetWidth(), Display::GetHeight() };
         render_driver->SetViewport(viewport);

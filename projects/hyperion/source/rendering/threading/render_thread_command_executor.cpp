@@ -135,10 +135,10 @@ namespace Hyperion::Rendering {
         switch (command_type) {
             case RenderThreadQueryCommandType::GetTextureData: {
                 auto query_command = reinterpret_cast<RenderThreadQueryCommandGetTextureData *>(render_thread_query_command);
-                render_driver->GetTextureData(query_command->texture_id, query_command->callback);
+                render_driver->GetTextureData(query_command->texture_id, query_command->buffer, nullptr);
                 return sizeof(*query_command);
             }
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }
 

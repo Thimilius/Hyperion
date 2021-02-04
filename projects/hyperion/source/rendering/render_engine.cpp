@@ -129,19 +129,15 @@ namespace Hyperion::Rendering {
                 switch (command_type) {
                     case RenderThreadQueryCommandType::GetTextureData: {
                         auto query_command = reinterpret_cast<RenderThreadQueryCommandGetTextureData *>(program_counter);
+                        // We are going to execute the callback on the Main Thread later.
                         GetTextureDataCallback callback = query_command->callback;
-                        Vector<uint8> real_data;
 
-                        // We put in a stub callback that gets the data from the Render Thread to the Main Thread.
-                        query_command->callback = [&real_data](Vector<uint8> &data) {
-                            real_data = std::move(data);
-                        };
                         s_current_query_command = program_counter;
                         s_is_current_query_command_pending = true;
                         Synchronization::WaitForQueryCommandDone();
 
-                        // We can now execute the actual callback on the Main Thread.
-                        callback(real_data);
+                        // Now that the query command is done, we can execute the actual callback.
+                        callback(query_command->buffer);
                         break;
                     }
                     default: HYP_ASSERT_ENUM_OUT_OF_RANGE;

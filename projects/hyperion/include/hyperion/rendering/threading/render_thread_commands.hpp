@@ -129,6 +129,7 @@ namespace Hyperion::Rendering {
     struct RenderThreadQueryCommandGetTextureData {
         ResourceId texture_id;
         GetTextureDataCallback callback;
+        Vector<uint8> *buffer;
     };
 
 }

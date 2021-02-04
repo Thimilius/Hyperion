@@ -58,7 +58,7 @@ namespace Hyperion::Rendering {
         ArrayDescriptor<uint8> pixels;
     };
 
-    using GetTextureDataCallback = std::function<void(Vector<uint8> &)>;
+    using GetTextureDataCallback = std::function<void(Vector<uint8> *)>;
 
     struct MaterialDescriptor {
         ResourceId shader_id;
@@ -88,7 +88,7 @@ namespace Hyperion::Rendering {
         virtual void DestroyShader(ResourceId shader_id) = 0;
 
         virtual void CreateTexture(ResourceId texture_id, const TextureDescriptor &descriptor) = 0;
-        virtual void GetTextureData(ResourceId texture_id, GetTextureDataCallback callback) = 0;
+        virtual void GetTextureData(ResourceId texture_id, Vector<uint8> *buffer, GetTextureDataCallback callback) = 0;
         virtual void DestroyTexture(ResourceId texture_id) = 0;
 
         virtual void CreateMaterial(ResourceId material_id, const MaterialDescriptor &descriptor) = 0;
