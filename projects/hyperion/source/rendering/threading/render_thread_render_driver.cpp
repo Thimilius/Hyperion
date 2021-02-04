@@ -54,18 +54,8 @@ namespace Hyperion::Rendering {
         helper.Write(descriptor.pixels);
     }
 
-    void RenderThreadRenderDriver::GetTextureData(ResourceId texture_id, Vector<uint8> &data) {
-        // NOTE: Getting the data of a texture is an immediate render command and needs to be handled appropriately.
-        ImmediateRenderThreadCommandGetTextureData command = { };
-        command.texture_id = texture_id;
-        command.data = &data;
-
-        ImmediateRenderThreadCommand &immediate_command = RenderEngine::GetImmediateCommand();
-        immediate_command.type = ImmediateRenderThreadCommandType::GetTextureData;
-        immediate_command.command = command;
-
-        RenderEngine::SetImmediateCommandPending();
-        Synchronization::WaitForImmediateCommandDone();
+    void RenderThreadRenderDriver::GetTextureData(ResourceId texture_id, GetTextureDataCallback callback) {
+        
     }
 
     void RenderThreadRenderDriver::DestroyTexture(ResourceId texture_id) {

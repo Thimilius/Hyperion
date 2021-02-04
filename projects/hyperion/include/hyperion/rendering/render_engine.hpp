@@ -42,10 +42,9 @@ namespace Hyperion::Rendering {
         static void RenderThreadLoop(void *parameter);
         static void ShutdownRenderThread();
 
-        inline static RenderThreadCommandQueue &GetCommandQueue() { return s_update_queue; }
-        inline static ImmediateRenderThreadCommand &GetImmediateCommand() { return s_immediate_render_command; }
-        inline static void SetImmediateCommandPending() { s_is_immediate_render_command_pending = true; }
+        inline static RenderThreadCommandQueue<RenderThreadCommandType> &GetCommandQueue() { return s_update_queue; }
         static void ExecuteRenderCommands();
+        inline static RenderThreadCommandQueue<ImmediateRenderThreadCommandType> &GetImmediateCommandQueue() { return s_immediate_queue; }
         static void ExecutePotentialImmediateRenderCommand();
     private: 
         inline static RenderSettings s_render_settings;
@@ -60,10 +59,14 @@ namespace Hyperion::Rendering {
 
         inline static bool s_exit_requested; // TODO: Maybe we can just use an atomic bool in Engine?
         inline static Threading::Thread s_render_thread;
-        inline static RenderThreadCommandQueue s_update_queue;
-        inline static RenderThreadCommandQueue s_render_queue;
-        inline static ImmediateRenderThreadCommand s_immediate_render_command;
-        inline static std::atomic<bool> s_is_immediate_render_command_pending;
+        inline static RenderThreadCommandQueue<RenderThreadCommandType> s_update_queue;
+        inline static RenderThreadCommandQueue<RenderThreadCommandType> s_render_queue;
+
+        inline static RenderThreadCommandQueue<ImmediateRenderThreadCommandType> s_immediate_queue;
+        inline static std::atomic<bool> s_current_immediate_command_pending;
+        inline static ImmediateRenderThreadCommandType s_current_immediate_command_type;
+        inline static void *s_current_immediate_command;
+        inline static uint64 s_current_immediate_command_size;
     private:
         friend class Hyperion::Engine;
         friend class Hyperion::Rendering::RenderThreadRenderDriver;

@@ -23,6 +23,8 @@ namespace Hyperion::Rendering {
                 break;
             }
             case RenderThreadingMode::MultiThreaded: {
+                s_update_queue.Reserve();
+                s_render_queue.Reserve();
                 s_render_thread.Start(RenderThreadLoop, window);
                 s_render_thread.SetName("Render Thread");
                 break;
@@ -53,6 +55,30 @@ namespace Hyperion::Rendering {
                 s_graphics_context->Present();
             } else {
                 Synchronization::WaitForRenderDone();
+
+                // Before we actually swap the buffers we want to execute all immediate render thread commands.
+                {
+                    if (s_immediate_queue.GetSize() > 0) {
+                        auto program_counter = s_immediate_queue.GetData();
+                        auto program_counter_end = s_immediate_queue.GetData() + s_immediate_queue.GetSize();
+                        ImmediateRenderThreadCommandType command_type;
+                        while (program_counter < program_counter_end) {
+                            command_type = *reinterpret_cast<ImmediateRenderThreadCommandType *>(program_counter);
+                            program_counter += sizeof(ImmediateRenderThreadCommandType);
+                            
+                            s_current_immediate_command_type = command_type;
+                            s_current_immediate_command = program_counter;
+                            s_current_immediate_command_pending = true;
+
+                            Synchronization::WaitForImmediateCommandDone();
+
+                            program_counter += s_current_immediate_command_size;
+                        }
+
+                        s_immediate_queue.Clear();
+                    }
+                }
+
                 SwapBuffers();
                 Synchronization::NotifySwapDone();
             }
@@ -164,8 +190,6 @@ namespace Hyperion::Rendering {
         auto program_counter_end = s_render_queue.GetData() + s_render_queue.GetSize();
         RenderThreadCommandType command_type;
         while (program_counter < program_counter_end) {
-            ExecutePotentialImmediateRenderCommand();
-
             command_type = *reinterpret_cast<RenderThreadCommandType *>(program_counter);
             program_counter += sizeof(RenderThreadCommandType);
 
@@ -178,9 +202,10 @@ namespace Hyperion::Rendering {
     }
 
     void RenderEngine::ExecutePotentialImmediateRenderCommand() {
-        if (s_is_immediate_render_command_pending) {
-            s_is_immediate_render_command_pending = false;
-            RenderThreadCommandExecutor::ExecuteImmediate(s_render_driver_backend, s_immediate_render_command);
+        if (s_current_immediate_command_pending) {
+            s_current_immediate_command_pending = false;
+            s_current_immediate_command_size = RenderThreadCommandExecutor::ExecuteImmediate(s_render_driver_backend, s_current_immediate_command_type, s_current_immediate_command);
+
             Synchronization::NotifyImmediateCommandDone();
         }
     }

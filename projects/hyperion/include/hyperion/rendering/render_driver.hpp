@@ -18,8 +18,8 @@ namespace Hyperion::Rendering {
     enum class ClearFlags {
         None,
 
-        Color = BIT(0),
-        Depth = BIT(1),
+        Color   = BIT(0),
+        Depth   = BIT(1),
         Stencil = BIT(2)
     };
     HYP_CREATE_ENUM_FLAG_OPERATORS(ClearFlags);
@@ -58,6 +58,8 @@ namespace Hyperion::Rendering {
         ArrayDescriptor<uint8> pixels;
     };
 
+    using GetTextureDataCallback = std::function<void(const Vector<uint8> &)>;
+
     struct MaterialDescriptor {
         ResourceId shader_id;
     };
@@ -86,7 +88,7 @@ namespace Hyperion::Rendering {
         virtual void DestroyShader(ResourceId shader_id) = 0;
 
         virtual void CreateTexture(ResourceId texture_id, const TextureDescriptor &descriptor) = 0;
-        virtual void GetTextureData(ResourceId texture_id, Vector<uint8> &data) = 0;
+        virtual void GetTextureData(ResourceId texture_id, GetTextureDataCallback callback) = 0;
         virtual void DestroyTexture(ResourceId texture_id) = 0;
 
         virtual void CreateMaterial(ResourceId material_id, const MaterialDescriptor &descriptor) = 0;

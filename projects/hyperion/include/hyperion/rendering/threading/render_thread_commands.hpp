@@ -128,13 +128,7 @@ namespace Hyperion::Rendering {
 
     struct ImmediateRenderThreadCommandGetTextureData {
         ResourceId texture_id;
-        Vector<uint8> *data;
-    };
-
-    struct ImmediateRenderThreadCommand {
-        ImmediateRenderThreadCommandType type;
-
-        std::variant<ImmediateRenderThreadCommandGetTextureData> command; // TODO: Can we get rid of the ugly variant here?
+        GetTextureDataCallback callback;
     };
 
 }

@@ -9,20 +9,17 @@ namespace Hyperion::Rendering {
 
 namespace Hyperion::Rendering {
 
+    template<typename CommandType>
     class RenderThreadCommandQueue {
     private:
         inline static constexpr uint64 MINIMIUM_CAPACITY_BEFORE_SHRINK = 1024 * 1024 * 10;
     public:
-        RenderThreadCommandQueue() {
-            m_buffer.reserve(MINIMIUM_CAPACITY_BEFORE_SHRINK);
-        }
-
-        inline void Allocate(RenderThreadCommandType command_type) {
+        inline void Allocate(CommandType command_type) {
             AllocateInternal(command_type, sizeof(command_type));
         }
 
         template<typename T>
-        inline T *Allocate(RenderThreadCommandType command_type, uint64 extra_size = 0) {
+        inline T *Allocate(CommandType command_type, uint64 extra_size = 0) {
             uint8 *data = AllocateInternal(command_type, sizeof(command_type) + sizeof(T) + extra_size);
             return reinterpret_cast<T *>(data);
         }
@@ -40,12 +37,16 @@ namespace Hyperion::Rendering {
             }
         }
 
-        inline uint8 *AllocateInternal(RenderThreadCommandType command_type, uint64 size) {
+        inline void Reserve() {
+            m_buffer.reserve(MINIMIUM_CAPACITY_BEFORE_SHRINK);
+        }
+
+        inline uint8 *AllocateInternal(CommandType command_type, uint64 size) {
             auto offset = m_buffer.size();
             m_buffer.resize(offset + size);
             uint8 *data = m_buffer.data() + offset;
 
-            RenderThreadCommandType *type_slot = reinterpret_cast<RenderThreadCommandType *>(data);
+            CommandType *type_slot = reinterpret_cast<CommandType *>(data);
             *type_slot = command_type;
 
             return data + sizeof(command_type);
