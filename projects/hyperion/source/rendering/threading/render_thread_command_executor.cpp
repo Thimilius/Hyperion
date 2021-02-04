@@ -138,6 +138,19 @@ namespace Hyperion::Rendering {
                 render_driver->GetTextureData(query_command->texture_id, query_command->buffer, nullptr);
                 return sizeof(*query_command);
             }
+            case RenderThreadQueryCommandType::GetRenderTextureSubData: {
+                auto query_command = reinterpret_cast<RenderThreadQueryCommandGetRenderTextureSubData *>(render_thread_query_command);
+                render_driver->GetRenderTextureSubData(
+                    query_command->render_texture_id,
+                    query_command->attachment_index,
+                    query_command->x,
+                    query_command->y,
+                    query_command->width,
+                    query_command->height,
+                    query_command->buffer,
+                    nullptr);
+                return sizeof(*query_command);
+            }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }

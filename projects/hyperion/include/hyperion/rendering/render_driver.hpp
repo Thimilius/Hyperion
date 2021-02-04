@@ -72,6 +72,8 @@ namespace Hyperion::Rendering {
         ArrayDescriptor<RenderTextureAttachment> attachments;
     };
 
+    using GetRenderTextureSubDataCallback = std::function<void(Vector<uint8> *)>;
+
     class IRenderDriver {
     public:
         virtual ~IRenderDriver() = default;
@@ -97,6 +99,7 @@ namespace Hyperion::Rendering {
 
         virtual void CreateRenderTexture(ResourceId render_texture_id, const RenderTextureDescriptor &descriptor) = 0;
         virtual void ResizeRenderTexture(ResourceId render_texture_id, uint32 width, uint32 height, uint32 mipmap_count) = 0;
+        virtual void GetRenderTextureSubData(ResourceId render_texture_id, uint32 attachment_index, int32 x, int32 y, int32 width, int32 height, Vector<uint8> *buffer, GetRenderTextureSubDataCallback callback) = 0;
         virtual void SetRenderTexture(ResourceId render_texture_id) = 0;
         virtual void BlitRenderTexture(ResourceId destination_id, uint32 destination_width, uint32 destination_height, ResourceId source_id, uint32 source_width, uint32 source_height) = 0;
         virtual void DestroyRenderTexture(ResourceId render_texture_id) = 0;

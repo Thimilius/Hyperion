@@ -105,6 +105,22 @@ namespace Hyperion::Rendering {
         command->mipmap_count = mipmap_count;
     }
 
+    void RenderThreadRenderDriver::GetRenderTextureSubData(ResourceId render_texture_id, uint32 attachment_index, int32 x, int32 y, int32 width, int32 height, Vector<uint8> *buffer, GetRenderTextureSubDataCallback callback) {
+        if (RenderEngine::IsExecutingRenderThreadGetCommands()) {
+            HYP_LOG_ERROR("Engine", "Trying to create an render thread query command while executing one!");
+        } else {
+            auto *command = RenderEngine::GetQueryCommandQueue().Allocate<RenderThreadQueryCommandGetRenderTextureSubData>(RenderThreadQueryCommandType::GetRenderTextureSubData);
+            command->render_texture_id = render_texture_id;
+            command->attachment_index = attachment_index;
+            command->x = x;
+            command->y = y;
+            command->width = width;
+            command->height = height;
+            command->buffer = buffer;
+            command->callback = callback;
+        }
+    }
+
     void RenderThreadRenderDriver::SetRenderTexture(ResourceId render_texture_id) {
         auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandId>(RenderThreadCommandType::SetRenderTexture);
         command->id = render_texture_id;

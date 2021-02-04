@@ -123,13 +123,25 @@ namespace Hyperion::Rendering {
     // Their primary purpose is to return data from the Render Thread back to the Main Thread.
 
     enum class RenderThreadQueryCommandType {
-        GetTextureData
+        GetTextureData,
+        GetRenderTextureSubData,
     };
 
     struct RenderThreadQueryCommandGetTextureData {
         ResourceId texture_id;
-        GetTextureDataCallback callback;
         Vector<uint8> *buffer;
+        GetTextureDataCallback callback;
+    };
+
+    struct RenderThreadQueryCommandGetRenderTextureSubData {
+        ResourceId render_texture_id;
+        uint32 attachment_index;
+        int32 x;
+        int32 y;
+        int32 width;
+        int32 height;
+        Vector<uint8> *buffer;
+        GetRenderTextureSubDataCallback callback;
     };
 
 }

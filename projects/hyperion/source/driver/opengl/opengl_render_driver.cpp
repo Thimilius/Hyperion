@@ -173,25 +173,20 @@ namespace Hyperion::Rendering {
         // We need to remeber the fact that the resource that gets queried might not actually be created yet.
         auto it = m_textures.find(id);
         if (it != m_textures.end()) {
-            OpenGLTexture &texture = m_textures[id];
+            OpenGLTexture &texture = it->second;
 
-            // FIXME: This is hardcoded for 2D textures. Maybe just store the complete size beforehand?
+            // FIXME: This is hardcoded for a specific format. Maybe just store the complete size beforehand?
             GLsizei size = texture.size.height * texture.size.width * 4;
-
             // We want to make sure that the buffer we got passed does actually have enough space.
             buffer->resize(size);
 
             GLenum format = OpenGLUtilities::GetGLTextureFormat(texture.format);
             GLenum format_type = OpenGLUtilities::GetGLTextureFormatType(texture.format);
             glGetTextureImage(texture.texture, 0, format, format_type, size, buffer->data());
+        }
 
-            if (callback != nullptr) {
-                callback(buffer);
-            }
-        } else {
-            if (callback != nullptr) {
-                callback(buffer);
-            }
+        if (callback != nullptr) {
+            callback(buffer);
         }
     }
 
@@ -371,6 +366,34 @@ namespace Hyperion::Rendering {
             descriptor.attachments = attachments;
 
             CreateRenderTexture(render_texture_id, descriptor);
+        }
+    }
+
+    void OpenGLRenderDriver::GetRenderTextureSubData(ResourceId render_texture_id, uint32 attachment_index, int32 x, int32 y, int32 width, int32 height, Vector<uint8> *buffer, GetRenderTextureSubDataCallback callback) {
+        auto it = m_render_textures.find(render_texture_id);
+        if (it != m_render_textures.end()) {
+            OpenGLRenderTexture &render_texture = it->second;
+            HYP_ASSERT(attachment_index < render_texture.attachments.size());
+
+            OpenGLRenderTextureAttachment &attachment = render_texture.attachments[attachment_index];
+            RenderTextureFormat format = attachment.attributes.format;
+            // NOTE: We currently do not allow to get the data of a non color attachment.
+            HYP_ASSERT(format != RenderTextureFormat::Depth24Stencil8);
+
+            // FIXME: Currently we do not handle out-of-bounds access.
+
+            // FIXME: This is hardcoded for a specific format. Maybe just store the complete size beforehand?
+            GLsizei size = (width - x) * (height - y) * 4;
+            // We want to make sure that the buffer we got passed does actually have enough space.
+            buffer->resize(size);
+
+            GLenum format_value = OpenGLUtilities::GetGLRenderTextureFormat(format);
+            GLenum format_type = OpenGLUtilities::GetGLRenderTextureFormatType(format);
+            glGetTextureSubImage(attachment.attachment, 0, x, y, 0, width, height, 1, format_value, format_type, size, buffer->data());
+        }
+         
+        if (callback != nullptr) {
+            callback(buffer);
         }
     }
 

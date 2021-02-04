@@ -126,22 +126,9 @@ namespace Hyperion::Rendering {
                 program_counter += sizeof(RenderThreadQueryCommandType);
 
                 s_current_query_command_type = command_type;
-                switch (command_type) {
-                    case RenderThreadQueryCommandType::GetTextureData: {
-                        auto query_command = reinterpret_cast<RenderThreadQueryCommandGetTextureData *>(program_counter);
-                        // We are going to execute the callback on the Main Thread later.
-                        GetTextureDataCallback callback = query_command->callback;
-
-                        s_current_query_command = program_counter;
-                        s_is_current_query_command_pending = true;
-                        Synchronization::WaitForQueryCommandDone();
-
-                        // Now that the query command is done, we can execute the actual callback.
-                        callback(query_command->buffer);
-                        break;
-                    }
-                    default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-                }
+                s_current_query_command = program_counter;
+                s_is_current_query_command_pending = true;
+                DispatchCurrentRenderThreadQueryCommand();
 
                 program_counter += s_current_query_command_size;
             }
@@ -161,6 +148,27 @@ namespace Hyperion::Rendering {
 
         Synchronization::NotifyRenderReady();
         Synchronization::WaitForUpdateReady();
+    }
+
+    void RenderEngine::DispatchCurrentRenderThreadQueryCommand() {
+        // We want to execute the callbacks of the query command here on the Main Thread.
+        switch (s_current_query_command_type) {
+            case RenderThreadQueryCommandType::GetTextureData: {
+                auto query_command = reinterpret_cast<RenderThreadQueryCommandGetTextureData *>(s_current_query_command);
+                GetTextureDataCallback callback = query_command->callback;
+                Synchronization::WaitForQueryCommandDone();
+                callback(query_command->buffer);
+                break;
+            }
+            case RenderThreadQueryCommandType::GetRenderTextureSubData: {
+                auto query_command = reinterpret_cast<RenderThreadQueryCommandGetRenderTextureSubData *>(s_current_query_command);
+                GetRenderTextureSubDataCallback callback = query_command->callback;
+                Synchronization::WaitForQueryCommandDone();
+                callback(query_command->buffer);
+                break;
+            }
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        }
     }
 
     void RenderEngine::RenderThreadLoop(void *parameter) {

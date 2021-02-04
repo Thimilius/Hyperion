@@ -37,6 +37,7 @@ namespace Hyperion::Rendering {
 
         static void InitGraphicsContextAndBackend(Window *window);
         static void HandleRenderThreadQueryCommands();
+        static void DispatchCurrentRenderThreadQueryCommand();
         static void SwapRenderThreadCommandQueues();
 
         static void InitRenderThread(Window *window);

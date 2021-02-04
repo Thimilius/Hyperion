@@ -2,8 +2,8 @@
 
 #include <hyperion/core/math/math.hpp>
 #include <hyperion/core/image.hpp>
-#include <hyperion/core/app/time.hpp>
 #include <hyperion/core/app/display.hpp>
+#include <hyperion/core/app/time.hpp>
 #include <hyperion/core/io/image_loader.hpp>
 #include <hyperion/rendering/render_driver.hpp>
 
@@ -13,7 +13,7 @@ using namespace Hyperion::Rendering;
 
 namespace Hyperion::Editor {
 
-    void EditorRenderPipeline::Initialize(Rendering::IRenderDriver *render_driver) {
+    void EditorRenderPipeline::Initialize(IRenderDriver *render_driver) {
         Map<ShaderStageFlags, String> sources = {
             { ShaderStageFlags::Vertex, R"(
                 #version 410 core
@@ -86,13 +86,9 @@ namespace Hyperion::Editor {
         InitializeGrid();
     }
 
-    void EditorRenderPipeline::Render(Rendering::IRenderDriver *render_driver, const Rendering::RenderPipelineContext &context) {
+    void EditorRenderPipeline::Render(IRenderDriver *render_driver, const RenderPipelineContext &context) {
         const CameraData &camera_data = context.GetCameraData();
         render_driver->SetCameraData(camera_data);
-
-        static Vector<uint8> pixels;
-        render_driver->GetTextureData(m_texture->GetResourceId(), &pixels, [](Vector<uint8> *data) { });
-        render_driver->GetTextureData(m_texture->GetResourceId(), &pixels, [](Vector<uint8> *data) { });
 
         Viewport viewport = { 0, 0, Display::GetWidth(), Display::GetHeight() };
         render_driver->SetViewport(viewport);
@@ -115,7 +111,7 @@ namespace Hyperion::Editor {
         render_driver->BlitRenderTexture(0, Display::GetWidth(), Display::GetHeight(), m_render_texture->GetResourceId(), m_render_texture->GetWidth(), m_render_texture->GetHeight());
     }
 
-    void EditorRenderPipeline::Shutdown(Rendering::IRenderDriver *render_driver) {
+    void EditorRenderPipeline::Shutdown(IRenderDriver *render_driver) {
 
     }
 
