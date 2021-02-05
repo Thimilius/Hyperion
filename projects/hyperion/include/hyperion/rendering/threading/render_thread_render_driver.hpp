@@ -18,7 +18,6 @@ namespace Hyperion::Rendering {
         void DestroyShader(ResourceId shader_id) override;
 
         void CreateTexture(ResourceId texture_id, const TextureDescriptor &descriptor) override;
-        void GetTextureData(ResourceId texture_id, Vector<uint8> *buffer, GetTextureDataCallback callback) override;
         void DestroyTexture(ResourceId texture_id) override;
 
         void CreateMaterial(ResourceId material_id, const MaterialDescriptor &descriptor) override;

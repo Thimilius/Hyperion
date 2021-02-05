@@ -54,17 +54,6 @@ namespace Hyperion::Rendering {
         helper.Write(descriptor.pixels);
     }
 
-    void RenderThreadRenderDriver::GetTextureData(ResourceId texture_id, Vector<uint8> *buffer, GetTextureDataCallback callback) {
-        if (RenderEngine::IsExecutingRenderThreadGetCommands()) {
-            HYP_LOG_ERROR("Engine", "Trying to create an render thread query command while executing one!");
-        } else {
-            auto *command = RenderEngine::GetQueryCommandQueue().Allocate<RenderThreadQueryCommandGetTextureData>(RenderThreadQueryCommandType::GetTextureData);
-            command->texture_id = texture_id;
-            command->buffer = buffer;
-            command->callback = callback;
-        }
-    }
-
     void RenderThreadRenderDriver::DestroyTexture(ResourceId texture_id) {
         auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandId>(RenderThreadCommandType::DestroyTexture);
         command->id = texture_id;

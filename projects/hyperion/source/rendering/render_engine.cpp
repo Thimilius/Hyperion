@@ -153,13 +153,6 @@ namespace Hyperion::Rendering {
     void RenderEngine::DispatchCurrentRenderThreadQueryCommand() {
         // We want to execute the callbacks of the query command here on the Main Thread.
         switch (s_current_query_command_type) {
-            case RenderThreadQueryCommandType::GetTextureData: {
-                auto query_command = reinterpret_cast<RenderThreadQueryCommandGetTextureData *>(s_current_query_command);
-                GetTextureDataCallback callback = query_command->callback;
-                Synchronization::WaitForQueryCommandDone();
-                callback(query_command->buffer);
-                break;
-            }
             case RenderThreadQueryCommandType::GetRenderTextureSubData: {
                 auto query_command = reinterpret_cast<RenderThreadQueryCommandGetRenderTextureSubData *>(s_current_query_command);
                 GetRenderTextureSubDataCallback callback = query_command->callback;

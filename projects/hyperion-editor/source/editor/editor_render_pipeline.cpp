@@ -3,6 +3,7 @@
 #include <hyperion/core/math/math.hpp>
 #include <hyperion/core/image.hpp>
 #include <hyperion/core/app/display.hpp>
+#include <hyperion/core/app/input.hpp>
 #include <hyperion/core/app/time.hpp>
 #include <hyperion/core/io/image_loader.hpp>
 #include <hyperion/rendering/render_driver.hpp>
@@ -89,6 +90,15 @@ namespace Hyperion::Editor {
     void EditorRenderPipeline::Render(IRenderDriver *render_driver, const RenderPipelineContext &context) {
         const CameraData &camera_data = context.GetCameraData();
         render_driver->SetCameraData(camera_data);
+
+        static Vector<uint8> buffer;
+        Vec2 mouse_position = Input::GetMousePosition();
+        render_driver->GetRenderTextureSubData(m_render_texture->GetResourceId(), 0, static_cast<int32>(mouse_position.x), static_cast<int32>(mouse_position.y), 1, 1, &buffer, [](Vector<uint8> *buffer) {
+            if (buffer->size() > 0) {
+                Vector<uint8> &pixels = *buffer;
+                HYP_TRACE("{} {} {} {}", pixels[0], pixels[1], pixels[2], pixels[3]);
+            }
+        });
 
         Viewport viewport = { 0, 0, Display::GetWidth(), Display::GetHeight() };
         render_driver->SetViewport(viewport);

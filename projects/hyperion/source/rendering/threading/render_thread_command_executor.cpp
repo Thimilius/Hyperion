@@ -133,11 +133,6 @@ namespace Hyperion::Rendering {
 
     uint64 RenderThreadCommandExecutor::ExecuteQuery(IRenderDriver *render_driver, RenderThreadQueryCommandType command_type, void *render_thread_query_command) {
         switch (command_type) {
-            case RenderThreadQueryCommandType::GetTextureData: {
-                auto query_command = reinterpret_cast<RenderThreadQueryCommandGetTextureData *>(render_thread_query_command);
-                render_driver->GetTextureData(query_command->texture_id, query_command->buffer, nullptr);
-                return sizeof(*query_command);
-            }
             case RenderThreadQueryCommandType::GetRenderTextureSubData: {
                 auto query_command = reinterpret_cast<RenderThreadQueryCommandGetRenderTextureSubData *>(render_thread_query_command);
                 render_driver->GetRenderTextureSubData(
