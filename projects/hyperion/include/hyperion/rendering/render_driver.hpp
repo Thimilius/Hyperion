@@ -5,6 +5,7 @@
 #include "hyperion/core/math/vec3.hpp"
 #include "hyperion/core/math/mat4.hpp"
 #include "hyperion/core/object/resource.hpp"
+#include "hyperion/rendering/camera_data.hpp"
 #include "hyperion/rendering/graphics_context.hpp"
 #include "hyperion/rendering/rasterizer_state.hpp"
 #include "hyperion/rendering/attributes/common_attributes.hpp"
