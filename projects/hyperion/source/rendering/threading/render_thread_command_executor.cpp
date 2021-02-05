@@ -96,7 +96,7 @@ namespace Hyperion::Rendering {
             }
             case RenderThreadCommandType::BlitRenderTexture: {
                 auto command = reinterpret_cast<RenderThreadCommandBlitRenderTexture *>(render_thread_command);
-                render_driver->BlitRenderTexture(command->destination_id, command->destination_width, command->destination_height, command->source_id, command->source_width, command->source_height);
+                render_driver->BlitRenderTexture(command->destination_id, command->destination_region, command->source_id, command->source_region);
                 return sizeof(*command);
             }
             case RenderThreadCommandType::DestroyRenderTexture: {
@@ -135,15 +135,7 @@ namespace Hyperion::Rendering {
         switch (command_type) {
             case RenderThreadQueryCommandType::GetRenderTextureSubData: {
                 auto query_command = reinterpret_cast<RenderThreadQueryCommandGetRenderTextureSubData *>(render_thread_query_command);
-                render_driver->GetRenderTextureSubData(
-                    query_command->render_texture_id,
-                    query_command->attachment_index,
-                    query_command->x,
-                    query_command->y,
-                    query_command->width,
-                    query_command->height,
-                    query_command->buffer,
-                    nullptr);
+                render_driver->GetRenderTextureSubData(query_command->render_texture_id, query_command->attachment_index, query_command->region, query_command->buffer, nullptr);
                 return sizeof(*query_command);
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;

@@ -348,7 +348,7 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void OpenGLRenderDriver::GetRenderTextureSubData(ResourceId render_texture_id, uint32 attachment_index, int32 x, int32 y, int32 width, int32 height, Vector<uint8> *buffer, GetRenderTextureSubDataCallback callback) {
+    void OpenGLRenderDriver::GetRenderTextureSubData(ResourceId render_texture_id, uint32 attachment_index, RectInt region, Vector<uint8> *buffer, GetRenderTextureSubDataCallback callback) {
         auto it = m_render_textures.find(render_texture_id);
         if (it != m_render_textures.end()) {
             OpenGLRenderTexture &render_texture = it->second;
@@ -360,20 +360,20 @@ namespace Hyperion::Rendering {
             HYP_ASSERT(format != RenderTextureFormat::Depth24Stencil8);
 
             // Make sure we are not out of bounds when accessing the render texture.
-            bool x_range_is_valid = x > 0 && (width + x) > 0 && (width + x) < static_cast<int32>(render_texture.size.width);
-            bool y_range_is_valid = y > 0 && (height + y) > 0 && (height + y) < static_cast<int32>(render_texture.size.height);
+            bool x_range_is_valid = region.x > 0 && (region.width + region.x) > 0 && (region.width + region.x) < static_cast<int32>(render_texture.size.width);
+            bool y_range_is_valid = region.y > 0 && (region.height + region.y) > 0 && (region.height + region.y) < static_cast<int32>(render_texture.size.height);
             if (!x_range_is_valid || !y_range_is_valid) {
-                HYP_LOG_ERROR("OpenGL", "Out-of-bounds access on a render texture!");
+                HYP_LOG_ERROR("OpenGL", "Trying to read out-of-bounds data of a render texture!");
                 goto finish;
             }
 
             // We want to make sure that the buffer we got passed does actually have enough space.
-            GLsizei buffer_size = OpenGLUtilities::GetRenderTextureBufferSize(x, y, width, height, format);
+            GLsizei buffer_size = OpenGLUtilities::GetRenderTextureBufferSize(region, format);
             buffer->resize(buffer_size);
 
             GLenum format_value = OpenGLUtilities::GetGLRenderTextureFormat(format);
             GLenum format_type = OpenGLUtilities::GetGLRenderTextureFormatType(format);
-            glGetTextureSubImage(attachment.attachment, 0, x, y, 0, width, height, 1, format_value, format_type, buffer_size, buffer->data());
+            glGetTextureSubImage(attachment.attachment, 0, region.x, region.y, 0, region.width, region.height, 1, format_value, format_type, buffer_size, buffer->data());
         }
          
     finish:
@@ -406,7 +406,7 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void OpenGLRenderDriver::BlitRenderTexture(ResourceId destination_id, uint32 destination_width, uint32 destination_height, ResourceId source_id, uint32 source_width, uint32 source_height) {
+    void OpenGLRenderDriver::BlitRenderTexture(ResourceId destination_id, RectInt destination_region, ResourceId source_id, RectInt source_region) {
         GLuint destination_render_texture = 0;
         if (destination_id != 0) {
             HYP_ASSERT(m_render_textures.find(destination_id) != m_render_textures.end());
@@ -420,9 +420,21 @@ namespace Hyperion::Rendering {
             source_render_texture = render_texture.render_texture;
         }
 
-        // Currently we always blit all buffers. Is this really what we always want?
+        // Currently we blit all buffers. Is this really what we always want?
         GLbitfield mask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
-        glBlitNamedFramebuffer(source_render_texture, destination_render_texture, 0, 0, source_width, source_height, 0, 0, destination_width, destination_height, mask, GL_NEAREST);
+        glBlitNamedFramebuffer(
+            source_render_texture,
+            destination_render_texture,
+            source_region.x,
+            source_region.y,
+            source_region.width,
+            source_region.height,
+            destination_region.x,
+            destination_region.y,
+            destination_region.width,
+            destination_region.height,
+            mask,
+            GL_NEAREST);
     }
 
     void OpenGLRenderDriver::DestroyRenderTexture(ResourceId render_texture_id) {

@@ -94,17 +94,14 @@ namespace Hyperion::Rendering {
         command->mipmap_count = mipmap_count;
     }
 
-    void RenderThreadRenderDriver::GetRenderTextureSubData(ResourceId render_texture_id, uint32 attachment_index, int32 x, int32 y, int32 width, int32 height, Vector<uint8> *buffer, GetRenderTextureSubDataCallback callback) {
+    void RenderThreadRenderDriver::GetRenderTextureSubData(ResourceId render_texture_id, uint32 attachment_index, RectInt region, Vector<uint8> *buffer, GetRenderTextureSubDataCallback callback) {
         if (RenderEngine::IsExecutingRenderThreadGetCommands()) {
             HYP_LOG_ERROR("Engine", "Trying to create an render thread query command while executing one!");
         } else {
             auto *command = RenderEngine::GetQueryCommandQueue().Allocate<RenderThreadQueryCommandGetRenderTextureSubData>(RenderThreadQueryCommandType::GetRenderTextureSubData);
             command->render_texture_id = render_texture_id;
             command->attachment_index = attachment_index;
-            command->x = x;
-            command->y = y;
-            command->width = width;
-            command->height = height;
+            command->region = region;
             command->buffer = buffer;
             command->callback = callback;
         }
@@ -115,14 +112,12 @@ namespace Hyperion::Rendering {
         command->id = render_texture_id;
     }
 
-    void RenderThreadRenderDriver::BlitRenderTexture(ResourceId destination_id, uint32 destination_width, uint32 destination_height, ResourceId source_id, uint32 source_width, uint32 source_height) {
+    void RenderThreadRenderDriver::BlitRenderTexture(ResourceId destination_id, RectInt destination_region, ResourceId source_id, RectInt source_region) {
         auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandBlitRenderTexture>(RenderThreadCommandType::BlitRenderTexture);
         command->destination_id = destination_id;
-        command->destination_width = destination_width;
-        command->destination_height = destination_height;
+        command->destination_region = destination_region;
         command->source_id = source_id;
-        command->source_width = source_width;
-        command->source_height = source_height;
+        command->source_region = source_region;
     }
 
     void RenderThreadRenderDriver::DestroyRenderTexture(ResourceId render_texture_id) {

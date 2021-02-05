@@ -26,9 +26,9 @@ namespace Hyperion::Rendering {
 
         void CreateRenderTexture(ResourceId render_texture_id, const RenderTextureDescriptor &descriptor) override;
         void ResizeRenderTexture(ResourceId render_texture_id, uint32 width, uint32 height, uint32 mipmap_count) override;
-        void GetRenderTextureSubData(ResourceId render_texture_id, uint32 attachment_index, int32 x, int32 y, int32 width, int32 height, Vector<uint8> *buffer, GetRenderTextureSubDataCallback callback) override;
+        void GetRenderTextureSubData(ResourceId render_texture_id, uint32 attachment_index, RectInt region, Vector<uint8> *buffer, GetRenderTextureSubDataCallback callback) override;
         void SetRenderTexture(ResourceId render_texture_id) override;
-        void BlitRenderTexture(ResourceId destination_id, uint32 destination_width, uint32 destination_height, ResourceId source_id, uint32 source_width, uint32 source_height) override;
+        void BlitRenderTexture(ResourceId destination_id, RectInt destination_region, ResourceId source_id, RectInt source_region) override;
         void DestroyRenderTexture(ResourceId render_texture_id) override;
 
         void CreateMesh(ResourceId mesh_id, const MeshDescriptor &descriptor) override;

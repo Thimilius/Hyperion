@@ -96,14 +96,11 @@ namespace Hyperion::Rendering {
         uint32 mipmap_count;
     };
 
-    // TODO: Add support for full destination/source rectangle bounds.
     struct RenderThreadCommandBlitRenderTexture {
         ResourceId destination_id;
-        uint32 destination_width;
-        uint32 destination_height;
+        RectInt destination_region;
         ResourceId source_id;
-        uint32 source_width;
-        uint32 source_height;
+        RectInt source_region;
     };
 
     struct RenderThreadCommandCreateMesh {
@@ -129,10 +126,7 @@ namespace Hyperion::Rendering {
     struct RenderThreadQueryCommandGetRenderTextureSubData {
         ResourceId render_texture_id;
         uint32 attachment_index;
-        int32 x;
-        int32 y;
-        int32 width;
-        int32 height;
+        RectInt region;
         Vector<uint8> *buffer;
         GetRenderTextureSubDataCallback callback;
     };

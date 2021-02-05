@@ -5,6 +5,7 @@
 namespace Hyperion {
 
     struct Vec2;
+    struct Vec2Int;
     struct Vec4;
     struct Mat4;
 
@@ -81,6 +82,72 @@ namespace Hyperion {
         friend Vec3 operator-(float32 left, Vec3 right);
         friend Vec3 operator*(float32 left, Vec3 right);
         friend Vec3 operator/(float32 left, Vec3 right);
+    };
+
+    struct Vec3Int {
+        int32 x;
+        int32 y;
+        int32 z;
+
+        Vec3Int();
+        Vec3Int(int32 x, int32 y, int32 z);
+        Vec3Int(const Vec2Int &vec2, int32 z);
+
+        Vec3Int &Add(const Vec3Int &other);
+        Vec3Int &Subtract(const Vec3Int &other);
+        Vec3Int &Multiply(const Vec3Int &other);
+        Vec3Int &Divide(const Vec3Int &other);
+
+        Vec3Int &Add(int32 value);
+        Vec3Int &Subtract(int32 value);
+        Vec3Int &Multiply(int32 value);
+        Vec3Int &Divide(int32 value);
+
+        float32 Magnitude() const;
+        int32 SqrMagnitude() const;
+
+        float32 Distance(const Vec3Int &other) const;
+
+        String ToString() const;
+
+        bool operator==(const Vec3Int &other) const;
+        bool operator!=(const Vec3Int &other) const;
+
+        Vec3Int &operator-();
+
+        Vec3Int &operator+=(const Vec3Int &other);
+        Vec3Int &operator-=(const Vec3Int &other);
+        Vec3Int &operator*=(const Vec3Int &other);
+        Vec3Int &operator/=(const Vec3Int &other);
+
+        bool operator<(const Vec3Int &other) const;
+        bool operator<=(const Vec3Int &other) const;
+        bool operator>(const Vec3Int &other) const;
+        bool operator>=(const Vec3Int &other) const;
+
+        inline static Vec3Int Zero() { return Vec3Int(0, 0, 0); }
+        inline static Vec3Int One() { return Vec3Int(1, 1, 1); }
+        inline static Vec3Int Up() { return Vec3Int(0, 1, 0); }
+        inline static Vec3Int Down() { return Vec3Int(0, -1, 0); }
+        inline static Vec3Int Right() { return Vec3Int(1, 0, 0); }
+        inline static Vec3Int Left() { return Vec3Int(-1, 0, 0); }
+        inline static Vec3Int Forward() { return Vec3Int(0, 0, -1); }
+        inline static Vec3Int Back() { return Vec3Int(0, 0, 1); }
+
+        friend Vec3Int operator+(Vec3Int left, const Vec3Int &right);
+        friend Vec3Int operator-(Vec3Int left, const Vec3Int &right);
+        friend Vec3Int operator*(Vec3Int left, const Vec3Int &right);
+        friend Vec3Int operator/(Vec3Int left, const Vec3Int &right);
+
+        friend Vec3Int operator+(Vec3Int left, int32 right);
+        friend Vec3Int operator-(Vec3Int left, int32 right);
+        friend Vec3Int operator*(Vec3Int left, int32 right);
+        friend Vec3Int operator/(Vec3Int left, int32 right);
+
+        friend Vec3Int operator+(int32 left, Vec3Int right);
+        friend Vec3Int operator-(int32 left, Vec3Int right);
+        friend Vec3Int operator*(int32 left, Vec3Int right);
+        friend Vec3Int operator/(int32 left, Vec3Int right);
     };
 
 }

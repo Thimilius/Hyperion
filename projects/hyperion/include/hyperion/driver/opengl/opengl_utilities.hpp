@@ -32,7 +32,7 @@ namespace Hyperion::Rendering {
         static GLenum GetGLRenderTextureInternalFormat(RenderTextureFormat internal_format);
         static GLenum GetGLRenderTextureFormat(RenderTextureFormat format);
         static GLenum GetGLRenderTextureFormatType(RenderTextureFormat format_type);
-        static GLsizei GetRenderTextureBufferSize(int32 x, int32 y, int32 width, int32 height, RenderTextureFormat fromat);
+        static GLsizei GetRenderTextureBufferSize(RectInt region, RenderTextureFormat fromat);
 
         static GLenum GetGLIndexFormat(IndexFormat index_format);
         static GLsizei GetGLIndexFormatSize(IndexFormat index_format);

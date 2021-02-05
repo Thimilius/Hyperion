@@ -4,6 +4,7 @@
 #include "hyperion/core/math/vec2.hpp"
 #include "hyperion/core/math/vec3.hpp"
 #include "hyperion/core/math/mat4.hpp"
+#include "hyperion/core/math/rect.hpp"
 #include "hyperion/core/object/resource.hpp"
 #include "hyperion/rendering/camera_data.hpp"
 #include "hyperion/rendering/graphics_context.hpp"
@@ -99,9 +100,9 @@ namespace Hyperion::Rendering {
 
         virtual void CreateRenderTexture(ResourceId render_texture_id, const RenderTextureDescriptor &descriptor) = 0;
         virtual void ResizeRenderTexture(ResourceId render_texture_id, uint32 width, uint32 height, uint32 mipmap_count) = 0;
-        virtual void GetRenderTextureSubData(ResourceId render_texture_id, uint32 attachment_index, int32 x, int32 y, int32 width, int32 height, Vector<uint8> *buffer, GetRenderTextureSubDataCallback callback) = 0;
+        virtual void GetRenderTextureSubData(ResourceId render_texture_id, uint32 attachment_index, RectInt region, Vector<uint8> *buffer, GetRenderTextureSubDataCallback callback) = 0;
         virtual void SetRenderTexture(ResourceId render_texture_id) = 0;
-        virtual void BlitRenderTexture(ResourceId destination_id, uint32 destination_width, uint32 destination_height, ResourceId source_id, uint32 source_width, uint32 source_height) = 0;
+        virtual void BlitRenderTexture(ResourceId destination_id, RectInt destination_region, ResourceId source_id, RectInt source_region) = 0;
         virtual void DestroyRenderTexture(ResourceId render_texture_id) = 0;
 
         virtual void CreateMesh(ResourceId mesh_id, const MeshDescriptor &descriptor) = 0;

@@ -216,9 +216,9 @@ namespace Hyperion::Rendering {
         }
     }
 
-    GLsizei OpenGLUtilities::GetRenderTextureBufferSize(int32 x, int32 y, int32 width, int32 height, RenderTextureFormat format) {
+    GLsizei OpenGLUtilities::GetRenderTextureBufferSize(RectInt region, RenderTextureFormat format) {
         switch (format) {
-            case RenderTextureFormat::RGBA32: return (x + width) * (y + height) * 4;
+            case RenderTextureFormat::RGBA32: return (region.x + region.width) * (region.y + region.height) * 4;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }

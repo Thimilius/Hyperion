@@ -91,15 +91,6 @@ namespace Hyperion::Editor {
         const CameraData &camera_data = context.GetCameraData();
         render_driver->SetCameraData(camera_data);
 
-        static Vector<uint8> buffer;
-        Vec2 mouse_position = Input::GetMousePosition();
-        render_driver->GetRenderTextureSubData(m_render_texture->GetResourceId(), 0, static_cast<int32>(mouse_position.x), static_cast<int32>(mouse_position.y), 1, 1, &buffer, [](Vector<uint8> *buffer) {
-            if (buffer->size() > 0) {
-                Vector<uint8> &pixels = *buffer;
-                HYP_TRACE("{} {} {} {}", pixels[0], pixels[1], pixels[2], pixels[3]);
-            }
-        });
-
         Viewport viewport = { 0, 0, Display::GetWidth(), Display::GetHeight() };
         render_driver->SetViewport(viewport);
         m_render_texture->Resize(Display::GetWidth(), Display::GetHeight());
@@ -110,7 +101,9 @@ namespace Hyperion::Editor {
 
         EditorWorldGrid::Render(render_driver, camera_data);
 
-        render_driver->BlitRenderTexture(0, Display::GetWidth(), Display::GetHeight(), m_render_texture->GetResourceId(), m_render_texture->GetWidth(), m_render_texture->GetHeight());
+        RectInt destination_region = RectInt(0, 0, static_cast<int32>(Display::GetWidth()), static_cast<int32>(Display::GetHeight()));
+        RectInt source_region = RectInt(0, 0, static_cast<int32>(m_render_texture->GetWidth()), static_cast<int32>(m_render_texture->GetHeight()));
+        render_driver->BlitRenderTexture(0, destination_region, m_render_texture->GetResourceId(), source_region);
     }
 
     void EditorRenderPipeline::Shutdown(IRenderDriver *render_driver) {

@@ -223,4 +223,196 @@ namespace Hyperion {
         return right.Divide(left);
     }
 
+    Vec3Int::Vec3Int()
+        : x(0), y(0), z(0) { }
+
+    Vec3Int::Vec3Int(int32 x, int32 y, int32 z)
+        : x(x), y(y), z(z) { }
+
+    Vec3Int::Vec3Int(const Vec2Int &vec2, int32 z)
+        : x(vec2.x), y(vec2.y), z(z) { }
+
+    Vec3Int &Vec3Int::Add(const Vec3Int &other) {
+        x += other.x;
+        y += other.y;
+        z += other.z;
+
+        return *this;
+    }
+
+    Vec3Int &Vec3Int::Subtract(const Vec3Int &other) {
+        x -= other.x;
+        y -= other.y;
+        z -= other.z;
+
+        return *this;
+    }
+
+    Vec3Int &Vec3Int::Multiply(const Vec3Int &other) {
+        x *= other.x;
+        y *= other.y;
+        z *= other.z;
+
+        return *this;
+    }
+
+    Vec3Int &Vec3Int::Divide(const Vec3Int &other) {
+        x /= other.x;
+        y /= other.y;
+        z /= other.z;
+
+        return *this;
+    }
+
+    Vec3Int &Vec3Int::Add(int32 value) {
+        x += value;
+        y += value;
+        z += value;
+
+        return *this;
+    }
+
+    Vec3Int &Vec3Int::Subtract(int32 value) {
+        x -= value;
+        y -= value;
+        z -= value;
+
+        return *this;
+    }
+
+    Vec3Int &Vec3Int::Multiply(int32 value) {
+        x *= value;
+        y *= value;
+        z *= value;
+
+        return *this;
+    }
+
+    Vec3Int &Vec3Int::Divide(int32 value) {
+        x /= value;
+        y /= value;
+        z /= value;
+
+        return *this;
+    }
+
+    String Vec3Int::ToString() const {
+        return StringUtils::Format("({}, {}, {})", x, y, z);
+    }
+
+    bool Vec3Int::operator==(const Vec3Int &other) const {
+        return x == other.x && y == other.y && z == other.z;
+    }
+
+    bool Vec3Int::operator!=(const Vec3Int &other) const {
+        return !(*this == other);
+    }
+
+    Vec3Int &Vec3Int::operator-() {
+        x = -x;
+        y = -y;
+        z = -z;
+
+        return *this;
+    }
+
+    Vec3Int &Vec3Int::operator+=(const Vec3Int &other) {
+        return Add(other);
+    }
+
+    Vec3Int &Vec3Int::operator-=(const Vec3Int &other) {
+        return Subtract(other);
+    }
+
+    Vec3Int &Vec3Int::operator*=(const Vec3Int &other) {
+        return Multiply(other);
+    }
+
+    Vec3Int &Vec3Int::operator/=(const Vec3Int &other) {
+        return Divide(other);
+    }
+
+    bool Vec3Int::operator<(const Vec3Int &other) const {
+        return x < other.x &&y < other.y &&z < other.z;
+    }
+
+    bool Vec3Int::operator<=(const Vec3Int &other) const {
+        return x <= other.x && y <= other.y && z <= other.z;
+    }
+
+    bool Vec3Int::operator>(const Vec3Int &other) const {
+        return x > other.x && y > other.y && z > other.z;
+    }
+
+    bool Vec3Int::operator>=(const Vec3Int &other) const {
+        return x >= other.x && y >= other.y && z >= other.z;
+    }
+
+    float32 Vec3Int::Magnitude() const {
+        float32 x = static_cast<float32>(this->x);
+        float32 y = static_cast<float32>(this->y);
+        float32 z = static_cast<float32>(this->z);
+
+        return Math::Sqrt(x * x + y * y + z * z);
+    }
+
+    int32 Vec3Int::SqrMagnitude() const {
+        return x * x + y * y + z * z;
+    }
+
+    float32 Vec3Int::Distance(const Vec3Int &other) const {
+        float32 x = static_cast<float32>(this->x - other.x);
+        float32 y = static_cast<float32>(this->y - other.y);
+        float32 z = static_cast<float32>(this->z - other.z);
+
+        return Math::Sqrt(x * x + y * y + z * z);
+    }
+
+    Vec3Int operator+(Vec3Int left, const Vec3Int &right) {
+        return left.Add(right);
+    }
+
+    Vec3Int operator-(Vec3Int left, const Vec3Int &right) {
+        return left.Subtract(right);
+    }
+
+    Vec3Int operator*(Vec3Int left, const Vec3Int &right) {
+        return left.Multiply(right);
+    }
+
+    Vec3Int operator/(Vec3Int left, const Vec3Int &right) {
+        return left.Divide(right);
+    }
+
+    Vec3Int operator+(Vec3Int left, int32 right) {
+        return left.Add(right);
+    }
+
+    Vec3Int operator-(Vec3Int left, int32 right) {
+        return left.Subtract(right);
+    }
+
+    Vec3Int operator*(Vec3Int left, int32 right) {
+        return left.Multiply(right);
+    }
+
+    Vec3Int operator/(Vec3Int left, int32 right) {
+        return left.Divide(right);
+    }
+
+    Vec3Int operator+(int32 left, Vec3Int right) {
+        return right.Add(left);
+    }
+
+    Vec3Int operator-(int32 left, Vec3Int right) {
+        return right.Subtract(left);
+    }
+
+    Vec3Int operator*(int32 left, Vec3Int right) {
+        return right.Multiply(left);
+    }
+
+    Vec3Int operator/(int32 left, Vec3Int right) {
+        return right.Divide(left);
+    }
 }
