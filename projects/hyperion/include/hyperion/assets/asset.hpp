@@ -5,6 +5,8 @@
 
 namespace Hyperion {
     class Engine;
+    class Mesh;
+    class Texture;
 }
 
 namespace Hyperion {
@@ -32,13 +34,34 @@ namespace Hyperion {
         ResourceId m_resource_id;
     };
 
+    enum class MeshPrimitive {
+        Quad,
+        Plane,
+        Cube,
+        Sphere,
+    };
+
+    enum class TexturePrimitive {
+        Grid,
+    };
+
     class AssetManager final {
+    public:
+        static Mesh *GetMeshPrimitive(MeshPrimitive mesh_primitive);
+        static Texture *GetTexturePrimitive(TexturePrimitive texture_primitive);
     private:
         ~AssetManager() = delete;
         AssetManager() = delete;
     private:
         static void Initialize();
         static void Shutdown();
+    private:
+        inline static Mesh *s_mesh_primitive_quad;
+        inline static Mesh *s_mesh_primitive_plane;
+        inline static Mesh *s_mesh_primitive_cube;
+        inline static Mesh *s_mesh_primitive_sphere;
+
+        inline static Texture *s_texture_primitive_grid;
     private:
         friend class Engine;
     };

@@ -8,6 +8,8 @@
 #include "hyperion/assets/mesh.hpp"
 #include "hyperion/assets/shader.hpp"
 #include "hyperion/assets/texture.hpp"
+#include "hyperion/assets/texture_atlas.hpp"
+#include "hyperion/core/image.hpp"
 #include "hyperion/entity/entity.hpp"
 #include "hyperion/entity/world.hpp"
 #include "hyperion/entity/components/behaviour.hpp"
@@ -141,6 +143,9 @@ HYP_REFLECT_REGISTER_BEGIN
             .property_readonly("resource_id", &Asset::m_resource_id)(metadata(Metadata::Serialize, false));
         Registration<Font>("Font")
             .constructor(select_overload<Font *()>(&Font::Create))(DefaultConstructorPolicy);
+        Registration<FontAtlas>("FontAtlas")
+            .constructor(select_overload<FontAtlas *()>(&FontAtlas::Create))(DefaultConstructorPolicy)
+            .constructor(select_overload<FontAtlas *(Texture2D *, const FontAtlasMap &)>(&FontAtlas::Create))(DefaultConstructorPolicy);
         Registration<Material>("Material")
             .constructor(select_overload<Material *()>(&Material::Create))(DefaultConstructorPolicy)
             .constructor(select_overload<Material *(Shader *)>(&Material::Create))(DefaultConstructorPolicy);
@@ -159,6 +164,12 @@ HYP_REFLECT_REGISTER_BEGIN
         Registration<RenderTexture>("RenderTexture")
             .constructor(select_overload<RenderTexture *()>(&RenderTexture::Create))(DefaultConstructorPolicy)
             .constructor(select_overload<RenderTexture *(uint32, uint32, Vector<Rendering::RenderTextureAttachment>)>(&RenderTexture::Create))(DefaultConstructorPolicy);
+    }
+
+    {
+        Registration<Image>("Image")
+            .constructor(select_overload<Image *()>(&Image::Create))(DefaultConstructorPolicy)
+            .constructor(select_overload<Image *(uint32, uint32, uint32, Vector<uint8> &&)>(&Image::Create))(DefaultConstructorPolicy);
     }
 
     {

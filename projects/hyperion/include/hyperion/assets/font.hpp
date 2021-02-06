@@ -22,6 +22,7 @@ namespace Hyperion {
 
     using FontAtlas = TextureAtlas<uint32, FontGlyph>;
     using FontAtlasElement = TextureAtlasElement<FontGlyph>;
+    using FontAtlasMap = Map<uint32, FontAtlasElement>;
 
     class Font : public Asset {
         HYP_REFLECT(Asset);

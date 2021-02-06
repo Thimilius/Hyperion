@@ -70,7 +70,7 @@ namespace Hyperion::Editor {
 
         m_material = Material::Create(m_shader);
         m_material->SetVec4("u_color", Color::White());
-        m_material->SetTexture("u_texture", m_texture);
+        m_material->SetTexture("u_texture", AssetManager::GetTexturePrimitive(TexturePrimitive::Grid));
 
         m_mesh = MeshFactory::CreateCube(1.0f);
 

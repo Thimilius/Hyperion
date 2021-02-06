@@ -31,10 +31,15 @@ namespace Hyperion {
             return element;
         }
     public:
+        static TextureAtlas<K, V> *Create() {
+            return new TextureAtlas<K, V>();
+        }
+
         static TextureAtlas<K, V> *Create(Texture2D *texture, const Map<K, TextureAtlasElement<V>> &elements) {
             return new TextureAtlas<K, V>(texture, elements);
         }
     private:
+        TextureAtlas() = default;
         TextureAtlas(Texture2D *texture, const Map<K, TextureAtlasElement<V>> &elements) {
             m_texture = texture;
             m_elements = elements;

@@ -5,6 +5,7 @@
 #include "hyperion/entity/world_manager.hpp"
 #include "hyperion/entity/components/physics/box_collider.hpp"
 #include "hyperion/entity/components/physics/sphere_collider.hpp"
+#include "hyperion/entity/components/rendering/camera.hpp"
 
 namespace Hyperion {
 
@@ -83,6 +84,21 @@ namespace Hyperion {
     Entity *Entity::CreatePrimitive(EntityPrimitive primitive, const Vec3 &position, const Quaternion &rotation, Transform *parent, World *world) {
         Entity *entity = Create(GetPrimitiveName(primitive), position, rotation, parent, world);
         
+        switch (primitive) {
+            case EntityPrimitive::Quad: break;
+            case EntityPrimitive::Plane: break;
+            case EntityPrimitive::Cube: break;
+            case EntityPrimitive::Sphere: break;
+            case EntityPrimitive::DirectionalLight: break;
+            case EntityPrimitive::PointLight: break;
+            case EntityPrimitive::SpotLight: break;
+            case EntityPrimitive::Camera: {
+                entity->AddComponent<Camera>();
+                break;
+            }
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        }
+
         return entity;
     }
 
