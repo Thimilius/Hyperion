@@ -18,7 +18,7 @@ namespace Hyperion {
     private:
         MemoryStats() = delete;
         ~MemoryStats() = delete;
-
+    private:
         inline static void ResetFrameMemory() { s_frame_memory = 0; }
     private:
         inline static std::atomic_uint64_t s_global_memory = 0;

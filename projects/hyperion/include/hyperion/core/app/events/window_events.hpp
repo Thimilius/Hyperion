@@ -9,7 +9,7 @@ namespace Hyperion {
     public:
         EventType GetType() const override { return EventType::WindowClose; }
         EventCategory GetCategory() const override { return EventCategory::Window; }
-
+    public:
         static EventType GetStaticType() { return EventType::WindowClose; }
     };
 
@@ -22,7 +22,7 @@ namespace Hyperion {
 
         EventType GetType() const override { return EventType::WindowResize; }
         EventCategory GetCategory() const override { return EventCategory::Window; }
-
+    public:
         static EventType GetStaticType() { return EventType::WindowResize; }
     private:
         uint32 m_width;
@@ -37,7 +37,7 @@ namespace Hyperion {
 
         EventType GetType() const override { return EventType::WindowFocus; }
         EventCategory GetCategory() const override { return EventCategory::Window; }
-
+    public:
         static EventType GetStaticType() { return EventType::WindowFocus; }
     private:
         bool m_focus;
@@ -47,7 +47,7 @@ namespace Hyperion {
     public:
         EventType GetType() const override { return EventType::WindowMoved; }
         EventCategory GetCategory() const override { return EventCategory::Window; }
-
+    public:
         static EventType GetStaticType() { return EventType::WindowMoved; }
     };
 
@@ -59,7 +59,7 @@ namespace Hyperion {
 
         EventType GetType() const override { return EventType::WindowStateChanged; }
         EventCategory GetCategory() const override { return EventCategory::Window; }
-
+    public:
         static EventType GetStaticType() { return EventType::WindowStateChanged; }
     private:
         WindowState m_state;

@@ -27,7 +27,7 @@ namespace Hyperion::Rendering {
     private:
         RenderEngine() = delete;
         ~RenderEngine() = delete;
-
+    private:
         static void PreInitialize(const RenderSettings &settings, Window *window);
         static void Initialize();
         static void Render();

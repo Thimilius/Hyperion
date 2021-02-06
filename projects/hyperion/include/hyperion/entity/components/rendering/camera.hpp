@@ -58,7 +58,7 @@ namespace Hyperion {
         void OnDestroy() override;
     private:
         void RecalculateMatricies();
-
+    private:
         static Camera *Create();
     private:
         mutable Rendering::CameraData m_data;

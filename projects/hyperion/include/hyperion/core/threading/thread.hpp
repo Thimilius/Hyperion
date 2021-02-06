@@ -19,7 +19,7 @@ namespace Hyperion::Threading {
         void Join();
 
         void SetName(const String &name);
-
+    public:
         static uint32 GetSupportedThreadCount();
         static ThreadId GetCurrentThreadId();
         static void Sleep(uint32 milliseconds);

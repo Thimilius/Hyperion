@@ -12,7 +12,7 @@ namespace Hyperion {
         Mesh *LoadMesh(const String &path) override;
     private:
         void LoadSubMesh(const aiMesh *mesh, MeshData &mesh_data, Vector<Rendering::SubMesh> &sub_meshes);
-
+    private:
         static Rendering::MeshTopology GetMeshTopologyForPrimitiveType(uint32 primitive_type);
     };
 

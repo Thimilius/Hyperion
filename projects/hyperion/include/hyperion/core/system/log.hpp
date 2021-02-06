@@ -41,9 +41,9 @@ namespace Hyperion {
         Client
     };
 
-    class Log {
+    class Log final {
     public:
-        inline static void SetLevel(LogLevel level) { m_level = level; }
+        inline static void SetLevel(LogLevel level) { s_level = level; }
         
         template<typename ...Args>
         static void LogMessage(LogType type, LogLevel level, const char *system, const char *message_format, Args... args) {
@@ -57,11 +57,14 @@ namespace Hyperion {
             LogMessageInternal(level, message);
         }
     private:
+        Log() = delete;
+        ~Log() = delete;
+    private:
         static void LogMessageInternal(LogLevel level, String message);
 
         static LogColor GetLogColor(LogLevel level);
     private:
-        inline static LogLevel m_level;
+        inline static LogLevel s_level;
     };
 
 }

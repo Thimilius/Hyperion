@@ -26,7 +26,7 @@ namespace Hyperion {
     class Window {
     public:
         virtual ~Window() = default;
-
+    public:
         virtual void *GetNativePointer() const = 0;
 
         inline const String &GetTitle() const { return m_title; }

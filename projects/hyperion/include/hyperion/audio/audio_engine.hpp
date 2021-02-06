@@ -17,7 +17,7 @@ namespace Hyperion::Audio {
     private:
         AudioEngine() = delete;
         ~AudioEngine() = delete;
-
+    private:
         static void Initialize();
         static void Shutdown();
     private:

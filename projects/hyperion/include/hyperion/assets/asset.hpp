@@ -22,7 +22,7 @@ namespace Hyperion {
         HYP_REFLECT(Object);
     public:
         virtual ~Asset() override = default;
-
+    public:
         virtual AssetType GetAssetType() const = 0;
 
         inline ResourceId GetResourceId() const { return m_resource_id; }
@@ -36,7 +36,7 @@ namespace Hyperion {
     private:
         ~AssetManager() = delete;
         AssetManager() = delete;
-
+    private:
         static void Initialize();
         static void Shutdown();
     private:

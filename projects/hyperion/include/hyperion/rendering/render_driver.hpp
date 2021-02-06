@@ -79,7 +79,7 @@ namespace Hyperion::Rendering {
     class IRenderDriver {
     public:
         virtual ~IRenderDriver() = default;
-
+    public:
         virtual void Initialize(GraphicsContext *graphics_context) = 0;
         virtual void Shutdown() = 0;
 

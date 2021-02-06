@@ -23,7 +23,7 @@ namespace Hyperion {
         MouseButtonPressedEvent(MouseButtonCode mouse_button_code, KeyModifier key_modifier) : MouseButtonEvent(mouse_button_code, key_modifier) { }
 
         EventType GetType() const override { return EventType::MouseButtonPressed; }
-
+    public:
         static EventType GetStaticType() { return EventType::MouseButtonPressed; }
     };
 
@@ -32,7 +32,7 @@ namespace Hyperion {
         MouseButtonReleasedEvent(MouseButtonCode mouse_button_code, KeyModifier key_modifier) : MouseButtonEvent(mouse_button_code, key_modifier) { }
 
         EventType GetType() const override { return EventType::MouseButtonReleased; }
-
+    public:
         static EventType GetStaticType() { return EventType::MouseButtonReleased; }
     };
 
@@ -45,7 +45,7 @@ namespace Hyperion {
 
         EventType GetType() const override { return EventType::MouseMoved; }
         EventCategory GetCategory() const override { return EventCategory::Input & EventCategory::Mouse; }
-
+    public:
         static EventType GetStaticType() { return EventType::MouseMoved; }
     private:
         float32 m_x;
@@ -60,7 +60,7 @@ namespace Hyperion {
 
         EventType GetType() const override { return EventType::MouseScrolled; }
         EventCategory GetCategory() const override { return EventCategory::Input & EventCategory::Mouse; }
-
+    public:
         static EventType GetStaticType() { return EventType::MouseScrolled; }
     private:
         float32 m_scroll;

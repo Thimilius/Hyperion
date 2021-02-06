@@ -14,7 +14,7 @@ namespace Hyperion {
     private:
         Resource() = delete;
         ~Resource() = delete;
-
+    private:
         inline static ResourceId GetNextResourceId() { return ++s_resource_id_counter; }
     private:
         inline static ResourceId s_resource_id_counter = 0;

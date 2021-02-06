@@ -19,7 +19,7 @@ namespace Hyperion::Editor {
     private:
         EditorWorldGrid() = delete;
         ~EditorWorldGrid() = delete;
-
+    private:
         static Mat4 GetTranslation(const Rendering::CameraData &camera_data);
         static Mat4 GetRotation();
     private:

@@ -41,6 +41,9 @@ namespace Hyperion::Rendering {
         static GLenum GetGLVertexAttributeType(VertexAttributeType vertex_attribute_type);
         static GLuint GetGLVertexAttributeSizeForVertexAttribute(VertexAttributeType vertex_attribute_type, uint32 dimension);
     private:
+        OpenGLUtilities() = delete;
+        ~OpenGLUtilities() = delete;
+    private:
         static uint32 GetBytesPerPixelForTextureFormat(TextureFormat format);
     };
 

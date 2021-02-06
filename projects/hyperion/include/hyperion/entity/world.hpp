@@ -62,7 +62,7 @@ namespace Hyperion {
 
         void AddRootEntity(Entity *entity);
         void RemoveRootEntity(Entity *entity);
-
+    private:
         static World *Create();
     private:
         WorldEnvironment m_environment;

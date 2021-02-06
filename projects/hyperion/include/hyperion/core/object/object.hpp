@@ -22,7 +22,7 @@ namespace Hyperion {
         // We would like to have the destructor private, but RTTR does not let us.
         // All objects should be destroyed through the static Object::Destroy function.
         virtual ~Object();
-
+    public:
         inline Type GetType() const { return get_type(); }
         
         inline ObjectId GetId() const { return m_id; }
@@ -32,7 +32,7 @@ namespace Hyperion {
         inline void SetName(const String &name) { m_name = name; }
 
         inline virtual String ToString() const { return m_name; }
-
+    public:
         static Object *Create();
         static Object *Create(const String &name);
         static Object *Clone(Object *object);
@@ -40,7 +40,7 @@ namespace Hyperion {
     protected:
         Object();
         Object(const String &name);
-
+    protected:
         inline virtual Object *CreateClone() const { return new Object(); }
         virtual void HandleClone(Object *clone) const;
 
@@ -48,7 +48,7 @@ namespace Hyperion {
     private:
         Object(const Object &other) = delete;
         Object &operator=(const Object &other) = delete;
-
+    private:
         static void DestroyImmediate(Object *object);
     private:
         ObjectId m_id = 0;
@@ -67,7 +67,7 @@ namespace Hyperion {
     private:
         ObjectManager() = delete;
         ~ObjectManager() = delete;
-
+    private:
         static void LateUpdate();
         static void Shutdown();
 

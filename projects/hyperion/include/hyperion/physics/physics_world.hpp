@@ -23,7 +23,7 @@ namespace Hyperion::Physics {
     class PhysicsWorld {
     public:
         virtual ~PhysicsWorld() = default;
-
+    public:
         virtual bool Raycast(Ray ray, RaycastResult &result, float32 distance) { return false; }
 
         virtual void DebugDraw() { }

@@ -11,7 +11,7 @@ namespace Hyperion {
     public:
         void Initialize(const ScriptingSettings &settings) override;
         void Shutdown() override;
-
+    public:
         inline static MonoDomain *GetDomain() { return s_root_domain; }
 
         static Object *GetNativeObject(MonoObject *object);

@@ -12,7 +12,7 @@ namespace Hyperion {
     public:
         WindowsWindow(const WindowSettings &settings);
         ~WindowsWindow();
-
+    public:
         void *GetNativePointer() const override { return m_window_handle; }
 
         void SetTitle(const String &title) override;
@@ -43,7 +43,7 @@ namespace Hyperion {
         MouseButtonCode TranslateMouseButtonCode(uint32 code) const;
         KeyModifier GetKeyModifier() const;
         uint32 GetMouseButtonFromMessage(uint32 message, uint32 w_param) const;
-
+    private:
         static LRESULT CALLBACK MessageCallback(HWND window_handle, uint32 message, WPARAM first_message_param, LPARAM second_message_param);
     private:
         WindowsInput *m_input;

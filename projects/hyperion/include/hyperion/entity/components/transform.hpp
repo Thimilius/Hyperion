@@ -92,15 +92,15 @@ namespace Hyperion {
         bool IsChildOf(Transform *parent) const;
     protected:
         Transform(const String &name) : Component(name) { }
-
+    protected:
         void OnCreate() override;
         void OnDestroy() override;
     private:
         Transform() : Component("Transform") { }
-
+    private:
         void NotifyTransformChange();
         void RecalculateTransform();
-
+    private:
         static Transform *Create();
     protected:
         Vec3 m_local_position = Vec3::Zero();

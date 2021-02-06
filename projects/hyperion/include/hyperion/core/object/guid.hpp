@@ -10,7 +10,7 @@ namespace Hyperion {
 
         bool operator==(const Guid &other) const;
         bool operator!=(const Guid &other) const;
-
+    public:
         static Guid Create();
         static Guid Create(const String &string);
     private:

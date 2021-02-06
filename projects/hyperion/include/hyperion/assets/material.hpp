@@ -86,16 +86,16 @@ namespace Hyperion {
         inline void SetTexture(const String &name, Texture *value) {
             SetTexture(Rendering::MaterialProperty::NameToId(name), value);
         }
-
+    public:
         static Material *Create(Shader *shader);
     protected:
         void OnDestroy() override;
     private:
         Material() = default;
         Material(Shader *shader);
-
+    private:
         void SetProperty(Rendering::MaterialPropertyId id, const MaterialProperty &property);
-
+    private:
         static Material *Create();
     private:
         Shader *m_shader;

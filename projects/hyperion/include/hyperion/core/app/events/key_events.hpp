@@ -23,7 +23,7 @@ namespace Hyperion {
         KeyPressedEvent(KeyCode key_code, KeyModifier key_modifier) : KeyEvent(key_code, key_modifier) { }
 
         EventType GetType() const override { return EventType::KeyPressed; }
-
+    public:
         static EventType GetStaticType() { return EventType::KeyPressed; }
     };
 
@@ -32,7 +32,7 @@ namespace Hyperion {
         KeyReleasedEvent(KeyCode key_code, KeyModifier key_modifier) : KeyEvent(key_code, key_modifier) { }
 
         EventType GetType() const override { return EventType::KeyReleased; }
-
+    public:
         static EventType GetStaticType() { return EventType::KeyReleased; }
     };
 
@@ -45,7 +45,7 @@ namespace Hyperion {
 
         EventType GetType() const override { return EventType::KeyTyped; }
         EventCategory GetCategory() const override { return EventCategory::Input & EventCategory::Keyboard; }
-
+    public:
         static EventType GetStaticType() { return EventType::KeyTyped; }
     private:
         uint32 m_character;

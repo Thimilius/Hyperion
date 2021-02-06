@@ -12,11 +12,11 @@ namespace Hyperion {
     class Application {
     public:
         virtual ~Application() = default;
-
+    public:
         inline Window *GetWindow() const { return m_window; }
 
         void Exit();
-
+    public:
         inline static Application *GetInstance() { return s_instance; }
     protected:
         Application(const ApplicationSettings &settings);
@@ -29,7 +29,7 @@ namespace Hyperion {
         virtual void OnShutdown() { }
     private:
         Window *m_window;
-
+    private:
         inline static Application *s_instance;
     private:
         friend class Hyperion::Engine;

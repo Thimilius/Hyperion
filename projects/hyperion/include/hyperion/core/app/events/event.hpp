@@ -58,7 +58,7 @@ namespace Hyperion {
         using EventFunction = std::function<void(T &)>;
     public:
         EventDispatcher(Event &event) : m_event(event) { }
-
+    public:
         template<typename T>
         bool Dispatch(EventFunction<T> func) {
             if (m_event.GetType() == T::GetStaticType()) {

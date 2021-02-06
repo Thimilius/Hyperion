@@ -8,7 +8,7 @@ namespace Hyperion::Audio {
     class IAudioDriver {
     public:
         virtual ~IAudioDriver() = default;
-
+    public:
         virtual AudioBackend GetBackend() const = 0;
 
         virtual void Load(const String &name, const String &path) = 0;

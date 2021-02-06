@@ -30,12 +30,12 @@ namespace Hyperion {
 
         inline uint32 GetWidth() const { return m_width; }
         inline uint32 GetHeight() const { return m_height; }
-
+    public:
         static Texture2D *Create(uint32 width, uint32 height, Rendering::TextureFormat format, Rendering::TextureParameters parameters, const Vector<uint8> &pixels, bool read_and_write_enabled = false);
     private:
         Texture2D() = default;
         Texture2D(uint32 width, uint32 height, Rendering::TextureFormat format, Rendering::TextureParameters parameters, const Vector<uint8> &pixels, bool read_and_write_enabled);
-
+    private:
         static Texture2D *Create();
     private:
         uint32 m_width;
@@ -49,7 +49,7 @@ namespace Hyperion {
         inline Rendering::TextureDimension GetDimension() const { return Rendering::TextureDimension::TextureCubemap; }
     private:
         TextureCubemap() = default;
-
+    private:
         static TextureCubemap *Create();
     };
 
@@ -62,14 +62,14 @@ namespace Hyperion {
         inline uint32 GetHeight() const { return m_height; }
 
         void Resize(uint32 width, uint32 height);
-
+    public:
         static RenderTexture *Create(uint32 width, uint32 height, Vector<Rendering::RenderTextureAttachment> attachments);
     protected:
         void OnDestroy() override;
     private:
         RenderTexture() = default;
         RenderTexture(uint32 width, uint32 height, Vector<Rendering::RenderTextureAttachment> attachments);
-
+    private:
         static RenderTexture *Create();
     private:
         uint32 m_width;

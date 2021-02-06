@@ -15,6 +15,9 @@ namespace Hyperion {
 
     class Synchronization final {
     private:
+        Synchronization() = delete;
+        ~Synchronization() = delete;
+    private:
         inline static void NotifyRenderReady() { s_render_ready_event.Notify(); }
         inline static void WaitForRenderReady() { s_render_ready_event.Wait(); }
 

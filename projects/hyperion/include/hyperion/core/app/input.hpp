@@ -215,7 +215,7 @@ namespace Hyperion {
     class InputImplementation {
     public:
         virtual ~InputImplementation() = default;
-
+    public:
         virtual bool IsKeyDown(KeyCode key_code) const = 0;
         virtual bool IsKeyHold(KeyCode key_code) const = 0;
         virtual bool IsKeyUp(KeyCode key_code) const = 0;

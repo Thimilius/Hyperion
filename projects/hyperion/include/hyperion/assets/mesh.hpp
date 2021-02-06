@@ -33,14 +33,14 @@ namespace Hyperion {
 
         inline bool IsReadAndWriteEnabled() const { return m_read_and_write_enabled; }
         inline BoundingBox GetBounds() const { return m_bounds; }
-        
+    public:
         static Mesh *Create(const MeshData &mesh_data, const Vector<Rendering::SubMesh> &sub_meshes, bool read_and_write_enabled = false);
     protected:
         void OnDestroy() override;
     private:
         Mesh() = default;
         Mesh(const MeshData &mesh_data, const Vector<Rendering::SubMesh> &sub_meshes, bool read_and_write_enabled);
-
+    private:
         static Mesh *Create();
         static BoundingBox CalculateBounds(const Vector<Vec3> &positions);
     private:
@@ -54,7 +54,7 @@ namespace Hyperion {
     class IMeshLoader {
     public:
         virtual ~IMeshLoader() = default;
-
+    public:
         virtual Mesh *LoadMesh(const String &path) = 0;
     };
 
@@ -68,7 +68,7 @@ namespace Hyperion {
     private:
         MeshFactory() = delete;
         ~MeshFactory() = delete;
-
+    private:
         static void Initialize();
         static void Shutdown();
     private:

@@ -15,7 +15,7 @@ namespace Hyperion {
     public:
         WindowsInput();
         ~WindowsInput();
-
+    public:
         bool IsKeyDown(KeyCode key_code) const override {
             return m_keys_down[static_cast<int32>(key_code)];
         }

@@ -28,7 +28,7 @@ namespace Hyperion {
     private:
         Engine() = delete;
         ~Engine() = delete;
-
+    private:
         static void Setup();
         static void PreInitialize();
         static void Initialize();

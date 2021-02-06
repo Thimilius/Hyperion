@@ -18,9 +18,9 @@ namespace Hyperion {
         using WatcherCallbackFunction = std::function<void(FileStatus, const String &, const String &, const String &)>;
     public:
         virtual ~FileWatcher() = default;
-
+    public:
         virtual void Update() = 0;
-
+    public:
         static FileWatcher *Create(const String &path, WatcherCallbackFunction callback, bool recursive);
     protected:
         String m_path;

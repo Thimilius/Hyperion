@@ -7,7 +7,7 @@ namespace Hyperion {
     class IScriptingDriver {
     public:
         virtual ~IScriptingDriver() = default;
-
+    public:
         virtual void Initialize(const ScriptingSettings &settings) = 0;
         virtual void Shutdown() = 0;
     };

@@ -30,7 +30,7 @@ namespace Hyperion {
         GamepadButtonPressedEvent(Gamepad gamepad, GamepadButtonCode button_code) : GamepadButtonEvent(gamepad, button_code) { }
 
         EventType GetType() const override { return EventType::GamepadButtonPressed; }
-
+    public:
         static EventType GetStaticType() { return EventType::GamepadButtonPressed; }
     };
 
@@ -39,7 +39,7 @@ namespace Hyperion {
         GamepadButtonReleasedEvent(Gamepad gamepad, GamepadButtonCode button_code) : GamepadButtonEvent(gamepad, button_code) {}
 
         EventType GetType() const override { return EventType::GamepadButtonReleased; }
-
+    public:
         static EventType GetStaticType() { return EventType::GamepadButtonReleased; }
     };
 
@@ -50,7 +50,7 @@ namespace Hyperion {
         inline bool GetConnected() const { return m_connected; }
 
         EventType GetType() const override { return EventType::GamepadConnectionChanged; }
-
+    public:
         static EventType GetStaticType() { return EventType::GamepadConnectionChanged; }
     private:
         bool m_connected;

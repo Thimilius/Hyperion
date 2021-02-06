@@ -28,7 +28,7 @@ namespace Hyperion::Rendering {
     class IRenderPipeline {
     public:
         virtual ~IRenderPipeline() = default;
-
+    public:
         virtual void Initialize(IRenderDriver *render_driver) = 0;
         virtual void Render(IRenderDriver *render_driver, const RenderPipelineContext &context) = 0;
         virtual void Shutdown(IRenderDriver *render_driver) = 0;

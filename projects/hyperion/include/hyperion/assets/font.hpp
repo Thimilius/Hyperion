@@ -34,14 +34,14 @@ namespace Hyperion {
         const FontAtlasElement &GetElement(uint32 codepoint) const;
 
         float32 GetTextWidth(const String &text, float32 scale) const;
-
+    public:
         static Font *Create(uint32 size, FontCharacterSet character_set, FontAtlas *font_atlas);
     protected:
         void OnDestroy() override;
     private:
         Font() = default;
         Font(uint32 size, FontCharacterSet character_set, FontAtlas *font_atlas);
-
+    private:
         static Font *Create();
     private:
         uint32 m_size;
@@ -52,7 +52,7 @@ namespace Hyperion {
     class IFontLoader {
     public:
         virtual ~IFontLoader() = default;
-
+    public:
         virtual Font *LoadFont(const String &path, uint32 font_size, FontCharacterSet character_set) = 0;
 
         virtual void Initialize() = 0;
@@ -65,7 +65,7 @@ namespace Hyperion {
     private:
         FontLoader() = delete;
         ~FontLoader() = delete;
-
+    private:
         static void Initialize();
         static void Shutdown();
     private:

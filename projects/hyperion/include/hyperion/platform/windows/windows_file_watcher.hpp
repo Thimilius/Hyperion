@@ -11,12 +11,12 @@ namespace Hyperion {
     public:
         WindowsFileWatcher(const String &path, FileWatcher::WatcherCallbackFunction callback, bool recursive);
         ~WindowsFileWatcher() override;
-
+    public:
         void Update() override;
     private:
         bool RefreshWatch(bool clear);
         void HandleAction(uint32 action, const String &path, const String &filename, const String &extension);
-
+    private:
         static void CALLBACK WatchCallback(DWORD error_code, DWORD number_of_bytes_transfered, LPOVERLAPPED overlapped);
     private:
         struct WatchStruct {

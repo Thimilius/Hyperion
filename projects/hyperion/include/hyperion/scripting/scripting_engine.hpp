@@ -13,7 +13,7 @@ namespace Hyperion {
     private:
         ScriptingEngine() = delete;
         ~ScriptingEngine() = delete;
-
+    private:
         static void Initialize(const ScriptingSettings &settings);
         static void Shutdown();
     private:

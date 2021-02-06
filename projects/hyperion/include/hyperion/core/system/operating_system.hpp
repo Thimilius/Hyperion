@@ -87,6 +87,8 @@ namespace Hyperion {
 
     class OperatingSystem {
     public:
+        virtual ~OperatingSystem() = default;
+    public:
         virtual OperatingSystemType GetType() const = 0;
         virtual SystemInfo GetSystemInfo() const = 0;
         virtual uint64 GetMemoryUsage() const = 0;
@@ -98,13 +100,13 @@ namespace Hyperion {
 
         virtual String OpenFileDialog(const String &title, const String &filter) = 0;
         virtual String SaveFileDialog(const String &title, const String &filter) = 0;
-
+    public:
         inline static OperatingSystem* GetInstance() { return s_instance; }
     private:
         virtual void Initialize() = 0;
     private:
         static OperatingSystem *s_instance;
-
+    private:
         friend class Hyperion::Engine;
     };
 

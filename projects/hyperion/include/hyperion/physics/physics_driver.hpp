@@ -8,7 +8,7 @@ namespace Hyperion::Physics {
     class IPhysicsDriver {
     public:
         virtual ~IPhysicsDriver() = default;
-        
+    public:
         virtual PhysicsBackend GetBackend() const = 0;
 
         virtual PhysicsWorld *CreatePhysicsWorld() = 0;

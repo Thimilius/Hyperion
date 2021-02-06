@@ -13,7 +13,7 @@ namespace Hyperion {
     class JsonSerializer {
     public:
         JsonSerializer(JsonSerializerSettings settings = JsonSerializerSettings()) : m_settings(settings) { }
-
+    public:
         template<typename T>
         Result<String, Error> Serialize(const T &object) {
             Type type = Type::get<T>();

@@ -14,13 +14,13 @@ namespace Hyperion {
     public:
         inline static World *GetActiveWorld() { return s_active_world; }
         inline static void SetActiveWorld(World *world) { s_active_world = world; }
-
+    public:
         static World *CreateWorld(); 
         static void DestroyWorld(World *world);
     private:
         WorldManager() = delete;
         ~WorldManager() = delete;
-
+    private:
         static void Shutdown();
 
         static void Update(float32 delta_time);

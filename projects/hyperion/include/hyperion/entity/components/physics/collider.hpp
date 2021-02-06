@@ -26,7 +26,7 @@ namespace Hyperion {
         Collider() = default;
         Collider(const String & name) : Behaviour(name) {}
         virtual ~Collider() override = default;
-
+    protected:
         void OnCreate() override;
         void OnDestroy() override;
     };

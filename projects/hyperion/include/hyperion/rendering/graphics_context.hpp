@@ -34,11 +34,11 @@ namespace Hyperion::Rendering {
     class GraphicsContext {
     public:
         virtual ~GraphicsContext() = default;
-        
+    public:
         inline const GraphicsContextProperties &GetProperties() const { return m_properties; }
     protected:
         GraphicsContext() = default;
-
+    protected:
         virtual void Initialize(const GraphicsContextDescriptor &descriptor) = 0;
         virtual void Present() = 0;
         virtual void SetVSyncMode(VSyncMode vsync_mode) = 0;

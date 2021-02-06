@@ -7,8 +7,6 @@ namespace Hyperion {
     class BoxCollider final : public Collider {
         HYP_REFLECT(Collider);
     public:
-        BoxCollider() : Collider("BoxCollider") { }
-
         ColliderType GetColliderType() const { return ColliderType::BoxCollider; }
 
         inline Vec3 GetOrigin() const { return m_origin; }
@@ -26,8 +24,10 @@ namespace Hyperion {
     protected:
         void OnCreate() override;
     private:
+        BoxCollider() : Collider("BoxCollider") { }
+    private:
         void NotifyColliderChange();
-
+    private:
         static BoxCollider *Create();
     private:
         Vec3 m_origin = Vec3::Zero();

@@ -8,7 +8,7 @@ namespace Hyperion {
     public:
         EventType GetType() const override { return EventType::AppDisplayChange; }
         EventCategory GetCategory() const override { return EventCategory::App; }
-
+    public:
         static EventType GetStaticType() { return EventType::AppDisplayChange; }
     };
 

@@ -22,7 +22,7 @@ namespace Hyperion {
     protected:
         Component() = default;
         Component(const String &name) : Object(name) { }
-
+    protected:
         void RegisterForUpdate();
         void UnregisterForUpdate();
 

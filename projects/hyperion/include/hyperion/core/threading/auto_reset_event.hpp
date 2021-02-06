@@ -8,7 +8,7 @@ namespace Hyperion::Threading {
     class AutoResetEvent final {
     public:
         AutoResetEvent(bool start_value = false);
-
+    public:
         void Notify();
         void Wait();
         bool WaitUnblocked();

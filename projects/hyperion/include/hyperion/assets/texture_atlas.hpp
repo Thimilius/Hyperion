@@ -30,7 +30,7 @@ namespace Hyperion {
             const TextureAtlasElement<V> &element = it->second;
             return element;
         }
-
+    public:
         static TextureAtlas<K, V> *Create(Texture2D *texture, const Map<K, TextureAtlasElement<V>> &elements) {
             return new TextureAtlas<K, V>(texture, elements);
         }

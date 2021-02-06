@@ -11,7 +11,7 @@ namespace Hyperion {
     class IImageLoader {
     public:
         virtual ~IImageLoader() = default;
-
+    public:
         virtual const Vector<String> &GetSupportedExtensions() const = 0;
         virtual bool SupportsExtension(const String &extension) const = 0;
 
@@ -28,7 +28,7 @@ namespace Hyperion {
     private:
         ImageLoader() = delete;
         ~ImageLoader() = delete;
-
+    private:
         static void Initialize();
         static void Shutdown();
     private:

@@ -44,7 +44,7 @@ namespace Hyperion {
     private:
         Display() = delete;
         ~Display() = delete;
-
+    private:
         static void UpdateDisplayInfos();
 
         inline static void UpdateSize(uint32 width, uint32 height) {
