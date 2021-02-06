@@ -7,22 +7,18 @@
 
 namespace Hyperion {
 
-    Font *FreetypeFontLoader::LoadFont(const String &path, uint32 size, FontCharacterSet character_set) {
-        Map<uint32, FontGlyph> glyphs;
-
+    Font *FreetypeFontLoader::LoadFont(const String &path, uint32 font_size, FontCharacterSet character_set) {
         FT_Face font_face;
         if (FT_New_Face(s_freetype_library, path.c_str(), 0, &font_face)) {
             HYP_LOG_ERROR("Engine", "Failed to load font from path: '{}'!", path);
+            return nullptr;
         }
 
-        FT_Set_Pixel_Sizes(font_face, 0, size);
+        FT_Set_Pixel_Sizes(font_face, 0, font_size);
 
-        const uint32 texture_atlas_size = 512;
-        const uint32 padding = 4;
-        Vector<uint8> texture_atlas(texture_atlas_size * texture_atlas_size);
-        uint8 *texture_atlas_buffer = texture_atlas.data();
-        uint32 texture_atlas_column = 0;
-        uint32 texture_atlas_row = 0;
+        uint32 TEXTURE_ATLAS_SIZE = 1024;
+        uint32 TEXTURE_ATLAS_PADDING = 4;
+        TextureAtlasPacker<uint32, FontGlyph> texture_atlas_packer(TEXTURE_ATLAS_SIZE, TEXTURE_ATLAS_SIZE, TEXTURE_ATLAS_PADDING, font_size);
 
         FT_UInt index;
         FT_ULong character = FT_Get_First_Char(font_face, &index);
@@ -49,21 +45,21 @@ namespace Hyperion {
                     break;
                 }
 
-                if (font_face->glyph->bitmap.width == 0 || font_face->glyph->bitmap.rows == 0) {
-                    goto continue_loop;
-                }
-                uint8 *character_bitmap_buffer = font_face->glyph->bitmap.buffer;
-                if (character_bitmap_buffer == nullptr) {
-                    goto continue_loop;
-                }
-
-                // We might already have the glyph loaded for some reason!?
-                if (glyphs.find(character) != glyphs.end()) {
-                    goto continue_loop;
-                }
-
+                // We need to make sure the bitmap of the character is actually valid.
+                // One very weird thing is that we have to check that the bitmap height is not greater than the font size.
                 uint32 bitmap_width = font_face->glyph->bitmap.width;
                 uint32 bitmap_height = font_face->glyph->bitmap.rows;
+                if (bitmap_width == 0 || bitmap_height == 0) {
+                    goto continue_loop;
+                }
+                if (bitmap_height > font_size) {
+                    HYP_LOG_WARN("Engine", "The font glyph '{}' is greater than the font size!", character);
+                    goto continue_loop;
+                }
+                uint8 *bitmap_buffer = font_face->glyph->bitmap.buffer;
+                if (bitmap_buffer == nullptr) {
+                    goto continue_loop;
+                }
 
                 FontGlyph glyph;
                 glyph.codepoint = static_cast<uint32>(character);
@@ -71,51 +67,9 @@ namespace Hyperion {
                 glyph.bearing = Vec2(static_cast<float32>(font_face->glyph->bitmap_left), static_cast<float32>(font_face->glyph->bitmap_top));
                 glyph.advance = font_face->glyph->advance.x >> 6;
 
-                // Pack the bitmap into the texture atlas...
-                {
-                    // Make sure we have enough space in the texture atlas to put the character bitmap into it.
-                    if ((texture_atlas_column + bitmap_width + padding) >= texture_atlas_size) {
-                        texture_atlas_column = 0;
-                        texture_atlas_row += size + padding;
-
-                        if ((texture_atlas_row + bitmap_height + padding) >= texture_atlas_size) {
-                            HYP_LOG_WARN("Engine", "Texture atlas is to small to fit in all font characters!");
-                            break;
-                        }
-                    }
-
-                    // Create the uvs that point to the corresponding location inside the texture atlas.
-                    // We have to remember that the origin of the font atlas is at the top left corner just like a regular image.
-                    // This means the y-coordinate (v) of the uvs starts at 1 and goes down instead of starting at 0 and going up.
-                    {
-                        float32 u = static_cast<float32>(texture_atlas_column);
-                        float32 v = static_cast<float32>(texture_atlas_size - texture_atlas_row);
-                        float32 divide = static_cast<float32>(texture_atlas_size);
-
-                        float32 left = u / divide;
-                        float32 right = (u + bitmap_width) / divide;
-                        float32 top = v / divide;
-                        float32 bottom = (v - bitmap_height) / divide;
-
-                        glyph.uv[static_cast<uint32>(FontGlyph::UVCorner::TopLeft)] = Vec2(left, top);
-                        glyph.uv[static_cast<uint32>(FontGlyph::UVCorner::TopRight)] = Vec2(right, top);
-                        glyph.uv[static_cast<uint32>(FontGlyph::UVCorner::BottomRight)] = Vec2(right, bottom);
-                        glyph.uv[static_cast<uint32>(FontGlyph::UVCorner::BottomLeft)] = Vec2(left, bottom);
-                    }
-
-                    // Now put the actual bitmap data into the texture atlas.
-                    // At this point we know we have enough space and we should therefore not overflow the buffer.
-                    uint32 texture_data_index = texture_atlas_column + (texture_atlas_row * texture_atlas_size);
-                    for (uint32 y = 0; y < bitmap_height; y++) {
-                        for (uint32 x = 0; x < bitmap_width; x++) {
-                            texture_atlas_buffer[texture_data_index + x] = character_bitmap_buffer[x + (y * bitmap_width)];
-                        }
-                        texture_data_index += texture_atlas_size;
-                    }
-                    texture_atlas_column += bitmap_width + padding;
+                if (!texture_atlas_packer.AddElement(glyph.codepoint, glyph, bitmap_width, bitmap_height, bitmap_buffer)) {
+                    break;
                 }
-
-                glyphs[static_cast<uint32>(character)] = glyph;
             }
 
         continue_loop:
@@ -126,11 +80,8 @@ namespace Hyperion {
         }
         FT_Done_Face(font_face);
 
-        Rendering::TextureParameters texture_parameters;
-        texture_parameters.use_mipmaps = false;
-        Texture2D *texture = Texture2D::Create(texture_atlas_size, texture_atlas_size, Rendering::TextureFormat::R8, texture_parameters, texture_atlas);
-
-        return Font::Create(size, character_set, glyphs, texture);
+        FontAtlas *font_atlas = texture_atlas_packer.CreateAtlas();
+        return Font::Create(font_size, character_set, font_atlas);
     }
 
     void FreetypeFontLoader::Initialize() {

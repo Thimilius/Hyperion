@@ -1,5 +1,6 @@
 #pragma once
 
+#include <hyperion/assets/font.hpp>
 #include <hyperion/assets/material.hpp>
 #include <hyperion/assets/mesh.hpp>
 #include <hyperion/assets/shader.hpp>

@@ -10,11 +10,12 @@ namespace Hyperion {
 namespace Hyperion {
 
     enum class AssetType {
+        Font,
+        Material,
         Mesh,
         Shader,
         Texture,
-        Material,
-        Font
+        TextureAtlas,
     };
 
     class Asset : public Object {

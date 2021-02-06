@@ -68,9 +68,11 @@ namespace Hyperion::Editor {
         m_texture = Texture2D::Create(image->GetWidth(), image->GetHeight(), TextureFormat::RGB24, TextureParameters(), pixels);
         delete image;
 
+        Font *font = FontLoader::LoadFont("data/fonts/consola.ttf", 64, FontCharacterSet::LatinSupplement);
+
         m_material = Material::Create(m_shader);
         m_material->SetVec4("u_color", Color::White());
-        m_material->SetTexture("u_texture", m_texture);
+        m_material->SetTexture("u_texture", font->GetTexture());
 
         m_mesh = MeshFactory::CreateCube(1.0f);
 

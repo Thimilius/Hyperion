@@ -8,7 +8,7 @@ namespace Hyperion {
 
     class FreetypeFontLoader : public IFontLoader {
     public:
-        Font *LoadFont(const String &path, uint32 size, FontCharacterSet character_set) override;
+        Font *LoadFont(const String &path, uint32 font_size, FontCharacterSet character_set) override;
 
         void Initialize() override;
         void Shutdown() override;

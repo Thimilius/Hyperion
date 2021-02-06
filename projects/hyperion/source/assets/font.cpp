@@ -6,21 +6,18 @@
 
 namespace Hyperion {
 
-    Font::Font(uint32 size, FontCharacterSet character_set, Map<uint32, FontGlyph> glyphs, Texture2D *texture_atlas) {
+    Font::Font(uint32 size, FontCharacterSet character_set, FontAtlas *font_atlas) {
         m_size = size;
         m_character_set = character_set;
-        m_glyphs = glyphs;
-        m_texture_atlas = texture_atlas;
+        m_font_atlas = font_atlas;
     }
 
     const FontGlyph &Font::GetGlyph(uint32 codepoint) const {
-        auto glyph = m_glyphs.find(codepoint);
-        if (glyph != m_glyphs.end()) {
-            return glyph->second;
-        } else {
-            // FIXME: What happens if the font does not have '?' as a glyph?
-            return m_glyphs.at('?');
-        }
+        return m_font_atlas->GetElement(codepoint).payload;
+    }
+
+    const FontAtlasElement &Font::GetElement(uint32 codepoint) const {
+        return m_font_atlas->GetElement(codepoint);
     }
 
     float32 Font::GetTextWidth(const String &text, float32 scale) const {
@@ -36,11 +33,11 @@ namespace Hyperion {
     }
 
     void Font::OnDestroy() {
-        Destroy(m_texture_atlas);
+        Destroy(m_font_atlas);
     }
 
-    Font *Font::Create(uint32 size, FontCharacterSet character_set, Map<uint32, FontGlyph> glyphs, Texture2D *texture_atlas) {
-        return new Font(size, character_set, glyphs, texture_atlas);
+    Font *Font::Create(uint32 size, FontCharacterSet character_set, FontAtlas *font_atlas) {
+        return new Font(size, character_set, font_atlas);
     }
 
     Font *Font::Create() {
