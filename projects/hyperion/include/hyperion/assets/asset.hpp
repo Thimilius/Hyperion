@@ -5,6 +5,7 @@
 
 namespace Hyperion {
     class Engine;
+    class Material;
     class Mesh;
     class Texture;
 }
@@ -49,6 +50,7 @@ namespace Hyperion {
     public:
         static Mesh *GetMeshPrimitive(MeshPrimitive mesh_primitive);
         static Texture *GetTexturePrimitive(TexturePrimitive texture_primitive);
+        inline static Material *GetDefaultMaterial() { return s_default_material; }
     private:
         ~AssetManager() = delete;
         AssetManager() = delete;
@@ -62,6 +64,8 @@ namespace Hyperion {
         inline static Mesh *s_mesh_primitive_sphere;
 
         inline static Texture *s_texture_primitive_grid;
+
+        inline static Material *s_default_material;
     private:
         friend class Engine;
     };

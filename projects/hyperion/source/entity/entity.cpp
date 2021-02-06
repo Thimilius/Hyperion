@@ -6,6 +6,7 @@
 #include "hyperion/entity/components/physics/box_collider.hpp"
 #include "hyperion/entity/components/physics/sphere_collider.hpp"
 #include "hyperion/entity/components/rendering/camera.hpp"
+#include "hyperion/entity/components/rendering/mesh_renderer.hpp"
 
 namespace Hyperion {
 
@@ -84,11 +85,28 @@ namespace Hyperion {
     Entity *Entity::CreatePrimitive(EntityPrimitive primitive, const Vec3 &position, const Quaternion &rotation, Transform *parent, World *world) {
         Entity *entity = Create(GetPrimitiveName(primitive), position, rotation, parent, world);
         
+        MeshRenderer *mesh_renderer = nullptr;
         switch (primitive) {
-            case EntityPrimitive::Quad: break;
-            case EntityPrimitive::Plane: break;
-            case EntityPrimitive::Cube: break;
-            case EntityPrimitive::Sphere: break;
+            case EntityPrimitive::Quad: {
+                mesh_renderer = entity->AddComponent<MeshRenderer>();
+                mesh_renderer->SetMesh(AssetManager::GetMeshPrimitive(MeshPrimitive::Quad));
+                break;
+            }
+            case EntityPrimitive::Plane: {
+                mesh_renderer = entity->AddComponent<MeshRenderer>();
+                mesh_renderer->SetMesh(AssetManager::GetMeshPrimitive(MeshPrimitive::Plane));
+                break;
+            }
+            case EntityPrimitive::Cube: {
+                mesh_renderer = entity->AddComponent<MeshRenderer>();
+                mesh_renderer->SetMesh(AssetManager::GetMeshPrimitive(MeshPrimitive::Cube));
+                break;
+            }
+            case EntityPrimitive::Sphere: {
+                mesh_renderer = entity->AddComponent<MeshRenderer>();
+                mesh_renderer->SetMesh(AssetManager::GetMeshPrimitive(MeshPrimitive::Sphere));
+                break;
+            }
             case EntityPrimitive::DirectionalLight: break;
             case EntityPrimitive::PointLight: break;
             case EntityPrimitive::SpotLight: break;
@@ -97,6 +115,10 @@ namespace Hyperion {
                 break;
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        }
+
+        if (mesh_renderer != nullptr) {
+            mesh_renderer->SetMaterial(AssetManager::GetDefaultMaterial());
         }
 
         return entity;
@@ -149,6 +171,7 @@ namespace Hyperion {
         } else if (!world) {
             world = WorldManager::GetActiveWorld();
         }
+        HYP_ASSERT(world);
         m_world = world;
 
         m_transform = new Transform();

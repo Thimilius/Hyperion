@@ -9,8 +9,13 @@
 
 namespace Hyperion {
     class Entity;
+    class MeshRenderer;
     class Transform;
     class WorldManager;
+
+    namespace Rendering {
+        class RenderEngine;
+    }
 }
 
 namespace Hyperion {
@@ -26,7 +31,6 @@ namespace Hyperion {
         HYP_REFLECT(Object);
     public:
         inline WorldEnvironment &GetEnvironment() { return m_environment; }
-
         inline Physics::PhysicsWorld *GetPhysicsWorld() const { return m_physics_world; }
 
         inline const Vector<Entity *> &GetRootEntites() const { return m_root_entities; }
@@ -59,21 +63,28 @@ namespace Hyperion {
     private:
         World() = default;
         World(const String &name);
-
+    private:
         void AddRootEntity(Entity *entity);
         void RemoveRootEntity(Entity *entity);
+
+        inline const Vector<MeshRenderer *> &GetMeshRenderers() const { return m_mesh_renderers; }
+        void AddMeshRenderer(MeshRenderer *mesh_renderer);
+        void RemoveMeshRenderer(MeshRenderer *mesh_renderer);
     private:
         static World *Create();
     private:
         WorldEnvironment m_environment;
-
         Physics::PhysicsWorld *m_physics_world;
 
         Vector<Entity *> m_root_entities;
+
+        Vector<MeshRenderer *> m_mesh_renderers;
     private:
         friend class Hyperion::Entity;
+        friend class Hyperion::MeshRenderer;
         friend class Hyperion::Transform;
         friend class Hyperion::WorldManager;
+        friend class Hyperion::Rendering::RenderEngine;
     };
 
 }

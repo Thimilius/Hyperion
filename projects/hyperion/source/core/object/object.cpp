@@ -20,6 +20,8 @@
 #include "hyperion/entity/components/physics/collider.hpp"
 #include "hyperion/entity/components/physics/sphere_collider.hpp"
 #include "hyperion/entity/components/rendering/camera.hpp"
+#include "hyperion/entity/components/rendering/renderer.hpp"
+#include "hyperion/entity/components/rendering/mesh_renderer.hpp"
 
 namespace Hyperion {
 
@@ -191,6 +193,9 @@ HYP_REFLECT_REGISTER_BEGIN
             .constructor(select_overload<SphereCollider *()>(&SphereCollider::Create))(DefaultConstructorPolicy);
         Registration<Camera>("Camera")
             .constructor(select_overload<Camera *()>(&Camera::Create))(DefaultConstructorPolicy);
+        Registration<Renderer>("Renderer");
+        Registration<MeshRenderer>("MeshRenderer")
+            .constructor(select_overload<MeshRenderer *()>(&MeshRenderer::Create))(DefaultConstructorPolicy);
     }
 }
 HYP_REFLECT_REGISTER_END

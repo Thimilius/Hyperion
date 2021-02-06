@@ -18,7 +18,7 @@ namespace Hyperion {
     class Camera final : public Component, public IEntityMessageListener {
         HYP_REFLECT(Component);
     public:
-        Camera() : Component("Camera") {}
+        Camera() : Component("Camera") { }
 
         inline Rendering::CameraProjectionMode GetProjectionMode() const { return m_data.projection_mode; }
         inline void SetProjectionMode(Rendering::CameraProjectionMode type) { m_data.projection_mode = type; }

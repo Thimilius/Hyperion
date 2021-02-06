@@ -1,11 +1,9 @@
 ﻿#include <hyperion/hyperion.hpp>
 #include <hyperion/entry_point.hpp>
 #include <hyperion/core/memory/memory.hpp>
-#include <hyperion/entity/components/rendering/camera.hpp>
 
-#include "hyperion/editor/editor_camera_controller.hpp"
 #include "hyperion/editor/editor_render_pipeline.hpp"
-#include "hyperion/editor/editor_world_view.hpp"
+#include "hyperion/editor/editor_world.hpp"
 
 namespace Hyperion::Editor {
 
@@ -14,12 +12,7 @@ namespace Hyperion::Editor {
         EditorApplication(const ApplicationSettings &settings) : Application(settings) { }
     protected:
         void OnInitialize() override {
-            World *world = WorldManager::CreateWorld();
-            WorldManager::SetActiveWorld(world);
-
-            Entity *entity = Entity::Create("Camera");
-            entity->AddComponent<Camera>();
-            entity->AddComponent<EditorCameraController>();
+            EditorWorld::Initialize();
         }
 
         void OnUpdate(float32 delta_time) override {
@@ -30,7 +23,7 @@ namespace Hyperion::Editor {
                 GetWindow()->SetWindowMode(GetWindow()->GetWindowMode() == WindowMode::Borderless ? WindowMode::Windowed : WindowMode::Borderless);
             }
 
-            EditorWorldView::OnUpdate(delta_time);
+            EditorWorld::Update(delta_time);
         }
 
         void OnTick() override {

@@ -2,7 +2,7 @@
 
 #include <hyperion/assets/shader.hpp>
 
-#include "hyperion/editor/editor_world_view.hpp"
+#include "hyperion/editor/editor_world.hpp"
 
 using namespace Hyperion::Rendering;
 
@@ -94,7 +94,7 @@ namespace Hyperion::Editor {
     }
 
     void EditorWorldGrid::Render(IRenderDriver *render_driver, const CameraData &camera_data) {
-        if (EditorWorldView::ShouldDrawGrid()) {
+        if (EditorWorld::ShouldDrawGrid()) {
             // We want to draw the grid at the center of the camera corresponding to the grid chunk size.
             Mat4 translation = GetTranslation(camera_data);
             Mat4 rotation = GetRotation();
