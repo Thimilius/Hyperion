@@ -64,15 +64,13 @@ namespace Hyperion::Editor {
         m_shader = Shader::Create(sources);
 
         Image *image = ImageLoader::Load("data/textures/grass.png");
-        Vector<uint8> pixels(image->GetPixels(), image->GetPixels() + (image->GetWidth() * image->GetWidth() * image->GetChannels()));
-        m_texture = Texture2D::Create(image->GetWidth(), image->GetHeight(), TextureFormat::RGB24, TextureParameters(), pixels);
-        delete image;
+        m_texture = Texture2D::Create(image->GetWidth(), image->GetHeight(), TextureFormat::RGB24, TextureParameters(), image->GetPixels());
 
         Font *font = FontLoader::LoadFont("data/fonts/consola.ttf", 64, FontCharacterSet::LatinSupplement);
 
         m_material = Material::Create(m_shader);
         m_material->SetVec4("u_color", Color::White());
-        m_material->SetTexture("u_texture", font->GetTexture());
+        m_material->SetTexture("u_texture", m_texture);
 
         m_mesh = MeshFactory::CreateCube(1.0f);
 

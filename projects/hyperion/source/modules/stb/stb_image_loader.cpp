@@ -17,16 +17,17 @@ namespace Hyperion {
         int32 width;
         int32 height;
         int32 channels;
-        uint8 *pixels = stbi_load(path.c_str(), &width, &height, &channels, 0);
+        uint8 *buffer = stbi_load(path.c_str(), &width, &height, &channels, 0);
 
-        if (!pixels) {
+        if (!buffer) {
             HYP_LOG_ERROR("Engine", "Failed to load image from path: {}", std::filesystem::absolute(path).u8string());
             width = 0;
             height = 0;
             channels = 0;
         }
 
-        return Image::Create(width, height, channels, pixels);
+        Vector<uint8> pixels(buffer, buffer + (width * height * channels));
+        return Image::Create(width, height, channels, std::move(pixels));
     }
 
 }
