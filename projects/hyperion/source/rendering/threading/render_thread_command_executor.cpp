@@ -96,7 +96,7 @@ namespace Hyperion::Rendering {
             }
             case RenderThreadCommandType::BlitRenderTexture: {
                 auto command = reinterpret_cast<RenderThreadCommandBlitRenderTexture *>(render_thread_command);
-                render_driver->BlitRenderTexture(command->destination_id, command->destination_region, command->source_id, command->source_region);
+                render_driver->BlitRenderTexture(command->destination_id, command->source_id);
                 return sizeof(*command);
             }
             case RenderThreadCommandType::DestroyRenderTexture: {

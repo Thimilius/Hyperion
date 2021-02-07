@@ -112,12 +112,10 @@ namespace Hyperion::Rendering {
         command->id = render_texture_id;
     }
 
-    void RenderThreadRenderDriver::BlitRenderTexture(ResourceId destination_id, RectInt destination_region, ResourceId source_id, RectInt source_region) {
+    void RenderThreadRenderDriver::BlitRenderTexture(ResourceId destination_id, ResourceId source_id) {
         auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandBlitRenderTexture>(RenderThreadCommandType::BlitRenderTexture);
         command->destination_id = destination_id;
-        command->destination_region = destination_region;
         command->source_id = source_id;
-        command->source_region = source_region;
     }
 
     void RenderThreadRenderDriver::DestroyRenderTexture(ResourceId render_texture_id) {

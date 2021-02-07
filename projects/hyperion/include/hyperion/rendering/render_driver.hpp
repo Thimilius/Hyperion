@@ -102,7 +102,7 @@ namespace Hyperion::Rendering {
         virtual void ResizeRenderTexture(ResourceId render_texture_id, uint32 width, uint32 height, uint32 mipmap_count) = 0;
         virtual void GetRenderTextureSubData(ResourceId render_texture_id, uint32 attachment_index, RectInt region, Vector<uint8> *buffer, GetRenderTextureSubDataCallback callback) = 0;
         virtual void SetRenderTexture(ResourceId render_texture_id) = 0;
-        virtual void BlitRenderTexture(ResourceId destination_id, RectInt destination_region, ResourceId source_id, RectInt source_region) = 0;
+        virtual void BlitRenderTexture(ResourceId destination_id, ResourceId source_id) = 0;
         virtual void DestroyRenderTexture(ResourceId render_texture_id) = 0;
 
         virtual void CreateMesh(ResourceId mesh_id, const MeshDescriptor &descriptor) = 0;

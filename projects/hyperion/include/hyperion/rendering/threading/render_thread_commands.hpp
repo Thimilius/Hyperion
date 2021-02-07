@@ -98,9 +98,7 @@ namespace Hyperion::Rendering {
 
     struct RenderThreadCommandBlitRenderTexture {
         ResourceId destination_id;
-        RectInt destination_region;
         ResourceId source_id;
-        RectInt source_region;
     };
 
     struct RenderThreadCommandCreateMesh {

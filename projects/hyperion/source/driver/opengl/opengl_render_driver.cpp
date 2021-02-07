@@ -44,12 +44,61 @@ namespace Hyperion::Rendering {
         }
     )";
 
+    const char *g_fullscreen_shader_vertex = R"(
+        #version 410 core
+
+        out V2F {
+	        vec2 texture0;
+        } o_v2f;
+
+        void main() {
+	        vec2 vertices[3] = vec2[3](vec2(-1.0, -1.0f), vec2(-1.0, 3.0), vec2(3.0f, -1.0));
+	        vec4 position = vec4(vertices[gl_VertexID], 0.0, 1.0);
+
+	        o_v2f.texture0 = 0.5 * position.xy + vec2(0.5);
+
+	        gl_Position = position;
+        }
+    )";
+    const char *g_fullscreen_shader_fragment = R"(
+        #version 410 core
+
+        layout(location = 0) out vec4 o_color;
+
+        in V2F {
+	        vec2 texture0;
+        } i_v2f;
+
+        uniform sampler2D u_texture;
+
+        void main() {
+	        o_color = texture(u_texture, i_v2f.texture0);
+        }
+    )";
+
     void OpenGLRenderDriver::Initialize(GraphicsContext *graphics_context) {
         m_graphics_context = static_cast<OpenGLGraphicsContext *>(graphics_context);
 
-        OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(g_fallback_shader_vertex, g_fallback_shader_fragment);
-        HYP_ASSERT(compilation_result.succes);
-        m_fallback_shader.program = compilation_result.program;
+        // FIXME: Currently we are not cleaning up those resources properly.
+        {
+            OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(g_fallback_shader_vertex, g_fallback_shader_fragment);
+            HYP_ASSERT(compilation_result.succes);
+            m_fallback_shader.program = compilation_result.program;
+        }
+        {
+            OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(g_fullscreen_shader_vertex, g_fullscreen_shader_fragment);
+            HYP_ASSERT(compilation_result.succes);
+            m_fullscreen_shader.program = compilation_result.program;
+            // We always need a vertex array to draw anything (in this case a fullscreen triangle).
+            // It does not need to contain anything and can therefore be empty.
+            glCreateVertexArrays(1, &m_fullscreen_vao);
+        }
+    }
+
+    void OpenGLRenderDriver::Shutdown() {
+        glDeleteShader(m_fallback_shader.program);
+        glDeleteShader(m_fullscreen_shader.program);
+        glDeleteVertexArrays(1, &m_fullscreen_vao);
     }
 
     void OpenGLRenderDriver::Clear(ClearFlags clear_flags, Color color) {
@@ -270,6 +319,7 @@ namespace Hyperion::Rendering {
         HYP_ASSERT(descriptor.size.height > 0 && descriptor.size.height <= m_graphics_context->GetLimits().max_framebuffer_height);
 
         OpenGLRenderTexture &render_texture = m_render_textures[render_texture_id];
+        render_texture.id = render_texture_id;
         render_texture.size = descriptor.size;
         render_texture.mipmap_count = descriptor.mipmap_count;
 
@@ -317,7 +367,7 @@ namespace Hyperion::Rendering {
             render_texture.attachments.push_back(attachment);
         }
 
-        render_texture.color_attachment_count = color_attachment_index + 1;
+        render_texture.color_attachment_count = color_attachment_index;
 
         if (glCheckNamedFramebufferStatus(render_texture.render_texture, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
             HYP_LOG_ERROR("OpenGL", "Failed to create framebuffer!");
@@ -385,6 +435,8 @@ namespace Hyperion::Rendering {
     void OpenGLRenderDriver::SetRenderTexture(ResourceId render_texture_id) {
         // We might get passed a 0, meaning the default render texture.
         if (render_texture_id == 0) {
+            m_current_render_texture = nullptr;
+
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
         } else {
             HYP_ASSERT(m_render_textures.find(render_texture_id) != m_render_textures.end());
@@ -406,35 +458,33 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void OpenGLRenderDriver::BlitRenderTexture(ResourceId destination_id, RectInt destination_region, ResourceId source_id, RectInt source_region) {
+    void OpenGLRenderDriver::BlitRenderTexture(ResourceId destination_id, ResourceId source_id) {
+        // NOTE: We currently do not allow blitting from the default render texture to another render texture.
+        HYP_ASSERT(source_id != 0);
+        
         GLuint destination_render_texture = 0;
         if (destination_id != 0) {
             HYP_ASSERT(m_render_textures.find(destination_id) != m_render_textures.end());
             OpenGLRenderTexture &render_texture = m_render_textures[destination_id];
             destination_render_texture = render_texture.render_texture;
         }
-        GLuint source_render_texture = 0;
-        if (source_id != 0) {
-            HYP_ASSERT(m_render_textures.find(source_id) != m_render_textures.end());
-            OpenGLRenderTexture &render_texture = m_render_textures[source_id];
-            source_render_texture = render_texture.render_texture;
-        }
+        glBindFramebuffer(GL_FRAMEBUFFER, destination_render_texture);
 
-        // Currently we blit all buffers. Is this really what we always want?
-        GLbitfield mask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
-        glBlitNamedFramebuffer(
-            source_render_texture,
-            destination_render_texture,
-            source_region.x,
-            source_region.y,
-            source_region.width,
-            source_region.height,
-            destination_region.x,
-            destination_region.y,
-            destination_region.width,
-            destination_region.height,
-            mask,
-            GL_NEAREST);
+        HYP_ASSERT(m_render_textures.find(source_id) != m_render_textures.end());
+        OpenGLRenderTexture &source_render_texture = m_render_textures[source_id];
+        HYP_ASSERT(source_render_texture.color_attachment_count >= 1 && source_render_texture.attachments[0].attributes.format != RenderTextureFormat::Depth24Stencil8);
+
+        m_current_material = nullptr;
+        glUseProgram(m_fullscreen_shader.program);
+        glBindTextureUnit(0, source_render_texture.attachments[0].attachment);
+        glBindVertexArray(m_fullscreen_vao);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        if (m_current_render_texture != nullptr) {
+            ResourceId current_render_texture_id = m_current_render_texture->id;
+            m_current_render_texture = nullptr;
+            SetRenderTexture(current_render_texture_id);
+        }
     }
 
     void OpenGLRenderDriver::DestroyRenderTexture(ResourceId render_texture_id) {

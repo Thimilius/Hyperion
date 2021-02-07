@@ -33,6 +33,9 @@ namespace Hyperion::Editor {
     void EditorRenderPipeline::Render(IRenderDriver *render_driver, const RenderPipelineContext &context) {
         const CameraData &camera_data = context.GetCameraData();
         {
+            render_driver->SetRenderTexture(0);
+            render_driver->Clear(ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, Color::Black());
+
             render_driver->SetCameraData(camera_data);
             
             Viewport viewport = { 0, 0, Display::GetWidth(), Display::GetHeight() };
@@ -40,7 +43,6 @@ namespace Hyperion::Editor {
 
             m_render_texture->Resize(Display::GetWidth(), Display::GetHeight());
             render_driver->SetRenderTexture(m_render_texture->GetResourceId());
-            
             render_driver->Clear(ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, Color::Black());
         }
 
@@ -53,15 +55,13 @@ namespace Hyperion::Editor {
                 render_driver->DrawMesh(mesh_id, transform->GetLocalToWorldMatrix(), material_id, 0);
             }
         }
-
+        
         {
             EditorWorldGrid::Render(render_driver, camera_data);
         }
-
+        
         {
-            RectInt destination_region = RectInt(0, 0, static_cast<int32>(Display::GetWidth()), static_cast<int32>(Display::GetHeight()));
-            RectInt source_region = RectInt(0, 0, static_cast<int32>(m_render_texture->GetWidth()), static_cast<int32>(m_render_texture->GetHeight()));
-            render_driver->BlitRenderTexture(0, destination_region, m_render_texture->GetResourceId(), source_region);
+            render_driver->BlitRenderTexture(0, m_render_texture->GetResourceId());
         }
     }
 

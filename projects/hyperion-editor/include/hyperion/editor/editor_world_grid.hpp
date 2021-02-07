@@ -27,8 +27,8 @@ namespace Hyperion::Editor {
         inline static Mesh *s_mesh;
         inline static Material *s_material;
 
-        inline static const Color GRID_COLOR = Color(0.25f, 0.25f, 0.25f, 0.25f);
-        inline static const Color GRID_SPECIAL_COLOR = Color(0.75f, 0.75f, 0.75f, 0.75f);
+        inline static const Color GRID_COLOR = Color(0.15f, 0.15f, 0.15f, 0.75f);
+        inline static const Color GRID_SPECIAL_COLOR = Color(0.6f, 0.6f, 0.6f, 0.75f);
         inline static const int32 GRID_SIZE = 100;
         inline static const int32 GRID_CHUNK_SIZE = 10;
     };
