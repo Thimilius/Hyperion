@@ -1,4 +1,4 @@
-#include "hyperion/editor/editor_camera_controller.hpp"
+#include "hyperion/editor/editor_first_person_camera_controller.hpp"
 
 #include <hyperion/core/math/math.hpp>
 #include <hyperion/core/app/input.hpp>
@@ -7,14 +7,14 @@
 
 namespace Hyperion::Editor {
 
-    void EditorCameraController::OnCreate() {
+    void EditorFirstPersonCameraController::OnCreate() {
         m_camera = GetEntity()->GetComponent<Camera>();
         GetEntity()->GetTransform()->SetPosition(Vec3(2.0f, 2.0f, 2.0f));
 
         RegisterForUpdate();
     }
 
-    void EditorCameraController::OnUpdate(float32 delta_time) {
+    void EditorFirstPersonCameraController::OnUpdate(float32 delta_time) {
         Transform *transform = m_camera->GetTransform();
         Vec3 position = transform->GetPosition();
         Vec3 rotation = transform->GetEulerAngles();
@@ -158,7 +158,7 @@ namespace Hyperion::Editor {
 
 HYP_REFLECT_REGISTER_BEGIN
 {
-    Registration<Editor::EditorCameraController>("EditorCameraController")
+    Registration<Editor::EditorFirstPersonCameraController>("EditorFirstPersonCameraController")
         .constructor()(DefaultConstructorPolicy);
 }
 HYP_REFLECT_REGISTER_END

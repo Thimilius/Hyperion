@@ -6,10 +6,10 @@
 
 namespace Hyperion::Editor {
 
-    class EditorCameraController : public Component {
+    class EditorFirstPersonCameraController : public Component {
         HYP_REFLECT(Component);
     public:
-        EditorCameraController() = default;
+        EditorFirstPersonCameraController() = default;
     protected:
         void OnCreate() override;
         void OnUpdate(float32 delta_time) override;
