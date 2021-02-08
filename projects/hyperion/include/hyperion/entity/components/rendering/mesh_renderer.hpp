@@ -12,12 +12,12 @@ namespace Hyperion {
             m_mesh = mesh;
         }
     public:
-        MeshRenderer() : Renderer("MeshRenderer") { }
-    public:
         static MeshRenderer *Create();
     protected:
         void OnCreate() override;
         void OnDestroy() override;
+    private:
+        MeshRenderer() : Renderer("MeshRenderer") { }
     private:
         Mesh *m_mesh;
     };

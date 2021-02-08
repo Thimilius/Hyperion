@@ -2,13 +2,12 @@
 
 #type vertex
 #version 410 core
-	
+
 layout(location = 0) in vec3 a_position;
-layout(location = 1) in vec3 a_normal;
-layout(location = 4) in vec2 a_texture0;
+layout(location = 3) in vec4 a_color;
 
 out V2F {
-	vec2 texture0;
+	vec4 color;
 } o_v2f;
 
 uniform struct Transform {
@@ -22,7 +21,7 @@ vec4 obj_to_clip_space(vec3 position) {
 }
 
 void main() {
-	o_v2f.texture0 = a_texture0;
+	o_v2f.color = a_color;
 
 	gl_Position = obj_to_clip_space(a_position);
 }
@@ -33,13 +32,9 @@ void main() {
 layout(location = 0) out vec4 o_color;
 
 in V2F {
-	vec2 texture0;
+	vec4 color;
 } i_v2f;
 
-uniform vec4 u_color;
-uniform sampler2D u_texture;
-
 void main() {
-	vec4 texture_color = texture(u_texture, i_v2f.texture0);
-	o_color = vec4(1, 1, 1, 1) * texture_color;
+	o_color = i_v2f.color;
 }

@@ -100,11 +100,13 @@ namespace Hyperion {
             case EntityPrimitive::Cube: {
                 mesh_renderer = entity->AddComponent<MeshRenderer>();
                 mesh_renderer->SetMesh(AssetManager::GetMeshPrimitive(MeshPrimitive::Cube));
+                entity->AddComponent<BoxCollider>();
                 break;
             }
             case EntityPrimitive::Sphere: {
                 mesh_renderer = entity->AddComponent<MeshRenderer>();
                 mesh_renderer->SetMesh(AssetManager::GetMeshPrimitive(MeshPrimitive::Sphere));
+                entity->AddComponent<SphereCollider>();
                 break;
             }
             case EntityPrimitive::DirectionalLight: break;

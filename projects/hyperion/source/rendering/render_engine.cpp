@@ -7,6 +7,7 @@
 #include "hyperion/entity/world_manager.hpp"
 #include "hyperion/entity/components/rendering/camera.hpp"
 #include "hyperion/rendering/graphics_context.hpp"
+#include "hyperion/rendering/immediate_renderer.hpp"
 #include "hyperion/rendering/pipelines/forward/forward_render_pipeline.hpp"
 #include "hyperion/rendering/threading/render_thread_commands.hpp"
 #include "hyperion/rendering/threading/render_thread_command_executor.hpp"
@@ -42,6 +43,7 @@ namespace Hyperion::Rendering {
 
     void RenderEngine::Initialize() {
         s_render_pipeline->Initialize(s_render_driver);
+        ImmediateRenderer::Initialize(s_render_driver);
     }
 
     void RenderEngine::Render() {

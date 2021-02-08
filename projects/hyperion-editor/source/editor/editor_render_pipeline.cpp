@@ -7,10 +7,11 @@
 #include <hyperion/core/app/time.hpp>
 #include <hyperion/core/io/image_loader.hpp>
 #include <hyperion/entity/entity.hpp>
+#include <hyperion/entity/world_manager.hpp>
 #include <hyperion/entity/components/rendering/mesh_renderer.hpp>
 #include <hyperion/rendering/render_driver.hpp>
 
-#include "hyperion/editor/editor_world_grid.hpp"
+#include "hyperion/editor/editor_world.hpp"
 
 using namespace Hyperion::Rendering;
 
@@ -26,8 +27,6 @@ namespace Hyperion::Editor {
             { RenderTextureFormat::Depth24Stencil8, TextureParameters() },
         };
         m_render_texture = RenderTexture::Create(Display::GetWidth(), Display::GetHeight(), attachments);
-
-        EditorWorldGrid::Initialize();
     }
 
     void EditorRenderPipeline::Render(IRenderDriver *render_driver, const RenderPipelineContext &context) {
@@ -57,9 +56,9 @@ namespace Hyperion::Editor {
         }
         
         {
-            EditorWorldGrid::Render(render_driver, camera_data);
+            EditorWorld::Render(render_driver, camera_data);
         }
-        
+
         {
             render_driver->BlitRenderTexture(0, m_render_texture->GetResourceId());
         }

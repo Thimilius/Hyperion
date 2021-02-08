@@ -58,8 +58,7 @@ namespace Hyperion {
         template<typename T, typename =
             std::enable_if_t<std::is_base_of<Component, T>::value &&
             !std::is_same<Component, T>::value &&
-            !std::is_same<Transform, T>::value &&
-            std::is_default_constructible<T>::value>>
+            !std::is_same<Transform, T>::value>>
         T *AddComponent() {
             Type type = Type::get<T>();
             return static_cast<T *>(AddComponent(type));

@@ -54,12 +54,10 @@ namespace Hyperion::Editor {
     }
 
     void EditorWorldGrid::Render(IRenderDriver *render_driver, const CameraData &camera_data) {
-        if (EditorWorld::ShouldDrawGrid()) {
-            // We want to draw the grid at the center of the camera corresponding to the grid chunk size.
-            Mat4 translation = GetTranslation(camera_data);
-            Mat4 rotation = GetRotation();
-            render_driver->DrawMesh(s_mesh->GetResourceId(), translation * rotation, s_material->GetResourceId(), 0);
-        }
+        // We want to draw the grid at the center of the camera corresponding to the grid chunk size.
+        Mat4 translation = GetTranslation(camera_data);
+        Mat4 rotation = GetRotation();
+        render_driver->DrawMesh(s_mesh->GetResourceId(), translation * rotation, s_material->GetResourceId(), 0);
     }
 
     Mat4 EditorWorldGrid::GetTranslation(const CameraData &camera_data) {
