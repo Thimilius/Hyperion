@@ -2,6 +2,7 @@
 
 #include "hyperion/driver/opengl/opengl_render_driver.hpp"
 
+#include "hyperion/core/io/file_system.hpp"
 #include "hyperion/driver/opengl/opengl_shader_compiler.hpp"
 #include "hyperion/driver/opengl/opengl_utilities.hpp"
 
@@ -15,80 +16,17 @@ namespace Hyperion::Rendering {
     // The actual initialization of the resources can then be executed later on the Render Thread.
     // This would require quite some work though and the creation would probably need to be synchronized somehow.
 
-    const char *g_fallback_shader_source = R"(
-        #type vertex
-        #version 410 core
-
-        layout(location = 0) in vec3 a_position;
-
-        uniform struct Transform {
-            mat4 model;
-            mat4 view;
-            mat4 projection;
-        } u_transform;
-
-        vec4 obj_to_clip_space(vec3 position) {
-	        return u_transform.projection * u_transform.view * u_transform.model * vec4(position, 1.0);
-        }
-
-        void main() {
-	        gl_Position = obj_to_clip_space(a_position);
-        }
-
-        #type fragment
-        #version 410 core
-
-        layout(location = 0) out vec4 o_color;
-
-        void main() {
-	        o_color = vec4(1.0, 0, 1.0, 1.0);
-        }
-    )";
-
-    const char *g_fullscreen_shader_source = R"(
-        #type vertex
-        #version 410 core
-
-        out V2F {
-	        vec2 texture0;
-        } o_v2f;
-
-        void main() {
-	        vec2 vertices[3] = vec2[3](vec2(-1.0, -1.0f), vec2(-1.0, 3.0), vec2(3.0f, -1.0));
-	        vec4 position = vec4(vertices[gl_VertexID], 0.0, 1.0);
-
-	        o_v2f.texture0 = 0.5 * position.xy + vec2(0.5);
-
-	        gl_Position = position;
-        }
-
-        #type fragment
-        #version 410 core
-
-        layout(location = 0) out vec4 o_color;
-
-        in V2F {
-	        vec2 texture0;
-        } i_v2f;
-
-        uniform sampler2D u_texture;
-
-        void main() {
-	        o_color = texture(u_texture, i_v2f.texture0);
-        }
-    )";
-
     void OpenGLRenderDriver::Initialize(GraphicsContext *graphics_context) {
         m_graphics_context = static_cast<OpenGLGraphicsContext *>(graphics_context);
 
         // FIXME: Currently we are not cleaning up those resources properly.
         {
-            OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(g_fallback_shader_source);
+            OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(FileSystem::ReadAllText("data/shaders/internal/fallback.shader"));
             HYP_ASSERT(compilation_result.success);
             m_fallback_shader.program = compilation_result.program;
         }
         {
-            OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(g_fullscreen_shader_source);
+            OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(FileSystem::ReadAllText("data/shaders/internal/fullscreen.shader"));
             HYP_ASSERT(compilation_result.success);
             m_fullscreen_shader.program = compilation_result.program;
             // We always need a vertex array to draw anything (in this case a fullscreen triangle).

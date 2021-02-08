@@ -25,22 +25,22 @@ namespace Hyperion::Editor {
     }
 
     void EditorLookAroundCameraController::OnUpdate(float32 delta_time) {
+        Vec2 current_mouse_position = Input::GetMousePosition();
+        Vec2 mouse_position_difference = m_last_mouse_position - current_mouse_position;
+        float32 mouse_axis_x = mouse_position_difference.x;
+        float32 mouse_axis_y = mouse_position_difference.y;
+        
         {
-            Vec3 current_position = GetPositionUnderMouse();
-            Vec3 difference = m_last_position - current_position;
             if (Input::IsMouseButtonHold(MouseButtonCode::Middle)) {
-                m_transform->SetPosition(m_transform->GetPosition() + difference);
-                current_position = GetPositionUnderMouse();
+                Vec3 position = m_transform->GetPosition();
+                position += m_transform->GetRight() * mouse_axis_x * m_xz_plane_distance * m_movement_speed * delta_time;
+                position += (m_transform->GetUp() + m_transform->GetForward()).Normalized() * mouse_axis_y * m_xz_plane_distance * m_movement_speed * delta_time;
+
+                m_transform->SetPosition(position);
             }
-            m_last_position = current_position;
         }
         
         {
-            Vec2 current_mouse_position = Input::GetMousePosition();
-            Vec2 mouse_position_difference = m_last_mouse_position - current_mouse_position;
-            float32 mouse_axis_x = mouse_position_difference.x;
-            float32 mouse_axis_y = mouse_position_difference.y;
-
             if (Input::IsMouseButtonHold(MouseButtonCode::Right)) {
                 m_rotation_velocity_x += m_rotation_speed * mouse_axis_x * delta_time;
                 m_rotation_velocity_y += m_rotation_speed * mouse_axis_y * delta_time;
@@ -53,15 +53,15 @@ namespace Hyperion::Editor {
 
             m_zoom -= Input::GetMouseScroll() * m_xz_plane_distance * m_zoom_speed * delta_time;
             m_zoom = Math::Clamp(m_zoom, 0.05f, 1000.0f);
-            m_xz_plane_distance = Math::Lerp(m_xz_plane_distance, m_zoom, 10.0f * delta_time);
+            m_xz_plane_distance = Math::Lerp(m_xz_plane_distance, m_zoom, 15.0f * delta_time);
 
             Vec3 plane_position = GetXZPlanePosition();
             Vec3 position = (rotation * Vec3(0, 0, m_xz_plane_distance)) + plane_position;
             m_transform->SetRotation(rotation);
             m_transform->SetPosition(position);
 
-            m_rotation_velocity_x = Math::Lerp(m_rotation_velocity_x, 0.0f, 75.0f * delta_time);
-            m_rotation_velocity_y = Math::Lerp(m_rotation_velocity_y, 0.0f, 75.0f * delta_time);
+            m_rotation_velocity_x = Math::Lerp(m_rotation_velocity_x, 0.0f, 50.0f * delta_time);
+            m_rotation_velocity_y = Math::Lerp(m_rotation_velocity_y, 0.0f, 50.0f * delta_time);
             m_last_mouse_position = current_mouse_position;
         }
 
