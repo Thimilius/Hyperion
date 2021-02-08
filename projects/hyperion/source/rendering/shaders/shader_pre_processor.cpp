@@ -1,21 +1,20 @@
 #include "hyppch.hpp"
 
-#include "hyperion/driver/opengl/opengl_shader_pre_processor.hpp"
-
-#include "hyperion/driver/opengl/opengl_shader_compiler.hpp"
+#include "hyperion/rendering/shaders/shader_pre_processor.hpp"
 
 namespace Hyperion::Rendering {
 
-    OpenGLShaderPreProcessor::OpenGLShaderPreProcessor(const String &source) {
+    ShaderPreProcessor::ShaderPreProcessor(const String &source) {
         m_source = source;
         m_position = 0;
     }
 
-    OpenGLShaderPreProcessResult OpenGLShaderPreProcessor::PreProcess() {
-        OpenGLShaderPreProcessResult result;
+    ShaderPreProcessResult ShaderPreProcessor::PreProcess() {
+        ShaderPreProcessResult result = { };
         result.success = false;
 
-        Map<ShaderType, String> sources;
+        Map<ShaderStageFlags, String> sources;
+        ShaderStageFlags stage_flags;
         ShaderAttributes properties;
         String source = m_source;
 
@@ -28,7 +27,7 @@ namespace Hyperion::Rendering {
                 SkipBlankspace();
 
                 if (Peek() == '#') {
-                    if (!HandleDirective(sources, properties)) {
+                    if (!HandleDirective(stage_flags, sources, properties)) {
                         return result;
                     }
                 }
@@ -36,25 +35,26 @@ namespace Hyperion::Rendering {
                 Advance();
             }
         }
-        EndShaderType(sources, m_position);
+        EndShaderStage(sources, m_position);
 
         // Check that we found both a vertex and fragment source.
-        if (sources.find(ShaderType::Vertex) == sources.end()) {
+        if ((stage_flags & ShaderStageFlags::Vertex) != ShaderStageFlags::Vertex) {
             HYP_LOG_ERROR("OpenGL", "Shader does not contain a vertex shader!");
             return result;
-        } else if (sources.find(ShaderType::Fragment) == sources.end()) {
+        } else if ((stage_flags & ShaderStageFlags::Fragment) != ShaderStageFlags::Fragment) {
             HYP_LOG_ERROR("OpenGL", "Shader does not contain a fragment shader!");
             return result;
         }
 
         result.success = true;
-        result.sources = std::move(sources);
         result.properties = std::move(properties);
+        result.stage_flags = stage_flags;
+        result.sources = std::move(sources);
 
         return result;
     }
 
-    bool OpenGLShaderPreProcessor::HandleDirective(Map<ShaderType, String> &sources, ShaderAttributes &properties) {
+    bool ShaderPreProcessor::HandleDirective(ShaderStageFlags &stage_flags, Map<ShaderStageFlags, String> &sources, ShaderAttributes &properties) {
         uint64 directive_start_position = m_position;
         Advance();
 
@@ -62,20 +62,21 @@ namespace Hyperion::Rendering {
         SkipAlphaNumeric();
 
         if (IsDirective("type", directive_type_start)) {
-            EndShaderType(sources, directive_start_position);
+            EndShaderStage(sources, directive_start_position);
 
             // A new shader type starts.
             {
                 SkipBlankspace();
                 String type_string = AdvanceUntilEndOfLine();
 
-                ShaderType shader_type = GetShaderTypeFromString(type_string);
-                if (shader_type == ShaderType::None) {
-                    HYP_LOG_ERROR("OpenGL", "Invalid shader type specifier: '{}'!", type_string);
+                ShaderStageFlags shader_stage = GetShaderStageFromString(type_string);
+                if (shader_stage == ShaderStageFlags::None) {
+                    HYP_LOG_ERROR("OpenGL", "Invalid shader stage specifier: '{}'!", type_string);
                     return false;
                 }
 
-                m_current_shader_type = shader_type;
+                stage_flags |= shader_stage;
+                m_current_shader_type = shader_stage;
                 m_current_shader_type_directive_end = m_position;
             }
         } else if (IsDirective("import", directive_type_start)) {
@@ -83,12 +84,13 @@ namespace Hyperion::Rendering {
             String import_string = AdvanceUntilEndOfLine();
             uint64 directive_full_length = m_position - directive_start_position;
 
-            String shader_module = OpenGLShaderCompiler::GetShaderModuleFromName(import_string);
-            if (shader_module.empty()) {
+            ShaderModuleType shader_module_type = GetShaderModuleTypeFromString(import_string);
+            if (shader_module_type == ShaderModuleType::Unknown) {
                 HYP_LOG_ERROR("OpenGL", "Invalid shader import module: '{}'!", import_string);
                 return false;
             }
 
+            String shader_module = ShaderModules::GetModule(shader_module_type);
             m_source = m_source.replace(directive_start_position, directive_full_length, shader_module);
             m_position = directive_start_position + shader_module.size();
         } else if (IsDirective("light_mode", directive_type_start)) {
@@ -116,20 +118,20 @@ namespace Hyperion::Rendering {
         return true;
     }
 
-    void OpenGLShaderPreProcessor::EndShaderType(Map<ShaderType, String> &sources, uint64 end_position) {
-        if (m_current_shader_type != ShaderType::None) {
+    void ShaderPreProcessor::EndShaderStage(Map<ShaderStageFlags, String> &sources, uint64 end_position) {
+        if (m_current_shader_type != ShaderStageFlags::None) {
             uint64 source_length = end_position - m_current_shader_type_directive_end;
             String source = m_source.substr(m_current_shader_type_directive_end, source_length);
             sources[m_current_shader_type] = source;
         }
     }
 
-    char OpenGLShaderPreProcessor::Advance() {
+    char ShaderPreProcessor::Advance() {
         m_position++;
         return m_source[m_position - 1];
     }
 
-    String OpenGLShaderPreProcessor::AdvanceUntilEndOfLine() {
+    String ShaderPreProcessor::AdvanceUntilEndOfLine() {
         uint64 import_start_position = m_position;
         SkipAlphaNumeric();
         uint64 import_end_position = m_position;
@@ -138,66 +140,74 @@ namespace Hyperion::Rendering {
         return m_source.substr(import_start_position, import_length);
     }
 
-    char OpenGLShaderPreProcessor::Peek() {
+    char ShaderPreProcessor::Peek() {
         return m_source[m_position];
     }
 
-    char OpenGLShaderPreProcessor::PeekNext() {
+    char ShaderPreProcessor::PeekNext() {
         if (IsAtEnd()) {
             return '\0';
         }
         return m_source[m_position];
     }
 
-    void OpenGLShaderPreProcessor::SkipAlphaNumeric() {
+    void ShaderPreProcessor::SkipAlphaNumeric() {
         while ((IsAlpha(Peek()) || IsNumeric(Peek())) && !IsAtEnd()) {
             Advance();
         }
     }
 
-    void OpenGLShaderPreProcessor::SkipBlankspace() {
+    void ShaderPreProcessor::SkipBlankspace() {
         while (IsWhitespace(Peek()) && !IsAtEnd()) {
             Advance();
         }
     }
 
-    bool OpenGLShaderPreProcessor::IsAtEnd() {
+    bool ShaderPreProcessor::IsAtEnd() {
         return m_position >= m_source.size();
     }
 
-    bool OpenGLShaderPreProcessor::IsAlpha(char c) {
+    bool ShaderPreProcessor::IsAlpha(char c) {
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';;
     }
 
-    bool OpenGLShaderPreProcessor::IsNumeric(char c) {
+    bool ShaderPreProcessor::IsNumeric(char c) {
         return c >= '0' && c <= '9';
     }
 
-    bool OpenGLShaderPreProcessor::IsWhitespace(char c) {
+    bool ShaderPreProcessor::IsWhitespace(char c) {
         return c == ' ' || c == '\t' || c == '\r';
     }
 
-    bool OpenGLShaderPreProcessor::IsDirective(const char *directive, const char *start) {
+    bool ShaderPreProcessor::IsDirective(const char *directive, const char *start) {
         return std::memcmp(directive, (void *)start, std::strlen(directive)) == 0;
     }
 
-    ShaderType OpenGLShaderPreProcessor::GetShaderTypeFromString(const String &string) {
+    ShaderStageFlags ShaderPreProcessor::GetShaderStageFromString(const String &string) {
         if (string == "vertex") {
-            return ShaderType::Vertex;
+            return ShaderStageFlags::Vertex;
         } else if (string == "fragment") {
-            return ShaderType::Fragment;
+            return ShaderStageFlags::Fragment;
         } else {
-            return ShaderType::None;
+            return ShaderStageFlags::None;
         }
     }
 
-    ShaderLightMode OpenGLShaderPreProcessor::GetShaderLightModeFromString(const String &string) {
+    ShaderLightMode ShaderPreProcessor::GetShaderLightModeFromString(const String &string) {
         if (string == "none") {
             return ShaderLightMode::None;
         } else if (string == "forward") {
             return ShaderLightMode::Forward;
         } else {
             return ShaderLightMode::Unknown;
+        }
+    }
+
+    ShaderModuleType ShaderPreProcessor::GetShaderModuleTypeFromString(const String &string) {
+        if (false) {
+
+        } else {
+            return ShaderModuleType::Unknown;
         }
     }
 

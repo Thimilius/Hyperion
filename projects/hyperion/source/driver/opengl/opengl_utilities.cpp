@@ -84,10 +84,10 @@ namespace Hyperion::Rendering {
         }
     }
 
-    GLenum OpenGLUtilities::GetGLShaderType(ShaderType shader_type) {
-        switch (shader_type) {
-            case ShaderType::Vertex:   return GL_VERTEX_SHADER;
-            case ShaderType::Fragment: return GL_FRAGMENT_SHADER;
+    GLenum OpenGLUtilities::GetGLShaderStage(ShaderStageFlags shader_stage) {
+        switch (shader_stage) {
+            case ShaderStageFlags::Vertex:   return GL_VERTEX_SHADER;
+            case ShaderStageFlags::Fragment: return GL_FRAGMENT_SHADER;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }

@@ -34,9 +34,11 @@ namespace Hyperion::Rendering {
     };
 
     struct ShaderDescriptor {
-        ShaderType stage_flags;
+        ShaderStageFlags stage_flags;
+        bool use_fallback; // NOTE: We need to somehow use the fallback shader when the pre-processor fails. This may be hacky but works for now.
 
-        ArrayDescriptor<char> source;
+        ArrayDescriptor<char> source_vertex;
+        ArrayDescriptor<char> source_fragment;
     };
 
     struct MeshDescriptor {

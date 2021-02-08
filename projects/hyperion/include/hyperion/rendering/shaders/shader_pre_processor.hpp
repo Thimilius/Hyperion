@@ -1,23 +1,26 @@
 #pragma once
 
 #include "hyperion/rendering/attributes/shader_attributes.hpp"
+#include "hyperion/rendering/shaders/shader_modules.hpp"
 
 namespace Hyperion::Rendering {
 
-    struct OpenGLShaderPreProcessResult {
+    struct ShaderPreProcessResult {
         bool success;
+
         ShaderAttributes properties;
-        Map<ShaderType, String> sources;
+        ShaderStageFlags stage_flags;
+        Map<ShaderStageFlags, String> sources;
     };
 
-    class OpenGLShaderPreProcessor {
+    class ShaderPreProcessor {
     public:
-        OpenGLShaderPreProcessor(const String &source);
+        ShaderPreProcessor(const String &source);
     public:
-        OpenGLShaderPreProcessResult PreProcess();
+        ShaderPreProcessResult PreProcess();
     private:
-        bool HandleDirective(Map<ShaderType, String> &sources, ShaderAttributes &properties);
-        void EndShaderType(Map<ShaderType, String> &sources, uint64 end_position);
+        bool HandleDirective(ShaderStageFlags &stage_flags, Map<ShaderStageFlags, String> &sources, ShaderAttributes &properties);
+        void EndShaderStage(Map<ShaderStageFlags, String> &sources, uint64 end_position);
 
         char Advance();
         String AdvanceUntilEndOfLine();
@@ -33,14 +36,15 @@ namespace Hyperion::Rendering {
         bool IsWhitespace(char c);
 
         bool IsDirective(const char *directive, const char *start);
-
-        static ShaderType GetShaderTypeFromString(const String &string);
+    private:
+        static ShaderStageFlags GetShaderStageFromString(const String &string);
         static ShaderLightMode GetShaderLightModeFromString(const String &string);
+        static ShaderModuleType GetShaderModuleTypeFromString(const String &string);
     private:
         String m_source;
         uint64 m_position;
 
-        ShaderType m_current_shader_type = ShaderType::None;
+        ShaderStageFlags m_current_shader_type = ShaderStageFlags::None;
         uint64 m_current_shader_type_directive_end;
 
         bool m_property_light_mode_set = false;

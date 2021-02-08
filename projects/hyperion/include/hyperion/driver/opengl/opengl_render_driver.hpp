@@ -107,9 +107,8 @@ namespace Hyperion::Rendering {
         };
         Map<ResourceId, OpenGLMesh> m_meshes;
 
-        OpenGLShader m_fallback_shader;
-
-        OpenGLShader m_fullscreen_shader;
+        GLuint m_fallback_shader;
+        GLuint m_fullscreen_shader;
         GLuint m_fullscreen_vao;
 
         // We want to keep track of the state of a few resources.

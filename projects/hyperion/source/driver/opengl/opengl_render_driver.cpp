@@ -5,6 +5,7 @@
 #include "hyperion/core/io/file_system.hpp"
 #include "hyperion/driver/opengl/opengl_shader_compiler.hpp"
 #include "hyperion/driver/opengl/opengl_utilities.hpp"
+#include "hyperion/rendering/shaders/shader_pre_processor.hpp"
 
 namespace Hyperion::Rendering {
 
@@ -21,14 +22,22 @@ namespace Hyperion::Rendering {
 
         // FIXME: Currently we are not cleaning up those resources properly.
         {
-            OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(FileSystem::ReadAllText("data/shaders/internal/fallback.shader"));
+            ShaderPreProcessor pre_processor(FileSystem::ReadAllText("data/shaders/internal/fallback.shader"));
+            ShaderPreProcessResult pre_process_result = pre_processor.PreProcess();
+            HYP_ASSERT(pre_process_result.success);
+            Map<ShaderStageFlags, String> &sources = pre_process_result.sources;
+            OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(sources[ShaderStageFlags::Vertex].c_str(), sources[ShaderStageFlags::Fragment].c_str());
             HYP_ASSERT(compilation_result.success);
-            m_fallback_shader.program = compilation_result.program;
+            m_fallback_shader = compilation_result.program;
         }
         {
-            OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(FileSystem::ReadAllText("data/shaders/internal/fullscreen.shader"));
+            ShaderPreProcessor pre_processor(FileSystem::ReadAllText("data/shaders/internal/fullscreen.shader"));
+            ShaderPreProcessResult pre_process_result = pre_processor.PreProcess();
+            HYP_ASSERT(pre_process_result.success);
+            Map<ShaderStageFlags, String> &sources = pre_process_result.sources;
+            OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(sources[ShaderStageFlags::Vertex].c_str(), sources[ShaderStageFlags::Fragment].c_str());
             HYP_ASSERT(compilation_result.success);
-            m_fullscreen_shader.program = compilation_result.program;
+            m_fullscreen_shader = compilation_result.program;
             // We always need a vertex array to draw anything (in this case a fullscreen triangle).
             // It does not need to contain anything and can therefore be empty.
             glCreateVertexArrays(1, &m_fullscreen_vao);
@@ -36,8 +45,8 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLRenderDriver::Shutdown() {
-        glDeleteShader(m_fallback_shader.program);
-        glDeleteShader(m_fullscreen_shader.program);
+        glDeleteShader(m_fallback_shader);
+        glDeleteShader(m_fullscreen_shader);
         glDeleteVertexArrays(1, &m_fullscreen_vao);
     }
 
@@ -120,13 +129,16 @@ namespace Hyperion::Rendering {
     void OpenGLRenderDriver::CreateShader(ResourceId id, const ShaderDescriptor &descriptor) {
         HYP_ASSERT(m_shaders.find(id) == m_shaders.end());
 
-        OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(descriptor.source.data);
         OpenGLShader &shader = m_shaders[id];
-        if (compilation_result.success) {
-            shader.program = compilation_result.program;
+        if (descriptor.use_fallback) {
+            shader.program = m_fallback_shader;
         } else {
-            // If we could not compile the shader successfully, just use the fallback shader...
-            shader.program = m_fallback_shader.program;
+            OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(descriptor.source_vertex.data, descriptor.source_fragment.data);
+            if (compilation_result.success) {
+                shader.program = compilation_result.program;
+            } else {
+                shader.program = m_fallback_shader;
+            }
         }
     }
 
@@ -415,7 +427,7 @@ namespace Hyperion::Rendering {
         HYP_ASSERT(source_render_texture.color_attachment_count >= 1 && source_render_texture.attachments[0].attributes.format != RenderTextureFormat::Depth24Stencil8);
 
         m_current_material = nullptr;
-        glUseProgram(m_fullscreen_shader.program);
+        glUseProgram(m_fullscreen_shader);
         glBindTextureUnit(0, source_render_texture.attachments[0].attachment);
         glBindVertexArray(m_fullscreen_vao);
         glDrawArrays(GL_TRIANGLES, 0, 3);
