@@ -4,7 +4,8 @@
 #include <hyperion/entity/world_manager.hpp>
 #include <hyperion/entity/components/rendering/camera.hpp>
 
-#include "hyperion/editor/editor_camera_controller.hpp"
+#include "hyperion/editor/editor_first_person_camera_controller.hpp"
+#include "hyperion/editor/editor_look_around_camera_controller.hpp"
 
 namespace Hyperion::Editor {
 
@@ -13,7 +14,7 @@ namespace Hyperion::Editor {
         WorldManager::SetActiveWorld(world);
 
         Entity *entity = Entity::CreatePrimitive(EntityPrimitive::Camera);
-        entity->AddComponent<EditorCameraController>();
+        entity->AddComponent<EditorLookAroundCameraController>();
 
         Entity::CreatePrimitive(EntityPrimitive::Cube);
     }
