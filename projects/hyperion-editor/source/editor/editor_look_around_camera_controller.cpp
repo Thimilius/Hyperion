@@ -33,8 +33,8 @@ namespace Hyperion::Editor {
         {
             if (Input::IsMouseButtonHold(MouseButtonCode::Middle)) {
                 Vec3 position = m_transform->GetPosition();
-                position += m_transform->GetRight() * mouse_axis_x * m_xz_plane_distance * m_movement_speed * delta_time;
-                position += (m_transform->GetUp() + m_transform->GetForward()).Normalized() * mouse_axis_y * m_xz_plane_distance * m_movement_speed * delta_time;
+                position += m_transform->GetRight() * mouse_axis_x * m_xz_plane_distance * m_movement_speed;
+                position += (m_transform->GetUp() + m_transform->GetForward()).Normalized() * mouse_axis_y * m_xz_plane_distance * m_movement_speed;
 
                 m_transform->SetPosition(position);
             }
@@ -51,7 +51,7 @@ namespace Hyperion::Editor {
             m_rotation_axis_x = ClampAngle(m_rotation_axis_x, -90, 90);
             Quaternion rotation = Quaternion::FromEulerAngles(m_rotation_axis_x, m_rotation_axis_y, 0);
 
-            m_zoom -= Input::GetMouseScroll() * m_xz_plane_distance * m_zoom_speed * delta_time;
+            m_zoom -= Input::GetMouseScroll() * m_xz_plane_distance * m_zoom_speed;
             m_zoom = Math::Clamp(m_zoom, 0.05f, 1000.0f);
             m_xz_plane_distance = Math::Lerp(m_xz_plane_distance, m_zoom, 15.0f * delta_time);
 

@@ -16,7 +16,11 @@ namespace Hyperion::Editor {
         Entity *entity = Entity::CreatePrimitive(EntityPrimitive::Camera);
         entity->AddComponent<EditorLookAroundCameraController>();
 
-        Entity::CreatePrimitive(EntityPrimitive::Cube);
+        for (float32 x = 0; x < 10; x++) {
+            for (float32 z = 0; z < 10; z++) {
+                Entity::CreatePrimitive(EntityPrimitive::Cube, Vec3(x * 2, 0, z * 2));
+            }
+        }
     }
 
     void EditorWorld::Update(float32 delta_time) {

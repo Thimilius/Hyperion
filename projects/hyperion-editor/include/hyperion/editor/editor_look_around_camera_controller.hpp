@@ -36,8 +36,8 @@ namespace Hyperion::Editor {
         Vec2 m_last_mouse_position;
 
         float32 m_rotation_speed = 5.0f;
-        float32 m_movement_speed = 2.5f;
-        float32 m_zoom_speed = 75.0f;
+        float32 m_movement_speed = 0.001f;
+        float32 m_zoom_speed = 0.05f;
     };
 
 }
