@@ -15,7 +15,8 @@ namespace Hyperion::Rendering {
     // The actual initialization of the resources can then be executed later on the Render Thread.
     // This would require quite some work though and the creation would probably need to be synchronized somehow.
 
-    const char *g_fallback_shader_vertex = R"(
+    const char *g_fallback_shader_source = R"(
+        #type vertex
         #version 410 core
 
         layout(location = 0) in vec3 a_position;
@@ -33,8 +34,8 @@ namespace Hyperion::Rendering {
         void main() {
 	        gl_Position = obj_to_clip_space(a_position);
         }
-    )";
-    const char *g_fallback_shader_fragment = R"(
+
+        #type fragment
         #version 410 core
 
         layout(location = 0) out vec4 o_color;
@@ -44,7 +45,8 @@ namespace Hyperion::Rendering {
         }
     )";
 
-    const char *g_fullscreen_shader_vertex = R"(
+    const char *g_fullscreen_shader_source = R"(
+        #type vertex
         #version 410 core
 
         out V2F {
@@ -59,8 +61,8 @@ namespace Hyperion::Rendering {
 
 	        gl_Position = position;
         }
-    )";
-    const char *g_fullscreen_shader_fragment = R"(
+
+        #type fragment
         #version 410 core
 
         layout(location = 0) out vec4 o_color;
@@ -81,13 +83,13 @@ namespace Hyperion::Rendering {
 
         // FIXME: Currently we are not cleaning up those resources properly.
         {
-            OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(g_fallback_shader_vertex, g_fallback_shader_fragment);
-            HYP_ASSERT(compilation_result.succes);
+            OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(g_fallback_shader_source);
+            HYP_ASSERT(compilation_result.success);
             m_fallback_shader.program = compilation_result.program;
         }
         {
-            OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(g_fullscreen_shader_vertex, g_fullscreen_shader_fragment);
-            HYP_ASSERT(compilation_result.succes);
+            OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(g_fullscreen_shader_source);
+            HYP_ASSERT(compilation_result.success);
             m_fullscreen_shader.program = compilation_result.program;
             // We always need a vertex array to draw anything (in this case a fullscreen triangle).
             // It does not need to contain anything and can therefore be empty.
@@ -180,9 +182,9 @@ namespace Hyperion::Rendering {
     void OpenGLRenderDriver::CreateShader(ResourceId id, const ShaderDescriptor &descriptor) {
         HYP_ASSERT(m_shaders.find(id) == m_shaders.end());
 
-        OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(descriptor.source_vertex.data, descriptor.source_fragment.data);
+        OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(descriptor.source.data);
         OpenGLShader &shader = m_shaders[id];
-        if (compilation_result.succes) {
+        if (compilation_result.success) {
             shader.program = compilation_result.program;
         } else {
             // If we could not compile the shader successfully, just use the fallback shader...

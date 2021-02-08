@@ -4,12 +4,22 @@
 
 namespace Hyperion::Rendering {
 
-    enum class ShaderStageFlags {
+    enum class ShaderType {
+        None,
+
+        Vertex,
+        Fragment,
+    };
+
+    enum class ShaderLightMode {
         Unknown,
 
-        Vertex   = BIT(0),
-        Fragment = BIT(1)
+        None,
+        Forward,
     };
-    HYP_CREATE_ENUM_FLAG_OPERATORS(ShaderStageFlags);
+
+    struct ShaderAttributes {
+        ShaderLightMode light_mode = ShaderLightMode::None;
+    };
 
 }

@@ -17,6 +17,8 @@ namespace Hyperion::Rendering {
         static GLenum GetGLCullingFrontFaceMode(CullingFrontFaceMode culling_front_face_mode);
         static GLenum GetGLPolygonMode(PolygonMode polygon_mode);
 
+        static GLenum GetGLShaderType(ShaderType shader_type);
+
         static void SetUnpackAlignmentForTextureFormat(TextureFormat format);
         static void FlipTextureHorizontally(TextureSize size, TextureFormat format, ArrayDescriptor<uint8> pixels);
         static GLenum GetGLTextureFormat(TextureFormat format);

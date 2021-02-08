@@ -31,12 +31,11 @@ namespace Hyperion::Rendering {
             case RenderThreadCommandType::CreateShader: {
                 auto command = reinterpret_cast<RenderThreadCommandCreateShader *>(render_thread_command);
                 RenderThreadCommandQueueHelper helper(command);
-                helper.Read(command->descriptor.source_vertex);
-                helper.Read(command->descriptor.source_fragment);
+                helper.Read(command->descriptor.source);
 
                 render_driver->CreateShader(command->shader_id, command->descriptor);
                 
-                uint64 extra_size = command->descriptor.source_vertex.size + command->descriptor.source_fragment.size;
+                uint64 extra_size = command->descriptor.source.size;
                 return sizeof(*command) + extra_size;
             }
             case RenderThreadCommandType::DestroyShader: {

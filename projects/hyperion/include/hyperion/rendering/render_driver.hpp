@@ -34,10 +34,9 @@ namespace Hyperion::Rendering {
     };
 
     struct ShaderDescriptor {
-        ShaderStageFlags stage_flags;
+        ShaderType stage_flags;
 
-        ArrayDescriptor<char> source_vertex;
-        ArrayDescriptor<char> source_fragment;
+        ArrayDescriptor<char> source;
     };
 
     struct MeshDescriptor {

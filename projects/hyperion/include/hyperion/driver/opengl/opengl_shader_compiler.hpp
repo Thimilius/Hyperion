@@ -7,13 +7,18 @@
 namespace Hyperion::Rendering {
 
     struct OpenGLShaderCompilationResult {
-        bool succes = false;
+        bool success = false;
         GLuint program;
     };
 
     class OpenGLShaderCompiler {
     public:
-        static OpenGLShaderCompilationResult Compile(const char *vertex, const char *fragment);
+        static void Init();
+
+        static OpenGLShaderCompilationResult Compile(const String &source);
+        static String GetShaderModuleFromName(const String &name);
+    private:
+        inline static Map<String, String> s_modules;
     private:
         OpenGLShaderCompiler() = delete;
         ~OpenGLShaderCompiler() = delete;
