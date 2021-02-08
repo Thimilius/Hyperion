@@ -14,8 +14,8 @@ namespace Hyperion::Rendering {
         result.success = false;
 
         Map<ShaderStageFlags, String> sources;
-        ShaderStageFlags stage_flags;
-        ShaderAttributes properties;
+        ShaderStageFlags stage_flags = ShaderStageFlags::None;
+        ShaderAttributes properties = { };
         String source = m_source;
 
         while (!IsAtEnd()) {

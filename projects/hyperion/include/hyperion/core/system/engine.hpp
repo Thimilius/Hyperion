@@ -42,12 +42,13 @@ namespace Hyperion {
 
         static void TimeInitilization();
         static void InputInitilization();
-        static void WorldManagerUpdate();
         static void PhysicsEngineFixedUpdate();
         static void ApplicationFixedUpdate();
         static void TimeFixedUpdate();
         static void TimeTick();
         static void ApplicationTick();
+        static void AssetManagerUpdate();
+        static void WorldManagerUpdate();
         static void ApplicationUpdate();
         static void ObjectManagerLateUpdate();
         static void RenderEngineLateUpdate();

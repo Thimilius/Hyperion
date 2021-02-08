@@ -90,6 +90,7 @@ namespace Hyperion::Rendering {
         virtual void SetCameraData(const CameraData &camera_data) = 0;
 
         virtual void CreateShader(ResourceId shader_id, const ShaderDescriptor &descriptor) = 0;
+        virtual void RecompileShader(ResourceId shader_id, const ShaderDescriptor &descriptor) = 0;
         virtual void DestroyShader(ResourceId shader_id) = 0;
 
         virtual void CreateTexture(ResourceId texture_id, const TextureDescriptor &descriptor) = 0;

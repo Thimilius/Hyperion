@@ -29,13 +29,24 @@ namespace Hyperion::Rendering {
                 return sizeof(*command);
             }
             case RenderThreadCommandType::CreateShader: {
-                auto command = reinterpret_cast<RenderThreadCommandCreateShader *>(render_thread_command);
+                auto command = reinterpret_cast<RenderThreadCommandCreateOrRecompileShader *>(render_thread_command);
                 RenderThreadCommandQueueHelper helper(command);
                 helper.Read(command->descriptor.source_vertex);
                 helper.Read(command->descriptor.source_fragment);
 
                 render_driver->CreateShader(command->shader_id, command->descriptor);
                 
+                uint64 extra_size = command->descriptor.source_vertex.size + command->descriptor.source_fragment.size;
+                return sizeof(*command) + extra_size;
+            }
+            case RenderThreadCommandType::RecompileShader: {
+                auto command = reinterpret_cast<RenderThreadCommandCreateOrRecompileShader *>(render_thread_command);
+                RenderThreadCommandQueueHelper helper(command);
+                helper.Read(command->descriptor.source_vertex);
+                helper.Read(command->descriptor.source_fragment);
+
+                render_driver->RecompileShader(command->shader_id, command->descriptor);
+
                 uint64 extra_size = command->descriptor.source_vertex.size + command->descriptor.source_fragment.size;
                 return sizeof(*command) + extra_size;
             }

@@ -21,6 +21,7 @@ namespace Hyperion::Rendering {
         SetCameraData,
 
         CreateShader,
+        RecompileShader,
         DestroyShader,
 
         CreateTexture,
@@ -64,7 +65,7 @@ namespace Hyperion::Rendering {
         CameraData camera_data;
     };
 
-    struct RenderThreadCommandCreateShader {
+    struct RenderThreadCommandCreateOrRecompileShader {
         ResourceId shader_id;
         ShaderDescriptor descriptor;
     };

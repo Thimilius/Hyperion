@@ -199,12 +199,16 @@ namespace Hyperion {
         s_application->OnTick();
     }
 
-    void Engine::ApplicationUpdate() {
-        s_application->OnUpdate(Time::GetDeltaTime());
+    void Engine::AssetManagerUpdate() {
+        AssetManager::Update();
     }
 
     void Engine::WorldManagerUpdate() {
         WorldManager::Update(Time::GetDeltaTime());
+    }
+
+    void Engine::ApplicationUpdate() {
+        s_application->OnUpdate(Time::GetDeltaTime());
     }
 
     void Engine::PhysicsEngineFixedUpdate() {

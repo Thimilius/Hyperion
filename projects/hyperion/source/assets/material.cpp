@@ -12,6 +12,8 @@ namespace Hyperion {
     Material::Material(Shader *shader) {
         m_shader = shader;
 
+        shader->RegisterRecompilationListener(this);
+
         MaterialDescriptor descriptor = { };
         descriptor.shader_id = shader->GetResourceId();
 
@@ -240,6 +242,12 @@ namespace Hyperion {
 
     Material *Material::Create() {
         return new Material();
+    }
+
+    void Material::OnRecompile() {
+        for (auto &[material_property_id, material_property] : m_properties) {
+            SetProperty(material_property_id, material_property);
+        }
     }
 
     Material *Material::Create(Shader *shader) {

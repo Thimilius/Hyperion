@@ -30,11 +30,22 @@ namespace Hyperion::Rendering {
 
     void RenderThreadRenderDriver::CreateShader(ResourceId shader_id, const ShaderDescriptor &descriptor) {
         uint64 extra_size = descriptor.source_vertex.size + descriptor.source_fragment.size;
-        auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandCreateShader>(RenderThreadCommandType::CreateShader, extra_size);
+        auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandCreateOrRecompileShader>(RenderThreadCommandType::CreateShader, extra_size);
         command->shader_id = shader_id;
         command->descriptor = descriptor;
 
-        RenderThreadCommandQueueHelper<RenderThreadCommandCreateShader> helper(command);
+        RenderThreadCommandQueueHelper<RenderThreadCommandCreateOrRecompileShader> helper(command);
+        helper.Write(descriptor.source_vertex);
+        helper.Write(descriptor.source_fragment);
+    }
+
+    void RenderThreadRenderDriver::RecompileShader(ResourceId shader_id, const ShaderDescriptor &descriptor) {
+        uint64 extra_size = descriptor.source_vertex.size + descriptor.source_fragment.size;
+        auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandCreateOrRecompileShader>(RenderThreadCommandType::RecompileShader, extra_size);
+        command->shader_id = shader_id;
+        command->descriptor = descriptor;
+
+        RenderThreadCommandQueueHelper<RenderThreadCommandCreateOrRecompileShader> helper(command);
         helper.Write(descriptor.source_vertex);
         helper.Write(descriptor.source_fragment);
     }

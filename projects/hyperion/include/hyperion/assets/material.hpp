@@ -7,7 +7,7 @@
 
 namespace Hyperion {
 
-    class Material : public Asset {
+    class Material : public Asset, public IShaderRecompilationListener {
         HYP_REFLECT(Asset);
     private:
         union MaterialPropertyStorage;
@@ -15,6 +15,8 @@ namespace Hyperion {
     public:
         inline AssetType GetAssetType() const override { return AssetType::Material; }
 
+        inline Shader *GetShader() const { return m_shader; }
+        
         float32 GetFloat32(Rendering::MaterialPropertyId id) const;
         inline float32 GetFloat32(const String &name) const {
             return GetFloat32(Rendering::MaterialProperty::NameToId(name));
@@ -86,6 +88,8 @@ namespace Hyperion {
         inline void SetTexture(const String &name, Texture *value) {
             SetTexture(Rendering::MaterialProperty::NameToId(name), value);
         }
+
+        void OnRecompile() override;
     public:
         static Material *Create(Shader *shader);
     protected:

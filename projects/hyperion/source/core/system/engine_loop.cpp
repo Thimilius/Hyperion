@@ -31,6 +31,7 @@ namespace Hyperion {
 
         result.update.name = "Update";
         result.update.sub_systems = {
+            { "AssetManagerUpdate", Engine::AssetManagerUpdate },
             { "WorldManagerUpdate", Engine::WorldManagerUpdate },
             { "ApplicationUpdate", Engine::ApplicationUpdate }
         };

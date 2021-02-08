@@ -39,5 +39,5 @@ uniform sampler2D u_texture;
 
 void main() {
 	vec4 texture_color = texture(u_texture, i_v2f.texture0);
-	o_color = u_color * texture_color;
+	o_color = vec4(1, 1, 1, 1) * texture_color;
 }

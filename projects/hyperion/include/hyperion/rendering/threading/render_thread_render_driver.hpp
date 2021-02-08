@@ -15,6 +15,7 @@ namespace Hyperion::Rendering {
         void SetCameraData(const CameraData &camera_data) override;
 
         void CreateShader(ResourceId shader_id, const ShaderDescriptor &descriptor) override;
+        void RecompileShader(ResourceId shader_id, const ShaderDescriptor &descriptor) override;
         void DestroyShader(ResourceId shader_id) override;
 
         void CreateTexture(ResourceId texture_id, const TextureDescriptor &descriptor) override;

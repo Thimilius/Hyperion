@@ -8,6 +8,7 @@
 #include "hyperion/assets/shader.hpp"
 #include "hyperion/assets/texture.hpp"
 #include "hyperion/core/color.hpp"
+#include "hyperion/core/app/input.hpp"
 #include "hyperion/core/io/file_system.hpp"
 #include "hyperion/core/io/image_loader.hpp"
 
@@ -54,6 +55,12 @@ namespace Hyperion {
         s_default_material = Material::Create(shader);
         s_default_material->SetVec4("u_color", Color::White());
         s_default_material->SetTexture("u_texture", s_texture_primitive_grid);
+    }
+
+    void AssetManager::Update() {
+        if (Input::IsKeyDown(KeyCode::I)) {
+            s_default_material->GetShader()->Recompile(FileSystem::ReadAllText("data/shaders/standard.shader"));
+        }
     }
 
     void AssetManager::Shutdown() {

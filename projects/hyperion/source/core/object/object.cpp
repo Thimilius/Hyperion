@@ -76,8 +76,12 @@ namespace Hyperion {
     }
 
     Object *ObjectManager::Get(ObjectId object_id) {
-        HYP_ASSERT(s_objects.find(object_id) != s_objects.end());
-        return s_objects[object_id];
+        auto it = s_objects.find(object_id);
+        if (it != s_objects.end()) {
+            return it->second;
+        } else {
+            return nullptr;
+        }
     }
 
     void ObjectManager::LateUpdate() {

@@ -56,6 +56,7 @@ namespace Hyperion {
         AssetManager() = delete;
     private:
         static void Initialize();
+        static void Update();
         static void Shutdown();
     private:
         inline static Mesh *s_mesh_primitive_quad;
