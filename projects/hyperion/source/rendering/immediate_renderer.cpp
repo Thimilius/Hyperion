@@ -24,10 +24,12 @@ namespace Hyperion::Rendering {
     }
 
     void ImmediateRenderer::End() {
-        Vector<SubMesh> sub_meshes = { { s_current_topology, s_current_index, 0, 0 } };
-        s_immediate_mesh = Mesh::Create(s_immediate_mesh_data, sub_meshes);
+        if (s_current_index > 0) {
+            Vector<SubMesh> sub_meshes = { { s_current_topology, s_current_index, 0, 0 } };
+            s_immediate_mesh = Mesh::Create(s_immediate_mesh_data, sub_meshes);
 
-        s_render_driver->DrawMesh(s_immediate_mesh->GetResourceId(), Mat4::Identity(), s_immediate_material->GetResourceId(), 0);
+            s_render_driver->DrawMesh(s_immediate_mesh->GetResourceId(), Mat4::Identity(), s_immediate_material->GetResourceId(), 0);
+        }
     }
 
     void ImmediateRenderer::Initialize(IRenderDriver *render_driver) {
