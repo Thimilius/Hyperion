@@ -1,5 +1,7 @@
 #include "hyppch.hpp"
 
+#include "hyperion/core/app/application.hpp"
+#include "hyperion/core/system/engine.hpp"
 #include "hyperion/core/system/main.hpp"
 
 namespace Hyperion {

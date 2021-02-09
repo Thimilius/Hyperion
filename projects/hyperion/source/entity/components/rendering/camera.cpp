@@ -2,6 +2,7 @@
 
 #include "hyperion/entity/components/rendering/camera.hpp"
 
+#include "hyperion/core/app/display.hpp"
 #include "hyperion/entity/entity.hpp"
 #include "hyperion/entity/world.hpp"
 #include "hyperion/entity/components/transform.hpp"

@@ -4,6 +4,8 @@
 
 #include <glad/glad_wgl.h>
 
+#include "hyperion/core/system/engine.hpp"
+
 namespace Hyperion::Rendering {
 
     WindowsOpenGLGraphicsContext::WindowsOpenGLGraphicsContext(HDC device_context, HDC helper_device_context) {

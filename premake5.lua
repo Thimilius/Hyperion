@@ -21,7 +21,7 @@ workspace "hyperion"
 	objdir ("build/%{cfg.buildcfg}/obj/" .. output_directory_format)
 	debugdir "run_tree/"
 
-	configurations { "debug", "release" }
+	configurations { "debug", "profile", "release" }
 
 	newoption {
 		trigger = audio_backend_option,
@@ -58,6 +58,11 @@ workspace "hyperion"
 		defines { "HYP_DEBUG", "HYP_ENABLE_ASSERTS", "HYP_BREAK_ON_ASSERT" }
 		runtime "Debug"
 		symbols "On"
+	filter "configurations:profile"	
+		defines { "HYP_DEBUG", "HYP_PROFILE", "HYP_ENABLE_ASSERTS", "HYP_BREAK_ON_ASSERT" }
+		runtime "Release"
+		symbols "On"
+		optimize "On"
 	filter "configurations:release"
 		defines { "HYP_RELEASE" }
 		runtime "Release"
@@ -142,6 +147,10 @@ project "hyperion"
 		}
 		includedirs { "%{prj.location}/vendor/mono/include" }
 
+	filter "configurations:profile"
+		files { "%{prj.location}/vendor/optick/source/**" }
+		includedirs { "%{prj.location}/vendor/optick/include" }
+
 	filter "system:windows"
 		files {
 			"%{prj.location}/include/hyperion/platform/windows/**.hpp",
@@ -179,7 +188,7 @@ function linkhyperion()
 		links { package_fmt_debug_links }
 		links { package_freetype_debug_links }
 		links { package_rttr_debug_links }
-	filter { "system:windows", "configurations:release" }
+	filter { "system:windows", "configurations:profile or release" }
 		libdirs { package_assimp_release_libdirs }
 		libdirs { package_fmt_release_libdirs }
 		libdirs { package_freetype_release_libdirs }
@@ -195,7 +204,7 @@ function linkhyperion()
 	filter { "system:windows", "configurations:debug", "options:physics=bullet" }
 		libdirs { package_bullet_debug_libdirs }
 		links { package_bullet_debug_links }
-	filter { "system:windows", "configurations:release", "options:physics=bullet" }
+	filter { "system:windows", "configurations:profile or release", "options:physics=bullet" }
 		libdirs { package_bullet_release_libdirs }
 		links { package_bullet_release_links }
 	filter { "system:windows", "options:with-mono" }

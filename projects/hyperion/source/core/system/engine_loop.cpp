@@ -3,6 +3,7 @@
 #include "hyperion/core/system/engine_loop.hpp"
 
 #include "hyperion/core/memory/memory.hpp"
+#include "hyperion/core/system/engine.hpp"
 
 namespace Hyperion {
 

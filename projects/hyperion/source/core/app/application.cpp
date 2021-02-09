@@ -2,6 +2,8 @@
 
 #include "hyperion/core/app/application.hpp"
 
+#include "hyperion/core/system/engine.hpp"
+
 namespace Hyperion {
 
     Application::Application(const ApplicationSettings &settings) {

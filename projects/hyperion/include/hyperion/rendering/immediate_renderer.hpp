@@ -3,6 +3,7 @@
 #include "hyperion/assets/material.hpp"
 #include "hyperion/assets/mesh.hpp"
 #include "hyperion/core/color.hpp"
+#include "hyperion/rendering/render_driver.hpp"
 
 namespace Hyperion::Rendering {
     class RenderEngine;

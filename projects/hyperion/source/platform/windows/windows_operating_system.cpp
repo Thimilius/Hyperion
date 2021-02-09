@@ -6,6 +6,8 @@
 #include <psapi.h>
 #include <Shlobj.h>
 
+#include "hyperion/core/app/application.hpp"
+
 namespace Hyperion {
 
     // RANT: Apparently Microsoft forgot to include this definition in their header files. What the hell!?!?

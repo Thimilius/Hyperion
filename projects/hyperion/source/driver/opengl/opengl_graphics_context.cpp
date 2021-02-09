@@ -2,6 +2,8 @@
 
 #include "hyperion/driver/opengl/opengl_graphics_context.hpp"
 
+#include "hyperion/core/system/engine.hpp"
+
 #define HYP_OPENGL_BREAK_ON_ERROR true
 #define HYP_OPENGL_LOG_EXTENSIONS false
 #define HYP_OPENGL_LOG_NOTIFICATIONS false

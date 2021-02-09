@@ -5,6 +5,7 @@
 #include "hyperion/assets/asset.hpp"
 #include "hyperion/audio/audio_engine.hpp"
 #include "hyperion/core/timer.hpp"
+#include "hyperion/core/app/application.hpp"
 #include "hyperion/core/app/display.hpp"
 #include "hyperion/core/app/input.hpp"
 #include "hyperion/core/app/time.hpp"
@@ -14,6 +15,7 @@
 #include "hyperion/core/app/events/key_events.hpp"
 #include "hyperion/core/object/object.hpp"
 #include "hyperion/core/memory/memory.hpp"
+#include "hyperion/core/profiling/profiling.hpp"
 #include "hyperion/core/threading/synchronization.hpp"
 #include "hyperion/entity/world_manager.hpp"
 #include "hyperion/physics/physics_engine.hpp"
@@ -78,6 +80,8 @@ namespace Hyperion {
 
         s_stats.timer = Timer::Create();
         while (s_running) {
+            HYP_PROFILE_FRAME("Main Thread");
+
             Iterate();
         }
         delete s_stats.timer;
@@ -178,6 +182,8 @@ namespace Hyperion {
     }
 
     void Engine::InputInitilization() {
+        HYP_PROFILE_CATEGORY("Input", Optick::Category::Input);
+
         s_application->GetWindow()->Poll();
     }
 
@@ -204,22 +210,32 @@ namespace Hyperion {
     }
 
     void Engine::WorldManagerUpdate() {
+        HYP_PROFILE_CATEGORY("Update", Optick::Category::GameLogic);
+
         WorldManager::Update(Time::GetDeltaTime());
     }
 
     void Engine::ApplicationUpdate() {
+        HYP_PROFILE_CATEGORY("Application Update", Optick::Category::GameLogic);
+
         s_application->OnUpdate(Time::GetDeltaTime());
     }
 
     void Engine::PhysicsEngineFixedUpdate() {
+        HYP_PROFILE_CATEGORY("Physics", Optick::Category::Physics);
+
         Physics::PhysicsEngine::FixedUpdate(Time::GetFixedDeltaTime());
     }
 
     void Engine::ObjectManagerLateUpdate() {
+        HYP_PROFILE_CATEGORY("Late Update", Optick::Category::GameLogic);
+
         ObjectManager::LateUpdate();
     }
 
     void Engine::RenderEngineLateUpdate() {
+        HYP_PROFILE_CATEGORY("Rendering", Optick::Category::Rendering);
+
         Rendering::RenderEngine::Render();
     }
 

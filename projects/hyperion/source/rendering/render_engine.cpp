@@ -2,6 +2,8 @@
 
 #include "hyperion/rendering/render_engine.hpp"
 
+#include "hyperion/core/app/window.hpp"
+#include "hyperion/core/profiling/profiling.hpp"
 #include "hyperion/core/threading/synchronization.hpp"
 #include "hyperion/driver/opengl/opengl_render_driver.hpp"
 #include "hyperion/entity/world_manager.hpp"
@@ -120,6 +122,8 @@ namespace Hyperion::Rendering {
     }
 
     void RenderEngine::HandleRenderThreadQueryCommands() {
+        HYP_PROFILE_SCOPE("HandleRenderThreadQueryCommands");
+
         if (s_query_queue.GetSize() > 0) {
             s_executing_render_thread_query_commands = true;
 
@@ -144,6 +148,8 @@ namespace Hyperion::Rendering {
     }
 
     void RenderEngine::SwapRenderThreadCommandQueues() {
+        HYP_PROFILE_SCOPE("SwapRenderThreadCommandQueues");
+
         s_render_queue.Clear();
         std::swap(s_update_queue, s_render_queue);
     }
@@ -172,6 +178,7 @@ namespace Hyperion::Rendering {
     void RenderEngine::RenderThreadLoop(void *parameter) {
         InitRenderThread(static_cast<Window *>(parameter));
 
+        HYP_PROFILE_THREAD("Render Thread");
         while (true) {
             ExecuteRenderCommands();
 
@@ -179,15 +186,23 @@ namespace Hyperion::Rendering {
                 break;
             }
 
-            s_graphics_context->Present();
-            Synchronization::NotifyRenderDone();
+            {
+                HYP_PROFILE_SCOPE("Present");
+
+                s_graphics_context->Present();
+                Synchronization::NotifyRenderDone();
+            }
+            
 
             // While we are waiting for the main thread to give us the new set of commands, we want to execute all render thread query commands.
-            while (true) {
-                ExecuteRenderThreadQueryCommand();
-            
-                if (Synchronization::WaitUnblockedForSwapDone()) {
-                    break;
+            {
+                HYP_PROFILE_SCOPE("WaitForSwapDone");
+                while (true) {
+                    ExecuteRenderThreadQueryCommand();
+
+                    if (Synchronization::WaitUnblockedForSwapDone()) {
+                        break;
+                    }
                 }
             }
         }
@@ -205,13 +220,18 @@ namespace Hyperion::Rendering {
     }
 
     void RenderEngine::ExecuteRenderCommands() {
+        HYP_PROFILE_CATEGORY("Execute Render Commands", Optick::Category::Rendering);
+
         // Execute render thread commands like a virtual machine...
         auto program_counter = s_render_queue.GetData();
         auto program_counter_end = s_render_queue.GetData() + s_render_queue.GetSize();
         RenderThreadCommandType command_type;
         while (program_counter < program_counter_end) {
+            HYP_PROFILE_SCOPE("ExecuteRenderCommand");
             command_type = *reinterpret_cast<RenderThreadCommandType *>(program_counter);
+            OPTICK_TAG("CommandType", static_cast<uint32>(command_type));
             program_counter += sizeof(RenderThreadCommandType);
+
 
             if (command_type == RenderThreadCommandType::Exit) {
                 s_exit_requested = true;

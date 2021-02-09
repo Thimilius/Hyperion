@@ -1,5 +1,6 @@
 #pragma once
 
+#include "hyperion/core/profiling/profiling.hpp"
 #include "hyperion/core/threading/auto_reset_event.hpp"
 
 namespace Hyperion {
@@ -25,10 +26,10 @@ namespace Hyperion {
         inline static void WaitForUpdateReady() { s_update_ready_event.Wait(); }
 
         inline static void NotifyRenderDone() { s_render_done_event.Notify(); }
-        inline static void WaitForRenderDone() { s_render_done_event.Wait(); }
+        inline static void WaitForRenderDone() { HYP_PROFILE_SCOPE("WaitForRenderDone"); s_render_done_event.Wait(); }
 
         inline static void NotifySwapDone() { s_swap_done_event.Notify(); }
-        inline static void WaitForSwapDone() { s_swap_done_event.Wait(); }
+        inline static void WaitForSwapDone() { HYP_PROFILE_SCOPE("WaitForSwapDone"); s_swap_done_event.Wait(); }
         inline static bool WaitUnblockedForSwapDone() { return s_swap_done_event.WaitUnblocked(); }
 
         inline static void NotifyQueryCommandDone() { s_query_command_done_event.Notify(); }

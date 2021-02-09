@@ -2,6 +2,8 @@
 
 #include "hyperion/core/system/log.hpp"
 
+#include "hyperion/core/system/operating_system.hpp"
+
 namespace Hyperion {
 
     void Log::LogMessageInternal(LogLevel level, String message) {

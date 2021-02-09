@@ -3,6 +3,7 @@
 #include "hyperion/assets/asset.hpp"
 #include "hyperion/assets/shader.hpp"
 #include "hyperion/assets/texture.hpp"
+#include "hyperion/core/math/vec2.hpp"
 #include "hyperion/rendering/attributes/material_attributes.hpp"
 
 namespace Hyperion {

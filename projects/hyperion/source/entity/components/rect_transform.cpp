@@ -2,6 +2,7 @@
 
 #include "hyperion/entity/components/rect_transform.hpp"
 
+#include "hyperion/core/app/display.hpp"
 #include "hyperion/entity/entity.hpp"
 
 namespace Hyperion {
