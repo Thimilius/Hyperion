@@ -4,12 +4,12 @@
 
 namespace Hyperion::Scripting {
 
-    class MonoBindingsObject final {
+    class MonoBindingsEntity final {
     public:
         static void Bind();
     private:
-        MonoBindingsObject() = delete;
-        ~MonoBindingsObject() = delete;
+        MonoBindingsEntity() = delete;
+        ~MonoBindingsEntity() = delete;
     };
 
 }

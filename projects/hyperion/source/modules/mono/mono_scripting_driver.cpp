@@ -7,19 +7,24 @@
 #include <mono/metadata/mono-debug.h>
 #include <mono/metadata/threads.h>
 
+#include "hyperion/modules/mono/bindings/mono_bindings_entity.hpp"
+#include "hyperion/modules/mono/bindings/mono_bindings_input.hpp"
 #include "hyperion/modules/mono/bindings/mono_bindings_object.hpp"
+#include "hyperion/modules/mono/bindings/mono_bindings_time.hpp"
 
-namespace Hyperion {
+namespace Hyperion::Scripting {
 
     void MonoScriptingDriver::Initialize(const ScriptingSettings &settings) {
         InitDebugger(settings);
         InitDomain();
         InitBindings();
-
-        TestFunctions();
+        InitAssembly();
+        InitMethods();
     }
-    
-    MonoAssembly *assembly;
+
+    void MonoScriptingDriver::Update() {
+        mono_runtime_invoke(s_update_method, nullptr, nullptr, nullptr);
+    }
 
     void MonoScriptingDriver::Shutdown() {
         mono_jit_cleanup(s_root_domain);
@@ -52,7 +57,7 @@ namespace Hyperion {
         mono_debug_init(MONO_DEBUG_FORMAT_MONO);
 
         String debug_option;
-        if (settings.wait_for_debugger) {
+        if (settings.wait_for_debugger) {          
             debug_option = StringUtils::Format("--debugger-agent=transport=dt_socket,address=127.0.0.1:{},server=y,embedding=1,server=y,suspend=y,timeout={}", settings.debugger_port, settings.debugger_wait_timeout);
         } else {
             debug_option = StringUtils::Format("--debugger-agent=transport=dt_socket,address=127.0.0.1:{},server=y,embedding=1,server=y,suspend=n", settings.debugger_port);
@@ -78,18 +83,27 @@ namespace Hyperion {
     }
 
     void MonoScriptingDriver::InitBindings() {
+        MonoBindingsEntity::Bind();
+        MonoBindingsInput::Bind();
         MonoBindingsObject::Bind();
+        MonoBindingsTime::Bind();
     }
 
-    void MonoScriptingDriver::TestFunctions() {
-        char *assembly_path = "data/managed/Hyperion.dll";
-        assembly = mono_domain_assembly_open(s_root_domain, assembly_path);
-        MonoImage *image = mono_assembly_get_image(assembly);
+    void MonoScriptingDriver::InitAssembly() {
+        char *assembly_path = "data/managed/Hyperion.Core.dll";
+        s_core_assembly = mono_domain_assembly_open(s_root_domain, assembly_path);
+        HYP_ASSERT(s_core_assembly);
+        s_core_assembly_image = mono_assembly_get_image(s_core_assembly);
+        HYP_ASSERT(s_core_assembly_image);
+    }
 
-        MonoMethodDesc *description = mono_method_desc_new("Hyperion.Application::Run()", true);
-        MonoMethod *method = mono_method_desc_search_in_image(description, image);
+    void MonoScriptingDriver::InitMethods() {
+        MonoMethodDesc *start_method_description = mono_method_desc_new("Hyperion.Application::Start()", true);
+        MonoMethod *start_method = mono_method_desc_search_in_image(start_method_description, s_core_assembly_image);
+        mono_runtime_invoke(start_method, nullptr, nullptr, nullptr);
 
-        mono_runtime_invoke(method, nullptr, nullptr, nullptr);
+        MonoMethodDesc *update_method_description = mono_method_desc_new("Hyperion.Application::Update()", true);
+        s_update_method = mono_method_desc_search_in_image(update_method_description, s_core_assembly_image);
     }
 
 }

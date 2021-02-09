@@ -7,7 +7,7 @@ namespace Hyperion {
     class Engine;
 }
 
-namespace Hyperion {
+namespace Hyperion::Scripting {
 
     class ScriptingEngine {
     private:
@@ -15,6 +15,7 @@ namespace Hyperion {
         ~ScriptingEngine() = delete;
     private:
         static void Initialize(const ScriptingSettings &settings);
+        static void Update();
         static void Shutdown();
     private:
         inline static IScriptingDriver *s_scripting_driver;

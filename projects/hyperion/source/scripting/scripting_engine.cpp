@@ -6,7 +6,7 @@
 #include "hyperion/modules/mono/mono_scripting_driver.hpp"
 #endif
 
-namespace Hyperion {
+namespace Hyperion::Scripting {
 
     void ScriptingEngine::Initialize(const ScriptingSettings &settings) {
 #ifdef HYP_SCRIPTING_MONO
@@ -16,6 +16,10 @@ namespace Hyperion {
 #endif
 
         s_scripting_driver->Initialize(settings);
+    }
+
+    void Scripting::ScriptingEngine::Update() {
+        s_scripting_driver->Update();
     }
 
     void ScriptingEngine::Shutdown() {

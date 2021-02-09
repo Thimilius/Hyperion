@@ -61,7 +61,7 @@ namespace Hyperion {
         AssetManager::Initialize();
         Rendering::RenderEngine::Initialize();
         Physics::PhysicsEngine::Initialize();
-        ScriptingEngine::Initialize(s_settings.scripting);
+        Scripting::ScriptingEngine::Initialize(s_settings.scripting);
     }
 
     uint32 Engine::Run() {
@@ -142,7 +142,7 @@ namespace Hyperion {
         // When shutting down we have to be very careful about the order.
         // The render engine (render thread) needs seperate phases in which it has to shut down.
         WorldManager::Shutdown();
-        ScriptingEngine::Shutdown();
+        Scripting::ScriptingEngine::Shutdown();
         Physics::PhysicsEngine::Shutdown();
         AssetManager::Shutdown();
         Audio::AudioEngine::Shutdown();
@@ -209,14 +209,20 @@ namespace Hyperion {
         AssetManager::Update();
     }
 
+    void Engine::ScriptingEngineUpdate() {
+        HYP_PROFILE_CATEGORY("ScriptingUpdate", Optick::Category::Script);
+
+        Scripting::ScriptingEngine::Update();
+    }
+
     void Engine::WorldManagerUpdate() {
-        HYP_PROFILE_CATEGORY("Update", Optick::Category::GameLogic);
+        HYP_PROFILE_CATEGORY("WorldManagerUpdate", Optick::Category::GameLogic);
 
         WorldManager::Update(Time::GetDeltaTime());
     }
 
     void Engine::ApplicationUpdate() {
-        HYP_PROFILE_CATEGORY("Application Update", Optick::Category::GameLogic);
+        HYP_PROFILE_CATEGORY("ApplicationUpdate", Optick::Category::GameLogic);
 
         s_application->OnUpdate(Time::GetDeltaTime());
     }
@@ -228,7 +234,7 @@ namespace Hyperion {
     }
 
     void Engine::ObjectManagerLateUpdate() {
-        HYP_PROFILE_CATEGORY("Late Update", Optick::Category::GameLogic);
+        HYP_PROFILE_CATEGORY("LateUpdate", Optick::Category::GameLogic);
 
         ObjectManager::LateUpdate();
     }

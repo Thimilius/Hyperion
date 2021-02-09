@@ -89,6 +89,7 @@ workspace "hyperion"
 project "hyperion"
 	location "projects/hyperion"
 	kind "StaticLib"
+	dependson { "Hyperion.Core" }
 	
 	pchheader "hyppch.hpp"
 	pchsource "%{prj.location}/source/hyppch.cpp"
@@ -163,6 +164,31 @@ project "hyperion"
 		    "{COPY} vendor/fmod/lib/windows/fmod.dll %{cfg.targetdir}/fmod.dll*",
 			"{COPY} vendor/mono/lib/windows/mono.dll %{cfg.targetdir}/mono.dll*"
 	    }
+
+group "managed"
+
+project "Hyperion.Core"
+	location "projects/managed/Hyperion.Core"
+	kind "SharedLib"
+	
+	language "C#"
+	
+	targetdir ("build/%{cfg.buildcfg}/bin/managed/")
+	objdir ("build/%{cfg.buildcfg}/obj/managed/")
+	
+	files { "%{prj.location}/**.cs" }
+	
+	postbuildcommands {
+		"{COPY} $(TargetDir)$(TargetFileName) $(ProjectDir)../../../run_tree/data/managed/",
+		"{COPY} $(TargetDir)$(TargetName).pdb $(ProjectDir)../../../run_tree/data/managed/"
+	}
+	
+	filter "system:windows"
+		postbuildcommands {
+			"$(ProjectDir)../../../run_tree/data/tools/pdb2mdb.exe $(ProjectDir)../../../run_tree/data/managed/$(TargetFileName)"
+		}
+
+group ""
 
 function linkhyperion()
 	filter { }
@@ -240,26 +266,3 @@ project "hyperion-editor"
 		    "{COPY} %{cfg.targetdir}/fmod.dll ../../run_tree/fmod.dll*",
 			"{COPY} %{cfg.targetdir}/mono.dll ../../run_tree/mono.dll*"
 	    }
-
-group "managed"
-
-project "Hyperion"
-	location "projects/managed/Hyperion"
-	kind "SharedLib"
-	
-	language "C#"
-	
-	targetdir ("build/%{cfg.buildcfg}/bin/managed/")
-	objdir ("build/%{cfg.buildcfg}/obj/managed/")
-	
-	files { "%{prj.location}/**.cs" }
-	
-	postbuildcommands {
-		"{COPY} $(TargetDir)$(TargetFileName) $(ProjectDir)../../../run_tree/data/managed/",
-		"{COPY} $(TargetDir)$(TargetName).pdb $(ProjectDir)../../../run_tree/data/managed/"
-	}
-	
-	filter "system:windows"
-		postbuildcommands {
-			"$(ProjectDir)../../../run_tree/data/tools/pdb2mdb.exe $(ProjectDir)../../../run_tree/data/managed/$(TargetFileName)"
-		}

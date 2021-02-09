@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
-    <ProjectGuid>{73A2235D-5F6F-7E68-8888-6C1074B4B3F6}</ProjectGuid>
+    <ProjectGuid>{2A2E61FE-96EE-DC34-5F29-26B2CBA82111}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Hyperion</RootNamespace>
-    <AssemblyName>Hyperion</AssemblyName>
+    <RootNamespace>Hyperion.Core</RootNamespace>
+    <AssemblyName>Hyperion.Core</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -55,7 +55,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />
+    <Compile Include="Entity.cs" />
+    <Compile Include="Input.cs" />
     <Compile Include="Object.cs" />
+    <Compile Include="Time.cs" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
