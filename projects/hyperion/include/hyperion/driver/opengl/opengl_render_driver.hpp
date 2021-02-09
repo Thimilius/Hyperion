@@ -46,8 +46,8 @@ namespace Hyperion::Rendering {
         void CreateTextureCubemap(OpenGLTexture &texture, const TextureDescriptor &descriptor);
         void SetTextureParameters(GLuint texture, const TextureParameters &parameters);
 
-        void CollectMaterialProperties(OpenGLMaterial &material);
-        void UseMaterial(OpenGLMaterial &material, const Mat4 &model_matrix);
+        void CollectMaterialProperties(OpenGLMaterial &material, GLuint program);
+        void UseMaterial(OpenGLMaterial &material, GLuint program, const Mat4 &model_matrix);
     private:
         OpenGLGraphicsContext *m_graphics_context;
 
@@ -109,6 +109,7 @@ namespace Hyperion::Rendering {
         };
         Map<ResourceId, OpenGLMesh> m_meshes;
 
+        OpenGLMaterial m_fallback_material;
         GLuint m_fallback_shader;
         GLuint m_fullscreen_shader;
         GLuint m_fullscreen_vao;

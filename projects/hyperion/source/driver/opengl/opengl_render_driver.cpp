@@ -29,6 +29,9 @@ namespace Hyperion::Rendering {
             OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(sources[ShaderStageFlags::Vertex].c_str(), sources[ShaderStageFlags::Fragment].c_str());
             HYP_ASSERT(compilation_result.success);
             m_fallback_shader = compilation_result.program;
+
+            m_fallback_material.shader_id = 0;
+            CollectMaterialProperties(m_fallback_material, m_fallback_shader);
         }
         {
             ShaderPreProcessor pre_processor(FileSystem::ReadAllText("data/shaders/internal/fullscreen.shader"));
@@ -153,7 +156,11 @@ namespace Hyperion::Rendering {
             if (material.shader_id == shader_id) {
                 material.properties.clear();
                 material.textures.clear();
-                CollectMaterialProperties(material);
+
+                HYP_ASSERT(m_shaders.find(shader_id) != m_shaders.end());
+                OpenGLShader &shader = m_shaders[shader_id];
+
+                CollectMaterialProperties(material, shader.program);
             }
         }
     }
@@ -199,10 +206,12 @@ namespace Hyperion::Rendering {
         HYP_ASSERT(m_materials.find(material_id) == m_materials.end());
 
         OpenGLMaterial &material = m_materials[material_id];
-        HYP_ASSERT(m_shaders.find(descriptor.shader_id) != m_shaders.end());
-        material.shader_id = descriptor.shader_id;
+        ResourceId shader_id = descriptor.shader_id;
+        HYP_ASSERT(m_shaders.find(shader_id) != m_shaders.end());
+        material.shader_id = shader_id;
 
-        CollectMaterialProperties(material);
+        OpenGLShader &shader = m_shaders[shader_id];
+        CollectMaterialProperties(material, shader.program);
     }
 
     void OpenGLRenderDriver::SetMaterialProperty(ResourceId material_id, const MaterialProperty &property) {
@@ -509,20 +518,34 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLRenderDriver::DrawMesh(ResourceId mesh_id, const Mat4 &model_matrix, ResourceId material_id, uint32 sub_mesh_index) {
-        HYP_ASSERT(m_materials.find(material_id) != m_materials.end());
-        OpenGLMaterial &material = m_materials[material_id];
-        UseMaterial(material, model_matrix);
+        // We are going to be very error tolerant here when drawing a mesh.
 
-        HYP_ASSERT(m_meshes.find(mesh_id) != m_meshes.end());
-        OpenGLMesh &mesh = m_meshes[mesh_id];
-        HYP_ASSERT(sub_mesh_index < mesh.sub_meshes.size());
-        SubMesh &sub_mesh = mesh.sub_meshes[sub_mesh_index];
+        auto material_it = m_materials.find(material_id);
+        if (material_it != m_materials.end()) {
+            OpenGLMaterial &material = material_it->second;
 
-        GLenum index_format = OpenGLUtilities::GetGLIndexFormat(mesh.index_format);
-        GLsizei index_format_size = OpenGLUtilities::GetGLIndexFormatSize(mesh.index_format);
-        const void *offset = reinterpret_cast<const void *>(static_cast<uint64>(sub_mesh.index_offset) * index_format_size);
-        glBindVertexArray(mesh.vertex_array);
-        glDrawElementsBaseVertex(OpenGLUtilities::GetGLMeshTopology(sub_mesh.topology), sub_mesh.index_count, index_format, offset, sub_mesh.vertex_offset);
+            ResourceId shader_id = material.shader_id;
+            HYP_ASSERT(m_shaders.find(shader_id) != m_shaders.end());
+            OpenGLShader &shader = m_shaders[shader_id];
+
+            UseMaterial(material, shader.program, model_matrix);
+        } else {
+            UseMaterial(m_fallback_material, m_fallback_shader, model_matrix);
+        }
+
+        auto mesh_it = m_meshes.find(mesh_id);
+        if (mesh_it != m_meshes.end()) {
+            OpenGLMesh &mesh = mesh_it->second;
+            if (sub_mesh_index < mesh.sub_meshes.size()) {
+                SubMesh &sub_mesh = mesh.sub_meshes[sub_mesh_index];
+
+                GLenum index_format = OpenGLUtilities::GetGLIndexFormat(mesh.index_format);
+                GLsizei index_format_size = OpenGLUtilities::GetGLIndexFormatSize(mesh.index_format);
+                const void *offset = reinterpret_cast<const void *>(static_cast<uint64>(sub_mesh.index_offset) * index_format_size);
+                glBindVertexArray(mesh.vertex_array);
+                glDrawElementsBaseVertex(OpenGLUtilities::GetGLMeshTopology(sub_mesh.topology), sub_mesh.index_count, index_format, offset, sub_mesh.vertex_offset);
+            }
+        }
     }
 
     void OpenGLRenderDriver::DestroyMesh(ResourceId mesh_id) {
@@ -581,12 +604,7 @@ namespace Hyperion::Rendering {
         glTextureParameterf(texture, GL_TEXTURE_MAX_ANISOTROPY, anisotropic_filter_value);
     }
 
-    void OpenGLRenderDriver::CollectMaterialProperties(OpenGLMaterial &material) {
-        ResourceId shader_id = material.shader_id;
-        HYP_ASSERT(m_shaders.find(shader_id) != m_shaders.end());
-        OpenGLShader &shader = m_shaders[shader_id];
-        GLuint program = shader.program;
-
+    void OpenGLRenderDriver::CollectMaterialProperties(OpenGLMaterial &material, GLuint program) {
         GLint active_uniform_count;
         glGetProgramInterfaceiv(program, GL_UNIFORM, GL_ACTIVE_RESOURCES, &active_uniform_count);
 
@@ -616,15 +634,11 @@ namespace Hyperion::Rendering {
         }
     }
 
-    void OpenGLRenderDriver::UseMaterial(OpenGLMaterial &material, const Mat4 &model_matrix) {
-        ResourceId shader_id = material.shader_id;
-        HYP_ASSERT(m_shaders.find(shader_id) != m_shaders.end());
-        OpenGLShader &shader = m_shaders[shader_id];
-
+    void OpenGLRenderDriver::UseMaterial(OpenGLMaterial &material, GLuint program, const Mat4 &model_matrix) {
         if (m_current_material != &material) {
             m_current_material = &material;
 
-            glUseProgram(shader.program);
+            glUseProgram(program);
 
             GLuint texture_unit = 0;
             for (auto [property_id, texture] : material.textures) {
@@ -637,14 +651,14 @@ namespace Hyperion::Rendering {
                 HYP_ASSERT(material.properties.find(PROJECTION_TRANSFORM_PROPERTY_ID) != material.properties.end());
                 OpenGLMaterialProperty &property = material.properties[PROJECTION_TRANSFORM_PROPERTY_ID];
                 GLint location = property.location;
-                glProgramUniformMatrix4fv(shader.program, location, 1, GL_FALSE, m_current_camera_data.projection_matrix.elements);
+                glProgramUniformMatrix4fv(program, location, 1, GL_FALSE, m_current_camera_data.projection_matrix.elements);
             }
             {
                 static const MaterialPropertyId VIEW_TRANSFORM_PROPERTY_ID = std::hash<String>{}("u_transform.view");
                 HYP_ASSERT(material.properties.find(VIEW_TRANSFORM_PROPERTY_ID) != material.properties.end());
                 OpenGLMaterialProperty &property = material.properties[VIEW_TRANSFORM_PROPERTY_ID];
                 GLint location = property.location;
-                glProgramUniformMatrix4fv(shader.program, location, 1, GL_FALSE, m_current_camera_data.view_matrix.elements);
+                glProgramUniformMatrix4fv(program, location, 1, GL_FALSE, m_current_camera_data.view_matrix.elements);
             }
         }
 
@@ -655,7 +669,7 @@ namespace Hyperion::Rendering {
         HYP_ASSERT(material.properties.find(MODEL_TRANSFORM_PROPERTY_ID) != material.properties.end());
         OpenGLMaterialProperty &property = material.properties[MODEL_TRANSFORM_PROPERTY_ID];
         GLint location = property.location;
-        glProgramUniformMatrix4fv(shader.program, location, 1, GL_FALSE, model_matrix.elements);
+        glProgramUniformMatrix4fv(program, location, 1, GL_FALSE, model_matrix.elements);
     }
 
 }
