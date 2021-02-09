@@ -54,25 +54,18 @@ namespace Hyperion {
         void DispatchMessage(EntityMessage message);
 
         Component *AddComponent(Type type);
-
-        template<typename T, typename =
-            std::enable_if_t<std::is_base_of<Component, T>::value &&
-            !std::is_same<Component, T>::value &&
-            !std::is_same<Transform, T>::value>>
+        template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value && !std::is_same<Transform, T>::value>>
         T *AddComponent() {
             Type type = Type::get<T>();
             return static_cast<T *>(AddComponent(type));
         }
 
+        Component *GetComponent(Type type) const;
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         T *GetComponent() const {
-            for (auto [component_type, component] : m_components) {
-                if (component_type.is_derived_from<T>()) {
-                    return static_cast<T *>(component);
-                }
-            }
-
-            return nullptr;
+            Type type = Type::get<T>();
+            Component *component = GetComponent(type);
+            return static_cast<T *>(component);
         }
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
@@ -141,6 +134,8 @@ namespace Hyperion {
             
             return components;
         }
+
+        const Map<Type, Component *> &GetComponents() const { return m_components; }
 
         inline Transform *GetTransform() { return m_transform; }
 

@@ -30,7 +30,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <OutputPath>..\..\..\build\profile\bin\managed\</OutputPath>
     <BaseIntermediateOutputPath>..\..\..\build\profile\obj\managed\</BaseIntermediateOutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
@@ -55,10 +55,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />
+    <Compile Include="Component.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="Object.cs" />
     <Compile Include="Time.cs" />
+    <Compile Include="Transform.cs" />
+    <Compile Include="Vector3.cs" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

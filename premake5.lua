@@ -62,7 +62,6 @@ workspace "hyperion"
 		defines { "HYP_DEBUG", "HYP_PROFILE", "HYP_ENABLE_ASSERTS", "HYP_BREAK_ON_ASSERT" }
 		runtime "Release"
 		symbols "On"
-		optimize "On"
 	filter "configurations:release"
 		defines { "HYP_RELEASE" }
 		runtime "Release"

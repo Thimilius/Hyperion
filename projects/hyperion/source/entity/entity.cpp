@@ -60,6 +60,16 @@ namespace Hyperion {
         return component;
     }
 
+    Component *Entity::GetComponent(Type type) const {
+        for (auto [component_type, component] : m_components) {
+            if (component_type.is_derived_from(type)) {
+                return component;
+            }
+        }
+
+        return nullptr;
+    }
+
     void Entity::RegisterMessageListener(IEntityMessageListener *listener) {
         m_message_listeners.push_back(listener);
     }
