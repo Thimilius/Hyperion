@@ -2,36 +2,46 @@
 
 #include "hyperion/modules/mono/mono_scripting_bindings.hpp"
 
+#include "hyperion/assets/material.hpp"
 #include "hyperion/core/app/input.hpp"
 #include "hyperion/core/app/time.hpp"
 #include "hyperion/core/object/object.hpp"
 #include "hyperion/entity/entity.hpp"
+#include "hyperion/entity/world.hpp"
 #include "hyperion/entity/components/component.hpp"
+#include "hyperion/entity/components/behaviour.hpp"
 #include "hyperion/entity/components/transform.hpp"
+#include "hyperion/entity/components/physics/box_collider.hpp"
+#include "hyperion/entity/components/physics/sphere_collider.hpp"
+#include "hyperion/entity/components/rendering/camera.hpp"
+#include "hyperion/entity/components/rendering/mesh_renderer.hpp"
 #include "hyperion/modules/mono/mono_scripting_driver.hpp"
 
 namespace Hyperion::Scripting {
 
-    MonoObject *Binding_Component_GetEntity(MonoObject *managed_object) {
-        if (Object *native_object = MonoScriptingDriver::GetNativeObject(managed_object)) {
-            Component *component = static_cast<Component *>(native_object);
-            MonoObject *managed_entity = MonoScriptingDriver::GetManagedObject(component->GetEntity());
-            HYP_ASSERT(managed_entity);
-            return managed_entity;
+    MonoObject *Binding_Component_GetEntity(MonoObject *managed_component) {
+        if (Component *component = MonoScriptingDriver::GetNativeObjectAs<Component>(managed_component)) {
+            return MonoScriptingDriver::GetOrCreateManagedObject(component->GetEntity(), Type::get<Entity>());
         } else {
             return nullptr;
         }
     }
 
-    MonoObject *Binding_Entity_GetTransform(MonoObject *managed_object, MonoString *managed_name) {
-        if (Object *native_object = MonoScriptingDriver::GetNativeObject(managed_object)) {
-            Entity *entity = static_cast<Entity *>(native_object);
+    MonoObject *Binding_Entity_GetTransform(MonoObject *managed_entity) {
+        if (Entity *entity = MonoScriptingDriver::GetNativeObjectAs<Entity>(managed_entity)) {
             return MonoScriptingDriver::GetOrCreateManagedObject(entity->GetTransform(), Type::get<Transform>());
         } else {
             return nullptr;
         }
     }
 
+    MonoObject *Binding_Entity_GetWorld(MonoObject *managed_entity) {
+        if (Entity *entity = MonoScriptingDriver::GetNativeObjectAs<Entity>(managed_entity)) {
+            return MonoScriptingDriver::GetOrCreateManagedObject(entity->GetWorld(), Type::get<World>());
+        } else {
+            return nullptr;
+        }
+    }
 
     void Binding_Entity_Ctor(MonoObject *managed_object, MonoString *managed_name) {
         Entity *native_entity;
@@ -45,18 +55,35 @@ namespace Hyperion::Scripting {
         MonoScriptingDriver::RegisterObject(managed_object, native_entity);
     }
 
-    MonoObject *Binding_Entity_GetComponent(MonoObject *managed_object, MonoReflectionType *reflection_type) {
-        MonoType *type = mono_reflection_type_get_type(reflection_type);
-        HYP_ASSERT(type);
-        MonoClass *managed_class = mono_type_get_class(type);
-        HYP_ASSERT(managed_class);
+    MonoObject *Binding_Entity_AddComponent(MonoObject *managed_entity, MonoReflectionType *reflection_type) {
+        if (Entity *entity = MonoScriptingDriver::GetNativeObjectAs<Entity>(managed_entity)) {
+            MonoType *type = mono_reflection_type_get_type(reflection_type);
+            HYP_ASSERT(type);
+            MonoClass *managed_class = mono_type_get_class(type);
+            HYP_ASSERT(managed_class);
 
-        if (Object *native_object = MonoScriptingDriver::GetNativeObject(managed_object)) {
-            Entity *entity = static_cast<Entity *>(native_object);
+            Type native_class = MonoScriptingDriver::GetNativeClass(managed_class);
+            Component *component = entity->AddComponent(native_class);
+            return MonoScriptingDriver::GetOrCreateManagedObject(component, native_class);
+        } else {
+            return nullptr;
+        }
+    }
+
+    MonoObject *Binding_Entity_GetComponent(MonoObject *managed_entity, MonoReflectionType *reflection_type) {
+        if (Entity *entity = MonoScriptingDriver::GetNativeObjectAs<Entity>(managed_entity)) {
+            MonoType *type = mono_reflection_type_get_type(reflection_type);
+            HYP_ASSERT(type);
+            MonoClass *managed_class = mono_type_get_class(type);
+            HYP_ASSERT(managed_class);
+
             Type native_class = MonoScriptingDriver::GetNativeClass(managed_class);
             Component *component = entity->GetComponent(native_class);
-            MonoObject *result = MonoScriptingDriver::GetOrCreateManagedObject(component, native_class);
-            return result;
+            if (component != nullptr) {
+                return MonoScriptingDriver::GetOrCreateManagedObject(component, component->GetType());
+            } else {
+                return nullptr;
+            }
         } else {
             return nullptr;
         }
@@ -109,16 +136,23 @@ namespace Hyperion::Scripting {
         return MonoScriptingDriver::IsRegisterdObject(managed_object);
     }
 
-    void Binding_Transform_GetPosition(MonoObject *managed_object, Vec3 *position) {
-        if (Object *native_object = MonoScriptingDriver::GetNativeObject(managed_object)) {
-            Transform *transform = static_cast<Transform *>(native_object);
+    MonoObject *Binding_Renderer_GetMaterial(MonoObject *managed_renderer) {
+        if (Renderer *renderer = MonoScriptingDriver::GetNativeObjectAs<Renderer>(managed_renderer)) {
+            Material *material = renderer->GetMaterial();
+            return MonoScriptingDriver::GetOrCreateManagedObject(material, Type::get<Material>());
+        } else {
+            return nullptr;
+        }
+    }
+
+    void Binding_Transform_GetPosition(MonoObject *managed_transform, Vec3 *position) {
+        if (Transform *transform = MonoScriptingDriver::GetNativeObjectAs<Transform>(managed_transform)) {
             *position = transform->GetPosition();
         }
     }
 
-    void Binding_Transform_SetPosition(MonoObject *managed_object, Vec3 *position) {
-        if (Object *native_object = MonoScriptingDriver::GetNativeObject(managed_object)) {
-            Transform *transform = static_cast<Transform *>(native_object);
+    void Binding_Transform_SetPosition(MonoObject *managed_transform, Vec3 *position) {
+        if (Transform *transform = MonoScriptingDriver::GetNativeObjectAs<Transform>(managed_transform)) {
             transform->SetPosition(*position);
         }
     }
@@ -126,10 +160,19 @@ namespace Hyperion::Scripting {
     void MonoScriptingBindings::Bind() {
         // Register classes
         {
+            MonoScriptingDriver::RegisterClass(Type::get<Behaviour>(), "Hyperion", "Behaviour");
+            MonoScriptingDriver::RegisterClass(Type::get<BoxCollider>(), "Hyperion", "BoxCollider");
+            MonoScriptingDriver::RegisterClass(Type::get<Camera>(), "Hyperion", "Camera");
+            MonoScriptingDriver::RegisterClass(Type::get<Collider>(), "Hyperion", "Collider");
             MonoScriptingDriver::RegisterClass(Type::get<Component>(), "Hyperion", "Component");
             MonoScriptingDriver::RegisterClass(Type::get<Entity>(), "Hyperion", "Entity");
             MonoScriptingDriver::RegisterClass(Type::get<Object>(), "Hyperion", "Object");
+            MonoScriptingDriver::RegisterClass(Type::get<Material>(), "Hyperion", "Material");
+            MonoScriptingDriver::RegisterClass(Type::get<MeshRenderer>(), "Hyperion", "MeshRenderer");
+            MonoScriptingDriver::RegisterClass(Type::get<Renderer>(), "Hyperion", "Renderer");
+            MonoScriptingDriver::RegisterClass(Type::get<SphereCollider>(), "Hyperion", "SphereCollider");
             MonoScriptingDriver::RegisterClass(Type::get<Transform>(), "Hyperion", "Transform");
+            MonoScriptingDriver::RegisterClass(Type::get<World>(), "Hyperion", "World");
         }
 
         // Input
@@ -150,7 +193,9 @@ namespace Hyperion::Scripting {
         // Entity
         {
             mono_add_internal_call("Hyperion.Entity::Binding_GetTransform", Binding_Entity_GetTransform);
+            mono_add_internal_call("Hyperion.Entity::Binding_GetWorld", Binding_Entity_GetWorld);
             mono_add_internal_call("Hyperion.Entity::Binding_Ctor", Binding_Entity_Ctor);
+            mono_add_internal_call("Hyperion.Entity::Binding_AddComponent", Binding_Entity_AddComponent);
             mono_add_internal_call("Hyperion.Entity::Binding_GetComponent", Binding_Entity_GetComponent);
             mono_add_internal_call("Hyperion.Entity::Binding_CreatePrimitive", Binding_Entity_CreatePrimitive);
         }
@@ -174,6 +219,11 @@ namespace Hyperion::Scripting {
         {
             mono_add_internal_call("Hyperion.Transform::Binding_GetPosition", Binding_Transform_GetPosition);
             mono_add_internal_call("Hyperion.Transform::Binding_SetPosition", Binding_Transform_SetPosition);
+        }
+
+        // Renderer
+        {
+            mono_add_internal_call("Hyperion.Renderer::Binding_GetMaterial", Binding_Renderer_GetMaterial);
         }
     }
 

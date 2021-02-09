@@ -55,13 +55,24 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />
-    <Compile Include="Component.cs" />
-    <Compile Include="Entity.cs" />
+    <Compile Include="Assets\Asset.cs" />
+    <Compile Include="Engine.cs" />
+    <Compile Include="Entity\Components\Behaviour.cs" />
+    <Compile Include="Entity\Components\Component.cs" />
+    <Compile Include="Entity\Components\Physics\BoxCollider.cs" />
+    <Compile Include="Entity\Components\Physics\Collider.cs" />
+    <Compile Include="Entity\Components\Physics\SphereCollider.cs" />
+    <Compile Include="Entity\Components\Rendering\Camera.cs" />
+    <Compile Include="Entity\Components\Rendering\MeshRenderer.cs" />
+    <Compile Include="Entity\Entity.cs" />
+    <Compile Include="Entity\World.cs" />
     <Compile Include="Input.cs" />
+    <Compile Include="Assets\Material.cs" />
     <Compile Include="Object.cs" />
+    <Compile Include="Entity\Components\Rendering\Renderer.cs" />
     <Compile Include="Time.cs" />
-    <Compile Include="Transform.cs" />
-    <Compile Include="Vector3.cs" />
+    <Compile Include="Entity\Components\Transform.cs" />
+    <Compile Include="Math\Vector3.cs" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

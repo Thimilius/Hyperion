@@ -15,6 +15,10 @@ namespace Hyperion::Scripting {
     public:
         inline static MonoDomain *GetDomain() { return s_core_domain; }
 
+        template<typename T>
+        static T *GetNativeObjectAs(MonoObject *managed_object) {
+            return static_cast<T *>(GetNativeObject(managed_object));
+        }
         static Object *GetNativeObject(MonoObject *managed_object);
         static MonoObject *GetManagedObject(Object *native_object);
         static MonoObject *GetOrCreateManagedObject(Object *native_object, Type native_type);

@@ -3,7 +3,7 @@
 #include "hyperion/core/color.hpp"
 #include "hyperion/entity/entity_message.hpp"
 #include "hyperion/entity/layer.hpp"
-#include "hyperion/entity/components/component.hpp"
+#include "hyperion/entity/components/behaviour.hpp"
 #include "hyperion/rendering/camera_data.hpp"
 
 namespace Hyperion {
@@ -15,10 +15,10 @@ namespace Hyperion {
         Nothing
     };
 
-    class Camera final : public Component, public IEntityMessageListener {
-        HYP_REFLECT(Component);
+    class Camera final : public Behaviour, public IEntityMessageListener {
+        HYP_REFLECT(Behaviour);
     public:
-        Camera() : Component("Camera") { }
+        Camera() : Behaviour("Camera") { }
 
         inline Rendering::CameraProjectionMode GetProjectionMode() const { return m_data.projection_mode; }
         inline void SetProjectionMode(Rendering::CameraProjectionMode type) { m_data.projection_mode = type; }

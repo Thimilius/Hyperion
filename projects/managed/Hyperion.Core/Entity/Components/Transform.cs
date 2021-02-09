@@ -12,6 +12,8 @@ namespace Hyperion {
             }
         }
 
+        protected Transform() { }
+
         [MethodImpl(MethodImplOptions.InternalCall)] private static extern Entity Binding_GetPosition(Transform transform, out Vector3 position);
         [MethodImpl(MethodImplOptions.InternalCall)] private static extern Entity Binding_SetPosition(Transform transform, ref Vector3 position);
     }
