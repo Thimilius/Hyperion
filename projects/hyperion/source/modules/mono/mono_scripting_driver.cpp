@@ -17,6 +17,7 @@ namespace Hyperion::Scripting {
         InitDomain();
         InitAssembly();
         InitBindings();
+        InitClasses();
         InitMethods();
     }
 
@@ -29,12 +30,16 @@ namespace Hyperion::Scripting {
     }
 
     void MonoScriptingDriver::Shutdown() {
+        for (auto [managed_class, scripting_type] : s_scripting_types) {
+            delete scripting_type;
+        }
+
         mono_jit_cleanup(s_core_domain);
     }
 
     void *MonoScriptingDriver::GetNativeObject(MonoObject *managed_object) {
-        auto it = s_native_objects.find(managed_object);
-        if (it != s_native_objects.end()) {
+        auto it = s_managed_to_native_objects.find(managed_object);
+        if (it != s_managed_to_native_objects.end()) {
             return it->second;
         } else {
             return nullptr;
@@ -44,36 +49,38 @@ namespace Hyperion::Scripting {
     MonoObject *MonoScriptingDriver::GetOrCreateManagedObject(Object *native_object, Type native_type) {
         MonoScriptingInstance *scripting_instance = static_cast<MonoScriptingInstance *>(native_object->GetScriptingInstance());
         if (scripting_instance) {
-            return scripting_instance->GetMonoObject();
+            return scripting_instance->GetManagedObject();
         } else {
-            return CreateManagedObject(native_object, native_type);
+            return CreateManagedObjectFromNativeType(native_object, native_type);
         }
     }
 
     MonoObject *MonoScriptingDriver::GetOrCreateManagedObjectRaw(void *native, Type native_type) {
-        HYP_ASSERT(s_managed_classes.find(native_type) != s_managed_classes.end());
+        HYP_ASSERT(s_native_to_managed_classes.find(native_type) != s_native_to_managed_classes.end());
 
-        auto it = s_managed_objects.find(native);
-        if (it != s_managed_objects.end()) {
+        auto it = s_native_to_managed_objects.find(native);
+        if (it != s_native_to_managed_objects.end()) {
             return it->second;
         } else {
-            MonoObject *managed_object = mono_object_new(s_core_domain, s_managed_classes[native_type]);
+            MonoObject *managed_object = mono_object_new(s_core_domain, s_native_to_managed_classes[native_type]);
             RegisterObject(managed_object, native);
             return managed_object;
         }
     }
 
-    MonoObject *MonoScriptingDriver::CreateManagedObject(Object *native_object, Type native_type) {
-        HYP_ASSERT(s_managed_classes.find(native_type) != s_managed_classes.end());
-
-        MonoObject *managed_object = mono_object_new(s_core_domain, s_managed_classes[native_type]);
+    MonoObject *MonoScriptingDriver::CreateManagedObjectFromManagedType(Object *native_object, MonoClass *managed_class) {
+        MonoObject *managed_object = mono_object_new(s_core_domain, managed_class);
         RegisterManagedObject(managed_object, native_object);
-
         return managed_object;
     }
 
+    MonoObject *MonoScriptingDriver::CreateManagedObjectFromNativeType(Object *native_object, Type native_type) {
+        HYP_ASSERT(s_native_to_managed_classes.find(native_type) != s_native_to_managed_classes.end());
+        return CreateManagedObjectFromManagedType(native_object, s_native_to_managed_classes[native_type]);
+    }
+
     bool MonoScriptingDriver::IsRegisterdObject(MonoObject *managed_object) {
-        return s_native_objects.find(managed_object) != s_native_objects.end();
+        return s_managed_to_native_objects.find(managed_object) != s_managed_to_native_objects.end();
     }
 
     void MonoScriptingDriver::RegisterManagedObject(MonoObject *managed_object, Object *native_object) {
@@ -82,31 +89,46 @@ namespace Hyperion::Scripting {
     }
 
     void MonoScriptingDriver::RegisterObject(MonoObject *managed_object, void *native) {
-        HYP_ASSERT(s_native_objects.find(managed_object) == s_native_objects.end());
+        HYP_ASSERT(s_managed_to_native_objects.find(managed_object) == s_managed_to_native_objects.end());
 
-        s_native_objects[managed_object] = native;
-        s_managed_objects[native] = managed_object;
+        s_managed_to_native_objects[managed_object] = native;
+        s_native_to_managed_objects[native] = managed_object;
     }
 
     void MonoScriptingDriver::UnregisterObject(MonoObject *managed_object) {
-        HYP_ASSERT(s_native_objects.find(managed_object) != s_native_objects.end());
+        HYP_ASSERT(s_managed_to_native_objects.find(managed_object) != s_managed_to_native_objects.end());
 
-        void *native = s_native_objects[managed_object];
-        s_native_objects.erase(managed_object);
-        s_managed_objects.erase(native);
+        void *native = s_managed_to_native_objects[managed_object];
+        s_managed_to_native_objects.erase(managed_object);
+        s_native_to_managed_objects.erase(native);
+    }
+
+    bool MonoScriptingDriver::IsNativeClass(MonoClass *native_class) {
+        return s_managed_to_native_classes.find(native_class) != s_managed_to_native_classes.end();
     }
 
     Type MonoScriptingDriver::GetNativeClass(MonoClass *native_class) {
-        HYP_ASSERT(s_native_classes.find(native_class) != s_native_classes.end());
-        return s_native_classes[native_class].get_value<Type>();
+        HYP_ASSERT(IsNativeClass(native_class));
+        return s_managed_to_native_classes[native_class].get_value<Type>();
     }
 
     void MonoScriptingDriver::RegisterClass(Type native_class, const char *managed_namespace, const char *managed_name) {
         MonoClass *managed_class = mono_class_from_name(s_core_assembly_image, managed_namespace, managed_name);
         HYP_ASSERT(managed_class);
 
-        s_managed_classes[native_class] = managed_class;
-        s_native_classes[managed_class] = native_class;
+        s_native_to_managed_classes[native_class] = managed_class;
+        s_managed_to_native_classes[managed_class] = native_class;
+    }
+
+    MonoScriptingType *MonoScriptingDriver::GetOrCreateScriptingType(MonoClass *managed_class) {
+        auto it = s_scripting_types.find(managed_class);
+        if (it != s_scripting_types.end()) {
+            return it->second;
+        } else {
+            MonoScriptingType *mono_scripting_type = new MonoScriptingType(managed_class);
+            s_scripting_types[managed_class] = mono_scripting_type;
+            return mono_scripting_type;
+        }
     }
 
     void MonoScriptingDriver::InitDebugger(const ScriptingSettings &settings) {
@@ -148,6 +170,11 @@ namespace Hyperion::Scripting {
         HYP_ASSERT(s_core_assembly);
         s_core_assembly_image = mono_assembly_get_image(s_core_assembly);
         HYP_ASSERT(s_core_assembly_image);
+    }
+
+    void MonoScriptingDriver::InitClasses() {
+        s_class_component = mono_class_from_name(s_core_assembly_image, "Hyperion", "Component");
+        HYP_ASSERT(s_class_component);
     }
 
     void MonoScriptingDriver::InitMethods() {

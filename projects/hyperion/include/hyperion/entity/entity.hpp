@@ -5,8 +5,9 @@
 
 #include "hyperion/entity/entity_message.hpp"
 #include "hyperion/entity/layer.hpp"
-#include "hyperion/entity/components/transform.hpp"
 #include "hyperion/entity/components/rect_transform.hpp"
+#include "hyperion/entity/components/script.hpp"
+#include "hyperion/entity/components/transform.hpp"
 
 namespace Hyperion {
     class Component;
@@ -64,6 +65,7 @@ namespace Hyperion {
             return static_cast<T *>(AddComponent(type));
         }
         Component *AddComponent(Type type);
+        Script *AddScript(Scripting::ScriptingType *scripting_type);
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         T *GetComponent() const {

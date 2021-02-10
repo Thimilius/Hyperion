@@ -3,10 +3,11 @@
 namespace Hyperion {
 
     enum class EntityMessageType {
-        ComponentDestroyed,
-
         TransformChanged,
-        ActivationChanged
+        ActivationChanged,
+
+        ComponentDestroyed,
+        ScriptDestroyed,
     };
 
     struct EntityMessage {

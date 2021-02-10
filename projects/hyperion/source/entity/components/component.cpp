@@ -14,6 +14,10 @@ namespace Hyperion {
         : m_is_native_type(false), m_native_type(Type::get<Component>()), m_scripting_type(scripting_type) { }
 
     bool ComponentType::IsDerivedFrom(const ComponentType &base) const {
+        if (m_is_native_type != base.m_is_native_type) {
+            return false;
+        }
+
         if (m_is_native_type) {
             return m_native_type.is_derived_from(base.m_native_type);
         } else {

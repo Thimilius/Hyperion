@@ -6,12 +6,12 @@
 
 namespace Hyperion::Scripting {
 
-    MonoScriptingInstance::MonoScriptingInstance(MonoObject *mono_object) {
-        m_mono_object = mono_object;
+    MonoScriptingInstance::MonoScriptingInstance(MonoObject *managed_object) {
+        m_managed_object = managed_object;
     }
 
     void MonoScriptingInstance::OnDestroy() {
-        MonoScriptingDriver::UnregisterObject(m_mono_object);
+        MonoScriptingDriver::UnregisterObject(m_managed_object);
 
         delete this; // I don't really know how I feel about this...
     }

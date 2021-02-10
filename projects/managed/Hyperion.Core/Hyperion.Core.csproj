@@ -64,6 +64,7 @@
     <Compile Include="Entity\Components\Physics\SphereCollider.cs" />
     <Compile Include="Entity\Components\Rendering\Camera.cs" />
     <Compile Include="Entity\Components\Rendering\MeshRenderer.cs" />
+    <Compile Include="Entity\Components\Script.cs" />
     <Compile Include="Entity\Entity.cs" />
     <Compile Include="Entity\World.cs" />
     <Compile Include="Input.cs" />

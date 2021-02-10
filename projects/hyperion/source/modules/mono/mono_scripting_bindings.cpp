@@ -16,6 +16,7 @@
 #include "hyperion/entity/components/rendering/camera.hpp"
 #include "hyperion/entity/components/rendering/mesh_renderer.hpp"
 #include "hyperion/modules/mono/mono_scripting_driver.hpp"
+#include "hyperion/modules/mono/mono_scripting_instance.hpp"
 
 namespace Hyperion::Scripting {
 
@@ -57,14 +58,40 @@ namespace Hyperion::Scripting {
 
     MonoObject *Binding_Entity_AddComponent(MonoObject *managed_entity, MonoReflectionType *reflection_type) {
         if (Entity *entity = MonoScriptingDriver::GetNativeObjectAs<Entity>(managed_entity)) {
-            MonoType *type = mono_reflection_type_get_type(reflection_type);
-            HYP_ASSERT(type);
-            MonoClass *managed_class = mono_type_get_class(type);
+            MonoType *managed_type = mono_reflection_type_get_type(reflection_type);
+            HYP_ASSERT(managed_type);
+            MonoClass *managed_class = mono_type_get_class(managed_type);
             HYP_ASSERT(managed_class);
             
-            Type native_class = MonoScriptingDriver::GetNativeClass(managed_class);
-            Component *component = entity->AddComponent(native_class);
-            return MonoScriptingDriver::GetOrCreateManagedObject(component, native_class);
+            // First check that we are actually adding a component type that derives from 'Hyperion.Component'.
+            if (!mono_class_is_subclass_of(managed_class, MonoScriptingDriver::GetComponentClass(), false)) {
+                // TODO: We need to define a custom exception we can throw here.
+                return nullptr;
+            }
+
+            // FIXME: Make sure we are not trying to create an abstract class.
+
+            bool is_native_component = MonoScriptingDriver::IsNativeClass(managed_class);
+            ComponentType component_type = nullptr;
+            if (is_native_component) {
+                component_type = MonoScriptingDriver::GetNativeClass(managed_class);
+            } else {
+                component_type = MonoScriptingDriver::GetOrCreateScriptingType(managed_class);
+            }
+
+            // NOTE: For now we prevent from adding the same script more than once.
+            if (entity->GetComponent(component_type) != nullptr) {
+                return nullptr;
+            }
+
+            if (is_native_component) {
+                Type native_class = component_type.GetNativeType();
+                Component *component = entity->AddComponent(native_class);
+                return MonoScriptingDriver::GetOrCreateManagedObject(component, native_class);
+            } else {
+                Script *script = entity->AddScript(component_type.GetScriptingType());
+                return MonoScriptingDriver::CreateManagedObjectFromManagedType(script, managed_class);
+            }
         } else {
             return nullptr;
         }
@@ -72,17 +99,35 @@ namespace Hyperion::Scripting {
 
     MonoObject *Binding_Entity_GetComponent(MonoObject *managed_entity, MonoReflectionType *reflection_type) {
         if (Entity *entity = MonoScriptingDriver::GetNativeObjectAs<Entity>(managed_entity)) {
-            MonoType *type = mono_reflection_type_get_type(reflection_type);
-            HYP_ASSERT(type);
-            MonoClass *managed_class = mono_type_get_class(type);
+            MonoType *managed_type = mono_reflection_type_get_type(reflection_type);
+            HYP_ASSERT(managed_type);
+            MonoClass *managed_class = mono_type_get_class(managed_type);
             HYP_ASSERT(managed_class);
 
-            Type native_class = MonoScriptingDriver::GetNativeClass(managed_class);
-            Component *component = entity->GetComponent(native_class);
-            if (component != nullptr) {
+            // First check that we are actually searching for a component type that derives from 'Hyperion.Component'.
+            if (!mono_class_is_subclass_of(managed_class, MonoScriptingDriver::GetComponentClass(), false)) {
+                // TODO: We need to define a custom exception we can throw here.
+                return nullptr;
+            }
+
+            bool is_native_component = MonoScriptingDriver::IsNativeClass(managed_class);
+            ComponentType component_type = nullptr;
+            if (is_native_component) {
+                component_type = MonoScriptingDriver::GetNativeClass(managed_class);
+            } else {
+                component_type = MonoScriptingDriver::GetOrCreateScriptingType(managed_class);
+            }
+
+            Component *component = entity->GetComponent(component_type);
+            if (component == nullptr) {
+                return nullptr;
+            }
+
+            if (is_native_component) {
                 return MonoScriptingDriver::GetOrCreateManagedObject(component, component->GetType());
             } else {
-                return nullptr;
+                HYP_ASSERT(component->GetType() == Type::get<Script>());
+                return static_cast<MonoScriptingInstance *>(component->GetScriptingInstance())->GetManagedObject();
             }
         } else {
             return nullptr;
@@ -91,7 +136,7 @@ namespace Hyperion::Scripting {
 
     MonoObject *Binding_Entity_CreatePrimitive(EntityPrimitive primitive) {
         Entity *native_entity = Entity::CreatePrimitive(primitive);
-        return MonoScriptingDriver::CreateManagedObject(native_entity, Type::get<Entity>());
+        return MonoScriptingDriver::CreateManagedObjectFromNativeType(native_entity, Type::get<Entity>());
     }
 
     MonoString *Binding_Object_GetName(MonoObject *managed_object) {

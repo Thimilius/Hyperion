@@ -15,6 +15,7 @@
 #include "hyperion/entity/components/behaviour.hpp"
 #include "hyperion/entity/components/component.hpp"
 #include "hyperion/entity/components/rect_transform.hpp"
+#include "hyperion/entity/components/script.hpp"
 #include "hyperion/entity/components/transform.hpp"
 #include "hyperion/entity/components/physics/box_collider.hpp"
 #include "hyperion/entity/components/physics/collider.hpp"
@@ -192,6 +193,8 @@ HYP_REFLECT_REGISTER_BEGIN
         Registration<Component>("Component");
         Registration<RectTransform>("RectTransform")
             .constructor(select_overload<RectTransform *()>(&RectTransform::Create))(DefaultConstructorPolicy);
+        Registration<Script>("Script")
+            .constructor(select_overload<Script *()>(&Script::Create))(DefaultConstructorPolicy);
         Registration<Transform>("Transform")
             .constructor(select_overload<Transform *()>(&Transform::Create))(DefaultConstructorPolicy);
         Registration<BoxCollider>("BoxCollider")

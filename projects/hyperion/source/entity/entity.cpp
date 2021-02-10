@@ -46,6 +46,17 @@ namespace Hyperion {
         return component;
     }
 
+    Script *Entity::AddScript(Scripting::ScriptingType *scripting_type) {
+        Script *script = Script::Create();
+        script->m_entity = this;
+        script->m_scripting_type = scripting_type;
+        m_components[scripting_type] = script;
+
+        script->OnCreate();
+
+        return script;
+    }
+
     Component *Entity::GetComponent(ComponentType type) const {
         for (auto [component_type, component] : m_components) {
             if (component_type.IsDerivedFrom(type)) {
@@ -61,6 +72,11 @@ namespace Hyperion {
             case EntityMessageType::ComponentDestroyed: {
                 Component *component = static_cast<Component *>(message.parameter);
                 m_components.erase(component->GetType());
+                break;
+            }
+            case EntityMessageType::ScriptDestroyed: {
+                Script *script = static_cast<Script *>(message.parameter);
+                m_components.erase(script->GetScriptingType());
                 break;
             }
         }
