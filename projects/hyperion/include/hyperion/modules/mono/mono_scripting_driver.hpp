@@ -10,6 +10,8 @@ namespace Hyperion::Scripting {
 
     class MonoScriptingDriver : public IScriptingDriver {
     public:
+        uint64 GetMemoryUsage() const override;
+
         void Initialize(const ScriptingSettings &settings) override;
         void Update() override;
         void Shutdown() override;

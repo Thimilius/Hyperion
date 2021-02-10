@@ -5,12 +5,17 @@
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/mono-debug.h>
+#include <mono/metadata/mono-gc.h>
 #include <mono/metadata/threads.h>
 
 #include "hyperion/modules/mono/mono_scripting_bindings.hpp"
 #include "hyperion/modules/mono/mono_scripting_instance.hpp"
 
 namespace Hyperion::Scripting {
+
+    uint64 MonoScriptingDriver::GetMemoryUsage() const {
+        return mono_gc_get_used_size();
+    }
 
     void MonoScriptingDriver::Initialize(const ScriptingSettings &settings) {
         InitDebugger(settings);

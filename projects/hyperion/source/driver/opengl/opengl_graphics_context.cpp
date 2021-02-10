@@ -15,9 +15,7 @@ namespace Hyperion::Rendering {
     constexpr bool g_log_notifications = false;
 
     void OpenGLGraphicsContext::Initialize(const GraphicsContextDescriptor &descriptor) {
-        glDebugMessageCallback(DebugMessageCallback, nullptr);
-        glEnable(GL_DEBUG_OUTPUT);
-        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        InitDebug();
 
         QueryExtensions();
         CheckExtensions();
@@ -27,6 +25,14 @@ namespace Hyperion::Rendering {
 
         HYP_LOG_INFO("OpenGL", "Initialized OpenGL! ({})", m_properties.version);
         HYP_LOG_INFO("OpenGL", "Renderer: {}", m_properties.renderer);
+    }
+
+    void OpenGLGraphicsContext::InitDebug() {
+#if defined HYP_DEBUG || defined HYP_PROFILE
+        glDebugMessageCallback(DebugMessageCallback, nullptr);
+        glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+#endif
     }
 
     void OpenGLGraphicsContext::QueryExtensions() {

@@ -8,6 +8,10 @@
 
 namespace Hyperion::Scripting {
 
+    uint64 ScriptingEngine::GetMemoryUsage() {
+        return s_scripting_driver->GetMemoryUsage();
+    }
+
     void ScriptingEngine::Initialize(const ScriptingSettings &settings) {
 #ifdef HYP_SCRIPTING_MONO
         s_scripting_driver = new MonoScriptingDriver();

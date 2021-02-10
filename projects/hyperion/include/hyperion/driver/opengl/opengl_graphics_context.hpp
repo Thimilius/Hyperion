@@ -27,6 +27,8 @@ namespace Hyperion::Rendering {
     protected:
         void Initialize(const GraphicsContextDescriptor &descriptor) override;
     private:
+        void InitDebug();
+
         void QueryExtensions();
         void QueryProperties();
         void QueryLimits();

@@ -10,6 +10,8 @@ namespace Hyperion {
 namespace Hyperion::Scripting {
 
     class ScriptingEngine {
+    public:
+        static uint64 GetMemoryUsage();
     private:
         ScriptingEngine() = delete;
         ~ScriptingEngine() = delete;

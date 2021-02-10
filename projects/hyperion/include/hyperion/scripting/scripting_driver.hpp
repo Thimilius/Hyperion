@@ -8,6 +8,8 @@ namespace Hyperion::Scripting {
     public:
         virtual ~IScriptingDriver() = default;
     public:
+        virtual uint64 GetMemoryUsage() const = 0;
+
         virtual void Initialize(const ScriptingSettings &settings) = 0;
         virtual void Update() = 0;
         virtual void Shutdown() = 0;
