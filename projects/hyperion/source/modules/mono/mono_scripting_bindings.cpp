@@ -193,6 +193,51 @@ namespace Hyperion::Scripting {
         }
     }
 
+    void Binding_Transform_GetRotation(MonoObject *managed_transform, Quaternion *position) {
+        if (Transform *transform = MonoScriptingDriver::GetNativeObjectAs<Transform>(managed_transform)) {
+            *position = transform->GetRotation();
+        }
+    }
+
+    void Binding_Transform_SetRotation(MonoObject *managed_transform, Quaternion *position) {
+        if (Transform *transform = MonoScriptingDriver::GetNativeObjectAs<Transform>(managed_transform)) {
+            transform->SetRotation(*position);
+        }
+    }
+
+    void Binding_Transform_GetEulerAngles(MonoObject *managed_transform, Vec3 *euler_angles) {
+        if (Transform *transform = MonoScriptingDriver::GetNativeObjectAs<Transform>(managed_transform)) {
+            *euler_angles = transform->GetEulerAngles();
+        }
+    }
+
+    void Binding_Transform_SetEulerAngles(MonoObject *managed_transform, Vec3 *euler_angles) {
+        if (Transform *transform = MonoScriptingDriver::GetNativeObjectAs<Transform>(managed_transform)) {
+            transform->SetEulerAngles(*euler_angles);
+        }
+    }
+
+    MonoObject *Binding_Transform_GetParent(MonoObject *managed_transform) {
+        if (Transform *transform = MonoScriptingDriver::GetNativeObjectAs<Transform>(managed_transform)) {
+            Transform *parent = transform->GetParent();
+            if (parent != nullptr) {
+                return MonoScriptingDriver::GetOrCreateManagedObject(parent, Type::get<Transform>());
+            } else {
+                return nullptr;
+            }
+        } else {
+            return nullptr;
+        }
+    }
+
+    void Binding_Transform_SetParent(MonoObject *managed_transform, MonoObject *managed_parent) {
+        if (Transform *transform = MonoScriptingDriver::GetNativeObjectAs<Transform>(managed_transform)) {
+            if (Transform *parent = MonoScriptingDriver::GetNativeObjectAs<Transform>(managed_parent)) {
+                transform->SetParent(parent);
+            }
+        }
+    }
+
     void MonoScriptingBindings::Bind() {
         // Register classes
         {
@@ -255,6 +300,12 @@ namespace Hyperion::Scripting {
         {
             mono_add_internal_call("Hyperion.Transform::Binding_GetPosition", Binding_Transform_GetPosition);
             mono_add_internal_call("Hyperion.Transform::Binding_SetPosition", Binding_Transform_SetPosition);
+            mono_add_internal_call("Hyperion.Transform::Binding_GetRotation", Binding_Transform_GetRotation);
+            mono_add_internal_call("Hyperion.Transform::Binding_SetRotation", Binding_Transform_SetRotation);
+            mono_add_internal_call("Hyperion.Transform::Binding_GetEulerAngles", Binding_Transform_GetEulerAngles);
+            mono_add_internal_call("Hyperion.Transform::Binding_SetEulerAngles", Binding_Transform_SetEulerAngles);
+            mono_add_internal_call("Hyperion.Transform::Binding_GetParent", Binding_Transform_GetParent);
+            mono_add_internal_call("Hyperion.Transform::Binding_SetParent", Binding_Transform_SetParent);
         }
 
         // Renderer

@@ -28,13 +28,12 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'profile|x64' ">
     <PlatformTarget>x64</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
     <OutputPath>..\..\..\build\profile\bin\managed\</OutputPath>
     <BaseIntermediateOutputPath>..\..\..\build\profile\obj\managed\</BaseIntermediateOutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
-    <DefineConstants>HYP_DEBUG;HYP_PROFILE;HYP_ENABLE_ASSERTS;HYP_BREAK_ON_ASSERT;HYP_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;HYP_AUDIO_FMOD;HYP_PHYSICS_BULLET;HYP_SCRIPTING_MONO</DefineConstants>
+    <DefineConstants>HYP_PROFILE;HYP_ENABLE_ASSERTS;HYP_BREAK_ON_ASSERT;HYP_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;HYP_AUDIO_FMOD;HYP_PHYSICS_BULLET;HYP_SCRIPTING_MONO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -56,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Application.cs" />
     <Compile Include="Assets\Asset.cs" />
+    <Compile Include="Assets\Material.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="Entity\Components\Behaviour.cs" />
     <Compile Include="Entity\Components\Component.cs" />
@@ -64,16 +64,16 @@
     <Compile Include="Entity\Components\Physics\SphereCollider.cs" />
     <Compile Include="Entity\Components\Rendering\Camera.cs" />
     <Compile Include="Entity\Components\Rendering\MeshRenderer.cs" />
+    <Compile Include="Entity\Components\Rendering\Renderer.cs" />
     <Compile Include="Entity\Components\Script.cs" />
+    <Compile Include="Entity\Components\Transform.cs" />
     <Compile Include="Entity\Entity.cs" />
     <Compile Include="Entity\World.cs" />
     <Compile Include="Input.cs" />
-    <Compile Include="Assets\Material.cs" />
-    <Compile Include="Object.cs" />
-    <Compile Include="Entity\Components\Rendering\Renderer.cs" />
-    <Compile Include="Time.cs" />
-    <Compile Include="Entity\Components\Transform.cs" />
+    <Compile Include="Math\Quaternion.cs" />
     <Compile Include="Math\Vector3.cs" />
+    <Compile Include="Object.cs" />
+    <Compile Include="Time.cs" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

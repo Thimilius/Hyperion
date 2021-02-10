@@ -48,9 +48,9 @@ namespace Hyperion {
             return result;
         }
 
-        [MethodImpl(MethodImplOptions.InternalCall)] private static extern string Binding_GetName(Object obj);
-        [MethodImpl(MethodImplOptions.InternalCall)] private static extern void Binding_SetName(Object obj, string name);
-        [MethodImpl(MethodImplOptions.InternalCall)] private static extern void Binding_Destroy(Object obj);
-        [MethodImpl(MethodImplOptions.InternalCall)] private static extern bool Binding_IsNativeAlive(Object obj);
+        [MethodImpl(MethodImplOptions.InternalCall)] private static extern string Binding_GetName(Object @this);
+        [MethodImpl(MethodImplOptions.InternalCall)] private static extern void Binding_SetName(Object @this, string name);
+        [MethodImpl(MethodImplOptions.InternalCall)] private static extern void Binding_Destroy(Object @this);
+        [MethodImpl(MethodImplOptions.InternalCall)] private static extern bool Binding_IsNativeAlive(Object @this);
     }
 }

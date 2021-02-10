@@ -87,8 +87,10 @@ namespace Hyperion {
         inline uint32 GetChildCount() const { return static_cast<uint32>(m_children.size()); }
         inline Transform *GetChild(uint32 index) { return m_children[index]; }
 
-        Transform *GetRoot() const;
+        Transform *GetParent() { return m_parent; }
         void SetParent(Transform *parent);
+
+        Transform *GetRoot() const;
         bool IsChildOf(Transform *parent) const;
     protected:
         Transform(const String &name) : Component(name) { }

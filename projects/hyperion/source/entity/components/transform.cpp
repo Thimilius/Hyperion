@@ -7,14 +7,6 @@
 
 namespace Hyperion {
 
-    Transform *Transform::GetRoot() const {
-        Transform *parent = m_parent ? m_parent : (Transform *)this;
-        while (parent->m_parent != nullptr) {
-            parent = parent->m_parent;
-        }
-        return parent;
-    }
-
     void Transform::SetParent(Transform *parent) {
         // Handle special edge cases and for now just silently abandon.
         if (m_parent == parent || parent == this) {
@@ -43,6 +35,14 @@ namespace Hyperion {
         m_parent = parent;
 
         NotifyTransformChange();
+    }
+
+    Transform *Transform::GetRoot() const {
+        Transform *parent = m_parent ? m_parent : (Transform *)this;
+        while (parent->m_parent != nullptr) {
+            parent = parent->m_parent;
+        }
+        return parent;
     }
 
     bool Transform::IsChildOf(Transform *parent) const {

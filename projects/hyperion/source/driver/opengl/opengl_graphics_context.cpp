@@ -28,7 +28,7 @@ namespace Hyperion::Rendering {
     }
 
     void OpenGLGraphicsContext::InitDebug() {
-#if defined HYP_DEBUG || defined HYP_PROFILE
+#ifdef HYP_DEBUG
         glDebugMessageCallback(DebugMessageCallback, nullptr);
         glEnable(GL_DEBUG_OUTPUT);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);

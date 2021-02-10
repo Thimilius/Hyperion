@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Hyperion {
     public static class Application {
@@ -8,7 +9,8 @@ namespace Hyperion {
             }
 
             protected override void OnUpdate(float deltaTime) {
-
+                float value = Time.ElapsedTime * 25.0f;
+                Transform.EulerAngles = new Vector3(value, value, 0);
             }
 
             protected override void OnDestroy() {
@@ -20,7 +22,7 @@ namespace Hyperion {
 
         }
 
-        private static readonly List<Entity> m_Entities = new List<Entity>();
+        private static Entity s_Parent;
 
         public static void Start() {
             
@@ -28,24 +30,28 @@ namespace Hyperion {
 
         public static void Update() {
             if (Input.IsKeyDown(KeyCode.N)) {
-                if (m_Entities.Count == 0) {
-                    for (int x = 0; x < 32; x++) {
-                        for (int z = 0; z < 32; z++) {
-                            Entity e = Entity.CreatePrimitive(EntityPrimitive.Cube);
-                            e.Transform.Position = new Vector3(x * 2, 0, z * 2);
-                            e.AddComponent<MyScript>();
-                            e.AddComponent<MyComponent>();
-                            m_Entities.Add(e);
+                if (!s_Parent) {
+                    s_Parent = new Entity();
+
+                    for (int x = 0; x < 10; x++) {
+                        for (int z = 0; z < 10; z++) {
+                            Entity entity = Entity.CreatePrimitive(EntityPrimitive.Cube);
+                            entity.Transform.Parent = s_Parent.Transform;
+                            entity.Transform.Position = new Vector3(x * 2, 0, z * 2);
+                            entity.AddComponent<MyScript>();
+                            entity.AddComponent<MyComponent>();
                         }
                     }
                 }
             }
 
+            if (s_Parent) {
+                s_Parent.Transform.Position = new Vector3((float)Math.Sin(Time.ElapsedTime) * 10.0f, 0, 0);
+                s_Parent.Transform.EulerAngles = new Vector3(0, Time.ElapsedTime * 10.0f, 0);
+            }
+
             if (Input.IsKeyDown(KeyCode.Delete)) {
-                foreach (Entity entity in m_Entities) {
-                    Object.Destroy(entity);
-                }
-                m_Entities.Clear();
+                Object.Destroy(s_Parent);
             }
         }
     }
