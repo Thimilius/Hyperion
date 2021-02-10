@@ -50,22 +50,28 @@ namespace Hyperion {
         inline LayerMask GetLayer() const { return m_layer; }
         inline void SetLayer(LayerMask layer) { m_layer = layer; }
 
-        void DispatchMessage(EntityMessage message);
+        inline const Set<EntityTag> &GetTags() const { return m_tags; }
+        inline bool HasTag(const EntityTag &tag) const { return m_tags.find(tag) != m_tags.end(); }
+        inline bool AddTag(const EntityTag &tag) { return m_tags.insert(tag).second; }
+        inline void RemoveTag(const EntityTag &tag) { m_tags.erase(tag); }
 
-        Component *AddComponent(Type type);
+        const Map<ComponentType, Component *> &GetComponents() const { return m_components; }
+        inline Transform *GetTransform() { return m_transform; }
+
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value && !std::is_same<Transform, T>::value>>
         T *AddComponent() {
             Type type = Type::get<T>();
             return static_cast<T *>(AddComponent(type));
         }
+        Component *AddComponent(Type type);
 
-        Component *GetComponent(Type type) const;
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         T *GetComponent() const {
             Type type = Type::get<T>();
             Component *component = GetComponent(type);
             return static_cast<T *>(component);
         }
+        Component *GetComponent(ComponentType type) const;
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         T *GetComponentInChildren() const {
@@ -134,15 +140,7 @@ namespace Hyperion {
             return components;
         }
 
-        const Map<Type, Component *> &GetComponents() const { return m_components; }
-
-        inline Transform *GetTransform() { return m_transform; }
-
-        inline const Set<EntityTag> &GetTags() const { return m_tags; }
-        inline bool HasTag(const EntityTag &tag) const { return m_tags.find(tag) != m_tags.end(); }
-        inline bool AddTag(const EntityTag &tag) { return m_tags.insert(tag).second; }
-        inline void RemoveTag(const EntityTag &tag) { m_tags.erase(tag); }
-
+        void DispatchMessage(EntityMessage message);
         void RegisterMessageListener(IEntityMessageListener *listener);
         void UnregisterMessageListener(IEntityMessageListener *listener);
     public:
@@ -166,7 +164,7 @@ namespace Hyperion {
 
         LayerMask m_layer = LayerMask::Default;
 
-        Map<Type, Component *> m_components;
+        Map<ComponentType, Component *> m_components;
         Transform *m_transform = nullptr;
         Set<EntityTag> m_tags;
 

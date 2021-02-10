@@ -28,20 +28,6 @@ namespace Hyperion {
         return true;
     }
 
-    void Entity::DispatchMessage(EntityMessage message) {
-        switch (message.type) {
-            case EntityMessageType::ComponentDestroyed: {
-                Component *component = static_cast<Component *>(message.parameter);
-                m_components.erase(component->GetType());
-                break;
-            }
-        }
-
-        for (IEntityMessageListener *listener : m_message_listeners) {
-            listener->OnMessage(message);
-        }
-    }
-
     Component *Entity::AddComponent(Type type) {
         HYP_ASSERT(type.is_valid());
         HYP_ASSERT_MESSAGE(m_components.find(type) == m_components.end(), "Failed to add component because a component with the same type already exists!");
@@ -60,14 +46,28 @@ namespace Hyperion {
         return component;
     }
 
-    Component *Entity::GetComponent(Type type) const {
+    Component *Entity::GetComponent(ComponentType type) const {
         for (auto [component_type, component] : m_components) {
-            if (component_type.is_derived_from(type)) {
+            if (component_type.IsDerivedFrom(type)) {
                 return component;
             }
         }
 
         return nullptr;
+    }
+
+    void Entity::DispatchMessage(EntityMessage message) {
+        switch (message.type) {
+            case EntityMessageType::ComponentDestroyed: {
+                Component *component = static_cast<Component *>(message.parameter);
+                m_components.erase(component->GetType());
+                break;
+            }
+        }
+
+        for (IEntityMessageListener *listener : m_message_listeners) {
+            listener->OnMessage(message);
+        }
     }
 
     void Entity::RegisterMessageListener(IEntityMessageListener *listener) {
@@ -154,7 +154,7 @@ namespace Hyperion {
         // Now destroy all our components except transform.
         for (auto it = m_components.begin(); it != m_components.end(); ) {
             auto [component_type, component] = *it;
-            if (component_type.is_derived_from<Transform>()) {
+            if (component_type.IsDerivedFrom(Type::get<Transform>())) {
                 ++it;
             } else {
                 it = m_components.erase(it);
