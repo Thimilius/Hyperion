@@ -10,7 +10,6 @@
 
 namespace Hyperion {
     class Component;
-    class Object;
     class World;
     class RectTransform;
 }
@@ -174,7 +173,6 @@ namespace Hyperion {
         Vector<IEntityMessageListener *> m_message_listeners;
     private:
         friend class Hyperion::Component;
-        friend class Hyperion::Object;
         friend class Hyperion::RectTransform;
     };
 

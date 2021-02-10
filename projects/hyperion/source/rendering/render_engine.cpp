@@ -229,7 +229,7 @@ namespace Hyperion::Rendering {
         while (program_counter < program_counter_end) {
             HYP_PROFILE_SCOPE("ExecuteRenderCommand");
             command_type = *reinterpret_cast<RenderThreadCommandType *>(program_counter);
-            OPTICK_TAG("CommandType", static_cast<uint32>(command_type));
+            HYP_PROFILE_TAG("CommandType", static_cast<uint32>(command_type));
             program_counter += sizeof(RenderThreadCommandType);
 
 

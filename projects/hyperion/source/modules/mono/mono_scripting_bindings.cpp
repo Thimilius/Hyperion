@@ -37,7 +37,7 @@ namespace Hyperion::Scripting {
 
     MonoObject *Binding_Entity_GetWorld(MonoObject *managed_entity) {
         if (Entity *entity = MonoScriptingDriver::GetNativeObjectAs<Entity>(managed_entity)) {
-            return MonoScriptingDriver::GetOrCreateManagedObject(entity->GetWorld(), Type::get<World>());
+            return MonoScriptingDriver::GetOrCreateManagedObjectRaw(entity->GetWorld(), Type::get<World>());
         } else {
             return nullptr;
         }
@@ -52,7 +52,7 @@ namespace Hyperion::Scripting {
             native_entity = Entity::Create(native_name);
             mono_free(native_name);
         }
-        MonoScriptingDriver::RegisterObject(managed_object, native_entity);
+        MonoScriptingDriver::RegisterManagedObject(managed_object, native_entity);
     }
 
     MonoObject *Binding_Entity_AddComponent(MonoObject *managed_entity, MonoReflectionType *reflection_type) {
@@ -61,7 +61,7 @@ namespace Hyperion::Scripting {
             HYP_ASSERT(type);
             MonoClass *managed_class = mono_type_get_class(type);
             HYP_ASSERT(managed_class);
-
+            
             Type native_class = MonoScriptingDriver::GetNativeClass(managed_class);
             Component *component = entity->AddComponent(native_class);
             return MonoScriptingDriver::GetOrCreateManagedObject(component, native_class);
@@ -91,11 +91,11 @@ namespace Hyperion::Scripting {
 
     MonoObject *Binding_Entity_CreatePrimitive(EntityPrimitive primitive) {
         Entity *native_entity = Entity::CreatePrimitive(primitive);
-        return MonoScriptingDriver::CreateManagedObject(Type::get<Entity>(), native_entity);
+        return MonoScriptingDriver::CreateManagedObject(native_entity, Type::get<Entity>());
     }
 
     MonoString *Binding_Object_GetName(MonoObject *managed_object) {
-        if (Object *native_object = MonoScriptingDriver::GetNativeObject(managed_object)) {
+        if (Object *native_object = MonoScriptingDriver::GetNativeObjectAs<Object>(managed_object)) {
             return mono_string_new(MonoScriptingDriver::GetDomain(), native_object->GetName().c_str());
         } else {
             return nullptr;
@@ -103,7 +103,7 @@ namespace Hyperion::Scripting {
     }
 
     void Binding_Object_SetName(MonoObject *managed_object, MonoString *managed_name) {
-        if (Object *native_object = MonoScriptingDriver::GetNativeObject(managed_object)) {
+        if (Object *native_object = MonoScriptingDriver::GetNativeObjectAs<Object>(managed_object)) {
             char *native_name = mono_string_to_utf8(managed_name);
             native_object->SetName(native_name);
             mono_free(native_name);
@@ -111,23 +111,7 @@ namespace Hyperion::Scripting {
     }
 
     void Binding_Object_Destroy(MonoObject *managed_object) {
-        if (Object *native_object = MonoScriptingDriver::GetNativeObject(managed_object)) {
-            // NOTE: This type check here and acting accordingly feels kinda like a hack.
-            // A better architecture would probably involve storing some kind of scripting representation directly inside an Object.
-
-            // When we are destroying entities we also need to unregister all previously registered components.
-            if (native_object->GetType() == Type::get<Entity>()) {
-                Entity *entity = static_cast<Entity *>(native_object);
-                const Map<Type, Component *> &components = entity->GetComponents();
-                for (auto [component_type, component] : components) {
-                    MonoObject *managed_component = MonoScriptingDriver::GetManagedObject(component);
-                    if (managed_component) {
-                        MonoScriptingDriver::UnregisterObject(managed_component);
-                    }
-                }
-            }
-            MonoScriptingDriver::UnregisterObject(managed_object);
-
+        if (Object *native_object = MonoScriptingDriver::GetNativeObjectAs<Object>(managed_object)) {
             Object::Destroy(native_object);
         }
     }

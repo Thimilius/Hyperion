@@ -21,17 +21,14 @@ namespace Hyperion {
             s_worlds.erase(std::remove(begin, end, world));
         }
 
-        world->OnDestroy();
         delete world;
     }
 
     void WorldManager::Shutdown() {
         for (World *world : s_worlds) {
-            world->OnDestroy();
             delete world;
         }
     }
-
 
     void WorldManager::Update(float32 delta_time) {
         for (auto &[world, components] : s_components_to_update) {

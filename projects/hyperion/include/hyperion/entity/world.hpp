@@ -27,8 +27,10 @@ namespace Hyperion {
         } ambient_light;
     };
 
-    class World final : public Object {
-        HYP_REFLECT(Object);
+    class World final {
+        HYP_REFLECT();
+    public:
+        ~World();
     public:
         inline WorldEnvironment &GetEnvironment() { return m_environment; }
         inline Physics::PhysicsWorld *GetPhysicsWorld() const { return m_physics_world; }
@@ -58,8 +60,6 @@ namespace Hyperion {
 
             return components;
         }
-    protected:
-        void OnDestroy() override;
     private:
         World() = default;
         World(const String &name);

@@ -2,13 +2,11 @@
 
 #include "hyperion/common.hpp"
 #include "hyperion/core/object/guid.hpp"
+#include "hyperion/scripting/scripting_instance.hpp"
 
 namespace Hyperion {
     class Engine;
-    class Entity;
     class ObjectManager;
-    class World;
-    class WorldManager;
 }
 
 namespace Hyperion {
@@ -28,15 +26,22 @@ namespace Hyperion {
         inline ObjectId GetId() const { return m_id; }
         inline ObjectGuid GetGuid() const { return m_guid; }
 
+        inline bool IsDestroyed() const { return m_is_destroyed; }
+
         inline String GetName() const { return m_name; }
         inline void SetName(const String &name) { m_name = name; }
+
+        inline Scripting::ScriptingInstance *GetScriptingInstance() const { return m_scripting_instance; }
+        inline void SetScriptingInstance(Scripting::ScriptingInstance *scripting_instance) { m_scripting_instance = scripting_instance; }
 
         inline virtual String ToString() const { return m_name; }
     public:
         static Object *Create();
         static Object *Create(const String &name);
         static Object *Clone(Object *object);
+
         static void Destroy(Object *object);
+        static void DestroyImmediate(Object *object);
     protected:
         Object();
         Object(const String &name);
@@ -49,16 +54,16 @@ namespace Hyperion {
         Object(const Object &other) = delete;
         Object &operator=(const Object &other) = delete;
     private:
-        static void DestroyImmediate(Object *object);
-    private:
         ObjectId m_id = 0;
         ObjectGuid m_guid = Guid::Create();
+
+        bool m_is_destroyed = false;
+
         String m_name = "Object";
-        bool m_destroyed = false;
+
+        Scripting::ScriptingInstance *m_scripting_instance = nullptr;
     private:
-        friend class Hyperion::Entity;
         friend class Hyperion::ObjectManager;
-        friend class Hyperion::World;
     };
 
     class ObjectManager final {
@@ -84,7 +89,6 @@ namespace Hyperion {
     private:
         friend class Hyperion::Engine;
         friend class Hyperion::Object;
-        friend class Hyperion::WorldManager;
     };
 
 }

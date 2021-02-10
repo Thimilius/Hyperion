@@ -143,7 +143,7 @@ namespace Hyperion {
                 Entity *child = m_transform->m_children[i]->m_entity;
                 // Children already scheduled for destruction get seperated from us by removing the parent reference.
                 // This way the order of destruction is not important.
-                if (child->m_destroyed) {
+                if (child->IsDestroyed()) {
                     child->m_transform->m_parent = nullptr;
                 } else {
                     DestroyImmediate(child);

@@ -7,7 +7,11 @@
 
 namespace Hyperion {
 
-    void World::OnDestroy() {
+    World::World(const String &name) {
+        m_physics_world = Physics::PhysicsEngine::CreatePhysicsWorld();
+    }
+    
+    World::~World() {
         for (auto it = m_root_entities.begin(); it != m_root_entities.end(); ) {
             Entity *entity = *it;
             it = m_root_entities.erase(it);
@@ -17,10 +21,6 @@ namespace Hyperion {
         Physics::PhysicsEngine::DestroyPhysicsWorld(m_physics_world);
     }
 
-    World::World(const String &name) {
-        m_physics_world = Physics::PhysicsEngine::CreatePhysicsWorld();
-    }
-    
     void World::AddRootEntity(Entity *entity) {
         HYP_ASSERT(entity);
         HYP_ASSERT(std::find(m_root_entities.begin(), m_root_entities.end(), entity) == m_root_entities.end());

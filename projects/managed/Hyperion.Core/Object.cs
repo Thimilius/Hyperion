@@ -7,11 +7,46 @@ namespace Hyperion {
             set => Binding_SetName(this, value);
         }
 
+        public override bool Equals(object other) {
+            if (!(other is Object @object)) {
+                return false;
+            } else {
+                return CompareObjects(this, @object);
+            }
+        }
+
+        public override int GetHashCode() {
+            return base.GetHashCode();
+        }
+
         public override string ToString() => Name;
 
         public static void Destroy(Object obj) => Binding_Destroy(obj);
 
         public static implicit operator bool(Object obj) => Binding_IsNativeAlive(obj);
+        public static bool operator ==(Object a, Object b) => CompareObjects(a, b);
+        public static bool operator !=(Object a, Object b) => !CompareObjects(a, b);
+
+        private static bool CompareObjects(Object a, Object b) {
+            bool aIsNull = a is null;
+            bool bIsNull = b is null;
+            bool bothAreNull = aIsNull && bIsNull;
+            bool result;
+            if (bothAreNull) {
+                result = true;
+            } else {
+                if (bIsNull) {
+                    result = !Binding_IsNativeAlive(a);
+                } else {
+                    if (aIsNull) {
+                        result = !Binding_IsNativeAlive(b);
+                    } else {
+                        result = ReferenceEquals(a, b);
+                    }
+                }
+            }
+            return result;
+        }
 
         [MethodImpl(MethodImplOptions.InternalCall)] private static extern string Binding_GetName(Object obj);
         [MethodImpl(MethodImplOptions.InternalCall)] private static extern void Binding_SetName(Object obj, string name);

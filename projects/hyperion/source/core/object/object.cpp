@@ -44,10 +44,10 @@ namespace Hyperion {
     }
 
     void Object::Destroy(Object *object) {
-        if (object && !object->m_destroyed) {
+        if (object && !object->m_is_destroyed) {
             HYP_ASSERT_MESSAGE(object->GetType() != rttr::type::get<Transform>(), "Destroying a transform component is not allowed!");
 
-            object->m_destroyed = true;
+            object->m_is_destroyed = true;
             ObjectManager::Destroy(object);
         }
     }
@@ -65,12 +65,16 @@ namespace Hyperion {
     }
 
     Object::~Object() {
+        if (m_scripting_instance) {
+            m_scripting_instance->OnDestroy();
+        }
+
         ObjectManager::UnregisterObject(this);
     }
 
     void Object::DestroyImmediate(Object *object) {
-        if (object && !object->m_destroyed) {
-            object->m_destroyed = true;
+        if (object && !object->m_is_destroyed) {
+            object->m_is_destroyed = true;
             ObjectManager::DestroyImmediate(object);
         }
     }

@@ -1,5 +1,5 @@
 ﻿namespace Hyperion {
-    public sealed class World : Object {
+    public sealed class World {
         private World() { }
     }
 }
