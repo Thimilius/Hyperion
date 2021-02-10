@@ -68,24 +68,24 @@ namespace Hyperion::Scripting {
         }
     }
 
-    MonoObject *MonoScriptingDriver::CreateManagedObjectFromManagedType(Object *native_object, MonoClass *managed_class) {
+    MonoObject *MonoScriptingDriver::CreateManagedObjectFromManagedType(Object *native_object, MonoClass *managed_class, bool is_script_component) {
         MonoObject *managed_object = mono_object_new(s_core_domain, managed_class);
-        RegisterManagedObject(managed_object, native_object);
+        RegisterManagedObject(managed_object, native_object, is_script_component);
         return managed_object;
     }
 
     MonoObject *MonoScriptingDriver::CreateManagedObjectFromNativeType(Object *native_object, Type native_type) {
         HYP_ASSERT(s_native_to_managed_classes.find(native_type) != s_native_to_managed_classes.end());
-        return CreateManagedObjectFromManagedType(native_object, s_native_to_managed_classes[native_type]);
+        return CreateManagedObjectFromManagedType(native_object, s_native_to_managed_classes[native_type], false);
     }
 
     bool MonoScriptingDriver::IsRegisterdObject(MonoObject *managed_object) {
         return s_managed_to_native_objects.find(managed_object) != s_managed_to_native_objects.end();
     }
 
-    void MonoScriptingDriver::RegisterManagedObject(MonoObject *managed_object, Object *native_object) {
+    void MonoScriptingDriver::RegisterManagedObject(MonoObject *managed_object, Object *native_object, bool is_script_component) {
         RegisterObject(managed_object, native_object);
-        native_object->SetScriptingInstance(new MonoScriptingInstance(managed_object));
+        native_object->SetScriptingInstance(new MonoScriptingInstance(managed_object, is_script_component));
     }
 
     void MonoScriptingDriver::RegisterObject(MonoObject *managed_object, void *native) {
@@ -173,8 +173,11 @@ namespace Hyperion::Scripting {
     }
 
     void MonoScriptingDriver::InitClasses() {
-        s_class_component = mono_class_from_name(s_core_assembly_image, "Hyperion", "Component");
-        HYP_ASSERT(s_class_component);
+        s_component_class = mono_class_from_name(s_core_assembly_image, "Hyperion", "Component");
+        HYP_ASSERT(s_component_class);
+
+        s_script_class = mono_class_from_name(s_core_assembly_image, "Hyperion", "Script");
+        HYP_ASSERT(s_script_class);
     }
 
     void MonoScriptingDriver::InitMethods() {

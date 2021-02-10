@@ -13,9 +13,13 @@ namespace Hyperion {
         HYP_REFLECT(Component);
     public:
         inline Scripting::ScriptingType *GetScriptingType() const { return m_scripting_type; }
+
+        void SendMessage(Scripting::ScriptingMessage message);
     public:
         static Script *Create();
     protected:
+        void OnCreate() override;
+        void OnUpdate(float32 delta_time) override;
         void OnDestroy() override;
     private:
         Script() = default;

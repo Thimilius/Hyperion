@@ -67,7 +67,7 @@ namespace Hyperion {
 
     Object::~Object() {
         if (m_scripting_instance) {
-            m_scripting_instance->OnDestroy();
+            m_scripting_instance->SendMessage(Scripting::ScriptingMessage::OnDestroy);
         }
 
         ObjectManager::UnregisterObject(this);

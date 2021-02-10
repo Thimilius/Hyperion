@@ -70,13 +70,11 @@ namespace Hyperion {
     void Entity::DispatchMessage(EntityMessage message) {
         switch (message.type) {
             case EntityMessageType::ComponentDestroyed: {
-                Component *component = static_cast<Component *>(message.parameter);
-                m_components.erase(component->GetType());
+                m_components.erase(message.data.component_destroyed.component->GetType());
                 break;
             }
             case EntityMessageType::ScriptDestroyed: {
-                Script *script = static_cast<Script *>(message.parameter);
-                m_components.erase(script->GetScriptingType());
+                m_components.erase(message.data.script_destroyed.script->GetScriptingType());
                 break;
             }
         }
@@ -179,7 +177,7 @@ namespace Hyperion {
         }
 
         // At the very end we can destroy the transform.
-        if (m_transform->GetType() == rttr::type::get<RectTransform>()) {
+        if (m_transform->GetType() == Type::get<RectTransform>()) {
             static_cast<RectTransform *>(m_transform)->m_replace_on_destroy = false;
         }
         DestroyImmediate(m_transform);
@@ -211,7 +209,7 @@ namespace Hyperion {
         m_transform->m_derived_rotation = rotation;
         m_transform->OnCreate();
 
-        m_components[rttr::type::get<Transform>()] = m_transform;
+        m_components[Type::get<Transform>()] = m_transform;
 
         if (parent) {
             m_transform->SetParent(parent);

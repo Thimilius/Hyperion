@@ -1,6 +1,11 @@
 #pragma once
 
 namespace Hyperion {
+    class Component;
+    class Script;
+}
+
+namespace Hyperion {
 
     enum class EntityMessageType {
         TransformChanged,
@@ -12,7 +17,16 @@ namespace Hyperion {
 
     struct EntityMessage {
         EntityMessageType type;
-        void *parameter;
+
+        union EntityMessageData {
+            struct ComponentDestroyed {
+                Component *component;
+            } component_destroyed;
+            
+            struct ScriptDestroyed {
+                Script *script;
+            } script_destroyed;
+        } data;
     };
 
     class IEntityMessageListener {

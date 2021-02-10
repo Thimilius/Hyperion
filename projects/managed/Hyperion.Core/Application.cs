@@ -1,37 +1,51 @@
-﻿using System;
+﻿using System.Collections.Generic;
 
 namespace Hyperion {
     public static class Application {
-        private static Entity m_Entity;
-
         class MyScript : Script {
-            public string MyString { get; set; }
+            protected override void OnCreate() {
+
+            }
+
+            protected override void OnUpdate(float deltaTime) {
+
+            }
+
+            protected override void OnDestroy() {
+
+            }
         }
 
-        public static void Start() {
+        class MyComponent : Component {
 
+        }
+
+        private static readonly List<Entity> m_Entities = new List<Entity>();
+
+        public static void Start() {
+            
         }
 
         public static void Update() {
             if (Input.IsKeyDown(KeyCode.N)) {
-                if (!m_Entity) {
-                    m_Entity = Entity.CreatePrimitive(EntityPrimitive.Cube);
-                    MyScript script = m_Entity.AddComponent<MyScript>();
-                    script.MyString = "Hello there";
+                if (m_Entities.Count == 0) {
+                    for (int x = 0; x < 32; x++) {
+                        for (int z = 0; z < 32; z++) {
+                            Entity e = Entity.CreatePrimitive(EntityPrimitive.Cube);
+                            e.Transform.Position = new Vector3(x * 2, 0, z * 2);
+                            e.AddComponent<MyScript>();
+                            e.AddComponent<MyComponent>();
+                            m_Entities.Add(e);
+                        }
+                    }
                 }
             }
 
-            if (m_Entity != null) {
-                MyScript myScript = m_Entity.GetComponent<MyScript>();
-                if (myScript != null) {
-                    Engine.Log(myScript.MyString);
-                } else {
-                    Engine.Log("No Script");
+            if (Input.IsKeyDown(KeyCode.Delete)) {
+                foreach (Entity entity in m_Entities) {
+                    Object.Destroy(entity);
                 }
-
-                if (Input.IsKeyDown(KeyCode.Delete)) {
-                    Object.Destroy(m_Entity.GetComponent<MyScript>());
-                }
+                m_Entities.Clear();
             }
         }
     }

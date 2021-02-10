@@ -8,13 +8,16 @@ namespace Hyperion::Scripting {
 
     class MonoScriptingInstance : public ScriptingInstance {
     public:
-        MonoScriptingInstance(MonoObject *managed_object);
+        MonoScriptingInstance(MonoObject *managed_object, bool is_script_component);
     public:
         inline MonoObject *GetManagedObject() const { return m_managed_object; }
 
-        void OnDestroy() override;
+        void SendMessage(ScriptingMessage message) override;
+    private:
+        void CallMethod(const char *name, int32 parameter_count, void **args);
     private:
         MonoObject *m_managed_object;
+        bool m_is_script_component;
     };
 
 }

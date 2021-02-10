@@ -16,7 +16,8 @@ namespace Hyperion::Scripting {
     public:
         inline static MonoDomain *GetDomain() { return s_core_domain; }
 
-        inline static MonoClass *GetComponentClass() { return s_class_component; }
+        inline static MonoClass *GetComponentClass() { return s_component_class; }
+        inline static MonoClass *GetScriptClass() { return s_script_class; }
 
         template<typename T>
         static T *GetNativeObjectAs(MonoObject *managed_object) {
@@ -25,11 +26,11 @@ namespace Hyperion::Scripting {
         static void *GetNativeObject(MonoObject *managed_object);
         static MonoObject *GetOrCreateManagedObject(Object *native_object, Type native_type);
         static MonoObject *GetOrCreateManagedObjectRaw(void *native, Type native_type);
-        static MonoObject *CreateManagedObjectFromManagedType(Object *native_object, MonoClass *managed_class);
+        static MonoObject *CreateManagedObjectFromManagedType(Object *native_object, MonoClass *managed_class, bool is_script_component);
         static MonoObject *CreateManagedObjectFromNativeType(Object *native_object, Type native_type);
 
         static bool IsRegisterdObject(MonoObject *managed_object);
-        static void RegisterManagedObject(MonoObject *managed_object, Object *native_object);
+        static void RegisterManagedObject(MonoObject *managed_object, Object *native_object, bool is_script_component);
         static void RegisterObject(MonoObject *managed_object, void *native);
         static void UnregisterObject(MonoObject *managed_object);
         
@@ -64,7 +65,8 @@ namespace Hyperion::Scripting {
 
         inline static Map<MonoClass *, MonoScriptingType *> s_scripting_types;
 
-        inline static MonoClass *s_class_component;
+        inline static MonoClass *s_component_class;
+        inline static MonoClass *s_script_class;
     };
 
 }

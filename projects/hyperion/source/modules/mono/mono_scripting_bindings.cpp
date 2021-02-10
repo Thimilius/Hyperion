@@ -53,7 +53,7 @@ namespace Hyperion::Scripting {
             native_entity = Entity::Create(native_name);
             mono_free(native_name);
         }
-        MonoScriptingDriver::RegisterManagedObject(managed_object, native_entity);
+        MonoScriptingDriver::RegisterManagedObject(managed_object, native_entity, false);
     }
 
     MonoObject *Binding_Entity_AddComponent(MonoObject *managed_entity, MonoReflectionType *reflection_type) {
@@ -90,7 +90,14 @@ namespace Hyperion::Scripting {
                 return MonoScriptingDriver::GetOrCreateManagedObject(component, native_class);
             } else {
                 Script *script = entity->AddScript(component_type.GetScriptingType());
-                return MonoScriptingDriver::CreateManagedObjectFromManagedType(script, managed_class);
+
+                bool is_script_component = mono_class_is_subclass_of(managed_class, MonoScriptingDriver::GetScriptClass(), false);
+                MonoObject *managed_object = MonoScriptingDriver::CreateManagedObjectFromManagedType(script, managed_class, is_script_component);
+
+                // We have to wait for the actual managed object to be create, so that we can send the OnCreate message.
+                script->SendMessage(ScriptingMessage::OnCreate);
+
+                return managed_object;
             }
         } else {
             return nullptr;
