@@ -7,7 +7,7 @@
     <ProjectGuid>{2A2E61FE-96EE-DC34-5F29-26B2CBA82111}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Hyperion.Core</RootNamespace>
+    <RootNamespace>Hyperion</RootNamespace>
     <AssemblyName>Hyperion.Core</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -24,7 +24,6 @@
     <DefineConstants>HYP_DEBUG;HYP_ENABLE_ASSERTS;HYP_BREAK_ON_ASSERT;HYP_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;HYP_AUDIO_FMOD;HYP_PHYSICS_BULLET;HYP_SCRIPTING_MONO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'profile|x64' ">
     <PlatformTarget>x64</PlatformTarget>
@@ -36,7 +35,6 @@
     <DefineConstants>HYP_PROFILE;HYP_ENABLE_ASSERTS;HYP_BREAK_ON_ASSERT;HYP_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;HYP_AUDIO_FMOD;HYP_PHYSICS_BULLET;HYP_SCRIPTING_MONO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'release|x64' ">
     <PlatformTarget>x64</PlatformTarget>
@@ -48,7 +46,6 @@
     <DefineConstants>HYP_RELEASE;HYP_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;HYP_AUDIO_FMOD;HYP_PHYSICS_BULLET;HYP_SCRIPTING_MONO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
   </ItemGroup>

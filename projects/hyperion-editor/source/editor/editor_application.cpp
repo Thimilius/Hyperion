@@ -4,7 +4,7 @@
 #include <hyperion/scripting/scripting_engine.hpp>
 
 #include "hyperion/editor/rendering/editor_render_pipeline.hpp"
-#include "hyperion/editor/world/editor_world.hpp"
+#include "hyperion/editor/entity/editor_world.hpp"
 
 namespace Hyperion::Editor {
 

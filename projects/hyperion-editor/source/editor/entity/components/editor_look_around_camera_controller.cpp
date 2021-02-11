@@ -1,4 +1,4 @@
-#include "hyperion/editor/world/editor_look_around_camera_controller.hpp"
+#include "hyperion/editor/entity/components/editor_look_around_camera_controller.hpp"
 
 #include <hyperion/core/math/math.hpp>
 #include <hyperion/core/math/plane.hpp>

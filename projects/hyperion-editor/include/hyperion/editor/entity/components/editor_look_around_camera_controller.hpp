@@ -4,7 +4,7 @@
 #include <hyperion/core/math/vec3.hpp>
 #include <hyperion/core/math/plane.hpp>
 
-#include "hyperion/editor/world/editor_camera_controller.hpp"
+#include "hyperion/editor/entity/components/editor_camera_controller.hpp"
 
 namespace Hyperion::Editor {
 

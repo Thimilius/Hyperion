@@ -11,7 +11,7 @@
 #include <hyperion/entity/components/rendering/mesh_renderer.hpp>
 #include <hyperion/rendering/render_driver.hpp>
 
-#include "hyperion/editor/world/editor_world.hpp"
+#include "hyperion/editor/entity/editor_world.hpp"
 
 using namespace Hyperion::Rendering;
 

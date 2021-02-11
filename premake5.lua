@@ -8,15 +8,6 @@ include "packages.lua"
 workspace "hyperion"
 	startproject "hyperion-editor"
 
-	language "C++"
-	cppdialect "C++17"
-	architecture "x86_64"
-	
-	staticruntime "On"
-	exceptionhandling "Off"
-	rtti "Off"
-	flags { "FatalCompileWarnings" }
-	
 	targetdir ("build/%{cfg.buildcfg}/bin/" .. output_directory_format)
 	objdir ("build/%{cfg.buildcfg}/obj/" .. output_directory_format)
 	debugdir "run_tree/"
@@ -87,8 +78,17 @@ workspace "hyperion"
 
 project "hyperion"
 	location "projects/hyperion"
-	kind "StaticLib"
 	dependson { "Hyperion.Core" }
+	
+	language "C++"
+	cppdialect "C++17"
+	architecture "x86_64"
+	kind "StaticLib"
+	
+	staticruntime "On"
+	exceptionhandling "Off"
+	rtti "Off"
+	flags { "FatalCompileWarnings" }
 	
 	pchheader "hyppch.hpp"
 	pchsource "%{prj.location}/source/hyppch.cpp"
@@ -164,31 +164,6 @@ project "hyperion"
 			"{COPY} vendor/mono/lib/windows/mono.dll %{cfg.targetdir}/mono.dll*"
 	    }
 
-group "managed"
-
-project "Hyperion.Core"
-	location "projects/managed/Hyperion.Core"
-	kind "SharedLib"
-	
-	language "C#"
-	
-	targetdir ("build/%{cfg.buildcfg}/bin/managed/")
-	objdir ("build/%{cfg.buildcfg}/obj/managed/")
-	
-	files { "%{prj.location}/**.cs" }
-	
-	postbuildcommands {
-		"{COPY} $(TargetDir)$(TargetFileName) $(ProjectDir)../../../run_tree/data/managed/",
-		"{COPY} $(TargetDir)$(TargetName).pdb $(ProjectDir)../../../run_tree/data/managed/"
-	}
-	
-	filter "system:windows"
-		postbuildcommands {
-			"$(ProjectDir)../../../run_tree/data/tools/pdb2mdb.exe $(ProjectDir)../../../run_tree/data/managed/$(TargetFileName)"
-		}
-
-group ""
-
 function linkhyperion()
 	filter { }
 
@@ -242,7 +217,16 @@ end
 
 project "hyperion-editor"
 	location "projects/hyperion-editor"
+	
+	language "C++"
+	cppdialect "C++17"
+	architecture "x86_64"
 	kind "ConsoleApp"
+	
+	staticruntime "On"
+	exceptionhandling "Off"
+	rtti "Off"
+	flags { "FatalCompileWarnings" }
 	
 	linkhyperion()
 
@@ -253,7 +237,6 @@ project "hyperion-editor"
 		"%{prj.location}/**.cpp"
 	}
     excludes { "%{prj.location}/resource.rc" }
-	
 	includedirs { "%{prj.location}/include" }
 		
     filter "system:windows"
@@ -265,3 +248,28 @@ project "hyperion-editor"
 		    "{COPY} %{cfg.targetdir}/fmod.dll ../../run_tree/fmod.dll*",
 			"{COPY} %{cfg.targetdir}/mono.dll ../../run_tree/mono.dll*"
 	    }
+
+group "managed"
+
+project "Hyperion.Core"
+	location "projects/managed/Hyperion.Core"
+	
+	language "C#"
+	kind "SharedLib"
+	architecture "x86_64"
+	namespace ("Hyperion")
+	
+	targetdir ("build/%{cfg.buildcfg}/bin/managed/")
+	objdir ("build/%{cfg.buildcfg}/obj/managed/")
+	
+	files { "%{prj.location}/**.cs" }
+	
+	postbuildcommands {
+		"{COPY} $(TargetDir)$(TargetFileName) $(ProjectDir)../../../run_tree/data/managed/",
+		"{COPY} $(TargetDir)$(TargetName).pdb $(ProjectDir)../../../run_tree/data/managed/"
+	}
+	
+	filter "system:windows"
+		postbuildcommands {
+			"$(ProjectDir)../../../run_tree/data/tools/pdb2mdb.exe $(ProjectDir)../../../run_tree/data/managed/$(TargetFileName)"
+		}

@@ -3,7 +3,7 @@
 #include <hyperion/entity/world.hpp>
 #include <hyperion/rendering/render_driver.hpp>
 
-#include "hyperion/editor/world/editor_camera_controller.hpp"
+#include "hyperion/editor/entity/components/editor_camera_controller.hpp"
 
 namespace Hyperion::Editor {
 
