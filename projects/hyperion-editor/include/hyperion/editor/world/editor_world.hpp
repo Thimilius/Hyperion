@@ -3,6 +3,8 @@
 #include <hyperion/entity/world.hpp>
 #include <hyperion/rendering/render_driver.hpp>
 
+#include "hyperion/editor/world/editor_camera_controller.hpp"
+
 namespace Hyperion::Editor {
 
     class EditorWorld final {
@@ -20,6 +22,8 @@ namespace Hyperion::Editor {
 
         inline static bool s_should_draw_grid = true;
         inline static bool s_should_draw_physics_debug = false;
+
+        inline static EditorCameraController *s_editor_camera_controller;
     };
 
 }

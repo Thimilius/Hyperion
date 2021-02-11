@@ -24,7 +24,7 @@ namespace Hyperion {
     void World::AddRootEntity(Entity *entity) {
         HYP_ASSERT(entity);
         HYP_ASSERT(std::find(m_root_entities.begin(), m_root_entities.end(), entity) == m_root_entities.end());
-        
+
         m_root_entities.push_back(entity);
     }
 

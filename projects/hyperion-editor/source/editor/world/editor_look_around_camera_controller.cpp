@@ -1,4 +1,4 @@
-#include "hyperion/editor/editor_look_around_camera_controller.hpp"
+#include "hyperion/editor/world/editor_look_around_camera_controller.hpp"
 
 #include <hyperion/core/math/math.hpp>
 #include <hyperion/core/math/plane.hpp>
@@ -9,7 +9,8 @@
 namespace Hyperion::Editor {
 
     void EditorLookAroundCameraController::OnCreate() {
-        m_camera = GetEntity()->GetComponent<Camera>();
+        EditorCameraController::OnCreate();
+
         m_camera->SetFOV(60);
         m_transform = GetEntity()->GetTransform();
         m_transform->SetEulerAngles(Vec3(-45, 45, 0));
@@ -20,8 +21,6 @@ namespace Hyperion::Editor {
 
         m_xz_plane_distance = 6;
         m_zoom = m_xz_plane_distance;
-
-        RegisterForUpdate();
     }
 
     void EditorLookAroundCameraController::OnUpdate(float32 delta_time) {

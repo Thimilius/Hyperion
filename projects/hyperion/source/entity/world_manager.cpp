@@ -30,29 +30,4 @@ namespace Hyperion {
         }
     }
 
-    void WorldManager::Update(float32 delta_time) {
-        for (auto &[world, components] : s_components_to_update) {
-            for (Component *component : components) {
-                component->OnUpdate(delta_time);
-            }
-        }
-    }
-
-    void WorldManager::RegisterComponentForUpdate(Component *component) {
-        s_components_to_update[component->GetWorld()].insert(component);
-    }
-
-    void WorldManager::UnregisterComponentForUpdate(Component *component) {
-        World *world = component->GetWorld();
-
-        if (s_components_to_update.find(world) != s_components_to_update.end()) {
-            Set<Component *> &components = s_components_to_update.at(world);
-            auto begin = components.begin();
-            auto end = components.end();
-            if (std::find(begin, end, component) != end) {
-                components.erase(component);
-            }
-        }
-    }
-
 }

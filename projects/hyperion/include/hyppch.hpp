@@ -1,11 +1,12 @@
-#ifndef HYP_PCH
-#define HYP_PCH
+#pragma once
 
+// ---------- C Standard Library Includes -----------
 #include <cfloat>
 #include <cmath>
 #include <cstdint>
 #include <ctime>
 
+// --------- C++ Standard Library Includes ----------
 #include <algorithm>
 #include <filesystem>
 #include <functional>
@@ -16,11 +17,13 @@
 #include <unordered_set>
 #include <vector>
 
+// ---------------- Library Includes ----------------
 #include <nlohmann/json.hpp>
 #include <fmt/format.h>
 #include <rttr/registration>
 #include <rttr/type>
 
+// ---------------- Project Includes ----------------
 #include "hyperion/common.hpp"
 #include "hyperion/core/result.hpp"
 #include "hyperion/core/string_utils.hpp"
@@ -37,5 +40,3 @@
 #include "hyperion/core/math/vec4.hpp"
 #include "hyperion/core/object/reflection.hpp"
 #include "hyperion/core/profiling/profiling.hpp"
-
-#endif

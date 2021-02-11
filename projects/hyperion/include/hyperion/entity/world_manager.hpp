@@ -22,11 +22,6 @@ namespace Hyperion {
         ~WorldManager() = delete;
     private:
         static void Shutdown();
-        
-        static void Update(float32 delta_time);
-
-        static void RegisterComponentForUpdate(Component *component);
-        static void UnregisterComponentForUpdate(Component *component);
     private:
         inline static World *s_active_world;
 

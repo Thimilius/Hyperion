@@ -215,12 +215,6 @@ namespace Hyperion {
         Scripting::ScriptingEngine::Update();
     }
 
-    void Engine::WorldManagerUpdate() {
-        HYP_PROFILE_CATEGORY("WorldManagerUpdate", Optick::Category::GameLogic);
-
-        WorldManager::Update(Time::GetDeltaTime());
-    }
-
     void Engine::ApplicationUpdate() {
         HYP_PROFILE_CATEGORY("ApplicationUpdate", Optick::Category::GameLogic);
 

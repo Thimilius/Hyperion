@@ -2,17 +2,18 @@
 
 #include <hyperion/core/math/vec2.hpp>
 #include <hyperion/core/math/vec3.hpp>
-#include <hyperion/entity/components/rendering/camera.hpp>
+
+#include "hyperion/editor/world/editor_camera_controller.hpp"
 
 namespace Hyperion::Editor {
 
-    class EditorFirstPersonCameraController : public Component {
-        HYP_REFLECT(Component);
+    class EditorFirstPersonCameraController : public EditorCameraController {
+        HYP_REFLECT(EditorCameraController);
     public:
         EditorFirstPersonCameraController() = default;
     protected:
         void OnCreate() override;
-        void OnUpdate(float32 delta_time) override;
+        void OnUpdate(float32 delta_time);
     private:
         Camera *m_camera;
 

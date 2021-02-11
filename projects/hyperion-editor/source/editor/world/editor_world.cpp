@@ -1,4 +1,4 @@
-#include "hyperion/editor/editor_world.hpp"
+#include "hyperion/editor/world/editor_world.hpp"
 
 #include <hyperion/core/app/input.hpp>
 #include <hyperion/core/app/time.hpp>
@@ -7,9 +7,9 @@
 #include <hyperion/entity/components/rendering/camera.hpp>
 #include <hyperion/rendering/immediate_renderer.hpp>
 
-#include "hyperion/editor/editor_first_person_camera_controller.hpp"
-#include "hyperion/editor/editor_look_around_camera_controller.hpp"
-#include "hyperion/editor/editor_world_grid.hpp"
+#include "hyperion/editor/world/editor_first_person_camera_controller.hpp"
+#include "hyperion/editor/world/editor_look_around_camera_controller.hpp"
+#include "hyperion/editor/world/editor_world_grid.hpp"
 
 namespace Hyperion::Editor {
 
@@ -18,7 +18,7 @@ namespace Hyperion::Editor {
         WorldManager::SetActiveWorld(s_editor_world);
 
         Entity *entity = Entity::CreatePrimitive(EntityPrimitive::Camera);
-        entity->AddComponent<EditorLookAroundCameraController>();
+        s_editor_camera_controller = entity->AddComponent<EditorLookAroundCameraController>();
 
         EditorWorldGrid::Initialize();
     }
@@ -30,6 +30,8 @@ namespace Hyperion::Editor {
         if (Input::IsKeyDown(KeyCode::F4)) {
             s_should_draw_physics_debug = !s_should_draw_physics_debug;
         }
+
+        s_editor_camera_controller->OnUpdate(delta_time);
     }
 
     void EditorWorld::Render(Rendering::IRenderDriver *render_driver, const Rendering::CameraData &camera_data) {

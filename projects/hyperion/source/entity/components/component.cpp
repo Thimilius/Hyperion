@@ -49,18 +49,4 @@ namespace Hyperion {
         return m_entity->GetWorld();
     }
 
-    void Component::RegisterForUpdate() {
-        WorldManager::RegisterComponentForUpdate(this);
-    }
-
-    void Component::UnregisterForUpdate() {
-        WorldManager::UnregisterComponentForUpdate(this);
-    }
-
-    void Component::OnDestroy() {
-        GetEntity()->DispatchMessage({ EntityMessageType::ComponentDestroyed, this });
-
-        UnregisterForUpdate();
-    }
-
 }

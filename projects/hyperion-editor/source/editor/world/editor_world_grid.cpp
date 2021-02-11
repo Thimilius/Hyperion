@@ -1,9 +1,9 @@
-#include "hyperion/editor/editor_world_grid.hpp"
+#include "hyperion/editor/world/editor_world_grid.hpp"
 
 #include <hyperion/assets/shader.hpp>
+#include <hyperion/core/io/file_system.hpp>
 
-#include "hyperion/core/io/file_system.hpp"
-#include "hyperion/editor/editor_world.hpp"
+#include "hyperion/editor/world/editor_world.hpp"
 
 using namespace Hyperion::Rendering;
 

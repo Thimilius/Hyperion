@@ -45,12 +45,8 @@ namespace Hyperion {
         Component() = default;
         Component(const String &name) : Object(name) { }
     protected:
-        void RegisterForUpdate();
-        void UnregisterForUpdate();
-
         virtual void OnCreate() { }
-        virtual void OnUpdate(float32 delta_time) { }
-        virtual void OnDestroy() override;
+        virtual void OnDestroy() override { }
     private:
         Entity *m_entity;
     private:

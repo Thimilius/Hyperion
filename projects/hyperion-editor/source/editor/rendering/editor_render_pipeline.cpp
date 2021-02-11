@@ -1,4 +1,4 @@
-#include "hyperion/editor/editor_render_pipeline.hpp"
+#include "hyperion/editor/rendering/editor_render_pipeline.hpp"
 
 #include <hyperion/core/math/math.hpp>
 #include <hyperion/core/image.hpp>
@@ -11,7 +11,7 @@
 #include <hyperion/entity/components/rendering/mesh_renderer.hpp>
 #include <hyperion/rendering/render_driver.hpp>
 
-#include "hyperion/editor/editor_world.hpp"
+#include "hyperion/editor/world/editor_world.hpp"
 
 using namespace Hyperion::Rendering;
 

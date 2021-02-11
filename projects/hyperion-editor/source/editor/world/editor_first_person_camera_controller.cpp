@@ -1,4 +1,4 @@
-#include "hyperion/editor/editor_first_person_camera_controller.hpp"
+#include "hyperion/editor/world/editor_first_person_camera_controller.hpp"
 
 #include <hyperion/core/math/math.hpp>
 #include <hyperion/core/app/input.hpp>
@@ -8,16 +8,14 @@
 namespace Hyperion::Editor {
 
     void EditorFirstPersonCameraController::OnCreate() {
-        m_camera = GetEntity()->GetComponent<Camera>();
-        GetEntity()->GetTransform()->SetPosition(Vec3(2.0f, 2.0f, 2.0f));
+        EditorCameraController::OnCreate();
 
-        RegisterForUpdate();
+        GetEntity()->GetTransform()->SetPosition(Vec3(2.0f, 2.0f, 2.0f));
     }
 
     void EditorFirstPersonCameraController::OnUpdate(float32 delta_time) {
-        Transform *transform = m_camera->GetTransform();
-        Vec3 position = transform->GetPosition();
-        Vec3 rotation = transform->GetEulerAngles();
+        Vec3 position = m_transform->GetPosition();
+        Vec3 euler_angles = m_transform->GetEulerAngles();
 
         float32 fov = m_camera->GetFOV();
         float32 orthographic_size = m_camera->GetOrthographicSize();
@@ -68,7 +66,7 @@ namespace Hyperion::Editor {
             m_yaw = Math::Lerp(m_yaw, m_target_yaw, delta_time * mouse_friction);
             m_pitch = Math::Lerp(m_pitch, m_target_pitch, delta_time * mouse_friction);
 
-            rotation = Vec3(m_pitch, m_yaw, 0);
+            euler_angles = Vec3(m_pitch, m_yaw, 0);
         }
 
         // Handle everything related to zooming.
@@ -97,8 +95,8 @@ namespace Hyperion::Editor {
             float32 acceleration = Input::IsKeyHold(KeyCode::Alt) ? m_acceleration * 5.0f : m_acceleration;
             float32 camera_acceleration = acceleration * delta_time;
 
-            Vec3 forward = camera_acceleration * transform->GetForward();
-            Vec3 right = camera_acceleration * transform->GetRight();
+            Vec3 forward = camera_acceleration * m_transform->GetForward();
+            Vec3 right = camera_acceleration * m_transform->GetRight();
             Vec3 up = camera_acceleration * Vec3::Up();
 
             position += m_velocity * delta_time;
@@ -148,8 +146,8 @@ namespace Hyperion::Editor {
             m_orthographic_size_target = orthographic_size;
         }
 
-        m_camera->GetTransform()->SetPosition(position);
-        m_camera->GetTransform()->SetEulerAngles(rotation);
+        m_transform->SetPosition(position);
+        m_transform->SetEulerAngles(euler_angles);
         m_camera->SetFOV(fov);
         m_camera->SetOrthographicSize(orthographic_size);
     }
