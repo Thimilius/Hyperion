@@ -1,12 +1,17 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/modules/freetype/freetype_font_loader.hpp"
 
+//---------------------- Library Includes ----------------------
 #include <ft2build.h>
 #include <freetype/freetype.h>
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    //--------------------------------------------------------------
     Font *FreetypeFontLoader::LoadFont(const String &path, uint32 font_size, FontCharacterSet character_set) {
         FT_Face font_face;
         if (FT_New_Face(s_freetype_library, path.c_str(), 0, &font_face)) {
@@ -84,12 +89,14 @@ namespace Hyperion {
         return Font::Create(font_size, character_set, font_atlas);
     }
 
+    //--------------------------------------------------------------
     void FreetypeFontLoader::Initialize() {
         if (FT_Init_FreeType(&s_freetype_library)) {
             HYP_LOG_ERROR("Engine", "Failed to initialize freetype library!");
         }
     }
 
+    //--------------------------------------------------------------
     void FreetypeFontLoader::Shutdown() {
         FT_Done_FreeType(s_freetype_library);
     }

@@ -1,11 +1,16 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/rendering/threading/render_thread_command_executor.hpp"
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/rendering/render_engine.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
+    //--------------------------------------------------------------
     uint64 RenderThreadCommandExecutor::Execute(IRenderDriver *render_driver, RenderThreadCommandType command_type, void *render_thread_command) {
         switch (command_type) {
             case RenderThreadCommandType::Clear: {
@@ -142,6 +147,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     uint64 RenderThreadCommandExecutor::ExecuteQuery(IRenderDriver *render_driver, RenderThreadQueryCommandType command_type, void *render_thread_query_command) {
         switch (command_type) {
             case RenderThreadQueryCommandType::GetRenderTextureSubData: {

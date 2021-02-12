@@ -1,33 +1,34 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/entity/entity.hpp"
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/entity/world_manager.hpp"
 #include "hyperion/entity/components/physics/box_collider.hpp"
 #include "hyperion/entity/components/physics/sphere_collider.hpp"
 #include "hyperion/entity/components/rendering/camera.hpp"
 #include "hyperion/entity/components/rendering/mesh_renderer.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    //--------------------------------------------------------------
     bool Entity::IsActiveInHierarchy() const {
-        // TODO: Maybe this is something we should cache instead of recomputing it every time.
-        bool active_self = m_active;
-        if (!active_self) {
+        if (!m_active) {
             return false;
-        }
-
-        Transform *parent = m_transform->m_parent;
-        while (parent != nullptr) {
-            if (!parent->GetEntity()->m_active) {
-                return false;
+        } else {
+            Transform *parent = m_transform->m_parent;
+            if (parent != nullptr) {
+                return parent->GetEntity()->IsActiveInHierarchy();
+            } else {
+                return true;
             }
-            parent = parent->m_parent;
         }
-
-        return true;
     }
 
+    //--------------------------------------------------------------
     Component *Entity::AddComponent(Type type) {
         HYP_ASSERT(type.is_valid());
         HYP_ASSERT_MESSAGE(m_components.find(type) == m_components.end(), "Failed to add component because a component with the same type already exists!");
@@ -46,6 +47,7 @@ namespace Hyperion {
         return component;
     }
 
+    //--------------------------------------------------------------
     Script *Entity::AddScript(Scripting::ScriptingType *scripting_type) {
         Script *script = Script::Create();
         script->m_entity = this;
@@ -57,6 +59,7 @@ namespace Hyperion {
         return script;
     }
 
+    //--------------------------------------------------------------
     Component *Entity::GetComponent(ComponentType type) const {
         for (auto [component_type, component] : m_components) {
             if (component_type.IsDerivedFrom(type)) {
@@ -67,6 +70,7 @@ namespace Hyperion {
         return nullptr;
     }
 
+    //--------------------------------------------------------------
     void Entity::DispatchMessage(EntityMessage message) {
         switch (message.type) {
             case EntityMessageType::ComponentDestroyed: {
@@ -84,10 +88,12 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     void Entity::RegisterMessageListener(IEntityMessageListener *listener) {
         m_message_listeners.push_back(listener);
     }
 
+    //--------------------------------------------------------------
     void Entity::UnregisterMessageListener(IEntityMessageListener *listener) {
         auto begin = m_message_listeners.begin();
         auto end = m_message_listeners.end();
@@ -96,16 +102,19 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     Entity *Entity::Create() {
         return new Entity();
     }
 
+    //--------------------------------------------------------------
     Entity *Entity::Create(const String &name, const Vec3 &position, const Quaternion &rotation, Transform *parent, World *world) {
         Entity *entity = new Entity(name);
         entity->OnCreate(position, rotation, parent, world);
         return entity;
     }
 
+    //--------------------------------------------------------------
     Entity *Entity::CreatePrimitive(EntityPrimitive primitive, const Vec3 &position, const Quaternion &rotation, Transform *parent, World *world) {
         Entity *entity = Create(GetPrimitiveName(primitive), position, rotation, parent, world);
         
@@ -150,6 +159,7 @@ namespace Hyperion {
         return entity;
     }
 
+    //--------------------------------------------------------------
     void Entity::OnDestroy() {
         // First destroy every child.
         if (!m_transform->m_children.empty()) {
@@ -177,12 +187,10 @@ namespace Hyperion {
         }
 
         // At the very end we can destroy the transform.
-        if (m_transform->GetType() == Type::get<RectTransform>()) {
-            static_cast<RectTransform *>(m_transform)->m_replace_on_destroy = false;
-        }
         DestroyImmediate(m_transform);
     }
 
+    //--------------------------------------------------------------
     void Entity::NotifyActivationChanged() {
         DispatchMessage({ EntityMessageType::ActivationChanged, nullptr });
 
@@ -191,6 +199,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     void Entity::OnCreate(const Vec3 &position, const Quaternion &rotation, Transform *parent, World *world) {
         if (parent) {
             world = parent->GetWorld();
@@ -218,6 +227,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     String Entity::GetPrimitiveName(EntityPrimitive primitive) {
         switch (primitive) {
             case EntityPrimitive::Quad: return "Quad";

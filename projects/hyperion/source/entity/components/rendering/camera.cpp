@@ -1,18 +1,24 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/entity/components/rendering/camera.hpp"
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/app/display.hpp"
 #include "hyperion/entity/entity.hpp"
 #include "hyperion/entity/world.hpp"
 #include "hyperion/entity/components/transform.hpp"
 
+//------------------------- Namespaces -------------------------
 using namespace Hyperion::Rendering;
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     // NOTE: We treat window cordinates with (0, 0) at bottom left.
 
+    //--------------------------------------------------------------
     Rendering::CameraData Camera::GetCameraData() const {
         Transform *transform = GetTransform();
         m_data.position = transform->GetPosition();
@@ -21,6 +27,7 @@ namespace Hyperion {
         return m_data;
     }
 
+    //--------------------------------------------------------------
     Vec3 Camera::ScreenToWorldPoint(Vec3 screen_point) const {
         float32 display_width = static_cast<float32>(Display::GetWidth());
         float32 display_height = static_cast<float32>(Display::GetHeight());
@@ -34,6 +41,7 @@ namespace Hyperion {
         return world;
     }
 
+    //--------------------------------------------------------------
     Vec2 Camera::WorldToScreenPoint(Vec3 world_point) const {
         float32 display_width = static_cast<float32>(Display::GetWidth());
         float32 display_height = static_cast<float32>(Display::GetHeight());
@@ -46,6 +54,7 @@ namespace Hyperion {
         return Vec2(x, y);
     }
 
+    //--------------------------------------------------------------
     Ray Camera::ScreenPointToRay(Vec2 screen_point) const {
         float32 display_width = static_cast<float32>(Display::GetWidth());
         float32 display_height = static_cast<float32>(Display::GetHeight());
@@ -83,12 +92,14 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     void Camera::OnMessage(EntityMessage message) {
         if (message.type == EntityMessageType::TransformChanged) {
             RecalculateMatricies();
         }
     }
 
+    //--------------------------------------------------------------
     void Camera::OnCreate() {
         Component::OnCreate();
 
@@ -97,12 +108,14 @@ namespace Hyperion {
         GetEntity()->RegisterMessageListener(this);
     }
 
+    //--------------------------------------------------------------
     void Camera::OnDestroy() {
         GetEntity()->UnregisterMessageListener(this);
 
         Component::OnDestroy();
     }
 
+    //--------------------------------------------------------------
     void Camera::RecalculateMatricies() {
         float32 aspect_ratio = static_cast<float32>(Display::GetWidth() / static_cast<float32>(Display::GetHeight()));
         Vec3 position = GetTransform()->GetPosition();
@@ -127,6 +140,7 @@ namespace Hyperion {
         m_data.inverse_view_projection_matrix = m_data.view_projection_matrix.Inverted();
     }
 
+    //--------------------------------------------------------------
     Camera *Camera::Create() {
         return new Camera();
     }

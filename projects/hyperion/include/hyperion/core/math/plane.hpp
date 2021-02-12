@@ -1,8 +1,10 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/math/ray.hpp"
 #include "hyperion/core/math/vec3.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     struct Plane {

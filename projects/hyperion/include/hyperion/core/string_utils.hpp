@@ -1,15 +1,18 @@
 #pragma once
 
+//--------------- C++ Standard Library Includes ----------------
 #include <string>
 
+//---------------------- Library Includes ----------------------
 #include <fmt/format.h>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/types.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     using String = std::string;
-
     using WideString = std::wstring;
 
     class StringUtils {

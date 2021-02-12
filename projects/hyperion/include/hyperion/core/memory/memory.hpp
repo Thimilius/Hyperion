@@ -1,14 +1,18 @@
 #pragma once
 
+//--------------- C++ Standard Library Includes ----------------
 #include <atomic>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/types.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion {
     struct EngineLoopSystem;
     class Main;
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     class MemoryStats final {

@@ -1,9 +1,12 @@
 #pragma once
 
+//---------------------- Library Includes ----------------------
 #include <glad/glad.h>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/rendering/render_driver.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
     class OpenGLUtilities final {

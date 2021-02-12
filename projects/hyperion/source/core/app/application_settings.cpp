@@ -1,13 +1,18 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/core/app/application_settings.hpp"
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/io/file_system.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     // TODO: Is there a better way to convert strings to enums?!
 
+    //--------------------------------------------------------------
     WindowMode WindowModeFromString(const String &string, const String &path) {
         if (string == "windowed") {
             return WindowMode::Windowed;
@@ -19,6 +24,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     ApplicationSettings ApplicationSettings::FromJsonFile(const String &path) {
         String json_text = FileSystem::ReadAllText(path);
         auto json = nlohmann::json::parse(json_text, nullptr, false);

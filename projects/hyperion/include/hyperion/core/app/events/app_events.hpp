@@ -1,7 +1,9 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/app/events/event.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     class AppDisplayChangeEvent : public Event {

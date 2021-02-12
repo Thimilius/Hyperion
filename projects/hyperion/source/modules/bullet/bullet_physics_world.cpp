@@ -1,21 +1,27 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/modules/bullet/bullet_physics_world.hpp"
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/entity/components/transform.hpp"
 #include "hyperion/entity/components/physics/box_collider.hpp"
 #include "hyperion/entity/components/physics/sphere_collider.hpp"
 #include "hyperion/modules/bullet/bullet_physics_debug_drawer.hpp"
 #include "hyperion/modules/bullet/bullet_physics_driver.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Physics {
 
+    //--------------------------------------------------------------
     BulletPhysicsWorld::BulletPhysicsWorld(BulletPhysicsDriver *driver) {
         btCollisionConfiguration *collision_configuration = driver->m_collision_configuration;
         m_collision_world = new btCollisionWorld(new btCollisionDispatcher(collision_configuration), new btDbvtBroadphase(), collision_configuration);
         m_collision_world->setDebugDrawer(new BulletDebugDrawer());
     }
 
+    //--------------------------------------------------------------
     BulletPhysicsWorld::~BulletPhysicsWorld() {
         for (auto [collider, collision_object] : m_collision_objects) {
             m_collision_world->removeCollisionObject(collision_object);
@@ -28,6 +34,7 @@ namespace Hyperion::Physics {
         delete m_collision_world;
     }
 
+    //--------------------------------------------------------------
     bool BulletPhysicsWorld::Raycast(Ray ray, RaycastResult &result, float32 distance) {
         btVector3 from = btVector3(ray.origin.x, ray.origin.y, ray.origin.z);
         btVector3 to = from + (distance * btVector3(ray.direction.x, ray.direction.y, ray.direction.z));
@@ -51,10 +58,12 @@ namespace Hyperion::Physics {
         }
     }
 
+    //--------------------------------------------------------------
     void BulletPhysicsWorld::DebugDraw() {
         m_collision_world->debugDrawWorld();
     }
 
+    //--------------------------------------------------------------
     void BulletPhysicsWorld::AddBoxCollider(BoxCollider *box_collider) {
         btCollisionObject *collision_object = new btCollisionObject();
         Vec3 half_extends = 0.5f * box_collider->GetSize();
@@ -67,6 +76,7 @@ namespace Hyperion::Physics {
         AddCollider(box_collider, collision_object);
     }
 
+    //--------------------------------------------------------------
     void BulletPhysicsWorld::AddSphereCollider(SphereCollider *sphere_collider) {
         btCollisionObject *collision_object = new btCollisionObject();
         collision_object->setCollisionShape(new btSphereShape(sphere_collider->GetRadius()));
@@ -77,6 +87,7 @@ namespace Hyperion::Physics {
         AddCollider(sphere_collider, collision_object);
     }
 
+    //--------------------------------------------------------------
     void BulletPhysicsWorld::RemoveCollider(Collider *collider) {
         btCollisionObject *collision_object = m_collision_objects.at(collider);
         m_collision_objects.erase(collider);
@@ -93,6 +104,7 @@ namespace Hyperion::Physics {
         delete collision_object;
     }
 
+    //--------------------------------------------------------------
     void BulletPhysicsWorld::UpdateBoxCollider(BoxCollider *box_collider) {
         btCollisionObject *collision_object = m_collision_objects.at(box_collider);
 
@@ -111,6 +123,7 @@ namespace Hyperion::Physics {
         m_collision_world->updateSingleAabb(collision_object);
     }
 
+    //--------------------------------------------------------------
     void BulletPhysicsWorld::UpdateSphereCollider(SphereCollider *sphere_collider) {
         btCollisionObject *collision_object = m_collision_objects.at(sphere_collider);
 
@@ -120,6 +133,7 @@ namespace Hyperion::Physics {
         m_collision_world->updateSingleAabb(collision_object);
     }
 
+    //--------------------------------------------------------------
     void BulletPhysicsWorld::UpdateBoxColliderTransform(BoxCollider *box_collider) {
         btCollisionObject *collision_object = m_collision_objects.at(box_collider);
 
@@ -131,6 +145,7 @@ namespace Hyperion::Physics {
         m_collision_world->updateSingleAabb(collision_object);
     }
 
+    //--------------------------------------------------------------
     void BulletPhysicsWorld::UpdateSphereColliderTransform(SphereCollider *sphere_collider) {
         btCollisionObject *collision_object = m_collision_objects.at(sphere_collider);
 
@@ -140,6 +155,7 @@ namespace Hyperion::Physics {
         m_collision_world->updateSingleAabb(collision_object);
     }
 
+    //--------------------------------------------------------------
     void BulletPhysicsWorld::UpdateColliderActivation(Collider *collider) {
         btCollisionObject *collision_object = m_collision_objects.at(collider);
         if (collider->IsActiveAndEnabled()) {
@@ -167,6 +183,7 @@ namespace Hyperion::Physics {
         }
     }
 
+    //--------------------------------------------------------------
     BoundingBox BulletPhysicsWorld::GetBounds(Collider *collider) {
         auto collision_object_pos = m_collision_objects.find(collider);
         if (collision_object_pos != m_collision_objects.end()) {
@@ -186,12 +203,14 @@ namespace Hyperion::Physics {
         }
     }
 
+    //--------------------------------------------------------------
     void BulletPhysicsWorld::AddCollider(Collider *collider, btCollisionObject *collision_object) {
         collision_object->setUserPointer(collider);
         m_collision_world->addCollisionObject(collision_object);
         m_collision_objects[collider] = collision_object;
     }
 
+    //--------------------------------------------------------------
     void BulletPhysicsWorld::UpdateTransform(Transform *transform, btCollisionObject *collision_object, Vec3 position) {
         Quaternion rotation = transform->GetRotation();
         Vec3 scale = transform->GetScale();

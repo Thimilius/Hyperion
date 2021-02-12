@@ -1,5 +1,7 @@
+//--------------------- Definition Include ---------------------
 #include "hyperion/editor/entity/editor_world.hpp"
 
+//---------------------- Library Includes ----------------------
 #include <hyperion/core/app/input.hpp>
 #include <hyperion/core/app/time.hpp>
 #include <hyperion/entity/world_manager.hpp>
@@ -7,12 +9,15 @@
 #include <hyperion/entity/components/rendering/camera.hpp>
 #include <hyperion/rendering/immediate_renderer.hpp>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/editor/entity/editor_world_grid.hpp"
 #include "hyperion/editor/entity/components/editor_first_person_camera_controller.hpp"
 #include "hyperion/editor/entity/components/editor_look_around_camera_controller.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Editor {
 
+    //--------------------------------------------------------------
     void EditorWorld::Initialize() {
         s_editor_world = WorldManager::CreateWorld();
         WorldManager::SetActiveWorld(s_editor_world);
@@ -23,6 +28,7 @@ namespace Hyperion::Editor {
         EditorWorldGrid::Initialize();
     }
 
+    //--------------------------------------------------------------
     void EditorWorld::Update(float32 delta_time) {
         if (Input::IsKeyDown(KeyCode::F3)) {
             s_should_draw_grid = !s_should_draw_grid;
@@ -34,6 +40,7 @@ namespace Hyperion::Editor {
         s_editor_camera_controller->OnUpdate(delta_time);
     }
 
+    //--------------------------------------------------------------
     void EditorWorld::Render(Rendering::IRenderDriver *render_driver, const Rendering::CameraData &camera_data) {
         if (s_should_draw_physics_debug) {
             Rendering::ImmediateRenderer::Begin(Rendering::MeshTopology::Lines);

@@ -1,9 +1,11 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset.hpp"
 #include "hyperion/assets/texture.hpp"
 #include "hyperion/core/math/vec2.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     template<typename T>

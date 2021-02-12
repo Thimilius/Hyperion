@@ -1,13 +1,16 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/entity/components/rendering/mesh_renderer.hpp"
 #include "hyperion/rendering/camera_data.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion::Rendering {
     class IRenderDriver;
     class RenderEngine;
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
     enum class RenderPipeline {

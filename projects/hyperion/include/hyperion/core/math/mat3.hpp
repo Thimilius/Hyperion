@@ -1,7 +1,9 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/math/vec3.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     // Matrix is in column-major order!

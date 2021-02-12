@@ -1,14 +1,19 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion {
-
     struct Vec2;
     struct Vec2Int;
     struct Vec4;
     struct Mat4;
+}
 
+//-------------------- Definition Namespace --------------------
+namespace Hyperion {
+  
     struct Vec3 {
         float32 x;
         float32 y;

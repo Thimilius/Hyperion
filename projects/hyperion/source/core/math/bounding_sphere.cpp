@@ -1,14 +1,20 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/core/math/bounding_sphere.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    //--------------------------------------------------------------
     BoundingSphere::BoundingSphere() { }
 
+    //--------------------------------------------------------------
     BoundingSphere::BoundingSphere(Vec3 origin, float32 radius)
         : origin(origin), radius(radius) { }
 
+    //--------------------------------------------------------------
     bool BoundingSphere::Intersects(Ray ray, float32 &hit_distance) const {
         Vec3 distance = origin - ray.origin;
         float32 radius_squared = radius * radius;
@@ -41,14 +47,17 @@ namespace Hyperion {
         return true;
     }
 
+    //--------------------------------------------------------------
     String BoundingSphere::ToString() const {
         return StringUtils::Format("(Origin: {}, Radius: {})", origin.ToString(), radius);
     }
 
+    //--------------------------------------------------------------
     bool BoundingSphere::operator==(const BoundingSphere &other) const {
         return origin == other.origin && radius != other.radius;
     }
 
+    //--------------------------------------------------------------
     bool BoundingSphere::operator!=(const BoundingSphere &other) const {
         return !(*this == other);
     }

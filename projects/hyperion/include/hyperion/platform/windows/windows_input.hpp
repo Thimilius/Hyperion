@@ -1,14 +1,17 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/app/input.hpp"
 #include "hyperion/core/app/events/gamepad_events.hpp"
 #include "hyperion/core/app/events/key_events.hpp"
 #include "hyperion/core/app/events/mouse_events.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class WindowsWindow;
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     class WindowsInput : public InputImplementation {

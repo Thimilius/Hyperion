@@ -1,10 +1,13 @@
 #pragma once
 
+//---------------------- Library Includes ----------------------
 #include <hyperion/entity/world.hpp>
 #include <hyperion/rendering/render_driver.hpp>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/editor/entity/components/editor_camera_controller.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Editor {
 
     class EditorWorld final {

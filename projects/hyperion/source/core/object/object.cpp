@@ -1,7 +1,10 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/core/object/object.hpp"
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset.hpp"
 #include "hyperion/assets/font.hpp"
 #include "hyperion/assets/material.hpp"
@@ -14,7 +17,6 @@
 #include "hyperion/entity/world.hpp"
 #include "hyperion/entity/components/behaviour.hpp"
 #include "hyperion/entity/components/component.hpp"
-#include "hyperion/entity/components/rect_transform.hpp"
 #include "hyperion/entity/components/script.hpp"
 #include "hyperion/entity/components/transform.hpp"
 #include "hyperion/entity/components/physics/box_collider.hpp"
@@ -24,16 +26,20 @@
 #include "hyperion/entity/components/rendering/renderer.hpp"
 #include "hyperion/entity/components/rendering/mesh_renderer.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    //--------------------------------------------------------------
     Object *Object::Create() {
         return new Object();
     }
 
+    //--------------------------------------------------------------
     Object *Object::Create(const String &name) {
         return new Object(name);
     }
 
+    //--------------------------------------------------------------
     Object *Object::Clone(Object *object) {
         if (object) {
             Object *clone = object->CreateClone();
@@ -44,6 +50,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     void Object::Destroy(Object *object) {
         if (object && !object->m_is_destroyed) {
             HYP_ASSERT_MESSAGE(object->GetType() != rttr::type::get<Transform>(), "Destroying a transform component is not allowed!");
@@ -53,18 +60,22 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     Object::Object() {
         m_id = ObjectManager::RegisterObject(this);
     }
 
+    //--------------------------------------------------------------
     Object::Object(const String &name) : Object() {
         m_name = name;
     }
 
+    //--------------------------------------------------------------
     void Object::HandleClone(Object *clone) const {
         clone->m_name = m_name;
     }
 
+    //--------------------------------------------------------------
     Object::~Object() {
         if (m_scripting_instance) {
             m_scripting_instance->SendMessage(Scripting::ScriptingMessage::OnDestroy);
@@ -73,6 +84,7 @@ namespace Hyperion {
         ObjectManager::UnregisterObject(this);
     }
 
+    //--------------------------------------------------------------
     void Object::DestroyImmediate(Object *object) {
         if (object && !object->m_is_destroyed) {
             object->m_is_destroyed = true;
@@ -80,6 +92,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     Object *ObjectManager::Get(ObjectId object_id) {
         auto it = s_objects.find(object_id);
         if (it != s_objects.end()) {
@@ -89,10 +102,12 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     void ObjectManager::LateUpdate() {
         DestroyPendingObjects();
     }
 
+    //--------------------------------------------------------------
     void ObjectManager::Shutdown() {
         for (auto [object_id, object] : s_objects) {
             Object::Destroy(object);
@@ -100,16 +115,19 @@ namespace Hyperion {
         DestroyPendingObjects();
     }
 
+    //--------------------------------------------------------------
     void ObjectManager::Destroy(Object *object) {
         s_objects_to_destroy.insert(object);
     }
 
+    //--------------------------------------------------------------
     void ObjectManager::DestroyImmediate(Object *object) {
         object->OnDestroy();
 
         delete object;
     }
 
+    //--------------------------------------------------------------
     void ObjectManager::DestroyPendingObjects() {
         for (Object *object : s_objects_to_destroy) {
             ObjectManager::DestroyImmediate(object);
@@ -117,6 +135,7 @@ namespace Hyperion {
         s_objects_to_destroy.clear();
     }
 
+    //--------------------------------------------------------------
     ObjectId ObjectManager::RegisterObject(Object *object) {
         // 0 is not a valid object id, so we preincrement.
         ObjectId id = ++s_object_id_counter;
@@ -124,6 +143,7 @@ namespace Hyperion {
         return id;
     }
 
+    //--------------------------------------------------------------
     void ObjectManager::UnregisterObject(Object *object) {
         HYP_ASSERT(object);
 
@@ -136,6 +156,7 @@ namespace Hyperion {
 
 }
 
+//--------------------------------------------------------------
 // NOTE: This is actually pretty ugly.
 // Ideally the types should register themselves in their corresponding .cpp file.
 // But unfortunately the linker may or may not optimize these registrations away which obviously leads to very annoying bugs.
@@ -191,8 +212,6 @@ HYP_REFLECT_REGISTER_BEGIN
             .constructor(select_overload<World *()>(&World::Create))(DefaultConstructorPolicy);
         Registration<Behaviour>("Behaviour");
         Registration<Component>("Component");
-        Registration<RectTransform>("RectTransform")
-            .constructor(select_overload<RectTransform *()>(&RectTransform::Create))(DefaultConstructorPolicy);
         Registration<Script>("Script")
             .constructor(select_overload<Script *()>(&Script::Create))(DefaultConstructorPolicy);
         Registration<Transform>("Transform")

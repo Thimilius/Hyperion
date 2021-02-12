@@ -1,5 +1,6 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/app/application.hpp"
 #include "hyperion/core/system/main.hpp"
 

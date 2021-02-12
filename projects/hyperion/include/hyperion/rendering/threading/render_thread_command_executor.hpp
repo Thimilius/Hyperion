@@ -1,7 +1,9 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/rendering/threading/render_thread_commands.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
     class RenderThreadCommandExecutor final {

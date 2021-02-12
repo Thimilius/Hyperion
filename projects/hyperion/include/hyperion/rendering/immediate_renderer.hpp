@@ -1,14 +1,17 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/assets/material.hpp"
 #include "hyperion/assets/mesh.hpp"
 #include "hyperion/core/color.hpp"
 #include "hyperion/rendering/render_driver.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion::Rendering {
     class RenderEngine;
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
     class ImmediateRenderer final {

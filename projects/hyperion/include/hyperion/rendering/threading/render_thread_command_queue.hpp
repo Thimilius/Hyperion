@@ -1,12 +1,15 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
 #include "hyperion/rendering/threading/render_thread_commands.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion::Rendering {
     class RenderEngine;
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
     // TODO: Implement another queue for render thread query commands instead of using a template.

@@ -1,11 +1,14 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Engine;
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     enum class OperatingSystemType {

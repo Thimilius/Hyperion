@@ -1,13 +1,16 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
 #include "hyperion/core/app/events/event.hpp"
 #include "hyperion/core/math/vec2.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class WindowsWindow;
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     enum class KeyCode {

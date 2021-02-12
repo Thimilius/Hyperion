@@ -1,14 +1,19 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/rendering/shaders/shader_pre_processor.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
+    //--------------------------------------------------------------
     ShaderPreProcessor::ShaderPreProcessor(const String &source) {
         m_source = source;
         m_position = 0;
     }
 
+    //--------------------------------------------------------------
     ShaderPreProcessResult ShaderPreProcessor::PreProcess() {
         ShaderPreProcessResult result = { };
         result.success = false;
@@ -54,6 +59,7 @@ namespace Hyperion::Rendering {
         return result;
     }
 
+    //--------------------------------------------------------------
     bool ShaderPreProcessor::HandleDirective(ShaderStageFlags &stage_flags, Map<ShaderStageFlags, String> &sources, ShaderAttributes &properties) {
         uint64 directive_start_position = m_position;
         Advance();
@@ -118,6 +124,7 @@ namespace Hyperion::Rendering {
         return true;
     }
 
+    //--------------------------------------------------------------
     void ShaderPreProcessor::EndShaderStage(Map<ShaderStageFlags, String> &sources, uint64 end_position) {
         if (m_current_shader_type != ShaderStageFlags::None) {
             uint64 source_length = end_position - m_current_shader_type_directive_end;
@@ -126,11 +133,13 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     char ShaderPreProcessor::Advance() {
         m_position++;
         return m_source[m_position - 1];
     }
 
+    //--------------------------------------------------------------
     String ShaderPreProcessor::AdvanceUntilEndOfLine() {
         uint64 import_start_position = m_position;
         SkipAlphaNumeric();
@@ -140,10 +149,12 @@ namespace Hyperion::Rendering {
         return m_source.substr(import_start_position, import_length);
     }
 
+    //--------------------------------------------------------------
     char ShaderPreProcessor::Peek() {
         return m_source[m_position];
     }
 
+    //--------------------------------------------------------------
     char ShaderPreProcessor::PeekNext() {
         if (IsAtEnd()) {
             return '\0';
@@ -151,38 +162,46 @@ namespace Hyperion::Rendering {
         return m_source[m_position];
     }
 
+    //--------------------------------------------------------------
     void ShaderPreProcessor::SkipAlphaNumeric() {
         while ((IsAlpha(Peek()) || IsNumeric(Peek())) && !IsAtEnd()) {
             Advance();
         }
     }
 
+    //--------------------------------------------------------------
     void ShaderPreProcessor::SkipBlankspace() {
         while (IsWhitespace(Peek()) && !IsAtEnd()) {
             Advance();
         }
     }
 
+    //--------------------------------------------------------------
     bool ShaderPreProcessor::IsAtEnd() {
         return m_position >= m_source.size();
     }
 
+    //--------------------------------------------------------------
     bool ShaderPreProcessor::IsAlpha(char c) {
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';;
     }
 
+    //--------------------------------------------------------------
     bool ShaderPreProcessor::IsNumeric(char c) {
         return c >= '0' && c <= '9';
     }
 
+    //--------------------------------------------------------------
     bool ShaderPreProcessor::IsWhitespace(char c) {
         return c == ' ' || c == '\t' || c == '\r';
     }
 
+    //--------------------------------------------------------------
     bool ShaderPreProcessor::IsDirective(const char *directive, const char *start) {
         return std::memcmp(directive, (void *)start, std::strlen(directive)) == 0;
     }
 
+    //--------------------------------------------------------------
     ShaderStageFlags ShaderPreProcessor::GetShaderStageFromString(const String &string) {
         if (string == "vertex") {
             return ShaderStageFlags::Vertex;
@@ -193,6 +212,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     ShaderLightMode ShaderPreProcessor::GetShaderLightModeFromString(const String &string) {
         if (string == "none") {
             return ShaderLightMode::None;
@@ -203,12 +223,9 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     ShaderModuleType ShaderPreProcessor::GetShaderModuleTypeFromString(const String &string) {
-        if (false) {
-
-        } else {
-            return ShaderModuleType::Unknown;
-        }
+        return ShaderModuleType::Unknown;
     }
 
 }

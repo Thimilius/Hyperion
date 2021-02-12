@@ -1,14 +1,20 @@
+//--------------------- Definition Include ---------------------
 #include "hyperion/editor/entity/editor_world_grid.hpp"
 
+//---------------------- Library Includes ----------------------
 #include <hyperion/assets/shader.hpp>
 #include <hyperion/core/io/file_system.hpp>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/editor/entity/editor_world.hpp"
 
+//------------------------- Namespaces -------------------------
 using namespace Hyperion::Rendering;
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Editor {
 
+    //--------------------------------------------------------------
     void EditorWorldGrid::Initialize() {
         Shader *grid_shader = Shader::Create(FileSystem::ReadAllText("data/shaders/editor/grid.shader"));
         s_material = Material::Create(grid_shader);
@@ -53,6 +59,7 @@ namespace Hyperion::Editor {
         s_mesh = Mesh::Create(mesh_data, sub_meshes);
     }
 
+    //--------------------------------------------------------------
     void EditorWorldGrid::Render(IRenderDriver *render_driver, const CameraData &camera_data) {
         // We want to draw the grid at the center of the camera corresponding to the grid chunk size.
         Mat4 translation = GetTranslation(camera_data);
@@ -60,6 +67,7 @@ namespace Hyperion::Editor {
         render_driver->DrawMesh(s_mesh->GetResourceId(), translation * rotation, s_material->GetResourceId(), 0);
     }
 
+    //--------------------------------------------------------------
     Mat4 EditorWorldGrid::GetTranslation(const CameraData &camera_data) {
         Vec3 camera_position = camera_data.position;
         int32 x = static_cast<int32>(camera_position.x + (GRID_CHUNK_SIZE / 2.0f)) / GRID_CHUNK_SIZE;
@@ -74,6 +82,7 @@ namespace Hyperion::Editor {
         }
     }
 
+    //--------------------------------------------------------------
     Mat4 EditorWorldGrid::GetRotation() {
         switch (s_grid_type) {
             case EditorWorldGridType::XZPlane: return Mat4::Identity();

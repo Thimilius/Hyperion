@@ -1,11 +1,16 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/modules/fmod/fmod_audio_driver.hpp"
 
+//---------------------- Library Includes ----------------------
 #include <fmod/fmod.hpp>
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Audio {
 
+    //--------------------------------------------------------------
     void FModAudioDriver::Initialize() {
         if (FMOD::System_Create(&m_system) != FMOD_OK) {
             HYP_LOG_ERROR("Audio", "Failed to create FMOD system!");
@@ -24,6 +29,7 @@ namespace Hyperion::Audio {
         HYP_LOG_INFO("Audio", "Initialized FMOD audio driver!");
     }
 
+    //--------------------------------------------------------------
     void FModAudioDriver::Shutdown() {
         for (auto sound : m_sounds) {
             sound.second->release();
@@ -32,6 +38,7 @@ namespace Hyperion::Audio {
         m_system->release();
     }
 
+    //--------------------------------------------------------------
     void FModAudioDriver::Load(const String &name, const String &path) {
         FMOD::Sound *sound;
         if (m_system->createSound(path.c_str(), FMOD_DEFAULT, nullptr, &sound) != FMOD_OK) {
@@ -46,6 +53,7 @@ namespace Hyperion::Audio {
         }
     }
 
+    //--------------------------------------------------------------
     void FModAudioDriver::Play(const String &name) {
         auto it = m_sounds.find(name);
         if (it == m_sounds.end()) {

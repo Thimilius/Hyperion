@@ -1,5 +1,6 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/color.hpp"
 #include "hyperion/core/math/vec2.hpp"
 #include "hyperion/core/math/vec3.hpp"
@@ -15,6 +16,7 @@
 #include "hyperion/rendering/attributes/shader_attributes.hpp"
 #include "hyperion/rendering/attributes/texture_attributes.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
     enum class ClearFlags {

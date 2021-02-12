@@ -1,10 +1,13 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/assets/mesh.hpp"
 #include "hyperion/rendering/attributes/mesh_attributes.hpp"
 
+//-------------------- Forward Declarations --------------------
 struct aiMesh;
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     class AssimpMeshLoader : public IMeshLoader {

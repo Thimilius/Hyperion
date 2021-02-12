@@ -1,14 +1,19 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/core/serialization/json_serializer.hpp"
 
+//---------------------- Library Includes ----------------------
 #include <nlohmann/json.hpp>
-#include <rttr/registration>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/io/file_system.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    //--------------------------------------------------------------
     String JsonSerializer::SerializeInternal(Instance object, Type type) {
         nlohmann::json json_object;
 
@@ -25,6 +30,7 @@ namespace Hyperion {
         return json_object.dump(m_settings.indent_width);
     }
 
+    //--------------------------------------------------------------
     void JsonSerializer::DeserializeInternal(const String &json, Instance object, Type type) {
         auto json_object = nlohmann::json::parse(json, nullptr, false);
 

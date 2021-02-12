@@ -1,12 +1,17 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/core/system/engine_loop.hpp"
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/memory/memory.hpp"
 #include "hyperion/core/system/engine.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    //--------------------------------------------------------------
     EngineLoopSystem EngineLoopSystem::Default() {
         EngineLoopSystem result;
         

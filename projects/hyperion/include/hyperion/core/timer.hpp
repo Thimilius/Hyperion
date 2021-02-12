@@ -1,7 +1,9 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     class Timer {

@@ -1,7 +1,9 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/object/object.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     class Image : public Object {

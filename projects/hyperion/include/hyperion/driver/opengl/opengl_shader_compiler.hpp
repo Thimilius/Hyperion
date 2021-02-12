@@ -1,9 +1,12 @@
 #pragma once
 
+//---------------------- Library Includes ----------------------
 #include <glad/glad.h>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
     struct OpenGLShaderCompilationResult {

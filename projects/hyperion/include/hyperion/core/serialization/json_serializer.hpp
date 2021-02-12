@@ -1,9 +1,12 @@
 #pragma once
 
-#include "hyperion/common.hpp"
-
+//---------------------- Library Includes ----------------------
 #include <rttr/registration>
 
+//---------------------- Project Includes ----------------------
+#include "hyperion/common.hpp"
+
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     struct JsonSerializerSettings {

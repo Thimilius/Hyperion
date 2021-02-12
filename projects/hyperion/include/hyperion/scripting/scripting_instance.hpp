@@ -1,9 +1,11 @@
 #pragma once
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Object;
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
 
     enum class ScriptingMessage {

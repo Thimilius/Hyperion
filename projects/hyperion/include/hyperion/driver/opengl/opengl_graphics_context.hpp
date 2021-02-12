@@ -1,10 +1,13 @@
 #pragma once
 
+//---------------------- Library Includes ----------------------
 #include <glad/glad.h>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
 #include "hyperion/rendering/graphics_context.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
     struct OpenGLGraphicsContextLimits {

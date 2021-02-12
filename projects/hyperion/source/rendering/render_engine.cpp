@@ -1,7 +1,10 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/rendering/render_engine.hpp"
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/app/window.hpp"
 #include "hyperion/core/profiling/profiling.hpp"
 #include "hyperion/core/threading/synchronization.hpp"
@@ -15,8 +18,10 @@
 #include "hyperion/rendering/threading/render_thread_command_executor.hpp"
 #include "hyperion/rendering/threading/render_thread_render_driver.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
+    //--------------------------------------------------------------
     void RenderEngine::PreInitialize(const RenderSettings &settings, Window *window) {
         s_render_settings = settings;
         
@@ -43,11 +48,13 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     void RenderEngine::Initialize() {
         s_render_pipeline->Initialize(s_render_driver);
         ImmediateRenderer::Initialize(s_render_driver);
     }
 
+    //--------------------------------------------------------------
     void RenderEngine::Render() {
         // Do the actual rendering with the render pipeline.
         {
@@ -72,10 +79,12 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     void RenderEngine::PreShutdown() {
         s_render_pipeline->Shutdown(s_render_driver);
     }
 
+    //--------------------------------------------------------------
     void RenderEngine::Shutdown() {
         delete s_render_pipeline;
         delete s_render_driver_wrapper;
@@ -94,10 +103,12 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     void RenderEngine::Exit() {
         GetCommandQueue().Allocate(RenderThreadCommandType::Exit);
     }
 
+    //--------------------------------------------------------------
     void RenderEngine::InitGraphicsContextAndBackend(Window *window) {
         // The graphics context is the very first thing we need to initialize so that resources can be created properly.
         s_graphics_context = window->CreateGraphicsContext(s_render_settings.backend);
@@ -121,6 +132,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     void RenderEngine::HandleRenderThreadQueryCommands() {
         HYP_PROFILE_SCOPE("HandleRenderThreadQueryCommands");
 
@@ -147,6 +159,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     void RenderEngine::SwapRenderThreadCommandQueues() {
         HYP_PROFILE_SCOPE("SwapRenderThreadCommandQueues");
 
@@ -154,6 +167,7 @@ namespace Hyperion::Rendering {
         std::swap(s_update_queue, s_render_queue);
     }
 
+    //--------------------------------------------------------------
     void RenderEngine::InitRenderThread(Window *window) {
         InitGraphicsContextAndBackend(window);
 
@@ -161,6 +175,7 @@ namespace Hyperion::Rendering {
         Synchronization::WaitForUpdateReady();
     }
 
+    //--------------------------------------------------------------
     void RenderEngine::DispatchCurrentRenderThreadQueryCommand() {
         // We want to execute the callbacks of the query command here on the Main Thread.
         switch (s_current_query_command_type) {
@@ -175,6 +190,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     void RenderEngine::RenderThreadLoop(void *parameter) {
         InitRenderThread(static_cast<Window *>(parameter));
 
@@ -210,6 +226,7 @@ namespace Hyperion::Rendering {
         ShutdownRenderThread();
     }
 
+    //--------------------------------------------------------------
     void RenderEngine::ShutdownRenderThread() {
         // We have to wait for all last render commands to properly destroy all GPU resources.
         Synchronization::WaitForSwapDone();
@@ -219,6 +236,7 @@ namespace Hyperion::Rendering {
         delete s_graphics_context;
     }
 
+    //--------------------------------------------------------------
     void RenderEngine::ExecuteRenderCommands() {
         HYP_PROFILE_CATEGORY("Execute Render Commands", Optick::Category::Rendering);
 
@@ -241,6 +259,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     void RenderEngine::ExecuteRenderThreadQueryCommand() {
         if (s_is_current_query_command_pending) {
             s_is_current_query_command_pending = false;

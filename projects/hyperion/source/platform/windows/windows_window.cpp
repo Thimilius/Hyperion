@@ -1,10 +1,14 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/platform/windows/windows_window.hpp"
 
+//---------------------- Library Includes ----------------------
 #include <Dbt.h>
 #include <Windowsx.h>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/app/events/app_events.hpp"
 #include "hyperion/core/app/events/event.hpp"
 #include "hyperion/core/app/events/gamepad_events.hpp"
@@ -14,12 +18,15 @@
 #include "hyperion/core/system/engine.hpp"
 #include "hyperion/platform/windows/windows_opengl_graphics_context.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    //--------------------------------------------------------------
     Window *Window::Create(const WindowSettings &settings) {
         return new WindowsWindow(settings);
     }
 
+    //--------------------------------------------------------------
     WindowsWindow::WindowsWindow(const WindowSettings &settings) {
         m_title = settings.title;
         m_width = settings.width;
@@ -41,10 +48,12 @@ namespace Hyperion {
         m_input->QueryConnectedGamepads();
     }
 
+    //--------------------------------------------------------------
     WindowsWindow::~WindowsWindow() {
         DestroyWindow(m_window_handle);
     }
 
+    //--------------------------------------------------------------
     void WindowsWindow::SetTitle(const String &title) {
         m_title = title;
         WideString title_wide = StringUtils::Utf8ToUtf16(title);
@@ -57,6 +66,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     void WindowsWindow::SetSize(uint32 width, uint32 height) {
         if (m_width == width && m_height == height) {
             return;
@@ -86,11 +96,13 @@ namespace Hyperion {
         m_height = height;
     }
 
+    //--------------------------------------------------------------
     void WindowsWindow::SetMinimumSize(uint32 min_width, uint32 min_height) {
         m_min_width = min_width;
         m_min_height = min_height;
     }
 
+    //--------------------------------------------------------------
     void WindowsWindow::SetWindowMode(WindowMode window_mode) {
         if (m_window_mode == window_mode) {
             return;
@@ -132,6 +144,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     void WindowsWindow::SetWindowState(WindowState window_state) {
         if (m_window_state == window_state) {
             return;
@@ -164,16 +177,19 @@ namespace Hyperion {
         m_window_state = window_state;
     }
 
+    //--------------------------------------------------------------
     void WindowsWindow::SetCursorVisible(bool visible) {
         m_cursor_is_visible = visible;
 
         ShowCursor(visible);
     }
 
+    //--------------------------------------------------------------
     void WindowsWindow::SetCursorMode(CursorMode mode) {
         m_cursor_mode = mode;
     }
 
+    //--------------------------------------------------------------
     void WindowsWindow::SetIcon(const String &path) {
         HICON icon = (HICON)LoadImageW(nullptr, StringUtils::Utf8ToUtf16(path).c_str(), IMAGE_ICON, 64, 64, LR_LOADFROMFILE);
         SendMessageW(m_window_handle, WM_SETICON, ICON_SMALL, (LPARAM)icon);
@@ -187,6 +203,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     Rendering::GraphicsContext *WindowsWindow::CreateGraphicsContext(Rendering::RenderBackend render_backend) {
         switch (render_backend) {
             case Rendering::RenderBackend::OpenGL: {
@@ -235,6 +252,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     void WindowsWindow::Poll() {
         m_input->Update();
 
@@ -261,15 +279,18 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     void WindowsWindow::Show() {
         ShowWindow(m_window_handle, SW_SHOWNORMAL);
     }
 
+    //--------------------------------------------------------------
     void WindowsWindow::SetEventCallback(const EventCallbackFunction &event_callback) {
         m_event_callback = event_callback;
         m_input->SetEventCallback(event_callback);
     }
 
+    //--------------------------------------------------------------
     void WindowsWindow::SetupWindow(const WindowSettings &settings) {
         uint32 window_styles = WS_OVERLAPPEDWINDOW;
         auto window_class_name = L"HYPERION_WINDOW_CLASS";
@@ -316,6 +337,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     Vec2 WindowsWindow::GetActualWindowSize(uint32 client_width, uint32 client_height) const {
         RECT window_rect = { 0 };
         window_rect.right = static_cast<LONG>(client_width);
@@ -326,6 +348,7 @@ namespace Hyperion {
         return Vec2(static_cast<float32>(window_rect.right - window_rect.left), static_cast<float32>(window_rect.bottom - window_rect.top));
     }
 
+    //--------------------------------------------------------------
     void WindowsWindow::DispatchEvent(Event &event) const {
         m_input->OnEvent(event);
 
@@ -334,6 +357,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     void WindowsWindow::DispatchKeyEvent(KeyCode key_code, bool is_down) const {
         if (key_code != KeyCode::None) {
             if (is_down) {
@@ -346,6 +370,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     MouseButtonCode WindowsWindow::TranslateMouseButtonCode(uint32 code) const {
         code = code & ~(MK_CONTROL & MK_SHIFT);
 
@@ -361,6 +386,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     KeyCode WindowsWindow::TranslateKeyCode(uint32 w_param, uint32 l_param, bool is_down) const {
         // Left and right keys need to be distinguished as extended keys.
         if (w_param == VK_CONTROL) {
@@ -539,6 +565,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     KeyModifier WindowsWindow::GetKeyModifier() const {
         KeyModifier key_modifier = KeyModifier::None;
 
@@ -564,6 +591,7 @@ namespace Hyperion {
         return key_modifier;
     }
 
+    //--------------------------------------------------------------
     uint32 WindowsWindow::GetMouseButtonFromMessage(uint32 message, uint32 w_param) const {
         if (message == WM_LBUTTONDOWN || message == WM_LBUTTONUP) {
             return MK_LBUTTON;
@@ -584,6 +612,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     LRESULT WindowsWindow::MessageCallback(HWND window_handle, uint32 message, WPARAM w_param, LPARAM l_param) {
         LRESULT result = 0;
 

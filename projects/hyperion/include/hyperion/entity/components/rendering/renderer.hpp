@@ -1,8 +1,10 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/assets/material.hpp"
 #include "hyperion/entity/components/behaviour.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     class Renderer : public Behaviour {

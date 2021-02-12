@@ -1,13 +1,17 @@
+//--------------------- Definition Include ---------------------
 #include "hyperion/editor/entity/components/editor_look_around_camera_controller.hpp"
 
+//---------------------- Library Includes ----------------------
 #include <hyperion/core/math/math.hpp>
 #include <hyperion/core/math/plane.hpp>
 #include <hyperion/core/app/input.hpp>
 #include <hyperion/entity/entity.hpp>
 #include <hyperion/entity/components/transform.hpp>
 
+//------------------- Definition Namespace ---------------------
 namespace Hyperion::Editor {
 
+    //--------------------------------------------------------------
     void EditorLookAroundCameraController::OnCreate() {
         EditorCameraController::OnCreate();
 
@@ -23,6 +27,7 @@ namespace Hyperion::Editor {
         m_zoom = m_xz_plane_distance;
     }
 
+    //--------------------------------------------------------------
     void EditorLookAroundCameraController::OnUpdate(float32 delta_time) {
         Vec2 current_mouse_position = Input::GetMousePosition();
         Vec2 mouse_position_difference = m_last_mouse_position - current_mouse_position;
@@ -79,6 +84,7 @@ namespace Hyperion::Editor {
         }
     }
 
+    //--------------------------------------------------------------
     Vec3 EditorLookAroundCameraController::GetPositionUnderMouse() {
         Ray ray = m_camera->ScreenPointToRay(Input::GetMousePosition());
         float32 hit_distance = 0;
@@ -86,6 +92,7 @@ namespace Hyperion::Editor {
         return ray.GetPoint(hit_distance);
     }
 
+    //--------------------------------------------------------------
     Vec3 EditorLookAroundCameraController::GetXZPlanePosition() {
         Ray ray = Ray(m_transform->GetPosition(), m_transform->GetForward());
         float32 hit_distance = 0;
@@ -93,6 +100,7 @@ namespace Hyperion::Editor {
         return ray.GetPoint(hit_distance);
     }
 
+    //--------------------------------------------------------------
     Vec3 EditorLookAroundCameraController::GetLookAtPosition(Vec3 position) {
         Ray ray_from_camera = Ray(m_transform->GetPosition(), m_transform->GetForward());
         float32 hit_distance = 0;
@@ -101,6 +109,7 @@ namespace Hyperion::Editor {
         return ray_to_camera.GetPoint(hit_distance);
     }
 
+    //--------------------------------------------------------------
     float32 EditorLookAroundCameraController::ClampAngle(float32 angle, float32 min, float32 max) {
         if (angle < -360.0f) {
             angle += 360.0f;
@@ -113,6 +122,7 @@ namespace Hyperion::Editor {
 
 }
 
+//--------------------------------------------------------------
 HYP_REFLECT_REGISTER_BEGIN
 {
     Registration<Editor::EditorLookAroundCameraController>("EditorLookAroundCameraController")

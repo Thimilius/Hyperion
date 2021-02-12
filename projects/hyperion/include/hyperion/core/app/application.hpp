@@ -1,12 +1,15 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/app/application_settings.hpp"
 #include "hyperion/core/app/window.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Main;
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     class Application {

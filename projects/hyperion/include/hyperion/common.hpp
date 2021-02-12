@@ -1,5 +1,6 @@
 #pragma once
 
+//--------------- C++ Standard Library Includes ----------------
 #include <memory>
 #include <functional>
 
@@ -15,6 +16,7 @@
     #define HYP_DEBUG_BREAK
 #endif
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/assert.hpp"
 #include "hyperion/core/enum.hpp"
 #include "hyperion/core/error.hpp"

@@ -1,13 +1,18 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
+#include "hyperion/core/object/guid.hpp"
+
+//---------------------- Library Includes ----------------------
 #ifdef HYP_PLATFORM_WINDOWS
 #include <objbase.h>
 #endif
 
-#include "hyperion/core/object/guid.hpp"
-
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    //--------------------------------------------------------------
     String Guid::ToString() const {
 #ifdef HYP_PLATFORM_WINDOWS
         GUID new_guid_native;
@@ -31,14 +36,17 @@ namespace Hyperion {
 #endif
     }
 
+    //--------------------------------------------------------------
     bool Guid::operator==(const Guid &other) const {
         return data[0] == other.data[0] && data[1] == other.data[1];
     }
 
+    //--------------------------------------------------------------
     bool Guid::operator!=(const Guid &other) const {
         return !(*this == other);
     }
 
+    //--------------------------------------------------------------
     Guid Guid::Create() {
 #ifdef HYP_PLATFORM_WINDOWS
         GUID guid_native;
@@ -59,6 +67,7 @@ namespace Hyperion {
 #endif
     }
 
+    //--------------------------------------------------------------
     Guid Guid::Create(const String &string) {
 #ifdef HYP_PLATFORM_WINDOWS
         GUID guid_native;

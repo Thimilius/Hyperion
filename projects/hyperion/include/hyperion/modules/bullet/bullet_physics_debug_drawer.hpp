@@ -1,7 +1,9 @@
 #pragma once
 
+//---------------------- Library Includes ----------------------
 #include <bullet/btBulletCollisionCommon.h>
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Physics {
 
     class BulletDebugDrawer : public btIDebugDraw {

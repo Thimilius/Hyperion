@@ -1,5 +1,6 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/audio/audio_backend.hpp"
 #include "hyperion/core/app/window_settings.hpp"
 #include "hyperion/core/system/engine_loop.hpp"
@@ -8,6 +9,7 @@
 #include "hyperion/rendering/pipelines/render_pipeline.hpp"
 #include "hyperion/rendering/threading/render_threading_mode.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     struct CoreSettings {

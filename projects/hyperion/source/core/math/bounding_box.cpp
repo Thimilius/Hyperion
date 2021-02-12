@@ -1,28 +1,37 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/core/math/bounding_box.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    //--------------------------------------------------------------
     BoundingBox::BoundingBox() { }
     
+    //--------------------------------------------------------------
     BoundingBox::BoundingBox(Vec3 min, Vec3 max)
         : min(min), max(max) { }
 
+    //--------------------------------------------------------------
     Vec3 BoundingBox::GetSize() const {
         return Vec3(Math::Abs(max.x - min.x), Math::Abs(max.y - min.y), Math::Abs(max.z - min.z));;
     }
 
+    //--------------------------------------------------------------
     Vec3 BoundingBox::GetCenter() const {
         return (max + min) * 0.5f;
     }
 
+    //--------------------------------------------------------------
     bool BoundingBox::Intersects(BoundingBox bounds) const {
         Vec3 bounds_min = bounds.min;
         Vec3 bounds_max = bounds.max;
         return (max > bounds_min && min < bounds_max) || (min > bounds_max && max < bounds_min);
     }
 
+    //--------------------------------------------------------------
     bool BoundingBox::Intersects(Ray ray, float32 &hit_distance) const {
         Vec3 inv_dir = Vec3(1.0f / ray.direction.x, 1.0f / ray.direction.y, 1.0f / ray.direction.z);
         uint32 sign[3];
@@ -76,18 +85,22 @@ namespace Hyperion {
         return true;
     }
 
+    //--------------------------------------------------------------
     bool BoundingBox::Contains(Vec3 point) const {
         return point > min && point < max;
     }
 
+    //--------------------------------------------------------------
     String BoundingBox::ToString() const {
         return StringUtils::Format("(Min: {}, Max: {})", min.ToString(), max.ToString());
     }
 
+    //--------------------------------------------------------------
     bool BoundingBox::operator==(const BoundingBox &other) const {
         return min == other.min && max != other.max;
     }
 
+    //--------------------------------------------------------------
     bool BoundingBox::operator!=(const BoundingBox &other) const {
         return !(*this == other);
     }

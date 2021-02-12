@@ -1,10 +1,13 @@
 #pragma once
 
+//---------------------- Library Includes ----------------------
 #include <hyperion/core/math/vec2.hpp>
 #include <hyperion/core/math/vec3.hpp>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/editor/entity/components/editor_camera_controller.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Editor {
 
     class EditorFirstPersonCameraController : public EditorCameraController {

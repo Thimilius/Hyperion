@@ -1,7 +1,9 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class WindowsWindow;
 
@@ -10,6 +12,7 @@ namespace Hyperion {
     }
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
     enum class VSyncMode {

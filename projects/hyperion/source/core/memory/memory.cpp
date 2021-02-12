@@ -1,5 +1,7 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/core/memory/memory.hpp"
 
 // RANT: We would really like to replace the global new[]/delete[] operators as well,
@@ -8,6 +10,7 @@
 // Actually I just realized when not replacing new[]/delete[] that Visual C++ calls
 // the new operator defined here for new[] but not delete for delete[]! WHAT IS THAT!?!?
 
+//--------------------------------------------------------------
 void *operator new(size_t size) {
 #ifdef HYP_DEBUG
     Hyperion::MemoryStats::s_global_memory += size;
@@ -16,6 +19,7 @@ void *operator new(size_t size) {
     return std::malloc(size);
 }
 
+//--------------------------------------------------------------
 void operator delete(void *memory, size_t size) {
 #ifdef HYP_DEBUG
     Hyperion::MemoryStats::s_global_memory -= size;

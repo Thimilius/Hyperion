@@ -1,9 +1,11 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/math/vec3.hpp"
 #include "hyperion/core/math/vec4.hpp"
 #include "hyperion/core/math/quaternion.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     // Matrix is in column-major order!
@@ -13,6 +15,7 @@ namespace Hyperion {
     // [  1  5  9 13 ]
     // [  2  6 10 14 ]
     // [  3  7 11 15 ]
+    // Furthermore matricies are always right-handed with the y-axis as up.
 
     struct Mat4 {
         union {

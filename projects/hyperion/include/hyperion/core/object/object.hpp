@@ -1,14 +1,17 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
 #include "hyperion/core/object/guid.hpp"
 #include "hyperion/scripting/scripting_instance.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Engine;
     class ObjectManager;
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     using ObjectId = uint64;

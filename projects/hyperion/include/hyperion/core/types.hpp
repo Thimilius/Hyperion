@@ -1,13 +1,16 @@
 #pragma once
 
+//--------------- C++ Standard Library Includes ----------------
 #include <cstdint>
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
 #include <queue>
 
+//---------------------- Library Includes ----------------------
 #include <rttr/type.h>
 
+//--------------------------------------------------------------
 using int8 = int8_t;
 using int16 = int16_t;
 using int32 = int32_t;

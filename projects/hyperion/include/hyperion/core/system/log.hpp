@@ -1,9 +1,12 @@
 #pragma once
 
+//---------------- C Standard Library Includes -----------------
 #include <ctime>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/string_utils.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     enum class LogColor {

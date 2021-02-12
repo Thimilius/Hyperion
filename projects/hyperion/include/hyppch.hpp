@@ -1,12 +1,12 @@
 #pragma once
 
-// ---------- C Standard Library Includes -----------
+//---------------- C Standard Library Includes -----------------
 #include <cfloat>
 #include <cmath>
 #include <cstdint>
 #include <ctime>
 
-// --------- C++ Standard Library Includes ----------
+//--------------- C++ Standard Library Includes ----------------
 #include <algorithm>
 #include <filesystem>
 #include <functional>
@@ -17,13 +17,13 @@
 #include <unordered_set>
 #include <vector>
 
-// ---------------- Library Includes ----------------
+//---------------------- Library Includes ----------------------
 #include <nlohmann/json.hpp>
 #include <fmt/format.h>
 #include <rttr/registration>
 #include <rttr/type>
 
-// ---------------- Project Includes ----------------
+//---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
 #include "hyperion/core/result.hpp"
 #include "hyperion/core/string_utils.hpp"

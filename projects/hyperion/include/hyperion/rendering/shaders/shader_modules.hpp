@@ -1,11 +1,14 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion::Rendering {
     class RenderEngine;
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
     enum class ShaderModuleType {

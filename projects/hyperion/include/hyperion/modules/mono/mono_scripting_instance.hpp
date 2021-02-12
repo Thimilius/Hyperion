@@ -1,9 +1,12 @@
 #pragma once
 
-#include "hyperion/scripting/scripting_instance.hpp"
-
+//---------------------- Library Includes ----------------------
 #include <mono/jit/jit.h>
 
+//---------------------- Project Includes ----------------------
+#include "hyperion/scripting/scripting_instance.hpp"
+
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
 
     class MonoScriptingInstance : public ScriptingInstance {

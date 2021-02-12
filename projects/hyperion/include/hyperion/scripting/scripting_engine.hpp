@@ -1,12 +1,15 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/app/application_settings.hpp"
 #include "hyperion/scripting/scripting_driver.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Engine;
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
 
     class ScriptingEngine {

@@ -1,18 +1,23 @@
+//--------------------- Definition Include ---------------------
 #include "hyperion/editor/entity/components/editor_first_person_camera_controller.hpp"
 
+//---------------------- Library Includes ----------------------
 #include <hyperion/core/math/math.hpp>
 #include <hyperion/core/app/input.hpp>
 #include <hyperion/entity/entity.hpp>
 #include <hyperion/entity/components/transform.hpp>
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Editor {
 
+    //--------------------------------------------------------------
     void EditorFirstPersonCameraController::OnCreate() {
         EditorCameraController::OnCreate();
 
         GetEntity()->GetTransform()->SetPosition(Vec3(2.0f, 2.0f, 2.0f));
     }
 
+    //--------------------------------------------------------------
     void EditorFirstPersonCameraController::OnUpdate(float32 delta_time) {
         Vec3 position = m_transform->GetPosition();
         Vec3 euler_angles = m_transform->GetEulerAngles();
@@ -154,6 +159,7 @@ namespace Hyperion::Editor {
 
 }
 
+//--------------------------------------------------------------
 HYP_REFLECT_REGISTER_BEGIN
 {
     Registration<Editor::EditorFirstPersonCameraController>("EditorFirstPersonCameraController")

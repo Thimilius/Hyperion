@@ -1,8 +1,10 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/math/mat4.hpp"
 #include "hyperion/core/math/ray.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
     enum class CameraProjectionMode {

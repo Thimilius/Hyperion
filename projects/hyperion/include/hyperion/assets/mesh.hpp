@@ -1,11 +1,13 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset.hpp"
 #include "hyperion/core/math/bounding_box.hpp"
 #include "hyperion/core/math/vec2.hpp"
 #include "hyperion/core/math/vec3.hpp"
 #include "hyperion/rendering/attributes/mesh_attributes.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     // The data of meshes is expected to be interpreted in a specific way:

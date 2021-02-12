@@ -1,15 +1,21 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/assets/mesh.hpp"
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/modules/assimp/assimp_mesh_loader.hpp"
 #include "hyperion/rendering/render_driver.hpp"
 #include "hyperion/rendering/render_engine.hpp"
 
+//------------------------- Namespaces -------------------------
 using namespace Hyperion::Rendering;
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    //--------------------------------------------------------------
     Mesh::Mesh(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes, bool read_and_write_enabled) {
         HYP_ASSERT_MESSAGE(sub_meshes.size() > 0, "Must provide at least one submesh when creating a mesh!");
 
@@ -96,6 +102,7 @@ namespace Hyperion {
         Rendering::RenderEngine::GetRenderDriver()->CreateMesh(m_resource_id, descriptor);
     }
 
+    //--------------------------------------------------------------
     const MeshData &Mesh::GetMeshData() const {
         if (!m_read_and_write_enabled) {
             HYP_LOG_WARN("Mesh", "The data of a mesh that is not read and write enabled will not exist when queried!");
@@ -103,6 +110,7 @@ namespace Hyperion {
         return m_mesh_data;
     }
 
+    //--------------------------------------------------------------
     const Vector<Rendering::SubMesh> &Mesh::GetSubMeshes() const {
         if (!m_read_and_write_enabled) {
             HYP_LOG_WARN("Mesh", "The data of a mesh that is not read and write enabled will not exist when queried!");
@@ -110,18 +118,22 @@ namespace Hyperion {
         return m_sub_meshes;
     }
 
+    //--------------------------------------------------------------
     Mesh *Mesh::Create() {
         return new Mesh();
     }
 
+    //--------------------------------------------------------------
     Mesh *Mesh::Create(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes, bool read_and_write_enabled) {
         return new Mesh(mesh_data, sub_meshes, read_and_write_enabled);
     }
 
+    //--------------------------------------------------------------
     void Mesh::OnDestroy() {
         Rendering::RenderEngine::GetRenderDriver()->DestroyMesh(m_resource_id);
     }
 
+    //--------------------------------------------------------------
     BoundingBox Mesh::CalculateBounds(const Vector<Vec3> &positions) {
         Vec3 min = Vec3(FLT_MAX, FLT_MAX, FLT_MAX);
         Vec3 max = Vec3(FLT_MIN, FLT_MIN, FLT_MIN);
@@ -151,6 +163,7 @@ namespace Hyperion {
         return BoundingBox(min, max);
     }
 
+    //--------------------------------------------------------------
     Mesh *MeshFactory::CreateQuad(float32 width, float32 height) {
         float32 half_width = width / 2.0f;
         float32 half_height = height / 2.0f;
@@ -188,6 +201,7 @@ namespace Hyperion {
         return Mesh::Create(mesh_data, { { MeshTopology::Triangles, 6, 0, 0 } });
     }
 
+    //--------------------------------------------------------------
     Mesh *MeshFactory::CreatePlane(float32 width, float32 height) {
         float32 half_width = width / 2.0f;
         float32 half_height = height / 2.0f;
@@ -227,6 +241,7 @@ namespace Hyperion {
         return Mesh::Create(mesh_data, { { MeshTopology::Triangles, 6, 0, 0 } });
     }
 
+    //--------------------------------------------------------------
     Mesh *MeshFactory::CreateCube(float32 size) {
         MeshData mesh_data;
         mesh_data.positions.resize(24);
@@ -370,6 +385,7 @@ namespace Hyperion {
         return Mesh::Create(mesh_data, { { MeshTopology::Triangles, 36, 0, 0 } });
     }
 
+    //--------------------------------------------------------------
     Mesh *MeshFactory::CreateSphere(float32 radius) {
         MeshData mesh_data;
 
@@ -425,14 +441,17 @@ namespace Hyperion {
         return Mesh::Create(mesh_data, { { MeshTopology::Triangles, static_cast<uint32>(mesh_data.indices.size()), 0, 0 } });
     }
 
+    //--------------------------------------------------------------
     Mesh *MeshFactory::CreateFromFile(const String &path) {
         return s_mesh_loader->LoadMesh(path);
     }
 
+    //--------------------------------------------------------------
     void MeshFactory::Initialize() {
         s_mesh_loader = new AssimpMeshLoader();
     }
 
+    //--------------------------------------------------------------
     void MeshFactory::Shutdown() {
         delete s_mesh_loader;
     }

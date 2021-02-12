@@ -1,13 +1,18 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/platform/windows/windows_file_watcher.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    //--------------------------------------------------------------
     FileWatcher *FileWatcher::Create(const String &path, WatcherCallbackFunction callback, bool recursive) {
         return new WindowsFileWatcher(path, callback, recursive);
     }
 
+    //--------------------------------------------------------------
     WindowsFileWatcher::WindowsFileWatcher(const String &path, WatcherCallbackFunction callback, bool recursive) {
         m_path = path;
         m_callback = callback;
@@ -35,6 +40,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     WindowsFileWatcher::~WindowsFileWatcher() {
         CancelIo(watch_struct.directory_handle);
 
@@ -50,10 +56,12 @@ namespace Hyperion {
         CloseHandle(watch_struct.directory_handle);
     }
 
+    //--------------------------------------------------------------
     void WindowsFileWatcher::Update() {
         MsgWaitForMultipleObjectsEx(0, nullptr, 0, QS_ALLINPUT, MWMO_ALERTABLE);
     }
 
+    //--------------------------------------------------------------
     bool WindowsFileWatcher::RefreshWatch(bool clear) {
         BOOL result = ReadDirectoryChangesW(
             watch_struct.directory_handle,
@@ -67,6 +75,7 @@ namespace Hyperion {
         return result != 0;
     }
 
+    //--------------------------------------------------------------
     void WindowsFileWatcher::HandleAction(uint32 action, const String &path, const String &filename, const String &extension) {
         FileStatus status;
         switch (action) {
@@ -86,6 +95,7 @@ namespace Hyperion {
         m_callback(status, path, filename, extension);
     }
 
+    //--------------------------------------------------------------
     void CALLBACK WindowsFileWatcher::WatchCallback(DWORD error_code, DWORD number_of_bytes_transfered, LPOVERLAPPED overlapped) {
         FILE_NOTIFY_INFORMATION *notify;
         WatchStruct *watch_struct = (WatchStruct *)overlapped;

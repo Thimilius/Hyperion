@@ -1,9 +1,12 @@
 #pragma once
 
+//---------------------- Library Includes ----------------------
 #include <Windows.h>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/system/operating_system.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     class WindowsOperatingSystem : public OperatingSystem {

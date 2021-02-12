@@ -1,13 +1,16 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/app/application_settings.hpp"
 #include "hyperion/entity/world.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Component;
     class Engine;
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     class WorldManager final {

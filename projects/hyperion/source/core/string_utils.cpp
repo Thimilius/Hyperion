@@ -1,13 +1,18 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/core/string_utils.hpp"
 
+//---------------------- Library Includes ----------------------
 #ifdef HYP_PLATFORM_WINDOWS
     #include <Windows.h>
 #endif
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    //--------------------------------------------------------------
     Vector<uint32> StringUtils::GetCodepointsUtf8(const String &string) {
         // Implementation from https://github.com/sheredom/utf8.h/blob/master/utf8.h.
         const char *s = string.c_str();
@@ -40,6 +45,7 @@ namespace Hyperion {
         return codepoints;
     }
 
+    //--------------------------------------------------------------
     WideString StringUtils::Utf8ToUtf16(const String &string) {
 #ifdef HYP_PLATFORM_WINDOWS
         int32 string_length = static_cast<int32>(string.length());
@@ -57,6 +63,7 @@ namespace Hyperion {
 #endif
     }
 
+    //--------------------------------------------------------------
     String StringUtils::Utf16ToUtf8(const WideString &string) {
 #ifdef HYP_PLATFORM_WINDOWS
         int32 string_length = static_cast<int32>(string.length());

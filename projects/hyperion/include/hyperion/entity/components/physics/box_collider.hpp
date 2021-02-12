@@ -1,7 +1,9 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/entity/components/physics/collider.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     class BoxCollider final : public Collider {

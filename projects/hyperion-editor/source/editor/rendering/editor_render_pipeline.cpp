@@ -1,5 +1,7 @@
+//--------------------- Definition Include ---------------------
 #include "hyperion/editor/rendering/editor_render_pipeline.hpp"
 
+//---------------------- Library Includes ----------------------
 #include <hyperion/core/math/math.hpp>
 #include <hyperion/core/image.hpp>
 #include <hyperion/core/app/display.hpp>
@@ -11,12 +13,16 @@
 #include <hyperion/entity/components/rendering/mesh_renderer.hpp>
 #include <hyperion/rendering/render_driver.hpp>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/editor/entity/editor_world.hpp"
 
+//------------------------- Namespaces -------------------------
 using namespace Hyperion::Rendering;
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Editor {
 
+    //--------------------------------------------------------------
     void EditorRenderPipeline::Initialize(IRenderDriver *render_driver) {
         RasterizerState rasterizer_state;
         rasterizer_state.blending_enabled = true;
@@ -29,6 +35,7 @@ namespace Hyperion::Editor {
         m_render_texture = RenderTexture::Create(Display::GetWidth(), Display::GetHeight(), attachments);
     }
 
+    //--------------------------------------------------------------
     void EditorRenderPipeline::Render(IRenderDriver *render_driver, const RenderPipelineContext &context) {
         const CameraData &camera_data = context.GetCameraData();
         {
@@ -64,6 +71,7 @@ namespace Hyperion::Editor {
         }
     }
 
+    //--------------------------------------------------------------
     void EditorRenderPipeline::Shutdown(IRenderDriver *render_driver) {
 
     }

@@ -1,18 +1,20 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/math/mat4.hpp"
 #include "hyperion/core/math/quaternion.hpp"
 #include "hyperion/core/math/vec3.hpp"
 #include "hyperion/entity/components/component.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Entity;
-    class RectTransform;
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    class Transform : public Component {
+    class Transform final : public Component {
         HYP_REFLECT(Component);
     public:
         inline Vec3 GetLocalPosition() const { return m_local_position; }
@@ -120,7 +122,6 @@ namespace Hyperion {
         Vector<Transform *> m_children;
     private:
         friend class Hyperion::Entity;
-        friend class Hyperion::RectTransform;
     };
 
 }

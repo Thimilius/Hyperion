@@ -1,13 +1,18 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/platform/windows/windows_operating_system.hpp"
 
+//---------------------- Library Includes ----------------------
 #include <Powrprof.h>
 #include <psapi.h>
 #include <Shlobj.h>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/app/application.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     // RANT: Apparently Microsoft forgot to include this definition in their header files. What the hell!?!?
@@ -22,6 +27,7 @@ namespace Hyperion {
 
     OperatingSystem* OperatingSystem::s_instance = new WindowsOperatingSystem();
 
+    //--------------------------------------------------------------
     void WindowsOperatingSystem::Initialize() {
         m_console_handle = GetStdHandle(STD_OUTPUT_HANDLE);
         if (m_console_handle == INVALID_HANDLE_VALUE) {
@@ -30,6 +36,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     SystemInfo WindowsOperatingSystem::GetSystemInfo() const {
         SystemInfo result;
 
@@ -52,12 +59,14 @@ namespace Hyperion {
         return result;
     }
 
+    //--------------------------------------------------------------
     uint64 WindowsOperatingSystem::GetMemoryUsage() const {
         PROCESS_MEMORY_COUNTERS process_memory;
         BOOL success = GetProcessMemoryInfo(GetCurrentProcess(), &process_memory, sizeof(process_memory));
         return success ? process_memory.WorkingSetSize : 0;
     }
 
+    //--------------------------------------------------------------
     SystemLanguage WindowsOperatingSystem::GetSystemLanguage() const {
         LANGID language_id = GetUserDefaultUILanguage();
         uint32 main_language  = language_id & 0xff;
@@ -112,6 +121,7 @@ namespace Hyperion {
         return result;
     }
 
+    //--------------------------------------------------------------
     String WindowsOperatingSystem::GetSystemFolder(SystemFolder system_folder) const {
         KNOWNFOLDERID folder_id;
 
@@ -136,10 +146,12 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     void WindowsOperatingSystem::DisplayError(const String &title, const String &message) {
         MessageBoxW(nullptr, StringUtils::Utf8ToUtf16(message).c_str(), StringUtils::Utf8ToUtf16(title).c_str(), MB_OK | MB_ICONERROR);
     }
 
+    //--------------------------------------------------------------
     void WindowsOperatingSystem::PrintToConsole(LogColor color, const String &message) {
         int16 console_color = 0;
         switch (color) {
@@ -169,6 +181,7 @@ namespace Hyperion {
         SetConsoleTextAttribute(m_console_handle, console_screen_buffer_info.wAttributes);
     }
 
+    //--------------------------------------------------------------
     String WindowsOperatingSystem::OpenFileDialog(const String &title, const String &filter) {
         WCHAR file_output[MAX_PATH] = { 0 };
 
@@ -189,6 +202,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     String WindowsOperatingSystem::SaveFileDialog(const String &title, const String &filter) {
         WCHAR file_output[MAX_PATH] = { 0 };
 

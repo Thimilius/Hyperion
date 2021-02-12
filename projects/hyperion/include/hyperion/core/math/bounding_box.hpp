@@ -1,7 +1,9 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/math/ray.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     struct BoundingBox {

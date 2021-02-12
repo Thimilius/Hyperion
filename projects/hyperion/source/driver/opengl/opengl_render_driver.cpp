@@ -1,12 +1,16 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/driver/opengl/opengl_render_driver.hpp"
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/io/file_system.hpp"
 #include "hyperion/driver/opengl/opengl_shader_compiler.hpp"
 #include "hyperion/driver/opengl/opengl_utilities.hpp"
 #include "hyperion/rendering/shaders/shader_pre_processor.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
     // NOTE: So here is the thing...
@@ -17,6 +21,7 @@ namespace Hyperion::Rendering {
     // The actual initialization of the resources can then be executed later on the Render Thread.
     // This would require quite some work though and the creation would probably need to be synchronized somehow.
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::Initialize(GraphicsContext *graphics_context) {
         m_graphics_context = static_cast<OpenGLGraphicsContext *>(graphics_context);
 
@@ -47,21 +52,25 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::Shutdown() {
         glDeleteShader(m_fallback_shader);
         glDeleteShader(m_fullscreen_shader);
         glDeleteVertexArrays(1, &m_fullscreen_vao);
     }
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::Clear(ClearFlags clear_flags, Color color) {
         glClearColor(color.r, color.g, color.b, color.a);
         glClear(OpenGLUtilities::GetGLClearFlags(clear_flags));
     }
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::SetViewport(const Viewport &viewport) {
         glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
     }
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::SetRasterizerState(const RasterizerState &rasterizer_state) {
         // NOTE: Currently we are setting the whole rasterizer state at once, regardless of wether or not we actually have new values we need to change.
         // TLDR: This is very expensive.
@@ -120,6 +129,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::SetCameraData(const CameraData &camera_data) {
         m_current_camera_data = camera_data;
 
@@ -129,6 +139,7 @@ namespace Hyperion::Rendering {
         m_current_material = nullptr;
     }
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::CreateShader(ResourceId shader_id, const ShaderDescriptor &descriptor) {
         HYP_ASSERT(m_shaders.find(shader_id) == m_shaders.end());
 
@@ -145,6 +156,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::RecompileShader(ResourceId shader_id, const ShaderDescriptor &descriptor) {
         HYP_ASSERT(m_shaders.find(shader_id) != m_shaders.end());
 
@@ -165,6 +177,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::DestroyShader(ResourceId id) {
         HYP_ASSERT(m_shaders.find(id) != m_shaders.end());
 
@@ -174,6 +187,7 @@ namespace Hyperion::Rendering {
         m_shaders.erase(id);
     }
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::CreateTexture(ResourceId texture_id, const TextureDescriptor &descriptor) {
         HYP_ASSERT(m_textures.find(texture_id) == m_textures.end());
 
@@ -193,6 +207,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::DestroyTexture(ResourceId texture_id) {
         HYP_ASSERT(m_textures.find(texture_id) != m_textures.end());
 
@@ -202,6 +217,7 @@ namespace Hyperion::Rendering {
         m_textures.erase(texture_id);
     }
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::CreateMaterial(ResourceId material_id, const MaterialDescriptor &descriptor) {
         HYP_ASSERT(m_materials.find(material_id) == m_materials.end());
 
@@ -214,6 +230,7 @@ namespace Hyperion::Rendering {
         CollectMaterialProperties(material, shader.program);
     }
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::SetMaterialProperty(ResourceId material_id, const MaterialProperty &property) {
         HYP_ASSERT(m_materials.find(material_id) != m_materials.end());
         OpenGLMaterial &material = m_materials[material_id];
@@ -284,11 +301,13 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::DestroyMaterial(ResourceId material_id) {
         HYP_ASSERT(m_materials.find(material_id) != m_materials.end());
         m_materials.erase(material_id);
     }
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::CreateRenderTexture(ResourceId render_texture_id, const RenderTextureDescriptor &descriptor) {
         HYP_ASSERT(m_render_textures.find(render_texture_id) == m_render_textures.end());
 
@@ -351,6 +370,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::ResizeRenderTexture(ResourceId render_texture_id, uint32 width, uint32 height, uint32 mipmap_count) {
         HYP_ASSERT(m_render_textures.find(render_texture_id) != m_render_textures.end());
 
@@ -375,6 +395,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::GetRenderTextureSubData(ResourceId render_texture_id, uint32 attachment_index, RectInt region, Vector<uint8> *buffer, GetRenderTextureSubDataCallback callback) {
         auto it = m_render_textures.find(render_texture_id);
         if (it != m_render_textures.end()) {
@@ -409,6 +430,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::SetRenderTexture(ResourceId render_texture_id) {
         // We might get passed a 0, meaning the default render texture.
         if (render_texture_id == 0) {
@@ -435,6 +457,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::BlitRenderTexture(ResourceId destination_id, ResourceId source_id) {
         // NOTE: We currently do not allow blitting from the default render texture to another render texture.
         HYP_ASSERT(source_id != 0);
@@ -464,6 +487,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::DestroyRenderTexture(ResourceId render_texture_id) {
         HYP_ASSERT(m_render_textures.find(render_texture_id) != m_render_textures.end());
 
@@ -480,6 +504,7 @@ namespace Hyperion::Rendering {
         m_render_textures.erase(render_texture_id);
     }
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::CreateMesh(ResourceId mesh_id, const MeshDescriptor &descriptor) {
         HYP_ASSERT(m_meshes.find(mesh_id) == m_meshes.end());
 
@@ -517,6 +542,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::DrawMesh(ResourceId mesh_id, const Mat4 &model_matrix, ResourceId material_id, uint32 sub_mesh_index) {
         // We are going to be very error tolerant here when drawing a mesh.
 
@@ -548,6 +574,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::DestroyMesh(ResourceId mesh_id) {
         HYP_ASSERT(m_meshes.find(mesh_id) != m_meshes.end());
 
@@ -558,6 +585,7 @@ namespace Hyperion::Rendering {
         m_meshes.erase(mesh_id);
     }
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::CreateTexture2D(OpenGLTexture &texture, const TextureDescriptor &descriptor) {
         glCreateTextures(GL_TEXTURE_2D, 1, &texture.texture);
         GLuint texture_id = texture.texture;
@@ -586,10 +614,12 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::CreateTextureCubemap(OpenGLTexture &texture, const TextureDescriptor &descriptor) {
         // TODO: Implement.
     }
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::SetTextureParameters(GLuint texture, const TextureParameters &parameters) {
         GLint wrap_mode = OpenGLUtilities::GetGLTextureWrapMode(parameters.wrap_mode);
         glTextureParameteri(texture, GL_TEXTURE_WRAP_S, wrap_mode);
@@ -604,6 +634,7 @@ namespace Hyperion::Rendering {
         glTextureParameterf(texture, GL_TEXTURE_MAX_ANISOTROPY, anisotropic_filter_value);
     }
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::CollectMaterialProperties(OpenGLMaterial &material, GLuint program) {
         GLint active_uniform_count;
         glGetProgramInterfaceiv(program, GL_UNIFORM, GL_ACTIVE_RESOURCES, &active_uniform_count);
@@ -634,6 +665,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::UseMaterial(OpenGLMaterial &material, GLuint program, const Mat4 &model_matrix) {
         if (m_current_material != &material) {
             m_current_material = &material;

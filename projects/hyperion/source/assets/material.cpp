@@ -1,14 +1,20 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/assets/material.hpp"
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/rendering/render_driver.hpp"
 #include "hyperion/rendering/render_engine.hpp"
 
+//------------------------- Namespaces -------------------------
 using namespace Hyperion::Rendering;
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    //--------------------------------------------------------------
     Material::Material(Shader *shader) {
         m_shader = shader;
 
@@ -20,7 +26,8 @@ namespace Hyperion {
         RenderEngine::GetRenderDriver()->CreateMaterial(m_resource_id, descriptor);
     }
 
-    float32 Material::GetFloat32(Rendering::MaterialPropertyId id) const {
+    //--------------------------------------------------------------
+    float32 Material::GetFloat32(MaterialPropertyId id) const {
         auto it = m_properties.find(id);
         if (it != m_properties.end() && it->second.type == MaterialPropertyType::Float32) {
             return it->second.storage.float32;
@@ -29,7 +36,8 @@ namespace Hyperion {
         }
     }
 
-    void Material::SetFloat32(Rendering::MaterialPropertyId id, float32 value) {
+    //--------------------------------------------------------------
+    void Material::SetFloat32(MaterialPropertyId id, float32 value) {
         auto it = m_properties.find(id);
         if (it != m_properties.end()) {
             HYP_ASSERT_MESSAGE(it->second.type == MaterialPropertyType::Float32, "The property can not change it's type when setting");
@@ -45,7 +53,8 @@ namespace Hyperion {
         }
     }
 
-    int32 Material::GetInt32(Rendering::MaterialPropertyId id) const {
+    //--------------------------------------------------------------
+    int32 Material::GetInt32(MaterialPropertyId id) const {
         auto it = m_properties.find(id);
         if (it != m_properties.end() && it->second.type == MaterialPropertyType::Int32) {
             return it->second.storage.int32;
@@ -54,7 +63,8 @@ namespace Hyperion {
         }
     }
 
-    void Material::SetInt32(Rendering::MaterialPropertyId id, int32 value) {
+    //--------------------------------------------------------------
+    void Material::SetInt32(MaterialPropertyId id, int32 value) {
         auto it = m_properties.find(id);
         if (it != m_properties.end()) {
             HYP_ASSERT_MESSAGE(it->second.type == MaterialPropertyType::Int32, "The property can not change it's type when setting");
@@ -70,7 +80,8 @@ namespace Hyperion {
         }
     }
 
-    Vec2 Material::GetVec2(Rendering::MaterialPropertyId id) const {
+    //--------------------------------------------------------------
+    Vec2 Material::GetVec2(MaterialPropertyId id) const {
         auto it = m_properties.find(id);
         if (it != m_properties.end() && it->second.type == MaterialPropertyType::Vec2) {
             return it->second.storage.vec2;
@@ -79,7 +90,8 @@ namespace Hyperion {
         }
     }
 
-    void Material::SetVec2(Rendering::MaterialPropertyId id, Vec2 value) {
+    //--------------------------------------------------------------
+    void Material::SetVec2(MaterialPropertyId id, Vec2 value) {
         auto it = m_properties.find(id);
         if (it != m_properties.end()) {
             HYP_ASSERT_MESSAGE(it->second.type == MaterialPropertyType::Vec2, "The property can not change it's type when setting");
@@ -95,6 +107,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     Vec3 Material::GetVec3(Rendering::MaterialPropertyId id) const {
         auto it = m_properties.find(id);
         if (it != m_properties.end() && it->second.type == MaterialPropertyType::Vec3) {
@@ -104,7 +117,8 @@ namespace Hyperion {
         }
     }
 
-    void Material::SetVec3(Rendering::MaterialPropertyId id, Vec3 value) {
+    //--------------------------------------------------------------
+    void Material::SetVec3(MaterialPropertyId id, Vec3 value) {
         auto it = m_properties.find(id);
         if (it != m_properties.end()) {
             HYP_ASSERT_MESSAGE(it->second.type == MaterialPropertyType::Vec3, "The property can not change it's type when setting");
@@ -120,6 +134,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     Vec4 Material::GetVec4(MaterialPropertyId id) const {
         auto it = m_properties.find(id);
         if (it != m_properties.end() && it->second.type == MaterialPropertyType::Vec4) {
@@ -129,6 +144,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     void Material::SetVec4(MaterialPropertyId id, Vec4 value) {
         auto it = m_properties.find(id);
         if (it != m_properties.end()) {
@@ -145,7 +161,8 @@ namespace Hyperion {
         }
     }
 
-    Mat3 Material::GetMat3(Rendering::MaterialPropertyId id) const {
+    //--------------------------------------------------------------
+    Mat3 Material::GetMat3(MaterialPropertyId id) const {
         auto it = m_properties.find(id);
         if (it != m_properties.end() && it->second.type == MaterialPropertyType::Mat3) {
             return it->second.storage.mat3;
@@ -154,7 +171,8 @@ namespace Hyperion {
         }
     }
 
-    void Material::SetMat3(Rendering::MaterialPropertyId id, const Mat3 &value) {
+    //--------------------------------------------------------------
+    void Material::SetMat3(MaterialPropertyId id, const Mat3 &value) {
         auto it = m_properties.find(id);
         if (it != m_properties.end()) {
             HYP_ASSERT_MESSAGE(it->second.type == MaterialPropertyType::Mat3, "The property can not change it's type when setting");
@@ -170,7 +188,8 @@ namespace Hyperion {
         }
     }
 
-    Mat4 Material::GetMat4(Rendering::MaterialPropertyId id) const {
+    //--------------------------------------------------------------
+    Mat4 Material::GetMat4(MaterialPropertyId id) const {
         auto it = m_properties.find(id);
         if (it != m_properties.end() && it->second.type == MaterialPropertyType::Mat4) {
             return it->second.storage.mat4;
@@ -179,7 +198,8 @@ namespace Hyperion {
         }
     }
 
-    void Material::SetMat4(Rendering::MaterialPropertyId id, const Mat4 &value) {
+    //--------------------------------------------------------------
+    void Material::SetMat4(MaterialPropertyId id, const Mat4 &value) {
         auto it = m_properties.find(id);
         if (it != m_properties.end()) {
             HYP_ASSERT_MESSAGE(it->second.type == MaterialPropertyType::Mat4, "The property can not change it's type when setting");
@@ -195,7 +215,8 @@ namespace Hyperion {
         }
     }
 
-    Texture *Material::GetTexture(Rendering::MaterialPropertyId id) const {
+    //--------------------------------------------------------------
+    Texture *Material::GetTexture(MaterialPropertyId id) const {
         auto it = m_properties.find(id);
         if (it != m_properties.end() && it->second.type == MaterialPropertyType::Texture) {
             return it->second.storage.texture;
@@ -204,7 +225,8 @@ namespace Hyperion {
         }
     }
 
-    void Material::SetTexture(Rendering::MaterialPropertyId id, Texture *value) {
+    //--------------------------------------------------------------
+    void Material::SetTexture(MaterialPropertyId id, Texture *value) {
         auto it = m_properties.find(id);
         if (it != m_properties.end()) {
             HYP_ASSERT_MESSAGE(it->second.type == MaterialPropertyType::Texture, "The property can not change it's type when setting");
@@ -220,6 +242,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     void Material::SetProperty(MaterialPropertyId id, const MaterialProperty &property) {
         Rendering::MaterialProperty rendering_property { };
         rendering_property.id = id;
@@ -240,20 +263,24 @@ namespace Hyperion {
         RenderEngine::GetRenderDriver()->SetMaterialProperty(m_resource_id, rendering_property);
     }
 
+    //--------------------------------------------------------------
     Material *Material::Create() {
         return new Material();
     }
 
+    //--------------------------------------------------------------
     void Material::OnRecompile() {
         for (auto &[material_property_id, material_property] : m_properties) {
             SetProperty(material_property_id, material_property);
         }
     }
 
+    //--------------------------------------------------------------
     Material *Material::Create(Shader *shader) {
         return new Material(shader);
     }
 
+    //--------------------------------------------------------------
     void Material::OnDestroy() {
         RenderEngine::GetRenderDriver()->DestroyMaterial(m_resource_id);
     }

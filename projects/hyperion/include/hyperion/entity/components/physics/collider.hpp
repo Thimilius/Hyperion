@@ -1,9 +1,11 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/math/bounding_box.hpp"
 #include "hyperion/entity/entity_message.hpp"
 #include "hyperion/entity/components/behaviour.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     enum class ColliderType {

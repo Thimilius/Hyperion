@@ -1,13 +1,16 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/app/application_settings.hpp"
 #include "hyperion/physics/physics_driver.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Engine;
     class World;
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Physics {
 
     class PhysicsEngine final {

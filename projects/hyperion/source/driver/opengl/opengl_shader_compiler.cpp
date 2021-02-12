@@ -1,11 +1,16 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/driver/opengl/opengl_shader_compiler.hpp"
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/driver/opengl/opengl_utilities.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
+    //--------------------------------------------------------------
     OpenGLShaderCompilationResult OpenGLShaderCompiler::Compile(const char *vertex_source, const char *fragment_source) {
         OpenGLShaderCompilationResult result = { };
         result.success = false;

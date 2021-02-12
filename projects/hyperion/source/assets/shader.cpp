@@ -1,15 +1,21 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/assets/shader.hpp"
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/rendering/render_driver.hpp"
 #include "hyperion/rendering/render_engine.hpp"
 #include "hyperion/rendering/shaders/shader_pre_processor.hpp"
 
+//------------------------- Namespaces -------------------------
 using namespace Hyperion::Rendering;
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    //--------------------------------------------------------------
     Shader::Shader(const String &source) {
         ShaderPreProcessor pre_processor(source);
         ShaderPreProcessResult pre_process_result = pre_processor.PreProcess();
@@ -36,16 +42,19 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     Shader *Shader::Create() {
         return new Shader();
     }
 
+    //--------------------------------------------------------------
     void Shader::RegisterRecompilationListener(IShaderRecompilationListener *recompilation_listener) {
         HYP_ASSERT(std::find(m_recompilation_listeners.begin(), m_recompilation_listeners.end(), recompilation_listener) == m_recompilation_listeners.end());
 
         m_recompilation_listeners.push_back(recompilation_listener);
     }
 
+    //--------------------------------------------------------------
     void Shader::UnregisterRecompilationListener(IShaderRecompilationListener *recompilation_listener) {
         auto begin = m_recompilation_listeners.begin();
         auto end = m_recompilation_listeners.end();
@@ -54,6 +63,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     void Shader::Recompile(const String &source) {
         // FIXME: This is mostly a copy paste from the constructor!
         ShaderPreProcessor pre_processor(source);
@@ -85,10 +95,12 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     Shader *Shader::Create(const String &source) {
         return new Shader(source);
     }
 
+    //--------------------------------------------------------------
     void Shader::OnDestroy() {
         Rendering::RenderEngine::GetRenderDriver()->DestroyShader(m_resource_id);
     }

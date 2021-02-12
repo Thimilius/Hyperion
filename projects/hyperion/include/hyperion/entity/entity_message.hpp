@@ -1,10 +1,12 @@
 #pragma once
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Component;
     class Script;
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     enum class EntityMessageType {

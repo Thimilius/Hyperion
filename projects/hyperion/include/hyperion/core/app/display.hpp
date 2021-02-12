@@ -1,13 +1,16 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Application;
     class Display;
     class Engine;
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     class DisplayInfo final {

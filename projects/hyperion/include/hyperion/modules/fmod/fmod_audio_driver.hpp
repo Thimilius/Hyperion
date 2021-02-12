@@ -1,12 +1,15 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/audio/audio_driver.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace FMOD {
     class System;
     class Sound;
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Audio {
 
     class FModAudioDriver : public IAudioDriver {

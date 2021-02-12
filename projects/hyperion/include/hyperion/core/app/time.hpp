@@ -1,12 +1,15 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
 #include "hyperion/core/math/math.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Engine;
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     class Time final {

@@ -1,16 +1,18 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/object/object.hpp"
 #include "hyperion/scripting/scripting_type.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Entity;
     class Transform;
-    class RectTransform;
     class World;
     class WorldManager;
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     class ComponentType {
@@ -51,7 +53,6 @@ namespace Hyperion {
         Entity *m_entity;
     private:
         friend class Hyperion::Entity;
-        friend class Hyperion::RectTransform;
         friend class Hyperion::WorldManager;
     };
 

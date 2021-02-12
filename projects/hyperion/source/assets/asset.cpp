@@ -1,7 +1,10 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/assets/asset.hpp"
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/assets/font.hpp"
 #include "hyperion/assets/material.hpp"
 #include "hyperion/assets/mesh.hpp"
@@ -12,14 +15,18 @@
 #include "hyperion/core/io/file_system.hpp"
 #include "hyperion/core/io/image_loader.hpp"
 
+//------------------------- Namespaces -------------------------
 using namespace Hyperion::Rendering;
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    //--------------------------------------------------------------
     Asset::Asset() {
         m_resource_id = Resource::GetNextResourceId();
     }
 
+    //--------------------------------------------------------------
     Mesh *AssetManager::GetMeshPrimitive(MeshPrimitive mesh_primitive) {
         switch (mesh_primitive) {
             case MeshPrimitive::Quad: return s_mesh_primitive_quad;
@@ -30,6 +37,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     Texture *AssetManager::GetTexturePrimitive(TexturePrimitive texture_primitive) {
         switch (texture_primitive) {
             case TexturePrimitive::Grid: return s_texture_primitive_grid;
@@ -37,6 +45,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     void AssetManager::Initialize() {
         ImageLoader::Initialize();
         FontLoader::Initialize();
@@ -57,12 +66,14 @@ namespace Hyperion {
         s_default_material->SetTexture("u_texture", s_texture_primitive_grid);
     }
 
+    //--------------------------------------------------------------
     void AssetManager::Update() {
         if (Input::IsKeyDown(KeyCode::I)) {
             s_default_material->GetShader()->Recompile(FileSystem::ReadAllText("data/shaders/standard.shader"));
         }
     }
 
+    //--------------------------------------------------------------
     void AssetManager::Shutdown() {
         MeshFactory::Shutdown();
         FontLoader::Shutdown();

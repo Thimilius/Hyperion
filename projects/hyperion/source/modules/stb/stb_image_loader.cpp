@@ -1,17 +1,23 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
-#include "hyperion/modules/stb/stb_image_format_loader.hpp"
+//--------------------- Definition Include ---------------------
+#include "hyperion/modules/stb/stb_image_loader.hpp"
 
+//---------------------- Library Includes ----------------------
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    bool StbImageFormatLoader::SupportsExtension(const String &extension) const {
+    //--------------------------------------------------------------
+    bool StbImageLoader::SupportsExtension(const String &extension) const {
         return std::find(s_supported_extensions.begin(), s_supported_extensions.end(), extension) != s_supported_extensions.end();
     }
 
-    Image *StbImageFormatLoader::Load(const String &path, bool flip_vertically) {
+    //--------------------------------------------------------------
+    Image *StbImageLoader::Load(const String &path, bool flip_vertically) {
         stbi_set_flip_vertically_on_load(flip_vertically);
 
         int32 width;

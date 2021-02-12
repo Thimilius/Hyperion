@@ -1,9 +1,11 @@
 #pragma once
 
+//---------------------- Library Includes ----------------------
 #include <hyperion/assets/material.hpp>
 #include <hyperion/assets/mesh.hpp>
 #include <hyperion/rendering/render_driver.hpp>
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Editor {
 
     enum class EditorWorldGridType {

@@ -1,8 +1,10 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/physics/physics_backend.hpp"
 #include "hyperion/physics/physics_world.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Physics {
 
     class IPhysicsDriver {

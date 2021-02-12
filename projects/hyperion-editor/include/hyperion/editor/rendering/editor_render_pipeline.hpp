@@ -1,5 +1,6 @@
 #pragma once
 
+//---------------------- Library Includes ----------------------
 #include <hyperion/assets/font.hpp>
 #include <hyperion/assets/material.hpp>
 #include <hyperion/assets/mesh.hpp>
@@ -8,6 +9,7 @@
 #include <hyperion/core/color.hpp>
 #include <hyperion/rendering/pipelines/render_pipeline.hpp>
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Editor {
 
     class EditorRenderPipeline : public Rendering::IRenderPipeline {

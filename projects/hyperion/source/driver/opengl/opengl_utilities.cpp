@@ -1,9 +1,13 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/driver/opengl/opengl_utilities.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
+    //--------------------------------------------------------------
     GLbitfield OpenGLUtilities::GetGLClearFlags(ClearFlags clear_flags) {
         GLbitfield result = 0;
 
@@ -20,6 +24,7 @@ namespace Hyperion::Rendering {
         return result;
     }
 
+    //--------------------------------------------------------------
     GLenum OpenGLUtilities::GetGLDepthEquation(DepthEquation depth_equation) {
         switch (depth_equation) {
             case DepthEquation::Never: return GL_NEVER;
@@ -34,6 +39,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     GLenum OpenGLUtilities::GetGLBlendingFactor(BlendingFactor blending_factor) {
         switch (blending_factor) {
             case BlendingFactor::Zero: return GL_ZERO;
@@ -50,6 +56,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     GLenum OpenGLUtilities::GetGLBlendingEquation(BlendingEquation blending_equation) {
         switch (blending_equation) {
             case BlendingEquation::Add: return GL_FUNC_ADD;
@@ -59,6 +66,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     GLenum OpenGLUtilities::GetGLCullingMode(CullingMode culling_mode) {
         switch (culling_mode) {
             case CullingMode::Back: return GL_BACK;
@@ -68,6 +76,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     GLenum OpenGLUtilities::GetGLCullingFrontFaceMode(CullingFrontFaceMode culling_front_face_mode) {
         switch (culling_front_face_mode) {
             case CullingFrontFaceMode::Clockwise: return GL_CW;
@@ -76,6 +85,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     GLenum OpenGLUtilities::GetGLPolygonMode(PolygonMode polygon_mode) {
         switch (polygon_mode) {
             case PolygonMode::Fill: return GL_FILL;
@@ -84,6 +94,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     GLenum OpenGLUtilities::GetGLShaderStage(ShaderStageFlags shader_stage) {
         switch (shader_stage) {
             case ShaderStageFlags::Vertex:   return GL_VERTEX_SHADER;
@@ -92,6 +103,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     void OpenGLUtilities::SetUnpackAlignmentForTextureFormat(TextureFormat format) {
         GLint alignment = 4;
         switch (format) {
@@ -103,6 +115,7 @@ namespace Hyperion::Rendering {
         glPixelStorei(GL_UNPACK_ALIGNMENT, alignment);
     }
 
+    //--------------------------------------------------------------
     void OpenGLUtilities::FlipTextureHorizontally(TextureSize size, TextureFormat format, ArrayDescriptor<uint8> pixels) {
         uint32 stride = size.width * OpenGLUtilities::GetBytesPerPixelForTextureFormat(format);
         Vector<uint8> temp_buffer(stride);
@@ -120,6 +133,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     GLenum OpenGLUtilities::GetGLTextureFormat(TextureFormat format) {
         switch (format) {
             case TextureFormat::RGB24: return GL_RGB;
@@ -129,6 +143,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     GLenum OpenGLUtilities::GetGLTextureFormatType(TextureFormat format_type) {
         switch (format_type) {
             case TextureFormat::RGB24: return GL_UNSIGNED_BYTE;
@@ -138,6 +153,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     GLenum OpenGLUtilities::GetGLTextureInternalFormat(TextureFormat internal_format) {
         switch (internal_format) {
             case TextureFormat::RGB24: return GL_RGB8;
@@ -147,6 +163,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     GLint OpenGLUtilities::GetGLTextureWrapMode(TextureWrapMode wrap_mode) {
         switch (wrap_mode) {
             case TextureWrapMode::Clamp: return GL_CLAMP_TO_EDGE;
@@ -157,6 +174,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     GLint OpenGLUtilities::GetGLTextureMinFilter(TextureFilter filter) {
         switch (filter) {
             case TextureFilter::Point: return GL_NEAREST_MIPMAP_NEAREST;
@@ -166,6 +184,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     GLint OpenGLUtilities::GetGLTextureMaxFilter(TextureFilter filter) {
         switch (filter) {
             case TextureFilter::Point: return GL_NEAREST;
@@ -175,6 +194,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     GLfloat OpenGLUtilities::GetGLTextureAnisotropicFilter(TextureAnisotropicFilter anisotropic_filter) {
         switch (anisotropic_filter) {
             case TextureAnisotropicFilter::None: return 1.0f;
@@ -186,6 +206,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     MaterialPropertyType OpenGLUtilities::GetMaterialPropertyTypeForGLShaderType(GLint type) {
         switch (type) {
             case GL_FLOAT: return MaterialPropertyType::Float32;
@@ -203,6 +224,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     GLenum OpenGLUtilities::GetGLRenderTextureInternalFormat(RenderTextureFormat internal_format) {
         switch (internal_format) {
             case RenderTextureFormat::RGBA32: return GL_RGBA8;
@@ -210,6 +232,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     GLenum OpenGLUtilities::GetGLRenderTextureFormat(RenderTextureFormat format) {
         switch (format) {
             case RenderTextureFormat::RGBA32: return GL_RGBA;
@@ -217,6 +240,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     GLenum OpenGLUtilities::GetGLRenderTextureFormatType(RenderTextureFormat format_type) {
         switch (format_type) {
             case RenderTextureFormat::RGBA32: return GL_UNSIGNED_BYTE;
@@ -224,6 +248,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     GLsizei OpenGLUtilities::GetRenderTextureBufferSize(RectInt region, RenderTextureFormat format) {
         switch (format) {
             case RenderTextureFormat::RGBA32: return (region.x + region.width) * (region.y + region.height) * 4;
@@ -231,6 +256,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     GLenum OpenGLUtilities::GetGLIndexFormat(IndexFormat index_format) {
         switch (index_format) {
             case IndexFormat::UInt16: return GL_UNSIGNED_SHORT;
@@ -239,6 +265,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     GLsizei OpenGLUtilities::GetGLIndexFormatSize(IndexFormat index_format) {
         switch (index_format) {
             case IndexFormat::UInt16: return sizeof(uint16);
@@ -247,6 +274,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     GLenum OpenGLUtilities::GetGLMeshTopology(MeshTopology mesh_topology) {
         switch (mesh_topology) {
             case MeshTopology::Points: return GL_POINTS;
@@ -257,6 +285,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     GLuint OpenGLUtilities::GetGLAttributeIndexForVertextAttributeSize(VertexAttributeKind kind) {
         switch (kind) {
             case Hyperion::Rendering::VertexAttributeKind::Position: return 0;
@@ -271,6 +300,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     GLenum OpenGLUtilities::GetGLVertexAttributeType(VertexAttributeType vertex_attribute_type) {
         switch (vertex_attribute_type) {
             case VertexAttributeType::Float32: return GL_FLOAT;
@@ -278,6 +308,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     GLuint OpenGLUtilities::GetGLVertexAttributeSizeForVertexAttribute(VertexAttributeType vertex_attribute_type, uint32 dimension) {
         switch (vertex_attribute_type) {
             case VertexAttributeType::Float32: return sizeof(float32) * dimension;
@@ -285,6 +316,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     uint32 OpenGLUtilities::GetBytesPerPixelForTextureFormat(TextureFormat format) {
         switch (format) {
             case TextureFormat::RGBA32: return 4;

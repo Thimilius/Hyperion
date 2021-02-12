@@ -1,23 +1,31 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/platform/windows/windows_opengl_graphics_context.hpp"
 
+//---------------------- Library Includes ----------------------
 #include <glad/glad_wgl.h>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/system/engine.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
+    //--------------------------------------------------------------
     WindowsOpenGLGraphicsContext::WindowsOpenGLGraphicsContext(HDC device_context, HDC helper_device_context) {
         m_device_context = device_context;
 
         LoadOpenGLExtensions(helper_device_context);
     }
 
+    //--------------------------------------------------------------
     WindowsOpenGLGraphicsContext::~WindowsOpenGLGraphicsContext() {
         wglDeleteContext(m_opengl_context);
     }
 
+    //--------------------------------------------------------------
     void WindowsOpenGLGraphicsContext::Initialize(const GraphicsContextDescriptor &descriptor) {
         const int32 pixel_attributes[] = {
                 WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
@@ -77,10 +85,12 @@ namespace Hyperion::Rendering {
         OpenGLGraphicsContext::Initialize(descriptor);
     }
 
+    //--------------------------------------------------------------
     void WindowsOpenGLGraphicsContext::Present() {
         SwapBuffers(m_device_context);
     }
 
+    //--------------------------------------------------------------
     void WindowsOpenGLGraphicsContext::SetVSyncMode(VSyncMode vsync_mode) {
         int32 swap_interval = 0;
         switch (vsync_mode) {
@@ -92,6 +102,7 @@ namespace Hyperion::Rendering {
         wglSwapIntervalEXT(swap_interval);
     }
 
+    //--------------------------------------------------------------
     void WindowsOpenGLGraphicsContext::LoadOpenGLExtensions(HDC helper_device_context) {
         PIXELFORMATDESCRIPTOR pixel_format_descriptor = { 0 };
         pixel_format_descriptor.nSize = sizeof(pixel_format_descriptor);

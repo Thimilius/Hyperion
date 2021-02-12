@@ -1,8 +1,10 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/app/application_settings.hpp"
 #include "hyperion/core/system/operating_system.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Application;
     class Event;
@@ -15,6 +17,7 @@ namespace Hyperion {
     }
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
     
     class Engine final {

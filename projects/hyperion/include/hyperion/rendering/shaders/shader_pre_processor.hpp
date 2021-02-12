@@ -1,8 +1,10 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/rendering/attributes/shader_attributes.hpp"
 #include "hyperion/rendering/shaders/shader_modules.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
     struct ShaderPreProcessResult {

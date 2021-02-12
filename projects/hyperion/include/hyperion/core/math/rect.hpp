@@ -1,7 +1,9 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/math/vec2.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     struct Rect {

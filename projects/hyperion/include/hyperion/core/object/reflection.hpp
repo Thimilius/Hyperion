@@ -1,11 +1,14 @@
 #pragma once
 
+//---------------------- Library Includes ----------------------
 #include <rttr/registration>
 #include <rttr/registration_friend>
 #include <rttr/type>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/object/metadata.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
     using Instance = rttr::instance;
     template<typename T>

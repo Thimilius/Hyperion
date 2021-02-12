@@ -1,13 +1,18 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/core/math/mat4.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    //--------------------------------------------------------------
     Mat4::Mat4() {
         std::memset(elements, 0, 16 * sizeof(float32));
     }
 
+    //--------------------------------------------------------------
     Mat4::Mat4(float32 diagonal) {
         std::memset(elements, 0, 16 * sizeof(float32));
         elements[0 + 0 * 4] = diagonal;
@@ -16,10 +21,12 @@ namespace Hyperion {
         elements[3 + 3 * 4] = diagonal;
     }
 
+    //--------------------------------------------------------------
     Mat4::Mat4(float32 *elements) {
         std::memcpy(this->elements, elements, 16 * sizeof(float32));
     }
 
+    //--------------------------------------------------------------
     Mat4::Mat4(const Vec4 &column0, const Vec4 &column1, const Vec4 &column2, const Vec4 &column3) {
         columns[0] = column0;
         columns[1] = column1;
@@ -27,6 +34,7 @@ namespace Hyperion {
         columns[3] = column3;
     }
 
+    //--------------------------------------------------------------
     Mat4 &Mat4::Multiply(const Mat4 &other) {
         float32 data[16];
         for (int y = 0; y < 4; y++) {
@@ -42,18 +50,22 @@ namespace Hyperion {
         return *this;
     }
 
+    //--------------------------------------------------------------
     Vec3 Mat4::Multiply(const Vec3 &other) const {
         return other.Multiply(*this);
     }
 
+    //--------------------------------------------------------------
     Vec4 Mat4::Multiply(const Vec4 &other) const {
         return other.Multiply(*this);
     }
 
+    //--------------------------------------------------------------
     Mat4 &Mat4::operator*=(const Mat4 &other) {
         return Multiply(other);
     }
 
+    //--------------------------------------------------------------
     Mat4 Mat4::Inverted() const {
         float32 temp[16];
 
@@ -180,7 +192,8 @@ namespace Hyperion {
         return result;
     }
 
-    Mat4 Mat4::Transposed()const {
+    //--------------------------------------------------------------
+    Mat4 Mat4::Transposed() const {
         return Mat4(
             Vec4(columns[0].x, columns[1].x, columns[2].x, columns[3].x),
             Vec4(columns[0].y, columns[1].y, columns[2].y, columns[3].y),
@@ -190,10 +203,12 @@ namespace Hyperion {
     }
 
 
+    //--------------------------------------------------------------
     Vec4 Mat4::GetRow(int index) const {
         return Vec4(elements[index + 0 * 4], elements[index + 1 * 4], elements[index + 2 * 4], elements[index + 3 * 4]);
     }
 
+    //--------------------------------------------------------------
     void Mat4::SetRow(int index, const Vec4 &row) {
         elements[index + 0 * 4] = row.x;
         elements[index + 1 * 4] = row.y;
@@ -201,6 +216,7 @@ namespace Hyperion {
         elements[index + 3 * 4] = row.w;
     }
 
+    //--------------------------------------------------------------
     String Mat4::ToString() const {
         return StringUtils::Format("({:.2f}, {:.2f}, {:.2f}, {:.2f})\n({:.2f}, {:.2f}, {:.2f}, {:.2f})\n({:.2f}, {:.2f}, {:.2f}, {:.2f})\n({:.2f}, {:.2f}, {:.2f}, {:.2f})\n",
             columns[0].x, columns[1].x, columns[2].x, columns[3].x,
@@ -210,14 +226,17 @@ namespace Hyperion {
         );
     }
 
+    //--------------------------------------------------------------
     Mat4 Mat4::Identity() {
         return Mat4(1.0f);
     }
 
+    //--------------------------------------------------------------
     Mat4 Mat4::Translate(const Vec3 &position) {
         return Translate(position.x, position.y, position.z);
     }
 
+    //--------------------------------------------------------------
     Mat4 Mat4::Translate(float32 x, float32 y, float32 z) {
         Mat4 result(1.0f);
 
@@ -228,6 +247,7 @@ namespace Hyperion {
         return result;
     }
 
+    //--------------------------------------------------------------
     Mat4 Mat4::Rotate(const Vec3 &axis, float32 angle) {
         Mat4 result(1.0f);
 
@@ -255,6 +275,7 @@ namespace Hyperion {
         return result;
     }
 
+    //--------------------------------------------------------------
     Mat4 Mat4::Rotate(const Quaternion &quaternion) {
         Mat4 result = Identity();
 
@@ -282,10 +303,12 @@ namespace Hyperion {
         return result;
     }
 
+    //--------------------------------------------------------------
     Mat4 Mat4::Scale(const Vec3 &scale) {
         return Scale(scale.x, scale.y, scale.z);
     }
 
+    //--------------------------------------------------------------
     Mat4 Mat4::Scale(float32 x, float32 y, float32 z) {
         Mat4 result(1.0f);
 
@@ -296,10 +319,12 @@ namespace Hyperion {
         return result;
     }
 
+    //--------------------------------------------------------------
     Mat4 Mat4::TRS(const Vec3 &position, const Quaternion &rotation, const Vec3 &scale) {
         return Translate(position) * Rotate(rotation) * Scale(scale);
     }
 
+    //--------------------------------------------------------------
     Mat4 Mat4::Orthographic(float32 left, float32 right, float32 bottom, float32 top, float32 z_near, float32 z_far) {
         Mat4 result(1.0f);
 
@@ -314,6 +339,7 @@ namespace Hyperion {
         return result;
     }
 
+    //--------------------------------------------------------------
     Mat4 Mat4::Perspective(float32 fov, float32 aspect_ratio, float32 z_near, float32 z_far) {
         Mat4 result(0.0f);
 
@@ -333,6 +359,7 @@ namespace Hyperion {
         return result;
     }
 
+    //--------------------------------------------------------------
     Mat4 Mat4::LookAt(const Vec3 &from, const Vec3 &to, const Vec3 &up) {
         Mat4 result(1.0f);
 
@@ -355,14 +382,17 @@ namespace Hyperion {
         return result * Translate(Vec3(-from.x, -from.y, -from.z));
     }
 
+    //--------------------------------------------------------------
     Mat4 operator*(Mat4 left, const Mat4 &right) {
         return left.Multiply(right);
     }
 
+    //--------------------------------------------------------------
     Vec3 operator*(const Mat4 &left, const Vec3 &right) {
         return left.Multiply(right);
     }
 
+    //--------------------------------------------------------------
     Vec4 operator*(const Mat4 &left, const Vec4 &right) {
         return left.Multiply(right);
     }

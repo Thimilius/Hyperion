@@ -1,11 +1,14 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Asset;
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     using ResourceId = uint64;

@@ -1,11 +1,14 @@
 #pragma once
 
+//---------------------- Library Includes ----------------------
 #include <Windows.h>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/app/window.hpp"
 #include "hyperion/core/math/vec2.hpp"
 #include "hyperion/platform/windows/windows_input.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     class WindowsWindow : public Window {

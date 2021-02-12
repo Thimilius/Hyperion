@@ -1,9 +1,12 @@
 #pragma once
 
-#include "hyperion/core/system/log.hpp"
-
+//--------------- C++ Standard Library Includes ----------------
 #include <utility>
 
+//---------------------- Project Includes ----------------------
+#include "hyperion/core/system/log.hpp"
+
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     template<typename T>

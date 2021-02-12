@@ -1,8 +1,10 @@
 #pragma once
 
+//--------------- C++ Standard Library Includes ----------------
 #include <atomic>
 #include <condition_variable>
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Threading {
 
     class AutoResetEvent final {

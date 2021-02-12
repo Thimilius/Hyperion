@@ -1,22 +1,29 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/platform/windows/windows_input.hpp"
 
+//---------------------- Library Includes ----------------------
 #include <Windows.h>
 #include <Xinput.h>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/app/events/app_events.hpp"
 #include "hyperion/core/app/events/window_events.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     using XInputGetStateFunc = DWORD(WINAPI *)(DWORD dwUserIndex, XINPUT_STATE *pState);
     using XInputSetStateFunc = DWORD(WINAPI *)(DWORD dwUserIndex, XINPUT_VIBRATION *pVibration);
 
+    //--------------------------------------------------------------
     DWORD WINAPI XInputGetStateStub(DWORD dwUserIndex, XINPUT_STATE *pState) {
         return ERROR_DEVICE_NOT_CONNECTED;
     }
 
+    //--------------------------------------------------------------
     DWORD WINAPI XInputSetStateStub(DWORD dwUserIndex, XINPUT_VIBRATION *pVibration) {
         return ERROR_DEVICE_NOT_CONNECTED;
     }
@@ -27,6 +34,7 @@ namespace Hyperion {
 
     InputImplementation *Input::s_input_implementation = new WindowsInput();
 
+    //--------------------------------------------------------------
     WindowsInput::WindowsInput() {
         g_xinput_library = LoadLibraryA("xinput1_4.dll");
         if (!g_xinput_library) {
@@ -44,10 +52,12 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     WindowsInput::~WindowsInput() {
         FreeLibrary(g_xinput_library);
     }
 
+    //--------------------------------------------------------------
     void WindowsInput::SetGamepadVibration(Gamepad gamepad, float32 left_vibration, float32 right_vibration) {
         uint32 gamepad_id = GetIdFromGamepad(gamepad);
 
@@ -58,6 +68,7 @@ namespace Hyperion {
         g_xinput_set_state(gamepad_id, &vibration);
     }
 
+    //--------------------------------------------------------------
     void WindowsInput::OnEvent(Event &event) {
         EventDispatcher dispatcher(event);
 
@@ -87,6 +98,7 @@ namespace Hyperion {
         });
     }
 
+    //--------------------------------------------------------------
     void WindowsInput::Update() {
         // Set input state for the new frame
         {
@@ -163,6 +175,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     void WindowsInput::Reset() {
         memset(&m_keys_down, false, sizeof(m_keys_down));
         memset(&m_keys_up, false, sizeof(m_keys_up));
@@ -190,6 +203,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     void WindowsInput::QueryConnectedGamepads() {
         for (DWORD gamepad_id = 0; gamepad_id < XUSER_MAX_COUNT; gamepad_id++) {
             XINPUT_STATE state = { 0 };
@@ -218,6 +232,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     void WindowsInput::OnKeyEvent(KeyEvent &event, bool down) {
         int32 key_code = static_cast<int32>(event.GetKeyCode());
         m_keys_down[key_code] = !m_keys_last[key_code] && down;
@@ -225,6 +240,7 @@ namespace Hyperion {
         m_keys_up[key_code] = m_keys_last[key_code] && !down;
     }
 
+    //--------------------------------------------------------------
     void WindowsInput::OnMouseButtonEvent(MouseButtonEvent &event, bool down) {
         int32 mouse_button_code = static_cast<int32>(event.GetMouseButtonCode());
         m_mouse_buttons_down[mouse_button_code] = !m_mouse_buttons_last[mouse_button_code] && down;
@@ -232,6 +248,7 @@ namespace Hyperion {
         m_mouse_buttons_up[mouse_button_code] = m_mouse_buttons_last[mouse_button_code] && !down;
     }
 
+    //--------------------------------------------------------------
     void WindowsInput::HandleGamepadButtonCode(Gamepad gamepad, GamepadButtonCode button_code, bool down) {
         m_gamepads[static_cast<int32>(gamepad)].buttons_down[static_cast<int32>(button_code)] = !m_gamepads[static_cast<int32>(gamepad)].buttons_last[static_cast<int32>(button_code)] && down;
         m_gamepads[static_cast<int32>(gamepad)].buttons[static_cast<int32>(button_code)] = down;
@@ -247,6 +264,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     Gamepad WindowsInput::GetGamepadFromId(uint32 id) {
         switch (id) {
             case 0: return Gamepad::Gamepad1;
@@ -257,6 +275,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     uint32 WindowsInput::GetIdFromGamepad(Gamepad gamepad) {
         switch (gamepad) {
             case Hyperion::Gamepad::Gamepad1: return 0;
@@ -267,6 +286,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     Vec2 WindowsInput::ApplyGamepadDeadzone(float32 x, float32 y) {
         // Deadzone logic from: https://www.gamasutra.com/blogs/JoshSutphin/20130416/190541/Doing_Thumbstick_Dead_Zones_Right.php
         float32 dead_zone = m_gamepad_dead_zone;

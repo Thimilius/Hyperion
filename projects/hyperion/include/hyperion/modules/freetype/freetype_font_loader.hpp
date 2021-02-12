@@ -1,9 +1,12 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/assets/font.hpp"
 
+//-------------------- Forward Declarations --------------------
 struct FT_LibraryRec_;
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     class FreetypeFontLoader : public IFontLoader {

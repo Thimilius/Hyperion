@@ -1,13 +1,17 @@
 #pragma once
 
+//---------------------- Library Includes ----------------------
 #include <glad/glad.h>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/driver/opengl/opengl_graphics_context.hpp"
 #include "hyperion/rendering/render_driver.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
     class OpenGLRenderDriver : public IRenderDriver {
+    private:
         struct OpenGLShader;
         struct OpenGLTexture;
         struct OpenGLMaterial;

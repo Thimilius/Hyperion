@@ -1,9 +1,12 @@
 #pragma once
 
+//---------------- C Standard Library Includes -----------------
 #include <cmath>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/types.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     class Math final {

@@ -1,11 +1,14 @@
 #pragma once
 
+//---------------------- Library Includes ----------------------
 #include <mono/jit/jit.h>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/object/object.hpp"
 #include "hyperion/scripting/scripting_driver.hpp"
 #include "hyperion/modules/mono/mono_scripting_type.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
 
     class MonoScriptingDriver : public IScriptingDriver {

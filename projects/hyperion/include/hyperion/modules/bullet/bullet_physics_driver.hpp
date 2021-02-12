@@ -1,13 +1,17 @@
 #pragma once
 
+//---------------------- Library Includes ----------------------
 #include <bullet/btBulletCollisionCommon.h>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/physics/physics_driver.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion::Physics {
     class BulletPhysicsWorld;
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Physics {
 
     class BulletPhysicsDriver : public IPhysicsDriver {

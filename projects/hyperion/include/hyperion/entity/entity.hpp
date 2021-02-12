@@ -1,20 +1,22 @@
 #pragma once
 
+//--------------- C++ Standard Library Includes ----------------
 #include <type_traits>
 #include <typeindex>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/entity/entity_message.hpp"
 #include "hyperion/entity/layer.hpp"
-#include "hyperion/entity/components/rect_transform.hpp"
 #include "hyperion/entity/components/script.hpp"
 #include "hyperion/entity/components/transform.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Component;
     class World;
-    class RectTransform;
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     enum class EntityPrimitive {
@@ -173,7 +175,6 @@ namespace Hyperion {
         Vector<IEntityMessageListener *> m_message_listeners;
     private:
         friend class Hyperion::Component;
-        friend class Hyperion::RectTransform;
     };
 
 }

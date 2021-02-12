@@ -1,9 +1,11 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/math/bounding_box.hpp"
 #include "hyperion/core/math/ray.hpp"
 #include "hyperion/core/math/vec3.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Collider;
     class BoxCollider;
@@ -11,6 +13,7 @@ namespace Hyperion {
     class MeshCollider;
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Physics {
 
     struct RaycastResult {

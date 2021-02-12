@@ -1,10 +1,12 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/io/image_loader.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    class StbImageFormatLoader : public IImageLoader {
+    class StbImageLoader : public IImageLoader {
     public:
         inline const Vector<String> &GetSupportedExtensions() const override { return s_supported_extensions; }
         bool SupportsExtension(const String &extension) const override;

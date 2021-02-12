@@ -1,9 +1,11 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset.hpp"
 #include "hyperion/core/image.hpp"
 #include "hyperion/rendering/attributes/texture_attributes.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     class Texture : public Asset {

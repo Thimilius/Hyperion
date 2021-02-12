@@ -1,9 +1,12 @@
 #pragma once
 
+//--------------- C++ Standard Library Includes ----------------
 #include <thread>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Threading {
 
     using ThreadId = uint32;

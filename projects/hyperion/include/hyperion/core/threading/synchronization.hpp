@@ -1,8 +1,10 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/profiling/profiling.hpp"
 #include "hyperion/core/threading/auto_reset_event.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Engine;
 
@@ -12,6 +14,7 @@ namespace Hyperion {
     }
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     class Synchronization final {

@@ -1,7 +1,9 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/app/application_settings.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
 
     class IScriptingDriver {

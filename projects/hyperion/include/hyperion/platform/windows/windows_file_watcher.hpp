@@ -1,10 +1,13 @@
 #pragma once
 
+//---------------------- Library Includes ----------------------
 #include <Windows.h>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
 #include "hyperion/core/io/file_watcher.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     class WindowsFileWatcher : public FileWatcher {

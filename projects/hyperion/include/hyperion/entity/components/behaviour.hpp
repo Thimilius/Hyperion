@@ -1,7 +1,9 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/entity/components/component.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     class Behaviour : public Component {

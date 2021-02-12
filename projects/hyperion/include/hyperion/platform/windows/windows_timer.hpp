@@ -1,9 +1,12 @@
 #pragma once
 
+//---------------------- Library Includes ----------------------
 #include <Windows.h>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/timer.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     class WindowsTimer : public Timer {

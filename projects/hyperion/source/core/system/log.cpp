@@ -1,15 +1,21 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/core/system/log.hpp"
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/system/operating_system.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    //--------------------------------------------------------------
     void Log::LogMessageInternal(LogLevel level, String message) {
         OperatingSystem::GetInstance()->PrintToConsole(GetLogColor(level), message.c_str());
     }
     
+    //--------------------------------------------------------------
     LogColor Log::GetLogColor(LogLevel level) {
         switch (level) {
             case Hyperion::LogLevel::Trace: return LogColor::White;

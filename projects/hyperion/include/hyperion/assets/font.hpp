@@ -1,9 +1,11 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset.hpp"
 #include "hyperion/assets/texture.hpp"
 #include "hyperion/assets/texture_atlas.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     enum class FontCharacterSet {

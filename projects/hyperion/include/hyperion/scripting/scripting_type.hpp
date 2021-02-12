@@ -1,5 +1,6 @@
 #pragma once
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
 
     class ScriptingType {

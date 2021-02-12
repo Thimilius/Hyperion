@@ -1,7 +1,10 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/core/system/engine.hpp"
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset.hpp"
 #include "hyperion/audio/audio_engine.hpp"
 #include "hyperion/core/timer.hpp"
@@ -22,8 +25,10 @@
 #include "hyperion/rendering/render_engine.hpp"
 #include "hyperion/scripting/scripting_engine.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    //--------------------------------------------------------------
     void Engine::Setup() {
         // We initialize the operating system first to get logging ability.
         OperatingSystem::GetInstance()->Initialize();
@@ -40,6 +45,7 @@ namespace Hyperion {
         HYP_LOG_INFO("Engine", "Primary display: {}x{} @{} Hz", mode_info.width, mode_info.height, mode_info.refresh_rate);
     }
 
+    //--------------------------------------------------------------
     void Engine::PreInitialize() {
         HYP_ASSERT_MESSAGE(s_settings.core.max_delta_time > 0, "Max delta time must be greater than zero!");
         Time::s_max_delta_time = s_settings.core.max_delta_time;
@@ -56,6 +62,7 @@ namespace Hyperion {
         Rendering::RenderEngine::PreInitialize(s_settings.render, window);
     }
 
+    //--------------------------------------------------------------
     void Engine::Initialize() {
         Audio::AudioEngine::Initialize();
         AssetManager::Initialize();
@@ -64,6 +71,7 @@ namespace Hyperion {
         Scripting::ScriptingEngine::Initialize(s_settings.scripting);
     }
 
+    //--------------------------------------------------------------
     uint32 Engine::Run() {
         s_running = true;
 
@@ -92,6 +100,7 @@ namespace Hyperion {
         return 0;
     }
 
+    //--------------------------------------------------------------
     void Engine::Iterate() {
         const EngineLoopSystem &engine_loop = s_settings.core.engine_loop;
         ExecuteEngineLoopSubSystem(engine_loop.initilization);
@@ -106,6 +115,7 @@ namespace Hyperion {
         ExecuteEngineLoopSubSystem(engine_loop.late_update);
     }
 
+    //--------------------------------------------------------------
     void Engine::OnEvent(Event &event) {
         EventDispatcher dispatcher(event);
 
@@ -133,11 +143,13 @@ namespace Hyperion {
         Application::GetInstance()->OnEvent(event);
     }
 
+    //--------------------------------------------------------------
     void Engine::Exit() {
         s_running = false;
         Rendering::RenderEngine::Exit();
     }
 
+    //--------------------------------------------------------------
     void Engine::Shutdown() {
         // When shutting down we have to be very careful about the order.
         // The render engine (render thread) needs seperate phases in which it has to shut down.
@@ -154,6 +166,7 @@ namespace Hyperion {
         delete Application::GetInstance()->GetWindow();
     }
 
+    //--------------------------------------------------------------
     void Engine::ExecuteEngineLoopSubSystem(const EngineLoopSubSystem &engine_loop_sub_system) {
         // We explicitly ignore the update function for systems that contain sub systems.
         if (engine_loop_sub_system.sub_systems.size() > 0) {
@@ -167,6 +180,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     void Engine::TimeInitilization() {
         s_stats.frame++;
         s_stats.fps_counter++;
@@ -181,64 +195,76 @@ namespace Hyperion {
         Time::s_time += delta_time;
     }
 
+    //--------------------------------------------------------------
     void Engine::InputInitilization() {
         HYP_PROFILE_CATEGORY("Input", Optick::Category::Input);
 
         s_application->GetWindow()->Poll();
     }
 
+    //--------------------------------------------------------------
     void Engine::ApplicationFixedUpdate() {
         s_application->OnFixedUpdate(Time::GetFixedDeltaTime());
     }
 
+    //--------------------------------------------------------------
     void Engine::TimeFixedUpdate() {
         s_stats.accumulator -= Time::GetFixedDeltaTime();
     }
 
+    //--------------------------------------------------------------
     void Engine::TimeTick() {
         Time::s_fps = s_stats.fps_counter;
         Time::s_frame_time = 1000.0f / s_stats.fps_counter;
         s_stats.fps_counter = 0;
     }
 
+    //--------------------------------------------------------------
     void Engine::ApplicationTick() {
         s_application->OnTick();
     }
 
+    //--------------------------------------------------------------
     void Engine::AssetManagerUpdate() {
         AssetManager::Update();
     }
 
+    //--------------------------------------------------------------
     void Engine::ScriptingEngineUpdate() {
         HYP_PROFILE_CATEGORY("ScriptingUpdate", Optick::Category::Script);
 
         Scripting::ScriptingEngine::Update();
     }
 
+    //--------------------------------------------------------------
     void Engine::ApplicationUpdate() {
         HYP_PROFILE_CATEGORY("ApplicationUpdate", Optick::Category::GameLogic);
 
         s_application->OnUpdate(Time::GetDeltaTime());
     }
 
+    //--------------------------------------------------------------
     void Engine::PhysicsEngineFixedUpdate() {
         HYP_PROFILE_CATEGORY("Physics", Optick::Category::Physics);
 
         Physics::PhysicsEngine::FixedUpdate(Time::GetFixedDeltaTime());
     }
 
+    //--------------------------------------------------------------
     void Engine::ObjectManagerLateUpdate() {
         HYP_PROFILE_CATEGORY("LateUpdate", Optick::Category::GameLogic);
 
         ObjectManager::LateUpdate();
     }
 
+    //--------------------------------------------------------------
     void Engine::RenderEngineLateUpdate() {
         HYP_PROFILE_CATEGORY("Rendering", Optick::Category::Rendering);
 
         Rendering::RenderEngine::Render();
     }
 
+    //--------------------------------------------------------------
     void Engine::PanicInternal(const String &title, const String &message) {
         OperatingSystem::GetInstance()->DisplayError(title, message);
         Exit();

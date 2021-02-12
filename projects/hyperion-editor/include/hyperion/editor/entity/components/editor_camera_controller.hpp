@@ -1,8 +1,10 @@
 #pragma once
 
+//---------------------- Library Includes ----------------------
 #include <hyperion/entity/components/component.hpp>
 #include <hyperion/entity/components/rendering/camera.hpp>
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Editor {
 
     class EditorCameraController : public Component {

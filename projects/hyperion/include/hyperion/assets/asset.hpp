@@ -1,8 +1,10 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/object/object.hpp"
 #include "hyperion/core/object/resource.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Engine;
     class Material;
@@ -10,6 +12,7 @@ namespace Hyperion {
     class Texture;
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     enum class AssetType {

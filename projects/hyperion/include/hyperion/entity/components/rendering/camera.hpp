@@ -1,11 +1,13 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/color.hpp"
 #include "hyperion/entity/entity_message.hpp"
 #include "hyperion/entity/layer.hpp"
 #include "hyperion/entity/components/behaviour.hpp"
 #include "hyperion/rendering/camera_data.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     enum class CameraClearMode {

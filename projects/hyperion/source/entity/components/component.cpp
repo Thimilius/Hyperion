@@ -1,18 +1,25 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/entity/components/component.hpp"
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/entity/entity.hpp"
 #include "hyperion/entity/world_manager.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    //--------------------------------------------------------------
     ComponentType::ComponentType(const Type &native_type)
         : m_is_native_type(true), m_native_type(native_type), m_scripting_type(nullptr) { }
 
+    //--------------------------------------------------------------
     ComponentType::ComponentType(Scripting::ScriptingType *scripting_type)
         : m_is_native_type(false), m_native_type(Type::get<Component>()), m_scripting_type(scripting_type) { }
 
+    //--------------------------------------------------------------
     bool ComponentType::IsDerivedFrom(const ComponentType &base) const {
         if (m_is_native_type != base.m_is_native_type) {
             return false;
@@ -25,6 +32,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     bool ComponentType::operator==(const ComponentType &other) const {
         if (m_is_native_type != other.m_is_native_type) {
             return false;
@@ -37,14 +45,17 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     bool ComponentType::operator!=(const ComponentType &other) const {
         return !(*this == other);
     }
 
+    //--------------------------------------------------------------
     Transform *Component::GetTransform() const {
         return m_entity->GetTransform();
     }
 
+    //--------------------------------------------------------------
     World *Component::GetWorld() const {
         return m_entity->GetWorld();
     }

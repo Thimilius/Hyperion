@@ -1,12 +1,17 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/core/io/file_system.hpp"
 
+//--------------- C++ Standard Library Includes ----------------
 #include <fstream>
 #include <filesystem>
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    //--------------------------------------------------------------
     String FileSystem::ReadAllText(const String &path) {
         std::ifstream file(path);
         if (!file.is_open()) {
@@ -23,6 +28,7 @@ namespace Hyperion {
         return buffer;
     }
 
+    //--------------------------------------------------------------
     Vector<String> FileSystem::ReadAllLines(const String &path) {
         Vector<String> result;
 
@@ -40,11 +46,13 @@ namespace Hyperion {
         return result;
     }
 
+    //--------------------------------------------------------------
     void FileSystem::WriteAllText(const String &path, const String &text) {
         std::ofstream file(path);
         file.write(text.data(), text.length());
     }
 
+    //--------------------------------------------------------------
     void FileSystem::Delete(const String &path) {
         std::filesystem::remove(path);
     }

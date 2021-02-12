@@ -1,8 +1,10 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/app/input.hpp"
 #include "hyperion/core/app/events/event.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     class GamepadEvent : public Event {

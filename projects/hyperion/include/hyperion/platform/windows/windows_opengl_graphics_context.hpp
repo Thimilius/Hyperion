@@ -1,9 +1,12 @@
 #pragma once
 
+//---------------------- Library Includes ----------------------
 #include <Windows.h>
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/driver/opengl/opengl_graphics_context.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
     class WindowsOpenGLGraphicsContext : public OpenGLGraphicsContext {

@@ -1,12 +1,12 @@
 #pragma once
 
-#include <queue>
-
+//---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
 #include "hyperion/core/color.hpp"
 #include "hyperion/entity/entity.hpp"
 #include "hyperion/physics/physics_world.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Entity;
     class MeshRenderer;
@@ -18,6 +18,7 @@ namespace Hyperion {
     }
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
     
     struct WorldEnvironment {

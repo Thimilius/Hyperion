@@ -1,13 +1,13 @@
 #pragma once
 
-#include <variant>
-
+//---------------------- Project Includes ----------------------
 #include "hyperion/rendering/render_driver.hpp"
 
 // NOTE: Everything inside a normal render thread command has to be trivially destructable (POD).
 // The reason is that only their storage gets deallocated and the destructor will never be called.
 // Using a type which is not trivially destructable would be a memory leak!
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
     // Those specify all 'normal' render thread commands.

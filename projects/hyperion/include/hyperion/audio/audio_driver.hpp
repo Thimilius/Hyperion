@@ -1,8 +1,10 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
 #include "hyperion/audio/audio_backend.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Audio {
 
     class IAudioDriver {

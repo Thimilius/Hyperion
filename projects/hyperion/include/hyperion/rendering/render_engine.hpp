@@ -1,11 +1,14 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
+#include "hyperion/core/color.hpp"
 #include "hyperion/core/app/application_settings.hpp"
 #include "hyperion/core/threading/thread.hpp"
 #include "hyperion/rendering/render_driver.hpp"
 #include "hyperion/rendering/threading/render_thread_commands.hpp"
 #include "hyperion/rendering/threading/render_thread_command_queue.hpp"
 
+//-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Engine;
     class Window;
@@ -18,6 +21,7 @@ namespace Hyperion {
     }
 }
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
     class RenderEngine final {

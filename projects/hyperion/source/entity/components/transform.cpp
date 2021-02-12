@@ -1,12 +1,17 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/entity/components/transform.hpp"
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/entity/entity.hpp"
 #include "hyperion/entity/world.hpp"
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    //--------------------------------------------------------------
     void Transform::SetParent(Transform *parent) {
         // Handle special edge cases and for now just silently abandon.
         if (m_parent == parent || parent == this) {
@@ -37,6 +42,7 @@ namespace Hyperion {
         NotifyTransformChange();
     }
 
+    //--------------------------------------------------------------
     Transform *Transform::GetRoot() const {
         Transform *parent = m_parent ? m_parent : (Transform *)this;
         while (parent->m_parent != nullptr) {
@@ -45,6 +51,7 @@ namespace Hyperion {
         return parent;
     }
 
+    //--------------------------------------------------------------
     bool Transform::IsChildOf(Transform *parent) const {
         Transform *p = parent;
         while (p != nullptr) {
@@ -57,6 +64,7 @@ namespace Hyperion {
         return false;
     }
 
+    //--------------------------------------------------------------
     void Transform::NotifyTransformChange() {
         RecalculateTransform();
 
@@ -67,6 +75,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     void Transform::RecalculateTransform() {
         if (m_parent) {
             m_derived_rotation = m_parent->m_derived_rotation * m_local_rotation;
@@ -84,16 +93,19 @@ namespace Hyperion {
         m_world_to_local_matrix = m_local_to_world_matrix.Inverted();
     }
 
+    //--------------------------------------------------------------
     Transform *Hyperion::Transform::Create() {
         return new Transform();
     }
 
+    //--------------------------------------------------------------
     void Hyperion::Transform::OnCreate() {
         Component::OnCreate();
 
         RecalculateTransform();
     }
 
+    //--------------------------------------------------------------
     void Transform::OnDestroy() {
         Entity *entity = GetEntity();
         if (m_parent == nullptr) {

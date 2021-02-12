@@ -1,13 +1,18 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/modules/assimp/assimp_mesh_loader.hpp"
 
+//---------------------- Library Includes ----------------------
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
+//------------------------- Namespaces -------------------------
 using namespace Hyperion::Rendering;
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     static uint32 g_assimp_import_flags =
@@ -21,6 +26,7 @@ namespace Hyperion {
         aiProcess_FlipWindingOrder |      // Flip winding order to be clockwise.                                           
         aiProcess_ValidateDataStructure;  // Validation.
 
+    //--------------------------------------------------------------
     Mesh *AssimpMeshLoader::LoadMesh(const String &path) {
         Assimp::Importer importer;
         const aiScene *scene = importer.ReadFile(path, g_assimp_import_flags);
@@ -42,6 +48,7 @@ namespace Hyperion {
         return Mesh::Create(mesh_data, sub_meshes);
     }
 
+    //--------------------------------------------------------------
     void AssimpMeshLoader::LoadSubMesh(const aiMesh *mesh, MeshData &mesh_data, Vector<SubMesh> &sub_meshes) {
         // Make sure the mesh has all necessary components.
         if (!mesh->HasPositions() || !mesh->HasNormals() || !mesh->HasTextureCoords(0)) {
@@ -77,6 +84,7 @@ namespace Hyperion {
         sub_meshes.push_back({ GetMeshTopologyForPrimitiveType(mesh->mPrimitiveTypes), index_count, index_offset, static_cast<uint32>(vertex_offset) });
     }
 
+    //--------------------------------------------------------------
     MeshTopology AssimpMeshLoader::GetMeshTopologyForPrimitiveType(uint32 primitive_type) {
         switch (primitive_type) {
             case aiPrimitiveType_TRIANGLE: return MeshTopology::Triangles;
