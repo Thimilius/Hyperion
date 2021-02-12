@@ -29,6 +29,15 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
+    void Engine::SetMode(EngineMode engine_mode) {
+        // We inform the scripting engine before we are actually setting the new mode,
+        // so it can still act like we are editor runtime when we switch to editor.
+        Scripting::ScriptingEngine::EngineModeChanged(engine_mode);
+
+        s_engine_mode = engine_mode;
+    }
+
+    //--------------------------------------------------------------
     void Engine::Setup() {
         // We initialize the operating system first to get logging ability.
         OperatingSystem::GetInstance()->Initialize();

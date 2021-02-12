@@ -99,12 +99,12 @@ namespace Hyperion::Scripting {
                 return MonoScriptingDriver::GetOrCreateManagedObject(component, native_class);
             } else {
                 Script *script = entity->AddScript(component_type.GetScriptingType());
-
                 bool is_script_component = mono_class_is_subclass_of(managed_class, MonoScriptingDriver::GetScriptClass(), false);
                 MonoObject *managed_object = MonoScriptingDriver::CreateManagedObjectFromManagedType(script, managed_class, is_script_component);
 
-                // We have to wait for the actual managed object to be create, so that we can send the OnCreate message.
-                script->SendMessage(ScriptingMessage::OnCreate);
+                if (MonoScriptingInstance *scripting_instance = reinterpret_cast<MonoScriptingInstance *>(script->GetScriptingInstance())) {
+                    scripting_instance->SendMessage(ScriptingMessage::OnCreate);
+                }
 
                 return managed_object;
             }
@@ -178,6 +178,10 @@ namespace Hyperion::Scripting {
     //--------------------------------------------------------------
     void Binding_Object_Destroy(MonoObject *managed_object) {
         if (Object *native_object = MonoScriptingDriver::GetNativeObjectAs<Object>(managed_object)) {
+            if (MonoScriptingInstance *scripting_instance = reinterpret_cast<MonoScriptingInstance *>(native_object->GetScriptingInstance())) {
+                scripting_instance->SendMessage(ScriptingMessage::OnDestroy);
+            }
+
             Object::Destroy(native_object);
         }
     }
@@ -316,6 +320,7 @@ namespace Hyperion::Scripting {
 
         // Time
         {
+            // TODO: We need to intercept the elapsed time call when we are in the editor runtime.
             mono_add_internal_call("Hyperion.Time::Binding_GetElapsedTime", Time::GetTime);
             mono_add_internal_call("Hyperion.Time::Binding_GetDeltaTime", Time::GetDeltaTime);
             mono_add_internal_call("Hyperion.Time::Binding_GetFixedDeltaTime", Time::GetFixedDeltaTime);

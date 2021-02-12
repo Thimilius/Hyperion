@@ -2,6 +2,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/application_settings.hpp"
+#include "hyperion/core/system/engine_mode.hpp"
 #include "hyperion/core/system/operating_system.hpp"
 
 //-------------------- Forward Declarations --------------------
@@ -28,6 +29,9 @@ namespace Hyperion {
             String message = StringUtils::Format(message_format, args...);
             PanicInternal(title, message);
         }
+
+        static EngineMode GetMode() { return s_engine_mode; }
+        static void SetMode(EngineMode engine_mode);
     private:
         Engine() = delete;
         ~Engine() = delete;
@@ -61,6 +65,7 @@ namespace Hyperion {
         inline static ApplicationSettings s_settings;
         inline static Application *s_application;
         inline static bool s_running = false;
+        inline static EngineMode s_engine_mode = EngineMode::Editor;
 
         inline static struct Stats {
             Timer *timer;

@@ -6,6 +6,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/time.hpp"
+#include "hyperion/core/system/engine.hpp"
 #include "hyperion/modules/mono/mono_scripting_driver.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -42,18 +43,20 @@ namespace Hyperion::Scripting {
 
         // The OnDestroy message gets processed by every scripting instance for cleanup.
         if (message == ScriptingMessage::OnDestroy) {
-            MonoScriptingDriver::UnregisterObject(m_managed_object);
+            MonoScriptingDriver::UnregisterObject(m_managed_object, m_is_script_component);
             delete this; // I don't really know how I feel about this...
         }
     }
 
     //--------------------------------------------------------------
     void MonoScriptingInstance::CallMethod(const char *name, int32 parameter_count, void **args) {
-        MonoClass *script_class = MonoScriptingDriver::GetScriptClass();
-        MonoMethod *method = mono_class_get_method_from_name(script_class, name, parameter_count);
-        MonoMethod *virtual_method = mono_object_get_virtual_method(m_managed_object, method);
-        MonoObject *exception = nullptr;
-        mono_runtime_invoke(virtual_method, m_managed_object, args, &exception);
+        if (Engine::GetMode() == EngineMode::EditorRuntime) {
+            MonoClass *script_class = MonoScriptingDriver::GetScriptClass();
+            MonoMethod *method = mono_class_get_method_from_name(script_class, name, parameter_count);
+            MonoMethod *virtual_method = mono_object_get_virtual_method(m_managed_object, method);
+            MonoObject *exception = nullptr;
+            mono_runtime_invoke(virtual_method, m_managed_object, args, &exception);
+        }
     }
 
 }

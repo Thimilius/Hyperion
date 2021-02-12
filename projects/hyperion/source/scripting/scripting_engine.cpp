@@ -29,6 +29,11 @@ namespace Hyperion::Scripting {
     }
 
     //--------------------------------------------------------------
+    void ScriptingEngine::EngineModeChanged(EngineMode engine_mode) {
+        s_scripting_driver->EngineModeChange(engine_mode);
+    }
+
+    //--------------------------------------------------------------
     void Scripting::ScriptingEngine::Update() {
         s_scripting_driver->Update();
     }

@@ -16,8 +16,6 @@ namespace Hyperion {
         HYP_REFLECT(Component);
     public:
         inline Scripting::ScriptingType *GetScriptingType() const { return m_scripting_type; }
-        
-        void SendMessage(Scripting::ScriptingMessage message);
     public:
         static Script *Create();
     private:

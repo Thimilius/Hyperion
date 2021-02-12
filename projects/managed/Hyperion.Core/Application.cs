@@ -5,7 +5,6 @@ namespace Hyperion {
     public static class Application {
         class MyScript : Script {
             protected override void OnCreate() {
-
             }
 
             protected override void OnUpdate(float deltaTime) {
@@ -14,7 +13,6 @@ namespace Hyperion {
             }
 
             protected override void OnDestroy() {
-
             }
         }
 

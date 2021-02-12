@@ -12,8 +12,8 @@
 #include <mono/metadata/threads.h>
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/core/system/engine.hpp"
 #include "hyperion/modules/mono/mono_scripting_bindings.hpp"
-#include "hyperion/modules/mono/mono_scripting_instance.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
@@ -34,7 +34,33 @@ namespace Hyperion::Scripting {
     }
 
     //--------------------------------------------------------------
+    void MonoScriptingDriver::EngineModeChange(EngineMode engine_mode) {
+        if (engine_mode == EngineMode::Editor) {
+            // We take a copy here as the actual vector gets changed, so we can not iterate over it directly.
+            Vector<Script *> scripts = s_scripts_which_recieve_messages;
+            for (Script *script : scripts) {
+                script->GetScriptingInstance()->SendMessage(ScriptingMessage::OnDestroy);
+            }
+        } else if (engine_mode == EngineMode::EditorRuntime) {
+            // Recreate all script components.
+            //for (Script *script : s_scripts_which_recieve_messages) {
+            //    CreateManagedObjectFromManagedType(script, static_cast<MonoScriptingType *>(script->GetScriptingType())->GetManagedClass(), true);
+            //}
+
+            for (Script *script : s_scripts_which_recieve_messages) {
+                script->GetScriptingInstance()->SendMessage(ScriptingMessage::OnCreate);
+            }
+        }
+    }
+
+    //--------------------------------------------------------------
     void MonoScriptingDriver::Update() {
+        if (Engine::GetMode() == EngineMode::EditorRuntime) {
+            for (Script *script : s_scripts_which_recieve_messages) {
+                script->GetScriptingInstance()->SendMessage(ScriptingMessage::OnUpdate);
+            }
+        }
+
         MonoObject *exception = nullptr;
         mono_runtime_invoke(s_update_method, nullptr, nullptr, &exception);
         if (exception != nullptr) {
@@ -106,7 +132,12 @@ namespace Hyperion::Scripting {
     //--------------------------------------------------------------
     void MonoScriptingDriver::RegisterManagedObject(MonoObject *managed_object, Object *native_object, bool is_script_component) {
         RegisterObject(managed_object, native_object);
-        native_object->SetScriptingInstance(new MonoScriptingInstance(managed_object, is_script_component));
+        MonoScriptingInstance *scripting_instance = new MonoScriptingInstance(managed_object, is_script_component);
+        native_object->SetScriptingInstance(scripting_instance);
+        if (is_script_component) {
+            Script *script = static_cast<Script *>(native_object);
+            s_scripts_which_recieve_messages.push_back(script);
+        }
     }
 
     //--------------------------------------------------------------
@@ -118,12 +149,21 @@ namespace Hyperion::Scripting {
     }
 
     //--------------------------------------------------------------
-    void MonoScriptingDriver::UnregisterObject(MonoObject *managed_object) {
+    void MonoScriptingDriver::UnregisterObject(MonoObject *managed_object, bool is_script_component) {
         HYP_ASSERT(s_managed_to_native_objects.find(managed_object) != s_managed_to_native_objects.end());
 
         void *native = s_managed_to_native_objects[managed_object];
         s_managed_to_native_objects.erase(managed_object);
         s_native_to_managed_objects.erase(native);
+
+        if (is_script_component && Engine::GetMode() == EngineMode::Runtime) {
+            Script *script = reinterpret_cast<Script *>(native);
+            auto begin = s_scripts_which_recieve_messages.begin();
+            auto end = s_scripts_which_recieve_messages.end();
+            if (std::find(begin, end, script) != end) {
+                s_scripts_which_recieve_messages.erase(std::remove(begin, end, script));
+            }
+        }
     }
 
     //--------------------------------------------------------------

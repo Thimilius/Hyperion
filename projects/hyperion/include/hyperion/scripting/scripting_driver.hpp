@@ -2,6 +2,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/application_settings.hpp"
+#include "hyperion/core/system/engine_mode.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
@@ -13,6 +14,7 @@ namespace Hyperion::Scripting {
         virtual uint64 GetMemoryUsage() const = 0;
 
         virtual void Initialize(const ScriptingSettings &settings) = 0;
+        virtual void EngineModeChange(EngineMode engine_mode) = 0;
         virtual void Update() = 0;
         virtual void Shutdown() = 0;
     };

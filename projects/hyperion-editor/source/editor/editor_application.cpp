@@ -6,6 +6,7 @@
 #include <hyperion/core/app/application.hpp>
 #include <hyperion/core/app/time.hpp>
 #include <hyperion/core/memory/memory.hpp>
+#include <hyperion/core/system/engine.hpp>
 #include <hyperion/scripting/scripting_engine.hpp>
 
 //---------------------- Project Includes ----------------------
@@ -27,6 +28,9 @@ namespace Hyperion::Editor {
         }
         if (Input::IsKeyDown(KeyCode::F1)) {
             GetWindow()->SetWindowMode(GetWindow()->GetWindowMode() == WindowMode::Borderless ? WindowMode::Windowed : WindowMode::Borderless);
+        }
+        if (Input::IsKeyDown(KeyCode::F5)) {
+            Engine::SetMode(Engine::GetMode() == EngineMode::Editor ? EngineMode::EditorRuntime : EngineMode::Editor);
         }
 
         EditorWorld::Update(delta_time);

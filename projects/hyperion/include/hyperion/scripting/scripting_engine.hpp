@@ -20,6 +20,7 @@ namespace Hyperion::Scripting {
         ~ScriptingEngine() = delete;
     private:
         static void Initialize(const ScriptingSettings &settings);
+        static void EngineModeChanged(EngineMode engine_mode);
         static void Update();
         static void Shutdown();
     private:

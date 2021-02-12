@@ -5,8 +5,10 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/object/object.hpp"
-#include "hyperion/scripting/scripting_driver.hpp"
+#include "hyperion/entity/components/script.hpp"
+#include "hyperion/modules/mono/mono_scripting_instance.hpp"
 #include "hyperion/modules/mono/mono_scripting_type.hpp"
+#include "hyperion/scripting/scripting_driver.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
@@ -16,6 +18,7 @@ namespace Hyperion::Scripting {
         uint64 GetMemoryUsage() const override;
 
         void Initialize(const ScriptingSettings &settings) override;
+        void EngineModeChange(EngineMode engine_mode) override;
         void Update() override;
         void Shutdown() override;
     public:
@@ -37,7 +40,7 @@ namespace Hyperion::Scripting {
         static bool IsRegisterdObject(MonoObject *managed_object);
         static void RegisterManagedObject(MonoObject *managed_object, Object *native_object, bool is_script_component);
         static void RegisterObject(MonoObject *managed_object, void *native);
-        static void UnregisterObject(MonoObject *managed_object);
+        static void UnregisterObject(MonoObject *managed_object, bool is_script_component);
         
         static bool IsNativeClass(MonoClass *native_class);
         static Type GetNativeClass(MonoClass *native_class);
@@ -68,6 +71,7 @@ namespace Hyperion::Scripting {
         // We can not use Type directly because it does not have a public default constructor.
         inline static Map<MonoClass *, Variant> s_managed_to_native_classes; 
 
+        inline static Vector<Script *> s_scripts_which_recieve_messages;
         inline static Map<MonoClass *, MonoScriptingType *> s_scripting_types;
 
         inline static MonoClass *s_component_class;
