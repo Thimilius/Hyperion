@@ -273,3 +273,28 @@ project "Hyperion.Core"
 		postbuildcommands {
 			"$(ProjectDir)../../../run_tree/data/tools/pdb2mdb.exe $(ProjectDir)../../../run_tree/data/managed/$(TargetFileName)"
 		}
+
+project "Hyperion.Editor"
+	location "projects/managed/Hyperion.Editor"
+	
+	language "C#"
+	kind "SharedLib"
+	architecture "x86_64"
+	namespace ("Hyperion.Editor")
+	
+	links ("Hyperion.Core")
+	
+	targetdir ("build/%{cfg.buildcfg}/bin/managed/")
+	objdir ("build/%{cfg.buildcfg}/obj/managed/")
+	
+	files { "%{prj.location}/**.cs" }
+	
+	postbuildcommands {
+		"{COPY} $(TargetDir)$(TargetFileName) $(ProjectDir)../../../run_tree/data/managed/",
+		"{COPY} $(TargetDir)$(TargetName).pdb $(ProjectDir)../../../run_tree/data/managed/"
+	}
+	
+	filter "system:windows"
+		postbuildcommands {
+			"$(ProjectDir)../../../run_tree/data/tools/pdb2mdb.exe $(ProjectDir)../../../run_tree/data/managed/$(TargetFileName)"
+		}

@@ -58,10 +58,14 @@ namespace Hyperion::Scripting {
         void PrintUnhandledException(MonoObject *exception);
     private:
         inline static MonoDomain *s_core_domain;
+
         inline static MonoAssembly *s_core_assembly;
         inline static MonoImage *s_core_assembly_image;
 
-        inline static MonoMethod *s_update_method;
+        inline static MonoDomain *s_editor_domain;
+        inline static MonoAssembly *s_editor_assembly;
+        inline static MonoImage *s_editor_assembly_image;
+        inline static MonoMethod *s_editor_update_method;
 
         inline static Map<MonoObject *, void *> s_managed_to_native_objects;
         inline static Map<void *, MonoObject * > s_native_to_managed_objects;

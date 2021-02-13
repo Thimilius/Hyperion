@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 
-namespace Hyperion {
+namespace Hyperion.Editor {
     public static class Application {
         class MyScript : Script {
             protected override void OnCreate() {

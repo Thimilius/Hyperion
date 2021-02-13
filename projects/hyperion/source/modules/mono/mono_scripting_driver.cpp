@@ -62,7 +62,7 @@ namespace Hyperion::Scripting {
         }
 
         MonoObject *exception = nullptr;
-        mono_runtime_invoke(s_update_method, nullptr, nullptr, &exception);
+        mono_runtime_invoke(s_editor_update_method, nullptr, nullptr, &exception);
         if (exception != nullptr) {
             PrintUnhandledException(exception);
         }
@@ -236,11 +236,20 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     void MonoScriptingDriver::InitAssembly() {
-        char *assembly_path = "data/managed/Hyperion.Core.dll";
-        s_core_assembly = mono_domain_assembly_open(s_core_domain, assembly_path);
-        HYP_ASSERT(s_core_assembly);
-        s_core_assembly_image = mono_assembly_get_image(s_core_assembly);
-        HYP_ASSERT(s_core_assembly_image);
+        {
+            char *assembly_path = "data/managed/Hyperion.Core.dll";
+            s_core_assembly = mono_domain_assembly_open(s_core_domain, assembly_path);
+            HYP_ASSERT(s_core_assembly);
+            s_core_assembly_image = mono_assembly_get_image(s_core_assembly);
+            HYP_ASSERT(s_core_assembly_image);
+        }
+        {
+            char *assembly_path = "data/managed/Hyperion.Editor.dll";
+            s_editor_assembly = mono_domain_assembly_open(s_core_domain, assembly_path);
+            HYP_ASSERT(s_editor_assembly);
+            s_editor_assembly_image = mono_assembly_get_image(s_editor_assembly);
+            HYP_ASSERT(s_editor_assembly_image);
+        }
     }
 
     //--------------------------------------------------------------
@@ -254,12 +263,12 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     void MonoScriptingDriver::InitMethods() {
-        MonoMethodDesc *start_method_description = mono_method_desc_new("Hyperion.Application::Start()", true);
-        MonoMethod *start_method = mono_method_desc_search_in_image(start_method_description, s_core_assembly_image);
+        MonoMethodDesc *start_method_description = mono_method_desc_new("Hyperion.Editor.Application::Start()", true);
+        MonoMethod *start_method = mono_method_desc_search_in_image(start_method_description, s_editor_assembly_image);
         mono_runtime_invoke(start_method, nullptr, nullptr, nullptr);
 
-        MonoMethodDesc *update_method_description = mono_method_desc_new("Hyperion.Application::Update()", true);
-        s_update_method = mono_method_desc_search_in_image(update_method_description, s_core_assembly_image);
+        MonoMethodDesc *update_method_description = mono_method_desc_new("Hyperion.Editor.Application::Update()", true);
+        s_editor_update_method = mono_method_desc_search_in_image(update_method_description, s_editor_assembly_image);
     }
 
     //--------------------------------------------------------------
