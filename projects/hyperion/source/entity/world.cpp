@@ -47,6 +47,26 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void World::AddLight(Light *light) {
+        HYP_ASSERT(light);
+        HYP_ASSERT(std::find(m_lights.begin(), m_lights.end(), light) == m_lights.end());
+
+        m_lights.push_back(light);
+    }
+
+    //--------------------------------------------------------------
+    void World::RemoveLight(Light *light) {
+        HYP_ASSERT(light);
+        HYP_ASSERT(std::find(m_lights.begin(), m_lights.end(), light) != m_lights.end());
+
+        auto begin = m_lights.begin();
+        auto end = m_lights.end();
+        if (std::find(begin, end, light) != end) {
+            m_lights.erase(std::remove(begin, end, light));
+        }
+    }
+
+    //--------------------------------------------------------------
     void World::AddMeshRenderer(MeshRenderer *mesh_renderer) {
         HYP_ASSERT(mesh_renderer);
         HYP_ASSERT(std::find(m_mesh_renderers.begin(), m_mesh_renderers.end(), mesh_renderer) == m_mesh_renderers.end());

@@ -9,6 +9,7 @@
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Entity;
+    class Light;
     class MeshRenderer;
     class Transform;
     class WorldManager;
@@ -68,6 +69,9 @@ namespace Hyperion {
         void AddRootEntity(Entity *entity);
         void RemoveRootEntity(Entity *entity);
 
+        inline const Vector<Light *> &GetLights() const { return m_lights; }
+        void AddLight(Light *light);
+        void RemoveLight(Light *light);
         inline const Vector<MeshRenderer *> &GetMeshRenderers() const { return m_mesh_renderers; }
         void AddMeshRenderer(MeshRenderer *mesh_renderer);
         void RemoveMeshRenderer(MeshRenderer *mesh_renderer);
@@ -79,9 +83,11 @@ namespace Hyperion {
 
         Vector<Entity *> m_root_entities;
 
+        Vector<Light *> m_lights;
         Vector<MeshRenderer *> m_mesh_renderers;
     private:
         friend class Hyperion::Entity;
+        friend class Hyperion::Light;
         friend class Hyperion::MeshRenderer;
         friend class Hyperion::Transform;
         friend class Hyperion::WorldManager;
