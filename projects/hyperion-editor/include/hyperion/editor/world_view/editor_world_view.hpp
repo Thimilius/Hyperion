@@ -5,23 +5,25 @@
 #include <hyperion/rendering/render_driver.hpp>
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/editor/entity/components/editor_camera_controller.hpp"
+#include "hyperion/editor/world_view/editor_world_view_camera_controller.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Editor {
 
-    class EditorWorld final {
+    class EditorWorldView final {
     public:
         inline static World *GetWorld() { return s_editor_world; }
+        inline static Camera *GetCamera() { return s_editor_camera; }
 
         static void Initialize();
         static void Update(float32 delta_time);
-        static void Render(Rendering::IRenderDriver *render_driver, const Rendering::CameraData &camera_data);
+        static void Render(Rendering::IRenderDriver *render_driver);
     private:
-        EditorWorld() = delete;
-        ~EditorWorld() = delete;
+        EditorWorldView() = delete;
+        ~EditorWorldView() = delete;
     private:
         inline static World *s_editor_world;
+        inline static Camera *s_editor_camera;
 
         inline static bool s_should_draw_grid = true;
         inline static bool s_should_draw_physics_debug = false;

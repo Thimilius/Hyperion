@@ -11,14 +11,14 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/editor/rendering/editor_render_pipeline.hpp"
-#include "hyperion/editor/entity/editor_world.hpp"
+#include "hyperion/editor/world_view/editor_world_view.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
     void EditorApplication::OnInitialize() {
-        EditorWorld::Initialize();
+        EditorWorldView::Initialize();
     }
 
     //--------------------------------------------------------------
@@ -33,7 +33,7 @@ namespace Hyperion::Editor {
             Engine::SetMode(Engine::GetMode() == EngineMode::Editor ? EngineMode::EditorRuntime : EngineMode::Editor);
         }
 
-        EditorWorld::Update(delta_time);
+        EditorWorldView::Update(delta_time);
     }
 
     //--------------------------------------------------------------

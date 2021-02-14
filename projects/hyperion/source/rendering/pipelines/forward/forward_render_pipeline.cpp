@@ -18,7 +18,7 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void ForwardRenderPipeline::Render(IRenderDriver *render_driver, const RenderPipelineContext &context) {
+    void ForwardRenderPipeline::Render(IRenderDriver *render_driver) {
 
     }
 

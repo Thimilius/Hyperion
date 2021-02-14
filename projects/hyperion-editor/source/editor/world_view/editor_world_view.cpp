@@ -1,5 +1,5 @@
 //--------------------- Definition Include ---------------------
-#include "hyperion/editor/entity/editor_world.hpp"
+#include "hyperion/editor/world_view/editor_world_view.hpp"
 
 //---------------------- Library Includes ----------------------
 #include <hyperion/core/app/input.hpp>
@@ -10,26 +10,26 @@
 #include <hyperion/rendering/immediate_renderer.hpp>
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/editor/entity/editor_world_grid.hpp"
-#include "hyperion/editor/entity/components/editor_first_person_camera_controller.hpp"
-#include "hyperion/editor/entity/components/editor_look_around_camera_controller.hpp"
+#include "hyperion/editor/world_view/editor_world_view_grid.hpp"
+#include "hyperion/editor/world_view/editor_world_view_camera_controller.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
-    void EditorWorld::Initialize() {
+    void EditorWorldView::Initialize() {
         s_editor_world = WorldManager::CreateWorld();
         WorldManager::SetActiveWorld(s_editor_world);
 
         Entity *entity = Entity::CreatePrimitive(EntityPrimitive::Camera);
+        s_editor_camera = entity->GetComponent<Camera>();
         s_editor_camera_controller = entity->AddComponent<EditorLookAroundCameraController>();
 
-        EditorWorldGrid::Initialize();
+        EditorWorldViewGrid::Initialize();
     }
 
     //--------------------------------------------------------------
-    void EditorWorld::Update(float32 delta_time) {
+    void EditorWorldView::Update(float32 delta_time) {
         if (Input::IsKeyDown(KeyCode::F3)) {
             s_should_draw_grid = !s_should_draw_grid;
         }
@@ -41,7 +41,21 @@ namespace Hyperion::Editor {
     }
 
     //--------------------------------------------------------------
-    void EditorWorld::Render(Rendering::IRenderDriver *render_driver, const Rendering::CameraData &camera_data) {
+    void EditorWorldView::Render(Rendering::IRenderDriver *render_driver) {
+        render_driver->SetCameraData(s_editor_camera->GetCameraData());
+
+        // First draw the actual scene.
+        {
+
+            Vector<MeshRenderer *> mesh_renderers = s_editor_world->GetMeshRenderers();
+            for (MeshRenderer *mesh_renderer : mesh_renderers) {
+                Transform *transform = mesh_renderer->GetEntity()->GetTransform();
+                ResourceId mesh_id = mesh_renderer->GetMesh()->GetResourceId();
+                ResourceId material_id = mesh_renderer->GetMaterial()->GetResourceId();
+                render_driver->DrawMesh(mesh_id, transform->GetLocalToWorldMatrix(), material_id, 0);
+            }
+        }
+
         if (s_should_draw_physics_debug) {
             Rendering::ImmediateRenderer::Begin(Rendering::MeshTopology::Lines);
             WorldManager::GetActiveWorld()->GetPhysicsWorld()->DebugDraw();
@@ -49,7 +63,7 @@ namespace Hyperion::Editor {
         }
         
         if (s_should_draw_grid) {
-            EditorWorldGrid::Render(render_driver, camera_data);
+            EditorWorldViewGrid::Render(render_driver, s_editor_camera_controller->GetTargetPosition());
         }
     }
 

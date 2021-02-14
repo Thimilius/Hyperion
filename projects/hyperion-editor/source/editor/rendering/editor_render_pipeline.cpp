@@ -14,7 +14,7 @@
 #include <hyperion/rendering/render_driver.hpp>
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/editor/entity/editor_world.hpp"
+#include "hyperion/editor/world_view/editor_world_view.hpp"
 
 //------------------------- Namespaces -------------------------
 using namespace Hyperion::Rendering;
@@ -36,13 +36,12 @@ namespace Hyperion::Editor {
     }
 
     //--------------------------------------------------------------
-    void EditorRenderPipeline::Render(IRenderDriver *render_driver, const RenderPipelineContext &context) {
-        const CameraData &camera_data = context.GetCameraData();
+    void EditorRenderPipeline::Render(IRenderDriver *render_driver) {
+        const CameraData &camera_data = EditorWorldView::GetCamera()->GetCameraData();
         {
             render_driver->SetRenderTexture(0);
             render_driver->Clear(ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, Color::Black());
 
-            render_driver->SetCameraData(camera_data);
             
             Viewport viewport = { 0, 0, Display::GetWidth(), Display::GetHeight() };
             render_driver->SetViewport(viewport);
@@ -51,19 +50,9 @@ namespace Hyperion::Editor {
             render_driver->SetRenderTexture(m_render_texture->GetResourceId());
             render_driver->Clear(ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, Color::Black());
         }
-
-        {
-            Vector<MeshRenderer *> mesh_renderers = context.GetMeshRenderers();
-            for (MeshRenderer *mesh_renderer : mesh_renderers) {
-                Transform *transform = mesh_renderer->GetEntity()->GetTransform();
-                ResourceId mesh_id = mesh_renderer->GetMesh()->GetResourceId();
-                ResourceId material_id = mesh_renderer->GetMaterial()->GetResourceId();
-                render_driver->DrawMesh(mesh_id, transform->GetLocalToWorldMatrix(), material_id, 0);
-            }
-        }
         
         {
-            EditorWorld::Render(render_driver, camera_data);
+            EditorWorldView::Render(render_driver);
         }
 
         {

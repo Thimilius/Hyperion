@@ -58,10 +58,7 @@ namespace Hyperion::Rendering {
     void RenderEngine::Render() {
         // Do the actual rendering with the render pipeline.
         {
-            World *world = WorldManager::GetActiveWorld();
-            Camera *camera = world->FindComponentOfType<Camera>();
-            RenderPipelineContext render_pipeline_context = RenderPipelineContext(camera->GetCameraData(), world->GetMeshRenderers());
-            s_render_pipeline->Render(s_render_driver, render_pipeline_context);
+            s_render_pipeline->Render(s_render_driver);
         }
         
         // The following block ends a frame on the Main Thread:

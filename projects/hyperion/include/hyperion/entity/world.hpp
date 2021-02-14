@@ -38,6 +38,8 @@ namespace Hyperion {
         inline Physics::PhysicsWorld *GetPhysicsWorld() const { return m_physics_world; }
 
         inline const Vector<Entity *> &GetRootEntites() const { return m_root_entities; }
+        inline const Vector<Light *> &GetLights() const { return m_lights; }
+        inline const Vector<MeshRenderer *> &GetMeshRenderers() const { return m_mesh_renderers; }
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         T *FindComponentOfType() {
@@ -69,10 +71,8 @@ namespace Hyperion {
         void AddRootEntity(Entity *entity);
         void RemoveRootEntity(Entity *entity);
 
-        inline const Vector<Light *> &GetLights() const { return m_lights; }
         void AddLight(Light *light);
         void RemoveLight(Light *light);
-        inline const Vector<MeshRenderer *> &GetMeshRenderers() const { return m_mesh_renderers; }
         void AddMeshRenderer(MeshRenderer *mesh_renderer);
         void RemoveMeshRenderer(MeshRenderer *mesh_renderer);
     private:

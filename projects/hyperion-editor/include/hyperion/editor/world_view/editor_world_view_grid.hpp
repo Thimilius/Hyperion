@@ -8,24 +8,24 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Editor {
 
-    enum class EditorWorldGridType {
+    enum class EditorWorldViewGridType {
         XZPlane,
         XYPlane,
         YZPlane,
     };
 
-    class EditorWorldGrid final {
+    class EditorWorldViewGrid final {
     public:
         static void Initialize();
-        static void Render(Rendering::IRenderDriver *render_driver, const Rendering::CameraData &camera_data);
+        static void Render(Rendering::IRenderDriver *render_driver, Vec3 target_position);
     private:
-        EditorWorldGrid() = delete;
-        ~EditorWorldGrid() = delete;
+        EditorWorldViewGrid() = delete;
+        ~EditorWorldViewGrid() = delete;
     private:
-        static Mat4 GetTranslation(const Rendering::CameraData &camera_data);
+        static Mat4 GetTranslation(Vec3 target_position);
         static Mat4 GetRotation();
     private:
-        inline static EditorWorldGridType s_grid_type = EditorWorldGridType::XZPlane;
+        inline static EditorWorldViewGridType s_grid_type = EditorWorldViewGridType::XZPlane;
         inline static Mesh *s_mesh;
         inline static Material *s_material;
 
