@@ -57,7 +57,7 @@ namespace Hyperion {
         s_mesh_primitive_sphere = MeshFactory::CreateSphere(1.0f);
 
         Image *image = ImageLoader::Load("data/textures/checkerboard.png");
-        s_texture_primitive_grid = Texture2D::Create(image->GetWidth(), image->GetHeight(), Rendering::TextureFormat::RGB24, Rendering::TextureParameters(), image->GetPixels());
+        s_texture_primitive_grid = Texture2D::Create(image->GetWidth(), image->GetHeight(), TextureFormat::RGB24, TextureParameters(), image->GetPixels());
         Object::Destroy(image);
 
         Shader *shader = Shader::Create(FileSystem::ReadAllText("data/shaders/standard.shader"));

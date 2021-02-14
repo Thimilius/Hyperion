@@ -10,7 +10,7 @@ namespace Hyperion::Rendering {
     struct ShaderPreProcessResult {
         bool success;
 
-        ShaderAttributes properties;
+        ShaderAttributes attributes;
         ShaderStageFlags stage_flags;
         Map<ShaderStageFlags, String> sources;
     };
@@ -21,7 +21,7 @@ namespace Hyperion::Rendering {
     public:
         ShaderPreProcessResult PreProcess();
     private:
-        bool HandleDirective(ShaderStageFlags &stage_flags, Map<ShaderStageFlags, String> &sources, ShaderAttributes &properties);
+        bool HandleDirective(ShaderStageFlags &stage_flags, Map<ShaderStageFlags, String> &sources, ShaderAttributes &attributes);
         void EndShaderStage(Map<ShaderStageFlags, String> &sources, uint64 end_position);
 
         char Advance();

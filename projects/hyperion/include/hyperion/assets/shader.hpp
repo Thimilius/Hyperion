@@ -4,6 +4,11 @@
 #include "hyperion/assets/asset.hpp"
 #include "hyperion/rendering/attributes/shader_attributes.hpp"
 
+//-------------------- Forward Declarations --------------------
+namespace Hyperion::Rendering {
+    struct ShaderDescriptor;
+}
+
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
@@ -16,8 +21,12 @@ namespace Hyperion {
 
     class Shader : public Asset {
         HYP_REFLECT(Asset);
+    private:
+        using ShaderPreProcessCallback = std::function<void (const Rendering::ShaderDescriptor &)>;
     public:
         inline AssetType GetAssetType() const override { return AssetType::Shader; }
+
+        inline Rendering::ShaderAttributes GetAttributes() const { return m_attributes; }
 
         void RegisterRecompilationListener(IShaderRecompilationListener *recompilation_listener);
         void UnregisterRecompilationListener(IShaderRecompilationListener *recompilation_listener);
@@ -31,8 +40,12 @@ namespace Hyperion {
         Shader() = default;
         Shader(const String &source);
     private:
+        void PreProcess(const String &source, ShaderPreProcessCallback callback);
+    private:
         static Shader *Create();
     private:
+        Rendering::ShaderAttributes m_attributes;
+
         Vector<IShaderRecompilationListener *> m_recompilation_listeners;
     };
 

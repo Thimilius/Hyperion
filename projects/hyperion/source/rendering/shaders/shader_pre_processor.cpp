@@ -20,7 +20,7 @@ namespace Hyperion::Rendering {
 
         Map<ShaderStageFlags, String> sources;
         ShaderStageFlags stage_flags = ShaderStageFlags::None;
-        ShaderAttributes properties = { };
+        ShaderAttributes attributes = { };
         String source = m_source;
 
         while (!IsAtEnd()) {
@@ -32,7 +32,7 @@ namespace Hyperion::Rendering {
                 SkipBlankspace();
 
                 if (Peek() == '#') {
-                    if (!HandleDirective(stage_flags, sources, properties)) {
+                    if (!HandleDirective(stage_flags, sources, attributes)) {
                         return result;
                     }
                 }
@@ -52,7 +52,7 @@ namespace Hyperion::Rendering {
         }
 
         result.success = true;
-        result.properties = std::move(properties);
+        result.attributes = std::move(attributes);
         result.stage_flags = stage_flags;
         result.sources = std::move(sources);
 
@@ -60,7 +60,7 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    bool ShaderPreProcessor::HandleDirective(ShaderStageFlags &stage_flags, Map<ShaderStageFlags, String> &sources, ShaderAttributes &properties) {
+    bool ShaderPreProcessor::HandleDirective(ShaderStageFlags &stage_flags, Map<ShaderStageFlags, String> &sources, ShaderAttributes &attributes) {
         uint64 directive_start_position = m_position;
         Advance();
 
@@ -113,7 +113,7 @@ namespace Hyperion::Rendering {
             if (m_property_light_mode_set) {
                 HYP_LOG_WARN("OpenGL", "The shader light mode was already set!");
             } else {
-                properties.light_mode = shader_light_mode;
+                attributes.light_mode = shader_light_mode;
                 m_property_light_mode_set = true;
             }
 

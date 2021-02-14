@@ -108,7 +108,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Vec3 Material::GetVec3(Rendering::MaterialPropertyId id) const {
+    Vec3 Material::GetVec3(MaterialPropertyId id) const {
         auto it = m_properties.find(id);
         if (it != m_properties.end() && it->second.type == MaterialPropertyType::Vec3) {
             return it->second.storage.vec3;

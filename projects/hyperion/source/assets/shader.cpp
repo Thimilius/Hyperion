@@ -17,29 +17,10 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     Shader::Shader(const String &source) {
-        ShaderPreProcessor pre_processor(source);
-        ShaderPreProcessResult pre_process_result = pre_processor.PreProcess();
-
-        ShaderDescriptor descriptor = { };
-        if (pre_process_result.success) {
-            ShaderStageFlags stage_flags = pre_process_result.stage_flags;
-            Map<ShaderStageFlags, String> &sources = pre_process_result.sources;
-
-            descriptor.use_fallback = false;
-            descriptor.stage_flags = pre_process_result.stage_flags;
-            if ((stage_flags & ShaderStageFlags::Vertex) == ShaderStageFlags::Vertex) {
-                descriptor.source_vertex = sources[ShaderStageFlags::Vertex];
-            }
-            if ((stage_flags & ShaderStageFlags::Fragment) == ShaderStageFlags::Fragment) {
-                descriptor.source_fragment = sources[ShaderStageFlags::Fragment];
-            }
-            
-            Rendering::RenderEngine::GetRenderDriver()->CreateShader(m_resource_id, descriptor);
-        } else {
-            descriptor.use_fallback = true;
-
-            Rendering::RenderEngine::GetRenderDriver()->CreateShader(m_resource_id, descriptor);
-        }
+        ResourceId resource_id = m_resource_id;
+        PreProcess(source, [resource_id](const ShaderDescriptor &descriptor) {
+            RenderEngine::GetRenderDriver()->CreateShader(resource_id, descriptor);
+        });
     }
 
     //--------------------------------------------------------------
@@ -65,12 +46,25 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Shader::Recompile(const String &source) {
-        // FIXME: This is mostly a copy paste from the constructor!
+        ResourceId resource_id = m_resource_id;
+        PreProcess(source, [resource_id](const ShaderDescriptor &descriptor) {
+            RenderEngine::GetRenderDriver()->RecompileShader(resource_id, descriptor);
+        });
+
+        for (IShaderRecompilationListener *recompilation_listener : m_recompilation_listeners) {
+            recompilation_listener->OnRecompile();
+        }
+    }
+
+    //--------------------------------------------------------------
+    void Shader::PreProcess(const String &source, ShaderPreProcessCallback callback) {
         ShaderPreProcessor pre_processor(source);
         ShaderPreProcessResult pre_process_result = pre_processor.PreProcess();
 
         ShaderDescriptor descriptor = { };
         if (pre_process_result.success) {
+            m_attributes = pre_process_result.attributes;
+
             ShaderStageFlags stage_flags = pre_process_result.stage_flags;
             Map<ShaderStageFlags, String> &sources = pre_process_result.sources;
 
@@ -82,17 +76,13 @@ namespace Hyperion {
             if ((stage_flags & ShaderStageFlags::Fragment) == ShaderStageFlags::Fragment) {
                 descriptor.source_fragment = sources[ShaderStageFlags::Fragment];
             }
-
-            Rendering::RenderEngine::GetRenderDriver()->RecompileShader(m_resource_id, descriptor);
         } else {
+            m_attributes = ShaderAttributes();
+
             descriptor.use_fallback = true;
-
-            Rendering::RenderEngine::GetRenderDriver()->RecompileShader(m_resource_id, descriptor);
         }
 
-        for (IShaderRecompilationListener *recompilation_listener : m_recompilation_listeners) {
-            recompilation_listener->OnRecompile();
-        }
+        callback(descriptor);
     }
 
     //--------------------------------------------------------------
@@ -102,7 +92,7 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Shader::OnDestroy() {
-        Rendering::RenderEngine::GetRenderDriver()->DestroyShader(m_resource_id);
+        RenderEngine::GetRenderDriver()->DestroyShader(m_resource_id);
     }
 
 }

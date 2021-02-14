@@ -2,6 +2,7 @@
 #include "hyperion/editor/world_view/editor_world_view.hpp"
 
 //---------------------- Library Includes ----------------------
+#include <hyperion/core/random.hpp>
 #include <hyperion/core/app/input.hpp>
 #include <hyperion/core/app/time.hpp>
 #include <hyperion/entity/world_manager.hpp>
@@ -12,6 +13,9 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/editor/world_view/editor_world_view_grid.hpp"
 #include "hyperion/editor/world_view/editor_world_view_camera_controller.hpp"
+
+//------------------------- Namespaces -------------------------
+using namespace Hyperion::Rendering;
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Editor {
@@ -41,13 +45,27 @@ namespace Hyperion::Editor {
     }
 
     //--------------------------------------------------------------
-    void EditorWorldView::Render(Rendering::IRenderDriver *render_driver) {
+    void EditorWorldView::Render(IRenderDriver *render_driver) {
         render_driver->SetCameraData(s_editor_camera->GetCameraData());
 
-        // First draw the actual scene.
         {
-
             Vector<MeshRenderer *> mesh_renderers = s_editor_world->GetMeshRenderers();
+            WorldEnvironment world_environment = s_editor_world->GetEnvironment();
+
+            Set<Material *> materials;
+            for (MeshRenderer *mesh_renderer : mesh_renderers) {
+                materials.insert(mesh_renderer->GetMaterial());
+            }
+            Vec3 ambient_color = world_environment.ambient_light.intensity * world_environment.ambient_light.color;
+            for (Material *material : materials) {
+                if (material->GetShader()->GetAttributes().light_mode == ShaderLightMode::Forward) {
+                    material->SetVec3("u_lighting.ambient_color", ambient_color);
+                    material->SetFloat32("u_lighting.main_light.intensity", 0.75f);
+                    material->SetVec4("u_lighting.main_light.color", Color::White());
+                    material->SetVec3("u_lighting.main_light.direction", Vec3::Forward());
+                }
+            }
+
             for (MeshRenderer *mesh_renderer : mesh_renderers) {
                 Transform *transform = mesh_renderer->GetEntity()->GetTransform();
                 ResourceId mesh_id = mesh_renderer->GetMesh()->GetResourceId();
@@ -57,9 +75,9 @@ namespace Hyperion::Editor {
         }
 
         if (s_should_draw_physics_debug) {
-            Rendering::ImmediateRenderer::Begin(Rendering::MeshTopology::Lines);
+            ImmediateRenderer::Begin(MeshTopology::Lines);
             WorldManager::GetActiveWorld()->GetPhysicsWorld()->DebugDraw();
-            Rendering::ImmediateRenderer::End();
+            ImmediateRenderer::End();
         }
         
         if (s_should_draw_grid) {
