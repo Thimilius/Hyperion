@@ -16,6 +16,8 @@ namespace Hyperion::Rendering {
 
     class ImmediateRenderer final {
     public:
+        inline static Material *GetImmediateMaterial() { return s_immediate_material; }
+
         static void Begin(MeshTopology topolog);
         static void DrawLine(Vec3 start, Vec3 end, Color color);
         static void End();

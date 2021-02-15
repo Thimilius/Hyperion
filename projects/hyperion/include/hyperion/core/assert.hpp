@@ -7,7 +7,7 @@
         #define HYP_ASSERT_DEBUG_BREAK
     #endif
 
-    #define HYP_ASSERT(x) do {                                                                                          \
+    #define HYP_ASSERT(x) do {                                                                                                     \
             if (!(x)) {                                                                                                            \
                 HYP_LOG_ERROR("Assert", "Assertion failed!\nIn file: {} ({})", __FILE__, __LINE__);                                \
                 HYP_ASSERT_DEBUG_BREAK;                                                                                            \

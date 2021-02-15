@@ -4,6 +4,7 @@
 //---------------------- Library Includes ----------------------
 #include <hyperion/assets/shader.hpp>
 #include <hyperion/core/io/file_system.hpp>
+#include <hyperion/rendering/immediate_renderer.hpp>
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/editor/world_view/editor_world_view.hpp"
@@ -16,9 +17,6 @@ namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
     void EditorWorldViewGrid::Initialize() {
-        Shader *grid_shader = Shader::Create(FileSystem::ReadAllText("data/shaders/editor/grid.shader"));
-        s_material = Material::Create(grid_shader);
-
         int32 half_grid_size = GRID_SIZE / 2;
         float32 to_point = static_cast<float32>(half_grid_size);
 
@@ -64,7 +62,7 @@ namespace Hyperion::Editor {
         // We want to draw the grid at the center of the camera corresponding to the grid chunk size.
         Mat4 translation = GetTranslation(target_position);
         Mat4 rotation = GetRotation();
-        render_driver->DrawMesh(s_mesh->GetResourceId(), translation * rotation, s_material->GetResourceId(), 0);
+        render_driver->DrawMesh(s_mesh->GetResourceId(), translation * rotation, ImmediateRenderer::GetImmediateMaterial()->GetResourceId(), 0);
     }
 
     //--------------------------------------------------------------

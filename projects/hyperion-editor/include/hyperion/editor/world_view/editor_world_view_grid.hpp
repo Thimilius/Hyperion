@@ -1,7 +1,6 @@
 #pragma once
 
 //---------------------- Library Includes ----------------------
-#include <hyperion/assets/material.hpp>
 #include <hyperion/assets/mesh.hpp>
 #include <hyperion/rendering/render_driver.hpp>
 
@@ -27,7 +26,6 @@ namespace Hyperion::Editor {
     private:
         inline static EditorWorldViewGridType s_grid_type = EditorWorldViewGridType::XZPlane;
         inline static Mesh *s_mesh;
-        inline static Material *s_material;
 
         inline static const Color GRID_COLOR = Color(0.15f, 0.15f, 0.15f, 0.75f);
         inline static const Color GRID_SPECIAL_COLOR = Color(0.6f, 0.6f, 0.6f, 0.75f);
