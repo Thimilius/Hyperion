@@ -7,7 +7,7 @@
 #include <hyperion/assets/shader.hpp>
 #include <hyperion/assets/texture.hpp>
 #include <hyperion/core/color.hpp>
-#include <hyperion/rendering/pipelines/render_pipeline.hpp>
+#include <hyperion/rendering/pipelines/forward/forward_render_pipeline.hpp>
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Editor {
@@ -18,10 +18,7 @@ namespace Hyperion::Editor {
         void Render(Rendering::IRenderDriver *render_driver) override;
         void Shutdown(Rendering::IRenderDriver *render_driver) override;
     private:
-        Material *m_material;
-        Shader *m_shader;
-        Texture2D *m_texture;
-        Mesh *m_mesh;
+        Rendering::ForwardRenderPipeline *m_forward_render_pipeline;
         RenderTexture *m_render_texture;
     };
 

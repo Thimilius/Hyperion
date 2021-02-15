@@ -33,15 +33,15 @@ namespace Hyperion::Editor {
             { RenderTextureFormat::Depth24Stencil8, TextureParameters() },
         };
         m_render_texture = RenderTexture::Create(Display::GetWidth(), Display::GetHeight(), attachments);
+
+        m_forward_render_pipeline = new ForwardRenderPipeline(false);
     }
 
     //--------------------------------------------------------------
     void EditorRenderPipeline::Render(IRenderDriver *render_driver) {
-        const CameraData &camera_data = EditorWorldView::GetCamera()->GetCameraData();
         {
             render_driver->SetRenderTexture(0);
             render_driver->Clear(ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, Color::Black());
-
             
             Viewport viewport = { 0, 0, Display::GetWidth(), Display::GetHeight() };
             render_driver->SetViewport(viewport);
@@ -49,6 +49,9 @@ namespace Hyperion::Editor {
             m_render_texture->Resize(Display::GetWidth(), Display::GetHeight());
             render_driver->SetRenderTexture(m_render_texture->GetResourceId());
             render_driver->Clear(ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, Color::Black());
+
+            // We just render the world in the 'normal' way.
+            m_forward_render_pipeline->RenderWorld(render_driver, EditorWorldView::GetWorld(), EditorWorldView::GetCamera()->GetCameraData());
         }
         
         {
@@ -62,7 +65,7 @@ namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
     void EditorRenderPipeline::Shutdown(IRenderDriver *render_driver) {
-
+        delete m_forward_render_pipeline;
     }
 
 }
