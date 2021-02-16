@@ -17,6 +17,7 @@
 #include "hyperion/entity/world.hpp"
 #include "hyperion/entity/components/behaviour.hpp"
 #include "hyperion/entity/components/component.hpp"
+#include "hyperion/entity/components/rect_transform.hpp"
 #include "hyperion/entity/components/script.hpp"
 #include "hyperion/entity/components/transform.hpp"
 #include "hyperion/entity/components/physics/box_collider.hpp"
@@ -209,6 +210,8 @@ HYP_REFLECT_REGISTER_BEGIN
             .constructor(select_overload<World *()>(&World::Create))(DefaultConstructorPolicy);
         Registration<Behaviour>("Behaviour");
         Registration<Component>("Component");
+        Registration<RectTransform>("RectTransform")
+            .constructor(select_overload<RectTransform *()>(&RectTransform::Create))(DefaultConstructorPolicy);
         Registration<Script>("Script")
             .constructor(select_overload<Script *()>(&Script::Create))(DefaultConstructorPolicy);
         Registration<Transform>("Transform")
@@ -225,6 +228,7 @@ HYP_REFLECT_REGISTER_BEGIN
         Registration<Renderer>("Renderer");
         Registration<MeshRenderer>("MeshRenderer")
             .constructor(select_overload<MeshRenderer *()>(&MeshRenderer::Create))(DefaultConstructorPolicy);
+
     }
 }
 HYP_REFLECT_REGISTER_END

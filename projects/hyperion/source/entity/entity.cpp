@@ -6,6 +6,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/entity/world_manager.hpp"
+#include "hyperion/entity/components/rect_transform.hpp"
 #include "hyperion/entity/components/physics/box_collider.hpp"
 #include "hyperion/entity/components/physics/sphere_collider.hpp"
 #include "hyperion/entity/components/rendering/camera.hpp"
@@ -186,6 +187,9 @@ namespace Hyperion {
             }
         }
 
+        if (m_transform->GetType() == Type::get<RectTransform>()) {
+            static_cast<RectTransform *>(m_transform)->m_replace_on_destroy = false;
+        }
         // At the very end we can destroy the transform.
         DestroyImmediate(m_transform);
     }

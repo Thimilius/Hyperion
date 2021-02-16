@@ -6,6 +6,7 @@
 #include <hyperion/core/app/input.hpp>
 #include <hyperion/core/app/time.hpp>
 #include <hyperion/entity/world_manager.hpp>
+#include <hyperion/entity/components/rect_transform.hpp>
 #include <hyperion/entity/components/physics/box_collider.hpp>
 #include <hyperion/entity/components/rendering/camera.hpp>
 #include <hyperion/rendering/immediate_renderer.hpp>

@@ -7,6 +7,7 @@
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Entity;
+    class RectTransform;
     class Transform;
     class World;
     class WorldManager;
@@ -53,6 +54,7 @@ namespace Hyperion {
         Entity *m_entity;
     private:
         friend class Hyperion::Entity;
+        friend class Hyperion::RectTransform;
         friend class Hyperion::WorldManager;
     };
 

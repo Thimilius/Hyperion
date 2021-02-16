@@ -9,12 +9,13 @@
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Entity;
+    class RectTransform;
 }
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    class Transform final : public Component {
+    class Transform : public Component {
         HYP_REFLECT(Component);
     public:
         inline Vec3 GetLocalPosition() const { return m_local_position; }
@@ -122,6 +123,7 @@ namespace Hyperion {
         Vector<Transform *> m_children;
     private:
         friend class Hyperion::Entity;
+        friend class Hyperion::RectTransform;
     };
 
 }

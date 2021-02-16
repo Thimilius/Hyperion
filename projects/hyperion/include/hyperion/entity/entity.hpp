@@ -13,6 +13,7 @@
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Component;
+    class RectTransform;
     class World;
 }
 
@@ -175,6 +176,7 @@ namespace Hyperion {
         Vector<IEntityMessageListener *> m_message_listeners;
     private:
         friend class Hyperion::Component;
+        friend class Hyperion::RectTransform;
     };
 
 }
