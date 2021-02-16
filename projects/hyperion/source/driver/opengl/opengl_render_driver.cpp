@@ -291,10 +291,16 @@ namespace Hyperion::Rendering {
                 HYP_ASSERT(m_textures.find(texture_id) != m_textures.end());
                 OpenGLTexture &texture = m_textures[texture_id];
 
-                GLuint texture_unit = static_cast<GLuint>(material.textures.size());
-                HYP_ASSERT(texture_unit < static_cast<GLuint>(m_graphics_context->GetLimits().max_texture_units));
-                glProgramUniform1i(program, location, texture_unit);
-                material.textures[property_id] = texture.texture;
+                // We have to check if the property might already be set.
+                auto &it = material.textures.find(property_id);
+                if (it != material.textures.end()) {
+                    it->second = texture.texture;
+                } else {
+                    GLuint texture_unit = static_cast<GLuint>(material.textures.size());
+                    HYP_ASSERT(texture_unit < static_cast<GLuint>(m_graphics_context->GetLimits().max_texture_units));
+                    glProgramUniform1i(program, location, texture_unit);
+                    material.textures[property_id] = texture.texture;
+                }
                 break;
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;

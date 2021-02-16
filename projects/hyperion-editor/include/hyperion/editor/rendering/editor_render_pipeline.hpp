@@ -20,6 +20,7 @@ namespace Hyperion::Editor {
     private:
         Rendering::ForwardRenderPipeline *m_forward_render_pipeline;
         RenderTexture *m_render_texture;
+        Font *m_font;
     };
 
 }

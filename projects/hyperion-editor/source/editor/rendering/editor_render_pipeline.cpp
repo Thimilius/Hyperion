@@ -12,6 +12,7 @@
 #include <hyperion/entity/world_manager.hpp>
 #include <hyperion/entity/components/rendering/mesh_renderer.hpp>
 #include <hyperion/rendering/render_driver.hpp>
+#include <hyperion/rendering/immediate_renderer.hpp>
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/editor/world_view/editor_world_view.hpp"
@@ -24,6 +25,8 @@ namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
     void EditorRenderPipeline::Initialize(IRenderDriver *render_driver) {
+        m_forward_render_pipeline = new ForwardRenderPipeline(false);
+
         RasterizerState rasterizer_state;
         rasterizer_state.blending_enabled = true;
         render_driver->SetRasterizerState(rasterizer_state);
@@ -34,7 +37,7 @@ namespace Hyperion::Editor {
         };
         m_render_texture = RenderTexture::Create(Display::GetWidth(), Display::GetHeight(), attachments);
 
-        m_forward_render_pipeline = new ForwardRenderPipeline(false);
+        m_font = FontLoader::LoadFont("data/fonts/consola.ttf", 32, FontCharacterSet::LatinSupplement);
     }
 
     //--------------------------------------------------------------
@@ -56,6 +59,10 @@ namespace Hyperion::Editor {
         
         {
             EditorWorldView::Render(render_driver);
+        }
+
+        {
+            ImmediateRenderer::DrawText(m_font, "Hellothere!", Vec2(0.0f, 0.0f), 1.0f, Color::White());
         }
 
         {
