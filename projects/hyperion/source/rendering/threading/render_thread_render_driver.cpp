@@ -171,6 +171,18 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
+    void RenderThreadRenderDriver::SetMeshData(ResourceId mesh_id, const MeshDataDescriptor &descriptor) {
+        uint64 extra_size = descriptor.vertices.size + descriptor.indices.size;
+        auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandSetMeshData>(RenderThreadCommandType::SetMeshData, extra_size);
+        command->mesh_id = mesh_id;
+        command->descriptor = descriptor;
+
+        RenderThreadCommandQueueHelper helper(command);
+        helper.Write(descriptor.vertices);
+        helper.Write(descriptor.indices);
+    }
+
+    //--------------------------------------------------------------
     void RenderThreadRenderDriver::DrawMesh(ResourceId mesh_id, const Mat4 &model_matrix, ResourceId material_id, uint32 sub_mesh_index) {
         auto *command = RenderEngine::GetCommandQueue().Allocate<RenderThreadCommandDrawMesh>(RenderThreadCommandType::DrawMesh);
         command->mesh_id = mesh_id;

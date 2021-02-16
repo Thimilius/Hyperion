@@ -14,7 +14,7 @@ namespace Hyperion::Rendering {
     
     //--------------------------------------------------------------
     void ImmediateRenderer::DrawText(Font *font, const String &text, Vec2 position, float32 scale, Color color) {
-        Object::Destroy(s_font_mesh);
+        //Object::Destroy(s_font_mesh);
         s_font_mesh_data.positions.clear();
         s_font_mesh_data.texture0.clear();
         s_font_mesh_data.indices.clear();
@@ -53,7 +53,11 @@ namespace Hyperion::Rendering {
         }
 
         Vector<SubMesh> sub_meshes = { { MeshTopology::Triangles, index_count, 0, 0 } };
-        s_font_mesh = Mesh::Create(s_font_mesh_data, sub_meshes);
+        if (s_font_mesh) {
+            s_font_mesh->SetData(s_font_mesh_data, sub_meshes);
+        } else {
+            s_font_mesh = Mesh::Create(s_font_mesh_data, sub_meshes);
+        }
 
         SetFontCameraData();
         s_font_material->SetVec4("u_color", color);

@@ -35,6 +35,7 @@ namespace Hyperion::Rendering {
         void DestroyRenderTexture(ResourceId render_texture_id) override;
 
         void CreateMesh(ResourceId mesh_id, const MeshDescriptor &descriptor) override;
+        void SetMeshData(ResourceId mesh_id, const MeshDataDescriptor &descriptor) override;
         void DrawMesh(ResourceId mesh_id, const Mat4 &model_matrix, ResourceId material_id, uint32 sub_mesh_index) override;
         void DestroyMesh(ResourceId mesh_id) override;
     };

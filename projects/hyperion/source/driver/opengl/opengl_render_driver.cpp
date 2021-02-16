@@ -549,6 +549,16 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
+    void OpenGLRenderDriver::SetMeshData(ResourceId mesh_id, const MeshDataDescriptor &descriptor) {
+        HYP_ASSERT(m_meshes.find(mesh_id) != m_meshes.end());
+        OpenGLMesh &mesh = m_meshes[mesh_id];
+
+        // NOTE: Do we always want to update both vertices and indices?
+        glNamedBufferSubData(mesh.vertex_buffer, 0, descriptor.vertices.size, descriptor.vertices.data);
+        glNamedBufferSubData(mesh.index_buffer, 0, descriptor.indices.size, descriptor.indices.data);
+    }
+
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::DrawMesh(ResourceId mesh_id, const Mat4 &model_matrix, ResourceId material_id, uint32 sub_mesh_index) {
         // We are going to be very error tolerant here when drawing a mesh.
 

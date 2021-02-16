@@ -53,6 +53,11 @@ namespace Hyperion::Rendering {
         ArrayDescriptor<uint8> indices;
     };
 
+    struct MeshDataDescriptor {
+        ArrayDescriptor<uint8> vertices;
+        ArrayDescriptor<uint8> indices;
+    };
+
     struct TextureDescriptor {
         TextureDimension dimension;
         TextureFormat format;
@@ -110,6 +115,7 @@ namespace Hyperion::Rendering {
         virtual void DestroyRenderTexture(ResourceId render_texture_id) = 0;
 
         virtual void CreateMesh(ResourceId mesh_id, const MeshDescriptor &descriptor) = 0;
+        virtual void SetMeshData(ResourceId mesh_id, const MeshDataDescriptor &descriptor) = 0;
         virtual void DrawMesh(ResourceId mesh_id, const Mat4 &model_matrix, ResourceId material_id, uint32 sub_mesh_index) = 0;
         virtual void DestroyMesh(ResourceId mesh_id) = 0;
     };

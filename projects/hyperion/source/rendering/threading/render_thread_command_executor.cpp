@@ -133,6 +133,17 @@ namespace Hyperion::Rendering {
                 uint64 extra_size = command->descriptor.sub_meshes.size + command->descriptor.vertex_format.attributes.size + command->descriptor.vertices.size + command->descriptor.indices.size;
                 return sizeof(*command) + extra_size;
             }
+            case RenderThreadCommandType::SetMeshData: {
+                auto command = reinterpret_cast<RenderThreadCommandSetMeshData *>(render_thread_command);
+                RenderThreadCommandQueueHelper helper(command);
+                helper.Read(command->descriptor.vertices);
+                helper.Read(command->descriptor.indices);
+
+                render_driver->SetMeshData(command->mesh_id, command->descriptor);
+
+                uint64 extra_size = command->descriptor.vertices.size + command->descriptor.indices.size;
+                return sizeof(*command) + extra_size;
+            }
             case RenderThreadCommandType::DrawMesh: {
                 auto command = reinterpret_cast<RenderThreadCommandDrawMesh *>(render_thread_command);
                 render_driver->DrawMesh(command->mesh_id, command->model_matrix, command->material_id, command->sub_mesh_index);

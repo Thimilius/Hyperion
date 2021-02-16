@@ -62,7 +62,13 @@ namespace Hyperion::Editor {
         }
 
         {
-            ImmediateRenderer::DrawText(m_font, "Hellothere!", Vec2(0.0f, 0.0f), 1.0f, Color::White());
+            Vec2 screen_point = EditorWorldView::GetCamera()->WorldToScreenPoint(Vec3(0, 0, 0));
+            float32 half_width = static_cast<float32>(Display::GetWidth()) / 2.0f;
+            float32 half_height = static_cast<float32>(Display::GetHeight()) / 2.0f;
+            screen_point.x -= half_width;
+            screen_point.y -= half_height;
+
+            ImmediateRenderer::DrawText(m_font, "Hellothere!", screen_point, 1.0f, Color::White());
         }
 
         {

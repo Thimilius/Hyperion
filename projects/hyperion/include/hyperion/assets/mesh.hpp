@@ -25,6 +25,11 @@ namespace Hyperion {
         Vector<uint32> indices;
     };
 
+    struct MeshVertexFormat {
+        uint32 stride;
+        Vector<Rendering::VertexAttribute> vertex_attributes;
+    };
+
     class Mesh : public Asset {
         HYP_REFLECT(Asset);
     public:
@@ -35,6 +40,8 @@ namespace Hyperion {
 
         inline bool IsReadAndWriteEnabled() const { return m_read_and_write_enabled; }
         inline BoundingBox GetBounds() const { return m_bounds; }
+
+        void SetData(const MeshData &mesh_data, const Vector<Rendering::SubMesh> &sub_meshes);
     public:
         static Mesh *Create(const MeshData &mesh_data, const Vector<Rendering::SubMesh> &sub_meshes, bool read_and_write_enabled = false);
     protected:
@@ -43,10 +50,13 @@ namespace Hyperion {
         Mesh() = default;
         Mesh(const MeshData &mesh_data, const Vector<Rendering::SubMesh> &sub_meshes, bool read_and_write_enabled);
     private:
+        bool HasVertexAttribute(Rendering::VertexAttributeKind vertex_attribute_kind);
+    private:
         static Mesh *Create();
         static BoundingBox CalculateBounds(const Vector<Vec3> &positions);
     private:
         MeshData m_mesh_data;
+        MeshVertexFormat m_vertex_format;
         Vector<Rendering::SubMesh> m_sub_meshes;
 
         bool m_read_and_write_enabled;

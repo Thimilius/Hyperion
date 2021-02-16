@@ -38,6 +38,7 @@ namespace Hyperion::Rendering {
         DestroyRenderTexture,
 
         CreateMesh,
+        SetMeshData,
         DrawMesh,
         DestroyMesh,
     };
@@ -105,6 +106,11 @@ namespace Hyperion::Rendering {
     struct RenderThreadCommandCreateMesh {
         ResourceId mesh_id;
         MeshDescriptor descriptor;
+    };
+
+    struct RenderThreadCommandSetMeshData {
+        ResourceId mesh_id;
+        MeshDataDescriptor descriptor;
     };
 
     struct RenderThreadCommandDrawMesh {
