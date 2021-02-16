@@ -11,10 +11,11 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    Font::Font(uint32 size, FontCharacterSet character_set, FontAtlas *font_atlas) {
+    Font::Font(uint32 size, FontCharacterSet character_set, FontAtlas *font_atlas, SpecialFontGlyphs special_glyphs) {
         m_size = size;
         m_character_set = character_set;
         m_font_atlas = font_atlas;
+        m_special_glyphs = special_glyphs;
     }
 
     //--------------------------------------------------------------
@@ -46,8 +47,8 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Font *Font::Create(uint32 size, FontCharacterSet character_set, FontAtlas *font_atlas) {
-        return new Font(size, character_set, font_atlas);
+    Font *Font::Create(uint32 size, FontCharacterSet character_set, FontAtlas *font_atlas, SpecialFontGlyphs special_glyphs) {
+        return new Font(size, character_set, font_atlas, special_glyphs);
     }
 
     //--------------------------------------------------------------

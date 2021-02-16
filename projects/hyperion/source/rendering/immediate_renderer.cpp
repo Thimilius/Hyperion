@@ -14,15 +14,28 @@ namespace Hyperion::Rendering {
     
     //--------------------------------------------------------------
     void ImmediateRenderer::DrawText(Font *font, const String &text, Vec2 position, float32 scale, Color color) {
-        //Object::Destroy(s_font_mesh);
         s_font_mesh_data.positions.clear();
         s_font_mesh_data.texture0.clear();
         s_font_mesh_data.indices.clear();
+
+        Vec2 intial_position = position;
 
         Vector<uint32> codepoints = StringUtils::GetCodepointsUtf8(text);
         uint32 index = 0;
         uint32 index_count = 0;
         for (uint32 codepoint : codepoints) {
+            // We first handle the special characters.
+            switch (codepoint) {
+                case ' ': position.x += font->GetSpecialGlyphs().space.advance * scale; continue;
+                case '\t': position.x += font->GetSpecialGlyphs().space.advance * 4 * scale; continue; // Tab is equivalent to 4 whitespaces.
+                case '\r': continue; // Carriage return gets just straight up ignored. 
+                case '\n': {
+                    position.x = intial_position.x;
+                    position.y -= font->GetSize();
+                    continue;
+                }
+            }
+
             FontAtlasElement element = font->GetElement(codepoint);
             FontGlyph glyph = element.payload;
 
@@ -48,7 +61,6 @@ namespace Hyperion::Rendering {
             s_font_mesh_data.indices.push_back(index++);
 
             index_count += 6;
-
             position.x += glyph.advance * scale;
         }
 

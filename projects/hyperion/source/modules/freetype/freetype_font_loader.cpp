@@ -25,6 +25,8 @@ namespace Hyperion {
         uint32 TEXTURE_ATLAS_PADDING = 4;
         TextureAtlasPacker<uint32, FontGlyph> texture_atlas_packer(TEXTURE_ATLAS_SIZE, TEXTURE_ATLAS_SIZE, TEXTURE_ATLAS_PADDING, font_size);
 
+        SpecialFontGlyphs special_glyphs;
+
         FT_UInt index;
         FT_ULong character = FT_Get_First_Char(font_face, &index);
         while (true) {
@@ -50,20 +52,25 @@ namespace Hyperion {
                     break;
                 }
 
-                // We need to make sure the bitmap of the character is actually valid.
-                // One very weird thing is that we have to check that the bitmap height is not greater than the font size.
+                // There are special characters that have no bitmap but should still be loaded.
+                bool is_special_character = character == ' ';
+
                 uint32 bitmap_width = font_face->glyph->bitmap.width;
                 uint32 bitmap_height = font_face->glyph->bitmap.rows;
-                if (bitmap_width == 0 || bitmap_height == 0) {
-                    goto continue_loop;
-                }
-                if (bitmap_height > font_size) {
-                    HYP_LOG_WARN("Engine", "The font glyph '{}' is greater than the font size!", character);
-                    goto continue_loop;
-                }
                 uint8 *bitmap_buffer = font_face->glyph->bitmap.buffer;
-                if (bitmap_buffer == nullptr) {
-                    goto continue_loop;
+                if (!is_special_character) {
+                    // We need to make sure the bitmap of the character is actually valid.
+                    // One very weird thing is that we have to check that the bitmap height is not greater than the font size.
+                    if (bitmap_width == 0 || bitmap_height == 0) {
+                        goto continue_loop;
+                    }
+                    if (bitmap_height > font_size) {
+                        HYP_LOG_WARN("Engine", "The font glyph '{}' is greater than the font size!", character);
+                        goto continue_loop;
+                    }
+                    if (bitmap_buffer == nullptr) {
+                        goto continue_loop;
+                    }
                 }
 
                 FontGlyph glyph;
@@ -72,8 +79,14 @@ namespace Hyperion {
                 glyph.bearing = Vec2(static_cast<float32>(font_face->glyph->bitmap_left), static_cast<float32>(font_face->glyph->bitmap_top));
                 glyph.advance = font_face->glyph->advance.x >> 6;
 
-                if (!texture_atlas_packer.AddElement(glyph.codepoint, glyph, bitmap_width, bitmap_height, bitmap_buffer)) {
-                    break;
+                if (is_special_character) {
+                    if (character == ' ') {
+                        special_glyphs.space = glyph;
+                    }
+                } else {
+                    if (!texture_atlas_packer.AddElement(glyph.codepoint, glyph, bitmap_width, bitmap_height, bitmap_buffer)) {
+                        break;
+                    }
                 }
             }
 
@@ -86,7 +99,7 @@ namespace Hyperion {
         FT_Done_Face(font_face);
 
         FontAtlas *font_atlas = texture_atlas_packer.CreateAtlas();
-        return Font::Create(font_size, character_set, font_atlas);
+        return Font::Create(font_size, character_set, font_atlas, special_glyphs);
     }
 
     //--------------------------------------------------------------

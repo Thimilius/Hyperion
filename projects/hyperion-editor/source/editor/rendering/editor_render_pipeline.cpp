@@ -68,7 +68,7 @@ namespace Hyperion::Editor {
             screen_point.x -= half_width;
             screen_point.y -= half_height;
 
-            ImmediateRenderer::DrawText(m_font, "Hellothere!", screen_point, 1.0f, Color::White());
+            ImmediateRenderer::DrawText(m_font, "Hello there!\nA new line with a\ttab!", screen_point, 1.0f, Color::White());
         }
 
         {
