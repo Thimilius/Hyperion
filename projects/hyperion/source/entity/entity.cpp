@@ -34,6 +34,16 @@ namespace Hyperion {
         HYP_ASSERT(type.is_valid());
         HYP_ASSERT_MESSAGE(m_components.find(type) == m_components.end(), "Failed to add component because a component with the same type already exists!");
 
+        // Before we add the actual component we want to make sure that all potentially required components already exist.
+        Variant metadata = type.get_metadata(Metadata::RequiresComponent);
+        if (metadata.is_valid() && metadata.is_type<Type>()) {
+            Type required_component_type = metadata.get_value<Type>();
+            Component *required_component = GetComponent(required_component_type);
+            if (required_component == nullptr) {
+                AddComponent(required_component_type);
+            }
+        }
+
         auto constructor = type.get_constructor();
         HYP_ASSERT_MESSAGE(constructor.is_valid(), "Failed to add component because the component does not have a valid default constructor!");
         Variant variant = constructor.invoke();

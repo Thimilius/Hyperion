@@ -8,6 +8,10 @@ namespace Hyperion {
 
     class Canvas : public Component {
         HYP_REFLECT(Component);
+    private:
+        Canvas() : Component("Canvas") { }
+    private:
+        static Canvas *Create();
     };
 
 }

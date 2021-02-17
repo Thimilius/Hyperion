@@ -9,6 +9,8 @@
 #include <hyperion/entity/components/rect_transform.hpp>
 #include <hyperion/entity/components/physics/box_collider.hpp>
 #include <hyperion/entity/components/rendering/camera.hpp>
+#include <hyperion/entity/components/rendering/canvas_renderer.hpp>
+#include <hyperion/entity/components/ui/canvas.hpp>
 #include <hyperion/rendering/immediate_renderer.hpp>
 
 //---------------------- Project Includes ----------------------

@@ -4,7 +4,9 @@
 namespace Hyperion {
 
     enum class Metadata {
-        Serialize // -> Bool - Default: true
+        Serialize, // -> Bool - Default: true
+
+        RequiresComponent, // -> Type
     };
 
 }

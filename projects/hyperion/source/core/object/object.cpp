@@ -24,9 +24,12 @@
 #include "hyperion/entity/components/physics/collider.hpp"
 #include "hyperion/entity/components/physics/sphere_collider.hpp"
 #include "hyperion/entity/components/rendering/camera.hpp"
+#include "hyperion/entity/components/rendering/canvas_renderer.hpp"
 #include "hyperion/entity/components/rendering/light.hpp"
 #include "hyperion/entity/components/rendering/renderer.hpp"
 #include "hyperion/entity/components/rendering/mesh_renderer.hpp"
+#include "hyperion/entity/components/ui/canvas.hpp"
+#include "hyperion/entity/components/ui/widget.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -208,6 +211,7 @@ HYP_REFLECT_REGISTER_BEGIN
             .constructor(select_overload<Entity *(const String &, const Vec3 &, const Quaternion &, Transform *, World *)>(&Entity::Create))(DefaultConstructorPolicy);
         Registration<World>("World")
             .constructor(select_overload<World *()>(&World::Create))(DefaultConstructorPolicy);
+
         Registration<Behaviour>("Behaviour");
         Registration<Component>("Component");
         Registration<RectTransform>("RectTransform")
@@ -216,11 +220,13 @@ HYP_REFLECT_REGISTER_BEGIN
             .constructor(select_overload<Script *()>(&Script::Create))(DefaultConstructorPolicy);
         Registration<Transform>("Transform")
             .constructor(select_overload<Transform *()>(&Transform::Create))(DefaultConstructorPolicy);
+
         Registration<BoxCollider>("BoxCollider")
             .constructor(select_overload<BoxCollider *()>(&BoxCollider::Create))(DefaultConstructorPolicy);
         Registration<Collider>("Collider");
         Registration<SphereCollider>("SphereCollider")
             .constructor(select_overload<SphereCollider *()>(&SphereCollider::Create))(DefaultConstructorPolicy);
+
         Registration<Camera>("Camera")
             .constructor(select_overload<Camera *()>(&Camera::Create))(DefaultConstructorPolicy);
         Registration<Light>("Light")
@@ -228,7 +234,12 @@ HYP_REFLECT_REGISTER_BEGIN
         Registration<Renderer>("Renderer");
         Registration<MeshRenderer>("MeshRenderer")
             .constructor(select_overload<MeshRenderer *()>(&MeshRenderer::Create))(DefaultConstructorPolicy);
+        Registration<CanvasRenderer>("CanvasRenderer")(metadata(Metadata::RequiresComponent, Type::get<RectTransform>()))
+            .constructor(select_overload<CanvasRenderer *()>(&CanvasRenderer::Create))(DefaultConstructorPolicy);
 
+        Registration<Canvas>("Canvas")(metadata(Metadata::RequiresComponent, Type::get<RectTransform>()))
+            .constructor(select_overload<Canvas *()>(&Canvas::Create))(DefaultConstructorPolicy);
+        Registration<Widget>("Widget");
     }
 }
 HYP_REFLECT_REGISTER_END

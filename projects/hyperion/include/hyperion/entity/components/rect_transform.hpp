@@ -35,8 +35,6 @@ namespace Hyperion {
     class RectTransform final : public Transform {
         HYP_REFLECT(Transform);
     public:
-        RectTransform() : Transform("RectTransform") {}
-
         Vec2 GetSize() const { return m_size; }
         void SetSize(Vec2 size) { m_size = size; }
         Vec2 GetPivot() const { return m_pivot; }
@@ -56,6 +54,8 @@ namespace Hyperion {
     protected:
         void OnCreate() override;
         void OnDestroy() override;
+    private:
+        RectTransform() : Transform("RectTransform") { }
     private:
         static RectTransform *Create();
     private:
