@@ -27,20 +27,29 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    Texture *AssetManager::GetTexturePrimitive(TexturePrimitive texture_primitive) {
+        switch (texture_primitive) {
+            case TexturePrimitive::Grid: return s_texture_primitive_grid;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
+        }
+    }
+
+    //--------------------------------------------------------------
+    Material *AssetManager::GetMaterialPrimitive(MaterialPrimitive material_primitive) {
+        switch (material_primitive) {
+            case MaterialPrimitive::Default:  return s_material_primitive_default;
+            case MaterialPrimitive::Font: return s_material_primitive_font;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
+        }
+    }
+
+    //--------------------------------------------------------------
     Mesh *AssetManager::GetMeshPrimitive(MeshPrimitive mesh_primitive) {
         switch (mesh_primitive) {
             case MeshPrimitive::Quad: return s_mesh_primitive_quad;
             case MeshPrimitive::Plane: return s_mesh_primitive_plane;
             case MeshPrimitive::Cube: return s_mesh_primitive_cube;
             case MeshPrimitive::Sphere: return s_mesh_primitive_sphere;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
-        }
-    }
-
-    //--------------------------------------------------------------
-    Texture *AssetManager::GetTexturePrimitive(TexturePrimitive texture_primitive) {
-        switch (texture_primitive) {
-            case TexturePrimitive::Grid: return s_texture_primitive_grid;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }
@@ -60,17 +69,18 @@ namespace Hyperion {
         s_texture_primitive_grid = Texture2D::Create(image->GetWidth(), image->GetHeight(), TextureFormat::RGB24, TextureParameters(), image->GetPixels());
         Object::Destroy(image);
 
-        Shader *shader = Shader::Create(FileSystem::ReadAllText("data/shaders/standard.shader"));
-        s_default_material = Material::Create(shader);
-        s_default_material->SetVec4("u_color", Color::White());
-        s_default_material->SetTexture("u_texture", s_texture_primitive_grid);
+        Shader *default_shader = Shader::Create(FileSystem::ReadAllText("data/shaders/standard.shader"));
+        s_material_primitive_default = Material::Create(default_shader);
+        s_material_primitive_default->SetVec4("u_color", Color::White());
+        s_material_primitive_default->SetTexture("u_texture", s_texture_primitive_grid);
+
+        Shader *font_shader = Shader::Create(FileSystem::ReadAllText("data/shaders/font.shader"));
+        s_material_primitive_font = Material::Create(font_shader);
     }
 
     //--------------------------------------------------------------
     void AssetManager::Update() {
-        if (Input::IsKeyDown(KeyCode::I)) {
-            s_default_material->GetShader()->Recompile(FileSystem::ReadAllText("data/shaders/standard.shader"));
-        }
+
     }
 
     //--------------------------------------------------------------

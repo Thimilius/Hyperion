@@ -12,6 +12,7 @@
 #include "hyperion/entity/components/rendering/mesh_renderer.hpp"
 #include "hyperion/entity/components/rendering/widget_renderer.hpp"
 #include "hyperion/entity/components/ui/widget.hpp"
+#include "hyperion/entity/components/ui/text.hpp"
 #include "hyperion/rendering/render_driver.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -87,11 +88,43 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void ForwardRenderPipeline::RenderCanvas(IRenderDriver *render_driver, Canvas *canvas) {
-        Vector<Widget *> widgets = canvas->GetEntity()->GetComponentsInChildren<Widget>();
+        SetUICameraData(render_driver);
 
+        Vector<Widget *> widgets = canvas->GetEntity()->GetComponentsInChildren<Widget>();
         for (Widget *widget : widgets) {
             WidgetRenderer *widget_renderer = widget->GetEntity()->GetComponent<WidgetRenderer>();
+            Transform *transform = widget->GetTransform();
+            Material *material = widget_renderer->GetMaterial();
+            ResourceId material_id = material->GetResourceId();
+            ResourceId mesh_id = widget_renderer->GetMesh()->GetResourceId();
+
+            if (widget->GetType() == Type::get<Text>()) {
+                Text *text = static_cast<Text *>(widget);
+                material->SetTexture("u_texture", text->GetFont()->GetTexture());
+                render_driver->DrawMesh(mesh_id, transform->GetLocalToWorldMatrix(), material_id, 0);
+            }
         }
+    }
+
+    //--------------------------------------------------------------
+    void ForwardRenderPipeline::SetUICameraData(IRenderDriver *render_driver) {
+        float32 half_width = static_cast<float32>(Display::GetWidth()) / 2.0f;
+        float32 half_height = static_cast<float32>(Display::GetHeight()) / 2.0f;
+
+        CameraData camera_data = { };
+        camera_data.projection_mode = CameraProjectionMode::Orthographic;
+
+        camera_data.view_matrix = Mat4::Identity();
+        camera_data.inverse_view_matrix = camera_data.view_matrix.Inverted();
+
+        // We want (0, 0) to be at the center of the screen.
+        camera_data.projection_matrix = Mat4::Orthographic(-half_width, half_width, -half_height, half_height, -1, 1);
+        camera_data.inverse_projection_matrix = camera_data.projection_matrix.Inverted();
+
+        camera_data.view_projection_matrix = camera_data.projection_matrix;
+        camera_data.inverse_view_projection_matrix = camera_data.view_projection_matrix.Inverted();
+
+        render_driver->SetCameraData(camera_data);
     }
 
 }

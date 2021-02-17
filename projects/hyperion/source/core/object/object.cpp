@@ -30,6 +30,7 @@
 #include "hyperion/entity/components/rendering/widget_renderer.hpp"
 #include "hyperion/entity/components/ui/canvas.hpp"
 #include "hyperion/entity/components/ui/widget.hpp"
+#include "hyperion/entity/components/ui/text.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -234,12 +235,14 @@ HYP_REFLECT_REGISTER_BEGIN
         Registration<Renderer>("Renderer");
         Registration<MeshRenderer>("MeshRenderer")
             .constructor(select_overload<MeshRenderer *()>(&MeshRenderer::Create))(DefaultConstructorPolicy);
-        Registration<WidgetRenderer>("WidgetRenderer")(metadata(Metadata::RequiresComponents, Vector<Variant>({ Type::get<RectTransform>() })))
+        Registration<WidgetRenderer>("WidgetRenderer")(metadata(Metadata::RequiresComponent0, Type::get<RectTransform>()))
             .constructor(select_overload<WidgetRenderer *()>(&WidgetRenderer::Create))(DefaultConstructorPolicy);
 
-        Registration<Canvas>("Canvas")(metadata(Metadata::RequiresComponents, Vector<Variant>({ Type::get<RectTransform>() })))
+        Registration<Canvas>("Canvas")(metadata(Metadata::RequiresComponent0, Type::get<RectTransform>()))
             .constructor(select_overload<Canvas *()>(&Canvas::Create))(DefaultConstructorPolicy);
-        Registration<Widget>("Widget")(metadata(Metadata::RequiresComponents, Vector<Variant>({ Type::get<RectTransform>(), Type::get<WidgetRenderer>() })));
+        Registration<Widget>("Widget")(metadata(Metadata::RequiresComponent0, Type::get<RectTransform>()))(metadata(Metadata::RequiresComponent1, Type::get<WidgetRenderer>()));
+        Registration<Text>("Text")
+            .constructor(select_overload<Text *()>(&Text::Create))(DefaultConstructorPolicy);
     }
 }
 HYP_REFLECT_REGISTER_END

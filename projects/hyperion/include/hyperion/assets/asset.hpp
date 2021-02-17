@@ -38,6 +38,15 @@ namespace Hyperion {
         ResourceId m_resource_id;
     };
 
+    enum class TexturePrimitive {
+        Grid,
+    };
+
+    enum class MaterialPrimitive {
+        Default,
+        Font,
+    };
+
     enum class MeshPrimitive {
         Quad,
         Plane,
@@ -45,15 +54,11 @@ namespace Hyperion {
         Sphere,
     };
 
-    enum class TexturePrimitive {
-        Grid,
-    };
-
     class AssetManager final {
     public:
-        static Mesh *GetMeshPrimitive(MeshPrimitive mesh_primitive);
         static Texture *GetTexturePrimitive(TexturePrimitive texture_primitive);
-        inline static Material *GetDefaultMaterial() { return s_default_material; }
+        static Material *GetMaterialPrimitive(MaterialPrimitive material_primitive);
+        static Mesh *GetMeshPrimitive(MeshPrimitive mesh_primitive);
     private:
         ~AssetManager() = delete;
         AssetManager() = delete;
@@ -62,14 +67,15 @@ namespace Hyperion {
         static void Update();
         static void Shutdown();
     private:
+        inline static Texture *s_texture_primitive_grid;
+
+        inline static Material *s_material_primitive_default;
+        inline static Material *s_material_primitive_font;
+
         inline static Mesh *s_mesh_primitive_quad;
         inline static Mesh *s_mesh_primitive_plane;
         inline static Mesh *s_mesh_primitive_cube;
         inline static Mesh *s_mesh_primitive_sphere;
-
-        inline static Texture *s_texture_primitive_grid;
-
-        inline static Material *s_default_material;
     private:
         friend class Engine;
     };

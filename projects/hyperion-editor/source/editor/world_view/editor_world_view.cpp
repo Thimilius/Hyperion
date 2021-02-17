@@ -10,7 +10,7 @@
 #include <hyperion/entity/components/physics/box_collider.hpp>
 #include <hyperion/entity/components/rendering/camera.hpp>
 #include <hyperion/entity/components/rendering/widget_renderer.hpp>
-#include <hyperion/entity/components/ui/canvas.hpp>
+#include <hyperion/entity/components/ui/text.hpp>
 #include <hyperion/rendering/immediate_renderer.hpp>
 
 //---------------------- Project Includes ----------------------
@@ -31,6 +31,15 @@ namespace Hyperion::Editor {
         Entity *entity = Entity::CreatePrimitive(EntityPrimitive::Camera);
         s_editor_camera = entity->GetComponent<Camera>();
         s_editor_camera_controller = entity->AddComponent<EditorLookAroundCameraController>();
+
+        Font *font = FontLoader::LoadFont("data/fonts/consola.ttf", 32, FontCharacterSet::LatinSupplement);
+        Entity *canvas_entity = Entity::Create("Canvas");
+        s_editor_canvas = canvas_entity->AddComponent<Canvas>();
+        Entity *text_entity = Entity::Create("Text");
+        text_entity->GetTransform()->SetParent(canvas_entity->GetTransform());
+        Text *text = text_entity->AddComponent<Text>();
+        text->SetFont(font);
+        text->SetText("Hello there!");
 
         EditorWorldViewGrid::Initialize();
     }

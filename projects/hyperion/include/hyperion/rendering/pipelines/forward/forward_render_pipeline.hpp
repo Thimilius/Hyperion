@@ -20,6 +20,8 @@ namespace Hyperion::Rendering {
         void RenderWorld(IRenderDriver *render_driver, World *world, const Rendering::CameraData &camera_data);
         void RenderCanvas(IRenderDriver *render_driver, Canvas *canvas);
     private:
+        void SetUICameraData(IRenderDriver *render_driver);
+    private:
         bool m_is_primary;
         RenderTexture *m_render_texture;
     };

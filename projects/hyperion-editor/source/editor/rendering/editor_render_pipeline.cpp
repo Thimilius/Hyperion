@@ -62,13 +62,7 @@ namespace Hyperion::Editor {
         }
 
         {
-            Vec2 screen_point = EditorWorldView::GetCamera()->WorldToScreenPoint(Vec3(0, 0, 0));
-            float32 half_width = static_cast<float32>(Display::GetWidth()) / 2.0f;
-            float32 half_height = static_cast<float32>(Display::GetHeight()) / 2.0f;
-            screen_point.x -= half_width;
-            screen_point.y -= half_height;
-
-            ImmediateRenderer::DrawText(m_font, "Hello there!\nA new line with a\ttab!", screen_point, 1.0f, Color::White());
+            m_forward_render_pipeline->RenderCanvas(render_driver, EditorWorldView::GetCanvas());
         }
 
         {

@@ -2,6 +2,7 @@
 
 //---------------------- Library Includes ----------------------
 #include <hyperion/entity/world.hpp>
+#include <hyperion/entity/components/ui/canvas.hpp>
 #include <hyperion/rendering/render_driver.hpp>
 
 //---------------------- Project Includes ----------------------
@@ -14,6 +15,7 @@ namespace Hyperion::Editor {
     public:
         inline static World *GetWorld() { return s_editor_world; }
         inline static Camera *GetCamera() { return s_editor_camera; }
+        inline static Canvas *GetCanvas() { return s_editor_canvas; }
 
         static void Initialize();
         static void Update(float32 delta_time);
@@ -24,6 +26,7 @@ namespace Hyperion::Editor {
     private:
         inline static World *s_editor_world;
         inline static Camera *s_editor_camera;
+        inline static Canvas *s_editor_canvas;
 
         inline static bool s_should_draw_grid = true;
         inline static bool s_should_draw_physics_debug = false;

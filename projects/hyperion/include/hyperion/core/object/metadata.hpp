@@ -6,7 +6,8 @@ namespace Hyperion {
     enum class Metadata {
         Serialize, // -> Bool - Default: true
 
-        RequiresComponents, // -> Vector<Variant> (Varinat just stores instances of Type) - Default: none
+        RequiresComponent0, // -> Type - Default: none
+        RequiresComponent1, // -> Type - Default: none
     };
 
 }

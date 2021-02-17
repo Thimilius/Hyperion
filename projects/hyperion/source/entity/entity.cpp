@@ -156,7 +156,7 @@ namespace Hyperion {
         }
 
         if (mesh_renderer != nullptr) {
-            mesh_renderer->SetMaterial(AssetManager::GetDefaultMaterial());
+            mesh_renderer->SetMaterial(AssetManager::GetMaterialPrimitive(MaterialPrimitive::Default));
         }
 
         return entity;
@@ -212,13 +212,23 @@ namespace Hyperion {
             return;
         }
 
-        Variant metadata = type.get_metadata(Metadata::RequiresComponents);
-        if (metadata.is_valid() && metadata.is_type<Type>()) {
-            Vector<Variant> &required_component_types = metadata.get_value<Vector<Variant>>();
-            for (Variant required_component_type_variant : required_component_types) {
-                HYP_ASSERT(required_component_type_variant.is_valid() && required_component_type_variant.is_type<Type>());
-
-                Type required_component_type = required_component_type_variant.get_value<Type>();
+        // FIXME: Copy-paste!!!
+        {
+            Variant metadata = type.get_metadata(Metadata::RequiresComponent0);
+            if (metadata.is_valid()) {
+                HYP_ASSERT(metadata.is_type<Type>());
+                Type required_component_type = metadata.get_value<Type>();
+                Component *required_component = GetComponent(required_component_type);
+                if (required_component == nullptr) {
+                    AddComponent(required_component_type);
+                }
+            }
+        }
+        {
+            Variant metadata = type.get_metadata(Metadata::RequiresComponent1);
+            if (metadata.is_valid()) {
+                HYP_ASSERT(metadata.is_type<Type>());
+                Type required_component_type = metadata.get_value<Type>();
                 Component *required_component = GetComponent(required_component_type);
                 if (required_component == nullptr) {
                     AddComponent(required_component_type);
@@ -229,9 +239,16 @@ namespace Hyperion {
         // We also want to check the metadata in all our base types.
         // NOTE: We do not use multiple base classes in our code, so we assume we only have one.
         auto &base_types = type.get_base_classes();
-        HYP_ASSERT(base_types.size() == 1);
-        Type base_type = *base_types.begin();
-        MakeSureRequiredComponentsArePresent(base_type);
+        HYP_ASSERT(base_types.size() >= 1);
+        for (auto it = base_types.rbegin(); it != base_types.rend(); it++) {
+            Type base_type = *it;
+            if (base_type.is_derived_from<Component>()) {
+                MakeSureRequiredComponentsArePresent(base_type);
+                break;
+            }
+        }
+
+
     }
 
     //--------------------------------------------------------------
