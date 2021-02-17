@@ -2,14 +2,14 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/entity/components/rendering/canvas_renderer.hpp"
+#include "hyperion/entity/components/rendering/widget_renderer.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    CanvasRenderer *CanvasRenderer::Create() {
-        return new CanvasRenderer();
+    WidgetRenderer *WidgetRenderer::Create() {
+        return new WidgetRenderer();
     }
 
 }

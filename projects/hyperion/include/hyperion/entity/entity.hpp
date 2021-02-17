@@ -112,10 +112,12 @@ namespace Hyperion {
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         Vector<T *> GetComponentsInChildren() const {
+            Type type = Type::get<T>();
+
             Vector<T *> components;
 
             for (auto [component_type, component] : m_components) {
-                if (component_type.is_derived_from<T>()) {
+                if (component_type.IsDerivedFrom(type)) {
                     components.push_back(static_cast<T *>(component));
                 }
             }
@@ -129,6 +131,8 @@ namespace Hyperion {
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         Vector<T *> GetComponentsInParent() const {
+            Type type = Type::get<T>();
+
             Vector<T *> components;
 
             for (auto [component_type, component] : m_components) {
@@ -158,6 +162,8 @@ namespace Hyperion {
         Entity(const String &name) : Object(name) { }
     private:
         void NotifyActivationChanged();
+
+        void MakeSureRequiredComponentsArePresent(Type type);
 
         void OnCreate(const Vec3 &position, const Quaternion &rotation, Transform *parent, World *world);
     private:

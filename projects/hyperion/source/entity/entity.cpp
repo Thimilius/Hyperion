@@ -34,15 +34,7 @@ namespace Hyperion {
         HYP_ASSERT(type.is_valid());
         HYP_ASSERT_MESSAGE(m_components.find(type) == m_components.end(), "Failed to add component because a component with the same type already exists!");
 
-        // Before we add the actual component we want to make sure that all potentially required components already exist.
-        Variant metadata = type.get_metadata(Metadata::RequiresComponent);
-        if (metadata.is_valid() && metadata.is_type<Type>()) {
-            Type required_component_type = metadata.get_value<Type>();
-            Component *required_component = GetComponent(required_component_type);
-            if (required_component == nullptr) {
-                AddComponent(required_component_type);
-            }
-        }
+        MakeSureRequiredComponentsArePresent(type);
 
         auto constructor = type.get_constructor();
         HYP_ASSERT_MESSAGE(constructor.is_valid(), "Failed to add component because the component does not have a valid default constructor!");
@@ -211,6 +203,35 @@ namespace Hyperion {
         for (Transform *child : m_transform->m_children) {
             child->GetEntity()->NotifyActivationChanged();
         }
+    }
+
+    //--------------------------------------------------------------
+    void Entity::MakeSureRequiredComponentsArePresent(Type type) {
+        // We use this function recursively to go up the type hierarchy and bail out when we reach the component base type.
+        if (type == Type::get<Component>()) {
+            return;
+        }
+
+        Variant metadata = type.get_metadata(Metadata::RequiresComponents);
+        if (metadata.is_valid() && metadata.is_type<Type>()) {
+            Vector<Variant> &required_component_types = metadata.get_value<Vector<Variant>>();
+            for (Variant required_component_type_variant : required_component_types) {
+                HYP_ASSERT(required_component_type_variant.is_valid() && required_component_type_variant.is_type<Type>());
+
+                Type required_component_type = required_component_type_variant.get_value<Type>();
+                Component *required_component = GetComponent(required_component_type);
+                if (required_component == nullptr) {
+                    AddComponent(required_component_type);
+                }
+            }
+        }
+
+        // We also want to check the metadata in all our base types.
+        // NOTE: We do not use multiple base classes in our code, so we assume we only have one.
+        auto &base_types = type.get_base_classes();
+        HYP_ASSERT(base_types.size() == 1);
+        Type base_type = *base_types.begin();
+        MakeSureRequiredComponentsArePresent(base_type);
     }
 
     //--------------------------------------------------------------

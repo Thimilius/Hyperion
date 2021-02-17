@@ -24,10 +24,10 @@
 #include "hyperion/entity/components/physics/collider.hpp"
 #include "hyperion/entity/components/physics/sphere_collider.hpp"
 #include "hyperion/entity/components/rendering/camera.hpp"
-#include "hyperion/entity/components/rendering/canvas_renderer.hpp"
 #include "hyperion/entity/components/rendering/light.hpp"
-#include "hyperion/entity/components/rendering/renderer.hpp"
 #include "hyperion/entity/components/rendering/mesh_renderer.hpp"
+#include "hyperion/entity/components/rendering/renderer.hpp"
+#include "hyperion/entity/components/rendering/widget_renderer.hpp"
 #include "hyperion/entity/components/ui/canvas.hpp"
 #include "hyperion/entity/components/ui/widget.hpp"
 
@@ -234,12 +234,12 @@ HYP_REFLECT_REGISTER_BEGIN
         Registration<Renderer>("Renderer");
         Registration<MeshRenderer>("MeshRenderer")
             .constructor(select_overload<MeshRenderer *()>(&MeshRenderer::Create))(DefaultConstructorPolicy);
-        Registration<CanvasRenderer>("CanvasRenderer")(metadata(Metadata::RequiresComponent, Type::get<RectTransform>()))
-            .constructor(select_overload<CanvasRenderer *()>(&CanvasRenderer::Create))(DefaultConstructorPolicy);
+        Registration<WidgetRenderer>("WidgetRenderer")(metadata(Metadata::RequiresComponents, Vector<Variant>({ Type::get<RectTransform>() })))
+            .constructor(select_overload<WidgetRenderer *()>(&WidgetRenderer::Create))(DefaultConstructorPolicy);
 
-        Registration<Canvas>("Canvas")(metadata(Metadata::RequiresComponent, Type::get<RectTransform>()))
+        Registration<Canvas>("Canvas")(metadata(Metadata::RequiresComponents, Vector<Variant>({ Type::get<RectTransform>() })))
             .constructor(select_overload<Canvas *()>(&Canvas::Create))(DefaultConstructorPolicy);
-        Registration<Widget>("Widget");
+        Registration<Widget>("Widget")(metadata(Metadata::RequiresComponents, Vector<Variant>({ Type::get<RectTransform>(), Type::get<WidgetRenderer>() })));
     }
 }
 HYP_REFLECT_REGISTER_END

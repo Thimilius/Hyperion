@@ -10,6 +10,8 @@
 #include "hyperion/core/io/image_loader.hpp"
 #include "hyperion/entity/world_manager.hpp"
 #include "hyperion/entity/components/rendering/mesh_renderer.hpp"
+#include "hyperion/entity/components/rendering/widget_renderer.hpp"
+#include "hyperion/entity/components/ui/widget.hpp"
 #include "hyperion/rendering/render_driver.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -80,6 +82,15 @@ namespace Hyperion::Rendering {
             ResourceId mesh_id = mesh_renderer->GetMesh()->GetResourceId();
             ResourceId material_id = mesh_renderer->GetMaterial()->GetResourceId();
             render_driver->DrawMesh(mesh_id, transform->GetLocalToWorldMatrix(), material_id, 0);
+        }
+    }
+
+    //--------------------------------------------------------------
+    void ForwardRenderPipeline::RenderCanvas(IRenderDriver *render_driver, Canvas *canvas) {
+        Vector<Widget *> widgets = canvas->GetEntity()->GetComponentsInChildren<Widget>();
+
+        for (Widget *widget : widgets) {
+            WidgetRenderer *widget_renderer = widget->GetEntity()->GetComponent<WidgetRenderer>();
         }
     }
 

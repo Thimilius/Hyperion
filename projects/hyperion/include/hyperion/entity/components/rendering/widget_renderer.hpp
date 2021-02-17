@@ -7,15 +7,15 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    class CanvasRenderer : public Component {
+    class WidgetRenderer : public Component {
         HYP_REFLECT(Component);
     public:
         Mesh *GetMesh() const { return m_mesh; }
         void SetMesh(Mesh *mesh) { m_mesh = mesh; }
     private:
-        CanvasRenderer() : Component("CanvasRenderer") { }
+        WidgetRenderer() : Component("WidgetRenderer") { }
     private:
-        static CanvasRenderer *Create();
+        static WidgetRenderer *Create();
     private:
         Mesh *m_mesh;
     };
