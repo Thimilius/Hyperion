@@ -9,6 +9,7 @@
 #include "hyperion/core/app/display.hpp"
 #include "hyperion/core/io/image_loader.hpp"
 #include "hyperion/entity/world_manager.hpp"
+#include "hyperion/entity/components/rect_transform.hpp"
 #include "hyperion/entity/components/rendering/mesh_renderer.hpp"
 #include "hyperion/entity/components/rendering/widget_renderer.hpp"
 #include "hyperion/entity/components/ui/widget.hpp"
@@ -93,7 +94,7 @@ namespace Hyperion::Rendering {
         Vector<Widget *> widgets = canvas->GetEntity()->GetComponentsInChildren<Widget>();
         for (Widget *widget : widgets) {
             WidgetRenderer *widget_renderer = widget->GetEntity()->GetComponent<WidgetRenderer>();
-            Transform *transform = widget->GetTransform();
+            RectTransform *rect_transform = widget->GetEntity()->GetComponent<RectTransform>();
             Material *material = widget_renderer->GetMaterial();
             ResourceId material_id = material->GetResourceId();
             ResourceId mesh_id = widget_renderer->GetMesh()->GetResourceId();
@@ -101,7 +102,7 @@ namespace Hyperion::Rendering {
             if (widget->GetType() == Type::get<Text>()) {
                 Text *text = static_cast<Text *>(widget);
                 material->SetTexture("u_texture", text->GetFont()->GetTexture());
-                render_driver->DrawMesh(mesh_id, transform->GetLocalToWorldMatrix(), material_id, 0);
+                render_driver->DrawMesh(mesh_id, rect_transform->GetLocalToWorldMatrix(), material_id, 0);
             }
         }
     }

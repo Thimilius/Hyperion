@@ -35,6 +35,16 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void Text::SetColor(Color color) {
+        if (m_color == color) {
+            return;
+        }
+
+        m_color = color;
+        RegenerateMesh();
+    }
+
+    //--------------------------------------------------------------
     void Text::OnCreate() {
         GetEntity()->GetComponent<WidgetRenderer>()->SetMaterial(AssetManager::GetMaterialPrimitive(MaterialPrimitive::Font));
     }
@@ -45,7 +55,7 @@ namespace Hyperion {
         Mesh *old_mesh = widget_renderer->GetMesh();
         Object::Destroy(old_mesh);
 
-        Mesh *new_mesh = GenerateMeshForText(m_font, m_text, GetTransform()->GetPosition(), 1.0f, Color::White());
+        Mesh *new_mesh = GenerateMeshForText(m_font, m_text, GetTransform()->GetPosition(), 1.0f, m_color);
         widget_renderer->SetMesh(new_mesh);
     }
 

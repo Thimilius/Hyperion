@@ -40,6 +40,7 @@ namespace Hyperion::Editor {
         Text *text = text_entity->AddComponent<Text>();
         text->SetFont(font);
         text->SetText("Hello there!");
+        text->SetColor(Color::Cyan());
 
         EditorWorldViewGrid::Initialize();
     }

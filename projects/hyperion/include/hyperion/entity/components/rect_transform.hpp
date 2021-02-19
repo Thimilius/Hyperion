@@ -60,7 +60,7 @@ namespace Hyperion {
         static RectTransform *Create();
     private:
         Vec2 m_size = Vec2(100, 100);
-        Vec2 m_pivot = Vec2(0.0f, 0.0f);
+        Vec2 m_pivot = Vec2(0.5f, 0.5f);
 
         Vec2 m_anchor_min = Vec2(0.5f, 0.5f);
         Vec2 m_anchor_max = Vec2(0.5f, 0.5f);

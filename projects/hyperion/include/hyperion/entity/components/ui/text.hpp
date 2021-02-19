@@ -17,6 +17,9 @@ namespace Hyperion {
 
         Font *GetFont() const { return m_font; }
         void SetFont(Font *font);
+
+        Color GetColor() const { return m_color; }
+        void SetColor(Color color);
     protected:
         void OnCreate() override;
     private:
@@ -29,8 +32,8 @@ namespace Hyperion {
         static Text *Create();
     private:
         String m_text;
-
         Font *m_font = nullptr;
+        Color m_color = Color::White();
     };
 
 }
