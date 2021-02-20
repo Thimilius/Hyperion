@@ -58,6 +58,7 @@ namespace Hyperion {
         static void ScriptingEngineUpdate();
         static void ApplicationUpdate();
         static void ObjectManagerLateUpdate();
+        static void UiEngineLateUpdate();
         static void RenderEngineLateUpdate();
 
         static void PanicInternal(const String &title, const String &message);

@@ -24,6 +24,7 @@
 #include "hyperion/physics/physics_engine.hpp"
 #include "hyperion/rendering/render_engine.hpp"
 #include "hyperion/scripting/scripting_engine.hpp"
+#include "hyperion/ui/ui_engine.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -264,6 +265,13 @@ namespace Hyperion {
         HYP_PROFILE_CATEGORY("LateUpdate", Optick::Category::GameLogic);
 
         ObjectManager::LateUpdate();
+    }
+
+    //--------------------------------------------------------------
+    void Engine::UiEngineLateUpdate() {
+        HYP_PROFILE_CATEGORY("UserInterface", Optick::Category::UI);
+
+        UiEngine::LateUpdate();
     }
 
     //--------------------------------------------------------------

@@ -21,7 +21,7 @@ namespace Hyperion {
         }
 
         m_text = text;
-        RegenerateMesh();
+        SetDirty();
     }
 
     //--------------------------------------------------------------
@@ -31,7 +31,7 @@ namespace Hyperion {
         }
 
         m_font = font;
-        RegenerateMesh();
+        SetDirty();
     }
 
     //--------------------------------------------------------------
@@ -41,16 +41,18 @@ namespace Hyperion {
         }
 
         m_color = color;
-        RegenerateMesh();
+        SetDirty();
     }
 
     //--------------------------------------------------------------
     void Text::OnCreate() {
+        Widget::OnCreate();
+
         GetEntity()->GetComponent<WidgetRenderer>()->SetMaterial(AssetManager::GetMaterialPrimitive(MaterialPrimitive::Font));
     }
 
     //--------------------------------------------------------------
-    void Text::RegenerateMesh() {
+    void Text::OnRebuildMesh() {
         WidgetRenderer *widget_renderer = GetEntity()->GetComponent<WidgetRenderer>();
         Mesh *old_mesh = widget_renderer->GetMesh();
         Object::Destroy(old_mesh);

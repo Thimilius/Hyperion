@@ -94,16 +94,27 @@ namespace Hyperion::Rendering {
         Vector<Widget *> widgets = canvas->GetEntity()->GetComponentsInChildren<Widget>();
         for (Widget *widget : widgets) {
             WidgetRenderer *widget_renderer = widget->GetEntity()->GetComponent<WidgetRenderer>();
-            RectTransform *rect_transform = widget->GetEntity()->GetComponent<RectTransform>();
+            Mesh *mesh = widget_renderer->GetMesh();
+            if (!mesh) {
+                continue;
+            }
+
+            ResourceId mesh_id = mesh->GetResourceId();
             Material *material = widget_renderer->GetMaterial();
             ResourceId material_id = material->GetResourceId();
-            ResourceId mesh_id = widget_renderer->GetMesh()->GetResourceId();
 
+            RectTransform *rect_transform = widget->GetEntity()->GetComponent<RectTransform>();
             if (widget->GetType() == Type::get<Text>()) {
                 Text *text = static_cast<Text *>(widget);
-                material->SetTexture("u_texture", text->GetFont()->GetTexture());
-                render_driver->DrawMesh(mesh_id, rect_transform->GetLocalToWorldMatrix(), material_id, 0);
+                Font *font = text->GetFont();
+                if (!font) {
+                    continue;
+                }
+
+                material->SetTexture("u_texture", font->GetTexture());
             }
+
+            render_driver->DrawMesh(mesh_id, rect_transform->GetLocalToWorldMatrix(), material_id, 0);
         }
     }
 
