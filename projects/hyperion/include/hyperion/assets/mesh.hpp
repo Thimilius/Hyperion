@@ -68,13 +68,15 @@ namespace Hyperion {
     public:
         void Clear();
 
+        void AddVertex(Vec3 position, Vec3 normal, Vec2 texture0);
         void AddVertex(Vec3 position, Color color, Vec2 texture0);
         void AddTriangle(uint32 a, uint32 b, uint32 c);
 
-        Mesh *CreateMesh(uint32 index_count);
-        void SetToMesh(Mesh *mesh, uint32 index_count);
+        Mesh *CreateMesh();
+        void SetToMesh(Mesh *mesh);
     private:
         MeshData m_mesh_data;
+        uint32 m_index_count = 0;
     };
 
     class IMeshLoader {
@@ -89,7 +91,7 @@ namespace Hyperion {
         static Mesh *CreateQuad(float32 width, float32 height);
         static Mesh *CreatePlane(float32 width, float32 height);
         static Mesh *CreateCube(float32 size);
-        static Mesh *CreateSphere(float32 radius);
+        static Mesh *CreateSphere(float32 radius, uint32 sector_count = 36, uint32 stack_count = 18);
         static Mesh *CreateFromFile(const String &path);
     private:
         MeshFactory() = delete;

@@ -59,14 +59,16 @@ namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
     void EditorWorldView::Render(IRenderDriver *render_driver) {
+        if (s_should_draw_grid) {
+            EditorWorldViewGrid::Render(render_driver, s_editor_camera_controller->GetTargetPosition());
+        }
+
         if (s_should_draw_physics_debug) {
+            render_driver->Clear(ClearFlags::Depth, Color::Black());
+
             ImmediateRenderer::Begin(MeshTopology::Lines);
             WorldManager::GetActiveWorld()->GetPhysicsWorld()->DebugDraw();
             ImmediateRenderer::End();
-        }
-        
-        if (s_should_draw_grid) {
-            EditorWorldViewGrid::Render(render_driver, s_editor_camera_controller->GetTargetPosition());
         }
     }
 

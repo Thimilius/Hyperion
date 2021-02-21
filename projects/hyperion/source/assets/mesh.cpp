@@ -230,6 +230,15 @@ namespace Hyperion {
         m_mesh_data.colors.clear();
         m_mesh_data.texture0.clear();
         m_mesh_data.indices.clear();
+
+        m_index_count = 0;
+    }
+
+    //--------------------------------------------------------------
+    void MeshBuilder::AddVertex(Vec3 position, Vec3 normal, Vec2 texture0) {
+        m_mesh_data.positions.push_back(position);
+        m_mesh_data.normals.push_back(normal);
+        m_mesh_data.texture0.push_back(texture0);
     }
 
     //--------------------------------------------------------------
@@ -244,17 +253,18 @@ namespace Hyperion {
         m_mesh_data.indices.push_back(a);
         m_mesh_data.indices.push_back(b);
         m_mesh_data.indices.push_back(c);
+        m_index_count += 3;
     }
 
     //--------------------------------------------------------------
-    Mesh *MeshBuilder::CreateMesh(uint32 index_count) {
-        Vector<SubMesh> sub_meshes = { { MeshTopology::Triangles, index_count, 0, 0 } };
+    Mesh *MeshBuilder::CreateMesh() {
+        Vector<SubMesh> sub_meshes = { { MeshTopology::Triangles, m_index_count, 0, 0 } };
         return Mesh::Create(m_mesh_data, sub_meshes);
     }
 
     //--------------------------------------------------------------
-    void MeshBuilder::SetToMesh(Mesh *mesh, uint32 index_count) {
-        Vector<SubMesh> sub_meshes = { { MeshTopology::Triangles, index_count, 0, 0 } };
+    void MeshBuilder::SetToMesh(Mesh *mesh) {
+        Vector<SubMesh> sub_meshes = { { MeshTopology::Triangles, m_index_count, 0, 0 } };
         mesh->SetData(m_mesh_data, sub_meshes);
     }
 
@@ -268,34 +278,16 @@ namespace Hyperion {
         // The quad should face the camera (right-handed).
         Vec3 normal = Vec3::Back();
 
-        MeshData mesh_data;
-        mesh_data.positions.resize(4);
-        mesh_data.normals.resize(4);
-        mesh_data.texture0.resize(4);
-        mesh_data.indices.resize(6);
+        MeshBuilder mesh_builder;
 
-        mesh_data.positions[0] = Vec3(half_width, half_height, 0);
-        mesh_data.normals[0] = normal;
-        mesh_data.texture0[0] = Vec2(1.0f, 1.0f);
+        mesh_builder.AddVertex(Vec3( half_width,  half_height, 0.0f), normal, Vec2(1.0f, 1.0f));
+        mesh_builder.AddVertex(Vec3( half_width, -half_height, 0.0f), normal, Vec2(1.0f, 0.0f));
+        mesh_builder.AddVertex(Vec3(-half_width, -half_height, 0.0f), normal, Vec2(0.0f, 0.0f));
+        mesh_builder.AddVertex(Vec3(-half_width,  half_height, 0.0f), normal, Vec2(0.0f, 1.0f));
+        mesh_builder.AddTriangle(0, 1, 2);
+        mesh_builder.AddTriangle(0, 2, 3);
 
-        mesh_data.positions[1] = Vec3(half_width, -half_height, 0);
-        mesh_data.normals[1] = normal;
-        mesh_data.texture0[1] = Vec2(1.0f, 0.0f);
-
-        mesh_data.positions[2] = Vec3(-half_width, -half_height, 0);
-        mesh_data.normals[2] = normal;
-        mesh_data.texture0[2] = Vec2(0.0f, 0.0f);
-
-        mesh_data.positions[3] = Vec3(-half_width, half_height, 0);
-        mesh_data.normals[3] = normal;
-        mesh_data.texture0[3] = Vec2(0.0f, 1.0f);
-
-        mesh_data.indices = {
-            0, 1, 2,
-            0, 2, 3
-        };
-
-        return Mesh::Create(mesh_data, { { MeshTopology::Triangles, 6, 0, 0 } });
+        return mesh_builder.CreateMesh();
     }
 
     //--------------------------------------------------------------
@@ -306,236 +298,117 @@ namespace Hyperion {
         // The plane should face up.
         Vec3 normal = Vec3::Up();
 
-        MeshData mesh_data;
-        mesh_data.positions.resize(4);
-        mesh_data.normals.resize(4);
-        mesh_data.texture0.resize(4);
-        mesh_data.indices.resize(6);
+        MeshBuilder mesh_builder;
 
         // Remember that we are right-handed and therefore -z is into the screen!
+        mesh_builder.AddVertex(Vec3( half_width, 0.0f, -half_height), normal, Vec2(1.0f, 1.0f));
+        mesh_builder.AddVertex(Vec3( half_width, 0.0f,  half_height), normal, Vec2(1.0f, 0.0f));
+        mesh_builder.AddVertex(Vec3(-half_width, 0.0f,  half_height), normal, Vec2(0.0f, 0.0f));
+        mesh_builder.AddVertex(Vec3(-half_width, 0.0f, -half_height), normal, Vec2(0.0f, 1.0f));
+        mesh_builder.AddTriangle(0, 1, 2);
+        mesh_builder.AddTriangle(0, 2, 3);
 
-        mesh_data.positions[0] = Vec3(-half_width, 0, half_height);
-        mesh_data.normals[0] = normal;
-        mesh_data.texture0[0] = Vec2(0.0f, 0.0f);
-
-        mesh_data.positions[1] = Vec3(-half_width, 0, -half_height);
-        mesh_data.normals[1] = normal;
-        mesh_data.texture0[1] = Vec2(0.0f, 1.0f);
-
-        mesh_data.positions[2] = Vec3(half_width, 0, -half_height);
-        mesh_data.normals[2] = normal;
-        mesh_data.texture0[2] = Vec2(1.0f, 1.0f);
-
-        mesh_data.positions[3] = Vec3(half_width, 0, half_height);
-        mesh_data.normals[3] = normal;
-        mesh_data.texture0[3] = Vec2(1.0f, 0.0f);
-
-        mesh_data.indices = {
-            0, 1, 2,
-            0, 2, 3
-        };
-
-        return Mesh::Create(mesh_data, { { MeshTopology::Triangles, 6, 0, 0 } });
+        return mesh_builder.CreateMesh();
     }
 
     //--------------------------------------------------------------
     Mesh *MeshFactory::CreateCube(float32 size) {
-        MeshData mesh_data;
-        mesh_data.positions.resize(24);
-        mesh_data.normals.resize(24);
-        mesh_data.texture0.resize(24);
-        mesh_data.indices.resize(36);
-
+        MeshBuilder mesh_builder;
+        
         float32 half_size = size / 2.0f;
 
         // Forward and back as seen from the center of the cube (aka right-handed)!
-        {
-            // Forward (-z)
-            mesh_data.positions[0] = Vec3(half_size, -half_size, -half_size);
-            mesh_data.normals[0] = Vec3::Forward();
-            mesh_data.texture0[0] = Vec2(0, 0);
 
-            mesh_data.positions[1] = Vec3(half_size, half_size, -half_size);
-            mesh_data.normals[1] = Vec3::Forward();
-            mesh_data.texture0[1] = Vec2(0, 1);
+        // Forward (-z)
+        mesh_builder.AddVertex(Vec3( half_size, -half_size, -half_size), Vec3::Forward(), Vec2(0.0f, 0.0f));
+        mesh_builder.AddVertex(Vec3( half_size,  half_size, -half_size), Vec3::Forward(), Vec2(0.0f, 1.0f));
+        mesh_builder.AddVertex(Vec3(-half_size,  half_size, -half_size), Vec3::Forward(), Vec2(1.0f, 1.0f));
+        mesh_builder.AddVertex(Vec3(-half_size, -half_size, -half_size), Vec3::Forward(), Vec2(1.0f, 0.0f));
+        mesh_builder.AddTriangle(0, 1, 2);
+        mesh_builder.AddTriangle(0, 2, 3);
+        // Right (+x)
+        mesh_builder.AddVertex(Vec3(half_size, -half_size,  half_size), Vec3::Right(), Vec2(0.0f, 0.0f));
+        mesh_builder.AddVertex(Vec3(half_size,  half_size,  half_size), Vec3::Right(), Vec2(0.0f, 1.0f));
+        mesh_builder.AddVertex(Vec3(half_size,  half_size, -half_size), Vec3::Right(), Vec2(1.0f, 1.0f));
+        mesh_builder.AddVertex(Vec3(half_size, -half_size, -half_size), Vec3::Right(), Vec2(1.0f, 0.0f));
+        mesh_builder.AddTriangle(4, 5, 6);
+        mesh_builder.AddTriangle(4, 6, 7);
+        // Back (+z)
+        mesh_builder.AddVertex(Vec3(-half_size, -half_size, half_size), Vec3::Back(), Vec2(0.0f, 0.0f));
+        mesh_builder.AddVertex(Vec3(-half_size,  half_size, half_size), Vec3::Back(), Vec2(0.0f, 1.0f));
+        mesh_builder.AddVertex(Vec3( half_size,  half_size, half_size), Vec3::Back(), Vec2(1.0f, 1.0f));
+        mesh_builder.AddVertex(Vec3( half_size, -half_size, half_size), Vec3::Back(), Vec2(1.0f, 0.0f));
+        mesh_builder.AddTriangle(8, 9, 10);
+        mesh_builder.AddTriangle(8, 10, 11);
+        // Left (-x)
+        mesh_builder.AddVertex(Vec3(-half_size, -half_size, -half_size), Vec3::Left(), Vec2(0.0f, 0.0f));
+        mesh_builder.AddVertex(Vec3(-half_size,  half_size, -half_size), Vec3::Left(), Vec2(0.0f, 1.0f));
+        mesh_builder.AddVertex(Vec3(-half_size,  half_size,  half_size), Vec3::Left(), Vec2(1.0f, 1.0f));
+        mesh_builder.AddVertex(Vec3(-half_size, -half_size,  half_size), Vec3::Left(), Vec2(1.0f, 0.0f));
+        mesh_builder.AddTriangle(12, 13, 14);
+        mesh_builder.AddTriangle(12, 14, 15);
+        // Up (+y)
+        mesh_builder.AddVertex(Vec3(-half_size, half_size,  half_size), Vec3::Up(), Vec2(0.0f, 0.0f));
+        mesh_builder.AddVertex(Vec3(-half_size, half_size, -half_size), Vec3::Up(), Vec2(0.0f, 1.0f));
+        mesh_builder.AddVertex(Vec3( half_size, half_size, -half_size), Vec3::Up(), Vec2(1.0f, 1.0f));
+        mesh_builder.AddVertex(Vec3( half_size, half_size,  half_size), Vec3::Up(), Vec2(1.0f, 0.0f));
+        mesh_builder.AddTriangle(16, 17, 18);
+        mesh_builder.AddTriangle(16, 18, 19);
+        // Down (-y)
+        mesh_builder.AddVertex(Vec3(-half_size, -half_size, -half_size), Vec3::Down(), Vec2(0.0f, 0.0f));
+        mesh_builder.AddVertex(Vec3(-half_size, -half_size,  half_size), Vec3::Down(), Vec2(0.0f, 1.0f));
+        mesh_builder.AddVertex(Vec3( half_size, -half_size,  half_size), Vec3::Down(), Vec2(1.0f, 1.0f));
+        mesh_builder.AddVertex(Vec3( half_size, -half_size, -half_size), Vec3::Down(), Vec2(1.0f, 0.0f));
+        mesh_builder.AddTriangle(20, 21, 22);
+        mesh_builder.AddTriangle(20, 22, 23);
 
-            mesh_data.positions[2] = Vec3(-half_size, half_size, -half_size);
-            mesh_data.normals[2] = Vec3::Forward();
-            mesh_data.texture0[2] = Vec2(1, 1);
-
-            mesh_data.positions[3] = Vec3(-half_size, -half_size, -half_size);
-            mesh_data.normals[3] = Vec3::Forward();
-            mesh_data.texture0[3] = Vec2(1, 0);
-
-            // Right
-            mesh_data.positions[4] = Vec3(half_size, -half_size, half_size);
-            mesh_data.normals[4] = Vec3::Right();
-            mesh_data.texture0[4] = Vec2(0, 0);
-
-            mesh_data.positions[5] = Vec3(half_size, half_size, half_size);
-            mesh_data.normals[5] = Vec3::Right();
-            mesh_data.texture0[5] = Vec2(0, 1);
-
-            mesh_data.positions[6] = Vec3(half_size, half_size, -half_size);
-            mesh_data.normals[6] = Vec3::Right();
-            mesh_data.texture0[6] = Vec2(1, 1);
-
-            mesh_data.positions[7] = Vec3(half_size, -half_size, -half_size);
-            mesh_data.normals[7] = Vec3::Right();
-            mesh_data.texture0[7] = Vec2(1, 0);
-
-            // Back (+z)
-            mesh_data.positions[8] = Vec3(-half_size, -half_size, half_size);
-            mesh_data.normals[8] = Vec3::Back();
-            mesh_data.texture0[8] = Vec2(0, 0);
-
-            mesh_data.positions[9] = Vec3(-half_size, half_size, half_size);
-            mesh_data.normals[9] = Vec3::Back();
-            mesh_data.texture0[9] = Vec2(0, 1);
-
-            mesh_data.positions[10] = Vec3(half_size, half_size, half_size);
-            mesh_data.normals[10] = Vec3::Back();
-            mesh_data.texture0[10] = Vec2(1, 1);
-
-            mesh_data.positions[11] = Vec3(half_size, -half_size, half_size);
-            mesh_data.normals[11] = Vec3::Back();
-            mesh_data.texture0[11] = Vec2(1, 0);
-
-            // Left
-            mesh_data.positions[12] = Vec3(-half_size, -half_size, -half_size);
-            mesh_data.normals[12] = Vec3::Left();
-            mesh_data.texture0[12] = Vec2(0, 0);
-
-            mesh_data.positions[13] = Vec3(-half_size, half_size, -half_size);
-            mesh_data.normals[13] = Vec3::Left();
-            mesh_data.texture0[13] = Vec2(0, 1);
-
-            mesh_data.positions[14] = Vec3(-half_size, half_size, half_size);
-            mesh_data.normals[14] = Vec3::Left();
-            mesh_data.texture0[14] = Vec2(1, 1);
-
-            mesh_data.positions[15] = Vec3(-half_size, -half_size, half_size);
-            mesh_data.normals[15] = Vec3::Left();
-            mesh_data.texture0[15] = Vec2(1, 0);
-
-            // Up
-            mesh_data.positions[16] = Vec3(-half_size, half_size, half_size);
-            mesh_data.normals[16] = Vec3::Up();
-            mesh_data.texture0[16] = Vec2(0, 0);
-
-            mesh_data.positions[17] = Vec3(-half_size, half_size, -half_size);
-            mesh_data.normals[17] = Vec3::Up();
-            mesh_data.texture0[17] = Vec2(0, 1);
-
-            mesh_data.positions[18] = Vec3(half_size, half_size, -half_size);
-            mesh_data.normals[18] = Vec3::Up();
-            mesh_data.texture0[18] = Vec2(1, 1);
-
-            mesh_data.positions[19] = Vec3(half_size, half_size, half_size);
-            mesh_data.normals[19] = Vec3::Up();
-            mesh_data.texture0[19] = Vec2(1, 0);
-
-            // Down
-            mesh_data.positions[20] = Vec3(-half_size, -half_size, -half_size);
-            mesh_data.normals[20] = Vec3::Down();
-            mesh_data.texture0[20] = Vec2(0, 0);
-
-            mesh_data.positions[21] = Vec3(-half_size, -half_size, half_size);
-            mesh_data.normals[21] = Vec3::Down();
-            mesh_data.texture0[21] = Vec2(0, 1);
-
-            mesh_data.positions[22] = Vec3(half_size, -half_size, half_size);
-            mesh_data.normals[22] = Vec3::Down();
-            mesh_data.texture0[22] = Vec2(1, 1);
-
-            mesh_data.positions[23] = Vec3(half_size, -half_size, -half_size);
-            mesh_data.normals[23] = Vec3::Down();
-            mesh_data.texture0[23] = Vec2(1, 0);
-        }
-
-        mesh_data.indices = {
-            // Back
-            0, 1, 2,
-            0, 2, 3,
-
-            // Right
-            4, 5, 6,
-            4, 6, 7,
-
-            // Forward
-            8, 9, 10,
-            8, 10, 11,
-
-            // Left
-            12, 13, 14,
-            12, 14, 15,
-
-            // Up
-            16, 17, 18,
-            16, 18, 19,
-
-            // Down
-            20, 21, 22,
-            20, 22, 23
-        };
-
-        return Mesh::Create(mesh_data, { { MeshTopology::Triangles, 36, 0, 0 } });
+        return mesh_builder.CreateMesh();
     }
 
     //--------------------------------------------------------------
-    Mesh *MeshFactory::CreateSphere(float32 radius) {
-        MeshData mesh_data;
+    Mesh *MeshFactory::CreateSphere(float32 radius, uint32 sector_count, uint32 stack_count) {
+        MeshBuilder mesh_builder;
 
-        const uint32 SECTOR_COUNT = 36;
-        const uint32 STACK_COUNT = 18;
-        const float32 SECTOR_STEP = 2 * Math::PI / SECTOR_COUNT;
-        const float32 STACK_STEP = Math::PI / STACK_COUNT;
-
+        float32 sector_step = 2 * Math::PI / sector_count;
+        float32 stack_step = Math::PI / stack_count;
         float32 length_inverse = 1.0f / radius;
 
-        for (uint32 i = 0; i <= STACK_COUNT; ++i) {
-            float32 stack_angle = Math::PI / 2 - i * STACK_STEP;
+        for (uint32 i = 0; i <= stack_count; ++i) {
+            float32 stack_angle = Math::PI / 2 - i * stack_step;
             float32 xy = radius * Math::Cos(stack_angle);
             float32 y = radius * Math::Sin(stack_angle);
 
-            for (int j = 0; j <= SECTOR_COUNT; ++j) {
-                float32 sector_angle = j * SECTOR_STEP;
+            for (uint32 j = 0; j <= sector_count; ++j) {
+                float32 sector_angle = j * sector_step;
 
                 float32 x = xy * Math::Cos(sector_angle);
                 float32 z = xy * Math::Sin(sector_angle);
-                mesh_data.positions.push_back(Vec3(x, y, z));
-
                 float32 nx = x * length_inverse;
                 float32 ny = y * length_inverse;
                 float32 nz = z * length_inverse;
-                mesh_data.normals.push_back(Vec3(nx, ny, nz));
+                float32 u = static_cast<float32>(j) / sector_count;
+                float32 v = static_cast<float32>(i) / stack_count;
 
-                float32 u = static_cast<float32>(j) / SECTOR_COUNT;
-                float32 v = static_cast<float32>(i) / STACK_COUNT;
-                mesh_data.texture0.push_back(Vec2(u, v));
+                mesh_builder.AddVertex(Vec3(x, y, z), Vec3(nx, ny, nz), Vec2(u, v));
             }
         }
 
-        for (uint32 i = 0; i < STACK_COUNT; ++i) {
-            uint32 k1 = i * (SECTOR_COUNT + 1);
-            uint32 k2 = k1 + SECTOR_COUNT + 1;
+        for (uint32 i = 0; i < stack_count; ++i) {
+            uint32 k1 = i * (sector_count + 1);
+            uint32 k2 = k1 + sector_count + 1;
 
-            for (uint32 j = 0; j < SECTOR_COUNT; ++j, ++k1, ++k2) {
+            for (uint32 j = 0; j < sector_count; ++j, ++k1, ++k2) {
                 if (i != 0) {
-                    mesh_data.indices.push_back(k1);
-                    mesh_data.indices.push_back(k2);
-                    mesh_data.indices.push_back(k1 + 1);
+                    mesh_builder.AddTriangle(k1, k2, k1 + 1);
                 }
 
-                if (i != (STACK_COUNT - 1)) {
-                    mesh_data.indices.push_back(k1 + 1);
-                    mesh_data.indices.push_back(k2);
-                    mesh_data.indices.push_back(k2 + 1);
+                if (i != (stack_count - 1)) {
+                    mesh_builder.AddTriangle(k1 + 1, k2, k2 + 1);
                 }
             }
         }
 
-        return Mesh::Create(mesh_data, { { MeshTopology::Triangles, static_cast<uint32>(mesh_data.indices.size()), 0, 0 } });
+        return mesh_builder.CreateMesh();
     }
 
     //--------------------------------------------------------------

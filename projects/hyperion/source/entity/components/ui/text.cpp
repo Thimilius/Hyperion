@@ -74,7 +74,6 @@ namespace Hyperion {
         MeshData mesh_data;
         Vector<uint32> codepoints = StringUtils::GetCodepointsUtf8(text);
         uint32 index = 0;
-        uint32 index_count = 0;
         for (uint32 codepoint : codepoints) {
             // We first handle the special characters.
             switch (codepoint) {
@@ -105,11 +104,10 @@ namespace Hyperion {
             mesh_builder.AddTriangle(index, index + 2, index + 3);
             
             index += 4;
-            index_count += 6;
             position.x += glyph.advance * scale;
         }
 
-        return mesh_builder.CreateMesh(index_count);
+        return mesh_builder.CreateMesh();
     }
 
     //--------------------------------------------------------------
