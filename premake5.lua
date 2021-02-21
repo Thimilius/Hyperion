@@ -79,6 +79,7 @@ workspace "hyperion"
 project "hyperion"
 	location "projects/hyperion"
 	dependson { "Hyperion.Core" }
+	dependson { "Hyperion.Editor" }
 	
 	language "C++"
 	cppdialect "C++17"

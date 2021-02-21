@@ -48,9 +48,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Application.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Application.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Hyperion.Core\Hyperion.Core.csproj">
