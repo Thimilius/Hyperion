@@ -22,11 +22,11 @@ namespace Hyperion {
         void SetColor(Color color);
     protected:
         void OnCreate() override;
-        void OnRebuildMesh() override;
+        void OnRebuildMesh(MeshBuilder &mesh_builder) override;
     private:
         Text() : Widget("Text") { }
     private:
-        static Mesh *GenerateMeshForText(Font *font, const String &text, Vec2 position, float32 scale, Color color);
+        static Mesh *GenerateMeshForText(MeshBuilder &mesh_builder, Font *font, const String &text, Vec2 position, float32 scale, Color color);
 
         static Text *Create();
     private:

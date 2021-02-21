@@ -224,6 +224,43 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void MeshBuilder::Clear() {
+        m_mesh_data.positions.clear();
+        m_mesh_data.normals.clear();
+        m_mesh_data.colors.clear();
+        m_mesh_data.texture0.clear();
+        m_mesh_data.indices.clear();
+    }
+
+    //--------------------------------------------------------------
+    void MeshBuilder::AddVertex(Vec3 position, Color color, Vec2 texture0) {
+        m_mesh_data.positions.push_back(position);
+        m_mesh_data.colors.push_back(color);
+        m_mesh_data.texture0.push_back(texture0);
+    }
+
+    //--------------------------------------------------------------
+    void MeshBuilder::AddTriangle(uint32 a, uint32 b, uint32 c) {
+        m_mesh_data.indices.push_back(a);
+        m_mesh_data.indices.push_back(b);
+        m_mesh_data.indices.push_back(c);
+    }
+
+    //--------------------------------------------------------------
+    Mesh *MeshBuilder::CreateMesh(uint32 index_count) {
+        Vector<SubMesh> sub_meshes = { { MeshTopology::Triangles, index_count, 0, 0 } };
+        return Mesh::Create(m_mesh_data, sub_meshes);
+    }
+
+    //--------------------------------------------------------------
+    void MeshBuilder::SetToMesh(Mesh *mesh, uint32 index_count) {
+        Vector<SubMesh> sub_meshes = { { MeshTopology::Triangles, index_count, 0, 0 } };
+        mesh->SetData(m_mesh_data, sub_meshes);
+    }
+
+    // TODO: Use mesh build in mesh factory methods.
+
+    //--------------------------------------------------------------
     Mesh *MeshFactory::CreateQuad(float32 width, float32 height) {
         float32 half_width = width / 2.0f;
         float32 half_height = height / 2.0f;

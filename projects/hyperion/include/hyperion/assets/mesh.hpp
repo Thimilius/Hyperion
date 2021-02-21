@@ -2,6 +2,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset.hpp"
+#include "hyperion/core/color.hpp"
 #include "hyperion/core/math/bounding_box.hpp"
 #include "hyperion/core/math/vec2.hpp"
 #include "hyperion/core/math/vec3.hpp"
@@ -61,6 +62,19 @@ namespace Hyperion {
 
         bool m_read_and_write_enabled;
         BoundingBox m_bounds;
+    };
+
+    class MeshBuilder final {
+    public:
+        void Clear();
+
+        void AddVertex(Vec3 position, Color color, Vec2 texture0);
+        void AddTriangle(uint32 a, uint32 b, uint32 c);
+
+        Mesh *CreateMesh(uint32 index_count);
+        void SetToMesh(Mesh *mesh, uint32 index_count);
+    private:
+        MeshData m_mesh_data;
     };
 
     class IMeshLoader {

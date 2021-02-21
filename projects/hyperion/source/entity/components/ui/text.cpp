@@ -52,17 +52,19 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void Text::OnRebuildMesh() {
+    void Text::OnRebuildMesh(MeshBuilder &mesh_builder) {
         WidgetRenderer *widget_renderer = GetEntity()->GetComponent<WidgetRenderer>();
         Mesh *old_mesh = widget_renderer->GetMesh();
         Object::Destroy(old_mesh);
 
-        Mesh *new_mesh = GenerateMeshForText(m_font, m_text, GetTransform()->GetPosition(), 1.0f, m_color);
+        mesh_builder.Clear();
+
+        Mesh *new_mesh = GenerateMeshForText(mesh_builder, m_font, m_text, GetTransform()->GetPosition(), 1.0f, m_color);
         widget_renderer->SetMesh(new_mesh);
     }
 
     //--------------------------------------------------------------
-    Mesh *Text::GenerateMeshForText(Font *font, const String &text, Vec2 position, float32 scale, Color color) {
+    Mesh *Text::GenerateMeshForText(MeshBuilder &mesh_builder, Font *font, const String &text, Vec2 position, float32 scale, Color color) {
         if (text == "") {
             return nullptr;
         }
@@ -95,32 +97,19 @@ namespace Hyperion {
             float32 width = glyph.size.x * scale;
             float32 height = glyph.size.y * scale;
 
-            mesh_data.positions.push_back(Vec3(x_pos, y_pos + height, 0.0f));
-            mesh_data.texture0.push_back(element.uv_top_left);
-            mesh_data.colors.push_back(color);
-            mesh_data.positions.push_back(Vec3(x_pos + width, y_pos + height, 0.0f));
-            mesh_data.texture0.push_back(element.uv_top_right);
-            mesh_data.colors.push_back(color);
-            mesh_data.positions.push_back(Vec3(x_pos + width, y_pos, 0.0f));
-            mesh_data.texture0.push_back(element.uv_bottom_right);
-            mesh_data.colors.push_back(color);
-            mesh_data.positions.push_back(Vec3(x_pos, y_pos, 0.0f));
-            mesh_data.texture0.push_back(element.uv_bottom_left);
-            mesh_data.colors.push_back(color);
-
-            mesh_data.indices.push_back(index++);
-            mesh_data.indices.push_back(index++);
-            mesh_data.indices.push_back(index++);
-            mesh_data.indices.push_back(index - 3);
-            mesh_data.indices.push_back(index - 1);
-            mesh_data.indices.push_back(index++);
-
+            mesh_builder.AddVertex(Vec3(x_pos, y_pos + height, 0.0f), color, element.uv_top_left);
+            mesh_builder.AddVertex(Vec3(x_pos + width, y_pos + height, 0.0f), color, element.uv_top_right);
+            mesh_builder.AddVertex(Vec3(x_pos + width, y_pos, 0.0f), color, element.uv_bottom_right);
+            mesh_builder.AddVertex(Vec3(x_pos, y_pos, 0.0f), color, element.uv_bottom_left);
+            mesh_builder.AddTriangle(index, index + 1, index + 2);
+            mesh_builder.AddTriangle(index, index + 2, index + 3);
+            
+            index += 4;
             index_count += 6;
             position.x += glyph.advance * scale;
         }
 
-        Vector<SubMesh> sub_meshes = { { MeshTopology::Triangles, index_count, 0, 0 } };
-        return Mesh::Create(mesh_data, sub_meshes);
+        return mesh_builder.CreateMesh(index_count);
     }
 
     //--------------------------------------------------------------

@@ -1,6 +1,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/assets/mesh.hpp"
 #include "hyperion/entity/components/behaviour.hpp"
 
 //-------------------- Forward Declarations --------------------
@@ -25,7 +26,7 @@ namespace Hyperion {
         void OnCreate() override;
         void OnDestroy() override;
 
-        virtual void OnRebuildMesh() { }
+        virtual void OnRebuildMesh(MeshBuilder &mesh_builder) { }
     protected:
         bool m_is_dirty = false;
     private:
