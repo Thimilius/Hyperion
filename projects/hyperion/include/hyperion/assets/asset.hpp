@@ -44,6 +44,7 @@ namespace Hyperion {
 
     enum class MaterialPrimitive {
         Default,
+        Ui,
         Font,
     };
 
@@ -70,6 +71,7 @@ namespace Hyperion {
         inline static Texture *s_texture_primitive_grid;
 
         inline static Material *s_material_primitive_default;
+        inline static Material *s_material_primitive_ui;
         inline static Material *s_material_primitive_font;
 
         inline static Mesh *s_mesh_primitive_quad;

@@ -11,6 +11,7 @@
 #include <hyperion/entity/components/rendering/camera.hpp>
 #include <hyperion/entity/components/rendering/widget_renderer.hpp>
 #include <hyperion/entity/components/ui/text.hpp>
+#include <hyperion/entity/components/ui/graphic.hpp>
 #include <hyperion/rendering/immediate_renderer.hpp>
 
 //---------------------- Project Includes ----------------------
@@ -35,12 +36,20 @@ namespace Hyperion::Editor {
         Font *font = FontLoader::LoadFont("data/fonts/consola.ttf", 32, FontCharacterSet::LatinSupplement);
         Entity *canvas_entity = Entity::Create("Canvas");
         s_editor_canvas = canvas_entity->AddComponent<Canvas>();
-        Entity *text_entity = Entity::Create("Text");
-        text_entity->GetTransform()->SetParent(canvas_entity->GetTransform());
-        Text *text = text_entity->AddComponent<Text>();
-        text->SetFont(font);
-        text->SetText("Hello there!");
-        text->SetColor(Color::Cyan());
+        {
+            Entity *text_entity = Entity::Create("Text");
+            text_entity->GetTransform()->SetParent(canvas_entity->GetTransform());
+            Text *text = text_entity->AddComponent<Text>();
+            text->SetFont(font);
+            text->SetText("Hello there!");
+            text->SetColor(Color::Cyan());
+        }
+        {
+            Entity *graphic_entity = Entity::Create("Graphic");
+            graphic_entity->GetTransform()->SetParent(canvas_entity->GetTransform());
+            Graphic *graphic = graphic_entity->AddComponent<Graphic>();
+            graphic->SetColor(Color::Yellow());
+        }
 
         EditorWorldViewGrid::Initialize();
     }

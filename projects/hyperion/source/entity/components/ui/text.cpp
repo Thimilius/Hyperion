@@ -35,16 +35,6 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void Text::SetColor(Color color) {
-        if (m_color == color) {
-            return;
-        }
-
-        m_color = color;
-        SetDirty();
-    }
-
-    //--------------------------------------------------------------
     void Text::OnCreate() {
         Widget::OnCreate();
 

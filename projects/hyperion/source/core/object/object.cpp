@@ -29,6 +29,7 @@
 #include "hyperion/entity/components/rendering/renderer.hpp"
 #include "hyperion/entity/components/rendering/widget_renderer.hpp"
 #include "hyperion/entity/components/ui/canvas.hpp"
+#include "hyperion/entity/components/ui/graphic.hpp"
 #include "hyperion/entity/components/ui/widget.hpp"
 #include "hyperion/entity/components/ui/text.hpp"
 
@@ -240,6 +241,8 @@ HYP_REFLECT_REGISTER_BEGIN
 
         Registration<Canvas>("Canvas")(metadata(Metadata::RequiresComponent0, Type::get<RectTransform>()))
             .constructor(select_overload<Canvas *()>(&Canvas::Create))(DefaultConstructorPolicy);
+        Registration<Graphic>("Graphic")
+            .constructor(select_overload<Graphic *()>(&Graphic::Create))(DefaultConstructorPolicy);
         Registration<Widget>("Widget")(metadata(Metadata::RequiresComponent0, Type::get<RectTransform>()))(metadata(Metadata::RequiresComponent1, Type::get<WidgetRenderer>()));
         Registration<Text>("Text")
             .constructor(select_overload<Text *()>(&Text::Create))(DefaultConstructorPolicy);

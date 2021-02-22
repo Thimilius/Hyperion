@@ -1,4 +1,4 @@
-#pragma once
+ #pragma once
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/entity/components/component.hpp"

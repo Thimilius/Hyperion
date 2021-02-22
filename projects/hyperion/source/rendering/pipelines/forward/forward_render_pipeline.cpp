@@ -94,13 +94,18 @@ namespace Hyperion::Rendering {
         Vector<Widget *> widgets = canvas->GetEntity()->GetComponentsInChildren<Widget>();
         for (Widget *widget : widgets) {
             WidgetRenderer *widget_renderer = widget->GetEntity()->GetComponent<WidgetRenderer>();
+
             Mesh *mesh = widget_renderer->GetMesh();
             if (!mesh) {
                 continue;
             }
-
             ResourceId mesh_id = mesh->GetResourceId();
+
             Material *material = widget_renderer->GetMaterial();
+            if (!material) {
+                // TODO: Use fallback material.
+                continue;
+            }
             ResourceId material_id = material->GetResourceId();
 
             RectTransform *rect_transform = widget->GetEntity()->GetComponent<RectTransform>();

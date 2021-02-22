@@ -3,7 +3,6 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/font.hpp"
 #include "hyperion/assets/mesh.hpp"
-#include "hyperion/core/color.hpp"
 #include "hyperion/entity/components/ui/widget.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -17,9 +16,6 @@ namespace Hyperion {
 
         Font *GetFont() const { return m_font; }
         void SetFont(Font *font);
-
-        Color GetColor() const { return m_color; }
-        void SetColor(Color color);
     protected:
         void OnCreate() override;
         void OnRebuildMesh(MeshBuilder &mesh_builder) override;
@@ -32,7 +28,6 @@ namespace Hyperion {
     private:
         String m_text;
         Font *m_font = nullptr;
-        Color m_color = Color::White();
     };
 
 }

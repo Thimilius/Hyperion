@@ -1,6 +1,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/core/color.hpp"
 #include "hyperion/assets/mesh.hpp"
 #include "hyperion/entity/components/behaviour.hpp"
 
@@ -16,6 +17,9 @@ namespace Hyperion {
         HYP_REFLECT(Behaviour);
     public:
         bool IsDirty() const { return m_is_dirty; }
+
+        Color GetColor() const { return m_color; }
+        void SetColor(Color color);
     protected:
         Widget() = default;
         Widget(const String & name) : Behaviour(name) { }
@@ -29,6 +33,8 @@ namespace Hyperion {
         virtual void OnRebuildMesh(MeshBuilder &mesh_builder) { }
     protected:
         bool m_is_dirty = false;
+
+        Color m_color = Color::White();
     private:
         friend class Hyperion::UiEngine;
     }; 
