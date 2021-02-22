@@ -6,6 +6,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/entity/entity.hpp"
+#include "hyperion/entity/components/ui/canvas.hpp"
 
 //------------------------- Namespaces -------------------------
 using namespace Hyperion::Rendering;
@@ -47,7 +48,7 @@ namespace Hyperion {
 
         mesh_builder.Clear();
 
-        Mesh *new_mesh = GenerateMeshForText(mesh_builder, m_font, m_text, GetTransform()->GetPosition(), 1.0f, m_color);
+        Mesh *new_mesh = GenerateMeshForText(mesh_builder, m_font, m_text, GetTransform()->GetPosition(), GetEntity()->GetComponentInParent<Canvas>()->GetScale(), m_color);
         GetWidgetRenderer()->SetMesh(new_mesh);
     }
 

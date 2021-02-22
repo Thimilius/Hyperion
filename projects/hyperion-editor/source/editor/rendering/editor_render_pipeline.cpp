@@ -66,6 +66,7 @@ namespace Hyperion::Editor {
         }
 
         {
+            render_driver->SetRasterizerState(RasterizerState());
             render_driver->BlitRenderTexture(0, m_render_texture->GetResourceId());
         }
     }

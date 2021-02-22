@@ -37,18 +37,20 @@ namespace Hyperion::Editor {
         Entity *canvas_entity = Entity::Create("Canvas");
         s_editor_canvas = canvas_entity->AddComponent<Canvas>();
         {
+            Entity *graphic_entity = Entity::Create("Graphic");
+            graphic_entity->GetTransform()->SetParent(canvas_entity->GetTransform());
+            Graphic *graphic = graphic_entity->AddComponent<Graphic>();
+            graphic->SetColor(Color::Yellow());
+            graphic->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::BottomLeftCorner);
+            graphic->GetRectTransform()->SetPosition(Vec3(0.0f, 0.0f, 0.0f));
+        }
+        {
             Entity *text_entity = Entity::Create("Text");
             text_entity->GetTransform()->SetParent(canvas_entity->GetTransform());
             Text *text = text_entity->AddComponent<Text>();
             text->SetFont(font);
             text->SetText("Hello there!");
-            text->SetColor(Color::Cyan());
-        }
-        {
-            Entity *graphic_entity = Entity::Create("Graphic");
-            graphic_entity->GetTransform()->SetParent(canvas_entity->GetTransform());
-            Graphic *graphic = graphic_entity->AddComponent<Graphic>();
-            graphic->SetColor(Color::Yellow());
+            text->SetColor(Color::White());
         }
 
         EditorWorldViewGrid::Initialize();

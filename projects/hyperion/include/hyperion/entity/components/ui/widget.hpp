@@ -3,6 +3,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/color.hpp"
 #include "hyperion/assets/mesh.hpp"
+#include "hyperion/entity/entity_message.hpp"
 #include "hyperion/entity/components/behaviour.hpp"
 #include "hyperion/entity/components/rect_transform.hpp"
 #include "hyperion/entity/components/rendering/widget_renderer.hpp"
@@ -15,7 +16,7 @@ namespace Hyperion {
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    class Widget : public Behaviour {
+    class Widget : public Behaviour, public IEntityMessageListener {
         HYP_REFLECT(Behaviour);
     public:
         inline RectTransform *GetRectTransform() const { return m_rect_transform; }
@@ -24,6 +25,8 @@ namespace Hyperion {
 
         inline Color GetColor() const { return m_color; }
         void SetColor(Color color);
+
+        void OnMessage(EntityMessage message) override;
     protected:
         Widget() = default;
         Widget(const String & name) : Behaviour(name) { }

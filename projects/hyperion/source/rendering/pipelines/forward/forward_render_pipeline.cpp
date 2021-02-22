@@ -89,6 +89,11 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void ForwardRenderPipeline::RenderCanvas(IRenderDriver *render_driver, Canvas *canvas) {
+        RasterizerState rasterizer_state;
+        rasterizer_state.blending_enabled = true;
+        rasterizer_state.depth_mask_enabled = false;
+        render_driver->SetRasterizerState(rasterizer_state);
+
         SetUICameraData(render_driver);
 
         Vector<Widget *> widgets = canvas->GetEntity()->GetComponentsInChildren<Widget>();
@@ -119,7 +124,13 @@ namespace Hyperion::Rendering {
                 material->SetTexture("u_texture", font->GetTexture());
             }
 
-            render_driver->DrawMesh(mesh_id, rect_transform->GetLocalToWorldMatrix(), material_id, 0);
+            render_driver->DrawMesh(mesh_id, Mat4::Identity(), material_id, 0);
+        }
+
+        {
+            RasterizerState rasterizer_state;
+            rasterizer_state.blending_enabled = true;
+            render_driver->SetRasterizerState(rasterizer_state);
         }
     }
 

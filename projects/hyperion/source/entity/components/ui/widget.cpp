@@ -22,9 +22,17 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void Widget::OnMessage(EntityMessage message) {
+        if (message.type == EntityMessageType::TransformChanged) {
+            SetDirty();
+        }
+    }
+
+    //--------------------------------------------------------------
     void Widget::OnCreate() {
         Behaviour::OnCreate();
 
+        GetEntity()->RegisterMessageListener(this);
         UiEngine::RegisterWidget(this);
 
         m_rect_transform = GetEntity()->GetComponent<RectTransform>();
@@ -35,6 +43,7 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Widget::OnDestroy() {
+        GetEntity()->UnregisterMessageListener(this);
         UiEngine::UnregisterWidget(this);
 
         Behaviour::OnDestroy();
