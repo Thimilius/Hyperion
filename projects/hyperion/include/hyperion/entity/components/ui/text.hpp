@@ -11,10 +11,10 @@ namespace Hyperion {
     class Text : public Widget {
         HYP_REFLECT(Widget);
     public:
-        String GetText() const { return m_text; }
+        inline String GetText() const { return m_text; }
         void SetText(const String &text);
 
-        Font *GetFont() const { return m_font; }
+        inline Font *GetFont() const { return m_font; }
         void SetFont(Font *font);
     protected:
         void OnCreate() override;

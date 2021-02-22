@@ -90,7 +90,7 @@ namespace Hyperion {
 
         // This comparison is most likely very unreliable
         bool stretching = m_anchor_min != m_anchor_max;
-        if (!stretching) {
+        if (stretching) {
             float32 x = m_anchor_min.x * parent_size.x - half_parent_size.x;
             float32 y = m_anchor_min.y * parent_size.y - half_parent_size.y;
 

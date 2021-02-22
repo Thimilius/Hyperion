@@ -6,7 +6,6 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/entity/entity.hpp"
-#include "hyperion/entity/components/rendering/widget_renderer.hpp"
 
 //------------------------- Namespaces -------------------------
 using namespace Hyperion::Rendering;
@@ -38,19 +37,18 @@ namespace Hyperion {
     void Text::OnCreate() {
         Widget::OnCreate();
 
-        GetEntity()->GetComponent<WidgetRenderer>()->SetMaterial(AssetManager::GetMaterialPrimitive(MaterialPrimitive::Font));
+        GetWidgetRenderer()->SetMaterial(AssetManager::GetMaterialPrimitive(MaterialPrimitive::Font));
     }
 
     //--------------------------------------------------------------
     void Text::OnRebuildMesh(MeshBuilder &mesh_builder) {
-        WidgetRenderer *widget_renderer = GetEntity()->GetComponent<WidgetRenderer>();
-        Mesh *old_mesh = widget_renderer->GetMesh();
+        Mesh *old_mesh = GetWidgetRenderer()->GetMesh();
         Object::Destroy(old_mesh);
 
         mesh_builder.Clear();
 
         Mesh *new_mesh = GenerateMeshForText(mesh_builder, m_font, m_text, GetTransform()->GetPosition(), 1.0f, m_color);
-        widget_renderer->SetMesh(new_mesh);
+        GetWidgetRenderer()->SetMesh(new_mesh);
     }
 
     //--------------------------------------------------------------

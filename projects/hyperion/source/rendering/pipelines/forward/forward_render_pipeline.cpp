@@ -93,7 +93,7 @@ namespace Hyperion::Rendering {
 
         Vector<Widget *> widgets = canvas->GetEntity()->GetComponentsInChildren<Widget>();
         for (Widget *widget : widgets) {
-            WidgetRenderer *widget_renderer = widget->GetEntity()->GetComponent<WidgetRenderer>();
+            WidgetRenderer *widget_renderer = widget->GetWidgetRenderer();
 
             Mesh *mesh = widget_renderer->GetMesh();
             if (!mesh) {

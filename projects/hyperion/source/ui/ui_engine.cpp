@@ -4,11 +4,20 @@
 //--------------------- Definition Include ---------------------
 #include "hyperion/ui/ui_engine.hpp"
 
+//---------------------- Project Includes ----------------------
+#include "hyperion/entity/world.hpp"
+#include "hyperion/entity/components/ui/canvas.hpp"
+
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     //--------------------------------------------------------------
     void UiEngine::LateUpdate() {
+        if (s_widgets.size() > 0) {
+            Canvas *canvas = s_widgets[0]->GetWorld()->FindComponentOfType<Canvas>();
+            canvas->UpdateScale();
+        }
+
         for (Widget *widget : s_widgets) {
             if (widget->IsDirty()) {
                 s_mesh_builder.Clear();

@@ -4,6 +4,8 @@
 #include "hyperion/core/color.hpp"
 #include "hyperion/assets/mesh.hpp"
 #include "hyperion/entity/components/behaviour.hpp"
+#include "hyperion/entity/components/rect_transform.hpp"
+#include "hyperion/entity/components/rendering/widget_renderer.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -16,9 +18,11 @@ namespace Hyperion {
     class Widget : public Behaviour {
         HYP_REFLECT(Behaviour);
     public:
-        bool IsDirty() const { return m_is_dirty; }
+        inline RectTransform *GetRectTransform() const { return m_rect_transform; }
+        inline WidgetRenderer *GetWidgetRenderer() const { return m_widget_renderer; }
+        inline bool IsDirty() const { return m_is_dirty; }
 
-        Color GetColor() const { return m_color; }
+        inline Color GetColor() const { return m_color; }
         void SetColor(Color color);
     protected:
         Widget() = default;
@@ -32,9 +36,11 @@ namespace Hyperion {
 
         virtual void OnRebuildMesh(MeshBuilder &mesh_builder) { }
     protected:
-        bool m_is_dirty = false;
-
         Color m_color = Color::White();
+    private:
+        WidgetRenderer *m_widget_renderer = nullptr;
+        RectTransform *m_rect_transform = nullptr;
+        bool m_is_dirty = false;
     private:
         friend class Hyperion::UiEngine;
     }; 
