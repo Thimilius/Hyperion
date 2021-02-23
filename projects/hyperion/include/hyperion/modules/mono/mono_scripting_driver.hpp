@@ -51,13 +51,13 @@ namespace Hyperion::Scripting {
         void InitDebugger(const ScriptingSettings &settings);
         void InitDomain();
         void InitBindings();
-        void InitAssembly();
-        void InitClasses();
-        void InitMethods();
+
+        void ReloadScriptingDomain();
 
         void PrintUnhandledException(MonoObject *exception);
     private:
         inline static MonoDomain *s_core_domain;
+        inline static MonoDomain *s_script_domain;
 
         inline static MonoAssembly *s_core_assembly;
         inline static MonoImage *s_core_assembly_image;

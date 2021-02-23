@@ -21,10 +21,6 @@ namespace Hyperion.Editor {
 
         private static Entity s_Parent;
 
-        public static void Start() {
-            
-        }
-
         public static void Update() {
             if (Input.IsKeyDown(KeyCode.N)) {
                 if (!s_Parent) {

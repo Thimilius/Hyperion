@@ -27,10 +27,7 @@ namespace Hyperion::Scripting {
     void MonoScriptingDriver::Initialize(const ScriptingSettings &settings) {
         InitDebugger(settings);
         InitDomain();
-        InitAssembly();
         InitBindings();
-        InitClasses();
-        InitMethods();
     }
 
     //--------------------------------------------------------------
@@ -74,6 +71,13 @@ namespace Hyperion::Scripting {
             delete scripting_type;
         }
 
+        // We can clean up the core domain.
+        // We do not need to bother explicitly unloading the scripting domain.
+        mono_domain_set(s_core_domain, true);
+        if (!mono_domain_finalize(s_core_domain, 2000)) {
+            HYP_LOG_ERROR("Scripting", "Domain finalization timeout!");
+        }
+        mono_gc_collect(mono_gc_max_generation());
         mono_jit_cleanup(s_core_domain);
     }
 
@@ -219,14 +223,15 @@ namespace Hyperion::Scripting {
     //--------------------------------------------------------------
     void MonoScriptingDriver::InitDomain() {
         mono_set_dirs("data/mono/lib", "data/mono/etc");
-        s_core_domain = mono_jit_init_version("Hyperion", "v4.0.30319");
+        s_core_domain = mono_jit_init_version("Hyperion.CoreDomain", "v4.0.30319");
         if (!s_core_domain) {
             HYP_LOG_ERROR("Scripting", "Initialization of app domain failed!");
             return;
         } else {
             HYP_LOG_INFO("Scripting", "Initialized Mono scripting driver!");
         }
-        mono_thread_set_main(mono_thread_current());
+
+        ReloadScriptingDomain();
     }
 
     //--------------------------------------------------------------
@@ -235,40 +240,54 @@ namespace Hyperion::Scripting {
     }
 
     //--------------------------------------------------------------
-    void MonoScriptingDriver::InitAssembly() {
+    void MonoScriptingDriver::ReloadScriptingDomain() {
+        if (s_script_domain != nullptr) {
+            mono_domain_set(s_core_domain, true);
+            mono_domain_finalize(s_script_domain, 2000);
+            mono_gc_collect(mono_gc_max_generation());
+            MonoObject *exception = nullptr;
+            mono_domain_try_unload(s_script_domain, &exception);
+            if (exception != nullptr) {
+                PrintUnhandledException(exception);
+            }
+        }
+        s_script_domain = mono_domain_create_appdomain("Hyperion.ScriptDomain", nullptr);
+        HYP_ASSERT(s_script_domain);
+        mono_domain_set(s_script_domain, true);
+        mono_thread_set_main(mono_thread_current());
+
+        // Load core assemblies.
         {
             char *assembly_path = "data/managed/Hyperion.Core.dll";
-            s_core_assembly = mono_domain_assembly_open(s_core_domain, assembly_path);
+            s_core_assembly = mono_domain_assembly_open(s_script_domain, assembly_path);
             HYP_ASSERT(s_core_assembly);
             s_core_assembly_image = mono_assembly_get_image(s_core_assembly);
             HYP_ASSERT(s_core_assembly_image);
         }
         {
             char *assembly_path = "data/managed/Hyperion.Editor.dll";
-            s_editor_assembly = mono_domain_assembly_open(s_core_domain, assembly_path);
+            s_editor_assembly = mono_domain_assembly_open(s_script_domain, assembly_path);
             HYP_ASSERT(s_editor_assembly);
             s_editor_assembly_image = mono_assembly_get_image(s_editor_assembly);
             HYP_ASSERT(s_editor_assembly_image);
         }
-    }
 
-    //--------------------------------------------------------------
-    void MonoScriptingDriver::InitClasses() {
-        s_component_class = mono_class_from_name(s_core_assembly_image, "Hyperion", "Component");
-        HYP_ASSERT(s_component_class);
+        // Load core classes.
+        {
+            s_component_class = mono_class_from_name(s_core_assembly_image, "Hyperion", "Component");
+            HYP_ASSERT(s_component_class);
+            s_script_class = mono_class_from_name(s_core_assembly_image, "Hyperion", "Script");
+            HYP_ASSERT(s_script_class);
 
-        s_script_class = mono_class_from_name(s_core_assembly_image, "Hyperion", "Script");
-        HYP_ASSERT(s_script_class);
-    }
+            MonoScriptingBindings::RegisterClasses();
+        }
 
-    //--------------------------------------------------------------
-    void MonoScriptingDriver::InitMethods() {
-        MonoMethodDesc *start_method_description = mono_method_desc_new("Hyperion.Editor.Application::Start()", true);
-        MonoMethod *start_method = mono_method_desc_search_in_image(start_method_description, s_editor_assembly_image);
-        mono_runtime_invoke(start_method, nullptr, nullptr, nullptr);
-
-        MonoMethodDesc *update_method_description = mono_method_desc_new("Hyperion.Editor.Application::Update()", true);
-        s_editor_update_method = mono_method_desc_search_in_image(update_method_description, s_editor_assembly_image);
+        // Load core methods.
+        {
+            MonoMethodDesc *update_method_description = mono_method_desc_new("Hyperion.Editor.Application::Update()", true);
+            s_editor_update_method = mono_method_desc_search_in_image(update_method_description, s_editor_assembly_image);
+            mono_method_desc_free(update_method_description);
+        }
     }
 
     //--------------------------------------------------------------

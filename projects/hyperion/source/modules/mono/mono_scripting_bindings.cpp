@@ -268,23 +268,6 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     void MonoScriptingBindings::Bind() {
-        // Register classes
-        {
-            MonoScriptingDriver::RegisterClass(Type::get<Behaviour>(), "Hyperion", "Behaviour");
-            MonoScriptingDriver::RegisterClass(Type::get<BoxCollider>(), "Hyperion", "BoxCollider");
-            MonoScriptingDriver::RegisterClass(Type::get<Camera>(), "Hyperion", "Camera");
-            MonoScriptingDriver::RegisterClass(Type::get<Collider>(), "Hyperion", "Collider");
-            MonoScriptingDriver::RegisterClass(Type::get<Component>(), "Hyperion", "Component");
-            MonoScriptingDriver::RegisterClass(Type::get<Entity>(), "Hyperion", "Entity");
-            MonoScriptingDriver::RegisterClass(Type::get<Object>(), "Hyperion", "Object");
-            MonoScriptingDriver::RegisterClass(Type::get<Material>(), "Hyperion", "Material");
-            MonoScriptingDriver::RegisterClass(Type::get<MeshRenderer>(), "Hyperion", "MeshRenderer");
-            MonoScriptingDriver::RegisterClass(Type::get<Renderer>(), "Hyperion", "Renderer");
-            MonoScriptingDriver::RegisterClass(Type::get<SphereCollider>(), "Hyperion", "SphereCollider");
-            MonoScriptingDriver::RegisterClass(Type::get<Transform>(), "Hyperion", "Transform");
-            MonoScriptingDriver::RegisterClass(Type::get<World>(), "Hyperion", "World");
-        }
-
         // Input
         {
             mono_add_internal_call("Hyperion.Input::Binding_IsKeyDown", Input::IsKeyDown);
@@ -342,6 +325,24 @@ namespace Hyperion::Scripting {
         {
             mono_add_internal_call("Hyperion.Renderer::Binding_GetMaterial", Binding_Renderer_GetMaterial);
         }
+    }
+
+    //--------------------------------------------------------------
+    void MonoScriptingBindings::RegisterClasses() {
+        MonoScriptingDriver::RegisterClass(Type::get<Behaviour>(), "Hyperion", "Behaviour");
+        MonoScriptingDriver::RegisterClass(Type::get<BoxCollider>(), "Hyperion", "BoxCollider");
+        MonoScriptingDriver::RegisterClass(Type::get<Camera>(), "Hyperion", "Camera");
+        MonoScriptingDriver::RegisterClass(Type::get<Collider>(), "Hyperion", "Collider");
+        MonoScriptingDriver::RegisterClass(Type::get<Component>(), "Hyperion", "Component");
+        MonoScriptingDriver::RegisterClass(Type::get<Entity>(), "Hyperion", "Entity");
+        MonoScriptingDriver::RegisterClass(Type::get<Object>(), "Hyperion", "Object");
+        MonoScriptingDriver::RegisterClass(Type::get<Material>(), "Hyperion", "Material");
+        MonoScriptingDriver::RegisterClass(Type::get<MeshRenderer>(), "Hyperion", "MeshRenderer");
+        MonoScriptingDriver::RegisterClass(Type::get<Renderer>(), "Hyperion", "Renderer");
+        MonoScriptingDriver::RegisterClass(Type::get<Script>(), "Hyperion", "Script");
+        MonoScriptingDriver::RegisterClass(Type::get<SphereCollider>(), "Hyperion", "SphereCollider");
+        MonoScriptingDriver::RegisterClass(Type::get<Transform>(), "Hyperion", "Transform");
+        MonoScriptingDriver::RegisterClass(Type::get<World>(), "Hyperion", "World");
     }
 
 }
