@@ -39,7 +39,8 @@ namespace Hyperion {
 
         m_parent = parent;
 
-        NotifyTransformChange();
+        NotifyTransformParentChanged();
+        NotifyTransformChanged();
     }
 
     //--------------------------------------------------------------
@@ -55,7 +56,6 @@ namespace Hyperion {
     bool Transform::IsChildOf(Transform *parent) const {
         Transform *p = parent;
         while (p != nullptr) {
-
             if (p->m_parent == this) {
                 return true;
             }
@@ -65,13 +65,22 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void Transform::NotifyTransformChange() {
+    void Transform::NotifyTransformChanged() {
         RecalculateTransform();
 
         GetEntity()->DispatchMessage({ EntityMessageType::TransformChanged, nullptr });
 
         for (Transform *child : m_children) {
-            child->NotifyTransformChange();
+            child->NotifyTransformChanged();
+        }
+    }
+
+    //--------------------------------------------------------------
+    void Transform::NotifyTransformParentChanged() {
+        GetEntity()->DispatchMessage({ EntityMessageType::TransformParentChanged, nullptr });
+
+        for (Transform *child : m_children) {
+            child->NotifyTransformParentChanged();
         }
     }
 

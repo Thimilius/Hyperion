@@ -23,8 +23,16 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Widget::OnMessage(EntityMessage message) {
-        if (message.type == EntityMessageType::TransformChanged) {
-            SetDirty();
+        switch (message.type) {
+            case EntityMessageType::TransformChanged: {
+                SetDirty();
+                break;
+            }
+            case EntityMessageType::TransformParentChanged: {
+                m_canvas = GetEntity()->GetComponentInParent<Canvas>();
+                HYP_ASSERT(m_canvas);
+                break;
+            }
         }
     }
 
@@ -39,6 +47,8 @@ namespace Hyperion {
         HYP_ASSERT(m_rect_transform);
         m_widget_renderer = GetEntity()->GetComponent<WidgetRenderer>();
         HYP_ASSERT(m_widget_renderer);
+        m_canvas = GetEntity()->GetComponentInParent<Canvas>();
+        HYP_ASSERT(m_canvas);
     }
 
     //--------------------------------------------------------------

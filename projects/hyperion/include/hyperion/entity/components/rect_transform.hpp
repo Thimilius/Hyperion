@@ -29,7 +29,9 @@ namespace Hyperion {
         TopRightCorner,
         TopLeftCorner,
         BottomRightCorner,
-        BottomLeftCorner
+        BottomLeftCorner,
+
+        Stretch,
     };
 
     class RectTransform final : public Transform {
@@ -50,12 +52,16 @@ namespace Hyperion {
 
         void SetAnchoringPreset(AnchoringPreset anchoring_preset);
 
-        void GetWorldCorners(Vec3 corners[4]);
+        void GetWorldCorners(Vec3 corners[4]) const;
     protected:
         void OnCreate() override;
         void OnDestroy() override;
+
+        void RecalculateTransform() override;
     private:
         RectTransform() : Transform("RectTransform") { }
+    private:
+        Vec2 GetParentSize() const;
     private:
         static RectTransform *Create();
     private:

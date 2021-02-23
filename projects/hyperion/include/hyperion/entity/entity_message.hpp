@@ -11,6 +11,7 @@ namespace Hyperion {
 
     enum class EntityMessageType {
         TransformChanged,
+        TransformParentChanged,
         ActivationChanged,
 
         ComponentDestroyed,

@@ -7,6 +7,7 @@
 #include "hyperion/entity/components/behaviour.hpp"
 #include "hyperion/entity/components/rect_transform.hpp"
 #include "hyperion/entity/components/rendering/widget_renderer.hpp"
+#include "hyperion/entity/components/ui/canvas.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -21,6 +22,8 @@ namespace Hyperion {
     public:
         inline RectTransform *GetRectTransform() const { return m_rect_transform; }
         inline WidgetRenderer *GetWidgetRenderer() const { return m_widget_renderer; }
+        inline Canvas *GetCanvas() const { return m_canvas; }
+
         inline bool IsDirty() const { return m_is_dirty; }
 
         inline Color GetColor() const { return m_color; }
@@ -41,8 +44,10 @@ namespace Hyperion {
     protected:
         Color m_color = Color::White();
     private:
-        WidgetRenderer *m_widget_renderer = nullptr;
         RectTransform *m_rect_transform = nullptr;
+        WidgetRenderer *m_widget_renderer = nullptr;
+        Canvas *m_canvas = nullptr;
+
         bool m_is_dirty = false;
     private:
         friend class Hyperion::UiEngine;

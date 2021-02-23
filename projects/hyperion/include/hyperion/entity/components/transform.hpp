@@ -21,13 +21,13 @@ namespace Hyperion {
         inline Vec3 GetLocalPosition() const { return m_local_position; }
         inline void SetLocalPosition(const Vec3 &position) {
             m_local_position = position;
-            NotifyTransformChange();
+            NotifyTransformChanged();
         }
 
         inline Quaternion GetLocalRotation() const { return m_local_rotation; }
         inline void SetLocalRotation(const Quaternion &rotation) {
             m_local_rotation = rotation;
-            NotifyTransformChange();
+            NotifyTransformChanged();
         }
         inline Vec3 GetLocalEulerAngles() const { return m_local_rotation.ToEulerAngles(); }
         inline void SetLocalEulerAngles(const Vec3 &angles) { SetLocalRotation(Quaternion::FromEulerAngles(angles)); }
@@ -35,19 +35,19 @@ namespace Hyperion {
         inline Vec3 GetLocalScale() const { return m_local_scale; }
         inline void SetLocalScale(const Vec3 &scale) {
             m_local_scale = scale;
-            NotifyTransformChange();
+            NotifyTransformChanged();
         }
 
         inline Vec3 GetPosition() const { return m_derived_position; }
         inline void SetPosition(const Vec3 &position) {
             m_local_position = m_parent ? m_parent->WorldToLocalPosition(position) : position;
-            NotifyTransformChange();
+            NotifyTransformChanged();
         }
 
         inline Quaternion GetRotation() const { return m_derived_rotation; }
         inline void SetRotation(const Quaternion &rotation) {
              m_local_rotation = m_parent ? m_parent->WorldToLocalRotation(rotation) : rotation;
-             NotifyTransformChange();
+             NotifyTransformChanged();
         }
         inline Vec3 GetEulerAngles() const { return m_derived_rotation.ToEulerAngles(); }
         inline void SetEulerAngles(const Vec3 &angles) { SetRotation(Quaternion::FromEulerAngles(angles)); }
@@ -57,7 +57,7 @@ namespace Hyperion {
         inline void SetPositionAndRotation(const Vec3 &position, const Quaternion &rotation) {
             m_local_position = m_parent ? m_parent->WorldToLocalPosition(position) : position;
             m_local_rotation = m_parent ? m_parent->WorldToLocalRotation(rotation) : rotation;
-            NotifyTransformChange();
+            NotifyTransformChanged();
         }
 
         inline Vec3 GetRight() const {
@@ -100,11 +100,13 @@ namespace Hyperion {
     protected:
         void OnCreate() override;
         void OnDestroy() override;
+
+        virtual void RecalculateTransform();
     private:
         Transform() : Component("Transform") { }
     private:
-        void NotifyTransformChange();
-        void RecalculateTransform();
+        void NotifyTransformChanged();
+        void NotifyTransformParentChanged();
     private:
         static Transform *Create();
     protected:

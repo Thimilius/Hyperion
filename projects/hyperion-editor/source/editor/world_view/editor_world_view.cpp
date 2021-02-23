@@ -41,8 +41,7 @@ namespace Hyperion::Editor {
             graphic_entity->GetTransform()->SetParent(canvas_entity->GetTransform());
             Graphic *graphic = graphic_entity->AddComponent<Graphic>();
             graphic->SetColor(Color::Yellow());
-            graphic->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::BottomLeftCorner);
-            graphic->GetRectTransform()->SetPosition(Vec3(0.0f, 0.0f, 0.0f));
+            graphic->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::Center);
         }
         {
             Entity *text_entity = Entity::Create("Text");
