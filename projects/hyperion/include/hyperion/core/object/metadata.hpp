@@ -4,7 +4,7 @@
 namespace Hyperion {
 
     enum class Metadata {
-        Serialize, // -> Bool - Default: true
+        DontSerialize, // -> Bool - Default: false
 
         RequiresComponent0, // -> Type - Default: none
         RequiresComponent1, // -> Type - Default: none

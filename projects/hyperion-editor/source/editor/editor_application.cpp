@@ -5,8 +5,11 @@
 #include <hyperion/entry_point.hpp>
 #include <hyperion/core/app/application.hpp>
 #include <hyperion/core/app/time.hpp>
+#include <hyperion/core/io/file_system.hpp>
 #include <hyperion/core/memory/memory.hpp>
+#include <hyperion/core/serialization/json_serializer.hpp>
 #include <hyperion/core/system/engine.hpp>
+#include <hyperion/entity/world_manager.hpp>
 #include <hyperion/scripting/scripting_engine.hpp>
 
 //---------------------- Project Includes ----------------------
@@ -19,6 +22,14 @@ namespace Hyperion::Editor {
     //--------------------------------------------------------------
     void EditorApplication::OnInitialize() {
         EditorWorldView::Initialize();
+
+        World *world = WorldManager::CreateWorld("Hello world");
+        world->GetEnvironment().ambient_light.color = Color::Blue();
+        world->GetEnvironment().ambient_light.intensity = 0.45f;
+
+        JsonSerializer serializer;
+        String json = serializer.Serialize(world).Unwrap();
+        World *new_world = serializer.DeserializeRaw<World>(json).Unwrap();
     }
 
     //--------------------------------------------------------------

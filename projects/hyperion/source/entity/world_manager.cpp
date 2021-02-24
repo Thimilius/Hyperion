@@ -11,8 +11,8 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    World *WorldManager::CreateWorld() {
-        World *world = new World("World");
+    World *WorldManager::CreateWorld(const String &name) {
+        World *world = new World(name);
         s_worlds.push_back(world);
         return world;
     }

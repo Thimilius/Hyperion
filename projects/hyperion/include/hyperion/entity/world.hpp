@@ -34,6 +34,9 @@ namespace Hyperion {
     public:
         ~World();
     public:
+        inline String GetName() const { return m_name; }
+        inline void SetName(const String &name) { m_name = name; }
+
         inline WorldEnvironment &GetEnvironment() { return m_environment; }
         inline Physics::PhysicsWorld *GetPhysicsWorld() const { return m_physics_world; }
 
@@ -78,6 +81,7 @@ namespace Hyperion {
     private:
         static World *Create();
     private:
+        String m_name;
         WorldEnvironment m_environment;
         Physics::PhysicsWorld *m_physics_world;
 

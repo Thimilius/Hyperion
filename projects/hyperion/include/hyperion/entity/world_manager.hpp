@@ -18,7 +18,7 @@ namespace Hyperion {
         inline static World *GetActiveWorld() { return s_active_world; }
         inline static void SetActiveWorld(World *world) { s_active_world = world; }
     public:
-        static World *CreateWorld(); 
+        static World *CreateWorld(const String &name = "World"); 
         static void DestroyWorld(World *world);
     private:
         WorldManager() = delete;

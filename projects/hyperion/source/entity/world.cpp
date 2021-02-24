@@ -13,6 +13,7 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     World::World(const String &name) {
+        m_name = name;
         m_physics_world = Physics::PhysicsEngine::CreatePhysicsWorld();
     }
     

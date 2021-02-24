@@ -169,13 +169,13 @@ HYP_REFLECT_REGISTER_BEGIN
     Registration<Object>("Object")
         .constructor(select_overload<Object *()>(&Object::Create))(DefaultConstructorPolicy)
         .constructor(select_overload<Object *(const String &)>(&Object::Create))(DefaultConstructorPolicy)
-        .property_readonly("id", &Object::m_id)(metadata(Metadata::Serialize, false))
-        .property_readonly("guid", &Object::m_guid)(metadata(Metadata::Serialize, true))
-        .property("name", &Object::m_name)(metadata(Metadata::Serialize, true));
+        .property_readonly("id", &Object::m_id)(metadata(Metadata::DontSerialize, true))
+        .property_readonly("guid", &Object::m_guid)
+        .property("name", &Object::m_name);
 
     {
         Registration<Asset>("Asset")
-            .property_readonly("resource_id", &Asset::m_resource_id)(metadata(Metadata::Serialize, false));
+            .property_readonly("resource_id", &Asset::m_resource_id)(metadata(Metadata::DontSerialize, true));
         Registration<Font>("Font")
             .constructor(select_overload<Font *()>(&Font::Create))(DefaultConstructorPolicy);
         Registration<FontAtlas>("FontAtlas")
@@ -211,8 +211,18 @@ HYP_REFLECT_REGISTER_BEGIN
         Registration<Entity>("Entity")
             .constructor(select_overload<Entity *()>(&Entity::Create))(DefaultConstructorPolicy)
             .constructor(select_overload<Entity *(const String &, const Vec3 &, const Quaternion &, Transform *, World *)>(&Entity::Create))(DefaultConstructorPolicy);
+        Registration<WorldEnvironment>("WorldEnvironment")
+            .constructor()(DefaultConstructorPolicy)
+            .property("ambient_light", &WorldEnvironment::ambient_light);
+        Registration<WorldEnvironment::AmbientLight>("WorldEnvironment.AmbientLight")
+            .constructor()(DefaultConstructorPolicy)
+            .property("intensity", &WorldEnvironment::AmbientLight::intensity)
+            .property("color", &WorldEnvironment::AmbientLight::color);
         Registration<World>("World")
-            .constructor(select_overload<World *()>(&World::Create))(DefaultConstructorPolicy);
+            .constructor(select_overload<World *()>(&World::Create))(DefaultConstructorPolicy)
+            .property("name", &World::m_name)
+            .property("environment", &World::m_environment)
+            .property("root_entities", &World::m_root_entities);
 
         Registration<Behaviour>("Behaviour");
         Registration<Component>("Component");
