@@ -2,6 +2,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/mesh.hpp"
+#include "hyperion/core/app/events/event.hpp"
 #include "hyperion/entity/components/ui/widget.hpp"
 
 //-------------------- Forward Declarations --------------------
@@ -18,6 +19,7 @@ namespace Hyperion {
         UiEngine() = delete;
         ~UiEngine() = delete;
     private:
+        static void Update();
         static void LateUpdate();
 
         static void RegisterWidget(Widget *widget);

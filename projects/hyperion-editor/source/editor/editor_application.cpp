@@ -38,9 +38,10 @@ namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
     void EditorApplication::OnTick() {
+        String engine_mode = Engine::GetMode() == EngineMode::Editor ? "Paused" : "Playing";
         float32 native_memory = static_cast<float32>(MemoryStats::GetGlobalMemory()) / 1000.0f / 1000.0f;
         float32 managed_memory = static_cast<float32>(Scripting::ScriptingEngine::GetMemoryUsage()) / 1000.0f / 1000.0f;
-        String title = StringUtils::Format("Hyperion - FPS: {} ({:.2f}ms) - Native Memory: {:.2f}MB - Managed Memory: {:.2f}MB", Time::GetFPS(), Time::GetFrameTime(), native_memory, managed_memory);
+        String title = StringUtils::Format("Hyperion - Playstate: {} - FPS: {} ({:.2f}ms) - Native Memory: {:.2f}MB - Managed Memory: {:.2f}MB", engine_mode, Time::GetFPS(), Time::GetFrameTime(), native_memory, managed_memory);
         GetWindow()->SetTitle(title);
     }
 

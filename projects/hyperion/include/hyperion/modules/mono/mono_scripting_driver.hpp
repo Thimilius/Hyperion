@@ -22,10 +22,12 @@ namespace Hyperion::Scripting {
         void Update() override;
         void Shutdown() override;
     public:
-        inline static MonoDomain *GetDomain() { return s_core_domain; }
+        inline static MonoDomain *GetDomain() { return s_root_domain; }
+        
+        inline static MonoClass *GetComponentClass() { return s_core_component_class; }
+        inline static MonoClass *GetScriptClass() { return s_core_script_class; }
 
-        inline static MonoClass *GetComponentClass() { return s_component_class; }
-        inline static MonoClass *GetScriptClass() { return s_script_class; }
+        static void InvokeMethod(MonoMethod *method, void *object, void **parameters);
 
         template<typename T>
         static T *GetNativeObjectAs(MonoObject *managed_object) {
@@ -48,21 +50,23 @@ namespace Hyperion::Scripting {
 
         static MonoScriptingType *GetOrCreateScriptingType(MonoClass *managed_class);
     private:
-        void InitDebugger(const ScriptingSettings &settings);
-        void InitDomain();
-        void InitBindings();
+        static void InitDebugger(const ScriptingSettings &settings);
+        static void InitDomain();
+        static void InitBindings();
 
-        void ReloadScriptingDomain();
+        static void ReloadScriptingDomain();
+        static void UnloadScriptingDomain();
 
-        void PrintUnhandledException(MonoObject *exception);
+        static void PrintUnhandledException(MonoObject *exception);
     private:
-        inline static MonoDomain *s_core_domain;
-        inline static MonoDomain *s_script_domain;
+        inline static MonoDomain *s_root_domain;
+        inline static MonoDomain *s_scripting_domain;
 
         inline static MonoAssembly *s_core_assembly;
         inline static MonoImage *s_core_assembly_image;
+        inline static MonoClass *s_core_component_class;
+        inline static MonoClass *s_core_script_class;
 
-        inline static MonoDomain *s_editor_domain;
         inline static MonoAssembly *s_editor_assembly;
         inline static MonoImage *s_editor_assembly_image;
         inline static MonoMethod *s_editor_update_method;
@@ -77,9 +81,6 @@ namespace Hyperion::Scripting {
 
         inline static Vector<Script *> s_scripts_which_recieve_messages;
         inline static Map<MonoClass *, MonoScriptingType *> s_scripting_types;
-
-        inline static MonoClass *s_component_class;
-        inline static MonoClass *s_script_class;
     };
 
 }

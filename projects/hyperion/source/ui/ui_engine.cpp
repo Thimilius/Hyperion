@@ -12,6 +12,11 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
+    void UiEngine::Update() {
+        
+    }
+
+    //--------------------------------------------------------------
     void UiEngine::LateUpdate() {
         if (s_widgets.size() > 0) {
             Canvas *canvas = s_widgets[0]->GetWorld()->FindComponentOfType<Canvas>();
