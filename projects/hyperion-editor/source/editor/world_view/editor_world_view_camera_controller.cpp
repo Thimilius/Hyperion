@@ -289,9 +289,9 @@ namespace Hyperion::Editor {
 //--------------------------------------------------------------
 HYP_REFLECT_REGISTER_BEGIN
 {
-    Registration<Editor::EditorFirstPersonCameraController>("EditorFirstPersonCameraController")
-        .constructor()(DefaultConstructorPolicy);
-    Registration<Editor::EditorLookAroundCameraController>("EditorLookAroundCameraController")
-        .constructor()(DefaultConstructorPolicy);
+    RegistrationClass<Editor::EditorFirstPersonCameraController>("EditorFirstPersonCameraController")
+        .constructor()(PointerConstructorPolicy);
+    RegistrationClass<Editor::EditorLookAroundCameraController>("EditorLookAroundCameraController")
+        .constructor()(PointerConstructorPolicy);
 }
 HYP_REFLECT_REGISTER_END

@@ -10,6 +10,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/color.hpp"
 #include "hyperion/core/io/file_system.hpp"
+#include "hyperion/core/object/guid.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -18,8 +19,8 @@ namespace Hyperion {
     void SerializeObject(nlohmann::ordered_json &json_object, Instance object, Type type) {
         for (auto &property : type.get_properties()) {
             // First make sure the property actually needs to be serialized based on the metadata.
-            Variant metadata = property.get_metadata(Metadata::DontSerialize);
-            if (metadata.is_valid() && metadata.get_value<bool>()) {
+            Variant property_metadata = property.get_metadata(Metadata::DontSerialize);
+            if (property_metadata.is_valid() && property_metadata.get_value<bool>()) {
                 continue;
             }
 
@@ -29,10 +30,15 @@ namespace Hyperion {
 
             if (property_type == Type::get<String>()) {
                 json_object[property_name] = property_variant.to_string();
+            } else if (property_type == Type::get<bool>()) {
+                json_object[property_name] = property_variant.to_bool();
             } else if (property_type == Type::get<int32>()) {
                 json_object[property_name] = property_variant.to_int32();
             } else if (property_type == Type::get<float32>()) {
                 json_object[property_name] = property_variant.to_float();
+            } else if (property_type == Type::get<Guid>()) {
+                Guid guid = property_variant.get_value<Guid>();
+                json_object[property_name] = guid.ToString();
             } else if (property_type == Type::get<Vec2>()) {
                 Vec2 vec2 = property_variant.get_value<Vec2>();
                 json_object[property_name] = nlohmann::json::object({ { "x", vec2.x }, { "y", vec2.y } });
@@ -45,6 +51,23 @@ namespace Hyperion {
             } else if (property_type == Type::get<Color>()) {
                 Color color = property_variant.get_value<Color>();
                 json_object[property_name] = nlohmann::json::object({ { "r", color.r }, { "g", color.g }, { "b", color.b }, { "a", color.a } });
+            } else if (property_type.is_enumeration()) {
+                auto enumeration = property_type.get_enumeration();
+                Variant enum_metadata = enumeration.get_metadata(Metadata::Flags);
+                if (enum_metadata.is_valid() && enum_metadata.get_value<bool>()) {
+                    Type underlying_type = enumeration.get_underlying_type();
+                    if (underlying_type == Type::get<int32>()) {
+                        json_object[property_name] = property_variant.get_value<int32>();
+                    } else if (underlying_type == Type::get<uint32>()) {
+                        json_object[property_name] = property_variant.get_value<uint32>();
+                    } else {
+                        HYP_ASSERT(false);
+                    }
+                } else {
+                    HYP_ASSERT(false);
+                }
+            } else if (property_type.is_pointer()) {
+                json_object[property_name] = nullptr;
             } else {
                 Type sub_object_type = property_variant.get_type();
                 if (sub_object_type.is_pointer()) {
@@ -68,6 +91,12 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void DeserializeObject(nlohmann::ordered_json &json_object, Instance object, Type type) {
         for (auto &property : type.get_properties()) {
+            // First make sure the property actually needs to be deserialized based on the metadata.
+            Variant metadata = property.get_metadata(Metadata::DontSerialize);
+            if (metadata.is_valid() && metadata.get_value<bool>()) {
+                continue;
+            }
+
             String property_name = property.get_name().to_string();
             auto &json_property_it = json_object.find(property_name);
             if (json_property_it == json_object.end()) {
@@ -81,26 +110,47 @@ namespace Hyperion {
             Variant property_variant;
             if (property_type == Type::get<String>() && json_property.is_string()) {
                 property_variant = json_property.get<String>();
+            } else if (property_type == Type::get<bool>() && json_property.is_boolean()) {
+                property_variant = json_property.get<bool>();
             } else if (property_type == Type::get<int32>() && json_property.is_number_integer()) {
                 property_variant = json_property.get<int32>();
             } else if (property_type == Type::get<float32>() && json_property.is_number_float()) {
                 property_variant = json_property.get<float32>();
-            } else if (property_type == Type::get<Vec2>()) {
+            } else if (property_type == Type::get<Guid>() && json_property.is_string()) {
+                property_variant = Guid::Create(json_property.get<String>());
+            } else if (property_type == Type::get<Vec2>() && json_property.is_object()) {
                 property_variant = Vec2(json_property["x"].get<float32>(), json_property["y"].get<float32>());
-            } else if (property_type == Type::get<Vec3>()) {
+            } else if (property_type == Type::get<Vec3>() && json_property.is_object()) {
                 property_variant = Vec3(json_property["x"].get<float32>(), json_property["y"].get<float32>(), json_property["z"].get<float32>());
-            } else if (property_type == Type::get<Vec4>()) {
+            } else if (property_type == Type::get<Vec4>() && json_property.is_object()) {
                 property_variant = Vec4(json_property["x"].get<float32>(), json_property["y"].get<float32>(), json_property["z"].get<float32>(), json_property["w"].get<float32>());
-            } else if (property_type == Type::get<Color>()) {
+            } else if (property_type == Type::get<Color>() && json_property.is_object()) {
                 property_variant = Color(json_property["r"].get<float32>(), json_property["g"].get<float32>(), json_property["b"].get<float32>(), json_property["a"].get<float32>());
+            } else if (property_type.is_enumeration()) {
+                auto enumeration = property_type.get_enumeration();
+                Variant enum_metadata = enumeration.get_metadata(Metadata::Flags);
+                if (enum_metadata.is_valid() && enum_metadata.get_value<bool>()) {
+                    Type underlying_type = enumeration.get_underlying_type();
+                    if (underlying_type == Type::get<int32>()) {
+                        property_variant = json_property.get<int32>();
+                    } else if (underlying_type == Type::get<uint32>()) {
+                        property_variant = json_property.get<uint32>();
+                    } else {
+                        HYP_ASSERT(false);
+                    }
+
+                    if (!property_variant.convert(static_cast<Type>(property_type))) {
+                        HYP_LOG_ERROR("Engine", "Failed to set convert enum property '{}' when deserializing type '{}'!", property_name, type.get_name().to_string());
+                    }
+                } else {
+                    HYP_ASSERT(false);
+                }
+            } else if (property_type.is_pointer()) {
+
             } else {
                 property_variant = property.get_value(object);
-                if (property_type.is_pointer()) {
-                    
-                } else {
-                    Type sub_object_type = property_variant.get_type();
-                    DeserializeObject(json_property, property_variant, sub_object_type);
-                }
+                Type sub_object_type = property_variant.get_type();
+                DeserializeObject(json_property, property_variant, sub_object_type);
             }
 
             if (!property.set_value(object, property_variant)) {

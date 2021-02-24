@@ -11,12 +11,13 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
     using Instance = rttr::instance;
+    using Registration = rttr::registration;
     template<typename T>
-    using Registration = rttr::registration::class_<T>;
+    using RegistrationClass = rttr::registration::class_<T>;
     using Type = rttr::type;
     using Variant = rttr::variant;
 
-    const auto DefaultConstructorPolicy = rttr::policy::ctor::as_raw_ptr;
+    const auto PointerConstructorPolicy = rttr::policy::ctor::as_raw_ptr;
 }
 
 #define HYP_REFLECT(...) RTTR_ENABLE(__VA_ARGS__) \
