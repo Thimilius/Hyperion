@@ -4,7 +4,7 @@
 #include <memory>
 #include <functional>
 
-#define BIT(x) (unsigned)(1 << x)
+#define BIT(x) (1 << x)
 
 #ifdef HYP_DEBUG
     #ifdef _MSC_VER
