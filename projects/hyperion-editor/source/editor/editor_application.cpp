@@ -31,6 +31,7 @@ namespace Hyperion::Editor {
         entity->SetLayer(LayerMask::Layer17);
 
         JsonSerializer serializer;
+
         String world_json = serializer.Serialize(world).Unwrap();
         World *new_world = serializer.DeserializeRaw<World>(world_json).Unwrap();
 

@@ -24,7 +24,8 @@ namespace Hyperion {
                 return Error::TypeInvalidForSerialization;
             }
 
-            return SerializeInternal(object, type);
+            Variant variant = object;
+            return SerializeInternal(variant, type);
         }
 
         template<typename T>
@@ -34,9 +35,9 @@ namespace Hyperion {
                 return Error::TypeInvalidForSerialization;
             }
             
-            T object = { };
-            DeserializeInternal(json, object, type);
-            return object;
+            Variant variant;
+            DeserializeInternal(json, variant, type);
+            return variant.get_value<T>();
         }
 
         template<typename T>
@@ -46,13 +47,13 @@ namespace Hyperion {
                 return Error::TypeInvalidForSerialization;
             }
 
-            Variant object = type.create();
-            DeserializeInternal(json, object, type);
-            return object.get_value<T *>();
+            Variant variant = type.create();
+            DeserializeInternal(json, variant, type);
+            return variant.get_value<T *>();
         }
     private:
-        String SerializeInternal(Instance object, Type type);
-        void DeserializeInternal(const String &json, Instance object, Type type);
+        String SerializeInternal(Variant &variant, Type type);
+        void DeserializeInternal(const String &json_text, Variant &variant, Type type);
     private:
         JsonSerializerSettings m_settings;
     };
