@@ -174,10 +174,10 @@ namespace Hyperion {
         bool m_active = true;
 
         LayerMask m_layer = LayerMask::Default;
+        Set<EntityTag> m_tags;
 
         Map<ComponentType, Component *> m_components;
         Transform *m_transform = nullptr;
-        Set<EntityTag> m_tags;
 
         Vector<IEntityMessageListener *> m_message_listeners;
     private:

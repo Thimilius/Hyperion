@@ -35,7 +35,7 @@ namespace Hyperion {
                 return Error::TypeInvalidForSerialization;
             }
             
-            Variant variant;
+            Variant variant = T{ };
             DeserializeInternal(json, variant, type);
             return variant.get_value<T>();
         }

@@ -33,6 +33,7 @@ namespace Hyperion::Editor {
         JsonSerializer serializer;
 
         String world_json = serializer.Serialize(world).Unwrap();
+        FileSystem::WriteAllText("world.json", world_json);
         World *new_world = serializer.DeserializeRaw<World>(world_json).Unwrap();
 
         String entity_json = serializer.Serialize(entity).Unwrap();

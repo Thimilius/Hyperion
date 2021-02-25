@@ -213,7 +213,10 @@ HYP_REFLECT_REGISTER_BEGIN
             .constructor(select_overload<Entity *()>(&Entity::Create))(PointerConstructorPolicy)
             .constructor(select_overload<Entity *(const String &, const Vec3 &, const Quaternion &, Transform *, World *)>(&Entity::Create))(PointerConstructorPolicy)
             .property("active", &Entity::m_active)
-            .property("layer", &Entity::m_layer);
+            .property("layer", &Entity::m_layer)
+            .property("tags", &Entity::m_tags)
+            .property("components", &Entity::m_components)
+            .property("transform", &Entity::m_transform);
         Registration::enumeration<LayerMask>("Layer")(
             value("Nothing", LayerMask::Nothing),
 
@@ -274,7 +277,12 @@ HYP_REFLECT_REGISTER_BEGIN
         RegistrationClass<Script>("Script")
             .constructor(select_overload<Script *()>(&Script::Create))(PointerConstructorPolicy);
         RegistrationClass<Transform>("Transform")
-            .constructor(select_overload<Transform *()>(&Transform::Create))(PointerConstructorPolicy);
+            .constructor(select_overload<Transform *()>(&Transform::Create))(PointerConstructorPolicy)
+            .property("position", &Transform::m_local_position)
+            .property("rotation", &Transform::m_local_rotation)
+            .property("scale", &Transform::m_local_scale)
+            .property("parent", &Transform::m_parent)
+            .property("children", &Transform::m_children);
 
         RegistrationClass<BoxCollider>("BoxCollider")
             .constructor(select_overload<BoxCollider *()>(&BoxCollider::Create))(PointerConstructorPolicy);

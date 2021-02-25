@@ -15,7 +15,7 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    void SerializeVariant(nlohmann::ordered_json &json, Variant &variant, Type type) {
+    void SerializeVariant(nlohmann::ordered_json &json, const Variant &variant, Type type) {
         if (type == Type::get<bool>()) {
             json = variant.to_bool();
         } else if (type == Type::get<int8>() || type == Type::get<int16>() || type == Type::get<int32>()) {
@@ -34,16 +34,19 @@ namespace Hyperion {
             json = guid.ToString();
         } else if (type == Type::get<Vec2>()) {
             Vec2 vec2 = variant.get_value<Vec2>();
-            json = nlohmann::json::object({ { "x", vec2.x }, { "y", vec2.y } });
+            json = nlohmann::ordered_json::object({ { "x", vec2.x }, { "y", vec2.y } });
         } else if (type == Type::get<Vec3>()) {
             Vec3 vec3 = variant.get_value<Vec3>();
-            json = nlohmann::json::object({ { "x", vec3.x }, { "y", vec3.y }, { "z", vec3.z } });
+            json = nlohmann::ordered_json::object({ { "x", vec3.x }, { "y", vec3.y }, { "z", vec3.z } });
         } else if (type == Type::get<Vec4>()) {
             Vec4 vec4 = variant.get_value<Vec4>();
-            json = nlohmann::json::object({ { "x", vec4.x }, { "y", vec4.y }, { "z", vec4.z }, { "w", vec4.w } });
+            json = nlohmann::ordered_json::object({ { "x", vec4.x }, { "y", vec4.y }, { "z", vec4.z }, { "w", vec4.w } });
+        } else if (type == Type::get<Quaternion>()) {
+            Quaternion quaternion = variant.get_value<Quaternion>();
+            json = nlohmann::ordered_json::object({ { "x", quaternion.x }, { "y", quaternion.y }, { "z", quaternion.z }, { "w", quaternion.w } });
         } else if (type == Type::get<Color>()) {
             Color color = variant.get_value<Color>();
-            json = nlohmann::json::object({ { "r", color.r }, { "g", color.g }, { "b", color.b }, { "a", color.a } });
+            json = nlohmann::ordered_json::object({ { "r", color.r }, { "g", color.g }, { "b", color.b }, { "a", color.a } });
         } else if (type.is_enumeration()) {
             auto enumeration = type.get_enumeration();
             Variant enum_metadata = enumeration.get_metadata(Metadata::Flags);
@@ -56,6 +59,17 @@ namespace Hyperion {
                 // TODO: Implement.
                 HYP_ASSERT(false);
             }
+        } else if (type.is_sequential_container()) {
+            auto sequential_view = variant.create_sequential_view();
+            json = nlohmann::ordered_json::array();
+            for (const Variant &wrapped_element_variant : sequential_view) {
+                Variant element_variant = wrapped_element_variant.extract_wrapped_value();
+                Type element_type = element_variant.get_type();
+
+                nlohmann::ordered_json json_element;
+                SerializeVariant(json_element, element_variant, element_type);
+                json.push_back(json_element);
+            }
         } else {
             // If its not a primitive type, we have three possibilities left:
             //     - An embedded object
@@ -64,9 +78,15 @@ namespace Hyperion {
 
             if (type.is_pointer()) {
                 // NOTE: Pointers will have to be handled in a special way, to keep track of all references.
+
+                // A pointer that is null is an early bail out.
+                if (variant == nullptr) {
+                    json = nullptr;
+                    return;
+                }
             }
 
-            nlohmann::ordered_json json_object = nlohmann::ordered_json::object();
+            json = nlohmann::ordered_json::object();
             for (auto &property : type.get_properties()) {
                 // First make sure the property actually needs to be serialized based on the metadata.
                 Variant property_metadata = property.get_metadata(Metadata::DontSerialize);
@@ -79,9 +99,8 @@ namespace Hyperion {
                 Variant property_variant = property.get_value(variant);
                 nlohmann::ordered_json property_json_object;
                 SerializeVariant(property_json_object, property_variant, property_type);
-                json_object[property_name] = property_json_object;
+                json[property_name] = property_json_object;
             }
-            json = json_object;
         }
     }
 
@@ -115,6 +134,8 @@ namespace Hyperion {
             variant = Vec3(json["x"].get<float32>(), json["y"].get<float32>(), json["z"].get<float32>());
         } else if (type == Type::get<Vec4>()) {
             variant = Vec4(json["x"].get<float32>(), json["y"].get<float32>(), json["z"].get<float32>(), json["w"].get<float32>());
+        } else if (type == Type::get<Quaternion>()) {
+            variant = Quaternion(json["x"].get<float32>(), json["y"].get<float32>(), json["z"].get<float32>(), json["w"].get<float32>());
         } else if (type == Type::get<Color>()) {
             variant = Color(json["r"].get<float32>(), json["g"].get<float32>(), json["b"].get<float32>(), json["a"].get<float32>());
         } else if (type.is_enumeration()) {
@@ -131,11 +152,31 @@ namespace Hyperion {
             } else {
                 // Normal enums get saved as strings representing the corresponding value.
                 // TODO: Implement.
-                HYP_ASSERT(false);
+                HYP_ASSERT(false);  
+            }
+        } else if (type.is_sequential_container()) {
+            auto sequential_view = variant.create_sequential_view();
+            uint64 size = json.size();
+            sequential_view.set_size(size);
+
+            for (uint64 i = 0; i < size; i++) {
+                nlohmann::ordered_json json_element = json[i];
+                Variant element_variant = sequential_view.get_value(i).extract_wrapped_value();
+                Type element_type = element_variant.get_type();
+                DeserializeVariant(json_element, element_variant, element_type);
+                if (!sequential_view.set_value(i, element_variant)) {
+                    HYP_LOG_ERROR("Engine", "Failed to set array element of type '{}' when deserializing!", element_type.get_name().to_string());
+                }
             }
         } else {
             if (type.is_pointer()) {
                 // NOTE: Pointers will have to be handled in a special way, to keep track of all references.
+
+                // A pointer that is null is an early bail out.
+                if (json.is_null()) {
+                    variant = nullptr;
+                    return;
+                }
             }
 
             for (auto &property : type.get_properties()) {
@@ -150,7 +191,9 @@ namespace Hyperion {
                 Variant property_variant = property.get_value(variant);
                 nlohmann::ordered_json property_json_object = json[property_name];
                 DeserializeVariant(property_json_object, property_variant, property_type);
-                property.set_value(variant, property_variant);
+                if (!property.set_value(variant, property_variant)) {
+                    HYP_LOG_ERROR("Engine", "Failed to set object property of type '{}' when deserializing!", property_type.get_name().to_string());
+                }
             }
         }
     }
