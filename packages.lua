@@ -26,5 +26,6 @@ package_assimp_includedirs = { conan_includedirs_assimp, conan_includedirs_irrxm
 package_bullet_includedirs = conan_includedirs_bullet3
 package_fmt_includedirs = conan_includedirs_fmt
 package_freetype_includedirs = { conan_includedirs_freetype, conan_includedirs_libpng, conan_includedirs_bzip2, conan_includedirs_brotli, conan_includedirs_zlib }
+package_rapidjson_includedirs = conan_includedirs_rapidjson
 package_rttr_includedirs = conan_includedirs_rttr
 package_stb_includedirs = conan_includedirs_stb
