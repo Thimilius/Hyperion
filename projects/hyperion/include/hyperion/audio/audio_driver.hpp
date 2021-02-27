@@ -20,7 +20,7 @@ namespace Hyperion::Audio {
         virtual void Shutdown() = 0;
     };
 
-    class DummyAudioDriver : public IAudioDriver {
+    class DummyAudioDriver final : public IAudioDriver {
     public:
         AudioBackend GetBackend() const override { return AudioBackend::None; }
 

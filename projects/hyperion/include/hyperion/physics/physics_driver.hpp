@@ -21,7 +21,7 @@ namespace Hyperion::Physics {
         virtual void Shutdown() = 0;
     };
 
-    class DummyPhysicsDriver : public IPhysicsDriver {
+    class DummyPhysicsDriver final : public IPhysicsDriver {
     public:
         PhysicsBackend GetBackend() const override { return PhysicsBackend::None; }
 
