@@ -18,7 +18,6 @@
 #include <vector>
 
 //---------------------- Library Includes ----------------------
-#include <nlohmann/json.hpp>
 #include <fmt/format.h>
 #include <rttr/registration>
 #include <rttr/type>

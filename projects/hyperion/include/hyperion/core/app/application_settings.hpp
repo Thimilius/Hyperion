@@ -46,8 +46,6 @@ namespace Hyperion {
         AssetSettings assets;
         RenderSettings render;
         ScriptingSettings scripting;
-
-        static ApplicationSettings FromJsonFile(const String &path);
     };
 
 }

@@ -120,7 +120,6 @@ project "hyperion"
 		"%{prj.location}/vendor/glad/include"
 	}
 	includedirs { package_assimp_includedirs }
-	includedirs { package_nlohmann_includedirs }
 	includedirs { package_fmt_includedirs }
 	includedirs { package_freetype_includedirs }
 	includedirs { package_rttr_includedirs }

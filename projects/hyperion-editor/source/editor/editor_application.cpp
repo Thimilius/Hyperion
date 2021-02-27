@@ -7,7 +7,6 @@
 #include <hyperion/core/app/time.hpp>
 #include <hyperion/core/io/file_system.hpp>
 #include <hyperion/core/memory/memory.hpp>
-#include <hyperion/core/serialization/json_serializer.hpp>
 #include <hyperion/core/system/engine.hpp>
 #include <hyperion/entity/world_manager.hpp>
 #include <hyperion/scripting/scripting_engine.hpp>
@@ -29,15 +28,6 @@ namespace Hyperion::Editor {
 
         Entity *entity = Entity::Create("Entity", Vec3::Zero(), Quaternion::Identity(), nullptr, world);
         entity->SetLayer(LayerMask::Layer17);
-
-        JsonSerializer serializer;
-
-        String world_json = serializer.Serialize(world).Unwrap();
-        FileSystem::WriteAllText("world.json", world_json);
-        World *new_world = serializer.DeserializeRaw<World>(world_json).Unwrap();
-
-        String entity_json = serializer.Serialize(entity).Unwrap();
-        Entity *new_entity = serializer.DeserializeRaw<Entity>(entity_json).Unwrap();
     }
 
     //--------------------------------------------------------------
@@ -68,7 +58,7 @@ namespace Hyperion::Editor {
 
 //--------------------------------------------------------------
 Hyperion::Application *Hyperion::CreateApplication() {
-    ApplicationSettings settings = ApplicationSettings::FromJsonFile("app.json");
+    ApplicationSettings settings = ApplicationSettings();
     settings.render.threading_mode = Rendering::RenderThreadingMode::MultiThreaded;
     settings.render.pipeline = Rendering::RenderPipeline::Custom;
     settings.render.custom_pipeline = new Editor::EditorRenderPipeline();
