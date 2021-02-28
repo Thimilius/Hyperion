@@ -36,8 +36,6 @@ namespace Hyperion::Editor {
             { RenderTextureFormat::Depth24Stencil8, TextureParameters() },
         };
         m_render_texture = RenderTexture::Create(Display::GetWidth(), Display::GetHeight(), attachments);
-
-        m_font = FontLoader::LoadFont("data/fonts/consola.ttf", 32, FontCharacterSet::LatinSupplement);
     }
 
     //--------------------------------------------------------------

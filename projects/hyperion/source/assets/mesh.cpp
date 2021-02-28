@@ -386,8 +386,8 @@ namespace Hyperion {
                 float32 nx = x * length_inverse;
                 float32 ny = y * length_inverse;
                 float32 nz = z * length_inverse;
-                float32 u = static_cast<float32>(j) / sector_count;
-                float32 v = static_cast<float32>(i) / stack_count;
+                float32 u = 1.0f - static_cast<float32>(j) / sector_count;
+                float32 v = 1.0f - static_cast<float32>(i) / stack_count;
 
                 mesh_builder.AddVertex(Vec3(x, y, z), Vec3(nx, ny, nz), Vec2(u, v));
             }
