@@ -3,7 +3,7 @@ assimp/5.0.1
 bullet3/3.07
 fmt/7.1.3
 freetype/2.10.4
-rapidjson/cci.20200410
+nlohmann_json/3.9.1
 rttr/0.9.6
 stb/20200203
 

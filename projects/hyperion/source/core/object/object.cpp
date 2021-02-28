@@ -38,16 +38,6 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    void Object::Serialize(SerializationStream &serialization_stream) {
-
-    }
-
-    //--------------------------------------------------------------
-    void Object::Deserialize(SerializationStream &serialization_stream) {
-
-    }
-
-    //--------------------------------------------------------------
     Object *Object::Create() {
         return new Object();
     }

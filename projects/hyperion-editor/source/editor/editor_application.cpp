@@ -7,6 +7,7 @@
 #include <hyperion/core/app/time.hpp>
 #include <hyperion/core/io/file_system.hpp>
 #include <hyperion/core/memory/memory.hpp>
+#include <hyperion/core/serialization/json_serializer.hpp>
 #include <hyperion/core/system/engine.hpp>
 #include <hyperion/entity/world_manager.hpp>
 #include <hyperion/scripting/scripting_engine.hpp>
@@ -28,6 +29,9 @@ namespace Hyperion::Editor {
 
         Entity *entity = Entity::Create("Entity", Vec3::Zero(), Quaternion::Identity(), nullptr, world);
         entity->SetLayer(LayerMask::Layer17);
+
+        JsonSerializer serializer;
+        String json = serializer.Serialize(world).Unwrap();
     }
 
     //--------------------------------------------------------------
