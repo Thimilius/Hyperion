@@ -88,34 +88,10 @@ namespace Hyperion {
         float32 pivot_x = m_pivot.x;
         float32 pivot_y = m_pivot.y;
 
-        //Vec2 parent_size;
-        //if (m_parent && m_parent->GetType() == Type::get<RectTransform>()) {
-        //    RectTransform *parent_transform = static_cast<RectTransform *>(m_parent);
-        //    parent_size = parent_transform->m_size;
-        //} else {
-        //    parent_size = Vec2(static_cast<float32>(Display::GetWidth()), static_cast<float32>(Display::GetHeight()));
-        //}
-        
         corners[0] = m_local_to_world_matrix * Vec4((1.0f - pivot_x) * width, (1.0f - pivot_y) * height, 0.0f, 1.0f);
         corners[1] = m_local_to_world_matrix * Vec4((1.0f - pivot_x) * width, -pivot_y * height, 0.0f, 1.0f);
         corners[2] = m_local_to_world_matrix * Vec4(-pivot_x * width, -pivot_y * height, 0.0f, 1.0f);
         corners[3] = m_local_to_world_matrix * Vec4(-pivot_x * width, (1.0f - pivot_y) * height, 0.0f, 1.0f);
-
-        Vec2 parent_size = GetParentSize();
-        if (m_size.x == 0.0f) {
-            width = m_anchor_max.x * parent_size.x;
-            corners[0].x = (1.0f - pivot_x) * width;
-            corners[1].x = (1.0f - pivot_x) * width;
-            corners[2].x = -pivot_x * width;
-            corners[3].x = -pivot_x * width;
-        }
-        if (m_size.y == 0.0f) {
-            height = m_anchor_max.y * parent_size.y;
-            corners[0].y = (1.0f - pivot_y) * height;
-            corners[1].y = -pivot_y * height;
-            corners[2].y = -pivot_y * height;
-            corners[3].y = (1.0f - pivot_y) * height;
-        }
     }
 
     //--------------------------------------------------------------
@@ -198,23 +174,17 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void RectTransform::RecalculateTransform() {
-        Transform::RecalculateTransform();
-
         Vec2 parent_size = GetParentSize();
         Vec2 half_parent_size = parent_size / 2.0f;
 
         // This comparison is most likely very unreliable.
         bool stretching = m_anchor_min != m_anchor_max;
-        if (stretching) {
-            float32 x = m_anchor_min.x * parent_size.x - half_parent_size.x;
-            float32 y = m_anchor_min.y * parent_size.y - half_parent_size.y;
+        float32 x = m_anchor_min.x * parent_size.x - half_parent_size.x;
+        float32 y = m_anchor_min.y * parent_size.y - half_parent_size.y;
+        Vec3 new_position = Vec3(x, y, 0.0f);
+        m_local_position = m_parent ? m_parent->WorldToLocalPosition(new_position) : new_position;
 
-            float32 offset_x = m_derived_scale.x * m_anchored_position.x;
-            float32 offset_y = m_derived_scale.y * m_anchored_position.y;
-
-            Vec3 new_position = Vec3(x + offset_x, y + offset_y, 0.0f);
-            m_local_position = m_parent ? m_parent->WorldToLocalPosition(new_position) : new_position;
-        }
+        Transform::RecalculateTransform();
     }
 
     //--------------------------------------------------------------
