@@ -48,7 +48,20 @@ namespace Hyperion {
 
         mesh_builder.Clear();
 
-        Mesh *new_mesh = GenerateMeshForText(mesh_builder, m_font, m_text, GetTransform()->GetPosition(), GetEntity()->GetComponentInParent<Canvas>()->GetScale(), m_color);
+        float32 scale = GetCanvas()->GetScale();
+
+        // We try to center the text by default.
+        Vec3 world_corners[4];
+        GetRectTransform()->GetWorldCorners(world_corners);
+        float32 x_center = (world_corners[2].x + world_corners[0].x) / 2.0f;
+        float32 y_center = (world_corners[0].y + world_corners[2].y) / 2.0f;
+
+        float32 font_size = static_cast<float32>(m_font->GetSize()) * scale;
+        Vec2 text_size = m_font->GetTextSize(m_text, scale);
+
+        Vec3 position = Vec3(x_center - (text_size.x / 2.0f), y_center - (text_size.y / 2.0f), 0.0f);
+
+        Mesh *new_mesh = GenerateMeshForText(mesh_builder, m_font, m_text, position, scale, m_color);
         GetWidgetRenderer()->SetMesh(new_mesh);
     }
 
@@ -69,10 +82,9 @@ namespace Hyperion {
                 case ' ': position.x += font->GetSpecialGlyphs().space.advance * scale; continue;
                 case '\t': position.x += font->GetSpecialGlyphs().space.advance * 4 * scale; continue; // Tab is equivalent to 4 whitespaces.
                 case '\r': continue; // Carriage return gets just straight up ignored. 
-                case '\n':
-                {
+                case '\n': {
                     position.x = intial_position.x;
-                    position.y -= font->GetSize();
+                    position.y -= font->GetSize() * scale;
                     continue;
                 }
             }

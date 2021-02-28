@@ -65,8 +65,9 @@ namespace Hyperion {
                         goto continue_loop;
                     }
                     if (bitmap_height > font_size) {
-                        HYP_LOG_WARN("Engine", "The font glyph '{}' is greater than the font size!", character);
-                        goto continue_loop;
+                        // It might be the case that the font glyphs are higher than the font size!? I am not sure why that is.
+                        // HACK: For now we just limit the size of the texture to be not more than the font size.
+                        bitmap_height = font_size;
                     }
                     if (bitmap_buffer == nullptr) {
                         goto continue_loop;

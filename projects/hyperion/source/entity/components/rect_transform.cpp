@@ -177,11 +177,17 @@ namespace Hyperion {
         Vec2 parent_size = GetParentSize();
         Vec2 half_parent_size = parent_size / 2.0f;
 
+        // We precalculate the derived scale here.
+        Vec3 derived_scale = m_parent ? m_parent->m_derived_scale * m_local_scale : m_local_scale;
+
         // This comparison is most likely very unreliable.
         bool stretching = m_anchor_min != m_anchor_max;
         float32 x = m_anchor_min.x * parent_size.x - half_parent_size.x;
         float32 y = m_anchor_min.y * parent_size.y - half_parent_size.y;
-        Vec3 new_position = Vec3(x, y, 0.0f);
+        float32 x_offset = derived_scale.x * m_anchored_position.x;
+        float32 y_offset = derived_scale.y * m_anchored_position.y;
+        Vec3 new_position = Vec3(x + x_offset, y + y_offset, 0.0f);
+        // We are setting the new local position manually here as to not trigger an endless recursive call of transform recalculation.
         m_local_position = m_parent ? m_parent->WorldToLocalPosition(new_position) : new_position;
 
         Transform::RecalculateTransform();
