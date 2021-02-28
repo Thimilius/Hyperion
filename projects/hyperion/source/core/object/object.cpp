@@ -38,6 +38,16 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
+    void Object::Serialize(SerializationStream &serialization_stream) {
+
+    }
+
+    //--------------------------------------------------------------
+    void Object::Deserialize(SerializationStream &serialization_stream) {
+
+    }
+
+    //--------------------------------------------------------------
     Object *Object::Create() {
         return new Object();
     }
@@ -45,17 +55,6 @@ namespace Hyperion {
     //--------------------------------------------------------------
     Object *Object::Create(const String &name) {
         return new Object(name);
-    }
-
-    //--------------------------------------------------------------
-    Object *Object::Clone(Object *object) {
-        if (object) {
-            Object *clone = object->CreateClone();
-            object->HandleClone(clone);
-            return clone;
-        } else {
-            return nullptr;
-        }
     }
 
     //--------------------------------------------------------------
@@ -76,11 +75,6 @@ namespace Hyperion {
     //--------------------------------------------------------------
     Object::Object(const String &name) : Object() {
         m_name = name;
-    }
-
-    //--------------------------------------------------------------
-    void Object::HandleClone(Object *clone) const {
-        clone->m_name = m_name;
     }
 
     //--------------------------------------------------------------

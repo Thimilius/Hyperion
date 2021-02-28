@@ -3,6 +3,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
 #include "hyperion/core/object/guid.hpp"
+#include "hyperion/core/serialization/serializable.hpp"
 #include "hyperion/scripting/scripting_instance.hpp"
 
 //-------------------- Forward Declarations --------------------
@@ -17,7 +18,7 @@ namespace Hyperion {
     using ObjectId = uint64;
     using ObjectGuid = Guid;
 
-    class Object {
+    class Object : public ISerializable {
         HYP_REFLECT();
     public:
         // We would like to have the destructor private, but RTTR does not let us.
@@ -38,10 +39,12 @@ namespace Hyperion {
         inline void SetScriptingInstance(Scripting::ScriptingInstance *scripting_instance) { m_scripting_instance = scripting_instance; }
 
         inline virtual String ToString() const { return m_name; }
+
+        virtual void Serialize(SerializationStream &serialization_stream) override;
+        virtual void Deserialize(SerializationStream &serialization_stream) override;
     public:
         static Object *Create();
         static Object *Create(const String &name);
-        static Object *Clone(Object *object);
 
         static void Destroy(Object *object);
         static void DestroyImmediate(Object *object);
@@ -49,9 +52,6 @@ namespace Hyperion {
         Object();
         Object(const String &name);
     protected:
-        inline virtual Object *CreateClone() const { return new Object(); }
-        virtual void HandleClone(Object *clone) const;
-
         virtual void OnDestroy() { }
     private:
         Object(const Object &other) = delete;
