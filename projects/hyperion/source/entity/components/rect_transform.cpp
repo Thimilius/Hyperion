@@ -185,10 +185,28 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void RectTransform::RecalculateTransform() {
         Vec2 pivot = m_pivot;
-        m_rect = Rect(-pivot * m_size, m_size);
+        Vec2 size = m_size;
+        Vec2 parent_size = GetParentSize();
+        Vec2 half_parent_size = parent_size / 2.0f;
 
-        // A rect transform has full control over the local position, so that the layout can be computed properly.
+        float32 anchor_x = m_anchor_max.x - m_anchor_min.x;
+        float32 anchor_y = m_anchor_max.y - m_anchor_min.y;
+
+        float32 anchor_x_size = anchor_x * parent_size.x;
+        float32 anchor_y_size = anchor_y * parent_size.y;
+        size.x += anchor_x_size;
+        size.y += anchor_y_size;
+
+        m_rect = Rect(-pivot * size, size);
+
+        // A rect transform has full control over the local position, so that the anchoring can be set properly.
         m_local_position = m_anchored_position;
+        
+        m_local_position.x += m_anchor_min.x * parent_size.x - half_parent_size.x;
+        m_local_position.y += m_anchor_min.y * parent_size.y - half_parent_size.y;
+
+        m_local_position.x += (m_pivot.x) * anchor_x_size;
+        m_local_position.y += (m_pivot.y) * anchor_y_size;
 
         Transform::RecalculateTransform();
     }
