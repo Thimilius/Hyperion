@@ -23,6 +23,8 @@ namespace Hyperion {
         }
 
         void UpdateScale();
+    protected:
+        void OnCreate() override;
     private:
         Canvas() : Component("Canvas") { }
     private:

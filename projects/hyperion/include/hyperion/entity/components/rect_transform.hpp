@@ -80,8 +80,6 @@ namespace Hyperion {
     private:
         RectTransform() : Transform("RectTransform") { }
     private:
-        Vec2 GetParentSize() const;
-    private:
         static RectTransform *Create();
     private:
         Rect m_rect = Rect(-50.0f, -50.0f, 100.0f, 100.0f);

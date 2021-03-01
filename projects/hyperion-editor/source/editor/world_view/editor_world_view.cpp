@@ -37,12 +37,30 @@ namespace Hyperion::Editor {
         Entity *canvas_entity = Entity::Create("Canvas");
         s_editor_canvas = canvas_entity->AddComponent<Canvas>();
         {
-            Entity *graphic_entity = Entity::Create("Graphic");
-            graphic_entity->GetTransform()->SetParent(canvas_entity->GetTransform());
-            Graphic *graphic = graphic_entity->AddComponent<Graphic>();
-            graphic->GetRectTransform()->SetSize(Vec2(100, 100));
-            graphic->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::Center);
-            graphic->SetColor(Color::Cyan());
+            Entity *graphic_0_entity = Entity::Create("Graphic_0");
+            graphic_0_entity->GetTransform()->SetParent(canvas_entity->GetTransform());
+            Graphic *graphic_0 = graphic_0_entity->AddComponent<Graphic>();
+            graphic_0->GetRectTransform()->SetSize(Vec2(0, 300));
+            graphic_0->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::Center);
+            graphic_0->GetRectTransform()->SetAnchorMin(Vec2(0.0f, 0.5f));
+            graphic_0->GetRectTransform()->SetAnchorMax(Vec2(1.0f, 0.5f));
+            graphic_0->GetRectTransform()->SetPivot(Vec2(0.0f, 0.5f));
+            graphic_0->SetColor(Color::White());
+            s_graphic = graphic_0;
+
+            Entity *graphic_1_entity = Entity::Create("Graphic_1");
+            graphic_1_entity->GetTransform()->SetParent(graphic_0_entity->GetTransform());
+            Graphic *graphic_1 = graphic_1_entity->AddComponent<Graphic>();
+            graphic_1->GetRectTransform()->SetSize(Vec2(200, 200));
+            graphic_1->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::LeftCenter);
+            graphic_1->SetColor(Color::Cyan());
+
+            Entity *graphic_2_entity = Entity::Create("Graphic_2");
+            graphic_2_entity->GetTransform()->SetParent(graphic_1_entity->GetTransform());
+            Graphic *graphic_2 = graphic_2_entity->AddComponent<Graphic>();
+            graphic_2->GetRectTransform()->SetSize(Vec2(100, 100));
+            graphic_2->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::BottomRightCorner);
+            graphic_2->SetColor(Color::Yellow());
         }
 
         EditorWorldViewGrid::Initialize();
@@ -58,6 +76,12 @@ namespace Hyperion::Editor {
         }
 
         s_editor_camera_controller->OnUpdate(delta_time);
+
+        if (RectTransformUtility::RectangleContainsScreenPoint(s_graphic->GetRectTransform(), Input::GetMousePosition())) {
+            s_graphic->SetColor(Color::Red());
+        } else {
+            s_graphic->SetColor(Color::White());
+        }
     }
 
     //--------------------------------------------------------------

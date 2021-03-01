@@ -41,6 +41,13 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void Canvas::OnCreate() {
+        Component::OnCreate();
+
+        UpdateScale();
+    }
+
+    //--------------------------------------------------------------
     Canvas *Canvas::Create() {
         return new Canvas();
     }

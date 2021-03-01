@@ -5,7 +5,6 @@
 #include "hyperion/entity/components/rect_transform.hpp"
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/app/display.hpp"
 #include "hyperion/entity/entity.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -186,39 +185,40 @@ namespace Hyperion {
     void RectTransform::RecalculateTransform() {
         Vec2 pivot = m_pivot;
         Vec2 size = m_size;
-        Vec2 parent_size = GetParentSize();
+        Vec2 parent_size;
+        Vec2 parent_pivot;
+        if (m_parent && m_parent->GetType() == Type::get<RectTransform>()) {
+            RectTransform *parent_rect_transform = static_cast<RectTransform *>(m_parent);
+            parent_pivot = parent_rect_transform->m_pivot;
+            parent_size = parent_rect_transform->m_rect.size;
+        } else {
+            parent_pivot = Vec2(0.5f, 0.5f);
+            parent_size = Vec2(0.0f, 0.0f);
+        }
         Vec2 half_parent_size = parent_size / 2.0f;
 
         float32 anchor_x = m_anchor_max.x - m_anchor_min.x;
         float32 anchor_y = m_anchor_max.y - m_anchor_min.y;
-
         float32 anchor_x_size = anchor_x * parent_size.x;
         float32 anchor_y_size = anchor_y * parent_size.y;
-        size.x += anchor_x_size;
-        size.y += anchor_y_size;
-
+        size.x += anchor_x * parent_size.x;
+        size.y += anchor_y * parent_size.y;
         m_rect = Rect(-pivot * size, size);
 
-        // A rect transform has full control over the local position, so that the anchoring can be set properly.
+        // NOTE: A rect transform has full control over the local position, so that the anchoring can be set properly.
+        // First we have our anchored position which acts as a simple offset.
         m_local_position = m_anchored_position;
-        
+        // We have to take into account the parent pivot which has an effect on our local position.
+        m_local_position.x += (1.0f - parent_pivot.x) * parent_size.x - half_parent_size.x;
+        m_local_position.y += (1.0f - parent_pivot.y) * parent_size.y - half_parent_size.y;
+        // Now we need to take into account our own pivot.
         m_local_position.x += m_anchor_min.x * parent_size.x - half_parent_size.x;
         m_local_position.y += m_anchor_min.y * parent_size.y - half_parent_size.y;
-
+        // And finally our anchoring.
         m_local_position.x += (m_pivot.x) * anchor_x_size;
         m_local_position.y += (m_pivot.y) * anchor_y_size;
 
         Transform::RecalculateTransform();
-    }
-
-    //--------------------------------------------------------------
-    Vec2 RectTransform::GetParentSize() const {
-       if (m_parent && m_parent->GetType() == Type::get<RectTransform>()) {
-           RectTransform *parent_transform = static_cast<RectTransform *>(m_parent);
-           return parent_transform->m_size;
-       } else {
-           return Vec2(static_cast<float32>(Display::GetWidth()), static_cast<float32>(Display::GetHeight()));
-       }
     }
 
     //--------------------------------------------------------------
@@ -228,11 +228,6 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     bool RectTransformUtility::RectangleContainsScreenPoint(RectTransform *rect_transform, Vec2 screen_point) {
-        // First we need to transform the screen point so that the origin is in the center
-        float32 display_half_width = static_cast<float32>(Display::GetWidth()) / 2.0f;
-        float32 display_half_height = static_cast<float32>(Display::GetHeight()) / 2.0f;
-        screen_point = Vec2(screen_point.x - display_half_width, screen_point.y - display_half_height);
-
         Vec3 world_corners[4];
         rect_transform->GetWorldCorners(world_corners);
 
