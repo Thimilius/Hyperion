@@ -13,22 +13,10 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void RectTransform::SetAnchoringPreset(AnchoringPreset anchoring_preset) {
         switch (anchoring_preset) {
-            case AnchoringPreset::Center: {
-                m_anchor_min = Vec2(0.5f, 0.5f);
-                m_anchor_max = Vec2(0.5f, 0.5f);
-                m_pivot = Vec2(0.5f, 0.5f);
-                break;
-            }
-            case AnchoringPreset::RightCenter: {
-                m_anchor_min = Vec2(1.0f, 0.5f);
-                m_anchor_max = Vec2(1.0f, 0.5f);
-                m_pivot = Vec2(1.0f, 0.5f);
-                break;
-            }
-            case AnchoringPreset::LeftCenter: {
-                m_anchor_min = Vec2(0.0f, 0.5f);
-                m_anchor_max = Vec2(0.0f, 0.5f);
-                m_pivot = Vec2(0.0f, 0.5f);
+            case AnchoringPreset::TopLeft: {
+                m_anchor_min = Vec2(0.0f, 1.0f);
+                m_anchor_max = Vec2(0.0f, 1.0f);
+                m_pivot = Vec2(0.0f, 1.0f);
                 break;
             }
             case AnchoringPreset::TopCenter: {
@@ -37,37 +25,91 @@ namespace Hyperion {
                 m_pivot = Vec2(0.5f, 1.0f);
                 break;
             }
+            case AnchoringPreset::TopRight: {
+                m_anchor_min = Vec2(1.0f, 1.0f);
+                m_anchor_max = Vec2(1.0f, 1.0f);
+                m_pivot = Vec2(1.0f, 1.0f);
+                break;
+            }
+            case AnchoringPreset::MiddleLeft: {
+                m_anchor_min = Vec2(0.0f, 0.5f);
+                m_anchor_max = Vec2(0.0f, 0.5f);
+                m_pivot = Vec2(0.0f, 0.5f);
+                break;
+            }
+            case AnchoringPreset::MiddleCenter: {
+                m_anchor_min = Vec2(0.5f, 0.5f);
+                m_anchor_max = Vec2(0.5f, 0.5f);
+                m_pivot = Vec2(0.5f, 0.5f);
+                break;
+            }
+            case AnchoringPreset::MiddleRight: {
+                m_anchor_min = Vec2(1.0f, 0.5f);
+                m_anchor_max = Vec2(1.0f, 0.5f);
+                m_pivot = Vec2(1.0f, 0.5f);
+                break;
+            }
+            case AnchoringPreset::BottomLeft: {
+                m_anchor_min = Vec2(0.0f, 0.0f);
+                m_anchor_max = Vec2(0.0f, 0.0f);
+                m_pivot = Vec2(0.0f, 0.0f);
+                break;
+            }
             case AnchoringPreset::BottomCenter: {
                 m_anchor_min = Vec2(0.5f, 0.0f);
                 m_anchor_max = Vec2(0.5f, 0.0f);
                 m_pivot = Vec2(0.5f, 0.0f);
                 break;
             }
-            case AnchoringPreset::TopRightCorner: {
-                m_anchor_min = Vec2(1.0f, 1.0f);
-                m_anchor_max = Vec2(1.0f, 1.0f);
-                m_pivot = Vec2(1.0f, 1.0f);
-                break;
-            }
-            case AnchoringPreset::TopLeftCorner: {
-                m_anchor_min = Vec2(0.0f, 1.0f);
-                m_anchor_max = Vec2(0.0f, 1.0f);
-                m_pivot = Vec2(0.0f, 1.0f);
-                break;
-            }
-            case AnchoringPreset::BottomRightCorner: {
+            case AnchoringPreset::BottomRight: {
                 m_anchor_min = Vec2(1.0f, 0.0f);
                 m_anchor_max = Vec2(1.0f, 0.0f);
                 m_pivot = Vec2(1.0f, 0.0f);
                 break;
             }
-            case AnchoringPreset::BottomLeftCorner: {
-                m_anchor_min = Vec2(0.0f, 0.0f);
-                m_anchor_max = Vec2(0.0f, 0.0f);
-                m_pivot = Vec2(0.0f, 0.0f);
+            case AnchoringPreset::TopStretchHorizontal: {
+                m_anchor_min = Vec2(0.0f, 1.0f);
+                m_anchor_max = Vec2(1.0f, 1.0f);
+                m_pivot = Vec2(0.5f, 1.0f);
+                m_size.x = 0.0f;
                 break;
             }
-            case AnchoringPreset::Stretch: {
+            case AnchoringPreset::MiddleStretchHorizontal: {
+                m_anchor_min = Vec2(0.0f, 0.5f);
+                m_anchor_max = Vec2(1.0f, 0.5f);
+                m_pivot = Vec2(0.5f, 0.5f);
+                m_size.x = 0.0f;
+                break;
+            }
+            case AnchoringPreset::BottomStretchHorizontal: {
+                m_anchor_min = Vec2(0.0f, 0.0f);
+                m_anchor_max = Vec2(1.0f, 0.0f);
+                m_pivot = Vec2(0.5f, 0.0f);
+                m_size.x = 0.0f;
+                break;
+            }
+            case AnchoringPreset::LeftStretchVertical: {
+                m_anchor_min = Vec2(0.0f, 0.0f);
+                m_anchor_max = Vec2(0.0f, 1.0f);
+                m_pivot = Vec2(0.0f, 0.5f);
+                m_size.y = 0.0f;
+                break;
+            }
+            case AnchoringPreset::CenterStretchVertical: {
+                m_anchor_min = Vec2(0.5f, 0.0f);
+                m_anchor_max = Vec2(0.5f, 1.0f);
+                m_pivot = Vec2(0.5f, 0.5f);
+                m_size.y = 0.0f;
+                break;
+            }
+            case AnchoringPreset::RightStretchVertical: {
+                m_anchor_min = Vec2(1.0f, 0.0f);
+                m_anchor_max = Vec2(1.0f, 1.0f);
+                m_pivot = Vec2(1.0f, 0.5f);
+                m_size.y = 0.0f;
+                break;
+            }
+            case AnchoringPreset::StretchAll: {
                 m_anchor_min = Vec2(0.0f, 0.0f);
                 m_anchor_max = Vec2(1.0f, 1.0f);
                 m_pivot = Vec2(0.5f, 0.5f);

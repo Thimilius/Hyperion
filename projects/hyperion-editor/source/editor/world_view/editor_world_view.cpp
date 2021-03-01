@@ -40,11 +40,8 @@ namespace Hyperion::Editor {
             Entity *graphic_0_entity = Entity::Create("Graphic_0");
             graphic_0_entity->GetTransform()->SetParent(canvas_entity->GetTransform());
             Graphic *graphic_0 = graphic_0_entity->AddComponent<Graphic>();
-            graphic_0->GetRectTransform()->SetSize(Vec2(0, 300));
-            graphic_0->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::Center);
-            graphic_0->GetRectTransform()->SetAnchorMin(Vec2(0.0f, 0.5f));
-            graphic_0->GetRectTransform()->SetAnchorMax(Vec2(1.0f, 0.5f));
-            graphic_0->GetRectTransform()->SetPivot(Vec2(0.0f, 0.5f));
+            graphic_0->GetRectTransform()->SetSize(Vec2(300, 300));
+            graphic_0->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::MiddleStretchHorizontal);
             graphic_0->SetColor(Color::White());
             s_graphic = graphic_0;
 
@@ -52,14 +49,14 @@ namespace Hyperion::Editor {
             graphic_1_entity->GetTransform()->SetParent(graphic_0_entity->GetTransform());
             Graphic *graphic_1 = graphic_1_entity->AddComponent<Graphic>();
             graphic_1->GetRectTransform()->SetSize(Vec2(200, 200));
-            graphic_1->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::LeftCenter);
+            graphic_1->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::MiddleLeft);
             graphic_1->SetColor(Color::Cyan());
 
             Entity *graphic_2_entity = Entity::Create("Graphic_2");
             graphic_2_entity->GetTransform()->SetParent(graphic_1_entity->GetTransform());
             Graphic *graphic_2 = graphic_2_entity->AddComponent<Graphic>();
             graphic_2->GetRectTransform()->SetSize(Vec2(100, 100));
-            graphic_2->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::BottomRightCorner);
+            graphic_2->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::BottomRight);
             graphic_2->SetColor(Color::Yellow());
         }
 

@@ -20,19 +20,27 @@ namespace Hyperion {
     // Another benefit should be easier integration with scripting which the normal entity components already handle as well.
 
     enum class AnchoringPreset {
-        Center,
-
-        RightCenter,
-        LeftCenter,
+        TopLeft,
         TopCenter,
+        TopRight,
+
+        MiddleLeft,
+        MiddleCenter,
+        MiddleRight,
+
+        BottomLeft,
         BottomCenter,
+        BottomRight,
 
-        TopRightCorner,
-        TopLeftCorner,
-        BottomRightCorner,
-        BottomLeftCorner,
+        TopStretchHorizontal,
+        MiddleStretchHorizontal,
+        BottomStretchHorizontal,
 
-        Stretch,
+        LeftStretchVertical,
+        CenterStretchVertical,
+        RightStretchVertical,
+
+        StretchAll,
     };
 
     class RectTransform final : public Transform {
