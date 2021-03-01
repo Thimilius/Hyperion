@@ -76,15 +76,6 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void Transform::NotifyTransformParentChanged() {
-        GetEntity()->DispatchMessage({ EntityMessageType::TransformParentChanged, nullptr });
-
-        for (Transform *child : m_children) {
-            child->NotifyTransformParentChanged();
-        }
-    }
-
-    //--------------------------------------------------------------
     void Transform::RecalculateTransform() {
         if (m_parent) {
             m_derived_rotation = m_parent->m_derived_rotation * m_local_rotation;
@@ -100,6 +91,15 @@ namespace Hyperion {
 
         m_local_to_world_matrix = Mat4::TRS(m_derived_position, m_derived_rotation, m_derived_scale);
         m_world_to_local_matrix = m_local_to_world_matrix.Inverted();
+    }
+
+    //--------------------------------------------------------------
+    void Transform::NotifyTransformParentChanged() {
+        GetEntity()->DispatchMessage({ EntityMessageType::TransformParentChanged, nullptr });
+
+        for (Transform *child : m_children) {
+            child->NotifyTransformParentChanged();
+        }
     }
 
     //--------------------------------------------------------------

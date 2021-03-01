@@ -36,35 +36,15 @@ namespace Hyperion::Editor {
         Font *font = FontLoader::LoadFont("data/fonts/robotomono_regular.ttf", 32, FontCharacterSet::LatinSupplement);
         Entity *canvas_entity = Entity::Create("Canvas");
         s_editor_canvas = canvas_entity->AddComponent<Canvas>();
-        //AnchoringPreset anchoring_preset = AnchoringPreset::TopCenter;
-        //{
-        //    Entity *graphic_entity = Entity::Create("Graphic");
-        //    graphic_entity->GetTransform()->SetParent(canvas_entity->GetTransform());
-        //    Graphic *graphic = graphic_entity->AddComponent<Graphic>();
-        //    graphic->GetRectTransform()->SetAnchoringPreset(anchoring_preset);
-        //    graphic->GetRectTransform()->SetSize(Vec2(100, 100));
-        //    graphic->SetColor(Color::Cyan());
-        //}
-        //String text_literal = "Hello";
-        //{
-        //    Entity *text_entity = Entity::Create("Text");
-        //    text_entity->GetTransform()->SetParent(canvas_entity->GetTransform());
-        //    Text *text = text_entity->AddComponent<Text>();
-        //    text->GetRectTransform()->SetAnchoringPreset(anchoring_preset);
-        //    text->GetRectTransform()->SetAnchoredPosition(Vec3(1.0f, -1.0f, 0.0f));
-        //    text->SetFont(font);
-        //    text->SetText(text_literal);
-        //    text->SetColor(Color::Black());
-        //}
-        //{
-        //    Entity *text_entity = Entity::Create("Text");
-        //    text_entity->GetTransform()->SetParent(canvas_entity->GetTransform());
-        //    Text *text = text_entity->AddComponent<Text>();
-        //    text->GetRectTransform()->SetAnchoringPreset(anchoring_preset);
-        //    text->SetFont(font);
-        //    text->SetText(text_literal);
-        //    text->SetColor(Color::White());
-        //}
+        {
+            Entity *graphic_entity = Entity::Create("Graphic");
+            graphic_entity->GetTransform()->SetParent(canvas_entity->GetTransform());
+            Graphic *graphic = graphic_entity->AddComponent<Graphic>();
+            graphic->GetRectTransform()->SetSize(Vec2(100, 100));
+            graphic->GetRectTransform()->SetPivot(Vec3(0.5f, 0.5f, 0.0f));
+            graphic->GetRectTransform()->SetPosition(Vec3(0.0f, 0.0f, 0.0f));
+            graphic->SetColor(Color::Cyan());
+        }
 
         EditorWorldViewGrid::Initialize();
     }

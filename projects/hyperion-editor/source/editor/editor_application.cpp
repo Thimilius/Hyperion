@@ -22,16 +22,6 @@ namespace Hyperion::Editor {
     //--------------------------------------------------------------
     void EditorApplication::OnInitialize() {
         EditorWorldView::Initialize();
-
-        World *world = WorldManager::CreateWorld("Hello world");
-        world->GetEnvironment().ambient_light.color = Color::Blue();
-        world->GetEnvironment().ambient_light.intensity = 0.45f;
-
-        Entity *entity = Entity::Create("Entity", Vec3::Zero(), Quaternion::Identity(), nullptr, world);
-        entity->SetLayer(LayerMask::Layer17);
-
-        JsonSerializer serializer;
-        String json = serializer.Serialize(world).Unwrap();
     }
 
     //--------------------------------------------------------------

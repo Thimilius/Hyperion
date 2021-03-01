@@ -101,11 +101,11 @@ namespace Hyperion {
         void OnCreate() override;
         void OnDestroy() override;
 
+        virtual void NotifyTransformChanged();
         virtual void RecalculateTransform();
     private:
         Transform() : Component("Transform") { }
     private:
-        void NotifyTransformChanged();
         void NotifyTransformParentChanged();
     private:
         static Transform *Create();

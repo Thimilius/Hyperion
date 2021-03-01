@@ -78,20 +78,30 @@ namespace Hyperion {
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
 
-        RecalculateTransform();
+        NotifyTransformChanged();
+    }
+
+    //--------------------------------------------------------------
+    void RectTransform::GetLocalCorners(Vec3 corners[4]) const {
+        HYP_ASSERT(corners);
+
+        Vec2 min = m_rect.GetMin();
+        Vec2 max = m_rect.GetMax();
+
+        corners[0] = Vec3(max.x, max.y, 0.0f);
+        corners[1] = Vec3(max.x, min.y, 0.0f);
+        corners[2] = Vec3(min.x, min.y, 0.0f);
+        corners[3] = Vec3(min.x, max.y, 0.0f);
     }
 
     //--------------------------------------------------------------
     void RectTransform::GetWorldCorners(Vec3 corners[4]) const {
-        float32 width = m_size.x;
-        float32 height = m_size.y;
-        float32 pivot_x = m_pivot.x;
-        float32 pivot_y = m_pivot.y;
+        HYP_ASSERT(corners);
 
-        corners[0] = m_local_to_world_matrix * Vec4((1.0f - pivot_x) * width, (1.0f - pivot_y) * height, 0.0f, 1.0f);
-        corners[1] = m_local_to_world_matrix * Vec4((1.0f - pivot_x) * width, -pivot_y * height, 0.0f, 1.0f);
-        corners[2] = m_local_to_world_matrix * Vec4(-pivot_x * width, -pivot_y * height, 0.0f, 1.0f);
-        corners[3] = m_local_to_world_matrix * Vec4(-pivot_x * width, (1.0f - pivot_y) * height, 0.0f, 1.0f);
+        GetLocalCorners(corners);
+        for (uint64 i = 0; i < 4; i++) {
+            corners[i] = m_local_to_world_matrix * corners[i];
+        }
     }
 
     //--------------------------------------------------------------
@@ -174,21 +184,11 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void RectTransform::RecalculateTransform() {
-        Vec2 parent_size = GetParentSize();
-        Vec2 half_parent_size = parent_size / 2.0f;
+        Vec2 pivot = m_pivot;
+        m_rect = Rect(-pivot * m_size, m_size);
 
-        // We precalculate the derived scale here.
-        Vec3 derived_scale = m_parent ? m_parent->m_derived_scale * m_local_scale : m_local_scale;
-
-        // This comparison is most likely very unreliable.
-        bool stretching = m_anchor_min != m_anchor_max;
-        float32 x = m_anchor_min.x * parent_size.x - half_parent_size.x;
-        float32 y = m_anchor_min.y * parent_size.y - half_parent_size.y;
-        float32 x_offset = derived_scale.x * m_anchored_position.x;
-        float32 y_offset = derived_scale.y * m_anchored_position.y;
-        Vec3 new_position = Vec3(x + x_offset, y + y_offset, 0.0f);
-        // We are setting the new local position manually here as to not trigger an endless recursive call of transform recalculation.
-        m_local_position = m_parent ? m_parent->WorldToLocalPosition(new_position) : new_position;
+        // A rect transform has full control over the local position, so that the layout can be computed properly.
+        m_local_position = m_anchored_position;
 
         Transform::RecalculateTransform();
     }

@@ -29,9 +29,14 @@ namespace Hyperion {
             m_scale = m_scale_factor * computed_scale;
 
             RectTransform *transform = GetEntity()->GetComponent<RectTransform>();
-            transform->SetSize(Vec2(display_width, display_height));
+            HYP_ASSERT(transform);
 
-            GetTransform()->SetLocalScale(Vec3(m_scale, m_scale, m_scale));
+            // Our actual size has to be determined based on the scale factor.
+            float32 inverse_scale = 1.0f / m_scale;
+
+            transform->SetSize(Vec2(inverse_scale * display_width, inverse_scale * display_height));
+            transform->SetAnchoredPosition(Vec3(display_width / 2.0f, display_height / 2.0f, 0.0f));
+            transform->SetLocalScale(Vec3(m_scale, m_scale, m_scale));
         }
     }
 

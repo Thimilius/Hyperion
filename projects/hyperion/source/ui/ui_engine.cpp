@@ -6,6 +6,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/entity/world.hpp"
+#include "hyperion/entity/world_manager.hpp"
 #include "hyperion/entity/components/ui/canvas.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -18,8 +19,8 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void UiEngine::LateUpdate() {
-        if (s_widgets.size() > 0) {
-            Canvas *canvas = s_widgets[0]->GetWorld()->FindComponentOfType<Canvas>();
+        Canvas *canvas = WorldManager::GetActiveWorld()->FindComponentOfType<Canvas>();
+        if (canvas != nullptr) {
             canvas->UpdateScale();
         }
 

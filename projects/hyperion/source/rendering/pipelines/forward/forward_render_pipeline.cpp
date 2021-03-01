@@ -124,20 +124,18 @@ namespace Hyperion::Rendering {
                 material->SetTexture("u_texture", font->GetTexture());
             }
 
+            // The widgets already provide their meshes in screen space, meaning they do not need a model matrix.
             render_driver->DrawMesh(mesh_id, Mat4::Identity(), material_id, 0);
         }
 
-        {
-            RasterizerState rasterizer_state;
-            rasterizer_state.blending_enabled = true;
-            render_driver->SetRasterizerState(rasterizer_state);
-        }
+        rasterizer_state.depth_mask_enabled = false;
+        render_driver->SetRasterizerState(rasterizer_state);
     }
 
     //--------------------------------------------------------------
     void ForwardRenderPipeline::SetUICameraData(IRenderDriver *render_driver) {
-        float32 half_width = static_cast<float32>(Display::GetWidth()) / 2.0f;
-        float32 half_height = static_cast<float32>(Display::GetHeight()) / 2.0f;
+        float32 width = static_cast<float32>(Display::GetWidth());
+        float32 height = static_cast<float32>(Display::GetHeight());
 
         CameraData camera_data = { };
         camera_data.projection_mode = CameraProjectionMode::Orthographic;
@@ -145,8 +143,7 @@ namespace Hyperion::Rendering {
         camera_data.view_matrix = Mat4::Identity();
         camera_data.inverse_view_matrix = camera_data.view_matrix.Inverted();
 
-        // We want (0, 0) to be at the center of the screen.
-        camera_data.projection_matrix = Mat4::Orthographic(-half_width, half_width, -half_height, half_height, -1, 1);
+        camera_data.projection_matrix = Mat4::Orthographic(0.0f, width, 0.0f, height, -1.0f, 1.0f);
         camera_data.inverse_projection_matrix = camera_data.projection_matrix.Inverted();
 
         camera_data.view_projection_matrix = camera_data.projection_matrix;
