@@ -29,8 +29,9 @@ namespace Hyperion {
 
         Vec2 GetMin() const;
         Vec2 GetMax() const;
+        Vec2 GetCenter() const;
 
-        bool Intersects(Rect bounds) const;
+        bool Intersects(const Rect &other) const;
         bool Contains(Vec2 point) const;
 
         String ToString() const;
@@ -62,8 +63,9 @@ namespace Hyperion {
 
         Vec2Int GetMin() const;
         Vec2Int GetMax() const;
+        Vec2Int GetCenter() const;
 
-        bool Intersects(RectInt bounds) const;
+        bool Intersects(const RectInt &other) const;
         bool Contains(Vec2Int point) const;
 
         String ToString() const;
