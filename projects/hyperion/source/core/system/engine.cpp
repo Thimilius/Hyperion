@@ -240,6 +240,11 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void Engine::UiEngineUpdate() {
+        UiEngine::Update();
+    }
+
+    //--------------------------------------------------------------
     void Engine::ScriptingEngineUpdate() {
         HYP_PROFILE_CATEGORY("ScriptingUpdate", Optick::Category::Script);
 

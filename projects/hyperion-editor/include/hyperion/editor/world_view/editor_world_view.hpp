@@ -3,7 +3,7 @@
 //---------------------- Library Includes ----------------------
 #include <hyperion/entity/world.hpp>
 #include <hyperion/entity/components/ui/canvas.hpp>
-#include <hyperion/entity/components/ui/graphic.hpp>
+#include <hyperion/entity/components/ui/text.hpp>
 #include <hyperion/rendering/render_driver.hpp>
 
 //---------------------- Project Includes ----------------------
@@ -28,7 +28,7 @@ namespace Hyperion::Editor {
         inline static World *s_editor_world;
         inline static Camera *s_editor_camera;
         inline static Canvas *s_editor_canvas;
-        inline static Graphic *s_graphic;
+        inline static Text *s_text;
 
         inline static bool s_should_draw_grid = true;
         inline static bool s_should_draw_physics_debug = false;

@@ -46,9 +46,9 @@ namespace Hyperion {
         Mesh *old_mesh = GetWidgetRenderer()->GetMesh();
         Object::Destroy(old_mesh);
 
-        mesh_builder.Clear();
-
-        float32 scale = GetCanvas()->GetScale();
+        if (m_font == nullptr || m_text == "") {
+            return;
+        }
 
         // We try to center the text by default.
         Vec3 world_corners[4];
@@ -56,11 +56,16 @@ namespace Hyperion {
         float32 x_center = (world_corners[2].x + world_corners[0].x) / 2.0f;
         float32 y_center = (world_corners[0].y + world_corners[2].y) / 2.0f;
 
+        float32 scale = GetCanvas()->GetScale();
         float32 font_size = static_cast<float32>(m_font->GetSize()) * scale;
         Vec2 text_size = m_font->GetTextSize(m_text, scale);
 
         Vec3 position = Vec3(x_center - (text_size.x / 2.0f), y_center - (text_size.y / 2.0f), 0.0f);
+        position.x = Math::Round(position.x);
+        position.y = Math::Round(position.y);
+        position.z = Math::Round(position.z);
 
+        mesh_builder.Clear();
         Mesh *new_mesh = GenerateMeshForText(mesh_builder, m_font, m_text, position, scale, m_color);
         GetWidgetRenderer()->SetMesh(new_mesh);
     }

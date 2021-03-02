@@ -6,7 +6,7 @@
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
-
+    
     //--------------------------------------------------------------
     WidgetRenderer *WidgetRenderer::Create() {
         return new WidgetRenderer();

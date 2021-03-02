@@ -8,7 +8,7 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    class WidgetRenderer : public Component {
+    class WidgetRenderer final : public Component {
         HYP_REFLECT(Component);
     public:
         Mesh *GetMesh() const { return m_mesh; }
@@ -21,6 +21,7 @@ namespace Hyperion {
     private:
         static WidgetRenderer *Create();
     private:
+        uint32 m_depth = 0;
         Mesh *m_mesh = nullptr;
         Material *m_material = nullptr;
     };

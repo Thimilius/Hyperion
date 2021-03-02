@@ -33,31 +33,34 @@ namespace Hyperion::Editor {
         s_editor_camera = entity->GetComponent<Camera>();
         s_editor_camera_controller = entity->AddComponent<EditorLookAroundCameraController>();
 
-        Font *font = FontLoader::LoadFont("data/fonts/robotomono_regular.ttf", 32, FontCharacterSet::LatinSupplement);
+        Font *font = FontLoader::LoadFont("data/fonts/robotomono_regular.ttf", 9, FontCharacterSet::LatinSupplement);
         Entity *canvas_entity = Entity::Create("Canvas");
         s_editor_canvas = canvas_entity->AddComponent<Canvas>();
+        s_editor_canvas->SetScaleMode(CanvasScaleMode::ConstantPixelSize);
         {
             Entity *graphic_0_entity = Entity::Create("Graphic_0");
             graphic_0_entity->GetTransform()->SetParent(canvas_entity->GetTransform());
             Graphic *graphic_0 = graphic_0_entity->AddComponent<Graphic>();
-            graphic_0->GetRectTransform()->SetSize(Vec2(300, 300));
-            graphic_0->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::MiddleStretchHorizontal);
-            graphic_0->SetColor(Color::White());
-            s_graphic = graphic_0;
+            graphic_0->GetRectTransform()->SetSize(Vec2(0, 14));
+            graphic_0->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::TopStretchHorizontal);
+            graphic_0->SetColor(Color(0.137f, 0.153f, 0.161f, 1.0f));
 
             Entity *graphic_1_entity = Entity::Create("Graphic_1");
             graphic_1_entity->GetTransform()->SetParent(graphic_0_entity->GetTransform());
             Graphic *graphic_1 = graphic_1_entity->AddComponent<Graphic>();
-            graphic_1->GetRectTransform()->SetSize(Vec2(200, 200));
-            graphic_1->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::MiddleLeft);
-            graphic_1->SetColor(Color::Cyan());
-
-            Entity *graphic_2_entity = Entity::Create("Graphic_2");
-            graphic_2_entity->GetTransform()->SetParent(graphic_1_entity->GetTransform());
-            Graphic *graphic_2 = graphic_2_entity->AddComponent<Graphic>();
-            graphic_2->GetRectTransform()->SetSize(Vec2(100, 100));
-            graphic_2->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::BottomRight);
-            graphic_2->SetColor(Color::Yellow());
+            graphic_1->GetRectTransform()->SetSize(Vec2(0, 1));
+            graphic_1->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::BottomStretchHorizontal);
+            graphic_1->GetRectTransform()->SetAnchoredPosition(Vec3(0.0f, -1.0f, 0.0f));
+            graphic_1->SetColor(Color(0.012f, 0.439f, 0.643f, 1.0f));
+            
+            Entity *text_entity = Entity::Create("Text");
+            text_entity->GetTransform()->SetParent(graphic_0_entity->GetTransform());
+            Text *text = text_entity->AddComponent<Text>();
+            text->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::StretchAll);
+            text->SetFont(font);
+            text->SetText("Hyperion");
+            text->SetColor(Color::White());
+            s_text = text;
         }
 
         EditorWorldViewGrid::Initialize();
@@ -72,13 +75,10 @@ namespace Hyperion::Editor {
             s_should_draw_physics_debug = !s_should_draw_physics_debug;
         }
 
-        s_editor_camera_controller->OnUpdate(delta_time);
+        String text = StringUtils::Format("Hyperion - FPS: {} ({:.2f}ms)", Time::GetFPS(), Time::GetFrameTime());
+        s_text->SetText(text);
 
-        if (RectTransformUtility::RectangleContainsScreenPoint(s_graphic->GetRectTransform(), Input::GetMousePosition())) {
-            s_graphic->SetColor(Color::Red());
-        } else {
-            s_graphic->SetColor(Color::White());
-        }
+        s_editor_camera_controller->OnUpdate(delta_time);
     }
 
     //--------------------------------------------------------------

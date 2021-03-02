@@ -5,6 +5,7 @@
 #include "hyperion/ui/ui_engine.hpp"
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/core/app/input.hpp"
 #include "hyperion/entity/world.hpp"
 #include "hyperion/entity/world_manager.hpp"
 #include "hyperion/entity/components/ui/canvas.hpp"
@@ -14,7 +15,15 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void UiEngine::Update() {
-        
+        Canvas *canvas = WorldManager::GetActiveWorld()->FindComponentOfType<Canvas>();
+        if (canvas != nullptr) {
+            Vector<Widget *> widgets = canvas->GetEntity()->GetComponentsInChildren<Widget>();
+            for (Widget *widget : widgets) {
+                if (RectTransformUtility::RectangleContainsScreenPoint(widget->GetRectTransform(), Input::GetMousePosition())) {
+                    HYP_TRACE("Hover over widget: {}", widget->GetId());
+                }
+            }
+        }
     }
 
     //--------------------------------------------------------------

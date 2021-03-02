@@ -55,6 +55,7 @@ namespace Hyperion {
         static void TimeTick();
         static void ApplicationTick();
         static void AssetManagerUpdate();
+        static void UiEngineUpdate();
         static void ScriptingEngineUpdate();
         static void ApplicationUpdate();
         static void ObjectManagerLateUpdate();
