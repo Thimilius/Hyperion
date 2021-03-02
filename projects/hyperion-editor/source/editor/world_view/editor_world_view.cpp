@@ -56,7 +56,8 @@ namespace Hyperion::Editor {
             Entity *text_entity = Entity::Create("Text");
             text_entity->GetTransform()->SetParent(graphic_0_entity->GetTransform());
             Text *text = text_entity->AddComponent<Text>();
-            text->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::StretchAll);
+            text->GetRectTransform()->SetSize(Vec2(100, 0));
+            text->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::CenterStretchVertical);
             text->SetFont(font);
             text->SetText("Hyperion");
             text->SetColor(Color::White());

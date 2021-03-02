@@ -11,23 +11,37 @@
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
+    class Canvas;
     class UiEngine;
 }
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    enum class EventMessageType {
+        PointerEnter,
+        PointerExit,
+        PointerUp,
+        PointerDown,
+        PointerClick,
+    };
+
+    struct EventMessage {
+        EventMessageType type;
+    };
+
     class Widget : public Behaviour, public IEntityMessageListener {
         HYP_REFLECT(Behaviour);
     public:
+        inline Color GetColor() const { return m_color; }
+        void SetColor(Color color);
+
         inline RectTransform *GetRectTransform() const { return m_rect_transform; }
         inline WidgetRenderer *GetWidgetRenderer() const { return m_widget_renderer; }
         inline Canvas *GetCanvas() const { return m_canvas; }
 
+        inline int32 GetDepth() const { return m_depth; }
         inline bool IsDirty() const { return m_is_dirty; }
-
-        inline Color GetColor() const { return m_color; }
-        void SetColor(Color color);
 
         void OnMessage(EntityMessage message) override;
     protected:
@@ -40,6 +54,8 @@ namespace Hyperion {
         void OnCreate() override;
         void OnDestroy() override;
 
+        virtual void OnEventMessage(EventMessage message);
+
         virtual void OnRebuildMesh(MeshBuilder &mesh_builder) { }
     protected:
         Color m_color = Color::White();
@@ -48,8 +64,10 @@ namespace Hyperion {
         WidgetRenderer *m_widget_renderer = nullptr;
         Canvas *m_canvas = nullptr;
 
+        int32 m_depth = -1;
         bool m_is_dirty = false;
     private:
+        friend class Hyperion::Canvas;
         friend class Hyperion::UiEngine;
     }; 
 

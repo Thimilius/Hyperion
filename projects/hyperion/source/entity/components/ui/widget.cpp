@@ -29,8 +29,12 @@ namespace Hyperion {
                 break;
             }
             case EntityMessageType::TransformParentChanged: {
+                m_canvas->UnregisterWidget(this);
+
                 m_canvas = GetEntity()->GetComponentInParent<Canvas>();
                 HYP_ASSERT(m_canvas);
+
+                m_canvas->RegisterWidget(this);
                 break;
             }
         }
@@ -49,6 +53,8 @@ namespace Hyperion {
         HYP_ASSERT(m_widget_renderer);
         m_canvas = GetEntity()->GetComponentInParent<Canvas>();
         HYP_ASSERT(m_canvas);
+
+        m_canvas->RegisterWidget(this);
     }
 
     //--------------------------------------------------------------
@@ -57,6 +63,16 @@ namespace Hyperion {
         UiEngine::UnregisterWidget(this);
 
         Behaviour::OnDestroy();
+    }
+
+    //--------------------------------------------------------------
+    void Widget::OnEventMessage(EventMessage message) {
+        switch (message.type) {
+            case EventMessageType::PointerEnter: HYP_TRACE("{} - PointerEnter", GetEntity()->GetName()); break;
+            case EventMessageType::PointerExit: HYP_TRACE("{} - PointerExit", GetEntity()->GetName()); break;
+            case EventMessageType::PointerClick: HYP_TRACE("{} - PointerClick", GetEntity()->GetName()); break;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        }
     }
 
 }

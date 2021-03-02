@@ -4,6 +4,11 @@
 #include "hyperion/core/math/vec2.hpp"
 #include "hyperion/entity/components/component.hpp"
 
+//-------------------- Forward Declarations --------------------
+namespace Hyperion {
+    class Widget;
+}
+
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
@@ -33,11 +38,18 @@ namespace Hyperion {
 
         inline float32 GetScale() const { return m_scale; }
 
+        inline const Vector<Widget *> &GetWidgets() const { return m_widgets; }
+
         void UpdateScale();
     protected:
         void OnCreate() override;
     private:
         Canvas() : Component("Canvas") { }
+    private:
+        void RegisterWidget(Widget *widget);
+        void UnregisterWidget(Widget *widget);
+
+        void UpdateWidgetDepths();
     private:
         static Canvas *Create();
     private:
@@ -49,6 +61,10 @@ namespace Hyperion {
 
         uint32 m_cached_display_width;
         uint32 m_cached_display_height;
+
+        Vector<Widget *> m_widgets;
+    private:
+        friend class Hyperion::Widget;
     };
 
 }

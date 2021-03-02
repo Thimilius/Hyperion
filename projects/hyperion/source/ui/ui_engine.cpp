@@ -17,10 +17,40 @@ namespace Hyperion {
     void UiEngine::Update() {
         Canvas *canvas = WorldManager::GetActiveWorld()->FindComponentOfType<Canvas>();
         if (canvas != nullptr) {
+            Vector<Widget *> hovered_widgets;
             Vector<Widget *> widgets = canvas->GetEntity()->GetComponentsInChildren<Widget>();
             for (Widget *widget : widgets) {
                 if (RectTransformUtility::RectangleContainsScreenPoint(widget->GetRectTransform(), Input::GetMousePosition())) {
-                    HYP_TRACE("Hover over widget: {}", widget->GetId());
+                    hovered_widgets.push_back(widget);
+                }
+            }
+
+            std::sort(hovered_widgets.begin(), hovered_widgets.end(), [](Widget *lhs, Widget *rhs) {
+                return lhs->GetDepth() > rhs->GetDepth();
+            });
+
+            if (hovered_widgets.size() > 0) {
+                Widget *hovered_widget = hovered_widgets[0];
+
+                if (s_hovered_widget != hovered_widget) {
+                    if (s_hovered_widget != nullptr) {
+                        SendEventMessage(s_hovered_widget, EventMessageType::PointerExit);
+                    }
+                    s_hovered_widget = hovered_widget;
+
+                    SendEventMessage(s_hovered_widget, EventMessageType::PointerEnter);
+                }
+            } else {
+                if (s_hovered_widget) {
+                    // Send exit to previous hovered widget.
+                    SendEventMessage(s_hovered_widget, EventMessageType::PointerExit);
+                    s_hovered_widget = nullptr;
+                }
+            }
+
+            if (s_hovered_widget) {
+                if (Input::IsMouseButtonUp(MouseButtonCode::Left)) {
+                    SendEventMessage(s_hovered_widget, EventMessageType::PointerClick);
                 }
             }
         }
@@ -43,6 +73,11 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void UiEngine::SendEventMessage(Widget *widget, EventMessageType type) {
+        widget->OnEventMessage({ type });
+    }
+
+    //--------------------------------------------------------------
     void UiEngine::RegisterWidget(Widget *widget) {
         HYP_ASSERT(widget);
         HYP_ASSERT(std::find(s_widgets.begin(), s_widgets.end(), widget) == s_widgets.end());
@@ -54,6 +89,11 @@ namespace Hyperion {
     void UiEngine::UnregisterWidget(Widget *widget) {
         HYP_ASSERT(widget);
         HYP_ASSERT(std::find(s_widgets.begin(), s_widgets.end(), widget) != s_widgets.end());
+
+        // We have to potentially kill our current hovered entity.
+        if (widget == s_hovered_widget) {
+            s_hovered_widget = nullptr;
+        }
 
         auto begin = s_widgets.begin();
         auto end = s_widgets.end();

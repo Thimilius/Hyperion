@@ -8,6 +8,7 @@
 #include "hyperion/core/app/display.hpp"
 #include "hyperion/entity/entity.hpp"
 #include "hyperion/entity/components/rect_transform.hpp"
+#include "hyperion/entity/components/ui/widget.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -52,6 +53,37 @@ namespace Hyperion {
         Component::OnCreate();
 
         UpdateScale();
+    }
+
+    //--------------------------------------------------------------
+    void Canvas::RegisterWidget(Widget *widget) {
+        HYP_ASSERT(std::find(m_widgets.begin(), m_widgets.end(), widget) == m_widgets.end());
+
+        m_widgets.push_back(widget);
+
+        UpdateWidgetDepths();
+    }
+
+    //--------------------------------------------------------------
+    void Canvas::UnregisterWidget(Widget *widget) {
+        HYP_ASSERT(std::find(m_widgets.begin(), m_widgets.end(), widget) != m_widgets.end());
+
+        auto begin = m_widgets.begin();
+        auto end = m_widgets.end();
+        if (std::find(begin, end, widget) != end) {
+            m_widgets.erase(std::remove(begin, end, widget));
+        }
+
+        UpdateWidgetDepths();
+    }
+
+    //--------------------------------------------------------------
+    void Canvas::UpdateWidgetDepths() {
+        Vector<Widget *> widgets = GetEntity()->GetComponentsInChildren<Widget>();
+        int32 depth = 0;
+        for (Widget *widget : widgets) {
+            widget->m_depth = depth++;
+        }
     }
 
     //--------------------------------------------------------------

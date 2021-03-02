@@ -22,10 +22,13 @@ namespace Hyperion {
         static void Update();
         static void LateUpdate();
 
+        static void SendEventMessage(Widget *widget, EventMessageType type);
+
         static void RegisterWidget(Widget *widget);
         static void UnregisterWidget(Widget *widget);
     private:
         inline static Vector<Widget *> s_widgets;
+        inline static Widget *s_hovered_widget;
 
         inline static MeshBuilder s_mesh_builder;
     private:

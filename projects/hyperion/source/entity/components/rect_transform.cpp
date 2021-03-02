@@ -278,8 +278,8 @@ namespace Hyperion {
         Vec2 p3 = world_corners[2];
         Vec2 p4 = world_corners[3];
 
-        // NOTE: Counter clockwise order of points is important
-        return (IsLeft(p1, p4, screen_point) > 0 && IsLeft(p4, p3, screen_point) > 0 && IsLeft(p3, p2, screen_point) > 0 && IsLeft(p2, p1, screen_point) > 0);
+        // NOTE: Counter clockwise order of points is important.
+        return (IsLeft(p1, p4, screen_point) >= 0.0f && IsLeft(p4, p3, screen_point) >= 0.0f && IsLeft(p3, p2, screen_point) >= 0.0f && IsLeft(p2, p1, screen_point) >= 0.0f);
     }
 
     //--------------------------------------------------------------
