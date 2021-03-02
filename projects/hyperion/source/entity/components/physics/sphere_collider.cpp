@@ -12,8 +12,8 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    void SphereCollider::OnMessage(EntityMessage message) {
-        Collider::OnMessage(message);
+    void SphereCollider::OnEntityMessage(EntityMessage message) {
+        Collider::OnEntityMessage(message);
 
         if (message.type == EntityMessageType::TransformChanged) {
             if (IsActiveAndEnabled()) {

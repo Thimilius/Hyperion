@@ -17,7 +17,7 @@ namespace Hyperion {
             NotifyColliderChange();
         }
 
-        void OnMessage(EntityMessage message) override;
+        void OnEntityMessage(EntityMessage message) override;
     protected:
         void OnCreate() override;
     private:

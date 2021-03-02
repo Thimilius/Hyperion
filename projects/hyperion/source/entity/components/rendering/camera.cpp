@@ -93,7 +93,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void Camera::OnMessage(EntityMessage message) {
+    void Camera::OnEntityMessage(EntityMessage message) {
         if (message.type == EntityMessageType::TransformChanged) {
             RecalculateMatricies();
         }

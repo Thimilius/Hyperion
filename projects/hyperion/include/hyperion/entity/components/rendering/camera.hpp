@@ -52,7 +52,7 @@ namespace Hyperion {
         Vec2 WorldToScreenPoint(Vec3 world_point) const;
         Ray ScreenPointToRay(Vec2 screen_point) const;
 
-        void OnMessage(EntityMessage message) override;
+        void OnEntityMessage(EntityMessage message) override;
     protected:
         void OnCreate() override;
         void OnDestroy() override;

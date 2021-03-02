@@ -43,7 +43,7 @@ namespace Hyperion {
         inline int32 GetDepth() const { return m_depth; }
         inline bool IsDirty() const { return m_is_dirty; }
 
-        void OnMessage(EntityMessage message) override;
+        void OnEntityMessage(EntityMessage message) override;
     protected:
         Widget() = default;
         Widget(const String & name) : Behaviour(name) { }

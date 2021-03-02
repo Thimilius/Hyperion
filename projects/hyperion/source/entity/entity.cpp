@@ -87,7 +87,7 @@ namespace Hyperion {
         }
 
         for (IEntityMessageListener *listener : m_message_listeners) {
-            listener->OnMessage(message);
+            listener->OnEntityMessage(message);
         }
     }
 

@@ -36,7 +36,7 @@ namespace Hyperion {
     public:
         virtual ~IEntityMessageListener() = default;
     public:
-        virtual void OnMessage(EntityMessage message) = 0;
+        virtual void OnEntityMessage(EntityMessage message) = 0;
     };
 
 }

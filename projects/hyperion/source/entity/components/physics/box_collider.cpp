@@ -12,8 +12,8 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    void BoxCollider::OnMessage(EntityMessage message) {
-        Collider::OnMessage(message);
+    void BoxCollider::OnEntityMessage(EntityMessage message) {
+        Collider::OnEntityMessage(message);
 
         if (message.type == EntityMessageType::TransformChanged) {
             if (IsActiveAndEnabled()) {

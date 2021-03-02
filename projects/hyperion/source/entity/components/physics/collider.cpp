@@ -25,7 +25,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void Collider::OnMessage(EntityMessage message) {
+    void Collider::OnEntityMessage(EntityMessage message) {
         if (message.type == EntityMessageType::ActivationChanged) {
             GetWorld()->GetPhysicsWorld()->UpdateColliderActivation(this);
         }

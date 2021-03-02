@@ -22,7 +22,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void Widget::OnMessage(EntityMessage message) {
+    void Widget::OnEntityMessage(EntityMessage message) {
         switch (message.type) {
             case EntityMessageType::TransformChanged: {
                 SetDirty();

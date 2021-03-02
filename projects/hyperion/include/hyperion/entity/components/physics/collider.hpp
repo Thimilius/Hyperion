@@ -23,7 +23,7 @@ namespace Hyperion {
         
         virtual BoundingBox GetBounds();
 
-        virtual void OnMessage(EntityMessage message) override;
+        virtual void OnEntityMessage(EntityMessage message) override;
     protected:
         Collider() = default;
         Collider(const String & name) : Behaviour(name) {}
