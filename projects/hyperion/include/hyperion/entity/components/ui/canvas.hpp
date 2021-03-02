@@ -7,10 +7,19 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    enum class CanvasScaleMode {
+        ScaleWithScreenSize,
+        ConstantPixelSize,
+    };
+
     class Canvas : public Component {
         HYP_REFLECT(Component);
     public:
-        inline float32 GetScale() const { return m_scale; }
+        inline CanvasScaleMode GetScaleMode() const { return m_scale_mode; }
+        inline void SetScaleMode(CanvasScaleMode scale_mode) {
+            m_scale_mode = scale_mode;
+            UpdateScale();
+        }
         inline float32 GetScaleFactor() const { return m_scale_factor; }
         inline void SetScaleFactor(float32 scale_factor) {
             m_scale_factor = scale_factor;
@@ -22,6 +31,8 @@ namespace Hyperion {
             UpdateScale();
         }
 
+        inline float32 GetScale() const { return m_scale; }
+
         void UpdateScale();
     protected:
         void OnCreate() override;
@@ -30,6 +41,8 @@ namespace Hyperion {
     private:
         static Canvas *Create();
     private:
+        CanvasScaleMode m_scale_mode = CanvasScaleMode::ScaleWithScreenSize;
+
         float32 m_scale = 1.0f;
         float32 m_scale_factor = 1.0f;
         Vec2 m_reference_resolution = Vec2(1280, 720);
