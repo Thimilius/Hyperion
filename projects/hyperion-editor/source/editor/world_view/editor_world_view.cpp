@@ -59,7 +59,7 @@ namespace Hyperion::Editor {
             s_editor_camera_controller->Reset();
         }
 
-        String text = StringUtils::Format("FPS: {} ({:.2f}ms)", Time::GetFPS(), Time::GetFrameTime());
+        String text = StringUtils::Format("VSync: {} - FPS: {} ({:.2f}ms)", RenderEngine::GetVSyncMode() == VSyncMode::DontSync ? "Off" : "On", Time::GetFPS(), Time::GetFrameTime());
         s_stats_text->SetText(text);
     }
 
@@ -157,7 +157,7 @@ namespace Hyperion::Editor {
                 text_entity->GetTransform()->SetParent(graphic_0_entity->GetTransform());
                 Text *text = text_entity->AddComponent<Text>();
                 text->SetFont(text_font);
-                text->GetRectTransform()->SetSize(Vec2(125, 0));
+                text->SetTextAlignment(TextAlignment::MiddleRight);
                 text->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::RightStretchVertical);
                 s_stats_text = text;
             }
