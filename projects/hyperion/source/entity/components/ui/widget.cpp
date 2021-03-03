@@ -60,7 +60,9 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void Widget::OnDestroy() {
         GetEntity()->UnregisterMessageListener(this);
+
         UiEngine::UnregisterWidget(this);
+        m_canvas->UnregisterWidget(this);
 
         Behaviour::OnDestroy();
     }
