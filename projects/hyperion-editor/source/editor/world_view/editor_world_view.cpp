@@ -33,7 +33,8 @@ namespace Hyperion::Editor {
         s_editor_camera = entity->GetComponent<Camera>();
         s_editor_camera_controller = entity->AddComponent<EditorLookAroundCameraController>();
 
-        Font *font = FontLoader::LoadFont("data/fonts/robotomono_regular.ttf", 9, FontCharacterSet::LatinSupplement);
+        Font *text_font = FontLoader::LoadFont("data/fonts/robotomono_regular.ttf", 10, FontCharacterSet::LatinSupplement);
+        Font *icon_font = FontLoader::LoadFont("data/fonts/font_awesome_solid.otf", 11, FontCharacterSet::All);
         Entity *canvas_entity = Entity::Create("Canvas");
         s_editor_canvas = canvas_entity->AddComponent<Canvas>();
         s_editor_canvas->SetScaleMode(CanvasScaleMode::ConstantPixelSize);
@@ -41,27 +42,51 @@ namespace Hyperion::Editor {
             Entity *graphic_0_entity = Entity::Create("Graphic_0");
             graphic_0_entity->GetTransform()->SetParent(canvas_entity->GetTransform());
             Graphic *graphic_0 = graphic_0_entity->AddComponent<Graphic>();
-            graphic_0->GetRectTransform()->SetSize(Vec2(0, 14));
-            graphic_0->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::TopStretchHorizontal);
             graphic_0->SetColor(Color(0.137f, 0.153f, 0.161f, 1.0f));
+            graphic_0->SetIsRaycastTarget(false);
+            graphic_0->GetRectTransform()->SetSize(Vec2(0, 19));
+            graphic_0->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::TopStretchHorizontal);
 
             Entity *graphic_1_entity = Entity::Create("Graphic_1");
             graphic_1_entity->GetTransform()->SetParent(graphic_0_entity->GetTransform());
             Graphic *graphic_1 = graphic_1_entity->AddComponent<Graphic>();
+            graphic_1->SetColor(Color(0.012f, 0.439f, 0.643f, 1.0f));
+            graphic_1->SetIsRaycastTarget(false);
             graphic_1->GetRectTransform()->SetSize(Vec2(0, 1));
             graphic_1->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::BottomStretchHorizontal);
             graphic_1->GetRectTransform()->SetAnchoredPosition(Vec3(0.0f, -1.0f, 0.0f));
-            graphic_1->SetColor(Color(0.012f, 0.439f, 0.643f, 1.0f));
             
-            Entity *text_entity = Entity::Create("Text");
-            text_entity->GetTransform()->SetParent(graphic_0_entity->GetTransform());
-            Text *text = text_entity->AddComponent<Text>();
-            text->GetRectTransform()->SetSize(Vec2(100, 0));
-            text->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::CenterStretchVertical);
-            text->SetFont(font);
-            text->SetText("Hyperion");
-            text->SetColor(Color::White());
-            s_text = text;
+            {
+                Entity *text_entity = Entity::Create("Text");
+                text_entity->GetTransform()->SetParent(graphic_0_entity->GetTransform());
+                Text *text = text_entity->AddComponent<Text>();
+                text->SetColor(Color::White());
+                text->SetFont(text_font);
+                text->GetRectTransform()->SetSize(Vec2(100, 0));
+                text->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::CenterStretchVertical);
+                s_text = text;
+            }
+            {
+                Entity *text_entity = Entity::Create("Text");
+                text_entity->GetTransform()->SetParent(graphic_0_entity->GetTransform());
+                Text *text = text_entity->AddComponent<Text>();
+                text->SetFont(icon_font);
+                text->SetText(u8"\uf00a");
+                text->SetColor(Color::White());
+                text->GetRectTransform()->SetSize(Vec2(20, 0));
+                text->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::LeftStretchVertical);
+            }
+            {
+                Entity *text_entity = Entity::Create("Text");
+                text_entity->GetTransform()->SetParent(graphic_0_entity->GetTransform());
+                Text *text = text_entity->AddComponent<Text>();
+                text->SetFont(icon_font);
+                text->SetText(u8"\uf5cb");
+                text->SetColor(Color::White());
+                text->GetRectTransform()->SetSize(Vec2(20, 0));
+                text->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::LeftStretchVertical);
+                text->GetRectTransform()->SetAnchoredPosition(Vec3(20.0f, 0.0f, 0.0f));
+            }
         }
 
         EditorWorldViewGrid::Initialize();

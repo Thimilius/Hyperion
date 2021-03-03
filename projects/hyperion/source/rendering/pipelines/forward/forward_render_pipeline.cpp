@@ -113,7 +113,6 @@ namespace Hyperion::Rendering {
             }
             ResourceId material_id = material->GetResourceId();
 
-            RectTransform *rect_transform = widget->GetEntity()->GetComponent<RectTransform>();
             if (widget->GetType() == Type::get<Text>()) {
                 Text *text = static_cast<Text *>(widget);
                 Font *font = text->GetFont();
@@ -123,6 +122,7 @@ namespace Hyperion::Rendering {
 
                 material->SetTexture("u_texture", font->GetTexture());
             }
+            material->SetVec4("u_color", widget_renderer->GetColor());
 
             // The widgets already provide their meshes in screen space, meaning they do not need a model matrix.
             render_driver->DrawMesh(mesh_id, Mat4::Identity(), material_id, 0);

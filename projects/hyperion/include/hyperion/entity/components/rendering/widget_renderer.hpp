@@ -16,14 +16,20 @@ namespace Hyperion {
 
         Material *GetMaterial() const { return m_material; }
         void SetMaterial(Material *material) { m_material = material; }
+
+        Color GetColor() const { return m_color; }
+        void SetColor(Color color) { m_color = color; }
     private:
         WidgetRenderer() : Component("WidgetRenderer") { }
     private:
         static WidgetRenderer *Create();
     private:
         uint32 m_depth = 0;
+
         Mesh *m_mesh = nullptr;
         Material *m_material = nullptr;
+
+        Color m_color = Color::White();
     };
 
 }

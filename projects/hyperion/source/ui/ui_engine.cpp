@@ -17,17 +17,7 @@ namespace Hyperion {
     void UiEngine::Update() {
         Canvas *canvas = WorldManager::GetActiveWorld()->FindComponentOfType<Canvas>();
         if (canvas != nullptr) {
-            Vector<Widget *> hovered_widgets;
-            Vector<Widget *> widgets = canvas->GetEntity()->GetComponentsInChildren<Widget>();
-            for (Widget *widget : widgets) {
-                if (RectTransformUtility::RectangleContainsScreenPoint(widget->GetRectTransform(), Input::GetMousePosition())) {
-                    hovered_widgets.push_back(widget);
-                }
-            }
-
-            std::sort(hovered_widgets.begin(), hovered_widgets.end(), [](Widget *lhs, Widget *rhs) {
-                return lhs->GetDepth() > rhs->GetDepth();
-            });
+            Vector<Widget *> hovered_widgets = RaycastWidgets(canvas->GetWidgets(), Input::GetMousePosition());
 
             if (hovered_widgets.size() > 0) {
                 Widget *hovered_widget = hovered_widgets[0];
@@ -70,6 +60,28 @@ namespace Hyperion {
                 widget->ResetDirty();
             }
         }
+    }
+
+    //--------------------------------------------------------------
+    Vector<Widget *> UiEngine::RaycastWidgets(const Vector<Widget *> &widgets, Vec2 screen_position) {
+        Vector<Widget *> result;
+        for (Widget *widget : widgets) {
+            if (!RectTransformUtility::RectangleContainsScreenPoint(widget->GetRectTransform(), screen_position)) {
+                continue;
+            }
+
+            if (!widget->IsRaycastTarget()) {
+                continue;
+            }
+
+            result.push_back(widget);
+        }
+
+        std::sort(result.begin(), result.end(), [](Widget *lhs, Widget *rhs) {
+            return lhs->GetDepth() > rhs->GetDepth();
+        });
+
+        return result;
     }
 
     //--------------------------------------------------------------

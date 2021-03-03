@@ -68,10 +68,14 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void Widget::OnEventMessage(EventMessage message) {
         switch (message.type) {
-            case EventMessageType::PointerEnter: HYP_TRACE("{} - PointerEnter", GetEntity()->GetName()); break;
-            case EventMessageType::PointerExit: HYP_TRACE("{} - PointerExit", GetEntity()->GetName()); break;
-            case EventMessageType::PointerClick: HYP_TRACE("{} - PointerClick", GetEntity()->GetName()); break;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+            case EventMessageType::PointerEnter: {
+                GetWidgetRenderer()->SetColor(Color(0.012f, 0.439f, 0.643f, 1.0f));
+                break;
+            }
+            case EventMessageType::PointerExit: {
+                GetWidgetRenderer()->SetColor(Color::White());
+                break;
+            }
         }
     }
 

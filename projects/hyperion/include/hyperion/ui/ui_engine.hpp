@@ -22,6 +22,7 @@ namespace Hyperion {
         static void Update();
         static void LateUpdate();
 
+        static Vector<Widget *> RaycastWidgets(const Vector<Widget *> &widgets, Vec2 screen_position);
         static void SendEventMessage(Widget *widget, EventMessageType type);
 
         static void RegisterWidget(Widget *widget);

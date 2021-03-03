@@ -39,6 +39,8 @@ in V2F {
 	vec2 texture0;
 } i_v2f;
 
+uniform vec4 u_color;
+
 void main() {
-	o_color = i_v2f.color;
+	o_color = u_color * i_v2f.color;
 }

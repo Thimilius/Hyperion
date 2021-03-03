@@ -40,6 +40,9 @@ namespace Hyperion {
         inline WidgetRenderer *GetWidgetRenderer() const { return m_widget_renderer; }
         inline Canvas *GetCanvas() const { return m_canvas; }
 
+        inline bool IsRaycastTarget() const { return m_is_raycast_target; }
+        inline void SetIsRaycastTarget(bool is_raycast_target) { m_is_raycast_target = is_raycast_target; }
+
         inline int32 GetDepth() const { return m_depth; }
         inline bool IsDirty() const { return m_is_dirty; }
 
@@ -63,6 +66,8 @@ namespace Hyperion {
         RectTransform *m_rect_transform = nullptr;
         WidgetRenderer *m_widget_renderer = nullptr;
         Canvas *m_canvas = nullptr;
+
+        bool m_is_raycast_target = true;
 
         int32 m_depth = -1;
         bool m_is_dirty = false;
