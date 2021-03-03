@@ -10,6 +10,7 @@
 #include <hyperion/entity/components/physics/box_collider.hpp>
 #include <hyperion/entity/components/rendering/camera.hpp>
 #include <hyperion/entity/components/rendering/widget_renderer.hpp>
+#include <hyperion/entity/components/ui/button.hpp>
 #include <hyperion/entity/components/ui/graphic.hpp>
 #include <hyperion/rendering/immediate_renderer.hpp>
 
@@ -58,15 +59,6 @@ namespace Hyperion::Editor {
             graphic_1->GetRectTransform()->SetAnchoredPosition(Vec3(0.0f, -1.0f, 0.0f));
             
             {
-                Entity *text_entity = Entity::CreateEmpty();
-                text_entity->GetTransform()->SetParent(graphic_0_entity->GetTransform());
-                Text *text = text_entity->AddComponent<Text>();
-                text->SetFont(text_font);
-                text->GetRectTransform()->SetSize(Vec2(125, 0));
-                text->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::RightStretchVertical);
-                s_stats_text = text;
-            }
-            {
                 Entity *toggle_entity = Entity::CreateEmpty();
                 toggle_entity->GetTransform()->SetParent(graphic_0_entity->GetTransform());
                 Toggle *toggle = toggle_entity->AddComponent<Toggle>();
@@ -107,6 +99,35 @@ namespace Hyperion::Editor {
                 toggle->SetIsOn(s_should_draw_physics_debug);
                 s_physics_debug_toggle = toggle;
             }
+            {
+                Entity *button_entity = Entity::CreateEmpty();
+                button_entity->GetTransform()->SetParent(graphic_0_entity->GetTransform());
+                Button *button = button_entity->AddComponent<Button>();
+                button->SetClickCallback([]() { s_editor_camera_controller->Reset(); });
+                button->GetRectTransform()->SetSize(Vec2(20, 0));
+                button->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::LeftStretchVertical);
+                button->GetRectTransform()->SetAnchoredPosition(Vec3(40.0f, 0.0f, 0.0f));
+
+                Entity *button_text_entity = Entity::CreateEmpty();
+                button_text_entity->GetTransform()->SetParent(button_entity->GetTransform());
+                Text *button_text = button_text_entity->AddComponent<Text>();
+                button_text->SetIsRaycastTarget(false);
+                button_text->SetFont(icon_font);
+                button_text->SetText(u8"\uf2ea");
+                button_text->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::StretchAll);
+
+                button->SetTargetWidget(button_text);
+            }
+
+            {
+                Entity *text_entity = Entity::CreateEmpty();
+                text_entity->GetTransform()->SetParent(graphic_0_entity->GetTransform());
+                Text *text = text_entity->AddComponent<Text>();
+                text->SetFont(text_font);
+                text->GetRectTransform()->SetSize(Vec2(125, 0));
+                text->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::RightStretchVertical);
+                s_stats_text = text;
+            }
         }
 
         EditorWorldViewGrid::Initialize();
@@ -114,17 +135,20 @@ namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
     void EditorWorldView::Update(float32 delta_time) {
+        s_editor_camera_controller->Update(delta_time);
+        
         if (Input::IsKeyDown(KeyCode::F3)) {
             s_grid_toggle->SetIsOn(!s_should_draw_grid);
         }
         if (Input::IsKeyDown(KeyCode::F4)) {
             s_physics_debug_toggle->SetIsOn(!s_should_draw_physics_debug);
         }
+        if (Input::IsKeyDown(KeyCode::R)) {
+            s_editor_camera_controller->Reset();
+        }
 
         String text = StringUtils::Format("FPS: {} ({:.2f}ms)", Time::GetFPS(), Time::GetFrameTime());
         s_stats_text->SetText(text);
-
-        s_editor_camera_controller->OnUpdate(delta_time);
     }
 
     //--------------------------------------------------------------

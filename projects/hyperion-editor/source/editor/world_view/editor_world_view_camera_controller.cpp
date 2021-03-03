@@ -22,14 +22,7 @@ namespace Hyperion::Editor {
     }
 
     //--------------------------------------------------------------
-    void EditorFirstPersonCameraController::OnCreate() {
-        EditorCameraController::OnCreate();
-
-        GetEntity()->GetTransform()->SetPosition(Vec3(2.0f, 2.0f, 2.0f));
-    }
-
-    //--------------------------------------------------------------
-    void EditorFirstPersonCameraController::OnUpdate(float32 delta_time) {
+    void EditorFirstPersonCameraController::Update(float32 delta_time) {
         Vec3 position = m_transform->GetPosition();
         Vec3 euler_angles = m_transform->GetEulerAngles();
 
@@ -147,27 +140,38 @@ namespace Hyperion::Editor {
             m_velocity -= m_friction * delta_time * m_velocity;
         }
 
-        // Handle resetting the camera state.
-        if (Input::IsKeyDown(KeyCode::R) || Input::IsGamepadButtonDown(Gamepad::Gamepad1, GamepadButtonCode::RightThumb)) {
-            position = Vec3(2, 2, 2);
-
-            m_velocity = Vec3::Zero();
-
-            m_pitch = -35.0f;
-            m_yaw = 45.0f;
-            m_target_pitch = m_pitch;
-            m_target_yaw = m_yaw;
-
-            fov = 90.0f;
-            m_fov_target = fov;
-            orthographic_size = 2.75f;
-            m_orthographic_size_target = orthographic_size;
-        }
-
         m_transform->SetPosition(position);
         m_transform->SetEulerAngles(euler_angles);
         m_camera->SetFOV(fov);
         m_camera->SetOrthographicSize(orthographic_size);
+    }
+
+    //--------------------------------------------------------------
+    void EditorFirstPersonCameraController::Reset() {
+        Vec3 position = Vec3(2, 2, 2);
+
+        m_velocity = Vec3::Zero();
+
+        m_pitch = -35.0f;
+        m_yaw = 45.0f;
+        m_target_pitch = m_pitch;
+        m_target_yaw = m_yaw;
+
+        float32 fov = 90.0f;
+        m_fov_target = fov;
+        float32 orthographic_size = 2.75f;
+        m_orthographic_size_target = orthographic_size;
+
+        m_transform->SetPosition(position);
+        m_camera->SetFOV(fov);
+        m_camera->SetOrthographicSize(orthographic_size);
+    }
+
+    //--------------------------------------------------------------
+    void EditorFirstPersonCameraController::OnCreate() {
+        EditorCameraController::OnCreate();
+
+        GetEntity()->GetTransform()->SetPosition(Vec3(2.0f, 2.0f, 2.0f));
     }
 
     //--------------------------------------------------------------
@@ -176,23 +180,7 @@ namespace Hyperion::Editor {
     }
 
     //--------------------------------------------------------------
-    void EditorLookAroundCameraController::OnCreate() {
-        EditorCameraController::OnCreate();
-
-        m_camera->SetFOV(60);
-        m_transform = GetEntity()->GetTransform();
-        m_transform->SetEulerAngles(Vec3(-45, 45, 0));
-
-        Vec3 angles = m_transform->GetEulerAngles();
-        m_rotation_axis_x = angles.x;
-        m_rotation_axis_y = angles.y;
-
-        m_xz_plane_distance = 6;
-        m_zoom = m_xz_plane_distance;
-    }
-
-    //--------------------------------------------------------------
-    void EditorLookAroundCameraController::OnUpdate(float32 delta_time) {
+    void EditorLookAroundCameraController::Update(float32 delta_time) {
         Vec2 current_mouse_position = Input::GetMousePosition();
         Vec2 mouse_position_difference = m_last_mouse_position - current_mouse_position;
         float32 mouse_axis_x = mouse_position_difference.x;
@@ -232,20 +220,35 @@ namespace Hyperion::Editor {
             m_rotation_velocity_y = Math::Lerp(m_rotation_velocity_y, 0.0f, 50.0f * delta_time);
             m_last_mouse_position = current_mouse_position;
         }
+    }
 
-        {
-            if (Input::IsKeyDown(KeyCode::R)) {
-                m_transform->SetEulerAngles(Vec3(-45, 45, 0));
-                m_transform->SetPosition(GetLookAtPosition(Vec3::Zero()));
+    //--------------------------------------------------------------
+    void EditorLookAroundCameraController::Reset() {
+        m_transform->SetEulerAngles(Vec3(-45, 45, 0));
+        m_transform->SetPosition(GetLookAtPosition(Vec3::Zero()));
 
-                Vec3 angles = m_transform->GetEulerAngles();
-                m_rotation_axis_x = angles.x;
-                m_rotation_axis_y = angles.y;
+        Vec3 angles = m_transform->GetEulerAngles();
+        m_rotation_axis_x = angles.x;
+        m_rotation_axis_y = angles.y;
 
-                m_xz_plane_distance = 6;
-                m_zoom = m_xz_plane_distance;
-            }
-        }
+        m_xz_plane_distance = 6;
+        m_zoom = m_xz_plane_distance;
+    }
+
+    //--------------------------------------------------------------
+    void EditorLookAroundCameraController::OnCreate() {
+        EditorCameraController::OnCreate();
+
+        m_camera->SetFOV(60);
+        m_transform = GetEntity()->GetTransform();
+        m_transform->SetEulerAngles(Vec3(-45, 45, 0));
+
+        Vec3 angles = m_transform->GetEulerAngles();
+        m_rotation_axis_x = angles.x;
+        m_rotation_axis_y = angles.y;
+
+        m_xz_plane_distance = 6;
+        m_zoom = m_xz_plane_distance;
     }
 
     //--------------------------------------------------------------

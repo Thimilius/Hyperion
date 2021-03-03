@@ -29,11 +29,13 @@
 #include "hyperion/entity/components/rendering/mesh_renderer.hpp"
 #include "hyperion/entity/components/rendering/renderer.hpp"
 #include "hyperion/entity/components/rendering/widget_renderer.hpp"
+#include "hyperion/entity/components/ui/button.hpp"
 #include "hyperion/entity/components/ui/canvas.hpp"
 #include "hyperion/entity/components/ui/graphic.hpp"
-#include "hyperion/entity/components/ui/widget.hpp"
+#include "hyperion/entity/components/ui/interactable.hpp"
 #include "hyperion/entity/components/ui/text.hpp"
 #include "hyperion/entity/components/ui/toggle.hpp"
+#include "hyperion/entity/components/ui/widget.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -285,15 +287,18 @@ HYP_REFLECT_REGISTER_BEGIN
         RegistrationClass<WidgetRenderer>("WidgetRenderer")(metadata(Metadata::RequiresComponent0, Type::get<RectTransform>()))
             .constructor(select_overload<WidgetRenderer *()>(&WidgetRenderer::Create))(PointerConstructorPolicy);
 
+        RegistrationClass<Button>("Button")
+            .constructor(select_overload<Button *()>(&Button::Create))(PointerConstructorPolicy);
         RegistrationClass<Canvas>("Canvas")(metadata(Metadata::RequiresComponent0, Type::get<RectTransform>()))
             .constructor(select_overload<Canvas *()>(&Canvas::Create))(PointerConstructorPolicy);
         RegistrationClass<Graphic>("Graphic")
             .constructor(select_overload<Graphic *()>(&Graphic::Create))(PointerConstructorPolicy);
-        RegistrationClass<Widget>("Widget")(metadata(Metadata::RequiresComponent0, Type::get<RectTransform>()))(metadata(Metadata::RequiresComponent1, Type::get<WidgetRenderer>()));
+        RegistrationClass<Interactable>("Interactable");
         RegistrationClass<Text>("Text")
             .constructor(select_overload<Text *()>(&Text::Create))(PointerConstructorPolicy);
         RegistrationClass<Toggle>("Toggle")
             .constructor(select_overload<Toggle *()>(&Toggle::Create))(PointerConstructorPolicy);
+        RegistrationClass<Widget>("Widget")(metadata(Metadata::RequiresComponent0, Type::get<RectTransform>()))(metadata(Metadata::RequiresComponent1, Type::get<WidgetRenderer>()));
     }
 }
 HYP_REFLECT_REGISTER_END

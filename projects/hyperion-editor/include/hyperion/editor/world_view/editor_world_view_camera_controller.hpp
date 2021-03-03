@@ -15,8 +15,10 @@ namespace Hyperion::Editor {
     public:
         virtual Vec3 GetTargetPosition() const = 0;
 
+        virtual void Update(float32 delta_time) = 0;
+        virtual void Reset() = 0;
+    protected:
         void OnCreate() override;
-        virtual void OnUpdate(float32 delta_time) = 0;
     protected:
         Camera *m_camera;
         Transform *m_transform;
@@ -29,8 +31,10 @@ namespace Hyperion::Editor {
     protected:
         Vec3 GetTargetPosition() const override;
 
+        void Update(float32 delta_time) override;
+        void Reset() override;
+    protected:
         void OnCreate() override;
-        void OnUpdate(float32 delta_time);
     private:
         Camera *m_camera;
 
@@ -49,16 +53,17 @@ namespace Hyperion::Editor {
         float32 m_orthographic_size_target;
     };
 
-
     class EditorLookAroundCameraController : public EditorCameraController {
         HYP_REFLECT(Component);
     public:
         EditorLookAroundCameraController() = default;
-    protected:
+    public:
         Vec3 GetTargetPosition() const override;
 
+        void Update(float32 delta_time) override;
+        void Reset() override;
+    protected:
         void OnCreate() override;
-        void OnUpdate(float32 delta_time);
     private:
         Vec3 GetPositionUnderMouse() const;
         Vec3 GetXZPlanePosition() const;
