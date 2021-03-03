@@ -57,7 +57,7 @@ namespace Hyperion {
         void OnCreate() override;
         void OnDestroy() override;
 
-        virtual void OnEventMessage(EventMessage message);
+        virtual void OnEventMessage(EventMessage message) { }
 
         virtual void OnRebuildMesh(MeshBuilder &mesh_builder) { }
     protected:

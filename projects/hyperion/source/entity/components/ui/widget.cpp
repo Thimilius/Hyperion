@@ -65,18 +65,4 @@ namespace Hyperion {
         Behaviour::OnDestroy();
     }
 
-    //--------------------------------------------------------------
-    void Widget::OnEventMessage(EventMessage message) {
-        switch (message.type) {
-            case EventMessageType::PointerEnter: {
-                GetWidgetRenderer()->SetColor(Color(0.012f, 0.439f, 0.643f, 1.0f));
-                break;
-            }
-            case EventMessageType::PointerExit: {
-                GetWidgetRenderer()->SetColor(Color::White());
-                break;
-            }
-        }
-    }
-
 }

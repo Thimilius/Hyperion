@@ -33,6 +33,7 @@
 #include "hyperion/entity/components/ui/graphic.hpp"
 #include "hyperion/entity/components/ui/widget.hpp"
 #include "hyperion/entity/components/ui/text.hpp"
+#include "hyperion/entity/components/ui/toggle.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -291,6 +292,8 @@ HYP_REFLECT_REGISTER_BEGIN
         RegistrationClass<Widget>("Widget")(metadata(Metadata::RequiresComponent0, Type::get<RectTransform>()))(metadata(Metadata::RequiresComponent1, Type::get<WidgetRenderer>()));
         RegistrationClass<Text>("Text")
             .constructor(select_overload<Text *()>(&Text::Create))(PointerConstructorPolicy);
+        RegistrationClass<Toggle>("Toggle")
+            .constructor(select_overload<Toggle *()>(&Toggle::Create))(PointerConstructorPolicy);
     }
 }
 HYP_REFLECT_REGISTER_END

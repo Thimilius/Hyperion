@@ -118,6 +118,11 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    Entity *Entity::CreateEmpty() {
+        return Create("New Entity");
+    }
+
+    //--------------------------------------------------------------
     Entity *Entity::CreatePrimitive(EntityPrimitive primitive, const Vec3 &position, const Quaternion &rotation, Transform *parent, World *world) {
         Entity *entity = Create(GetPrimitiveName(primitive), position, rotation, parent, world);
         

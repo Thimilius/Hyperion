@@ -4,6 +4,7 @@
 #include <hyperion/entity/world.hpp>
 #include <hyperion/entity/components/ui/canvas.hpp>
 #include <hyperion/entity/components/ui/text.hpp>
+#include <hyperion/entity/components/ui/toggle.hpp>
 #include <hyperion/rendering/render_driver.hpp>
 
 //---------------------- Project Includes ----------------------
@@ -28,7 +29,10 @@ namespace Hyperion::Editor {
         inline static World *s_editor_world;
         inline static Camera *s_editor_camera;
         inline static Canvas *s_editor_canvas;
-        inline static Text *s_text;
+
+        inline static Text *s_stats_text;
+        inline static Toggle *s_grid_toggle;
+        inline static Toggle *s_physics_debug_toggle;
 
         inline static bool s_should_draw_grid = true;
         inline static bool s_should_draw_physics_debug = false;

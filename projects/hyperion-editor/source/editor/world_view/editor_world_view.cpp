@@ -10,7 +10,6 @@
 #include <hyperion/entity/components/physics/box_collider.hpp>
 #include <hyperion/entity/components/rendering/camera.hpp>
 #include <hyperion/entity/components/rendering/widget_renderer.hpp>
-#include <hyperion/entity/components/ui/text.hpp>
 #include <hyperion/entity/components/ui/graphic.hpp>
 #include <hyperion/rendering/immediate_renderer.hpp>
 
@@ -29,6 +28,8 @@ namespace Hyperion::Editor {
         s_editor_world = WorldManager::CreateWorld();
         WorldManager::SetActiveWorld(s_editor_world);
 
+        Entity::CreatePrimitive(EntityPrimitive::Cube);
+
         Entity *entity = Entity::CreatePrimitive(EntityPrimitive::Camera);
         s_editor_camera = entity->GetComponent<Camera>();
         s_editor_camera_controller = entity->AddComponent<EditorLookAroundCameraController>();
@@ -39,7 +40,7 @@ namespace Hyperion::Editor {
         s_editor_canvas = canvas_entity->AddComponent<Canvas>();
         s_editor_canvas->SetScaleMode(CanvasScaleMode::ConstantPixelSize);
         {
-            Entity *graphic_0_entity = Entity::Create("Graphic_0");
+            Entity *graphic_0_entity = Entity::CreateEmpty();
             graphic_0_entity->GetTransform()->SetParent(canvas_entity->GetTransform());
             Graphic *graphic_0 = graphic_0_entity->AddComponent<Graphic>();
             graphic_0->SetColor(Color(0.137f, 0.153f, 0.161f, 1.0f));
@@ -47,7 +48,7 @@ namespace Hyperion::Editor {
             graphic_0->GetRectTransform()->SetSize(Vec2(0, 19));
             graphic_0->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::TopStretchHorizontal);
 
-            Entity *graphic_1_entity = Entity::Create("Graphic_1");
+            Entity *graphic_1_entity = Entity::CreateEmpty();
             graphic_1_entity->GetTransform()->SetParent(graphic_0_entity->GetTransform());
             Graphic *graphic_1 = graphic_1_entity->AddComponent<Graphic>();
             graphic_1->SetColor(Color(0.012f, 0.439f, 0.643f, 1.0f));
@@ -57,35 +58,54 @@ namespace Hyperion::Editor {
             graphic_1->GetRectTransform()->SetAnchoredPosition(Vec3(0.0f, -1.0f, 0.0f));
             
             {
-                Entity *text_entity = Entity::Create("Text");
+                Entity *text_entity = Entity::CreateEmpty();
                 text_entity->GetTransform()->SetParent(graphic_0_entity->GetTransform());
                 Text *text = text_entity->AddComponent<Text>();
-                text->SetColor(Color::White());
                 text->SetFont(text_font);
-                text->GetRectTransform()->SetSize(Vec2(100, 0));
-                text->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::CenterStretchVertical);
-                s_text = text;
+                text->GetRectTransform()->SetSize(Vec2(125, 0));
+                text->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::RightStretchVertical);
+                s_stats_text = text;
             }
             {
-                Entity *text_entity = Entity::Create("Text");
-                text_entity->GetTransform()->SetParent(graphic_0_entity->GetTransform());
-                Text *text = text_entity->AddComponent<Text>();
-                text->SetFont(icon_font);
-                text->SetText(u8"\uf00a");
-                text->SetColor(Color::White());
-                text->GetRectTransform()->SetSize(Vec2(20, 0));
-                text->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::LeftStretchVertical);
+                Entity *toggle_entity = Entity::CreateEmpty();
+                toggle_entity->GetTransform()->SetParent(graphic_0_entity->GetTransform());
+                Toggle *toggle = toggle_entity->AddComponent<Toggle>();
+                toggle->SetIsOnChangedCallback([](bool is_on) { s_should_draw_grid = is_on; });
+                toggle->GetRectTransform()->SetSize(Vec2(20, 0));
+                toggle->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::LeftStretchVertical);
+
+                Entity *toggle_text_entity = Entity::CreateEmpty();
+                toggle_text_entity->GetTransform()->SetParent(toggle_entity->GetTransform());
+                Text *toggle_text = toggle_text_entity->AddComponent<Text>();
+                toggle_text->SetIsRaycastTarget(false);
+                toggle_text->SetFont(icon_font);
+                toggle_text->SetText(u8"\uf00a");
+                toggle_text->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::StretchAll);
+
+                toggle->SetTargetWidget(toggle_text);
+                toggle->SetIsOn(s_should_draw_grid);
+                s_grid_toggle = toggle;
             }
             {
-                Entity *text_entity = Entity::Create("Text");
-                text_entity->GetTransform()->SetParent(graphic_0_entity->GetTransform());
-                Text *text = text_entity->AddComponent<Text>();
-                text->SetFont(icon_font);
-                text->SetText(u8"\uf5cb");
-                text->SetColor(Color::White());
-                text->GetRectTransform()->SetSize(Vec2(20, 0));
-                text->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::LeftStretchVertical);
-                text->GetRectTransform()->SetAnchoredPosition(Vec3(20.0f, 0.0f, 0.0f));
+                Entity *toggle_entity = Entity::CreateEmpty();
+                toggle_entity->GetTransform()->SetParent(graphic_0_entity->GetTransform());
+                Toggle *toggle = toggle_entity->AddComponent<Toggle>();
+                toggle->SetIsOnChangedCallback([](bool is_on) { s_should_draw_physics_debug = is_on; });
+                toggle->GetRectTransform()->SetSize(Vec2(20, 0));
+                toggle->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::LeftStretchVertical);
+                toggle->GetRectTransform()->SetAnchoredPosition(Vec3(20.0f, 0.0f, 0.0f));
+
+                Entity *toggle_text_entity = Entity::CreateEmpty();
+                toggle_text_entity->GetTransform()->SetParent(toggle_entity->GetTransform());
+                Text *toggle_text = toggle_text_entity->AddComponent<Text>();
+                toggle_text->SetIsRaycastTarget(false);
+                toggle_text->SetFont(icon_font);
+                toggle_text->SetText(u8"\uf5cb");
+                toggle_text->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::StretchAll);
+
+                toggle->SetTargetWidget(toggle_text);
+                toggle->SetIsOn(s_should_draw_physics_debug);
+                s_physics_debug_toggle = toggle;
             }
         }
 
@@ -95,14 +115,14 @@ namespace Hyperion::Editor {
     //--------------------------------------------------------------
     void EditorWorldView::Update(float32 delta_time) {
         if (Input::IsKeyDown(KeyCode::F3)) {
-            s_should_draw_grid = !s_should_draw_grid;
+            s_grid_toggle->SetIsOn(!s_should_draw_grid);
         }
         if (Input::IsKeyDown(KeyCode::F4)) {
-            s_should_draw_physics_debug = !s_should_draw_physics_debug;
+            s_physics_debug_toggle->SetIsOn(!s_should_draw_physics_debug);
         }
 
-        String text = StringUtils::Format("Hyperion - FPS: {} ({:.2f}ms)", Time::GetFPS(), Time::GetFrameTime());
-        s_text->SetText(text);
+        String text = StringUtils::Format("FPS: {} ({:.2f}ms)", Time::GetFPS(), Time::GetFrameTime());
+        s_stats_text->SetText(text);
 
         s_editor_camera_controller->OnUpdate(delta_time);
     }
