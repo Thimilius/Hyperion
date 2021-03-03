@@ -688,12 +688,6 @@ namespace Hyperion::Rendering {
 
             glUseProgram(program);
 
-            GLuint texture_unit = 0;
-            for (auto [property_id, texture] : material.textures) {
-                glBindTextureUnit(texture_unit, texture);
-                texture_unit++;
-            }
-
             {
                 static const MaterialPropertyId PROJECTION_TRANSFORM_PROPERTY_ID = std::hash<String>{}("u_transform.projection");
                 HYP_ASSERT(material.properties.find(PROJECTION_TRANSFORM_PROPERTY_ID) != material.properties.end());
@@ -710,7 +704,14 @@ namespace Hyperion::Rendering {
             }
         }
 
-        // We will always need to set the transformation matrix.
+        // We will always need to set the transformation matrix as well as binding the correct textures.
+
+        GLuint texture_unit = 0;
+        for (auto [property_id, texture] : material.textures) {
+            glBindTextureUnit(texture_unit, texture);
+            texture_unit++;
+        }
+
         // Currently we are going to assume that every shader has this specific property.
         // TODO: Maybe we can cache that special property in the material directly.
         static const MaterialPropertyId MODEL_TRANSFORM_PROPERTY_ID = std::hash<String>{}("u_transform.model");
