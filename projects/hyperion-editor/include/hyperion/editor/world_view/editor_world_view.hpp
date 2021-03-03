@@ -26,6 +26,8 @@ namespace Hyperion::Editor {
         EditorWorldView() = delete;
         ~EditorWorldView() = delete;
     private:
+        static void BuildInterface();
+    private:
         inline static World *s_editor_world;
         inline static Camera *s_editor_camera;
         inline static Canvas *s_editor_canvas;
@@ -33,6 +35,7 @@ namespace Hyperion::Editor {
         inline static Text *s_stats_text;
         inline static Toggle *s_grid_toggle;
         inline static Toggle *s_physics_debug_toggle;
+        inline static Toggle *s_vsync_toggle;
 
         inline static bool s_should_draw_grid = true;
         inline static bool s_should_draw_physics_debug = false;

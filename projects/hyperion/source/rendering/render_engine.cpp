@@ -71,8 +71,6 @@ namespace Hyperion::Rendering {
                 SwapRenderThreadCommandQueues();
                 Synchronization::NotifySwapDone();
             }
-
-            s_render_frame++;
         }
     }
 
@@ -106,11 +104,17 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
+    void RenderEngine::SetVSyncMode(VSyncMode vsync_mode) {
+        auto command = GetCommandQueue().Allocate<RenderThreadCommandSetVSyncMode>(RenderThreadCommandType::SetVSyncMode);
+        command->vsync_mode = vsync_mode;
+    }
+
+    //--------------------------------------------------------------
     void RenderEngine::InitGraphicsContextAndBackend(Window *window) {
         // The graphics context is the very first thing we need to initialize so that resources can be created properly.
         s_graphics_context = window->CreateGraphicsContext(s_render_settings.backend);
         s_graphics_context->Initialize(GraphicsContextDescriptor());
-        s_graphics_context->SetVSyncMode(VSyncMode::DontSync);
+        s_graphics_context->SetVSyncMode(s_vsync_mode);
 
         switch (s_render_settings.backend) {
             case RenderBackend::OpenGL: {
@@ -250,8 +254,12 @@ namespace Hyperion::Rendering {
 
             if (command_type == RenderThreadCommandType::Exit) {
                 s_exit_requested = true;
+            } else if (command_type == RenderThreadCommandType::SetVSyncMode) {
+                auto command = reinterpret_cast<RenderThreadCommandSetVSyncMode*>(program_counter);
+                s_graphics_context->SetVSyncMode(command->vsync_mode);
+                program_counter += sizeof(RenderThreadCommandSetVSyncMode);
             } else {
-                program_counter += static_cast<size_t>(RenderThreadCommandExecutor::Execute(s_render_driver_backend, command_type, program_counter));
+                program_counter += RenderThreadCommandExecutor::Execute(s_render_driver_backend, command_type, program_counter);
             }
         }
     }

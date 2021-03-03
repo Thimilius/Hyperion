@@ -14,6 +14,7 @@ namespace Hyperion::Rendering {
     // Render thread query commands are handled seperately.
     enum class RenderThreadCommandType {
         Exit,
+        SetVSyncMode,
 
         Clear,
         SetViewport,
@@ -41,6 +42,10 @@ namespace Hyperion::Rendering {
         SetMeshData,
         DrawMesh,
         DestroyMesh,
+    };
+    
+    struct RenderThreadCommandSetVSyncMode {
+        VSyncMode vsync_mode;
     };
 
     // This is a generic render thread command containing just an id.

@@ -28,6 +28,9 @@ namespace Hyperion::Rendering {
     public:
         inline static RenderBackend GetBackend() { return s_render_settings.backend; }
         inline static IRenderDriver *GetRenderDriver() { return s_render_driver; }
+
+        inline static VSyncMode GetVSyncMode() { return s_vsync_mode; }
+        static void SetVSyncMode(VSyncMode vsync_mode);
     private:
         RenderEngine() = delete;
         ~RenderEngine() = delete;
@@ -56,8 +59,8 @@ namespace Hyperion::Rendering {
     private: 
         inline static RenderSettings s_render_settings;
         inline static IRenderPipeline *s_render_pipeline;
-        inline static uint64 s_render_frame = 0;
 
+        inline static VSyncMode s_vsync_mode = VSyncMode::DontSync; // We cache the vsync mode here for easy access on the Main Thread.
         inline static GraphicsContext *s_graphics_context;
 
         inline static IRenderDriver *s_render_driver;
