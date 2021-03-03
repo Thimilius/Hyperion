@@ -105,6 +105,8 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void RenderEngine::SetVSyncMode(VSyncMode vsync_mode) {
+        s_vsync_mode = vsync_mode;
+
         auto command = GetCommandQueue().Allocate<RenderThreadCommandSetVSyncMode>(RenderThreadCommandType::SetVSyncMode);
         command->vsync_mode = vsync_mode;
     }
