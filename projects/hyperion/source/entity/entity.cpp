@@ -106,6 +106,27 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void Entity::Serialize(ISerializationStream &stream) {
+        Object::Serialize(stream);
+
+        stream.WriteBool("active", m_active);
+        stream.WriteUInt32("layer", static_cast<uint32>(m_layer));
+        auto tags_iterator = m_tags.begin();
+        stream.WriteArray("tags", m_tags.size(), [&tags_iterator](uint64 index, IArrayWriter &writer) { writer.WriteString(*tags_iterator); tags_iterator++; });
+        auto components_iterator = m_components.begin();
+        stream.WriteArray("components", m_components.size(), [&components_iterator](uint64 index, IArrayWriter &writer) { });
+    }
+
+    //--------------------------------------------------------------
+    void Entity::Deserialize(IDeserializationStream &stream) {
+        Object::Deserialize(stream);
+
+        m_active = stream.ReadBool("active");
+        m_layer = static_cast<LayerMask>(stream.ReadUInt32("layer"));
+        stream.ReadArray("tags", [this](uint64 index, IArrayReader &reader) { m_tags.insert(reader.ReadString()); });
+    }
+
+    //--------------------------------------------------------------
     Entity *Entity::Create() {
         return new Entity();
     }
@@ -252,8 +273,6 @@ namespace Hyperion {
                 break;
             }
         }
-
-
     }
 
     //--------------------------------------------------------------

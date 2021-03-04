@@ -41,6 +41,18 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
+    void Object::Serialize(ISerializationStream &stream) {
+        stream.WriteString("guid", m_guid.ToString());
+        stream.WriteString("name", m_name);
+    }
+
+    //--------------------------------------------------------------
+    void Object::Deserialize(IDeserializationStream &stream) {
+        m_guid = Guid::Create(stream.ReadString("guid"));
+        m_name = stream.ReadString("name");
+    }
+
+    //--------------------------------------------------------------
     Object *Object::Create() {
         return new Object();
     }

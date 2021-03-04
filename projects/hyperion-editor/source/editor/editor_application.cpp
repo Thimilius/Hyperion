@@ -23,55 +23,18 @@ namespace Hyperion::Editor {
     void EditorApplication::OnInitialize() {
         EditorWorldView::Initialize();
 
-        struct EmbeddedStruct : public ISerializable {
-            int32 int_value;
-            String string_value;
+        World *world = WorldManager::CreateWorld();
+        Entity *entity = Entity::Create("My Entity", Vec3::Zero(), Quaternion::Identity(), nullptr, world);
+        entity->SetActive(false);
+        entity->SetLayer(LayerMask::Layer1 | LayerMask::Layer13);
+        entity->AddTag("Tag0");
+        entity->AddTag("Tag1");
+        entity->AddTag("Tag2");
 
-            void Serialize(ISerializationStream &stream) override {
-                stream.WriteInt32("int_value", int_value);
-                stream.WriteString("string_value", string_value);
-            }
-
-            void Deserialize(IDeserializationStream &stream) override {
-                int_value = stream.ReadInt32("int_value");
-                string_value = stream.ReadString("string_value");
-            }
-        };
-
-        struct MyStruct : public ISerializable {
-            int32 int_value;
-            String string_value;
-            MyStruct *pointer_value;
-            EmbeddedStruct struct_value;
-
-            void Serialize(ISerializationStream &stream) override {
-                stream.WriteInt32("int_value", int_value);
-                stream.WriteString("string_value", string_value);
-                stream.WriteObject("pointer_value", pointer_value);
-                stream.WriteStruct("struct_value", struct_value);
-            }
-
-            void Deserialize(IDeserializationStream &stream) override {
-                int_value = stream.ReadInt32("int_value");
-                string_value = stream.ReadString("string_value");
-                pointer_value = stream.ReadObject<MyStruct>("pointer_value");
-                struct_value = stream.ReadStruct<EmbeddedStruct>("struct_value");
-            }
-        };
-
-        MyStruct inner_struct;
-        inner_struct.int_value = 13;
-        inner_struct.string_value = "Hello world!";
-        inner_struct.pointer_value = nullptr;
-        MyStruct my_struct;
-        my_struct.pointer_value = &inner_struct;
-        my_struct.string_value = "Hello there!";
-        my_struct.struct_value.int_value = 10;
-        my_struct.struct_value.string_value = "My String";
-        String json = Serializer::Serialize(&my_struct);
+        String json = Serializer::Serialize(entity);
         HYP_TRACE("\n{}", json);
 
-        MyStruct deserialized_struct = Serializer::DeserializeStruct<MyStruct>(json);
+        Entity *new_entity = Serializer::DeserializeObject<Entity>(json, []() { return Type::get<Entity>().create().get_value<Entity *>(); });
     }
 
     //--------------------------------------------------------------

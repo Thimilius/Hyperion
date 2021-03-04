@@ -12,11 +12,19 @@ namespace Hyperion {
         
         template<typename T>
         static T *DeserializeObject(const String &text) {
-            T *object = new T();
-            Deserialize(text, static_cast<ISerializable *>(object));
-            return object;
+            SerializableAllocatorFunction allocator = []() { return new T(); };
+            return DeserializeObject(text, allocator);
         }
         
+        template<typename T>
+        static T *DeserializeObject(const String &text, SerializableAllocatorFunction allocator) {
+            HYP_ASSERT(allocator);
+
+            ISerializable *serializable = allocator();
+            Deserialize(text, serializable);
+            return static_cast<T *>(serializable);
+        }
+
         template<typename T>
         static T DeserializeStruct(const String &text) {
             T object = { };

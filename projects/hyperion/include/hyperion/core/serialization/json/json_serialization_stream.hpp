@@ -6,11 +6,18 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/serialization/serialization_stream.hpp"
 
+//-------------------- Forward Declarations --------------------
+namespace Hyperion {
+    class JsonArrayReader;
+    class JsonArrayWriter;
+}
+
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     class JsonSerializationStream : public ISerializationStream {
     public:
+        void WriteBool(const char *key, bool value) override { WriteValue(key, value); }
         void WriteInt8(const char *key, int8 value) override { WriteValue(key, value); }
         void WriteInt16(const char *key, int16 value) override { WriteValue(key, value); }
         void WriteInt32(const char *key, int32 value) override { WriteValue(key, value); }
@@ -20,6 +27,7 @@ namespace Hyperion {
         void WriteString(const char *key, const String &value) override { WriteValue(key, value); }
         void WriteObject(const char *key, ISerializable *value) override;
         void WriteStruct(const char *key, ISerializable *value) override;
+        void WriteArray(const char *key, uint64 length, ArrayWriterCallback callback) override;
 
         String ToString() const;
     private:
@@ -31,10 +39,13 @@ namespace Hyperion {
         }
     private:
         nlohmann::ordered_json m_json = nlohmann::ordered_json::object();
+    private:
+        friend class Hyperion::JsonArrayWriter;
     };
 
     class JsonDeserializationStream : public IDeserializationStream {
     public:
+        bool ReadBool(const char *key) override;
         int8 ReadInt8(const char *key) override { return ReadInt<int8>(key); }
         int16 ReadInt16(const char *key) override { return ReadInt<int16>(key); }
         int32 ReadInt32(const char *key) override { return ReadInt<int32>(key); }
@@ -42,8 +53,9 @@ namespace Hyperion {
         uint16 ReadUInt16(const char *key) override { return ReadUInt<uint16>(key); }
         uint32 ReadUInt32(const char *key) override { return ReadUInt<uint32>(key); }
         String ReadString(const char *key) override;
-        void *ReadObject(const char *key, ObjectAllocatorFunction allocator) override;
+        void *ReadObject(const char *key, SerializableAllocatorFunction allocator) override;
         void ReadStruct(const char *key, ISerializable *serializable) override;
+        void ReadArray(const char *key, ArrayReaderCallback callback) override;
 
         void Parse(const String &json_text);
     private:

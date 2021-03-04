@@ -152,6 +152,9 @@ namespace Hyperion {
         void DispatchMessage(EntityMessage message);
         void RegisterMessageListener(IEntityMessageListener *listener);
         void UnregisterMessageListener(IEntityMessageListener *listener);
+
+        virtual void Serialize(ISerializationStream &stream) override;
+        virtual void Deserialize(IDeserializationStream &stream) override;
     public:
         static Entity *Create(const String &name, const Vec3 &position = Vec3::Zero(), const Quaternion &rotation = Quaternion::Identity(), Transform *parent = nullptr, World *world = nullptr);
         static Entity *CreateEmpty();
