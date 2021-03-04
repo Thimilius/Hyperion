@@ -111,19 +111,27 @@ namespace Hyperion {
 
         stream.WriteBool("active", m_active);
         stream.WriteUInt32("layer", static_cast<uint32>(m_layer));
+        stream.WriteString("world", m_world->GetGuid().ToString());
         auto tags_iterator = m_tags.begin();
-        stream.WriteArray("tags", m_tags.size(), [&tags_iterator](uint64 index, IArrayWriter &writer) { writer.WriteString(*tags_iterator); tags_iterator++; });
+        stream.WriteArray("tags", m_tags.size(), [&tags_iterator](uint64 index, IArrayWriter &writer) {
+            writer.WriteString(*tags_iterator); tags_iterator++;
+        });
         auto components_iterator = m_components.begin();
-        stream.WriteArray("components", m_components.size(), [&components_iterator](uint64 index, IArrayWriter &writer) { });
+        stream.WriteArray("components", m_components.size(), [&components_iterator](uint64 index, IArrayWriter &writer) {
+
+        });
     }
 
     //--------------------------------------------------------------
-    void Entity::Deserialize(IDeserializationStream &stream) {
-        Object::Deserialize(stream);
+    void Entity::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
+        Object::Deserialize(stream, context);
 
         m_active = stream.ReadBool("active");
         m_layer = static_cast<LayerMask>(stream.ReadUInt32("layer"));
-        stream.ReadArray("tags", [this](uint64 index, IArrayReader &reader) { m_tags.insert(reader.ReadString()); });
+        context.Resolve(Guid::Create(stream.ReadString("world")), &m_world);
+        stream.ReadArray("tags", context, [this](uint64 index, IArrayReader &reader) {
+            m_tags.insert(reader.ReadString());
+        });
     }
 
     //--------------------------------------------------------------
@@ -238,29 +246,8 @@ namespace Hyperion {
             return;
         }
 
-        // FIXME: Copy-paste!!!
-        {
-            Variant metadata = type.get_metadata(Metadata::RequiresComponent0);
-            if (metadata.is_valid()) {
-                HYP_ASSERT(metadata.is_type<Type>());
-                Type required_component_type = metadata.get_value<Type>();
-                Component *required_component = GetComponent(required_component_type);
-                if (required_component == nullptr) {
-                    AddComponent(required_component_type);
-                }
-            }
-        }
-        {
-            Variant metadata = type.get_metadata(Metadata::RequiresComponent1);
-            if (metadata.is_valid()) {
-                HYP_ASSERT(metadata.is_type<Type>());
-                Type required_component_type = metadata.get_value<Type>();
-                Component *required_component = GetComponent(required_component_type);
-                if (required_component == nullptr) {
-                    AddComponent(required_component_type);
-                }
-            }
-        }
+        MakeSureRequiredComponentIsPresent(type, Metadata::RequiresComponent0);
+        MakeSureRequiredComponentIsPresent(type, Metadata::RequiresComponent1);
 
         // We also want to check the metadata in all our base types.
         // NOTE: We do not use multiple base classes in our code, so we assume we only have one.
@@ -271,6 +258,19 @@ namespace Hyperion {
             if (base_type.is_derived_from<Component>()) {
                 MakeSureRequiredComponentsArePresent(base_type);
                 break;
+            }
+        }
+    }
+
+    //--------------------------------------------------------------
+    void Entity::MakeSureRequiredComponentIsPresent(Type type, Metadata component_metadata) {
+        Variant metadata = type.get_metadata(component_metadata);
+        if (metadata.is_valid()) {
+            HYP_ASSERT(metadata.is_type<Type>());
+            Type required_component_type = metadata.get_value<Type>();
+            Component *required_component = GetComponent(required_component_type);
+            if (required_component == nullptr) {
+                AddComponent(required_component_type);
             }
         }
     }

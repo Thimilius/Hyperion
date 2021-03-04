@@ -27,13 +27,13 @@ namespace Hyperion {
             s_worlds.erase(std::remove(begin, end, world));
         }
 
-        delete world;
+        Object::Destroy(world);
     }
 
     //--------------------------------------------------------------
     void WorldManager::Shutdown() {
         for (World *world : s_worlds) {
-            delete world;
+            Object::DestroyImmediate(world);
         }
     }
 

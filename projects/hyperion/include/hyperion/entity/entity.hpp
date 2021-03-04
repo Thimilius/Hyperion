@@ -154,7 +154,7 @@ namespace Hyperion {
         void UnregisterMessageListener(IEntityMessageListener *listener);
 
         virtual void Serialize(ISerializationStream &stream) override;
-        virtual void Deserialize(IDeserializationStream &stream) override;
+        virtual void Deserialize(IDeserializationStream &stream, ReferenceContext &context) override;
     public:
         static Entity *Create(const String &name, const Vec3 &position = Vec3::Zero(), const Quaternion &rotation = Quaternion::Identity(), Transform *parent = nullptr, World *world = nullptr);
         static Entity *CreateEmpty();
@@ -168,6 +168,7 @@ namespace Hyperion {
         void NotifyActivationChanged();
 
         void MakeSureRequiredComponentsArePresent(Type type);
+        void MakeSureRequiredComponentIsPresent(Type type, Metadata component_metadata);
 
         void OnCreate(const Vec3 &position, const Quaternion &rotation, Transform *parent, World *world);
     private:

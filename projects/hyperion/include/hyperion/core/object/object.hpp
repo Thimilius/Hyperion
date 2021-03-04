@@ -41,7 +41,7 @@ namespace Hyperion {
         inline virtual String ToString() const { return m_name; }
 
         virtual void Serialize(ISerializationStream &stream) override;
-        virtual void Deserialize(IDeserializationStream &stream) override;
+        virtual void Deserialize(IDeserializationStream &stream, ReferenceContext &context) override;
     public:
         static Object *Create();
         static Object *Create(const String &name);

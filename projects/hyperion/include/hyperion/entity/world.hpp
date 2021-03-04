@@ -22,21 +22,22 @@ namespace Hyperion {
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
     
-    struct WorldEnvironment {
-        struct AmbientLight {
+    struct WorldEnvironment : public ISerializable {
+        struct AmbientLight : public ISerializable {
             float32 intensity = 0.2f;
             Color color = Color::White();
+
+            void Serialize(ISerializationStream &stream) override;
+            void Deserialize(IDeserializationStream &stream, ReferenceContext &context) override;
         } ambient_light;
+
+        void Serialize(ISerializationStream &stream) override;
+        void Deserialize(IDeserializationStream &stream, ReferenceContext &context) override;
     };
 
-    class World final {
-        HYP_REFLECT();
+    class World final : public Object {
+        HYP_REFLECT(Object);
     public:
-        ~World();
-    public:
-        inline String GetName() const { return m_name; }
-        inline void SetName(const String &name) { m_name = name; }
-
         inline WorldEnvironment &GetEnvironment() { return m_environment; }
         inline Physics::PhysicsWorld *GetPhysicsWorld() const { return m_physics_world; }
 
@@ -67,9 +68,14 @@ namespace Hyperion {
 
             return components;
         }
+
+        void Serialize(ISerializationStream &stream) override;
+        void Deserialize(IDeserializationStream &stream, ReferenceContext &context) override;
     private:
         World() = default;
         World(const String &name);
+    protected:
+        void OnDestroy() override;
     private:
         void AddRootEntity(Entity *entity);
         void RemoveRootEntity(Entity *entity);
@@ -81,7 +87,6 @@ namespace Hyperion {
     private:
         static World *Create();
     private:
-        String m_name;
         WorldEnvironment m_environment;
         Physics::PhysicsWorld *m_physics_world;
 

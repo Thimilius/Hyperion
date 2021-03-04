@@ -24,17 +24,20 @@ namespace Hyperion::Editor {
         EditorWorldView::Initialize();
 
         World *world = WorldManager::CreateWorld();
+        WorldEnvironment &environment = world->GetEnvironment();
+        environment.ambient_light.color = Color::Red();
+        environment.ambient_light.intensity = 0.75f;
         Entity *entity = Entity::Create("My Entity", Vec3::Zero(), Quaternion::Identity(), nullptr, world);
         entity->SetActive(false);
         entity->SetLayer(LayerMask::Layer1 | LayerMask::Layer13);
         entity->AddTag("Tag0");
         entity->AddTag("Tag1");
         entity->AddTag("Tag2");
-
-        String json = Serializer::Serialize(entity);
+        
+        String json = Serializer::Serialize(world);
         HYP_TRACE("\n{}", json);
-
-        Entity *new_entity = Serializer::DeserializeObject<Entity>(json, []() { return Type::get<Entity>().create().get_value<Entity *>(); });
+        
+        World *new_world = Serializer::DeserializeObject<World>(json, []() { return WorldManager::CreateWorld(); });
     }
 
     //--------------------------------------------------------------

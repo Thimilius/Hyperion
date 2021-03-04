@@ -23,7 +23,10 @@ namespace Hyperion {
     void Serializer::Deserialize(const String &text, ISerializable *serializable) {
         JsonDeserializationStream stream;
         stream.Parse(text);
-        serializable->Deserialize(stream);
+
+        ReferenceContext context;
+        serializable->Deserialize(stream, context);
+        context.ResolveAllReferences();
     }
 
 }

@@ -12,13 +12,55 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    World::World(const String &name) {
-        m_name = name;
+    void WorldEnvironment::AmbientLight::Serialize(ISerializationStream &stream) {
+        stream.WriteFloat("intensity", intensity);
+        stream.WriteColor("color", color);
+    }
+
+    //--------------------------------------------------------------
+    void WorldEnvironment::AmbientLight::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
+        intensity = stream.ReadFloat("intensity");
+        color = stream.ReadColor("color");
+    }
+
+    //--------------------------------------------------------------
+    void WorldEnvironment::Serialize(ISerializationStream &stream) {
+        stream.WriteStruct("ambient_light", ambient_light);
+    }
+
+    //--------------------------------------------------------------
+    void WorldEnvironment::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
+        ambient_light = stream.ReadStruct<AmbientLight>("ambient_light", context);
+    }
+
+    //--------------------------------------------------------------
+    void World::Serialize(ISerializationStream &stream) {
+        Object::Serialize(stream);
+
+        stream.WriteStruct("environment", m_environment);
+        stream.WriteArray("root_entities", m_root_entities.size(), [this](uint64 index, IArrayWriter &writer) {
+            writer.WriteObject(m_root_entities[index]);
+        });
+    }
+
+    //--------------------------------------------------------------
+    void World::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
+        Object::Deserialize(stream, context);
+        
+        m_environment = stream.ReadStruct<WorldEnvironment>("environment", context);
+        stream.ReadArray("root_entities", context, [this, &context](uint64 index, IArrayReader &reader) {
+            SerializableAllocatorFunction allocator = []() { return Type::get<Entity>().create().get_value<Entity *>(); };
+            m_root_entities.push_back(reader.ReadObject<Entity>(context, allocator));
+        });
+    }
+
+    //--------------------------------------------------------------
+    World::World(const String &name) : Object(name) {
         m_physics_world = Physics::PhysicsEngine::CreatePhysicsWorld();
     }
-    
+
     //--------------------------------------------------------------
-    World::~World() {
+    void World::OnDestroy() {
         for (auto it = m_root_entities.begin(); it != m_root_entities.end(); ) {
             Entity *entity = *it;
             it = m_root_entities.erase(it);

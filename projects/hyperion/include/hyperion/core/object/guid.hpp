@@ -17,6 +17,19 @@ namespace Hyperion {
         static Guid Create(const String &string);
     private:
         uint64 data[2] = { 0 };
+    private:
+        friend struct std::hash<Hyperion::Guid>;
+    };
+
+}
+
+namespace std {
+
+    template <>
+    struct hash<Hyperion::Guid> {
+        std::size_t operator()(const Hyperion::Guid &guid) const {
+            return (hash<uint64>()(guid.data[0]) ^ (hash<uint64>()(guid.data[1]) << 1)) >> 1;
+        }
     };
 
 }

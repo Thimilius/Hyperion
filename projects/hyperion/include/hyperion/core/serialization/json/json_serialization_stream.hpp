@@ -24,7 +24,13 @@ namespace Hyperion {
         void WriteUInt8(const char *key, uint8 value) override { WriteValue(key, value); }
         void WriteUInt16(const char *key, uint16 value) override { WriteValue(key, value); }
         void WriteUInt32(const char *key, uint32 value) override { WriteValue(key, value); }
+        void WriteFloat(const char *key, float32 value) override { WriteValue(key, value); }
         void WriteString(const char *key, const String &value) override { WriteValue(key, value); }
+        void WriteColor(const char *key, Color value) override;
+        void WriteVec2(const char *key, Vec2 value) override;
+        void WriteVec3(const char *key, Vec3 value) override;
+        void WriteVec4(const char *key, Vec4 value) override;
+        void WriteQuaternion(const char *key, Quaternion value) override;
         void WriteObject(const char *key, ISerializable *value) override;
         void WriteStruct(const char *key, ISerializable *value) override;
         void WriteArray(const char *key, uint64 length, ArrayWriterCallback callback) override;
@@ -52,10 +58,16 @@ namespace Hyperion {
         uint8 ReadUInt8(const char *key) override { return ReadUInt<uint8>(key); }
         uint16 ReadUInt16(const char *key) override { return ReadUInt<uint16>(key); }
         uint32 ReadUInt32(const char *key) override { return ReadUInt<uint32>(key); }
+        float32 ReadFloat(const char *key) override;
         String ReadString(const char *key) override;
-        void *ReadObject(const char *key, SerializableAllocatorFunction allocator) override;
-        void ReadStruct(const char *key, ISerializable *serializable) override;
-        void ReadArray(const char *key, ArrayReaderCallback callback) override;
+        Color ReadColor(const char *key) override;
+        Vec2 ReadVec2(const char *key) override;
+        Vec3 ReadVec3(const char *key) override;
+        Vec4 ReadVec4(const char *key) override;
+        Quaternion ReadQuaternion(const char *key) override;
+        void *ReadObject(const char *key, ReferenceContext &context, SerializableAllocatorFunction allocator) override;
+        void ReadStruct(const char *key, ReferenceContext &context, ISerializable *serializable) override;
+        void ReadArray(const char *key, ReferenceContext &context, ArrayReaderCallback callback) override;
 
         void Parse(const String &json_text);
     private:
@@ -84,6 +96,8 @@ namespace Hyperion {
         }
     private:
         nlohmann::ordered_json m_json;
+    private:
+        friend class Hyperion::JsonArrayReader;
     };
 
 }
