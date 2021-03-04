@@ -7,7 +7,7 @@
 #include <hyperion/core/app/time.hpp>
 #include <hyperion/core/io/file_system.hpp>
 #include <hyperion/core/memory/memory.hpp>
-#include <hyperion/core/serialization/json_serializer.hpp>
+#include <hyperion/core/serialization/serializer.hpp>
 #include <hyperion/core/system/engine.hpp>
 #include <hyperion/entity/world_manager.hpp>
 #include <hyperion/scripting/scripting_engine.hpp>
@@ -22,6 +22,56 @@ namespace Hyperion::Editor {
     //--------------------------------------------------------------
     void EditorApplication::OnInitialize() {
         EditorWorldView::Initialize();
+
+        struct EmbeddedStruct : public ISerializable {
+            int32 int_value;
+            String string_value;
+
+            void Serialize(ISerializationStream &stream) override {
+                stream.WriteInt32("int_value", int_value);
+                stream.WriteString("string_value", string_value);
+            }
+
+            void Deserialize(IDeserializationStream &stream) override {
+                int_value = stream.ReadInt32("int_value");
+                string_value = stream.ReadString("string_value");
+            }
+        };
+
+        struct MyStruct : public ISerializable {
+            int32 int_value;
+            String string_value;
+            MyStruct *pointer_value;
+            EmbeddedStruct struct_value;
+
+            void Serialize(ISerializationStream &stream) override {
+                stream.WriteInt32("int_value", int_value);
+                stream.WriteString("string_value", string_value);
+                stream.WriteObject("pointer_value", pointer_value);
+                stream.WriteStruct("struct_value", struct_value);
+            }
+
+            void Deserialize(IDeserializationStream &stream) override {
+                int_value = stream.ReadInt32("int_value");
+                string_value = stream.ReadString("string_value");
+                pointer_value = stream.ReadObject<MyStruct>("pointer_value");
+                struct_value = stream.ReadStruct<EmbeddedStruct>("struct_value");
+            }
+        };
+
+        MyStruct inner_struct;
+        inner_struct.int_value = 13;
+        inner_struct.string_value = "Hello world!";
+        inner_struct.pointer_value = nullptr;
+        MyStruct my_struct;
+        my_struct.pointer_value = &inner_struct;
+        my_struct.string_value = "Hello there!";
+        my_struct.struct_value.int_value = 10;
+        my_struct.struct_value.string_value = "My String";
+        String json = Serializer::Serialize(&my_struct);
+        HYP_TRACE("\n{}", json);
+
+        MyStruct deserialized_struct = Serializer::DeserializeStruct<MyStruct>(json);
     }
 
     //--------------------------------------------------------------
