@@ -77,6 +77,9 @@ namespace Hyperion {
     protected:
         void OnDestroy() override;
     private:
+        void OnAfterDeserialization();
+        void SetWorldReferenceRecursive(Entity *entity);
+
         void AddRootEntity(Entity *entity);
         void RemoveRootEntity(Entity *entity);
 

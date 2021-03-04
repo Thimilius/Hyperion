@@ -65,6 +65,28 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void Transform::Serialize(ISerializationStream &stream) {
+        Component::Serialize(stream);
+
+        stream.WriteVec3("position", m_local_position);
+        stream.WriteQuaternion("rotation", m_local_rotation);
+        stream.WriteVec3("scale", m_local_scale);
+
+        // NOTE: Children get serialized by the entity directly.
+    }
+
+    //--------------------------------------------------------------
+    void Transform::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
+        Component::Deserialize(stream, context);
+
+        m_local_position = stream.ReadVec3("position");
+        m_local_rotation = stream.ReadQuaternion("rotation");
+        m_local_scale = stream.ReadVec3("scale");
+
+        // The m_parent reference gets set by the entity itself.
+    }
+
+    //--------------------------------------------------------------
     void Transform::NotifyTransformChanged() {
         RecalculateTransform();
 

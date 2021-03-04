@@ -5,6 +5,7 @@
 #include "hyperion/entity/world_manager.hpp"
 
 //---------------------- Project Includes ----------------------
+#include <hyperion/core/serialization/serializer.hpp>
 #include "hyperion/entity/entity.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -35,6 +36,18 @@ namespace Hyperion {
         for (World *world : s_worlds) {
             Object::DestroyImmediate(world);
         }
+    }
+
+    //--------------------------------------------------------------
+    String WorldManager::SerializeWorld(World *world) {
+        return Serializer::Serialize(world);
+    }
+
+    //--------------------------------------------------------------
+    World *WorldManager::DeserializeWorld(const String &text) {
+        World *world = Serializer::DeserializeObject<World>(text, []() { return WorldManager::CreateWorld(); });
+        world->OnAfterDeserialization();
+        return world;
     }
 
 }

@@ -150,6 +150,13 @@ namespace Hyperion {
         // Creating a rect transform means replacing the current one.
         Transform *obsolete = GetEntity()->m_transform;
 
+        // We do not need to replace ourselves.
+        // This case happens on deserialization. In that case just call the base function.
+        if (obsolete == this) {
+            Transform::OnCreate();
+            return;
+        }
+
         // We need to copy everything over from the now obsolete transform we are about to destroy.
         m_local_position = obsolete->m_local_position;
         m_local_rotation = obsolete->m_local_rotation;

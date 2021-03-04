@@ -71,6 +71,28 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void World::OnAfterDeserialization() {
+        // Before we call the callback on the entites themselves, we first have to set the m_world references of all entites.
+        for (Entity *entity : m_root_entities) {
+            SetWorldReferenceRecursive(entity);
+        }
+
+        for (Entity *entity : m_root_entities) {
+            entity->OnAfterDeserialization();
+        }
+    }
+
+    //--------------------------------------------------------------
+    void World::SetWorldReferenceRecursive(Entity *entity) {
+        entity->m_world = this;
+
+        for (uint32 i = 0; i < entity->GetTransform()->GetChildCount(); i++) {
+            Entity *child_entity = entity->GetTransform()->GetChild(i)->GetEntity();
+            SetWorldReferenceRecursive(child_entity);
+        }
+    }
+
+    //--------------------------------------------------------------
     void World::AddRootEntity(Entity *entity) {
         HYP_ASSERT(entity);
         HYP_ASSERT(std::find(m_root_entities.begin(), m_root_entities.end(), entity) == m_root_entities.end());

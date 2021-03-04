@@ -171,6 +171,7 @@ namespace Hyperion {
         void MakeSureRequiredComponentIsPresent(Type type, Metadata component_metadata);
 
         void OnCreate(const Vec3 &position, const Quaternion &rotation, Transform *parent, World *world);
+        void OnAfterDeserialization();
     private:
         static Entity *Create();
         static String GetPrimitiveName(EntityPrimitive primitive);
@@ -188,6 +189,7 @@ namespace Hyperion {
     private:
         friend class Hyperion::Component;
         friend class Hyperion::RectTransform;
+        friend class Hyperion::World;
     };
 
 }

@@ -106,19 +106,46 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    struct ComponentsPair : public ISerializable {
+        ComponentType key;
+        Component *value;
+
+        ComponentsPair(ComponentType key, Component *value) : key(key), value(value) {}
+
+        void Serialize(ISerializationStream &stream) {
+            stream.WriteStruct("key", key);
+            stream.WriteObject("value", value);
+        };
+
+        void Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
+            stream.ReadStruct("key", context, &key);
+            SerializableAllocatorFunction allocator = [this]() { return key.GetNativeType().create().get_value<Component *>(); };
+            value = stream.ReadObject<Component>("value", context, allocator);
+        }
+    };
+
+    //--------------------------------------------------------------
     void Entity::Serialize(ISerializationStream &stream) {
         Object::Serialize(stream);
 
         stream.WriteBool("active", m_active);
         stream.WriteUInt32("layer", static_cast<uint32>(m_layer));
-        stream.WriteString("world", m_world->GetGuid().ToString());
         auto tags_iterator = m_tags.begin();
         stream.WriteArray("tags", m_tags.size(), [&tags_iterator](uint64 index, IArrayWriter &writer) {
-            writer.WriteString(*tags_iterator); tags_iterator++;
+            writer.WriteString(*tags_iterator++);
         });
+
         auto components_iterator = m_components.begin();
         stream.WriteArray("components", m_components.size(), [&components_iterator](uint64 index, IArrayWriter &writer) {
+            auto [component_type, component] = *components_iterator++;
+            ComponentsPair pair(component_type, component);
+            writer.WriteStruct(pair);
+        });
 
+        // Children are special and get directly serialized here inside the entity.
+        Vector<Transform *> &children = m_transform->m_children;
+        stream.WriteArray("children", m_transform->m_children.size(), [&children](uint64 index, IArrayWriter &writer) {
+            writer.WriteObject(children[index]->GetEntity());
         });
     }
 
@@ -128,10 +155,36 @@ namespace Hyperion {
 
         m_active = stream.ReadBool("active");
         m_layer = static_cast<LayerMask>(stream.ReadUInt32("layer"));
-        context.Resolve(Guid::Create(stream.ReadString("world")), &m_world);
         stream.ReadArray("tags", context, [this](uint64 index, IArrayReader &reader) {
             m_tags.insert(reader.ReadString());
         });
+
+        stream.ReadArray("components", context, [this, &context](uint64 index, IArrayReader &reader) {
+            ComponentsPair pair(Type::get<Component>(), nullptr);
+            reader.ReadStruct(context, &pair);
+
+            ComponentType component_type = pair.key;
+            Component *component = pair.value;
+
+            m_components[component_type] = component;
+        });
+        for (auto &[component_type, component] : m_components) {
+            component->m_entity = this;
+
+            if (component_type.GetNativeType().is_derived_from<Transform>()) {
+                m_transform = static_cast<Transform *>(component);
+            }
+        }
+
+        Vector<Transform *> &children = m_transform->m_children;
+        stream.ReadArray("children", context, [this, &context, &children](uint64 index, IArrayReader &reader) {
+            SerializableAllocatorFunction allocator = []() { return Type::get<Entity>().create().get_value<Entity *>(); };
+            Entity *entity = reader.ReadObject<Entity>(context, allocator);
+            children.push_back(entity->GetTransform());
+        });
+        for (Transform *child : children) {
+            child->m_parent = m_transform;
+        }
     }
 
     //--------------------------------------------------------------
@@ -300,6 +353,20 @@ namespace Hyperion {
             m_transform->SetParent(parent);
         } else {
             m_world->AddRootEntity(this);
+        }
+    }
+
+    //--------------------------------------------------------------
+    void Entity::OnAfterDeserialization() {
+        m_transform->OnCreate();
+        for (auto [component_type, component] : m_components) {
+            if (!component_type.GetNativeType().is_derived_from<Transform>()) {
+                component->OnCreate();
+            }
+        }
+
+        for (Transform *child : m_transform->m_children) {
+            child->GetEntity()->OnAfterDeserialization();
         }
     }
 

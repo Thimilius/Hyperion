@@ -16,7 +16,7 @@ namespace Hyperion {
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    class ComponentType {
+    class ComponentType : public ISerializable {
     public:
         ComponentType(const Type &native_type);
         ComponentType(Scripting::ScriptingType *scripting_type);
@@ -25,6 +25,9 @@ namespace Hyperion {
         inline Scripting::ScriptingType *GetScriptingType() const { return m_scripting_type; }
 
         bool IsDerivedFrom(const ComponentType &base) const;
+
+        void Serialize(ISerializationStream &stream) override;
+        void Deserialize(IDeserializationStream &stream, ReferenceContext &context) override;
 
         bool operator==(const ComponentType &other) const;
         bool operator!=(const ComponentType &other) const;
@@ -44,6 +47,9 @@ namespace Hyperion {
 
         Transform *GetTransform() const;
         World *GetWorld() const;
+
+        virtual void Serialize(ISerializationStream &stream) override;
+        virtual void Deserialize(IDeserializationStream &stream, ReferenceContext &context) override;
     protected:
         Component() = default;
         Component(const String &name) : Object(name) { }

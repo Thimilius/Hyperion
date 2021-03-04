@@ -33,6 +33,19 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void ComponentType::Serialize(ISerializationStream &stream) {
+        stream.WriteBool("is_native_type", m_is_native_type);
+        stream.WriteString("native_type_name", m_native_type.get_name().to_string());
+    }
+
+    //--------------------------------------------------------------
+    void ComponentType::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
+        m_is_native_type = stream.ReadBool("is_native_type");
+        m_native_type = Type::get_by_name(stream.ReadString("native_type_name"));
+        HYP_ASSERT(m_native_type.is_valid());
+    }
+
+    //--------------------------------------------------------------
     bool ComponentType::operator==(const ComponentType &other) const {
         if (m_is_native_type != other.m_is_native_type) {
             return false;
@@ -58,6 +71,18 @@ namespace Hyperion {
     //--------------------------------------------------------------
     World *Component::GetWorld() const {
         return m_entity->GetWorld();
+    }
+
+    //--------------------------------------------------------------
+    void Component::Serialize(ISerializationStream &stream) {
+        Object::Serialize(stream);
+    }
+
+    //--------------------------------------------------------------
+    void Component::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
+        Object::Deserialize(stream, context);
+
+        // The m_entity reference gets set by the entity itself.
     }
 
 }
