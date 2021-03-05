@@ -3,6 +3,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/math/mat4.hpp"
 #include "hyperion/core/math/ray.hpp"
+#include "hyperion/core/serialization/serializable.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
@@ -12,7 +13,7 @@ namespace Hyperion::Rendering {
         Orthographic
     };
 
-    struct CameraData {
+    struct CameraData : public ISerializable {
         CameraProjectionMode projection_mode = CameraProjectionMode::Perspective;
 
         Vec3 position = Vec3(0, 0, 0);
@@ -32,6 +33,9 @@ namespace Hyperion::Rendering {
         Mat4 inverse_view_matrix = Mat4::Identity();
         Mat4 inverse_projection_matrix = Mat4::Identity();
         Mat4 inverse_view_projection_matrix = Mat4::Identity();
+
+        void Serialize(ISerializationStream &stream) override;
+        void Deserialize(IDeserializationStream &stream, ReferenceContext &context) override;
     };
 
 }

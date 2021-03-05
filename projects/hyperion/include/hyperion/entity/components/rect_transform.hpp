@@ -80,6 +80,9 @@ namespace Hyperion {
 
         void GetLocalCorners(Vec3 corners[4]) const;
         void GetWorldCorners(Vec3 corners[4]) const;
+
+        virtual void Serialize(ISerializationStream &stream) override;
+        virtual void Deserialize(IDeserializationStream &stream, ReferenceContext &context) override;
     protected:
         void OnCreate() override;
         void OnDestroy() override;

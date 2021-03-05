@@ -53,6 +53,9 @@ namespace Hyperion {
         Ray ScreenPointToRay(Vec2 screen_point) const;
 
         void OnEntityMessage(EntityMessage message) override;
+
+        void Serialize(ISerializationStream &stream) override;
+        void Deserialize(IDeserializationStream &stream, ReferenceContext &context) override;
     protected:
         void OnCreate() override;
         void OnDestroy() override;

@@ -23,6 +23,22 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void BoxCollider::Serialize(ISerializationStream &stream) {
+        Collider::Serialize(stream);
+
+        stream.WriteVec3("origin", m_origin);
+        stream.WriteVec3("size", m_size);
+    }
+
+    //--------------------------------------------------------------
+    void BoxCollider::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
+        Collider::Deserialize(stream, context);
+
+        m_origin = stream.ReadVec3("origin");
+        m_size = stream.ReadVec3("size");
+    }
+
+    //--------------------------------------------------------------
     void BoxCollider::OnCreate() {
         Collider::OnCreate();
 

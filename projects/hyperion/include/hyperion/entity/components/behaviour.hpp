@@ -12,6 +12,9 @@ namespace Hyperion {
         inline bool IsEnabled() const { return m_enabled; }
         virtual inline void SetEnabled(bool enabled) { m_enabled = enabled; }
         bool IsActiveAndEnabled();
+
+        virtual void Serialize(ISerializationStream &stream) override;
+        virtual void Deserialize(IDeserializationStream &stream, ReferenceContext &context) override;
     protected:
         Behaviour() = default;
         Behaviour(const String &name) : Component(name) { }

@@ -146,6 +146,28 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void RectTransform::Serialize(ISerializationStream &stream) {
+        Transform::Serialize(stream);
+
+        stream.WriteVec2("size", m_size);
+        stream.WriteVec2("pivot", m_pivot);
+        stream.WriteVec2("anchor_min", m_anchor_min);
+        stream.WriteVec2("anchor_max", m_anchor_max);
+        stream.WriteVec3("anchored_position", m_anchored_position);
+    }
+
+    //--------------------------------------------------------------
+    void RectTransform::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
+        Transform::Deserialize(stream, context);
+
+        m_size = stream.ReadVec2("size");
+        m_pivot = stream.ReadVec2("pivot");
+        m_anchor_min = stream.ReadVec2("anchor_min");
+        m_anchor_max = stream.ReadVec2("anchor_max");
+        m_anchored_position = stream.ReadVec3("anchored_position");
+    }
+
+    //--------------------------------------------------------------
     void RectTransform::OnCreate() {
         // Creating a rect transform means replacing the current one.
         Transform *obsolete = GetEntity()->m_transform;

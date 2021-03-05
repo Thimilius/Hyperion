@@ -100,6 +100,26 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void Camera::Serialize(ISerializationStream &stream) {
+        Behaviour::Serialize(stream);
+
+        stream.WriteStruct("data", m_data);
+        stream.WriteUInt32("culling_mask", static_cast<uint32>(m_culling_mask));
+        stream.WriteInt32("clear_mode", static_cast<int32>(m_clear_mode));
+        stream.WriteColor("background_color", m_background_color);
+    }
+
+    //--------------------------------------------------------------
+    void Camera::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
+        Behaviour::Deserialize(stream, context);
+
+        m_data = stream.ReadStruct<CameraData>("data", context);
+        m_culling_mask = static_cast<LayerMask>(stream.ReadUInt32("culling_mask"));
+        m_clear_mode = static_cast<CameraClearMode>(stream.ReadInt32("clear_mode"));
+        m_background_color = stream.ReadColor("background_color");
+    }
+
+    //--------------------------------------------------------------
     void Camera::OnCreate() {
         Component::OnCreate();
 

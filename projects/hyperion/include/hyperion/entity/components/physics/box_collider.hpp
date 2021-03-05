@@ -23,6 +23,9 @@ namespace Hyperion {
         }
 
         void OnEntityMessage(EntityMessage message) override;
+
+        void Serialize(ISerializationStream &stream) override;
+        void Deserialize(IDeserializationStream &stream, ReferenceContext &context) override;
     protected:
         void OnCreate() override;
     private:

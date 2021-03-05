@@ -23,6 +23,20 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void SphereCollider::Serialize(ISerializationStream &stream) {
+        Collider::Serialize(stream);
+
+        stream.WriteFloat("radius", m_radius);
+    }
+
+    //--------------------------------------------------------------
+    void SphereCollider::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
+        Collider::Deserialize(stream, context);
+
+        m_radius = stream.ReadFloat("radius");
+    }
+
+    //--------------------------------------------------------------
     void SphereCollider::OnCreate() {
         Collider::OnCreate();
 

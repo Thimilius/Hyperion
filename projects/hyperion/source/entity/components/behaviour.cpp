@@ -16,4 +16,18 @@ namespace Hyperion {
         return m_enabled && GetTransform()->GetEntity()->IsActiveInHierarchy();
     }
 
+    //--------------------------------------------------------------
+    void Behaviour::Serialize(ISerializationStream &stream) {
+        Component::Serialize(stream);
+
+        stream.WriteBool("enabled", m_enabled);
+    }
+
+    //--------------------------------------------------------------
+    void Behaviour::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
+        Component::Deserialize(stream, context);
+
+        m_enabled = stream.ReadBool("enabled");
+    }
+
 }
