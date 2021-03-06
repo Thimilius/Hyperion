@@ -36,8 +36,6 @@ namespace Hyperion::Editor {
     protected:
         void OnCreate() override;
     private:
-        Camera *m_camera;
-
         Vec3 m_velocity;
         float32 m_acceleration = 100.0f;
         float32 m_friction = 10.0f;
