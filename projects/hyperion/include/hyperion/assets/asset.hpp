@@ -21,6 +21,7 @@ namespace Hyperion {
         Mesh,
         Shader,
         Texture,
+        RenderTexture,
         TextureAtlas,
     };
 

@@ -23,7 +23,8 @@ namespace Hyperion::Rendering {
         Mat3,
         Mat4,
 
-        Texture
+        Texture,
+        RenderTexture
     };
 
     union MaterialPropertyStorage {
@@ -38,6 +39,10 @@ namespace Hyperion::Rendering {
         Mat4 mat4;
 
         ResourceId texture;
+        struct {
+            ResourceId render_texture;
+            uint32 attachment_index;
+        } render_texture;
     };
 
     struct MaterialProperty {
@@ -45,9 +50,7 @@ namespace Hyperion::Rendering {
         MaterialPropertyType type;
         MaterialPropertyStorage storage;
 
-        static MaterialPropertyId NameToId(const String &name) {
-            return std::hash<String>{}(name);
-        }
+        inline static MaterialPropertyId NameToId(const String &name) { return std::hash<String>{}(name); }
     };
 
 }

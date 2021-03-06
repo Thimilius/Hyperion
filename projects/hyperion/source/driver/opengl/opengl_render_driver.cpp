@@ -248,8 +248,13 @@ namespace Hyperion::Rendering {
             return;
         }
         if (it->second.type != property.type) {
-            HYP_LOG_ERROR("OpenGL", "Trying to assign material property '{}' a wrong type!", it->second.name);
-            return;
+            // Textures and render textures are actually compatible with each other.
+            bool is_compatible_texture = (it->second.type == MaterialPropertyType::RenderTexture || property.type == MaterialPropertyType::RenderTexture) &&
+                (it->second.type == MaterialPropertyType::Texture || property.type == MaterialPropertyType::Texture);
+            if (!is_compatible_texture) {
+                HYP_LOG_ERROR("OpenGL", "Trying to assign material property '{}' a wrong type!", it->second.name);
+                return;
+            }
         }
 
         GLint location = it->second.location;
@@ -286,20 +291,34 @@ namespace Hyperion::Rendering {
                 glProgramUniformMatrix4fv(program, location, 1, GL_FALSE, property.storage.mat4.elements);
                 break;
             }
-            case MaterialPropertyType::Texture: {
-                ResourceId texture_id = property.storage.texture;
-                HYP_ASSERT(m_textures.find(texture_id) != m_textures.end());
-                OpenGLTexture &texture = m_textures[texture_id];
+            case MaterialPropertyType::Texture:
+            case MaterialPropertyType::RenderTexture: {
+                // A material stores a normal texture and a render texture in the same way.
+                GLuint texture_object = 0;
+                if (property.type == MaterialPropertyType::Texture) {
+                    ResourceId texture_id = property.storage.texture;
+                    HYP_ASSERT(m_textures.find(texture_id) != m_textures.end());
+                    OpenGLTexture &texture = m_textures[texture_id];
+                    texture_object = texture.texture;
+                } else {
+                    ResourceId render_texture_id = property.storage.render_texture.render_texture;
+                    HYP_ASSERT(m_render_textures.find(render_texture_id) != m_render_textures.end());
+                    OpenGLRenderTexture &render_texture = m_render_textures[render_texture_id];
+                    HYP_ASSERT(property.storage.render_texture.attachment_index < render_texture.attachments.size());
+                    OpenGLRenderTextureAttachment &attachment = render_texture.attachments[property.storage.render_texture.attachment_index];
+                    HYP_ASSERT(attachment.attributes.format != RenderTextureFormat::Depth24Stencil8);
+                    texture_object = attachment.attachment;
+                }
 
                 // We have to check if the property might already be set.
                 auto &it = material.textures.find(property_id);
                 if (it != material.textures.end()) {
-                    it->second = texture.texture;
+                    it->second = texture_object;
                 } else {
                     GLuint texture_unit = static_cast<GLuint>(material.textures.size());
                     HYP_ASSERT(texture_unit < static_cast<GLuint>(m_graphics_context->GetLimits().max_texture_units));
                     glProgramUniform1i(program, location, texture_unit);
-                    material.textures[property_id] = texture.texture;
+                    material.textures[property_id] = texture_object;
                 }
                 break;
             }
@@ -337,6 +356,7 @@ namespace Hyperion::Rendering {
             attachment.attributes.format = render_texture_attachment.format;
             attachment.attributes.parameters = render_texture_attachment.parameters;
 
+            // TODO: We should have the ability to specify that we want to create a texture even for depth/stencil so that we can read from it in a shader.
             if (render_texture_attachment.format == RenderTextureFormat::Depth24Stencil8) {
                 if (has_created_depth_stencil_attachment) {
                     HYP_LOG_ERROR("OpenGL", "Trying to add more than one depth and stencil attachment to a render texture!");

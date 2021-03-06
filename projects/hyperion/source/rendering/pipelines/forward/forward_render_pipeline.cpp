@@ -28,7 +28,7 @@ namespace Hyperion::Rendering {
     void ForwardRenderPipeline::Initialize(IRenderDriver *render_driver) {
         if (m_is_primary) {
             Vector<RenderTextureAttachment> attachments = {
-                { RenderTextureFormat::RGBA32, TextureParameters() },
+                { RenderTextureFormat::RGBA32, { TextureWrapMode::Clamp, TextureFilter::Bilinear, TextureAnisotropicFilter::None, false } },
                 { RenderTextureFormat::Depth24Stencil8, TextureParameters() },
             };
             m_render_texture = RenderTexture::Create(Display::GetWidth(), Display::GetHeight(), attachments);

@@ -26,6 +26,7 @@ namespace Hyperion::Editor {
     //--------------------------------------------------------------
     void EditorRenderPipeline::Initialize(IRenderDriver *render_driver) {
         m_forward_render_pipeline = new ForwardRenderPipeline(false);
+        m_forward_render_pipeline->Initialize(render_driver);
 
         RasterizerState rasterizer_state;
         rasterizer_state.blending_enabled = true;

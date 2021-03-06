@@ -44,6 +44,9 @@ namespace Hyperion::Rendering {
         TextureFilter filter = TextureFilter::Bilinear;
         TextureAnisotropicFilter anisotropic_filter = TextureAnisotropicFilter::None;
         bool use_mipmaps = true;
+
+        inline static TextureParameters ForDefaultTextures() { return { TextureWrapMode::Clamp, TextureFilter::Bilinear, TextureAnisotropicFilter::None, true }; }
+        inline static TextureParameters ForRenderTextures() { return { TextureWrapMode::Clamp, TextureFilter::Point, TextureAnisotropicFilter::None, false }; }
     };
 
     struct TextureSize {

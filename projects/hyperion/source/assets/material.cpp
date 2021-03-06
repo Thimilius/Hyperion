@@ -217,9 +217,17 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     Texture *Material::GetTexture(MaterialPropertyId id) const {
+        // NOTE: We are also handling render textures.
+
         auto it = m_properties.find(id);
-        if (it != m_properties.end() && it->second.type == MaterialPropertyType::Texture) {
-            return it->second.storage.texture;
+        if (it != m_properties.end()) {
+            if (it->second.type == MaterialPropertyType::Texture) {
+                return it->second.storage.texture;
+            } else if (it->second.type == MaterialPropertyType::RenderTexture) {
+                return it->second.storage.render_texture.render_texture;
+            } else {
+                return nullptr;
+            }
         } else {
             return nullptr;
         }
@@ -227,16 +235,58 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Material::SetTexture(MaterialPropertyId id, Texture *value) {
+        HYP_ASSERT(value);
+
+        // NOTE: We are also handling render textures as they are essentially textures as well.
+        if (value->GetAssetType() == AssetType::RenderTexture) {
+            SetRenderTexture(id, static_cast<RenderTexture *>(value), 0);
+        } else {
+            auto it = m_properties.find(id);
+            if (it != m_properties.end()) {
+                // Textures are a property which can change their type (either normal texture or render texture).
+                HYP_ASSERT_MESSAGE(it->second.type == MaterialPropertyType::Texture || it->second.type == MaterialPropertyType::RenderTexture, "The property can not change it's type when setting");
+                it->second.type = MaterialPropertyType::Texture;
+                it->second.storage.texture = value;
+
+                SetProperty(id, it->second);
+            } else {
+                MaterialProperty &property = m_properties[id];
+                property.type = MaterialPropertyType::Texture;
+                property.storage.texture = value;
+
+                SetProperty(id, property);
+            }
+        }
+    }
+
+    //--------------------------------------------------------------
+    RenderTexture *Material::GetRenderTexture(Rendering::MaterialPropertyId id) const {
+        auto it = m_properties.find(id);
+        if (it != m_properties.end() && it->second.type == MaterialPropertyType::RenderTexture) {
+            return it->second.storage.render_texture.render_texture;
+        } else {
+            return nullptr;
+        }
+    }
+
+    //--------------------------------------------------------------
+    void Material::SetRenderTexture(Rendering::MaterialPropertyId id, RenderTexture *value, uint32 attachment_index) {
+        HYP_ASSERT(value);
+
         auto it = m_properties.find(id);
         if (it != m_properties.end()) {
-            HYP_ASSERT_MESSAGE(it->second.type == MaterialPropertyType::Texture, "The property can not change it's type when setting");
-            it->second.storage.texture = value;
+            // Textures are a property which can change their type (either normal texture or render texture).
+            HYP_ASSERT_MESSAGE(it->second.type == MaterialPropertyType::RenderTexture || it->second.type == MaterialPropertyType::Texture, "The property can not change it's type when setting");
+            it->second.type = MaterialPropertyType::RenderTexture;
+            it->second.storage.render_texture.render_texture = value;
+            it->second.storage.render_texture.attachment_index = attachment_index;
 
             SetProperty(id, it->second);
         } else {
             MaterialProperty &property = m_properties[id];
-            property.type = MaterialPropertyType::Texture;
-            property.storage.texture = value;
+            property.type = MaterialPropertyType::RenderTexture;
+            property.storage.render_texture.render_texture = value;
+            property.storage.render_texture.attachment_index = attachment_index;
 
             SetProperty(id, property);
         }
@@ -257,6 +307,11 @@ namespace Hyperion {
             case MaterialPropertyType::Mat3: rendering_property.storage.mat3 = property.storage.mat3; break;
             case MaterialPropertyType::Mat4: rendering_property.storage.mat4 = property.storage.mat4; break;
             case MaterialPropertyType::Texture: rendering_property.storage.texture = property.storage.texture->GetResourceId(); break;
+            case MaterialPropertyType::RenderTexture: {
+                rendering_property.storage.render_texture.render_texture = property.storage.render_texture.render_texture->GetResourceId();
+                rendering_property.storage.render_texture.attachment_index = property.storage.render_texture.attachment_index;
+                break;
+            }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
         }
 

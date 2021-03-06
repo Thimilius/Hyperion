@@ -92,6 +92,15 @@ namespace Hyperion {
             SetTexture(Rendering::MaterialProperty::NameToId(name), value);
         }
 
+        RenderTexture *GetRenderTexture(Rendering::MaterialPropertyId id) const;
+        inline RenderTexture *GetRenderTexture(const String &name) const {
+            return GetRenderTexture(Rendering::MaterialProperty::NameToId(name));
+        }
+        void SetRenderTexture(Rendering::MaterialPropertyId id, RenderTexture *value, uint32 attachment_index);
+        inline void SetRenderTexture(const String &name, RenderTexture *value, uint32 attachment_index) {
+            SetRenderTexture(Rendering::MaterialProperty::NameToId(name), value, attachment_index);
+        }
+
         void OnRecompile() override;
     public:
         static Material *Create(Shader *shader);
@@ -107,8 +116,6 @@ namespace Hyperion {
     private:
         Shader *m_shader;
         
-        // RANT: The namespace 'Material' here is only necessary to shut up IntelliSense
-        // that for some reason does not understand it properly otherwise.
         Map<Rendering::MaterialPropertyId, MaterialProperty> m_properties;
     private:
         union MaterialPropertyStorage {
@@ -123,6 +130,10 @@ namespace Hyperion {
             Mat4 mat4;
 
             Texture *texture;
+            struct {
+                RenderTexture *render_texture;
+                uint32 attachment_index;
+            } render_texture;
         };
 
         struct MaterialProperty {

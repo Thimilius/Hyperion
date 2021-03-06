@@ -10,6 +10,7 @@ namespace Hyperion {
 
     class Texture : public Asset {
         HYP_REFLECT(Asset);
+    public:
         inline AssetType GetAssetType() const override { return AssetType::Texture; }
 
         virtual Rendering::TextureDimension GetDimension() const = 0;
@@ -28,7 +29,7 @@ namespace Hyperion {
     class Texture2D : public Texture {
         HYP_REFLECT(Texture);
     public:
-        inline Rendering::TextureDimension GetDimension() const { return Rendering::TextureDimension::Texture2D; }
+        inline Rendering::TextureDimension GetDimension() const override { return Rendering::TextureDimension::Texture2D; }
 
         inline uint32 GetWidth() const { return m_width; }
         inline uint32 GetHeight() const { return m_height; }
@@ -48,7 +49,7 @@ namespace Hyperion {
     class TextureCubemap : public Texture {
         HYP_REFLECT(Texture);
     public:
-        inline Rendering::TextureDimension GetDimension() const { return Rendering::TextureDimension::TextureCubemap; }
+        inline Rendering::TextureDimension GetDimension() const override { return Rendering::TextureDimension::TextureCubemap; }
     private:
         TextureCubemap() = default;
     private:
@@ -58,7 +59,9 @@ namespace Hyperion {
     class RenderTexture : public Texture {
         HYP_REFLECT(Texture);
     public:
-        inline Rendering::TextureDimension GetDimension() const { return Rendering::TextureDimension::Texture2D; }
+        inline AssetType GetAssetType() const override { return AssetType::RenderTexture; }
+
+        inline Rendering::TextureDimension GetDimension() const override { return Rendering::TextureDimension::Texture2D; }
 
         inline uint32 GetWidth() const { return m_width; }
         inline uint32 GetHeight() const { return m_height; }
