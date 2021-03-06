@@ -23,7 +23,10 @@ namespace Hyperion {
 
         uint32 TEXTURE_ATLAS_SIZE = 1024;
         uint32 TEXTURE_ATLAS_PADDING = 4;
-        TextureAtlasPacker<uint32, FontGlyph> texture_atlas_packer(TEXTURE_ATLAS_SIZE, TEXTURE_ATLAS_SIZE, TEXTURE_ATLAS_PADDING, font_size);
+        // NOTE: Setting the pixel size does not guarantee that the bitmaps are at most of that height.
+        // We first have to compute this actual height and pass it to the atlas packer so that every bitmap can fit properly.
+        uint32 actual_font_height = static_cast<uint32>(Math::Round(static_cast<float32>((font_face->bbox.yMax - font_face->bbox.yMin) * font_size) / static_cast<float32>(font_face->units_per_EM)));
+        TextureAtlasPacker<uint32, FontGlyph> texture_atlas_packer(TEXTURE_ATLAS_SIZE, TEXTURE_ATLAS_SIZE, TEXTURE_ATLAS_PADDING, actual_font_height);
 
         SpecialFontGlyphs special_glyphs;
 
@@ -60,16 +63,7 @@ namespace Hyperion {
                 uint8 *bitmap_buffer = font_face->glyph->bitmap.buffer;
                 if (!is_special_character) {
                     // We need to make sure the bitmap of the character is actually valid.
-                    // One very weird thing is that we have to check that the bitmap height is not greater than the font size.
-                    if (bitmap_width == 0 || bitmap_height == 0) {
-                        goto continue_loop;
-                    }
-                    if (bitmap_height > font_size) {
-                        // It might be the case that the font glyphs are higher than the font size!? I am not sure why that is.
-                        // HACK: For now we just limit the size of the texture to be not more than the font size.
-                        bitmap_height = font_size;
-                    }
-                    if (bitmap_buffer == nullptr) {
+                    if (bitmap_width == 0 || bitmap_height == 0 || bitmap_buffer == nullptr) {
                         goto continue_loop;
                     }
                 }
