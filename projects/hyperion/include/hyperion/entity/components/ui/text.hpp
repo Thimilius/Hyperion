@@ -3,24 +3,11 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/font.hpp"
 #include "hyperion/assets/mesh.hpp"
+#include "hyperion/assets/utilities/text_alignment.hpp"
 #include "hyperion/entity/components/ui/widget.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
-
-    enum class TextAlignment {
-        TopLeft,
-        TopCenter,
-        TopRight,
-
-        MiddleLeft,
-        MiddleCenter,
-        MiddleRight,
-
-        BottomLeft,
-        BottomCenter,
-        BottomRight,
-    };
 
     class Text : public Widget {
         HYP_REFLECT(Widget);
@@ -46,27 +33,6 @@ namespace Hyperion {
         String m_text;
         Font *m_font = nullptr;
         TextAlignment m_text_alignment = TextAlignment::MiddleCenter;
-    };
-
-    struct TextMeshGenerationSettings {
-        String text = "";
-        Font *font = nullptr;
-        TextAlignment alignment = TextAlignment::MiddleCenter;
-        Color color = Color::White();
-
-        Rect rect = Rect();
-        float32 scale = 1.0f;
-    };
-
-    class TextMeshGenerator final {
-    public:
-        static Mesh *GenerateMesh(const TextMeshGenerationSettings &settings);
-        static Mesh *GenerateMesh(const TextMeshGenerationSettings &settings, MeshBuilder &mesh_builder);
-    private:
-        static Vec2 GetPosition(TextAlignment text_alignment, Vec2 text_size, Rect rect);
-    private:
-        TextMeshGenerator() = delete;
-        ~TextMeshGenerator() = delete;
     };
 
 }

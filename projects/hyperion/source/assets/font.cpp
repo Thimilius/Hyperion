@@ -4,9 +4,6 @@
 //--------------------- Definition Include ---------------------
 #include "hyperion/assets/font.hpp"
 
-//---------------------- Project Includes ----------------------
-#include "hyperion/modules/freetype/freetype_font_loader.hpp"
-
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
@@ -82,18 +79,6 @@ namespace Hyperion {
     //--------------------------------------------------------------
     Font *Font::Create() {
         return new Font();
-    }
-
-    //--------------------------------------------------------------
-    void FontLoader::Initialize() {
-        s_font_loader = new FreetypeFontLoader();
-        s_font_loader->Initialize();
-    }
-
-    //--------------------------------------------------------------
-    void FontLoader::Shutdown() {
-        s_font_loader->Shutdown();
-        delete s_font_loader;
     }
 
 }

@@ -5,6 +5,7 @@
 #include "hyperion/entity/entity.hpp"
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/entity/world_manager.hpp"
 #include "hyperion/entity/components/rect_transform.hpp"
 #include "hyperion/entity/components/physics/box_collider.hpp"

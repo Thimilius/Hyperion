@@ -5,7 +5,7 @@
 #include "hyperion/core/system/engine.hpp"
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/assets/asset.hpp"
+#include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/audio/audio_engine.hpp"
 #include "hyperion/core/timer.hpp"
 #include "hyperion/core/app/application.hpp"

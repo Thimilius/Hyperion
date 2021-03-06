@@ -3,6 +3,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/color.hpp"
 #include "hyperion/assets/mesh.hpp"
+#include "hyperion/assets/utilities/mesh_builder.hpp"
 #include "hyperion/entity/entity_message.hpp"
 #include "hyperion/entity/components/behaviour.hpp"
 #include "hyperion/entity/components/rect_transform.hpp"

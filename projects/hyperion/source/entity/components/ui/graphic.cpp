@@ -5,6 +5,7 @@
 #include "hyperion/entity/components/ui/graphic.hpp"
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/entity/entity.hpp"
 
 //------------------------- Namespaces -------------------------

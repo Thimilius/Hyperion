@@ -2,6 +2,7 @@
 #include "hyperion/editor/world_view/editor_world_view.hpp"
 
 //---------------------- Library Includes ----------------------
+#include <hyperion/assets/loader/font_loader.hpp>
 #include <hyperion/core/random.hpp>
 #include <hyperion/core/app/input.hpp>
 #include <hyperion/core/app/time.hpp>

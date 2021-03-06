@@ -1,6 +1,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/assets/mesh.hpp"
 #include "hyperion/entity/components/rendering/renderer.hpp"
 
 //-------------------- Definition Namespace --------------------

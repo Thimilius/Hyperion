@@ -1,7 +1,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/assets/mesh.hpp"
+#include "hyperion/assets/loader/mesh_loader.hpp"
 #include "hyperion/rendering/attributes/mesh_attributes.hpp"
 
 //-------------------- Forward Declarations --------------------

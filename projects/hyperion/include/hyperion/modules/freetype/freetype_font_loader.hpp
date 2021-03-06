@@ -1,7 +1,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/assets/font.hpp"
+#include "hyperion/assets/loader/font_loader.hpp"
 
 //-------------------- Forward Declarations --------------------
 struct FT_LibraryRec_;
