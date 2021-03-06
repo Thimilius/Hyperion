@@ -19,7 +19,7 @@ namespace Hyperion {
     // NOTE: We treat window cordinates with (0, 0) at bottom left.
 
     //--------------------------------------------------------------
-    Rendering::CameraData Camera::GetCameraData() const {
+    Rendering::CameraData Camera::GetData() const {
         Transform *transform = GetTransform();
         m_data.position = transform->GetPosition();
         m_data.forward = transform->GetForward();

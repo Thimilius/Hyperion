@@ -2,7 +2,7 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/rendering/camera_data.hpp"
+#include "hyperion/rendering/data/camera_data.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {

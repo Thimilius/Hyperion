@@ -2,10 +2,11 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/color.hpp"
+#include "hyperion/core/math/ray.hpp"
 #include "hyperion/entity/entity_message.hpp"
 #include "hyperion/entity/layer.hpp"
 #include "hyperion/entity/components/behaviour.hpp"
-#include "hyperion/rendering/camera_data.hpp"
+#include "hyperion/rendering/data/camera_data.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -46,7 +47,7 @@ namespace Hyperion {
         inline Color GetBackgroundColor() const { return m_background_color; }
         inline void SetBackgroundColor(Color background_color) { m_background_color = background_color; }
 
-        Rendering::CameraData GetCameraData() const;
+        Rendering::CameraData GetData() const;
 
         Vec3 ScreenToWorldPoint(Vec3 screen_point) const;
         Vec2 WorldToScreenPoint(Vec3 world_point) const;

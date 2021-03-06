@@ -2,7 +2,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/entity/components/rendering/mesh_renderer.hpp"
-#include "hyperion/rendering/camera_data.hpp"
+#include "hyperion/rendering/data/camera_data.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion::Rendering {

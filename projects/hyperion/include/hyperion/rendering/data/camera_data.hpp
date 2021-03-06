@@ -2,7 +2,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/math/mat4.hpp"
-#include "hyperion/core/math/ray.hpp"
+#include "hyperion/core/math/vec3.hpp"
 #include "hyperion/core/serialization/serializable.hpp"
 
 //-------------------- Definition Namespace --------------------

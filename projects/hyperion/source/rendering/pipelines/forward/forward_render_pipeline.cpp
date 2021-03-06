@@ -48,7 +48,7 @@ namespace Hyperion::Rendering {
         render_driver->Clear(ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, Color::Black());
 
         World *world = WorldManager::GetActiveWorld();
-        RenderWorld(render_driver, world, world->FindComponentOfType<Camera>()->GetCameraData());
+        RenderWorld(render_driver, world, world->FindComponentOfType<Camera>()->GetData());
     }
 
     //--------------------------------------------------------------

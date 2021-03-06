@@ -52,7 +52,7 @@ namespace Hyperion::Editor {
             render_driver->Clear(ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, Color::Black());
 
             // We just render the world in the 'normal' way.
-            m_forward_render_pipeline->RenderWorld(render_driver, EditorWorldView::GetWorld(), EditorWorldView::GetCamera()->GetCameraData());
+            m_forward_render_pipeline->RenderWorld(render_driver, EditorWorldView::GetWorld(), EditorWorldView::GetCamera()->GetData());
         }
         
         {

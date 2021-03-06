@@ -11,6 +11,14 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
+    Rendering::LightData Light::GetData() const {
+        Transform *transform = GetTransform();
+        m_data.position = transform->GetPosition();
+        m_data.direction = transform->GetForward();
+        return m_data;
+    }
+
+    //--------------------------------------------------------------
     void Light::OnCreate() {
         Behaviour::OnCreate();
 
