@@ -87,7 +87,7 @@ namespace Hyperion {
         static void UnregisterObject(Object *object);
     private:
         inline static Map<ObjectId, Object *> s_objects;
-        inline static Set<Object *> s_objects_to_destroy;
+        inline static Vector<Object *> s_objects_to_destroy;
         inline static ObjectId s_object_id_counter;
     private:
         friend class Hyperion::Engine;

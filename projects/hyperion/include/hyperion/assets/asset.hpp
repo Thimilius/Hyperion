@@ -11,9 +11,9 @@ namespace Hyperion {
         Font,
         Material,
         Mesh,
+        RenderTexture,
         Shader,
         Texture,
-        RenderTexture,
         TextureAtlas,
     };
 
@@ -27,6 +27,10 @@ namespace Hyperion {
         inline ResourceId GetResourceId() const { return m_resource_id; }
     protected:
         Asset();
+    protected:
+        virtual void OnDestroy() override;
+
+        void RegisterAsset();
     protected:
         ResourceId m_resource_id;
     };

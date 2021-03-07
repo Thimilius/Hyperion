@@ -19,7 +19,7 @@ namespace Hyperion {
         virtual void OnRecompile() = 0;
     };
 
-    class Shader : public Asset {
+    class Shader final : public Asset {
         HYP_REFLECT(Asset);
     private:
         using ShaderPreProcessCallback = std::function<void (const Rendering::ShaderDescriptor &)>;

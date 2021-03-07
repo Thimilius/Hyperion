@@ -9,6 +9,8 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     Font::Font(uint32 size, FontCharacterSet character_set, FontAtlas *font_atlas, SpecialFontGlyphs special_glyphs) {
+        RegisterAsset();
+
         m_size = size;
         m_character_set = character_set;
         m_font_atlas = font_atlas;
@@ -69,6 +71,8 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void Font::OnDestroy() {
         Destroy(m_font_atlas);
+
+        Asset::OnDestroy();
     }
 
     //--------------------------------------------------------------

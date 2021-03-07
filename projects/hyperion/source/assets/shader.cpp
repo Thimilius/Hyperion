@@ -17,6 +17,8 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     Shader::Shader(const String &source) {
+        RegisterAsset();
+
         ResourceId resource_id = m_resource_id;
         PreProcess(source, [resource_id](const ShaderDescriptor &descriptor) {
             RenderEngine::GetRenderDriver()->CreateShader(resource_id, descriptor);
@@ -93,6 +95,8 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void Shader::OnDestroy() {
         RenderEngine::GetRenderDriver()->DestroyShader(m_resource_id);
+
+        Asset::OnDestroy();
     }
 
 }

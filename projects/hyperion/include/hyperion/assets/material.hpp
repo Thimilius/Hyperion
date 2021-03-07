@@ -10,7 +10,7 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    class Material : public Asset, public IShaderRecompilationListener {
+    class Material final : public Asset, public IShaderRecompilationListener {
         HYP_REFLECT(Asset);
     private:
         union MaterialPropertyStorage;

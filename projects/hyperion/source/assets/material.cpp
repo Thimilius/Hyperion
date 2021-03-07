@@ -16,6 +16,8 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     Material::Material(Shader *shader) {
+        RegisterAsset();
+
         m_shader = shader;
 
         shader->RegisterRecompilationListener(this);
@@ -337,12 +339,11 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Material::OnDestroy() {
-        // NOTE: We are not unregistring ourselves here as a shader recompilation listener
-        // because it would lead to an issue when destroying objects at the very end.
-        // In perticular the shader might already be destroyed and therefore we can not access it anymore.
-        // In this scenario here, a reference count would actually be useful.
-        // Meaning we are going to have a dangling pointer in the shader if we have been destroyed prior to the shader...
+        m_shader->UnregisterRecompilationListener(this);
+
         RenderEngine::GetRenderDriver()->DestroyMaterial(m_resource_id);
+
+        Asset::OnDestroy();
     }
 
 }

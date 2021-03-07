@@ -19,14 +19,14 @@ namespace Hyperion {
         inline const Rendering::TextureParameters &GetParamters() const { return m_parameters; }
     protected:
         virtual void OnDestroy() override;
-
+    protected:
         static uint32 CalculateMipmapCount(uint32 width, uint32 height);
     protected:
         bool m_read_and_write_enabled;
         Rendering::TextureParameters m_parameters;
     };
 
-    class Texture2D : public Texture {
+    class Texture2D final : public Texture {
         HYP_REFLECT(Texture);
     public:
         inline Rendering::TextureDimension GetDimension() const override { return Rendering::TextureDimension::Texture2D; }
@@ -46,7 +46,7 @@ namespace Hyperion {
         Vector<uint8> m_pixels;
     };
 
-    class TextureCubemap : public Texture {
+    class TextureCubemap final : public Texture {
         HYP_REFLECT(Texture);
     public:
         inline Rendering::TextureDimension GetDimension() const override { return Rendering::TextureDimension::TextureCubemap; }
@@ -56,7 +56,7 @@ namespace Hyperion {
         static TextureCubemap *Create();
     };
 
-    class RenderTexture : public Texture {
+    class RenderTexture final : public Texture {
         HYP_REFLECT(Texture);
     public:
         inline AssetType GetAssetType() const override { return AssetType::RenderTexture; }

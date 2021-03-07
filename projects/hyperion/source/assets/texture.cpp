@@ -17,6 +17,8 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void Texture::OnDestroy() {
         RenderEngine::GetRenderDriver()->DestroyTexture(m_resource_id);
+
+        Asset::OnDestroy();
     }
 
     //--------------------------------------------------------------
@@ -26,6 +28,8 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     Texture2D::Texture2D(uint32 width, uint32 height, TextureFormat format, TextureParameters parameters, const Vector<uint8> &pixels, bool read_and_write_enabled) {
+        RegisterAsset();
+
         m_width = width;
         m_height = height;
         m_parameters = parameters;
@@ -64,10 +68,14 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void RenderTexture::OnDestroy() {
         RenderEngine::GetRenderDriver()->DestroyRenderTexture(m_resource_id);
+
+        Asset::OnDestroy();
     }
 
     //--------------------------------------------------------------
     RenderTexture::RenderTexture(uint32 width, uint32 height, Vector<RenderTextureAttachment> attachments) {
+        RegisterAsset();
+
         m_width = width;
         m_height = height;
         m_attachments = attachments;

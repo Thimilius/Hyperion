@@ -122,7 +122,7 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void ObjectManager::Destroy(Object *object) {
-        s_objects_to_destroy.insert(object);
+        s_objects_to_destroy.push_back(object);
     }
 
     //--------------------------------------------------------------

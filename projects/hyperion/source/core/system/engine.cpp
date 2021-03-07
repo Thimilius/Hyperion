@@ -162,13 +162,15 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void Engine::Shutdown() {
         // When shutting down we have to be very careful about the order.
-        // The render engine (render thread) needs seperate phases in which it has to shut down.
         WorldManager::Shutdown();
+
         Scripting::ScriptingEngine::Shutdown();
         Physics::PhysicsEngine::Shutdown();
-        AssetManager::Shutdown();
         Audio::AudioEngine::Shutdown();
+        
+        AssetManager::Shutdown();
 
+        // The render engine (render thread) needs seperate phases in which it has to shut down.
         Rendering::RenderEngine::PreShutdown();
         ObjectManager::Shutdown();
         Rendering::RenderEngine::Shutdown();

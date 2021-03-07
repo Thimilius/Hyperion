@@ -24,6 +24,8 @@ namespace Hyperion {
     Mesh::Mesh(const MeshData &mesh_data, const Vector<SubMesh> &sub_meshes, bool read_and_write_enabled) {
         HYP_ASSERT_MESSAGE(sub_meshes.size() > 0, "Must provide at least one submesh when creating a mesh!");
 
+        RegisterAsset();
+
         m_read_and_write_enabled = read_and_write_enabled;
         m_bounds = CalculateBounds(mesh_data.positions);
 
@@ -190,6 +192,8 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void Mesh::OnDestroy() {
         Rendering::RenderEngine::GetRenderDriver()->DestroyMesh(m_resource_id);
+
+        Asset::OnDestroy();
     }
 
     //--------------------------------------------------------------

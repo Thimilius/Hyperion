@@ -8,6 +8,7 @@
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
+    class Asset;
     class Engine;
 }
 
@@ -43,19 +44,31 @@ namespace Hyperion {
         static void Initialize();
         static void Update();
         static void Shutdown();
-    private:
-        inline static Texture *s_texture_primitive_grid;
 
-        inline static Material *s_material_primitive_default;
-        inline static Material *s_material_primitive_ui;
-        inline static Material *s_material_primitive_font;
-
-        inline static Mesh *s_mesh_primitive_quad;
-        inline static Mesh *s_mesh_primitive_plane;
-        inline static Mesh *s_mesh_primitive_cube;
-        inline static Mesh *s_mesh_primitive_sphere;
+        static void RegisterAsset(Asset *asset);
+        static void UnregisterAsset(Asset *asset);
     private:
-        friend class Engine;
+        inline static struct Primitives {
+            Texture *texture_grid;
+
+            Material *material_default;
+            Material *material_ui;
+            Material *material_font;
+
+            Mesh *mesh_quad;
+            Mesh *mesh_plane;
+            Mesh *mesh_cube;
+            Mesh *mesh_sphere;
+        } s_primitives;
+
+        inline static Map<ResourceId, Font *> s_fonts;
+        inline static Map<ResourceId, Material *> s_materials;
+        inline static Map<ResourceId, Mesh *> s_meshes;
+        inline static Map<ResourceId, Shader *> s_shaders;
+        inline static Map<ResourceId, Texture *> s_textures;
+    private:
+        friend class Hyperion::Engine;
+        friend class Hyperion::Asset;
     };
 
 }
