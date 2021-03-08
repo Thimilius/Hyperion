@@ -182,7 +182,11 @@ namespace Hyperion::Rendering {
         HYP_ASSERT(m_shaders.find(id) != m_shaders.end());
 
         OpenGLShader &shader = m_shaders[id];
-        glDeleteProgram(shader.program);
+
+        // NOTE: We have to remember the special case where the shader might point to the fallback shader which we DO NOT want to delete.
+        if (shader.program != m_fallback_shader) {
+            glDeleteProgram(shader.program);
+        }
         
         m_shaders.erase(id);
     }
@@ -676,11 +680,11 @@ namespace Hyperion::Rendering {
         glGetProgramInterfaceiv(program, GL_UNIFORM, GL_ACTIVE_RESOURCES, &active_uniform_count);
 
         for (GLint uniform_index = 0; uniform_index < active_uniform_count; uniform_index++) {
-            const uint64 NAME_BUFFER_COUNT = 50;
+            const uint64 NAME_BUFFER_SIZE = 64;
             String name_buffer;
-            name_buffer.resize(NAME_BUFFER_COUNT);
+            name_buffer.resize(NAME_BUFFER_SIZE);
             GLsizei name_length;
-            glGetProgramResourceName(program, GL_UNIFORM, uniform_index, NAME_BUFFER_COUNT, &name_length, name_buffer.data());
+            glGetProgramResourceName(program, GL_UNIFORM, uniform_index, NAME_BUFFER_SIZE, &name_length, name_buffer.data());
             name_buffer.resize(name_length);
 
             MaterialPropertyId material_id = MaterialProperty::NameToId(name_buffer);

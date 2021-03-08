@@ -75,7 +75,7 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void Engine::Initialize() {
         Audio::AudioEngine::Initialize();
-        AssetManager::Initialize();
+        AssetManager::Initialize(s_settings.assets);
         Rendering::RenderEngine::Initialize();
         Physics::PhysicsEngine::Initialize();
         Scripting::ScriptingEngine::Initialize(s_settings.scripting);

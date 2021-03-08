@@ -47,35 +47,25 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void AssetManager::Initialize() {
+    void AssetManager::Initialize(AssetSettings settings) {
+        s_settings = settings;
+
+        if (settings.hot_loading) {
+            InitializeFileWatchers();
+        }
+
         ImageLoader::Initialize();
         MeshLoader::Initialize();
         FontLoader::Initialize();
 
-        s_primitives.mesh_quad = MeshGenerator::GenerateQuad(1.0f, 1.0f);
-        s_primitives.mesh_plane = MeshGenerator::GeneratePlane(10.0f, 10.0f);
-        s_primitives.mesh_cube = MeshGenerator::GenerateCube(1.0f);
-        s_primitives.mesh_sphere = MeshGenerator::GenerateSphere(0.5f);
-
-        Image *image = ImageLoader::Load("data/textures/checkerboard.png");
-        s_primitives.texture_grid = Texture2D::Create(image->GetWidth(), image->GetHeight(), TextureFormat::RGB24, TextureParameters(), image->GetPixels());
-        Object::Destroy(image);
-
-        Shader *default_shader = Shader::Create(FileSystem::ReadAllText("data/shaders/standard.shader"));
-        s_primitives.material_default = Material::Create(default_shader);
-        s_primitives.material_default->SetVec4("u_color", Color::White());
-        s_primitives.material_default->SetTexture("u_texture", s_primitives.texture_grid);
-
-        Shader *ui_shader = Shader::Create(FileSystem::ReadAllText("data/shaders/ui.shader"));
-        s_primitives.material_ui = Material::Create(ui_shader);
-
-        Shader *font_shader = Shader::Create(FileSystem::ReadAllText("data/shaders/font.shader"));
-        s_primitives.material_font = Material::Create(font_shader);
+        InitializePrimitives();
     }
 
     //--------------------------------------------------------------
     void AssetManager::Update() {
-
+        if (s_settings.hot_loading) {
+            s_file_watcher_shaders->Update();
+        }
     }
 
     //--------------------------------------------------------------
@@ -101,6 +91,49 @@ namespace Hyperion {
         FontLoader::Shutdown();
         MeshLoader::Shutdown();
         ImageLoader::Shutdown();
+    }
+
+    //--------------------------------------------------------------
+    void AssetManager::InitializeFileWatchers() {
+        s_file_watcher_shaders = FileWatcher::Create(s_settings.shader_path, [](FileStatus status, const String &path, const String &name, const String &extension) {
+            if (status == FileStatus::Modified) {
+                if (extension == ".shader") {
+                    // TODO: We need a way to store assets by their name or path, so we can look them up and reload them when necessary.
+
+                    // FIXME: This is very hardcoded.
+                    if (name == "font.shader") {
+                        s_primitives.material_font->GetShader()->Recompile(FileSystem::ReadAllText(path));
+                    } else if (name == "standard.shader") {
+                        s_primitives.material_default->GetShader()->Recompile(FileSystem::ReadAllText(path));
+                    } else if (name == "ui.shader") {
+                        s_primitives.material_ui->GetShader()->Recompile(FileSystem::ReadAllText(path));
+                    }
+                }
+            }
+        }, false);
+    }
+
+    //--------------------------------------------------------------
+    void AssetManager::InitializePrimitives() {
+        s_primitives.mesh_quad = MeshGenerator::GenerateQuad(1.0f, 1.0f);
+        s_primitives.mesh_plane = MeshGenerator::GeneratePlane(10.0f, 10.0f);
+        s_primitives.mesh_cube = MeshGenerator::GenerateCube(1.0f);
+        s_primitives.mesh_sphere = MeshGenerator::GenerateSphere(0.5f);
+
+        Image *image = ImageLoader::Load("data/textures/checkerboard.png");
+        s_primitives.texture_grid = Texture2D::Create(image->GetWidth(), image->GetHeight(), TextureFormat::RGB24, TextureParameters(), image->GetPixels());
+        Object::Destroy(image);
+
+        Shader *default_shader = Shader::Create(FileSystem::ReadAllText("data/shaders/standard.shader"));
+        s_primitives.material_default = Material::Create(default_shader);
+        s_primitives.material_default->SetVec4("u_color", Color::White());
+        s_primitives.material_default->SetTexture("u_texture", s_primitives.texture_grid);
+
+        Shader *ui_shader = Shader::Create(FileSystem::ReadAllText("data/shaders/ui.shader"));
+        s_primitives.material_ui = Material::Create(ui_shader);
+
+        Shader *font_shader = Shader::Create(FileSystem::ReadAllText("data/shaders/font.shader"));
+        s_primitives.material_font = Material::Create(font_shader);
     }
 
     //--------------------------------------------------------------

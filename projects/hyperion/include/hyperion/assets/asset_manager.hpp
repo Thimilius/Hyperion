@@ -5,6 +5,8 @@
 #include "hyperion/assets/material.hpp"
 #include "hyperion/assets/mesh.hpp"
 #include "hyperion/assets/texture.hpp"
+#include "hyperion/core/app/application_settings.hpp"
+#include "hyperion/core/io/file_watcher.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -41,13 +43,20 @@ namespace Hyperion {
         ~AssetManager() = delete;
         AssetManager() = delete;
     private:
-        static void Initialize();
+        static void Initialize(AssetSettings settings);
         static void Update();
         static void Shutdown();
+
+        static void InitializeFileWatchers();
+        static void InitializePrimitives();
 
         static void RegisterAsset(Asset *asset);
         static void UnregisterAsset(Asset *asset);
     private:
+        inline static AssetSettings s_settings;
+
+        inline static FileWatcher *s_file_watcher_shaders;
+
         inline static struct Primitives {
             Texture *texture_grid;
 
