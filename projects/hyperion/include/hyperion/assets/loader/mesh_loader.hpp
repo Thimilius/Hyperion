@@ -20,7 +20,7 @@ namespace Hyperion {
 
     class MeshLoader final {
     public:
-        inline static Mesh *LoadMesh(const String &path) { s_mesh_loader->LoadMesh(path); }
+        inline static Mesh *LoadMesh(const String &path) { return s_mesh_loader->LoadMesh(path); }
     private:
         MeshLoader() = delete;
         ~MeshLoader() = delete;
