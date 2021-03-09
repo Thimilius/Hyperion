@@ -32,8 +32,7 @@ namespace Hyperion::Editor {
         s_editor_world = WorldManager::CreateWorld();
         WorldManager::SetActiveWorld(s_editor_world);
 
-        Mesh *mesh = MeshLoader::LoadMesh("data/models/notebook.obj");
-        Entity::CreatePrimitive(EntityPrimitive::Cube)->GetComponent<MeshRenderer>()->SetMesh(mesh);
+        Entity::CreatePrimitive(EntityPrimitive::Cube);
 
         Entity *entity = Entity::CreatePrimitive(EntityPrimitive::Camera);
         s_editor_camera = entity->GetComponent<Camera>();

@@ -46,12 +46,16 @@ namespace Hyperion {
         static Object *Create();
         static Object *Create(const String &name);
 
+        static Object *Clone(Object *object);
+        template<typename T> static T *Clone(T *object) { return static_cast<T *>(Clone(static_cast<Object *>(object))); }
+
         static void Destroy(Object *object);
         static void DestroyImmediate(Object *object);
     protected:
         Object();
         Object(const String &name);
     protected:
+        virtual void OnClone(Object *clone);
         virtual void OnDestroy() { }
     private:
         Object(const Object &other) = delete;

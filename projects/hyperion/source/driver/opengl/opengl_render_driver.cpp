@@ -228,6 +228,7 @@ namespace Hyperion::Rendering {
         OpenGLMaterial &material = m_materials[material_id];
         ResourceId shader_id = descriptor.shader_id;
         HYP_ASSERT(m_shaders.find(shader_id) != m_shaders.end());
+        material.id = material_id;
         material.shader_id = shader_id;
 
         OpenGLShader &shader = m_shaders[shader_id];
@@ -244,23 +245,23 @@ namespace Hyperion::Rendering {
         OpenGLShader &shader = m_shaders[shader_id];
         GLuint program = shader.program;
 
-
         MaterialPropertyId property_id = property.id;
         auto it = material.properties.find(property_id);
         if (it == material.properties.end()) {
             // We simply ignore a property if it does not actually exist on the shader.
             return;
         }
-        if (it->second.type != property.type) {
+        if (it->second.property.type != property.type) {
             // Textures and render textures are actually compatible with each other.
-            bool is_compatible_texture = (it->second.type == MaterialPropertyType::RenderTexture || property.type == MaterialPropertyType::RenderTexture) &&
-                (it->second.type == MaterialPropertyType::Texture || property.type == MaterialPropertyType::Texture);
+            bool is_compatible_texture = (it->second.property.type == MaterialPropertyType::RenderTexture || property.type == MaterialPropertyType::RenderTexture) &&
+                (it->second.property.type == MaterialPropertyType::Texture || property.type == MaterialPropertyType::Texture);
             if (!is_compatible_texture) {
                 HYP_LOG_ERROR("OpenGL", "Trying to assign material property '{}' a wrong type!", it->second.name);
                 return;
             }
         }
 
+        it->second.property.storage = property.storage;
         GLint location = it->second.location;
 
         switch (property.type) {
@@ -698,10 +699,29 @@ namespace Hyperion::Rendering {
                 glGetProgramResourceiv(program, GL_UNIFORM, uniform_index, 1, &resource_property, 1, nullptr, &type);
 
                 OpenGLMaterialProperty &property = material.properties[material_id];
+                property.property.id = MaterialProperty::NameToId(name_buffer);
+                property.property.type = OpenGLUtilities::GetMaterialPropertyTypeForGLShaderType(type);
                 property.name = name_buffer;
-                property.type = OpenGLUtilities::GetMaterialPropertyTypeForGLShaderType(type);
                 property.location = location;
+
+                SetMaterialPropertyToDefault(property);
             }
+        }
+    }
+
+    //--------------------------------------------------------------
+    void OpenGLRenderDriver::SetMaterialPropertyToDefault(OpenGLMaterialProperty &property) {
+        switch (property.property.type) 	{
+            case MaterialPropertyType::Float32: property.property.storage.float32 = 0.0f; break;
+            case MaterialPropertyType::Int32: property.property.storage.int32 = 0; break;
+            case MaterialPropertyType::Vec2: property.property.storage.vec2 = Vec2(0.0f, 0.0f); break;
+            case MaterialPropertyType::Vec3: property.property.storage.vec3 = Vec3(0.0f, 0.0f, 0.0f); break;
+            case MaterialPropertyType::Vec4: property.property.storage.vec4 = Vec4(0.0f, 0.0f, 0.0f, 0.0f); break;
+            case MaterialPropertyType::Mat3: property.property.storage.mat3 = Mat3(1.0f); break;
+            case MaterialPropertyType::Mat4: property.property.storage.mat4 = Mat4::Identity(); break;
+            case MaterialPropertyType::Texture: property.property.storage.texture = 0; break;
+            case MaterialPropertyType::RenderTexture: property.property.storage.render_texture.render_texture = 0; property.property.storage.render_texture.attachment_index = 0; break;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
     }
 
@@ -712,15 +732,19 @@ namespace Hyperion::Rendering {
 
             glUseProgram(program);
 
+            for (auto &[property_id, property] : material.properties) {
+                SetMaterialProperty(material.id, property.property);
+            }
+
             {
-                static const MaterialPropertyId PROJECTION_TRANSFORM_PROPERTY_ID = std::hash<String>{}("u_transform.projection");
+                static const MaterialPropertyId PROJECTION_TRANSFORM_PROPERTY_ID = MaterialProperty::NameToId("u_transform.projection");
                 HYP_ASSERT(material.properties.find(PROJECTION_TRANSFORM_PROPERTY_ID) != material.properties.end());
                 OpenGLMaterialProperty &property = material.properties[PROJECTION_TRANSFORM_PROPERTY_ID];
                 GLint location = property.location;
                 glProgramUniformMatrix4fv(program, location, 1, GL_FALSE, m_current_camera_data.projection_matrix.elements);
             }
             {
-                static const MaterialPropertyId VIEW_TRANSFORM_PROPERTY_ID = std::hash<String>{}("u_transform.view");
+                static const MaterialPropertyId VIEW_TRANSFORM_PROPERTY_ID = MaterialProperty::NameToId("u_transform.view");
                 HYP_ASSERT(material.properties.find(VIEW_TRANSFORM_PROPERTY_ID) != material.properties.end());
                 OpenGLMaterialProperty &property = material.properties[VIEW_TRANSFORM_PROPERTY_ID];
                 GLint location = property.location;
@@ -738,7 +762,7 @@ namespace Hyperion::Rendering {
 
         // Currently we are going to assume that every shader has this specific property.
         // TODO: Maybe we can cache that special property in the material directly.
-        static const MaterialPropertyId MODEL_TRANSFORM_PROPERTY_ID = std::hash<String>{}("u_transform.model");
+        static const MaterialPropertyId MODEL_TRANSFORM_PROPERTY_ID = MaterialProperty::NameToId("u_transform.model");
         HYP_ASSERT(material.properties.find(MODEL_TRANSFORM_PROPERTY_ID) != material.properties.end());
         OpenGLMaterialProperty &property = material.properties[MODEL_TRANSFORM_PROPERTY_ID];
         GLint location = property.location;

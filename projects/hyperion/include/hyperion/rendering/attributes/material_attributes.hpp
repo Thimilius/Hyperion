@@ -48,7 +48,7 @@ namespace Hyperion::Rendering {
     struct MaterialProperty {
         MaterialPropertyId id;
         MaterialPropertyType type;
-        MaterialPropertyStorage storage;
+        MaterialPropertyStorage storage = { };
 
         inline static MaterialPropertyId NameToId(const String &name) { return std::hash<String>{}(name); }
     };

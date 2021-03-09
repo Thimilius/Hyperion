@@ -15,6 +15,7 @@ namespace Hyperion::Rendering {
         struct OpenGLShader;
         struct OpenGLTexture;
         struct OpenGLMaterial;
+        struct OpenGLMaterialProperty;
     public:
         void Initialize(GraphicsContext *graphics_context) override;
         void Shutdown() override;
@@ -52,6 +53,7 @@ namespace Hyperion::Rendering {
         void SetTextureParameters(GLuint texture, const TextureParameters &parameters);
 
         void CollectMaterialProperties(OpenGLMaterial &material, GLuint program);
+        void SetMaterialPropertyToDefault(OpenGLMaterialProperty &property);
         void UseMaterial(OpenGLMaterial &material, GLuint program, const Mat4 &model_matrix);
     private:
         OpenGLGraphicsContext *m_graphics_context;
@@ -72,12 +74,14 @@ namespace Hyperion::Rendering {
         Map<ResourceId, OpenGLTexture> m_textures;
 
         struct OpenGLMaterialProperty {
-            MaterialPropertyType type;
+            MaterialProperty property;
             String name;
 
             GLint location;
         };
         struct OpenGLMaterial {
+            ResourceId id;
+
             ResourceId shader_id;
 
             Map<MaterialPropertyId, OpenGLMaterialProperty> properties;

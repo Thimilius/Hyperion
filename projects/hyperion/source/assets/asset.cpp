@@ -16,6 +16,13 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void Asset::OnClone(Object *clone) {
+        Object::OnClone(clone);
+
+        // The resource id does not need to be copied as its distinct for each asset.
+    }
+
+    //--------------------------------------------------------------
     void Asset::OnDestroy() {
         AssetManager::UnregisterAsset(this);
     }

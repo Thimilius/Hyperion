@@ -15,17 +15,15 @@ using namespace Hyperion::Rendering;
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    Material::Material(Shader *shader) {
+    Material::Material() {
         RegisterAsset();
+    }
 
+    //--------------------------------------------------------------
+    Material::Material(Shader *shader) : Material() {
         m_shader = shader;
-
-        shader->RegisterRecompilationListener(this);
-
-        MaterialDescriptor descriptor = { };
-        descriptor.shader_id = shader->GetResourceId();
-
-        RenderEngine::GetRenderDriver()->CreateMaterial(m_resource_id, descriptor);
+        
+        Initialize();
     }
 
     //--------------------------------------------------------------
@@ -45,13 +43,13 @@ namespace Hyperion {
             HYP_ASSERT_MESSAGE(it->second.type == MaterialPropertyType::Float32, "The property can not change it's type when setting");
             it->second.storage.float32 = value;
 
-            SetProperty(id, it->second);
+            SendPropertyToGPU(id, it->second);
         } else {
             MaterialProperty &property = m_properties[id];
             property.type = MaterialPropertyType::Float32;
             property.storage.float32 = value;
 
-            SetProperty(id, property);
+            SendPropertyToGPU(id, property);
         }
     }
 
@@ -72,13 +70,13 @@ namespace Hyperion {
             HYP_ASSERT_MESSAGE(it->second.type == MaterialPropertyType::Int32, "The property can not change it's type when setting");
             it->second.storage.int32 = value;
 
-            SetProperty(id, it->second);
+            SendPropertyToGPU(id, it->second);
         } else {
             MaterialProperty &property = m_properties[id];
             property.type = MaterialPropertyType::Int32;
             property.storage.int32 = value;
 
-            SetProperty(id, property);
+            SendPropertyToGPU(id, property);
         }
     }
 
@@ -99,13 +97,13 @@ namespace Hyperion {
             HYP_ASSERT_MESSAGE(it->second.type == MaterialPropertyType::Vec2, "The property can not change it's type when setting");
             it->second.storage.vec2 = value;
 
-            SetProperty(id, it->second);
+            SendPropertyToGPU(id, it->second);
         } else {
             MaterialProperty &property = m_properties[id];
             property.type = MaterialPropertyType::Vec2;
             property.storage.vec2 = value;
 
-            SetProperty(id, property);
+            SendPropertyToGPU(id, property);
         }
     }
 
@@ -126,13 +124,13 @@ namespace Hyperion {
             HYP_ASSERT_MESSAGE(it->second.type == MaterialPropertyType::Vec3, "The property can not change it's type when setting");
             it->second.storage.vec3 = value;
 
-            SetProperty(id, it->second);
+            SendPropertyToGPU(id, it->second);
         } else {
             MaterialProperty &property = m_properties[id];
             property.type = MaterialPropertyType::Vec3;
             property.storage.vec3 = value;
 
-            SetProperty(id, property);
+            SendPropertyToGPU(id, property);
         }
     }
 
@@ -153,13 +151,13 @@ namespace Hyperion {
             HYP_ASSERT_MESSAGE(it->second.type == MaterialPropertyType::Vec4, "The property can not change it's type when setting");
             it->second.storage.vec4 = value;
 
-            SetProperty(id, it->second);
+            SendPropertyToGPU(id, it->second);
         } else {
             MaterialProperty &property = m_properties[id];
             property.type = MaterialPropertyType::Vec4;
             property.storage.vec4 = value;
 
-            SetProperty(id, property);
+            SendPropertyToGPU(id, property);
         }
     }
 
@@ -180,13 +178,13 @@ namespace Hyperion {
             HYP_ASSERT_MESSAGE(it->second.type == MaterialPropertyType::Mat3, "The property can not change it's type when setting");
             it->second.storage.mat3 = value;
 
-            SetProperty(id, it->second);
+            SendPropertyToGPU(id, it->second);
         } else {
             MaterialProperty &property = m_properties[id];
             property.type = MaterialPropertyType::Mat3;
             property.storage.mat3 = value;
 
-            SetProperty(id, property);
+            SendPropertyToGPU(id, property);
         }
     }
 
@@ -207,13 +205,13 @@ namespace Hyperion {
             HYP_ASSERT_MESSAGE(it->second.type == MaterialPropertyType::Mat4, "The property can not change it's type when setting");
             it->second.storage.mat4 = value;
 
-            SetProperty(id, it->second);
+            SendPropertyToGPU(id, it->second);
         } else {
             MaterialProperty &property = m_properties[id];
             property.type = MaterialPropertyType::Mat4;
             property.storage.mat4 = value;
 
-            SetProperty(id, property);
+            SendPropertyToGPU(id, property);
         }
     }
 
@@ -250,13 +248,13 @@ namespace Hyperion {
                 it->second.type = MaterialPropertyType::Texture;
                 it->second.storage.texture = value;
 
-                SetProperty(id, it->second);
+                SendPropertyToGPU(id, it->second);
             } else {
                 MaterialProperty &property = m_properties[id];
                 property.type = MaterialPropertyType::Texture;
                 property.storage.texture = value;
 
-                SetProperty(id, property);
+                SendPropertyToGPU(id, property);
             }
         }
     }
@@ -283,19 +281,35 @@ namespace Hyperion {
             it->second.storage.render_texture.render_texture = value;
             it->second.storage.render_texture.attachment_index = attachment_index;
 
-            SetProperty(id, it->second);
+            SendPropertyToGPU(id, it->second);
         } else {
             MaterialProperty &property = m_properties[id];
             property.type = MaterialPropertyType::RenderTexture;
             property.storage.render_texture.render_texture = value;
             property.storage.render_texture.attachment_index = attachment_index;
 
-            SetProperty(id, property);
+            SendPropertyToGPU(id, property);
         }
     }
 
     //--------------------------------------------------------------
-    void Material::SetProperty(MaterialPropertyId id, const MaterialProperty &property) {
+    void Material::Initialize() {
+        m_shader->RegisterRecompilationListener(this);
+
+        CreateOnGPU();
+        SendPropertiesToGPU();
+    }
+
+    //--------------------------------------------------------------
+    void Material::CreateOnGPU() {
+        MaterialDescriptor descriptor = { };
+        descriptor.shader_id = m_shader->GetResourceId();
+
+        RenderEngine::GetRenderDriver()->CreateMaterial(m_resource_id, descriptor);
+    }
+
+    //--------------------------------------------------------------
+    void Material::SendPropertyToGPU(MaterialPropertyId id, const MaterialProperty &property) {
         Rendering::MaterialProperty rendering_property { };
         rendering_property.id = id;
         rendering_property.type = property.type;
@@ -321,20 +335,36 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void Material::SendPropertiesToGPU() {
+        for (auto &[material_property_id, material_property] : m_properties) {
+            SendPropertyToGPU(material_property_id, material_property);
+        }
+    }
+
+    //--------------------------------------------------------------
     Material *Material::Create() {
         return new Material();
     }
 
     //--------------------------------------------------------------
     void Material::OnRecompile() {
-        for (auto &[material_property_id, material_property] : m_properties) {
-            SetProperty(material_property_id, material_property);
-        }
+        SendPropertiesToGPU();
     }
 
     //--------------------------------------------------------------
     Material *Material::Create(Shader *shader) {
         return new Material(shader);
+    }
+
+    //--------------------------------------------------------------
+    void Material::OnClone(Object *clone) {
+        Asset::OnClone(clone);
+
+        Material *material_clone = static_cast<Material *>(clone);
+        material_clone->m_shader = m_shader;
+        material_clone->m_properties = m_properties;
+
+        material_clone->Initialize();
     }
 
     //--------------------------------------------------------------

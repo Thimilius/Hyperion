@@ -105,12 +105,17 @@ namespace Hyperion {
     public:
         static Material *Create(Shader *shader);
     protected:
+        void OnClone(Object *clone) override;
         void OnDestroy() override;
     private:
-        Material() = default;
+        Material();
         Material(Shader *shader);
     private:
-        void SetProperty(Rendering::MaterialPropertyId id, const MaterialProperty &property);
+        void Initialize();
+
+        void CreateOnGPU();
+        void SendPropertyToGPU(Rendering::MaterialPropertyId id, const MaterialProperty &property);
+        void SendPropertiesToGPU();
     private:
         static Material *Create();
     private:

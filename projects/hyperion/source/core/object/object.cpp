@@ -65,6 +65,20 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    Object *Object::Clone(Object *object) {
+        HYP_ASSERT(object);
+
+        // NOTE: Currently we rely on reflection to create the clone of the proper type.
+        // This may not be the best way of doing things but works just fine for now.
+        Variant variant = object->GetType().create();
+        HYP_ASSERT(variant.is_valid() && variant.get_type().is_derived_from<Object *>());
+
+        Object *clone = variant.get_value<Object *>();
+        object->OnClone(clone);
+        return clone;
+    }
+
+    //--------------------------------------------------------------
     void Object::Destroy(Object *object) {
         if (object && !object->m_is_destroyed) {
             HYP_ASSERT_MESSAGE(object->GetType() != rttr::type::get<Transform>(), "Destroying a transform component is not allowed!");
@@ -82,6 +96,14 @@ namespace Hyperion {
     //--------------------------------------------------------------
     Object::Object(const String &name) : Object() {
         m_name = name;
+    }
+
+    //--------------------------------------------------------------
+    void Object::OnClone(Object *clone) {
+        clone->m_name = m_name;
+
+        // Guid and id do not need to be copied as they are distinct for each object.
+        // The scripting instance does also not need to be copied as we have a completely new native object that needs to get handled by the scripting driver.
     }
 
     //--------------------------------------------------------------

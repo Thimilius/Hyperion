@@ -28,6 +28,7 @@ namespace Hyperion {
     protected:
         Asset();
     protected:
+        virtual void OnClone(Object *clone) override;
         virtual void OnDestroy() override;
 
         void RegisterAsset();
