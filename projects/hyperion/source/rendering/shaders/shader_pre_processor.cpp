@@ -64,16 +64,23 @@ namespace Hyperion::Rendering {
         uint64 directive_start_position = m_position;
         Advance();
 
-        char *directive_type_start = m_source.data() + m_position;
+        char *directive_start = m_source.data() + m_position;
         SkipAlphaNumeric();
 
-        if (IsDirective("type", directive_type_start)) {
+        if (IsDirective("version", directive_start)) {
+            SkipToNextLine();
+
+            // Here is the point where we can dynamically add defines into the shader.
+#if HYP_EDITOR
+            AddDefine("HYP_EDITOR");
+#endif
+        } else if (IsDirective("type", directive_start)) {
             EndShaderStage(sources, directive_start_position);
 
             // A new shader type starts.
             {
                 SkipBlankspace();
-                String type_string = AdvanceUntilEndOfLine();
+                String type_string = AdvanceUntilWhitespaceOrEndOfLine();
 
                 ShaderStageFlags shader_stage = GetShaderStageFromString(type_string);
                 if (shader_stage == ShaderStageFlags::None) {
@@ -85,9 +92,9 @@ namespace Hyperion::Rendering {
                 m_current_shader_type = shader_stage;
                 m_current_shader_type_directive_end = m_position;
             }
-        } else if (IsDirective("import", directive_type_start)) {
+        } else if (IsDirective("import", directive_start)) {
             SkipBlankspace();
-            String import_string = AdvanceUntilEndOfLine();
+            String import_string = AdvanceUntilWhitespaceOrEndOfLine();
             uint64 directive_full_length = m_position - directive_start_position;
 
             ShaderModuleType shader_module_type = GetShaderModuleTypeFromString(import_string);
@@ -99,9 +106,9 @@ namespace Hyperion::Rendering {
             String shader_module = ShaderModules::GetModule(shader_module_type);
             m_source = m_source.replace(directive_start_position, directive_full_length, shader_module);
             m_position = directive_start_position + shader_module.size();
-        } else if (IsDirective("light_mode", directive_type_start)) {
+        } else if (IsDirective("light_mode", directive_start)) {
             SkipBlankspace();
-            String light_mode_string = AdvanceUntilEndOfLine();
+            String light_mode_string = AdvanceUntilWhitespaceOrEndOfLine();
             uint64 directive_full_length = m_position - directive_start_position;
 
             ShaderLightMode shader_light_mode = GetShaderLightModeFromString(light_mode_string);
@@ -134,13 +141,19 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
+    void ShaderPreProcessor::AddDefine(const String &define) {
+        m_source.insert(m_position, String("\n#define ").append(define));
+        // We know that we have a new line directly after the inserted string, so we do not need to add it ourselves.
+    }
+
+    //--------------------------------------------------------------
     char ShaderPreProcessor::Advance() {
         m_position++;
         return m_source[m_position - 1];
     }
 
     //--------------------------------------------------------------
-    String ShaderPreProcessor::AdvanceUntilEndOfLine() {
+    String ShaderPreProcessor::AdvanceUntilWhitespaceOrEndOfLine() {
         uint64 import_start_position = m_position;
         SkipAlphaNumeric();
         uint64 import_end_position = m_position;
@@ -173,6 +186,16 @@ namespace Hyperion::Rendering {
     void ShaderPreProcessor::SkipBlankspace() {
         while (IsWhitespace(Peek()) && !IsAtEnd()) {
             Advance();
+        }
+    }
+
+    //--------------------------------------------------------------
+    void ShaderPreProcessor::SkipToNextLine() {
+        while (!IsAtEnd()) {
+            while (Peek() != '\n') {
+                Advance();
+            }
+            return;
         }
     }
 

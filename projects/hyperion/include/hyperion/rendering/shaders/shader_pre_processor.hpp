@@ -23,14 +23,16 @@ namespace Hyperion::Rendering {
     private:
         bool HandleDirective(ShaderStageFlags &stage_flags, Map<ShaderStageFlags, String> &sources, ShaderAttributes &attributes);
         void EndShaderStage(Map<ShaderStageFlags, String> &sources, uint64 end_position);
+        void AddDefine(const String &define);
 
         char Advance();
-        String AdvanceUntilEndOfLine();
+        String AdvanceUntilWhitespaceOrEndOfLine();
         char Peek();
         char PeekNext();
 
         void SkipAlphaNumeric();
         void SkipBlankspace();
+        void SkipToNextLine();
 
         bool IsAtEnd();
         bool IsAlpha(char c);

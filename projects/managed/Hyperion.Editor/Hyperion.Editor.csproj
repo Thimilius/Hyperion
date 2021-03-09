@@ -21,7 +21,7 @@
     <OutputPath>..\..\..\build\debug\bin\managed\</OutputPath>
     <BaseIntermediateOutputPath>..\..\..\build\debug\obj\managed\debug\Hyperion.Editor\</BaseIntermediateOutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
-    <DefineConstants>HYP_DEBUG;HYP_ENABLE_ASSERTS;HYP_BREAK_ON_ASSERT;HYP_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;HYP_AUDIO_FMOD;HYP_PHYSICS_BULLET;HYP_SCRIPTING_MONO</DefineConstants>
+    <DefineConstants>HYP_EDITOR;HYP_DEBUG;HYP_ENABLE_ASSERTS;HYP_BREAK_ON_ASSERT;HYP_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;HYP_AUDIO_FMOD;HYP_PHYSICS_BULLET;HYP_SCRIPTING_MONO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -32,7 +32,7 @@
     <OutputPath>..\..\..\build\profile\bin\managed\</OutputPath>
     <BaseIntermediateOutputPath>..\..\..\build\profile\obj\managed\profile\Hyperion.Editor\</BaseIntermediateOutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
-    <DefineConstants>HYP_PROFILE;HYP_ENABLE_ASSERTS;HYP_BREAK_ON_ASSERT;HYP_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;HYP_AUDIO_FMOD;HYP_PHYSICS_BULLET;HYP_SCRIPTING_MONO</DefineConstants>
+    <DefineConstants>HYP_EDITOR;HYP_PROFILE;HYP_ENABLE_ASSERTS;HYP_BREAK_ON_ASSERT;HYP_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;HYP_AUDIO_FMOD;HYP_PHYSICS_BULLET;HYP_SCRIPTING_MONO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -43,7 +43,7 @@
     <OutputPath>..\..\..\build\release\bin\managed\</OutputPath>
     <BaseIntermediateOutputPath>..\..\..\build\release\obj\managed\release\Hyperion.Editor\</BaseIntermediateOutputPath>
     <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
-    <DefineConstants>HYP_RELEASE;HYP_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;HYP_AUDIO_FMOD;HYP_PHYSICS_BULLET;HYP_SCRIPTING_MONO</DefineConstants>
+    <DefineConstants>HYP_EDITOR;HYP_RELEASE;HYP_PLATFORM_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;HYP_AUDIO_FMOD;HYP_PHYSICS_BULLET;HYP_SCRIPTING_MONO</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>

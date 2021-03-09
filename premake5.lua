@@ -45,6 +45,8 @@ workspace "hyperion"
 		description = "Specifies that the Mono scripting driver should be included",
 	}
 
+	defines { "HYP_EDITOR" }
+
 	filter "configurations:debug"	
 		defines { "HYP_DEBUG", "HYP_ENABLE_ASSERTS", "HYP_BREAK_ON_ASSERT" }
 		runtime "Debug"
