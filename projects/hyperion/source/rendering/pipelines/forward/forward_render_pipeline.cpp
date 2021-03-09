@@ -65,6 +65,7 @@ namespace Hyperion::Rendering {
         Vector<MeshRenderer *> mesh_renderers = world->GetMeshRenderers();
         WorldEnvironment world_environment = world->GetEnvironment();
 
+        // First we do some global material setup.
         Set<Material *> materials;
         for (MeshRenderer *mesh_renderer : mesh_renderers) {
             materials.insert(mesh_renderer->GetMaterial());
@@ -79,11 +80,20 @@ namespace Hyperion::Rendering {
             }
         }
 
+        // Now we can draw all mesh renderers, meaning a single draw call for each sub mesh.
         for (MeshRenderer *mesh_renderer : mesh_renderers) {
             Transform *transform = mesh_renderer->GetEntity()->GetTransform();
-            ResourceId mesh_id = mesh_renderer->GetMesh()->GetResourceId();
-            ResourceId material_id = mesh_renderer->GetMaterial()->GetResourceId();
-            render_driver->DrawMesh(mesh_id, transform->GetLocalToWorldMatrix(), material_id, 0);
+            Mat4 local_to_world_matrix = transform->GetLocalToWorldMatrix();
+
+            Mesh *mesh = mesh_renderer->GetMesh();
+            ResourceId mesh_id = mesh->GetResourceId();
+            uint32 sub_mesh_count = mesh->GetSubMeshCount();
+
+            for (uint32 i = 0; i < sub_mesh_count; i++) {
+                Material *material = mesh_renderer->GetMaterial();
+                ResourceId material_id = material->GetResourceId();
+                render_driver->DrawMesh(mesh_id, local_to_world_matrix, material_id, i);
+            }
         }
     }
 

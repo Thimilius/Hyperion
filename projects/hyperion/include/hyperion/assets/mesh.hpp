@@ -38,6 +38,7 @@ namespace Hyperion {
 
         const MeshData &GetMeshData() const;
         const Vector<Rendering::SubMesh> &GetSubMeshes() const;
+        uint32 GetSubMeshCount() const { return static_cast<uint32>(m_sub_meshes.size()); }
 
         inline bool IsReadAndWriteEnabled() const { return m_read_and_write_enabled; }
         inline BoundingBox GetBounds() const { return m_bounds; }

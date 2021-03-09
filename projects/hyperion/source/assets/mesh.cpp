@@ -28,10 +28,10 @@ namespace Hyperion {
 
         m_read_and_write_enabled = read_and_write_enabled;
         m_bounds = CalculateBounds(mesh_data.positions);
+        m_sub_meshes = sub_meshes;
 
         if (read_and_write_enabled) {
             m_mesh_data = mesh_data;
-            m_sub_meshes = sub_meshes;
         }
 
         MeshDescriptor descriptor = { };

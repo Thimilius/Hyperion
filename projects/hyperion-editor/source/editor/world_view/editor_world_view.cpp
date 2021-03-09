@@ -3,6 +3,7 @@
 
 //---------------------- Library Includes ----------------------
 #include <hyperion/assets/loader/font_loader.hpp>
+#include <hyperion/assets/loader/mesh_loader.hpp>
 #include <hyperion/core/random.hpp>
 #include <hyperion/core/app/input.hpp>
 #include <hyperion/core/app/time.hpp>
@@ -31,7 +32,8 @@ namespace Hyperion::Editor {
         s_editor_world = WorldManager::CreateWorld();
         WorldManager::SetActiveWorld(s_editor_world);
 
-        Entity::CreatePrimitive(EntityPrimitive::Cube);
+        Mesh *mesh = MeshLoader::LoadMesh("data/models/notebook.obj");
+        Entity::CreatePrimitive(EntityPrimitive::Cube)->GetComponent<MeshRenderer>()->SetMesh(mesh);
 
         Entity *entity = Entity::CreatePrimitive(EntityPrimitive::Camera);
         s_editor_camera = entity->GetComponent<Camera>();
