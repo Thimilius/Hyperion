@@ -23,6 +23,7 @@ namespace Hyperion {
 
     enum class MaterialPrimitive {
         Default,
+        Unlit,
         Ui,
         Font,
     };
@@ -61,6 +62,7 @@ namespace Hyperion {
             Texture *texture_grid;
 
             Material *material_default;
+            Material *material_unlit;
             Material *material_ui;
             Material *material_font;
 

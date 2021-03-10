@@ -13,6 +13,8 @@ namespace Hyperion::Editor {
         void Render(Rendering::IRenderDriver *render_driver) override;
         void Shutdown(Rendering::IRenderDriver *render_driver) override;
 
+        void DrawMeshRenderer(Rendering::IRenderDriver *render_driver, MeshRenderer *mesh_renderer, Material *overwrite_material);
+
         inline RenderTexture *GetRenderTexture() const { return m_render_texture; }
     private:
         Rendering::ForwardRenderPipeline *m_forward_render_pipeline;

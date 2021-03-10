@@ -2,6 +2,7 @@
 #include "hyperion/editor/world_view/editor_world_view.hpp"
 
 //---------------------- Library Includes ----------------------
+#include <hyperion/assets/asset_manager.hpp>
 #include <hyperion/assets/loader/font_loader.hpp>
 #include <hyperion/assets/loader/mesh_loader.hpp>
 #include <hyperion/core/random.hpp>
@@ -20,6 +21,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/editor/editor_application.hpp"
+#include "hyperion/editor/editor_selection.hpp"
 #include "hyperion/editor/world_view/editor_world_view_grid.hpp"
 #include "hyperion/editor/world_view/editor_world_view_camera_controller.hpp"
 
@@ -71,6 +73,25 @@ namespace Hyperion::Editor {
     void EditorWorldView::Render(IRenderDriver *render_driver) {
         RetrieveEntityUnderMouse(render_driver);
 
+        // We want to draw a highlight of our selection.
+        Entity *selected_entity = EditorSelection::GetSelectedEntity();
+        if (selected_entity != nullptr) {
+            MeshRenderer *mesh_renderer = selected_entity->GetComponent<MeshRenderer>();
+
+            RasterizerState rasterizer_state;
+            rasterizer_state.depth_test_enabled = false;
+            rasterizer_state.polygon_mode = PolygonMode::Line;
+            render_driver->SetRasterizerState(rasterizer_state);
+
+            Material *overwrite_material = AssetManager::GetMaterialPrimitive(MaterialPrimitive::Unlit);
+            overwrite_material->SetVec4("u_color", s_selection_color);
+
+            EditorApplication::GetRenderPipeline()->DrawMeshRenderer(render_driver, mesh_renderer, overwrite_material);
+            rasterizer_state.depth_test_enabled = true;
+            rasterizer_state.polygon_mode = PolygonMode::Fill;
+            render_driver->SetRasterizerState(rasterizer_state);
+        }
+
         if (s_should_draw_grid) {
             EditorWorldViewGrid::Render(render_driver, s_editor_camera_controller->GetTargetPosition());
         }
@@ -90,20 +111,23 @@ namespace Hyperion::Editor {
 
         // Make sure we are in bounds.
         if (mouse_position.x < 0 || mouse_position.x >= static_cast<int32>(Display::GetWidth()) || mouse_position.y < 0 || mouse_position.y >= static_cast<int32>(Display::GetHeight())) {
-            s_entity_id = 0;
             return;
         }
 
-        if (Input::IsMouseButtonUp(MouseButtonCode::Left)) {
+        if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
             ResourceId render_texture_id = EditorApplication::GetRenderPipeline()->GetRenderTexture()->GetResourceId();
             render_driver->GetRenderTextureSubData(render_texture_id, 1, RectInt(mouse_position, Vec2Int(1, 1)), &s_render_texture_entity_id_buffer, [](Vector<uint8> *data) {
+                ObjectId object_id = 0;
                 if (data->size() > 0) {
-                    s_entity_id = *reinterpret_cast<uint32 *>(data->data());
+                    object_id = *reinterpret_cast<uint32 *>(data->data());
                 }
 
-                if (s_entity_id != 0) {
-                    HYP_TRACE("Entity: {}", ObjectManager::Get(s_entity_id)->GetName());
+                Object *selected_object = nullptr;
+                if (object_id != 0) {
+                    selected_object = ObjectManager::Get(object_id);
                 }
+
+                EditorSelection::SetSelectedObject(selected_object);
             });
         }
     }

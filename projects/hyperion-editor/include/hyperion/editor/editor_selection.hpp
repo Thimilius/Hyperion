@@ -17,7 +17,7 @@ namespace Hyperion::Editor {
     class EditorSelection final {
     public:
         inline static Object *GetSelectedObject() { return s_selected_object; }
-        static Entity *GetSelectedEntity() { return s_selected_object->GetType() == Type::get<Entity>() ? static_cast<Entity *>(s_selected_object) : nullptr; }
+        static Entity *GetSelectedEntity();
 
         static void SetSelectedObject(Object *object);
 

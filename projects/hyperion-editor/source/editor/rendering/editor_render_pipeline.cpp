@@ -54,7 +54,7 @@ namespace Hyperion::Editor {
             render_driver->Clear(ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, Color::Black());
 
             // We just render the world in the 'normal' way.
-            m_forward_render_pipeline->RenderWorld(render_driver, EditorWorldView::GetWorld(), EditorWorldView::GetCamera()->GetData());
+            m_forward_render_pipeline->DrawWorld(render_driver, EditorWorldView::GetWorld(), EditorWorldView::GetCamera()->GetData());
         }
         
         {
@@ -62,7 +62,7 @@ namespace Hyperion::Editor {
         }
 
         {
-            m_forward_render_pipeline->RenderCanvas(render_driver, EditorWorldView::GetCanvas());
+            m_forward_render_pipeline->DrawCanvas(render_driver, EditorWorldView::GetCanvas());
         }
 
         {
@@ -74,6 +74,11 @@ namespace Hyperion::Editor {
     //--------------------------------------------------------------
     void EditorRenderPipeline::Shutdown(IRenderDriver *render_driver) {
         delete m_forward_render_pipeline;
+    }
+
+    //--------------------------------------------------------------
+    void EditorRenderPipeline::DrawMeshRenderer(IRenderDriver *render_driver, MeshRenderer *mesh_renderer, Material *overwrite_material) {
+        m_forward_render_pipeline->DrawMeshRenderer(render_driver, mesh_renderer, overwrite_material);
     }
 
 }

@@ -43,7 +43,7 @@ namespace Hyperion::Editor {
 
         inline static EditorCameraController *s_editor_camera_controller;
 
-        inline static ObjectId s_entity_id;
+        inline static Color s_selection_color = Color(1.0f, 0.6f, 0.1f, 1.0f);
         inline static Vector<uint8> s_render_texture_entity_id_buffer;
     };
 

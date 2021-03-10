@@ -48,7 +48,7 @@ namespace Hyperion::Rendering {
         render_driver->Clear(ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, Color::Black());
 
         World *world = WorldManager::GetActiveWorld();
-        RenderWorld(render_driver, world, world->FindComponentOfType<Camera>()->GetData());
+        DrawWorld(render_driver, world, world->FindComponentOfType<Camera>()->GetData());
     }
 
     //--------------------------------------------------------------
@@ -57,7 +57,7 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void ForwardRenderPipeline::RenderWorld(IRenderDriver *render_driver, World *world, const CameraData &camera_data) {
+    void ForwardRenderPipeline::DrawWorld(IRenderDriver *render_driver, World *world, const CameraData &camera_data) {
         HYP_ASSERT(world);
 
         render_driver->SetCameraData(camera_data);
@@ -82,28 +82,33 @@ namespace Hyperion::Rendering {
 
         // Now we can draw all mesh renderers, meaning a single draw call for each sub mesh.
         for (MeshRenderer *mesh_renderer : mesh_renderers) {
-            Transform *transform = mesh_renderer->GetTransform();
-            Mat4 local_to_world_matrix = transform->GetLocalToWorldMatrix();
-
-            Mesh *mesh = mesh_renderer->GetMesh();
-            ResourceId mesh_id = mesh->GetResourceId();
-            uint32 sub_mesh_count = mesh->GetSubMeshCount();
-
-            for (uint32 i = 0; i < sub_mesh_count; i++) {
-                Material *material = mesh_renderer->GetMaterial();
-                ResourceId material_id = material->GetResourceId();
-
-#ifdef HYP_EDITOR
-                material->SetUInt32("u_entity_id", static_cast<uint32>(mesh_renderer->GetEntity()->GetId()));
-#endif
-
-                render_driver->DrawMesh(mesh_id, local_to_world_matrix, material_id, i);
-            }
+            DrawMeshRenderer(render_driver, mesh_renderer);
         }
     }
 
     //--------------------------------------------------------------
-    void ForwardRenderPipeline::RenderCanvas(IRenderDriver *render_driver, Canvas *canvas) {
+    void ForwardRenderPipeline::DrawMeshRenderer(IRenderDriver *render_driver, MeshRenderer *mesh_renderer, Material *overwrite_material) {
+        Transform *transform = mesh_renderer->GetTransform();
+        Mat4 local_to_world_matrix = transform->GetLocalToWorldMatrix();
+
+        Mesh *mesh = mesh_renderer->GetMesh();
+        ResourceId mesh_id = mesh->GetResourceId();
+        uint32 sub_mesh_count = mesh->GetSubMeshCount();
+
+        for (uint32 i = 0; i < sub_mesh_count; i++) {
+            Material *material = overwrite_material == nullptr ? mesh_renderer->GetMaterial() : overwrite_material;
+            ResourceId material_id = material->GetResourceId();
+
+#ifdef HYP_EDITOR
+            material->SetUInt32("u_entity_id", static_cast<uint32>(mesh_renderer->GetEntity()->GetId()));
+#endif
+
+            render_driver->DrawMesh(mesh_id, local_to_world_matrix, material_id, i);
+        }
+    }
+
+    //--------------------------------------------------------------
+    void ForwardRenderPipeline::DrawCanvas(IRenderDriver *render_driver, Canvas *canvas) {
         RasterizerState rasterizer_state;
         rasterizer_state.blending_enabled = true;
         rasterizer_state.depth_mask_enabled = false;

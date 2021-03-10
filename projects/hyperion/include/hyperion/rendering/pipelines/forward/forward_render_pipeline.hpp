@@ -17,8 +17,9 @@ namespace Hyperion::Rendering {
         void Render(IRenderDriver *render_driver) override;
         void Shutdown(IRenderDriver *render_driver) override;
 
-        void RenderWorld(IRenderDriver *render_driver, World *world, const Rendering::CameraData &camera_data);
-        void RenderCanvas(IRenderDriver *render_driver, Canvas *canvas);
+        void DrawWorld(IRenderDriver *render_driver, World *world, const Rendering::CameraData &camera_data);
+        void DrawMeshRenderer(IRenderDriver *render_driver, MeshRenderer *mesh_renderer, Material *overwrite_material = nullptr);
+        void DrawCanvas(IRenderDriver *render_driver, Canvas *canvas);
     private:
         void SetUICameraData(IRenderDriver *render_driver);
     private:

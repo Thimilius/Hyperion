@@ -29,6 +29,7 @@ namespace Hyperion {
     Material *AssetManager::GetMaterialPrimitive(MaterialPrimitive material_primitive) {
         switch (material_primitive) {
             case MaterialPrimitive::Default:  return s_primitives.material_default;
+            case MaterialPrimitive::Unlit: return s_primitives.material_unlit;
             case MaterialPrimitive::Ui: return s_primitives.material_ui;
             case MaterialPrimitive::Font: return s_primitives.material_font;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
@@ -128,6 +129,10 @@ namespace Hyperion {
         s_primitives.material_default = Material::Create(default_shader);
         s_primitives.material_default->SetVec4("u_color", Color::White());
         s_primitives.material_default->SetTexture("u_texture", s_primitives.texture_grid);
+
+        Shader *unlit_shader = Shader::Create(FileSystem::ReadAllText("data/shaders/unlit.shader"));
+        s_primitives.material_unlit = Material::Create(unlit_shader);
+        s_primitives.material_unlit->SetVec4("u_color", Color::White());
 
         Shader *ui_shader = Shader::Create(FileSystem::ReadAllText("data/shaders/ui.shader"));
         s_primitives.material_ui = Material::Create(ui_shader);

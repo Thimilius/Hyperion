@@ -5,6 +5,15 @@
 namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
+    Entity *EditorSelection::GetSelectedEntity() {
+        if (s_selected_object != nullptr && s_selected_object->GetType() == Type::get<Entity>()) {
+            return static_cast<Entity *>(s_selected_object);
+        } else {
+            return nullptr;
+        }
+    }
+
+    //--------------------------------------------------------------
     void EditorSelection::SetSelectedObject(Object *object) {
         if (s_selected_object == object) {
             return;
