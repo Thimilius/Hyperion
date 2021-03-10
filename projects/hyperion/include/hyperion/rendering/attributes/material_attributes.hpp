@@ -14,7 +14,9 @@ namespace Hyperion::Rendering {
 
     enum class MaterialPropertyType {
         Float32,
+
         Int32,
+        UInt32,
 
         Vec2,
         Vec3,
@@ -29,7 +31,9 @@ namespace Hyperion::Rendering {
 
     union MaterialPropertyStorage {
         float32 float32;
+
         int32 int32;
+        uint32 unsigned_int32;
 
         Vec2 vec2;
         Vec3 vec3;

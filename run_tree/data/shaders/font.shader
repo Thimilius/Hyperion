@@ -33,6 +33,9 @@ void main() {
 #version 410 core
 
 layout(location = 0) out vec4 o_color;
+#ifdef HYP_EDITOR
+layout(location = 1) out uint o_entity_id;
+#endif
 
 in V2F {
 	vec4 color;
@@ -46,4 +49,7 @@ void main() {
 	vec4 texture_color = vec4(1.0, 1.0, 1.0, texture(u_texture, i_v2f.texture0).r);
 	
 	o_color = u_color * i_v2f.color * texture_color;
+#ifdef HYP_EDITOR
+	o_entity_id = 0;
+#endif
 }

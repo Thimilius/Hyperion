@@ -26,6 +26,7 @@ namespace Hyperion::Editor {
         EditorWorldView() = delete;
         ~EditorWorldView() = delete;
     private:
+        static void RetrieveEntityUnderMouse(Rendering::IRenderDriver *render_driver);
         static void BuildInterface();
     private:
         inline static World *s_editor_world;
@@ -41,6 +42,9 @@ namespace Hyperion::Editor {
         inline static bool s_should_draw_physics_debug = false;
 
         inline static EditorCameraController *s_editor_camera_controller;
+
+        inline static ObjectId s_entity_id;
+        inline static Vector<uint8> s_render_texture_entity_id_buffer;
     };
 
 }

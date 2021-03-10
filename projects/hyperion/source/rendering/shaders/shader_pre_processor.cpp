@@ -71,7 +71,7 @@ namespace Hyperion::Rendering {
             SkipToNextLine();
 
             // Here is the point where we can dynamically add defines into the shader.
-#if HYP_EDITOR
+#ifdef HYP_EDITOR
             AddDefine("HYP_EDITOR");
 #endif
         } else if (IsDirective("type", directive_start)) {

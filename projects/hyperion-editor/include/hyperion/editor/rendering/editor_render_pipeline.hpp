@@ -12,6 +12,8 @@ namespace Hyperion::Editor {
         void Initialize(Rendering::IRenderDriver *render_driver) override;
         void Render(Rendering::IRenderDriver *render_driver) override;
         void Shutdown(Rendering::IRenderDriver *render_driver) override;
+
+        inline RenderTexture *GetRenderTexture() const { return m_render_texture; }
     private:
         Rendering::ForwardRenderPipeline *m_forward_render_pipeline;
         RenderTexture *m_render_texture;

@@ -81,6 +81,33 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    uint32 Material::GetUInt32(Rendering::MaterialPropertyId id) const {
+        auto it = m_properties.find(id);
+        if (it != m_properties.end() && it->second.type == MaterialPropertyType::UInt32) {
+            return it->second.storage.int32;
+        } else {
+            return uint32();
+        }
+    }
+
+    //--------------------------------------------------------------
+    void Material::SetUInt32(Rendering::MaterialPropertyId id, uint32 value) {
+        auto it = m_properties.find(id);
+        if (it != m_properties.end()) {
+            HYP_ASSERT_MESSAGE(it->second.type == MaterialPropertyType::UInt32, "The property can not change it's type when setting");
+            it->second.storage.unsigned_int32 = value;
+
+            SendPropertyToGPU(id, it->second);
+        } else {
+            MaterialProperty &property = m_properties[id];
+            property.type = MaterialPropertyType::UInt32;
+            property.storage.unsigned_int32 = value;
+
+            SendPropertyToGPU(id, property);
+        }
+    }
+
+    //--------------------------------------------------------------
     Vec2 Material::GetVec2(MaterialPropertyId id) const {
         auto it = m_properties.find(id);
         if (it != m_properties.end() && it->second.type == MaterialPropertyType::Vec2) {
@@ -317,6 +344,7 @@ namespace Hyperion {
         switch (property.type) {
             case MaterialPropertyType::Float32: rendering_property.storage.float32 = property.storage.float32; break;
             case MaterialPropertyType::Int32: rendering_property.storage.int32 = property.storage.int32; break;
+            case MaterialPropertyType::UInt32: rendering_property.storage.unsigned_int32 = property.storage.unsigned_int32; break;
             case MaterialPropertyType::Vec2: rendering_property.storage.vec2 = property.storage.vec2; break;
             case MaterialPropertyType::Vec3: rendering_property.storage.vec3 = property.storage.vec3; break;
             case MaterialPropertyType::Vec4: rendering_property.storage.vec4 = property.storage.vec4; break;

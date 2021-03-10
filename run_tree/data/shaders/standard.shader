@@ -43,6 +43,9 @@ void main() {
 #version 410 core
 
 layout(location = 0) out vec4 o_color;
+#ifdef HYP_EDITOR
+layout(location = 1) out uint o_entity_id;
+#endif
 
 in V2F {
 	vec3 position;
@@ -73,6 +76,10 @@ uniform vec4 u_color;
 uniform sampler2D u_texture;
 uniform Lighting u_lighting;
 
+#ifdef HYP_EDITOR
+uniform uint u_entity_id;
+#endif
+
 vec3 calculate_phong_directional_light(vec3 position, vec3 normal, Light light) {
 	// Diffuse
 	float diffuse_intensity = light.intensity;
@@ -95,5 +102,9 @@ vec4 calculate_phong_lighting(vec3 position, vec3 normal) {
 void main() {
 	vec4 lighting_color = calculate_phong_lighting(i_v2f.position, i_v2f.normal);
 	vec4 texture_color = texture(u_texture, i_v2f.texture0);
+	
 	o_color = lighting_color * u_color * texture_color;
+#ifdef HYP_EDITOR
+	o_entity_id = u_entity_id;
+#endif
 }

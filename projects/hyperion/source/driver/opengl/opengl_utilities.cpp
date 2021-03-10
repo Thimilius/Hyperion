@@ -211,6 +211,7 @@ namespace Hyperion::Rendering {
         switch (type) {
             case GL_FLOAT: return MaterialPropertyType::Float32;
             case GL_INT: return MaterialPropertyType::Int32;
+            case GL_UNSIGNED_INT: return MaterialPropertyType::UInt32;
             case GL_FLOAT_VEC2: return MaterialPropertyType::Vec2;
             case GL_FLOAT_VEC3: return MaterialPropertyType::Vec3;
             case GL_FLOAT_VEC4: return MaterialPropertyType::Vec4;
@@ -228,6 +229,7 @@ namespace Hyperion::Rendering {
     GLenum OpenGLUtilities::GetGLRenderTextureInternalFormat(RenderTextureFormat internal_format) {
         switch (internal_format) {
             case RenderTextureFormat::RGBA32: return GL_RGBA8;
+            case RenderTextureFormat::UInt32: return GL_R32UI;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }
@@ -236,6 +238,7 @@ namespace Hyperion::Rendering {
     GLenum OpenGLUtilities::GetGLRenderTextureFormat(RenderTextureFormat format) {
         switch (format) {
             case RenderTextureFormat::RGBA32: return GL_RGBA;
+            case RenderTextureFormat::UInt32: return GL_RED_INTEGER;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }
@@ -244,14 +247,17 @@ namespace Hyperion::Rendering {
     GLenum OpenGLUtilities::GetGLRenderTextureFormatType(RenderTextureFormat format_type) {
         switch (format_type) {
             case RenderTextureFormat::RGBA32: return GL_UNSIGNED_BYTE;
+            case RenderTextureFormat::UInt32: return GL_UNSIGNED_INT;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }
 
     //--------------------------------------------------------------
     GLsizei OpenGLUtilities::GetRenderTextureBufferSize(RectInt region, RenderTextureFormat format) {
+        GLsizei region_size = region.width * region.height;
         switch (format) {
-            case RenderTextureFormat::RGBA32: return (region.x + region.width) * (region.y + region.height) * 4;
+            case RenderTextureFormat::RGBA32: return region_size * 4 * sizeof(char);
+            case RenderTextureFormat::UInt32: return region_size * 1 * sizeof(uint32);
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }

@@ -30,6 +30,9 @@ void main() {
 #version 410 core
 
 layout(location = 0) out vec4 o_color;
+#ifdef HYP_EDITOR
+layout(location = 1) out uint o_entity_id;
+#endif
 
 in V2F {
 	vec4 color;
@@ -37,4 +40,7 @@ in V2F {
 
 void main() {
 	o_color = i_v2f.color;
+#ifdef HYP_EDITOR
+	o_entity_id = 0;
+#endif
 }

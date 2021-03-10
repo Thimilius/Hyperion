@@ -38,6 +38,15 @@ namespace Hyperion {
             SetInt32(Rendering::MaterialProperty::NameToId(name), value);
         }
 
+        uint32 GetUInt32(Rendering::MaterialPropertyId id) const;
+        inline uint32 GetUInt32(const String &name) const {
+            return GetUInt32(Rendering::MaterialProperty::NameToId(name));
+        }
+        void SetUInt32(Rendering::MaterialPropertyId id, uint32 value);
+        inline void SetUInt32(const String &name, uint32 value) {
+            SetUInt32(Rendering::MaterialProperty::NameToId(name), value);
+        }
+
         Vec2 GetVec2(Rendering::MaterialPropertyId id) const;
         inline Vec2 GetVec2(const String &name) const {
             return GetVec2(Rendering::MaterialProperty::NameToId(name));
@@ -125,7 +134,9 @@ namespace Hyperion {
     private:
         union MaterialPropertyStorage {
             float32 float32;
+
             int32 int32;
+            uint32 unsigned_int32;
 
             Vec2 vec2;
             Vec3 vec3;

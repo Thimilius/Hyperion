@@ -19,6 +19,11 @@
 namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
+    EditorApplication::EditorApplication(const ApplicationSettings &settings) : Application(settings) {
+        s_editor_render_pipeline = static_cast<EditorRenderPipeline *>(settings.render.custom_pipeline);
+    }
+
+    //--------------------------------------------------------------
     void EditorApplication::OnInitialize() {
         EditorWorldView::Initialize();
     }

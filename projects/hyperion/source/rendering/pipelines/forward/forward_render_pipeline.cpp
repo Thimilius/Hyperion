@@ -28,8 +28,8 @@ namespace Hyperion::Rendering {
     void ForwardRenderPipeline::Initialize(IRenderDriver *render_driver) {
         if (m_is_primary) {
             Vector<RenderTextureAttachment> attachments = {
-                { RenderTextureFormat::RGBA32, { TextureWrapMode::Clamp, TextureFilter::Bilinear, TextureAnisotropicFilter::None, false } },
-                { RenderTextureFormat::Depth24Stencil8, TextureParameters() },
+                { RenderTextureFormat::RGBA32, TextureParameters::ForRenderTextures() },
+                { RenderTextureFormat::Depth24Stencil8, TextureParameters::ForRenderTextures() },
             };
             m_render_texture = RenderTexture::Create(Display::GetWidth(), Display::GetHeight(), attachments);
         }
@@ -82,7 +82,7 @@ namespace Hyperion::Rendering {
 
         // Now we can draw all mesh renderers, meaning a single draw call for each sub mesh.
         for (MeshRenderer *mesh_renderer : mesh_renderers) {
-            Transform *transform = mesh_renderer->GetEntity()->GetTransform();
+            Transform *transform = mesh_renderer->GetTransform();
             Mat4 local_to_world_matrix = transform->GetLocalToWorldMatrix();
 
             Mesh *mesh = mesh_renderer->GetMesh();
@@ -92,6 +92,11 @@ namespace Hyperion::Rendering {
             for (uint32 i = 0; i < sub_mesh_count; i++) {
                 Material *material = mesh_renderer->GetMaterial();
                 ResourceId material_id = material->GetResourceId();
+
+#ifdef HYP_EDITOR
+                material->SetUInt32("u_entity_id", static_cast<uint32>(mesh_renderer->GetEntity()->GetId()));
+#endif
+
                 render_driver->DrawMesh(mesh_id, local_to_world_matrix, material_id, i);
             }
         }

@@ -5,6 +5,7 @@
 #include <hyperion/assets/loader/font_loader.hpp>
 #include <hyperion/assets/loader/mesh_loader.hpp>
 #include <hyperion/core/random.hpp>
+#include <hyperion/core/app/display.hpp>
 #include <hyperion/core/app/input.hpp>
 #include <hyperion/core/app/time.hpp>
 #include <hyperion/entity/world_manager.hpp>
@@ -18,6 +19,7 @@
 #include <hyperion/rendering/render_engine.hpp>
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/editor/editor_application.hpp"
 #include "hyperion/editor/world_view/editor_world_view_grid.hpp"
 #include "hyperion/editor/world_view/editor_world_view_camera_controller.hpp"
 
@@ -34,9 +36,9 @@ namespace Hyperion::Editor {
 
         Entity::CreatePrimitive(EntityPrimitive::Cube);
 
-        Entity *entity = Entity::CreatePrimitive(EntityPrimitive::Camera);
-        s_editor_camera = entity->GetComponent<Camera>();
-        s_editor_camera_controller = entity->AddComponent<EditorLookAroundCameraController>();
+        Entity *camera_entity = Entity::CreatePrimitive(EntityPrimitive::Camera);
+        s_editor_camera = camera_entity->GetComponent<Camera>();
+        s_editor_camera_controller = camera_entity->AddComponent<EditorLookAroundCameraController>();
 
         BuildInterface();
 
@@ -46,7 +48,7 @@ namespace Hyperion::Editor {
     //--------------------------------------------------------------
     void EditorWorldView::Update(float32 delta_time) {
         s_editor_camera_controller->Update(delta_time);
-        
+
         if (Input::IsKeyDown(KeyCode::F2)) {
             bool vsync_on = RenderEngine::GetVSyncMode() != VSyncMode::DontSync;
             s_vsync_toggle->SetIsOn(!vsync_on);
@@ -67,6 +69,8 @@ namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
     void EditorWorldView::Render(IRenderDriver *render_driver) {
+        RetrieveEntityUnderMouse(render_driver);
+
         if (s_should_draw_grid) {
             EditorWorldViewGrid::Render(render_driver, s_editor_camera_controller->GetTargetPosition());
         }
@@ -77,6 +81,30 @@ namespace Hyperion::Editor {
             ImmediateRenderer::Begin(MeshTopology::Lines);
             WorldManager::GetActiveWorld()->GetPhysicsWorld()->DebugDraw();
             ImmediateRenderer::End();
+        }
+    }
+
+    //--------------------------------------------------------------
+    void EditorWorldView::RetrieveEntityUnderMouse(Rendering::IRenderDriver *render_driver) {
+        Vec2Int mouse_position = Vec2Int(static_cast<int32>(Input::GetMousePosition().x), static_cast<int32>(Input::GetMousePosition().y));
+
+        // Make sure we are in bounds.
+        if (mouse_position.x < 0 || mouse_position.x >= static_cast<int32>(Display::GetWidth()) || mouse_position.y < 0 || mouse_position.y >= static_cast<int32>(Display::GetHeight())) {
+            s_entity_id = 0;
+            return;
+        }
+
+        if (Input::IsMouseButtonUp(MouseButtonCode::Left)) {
+            ResourceId render_texture_id = EditorApplication::GetRenderPipeline()->GetRenderTexture()->GetResourceId();
+            render_driver->GetRenderTextureSubData(render_texture_id, 1, RectInt(mouse_position, Vec2Int(1, 1)), &s_render_texture_entity_id_buffer, [](Vector<uint8> *data) {
+                if (data->size() > 0) {
+                    s_entity_id = *reinterpret_cast<uint32 *>(data->data());
+                }
+
+                if (s_entity_id != 0) {
+                    HYP_TRACE("Entity: {}", ObjectManager::Get(s_entity_id)->GetName());
+                }
+            });
         }
     }
 

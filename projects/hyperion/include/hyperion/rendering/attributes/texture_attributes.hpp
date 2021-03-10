@@ -58,6 +58,8 @@ namespace Hyperion::Rendering {
     enum class RenderTextureFormat {
         RGBA32,
 
+        UInt32,
+
         Depth24Stencil8,
     };
 

@@ -273,6 +273,10 @@ namespace Hyperion::Rendering {
                 glProgramUniform1i(program, location, property.storage.int32);
                 break;
             }
+            case MaterialPropertyType::UInt32: {
+                glProgramUniform1ui(program, location, property.storage.unsigned_int32);
+                break;
+            }
             case MaterialPropertyType::Vec2: {
                 Vec2 vec2 = property.storage.vec2;
                 glProgramUniform2f(program, location, vec2.x, vec2.y);
@@ -452,6 +456,7 @@ namespace Hyperion::Rendering {
 
             GLenum format_value = OpenGLUtilities::GetGLRenderTextureFormat(format);
             GLenum format_type = OpenGLUtilities::GetGLRenderTextureFormatType(format);
+
             glGetTextureSubImage(attachment.attachment, 0, region.x, region.y, 0, region.width, region.height, 1, format_value, format_type, buffer_size, buffer->data());
         }
          
@@ -714,6 +719,7 @@ namespace Hyperion::Rendering {
         switch (property.property.type) 	{
             case MaterialPropertyType::Float32: property.property.storage.float32 = 0.0f; break;
             case MaterialPropertyType::Int32: property.property.storage.int32 = 0; break;
+            case MaterialPropertyType::UInt32: property.property.storage.unsigned_int32 = 0; break;
             case MaterialPropertyType::Vec2: property.property.storage.vec2 = Vec2(0.0f, 0.0f); break;
             case MaterialPropertyType::Vec3: property.property.storage.vec3 = Vec3(0.0f, 0.0f, 0.0f); break;
             case MaterialPropertyType::Vec4: property.property.storage.vec4 = Vec4(0.0f, 0.0f, 0.0f, 0.0f); break;

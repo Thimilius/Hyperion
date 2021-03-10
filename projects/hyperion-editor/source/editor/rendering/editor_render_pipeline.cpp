@@ -33,8 +33,9 @@ namespace Hyperion::Editor {
         render_driver->SetRasterizerState(rasterizer_state);
 
         Vector<RenderTextureAttachment> attachments = {
-            { RenderTextureFormat::RGBA32, TextureParameters() },
-            { RenderTextureFormat::Depth24Stencil8, TextureParameters() },
+            { RenderTextureFormat::RGBA32, TextureParameters::ForRenderTextures() },
+            { RenderTextureFormat::UInt32, TextureParameters::ForRenderTextures() },
+            { RenderTextureFormat::Depth24Stencil8, TextureParameters::ForRenderTextures() },
         };
         m_render_texture = RenderTexture::Create(Display::GetWidth(), Display::GetHeight(), attachments);
     }
