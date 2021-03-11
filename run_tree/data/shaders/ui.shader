@@ -42,10 +42,13 @@ in V2F {
 	vec2 texture0;
 } i_v2f;
 
+uniform sampler2D u_texture;
 uniform vec4 u_color;
 
 void main() {
-	o_color = u_color * i_v2f.color;
+	vec4 texture_color = texture(u_texture, i_v2f.texture0);
+
+	o_color = u_color * i_v2f.color * texture_color;
 #ifdef HYP_EDITOR
 	o_entity_id = 0;
 #endif

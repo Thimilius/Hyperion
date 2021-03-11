@@ -20,6 +20,7 @@ namespace Hyperion {
     //--------------------------------------------------------------
     Texture *AssetManager::GetTexturePrimitive(TexturePrimitive texture_primitive) {
         switch (texture_primitive) {
+            case TexturePrimitive::White: return s_primitives.texture_white;
             case TexturePrimitive::Grid: return s_primitives.texture_grid;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
@@ -116,14 +117,17 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void AssetManager::InitializePrimitives() {
+        Image *image = ImageLoader::Load("data/textures/checkerboard.png");
+        s_primitives.texture_grid = Texture2D::Create(image->GetWidth(), image->GetHeight(), TextureFormat::RGB24, TextureParameters(), image->GetPixels());
+        Object::Destroy(image);
+        
+        Vector<uint8> white_pixels(2 * 2 * 4, 0xFF);
+        s_primitives.texture_white = Texture2D::Create(4, 4, TextureFormat::RGBA32, TextureParameters(), white_pixels);
+
         s_primitives.mesh_quad = MeshGenerator::GenerateQuad(1.0f, 1.0f);
         s_primitives.mesh_plane = MeshGenerator::GeneratePlane(10.0f, 10.0f);
         s_primitives.mesh_cube = MeshGenerator::GenerateCube(1.0f);
         s_primitives.mesh_sphere = MeshGenerator::GenerateSphere(0.5f);
-
-        Image *image = ImageLoader::Load("data/textures/checkerboard.png");
-        s_primitives.texture_grid = Texture2D::Create(image->GetWidth(), image->GetHeight(), TextureFormat::RGB24, TextureParameters(), image->GetPixels());
-        Object::Destroy(image);
 
         Shader *default_shader = Shader::Create(FileSystem::ReadAllText("data/shaders/standard.shader"));
         s_primitives.material_default = Material::Create(default_shader);
@@ -136,6 +140,7 @@ namespace Hyperion {
 
         Shader *ui_shader = Shader::Create(FileSystem::ReadAllText("data/shaders/ui.shader"));
         s_primitives.material_ui = Material::Create(ui_shader);
+        s_primitives.material_ui->SetTexture("u_texture", s_primitives.texture_white);
 
         Shader *font_shader = Shader::Create(FileSystem::ReadAllText("data/shaders/font.shader"));
         s_primitives.material_font = Material::Create(font_shader);

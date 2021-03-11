@@ -18,6 +18,7 @@ namespace Hyperion {
 namespace Hyperion {
 
     enum class TexturePrimitive {
+        White,
         Grid,
     };
 
@@ -59,6 +60,7 @@ namespace Hyperion {
         inline static FileWatcher *s_file_watcher_shaders;
 
         inline static struct Primitives {
+            Texture *texture_white;
             Texture *texture_grid;
 
             Material *material_default;
