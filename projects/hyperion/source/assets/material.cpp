@@ -243,6 +243,18 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    Color Material::GetColor(Rendering::MaterialPropertyId id) const {
+        // Color is just treated as a Vec4.
+        return GetVec4(id);
+    }
+
+    //--------------------------------------------------------------
+    void Material::SetColor(Rendering::MaterialPropertyId id, Color value) {
+        // Color is just treated as a Vec4.
+        SetVec4(id, value);
+    }
+
+    //--------------------------------------------------------------
     Texture *Material::GetTexture(MaterialPropertyId id) const {
         // NOTE: We are also handling render textures.
 

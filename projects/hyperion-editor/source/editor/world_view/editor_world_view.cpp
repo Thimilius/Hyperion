@@ -84,7 +84,7 @@ namespace Hyperion::Editor {
             render_driver->SetRasterizerState(rasterizer_state);
 
             Material *overwrite_material = AssetManager::GetMaterialPrimitive(MaterialPrimitive::Unlit);
-            overwrite_material->SetVec4("u_color", s_selection_color);
+            overwrite_material->SetColor("u_color", s_selection_color);
 
             EditorApplication::GetRenderPipeline()->DrawMeshRenderer(render_driver, mesh_renderer, overwrite_material);
             rasterizer_state.depth_test_enabled = true;

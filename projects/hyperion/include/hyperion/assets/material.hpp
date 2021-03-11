@@ -92,6 +92,15 @@ namespace Hyperion {
             SetMat4(Rendering::MaterialProperty::NameToId(name), value);
         }
 
+        Color GetColor(Rendering::MaterialPropertyId id) const;
+        inline Color GetColor(const String &name) const {
+            return GetColor(Rendering::MaterialProperty::NameToId(name));
+        }
+        void SetColor(Rendering::MaterialPropertyId id, Color value);
+        inline void SetColor(const String &name, Color value) {
+            SetColor(Rendering::MaterialProperty::NameToId(name), value);
+        }
+
         Texture *GetTexture(Rendering::MaterialPropertyId id) const;
         inline Texture *GetTexture(const String &name) const {
             return GetTexture(Rendering::MaterialProperty::NameToId(name));

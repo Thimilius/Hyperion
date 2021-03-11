@@ -253,7 +253,6 @@ namespace Hyperion::Rendering {
             HYP_PROFILE_TAG("CommandType", static_cast<uint32>(command_type));
             program_counter += sizeof(RenderThreadCommandType);
 
-
             if (command_type == RenderThreadCommandType::Exit) {
                 s_exit_requested = true;
             } else if (command_type == RenderThreadCommandType::SetVSyncMode) {

@@ -120,9 +120,9 @@ namespace Hyperion {
         Image *image = ImageLoader::Load("data/textures/checkerboard.png");
         s_primitives.texture_grid = Texture2D::Create(image->GetWidth(), image->GetHeight(), TextureFormat::RGB24, TextureParameters(), image->GetPixels());
         Object::Destroy(image);
-        
+            
         Vector<uint8> white_pixels(2 * 2 * 4, 0xFF);
-        s_primitives.texture_white = Texture2D::Create(4, 4, TextureFormat::RGBA32, TextureParameters(), white_pixels);
+        s_primitives.texture_white = Texture2D::Create(2, 2, TextureFormat::RGBA32, TextureParameters(), white_pixels);
 
         s_primitives.mesh_quad = MeshGenerator::GenerateQuad(1.0f, 1.0f);
         s_primitives.mesh_plane = MeshGenerator::GeneratePlane(10.0f, 10.0f);
@@ -131,12 +131,12 @@ namespace Hyperion {
 
         Shader *default_shader = Shader::Create(FileSystem::ReadAllText("data/shaders/standard.shader"));
         s_primitives.material_default = Material::Create(default_shader);
-        s_primitives.material_default->SetVec4("u_color", Color::White());
+        s_primitives.material_default->SetColor("u_color", Color::White());
         s_primitives.material_default->SetTexture("u_texture", s_primitives.texture_grid);
 
         Shader *unlit_shader = Shader::Create(FileSystem::ReadAllText("data/shaders/unlit.shader"));
         s_primitives.material_unlit = Material::Create(unlit_shader);
-        s_primitives.material_unlit->SetVec4("u_color", Color::White());
+        s_primitives.material_unlit->SetColor("u_color", Color::White());
 
         Shader *ui_shader = Shader::Create(FileSystem::ReadAllText("data/shaders/ui.shader"));
         s_primitives.material_ui = Material::Create(ui_shader);

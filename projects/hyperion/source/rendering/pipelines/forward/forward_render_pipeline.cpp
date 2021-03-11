@@ -142,7 +142,7 @@ namespace Hyperion::Rendering {
 
                 material->SetTexture("u_texture", font->GetTexture());
             }
-            material->SetVec4("u_color", widget_renderer->GetColor());
+            material->SetColor("u_color", widget_renderer->GetColor());
 
             // The widgets already provide their meshes in screen space, meaning they do not need a model matrix.
             render_driver->DrawMesh(mesh_id, Mat4::Identity(), material_id, 0);
