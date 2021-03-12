@@ -6,6 +6,7 @@ freetype/2.10.4
 nlohmann_json/3.9.1
 rttr/0.9.6
 stb/20200203
+yaml-cpp/0.6.3
 
 [generators]
 premake
@@ -20,3 +21,4 @@ freetype/2.10.4:with_brotli=False
 freetype/2.10.4:with_bzip2=False
 freetype/2.10.4:with_png=False
 freetype/2.10.4:with_zlib=False
+yaml-cpp/0.6.3:shared=False

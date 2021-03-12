@@ -127,6 +127,7 @@ project "hyperion"
 	includedirs { package_nlohmann_includedirs }
 	includedirs { package_rttr_includedirs }
 	includedirs { package_stb_includedirs }
+	includedirs { package_yaml_includedirs }
 			
 	filter "files:projects/hyperion/vendor/**"
 		flags { "NoPCH" }
@@ -187,19 +188,23 @@ function linkhyperion()
 		libdirs { package_fmt_debug_libdirs }
 		libdirs { package_freetype_debug_libdirs }
 		libdirs { package_rttr_debug_libdirs }
+		libdirs { package_yaml_debug_libdirs }
 		links { package_assimp_debug_links }
 		links { package_fmt_debug_links }
 		links { package_freetype_debug_links }
 		links { package_rttr_debug_links }
+		links { package_yaml_debug_links }
 	filter { "system:windows", "configurations:profile or release" }
 		libdirs { package_assimp_release_libdirs }
 		libdirs { package_fmt_release_libdirs }
 		libdirs { package_freetype_release_libdirs }
 		libdirs { package_rttr_release_libdirs }
+		libdirs { package_yaml_release_libdirs }
 		links { package_assimp_release_links }
 		links { package_fmt_release_links }
 		links { package_freetype_release_links }
 		links { package_rttr_release_links }
+		links { package_yaml_release_links }
 
 	filter { "system:windows", "options:audio=fmod" }
 		links { "fmod_vc" }
