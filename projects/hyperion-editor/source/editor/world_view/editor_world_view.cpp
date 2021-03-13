@@ -9,6 +9,7 @@
 #include <hyperion/core/app/display.hpp>
 #include <hyperion/core/app/input.hpp>
 #include <hyperion/core/app/time.hpp>
+#include <hyperion/core/system/operating_system.hpp>
 #include <hyperion/entity/world_manager.hpp>
 #include <hyperion/entity/components/rect_transform.hpp>
 #include <hyperion/entity/components/physics/box_collider.hpp>
@@ -35,8 +36,6 @@ namespace Hyperion::Editor {
     void EditorWorldView::Initialize() {
         s_editor_world = WorldManager::CreateWorld();
         WorldManager::SetActiveWorld(s_editor_world);
-
-        Entity::CreatePrimitive(EntityPrimitive::Cube);
 
         Entity *camera_entity = Entity::CreatePrimitive(EntityPrimitive::Camera);
         s_editor_camera = camera_entity->GetComponent<Camera>();
@@ -100,9 +99,19 @@ namespace Hyperion::Editor {
             render_driver->Clear(ClearFlags::Depth, Color::Black());
 
             ImmediateRenderer::Begin(MeshTopology::Lines);
-            WorldManager::GetActiveWorld()->GetPhysicsWorld()->DebugDraw();
+            EditorApplication::GetLoadedWorld()->GetPhysicsWorld()->DebugDraw();
             ImmediateRenderer::End();
         }
+    }
+
+    //--------------------------------------------------------------
+    void EditorWorldView::LoadWorld() {
+        String path = OperatingSystem::GetInstance()->OpenFileDialog("Load world", "");
+    }
+
+    //--------------------------------------------------------------
+    void EditorWorldView::SaveWorld() {
+        String path = OperatingSystem::GetInstance()->SaveFileDialog("Save world", "");
     }
 
     //--------------------------------------------------------------
@@ -158,6 +167,33 @@ namespace Hyperion::Editor {
             graphic_1->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::BottomStretchHorizontal);
             graphic_1->GetRectTransform()->SetAnchoredPosition(Vec3(0.0f, -1.0f, 0.0f));
 
+            std::function<Button *(const String &, Font *, float32, OnClickCallback)> make_button = [graphic_0_entity]
+            (const String &text, Font *font, float32 x_position, OnClickCallback callback) {
+                Entity *button_entity = Entity::CreateEmpty();
+                button_entity->GetTransform()->SetParent(graphic_0_entity->GetTransform());
+                Button *button = button_entity->AddComponent<Button>();
+                button->SetClickCallback(callback);
+                button->GetRectTransform()->SetSize(Vec2(20, 0));
+                button->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::LeftStretchVertical);
+                button->GetRectTransform()->SetAnchoredPosition(Vec3(x_position, 0.0f, 0.0f));
+
+                Entity *button_text_entity = Entity::CreateEmpty();
+                button_text_entity->GetTransform()->SetParent(button_entity->GetTransform());
+                Text *button_text = button_text_entity->AddComponent<Text>();
+                button_text->SetIsRaycastTarget(false);
+                button_text->SetFont(font);
+                button_text->SetText(text);
+                button_text->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::StretchAll);
+
+                button->SetTargetWidget(button_text);
+
+                return button;
+            };
+
+            make_button(u8"\uf07c", icon_font, 0.0f, LoadWorld);
+            make_button(u8"\uf0c7", icon_font, 20.0f, SaveWorld);
+            make_button(u8"|", text_font, 40.0f, []() { });
+
             std::function<Toggle *(const String &, bool, float32, OnIsOnChangedCallback)> make_toggle_button = [graphic_0_entity, icon_font]
             (const String &text, bool is_on, float32 x_position, OnIsOnChangedCallback callback) {
                 Entity *toggle_entity = Entity::CreateEmpty();
@@ -182,29 +218,9 @@ namespace Hyperion::Editor {
                 return toggle;
             };
 
-            s_vsync_toggle = make_toggle_button(u8"\uf108", RenderEngine::GetVSyncMode() != VSyncMode::DontSync, 0.0f, [](bool is_on) { RenderEngine::SetVSyncMode(is_on ? VSyncMode::EveryVBlank : VSyncMode::DontSync); });
-            s_grid_toggle = make_toggle_button(u8"\uf00a", s_should_draw_grid, 20.0f, [](bool is_on) { s_should_draw_grid = is_on; });
-            s_physics_debug_toggle = make_toggle_button(u8"\uf5cb", s_physics_debug_toggle, 40.0f, [](bool is_on) { s_should_draw_physics_debug = is_on; });
-
-            {
-                Entity *button_entity = Entity::CreateEmpty();
-                button_entity->GetTransform()->SetParent(graphic_0_entity->GetTransform());
-                Button *button = button_entity->AddComponent<Button>();
-                button->SetClickCallback([]() { s_editor_camera_controller->Reset(); });
-                button->GetRectTransform()->SetSize(Vec2(20, 0));
-                button->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::LeftStretchVertical);
-                button->GetRectTransform()->SetAnchoredPosition(Vec3(60.0f, 0.0f, 0.0f));
-
-                Entity *button_text_entity = Entity::CreateEmpty();
-                button_text_entity->GetTransform()->SetParent(button_entity->GetTransform());
-                Text *button_text = button_text_entity->AddComponent<Text>();
-                button_text->SetIsRaycastTarget(false);
-                button_text->SetFont(icon_font);
-                button_text->SetText(u8"\uf2ea");
-                button_text->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::StretchAll);
-
-                button->SetTargetWidget(button_text);
-            }
+            s_vsync_toggle = make_toggle_button(u8"\uf108", RenderEngine::GetVSyncMode() != VSyncMode::DontSync, 60.0f, [](bool is_on) { RenderEngine::SetVSyncMode(is_on ? VSyncMode::EveryVBlank : VSyncMode::DontSync); });
+            s_grid_toggle = make_toggle_button(u8"\uf00a", s_should_draw_grid, 80.0f, [](bool is_on) { s_should_draw_grid = is_on; });
+            s_physics_debug_toggle = make_toggle_button(u8"\uf5cb", s_physics_debug_toggle, 100.0f, [](bool is_on) { s_should_draw_physics_debug = is_on; });
 
             {
                 Entity *text_entity = Entity::CreateEmpty();

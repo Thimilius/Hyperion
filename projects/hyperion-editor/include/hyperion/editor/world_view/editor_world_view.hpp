@@ -26,6 +26,9 @@ namespace Hyperion::Editor {
         EditorWorldView() = delete;
         ~EditorWorldView() = delete;
     private:
+        static void LoadWorld();
+        static void SaveWorld();
+
         static void RetrieveEntityUnderMouse(Rendering::IRenderDriver *render_driver);
         static void BuildInterface();
     private:

@@ -26,6 +26,10 @@ namespace Hyperion::Editor {
     //--------------------------------------------------------------
     void EditorApplication::OnInitialize() {
         EditorWorldView::Initialize();
+
+        s_loaded_world = WorldManager::CreateWorld();
+
+        Entity::CreatePrimitive(EntityPrimitive::Cube, Vec3::Zero(), Quaternion::Identity(), nullptr, s_loaded_world);
     }
 
     //--------------------------------------------------------------

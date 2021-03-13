@@ -15,6 +15,7 @@
 #include <hyperion/rendering/immediate_renderer.hpp>
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/editor/editor_application.hpp"
 #include "hyperion/editor/world_view/editor_world_view.hpp"
 
 //------------------------- Namespaces -------------------------
@@ -53,8 +54,11 @@ namespace Hyperion::Editor {
             render_driver->SetRenderTexture(m_render_texture->GetResourceId());
             render_driver->Clear(ClearFlags::Color | ClearFlags::Depth | ClearFlags::Stencil, Color::Black());
 
+            CameraData camera_data = EditorWorldView::GetCamera()->GetData();
+
             // We just render the world in the 'normal' way.
-            m_forward_render_pipeline->DrawWorld(render_driver, EditorWorldView::GetWorld(), EditorWorldView::GetCamera()->GetData());
+            m_forward_render_pipeline->DrawWorld(render_driver, EditorApplication::GetLoadedWorld(), camera_data);
+            m_forward_render_pipeline->DrawWorld(render_driver, EditorWorldView::GetWorld(), camera_data);
         }
         
         {

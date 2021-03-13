@@ -185,6 +185,8 @@ namespace Hyperion {
     String WindowsOperatingSystem::OpenFileDialog(const String &title, const String &filter) {
         WCHAR file_output[MAX_PATH] = { 0 };
 
+        WideString title_utf16 = StringUtils::Utf8ToUtf16(title);
+
         OPENFILENAMEW open_file_options = { };
         open_file_options.lStructSize = sizeof(open_file_options);
         open_file_options.hwndOwner = static_cast<HWND>(Application::GetInstance()->GetWindow()->GetNativePointer());
@@ -192,7 +194,7 @@ namespace Hyperion {
         open_file_options.lpstrFile = file_output;
         open_file_options.lpstrFilter = L"All\0*.*\0";
         open_file_options.nFilterIndex = 1;
-        open_file_options.lpstrTitle = StringUtils::Utf8ToUtf16(title).c_str();
+        open_file_options.lpstrTitle = title_utf16.c_str();
         open_file_options.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
         if (GetOpenFileNameW(&open_file_options)) {
@@ -206,17 +208,19 @@ namespace Hyperion {
     String WindowsOperatingSystem::SaveFileDialog(const String &title, const String &filter) {
         WCHAR file_output[MAX_PATH] = { 0 };
 
-        OPENFILENAMEW open_file_options = { };
-        open_file_options.lStructSize = sizeof(open_file_options);
-        open_file_options.hwndOwner = static_cast<HWND>(Application::GetInstance()->GetWindow()->GetNativePointer());
-        open_file_options.nMaxFile = sizeof(file_output);
-        open_file_options.lpstrFile = file_output;
-        open_file_options.lpstrFilter = L"All\0*.*\0";
-        open_file_options.nFilterIndex = 1;
-        open_file_options.lpstrTitle = StringUtils::Utf8ToUtf16(title).c_str();
-        open_file_options.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+        WideString title_utf16 = StringUtils::Utf8ToUtf16(title);
 
-        if (GetSaveFileNameW(&open_file_options)) {
+        OPENFILENAMEW save_file_options = { };
+        save_file_options.lStructSize = sizeof(save_file_options);
+        save_file_options.hwndOwner = static_cast<HWND>(Application::GetInstance()->GetWindow()->GetNativePointer());
+        save_file_options.nMaxFile = sizeof(file_output);
+        save_file_options.lpstrFile = file_output;
+        save_file_options.lpstrFilter = L"All\0*.*\0";
+        save_file_options.nFilterIndex = 1;
+        save_file_options.lpstrTitle = title_utf16.c_str();
+        save_file_options.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+        if (GetSaveFileNameW(&save_file_options)) {
             return StringUtils::Utf16ToUtf8(file_output);
         } else {
             return String();
