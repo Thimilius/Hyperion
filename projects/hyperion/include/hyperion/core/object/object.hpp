@@ -3,8 +3,9 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
 #include "hyperion/core/object/guid.hpp"
+#include "hyperion/core/object/non_copyable.hpp"
 #include "hyperion/core/serialization/serializable.hpp"
-#include "hyperion/scripting/scripting_instance.hpp"
+#include "hyperion/scripting/scripting_object.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -18,7 +19,7 @@ namespace Hyperion {
     using ObjectId = uint64;
     using ObjectGuid = Guid;
 
-    class Object : public ISerializable {
+    class Object : public Scripting::ScriptingObject, public INonCopyable, public ISerializable {
         HYP_REFLECT();
     public:
         // We would like to have the destructor private, but RTTR does not let us.
@@ -34,9 +35,6 @@ namespace Hyperion {
 
         inline String GetName() const { return m_name; }
         inline void SetName(const String &name) { m_name = name; }
-
-        inline Scripting::ScriptingInstance *GetScriptingInstance() const { return m_scripting_instance; }
-        inline void SetScriptingInstance(Scripting::ScriptingInstance *scripting_instance) { m_scripting_instance = scripting_instance; }
 
         inline virtual String ToString() const { return m_name; }
 
@@ -58,9 +56,6 @@ namespace Hyperion {
         virtual void OnClone(Object *clone);
         virtual void OnDestroy() { }
     private:
-        Object(const Object &other) = delete;
-        Object &operator=(const Object &other) = delete;
-    private:
         ObjectId m_id = 0;
         ObjectGuid m_guid = Guid::Create();
 
@@ -68,7 +63,6 @@ namespace Hyperion {
 
         String m_name = "Object";
 
-        Scripting::ScriptingInstance *m_scripting_instance = nullptr;
     private:
         friend class Hyperion::ObjectManager;
     };
