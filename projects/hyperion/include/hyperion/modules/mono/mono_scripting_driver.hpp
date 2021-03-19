@@ -22,17 +22,12 @@ namespace Hyperion::Scripting {
         void Update() override;
         void Shutdown() override;
     public:
-        inline static MonoDomain *GetDomain() { return s_root_domain; }
-        
+        inline static MonoDomain *GetRuntimeDomain() { return s_runtime_domain; }
         inline static MonoClass *GetComponentClass() { return s_core_component_class; }
         inline static MonoClass *GetScriptClass() { return s_core_script_class; }
 
         static void InvokeMethod(MonoMethod *method, void *object, void **parameters);
 
-        template<typename T>
-        static T *GetNativeObjectAs(MonoObject *managed_object) {
-            return reinterpret_cast<T *>(GetNativeObject(managed_object));
-        }
         static void *GetNativeObject(MonoObject *managed_object);
         static MonoObject *GetOrCreateManagedObject(Object *native_object, Type native_type);
         static MonoObject *GetOrCreateManagedObjectRaw(void *native, Type native_type);
@@ -54,13 +49,13 @@ namespace Hyperion::Scripting {
         static void InitDomain();
         static void InitBindings();
 
-        static void ReloadScriptingDomain();
-        static void UnloadScriptingDomain();
+        static void ReloadRuntimeDomain();
+        static void UnloadRuntimeDomain();
 
         static void PrintUnhandledException(MonoObject *exception);
     private:
         inline static MonoDomain *s_root_domain;
-        inline static MonoDomain *s_scripting_domain;
+        inline static MonoDomain *s_runtime_domain;
 
         inline static MonoAssembly *s_core_assembly;
         inline static MonoImage *s_core_assembly_image;

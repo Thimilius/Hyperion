@@ -39,7 +39,7 @@ namespace Hyperion::Scripting {
                 script->GetScriptingInstance()->SendMessage(ScriptingMessage::OnDestroy);
             }
         } else if (engine_mode == EngineMode::EditorRuntime) {
-            ReloadScriptingDomain();
+            ReloadRuntimeDomain();
 
             MonoMethodDesc *update_method_description = mono_method_desc_new("Hyperion.Editor.Application::Start()", true);
             MonoMethod *start_method = mono_method_desc_search_in_image(update_method_description, s_editor_assembly_image);
@@ -237,7 +237,7 @@ namespace Hyperion::Scripting {
             HYP_LOG_INFO("Scripting", "Initialized Mono scripting driver!");
         }
 
-        ReloadScriptingDomain();
+        ReloadRuntimeDomain();
     }
 
     //--------------------------------------------------------------
@@ -246,26 +246,26 @@ namespace Hyperion::Scripting {
     }
 
     //--------------------------------------------------------------
-    void MonoScriptingDriver::ReloadScriptingDomain() {
-        if (s_scripting_domain != nullptr) {
-            UnloadScriptingDomain();
+    void MonoScriptingDriver::ReloadRuntimeDomain() {
+        if (s_runtime_domain != nullptr) {
+            UnloadRuntimeDomain();
         }
-        s_scripting_domain = mono_domain_create_appdomain("Hyperion.ScriptDomain", nullptr);
-        HYP_ASSERT(s_scripting_domain);
-        mono_domain_set(s_scripting_domain, true);
+        s_runtime_domain = mono_domain_create_appdomain("Hyperion.ScriptDomain", nullptr);
+        HYP_ASSERT(s_runtime_domain);
+        mono_domain_set(s_runtime_domain, true);
         mono_thread_set_main(mono_thread_current());
 
         // Load core assemblies.
         {
             char *assembly_path = "data/managed/Hyperion.Core.dll";
-            s_core_assembly = mono_domain_assembly_open(s_scripting_domain, assembly_path);
+            s_core_assembly = mono_domain_assembly_open(s_runtime_domain, assembly_path);
             HYP_ASSERT(s_core_assembly);
             s_core_assembly_image = mono_assembly_get_image(s_core_assembly);
             HYP_ASSERT(s_core_assembly_image);
         }
         {
             char *assembly_path = "data/managed/Hyperion.Editor.dll";
-            s_editor_assembly = mono_domain_assembly_open(s_scripting_domain, assembly_path);
+            s_editor_assembly = mono_domain_assembly_open(s_runtime_domain, assembly_path);
             HYP_ASSERT(s_editor_assembly);
             s_editor_assembly_image = mono_assembly_get_image(s_editor_assembly);
             HYP_ASSERT(s_editor_assembly_image);
@@ -290,7 +290,7 @@ namespace Hyperion::Scripting {
     }
 
     //--------------------------------------------------------------
-    void MonoScriptingDriver::UnloadScriptingDomain() {
+    void MonoScriptingDriver::UnloadRuntimeDomain() {
         // We first clear out every cache we have with managed objects that become invalid.
         s_managed_to_native_objects.clear();
         s_native_to_managed_objects.clear();
@@ -300,10 +300,10 @@ namespace Hyperion::Scripting {
 
         // Now unload the actual managed domain.
         mono_domain_set(s_root_domain, true);
-        mono_domain_finalize(s_scripting_domain, 2000);
+        mono_domain_finalize(s_runtime_domain, 2000);
         mono_gc_collect(mono_gc_max_generation());
         MonoObject *exception = nullptr;
-        mono_domain_try_unload(s_scripting_domain, &exception);
+        mono_domain_try_unload(s_runtime_domain, &exception);
         if (exception != nullptr) {
             PrintUnhandledException(exception);
         }
