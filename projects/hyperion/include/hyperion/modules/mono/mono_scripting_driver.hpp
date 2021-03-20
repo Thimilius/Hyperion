@@ -8,6 +8,9 @@
 #include "hyperion/entity/components/script.hpp"
 #include "hyperion/modules/mono/mono_scripting_instance.hpp"
 #include "hyperion/modules/mono/mono_scripting_type.hpp"
+#include "hyperion/modules/mono/managed/managed_assembly.hpp"
+#include "hyperion/modules/mono/managed/managed_domain.hpp"
+#include "hyperion/modules/mono/managed/managed_method.hpp"
 #include "hyperion/scripting/scripting_driver.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -22,9 +25,11 @@ namespace Hyperion::Scripting {
         void Update() override;
         void Shutdown() override;
     public:
-        inline static MonoDomain *GetRuntimeDomain() { return s_runtime_domain; }
+        inline static MonoDomain *GetRuntimeDomain() { return s_domain_runtime.GetMonoDomain(); }
         inline static MonoClass *GetComponentClass() { return s_core_component_class; }
         inline static MonoClass *GetScriptClass() { return s_core_script_class; }
+
+        static void PrintUnhandledException(MonoObject *exception);
 
         static void InvokeMethod(MonoMethod *method, void *object, void **parameters);
 
@@ -51,11 +56,9 @@ namespace Hyperion::Scripting {
 
         static void ReloadRuntimeDomain();
         static void UnloadRuntimeDomain();
-
-        static void PrintUnhandledException(MonoObject *exception);
     private:
-        inline static MonoDomain *s_root_domain;
-        inline static MonoDomain *s_runtime_domain;
+        inline static ManagedDomain s_domain_root;
+        inline static ManagedDomain s_domain_runtime;
 
         inline static MonoAssembly *s_core_assembly;
         inline static MonoImage *s_core_assembly_image;

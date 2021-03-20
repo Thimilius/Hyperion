@@ -19,13 +19,11 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     void ScriptingEngine::Initialize(const ScriptingSettings &settings) {
-//#ifdef HYP_SCRIPTING_MONO
-//        s_scripting_driver = new MonoScriptingDriver();
-//#else
-//        s_scripting_driver = new DummyScriptingDriver();
-//#endif
-        // TEMP: This is just so we currently do not need to bother about scripting at all and can focus on other things.
+#ifdef HYP_SCRIPTING_MONO
+        s_scripting_driver = new MonoScriptingDriver();
+#else
         s_scripting_driver = new DummyScriptingDriver();
+#endif
 
         s_scripting_driver->Initialize(settings);
     }

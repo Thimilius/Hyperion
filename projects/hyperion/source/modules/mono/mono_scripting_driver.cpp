@@ -58,7 +58,7 @@ namespace Hyperion::Scripting {
                 script->GetScriptingInstance()->SendMessage(ScriptingMessage::OnUpdate);
             }
 
-            InvokeMethod(s_editor_update_method, nullptr, nullptr);
+            //InvokeMethod(s_editor_update_method, nullptr, nullptr);
         }
     }
 
@@ -68,14 +68,10 @@ namespace Hyperion::Scripting {
             delete scripting_type;
         }
 
-        // We can clean up the core domain.
-        // We do not need to bother explicitly unloading the scripting domain.
-        mono_domain_set(s_root_domain, true);
-        if (!mono_domain_finalize(s_root_domain, 2000)) {
-            HYP_LOG_ERROR("Scripting", "Domain finalization timeout!");
-        }
-        mono_gc_collect(mono_gc_max_generation());
-        mono_jit_cleanup(s_root_domain);
+        // We do not need to bother explicitly unloading the runtime domain.
+        s_domain_root.SetActive();
+        s_domain_root.Finalize();
+        mono_jit_cleanup(s_domain_root.GetMonoDomain());
     }
 
     //--------------------------------------------------------------
@@ -115,7 +111,7 @@ namespace Hyperion::Scripting {
         if (it != s_native_to_managed_objects.end()) {
             return it->second;
         } else {
-            MonoObject *managed_object = mono_object_new(s_root_domain, s_native_to_managed_classes[native_type]);
+            MonoObject *managed_object = mono_object_new(s_domain_runtime.GetMonoDomain(), s_native_to_managed_classes[native_type]);
             RegisterObject(managed_object, native);
             return managed_object;
         }
@@ -123,7 +119,7 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     MonoObject *MonoScriptingDriver::CreateManagedObjectFromManagedType(Object *native_object, MonoClass *managed_class, bool is_script_component) {
-        MonoObject *managed_object = mono_object_new(s_root_domain, managed_class);
+        MonoObject *managed_object = mono_object_new(s_domain_runtime.GetMonoDomain(), managed_class);
         RegisterManagedObject(managed_object, native_object, is_script_component);
         return managed_object;
     }
@@ -229,13 +225,16 @@ namespace Hyperion::Scripting {
     //--------------------------------------------------------------
     void MonoScriptingDriver::InitDomain() {
         mono_set_dirs("data/mono/lib", "data/mono/etc");
-        s_root_domain = mono_jit_init_version("Hyperion.CoreDomain", "v4.0.30319");
-        if (!s_root_domain) {
+        MonoDomain *root_domain = mono_jit_init_version("Hyperion.RootDomain", "v4.0.30319");
+        if (!root_domain) {
             HYP_LOG_ERROR("Scripting", "Initialization of app domain failed!");
             return;
         } else {
             HYP_LOG_INFO("Scripting", "Initialized Mono scripting driver!");
         }
+
+        s_domain_root = ManagedDomain(root_domain);
+        ManagedDomain::SetCurrentMainThread();
 
         ReloadRuntimeDomain();
     }
@@ -247,25 +246,23 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     void MonoScriptingDriver::ReloadRuntimeDomain() {
-        if (s_runtime_domain != nullptr) {
+        if (s_domain_runtime.GetMonoDomain() != nullptr) {
             UnloadRuntimeDomain();
         }
-        s_runtime_domain = mono_domain_create_appdomain("Hyperion.ScriptDomain", nullptr);
-        HYP_ASSERT(s_runtime_domain);
-        mono_domain_set(s_runtime_domain, true);
-        mono_thread_set_main(mono_thread_current());
+        s_domain_runtime = ManagedDomain::Create("Hyperion.RuntimeDomain");
+        s_domain_runtime.SetActive();
 
         // Load core assemblies.
         {
             char *assembly_path = "data/managed/Hyperion.Core.dll";
-            s_core_assembly = mono_domain_assembly_open(s_runtime_domain, assembly_path);
+            s_core_assembly = mono_domain_assembly_open(s_domain_runtime.GetMonoDomain(), assembly_path);
             HYP_ASSERT(s_core_assembly);
             s_core_assembly_image = mono_assembly_get_image(s_core_assembly);
             HYP_ASSERT(s_core_assembly_image);
         }
         {
             char *assembly_path = "data/managed/Hyperion.Editor.dll";
-            s_editor_assembly = mono_domain_assembly_open(s_runtime_domain, assembly_path);
+            s_editor_assembly = mono_domain_assembly_open(s_domain_runtime.GetMonoDomain(), assembly_path);
             HYP_ASSERT(s_editor_assembly);
             s_editor_assembly_image = mono_assembly_get_image(s_editor_assembly);
             HYP_ASSERT(s_editor_assembly_image);
@@ -298,15 +295,8 @@ namespace Hyperion::Scripting {
         s_native_to_managed_classes.clear();
         s_scripting_types.clear();
 
-        // Now unload the actual managed domain.
-        mono_domain_set(s_root_domain, true);
-        mono_domain_finalize(s_runtime_domain, 2000);
-        mono_gc_collect(mono_gc_max_generation());
-        MonoObject *exception = nullptr;
-        mono_domain_try_unload(s_runtime_domain, &exception);
-        if (exception != nullptr) {
-            PrintUnhandledException(exception);
-        }
+        // Now unload the actual runtime domain.
+        s_domain_runtime.Unload();
     }
 
     //--------------------------------------------------------------
