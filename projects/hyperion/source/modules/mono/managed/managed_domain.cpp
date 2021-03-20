@@ -36,6 +36,10 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     void ManagedDomain::Unload() {
+        if (m_domain == nullptr) {
+            return;
+        }
+
         Finalize();
 
         MonoObject *exception = nullptr;

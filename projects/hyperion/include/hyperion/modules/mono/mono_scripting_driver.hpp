@@ -31,8 +31,6 @@ namespace Hyperion::Scripting {
 
         static void PrintUnhandledException(MonoObject *exception);
 
-        static void InvokeMethod(MonoMethod *method, void *object, void **parameters);
-
         static void *GetNativeObject(MonoObject *managed_object);
         static MonoObject *GetOrCreateManagedObject(Object *native_object, Type native_type);
         static MonoObject *GetOrCreateManagedObjectRaw(void *native, Type native_type);
@@ -55,19 +53,16 @@ namespace Hyperion::Scripting {
         static void InitBindings();
 
         static void ReloadRuntimeDomain();
-        static void UnloadRuntimeDomain();
     private:
         inline static ManagedDomain s_domain_root;
         inline static ManagedDomain s_domain_runtime;
 
-        inline static MonoAssembly *s_core_assembly;
-        inline static MonoImage *s_core_assembly_image;
+        inline static ManagedAssembly s_assembly_core;
+        inline static ManagedAssembly s_assembly_editor;
+        
         inline static MonoClass *s_core_component_class;
         inline static MonoClass *s_core_script_class;
-
-        inline static MonoAssembly *s_editor_assembly;
-        inline static MonoImage *s_editor_assembly_image;
-        inline static MonoMethod *s_editor_update_method;
+        inline static ManagedMethod s_editor_update_method;
 
         inline static Map<MonoObject *, void *> s_managed_to_native_objects;
         inline static Map<void *, MonoObject * > s_native_to_managed_objects;

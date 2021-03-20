@@ -32,34 +32,12 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     void MonoScriptingDriver::EngineModeChange(EngineMode engine_mode) {
-        if (engine_mode == EngineMode::Editor) {
-            // We take a copy here as the actual vector gets changed, so we can not iterate over it directly.
-            Vector<Script *> scripts = s_scripts_which_recieve_messages;
-            for (Script *script : scripts) {
-                script->GetScriptingInstance()->SendMessage(ScriptingMessage::OnDestroy);
-            }
-        } else if (engine_mode == EngineMode::EditorRuntime) {
-            ReloadRuntimeDomain();
-
-            MonoMethodDesc *update_method_description = mono_method_desc_new("Hyperion.Editor.Application::Start()", true);
-            MonoMethod *start_method = mono_method_desc_search_in_image(update_method_description, s_editor_assembly_image);
-            InvokeMethod(start_method, nullptr, nullptr);
-
-            for (Script *script : s_scripts_which_recieve_messages) {
-                script->GetScriptingInstance()->SendMessage(ScriptingMessage::OnCreate);
-            }
-        }
+        
     }
 
     //--------------------------------------------------------------
     void MonoScriptingDriver::Update() {
-        if (Engine::GetMode() == EngineMode::EditorRuntime) {
-            for (Script *script : s_scripts_which_recieve_messages) {
-                script->GetScriptingInstance()->SendMessage(ScriptingMessage::OnUpdate);
-            }
-
-            //InvokeMethod(s_editor_update_method, nullptr, nullptr);
-        }
+        s_editor_update_method.Invoke(nullptr, nullptr);
     }
 
     //--------------------------------------------------------------
@@ -72,15 +50,6 @@ namespace Hyperion::Scripting {
         s_domain_root.SetActive();
         s_domain_root.Finalize();
         mono_jit_cleanup(s_domain_root.GetMonoDomain());
-    }
-
-    //--------------------------------------------------------------
-    void MonoScriptingDriver::InvokeMethod(MonoMethod *method, void *object, void **parameters) {
-        MonoObject *exception = nullptr;
-        mono_runtime_invoke(method, object, parameters, &exception);
-        if (exception != nullptr) {
-            PrintUnhandledException(exception);
-        }
     }
 
     //--------------------------------------------------------------
@@ -185,7 +154,7 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     void MonoScriptingDriver::RegisterClass(Type native_class, const char *managed_namespace, const char *managed_name) {
-        MonoClass *managed_class = mono_class_from_name(s_core_assembly_image, managed_namespace, managed_name);
+        MonoClass *managed_class = s_assembly_core.FindClass(managed_namespace, managed_name);
         HYP_ASSERT(managed_class);
 
         s_native_to_managed_classes[native_class] = managed_class;
@@ -247,56 +216,18 @@ namespace Hyperion::Scripting {
     //--------------------------------------------------------------
     void MonoScriptingDriver::ReloadRuntimeDomain() {
         if (s_domain_runtime.GetMonoDomain() != nullptr) {
-            UnloadRuntimeDomain();
+            s_domain_runtime.Unload();
         }
         s_domain_runtime = ManagedDomain::Create("Hyperion.RuntimeDomain");
         s_domain_runtime.SetActive();
 
-        // Load core assemblies.
-        {
-            char *assembly_path = "data/managed/Hyperion.Core.dll";
-            s_core_assembly = mono_domain_assembly_open(s_domain_runtime.GetMonoDomain(), assembly_path);
-            HYP_ASSERT(s_core_assembly);
-            s_core_assembly_image = mono_assembly_get_image(s_core_assembly);
-            HYP_ASSERT(s_core_assembly_image);
-        }
-        {
-            char *assembly_path = "data/managed/Hyperion.Editor.dll";
-            s_editor_assembly = mono_domain_assembly_open(s_domain_runtime.GetMonoDomain(), assembly_path);
-            HYP_ASSERT(s_editor_assembly);
-            s_editor_assembly_image = mono_assembly_get_image(s_editor_assembly);
-            HYP_ASSERT(s_editor_assembly_image);
-        }
+        s_assembly_core = s_domain_runtime.LoadAssembly("data/managed/Hyperion.Core.dll");
+        s_core_component_class = s_assembly_core.FindClass("Hyperion", "Component");
+        s_core_script_class = s_assembly_core.FindClass("Hyperion", "Script");
+        MonoScriptingBindings::RegisterClasses();
 
-        // Load core classes.
-        {
-            s_core_component_class = mono_class_from_name(s_core_assembly_image, "Hyperion", "Component");
-            HYP_ASSERT(s_core_component_class);
-            s_core_script_class = mono_class_from_name(s_core_assembly_image, "Hyperion", "Script");
-            HYP_ASSERT(s_core_script_class);
-
-            MonoScriptingBindings::RegisterClasses();
-        }
-
-        // Load core methods.
-        {
-            MonoMethodDesc *update_method_description = mono_method_desc_new("Hyperion.Editor.Application::Update()", true);
-            s_editor_update_method = mono_method_desc_search_in_image(update_method_description, s_editor_assembly_image);
-            mono_method_desc_free(update_method_description);
-        }
-    }
-
-    //--------------------------------------------------------------
-    void MonoScriptingDriver::UnloadRuntimeDomain() {
-        // We first clear out every cache we have with managed objects that become invalid.
-        s_managed_to_native_objects.clear();
-        s_native_to_managed_objects.clear();
-        s_managed_to_native_classes.clear();
-        s_native_to_managed_classes.clear();
-        s_scripting_types.clear();
-
-        // Now unload the actual runtime domain.
-        s_domain_runtime.Unload();
+        s_assembly_editor = s_domain_runtime.LoadAssembly("data/managed/Hyperion.Editor.dll");
+        s_editor_update_method = s_assembly_editor.FindMethod("Hyperion.Editor.Application::Update()");
     }
 
     //--------------------------------------------------------------
