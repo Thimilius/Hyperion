@@ -33,8 +33,9 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Light *Light::Create() {
-        return new Light();
-    }
+    HYP_REFLECT_BEGIN(Light)
+    HYP_REFLECT_BASE(Behaviour)
+    HYP_REFLECT_CONSTRUCTOR([]() { return new Light(); })
+    HYP_REFLECT_END()
 
 }

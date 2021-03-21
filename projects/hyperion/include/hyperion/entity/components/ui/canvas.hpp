@@ -18,7 +18,7 @@ namespace Hyperion {
     };
 
     class Canvas : public Component {
-        HYP_REFLECT(Component);
+        HYP_REFLECT();
     public:
         inline CanvasScaleMode GetScaleMode() const { return m_scale_mode; }
         inline void SetScaleMode(CanvasScaleMode scale_mode) {
@@ -50,8 +50,6 @@ namespace Hyperion {
         void UnregisterWidget(Widget *widget);
 
         void UpdateWidgetDepths();
-    private:
-        static Canvas *Create();
     private:
         CanvasScaleMode m_scale_mode = CanvasScaleMode::ScaleWithScreenSize;
 

@@ -20,7 +20,6 @@ namespace Hyperion {
     };
 
     class Shader final : public Asset {
-        HYP_REFLECT(Asset);
     private:
         using ShaderPreProcessCallback = std::function<void (const Rendering::ShaderDescriptor &)>;
     public:

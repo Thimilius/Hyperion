@@ -13,15 +13,13 @@ namespace Hyperion {
 namespace Hyperion {
 
     class Script final : public Component {
-        HYP_REFLECT(Component);
+        HYP_REFLECT();
     public:
         inline Scripting::ScriptingType *GetScriptingType() const { return m_scripting_type; }
-    public:
-        static Script *Create();
     private:
         Script() = default;
     private:
-        Scripting::ScriptingType *m_scripting_type;
+        Scripting::ScriptingType *m_scripting_type = nullptr;
     private:
         friend class Hyperion::Entity;
     };

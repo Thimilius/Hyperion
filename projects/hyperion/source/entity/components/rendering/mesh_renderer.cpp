@@ -11,11 +11,6 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    MeshRenderer *MeshRenderer::Create() {
-        return new MeshRenderer();
-    }
-
-    //--------------------------------------------------------------
     void MeshRenderer::OnCreate() {
         GetWorld()->AddMeshRenderer(this);
     }
@@ -24,6 +19,12 @@ namespace Hyperion {
     void MeshRenderer::OnDestroy() {
         GetWorld()->RemoveMeshRenderer(this);
     }
+
+    //--------------------------------------------------------------
+    HYP_REFLECT_BEGIN(MeshRenderer)
+    HYP_REFLECT_BASE(Renderer)
+    HYP_REFLECT_CONSTRUCTOR([]() { return new MeshRenderer(); })
+    HYP_REFLECT_END()
 
 }
 

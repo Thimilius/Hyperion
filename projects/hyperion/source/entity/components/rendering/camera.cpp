@@ -161,8 +161,9 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Camera *Camera::Create() {
-        return new Camera();
-    }
+    HYP_REFLECT_BEGIN(Camera)
+    HYP_REFLECT_BASE(Behaviour)
+    HYP_REFLECT_CONSTRUCTOR([]() { return new Camera(); })
+    HYP_REFLECT_END()
 
 }

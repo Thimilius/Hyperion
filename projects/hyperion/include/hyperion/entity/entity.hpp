@@ -38,7 +38,7 @@ namespace Hyperion {
     // NOTE: Should we allow multiple components of the same type?
     // Currently the GetComponent implementations assume only one component of a certain type.
     class Entity final : public Object {
-        HYP_REFLECT(Object);
+        HYP_REFLECT();
     public:
         inline World *GetWorld() const { return m_world; }
 
@@ -59,24 +59,23 @@ namespace Hyperion {
         inline bool AddTag(const EntityTag &tag) { return m_tags.insert(tag).second; }
         inline void RemoveTag(const EntityTag &tag) { m_tags.erase(tag); }
 
-        const Map<ComponentType, Component *> &GetComponents() const { return m_components; }
+        const Map<Type *, Component *> &GetComponents() const { return m_components; }
         inline Transform *GetTransform() { return m_transform; }
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value && !std::is_same<Transform, T>::value>>
         T *AddComponent() {
-            Type type = Type::get<T>();
+            Type *type = Type::Get<T>();
             return static_cast<T *>(AddComponent(type));
         }
-        Component *AddComponent(Type type);
-        Script *AddScript(Scripting::ScriptingType *scripting_type);
+        Component *AddComponent(Type *type);
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         T *GetComponent() const {
-            Type type = Type::get<T>();
+            Type *type = Type::Get<T>();
             Component *component = GetComponent(type);
             return static_cast<T *>(component);
         }
-        Component *GetComponent(ComponentType type) const;
+        Component *GetComponent(Type *type) const;
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         T *GetComponentInChildren() const {
@@ -112,12 +111,10 @@ namespace Hyperion {
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         Vector<T *> GetComponentsInChildren() const {
-            Type type = Type::get<T>();
-
             Vector<T *> components;
 
             for (auto [component_type, component] : m_components) {
-                if (component_type.IsDerivedFrom(type)) {
+                if (component_type->IsDerivedFrom<T>()) {
                     components.push_back(static_cast<T *>(component));
                 }
             }
@@ -131,12 +128,10 @@ namespace Hyperion {
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         Vector<T *> GetComponentsInParent() const {
-            Type type = Type::get<T>();
-
             Vector<T *> components;
 
             for (auto [component_type, component] : m_components) {
-                if (component_type.is_derived_from<T>()) {
+                if (component_type->IsDerivedFrom<T>()) {
                     components.push_back(static_cast<T *>(component));
                 }
             }
@@ -156,8 +151,7 @@ namespace Hyperion {
         virtual void Serialize(ISerializationStream &stream) override;
         virtual void Deserialize(IDeserializationStream &stream, ReferenceContext &context) override;
     public:
-        static Entity *Create(const String &name, const Vec3 &position = Vec3::Zero(), const Quaternion &rotation = Quaternion::Identity(), Transform *parent = nullptr, World *world = nullptr);
-        static Entity *CreateEmpty();
+        static Entity *Create(const String &name = "New Entity", const Vec3 &position = Vec3::Zero(), const Quaternion &rotation = Quaternion::Identity(), Transform *parent = nullptr, World *world = nullptr);
         static Entity *CreatePrimitive(EntityPrimitive primitive, const Vec3 &position = Vec3::Zero(), const Quaternion &rotation = Quaternion::Identity(), Transform *parent = nullptr, World *world = nullptr);
     protected:
         void OnDestroy() override;
@@ -167,13 +161,11 @@ namespace Hyperion {
     private:
         void NotifyActivationChanged();
 
-        void MakeSureRequiredComponentsArePresent(Type type);
-        void MakeSureRequiredComponentIsPresent(Type type, Metadata component_metadata);
+        void MakeSureRequiredComponentsArePresent(Type *type);
 
         void OnCreate(const Vec3 &position, const Quaternion &rotation, Transform *parent, World *world);
         void OnAfterDeserialization();
     private:
-        static Entity *Create();
         static String GetPrimitiveName(EntityPrimitive primitive);
     private:
         World *m_world = nullptr;
@@ -182,7 +174,7 @@ namespace Hyperion {
         LayerMask m_layer = LayerMask::Default;
         Set<EntityTag> m_tags;
 
-        Map<ComponentType, Component *> m_components;
+        Map<Type *, Component *> m_components; // TODO: We definitely need a multimap here, so we can properly add multiple scripts.
         Transform *m_transform = nullptr;
 
         Vector<IEntityMessageListener *> m_message_listeners;

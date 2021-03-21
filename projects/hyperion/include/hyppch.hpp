@@ -19,8 +19,6 @@
 
 //---------------------- Library Includes ----------------------
 #include <fmt/format.h>
-#include <rttr/registration>
-#include <rttr/type>
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
@@ -37,5 +35,5 @@
 #include "hyperion/core/math/vec2.hpp"
 #include "hyperion/core/math/vec3.hpp"
 #include "hyperion/core/math/vec4.hpp"
-#include "hyperion/core/object/reflection.hpp"
+#include "hyperion/core/object/type.hpp"
 #include "hyperion/core/profiling/profiling.hpp"

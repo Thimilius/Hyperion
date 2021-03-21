@@ -150,7 +150,7 @@ namespace Hyperion::Editor {
         s_editor_canvas = canvas_entity->AddComponent<Canvas>();
         s_editor_canvas->SetScaleMode(CanvasScaleMode::ConstantPixelSize);
         {
-            Entity *graphic_0_entity = Entity::CreateEmpty();
+            Entity *graphic_0_entity = Entity::Create();
             graphic_0_entity->GetTransform()->SetParent(canvas_entity->GetTransform());
             Graphic *graphic_0 = graphic_0_entity->AddComponent<Graphic>();
             graphic_0->SetColor(Color(0.137f, 0.153f, 0.161f, 1.0f));
@@ -158,7 +158,7 @@ namespace Hyperion::Editor {
             graphic_0->GetRectTransform()->SetSize(Vec2(0, 19));
             graphic_0->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::TopStretchHorizontal);
 
-            Entity *graphic_1_entity = Entity::CreateEmpty();
+            Entity *graphic_1_entity = Entity::Create();
             graphic_1_entity->GetTransform()->SetParent(graphic_0_entity->GetTransform());
             Graphic *graphic_1 = graphic_1_entity->AddComponent<Graphic>();
             graphic_1->SetColor(Color(0.012f, 0.439f, 0.643f, 1.0f));
@@ -169,7 +169,7 @@ namespace Hyperion::Editor {
 
             std::function<Button *(const String &, Font *, float32, OnClickCallback)> make_button = [graphic_0_entity]
             (const String &text, Font *font, float32 x_position, OnClickCallback callback) {
-                Entity *button_entity = Entity::CreateEmpty();
+                Entity *button_entity = Entity::Create();
                 button_entity->GetTransform()->SetParent(graphic_0_entity->GetTransform());
                 Button *button = button_entity->AddComponent<Button>();
                 button->SetClickCallback(callback);
@@ -177,7 +177,7 @@ namespace Hyperion::Editor {
                 button->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::LeftStretchVertical);
                 button->GetRectTransform()->SetAnchoredPosition(Vec3(x_position, 0.0f, 0.0f));
 
-                Entity *button_text_entity = Entity::CreateEmpty();
+                Entity *button_text_entity = Entity::Create();
                 button_text_entity->GetTransform()->SetParent(button_entity->GetTransform());
                 Text *button_text = button_text_entity->AddComponent<Text>();
                 button_text->SetIsRaycastTarget(false);
@@ -196,7 +196,7 @@ namespace Hyperion::Editor {
 
             std::function<Toggle *(const String &, bool, float32, OnIsOnChangedCallback)> make_toggle_button = [graphic_0_entity, icon_font]
             (const String &text, bool is_on, float32 x_position, OnIsOnChangedCallback callback) {
-                Entity *toggle_entity = Entity::CreateEmpty();
+                Entity *toggle_entity = Entity::Create();
                 toggle_entity->GetTransform()->SetParent(graphic_0_entity->GetTransform());
                 Toggle *toggle = toggle_entity->AddComponent<Toggle>();
                 toggle->SetIsOnChangedCallback(callback);
@@ -204,7 +204,7 @@ namespace Hyperion::Editor {
                 toggle->GetRectTransform()->SetAnchoringPreset(AnchoringPreset::LeftStretchVertical);
                 toggle->GetRectTransform()->SetAnchoredPosition(Vec3(x_position, 0.0f, 0.0f));
 
-                Entity *toggle_text_entity = Entity::CreateEmpty();
+                Entity *toggle_text_entity = Entity::Create();
                 toggle_text_entity->GetTransform()->SetParent(toggle_entity->GetTransform());
                 Text *toggle_text = toggle_text_entity->AddComponent<Text>();
                 toggle_text->SetIsRaycastTarget(false);
@@ -223,7 +223,7 @@ namespace Hyperion::Editor {
             s_physics_debug_toggle = make_toggle_button(u8"\uf5cb", s_physics_debug_toggle, 100.0f, [](bool is_on) { s_should_draw_physics_debug = is_on; });
 
             {
-                Entity *text_entity = Entity::CreateEmpty();
+                Entity *text_entity = Entity::Create();
                 text_entity->GetTransform()->SetParent(graphic_0_entity->GetTransform());
                 Text *text = text_entity->AddComponent<Text>();
                 text->SetFont(text_font);

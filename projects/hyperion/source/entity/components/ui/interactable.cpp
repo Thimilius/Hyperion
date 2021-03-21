@@ -14,4 +14,9 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
+    HYP_REFLECT_BEGIN(Interactable)
+    HYP_REFLECT_BASE(Widget)
+    HYP_REFLECT_END()
+
 }

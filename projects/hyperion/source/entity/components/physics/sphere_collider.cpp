@@ -51,8 +51,9 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    SphereCollider *SphereCollider::Create() {
-        return new SphereCollider();
-    }
+    HYP_REFLECT_BEGIN(SphereCollider)
+    HYP_REFLECT_BASE(Collider)
+    HYP_REFLECT_CONSTRUCTOR([]() { return new SphereCollider(); })
+    HYP_REFLECT_END()
 
 }

@@ -7,7 +7,7 @@
 namespace Hyperion {
 
     class SphereCollider final : public Collider {
-        HYP_REFLECT(Collider);
+        HYP_REFLECT();
     public:
         ColliderType GetColliderType() const { return ColliderType::SphereCollider; }
 
@@ -27,8 +27,6 @@ namespace Hyperion {
         SphereCollider() : Collider("SphereCollider") {}
     private:
         void NotifyColliderChange();
-    private:
-        static SphereCollider *Create();
     private:
         float32 m_radius = 0.5f;
     };

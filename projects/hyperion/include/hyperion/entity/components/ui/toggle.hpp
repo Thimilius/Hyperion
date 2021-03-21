@@ -9,7 +9,7 @@ namespace Hyperion {
     using OnIsOnChangedCallback = std::function<void(bool)>;
 
     class Toggle : public Interactable {
-        HYP_REFLECT(Interactable);
+        HYP_REFLECT();
     public:
         inline bool IsOn() const { return m_is_on; }
         void SetIsOn(bool is_on);
@@ -19,8 +19,6 @@ namespace Hyperion {
         void OnEventMessage(EventMessage event_message) override;
     private:
         Toggle() : Interactable("Toggle") { }
-    private:
-        static Toggle *Create();
     private:
         bool m_is_on = false;
 

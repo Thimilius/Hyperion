@@ -7,7 +7,7 @@
 namespace Hyperion {
 
     class Behaviour : public Component {
-        HYP_REFLECT(Component);
+        HYP_REFLECT();
     public:
         inline bool IsEnabled() const { return m_enabled; }
         virtual inline void SetEnabled(bool enabled) { m_enabled = enabled; }

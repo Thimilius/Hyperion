@@ -48,8 +48,8 @@ namespace Hyperion {
         Object::Deserialize(stream, context);
         
         m_environment = stream.ReadStruct<WorldEnvironment>("environment", context);
-        stream.ReadArray("root_entities", context, [this, &context](uint64 index, IArrayReader &reader) {
-            SerializableAllocatorFunction allocator = []() { return Type::get<Entity>().create().get_value<Entity *>(); };
+        SerializableAllocatorFunction allocator = []() { return Type::Get<Entity>()->CreateAs<Entity>(); };
+        stream.ReadArray("root_entities", context, [this, &context, &allocator](uint64 index, IArrayReader &reader) {
             m_root_entities.push_back(reader.ReadObject<Entity>(context, allocator));
         });
     }
@@ -152,8 +152,9 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    World *World::Create() {
-        return new World();
-    }
+    HYP_REFLECT_BEGIN(World)
+    HYP_REFLECT_BASE(Object)
+    HYP_REFLECT_CONSTRUCTOR([]() { return new World(); })
+    HYP_REFLECT_END()
 
 }

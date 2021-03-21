@@ -6,7 +6,7 @@ namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
     Entity *EditorSelection::GetSelectedEntity() {
-        if (s_selected_object != nullptr && s_selected_object->GetType() == Type::get<Entity>()) {
+        if (s_selected_object != nullptr && s_selected_object->GetType() == Type::Get<Entity>()) {
             return static_cast<Entity *>(s_selected_object);
         } else {
             return nullptr;

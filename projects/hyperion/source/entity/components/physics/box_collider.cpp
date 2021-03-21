@@ -53,8 +53,9 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    BoxCollider *BoxCollider::Create() {
-        return new BoxCollider();
-    }
+    HYP_REFLECT_BEGIN(BoxCollider)
+    HYP_REFLECT_BASE(Collider)
+    HYP_REFLECT_CONSTRUCTOR([]() { return new BoxCollider(); })
+    HYP_REFLECT_END()
 
 }

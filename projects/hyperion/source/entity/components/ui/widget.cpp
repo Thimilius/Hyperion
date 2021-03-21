@@ -67,4 +67,11 @@ namespace Hyperion {
         Behaviour::OnDestroy();
     }
 
+    //--------------------------------------------------------------
+    HYP_REFLECT_BEGIN(Widget)
+    HYP_REFLECT_BASE(Behaviour)
+    HYP_REFLECT_METADATA_POINTER(MetadataKind::RequireComponent, Type::Get<RectTransform>())
+    HYP_REFLECT_METADATA_POINTER(MetadataKind::RequireComponent, Type::Get<WidgetRenderer>())
+    HYP_REFLECT_END()
+
 }

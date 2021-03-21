@@ -9,7 +9,7 @@
 namespace Hyperion {
 
     class WidgetRenderer final : public Component {
-        HYP_REFLECT(Component);
+        HYP_REFLECT();
     public:
         Mesh *GetMesh() const { return m_mesh; }
         void SetMesh(Mesh *mesh) { m_mesh = mesh; }
@@ -21,8 +21,6 @@ namespace Hyperion {
         void SetColor(Color color) { m_color = color; }
     private:
         WidgetRenderer() : Component("WidgetRenderer") { }
-    private:
-        static WidgetRenderer *Create();
     private:
         uint32 m_depth = 0;
 

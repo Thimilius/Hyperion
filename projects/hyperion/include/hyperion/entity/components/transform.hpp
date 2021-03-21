@@ -16,7 +16,7 @@ namespace Hyperion {
 namespace Hyperion {
 
     class Transform : public Component {
-        HYP_REFLECT(Component);
+        HYP_REFLECT();
     public:
         inline Vec3 GetLocalPosition() const { return m_local_position; }
         inline void SetLocalPosition(const Vec3 &position) {
@@ -110,8 +110,6 @@ namespace Hyperion {
         Transform() : Component("Transform") { }
     private:
         void NotifyTransformParentChanged();
-    private:
-        static Transform *Create();
     protected:
         Vec3 m_local_position = Vec3::Zero();
         Quaternion m_local_rotation = Quaternion::Identity();

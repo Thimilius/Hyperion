@@ -18,7 +18,6 @@ namespace Hyperion {
     };
 
     class Asset : public Object {
-        HYP_REFLECT(Object);
     public:
         virtual ~Asset() override = default;
     public:

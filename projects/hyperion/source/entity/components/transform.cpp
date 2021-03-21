@@ -125,11 +125,6 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Transform *Hyperion::Transform::Create() {
-        return new Transform();
-    }
-
-    //--------------------------------------------------------------
     void Hyperion::Transform::OnCreate() {
         Component::OnCreate();
 
@@ -151,5 +146,11 @@ namespace Hyperion {
 
         Component::OnDestroy();
     }
+
+    //--------------------------------------------------------------
+    HYP_REFLECT_BEGIN(Transform)
+    HYP_REFLECT_BASE(Component)
+    HYP_REFLECT_CONSTRUCTOR([]() { return new Transform(); })
+    HYP_REFLECT_END()
 
 }

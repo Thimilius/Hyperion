@@ -56,4 +56,9 @@ namespace Hyperion {
         Behaviour::OnDestroy();
     }
 
+    //--------------------------------------------------------------
+    HYP_REFLECT_BEGIN(Collider)
+    HYP_REFLECT_BASE(Behaviour)
+    HYP_REFLECT_END()
+
 }

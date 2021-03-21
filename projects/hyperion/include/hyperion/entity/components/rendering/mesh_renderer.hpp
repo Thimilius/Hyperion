@@ -8,12 +8,10 @@
 namespace Hyperion {
 
     class MeshRenderer : public Renderer {
-        HYP_REFLECT(Renderer);
+        HYP_REFLECT();
     public:
         Mesh *GetMesh() const { return m_mesh; }
         void SetMesh(Mesh *mesh) { m_mesh = mesh; }
-    public:
-        static MeshRenderer *Create();
     protected:
         void OnCreate() override;
         void OnDestroy() override;

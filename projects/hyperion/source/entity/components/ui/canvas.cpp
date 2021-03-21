@@ -87,8 +87,10 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Canvas *Canvas::Create() {
-        return new Canvas();
-    }
+    HYP_REFLECT_BEGIN(Canvas)
+    HYP_REFLECT_BASE(Component)
+    HYP_REFLECT_CONSTRUCTOR([]() { return new Canvas(); })
+    HYP_REFLECT_METADATA_POINTER(MetadataKind::RequireComponent, Type::Get<RectTransform>())
+    HYP_REFLECT_END()
 
 }

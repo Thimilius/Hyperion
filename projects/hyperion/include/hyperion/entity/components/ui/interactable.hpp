@@ -7,7 +7,7 @@
 namespace Hyperion {
 
     class Interactable : public Widget {
-        HYP_REFLECT(Widget);
+        HYP_REFLECT();
     public:
         inline bool IsInteractable() const { return m_is_interactable; }
         inline void SetIsInteractable(bool is_interactable) { m_is_interactable = is_interactable; }

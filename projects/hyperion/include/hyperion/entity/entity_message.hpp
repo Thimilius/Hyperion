@@ -12,10 +12,10 @@ namespace Hyperion {
     enum class EntityMessageType {
         TransformChanged,
         TransformParentChanged,
+
         ActivationChanged,
 
         ComponentDestroyed,
-        ScriptDestroyed,
     };
 
     struct EntityMessage {
@@ -25,10 +25,6 @@ namespace Hyperion {
             struct ComponentDestroyed {
                 Component *component;
             } component_destroyed;
-            
-            struct ScriptDestroyed {
-                Script *script;
-            } script_destroyed;
         } data;
     };
 

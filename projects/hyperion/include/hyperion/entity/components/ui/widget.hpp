@@ -32,7 +32,7 @@ namespace Hyperion {
     };
 
     class Widget : public Behaviour, public IEntityMessageListener {
-        HYP_REFLECT(Behaviour);
+        HYP_REFLECT();
     public:
         inline Color GetColor() const { return m_color; }
         void SetColor(Color color);

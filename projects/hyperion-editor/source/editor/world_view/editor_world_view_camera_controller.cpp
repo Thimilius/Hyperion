@@ -287,14 +287,21 @@ namespace Hyperion::Editor {
         return Math::Clamp(angle, min, max);
     }
 
-}
+    //--------------------------------------------------------------
+    HYP_REFLECT_BEGIN(EditorCameraController)
+    HYP_REFLECT_BASE(Component)
+    HYP_REFLECT_END()
 
-//--------------------------------------------------------------
-HYP_REFLECT_REGISTER_BEGIN
-{
-    RegistrationClass<Editor::EditorFirstPersonCameraController>("EditorFirstPersonCameraController")
-        .constructor()(PointerConstructorPolicy);
-    RegistrationClass<Editor::EditorLookAroundCameraController>("EditorLookAroundCameraController")
-        .constructor()(PointerConstructorPolicy);
+    //--------------------------------------------------------------
+    HYP_REFLECT_BEGIN(EditorFirstPersonCameraController)
+    HYP_REFLECT_BASE(EditorCameraController)
+    HYP_REFLECT_CONSTRUCTOR([]() { return new EditorFirstPersonCameraController(); })
+    HYP_REFLECT_END()
+
+    //--------------------------------------------------------------
+    HYP_REFLECT_BEGIN(EditorLookAroundCameraController)
+    HYP_REFLECT_BASE(EditorCameraController)
+    HYP_REFLECT_CONSTRUCTOR([]() { return new EditorLookAroundCameraController(); })
+    HYP_REFLECT_END()
+
 }
-HYP_REFLECT_REGISTER_END

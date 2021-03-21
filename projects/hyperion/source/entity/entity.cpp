@@ -31,20 +31,16 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Component *Entity::AddComponent(Type type) {
-        HYP_ASSERT(type.is_valid());
-        HYP_ASSERT_MESSAGE(m_components.find(type) == m_components.end(), "Failed to add component because a component with the same type already exists!");
+    Component *Entity::AddComponent(Type *type) {
+        HYP_ASSERT(type);
+        HYP_ASSERT(type->IsDerivedFrom<Component>());
+        HYP_ASSERT_MESSAGE(type->HasConstructor(), "Failed to add component because the component does not have a constructor!");
 
-        MakeSureRequiredComponentsArePresent(type);
-
-        auto constructor = type.get_constructor();
-        HYP_ASSERT_MESSAGE(constructor.is_valid(), "Failed to add component because the component does not have a valid default constructor!");
-        Variant variant = constructor.invoke();
-        HYP_ASSERT(variant.is_valid() && variant.get_type().is_derived_from<Component>());
-
-        Component *component = variant.get_value<Component *>();
+        Component *component = type->CreateAs<Component>();
         component->m_entity = this;
         m_components[type] = component;
+
+        MakeSureRequiredComponentsArePresent(type);
 
         component->OnCreate();
 
@@ -52,21 +48,9 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Script *Entity::AddScript(Scripting::ScriptingType *scripting_type) {
-        Script *script = Script::Create();
-        script->m_entity = this;
-        script->m_scripting_type = scripting_type;
-        m_components[scripting_type] = script;
-
-        script->OnCreate();
-
-        return script;
-    }
-
-    //--------------------------------------------------------------
-    Component *Entity::GetComponent(ComponentType type) const {
+    Component *Entity::GetComponent(Type *type) const {
         for (auto [component_type, component] : m_components) {
-            if (component_type.IsDerivedFrom(type)) {
+            if (component_type->IsDerivedFrom(type)) {
                 return component;
             }
         }
@@ -79,10 +63,6 @@ namespace Hyperion {
         switch (message.type) {
             case EntityMessageType::ComponentDestroyed: {
                 m_components.erase(message.data.component_destroyed.component->GetType());
-                break;
-            }
-            case EntityMessageType::ScriptDestroyed: {
-                m_components.erase(message.data.script_destroyed.script->GetScriptingType());
                 break;
             }
         }
@@ -107,25 +87,6 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    struct ComponentsPair : public ISerializable {
-        ComponentType key;
-        Component *value;
-
-        ComponentsPair(ComponentType key, Component *value) : key(key), value(value) {}
-
-        void Serialize(ISerializationStream &stream) {
-            stream.WriteStruct("key", key);
-            stream.WriteObject("value", value);
-        };
-
-        void Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
-            stream.ReadStruct("key", context, &key);
-            SerializableAllocatorFunction allocator = [this]() { return key.GetNativeType().create().get_value<Component *>(); };
-            value = stream.ReadObject<Component>("value", context, allocator);
-        }
-    };
-
-    //--------------------------------------------------------------
     void Entity::Serialize(ISerializationStream &stream) {
         Object::Serialize(stream);
 
@@ -134,13 +95,6 @@ namespace Hyperion {
         auto tags_iterator = m_tags.begin();
         stream.WriteArray("tags", m_tags.size(), [&tags_iterator](uint64 index, IArrayWriter &writer) {
             writer.WriteString(*tags_iterator++);
-        });
-
-        auto components_iterator = m_components.begin();
-        stream.WriteArray("components", m_components.size(), [&components_iterator](uint64 index, IArrayWriter &writer) {
-            auto [component_type, component] = *components_iterator++;
-            ComponentsPair pair(component_type, component);
-            writer.WriteStruct(pair);
         });
 
         // Children are special and get directly serialized here inside the entity.
@@ -160,26 +114,17 @@ namespace Hyperion {
             m_tags.insert(reader.ReadString());
         });
 
-        stream.ReadArray("components", context, [this, &context](uint64 index, IArrayReader &reader) {
-            ComponentsPair pair(Type::get<Component>(), nullptr);
-            reader.ReadStruct(context, &pair);
-
-            ComponentType component_type = pair.key;
-            Component *component = pair.value;
-
-            m_components[component_type] = component;
-        });
         for (auto &[component_type, component] : m_components) {
             component->m_entity = this;
 
-            if (component_type.GetNativeType().is_derived_from<Transform>()) {
+            if (component_type->IsDerivedFrom<Transform>()) {
                 m_transform = static_cast<Transform *>(component);
             }
         }
 
         Vector<Transform *> &children = m_transform->m_children;
-        stream.ReadArray("children", context, [this, &context, &children](uint64 index, IArrayReader &reader) {
-            SerializableAllocatorFunction allocator = []() { return Type::get<Entity>().create().get_value<Entity *>(); };
+        SerializableAllocatorFunction allocator = []() { return new Entity(); };
+        stream.ReadArray("children", context, [this, &context, &children, &allocator](uint64 index, IArrayReader &reader) {
             Entity *entity = reader.ReadObject<Entity>(context, allocator);
             children.push_back(entity->GetTransform());
         });
@@ -189,20 +134,10 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Entity *Entity::Create() {
-        return new Entity();
-    }
-
-    //--------------------------------------------------------------
     Entity *Entity::Create(const String &name, const Vec3 &position, const Quaternion &rotation, Transform *parent, World *world) {
         Entity *entity = new Entity(name);
         entity->OnCreate(position, rotation, parent, world);
         return entity;
-    }
-
-    //--------------------------------------------------------------
-    Entity *Entity::CreateEmpty() {
-        return Create("New Entity");
     }
 
     //--------------------------------------------------------------
@@ -269,7 +204,7 @@ namespace Hyperion {
         // Now destroy all our components except transform.
         for (auto it = m_components.begin(); it != m_components.end(); ) {
             auto [component_type, component] = *it;
-            if (component_type.IsDerivedFrom(Type::get<Transform>())) {
+            if (component_type->IsDerivedFrom(Type::Get<Transform>())) {
                 ++it;
             } else {
                 it = m_components.erase(it);
@@ -277,7 +212,7 @@ namespace Hyperion {
             }
         }
 
-        if (m_transform->GetType() == Type::get<RectTransform>()) {
+        if (m_transform->GetType() == Type::Get<RectTransform>()) {
             static_cast<RectTransform *>(m_transform)->m_replace_on_destroy = false;
         }
         // At the very end we can destroy the transform.
@@ -294,38 +229,28 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void Entity::MakeSureRequiredComponentsArePresent(Type type) {
+    void Entity::MakeSureRequiredComponentsArePresent(Type *type) {
         // We use this function recursively to go up the type hierarchy and bail out when we reach the component base type.
-        if (type == Type::get<Component>()) {
+        if (type == Type::Get<Component>()) {
             return;
         }
 
-        MakeSureRequiredComponentIsPresent(type, Metadata::RequiresComponent0);
-        MakeSureRequiredComponentIsPresent(type, Metadata::RequiresComponent1);
-
-        // We also want to check the metadata in all our base types.
-        // NOTE: We do not use multiple base classes in our code, so we assume we only have one.
-        auto &base_types = type.get_base_classes();
-        HYP_ASSERT(base_types.size() >= 1);
-        for (auto it = base_types.rbegin(); it != base_types.rend(); it++) {
-            Type base_type = *it;
-            if (base_type.is_derived_from<Component>()) {
-                MakeSureRequiredComponentsArePresent(base_type);
-                break;
+        const Vector<Metadata> &metadata = type->GetMetadata();
+        for (Metadata data : metadata) {
+            if (data.kind == MetadataKind::RequireComponent) {
+                Type *component_type = data.data.type_pointer;
+                Component *required_component = GetComponent(component_type);
+                if (required_component == nullptr) {
+                    AddComponent(component_type);
+                }
             }
         }
-    }
-
-    //--------------------------------------------------------------
-    void Entity::MakeSureRequiredComponentIsPresent(Type type, Metadata component_metadata) {
-        Variant metadata = type.get_metadata(component_metadata);
-        if (metadata.is_valid()) {
-            HYP_ASSERT(metadata.is_type<Type>());
-            Type required_component_type = metadata.get_value<Type>();
-            Component *required_component = GetComponent(required_component_type);
-            if (required_component == nullptr) {
-                AddComponent(required_component_type);
-            }
+        
+        // We also want to check the metadata in all our base types.
+        // NOTE: We do not use multiple base classes in our code, so we only have one.
+        Type *base = type->GetBase();
+        if (base != nullptr) {
+            MakeSureRequiredComponentsArePresent(base);
         }
     }
 
@@ -348,7 +273,7 @@ namespace Hyperion {
         m_transform->m_derived_rotation = rotation;
         m_transform->OnCreate();
 
-        m_components[Type::get<Transform>()] = m_transform;
+        m_components[Type::Get<Transform>()] = m_transform;
 
         if (parent) {
             m_transform->SetParent(parent);
@@ -361,7 +286,7 @@ namespace Hyperion {
     void Entity::OnAfterDeserialization() {
         m_transform->OnCreate();
         for (auto [component_type, component] : m_components) {
-            if (!component_type.GetNativeType().is_derived_from<Transform>()) {
+            if (!component_type->IsDerivedFrom<Transform>()) {
                 component->OnCreate();
             }
         }
@@ -385,5 +310,11 @@ namespace Hyperion {
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return "Primitive";
         }
     }
+
+    //--------------------------------------------------------------
+    HYP_REFLECT_BEGIN(Entity)
+    HYP_REFLECT_BASE(Object)
+    HYP_REFLECT_CONSTRUCTOR([]() { return new Entity(); })
+    HYP_REFLECT_END()
 
 }

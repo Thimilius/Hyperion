@@ -7,9 +7,6 @@
 #include <unordered_set>
 #include <queue>
 
-//---------------------- Library Includes ----------------------
-#include <rttr/type.h>
-
 //--------------------------------------------------------------
 using int8 = int8_t;
 using int16 = int16_t;

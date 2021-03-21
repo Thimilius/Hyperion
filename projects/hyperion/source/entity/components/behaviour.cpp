@@ -30,4 +30,9 @@ namespace Hyperion {
         m_enabled = stream.ReadBool("enabled");
     }
 
+    //--------------------------------------------------------------
+    HYP_REFLECT_BEGIN(Behaviour)
+    HYP_REFLECT_BASE(Component)
+    HYP_REFLECT_END()
+
 }

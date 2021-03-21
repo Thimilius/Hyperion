@@ -194,8 +194,8 @@ namespace Hyperion {
         // Update the entity.
         Entity *entity = GetEntity();
         entity->m_transform = this;
-        entity->m_components.erase(Type::get<Transform>());
-        entity->m_components[Type::get<RectTransform>()] = this;
+        entity->m_components.erase(Type::Get<Transform>());
+        entity->m_components[Type::Get<RectTransform>()] = this;
 
         // Update the parent.
         Transform *parent = entity->m_transform->m_parent;
@@ -240,8 +240,8 @@ namespace Hyperion {
             Entity *entity = GetEntity();
             transform->m_entity = entity;
             entity->m_transform = transform;
-            entity->m_components.erase(Type::get<RectTransform>());
-            entity->m_components[Type::get<Transform>()] = transform;
+            entity->m_components.erase(Type::Get<RectTransform>());
+            entity->m_components[Type::Get<Transform>()] = transform;
 
             // Update the children.
             for (Transform *child : m_children) {
@@ -258,7 +258,7 @@ namespace Hyperion {
         Vec2 size = m_size;
         Vec2 parent_size;
         Vec2 parent_pivot;
-        if (m_parent && m_parent->GetType() == Type::get<RectTransform>()) {
+        if (m_parent && m_parent->GetType() == Type::Get<RectTransform>()) {
             RectTransform *parent_rect_transform = static_cast<RectTransform *>(m_parent);
             parent_pivot = parent_rect_transform->m_pivot;
             parent_size = parent_rect_transform->m_rect.size;
@@ -293,11 +293,6 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    RectTransform *RectTransform::Create() {
-        return new RectTransform();
-    }
-
-    //--------------------------------------------------------------
     bool RectTransformUtility::RectangleContainsScreenPoint(RectTransform *rect_transform, Vec2 screen_point) {
         Vec3 world_corners[4];
         rect_transform->GetWorldCorners(world_corners);
@@ -315,5 +310,11 @@ namespace Hyperion {
     float32 RectTransformUtility::IsLeft(Vec2 p0, Vec2 p1, Vec2 p2) {
         return ((p1.x - p0.x) * (p2.y - p0.y) - (p2.x - p0.x) * (p1.y - p0.y));
     }
+
+    //--------------------------------------------------------------
+    HYP_REFLECT_BEGIN(RectTransform)
+    HYP_REFLECT_BASE(Transform)
+    HYP_REFLECT_CONSTRUCTOR([]() { return new RectTransform(); })
+    HYP_REFLECT_END()
 
 }

@@ -15,7 +15,7 @@ namespace Hyperion {
     };
 
     class Collider : public Behaviour, public IEntityMessageListener {
-        HYP_REFLECT(Behaviour);
+        HYP_REFLECT();
     public:
         void SetEnabled(bool enabled) override;
 

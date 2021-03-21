@@ -8,7 +8,7 @@
 namespace Hyperion {
 
     class Renderer : public Behaviour {
-        HYP_REFLECT(Behaviour);
+        HYP_REFLECT();
     public:
         Material *GetMaterial() const { return m_material; }
         void SetMaterial(Material *material) { m_material = material; }

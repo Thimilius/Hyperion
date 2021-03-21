@@ -11,7 +11,7 @@
 namespace Hyperion::Editor {
 
     class EditorCameraController : public Component {
-        HYP_REFLECT(Component);
+        HYP_REFLECT();
     public:
         virtual Vec3 GetTargetPosition() const = 0;
 
@@ -25,9 +25,7 @@ namespace Hyperion::Editor {
     };
 
     class EditorFirstPersonCameraController : public EditorCameraController {
-        HYP_REFLECT(EditorCameraController);
-    public:
-        EditorFirstPersonCameraController() = default;
+        HYP_REFLECT();
     protected:
         Vec3 GetTargetPosition() const override;
 
@@ -35,6 +33,8 @@ namespace Hyperion::Editor {
         void Reset() override;
     protected:
         void OnCreate() override;
+    private:
+        EditorFirstPersonCameraController() = default;
     private:
         Vec3 m_velocity;
         float32 m_acceleration = 100.0f;
@@ -52,9 +52,7 @@ namespace Hyperion::Editor {
     };
 
     class EditorLookAroundCameraController : public EditorCameraController {
-        HYP_REFLECT(Component);
-    public:
-        EditorLookAroundCameraController() = default;
+        HYP_REFLECT();
     public:
         Vec3 GetTargetPosition() const override;
 
@@ -62,6 +60,8 @@ namespace Hyperion::Editor {
         void Reset() override;
     protected:
         void OnCreate() override;
+    private:
+        EditorLookAroundCameraController() = default;
     private:
         Vec3 GetPositionUnderMouse() const;
         Vec3 GetXZPlanePosition() const;

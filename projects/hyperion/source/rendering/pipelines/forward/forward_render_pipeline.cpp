@@ -133,7 +133,7 @@ namespace Hyperion::Rendering {
             }
             ResourceId material_id = material->GetResourceId();
 
-            if (widget->GetType() == Type::get<Text>()) {
+            if (widget->GetType() == Type::Get<Text>()) {
                 Text *text = static_cast<Text *>(widget);
                 Font *font = text->GetFont();
                 if (!font) {

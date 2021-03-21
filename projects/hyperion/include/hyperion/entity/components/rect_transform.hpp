@@ -44,7 +44,7 @@ namespace Hyperion {
     };
 
     class RectTransform final : public Transform {
-        HYP_REFLECT(Transform);
+        HYP_REFLECT();
     public:
         Rect GetRect() const { return m_rect; }
 
@@ -90,8 +90,6 @@ namespace Hyperion {
         void RecalculateTransform() override;
     private:
         RectTransform() : Transform("RectTransform") { }
-    private:
-        static RectTransform *Create();
     private:
         Rect m_rect = Rect(-50.0f, -50.0f, 100.0f, 100.0f);
         Vec2 m_size = Vec2(100.0f, 100.0f);

@@ -42,8 +42,9 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Graphic *Graphic::Create() {
-        return new Graphic();
-    }
+    HYP_REFLECT_BEGIN(Graphic)
+    HYP_REFLECT_BASE(Widget)
+    HYP_REFLECT_CONSTRUCTOR([]() { return new Graphic(); })
+    HYP_REFLECT_END()
 
 }

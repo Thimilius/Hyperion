@@ -7,7 +7,7 @@
 namespace Hyperion {
 
     class Image : public Object {
-        HYP_REFLECT(Object);
+        HYP_REFLECT();
     public:
         inline uint32 GetWidth() const { return m_width; }
         inline uint32 GetHeight() const { return m_height; }

@@ -63,7 +63,7 @@ namespace Hyperion::Scripting {
     }
 
     //--------------------------------------------------------------
-    MonoObject *MonoScriptingDriver::GetOrCreateManagedObject(Object *native_object, Type native_type) {
+    MonoObject *MonoScriptingDriver::GetOrCreateManagedObject(Object *native_object, Type *native_type) {
         MonoScriptingInstance *scripting_instance = static_cast<MonoScriptingInstance *>(native_object->GetScriptingInstance());
         if (scripting_instance) {
             return scripting_instance->GetManagedObject();
@@ -73,7 +73,7 @@ namespace Hyperion::Scripting {
     }
 
     //--------------------------------------------------------------
-    MonoObject *MonoScriptingDriver::GetOrCreateManagedObjectRaw(void *native, Type native_type) {
+    MonoObject *MonoScriptingDriver::GetOrCreateManagedObjectRaw(void *native, Type *native_type) {
         HYP_ASSERT(s_native_to_managed_classes.find(native_type) != s_native_to_managed_classes.end());
 
         auto it = s_native_to_managed_objects.find(native);
@@ -94,7 +94,7 @@ namespace Hyperion::Scripting {
     }
 
     //--------------------------------------------------------------
-    MonoObject *MonoScriptingDriver::CreateManagedObjectFromNativeType(Object *native_object, Type native_type) {
+    MonoObject *MonoScriptingDriver::CreateManagedObjectFromNativeType(Object *native_object, Type *native_type) {
         HYP_ASSERT(s_native_to_managed_classes.find(native_type) != s_native_to_managed_classes.end());
         return CreateManagedObjectFromManagedType(native_object, s_native_to_managed_classes[native_type], false);
     }
@@ -147,13 +147,13 @@ namespace Hyperion::Scripting {
     }
 
     //--------------------------------------------------------------
-    Type MonoScriptingDriver::GetNativeClass(MonoClass *native_class) {
+    Type *MonoScriptingDriver::GetNativeClass(MonoClass *native_class) {
         HYP_ASSERT(IsNativeClass(native_class));
-        return s_managed_to_native_classes[native_class].get_value<Type>();
+        return s_managed_to_native_classes[native_class];
     }
 
     //--------------------------------------------------------------
-    void MonoScriptingDriver::RegisterClass(Type native_class, const char *managed_namespace, const char *managed_name) {
+    void MonoScriptingDriver::RegisterClass(Type *native_class, const char *managed_namespace, const char *managed_name) {
         MonoClass *managed_class = s_assembly_core.FindClass(managed_namespace, managed_name);
         HYP_ASSERT(managed_class);
 

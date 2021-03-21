@@ -36,7 +36,7 @@ namespace Hyperion {
     };
 
     class World final : public Object {
-        HYP_REFLECT(Object);
+        HYP_REFLECT();
     public:
         inline WorldEnvironment &GetEnvironment() { return m_environment; }
         inline Physics::PhysicsWorld *GetPhysicsWorld() const { return m_physics_world; }
@@ -87,8 +87,6 @@ namespace Hyperion {
         void RemoveLight(Light *light);
         void AddMeshRenderer(MeshRenderer *mesh_renderer);
         void RemoveMeshRenderer(MeshRenderer *mesh_renderer);
-    private:
-        static World *Create();
     private:
         WorldEnvironment m_environment;
         Physics::PhysicsWorld *m_physics_world;

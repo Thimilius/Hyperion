@@ -20,7 +20,6 @@ namespace Hyperion {
 
     template<typename K, typename V>
     class TextureAtlas : public Asset {
-        HYP_REFLECT(Asset);
     public:
         inline AssetType GetAssetType() const override { return AssetType::TextureAtlas; }
 

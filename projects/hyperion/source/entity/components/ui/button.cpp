@@ -28,8 +28,9 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Button *Button::Create() {
-        return new Button();
-    }
+    HYP_REFLECT_BEGIN(Button)
+    HYP_REFLECT_BASE(Interactable)
+    HYP_REFLECT_CONSTRUCTOR([]() { return new Button(); })
+    HYP_REFLECT_END()
 
 }

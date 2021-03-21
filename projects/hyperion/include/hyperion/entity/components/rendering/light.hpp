@@ -9,7 +9,7 @@
 namespace Hyperion {
 
     class Light final : public Behaviour {
-        HYP_REFLECT(Behaviour);
+        HYP_REFLECT();
     public:
         inline void SetLightType(Rendering::LightType type) { m_data.type = type; }
         inline Rendering::LightType GetLightType() const { return m_data.type; }
@@ -30,8 +30,6 @@ namespace Hyperion {
         void OnDestroy() override;
     private:
         Light() : Behaviour("Light") { }
-    private:
-        static Light *Create();
     private:
         mutable Rendering::LightData m_data;
     };

@@ -14,8 +14,9 @@ using namespace Hyperion::Scripting;
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    Script *Script::Create() {
-        return new Script();
-    }
+    HYP_REFLECT_BEGIN(Script)
+    HYP_REFLECT_BASE(Component)
+    HYP_REFLECT_CONSTRUCTOR([]() { return new Script(); })
+    HYP_REFLECT_END()
 
 }

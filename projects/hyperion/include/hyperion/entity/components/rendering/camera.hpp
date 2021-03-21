@@ -19,7 +19,7 @@ namespace Hyperion {
     };
 
     class Camera final : public Behaviour, public IEntityMessageListener {
-        HYP_REFLECT(Behaviour);
+        HYP_REFLECT();
     public:
         inline Rendering::CameraProjectionMode GetProjectionMode() const { return m_data.projection_mode; }
         inline void SetProjectionMode(Rendering::CameraProjectionMode type) { m_data.projection_mode = type; }
@@ -64,8 +64,6 @@ namespace Hyperion {
         Camera() : Behaviour("Camera") { }
     private:
         void RecalculateMatricies();
-    private:
-        static Camera *Create();
     private:
         mutable Rendering::CameraData m_data;
 

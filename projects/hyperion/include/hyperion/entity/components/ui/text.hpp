@@ -10,7 +10,7 @@
 namespace Hyperion {
 
     class Text : public Widget {
-        HYP_REFLECT(Widget);
+        HYP_REFLECT();
     public:
         inline String GetText() const { return m_text; }
         void SetText(const String &text);
@@ -25,10 +25,6 @@ namespace Hyperion {
         void OnRebuildMesh(MeshBuilder &mesh_builder) override;
     private:
         Text() : Widget("Text") { }
-    private:
-        static Mesh *GenerateMeshForText(MeshBuilder &mesh_builder, Font *font, const String &text, Vec2 position, float32 scale, Color color);
-
-        static Text *Create();
     private:
         String m_text;
         Font *m_font = nullptr;

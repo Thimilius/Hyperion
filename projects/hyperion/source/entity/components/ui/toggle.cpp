@@ -38,8 +38,9 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Toggle *Toggle::Create() {
-        return new Toggle();
-    }
+    HYP_REFLECT_BEGIN(Toggle)
+    HYP_REFLECT_BASE(Interactable)
+    HYP_REFLECT_CONSTRUCTOR([]() { return new Toggle(); })
+    HYP_REFLECT_END()
 
 }

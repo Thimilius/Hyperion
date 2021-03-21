@@ -78,50 +78,9 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Mesh *Text::GenerateMeshForText(MeshBuilder &mesh_builder, Font *font, const String &text, Vec2 position, float32 scale, Color color) {
-        Vec2 intial_position = position;
-
-        MeshData mesh_data;
-        Vector<uint32> codepoints = StringUtils::GetCodepointsUtf8(text);
-        uint32 index = 0;
-        for (uint32 codepoint : codepoints) {
-            // We first handle the special characters.
-            switch (codepoint) {
-                case ' ': position.x += font->GetSpecialGlyphs().space.advance * scale; continue;
-                case '\t': position.x += font->GetSpecialGlyphs().space.advance * 4 * scale; continue; // Tab is equivalent to 4 whitespaces.
-                case '\r': continue; // Carriage return gets just straight up ignored. 
-                case '\n': {
-                    position.x = intial_position.x;
-                    position.y -= font->GetSize() * scale;
-                    continue;
-                }
-            }
-
-            FontAtlasElement element = font->GetElement(codepoint);
-            FontGlyph glyph = element.payload;
-
-            float32 x_pos = position.x + glyph.bearing.x * scale;
-            float32 y_pos = position.y - (glyph.size.y - glyph.bearing.y) * scale;
-            float32 width = glyph.size.x * scale;
-            float32 height = glyph.size.y * scale;
-
-            mesh_builder.AddVertex(Vec3(x_pos, y_pos + height, 0.0f), color, element.uv_top_left);
-            mesh_builder.AddVertex(Vec3(x_pos + width, y_pos + height, 0.0f), color, element.uv_top_right);
-            mesh_builder.AddVertex(Vec3(x_pos + width, y_pos, 0.0f), color, element.uv_bottom_right);
-            mesh_builder.AddVertex(Vec3(x_pos, y_pos, 0.0f), color, element.uv_bottom_left);
-            mesh_builder.AddTriangle(index, index + 1, index + 2);
-            mesh_builder.AddTriangle(index, index + 2, index + 3);
-            
-            index += 4;
-            position.x += glyph.advance * scale;
-        }
-
-        return mesh_builder.CreateMesh();
-    }
-
-    //--------------------------------------------------------------
-    Text *Text::Create() {
-        return new Text();
-    }
+    HYP_REFLECT_BEGIN(Text)
+    HYP_REFLECT_BASE(Widget)
+    HYP_REFLECT_CONSTRUCTOR([]() { return new Text(); })
+    HYP_REFLECT_END()
 
 }

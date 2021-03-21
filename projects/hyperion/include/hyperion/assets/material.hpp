@@ -11,7 +11,6 @@
 namespace Hyperion {
 
     class Material final : public Asset, public IShaderRecompilationListener {
-        HYP_REFLECT(Asset);
     private:
         union MaterialPropertyStorage;
         struct MaterialProperty;

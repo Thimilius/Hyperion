@@ -306,9 +306,12 @@ namespace Hyperion::Rendering {
                 GLuint texture_object = 0;
                 if (property.type == MaterialPropertyType::Texture) {
                     ResourceId texture_id = property.storage.texture;
-                    HYP_ASSERT(m_textures.find(texture_id) != m_textures.end());
-                    OpenGLTexture &texture = m_textures[texture_id];
-                    texture_object = texture.texture;
+                    if (texture_id != 0) {
+                        HYP_ASSERT(m_textures.find(texture_id) != m_textures.end());
+                        OpenGLTexture &texture = m_textures[texture_id];
+                        texture_object = texture.texture;
+                    }
+                    
                 } else {
                     ResourceId render_texture_id = property.storage.render_texture.render_texture;
                     HYP_ASSERT(m_render_textures.find(render_texture_id) != m_render_textures.end());

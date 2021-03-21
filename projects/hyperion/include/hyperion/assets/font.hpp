@@ -31,7 +31,6 @@ namespace Hyperion {
     using FontAtlasMap = Map<uint32, FontAtlasElement>;
 
     class Font final : public Asset {
-        HYP_REFLECT(Asset);
     public:
         AssetType GetAssetType() const override { return AssetType::Font; }
 

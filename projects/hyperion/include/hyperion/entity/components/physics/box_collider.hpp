@@ -7,7 +7,7 @@
 namespace Hyperion {
 
     class BoxCollider final : public Collider {
-        HYP_REFLECT(Collider);
+        HYP_REFLECT();
     public:
         ColliderType GetColliderType() const { return ColliderType::BoxCollider; }
 
@@ -32,8 +32,6 @@ namespace Hyperion {
         BoxCollider() : Collider("BoxCollider") { }
     private:
         void NotifyColliderChange();
-    private:
-        static BoxCollider *Create();
     private:
         Vec3 m_origin = Vec3::Zero();
         Vec3 m_size = Vec3::One();

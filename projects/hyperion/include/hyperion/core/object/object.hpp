@@ -4,6 +4,7 @@
 #include "hyperion/common.hpp"
 #include "hyperion/core/object/guid.hpp"
 #include "hyperion/core/object/non_copyable.hpp"
+#include "hyperion/core/object/type.hpp"
 #include "hyperion/core/serialization/serializable.hpp"
 #include "hyperion/scripting/scripting_object.hpp"
 
@@ -26,8 +27,6 @@ namespace Hyperion {
         // All objects should be destroyed through the static Object::Destroy function.
         virtual ~Object();
     public:
-        inline Type GetType() const { return get_type(); }
-        
         inline ObjectId GetId() const { return m_id; }
         inline ObjectGuid GetGuid() const { return m_guid; }
 

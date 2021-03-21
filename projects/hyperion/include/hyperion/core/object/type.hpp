@@ -2,78 +2,94 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
+#include "hyperion/core/object/non_copyable.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
-    class MyType;
-    struct MyTypeData;
+    class Type;
 }
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-#define HYP_OBJECT()                                               \
-    public:                                                        \
-        inline MyType GetType() const { return s_type; }           \
-    public:                                                        \
-        inline static MyType *GetTypePointer() { return &s_type; } \
-    private:                                                       \
-        inline static MyTypeData *InitializeType();          \
-    private:                                                       \
-        inline static MyType s_type = InitializeType;              \
-    private:                                                       \
-        friend class Hyperion::MyType;                             \
-    private:
+    enum class MetadataKind {
+        Invalid,
 
-#define HYP_OBJECT_REFLECT_BEGIN(type)                                                       \
-    MyTypeData *type::InitializeType() {                                                     \
-        static const std::unique_ptr<MyTypeData> type_data = std::make_unique<MyTypeData>(); \
-        type_data->name = #type;
-#define HYP_OBJECT_REFLECT_BASE(base_type) type_data->base = base_type::GetTypePointer();
-#define HYP_OBJECT_REFLECT_END() return type_data.get(); \
-    }
-
-    typedef MyTypeData *(*TypeInitializerFunction)();
-
-    struct MyTypeData final {
-        String name;
-        MyType *base = nullptr;
+        RequireComponent,
     };
-    
-    class MyType final {
-    public:
-        MyType() = default;
-        MyType(TypeInitializerFunction initializer_function);
-    public:
-        bool IsValid() const { return m_data != nullptr; }
 
-        bool IsDerivedFrom(MyType base);
+    struct Metadata {
+        MetadataKind kind = MetadataKind::Invalid;
+        union MetadataData {
+            bool boolean;
+            void *opaque_pointer;
+            Type *type_pointer;
+        } data;
+    };
+
+    using TypeConstructorFunction = std::function<void*()>;
+    
+    struct TypeData final {
+        String name;
+        Type *base = nullptr;
+        TypeConstructorFunction constructor = nullptr;
+        Vector<Metadata> metadata;
+    };
+
+    typedef TypeData *(*TypeInitializerFunction)();
+    
+    class Type final : public INonCopyable {
+    public:
+        Type(TypeInitializerFunction initializer_function);
+    public:
+        bool IsDerivedFrom(Type *base);
         template<typename T> inline bool IsDerivedFrom() { return IsDerivedFrom(Get<T>()); }
 
-        inline String GetName() const { return IsValid() ? m_data->name : "invalid"; }
+        inline String GetName() const { return m_data->name; }
 
-        inline bool HasBase() const { return IsValid() ? m_data->base != nullptr : false; }
-        inline MyType GetBase() const { return IsValid() ? (m_data->base != nullptr ? *m_data->base : MyType()) : MyType(); }
+        inline bool HasBase() const { return m_data->base != nullptr; }
+        inline Type *GetBase() const { return m_data->base; }
 
-        inline bool operator==(const MyType &other) const { return m_data == other.m_data; }
-        inline bool operator!=(const MyType &other) const { return !(*this == other); }
+        const Vector<Metadata> &GetMetadata() const { return m_data->metadata; }
+
+        inline bool HasConstructor() const { return m_data->constructor != nullptr; }
+        inline void *Create() { HYP_ASSERT(HasConstructor()); return m_data->constructor(); }
+        template<typename T> inline T *CreateAs() const { HYP_ASSERT(HasConstructor()); return reinterpret_cast<T *>(m_data->constructor()); }
+
+        inline bool operator==(const Type *other) const { return m_data == other->m_data; }
+        inline bool operator!=(const Type *other) const { return !(*this == other); }
     public:
-        template<typename T> inline static MyType Get() { return T::s_type; }
+        template<typename T> inline static Type *Get() { return T::GetStaticType(); }
+        static Type *GetByName(const String &name);
     private:
-        MyTypeData *m_data = nullptr;
+        TypeData *m_data = nullptr;
     private:
-        friend struct std::hash<Hyperion::MyType>;
+        inline static Vector<Type *> s_types;
     };
 
 }
 
-namespace std {
+#define HYP_REFLECT()                                                      \
+    public:                                                                \
+        inline virtual Hyperion::Type *GetType() const { return &s_type; } \
+    public:                                                                \
+        inline static Hyperion::Type *GetStaticType() { return &s_type; }  \
+    private:                                                               \
+        static Hyperion::TypeData *InitializeType();                       \
+    private:                                                               \
+        inline static Hyperion::Type s_type = InitializeType;              \
+    private:
 
-    template <>
-    struct hash<Hyperion::MyType> {
-        std::size_t operator()(const Hyperion::MyType &type) const {
-            return hash<void *>()(type.m_data);
-        }
-    };
-
-}
+#define HYP_REFLECT_BEGIN(type)                                                                              \
+    Hyperion::TypeData *type::InitializeType() {                                                             \
+        static const std::unique_ptr<Hyperion::TypeData> type_data = std::make_unique<Hyperion::TypeData>(); \
+        type_data->name = #type;
+#define HYP_REFLECT_BASE(base_type) type_data->base = base_type::GetStaticType();
+#define HYP_REFLECT_CONSTRUCTOR(constructor_function) type_data->constructor = constructor_function;
+#define HYP_REFLECT_METADATA_POINTER(k, p) {     \
+        Hyperion::Metadata metadata;             \
+        metadata.kind = k;                       \
+        metadata.data.opaque_pointer = p;        \
+        type_data->metadata.push_back(metadata); \
+    }
+#define HYP_REFLECT_END() return type_data.get(); }
