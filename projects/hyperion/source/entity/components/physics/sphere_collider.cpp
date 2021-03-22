@@ -15,7 +15,7 @@ namespace Hyperion {
     void SphereCollider::OnEntityMessage(EntityMessage message) {
         Collider::OnEntityMessage(message);
 
-        if (message.type == EntityMessageType::TransformChanged) {
+        if (message == EntityMessage::TransformChanged) {
             if (IsActiveAndEnabled()) {
                 GetWorld()->GetPhysicsWorld()->UpdateSphereColliderTransform(this);
             }

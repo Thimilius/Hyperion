@@ -12,12 +12,16 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void MeshRenderer::OnCreate() {
+        Renderer::OnCreate();
+
         GetWorld()->AddMeshRenderer(this);
     }
 
     //--------------------------------------------------------------
     void MeshRenderer::OnDestroy() {
         GetWorld()->RemoveMeshRenderer(this);
+
+        Renderer::OnDestroy();
     }
 
     //--------------------------------------------------------------

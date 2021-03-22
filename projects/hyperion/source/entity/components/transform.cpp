@@ -90,7 +90,7 @@ namespace Hyperion {
     void Transform::NotifyTransformChanged() {
         RecalculateTransform();
 
-        GetEntity()->DispatchMessage({ EntityMessageType::TransformChanged, nullptr });
+        GetEntity()->DispatchMessage(EntityMessage::TransformChanged);
 
         for (Transform *child : m_children) {
             child->NotifyTransformChanged();
@@ -117,7 +117,7 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Transform::NotifyTransformParentChanged() {
-        GetEntity()->DispatchMessage({ EntityMessageType::TransformParentChanged, nullptr });
+        GetEntity()->DispatchMessage(EntityMessage::TransformParentChanged);
 
         for (Transform *child : m_children) {
             child->NotifyTransformParentChanged();

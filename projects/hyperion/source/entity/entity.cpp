@@ -99,13 +99,6 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Entity::DispatchMessage(EntityMessage message) {
-        switch (message.type) {
-            case EntityMessageType::ComponentDestroyed: {
-                m_components.erase(message.data.component_destroyed.component->GetType());
-                break;
-            }
-        }
-
         for (IEntityMessageListener *listener : m_message_listeners) {
             listener->OnEntityMessage(message);
         }
@@ -287,7 +280,7 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Entity::NotifyActivationChanged() {
-        DispatchMessage({ EntityMessageType::ActivationChanged, nullptr });
+        DispatchMessage(EntityMessage::ActivationChanged);
 
         for (Transform *child : m_transform->m_children) {
             child->GetEntity()->NotifyActivationChanged();

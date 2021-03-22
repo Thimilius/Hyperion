@@ -94,7 +94,7 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Camera::OnEntityMessage(EntityMessage message) {
-        if (message.type == EntityMessageType::TransformChanged) {
+        if (message == EntityMessage::TransformChanged) {
             RecalculateMatricies();
         }
     }
@@ -121,7 +121,7 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Camera::OnCreate() {
-        Component::OnCreate();
+        Behaviour::OnCreate();
 
         RecalculateMatricies();
 
@@ -132,7 +132,7 @@ namespace Hyperion {
     void Camera::OnDestroy() {
         GetEntity()->UnregisterMessageListener(this);
 
-        Component::OnDestroy();
+        Behaviour::OnDestroy();
     }
 
     //--------------------------------------------------------------

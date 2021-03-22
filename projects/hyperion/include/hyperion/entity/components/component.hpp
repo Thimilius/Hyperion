@@ -31,7 +31,7 @@ namespace Hyperion {
         Component(const String &name) : Object(name) { }
     protected:
         virtual void OnCreate() { }
-        virtual void OnDestroy() override { }
+        virtual void OnDestroy() override;
     private:
         Entity *m_entity = nullptr;
     private:

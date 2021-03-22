@@ -34,6 +34,18 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void Component::OnDestroy() {
+        auto range = m_entity->m_components.equal_range(GetType());
+        for (auto it = range.first; it != range.second; ) {
+            if (it->second == this) {
+                it = m_entity->m_components.erase(it);
+            } else {
+                it++;
+            }
+        }
+    }
+
+    //--------------------------------------------------------------
     HYP_REFLECT_BEGIN(Component)
     HYP_REFLECT_BASE(Object)
     HYP_REFLECT_END()

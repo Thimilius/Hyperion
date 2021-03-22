@@ -16,6 +16,7 @@ namespace Hyperion {
         Invalid,
 
         RequireComponent,
+        DisallowMultipleComponent,
     };
 
     struct Metadata {

@@ -23,12 +23,12 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Widget::OnEntityMessage(EntityMessage message) {
-        switch (message.type) {
-            case EntityMessageType::TransformChanged: {
+        switch (message) {
+            case EntityMessage::TransformChanged: {
                 SetDirty();
                 break;
             }
-            case EntityMessageType::TransformParentChanged: {
+            case EntityMessage::TransformParentChanged: {
                 m_canvas->UnregisterWidget(this);
 
                 m_canvas = GetEntity()->GetComponentInParent<Canvas>();

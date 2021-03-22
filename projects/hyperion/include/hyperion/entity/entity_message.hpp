@@ -9,23 +9,11 @@ namespace Hyperion {
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    enum class EntityMessageType {
+    enum class EntityMessage {
         TransformChanged,
         TransformParentChanged,
 
         ActivationChanged,
-
-        ComponentDestroyed,
-    };
-
-    struct EntityMessage {
-        EntityMessageType type;
-
-        union EntityMessageData {
-            struct ComponentDestroyed {
-                Component *component;
-            } component_destroyed;
-        } data;
     };
 
     class IEntityMessageListener {

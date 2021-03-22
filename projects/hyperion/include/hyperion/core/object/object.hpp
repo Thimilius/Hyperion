@@ -23,10 +23,6 @@ namespace Hyperion {
     class Object : public Scripting::ScriptingObject, public INonCopyable, public ISerializable {
         HYP_REFLECT();
     public:
-        // We would like to have the destructor private, but RTTR does not let us.
-        // All objects should be destroyed through the static Object::Destroy function.
-        virtual ~Object();
-    public:
         inline ObjectId GetId() const { return m_id; }
         inline ObjectGuid GetGuid() const { return m_guid; }
 
@@ -51,6 +47,7 @@ namespace Hyperion {
     protected:
         Object();
         Object(const String &name);
+        virtual ~Object();
     protected:
         virtual void OnClone(Object *clone);
         virtual void OnDestroy() { }
