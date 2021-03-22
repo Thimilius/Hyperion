@@ -264,7 +264,7 @@ namespace Hyperion {
         for (auto it = m_components.begin(); it != m_components.end(); ) {
             auto [component_type, component] = *it;
             if (component_type->IsDerivedFrom(Type::Get<Transform>())) {
-                ++it;
+                it++;
             } else {
                 it = m_components.erase(it);
                 DestroyImmediate(component);

@@ -2,7 +2,6 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/object/object.hpp"
-#include "hyperion/scripting/scripting_type.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {

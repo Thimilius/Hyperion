@@ -42,10 +42,6 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     void MonoScriptingDriver::Shutdown() {
-        for (auto [managed_class, scripting_type] : s_scripting_types) {
-            delete scripting_type;
-        }
-
         // We do not need to bother explicitly unloading the runtime domain.
         s_domain_root.SetActive();
         s_domain_root.Finalize();
@@ -66,7 +62,7 @@ namespace Hyperion::Scripting {
     MonoObject *MonoScriptingDriver::GetOrCreateManagedObject(Object *native_object, Type *native_type) {
         MonoScriptingInstance *scripting_instance = static_cast<MonoScriptingInstance *>(native_object->GetScriptingInstance());
         if (scripting_instance) {
-            return scripting_instance->GetManagedObject();
+            return scripting_instance->GetMonoObject();
         } else {
             return CreateManagedObjectFromNativeType(native_object, native_type);
         }

@@ -7,7 +7,6 @@
 #include "hyperion/core/object/object.hpp"
 #include "hyperion/entity/components/script.hpp"
 #include "hyperion/modules/mono/mono_scripting_instance.hpp"
-#include "hyperion/modules/mono/mono_scripting_type.hpp"
 #include "hyperion/modules/mono/managed/managed_assembly.hpp"
 #include "hyperion/modules/mono/managed/managed_domain.hpp"
 #include "hyperion/modules/mono/managed/managed_method.hpp"

@@ -9,10 +9,17 @@ namespace Hyperion::Scripting {
         OnDestroy,
     };
 
+    class ScriptingType {
+    public:
+        virtual ~ScriptingType() = default;
+    };
+
     class ScriptingInstance {
     public:
         virtual ~ScriptingInstance() = default;
     public:
+        virtual ScriptingType *GetScriptingType() const = 0;
+
         virtual void SendMessage(ScriptingMessage message) = 0;
     };
 

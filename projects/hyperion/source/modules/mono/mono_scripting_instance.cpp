@@ -13,9 +13,19 @@
 namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
-    MonoScriptingInstance::MonoScriptingInstance(MonoObject *managed_object, bool is_script_component) {
-        m_managed_object = managed_object;
+    MonoScriptingType::MonoScriptingType(MonoClass *mono_class) {
+        m_mono_class = mono_class;
+    }
+
+    //--------------------------------------------------------------
+    MonoScriptingInstance::MonoScriptingInstance(MonoObject *mono_object, bool is_script_component) {
+        m_mono_object = mono_object;
         m_is_script_component = is_script_component;
+    }
+
+    //--------------------------------------------------------------
+    ScriptingType *MonoScriptingInstance::GetScriptingType() const {
+        return MonoScriptingDriver::GetOrCreateScriptingType(mono_object_get_class(m_mono_object));
     }
 
     //--------------------------------------------------------------
@@ -43,7 +53,7 @@ namespace Hyperion::Scripting {
 
         // The OnDestroy message gets processed by every scripting instance for cleanup.
         if (message == ScriptingMessage::OnDestroy) {
-            MonoScriptingDriver::UnregisterObject(m_managed_object, m_is_script_component);
+            MonoScriptingDriver::UnregisterObject(m_mono_object, m_is_script_component);
             delete this; // I don't really know how I feel about this...
         }
     }
@@ -53,9 +63,9 @@ namespace Hyperion::Scripting {
         if (Engine::GetMode() == EngineMode::EditorRuntime) {
             MonoClass *script_class = MonoScriptingDriver::GetScriptClass();
             MonoMethod *method = mono_class_get_method_from_name(script_class, name, parameter_count);
-            MonoMethod *virtual_method = mono_object_get_virtual_method(m_managed_object, method);
+            MonoMethod *virtual_method = mono_object_get_virtual_method(m_mono_object, method);
             MonoObject *exception = nullptr;
-            mono_runtime_invoke(virtual_method, m_managed_object, args, &exception);
+            mono_runtime_invoke(virtual_method, m_mono_object, args, &exception);
         }
     }
 
