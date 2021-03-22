@@ -35,8 +35,6 @@ namespace Hyperion {
 
     using EntityTag = String;
 
-    // NOTE: Should we allow multiple components of the same type?
-    // Currently the GetComponent implementations assume only one component of a certain type.
     class Entity final : public Object {
         HYP_REFLECT();
     public:
@@ -59,13 +57,11 @@ namespace Hyperion {
         inline bool AddTag(const EntityTag &tag) { return m_tags.insert(tag).second; }
         inline void RemoveTag(const EntityTag &tag) { m_tags.erase(tag); }
 
-        const Map<Type *, Component *> &GetComponents() const { return m_components; }
-        inline Transform *GetTransform() { return m_transform; }
-
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value && !std::is_same<Transform, T>::value>>
         T *AddComponent() {
             Type *type = Type::Get<T>();
-            return static_cast<T *>(AddComponent(type));
+            Component *component = AddComponent(type);
+            return static_cast<T *>(component);
         }
         Component *AddComponent(Type *type);
 
@@ -79,34 +75,31 @@ namespace Hyperion {
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         T *GetComponentInChildren() const {
-            T *component = GetComponent<T>();
-            if (component) {
-                return component;
-            } else {
-                for (Transform *child : m_transform->m_children) {
-                    component = child->GetEntity()->GetComponentInChildren<T>();
-                    if (component) {
-                        return component;
-                    }
-                }
-            }
-
-            return nullptr;
+            Type *type = Type::Get<T>();
+            Component *component = GetComponentInChildren(type);
+            return static_cast<T *>(component);
         }
+        Component *GetComponentInChildren(Type *type) const;
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
         T *GetComponentInParent() const {
-            T *component = GetComponent<T>();
-            if (component) {
-                return component;
-            } else {
-                Transform *parent = m_transform->m_parent;
-                if (parent != nullptr) {
-                    return parent->GetEntity()->GetComponentInParent<T>();
+            Type *type = Type::Get<T>();
+            Component *component = GetComponentInParent(type);
+            return static_cast<T *>(component);
+        }
+        Component *GetComponentInParent(Type *type) const;
+
+        template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
+        Vector<T *> GetComponents() const {
+            Vector<T *> components;
+
+            for (auto [component_type, component] : m_components) {
+                if (component_type->IsDerivedFrom<T>()) {
+                    components.push_back(static_cast<T *>(component));
                 }
             }
 
-            return nullptr;
+            return components;
         }
 
         template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && !std::is_same<Component, T>::value>>
@@ -144,6 +137,8 @@ namespace Hyperion {
             return components;
         }
 
+        inline Transform *GetTransform() { return m_transform; }
+
         void DispatchMessage(EntityMessage message);
         void RegisterMessageListener(IEntityMessageListener *listener);
         void UnregisterMessageListener(IEntityMessageListener *listener);
@@ -163,18 +158,17 @@ namespace Hyperion {
 
         void MakeSureRequiredComponentsArePresent(Type *type);
 
-        void OnCreate(const Vec3 &position, const Quaternion &rotation, Transform *parent, World *world);
         void OnAfterDeserialization();
     private:
         static String GetPrimitiveName(EntityPrimitive primitive);
     private:
         World *m_world = nullptr;
-        bool m_active = true;
 
+        bool m_active = true;
         LayerMask m_layer = LayerMask::Default;
         Set<EntityTag> m_tags;
 
-        Map<Type *, Component *> m_components; // TODO: We definitely need a multimap here, so we can properly add multiple scripts.
+        MultiMap<Type *, Component *> m_components;
         Transform *m_transform = nullptr;
 
         Vector<IEntityMessageListener *> m_message_listeners;

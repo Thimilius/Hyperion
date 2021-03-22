@@ -27,6 +27,9 @@ using Vector = std::vector<T>;
 template<typename Key, typename Value>
 using Map = std::unordered_map<Key, Value>;
 
+template<typename Key, typename Value>
+using MultiMap = std::unordered_multimap<Key, Value>;
+
 template<typename T>
 using Set = std::unordered_set<T>;
 

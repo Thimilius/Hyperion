@@ -195,7 +195,7 @@ namespace Hyperion {
         Entity *entity = GetEntity();
         entity->m_transform = this;
         entity->m_components.erase(Type::Get<Transform>());
-        entity->m_components[Type::Get<RectTransform>()] = this;
+        entity->m_components.emplace(Type::Get<RectTransform>(), this);
 
         // Update the parent.
         Transform *parent = entity->m_transform->m_parent;
@@ -241,7 +241,7 @@ namespace Hyperion {
             transform->m_entity = entity;
             entity->m_transform = transform;
             entity->m_components.erase(Type::Get<RectTransform>());
-            entity->m_components[Type::Get<Transform>()] = transform;
+            entity->m_components.emplace(Type::Get<Transform>(), transform);
 
             // Update the children.
             for (Transform *child : m_children) {

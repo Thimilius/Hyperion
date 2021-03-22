@@ -34,14 +34,15 @@ namespace Hyperion {
     Component *Entity::AddComponent(Type *type) {
         HYP_ASSERT(type);
         HYP_ASSERT(type->IsDerivedFrom<Component>());
-        HYP_ASSERT_MESSAGE(type->HasConstructor(), "Failed to add component because the component does not have a constructor!");
+        HYP_ASSERT(type != Type::Get<Transform>());
+        HYP_ASSERT_MESSAGE(type->HasConstructor(), "Failed to add component because the component type does not have a constructor!");
 
         Component *component = type->CreateAs<Component>();
         component->m_entity = this;
-        m_components[type] = component;
+        m_components.emplace(type, component);
 
         MakeSureRequiredComponentsArePresent(type);
-
+        
         component->OnCreate();
 
         return component;
@@ -49,9 +50,47 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     Component *Entity::GetComponent(Type *type) const {
+        HYP_ASSERT(type);
+
         for (auto [component_type, component] : m_components) {
             if (component_type->IsDerivedFrom(type)) {
                 return component;
+            }
+        }
+
+        return nullptr;
+    }
+
+    //--------------------------------------------------------------
+    Component *Entity::GetComponentInChildren(Type *type) const {
+        HYP_ASSERT(type);
+
+        Component *component = GetComponent(type);
+        if (component) {
+            return component;
+        } else {
+            for (Transform *child : m_transform->m_children) {
+                component = child->GetEntity()->GetComponentInChildren(type);
+                if (component) {
+                    return component;
+                }
+            }
+        }
+
+        return nullptr;
+    }
+
+    //--------------------------------------------------------------
+    Component *Entity::GetComponentInParent(Type *type) const {
+        HYP_ASSERT(type);
+
+        Component *component = GetComponent(type);
+        if (component) {
+            return component;
+        } else {
+            Transform *parent = m_transform->m_parent;
+            if (parent != nullptr) {
+                return parent->GetEntity()->GetComponentInParent(type);
             }
         }
 
@@ -74,11 +113,15 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Entity::RegisterMessageListener(IEntityMessageListener *listener) {
+        HYP_ASSERT(listener);
+
         m_message_listeners.push_back(listener);
     }
 
     //--------------------------------------------------------------
     void Entity::UnregisterMessageListener(IEntityMessageListener *listener) {
+        HYP_ASSERT(listener);
+
         auto begin = m_message_listeners.begin();
         auto end = m_message_listeners.end();
         if (std::find(begin, end, listener) != end) {
@@ -136,7 +179,30 @@ namespace Hyperion {
     //--------------------------------------------------------------
     Entity *Entity::Create(const String &name, const Vec3 &position, const Quaternion &rotation, Transform *parent, World *world) {
         Entity *entity = new Entity(name);
-        entity->OnCreate(position, rotation, parent, world);
+
+        if (parent) {
+            world = parent->GetWorld();
+        } else if (!world) {
+            world = WorldManager::GetActiveWorld();
+        }
+        HYP_ASSERT(world);
+        entity->m_world = world;
+
+        entity->m_transform = new Transform();
+        entity->m_transform->m_entity = entity;
+        entity->m_transform->m_local_position = position;
+        entity->m_transform->m_derived_position = position;
+        entity->m_transform->m_local_rotation = rotation;
+        entity->m_transform->m_derived_rotation = rotation;
+        entity->m_transform->OnCreate();
+        entity->m_components.emplace(Type::Get<Transform>(), entity->m_transform);
+
+        if (parent) {
+            entity->m_transform->SetParent(parent);
+        } else {
+            entity->m_world->AddRootEntity(entity);
+        }
+
         return entity;
     }
 
@@ -251,34 +317,6 @@ namespace Hyperion {
         Type *base = type->GetBase();
         if (base != nullptr) {
             MakeSureRequiredComponentsArePresent(base);
-        }
-    }
-
-    //--------------------------------------------------------------
-    void Entity::OnCreate(const Vec3 &position, const Quaternion &rotation, Transform *parent, World *world) {
-        if (parent) {
-            world = parent->GetWorld();
-        } else if (!world) {
-            world = WorldManager::GetActiveWorld();
-        }
-        HYP_ASSERT(world);
-        m_world = world;
-
-        m_transform = new Transform();
-
-        m_transform->m_entity = this;
-        m_transform->m_local_position = position;
-        m_transform->m_derived_position = position;
-        m_transform->m_local_rotation = rotation;
-        m_transform->m_derived_rotation = rotation;
-        m_transform->OnCreate();
-
-        m_components[Type::Get<Transform>()] = m_transform;
-
-        if (parent) {
-            m_transform->SetParent(parent);
-        } else {
-            m_world->AddRootEntity(this);
         }
     }
 
