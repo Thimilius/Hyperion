@@ -4,21 +4,21 @@
 #include <mono/jit/jit.h>
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/modules/mono/managed/managed_method.hpp"
+#include "hyperion/modules/mono/managed/mono_managed_method.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
 
-    class ManagedAssembly {
+    class MonoManagedAssembly {
     public:
-        ManagedAssembly() = default;
-        ManagedAssembly(MonoAssembly *assembly);
+        MonoManagedAssembly() = default;
+        MonoManagedAssembly(MonoAssembly *mono_assembly);
     public:
-        ManagedMethod FindMethod(const String &description);
+        MonoManagedMethod FindMethod(const String &description);
         MonoClass *FindClass(const String &name_space, const String &name);
     private:
-        MonoAssembly *m_assembly;
-        MonoImage *m_assembly_image;
+        MonoAssembly *m_mono_assembly = nullptr;
+        MonoImage *m_mono_assembly_image = nullptr;
     };
 
 }

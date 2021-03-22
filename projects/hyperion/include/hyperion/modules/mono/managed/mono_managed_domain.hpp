@@ -4,29 +4,29 @@
 #include <mono/jit/jit.h>
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/modules/mono/managed/managed_assembly.hpp"
+#include "hyperion/modules/mono/managed/mono_managed_assembly.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
 
-    class ManagedDomain {
+    class MonoManagedDomain {
     public:
-        ManagedDomain() = default;
-        ManagedDomain(MonoDomain *domain);
+        MonoManagedDomain() = default;
+        MonoManagedDomain(MonoDomain *mono_domain);
     public:
-        inline MonoDomain *GetMonoDomain() const { return m_domain; }
+        inline MonoDomain *GetMonoDomain() const { return m_mono_domain; }
 
         void SetActive();
 
-        ManagedAssembly LoadAssembly(const String &path);
+        MonoManagedAssembly LoadAssembly(const String &path);
 
         void Finalize();
         void Unload();
     public:
-        static ManagedDomain Create(char *name);
+        static MonoManagedDomain Create(char *name);
         static void SetCurrentMainThread();
     private:
-        MonoDomain *m_domain;
+        MonoDomain *m_mono_domain = nullptr;
     };
 
 }

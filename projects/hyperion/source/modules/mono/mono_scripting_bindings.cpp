@@ -56,7 +56,7 @@ namespace Hyperion::Scripting {
     void Binding_Entity_Ctor(MonoObject *managed_object, MonoString *managed_name) {
         Entity *native_entity;
         if (managed_name == nullptr) {
-            native_entity = Entity::Create("Entity");
+            native_entity = Entity::Create();
         } else {
             char *native_name = mono_string_to_utf8(managed_name);
             native_entity = Entity::Create(native_name);

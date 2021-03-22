@@ -6,14 +6,14 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
 
-    class ManagedMethod {
+    class MonoManagedMethod {
     public:
-        ManagedMethod() = default;
-        ManagedMethod(MonoMethod *method);
+        MonoManagedMethod() = default;
+        MonoManagedMethod(MonoMethod *mono_method);
     public:
         void Invoke(void *object, void **parameters);
     private:
-        MonoMethod *m_method = nullptr;
+        MonoMethod *m_mono_method = nullptr;
     };
 
 }

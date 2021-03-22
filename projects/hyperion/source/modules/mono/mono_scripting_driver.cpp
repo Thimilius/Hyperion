@@ -198,8 +198,8 @@ namespace Hyperion::Scripting {
             HYP_LOG_INFO("Scripting", "Initialized Mono scripting driver!");
         }
 
-        s_domain_root = ManagedDomain(root_domain);
-        ManagedDomain::SetCurrentMainThread();
+        s_domain_root = MonoManagedDomain(root_domain);
+        MonoManagedDomain::SetCurrentMainThread();
 
         ReloadRuntimeDomain();
     }
@@ -214,7 +214,7 @@ namespace Hyperion::Scripting {
         if (s_domain_runtime.GetMonoDomain() != nullptr) {
             s_domain_runtime.Unload();
         }
-        s_domain_runtime = ManagedDomain::Create("Hyperion.RuntimeDomain");
+        s_domain_runtime = MonoManagedDomain::Create("Hyperion.RuntimeDomain");
         s_domain_runtime.SetActive();
 
         s_assembly_core = s_domain_runtime.LoadAssembly("data/managed/Hyperion.Core.dll");

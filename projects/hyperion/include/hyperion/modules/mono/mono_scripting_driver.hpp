@@ -7,9 +7,9 @@
 #include "hyperion/core/object/object.hpp"
 #include "hyperion/entity/components/script.hpp"
 #include "hyperion/modules/mono/mono_scripting_instance.hpp"
-#include "hyperion/modules/mono/managed/managed_assembly.hpp"
-#include "hyperion/modules/mono/managed/managed_domain.hpp"
-#include "hyperion/modules/mono/managed/managed_method.hpp"
+#include "hyperion/modules/mono/managed/mono_managed_assembly.hpp"
+#include "hyperion/modules/mono/managed/mono_managed_domain.hpp"
+#include "hyperion/modules/mono/managed/mono_managed_method.hpp"
 #include "hyperion/scripting/scripting_driver.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -53,15 +53,15 @@ namespace Hyperion::Scripting {
 
         static void ReloadRuntimeDomain();
     private:
-        inline static ManagedDomain s_domain_root;
-        inline static ManagedDomain s_domain_runtime;
+        inline static MonoManagedDomain s_domain_root;
+        inline static MonoManagedDomain s_domain_runtime;
 
-        inline static ManagedAssembly s_assembly_core;
-        inline static ManagedAssembly s_assembly_editor;
+        inline static MonoManagedAssembly s_assembly_core;
+        inline static MonoManagedAssembly s_assembly_editor;
         
         inline static MonoClass *s_core_component_class;
         inline static MonoClass *s_core_script_class;
-        inline static ManagedMethod s_editor_update_method;
+        inline static MonoManagedMethod s_editor_update_method;
 
         inline static Map<MonoObject *, void *> s_managed_to_native_objects;
         inline static Map<void *, MonoObject * > s_native_to_managed_objects;

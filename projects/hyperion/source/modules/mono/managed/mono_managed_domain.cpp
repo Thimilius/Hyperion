@@ -2,7 +2,7 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/modules/mono/managed/managed_domain.hpp"
+#include "hyperion/modules/mono/managed/mono_managed_domain.hpp"
 
 //---------------------- Library Includes ----------------------
 #include <mono/metadata/assembly.h>
@@ -16,54 +16,55 @@
 namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
-    ManagedDomain::ManagedDomain(MonoDomain *domain) {
-        HYP_ASSERT(domain);
-        m_domain = domain;
+    MonoManagedDomain::MonoManagedDomain(MonoDomain *mono_domain) {
+        HYP_ASSERT(mono_domain);
+
+        m_mono_domain = mono_domain;
     }
 
     //--------------------------------------------------------------
-    void ManagedDomain::SetActive() {
-        mono_domain_set(m_domain, true);
+    void MonoManagedDomain::SetActive() {
+        mono_domain_set(m_mono_domain, true);
     }
 
     //--------------------------------------------------------------
-    void ManagedDomain::Finalize() {
-        if (!mono_domain_finalize(m_domain, 2000)) {
+    void MonoManagedDomain::Finalize() {
+        if (!mono_domain_finalize(m_mono_domain, 2000)) {
             HYP_LOG_ERROR("Scripting", "Domain finalization timeout!");
         }
         mono_gc_collect(mono_gc_max_generation());
     }
 
     //--------------------------------------------------------------
-    void ManagedDomain::Unload() {
-        if (m_domain == nullptr) {
+    void MonoManagedDomain::Unload() {
+        if (m_mono_domain == nullptr) {
             return;
         }
 
         Finalize();
 
         MonoObject *exception = nullptr;
-        mono_domain_try_unload(m_domain, &exception);
+        mono_domain_try_unload(m_mono_domain, &exception);
         if (exception != nullptr) {
             MonoScriptingDriver::PrintUnhandledException(exception);
         }
     }
 
     //--------------------------------------------------------------
-    ManagedAssembly ManagedDomain::LoadAssembly(const String &path) {
-        MonoAssembly *assembly = mono_domain_assembly_open(m_domain, path.c_str());
+    MonoManagedAssembly MonoManagedDomain::LoadAssembly(const String &path) {
+        MonoAssembly *assembly = mono_domain_assembly_open(m_mono_domain, path.c_str());
         HYP_ASSERT(assembly);
-        return ManagedAssembly(assembly);
+        return MonoManagedAssembly(assembly);
     }
 
     //--------------------------------------------------------------
-    ManagedDomain ManagedDomain::Create(char *name) {
+    MonoManagedDomain MonoManagedDomain::Create(char *name) {
         MonoDomain *domain = mono_domain_create_appdomain(name, nullptr);
-        return ManagedDomain(domain);
+        return MonoManagedDomain(domain);
     }
 
     //--------------------------------------------------------------
-    void ManagedDomain::SetCurrentMainThread() {
+    void MonoManagedDomain::SetCurrentMainThread() {
         mono_thread_set_main(mono_thread_current());
     }
 
