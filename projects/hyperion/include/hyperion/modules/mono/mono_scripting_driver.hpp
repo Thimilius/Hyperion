@@ -61,15 +61,12 @@ namespace Hyperion::Scripting {
         
         inline static MonoClass *s_core_component_class;
         inline static MonoClass *s_core_script_class;
-        inline static MonoManagedMethod s_editor_update_method;
 
         inline static Map<MonoObject *, void *> s_managed_to_native_objects;
         inline static Map<void *, MonoObject * > s_native_to_managed_objects;
 
         inline static Map<Type *, MonoClass *> s_native_to_managed_classes;
-        // NOTE: The variant just stores a Type.
-        // We can not use Type directly because it does not have a public default constructor.
-        inline static Map<MonoClass *, Type *> s_managed_to_native_classes; 
+        inline static Map<MonoClass *, Type *> s_managed_to_native_classes;
 
         inline static Vector<Script *> s_scripts_which_recieve_messages;
         inline static Map<MonoClass *, MonoScriptingType *> s_scripting_types;

@@ -14,6 +14,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/system/engine.hpp"
 #include "hyperion/modules/mono/mono_scripting_bindings.hpp"
+#include "hyperion/modules/mono/managed/mono_managed_string.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
@@ -37,7 +38,7 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     void MonoScriptingDriver::Update() {
-        s_editor_update_method.Invoke(nullptr, nullptr);
+
     }
 
     //--------------------------------------------------------------
@@ -145,6 +146,7 @@ namespace Hyperion::Scripting {
     //--------------------------------------------------------------
     Type *MonoScriptingDriver::GetNativeClass(MonoClass *native_class) {
         HYP_ASSERT(IsNativeClass(native_class));
+
         return s_managed_to_native_classes[native_class];
     }
 
@@ -223,7 +225,6 @@ namespace Hyperion::Scripting {
         MonoScriptingBindings::RegisterClasses();
 
         s_assembly_editor = s_domain_runtime.LoadAssembly("data/managed/Hyperion.Editor.dll");
-        s_editor_update_method = s_assembly_editor.FindMethod("Hyperion.Editor.Application::Update()");
     }
 
     //--------------------------------------------------------------
@@ -234,16 +235,13 @@ namespace Hyperion::Scripting {
 
         MonoProperty *message_property = mono_class_get_property_from_name(mono_get_exception_class(), "Message");
         MonoObject *managed_message = mono_property_get_value(message_property, exception, nullptr, nullptr);
-        char *message = mono_string_to_utf8(reinterpret_cast<MonoString *>(managed_message));
+        String message = MonoManagedString(reinterpret_cast<MonoString *>(managed_message)).GetString();
 
         MonoProperty *stack_trace_property = mono_class_get_property_from_name(mono_get_exception_class(), "StackTrace");
         MonoObject *managed_stack_trace = mono_property_get_value(stack_trace_property, exception, nullptr, nullptr);
-        char *stack_trace = mono_string_to_utf8(reinterpret_cast<MonoString *>(managed_stack_trace));
+        String stack_trace = MonoManagedString(reinterpret_cast<MonoString *>(managed_stack_trace)).GetString();
 
         HYP_LOG_ERROR("Scripting", "{}: {}\n{}", mono_class_get_name(exception_class), message, stack_trace);
-
-        mono_free(message);
-        mono_free(stack_trace);
     }
 
 }

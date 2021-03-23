@@ -21,6 +21,7 @@
 #include "hyperion/modules/mono/mono_scripting_driver.hpp"
 #include "hyperion/modules/mono/mono_scripting_helper.hpp"
 #include "hyperion/modules/mono/mono_scripting_instance.hpp"
+#include "hyperion/modules/mono/managed/mono_managed_string.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
@@ -54,13 +55,11 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     void Binding_Entity_Ctor(MonoObject *managed_object, MonoString *managed_name) {
-        Entity *native_entity;
-        if (managed_name == nullptr) {
-            native_entity = Entity::Create();
+        Entity *native_entity = nullptr;
+        if (managed_name != nullptr) {
+            native_entity = Entity::Create(MonoManagedString(managed_name).GetString());
         } else {
-            char *native_name = mono_string_to_utf8(managed_name);
-            native_entity = Entity::Create(native_name);
-            mono_free(native_name);
+            native_entity = Entity::Create();
         }
         MonoScriptingDriver::RegisterManagedObject(managed_object, native_entity, false);
     }
@@ -86,7 +85,7 @@ namespace Hyperion::Scripting {
     //--------------------------------------------------------------
     MonoString *Binding_Object_GetName(MonoObject *managed_object) {
         if (Object *native_object = MonoScriptingHelper::GetNativeObjectAs<Object>(managed_object)) {
-            return MonoScriptingHelper::NewString(native_object->GetName());
+            return MonoManagedString(native_object->GetName()).GetMonoString();
         } else {
             return nullptr;
         }
@@ -95,9 +94,7 @@ namespace Hyperion::Scripting {
     //--------------------------------------------------------------
     void Binding_Object_SetName(MonoObject *managed_object, MonoString *managed_name) {
         if (Object *native_object = MonoScriptingHelper::GetNativeObjectAs<Object>(managed_object)) {
-            char *native_name = mono_string_to_utf8(managed_name);
-            native_object->SetName(native_name);
-            mono_free(native_name);
+            native_object->SetName(MonoManagedString(managed_name).GetString());
         }
     }
 

@@ -1,9 +1,19 @@
-﻿using System;
+﻿namespace Hyperion.Editor {
+    public class Application : IApplicationCallbacks {
+        public void Initialize() {
 
-namespace Hyperion.Editor {
-    public static class Application {
-        public static void Update() {
+        }
+
+        public void Update(float deltaTime) {
             Engine.Log("Hello there from managed code! {0}", Time.ElapsedTime);
+        }
+
+        public void FixedUpdate(float deltaTime) {
+
+        }
+
+        public void Shutdown() {
+
         }
     }
 }

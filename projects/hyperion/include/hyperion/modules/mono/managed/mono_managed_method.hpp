@@ -11,7 +11,7 @@ namespace Hyperion::Scripting {
         MonoManagedMethod() = default;
         MonoManagedMethod(MonoMethod *mono_method);
     public:
-        void Invoke(void *object, void **parameters);
+        MonoObject *Invoke(void *object, void **parameters);
     private:
         MonoMethod *m_mono_method = nullptr;
     };
