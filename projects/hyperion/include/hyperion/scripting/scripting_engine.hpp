@@ -20,8 +20,10 @@ namespace Hyperion::Scripting {
         ~ScriptingEngine() = delete;
     private:
         static void Initialize(const ScriptingSettings &settings);
+        static void PostInitialize();
         static void EngineModeChanged(EngineMode engine_mode);
         static void Update();
+        static void FixedUpdate();
         static void Shutdown();
     private:
         inline static IScriptingDriver *s_scripting_driver;

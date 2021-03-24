@@ -15,7 +15,9 @@ namespace Hyperion::Scripting {
         virtual void EngineModeChange(EngineMode engine_mode) = 0;
 
         virtual void Initialize(const ScriptingSettings &settings) = 0;
+        virtual void PostInitialize() = 0;
         virtual void Update() = 0;
+        virtual void FixedUpdate() = 0;
         virtual void Shutdown() = 0;
     };
 

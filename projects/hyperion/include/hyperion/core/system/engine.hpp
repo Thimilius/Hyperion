@@ -39,6 +39,7 @@ namespace Hyperion {
         static void Setup();
         static void PreInitialize();
         static void Initialize();
+        static void PostInitialize();
         static uint32 Run();
         static void Iterate();
         static void OnEvent(Event &event);
@@ -50,6 +51,7 @@ namespace Hyperion {
         static void TimeInitilization();
         static void InputInitilization();
         static void PhysicsEngineFixedUpdate();
+        static void ScriptingEngineFixedUpdate();
         static void ApplicationFixedUpdate();
         static void TimeFixedUpdate();
         static void TimeTick();

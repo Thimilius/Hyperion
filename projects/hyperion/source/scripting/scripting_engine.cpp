@@ -29,6 +29,11 @@ namespace Hyperion::Scripting {
     }
 
     //--------------------------------------------------------------
+    void ScriptingEngine::PostInitialize() {
+        s_scripting_driver->PostInitialize();
+    }
+
+    //--------------------------------------------------------------
     void ScriptingEngine::EngineModeChanged(EngineMode engine_mode) {
         s_scripting_driver->EngineModeChange(engine_mode);
     }
@@ -36,6 +41,11 @@ namespace Hyperion::Scripting {
     //--------------------------------------------------------------
     void Scripting::ScriptingEngine::Update() {
         s_scripting_driver->Update();
+    }
+
+    //--------------------------------------------------------------
+    void Scripting::ScriptingEngine::FixedUpdate() {
+        s_scripting_driver->FixedUpdate();
     }
 
     //--------------------------------------------------------------

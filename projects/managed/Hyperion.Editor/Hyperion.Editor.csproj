@@ -50,7 +50,7 @@
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Application.cs" />
+    <Compile Include="EditorApplication.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Hyperion.Core\Hyperion.Core.csproj">

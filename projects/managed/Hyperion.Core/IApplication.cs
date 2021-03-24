@@ -1,5 +1,5 @@
 ﻿namespace Hyperion {
-    public interface IApplicationCallbacks {
+    public interface IApplication {
         void Initialize();
         void Update(float deltaTime);
         void FixedUpdate(float deltaTime);

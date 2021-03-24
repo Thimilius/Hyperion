@@ -20,8 +20,10 @@ namespace Hyperion::Scripting {
         uint64 GetMemoryUsage() const override;
 
         void Initialize(const ScriptingSettings &settings) override;
+        void PostInitialize() override;
         void EngineModeChange(EngineMode engine_mode) override;
         void Update() override;
+        void FixedUpdate() override;
         void Shutdown() override;
     public:
         inline static MonoDomain *GetRuntimeDomain() { return s_domain_runtime.GetMonoDomain(); }
@@ -47,12 +49,14 @@ namespace Hyperion::Scripting {
 
         static MonoScriptingType *GetOrCreateScriptingType(MonoClass *managed_class);
     private:
-        static void InitDebugger(const ScriptingSettings &settings);
-        static void InitDomain();
-        static void InitBindings();
+        static void InitializerDebugger(const ScriptingSettings &settings);
+        static void InititializeDomain();
+        static void InititializeBindings();
 
         static void ReloadRuntimeDomain();
     private:
+        inline static ScriptingSettings s_settings;
+
         inline static MonoManagedDomain s_domain_root;
         inline static MonoManagedDomain s_domain_runtime;
 

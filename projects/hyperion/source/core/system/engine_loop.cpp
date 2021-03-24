@@ -25,6 +25,7 @@ namespace Hyperion {
         result.fixed_update.name = "FixedUpdate";
         result.fixed_update.sub_systems = {
             { "PhysicsEngineFixedUpdate", Engine::PhysicsEngineFixedUpdate },
+            { "ScriptingEngineFixedUpdate", Engine::ScriptingEngineFixedUpdate },
             { "ApplicationFixedUpdate", Engine::ApplicationFixedUpdate },
             { "TimeFixedUpdate", Engine::TimeFixedUpdate }
         };

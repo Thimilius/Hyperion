@@ -12,6 +12,7 @@
 #include <mono/metadata/threads.h>
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/core/app/time.hpp"
 #include "hyperion/core/system/engine.hpp"
 #include "hyperion/modules/mono/mono_scripting_bindings.hpp"
 #include "hyperion/modules/mono/managed/mono_managed_string.hpp"
@@ -26,9 +27,17 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     void MonoScriptingDriver::Initialize(const ScriptingSettings &settings) {
-        InitDebugger(settings);
-        InitDomain();
-        InitBindings();
+        s_settings = settings;
+
+        InitializerDebugger(settings);
+        InititializeDomain();
+        InititializeBindings();
+    }
+
+    //--------------------------------------------------------------
+    void MonoScriptingDriver::PostInitialize() {
+        MonoManagedMethod engine_initialize_method =  s_assembly_core.FindMethod("Hyperion.Engine:Initialize()");
+        engine_initialize_method.Invoke(nullptr, nullptr);
     }
 
     //--------------------------------------------------------------
@@ -38,11 +47,25 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     void MonoScriptingDriver::Update() {
+        MonoManagedMethod engine_update_method = s_assembly_core.FindMethod("Hyperion.Engine:Update(single)");
+        float32 delta_time = Time::GetDeltaTime();
+        void *parameters[] = { &delta_time };
+        engine_update_method.Invoke(nullptr, parameters);
+    }
 
+    //--------------------------------------------------------------
+    void MonoScriptingDriver::FixedUpdate() {
+        MonoManagedMethod engine_fixed_update_method = s_assembly_core.FindMethod("Hyperion.Engine:FixedUpdate(single)");
+        float32 delta_time = Time::GetFixedDeltaTime();
+        void *parameters[] = { &delta_time };
+        engine_fixed_update_method.Invoke(nullptr, parameters);
     }
 
     //--------------------------------------------------------------
     void MonoScriptingDriver::Shutdown() {
+        MonoManagedMethod engine_shutdown_method = s_assembly_core.FindMethod("Hyperion.Engine:Shutdown()");
+        engine_shutdown_method.Invoke(nullptr, nullptr);
+
         // We do not need to bother explicitly unloading the runtime domain.
         s_domain_root.SetActive();
         s_domain_root.Finalize();
@@ -172,7 +195,7 @@ namespace Hyperion::Scripting {
     }
 
     //--------------------------------------------------------------
-    void MonoScriptingDriver::InitDebugger(const ScriptingSettings &settings) {
+    void MonoScriptingDriver::InitializerDebugger(const ScriptingSettings &settings) {
         mono_debug_init(MONO_DEBUG_FORMAT_MONO);
 
         String debug_option;
@@ -190,8 +213,10 @@ namespace Hyperion::Scripting {
     }
 
     //--------------------------------------------------------------
-    void MonoScriptingDriver::InitDomain() {
-        mono_set_dirs("data/mono/lib", "data/mono/etc");
+    void MonoScriptingDriver::InititializeDomain() {
+        mono_set_dirs((s_settings.runtime_path + "lib").c_str(), (s_settings.runtime_path + "etc").c_str());
+        mono_set_assemblies_path((s_settings.runtime_path + "lib/mono/4.5").c_str());
+
         MonoDomain *root_domain = mono_jit_init_version("Hyperion.RootDomain", "v4.0.30319");
         if (!root_domain) {
             HYP_LOG_ERROR("Scripting", "Initialization of app domain failed!");
@@ -199,7 +224,6 @@ namespace Hyperion::Scripting {
         } else {
             HYP_LOG_INFO("Scripting", "Initialized Mono scripting driver!");
         }
-
         s_domain_root = MonoManagedDomain(root_domain);
         MonoManagedDomain::SetCurrentMainThread();
 
@@ -207,7 +231,7 @@ namespace Hyperion::Scripting {
     }
 
     //--------------------------------------------------------------
-    void MonoScriptingDriver::InitBindings() {
+    void MonoScriptingDriver::InititializeBindings() {
         MonoScriptingBindings::Bind();
     }
 
@@ -219,12 +243,12 @@ namespace Hyperion::Scripting {
         s_domain_runtime = MonoManagedDomain::Create("Hyperion.RuntimeDomain");
         s_domain_runtime.SetActive();
 
-        s_assembly_core = s_domain_runtime.LoadAssembly("data/managed/Hyperion.Core.dll");
+        s_assembly_core = s_domain_runtime.LoadAssembly((s_settings.library_path + "Hyperion.Core.dll").c_str());
         s_core_component_class = s_assembly_core.FindClass("Hyperion", "Component");
         s_core_script_class = s_assembly_core.FindClass("Hyperion", "Script");
         MonoScriptingBindings::RegisterClasses();
 
-        s_assembly_editor = s_domain_runtime.LoadAssembly("data/managed/Hyperion.Editor.dll");
+        s_assembly_editor = s_domain_runtime.LoadAssembly((s_settings.library_path + "Hyperion.Editor.dll").c_str());
     }
 
     //--------------------------------------------------------------
@@ -239,7 +263,7 @@ namespace Hyperion::Scripting {
 
         MonoProperty *stack_trace_property = mono_class_get_property_from_name(mono_get_exception_class(), "StackTrace");
         MonoObject *managed_stack_trace = mono_property_get_value(stack_trace_property, exception, nullptr, nullptr);
-        String stack_trace = MonoManagedString(reinterpret_cast<MonoString *>(managed_stack_trace)).GetString();
+        String stack_trace = managed_stack_trace != nullptr ? MonoManagedString(reinterpret_cast<MonoString *>(managed_stack_trace)).GetString() : "";
 
         HYP_LOG_ERROR("Scripting", "{}: {}\n{}", mono_class_get_name(exception_class), message, stack_trace);
     }

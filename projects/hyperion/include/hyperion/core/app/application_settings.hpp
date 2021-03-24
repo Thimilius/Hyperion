@@ -23,8 +23,8 @@ namespace Hyperion {
     struct AssetSettings {
         bool hot_loading = true;
 
-        String shader_path = "data/shaders";
-        String texture_path = "data/textures";
+        String shader_path = "data/shaders/";
+        String texture_path = "data/textures/";
     };
 
     struct RenderSettings {
@@ -35,6 +35,9 @@ namespace Hyperion {
     };
 
     struct ScriptingSettings {
+        String runtime_path = "data/mono/";
+        String library_path = "data/managed/";
+
         bool wait_for_debugger = false;
         uint32 debugger_port = 12345;
         uint32 debugger_wait_timeout = 3000;

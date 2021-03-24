@@ -82,6 +82,11 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void Engine::PostInitialize() {
+        Scripting::ScriptingEngine::PostInitialize();
+    }
+
+    //--------------------------------------------------------------
     uint32 Engine::Run() {
         s_running = true;
 
@@ -94,6 +99,7 @@ namespace Hyperion {
 
         Initialize();
         s_application->OnInitialize();
+        PostInitialize();
         s_application->GetWindow()->Show();
 
         s_stats.timer = Timer::Create();
@@ -215,6 +221,18 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void Engine::PhysicsEngineFixedUpdate() {
+        HYP_PROFILE_CATEGORY("Physics", Optick::Category::Physics);
+
+        Physics::PhysicsEngine::FixedUpdate(Time::GetFixedDeltaTime());
+    }
+
+    //--------------------------------------------------------------
+    void Engine::ScriptingEngineFixedUpdate() {
+        Scripting::ScriptingEngine::FixedUpdate();
+    }
+
+    //--------------------------------------------------------------
     void Engine::ApplicationFixedUpdate() {
         s_application->OnFixedUpdate(Time::GetFixedDeltaTime());
     }
@@ -258,13 +276,6 @@ namespace Hyperion {
         HYP_PROFILE_CATEGORY("ApplicationUpdate", Optick::Category::GameLogic);
 
         s_application->OnUpdate(Time::GetDeltaTime());
-    }
-
-    //--------------------------------------------------------------
-    void Engine::PhysicsEngineFixedUpdate() {
-        HYP_PROFILE_CATEGORY("Physics", Optick::Category::Physics);
-
-        Physics::PhysicsEngine::FixedUpdate(Time::GetFixedDeltaTime());
     }
 
     //--------------------------------------------------------------
