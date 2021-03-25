@@ -17,12 +17,23 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     MonoObject *MonoManagedMethod::Invoke(void *object, void **parameters) {
-        HYP_ASSERT(m_mono_method);
+        MonoManagedException exception = MonoManagedException();
+        MonoObject *result = Invoke(object, parameters, exception);
 
-        MonoObject *exception = nullptr;
-        MonoObject *result = mono_runtime_invoke(m_mono_method, object, parameters, &exception);
-        if (exception != nullptr) {
-            MonoScriptingDriver::PrintUnhandledException(exception);
+        if (exception.IsValid()) {
+            exception.Print();
+        }
+
+        return result;
+    }
+
+    //--------------------------------------------------------------
+    MonoObject *MonoManagedMethod::Invoke(void *object, void **parameters, MonoManagedException &exception) {
+        MonoObject *mono_exception = nullptr;
+        MonoObject *result = mono_runtime_invoke(m_mono_method, object, parameters, &mono_exception);
+
+        if (mono_exception != nullptr) {
+            exception = MonoManagedException(mono_exception);
         }
 
         return result;

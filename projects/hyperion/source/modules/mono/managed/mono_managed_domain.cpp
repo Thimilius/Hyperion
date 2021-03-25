@@ -43,10 +43,10 @@ namespace Hyperion::Scripting {
 
         Finalize();
 
-        MonoObject *exception = nullptr;
-        mono_domain_try_unload(m_mono_domain, &exception);
-        if (exception != nullptr) {
-            MonoScriptingDriver::PrintUnhandledException(exception);
+        MonoObject *mono_exception = nullptr;
+        mono_domain_try_unload(m_mono_domain, &mono_exception);
+        if (mono_exception != nullptr) {
+            MonoManagedException(mono_exception).Print();
         }
     }
 

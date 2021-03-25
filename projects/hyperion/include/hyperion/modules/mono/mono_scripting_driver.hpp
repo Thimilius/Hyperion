@@ -29,9 +29,7 @@ namespace Hyperion::Scripting {
         inline static MonoDomain *GetRuntimeDomain() { return s_domain_runtime.GetMonoDomain(); }
         inline static MonoClass *GetComponentClass() { return s_core_component_class; }
         inline static MonoClass *GetScriptClass() { return s_core_script_class; }
-
-        static void PrintUnhandledException(MonoObject *exception);
-
+        
         static void *GetNativeObject(MonoObject *managed_object);
         static MonoObject *GetOrCreateManagedObject(Object *native_object, Type *native_type);
         static MonoObject *GetOrCreateManagedObjectRaw(void *native, Type *native_type);

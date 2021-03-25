@@ -251,21 +251,4 @@ namespace Hyperion::Scripting {
         s_assembly_editor = s_domain_runtime.LoadAssembly((s_settings.library_path + "Hyperion.Editor.dll").c_str());
     }
 
-    //--------------------------------------------------------------
-    void MonoScriptingDriver::PrintUnhandledException(MonoObject *exception) {
-        HYP_ASSERT(exception);
-
-        MonoClass *exception_class = mono_object_get_class(exception);
-
-        MonoProperty *message_property = mono_class_get_property_from_name(mono_get_exception_class(), "Message");
-        MonoObject *managed_message = mono_property_get_value(message_property, exception, nullptr, nullptr);
-        String message = MonoManagedString(reinterpret_cast<MonoString *>(managed_message)).GetString();
-
-        MonoProperty *stack_trace_property = mono_class_get_property_from_name(mono_get_exception_class(), "StackTrace");
-        MonoObject *managed_stack_trace = mono_property_get_value(stack_trace_property, exception, nullptr, nullptr);
-        String stack_trace = managed_stack_trace != nullptr ? MonoManagedString(reinterpret_cast<MonoString *>(managed_stack_trace)).GetString() : "";
-
-        HYP_LOG_ERROR("Scripting", "{}: {}\n{}", mono_class_get_name(exception_class), message, stack_trace);
-    }
-
 }
