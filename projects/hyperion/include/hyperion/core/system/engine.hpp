@@ -71,7 +71,7 @@ namespace Hyperion {
         inline static bool s_running = false;
         inline static EngineMode s_engine_mode = EngineMode::Editor;
 
-        inline static struct Stats {
+        inline static struct TimeStats {
             Timer *timer;
 
             float64 last_time = 0.0;
@@ -79,7 +79,7 @@ namespace Hyperion {
 
             uint64 frame = 0;
             uint32 fps_counter = 0;
-        } s_stats;
+        } s_time_stats;
     private:
         friend class Hyperion::Application;
         friend struct Hyperion::EngineLoopSystem;

@@ -35,6 +35,17 @@ namespace Hyperion {
 
     using EntityTag = String;
 
+    struct EntityCreationParameters {
+        String name = "New Entity";
+
+        Vec3 position = Vec3::Zero();
+        Quaternion rotation = Quaternion::Identity();
+        Vec3 scale = Vec3::One();
+
+        Transform *parent = nullptr;
+        World *world = nullptr;
+    };
+
     class Entity final : public Object {
         HYP_REFLECT();
     public:
@@ -146,8 +157,8 @@ namespace Hyperion {
         virtual void Serialize(ISerializationStream &stream) override;
         virtual void Deserialize(IDeserializationStream &stream, ReferenceContext &context) override;
     public:
-        static Entity *Create(const String &name = "New Entity", const Vec3 &position = Vec3::Zero(), const Quaternion &rotation = Quaternion::Identity(), Transform *parent = nullptr, World *world = nullptr);
-        static Entity *CreatePrimitive(EntityPrimitive primitive, const Vec3 &position = Vec3::Zero(), const Quaternion &rotation = Quaternion::Identity(), Transform *parent = nullptr, World *world = nullptr);
+        static Entity *Create(const EntityCreationParameters &creation_parameters = EntityCreationParameters());
+        static Entity *CreatePrimitive(EntityPrimitive primitive, const EntityCreationParameters &creation_parameters = EntityCreationParameters());
     protected:
         void OnDestroy() override;
     private:

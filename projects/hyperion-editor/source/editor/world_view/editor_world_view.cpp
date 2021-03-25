@@ -143,10 +143,9 @@ namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
     void EditorWorldView::BuildInterface() {
-
         Font *text_font = FontLoader::LoadFont("data/fonts/robotomono_regular.ttf", 10, FontCharacterSet::LatinSupplement);
         Font *icon_font = FontLoader::LoadFont("data/fonts/font_awesome_solid.otf", 11, FontCharacterSet::All);
-        Entity *canvas_entity = Entity::Create("Canvas");
+        Entity *canvas_entity = Entity::Create();
         s_editor_canvas = canvas_entity->AddComponent<Canvas>();
         s_editor_canvas->SetScaleMode(CanvasScaleMode::ConstantPixelSize);
         {

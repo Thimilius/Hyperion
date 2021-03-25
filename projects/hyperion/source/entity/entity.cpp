@@ -170,11 +170,12 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Entity *Entity::Create(const String &name, const Vec3 &position, const Quaternion &rotation, Transform *parent, World *world) {
-        Entity *entity = new Entity(name);
+    Entity *Entity::Create(const EntityCreationParameters &creation_parameters) {
+        Entity *entity = new Entity(creation_parameters.name);
 
-        if (parent) {
-            world = parent->GetWorld();
+        World *world = creation_parameters.world;
+        if (creation_parameters.parent) {
+            world = creation_parameters.parent->GetWorld();
         } else if (!world) {
             world = WorldManager::GetActiveWorld();
         }
@@ -183,15 +184,17 @@ namespace Hyperion {
 
         entity->m_transform = new Transform();
         entity->m_transform->m_entity = entity;
-        entity->m_transform->m_local_position = position;
-        entity->m_transform->m_derived_position = position;
-        entity->m_transform->m_local_rotation = rotation;
-        entity->m_transform->m_derived_rotation = rotation;
+        entity->m_transform->m_local_position = creation_parameters.position;
+        entity->m_transform->m_derived_position = creation_parameters.position;
+        entity->m_transform->m_local_rotation = creation_parameters.rotation;
+        entity->m_transform->m_derived_rotation = creation_parameters.rotation;
+        entity->m_transform->m_local_scale = creation_parameters.scale;
+        entity->m_transform->m_derived_scale = creation_parameters.scale;
         entity->m_transform->OnCreate();
         entity->m_components.emplace(Type::Get<Transform>(), entity->m_transform);
 
-        if (parent) {
-            entity->m_transform->SetParent(parent);
+        if (creation_parameters.parent) {
+            entity->m_transform->SetParent(creation_parameters.parent);
         } else {
             entity->m_world->AddRootEntity(entity);
         }
@@ -200,8 +203,9 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Entity *Entity::CreatePrimitive(EntityPrimitive primitive, const Vec3 &position, const Quaternion &rotation, Transform *parent, World *world) {
-        Entity *entity = Create(GetPrimitiveName(primitive), position, rotation, parent, world);
+    Entity *Entity::CreatePrimitive(EntityPrimitive primitive, const EntityCreationParameters &creation_parameters) {
+        Entity *entity = Create(creation_parameters);
+        entity->SetName(GetPrimitiveName(primitive));
         
         MeshRenderer *mesh_renderer = nullptr;
         switch (primitive) {

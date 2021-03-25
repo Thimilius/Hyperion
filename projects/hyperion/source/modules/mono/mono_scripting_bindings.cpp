@@ -55,12 +55,11 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     void Binding_Entity_Ctor(MonoObject *managed_object, MonoString *managed_name) {
-        Entity *native_entity = nullptr;
+        EntityCreationParameters entity_creation_parameters = EntityCreationParameters();
         if (managed_name != nullptr) {
-            native_entity = Entity::Create(MonoManagedString(managed_name).GetString());
-        } else {
-            native_entity = Entity::Create();
+            entity_creation_parameters.name = MonoManagedString(managed_name).GetString();
         }
+        Entity *native_entity = Entity::Create();
         MonoScriptingDriver::RegisterManagedObject(managed_object, native_entity, false);
     }
 

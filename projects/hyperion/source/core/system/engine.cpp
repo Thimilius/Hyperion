@@ -102,13 +102,13 @@ namespace Hyperion {
         PostInitialize();
         s_application->GetWindow()->Show();
 
-        s_stats.timer = Timer::Create();
+        s_time_stats.timer = Timer::Create();
         while (s_running) {
             HYP_PROFILE_FRAME("Main Thread");
 
             Iterate();
         }
-        delete s_stats.timer;
+        delete s_time_stats.timer;
 
         s_application->OnShutdown();
         Shutdown();
@@ -120,7 +120,7 @@ namespace Hyperion {
     void Engine::Iterate() {
         const EngineLoopSystem &engine_loop = s_settings.core.engine_loop;
         ExecuteEngineLoopSubSystem(engine_loop.initilization);
-        while (s_stats.accumulator > Time::GetFixedDeltaTime()) {
+        while (s_time_stats.accumulator > Time::GetFixedDeltaTime()) {
             ExecuteEngineLoopSubSystem(engine_loop.fixed_update);
         }
         if (Time::OnInterval(1.0f)) {
@@ -200,15 +200,15 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Engine::TimeInitilization() {
-        s_stats.frame++;
-        s_stats.fps_counter++;
-        float32 now = s_stats.timer->ElapsedSeconds();
-        float32 delta_time = static_cast<float32>(now - s_stats.last_time);
+        s_time_stats.frame++;
+        s_time_stats.fps_counter++;
+        float32 now = s_time_stats.timer->ElapsedSeconds();
+        float32 delta_time = static_cast<float32>(now - s_time_stats.last_time);
         if (delta_time > Time::GetMaxDeltaTime()) {
             delta_time = Time::GetMaxDeltaTime();
         }
-        s_stats.last_time = now;
-        s_stats.accumulator += delta_time;
+        s_time_stats.last_time = now;
+        s_time_stats.accumulator += delta_time;
         Time::s_delta_time = delta_time;
         Time::s_time += delta_time;
     }
@@ -239,14 +239,14 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Engine::TimeFixedUpdate() {
-        s_stats.accumulator -= Time::GetFixedDeltaTime();
+        s_time_stats.accumulator -= Time::GetFixedDeltaTime();
     }
 
     //--------------------------------------------------------------
     void Engine::TimeTick() {
-        Time::s_fps = s_stats.fps_counter;
-        Time::s_frame_time = 1000.0f / s_stats.fps_counter;
-        s_stats.fps_counter = 0;
+        Time::s_fps = s_time_stats.fps_counter;
+        Time::s_frame_time = 1000.0f / s_time_stats.fps_counter;
+        s_time_stats.fps_counter = 0;
     }
 
     //--------------------------------------------------------------

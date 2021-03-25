@@ -29,7 +29,9 @@ namespace Hyperion::Editor {
 
         s_loaded_world = WorldManager::CreateWorld();
 
-        Entity::CreatePrimitive(EntityPrimitive::Cube, Vec3::Zero(), Quaternion::Identity(), nullptr, s_loaded_world);
+        EntityCreationParameters entity_creation_parameters = EntityCreationParameters();
+        entity_creation_parameters.world = s_loaded_world;
+        Entity::CreatePrimitive(EntityPrimitive::Cube, entity_creation_parameters);
     }
 
     //--------------------------------------------------------------
