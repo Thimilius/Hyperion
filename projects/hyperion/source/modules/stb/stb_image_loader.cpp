@@ -20,19 +20,19 @@ namespace Hyperion {
     Image *StbImageLoader::Load(const String &path, bool flip_vertically) {
         stbi_set_flip_vertically_on_load(flip_vertically);
 
-        int32 width;
-        int32 height;
-        int32 channels;
+        int32 width = 0;
+        int32 height = 0;
+        int32 channels = 0;
         uint8 *buffer = stbi_load(path.c_str(), &width, &height, &channels, 0);
 
         if (!buffer) {
             HYP_LOG_ERROR("Engine", "Failed to load image from path: {}", std::filesystem::absolute(path).u8string());
-            width = 0;
-            height = 0;
-            channels = 0;
+            return nullptr;
         }
 
         Vector<uint8> pixels(buffer, buffer + (width * height * channels));
+        stbi_image_free(buffer);
+
         return Image::Create(width, height, channels, std::move(pixels));
     }
 
