@@ -18,20 +18,22 @@ namespace Hyperion::Scripting {
         MonoClass *m_mono_class;
     };
 
-    class MonoScriptingInstance : public ScriptingInstance {
+    class MonoScriptingInstanceBase : public ScriptingInstance {
     public:
-        MonoScriptingInstance(MonoObject *mono_object, bool is_script_component);
+        MonoScriptingInstanceBase(MonoObject *mono_object);
     public:
         ScriptingType *GetScriptingType() const override;
 
-        void SendMessage(ScriptingMessage message) override;
+        void SendMessage(ScriptingMessage message) override { }
 
         inline MonoObject *GetMonoObject() const { return m_mono_object; }
     private:
-        void CallMethod(const char *name, int32 parameter_count, void **args);
-    private:
         MonoObject *m_mono_object;
-        bool m_is_script_component;
+    };
+
+    class MonoScriptingInstance : public MonoScriptingInstanceBase {
+    public:
+        void SendMessage(ScriptingMessage message) override;
     };
 
 }

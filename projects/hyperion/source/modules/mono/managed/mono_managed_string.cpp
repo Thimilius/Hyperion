@@ -14,7 +14,7 @@ namespace Hyperion::Scripting {
     MonoManagedString::MonoManagedString(const char *string) {
         HYP_ASSERT(string);
 
-        m_mono_string = mono_string_new(MonoScriptingDriver::GetRuntimeDomain(), string);
+        m_mono_string = mono_string_new(MonoScriptingDriver::GetRuntimeDomain()->GetMonoDomain(), string);
         m_string = string;
     }
 

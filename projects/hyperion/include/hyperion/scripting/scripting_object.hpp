@@ -9,7 +9,7 @@ namespace Hyperion::Scripting {
     class ScriptingObject {
     public:
         ScriptingObject() = default;
-        virtual ~ScriptingObject() = default;
+        virtual ~ScriptingObject();
     public:
         inline ScriptingInstance *GetScriptingInstance() const { return m_scripting_instance; }
         inline void SetScriptingInstance(ScriptingInstance *scripting_instance) { m_scripting_instance = scripting_instance; }
