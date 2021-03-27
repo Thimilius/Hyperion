@@ -8,6 +8,7 @@
 #include "hyperion/core/app/time.hpp"
 #include "hyperion/core/system/engine.hpp"
 #include "hyperion/modules/mono/mono_scripting_driver.hpp"
+#include "hyperion/modules/mono/mono_scripting_storage.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
@@ -24,7 +25,7 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     ScriptingType *MonoScriptingInstanceBase::GetScriptingType() const {
-        return nullptr;
+        return MonoScriptingStorage::GetOrCreateScriptingType(mono_object_get_class(m_mono_object));
     }
 
     //--------------------------------------------------------------

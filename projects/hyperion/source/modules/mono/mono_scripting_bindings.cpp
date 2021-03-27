@@ -19,40 +19,40 @@
 #include "hyperion/entity/components/rendering/camera.hpp"
 #include "hyperion/entity/components/rendering/mesh_renderer.hpp"
 #include "hyperion/modules/mono/mono_scripting_driver.hpp"
-#include "hyperion/modules/mono/mono_scripting_helper.hpp"
 #include "hyperion/modules/mono/mono_scripting_instance.hpp"
+#include "hyperion/modules/mono/mono_scripting_storage.hpp"
 #include "hyperion/modules/mono/managed/mono_managed_string.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
-    MonoObject *Binding_Component_GetEntity(MonoObject *managed_component) {
+    MonoObject *Binding_Component_GetEntity(MonoObject *mono_component) {
         return nullptr;
     }
 
     //--------------------------------------------------------------
-    MonoObject *Binding_Entity_GetTransform(MonoObject *managed_entity) {
+    MonoObject *Binding_Entity_GetTransform(MonoObject *mono_entity) {
         return nullptr;
     }
 
     //--------------------------------------------------------------
-    MonoObject *Binding_Entity_GetWorld(MonoObject *managed_entity) {
+    MonoObject *Binding_Entity_GetWorld(MonoObject *mono_entity) {
         return nullptr;
     }
 
     //--------------------------------------------------------------
-    void Binding_Entity_Ctor(MonoObject *managed_object, MonoString *managed_name) {
+    void Binding_Entity_Ctor(MonoObject *mono_entity, MonoString *mono_entity_name) {
         
     }
 
     //--------------------------------------------------------------
-    MonoObject *Binding_Entity_AddComponent(MonoObject *managed_entity, MonoReflectionType *reflection_type) {
+    MonoObject *Binding_Entity_AddComponent(MonoObject *mono_entity, MonoReflectionType *mono_component_reflection_type) {
         return nullptr;
     }
 
     //--------------------------------------------------------------
-    MonoObject *Binding_Entity_GetComponent(MonoObject *managed_entity, MonoReflectionType *reflection_type) {
+    MonoObject *Binding_Entity_GetComponent(MonoObject *mono_entity, MonoReflectionType *mono_component_reflection_type) {
         return nullptr;
     }
 
@@ -62,66 +62,66 @@ namespace Hyperion::Scripting {
     }
 
     //--------------------------------------------------------------
-    MonoString *Binding_Object_GetName(MonoObject *managed_object) {
+    MonoString *Binding_Object_GetName(MonoObject *mono_object) {
         return nullptr;
     }
 
     //--------------------------------------------------------------
-    void Binding_Object_SetName(MonoObject *managed_object, MonoString *managed_name) {
+    void Binding_Object_SetName(MonoObject *mono_object, MonoString *managed_name) {
     }
 
     //--------------------------------------------------------------
-    void Binding_Object_Destroy(MonoObject *managed_object) {
+    void Binding_Object_Destroy(MonoObject *mono_object) {
 
     }
 
     //--------------------------------------------------------------
-    bool Binding_Object_IsNativeAlive(MonoObject *managed_object) {
+    bool Binding_Object_IsNativeAlive(MonoObject *mono_object) {
         return false;
     }
 
     //--------------------------------------------------------------
-    MonoObject *Binding_Renderer_GetMaterial(MonoObject *managed_renderer) {
+    MonoObject *Binding_Renderer_GetMaterial(MonoObject *mono_renderer) {
         return nullptr;
     }
 
     //--------------------------------------------------------------
-    void Binding_Transform_GetPosition(MonoObject *managed_transform, Vec3 *position) {
+    void Binding_Transform_GetPosition(MonoObject *mono_transform, Vec3 *position) {
 
     }
 
     //--------------------------------------------------------------
-    void Binding_Transform_SetPosition(MonoObject *managed_transform, Vec3 *position) {
+    void Binding_Transform_SetPosition(MonoObject *mono_transform, Vec3 *position) {
 
     }
 
     //--------------------------------------------------------------
-    void Binding_Transform_GetRotation(MonoObject *managed_transform, Quaternion *position) {
+    void Binding_Transform_GetRotation(MonoObject *mono_transform, Quaternion *position) {
 
     }
 
     //--------------------------------------------------------------
-    void Binding_Transform_SetRotation(MonoObject *managed_transform, Quaternion *position) {
+    void Binding_Transform_SetRotation(MonoObject *mono_transform, Quaternion *position) {
 
     }
 
     //--------------------------------------------------------------
-    void Binding_Transform_GetEulerAngles(MonoObject *managed_transform, Vec3 *euler_angles) {
+    void Binding_Transform_GetEulerAngles(MonoObject *mono_transform, Vec3 *euler_angles) {
 
     }
 
     //--------------------------------------------------------------
-    void Binding_Transform_SetEulerAngles(MonoObject *managed_transform, Vec3 *euler_angles) {
+    void Binding_Transform_SetEulerAngles(MonoObject *mono_transform, Vec3 *euler_angles) {
 
     }
 
     //--------------------------------------------------------------
-    MonoObject *Binding_Transform_GetParent(MonoObject *managed_transform) {
+    MonoObject *Binding_Transform_GetParent(MonoObject *mono_transform) {
         return nullptr;
     }
 
     //--------------------------------------------------------------
-    void Binding_Transform_SetParent(MonoObject *managed_transform, MonoObject *managed_parent) {
+    void Binding_Transform_SetParent(MonoObject *mono_transform, MonoObject *mono_parent_transform) {
 
     }
 

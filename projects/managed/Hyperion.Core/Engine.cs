@@ -25,9 +25,9 @@ namespace Hyperion {
             }
         }
 
-        internal static void FixedUpdate(float deltaTime) {
+        internal static void FixedUpdate(float fixedDeltaTime) {
             foreach (IApplication applicationCallback in s_ApplicationCallbacks) {
-                applicationCallback.FixedUpdate(deltaTime);
+                applicationCallback.FixedUpdate(fixedDeltaTime);
             }
         }
 

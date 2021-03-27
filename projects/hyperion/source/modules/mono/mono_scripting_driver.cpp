@@ -36,8 +36,7 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     void MonoScriptingDriver::PostInitialize() {
-        MonoManagedMethod engine_initialize_method =  s_assembly_core.FindMethod("Hyperion.Engine:Initialize()");
-        engine_initialize_method.Invoke(nullptr, nullptr);
+        s_engine_methods.initialize_method.Invoke(nullptr, nullptr);
     }
 
     //--------------------------------------------------------------
@@ -47,24 +46,21 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     void MonoScriptingDriver::Update() {
-        MonoManagedMethod engine_update_method = s_assembly_core.FindMethod("Hyperion.Engine:Update(single)");
         float32 delta_time = Time::GetDeltaTime();
         void *parameters[] = { &delta_time };
-        engine_update_method.Invoke(nullptr, parameters);
+        s_engine_methods.update_method.Invoke(nullptr, parameters);
     }
 
     //--------------------------------------------------------------
     void MonoScriptingDriver::FixedUpdate() {
-        MonoManagedMethod engine_fixed_update_method = s_assembly_core.FindMethod("Hyperion.Engine:FixedUpdate(single)");
-        float32 delta_time = Time::GetFixedDeltaTime();
-        void *parameters[] = { &delta_time };
-        engine_fixed_update_method.Invoke(nullptr, parameters);
+        float32 fixed_delta_time = Time::GetFixedDeltaTime();
+        void *parameters[] = { &fixed_delta_time };
+        s_engine_methods.fixed_update_method.Invoke(nullptr, parameters);
     }
 
     //--------------------------------------------------------------
     void MonoScriptingDriver::Shutdown() {
-        MonoManagedMethod engine_shutdown_method = s_assembly_core.FindMethod("Hyperion.Engine:Shutdown()");
-        engine_shutdown_method.Invoke(nullptr, nullptr);
+        s_engine_methods.shutdown_method.Invoke(nullptr, nullptr);
 
         // We do not need to bother explicitly unloading the runtime domain.
         s_domain_root.SetActive();
@@ -115,16 +111,28 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     void MonoScriptingDriver::ReloadRuntimeDomain() {
-        if (s_domain_runtime.GetMonoDomain() != nullptr) {
+        bool is_first_time_load = s_domain_runtime.GetMonoDomain() == nullptr;
+        if (!is_first_time_load) {
+            s_engine_methods.shutdown_method.Invoke(nullptr, nullptr);
             s_domain_runtime.Unload();
         }
+
         s_domain_runtime = MonoManagedDomain::Create("Hyperion.RuntimeDomain");
         s_domain_runtime.SetActive();
 
         s_assembly_core = s_domain_runtime.LoadAssembly((s_settings.library_path + "Hyperion.Core.dll").c_str());
         s_assembly_editor = s_domain_runtime.LoadAssembly((s_settings.library_path + "Hyperion.Editor.dll").c_str());
 
+        s_engine_methods.initialize_method = s_assembly_core.FindMethod("Hyperion.Engine.Initialize()");
+        s_engine_methods.update_method = s_assembly_core.FindMethod("Hyperion.Engine:Update(single)");
+        s_engine_methods.fixed_update_method = s_assembly_core.FindMethod("Hyperion.Engine:FixedUpdate(single)");
+        s_engine_methods.shutdown_method = s_assembly_core.FindMethod("Hyperion.Engine:Shutdown()");
+
         MonoScriptingBindings::RegisterClasses();
+
+        if (!is_first_time_load) {
+            s_engine_methods.initialize_method.Invoke(nullptr, nullptr);
+        }
     }
 
 }

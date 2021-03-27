@@ -14,7 +14,7 @@
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
-
+    
     class MonoScriptingDriver : public IScriptingDriver {
     public:
         uint64 GetMemoryUsage() const override;
@@ -41,6 +41,13 @@ namespace Hyperion::Scripting {
 
         inline static MonoManagedAssembly s_assembly_core;
         inline static MonoManagedAssembly s_assembly_editor;
+
+        inline static struct EngineMethods {
+            MonoManagedMethod initialize_method;
+            MonoManagedMethod update_method;
+            MonoManagedMethod fixed_update_method;
+            MonoManagedMethod shutdown_method;
+        } s_engine_methods;
     };
 
 }
