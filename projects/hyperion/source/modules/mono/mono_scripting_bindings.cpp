@@ -33,7 +33,11 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     MonoObject *Binding_Entity_GetTransform(MonoObject *mono_entity) {
-        return nullptr;
+        if (Entity *entity = MonoScriptingStorage::GetScriptingObject<Entity>(mono_entity)) {
+            return MonoScriptingStorage::GetOrCreateMonoObject(entity->GetTransform(), entity->GetType());
+        } else {
+            return nullptr;
+        }
     }
 
     //--------------------------------------------------------------
@@ -58,7 +62,8 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     MonoObject *Binding_Entity_CreatePrimitive(EntityPrimitive primitive) {
-        return nullptr;
+        Entity *entity = Entity::CreatePrimitive(primitive);
+        return MonoScriptingStorage::GetOrCreateMonoObject(entity, entity->GetType());
     }
 
     //--------------------------------------------------------------
@@ -92,7 +97,9 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     void Binding_Transform_SetPosition(MonoObject *mono_transform, Vec3 *position) {
-
+        if (Transform *transform = MonoScriptingStorage::GetScriptingObject<Transform>(mono_transform)) {
+            transform->SetPosition(*position);
+        }
     }
 
     //--------------------------------------------------------------
@@ -187,7 +194,7 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     void MonoScriptingBindings::RegisterClasses() {
-        
+        MonoScriptingStorage::RegisterClass<Entity>("Hyperion", "Entity");
     }
 
 }

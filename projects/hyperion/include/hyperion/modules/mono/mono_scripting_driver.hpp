@@ -27,6 +27,7 @@ namespace Hyperion::Scripting {
         void Shutdown() override;
     public:
         inline static MonoManagedDomain *GetRuntimeDomain() { return &s_domain_runtime; }
+        inline static MonoManagedAssembly *GetCoreAssembly() { return &s_assembly_core; }
     private:
         static void InitializeDebugger(const ScriptingSettings &settings);
         static void InitializeDomain();

@@ -16,8 +16,8 @@ namespace Hyperion::Scripting {
     public:
         inline MonoAssembly *GetMonoAssembly() const { return m_mono_assembly; }
 
-        MonoManagedMethod FindMethod(const String &description);
-        MonoClass *FindClass(const String &name_space, const String &name);
+        MonoManagedMethod FindMethod(const char *description);
+        MonoClass *FindClass(const char *name_space, const char *name);
     private:
         MonoAssembly *m_mono_assembly = nullptr;
         MonoImage *m_mono_assembly_image = nullptr;

@@ -19,17 +19,17 @@ namespace Hyperion::Scripting {
     }
 
     //--------------------------------------------------------------
-    MonoScriptingInstanceBase::MonoScriptingInstanceBase(MonoObject *mono_object) {
+    MonoScriptingInstance::MonoScriptingInstance(MonoObject *mono_object) {
         m_mono_object = mono_object;
     }
 
     //--------------------------------------------------------------
-    ScriptingType *MonoScriptingInstanceBase::GetScriptingType() const {
+    ScriptingType *MonoScriptingInstance::GetScriptingType() const {
         return MonoScriptingStorage::GetOrCreateScriptingType(mono_object_get_class(m_mono_object));
     }
 
     //--------------------------------------------------------------
-    void MonoScriptingInstance::SendMessage(ScriptingMessage message) {
+    void MonoScriptingInstanceScript::SendMessage(ScriptingMessage message) {
         switch (message) {
             case ScriptingMessage::OnCreate: {
                 break;
