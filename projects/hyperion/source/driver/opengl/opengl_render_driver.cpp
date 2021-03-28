@@ -446,9 +446,9 @@ namespace Hyperion::Rendering {
             HYP_ASSERT(format != RenderTextureFormat::Depth24Stencil8);
 
             // Make sure we are not out of bounds when accessing the render texture.
-            bool x_range_is_valid = region.x > 0 && (region.width + region.x) > 0 && (region.width + region.x) < static_cast<int32>(render_texture.size.width);
-            bool y_range_is_valid = region.y > 0 && (region.height + region.y) > 0 && (region.height + region.y) < static_cast<int32>(render_texture.size.height);
-            if (!x_range_is_valid || !y_range_is_valid) {
+            bool x_range_is_not_valid = region.x < 0 || (region.width + region.x) < 0 || (region.width + region.x) > static_cast<int32>(render_texture.size.width);
+            bool y_range_is_not_valid = region.y < 0 || (region.height + region.y) < 0 || (region.height + region.y) > static_cast<int32>(render_texture.size.height);
+            if (x_range_is_not_valid || y_range_is_not_valid) {
                 HYP_LOG_ERROR("OpenGL", "Trying to read out-of-bounds data of a render texture!");
                 goto finish;
             }
