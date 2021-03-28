@@ -5,9 +5,15 @@
 namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
+    Object *EditorSelection::GetSelectedObject() {
+        return ObjectManager::Get(s_selected_object_id);
+    }
+
+    //--------------------------------------------------------------
     Entity *EditorSelection::GetSelectedEntity() {
-        if (s_selected_object != nullptr && s_selected_object->GetType() == Type::Get<Entity>()) {
-            return static_cast<Entity *>(s_selected_object);
+        Object *selected_object = GetSelectedObject();
+        if (selected_object != nullptr && selected_object->GetType() == Type::Get<Entity>()) {
+            return static_cast<Entity *>(selected_object);
         } else {
             return nullptr;
         }
@@ -15,12 +21,17 @@ namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
     void EditorSelection::SetSelectedObject(Object *object) {
-        if (s_selected_object == object) {
+        ObjectId object_id = 0;
+        if (object != nullptr) {
+            object_id = object->GetId();
+        }
+
+        if (s_selected_object_id == object_id) {
             return;
         }
 
         // We explicitly allow a nullptr here, meaning no selection.
-        s_selected_object = object;
+        s_selected_object_id = object_id;
 
         for (IEditorSelectionChangedListener *selection_changed_listener : s_selection_changed_listeners) {
             selection_changed_listener->OnSelectionChanaged(object);

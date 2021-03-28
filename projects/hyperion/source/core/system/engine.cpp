@@ -31,6 +31,10 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Engine::SetMode(EngineMode engine_mode) {
+        if (s_engine_mode == engine_mode) {
+            return;
+        }
+
         s_engine_mode = engine_mode;
         Scripting::ScriptingEngine::EngineModeChanged(engine_mode);
 

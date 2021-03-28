@@ -2,6 +2,7 @@
 
 //---------------------- Library Includes ----------------------
 #include <hyperion/core/app/application.hpp>
+#include <hyperion/core/system/engine_mode.hpp>
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/editor/rendering/editor_render_pipeline.hpp"
@@ -13,15 +14,18 @@ namespace Hyperion::Editor {
     public:
         EditorApplication(const ApplicationSettings &settings);
     public:
-        inline static World *GetLoadedWorld() { return s_loaded_world; }
-        inline static void SetLoadedWorld(World *loaded_world) { s_loaded_world = loaded_world; }
+        inline static World *GetEditingWorld() { return s_editing_world; }
+        inline static void SetEditingWorld(World *editing_world) { s_editing_world = editing_world; }
 
         inline static EditorRenderPipeline *GetRenderPipeline() { return s_editor_render_pipeline; }
     protected:
         void OnInitialize() override;
         void OnUpdate(float32 delta_time) override;
     private:
-        inline static World *s_loaded_world;
+        static void EnterEngineMode(EngineMode engine_mode);
+        static void ReloadEditingWorld();
+    private:
+        inline static World *s_editing_world;
 
         inline static EditorRenderPipeline *s_editor_render_pipeline;
     };

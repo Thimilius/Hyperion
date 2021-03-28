@@ -16,7 +16,7 @@ namespace Hyperion::Editor {
 
     class EditorSelection final {
     public:
-        inline static Object *GetSelectedObject() { return s_selected_object; }
+        static Object *GetSelectedObject();
         static Entity *GetSelectedEntity();
 
         static void SetSelectedObject(Object *object);
@@ -24,7 +24,7 @@ namespace Hyperion::Editor {
         static void RegisterSelectionChangedListener(IEditorSelectionChangedListener *selection_changed_listener);
         static void UnregisterSelectionChangedListener(IEditorSelectionChangedListener *selection_changed_listener);
     private:
-        inline static Object *s_selected_object;
+        inline static ObjectId s_selected_object_id;
         inline static Vector<IEditorSelectionChangedListener *> s_selection_changed_listeners;
     };
 

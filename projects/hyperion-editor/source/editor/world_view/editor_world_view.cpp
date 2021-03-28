@@ -99,7 +99,7 @@ namespace Hyperion::Editor {
             render_driver->Clear(ClearFlags::Depth, Color::Black());
 
             ImmediateRenderer::Begin(MeshTopology::Lines);
-            EditorApplication::GetLoadedWorld()->GetPhysicsWorld()->DebugDraw();
+            EditorApplication::GetEditingWorld()->GetPhysicsWorld()->DebugDraw();
             ImmediateRenderer::End();
         }
     }

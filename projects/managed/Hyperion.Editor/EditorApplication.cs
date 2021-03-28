@@ -17,7 +17,7 @@
         }
 
         public void Shutdown() {
-            Object.Destroy(null);
+
         }
     }
 }

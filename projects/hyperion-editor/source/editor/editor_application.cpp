@@ -12,6 +12,7 @@
 #include <hyperion/scripting/scripting_engine.hpp>
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/editor/editor_selection.hpp"
 #include "hyperion/editor/rendering/editor_render_pipeline.hpp"
 #include "hyperion/editor/world_view/editor_world_view.hpp"
 
@@ -27,8 +28,8 @@ namespace Hyperion::Editor {
     void EditorApplication::OnInitialize() {
         EditorWorldView::Initialize();
 
-        s_loaded_world = WorldManager::CreateWorld();
-        WorldManager::SetActiveWorld(s_loaded_world);
+        s_editing_world = WorldManager::CreateWorld();
+        WorldManager::SetActiveWorld(s_editing_world);
     }
 
     //--------------------------------------------------------------
@@ -40,10 +41,28 @@ namespace Hyperion::Editor {
             GetWindow()->SetWindowMode(GetWindow()->GetWindowMode() == WindowMode::Borderless ? WindowMode::Windowed : WindowMode::Borderless);
         }
         if (Input::IsKeyDown(KeyCode::F5)) {
-            Engine::SetMode(Engine::GetMode() == EngineMode::Editor ? EngineMode::EditorRuntime : EngineMode::Editor);
+            EnterEngineMode(Engine::GetMode() == EngineMode::Editor ? EngineMode::EditorRuntime : EngineMode::Editor);
         }
 
         EditorWorldView::Update(delta_time);
+    }
+
+    //--------------------------------------------------------------
+    void EditorApplication::EnterEngineMode(EngineMode engine_mode) {
+        Engine::SetMode(engine_mode);
+
+        // When going back to normal editor mode, we want to reset the complete world state.
+        if (engine_mode == EngineMode::Editor) {
+            ReloadEditingWorld();
+        }
+    }
+
+    //--------------------------------------------------------------
+    void EditorApplication::ReloadEditingWorld() {
+        World *new_world = WorldManager::CreateWorld();
+        WorldManager::SetActiveWorld(new_world);
+        WorldManager::DestroyWorld(s_editing_world);
+        s_editing_world = new_world;
     }
 
 }
