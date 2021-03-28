@@ -94,6 +94,11 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    HYP_REFLECT_BEGIN(Object)
+    HYP_REFLECT_BASE(Scripting::ScriptingObject)
+    HYP_REFLECT_END()
+
+    //--------------------------------------------------------------
     void ObjectManager::LateUpdate() {
         DestroyPendingObjects();
     }
@@ -144,9 +149,5 @@ namespace Hyperion {
 
         s_objects.erase(id);
     }
-
-    //--------------------------------------------------------------
-    HYP_REFLECT_BEGIN(Object)
-    HYP_REFLECT_END()
 
 }

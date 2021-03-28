@@ -35,6 +35,7 @@ namespace Hyperion {
         void Deserialize(IDeserializationStream &stream, ReferenceContext &context) override;
     };
 
+    // TODO: Make worlds not be an object.
     class World final : public Object {
         HYP_REFLECT();
     public:

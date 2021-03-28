@@ -143,7 +143,6 @@ namespace Hyperion::Scripting {
         s_engine_methods.shutdown_method = s_assembly_core.FindMethod("Hyperion.Engine:Shutdown()");
 
         MonoScriptingStorage::Clear();
-
         MonoScriptingBindings::RegisterClasses();
         MonoScriptingBindings::Bind();
 

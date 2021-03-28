@@ -21,6 +21,7 @@ namespace Hyperion::Scripting {
     class MonoScriptingInstance : public ScriptingInstance {
     public:
         MonoScriptingInstance(MonoObject *mono_object);
+        virtual ~MonoScriptingInstance() override;
     public:
         ScriptingType *GetScriptingType() const override;
 
@@ -33,7 +34,7 @@ namespace Hyperion::Scripting {
 
     class MonoScriptingInstanceScript : public MonoScriptingInstance {
     public:
-        MonoScriptingInstanceScript(MonoObject *mono_object) : MonoScriptingInstance(mono_object) { }
+        MonoScriptingInstanceScript(MonoObject *mono_object);
     public:
         void SendMessage(ScriptingMessage message) override;
     };

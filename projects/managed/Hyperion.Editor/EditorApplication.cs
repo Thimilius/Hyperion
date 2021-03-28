@@ -7,7 +7,9 @@
         }
 
         public void Update(float deltaTime) {
-            m_Entity.Transform.Position = new Vector3(Time.ElapsedTime, 0.0f, 0.0f);
+            Vector3 position = m_Entity.Transform.Position;
+            position.x += deltaTime;
+            m_Entity.Transform.Position = position;
         }
 
         public void FixedUpdate(float fixedDeltaTime) {
@@ -15,7 +17,7 @@
         }
 
         public void Shutdown() {
-
+            Object.Destroy(null);
         }
     }
 }

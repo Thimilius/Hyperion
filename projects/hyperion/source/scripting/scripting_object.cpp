@@ -9,7 +9,17 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     ScriptingObject::~ScriptingObject() {
-        delete m_scripting_instance;
+        ClearScriptingInstance();
     }
+
+    //--------------------------------------------------------------
+    void ScriptingObject::ClearScriptingInstance() {
+        delete m_scripting_instance;
+        m_scripting_instance = nullptr;
+    }
+
+    //--------------------------------------------------------------
+    HYP_REFLECT_BEGIN(ScriptingObject)
+    HYP_REFLECT_END()
 
 }
