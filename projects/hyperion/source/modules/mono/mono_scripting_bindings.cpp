@@ -160,10 +160,14 @@ namespace Hyperion::Scripting {
             mono_add_internal_call("Hyperion.Object::Binding_IsNativeAlive", Binding_Object_IsNativeAlive);
         }
 
+        // Renderer
+        {
+            mono_add_internal_call("Hyperion.Renderer::Binding_GetMaterial", Binding_Renderer_GetMaterial);
+        }
+
         // Time
         {
-            // TODO: We need to intercept the elapsed time call when we are in the editor runtime.
-            mono_add_internal_call("Hyperion.Time::Binding_GetElapsedTime", Time::GetTime);
+            mono_add_internal_call("Hyperion.Time::Binding_GetElapsedTime", Time::GetTimeSinceEngineModeChange);
             mono_add_internal_call("Hyperion.Time::Binding_GetDeltaTime", Time::GetDeltaTime);
             mono_add_internal_call("Hyperion.Time::Binding_GetFixedDeltaTime", Time::GetFixedDeltaTime);
         }
@@ -178,11 +182,6 @@ namespace Hyperion::Scripting {
             mono_add_internal_call("Hyperion.Transform::Binding_SetEulerAngles", Binding_Transform_SetEulerAngles);
             mono_add_internal_call("Hyperion.Transform::Binding_GetParent", Binding_Transform_GetParent);
             mono_add_internal_call("Hyperion.Transform::Binding_SetParent", Binding_Transform_SetParent);
-        }
-
-        // Renderer
-        {
-            mono_add_internal_call("Hyperion.Renderer::Binding_GetMaterial", Binding_Renderer_GetMaterial);
         }
     }
 

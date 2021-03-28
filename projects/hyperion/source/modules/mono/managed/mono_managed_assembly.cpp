@@ -22,6 +22,10 @@ namespace Hyperion::Scripting {
     //--------------------------------------------------------------
     MonoManagedMethod MonoManagedAssembly::FindMethod(const String &description) {
         MonoMethodDesc *method_description = mono_method_desc_new(description.c_str(), true);
+        if (method_description == nullptr) {
+            HYP_LOG_ERROR("Scripting", "Failed to find method: '{}'!", description);
+            return MonoManagedMethod();
+        }
         MonoMethod *mono_method = mono_method_desc_search_in_image(method_description, m_mono_assembly_image);
         if (mono_method == nullptr) {
             HYP_LOG_ERROR("Scripting", "Failed to find method: '{}'!", description);

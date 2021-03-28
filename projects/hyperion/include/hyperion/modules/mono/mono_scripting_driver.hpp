@@ -28,11 +28,12 @@ namespace Hyperion::Scripting {
     public:
         inline static MonoManagedDomain *GetRuntimeDomain() { return &s_domain_runtime; }
     private:
-        static void InitializerDebugger(const ScriptingSettings &settings);
-        static void InititializeDomain();
-        static void InititializeBindings();
+        static void InitializeDebugger(const ScriptingSettings &settings);
+        static void InitializeDomain();
 
         static void ReloadRuntimeDomain();
+
+        static bool IsInRuntime();
     private:
         inline static ScriptingSettings s_settings;
 

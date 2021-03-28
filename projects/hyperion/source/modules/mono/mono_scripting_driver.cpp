@@ -15,6 +15,7 @@
 #include "hyperion/core/app/time.hpp"
 #include "hyperion/core/system/engine.hpp"
 #include "hyperion/modules/mono/mono_scripting_bindings.hpp"
+#include "hyperion/modules/mono/mono_scripting_storage.hpp"
 #include "hyperion/modules/mono/managed/mono_managed_string.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -29,23 +30,34 @@ namespace Hyperion::Scripting {
     void MonoScriptingDriver::Initialize(const ScriptingSettings &settings) {
         s_settings = settings;
 
-        InitializerDebugger(settings);
-        InititializeDomain();
-        InititializeBindings();
+        InitializeDebugger(settings);
+        InitializeDomain();
     }
 
     //--------------------------------------------------------------
     void MonoScriptingDriver::PostInitialize() {
-        s_engine_methods.initialize_method.Invoke(nullptr, nullptr);
+        if (IsInRuntime()) {
+            s_engine_methods.initialize_method.Invoke(nullptr, nullptr);
+        }
     }
 
     //--------------------------------------------------------------
     void MonoScriptingDriver::EngineModeChange(EngineMode engine_mode) {
-        
+        if (engine_mode == EngineMode::EditorRuntime) {
+            ReloadRuntimeDomain();
+
+            s_engine_methods.initialize_method.Invoke(nullptr, nullptr);
+        } else if (engine_mode == EngineMode::Editor) {
+            s_engine_methods.shutdown_method.Invoke(nullptr, nullptr);
+        }
     }
 
     //--------------------------------------------------------------
     void MonoScriptingDriver::Update() {
+        if (!IsInRuntime()) {
+            return;
+        }
+
         float32 delta_time = Time::GetDeltaTime();
         void *parameters[] = { &delta_time };
         s_engine_methods.update_method.Invoke(nullptr, parameters);
@@ -53,6 +65,10 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     void MonoScriptingDriver::FixedUpdate() {
+        if (!IsInRuntime()) {
+            return;
+        }
+
         float32 fixed_delta_time = Time::GetFixedDeltaTime();
         void *parameters[] = { &fixed_delta_time };
         s_engine_methods.fixed_update_method.Invoke(nullptr, parameters);
@@ -60,7 +76,9 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     void MonoScriptingDriver::Shutdown() {
-        s_engine_methods.shutdown_method.Invoke(nullptr, nullptr);
+        if (IsInRuntime()) {
+            s_engine_methods.shutdown_method.Invoke(nullptr, nullptr);
+        }
 
         // We do not need to bother explicitly unloading the runtime domain.
         s_domain_root.SetActive();
@@ -69,7 +87,7 @@ namespace Hyperion::Scripting {
     }
 
     //--------------------------------------------------------------
-    void MonoScriptingDriver::InitializerDebugger(const ScriptingSettings &settings) {
+    void MonoScriptingDriver::InitializeDebugger(const ScriptingSettings &settings) {
         mono_debug_init(MONO_DEBUG_FORMAT_MONO);
 
         String debug_option;
@@ -87,7 +105,7 @@ namespace Hyperion::Scripting {
     }
 
     //--------------------------------------------------------------
-    void MonoScriptingDriver::InititializeDomain() {
+    void MonoScriptingDriver::InitializeDomain() {
         mono_set_dirs((s_settings.runtime_path + "lib").c_str(), (s_settings.runtime_path + "etc").c_str());
         mono_set_assemblies_path((s_settings.runtime_path + "lib/mono/4.5").c_str());
 
@@ -105,15 +123,11 @@ namespace Hyperion::Scripting {
     }
 
     //--------------------------------------------------------------
-    void MonoScriptingDriver::InititializeBindings() {
-        MonoScriptingBindings::Bind();
-    }
-
-    //--------------------------------------------------------------
     void MonoScriptingDriver::ReloadRuntimeDomain() {
-        bool is_first_time_load = s_domain_runtime.GetMonoDomain() == nullptr;
-        if (!is_first_time_load) {
-            s_engine_methods.shutdown_method.Invoke(nullptr, nullptr);
+        // We have to clean up the old domain 
+        if (s_domain_runtime.GetMonoDomain() != nullptr) {
+            // Before unloading the runtime domain, we have to remember to set the root domain active.
+            s_domain_root.SetActive();
             s_domain_runtime.Unload();
         }
 
@@ -123,16 +137,23 @@ namespace Hyperion::Scripting {
         s_assembly_core = s_domain_runtime.LoadAssembly((s_settings.library_path + "Hyperion.Core.dll").c_str());
         s_assembly_editor = s_domain_runtime.LoadAssembly((s_settings.library_path + "Hyperion.Editor.dll").c_str());
 
-        s_engine_methods.initialize_method = s_assembly_core.FindMethod("Hyperion.Engine.Initialize()");
+        s_engine_methods.initialize_method = s_assembly_core.FindMethod("Hyperion.Engine:Initialize()");
         s_engine_methods.update_method = s_assembly_core.FindMethod("Hyperion.Engine:Update(single)");
         s_engine_methods.fixed_update_method = s_assembly_core.FindMethod("Hyperion.Engine:FixedUpdate(single)");
         s_engine_methods.shutdown_method = s_assembly_core.FindMethod("Hyperion.Engine:Shutdown()");
 
-        MonoScriptingBindings::RegisterClasses();
+        MonoScriptingStorage::Clear();
 
-        if (!is_first_time_load) {
-            s_engine_methods.initialize_method.Invoke(nullptr, nullptr);
-        }
+        MonoScriptingBindings::RegisterClasses();
+        MonoScriptingBindings::Bind();
+
+        // We have to trigger the internal registration.
+        s_assembly_core.FindMethod("Hyperion.Engine:Register()").Invoke(nullptr, nullptr);
+    }
+
+    //--------------------------------------------------------------
+    bool MonoScriptingDriver::IsInRuntime() {
+        return Engine::GetMode() == EngineMode::Runtime || Engine::GetMode() == EngineMode::EditorRuntime;
     }
 
 }

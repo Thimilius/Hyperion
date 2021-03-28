@@ -31,11 +31,12 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Engine::SetMode(EngineMode engine_mode) {
-        // We inform the scripting engine before we are actually setting the new mode,
-        // so it can still act like we are editor runtime when we switch to editor.
+        s_engine_mode = engine_mode;
         Scripting::ScriptingEngine::EngineModeChanged(engine_mode);
 
-        s_engine_mode = engine_mode;
+        // We reset the time after informing the scripting engine.
+        // This ensures that we wait before the scripting domain gets properly reloaded.
+        Time::s_time_since_engine_mode_change = 0.0f;
     }
 
     //--------------------------------------------------------------
@@ -211,6 +212,7 @@ namespace Hyperion {
         s_time_stats.accumulator += delta_time;
         Time::s_delta_time = delta_time;
         Time::s_time += delta_time;
+        Time::s_time_since_engine_mode_change += delta_time;
     }
 
     //--------------------------------------------------------------

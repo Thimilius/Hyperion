@@ -7,6 +7,7 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
 
+    //--------------------------------------------------------------
     ScriptingObject::~ScriptingObject() {
         delete m_scripting_instance;
     }
