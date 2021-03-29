@@ -4,6 +4,9 @@
 //--------------------- Definition Include ---------------------
 #include "hyperion/modules/mono/mono_scripting_bindings.hpp"
 
+//---------------------- Library Includes ----------------------
+#include <mono/metadata/exception.h>
+
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/material.hpp"
 #include "hyperion/core/app/input.hpp"
@@ -39,6 +42,18 @@ namespace Hyperion::Scripting {
             return mono_class;
         }
     }
+
+    //--------------------------------------------------------------
+    bool ValidateComponentMonoClass(MonoClass *mono_class) {
+        if (!mono_class_is_subclass_of(mono_class, MonoScriptingStorage::GetSpecialClass(MonoSpecialClass::Script), false)) {
+            mono_raise_exception(mono_get_exception_argument("type", "The requested component must inherit from 'Hyperion.Script'"));
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    //--------------------------------------------------------------
 
     //--------------------------------------------------------------
     MonoObject *Binding_Component_GetEntity(MonoObject *mono_component) {
@@ -89,17 +104,17 @@ namespace Hyperion::Scripting {
     //--------------------------------------------------------------
     MonoObject *Binding_Entity_AddComponent(MonoObject *mono_entity, MonoReflectionType *mono_component_reflection_type) {
         if (Entity *entity = MonoScriptingStorage::GetScriptingObject<Entity>(mono_entity)) {
+
             MonoClass *mono_class = GetMonoClassFromReflectionType(mono_component_reflection_type);
             Type *type = MonoScriptingStorage::GetNativeType(mono_class);
-
-            // TODO: Do some more verification for proper error reporting.
-
-            // We have to handle differently depending on whether or not the requested component is a native one or not.
-            if (type->IsDerivedFrom<Script>()) {
-                // TODO: Implement.
-                return nullptr;
-            } else {
+            if (type != nullptr) {
                 return MonoScriptingStorage::GetOrCreateMonoObject(entity->AddComponent(type));
+            } else {
+                if (ValidateComponentMonoClass(mono_class)) {
+                    return nullptr;
+                }
+
+                return nullptr;
             }
         } else {
             return nullptr;
@@ -111,13 +126,14 @@ namespace Hyperion::Scripting {
         if (Entity *entity = MonoScriptingStorage::GetScriptingObject<Entity>(mono_entity)) {
             MonoClass *mono_class = GetMonoClassFromReflectionType(mono_component_reflection_type);
             Type *type = MonoScriptingStorage::GetNativeType(mono_class);
-
-            // We have to handle differently depending on whether or not the requested component is a native one or not.
-            if (type->IsDerivedFrom<Script>()) {
-                // TODO: Implement.
-                return nullptr;
-            } else {
+            if (type != nullptr) {
                 return MonoScriptingStorage::GetOrCreateMonoObject(entity->GetComponent(type));
+            } else {
+                if (ValidateComponentMonoClass(mono_class)) {
+                    return nullptr;
+                }
+
+                return nullptr;
             }
         } else {
             return nullptr;
@@ -156,6 +172,11 @@ namespace Hyperion::Scripting {
     //--------------------------------------------------------------
     bool Binding_Object_IsNativeAlive(MonoObject *mono_object) {
         return MonoScriptingStorage::GetScriptingObject(mono_object) != nullptr;
+    }
+
+    //--------------------------------------------------------------
+    void Binding_Script_Ctor(MonoObject *mono_script) {
+        // TODO: Add validation check that we do not call this constructor through new.
     }
 
     //--------------------------------------------------------------
@@ -252,6 +273,11 @@ namespace Hyperion::Scripting {
             mono_add_internal_call("Hyperion.Object::Binding_SetName", Binding_Object_SetName);
             mono_add_internal_call("Hyperion.Object::Binding_Destroy", Binding_Object_Destroy);
             mono_add_internal_call("Hyperion.Object::Binding_IsNativeAlive", Binding_Object_IsNativeAlive);
+        }
+
+        // Script
+        {
+            mono_add_internal_call("Hyperion.Script::Binding_Ctor", Binding_Script_Ctor);
         }
 
         // Time

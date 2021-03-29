@@ -96,9 +96,13 @@ namespace Hyperion::Scripting {
     //--------------------------------------------------------------
     Type *MonoScriptingStorage::GetNativeType(MonoClass *mono_class) {
         HYP_ASSERT(mono_class);
-        HYP_ASSERT(s_mono_class_to_native_types.find(mono_class) != s_mono_class_to_native_types.end());
-        
-        return s_mono_class_to_native_types[mono_class];
+
+        auto it = s_mono_class_to_native_types.find(mono_class);
+        if (it != s_mono_class_to_native_types.end()) {
+            return it->second;
+        } else {
+            return nullptr;
+        }
     }
 
     //--------------------------------------------------------------

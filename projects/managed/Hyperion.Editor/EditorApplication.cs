@@ -1,5 +1,9 @@
 ﻿namespace Hyperion.Editor {
     public class EditorApplication : IApplication {
+        private class MyComponent : Component {
+
+        }
+
         private Entity m_Entity;
 
         public void Initialize() {

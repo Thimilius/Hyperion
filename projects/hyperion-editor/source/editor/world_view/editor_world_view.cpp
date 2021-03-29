@@ -120,7 +120,6 @@ namespace Hyperion::Editor {
 
         // Make sure we are in bounds.
         if (mouse_position.x < 0 || mouse_position.x >= static_cast<int32>(Display::GetWidth()) || mouse_position.y < 0 || mouse_position.y >= static_cast<int32>(Display::GetHeight())) {
-            HYP_TRACE("Out of bounds");
             return;
         }
 

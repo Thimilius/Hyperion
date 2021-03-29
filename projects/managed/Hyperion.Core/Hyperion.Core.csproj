@@ -65,11 +65,13 @@
     <Compile Include="Entity\Components\Transform.cs" />
     <Compile Include="Entity\Entity.cs" />
     <Compile Include="Entity\World.cs" />
+    <Compile Include="HyperionException.cs" />
     <Compile Include="IApplication.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="Math\Quaternion.cs" />
     <Compile Include="Math\Vector3.cs" />
     <Compile Include="Object.cs" />
+    <Compile Include="ObjectDestroyedException.cs" />
     <Compile Include="Time.cs" />
   </ItemGroup>
   <ItemGroup>
