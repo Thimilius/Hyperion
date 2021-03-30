@@ -28,6 +28,18 @@
 namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
+    template<typename T>
+    T *GetScriptingObjectAs(MonoObject *mono_object) {
+        T *scripting_object = MonoScriptingStorage::GetScriptingObject<T>(mono_object);
+        if (scripting_object != nullptr) {
+            return scripting_object;
+        } else {
+            mono_raise_exception(mono_get_exception_invalid_operation("Trying to access an object that was already destroyed"));
+            return nullptr;
+        }
+    }
+
+    //--------------------------------------------------------------
     MonoClass *GetMonoClassFromReflectionType(MonoReflectionType *mono_reflection_type) {
         MonoType *mono_type = mono_reflection_type_get_type(mono_reflection_type);
         HYP_ASSERT(mono_type);
@@ -54,41 +66,27 @@ namespace Hyperion::Scripting {
     }
 
     //--------------------------------------------------------------
-
-    //--------------------------------------------------------------
     MonoObject *Binding_Component_GetEntity(MonoObject *mono_component) {
-        if (Component *component = MonoScriptingStorage::GetScriptingObject<Component>(mono_component)) {
-            return MonoScriptingStorage::GetOrCreateMonoObject(component->GetEntity());
-        } else {
-            return nullptr;
-        }
+        Component *component = GetScriptingObjectAs<Component>(mono_component);
+        return MonoScriptingStorage::GetOrCreateMonoObject(component->GetEntity());
     }
 
     //--------------------------------------------------------------
     MonoObject *Binding_Component_GetTransform(MonoObject *mono_component) {
-        if (Component *component = MonoScriptingStorage::GetScriptingObject<Component>(mono_component)) {
-            return MonoScriptingStorage::GetOrCreateMonoObject(component->GetTransform());
-        } else {
-            return nullptr;
-        }
+        Component *component = GetScriptingObjectAs<Component>(mono_component);
+        return MonoScriptingStorage::GetOrCreateMonoObject(component->GetTransform());
     }
 
     //--------------------------------------------------------------
     MonoObject *Binding_Entity_GetTransform(MonoObject *mono_entity) {
-        if (Entity *entity = MonoScriptingStorage::GetScriptingObject<Entity>(mono_entity)) {
-            return MonoScriptingStorage::GetOrCreateMonoObject(entity->GetTransform());
-        } else {
-            return nullptr;
-        }
+        Entity *entity = GetScriptingObjectAs<Entity>(mono_entity);
+        return MonoScriptingStorage::GetOrCreateMonoObject(entity->GetTransform());
     }
 
     //--------------------------------------------------------------
     MonoObject *Binding_Entity_GetWorld(MonoObject *mono_entity) {
-        if (Entity *entity = MonoScriptingStorage::GetScriptingObject<Entity>(mono_entity)) {
-            return MonoScriptingStorage::GetOrCreateMonoObject(entity->GetWorld());
-        } else {
-            return nullptr;
-        }
+        Entity *entity = GetScriptingObjectAs<Entity>(mono_entity);
+        return MonoScriptingStorage::GetOrCreateMonoObject(entity->GetWorld());
     }
 
     //--------------------------------------------------------------
@@ -103,40 +101,33 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     MonoObject *Binding_Entity_AddComponent(MonoObject *mono_entity, MonoReflectionType *mono_component_reflection_type) {
-        if (Entity *entity = MonoScriptingStorage::GetScriptingObject<Entity>(mono_entity)) {
-
-            MonoClass *mono_class = GetMonoClassFromReflectionType(mono_component_reflection_type);
-            Type *type = MonoScriptingStorage::GetNativeType(mono_class);
-            if (type != nullptr) {
-                return MonoScriptingStorage::GetOrCreateMonoObject(entity->AddComponent(type));
+        Entity *entity = GetScriptingObjectAs<Entity>(mono_entity);
+        MonoClass *mono_class = GetMonoClassFromReflectionType(mono_component_reflection_type);
+        Type *type = MonoScriptingStorage::GetNativeType(mono_class);
+        if (type != nullptr) {
+            return MonoScriptingStorage::GetOrCreateMonoObject(entity->AddComponent(type));
+        } else {
+            if (ValidateComponentMonoClass(mono_class)) {
+                return nullptr;
             } else {
-                if (ValidateComponentMonoClass(mono_class)) {
-                    return nullptr;
-                }
-
                 return nullptr;
             }
-        } else {
-            return nullptr;
         }
     }
 
     //--------------------------------------------------------------
     MonoObject *Binding_Entity_GetComponent(MonoObject *mono_entity, MonoReflectionType *mono_component_reflection_type) {
-        if (Entity *entity = MonoScriptingStorage::GetScriptingObject<Entity>(mono_entity)) {
-            MonoClass *mono_class = GetMonoClassFromReflectionType(mono_component_reflection_type);
-            Type *type = MonoScriptingStorage::GetNativeType(mono_class);
-            if (type != nullptr) {
-                return MonoScriptingStorage::GetOrCreateMonoObject(entity->GetComponent(type));
+        Entity *entity = GetScriptingObjectAs<Entity>(mono_entity);
+        MonoClass *mono_class = GetMonoClassFromReflectionType(mono_component_reflection_type);
+        Type *type = MonoScriptingStorage::GetNativeType(mono_class);
+        if (type != nullptr) {
+            return MonoScriptingStorage::GetOrCreateMonoObject(entity->GetComponent(type));
+        } else {
+            if (ValidateComponentMonoClass(mono_class)) {
+                return nullptr;
             } else {
-                if (ValidateComponentMonoClass(mono_class)) {
-                    return nullptr;
-                }
-
                 return nullptr;
             }
-        } else {
-            return nullptr;
         }
     }
 
@@ -148,25 +139,20 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     MonoString *Binding_Object_GetName(MonoObject *mono_object) {
-        if (Object *object = MonoScriptingStorage::GetScriptingObject<Object>(mono_object)) {
-            return MonoManagedString(object->GetName()).GetMonoString();
-        } else {
-            return nullptr;
-        }
+        Object *object = GetScriptingObjectAs<Object>(mono_object);
+        return MonoManagedString(object->GetName()).GetMonoString();
     }
 
     //--------------------------------------------------------------
     void Binding_Object_SetName(MonoObject *mono_object, MonoString *managed_name) {
-        if (Object *object = MonoScriptingStorage::GetScriptingObject<Object>(mono_object)) {
-            object->SetName(MonoManagedString(managed_name).GetString());
-        }
+        Object *object = GetScriptingObjectAs<Object>(mono_object);
+        object->SetName(MonoManagedString(managed_name).GetString());
     }
 
     //--------------------------------------------------------------
     void Binding_Object_Destroy(MonoObject *mono_object) {
-        if (Object *object = MonoScriptingStorage::GetScriptingObject<Object>(mono_object)) {
-            Object::Destroy(object);
-        }
+        Object *object = GetScriptingObjectAs<Object>(mono_object);
+        Object::Destroy(object);
     }
 
     //--------------------------------------------------------------
@@ -181,62 +167,51 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     void Binding_Transform_GetPosition(MonoObject *mono_transform, Vec3 *position) {
-        if (Transform *transform = MonoScriptingStorage::GetScriptingObject<Transform>(mono_transform)) {
-            *position = transform->GetPosition();
-        }
+        Transform *transform = GetScriptingObjectAs<Transform>(mono_transform);
+        *position = transform->GetPosition();
     }
 
     //--------------------------------------------------------------
     void Binding_Transform_SetPosition(MonoObject *mono_transform, Vec3 *position) {
-        if (Transform *transform = MonoScriptingStorage::GetScriptingObject<Transform>(mono_transform)) {
-            transform->SetPosition(*position);
-        }
+        Transform *transform = GetScriptingObjectAs<Transform>(mono_transform);
+        transform->SetPosition(*position);
     }
 
     //--------------------------------------------------------------
     void Binding_Transform_GetRotation(MonoObject *mono_transform, Quaternion *rotation) {
-        if (Transform *transform = MonoScriptingStorage::GetScriptingObject<Transform>(mono_transform)) {
-            *rotation = transform->GetRotation();
-        }
+        Transform *transform = GetScriptingObjectAs<Transform>(mono_transform);
+        *rotation = transform->GetRotation();
     }
 
     //--------------------------------------------------------------
     void Binding_Transform_SetRotation(MonoObject *mono_transform, Quaternion *rotation) {
-        if (Transform *transform = MonoScriptingStorage::GetScriptingObject<Transform>(mono_transform)) {
-            transform->SetRotation(*rotation);
-        }
+        Transform *transform = GetScriptingObjectAs<Transform>(mono_transform);
+        transform->SetRotation(*rotation);
     }
 
     //--------------------------------------------------------------
     void Binding_Transform_GetEulerAngles(MonoObject *mono_transform, Vec3 *euler_angles) {
-        if (Transform *transform = MonoScriptingStorage::GetScriptingObject<Transform>(mono_transform)) {
-            *euler_angles = transform->GetEulerAngles();
-        }
+        Transform *transform = GetScriptingObjectAs<Transform>(mono_transform);
+        *euler_angles = transform->GetEulerAngles();
     }
 
     //--------------------------------------------------------------
     void Binding_Transform_SetEulerAngles(MonoObject *mono_transform, Vec3 *euler_angles) {
-        if (Transform *transform = MonoScriptingStorage::GetScriptingObject<Transform>(mono_transform)) {
-            transform->SetEulerAngles(*euler_angles);
-        }
+        Transform *transform = GetScriptingObjectAs<Transform>(mono_transform);
+        transform->SetEulerAngles(*euler_angles);
     }
 
     //--------------------------------------------------------------
     MonoObject *Binding_Transform_GetParent(MonoObject *mono_transform) {
-        if (Transform *transform = MonoScriptingStorage::GetScriptingObject<Transform>(mono_transform)) {
-            return MonoScriptingStorage::GetOrCreateMonoObject(transform);
-        } else {
-            return nullptr;
-        }
+        Transform *transform = GetScriptingObjectAs<Transform>(mono_transform);
+        return MonoScriptingStorage::GetOrCreateMonoObject(transform->GetParent());
     }
 
     //--------------------------------------------------------------
     void Binding_Transform_SetParent(MonoObject *mono_transform, MonoObject *mono_parent_transform) {
-        if (Transform *transform = MonoScriptingStorage::GetScriptingObject<Transform>(mono_transform)) {
-            if (Transform *parent_transform = MonoScriptingStorage::GetScriptingObject<Transform>(mono_parent_transform)) {
-                transform->SetParent(parent_transform);
-            }
-        }
+        Transform *transform = GetScriptingObjectAs<Transform>(mono_transform);
+        Transform *parent_transform = GetScriptingObjectAs<Transform>(mono_parent_transform);
+        transform->SetParent(parent_transform);
     }
 
     //--------------------------------------------------------------

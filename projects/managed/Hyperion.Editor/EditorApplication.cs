@@ -1,6 +1,6 @@
 ﻿namespace Hyperion.Editor {
     public class EditorApplication : IApplication {
-        private class MyComponent : Component {
+        private class MyComponent : Script {
 
         }
 
@@ -14,6 +14,12 @@
             Vector3 position = m_Entity.Transform.Position;
             position.x += deltaTime;
             m_Entity.Transform.Position = position;
+
+            m_Entity.AddComponent<MyComponent>();
+
+            if (Input.IsKeyDown(KeyCode.Delete)) {
+                Object.Destroy(m_Entity);
+            }
         }
 
         public void FixedUpdate(float fixedDeltaTime) {
