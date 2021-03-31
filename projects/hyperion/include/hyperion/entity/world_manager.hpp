@@ -18,6 +18,8 @@ namespace Hyperion {
         inline static World *GetActiveWorld() { return s_active_world; }
         inline static void SetActiveWorld(World *world) { s_active_world = world; }
 
+        inline static const Vector<World *> GetWorlds() { return s_worlds; }
+
         static World *CreateWorld(const String &name = "World"); 
         static void DestroyWorld(World *world);
 

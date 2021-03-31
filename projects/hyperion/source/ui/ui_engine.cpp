@@ -15,42 +15,19 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void UiEngine::Update() {
-        Canvas *canvas = WorldManager::GetActiveWorld()->FindComponentOfType<Canvas>();
-        if (canvas != nullptr) {
-            Vector<Widget *> hovered_widgets = RaycastWidgets(canvas->GetWidgets(), Input::GetMousePosition());
-
-            if (hovered_widgets.size() > 0) {
-                Widget *hovered_widget = hovered_widgets[0];
-
-                if (s_hovered_widget != hovered_widget) {
-                    if (s_hovered_widget != nullptr) {
-                        SendEventMessage(s_hovered_widget, EventMessageType::PointerExit);
-                    }
-                    s_hovered_widget = hovered_widget;
-
-                    SendEventMessage(s_hovered_widget, EventMessageType::PointerEnter);
-                }
-            } else {
-                if (s_hovered_widget) {
-                    // Send exit to previous hovered widget.
-                    SendEventMessage(s_hovered_widget, EventMessageType::PointerExit);
-                    s_hovered_widget = nullptr;
-                }
-            }
-
-            if (s_hovered_widget) {
-                if (Input::IsMouseButtonUp(MouseButtonCode::Left)) {
-                    SendEventMessage(s_hovered_widget, EventMessageType::PointerClick);
-                }
-            }
+        for (World *world : WorldManager::GetWorlds()) {
+            Canvas *canvas = world->FindComponentOfType<Canvas>();
+            UpdateCanvas(canvas);
         }
     }
 
     //--------------------------------------------------------------
     void UiEngine::LateUpdate() {
-        Canvas *canvas = WorldManager::GetActiveWorld()->FindComponentOfType<Canvas>();
-        if (canvas != nullptr) {
-            canvas->UpdateScale();
+        for (World *world : WorldManager::GetWorlds()) {
+            Canvas *canvas = world->FindComponentOfType<Canvas>();
+            if (canvas != nullptr) {
+                canvas->UpdateScale();
+            }
         }
 
         for (Widget *widget : s_widgets) {
@@ -58,6 +35,40 @@ namespace Hyperion {
                 s_mesh_builder.Clear();
                 widget->OnRebuildMesh(s_mesh_builder);
                 widget->ResetDirty();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------
+    void UiEngine::UpdateCanvas(Canvas *canvas) {
+        if (canvas == nullptr) {
+            return;
+        }
+
+        Vector<Widget *> hovered_widgets = RaycastWidgets(canvas->GetWidgets(), Input::GetMousePosition());
+
+        if (hovered_widgets.size() > 0) {
+            Widget *hovered_widget = hovered_widgets[0];
+
+            if (s_hovered_widget != hovered_widget) {
+                if (s_hovered_widget != nullptr) {
+                    SendEventMessage(s_hovered_widget, EventMessageType::PointerExit);
+                }
+                s_hovered_widget = hovered_widget;
+
+                SendEventMessage(s_hovered_widget, EventMessageType::PointerEnter);
+            }
+        } else {
+            if (s_hovered_widget) {
+                // Send exit to previous hovered widget.
+                SendEventMessage(s_hovered_widget, EventMessageType::PointerExit);
+                s_hovered_widget = nullptr;
+            }
+        }
+
+        if (s_hovered_widget) {
+            if (Input::IsMouseButtonUp(MouseButtonCode::Left)) {
+                SendEventMessage(s_hovered_widget, EventMessageType::PointerClick);
             }
         }
     }

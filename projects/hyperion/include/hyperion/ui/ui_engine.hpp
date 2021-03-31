@@ -14,6 +14,8 @@ namespace Hyperion {
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    // TODO: This whole ui engine is kinda weird and should not exist in the way it does now.
+    // We should probably move that into components and add back in the functionality that native components can be updated.
     class UiEngine final {
     private:
         UiEngine() = delete;
@@ -22,6 +24,7 @@ namespace Hyperion {
         static void Update();
         static void LateUpdate();
 
+        static void UpdateCanvas(Canvas *canvas);
         static Vector<Widget *> RaycastWidgets(const Vector<Widget *> &widgets, Vec2 screen_position);
         static void SendEventMessage(Widget *widget, EventMessageType type);
 
