@@ -32,6 +32,11 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void WorldManager::Update(float32 delta_time) {
+        s_active_world->OnUpdate(delta_time);
+    }
+
+    //--------------------------------------------------------------
     void WorldManager::Shutdown() {
         for (World *world : s_worlds) {
             Object::DestroyImmediate(world);

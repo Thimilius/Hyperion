@@ -8,6 +8,7 @@
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
+    class Component;
     class Entity;
     class Light;
     class MeshRenderer;
@@ -78,11 +79,16 @@ namespace Hyperion {
     protected:
         void OnDestroy() override;
     private:
+        void OnUpdate(float32 delta_time);
+
         void OnAfterDeserialization();
         void SetWorldReferenceRecursive(Entity *entity);
 
         void AddRootEntity(Entity *entity);
         void RemoveRootEntity(Entity *entity);
+
+        void RegisterComponentForUpdate(Component *component);
+        void UnregisterComponentForUpdate(Component *component);
 
         void AddLight(Light *light);
         void RemoveLight(Light *light);
@@ -93,10 +99,12 @@ namespace Hyperion {
         Physics::PhysicsWorld *m_physics_world;
 
         Vector<Entity *> m_root_entities;
+        Vector<Component *> m_components_to_update;
 
         Vector<Light *> m_lights;
         Vector<MeshRenderer *> m_mesh_renderers;
     private:
+        friend class Hyperion::Component;
         friend class Hyperion::Entity;
         friend class Hyperion::Light;
         friend class Hyperion::MeshRenderer;

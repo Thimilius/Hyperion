@@ -43,6 +43,18 @@ namespace Hyperion {
                 it++;
             }
         }
+
+        DisableUpdate();
+    }
+
+    //--------------------------------------------------------------
+    void Component::EnableUpdate() {
+        m_entity->GetWorld()->RegisterComponentForUpdate(this);
+    }
+
+    //--------------------------------------------------------------
+    void Component::DisableUpdate() {
+        m_entity->GetWorld()->UnregisterComponentForUpdate(this);
     }
 
     //--------------------------------------------------------------

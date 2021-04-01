@@ -266,6 +266,11 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void Engine::WorldManagerUpdate() {
+        WorldManager::Update(Time::GetDeltaTime());
+    }
+
+    //--------------------------------------------------------------
     void Engine::UiEngineUpdate() {
         UiEngine::Update();
     }

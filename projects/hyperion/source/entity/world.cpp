@@ -71,6 +71,13 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void World::OnUpdate(float32 delta_time) {
+        for (Component *component : m_components_to_update) {
+            component->OnUpdate(delta_time);
+        }
+    }
+
+    //--------------------------------------------------------------
     void World::OnAfterDeserialization() {
         // Before we call the callback on the entites themselves, we first have to set the m_world references of all entites.
         for (Entity *entity : m_root_entities) {
@@ -108,6 +115,25 @@ namespace Hyperion {
         auto end = m_root_entities.end();
         if (std::find(begin, end, entity) != end) {
             m_root_entities.erase(std::remove(begin, end, entity));
+        }
+    }
+
+    //--------------------------------------------------------------
+    void World::RegisterComponentForUpdate(Component *component) {
+        HYP_ASSERT(component);
+        HYP_ASSERT(std::find(m_components_to_update.begin(), m_components_to_update.end(), component) == m_components_to_update.end());
+
+        m_components_to_update.push_back(component);
+    }
+
+    //--------------------------------------------------------------
+    void World::UnregisterComponentForUpdate(Component *component) {
+        HYP_ASSERT(component);
+
+        auto begin = m_components_to_update.begin();
+        auto end = m_components_to_update.end();
+        if (std::find(begin, end, component) != end) {
+            m_components_to_update.erase(std::remove(begin, end, component));
         }
     }
 

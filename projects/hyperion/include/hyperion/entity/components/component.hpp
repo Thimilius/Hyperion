@@ -9,7 +9,6 @@ namespace Hyperion {
     class RectTransform;
     class Transform;
     class World;
-    class WorldManager;
 }
 
 //-------------------- Definition Namespace --------------------
@@ -30,13 +29,17 @@ namespace Hyperion {
         Component(const String &name) : Object(name) { }
     protected:
         virtual void OnCreate() { }
+        virtual void OnUpdate(float32 delta_time) { }
         virtual void OnDestroy() override;
+
+        void EnableUpdate();
+        void DisableUpdate();
     private:
         Entity *m_entity = nullptr;
     private:
         friend class Hyperion::Entity;
         friend class Hyperion::RectTransform;
-        friend class Hyperion::WorldManager;
+        friend class Hyperion::World;
     };
 
 }
