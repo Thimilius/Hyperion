@@ -25,7 +25,7 @@ namespace Hyperion::Editor {
         static void EnterEngineMode(EngineMode engine_mode);
         static void ReloadEditingWorld();
     private:
-        inline static World *s_editing_world;
+        inline static World *s_editing_world = nullptr;
 
         inline static EditorRenderPipeline *s_editor_render_pipeline;
     };

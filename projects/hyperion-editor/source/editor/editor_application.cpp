@@ -28,8 +28,7 @@ namespace Hyperion::Editor {
     void EditorApplication::OnInitialize() {
         EditorWorldView::Initialize();
 
-        s_editing_world = WorldManager::CreateWorld();
-        WorldManager::SetActiveWorld(s_editing_world);
+        ReloadEditingWorld();
     }
 
     //--------------------------------------------------------------

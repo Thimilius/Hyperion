@@ -32,7 +32,18 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void WorldManager::Initialize() {
+#if HYP_EDITOR
+        s_editor_world = CreateWorld("Editor World");
+#endif
+    }
+
+    //--------------------------------------------------------------
     void WorldManager::Update(float32 delta_time) {
+#if HYP_EDITOR
+        s_editor_world->OnUpdate(delta_time);
+#endif
+
         s_active_world->OnUpdate(delta_time);
     }
 

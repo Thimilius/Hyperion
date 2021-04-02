@@ -58,7 +58,7 @@ namespace Hyperion::Editor {
 
             // We just render the world in the 'normal' way.
             m_forward_render_pipeline->DrawWorld(render_driver, EditorApplication::GetEditingWorld(), camera_data);
-            m_forward_render_pipeline->DrawWorld(render_driver, EditorWorldView::GetWorld(), camera_data);
+            m_forward_render_pipeline->DrawWorld(render_driver, WorldManager::GetEditorWorld(), camera_data);
         }
         
         {

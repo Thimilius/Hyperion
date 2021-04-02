@@ -84,6 +84,7 @@ namespace Hyperion {
         Rendering::RenderEngine::Initialize();
         Physics::PhysicsEngine::Initialize();
         Scripting::ScriptingEngine::Initialize(s_settings.scripting);
+        WorldManager::Initialize();
     }
 
     //--------------------------------------------------------------

@@ -15,7 +15,6 @@ namespace Hyperion::Editor {
     public:
         virtual Vec3 GetTargetPosition() const = 0;
 
-        virtual void Update(float32 delta_time) = 0;
         virtual void Reset() = 0;
     protected:
         void OnCreate() override;
@@ -29,10 +28,10 @@ namespace Hyperion::Editor {
     protected:
         Vec3 GetTargetPosition() const override;
 
-        void Update(float32 delta_time) override;
-        void Reset() override;
-    protected:
         void OnCreate() override;
+        void OnUpdate(float32 delta_time) override;
+
+        void Reset() override;
     private:
         EditorFirstPersonCameraController() = default;
     private:
@@ -56,10 +55,10 @@ namespace Hyperion::Editor {
     public:
         Vec3 GetTargetPosition() const override;
 
-        void Update(float32 delta_time) override;
         void Reset() override;
     protected:
         void OnCreate() override;
+        void OnUpdate(float32 delta_time) override;
     private:
         EditorLookAroundCameraController() = default;
     private:

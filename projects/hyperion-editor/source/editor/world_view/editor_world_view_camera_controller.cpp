@@ -14,6 +14,8 @@ namespace Hyperion::Editor {
     void EditorCameraController::OnCreate() {
         m_camera = GetEntity()->GetComponent<Camera>();
         m_transform = m_camera->GetTransform();
+
+        EnableUpdate();
     }
 
     //--------------------------------------------------------------
@@ -22,7 +24,14 @@ namespace Hyperion::Editor {
     }
 
     //--------------------------------------------------------------
-    void EditorFirstPersonCameraController::Update(float32 delta_time) {
+    void EditorFirstPersonCameraController::OnCreate() {
+        EditorCameraController::OnCreate();
+
+        GetEntity()->GetTransform()->SetPosition(Vec3(2.0f, 2.0f, 2.0f));
+    }
+
+    //--------------------------------------------------------------
+    void EditorFirstPersonCameraController::OnUpdate(float32 delta_time) {
         Vec3 position = m_transform->GetPosition();
         Vec3 euler_angles = m_transform->GetEulerAngles();
 
@@ -168,19 +177,28 @@ namespace Hyperion::Editor {
     }
 
     //--------------------------------------------------------------
-    void EditorFirstPersonCameraController::OnCreate() {
-        EditorCameraController::OnCreate();
-
-        GetEntity()->GetTransform()->SetPosition(Vec3(2.0f, 2.0f, 2.0f));
-    }
-
-    //--------------------------------------------------------------
     Vec3 EditorLookAroundCameraController::GetTargetPosition() const {
         return GetXZPlanePosition();
     }
 
     //--------------------------------------------------------------
-    void EditorLookAroundCameraController::Update(float32 delta_time) {
+    void EditorLookAroundCameraController::OnCreate() {
+        EditorCameraController::OnCreate();
+
+        m_camera->SetFOV(60);
+        m_transform = GetEntity()->GetTransform();
+        m_transform->SetEulerAngles(Vec3(-45, 45, 0));
+
+        Vec3 angles = m_transform->GetEulerAngles();
+        m_rotation_axis_x = angles.x;
+        m_rotation_axis_y = angles.y;
+
+        m_xz_plane_distance = 6;
+        m_zoom = m_xz_plane_distance;
+    }
+
+    //--------------------------------------------------------------
+    void EditorLookAroundCameraController::OnUpdate(float32 delta_time) {
         Vec2 current_mouse_position = Input::GetMousePosition();
         Vec2 mouse_position_difference = m_last_mouse_position - current_mouse_position;
         float32 mouse_axis_x = mouse_position_difference.x;
@@ -226,22 +244,6 @@ namespace Hyperion::Editor {
     void EditorLookAroundCameraController::Reset() {
         m_transform->SetEulerAngles(Vec3(-45, 45, 0));
         m_transform->SetPosition(GetLookAtPosition(Vec3::Zero()));
-
-        Vec3 angles = m_transform->GetEulerAngles();
-        m_rotation_axis_x = angles.x;
-        m_rotation_axis_y = angles.y;
-
-        m_xz_plane_distance = 6;
-        m_zoom = m_xz_plane_distance;
-    }
-
-    //--------------------------------------------------------------
-    void EditorLookAroundCameraController::OnCreate() {
-        EditorCameraController::OnCreate();
-
-        m_camera->SetFOV(60);
-        m_transform = GetEntity()->GetTransform();
-        m_transform->SetEulerAngles(Vec3(-45, 45, 0));
 
         Vec3 angles = m_transform->GetEulerAngles();
         m_rotation_axis_x = angles.x;

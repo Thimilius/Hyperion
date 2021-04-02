@@ -15,7 +15,6 @@ namespace Hyperion::Editor {
 
     class EditorWorldView final {
     public:
-        inline static World *GetWorld() { return s_editor_world; }
         inline static Camera *GetCamera() { return s_editor_camera; }
         inline static Canvas *GetCanvas() { return s_editor_canvas; }
 
@@ -32,7 +31,6 @@ namespace Hyperion::Editor {
         static void RetrieveEntityUnderMouse(Rendering::IRenderDriver *render_driver);
         static void BuildInterface();
     private:
-        inline static World *s_editor_world;
         inline static Camera *s_editor_camera;
         inline static Canvas *s_editor_canvas;
 

@@ -34,8 +34,7 @@ namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
     void EditorWorldView::Initialize() {
-        s_editor_world = WorldManager::CreateWorld();
-        WorldManager::SetActiveWorld(s_editor_world);
+        WorldManager::SetActiveWorld(WorldManager::GetEditorWorld());
 
         Entity *camera_entity = Entity::CreatePrimitive(EntityPrimitive::Camera);
         s_editor_camera = camera_entity->GetComponent<Camera>();
@@ -48,8 +47,6 @@ namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
     void EditorWorldView::Update(float32 delta_time) {
-        s_editor_camera_controller->Update(delta_time);
-
         if (Input::IsKeyDown(KeyCode::F2)) {
             bool vsync_on = RenderEngine::GetVSyncMode() != VSyncMode::DontSync;
             s_vsync_toggle->SetIsOn(!vsync_on);
