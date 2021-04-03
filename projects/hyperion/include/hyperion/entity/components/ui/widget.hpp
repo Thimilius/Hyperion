@@ -8,7 +8,6 @@
 #include "hyperion/entity/components/behaviour.hpp"
 #include "hyperion/entity/components/rect_transform.hpp"
 #include "hyperion/entity/components/rendering/widget_renderer.hpp"
-#include "hyperion/entity/components/ui/canvas.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {

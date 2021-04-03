@@ -80,6 +80,7 @@ namespace Hyperion {
         void OnDestroy() override;
     private:
         void OnUpdate(float32 delta_time);
+        void OnLateUpdate(float32 delta_time);
 
         void OnAfterDeserialization();
         void SetWorldReferenceRecursive(Entity *entity);

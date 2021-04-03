@@ -40,15 +40,14 @@ namespace Hyperion {
         result.update.sub_systems = {
             { "AssetManagerUpdate", Engine::AssetManagerUpdate },
             { "WorldManagerUpdate", Engine::WorldManagerUpdate },
-            { "UiEngineUpdatge", Engine::UiEngineUpdate },
             { "ScriptingEngineUpdate", Engine::ScriptingEngineUpdate },
             { "ApplicationUpdate", Engine::ApplicationUpdate }
         };
 
         result.late_update.name = "LateUpdate";
         result.late_update.sub_systems = {
+            { "WorldManagerLateUpdate", Engine::WorldManagerLateUpdate },
             { "ObjectManagerLateUpdate", Engine::ObjectManagerLateUpdate },
-            { "UiEngineLateUpdate", Engine::UiEngineLateUpdate },
             { "RenderEngineLateUpdate", Engine::RenderEngineLateUpdate }
         };
 

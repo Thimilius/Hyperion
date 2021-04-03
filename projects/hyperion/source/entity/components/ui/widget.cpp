@@ -6,7 +6,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/entity/entity.hpp"
-#include "hyperion/ui/ui_engine.hpp"
+#include "hyperion/entity/components/ui/canvas.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -45,7 +45,6 @@ namespace Hyperion {
         Behaviour::OnCreate();
 
         GetEntity()->RegisterMessageListener(this);
-        UiEngine::RegisterWidget(this);
 
         m_rect_transform = GetEntity()->GetComponent<RectTransform>();
         HYP_ASSERT(m_rect_transform);
@@ -61,7 +60,6 @@ namespace Hyperion {
     void Widget::OnDestroy() {
         GetEntity()->UnregisterMessageListener(this);
 
-        UiEngine::UnregisterWidget(this);
         m_canvas->UnregisterWidget(this);
 
         Behaviour::OnDestroy();

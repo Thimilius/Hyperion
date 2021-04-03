@@ -78,6 +78,13 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void World::OnLateUpdate(float32 delta_time) {
+        for (Component *component : m_components_to_update) {
+            component->OnLateUpdate(delta_time);
+        }
+    }
+
+    //--------------------------------------------------------------
     void World::OnAfterDeserialization() {
         // Before we call the callback on the entites themselves, we first have to set the m_world references of all entites.
         for (Entity *entity : m_root_entities) {

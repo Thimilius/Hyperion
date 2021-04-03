@@ -29,7 +29,8 @@ namespace Hyperion {
         Component(const String &name) : Object(name) { }
     protected:
         virtual void OnCreate() { }
-        virtual void OnUpdate(float32 delta_time) { }
+        virtual void OnUpdate(float32 delta_time) {}
+        virtual void OnLateUpdate(float32 delta_time) { }
         virtual void OnDestroy() override;
 
         void EnableUpdate();

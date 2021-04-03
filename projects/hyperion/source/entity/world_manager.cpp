@@ -48,6 +48,15 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void WorldManager::LateUpdate(float32 delta_time) {
+#if HYP_EDITOR
+        s_editor_world->OnLateUpdate(delta_time);
+#endif
+
+        s_active_world->OnLateUpdate(delta_time);
+    }
+
+    //--------------------------------------------------------------
     void WorldManager::Shutdown() {
         for (World *world : s_worlds) {
             Object::DestroyImmediate(world);

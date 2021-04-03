@@ -6,12 +6,65 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/display.hpp"
+#include "hyperion/core/app/input.hpp"
 #include "hyperion/entity/entity.hpp"
 #include "hyperion/entity/components/rect_transform.hpp"
 #include "hyperion/entity/components/ui/widget.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
+
+    //--------------------------------------------------------------
+    void Canvas::OnCreate() {
+        Component::OnCreate();
+
+        UpdateScale();
+
+        EnableUpdate();
+    }
+
+    //--------------------------------------------------------------
+    void Canvas::OnUpdate(float32 delta_time) {
+        Vector<Widget *> hovered_widgets = RaycastWidgets(Input::GetMousePosition());
+
+        if (hovered_widgets.size() > 0) {
+            Widget *hovered_widget = hovered_widgets[0];
+
+            if (m_hovered_widget != hovered_widget) {
+                if (m_hovered_widget != nullptr) {
+                    SendEventMessage(m_hovered_widget, EventMessageType::PointerExit);
+                }
+                m_hovered_widget = hovered_widget;
+
+                SendEventMessage(m_hovered_widget, EventMessageType::PointerEnter);
+            }
+        } else {
+            if (m_hovered_widget) {
+                // Send exit to previous hovered widget.
+                SendEventMessage(m_hovered_widget, EventMessageType::PointerExit);
+                m_hovered_widget = nullptr;
+            }
+        }
+
+        if (m_hovered_widget) {
+            if (Input::IsMouseButtonUp(MouseButtonCode::Left)) {
+                SendEventMessage(m_hovered_widget, EventMessageType::PointerClick);
+            }
+        }
+    }
+
+    //--------------------------------------------------------------
+    void Canvas::OnLateUpdate(float32 delta_time) {
+        UpdateScale();
+
+        for (Widget *widget : m_widgets) {
+            if (widget->IsDirty()) {
+                m_mesh_builder.Clear();
+                widget->OnRebuildMesh(m_mesh_builder);
+                widget->ResetDirty();
+            }
+        }
+    }
 
     //--------------------------------------------------------------
     void Canvas::UpdateScale() {
@@ -22,7 +75,8 @@ namespace Hyperion {
             m_cached_display_height = Display::GetHeight();
 
             switch (m_scale_mode) {
-                case CanvasScaleMode::ScaleWithScreenSize: {
+                case CanvasScaleMode::ScaleWithScreenSize:
+                {
                     float32 log_base = 2;
                     float32 log_width = Math::Log(display_width / m_reference_resolution.x) / Math::Log(log_base);
                     float32 log_height = Math::Log(display_height / m_reference_resolution.y) / Math::Log(log_base);
@@ -31,7 +85,8 @@ namespace Hyperion {
                     m_scale = computed_scale;
                     break;
                 }
-                case CanvasScaleMode::ConstantPixelSize: {
+                case CanvasScaleMode::ConstantPixelSize:
+                {
                     m_scale = m_scale_factor;
                     break;
                 }
@@ -49,10 +104,30 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void Canvas::OnCreate() {
-        Component::OnCreate();
+    Vector<Widget *> Canvas::RaycastWidgets(Vec2 screen_position) {
+        Vector<Widget *> result;
+        for (Widget *widget : m_widgets) {
+            if (!RectTransformUtility::RectangleContainsScreenPoint(widget->GetRectTransform(), screen_position)) {
+                continue;
+            }
 
-        UpdateScale();
+            if (!widget->IsRaycastTarget()) {
+                continue;
+            }
+
+            result.push_back(widget);
+        }
+
+        std::sort(result.begin(), result.end(), [](Widget *lhs, Widget *rhs) {
+            return lhs->GetDepth() > rhs->GetDepth();
+        });
+
+        return result;
+    }
+
+    //--------------------------------------------------------------
+    void Canvas::SendEventMessage(Widget *widget, EventMessageType type) {
+        widget->OnEventMessage({ type });
     }
 
     //--------------------------------------------------------------

@@ -35,6 +35,7 @@ namespace Hyperion {
     private:
         static void Initialize();
         static void Update(float32 delta_time);
+        static void LateUpdate(float32 delta_time);
         static void Shutdown();
     private:
         inline static World *s_active_world;

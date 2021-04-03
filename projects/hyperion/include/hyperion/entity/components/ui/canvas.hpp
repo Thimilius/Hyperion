@@ -1,8 +1,10 @@
  #pragma once
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/assets/utilities/mesh_builder.hpp"
 #include "hyperion/core/math/vec2.hpp"
 #include "hyperion/entity/components/component.hpp"
+#include "hyperion/entity/components/ui/widget.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -39,13 +41,17 @@ namespace Hyperion {
         inline float32 GetScale() const { return m_scale; }
 
         inline const Vector<Widget *> &GetWidgets() const { return m_widgets; }
-
-        void UpdateScale();
     protected:
         void OnCreate() override;
+        void OnUpdate(float32 delta_time) override;
+        void OnLateUpdate(float32 delta_time) override;
     private:
         Canvas() : Component("Canvas") { }
     private:
+        void UpdateScale();
+        Vector<Widget *> RaycastWidgets(Vec2 screen_position);
+        void SendEventMessage(Widget *widget, EventMessageType type);
+
         void RegisterWidget(Widget *widget);
         void UnregisterWidget(Widget *widget);
 
@@ -60,6 +66,9 @@ namespace Hyperion {
         uint32 m_cached_display_width;
         uint32 m_cached_display_height;
 
+        Widget *m_hovered_widget = nullptr;
+
+        MeshBuilder m_mesh_builder;
         Vector<Widget *> m_widgets;
     private:
         friend class Hyperion::Widget;
