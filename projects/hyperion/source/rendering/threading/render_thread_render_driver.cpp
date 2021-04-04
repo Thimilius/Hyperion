@@ -125,7 +125,7 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void RenderThreadRenderDriver::GetRenderTextureSubData(ResourceId render_texture_id, uint32 attachment_index, RectInt region, Vector<uint8> *buffer, GetRenderTextureSubDataCallback callback) {
-        if (RenderEngine::IsExecutingRenderThreadGetCommands()) {
+        if (RenderEngine::IsExecutingRenderThreadQueryCommands()) {
             HYP_LOG_ERROR("Engine", "Trying to create an render thread query command while executing one!");
         } else {
             auto *command = RenderEngine::GetQueryCommandQueue().Allocate<RenderThreadQueryCommandGetRenderTextureSubData>(RenderThreadQueryCommandType::GetRenderTextureSubData);

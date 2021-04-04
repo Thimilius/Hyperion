@@ -24,6 +24,7 @@ namespace Hyperion {
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
+    // TODO: Move Render Thread related stuff into a different class/file.
     class RenderEngine final {
     public:
         inline static RenderBackend GetBackend() { return s_render_settings.backend; }
@@ -54,7 +55,7 @@ namespace Hyperion::Rendering {
         inline static RenderThreadCommandQueue<RenderThreadCommandType> &GetCommandQueue() { return s_update_queue; }
         static void ExecuteRenderCommands();
         inline static RenderThreadCommandQueue<RenderThreadQueryCommandType> &GetQueryCommandQueue() { return s_query_queue; }
-        inline static bool IsExecutingRenderThreadGetCommands() { return s_executing_render_thread_query_commands; }
+        inline static bool IsExecutingRenderThreadQueryCommands() { return s_executing_render_thread_query_commands; }
         static void ExecuteRenderThreadQueryCommand();
     private: 
         inline static RenderSettings s_render_settings;

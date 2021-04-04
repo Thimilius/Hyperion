@@ -12,7 +12,6 @@ namespace Hyperion::Rendering {
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-    // TODO: Implement another queue for render thread query commands instead of using a template.
     template<typename CommandType>
     class RenderThreadCommandQueue {
     private:
