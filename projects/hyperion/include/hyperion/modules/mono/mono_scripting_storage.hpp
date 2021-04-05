@@ -29,6 +29,7 @@ namespace Hyperion::Scripting {
         template<typename T> inline static T *GetScriptingObject(MonoObject *mono_object) { return static_cast<T *>(GetScriptingObject(mono_object)); }
         static ScriptingObject *GetScriptingObject(MonoObject *mono_object);
         static MonoObject *GetOrCreateMonoObject(ScriptingObject *scripting_object);
+        static MonoObject *CreateMonoObject(ScriptingObject *scripting_object, MonoClass *mono_class);
         static void RegisterMonoObject(MonoObject *mono_object, ScriptingObject *scripting_object);
         static void UnregisterMonoObject(MonoObject *mono_object);
 

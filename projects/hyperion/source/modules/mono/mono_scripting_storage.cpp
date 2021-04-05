@@ -46,12 +46,15 @@ namespace Hyperion::Scripting {
             Type *type = scripting_object->GetType();
             HYP_ASSERT(s_native_type_to_mono_classes.find(type) != s_native_type_to_mono_classes.end());
             MonoClass *mono_class = s_native_type_to_mono_classes[scripting_object->GetType()];
-            MonoObject *mono_object = mono_object_new(MonoScriptingDriver::GetRuntimeDomain()->GetMonoDomain(), mono_class);
-
-            RegisterMonoObject(mono_object, scripting_object);
-
-            return mono_object;
+            return CreateMonoObject(scripting_object, mono_class);
         }
+    }
+
+    //--------------------------------------------------------------
+    MonoObject *MonoScriptingStorage::CreateMonoObject(ScriptingObject *scripting_object, MonoClass *mono_class) {
+        MonoObject *mono_object = mono_object_new(MonoScriptingDriver::GetRuntimeDomain()->GetMonoDomain(), mono_class);
+        RegisterMonoObject(mono_object, scripting_object);
+        return mono_object;
     }
 
     //--------------------------------------------------------------

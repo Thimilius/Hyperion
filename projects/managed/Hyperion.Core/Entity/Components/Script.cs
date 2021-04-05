@@ -6,6 +6,7 @@ namespace Hyperion {
 
         protected virtual void OnCreate() { }
         protected virtual void OnUpdate(float deltaTime) { }
+        protected virtual void OnFixedUpdate(float deltaTime) { }
         protected virtual void OnDestroy() { }
 
         [MethodImpl(MethodImplOptions.InternalCall)]

@@ -102,13 +102,17 @@ namespace Hyperion::Scripting {
     //--------------------------------------------------------------
     MonoObject *Binding_Entity_AddComponent(MonoObject *mono_entity, MonoReflectionType *mono_component_reflection_type) {
         Entity *entity = GetScriptingObjectAs<Entity>(mono_entity);
-        MonoClass *mono_class = GetMonoClassFromReflectionType(mono_component_reflection_type);
-        Type *type = MonoScriptingStorage::GetNativeType(mono_class);
+        MonoClass *mono_component_class = GetMonoClassFromReflectionType(mono_component_reflection_type);
+        Type *type = MonoScriptingStorage::GetNativeType(mono_component_class);
         if (type != nullptr) {
             return MonoScriptingStorage::GetOrCreateMonoObject(entity->AddComponent(type));
         } else {
-            if (ValidateComponentMonoClass(mono_class)) {
-                return nullptr;
+            if (ValidateComponentMonoClass(mono_component_class)) {
+                // TODO: Do validation like required and multiple components. Maybe we can should do that in the managed side?
+                Script *script = entity->AddComponent<Script>();
+                MonoObject *mono_object = MonoScriptingStorage::CreateMonoObject(script, mono_component_class);
+                MonoScriptingInstance *mono_scripting_instance = static_cast<MonoScriptingInstance *>(script->GetScriptingInstance());
+                return mono_object;
             } else {
                 return nullptr;
             }
@@ -118,12 +122,19 @@ namespace Hyperion::Scripting {
     //--------------------------------------------------------------
     MonoObject *Binding_Entity_GetComponent(MonoObject *mono_entity, MonoReflectionType *mono_component_reflection_type) {
         Entity *entity = GetScriptingObjectAs<Entity>(mono_entity);
-        MonoClass *mono_class = GetMonoClassFromReflectionType(mono_component_reflection_type);
-        Type *type = MonoScriptingStorage::GetNativeType(mono_class);
+        MonoClass *mono_component_class = GetMonoClassFromReflectionType(mono_component_reflection_type);
+        Type *type = MonoScriptingStorage::GetNativeType(mono_component_class);
         if (type != nullptr) {
             return MonoScriptingStorage::GetOrCreateMonoObject(entity->GetComponent(type));
         } else {
-            if (ValidateComponentMonoClass(mono_class)) {
+            if (ValidateComponentMonoClass(mono_component_class)) {
+                Vector<Script *> scripts = entity->GetComponents<Script>();
+                for (Script *script : scripts) {
+                    MonoClass *mono_class = static_cast<MonoScriptingType *>(script->GetScriptingInstance()->GetScriptingType())->GetMonoClass();
+                    if (mono_class_is_assignable_from(mono_class, mono_component_class)) {
+                        return MonoScriptingStorage::GetOrCreateMonoObject(script);
+                    }
+                }
                 return nullptr;
             } else {
                 return nullptr;
