@@ -21,10 +21,14 @@ namespace Hyperion::Scripting {
     //--------------------------------------------------------------
     MonoScriptingInstance::MonoScriptingInstance(MonoObject *mono_object) {
         m_mono_object = mono_object;
+        // NOTE: For now every object is going to be pinned.
+        // This may be bad for the memory footprint but would require a more dynamic handling of objects in the scripting storage.
+        m_gc_handle = mono_gchandle_new_v2(mono_object, true);
     }
 
     //--------------------------------------------------------------
     MonoScriptingInstance::~MonoScriptingInstance() {
+        mono_gchandle_free_v2(m_gc_handle);
         MonoScriptingStorage::UnregisterMonoObject(m_mono_object);
     }
 

@@ -30,6 +30,7 @@ namespace Hyperion::Scripting {
         inline MonoObject *GetMonoObject() const { return m_mono_object; }
     private:
         MonoObject *m_mono_object;
+        MonoGCHandle m_gc_handle;
     };
 
     class MonoScriptingInstanceScript : public MonoScriptingInstance {
