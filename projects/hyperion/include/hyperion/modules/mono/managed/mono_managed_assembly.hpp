@@ -18,6 +18,7 @@ namespace Hyperion::Scripting {
 
         MonoManagedMethod FindMethod(const char *description);
         MonoClass *FindClass(const char *name_space, const char *name);
+        MonoException *FindException(const char *name_space, const char *name);
     private:
         MonoAssembly *m_mono_assembly = nullptr;
         MonoImage *m_mono_assembly_image = nullptr;

@@ -7,6 +7,7 @@
 //---------------------- Library Includes ----------------------
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/debug-helpers.h>
+#include <mono/metadata/exception.h>
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
@@ -34,12 +35,18 @@ namespace Hyperion::Scripting {
         return MonoManagedMethod(mono_method);
     }
 
+    //--------------------------------------------------------------
     MonoClass *MonoManagedAssembly::FindClass(const char *name_space, const char *name) {
         MonoClass *mono_class = mono_class_from_name(m_mono_assembly_image, name_space, name);
         if (mono_class == nullptr) {
             HYP_LOG_ERROR("Scripting", "Failed to find class: '{}.{}'!", name_space, name);
         }
         return mono_class;
+    }
+
+    //--------------------------------------------------------------
+    MonoException *MonoManagedAssembly::FindException(const char *name_space, const char *name) {
+        return mono_exception_from_name(m_mono_assembly_image, name_space, name);
     }
 
 }

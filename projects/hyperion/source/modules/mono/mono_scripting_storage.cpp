@@ -79,7 +79,7 @@ namespace Hyperion::Scripting {
     }
 
     //--------------------------------------------------------------
-    void MonoScriptingStorage::RegisterClass(const char *name_space, const char *name, MonoSpecialClass mono_special_class, Type *type) {
+    void MonoScriptingStorage::RegisterNativeClass(const char *name_space, const char *name, MonoSpecialClass special_class, Type *type) {
         HYP_ASSERT(type);
 
         MonoClass *mono_class = MonoScriptingDriver::GetCoreAssembly()->FindClass(name_space, name);
@@ -90,7 +90,7 @@ namespace Hyperion::Scripting {
         s_mono_class_to_native_types[mono_class] = type;
         s_native_type_to_mono_classes[type] = mono_class;
 
-        switch (mono_special_class) 	{
+        switch (special_class) 	{
             case MonoSpecialClass::Component: s_special_classes.component_class = mono_class; break;
             case MonoSpecialClass::Script: s_special_classes.script_class = mono_class; break;
         }
@@ -105,6 +105,15 @@ namespace Hyperion::Scripting {
             return it->second;
         } else {
             return nullptr;
+        }
+    }
+
+    //--------------------------------------------------------------
+    MonoException *MonoScriptingStorage::GetException(MonoSpecialExceptionClass special_exception_class) {
+        switch (special_exception_class) {
+            case MonoSpecialExceptionClass::ObjectDestroyed: return MonoScriptingDriver::GetCoreAssembly()->FindException("Hyperion", "ObjectDestroyedException");
+            case MonoSpecialExceptionClass::InvalidComponentType: return MonoScriptingDriver::GetCoreAssembly()->FindException("Hyperion", "InvalidComponentTypeException");
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }
 

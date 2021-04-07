@@ -68,6 +68,7 @@
     <Compile Include="HyperionException.cs" />
     <Compile Include="IApplication.cs" />
     <Compile Include="Input.cs" />
+    <Compile Include="InvalidComponentTypeException.cs" />
     <Compile Include="Math\Quaternion.cs" />
     <Compile Include="Math\Vector3.cs" />
     <Compile Include="Object.cs" />

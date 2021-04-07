@@ -6,7 +6,7 @@
             protected override void OnCreate() {
                 Engine.Log("OnCreate");
             }
-
+            
             protected override void OnDestroy() {
                 Engine.Log("OnDestroy");
             }
@@ -17,17 +17,12 @@
         public void Initialize() {
             m_Entity = Entity.CreatePrimitive(EntityPrimitive.Sphere);
             MyComponent myComponent = m_Entity.AddComponent<MyComponent>();
-            myComponent.Value = 13;
-            Engine.Log(myComponent.Value);
         }
 
         public void Update(float deltaTime) {
             Vector3 position = m_Entity.Transform.Position;
             position.x += deltaTime;
             m_Entity.Transform.Position = position;
-
-            MyComponent myComponent = m_Entity.GetComponent<MyComponent>();
-            Engine.Log(myComponent.Value);
 
             if (Input.IsKeyDown(KeyCode.Delete)) {
                 Object.Destroy(m_Entity);

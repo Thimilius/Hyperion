@@ -34,7 +34,7 @@ namespace Hyperion::Scripting {
         if (scripting_object != nullptr) {
             return scripting_object;
         } else {
-            mono_raise_exception(mono_get_exception_invalid_operation("Trying to access an object that was already destroyed"));
+            mono_raise_exception(MonoScriptingStorage::GetException(MonoSpecialExceptionClass::ObjectDestroyed));
             return nullptr;
         }
     }
@@ -58,7 +58,7 @@ namespace Hyperion::Scripting {
     //--------------------------------------------------------------
     bool ValidateComponentMonoClass(MonoClass *mono_class) {
         if (!mono_class_is_subclass_of(mono_class, MonoScriptingStorage::GetSpecialClass(MonoSpecialClass::Script), false)) {
-            mono_raise_exception(mono_get_exception_argument("type", "The requested component must inherit from 'Hyperion.Script'"));
+            mono_raise_exception(MonoScriptingStorage::GetException(MonoSpecialExceptionClass::InvalidComponentType));
             return false;
         } else {
             return true;
@@ -108,6 +108,8 @@ namespace Hyperion::Scripting {
             return MonoScriptingStorage::GetOrCreateMonoObject(entity->AddComponent(type));
         } else {
             if (ValidateComponentMonoClass(mono_component_class)) {
+                MonoCustomAttrInfo *custom_attribute_info = mono_custom_attrs_from_class(mono_component_class);
+
                 // TODO: Do validation like required and multiple components. Maybe we can should do that in the managed side?
                 Script *script = entity->AddComponent<Script>();
                 MonoObject *mono_object = MonoScriptingStorage::CreateMonoObject(script, mono_component_class);
@@ -288,16 +290,16 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     void MonoScriptingBindings::RegisterClasses() {
-        MonoScriptingStorage::RegisterClass<Behaviour>("Hyperion", "Behaviour");
-        MonoScriptingStorage::RegisterClass<BoxCollider>("Hyperion", "BoxCollider");
-        MonoScriptingStorage::RegisterClass<Collider>("Hyperion", "Collider");
-        MonoScriptingStorage::RegisterClass<Component>("Hyperion", "Component", MonoSpecialClass::Component);
-        MonoScriptingStorage::RegisterClass<Entity>("Hyperion", "Entity");
-        MonoScriptingStorage::RegisterClass<Object>("Hyperion", "Object");
-        MonoScriptingStorage::RegisterClass<Script>("Hyperion", "Script", MonoSpecialClass::Script);
-        MonoScriptingStorage::RegisterClass<SphereCollider>("Hyperion", "SphereCollider");
-        MonoScriptingStorage::RegisterClass<Transform>("Hyperion", "Transform");
-        MonoScriptingStorage::RegisterClass<World>("Hyperion", "World");
+        MonoScriptingStorage::RegisterNativeClass<Behaviour>("Hyperion", "Behaviour");
+        MonoScriptingStorage::RegisterNativeClass<BoxCollider>("Hyperion", "BoxCollider");
+        MonoScriptingStorage::RegisterNativeClass<Collider>("Hyperion", "Collider");
+        MonoScriptingStorage::RegisterNativeClass<Component>("Hyperion", "Component", MonoSpecialClass::Component);
+        MonoScriptingStorage::RegisterNativeClass<Entity>("Hyperion", "Entity");
+        MonoScriptingStorage::RegisterNativeClass<Object>("Hyperion", "Object");
+        MonoScriptingStorage::RegisterNativeClass<Script>("Hyperion", "Script", MonoSpecialClass::Script);
+        MonoScriptingStorage::RegisterNativeClass<SphereCollider>("Hyperion", "SphereCollider");
+        MonoScriptingStorage::RegisterNativeClass<Transform>("Hyperion", "Transform");
+        MonoScriptingStorage::RegisterNativeClass<World>("Hyperion", "World");
     }
 
 }

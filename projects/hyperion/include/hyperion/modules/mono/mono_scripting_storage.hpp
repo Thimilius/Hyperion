@@ -22,6 +22,13 @@ namespace Hyperion::Scripting {
         Script,
     };
 
+    enum class MonoSpecialExceptionClass {
+        None,
+
+        ObjectDestroyed,
+        InvalidComponentType,
+    };
+
     class MonoScriptingStorage final {
     public:
         static MonoClass *GetSpecialClass(MonoSpecialClass mono_special_class);
@@ -33,9 +40,11 @@ namespace Hyperion::Scripting {
         static void RegisterMonoObject(MonoObject *mono_object, ScriptingObject *scripting_object);
         static void UnregisterMonoObject(MonoObject *mono_object);
 
-        template<typename T> inline static void RegisterClass(const char *name_space, const char *name, MonoSpecialClass mono_special_class = MonoSpecialClass::None) { RegisterClass(name_space, name, mono_special_class, Type::Get<T>()); }
-        static void RegisterClass(const char *name_space, const char *name, MonoSpecialClass mono_special_class, Type *type);
+        template<typename T> inline static void RegisterNativeClass(const char *name_space, const char *name, MonoSpecialClass special_class = MonoSpecialClass::None) { RegisterNativeClass(name_space, name, special_class, Type::Get<T>()); }
+        static void RegisterNativeClass(const char *name_space, const char *name, MonoSpecialClass special_class, Type *type);
         static Type *GetNativeType(MonoClass *mono_class);
+
+        static MonoException *GetException(MonoSpecialExceptionClass special_exception_class);
 
         static MonoScriptingType *GetOrCreateScriptingType(MonoClass *mono_class);
     private:
@@ -44,10 +53,14 @@ namespace Hyperion::Scripting {
     private:
         static void Clear();
     private:
-        inline static struct MonoSepcialClasses {
+        inline static struct MonoSpecialClasses {
             MonoClass *component_class;
             MonoClass *script_class;
         } s_special_classes;
+
+        inline static struct MonoSpecialExceptionClasses {
+            MonoClass *object_destroyed_class;
+        } s_special_exception_classes;
 
         inline static Map<MonoObject *, ScriptingObject *> s_mono_object_to_scripting_objects;
 
