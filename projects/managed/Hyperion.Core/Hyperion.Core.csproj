@@ -70,7 +70,9 @@
     <Compile Include="Input.cs" />
     <Compile Include="InvalidComponentTypeException.cs" />
     <Compile Include="Math\Quaternion.cs" />
+    <Compile Include="Math\Vector2.cs" />
     <Compile Include="Math\Vector3.cs" />
+    <Compile Include="Math\Vector4.cs" />
     <Compile Include="Object.cs" />
     <Compile Include="ObjectDestroyedException.cs" />
     <Compile Include="Time.cs" />

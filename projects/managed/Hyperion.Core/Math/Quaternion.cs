@@ -5,7 +5,7 @@
         public float z;
         public float w;
 
-        public static Quaternion Identity => new Quaternion(0, 0, 0, 1);
+        public static Quaternion Identity => new Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
 
         public Quaternion(float x, float y, float z, float w) {
             this.x = x;
