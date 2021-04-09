@@ -21,7 +21,7 @@
 
         public void Update(float deltaTime) {
             Vector3 position = m_Entity.Transform.Position;
-            position.x += deltaTime;
+            position.X += deltaTime;
             m_Entity.Transform.Position = position;
 
             if (Input.IsKeyDown(KeyCode.Delete)) {

@@ -16,7 +16,7 @@ namespace Hyperion {
         Vec3 GetSize() const;
         Vec3 GetCenter() const;
 
-        bool Intersects(BoundingBox bounds) const;
+        bool Intersects(BoundingBox other) const;
         bool Intersects(Ray ray, float32 &hit_distance) const;
         bool Contains(Vec3 point) const;
 

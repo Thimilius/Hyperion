@@ -3,19 +3,19 @@ using System.Runtime.CompilerServices;
 
 namespace Hyperion {
     public struct Vector2 : IEquatable<Vector2> {
-        public float Magnitude => (float)Math.Sqrt(x * x + y * y);
-        public float SqrMagnitude => x * x + y * y;
+        public float Magnitude => (float)Math.Sqrt(X * X + Y * Y);
+        public float SqrMagnitude => X * X + Y * Y;
 
-        public float x;
-        public float y;
+        public float X;
+        public float Y;
 
         public Vector2(float x, float y) {
-            this.x = x;
-            this.y = y;
+            X = x;
+            Y = y;
         }
 
         public override string ToString() {
-            return $"({x:0.00}, {y:0.00})";
+            return $"({X:0.00}, {Y:0.00})";
         }
 
         public override bool Equals(object obj) {
@@ -27,7 +27,7 @@ namespace Hyperion {
         }
 
         public override int GetHashCode() {
-            return base.GetHashCode();
+            return X.GetHashCode() ^ Y.GetHashCode() << 2;
         }
 
         public bool Equals(Vector2 other) {
@@ -36,12 +36,12 @@ namespace Hyperion {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Dot(Vector2 lhs, Vector2 rhs) {
-            return lhs.x * rhs.x + lhs.y * rhs.y;
+            return lhs.X * rhs.X + lhs.Y * rhs.Y;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(Vector2 lhs, Vector2 rhs) {
-            return lhs.x == rhs.x && lhs.y == rhs.y;
+            return lhs.X == rhs.X && lhs.Y == rhs.Y;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -50,43 +50,53 @@ namespace Hyperion {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator <(Vector2 lhs, Vector2 rhs) {
+            return lhs.X < rhs.X && lhs.Y < rhs.Y;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator >(Vector2 lhs, Vector2 rhs) {
+            return lhs.X > rhs.X && lhs.Y > rhs.Y;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2 operator +(Vector2 lhs, Vector2 rhs) {
-            return new Vector2(lhs.x + rhs.x, lhs.y + rhs.y);
+            return new Vector2(lhs.X + rhs.X, lhs.Y + rhs.Y);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2 operator -(Vector2 lhs, Vector2 rhs) {
-            return new Vector2(lhs.x - rhs.x, lhs.y - rhs.y);
+            return new Vector2(lhs.X - rhs.X, lhs.Y - rhs.Y);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2 operator *(Vector2 lhs, Vector2 rhs) {
-            return new Vector2(lhs.x * rhs.x, lhs.y * rhs.y);
+            return new Vector2(lhs.X * rhs.X, lhs.Y * rhs.Y);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2 operator /(Vector2 lhs, Vector2 rhs) {
-            return new Vector2(lhs.x / rhs.x, lhs.y / rhs.y);
+            return new Vector2(lhs.X / rhs.X, lhs.Y / rhs.Y);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2 operator -(Vector2 vector) {
-            return new Vector2(-vector.x, -vector.y);
+            return new Vector2(-vector.X, -vector.Y);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2 operator *(Vector2 lhs, float rhs) {
-            return new Vector2(lhs.x * rhs, lhs.y * rhs);
+            return new Vector2(lhs.X * rhs, lhs.Y * rhs);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2 operator *(float lhs, Vector2 rhs) {
-            return new Vector2(lhs * rhs.x, lhs * rhs.y);
+            return new Vector2(lhs * rhs.X, lhs * rhs.Y);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector2 operator /(Vector2 lhs, float rhs) {
-            return new Vector2(lhs.x / rhs, lhs.y / rhs);
+            return new Vector2(lhs.X / rhs, lhs.Y / rhs);
         }
     }
 }

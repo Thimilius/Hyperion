@@ -69,6 +69,7 @@
     <Compile Include="IApplication.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="InvalidComponentTypeException.cs" />
+    <Compile Include="Math\BoundingBox.cs" />
     <Compile Include="Math\Quaternion.cs" />
     <Compile Include="Math\Vector2.cs" />
     <Compile Include="Math\Vector3.cs" />

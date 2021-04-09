@@ -12,33 +12,33 @@ namespace Hyperion {
         public static Vector3 Left => new Vector3(-1.0f, 0.0f, 0.0f);
         public static Vector3 Right => new Vector3(1.0f, 0.0f, 0.0f);
 
-        public float Magnitude => (float)Math.Sqrt(x * x + y * y + z * z);
-        public float SqrMagnitude => x * x + y * y + z * z;
+        public float Magnitude => (float)Math.Sqrt(X * X + Y * Y + Z * Z);
+        public float SqrMagnitude => X * X + Y * Y + Z * Z;
 
-        public float x;
-        public float y;
-        public float z;
+        public float X;
+        public float Y;
+        public float Z;
 
         public Vector3(float x, float y) {
-            this.x = x;
-            this.y = y;
-            z = 0.0f;
+            X = x;
+            Y = y;
+            Z = 0.0f;
         }
 
         public Vector3(float x, float y, float z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
+            X = x;
+            Y = y;
+            Z = z;
         }
 
         public Vector3(Vector2 vector2, float z) {
-            x = vector2.x;
-            y = vector2.y;
-            this.z = z;
+            X = vector2.X;
+            Y = vector2.Y;
+            Z = z;
         }
 
         public override string ToString() {
-            return $"({x:0.00}, {y:0.00}, {z:0.00})";
+            return $"({X:0.00}, {Y:0.00}, {Z:0.00})";
         }
 
         public override bool Equals(object obj) {
@@ -50,7 +50,7 @@ namespace Hyperion {
         }
 
         public override int GetHashCode() {
-            return base.GetHashCode();
+            return X.GetHashCode() ^ Y.GetHashCode() << 2 ^ Z.GetHashCode() >> 2;
         }
 
         public bool Equals(Vector3 other) {
@@ -59,12 +59,12 @@ namespace Hyperion {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Dot(Vector3 lhs, Vector3 rhs) {
-            return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
+            return lhs.X * rhs.X + lhs.Y * rhs.Y + lhs.Z * rhs.Z;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(Vector3 lhs, Vector3 rhs) {
-            return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z;
+            return lhs.X == rhs.X && lhs.Y == rhs.Y && lhs.Z == rhs.Z;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -73,43 +73,53 @@ namespace Hyperion {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator <(Vector3 lhs, Vector3 rhs) {
+            return lhs.X < rhs.X && lhs.Y < rhs.Y && lhs.Z < rhs.Z;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator >(Vector3 lhs, Vector3 rhs) {
+            return lhs.X > rhs.X && lhs.Y > rhs.Y && lhs.Z > rhs.Z;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 operator +(Vector3 lhs, Vector3 rhs) {
-            return new Vector3(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z);
+            return new Vector3(lhs.X + rhs.X, lhs.Y + rhs.Y, lhs.Z + rhs.Z);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 operator -(Vector3 lhs, Vector3 rhs) {
-            return new Vector3(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z);
+            return new Vector3(lhs.X - rhs.X, lhs.Y - rhs.Y, lhs.Z - rhs.Z);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 operator *(Vector3 lhs, Vector3 rhs) {
-            return new Vector3(lhs.x * rhs.x, lhs.y * rhs.y, lhs.z * rhs.z);
+            return new Vector3(lhs.X * rhs.X, lhs.Y * rhs.Y, lhs.Z * rhs.Z);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 operator /(Vector3 lhs, Vector3 rhs) {
-            return new Vector3(lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z);
+            return new Vector3(lhs.X / rhs.X, lhs.Y / rhs.Y, lhs.Z / rhs.Z);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 operator -(Vector3 vector) {
-            return new Vector3(-vector.x, -vector.y, -vector.z);
+            return new Vector3(-vector.X, -vector.Y, -vector.Z);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 operator *(Vector3 lhs, float rhs) {
-            return new Vector3(lhs.x * rhs, lhs.y * rhs, lhs.z * rhs);
+            return new Vector3(lhs.X * rhs, lhs.Y * rhs, lhs.Z * rhs);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 operator *(float lhs, Vector3 rhs) {
-            return new Vector3(lhs * rhs.x, lhs * rhs.y, lhs * rhs.z);
+            return new Vector3(lhs * rhs.X, lhs * rhs.Y, lhs * rhs.Z);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 operator /(Vector3 lhs, float rhs) {
-            return new Vector3(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs);
+            return new Vector3(lhs.X / rhs, lhs.Y / rhs, lhs.Z / rhs);
         }
     }
 }

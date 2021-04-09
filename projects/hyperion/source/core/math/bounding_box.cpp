@@ -25,10 +25,10 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    bool BoundingBox::Intersects(BoundingBox bounds) const {
-        Vec3 bounds_min = bounds.min;
-        Vec3 bounds_max = bounds.max;
-        return (max > bounds_min && min < bounds_max) || (min > bounds_max && max < bounds_min);
+    bool BoundingBox::Intersects(BoundingBox other) const {
+        Vec3 other_min = other.min;
+        Vec3 other_max = other.max;
+        return (max > other_min && min < other_max) || (min > other_max && max < other_min);
     }
 
     //--------------------------------------------------------------
