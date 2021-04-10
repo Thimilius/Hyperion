@@ -22,6 +22,7 @@ namespace Hyperion::Rendering {
         s_immediate_mesh_data.indices.clear(),
 
         Object::Destroy(s_immediate_mesh);
+        s_immediate_mesh = nullptr;
     }
 
     //--------------------------------------------------------------
