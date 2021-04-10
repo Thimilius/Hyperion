@@ -66,6 +66,54 @@ namespace Hyperion::Scripting {
     }
 
     //--------------------------------------------------------------
+    void Binding_Behaviour_IsActiveAndEnabled(MonoObject *mono_behaviour, bool *is_active_and_enabled) {
+        Behaviour *behaviour = GetScriptingObjectAs<Behaviour>(mono_behaviour);
+        *is_active_and_enabled = behaviour->IsActiveAndEnabled();
+    }
+
+    //--------------------------------------------------------------
+    void Binding_Behaviour_IsEnabled(MonoObject *mono_behaviour, bool *is_enabled) {
+        Behaviour *behaviour = GetScriptingObjectAs<Behaviour>(mono_behaviour);
+        *is_enabled = behaviour->IsEnabled();
+    }
+
+    //--------------------------------------------------------------
+    void Binding_Behaviour_SetEnabled(MonoObject *mono_behaviour, bool *is_enabled) {
+        Behaviour *behaviour = GetScriptingObjectAs<Behaviour>(mono_behaviour);
+        behaviour->SetEnabled(*is_enabled);
+    }
+
+    //--------------------------------------------------------------
+    void Binding_BoxCollider_GetOrigin(MonoObject *mono_box_collider, Vec3 *origin) {
+        BoxCollider *box_collider = GetScriptingObjectAs<BoxCollider>(mono_box_collider);
+        *origin = box_collider->GetOrigin();
+    }
+
+    //--------------------------------------------------------------
+    void Binding_BoxCollider_SetOrigin(MonoObject *mono_box_collider, Vec3 *origin) {
+        BoxCollider *box_collider = GetScriptingObjectAs<BoxCollider>(mono_box_collider);
+        box_collider->SetOrigin(*origin);
+    }
+
+    //--------------------------------------------------------------
+    void Binding_BoxCollider_GetSize(MonoObject *mono_box_collider, Vec3 *size) {
+        BoxCollider *box_collider = GetScriptingObjectAs<BoxCollider>(mono_box_collider);
+        *size = box_collider->GetSize();
+    }
+
+    //--------------------------------------------------------------
+    void Binding_BoxCollider_SetSize(MonoObject *mono_box_collider, Vec3 *size) {
+        BoxCollider *box_collider = GetScriptingObjectAs<BoxCollider>(mono_box_collider);
+        box_collider->SetSize(*size);
+    }
+
+    //--------------------------------------------------------------
+    void Binding_Collider_GetBoundingBox(MonoObject *mono_collider, BoundingBox *bounding_box) {
+        Collider *collider = GetScriptingObjectAs<Collider>(mono_collider);
+        *bounding_box = collider->GetBoundingBox();
+    }
+
+    //--------------------------------------------------------------
     MonoObject *Binding_Component_GetEntity(MonoObject *mono_component) {
         Component *component = GetScriptingObjectAs<Component>(mono_component);
         return MonoScriptingStorage::GetOrCreateMonoObject(component->GetEntity());
@@ -179,6 +227,18 @@ namespace Hyperion::Scripting {
     }
 
     //--------------------------------------------------------------
+    void Binding_SphereCollider_GetRadius(MonoObject *mono_sphere_collider, float32 *radius) {
+        SphereCollider *sphere_collider = GetScriptingObjectAs<SphereCollider>(mono_sphere_collider);
+        *radius = sphere_collider->GetRadius();
+    }
+
+    //--------------------------------------------------------------
+    void Binding_SphereCollider_SetRadius(MonoObject *mono_sphere_collider, float32 *radius) {
+        SphereCollider *sphere_collider = GetScriptingObjectAs<SphereCollider>(mono_sphere_collider);
+        sphere_collider->SetRadius(*radius);
+    }
+
+    //--------------------------------------------------------------
     void Binding_Transform_GetPosition(MonoObject *mono_transform, Vec3 *position) {
         Transform *transform = GetScriptingObjectAs<Transform>(mono_transform);
         *position = transform->GetPosition();
@@ -229,14 +289,24 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     void MonoScriptingBindings::Bind() {
-        // Input
+        // Behaviour
         {
-            mono_add_internal_call("Hyperion.Input::Binding_IsKeyDown", Input::IsKeyDown);
-            mono_add_internal_call("Hyperion.Input::Binding_IsKeyHold", Input::IsKeyHold);
-            mono_add_internal_call("Hyperion.Input::Binding_IsKeyUp", Input::IsKeyUp);
-            mono_add_internal_call("Hyperion.Input::Binding_IsKeyUp", Input::IsMouseButtonDown);
-            mono_add_internal_call("Hyperion.Input::Binding_IsKeyUp", Input::IsMouseButtonHold);
-            mono_add_internal_call("Hyperion.Input::Binding_IsKeyUp", Input::IsKeyUp);
+            mono_add_internal_call("Hyperion.Behaviour::Binding_IsActiveAndEnabled", Binding_Behaviour_IsActiveAndEnabled);
+            mono_add_internal_call("Hyperion.Behaviour::Binding_IsEnabled", Binding_Behaviour_IsEnabled);
+            mono_add_internal_call("Hyperion.Behaviour::Binding_SetEnabled", Binding_Behaviour_SetEnabled);
+        }
+        
+        // BoxCollider
+        {
+            mono_add_internal_call("Hyperion.BoxCollider::Binding_GetOrigin", Binding_BoxCollider_GetOrigin);
+            mono_add_internal_call("Hyperion.BoxCollider::Binding_SetOrigin", Binding_BoxCollider_SetOrigin);
+            mono_add_internal_call("Hyperion.BoxCollider::Binding_GetSize", Binding_BoxCollider_GetSize);
+            mono_add_internal_call("Hyperion.BoxCollider::Binding_SetSize", Binding_BoxCollider_SetSize);
+        }
+
+        // Collider
+        {
+            mono_add_internal_call("Hyperion.Collider::Binding_GetBoundingBox", Binding_Collider_GetBoundingBox);
         }
 
         // Component
@@ -255,6 +325,16 @@ namespace Hyperion::Scripting {
             mono_add_internal_call("Hyperion.Entity::Binding_CreatePrimitive", Binding_Entity_CreatePrimitive);
         }
 
+        // Input
+        {
+            mono_add_internal_call("Hyperion.Input::Binding_IsKeyDown", Input::IsKeyDown);
+            mono_add_internal_call("Hyperion.Input::Binding_IsKeyHold", Input::IsKeyHold);
+            mono_add_internal_call("Hyperion.Input::Binding_IsKeyUp", Input::IsKeyUp);
+            mono_add_internal_call("Hyperion.Input::Binding_IsKeyUp", Input::IsMouseButtonDown);
+            mono_add_internal_call("Hyperion.Input::Binding_IsKeyUp", Input::IsMouseButtonHold);
+            mono_add_internal_call("Hyperion.Input::Binding_IsKeyUp", Input::IsKeyUp);
+        }
+
         // Object
         {
             mono_add_internal_call("Hyperion.Object::Binding_GetName", Binding_Object_GetName);
@@ -266,6 +346,12 @@ namespace Hyperion::Scripting {
         // Script
         {
             mono_add_internal_call("Hyperion.Script::Binding_Ctor", Binding_Script_Ctor);
+        }
+
+        // SphereCollider
+        {
+            mono_add_internal_call("Hyperion.SphereCollider::Binding_GetRadius", Binding_SphereCollider_GetRadius);
+            mono_add_internal_call("Hyperion.SphereCollider::Binding_SetRadius", Binding_SphereCollider_SetRadius);
         }
 
         // Time

@@ -20,7 +20,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    BoundingBox Collider::GetBounds() {
+    BoundingBox Collider::GetBoundingBox() {
         return GetWorld()->GetPhysicsWorld()->GetBounds(this);
     }
 

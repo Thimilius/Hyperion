@@ -16,7 +16,6 @@
 
         public void Initialize() {
             m_Entity = Entity.CreatePrimitive(EntityPrimitive.Sphere);
-            MyComponent myComponent = m_Entity.AddComponent<MyComponent>();
         }
 
         public void Update(float deltaTime) {

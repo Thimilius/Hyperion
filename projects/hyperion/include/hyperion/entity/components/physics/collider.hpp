@@ -21,7 +21,7 @@ namespace Hyperion {
 
         virtual ColliderType GetColliderType() const = 0;
         
-        virtual BoundingBox GetBounds();
+        virtual BoundingBox GetBoundingBox();
 
         virtual void OnEntityMessage(EntityMessage message) override;
 
