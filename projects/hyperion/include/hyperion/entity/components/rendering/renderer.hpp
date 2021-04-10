@@ -16,7 +16,7 @@ namespace Hyperion {
         Renderer() = default;
         Renderer(const String &name) : Behaviour(name) { }
     private:
-        Material *m_material;
+        Material *m_material = nullptr;
     };
 
 }

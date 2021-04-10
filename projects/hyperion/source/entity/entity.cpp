@@ -123,6 +123,36 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    class ComponentPair : public ISerializable {
+    public:
+        ComponentPair() = default;
+        ComponentPair(const std::pair<Type *, Component *> &pair) {
+            m_type = pair.first;
+            m_component = pair.second;
+        }
+    public:
+        Type *GetType() const { return m_type; }
+        Component *GetComponent() const { return m_component; }
+
+        void Serialize(ISerializationStream &stream) override {
+            stream.WriteString("type", m_type->GetName());
+            stream.WriteObject("component", m_component);
+        }
+
+        void Deserialize(IDeserializationStream &stream, ReferenceContext &context) override {
+            String type_name = stream.ReadString("type");
+            Type *type = Type::GetByName(type_name);
+            HYP_ASSERT(type);
+            m_type = type;
+
+            m_component = stream.ReadObject<Component>("component", context, [type]() { return type->CreateAs<Component>(); });
+        }
+    private:
+        Type *m_type = nullptr;
+        Component *m_component = nullptr;
+    };
+
+    //--------------------------------------------------------------
     void Entity::Serialize(ISerializationStream &stream) {
         Object::Serialize(stream);
 
@@ -131,6 +161,11 @@ namespace Hyperion {
         auto tags_iterator = m_tags.begin();
         stream.WriteArray("tags", m_tags.size(), [&tags_iterator](uint64 index, IArrayWriter &writer) {
             writer.WriteString(*tags_iterator++);
+        });
+        auto components_iterator = m_components.begin();
+        stream.WriteArray("components", m_components.size(), [&components_iterator](uint64 index, IArrayWriter &writer) {
+            ComponentPair component_pair = *components_iterator++;
+            writer.WriteStruct(&component_pair);
         });
 
         // Children are special and get directly serialized here inside the entity.
@@ -149,8 +184,12 @@ namespace Hyperion {
         stream.ReadArray("tags", context, [this](uint64 index, IArrayReader &reader) {
             m_tags.insert(reader.ReadString());
         });
+        stream.ReadArray("components", context, [this, &context](uint64 index, IArrayReader &reader) {
+            ComponentPair component_pair = reader.ReadStruct<ComponentPair>(context);
+            m_components.emplace(component_pair.GetType(), component_pair.GetComponent());
+        });
 
-        for (auto &[component_type, component] : m_components) {
+        for (auto [component_type, component] : m_components) {
             component->m_entity = this;
 
             if (component_type->IsDerivedFrom<Transform>()) {

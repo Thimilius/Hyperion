@@ -55,7 +55,7 @@ namespace Hyperion {
 
         inline bool HasConstructor() const { return m_data->constructor != nullptr; }
         inline void *Create() { HYP_ASSERT(HasConstructor()); return m_data->constructor(); }
-        template<typename T> inline T *CreateAs() const { HYP_ASSERT(HasConstructor()); return reinterpret_cast<T *>(m_data->constructor()); }
+        template<typename T> inline T *CreateAs() const { HYP_ASSERT(HasConstructor()); return static_cast<T *>(m_data->constructor()); }
 
         inline bool operator==(const Type *other) const { return m_data == other->m_data; }
         inline bool operator!=(const Type *other) const { return !(*this == other); }

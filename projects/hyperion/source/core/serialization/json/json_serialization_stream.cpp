@@ -206,7 +206,7 @@ namespace Hyperion {
                 return Quaternion();
             }
         }
-        void *ReadObject(ReferenceContext &context, SerializableAllocatorFunction allocator) override {
+        ISerializable *ReadObject(ReferenceContext &context, SerializableAllocatorFunction allocator) override {
             nlohmann::ordered_json &json_key = m_json;
             if (json_key.is_object()) {
                 ISerializable *serializable = allocator();
@@ -359,7 +359,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void *JsonDeserializationStream::ReadObject(const char *key, ReferenceContext &context, SerializableAllocatorFunction allocator) {
+    ISerializable *JsonDeserializationStream::ReadObject(const char *key, ReferenceContext &context, SerializableAllocatorFunction allocator) {
         HYP_ASSERT(key);
         HYP_ASSERT(allocator);
 

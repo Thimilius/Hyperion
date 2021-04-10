@@ -65,7 +65,7 @@ namespace Hyperion {
         Vec3 ReadVec3(const char *key) override;
         Vec4 ReadVec4(const char *key) override;
         Quaternion ReadQuaternion(const char *key) override;
-        void *ReadObject(const char *key, ReferenceContext &context, SerializableAllocatorFunction allocator) override;
+        ISerializable *ReadObject(const char *key, ReferenceContext &context, SerializableAllocatorFunction allocator) override;
         void ReadStruct(const char *key, ReferenceContext &context, ISerializable *serializable) override;
         void ReadArray(const char *key, ReferenceContext &context, ArrayReaderCallback callback) override;
 

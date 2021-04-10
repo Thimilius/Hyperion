@@ -18,7 +18,7 @@ namespace Hyperion {
     private:
         MeshRenderer() : Renderer("MeshRenderer") { }
     private:
-        Mesh *m_mesh;
+        Mesh *m_mesh = nullptr;
     };
 
 }

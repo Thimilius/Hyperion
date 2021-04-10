@@ -98,18 +98,18 @@ namespace Hyperion {
         virtual Vec3 ReadVec3() = 0;
         virtual Vec4 ReadVec4() = 0;
         virtual Quaternion ReadQuaternion() = 0;
-        virtual void *ReadObject(ReferenceContext &context, SerializableAllocatorFunction allocator) = 0;
+        virtual ISerializable *ReadObject(ReferenceContext &context, SerializableAllocatorFunction allocator) = 0;
         virtual void ReadStruct(ReferenceContext &context, ISerializable *serializable) = 0;
         virtual void ReadArray(ReferenceContext &context, ArrayReaderCallback callback) = 0;
 
         template<typename T>
         T *ReadObject(ReferenceContext &context) {
             SerializableAllocatorFunction allocator = []() { return new T(); };
-            return reinterpret_cast<T *>(ReadObject(context, allocator));
+            return static_cast<T *>(ReadObject(context, allocator));
         }
         template<typename T>
         T *ReadObject(ReferenceContext &context, SerializableAllocatorFunction allocator) {
-            return reinterpret_cast<T *>(ReadObject(context, allocator));
+            return static_cast<T *>(ReadObject(context, allocator));
         }
 
         template<typename T>
@@ -139,18 +139,18 @@ namespace Hyperion {
         virtual Vec3 ReadVec3(const char *key) = 0;
         virtual Vec4 ReadVec4(const char *key) = 0;
         virtual Quaternion ReadQuaternion(const char *key) = 0;
-        virtual void *ReadObject(const char *key, ReferenceContext &context, SerializableAllocatorFunction allocator) = 0;
+        virtual ISerializable *ReadObject(const char *key, ReferenceContext &context, SerializableAllocatorFunction allocator) = 0;
         virtual void ReadStruct(const char *key, ReferenceContext &context, ISerializable *serializable) = 0;
         virtual void ReadArray(const char *key, ReferenceContext &context, ArrayReaderCallback callback) = 0;
 
         template<typename T>
         T *ReadObject(const char *key, ReferenceContext &context) {
             SerializableAllocatorFunction allocator = []() { return new T(); };
-            return reinterpret_cast<T *>(ReadObject(key, context, allocator));
+            return static_cast<T *>(ReadObject(key, context, allocator));
         }
         template<typename T>
         T *ReadObject(const char *key, ReferenceContext &context, SerializableAllocatorFunction allocator) {
-            return reinterpret_cast<T *>(ReadObject(key, context, allocator));
+            return static_cast<T *>(ReadObject(key, context, allocator));
         }
 
         template<typename T>
