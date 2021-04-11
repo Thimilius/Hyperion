@@ -14,6 +14,16 @@ namespace Hyperion {
 
         public float Magnitude => (float)Math.Sqrt(X * X + Y * Y + Z * Z);
         public float SqrMagnitude => X * X + Y * Y + Z * Z;
+        public Vector3 Normalized {
+            get {
+                float magnitude = Magnitude;
+                if (magnitude == 0) {
+                    return Zero;
+                } else {
+                    return new Vector3(X / magnitude, Y / magnitude, Z / magnitude);
+                }
+            }
+        }
 
         public float X;
         public float Y;
@@ -60,6 +70,15 @@ namespace Hyperion {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float Dot(Vector3 lhs, Vector3 rhs) {
             return lhs.X * rhs.X + lhs.Y * rhs.Y + lhs.Z * rhs.Z;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3 Cross(Vector3 lhs, Vector3 rhs) {
+            float x = lhs.Y * rhs.Z - lhs.Z * rhs.Y;
+            float y = lhs.Z * rhs.X - lhs.X * rhs.Z;
+            float z = lhs.X * rhs.Y - lhs.Y * rhs.X;
+
+            return new Vector3(x, y, z);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

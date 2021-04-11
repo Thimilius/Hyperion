@@ -162,6 +162,7 @@ namespace Hyperion::Scripting {
                 Script *script = entity->AddComponent<Script>();
                 MonoObject *mono_object = MonoScriptingStorage::CreateMonoObject(script, mono_component_class);
                 MonoScriptingInstance *mono_scripting_instance = static_cast<MonoScriptingInstance *>(script->GetScriptingInstance());
+
                 return mono_object;
             } else {
                 return nullptr;
