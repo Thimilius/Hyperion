@@ -36,8 +36,7 @@ namespace Hyperion {
         void Deserialize(IDeserializationStream &stream, ReferenceContext &context) override;
     };
 
-    // TODO: Make worlds not be an object.
-    class World final : public Object {
+    class World final : public Scripting::ScriptingObject, public ISerializable {
         HYP_REFLECT();
     public:
         inline WorldEnvironment &GetEnvironment() { return m_environment; }
@@ -76,8 +75,7 @@ namespace Hyperion {
     private:
         World() = default;
         World(const String &name);
-    protected:
-        void OnDestroy() override;
+        ~World();
     private:
         void OnUpdate(float32 delta_time);
         void OnLateUpdate(float32 delta_time);
@@ -96,6 +94,7 @@ namespace Hyperion {
         void AddMeshRenderer(MeshRenderer *mesh_renderer);
         void RemoveMeshRenderer(MeshRenderer *mesh_renderer);
     private:
+        String m_name;
         WorldEnvironment m_environment;
         Physics::PhysicsWorld *m_physics_world;
 

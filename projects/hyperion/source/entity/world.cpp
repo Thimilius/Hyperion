@@ -35,8 +35,7 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void World::Serialize(ISerializationStream &stream) {
-        Object::Serialize(stream);
-
+        stream.WriteString("name", m_name);
         stream.WriteStruct("environment", m_environment);
         stream.WriteArray("root_entities", m_root_entities.size(), [this](uint64 index, IArrayWriter &writer) {
             writer.WriteObject(m_root_entities[index]);
@@ -45,8 +44,7 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void World::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
-        Object::Deserialize(stream, context);
-        
+        m_name = stream.ReadString("name");
         m_environment = stream.ReadStruct<WorldEnvironment>("environment", context);
         SerializableAllocatorFunction allocator = []() { return Type::Get<Entity>()->CreateAs<Entity>(); };
         stream.ReadArray("root_entities", context, [this, &context, &allocator](uint64 index, IArrayReader &reader) {
@@ -55,12 +53,13 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    World::World(const String &name) : Object(name) {
+    World::World(const String &name) {
+        m_name = name;
         m_physics_world = Physics::PhysicsEngine::CreatePhysicsWorld();
     }
 
     //--------------------------------------------------------------
-    void World::OnDestroy() {
+    World::~World() {
         for (auto it = m_root_entities.begin(); it != m_root_entities.end(); ) {
             Entity *entity = *it;
             it = m_root_entities.erase(it);

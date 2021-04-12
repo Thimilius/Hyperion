@@ -28,7 +28,7 @@ namespace Hyperion {
             s_worlds.erase(std::remove(begin, end, world));
         }
 
-        Object::Destroy(world);
+        delete world;
     }
 
     //--------------------------------------------------------------
@@ -59,7 +59,7 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void WorldManager::Shutdown() {
         for (World *world : s_worlds) {
-            Object::DestroyImmediate(world);
+            delete world;
         }
     }
 
