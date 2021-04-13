@@ -18,6 +18,7 @@ namespace Hyperion::Scripting {
     enum class MonoSpecialClass {
         None,
 
+        Entity,
         Component,
         Script,
     };
@@ -54,6 +55,7 @@ namespace Hyperion::Scripting {
         static void Clear();
     private:
         inline static struct MonoSpecialClasses {
+            MonoClass *entity_class;
             MonoClass *component_class;
             MonoClass *script_class;
         } s_special_classes;

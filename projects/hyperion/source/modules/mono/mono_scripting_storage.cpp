@@ -27,6 +27,7 @@ namespace Hyperion::Scripting {
     //--------------------------------------------------------------
     MonoClass *MonoScriptingStorage::GetSpecialClass(MonoSpecialClass mono_special_class) {
         switch (mono_special_class) 	{
+            case MonoSpecialClass::Entity: return s_special_classes.entity_class;
             case MonoSpecialClass::Component: return s_special_classes.component_class;
             case MonoSpecialClass::Script: return s_special_classes.script_class;
             default: return nullptr;
@@ -91,6 +92,7 @@ namespace Hyperion::Scripting {
         s_native_type_to_mono_classes[type] = mono_class;
 
         switch (special_class) 	{
+            case MonoSpecialClass::Entity: s_special_classes.entity_class = mono_class; break;
             case MonoSpecialClass::Component: s_special_classes.component_class = mono_class; break;
             case MonoSpecialClass::Script: s_special_classes.script_class = mono_class; break;
         }

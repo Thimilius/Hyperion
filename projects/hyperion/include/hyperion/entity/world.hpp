@@ -39,6 +39,9 @@ namespace Hyperion {
     class World final : public Scripting::ScriptingObject, public ISerializable {
         HYP_REFLECT();
     public:
+        inline String GetName() const { return m_name; }
+        inline void SetName(const String &name) { m_name = name; }
+
         inline WorldEnvironment &GetEnvironment() { return m_environment; }
         inline Physics::PhysicsWorld *GetPhysicsWorld() const { return m_physics_world; }
 

@@ -21,6 +21,7 @@
 #include "hyperion/entity/components/physics/sphere_collider.hpp"
 #include "hyperion/entity/components/rendering/camera.hpp"
 #include "hyperion/entity/components/rendering/mesh_renderer.hpp"
+#include "hyperion/modules/mono/mono_scripting_driver.hpp"
 #include "hyperion/modules/mono/mono_scripting_storage.hpp"
 #include "hyperion/modules/mono/managed/mono_managed_string.hpp"
 
@@ -289,6 +290,35 @@ namespace Hyperion::Scripting {
     }
 
     //--------------------------------------------------------------
+    MonoString *Binding_World_GetName(MonoObject *mono_world) {
+        World *world = GetScriptingObjectAs<World>(mono_world);
+        return MonoManagedString(world->GetName()).GetMonoString();
+    }
+
+    //--------------------------------------------------------------
+    void Binding_World_SetName(MonoObject *mono_world, MonoString *name) {
+        World *world = GetScriptingObjectAs<World>(mono_world);
+        world->SetName(MonoManagedString(name).GetString());
+    }
+
+    //--------------------------------------------------------------
+    MonoArray *Binding_World_GetRootEntities(MonoObject *mono_world) {
+        World *world = GetScriptingObjectAs<World>(mono_world);
+        const Vector<Entity *> &root_entities = world->GetRootEntites();
+
+        // TODO: Move all array related things into own MonoManagedArray class.
+        MonoDomain *mono_domain = MonoScriptingDriver::GetRuntimeDomain()->GetMonoDomain();
+        MonoClass *mono_entity_class = MonoScriptingStorage::GetSpecialClass(MonoSpecialClass::Entity);
+        MonoArray *mono_array = mono_array_new(mono_domain, mono_entity_class, root_entities.size());
+
+        for (uint32 i = 0; i < root_entities.size(); i++) 		{
+            mono_array_set(mono_array, MonoObject *, i, MonoScriptingStorage::GetOrCreateMonoObject(root_entities[i]));
+        }
+
+        return mono_array;
+    }
+
+    //--------------------------------------------------------------
     void MonoScriptingBindings::Bind() {
         // Behaviour
         {
@@ -373,6 +403,13 @@ namespace Hyperion::Scripting {
             mono_add_internal_call("Hyperion.Transform::Binding_GetParent", Binding_Transform_GetParent);
             mono_add_internal_call("Hyperion.Transform::Binding_SetParent", Binding_Transform_SetParent);
         }
+
+        // World
+        {
+            mono_add_internal_call("Hyperion.World::Binding_GetName", Binding_World_GetName);
+            mono_add_internal_call("Hyperion.World::Binding_SetName", Binding_World_SetName);
+            mono_add_internal_call("Hyperion.World::Binding_GetRootEntities", Binding_World_GetRootEntities);
+        }
     }
 
     //--------------------------------------------------------------
@@ -381,7 +418,7 @@ namespace Hyperion::Scripting {
         MonoScriptingStorage::RegisterNativeClass<BoxCollider>("Hyperion", "BoxCollider");
         MonoScriptingStorage::RegisterNativeClass<Collider>("Hyperion", "Collider");
         MonoScriptingStorage::RegisterNativeClass<Component>("Hyperion", "Component", MonoSpecialClass::Component);
-        MonoScriptingStorage::RegisterNativeClass<Entity>("Hyperion", "Entity");
+        MonoScriptingStorage::RegisterNativeClass<Entity>("Hyperion", "Entity", MonoSpecialClass::Entity);
         MonoScriptingStorage::RegisterNativeClass<Object>("Hyperion", "Object");
         MonoScriptingStorage::RegisterNativeClass<Script>("Hyperion", "Script", MonoSpecialClass::Script);
         MonoScriptingStorage::RegisterNativeClass<SphereCollider>("Hyperion", "SphereCollider");
