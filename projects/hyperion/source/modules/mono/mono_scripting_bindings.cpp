@@ -21,8 +21,8 @@
 #include "hyperion/entity/components/physics/sphere_collider.hpp"
 #include "hyperion/entity/components/rendering/camera.hpp"
 #include "hyperion/entity/components/rendering/mesh_renderer.hpp"
-#include "hyperion/modules/mono/mono_scripting_driver.hpp"
 #include "hyperion/modules/mono/mono_scripting_storage.hpp"
+#include "hyperion/modules/mono/managed/mono_managed_array.hpp"
 #include "hyperion/modules/mono/managed/mono_managed_string.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -304,18 +304,7 @@ namespace Hyperion::Scripting {
     //--------------------------------------------------------------
     MonoArray *Binding_World_GetRootEntities(MonoObject *mono_world) {
         World *world = GetScriptingObjectAs<World>(mono_world);
-        const Vector<Entity *> &root_entities = world->GetRootEntites();
-
-        // TODO: Move all array related things into own MonoManagedArray class.
-        MonoDomain *mono_domain = MonoScriptingDriver::GetRuntimeDomain()->GetMonoDomain();
-        MonoClass *mono_entity_class = MonoScriptingStorage::GetSpecialClass(MonoSpecialClass::Entity);
-        MonoArray *mono_array = mono_array_new(mono_domain, mono_entity_class, root_entities.size());
-
-        for (uint32 i = 0; i < root_entities.size(); i++) 		{
-            mono_array_set(mono_array, MonoObject *, i, MonoScriptingStorage::GetOrCreateMonoObject(root_entities[i]));
-        }
-
-        return mono_array;
+        return MonoManagedArray(world->GetRootEntites(), MonoScriptingStorage::GetSpecialClass(MonoSpecialClass::Entity)).GetMonoArray();
     }
 
     //--------------------------------------------------------------
