@@ -127,6 +127,26 @@ namespace Hyperion::Scripting {
     }
 
     //--------------------------------------------------------------
+    void Binding_EngineLogger_Trace(MonoString *message) {
+        HYP_TRACE(MonoManagedString(message).GetString().c_str());
+    }
+
+    //--------------------------------------------------------------
+    void Binding_EngineLogger_Info(MonoString *message) {
+        HYP_INFO(MonoManagedString(message).GetString().c_str());
+    }
+
+    //--------------------------------------------------------------
+    void Binding_EngineLogger_Warn(MonoString *message) {
+        HYP_WARN(MonoManagedString(message).GetString().c_str());
+    }
+
+    //--------------------------------------------------------------
+    void Binding_EngineLogger_Error(MonoString *message) {
+        HYP_ERROR(MonoManagedString(message).GetString().c_str());
+    }
+
+    //--------------------------------------------------------------
     MonoObject *Binding_Entity_GetTransform(MonoObject *mono_entity) {
         Entity *entity = GetScriptingObjectAs<Entity>(mono_entity);
         return MonoScriptingStorage::GetOrCreateMonoObject(entity->GetTransform());
@@ -333,6 +353,14 @@ namespace Hyperion::Scripting {
         {
             mono_add_internal_call("Hyperion.Component::Binding_GetEntity", Binding_Component_GetEntity);
             mono_add_internal_call("Hyperion.Component::Binding_GetTransform", Binding_Component_GetTransform);
+        }
+
+        // EngineLogger
+        {
+            mono_add_internal_call("Hyperion.EngineLogger::Binding_Trace", Binding_EngineLogger_Trace);
+            mono_add_internal_call("Hyperion.EngineLogger::Binding_Info", Binding_EngineLogger_Info);
+            mono_add_internal_call("Hyperion.EngineLogger::Binding_Warn", Binding_EngineLogger_Warn);
+            mono_add_internal_call("Hyperion.EngineLogger::Binding_Error", Binding_EngineLogger_Error);
         }
 
         // Entity

@@ -53,6 +53,7 @@
     <Compile Include="Assets\Asset.cs" />
     <Compile Include="Assets\Material.cs" />
     <Compile Include="Engine.cs" />
+    <Compile Include="EngineLogger.cs" />
     <Compile Include="Entity\Components\Behaviour.cs" />
     <Compile Include="Entity\Components\Component.cs" />
     <Compile Include="Entity\Components\Physics\BoxCollider.cs" />
@@ -67,8 +68,10 @@
     <Compile Include="Entity\World.cs" />
     <Compile Include="HyperionException.cs" />
     <Compile Include="IApplication.cs" />
+    <Compile Include="ILogger.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="InvalidComponentTypeException.cs" />
+    <Compile Include="LogLevel.cs" />
     <Compile Include="Math\BoundingBox.cs" />
     <Compile Include="Math\Plane.cs" />
     <Compile Include="Math\Quaternion.cs" />
