@@ -3,6 +3,17 @@ using System.Runtime.CompilerServices;
 
 namespace Hyperion {
     public struct Color : IEquatable<Color> {
+        public static Color Black => new Color(0.0f, 0.0f, 0.0f, 1.0f);
+        public static Color Red => new Color(1.0f, 0.0f, 0.0f, 1.0f);
+        public static Color Green => new Color(0.0f, 1.0f, 0.0f, 1.0f);
+        public static Color Blue => new Color(0.0f, 0.0f, 1.0f, 1.0f);
+        public static Color Yellow => new Color(1.0f, 1.0f, 0.0f, 1.0f);
+        public static Color Magenta => new Color(1.0f, 0.0f, 1.0f, 1.0f);
+        public static Color Cyan => new Color(0.0f, 1.0f, 1.0f, 1.0f);
+        public static Color Grey => new Color(0.5f, 0.5f, 0.5f, 1.0f);
+        public static Color White => new Color(1.0f, 1.0f, 1.0f, 1.0f);
+        public static Color Transparent => new Color(0.0f, 0.0f, 0.0f, 0.0f);
+
         public float R;
         public float G;
         public float B;
