@@ -55,6 +55,7 @@ namespace Hyperion::Scripting {
     MonoObject *MonoScriptingStorage::CreateMonoObject(ScriptingObject *scripting_object, MonoClass *mono_class) {
         MonoObject *mono_object = mono_object_new(MonoScriptingDriver::GetRuntimeDomain()->GetMonoDomain(), mono_class);
         RegisterMonoObject(mono_object, scripting_object);
+        mono_runtime_object_init(mono_object);
         return mono_object;
     }
 

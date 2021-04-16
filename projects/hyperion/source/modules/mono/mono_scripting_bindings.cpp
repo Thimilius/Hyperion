@@ -28,6 +28,12 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
 
+    // NOTE: We want to make sure that a user does not create managed components through 'new'.
+    // Currently we validate that through this global flag. This may or may not be the best way to do it but works for now.
+    //--------------------------------------------------------------
+    bool g_is_adding_component = false;
+    bool g_create_entity_primitive = false;
+
     //--------------------------------------------------------------
     template<typename T>
     T *GetScriptingObjectAs(MonoObject *mono_object) {
@@ -160,12 +166,14 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     void Binding_Entity_Ctor(MonoObject *mono_entity, MonoString *mono_entity_name) {
-        EntityCreationParameters entity_creation_parameters = EntityCreationParameters();
-        if (mono_entity_name != nullptr) {
-            entity_creation_parameters.name = MonoManagedString(mono_entity_name).GetString();
+        if (!g_create_entity_primitive) {
+            EntityCreationParameters entity_creation_parameters = EntityCreationParameters();
+            if (mono_entity_name != nullptr) {
+                entity_creation_parameters.name = MonoManagedString(mono_entity_name).GetString();
+            }
+            Entity *entity = Entity::Create(entity_creation_parameters);
+            MonoScriptingStorage::RegisterMonoObject(mono_entity, entity);
         }
-        Entity *entity = Entity::Create(entity_creation_parameters);
-        MonoScriptingStorage::RegisterMonoObject(mono_entity, entity);
     }
 
     //--------------------------------------------------------------
@@ -176,18 +184,20 @@ namespace Hyperion::Scripting {
         if (type != nullptr) {
             return MonoScriptingStorage::GetOrCreateMonoObject(entity->AddComponent(type));
         } else {
+            MonoObject *mono_component = nullptr;
+
+            g_is_adding_component = true;
             if (ValidateComponentMonoClass(mono_component_class)) {
                 MonoCustomAttrInfo *custom_attribute_info = mono_custom_attrs_from_class(mono_component_class);
 
                 // TODO: Do validation like required and multiple components. Maybe we can should do that in the managed side?
                 Script *script = entity->AddComponent<Script>();
-                MonoObject *mono_object = MonoScriptingStorage::CreateMonoObject(script, mono_component_class);
+                mono_component = MonoScriptingStorage::CreateMonoObject(script, mono_component_class);
                 MonoScriptingInstance *mono_scripting_instance = static_cast<MonoScriptingInstance *>(script->GetScriptingInstance());
-
-                return mono_object;
-            } else {
-                return nullptr;
             }
+            g_is_adding_component = false;
+
+            return mono_component;
         }
     }
 
@@ -216,8 +226,12 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     MonoObject *Binding_Entity_CreatePrimitive(EntityPrimitive primitive) {
+        g_create_entity_primitive = true;
         Entity *entity = Entity::CreatePrimitive(primitive);
-        return MonoScriptingStorage::GetOrCreateMonoObject(entity);
+        MonoObject *mono_entity = MonoScriptingStorage::GetOrCreateMonoObject(entity);
+        g_create_entity_primitive = false;
+
+        return mono_entity;
     }
 
     //--------------------------------------------------------------
@@ -245,7 +259,10 @@ namespace Hyperion::Scripting {
 
     //--------------------------------------------------------------
     void Binding_Script_Ctor(MonoObject *mono_script) {
-        // TODO: Add validation check that we do not call this constructor through new.
+        // We need to validate if we are being added properly through 'AddComponent'.
+        if (!g_is_adding_component) {
+            mono_raise_exception(mono_get_exception_invalid_operation("Creating components through 'new' is not allowed"));
+        }
     }
 
     //--------------------------------------------------------------
