@@ -30,7 +30,7 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void WindowsOperatingSystem::Initialize() {
         m_console_handle = GetStdHandle(STD_OUTPUT_HANDLE);
-        if (m_console_handle == INVALID_HANDLE_VALUE) {
+        if (!m_console_handle || m_console_handle == INVALID_HANDLE_VALUE) {
             AllocConsole();
             m_console_handle = GetStdHandle(STD_OUTPUT_HANDLE);
         }

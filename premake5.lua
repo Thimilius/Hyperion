@@ -226,7 +226,7 @@ project "hyperion-editor"
 	language "C++"
 	cppdialect "C++17"
 	architecture "x86_64"
-	kind "ConsoleApp"
+	kind "WindowedApp"
 	
 	staticruntime "On"
 	exceptionhandling "Off"
