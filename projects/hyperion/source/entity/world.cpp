@@ -12,31 +12,8 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    void WorldEnvironment::AmbientLight::Serialize(ISerializationStream &stream) {
-        stream.WriteFloat("intensity", intensity);
-        stream.WriteColor("color", color);
-    }
-
-    //--------------------------------------------------------------
-    void WorldEnvironment::AmbientLight::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
-        intensity = stream.ReadFloat("intensity");
-        color = stream.ReadColor("color");
-    }
-
-    //--------------------------------------------------------------
-    void WorldEnvironment::Serialize(ISerializationStream &stream) {
-        stream.WriteStruct("ambient_light", ambient_light);
-    }
-
-    //--------------------------------------------------------------
-    void WorldEnvironment::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
-        ambient_light = stream.ReadStruct<AmbientLight>("ambient_light", context);
-    }
-
-    //--------------------------------------------------------------
     void World::Serialize(ISerializationStream &stream) {
         stream.WriteString("name", m_name);
-        stream.WriteStruct("environment", m_environment);
         stream.WriteArray("root_entities", m_root_entities.size(), [this](uint64 index, IArrayWriter &writer) {
             writer.WriteObject(m_root_entities[index]);
         });
@@ -45,7 +22,6 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void World::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
         m_name = stream.ReadString("name");
-        m_environment = stream.ReadStruct<WorldEnvironment>("environment", context);
         SerializableAllocatorFunction allocator = []() { return Type::Get<Entity>()->CreateAs<Entity>(); };
         stream.ReadArray("root_entities", context, [this, &context, &allocator](uint64 index, IArrayReader &reader) {
             m_root_entities.push_back(reader.ReadObject<Entity>(context, allocator));

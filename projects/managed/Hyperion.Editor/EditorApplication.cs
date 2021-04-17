@@ -22,7 +22,7 @@
             Vector3 position = m_Entity.Transform.Position;
             position.X += deltaTime;
             m_Entity.Transform.Position = position;
-
+            
             if (Input.IsKeyDown(KeyCode.Delete)) {
                 Object.Destroy(m_Entity);
             }

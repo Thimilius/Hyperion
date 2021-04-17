@@ -23,17 +23,11 @@ namespace Hyperion {
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
     
-    struct WorldEnvironment : public ISerializable {
-        struct AmbientLight : public ISerializable {
+    struct WorldEnvironment {
+        struct AmbientLight {
             float32 intensity = 0.2f;
             Color color = Color::White();
-
-            void Serialize(ISerializationStream &stream) override;
-            void Deserialize(IDeserializationStream &stream, ReferenceContext &context) override;
         } ambient_light;
-
-        void Serialize(ISerializationStream &stream) override;
-        void Deserialize(IDeserializationStream &stream, ReferenceContext &context) override;
     };
 
     class World final : public Scripting::ScriptingObject, public ISerializable {

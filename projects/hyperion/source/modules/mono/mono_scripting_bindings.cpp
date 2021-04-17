@@ -34,6 +34,8 @@ namespace Hyperion::Scripting {
     bool g_is_adding_component = false;
     bool g_create_entity_primitive = false;
 
+    // NOTE: Interop with structs requires that the struct on the native side does not use inheritance.
+
     //--------------------------------------------------------------
     template<typename T>
     T *GetScriptingObjectAs(MonoObject *mono_object) {
@@ -339,6 +341,18 @@ namespace Hyperion::Scripting {
     }
 
     //--------------------------------------------------------------
+    void Binding_World_GetEnvironment(MonoObject *mono_world, WorldEnvironment *environment) {
+        World *world = GetScriptingObjectAs<World>(mono_world);
+        *environment = world->GetEnvironment();
+    }
+
+    //--------------------------------------------------------------
+    void Binding_World_SetEnvironment(MonoObject *mono_world, WorldEnvironment *environment) {
+        World *world = GetScriptingObjectAs<World>(mono_world);
+        world->GetEnvironment() = *environment;
+    }
+
+    //--------------------------------------------------------------
     MonoArray *Binding_World_GetRootEntities(MonoObject *mono_world) {
         World *world = GetScriptingObjectAs<World>(mono_world);
         return MonoManagedArray(world->GetRootEntites(), MonoScriptingStorage::GetSpecialClass(MonoSpecialClass::Entity)).GetMonoArray();
@@ -442,6 +456,8 @@ namespace Hyperion::Scripting {
         {
             mono_add_internal_call("Hyperion.World::Binding_GetName", Binding_World_GetName);
             mono_add_internal_call("Hyperion.World::Binding_SetName", Binding_World_SetName);
+            mono_add_internal_call("Hyperion.World::Binding_GetEnvironment", Binding_World_GetEnvironment);
+            mono_add_internal_call("Hyperion.World::Binding_SetEnvironment", Binding_World_SetEnvironment);
             mono_add_internal_call("Hyperion.World::Binding_GetRootEntities", Binding_World_GetRootEntities);
         }
     }
