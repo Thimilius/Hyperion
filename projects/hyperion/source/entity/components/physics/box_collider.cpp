@@ -31,8 +31,8 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void BoxCollider::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
-        Collider::Deserialize(stream, context);
+    void BoxCollider::Deserialize(IDeserializationStream &stream) {
+        Collider::Deserialize(stream);
 
         m_origin = stream.ReadVec3("origin");
         m_size = stream.ReadVec3("size");

@@ -17,11 +17,9 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void Object::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
+    void Object::Deserialize(IDeserializationStream &stream) {
         m_guid = Guid::Create(stream.ReadString("guid"));
         m_name = stream.ReadString("name");
-        
-        context.Register(m_guid, this);
     }
 
     //--------------------------------------------------------------

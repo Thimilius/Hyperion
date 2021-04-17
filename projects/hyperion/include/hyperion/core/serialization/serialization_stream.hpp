@@ -6,7 +6,6 @@
 #include "hyperion/core/math/vec3.hpp"
 #include "hyperion/core/math/vec4.hpp"
 #include "hyperion/core/math/quaternion.hpp"
-#include "hyperion/core/serialization/reference_context.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -98,24 +97,24 @@ namespace Hyperion {
         virtual Vec3 ReadVec3() = 0;
         virtual Vec4 ReadVec4() = 0;
         virtual Quaternion ReadQuaternion() = 0;
-        virtual ISerializable *ReadObject(ReferenceContext &context, SerializableAllocatorFunction allocator) = 0;
-        virtual void ReadStruct(ReferenceContext &context, ISerializable *serializable) = 0;
-        virtual void ReadArray(ReferenceContext &context, ArrayReaderCallback callback) = 0;
+        virtual ISerializable *ReadObject(SerializableAllocatorFunction allocator) = 0;
+        virtual void ReadStruct(ISerializable *serializable) = 0;
+        virtual void ReadArray(ArrayReaderCallback callback) = 0;
 
         template<typename T>
-        T *ReadObject(ReferenceContext &context) {
+        T *ReadObject() {
             SerializableAllocatorFunction allocator = []() { return new T(); };
-            return static_cast<T *>(ReadObject(context, allocator));
+            return static_cast<T *>(ReadObject(allocator));
         }
         template<typename T>
-        T *ReadObject(ReferenceContext &context, SerializableAllocatorFunction allocator) {
-            return static_cast<T *>(ReadObject(context, allocator));
+        T *ReadObject(SerializableAllocatorFunction allocator) {
+            return static_cast<T *>(ReadObject(allocator));
         }
 
         template<typename T>
-        T ReadStruct(ReferenceContext &context) {
+        T ReadStruct() {
             T object = { };
-            ReadStruct(context, static_cast<ISerializable *>(&object));
+            ReadStruct(static_cast<ISerializable *>(&object));
             return object;
         }
     };
@@ -139,24 +138,24 @@ namespace Hyperion {
         virtual Vec3 ReadVec3(const char *key) = 0;
         virtual Vec4 ReadVec4(const char *key) = 0;
         virtual Quaternion ReadQuaternion(const char *key) = 0;
-        virtual ISerializable *ReadObject(const char *key, ReferenceContext &context, SerializableAllocatorFunction allocator) = 0;
-        virtual void ReadStruct(const char *key, ReferenceContext &context, ISerializable *serializable) = 0;
-        virtual void ReadArray(const char *key, ReferenceContext &context, ArrayReaderCallback callback) = 0;
+        virtual ISerializable *ReadObject(const char *key, SerializableAllocatorFunction allocator) = 0;
+        virtual void ReadStruct(const char *key, ISerializable *serializable) = 0;
+        virtual void ReadArray(const char *key, ArrayReaderCallback callback) = 0;
 
         template<typename T>
-        T *ReadObject(const char *key, ReferenceContext &context) {
+        T *ReadObject(const char *key) {
             SerializableAllocatorFunction allocator = []() { return new T(); };
-            return static_cast<T *>(ReadObject(key, context, allocator));
+            return static_cast<T *>(ReadObject(key, allocator));
         }
         template<typename T>
-        T *ReadObject(const char *key, ReferenceContext &context, SerializableAllocatorFunction allocator) {
-            return static_cast<T *>(ReadObject(key, context, allocator));
+        T *ReadObject(const char *key, SerializableAllocatorFunction allocator) {
+            return static_cast<T *>(ReadObject(key, allocator));
         }
 
         template<typename T>
-        T ReadStruct(const char *key, ReferenceContext &context) {
+        T ReadStruct(const char *key) {
             T object = { };
-            ReadStruct(key, context, static_cast<ISerializable *>(&object));
+            ReadStruct(key, static_cast<ISerializable *>(&object));
             return object;
         }
     };

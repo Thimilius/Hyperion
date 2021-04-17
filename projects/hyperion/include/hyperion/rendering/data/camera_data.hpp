@@ -35,7 +35,7 @@ namespace Hyperion::Rendering {
         Mat4 inverse_view_projection_matrix = Mat4::Identity();
 
         void Serialize(ISerializationStream &stream) override;
-        void Deserialize(IDeserializationStream &stream, ReferenceContext &context) override;
+        void Deserialize(IDeserializationStream &stream) override;
     };
 
 }

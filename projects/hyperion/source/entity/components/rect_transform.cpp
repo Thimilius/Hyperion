@@ -157,8 +157,8 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void RectTransform::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
-        Transform::Deserialize(stream, context);
+    void RectTransform::Deserialize(IDeserializationStream &stream) {
+        Transform::Deserialize(stream);
 
         m_size = stream.ReadVec2("size");
         m_pivot = stream.ReadVec2("pivot");

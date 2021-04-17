@@ -14,7 +14,7 @@ namespace Hyperion {
         bool IsActiveAndEnabled();
 
         virtual void Serialize(ISerializationStream &stream) override;
-        virtual void Deserialize(IDeserializationStream &stream, ReferenceContext &context) override;
+        virtual void Deserialize(IDeserializationStream &stream) override;
     protected:
         Behaviour() = default;
         Behaviour(const String &name) : Component(name) { }

@@ -206,14 +206,14 @@ namespace Hyperion {
                 return Quaternion();
             }
         }
-        ISerializable *ReadObject(ReferenceContext &context, SerializableAllocatorFunction allocator) override {
+        ISerializable *ReadObject(SerializableAllocatorFunction allocator) override {
             nlohmann::ordered_json &json_key = m_json;
             if (json_key.is_object()) {
                 ISerializable *serializable = allocator();
 
                 JsonDeserializationStream inner_stream;
                 inner_stream.m_json = json_key;
-                serializable->Deserialize(inner_stream, context);
+                serializable->Deserialize(inner_stream);
                 return serializable;
             } else if (json_key.is_null()) {
                 return nullptr;
@@ -221,15 +221,15 @@ namespace Hyperion {
                 return nullptr;
             }
         }
-        void ReadStruct(ReferenceContext &context, ISerializable *serializable) override {
+        void ReadStruct(ISerializable *serializable) override {
             nlohmann::ordered_json &json_key = m_json;
             if (json_key.is_object()) {
                 JsonDeserializationStream inner_stream;
                 inner_stream.m_json = json_key;
-                serializable->Deserialize(inner_stream, context);
+                serializable->Deserialize(inner_stream);
             }
         }
-        void ReadArray(ReferenceContext &context, ArrayReaderCallback callback) override {
+        void ReadArray(ArrayReaderCallback callback) override {
             nlohmann::ordered_json &json_key = m_json;
             if (json_key.is_array()) {
                 uint64 index = 0;
@@ -359,7 +359,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    ISerializable *JsonDeserializationStream::ReadObject(const char *key, ReferenceContext &context, SerializableAllocatorFunction allocator) {
+    ISerializable *JsonDeserializationStream::ReadObject(const char *key, SerializableAllocatorFunction allocator) {
         HYP_ASSERT(key);
         HYP_ASSERT(allocator);
 
@@ -369,7 +369,7 @@ namespace Hyperion {
 
             JsonDeserializationStream inner_stream;
             inner_stream.m_json = json_key;
-            serializable->Deserialize(inner_stream, context);
+            serializable->Deserialize(inner_stream);
             return serializable;
         } else if (json_key.is_null()) {
             return nullptr;
@@ -379,7 +379,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void JsonDeserializationStream::ReadStruct(const char *key, ReferenceContext &context, ISerializable *serializable) {
+    void JsonDeserializationStream::ReadStruct(const char *key, ISerializable *serializable) {
         HYP_ASSERT(key);
         HYP_ASSERT(serializable);
 
@@ -387,12 +387,12 @@ namespace Hyperion {
         if (json_key.is_object()) {
             JsonDeserializationStream inner_stream;
             inner_stream.m_json = json_key;
-            serializable->Deserialize(inner_stream, context);
+            serializable->Deserialize(inner_stream);
         }
     }
 
     //--------------------------------------------------------------
-    void JsonDeserializationStream::ReadArray(const char *key, ReferenceContext &context, ArrayReaderCallback callback) {
+    void JsonDeserializationStream::ReadArray(const char *key, ArrayReaderCallback callback) {
         HYP_ASSERT(key);
         HYP_ASSERT(callback);
 

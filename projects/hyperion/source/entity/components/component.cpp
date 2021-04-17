@@ -27,8 +27,8 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void Component::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
-        Object::Deserialize(stream, context);
+    void Component::Deserialize(IDeserializationStream &stream) {
+        Object::Deserialize(stream);
 
         // The m_entity reference gets set by the entity itself.
     }

@@ -37,8 +37,8 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void Collider::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
-        Behaviour::Deserialize(stream, context);
+    void Collider::Deserialize(IDeserializationStream &stream) {
+        Behaviour::Deserialize(stream);
     }
 
     //--------------------------------------------------------------

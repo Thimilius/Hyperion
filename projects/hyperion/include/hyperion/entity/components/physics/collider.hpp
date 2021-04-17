@@ -26,7 +26,7 @@ namespace Hyperion {
         virtual void OnEntityMessage(EntityMessage message) override;
 
         virtual void Serialize(ISerializationStream &stream) override;
-        virtual void Deserialize(IDeserializationStream &stream, ReferenceContext &context) override;
+        virtual void Deserialize(IDeserializationStream &stream) override;
     protected:
         Collider() = default;
         Collider(const String & name) : Behaviour(name) {}

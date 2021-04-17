@@ -155,7 +155,7 @@ namespace Hyperion {
         void UnregisterMessageListener(IEntityMessageListener *listener);
 
         virtual void Serialize(ISerializationStream &stream) override;
-        virtual void Deserialize(IDeserializationStream &stream, ReferenceContext &context) override;
+        virtual void Deserialize(IDeserializationStream &stream) override;
     public:
         static Entity *Create(const EntityCreationParameters &creation_parameters = EntityCreationParameters());
         static Entity *CreatePrimitive(EntityPrimitive primitive, const EntityCreationParameters &creation_parameters = EntityCreationParameters());

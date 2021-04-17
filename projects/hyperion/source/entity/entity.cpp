@@ -139,13 +139,13 @@ namespace Hyperion {
             stream.WriteObject("component", m_component);
         }
 
-        void Deserialize(IDeserializationStream &stream, ReferenceContext &context) override {
+        void Deserialize(IDeserializationStream &stream) override {
             String type_name = stream.ReadString("type");
             Type *type = Type::GetByName(type_name);
             HYP_ASSERT(type);
             m_type = type;
 
-            m_component = stream.ReadObject<Component>("component", context, [type]() { return type->CreateAs<Component>(); });
+            m_component = stream.ReadObject<Component>("component", [type]() { return type->CreateAs<Component>(); });
         }
     private:
         Type *m_type = nullptr;
@@ -176,16 +176,16 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void Entity::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
-        Object::Deserialize(stream, context);
+    void Entity::Deserialize(IDeserializationStream &stream) {
+        Object::Deserialize(stream);
 
         m_active = stream.ReadBool("active");
         m_layer = static_cast<LayerMask>(stream.ReadUInt32("layer"));
-        stream.ReadArray("tags", context, [this](uint64 index, IArrayReader &reader) {
+        stream.ReadArray("tags", [this](uint64 index, IArrayReader &reader) {
             m_tags.insert(reader.ReadString());
         });
-        stream.ReadArray("components", context, [this, &context](uint64 index, IArrayReader &reader) {
-            ComponentPair component_pair = reader.ReadStruct<ComponentPair>(context);
+        stream.ReadArray("components", [this](uint64 index, IArrayReader &reader) {
+            ComponentPair component_pair = reader.ReadStruct<ComponentPair>();
             m_components.emplace(component_pair.GetType(), component_pair.GetComponent());
         });
 
@@ -199,8 +199,8 @@ namespace Hyperion {
 
         Vector<Transform *> &children = m_transform->m_children;
         SerializableAllocatorFunction allocator = []() { return new Entity(); };
-        stream.ReadArray("children", context, [this, &context, &children, &allocator](uint64 index, IArrayReader &reader) {
-            Entity *entity = reader.ReadObject<Entity>(context, allocator);
+        stream.ReadArray("children", [this, &children, &allocator](uint64 index, IArrayReader &reader) {
+            Entity *entity = reader.ReadObject<Entity>(allocator);
             children.push_back(entity->GetTransform());
         });
         for (Transform *child : children) {

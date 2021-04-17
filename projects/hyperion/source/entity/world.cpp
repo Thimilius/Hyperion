@@ -20,11 +20,11 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void World::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
+    void World::Deserialize(IDeserializationStream &stream) {
         m_name = stream.ReadString("name");
         SerializableAllocatorFunction allocator = []() { return Type::Get<Entity>()->CreateAs<Entity>(); };
-        stream.ReadArray("root_entities", context, [this, &context, &allocator](uint64 index, IArrayReader &reader) {
-            m_root_entities.push_back(reader.ReadObject<Entity>(context, allocator));
+        stream.ReadArray("root_entities", [this, &allocator](uint64 index, IArrayReader &reader) {
+            m_root_entities.push_back(reader.ReadObject<Entity>(allocator));
         });
     }
 

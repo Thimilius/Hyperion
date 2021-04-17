@@ -76,8 +76,8 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void Transform::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
-        Component::Deserialize(stream, context);
+    void Transform::Deserialize(IDeserializationStream &stream) {
+        Component::Deserialize(stream);
 
         m_local_position = stream.ReadVec3("position");
         m_local_rotation = stream.ReadQuaternion("rotation");

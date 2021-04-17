@@ -29,7 +29,7 @@ namespace Hyperion::Rendering {
         float32 outer_spot_radius = 1.0f;
 
         void Serialize(ISerializationStream &stream) override;
-        void Deserialize(IDeserializationStream &stream, ReferenceContext &context) override;
+        void Deserialize(IDeserializationStream &stream) override;
     };
 
 }

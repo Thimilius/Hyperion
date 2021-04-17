@@ -68,7 +68,7 @@ namespace Hyperion {
         }
 
         void Serialize(ISerializationStream &stream) override;
-        void Deserialize(IDeserializationStream &stream, ReferenceContext &context) override;
+        void Deserialize(IDeserializationStream &stream) override;
     private:
         World() = default;
         World(const String &name);

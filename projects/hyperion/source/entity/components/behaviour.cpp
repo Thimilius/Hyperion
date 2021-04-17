@@ -24,8 +24,8 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void Behaviour::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
-        Component::Deserialize(stream, context);
+    void Behaviour::Deserialize(IDeserializationStream &stream) {
+        Component::Deserialize(stream);
 
         m_enabled = stream.ReadBool("enabled");
     }

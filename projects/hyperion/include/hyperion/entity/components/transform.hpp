@@ -97,7 +97,7 @@ namespace Hyperion {
         bool IsChildOf(Transform *parent) const;
 
         virtual void Serialize(ISerializationStream &stream) override;
-        virtual void Deserialize(IDeserializationStream &stream, ReferenceContext &context) override;
+        virtual void Deserialize(IDeserializationStream &stream) override;
     protected:
         Transform(const String &name) : Component(name) { }
     protected:

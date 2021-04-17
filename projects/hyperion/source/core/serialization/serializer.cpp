@@ -24,9 +24,7 @@ namespace Hyperion {
         JsonDeserializationStream stream;
         stream.Parse(text);
 
-        ReferenceContext context;
-        serializable->Deserialize(stream, context);
-        context.ResolveAllReferences();
+        serializable->Deserialize(stream);
     }
 
 }

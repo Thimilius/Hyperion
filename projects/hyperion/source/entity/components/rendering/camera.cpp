@@ -110,10 +110,10 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void Camera::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
-        Behaviour::Deserialize(stream, context);
+    void Camera::Deserialize(IDeserializationStream &stream) {
+        Behaviour::Deserialize(stream);
 
-        m_data = stream.ReadStruct<CameraData>("data", context);
+        m_data = stream.ReadStruct<CameraData>("data");
         m_culling_mask = static_cast<LayerMask>(stream.ReadUInt32("culling_mask"));
         m_clear_mode = static_cast<CameraClearMode>(stream.ReadInt32("clear_mode"));
         m_background_color = stream.ReadColor("background_color");

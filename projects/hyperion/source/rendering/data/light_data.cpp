@@ -20,7 +20,7 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void LightData::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
+    void LightData::Deserialize(IDeserializationStream &stream) {
         type = static_cast<LightType>(stream.ReadInt32("type"));
         position = stream.ReadVec3("position");
         direction = stream.ReadVec3("direction");

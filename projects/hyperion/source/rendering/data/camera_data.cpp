@@ -20,7 +20,7 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void CameraData::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
+    void CameraData::Deserialize(IDeserializationStream &stream) {
         projection_mode = static_cast<CameraProjectionMode>(stream.ReadInt32("projection_mode"));
         position = stream.ReadVec3("position");
         forward = stream.ReadVec3("forward");

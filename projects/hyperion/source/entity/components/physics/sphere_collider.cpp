@@ -30,8 +30,8 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void SphereCollider::Deserialize(IDeserializationStream &stream, ReferenceContext &context) {
-        Collider::Deserialize(stream, context);
+    void SphereCollider::Deserialize(IDeserializationStream &stream) {
+        Collider::Deserialize(stream);
 
         m_radius = stream.ReadFloat("radius");
     }
