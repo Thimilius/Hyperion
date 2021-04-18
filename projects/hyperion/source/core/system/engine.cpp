@@ -19,7 +19,6 @@
 #include "hyperion/core/object/object.hpp"
 #include "hyperion/core/memory/memory.hpp"
 #include "hyperion/core/profiling/profiling.hpp"
-#include "hyperion/core/threading/synchronization.hpp"
 #include "hyperion/entity/world_manager.hpp"
 #include "hyperion/physics/physics_engine.hpp"
 #include "hyperion/rendering/render_engine.hpp"
@@ -97,11 +96,6 @@ namespace Hyperion {
 
         PreInitialize();
 
-        if (s_settings.render.threading_mode == Rendering::RenderThreadingMode::MultiThreaded) {
-            Synchronization::NotifyUpdateReady();
-            Synchronization::WaitForRenderReady();
-        }
-
         Initialize();
         s_application->OnInitialize();
         PostInitialize();
@@ -167,7 +161,6 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void Engine::Exit() {
         s_running = false;
-        Rendering::RenderEngine::Exit();
     }
 
     //--------------------------------------------------------------

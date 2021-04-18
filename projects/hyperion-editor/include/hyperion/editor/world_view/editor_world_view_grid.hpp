@@ -2,7 +2,6 @@
 
 //---------------------- Library Includes ----------------------
 #include <hyperion/assets/mesh.hpp>
-#include <hyperion/rendering/render_driver.hpp>
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Editor {
@@ -16,7 +15,6 @@ namespace Hyperion::Editor {
     class EditorWorldViewGrid final {
     public:
         static void Initialize();
-        static void Render(Rendering::IRenderDriver *render_driver, Vec3 target_position);
     private:
         EditorWorldViewGrid() = delete;
         ~EditorWorldViewGrid() = delete;

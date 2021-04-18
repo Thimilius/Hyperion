@@ -69,7 +69,6 @@ namespace Hyperion::Editor {
 //--------------------------------------------------------------
 Hyperion::Application *Hyperion::CreateApplication() {
     ApplicationSettings settings = ApplicationSettings();
-    settings.render.threading_mode = Rendering::RenderThreadingMode::MultiThreaded;
     settings.render.pipeline = Rendering::RenderPipeline::Custom;
     settings.render.custom_pipeline = new Editor::EditorRenderPipeline();
     return new Hyperion::Editor::EditorApplication(settings);

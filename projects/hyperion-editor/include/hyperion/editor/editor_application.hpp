@@ -3,6 +3,7 @@
 //---------------------- Library Includes ----------------------
 #include <hyperion/core/app/application.hpp>
 #include <hyperion/core/system/engine_mode.hpp>
+#include <hyperion/entity/world.hpp>
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/editor/rendering/editor_render_pipeline.hpp"

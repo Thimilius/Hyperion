@@ -4,10 +4,6 @@
 //--------------------- Definition Include ---------------------
 #include "hyperion/assets/texture.hpp"
 
-//---------------------- Project Includes ----------------------
-#include "hyperion/rendering/render_driver.hpp"
-#include "hyperion/rendering/render_engine.hpp"
-
 //------------------------- Namespaces -------------------------
 using namespace Hyperion::Rendering;
 
@@ -16,8 +12,6 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Texture::OnDestroy() {
-        RenderEngine::GetRenderDriver()->DestroyTexture(m_resource_id);
-
         Asset::OnDestroy();
     }
 
@@ -38,16 +32,6 @@ namespace Hyperion {
         if (read_and_write_enabled) {
             m_pixels = pixels;
         }
-
-        TextureDescriptor descriptor = { };
-        descriptor.dimension = GetDimension();
-        descriptor.format = format;
-        descriptor.parameters = parameters;
-        descriptor.size = { width, height };
-        descriptor.mipmap_count = CalculateMipmapCount(width, height);
-        descriptor.pixels = pixels;
-
-        RenderEngine::GetRenderDriver()->CreateTexture(m_resource_id, descriptor);
     }
 
     //--------------------------------------------------------------
@@ -67,8 +51,6 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void RenderTexture::OnDestroy() {
-        RenderEngine::GetRenderDriver()->DestroyRenderTexture(m_resource_id);
-
         Asset::OnDestroy();
     }
 
@@ -79,21 +61,12 @@ namespace Hyperion {
         m_width = width;
         m_height = height;
         m_attachments = attachments;
-
-        RenderTextureDescriptor descriptor = { };
-        descriptor.size = { width, height };
-        descriptor.mipmap_count = CalculateMipmapCount(width, height);
-        descriptor.attachments = attachments;
-
-        RenderEngine::GetRenderDriver()->CreateRenderTexture(m_resource_id, descriptor);
     }
 
     //--------------------------------------------------------------
     void RenderTexture::Resize(uint32 width, uint32 height) {
         m_width = width;
         m_height = height;
-
-        RenderEngine::GetRenderDriver()->ResizeRenderTexture(m_resource_id, width, height, CalculateMipmapCount(width, height));
     }
 
     //--------------------------------------------------------------

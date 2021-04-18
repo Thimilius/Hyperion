@@ -7,7 +7,6 @@
 #include "hyperion/physics/physics_backend.hpp"
 #include "hyperion/rendering/render_backend.hpp"
 #include "hyperion/rendering/pipelines/render_pipeline.hpp"
-#include "hyperion/rendering/threading/render_threading_mode.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -29,7 +28,6 @@ namespace Hyperion {
 
     struct RenderSettings {
         Rendering::RenderBackend backend = Rendering::RenderBackend::OpenGL;
-        Rendering::RenderThreadingMode threading_mode = Rendering::RenderThreadingMode::MultiThreaded;
         Rendering::RenderPipeline pipeline = Rendering::RenderPipeline::Forward;
         Rendering::IRenderPipeline *custom_pipeline = nullptr;
     };

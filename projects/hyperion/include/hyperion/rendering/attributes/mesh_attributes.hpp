@@ -1,8 +1,5 @@
 #pragma once
 
-//---------------------- Project Includes ----------------------
-#include "hyperion/rendering/attributes/common_attributes.hpp"
-
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
@@ -25,11 +22,6 @@ namespace Hyperion::Rendering {
         VertexAttributeKind kind;
         VertexAttributeType type;
         uint32 dimension;
-    };
-
-    struct VertexFormat {
-        ArrayDescriptor<VertexAttribute> attributes;
-        uint32 stride;
     };
 
     enum class IndexFormat {

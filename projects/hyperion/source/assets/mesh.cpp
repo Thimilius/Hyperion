@@ -4,10 +4,6 @@
 //--------------------- Definition Include ---------------------
 #include "hyperion/assets/mesh.hpp"
 
-//---------------------- Project Includes ----------------------
-#include "hyperion/rendering/render_driver.hpp"
-#include "hyperion/rendering/render_engine.hpp"
-
 //------------------------- Namespaces -------------------------
 using namespace Hyperion::Rendering;
 
@@ -33,9 +29,6 @@ namespace Hyperion {
         if (read_and_write_enabled) {
             m_mesh_data = mesh_data;
         }
-
-        MeshDescriptor descriptor = { };
-        descriptor.sub_meshes = sub_meshes;
 
         // The minimum a mesh must provide is positional data.
         HYP_ASSERT(mesh_data.positions.size() > 0);
@@ -63,9 +56,6 @@ namespace Hyperion {
         }
         m_vertex_format.stride = stride;
 
-        descriptor.vertex_format.attributes = m_vertex_format.vertex_attributes;
-        descriptor.vertex_format.stride = m_vertex_format.stride;
-
         uint32 vertex_count = static_cast<uint32>(mesh_data.positions.size());
         Vector<uint8> vertices(vertex_count * stride);
         for (uint32 i = 0; i < vertex_count; i++) {
@@ -91,19 +81,14 @@ namespace Hyperion {
                 index += VERTEX_ATTRIBUTE_SIZE_TEXTURE0;
             }
         }
-        descriptor.vertices = vertices;
 
         // FIXME: This is hardcoded for 32-Bit indices!
-        descriptor.index_format = IndexFormat::UInt32;
         uint32 index_count = static_cast<uint32>(mesh_data.indices.size());
         Vector<uint8> indices(index_count * sizeof(uint32));
         uint32 *index_data = reinterpret_cast<uint32 *>(indices.data());
         for (uint32 i = 0; i < index_count; i++) {
             index_data[i] = mesh_data.indices[i];
         }
-        descriptor.indices = indices;
-
-        Rendering::RenderEngine::GetRenderDriver()->CreateMesh(m_resource_id, descriptor);
     }
 
     //--------------------------------------------------------------
@@ -139,8 +124,6 @@ namespace Hyperion {
         bool has_texture0 = mesh_data.texture0.size() > 0;
         HYP_ASSERT(!has_texture0 || (has_texture0 && HasVertexAttribute(VertexAttributeKind::Texture0)));
 
-        MeshDataDescriptor descriptor = { };
-        
         uint32 vertex_count = static_cast<uint32>(mesh_data.positions.size());
         Vector<uint8> vertices(vertex_count * m_vertex_format.stride);
         for (uint32 i = 0; i < vertex_count; i++) {
@@ -166,7 +149,6 @@ namespace Hyperion {
                 index += VERTEX_ATTRIBUTE_SIZE_TEXTURE0;
             }
         }
-        descriptor.vertices = vertices;
 
         uint32 index_count = static_cast<uint32>(mesh_data.indices.size());
         Vector<uint8> indices(index_count * sizeof(uint32));
@@ -174,9 +156,6 @@ namespace Hyperion {
         for (uint32 i = 0; i < index_count; i++) {
             index_data[i] = mesh_data.indices[i];
         }
-        descriptor.indices = indices;
-
-        Rendering::RenderEngine::GetRenderDriver()->SetMeshData(m_resource_id, descriptor);
     }
 
     //--------------------------------------------------------------
@@ -191,8 +170,6 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Mesh::OnDestroy() {
-        Rendering::RenderEngine::GetRenderDriver()->DestroyMesh(m_resource_id);
-
         Asset::OnDestroy();
     }
 

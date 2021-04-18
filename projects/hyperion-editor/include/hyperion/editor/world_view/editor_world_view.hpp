@@ -5,7 +5,6 @@
 #include <hyperion/entity/components/ui/canvas.hpp>
 #include <hyperion/entity/components/ui/text.hpp>
 #include <hyperion/entity/components/ui/toggle.hpp>
-#include <hyperion/rendering/render_driver.hpp>
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/editor/world_view/editor_world_view_camera_controller.hpp"
@@ -20,7 +19,6 @@ namespace Hyperion::Editor {
 
         static void Initialize();
         static void Update(float32 delta_time);
-        static void Render(Rendering::IRenderDriver *render_driver);
     private:
         EditorWorldView() = delete;
         ~EditorWorldView() = delete;
@@ -28,7 +26,6 @@ namespace Hyperion::Editor {
         static void LoadWorld();
         static void SaveWorld();
 
-        static void RetrieveEntityUnderMouse(Rendering::IRenderDriver *render_driver);
         static void BuildInterface();
     private:
         inline static Camera *s_editor_camera;

@@ -4,10 +4,6 @@
 //--------------------- Definition Include ---------------------
 #include "hyperion/assets/material.hpp"
 
-//---------------------- Project Includes ----------------------
-#include "hyperion/rendering/render_driver.hpp"
-#include "hyperion/rendering/render_engine.hpp"
-
 //------------------------- Namespaces -------------------------
 using namespace Hyperion::Rendering;
 
@@ -341,10 +337,7 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Material::CreateOnGPU() {
-        MaterialDescriptor descriptor = { };
-        descriptor.shader_id = m_shader->GetResourceId();
 
-        RenderEngine::GetRenderDriver()->CreateMaterial(m_resource_id, descriptor);
     }
 
     //--------------------------------------------------------------
@@ -370,8 +363,6 @@ namespace Hyperion {
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
         }
-
-        RenderEngine::GetRenderDriver()->SetMaterialProperty(m_resource_id, rendering_property);
     }
 
     //--------------------------------------------------------------
@@ -410,8 +401,6 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void Material::OnDestroy() {
         m_shader->UnregisterRecompilationListener(this);
-
-        RenderEngine::GetRenderDriver()->DestroyMaterial(m_resource_id);
 
         Asset::OnDestroy();
     }

@@ -58,14 +58,6 @@ namespace Hyperion::Editor {
     }
 
     //--------------------------------------------------------------
-    void EditorWorldViewGrid::Render(IRenderDriver *render_driver, Vec3 target_position) {
-        // We want to draw the grid at the center of the camera corresponding to the grid chunk size.
-        Mat4 translation = GetTranslation(target_position);
-        Mat4 rotation = GetRotation();
-        render_driver->DrawMesh(s_mesh->GetResourceId(), translation * rotation, ImmediateRenderer::GetImmediateMaterial()->GetResourceId(), 0);
-    }
-
-    //--------------------------------------------------------------
     Mat4 EditorWorldViewGrid::GetTranslation(Vec3 target_position) {
         int32 x = static_cast<int32>(target_position.x + (GRID_CHUNK_SIZE / 2.0f)) / GRID_CHUNK_SIZE;
         int32 y = static_cast<int32>(target_position.y + (GRID_CHUNK_SIZE / 2.0f)) / GRID_CHUNK_SIZE;

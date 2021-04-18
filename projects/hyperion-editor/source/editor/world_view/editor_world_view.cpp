@@ -17,8 +17,6 @@
 #include <hyperion/entity/components/rendering/widget_renderer.hpp>
 #include <hyperion/entity/components/ui/button.hpp>
 #include <hyperion/entity/components/ui/graphic.hpp>
-#include <hyperion/rendering/immediate_renderer.hpp>
-#include <hyperion/rendering/render_engine.hpp>
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/editor/editor_application.hpp"
@@ -47,10 +45,6 @@ namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
     void EditorWorldView::Update(float32 delta_time) {
-        if (Input::IsKeyDown(KeyCode::F2)) {
-            bool vsync_on = RenderEngine::GetVSyncMode() != VSyncMode::DontSync;
-            s_vsync_toggle->SetIsOn(!vsync_on);
-        }
         if (Input::IsKeyDown(KeyCode::F3)) {
             s_grid_toggle->SetIsOn(!s_should_draw_grid);
         }
@@ -61,44 +55,8 @@ namespace Hyperion::Editor {
             s_editor_camera_controller->Reset();
         }
 
-        String text = StringUtils::Format("VSync: {} - FPS: {} ({:.2f}ms)", RenderEngine::GetVSyncMode() == VSyncMode::DontSync ? "Off" : "On", Time::GetFPS(), Time::GetFrameTime());
+        String text = StringUtils::Format("FPS: {} ({:.2f}ms)", Time::GetFPS(), Time::GetFrameTime());
         s_stats_text->SetText(text);
-    }
-
-    //--------------------------------------------------------------
-    void EditorWorldView::Render(IRenderDriver *render_driver) {
-        RetrieveEntityUnderMouse(render_driver);
-
-        // We want to draw a highlight of our selection.
-        Entity *selected_entity = EditorSelection::GetSelectedEntity();
-        if (selected_entity != nullptr) {
-            MeshRenderer *mesh_renderer = selected_entity->GetComponent<MeshRenderer>();
-
-            RasterizerState rasterizer_state;
-            rasterizer_state.depth_test_enabled = false;
-            rasterizer_state.polygon_mode = PolygonMode::Line;
-            render_driver->SetRasterizerState(rasterizer_state);
-
-            Material *overwrite_material = AssetManager::GetMaterialPrimitive(MaterialPrimitive::Unlit);
-            overwrite_material->SetColor("u_color", s_selection_color);
-
-            EditorApplication::GetRenderPipeline()->DrawMeshRenderer(render_driver, mesh_renderer, overwrite_material);
-            rasterizer_state.depth_test_enabled = true;
-            rasterizer_state.polygon_mode = PolygonMode::Fill;
-            render_driver->SetRasterizerState(rasterizer_state);
-        }
-
-        if (s_should_draw_grid) {
-            EditorWorldViewGrid::Render(render_driver, s_editor_camera_controller->GetTargetPosition());
-        }
-
-        if (s_should_draw_physics_debug) {
-            render_driver->Clear(ClearFlags::Depth, Color::Black());
-
-            ImmediateRenderer::Begin(MeshTopology::Lines);
-            EditorApplication::GetEditingWorld()->GetPhysicsWorld()->DebugDraw();
-            ImmediateRenderer::End();
-        }
     }
 
     //--------------------------------------------------------------
@@ -109,33 +67,6 @@ namespace Hyperion::Editor {
     //--------------------------------------------------------------
     void EditorWorldView::SaveWorld() {
         String path = OperatingSystem::GetInstance()->SaveFileDialog("Save world", "");
-    }
-
-    //--------------------------------------------------------------
-    void EditorWorldView::RetrieveEntityUnderMouse(Rendering::IRenderDriver *render_driver) {
-        Vec2Int mouse_position = Vec2Int(static_cast<int32>(Input::GetMousePosition().x), static_cast<int32>(Input::GetMousePosition().y));
-
-        // Make sure we are in bounds.
-        if (mouse_position.x < 0 || mouse_position.x >= static_cast<int32>(Display::GetWidth()) || mouse_position.y < 0 || mouse_position.y >= static_cast<int32>(Display::GetHeight())) {
-            return;
-        }
-
-        if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
-            ResourceId render_texture_id = EditorApplication::GetRenderPipeline()->GetRenderTexture()->GetResourceId();
-            render_driver->GetRenderTextureSubData(render_texture_id, 1, RectInt(mouse_position, Vec2Int(1, 1)), &s_render_texture_entity_id_buffer, [](Vector<uint8> *data) {
-                ObjectId object_id = 0;
-                if (data->size() > 0) {
-                    object_id = *reinterpret_cast<uint32 *>(data->data());
-                }
-
-                Object *selected_object = nullptr;
-                if (object_id != 0) {
-                    selected_object = ObjectManager::Get(object_id);
-                }
-
-                EditorSelection::SetSelectedObject(selected_object);
-            });
-        }
     }
 
     //--------------------------------------------------------------
@@ -214,7 +145,6 @@ namespace Hyperion::Editor {
                 return toggle;
             };
 
-            s_vsync_toggle = make_toggle_button(u8"\uf108", RenderEngine::GetVSyncMode() != VSyncMode::DontSync, 60.0f, [](bool is_on) { RenderEngine::SetVSyncMode(is_on ? VSyncMode::EveryVBlank : VSyncMode::DontSync); });
             s_grid_toggle = make_toggle_button(u8"\uf00a", s_should_draw_grid, 80.0f, [](bool is_on) { s_should_draw_grid = is_on; });
             s_physics_debug_toggle = make_toggle_button(u8"\uf5cb", s_physics_debug_toggle, 100.0f, [](bool is_on) { s_should_draw_physics_debug = is_on; });
 
