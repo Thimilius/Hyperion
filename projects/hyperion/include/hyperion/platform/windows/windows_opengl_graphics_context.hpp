@@ -4,18 +4,19 @@
 #include <Windows.h>
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/driver/opengl/opengl_graphics_context.hpp"
+#include "hyperion/graphics/driver/opengl/opengl_graphics_context.hpp"
 
 //-------------------- Definition Namespace --------------------
-namespace Hyperion::Rendering {
+namespace Hyperion::Graphics {
 
     class WindowsOpenGLGraphicsContext : public OpenGLGraphicsContext {
     public:
         WindowsOpenGLGraphicsContext(HDC device_context, HDC helper_device_context);
-        ~WindowsOpenGLGraphicsContext() override;
     private:
         void Initialize(const GraphicsContextDescriptor &descriptor) override;
-        void Present() override;
+        void Shutdown() override;
+        
+        void SwapBuffers() override;
         void SetVSyncMode(VSyncMode vsync_mode) override;
 
         void LoadOpenGLExtensions(HDC helper_device_context);

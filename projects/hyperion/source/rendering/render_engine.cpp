@@ -15,26 +15,21 @@ namespace Hyperion::Rendering {
     //--------------------------------------------------------------
     void RenderEngine::PreInitialize(const RenderSettings &settings, Window *window) {
         s_render_settings = settings;
-        
+    }
+
+    //--------------------------------------------------------------
+    void RenderEngine::Initialize() {
         switch (s_render_settings.pipeline) {
             case RenderPipeline::Forward: s_render_pipeline = new ForwardRenderPipeline(); break;
             case RenderPipeline::Custom: s_render_pipeline = s_render_settings.custom_pipeline; break;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
-    }
 
-    //--------------------------------------------------------------
-    void RenderEngine::Initialize() {
-
+        s_render_pipeline->Initialize();
     }
 
     //--------------------------------------------------------------
     void RenderEngine::Render() {
-
-    }
-
-    //--------------------------------------------------------------
-    void RenderEngine::PreShutdown() {
 
     }
 

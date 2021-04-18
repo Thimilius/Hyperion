@@ -1,7 +1,7 @@
 #pragma once
 
 //-------------------- Definition Namespace --------------------
-namespace Hyperion::Rendering {
+namespace Hyperion::Graphics {
 
     enum class DepthEquation {
         Never,
@@ -58,7 +58,7 @@ namespace Hyperion::Rendering {
         Line
     };
 
-    struct RasterizerState {
+    struct GraphicsRasterizerState {
         bool depth_test_enabled = true;
         bool depth_mask_enabled = true;
         DepthEquation depth_equation = DepthEquation::Less;

@@ -4,11 +4,10 @@
 #include <glad/glad.h>
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/common.hpp"
-#include "hyperion/rendering/graphics_context.hpp"
+#include "hyperion/graphics/graphics_context.hpp"
 
 //-------------------- Definition Namespace --------------------
-namespace Hyperion::Rendering {
+namespace Hyperion::Graphics {
 
     struct OpenGLGraphicsContextLimits {
         uint32 max_texture_units;
@@ -21,12 +20,14 @@ namespace Hyperion::Rendering {
         uint32 max_framebuffer_height;
     };
 
-    class OpenGLGraphicsContext : public GraphicsContext {
+    class OpenGLGraphicsContext : public IGraphicsContext {
     public:
         virtual ~OpenGLGraphicsContext() override = default;
     public:
-        inline const Vector<String> &GetExtensions() const { return m_extensions; }
+        inline GraphicsContextProperties GetProperties() const override { return m_properties; }
+
         inline const OpenGLGraphicsContextLimits &GetLimits() const { return m_limits; }
+        inline const Vector<String> &GetExtensions() const { return m_extensions; }
     protected:
         void Initialize(const GraphicsContextDescriptor &descriptor) override;
     private:
@@ -41,8 +42,9 @@ namespace Hyperion::Rendering {
     private:
         static void GLAPIENTRY DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *user_pointer);
     private:
-        Vector<String> m_extensions;
+        GraphicsContextProperties m_properties;
         OpenGLGraphicsContextLimits m_limits;
+        Vector<String> m_extensions;
     };
 
 }

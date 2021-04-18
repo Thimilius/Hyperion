@@ -2,7 +2,7 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/driver/opengl/opengl_graphics_context.hpp"
+#include "hyperion/graphics/driver/opengl/opengl_graphics_context.hpp"
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/system/engine.hpp"
@@ -12,7 +12,7 @@
 #define HYP_OPENGL_LOG_NOTIFICATIONS false
 
 //-------------------- Definition Namespace --------------------
-namespace Hyperion::Rendering {
+namespace Hyperion::Graphics {
 
     constexpr bool g_break_on_error = true;
     constexpr bool g_log_extensions = false;

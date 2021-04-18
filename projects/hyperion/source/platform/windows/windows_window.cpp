@@ -204,7 +204,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Rendering::GraphicsContext *WindowsWindow::CreateGraphicsContext(Rendering::RenderBackend render_backend) {
+    Graphics::IGraphicsContext *WindowsWindow::CreateGraphicsContext(Rendering::RenderBackend render_backend) {
         switch (render_backend) {
             case Rendering::RenderBackend::OpenGL: {
                 // To create a proper OpenGL context we need a second helper window.
@@ -240,7 +240,7 @@ namespace Hyperion {
                     nullptr
                 );
 
-                Rendering::GraphicsContext *graphics_context = new Rendering::WindowsOpenGLGraphicsContext(GetDC(m_window_handle), GetDC(helper_window));
+                Graphics::IGraphicsContext *graphics_context = new Graphics::WindowsOpenGLGraphicsContext(GetDC(m_window_handle), GetDC(helper_window));
 
                 // We can destroy the helper window now that we have the proper context.
                 UnregisterClassW(helper_window_class_name, instance);

@@ -11,18 +11,13 @@
 #include "hyperion/core/system/engine.hpp"
 
 //-------------------- Definition Namespace --------------------
-namespace Hyperion::Rendering {
+namespace Hyperion::Graphics {
 
     //--------------------------------------------------------------
     WindowsOpenGLGraphicsContext::WindowsOpenGLGraphicsContext(HDC device_context, HDC helper_device_context) {
         m_device_context = device_context;
 
         LoadOpenGLExtensions(helper_device_context);
-    }
-
-    //--------------------------------------------------------------
-    WindowsOpenGLGraphicsContext::~WindowsOpenGLGraphicsContext() {
-        wglDeleteContext(m_opengl_context);
     }
 
     //--------------------------------------------------------------
@@ -86,8 +81,13 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void WindowsOpenGLGraphicsContext::Present() {
-        SwapBuffers(m_device_context);
+    void WindowsOpenGLGraphicsContext::Shutdown() {
+        wglDeleteContext(m_opengl_context);
+    }
+
+    //--------------------------------------------------------------
+    void WindowsOpenGLGraphicsContext::SwapBuffers() {
+        ::SwapBuffers(m_device_context);
     }
 
     //--------------------------------------------------------------

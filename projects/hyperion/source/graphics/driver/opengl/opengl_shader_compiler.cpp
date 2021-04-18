@@ -2,7 +2,7 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/driver/opengl/opengl_shader_compiler.hpp"
+#include "hyperion/graphics/driver/opengl/opengl_shader_compiler.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {

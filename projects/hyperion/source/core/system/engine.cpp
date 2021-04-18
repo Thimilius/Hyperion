@@ -174,8 +174,6 @@ namespace Hyperion {
         
         AssetManager::Shutdown();
 
-        // The render engine (render thread) needs seperate phases in which it has to shut down.
-        Rendering::RenderEngine::PreShutdown();
         ObjectManager::Shutdown();
         Rendering::RenderEngine::Shutdown();
 
