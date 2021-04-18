@@ -6,7 +6,7 @@ with_mono_option = "with-mono"
 include "packages.lua"
 
 workspace "hyperion"
-	startproject "hyperion-editor"
+	startproject "hyperion-sandbox"
 
 	targetdir ("build/%{cfg.buildcfg}/bin/" .. output_directory_format)
 	objdir ("build/%{cfg.buildcfg}/obj/" .. output_directory_format)
@@ -247,6 +247,37 @@ project "hyperion-editor"
     filter "system:windows"
         files { "projects/hyperion-editor/resource.rc" }
 
+		postbuildcommands {
+		    "{COPY} %{cfg.targetdir}/%{prj.name}.exe ../../run_tree/hyperion.exe*",
+		    
+		    "{COPY} %{cfg.targetdir}/fmod.dll ../../run_tree/fmod.dll*",
+			"{COPY} %{cfg.targetdir}/mono.dll ../../run_tree/mono.dll*"
+	    }
+
+project "hyperion-sandbox"
+	location "projects/hyperion-sandbox"
+	
+	language "C++"
+	cppdialect "C++17"
+	architecture "x86_64"
+	kind "WindowedApp"
+	
+	staticruntime "On"
+	exceptionhandling "Off"
+	rtti "Off"
+	flags { "FatalCompileWarnings" }
+	
+	linkhyperion()
+
+	files {
+		"%{prj.location}/**.hpp",
+		"%{prj.location}/**.h",
+		"%{prj.location}/**.c",
+		"%{prj.location}/**.cpp"
+	}
+	includedirs { "%{prj.location}/include" }
+		
+    filter "system:windows"
 		postbuildcommands {
 		    "{COPY} %{cfg.targetdir}/%{prj.name}.exe ../../run_tree/hyperion.exe*",
 		    
