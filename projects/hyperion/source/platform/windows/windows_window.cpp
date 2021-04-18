@@ -16,6 +16,7 @@
 #include "hyperion/core/app/events/mouse_events.hpp"
 #include "hyperion/core/app/events/window_events.hpp"
 #include "hyperion/core/system/engine.hpp"
+#include "hyperion/graphics/driver/null/null_graphics_context.hpp"
 #include "hyperion/platform/windows/windows_opengl_graphics_context.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -206,6 +207,9 @@ namespace Hyperion {
     //--------------------------------------------------------------
     Graphics::IGraphicsContext *WindowsWindow::CreateGraphicsContext(Graphics::GraphicsBackend graphics_backend) {
         switch (graphics_backend) {
+            case Graphics::GraphicsBackend::None: {
+                return new Graphics::NullGraphicsContext();
+            }
             case Graphics::GraphicsBackend::OpenGL: {
                 // To create a proper OpenGL context we need a second helper window.
                 const auto helper_window_class_name = L"HYPERION_HELPER_WINDOW_CLASS";
@@ -306,6 +310,7 @@ namespace Hyperion {
         window_class.hInstance = instance;
         window_class.lpfnWndProc = &MessageCallback;
         window_class.hCursor = LoadCursorW(nullptr, IDC_ARROW);
+        window_class.hbrBackground = static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH));
 
         if (!RegisterClassExW(&window_class)) {
             HYP_PANIC_MESSAGE("Engine", "Failed to register windows window class!");

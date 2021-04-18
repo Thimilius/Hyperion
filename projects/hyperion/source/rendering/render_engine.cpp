@@ -15,6 +15,9 @@ namespace Hyperion::Rendering {
     //--------------------------------------------------------------
     void RenderEngine::PreInitialize(const RenderSettings &settings, Window *window) {
         s_render_settings = settings;
+
+        s_graphics_context = window->CreateGraphicsContext(settings.graphics_backend);
+        s_graphics_context->Initialize(Graphics::GraphicsContextDescriptor());
     }
 
     //--------------------------------------------------------------
@@ -30,12 +33,15 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void RenderEngine::Render() {
-
+        s_graphics_context->SwapBuffers();
     }
 
     //--------------------------------------------------------------
     void RenderEngine::Shutdown() {
         delete s_render_pipeline;
+
+        s_graphics_context->Shutdown();
+        delete s_graphics_context;
     }
 
 }

@@ -28,8 +28,8 @@ namespace Hyperion::Graphics {
         QueryProperties();
         QueryLimits();
 
-        HYP_LOG_INFO("OpenGL", "Initialized OpenGL! ({})", m_properties.version);
-        HYP_LOG_INFO("OpenGL", "Renderer: {}", m_properties.renderer);
+        HYP_LOG_INFO("Graphics", "Initialized OpenGL graphics driver!");
+        HYP_LOG_INFO("Graphics", "{} {}", m_properties.version, m_properties.renderer);
     }
 
     //--------------------------------------------------------------

@@ -69,6 +69,7 @@ namespace Hyperion::Editor {
 //--------------------------------------------------------------
 Hyperion::Application *Hyperion::CreateApplication() {
     ApplicationSettings settings = ApplicationSettings();
+    settings.render.graphics_backend = Graphics::GraphicsBackend::None;
     settings.render.pipeline = Rendering::RenderPipeline::Custom;
     settings.render.custom_pipeline = new Editor::EditorRenderPipeline();
     return new Hyperion::Editor::EditorApplication(settings);
