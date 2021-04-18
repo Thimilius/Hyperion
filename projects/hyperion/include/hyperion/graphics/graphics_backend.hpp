@@ -1,9 +1,11 @@
 #pragma once
 
 //-------------------- Definition Namespace --------------------
-namespace Hyperion::Rendering {
+namespace Hyperion::Graphics {
 
-    enum class RenderBackend {
+    enum class GraphicsBackend {
+        None,
+
         OpenGL
     };
 

@@ -4,8 +4,8 @@
 #include "hyperion/audio/audio_backend.hpp"
 #include "hyperion/core/app/window_settings.hpp"
 #include "hyperion/core/system/engine_loop.hpp"
+#include "hyperion/graphics/graphics_backend.hpp"
 #include "hyperion/physics/physics_backend.hpp"
-#include "hyperion/rendering/render_backend.hpp"
 #include "hyperion/rendering/pipelines/render_pipeline.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -27,7 +27,8 @@ namespace Hyperion {
     };
 
     struct RenderSettings {
-        Rendering::RenderBackend backend = Rendering::RenderBackend::OpenGL;
+        Graphics::GraphicsBackend graphics_backend = Graphics::GraphicsBackend::OpenGL;
+
         Rendering::RenderPipeline pipeline = Rendering::RenderPipeline::Forward;
         Rendering::IRenderPipeline *custom_pipeline = nullptr;
     };

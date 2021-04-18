@@ -5,7 +5,7 @@
 #include "hyperion/core/app/input.hpp"
 #include "hyperion/core/app/window_settings.hpp"
 #include "hyperion/core/app/events/event.hpp"
-#include "hyperion/rendering/render_backend.hpp"
+#include "hyperion/graphics/graphics_backend.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -56,7 +56,7 @@ namespace Hyperion {
 
         virtual void SetIcon(const String &path) = 0;
     protected:
-        virtual Graphics::IGraphicsContext *CreateGraphicsContext(Rendering::RenderBackend render_backend) = 0;
+        virtual Graphics::IGraphicsContext *CreateGraphicsContext(Graphics::GraphicsBackend graphics_backend) = 0;
 
         virtual void Poll() = 0;
         virtual void Show() = 0;

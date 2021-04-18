@@ -204,11 +204,11 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Graphics::IGraphicsContext *WindowsWindow::CreateGraphicsContext(Rendering::RenderBackend render_backend) {
-        switch (render_backend) {
-            case Rendering::RenderBackend::OpenGL: {
+    Graphics::IGraphicsContext *WindowsWindow::CreateGraphicsContext(Graphics::GraphicsBackend graphics_backend) {
+        switch (graphics_backend) {
+            case Graphics::GraphicsBackend::OpenGL: {
                 // To create a proper OpenGL context we need a second helper window.
-                auto helper_window_class_name = L"HYPERION_HELPER_WINDOW_CLASS";
+                const auto helper_window_class_name = L"HYPERION_HELPER_WINDOW_CLASS";
                 HINSTANCE instance = GetModuleHandleW(nullptr);
                 if (!instance) {
                     HYP_PANIC_MESSAGE("Engine", "Failed to get windows application instance!");

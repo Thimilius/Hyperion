@@ -19,7 +19,7 @@ namespace Hyperion::Rendering {
 
     class RenderEngine final {
     public:
-        inline static RenderBackend GetBackend() { return s_render_settings.backend; }
+        inline static Graphics::GraphicsBackend GetBackend() { return s_render_settings.graphics_backend; }
     private:
         RenderEngine() = delete;
         ~RenderEngine() = delete;
