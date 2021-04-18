@@ -285,18 +285,18 @@ project "hyperion-sandbox"
 			"{COPY} %{cfg.targetdir}/mono.dll ../../run_tree/mono.dll*"
 	    }
 
-group "managed"
+group "hyperion-managed"
 
 project "Hyperion.Core"
-	location "projects/managed/Hyperion.Core"
+	location "projects/hyperion-managed/Hyperion.Core"
 	
 	language "C#"
 	kind "SharedLib"
 	architecture "x86_64"
 	namespace ("Hyperion")
 	
-	targetdir ("build/%{cfg.buildcfg}/bin/managed/")
-	objdir ("build/%{cfg.buildcfg}/obj/managed/")
+	targetdir ("build/%{cfg.buildcfg}/bin/hyperion-managed/")
+	objdir ("build/%{cfg.buildcfg}/obj/hyperion-managed/")
 	
 	files { "%{prj.location}/**.cs" }
 	
@@ -311,7 +311,7 @@ project "Hyperion.Core"
 		}
 
 project "Hyperion.Editor"
-	location "projects/managed/Hyperion.Editor"
+	location "projects/hyperion-managed/Hyperion.Editor"
 	
 	language "C#"
 	kind "SharedLib"
@@ -320,8 +320,8 @@ project "Hyperion.Editor"
 	
 	links ("Hyperion.Core")
 	
-	targetdir ("build/%{cfg.buildcfg}/bin/managed/")
-	objdir ("build/%{cfg.buildcfg}/obj/managed/")
+	targetdir ("build/%{cfg.buildcfg}/bin/hyperion-managed/")
+	objdir ("build/%{cfg.buildcfg}/obj/hyperion-managed/")
 	
 	files { "%{prj.location}/**.cs" }
 	
