@@ -12,6 +12,9 @@ namespace Hyperion::Graphics {
     class OpenGLGraphicsTexture : public GraphicsTexture {
     public:
         OpenGLGraphicsTexture(GraphicsDevice *device, const GraphicsTextureDescription &description);
+        ~OpenGLGraphicsTexture();
+    private:
+        GLuint m_texture_id;
     };
 
 }

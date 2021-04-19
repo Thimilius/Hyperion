@@ -37,9 +37,6 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void RenderEngine::Render() {
-        GraphicsBuffer *buffer = s_graphics_device->CreateBuffer(GraphicsBufferDescription());
-        s_graphics_device->DestroyObject(buffer);
-
         s_graphics_context->SwapBuffers();
     }
 

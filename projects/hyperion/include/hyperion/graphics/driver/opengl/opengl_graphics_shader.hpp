@@ -12,6 +12,9 @@ namespace Hyperion::Graphics {
     class OpenGLGraphicsShader : public GraphicsShader {
     public:
         OpenGLGraphicsShader(GraphicsDevice *device, const GraphicsShaderDescription &description);
+        ~OpenGLGraphicsShader();
+    private:
+        GLuint m_shader_id;
     };
 
 }

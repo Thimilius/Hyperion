@@ -36,6 +36,6 @@ namespace Sandbox {
 //--------------------------------------------------------------
 Application *Hyperion::CreateApplication() {
     ApplicationSettings settings = ApplicationSettings();
-    settings.render.graphics_backend = Graphics::GraphicsBackend::None;
+    settings.render.graphics_backend = Graphics::GraphicsBackend::OpenGL;
     return new Sandbox::SandboxApplication(settings);
 }

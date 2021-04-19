@@ -12,6 +12,9 @@ namespace Hyperion::Graphics {
     class OpenGLGraphicsBuffer : public GraphicsBuffer {
     public:
         OpenGLGraphicsBuffer(GraphicsDevice *device, const GraphicsBufferDescription &description);
+        ~OpenGLGraphicsBuffer();
+    private:
+        GLuint m_buffer_id;
     };
 
 }
