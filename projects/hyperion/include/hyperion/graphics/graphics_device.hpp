@@ -2,19 +2,21 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/graphics/graphics_buffer.hpp"
+#include "hyperion/graphics/graphics_pipeline_state.hpp"
 #include "hyperion/graphics/graphics_shader.hpp"
 #include "hyperion/graphics/graphics_texture.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Graphics {
 
-    class IGraphicsDevice {
+    class GraphicsDevice {
     public:
-        virtual ~IGraphicsDevice() = default;
+        virtual ~GraphicsDevice() = default;
     public:
-        virtual IGraphicsBuffer *CreateBuffer(const GraphicsBufferDescription &description) = 0;
-        virtual IGraphicsTexture *CreateTexture(const GraphicsTextureDescription &description) = 0;
-        virtual IGraphicsShader *CreateShader(const GraphicsShaderDescription &description) = 0;
+        virtual GraphicsBuffer *CreateBuffer(const GraphicsBufferDescription &description) = 0;
+        virtual GraphicsTexture *CreateTexture(const GraphicsTextureDescription &description) = 0;
+        virtual GraphicsShader *CreateShader(const GraphicsShaderDescription &description) = 0;
+        virtual GraphicsPipelineState *CreatePipelineState(const GraphicsPipelineStateDescription &description) = 0;
     };
 
 }

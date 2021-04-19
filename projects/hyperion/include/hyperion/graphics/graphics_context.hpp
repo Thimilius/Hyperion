@@ -2,6 +2,9 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
+#include "hyperion/graphics/graphics_device.hpp"
+#include "hyperion/graphics/graphics_device_context.hpp"
+#include "hyperion/graphics/graphics_swap_chain.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Graphics {
@@ -34,7 +37,9 @@ namespace Hyperion::Graphics {
         virtual void Initialize(const GraphicsContextDescriptor &descriptor) = 0;
         virtual void Shutdown() = 0;
 
-        virtual void SwapBuffers() = 0;
+        virtual void CreateDeviceAndSwapChain(GraphicsDevice **device, GraphicsDeviceContext **device_context, GraphicsSwapChain **swap_chain) = 0;
+
+        virtual void SwapBuffers() = 0; 
         virtual void SetVSyncMode(VSyncMode vsync_mode) = 0;
     };
 

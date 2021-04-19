@@ -1,7 +1,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/graphics/graphics_object.hpp"
+#include "hyperion/graphics/graphics_device_object.hpp"
 #include "hyperion/graphics/graphics_blending_state.hpp"
 #include "hyperion/graphics/graphics_depth_stencil_state.hpp"
 #include "hyperion/graphics/graphics_rasterizer_state.hpp"
@@ -9,15 +9,15 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Graphics {
 
-    struct GraphicsPipelineStateDescription : public GraphicsObjectDescription {
+    struct GraphicsPipelineStateDescription : public GraphicsDeviceObjectDescription {
         GraphicsBlendingStateDescription blending_description;
         GraphicsDepthStencilStateDescription depth_stencil_description;
         GraphicsRasterizerStateDescription rasterizer_description;
     };
 
-    class IGraphicsPipelineState : public IGraphicsObject {
+    class GraphicsPipelineState : public GraphicsDeviceObject {
     public:
-        virtual ~IGraphicsPipelineState() = default;
+        virtual ~GraphicsPipelineState() = default;
     public:
         virtual const GraphicsPipelineStateDescription &GetDescription() const override = 0;
     };

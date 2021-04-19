@@ -1,18 +1,18 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/graphics/graphics_object.hpp"
+#include "hyperion/graphics/graphics_device_object.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Graphics {
 
-    struct GraphicsTextureDescription : public GraphicsObjectDescription {
+    struct GraphicsTextureDescription : public GraphicsDeviceObjectDescription {
 
     };
 
-    class IGraphicsTexture : public IGraphicsObject {
+    class GraphicsTexture : public GraphicsDeviceObject {
     public:
-        virtual ~IGraphicsTexture() = default;
+        virtual ~GraphicsTexture() = default;
     public:
         virtual const GraphicsTextureDescription &GetDescription() const override = 0;
     };

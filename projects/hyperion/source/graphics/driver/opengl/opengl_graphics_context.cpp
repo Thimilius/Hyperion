@@ -6,6 +6,9 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/system/engine.hpp"
+#include "hyperion/graphics/driver/opengl/opengl_graphics_device.hpp"
+#include "hyperion/graphics/driver/opengl/opengl_graphics_device_context.hpp"
+#include "hyperion/graphics/driver/opengl/opengl_graphics_swap_chain.hpp"
 
 #define HYP_OPENGL_BREAK_ON_ERROR true
 #define HYP_OPENGL_LOG_EXTENSIONS false
@@ -30,6 +33,17 @@ namespace Hyperion::Graphics {
 
         HYP_LOG_INFO("Graphics", "Initialized OpenGL graphics driver!");
         HYP_LOG_INFO("Graphics", "{} {}", m_properties.version, m_properties.renderer);
+    }
+
+    //--------------------------------------------------------------
+    void OpenGLGraphicsContext::CreateDeviceAndSwapChain(GraphicsDevice **device, GraphicsDeviceContext **device_context, GraphicsSwapChain **swap_chain) {
+        HYP_ASSERT(device);
+        HYP_ASSERT(device_context);
+        HYP_ASSERT(swap_chain);
+
+        *device = new OpenGLGraphicsDevice();
+        *device_context = new OpenGLGraphicsDeviceContext();
+        *swap_chain = new OpenGLGraphicsSwapChain();
     }
 
     //--------------------------------------------------------------

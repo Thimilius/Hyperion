@@ -13,6 +13,8 @@ namespace Hyperion::Graphics {
         void Initialize(const GraphicsContextDescriptor &descriptor) override;
         void Shutdown() override;
 
+        void CreateDeviceAndSwapChain(GraphicsDevice **device, GraphicsDeviceContext **device_context, GraphicsSwapChain **swap_chain) override;
+
         void SwapBuffers() override { }
         void SetVSyncMode(VSyncMode vsync_mode) override { }
     };

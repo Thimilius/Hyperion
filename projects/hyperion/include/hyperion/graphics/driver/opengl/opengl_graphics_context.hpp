@@ -28,8 +28,10 @@ namespace Hyperion::Graphics {
 
         inline const OpenGLGraphicsContextLimits &GetLimits() const { return m_limits; }
         inline const Vector<String> &GetExtensions() const { return m_extensions; }
-    protected:
+
         void Initialize(const GraphicsContextDescriptor &descriptor) override;
+
+        void CreateDeviceAndSwapChain(GraphicsDevice **device, GraphicsDeviceContext **device_context, GraphicsSwapChain **swap_chain) override;
     private:
         void InitDebug();
 

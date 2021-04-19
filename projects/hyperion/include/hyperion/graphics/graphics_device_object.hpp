@@ -6,15 +6,15 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Graphics {
 
-    struct GraphicsObjectDescription {
+    struct GraphicsDeviceObjectDescription {
         String name = "";
     };
 
-    class IGraphicsObject {
+    class GraphicsDeviceObject {
     public:
-        virtual ~IGraphicsObject() = default;
+        virtual ~GraphicsDeviceObject() = default;
     public:
-        virtual const GraphicsObjectDescription &GetDescription() const = 0;
+        virtual const GraphicsDeviceObjectDescription &GetDescription() const = 0;
     };
 
 }
