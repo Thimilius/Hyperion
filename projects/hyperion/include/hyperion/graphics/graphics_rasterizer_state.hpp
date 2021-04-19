@@ -2,78 +2,29 @@
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Graphics {
-
-    enum class DepthEquation {
-        Never,
-        Always,
-
-        Less,
-        LessEqual,
-        Greater,
-        GreaterEqual,
-
-        Equal,
-        NotEqual
-    };
-
-    enum class BlendingFactor {
-        Zero,
-        One,
-
-        SourceAlpha,
-        SourceColor,
-        DestinationAlpha,
-        DestinationColor,
-
-        InverseSourceAlpha,
-        InverseSourceColor,
-        InverseDestinationAlpha,
-        InverseDestinationColor
-    };
-
-    struct BlendingFunction {
-        BlendingFactor source_factor = BlendingFactor::SourceAlpha;
-        BlendingFactor destination_factor = BlendingFactor::InverseSourceAlpha;
-    };
-
-    enum class BlendingEquation {
-        Add,
-        Subtract,
-        ReverseSubract
-    };
-
-    enum class CullingMode {
+    
+    enum class GraphicsCullingMode {
         Back,
         Front,
         FrontAndBack
     };
 
-    enum class CullingFrontFaceMode {
+    enum class GraphicsCullingFrontFaceMode {
         Clockwise,
         CounterClockwise
     };
 
-    enum class PolygonMode {
+    enum class GraphicsPolygonMode {
         Fill,
         Line
     };
 
-    struct GraphicsRasterizerState {
-        bool depth_test_enabled = true;
-        bool depth_mask_enabled = true;
-        DepthEquation depth_equation = DepthEquation::Less;
-
-        bool stencil_test_enabled = false;
-
-        bool blending_enabled = false;
-        BlendingFunction blending_function;
-        BlendingEquation blending_equation = BlendingEquation::Add;
-
+    struct GraphicsRasterizerStateDescription {
         bool culling_enabled = true;
-        CullingMode culling_mode = CullingMode::Back;
-        CullingFrontFaceMode culling_front_face_mode = CullingFrontFaceMode::Clockwise;
+        GraphicsCullingMode culling_mode = GraphicsCullingMode::Back;
+        GraphicsCullingFrontFaceMode culling_front_face_mode = GraphicsCullingFrontFaceMode::Clockwise;
 
-        PolygonMode polygon_mode = PolygonMode::Fill;
+        GraphicsPolygonMode polygon_mode = GraphicsPolygonMode::Fill;
     };
 
 }
