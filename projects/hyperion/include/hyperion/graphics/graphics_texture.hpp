@@ -13,8 +13,12 @@ namespace Hyperion::Graphics {
     class GraphicsTexture : public GraphicsDeviceObject {
     public:
         virtual ~GraphicsTexture() = default;
+    protected:
+        GraphicsTexture(GraphicsDevice *device, const GraphicsTextureDescription &description);
     public:
-        virtual const GraphicsTextureDescription &GetDescription() const override = 0;
+        virtual const GraphicsTextureDescription &GetDescription() const override { return m_description; }
+    protected:
+        GraphicsTextureDescription m_description;
     };
 
 }

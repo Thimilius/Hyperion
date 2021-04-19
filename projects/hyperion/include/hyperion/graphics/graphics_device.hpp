@@ -17,6 +17,8 @@ namespace Hyperion::Graphics {
         virtual GraphicsTexture *CreateTexture(const GraphicsTextureDescription &description) = 0;
         virtual GraphicsShader *CreateShader(const GraphicsShaderDescription &description) = 0;
         virtual GraphicsPipelineState *CreatePipelineState(const GraphicsPipelineStateDescription &description) = 0;
+
+        virtual void DestroyObject(GraphicsDeviceObject *object) = 0;
     };
 
 }

@@ -18,8 +18,12 @@ namespace Hyperion::Graphics {
     class GraphicsPipelineState : public GraphicsDeviceObject {
     public:
         virtual ~GraphicsPipelineState() = default;
+    protected:
+        GraphicsPipelineState(GraphicsDevice *device, const GraphicsPipelineStateDescription &description);
     public:
-        virtual const GraphicsPipelineStateDescription &GetDescription() const override = 0;
+        virtual const GraphicsPipelineStateDescription &GetDescription() const override { return m_description; }
+    protected:
+        GraphicsPipelineStateDescription m_description;
     };
 
 }

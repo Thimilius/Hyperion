@@ -13,8 +13,12 @@ namespace Hyperion::Graphics {
     class GraphicsBuffer : public GraphicsDeviceObject {
     public:
         virtual ~GraphicsBuffer() = default;
+    protected:
+        GraphicsBuffer(GraphicsDevice *device, const GraphicsBufferDescription &description);
     public:
-        virtual const GraphicsBufferDescription &GetDescription() const override = 0;
+        const GraphicsBufferDescription &GetDescription() const override { return m_description; }
+    protected:
+        GraphicsBufferDescription m_description;
     };
 
 }
