@@ -121,7 +121,8 @@ project "hyperion"
 	includedirs {
 		"%{prj.location}/include",
 		
-		"%{prj.location}/vendor/glad/include"
+		"%{prj.location}/vendor/glad/include",
+		"%{prj.location}/vendor/vulkan/include",
 	}
 	includedirs { package_assimp_includedirs }
 	includedirs { package_fmt_includedirs }
@@ -182,7 +183,8 @@ function linkhyperion()
 		defines { "HYP_CONSOLE" }
 
 	filter "system:windows"
-		links { "opengl32", "PowrProf" }
+		libdirs { "projects/hyperion/vendor/vulkan/lib/windows" }
+		links { "opengl32", "PowrProf", "vulkan-1" }
 	
 	filter { "system:windows", "configurations:debug" }
 		libdirs { package_assimp_debug_libdirs }
@@ -204,8 +206,8 @@ function linkhyperion()
 		links { package_yaml_release_links }
 
 	filter { "system:windows", "options:audio=fmod" }
-		links { "fmod_vc" }
 		libdirs { "projects/hyperion/vendor/fmod/lib/windows" }
+		links { "fmod_vc" }
 	filter { "system:windows", "configurations:debug", "options:physics=bullet" }
 		libdirs { package_bullet_debug_libdirs }
 		links { package_bullet_debug_links }
@@ -213,8 +215,8 @@ function linkhyperion()
 		libdirs { package_bullet_release_libdirs }
 		links { package_bullet_release_links }
 	filter { "system:windows", "options:with-mono" }
-		links { "mono" }
 		libdirs { "projects/hyperion/vendor/mono/lib/windows" }
+		links { "mono" }
 		
 	filter { }
 
