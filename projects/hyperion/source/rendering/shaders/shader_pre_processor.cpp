@@ -44,10 +44,10 @@ namespace Hyperion::Rendering {
 
         // Check that we found both a vertex and fragment source.
         if ((stage_flags & ShaderStageFlags::Vertex) != ShaderStageFlags::Vertex) {
-            HYP_LOG_ERROR("OpenGL", "Shader does not contain a vertex shader!");
+            HYP_LOG_ERROR("Graphics", "Shader does not contain a vertex shader!");
             return result;
         } else if ((stage_flags & ShaderStageFlags::Fragment) != ShaderStageFlags::Fragment) {
-            HYP_LOG_ERROR("OpenGL", "Shader does not contain a fragment shader!");
+            HYP_LOG_ERROR("Graphics", "Shader does not contain a fragment shader!");
             return result;
         }
 
@@ -84,7 +84,7 @@ namespace Hyperion::Rendering {
 
                 ShaderStageFlags shader_stage = GetShaderStageFromString(type_string);
                 if (shader_stage == ShaderStageFlags::None) {
-                    HYP_LOG_ERROR("OpenGL", "Invalid shader stage specifier: '{}'!", type_string);
+                    HYP_LOG_ERROR("Graphics", "Invalid shader stage specifier: '{}'!", type_string);
                     return false;
                 }
 
@@ -99,7 +99,7 @@ namespace Hyperion::Rendering {
 
             ShaderModuleType shader_module_type = GetShaderModuleTypeFromString(import_string);
             if (shader_module_type == ShaderModuleType::Unknown) {
-                HYP_LOG_ERROR("OpenGL", "Invalid shader import module: '{}'!", import_string);
+                HYP_LOG_ERROR("Graphics", "Invalid shader import module: '{}'!", import_string);
                 return false;
             }
 
@@ -113,12 +113,12 @@ namespace Hyperion::Rendering {
 
             ShaderLightMode shader_light_mode = GetShaderLightModeFromString(light_mode_string);
             if (shader_light_mode == ShaderLightMode::Unknown) {
-                HYP_LOG_ERROR("OpenGL", "Invalid shader light mode specifier: '{}'!", light_mode_string);
+                HYP_LOG_ERROR("Graphics", "Invalid shader light mode specifier: '{}'!", light_mode_string);
                 return false;
             }
 
             if (m_property_light_mode_set) {
-                HYP_LOG_WARN("OpenGL", "The shader light mode was already set!");
+                HYP_LOG_WARN("Graphics", "The shader light mode was already set!");
             } else {
                 attributes.light_mode = shader_light_mode;
                 m_property_light_mode_set = true;

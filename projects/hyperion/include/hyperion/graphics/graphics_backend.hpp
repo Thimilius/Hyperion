@@ -6,7 +6,8 @@ namespace Hyperion::Graphics {
     enum class GraphicsBackend {
         None,
 
-        OpenGL
+        OpenGL,
+        Vulkan,
     };
 
 }

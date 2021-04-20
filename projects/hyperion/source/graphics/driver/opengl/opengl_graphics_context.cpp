@@ -10,10 +10,6 @@
 #include "hyperion/graphics/driver/opengl/opengl_graphics_device_context.hpp"
 #include "hyperion/graphics/driver/opengl/opengl_graphics_swap_chain.hpp"
 
-#define HYP_OPENGL_BREAK_ON_ERROR true
-#define HYP_OPENGL_LOG_EXTENSIONS false
-#define HYP_OPENGL_LOG_NOTIFICATIONS false
-
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Graphics {
 
@@ -63,7 +59,7 @@ namespace Hyperion::Graphics {
             String extension = reinterpret_cast<const char *>(glGetStringi(GL_EXTENSIONS, i));
             m_extensions.push_back(extension);
             if constexpr (g_log_extensions) {
-                HYP_LOG_INFO("OpenGL", "Extension: '{}' available!", extension);
+                HYP_LOG_INFO("Graphics", "OpenGL extension: '{}' available!", extension);
             }
         }
     }
@@ -95,7 +91,7 @@ namespace Hyperion::Graphics {
     //--------------------------------------------------------------
     void OpenGLGraphicsContext::CheckExtension(const String &extension) {
         if (std::find(m_extensions.begin(), m_extensions.end(), extension) == m_extensions.end()) {
-            HYP_PANIC_MESSAGE("OpenGL", "Manditory OpenGL extension: '{}' not available!", extension);
+            HYP_PANIC_MESSAGE("Graphics", "Manditory OpenGL extension: '{}' not available!", extension);
         }
     }
 
@@ -128,12 +124,12 @@ namespace Hyperion::Graphics {
 
         const char *log_string_format = "Severity: {}, Source: {}, Type: {}, ID: {},\nMessage: {}";
         switch (severity) {
-            case GL_DEBUG_SEVERITY_HIGH: HYP_LOG_ERROR("OpenGL", log_string_format, "High", source_string, type_string, id, message); break;
-            case GL_DEBUG_SEVERITY_MEDIUM: HYP_LOG_WARN("OpenGL", log_string_format, "Medium", source_string, type_string, id, message); break;
-            case GL_DEBUG_SEVERITY_LOW: HYP_LOG_WARN("OpenGL", log_string_format, "Low", source_string, type_string, id, message); break;
+            case GL_DEBUG_SEVERITY_HIGH: HYP_LOG_ERROR("Graphics", log_string_format, "High", source_string, type_string, id, message); break;
+            case GL_DEBUG_SEVERITY_MEDIUM: HYP_LOG_WARN("Graphics", log_string_format, "Medium", source_string, type_string, id, message); break;
+            case GL_DEBUG_SEVERITY_LOW: HYP_LOG_WARN("Graphics", log_string_format, "Low", source_string, type_string, id, message); break;
             case GL_DEBUG_SEVERITY_NOTIFICATION: {
                 if constexpr (g_log_notifications) {
-                    HYP_LOG_INFO("OpenGL", log_string_format, "Notification", source_string, type_string, id, message);
+                    HYP_LOG_INFO("Graphics", log_string_format, "Notification", source_string, type_string, id, message);
                 }
                 break;
             }

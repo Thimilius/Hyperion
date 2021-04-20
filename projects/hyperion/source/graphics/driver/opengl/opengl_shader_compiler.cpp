@@ -29,7 +29,7 @@ namespace Hyperion::Rendering {
 
                 glDeleteShader(vertex_shader);
 
-                HYP_LOG_ERROR("OpenGL", "Shader compilation error in vertex shader:\n{}", info_log.c_str());
+                HYP_LOG_ERROR("Graphics", "Shader compilation error in vertex shader:\n{}", info_log.c_str());
 
                 return result;
             }
@@ -53,7 +53,7 @@ namespace Hyperion::Rendering {
                 glDeleteShader(vertex_shader);
                 glDeleteShader(fragment_shader);
 
-                HYP_LOG_ERROR("OpenGL", "Shader compilation error in fragment shader:\n{}", info_log.c_str());
+                HYP_LOG_ERROR("Graphics", "Shader compilation error in fragment shader:\n{}", info_log.c_str());
 
                 return result;
             }
@@ -74,7 +74,7 @@ namespace Hyperion::Rendering {
                 String info_log(log_length, '\0');
                 glGetProgramInfoLog(program, log_length, &log_length, info_log.data());
 
-                HYP_LOG_ERROR("OpenGL", "Shader linking error:\n{}", info_log.c_str());
+                HYP_LOG_ERROR("Graphics", "Shader linking error:\n{}", info_log.c_str());
 
                 glDeleteShader(vertex_shader);
                 glDeleteShader(fragment_shader);

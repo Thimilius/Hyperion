@@ -17,6 +17,7 @@
 #include "hyperion/core/app/events/window_events.hpp"
 #include "hyperion/core/system/engine.hpp"
 #include "hyperion/graphics/driver/null/null_graphics_context.hpp"
+#include "hyperion/graphics/driver/vulkan/vulkan_graphics_context.hpp"
 #include "hyperion/platform/windows/windows_opengl_graphics_context.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -251,6 +252,9 @@ namespace Hyperion {
                 DestroyWindow(helper_window);
 
                 return graphics_context;
+            }
+            case Graphics::GraphicsBackend::Vulkan: {
+                return new Graphics::VulkanGraphicsContext();
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
