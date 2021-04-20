@@ -23,5 +23,6 @@
 #include "hyperion/core/types.hpp"
 #include "hyperion/core/result.hpp"
 #include "hyperion/core/string_utils.hpp"
+#include "hyperion/core/object/non_copyable.hpp"
 #include "hyperion/core/object/type.hpp"
 #include "hyperion/core/system/log.hpp"

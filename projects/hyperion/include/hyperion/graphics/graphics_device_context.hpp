@@ -3,11 +3,9 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Graphics {
 
-    class GraphicsDeviceContext {
+    class GraphicsDeviceContext : public INonCopyable {
     public:
         virtual ~GraphicsDeviceContext() = default;
-    public:
-
     };
 
 }

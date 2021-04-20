@@ -15,7 +15,7 @@ namespace Hyperion::Graphics {
         String name = "";
     };
 
-    class GraphicsDeviceObject {
+    class GraphicsDeviceObject : public INonCopyable {
     public:
         virtual ~GraphicsDeviceObject() = default;
     protected:

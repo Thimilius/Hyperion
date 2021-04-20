@@ -8,6 +8,11 @@
 namespace Hyperion::Graphics {
 
     //--------------------------------------------------------------
+    OpenGLGraphicsTextureView::OpenGLGraphicsTextureView(GraphicsDevice *device, const GraphicsTextureViewDescription &description, GraphicsTexture *texture) : GraphicsTextureView(device, description, texture) {
+
+    }
+
+    //--------------------------------------------------------------
     OpenGLGraphicsTexture::OpenGLGraphicsTexture(GraphicsDevice *device, const GraphicsTextureDescription &description) : GraphicsTexture(device, description) {
 
     }
@@ -15,6 +20,11 @@ namespace Hyperion::Graphics {
     //--------------------------------------------------------------
     OpenGLGraphicsTexture::~OpenGLGraphicsTexture() {
         glDeleteTextures(1, &m_texture_id);
+    }
+
+    //--------------------------------------------------------------
+    GraphicsTextureView *OpenGLGraphicsTexture::CreateView(const GraphicsTextureViewDescription &description) {
+        return new OpenGLGraphicsTextureView(GetDevice(), description, this);
     }
 
 }

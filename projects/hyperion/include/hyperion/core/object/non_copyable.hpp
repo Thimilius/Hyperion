@@ -7,8 +7,9 @@ namespace Hyperion {
     public:
         INonCopyable() = default;
         INonCopyable(const INonCopyable &other) = delete;
-        INonCopyable &operator=(const INonCopyable &other) = delete;
         virtual ~INonCopyable() = default;
+    public:
+        INonCopyable &operator=(const INonCopyable &other) = delete;
     };
 
 }

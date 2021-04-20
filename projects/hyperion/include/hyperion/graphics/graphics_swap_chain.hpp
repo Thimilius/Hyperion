@@ -3,7 +3,7 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Graphics {
 
-    class GraphicsSwapChain {
+    class GraphicsSwapChain : public INonCopyable {
     public:
         virtual ~GraphicsSwapChain() = default;
     public:

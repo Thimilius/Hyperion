@@ -28,7 +28,7 @@ namespace Hyperion::Graphics {
         int32 msaa_samples = 0;
     };
 
-    class IGraphicsContext {
+    class IGraphicsContext : public INonCopyable {
     public:
         virtual ~IGraphicsContext() = default;
     public:

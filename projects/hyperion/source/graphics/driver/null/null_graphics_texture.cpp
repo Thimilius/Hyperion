@@ -8,8 +8,18 @@
 namespace Hyperion::Graphics {
 
     //--------------------------------------------------------------
+    NullGraphicsTextureView::NullGraphicsTextureView(GraphicsDevice *device, const GraphicsTextureViewDescription &description, GraphicsTexture *texture) : GraphicsTextureView(device, description, texture) {
+
+    }
+
+    //--------------------------------------------------------------
     NullGraphicsTexture::NullGraphicsTexture(GraphicsDevice *device, const GraphicsTextureDescription &description) : GraphicsTexture(device, description) {
 
+    }
+
+    //--------------------------------------------------------------
+    GraphicsTextureView *NullGraphicsTexture::CreateView(const GraphicsTextureViewDescription &description) {
+        return new NullGraphicsTextureView(GetDevice(), description, this);
     }
 
 }
