@@ -19,7 +19,9 @@ namespace Hyperion::Graphics {
 
     //--------------------------------------------------------------
     void OpenGLGraphicsContext::Initialize(const GraphicsContextDescriptor &descriptor) {
+#ifdef HYP_DEBUG
         InitDebug();
+#endif
 
         QueryExtensions();
         CheckExtensions();
@@ -44,11 +46,9 @@ namespace Hyperion::Graphics {
 
     //--------------------------------------------------------------
     void OpenGLGraphicsContext::InitDebug() {
-#ifdef HYP_DEBUG
         glDebugMessageCallback(DebugMessageCallback, nullptr);
         glEnable(GL_DEBUG_OUTPUT);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-#endif
     }
 
     //--------------------------------------------------------------
