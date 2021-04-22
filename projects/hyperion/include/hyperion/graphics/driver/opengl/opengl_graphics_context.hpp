@@ -33,7 +33,7 @@ namespace Hyperion::Graphics {
 
         void CreateDeviceAndSwapChain(GraphicsDevice **device, GraphicsDeviceContext **device_context, GraphicsSwapChain **swap_chain) override;
     private:
-        void InitDebug();
+        void InitializeDebug();
 
         void QueryExtensions();
         void QueryProperties();

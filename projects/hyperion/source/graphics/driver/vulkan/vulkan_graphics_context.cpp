@@ -29,25 +29,11 @@ namespace Hyperion::Graphics {
         QueryLayers();
         CheckLayers(required_layer_names);
 
-        VkApplicationInfo application_info = { };
-        application_info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-        application_info.pApplicationName = "Hyperion";
-        application_info.applicationVersion = VK_MAKE_VERSION(0, 0, 1);
-        application_info.pEngineName = "Hyperion";
-        application_info.engineVersion = VK_MAKE_VERSION(0, 0, 1);
-        application_info.apiVersion = VK_VERSION_1_2;
-
-        VkInstanceCreateInfo instance_create_info = { };
-        instance_create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-        instance_create_info.pApplicationInfo = &application_info;
-        instance_create_info.enabledLayerCount = static_cast<uint32>(required_layer_names.size());
-        instance_create_info.ppEnabledLayerNames = required_layer_names.data();
-        instance_create_info.enabledExtensionCount = static_cast<uint32>(required_extension_names.size());
-        instance_create_info.ppEnabledExtensionNames = required_extension_names.data();
-        HYP_VULKAN_CHECK(vkCreateInstance(&instance_create_info, nullptr, &m_instance));
+        InitializeInstance(required_extension_names, required_layer_names);
+        InitializePhysicalDevice();
 
 #ifdef HYP_DEBUG
-        InitDebug();
+        InitializeDebug();
 #endif
 
         HYP_LOG_INFO("Graphics", "Initialized Vulkan graphics driver!");
@@ -85,7 +71,7 @@ namespace Hyperion::Graphics {
     }
 
     //--------------------------------------------------------------
-    void VulkanGraphicsContext::InitDebug() {
+    void VulkanGraphicsContext::InitializeDebug() {
         auto create_debug_message_function = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(m_instance, "vkCreateDebugUtilsMessengerEXT"));
         if (create_debug_message_function) {
             VkDebugUtilsMessengerCreateInfoEXT debug_message_create_info = { };
@@ -97,6 +83,51 @@ namespace Hyperion::Graphics {
             HYP_VULKAN_CHECK(create_debug_message_function(m_instance, &debug_message_create_info, nullptr, &m_debug_messenger));
         } else {
             HYP_LOG_ERROR("Graphics", "Failed to load Vulkan extension function to create debug message listener!");
+        }
+    }
+
+    //--------------------------------------------------------------
+    void VulkanGraphicsContext::InitializeInstance(const Vector<const char *> &required_extension_names, const Vector<const char *> &required_layer_names) {
+        VkApplicationInfo application_info = { };
+        application_info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+        application_info.pApplicationName = "Hyperion";
+        application_info.applicationVersion = VK_MAKE_VERSION(0, 0, 1);
+        application_info.pEngineName = "Hyperion";
+        application_info.engineVersion = VK_MAKE_VERSION(0, 0, 1);
+        application_info.apiVersion = VK_VERSION_1_2;
+
+        VkInstanceCreateInfo instance_create_info = { };
+        instance_create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+        instance_create_info.pApplicationInfo = &application_info;
+        instance_create_info.enabledLayerCount = static_cast<uint32>(required_layer_names.size());
+        instance_create_info.ppEnabledLayerNames = required_layer_names.data();
+        instance_create_info.enabledExtensionCount = static_cast<uint32>(required_extension_names.size());
+        instance_create_info.ppEnabledExtensionNames = required_extension_names.data();
+        HYP_VULKAN_CHECK(vkCreateInstance(&instance_create_info, nullptr, &m_instance));
+    }
+
+    //--------------------------------------------------------------
+    void VulkanGraphicsContext::InitializePhysicalDevice() {
+        uint32_t device_count = 0;
+        vkEnumeratePhysicalDevices(m_instance, &device_count, nullptr);
+        if (device_count == 0) {
+            HYP_PANIC_MESSAGE("Graphics", "No Vulkan device available!");
+        }
+
+        Vector<VkPhysicalDevice> devices(device_count);
+        vkEnumeratePhysicalDevices(m_instance, &device_count, devices.data());
+        for (const VkPhysicalDevice &device : devices) {
+            VkPhysicalDeviceProperties device_properties;
+            vkGetPhysicalDeviceProperties(device, &device_properties);
+            VkPhysicalDeviceFeatures device_features;
+            vkGetPhysicalDeviceFeatures(device, &device_features);
+
+            // NOTE: For now we just pick the very first physical device we find.
+            // A more robust implementation would give each possible device a score and pick the one with the highest score.
+            // A discrete device could for example get a higher score than an embedded one.
+
+            m_physical_device = device;
+            break;
         }
     }
 

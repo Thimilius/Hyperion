@@ -21,7 +21,9 @@ namespace Hyperion::Graphics {
         void SwapBuffers();
         void SetVSyncMode(VSyncMode vsync_mode);
     private:
-        void InitDebug();
+        void InitializeDebug();
+        void InitializeInstance(const Vector<const char *> &required_extension_names, const Vector<const char *> &required_layer_names);
+        void InitializePhysicalDevice();
 
         void QueryExtensions();
         void CheckExtensions(Vector<const char *> &required_extension_names);
@@ -33,9 +35,10 @@ namespace Hyperion::Graphics {
     private:
         static VKAPI_ATTR VkBool32 VKAPI_CALL DebugMessageCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity, VkDebugUtilsMessageTypeFlagsEXT type, const VkDebugUtilsMessengerCallbackDataEXT *callback_data, void *user_pointer);
     private:
-        VkInstance m_instance;
+        VkInstance m_instance = VK_NULL_HANDLE;
+        VkPhysicalDevice m_physical_device = VK_NULL_HANDLE;
 
-        VkDebugUtilsMessengerEXT m_debug_messenger;
+        VkDebugUtilsMessengerEXT m_debug_messenger = VK_NULL_HANDLE;
 
         Vector<VkExtensionProperties> m_extensions;
         Vector<VkLayerProperties> m_layers;
