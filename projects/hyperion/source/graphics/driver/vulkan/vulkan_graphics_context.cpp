@@ -7,6 +7,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/system/engine.hpp"
 #include "hyperion/graphics/driver/vulkan/vulkan_graphics_device.hpp"
+#include "hyperion/graphics/driver/vulkan/vulkan_graphics_swap_chain.hpp"
 #include "hyperion/graphics/driver/vulkan/vulkan_graphics_utilities.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -14,6 +15,7 @@ namespace Hyperion::Graphics {
 
     constexpr bool g_log_extensions = false;
     constexpr bool g_log_layers = false;
+    constexpr VkDebugUtilsMessageSeverityFlagBitsEXT g_debug_message_severity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT;
 
     //--------------------------------------------------------------
     GraphicsContextProperties VulkanGraphicsContext::GetProperties() const {
@@ -31,6 +33,7 @@ namespace Hyperion::Graphics {
         CheckLayers(required_layer_names);
 
         InitializeInstance(required_extension_names, required_layer_names);
+        InitializeSurface();
         InitializePhysicalDevice();
         InitializeQueueFamilyIndices();
 
@@ -61,28 +64,41 @@ namespace Hyperion::Graphics {
         HYP_ASSERT(device_context);
         HYP_ASSERT(swap_chain);
 
+        VkDevice logical_device;
         {
-            VkDeviceQueueCreateInfo device_queue_create_info = { };
-            device_queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-            device_queue_create_info.queueFamilyIndex = m_queue_family_indices.graphics_family_index;
-            device_queue_create_info.queueCount = 1;
+            Vector<VkDeviceQueueCreateInfo> device_queue_create_infos;
+            Set<uint32> unique_queue_family_indices = { m_queue_family_indices.graphics_family_index, m_queue_family_indices.present_family_index };
+
             float32 queue_priority = 1.0f;
-            device_queue_create_info.pQueuePriorities = &queue_priority;
+            for (uint32 queue_family_index : unique_queue_family_indices) {
+                VkDeviceQueueCreateInfo device_queue_create_info = { };
+                device_queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+                device_queue_create_info.queueFamilyIndex = queue_family_index;
+                device_queue_create_info.queueCount = 1;
+                device_queue_create_info.pQueuePriorities = &queue_priority;
+                device_queue_create_infos.push_back(device_queue_create_info);
+            }
 
             VkPhysicalDeviceFeatures physical_device_features = { };
 
             VkDeviceCreateInfo device_create_info = { };
             device_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-            device_create_info.pQueueCreateInfos = &device_queue_create_info;
-            device_create_info.queueCreateInfoCount = 1;
+            device_create_info.queueCreateInfoCount = static_cast<uint32>(device_queue_create_infos.size());
+            device_create_info.pQueueCreateInfos = device_queue_create_infos.data();
             device_create_info.pEnabledFeatures = &physical_device_features;
 
-            VkDevice logical_device;
             HYP_VULKAN_CHECK(vkCreateDevice(m_physical_device, &device_create_info, nullptr, &logical_device));
             VkQueue graphics_queue;
             vkGetDeviceQueue(logical_device, m_queue_family_indices.graphics_family_index, 0, &graphics_queue);
 
             *device = new VulkanGraphicsDevice(logical_device, graphics_queue);
+        }
+
+        {
+            VkQueue present_queue;
+            vkGetDeviceQueue(logical_device, m_queue_family_indices.present_family_index, 0, &present_queue);
+
+            *swap_chain = new VulkanGraphicsSwapChain(this, m_surface, present_queue);
         }
     }
 
@@ -94,6 +110,45 @@ namespace Hyperion::Graphics {
     //--------------------------------------------------------------
     void VulkanGraphicsContext::SetVSyncMode(VSyncMode vsync_mode) {
 
+    }
+
+    //--------------------------------------------------------------
+    void VulkanGraphicsContext::CheckExtensions(Vector<const char *> &required_extension_names) {
+#ifdef HYP_DEBUG
+        CheckExtension(required_extension_names, VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+#endif
+        CheckExtension(required_extension_names, VK_KHR_SURFACE_EXTENSION_NAME);
+    }
+
+    //--------------------------------------------------------------
+    void VulkanGraphicsContext::CheckExtension(Vector<const char *> &required_extension_names, const char *extension_name) {
+        required_extension_names.push_back(extension_name);
+
+        auto it = std::find_if(m_extensions.begin(), m_extensions.end(), [extension_name](const VkExtensionProperties &extension) {
+            return std::strcmp(extension_name, extension.extensionName);
+        });
+        if (it == m_extensions.end()) {
+            HYP_PANIC_MESSAGE("Graphics", "Manditory Vulkan extension: '{}' not available!", extension_name);
+        }
+    }
+
+    //--------------------------------------------------------------
+    void VulkanGraphicsContext::CheckLayers(Vector<const char *> &required_layer_names) {
+#ifdef HYP_DEBUG
+        CheckLayer(required_layer_names, "VK_LAYER_KHRONOS_validation");
+#endif
+    }
+
+    //--------------------------------------------------------------
+    void VulkanGraphicsContext::CheckLayer(Vector<const char *> &required_layer_names, const char *layer_name) {
+        required_layer_names.push_back(layer_name);
+
+        auto it = std::find_if(m_layers.begin(), m_layers.end(), [layer_name](const VkLayerProperties &layer) {
+            return std::strcmp(layer_name, layer.layerName);
+        });
+        if (it == m_layers.end()) {
+            HYP_PANIC_MESSAGE("Graphics", "Manditory Vulkan layer: '{}' not available!", layer_name);
+        }
     }
 
     //--------------------------------------------------------------
@@ -130,6 +185,11 @@ namespace Hyperion::Graphics {
         instance_create_info.enabledExtensionCount = static_cast<uint32>(required_extension_names.size());
         instance_create_info.ppEnabledExtensionNames = required_extension_names.data();
         HYP_VULKAN_CHECK(vkCreateInstance(&instance_create_info, nullptr, &m_instance));
+    }
+
+    //--------------------------------------------------------------
+    void VulkanGraphicsContext::InitializeSurface() {
+        HYP_VULKAN_CHECK(CreateSurface(&m_surface));
     }
 
     //--------------------------------------------------------------
@@ -170,6 +230,18 @@ namespace Hyperion::Graphics {
                 m_queue_family_indices.graphics_family_index = index;
                 m_queue_family_indices.has_graphics_family_index = true;
             }
+
+            VkBool32 surface_present_support = false;
+            HYP_VULKAN_CHECK(vkGetPhysicalDeviceSurfaceSupportKHR(m_physical_device, index, m_surface, &surface_present_support));
+            if (surface_present_support) {
+                m_queue_family_indices.present_family_index = index;
+                m_queue_family_indices.has_present_family_index = true;
+            }
+
+            if (m_queue_family_indices.has_graphics_family_index && m_queue_family_indices.has_present_family_index) {
+                break;
+            }
+
             index++;
         }
     }
@@ -189,25 +261,6 @@ namespace Hyperion::Graphics {
     }
 
     //--------------------------------------------------------------
-    void VulkanGraphicsContext::CheckExtensions(Vector<const char *> &required_extension_names) {
-#ifdef HYP_DEBUG
-        CheckExtension(required_extension_names, VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-#endif
-    }
-
-    //--------------------------------------------------------------
-    void VulkanGraphicsContext::CheckExtension(Vector<const char *> &required_extension_names, const char *extension_name) {
-        required_extension_names.push_back(extension_name);
-
-        auto it = std::find_if(m_extensions.begin(), m_extensions.end(), [extension_name](const VkExtensionProperties &extension) {
-            return std::strcmp(extension_name, extension.extensionName);
-        });
-        if (it == m_extensions.end()) {
-            HYP_PANIC_MESSAGE("Graphics", "Manditory Vulkan extension: '{}' not available!", extension_name);
-        }
-    }
-
-    //--------------------------------------------------------------
     void VulkanGraphicsContext::QueryLayers() {
         uint32 layer_count = 0;
         HYP_VULKAN_CHECK(vkEnumerateInstanceLayerProperties(&layer_count, nullptr));
@@ -222,25 +275,6 @@ namespace Hyperion::Graphics {
     }
 
     //--------------------------------------------------------------
-    void VulkanGraphicsContext::CheckLayers(Vector<const char *> &required_layer_names) {
-#ifdef HYP_DEBUG
-        CheckLayer(required_layer_names, "VK_LAYER_KHRONOS_validation");
-#endif
-    }
-
-    //--------------------------------------------------------------
-    void VulkanGraphicsContext::CheckLayer(Vector<const char *> &required_layer_names, const char *layer_name) {
-        required_layer_names.push_back(layer_name);
-
-        auto it = std::find_if(m_layers.begin(), m_layers.end(), [layer_name](const VkLayerProperties &layer) {
-            return std::strcmp(layer_name, layer.layerName);
-        });
-        if (it == m_layers.end()) {
-            HYP_PANIC_MESSAGE("Graphics", "Manditory Vulkan layer: '{}' not available!", layer_name);
-        }
-    }
-
-    //--------------------------------------------------------------
     VKAPI_ATTR VkBool32 VKAPI_CALL VulkanGraphicsContext::DebugMessageCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity, VkDebugUtilsMessageTypeFlagsEXT type, const VkDebugUtilsMessengerCallbackDataEXT *callback_data, void *user_pointer) {
         const char *type_string = nullptr;
         switch (type) 	{
@@ -250,15 +284,17 @@ namespace Hyperion::Graphics {
             default: type_string = "Unknown"; break;
         }
 
-        const char *log_string_format = "Severity: {}, Type: {},\nMessage: {}";
-        if (severity <= VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT) {
-            HYP_LOG_TRACE("Graphics", log_string_format, "Verbose", type_string, callback_data->pMessage);
-        } else if (severity <= VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT) {
-            HYP_LOG_INFO("Graphics", log_string_format, "Info", type_string, callback_data->pMessage);
-        } else if (severity <= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
-            HYP_LOG_WARN("Graphics", log_string_format, "Warning", type_string, callback_data->pMessage);
-        } else if (severity <= VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {
-            HYP_LOG_ERROR("Graphics", log_string_format, "Error", type_string, callback_data->pMessage);
+        if (severity >= g_debug_message_severity) {
+            const char *log_string_format = "Severity: {}, Type: {},\nMessage: {}";
+            if (severity <= VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT) {
+                HYP_LOG_TRACE("Graphics", log_string_format, "Verbose", type_string, callback_data->pMessage);
+            } else if (severity <= VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT) {
+                HYP_LOG_INFO("Graphics", log_string_format, "Info", type_string, callback_data->pMessage);
+            } else if (severity <= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
+                HYP_LOG_WARN("Graphics", log_string_format, "Warning", type_string, callback_data->pMessage);
+            } else if (severity <= VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {
+                HYP_LOG_ERROR("Graphics", log_string_format, "Error", type_string, callback_data->pMessage);
+            }
         }
 
         return VK_FALSE;

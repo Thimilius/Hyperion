@@ -2,7 +2,7 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/platform/windows/windows_opengl_graphics_context.hpp"
+#include "hyperion/platform/windows/driver/windows_opengl_graphics_context.hpp"
 
 //---------------------- Library Includes ----------------------
 #include <glad/glad_wgl.h>

@@ -20,7 +20,7 @@ namespace Hyperion::Graphics {
         uint32 max_framebuffer_height;
     };
 
-    class OpenGLGraphicsContext : public IGraphicsContext {
+    class OpenGLGraphicsContext : public GraphicsContext {
     public:
         virtual ~OpenGLGraphicsContext() override = default;
     public:

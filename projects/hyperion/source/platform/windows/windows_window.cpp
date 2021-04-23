@@ -17,8 +17,8 @@
 #include "hyperion/core/app/events/window_events.hpp"
 #include "hyperion/core/system/engine.hpp"
 #include "hyperion/graphics/driver/null/null_graphics_context.hpp"
-#include "hyperion/graphics/driver/vulkan/vulkan_graphics_context.hpp"
-#include "hyperion/platform/windows/windows_opengl_graphics_context.hpp"
+#include "hyperion/platform/windows/driver/windows_opengl_graphics_context.hpp"
+#include "hyperion/platform/windows/driver/windows_vulkan_graphics_context.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -206,7 +206,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Graphics::IGraphicsContext *WindowsWindow::CreateGraphicsContext(Graphics::GraphicsBackend graphics_backend) {
+    Graphics::GraphicsContext *WindowsWindow::CreateGraphicsContext(Graphics::GraphicsBackend graphics_backend) {
         switch (graphics_backend) {
             case Graphics::GraphicsBackend::None: {
                 return new Graphics::NullGraphicsContext();
@@ -245,7 +245,7 @@ namespace Hyperion {
                     nullptr
                 );
 
-                Graphics::IGraphicsContext *graphics_context = new Graphics::WindowsOpenGLGraphicsContext(GetDC(m_window_handle), GetDC(helper_window));
+                Graphics::GraphicsContext *graphics_context = new Graphics::WindowsOpenGLGraphicsContext(GetDC(m_window_handle), GetDC(helper_window));
 
                 // We can destroy the helper window now that we have the proper context.
                 UnregisterClassW(helper_window_class_name, instance);
@@ -254,7 +254,7 @@ namespace Hyperion {
                 return graphics_context;
             }
             case Graphics::GraphicsBackend::Vulkan: {
-                return new Graphics::VulkanGraphicsContext();
+                return new Graphics::WindowsVulkanGraphicsContext(m_window_handle);
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }

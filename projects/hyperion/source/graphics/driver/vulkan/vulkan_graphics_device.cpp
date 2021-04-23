@@ -4,9 +4,6 @@
 //--------------------- Definition Include ---------------------
 #include "hyperion/graphics/driver/vulkan/vulkan_graphics_device.hpp"
 
-//---------------------- Project Includes ----------------------
-#include "hyperion/graphics/driver/vulkan/vulkan_graphics_utilities.hpp"
-
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Graphics {
 

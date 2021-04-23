@@ -12,7 +12,7 @@ namespace Hyperion {
     class Engine;
 
     namespace Graphics {
-        class IGraphicsContext;
+        class GraphicsContext;
     }
     namespace Rendering {
         class RenderEngine;
@@ -56,7 +56,7 @@ namespace Hyperion {
 
         virtual void SetIcon(const String &path) = 0;
     protected:
-        virtual Graphics::IGraphicsContext *CreateGraphicsContext(Graphics::GraphicsBackend graphics_backend) = 0;
+        virtual Graphics::GraphicsContext *CreateGraphicsContext(Graphics::GraphicsBackend graphics_backend) = 0;
 
         virtual void Poll() = 0;
         virtual void Show() = 0;

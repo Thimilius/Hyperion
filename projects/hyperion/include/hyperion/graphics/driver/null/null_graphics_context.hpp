@@ -6,7 +6,7 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Graphics {
 
-    class NullGraphicsContext : public IGraphicsContext {
+    class NullGraphicsContext : public GraphicsContext {
     public:
         GraphicsContextProperties GetProperties() const override;
     public:

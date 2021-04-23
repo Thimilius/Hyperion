@@ -32,7 +32,7 @@ namespace Hyperion::Rendering {
         inline static RenderSettings s_render_settings;
         inline static IRenderPipeline *s_render_pipeline;
 
-        inline static Graphics::IGraphicsContext *s_graphics_context;
+        inline static Graphics::GraphicsContext *s_graphics_context;
         inline static Graphics::GraphicsDevice *s_graphics_device;
         inline static Graphics::GraphicsDeviceContext *s_graphics_device_context;
         inline static Graphics::GraphicsSwapChain *s_graphics_swap_chain;

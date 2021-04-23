@@ -241,6 +241,7 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Engine::TimeTick() {
+        // FIXME: The calculation of fps and frame should happen every frame.
         Time::s_fps = s_time_stats.fps_counter;
         Time::s_frame_time = 1000.0f / s_time_stats.fps_counter;
         s_time_stats.fps_counter = 0;

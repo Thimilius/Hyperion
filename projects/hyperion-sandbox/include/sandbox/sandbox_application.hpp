@@ -11,6 +11,8 @@ namespace Sandbox {
     protected:
         void OnInitialize() override;
         void OnUpdate(float32 delta_time) override;
+    private:
+        void UpdateTitle();
     };
 
 }

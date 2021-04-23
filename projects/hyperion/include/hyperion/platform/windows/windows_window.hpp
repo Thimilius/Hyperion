@@ -29,7 +29,7 @@ namespace Hyperion {
 
         void SetIcon(const String &path) override;
     private:
-        Graphics::IGraphicsContext *CreateGraphicsContext(Graphics::GraphicsBackend graphics_backend) override;
+        Graphics::GraphicsContext *CreateGraphicsContext(Graphics::GraphicsBackend graphics_backend) override;
 
         void Poll() override;
         void Show() override;
