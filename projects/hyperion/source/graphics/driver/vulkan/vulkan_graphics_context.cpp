@@ -6,6 +6,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/system/engine.hpp"
+#include "hyperion/graphics/driver/vulkan/vulkan_graphics_device.hpp"
 #include "hyperion/graphics/driver/vulkan/vulkan_graphics_utilities.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -31,6 +32,7 @@ namespace Hyperion::Graphics {
 
         InitializeInstance(required_extension_names, required_layer_names);
         InitializePhysicalDevice();
+        InitializeQueueFamilyIndices();
 
 #ifdef HYP_DEBUG
         InitializeDebug();
@@ -58,6 +60,30 @@ namespace Hyperion::Graphics {
         HYP_ASSERT(device);
         HYP_ASSERT(device_context);
         HYP_ASSERT(swap_chain);
+
+        {
+            VkDeviceQueueCreateInfo device_queue_create_info = { };
+            device_queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+            device_queue_create_info.queueFamilyIndex = m_queue_family_indices.graphics_family_index;
+            device_queue_create_info.queueCount = 1;
+            float32 queue_priority = 1.0f;
+            device_queue_create_info.pQueuePriorities = &queue_priority;
+
+            VkPhysicalDeviceFeatures physical_device_features = { };
+
+            VkDeviceCreateInfo device_create_info = { };
+            device_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+            device_create_info.pQueueCreateInfos = &device_queue_create_info;
+            device_create_info.queueCreateInfoCount = 1;
+            device_create_info.pEnabledFeatures = &physical_device_features;
+
+            VkDevice logical_device;
+            HYP_VULKAN_CHECK(vkCreateDevice(m_physical_device, &device_create_info, nullptr, &logical_device));
+            VkQueue graphics_queue;
+            vkGetDeviceQueue(logical_device, m_queue_family_indices.graphics_family_index, 0, &graphics_queue);
+
+            *device = new VulkanGraphicsDevice(logical_device, graphics_queue);
+        }
     }
 
     //--------------------------------------------------------------
@@ -108,14 +134,14 @@ namespace Hyperion::Graphics {
 
     //--------------------------------------------------------------
     void VulkanGraphicsContext::InitializePhysicalDevice() {
-        uint32_t device_count = 0;
-        vkEnumeratePhysicalDevices(m_instance, &device_count, nullptr);
+        uint32 device_count = 0;
+        HYP_VULKAN_CHECK(vkEnumeratePhysicalDevices(m_instance, &device_count, nullptr));
         if (device_count == 0) {
             HYP_PANIC_MESSAGE("Graphics", "No Vulkan device available!");
         }
 
         Vector<VkPhysicalDevice> devices(device_count);
-        vkEnumeratePhysicalDevices(m_instance, &device_count, devices.data());
+        HYP_VULKAN_CHECK(vkEnumeratePhysicalDevices(m_instance, &device_count, devices.data()));
         for (const VkPhysicalDevice &device : devices) {
             VkPhysicalDeviceProperties device_properties;
             vkGetPhysicalDeviceProperties(device, &device_properties);
@@ -123,11 +149,28 @@ namespace Hyperion::Graphics {
             vkGetPhysicalDeviceFeatures(device, &device_features);
 
             // NOTE: For now we just pick the very first physical device we find.
-            // A more robust implementation would give each possible device a score and pick the one with the highest score.
+            // A more robust implementation would give each possible device a score and pick the one with the highest.
             // A discrete device could for example get a higher score than an embedded one.
 
             m_physical_device = device;
             break;
+        }
+    }
+
+    //--------------------------------------------------------------
+    void VulkanGraphicsContext::InitializeQueueFamilyIndices() {
+        uint32 queue_family_properties_count = 0;
+        vkGetPhysicalDeviceQueueFamilyProperties(m_physical_device, &queue_family_properties_count, nullptr);
+        Vector<VkQueueFamilyProperties> queue_family_properties(queue_family_properties_count);
+        vkGetPhysicalDeviceQueueFamilyProperties(m_physical_device, &queue_family_properties_count, queue_family_properties.data());
+
+        uint32 index = 0;
+        for (const VkQueueFamilyProperties &queue_family_property : queue_family_properties) {
+            if (queue_family_property.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+                m_queue_family_indices.graphics_family_index = index;
+                m_queue_family_indices.has_graphics_family_index = true;
+            }
+            index++;
         }
     }
 
