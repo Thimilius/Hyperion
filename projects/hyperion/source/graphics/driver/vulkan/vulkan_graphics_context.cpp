@@ -66,6 +66,23 @@ namespace Hyperion::Graphics {
 
         VkDevice logical_device;
         {
+            Vector<const char *> required_device_extensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+            {
+                uint32 device_extensions_count;
+                HYP_VULKAN_CHECK(vkEnumerateDeviceExtensionProperties(m_physical_device, nullptr, &device_extensions_count, nullptr));
+                Vector<VkExtensionProperties> device_extensions(device_extensions_count);
+                HYP_VULKAN_CHECK(vkEnumerateDeviceExtensionProperties(m_physical_device, nullptr, &device_extensions_count, device_extensions.data()));
+
+                for (const char *device_extension_name : required_device_extensions) {
+                    auto it = std::find_if(device_extensions.begin(), device_extensions.end(), [device_extension_name](const VkExtensionProperties& extension_property) {
+                        return std::strcmp(extension_property.extensionName, device_extension_name) == 0;
+                    });
+                    if (it == device_extensions.end()) {
+                        HYP_PANIC_MESSAGE("Graphics", "Manditory Vulkan device extension: '{}' not available!", device_extension_name);
+                    }
+                }
+            }
+
             Vector<VkDeviceQueueCreateInfo> device_queue_create_infos;
             Set<uint32> unique_queue_family_indices = { m_queue_family_indices.graphics_family_index, m_queue_family_indices.present_family_index };
 
@@ -86,6 +103,8 @@ namespace Hyperion::Graphics {
             device_create_info.queueCreateInfoCount = static_cast<uint32>(device_queue_create_infos.size());
             device_create_info.pQueueCreateInfos = device_queue_create_infos.data();
             device_create_info.pEnabledFeatures = &physical_device_features;
+            device_create_info.enabledExtensionCount = static_cast<uint32>(required_device_extensions.size());
+            device_create_info.ppEnabledExtensionNames = required_device_extensions.data();
 
             HYP_VULKAN_CHECK(vkCreateDevice(m_physical_device, &device_create_info, nullptr, &logical_device));
             VkQueue graphics_queue;

@@ -30,7 +30,7 @@ namespace Sandbox {
             GetWindow()->SetWindowMode(GetWindow()->GetWindowMode() == WindowMode::Borderless ? WindowMode::Windowed : WindowMode::Borderless);
         }
 
-        UpdateTitle();
+        //UpdateTitle();
     }
 
     //--------------------------------------------------------------

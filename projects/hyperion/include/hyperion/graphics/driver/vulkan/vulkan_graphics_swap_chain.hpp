@@ -19,10 +19,19 @@ namespace Hyperion::Graphics {
         VulkanGraphicsSwapChain(VulkanGraphicsContext *context, VkSurfaceKHR surface, VkQueue queue);
         ~VulkanGraphicsSwapChain();
     private:
+        void QuerySwapChainSupportDetails();
+    private:
         VulkanGraphicsContext *m_context;
 
         VkSurfaceKHR m_surface;
         VkQueue m_queue;
+
+        struct SwapChainSupportDetails {
+            VkSurfaceCapabilitiesKHR capabilities;
+
+            Vector<VkSurfaceFormatKHR> formats;
+            Vector<VkPresentModeKHR> present_modes;
+        } m_swap_chain_support_details;
     };
 
 }

@@ -12,6 +12,7 @@ namespace Hyperion::Graphics {
     class VulkanGraphicsContext : public GraphicsContext {
     public:
         inline VkInstance GetInstance() const { return m_instance; }
+        inline VkPhysicalDevice GetPhysicalDevice() const { return m_physical_device; }
 
         GraphicsContextProperties GetProperties() const override;
 
