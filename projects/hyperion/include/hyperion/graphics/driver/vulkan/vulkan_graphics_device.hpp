@@ -14,6 +14,8 @@ namespace Hyperion::Graphics {
         VulkanGraphicsDevice(VkDevice device, VkQueue graphics_queue);
         ~VulkanGraphicsDevice();
     public:
+        inline VkDevice GetDevice() const { return m_device; }
+
         GraphicsBuffer *CreateBuffer(const GraphicsBufferDescription &description) { return nullptr; }
         GraphicsTexture *CreateTexture(const GraphicsTextureDescription &description) { return nullptr; }
         GraphicsShader *CreateShader(const GraphicsShaderDescription &description) { return nullptr; }

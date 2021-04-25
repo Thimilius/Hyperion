@@ -44,9 +44,6 @@ namespace Hyperion::Rendering {
     void RenderEngine::Shutdown() {
         delete s_render_pipeline;
 
-        delete s_graphics_swap_chain;
-        delete s_graphics_device_context;
-        delete s_graphics_device;
         s_graphics_context->Shutdown();
         delete s_graphics_context;
     }

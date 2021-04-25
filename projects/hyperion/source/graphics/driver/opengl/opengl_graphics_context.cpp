@@ -34,14 +34,24 @@ namespace Hyperion::Graphics {
     }
 
     //--------------------------------------------------------------
+    void OpenGLGraphicsContext::Shutdown() {
+        delete m_swap_chain;
+        delete m_device_context;
+        delete m_device;
+    }
+
+    //--------------------------------------------------------------
     void OpenGLGraphicsContext::CreateDeviceAndSwapChain(GraphicsDevice **device, GraphicsDeviceContext **device_context, GraphicsSwapChain **swap_chain) {
         HYP_ASSERT(device);
         HYP_ASSERT(device_context);
         HYP_ASSERT(swap_chain);
 
-        *device = new OpenGLGraphicsDevice();
-        *device_context = new OpenGLGraphicsDeviceContext();
-        *swap_chain = new OpenGLGraphicsSwapChain();
+        m_device = new OpenGLGraphicsDevice();
+        *device = m_device;
+        m_device_context = new OpenGLGraphicsDeviceContext();
+        *device_context = m_device_context;
+        m_swap_chain = new OpenGLGraphicsSwapChain();
+        *swap_chain = m_swap_chain;
     }
 
     //--------------------------------------------------------------

@@ -6,6 +6,13 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/graphics/graphics_context.hpp"
 
+//-------------------- Forward Declarations --------------------
+namespace Hyperion::Graphics {
+    class OpenGLGraphicsDevice;
+    class OpenGLGraphicsDeviceContext;
+    class OpenGLGraphicsSwapChain;
+}
+
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Graphics {
 
@@ -30,6 +37,7 @@ namespace Hyperion::Graphics {
         inline const Vector<String> &GetExtensions() const { return m_extensions; }
 
         void Initialize(const GraphicsContextDescriptor &descriptor) override;
+        void Shutdown() override;
 
         void CreateDeviceAndSwapChain(GraphicsDevice **device, GraphicsDeviceContext **device_context, GraphicsSwapChain **swap_chain) override;
     private:
@@ -44,6 +52,10 @@ namespace Hyperion::Graphics {
     private:
         static void GLAPIENTRY DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *user_pointer);
     private:
+        OpenGLGraphicsDevice *m_device;
+        OpenGLGraphicsDeviceContext *m_device_context;
+        OpenGLGraphicsSwapChain *m_swap_chain;
+
         GraphicsContextProperties m_properties;
         OpenGLGraphicsContextLimits m_limits;
         Vector<String> m_extensions;

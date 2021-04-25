@@ -7,6 +7,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/system/engine.hpp"
 #include "hyperion/graphics/driver/vulkan/vulkan_graphics_device.hpp"
+#include "hyperion/graphics/driver/vulkan/vulkan_graphics_device_context.hpp"
 #include "hyperion/graphics/driver/vulkan/vulkan_graphics_swap_chain.hpp"
 #include "hyperion/graphics/driver/vulkan/vulkan_graphics_utilities.hpp"
 
@@ -54,6 +55,10 @@ namespace Hyperion::Graphics {
             HYP_LOG_ERROR("Graphics", "Failed to load Vulkan extension function to destroy debug message listener!");
         }
 #endif
+
+        delete m_swap_chain;
+        delete m_device_context;
+        delete m_device;
 
         vkDestroyInstance(m_instance, nullptr);
     }
@@ -110,14 +115,16 @@ namespace Hyperion::Graphics {
             VkQueue graphics_queue;
             vkGetDeviceQueue(logical_device, m_queue_family_indices.graphics_family_index, 0, &graphics_queue);
 
-            *device = new VulkanGraphicsDevice(logical_device, graphics_queue);
+            m_device = new VulkanGraphicsDevice(logical_device, graphics_queue);
+            *device = m_device;
         }
 
         {
             VkQueue present_queue;
             vkGetDeviceQueue(logical_device, m_queue_family_indices.present_family_index, 0, &present_queue);
 
-            *swap_chain = new VulkanGraphicsSwapChain(this, m_surface, present_queue);
+            m_swap_chain = new VulkanGraphicsSwapChain(this, m_surface, present_queue);
+            *swap_chain = m_swap_chain;
         }
     }
 

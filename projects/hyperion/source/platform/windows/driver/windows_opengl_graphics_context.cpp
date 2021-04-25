@@ -82,6 +82,8 @@ namespace Hyperion::Graphics {
 
     //--------------------------------------------------------------
     void WindowsOpenGLGraphicsContext::Shutdown() {
+        OpenGLGraphicsContext::Shutdown();
+
         wglDeleteContext(m_opengl_context);
     }
 
