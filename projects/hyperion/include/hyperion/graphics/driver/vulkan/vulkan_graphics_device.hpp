@@ -16,12 +16,13 @@ namespace Hyperion::Graphics {
     public:
         inline VkDevice GetDevice() const { return m_device; }
 
-        GraphicsBuffer *CreateBuffer(const GraphicsBufferDescription &description) { return nullptr; }
-        GraphicsTexture *CreateTexture(const GraphicsTextureDescription &description) { return nullptr; }
-        GraphicsShader *CreateShader(const GraphicsShaderDescription &description) { return nullptr; }
-        GraphicsPipelineState *CreatePipelineState(const GraphicsPipelineStateDescription &description) { return nullptr; }
+        GraphicsBuffer *CreateBuffer(const GraphicsBufferDescription &description) override;
+        GraphicsTexture *CreateTexture(const GraphicsTextureDescription &description) override;
+        GraphicsShader *CreateShader(const GraphicsShaderDescription &description) override;
+        GraphicsRenderPass *CreateRenderPass(const GraphicsRenderPassDescription &description) override;
+        GraphicsPipelineState *CreatePipelineState(const GraphicsPipelineStateDescription &description) override;
 
-        void DestroyObject(GraphicsDeviceObject *object) { }
+        void DestroyObject(GraphicsDeviceObject *object) override;
     private:
         VkDevice m_device;
         VkQueue m_graphics_queue;

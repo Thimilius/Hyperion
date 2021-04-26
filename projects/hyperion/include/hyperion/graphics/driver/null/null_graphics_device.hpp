@@ -8,12 +8,13 @@ namespace Hyperion::Graphics {
 
     class NullGraphicsDevice final : public GraphicsDevice {
     public:
-        GraphicsBuffer *CreateBuffer(const GraphicsBufferDescription &description);
-        GraphicsTexture *CreateTexture(const GraphicsTextureDescription &description);
-        GraphicsShader *CreateShader(const GraphicsShaderDescription &description);
-        GraphicsPipelineState *CreatePipelineState(const GraphicsPipelineStateDescription &description);
+        GraphicsBuffer *CreateBuffer(const GraphicsBufferDescription &description) override;
+        GraphicsTexture *CreateTexture(const GraphicsTextureDescription &description) override;
+        GraphicsShader *CreateShader(const GraphicsShaderDescription &description) override;
+        GraphicsRenderPass *CreateRenderPass(const GraphicsRenderPassDescription &description) override;
+        GraphicsPipelineState *CreatePipelineState(const GraphicsPipelineStateDescription &description) override;
 
-        void DestroyObject(GraphicsDeviceObject *object);
+        void DestroyObject(GraphicsDeviceObject *object) override;
     };
 
 }

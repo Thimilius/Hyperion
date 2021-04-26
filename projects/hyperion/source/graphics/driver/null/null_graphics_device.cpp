@@ -7,6 +7,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/graphics/driver/null/null_graphics_buffer.hpp"
 #include "hyperion/graphics/driver/null/null_graphics_pipeline_state.hpp"
+#include "hyperion/graphics/driver/null/null_graphics_render_pass.hpp"
 #include "hyperion/graphics/driver/null/null_graphics_shader.hpp"
 #include "hyperion/graphics/driver/null/null_graphics_texture.hpp"
 
@@ -26,6 +27,11 @@ namespace Hyperion::Graphics {
     //--------------------------------------------------------------
     GraphicsShader *NullGraphicsDevice::CreateShader(const GraphicsShaderDescription &description) {
         return new NullGraphicsShader(this, description);
+    }
+
+    //--------------------------------------------------------------
+    GraphicsRenderPass *NullGraphicsDevice::CreateRenderPass(const GraphicsRenderPassDescription &description) {
+        return new NullGraphicsRenderPass(this, description);
     }
 
     //--------------------------------------------------------------

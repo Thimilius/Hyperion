@@ -4,6 +4,10 @@
 //--------------------- Definition Include ---------------------
 #include "hyperion/graphics/driver/vulkan/vulkan_graphics_device.hpp"
 
+//---------------------- Project Includes ----------------------
+#include "hyperion/graphics/driver/vulkan/vulkan_graphics_pipeline_state.hpp"
+#include "hyperion/graphics/driver/vulkan/vulkan_graphics_render_pass.hpp"
+
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Graphics {
 
@@ -16,6 +20,36 @@ namespace Hyperion::Graphics {
     //--------------------------------------------------------------
     VulkanGraphicsDevice::~VulkanGraphicsDevice() {
         vkDestroyDevice(m_device, nullptr);
+    }
+
+    //--------------------------------------------------------------
+    GraphicsBuffer *VulkanGraphicsDevice::CreateBuffer(const GraphicsBufferDescription &description) {
+        return nullptr;
+    }
+
+    //--------------------------------------------------------------
+    GraphicsTexture *VulkanGraphicsDevice::CreateTexture(const GraphicsTextureDescription &description) {
+        return nullptr;
+    }
+
+    //--------------------------------------------------------------
+    GraphicsShader *VulkanGraphicsDevice::CreateShader(const GraphicsShaderDescription &description) {
+        return nullptr;
+    }
+
+    //--------------------------------------------------------------
+    GraphicsRenderPass *VulkanGraphicsDevice::CreateRenderPass(const GraphicsRenderPassDescription &description) {
+        return new VulkanGraphicsRenderPass(this, description);
+    }
+
+    //--------------------------------------------------------------
+    GraphicsPipelineState *VulkanGraphicsDevice::CreatePipelineState(const GraphicsPipelineStateDescription &description) {
+        return new VulkanGraphicsPipelineState(this, description);
+    }
+
+    //--------------------------------------------------------------
+    void VulkanGraphicsDevice::DestroyObject(GraphicsDeviceObject *object) {
+        delete object;
     }
 
 }
