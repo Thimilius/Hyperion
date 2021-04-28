@@ -18,6 +18,10 @@ namespace Hyperion::Graphics {
     public:
         VulkanGraphicsSwapChain(VulkanGraphicsContext *context, VkSurfaceKHR surface, VkQueue queue);
         ~VulkanGraphicsSwapChain();
+    public:
+        inline VulkanGraphicsContext *GetContext() const { return m_context; }
+
+        inline VkFormat GetFormat() const { return m_swap_chain_format; }
     private:
         void QuerySwapChainSupportDetails();
         void CreateSwapChain();

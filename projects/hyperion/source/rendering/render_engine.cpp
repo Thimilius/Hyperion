@@ -37,6 +37,9 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void RenderEngine::Render() {
+        GraphicsRenderPass *render_pass = s_graphics_device->CreateRenderPass(GraphicsRenderPassDescription());
+        s_graphics_device->DestroyObject(render_pass);
+
         s_graphics_context->SwapBuffers();
     }
 

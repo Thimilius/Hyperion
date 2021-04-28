@@ -115,7 +115,7 @@ namespace Hyperion::Graphics {
             VkQueue graphics_queue;
             vkGetDeviceQueue(logical_device, m_queue_family_indices.graphics_family_index, 0, &graphics_queue);
 
-            m_device = new VulkanGraphicsDevice(logical_device, graphics_queue);
+            m_device = new VulkanGraphicsDevice(this, logical_device, graphics_queue);
             *device = m_device;
         }
 

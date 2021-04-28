@@ -12,7 +12,8 @@
 namespace Hyperion::Graphics {
 
     //--------------------------------------------------------------
-    VulkanGraphicsDevice::VulkanGraphicsDevice(VkDevice device, VkQueue graphics_queue) {
+    VulkanGraphicsDevice::VulkanGraphicsDevice(VulkanGraphicsContext *context, VkDevice device, VkQueue graphics_queue) {
+        m_context = context;
         m_device = device;
         m_graphics_queue = graphics_queue;
     }

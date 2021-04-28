@@ -6,14 +6,21 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/graphics/graphics_device.hpp"
 
+//-------------------- Forward Declarations --------------------
+namespace Hyperion::Graphics {
+    class VulkanGraphicsContext;
+}
+
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Graphics {
 
     class VulkanGraphicsDevice : public GraphicsDevice {
     public:
-        VulkanGraphicsDevice(VkDevice device, VkQueue graphics_queue);
+        VulkanGraphicsDevice(VulkanGraphicsContext *context, VkDevice device, VkQueue graphics_queue);
         ~VulkanGraphicsDevice();
     public:
+        inline VulkanGraphicsContext *GetContext() const { return m_context; }
+
         inline VkDevice GetDevice() const { return m_device; }
 
         GraphicsBuffer *CreateBuffer(const GraphicsBufferDescription &description) override;
@@ -24,6 +31,8 @@ namespace Hyperion::Graphics {
 
         void DestroyObject(GraphicsDeviceObject *object) override;
     private:
+        VulkanGraphicsContext *m_context;
+
         VkDevice m_device;
         VkQueue m_graphics_queue;
     };
