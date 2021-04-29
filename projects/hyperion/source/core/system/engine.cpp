@@ -197,12 +197,13 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void Engine::TimeInitilization() {
         s_time_stats.frame++;
-        s_time_stats.fps_counter++;
         float32 now = s_time_stats.timer->ElapsedSeconds();
         float32 delta_time = static_cast<float32>(now - s_time_stats.last_time);
         if (delta_time > Time::GetMaxDeltaTime()) {
             delta_time = Time::GetMaxDeltaTime();
         }
+        Time::s_frame_time = delta_time * 1000.0f;
+        Time::s_fps = static_cast<uint32>(1.0f / delta_time);
         s_time_stats.last_time = now;
         s_time_stats.accumulator += delta_time;
         Time::s_delta_time = delta_time;
@@ -237,14 +238,6 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void Engine::TimeFixedUpdate() {
         s_time_stats.accumulator -= Time::GetFixedDeltaTime();
-    }
-
-    //--------------------------------------------------------------
-    void Engine::TimeTick() {
-        // FIXME: The calculation of fps and frame should happen every frame.
-        Time::s_fps = s_time_stats.fps_counter;
-        Time::s_frame_time = 1000.0f / s_time_stats.fps_counter;
-        s_time_stats.fps_counter = 0;
     }
 
     //--------------------------------------------------------------

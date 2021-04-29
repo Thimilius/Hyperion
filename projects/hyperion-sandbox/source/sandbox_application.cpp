@@ -29,8 +29,11 @@ namespace Sandbox {
         if (Input::IsKeyDown(KeyCode::F1)) {
             GetWindow()->SetWindowMode(GetWindow()->GetWindowMode() == WindowMode::Borderless ? WindowMode::Windowed : WindowMode::Borderless);
         }
+    }
 
-        //UpdateTitle();
+    //--------------------------------------------------------------
+    void SandboxApplication::OnTick() {
+        UpdateTitle();
     }
 
     //--------------------------------------------------------------

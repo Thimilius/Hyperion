@@ -54,7 +54,6 @@ namespace Hyperion {
         static void ScriptingEngineFixedUpdate();
         static void ApplicationFixedUpdate();
         static void TimeFixedUpdate();
-        static void TimeTick();
         static void ApplicationTick();
         static void AssetManagerUpdate();
         static void WorldManagerUpdate();
@@ -78,7 +77,6 @@ namespace Hyperion {
             float64 accumulator = 0.0;
 
             uint64 frame = 0;
-            uint32 fps_counter = 0;
         } s_time_stats;
     private:
         friend class Hyperion::Application;
