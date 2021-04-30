@@ -16,8 +16,10 @@ namespace Hyperion::Graphics {
     class VulkanGraphicsPipelineState : public GraphicsPipelineState {
     public:
         VulkanGraphicsPipelineState(VulkanGraphicsDevice *device, const GraphicsPipelineStateDescription &description);
+        ~VulkanGraphicsPipelineState();
     private:
         VkPipeline m_pipeline;
+        VkPipelineLayout m_pipeline_layout;
     };
 
 }

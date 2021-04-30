@@ -18,21 +18,22 @@ namespace Hyperion::Graphics {
         InverseDestinationColor
     };
 
-    struct GraphicsBlendingFunctionDescription {
-        GraphicsBlendingFactor source_factor = GraphicsBlendingFactor::SourceAlpha;
-        GraphicsBlendingFactor destination_factor = GraphicsBlendingFactor::InverseSourceAlpha;
-    };
-
-    enum class GraphicsBlendingEquation {
+    enum class GraphicsBlendingOperator {
         Add,
         Subtract,
         ReverseSubract
     };
 
+    struct GraphicsBlendingFunctionDescription {
+        GraphicsBlendingFactor source_factor = GraphicsBlendingFactor::SourceAlpha;
+        GraphicsBlendingFactor destination_factor = GraphicsBlendingFactor::InverseSourceAlpha;
+        GraphicsBlendingOperator function_operator = GraphicsBlendingOperator::Add;
+    };
+
     struct GraphicsBlendingStateDescription {
         bool blending_enabled = false;
-        GraphicsBlendingFunctionDescription blending_function;
-        GraphicsBlendingEquation blending_equation = GraphicsBlendingEquation::Add;
+        GraphicsBlendingFunctionDescription color_function;
+        GraphicsBlendingFunctionDescription alpha_function;
     };
 
 }

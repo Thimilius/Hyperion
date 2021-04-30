@@ -3,9 +3,15 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Graphics {
     
+    enum class GraphicsPolygonMode {
+        Fill,
+        Line
+    };
+
     enum class GraphicsCullingMode {
-        Back,
+        None,
         Front,
+        Back,
         FrontAndBack
     };
 
@@ -14,17 +20,11 @@ namespace Hyperion::Graphics {
         CounterClockwise
     };
 
-    enum class GraphicsPolygonMode {
-        Fill,
-        Line
-    };
-
     struct GraphicsRasterizerStateDescription {
-        bool culling_enabled = true;
+        GraphicsPolygonMode polygon_mode = GraphicsPolygonMode::Fill;
+
         GraphicsCullingMode culling_mode = GraphicsCullingMode::Back;
         GraphicsCullingFrontFaceMode culling_front_face_mode = GraphicsCullingFrontFaceMode::Clockwise;
-
-        GraphicsPolygonMode polygon_mode = GraphicsPolygonMode::Fill;
     };
 
 }

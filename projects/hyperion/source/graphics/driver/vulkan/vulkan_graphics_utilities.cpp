@@ -8,6 +8,62 @@
 namespace Hyperion::Graphics {
 
     //--------------------------------------------------------------
+    VkPolygonMode VulkanGraphicsUtilities::GetPolygonMode(GraphicsPolygonMode polygon_mode) {
+        switch (polygon_mode) 	{
+            case GraphicsPolygonMode::Fill: return VK_POLYGON_MODE_FILL;
+            case GraphicsPolygonMode::Line: return VK_POLYGON_MODE_LINE;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return VK_POLYGON_MODE_FILL;
+        }
+    }
+
+    //--------------------------------------------------------------
+    VkCullModeFlags VulkanGraphicsUtilities::GetCullingMode(GraphicsCullingMode culling_mode) {
+        switch (culling_mode) 	{
+            case GraphicsCullingMode::None: return VK_CULL_MODE_NONE;
+            case GraphicsCullingMode::Front: return VK_CULL_MODE_FRONT_BIT;
+            case GraphicsCullingMode::Back: return VK_CULL_MODE_BACK_BIT;
+            case GraphicsCullingMode::FrontAndBack: return VK_CULL_MODE_FRONT_AND_BACK;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return VK_CULL_MODE_NONE;
+        }
+    }
+
+    //--------------------------------------------------------------
+    VkFrontFace VulkanGraphicsUtilities::GetCullingFrontFaceMode(GraphicsCullingFrontFaceMode culling_front_face_mode) {
+        switch (culling_front_face_mode) 	{
+            case GraphicsCullingFrontFaceMode::Clockwise: return VK_FRONT_FACE_CLOCKWISE;
+            case GraphicsCullingFrontFaceMode::CounterClockwise: return VK_FRONT_FACE_COUNTER_CLOCKWISE;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return VK_FRONT_FACE_CLOCKWISE;
+        }
+    }
+
+    //--------------------------------------------------------------
+    VkBlendFactor VulkanGraphicsUtilities::GetBlendingFactor(GraphicsBlendingFactor blending_factor) {
+        switch (blending_factor) 	{
+            case GraphicsBlendingFactor::Zero: return VK_BLEND_FACTOR_ZERO;
+            case GraphicsBlendingFactor::One: return VK_BLEND_FACTOR_ONE;
+            case GraphicsBlendingFactor::SourceAlpha: return VK_BLEND_FACTOR_SRC_ALPHA;
+            case GraphicsBlendingFactor::SourceColor: return VK_BLEND_FACTOR_SRC_COLOR;
+            case GraphicsBlendingFactor::DestinationAlpha: return VK_BLEND_FACTOR_DST_ALPHA;
+            case GraphicsBlendingFactor::DestinationColor: return VK_BLEND_FACTOR_DST_COLOR;
+            case GraphicsBlendingFactor::InverseSourceAlpha: return VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+            case GraphicsBlendingFactor::InverseSourceColor: return VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR;
+            case GraphicsBlendingFactor::InverseDestinationAlpha: return VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA;
+            case GraphicsBlendingFactor::InverseDestinationColor: return VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return VK_BLEND_FACTOR_ZERO;
+        }
+    }
+
+    //--------------------------------------------------------------
+    VkBlendOp VulkanGraphicsUtilities::GetBlendingOperator(GraphicsBlendingOperator blending_operator) {
+        switch (blending_operator) 	{
+            case GraphicsBlendingOperator::Add: return VK_BLEND_OP_ADD;
+            case GraphicsBlendingOperator::Subtract:  return VK_BLEND_OP_SUBTRACT;
+            case GraphicsBlendingOperator::ReverseSubract:  return VK_BLEND_OP_REVERSE_SUBTRACT;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return VK_BLEND_OP_ADD;
+        }
+    }
+
+    //--------------------------------------------------------------
     void VulkanGraphicsUtilities::ReportError(VkResult result) {
         const char *error_message = nullptr;
         switch (result) {

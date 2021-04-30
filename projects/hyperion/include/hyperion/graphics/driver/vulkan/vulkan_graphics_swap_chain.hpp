@@ -22,6 +22,7 @@ namespace Hyperion::Graphics {
         inline VulkanGraphicsContext *GetContext() const { return m_context; }
 
         inline VkFormat GetFormat() const { return m_swap_chain_format; }
+        inline VkExtent2D GetExtent() const { return m_swap_chain_extent; }
     private:
         void QuerySwapChainSupportDetails();
         void CreateSwapChain();
