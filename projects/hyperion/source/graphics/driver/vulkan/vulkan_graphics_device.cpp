@@ -7,6 +7,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/graphics/driver/vulkan/vulkan_graphics_pipeline_state.hpp"
 #include "hyperion/graphics/driver/vulkan/vulkan_graphics_render_pass.hpp"
+#include "hyperion/graphics/driver/vulkan/vulkan_graphics_shader.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Graphics {
@@ -35,7 +36,7 @@ namespace Hyperion::Graphics {
 
     //--------------------------------------------------------------
     GraphicsShader *VulkanGraphicsDevice::CreateShader(const GraphicsShaderDescription &description) {
-        return nullptr;
+        return new VulkanGraphicsShader(this, description);
     }
 
     //--------------------------------------------------------------
