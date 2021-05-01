@@ -12,18 +12,35 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
+    Vector<uint8> FileSystem::ReadAllBytes(const String &path) {
+        Vector<uint8> result;
+
+        std::ifstream file(path, std::ios::ate | std::ios::binary);
+        if (!file.is_open()) {
+            HYP_LOG_ERROR("Engine", "Failed to open file: '{}'!", std::filesystem::absolute(path).u8string());
+            return result;
+        }
+
+        uint64 size = file.tellg();
+        result.resize(size);
+        file.seekg(0);
+        file.read(reinterpret_cast<char *>(result.data()), size);
+
+        return result;
+    }
+
+    //--------------------------------------------------------------
     String FileSystem::ReadAllText(const String &path) {
-        std::ifstream file(path);
+        std::ifstream file(path, std::ios::ate);
         if (!file.is_open()) {
             HYP_LOG_ERROR("Engine", "Failed to open file: '{}'!", std::filesystem::absolute(path).u8string());
             return String();
         }
 
-        file.seekg(0, std::ios::end);
-        size_t size = file.tellg();
-        std::string buffer(size, ' ');
+        uint64 size = file.tellg();
+        String buffer(size, ' ');
         file.seekg(0);
-        file.read(&buffer[0], size);
+        file.read(buffer.data(), size);
 
         return buffer;
     }
@@ -38,7 +55,7 @@ namespace Hyperion {
             return result;
         }
 
-        std::string line;
+        String line;
         while (std::getline(file, line)) {
             result.push_back(line);
         }
