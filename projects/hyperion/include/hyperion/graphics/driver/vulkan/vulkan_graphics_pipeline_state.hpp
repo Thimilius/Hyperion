@@ -18,7 +18,7 @@ namespace Hyperion::Graphics {
         VulkanGraphicsPipelineState(VulkanGraphicsDevice *device, const GraphicsPipelineStateDescription &description);
         ~VulkanGraphicsPipelineState();
     private:
-        VkPipeline m_pipeline;
+        VkPipeline m_graphics_pipeline;
         VkPipelineLayout m_pipeline_layout;
     };
 

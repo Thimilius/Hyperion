@@ -17,6 +17,8 @@ namespace Hyperion::Graphics {
     public:
         VulkanGraphicsRenderPass(VulkanGraphicsDevice *device, const GraphicsRenderPassDescription &description);
         ~VulkanGraphicsRenderPass();
+    public:
+        VkRenderPass GetRenderPass() const { return m_render_pass; }
     private:
         VkRenderPass m_render_pass;
     };

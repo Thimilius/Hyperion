@@ -5,6 +5,8 @@
 #include "hyperion/graphics/graphics_blending_state.hpp"
 #include "hyperion/graphics/graphics_depth_stencil_state.hpp"
 #include "hyperion/graphics/graphics_rasterizer_state.hpp"
+#include "hyperion/graphics/graphics_render_pass.hpp"
+#include "hyperion/graphics/graphics_shader.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Graphics {
@@ -13,6 +15,11 @@ namespace Hyperion::Graphics {
         GraphicsBlendingStateDescription blending_description;
         GraphicsDepthStencilStateDescription depth_stencil_description;
         GraphicsRasterizerStateDescription rasterizer_description;
+
+        GraphicsRenderPass *render_pass;
+
+        GraphicsShader *vertex_shader;
+        GraphicsShader *pixel_shader;
     };
 
     class GraphicsPipelineState : public GraphicsDeviceObject {

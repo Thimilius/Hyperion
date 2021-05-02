@@ -6,6 +6,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/window.hpp"
+#include "hyperion/core/io/file_system.hpp"
 #include "hyperion/core/profiling/profiling.hpp"
 #include "hyperion/rendering/pipelines/forward/forward_render_pipeline.hpp"
 
@@ -33,16 +34,33 @@ namespace Hyperion::Rendering {
         }
 
         s_render_pipeline->Initialize();
+
+        Vector<uint8> vertex_shader_bytes = FileSystem::ReadAllBytes("data/shaders/spirv/vulkan_vertex.spirv");
+        GraphicsShaderDescription vertex_shader_description = GraphicsShaderDescription();
+        vertex_shader_description.type = GraphicsShaderType::Vertex;
+        vertex_shader_description.byte_code_size = vertex_shader_bytes.size();
+        vertex_shader_description.byte_code = vertex_shader_bytes.data();
+        GraphicsShader *vertex_shader = s_graphics_device->CreateShader(vertex_shader_description);
+        Vector<uint8> pixel_shader_bytes = FileSystem::ReadAllBytes("data/shaders/spirv/vulkan_pixel.spirv");
+        GraphicsShaderDescription pixel_shader_description = GraphicsShaderDescription();
+        pixel_shader_description.type = GraphicsShaderType::Pixel;
+        pixel_shader_description.byte_code_size = pixel_shader_bytes.size();
+        pixel_shader_description.byte_code = pixel_shader_bytes.data();
+        GraphicsShader *pixel_shader = s_graphics_device->CreateShader(pixel_shader_description);
+
+        GraphicsRenderPass *render_pass = s_graphics_device->CreateRenderPass(GraphicsRenderPassDescription());
+
+        GraphicsPipelineStateDescription pipeline_state_description = GraphicsPipelineStateDescription();
+        pipeline_state_description.vertex_shader = vertex_shader;
+        pipeline_state_description.pixel_shader = pixel_shader;
+        pipeline_state_description.render_pass = render_pass;
+        GraphicsPipelineState *pipeline_state = s_graphics_device->CreatePipelineState(pipeline_state_description);
     }
 
     //--------------------------------------------------------------
     void RenderEngine::Render() {
         {
-            GraphicsRenderPass *render_pass = s_graphics_device->CreateRenderPass(GraphicsRenderPassDescription());
-            GraphicsPipelineState *pipeline_state = s_graphics_device->CreatePipelineState(GraphicsPipelineStateDescription());
 
-            s_graphics_device->DestroyObject(pipeline_state);
-            s_graphics_device->DestroyObject(render_pass);
         }
         s_graphics_context->SwapBuffers();
     }

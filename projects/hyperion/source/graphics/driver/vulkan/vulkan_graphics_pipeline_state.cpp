@@ -7,6 +7,8 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/graphics/driver/vulkan/vulkan_graphics_context.hpp"
 #include "hyperion/graphics/driver/vulkan/vulkan_graphics_device.hpp"
+#include "hyperion/graphics/driver/vulkan/vulkan_graphics_shader.hpp"
+#include "hyperion/graphics/driver/vulkan/vulkan_graphics_render_pass.hpp"
 #include "hyperion/graphics/driver/vulkan/vulkan_graphics_swap_chain.hpp"
 #include "hyperion/graphics/driver/vulkan/vulkan_graphics_utilities.hpp"
 
@@ -97,12 +99,52 @@ namespace Hyperion::Graphics {
         pipeline_layout_create_info.pushConstantRangeCount = 0;
         pipeline_layout_create_info.pPushConstantRanges = nullptr;
         HYP_VULKAN_CHECK(vkCreatePipelineLayout(device->GetDevice(), &pipeline_layout_create_info, nullptr, &m_pipeline_layout));
+
+        HYP_ASSERT(description.vertex_shader);
+        HYP_ASSERT(description.vertex_shader->GetDescription().type == GraphicsShaderType::Vertex);
+        VkPipelineShaderStageCreateInfo vertex_shader_state_create_info = { };
+        vertex_shader_state_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        vertex_shader_state_create_info.stage = VK_SHADER_STAGE_VERTEX_BIT;
+        vertex_shader_state_create_info.module = static_cast<VulkanGraphicsShader *>(description.vertex_shader)->GetShaderModule();
+        vertex_shader_state_create_info.pName = description.vertex_shader->GetDescription().entry_point;
+
+        HYP_ASSERT(description.pixel_shader);
+        HYP_ASSERT(description.pixel_shader->GetDescription().type == GraphicsShaderType::Pixel);
+        VkPipelineShaderStageCreateInfo pixel_shader_state_create_info = { };
+        pixel_shader_state_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        pixel_shader_state_create_info.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+        pixel_shader_state_create_info.module = static_cast<VulkanGraphicsShader *>(description.pixel_shader)->GetShaderModule();
+        pixel_shader_state_create_info.pName = description.pixel_shader->GetDescription().entry_point;
+
+        VkPipelineShaderStageCreateInfo shader_stages[] = { vertex_shader_state_create_info, pixel_shader_state_create_info };
+
+        HYP_ASSERT(description.render_pass);
+        VkGraphicsPipelineCreateInfo graphics_pipeline_create_info = { };
+        graphics_pipeline_create_info.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+        graphics_pipeline_create_info.stageCount = 2;
+        graphics_pipeline_create_info.pStages = shader_stages;
+        graphics_pipeline_create_info.pVertexInputState = &pipeline_vertex_input_state_create_info;
+        graphics_pipeline_create_info.pInputAssemblyState = &pipeline_input_assembly_state_create_info;
+        graphics_pipeline_create_info.pViewportState = &pipeline_viewport_state_create_info;
+        graphics_pipeline_create_info.pRasterizationState = &pipeline_rasterization_state_create_info;
+        graphics_pipeline_create_info.pMultisampleState = &pipeline_multisample_state_create_info;
+        graphics_pipeline_create_info.pDepthStencilState = nullptr;
+        graphics_pipeline_create_info.pColorBlendState = &pipeline_color_blend_state_create_info;
+        graphics_pipeline_create_info.pDynamicState = nullptr;
+        graphics_pipeline_create_info.layout = m_pipeline_layout;
+        graphics_pipeline_create_info.renderPass = reinterpret_cast<VulkanGraphicsRenderPass *>(description.render_pass)->GetRenderPass();
+        graphics_pipeline_create_info.subpass = 0;
+        graphics_pipeline_create_info.basePipelineHandle = VK_NULL_HANDLE;
+        graphics_pipeline_create_info.basePipelineIndex = -1;
+
+        vkCreateGraphicsPipelines(device->GetDevice(), VK_NULL_HANDLE, 1, &graphics_pipeline_create_info, nullptr, &m_graphics_pipeline);
     }
 
     //--------------------------------------------------------------
     VulkanGraphicsPipelineState::~VulkanGraphicsPipelineState() {
         VulkanGraphicsDevice *device = static_cast<VulkanGraphicsDevice *>(GetDevice());
         vkDestroyPipelineLayout(device->GetDevice(), m_pipeline_layout, nullptr);
+        vkDestroyPipeline(device->GetDevice(), m_graphics_pipeline, nullptr);
     }
 
 }

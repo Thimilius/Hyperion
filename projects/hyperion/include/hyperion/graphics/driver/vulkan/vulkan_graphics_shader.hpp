@@ -18,6 +18,8 @@ namespace Hyperion::Graphics {
     public:
         VulkanGraphicsShader(VulkanGraphicsDevice *device, const GraphicsShaderDescription &description);
         ~VulkanGraphicsShader();
+    public:
+        VkShaderModule GetShaderModule() const { return m_shader_module; }
     private:
         VkShaderModule m_shader_module;
     };

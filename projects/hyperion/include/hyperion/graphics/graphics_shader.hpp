@@ -6,8 +6,21 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Graphics {
 
-    struct GraphicsShaderDescription : public GraphicsDeviceObjectDescription {
+    enum class GraphicsShaderType {
+        Unknown,
 
+        Vertex = BIT(0),
+        Pixel  = BIT(1),
+    };
+    HYP_CREATE_ENUM_FLAG_OPERATORS(GraphicsShaderType);
+
+    struct GraphicsShaderDescription : public GraphicsDeviceObjectDescription {
+        GraphicsShaderType type;
+
+        uint64 byte_code_size = 0;
+        const void *byte_code = nullptr;
+
+        const char *entry_point = "main";
     };
 
     class GraphicsShader : public GraphicsDeviceObject {
