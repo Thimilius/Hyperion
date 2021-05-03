@@ -6,6 +6,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/graphics/driver/opengl/opengl_graphics_buffer.hpp"
+#include "hyperion/graphics/driver/opengl/opengl_graphics_framebuffer.hpp"
 #include "hyperion/graphics/driver/opengl/opengl_graphics_pipeline_state.hpp"
 #include "hyperion/graphics/driver/opengl/opengl_graphics_render_pass.hpp"
 #include "hyperion/graphics/driver/opengl/opengl_graphics_shader.hpp"
@@ -37,6 +38,11 @@ namespace Hyperion::Graphics {
     //--------------------------------------------------------------
     GraphicsPipelineState *OpenGLGraphicsDevice::CreatePipelineState(const GraphicsPipelineStateDescription &description) {
         return new OpenGLGraphicsPipelineState(this, description);
+    }
+
+    //--------------------------------------------------------------
+    GraphicsFramebuffer *OpenGLGraphicsDevice::CreateFramebuffer(const GraphicsFramebufferDescription &description) {
+        return new OpenGLGraphicsFramebuffer(this, description);
     }
 
     //--------------------------------------------------------------

@@ -6,6 +6,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/graphics/driver/vulkan/vulkan_graphics_pipeline_state.hpp"
+#include "hyperion/graphics/driver/vulkan/vulkan_graphics_framebuffer.hpp"
 #include "hyperion/graphics/driver/vulkan/vulkan_graphics_render_pass.hpp"
 #include "hyperion/graphics/driver/vulkan/vulkan_graphics_shader.hpp"
 
@@ -47,6 +48,10 @@ namespace Hyperion::Graphics {
     //--------------------------------------------------------------
     GraphicsPipelineState *VulkanGraphicsDevice::CreatePipelineState(const GraphicsPipelineStateDescription &description) {
         return new VulkanGraphicsPipelineState(this, description);
+    }
+
+    GraphicsFramebuffer *VulkanGraphicsDevice::CreateFramebuffer(const GraphicsFramebufferDescription &description) {
+        return new VulkanGraphicsFramebuffer(this, description);
     }
 
     //--------------------------------------------------------------

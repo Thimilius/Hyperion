@@ -12,6 +12,7 @@ namespace Hyperion::Graphics {
         GraphicsTexture *CreateTexture(const GraphicsTextureDescription &description) override;
         GraphicsShader *CreateShader(const GraphicsShaderDescription &description) override;
         GraphicsRenderPass *CreateRenderPass(const GraphicsRenderPassDescription &description) override;
+        GraphicsFramebuffer *CreateFramebuffer(const GraphicsFramebufferDescription &description) override;
         GraphicsPipelineState *CreatePipelineState(const GraphicsPipelineStateDescription &description) override;
 
         void DestroyObject(GraphicsDeviceObject *object) override;
