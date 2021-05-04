@@ -17,6 +17,9 @@ namespace Hyperion::Graphics {
     class VulkanGraphicsFramebuffer : public GraphicsFramebuffer {
     public:
         VulkanGraphicsFramebuffer(VulkanGraphicsDevice *device, const GraphicsFramebufferDescription &description);
+        ~VulkanGraphicsFramebuffer();
+    private:
+        VkFramebuffer m_framebuffer;
     };
 
 }

@@ -2,12 +2,16 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/graphics/graphics_device_object.hpp"
+#include "hyperion/graphics/graphics_render_pass.hpp"
+#include "hyperion/graphics/graphics_texture.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Graphics {
 
     struct GraphicsFramebufferDescription : public GraphicsDeviceObjectDescription {
+        GraphicsRenderPass *render_pass;
 
+        Vector<GraphicsTextureView *> attachments;
     };
 
     class GraphicsFramebuffer : public GraphicsDeviceObject {
