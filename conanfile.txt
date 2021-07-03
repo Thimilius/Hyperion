@@ -12,6 +12,7 @@ premake
 
 [options]
 assimp/5.0.1:shared=False
+assimp/5.0.1:with_ifc=False
 assimp/5.0.1:with_irr=False
 assimp/5.0.1:with_irrmesh=False
 fmt/7.1.3:shared=False
