@@ -47,6 +47,10 @@ namespace Hyperion::Graphics {
 
     //--------------------------------------------------------------
     void VulkanGraphicsContext::Shutdown() {
+        delete m_swap_chain;
+        delete m_device_context;
+        delete m_device;
+
 #ifdef HYP_DEBUG
         auto destroy_debug_message_function = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(m_instance, "vkDestroyDebugUtilsMessengerEXT"));
         if (destroy_debug_message_function) {
@@ -55,10 +59,6 @@ namespace Hyperion::Graphics {
             HYP_LOG_ERROR("Graphics", "Failed to load Vulkan extension function to destroy debug message listener!");
         }
 #endif
-
-        delete m_swap_chain;
-        delete m_device_context;
-        delete m_device;
 
         vkDestroyInstance(m_instance, nullptr);
     }

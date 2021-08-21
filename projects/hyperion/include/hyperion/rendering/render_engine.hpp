@@ -28,6 +28,8 @@ namespace Hyperion::Rendering {
         static void Initialize();
         static void Render();
         static void Shutdown();
+
+        static void InitializeGraphics();
     private: 
         inline static RenderSettings s_render_settings;
         inline static IRenderPipeline *s_render_pipeline;
