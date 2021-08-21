@@ -64,8 +64,6 @@ workspace "hyperion"
 		defines { "HYP_PLATFORM_WINDOWS", "_CRT_SECURE_NO_WARNINGS", "_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS" }
 		systemversion "latest"
 		linkoptions { "/IGNORE:4099" }
-	filter ("system:windows", "configurations:debug")
-		linkoptions { "/DEBUG:FULL" }
 
 	filter "options:audio=none"
 		defines { "HYP_AUDIO_NONE" }
