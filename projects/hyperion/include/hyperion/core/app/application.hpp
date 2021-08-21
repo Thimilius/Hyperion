@@ -22,8 +22,9 @@ namespace Hyperion {
     public:
         inline static Application *GetInstance() { return s_instance; }
     protected:
-        Application(const ApplicationSettings &settings);
+        Application();
 
+        virtual void OnSetup(ApplicationSettings &settings) { }
         virtual void OnInitialize() { }
         virtual void OnEvent(Event &event) { }
         virtual void OnUpdate(float32 delta_time) { }

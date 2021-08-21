@@ -12,7 +12,9 @@ using namespace Hyperion;
 namespace Sandbox {
 
     //--------------------------------------------------------------
-    SandboxApplication::SandboxApplication(const Hyperion::ApplicationSettings &settings) : Application(settings) { }
+    void SandboxApplication::OnSetup(ApplicationSettings &settings) {
+        settings.render.graphics_backend = Graphics::GraphicsBackend::OpenGL;
+    }
 
     //--------------------------------------------------------------
     void SandboxApplication::OnInitialize() {
@@ -46,7 +48,5 @@ namespace Sandbox {
 
 //--------------------------------------------------------------
 Application *Hyperion::CreateApplication() {
-    ApplicationSettings settings = ApplicationSettings();
-    settings.render.graphics_backend = Graphics::GraphicsBackend::Vulkan;
-    return new Sandbox::SandboxApplication(settings);
+    return new Sandbox::SandboxApplication();
 }

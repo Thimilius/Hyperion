@@ -22,6 +22,7 @@ namespace Hyperion::Rendering {
 
         s_graphics_context = window->CreateGraphicsContext(settings.graphics_backend);
         s_graphics_context->Initialize(GraphicsContextDescriptor());
+        s_graphics_context->SetVSyncMode(VSyncMode::DontSync);
         s_graphics_context->CreateDeviceAndSwapChain(&s_graphics_device, &s_graphics_device_context, &s_graphics_swap_chain);
     }
 

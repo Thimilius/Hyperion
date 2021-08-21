@@ -20,8 +20,12 @@
 namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
-    EditorApplication::EditorApplication(const ApplicationSettings &settings) : Application(settings) {
-        s_editor_render_pipeline = static_cast<EditorRenderPipeline *>(settings.render.custom_pipeline);
+    void EditorApplication::OnSetup(ApplicationSettings &settings) {
+        s_editor_render_pipeline = new Editor::EditorRenderPipeline();
+
+        settings.render.graphics_backend = Graphics::GraphicsBackend::OpenGL;
+        settings.render.pipeline = Rendering::RenderPipeline::Custom;
+        settings.render.custom_pipeline = s_editor_render_pipeline;
     }
 
     //--------------------------------------------------------------
@@ -68,9 +72,5 @@ namespace Hyperion::Editor {
 
 //--------------------------------------------------------------
 Hyperion::Application *Hyperion::CreateApplication() {
-    ApplicationSettings settings = ApplicationSettings();
-    settings.render.graphics_backend = Graphics::GraphicsBackend::OpenGL;
-    settings.render.pipeline = Rendering::RenderPipeline::Custom;
-    settings.render.custom_pipeline = new Editor::EditorRenderPipeline();
-    return new Hyperion::Editor::EditorApplication(settings);
+    return new Hyperion::Editor::EditorApplication();
 }

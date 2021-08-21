@@ -67,7 +67,7 @@ namespace Hyperion {
         
         Display::UpdateSize(s_settings.window.width, s_settings.window.height);
 
-        s_application = Application::GetInstance();
+        
         Window *window = Window::Create(s_settings.window);
         window->SetEventCallback(Engine::OnEvent);
         s_application->m_window = window;
@@ -93,6 +93,10 @@ namespace Hyperion {
     //--------------------------------------------------------------
     uint32 Engine::Run() {
         s_running = true;
+
+        s_application = Application::GetInstance();
+        s_settings = ApplicationSettings();
+        s_application->OnSetup(s_settings);
 
         PreInitialize();
 
