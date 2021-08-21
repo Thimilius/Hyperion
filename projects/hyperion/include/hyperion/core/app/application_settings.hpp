@@ -7,6 +7,7 @@
 #include "hyperion/graphics/graphics_backend.hpp"
 #include "hyperion/physics/physics_backend.hpp"
 #include "hyperion/rendering/pipelines/render_pipeline.hpp"
+#include "hyperion/rendering/threading/render_threading_mode.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -16,6 +17,7 @@ namespace Hyperion {
 
         float32 max_delta_time = 0.15f;
         float32 fixed_delta_time = 1.0f / 60.0f;
+
         bool allow_altf4 = true;
     };
 
@@ -31,6 +33,8 @@ namespace Hyperion {
 
         Rendering::RenderPipeline pipeline = Rendering::RenderPipeline::Forward;
         Rendering::IRenderPipeline *custom_pipeline = nullptr;
+
+        Rendering::RenderThreadingMode threading_mode = Rendering::RenderThreadingMode::MultiThreaded;
     };
 
     struct ScriptingSettings {
