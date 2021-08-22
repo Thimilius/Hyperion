@@ -1,19 +1,18 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/math/vec3.hpp"
-
+#include "hyperion/core/math/vector3.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     struct Ray {
-        Vec3 origin;
-        Vec3 direction;
+        Vector3 origin;
+        Vector3 direction;
 
-        Ray(Vec3 origin, Vec3 direction);
+        Ray(Vector3 origin, Vector3 direction);
 
-        Vec3 GetPoint(float32 t) const;
+        Vector3 GetPoint(float32 t) const;
 
         String ToString() const;
     };

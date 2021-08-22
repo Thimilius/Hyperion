@@ -81,7 +81,7 @@ namespace Hyperion {
                     SetWindowState(WindowState::Normal);
                 }
 
-                Vec2 size = GetActualWindowSize(width, height);
+                Vector2 size = GetActualWindowSize(width, height);
 
                 uint32 flags = SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER;
                 SetWindowPos(m_window_handle, nullptr, 0, 0, static_cast<uint32>(size.x), static_cast<uint32>(size.y), flags);
@@ -121,7 +121,7 @@ namespace Hyperion {
                 SetWindowLongW(m_window_handle, GWL_STYLE, window_styles | (WS_OVERLAPPEDWINDOW));
                 SetWindowPlacement(m_window_handle, &m_previous_placement);
 
-                Vec2 size = GetActualWindowSize(m_width, m_height);
+                Vector2 size = GetActualWindowSize(m_width, m_height);
 
                 uint32 flags = SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED;
                 SetWindowPos(m_window_handle, nullptr, 0, 0, static_cast<uint32>(size.x), static_cast<uint32>(size.y), flags);
@@ -320,7 +320,7 @@ namespace Hyperion {
             HYP_PANIC_MESSAGE("Engine", "Failed to register windows window class!");
         }
 
-        Vec2 size = GetActualWindowSize(settings.width, settings.height);
+        Vector2 size = GetActualWindowSize(settings.width, settings.height);
 
         m_window_handle = CreateWindowExW(
             0,
@@ -347,14 +347,14 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Vec2 WindowsWindow::GetActualWindowSize(uint32 client_width, uint32 client_height) const {
+    Vector2 WindowsWindow::GetActualWindowSize(uint32 client_width, uint32 client_height) const {
         RECT window_rect = { 0 };
         window_rect.right = static_cast<LONG>(client_width);
         window_rect.bottom = static_cast<LONG>(client_height);
         if (!AdjustWindowRect(&window_rect, GetWindowLongW(m_window_handle, GWL_STYLE), false)) {
             HYP_PANIC_MESSAGE("Engine", "Failed to calculate window size!");
         }
-        return Vec2(static_cast<float32>(window_rect.right - window_rect.left), static_cast<float32>(window_rect.bottom - window_rect.top));
+        return Vector2(static_cast<float32>(window_rect.right - window_rect.left), static_cast<float32>(window_rect.bottom - window_rect.top));
     }
 
     //--------------------------------------------------------------
@@ -741,7 +741,7 @@ namespace Hyperion {
                 MINMAXINFO *min_max_info = (MINMAXINFO *)l_param;
                 // We need the check for the window pointer here because we get the GETMINMAXINFO message before the CREATE message.
                 if (window) {
-                    Vec2 min_size = window->GetActualWindowSize(window->m_min_width, window->m_min_height);
+                    Vector2 min_size = window->GetActualWindowSize(window->m_min_width, window->m_min_height);
                     min_max_info->ptMinTrackSize.x = static_cast<LONG>(min_size.x);
                     min_max_info->ptMinTrackSize.y = static_cast<LONG>(min_size.y);
                 }

@@ -1,14 +1,14 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/math/vec2.hpp"
+#include "hyperion/core/math/vector2.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     struct Rect {
         union {
-            Vec2 position;
+            Vector2 position;
             struct {
                 float32 x;
                 float32 y;
@@ -16,7 +16,7 @@ namespace Hyperion {
         };
 
         union {
-            Vec2 size;
+            Vector2 size;
             struct {
                 float32 width;
                 float32 height;
@@ -24,15 +24,15 @@ namespace Hyperion {
         };
 
         Rect();
-        Rect(Vec2 position, Vec2 size);
+        Rect(Vector2 position, Vector2 size);
         Rect(float32 x, float32 y, float32 width, float32 height);
 
-        Vec2 GetMin() const;
-        Vec2 GetMax() const;
-        Vec2 GetCenter() const;
+        Vector2 GetMin() const;
+        Vector2 GetMax() const;
+        Vector2 GetCenter() const;
 
         bool Intersects(const Rect &other) const;
-        bool Contains(Vec2 point) const;
+        bool Contains(Vector2 point) const;
 
         String ToString() const;
 
@@ -42,7 +42,7 @@ namespace Hyperion {
 
     struct RectInt {
         union {
-            Vec2Int position;
+            Vector2Int position;
             struct {
                 int32 x;
                 int32 y;
@@ -50,7 +50,7 @@ namespace Hyperion {
         };
 
         union {
-            Vec2Int size;
+            Vector2Int size;
             struct {
                 int32 width;
                 int32 height;
@@ -58,15 +58,15 @@ namespace Hyperion {
         };
 
         RectInt();
-        RectInt(Vec2Int position, Vec2Int size);
+        RectInt(Vector2Int position, Vector2Int size);
         RectInt(int32 x, int32 y, int32 width, int32 height);
 
-        Vec2Int GetMin() const;
-        Vec2Int GetMax() const;
-        Vec2Int GetCenter() const;
+        Vector2Int GetMin() const;
+        Vector2Int GetMax() const;
+        Vector2Int GetCenter() const;
 
         bool Intersects(const RectInt &other) const;
-        bool Contains(Vec2Int point) const;
+        bool Contains(Vector2Int point) const;
 
         String ToString() const;
 

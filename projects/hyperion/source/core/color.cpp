@@ -5,7 +5,7 @@
 #include "hyperion/core/color.hpp"
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/math/vec4.hpp"
+#include "hyperion/core/math/vector4.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -73,8 +73,8 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Color::operator Vec4() {
-        return Vec4(r, g, b, a);
+    Color::operator Vector4() {
+        return Vector4(r, g, b, a);
     }
 
     //--------------------------------------------------------------

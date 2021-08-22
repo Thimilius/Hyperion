@@ -11,7 +11,7 @@ namespace Hyperion {
     Rect::Rect() { }
 
     //--------------------------------------------------------------
-    Rect::Rect(Vec2 position, Vec2 size)
+    Rect::Rect(Vector2 position, Vector2 size)
         : position(position), size(size) { }
 
     //--------------------------------------------------------------
@@ -19,30 +19,30 @@ namespace Hyperion {
         : x(x), y(y), width(width), height(height) { }
 
     //--------------------------------------------------------------
-    Vec2 Rect::GetMin() const {
-        return Vec2(x, y);
+    Vector2 Rect::GetMin() const {
+        return Vector2(x, y);
     }
 
     //--------------------------------------------------------------
-    Vec2 Rect::GetMax() const {
-        return Vec2(x + width, y + height);
+    Vector2 Rect::GetMax() const {
+        return Vector2(x + width, y + height);
     }
 
     //--------------------------------------------------------------
-    Vec2 Rect::GetCenter() const {
-        return Vec2(x + width / 2.0f, y + height / 2.0f);
+    Vector2 Rect::GetCenter() const {
+        return Vector2(x + width / 2.0f, y + height / 2.0f);
     }
 
     //--------------------------------------------------------------
     bool Rect::Intersects(const Rect &other) const {
-        Vec2 this_max = GetMax();
-        Vec2 other_max = other.GetMax();
+        Vector2 this_max = GetMax();
+        Vector2 other_max = other.GetMax();
         return other_max.x > x && other.x < this_max.x && other_max.y > y && other.y < this_max.y;
     }
 
     //--------------------------------------------------------------
-    bool Rect::Contains(Vec2 point) const {
-        Vec2 max = GetMax();
+    bool Rect::Contains(Vector2 point) const {
+        Vector2 max = GetMax();
         return point.x >= x && point.x < max.x && point.y >= y && point.y < max.y;
     }
 
@@ -65,7 +65,7 @@ namespace Hyperion {
     RectInt::RectInt() { }
 
     //--------------------------------------------------------------
-    RectInt::RectInt(Vec2Int position, Vec2Int size)
+    RectInt::RectInt(Vector2Int position, Vector2Int size)
         : position(position), size(size) { }
 
     //--------------------------------------------------------------
@@ -73,30 +73,30 @@ namespace Hyperion {
         : x(x), y(y), width(width), height(height) { }
 
     //--------------------------------------------------------------
-    Vec2Int RectInt::GetMin() const {
-        return Vec2Int(x, y);
+    Vector2Int RectInt::GetMin() const {
+        return Vector2Int(x, y);
     }
 
     //--------------------------------------------------------------
-    Vec2Int RectInt::GetMax() const {
-        return Vec2Int(x + width, y + height);
+    Vector2Int RectInt::GetMax() const {
+        return Vector2Int(x + width, y + height);
     }
 
     //--------------------------------------------------------------
-    Vec2Int RectInt::GetCenter() const {
-        return Vec2Int(x + width / 2, y + height / 2);
+    Vector2Int RectInt::GetCenter() const {
+        return Vector2Int(x + width / 2, y + height / 2);
     }
 
     //--------------------------------------------------------------
     bool RectInt::Intersects(const RectInt &other) const {
-        Vec2Int this_max = GetMax();
-        Vec2Int other_max = other.GetMax();
+        Vector2Int this_max = GetMax();
+        Vector2Int other_max = other.GetMax();
         return other_max.x > x && other.x < this_max.x &&other_max.y > y && other.y < this_max.y;
     }
 
     //--------------------------------------------------------------
-    bool RectInt::Contains(Vec2Int point) const {
-        Vec2Int max = GetMax();
+    bool RectInt::Contains(Vector2Int point) const {
+        Vector2Int max = GetMax();
         return point.x >= x && point.x < max.x &&point.y >= y && point.y < max.y;
     }
 

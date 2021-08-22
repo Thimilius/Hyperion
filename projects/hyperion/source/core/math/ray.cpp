@@ -8,11 +8,11 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    Ray::Ray(Vec3 origin, Vec3 direction) :
+    Ray::Ray(Vector3 origin, Vector3 direction) :
         origin(origin), direction(direction.Normalized()) { }
 
     //--------------------------------------------------------------
-    Vec3 Ray::GetPoint(float32 t) const {
+    Vector3 Ray::GetPoint(float32 t) const {
         return origin + direction * t;
     }
 

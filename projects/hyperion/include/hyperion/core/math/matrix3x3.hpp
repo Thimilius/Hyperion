@@ -1,7 +1,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/math/vec3.hpp"
+#include "hyperion/core/math/vector3.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -13,20 +13,20 @@ namespace Hyperion {
     // [  1  4  7  ]
     // [  2  5  8  ]
 
-    struct Mat3 {
+    struct Matrix3x3 {
         union {
             float32 elements[9];
-            Vec3 columns[3];
+            Vector3 columns[3];
         };
 
-        Mat3();
-        Mat3(float32 diagonal);
-        Mat3(float32 *elements);
-        Mat3(const Vec3 &column0, const Vec3 &column1, const Vec3 &column2);
-        Mat3(const Mat4 &mat4);
+        Matrix3x3();
+        Matrix3x3(float32 diagonal);
+        Matrix3x3(float32 *elements);
+        Matrix3x3(const Vector3 &column0, const Vector3 &column1, const Vector3 &column2);
+        Matrix3x3(const Matrix4x4 &matrix4x4);
 
-        Vec3 GetRow(int index) const;
-        void SetRow(int index, const Vec3 &row);
+        Vector3 GetRow(int index) const;
+        void SetRow(int index, const Vector3 &row);
 
         String ToString() const;
     };

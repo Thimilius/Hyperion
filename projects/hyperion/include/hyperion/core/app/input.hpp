@@ -3,7 +3,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
 #include "hyperion/core/app/events/event.hpp"
-#include "hyperion/core/math/vec2.hpp"
+#include "hyperion/core/math/vector2.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -223,14 +223,14 @@ namespace Hyperion {
         virtual bool IsKeyHold(KeyCode key_code) const = 0;
         virtual bool IsKeyUp(KeyCode key_code) const = 0;
 
-        virtual Vec2 GetMousePosition() const = 0;
+        virtual Vector2 GetMousePosition() const = 0;
         virtual float32 GetMouseScroll() const = 0;
         virtual bool IsMouseButtonDown(MouseButtonCode mouse_button_code) const = 0;
         virtual bool IsMouseButtonHold(MouseButtonCode mouse_button_code) const = 0;
         virtual bool IsMouseButtonUp(MouseButtonCode mouse_button_code) const = 0;
 
         virtual const Vector<Gamepad> &GetConnectedGamepads() const = 0;
-        virtual Vec2 GetGamepadAxis(Gamepad gamepad, GamepadAxis axis) const = 0;
+        virtual Vector2 GetGamepadAxis(Gamepad gamepad, GamepadAxis axis) const = 0;
         virtual void SetGamepadVibration(Gamepad gamepad, float32 left_vibration, float32 right_vibration) = 0;
         virtual float32 GetGamepadDeadZone() const = 0;
         virtual void SetGamepadDeadZone(float32 gamepad_dead_zone) = 0;
@@ -255,14 +255,14 @@ namespace Hyperion {
         inline static bool IsKeyHold(KeyCode key_code) { return s_input_implementation->IsKeyHold(key_code); }
         inline static bool IsKeyUp(KeyCode key_code) { return s_input_implementation->IsKeyUp(key_code); }
 
-        inline static Vec2 GetMousePosition() { return s_input_implementation->GetMousePosition(); }
+        inline static Vector2 GetMousePosition() { return s_input_implementation->GetMousePosition(); }
         inline static float32 GetMouseScroll() { return s_input_implementation->GetMouseScroll(); }
         inline static bool IsMouseButtonDown(MouseButtonCode mouse_button_code) { return s_input_implementation->IsMouseButtonDown(mouse_button_code); }
         inline static bool IsMouseButtonHold(MouseButtonCode mouse_button_code) { return s_input_implementation->IsMouseButtonHold(mouse_button_code); }
         inline static bool IsMouseButtonUp(MouseButtonCode mouse_button_code) { return s_input_implementation->IsMouseButtonUp(mouse_button_code); }
 
         inline static const Vector<Gamepad> &GetConnectedGamepads() { return s_input_implementation->GetConnectedGamepads(); }
-        inline static Vec2 GetGamepadAxis(Gamepad gamepad, GamepadAxis axis) { return s_input_implementation->GetGamepadAxis(gamepad, axis); }
+        inline static Vector2 GetGamepadAxis(Gamepad gamepad, GamepadAxis axis) { return s_input_implementation->GetGamepadAxis(gamepad, axis); }
         inline static void SetGamepadVibration(Gamepad gamepad, float32 left_vibration, float32 right_vibration) { s_input_implementation->SetGamepadVibration(gamepad, left_vibration, right_vibration); }
         inline static float32 GetGamepadDeadZone() { return s_input_implementation->GetGamepadDeadZone(); }
         inline static void GetGamepadDeadZone(float32 gamepad_dead_zone) { s_input_implementation->SetGamepadDeadZone(gamepad_dead_zone); }

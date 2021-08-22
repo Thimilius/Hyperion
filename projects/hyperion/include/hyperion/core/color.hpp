@@ -5,7 +5,7 @@
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
-    struct Vec4;
+    struct Vector4;
 }
 
 //-------------------- Definition Namespace --------------------
@@ -30,7 +30,7 @@ namespace Hyperion {
         Color &operator*=(const float32 &value);
         Color &operator/=(const float32 &value);
 
-        operator Vec4();
+        operator Vector4();
 
         inline static Color Black() { return Color(0, 0, 0, 1); }
         inline static Color Red() { return Color(1, 0, 0, 1); }

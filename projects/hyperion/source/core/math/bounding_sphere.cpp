@@ -11,12 +11,12 @@ namespace Hyperion {
     BoundingSphere::BoundingSphere() { }
 
     //--------------------------------------------------------------
-    BoundingSphere::BoundingSphere(Vec3 origin, float32 radius)
+    BoundingSphere::BoundingSphere(Vector3 origin, float32 radius)
         : origin(origin), radius(radius) { }
 
     //--------------------------------------------------------------
     bool BoundingSphere::Intersects(Ray ray, float32 &hit_distance) const {
-        Vec3 distance = origin - ray.origin;
+        Vector3 distance = origin - ray.origin;
         float32 radius_squared = radius * radius;
 
         float32 tca = distance.Dot(ray.direction);

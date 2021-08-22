@@ -9,21 +9,21 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     Plane::Plane()
-        : normal(Vec3::Up()), distance(0) { }
+        : normal(Vector3::Up()), distance(0) { }
 
     //--------------------------------------------------------------
-    Plane::Plane(Vec3 normal, float32 distance)
+    Plane::Plane(Vector3 normal, float32 distance)
         : normal(normal.Normalized()), distance(distance) { }
 
     //--------------------------------------------------------------
-    Plane::Plane(Vec3 normal, Vec3 point) {
+    Plane::Plane(Vector3 normal, Vector3 point) {
         this->normal = normal.Normalized();
         distance = -this->normal.Dot(point);
     }
 
     //--------------------------------------------------------------
-    Plane::Plane(Vec3 a, Vec3 b, Vec3 c) {
-        normal = Vec3::Cross(b - a, c - a).Normalized();
+    Plane::Plane(Vector3 a, Vector3 b, Vector3 c) {
+        normal = Vector3::Cross(b - a, c - a).Normalized();
         distance = -this->normal.Dot(a);
     }
 
@@ -34,13 +34,13 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Vec3 Plane::GetClosestPoint(Vec3 point) const {
+    Vector3 Plane::GetClosestPoint(Vector3 point) const {
         float32 d = normal.Dot(point) + distance;
         return point - normal * d;
     }
 
     //--------------------------------------------------------------
-    float32 Plane::GetDistanceToPoint(Vec3 point) const {
+    float32 Plane::GetDistanceToPoint(Vector3 point) const {
         return normal.Dot(point) + distance;
     }
 

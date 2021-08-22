@@ -25,7 +25,7 @@ namespace Hyperion {
         bool IsKeyHold(KeyCode key_code) const override { return m_keys[static_cast<int32>(key_code)]; }
         bool IsKeyUp(KeyCode key_code) const override { return m_keys_up[static_cast<int32>(key_code)]; }
 
-        Vec2 GetMousePosition() const override { return m_mouse_position; }
+        Vector2 GetMousePosition() const override { return m_mouse_position; }
         float32 GetMouseScroll() const override { return m_mouse_scroll; }
 
         bool IsMouseButtonDown(MouseButtonCode mouse_button_code) const override { return m_mouse_buttons_down[static_cast<int32>(mouse_button_code)]; }
@@ -33,7 +33,7 @@ namespace Hyperion {
         bool IsMouseButtonUp(MouseButtonCode mouse_button_code) const override { return m_mouse_buttons_up[static_cast<int32>(mouse_button_code)]; }
 
         const Vector<Gamepad> &GetConnectedGamepads() const override { return m_gamepads_connected; }
-        Vec2 GetGamepadAxis(Gamepad gamepad, GamepadAxis axis) const override { return m_gamepads[static_cast<int32>(gamepad)].axes[static_cast<int32>(axis)]; }
+        Vector2 GetGamepadAxis(Gamepad gamepad, GamepadAxis axis) const override { return m_gamepads[static_cast<int32>(gamepad)].axes[static_cast<int32>(axis)]; }
         void SetGamepadVibration(Gamepad gamepad, float32 left_vibration, float32 right_vibration) override;
 
         float32 GetGamepadDeadZone() const override { return m_gamepad_dead_zone; }
@@ -55,7 +55,7 @@ namespace Hyperion {
         void HandleGamepadButtonCode(Gamepad gamepad, GamepadButtonCode button_code, bool down);
         Gamepad GetGamepadFromId(uint32 id);
         uint32 GetIdFromGamepad(Gamepad gamepad);
-        Vec2 ApplyGamepadDeadzone(float32 x, float32 y);
+        Vector2 ApplyGamepadDeadzone(float32 x, float32 y);
     private:
         bool m_keys_down[static_cast<int32>(KeyCode::Last)];
         bool m_keys[static_cast<int32>(KeyCode::Last)];
@@ -67,7 +67,7 @@ namespace Hyperion {
         bool m_mouse_buttons_last[static_cast<int32>(MouseButtonCode::Last)];
         bool m_mouse_buttons_up[static_cast<int32>(MouseButtonCode::Last)];
 
-        Vec2 m_mouse_position;
+        Vector2 m_mouse_position;
         float32 m_mouse_scroll;
 
         struct GamepadState {
@@ -76,7 +76,7 @@ namespace Hyperion {
             bool buttons_last[static_cast<int32>(GamepadButtonCode::Last)];
             bool buttons_up[static_cast<int32>(GamepadButtonCode::Last)];
 
-            Vec2 axes[static_cast<int32>(GamepadAxis::Last)];
+            Vector2 axes[static_cast<int32>(GamepadAxis::Last)];
         };
 
         bool m_gamepad_input_active = true;

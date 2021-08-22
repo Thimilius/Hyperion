@@ -15,15 +15,15 @@ namespace Hyperion {
         : x(x), y(y), z(z), w(w) { }
 
     //--------------------------------------------------------------
-    Quaternion::Quaternion(Vec3 xyz, float32 w)
+    Quaternion::Quaternion(Vector3 xyz, float32 w)
         : x(xyz.x), y(xyz.y), z(xyz.z), w(w) { }
 
     //--------------------------------------------------------------
-    Vec3 Quaternion::ToEulerAngles() const {
+    Vector3 Quaternion::ToEulerAngles() const {
         float32 x_value = Math::RadToDeg(Math::ATan2(2 * x * w - 2 * y * z, 1 - 2 * x * x - 2 * z * z));
         float32 y_value = Math::RadToDeg(Math::ATan2(2 * y * w - 2 * x * z, 1 - 2 * y * y - 2 * z * z));
         float32 z_value = Math::RadToDeg(Math::ASin(2 * x * y + 2 * z * w));
-        return Vec3(x_value, y_value, z_value);
+        return Vector3(x_value, y_value, z_value);
     }
 
     //--------------------------------------------------------------
@@ -83,7 +83,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Vec3 Quaternion::operator*(const Vec3 &other) const {
+    Vector3 Quaternion::operator*(const Vector3 &other) const {
         return Rotate(*this, other);
     }
 
@@ -98,12 +98,12 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Vec3 Quaternion::Rotate(const Quaternion &quaternion, const Vec3 &vec) {
+    Vector3 Quaternion::Rotate(const Quaternion &quaternion, const Vector3 &vec) {
         float32 x = (((quaternion.w * vec.x) + (quaternion.y * vec.z)) - (quaternion.z * vec.y));
         float32 y = (((quaternion.w * vec.y) + (quaternion.z * vec.x)) - (quaternion.x * vec.z));
         float32 z = (((quaternion.w * vec.z) + (quaternion.x * vec.y)) - (quaternion.y * vec.x));
         float32 w = (((quaternion.x * vec.x) + (quaternion.y * vec.y)) + (quaternion.z * vec.z));
-        return Vec3(
+        return Vector3(
             ((((w * quaternion.x) + (x * quaternion.w)) - (y * quaternion.z)) + (z * quaternion.y)),
             ((((w * quaternion.y) + (y * quaternion.w)) - (z * quaternion.x)) + (x * quaternion.z)),
             ((((w * quaternion.z) + (z * quaternion.w)) - (x * quaternion.y)) + (y * quaternion.x))
@@ -111,13 +111,13 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Quaternion Quaternion::FromAxisAngle(const Vec3 &axis, float32 angle) {
+    Quaternion Quaternion::FromAxisAngle(const Vector3 &axis, float32 angle) {
         angle = Math::DegToRad(angle) * 0.5f;
         return Quaternion((axis * Math::Sin(angle)), Math::Cos(angle));
     }
 
     //--------------------------------------------------------------
-    Quaternion Quaternion::FromEulerAngles(const Vec3 &angles) {
+    Quaternion Quaternion::FromEulerAngles(const Vector3 &angles) {
         return FromEulerAngles(angles.x, angles.y, angles.z);
     }
 

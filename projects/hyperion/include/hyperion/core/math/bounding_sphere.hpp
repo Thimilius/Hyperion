@@ -7,11 +7,11 @@
 namespace Hyperion {
 
     struct BoundingSphere {
-        Vec3 origin;
+        Vector3 origin;
         float32 radius;
 
         BoundingSphere();
-        BoundingSphere(Vec3 origin, float32 radius);
+        BoundingSphere(Vector3 origin, float32 radius);
 
         bool Intersects(Ray ray, float32 &hit_distance) const;
 

@@ -5,7 +5,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/window.hpp"
-#include "hyperion/core/math/vec2.hpp"
+#include "hyperion/core/math/vector2.hpp"
 #include "hyperion/platform/windows/windows_input.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -38,7 +38,7 @@ namespace Hyperion {
         void SetEventCallback(const EventCallbackFunction &event_callback) override;
 
         void SetupWindow(const WindowSettings &settings);
-        Vec2 GetActualWindowSize(uint32 client_width, uint32 client_height) const;
+        Vector2 GetActualWindowSize(uint32 client_width, uint32 client_height) const;
         void DispatchEvent(Event &event) const;
         void DispatchKeyEvent(KeyCode key_code, bool is_down) const;
 

@@ -88,7 +88,7 @@ namespace Hyperion {
             m_mouse_scroll = mouse_scrolled_event.GetScroll();
         });
         dispatcher.Dispatch<MouseMovedEvent>([this](MouseMovedEvent &mouse_moved_event) {
-            m_mouse_position = Vec2(mouse_moved_event.GetX(), mouse_moved_event.GetY());
+            m_mouse_position = Vector2(mouse_moved_event.GetX(), mouse_moved_event.GetY());
         });
         dispatcher.Dispatch<MouseButtonPressedEvent>([this](MouseButtonPressedEvent &mouse_button_pressed_event) {
             OnMouseButtonEvent(mouse_button_pressed_event, true);
@@ -168,8 +168,8 @@ namespace Hyperion {
                     m_gamepads[static_cast<int32>(gamepad)].axes[static_cast<int32>(GamepadAxis::LeftStick)] = ApplyGamepadDeadzone(left_stick_x, left_stick_y);
                     m_gamepads[static_cast<int32>(gamepad)].axes[static_cast<int32>(GamepadAxis::RightStick)] = ApplyGamepadDeadzone(right_stick_x, right_stick_y);
                     // Left and right trigger are treated as if they had the same two x and y axes.
-                    m_gamepads[static_cast<int32>(gamepad)].axes[static_cast<int32>(GamepadAxis::LeftTrigger)] = Vec2(left_trigger, left_trigger);
-                    m_gamepads[static_cast<int32>(gamepad)].axes[static_cast<int32>(GamepadAxis::RightTrigger)] = Vec2(right_trigger, right_trigger);
+                    m_gamepads[static_cast<int32>(gamepad)].axes[static_cast<int32>(GamepadAxis::LeftTrigger)] = Vector2(left_trigger, left_trigger);
+                    m_gamepads[static_cast<int32>(gamepad)].axes[static_cast<int32>(GamepadAxis::RightTrigger)] = Vector2(right_trigger, right_trigger);
                 }
             }
         }
@@ -198,7 +198,7 @@ namespace Hyperion {
             memset(&gamepad.buttons_last, false, sizeof(gamepad.buttons_last));
 
             for (uint32 j = 0; j < static_cast<uint32>(GamepadAxis::Last); j++) {
-                gamepad.axes[j] = Vec2();
+                gamepad.axes[j] = Vector2();
             }
         }
     }
@@ -287,13 +287,13 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Vec2 WindowsInput::ApplyGamepadDeadzone(float32 x, float32 y) {
+    Vector2 WindowsInput::ApplyGamepadDeadzone(float32 x, float32 y) {
         // Deadzone logic from: https://www.gamasutra.com/blogs/JoshSutphin/20130416/190541/Doing_Thumbstick_Dead_Zones_Right.php
         float32 dead_zone = m_gamepad_dead_zone;
-        Vec2 left_stick = Vec2(x, y);
+        Vector2 left_stick = Vector2(x, y);
 
         if (left_stick.Magnitude() < dead_zone) {
-            return Vec2();
+            return Vector2();
         } else {
             left_stick = left_stick.Normalized() * ((left_stick.Magnitude() - dead_zone) / (1 - dead_zone));
             left_stick.x = Math::Clamp(left_stick.x, -1.0f, 1.0f);

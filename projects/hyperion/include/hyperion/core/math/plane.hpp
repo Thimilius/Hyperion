@@ -2,24 +2,24 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/math/ray.hpp"
-#include "hyperion/core/math/vec3.hpp"
+#include "hyperion/core/math/vector3.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     struct Plane {
-        Vec3 normal;
+        Vector3 normal;
         float32 distance;
 
         Plane();
-        Plane(Vec3 normal, float32 distance);
-        Plane(Vec3 normal, Vec3 point);
-        Plane(Vec3 a, Vec3 b, Vec3 c);
+        Plane(Vector3 normal, float32 distance);
+        Plane(Vector3 normal, Vector3 point);
+        Plane(Vector3 a, Vector3 b, Vector3 c);
 
         void Flip();
 
-        Vec3 GetClosestPoint(Vec3 point) const;
-        float32 GetDistanceToPoint(Vec3 point) const;
+        Vector3 GetClosestPoint(Vector3 point) const;
+        float32 GetDistanceToPoint(Vector3 point) const;
 
         bool Intersects(Ray ray, float32 &hit_distance) const;
 
