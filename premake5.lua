@@ -1,7 +1,6 @@
 output_directory_format = "%{cfg.system}-%{cfg.architecture}"
 audio_backend_option = "audio"
 physics_backend_option = "physics"
-with_mono_option = "with-mono"
 
 include "packages.lua"
 
@@ -19,12 +18,11 @@ workspace "hyperion"
 		value = "API",
 		description = "Specifies the audio backend",
 		allowed = {
-			{ "none", "None" },
-			{ "fmod", "FMOD" }
+			{ "none", "None" }
 		}
 	}
 	if not _OPTIONS[audio_backend_option] then
-		_OPTIONS[audio_backend_option] = "fmod"
+		_OPTIONS[audio_backend_option] = "none"
 	end
 
 	newoption {
@@ -39,13 +37,6 @@ workspace "hyperion"
 	if not _OPTIONS[physics_backend_option] then
 		_OPTIONS[physics_backend_option] = "bullet"
 	end
-
-	newoption {
-		trigger = with_mono_option,
-		description = "Specifies that the Mono scripting driver should be included",
-	}
-
-	defines { "HYP_EDITOR" }
 
 	filter "configurations:debug"	
 		defines { "HYP_DEBUG", "HYP_ENABLE_ASSERTS", "HYP_BREAK_ON_ASSERT" }
@@ -67,21 +58,14 @@ workspace "hyperion"
 
 	filter "options:audio=none"
 		defines { "HYP_AUDIO_NONE" }
-	filter "options:audio=fmod"
-		defines { "HYP_AUDIO_FMOD" }
 
 	filter "options:physics=none"
 		defines { "HYP_PHYSICS_NONE" }
 	filter "options:physics=bullet"
 		defines { "HYP_PHYSICS_BULLET" }
 
-	filter "options:with-mono"
-		defines { "HYP_SCRIPTING_MONO" }
-
 project "hyperion"
 	location "projects/hyperion"
-	dependson { "Hyperion.Core" }
-	dependson { "Hyperion.Editor" }
 	
 	language "C++"
 	cppdialect "C++17"
@@ -108,10 +92,6 @@ project "hyperion"
 
 		"%{prj.location}/include/hyperion/modules/bullet/**",
 		"%{prj.location}/source/modules/bullet/**",
-		"%{prj.location}/include/hyperion/modules/fmod/**",
-		"%{prj.location}/source/modules/fmod/**",
-		"%{prj.location}/include/hyperion/modules/mono/**",
-		"%{prj.location}/source/modules/mono/**",
 
         "%{prj.location}/vendor/glad/source/glad_wgl.c"
 	}
@@ -132,24 +112,12 @@ project "hyperion"
 	filter "files:projects/hyperion/vendor/**"
 		flags { "NoPCH" }
 
-	filter "options:audio=fmod"
-		files { 
-			"%{prj.location}/include/hyperion/modules/fmod/**",
-			"%{prj.location}/source/modules/fmod/**"
-		}
-		includedirs { "%{prj.location}/vendor/fmod/include" }
 	filter "options:physics=bullet"
 		files { 
 			"%{prj.location}/include/hyperion/modules/bullet/**",
 			"%{prj.location}/source/modules/bullet/**"
 		}
 		includedirs { package_bullet_includedirs }
-	filter "options:with-mono"
-		files {
-			"%{prj.location}/include/hyperion/modules/mono/**",
-			"%{prj.location}/source/modules/mono/**",
-		}
-		includedirs { "%{prj.location}/vendor/mono/include" }
 
 	filter "system:windows"
 		files {
@@ -159,11 +127,6 @@ project "hyperion"
             "%{prj.location}/vendor/glad/source/glad_wgl.c"
 		}
 		
-	    postbuildcommands {
-		    "{COPY} vendor/fmod/lib/windows/fmod.dll %{cfg.targetdir}/fmod.dll*",
-			"{COPY} vendor/mono/lib/windows/mono.dll %{cfg.targetdir}/mono.dll*"
-	    }
-
 function linkhyperion()
 	filter { }
 
@@ -198,56 +161,16 @@ function linkhyperion()
 		links { package_freetype_release_links }
 		links { package_yaml_release_links }
 
-	filter { "system:windows", "options:audio=fmod" }
-		libdirs { "projects/hyperion/vendor/fmod/lib/windows" }
-		links { "fmod_vc" }
 	filter { "system:windows", "configurations:debug", "options:physics=bullet" }
 		libdirs { package_bullet_debug_libdirs }
 		links { package_bullet_debug_links }
 	filter { "system:windows", "configurations:profile or release", "options:physics=bullet" }
 		libdirs { package_bullet_release_libdirs }
 		links { package_bullet_release_links }
-	filter { "system:windows", "options:with-mono" }
-		libdirs { "projects/hyperion/vendor/mono/lib/windows" }
-		links { "mono" }
 		
 	filter { }
 
 end
-
-project "hyperion-editor"
-	location "projects/hyperion-editor"
-	
-	language "C++"
-	cppdialect "C++17"
-	architecture "x86_64"
-	kind "WindowedApp"
-	
-	staticruntime "On"
-	exceptionhandling "Off"
-	rtti "Off"
-	flags { "FatalCompileWarnings" }
-	
-	linkhyperion()
-
-	files {
-		"%{prj.location}/**.hpp",
-		"%{prj.location}/**.h",
-		"%{prj.location}/**.c",
-		"%{prj.location}/**.cpp"
-	}
-    excludes { "%{prj.location}/resource.rc" }
-	includedirs { "%{prj.location}/include" }
-		
-    filter "system:windows"
-        files { "projects/hyperion-editor/resource.rc" }
-
-		postbuildcommands {
-		    "{COPY} %{cfg.targetdir}/%{prj.name}.exe ../../run_tree/hyperion.exe*",
-		    
-		    "{COPY} %{cfg.targetdir}/fmod.dll ../../run_tree/fmod.dll*",
-			"{COPY} %{cfg.targetdir}/mono.dll ../../run_tree/mono.dll*"
-	    }
 
 project "hyperion-sandbox"
 	location "projects/hyperion-sandbox"
@@ -274,58 +197,5 @@ project "hyperion-sandbox"
 		
     filter "system:windows"
 		postbuildcommands {
-		    "{COPY} %{cfg.targetdir}/%{prj.name}.exe ../../run_tree/hyperion.exe*",
-		    
-		    "{COPY} %{cfg.targetdir}/fmod.dll ../../run_tree/fmod.dll*",
-			"{COPY} %{cfg.targetdir}/mono.dll ../../run_tree/mono.dll*"
+		    "{COPY} %{cfg.targetdir}/%{prj.name}.exe ../../run_tree/hyperion.exe*"
 	    }
-
-group "hyperion-managed"
-
-project "Hyperion.Core"
-	location "projects/hyperion-managed/Hyperion.Core"
-	
-	language "C#"
-	kind "SharedLib"
-	architecture "x86_64"
-	namespace ("Hyperion")
-	
-	targetdir ("build/%{cfg.buildcfg}/bin/hyperion-managed/")
-	objdir ("build/%{cfg.buildcfg}/obj/hyperion-managed/")
-	
-	files { "%{prj.location}/**.cs" }
-	
-	postbuildcommands {
-		"{COPY} $(TargetDir)$(TargetFileName) $(ProjectDir)../../../run_tree/data/managed/",
-		"{COPY} $(TargetDir)$(TargetName).pdb $(ProjectDir)../../../run_tree/data/managed/"
-	}
-	
-	filter "system:windows"
-		postbuildcommands {
-			"$(ProjectDir)../../../run_tree/data/tools/pdb2mdb.exe $(ProjectDir)../../../run_tree/data/managed/$(TargetFileName)"
-		}
-
-project "Hyperion.Editor"
-	location "projects/hyperion-managed/Hyperion.Editor"
-	
-	language "C#"
-	kind "SharedLib"
-	architecture "x86_64"
-	namespace ("Hyperion.Editor")
-	
-	links ("Hyperion.Core")
-	
-	targetdir ("build/%{cfg.buildcfg}/bin/hyperion-managed/")
-	objdir ("build/%{cfg.buildcfg}/obj/hyperion-managed/")
-	
-	files { "%{prj.location}/**.cs" }
-	
-	postbuildcommands {
-		"{COPY} $(TargetDir)$(TargetFileName) $(ProjectDir)../../../run_tree/data/managed/",
-		"{COPY} $(TargetDir)$(TargetName).pdb $(ProjectDir)../../../run_tree/data/managed/"
-	}
-	
-	filter "system:windows"
-		postbuildcommands {
-			"$(ProjectDir)../../../run_tree/data/tools/pdb2mdb.exe $(ProjectDir)../../../run_tree/data/managed/$(TargetFileName)"
-		}

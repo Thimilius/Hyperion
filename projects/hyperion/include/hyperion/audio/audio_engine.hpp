@@ -14,9 +14,6 @@ namespace Hyperion {
 namespace Hyperion::Audio {
 
     class AudioEngine final {
-    public:
-        inline static void Load(const String &name, const String &path) { s_audio_driver->Load(name, path); }
-        inline static void Play(const String &name) { s_audio_driver->Play(name); }
     private:
         AudioEngine() = delete;
         ~AudioEngine() = delete;
