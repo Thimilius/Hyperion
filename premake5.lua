@@ -172,7 +172,6 @@ function linkhyperion()
 	filter { }
 
 	includedirs { "projects/hyperion/include" }
-	includedirs { package_rttr_includedirs }
 	includedirs { package_fmt_includedirs }
 
 	links { "hyperion" }
