@@ -21,9 +21,4 @@ namespace Hyperion {
         return new Image(width, height, channels, std::move(pixels));
     }
 
-    //--------------------------------------------------------------
-    HYP_REFLECT_BEGIN(Image)
-    HYP_REFLECT_BASE(Object)
-    HYP_REFLECT_END()
-
 }

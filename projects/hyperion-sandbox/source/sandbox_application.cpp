@@ -1,9 +1,9 @@
+//--------------------- Definition Include ---------------------
+#include "sandbox/sandbox_application.hpp"
+
 //---------------------- Library Includes ----------------------
 #include <hyperion/entry_point.hpp>
 #include <hyperion/core/app/time.hpp>
-#include <hyperion/entity/world_manager.hpp>
-
-#include "sandbox/sandbox_application.hpp"
 
 //------------------------- Namespaces -------------------------
 using namespace Hyperion;
@@ -18,8 +18,6 @@ namespace Sandbox {
 
     //--------------------------------------------------------------
     void SandboxApplication::OnInitialize() {
-        WorldManager::SetActiveWorld(WorldManager::CreateWorld());
-
         UpdateTitle();
     }
 

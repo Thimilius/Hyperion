@@ -5,7 +5,6 @@
 #include "hyperion/core/system/engine.hpp"
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/audio/audio_engine.hpp"
 #include "hyperion/core/timer.hpp"
 #include "hyperion/core/app/application.hpp"
@@ -16,30 +15,12 @@
 #include "hyperion/core/app/events/app_events.hpp"
 #include "hyperion/core/app/events/window_events.hpp"
 #include "hyperion/core/app/events/key_events.hpp"
-#include "hyperion/core/object/object.hpp"
 #include "hyperion/core/memory/memory.hpp"
-#include "hyperion/core/profiling/profiling.hpp"
-#include "hyperion/entity/world_manager.hpp"
 #include "hyperion/physics/physics_engine.hpp"
 #include "hyperion/rendering/render_engine.hpp"
-#include "hyperion/scripting/scripting_engine.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
-
-    //--------------------------------------------------------------
-    void Engine::SetMode(EngineMode engine_mode) {
-        if (s_engine_mode == engine_mode) {
-            return;
-        }
-
-        s_engine_mode = engine_mode;
-        Scripting::ScriptingEngine::EngineModeChanged(engine_mode);
-
-        // We reset the time after informing the scripting engine.
-        // This ensures that we wait before the scripting domain gets properly reloaded.
-        Time::s_time_since_engine_mode_change = 0.0f;
-    }
 
     //--------------------------------------------------------------
     void Engine::Setup() {
@@ -66,7 +47,6 @@ namespace Hyperion {
         Time::s_fixed_delta_time = s_settings.core.fixed_delta_time;
         
         Display::UpdateSize(s_settings.window.width, s_settings.window.height);
-
         
         Window *window = Window::Create(s_settings.window);
         window->SetEventCallback(Engine::OnEvent);
@@ -78,16 +58,13 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void Engine::Initialize() {
         Audio::AudioEngine::Initialize();
-        AssetManager::Initialize(s_settings.assets);
         Rendering::RenderEngine::Initialize();
         Physics::PhysicsEngine::Initialize();
-        Scripting::ScriptingEngine::Initialize(s_settings.scripting);
-        WorldManager::Initialize();
     }
 
     //--------------------------------------------------------------
     void Engine::PostInitialize() {
-        Scripting::ScriptingEngine::PostInitialize();
+
     }
 
     //--------------------------------------------------------------
@@ -107,8 +84,6 @@ namespace Hyperion {
 
         s_time_stats.timer = Timer::Create();
         while (s_running) {
-            HYP_PROFILE_FRAME("Main Thread");
-
             Iterate();
         }
         delete s_time_stats.timer;
@@ -170,15 +145,10 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void Engine::Shutdown() {
         // When shutting down we have to be very careful about the order.
-        WorldManager::Shutdown();
 
-        Scripting::ScriptingEngine::Shutdown();
         Physics::PhysicsEngine::Shutdown();
         Audio::AudioEngine::Shutdown();
-        
-        AssetManager::Shutdown();
 
-        ObjectManager::Shutdown();
         Rendering::RenderEngine::Shutdown();
 
         delete Application::GetInstance()->GetWindow();
@@ -217,21 +187,7 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Engine::InputInitilization() {
-        HYP_PROFILE_CATEGORY("Input", Optick::Category::Input);
-
         s_application->GetWindow()->Poll();
-    }
-
-    //--------------------------------------------------------------
-    void Engine::PhysicsEngineFixedUpdate() {
-        HYP_PROFILE_CATEGORY("Physics", Optick::Category::Physics);
-
-        Physics::PhysicsEngine::FixedUpdate(Time::GetFixedDeltaTime());
-    }
-
-    //--------------------------------------------------------------
-    void Engine::ScriptingEngineFixedUpdate() {
-        Scripting::ScriptingEngine::FixedUpdate();
     }
 
     //--------------------------------------------------------------
@@ -250,45 +206,12 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void Engine::AssetManagerUpdate() {
-        AssetManager::Update();
-    }
-
-    //--------------------------------------------------------------
-    void Engine::WorldManagerUpdate() {
-        WorldManager::Update(Time::GetDeltaTime());
-    }
-
-    //--------------------------------------------------------------
-    void Engine::ScriptingEngineUpdate() {
-        HYP_PROFILE_CATEGORY("ScriptingUpdate", Optick::Category::Script);
-
-        Scripting::ScriptingEngine::Update();
-    }
-
-    //--------------------------------------------------------------
     void Engine::ApplicationUpdate() {
-        HYP_PROFILE_CATEGORY("ApplicationUpdate", Optick::Category::GameLogic);
-
         s_application->OnUpdate(Time::GetDeltaTime());
     }
 
     //--------------------------------------------------------------
-    void Engine::WorldManagerLateUpdate() {
-        WorldManager::LateUpdate(Time::GetDeltaTime());
-    }
-
-    //--------------------------------------------------------------
-    void Engine::ObjectManagerLateUpdate() {
-        HYP_PROFILE_CATEGORY("LateUpdate", Optick::Category::GameLogic);
-
-        ObjectManager::LateUpdate();
-    }
-
-    //--------------------------------------------------------------
     void Engine::RenderEngineLateUpdate() {
-        HYP_PROFILE_CATEGORY("Rendering", Optick::Category::Rendering);
-
         Rendering::RenderEngine::Render();
     }
 

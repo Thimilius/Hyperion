@@ -1,9 +1,6 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/entity/world.hpp"
-#include "hyperion/entity/components/rendering/camera.hpp"
-#include "hyperion/entity/components/ui/canvas.hpp"
 #include "hyperion/rendering/pipelines/render_pipeline.hpp"
 
 //-------------------- Definition Namespace --------------------

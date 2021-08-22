@@ -3,11 +3,6 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/image.hpp"
 
-//-------------------- Forward Declarations --------------------
-namespace Hyperion {
-    class AssetManager;
-}
-
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
@@ -36,8 +31,6 @@ namespace Hyperion {
         static void Shutdown();
     private:
         inline static Vector<IImageLoader *> s_loaders;
-    private:
-        friend class Hyperion::AssetManager;
     };
 
 }

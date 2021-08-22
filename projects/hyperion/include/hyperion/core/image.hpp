@@ -1,13 +1,12 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/object/object.hpp"
+#include "hyperion/common.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    class Image : public Object {
-        HYP_REFLECT();
+    class Image {
     public:
         inline uint32 GetWidth() const { return m_width; }
         inline uint32 GetHeight() const { return m_height; }

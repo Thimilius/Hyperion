@@ -24,8 +24,6 @@ namespace Hyperion {
 
         result.fixed_update.name = "FixedUpdate";
         result.fixed_update.sub_systems = {
-            { "PhysicsEngineFixedUpdate", Engine::PhysicsEngineFixedUpdate },
-            { "ScriptingEngineFixedUpdate", Engine::ScriptingEngineFixedUpdate },
             { "ApplicationFixedUpdate", Engine::ApplicationFixedUpdate },
             { "TimeFixedUpdate", Engine::TimeFixedUpdate }
         };
@@ -37,16 +35,11 @@ namespace Hyperion {
 
         result.update.name = "Update";
         result.update.sub_systems = {
-            { "AssetManagerUpdate", Engine::AssetManagerUpdate },
-            { "WorldManagerUpdate", Engine::WorldManagerUpdate },
-            { "ScriptingEngineUpdate", Engine::ScriptingEngineUpdate },
             { "ApplicationUpdate", Engine::ApplicationUpdate }
         };
 
         result.late_update.name = "LateUpdate";
         result.late_update.sub_systems = {
-            { "WorldManagerLateUpdate", Engine::WorldManagerLateUpdate },
-            { "ObjectManagerLateUpdate", Engine::ObjectManagerLateUpdate },
             { "RenderEngineLateUpdate", Engine::RenderEngineLateUpdate }
         };
 

@@ -2,7 +2,7 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/core/object/guid.hpp"
+#include "hyperion/core/guid.hpp"
 
 //---------------------- Library Includes ----------------------
 #ifdef HYP_PLATFORM_WINDOWS

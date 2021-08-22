@@ -2,7 +2,7 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/core/io/image_loader.hpp"
+#include "hyperion/assets/loader/image_loader.hpp"
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/modules/stb/stb_image_loader.hpp"

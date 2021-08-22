@@ -1,7 +1,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/io/image_loader.hpp"
+#include "hyperion/assets/loader/image_loader.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {

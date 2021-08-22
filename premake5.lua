@@ -151,10 +151,6 @@ project "hyperion"
 		}
 		includedirs { "%{prj.location}/vendor/mono/include" }
 
-	filter "configurations:profile"
-		files { "%{prj.location}/vendor/optick/source/**" }
-		includedirs { "%{prj.location}/vendor/optick/include" }
-
 	filter "system:windows"
 		files {
 			"%{prj.location}/include/hyperion/platform/windows/**.hpp",
