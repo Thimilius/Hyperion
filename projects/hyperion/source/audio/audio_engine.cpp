@@ -17,7 +17,7 @@ namespace Hyperion::Audio {
 #ifdef HYP_AUDIO_FMOD
         s_audio_driver = new FModAudioDriver();
 #else
-        s_audio_driver = new DummyAudioDriver();
+        s_audio_driver = new NullAudioDriver();
 #endif
 
         s_audio_driver->Initialize();
