@@ -8,12 +8,12 @@ namespace Hyperion {
 
     class StbImageLoader : public IImageLoader {
     public:
-        inline const Vector<String> &GetSupportedExtensions() const override { return s_supported_extensions; }
+        inline const List<String> &GetSupportedExtensions() const override { return s_supported_extensions; }
         bool SupportsExtension(const String &extension) const override;
 
         Image *Load(const String &path, bool flip_vertically) override;
     private:
-        inline static Vector<String> s_supported_extensions = {
+        inline static List<String> s_supported_extensions = {
             ".png",
             ".jpg",
             ".jpeg",

@@ -12,8 +12,8 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    Vector<byte> FileSystem::ReadAllBytes(const String &path) {
-        Vector<byte> result;
+    List<byte> FileSystem::ReadAllBytes(const String &path) {
+        List<byte> result;
 
         std::ifstream file(path, std::ios::ate | std::ios::binary);
         if (!file.is_open()) {
@@ -22,9 +22,9 @@ namespace Hyperion {
         }
 
         uint64 size = file.tellg();
-        result.resize(size);
+        result.Resize(size);
         file.seekg(0);
-        file.read(reinterpret_cast<char *>(result.data()), size);
+        file.read(reinterpret_cast<char *>(result.GetData()), size);
 
         return result;
     }
@@ -46,8 +46,8 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Vector<String> FileSystem::ReadAllLines(const String &path) {
-        Vector<String> result;
+    List<String> FileSystem::ReadAllLines(const String &path) {
+        List<String> result;
 
         std::ifstream file(path);
         if (!file.is_open()) {
@@ -57,7 +57,7 @@ namespace Hyperion {
 
         String line;
         while (std::getline(file, line)) {
-            result.push_back(line);
+            result.Add(std::move(line));
         }
 
         return result;

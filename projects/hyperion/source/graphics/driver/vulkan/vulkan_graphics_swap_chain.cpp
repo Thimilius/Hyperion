@@ -43,15 +43,15 @@ namespace Hyperion::Graphics {
         uint32_t format_count;
         HYP_VULKAN_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(physical_device, m_surface, &format_count, nullptr));
         if (format_count != 0) {
-            m_swap_chain_support_details.formats.resize(format_count);
-            HYP_VULKAN_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(physical_device, m_surface, &format_count, m_swap_chain_support_details.formats.data()));
+            m_swap_chain_support_details.formats.Resize(format_count);
+            HYP_VULKAN_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(physical_device, m_surface, &format_count, m_swap_chain_support_details.formats.GetData()));
         }
 
         uint32_t present_mode_count;
         HYP_VULKAN_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(physical_device, m_surface, &present_mode_count, nullptr));
         if (present_mode_count != 0) {
-            m_swap_chain_support_details.present_modes.resize(present_mode_count);
-            HYP_VULKAN_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(physical_device, m_surface, &present_mode_count, m_swap_chain_support_details.present_modes.data()));
+            m_swap_chain_support_details.present_modes.Resize(present_mode_count);
+            HYP_VULKAN_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(physical_device, m_surface, &present_mode_count, m_swap_chain_support_details.present_modes.GetData()));
         }
     }
 
@@ -96,16 +96,16 @@ namespace Hyperion::Graphics {
         HYP_VULKAN_CHECK(vkCreateSwapchainKHR(device, &swap_chain_create_info, nullptr, &m_swap_chain));
 
         HYP_VULKAN_CHECK(vkGetSwapchainImagesKHR(device, m_swap_chain, &image_count, nullptr));
-        m_swap_chain_images.resize(image_count);
-        HYP_VULKAN_CHECK(vkGetSwapchainImagesKHR(device, m_swap_chain, &image_count, m_swap_chain_images.data()));
+        m_swap_chain_images.Resize(image_count);
+        HYP_VULKAN_CHECK(vkGetSwapchainImagesKHR(device, m_swap_chain, &image_count, m_swap_chain_images.GetData()));
     }
 
     //--------------------------------------------------------------
     void VulkanGraphicsSwapChain::CreateSwapChainImageViews() {
-        m_swap_chain_image_views.resize(m_swap_chain_images.size());
+        m_swap_chain_image_views.Resize(m_swap_chain_images.GetLength());
 
         VkDevice device = m_context->GetDevice()->GetDevice();
-        for (uint64 i = 0; i < m_swap_chain_images.size(); i++) {
+        for (uint64 i = 0; i < m_swap_chain_images.GetLength(); i++) {
             VkImageViewCreateInfo image_view_create_info = { };
             image_view_create_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
             image_view_create_info.image = m_swap_chain_images[i];
@@ -126,7 +126,7 @@ namespace Hyperion::Graphics {
     }
 
     //--------------------------------------------------------------
-    VkSurfaceFormatKHR VulkanGraphicsSwapChain::ChooseSwapChainSurfaceFormat(const Vector<VkSurfaceFormatKHR> &formats) {
+    VkSurfaceFormatKHR VulkanGraphicsSwapChain::ChooseSwapChainSurfaceFormat(const List<VkSurfaceFormatKHR> &formats) {
         for (const VkSurfaceFormatKHR &format : formats) {
             if (format.format == VK_FORMAT_R8G8B8A8_SRGB && format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
                 return format;
@@ -137,7 +137,7 @@ namespace Hyperion::Graphics {
     }
 
     //--------------------------------------------------------------
-    VkPresentModeKHR VulkanGraphicsSwapChain::ChooseSwapChainPresentMode(const Vector<VkPresentModeKHR> &present_modes) {
+    VkPresentModeKHR VulkanGraphicsSwapChain::ChooseSwapChainPresentMode(const List<VkPresentModeKHR> &present_modes) {
         for (const VkPresentModeKHR &present_mode : present_modes) {
             if (present_mode == VK_PRESENT_MODE_MAILBOX_KHR) {
                 return present_mode;

@@ -7,7 +7,7 @@
 #include <fmt/format.h>
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/types.hpp"
+#include "hyperion/core/collections/list.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -47,7 +47,7 @@ namespace Hyperion {
             return *input ? static_cast<uint32>(*input) + 33 * Hash(input + 1) : 5381;
         }
 
-        static Vector<uint32> GetCodepointsUtf8(const String &string);
+        static List<uint32> GetCodepointsUtf8(const String &string);
 
         static WideString Utf8ToUtf16(const String &string);
         static String Utf16ToUtf8(const WideString &string);

@@ -157,7 +157,7 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void Engine::ExecuteEngineLoopSubSystem(const EngineLoopSubSystem &engine_loop_sub_system) {
         // We explicitly ignore the update function for systems that contain sub systems.
-        if (engine_loop_sub_system.sub_systems.size() > 0) {
+        if (!engine_loop_sub_system.sub_systems.IsEmpty()) {
             for (const EngineLoopSubSystem &sub_system : engine_loop_sub_system.sub_systems) {
                 ExecuteEngineLoopSubSystem(sub_system);
             }
@@ -176,6 +176,7 @@ namespace Hyperion {
         if (delta_time > Time::GetMaxDeltaTime()) {
             delta_time = Time::GetMaxDeltaTime();
         }
+        // TODO: Accumulate frame times and calculate the average to get more robust frame times and fps.
         Time::s_frame_time = delta_time * 1000.0f;
         Time::s_fps = static_cast<uint32>(1.0f / delta_time);
         s_time_stats.last_time = now;

@@ -11,8 +11,8 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    Vector<String> ImageLoader::GetSupportedExtensions() {
-        Vector<String> extensions;
+    List<String> ImageLoader::GetSupportedExtensions() {
+        List<String> extensions;
 
         return extensions;
     }
@@ -39,7 +39,7 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void ImageLoader::AddFormatLoader(IImageLoader *image_loader) {
-        s_loaders.push_back(image_loader);
+        s_loaders.Add(image_loader);
     }
 
     //--------------------------------------------------------------

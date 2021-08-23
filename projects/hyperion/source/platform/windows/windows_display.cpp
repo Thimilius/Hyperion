@@ -40,7 +40,7 @@ namespace Hyperion {
         DISPLAY_DEVICEA display_device = { 0 };
         display_device.cb = sizeof(display_device);
 
-        s_display_infos.clear();
+        s_display_infos.Clear();
 
         int32 device_number = 0;
         while (EnumDisplayDevicesA(nullptr, device_number, &display_device, 0)) {
@@ -73,10 +73,10 @@ namespace Hyperion {
                         continue;
                     }
 
-                    display_info.m_mode_infos.push_back(display_mode_info);
+                    display_info.m_mode_infos.Add(display_mode_info);
                 }
 
-                s_display_infos.push_back(display_info);
+                s_display_infos.Add(display_info);
             }
         }
     }

@@ -8,9 +8,9 @@ namespace Hyperion {
 
     class FileSystem final {
     public:
-        static Vector<byte> ReadAllBytes(const String &path);
+        static List<byte> ReadAllBytes(const String &path);
         static String ReadAllText(const String &path);
-        static Vector<String> ReadAllLines(const String &path);
+        static List<String> ReadAllLines(const String &path);
 
         static void WriteAllText(const String &path, const String &text);
 

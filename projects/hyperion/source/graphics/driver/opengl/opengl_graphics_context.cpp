@@ -67,7 +67,7 @@ namespace Hyperion::Graphics {
         glGetIntegerv(GL_NUM_EXTENSIONS, &extension_count);
         for (int32 i = 0; i < extension_count; i++) {
             String extension = reinterpret_cast<const char *>(glGetStringi(GL_EXTENSIONS, i));
-            m_extensions.push_back(extension);
+            m_extensions.Add(extension);
             if constexpr (g_log_extensions) {
                 HYP_LOG_INFO("Graphics", "OpenGL extension: '{}' available!", extension);
             }

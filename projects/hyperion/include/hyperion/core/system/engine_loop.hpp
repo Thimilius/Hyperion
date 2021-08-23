@@ -11,7 +11,7 @@ namespace Hyperion {
     struct EngineLoopSubSystem {
         String name;
         EngineLoopUpdateFunction update_function = nullptr;
-        Vector<EngineLoopSubSystem> sub_systems;
+        List<EngineLoopSubSystem> sub_systems;
     };
 
     struct EngineLoopSystem {

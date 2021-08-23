@@ -28,8 +28,8 @@ namespace Hyperion::Graphics {
         void CreateSwapChain();
         void CreateSwapChainImageViews();
     private:
-        static VkSurfaceFormatKHR ChooseSwapChainSurfaceFormat(const Vector<VkSurfaceFormatKHR> &formats);
-        static VkPresentModeKHR ChooseSwapChainPresentMode(const Vector<VkPresentModeKHR> &present_modes);
+        static VkSurfaceFormatKHR ChooseSwapChainSurfaceFormat(const List<VkSurfaceFormatKHR> &formats);
+        static VkPresentModeKHR ChooseSwapChainPresentMode(const List<VkPresentModeKHR> &present_modes);
         static VkExtent2D ChooseSwapChainExtent(const VkSurfaceCapabilitiesKHR &capabilities);
     private:
         VulkanGraphicsContext *m_context;
@@ -38,16 +38,16 @@ namespace Hyperion::Graphics {
         VkQueue m_queue;
 
         VkSwapchainKHR m_swap_chain;
-        Vector<VkImage> m_swap_chain_images;
+        List<VkImage> m_swap_chain_images;
         VkFormat m_swap_chain_format;
         VkExtent2D m_swap_chain_extent;
-        Vector<VkImageView> m_swap_chain_image_views;
+        List<VkImageView> m_swap_chain_image_views;
 
         struct SwapChainSupportDetails {
             VkSurfaceCapabilitiesKHR capabilities;
 
-            Vector<VkSurfaceFormatKHR> formats;
-            Vector<VkPresentModeKHR> present_modes;
+            List<VkSurfaceFormatKHR> formats;
+            List<VkPresentModeKHR> present_modes;
         } m_swap_chain_support_details;
     };
 

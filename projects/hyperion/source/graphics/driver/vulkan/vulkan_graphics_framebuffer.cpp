@@ -16,9 +16,9 @@ namespace Hyperion::Graphics {
 
     //--------------------------------------------------------------
     VulkanGraphicsFramebuffer::VulkanGraphicsFramebuffer(VulkanGraphicsDevice *device, const GraphicsFramebufferDescription &description) : GraphicsFramebuffer(device, description) {
-        uint32 attachment_count = static_cast<uint32>(description.attachments.size());
+        uint32 attachment_count = static_cast<uint32>(description.attachments.GetLength());
 
-        Vector<VkImageView> attachments(attachment_count);
+        List<VkImageView> attachments(attachment_count);
         for (GraphicsTextureView *texture_view : description.attachments) {
             // TODO: Implement.
         }
@@ -28,7 +28,7 @@ namespace Hyperion::Graphics {
         framebuffer_create_info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
         framebuffer_create_info.renderPass = reinterpret_cast<VulkanGraphicsRenderPass *>(description.render_pass)->GetRenderPass();
         framebuffer_create_info.attachmentCount = attachment_count;
-        framebuffer_create_info.pAttachments = attachments.data();
+        framebuffer_create_info.pAttachments = attachments.GetData();
         framebuffer_create_info.width = swap_chain_extent.width;
         framebuffer_create_info.height = swap_chain_extent.height;
         framebuffer_create_info.layers = 1;

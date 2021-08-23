@@ -13,11 +13,11 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    Vector<uint32> StringUtils::GetCodepointsUtf8(const String &string) {
+    List<uint32> StringUtils::GetCodepointsUtf8(const String &string) {
         // Implementation from https://github.com/sheredom/utf8.h/blob/master/utf8.h.
         const char *s = string.c_str();
 
-        Vector<uint32> codepoints;
+        List<uint32> codepoints;
 
         // This assumes a valid utf8 string.
         while (*s != '\0') {
@@ -39,7 +39,7 @@ namespace Hyperion {
                 codepoint = s[0];
                 s += 1;
             }
-            codepoints.push_back(codepoint);
+            codepoints.Add(codepoint);
         }
 
         return codepoints;
@@ -51,12 +51,12 @@ namespace Hyperion {
         int32 string_length = static_cast<int32>(string.length());
         auto utf16_length = MultiByteToWideChar(CP_UTF8, 0, string.c_str(), string_length, nullptr, 0);
 
-        Vector<WCHAR> buffer(utf16_length + 1);
+        List<WCHAR> buffer(utf16_length + 1);
         buffer[utf16_length] = 0;
 
-        MultiByteToWideChar(CP_UTF8, 0, string.c_str(), string_length, buffer.data(), utf16_length);
+        MultiByteToWideChar(CP_UTF8, 0, string.c_str(), string_length, buffer.GetData(), utf16_length);
 
-        WideString result = buffer.data();
+        WideString result = buffer.GetData();
         return result;
 #else
         #error Missing platform implementation
@@ -69,12 +69,12 @@ namespace Hyperion {
         int32 string_length = static_cast<int32>(string.length());
         auto utf8_length = WideCharToMultiByte(CP_UTF8, 0, string.c_str(), string_length, nullptr, 0, nullptr, nullptr);
 
-        Vector<char> buffer(utf8_length + 1);
+        List<char> buffer(utf8_length + 1);
         buffer[utf8_length] = 0;
 
-        WideCharToMultiByte(CP_UTF8, 0, string.c_str(), string_length, buffer.data(), utf8_length, nullptr, nullptr);
+        WideCharToMultiByte(CP_UTF8, 0, string.c_str(), string_length, buffer.GetData(), utf8_length, nullptr, nullptr);
 
-        String result = buffer.data();
+        String result = buffer.GetData();
         return result;
 #else
         #error Missing platform implementation

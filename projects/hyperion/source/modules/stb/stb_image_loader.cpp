@@ -33,7 +33,7 @@ namespace Hyperion {
             return nullptr;
         }
 
-        Vector<byte> pixels(buffer, buffer + (width * height * channels));
+        List<byte> pixels(buffer, buffer + (width * height * channels));
         stbi_image_free(buffer);
 
         return Image::Create(width, height, channels, std::move(pixels));

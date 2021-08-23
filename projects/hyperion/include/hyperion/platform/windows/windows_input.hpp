@@ -32,7 +32,7 @@ namespace Hyperion {
         bool IsMouseButtonHold(MouseButtonCode mouse_button_code) const override { return m_mouse_buttons[static_cast<int32>(mouse_button_code)]; }
         bool IsMouseButtonUp(MouseButtonCode mouse_button_code) const override { return m_mouse_buttons_up[static_cast<int32>(mouse_button_code)]; }
 
-        const Vector<Gamepad> &GetConnectedGamepads() const override { return m_gamepads_connected; }
+        const List<Gamepad> &GetConnectedGamepads() const override { return m_gamepads_connected; }
         Vector2 GetGamepadAxis(Gamepad gamepad, GamepadAxis axis) const override { return m_gamepads[static_cast<int32>(gamepad)].axes[static_cast<int32>(axis)]; }
         void SetGamepadVibration(Gamepad gamepad, float32 left_vibration, float32 right_vibration) override;
 
@@ -80,7 +80,7 @@ namespace Hyperion {
         };
 
         bool m_gamepad_input_active = true;
-        Vector<Gamepad> m_gamepads_connected;
+        List<Gamepad> m_gamepads_connected;
         GamepadState m_gamepads[static_cast<int32>(Gamepad::Last)];
         float32 m_gamepad_dead_zone = 0.25f;
     private:

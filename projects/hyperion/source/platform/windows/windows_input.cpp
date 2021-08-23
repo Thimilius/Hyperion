@@ -122,17 +122,15 @@ namespace Hyperion {
         }
         
         if (m_gamepad_input_active) {
-            for (DWORD i = 0; i < m_gamepads_connected.size(); i++) {
+            for (DWORD i = 0; i < m_gamepads_connected.GetLength(); i++) {
                 Gamepad gamepad = m_gamepads_connected[i];
                 XINPUT_STATE state = { 0 };
                 DWORD result = g_xinput_get_state(GetIdFromGamepad(gamepad), &state);
 
-                auto begin = m_gamepads_connected.begin();
-                auto end = m_gamepads_connected.end();
-
                 if (result != ERROR_SUCCESS) {
-                    if (std::find(begin, end, gamepad) != end) {
-                        m_gamepads_connected.erase(std::remove(begin, end, gamepad));
+                    // FIXME: Does this really work while we are iterating?
+                    if (m_gamepads_connected.Contains(gamepad)) {
+                        m_gamepads_connected.Remove(gamepad);
 
                         GamepadConnectionChangedEvent event(gamepad, false);
                         DispatchEvent(event);
@@ -209,21 +207,18 @@ namespace Hyperion {
             XINPUT_STATE state = { 0 };
             DWORD result = g_xinput_get_state(gamepad_id, &state);
 
-            auto begin = m_gamepads_connected.begin();
-            auto end = m_gamepads_connected.end();
-
             Gamepad gamepad = GetGamepadFromId(gamepad_id);
 
             if (result == ERROR_SUCCESS) {
-                if (std::find(begin, end, gamepad) == end) {
-                    m_gamepads_connected.push_back(gamepad);
+                if (!m_gamepads_connected.Contains(gamepad)) {
+                    m_gamepads_connected.Add(gamepad);
 
                     GamepadConnectionChangedEvent event(gamepad, true);
                     DispatchEvent(event);
                 }
             } else {
-                if (std::find(begin, end, gamepad) != end) {
-                    m_gamepads_connected.erase(std::remove(begin, end, gamepad));
+                if (m_gamepads_connected.Contains(gamepad)) {
+                    m_gamepads_connected.Remove(gamepad);
 
                     GamepadConnectionChangedEvent event(gamepad, false);
                     DispatchEvent(event);

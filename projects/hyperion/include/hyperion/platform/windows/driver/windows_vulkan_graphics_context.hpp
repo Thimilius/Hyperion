@@ -15,7 +15,7 @@ namespace Hyperion::Graphics {
     protected:
         VkResult CreateSurface(VkSurfaceKHR *surface) override;
 
-        void CheckExtensions(Vector<const char *> &required_extension_names) override;
+        void CheckExtensions(List<const char *> &required_extension_names) override;
     private:
         HWND m_window_handle;
     };

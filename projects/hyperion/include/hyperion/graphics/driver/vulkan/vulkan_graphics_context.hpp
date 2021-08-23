@@ -46,13 +46,13 @@ namespace Hyperion::Graphics {
     protected:
         virtual VkResult CreateSurface(VkSurfaceKHR *surface) = 0;
 
-        virtual void CheckExtensions(Vector<const char *> &required_extension_names);
-        void CheckExtension(Vector<const char *> &required_extension_names, const char *extension_name);
-        virtual void CheckLayers(Vector<const char *> &required_layer_names);
-        void CheckLayer(Vector<const char *> &required_layer_names, const char *layer_name);
+        virtual void CheckExtensions(List<const char *> &required_extension_names);
+        void CheckExtension(List<const char *> &required_extension_names, const char *extension_name);
+        virtual void CheckLayers(List<const char *> &required_layer_names);
+        void CheckLayer(List<const char *> &required_layer_names, const char *layer_name);
     private:
         void InitializeDebug();
-        void InitializeInstance(const Vector<const char *> &required_extension_names, const Vector<const char *> &required_layer_names);
+        void InitializeInstance(const List<const char *> &required_extension_names, const List<const char *> &required_layer_names);
         void InitializeSurface();
         void InitializePhysicalDevice();
         void InitializeQueueFamilyIndices();
@@ -73,8 +73,8 @@ namespace Hyperion::Graphics {
         VkDebugUtilsMessengerEXT m_debug_messenger = nullptr;
 
         VulkanQueueFamilyIndices m_queue_family_indices;
-        Vector<VkExtensionProperties> m_extensions;
-        Vector<VkLayerProperties> m_layers;
+        List<VkExtensionProperties> m_extensions;
+        List<VkLayerProperties> m_layers;
     };
 
 }
