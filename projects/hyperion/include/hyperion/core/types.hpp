@@ -18,6 +18,8 @@ using uint16 = uint16_t;
 using uint32 = uint32_t;
 using uint64 = uint64_t;
 
+using byte = uint8;
+
 using float32 = float;
 using float64 = double;
 

@@ -12,8 +12,8 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    Vector<uint8> FileSystem::ReadAllBytes(const String &path) {
-        Vector<uint8> result;
+    Vector<byte> FileSystem::ReadAllBytes(const String &path) {
+        Vector<byte> result;
 
         std::ifstream file(path, std::ios::ate | std::ios::binary);
         if (!file.is_open()) {

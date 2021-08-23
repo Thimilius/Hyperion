@@ -23,14 +23,14 @@ namespace Hyperion {
         int32 width = 0;
         int32 height = 0;
         int32 channels = 0;
-        uint8 *buffer = stbi_load(path.c_str(), &width, &height, &channels, 0);
+        byte *buffer = stbi_load(path.c_str(), &width, &height, &channels, 0);
 
         if (!buffer) {
             HYP_LOG_ERROR("Engine", "Failed to load image from path: {}", std::filesystem::absolute(path).u8string());
             return nullptr;
         }
 
-        Vector<uint8> pixels(buffer, buffer + (width * height * channels));
+        Vector<byte> pixels(buffer, buffer + (width * height * channels));
         stbi_image_free(buffer);
 
         return Image::Create(width, height, channels, std::move(pixels));
