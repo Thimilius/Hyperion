@@ -17,7 +17,7 @@ namespace Hyperion {
 
         std::ifstream file(path, std::ios::ate | std::ios::binary);
         if (!file.is_open()) {
-            HYP_LOG_ERROR("Engine", "Failed to open file: '{}'!", std::filesystem::absolute(path).u8string());
+            HYP_LOG_ERROR("Engine", "Failed to open file: '{}'!", GetAbsoluteFilePath(path));
             return result;
         }
 
@@ -33,7 +33,7 @@ namespace Hyperion {
     String FileSystem::ReadAllText(const String &path) {
         std::ifstream file(path, std::ios::ate);
         if (!file.is_open()) {
-            HYP_LOG_ERROR("Engine", "Failed to open file: '{}'!", std::filesystem::absolute(path).u8string());
+            HYP_LOG_ERROR("Engine", "Failed to open file: '{}'!", GetAbsoluteFilePath(path));
             return String();
         }
 
@@ -51,7 +51,7 @@ namespace Hyperion {
 
         std::ifstream file(path);
         if (!file.is_open()) {
-            HYP_LOG_ERROR("Engine", "Failed to open file: '{}'!", std::filesystem::absolute(path).u8string());
+            HYP_LOG_ERROR("Engine", "Failed to open file: '{}'!", GetAbsoluteFilePath(path));
             return result;
         }
 
@@ -72,6 +72,11 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void FileSystem::Delete(const String &path) {
         std::filesystem::remove(path);
+    }
+
+    //--------------------------------------------------------------
+    String FileSystem::GetAbsoluteFilePath(const String& path) {
+        return std::filesystem::absolute(path).u8string();
     }
 
 }

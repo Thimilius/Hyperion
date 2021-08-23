@@ -8,6 +8,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
+//---------------------- Project Includes ----------------------
+#include "hyperion/core/io/file_system.hpp"
+
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
@@ -26,7 +29,7 @@ namespace Hyperion {
         byte *buffer = stbi_load(path.c_str(), &width, &height, &channels, 0);
 
         if (!buffer) {
-            HYP_LOG_ERROR("Engine", "Failed to load image from path: {}", std::filesystem::absolute(path).u8string());
+            HYP_LOG_ERROR("Engine", "Failed to load image from path: {}", FileSystem::GetAbsoluteFilePath(path));
             return nullptr;
         }
 

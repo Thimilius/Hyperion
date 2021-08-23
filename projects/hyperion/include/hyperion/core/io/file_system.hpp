@@ -15,6 +15,8 @@ namespace Hyperion {
         static void WriteAllText(const String &path, const String &text);
 
         static void Delete(const String &path);
+
+        static String GetAbsoluteFilePath(const String &path);
     private:
         FileSystem() = delete;
         ~FileSystem() = delete;
