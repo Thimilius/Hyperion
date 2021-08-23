@@ -3,9 +3,7 @@
 //--------------- C++ Standard Library Includes ----------------
 #include <cstdint>
 #include <vector>
-#include <unordered_map>
 #include <unordered_set>
-#include <queue>
 
 //--------------------------------------------------------------
 using int8 = int8_t;
@@ -26,14 +24,5 @@ using float64 = double;
 template<typename T>
 using Vector = std::vector<T>;
 
-template<typename Key, typename Value>
-using Map = std::unordered_map<Key, Value>;
-
-template<typename Key, typename Value>
-using MultiMap = std::unordered_multimap<Key, Value>;
-
 template<typename T>
 using Set = std::unordered_set<T>;
-
-template<typename T>
-using Queue = std::queue<T>;

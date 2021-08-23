@@ -18,6 +18,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/assert.hpp"
+#include "hyperion/core/collections/collections.hpp"
 #include "hyperion/core/enum.hpp"
 #include "hyperion/core/error.hpp"
 #include "hyperion/core/non_copyable.hpp"
