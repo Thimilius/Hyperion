@@ -11,10 +11,10 @@ namespace Hyperion {
 
     template<typename T>
     class List {
-        using ListIterator = typename std::vector<T>::iterator;
-        using ListConstIterator = typename std::vector<T>::const_iterator;
-        using ListReverseIterator = typename std::vector<T>::reverse_iterator;
-        using ListConstReverseIterator = typename std::vector<T>::const_reverse_iterator;
+        using Iterator = typename std::vector<T>::iterator;
+        using ConstIterator = typename std::vector<T>::const_iterator;
+        using ReverseIterator = typename std::vector<T>::reverse_iterator;
+        using ConstReverseIterator = typename std::vector<T>::const_reverse_iterator;
     public:
         inline List() { }
         inline List(uint64 size) : m_vector(size) { }
@@ -42,7 +42,7 @@ namespace Hyperion {
         inline void Add(T &&item) { m_vector.push_back(item); }
         
         inline void Remove(const T &item) { m_vector.erase(std::remove(begin(), end(), item)); }
-        inline void Remove(ListIterator first, ListIterator last, const T &item) { m_vector.erase(std::remove(first, last, item)); }
+        inline void Remove(Iterator first, Iterator last, const T &item) { m_vector.erase(std::remove(first, last, item)); }
         inline void RemoveLast() { m_vector.pop_back(); }
 
         inline void Clear() { m_vector.clear(); }
@@ -50,19 +50,19 @@ namespace Hyperion {
         inline void Resize(uint64 size) { m_vector.resize(size); }
         inline void ShrinkToFit() { m_vector.shrink_to_fit(); }
 
-        inline ListIterator begin() { return m_vector.begin(); }
-        inline ListConstIterator begin() const { return m_vector.begin(); }
-        inline ListConstIterator cbegin() const { return m_vector.cbegin(); }
-        inline ListIterator end() { return m_vector.end(); }
-        inline ListConstIterator end() const { return m_vector.end(); }
-        inline ListConstIterator cend() const { return m_vector.cend(); }
+        inline Iterator begin() { return m_vector.begin(); }
+        inline ConstIterator begin() const { return m_vector.begin(); }
+        inline ConstIterator cbegin() const { return m_vector.cbegin(); }
+        inline Iterator end() { return m_vector.end(); }
+        inline ConstIterator end() const { return m_vector.end(); }
+        inline ConstIterator cend() const { return m_vector.cend(); }
 
-        inline ListReverseIterator rbegin() { return m_vector.rbegin(); }
-        inline ListConstReverseIterator rbegin() const { return m_vector.rbegin(); }
-        inline ListConstReverseIterator crbegin() const { return m_vector.crbegin(); }
-        inline ListReverseIterator rend() { return m_vector.rend(); }
-        inline ListConstReverseIterator rend() const { return m_vector.rend(); }
-        inline ListConstReverseIterator crend() const { return m_vector.crend(); }
+        inline ReverseIterator rbegin() { return m_vector.rbegin(); }
+        inline ConstReverseIterator rbegin() const { return m_vector.rbegin(); }
+        inline ConstReverseIterator crbegin() const { return m_vector.crbegin(); }
+        inline ReverseIterator rend() { return m_vector.rend(); }
+        inline ConstReverseIterator rend() const { return m_vector.rend(); }
+        inline ConstReverseIterator crend() const { return m_vector.crend(); }
 
         inline T &operator[](uint64 index) { return m_vector[index]; }
         inline const T &operator[](uint64 index) const { return m_vector[index]; }
