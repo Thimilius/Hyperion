@@ -13,10 +13,8 @@ namespace Hyperion {
         inline uint32 GetChannels() const { return m_channels; }
         inline const List<byte> &GetPixels() const { return m_pixels; }
     public:
-        static Image *Create();
         static Image *Create(uint32 width, uint32 height, uint32 channels, List<byte> &&pixels);
     private:
-        Image() = default;
         Image(uint32 width, uint32 height, uint32 channels, List<byte> &&pixels);
     private:
         uint32 m_width;

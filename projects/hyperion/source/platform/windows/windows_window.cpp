@@ -75,7 +75,7 @@ namespace Hyperion {
         }
 
         switch (m_window_mode) {
-            case Hyperion::WindowMode::Windowed: {
+            case WindowMode::Windowed: {
                 // If we are maximized we first restore the window to be normal.
                 if (m_window_state == WindowState::Maximized) {
                     SetWindowState(WindowState::Normal);
@@ -87,7 +87,7 @@ namespace Hyperion {
                 SetWindowPos(m_window_handle, nullptr, 0, 0, static_cast<uint32>(size.x), static_cast<uint32>(size.y), flags);
                 break;
             }
-            case Hyperion::WindowMode::Borderless: {
+            case WindowMode::Borderless: {
                 // In borderless mode we do not resize because we would probably not fill the screen anymore.
                 break;
             }
@@ -117,7 +117,7 @@ namespace Hyperion {
         m_window_mode = window_mode;
 
         switch (window_mode) {
-            case Hyperion::WindowMode::Windowed: {
+            case WindowMode::Windowed: {
                 SetWindowLongW(m_window_handle, GWL_STYLE, window_styles | (WS_OVERLAPPEDWINDOW));
                 SetWindowPlacement(m_window_handle, &m_previous_placement);
 
@@ -127,7 +127,7 @@ namespace Hyperion {
                 SetWindowPos(m_window_handle, nullptr, 0, 0, static_cast<uint32>(size.x), static_cast<uint32>(size.y), flags);
                 break;
             }
-            case Hyperion::WindowMode::Borderless: {
+            case WindowMode::Borderless: {
                 GetWindowPlacement(m_window_handle, &m_previous_placement);
 
                 MONITORINFO monitor_info = { sizeof(monitor_info) };
@@ -154,15 +154,15 @@ namespace Hyperion {
 
         bool result = true;
         switch (window_state) {
-            case Hyperion::WindowState::Normal: {
+            case WindowState::Normal: {
                 result = ShowWindow(m_window_handle, SW_RESTORE);
                 break;
             }
-            case Hyperion::WindowState::Minimized: {
+            case WindowState::Minimized: {
                 result = ShowWindow(m_window_handle, SW_MINIMIZE);
                 break;
             }
-            case Hyperion::WindowState::Maximized: {
+            case WindowState::Maximized: {
                 // We only maximize in windowed mode.
                 if (m_window_mode == WindowMode::Windowed) {
                     result = ShowWindow(m_window_handle, SW_MAXIMIZE);

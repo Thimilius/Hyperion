@@ -2,18 +2,22 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/core/image.hpp"
+#include "hyperion/assets/asset_manager.hpp"
+
+//---------------------- Project Includes ----------------------
+#include "hyperion/assets/loader/image_loader.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
+    
+    //--------------------------------------------------------------
+    void AssetManager::Initialize() {
+        ImageLoader::Initialize();
+    }
 
     //--------------------------------------------------------------
-    Image::Image(uint32 width, uint32 height, uint32 channels, List<byte> &&pixels)
-        : m_width(width), m_height(height), m_channels(channels), m_pixels(pixels) { }
-
-    //--------------------------------------------------------------
-    Image *Image::Create(uint32 width, uint32 height, uint32 channels, List<byte> &&pixels) {
-        return new Image(width, height, channels, std::move(pixels));
+    void AssetManager::Shutdown() {
+        ImageLoader::Shutdown();
     }
 
 }

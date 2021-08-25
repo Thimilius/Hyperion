@@ -75,6 +75,11 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    bool FileSystem::Exists(const String &path) {
+        return std::filesystem::exists(path);
+    }
+
+    //--------------------------------------------------------------
     String FileSystem::GetAbsoluteFilePath(const String& path) {
         return std::filesystem::absolute(path).u8string();
     }

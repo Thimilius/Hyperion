@@ -5,6 +5,7 @@
 #include "hyperion/core/system/engine.hpp"
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/audio/audio_engine.hpp"
 #include "hyperion/core/timer.hpp"
 #include "hyperion/core/app/application.hpp"
@@ -57,6 +58,8 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Engine::Initialize() {
+        AssetManager::Initialize();
+
         Audio::AudioEngine::Initialize();
         Rendering::RenderEngine::Initialize();
         Physics::PhysicsEngine::Initialize();

@@ -19,7 +19,7 @@ namespace Hyperion {
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
-    
+
     class Engine final {
     public:
         template<typename ...Args>

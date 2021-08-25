@@ -20,7 +20,11 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Image *StbImageLoader::Load(const String &path, bool flip_vertically) {
+    Result<Image *, Error> StbImageLoader::Load(const String &path, bool flip_vertically) {
+        if (!FileSystem::Exists(path)) {
+            return { Error::FileDoesNotExist };
+        }
+
         stbi_set_flip_vertically_on_load(flip_vertically);
 
         int32 width = 0;
@@ -29,14 +33,13 @@ namespace Hyperion {
         byte *buffer = stbi_load(path.c_str(), &width, &height, &channels, 0);
 
         if (!buffer) {
-            HYP_LOG_ERROR("Engine", "Failed to load image from path: {}", FileSystem::GetAbsoluteFilePath(path));
-            return nullptr;
+            return { Error::ImageLoadFailed };
         }
 
         List<byte> pixels(buffer, buffer + (width * height * channels));
         stbi_image_free(buffer);
 
-        return Image::Create(width, height, channels, std::move(pixels));
+        return { Image::Create(width, height, channels, std::move(pixels)) };
     }
 
 }

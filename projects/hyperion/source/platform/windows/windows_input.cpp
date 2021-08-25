@@ -273,10 +273,10 @@ namespace Hyperion {
     //--------------------------------------------------------------
     uint32 WindowsInput::GetIdFromGamepad(Gamepad gamepad) {
         switch (gamepad) {
-            case Hyperion::Gamepad::Gamepad1: return 0;
-            case Hyperion::Gamepad::Gamepad2: return 1;
-            case Hyperion::Gamepad::Gamepad3: return 2;
-            case Hyperion::Gamepad::Gamepad4: return 3;
+            case Gamepad::Gamepad1: return 0;
+            case Gamepad::Gamepad2: return 1;
+            case Gamepad::Gamepad3: return 2;
+            case Gamepad::Gamepad4: return 3;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
         }
     }

@@ -43,7 +43,7 @@ namespace Hyperion {
             return string;
         }
 
-        inline static constexpr uint32 Hash(char const *input) {
+        inline static constexpr uint32 Hash(const char *input) {
             return *input ? static_cast<uint32>(*input) + 33 * Hash(input + 1) : 5381;
         }
 

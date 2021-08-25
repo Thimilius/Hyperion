@@ -3,6 +3,11 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/image.hpp"
 
+//-------------------- Forward Declarations --------------------
+namespace Hyperion {
+    class AssetManager;
+}
+
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
@@ -13,7 +18,7 @@ namespace Hyperion {
         virtual const List<String> &GetSupportedExtensions() const = 0;
         virtual bool SupportsExtension(const String &extension) const = 0;
 
-        virtual Image *Load(const String &path, bool flip_vertically) = 0;
+        virtual Result<Image *, Error> Load(const String &path, bool flip_vertically) = 0;
     };
 
     class ImageLoader final {
@@ -21,7 +26,7 @@ namespace Hyperion {
         static List<String> GetSupportedExtensions();
         static bool SupportsExtension(const String &extension);
 
-        static Image *Load(const String &path, bool flip_vertically = false);
+        static Result<Image *, Error> Load(const String &path, bool flip_vertically = false);
         static void AddFormatLoader(IImageLoader *image_loader);
     private:
         ImageLoader() = delete;
@@ -31,6 +36,8 @@ namespace Hyperion {
         static void Shutdown();
     private:
         inline static List<IImageLoader *> s_loaders;
+    private:
+        friend class Hyperion::AssetManager;
     };
 
 }
