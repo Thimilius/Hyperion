@@ -29,12 +29,12 @@ namespace Hyperion {
         inline T *GetData() { return m_vector.data(); }
         inline const T *GetData() const { return m_vector.data(); }
 
-        inline T &Get(uint64 index) { m_vector.at(index); }
-        inline const T &Get(uint64 index) const { m_vector.at(index); }
-        inline T &GetFirst() { m_vector.front(); }
-        inline const T &GetFirst() const { m_vector.front(); }
-        inline T &GetLast() { m_vector.back(); }
-        inline const T &GetLast() const { m_vector.back(); }
+        inline T &Get(uint64 index) { return m_vector.at(index); }
+        inline const T &Get(uint64 index) const { return m_vector.at(index); }
+        inline T &GetFirst() { return m_vector.front(); }
+        inline const T &GetFirst() const { return m_vector.front(); }
+        inline T &GetLast() { return  m_vector.back(); }
+        inline const T &GetLast() const { return m_vector.back(); }
 
         inline bool Contains(const T &item) const { return std::find(begin(), end(), item) != end(); }
 
