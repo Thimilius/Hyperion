@@ -5,7 +5,7 @@
 #include <hyperion/entry_point.hpp>
 #include <hyperion/core/app/time.hpp>
 
-#include <hyperion/assets/loader/image_loader.hpp>
+#include <hyperion/entity/world.hpp>
 
 //------------------------- Namespaces -------------------------
 using namespace Hyperion;
@@ -21,8 +21,6 @@ namespace Sandbox {
     //--------------------------------------------------------------
     void SandboxApplication::OnInitialize() {
         UpdateTitle();
-
-        Image *image = ImageLoader::Load("icon/icon.png").Unwrap();
     }
 
     //--------------------------------------------------------------

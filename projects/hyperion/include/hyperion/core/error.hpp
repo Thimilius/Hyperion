@@ -8,7 +8,7 @@
 namespace Hyperion {
 
     enum class Error {
-        Unknown,
+        None,
 
         FileDoesNotExist,
         ImageLoadFailed,
@@ -17,7 +17,7 @@ namespace Hyperion {
 
     inline String ToString(Error error) {
         switch (error) {
-            case Error::Unknown: return "Unknown";
+            case Error::None: return "None";
             case Error::FileDoesNotExist: return "FileDoesNotExist";
             case Error::ImageLoadFailed: return "ImageLoadFailed";
             case Error::NoLoaderAvailable: return "NoLoaderAvailable";
