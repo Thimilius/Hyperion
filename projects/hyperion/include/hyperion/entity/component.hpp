@@ -12,7 +12,7 @@ namespace Hyperion {
     public:
         template<typename T>
         inline static ComponentId GetId() {
-            static ComponentId component_id = s_component_counter;
+            static ComponentId component_id = s_component_counter++;
             return component_id;
         }
     private:
