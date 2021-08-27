@@ -8,7 +8,7 @@ namespace Hyperion {
 
     using ComponentId = uint32;
 
-    class Component {
+    class Component final {
     public:
         template<typename T>
         inline static ComponentId GetId() {

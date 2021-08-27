@@ -48,6 +48,7 @@ namespace Hyperion {
         inline void Clear() { m_vector.clear(); }
         inline void Reserve(uint64 capacity) { m_vector.reserve(capacity); }
         inline void Resize(uint64 size) { m_vector.resize(size); }
+        inline void Resize(uint64 size, const T &value) { m_vector.resize(size, value); }
         inline void ShrinkToFit() { m_vector.shrink_to_fit(); }
 
         inline Iterator begin() { return m_vector.begin(); }

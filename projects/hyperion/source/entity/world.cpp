@@ -8,6 +8,12 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
+    bool World::IsValidId(EntityId id) {
+        EntityIndex index = Entity::GetIndex(id);
+        return index < m_entities.GetLength() && m_entities[index].id == id;
+    }
+
+    //--------------------------------------------------------------
     EntityGuid World::GetGuid(EntityId id) {
         if (IsValidId(id)) {
             return m_entities[Entity::GetIndex(id)].guid;
@@ -20,7 +26,7 @@ namespace Hyperion {
     //--------------------------------------------------------------
     EntityId World::CreateEntity() {
         if (m_free_entity_indices.IsEmpty()) {
-            m_entities.Add({ m_entities.GetLength(), Entity::CreateGuid(), EntityComponentMask() });
+            m_entities.Add({ Entity::CreateId(static_cast<EntityIndex>(m_entities.GetLength()), 0), Entity::CreateGuid() });
             return m_entities.GetLast().id;
         } else {
             EntityIndex new_index = m_free_entity_indices.GetLast();
@@ -41,18 +47,14 @@ namespace Hyperion {
 
             EntityDescription &entity_description = m_entities[index];
             entity_description.id = new_id;
-            entity_description.component_mask.reset();
-
             m_free_entity_indices.Add(index);
+
+            for (EntityPool &entity_pool : m_entity_pools) {
+                entity_pool.RemoveComponent(id);
+            }
         } else {
             HYP_LOG_WARN("Entity", "Trying to destroy nonexistent entity with id {}.", id);
         }
-    }
-
-    //--------------------------------------------------------------
-    bool World::IsValidId(EntityId id) {
-        EntityIndex index = Entity::GetIndex(id);
-        return index < m_entities.GetLength() && m_entities[index].id == id;
     }
 
 }

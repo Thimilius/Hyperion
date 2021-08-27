@@ -8,7 +8,7 @@ namespace Hyperion {
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    class AssetManager {
+    class AssetManager final {
     private:
         AssetManager() = delete;
         ~AssetManager() = delete;
