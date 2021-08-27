@@ -34,6 +34,12 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    bool EntityPool::HasComponent(EntityId id) {
+        uint32 packed_index = m_entity_indices[Entity::GetIndex(id)];
+        return packed_index != EntityPool::SPARSE_ELEMENT;
+    }
+
+    //--------------------------------------------------------------
     byte *EntityPool::GetComponent(EntityId id) {
         uint32 packed_index = m_entity_indices[Entity::GetIndex(id)];
         if (packed_index == EntityPool::SPARSE_ELEMENT) {

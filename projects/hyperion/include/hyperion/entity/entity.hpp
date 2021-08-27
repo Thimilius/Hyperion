@@ -46,6 +46,7 @@ namespace Hyperion {
         inline EntityId GetEntity(EntityIndex index) const { return m_entity_list[index]; }
 
         byte *AddComponent(EntityId id);
+        bool HasComponent(EntityId id);
         byte *GetComponent(EntityId id);
         bool RemoveComponent(EntityId id);
     private:
