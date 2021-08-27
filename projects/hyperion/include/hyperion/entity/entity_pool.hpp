@@ -2,7 +2,8 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/guid.hpp"
-#include "hyperion/entity/component.hpp"
+#include "hyperion/entity/entity_types.hpp"
+#include "hyperion/entity/component/component.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -11,27 +12,6 @@ namespace Hyperion {
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
-
-    using EntityId = uint64;
-    using EntityIndex = uint32;
-    using EntityVersion = uint32;
-    using EntityGuid = Guid;
-
-    struct EntityDescription {
-        EntityId id;
-        EntityGuid guid;
-    };
-
-    class Entity final {
-    public:
-        inline static constexpr EntityId CreateId(EntityIndex index, EntityVersion version) { return static_cast<EntityId>(index) | (static_cast<EntityId>(version) << 32); }
-        inline static EntityGuid CreateGuid() { return Guid::Create(); }
-
-        inline static constexpr EntityIndex GetIndex(EntityId id) { return static_cast<EntityIndex>(id); }
-        inline static constexpr EntityVersion GetVersion(EntityId id) { return id >> 32; }
-    public:
-        inline static constexpr EntityId EMPTY = 0xFFFFFFFF00000000;
-    };
 
     using EntityIndices = List<uint32>;
     using EntityList = List<EntityId>;
@@ -62,5 +42,6 @@ namespace Hyperion {
     private:
         friend class Hyperion::World;
     };
+
 
 }

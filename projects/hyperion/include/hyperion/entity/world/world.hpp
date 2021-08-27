@@ -1,8 +1,8 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/entity/component.hpp"
-#include "hyperion/entity/world_view.hpp"
+#include "hyperion/entity/component/component.hpp"
+#include "hyperion/entity/world/world_view.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {

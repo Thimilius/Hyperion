@@ -2,7 +2,10 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/entity/entity.hpp"
+#include "hyperion/entity/entity_pool.hpp"
+
+//---------------------- Project Includes ----------------------
+#include "hyperion/entity/entity_utilities.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -18,9 +21,9 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     byte *EntityPool::AddComponent(EntityId id) {
-        uint32 packed_index = m_entity_indices[Entity::GetIndex(id)];
+        uint32 packed_index = m_entity_indices[EntityUtilities::GetIndex(id)];
         if (packed_index == EntityPool::SPARSE_ELEMENT) {
-            m_entity_indices[Entity::GetIndex(id)] = static_cast<uint32>(m_entity_list.GetLength());
+            m_entity_indices[EntityUtilities::GetIndex(id)] = static_cast<uint32>(m_entity_list.GetLength());
             m_entity_list.Add(id);
             uint64 current_size = m_component_list.GetLength();
             m_component_list.Resize(current_size + m_component_element_size);
@@ -35,13 +38,13 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     bool EntityPool::HasComponent(EntityId id) {
-        uint32 packed_index = m_entity_indices[Entity::GetIndex(id)];
+        uint32 packed_index = m_entity_indices[EntityUtilities::GetIndex(id)];
         return packed_index != EntityPool::SPARSE_ELEMENT;
     }
 
     //--------------------------------------------------------------
     byte *EntityPool::GetComponent(EntityId id) {
-        uint32 packed_index = m_entity_indices[Entity::GetIndex(id)];
+        uint32 packed_index = m_entity_indices[EntityUtilities::GetIndex(id)];
         if (packed_index == EntityPool::SPARSE_ELEMENT) {
             return nullptr;
         } else {
@@ -55,9 +58,9 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     bool EntityPool::RemoveComponent(EntityId id) {
-        uint32 packed_index = m_entity_indices[Entity::GetIndex(id)];
+        uint32 packed_index = m_entity_indices[EntityUtilities::GetIndex(id)];
         if (packed_index != EntityPool::SPARSE_ELEMENT) {
-            m_entity_indices[Entity::GetIndex(id)] = EntityPool::SPARSE_ELEMENT;
+            m_entity_indices[EntityUtilities::GetIndex(id)] = EntityPool::SPARSE_ELEMENT;
 
             EntityId packed_id = m_entity_list[packed_index];
             HYP_ASSERT(packed_id == id);
