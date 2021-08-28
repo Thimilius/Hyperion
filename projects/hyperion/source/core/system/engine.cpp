@@ -179,14 +179,22 @@ namespace Hyperion {
         if (delta_time > Time::GetMaxDeltaTime()) {
             delta_time = Time::GetMaxDeltaTime();
         }
-        // TODO: Accumulate frame times and calculate the average to get more robust frame times and fps.
-        Time::s_frame_time = delta_time * 1000.0f;
-        Time::s_fps = static_cast<uint32>(1.0f / delta_time);
         s_time_stats.last_time = now;
         s_time_stats.accumulator += delta_time;
         Time::s_delta_time = delta_time;
         Time::s_time += delta_time;
         Time::s_time_since_engine_mode_change += delta_time;
+
+        // Accumulate frame times and calculate the average to get more robust frame times and fps.
+        Time::s_past_delta_times[Time::s_frame_counter % Time::MAX_PAST_DELTA_TIMES] = delta_time;
+        float32 delta_time_average = 0.0f;
+        for (uint64 i = 0; i < Time::MAX_PAST_DELTA_TIMES; i++) {
+            delta_time_average += Time::s_past_delta_times[i];
+        }
+        delta_time_average /= Time::MAX_PAST_DELTA_TIMES;
+        Time::s_frame_time = delta_time_average * 1000.0f;
+        Time::s_fps = static_cast<uint32>(1.0f / delta_time_average);
+        Time::s_frame_counter++;
     }
 
     //--------------------------------------------------------------
