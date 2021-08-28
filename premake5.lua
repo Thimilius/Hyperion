@@ -193,9 +193,11 @@ project "hyperion-sandbox"
 		"%{prj.location}/**.c",
 		"%{prj.location}/**.cpp"
 	}
+	excludes { "%{prj.location}/resource.rc" }
 	includedirs { "%{prj.location}/include" }
 		
     filter "system:windows"
+		files { "%{prj.location}/resource.rc" }
 		postbuildcommands {
 		    "{COPY} %{cfg.targetdir}/%{prj.name}.exe ../../run_tree/hyperion.exe*"
 	    }
