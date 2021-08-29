@@ -2,13 +2,8 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/guid.hpp"
-#include "hyperion/entity/entity_types.hpp"
-#include "hyperion/entity/component/component.hpp"
-
-//-------------------- Forward Declarations --------------------
-namespace Hyperion {
-    class World;
-}
+#include "hyperion/ecs/entity/entity_types.hpp"
+#include "hyperion/ecs/component/component.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -39,9 +34,6 @@ namespace Hyperion {
         ComponentDestructorFunction m_component_destructor = nullptr;
     private:
         inline static const uint32 SPARSE_ELEMENT = 0xFFFFFFFF;
-    private:
-        friend class Hyperion::World;
     };
-
 
 }

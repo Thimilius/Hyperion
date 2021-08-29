@@ -2,10 +2,10 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/entity/entity_pool.hpp"
+#include "hyperion/ecs/entity/entity_pool.hpp"
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/entity/entity_utilities.hpp"
+#include "hyperion/ecs/entity/entity_utilities.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {

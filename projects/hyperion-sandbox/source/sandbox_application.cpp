@@ -4,7 +4,7 @@
 //---------------------- Library Includes ----------------------
 #include <hyperion/entry_point.hpp>
 #include <hyperion/core/app/time.hpp>
-#include <hyperion/entity/world/world.hpp>
+#include <hyperion/ecs/world/world.hpp>
 
 //------------------------- Namespaces -------------------------
 using namespace Hyperion;

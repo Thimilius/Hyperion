@@ -1,8 +1,8 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/entity/component/component.hpp"
-#include "hyperion/entity/world/world_view.hpp"
+#include "hyperion/ecs/component/component.hpp"
+#include "hyperion/ecs/world/world_view.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -86,6 +86,7 @@ namespace Hyperion {
         }
     private:
         List<EntityDescription> m_entities;
+        // TODO: Remove free entities by using an implicit list as described here: https://skypjack.github.io/2019-05-06-ecs-baf-part-3/.
         List<EntityIndex> m_free_entity_indices;
 
         List<EntityPool> m_entity_pools;

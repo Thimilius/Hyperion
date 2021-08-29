@@ -1,7 +1,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/entity/entity_types.hpp"
+#include "hyperion/ecs/entity/entity_types.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {

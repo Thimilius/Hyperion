@@ -1,7 +1,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/entity/entity_pool.hpp"
+#include "hyperion/ecs/entity/entity_pool.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
