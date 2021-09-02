@@ -2,6 +2,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/application_settings.hpp"
+#include "hyperion/core/threading/thread.hpp"
 #include "hyperion/graphics/graphics_context.hpp"
 
 //-------------------- Forward Declarations --------------------
@@ -29,9 +30,22 @@ namespace Hyperion::Rendering {
         static void Render();
         static void Shutdown();
 
-        static void InitializeGraphics();
+        static void RequestExit();
+
+        static void RT_Initialize(Window *window);
+        static void RT_Loop(void *parameter);
+        static void RT_Shutdown();
+
+        static void InitializeGraphicsContext(Window *window);
+        static void ShutdownGraphicsContext();
+
+        static void SynchronizeMainAndRenderThread();
     private: 
         inline static RenderSettings s_render_settings;
+        
+        inline static Threading::Thread s_render_thread;
+        inline static std::atomic<bool> s_render_thread_should_exit;
+
         inline static IRenderPipeline *s_render_pipeline;
 
         inline static Graphics::GraphicsContext *s_graphics_context;

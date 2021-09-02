@@ -6,6 +6,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/window.hpp"
+#include "hyperion/core/threading/synchronization.hpp"
 #include "hyperion/rendering/pipelines/forward/forward_render_pipeline.hpp"
 
 //------------------------- Namespaces -------------------------
@@ -18,10 +19,21 @@ namespace Hyperion::Rendering {
     void RenderEngine::PreInitialize(const RenderSettings &settings, Window *window) {
         s_render_settings = settings;
 
-        s_graphics_context = window->CreateGraphicsContext(settings.graphics_backend);
-        s_graphics_context->Initialize(GraphicsContextDescriptor());
-        s_graphics_context->SetVSyncMode(VSyncMode::DontSync);
-        s_graphics_context->CreateDeviceAndSwapChain(&s_graphics_device, &s_graphics_device_context, &s_graphics_swap_chain);
+        switch (settings.threading_mode) {
+            case RenderThreadingMode::SingleThreaded: {
+                InitializeGraphicsContext(window);
+                break;
+            }
+            case RenderThreadingMode::MultiThreaded: {
+                s_render_thread.Start(RT_Loop, window);
+                s_render_thread.SetName("Render Thread");
+
+                Threading::Synchronization::NotifyUpdateReady();
+                Threading::Synchronization::WaitForRenderReady();
+                break;
+            }
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+        }
     }
 
     //--------------------------------------------------------------
@@ -38,15 +50,98 @@ namespace Hyperion::Rendering {
     //--------------------------------------------------------------
     void RenderEngine::Render() {
         {
-
+            s_render_pipeline->Render();
         }
-        s_graphics_context->SwapBuffers();
+
+        switch (s_render_settings.threading_mode) {
+            case RenderThreadingMode::SingleThreaded: {
+                s_graphics_context->SwapBuffers();
+                break;
+            }
+            case RenderThreadingMode::MultiThreaded: {
+                Threading::Synchronization::WaitForRenderDone();
+                SynchronizeMainAndRenderThread();
+                Threading::Synchronization::NotifySwapDone();
+                break;
+            }
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+        }
     }
 
     //--------------------------------------------------------------
     void RenderEngine::Shutdown() {
+        s_render_pipeline->Shutdown();
         delete s_render_pipeline;
 
+        switch (s_render_settings.threading_mode) {
+            case RenderThreadingMode::SingleThreaded: {
+                ShutdownGraphicsContext();
+                break;
+            }
+            case RenderThreadingMode::MultiThreaded: {
+                s_render_thread_should_exit = true;
+                Threading::Synchronization::NotifySwapDone();
+                s_render_thread.Join();
+                break;
+            }
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+        }
+    }
+
+    //--------------------------------------------------------------
+    void RenderEngine::RequestExit() {
+        s_render_thread_should_exit = true;
+    }
+
+    //--------------------------------------------------------------
+    void RenderEngine::RT_Initialize(Window *window) {
+        InitializeGraphicsContext(window);
+
+        Threading::Synchronization::NotifyRenderReady();
+        Threading::Synchronization::WaitForUpdateReady();
+    }
+
+    //--------------------------------------------------------------
+    void RenderEngine::RT_Loop(void *parameter) {
+        RT_Initialize(static_cast<Window *>(parameter));
+        
+        while (true) {
+            if (s_render_thread_should_exit) {
+                break;
+            }
+
+            // TODO: The render pipeline should be used here instead of on the main thread.
+
+            {
+                s_graphics_context->SwapBuffers();
+                Threading::Synchronization::NotifyRenderDone();
+            }
+            
+            Threading::Synchronization::WaitForSwapDone();
+        }
+
+        RT_Shutdown();
+    }
+
+    //--------------------------------------------------------------
+    void RenderEngine::RT_Shutdown() {
+        ShutdownGraphicsContext();
+    }
+
+    //--------------------------------------------------------------
+    void RenderEngine::SynchronizeMainAndRenderThread() {
+
+    }
+
+    //--------------------------------------------------------------
+    void RenderEngine::InitializeGraphicsContext(Window *window) {
+        s_graphics_context = window->CreateGraphicsContext(s_render_settings.graphics_backend);
+        s_graphics_context->Initialize(GraphicsContextDescriptor());
+        s_graphics_context->SetVSyncMode(VSyncMode::DontSync);
+        s_graphics_context->CreateDeviceAndSwapChain(&s_graphics_device, &s_graphics_device_context, &s_graphics_swap_chain);
+    }
+
+    void RenderEngine::ShutdownGraphicsContext() {
         s_graphics_context->Shutdown();
         delete s_graphics_context;
     }

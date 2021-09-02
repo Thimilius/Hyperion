@@ -6,6 +6,10 @@
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Engine;
+    
+    namespace Rendering {
+        class RenderEngine;
+    }
 }
 
 //-------------------- Definition Namespace --------------------
@@ -27,7 +31,6 @@ namespace Hyperion::Threading {
 
         inline static void NotifySwapDone() { s_swap_done_event.Notify(); }
         inline static void WaitForSwapDone() { s_swap_done_event.Wait(); }
-        inline static bool WaitUnblockedForSwapDone() { return s_swap_done_event.WaitUnblocked(); }
     private:
         inline static AutoResetEvent s_render_ready_event = AutoResetEvent(false);
         inline static AutoResetEvent s_update_ready_event = AutoResetEvent(false);
@@ -35,6 +38,7 @@ namespace Hyperion::Threading {
         inline static AutoResetEvent s_swap_done_event = AutoResetEvent(false);
     private:
         friend class Hyperion::Engine;
+        friend class Hyperion::Rendering::RenderEngine;
     };
 
 }

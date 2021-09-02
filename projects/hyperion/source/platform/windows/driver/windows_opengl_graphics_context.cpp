@@ -89,6 +89,9 @@ namespace Hyperion::Graphics {
 
     //--------------------------------------------------------------
     void WindowsOpenGLGraphicsContext::SwapBuffers() {
+        glClearColor(0.0f, 1.0, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
         ::SwapBuffers(m_device_context);
     }
 
