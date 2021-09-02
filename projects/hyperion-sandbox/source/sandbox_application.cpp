@@ -49,13 +49,13 @@ namespace Sandbox {
             GetWindow()->SetWindowMode(GetWindow()->GetWindowMode() == WindowMode::Borderless ? WindowMode::Windowed : WindowMode::Borderless);
         }
 
-        //auto view = world.GetView<TransformComponent, TagComponent>();
-        //for (EntityId id : view) {
-        //    TransformComponent *transform = world.GetComponent<TransformComponent>(id);
-        //    TagComponent *tag = world.GetComponent<TagComponent>(id);
-        //    transform->position += 1.0f;
-        //    tag->tag = "Hello there";
-        //}
+        auto view = world.GetView<TransformComponent, TagComponent>();
+        for (EntityId id : view) {
+            TransformComponent *transform = world.GetComponent<TransformComponent>(id);
+            TagComponent *tag = world.GetComponent<TagComponent>(id);
+            transform->position += 1.0f;
+            tag->tag = "Hello there";
+        }
     }
 
     //--------------------------------------------------------------

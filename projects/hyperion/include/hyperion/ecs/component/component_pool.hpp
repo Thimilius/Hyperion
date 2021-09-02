@@ -11,11 +11,10 @@ namespace Hyperion {
     using EntityIndices = List<uint32>;
     using EntityList = List<EntityId>;
     using ComponentList = List<byte>;
-    using ComponentDestructorFunction = void(*)(const void *);
 
-    class EntityPool final {
+    class ComponentPool final {
     public:
-        EntityPool(uint64 max_entities, ComponentId component_id, uint64 component_element_size, ComponentDestructorFunction component_destructor);
+        ComponentPool(uint64 max_entities, ComponentInfo component_info);
     public:
         inline uint64 GetEntityCount() const { return m_entity_list.GetLength(); }
         inline EntityId GetEntity(EntityIndex index) const { return m_entity_list[index]; }
@@ -29,9 +28,7 @@ namespace Hyperion {
         EntityList m_entity_list;
         ComponentList m_component_list;
 
-        ComponentId m_component_id;
-        uint64 m_component_element_size;
-        ComponentDestructorFunction m_component_destructor = nullptr;
+        ComponentInfo m_component_info;
     private:
         inline static const uint32 SPARSE_ELEMENT = 0xFFFFFFFF;
     };

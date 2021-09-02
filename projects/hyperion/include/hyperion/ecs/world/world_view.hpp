@@ -1,7 +1,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/ecs/entity/entity_pool.hpp"
+#include "hyperion/ecs/component/component_pool.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -16,7 +16,7 @@ namespace Hyperion {
     public:
         class Iterator {
         public:
-            Iterator(EntityIndex index, World *world, EntityPool *smallest_pool, bool all) : m_index(index), m_world(world), m_smallest_pool(smallest_pool), m_all(all) {}
+            Iterator(EntityIndex index, World *world, ComponentPool *smallest_pool, bool all) : m_index(index), m_world(world), m_smallest_pool(smallest_pool), m_all(all) {}
         public:
             inline EntityId operator*() const { return m_all ? m_world->m_entities[m_index].id : m_smallest_pool->GetEntity(m_index); }
             inline bool operator==(const Iterator &other) const { return m_index == other.m_index || m_index == m_world->m_entities.GetLength(); }
@@ -39,9 +39,9 @@ namespace Hyperion {
 
                 EntityId id = m_smallest_pool->GetEntity(m_index);
                 for (uint64 i = 1; i < (sizeof...(T) + 1); i++) {
-                    EntityPool &entity_pool = m_world->m_entity_pools[COMPONENT_IDS[i]];
-                    if (&entity_pool != m_smallest_pool) {
-                        if (!entity_pool.HasComponent(id)) {
+                    ComponentPool &component_pool = m_world->m_component_pools[COMPONENT_IDS[i]];
+                    if (&component_pool != m_smallest_pool) {
+                        if (!component_pool.HasComponent(id)) {
                             return true;
                         }
                     }
@@ -52,7 +52,7 @@ namespace Hyperion {
             EntityIndex m_index;
 
             World *m_world;
-            EntityPool *m_smallest_pool;
+            ComponentPool *m_smallest_pool;
             bool m_all;
         };
     public:
@@ -61,10 +61,10 @@ namespace Hyperion {
 
             uint64 smallest_entity_count = UINT64_MAX;
             for (uint64 i = 1; i < (sizeof...(T) + 1); i++) {
-                EntityPool &entity_pool = m_world->m_entity_pools[COMPONENT_IDS[i]];
-                if (entity_pool.GetEntityCount() < smallest_entity_count) {
-                    m_smallest_pool = &entity_pool;
-                    smallest_entity_count = entity_pool.GetEntityCount();
+                ComponentPool &component_pool = m_world->m_component_pools[COMPONENT_IDS[i]];
+                if (component_pool.GetEntityCount() < smallest_entity_count) {
+                    m_smallest_pool = &component_pool;
+                    smallest_entity_count = component_pool.GetEntityCount();
                 }
             }
         }
@@ -75,9 +75,9 @@ namespace Hyperion {
                 while (index < m_smallest_pool->GetEntityCount()) {
                     EntityId id = m_smallest_pool->GetEntity(index);
                     for (uint64 i = 1; i < (sizeof...(T) + 1); i++) {
-                        EntityPool &entity_pool = m_world->m_entity_pools[COMPONENT_IDS[i]];
-                        if (&entity_pool != m_smallest_pool) {
-                            if (!entity_pool.HasComponent(id)) {
+                        ComponentPool &component_pool = m_world->m_component_pools[COMPONENT_IDS[i]];
+                        if (&component_pool != m_smallest_pool) {
+                            if (!component_pool.HasComponent(id)) {
                                 index++;
                                 goto outer;
                             }
@@ -96,7 +96,7 @@ namespace Hyperion {
         }
     private:
         World *m_world;
-        EntityPool *m_smallest_pool;
+        ComponentPool *m_smallest_pool;
         bool m_all;
     private:
         inline static ComponentId COMPONENT_IDS[] = { 0, Component::GetId<T>() ... };

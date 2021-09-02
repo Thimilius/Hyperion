@@ -52,8 +52,8 @@ namespace Hyperion {
             entity_description.id = new_id;
             m_free_entity_indices.Add(index);
 
-            for (EntityPool &entity_pool : m_entity_pools) {
-                entity_pool.RemoveComponent(id);
+            for (ComponentPool &component_pool : m_component_pools) {
+                component_pool.RemoveComponent(id);
             }
         } else {
             HYP_LOG_WARN("Entity", "Trying to destroy nonexistent entity with id {}.", id);
