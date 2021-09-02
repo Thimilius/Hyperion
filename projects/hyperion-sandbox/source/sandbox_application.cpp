@@ -35,7 +35,7 @@ namespace Sandbox {
 
         world = World();
 
-        for (size_t i = 0; i < 1000; i++) {
+        for (size_t i = 0; i < 4096; i++) {
             auto entity = world.CreateEntity();
             world.AddComponent<TransformComponent>(entity);
             world.AddComponent<TagComponent>(entity);

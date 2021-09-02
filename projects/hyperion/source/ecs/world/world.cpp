@@ -35,9 +35,10 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     EntityId World::CreateEntity() {
+        EntityId id;
         if (m_free_entity_indices.IsEmpty()) {
             m_entities.Add({ EntityUtilities::CreateId(static_cast<EntityIndex>(m_entities.GetLength()), 0), EntityUtilities::CreateGuid() });
-            return m_entities.GetLast().id;
+            id = m_entities.GetLast().id;
         } else {
             EntityIndex new_index = m_free_entity_indices.GetLast();
             m_free_entity_indices.RemoveLast();
@@ -45,8 +46,14 @@ namespace Hyperion {
             EntityId new_id = EntityUtilities::CreateId(new_index, EntityUtilities::GetVersion(m_entities[new_index].id));
             m_entities[new_index].id = new_id;
 
-            return new_id;
+            id = new_id;
         }
+
+        for (ComponentPool &component_pool : m_component_pools) {
+            component_pool.FitIntoPool(id);
+        }
+
+        return id;
     }
 
     //--------------------------------------------------------------
