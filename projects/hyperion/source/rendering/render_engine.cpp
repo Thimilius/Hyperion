@@ -6,8 +6,8 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/window.hpp"
-#include "hyperion/core/threading/synchronization.hpp"
 #include "hyperion/rendering/pipelines/forward/forward_render_pipeline.hpp"
+#include "hyperion/rendering/threading/render_thread_synchronization.hpp"
 
 //------------------------- Namespaces -------------------------
 using namespace Hyperion::Graphics;
@@ -28,8 +28,8 @@ namespace Hyperion::Rendering {
                 s_render_thread.Start(RT_Loop, window);
                 s_render_thread.SetName("Render Thread");
 
-                Threading::Synchronization::NotifyUpdateReady();
-                Threading::Synchronization::WaitForRenderReady();
+                RenderThreadSynchronization::NotifyMainReady();
+                RenderThreadSynchronization::WaitForRenderReady();
                 break;
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
@@ -59,9 +59,9 @@ namespace Hyperion::Rendering {
                 break;
             }
             case RenderThreadingMode::MultiThreaded: {
-                Threading::Synchronization::WaitForRenderDone();
+                RenderThreadSynchronization::WaitForRenderDone();
                 SynchronizeMainAndRenderThread();
-                Threading::Synchronization::NotifySwapDone();
+                RenderThreadSynchronization::NotifySwapDone();
                 break;
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
@@ -80,7 +80,7 @@ namespace Hyperion::Rendering {
             }
             case RenderThreadingMode::MultiThreaded: {
                 s_render_thread_should_exit = true;
-                Threading::Synchronization::NotifySwapDone();
+                RenderThreadSynchronization::NotifySwapDone();
                 s_render_thread.Join();
                 break;
             }
@@ -97,8 +97,8 @@ namespace Hyperion::Rendering {
     void RenderEngine::RT_Initialize(Window *window) {
         InitializeGraphicsContext(window);
 
-        Threading::Synchronization::NotifyRenderReady();
-        Threading::Synchronization::WaitForUpdateReady();
+        RenderThreadSynchronization::NotifyRenderReady();
+        RenderThreadSynchronization::WaitForMainReady();
     }
 
     //--------------------------------------------------------------
@@ -114,10 +114,10 @@ namespace Hyperion::Rendering {
 
             {
                 s_graphics_context->SwapBuffers();
-                Threading::Synchronization::NotifyRenderDone();
+                RenderThreadSynchronization::NotifyRenderDone();
             }
             
-            Threading::Synchronization::WaitForSwapDone();
+            RenderThreadSynchronization::WaitForSwapDone();
         }
 
         RT_Shutdown();
