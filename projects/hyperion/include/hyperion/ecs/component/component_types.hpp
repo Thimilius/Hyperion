@@ -7,24 +7,12 @@
 namespace Hyperion {
 
     using ComponentId = uint32;
-
     using ComponentDestructorFunction = void(*)(const void *);
 
     struct ComponentInfo {
         ComponentId id;
         uint64 element_size;
         ComponentDestructorFunction destructor;
-    };
-
-    class Component final {
-    public:
-        template<typename T>
-        inline static ComponentId GetId() {
-            static ComponentId component_id = s_component_counter++;
-            return component_id;
-        }
-    private:
-        inline static ComponentId s_component_counter = 0;
     };
 
 }

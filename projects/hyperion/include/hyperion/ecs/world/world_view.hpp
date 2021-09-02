@@ -99,7 +99,7 @@ namespace Hyperion {
         ComponentPool *m_smallest_pool;
         bool m_all;
     private:
-        inline static ComponentId COMPONENT_IDS[] = { 0, Component::GetId<T>() ... };
+        inline static ComponentId COMPONENT_IDS[] = { 0, ComponentRegistry::GetId<T>() ... };
     };
 
 }

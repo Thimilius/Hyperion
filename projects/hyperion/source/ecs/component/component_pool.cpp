@@ -11,8 +11,8 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    ComponentPool::ComponentPool(uint64 max_entities, ComponentInfo component_info) : m_component_info(component_info) {
-        m_entity_indices.Resize(max_entities, SPARSE_ELEMENT);
+    ComponentPool::ComponentPool(ComponentInfo component_info) : m_component_info(component_info) {
+        m_entity_indices.Resize(MAX_ENTITIES, SPARSE_ELEMENT);
     }
 
     //--------------------------------------------------------------

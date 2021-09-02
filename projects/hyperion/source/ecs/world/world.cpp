@@ -11,6 +11,13 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
+    World::World() {
+        for (const ComponentInfo &component_info : ComponentRegistry::GetComponents()) {
+            m_component_pools.Add(ComponentPool(component_info));
+        }
+    }
+
+    //--------------------------------------------------------------
     bool World::IsValidId(EntityId id) const {
         EntityIndex index = EntityUtilities::GetIndex(id);
         return index < m_entities.GetLength() && m_entities[index].id == id;

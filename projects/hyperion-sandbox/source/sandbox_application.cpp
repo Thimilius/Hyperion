@@ -30,8 +30,10 @@ namespace Sandbox {
     void SandboxApplication::OnInitialize() {
         UpdateTitle();
 
-        world.RegisterComponent<TransformComponent>();
-        world.RegisterComponent<TagComponent>();
+        ComponentRegistry::Register<TransformComponent>();
+        ComponentRegistry::Register<TagComponent>();
+
+        world = World();
 
         for (size_t i = 0; i < 1000; i++) {
             auto entity = world.CreateEntity();
