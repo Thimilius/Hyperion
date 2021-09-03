@@ -321,7 +321,26 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     Matrix4x4 Matrix4x4::TRS(const Vector3 &position, const Quaternion &rotation, const Vector3 &scale) {
-        return Translate(position) * Rotate(rotation) * Scale(scale);
+        Matrix4x4 result;
+
+        result.elements[0 + 0 * 4] = (1.0f - 2.0f * (rotation.y * rotation.y + rotation.z * rotation.z)) * scale.x;
+        result.elements[1 + 0 * 4] = (rotation.x * rotation.y + rotation.z * rotation.w) * scale.x * 2.0f;
+        result.elements[2 + 0 * 4] = (rotation.x * rotation.z - rotation.y * rotation.w) * scale.x * 2.0f;
+        result.elements[3 + 0 * 4] = 0.0f;
+        result.elements[0 + 1 * 4] = (rotation.x * rotation.y - rotation.z * rotation.w) * scale.y * 2.0f;
+        result.elements[1 + 1 * 4] = (1.0f - 2.0f * (rotation.x * rotation.x + rotation.z * rotation.z)) * scale.y;
+        result.elements[2 + 1 * 4] = (rotation.y * rotation.z + rotation.x * rotation.w) * scale.y * 2.0f;
+        result.elements[3 + 1 * 4] = 0.0f;
+        result.elements[0 + 2 * 4] = (rotation.x * rotation.z + rotation.y * rotation.w) * scale.z * 2.0f;
+        result.elements[1 + 2 * 4] = (rotation.y * rotation.z - rotation.x * rotation.w) * scale.z * 2.0f;
+        result.elements[2 + 2 * 4] = (1.0f - 2.0f * (rotation.x * rotation.x + rotation.y * rotation.y)) * scale.z;
+        result.elements[3 + 2 * 4] = 0.0f;
+        result.elements[0 + 3 * 4] = position.x;
+        result.elements[1 + 3 * 4] = position.y;
+        result.elements[2 + 3 * 4] = position.z;
+        result.elements[3 + 3 * 4] = 1.0f;
+
+        return result;
     }
 
     //--------------------------------------------------------------
