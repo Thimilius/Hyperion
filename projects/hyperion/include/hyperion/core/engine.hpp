@@ -6,8 +6,8 @@
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
+    class AppEvent;
     class Application;
-    class Event;
     class Main;
     class WindowsWindow;
 
@@ -39,7 +39,7 @@ namespace Hyperion {
         static void Initialize();
         static void PostInitialize();
         static void Iterate();
-        static void OnEvent(Event &event);
+        static void OnAppEvent(AppEvent &app_event);
         static void Shutdown();
         
         static void ExecuteEngineLoopSubSystem(const EngineLoopSubSystem &engine_loop_sub_system);

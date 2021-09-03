@@ -9,7 +9,7 @@
 #include <Xinput.h>
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/app/events/app_events.hpp"
+#include "hyperion/core/app/events/app_event.hpp"
 #include "hyperion/core/app/events/window_events.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -69,31 +69,31 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void WindowsInput::OnEvent(Event &event) {
-        EventDispatcher dispatcher(event);
+    void WindowsInput::OnAppEvent(AppEvent &app_event) {
+        AppEventDispatcher dispatcher(app_event);
 
-        dispatcher.Dispatch<WindowFocusEvent>([this](WindowFocusEvent &window_focus_event){
+        dispatcher.Dispatch<WindowFocusAppEvent>([this](WindowFocusAppEvent &window_focus_event){
             Reset();
             m_gamepad_input_active = window_focus_event.GetFocus();
         });
 
-        dispatcher.Dispatch<KeyPressedEvent>([this](KeyPressedEvent &key_pressed_event) {
+        dispatcher.Dispatch<KeyPressedAppEvent>([this](KeyPressedAppEvent &key_pressed_event) {
             OnKeyEvent(key_pressed_event, true);
         });
-        dispatcher.Dispatch<KeyReleasedEvent>([this](KeyReleasedEvent &key_released_event) {
+        dispatcher.Dispatch<KeyReleasedAppEvent>([this](KeyReleasedAppEvent &key_released_event) {
             OnKeyEvent(key_released_event, false);
         });
 
-        dispatcher.Dispatch<MouseScrolledEvent>([this](MouseScrolledEvent &mouse_scrolled_event) {
+        dispatcher.Dispatch<MouseScrolledAppEvent>([this](MouseScrolledAppEvent &mouse_scrolled_event) {
             m_mouse_scroll = mouse_scrolled_event.GetScroll();
         });
-        dispatcher.Dispatch<MouseMovedEvent>([this](MouseMovedEvent &mouse_moved_event) {
+        dispatcher.Dispatch<MouseMovedAppEvent>([this](MouseMovedAppEvent &mouse_moved_event) {
             m_mouse_position = Vector2(mouse_moved_event.GetX(), mouse_moved_event.GetY());
         });
-        dispatcher.Dispatch<MouseButtonPressedEvent>([this](MouseButtonPressedEvent &mouse_button_pressed_event) {
+        dispatcher.Dispatch<MouseButtonPressedAppEvent>([this](MouseButtonPressedAppEvent &mouse_button_pressed_event) {
             OnMouseButtonEvent(mouse_button_pressed_event, true);
         });
-        dispatcher.Dispatch<MouseButtonReleasedEvent>([this](MouseButtonReleasedEvent &mouse_button_released_event) {
+        dispatcher.Dispatch<MouseButtonReleasedAppEvent>([this](MouseButtonReleasedAppEvent &mouse_button_released_event) {
             OnMouseButtonEvent(mouse_button_released_event, false);
         });
     }
@@ -132,8 +132,8 @@ namespace Hyperion {
                     if (m_gamepads_connected.Contains(gamepad)) {
                         m_gamepads_connected.Remove(gamepad);
 
-                        GamepadConnectionChangedEvent event(gamepad, false);
-                        DispatchEvent(event);
+                        GamepadConnectionChangedAppEvent event(gamepad, false);
+                        DispatchAppEvent(event);
                     }
                 }
 
@@ -213,31 +213,31 @@ namespace Hyperion {
                 if (!m_gamepads_connected.Contains(gamepad)) {
                     m_gamepads_connected.Add(gamepad);
 
-                    GamepadConnectionChangedEvent event(gamepad, true);
-                    DispatchEvent(event);
+                    GamepadConnectionChangedAppEvent event(gamepad, true);
+                    DispatchAppEvent(event);
                 }
             } else {
                 if (m_gamepads_connected.Contains(gamepad)) {
                     m_gamepads_connected.Remove(gamepad);
 
-                    GamepadConnectionChangedEvent event(gamepad, false);
-                    DispatchEvent(event);
+                    GamepadConnectionChangedAppEvent event(gamepad, false);
+                    DispatchAppEvent(event);
                 }
             }
         }
     }
 
     //--------------------------------------------------------------
-    void WindowsInput::OnKeyEvent(KeyEvent &event, bool down) {
-        int32 key_code = static_cast<int32>(event.GetKeyCode());
+    void WindowsInput::OnKeyEvent(KeyAppEvent &key_app_event, bool down) {
+        int32 key_code = static_cast<int32>(key_app_event.GetKeyCode());
         m_keys_down[key_code] = !m_keys_last[key_code] && down;
         m_keys[key_code] = down;
         m_keys_up[key_code] = m_keys_last[key_code] && !down;
     }
 
     //--------------------------------------------------------------
-    void WindowsInput::OnMouseButtonEvent(MouseButtonEvent &event, bool down) {
-        int32 mouse_button_code = static_cast<int32>(event.GetMouseButtonCode());
+    void WindowsInput::OnMouseButtonEvent(MouseButtonAppEvent &mouse_button_app_event, bool down) {
+        int32 mouse_button_code = static_cast<int32>(mouse_button_app_event.GetMouseButtonCode());
         m_mouse_buttons_down[mouse_button_code] = !m_mouse_buttons_last[mouse_button_code] && down;
         m_mouse_buttons[mouse_button_code] = down;
         m_mouse_buttons_up[mouse_button_code] = m_mouse_buttons_last[mouse_button_code] && !down;
@@ -248,14 +248,14 @@ namespace Hyperion {
         m_gamepads[static_cast<int32>(gamepad)].buttons_down[static_cast<int32>(button_code)] = !m_gamepads[static_cast<int32>(gamepad)].buttons_last[static_cast<int32>(button_code)] && down;
         m_gamepads[static_cast<int32>(gamepad)].buttons[static_cast<int32>(button_code)] = down;
         if (down) {
-            GamepadButtonPressedEvent event(gamepad, button_code);
-            DispatchEvent(event);
+            GamepadButtonPressedAppEvent event(gamepad, button_code);
+            DispatchAppEvent(event);
         }
         if (m_gamepads[static_cast<int32>(gamepad)].buttons_last[static_cast<int32>(button_code)] && !down) {
             m_gamepads[static_cast<int32>(gamepad)].buttons_up[static_cast<int32>(button_code)] = true;
 
-            GamepadButtonReleasedEvent event(gamepad, button_code);
-            DispatchEvent(event);
+            GamepadButtonReleasedAppEvent event(gamepad, button_code);
+            DispatchAppEvent(event);
         }
     }
 

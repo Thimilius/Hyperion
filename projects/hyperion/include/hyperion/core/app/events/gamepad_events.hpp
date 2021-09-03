@@ -2,58 +2,58 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/input.hpp"
-#include "hyperion/core/app/events/event.hpp"
+#include "hyperion/core/app/events/app_event.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    class GamepadEvent : public Event {
+    class GamepadAppEvent : public AppEvent {
     public:
-        GamepadEvent(Gamepad gamepad) : m_gamepad(gamepad) { }
+        GamepadAppEvent(Gamepad gamepad) : m_gamepad(gamepad) { }
 
         inline Gamepad GetGamepad() const { return m_gamepad; }
 
-        EventCategory GetCategory() const override { return EventCategory::Input & EventCategory::Gamepad; }
+        AppEventCategory GetCategory() const override { return AppEventCategory::Input & AppEventCategory::Gamepad; }
     private:
         Gamepad m_gamepad;
     };
 
-    class GamepadButtonEvent : public GamepadEvent {
+    class GamepadButtonAppEvent : public GamepadAppEvent {
     public:
-        GamepadButtonEvent(Gamepad gamepad, GamepadButtonCode button_code) : GamepadEvent(gamepad), m_button_code(button_code) { }
+        GamepadButtonAppEvent(Gamepad gamepad, GamepadButtonCode button_code) : GamepadAppEvent(gamepad), m_button_code(button_code) { }
 
         inline GamepadButtonCode GetGamepadButtonCode() const { return m_button_code; }
     private:
         GamepadButtonCode m_button_code;
     };
 
-    class GamepadButtonPressedEvent : public GamepadButtonEvent {
+    class GamepadButtonPressedAppEvent : public GamepadButtonAppEvent {
     public:
-        GamepadButtonPressedEvent(Gamepad gamepad, GamepadButtonCode button_code) : GamepadButtonEvent(gamepad, button_code) { }
+        GamepadButtonPressedAppEvent(Gamepad gamepad, GamepadButtonCode button_code) : GamepadButtonAppEvent(gamepad, button_code) { }
 
-        EventType GetType() const override { return EventType::GamepadButtonPressed; }
+        AppEventType GetType() const override { return AppEventType::GamepadButtonPressed; }
     public:
-        static EventType GetStaticType() { return EventType::GamepadButtonPressed; }
+        static AppEventType GetStaticType() { return AppEventType::GamepadButtonPressed; }
     };
 
-    class GamepadButtonReleasedEvent : public GamepadButtonEvent {
+    class GamepadButtonReleasedAppEvent : public GamepadButtonAppEvent {
     public:
-        GamepadButtonReleasedEvent(Gamepad gamepad, GamepadButtonCode button_code) : GamepadButtonEvent(gamepad, button_code) {}
+        GamepadButtonReleasedAppEvent(Gamepad gamepad, GamepadButtonCode button_code) : GamepadButtonAppEvent(gamepad, button_code) {}
 
-        EventType GetType() const override { return EventType::GamepadButtonReleased; }
+        AppEventType GetType() const override { return AppEventType::GamepadButtonReleased; }
     public:
-        static EventType GetStaticType() { return EventType::GamepadButtonReleased; }
+        static AppEventType GetStaticType() { return AppEventType::GamepadButtonReleased; }
     };
 
-    class GamepadConnectionChangedEvent : public GamepadEvent {
+    class GamepadConnectionChangedAppEvent : public GamepadAppEvent {
     public:
-        GamepadConnectionChangedEvent(Gamepad gamepad, bool connected) : GamepadEvent(gamepad), m_connected(connected) { }
+        GamepadConnectionChangedAppEvent(Gamepad gamepad, bool connected) : GamepadAppEvent(gamepad), m_connected(connected) { }
 
         inline bool GetConnected() const { return m_connected; }
 
-        EventType GetType() const override { return EventType::GamepadConnectionChanged; }
+        AppEventType GetType() const override { return AppEventType::GamepadConnectionChanged; }
     public:
-        static EventType GetStaticType() { return EventType::GamepadConnectionChanged; }
+        static AppEventType GetStaticType() { return AppEventType::GamepadConnectionChanged; }
     private:
         bool m_connected;
     };

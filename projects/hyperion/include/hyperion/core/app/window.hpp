@@ -4,7 +4,7 @@
 #include "hyperion/common.hpp"
 #include "hyperion/core/app/input.hpp"
 #include "hyperion/core/app/window_settings.hpp"
-#include "hyperion/core/app/events/event.hpp"
+#include "hyperion/core/app/events/app_event.hpp"
 #include "hyperion/graphics/graphics_backend.hpp"
 
 //-------------------- Forward Declarations --------------------
@@ -62,7 +62,7 @@ namespace Hyperion {
         virtual void Show() = 0;
 
         virtual InputImplementation *GetInput() const = 0;
-        virtual void SetEventCallback(const EventCallbackFunction &event_callback) { m_event_callback = event_callback; }
+        virtual void SetAppEventCallback(const AppEventCallbackFunction &app_event_callback) { m_app_event_callback = app_event_callback; }
 
         static Window *Create(const WindowSettings &settings);
     protected:
@@ -82,7 +82,7 @@ namespace Hyperion {
         CursorMode m_cursor_mode;
         bool m_cursor_is_visible;
 
-        EventCallbackFunction m_event_callback;
+        AppEventCallbackFunction m_app_event_callback;
     private:
         friend class Hyperion::Engine;
         friend class Hyperion::Rendering::RenderEngine;

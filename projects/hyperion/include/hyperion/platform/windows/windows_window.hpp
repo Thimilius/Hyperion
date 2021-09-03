@@ -35,12 +35,12 @@ namespace Hyperion {
         void Show() override;
         
         InputImplementation *GetInput() const override { return m_input; }
-        void SetEventCallback(const EventCallbackFunction &event_callback) override;
+        void SetAppEventCallback(const AppEventCallbackFunction &app_event_callback) override;
 
         void SetupWindow(const WindowSettings &settings);
         Vector2 GetActualWindowSize(uint32 client_width, uint32 client_height) const;
-        void DispatchEvent(Event &event) const;
-        void DispatchKeyEvent(KeyCode key_code, bool is_down) const;
+        void DispatchAppEvent(AppEvent &app_event) const;
+        void DispatchKeyAppEvent(KeyCode key_code, bool is_down) const;
 
         KeyCode TranslateKeyCode(uint32 w_param, uint32 l_param, bool is_down) const;
         MouseButtonCode TranslateMouseButtonCode(uint32 code) const;

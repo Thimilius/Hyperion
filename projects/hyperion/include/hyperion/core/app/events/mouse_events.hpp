@@ -2,68 +2,68 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/input.hpp"
-#include "hyperion/core/app/events/event.hpp"
+#include "hyperion/core/app/events/app_event.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    class MouseButtonEvent : public Event {
+    class MouseButtonAppEvent : public AppEvent {
     public:
-        MouseButtonEvent(MouseButtonCode mouse_button_code, KeyModifier key_modifier) : m_mouse_button_code(mouse_button_code), m_key_modifier(key_modifier) { }
+        MouseButtonAppEvent(MouseButtonCode mouse_button_code, KeyModifier key_modifier) : m_mouse_button_code(mouse_button_code), m_key_modifier(key_modifier) { }
 
         inline MouseButtonCode GetMouseButtonCode() const { return m_mouse_button_code; }
         inline bool HasKeyModifier(KeyModifier key_modifier) const { return (m_key_modifier & key_modifier) == key_modifier; }
 
-        EventCategory GetCategory() const override { return EventCategory::Input & EventCategory::Mouse & EventCategory::MouseButton; }
+        AppEventCategory GetCategory() const override { return AppEventCategory::Input & AppEventCategory::Mouse & AppEventCategory::MouseButton; }
     private:
         MouseButtonCode m_mouse_button_code;
         KeyModifier m_key_modifier;
     };
 
-    class MouseButtonPressedEvent : public MouseButtonEvent {
+    class MouseButtonPressedAppEvent : public MouseButtonAppEvent {
     public:
-        MouseButtonPressedEvent(MouseButtonCode mouse_button_code, KeyModifier key_modifier) : MouseButtonEvent(mouse_button_code, key_modifier) { }
+        MouseButtonPressedAppEvent(MouseButtonCode mouse_button_code, KeyModifier key_modifier) : MouseButtonAppEvent(mouse_button_code, key_modifier) { }
 
-        EventType GetType() const override { return EventType::MouseButtonPressed; }
+        AppEventType GetType() const override { return AppEventType::MouseButtonPressed; }
     public:
-        static EventType GetStaticType() { return EventType::MouseButtonPressed; }
+        static AppEventType GetStaticType() { return AppEventType::MouseButtonPressed; }
     };
 
-    class MouseButtonReleasedEvent : public MouseButtonEvent {
+    class MouseButtonReleasedAppEvent : public MouseButtonAppEvent {
     public:
-        MouseButtonReleasedEvent(MouseButtonCode mouse_button_code, KeyModifier key_modifier) : MouseButtonEvent(mouse_button_code, key_modifier) { }
+        MouseButtonReleasedAppEvent(MouseButtonCode mouse_button_code, KeyModifier key_modifier) : MouseButtonAppEvent(mouse_button_code, key_modifier) { }
 
-        EventType GetType() const override { return EventType::MouseButtonReleased; }
+        AppEventType GetType() const override { return AppEventType::MouseButtonReleased; }
     public:
-        static EventType GetStaticType() { return EventType::MouseButtonReleased; }
+        static AppEventType GetStaticType() { return AppEventType::MouseButtonReleased; }
     };
 
-    class MouseMovedEvent : public Event {
+    class MouseMovedAppEvent : public AppEvent {
     public:
-        MouseMovedEvent(float32 x, float32 y) : m_x(x), m_y(y) { }
+        MouseMovedAppEvent(float32 x, float32 y) : m_x(x), m_y(y) { }
 
         inline float32 GetX() const { return m_x; }
         inline float32 GetY() const { return m_y; }
 
-        EventType GetType() const override { return EventType::MouseMoved; }
-        EventCategory GetCategory() const override { return EventCategory::Input & EventCategory::Mouse; }
+        AppEventType GetType() const override { return AppEventType::MouseMoved; }
+        AppEventCategory GetCategory() const override { return AppEventCategory::Input & AppEventCategory::Mouse; }
     public:
-        static EventType GetStaticType() { return EventType::MouseMoved; }
+        static AppEventType GetStaticType() { return AppEventType::MouseMoved; }
     private:
         float32 m_x;
         float32 m_y;
     };
 
-    class MouseScrolledEvent : public Event {
+    class MouseScrolledAppEvent : public AppEvent {
     public:
-        MouseScrolledEvent(float32 scroll) : m_scroll(scroll) { }
+        MouseScrolledAppEvent(float32 scroll) : m_scroll(scroll) { }
 
         inline float32 GetScroll() const { return m_scroll; }
 
-        EventType GetType() const override { return EventType::MouseScrolled; }
-        EventCategory GetCategory() const override { return EventCategory::Input & EventCategory::Mouse; }
+        AppEventType GetType() const override { return AppEventType::MouseScrolled; }
+        AppEventCategory GetCategory() const override { return AppEventCategory::Input & AppEventCategory::Mouse; }
     public:
-        static EventType GetStaticType() { return EventType::MouseScrolled; }
+        static AppEventType GetStaticType() { return AppEventType::MouseScrolled; }
     private:
         float32 m_scroll;
     };

@@ -13,9 +13,10 @@
 #include "hyperion/core/app/input.hpp"
 #include "hyperion/core/app/time.hpp"
 #include "hyperion/core/app/window.hpp"
-#include "hyperion/core/app/events/app_events.hpp"
-#include "hyperion/core/app/events/window_events.hpp"
+#include "hyperion/core/app/events/app_event.hpp"
+#include "hyperion/core/app/events/display_events.hpp"
 #include "hyperion/core/app/events/key_events.hpp"
+#include "hyperion/core/app/events/window_events.hpp"
 #include "hyperion/core/memory/memory.hpp"
 #include "hyperion/ecs/world/world_manager.hpp"
 #include "hyperion/physics/physics_engine.hpp"
@@ -128,7 +129,7 @@ namespace Hyperion {
         Display::UpdateSize(s_settings.window.width, s_settings.window.height);
         
         Window *window = Window::Create(s_settings.window);
-        window->SetEventCallback(Engine::OnEvent);
+        window->SetAppEventCallback(Engine::OnAppEvent);
         s_application->m_window = window;
 
         Rendering::RenderEngine::PreInitialize(s_settings.render, window);
@@ -166,31 +167,29 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void Engine::OnEvent(Event &event) {
-        EventDispatcher dispatcher(event);
+    void Engine::OnAppEvent(AppEvent &app_event) {
+        AppEventDispatcher dispatcher(app_event);
 
-        dispatcher.Dispatch<AppDisplayChangeEvent>([](AppDisplayChangeEvent &app_display_change_event) {
+        dispatcher.Dispatch<DisplayChangeAppEvent>([](DisplayChangeAppEvent &display_change_event) {
             Display::UpdateDisplayInfos();
         });
 
-        dispatcher.Dispatch<WindowCloseEvent>([](WindowCloseEvent &window_close_event) {
+        dispatcher.Dispatch<WindowCloseAppEvent>([](WindowCloseAppEvent &window_close_event) {
             Exit();
         });
-        dispatcher.Dispatch<WindowResizeEvent>([](WindowResizeEvent &window_resize_event) {
+        dispatcher.Dispatch<WindowResizeAppEvent>([](WindowResizeAppEvent &window_resize_event) {
             uint32 width = window_resize_event.GetWidth();
             uint32 height = window_resize_event.GetHeight();
             Display::UpdateSize(width, height);
         });
 
-        dispatcher.Dispatch<KeyPressedEvent>([](KeyPressedEvent &key_pressed_event) {
+        dispatcher.Dispatch<KeyPressedAppEvent>([](KeyPressedAppEvent &key_pressed_event) {
             if (s_settings.core.allow_altf4) {
                 if (key_pressed_event.HasKeyModifier(KeyModifier::Alt) && key_pressed_event.GetKeyCode() == KeyCode::F4) {
                     Exit();
                 }
             }
         });
-
-        Application::GetInstance()->OnEvent(event);
     }
 
     //--------------------------------------------------------------
@@ -203,7 +202,7 @@ namespace Hyperion {
 
         Rendering::RenderEngine::Shutdown();
 
-        delete Application::GetInstance()->GetWindow();
+        delete s_application->GetWindow();
     }
 
     //--------------------------------------------------------------

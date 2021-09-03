@@ -2,53 +2,53 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/input.hpp"
-#include "hyperion/core/app/events/event.hpp"
+#include "hyperion/core/app/events/app_event.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    class KeyEvent : public Event {
+    class KeyAppEvent : public AppEvent {
     public:
-        KeyEvent(KeyCode key_code, KeyModifier key_modifier) : m_key_code(key_code), m_key_modifier(key_modifier) { }
+        KeyAppEvent(KeyCode key_code, KeyModifier key_modifier) : m_key_code(key_code), m_key_modifier(key_modifier) { }
 
         inline KeyCode GetKeyCode() const { return m_key_code; }
         inline bool HasKeyModifier(KeyModifier key_modifier) const { return (m_key_modifier & key_modifier) == key_modifier; }
 
-        EventCategory GetCategory() const override { return EventCategory::Input & EventCategory::Keyboard; }
+        AppEventCategory GetCategory() const override { return AppEventCategory::Input & AppEventCategory::Keyboard; }
     private:
         KeyCode m_key_code;
         KeyModifier m_key_modifier;
     };
 
-    class KeyPressedEvent : public KeyEvent {
+    class KeyPressedAppEvent : public KeyAppEvent {
     public:
-        KeyPressedEvent(KeyCode key_code, KeyModifier key_modifier) : KeyEvent(key_code, key_modifier) { }
+        KeyPressedAppEvent(KeyCode key_code, KeyModifier key_modifier) : KeyAppEvent(key_code, key_modifier) { }
 
-        EventType GetType() const override { return EventType::KeyPressed; }
+        AppEventType GetType() const override { return AppEventType::KeyPressed; }
     public:
-        static EventType GetStaticType() { return EventType::KeyPressed; }
+        static AppEventType GetStaticType() { return AppEventType::KeyPressed; }
     };
 
-    class KeyReleasedEvent : public KeyEvent {
+    class KeyReleasedAppEvent : public KeyAppEvent {
     public:
-        KeyReleasedEvent(KeyCode key_code, KeyModifier key_modifier) : KeyEvent(key_code, key_modifier) { }
+        KeyReleasedAppEvent(KeyCode key_code, KeyModifier key_modifier) : KeyAppEvent(key_code, key_modifier) { }
 
-        EventType GetType() const override { return EventType::KeyReleased; }
+        AppEventType GetType() const override { return AppEventType::KeyReleased; }
     public:
-        static EventType GetStaticType() { return EventType::KeyReleased; }
+        static AppEventType GetStaticType() { return AppEventType::KeyReleased; }
     };
 
-    class KeyTypedEvent : public Event {
+    class KeyTypedAppEvent : public AppEvent {
     public:
-        KeyTypedEvent(uint32 character, KeyModifier key_modifier) : m_character(character), m_key_modifier(key_modifier) { }
+        KeyTypedAppEvent(uint32 character, KeyModifier key_modifier) : m_character(character), m_key_modifier(key_modifier) { }
 
         inline uint32 GetCharacter() const { return m_character; }
         inline bool HasKeyModifier(KeyModifier key_modifier) const { return (m_key_modifier & key_modifier) == key_modifier; }
 
-        EventType GetType() const override { return EventType::KeyTyped; }
-        EventCategory GetCategory() const override { return EventCategory::Input & EventCategory::Keyboard; }
+        AppEventType GetType() const override { return AppEventType::KeyTyped; }
+        AppEventCategory GetCategory() const override { return AppEventCategory::Input & AppEventCategory::Keyboard; }
     public:
-        static EventType GetStaticType() { return EventType::KeyTyped; }
+        static AppEventType GetStaticType() { return AppEventType::KeyTyped; }
     private:
         uint32 m_character;
         KeyModifier m_key_modifier;

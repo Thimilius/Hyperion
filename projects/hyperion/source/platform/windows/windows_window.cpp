@@ -10,8 +10,8 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/engine.hpp"
-#include "hyperion/core/app/events/app_events.hpp"
-#include "hyperion/core/app/events/event.hpp"
+#include "hyperion/core/app/events/app_event.hpp"
+#include "hyperion/core/app/events/display_events.hpp"
 #include "hyperion/core/app/events/gamepad_events.hpp"
 #include "hyperion/core/app/events/key_events.hpp"
 #include "hyperion/core/app/events/mouse_events.hpp"
@@ -293,9 +293,9 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void WindowsWindow::SetEventCallback(const EventCallbackFunction &event_callback) {
-        m_event_callback = event_callback;
-        m_input->SetEventCallback(event_callback);
+    void WindowsWindow::SetAppEventCallback(const AppEventCallbackFunction &app_event_callback) {
+        m_app_event_callback = app_event_callback;
+        m_input->SetEventCallback(app_event_callback);
     }
 
     //--------------------------------------------------------------
@@ -358,23 +358,23 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void WindowsWindow::DispatchEvent(Event &event) const {
-        m_input->OnEvent(event);
+    void WindowsWindow::DispatchAppEvent(AppEvent &app_event) const {
+        m_input->OnAppEvent(app_event);
 
-        if (m_event_callback) {
-            m_event_callback(event);
+        if (m_app_event_callback) {
+            m_app_event_callback(app_event);
         }
     }
 
     //--------------------------------------------------------------
-    void WindowsWindow::DispatchKeyEvent(KeyCode key_code, bool is_down) const {
+    void WindowsWindow::DispatchKeyAppEvent(KeyCode key_code, bool is_down) const {
         if (key_code != KeyCode::None) {
             if (is_down) {
-                KeyPressedEvent event(key_code, GetKeyModifier());
-                DispatchEvent(event);
+                KeyPressedAppEvent event(key_code, GetKeyModifier());
+                DispatchAppEvent(event);
             } else {
-                KeyReleasedEvent event(key_code, GetKeyModifier());
-                DispatchEvent(event);
+                KeyReleasedAppEvent event(key_code, GetKeyModifier());
+                DispatchAppEvent(event);
             }
         }
     }
@@ -406,7 +406,7 @@ namespace Hyperion {
                 if (next_message.message == WM_KEYDOWN || next_message.message == WM_SYSKEYDOWN || next_message.message == WM_KEYUP || next_message.message == WM_SYSKEYUP) {
                     DWORD message_time = GetMessageTime();
                     if (next_message.wParam == VK_MENU && (next_message.lParam & 0x01000000) && next_message.time == message_time) {
-                        DispatchKeyEvent(KeyCode::AltGr, is_down);
+                        DispatchKeyAppEvent(KeyCode::AltGr, is_down);
 
                         // Next message is right alt down so discard this.
                         return KeyCode::None;
@@ -414,7 +414,7 @@ namespace Hyperion {
                 }
             }
 
-            DispatchKeyEvent(KeyCode::Control, is_down);
+            DispatchKeyAppEvent(KeyCode::Control, is_down);
 
             if (l_param & 0x01000000) {
                 return KeyCode::RightControl;
@@ -422,7 +422,7 @@ namespace Hyperion {
                 return KeyCode::LeftControl;
             }
         } else if (w_param == VK_SHIFT) {
-            DispatchKeyEvent(KeyCode::Shift, is_down);
+            DispatchKeyAppEvent(KeyCode::Shift, is_down);
 
             // Left and right shift keys are not send as extended keys and therefore need to be queried explicitly.
             bool previous_left_shift_down = m_left_shift_last_down;
@@ -446,7 +446,7 @@ namespace Hyperion {
                 }
             }
         } else if (w_param == VK_MENU) {
-            DispatchKeyEvent(KeyCode::Alt, is_down);
+            DispatchKeyAppEvent(KeyCode::Alt, is_down);
 
             if (l_param & 0x01000000) {
                 return KeyCode::RightAlt;
@@ -643,30 +643,30 @@ namespace Hyperion {
             }
 
             case WM_DISPLAYCHANGE: {
-                AppDisplayChangeEvent event;
-                window->DispatchEvent(event);
+                DisplayChangeAppEvent event;
+                window->DispatchAppEvent(event);
                 break;
             }
 
             case WM_CHAR: 
             case WM_SYSCHAR: {
                 uint32 character = static_cast<uint32>(w_param);
-                KeyTypedEvent event(character, window->GetKeyModifier());
-                window->DispatchEvent(event);
+                KeyTypedAppEvent event(character, window->GetKeyModifier());
+                window->DispatchAppEvent(event);
                 break;
             }
 
             case WM_KEYDOWN: 
             case WM_SYSKEYDOWN: {
                 KeyCode key_code = window->TranslateKeyCode(static_cast<uint32>(w_param), static_cast<uint32>(l_param), true);
-                window->DispatchKeyEvent(key_code, true);
+                window->DispatchKeyAppEvent(key_code, true);
                 break;
             }
 
             case WM_KEYUP:
             case WM_SYSKEYUP: {
                 KeyCode key_code = window->TranslateKeyCode(static_cast<uint32>(w_param), static_cast<uint32>(l_param), false);
-                window->DispatchKeyEvent(key_code, false);
+                window->DispatchKeyAppEvent(key_code, false);
                 break;
             }
 
@@ -677,8 +677,8 @@ namespace Hyperion {
                 SetCapture(window->m_window_handle);
 
                 uint32 code = window->GetMouseButtonFromMessage(static_cast<uint32>(message), static_cast<uint32>(w_param));
-                MouseButtonPressedEvent event(window->TranslateMouseButtonCode(code), window->GetKeyModifier());
-                window->DispatchEvent(event);
+                MouseButtonPressedAppEvent event(window->TranslateMouseButtonCode(code), window->GetKeyModifier());
+                window->DispatchAppEvent(event);
                 break;
             }
 
@@ -689,8 +689,8 @@ namespace Hyperion {
                 ReleaseCapture();
                 
                 uint32 code = window->GetMouseButtonFromMessage(static_cast<uint32>(message), static_cast<uint32>(w_param));
-                MouseButtonReleasedEvent event(window->TranslateMouseButtonCode(code), window->GetKeyModifier());
-                window->DispatchEvent(event);
+                MouseButtonReleasedAppEvent event(window->TranslateMouseButtonCode(code), window->GetKeyModifier());
+                window->DispatchAppEvent(event);
                 break;
             }
 
@@ -700,15 +700,15 @@ namespace Hyperion {
                 
                 float32 height = static_cast<float32>(window->m_height);
 
-                MouseMovedEvent event(static_cast<float32>(x), height - static_cast<float32>(y));
-                window->DispatchEvent(event);
+                MouseMovedAppEvent event(static_cast<float32>(x), height - static_cast<float32>(y));
+                window->DispatchAppEvent(event);
                 break;
             }
 
             case WM_MOUSEWHEEL: {
                 int16 scroll = GET_WHEEL_DELTA_WPARAM(w_param);
-                MouseScrolledEvent event(scroll / static_cast<float32>(WHEEL_DELTA));
-                window->DispatchEvent(event);
+                MouseScrolledAppEvent event(scroll / static_cast<float32>(WHEEL_DELTA));
+                window->DispatchAppEvent(event);
                 break;
             };
 
@@ -730,8 +730,8 @@ namespace Hyperion {
 
                 // We do not want to generate a window resize event when the size gets 0 because the window got minimized.
                 if (width > 0 && height > 0) {
-                    WindowResizeEvent event(width, height);
-                    window->DispatchEvent(event);
+                    WindowResizeAppEvent event(width, height);
+                    window->DispatchAppEvent(event);
                 }
                 
                 break;
@@ -749,14 +749,14 @@ namespace Hyperion {
             }
 
             case WM_MOVE: {
-                WindowMovedEvent event;
-                window->DispatchEvent(event);
+                WindowMovedAppEvent event;
+                window->DispatchAppEvent(event);
                 break;
             }
 
             case WM_CLOSE: {
-                WindowCloseEvent event;
-                window->DispatchEvent(event);
+                WindowCloseAppEvent event;
+                window->DispatchAppEvent(event);
                 break;
             }
 
@@ -768,8 +768,8 @@ namespace Hyperion {
                 // We need to reset the cursor clip state when losing focus.
                 ClipCursor(nullptr);
 
-                WindowFocusEvent event(focused);
-                window->DispatchEvent(event);
+                WindowFocusAppEvent event(focused);
+                window->DispatchAppEvent(event);
                 break;
             }
 

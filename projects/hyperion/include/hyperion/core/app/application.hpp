@@ -26,7 +26,6 @@ namespace Hyperion {
 
         virtual void OnSetup(ApplicationSettings &settings) { }
         virtual void OnInitialize() { }
-        virtual void OnEvent(Event &event) { }
         virtual void OnUpdate(float32 delta_time) { }
         virtual void OnFixedUpdate(float32 delta_time) { }
         virtual void OnTick() { }

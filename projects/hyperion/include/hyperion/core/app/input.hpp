@@ -2,7 +2,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
-#include "hyperion/core/app/events/event.hpp"
+#include "hyperion/core/app/events/app_event.hpp"
 #include "hyperion/core/math/vector2.hpp"
 
 //-------------------- Forward Declarations --------------------
@@ -238,15 +238,15 @@ namespace Hyperion {
         virtual bool IsGamepadButtonHold(Gamepad gamepad, GamepadButtonCode gamepad_button_code) const = 0;
         virtual bool IsGamepadButtonUp(Gamepad gamepad, GamepadButtonCode gamepad_button_code) const = 0;
     protected:
-        inline void DispatchEvent(Event &event) const {
-            if (m_event_callback) {
-                m_event_callback(event);
+        inline void DispatchAppEvent(AppEvent &app_event) const {
+            if (m_app_event_callback) {
+                m_app_event_callback(app_event);
             }
         }
 
-        void SetEventCallback(const EventCallbackFunction &event_callback) { m_event_callback = event_callback; }
+        void SetEventCallback(const AppEventCallbackFunction &app_event_callback) { m_app_event_callback = app_event_callback; }
     private:
-        EventCallbackFunction m_event_callback;
+        AppEventCallbackFunction m_app_event_callback;
     };
 
     class Input final {

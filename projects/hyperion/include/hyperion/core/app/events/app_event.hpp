@@ -6,8 +6,8 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    enum class EventType {
-        AppDisplayChange,
+    enum class AppEventType {
+        DisplayChange,
 
         WindowClose,
         WindowResize,
@@ -29,8 +29,8 @@ namespace Hyperion {
         GamepadConnectionChanged,
     };
 
-    enum class EventCategory {
-        App         = BIT(0),
+    enum class AppEventCategory {
+        Display     = BIT(0),
         Window      = BIT(1),
         Input       = BIT(2),
         Keyboard    = BIT(3),
@@ -38,39 +38,39 @@ namespace Hyperion {
         MouseButton = BIT(5),
         Gamepad     = BIT(6)
     };
-    HYP_CREATE_ENUM_FLAG_OPERATORS(EventCategory)
+    HYP_CREATE_ENUM_FLAG_OPERATORS(AppEventCategory)
 
-    class Event {
+    class AppEvent {
     public:
         inline bool IsHandled() const { return m_handled; }
         inline void Handle() { m_handled = false; }
 
-        virtual EventType GetType() const = 0;
-        virtual EventCategory GetCategory() const = 0;
+        virtual AppEventType GetType() const = 0;
+        virtual AppEventCategory GetCategory() const = 0;
 
-        inline bool IsInCategory(EventCategory category) const { return (GetCategory() & category) == category; }
+        inline bool IsInCategory(AppEventCategory category) const { return (GetCategory() & category) == category; }
     private:
         bool m_handled = false;
     };
 
-    using EventCallbackFunction = std::function<void(Event &)>;
+    using AppEventCallbackFunction = std::function<void(AppEvent &)>;
 
-    class EventDispatcher {
+    class AppEventDispatcher {
         template<typename T>
-        using EventFunction = std::function<void(T &)>;
+        using AppEventFunction = std::function<void(T &)>;
     public:
-        EventDispatcher(Event &event) : m_event(event) { }
+        AppEventDispatcher(AppEvent &app_event) : m_app_event(app_event) { }
     public:
         template<typename T>
-        bool Dispatch(EventFunction<T> func) {
-            if (m_event.GetType() == T::GetStaticType()) {
-                func(*(T *)& m_event);
+        bool Dispatch(AppEventFunction<T> func) {
+            if (m_app_event.GetType() == T::GetStaticType()) {
+                func(*static_cast<T *>(&m_app_event));
                 return true;
             }
             return false;
         }
     private:
-        Event &m_event;
+        AppEvent &m_app_event;
     };
     
 }

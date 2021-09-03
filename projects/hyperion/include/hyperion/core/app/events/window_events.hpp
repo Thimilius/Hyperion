@@ -1,68 +1,68 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/app/window.hpp"
-#include "hyperion/core/app/events/event.hpp"
+#include "hyperion/core/app/window_settings.hpp"
+#include "hyperion/core/app/events/app_event.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    class WindowCloseEvent : public Event {
+    class WindowCloseAppEvent : public AppEvent {
     public:
-        EventType GetType() const override { return EventType::WindowClose; }
-        EventCategory GetCategory() const override { return EventCategory::Window; }
+        AppEventType GetType() const override { return AppEventType::WindowClose; }
+        AppEventCategory GetCategory() const override { return AppEventCategory::Window; }
     public:
-        static EventType GetStaticType() { return EventType::WindowClose; }
+        static AppEventType GetStaticType() { return AppEventType::WindowClose; }
     };
 
-    class WindowResizeEvent : public Event {
+    class WindowResizeAppEvent : public AppEvent {
     public:
-        WindowResizeEvent(uint32 width, uint32 height) : m_width(width), m_height(height) { }
+        WindowResizeAppEvent(uint32 width, uint32 height) : m_width(width), m_height(height) { }
 
         inline uint32 GetWidth() const { return m_width; }
         inline uint32 GetHeight() const { return m_height; }
 
-        EventType GetType() const override { return EventType::WindowResize; }
-        EventCategory GetCategory() const override { return EventCategory::Window; }
+        AppEventType GetType() const override { return AppEventType::WindowResize; }
+        AppEventCategory GetCategory() const override { return AppEventCategory::Window; }
     public:
-        static EventType GetStaticType() { return EventType::WindowResize; }
+        static AppEventType GetStaticType() { return AppEventType::WindowResize; }
     private:
         uint32 m_width;
         uint32 m_height;
     };
 
-    class WindowFocusEvent : public Event {
+    class WindowFocusAppEvent : public AppEvent {
     public:
-        WindowFocusEvent(bool focus) : m_focus(focus) { }
+        WindowFocusAppEvent(bool focus) : m_focus(focus) { }
 
         inline bool GetFocus() const { return m_focus; }
 
-        EventType GetType() const override { return EventType::WindowFocus; }
-        EventCategory GetCategory() const override { return EventCategory::Window; }
+        AppEventType GetType() const override { return AppEventType::WindowFocus; }
+        AppEventCategory GetCategory() const override { return AppEventCategory::Window; }
     public:
-        static EventType GetStaticType() { return EventType::WindowFocus; }
+        static AppEventType GetStaticType() { return AppEventType::WindowFocus; }
     private:
         bool m_focus;
     };
 
-    class WindowMovedEvent : public Event {
+    class WindowMovedAppEvent : public AppEvent {
     public:
-        EventType GetType() const override { return EventType::WindowMoved; }
-        EventCategory GetCategory() const override { return EventCategory::Window; }
+        AppEventType GetType() const override { return AppEventType::WindowMoved; }
+        AppEventCategory GetCategory() const override { return AppEventCategory::Window; }
     public:
-        static EventType GetStaticType() { return EventType::WindowMoved; }
+        static AppEventType GetStaticType() { return AppEventType::WindowMoved; }
     };
 
-    class WindowStateChangedEvent : public Event {
+    class WindowStateChangedAppEvent : public AppEvent {
     public:
-        WindowStateChangedEvent(WindowState state) : m_state(state) { }
+        WindowStateChangedAppEvent(WindowState state) : m_state(state) { }
 
         inline WindowState GetState() const { return m_state; }
 
-        EventType GetType() const override { return EventType::WindowStateChanged; }
-        EventCategory GetCategory() const override { return EventCategory::Window; }
+        AppEventType GetType() const override { return AppEventType::WindowStateChanged; }
+        AppEventCategory GetCategory() const override { return AppEventCategory::Window; }
     public:
-        static EventType GetStaticType() { return EventType::WindowStateChanged; }
+        static AppEventType GetStaticType() { return AppEventType::WindowStateChanged; }
     private:
         WindowState m_state;
     };

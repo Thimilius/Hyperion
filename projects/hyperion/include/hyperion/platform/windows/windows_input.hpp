@@ -43,14 +43,14 @@ namespace Hyperion {
         bool IsGamepadButtonHold(Gamepad gamepad, GamepadButtonCode gamepad_button_code) const override { return m_gamepads[static_cast<int32>(gamepad)].buttons[static_cast<int32>(gamepad_button_code)]; }
         bool IsGamepadButtonUp(Gamepad gamepad, GamepadButtonCode gamepad_button_code) const override { return m_gamepads[static_cast<int32>(gamepad)].buttons_up[static_cast<int32>(gamepad_button_code)]; }
     private:
-        void OnEvent(Event &event);
+        void OnAppEvent(AppEvent &app_event);
         void Update();
         void Reset();
 
         void QueryConnectedGamepads();
 
-        void OnKeyEvent(KeyEvent &event, bool down);
-        void OnMouseButtonEvent(MouseButtonEvent &event, bool down);
+        void OnKeyEvent(KeyAppEvent &key_app_event, bool down);
+        void OnMouseButtonEvent(MouseButtonAppEvent &mouse_button_app_event, bool down);
 
         void HandleGamepadButtonCode(Gamepad gamepad, GamepadButtonCode button_code, bool down);
         Gamepad GetGamepadFromId(uint32 id);
