@@ -17,6 +17,7 @@
 #include "hyperion/core/app/events/window_events.hpp"
 #include "hyperion/core/app/events/key_events.hpp"
 #include "hyperion/core/memory/memory.hpp"
+#include "hyperion/ecs/world/world_manager.hpp"
 #include "hyperion/physics/physics_engine.hpp"
 #include "hyperion/rendering/render_engine.hpp"
 
@@ -63,6 +64,8 @@ namespace Hyperion {
         Audio::AudioEngine::Initialize();
         Rendering::RenderEngine::Initialize();
         Physics::PhysicsEngine::Initialize();
+
+        WorldManager::Initialize();
     }
 
     //--------------------------------------------------------------
@@ -148,6 +151,7 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void Engine::Shutdown() {
         // When shutting down we have to be very careful about the order.
+        WorldManager::Shutdown();
 
         Physics::PhysicsEngine::Shutdown();
         Audio::AudioEngine::Shutdown();

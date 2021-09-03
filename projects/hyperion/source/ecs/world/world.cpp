@@ -5,6 +5,7 @@
 #include "hyperion/ecs/world/world.hpp"
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/ecs/component/components.hpp"
 #include "hyperion/ecs/entity/entity_utilities.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -34,7 +35,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    EntityId World::CreateEntity() {
+    EntityId World::CreateEntity(EntityPrimitive primitive) {
         EntityId id;
         if (m_free_entity_indices.IsEmpty()) {
             m_entities.Add({ EntityUtilities::CreateId(static_cast<EntityIndex>(m_entities.GetLength()), 0), EntityUtilities::CreateGuid() });
@@ -52,6 +53,8 @@ namespace Hyperion {
         for (ComponentPool &component_pool : m_component_pools) {
             component_pool.FitIntoPool(id);
         }
+
+        AddComponentsForPrimitive(id, primitive);
 
         return id;
     }
@@ -71,6 +74,15 @@ namespace Hyperion {
             }
         } else {
             HYP_LOG_WARN("Entity", "Trying to destroy nonexistent entity with id {}.", id);
+        }
+    }
+
+    //--------------------------------------------------------------
+    void World::AddComponentsForPrimitive(EntityId id, EntityPrimitive primitive) {
+        if (primitive != EntityPrimitive::Empty) {
+            AddComponent<TagComponent>(id);
+            AddComponent<TransformComponent>(id);
+            AddComponent<HierarchyComponent>(id);
         }
     }
 

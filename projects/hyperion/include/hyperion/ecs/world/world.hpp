@@ -4,17 +4,22 @@
 #include "hyperion/ecs/component/component_pool.hpp"
 #include "hyperion/ecs/world/world_view.hpp"
 
+//-------------------- Forward Declarations --------------------
+namespace Hyperion {
+    class WorldManager;
+}
+
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     class World final {
-    public:
+    private:
         World();
     public:
         bool IsValidId(EntityId id) const;
         EntityGuid GetGuid(EntityId id) const;
 
-        EntityId CreateEntity();
+        EntityId CreateEntity(EntityPrimitive primitive = EntityPrimitive::Base);
         void DestroyEntity(EntityId id);
 
         template<typename T>
@@ -78,6 +83,8 @@ namespace Hyperion {
         template<typename... T>
         WorldView<T ...> GetView() { return WorldView<T ...>(this); }
     private:
+        void AddComponentsForPrimitive(EntityId id, EntityPrimitive primitive);
+    private:
         List<EntityDescription> m_entities;
         // TODO: Remove free entities by using an implicit list as described here: https://skypjack.github.io/2019-05-06-ecs-baf-part-3/.
         List<EntityIndex> m_free_entity_indices;
@@ -85,6 +92,7 @@ namespace Hyperion {
         List<ComponentPool> m_component_pools;
     private:
     private:
+        friend class Hyperion::WorldManager;
         template<typename... T>
         friend class Hyperion::WorldView;
     };

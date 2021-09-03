@@ -4,7 +4,8 @@
 //---------------------- Library Includes ----------------------
 #include <hyperion/entry_point.hpp>
 #include <hyperion/core/app/time.hpp>
-#include <hyperion/ecs/world/world.hpp>
+#include <hyperion/ecs/world/world_manager.hpp>
+#include <hyperion/ecs/component/components.hpp>
 
 //------------------------- Namespaces -------------------------
 using namespace Hyperion;
@@ -15,30 +16,18 @@ namespace Sandbox {
     //--------------------------------------------------------------
     void SandboxApplication::OnSetup(ApplicationSettings &settings) {
         settings.render.graphics_backend = Graphics::GraphicsBackend::OpenGL;
-        settings.render.threading_mode = Rendering::RenderThreadingMode::SingleThreaded;
+        settings.render.threading_mode = Rendering::RenderThreadingMode::MultiThreaded;
     }
 
-    World world;
-    struct TransformComponent {
-        float32 position;
-    };
-    struct TagComponent {
-        String tag;
-    };
+    World *world;
 
     //--------------------------------------------------------------
     void SandboxApplication::OnInitialize() {
         UpdateTitle();
 
-        ComponentRegistry::Register<TransformComponent>();
-        ComponentRegistry::Register<TagComponent>();
-
-        world = World();
-
+        world = WorldManager::CreateWorld();
         for (size_t i = 0; i < 4096; i++) {
-            auto entity = world.CreateEntity();
-            world.AddComponent<TransformComponent>(entity);
-            world.AddComponent<TagComponent>(entity);
+            world->CreateEntity();
         }
     }
 
@@ -51,11 +40,11 @@ namespace Sandbox {
             GetWindow()->SetWindowMode(GetWindow()->GetWindowMode() == WindowMode::Borderless ? WindowMode::Windowed : WindowMode::Borderless);
         }
 
-        auto view = world.GetView<TransformComponent, TagComponent>();
+        auto view = world->GetView<TransformComponent, TagComponent>();
         for (EntityId id : view) {
-            TransformComponent *transform = world.GetComponent<TransformComponent>(id);
-            TagComponent *tag = world.GetComponent<TagComponent>(id);
-            transform->position += 1.0f;
+            TransformComponent *transform = world->GetComponent<TransformComponent>(id);
+            TagComponent *tag = world->GetComponent<TagComponent>(id);
+            transform->position.x += 1.0f;
             tag->tag = "Hello there";
         }
     }

@@ -13,8 +13,6 @@ namespace Hyperion {
 
         inline static constexpr EntityIndex GetIndex(EntityId id) { return static_cast<EntityIndex>(id); }
         inline static constexpr EntityVersion GetVersion(EntityId id) { return id >> 32; }
-    public:
-        inline static constexpr EntityId EMPTY = 0xFFFFFFFF00000000;
     };
 
 }
