@@ -4,7 +4,7 @@
 #include <utility>
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/system/log.hpp"
+#include "hyperion/core/log.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {

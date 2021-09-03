@@ -9,13 +9,13 @@
 #include <Windowsx.h>
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/core/engine.hpp"
 #include "hyperion/core/app/events/app_events.hpp"
 #include "hyperion/core/app/events/event.hpp"
 #include "hyperion/core/app/events/gamepad_events.hpp"
 #include "hyperion/core/app/events/key_events.hpp"
 #include "hyperion/core/app/events/mouse_events.hpp"
 #include "hyperion/core/app/events/window_events.hpp"
-#include "hyperion/core/system/engine.hpp"
 #include "hyperion/graphics/driver/null/null_graphics_context.hpp"
 #include "hyperion/platform/windows/driver/windows_opengl_graphics_context.hpp"
 #include "hyperion/platform/windows/driver/windows_vulkan_graphics_context.hpp"

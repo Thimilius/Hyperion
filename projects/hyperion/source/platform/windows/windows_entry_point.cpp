@@ -5,7 +5,7 @@
 #include "hyperion/platform/windows/windows_entry_point.hpp"
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/system/main.hpp"
+#include "hyperion/core/main.hpp"
 
 int WINAPI WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmd_line, int cmd_show) {
     return Hyperion::Main::Run();

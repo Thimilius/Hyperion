@@ -4,7 +4,7 @@
 #include <Windows.h>
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/system/operating_system.hpp"
+#include "hyperion/core/operating_system.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {

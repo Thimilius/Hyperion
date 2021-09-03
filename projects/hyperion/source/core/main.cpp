@@ -2,11 +2,11 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/core/system/main.hpp"
+#include "hyperion/core/main.hpp"
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/core/engine.hpp"
 #include "hyperion/core/app/application.hpp"
-#include "hyperion/core/system/engine.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {

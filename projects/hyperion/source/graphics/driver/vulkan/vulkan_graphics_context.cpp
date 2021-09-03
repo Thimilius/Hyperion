@@ -5,7 +5,7 @@
 #include "hyperion/graphics/driver/vulkan/vulkan_graphics_context.hpp"
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/system/engine.hpp"
+#include "hyperion/core/engine.hpp"
 #include "hyperion/graphics/driver/vulkan/vulkan_graphics_device.hpp"
 #include "hyperion/graphics/driver/vulkan/vulkan_graphics_device_context.hpp"
 #include "hyperion/graphics/driver/vulkan/vulkan_graphics_swap_chain.hpp"

@@ -2,10 +2,10 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/core/system/log.hpp"
+#include "hyperion/core/log.hpp"
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/system/operating_system.hpp"
+#include "hyperion/core/operating_system.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
