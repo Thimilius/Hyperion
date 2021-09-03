@@ -17,7 +17,7 @@ namespace Hyperion {
     };
 
     namespace Entity {
-        inline static constexpr EntityId EMPTY = 0xFFFFFFFF00000000;
+        inline static constexpr EntityId EMPTY = 0xFFFFFFFF;
     }
 
     enum class EntityPrimitive {

@@ -24,7 +24,7 @@ namespace Sandbox {
     //--------------------------------------------------------------
     void SandboxApplication::OnInitialize() {
         UpdateTitle();
-
+        
         world = WorldManager::CreateWorld();
         for (size_t i = 0; i < 4096; i++) {
             world->CreateEntity();

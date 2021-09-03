@@ -6,7 +6,6 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/ecs/component/components.hpp"
-#include "hyperion/ecs/entity/entity_utilities.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -37,15 +36,17 @@ namespace Hyperion {
     //--------------------------------------------------------------
     EntityId World::CreateEntity(EntityPrimitive primitive) {
         EntityId id;
-        if (m_free_entity_indices.IsEmpty()) {
+        if (m_available <= 0) {
             m_entities.Add({ EntityUtilities::CreateId(static_cast<EntityIndex>(m_entities.GetLength()), 0), EntityUtilities::CreateGuid() });
             id = m_entities.GetLast().id;
         } else {
-            EntityIndex new_index = m_free_entity_indices.GetLast();
-            m_free_entity_indices.RemoveLast();
+            EntityIndex new_index = m_next;
+            m_next = EntityUtilities::GetIndex(m_entities[new_index].id);
+            m_available--;
 
             EntityId new_id = EntityUtilities::CreateId(new_index, EntityUtilities::GetVersion(m_entities[new_index].id));
             m_entities[new_index].id = new_id;
+            m_entities[new_index].guid = EntityUtilities::CreateGuid();
 
             id = new_id;
         }
@@ -62,12 +63,14 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void World::DestroyEntity(EntityId id) {
         if (IsValidId(id)) {
-            EntityId new_id = EntityUtilities::CreateId(EntityIndex(-1), EntityUtilities::GetVersion(id) + 1);
+            EntityId new_id = EntityUtilities::CreateId(m_next, EntityUtilities::GetVersion(id) + 1);
             EntityIndex index = EntityUtilities::GetIndex(id);
+
+            m_next = index;
+            m_available++;
 
             EntityDescription &entity_description = m_entities[index];
             entity_description.id = new_id;
-            m_free_entity_indices.Add(index);
 
             for (ComponentPool &component_pool : m_component_pools) {
                 component_pool.RemoveComponent(id);

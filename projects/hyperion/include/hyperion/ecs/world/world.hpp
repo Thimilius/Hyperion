@@ -2,6 +2,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/ecs/component/component_pool.hpp"
+#include "hyperion/ecs/entity/entity_utilities.hpp"
 #include "hyperion/ecs/world/world_view.hpp"
 
 //-------------------- Forward Declarations --------------------
@@ -86,9 +87,9 @@ namespace Hyperion {
         void AddComponentsForPrimitive(EntityId id, EntityPrimitive primitive);
     private:
         List<EntityDescription> m_entities;
-        // TODO: Remove free entities by using an implicit list as described here: https://skypjack.github.io/2019-05-06-ecs-baf-part-3/.
-        List<EntityIndex> m_free_entity_indices;
-
+        uint64 m_available = 0;
+        EntityIndex m_next = EntityUtilities::GetIndex(Entity::EMPTY);
+        
         List<ComponentPool> m_component_pools;
     private:
     private:
