@@ -33,6 +33,8 @@ namespace Hyperion {
             }
         private:
             bool ShouldSkip() {
+                const ComponentId COMPONENT_IDS[] = { 0, ComponentRegistry::GetId<T>() ... };
+
                 if (m_index >= m_smallest_pool->GetEntityCount()) {
                     return false;
                 }
@@ -57,6 +59,8 @@ namespace Hyperion {
         };
     public:
         WorldView(World *world) : m_world(world) {
+            const ComponentId COMPONENT_IDS[] = { 0, ComponentRegistry::GetId<T>() ... };
+
             m_all = sizeof...(T) == 0;
 
             uint64 smallest_entity_count = UINT64_MAX;
@@ -70,6 +74,8 @@ namespace Hyperion {
         }
     public:
         const Iterator begin() const {
+            const ComponentId COMPONENT_IDS[] = { 0, ComponentRegistry::GetId<T>() ... };
+
             EntityIndex index = 0;
             if (!m_all) {
                 while (index < m_smallest_pool->GetEntityCount()) {
@@ -98,8 +104,6 @@ namespace Hyperion {
         World *m_world;
         ComponentPool *m_smallest_pool;
         bool m_all;
-    private:
-        inline static ComponentId COMPONENT_IDS[] = { 0, ComponentRegistry::GetId<T>() ... };
     };
 
 }

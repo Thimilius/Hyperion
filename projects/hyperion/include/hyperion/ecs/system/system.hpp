@@ -1,5 +1,10 @@
 #pragma once
 
+//-------------------- Forward Declarations --------------------
+namespace Hyperion {
+    class World;
+}
+
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
@@ -7,7 +12,7 @@ namespace Hyperion {
     public:
         virtual ~ISystem() = default;
     public:
-        virtual void Run() = 0;
+        virtual void Run(World *world) = 0;
     };
 
 }

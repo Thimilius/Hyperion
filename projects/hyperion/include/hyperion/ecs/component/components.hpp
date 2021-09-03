@@ -1,6 +1,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/core/math/matrix4x4.hpp"
 #include "hyperion/core/math/vector3.hpp"
 #include "hyperion/core/math/quaternion.hpp"
 #include "hyperion/ecs/entity/entity_types.hpp"
@@ -13,13 +14,17 @@ namespace Hyperion {
     };
 
     struct TransformComponent {
-        Vector3 position;
-        Quaternion rotation;
-        Vector3 scale;
+        Vector3 position = Vector3::Zero();
+        Quaternion rotation = Quaternion::Identity();
+        Vector3 scale = Vector3::One();
+    };
+
+    struct LocalToWorldComponent {
+        Matrix4x4 local_to_world;
     };
 
     struct HierarchyComponent {
-        uint64 child_count;
+        uint64 child_count = 0;
 
         EntityId parent = Entity::EMPTY;
 

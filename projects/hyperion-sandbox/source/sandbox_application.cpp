@@ -4,8 +4,9 @@
 //---------------------- Library Includes ----------------------
 #include <hyperion/entry_point.hpp>
 #include <hyperion/core/app/time.hpp>
-#include <hyperion/ecs/world/world_manager.hpp>
 #include <hyperion/ecs/component/components.hpp>
+#include <hyperion/ecs/system/transform_system.hpp>
+#include <hyperion/ecs/world/world_manager.hpp>
 
 //------------------------- Namespaces -------------------------
 using namespace Hyperion;
@@ -24,10 +25,10 @@ namespace Sandbox {
     //--------------------------------------------------------------
     void SandboxApplication::OnInitialize() {
         UpdateTitle();
-        
+
         world = WorldManager::CreateWorld();
         for (size_t i = 0; i < 4096; i++) {
-            world->CreateEntity();
+            EntityId entity = world->CreateEntity();
         }
     }
 
@@ -40,13 +41,8 @@ namespace Sandbox {
             GetWindow()->SetWindowMode(GetWindow()->GetWindowMode() == WindowMode::Borderless ? WindowMode::Windowed : WindowMode::Borderless);
         }
 
-        auto view = world->GetView<TransformComponent, TagComponent>();
-        for (EntityId id : view) {
-            TransformComponent *transform = world->GetComponent<TransformComponent>(id);
-            TagComponent *tag = world->GetComponent<TagComponent>(id);
-            transform->position.x += 1.0f;
-            tag->tag = "Hello there";
-        }
+        LocalToWorldSystem local_to_world_system;
+        local_to_world_system.Run(world);
     }
 
     //--------------------------------------------------------------

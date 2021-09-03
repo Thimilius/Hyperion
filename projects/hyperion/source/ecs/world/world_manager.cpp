@@ -29,6 +29,7 @@ namespace Hyperion {
     void WorldManager::Initialize() {
         ComponentRegistry::Register<TagComponent>();
         ComponentRegistry::Register<TransformComponent>();
+        ComponentRegistry::Register<LocalToWorldComponent>();
         ComponentRegistry::Register<HierarchyComponent>();
     }
 

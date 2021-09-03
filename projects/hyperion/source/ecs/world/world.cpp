@@ -85,7 +85,7 @@ namespace Hyperion {
         if (primitive != EntityPrimitive::Empty) {
             AddComponent<TagComponent>(id);
             AddComponent<TransformComponent>(id);
-            AddComponent<HierarchyComponent>(id);
+            AddComponent<LocalToWorldComponent>(id);
         }
     }
 
