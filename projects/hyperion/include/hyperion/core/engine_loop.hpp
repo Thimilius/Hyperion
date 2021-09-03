@@ -6,7 +6,7 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    typedef void (*EngineLoopUpdateFunction)();
+    using EngineLoopUpdateFunction = void(*)();
 
     struct EngineLoopSubSystem {
         String name;
@@ -21,8 +21,6 @@ namespace Hyperion {
         EngineLoopSubSystem pre_update;
         EngineLoopSubSystem update;
         EngineLoopSubSystem late_update;
-
-        static EngineLoopSystem Default();
     };
 
 }

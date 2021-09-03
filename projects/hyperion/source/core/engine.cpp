@@ -40,22 +40,20 @@ namespace Hyperion {
         DisplayInfo::DisplayModeInfo mode_info = Display::GetCurrentDisplayModeInfo();
         HYP_LOG_INFO("Engine", "Primary display: {}x{} @{} Hz", mode_info.width, mode_info.height, mode_info.refresh_rate);
 
-        EngineLoopSystem &result = s_settings.core.engine_loop;
-        result.initilization.name = "Initilization";
-        result.initilization.sub_systems = {
+        EngineLoopSystem &engine_loop = s_settings.core.engine_loop;
+        engine_loop.initilization.name = "Initilization";
+        engine_loop.initilization.sub_systems = {
             { "MemoryStatsInitilization", MemoryStats::ResetFrameMemory },
             { "TimeInitilization", []() {
-                s_time_stats.frame++;
-                float32 now = s_time_stats.timer->ElapsedSeconds();
-                float32 delta_time = static_cast<float32>(now - s_time_stats.last_time);
+                float32 now = Time::s_timer->ElapsedSeconds();
+                float32 delta_time = static_cast<float32>(now - Time::s_last_time);
                 if (delta_time > Time::GetMaxDeltaTime()) {
                     delta_time = Time::GetMaxDeltaTime();
                 }
-                s_time_stats.last_time = now;
-                s_time_stats.accumulator += delta_time;
+                Time::s_last_time = now;
+                Time::s_accumulator += delta_time;
                 Time::s_delta_time = delta_time;
                 Time::s_time += delta_time;
-                Time::s_time_since_engine_mode_change += delta_time;
 
                 // Accumulate frame times and calculate the average to get more robust frame times and fps.
                 Time::s_past_delta_times[Time::s_frame_counter % Time::MAX_PAST_DELTA_TIMES] = delta_time;
@@ -70,23 +68,54 @@ namespace Hyperion {
             } },
             { "InputInitilization", []() { s_application->GetWindow()->Poll(); } }
         };
-        result.fixed_update.name = "FixedUpdate";
-        result.fixed_update.sub_systems = {
+        engine_loop.fixed_update.name = "FixedUpdate";
+        engine_loop.fixed_update.sub_systems = {
             { "ApplicationFixedUpdate", []() { s_application->OnFixedUpdate(Time::GetFixedDeltaTime()); } },
-            { "TimeFixedUpdate", []() { s_time_stats.accumulator -= Time::GetFixedDeltaTime(); } }
+            { "TimeFixedUpdate", []() { Time::s_accumulator -= Time::GetFixedDeltaTime(); } }
         };
-        result.tick.name = "Tick";
-        result.tick.sub_systems = {
+        engine_loop.tick.name = "Tick";
+        engine_loop.tick.sub_systems = {
             { "ApplicationTick", []() { s_application->OnTick(); } }
         };
-        result.update.name = "Update";
-        result.update.sub_systems = {
+        engine_loop.update.name = "Update";
+        engine_loop.update.sub_systems = {
             { "ApplicationUpdate", []() { s_application->OnUpdate(Time::GetDeltaTime()); } }
         };
-        result.late_update.name = "LateUpdate";
-        result.late_update.sub_systems = {
+        engine_loop.late_update.name = "LateUpdate";
+        engine_loop.late_update.sub_systems = {
             { "RenderEngineLateUpdate", []() { Rendering::RenderEngine::Render(); } }
         };
+    }
+
+    //--------------------------------------------------------------
+    uint32 Engine::Run() {
+        s_running = true;
+
+        s_application = Application::GetInstance();
+        s_application->OnSetup(s_settings);
+
+        PreInitialize();
+
+        Initialize();
+        s_application->OnInitialize();
+        PostInitialize();
+        s_application->GetWindow()->Show();
+
+        Time::s_timer = Timer::Create();
+        while (s_running) {
+            Iterate();
+        }
+        delete Time::s_timer;
+
+        s_application->OnShutdown();
+        Shutdown();
+
+        return 0;
+    }
+
+    //--------------------------------------------------------------
+    void Engine::Exit() {
+        s_running = false;
     }
 
     //--------------------------------------------------------------
@@ -122,37 +151,10 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    uint32 Engine::Run() {
-        s_running = true;
-
-        s_application = Application::GetInstance();
-        s_settings = ApplicationSettings();
-        s_application->OnSetup(s_settings);
-
-        PreInitialize();
-
-        Initialize();
-        s_application->OnInitialize();
-        PostInitialize();
-        s_application->GetWindow()->Show();
-
-        s_time_stats.timer = Timer::Create();
-        while (s_running) {
-            Iterate();
-        }
-        delete s_time_stats.timer;
-
-        s_application->OnShutdown();
-        Shutdown();
-
-        return 0;
-    }
-
-    //--------------------------------------------------------------
     void Engine::Iterate() {
         const EngineLoopSystem &engine_loop = s_settings.core.engine_loop;
         ExecuteEngineLoopSubSystem(engine_loop.initilization);
-        while (s_time_stats.accumulator > Time::GetFixedDeltaTime()) {
+        while (Time::s_accumulator > Time::GetFixedDeltaTime()) {
             ExecuteEngineLoopSubSystem(engine_loop.fixed_update);
         }
         if (Time::OnInterval(1.0f)) {
@@ -192,11 +194,6 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void Engine::Exit() {
-        s_running = false;
-    }
-
-    //--------------------------------------------------------------
     void Engine::Shutdown() {
         // When shutting down we have to be very careful about the order.
         WorldManager::Shutdown();
@@ -221,62 +218,6 @@ namespace Hyperion {
                 engine_loop_sub_system.update_function();
             }
         }
-    }
-
-    //--------------------------------------------------------------
-    void Engine::TimeInitilization() {
-        s_time_stats.frame++;
-        float32 now = s_time_stats.timer->ElapsedSeconds();
-        float32 delta_time = static_cast<float32>(now - s_time_stats.last_time);
-        if (delta_time > Time::GetMaxDeltaTime()) {
-            delta_time = Time::GetMaxDeltaTime();
-        }
-        s_time_stats.last_time = now;
-        s_time_stats.accumulator += delta_time;
-        Time::s_delta_time = delta_time;
-        Time::s_time += delta_time;
-        Time::s_time_since_engine_mode_change += delta_time;
-
-        // Accumulate frame times and calculate the average to get more robust frame times and fps.
-        Time::s_past_delta_times[Time::s_frame_counter % Time::MAX_PAST_DELTA_TIMES] = delta_time;
-        float32 delta_time_average = 0.0f;
-        for (uint64 i = 0; i < Time::MAX_PAST_DELTA_TIMES; i++) {
-            delta_time_average += Time::s_past_delta_times[i];
-        }
-        delta_time_average /= Time::MAX_PAST_DELTA_TIMES;
-        Time::s_frame_time = delta_time_average * 1000.0f;
-        Time::s_fps = static_cast<uint32>(1.0f / delta_time_average);
-        Time::s_frame_counter++;
-    }
-
-    //--------------------------------------------------------------
-    void Engine::InputInitilization() {
-        s_application->GetWindow()->Poll();
-    }
-
-    //--------------------------------------------------------------
-    void Engine::ApplicationFixedUpdate() {
-        s_application->OnFixedUpdate(Time::GetFixedDeltaTime());
-    }
-
-    //--------------------------------------------------------------
-    void Engine::TimeFixedUpdate() {
-        s_time_stats.accumulator -= Time::GetFixedDeltaTime();
-    }
-
-    //--------------------------------------------------------------
-    void Engine::ApplicationTick() {
-        s_application->OnTick();
-    }
-
-    //--------------------------------------------------------------
-    void Engine::ApplicationUpdate() {
-        s_application->OnUpdate(Time::GetDeltaTime());
-    }
-
-    //--------------------------------------------------------------
-    void Engine::RenderEngineLateUpdate() {
-        Rendering::RenderEngine::Render();
     }
 
     //--------------------------------------------------------------

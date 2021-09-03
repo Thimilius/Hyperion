@@ -7,6 +7,7 @@
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Engine;
+    class Timer;
 }
 
 //-------------------- Definition Namespace --------------------
@@ -18,7 +19,6 @@ namespace Hyperion {
         inline static float32 GetFixedDeltaTime() { return s_fixed_delta_time; }
         inline static float32 GetDeltaTime() { return s_delta_time; }
         inline static float32 GetTime() { return s_time; }
-        inline static float32 GetTimeSinceEngineModeChange() { return s_time_since_engine_mode_change; }
         inline static float32 GetFrameTime() { return s_frame_time; }
         inline static uint32 GetFPS() { return s_fps; }
 
@@ -37,13 +37,15 @@ namespace Hyperion {
         Time() = delete;
         ~Time() = delete;
     private:
+        inline static Timer *s_timer;
+        inline static float64 s_last_time = 0.0;
+        inline static float64 s_accumulator = 0.0;
+
         inline static float32 s_max_delta_time = 0.0f;
         inline static float32 s_fixed_delta_time = 0.0f;
         inline static float32 s_delta_time = 0.0f;
-
         inline static float32 s_time = 0.0f;
-        inline static float32 s_time_since_engine_mode_change = 0.0f;
-        
+
         inline static uint64 s_frame_counter = 0;
         inline static float32 s_frame_time = 0.0f;
         inline static uint32 s_fps = 0;

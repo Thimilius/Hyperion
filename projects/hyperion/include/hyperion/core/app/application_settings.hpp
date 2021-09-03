@@ -13,7 +13,7 @@
 namespace Hyperion {
 
     struct CoreSettings {
-        EngineLoopSystem engine_loop = EngineLoopSystem::Default();
+        EngineLoopSystem engine_loop;
 
         float32 max_delta_time = 0.15f;
         float32 fixed_delta_time = 1.0f / 60.0f;

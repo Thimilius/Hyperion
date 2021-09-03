@@ -8,7 +8,7 @@
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
-    struct EngineLoopSystem;
+    class Engine;
     class Main;
 }
 
@@ -28,7 +28,7 @@ namespace Hyperion {
         inline static std::atomic_uint64_t s_global_memory = 0;
         inline static std::atomic_uint64_t s_frame_memory = 0;
     private:
-        friend struct Hyperion::EngineLoopSystem;
+        friend class Hyperion::Engine;
         friend class Hyperion::Main;
 
         friend void *::operator new(size_t size);
