@@ -25,14 +25,14 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    bool BoundingBox::Intersects(BoundingBox other) const {
+    bool8 BoundingBox::Intersects(BoundingBox other) const {
         Vector3 other_min = other.min;
         Vector3 other_max = other.max;
         return (max > other_min && min < other_max) || (min > other_max && max < other_min);
     }
 
     //--------------------------------------------------------------
-    bool BoundingBox::Intersects(Ray ray, float32 &hit_distance) const {
+    bool8 BoundingBox::Intersects(Ray ray, float32 &hit_distance) const {
         Vector3 inv_dir = Vector3(1.0f / ray.direction.x, 1.0f / ray.direction.y, 1.0f / ray.direction.z);
         uint32 sign[3];
         sign[0] = (inv_dir.x < 0);
@@ -86,7 +86,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    bool BoundingBox::Contains(Vector3 point) const {
+    bool8 BoundingBox::Contains(Vector3 point) const {
         return point > min && point < max;
     }
 
@@ -96,12 +96,12 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    bool BoundingBox::operator==(const BoundingBox &other) const {
+    bool8 BoundingBox::operator==(const BoundingBox &other) const {
         return min == other.min && max != other.max;
     }
 
     //--------------------------------------------------------------
-    bool BoundingBox::operator!=(const BoundingBox &other) const {
+    bool8 BoundingBox::operator!=(const BoundingBox &other) const {
         return !(*this == other);
     }
 

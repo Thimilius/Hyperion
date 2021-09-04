@@ -47,8 +47,8 @@ namespace Hyperion {
 
         String ToString() const;
 
-        bool operator==(const Vector3 &other) const;
-        bool operator!=(const Vector3 &other) const;
+        bool8 operator==(const Vector3 &other) const;
+        bool8 operator!=(const Vector3 &other) const;
 
         Vector3 &operator-();
 
@@ -57,10 +57,10 @@ namespace Hyperion {
         Vector3 &operator*=(const Vector3 &other);
         Vector3 &operator/=(const Vector3 &other);
 
-        bool operator<(const Vector3 &other) const;
-        bool operator<=(const Vector3 &other) const;
-        bool operator>(const Vector3 &other) const;
-        bool operator>=(const Vector3 &other) const;
+        bool8 operator<(const Vector3 &other) const;
+        bool8 operator<=(const Vector3 &other) const;
+        bool8 operator>(const Vector3 &other) const;
+        bool8 operator>=(const Vector3 &other) const;
 
         static Vector3 Cross(const Vector3 &a, const Vector3 &b);
 
@@ -115,8 +115,8 @@ namespace Hyperion {
 
         String ToString() const;
 
-        bool operator==(const Vector3Int &other) const;
-        bool operator!=(const Vector3Int &other) const;
+        bool8 operator==(const Vector3Int &other) const;
+        bool8 operator!=(const Vector3Int &other) const;
 
         Vector3Int &operator-();
 
@@ -125,10 +125,10 @@ namespace Hyperion {
         Vector3Int &operator*=(const Vector3Int &other);
         Vector3Int &operator/=(const Vector3Int &other);
 
-        bool operator<(const Vector3Int &other) const;
-        bool operator<=(const Vector3Int &other) const;
-        bool operator>(const Vector3Int &other) const;
-        bool operator>=(const Vector3Int &other) const;
+        bool8 operator<(const Vector3Int &other) const;
+        bool8 operator<=(const Vector3Int &other) const;
+        bool8 operator>(const Vector3Int &other) const;
+        bool8 operator>=(const Vector3Int &other) const;
 
         inline static Vector3Int Zero() { return Vector3Int(0, 0, 0); }
         inline static Vector3Int One() { return Vector3Int(1, 1, 1); }

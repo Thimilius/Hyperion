@@ -34,14 +34,14 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    bool Rect::Intersects(const Rect &other) const {
+    bool8 Rect::Intersects(const Rect &other) const {
         Vector2 this_max = GetMax();
         Vector2 other_max = other.GetMax();
         return other_max.x > x && other.x < this_max.x && other_max.y > y && other.y < this_max.y;
     }
 
     //--------------------------------------------------------------
-    bool Rect::Contains(Vector2 point) const {
+    bool8 Rect::Contains(Vector2 point) const {
         Vector2 max = GetMax();
         return point.x >= x && point.x < max.x && point.y >= y && point.y < max.y;
     }
@@ -52,12 +52,12 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    bool Rect::operator==(const Rect &other) const {
+    bool8 Rect::operator==(const Rect &other) const {
         return position == other.position && size == other.size;
     }
 
     //--------------------------------------------------------------
-    bool Rect::operator!=(const Rect &other) const {
+    bool8 Rect::operator!=(const Rect &other) const {
         return !(*this == other);
     }
 
@@ -88,14 +88,14 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    bool RectInt::Intersects(const RectInt &other) const {
+    bool8 RectInt::Intersects(const RectInt &other) const {
         Vector2Int this_max = GetMax();
         Vector2Int other_max = other.GetMax();
         return other_max.x > x && other.x < this_max.x &&other_max.y > y && other.y < this_max.y;
     }
 
     //--------------------------------------------------------------
-    bool RectInt::Contains(Vector2Int point) const {
+    bool8 RectInt::Contains(Vector2Int point) const {
         Vector2Int max = GetMax();
         return point.x >= x && point.x < max.x &&point.y >= y && point.y < max.y;
     }
@@ -106,12 +106,12 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    bool RectInt::operator==(const RectInt &other) const {
+    bool8 RectInt::operator==(const RectInt &other) const {
         return position == other.position && size == other.size;
     }
 
     //--------------------------------------------------------------
-    bool RectInt::operator!=(const RectInt &other) const {
+    bool8 RectInt::operator!=(const RectInt &other) const {
         return !(*this == other);
     }
 

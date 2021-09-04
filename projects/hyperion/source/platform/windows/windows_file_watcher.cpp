@@ -8,12 +8,12 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    FileWatcher *FileWatcher::Create(const String &path, WatcherCallbackFunction callback, bool recursive) {
+    FileWatcher *FileWatcher::Create(const String &path, WatcherCallbackFunction callback, bool8 recursive) {
         return new WindowsFileWatcher(path, callback, recursive);
     }
 
     //--------------------------------------------------------------
-    WindowsFileWatcher::WindowsFileWatcher(const String &path, WatcherCallbackFunction callback, bool recursive) {
+    WindowsFileWatcher::WindowsFileWatcher(const String &path, WatcherCallbackFunction callback, bool8 recursive) {
         m_path = path;
         m_callback = callback;
         m_recursive = recursive;
@@ -62,7 +62,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    bool WindowsFileWatcher::RefreshWatch(bool clear) {
+    bool8 WindowsFileWatcher::RefreshWatch(bool8 clear) {
         BOOL result = ReadDirectoryChangesW(
             watch_struct.directory_handle,
             watch_struct.buffer,
@@ -115,7 +115,7 @@ namespace Hyperion {
                 String filename = StringUtils::Utf16ToUtf8(WideString(notify->FileName).substr(0, filename_length));
 
                 // Format path to always include last directory seperator.
-                bool has_seperator = false;
+                bool8 has_seperator = false;
                 if (watch_struct->watcher->m_path.back() == '\\' || watch_struct->watcher->m_path.back() == '/') {
                     has_seperator = true;
                 }

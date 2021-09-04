@@ -15,12 +15,12 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    bool StbImageLoader::SupportsExtension(const String &extension) const {
+    bool8 StbImageLoader::SupportsExtension(const String &extension) const {
         return std::find(s_supported_extensions.begin(), s_supported_extensions.end(), extension) != s_supported_extensions.end();
     }
 
     //--------------------------------------------------------------
-    Result<Image *, Error> StbImageLoader::Load(const String &path, bool flip_vertically) {
+    Result<Image *, Error> StbImageLoader::Load(const String &path, bool8 flip_vertically) {
         if (!FileSystem::Exists(path)) {
             return { Error::FileDoesNotExist };
         }

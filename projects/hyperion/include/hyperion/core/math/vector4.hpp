@@ -39,8 +39,8 @@ namespace Hyperion {
 
         String ToString() const;
 
-        bool operator==(const Vector4 &other) const;
-        bool operator!=(const Vector4 &other) const;
+        bool8 operator==(const Vector4 &other) const;
+        bool8 operator!=(const Vector4 &other) const;
 
         Vector4 &operator-();
 
@@ -49,10 +49,10 @@ namespace Hyperion {
         Vector4 &operator*=(const Vector4 &other);
         Vector4 &operator/=(const Vector4 &other);
 
-        bool operator<(const Vector4 &other) const;
-        bool operator<=(const Vector4 &other) const;
-        bool operator>(const Vector4 &other) const;
-        bool operator>=(const Vector4 &other) const;
+        bool8 operator<(const Vector4 &other) const;
+        bool8 operator<=(const Vector4 &other) const;
+        bool8 operator>(const Vector4 &other) const;
+        bool8 operator>=(const Vector4 &other) const;
 
         operator Color();
 

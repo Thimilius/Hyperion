@@ -12,7 +12,7 @@ namespace Hyperion {
         MouseButtonAppEvent(MouseButtonCode mouse_button_code, KeyModifier key_modifier) : m_mouse_button_code(mouse_button_code), m_key_modifier(key_modifier) { }
 
         inline MouseButtonCode GetMouseButtonCode() const { return m_mouse_button_code; }
-        inline bool HasKeyModifier(KeyModifier key_modifier) const { return (m_key_modifier & key_modifier) == key_modifier; }
+        inline bool8 HasKeyModifier(KeyModifier key_modifier) const { return (m_key_modifier & key_modifier) == key_modifier; }
 
         AppEventCategory GetCategory() const override { return AppEventCategory::Input & AppEventCategory::Mouse & AppEventCategory::MouseButton; }
     private:

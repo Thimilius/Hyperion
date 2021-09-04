@@ -20,8 +20,8 @@ namespace Hyperion::Graphics {
         uint32 graphics_family_index;
         uint32 present_family_index;
 
-        bool has_graphics_family_index = false;
-        bool has_present_family_index = false;
+        bool8 has_graphics_family_index = false;
+        bool8 has_present_family_index = false;
     };
 
     class VulkanGraphicsContext : public GraphicsContext {

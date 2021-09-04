@@ -22,15 +22,15 @@ namespace Hyperion {
         inline static float32 GetFrameTime() { return s_frame_time; }
         inline static uint32 GetFPS() { return s_fps; }
 
-        inline static bool OnInterval(float32 interval, float32 offset = 0.0f) {
+        inline static bool8 OnInterval(float32 interval, float32 offset = 0.0f) {
             return Math::Floor((s_time - offset - s_delta_time) / interval) < Math::Floor((s_time - offset) / interval);
         }
 
-        inline static bool OnTime(float32 timestamp) {
+        inline static bool8 OnTime(float32 timestamp) {
             return s_time >= timestamp && s_time - s_delta_time < timestamp;
         }
 
-        inline static bool BetweenInterval(float32 interval, float32 offset = 0.0f) {
+        inline static bool8 BetweenInterval(float32 interval, float32 offset = 0.0f) {
             return Math::ModF(s_time - offset, interval * 2) >= interval;
         }
     private:

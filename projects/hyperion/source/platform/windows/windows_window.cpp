@@ -152,7 +152,7 @@ namespace Hyperion {
             return;
         }
 
-        bool result = true;
+        bool8 result = true;
         switch (window_state) {
             case WindowState::Normal: {
                 result = ShowWindow(m_window_handle, SW_RESTORE);
@@ -180,7 +180,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void WindowsWindow::SetCursorVisible(bool visible) {
+    void WindowsWindow::SetCursorVisible(bool8 visible) {
         m_cursor_is_visible = visible;
 
         ShowCursor(visible);
@@ -369,7 +369,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void WindowsWindow::DispatchKeyAppEvent(KeyCode key_code, bool is_down) const {
+    void WindowsWindow::DispatchKeyAppEvent(KeyCode key_code, bool8 is_down) const {
         if (key_code != KeyCode::None) {
             if (is_down) {
                 KeyPressedAppEvent event(key_code, GetKeyModifier());
@@ -398,7 +398,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    KeyCode WindowsWindow::TranslateKeyCode(uint32 w_param, uint32 l_param, bool is_down) const {
+    KeyCode WindowsWindow::TranslateKeyCode(uint32 w_param, uint32 l_param, bool8 is_down) const {
         // Left and right keys need to be distinguished as extended keys.
         if (w_param == VK_CONTROL) {
             // Alt-Gr sends both left control and alt right messages.
@@ -427,8 +427,8 @@ namespace Hyperion {
             DispatchKeyAppEvent(KeyCode::Shift, is_down);
 
             // Left and right shift keys are not send as extended keys and therefore need to be queried explicitly.
-            bool previous_left_shift_down = m_left_shift_last_down;
-            bool previous_right_shift_down = m_right_shift_last_down;
+            bool8 previous_left_shift_down = m_left_shift_last_down;
+            bool8 previous_right_shift_down = m_right_shift_last_down;
             m_left_shift_last_down = GetKeyState(VK_LSHIFT) & 0x8000;
             m_right_shift_last_down = GetAsyncKeyState(VK_RSHIFT) & 0x8000;
 
@@ -764,7 +764,7 @@ namespace Hyperion {
 
             case WM_SETFOCUS: 
             case WM_KILLFOCUS: {
-                bool focused = message == WM_SETFOCUS;
+                bool8 focused = message == WM_SETFOCUS;
                 window->m_is_focused = focused;
 
                 // We need to reset the cursor clip state when losing focus.

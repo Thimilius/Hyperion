@@ -75,7 +75,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    bool FileSystem::Exists(const String &path) {
+    bool8 FileSystem::Exists(const String &path) {
         return std::filesystem::exists(path);
     }
 

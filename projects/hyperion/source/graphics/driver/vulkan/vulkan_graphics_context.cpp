@@ -14,8 +14,8 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Graphics {
 
-    constexpr bool g_log_extensions = false;
-    constexpr bool g_log_layers = false;
+    constexpr bool8 g_log_extensions = false;
+    constexpr bool8 g_log_layers = false;
     constexpr VkDebugUtilsMessageSeverityFlagBitsEXT g_debug_message_severity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT;
 
     //--------------------------------------------------------------

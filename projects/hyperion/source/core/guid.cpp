@@ -37,12 +37,12 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    bool Guid::operator==(const Guid &other) const {
+    bool8 Guid::operator==(const Guid &other) const {
         return data[0] == other.data[0] && data[1] == other.data[1];
     }
 
     //--------------------------------------------------------------
-    bool Guid::operator!=(const Guid &other) const {
+    bool8 Guid::operator!=(const Guid &other) const {
         return !(*this == other);
     }
 

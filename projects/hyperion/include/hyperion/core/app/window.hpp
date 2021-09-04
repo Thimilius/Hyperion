@@ -49,8 +49,8 @@ namespace Hyperion {
         inline WindowState GetWindowState() const { return m_window_state; }
         virtual void SetWindowState(WindowState window_state) = 0;
         
-        inline bool IsCursorVisible() const { return m_cursor_is_visible; }
-        virtual void SetCursorVisible(bool visible) = 0;
+        inline bool8 IsCursorVisible() const { return m_cursor_is_visible; }
+        virtual void SetCursorVisible(bool8 visible) = 0;
         inline CursorMode GetCursorMode() const { return m_cursor_mode; }
         virtual void SetCursorMode(CursorMode mode) = 0;
 
@@ -77,10 +77,10 @@ namespace Hyperion {
         WindowMode m_window_mode;
         WindowState m_window_state;
 
-        bool m_is_focused;
+        bool8 m_is_focused;
 
         CursorMode m_cursor_mode;
-        bool m_cursor_is_visible;
+        bool8 m_cursor_is_visible;
 
         AppEventCallbackFunction m_app_event_callback;
     private:

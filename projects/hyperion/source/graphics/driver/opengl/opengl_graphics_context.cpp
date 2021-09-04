@@ -13,9 +13,9 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Graphics {
 
-    constexpr bool g_break_on_error = true;
-    constexpr bool g_log_extensions = false;
-    constexpr bool g_log_notifications = false;
+    constexpr bool8 g_break_on_error = true;
+    constexpr bool8 g_log_extensions = false;
+    constexpr bool8 g_log_notifications = false;
 
     //--------------------------------------------------------------
     void OpenGLGraphicsContext::Initialize(const GraphicsContextDescriptor &descriptor) {

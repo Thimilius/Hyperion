@@ -47,15 +47,15 @@ namespace Hyperion {
 
     class GamepadConnectionChangedAppEvent : public GamepadAppEvent {
     public:
-        GamepadConnectionChangedAppEvent(Gamepad gamepad, bool connected) : GamepadAppEvent(gamepad), m_connected(connected) { }
+        GamepadConnectionChangedAppEvent(Gamepad gamepad, bool8 connected) : GamepadAppEvent(gamepad), m_connected(connected) { }
 
-        inline bool GetConnected() const { return m_connected; }
+        inline bool8 GetConnected() const { return m_connected; }
 
         AppEventType GetType() const override { return AppEventType::GamepadConnectionChanged; }
     public:
         static AppEventType GetStaticType() { return AppEventType::GamepadConnectionChanged; }
     private:
-        bool m_connected;
+        bool8 m_connected;
     };
 
 }

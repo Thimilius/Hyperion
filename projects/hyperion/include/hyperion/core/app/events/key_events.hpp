@@ -12,7 +12,7 @@ namespace Hyperion {
         KeyAppEvent(KeyCode key_code, KeyModifier key_modifier) : m_key_code(key_code), m_key_modifier(key_modifier) { }
 
         inline KeyCode GetKeyCode() const { return m_key_code; }
-        inline bool HasKeyModifier(KeyModifier key_modifier) const { return (m_key_modifier & key_modifier) == key_modifier; }
+        inline bool8 HasKeyModifier(KeyModifier key_modifier) const { return (m_key_modifier & key_modifier) == key_modifier; }
 
         AppEventCategory GetCategory() const override { return AppEventCategory::Input & AppEventCategory::Keyboard; }
     private:
@@ -43,7 +43,7 @@ namespace Hyperion {
         KeyTypedAppEvent(uint32 character, KeyModifier key_modifier) : m_character(character), m_key_modifier(key_modifier) { }
 
         inline uint32 GetCharacter() const { return m_character; }
-        inline bool HasKeyModifier(KeyModifier key_modifier) const { return (m_key_modifier & key_modifier) == key_modifier; }
+        inline bool8 HasKeyModifier(KeyModifier key_modifier) const { return (m_key_modifier & key_modifier) == key_modifier; }
 
         AppEventType GetType() const override { return AppEventType::KeyTyped; }
         AppEventCategory GetCategory() const override { return AppEventCategory::Input & AppEventCategory::Keyboard; }

@@ -23,10 +23,10 @@ namespace Hyperion {
     public:
         virtual void Update() = 0;
     public:
-        static FileWatcher *Create(const String &path, WatcherCallbackFunction callback, bool recursive);
+        static FileWatcher *Create(const String &path, WatcherCallbackFunction callback, bool8 recursive);
     protected:
         String m_path;
         WatcherCallbackFunction m_callback;
-        bool m_recursive;
+        bool8 m_recursive;
     };
 }

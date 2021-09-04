@@ -35,7 +35,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    bool ComponentPool::HasComponent(EntityId id) {
+    bool8 ComponentPool::HasComponent(EntityId id) {
         EntityIndices &entity_indices = GetEntityIndices(id);
         uint32 sparse_index = GetSparseIndex(id);
         uint32 packed_index = entity_indices[sparse_index];
@@ -59,7 +59,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    bool ComponentPool::RemoveComponent(EntityId id) {
+    bool8 ComponentPool::RemoveComponent(EntityId id) {
         EntityIndices &entity_indices = GetEntityIndices(id);
         uint32 sparse_index = GetSparseIndex(id);
         uint32 packed_index = entity_indices[sparse_index];

@@ -10,8 +10,8 @@ namespace Hyperion {
     public:
         String ToString() const;
 
-        bool operator==(const Guid &other) const;
-        bool operator!=(const Guid &other) const;
+        bool8 operator==(const Guid &other) const;
+        bool8 operator!=(const Guid &other) const;
     public:
         static Guid Create();
         static Guid Create(const String &string);

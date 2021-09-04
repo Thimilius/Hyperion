@@ -48,12 +48,12 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    bool Quaternion::operator==(const Quaternion &other) const {
+    bool8 Quaternion::operator==(const Quaternion &other) const {
         return x == other.x && y == other.y && z == other.z && w == other.z;
     }
 
     //--------------------------------------------------------------
-    bool Quaternion::operator!=(const Quaternion &other) const {
+    bool8 Quaternion::operator!=(const Quaternion &other) const {
         return !(*this == other);
     }
 

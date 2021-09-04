@@ -17,7 +17,7 @@ namespace Hyperion {
     private:
         World();
     public:
-        bool IsValidId(EntityId id) const;
+        bool8 IsValidId(EntityId id) const;
         EntityGuid GetGuid(EntityId id) const;
 
         EntityId CreateEntity(EntityPrimitive primitive = EntityPrimitive::Base);
@@ -44,7 +44,7 @@ namespace Hyperion {
         }
 
         template<typename T>
-        bool HasComponent(EntityId id) {
+        bool8 HasComponent(EntityId id) {
             if (IsValidId(id)) {
                 ComponentId component_id = ComponentRegistry::GetId<T>();
                 ComponentPool &component_pool = m_component_pools[component_id];

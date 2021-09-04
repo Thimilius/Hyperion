@@ -42,15 +42,15 @@ namespace Hyperion {
 
     class AppEvent {
     public:
-        inline bool IsHandled() const { return m_handled; }
+        inline bool8 IsHandled() const { return m_handled; }
         inline void Handle() { m_handled = false; }
 
         virtual AppEventType GetType() const = 0;
         virtual AppEventCategory GetCategory() const = 0;
 
-        inline bool IsInCategory(AppEventCategory category) const { return (GetCategory() & category) == category; }
+        inline bool8 IsInCategory(AppEventCategory category) const { return (GetCategory() & category) == category; }
     private:
-        bool m_handled = false;
+        bool8 m_handled = false;
     };
 
     using AppEventCallbackFunction = std::function<void(AppEvent &)>;
@@ -62,7 +62,7 @@ namespace Hyperion {
         AppEventDispatcher(AppEvent &app_event) : m_app_event(app_event) { }
     public:
         template<typename T>
-        bool Dispatch(AppEventFunction<T> func) {
+        bool8 Dispatch(AppEventFunction<T> func) {
             if (m_app_event.GetType() == T::GetStaticType()) {
                 func(*static_cast<T *>(&m_app_event));
                 return true;

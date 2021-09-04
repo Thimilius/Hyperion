@@ -24,7 +24,7 @@ namespace Hyperion {
     public:
         inline uint64 GetLength() const { return m_vector.size(); }
         inline uint64 GetCapacity() const { return m_vector.capacity(); }
-        inline bool IsEmpty() const { return m_vector.empty(); }
+        inline bool8 IsEmpty() const { return m_vector.empty(); }
 
         inline T *GetData() { return m_vector.data(); }
         inline const T *GetData() const { return m_vector.data(); }
@@ -36,7 +36,7 @@ namespace Hyperion {
         inline T &GetLast() { return  m_vector.back(); }
         inline const T &GetLast() const { return m_vector.back(); }
 
-        inline bool Contains(const T &item) const { return std::find(begin(), end(), item) != end(); }
+        inline bool8 Contains(const T &item) const { return std::find(begin(), end(), item) != end(); }
 
         inline void Add(const T &item) { m_vector.push_back(item); }
         inline void Add(T &&item) { m_vector.push_back(item); }

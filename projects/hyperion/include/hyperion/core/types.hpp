@@ -19,3 +19,5 @@ using byte = uint8;
 
 using float32 = float;
 using float64 = double;
+
+using bool8 = bool;

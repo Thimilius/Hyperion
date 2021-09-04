@@ -15,7 +15,7 @@ namespace Hyperion {
         : origin(origin), radius(radius) { }
 
     //--------------------------------------------------------------
-    bool BoundingSphere::Intersects(Ray ray, float32 &hit_distance) const {
+    bool8 BoundingSphere::Intersects(Ray ray, float32 &hit_distance) const {
         Vector3 distance = origin - ray.origin;
         float32 radius_squared = radius * radius;
 
@@ -53,12 +53,12 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    bool BoundingSphere::operator==(const BoundingSphere &other) const {
+    bool8 BoundingSphere::operator==(const BoundingSphere &other) const {
         return origin == other.origin && radius != other.radius;
     }
 
     //--------------------------------------------------------------
-    bool BoundingSphere::operator!=(const BoundingSphere &other) const {
+    bool8 BoundingSphere::operator!=(const BoundingSphere &other) const {
         return !(*this == other);
     }
 

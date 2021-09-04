@@ -44,7 +44,7 @@ namespace Hyperion::Rendering {
         inline static RenderSettings s_render_settings;
         
         inline static Threading::Thread s_render_thread;
-        inline static std::atomic<bool> s_render_thread_should_exit;
+        inline static std::atomic<bool8> s_render_thread_should_exit;
 
         inline static IRenderPipeline *s_render_pipeline;
 

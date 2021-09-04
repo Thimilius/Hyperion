@@ -33,16 +33,16 @@ namespace Hyperion {
 
     class WindowFocusAppEvent : public AppEvent {
     public:
-        WindowFocusAppEvent(bool focus) : m_focus(focus) { }
+        WindowFocusAppEvent(bool8 focus) : m_focus(focus) { }
 
-        inline bool GetFocus() const { return m_focus; }
+        inline bool8 GetFocus() const { return m_focus; }
 
         AppEventType GetType() const override { return AppEventType::WindowFocus; }
         AppEventCategory GetCategory() const override { return AppEventCategory::Window; }
     public:
         static AppEventType GetStaticType() { return AppEventType::WindowFocus; }
     private:
-        bool m_focus;
+        bool8 m_focus;
     };
 
     class WindowMovedAppEvent : public AppEvent {

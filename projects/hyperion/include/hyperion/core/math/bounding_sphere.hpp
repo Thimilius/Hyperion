@@ -13,12 +13,12 @@ namespace Hyperion {
         BoundingSphere();
         BoundingSphere(Vector3 origin, float32 radius);
 
-        bool Intersects(Ray ray, float32 &hit_distance) const;
+        bool8 Intersects(Ray ray, float32 &hit_distance) const;
 
         String ToString() const;
 
-        bool operator==(const BoundingSphere &other) const;
-        bool operator!=(const BoundingSphere &other) const;
+        bool8 operator==(const BoundingSphere &other) const;
+        bool8 operator!=(const BoundingSphere &other) const;
     };
 
 }

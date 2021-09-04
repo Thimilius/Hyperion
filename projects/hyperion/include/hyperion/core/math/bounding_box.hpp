@@ -16,14 +16,14 @@ namespace Hyperion {
         Vector3 GetSize() const;
         Vector3 GetCenter() const;
 
-        bool Intersects(BoundingBox other) const;
-        bool Intersects(Ray ray, float32 &hit_distance) const;
-        bool Contains(Vector3 point) const;
+        bool8 Intersects(BoundingBox other) const;
+        bool8 Intersects(Ray ray, float32 &hit_distance) const;
+        bool8 Contains(Vector3 point) const;
 
         String ToString() const;
 
-        bool operator==(const BoundingBox &other) const;
-        bool operator!=(const BoundingBox &other) const;
+        bool8 operator==(const BoundingBox &other) const;
+        bool8 operator!=(const BoundingBox &other) const;
     };
 
 }

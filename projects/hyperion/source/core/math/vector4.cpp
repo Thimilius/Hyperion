@@ -118,12 +118,12 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    bool Vector4::operator==(const Vector4 &other) const {
+    bool8 Vector4::operator==(const Vector4 &other) const {
         return x == other.x && y == other.y && z == other.z && w == other.w;
     }
 
     //--------------------------------------------------------------
-    bool Vector4::operator!=(const Vector4 &other) const {
+    bool8 Vector4::operator!=(const Vector4 &other) const {
         return !(*this == other);
     }
 
@@ -158,22 +158,22 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    bool Vector4::operator<(const Vector4 &other) const {
+    bool8 Vector4::operator<(const Vector4 &other) const {
         return x < other.x && y < other.y && z < other.z && w < other.w;
     }
 
     //--------------------------------------------------------------
-    bool Vector4::operator<=(const Vector4 &other) const {
+    bool8 Vector4::operator<=(const Vector4 &other) const {
         return x <= other.x && y <= other.y && z <= other.z && w <= other.w;
     }
 
     //--------------------------------------------------------------
-    bool Vector4::operator>(const Vector4 &other) const {
+    bool8 Vector4::operator>(const Vector4 &other) const {
         return x > other.x && y > other.y && z > other.z && w > other.w;
     }
 
     //--------------------------------------------------------------
-    bool Vector4::operator>=(const Vector4 &other) const {
+    bool8 Vector4::operator>=(const Vector4 &other) const {
         return x >= other.x && y >= other.y && z >= other.z && w >= other.w;
     }
 

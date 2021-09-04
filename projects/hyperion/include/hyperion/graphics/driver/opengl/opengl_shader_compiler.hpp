@@ -10,7 +10,7 @@
 namespace Hyperion::Rendering {
 
     struct OpenGLShaderCompilationResult {
-        bool success;
+        bool8 success;
 
         GLuint program;
     };

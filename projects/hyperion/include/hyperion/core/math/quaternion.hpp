@@ -23,8 +23,8 @@ namespace Hyperion {
 
         String ToString() const;
 
-        bool operator==(const Quaternion &other) const;
-        bool operator!=(const Quaternion &other) const;
+        bool8 operator==(const Quaternion &other) const;
+        bool8 operator!=(const Quaternion &other) const;
 
         Quaternion operator-() const;
 

@@ -48,7 +48,7 @@ namespace Hyperion {
     private:
         inline static ApplicationSettings s_settings;
         inline static Application *s_application;
-        inline static std::atomic<bool> s_running = false;
+        inline static std::atomic<bool8> s_running = false;
     private:
         friend class Hyperion::Application;
         friend class Hyperion::Main;

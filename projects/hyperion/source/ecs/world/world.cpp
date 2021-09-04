@@ -18,7 +18,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    bool World::IsValidId(EntityId id) const {
+    bool8 World::IsValidId(EntityId id) const {
         EntityIndex index = EntityUtilities::GetIndex(id);
         return index < m_entities.GetLength() && m_entities[index].id == id;
     }

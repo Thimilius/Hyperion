@@ -32,8 +32,8 @@ namespace Hyperion {
 
         String ToString() const;
 
-        bool operator==(const Vector2 &other) const;
-        bool operator!=(const Vector2 &other) const;
+        bool8 operator==(const Vector2 &other) const;
+        bool8 operator!=(const Vector2 &other) const;
 
         Vector2 &operator-();
 
@@ -42,10 +42,10 @@ namespace Hyperion {
         Vector2 &operator*=(const Vector2 &other);
         Vector2 &operator/=(const Vector2 &other);
 
-        bool operator<(const Vector2 &other) const;
-        bool operator<=(const Vector2 &other) const;
-        bool operator>(const Vector2 &other) const;
-        bool operator>=(const Vector2 &other) const;
+        bool8 operator<(const Vector2 &other) const;
+        bool8 operator<=(const Vector2 &other) const;
+        bool8 operator>(const Vector2 &other) const;
+        bool8 operator>=(const Vector2 &other) const;
 
         float32 Dot(const Vector2 &other) const;
 
@@ -92,8 +92,8 @@ namespace Hyperion {
 
         String ToString() const;
 
-        bool operator==(const Vector2Int &other) const;
-        bool operator!=(const Vector2Int &other) const;
+        bool8 operator==(const Vector2Int &other) const;
+        bool8 operator!=(const Vector2Int &other) const;
 
         Vector2Int &operator-();
 
@@ -102,10 +102,10 @@ namespace Hyperion {
         Vector2Int &operator*=(const Vector2Int &other);
         Vector2Int &operator/=(const Vector2Int &other);
 
-        bool operator<(const Vector2Int &other) const;
-        bool operator<=(const Vector2Int &other) const;
-        bool operator>(const Vector2Int &other) const;
-        bool operator>=(const Vector2Int &other) const;
+        bool8 operator<(const Vector2Int &other) const;
+        bool8 operator<=(const Vector2Int &other) const;
+        bool8 operator>(const Vector2Int &other) const;
+        bool8 operator>=(const Vector2Int &other) const;
 
         int32 Dot(const Vector2Int &other) const;
 

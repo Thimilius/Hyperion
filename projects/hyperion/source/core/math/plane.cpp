@@ -45,10 +45,10 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    bool Plane::Intersects(Ray ray, float32 &hit_distance) const {
+    bool8 Plane::Intersects(Ray ray, float32 &hit_distance) const {
         float32 angle = ray.direction.Dot(normal);
         float32 origin_to_plane = -ray.origin.Dot(normal) - this->distance;
-        bool hit;
+        bool8 hit;
         if (angle == 0.0f) {
             hit_distance = 0.0f;
             hit = false;
@@ -66,12 +66,12 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    bool Plane::operator==(const Plane &other) const {
+    bool8 Plane::operator==(const Plane &other) const {
         return normal == other.normal && distance == other.distance;
     }
 
     //--------------------------------------------------------------
-    bool Plane::operator!=(const Plane &other) const {
+    bool8 Plane::operator!=(const Plane &other) const {
         return !(*this == other);
     }
 

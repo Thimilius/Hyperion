@@ -8,7 +8,7 @@
 namespace Hyperion::Threading {
 
     //--------------------------------------------------------------
-    AutoResetEvent::AutoResetEvent(bool start_value) {
+    AutoResetEvent::AutoResetEvent(bool8 start_value) {
         m_signaled = start_value;
     }
 
@@ -25,14 +25,14 @@ namespace Hyperion::Threading {
         std::unique_lock<std::mutex> lock(m_mutex);
 
         m_condition_variable.wait(lock, [&]() {
-            bool signaled = m_signaled;
+            bool8 signaled = m_signaled;
             return signaled;
         });
         m_signaled = false;
     }
 
     //--------------------------------------------------------------
-    bool AutoResetEvent::WaitUnblocked() {
+    bool8 AutoResetEvent::WaitUnblocked() {
         if (m_signaled) {
             m_signaled = false;
             return true;

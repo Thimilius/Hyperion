@@ -228,7 +228,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void WindowsInput::OnKeyEvent(KeyAppEvent &key_app_event, bool down) {
+    void WindowsInput::OnKeyEvent(KeyAppEvent &key_app_event, bool8 down) {
         int32 key_code = static_cast<int32>(key_app_event.GetKeyCode());
         m_keys_down[key_code] = !m_keys_last[key_code] && down;
         m_keys[key_code] = down;
@@ -236,7 +236,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void WindowsInput::OnMouseButtonEvent(MouseButtonAppEvent &mouse_button_app_event, bool down) {
+    void WindowsInput::OnMouseButtonEvent(MouseButtonAppEvent &mouse_button_app_event, bool8 down) {
         int32 mouse_button_code = static_cast<int32>(mouse_button_app_event.GetMouseButtonCode());
         m_mouse_buttons_down[mouse_button_code] = !m_mouse_buttons_last[mouse_button_code] && down;
         m_mouse_buttons[mouse_button_code] = down;
@@ -244,7 +244,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void WindowsInput::HandleGamepadButtonCode(Gamepad gamepad, GamepadButtonCode button_code, bool down) {
+    void WindowsInput::HandleGamepadButtonCode(Gamepad gamepad, GamepadButtonCode button_code, bool8 down) {
         m_gamepads[static_cast<int32>(gamepad)].buttons_down[static_cast<int32>(button_code)] = !m_gamepads[static_cast<int32>(gamepad)].buttons_last[static_cast<int32>(button_code)] && down;
         m_gamepads[static_cast<int32>(gamepad)].buttons[static_cast<int32>(button_code)] = down;
         if (down) {

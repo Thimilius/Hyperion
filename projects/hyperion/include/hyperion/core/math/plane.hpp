@@ -21,12 +21,12 @@ namespace Hyperion {
         Vector3 GetClosestPoint(Vector3 point) const;
         float32 GetDistanceToPoint(Vector3 point) const;
 
-        bool Intersects(Ray ray, float32 &hit_distance) const;
+        bool8 Intersects(Ray ray, float32 &hit_distance) const;
 
         String ToString() const;
 
-        bool operator==(const Plane &other) const;
-        bool operator!=(const Plane &other) const;
+        bool8 operator==(const Plane &other) const;
+        bool8 operator!=(const Plane &other) const;
     };
 
 }

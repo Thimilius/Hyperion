@@ -89,12 +89,12 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    bool Vector2::operator==(const Vector2 &other) const {
+    bool8 Vector2::operator==(const Vector2 &other) const {
         return x == other.x && y == other.y;
     }
 
     //--------------------------------------------------------------
-    bool Vector2::operator!=(const Vector2 &other) const {
+    bool8 Vector2::operator!=(const Vector2 &other) const {
         return !(*this == other);
     }
 
@@ -126,22 +126,22 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    bool Vector2::operator<(const Vector2 &other) const {
+    bool8 Vector2::operator<(const Vector2 &other) const {
         return x < other.x && y < other.y;
     }
 
     //--------------------------------------------------------------
-    bool Vector2::operator<=(const Vector2 &other) const {
+    bool8 Vector2::operator<=(const Vector2 &other) const {
         return x <= other.x && y <= other.y;
     }
 
     //--------------------------------------------------------------
-    bool Vector2::operator>(const Vector2 &other) const {
+    bool8 Vector2::operator>(const Vector2 &other) const {
         return x > other.x && y > other.y;
     }
 
     //--------------------------------------------------------------
-    bool Vector2::operator>=(const Vector2 &other) const {
+    bool8 Vector2::operator>=(const Vector2 &other) const {
         return x >= other.x && y >= other.y;
     }
 
@@ -320,12 +320,12 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    bool Vector2Int::operator==(const Vector2Int &other) const {
+    bool8 Vector2Int::operator==(const Vector2Int &other) const {
         return x == other.x && y == other.y;
     }
 
     //--------------------------------------------------------------
-    bool Vector2Int::operator!=(const Vector2Int &other) const {
+    bool8 Vector2Int::operator!=(const Vector2Int &other) const {
         return !(*this == other);
     }
 
@@ -358,22 +358,22 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    bool Vector2Int::operator<(const Vector2Int &other) const {
+    bool8 Vector2Int::operator<(const Vector2Int &other) const {
         return x < other.x &&y < other.y;
     }
 
     //--------------------------------------------------------------
-    bool Vector2Int::operator<=(const Vector2Int &other) const {
+    bool8 Vector2Int::operator<=(const Vector2Int &other) const {
         return x <= other.x && y <= other.y;
     }
 
     //--------------------------------------------------------------
-    bool Vector2Int::operator>(const Vector2Int &other) const {
+    bool8 Vector2Int::operator>(const Vector2Int &other) const {
         return x > other.x && y > other.y;
     }
 
     //--------------------------------------------------------------
-    bool Vector2Int::operator>=(const Vector2Int &other) const {
+    bool8 Vector2Int::operator>=(const Vector2Int &other) const {
         return x >= other.x && y >= other.y;
     }
 

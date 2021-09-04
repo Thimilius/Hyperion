@@ -18,11 +18,11 @@ namespace Hyperion {
         float32 max_delta_time = 0.15f;
         float32 fixed_delta_time = 1.0f / 60.0f;
 
-        bool allow_altf4 = true;
+        bool8 allow_altf4 = true;
     };
 
     struct AssetSettings {
-        bool hot_loading = true;
+        bool8 hot_loading = true;
 
         String shader_path = "data/shaders/";
         String texture_path = "data/textures/";
@@ -41,7 +41,7 @@ namespace Hyperion {
         String runtime_path = "data/mono/";
         String library_path = "data/managed/";
 
-        bool wait_for_debugger = false;
+        bool8 wait_for_debugger = false;
         uint32 debugger_port = 12345;
         uint32 debugger_wait_timeout = 3000;
     };

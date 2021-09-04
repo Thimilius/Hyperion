@@ -22,8 +22,8 @@ namespace Hyperion {
 
         String ToString() const;
 
-        bool operator==(const Color &other) const;
-        bool operator!=(const Color &other) const;
+        bool8 operator==(const Color &other) const;
+        bool8 operator!=(const Color &other) const;
 
         Color &operator+=(const float32 &value);
         Color &operator-=(const float32 &value);

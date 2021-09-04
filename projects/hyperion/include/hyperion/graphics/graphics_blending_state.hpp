@@ -31,7 +31,7 @@ namespace Hyperion::Graphics {
     };
 
     struct GraphicsBlendingStateDescription {
-        bool blending_enabled = false;
+        bool8 blending_enabled = false;
         GraphicsBlendingFunctionDescription color_function;
         GraphicsBlendingFunctionDescription alpha_function;
     };

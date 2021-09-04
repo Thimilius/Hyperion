@@ -21,9 +21,9 @@ namespace Hyperion {
         inline Set(std::initializer_list<T> init) : m_set(init) { }
     public:
         inline uint64 GetLength() const { return m_set.size(); }
-        inline bool IsEmpty() const { return m_set.empty(); }
+        inline bool8 IsEmpty() const { return m_set.empty(); }
 
-        inline bool Contains(const T &item) const { return std::find(begin(), end(), item) != end(); }
+        inline bool8 Contains(const T &item) const { return std::find(begin(), end(), item) != end(); }
 
         inline auto Insert(const T &item) { return m_set.insert(item); }
         inline auto Insert(T &&item) { return m_set.insert(item); }

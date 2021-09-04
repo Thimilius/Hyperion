@@ -24,7 +24,7 @@ namespace Hyperion {
         void SetWindowMode(WindowMode window_mode) override;
         void SetWindowState(WindowState window_state) override;
 
-        void SetCursorVisible(bool visible) override;
+        void SetCursorVisible(bool8 visible) override;
         void SetCursorMode(CursorMode mode) override;
 
         void SetIcon(const String &path) override;
@@ -40,9 +40,9 @@ namespace Hyperion {
         void SetupWindow(const WindowSettings &settings);
         Vector2 GetActualWindowSize(uint32 client_width, uint32 client_height) const;
         void DispatchAppEvent(AppEvent &app_event) const;
-        void DispatchKeyAppEvent(KeyCode key_code, bool is_down) const;
+        void DispatchKeyAppEvent(KeyCode key_code, bool8 is_down) const;
 
-        KeyCode TranslateKeyCode(uint32 w_param, uint32 l_param, bool is_down) const;
+        KeyCode TranslateKeyCode(uint32 w_param, uint32 l_param, bool8 is_down) const;
         MouseButtonCode TranslateMouseButtonCode(uint32 code) const;
         KeyModifier GetKeyModifier() const;
         uint32 GetMouseButtonFromMessage(uint32 message, uint32 w_param) const;
@@ -59,8 +59,8 @@ namespace Hyperion {
 
         // To distinguish the two shift keys we explicily store their previous state.
         // That way we can send out the correct key released events when appropriate.
-        mutable bool m_left_shift_last_down = false;
-        mutable bool m_right_shift_last_down = false;
+        mutable bool8 m_left_shift_last_down = false;
+        mutable bool8 m_right_shift_last_down = false;
     };
 
 }

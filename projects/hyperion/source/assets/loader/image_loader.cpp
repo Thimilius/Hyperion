@@ -18,7 +18,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    bool ImageLoader::SupportsExtension(const String &extension) {
+    bool8 ImageLoader::SupportsExtension(const String &extension) {
         for (IImageLoader *image_loader : s_loaders) {
             if (image_loader->SupportsExtension(extension)) {
                 return true;
@@ -28,7 +28,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Result<Image *, Error> ImageLoader::Load(const String &path, bool flip_vertically) {
+    Result<Image *, Error> ImageLoader::Load(const String &path, bool8 flip_vertically) {
         for (IImageLoader *image_loader : s_loaders) {
             if (image_loader->SupportsExtension(StringUtils::GetExtension(path))) {
                 return image_loader->Load(path, flip_vertically);

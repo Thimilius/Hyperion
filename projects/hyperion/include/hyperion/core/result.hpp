@@ -40,10 +40,10 @@ namespace Hyperion {
         Result(Ok<T> value) : m_okay_value(std::move(value)), m_error_value{ }, m_okay_contains_value(true) { }
         Result(Err<E> error) : m_okay_value{ }, m_error_value(std::move(error)), m_okay_contains_value(false) { }
 
-        bool &IsOk() { return m_okay_contains_value; }
-        const bool &IsOk() const { return m_okay_contains_value; }
-        bool IsErr() { return !m_okay_contains_value; }
-        const bool IsErr() const { return !m_okay_contains_value; }
+        bool8 &IsOk() { return m_okay_contains_value; }
+        const bool8 &IsOk() const { return m_okay_contains_value; }
+        bool8 IsErr() { return !m_okay_contains_value; }
+        const bool8 IsErr() const { return !m_okay_contains_value; }
 
         T &Expect(const char *msg) {
             HYP_ASSERT_MESSAGE(m_okay_contains_value, msg);
@@ -109,42 +109,19 @@ namespace Hyperion {
             return m_error_value.error;
         }
 
-        bool operator==(const Ok<T> &value) {
-            return m_okay_value.value == value.value;
-        }
-
-        bool operator==(const Ok<T> &value) const {
-            return m_okay_value.value == value.value;
-        }
-
-        bool operator==(const Err<E> &error) {
-            return m_error_value.error == error.error;
-        }
-
-        bool operator==(const Err<E> &error) const {
-            return m_error_value.error == error.error;
-        }
-
-        bool operator!=(const Ok<T> &value) {
-            return m_okay_value.value != value.value;
-        }
-
-        bool operator!=(const Ok<T> &value) const {
-            return m_okay_value.value != value.value;
-        }
-
-        bool operator!=(const Err<E> &error) {
-            return m_error_value.error != error.error;
-        }
-
-        bool operator!=(const Err<E> &error) const {
-            return m_error_value.error != error.error;
-        }
+        bool8 operator==(const Ok<T> &value) { return m_okay_value.value == value.value; }
+        bool8 operator==(const Ok<T> &value) const { return m_okay_value.value == value.value; }
+        bool8 operator==(const Err<E> &error) { return m_error_value.error == error.error; }
+        bool8 operator==(const Err<E> &error) const { return m_error_value.error == error.error; }
+        bool8 operator!=(const Ok<T> &value) { return m_okay_value.value != value.value; }
+        bool8 operator!=(const Ok<T> &value) const { return m_okay_value.value != value.value; }
+        bool8 operator!=(const Err<E> &error) { return m_error_value.error != error.error; }
+        bool8 operator!=(const Err<E> &error) const { return m_error_value.error != error.error; }
     private:
         Ok<T> m_okay_value;
         Err<E> m_error_value;
 
-        bool m_okay_contains_value;
+        bool8 m_okay_contains_value;
     };
 
 }

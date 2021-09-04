@@ -21,17 +21,17 @@ namespace Hyperion {
             uint32 bits_per_pixel;
             uint32 refresh_rate;
 
-            inline bool operator==(const DisplayModeInfo &other) const {
+            inline bool8 operator==(const DisplayModeInfo &other) const {
                 return width == other.width && height == other.height && bits_per_pixel == other.bits_per_pixel && refresh_rate == other.refresh_rate;
             }
         };
     public:
         inline const String &GetName() const { return m_name; }
-        inline bool IsPrimary() const { return m_is_primary; }
+        inline bool8 IsPrimary() const { return m_is_primary; }
         inline const List<DisplayModeInfo> &GetModeInfos() const { return m_mode_infos; }
     private:
         String m_name;
-        bool m_is_primary;
+        bool8 m_is_primary;
         List<DisplayModeInfo> m_mode_infos;
     private:
         friend class Hyperion::Display;

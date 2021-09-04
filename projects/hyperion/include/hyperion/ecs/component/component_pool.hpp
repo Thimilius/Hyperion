@@ -21,9 +21,9 @@ namespace Hyperion {
         inline EntityId GetEntity(EntityIndex index) const { return m_entity_list[index]; }
 
         byte *AddComponent(EntityId id);
-        bool HasComponent(EntityId id);
+        bool8 HasComponent(EntityId id);
         byte *GetComponent(EntityId id);
-        bool RemoveComponent(EntityId id);
+        bool8 RemoveComponent(EntityId id);
 
         void FitIntoPool(EntityId id);
     private:

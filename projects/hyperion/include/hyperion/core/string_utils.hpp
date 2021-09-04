@@ -27,7 +27,7 @@ namespace Hyperion {
             return fmt::format(format, args...);
         }
 
-        inline static bool EndsWith(String const &string, String const &ending) {
+        inline static bool8 EndsWith(String const &string, String const &ending) {
             if (string.length() >= ending.length()) {
                 return string.compare(string.length() - ending.length(), ending.length(), ending) == 0;
             } else {

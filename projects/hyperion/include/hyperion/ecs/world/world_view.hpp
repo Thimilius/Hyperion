@@ -16,11 +16,11 @@ namespace Hyperion {
     public:
         class Iterator {
         public:
-            Iterator(EntityIndex index, World *world, ComponentPool *smallest_pool, bool all) : m_index(index), m_world(world), m_smallest_pool(smallest_pool), m_all(all) {}
+            Iterator(EntityIndex index, World *world, ComponentPool *smallest_pool, bool8 all) : m_index(index), m_world(world), m_smallest_pool(smallest_pool), m_all(all) {}
         public:
             inline EntityId operator*() const { return m_all ? m_world->m_entities[m_index].id : m_smallest_pool->GetEntity(m_index); }
-            inline bool operator==(const Iterator &other) const { return m_index == other.m_index || m_index == m_world->m_entities.GetLength(); }
-            inline bool operator!=(const Iterator &other) const { return !(*this == other); }
+            inline bool8 operator==(const Iterator &other) const { return m_index == other.m_index || m_index == m_world->m_entities.GetLength(); }
+            inline bool8 operator!=(const Iterator &other) const { return !(*this == other); }
             inline Iterator &operator++() {
                 if (m_all) {
                     m_index++;
@@ -32,7 +32,7 @@ namespace Hyperion {
                 return *this;
             }
         private:
-            bool ShouldSkip() {
+            bool8 ShouldSkip() {
                 const ComponentId COMPONENT_IDS[] = { 0, ComponentRegistry::GetId<T>() ... };
 
                 if (m_index >= m_smallest_pool->GetEntityCount()) {
@@ -55,7 +55,7 @@ namespace Hyperion {
 
             World *m_world;
             ComponentPool *m_smallest_pool;
-            bool m_all;
+            bool8 m_all;
         };
     public:
         WorldView(World *world) : m_world(world) {
@@ -103,7 +103,7 @@ namespace Hyperion {
     private:
         World *m_world;
         ComponentPool *m_smallest_pool;
-        bool m_all;
+        bool8 m_all;
     };
 
 }
