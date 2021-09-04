@@ -314,7 +314,9 @@ namespace Hyperion {
         window_class.hInstance = instance;
         window_class.lpfnWndProc = &MessageCallback;
         window_class.hCursor = LoadCursorW(nullptr, IDC_ARROW);
-        window_class.hbrBackground = static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH));
+        // NOTE: Having a null background is important as this prevents Windows from updating the window contents.
+        // This allows to have proper rendering while resizing or moving the window.
+        window_class.hbrBackground = nullptr; 
 
         if (!RegisterClassExW(&window_class)) {
             HYP_PANIC_MESSAGE("Engine", "Failed to register windows window class!");

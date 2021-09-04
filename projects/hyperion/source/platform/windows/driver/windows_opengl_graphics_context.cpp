@@ -9,6 +9,9 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/engine.hpp"
+// TEMP:
+#include "hyperion/core/app/display.hpp" 
+#include "hyperion/core/app/time.hpp" 
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Graphics {
@@ -89,7 +92,10 @@ namespace Hyperion::Graphics {
 
     //--------------------------------------------------------------
     void WindowsOpenGLGraphicsContext::SwapBuffers() {
-        glClearColor(0.0f, 1.0, 1.0f, 1.0f);
+        // TEMP: This is just so we see something on the screen.
+        float32 value = Math::Sin(Time::GetTime() * 5.0f) * 0.5f + 0.5f;
+        glViewport(0, 0, Display::GetWidth(), Display::GetHeight());
+        glClearColor(0.0f, value, value, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         ::SwapBuffers(m_device_context);
