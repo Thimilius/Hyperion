@@ -4,6 +4,7 @@
 #include "hyperion/core/app/application_settings.hpp"
 #include "hyperion/core/threading/thread.hpp"
 #include "hyperion/graphics/graphics_context.hpp"
+#include "hyperion/rendering/view/render_view.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -46,12 +47,13 @@ namespace Hyperion::Rendering {
         inline static Threading::Thread s_render_thread;
         inline static std::atomic<bool8> s_render_thread_should_exit;
 
-        inline static IRenderPipeline *s_render_pipeline;
+        inline static RenderView s_first_view;
+        inline static RenderView s_second_view;
+        inline static RenderView *s_main_view;
+        inline static RenderView *s_render_view;
 
+        inline static IRenderPipeline *s_render_pipeline;
         inline static Graphics::GraphicsContext *s_graphics_context;
-        inline static Graphics::GraphicsDevice *s_graphics_device;
-        inline static Graphics::GraphicsDeviceContext *s_graphics_device_context;
-        inline static Graphics::GraphicsSwapChain *s_graphics_swap_chain;
     private:
         friend class Hyperion::Engine;
     };

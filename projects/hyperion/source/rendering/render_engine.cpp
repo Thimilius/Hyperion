@@ -19,6 +19,15 @@ namespace Hyperion::Rendering {
     void RenderEngine::PreInitialize(const RenderSettings &settings, Window *window) {
         s_render_settings = settings;
 
+        switch (s_render_settings.pipeline) {
+            case RenderPipeline::Forward: s_render_pipeline = new ForwardRenderPipeline(); break;
+            case RenderPipeline::Custom: s_render_pipeline = s_render_settings.custom_pipeline; break;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        }
+
+        s_main_view = &s_first_view;
+        s_render_view = &s_second_view;
+
         switch (settings.threading_mode) {
             case RenderThreadingMode::SingleThreaded: {
                 InitializeGraphicsContext(window);
@@ -38,23 +47,15 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void RenderEngine::Initialize() {
-        switch (s_render_settings.pipeline) {
-            case RenderPipeline::Forward: s_render_pipeline = new ForwardRenderPipeline(); break;
-            case RenderPipeline::Custom: s_render_pipeline = s_render_settings.custom_pipeline; break;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-        }
-
-        s_render_pipeline->Initialize();
+        s_render_pipeline->Initialize(s_graphics_context);
     }
 
     //--------------------------------------------------------------
     void RenderEngine::Render() {
-        {
-            s_render_pipeline->Render();
-        }
-
         switch (s_render_settings.threading_mode) {
             case RenderThreadingMode::SingleThreaded: {
+                SynchronizeMainAndRenderThread();
+                s_render_pipeline->Render(s_render_view);
                 s_graphics_context->SwapBuffers();
                 break;
             }
@@ -110,7 +111,7 @@ namespace Hyperion::Rendering {
                 break;
             }
 
-            // TODO: The render pipeline should be used here instead of on the main thread.
+            s_render_pipeline->Render(s_render_view);
 
             {
                 s_graphics_context->SwapBuffers();
@@ -130,7 +131,9 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void RenderEngine::SynchronizeMainAndRenderThread() {
-
+        RenderView *temp = s_main_view;
+        s_main_view = s_render_view;
+        s_render_view = temp;
     }
 
     //--------------------------------------------------------------
@@ -138,7 +141,6 @@ namespace Hyperion::Rendering {
         s_graphics_context = window->CreateGraphicsContext(s_render_settings.graphics_backend);
         s_graphics_context->Initialize(GraphicsContextDescriptor());
         s_graphics_context->SetVSyncMode(VSyncMode::DontSync);
-        s_graphics_context->CreateDeviceAndSwapChain(&s_graphics_device, &s_graphics_device_context, &s_graphics_swap_chain);
     }
 
     void RenderEngine::ShutdownGraphicsContext() {
