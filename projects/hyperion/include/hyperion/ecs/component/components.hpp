@@ -5,6 +5,7 @@
 #include "hyperion/core/math/vector3.hpp"
 #include "hyperion/core/math/quaternion.hpp"
 #include "hyperion/ecs/entity/entity_types.hpp"
+#include "hyperion/rendering/camera_projection_mode.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -31,6 +32,19 @@ namespace Hyperion {
         EntityId first = Entity::EMPTY;
         EntityId prev = Entity::EMPTY;
         EntityId next = Entity::EMPTY;
+    };
+
+    struct CameraComponent {
+        Rendering::CameraProjectionMode projection_mode = Rendering::CameraProjectionMode::Perspective;
+
+        float32 near_plane = 0.1f;
+        float32 far_plane = 1000.0f;
+
+        float32 fov = 90.0f;
+        float32 orthographic_size = 2.75f;
+
+        Matrix4x4 view_matrix = Matrix4x4::Identity();
+        Matrix4x4 projection_matrix = Matrix4x4::Identity();
     };
 
 }

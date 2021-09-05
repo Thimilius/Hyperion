@@ -4,9 +4,9 @@
 #include "hyperion/common.hpp"
 
 //-------------------- Definition Namespace --------------------
-namespace Hyperion {
+namespace Hyperion::Rendering {
 
-    struct RenderObjectData {
+    struct RenderViewObjectData {
         // Material *material;
         // Mesh *mesh;
         // uint32 sub_mesh_index;
@@ -14,11 +14,11 @@ namespace Hyperion {
         // Matrix4x4 local_to_world;
     };
 
-    class RenderObject {
+    class RenderViewObject {
     public:
-        RenderObject(const RenderObjectData &data) : m_data(data) { }
+        RenderViewObject(const RenderViewObjectData &data) : m_data(data) {}
     private:
-        RenderObjectData m_data;
+        RenderViewObjectData m_data;
     };
 
 }

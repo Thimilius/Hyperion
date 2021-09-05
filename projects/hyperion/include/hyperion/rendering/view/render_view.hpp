@@ -1,14 +1,16 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/rendering/view/render_object.hpp"
+#include "hyperion/rendering/view/render_view_camera.hpp"
+#include "hyperion/rendering/view/render_view_object.hpp"
 
 //-------------------- Definition Namespace --------------------
-namespace Hyperion {
+namespace Hyperion::Rendering {
 
     class RenderView final {
     public:
-        void AddRenderObject(RenderObject *render_object);
+        void AddRenderCamera(RenderViewCamera *render_view_camera);
+        void AddRenderObject(RenderViewObject *render_view_object);
     };
 
 }
