@@ -9,8 +9,13 @@ namespace Hyperion::Rendering {
 
     class RenderView final {
     public:
-        void AddRenderCamera(RenderViewCamera *render_view_camera);
-        void AddRenderObject(RenderViewObject *render_view_object);
+        void Reset();
+
+        RenderViewCameraData &AddRenderCamera();
+        RenderViewObjectData &AddRenderObject();
+    private:
+        List<RenderViewCamera> m_view_cameras;
+        List<RenderViewObject> m_view_objects;
     };
 
 }

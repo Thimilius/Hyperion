@@ -42,9 +42,6 @@ namespace Hyperion {
 
         float32 fov = 90.0f;
         float32 orthographic_size = 2.75f;
-
-        Matrix4x4 view_matrix = Matrix4x4::Identity();
-        Matrix4x4 projection_matrix = Matrix4x4::Identity();
     };
 
 }

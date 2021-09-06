@@ -134,6 +134,8 @@ namespace Hyperion::Rendering {
         RenderView *temp = s_main_view;
         s_main_view = s_render_view;
         s_render_view = temp;
+
+        s_main_view->Reset();
     }
 
     //--------------------------------------------------------------

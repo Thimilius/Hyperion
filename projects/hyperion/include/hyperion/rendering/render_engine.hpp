@@ -12,6 +12,7 @@ namespace Hyperion {
     class Window;
 
     namespace Rendering {
+        class CameraSystem;
         class IRenderPipeline;
     }
 }
@@ -32,6 +33,8 @@ namespace Hyperion::Rendering {
         static void Shutdown();
 
         static void RequestExit();
+
+        static RenderView *GetMainRenderView() { return s_render_view; }
 
         static void RT_Initialize(Window *window);
         static void RT_Loop(void *parameter);
@@ -56,6 +59,7 @@ namespace Hyperion::Rendering {
         inline static Graphics::GraphicsContext *s_graphics_context;
     private:
         friend class Hyperion::Engine;
+        friend class Hyperion::Rendering::CameraSystem;
     };
 
 }

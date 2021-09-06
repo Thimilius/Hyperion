@@ -80,10 +80,12 @@ namespace Hyperion {
         };
         engine_loop.update.name = "Update";
         engine_loop.update.sub_systems = {
+            { "WorldManagerUpdate", []() { WorldManager::Update(); } },
             { "ApplicationUpdate", []() { s_application->OnUpdate(Time::GetDeltaTime()); } }
         };
         engine_loop.late_update.name = "LateUpdate";
         engine_loop.late_update.sub_systems = {
+            { "WorldManagerLateUpdate", []() { WorldManager::LateUpdate(); } },
             { "RenderEngineLateUpdate", []() { Rendering::RenderEngine::Render(); } }
         };
     }

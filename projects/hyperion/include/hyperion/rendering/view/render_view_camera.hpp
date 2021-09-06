@@ -32,7 +32,8 @@ namespace Hyperion::Rendering {
 
     class RenderViewCamera {
     public:
-        RenderViewCamera(const RenderViewCameraData &data) : m_data(data) {}
+        RenderViewCameraData &GetData() { return m_data; }
+        const RenderViewCameraData &GetData() const { return m_data; }
     private:
         RenderViewCameraData m_data;
     };

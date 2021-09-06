@@ -24,6 +24,7 @@ namespace Hyperion {
         Empty,
         
         Base,
+        Camera,
     };
 
 }

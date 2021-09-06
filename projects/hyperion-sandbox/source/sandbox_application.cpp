@@ -20,14 +20,14 @@ namespace Sandbox {
         settings.render.threading_mode = Rendering::RenderThreadingMode::MultiThreaded;
     }
 
-    World *world;
-
     //--------------------------------------------------------------
     void SandboxApplication::OnInitialize() {
         UpdateTitle();
 
-        world = WorldManager::CreateWorld();
-        for (size_t i = 0; i < 4096; i++) {
+        World *world = WorldManager::CreateWorld();
+        WorldManager::SetActiveWorld(world);
+        world->CreateEntity(EntityPrimitive::Camera);
+        for (size_t i = 0; i < 1024; i++) {
             EntityId entity = world->CreateEntity();
         }
     }
@@ -40,9 +40,6 @@ namespace Sandbox {
         if (Input::IsKeyDown(KeyCode::F1)) {
             GetWindow()->SetWindowMode(GetWindow()->GetWindowMode() == WindowMode::Borderless ? WindowMode::Windowed : WindowMode::Borderless);
         }
-
-        LocalToWorldSystem local_to_world_system;
-        local_to_world_system.Run(world);
     }
 
     //--------------------------------------------------------------

@@ -87,6 +87,10 @@ namespace Hyperion {
             AddComponent<TransformComponent>(id);
             AddComponent<LocalToWorldComponent>(id);
         }
+
+        if (primitive == EntityPrimitive::Camera) {
+            AddComponent<CameraComponent>(id);
+        }
     }
 
 }

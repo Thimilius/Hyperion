@@ -16,7 +16,8 @@ namespace Hyperion::Rendering {
 
     class RenderViewObject {
     public:
-        RenderViewObject(const RenderViewObjectData &data) : m_data(data) {}
+        RenderViewObjectData &GetData() { return m_data; }
+        const RenderViewObjectData &GetData() const { return m_data; }
     private:
         RenderViewObjectData m_data;
     };
