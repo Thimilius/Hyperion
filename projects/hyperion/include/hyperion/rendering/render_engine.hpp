@@ -4,7 +4,7 @@
 #include "hyperion/core/app/application_settings.hpp"
 #include "hyperion/core/threading/thread.hpp"
 #include "hyperion/graphics/graphics_context.hpp"
-#include "hyperion/rendering/view/render_view.hpp"
+#include "hyperion/rendering/frame/render_frame.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -34,7 +34,7 @@ namespace Hyperion::Rendering {
 
         static void RequestExit();
 
-        static RenderView *GetMainRenderView() { return s_render_view; }
+        static RenderFrame *GetMainRenderFrame() { return s_render_frame; }
 
         static void RT_Initialize(Window *window);
         static void RT_Loop(void *parameter);
@@ -50,10 +50,10 @@ namespace Hyperion::Rendering {
         inline static Threading::Thread s_render_thread;
         inline static std::atomic<bool8> s_render_thread_should_exit;
 
-        inline static RenderView s_first_view;
-        inline static RenderView s_second_view;
-        inline static RenderView *s_main_view;
-        inline static RenderView *s_render_view;
+        inline static RenderFrame s_first_frame;
+        inline static RenderFrame s_second_frame;
+        inline static RenderFrame *s_main_frame;
+        inline static RenderFrame *s_render_frame;
 
         inline static IRenderPipeline *s_render_pipeline;
         inline static Graphics::GraphicsContext *s_graphics_context;

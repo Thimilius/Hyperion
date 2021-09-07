@@ -5,7 +5,7 @@
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion::Rendering {
-    class RenderView;
+    class RenderFrame;
 }
 
 //-------------------- Definition Namespace --------------------

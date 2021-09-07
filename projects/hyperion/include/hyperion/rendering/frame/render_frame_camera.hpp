@@ -8,7 +8,7 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-    struct RenderViewCameraData {
+    struct RenderFrameCameraData {
         CameraProjectionMode projection_mode = CameraProjectionMode::Perspective;
 
         Vector3 position = Vector3(0, 0, 0);
@@ -30,12 +30,12 @@ namespace Hyperion::Rendering {
         Matrix4x4 inverse_view_projection_matrix = Matrix4x4::Identity();
     };
 
-    class RenderViewCamera {
+    class RenderFrameCamera {
     public:
-        RenderViewCameraData &GetData() { return m_data; }
-        const RenderViewCameraData &GetData() const { return m_data; }
+        RenderFrameCameraData &GetData() { return m_data; }
+        const RenderFrameCameraData &GetData() const { return m_data; }
     private:
-        RenderViewCameraData m_data;
+        RenderFrameCameraData m_data;
     };
 
 }

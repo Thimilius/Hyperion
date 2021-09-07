@@ -6,7 +6,7 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-    struct RenderViewObjectData {
+    struct RenderFrameObjectData {
         // Material *material;
         // Mesh *mesh;
         // uint32 sub_mesh_index;
@@ -14,12 +14,12 @@ namespace Hyperion::Rendering {
         // Matrix4x4 local_to_world;
     };
 
-    class RenderViewObject {
+    class RenderFrameObject {
     public:
-        RenderViewObjectData &GetData() { return m_data; }
-        const RenderViewObjectData &GetData() const { return m_data; }
+        RenderFrameObjectData &GetData() { return m_data; }
+        const RenderFrameObjectData &GetData() const { return m_data; }
     private:
-        RenderViewObjectData m_data;
+        RenderFrameObjectData m_data;
     };
 
 }

@@ -6,7 +6,7 @@ namespace Hyperion {
         class GraphicsContext;
     }
     namespace Rendering {
-        class RenderView;
+        class RenderFrame;
     }
 }
 
@@ -25,7 +25,7 @@ namespace Hyperion::Rendering {
         virtual ~IRenderPipeline() = default;
     public:
         virtual void Initialize(Graphics::GraphicsContext *graphics_context) = 0;
-        virtual void Render(RenderView *render_view) = 0;
+        virtual void Render(RenderFrame *render_frame) = 0;
         virtual void Shutdown() = 0;
     };
 

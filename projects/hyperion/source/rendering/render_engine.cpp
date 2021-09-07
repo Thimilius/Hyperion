@@ -25,8 +25,8 @@ namespace Hyperion::Rendering {
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
 
-        s_main_view = &s_first_view;
-        s_render_view = &s_second_view;
+        s_main_frame = &s_first_frame;
+        s_render_frame = &s_second_frame;
 
         switch (settings.threading_mode) {
             case RenderThreadingMode::SingleThreaded: {
@@ -55,7 +55,7 @@ namespace Hyperion::Rendering {
         switch (s_render_settings.threading_mode) {
             case RenderThreadingMode::SingleThreaded: {
                 SynchronizeMainAndRenderThread();
-                s_render_pipeline->Render(s_render_view);
+                s_render_pipeline->Render(s_render_frame);
                 s_graphics_context->SwapBuffers();
                 break;
             }
@@ -111,7 +111,7 @@ namespace Hyperion::Rendering {
                 break;
             }
 
-            s_render_pipeline->Render(s_render_view);
+            s_render_pipeline->Render(s_render_frame);
 
             {
                 s_graphics_context->SwapBuffers();
@@ -131,11 +131,11 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void RenderEngine::SynchronizeMainAndRenderThread() {
-        RenderView *temp = s_main_view;
-        s_main_view = s_render_view;
-        s_render_view = temp;
+        RenderFrame *temp = s_main_frame;
+        s_main_frame = s_render_frame;
+        s_render_frame = temp;
 
-        s_main_view->Reset();
+        s_main_frame->Reset();
     }
 
     //--------------------------------------------------------------

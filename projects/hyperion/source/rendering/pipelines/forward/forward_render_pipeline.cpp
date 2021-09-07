@@ -6,7 +6,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/graphics/graphics_context.hpp"
-#include "hyperion/rendering/view/render_view.hpp"
+#include "hyperion/rendering/frame/render_frame.hpp"
 
 //------------------------- Namespaces -------------------------
 using namespace Hyperion::Graphics;
@@ -20,13 +20,20 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void ForwardRenderPipeline::Render(RenderView *render_view) {
-        
+    void ForwardRenderPipeline::Render(RenderFrame *render_frame) {
+        for (const RenderFrameCamera &render_frame_camera : render_frame->GetRenderCameras()) {
+            RenderCamera(render_frame_camera);
+        }
     }
 
     //--------------------------------------------------------------
     void ForwardRenderPipeline::Shutdown() {
 
+    }
+
+    //--------------------------------------------------------------
+    void ForwardRenderPipeline::RenderCamera(const RenderFrameCamera &render_frame_camera) {
+        const RenderFrameCameraData &render_frame_camera_data = render_frame_camera.GetData();
     }
 
 }
