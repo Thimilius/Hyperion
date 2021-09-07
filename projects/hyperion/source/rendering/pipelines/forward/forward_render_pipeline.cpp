@@ -4,6 +4,9 @@
 //--------------------- Definition Include ---------------------
 #include "hyperion/rendering/pipelines/forward/forward_render_pipeline.hpp"
 
+//---------------------- Library Includes ----------------------
+#include <glad/glad.h>
+
 //---------------------- Project Includes ----------------------
 #include "hyperion/graphics/graphics_context.hpp"
 #include "hyperion/rendering/frame/render_frame.hpp"
@@ -34,6 +37,13 @@ namespace Hyperion::Rendering {
     //--------------------------------------------------------------
     void ForwardRenderPipeline::RenderCamera(const RenderFrameCamera &render_frame_camera) {
         const RenderFrameCameraData &render_frame_camera_data = render_frame_camera.GetData();
+        const CameraViewport &viewport = render_frame_camera_data.viewport;
+
+        // TEMP: This is just so we see something on the screen.
+        glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+        Color background_color = render_frame_camera_data.background_color;
+        glClearColor(background_color.r, background_color.g, background_color.b, background_color.a);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
 
 }

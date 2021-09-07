@@ -20,15 +20,18 @@ namespace Sandbox {
         settings.render.threading_mode = Rendering::RenderThreadingMode::MultiThreaded;
     }
 
+    World *g_world;
+    EntityId g_camera_id;
+
     //--------------------------------------------------------------
     void SandboxApplication::OnInitialize() {
         UpdateTitle();
 
-        World *world = WorldManager::CreateWorld();
-        WorldManager::SetActiveWorld(world);
-        world->CreateEntity(EntityPrimitive::Camera);
+        g_world = WorldManager::CreateWorld();
+        WorldManager::SetActiveWorld(g_world);
+        g_camera_id = g_world->CreateEntity(EntityPrimitive::Camera);
         for (size_t i = 0; i < 1024; i++) {
-            EntityId entity = world->CreateEntity();
+            EntityId entity = g_world->CreateEntity();
         }
     }
 
@@ -40,6 +43,10 @@ namespace Sandbox {
         if (Input::IsKeyDown(KeyCode::F1)) {
             GetWindow()->SetWindowMode(GetWindow()->GetWindowMode() == WindowMode::Borderless ? WindowMode::Windowed : WindowMode::Borderless);
         }
+
+        float32 value = Math::Sin(Time::GetTime() * 5.0f) * 0.5f + 0.5f;
+        CameraComponent *camera = g_world->GetComponent<CameraComponent>(g_camera_id);
+        camera->background_color = Color(0.0f, value, value, 1.0f);
     }
 
     //--------------------------------------------------------------

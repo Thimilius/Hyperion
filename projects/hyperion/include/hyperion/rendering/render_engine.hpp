@@ -34,7 +34,7 @@ namespace Hyperion::Rendering {
 
         static void RequestExit();
 
-        static RenderFrame *GetMainRenderFrame() { return s_render_frame; }
+        static RenderFrame *GetMainRenderFrame() { return s_main_frame; }
 
         static void RT_Initialize(Window *window);
         static void RT_Loop(void *parameter);
