@@ -1,11 +1,13 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/core/color.hpp"
 #include "hyperion/core/math/matrix4x4.hpp"
 #include "hyperion/core/math/vector3.hpp"
 #include "hyperion/core/math/quaternion.hpp"
 #include "hyperion/ecs/entity/entity_types.hpp"
-#include "hyperion/rendering/camera_projection_mode.hpp"
+#include "hyperion/rendering/camera/camera_clear_mode.hpp"
+#include "hyperion/rendering/camera/camera_projection_mode.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -36,6 +38,9 @@ namespace Hyperion {
 
     struct CameraComponent {
         Rendering::CameraProjectionMode projection_mode = Rendering::CameraProjectionMode::Perspective;
+
+        Rendering::CameraClearMode clear_mode = Rendering::CameraClearMode::Color;
+        Color background_color = Color::Black();
 
         float32 near_plane = 0.1f;
         float32 far_plane = 1000.0f;

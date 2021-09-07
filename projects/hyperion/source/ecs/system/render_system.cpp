@@ -57,6 +57,8 @@ namespace Hyperion::Rendering {
 
             RenderFrameCameraData &render_frame_camera_data = render_frame->AddRenderCamera();
             render_frame_camera_data.projection_mode = projection_mode;
+            render_frame_camera_data.clear_mode = camera->clear_mode;
+            render_frame_camera_data.background_color = camera->background_color;
             render_frame_camera_data.position = transform->position;
             render_frame_camera_data.forward = forward;
             render_frame_camera_data.up = up;
@@ -70,6 +72,7 @@ namespace Hyperion::Rendering {
             render_frame_camera_data.inverse_projection_matrix = projection_matrix.Inverted();
             render_frame_camera_data.view_projection_matrix = view_projection_matrix;
             render_frame_camera_data.inverse_view_projection_matrix = view_projection_matrix.Inverted();
+            render_frame_camera_data.viewport = { 0, 0, width, height };
         }
     }
 
