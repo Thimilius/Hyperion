@@ -11,7 +11,8 @@ namespace Hyperion::Rendering {
         // Mesh *mesh;
         // uint32 sub_mesh_index;
         
-        // Matrix4x4 local_to_world;
+        Matrix4x4 local_to_world;
+        Color color;
     };
 
     class RenderFrameObject {

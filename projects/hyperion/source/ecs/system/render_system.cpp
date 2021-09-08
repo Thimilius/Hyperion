@@ -83,4 +83,19 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
+    void SpriteSystem::Run(World *world) {
+        RenderFrame *render_frame = RenderEngine::GetMainRenderFrame();
+
+        auto view = world->GetView<LocalToWorldComponent, SpriteComponent>();
+        for (EntityId entity : view) {
+            LocalToWorldComponent *local_to_world = world->GetComponent<LocalToWorldComponent>(entity);
+            SpriteComponent *sprite = world->GetComponent<SpriteComponent>(entity);
+
+            RenderFrameObjectData &render_frame_object_data = render_frame->AddRenderObject();
+            render_frame_object_data.local_to_world = local_to_world->local_to_world;
+            render_frame_object_data.color = sprite->color;
+        }
+    }
+
 }

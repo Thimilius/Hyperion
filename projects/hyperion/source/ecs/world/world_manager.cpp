@@ -44,6 +44,7 @@ namespace Hyperion {
         ComponentRegistry::Register<LocalToWorldComponent>();
         ComponentRegistry::Register<HierarchyComponent>();
         ComponentRegistry::Register<CameraComponent>();
+        ComponentRegistry::Register<SpriteComponent>();
     }
 
     //--------------------------------------------------------------
@@ -59,6 +60,9 @@ namespace Hyperion {
 
             Rendering::CameraSystem camera_system;
             camera_system.Run(s_active_world);
+
+            Rendering::SpriteSystem sprite_system;
+            sprite_system.Run(s_active_world);
         }
     }
 

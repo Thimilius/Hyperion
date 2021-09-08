@@ -25,7 +25,7 @@ namespace Hyperion::Rendering {
     //--------------------------------------------------------------
     void ForwardRenderPipeline::Render(RenderFrame *render_frame) {
         for (const RenderFrameCamera &render_frame_camera : render_frame->GetRenderCameras()) {
-            RenderCamera(render_frame_camera);
+            RenderCamera(render_frame_camera, render_frame);
         }
     }
 
@@ -35,7 +35,7 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void ForwardRenderPipeline::RenderCamera(const RenderFrameCamera &render_frame_camera) {
+    void ForwardRenderPipeline::RenderCamera(const RenderFrameCamera &render_frame_camera, RenderFrame *render_frame) {
         const RenderFrameCameraData &render_frame_camera_data = render_frame_camera.GetData();
         const CameraViewport &viewport = render_frame_camera_data.viewport;
 

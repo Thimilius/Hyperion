@@ -18,7 +18,7 @@ namespace Hyperion::Rendering {
         void Render(RenderFrame *render_view) override;
         void Shutdown() override;
     private:
-        void RenderCamera(const RenderFrameCamera &render_frame_camera);
+        void RenderCamera(const RenderFrameCamera &render_frame_camera, RenderFrame *render_frame);
     private:
         Graphics::GraphicsDevice *m_device;
         Graphics::GraphicsDeviceContext *m_device_context;
