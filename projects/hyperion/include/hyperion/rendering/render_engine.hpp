@@ -41,8 +41,8 @@ namespace Hyperion::Rendering {
         static void RT_Loop(void *parameter);
         static void RT_Shutdown();
 
-        static void InitializeGraphicsContext(Window *window);
-        static void ShutdownGraphicsContext();
+        static void InitializeGraphicsContextAndPipeline(Window *window);
+        static void ShutdownGraphicsContextAndPipeline();
 
         static void SynchronizeMainAndRenderThread();
     private: 

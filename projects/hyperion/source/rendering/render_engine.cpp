@@ -30,7 +30,7 @@ namespace Hyperion::Rendering {
 
         switch (settings.threading_mode) {
             case RenderThreadingMode::SingleThreaded: {
-                InitializeGraphicsContext(window);
+                InitializeGraphicsContextAndPipeline(window);
                 break;
             }
             case RenderThreadingMode::MultiThreaded: {
@@ -47,7 +47,7 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void RenderEngine::Initialize() {
-        s_render_pipeline->Initialize(s_graphics_context);
+
     }
 
     //--------------------------------------------------------------
@@ -71,12 +71,9 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void RenderEngine::Shutdown() {
-        s_render_pipeline->Shutdown();
-        delete s_render_pipeline;
-
         switch (s_render_settings.threading_mode) {
             case RenderThreadingMode::SingleThreaded: {
-                ShutdownGraphicsContext();
+                ShutdownGraphicsContextAndPipeline();
                 break;
             }
             case RenderThreadingMode::MultiThreaded: {
@@ -96,7 +93,7 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void RenderEngine::RT_Initialize(Window *window) {
-        InitializeGraphicsContext(window);
+        InitializeGraphicsContextAndPipeline(window);
 
         RenderThreadSynchronization::NotifyRenderReady();
         RenderThreadSynchronization::WaitForMainReady();
@@ -126,7 +123,7 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void RenderEngine::RT_Shutdown() {
-        ShutdownGraphicsContext();
+        ShutdownGraphicsContextAndPipeline();
     }
 
     //--------------------------------------------------------------
@@ -139,13 +136,18 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void RenderEngine::InitializeGraphicsContext(Window *window) {
+    void RenderEngine::InitializeGraphicsContextAndPipeline(Window *window) {
         s_graphics_context = window->CreateGraphicsContext(s_render_settings.graphics_backend);
         s_graphics_context->Initialize(GraphicsContextDescriptor());
         s_graphics_context->SetVSyncMode(VSyncMode::DontSync);
+
+        s_render_pipeline->Initialize(s_graphics_context);
     }
 
-    void RenderEngine::ShutdownGraphicsContext() {
+    void RenderEngine::ShutdownGraphicsContextAndPipeline() {
+        s_render_pipeline->Shutdown();
+        delete s_render_pipeline;
+
         s_graphics_context->Shutdown();
         delete s_graphics_context;
     }
