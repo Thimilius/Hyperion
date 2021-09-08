@@ -31,9 +31,9 @@ namespace Hyperion::Rendering {
             float32 orthographic_size = camera->orthographic_size;
             float32 near_plane = camera->near_plane;
             float32 far_plane = camera->far_plane;
-            uint32 width = Display::GetWidth();
-            uint32 height = Display::GetHeight();
-            float32 aspect_ratio = static_cast<float32>(width) / static_cast<float32>(height);
+            uint32 display_width = Display::GetWidth();
+            uint32 display_height = Display::GetHeight();
+            float32 aspect_ratio = static_cast<float32>(display_width) / static_cast<float32>(display_height);
 
             Matrix4x4 view_matrix = Matrix4x4::LookAt(position, position + forward, up);
             Matrix4x4 projection_matrix;
@@ -55,6 +55,13 @@ namespace Hyperion::Rendering {
             }
             Matrix4x4 view_projection_matrix = projection_matrix * view_matrix;
 
+            CameraViewportClipping &viewport_clipping = camera->viewport_clipping;
+            CameraViewport viewport;
+            viewport.x = static_cast<uint32>(Math::Clamp01(viewport_clipping.x) * display_width);
+            viewport.y = static_cast<uint32>(Math::Clamp01(viewport_clipping.y) * display_height);
+            viewport.width = static_cast<uint32>(Math::Clamp01(viewport_clipping.width) * display_width);
+            viewport.height = static_cast<uint32>(Math::Clamp01(viewport_clipping.height) * display_height);
+
             RenderFrameCameraData &render_frame_camera_data = render_frame->AddRenderCamera();
             render_frame_camera_data.projection_mode = projection_mode;
             render_frame_camera_data.clear_mode = camera->clear_mode;
@@ -72,7 +79,7 @@ namespace Hyperion::Rendering {
             render_frame_camera_data.inverse_projection_matrix = projection_matrix.Inverted();
             render_frame_camera_data.view_projection_matrix = view_projection_matrix;
             render_frame_camera_data.inverse_view_projection_matrix = view_projection_matrix.Inverted();
-            render_frame_camera_data.viewport = { 0, 0, width, height };
+            render_frame_camera_data.viewport = { 0, 0, display_width, display_height };
         }
     }
 

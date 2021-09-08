@@ -8,6 +8,7 @@
 #include "hyperion/ecs/entity/entity_types.hpp"
 #include "hyperion/rendering/camera/camera_clear_mode.hpp"
 #include "hyperion/rendering/camera/camera_projection_mode.hpp"
+#include "hyperion/rendering/camera/camera_viewport.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -47,6 +48,8 @@ namespace Hyperion {
 
         float32 fov = 90.0f;
         float32 orthographic_size = 2.75f;
+
+        Rendering::CameraViewportClipping viewport_clipping = { 0.0f, 0.0f, 1.0f, 1.0f };
     };
 
 }
