@@ -31,8 +31,7 @@ namespace Sandbox {
         WorldManager::SetActiveWorld(g_world);
         g_camera_id = g_world->CreateEntity(EntityPrimitive::Camera);
         for (size_t i = 0; i < 1024; i++) {
-            EntityId entity = g_world->CreateEntity();
-            g_world->AddComponent<SpriteComponent>(entity);
+            g_world->CreateEntity(EntityPrimitive::Sprite);
         }
     }
 

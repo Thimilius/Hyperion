@@ -25,6 +25,7 @@ namespace Hyperion {
         
         Base,
         Camera,
+        Sprite
     };
 
 }
