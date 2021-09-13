@@ -23,7 +23,6 @@ namespace Hyperion {
     private:
         static void Initialize();
         static void Update();
-        static void LateUpdate();
         static void Shutdown();
     private:
         inline static World *s_active_world;

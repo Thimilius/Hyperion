@@ -27,8 +27,24 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void AssetManager::Unload(Asset *asset) {
+        Unregister(asset);
+
+        HYP_ASSERT(!s_assets_to_unload.Contains(asset));
+        s_assets_to_unload.Add(asset);
+    }
+
+    //--------------------------------------------------------------
     void AssetManager::Initialize() {
         ImageLoader::Initialize();
+    }
+
+    //--------------------------------------------------------------
+    void AssetManager::LateUpdate() {
+        for (Asset *asset : s_assets_to_unload) {
+            delete asset;
+        }
+        s_assets_to_unload.Clear();
     }
 
     //--------------------------------------------------------------

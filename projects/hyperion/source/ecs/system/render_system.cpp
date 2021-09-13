@@ -5,6 +5,7 @@
 #include "hyperion/ecs/system/render_system.hpp"
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/core/app/display.hpp"
 #include "hyperion/ecs/component/components.hpp"
 #include "hyperion/ecs/world/world.hpp"
@@ -105,6 +106,15 @@ namespace Hyperion::Rendering {
             RenderFrameObjectData &render_frame_object_data = render_frame->AddFrameObject();
             render_frame_object_data.local_to_world = local_to_world->local_to_world;
             render_frame_object_data.mesh = render_mesh->mesh;
+        }
+    }
+
+    //--------------------------------------------------------------
+    void RenderAssetUnloadSystem::Run(World *world) {
+        RenderFrame *render_frame = RenderEngine::GetMainRenderFrame();
+
+        for (Asset *asset : AssetManager::s_assets_to_unload) {
+            render_frame->AddFrameAssetToUnload(asset->GetInfo().id);
         }
     }
 

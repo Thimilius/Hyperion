@@ -3,11 +3,6 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/ecs/system/system.hpp"
 
-//-------------------- Forward Declarations --------------------
-namespace Hyperion::Rendering {
-    class RenderFrame;
-}
-
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
@@ -22,6 +17,11 @@ namespace Hyperion::Rendering {
     };
 
     class RenderMeshSystem : public ISystem {
+    public:
+        void Run(World *world) override;
+    };
+
+    class RenderAssetUnloadSystem : public ISystem {
     public:
         void Run(World *world) override;
     };

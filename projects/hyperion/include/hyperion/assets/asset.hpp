@@ -27,7 +27,7 @@ namespace Hyperion {
     class Asset : public INonCopyable {
     protected:
         Asset(AssetInfo info) : m_info(info) { }
-        virtual ~Asset();
+        virtual ~Asset() = default;
     public:
         inline const AssetInfo &GetInfo() const { return m_info; }
 

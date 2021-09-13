@@ -50,23 +50,27 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void WorldManager::Update() {
-        
-    }
-
-    //--------------------------------------------------------------
-    void WorldManager::LateUpdate() {
         if (s_active_world) {
-            LocalToWorldSystem local_to_world_system;
-            local_to_world_system.Run(s_active_world);
+            // Transformation
+            {
+                LocalToWorldSystem local_to_world_system;
+                local_to_world_system.Run(s_active_world);
+            }
 
-            Rendering::CameraSystem camera_system;
-            camera_system.Run(s_active_world);
+            // Rendering
+            {
+                Rendering::CameraSystem camera_system;
+                camera_system.Run(s_active_world);
 
-            Rendering::SpriteSystem sprite_system;
-            sprite_system.Run(s_active_world);
+                Rendering::SpriteSystem sprite_system;
+                sprite_system.Run(s_active_world);
 
-            Rendering::RenderMeshSystem render_mesh_system;
-            render_mesh_system.Run(s_active_world);
+                Rendering::RenderMeshSystem render_mesh_system;
+                render_mesh_system.Run(s_active_world);
+
+                Rendering::RenderAssetUnloadSystem render_asset_unload_system;
+                render_asset_unload_system.Run(s_active_world);
+            }
         }
     }
 

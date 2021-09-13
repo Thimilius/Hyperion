@@ -9,8 +9,16 @@ namespace Hyperion::Rendering {
     
     //--------------------------------------------------------------
     void RenderFrame::Reset() {
+        m_frame_assets_to_unload.Clear();
+
         m_frame_cameras.Clear();
         m_frame_objects.Clear();
+    }
+
+    //--------------------------------------------------------------
+    void RenderFrame::AddFrameAssetToUnload(AssetId asset_id) {
+        HYP_ASSERT(!m_frame_assets_to_unload.Contains(asset_id));
+        m_frame_assets_to_unload.Add(asset_id);
     }
 
     //--------------------------------------------------------------

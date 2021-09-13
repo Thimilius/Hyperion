@@ -12,9 +12,6 @@ namespace Hyperion {
     class Window;
 
     namespace Rendering {
-        class CameraSystem;
-        class RenderMeshSystem;
-        class SpriteSystem;
         class IRenderPipeline;
     }
 }
@@ -25,6 +22,7 @@ namespace Hyperion::Rendering {
     class RenderEngine final {
     public:
         inline static Graphics::GraphicsBackend GetBackend() { return s_render_settings.graphics_backend; }
+        inline static RenderFrame *GetMainRenderFrame() { return s_main_frame; }
     private:
         RenderEngine() = delete;
         ~RenderEngine() = delete;
@@ -35,8 +33,6 @@ namespace Hyperion::Rendering {
         static void Shutdown();
 
         static void RequestExit();
-
-        static RenderFrame *GetMainRenderFrame() { return s_main_frame; }
 
         static void RT_Initialize(Window *window);
         static void RT_Loop(void *parameter);
@@ -61,9 +57,6 @@ namespace Hyperion::Rendering {
         inline static Graphics::GraphicsContext *s_graphics_context;
     private:
         friend class Hyperion::Engine;
-        friend class Hyperion::Rendering::CameraSystem;
-        friend class Hyperion::Rendering::RenderMeshSystem;
-        friend class Hyperion::Rendering::SpriteSystem;
     };
 
 }

@@ -10,16 +10,13 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Threading {
 
-    class AutoResetEvent final {
+    class AutoResetEvent final : public INonCopyable {
     public:
         AutoResetEvent(bool8 start_value = false);
     public:
         void Notify();
         void Wait();
         bool8 WaitUnblocked();
-    private:
-        AutoResetEvent(const AutoResetEvent &other) = delete;
-        AutoResetEvent &operator=(const AutoResetEvent &other) = delete;
     private:
         std::mutex m_mutex;
         std::condition_variable m_condition_variable;
