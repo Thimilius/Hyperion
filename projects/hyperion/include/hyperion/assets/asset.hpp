@@ -12,7 +12,8 @@ namespace Hyperion {
 namespace Hyperion {
 
     enum class AssetType {
-        Mesh
+        Mesh,
+        Texture
     };
 
     using AssetId = uint64;
@@ -26,7 +27,7 @@ namespace Hyperion {
     class Asset : public INonCopyable {
     protected:
         Asset(AssetInfo info) : m_info(info) { }
-        virtual ~Asset() = default;
+        virtual ~Asset();
     public:
         inline const AssetInfo &GetInfo() const { return m_info; }
 

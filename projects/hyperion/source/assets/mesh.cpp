@@ -8,11 +8,9 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    Mesh::Mesh(AssetInfo info) : Asset(info) { }
-
-    //--------------------------------------------------------------
     Mesh::Mesh(AssetInfo info, const MeshData &data) : Mesh(info) {
         m_data = data;
+        m_bounds = CalculateBounds(data.positions);
     }
 
     //--------------------------------------------------------------

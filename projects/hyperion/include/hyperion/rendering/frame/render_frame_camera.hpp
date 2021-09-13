@@ -4,9 +4,7 @@
 #include "hyperion/core/color.hpp"
 #include "hyperion/core/math/matrix4x4.hpp"
 #include "hyperion/core/math/vector3.hpp"
-#include "hyperion/rendering/camera/camera_clear_mode.hpp"
-#include "hyperion/rendering/camera/camera_projection_mode.hpp"
-#include "hyperion/rendering/camera/camera_viewport.hpp"
+#include "hyperion/rendering/render_types.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {

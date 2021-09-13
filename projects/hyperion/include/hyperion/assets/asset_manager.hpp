@@ -7,6 +7,8 @@
 namespace Hyperion {
     class Engine;
     class Mesh;
+    class Texture;
+    class Texture2D;
 }
 
 //-------------------- Definition Namespace --------------------
@@ -18,16 +20,20 @@ namespace Hyperion {
         ~AssetManager() = delete;
     public:
         static Mesh *CreateMesh();
+        static Texture2D *CreateTexture2D();
     private:
         static void Initialize();
         static void Shutdown();
 
+        static void Unregister(Asset *asset);
         static AssetInfo GetNextAssetInfo();
     private:
         inline static Array<Mesh *> s_meshes;
+        inline static Array<Texture *> s_textures;
 
         inline static AssetId s_id_counter;
     private:
+        friend class Hyperion::Asset;
         friend class Hyperion::Engine;
     };
 

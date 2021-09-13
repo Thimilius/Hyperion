@@ -1,7 +1,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/common.hpp"
+#include "hyperion/assets/texture.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
@@ -12,7 +12,10 @@ namespace Hyperion::Rendering {
         // uint32 sub_mesh_index;
         
         Matrix4x4 local_to_world;
+
+        // TEMP: This is just so we somehow get the sprite stuff accross.
         Color color;
+        Texture2D *texture;
     };
 
     class RenderFrameObject {

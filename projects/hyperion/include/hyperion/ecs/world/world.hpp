@@ -16,6 +16,7 @@ namespace Hyperion {
     class World final {
     private:
         World();
+        ~World() = default;
     public:
         bool8 IsValidId(EntityId id) const;
         EntityGuid GetGuid(EntityId id) const;

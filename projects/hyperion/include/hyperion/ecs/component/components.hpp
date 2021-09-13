@@ -1,14 +1,13 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/assets/texture.hpp"
 #include "hyperion/core/color.hpp"
 #include "hyperion/core/math/matrix4x4.hpp"
 #include "hyperion/core/math/vector3.hpp"
 #include "hyperion/core/math/quaternion.hpp"
 #include "hyperion/ecs/entity/entity_types.hpp"
-#include "hyperion/rendering/camera/camera_clear_mode.hpp"
-#include "hyperion/rendering/camera/camera_projection_mode.hpp"
-#include "hyperion/rendering/camera/camera_viewport.hpp"
+#include "hyperion/rendering/render_types.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -24,7 +23,7 @@ namespace Hyperion {
     };
 
     struct LocalToWorldComponent {
-        Matrix4x4 local_to_world;
+        Matrix4x4 local_to_world = Matrix4x4::Identity();
     };
 
     struct HierarchyComponent {
@@ -54,6 +53,7 @@ namespace Hyperion {
 
     struct SpriteComponent {
         Color color = Color::White();
+        Texture2D *texture = nullptr;
     };
 
 }

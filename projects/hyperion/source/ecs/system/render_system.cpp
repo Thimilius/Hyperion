@@ -95,6 +95,7 @@ namespace Hyperion::Rendering {
             RenderFrameObjectData &render_frame_object_data = render_frame->AddRenderObject();
             render_frame_object_data.local_to_world = local_to_world->local_to_world;
             render_frame_object_data.color = sprite->color;
+            render_frame_object_data.texture = sprite->texture;
         }
     }
 
