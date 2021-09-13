@@ -23,7 +23,8 @@ namespace Sandbox {
     }
 
     World *g_world;
-    EntityId g_camera_id;
+    EntityId g_camera;
+    EntityId g_cube;
 
     //--------------------------------------------------------------
     void SandboxApplication::OnInitialize() {
@@ -32,10 +33,14 @@ namespace Sandbox {
         g_world = WorldManager::CreateWorld();
 
         WorldManager::SetActiveWorld(g_world);
-        g_camera_id = g_world->CreateEntity(EntityPrimitive::Camera);
-        for (size_t i = 0; i < 4096; i++) {
-            g_world->CreateEntity(EntityPrimitive::Sprite);
-        }
+        g_camera = g_world->CreateEntity(EntityPrimitive::Camera);
+
+        TransformComponent *camera_transform = g_world->GetComponent<TransformComponent>(g_camera);
+        camera_transform->position = Vector3(0.0f, 1.5f, 3.0f);
+        camera_transform->rotation = Quaternion::FromEulerAngles(-25.0f, 0.0f, 0.0f);
+
+        g_cube = g_world->CreateEntity();
+        RenderMeshComponent *render_mesh = g_world->AddComponent<RenderMeshComponent>(g_cube);
     }
 
     //--------------------------------------------------------------
@@ -48,8 +53,11 @@ namespace Sandbox {
         }
 
         float32 value = Math::Sin(Time::GetTime() * 5.0f) * 0.5f + 0.5f;
-        CameraComponent *camera = g_world->GetComponent<CameraComponent>(g_camera_id);
+        CameraComponent *camera = g_world->GetComponent<CameraComponent>(g_camera);
         camera->background_color = Color(0.0f, value, value, 1.0f);
+
+        TransformComponent *transform = g_world->GetComponent<TransformComponent>(g_cube);
+        transform->rotation = Quaternion::FromEulerAngles(0.0f, Time::GetTime() * 25.0f, 0.0f);
     }
 
     //--------------------------------------------------------------

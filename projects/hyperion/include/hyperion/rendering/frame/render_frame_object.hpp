@@ -1,6 +1,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/assets/mesh.hpp"
 #include "hyperion/assets/texture.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -13,8 +14,8 @@ namespace Hyperion::Rendering {
         
         Matrix4x4 local_to_world;
 
-        // TEMP: This is just so we somehow get the sprite stuff accross.
-        Color color;
+        // TEMP: This is just so we somehow get the stuff accross.
+        Mesh *mesh;
         Texture2D *texture;
     };
 

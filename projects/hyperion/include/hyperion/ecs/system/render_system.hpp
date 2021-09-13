@@ -21,4 +21,9 @@ namespace Hyperion::Rendering {
         void Run(World *world) override;
     };
 
+    class RenderMeshSystem : public ISystem {
+    public:
+        void Run(World *world) override;
+    };
+
 }

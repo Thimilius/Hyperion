@@ -62,7 +62,7 @@ namespace Hyperion::Rendering {
             viewport.width = static_cast<uint32>(Math::Clamp01(viewport_clipping.width) * display_width);
             viewport.height = static_cast<uint32>(Math::Clamp01(viewport_clipping.height) * display_height);
 
-            RenderFrameCameraData &render_frame_camera_data = render_frame->AddRenderCamera();
+            RenderFrameCameraData &render_frame_camera_data = render_frame->AddFrameCamera();
             render_frame_camera_data.projection_mode = projection_mode;
             render_frame_camera_data.clear_mode = camera->clear_mode;
             render_frame_camera_data.background_color = camera->background_color;
@@ -91,11 +91,20 @@ namespace Hyperion::Rendering {
         for (EntityId entity : view) {
             LocalToWorldComponent *local_to_world = world->GetComponent<LocalToWorldComponent>(entity);
             SpriteComponent *sprite = world->GetComponent<SpriteComponent>(entity);
+        }
+    }
 
-            RenderFrameObjectData &render_frame_object_data = render_frame->AddRenderObject();
+    //--------------------------------------------------------------
+    void RenderMeshSystem::Run(World *world) {
+        RenderFrame *render_frame = RenderEngine::GetMainRenderFrame();
+        auto view = world->GetView<LocalToWorldComponent, RenderMeshComponent>();
+        for (EntityId entity : view) {
+            LocalToWorldComponent *local_to_world = world->GetComponent<LocalToWorldComponent>(entity);
+            RenderMeshComponent *render_mesh = world->GetComponent<RenderMeshComponent>(entity);
+
+            RenderFrameObjectData &render_frame_object_data = render_frame->AddFrameObject();
             render_frame_object_data.local_to_world = local_to_world->local_to_world;
-            render_frame_object_data.color = sprite->color;
-            render_frame_object_data.texture = sprite->texture;
+            render_frame_object_data.mesh = render_mesh->mesh;
         }
     }
 

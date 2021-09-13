@@ -45,6 +45,7 @@ namespace Hyperion {
         ComponentRegistry::Register<HierarchyComponent>();
         ComponentRegistry::Register<CameraComponent>();
         ComponentRegistry::Register<SpriteComponent>();
+        ComponentRegistry::Register<RenderMeshComponent>();
     }
 
     //--------------------------------------------------------------
@@ -63,6 +64,9 @@ namespace Hyperion {
 
             Rendering::SpriteSystem sprite_system;
             sprite_system.Run(s_active_world);
+
+            Rendering::RenderMeshSystem render_mesh_system;
+            render_mesh_system.Run(s_active_world);
         }
     }
 

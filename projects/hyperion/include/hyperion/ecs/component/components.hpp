@@ -1,6 +1,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/assets/mesh.hpp"
 #include "hyperion/assets/texture.hpp"
 #include "hyperion/core/color.hpp"
 #include "hyperion/core/math/matrix4x4.hpp"
@@ -54,6 +55,10 @@ namespace Hyperion {
     struct SpriteComponent {
         Color color = Color::White();
         Texture2D *texture = nullptr;
+    };
+
+    struct RenderMeshComponent {
+        Mesh *mesh = nullptr;
     };
 
 }

@@ -13,6 +13,7 @@ namespace Hyperion {
 
     namespace Rendering {
         class CameraSystem;
+        class RenderMeshSystem;
         class SpriteSystem;
         class IRenderPipeline;
     }
@@ -61,6 +62,7 @@ namespace Hyperion::Rendering {
     private:
         friend class Hyperion::Engine;
         friend class Hyperion::Rendering::CameraSystem;
+        friend class Hyperion::Rendering::RenderMeshSystem;
         friend class Hyperion::Rendering::SpriteSystem;
     };
 
