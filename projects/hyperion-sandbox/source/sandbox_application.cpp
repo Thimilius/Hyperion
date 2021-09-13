@@ -3,6 +3,7 @@
 
 //---------------------- Library Includes ----------------------
 #include <hyperion/entry_point.hpp>
+#include <hyperion/assets/asset_manager.hpp>
 #include <hyperion/core/app/time.hpp>
 #include <hyperion/ecs/component/components.hpp>
 #include <hyperion/ecs/system/transform_system.hpp>
@@ -27,6 +28,8 @@ namespace Sandbox {
     void SandboxApplication::OnInitialize() {
         UpdateTitle();
 
+        Mesh *mesh = AssetManager::CreateMesh();
+        
         g_world = WorldManager::CreateWorld();
         WorldManager::SetActiveWorld(g_world);
         g_camera_id = g_world->CreateEntity(EntityPrimitive::Camera);
