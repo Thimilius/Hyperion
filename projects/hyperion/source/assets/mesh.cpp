@@ -8,10 +8,10 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    Mesh::Mesh(AssetId id) : Asset(id) { }
+    Mesh::Mesh(AssetInfo info) : Asset(info) { }
 
     //--------------------------------------------------------------
-    Mesh::Mesh(AssetId id, const MeshData &data) : Mesh(id) {
+    Mesh::Mesh(AssetInfo info, const MeshData &data) : Mesh(info) {
         m_data = data;
     }
 

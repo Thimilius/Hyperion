@@ -13,7 +13,9 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     Mesh *AssetManager::CreateMesh() {
-        return new Mesh(GetNextAssetId());
+        Mesh *mesh = new Mesh(GetNextAssetInfo());
+        s_meshes.Add(mesh);
+        return mesh;
     }
 
     //--------------------------------------------------------------
@@ -26,8 +28,9 @@ namespace Hyperion {
         ImageLoader::Shutdown();
     }
 
-    AssetId AssetManager::GetNextAssetId() {
-        return s_id_counter++;
+    //--------------------------------------------------------------
+    AssetInfo AssetManager::GetNextAssetInfo() {
+        return { s_id_counter++, AssetGuid::Create() };
     }
 
 }

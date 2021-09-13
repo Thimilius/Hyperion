@@ -1,7 +1,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/common.hpp"
+#include "hyperion/core/guid.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -16,17 +16,23 @@ namespace Hyperion {
     };
 
     using AssetId = uint64;
+    using AssetGuid = Guid;
+
+    struct AssetInfo {
+        AssetId id;
+        AssetGuid guid;
+    };
 
     class Asset : public INonCopyable {
     protected:
-        Asset(AssetId id) : m_id(id) { }
+        Asset(AssetInfo info) : m_info(info) { }
         virtual ~Asset() = default;
     public:
-        inline AssetId GetId() const { return m_id; }
+        inline const AssetInfo &GetInfo() const { return m_info; }
 
         virtual AssetType GetAssetType() const = 0;
     private:
-        AssetId m_id;
+        AssetInfo m_info;
     private:
         friend class Hyperion::AssetManager;
     };

@@ -22,8 +22,10 @@ namespace Hyperion {
         static void Initialize();
         static void Shutdown();
 
-        static AssetId GetNextAssetId();
+        static AssetInfo GetNextAssetInfo();
     private:
+        inline static Array<Mesh *> s_meshes;
+
         inline static AssetId s_id_counter;
     private:
         friend class Hyperion::Engine;

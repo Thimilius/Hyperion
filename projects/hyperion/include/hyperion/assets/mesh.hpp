@@ -32,8 +32,8 @@ namespace Hyperion {
 
     class Mesh final : public Asset {
     private:
-        Mesh(AssetId id);
-        Mesh(AssetId id, const MeshData &data);
+        Mesh(AssetInfo info);
+        Mesh(AssetInfo info, const MeshData &data);
     public:
         inline AssetType GetAssetType() const override { return AssetType::Mesh; }
     private:
