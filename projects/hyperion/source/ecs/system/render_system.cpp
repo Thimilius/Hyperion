@@ -63,24 +63,24 @@ namespace Hyperion::Rendering {
             viewport.width = static_cast<uint32>(Math::Clamp01(viewport_clipping.width) * display_width);
             viewport.height = static_cast<uint32>(Math::Clamp01(viewport_clipping.height) * display_height);
 
-            RenderFrameCameraData &render_frame_camera_data = render_frame->AddFrameCamera();
-            render_frame_camera_data.projection_mode = projection_mode;
-            render_frame_camera_data.clear_mode = camera->clear_mode;
-            render_frame_camera_data.background_color = camera->background_color;
-            render_frame_camera_data.position = transform->position;
-            render_frame_camera_data.forward = forward;
-            render_frame_camera_data.up = up;
-            render_frame_camera_data.fov = fov;
-            render_frame_camera_data.orthographic_size = orthographic_size;
-            render_frame_camera_data.near_plane = near_plane;
-            render_frame_camera_data.far_plane = far_plane;
-            render_frame_camera_data.view_matrix = view_matrix;
-            render_frame_camera_data.inverse_view_matrix = view_matrix.Inverted();
-            render_frame_camera_data.projection_matrix = projection_matrix;
-            render_frame_camera_data.inverse_projection_matrix = projection_matrix.Inverted();
-            render_frame_camera_data.view_projection_matrix = view_projection_matrix;
-            render_frame_camera_data.inverse_view_projection_matrix = view_projection_matrix.Inverted();
-            render_frame_camera_data.viewport = { 0, 0, display_width, display_height };
+            RenderFrameCamera &render_frame_camera = render_frame->AddFrameCamera();
+            render_frame_camera.projection_mode = projection_mode;
+            render_frame_camera.clear_mode = camera->clear_mode;
+            render_frame_camera.background_color = camera->background_color;
+            render_frame_camera.position = transform->position;
+            render_frame_camera.forward = forward;
+            render_frame_camera.up = up;
+            render_frame_camera.fov = fov;
+            render_frame_camera.orthographic_size = orthographic_size;
+            render_frame_camera.near_plane = near_plane;
+            render_frame_camera.far_plane = far_plane;
+            render_frame_camera.view_matrix = view_matrix;
+            render_frame_camera.inverse_view_matrix = view_matrix.Inverted();
+            render_frame_camera.projection_matrix = projection_matrix;
+            render_frame_camera.inverse_projection_matrix = projection_matrix.Inverted();
+            render_frame_camera.view_projection_matrix = view_projection_matrix;
+            render_frame_camera.inverse_view_projection_matrix = view_projection_matrix.Inverted();
+            render_frame_camera.viewport = { 0, 0, display_width, display_height };
         }
     }
 
@@ -103,9 +103,9 @@ namespace Hyperion::Rendering {
             LocalToWorldComponent *local_to_world = world->GetComponent<LocalToWorldComponent>(entity);
             RenderMeshComponent *render_mesh = world->GetComponent<RenderMeshComponent>(entity);
 
-            RenderFrameObjectData &render_frame_object_data = render_frame->AddFrameObject();
-            render_frame_object_data.local_to_world = local_to_world->local_to_world;
-            render_frame_object_data.mesh = render_mesh->mesh;
+            RenderFrameMeshObject &render_frame_mesh_object = render_frame->AddFrameMeshObject();
+            render_frame_mesh_object.local_to_world = local_to_world->local_to_world;
+            render_frame_mesh_object.mesh = render_mesh->mesh;
         }
     }
 

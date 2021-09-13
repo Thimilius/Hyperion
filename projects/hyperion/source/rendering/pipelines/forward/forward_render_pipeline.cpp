@@ -146,23 +146,21 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void ForwardRenderPipeline::RenderCamera(const RenderFrameCamera &render_frame_camera, RenderFrame *render_frame) {
-        const RenderFrameCameraData &render_frame_camera_data = render_frame_camera.GetData();
-        const CameraViewport &viewport = render_frame_camera_data.viewport;
+        const CameraViewport &viewport = render_frame_camera.viewport;
 
-        glProgramUniformMatrix4fv(g_shader_program, glGetUniformLocation(g_shader_program, "u_view"), 1, GL_FALSE, render_frame_camera_data.view_matrix.elements);
-        glProgramUniformMatrix4fv(g_shader_program, glGetUniformLocation(g_shader_program, "u_projection"), 1, GL_FALSE, render_frame_camera_data.projection_matrix.elements);
+        glProgramUniformMatrix4fv(g_shader_program, glGetUniformLocation(g_shader_program, "u_view"), 1, GL_FALSE, render_frame_camera.view_matrix.elements);
+        glProgramUniformMatrix4fv(g_shader_program, glGetUniformLocation(g_shader_program, "u_projection"), 1, GL_FALSE, render_frame_camera.projection_matrix.elements);
 
         // TEMP: This is just so we see something on the screen.
         glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
-        Color background_color = render_frame_camera_data.background_color;
+        Color background_color = render_frame_camera.background_color;
         glClearColor(background_color.r, background_color.g, background_color.b, background_color.a);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         glUseProgram(g_shader_program);
         glBindVertexArray(g_vertex_array);
-        for (const RenderFrameObject &render_frame_object : render_frame->GetFrameObjects()) {
-            const RenderFrameObjectData &render_frame_object_data = render_frame_object.GetData();
-            glProgramUniformMatrix4fv(g_shader_program, glGetUniformLocation(g_shader_program, "u_model"), 1, GL_FALSE, render_frame_object_data.local_to_world.elements);
+        for (const RenderFrameObject &render_frame_object : render_frame->GetFrameMeshObjects()) {
+            glProgramUniformMatrix4fv(g_shader_program, glGetUniformLocation(g_shader_program, "u_model"), 1, GL_FALSE, render_frame_object.local_to_world.elements);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
     }

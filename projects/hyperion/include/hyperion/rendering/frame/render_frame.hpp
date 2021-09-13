@@ -2,7 +2,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/rendering/frame/render_frame_camera.hpp"
-#include "hyperion/rendering/frame/render_frame_object.hpp"
+#include "hyperion/rendering/frame/render_frame_objects.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
@@ -12,15 +12,18 @@ namespace Hyperion::Rendering {
         void Reset();
 
         const Array<RenderFrameCamera> &GetFrameCameras() const { return m_frame_cameras; }
-        const Array<RenderFrameObject> &GetFrameObjects() const { return m_frame_objects; }
+        const Array<RenderFrameMeshObject> &GetFrameMeshObjects() const { return m_frame_mesh_objects; }
+        const Array<RenderFrameSpriteObject> &GetFrameSpriteObjects() const { return m_frame_sprite_objects; }
         const Array<AssetId> &GetFrameAssetsToUnload() const { return m_frame_assets_to_unload; }
 
-        RenderFrameCameraData &AddFrameCamera();
-        RenderFrameObjectData &AddFrameObject();
+        RenderFrameCamera &AddFrameCamera();
+        RenderFrameMeshObject &AddFrameMeshObject();
+        RenderFrameSpriteObject &AddFrameSpriteObject();
         void AddFrameAssetToUnload(AssetId asset_id);
     private:
         Array<RenderFrameCamera> m_frame_cameras;
-        Array<RenderFrameObject> m_frame_objects;
+        Array<RenderFrameMeshObject> m_frame_mesh_objects;
+        Array<RenderFrameSpriteObject> m_frame_sprite_objects;
         Array<AssetId> m_frame_assets_to_unload;
     };
 

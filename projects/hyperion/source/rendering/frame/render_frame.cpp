@@ -12,7 +12,7 @@ namespace Hyperion::Rendering {
         m_frame_assets_to_unload.Clear();
 
         m_frame_cameras.Clear();
-        m_frame_objects.Clear();
+        m_frame_mesh_objects.Clear();
     }
 
     //--------------------------------------------------------------
@@ -22,17 +22,21 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    RenderFrameCameraData &RenderFrame::AddFrameCamera() {
-        uint64 length = m_frame_cameras.GetLength();
-        m_frame_cameras.Resize(length + 1);
-        return m_frame_cameras[length].GetData();
+    RenderFrameCamera &RenderFrame::AddFrameCamera() {
+        m_frame_cameras.Resize(m_frame_cameras.GetLength() + 1);
+        return m_frame_cameras.GetLast();
     }
 
     //--------------------------------------------------------------
-    RenderFrameObjectData &RenderFrame::AddFrameObject() {
-        uint64 length = m_frame_objects.GetLength();
-        m_frame_objects.Resize(length + 1);
-        return m_frame_objects[length].GetData();
+    RenderFrameMeshObject &RenderFrame::AddFrameMeshObject() {
+        m_frame_mesh_objects.Resize(m_frame_mesh_objects.GetLength() + 1);
+        return m_frame_mesh_objects.GetLast();
+    }
+
+    //--------------------------------------------------------------
+    RenderFrameSpriteObject &RenderFrame::AddFrameSpriteObject() {
+        m_frame_sprite_objects.Resize(m_frame_sprite_objects.GetLength() + 1);
+        return m_frame_sprite_objects.GetLast();
     }
 
 }

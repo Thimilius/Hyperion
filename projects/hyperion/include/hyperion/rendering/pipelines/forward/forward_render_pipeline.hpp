@@ -6,7 +6,7 @@
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion::Rendering {
-    class RenderFrameCamera;
+    struct RenderFrameCamera;
 }
 
 //-------------------- Definition Namespace --------------------
