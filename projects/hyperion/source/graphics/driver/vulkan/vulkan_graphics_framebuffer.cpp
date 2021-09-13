@@ -18,7 +18,7 @@ namespace Hyperion::Graphics {
     VulkanGraphicsFramebuffer::VulkanGraphicsFramebuffer(VulkanGraphicsDevice *device, const GraphicsFramebufferDescription &description) : GraphicsFramebuffer(device, description) {
         uint32 attachment_count = static_cast<uint32>(description.attachments.GetLength());
 
-        List<VkImageView> attachments(attachment_count);
+        Array<VkImageView> attachments(attachment_count);
         for (GraphicsTextureView *texture_view : description.attachments) {
             // TODO: Implement.
         }

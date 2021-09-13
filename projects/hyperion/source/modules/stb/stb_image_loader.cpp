@@ -36,7 +36,7 @@ namespace Hyperion {
             return { Error::ImageLoadFailed };
         }
 
-        List<byte> pixels(buffer, buffer + (width * height * channels));
+        Array<byte> pixels(buffer, buffer + (width * height * channels));
         stbi_image_free(buffer);
 
         return { Image::Create(width, height, channels, std::move(pixels)) };

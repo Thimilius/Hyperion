@@ -8,10 +8,10 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    using EntityIndices = List<uint32>;
-    using EntityIndexPages = List<EntityIndices>;
-    using EntityList = List<EntityId>;
-    using ComponentList = List<byte>;
+    using EntityIndices = Array<uint32>;
+    using EntityIndexPages = Array<EntityIndices>;
+    using EntityList = Array<EntityId>;
+    using ComponentList = Array<byte>;
 
     class ComponentPool final {
     public:
@@ -28,7 +28,7 @@ namespace Hyperion {
         void FitIntoPool(EntityId id);
     private:
         uint32 GetSparseIndex(EntityId id);
-        List<uint32> &GetEntityIndices(EntityId id);
+        Array<uint32> &GetEntityIndices(EntityId id);
     public:
         inline static const uint32 MAX_ENTITIES_PER_PAGE = 2048;
     private:

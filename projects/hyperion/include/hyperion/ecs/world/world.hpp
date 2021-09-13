@@ -86,11 +86,11 @@ namespace Hyperion {
     private:
         void AddComponentsForPrimitive(EntityId id, EntityPrimitive primitive);
     private:
-        List<EntityDescription> m_entities;
+        Array<EntityDescription> m_entities;
         uint64 m_available = 0;
         EntityIndex m_next = EntityUtilities::GetIndex(Entity::EMPTY);
         
-        List<ComponentPool> m_component_pools;
+        Array<ComponentPool> m_component_pools;
     private:
     private:
         friend class Hyperion::WorldManager;

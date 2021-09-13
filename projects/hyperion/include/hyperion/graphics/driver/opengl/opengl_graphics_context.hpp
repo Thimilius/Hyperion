@@ -34,7 +34,7 @@ namespace Hyperion::Graphics {
         inline GraphicsContextProperties GetProperties() const override { return m_properties; }
 
         inline const OpenGLGraphicsContextLimits &GetLimits() const { return m_limits; }
-        inline const List<String> &GetExtensions() const { return m_extensions; }
+        inline const Array<String> &GetExtensions() const { return m_extensions; }
 
         void Initialize(const GraphicsContextDescriptor &descriptor) override;
         void Shutdown() override;
@@ -58,7 +58,7 @@ namespace Hyperion::Graphics {
 
         GraphicsContextProperties m_properties;
         OpenGLGraphicsContextLimits m_limits;
-        List<String> m_extensions;
+        Array<String> m_extensions;
     };
 
 }

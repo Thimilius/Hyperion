@@ -25,11 +25,11 @@ namespace Hyperion::Graphics {
 
     //--------------------------------------------------------------
     void VulkanGraphicsContext::Initialize(const GraphicsContextDescriptor &descriptor) {
-        List<const char *> required_extension_names;
+        Array<const char *> required_extension_names;
         QueryExtensions();
         CheckExtensions(required_extension_names);
 
-        List<const char *> required_layer_names;
+        Array<const char *> required_layer_names;
         QueryLayers();
         CheckLayers(required_layer_names);
 
@@ -71,11 +71,11 @@ namespace Hyperion::Graphics {
 
         VkDevice logical_device;
         {
-            List<const char *> required_device_extensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+            Array<const char *> required_device_extensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
             {
                 uint32 device_extensions_count;
                 HYP_VULKAN_CHECK(vkEnumerateDeviceExtensionProperties(m_physical_device, nullptr, &device_extensions_count, nullptr));
-                List<VkExtensionProperties> device_extensions(device_extensions_count);
+                Array<VkExtensionProperties> device_extensions(device_extensions_count);
                 HYP_VULKAN_CHECK(vkEnumerateDeviceExtensionProperties(m_physical_device, nullptr, &device_extensions_count, device_extensions.GetData()));
 
                 for (const char *device_extension_name : required_device_extensions) {
@@ -88,7 +88,7 @@ namespace Hyperion::Graphics {
                 }
             }
 
-            List<VkDeviceQueueCreateInfo> device_queue_create_infos;
+            Array<VkDeviceQueueCreateInfo> device_queue_create_infos;
             Set<uint32> unique_queue_family_indices = { m_queue_family_indices.graphics_family_index, m_queue_family_indices.present_family_index };
 
             float32 queue_priority = 1.0f;
@@ -139,7 +139,7 @@ namespace Hyperion::Graphics {
     }
 
     //--------------------------------------------------------------
-    void VulkanGraphicsContext::CheckExtensions(List<const char *> &required_extension_names) {
+    void VulkanGraphicsContext::CheckExtensions(Array<const char *> &required_extension_names) {
 #ifdef HYP_DEBUG
         CheckExtension(required_extension_names, VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 #endif
@@ -147,7 +147,7 @@ namespace Hyperion::Graphics {
     }
 
     //--------------------------------------------------------------
-    void VulkanGraphicsContext::CheckExtension(List<const char *> &required_extension_names, const char *extension_name) {
+    void VulkanGraphicsContext::CheckExtension(Array<const char *> &required_extension_names, const char *extension_name) {
         required_extension_names.Add(extension_name);
 
         auto it = std::find_if(m_extensions.begin(), m_extensions.end(), [extension_name](const VkExtensionProperties &extension) {
@@ -159,14 +159,14 @@ namespace Hyperion::Graphics {
     }
 
     //--------------------------------------------------------------
-    void VulkanGraphicsContext::CheckLayers(List<const char *> &required_layer_names) {
+    void VulkanGraphicsContext::CheckLayers(Array<const char *> &required_layer_names) {
 #ifdef HYP_DEBUG
         CheckLayer(required_layer_names, "VK_LAYER_KHRONOS_validation");
 #endif
     }
 
     //--------------------------------------------------------------
-    void VulkanGraphicsContext::CheckLayer(List<const char *> &required_layer_names, const char *layer_name) {
+    void VulkanGraphicsContext::CheckLayer(Array<const char *> &required_layer_names, const char *layer_name) {
         required_layer_names.Add(layer_name);
 
         auto it = std::find_if(m_layers.begin(), m_layers.end(), [layer_name](const VkLayerProperties &layer) {
@@ -194,7 +194,7 @@ namespace Hyperion::Graphics {
     }
 
     //--------------------------------------------------------------
-    void VulkanGraphicsContext::InitializeInstance(const List<const char *> &required_extension_names, const List<const char *> &required_layer_names) {
+    void VulkanGraphicsContext::InitializeInstance(const Array<const char *> &required_extension_names, const Array<const char *> &required_layer_names) {
         VkApplicationInfo application_info = { };
         application_info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
         application_info.pApplicationName = "Hyperion";
@@ -226,7 +226,7 @@ namespace Hyperion::Graphics {
             HYP_PANIC_MESSAGE("Graphics", "No Vulkan device available!");
         }
 
-        List<VkPhysicalDevice> devices(device_count);
+        Array<VkPhysicalDevice> devices(device_count);
         HYP_VULKAN_CHECK(vkEnumeratePhysicalDevices(m_instance, &device_count, devices.GetData()));
         for (const VkPhysicalDevice &device : devices) {
             VkPhysicalDeviceProperties device_properties;
@@ -247,7 +247,7 @@ namespace Hyperion::Graphics {
     void VulkanGraphicsContext::InitializeQueueFamilyIndices() {
         uint32 queue_family_properties_count = 0;
         vkGetPhysicalDeviceQueueFamilyProperties(m_physical_device, &queue_family_properties_count, nullptr);
-        List<VkQueueFamilyProperties> queue_family_properties(queue_family_properties_count);
+        Array<VkQueueFamilyProperties> queue_family_properties(queue_family_properties_count);
         vkGetPhysicalDeviceQueueFamilyProperties(m_physical_device, &queue_family_properties_count, queue_family_properties.GetData());
 
         uint32 index = 0;
@@ -276,7 +276,7 @@ namespace Hyperion::Graphics {
     void VulkanGraphicsContext::QueryExtensions() {
         uint32 extension_count = 0;
         HYP_VULKAN_CHECK(vkEnumerateInstanceExtensionProperties(nullptr, &extension_count, nullptr));
-        m_extensions = List<VkExtensionProperties>(extension_count);
+        m_extensions = Array<VkExtensionProperties>(extension_count);
         HYP_VULKAN_CHECK(vkEnumerateInstanceExtensionProperties(nullptr, &extension_count, m_extensions.GetData()));
 
         if constexpr (g_log_extensions) {
@@ -290,7 +290,7 @@ namespace Hyperion::Graphics {
     void VulkanGraphicsContext::QueryLayers() {
         uint32 layer_count = 0;
         HYP_VULKAN_CHECK(vkEnumerateInstanceLayerProperties(&layer_count, nullptr));
-        m_layers = List<VkLayerProperties>(layer_count);
+        m_layers = Array<VkLayerProperties>(layer_count);
         HYP_VULKAN_CHECK(vkEnumerateInstanceLayerProperties(&layer_count, m_layers.GetData()));
 
         if constexpr (g_log_layers) {

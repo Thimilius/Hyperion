@@ -15,7 +15,7 @@ namespace Hyperion {
     public:
         virtual ~IImageLoader() = default;
     public:
-        virtual const List<String> &GetSupportedExtensions() const = 0;
+        virtual const Array<String> &GetSupportedExtensions() const = 0;
         virtual bool8 SupportsExtension(const String &extension) const = 0;
 
         virtual Result<Image *, Error> Load(const String &path, bool8 flip_vertically) = 0;
@@ -23,7 +23,7 @@ namespace Hyperion {
 
     class ImageLoader final {
     public:
-        static List<String> GetSupportedExtensions();
+        static Array<String> GetSupportedExtensions();
         static bool8 SupportsExtension(const String &extension);
 
         static Result<Image *, Error> Load(const String &path, bool8 flip_vertically = false);
@@ -35,7 +35,7 @@ namespace Hyperion {
         static void Initialize();
         static void Shutdown();
     private:
-        inline static List<IImageLoader *> s_loaders;
+        inline static Array<IImageLoader *> s_loaders;
     private:
         friend class Hyperion::AssetManager;
     };

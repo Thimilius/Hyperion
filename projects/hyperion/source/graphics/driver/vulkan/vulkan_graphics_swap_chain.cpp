@@ -126,7 +126,7 @@ namespace Hyperion::Graphics {
     }
 
     //--------------------------------------------------------------
-    VkSurfaceFormatKHR VulkanGraphicsSwapChain::ChooseSwapChainSurfaceFormat(const List<VkSurfaceFormatKHR> &formats) {
+    VkSurfaceFormatKHR VulkanGraphicsSwapChain::ChooseSwapChainSurfaceFormat(const Array<VkSurfaceFormatKHR> &formats) {
         for (const VkSurfaceFormatKHR &format : formats) {
             if (format.format == VK_FORMAT_R8G8B8A8_SRGB && format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
                 return format;
@@ -137,7 +137,7 @@ namespace Hyperion::Graphics {
     }
 
     //--------------------------------------------------------------
-    VkPresentModeKHR VulkanGraphicsSwapChain::ChooseSwapChainPresentMode(const List<VkPresentModeKHR> &present_modes) {
+    VkPresentModeKHR VulkanGraphicsSwapChain::ChooseSwapChainPresentMode(const Array<VkPresentModeKHR> &present_modes) {
         for (const VkPresentModeKHR &present_mode : present_modes) {
             if (present_mode == VK_PRESENT_MODE_MAILBOX_KHR) {
                 return present_mode;

@@ -8,7 +8,7 @@ namespace Hyperion {
 
     class ComponentRegistry final {
     public:
-        inline static const List<ComponentInfo> &GetComponents() { return s_components; }
+        inline static const Array<ComponentInfo> &GetComponents() { return s_components; }
 
         template<typename T>
         inline static ComponentId GetId() {
@@ -26,7 +26,7 @@ namespace Hyperion {
             s_components.Add(component_info);
         }
     private:
-        inline static List<ComponentInfo> s_components;
+        inline static Array<ComponentInfo> s_components;
 
         inline static ComponentId s_component_counter = 0;
     };

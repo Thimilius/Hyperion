@@ -11,14 +11,14 @@ namespace Hyperion::Rendering {
     public:
         void Reset();
 
-        const List<RenderFrameCamera> &GetRenderCameras() const { return m_frame_cameras; }
-        const List<RenderFrameObject> &GetRenderObjects() const { return m_frame_objects; }
+        const Array<RenderFrameCamera> &GetRenderCameras() const { return m_frame_cameras; }
+        const Array<RenderFrameObject> &GetRenderObjects() const { return m_frame_objects; }
 
         RenderFrameCameraData &AddRenderCamera();
         RenderFrameObjectData &AddRenderObject();
     private:
-        List<RenderFrameCamera> m_frame_cameras;
-        List<RenderFrameObject> m_frame_objects;
+        Array<RenderFrameCamera> m_frame_cameras;
+        Array<RenderFrameObject> m_frame_objects;
     };
 
 }

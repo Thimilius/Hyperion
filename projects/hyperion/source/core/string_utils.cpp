@@ -13,11 +13,11 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    List<uint32> StringUtils::GetCodepointsUtf8(const String &string) {
+    Array<uint32> StringUtils::GetCodepointsUtf8(const String &string) {
         // Implementation from https://github.com/sheredom/utf8.h/blob/master/utf8.h.
         const char *s = string.c_str();
 
-        List<uint32> codepoints;
+        Array<uint32> codepoints;
 
         // This assumes a valid utf8 string.
         while (*s != '\0') {
@@ -51,7 +51,7 @@ namespace Hyperion {
         int32 string_length = static_cast<int32>(string.length());
         auto utf16_length = MultiByteToWideChar(CP_UTF8, 0, string.c_str(), string_length, nullptr, 0);
 
-        List<WCHAR> buffer(utf16_length + 1);
+        Array<WCHAR> buffer(utf16_length + 1);
         buffer[utf16_length] = 0;
 
         MultiByteToWideChar(CP_UTF8, 0, string.c_str(), string_length, buffer.GetData(), utf16_length);
@@ -69,7 +69,7 @@ namespace Hyperion {
         int32 string_length = static_cast<int32>(string.length());
         auto utf8_length = WideCharToMultiByte(CP_UTF8, 0, string.c_str(), string_length, nullptr, 0, nullptr, nullptr);
 
-        List<char> buffer(utf8_length + 1);
+        Array<char> buffer(utf8_length + 1);
         buffer[utf8_length] = 0;
 
         WideCharToMultiByte(CP_UTF8, 0, string.c_str(), string_length, buffer.GetData(), utf8_length, nullptr, nullptr);

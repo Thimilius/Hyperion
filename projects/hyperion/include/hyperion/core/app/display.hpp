@@ -28,18 +28,18 @@ namespace Hyperion {
     public:
         inline const String &GetName() const { return m_name; }
         inline bool8 IsPrimary() const { return m_is_primary; }
-        inline const List<DisplayModeInfo> &GetModeInfos() const { return m_mode_infos; }
+        inline const Array<DisplayModeInfo> &GetModeInfos() const { return m_mode_infos; }
     private:
         String m_name;
         bool8 m_is_primary;
-        List<DisplayModeInfo> m_mode_infos;
+        Array<DisplayModeInfo> m_mode_infos;
     private:
         friend class Hyperion::Display;
     };
 
     class Display final {
     public:
-        inline static const List<DisplayInfo> &GetDisplayInfos() { return s_display_infos; }
+        inline static const Array<DisplayInfo> &GetDisplayInfos() { return s_display_infos; }
         static DisplayInfo::DisplayModeInfo GetCurrentDisplayModeInfo();
 
         inline static uint32 GetWidth() { return s_cached_width; }
@@ -55,7 +55,7 @@ namespace Hyperion {
             s_cached_height = height;
         }
     private:
-        inline static List<DisplayInfo> s_display_infos;
+        inline static Array<DisplayInfo> s_display_infos;
 
         inline static uint32 s_cached_width;
         inline static uint32 s_cached_height;

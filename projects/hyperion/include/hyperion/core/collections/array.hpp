@@ -10,17 +10,17 @@
 namespace Hyperion {
 
     template<typename T>
-    class List {
+    class Array {
         using Iterator = typename std::vector<T>::iterator;
         using ConstIterator = typename std::vector<T>::const_iterator;
         using ReverseIterator = typename std::vector<T>::reverse_iterator;
         using ConstReverseIterator = typename std::vector<T>::const_reverse_iterator;
     public:
-        inline List() { }
-        inline List(uint64 size) : m_vector(size) { }
+        inline Array() { }
+        inline Array(uint64 size) : m_vector(size) { }
         template<typename Iterator>
-        inline List(Iterator first, Iterator last) : m_vector(first, last) { }
-        inline List(std::initializer_list<T> init) : m_vector(init) { }
+        inline Array(Iterator first, Iterator last) : m_vector(first, last) { }
+        inline Array(std::initializer_list<T> init) : m_vector(init) { }
     public:
         inline uint64 GetLength() const { return m_vector.size(); }
         inline uint64 GetCapacity() const { return m_vector.capacity(); }

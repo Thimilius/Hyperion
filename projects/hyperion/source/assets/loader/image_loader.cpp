@@ -11,8 +11,8 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    List<String> ImageLoader::GetSupportedExtensions() {
-        List<String> extensions;
+    Array<String> ImageLoader::GetSupportedExtensions() {
+        Array<String> extensions;
 
         return extensions;
     }

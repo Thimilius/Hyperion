@@ -109,7 +109,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    List<uint32> &ComponentPool::GetEntityIndices(EntityId id) {
+    Array<uint32> &ComponentPool::GetEntityIndices(EntityId id) {
         EntityIndex index = EntityUtilities::GetIndex(id);
         uint32 page_index = index / MAX_ENTITIES_PER_PAGE;
         return m_entity_index_pages[page_index];

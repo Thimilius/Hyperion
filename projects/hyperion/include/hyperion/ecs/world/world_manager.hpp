@@ -27,7 +27,7 @@ namespace Hyperion {
         static void Shutdown();
     private:
         inline static World *s_active_world;
-        inline static List<World *> s_worlds;
+        inline static Array<World *> s_worlds;
     private:
         friend class Hyperion::Engine;
     };

@@ -12,8 +12,8 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    List<byte> FileSystem::ReadAllBytes(const String &path) {
-        List<byte> result;
+    Array<byte> FileSystem::ReadAllBytes(const String &path) {
+        Array<byte> result;
 
         std::ifstream file(path, std::ios::ate | std::ios::binary);
         if (!file.is_open()) {
@@ -46,8 +46,8 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    List<String> FileSystem::ReadAllLines(const String &path) {
-        List<String> result;
+    Array<String> FileSystem::ReadAllLines(const String &path) {
+        Array<String> result;
 
         std::ifstream file(path);
         if (!file.is_open()) {

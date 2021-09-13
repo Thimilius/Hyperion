@@ -11,7 +11,7 @@ namespace Hyperion::Graphics {
     struct GraphicsFramebufferDescription : public GraphicsDeviceObjectDescription {
         GraphicsRenderPass *render_pass;
 
-        List<GraphicsTextureView *> attachments;
+        Array<GraphicsTextureView *> attachments;
     };
 
     class GraphicsFramebuffer : public GraphicsDeviceObject {

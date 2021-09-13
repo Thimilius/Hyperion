@@ -26,7 +26,7 @@ namespace Hyperion::Graphics {
     }
 
     //--------------------------------------------------------------
-    void WindowsVulkanGraphicsContext::CheckExtensions(List<const char *> &required_extension_names) {
+    void WindowsVulkanGraphicsContext::CheckExtensions(Array<const char *> &required_extension_names) {
         VulkanGraphicsContext::CheckExtensions(required_extension_names);
 
         CheckExtension(required_extension_names, VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
