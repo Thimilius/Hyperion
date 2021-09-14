@@ -9,40 +9,40 @@ namespace Hyperion::Rendering {
     
     //--------------------------------------------------------------
     void RenderFrame::Reset() {
-        m_frame_assets_to_unload.Clear();
+        m_assets_to_unload.Clear();
 
-        m_frame_cameras.Clear();
-        m_frame_mesh_objects.Clear();
+        m_cameras.Clear();
+        m_mesh_objects.Clear();
     }
 
     //--------------------------------------------------------------
-    void RenderFrame::AddFrameAssetToLoad(Asset *asset) {
-        HYP_ASSERT(!m_frame_assets_to_load.Contains(asset));
-        m_frame_assets_to_load.Add(asset);
+    void RenderFrame::AddAssetToLoad(Asset *asset) {
+        HYP_ASSERT(!m_assets_to_load.Contains(asset));
+        m_assets_to_load.Add(asset);
     }
 
     //--------------------------------------------------------------
-    void RenderFrame::AddFrameAssetToUnload(AssetId asset_id) {
-        HYP_ASSERT(!m_frame_assets_to_unload.Contains(asset_id));
-        m_frame_assets_to_unload.Add(asset_id);
+    void RenderFrame::AddAssetToUnload(AssetId asset_id) {
+        HYP_ASSERT(!m_assets_to_unload.Contains(asset_id));
+        m_assets_to_unload.Add(asset_id);
     }
 
     //--------------------------------------------------------------
-    RenderFrameCamera &RenderFrame::AddFrameCamera() {
-        m_frame_cameras.Resize(m_frame_cameras.GetLength() + 1);
-        return m_frame_cameras.GetLast();
+    RenderFrameCamera &RenderFrame::AddCamera() {
+        m_cameras.Resize(m_cameras.GetLength() + 1);
+        return m_cameras.GetLast();
     }
 
     //--------------------------------------------------------------
-    RenderFrameMeshObject &RenderFrame::AddFrameMeshObject() {
-        m_frame_mesh_objects.Resize(m_frame_mesh_objects.GetLength() + 1);
-        return m_frame_mesh_objects.GetLast();
+    RenderFrameMeshObject &RenderFrame::AddMeshObject() {
+        m_mesh_objects.Resize(m_mesh_objects.GetLength() + 1);
+        return m_mesh_objects.GetLast();
     }
 
     //--------------------------------------------------------------
-    RenderFrameSpriteObject &RenderFrame::AddFrameSpriteObject() {
-        m_frame_sprite_objects.Resize(m_frame_sprite_objects.GetLength() + 1);
-        return m_frame_sprite_objects.GetLast();
+    RenderFrameSpriteObject &RenderFrame::AddSpriteObject() {
+        m_sprite_objects.Resize(m_sprite_objects.GetLength() + 1);
+        return m_sprite_objects.GetLast();
     }
 
 }

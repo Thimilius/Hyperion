@@ -11,26 +11,26 @@ namespace Hyperion::Rendering {
     public:
         void Reset();
 
-        const Array<Asset *> &GetFrameAssetsToLoad() const { return m_frame_assets_to_load; }
-        const Array<AssetId> &GetFrameAssetsToUnload() const { return m_frame_assets_to_unload; }
+        const Array<Asset *> &GetAssetsToLoad() const { return m_assets_to_load; }
+        const Array<AssetId> &GetAssetsToUnload() const { return m_assets_to_unload; }
 
-        const Array<RenderFrameCamera> &GetFrameCameras() const { return m_frame_cameras; }
-        const Array<RenderFrameMeshObject> &GetFrameMeshObjects() const { return m_frame_mesh_objects; }
-        const Array<RenderFrameSpriteObject> &GetFrameSpriteObjects() const { return m_frame_sprite_objects; }
+        const Array<RenderFrameCamera> &GetCameras() const { return m_cameras; }
+        const Array<RenderFrameMeshObject> &GetMeshObjects() const { return m_mesh_objects; }
+        const Array<RenderFrameSpriteObject> &GetSpriteObjects() const { return m_sprite_objects; }
 
-        void AddFrameAssetToLoad(Asset *asset);
-        void AddFrameAssetToUnload(AssetId asset_id);
+        void AddAssetToLoad(Asset *asset);
+        void AddAssetToUnload(AssetId asset_id);
 
-        RenderFrameCamera &AddFrameCamera();
-        RenderFrameMeshObject &AddFrameMeshObject();
-        RenderFrameSpriteObject &AddFrameSpriteObject();
+        RenderFrameCamera &AddCamera();
+        RenderFrameMeshObject &AddMeshObject();
+        RenderFrameSpriteObject &AddSpriteObject();
     private:
-        Array<AssetId> m_frame_assets_to_unload;
-        Array<Asset *> m_frame_assets_to_load;
+        Array<AssetId> m_assets_to_unload;
+        Array<Asset *> m_assets_to_load;
 
-        Array<RenderFrameCamera> m_frame_cameras;
-        Array<RenderFrameMeshObject> m_frame_mesh_objects;
-        Array<RenderFrameSpriteObject> m_frame_sprite_objects;
+        Array<RenderFrameCamera> m_cameras;
+        Array<RenderFrameMeshObject> m_mesh_objects;
+        Array<RenderFrameSpriteObject> m_sprite_objects;
     };
 
 }

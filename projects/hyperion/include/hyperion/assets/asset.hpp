@@ -30,7 +30,7 @@ namespace Hyperion {
         virtual ~Asset() = default;
     public:
         inline const AssetInfo &GetInfo() const { return m_info; }
-        inline bool IsDirty() const { return m_is_dirty; }
+        inline bool8 IsDirty() const { return m_is_dirty; }
 
         virtual AssetType GetAssetType() const = 0;
     protected:
@@ -40,7 +40,7 @@ namespace Hyperion {
     private:
         AssetInfo m_info;
 
-        bool m_is_dirty;
+        bool8 m_is_dirty;
     private:
         friend class Hyperion::AssetManager;
     };

@@ -6,6 +6,7 @@
 #include "hyperion/core/math/bounding_box.hpp"
 #include "hyperion/core/math/vector2.hpp"
 #include "hyperion/core/math/vector3.hpp"
+#include "hyperion/rendering/render_types.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -30,17 +31,32 @@ namespace Hyperion {
         Array<uint32> indices;
     };
 
+    struct MeshVertexFormat {
+        uint32 stride;
+        Array<Rendering::VertexAttribute> vertex_attributes;
+    };
+
     class Mesh final : public Asset {
     private:
         Mesh(AssetInfo info) : Asset(info) { }
-        Mesh(AssetInfo info, const MeshData &data);
+        Mesh(AssetInfo info, const MeshData &data, const Array<Rendering::SubMesh> &sub_meshes);
         ~Mesh() = default;
     public:
         inline AssetType GetAssetType() const override { return AssetType::Mesh; }
+
+        inline const MeshData &GetMeshData() const { return m_data; }
+        inline const Array<Rendering::SubMesh> &GetSubMeshes() { return m_sub_meshes; }
+        inline uint32 GetSubMeshCount() const { return static_cast<uint32>(m_sub_meshes.GetLength()); }
+        void SetData(const MeshData &data, const Array<Rendering::SubMesh> &sub_meshes);
+
+        inline BoundingBox GetBounds() const { return m_bounds; }
     private:
         static BoundingBox CalculateBounds(const Array<Vector3> &positions);
     private:
         MeshData m_data;
+        MeshVertexFormat m_vertex_format;
+        Array<Rendering::SubMesh> m_sub_meshes;
+
         BoundingBox m_bounds;
     private:
         friend class Hyperion::AssetManager;

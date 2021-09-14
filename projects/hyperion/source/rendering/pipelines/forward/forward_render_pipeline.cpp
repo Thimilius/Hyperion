@@ -134,7 +134,7 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void ForwardRenderPipeline::Render(RenderFrame *render_frame) {
-        for (const RenderFrameCamera &render_frame_camera : render_frame->GetFrameCameras()) {
+        for (const RenderFrameCamera &render_frame_camera : render_frame->GetCameras()) {
             RenderCamera(render_frame_camera, render_frame);
         }
     }
@@ -159,7 +159,7 @@ namespace Hyperion::Rendering {
 
         glUseProgram(g_shader_program);
         glBindVertexArray(g_vertex_array);
-        for (const RenderFrameObject &render_frame_object : render_frame->GetFrameMeshObjects()) {
+        for (const RenderFrameObject &render_frame_object : render_frame->GetMeshObjects()) {
             glProgramUniformMatrix4fv(g_shader_program, glGetUniformLocation(g_shader_program, "u_model"), 1, GL_FALSE, render_frame_object.local_to_world.elements);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }

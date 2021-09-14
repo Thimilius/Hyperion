@@ -63,7 +63,7 @@ namespace Hyperion::Rendering {
             viewport.width = static_cast<uint32>(Math::Clamp01(viewport_clipping.width) * display_width);
             viewport.height = static_cast<uint32>(Math::Clamp01(viewport_clipping.height) * display_height);
 
-            RenderFrameCamera &render_frame_camera = render_frame->AddFrameCamera();
+            RenderFrameCamera &render_frame_camera = render_frame->AddCamera();
             render_frame_camera.projection_mode = projection_mode;
             render_frame_camera.clear_mode = camera->clear_mode;
             render_frame_camera.background_color = camera->background_color;
@@ -103,7 +103,7 @@ namespace Hyperion::Rendering {
             LocalToWorldComponent *local_to_world = world->GetComponent<LocalToWorldComponent>(entity);
             RenderMeshComponent *render_mesh = world->GetComponent<RenderMeshComponent>(entity);
 
-            RenderFrameMeshObject &render_frame_mesh_object = render_frame->AddFrameMeshObject();
+            RenderFrameMeshObject &render_frame_mesh_object = render_frame->AddMeshObject();
             render_frame_mesh_object.local_to_world = local_to_world->local_to_world;
             render_frame_mesh_object.mesh = render_mesh->mesh;
         }

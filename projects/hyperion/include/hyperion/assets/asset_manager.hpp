@@ -22,6 +22,7 @@ namespace Hyperion {
         ~AssetManager() = delete;
     public:
         static Mesh *CreateMesh();
+
         static Texture2D *CreateTexture2D();
 
         static void Unload(Asset *asset);

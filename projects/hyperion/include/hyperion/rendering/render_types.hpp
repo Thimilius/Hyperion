@@ -109,7 +109,7 @@ namespace Hyperion::Rendering {
         TextureWrapMode wrap_mode = TextureWrapMode::Clamp;
         TextureFilter filter = TextureFilter::Bilinear;
         TextureAnisotropicFilter anisotropic_filter = TextureAnisotropicFilter::None;
-        bool use_mipmaps = true;
+        bool8 use_mipmaps = true;
     };
 
     struct TextureSize {
