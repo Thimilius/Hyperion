@@ -5,14 +5,12 @@
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
+    class AssetLoadSystem;
+    class AssetUnloadSystem;
     class Engine;
     class Mesh;
     class Texture;
     class Texture2D;
-
-    namespace Rendering {
-        class RenderAssetUnloadSystem;
-    }
 }
 
 //-------------------- Definition Namespace --------------------
@@ -32,19 +30,22 @@ namespace Hyperion {
         static void LateUpdate();
         static void Shutdown();
 
-        static void Unregister(Asset *asset);
+        static void AddDirtyAsset(Asset *asset);
+
         static AssetInfo GetNextAssetInfo();
     private:
         inline static Array<Mesh *> s_meshes;
         inline static Array<Texture *> s_textures;
 
+        inline static Array<Asset *> s_assets_to_load;
         inline static Array<Asset *> s_assets_to_unload;
 
         inline static AssetId s_id_counter;
     private:
         friend class Hyperion::Asset;
+        friend class Hyperion::AssetLoadSystem;
+        friend class Hyperion::AssetUnloadSystem;
         friend class Hyperion::Engine;
-        friend class Hyperion::Rendering::RenderAssetUnloadSystem;
     };
 
 }

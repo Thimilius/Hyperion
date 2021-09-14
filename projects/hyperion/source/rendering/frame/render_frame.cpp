@@ -16,6 +16,12 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
+    void RenderFrame::AddFrameAssetToLoad(Asset *asset) {
+        HYP_ASSERT(!m_frame_assets_to_load.Contains(asset));
+        m_frame_assets_to_load.Add(asset);
+    }
+
+    //--------------------------------------------------------------
     void RenderFrame::AddFrameAssetToUnload(AssetId asset_id) {
         HYP_ASSERT(!m_frame_assets_to_unload.Contains(asset_id));
         m_frame_assets_to_unload.Add(asset_id);

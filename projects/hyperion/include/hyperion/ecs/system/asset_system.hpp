@@ -4,19 +4,14 @@
 #include "hyperion/ecs/system/system.hpp"
 
 //-------------------- Definition Namespace --------------------
-namespace Hyperion::Rendering {
+namespace Hyperion {
 
-    class CameraSystem : public ISystem {
+    class AssetLoadSystem : public ISystem {
     public:
         void Run(World *world) override;
     };
 
-    class SpriteSystem : public ISystem {
-    public:
-        void Run(World *world) override;
-    };
-
-    class RenderMeshSystem : public ISystem {
+    class AssetUnloadSystem : public ISystem {
     public:
         void Run(World *world) override;
     };

@@ -6,6 +6,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/ecs/component/components.hpp"
+#include "hyperion/ecs/system/asset_system.hpp"
 #include "hyperion/ecs/system/transform_system.hpp"
 #include "hyperion/ecs/system/render_system.hpp"
 
@@ -57,6 +58,15 @@ namespace Hyperion {
                 local_to_world_system.Run(s_active_world);
             }
 
+            // Assets
+            {
+                AssetLoadSystem asset_load_system;
+                asset_load_system.Run(s_active_world);
+
+                AssetUnloadSystem asset_unload_system;
+                asset_unload_system.Run(s_active_world);
+            }
+
             // Rendering
             {
                 Rendering::CameraSystem camera_system;
@@ -67,9 +77,6 @@ namespace Hyperion {
 
                 Rendering::RenderMeshSystem render_mesh_system;
                 render_mesh_system.Run(s_active_world);
-
-                Rendering::RenderAssetUnloadSystem render_asset_unload_system;
-                render_asset_unload_system.Run(s_active_world);
             }
         }
     }

@@ -11,20 +11,26 @@ namespace Hyperion::Rendering {
     public:
         void Reset();
 
+        const Array<Asset *> &GetFrameAssetsToLoad() const { return m_frame_assets_to_load; }
+        const Array<AssetId> &GetFrameAssetsToUnload() const { return m_frame_assets_to_unload; }
+
         const Array<RenderFrameCamera> &GetFrameCameras() const { return m_frame_cameras; }
         const Array<RenderFrameMeshObject> &GetFrameMeshObjects() const { return m_frame_mesh_objects; }
         const Array<RenderFrameSpriteObject> &GetFrameSpriteObjects() const { return m_frame_sprite_objects; }
-        const Array<AssetId> &GetFrameAssetsToUnload() const { return m_frame_assets_to_unload; }
+
+        void AddFrameAssetToLoad(Asset *asset);
+        void AddFrameAssetToUnload(AssetId asset_id);
 
         RenderFrameCamera &AddFrameCamera();
         RenderFrameMeshObject &AddFrameMeshObject();
         RenderFrameSpriteObject &AddFrameSpriteObject();
-        void AddFrameAssetToUnload(AssetId asset_id);
     private:
+        Array<AssetId> m_frame_assets_to_unload;
+        Array<Asset *> m_frame_assets_to_load;
+
         Array<RenderFrameCamera> m_frame_cameras;
         Array<RenderFrameMeshObject> m_frame_mesh_objects;
         Array<RenderFrameSpriteObject> m_frame_sprite_objects;
-        Array<AssetId> m_frame_assets_to_unload;
     };
 
 }

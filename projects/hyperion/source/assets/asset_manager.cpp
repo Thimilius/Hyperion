@@ -28,7 +28,21 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void AssetManager::Unload(Asset *asset) {
-        Unregister(asset);
+        switch (asset->GetAssetType()) {
+            case AssetType::Mesh: {
+                Mesh *mesh = static_cast<Mesh *>(asset);
+                HYP_ASSERT(s_meshes.Contains(mesh));
+                s_meshes.Remove(mesh);
+                break;
+            }
+            case AssetType::Texture: {
+                Texture *texture = static_cast<Texture *>(asset);
+                HYP_ASSERT(s_textures.Contains(texture));
+                s_textures.Remove(texture);
+                break;
+            }
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        }
 
         HYP_ASSERT(!s_assets_to_unload.Contains(asset));
         s_assets_to_unload.Add(asset);
@@ -53,22 +67,9 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void AssetManager::Unregister(Asset *asset) {
-        switch (asset->GetAssetType()) {
-            case AssetType::Mesh: {
-                Mesh *mesh = static_cast<Mesh *>(asset);
-                HYP_ASSERT(s_meshes.Contains(mesh));
-                s_meshes.Remove(mesh);
-                break;
-            }
-            case AssetType::Texture: {
-                Texture *texture = static_cast<Texture *>(asset);
-                HYP_ASSERT(s_textures.Contains(texture));
-                s_textures.Remove(texture);
-                break;
-            }
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-        }
+    void AssetManager::AddDirtyAsset(Asset *asset) {
+        HYP_ASSERT(!s_assets_to_load.Contains(asset));
+        s_assets_to_load.Add(asset);
     }
 
     //--------------------------------------------------------------

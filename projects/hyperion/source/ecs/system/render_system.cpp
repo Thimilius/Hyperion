@@ -109,13 +109,4 @@ namespace Hyperion::Rendering {
         }
     }
 
-    //--------------------------------------------------------------
-    void RenderAssetUnloadSystem::Run(World *world) {
-        RenderFrame *render_frame = RenderEngine::GetMainRenderFrame();
-
-        for (Asset *asset : AssetManager::s_assets_to_unload) {
-            render_frame->AddFrameAssetToUnload(asset->GetInfo().id);
-        }
-    }
-
 }
