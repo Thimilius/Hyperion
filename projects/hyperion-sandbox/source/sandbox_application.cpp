@@ -4,7 +4,7 @@
 //---------------------- Library Includes ----------------------
 #include <hyperion/entry_point.hpp>
 #include <hyperion/assets/asset_manager.hpp>
-#include <hyperion/assets/texture.hpp>
+#include <hyperion/assets/loader/mesh_loader.hpp>
 #include <hyperion/assets/utilities/mesh_generator.hpp>
 #include <hyperion/core/app/time.hpp>
 #include <hyperion/core/io/file_watcher.hpp>
@@ -48,7 +48,7 @@ namespace Sandbox {
         camera_transform->rotation = Quaternion::FromEulerAngles(-25.0f, 0.0f, 0.0f);
 #endif
 
-        Mesh *mesh = MeshGenerator::GenerateCube(1.0f);
+        Mesh *mesh = MeshLoader::Load("data/models/monkey.obj").Unwrap();
 
 #ifdef HYP_STRESS_TEST
         float32 size = 100;
@@ -80,15 +80,17 @@ namespace Sandbox {
         float32 value = Math::Sin(Time::GetTime() * 5.0f) * 0.5f + 0.5f;
         CameraComponent *camera = g_world->GetComponent<CameraComponent>(g_camera);
         camera->background_color = Color(0.0f, value, value, 1.0f);
+
+        Quaternion rotation = Quaternion::FromEulerAngles(0.0f, Time::GetTime() * 25.0f, 0.0f);
 #ifdef HYP_STRESS_TEST
         auto view = g_world->GetView<TransformComponent, RenderMeshComponent>();
         for (EntityId entity : view) {
             TransformComponent *transform = g_world->GetComponent<TransformComponent>(entity);
-            transform->rotation = Quaternion::FromEulerAngles(0.0f, Time::GetTime() * 25.0f, 0.0f);
+            transform->rotation = rotation;
         }
 #else
         TransformComponent *transform = g_world->GetComponent<TransformComponent>(g_cube);
-        transform->rotation = Quaternion::FromEulerAngles(0.0f, Time::GetTime() * 25.0f, 0.0f);
+        transform->rotation = rotation;
 #endif
     }
 

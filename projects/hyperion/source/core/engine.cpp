@@ -29,7 +29,7 @@ namespace Hyperion {
     void Engine::Setup() {
         // We initialize the operating system first to get logging ability.
         OperatingSystem::Initialize();
-
+        
         HYP_LOG_INFO("Engine", "Initializing...");
         OperatingSystemInfo operating_system_info = OperatingSystem::GetSystemInfo();
         HYP_LOG_INFO("Engine", "Processor Count: {} | Processor Frequency: {:.2f} Ghz | Physical Memory: {:.2f} GB",

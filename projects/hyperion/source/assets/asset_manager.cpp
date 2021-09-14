@@ -8,6 +8,7 @@
 #include "hyperion/assets/mesh.hpp"
 #include "hyperion/assets/texture.hpp"
 #include "hyperion/assets/loader/image_loader.hpp"
+#include "hyperion/assets/loader/mesh_loader.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -51,6 +52,7 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void AssetManager::Initialize() {
         ImageLoader::Initialize();
+        MeshLoader::Initialize();
     }
 
     //--------------------------------------------------------------
@@ -64,6 +66,7 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void AssetManager::Shutdown() {
         ImageLoader::Shutdown();
+        MeshLoader::Shutdown();
     }
 
     //--------------------------------------------------------------

@@ -13,6 +13,8 @@ namespace Hyperion {
         FileDoesNotExist,
         ImageLoadFailed,
         NoLoaderAvailable,
+
+        InvalidMesh,
     };
 
     inline String ToString(Error error) {
@@ -21,6 +23,7 @@ namespace Hyperion {
             case Error::FileDoesNotExist: return "FileDoesNotExist";
             case Error::ImageLoadFailed: return "ImageLoadFailed";
             case Error::NoLoaderAvailable: return "NoLoaderAvailable";
+            case Error::InvalidMesh: return "InvalidMesh";
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return {};
         }
     }
