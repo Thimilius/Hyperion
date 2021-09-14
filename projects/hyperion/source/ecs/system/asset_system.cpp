@@ -34,7 +34,7 @@ namespace Hyperion {
         RenderFrame *render_frame = RenderEngine::GetMainRenderFrame();
 
         for (Asset *asset : AssetManager::s_assets_to_unload) {
-            render_frame->AddAssetToUnload(asset->GetInfo().id);
+            render_frame->AddAssetToUnload(asset->GetAssetInfo().id);
         }
     }
 

@@ -146,7 +146,7 @@ namespace Hyperion::Rendering {
 
         glUseProgram(g_shader_program);
         for (const RenderFrameMeshObject &render_frame_mesh_object : render_frame->GetMeshObjects()) {
-            AssetId mesh_id = render_frame_mesh_object.mesh->GetInfo().id;
+            AssetId mesh_id = render_frame_mesh_object.mesh->GetAssetInfo().id;
             auto it = std::find_if(g_opengl_meshes.begin(), g_opengl_meshes.end(), [mesh_id](const OpenGLMesh &opengl_mesh) {
                 return opengl_mesh.id == mesh_id;
             });
@@ -164,9 +164,8 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void ForwardRenderPipeline::HandleAssets(RenderFrame *render_frame) {
-        // FIXME: This is not thread-safe at all!
-
         for (Asset *asset : render_frame->GetAssetsToLoad()) {
+            Threading::ScopeLock lock(asset->GetLocker());
             if (asset->GetAssetType() == AssetType::Mesh) {
                 LoadMesh(static_cast<Mesh *>(asset));
             }
@@ -210,7 +209,7 @@ namespace Hyperion::Rendering {
             }
         }
 
-        opengl_mesh.id = mesh->GetInfo().id;
+        opengl_mesh.id = mesh->GetAssetInfo().id;
 
         glCreateBuffers(1, &opengl_mesh.vertex_buffer);
         glNamedBufferData(opengl_mesh.vertex_buffer, vertices.GetLength(), vertices.GetData(), GL_STATIC_DRAW);

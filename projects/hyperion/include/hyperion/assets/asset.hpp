@@ -2,6 +2,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/guid.hpp"
+#include "hyperion/core/threading/critical_section.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -30,8 +31,9 @@ namespace Hyperion {
         Asset(AssetInfo info) : m_info(info) { }
         virtual ~Asset() = default;
     public:
-        inline const AssetInfo &GetInfo() const { return m_info; }
+        inline const AssetInfo &GetAssetInfo() const { return m_info; }
         inline bool8 IsDirty() const { return m_is_dirty; }
+        inline const Threading::CriticalSection &GetLocker() const { return m_locker; }
 
         virtual AssetType GetAssetType() const = 0;
     protected:
@@ -42,6 +44,8 @@ namespace Hyperion {
         AssetInfo m_info;
 
         bool8 m_is_dirty;
+
+        Threading::CriticalSection m_locker;
     private:
         friend class Hyperion::AssetManager;
         friend class Hyperion::AssetLoadSystem;

@@ -18,6 +18,8 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Mesh::SetData(const MeshData &data, const Array<Rendering::SubMesh> &sub_meshes) {
+        Threading::ScopeLock lock(GetLocker());
+
         m_data = data;
         m_sub_meshes = sub_meshes;
 
