@@ -24,11 +24,6 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    Window *Window::Create(const WindowSettings &settings) {
-        return new WindowsWindow(settings);
-    }
-
-    //--------------------------------------------------------------
     WindowsWindow::WindowsWindow(const WindowSettings &settings) {
         m_title = settings.title;
         m_width = settings.width;

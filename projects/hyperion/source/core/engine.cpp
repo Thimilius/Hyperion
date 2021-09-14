@@ -128,7 +128,7 @@ namespace Hyperion {
 
         Display::UpdateSize(s_settings.window.width, s_settings.window.height);
         
-        Window *window = Window::Create(s_settings.window);
+        Window *window = new Window(s_settings.window);
         window->SetAppEventCallback(Engine::OnAppEvent);
         s_application->m_window = window;
 

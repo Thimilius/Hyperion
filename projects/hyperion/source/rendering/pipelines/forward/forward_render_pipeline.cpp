@@ -8,6 +8,7 @@
 #include <glad/glad.h>
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/core/threading/scope_lock.hpp"
 #include "hyperion/graphics/graphics_context.hpp"
 #include "hyperion/rendering/frame/render_frame.hpp"
 #include "hyperion/graphics/driver/opengl/opengl_shader_compiler.hpp"

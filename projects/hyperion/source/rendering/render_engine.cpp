@@ -5,7 +5,6 @@
 #include "hyperion/rendering/render_engine.hpp"
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/app/window.hpp"
 #include "hyperion/rendering/pipelines/forward/forward_render_pipeline.hpp"
 #include "hyperion/rendering/threading/render_thread_synchronization.hpp"
 

@@ -2,9 +2,7 @@
 
 #ifdef HYP_PLATFORM_WINDOWS
 #include "hyperion/platform/windows/windows_guid.hpp"
-namespace Hyperion {
-    using Guid = WindowsGuid;
-}
+namespace Hyperion { using Guid = WindowsGuid; }
 #else 
 #error Platform not implemented
 #endif

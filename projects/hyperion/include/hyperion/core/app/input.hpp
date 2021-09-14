@@ -215,6 +215,11 @@ namespace Hyperion {
         Last
     };
 
+    enum class CursorMode {
+        Default,
+        Confined
+    };
+
     class InputImplementation {
     public:
         virtual ~InputImplementation() = default;

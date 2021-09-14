@@ -2,6 +2,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/application_settings.hpp"
+#include "hyperion/core/app/window.hpp"
 #include "hyperion/core/threading/thread.hpp"
 #include "hyperion/graphics/graphics_context.hpp"
 #include "hyperion/rendering/frame/render_frame.hpp"
@@ -9,7 +10,6 @@
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Engine;
-    class Window;
 
     namespace Rendering {
         class IRenderPipeline;
