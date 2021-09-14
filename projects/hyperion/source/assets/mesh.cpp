@@ -27,28 +27,23 @@ namespace Hyperion {
         bool8 has_colors = data.colors.GetLength() > 0;
         bool8 has_texture0 = data.texture0.GetLength() > 0;
 
-        constexpr uint32 VERTEX_ATTRIBUTE_SIZE_POSITION = sizeof(float32) * 3;
-        constexpr uint32 VERTEX_ATTRIBUTE_SIZE_NORMAL = sizeof(float32) * 3;
-        constexpr uint32 VERTEX_ATTRIBUTE_SIZE_COLOR = sizeof(float32) * 4;
-        constexpr uint32 VERTEX_ATTRIBUTE_SIZE_TEXTURE0 = sizeof(float32) * 2;
-
-        m_vertex_format.vertex_attributes.Add({ VertexAttributeKind::Position, VertexAttributeType::Float32, 3 });
-        uint32 stride = VERTEX_ATTRIBUTE_SIZE_POSITION;
+        m_vertex_format.attributes.Add({ VertexAttributeKind::Position, VertexAttributeType::Float32, 3 });
+        uint32 stride = MeshVertexFormat::VERTEX_ATTRIBUTE_SIZE_POSITION;
 
         if (has_normals) {
             HYP_ASSERT(data.normals.GetLength() == data.positions.GetLength());
-            m_vertex_format.vertex_attributes.Add({ VertexAttributeKind::Normal, VertexAttributeType::Float32, 3 });
-            stride += VERTEX_ATTRIBUTE_SIZE_NORMAL;
+            m_vertex_format.attributes.Add({ VertexAttributeKind::Normal, VertexAttributeType::Float32, 3 });
+            stride += MeshVertexFormat::VERTEX_ATTRIBUTE_SIZE_NORMAL;
         }
         if (has_colors) {
             HYP_ASSERT(data.colors.GetLength() == data.positions.GetLength());
-            m_vertex_format.vertex_attributes.Add({ VertexAttributeKind::Color, VertexAttributeType::Float32, 4 });
-            stride += VERTEX_ATTRIBUTE_SIZE_COLOR;
+            m_vertex_format.attributes.Add({ VertexAttributeKind::Color, VertexAttributeType::Float32, 4 });
+            stride += MeshVertexFormat::VERTEX_ATTRIBUTE_SIZE_COLOR;
         }
         if (has_texture0) {
             HYP_ASSERT(data.texture0.GetLength() == data.positions.GetLength());
-            m_vertex_format.vertex_attributes.Add({ VertexAttributeKind::Texture0, VertexAttributeType::Float32, 2 });
-            stride += VERTEX_ATTRIBUTE_SIZE_TEXTURE0;
+            m_vertex_format.attributes.Add({ VertexAttributeKind::Texture0, VertexAttributeType::Float32, 2 });
+            stride += MeshVertexFormat::VERTEX_ATTRIBUTE_SIZE_TEXTURE0;
         }
         m_vertex_format.stride = stride;
 

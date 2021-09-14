@@ -5,6 +5,7 @@
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
+    class AssetLoadSystem;
     class AssetManager;
 }
 
@@ -43,6 +44,7 @@ namespace Hyperion {
         bool8 m_is_dirty;
     private:
         friend class Hyperion::AssetManager;
+        friend class Hyperion::AssetLoadSystem;
     };
 
 }

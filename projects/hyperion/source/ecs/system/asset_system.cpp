@@ -24,7 +24,9 @@ namespace Hyperion {
 
         for (Asset *asset : AssetManager::s_assets_to_load) {
             render_frame->AddAssetToLoad(asset);
+            asset->ResetDirty();
         }
+        AssetManager::s_assets_to_load.Clear();
     }
 
     //--------------------------------------------------------------

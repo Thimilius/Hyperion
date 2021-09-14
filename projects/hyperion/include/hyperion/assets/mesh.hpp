@@ -33,7 +33,12 @@ namespace Hyperion {
 
     struct MeshVertexFormat {
         uint32 stride;
-        Array<Rendering::VertexAttribute> vertex_attributes;
+        Array<Rendering::VertexAttribute> attributes;
+
+        inline static uint32 VERTEX_ATTRIBUTE_SIZE_POSITION = sizeof(float32) * 3;
+        inline static uint32 VERTEX_ATTRIBUTE_SIZE_NORMAL = sizeof(float32) * 3;
+        inline static uint32 VERTEX_ATTRIBUTE_SIZE_COLOR = sizeof(float32) * 4;
+        inline static uint32 VERTEX_ATTRIBUTE_SIZE_TEXTURE0 = sizeof(float32) * 2;
     };
 
     class Mesh final : public Asset {
@@ -44,7 +49,8 @@ namespace Hyperion {
     public:
         inline AssetType GetAssetType() const override { return AssetType::Mesh; }
 
-        inline const MeshData &GetMeshData() const { return m_data; }
+        inline const MeshData &GetData() const { return m_data; }
+        inline const MeshVertexFormat &GetVertexFormat() const { return m_vertex_format; }
         inline const Array<Rendering::SubMesh> &GetSubMeshes() { return m_sub_meshes; }
         inline uint32 GetSubMeshCount() const { return static_cast<uint32>(m_sub_meshes.GetLength()); }
         void SetData(const MeshData &data, const Array<Rendering::SubMesh> &sub_meshes);
