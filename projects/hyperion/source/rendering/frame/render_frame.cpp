@@ -8,7 +8,8 @@
 namespace Hyperion::Rendering {
     
     //--------------------------------------------------------------
-    void RenderFrame::Reset() {
+    void RenderFrame::Clear() {
+        m_assets_to_load.Clear();
         m_assets_to_unload.Clear();
 
         m_cameras.Clear();

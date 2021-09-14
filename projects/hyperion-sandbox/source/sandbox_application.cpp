@@ -5,6 +5,7 @@
 #include <hyperion/entry_point.hpp>
 #include <hyperion/assets/asset_manager.hpp>
 #include <hyperion/assets/texture.hpp>
+#include <hyperion/assets/utilities/mesh_generator.hpp>
 #include <hyperion/core/app/time.hpp>
 #include <hyperion/ecs/component/components.hpp>
 #include <hyperion/ecs/system/transform_system.hpp>
@@ -41,6 +42,7 @@ namespace Sandbox {
 
         g_cube = g_world->CreateEntity();
         RenderMeshComponent *render_mesh = g_world->AddComponent<RenderMeshComponent>(g_cube);
+        render_mesh->mesh = MeshGenerator::GenerateCube(1.0f);
     }
 
     //--------------------------------------------------------------

@@ -9,7 +9,7 @@ namespace Hyperion::Rendering {
 
     class RenderFrame final : public INonCopyable {
     public:
-        void Reset();
+        void Clear();
 
         const Array<Asset *> &GetAssetsToLoad() const { return m_assets_to_load; }
         const Array<AssetId> &GetAssetsToUnload() const { return m_assets_to_unload; }

@@ -97,6 +97,7 @@ namespace Hyperion::Rendering {
 
         RenderThreadSynchronization::NotifyRenderReady();
         RenderThreadSynchronization::WaitForMainReady();
+        RenderThreadSynchronization::NotifyRenderDone();
     }
 
     //--------------------------------------------------------------
@@ -108,14 +109,12 @@ namespace Hyperion::Rendering {
                 break;
             }
 
+            RenderThreadSynchronization::WaitForSwapDone();
+
             s_render_pipeline->Render(s_render_frame);
 
-            {
-                s_graphics_context->SwapBuffers();
-                RenderThreadSynchronization::NotifyRenderDone();
-            }
-            
-            RenderThreadSynchronization::WaitForSwapDone();
+            s_graphics_context->SwapBuffers();
+            RenderThreadSynchronization::NotifyRenderDone();
         }
 
         RT_Shutdown();
@@ -132,7 +131,7 @@ namespace Hyperion::Rendering {
         s_main_frame = s_render_frame;
         s_render_frame = temp;
 
-        s_main_frame->Reset();
+        s_main_frame->Clear();
     }
 
     //--------------------------------------------------------------
