@@ -5,6 +5,7 @@
 #include "hyperion/platform/windows/windows_operating_system.hpp"
 
 //---------------------- Library Includes ----------------------
+#include <Windows.h>
 #include <Powrprof.h>
 #include <psapi.h>
 #include <Shlobj.h>
@@ -15,30 +16,18 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    // RANT: Apparently Microsoft forgot to include this definition in their header files. What the hell!?!?
-    typedef struct _PROCESSOR_POWER_INFORMATION {
-        ULONG Number;
-        ULONG MaxMhz;
-        ULONG CurrentMhz;
-        ULONG MhzLimit;
-        ULONG MaxIdleState;
-        ULONG CurrentIdleState;
-    } PROCESSOR_POWER_INFORMATION, *PPROCESSOR_POWER_INFORMATION;
-
-    OperatingSystem* OperatingSystem::s_instance = new WindowsOperatingSystem();
-
     //--------------------------------------------------------------
     void WindowsOperatingSystem::Initialize() {
-        m_console_handle = GetStdHandle(STD_OUTPUT_HANDLE);
-        if (!m_console_handle || m_console_handle == INVALID_HANDLE_VALUE) {
+        s_console_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+        if (!s_console_handle || s_console_handle == INVALID_HANDLE_VALUE) {
             AllocConsole();
-            m_console_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+            s_console_handle = GetStdHandle(STD_OUTPUT_HANDLE);
         }
     }
 
     //--------------------------------------------------------------
-    SystemInfo WindowsOperatingSystem::GetSystemInfo() const {
-        SystemInfo result;
+    OperatingSystemInfo WindowsOperatingSystem::GetSystemInfo() {
+        OperatingSystemInfo result;
 
         SYSTEM_INFO system_info;
         GetNativeSystemInfo(&system_info);
@@ -60,78 +49,78 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    uint64 WindowsOperatingSystem::GetMemoryUsage() const {
+    uint64 WindowsOperatingSystem::GetMemoryUsage() {
         PROCESS_MEMORY_COUNTERS process_memory;
         BOOL success = GetProcessMemoryInfo(GetCurrentProcess(), &process_memory, sizeof(process_memory));
         return success ? process_memory.WorkingSetSize : 0;
     }
 
     //--------------------------------------------------------------
-    SystemLanguage WindowsOperatingSystem::GetSystemLanguage() const {
+    OperatingSystemLanguage WindowsOperatingSystem::GetSystemLanguage() {
         LANGID language_id = GetUserDefaultUILanguage();
         uint32 main_language  = language_id & 0xff;
 
-        SystemLanguage result = SystemLanguage::Unknown;
+        OperatingSystemLanguage result = OperatingSystemLanguage::Unknown;
 		switch (main_language) {
-			case LANG_ALBANIAN: result = SystemLanguage::Albanian; break;
-			case LANG_ARABIC: result = SystemLanguage::Arabic; break;
-			case LANG_ARMENIAN: result = SystemLanguage::Armenian; break;
-			case LANG_BELARUSIAN: result = SystemLanguage::Belarusian; break;
-			case LANG_BULGARIAN: result = SystemLanguage::Bulgarian; break;
-			case LANG_CATALAN: result = SystemLanguage::Catalan; break;
-			case LANG_CHINESE: result = SystemLanguage::Chinese; break;
-			case LANG_CROATIAN: result = SystemLanguage::Croatian; break;
-			case LANG_CZECH: result = SystemLanguage::Czech; break;
-			case LANG_DANISH: result = SystemLanguage::Danish; break;
-			case LANG_DUTCH: result = SystemLanguage::Dutch; break;
-			case LANG_ENGLISH: result = SystemLanguage::English; break;
-			case LANG_ESTONIAN: result = SystemLanguage::Estonian; break;
-			case LANG_FINNISH: result = SystemLanguage::Finnish; break;
-			case LANG_FRENCH: result = SystemLanguage::French; break;
-			case LANG_GERMAN: result = SystemLanguage::German; break;
-			case LANG_GREEK: result = SystemLanguage::Greek; break;
-			case LANG_HEBREW: result = SystemLanguage::Hebrew; break;
-			case LANG_HINDI: result = SystemLanguage::Hindi; break;
-			case LANG_HUNGARIAN: result = SystemLanguage::Hungarian; break;
-			case LANG_ICELANDIC: result = SystemLanguage::Icelandic; break;
-			case LANG_INDONESIAN: result = SystemLanguage::Indonesian; break;
-			case LANG_IRISH: result = SystemLanguage::Irish; break;
-			case LANG_ITALIAN: result = SystemLanguage::Italian; break;
-			case LANG_JAPANESE: result = SystemLanguage::Japanese; break;
-			case LANG_KOREAN: result = SystemLanguage::Korean; break;
-			case LANG_LATVIAN: result = SystemLanguage::Lativian; break;
-			case LANG_LITHUANIAN: result = SystemLanguage::Lithuanian; break;
-			case LANG_MACEDONIAN: result = SystemLanguage::Macedonian; break;
-			case LANG_MALAY: result = SystemLanguage::Malay; break;
-			case LANG_MALTESE: result = SystemLanguage::Maltese; break;
-			case LANG_NORWEGIAN: result = SystemLanguage::Norwegian; break;
-			case LANG_POLISH: result = SystemLanguage::Polish; break;
-			case LANG_PORTUGUESE: result = SystemLanguage::Portuguese; break;
-			case LANG_ROMANIAN: result = SystemLanguage::Romanian; break;
-			case LANG_RUSSIAN: result = SystemLanguage::Russian; break;
-			case LANG_SLOVAK: result = SystemLanguage::Slovak; break;
-			case LANG_SLOVENIAN: result = SystemLanguage::Slovenian; break;
-			case LANG_SPANISH: result = SystemLanguage::Spanish; break;
-			case LANG_SWEDISH: result = SystemLanguage::Swedish; break;
-			case LANG_THAI: result = SystemLanguage::Thai; break;
-			case LANG_TURKISH: result = SystemLanguage::Turkish; break;
-			case LANG_UKRAINIAN: result = SystemLanguage::Ukrainian; break;
-			case LANG_VIETNAMESE: result = SystemLanguage::Vietnamese; break;
+			case LANG_ALBANIAN: result = OperatingSystemLanguage::Albanian; break;
+			case LANG_ARABIC: result = OperatingSystemLanguage::Arabic; break;
+			case LANG_ARMENIAN: result = OperatingSystemLanguage::Armenian; break;
+			case LANG_BELARUSIAN: result = OperatingSystemLanguage::Belarusian; break;
+			case LANG_BULGARIAN: result = OperatingSystemLanguage::Bulgarian; break;
+			case LANG_CATALAN: result = OperatingSystemLanguage::Catalan; break;
+			case LANG_CHINESE: result = OperatingSystemLanguage::Chinese; break;
+			case LANG_CROATIAN: result = OperatingSystemLanguage::Croatian; break;
+			case LANG_CZECH: result = OperatingSystemLanguage::Czech; break;
+			case LANG_DANISH: result = OperatingSystemLanguage::Danish; break;
+			case LANG_DUTCH: result = OperatingSystemLanguage::Dutch; break;
+			case LANG_ENGLISH: result = OperatingSystemLanguage::English; break;
+			case LANG_ESTONIAN: result = OperatingSystemLanguage::Estonian; break;
+			case LANG_FINNISH: result = OperatingSystemLanguage::Finnish; break;
+			case LANG_FRENCH: result = OperatingSystemLanguage::French; break;
+			case LANG_GERMAN: result = OperatingSystemLanguage::German; break;
+			case LANG_GREEK: result = OperatingSystemLanguage::Greek; break;
+			case LANG_HEBREW: result = OperatingSystemLanguage::Hebrew; break;
+			case LANG_HINDI: result = OperatingSystemLanguage::Hindi; break;
+			case LANG_HUNGARIAN: result = OperatingSystemLanguage::Hungarian; break;
+			case LANG_ICELANDIC: result = OperatingSystemLanguage::Icelandic; break;
+			case LANG_INDONESIAN: result = OperatingSystemLanguage::Indonesian; break;
+			case LANG_IRISH: result = OperatingSystemLanguage::Irish; break;
+			case LANG_ITALIAN: result = OperatingSystemLanguage::Italian; break;
+			case LANG_JAPANESE: result = OperatingSystemLanguage::Japanese; break;
+			case LANG_KOREAN: result = OperatingSystemLanguage::Korean; break;
+			case LANG_LATVIAN: result = OperatingSystemLanguage::Lativian; break;
+			case LANG_LITHUANIAN: result = OperatingSystemLanguage::Lithuanian; break;
+			case LANG_MACEDONIAN: result = OperatingSystemLanguage::Macedonian; break;
+			case LANG_MALAY: result = OperatingSystemLanguage::Malay; break;
+			case LANG_MALTESE: result = OperatingSystemLanguage::Maltese; break;
+			case LANG_NORWEGIAN: result = OperatingSystemLanguage::Norwegian; break;
+			case LANG_POLISH: result = OperatingSystemLanguage::Polish; break;
+			case LANG_PORTUGUESE: result = OperatingSystemLanguage::Portuguese; break;
+			case LANG_ROMANIAN: result = OperatingSystemLanguage::Romanian; break;
+			case LANG_RUSSIAN: result = OperatingSystemLanguage::Russian; break;
+			case LANG_SLOVAK: result = OperatingSystemLanguage::Slovak; break;
+			case LANG_SLOVENIAN: result = OperatingSystemLanguage::Slovenian; break;
+			case LANG_SPANISH: result = OperatingSystemLanguage::Spanish; break;
+			case LANG_SWEDISH: result = OperatingSystemLanguage::Swedish; break;
+			case LANG_THAI: result = OperatingSystemLanguage::Thai; break;
+			case LANG_TURKISH: result = OperatingSystemLanguage::Turkish; break;
+			case LANG_UKRAINIAN: result = OperatingSystemLanguage::Ukrainian; break;
+			case LANG_VIETNAMESE: result = OperatingSystemLanguage::Vietnamese; break;
 		}
         return result;
     }
 
     //--------------------------------------------------------------
-    String WindowsOperatingSystem::GetSystemFolder(SystemFolder system_folder) const {
+    String WindowsOperatingSystem::GetSpecialFolder(OperatingSystemSpecialFolder special_folder) {
         KNOWNFOLDERID folder_id;
 
-        switch (system_folder) {
-            case SystemFolder::Desktop: folder_id = FOLDERID_Desktop; break;
-            case SystemFolder::Downloads: folder_id = FOLDERID_Downloads; break;
-            case SystemFolder::Documents: folder_id = FOLDERID_Documents; break;
-            case SystemFolder::Pictures: folder_id = FOLDERID_Pictures; break;
-            case SystemFolder::Music: folder_id = FOLDERID_Music; break;
-            case SystemFolder::Videos: folder_id = FOLDERID_Videos; break;
+        switch (special_folder) {
+            case OperatingSystemSpecialFolder::Desktop: folder_id = FOLDERID_Desktop; break;
+            case OperatingSystemSpecialFolder::Downloads: folder_id = FOLDERID_Downloads; break;
+            case OperatingSystemSpecialFolder::Documents: folder_id = FOLDERID_Documents; break;
+            case OperatingSystemSpecialFolder::Pictures: folder_id = FOLDERID_Pictures; break;
+            case OperatingSystemSpecialFolder::Music: folder_id = FOLDERID_Music; break;
+            case OperatingSystemSpecialFolder::Videos: folder_id = FOLDERID_Videos; break;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
 
@@ -174,11 +163,11 @@ namespace Hyperion {
         }
 
         CONSOLE_SCREEN_BUFFER_INFO console_screen_buffer_info;
-        GetConsoleScreenBufferInfo(m_console_handle, &console_screen_buffer_info);
-        SetConsoleTextAttribute(m_console_handle, console_color);
+        GetConsoleScreenBufferInfo(s_console_handle, &console_screen_buffer_info);
+        SetConsoleTextAttribute(s_console_handle, console_color);
         unsigned long written_chars = 0;
-        WriteConsoleA(m_console_handle, message.c_str(), static_cast<DWORD>(message.length()), &written_chars, nullptr);
-        SetConsoleTextAttribute(m_console_handle, console_screen_buffer_info.wAttributes);
+        WriteConsoleA(s_console_handle, message.c_str(), static_cast<DWORD>(message.length()), &written_chars, nullptr);
+        SetConsoleTextAttribute(s_console_handle, console_screen_buffer_info.wAttributes);
     }
 
     //--------------------------------------------------------------

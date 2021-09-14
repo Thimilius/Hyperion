@@ -28,14 +28,14 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void Engine::Setup() {
         // We initialize the operating system first to get logging ability.
-        OperatingSystem::GetInstance()->Initialize();
+        OperatingSystem::Initialize();
 
         HYP_LOG_INFO("Engine", "Initializing...");
-        SystemInfo system_info = OperatingSystem::GetInstance()->GetSystemInfo();
+        OperatingSystemInfo operating_system_info = OperatingSystem::GetSystemInfo();
         HYP_LOG_INFO("Engine", "Processor Count: {} | Processor Frequency: {:.2f} Ghz | Physical Memory: {:.2f} GB",
-            system_info.processor_info.processor_count,
-            static_cast<float32>(system_info.processor_info.processor_mhz_frequency / 1000.0f),
-            static_cast<float32>(system_info.memory_info.total_physical_memory / (1024.0f * 1024.0f * 1024.0f)));
+            operating_system_info.processor_info.processor_count,
+            static_cast<float32>(operating_system_info.processor_info.processor_mhz_frequency / 1000.0f),
+            static_cast<float32>(operating_system_info.memory_info.total_physical_memory / (1024.0f * 1024.0f * 1024.0f)));
 
         Display::UpdateDisplayInfos();
         DisplayInfo::DisplayModeInfo mode_info = Display::GetCurrentDisplayModeInfo();
@@ -221,7 +221,7 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Engine::PanicInternal(const String &title, const String &message) {
-        OperatingSystem::GetInstance()->DisplayError(title, message);
+        OperatingSystem::DisplayError(title, message);
         Exit();
     }
 

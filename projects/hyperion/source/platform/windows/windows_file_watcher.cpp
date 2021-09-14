@@ -1,6 +1,9 @@
 //----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//---------------------- Library Includes ----------------------
+#include <Windows.h>
+
 //--------------------- Definition Include ---------------------
 #include "hyperion/platform/windows/windows_file_watcher.hpp"
 
@@ -8,12 +11,7 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    FileWatcher *FileWatcher::Create(const String &path, WatcherCallbackFunction callback, bool8 recursive) {
-        return new WindowsFileWatcher(path, callback, recursive);
-    }
-
-    //--------------------------------------------------------------
-    WindowsFileWatcher::WindowsFileWatcher(const String &path, WatcherCallbackFunction callback, bool8 recursive) {
+    WindowsFileWatcher::WindowsFileWatcher(const String &path, FileWatcherCallbackFunction callback, bool8 recursive) {
         m_path = path;
         m_callback = callback;
         m_recursive = recursive;
@@ -28,13 +26,14 @@ namespace Hyperion {
             nullptr);
 
         if (watch_struct.directory_handle != INVALID_HANDLE_VALUE) {
-            watch_struct.overlapped.hEvent = CreateEvent(nullptr, TRUE, FALSE, nullptr);
+            ::OVERLAPPED *overlapped = reinterpret_cast<::OVERLAPPED *>(&watch_struct.overlapped);
+            overlapped->hEvent = CreateEvent(nullptr, TRUE, FALSE, nullptr);
             watch_struct.notify_filter = FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_LAST_WRITE | FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME;
             watch_struct.watcher = this;
             watch_struct.stop_now = false;
 
             if (!RefreshWatch(false)) {
-                CloseHandle(watch_struct.overlapped.hEvent);
+                CloseHandle(overlapped->hEvent);
                 CloseHandle(watch_struct.directory_handle);
             }
         }
@@ -48,11 +47,12 @@ namespace Hyperion {
 
         watch_struct.stop_now = true;
 
-        if (!HasOverlappedIoCompleted(&watch_struct.overlapped)) {
+        OVERLAPPED *overlapped = reinterpret_cast<OVERLAPPED *>(&watch_struct.overlapped);
+        if (!HasOverlappedIoCompleted(overlapped)) {
             SleepEx(1, TRUE);
         }
 
-        CloseHandle(watch_struct.overlapped.hEvent);
+        CloseHandle(overlapped->hEvent);
         CloseHandle(watch_struct.directory_handle);
     }
 
@@ -63,6 +63,7 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     bool8 WindowsFileWatcher::RefreshWatch(bool8 clear) {
+        OVERLAPPED *overlapped = reinterpret_cast<OVERLAPPED *>(&watch_struct.overlapped);
         BOOL result = ReadDirectoryChangesW(
             watch_struct.directory_handle,
             watch_struct.buffer,
@@ -70,25 +71,25 @@ namespace Hyperion {
             m_recursive,
             watch_struct.notify_filter,
             nullptr,
-            &watch_struct.overlapped,
-            clear ? 0 : WatchCallback);
+            overlapped,
+            clear ? 0 : reinterpret_cast<LPOVERLAPPED_COMPLETION_ROUTINE>(WatchCallback));
         return result != 0;
     }
 
     //--------------------------------------------------------------
     void WindowsFileWatcher::HandleAction(uint32 action, const String &path, const String &filename, const String &extension) {
-        FileStatus status;
+        FileWatcherFileStatus status;
         switch (action) {
             case FILE_ACTION_RENAMED_NEW_NAME:
             case FILE_ACTION_ADDED:
-                status = FileStatus::Created;
+                status = FileWatcherFileStatus::Created;
                 break;
             case FILE_ACTION_RENAMED_OLD_NAME:
             case FILE_ACTION_REMOVED:
-                status = FileStatus::Deleted;
+                status = FileWatcherFileStatus::Deleted;
                 break;
             case FILE_ACTION_MODIFIED:
-                status = FileStatus::Modified;
+                status = FileWatcherFileStatus::Modified;
                 break;
         }
 
@@ -96,7 +97,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void CALLBACK WindowsFileWatcher::WatchCallback(DWORD error_code, DWORD number_of_bytes_transfered, LPOVERLAPPED overlapped) {
+    void CALLBACK WindowsFileWatcher::WatchCallback(DWORD error_code, DWORD number_of_bytes_transfered, LPOverlapped overlapped) {
         FILE_NOTIFY_INFORMATION *notify;
         WatchStruct *watch_struct = (WatchStruct *)overlapped;
         size_t notify_offset = 0;

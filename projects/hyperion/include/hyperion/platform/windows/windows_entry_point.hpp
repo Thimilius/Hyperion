@@ -1,7 +1,7 @@
 #pragma once
 
-//---------------------- Library Includes ----------------------
-#include <Windows.h>
+//---------------------- Project Includes ----------------------
+#include "hyperion/platform/windows/windows_types.hpp"
 
 //--------------------------------------------------------------
-int WINAPI WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmd_line, int cmd_show);
+int WIN_API_CALLCONV WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmd_line, int cmd_show);

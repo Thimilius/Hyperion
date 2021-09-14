@@ -7,6 +7,7 @@
 #include <hyperion/assets/texture.hpp>
 #include <hyperion/assets/utilities/mesh_generator.hpp>
 #include <hyperion/core/app/time.hpp>
+#include <hyperion/core/io/file_watcher.hpp>
 #include <hyperion/ecs/component/components.hpp>
 #include <hyperion/ecs/system/transform_system.hpp>
 #include <hyperion/ecs/world/world_manager.hpp>

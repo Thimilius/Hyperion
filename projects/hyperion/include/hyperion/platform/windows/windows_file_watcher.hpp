@@ -1,29 +1,31 @@
 #pragma once
 
-//---------------------- Library Includes ----------------------
-#include <Windows.h>
-
 //---------------------- Project Includes ----------------------
-#include "hyperion/common.hpp"
-#include "hyperion/core/io/file_watcher.hpp"
+#include "hyperion/core/io/file_watcher_types.hpp"
+#include "hyperion/platform/windows/windows_types.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    class WindowsFileWatcher : public FileWatcher {
+    class WindowsFileWatcher : public INonCopyable {
     public:
-        WindowsFileWatcher(const String &path, FileWatcher::WatcherCallbackFunction callback, bool8 recursive);
-        ~WindowsFileWatcher() override;
+        WindowsFileWatcher() = default;
+        WindowsFileWatcher(const String &path, FileWatcherCallbackFunction callback, bool8 recursive);
+        ~WindowsFileWatcher();
     public:
-        void Update() override;
+        void Update();
     private:
         bool8 RefreshWatch(bool8 clear);
         void HandleAction(uint32 action, const String &path, const String &filename, const String &extension);
     private:
-        static void CALLBACK WatchCallback(DWORD error_code, DWORD number_of_bytes_transfered, LPOVERLAPPED overlapped);
+        static void WIN_API_CALLCONV WatchCallback(DWORD error_code, DWORD number_of_bytes_transfered, LPOverlapped overlapped);
     private:
+        String m_path;
+        FileWatcherCallbackFunction m_callback;
+        bool8 m_recursive;
+
         struct WatchStruct {
-            OVERLAPPED overlapped;
+            Overlapped overlapped;
             HANDLE directory_handle;
             BYTE buffer[32 * 1024];
             DWORD notify_filter;

@@ -1,32 +1,38 @@
 #pragma once
 
-//---------------------- Library Includes ----------------------
-#include <Windows.h>
-
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/operating_system.hpp"
+#include "hyperion/core/operating_system_types.hpp"
+#include "hyperion/platform/windows/windows_types.hpp"
+
+//-------------------- Forward Declarations --------------------
+namespace Hyperion {
+    class Engine;
+}
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    class WindowsOperatingSystem : public OperatingSystem {
+    class WindowsOperatingSystem {
     public:
-        void Initialize() override;
+        inline static OperatingSystemType GetType() { return OperatingSystemType::Windows; }
 
-        inline OperatingSystemType GetType() const override { return OperatingSystemType::Windows; }
-        SystemInfo GetSystemInfo() const override;
-        uint64 GetMemoryUsage() const override;
-        SystemLanguage GetSystemLanguage() const override;
-        String GetSystemFolder(SystemFolder system_folder) const override;
+        static OperatingSystemInfo GetSystemInfo();
+        static uint64 GetMemoryUsage();
+        static OperatingSystemLanguage GetSystemLanguage();
+        static String GetSpecialFolder(OperatingSystemSpecialFolder special_folder);
 
-        void DisplayError(const String &title, const String &message) override;
-        void PrintToConsole(LogColor color, const String &message) override;
+        static void DisplayError(const String &title, const String &message);
+        static void PrintToConsole(LogColor color, const String &message);
 
         // TODO: Make the filter work.
-        String OpenFileDialog(const String &title, const String &filter) override;
-        String SaveFileDialog(const String &title, const String &filter) override;
+        static String OpenFileDialog(const String &title, const String &filter);
+        static String SaveFileDialog(const String &title, const String &filter);
     private:
-        HANDLE m_console_handle;
+        static void Initialize();
+    private:
+        inline static HANDLE s_console_handle;
+    private:
+        friend class Hyperion::Engine;
     };
 
 }

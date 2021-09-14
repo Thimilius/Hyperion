@@ -2,9 +2,10 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/non_copyable.hpp"
+#include "hyperion/platform/windows/windows_types.hpp"
 
 //-------------------- Definition Namespace --------------------
-namespace Hyperion::Threading {
+namespace Hyperion {
 
     class WindowsCriticalSection : INonCopyable {
     public:
@@ -14,13 +15,7 @@ namespace Hyperion::Threading {
         void Lock() const;
         void Unlock() const;
     private:
-        struct CriticalSection {
-            void *Data1[1];
-            long Data2[2];
-            void *Data3[3];
-        };
-
-        mutable CriticalSection m_critical_section;
+        mutable Critical_Section m_critical_section;
     };
 
 }

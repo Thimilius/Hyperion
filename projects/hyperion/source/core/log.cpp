@@ -12,7 +12,7 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Log::LogMessageInternal(LogLevel level, String message) {
-        OperatingSystem::GetInstance()->PrintToConsole(GetLogColor(level), message.c_str());
+        OperatingSystem::PrintToConsole(GetLogColor(level), message.c_str());
     }
     
     //--------------------------------------------------------------
