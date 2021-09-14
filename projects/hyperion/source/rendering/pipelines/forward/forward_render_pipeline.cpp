@@ -25,12 +25,11 @@ namespace Hyperion::Rendering {
 
     struct OpenGLMesh {
         AssetId id;
+        Array<SubMesh> sub_meshes;
 
         GLsizei index_count;
-
         GLuint vertex_buffer;
         GLuint index_buffer;
-
         GLuint vertex_array;
     };
     Array<OpenGLMesh> g_opengl_meshes;
@@ -68,6 +67,16 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
+    GLenum GetGLMeshTopology(MeshTopology mesh_topology) {
+        switch (mesh_topology) {
+            case MeshTopology::Points: return GL_POINTS;
+            case MeshTopology::Lines: return GL_LINES;
+            case MeshTopology::LineStrip: return GL_LINE_STRIP;
+            case MeshTopology::Triangles: return GL_TRIANGLES;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
 
     //--------------------------------------------------------------
     void ForwardRenderPipeline::Initialize(GraphicsContext *graphics_context) {
@@ -159,7 +168,10 @@ namespace Hyperion::Rendering {
             }
 
             glProgramUniformMatrix4fv(g_shader_program, glGetUniformLocation(g_shader_program, "u_model"), 1, GL_FALSE, render_frame_mesh_object.local_to_world.elements);
-            glDrawElements(GL_TRIANGLES, opengl_mesh.index_count, GL_UNSIGNED_INT, nullptr);
+
+            SubMesh sub_mesh = opengl_mesh.sub_meshes[render_frame_mesh_object.sub_mesh_index];
+            void *index_offset = reinterpret_cast<void *>(static_cast<uint32>(sub_mesh.index_offset) * sizeof(uint32));
+            glDrawElementsBaseVertex(GetGLMeshTopology(sub_mesh.topology), sub_mesh.index_count, GL_UNSIGNED_INT, index_offset, sub_mesh.vertex_offset);
         }
     }
 
@@ -173,6 +185,7 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
     void ForwardRenderPipeline::LoadMesh(Mesh *mesh) {
         g_opengl_meshes.Resize(g_opengl_meshes.GetLength() + 1);
         OpenGLMesh &opengl_mesh = g_opengl_meshes.GetLast();
@@ -211,6 +224,7 @@ namespace Hyperion::Rendering {
         }
 
         opengl_mesh.id = mesh->GetAssetInfo().id;
+        opengl_mesh.sub_meshes = mesh->GetSubMeshes();
 
         glCreateBuffers(1, &opengl_mesh.vertex_buffer);
         glNamedBufferData(opengl_mesh.vertex_buffer, vertices.GetLength(), vertices.GetData(), GL_STATIC_DRAW);

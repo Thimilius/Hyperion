@@ -13,6 +13,7 @@ namespace Hyperion::Rendering {
 
     struct RenderFrameMeshObject : public RenderFrameObject {
         Mesh *mesh;
+        uint32 sub_mesh_index;
     };
 
     struct RenderFrameSpriteObject : public RenderFrameObject {

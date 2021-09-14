@@ -106,6 +106,7 @@ namespace Hyperion::Rendering {
             RenderFrameMeshObject &render_frame_mesh_object = render_frame->AddMeshObject();
             render_frame_mesh_object.local_to_world = local_to_world->local_to_world;
             render_frame_mesh_object.mesh = render_mesh->mesh;
+            render_frame_mesh_object.sub_mesh_index = render_mesh->sub_mesh_index;
         }
     }
 

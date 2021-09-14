@@ -59,6 +59,7 @@ namespace Hyperion {
 
     struct RenderMeshComponent {
         Mesh *mesh = nullptr;
+        uint32 sub_mesh_index = 0;
     };
 
 }
