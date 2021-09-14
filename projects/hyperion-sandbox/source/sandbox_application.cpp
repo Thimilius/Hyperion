@@ -4,10 +4,11 @@
 //---------------------- Library Includes ----------------------
 #include <hyperion/entry_point.hpp>
 #include <hyperion/assets/asset_manager.hpp>
+#include <hyperion/assets/material.hpp>
 #include <hyperion/assets/loader/mesh_loader.hpp>
 #include <hyperion/assets/utilities/mesh_generator.hpp>
 #include <hyperion/core/app/time.hpp>
-#include <hyperion/core/io/file_watcher.hpp>
+#include <hyperion/core/io/file_system.hpp>
 #include <hyperion/ecs/component/components.hpp>
 #include <hyperion/ecs/system/transform_system.hpp>
 #include <hyperion/ecs/world/world_manager.hpp>
@@ -47,6 +48,9 @@ namespace Sandbox {
         camera_transform->position = Vector3(0.0f, 1.5f, 3.0f);
         camera_transform->rotation = Quaternion::FromEulerAngles(-25.0f, 0.0f, 0.0f);
 #endif
+
+        Shader *shader = AssetManager::CreateShader(FileSystem::ReadAllText("data/shaders/standard.shader"));
+        Material *material = AssetManager::CreateMaterial(shader);
 
         Mesh *mesh = MeshLoader::Load("data/models/monkey.obj").Unwrap();
 

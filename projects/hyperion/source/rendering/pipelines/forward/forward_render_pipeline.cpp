@@ -19,9 +19,20 @@ using namespace Hyperion::Graphics;
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-    GLuint g_shader_program;
-    GLuint g_vertex_buffer;
-    GLuint g_vertex_array;
+    struct OpenGLShader {
+        AssetId id;
+
+        GLuint program;
+    };
+    Array<OpenGLShader> g_opengl_shaders;
+
+    struct OpenGLMaterial {
+        AssetId id;
+        MaterialPropertyCollection properties;
+
+        OpenGLShader *shader;
+    };
+    Array<OpenGLMaterial> g_opengl_materials;
 
     struct OpenGLMesh {
         AssetId id;
@@ -82,42 +93,6 @@ namespace Hyperion::Rendering {
     void ForwardRenderPipeline::Initialize(GraphicsContext *graphics_context) {
         graphics_context->CreateDeviceAndSwapChain(&m_device, &m_device_context, &m_swap_chain);
 
-        const char *vertex_source = R"(
-            #version 450
-            
-            layout(location = 0) in vec3 a_position;
-            layout(location = 1) in vec3 a_normal;
-            layout(location = 4) in vec2 a_texture0;
-
-            out V2F {
-	            vec4 color;
-            } o_v2f;
-
-            uniform mat4 u_model;
-            uniform mat4 u_view;
-            uniform mat4 u_projection;
-
-            void main() {
-                o_v2f.color = vec4(a_texture0, 0.0f, 1.0f);
-    
-                gl_Position = u_projection * u_view * u_model * vec4(a_position, 1.0);
-            }
-        )";
-        const char *fragment_source = R"(
-            #version 450
-
-            layout(location = 0) out vec4 o_color;
-
-            in V2F {
-	            vec4 color;
-            } i_v2f;
-
-            void main() {
-                o_color = i_v2f.color;
-            }	
-        )";
-        g_shader_program = OpenGLShaderCompiler::Compile(vertex_source, fragment_source).program;
-
         glEnable(GL_DEPTH_TEST);
 
         glEnable(GL_CULL_FACE);
@@ -127,7 +102,7 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void ForwardRenderPipeline::Render(RenderFrame *render_frame) {
-        HandleAssets(render_frame);
+        LoadAssets(render_frame);
 
         for (const RenderFrameCamera &render_frame_camera : render_frame->GetCameras()) {
             RenderCamera(render_frame_camera, render_frame);
@@ -143,44 +118,78 @@ namespace Hyperion::Rendering {
     void ForwardRenderPipeline::RenderCamera(const RenderFrameCamera &render_frame_camera, RenderFrame *render_frame) {
         const CameraViewport &viewport = render_frame_camera.viewport;
 
-        glProgramUniformMatrix4fv(g_shader_program, glGetUniformLocation(g_shader_program, "u_view"), 1, GL_FALSE, render_frame_camera.view_matrix.elements);
-        glProgramUniformMatrix4fv(g_shader_program, glGetUniformLocation(g_shader_program, "u_projection"), 1, GL_FALSE, render_frame_camera.projection_matrix.elements);
-
-        // TEMP: This is just so we see something on the screen.
-        glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
-        Color background_color = render_frame_camera.background_color;
-        glClearColor(background_color.r, background_color.g, background_color.b, background_color.a);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-        OpenGLMesh opengl_mesh = g_opengl_meshes[0];
-
-        glUseProgram(g_shader_program);
-        for (const RenderFrameMeshObject &render_frame_mesh_object : render_frame->GetMeshObjects()) {
-            AssetId mesh_id = render_frame_mesh_object.mesh->GetAssetInfo().id;
-            auto it = std::find_if(g_opengl_meshes.begin(), g_opengl_meshes.end(), [mesh_id](const OpenGLMesh &opengl_mesh) {
-                return opengl_mesh.id == mesh_id;
-            });
-            if (it != g_opengl_meshes.end()) {
-                if (it->vertex_array != g_bound_vertex_array) {
-                    glBindVertexArray(it->vertex_array);
-                    g_bound_vertex_array = it->vertex_array;
-                }
+        {
+            glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+            Color background_color = render_frame_camera.background_color;
+            glClearColor(background_color.r, background_color.g, background_color.b, background_color.a);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        }
+        
+        {
+            for (const OpenGLShader &shader : g_opengl_shaders) {
+                glProgramUniformMatrix4fv(shader.program, glGetUniformLocation(shader.program, "u_view"), 1, GL_FALSE, render_frame_camera.view_matrix.elements);
+                glProgramUniformMatrix4fv(shader.program, glGetUniformLocation(shader.program, "u_projection"), 1, GL_FALSE, render_frame_camera.projection_matrix.elements);
             }
+        }
 
-            glProgramUniformMatrix4fv(g_shader_program, glGetUniformLocation(g_shader_program, "u_model"), 1, GL_FALSE, render_frame_mesh_object.local_to_world.elements);
+        {
+            const OpenGLMesh &opengl_mesh = g_opengl_meshes[0];
+            const OpenGLShader &opengl_shader = g_opengl_shaders[0];
 
-            SubMesh sub_mesh = opengl_mesh.sub_meshes[render_frame_mesh_object.sub_mesh_index];
-            void *index_offset = reinterpret_cast<void *>(static_cast<uint32>(sub_mesh.index_offset) * sizeof(uint32));
-            glDrawElementsBaseVertex(GetGLMeshTopology(sub_mesh.topology), sub_mesh.index_count, GL_UNSIGNED_INT, index_offset, sub_mesh.vertex_offset);
+            glUseProgram(opengl_shader.program);
+            for (const RenderFrameMeshObject &render_frame_mesh_object : render_frame->GetMeshObjects()) {
+                AssetId mesh_id = render_frame_mesh_object.mesh->GetAssetInfo().id;
+                auto it = std::find_if(g_opengl_meshes.begin(), g_opengl_meshes.end(), [mesh_id](const OpenGLMesh &opengl_mesh) {
+                    return opengl_mesh.id == mesh_id;
+                    });
+                if (it != g_opengl_meshes.end()) {
+                    if (it->vertex_array != g_bound_vertex_array) {
+                        glBindVertexArray(it->vertex_array);
+                        g_bound_vertex_array = it->vertex_array;
+                    }
+                }
+
+                glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_model"), 1, GL_FALSE, render_frame_mesh_object.local_to_world.elements);
+
+                SubMesh sub_mesh = opengl_mesh.sub_meshes[render_frame_mesh_object.sub_mesh_index];
+                void *index_offset = reinterpret_cast<void *>(static_cast<uint32>(sub_mesh.index_offset) * sizeof(uint32));
+                glDrawElementsBaseVertex(GetGLMeshTopology(sub_mesh.topology), sub_mesh.index_count, GL_UNSIGNED_INT, index_offset, sub_mesh.vertex_offset);
+            }
         }
     }
 
     //--------------------------------------------------------------
-    void ForwardRenderPipeline::HandleAssets(RenderFrame *render_frame) {
+    void ForwardRenderPipeline::LoadAssets(RenderFrame *render_frame) {
         for (Asset *asset : render_frame->GetAssetsToLoad()) {
             Threading::ScopeLock lock(asset->GetLocker());
-            if (asset->GetAssetType() == AssetType::Mesh) {
-                LoadMesh(static_cast<Mesh *>(asset));
+
+            switch (asset->GetAssetType()) {
+                case AssetType::Material: LoadMaterial(static_cast<Material *>(asset)); break;
+                case AssetType::Mesh: LoadMesh(static_cast<Mesh *>(asset)); break;
+                case AssetType::Shader: LoadShader(static_cast<Shader *>(asset)); break;
+            }
+        }
+    }
+
+    //--------------------------------------------------------------
+    void ForwardRenderPipeline::LoadMaterial(Material *material) {
+        g_opengl_materials.Resize(g_opengl_materials.GetLength() + 1);
+        OpenGLMaterial &opengl_material = g_opengl_materials.GetLast();
+
+        opengl_material.id = material->GetAssetInfo().id;
+        opengl_material.properties = material->GetProperties();
+
+        AssetId shader_id = material->GetShader()->GetAssetInfo().id;
+        auto it = std::find_if(g_opengl_shaders.begin(), g_opengl_shaders.end(), [shader_id](const OpenGLShader &opengl_shader) {
+            return opengl_shader.id == shader_id;
+        });
+        OpenGLShader &opengl_shader = *it;
+        opengl_material.shader = &opengl_shader;
+
+        for (const MaterialProperty &property : material->GetProperties()) {
+            if (property.type == MaterialPropertyType::Color) {
+                Color color = property.storage.color;
+                glProgramUniform4f(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_color"), color.r, color.g, color.b, color.a);
             }
         }
     }
@@ -251,6 +260,17 @@ namespace Hyperion::Rendering {
 
             relative_offset += GetGLVertexAttributeSizeForVertexAttribute(vertex_attribute.type, vertex_attribute.dimension);
         }
+    }
+
+    //--------------------------------------------------------------
+    void ForwardRenderPipeline::LoadShader(Shader *shader) {
+        g_opengl_shaders.Resize(g_opengl_shaders.GetLength() + 1);
+        OpenGLShader &opengl_shader = g_opengl_shaders.GetLast();
+
+        const ShaderData &data = shader->GetData();
+
+        opengl_shader.id = shader->GetAssetInfo().id;
+        opengl_shader.program = OpenGLShaderCompiler::Compile(data.vertex_source.c_str(), data.fragment_source.c_str()).program;
     }
 
 }

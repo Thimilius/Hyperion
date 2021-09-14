@@ -6,7 +6,9 @@
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
+    class Material;
     class Mesh;
+    class Shader;
 
     namespace Rendering {
         struct RenderFrameCamera;
@@ -24,8 +26,10 @@ namespace Hyperion::Rendering {
     private:
         void RenderCamera(const RenderFrameCamera &render_frame_camera, RenderFrame *render_frame);
 
-        void HandleAssets(RenderFrame *render_frame);
+        void LoadAssets(RenderFrame *render_frame);
+        void LoadMaterial(Material *material);
         void LoadMesh(Mesh *mesh);
+        void LoadShader(Shader *shader);
     private:
         Graphics::GraphicsDevice *m_device;
         Graphics::GraphicsDeviceContext *m_device_context;

@@ -13,7 +13,6 @@ namespace Hyperion {
     //--------------------------------------------------------------
     Mesh::Mesh(AssetInfo info, const MeshData &data, const Array<Rendering::SubMesh> &sub_meshes) : Mesh(info) {
         SetData(data, sub_meshes);
-        m_bounds = CalculateBounds(data.positions);
     }
 
     //--------------------------------------------------------------
@@ -48,6 +47,8 @@ namespace Hyperion {
             stride += MeshVertexFormat::VERTEX_ATTRIBUTE_SIZE_TEXTURE0;
         }
         m_vertex_format.stride = stride;
+
+        m_bounds = CalculateBounds(data.positions);
 
         SetDirty();
     }

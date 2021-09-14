@@ -2,6 +2,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/math/matrix4x4.hpp"
+#include "hyperion/assets/material.hpp"
 #include "hyperion/assets/mesh.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -12,6 +13,7 @@ namespace Hyperion::Rendering {
     };
 
     struct RenderFrameMeshObject : public RenderFrameObject {
+        Material *material;
         Mesh *mesh;
         uint32 sub_mesh_index;
     };

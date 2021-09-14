@@ -4,11 +4,6 @@
 #include "hyperion/assets/asset.hpp"
 #include "hyperion/rendering/render_types.hpp"
 
-//-------------------- Forward Declarations --------------------
-namespace Hyperion {
-    class AssetManager;
-}
-
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 

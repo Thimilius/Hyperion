@@ -8,7 +8,9 @@ namespace Hyperion {
     class AssetLoadSystem;
     class AssetUnloadSystem;
     class Engine;
+    class Material;
     class Mesh;
+    class Shader;
     class Texture;
     class Texture2D;
 }
@@ -21,9 +23,13 @@ namespace Hyperion {
         AssetManager() = delete;
         ~AssetManager() = delete;
     public:
+        static Material *CreateMaterial(Shader *shader);
+
         static Mesh *CreateMesh();
 
         static Texture2D *CreateTexture2D();
+
+        static Shader *CreateShader(const String &source);
 
         static void Unload(Asset *asset);
     private:
@@ -35,7 +41,9 @@ namespace Hyperion {
 
         static AssetInfo GetNextAssetInfo();
     private:
+        inline static Array<Material *> s_materials;
         inline static Array<Mesh *> s_meshes;
+        inline static Array<Shader *> s_shaders;
         inline static Array<Texture *> s_textures;
 
         inline static Array<Asset *> s_assets_to_load;

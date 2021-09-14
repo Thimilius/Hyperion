@@ -5,13 +5,22 @@
 #include "hyperion/assets/asset_manager.hpp"
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/assets/material.hpp"
 #include "hyperion/assets/mesh.hpp"
+#include "hyperion/assets/shader.hpp"
 #include "hyperion/assets/texture.hpp"
 #include "hyperion/assets/loader/image_loader.hpp"
 #include "hyperion/assets/loader/mesh_loader.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
+
+    //--------------------------------------------------------------
+    Material *AssetManager::CreateMaterial(Shader *shader) {
+        Material *material = new Material(GetNextAssetInfo(), shader);
+        s_materials.Add(material);
+        return material;
+    }
 
     //--------------------------------------------------------------
     Mesh *AssetManager::CreateMesh() {
@@ -28,12 +37,31 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    Shader *AssetManager::CreateShader(const String &source) {
+        Shader *shader = new Shader(GetNextAssetInfo(), source);
+        s_shaders.Add(shader);
+        return shader;
+    }
+
+    //--------------------------------------------------------------
     void AssetManager::Unload(Asset *asset) {
         switch (asset->GetAssetType()) {
+            case AssetType::Material: {
+                Material *material = static_cast<Material *>(asset);
+                HYP_ASSERT(s_materials.Contains(material));
+                s_materials.Remove(material);
+                break;
+            }
             case AssetType::Mesh: {
                 Mesh *mesh = static_cast<Mesh *>(asset);
                 HYP_ASSERT(s_meshes.Contains(mesh));
                 s_meshes.Remove(mesh);
+                break;
+            }
+            case AssetType::Shader: {
+                Shader *shader = static_cast<Shader *>(asset);
+                HYP_ASSERT(s_shaders.Contains(shader));
+                s_shaders.Remove(shader);
                 break;
             }
             case AssetType::Texture: {

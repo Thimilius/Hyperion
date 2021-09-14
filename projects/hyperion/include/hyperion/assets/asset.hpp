@@ -14,7 +14,9 @@ namespace Hyperion {
 namespace Hyperion {
 
     enum class AssetType {
+        Material,
         Mesh,
+        Shader,
         Texture
     };
 

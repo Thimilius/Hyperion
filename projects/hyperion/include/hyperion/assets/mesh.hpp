@@ -8,11 +8,6 @@
 #include "hyperion/core/math/vector3.hpp"
 #include "hyperion/rendering/render_types.hpp"
 
-//-------------------- Forward Declarations --------------------
-namespace Hyperion {
-    class AssetManager;
-}
-
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
@@ -45,7 +40,6 @@ namespace Hyperion {
     private:
         Mesh(AssetInfo info) : Asset(info) { }
         Mesh(AssetInfo info, const MeshData &data, const Array<Rendering::SubMesh> &sub_meshes);
-        ~Mesh() = default;
     public:
         inline AssetType GetAssetType() const override { return AssetType::Mesh; }
 
