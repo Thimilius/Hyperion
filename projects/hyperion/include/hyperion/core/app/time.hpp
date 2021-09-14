@@ -2,12 +2,12 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
+#include "hyperion/core/timer.hpp"
 #include "hyperion/core/math/math.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Engine;
-    class Timer;
 }
 
 //-------------------- Definition Namespace --------------------
@@ -37,7 +37,7 @@ namespace Hyperion {
         Time() = delete;
         ~Time() = delete;
     private:
-        inline static Timer *s_timer;
+        inline static Timer s_timer;
         inline static float64 s_last_time = 0.0;
         inline static float64 s_accumulator = 0.0;
 

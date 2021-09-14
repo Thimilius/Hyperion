@@ -4,13 +4,11 @@
 //--------------------- Definition Include ---------------------
 #include "hyperion/platform/windows/windows_timer.hpp"
 
+//---------------------- Library Includes ----------------------
+#include <Windows.h>
+
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
-
-    //--------------------------------------------------------------
-    Timer *Timer::Create() {
-        return new WindowsTimer();
-    }
 
     //--------------------------------------------------------------
     WindowsTimer::WindowsTimer() {
@@ -25,7 +23,7 @@ namespace Hyperion {
     float32 WindowsTimer::ElapsedSeconds() const {
         LARGE_INTEGER current;
         QueryPerformanceCounter(&current);
-        uint64 cycles = current.QuadPart - m_start.QuadPart;
+        uint64 cycles = current.QuadPart - m_start;
         return static_cast<float32>(cycles * m_frequency);
     }
 
@@ -36,6 +34,8 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void WindowsTimer::Reset() {
-        QueryPerformanceCounter(&m_start);
+        LARGE_INTEGER current;
+        QueryPerformanceCounter(&current);
+        m_start = current.QuadPart;
     }
 }

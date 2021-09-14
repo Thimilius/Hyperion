@@ -46,7 +46,7 @@ namespace Hyperion {
         engine_loop.initilization.sub_systems = {
             { "MemoryStatsInitilization", MemoryStats::ResetFrameMemory },
             { "TimeInitilization", []() {
-                float32 now = Time::s_timer->ElapsedSeconds();
+                float32 now = Time::s_timer.ElapsedSeconds();
                 float32 delta_time = static_cast<float32>(now - Time::s_last_time);
                 if (delta_time > Time::GetMaxDeltaTime()) {
                     delta_time = Time::GetMaxDeltaTime();
@@ -104,11 +104,9 @@ namespace Hyperion {
         PostInitialize();
         s_application->GetWindow()->Show();
 
-        Time::s_timer = Timer::Create();
         while (s_running) {
             Iterate();
         }
-        delete Time::s_timer;
 
         s_application->OnShutdown();
         Shutdown();

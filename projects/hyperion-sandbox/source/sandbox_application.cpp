@@ -14,6 +14,8 @@
 //------------------------- Namespaces -------------------------
 using namespace Hyperion;
 
+//#define HYP_STRESS_TEST
+
 //-------------------- Definition Namespace --------------------
 namespace Sandbox {
 
@@ -27,8 +29,6 @@ namespace Sandbox {
     EntityId g_camera;
     EntityId g_cube;
 
-#define STRESS_TEST
-
     //--------------------------------------------------------------
     void SandboxApplication::OnInitialize() {
         UpdateTitle();
@@ -39,7 +39,7 @@ namespace Sandbox {
         g_camera = g_world->CreateEntity(EntityPrimitive::Camera);
 
         TransformComponent *camera_transform = g_world->GetComponent<TransformComponent>(g_camera);
-#ifdef STRESS_TEST
+#ifdef HYP_STRESS_TEST
         camera_transform->position = Vector3(0.0f, 15.0f, 0.0f);
         camera_transform->rotation = Quaternion::FromEulerAngles(-45.0f, -45.0f, 0.0f);
 #else
@@ -47,9 +47,9 @@ namespace Sandbox {
         camera_transform->rotation = Quaternion::FromEulerAngles(-25.0f, 0.0f, 0.0f);
 #endif
 
-        Mesh *cube_mesh = MeshGenerator::GenerateCube(1.0f);
+        Mesh *mesh = MeshGenerator::GenerateCube(1.0f);
 
-#ifdef STRESS_TEST
+#ifdef HYP_STRESS_TEST
         float32 size = 100;
         for (float32 x = 0; x < size; x++) {
             for (float32 z = 0; z < size; z++) {
@@ -57,13 +57,13 @@ namespace Sandbox {
                 TransformComponent *transform = g_world->GetComponent<TransformComponent>(entity);
                 transform->position = Vector3(x * 2.0f, 0.0f, -z * 2.0f);
                 RenderMeshComponent *render_mesh = g_world->AddComponent<RenderMeshComponent>(entity);
-                render_mesh->mesh = cube_mesh;
+                render_mesh->mesh = mesh;
             }
         }
 #else
         g_cube = g_world->CreateEntity();
         RenderMeshComponent *render_mesh = g_world->AddComponent<RenderMeshComponent>(g_cube);
-        render_mesh->mesh = cube_mesh;
+        render_mesh->mesh = mesh;
 #endif
     }
 
@@ -79,7 +79,7 @@ namespace Sandbox {
         float32 value = Math::Sin(Time::GetTime() * 5.0f) * 0.5f + 0.5f;
         CameraComponent *camera = g_world->GetComponent<CameraComponent>(g_camera);
         camera->background_color = Color(0.0f, value, value, 1.0f);
-#ifdef STRESS_TEST
+#ifdef HYP_STRESS_TEST
         auto view = g_world->GetView<TransformComponent, RenderMeshComponent>();
         for (EntityId entity : view) {
             TransformComponent *transform = g_world->GetComponent<TransformComponent>(entity);

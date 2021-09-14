@@ -74,7 +74,7 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     AssetInfo AssetManager::GetNextAssetInfo() {
-        return { s_id_counter++, AssetGuid::Create() };
+        return { s_id_counter++, AssetGuid::Generate() };
     }
 
 }

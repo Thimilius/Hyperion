@@ -1,11 +1,16 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+//--------------------- Definition Include ---------------------
 #include "hyperion/core/app/display.hpp"
 
+//---------------------- Library Includes ----------------------
 #include <Windows.h>
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    //--------------------------------------------------------------
     DisplayInfo::DisplayModeInfo Display::GetCurrentDisplayModeInfo() {
         DISPLAY_DEVICEA display_device = { 0 };
         display_device.cb = sizeof(display_device);
@@ -36,6 +41,7 @@ namespace Hyperion {
         return DisplayInfo::DisplayModeInfo();
     }
 
+    //--------------------------------------------------------------
     void Display::UpdateDisplayInfos() {
         DISPLAY_DEVICEA display_device = { 0 };
         display_device.cb = sizeof(display_device);

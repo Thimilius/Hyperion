@@ -1,21 +1,10 @@
 #pragma once
 
-//---------------------- Project Includes ----------------------
-#include "hyperion/common.hpp"
-
-//-------------------- Definition Namespace --------------------
+#ifdef HYP_PLATFORM_WINDOWS
+#include "hyperion/platform/windows/windows_timer.hpp"
 namespace Hyperion {
-
-    class Timer {
-    public:
-        virtual ~Timer() = default;
-    public:
-        virtual float32 ElapsedSeconds() const = 0;
-        virtual float32 ElapsedMilliSeconds() const = 0;
-
-        virtual void Reset() = 0;
-    public:
-        static Timer *Create();
-    };
-
+    using Timer = WindowsTimer;
 }
+#else 
+#error Platform not implemented
+#endif

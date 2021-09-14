@@ -1,24 +1,21 @@
 #pragma once
 
-//---------------------- Library Includes ----------------------
-#include <Windows.h>
-
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/timer.hpp"
+#include "hyperion/core/types.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    class WindowsTimer : public Timer {
+    class WindowsTimer {
     public:
         WindowsTimer();
+    public:
+        float32 ElapsedSeconds() const;
+        float32 ElapsedMilliSeconds() const;
 
-        float32 ElapsedSeconds() const override;
-        float32 ElapsedMilliSeconds() const override;
-
-        void Reset() override;
+        void Reset();
     private:
-        LARGE_INTEGER m_start;
+        uint64 m_start;
         float64 m_frequency;
     };
 

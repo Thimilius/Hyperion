@@ -1,34 +1,20 @@
 #pragma once
 
-//---------------------- Project Includes ----------------------
-#include "hyperion/common.hpp"
-
-//-------------------- Forward Declarations --------------------
+#ifdef HYP_PLATFORM_WINDOWS
+#include "hyperion/platform/windows/windows_guid.hpp"
 namespace Hyperion {
-
-    class Guid {
-    public:
-        String ToString() const;
-
-        bool8 operator==(const Guid &other) const;
-        bool8 operator!=(const Guid &other) const;
-    public:
-        static Guid Create();
-        static Guid Create(const String &string);
-    private:
-        uint64 data[2] = { 0 };
-    private:
-        friend struct std::hash<Hyperion::Guid>;
-    };
-
+    using Guid = WindowsGuid;
 }
+#else 
+#error Platform not implemented
+#endif
 
 namespace std {
 
     template <>
     struct hash<Hyperion::Guid> {
         std::size_t operator()(const Hyperion::Guid &guid) const {
-            return (hash<uint64>()(guid.data[0]) ^ (hash<uint64>()(guid.data[1]) << 1)) >> 1;
+            return (hash<uint64>()(guid.m_data[0]) ^ (hash<uint64>()(guid.m_data[1]) << 1)) >> 1;
         }
     };
 
