@@ -1,6 +1,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/assets/material.hpp"
 #include "hyperion/assets/mesh.hpp"
 #include "hyperion/assets/texture.hpp"
 #include "hyperion/core/color.hpp"
@@ -58,6 +59,7 @@ namespace Hyperion {
     };
 
     struct RenderMeshComponent {
+        Material *material = nullptr;
         Mesh *mesh = nullptr;
         uint32 sub_mesh_index = 0;
     };

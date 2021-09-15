@@ -12,9 +12,11 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Asset::SetDirty() {
-        m_is_dirty = true;
+        if (!m_is_dirty) {
+            m_is_dirty = true;
 
-        AssetManager::AddDirtyAsset(this);
+            AssetManager::AddDirtyAsset(this);
+        }
     }
 
     //--------------------------------------------------------------

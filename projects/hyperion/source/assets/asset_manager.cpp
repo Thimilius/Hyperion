@@ -73,7 +73,7 @@ namespace Hyperion {
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
 
-        HYP_ASSERT(!s_assets_to_unload.Contains(asset));
+        // FIXME: Check for duplicates.
         s_assets_to_unload.Add(asset);
     }
 
@@ -99,7 +99,6 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void AssetManager::AddDirtyAsset(Asset *asset) {
-        HYP_ASSERT(!s_assets_to_load.Contains(asset));
         s_assets_to_load.Add(asset);
     }
 

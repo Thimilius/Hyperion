@@ -45,7 +45,7 @@ namespace Hyperion {
     private:
         AssetInfo m_info;
 
-        bool8 m_is_dirty;
+        bool8 m_is_dirty = false;
 
         Threading::CriticalSection m_locker;
     private:

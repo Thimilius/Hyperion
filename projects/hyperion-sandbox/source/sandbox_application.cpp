@@ -7,6 +7,7 @@
 #include <hyperion/assets/material.hpp>
 #include <hyperion/assets/loader/mesh_loader.hpp>
 #include <hyperion/assets/utilities/mesh_generator.hpp>
+#include <hyperion/core/random.hpp>
 #include <hyperion/core/app/time.hpp>
 #include <hyperion/core/io/file_system.hpp>
 #include <hyperion/ecs/component/components.hpp>
@@ -30,6 +31,7 @@ namespace Sandbox {
     World *g_world;
     EntityId g_camera;
     EntityId g_cube;
+    Material *g_material;
 
     //--------------------------------------------------------------
     void SandboxApplication::OnInitialize() {
@@ -39,6 +41,8 @@ namespace Sandbox {
 
         WorldManager::SetActiveWorld(g_world);
         g_camera = g_world->CreateEntity(EntityPrimitive::Camera);
+        CameraComponent *camera = g_world->GetComponent<CameraComponent>(g_camera);
+        camera->background_color = Color(0.0f, 1.0f, 1.0f, 1.0f);
 
         TransformComponent *camera_transform = g_world->GetComponent<TransformComponent>(g_camera);
 #ifdef HYP_STRESS_TEST
@@ -50,7 +54,7 @@ namespace Sandbox {
 #endif
 
         Shader *shader = AssetManager::CreateShader(FileSystem::ReadAllText("data/shaders/standard.shader"));
-        Material *material = AssetManager::CreateMaterial(shader);
+        g_material = AssetManager::CreateMaterial(shader);
 
         Mesh *mesh = MeshLoader::Load("data/models/monkey.obj").Unwrap();
 
@@ -58,16 +62,22 @@ namespace Sandbox {
         float32 size = 100;
         for (float32 x = 0; x < size; x++) {
             for (float32 z = 0; z < size; z++) {
+                Material *material = AssetManager::CreateMaterial(shader);
+                Color color = Color(Random::Get(), Random::Get(), Random::Get(), 1.0f);
+                material->SetColor("u_color", color);
+
                 EntityId entity = g_world->CreateEntity();
                 TransformComponent *transform = g_world->GetComponent<TransformComponent>(entity);
                 transform->position = Vector3(x * 2.0f, 0.0f, -z * 2.0f);
                 RenderMeshComponent *render_mesh = g_world->AddComponent<RenderMeshComponent>(entity);
+                render_mesh->material = material;
                 render_mesh->mesh = mesh;
             }
         }
 #else
         g_cube = g_world->CreateEntity();
         RenderMeshComponent *render_mesh = g_world->AddComponent<RenderMeshComponent>(g_cube);
+        render_mesh->material = g_material;
         render_mesh->mesh = mesh;
 #endif
     }
@@ -80,10 +90,6 @@ namespace Sandbox {
         if (Input::IsKeyDown(KeyCode::F1)) {
             GetWindow()->SetWindowMode(GetWindow()->GetWindowMode() == WindowMode::Borderless ? WindowMode::Windowed : WindowMode::Borderless);
         }
-
-        float32 value = Math::Sin(Time::GetTime() * 5.0f) * 0.5f + 0.5f;
-        CameraComponent *camera = g_world->GetComponent<CameraComponent>(g_camera);
-        camera->background_color = Color(0.0f, value, value, 1.0f);
 
         Quaternion rotation = Quaternion::FromEulerAngles(0.0f, Time::GetTime() * 25.0f, 0.0f);
 #ifdef HYP_STRESS_TEST
