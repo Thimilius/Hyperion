@@ -5,7 +5,7 @@
 #include "hyperion/ecs/world/world_manager.hpp"
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/ecs/component/components.hpp"
+#include "hyperion/ecs/component/components/components.hpp"
 #include "hyperion/ecs/system/asset_system.hpp"
 #include "hyperion/ecs/system/transform_system.hpp"
 #include "hyperion/ecs/system/render_system.hpp"
@@ -41,12 +41,14 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void WorldManager::Initialize() {
         ComponentRegistry::Register<TagComponent>();
-        ComponentRegistry::Register<TransformComponent>();
-        ComponentRegistry::Register<LocalToWorldComponent>();
-        ComponentRegistry::Register<HierarchyComponent>();
+        
         ComponentRegistry::Register<CameraComponent>();
         ComponentRegistry::Register<SpriteComponent>();
         ComponentRegistry::Register<RenderMeshComponent>();
+
+        ComponentRegistry::Register<TransformComponent>();
+        ComponentRegistry::Register<LocalToWorldComponent>();
+        ComponentRegistry::Register<HierarchyComponent>();
     }
 
     //--------------------------------------------------------------

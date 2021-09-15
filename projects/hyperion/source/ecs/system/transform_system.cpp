@@ -5,7 +5,7 @@
 #include "hyperion/ecs/system/transform_system.hpp"
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/ecs/component/components.hpp"
+#include "hyperion/ecs/component/components/transform_components.hpp"
 #include "hyperion/ecs/world/world.hpp"
 
 //-------------------- Definition Namespace --------------------

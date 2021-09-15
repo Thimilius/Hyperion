@@ -8,7 +8,7 @@
 #include <yaml-cpp/yaml.h>
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/ecs/component/components.hpp"
+#include "hyperion/ecs/component/components/components.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {

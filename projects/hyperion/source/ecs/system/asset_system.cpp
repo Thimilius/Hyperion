@@ -6,9 +6,6 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset_manager.hpp"
-#include "hyperion/core/app/display.hpp"
-#include "hyperion/ecs/component/components.hpp"
-#include "hyperion/ecs/world/world.hpp"
 #include "hyperion/rendering/render_engine.hpp"
 #include "hyperion/rendering/frame/render_frame.hpp"
 
