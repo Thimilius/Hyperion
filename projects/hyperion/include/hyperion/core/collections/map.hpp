@@ -31,7 +31,7 @@ namespace Hyperion {
 
         inline auto Insert(const K &key, const V &value) { return m_map.insert(std::make_pair(key, value)); }
 
-        inline void Remove(const K &key) { m_map.erase(std::remove(begin(), end(), key)); }
+        inline void Remove(const K &key) { m_map.erase(key); }
 
         inline void Clear() { m_map.clear(); }
         inline void Reserve(uint64 capacity) { m_map.reserve(capacity); }

@@ -28,8 +28,7 @@ namespace Hyperion {
         inline auto Insert(const T &item) { return m_set.insert(item); }
         inline auto Insert(T &&item) { return m_set.insert(item); }
 
-        inline void Remove(const T &item) { m_set.erase(std::remove(begin(), end(), item)); }
-        inline void Remove(Iterator first, Iterator last, const T &item) { m_set.erase(std::remove(first, last, item)); }
+        inline void Remove(const T &item) { m_set.erase(item); }
 
         inline void Clear() { m_set.clear(); }
         inline void Reserve(uint64 capacity) { m_set.reserve(capacity); }
