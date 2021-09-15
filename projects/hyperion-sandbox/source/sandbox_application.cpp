@@ -63,8 +63,7 @@ namespace Sandbox {
         for (float32 x = 0; x < size; x++) {
             for (float32 z = 0; z < size; z++) {
                 Material *material = AssetManager::CreateMaterial(shader);
-                Color color = Color(Random::Get(), Random::Get(), Random::Get(), 1.0f);
-                material->SetColor("u_color", color);
+                material->SetColor("u_color", Color(Random::Get(), Random::Get(), Random::Get(), 1.0f));
 
                 EntityId entity = g_world->CreateEntity();
                 TransformComponent *transform = g_world->GetComponent<TransformComponent>(entity);
@@ -97,6 +96,8 @@ namespace Sandbox {
         for (EntityId entity : view) {
             TransformComponent *transform = g_world->GetComponent<TransformComponent>(entity);
             transform->rotation = rotation;
+            RenderMeshComponent *render_mesh = g_world->GetComponent<RenderMeshComponent>(entity);
+            render_mesh->material->SetColor("u_color", Color(Random::Get(), Random::Get(), Random::Get(), 1.0f));
         }
 #else
         TransformComponent *transform = g_world->GetComponent<TransformComponent>(g_cube);

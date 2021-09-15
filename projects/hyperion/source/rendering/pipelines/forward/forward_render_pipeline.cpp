@@ -24,7 +24,7 @@ namespace Hyperion::Rendering {
 
         GLuint program;
     };
-    Array<OpenGLShader> g_opengl_shaders;
+    Map<AssetId, OpenGLShader> g_opengl_shaders;
 
     struct OpenGLMaterial {
         AssetId id;
@@ -32,7 +32,7 @@ namespace Hyperion::Rendering {
 
         OpenGLShader *shader;
     };
-    Array<OpenGLMaterial> g_opengl_materials;
+    Map<AssetId, OpenGLMaterial> g_opengl_materials;
 
     struct OpenGLMesh {
         AssetId id;
@@ -43,10 +43,9 @@ namespace Hyperion::Rendering {
         GLuint index_buffer;
         GLuint vertex_array;
     };
-    Array<OpenGLMesh> g_opengl_meshes;
+    Map<AssetId, OpenGLMesh> g_opengl_meshes;
 
     GLuint g_bound_vertex_array;
-
 
     struct GroupedMesh {
         OpenGLMesh *mesh;
@@ -56,12 +55,12 @@ namespace Hyperion::Rendering {
     struct GroupedMaterial {
         OpenGLMaterial *material;
 
-        Array<GroupedMesh> meshes;
+        Map<AssetId, GroupedMesh> meshes;
     };
     struct GroupedShader {
         OpenGLShader *shader;
 
-        Array<GroupedMaterial> materials;
+        Map<AssetId, GroupedMaterial> materials;
     };
 
     //--------------------------------------------------------------
@@ -78,49 +77,36 @@ namespace Hyperion::Rendering {
             });
             GroupedShader *grouped_shader = nullptr;
             if (shaders_it == grouped_shaders.end()) {
-                auto opengl_shaders_it = std::find_if(g_opengl_shaders.begin(), g_opengl_shaders.end(), [shader_id](const OpenGLShader &opengl_shader) {
-                    return opengl_shader.id == shader_id;
-                });
                 GroupedShader new_grouped_shader;
-                new_grouped_shader.shader = &*opengl_shaders_it;
+                new_grouped_shader.shader = &g_opengl_shaders.Get(shader_id);
                 grouped_shaders.Add(new_grouped_shader);
                 grouped_shader = &grouped_shaders.GetLast();
             } else {
                 grouped_shader = &*shaders_it;
             }
 
-            Array<GroupedMaterial> &materials = grouped_shader->materials;
-            auto materials_it = std::find_if(materials.begin(), materials.end(), [material_id](const GroupedMaterial &grouped_material) {
-                return grouped_material.material->id == material_id;
-            });
+            Map<AssetId, GroupedMaterial> &materials = grouped_shader->materials;
+            auto materials_it = materials.Find(material_id);
             GroupedMaterial *grouped_material = nullptr;
             if (materials_it == materials.end()) {
-                auto opengl_material_it = std::find_if(g_opengl_materials.begin(), g_opengl_materials.end(), [material_id](const OpenGLMaterial &opengl_material) {
-                    return opengl_material.id == material_id;
-                });
                 GroupedMaterial new_grouped_material;
-                new_grouped_material.material = &*opengl_material_it;
-                materials.Add(new_grouped_material);
-                grouped_material = &materials.GetLast();
+                new_grouped_material.material = &g_opengl_materials.Get(material_id);
+                materials.Insert(material_id, new_grouped_material);
+                grouped_material = &materials.Get(material_id);
             } else {
-                grouped_material = &*materials_it;
+                grouped_material = &materials.Get(material_id);
             }
 
-            Array<GroupedMesh> &meshes = grouped_material->meshes;
-            auto meshes_it = std::find_if(meshes.begin(), meshes.end(), [mesh_id](const GroupedMesh &grouped_mesh) {
-                return grouped_mesh.mesh->id == mesh_id;
-            });
+            Map<AssetId, GroupedMesh> &meshes = grouped_material->meshes;
+            auto meshes_it = meshes.Find(mesh_id);
             GroupedMesh *grouped_mesh = nullptr;
             if (meshes_it == meshes.end()) {
-                auto opengl_mesh_it = std::find_if(g_opengl_meshes.begin(), g_opengl_meshes.end(), [mesh_id](const OpenGLMesh &opengl_mesh) {
-                    return opengl_mesh.id == mesh_id;
-                });
                 GroupedMesh new_grouped_material;
-                new_grouped_material.mesh = &*opengl_mesh_it;
-                meshes.Add(new_grouped_material);
-                grouped_mesh = &meshes.GetLast();
+                new_grouped_material.mesh = &g_opengl_meshes.Get(mesh_id);
+                meshes.Insert(mesh_id, new_grouped_material);
+                grouped_mesh = &meshes.Get(mesh_id);
             } else {
-                grouped_mesh = &*meshes_it;
+                grouped_mesh = &meshes.Get(mesh_id);
             }
 
             grouped_mesh->objects.Add(render_frame_mesh_object);
@@ -211,28 +197,24 @@ namespace Hyperion::Rendering {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         }
         
-        {
-            for (const OpenGLShader &shader : g_opengl_shaders) {
-                glProgramUniformMatrix4fv(shader.program, glGetUniformLocation(shader.program, "u_view"), 1, GL_FALSE, render_frame_camera.view_matrix.elements);
-                glProgramUniformMatrix4fv(shader.program, glGetUniformLocation(shader.program, "u_projection"), 1, GL_FALSE, render_frame_camera.projection_matrix.elements);
-            }
-        }
-
         for (const GroupedShader &grouped_shader : g_grouped_shaders) {
             const OpenGLShader &opengl_shader = *grouped_shader.shader;
             glUseProgram(opengl_shader.program);
+            glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_view"), 1, GL_FALSE, render_frame_camera.view_matrix.elements);
+            glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_projection"), 1, GL_FALSE, render_frame_camera.projection_matrix.elements);
 
-            for (const GroupedMaterial &grouped_material : grouped_shader.materials) {
+            for (const auto [material_id, grouped_material] : grouped_shader.materials) {
                 const OpenGLMaterial &opengl_material = *grouped_material.material;
 
+                GLint color_location = glGetUniformLocation(opengl_shader.program, "u_color");
                 for (const MaterialProperty &property : opengl_material.properties) {
                     if (property.type == MaterialPropertyType::Color) {
                         Color color = property.storage.color;
-                        glProgramUniform4f(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_color"), color.r, color.g, color.b, color.a);
+                        glProgramUniform4f(opengl_shader.program, color_location, color.r, color.g, color.b, color.a);
                     }
                 }
 
-                for (const GroupedMesh &grouped_mesh : grouped_material.meshes) {
+                for (const auto [mesh_id, grouped_mesh] : grouped_material.meshes) {
                     const OpenGLMesh &opengl_mesh = *grouped_mesh.mesh;
                     glBindVertexArray(opengl_mesh.vertex_array);
 
@@ -266,34 +248,26 @@ namespace Hyperion::Rendering {
     //--------------------------------------------------------------
     void ForwardRenderPipeline::LoadMaterial(Material *material) {
         AssetId material_id = material->GetAssetInfo().id;
-        auto material_it = std::find_if(g_opengl_materials.begin(), g_opengl_materials.end(), [material_id](const OpenGLMaterial &opengl_material) {
-            return opengl_material.id == material_id;
-        });
-        bool8 update = material_it != g_opengl_materials.end();
 
-        if (!update) {
-            g_opengl_materials.Resize(g_opengl_materials.GetLength() + 1);
-        }
-        OpenGLMaterial &opengl_material = update ? *material_it : g_opengl_materials.GetLast();
-
-        if (!update) {
-            opengl_material.id = material_id;
-
+        auto material_it = g_opengl_materials.Find(material_id);
+        if (material_it == g_opengl_materials.end()) {
             AssetId shader_id = material->GetShader()->GetAssetInfo().id;
-            auto shader_it = std::find_if(g_opengl_shaders.begin(), g_opengl_shaders.end(), [shader_id](const OpenGLShader &opengl_shader) {
-                return opengl_shader.id == shader_id;
-            });
-            OpenGLShader &opengl_shader = *shader_it;
-            opengl_material.shader = &opengl_shader;
-        }
 
-        opengl_material.properties = material->GetProperties();
+            OpenGLMaterial opengl_material;
+            opengl_material.id = material_id;
+            opengl_material.shader = &g_opengl_shaders.Get(shader_id);;
+            opengl_material.properties = material->GetProperties();
+
+            g_opengl_materials.Insert(material_id, opengl_material);
+        } else {
+            OpenGLMaterial &opengl_material = material_it->second;
+            opengl_material.properties = material->GetProperties();
+        }
     }
 
     //--------------------------------------------------------------
     void ForwardRenderPipeline::LoadMesh(Mesh *mesh) {
-        g_opengl_meshes.Resize(g_opengl_meshes.GetLength() + 1);
-        OpenGLMesh &opengl_mesh = g_opengl_meshes.GetLast();
+        AssetId mesh_id = mesh->GetAssetInfo().id;
 
         const MeshData &data = mesh->GetData();
         const MeshVertexFormat &vertex_format = mesh->GetVertexFormat();
@@ -328,7 +302,8 @@ namespace Hyperion::Rendering {
             }
         }
 
-        opengl_mesh.id = mesh->GetAssetInfo().id;
+        OpenGLMesh opengl_mesh;
+        opengl_mesh.id = mesh_id;
         opengl_mesh.sub_meshes = mesh->GetSubMeshes();
 
         glCreateBuffers(1, &opengl_mesh.vertex_buffer);
@@ -356,17 +331,20 @@ namespace Hyperion::Rendering {
 
             relative_offset += GetGLVertexAttributeSizeForVertexAttribute(vertex_attribute.type, vertex_attribute.dimension);
         }
+
+        g_opengl_meshes.Insert(mesh_id, opengl_mesh);
     }
 
     //--------------------------------------------------------------
     void ForwardRenderPipeline::LoadShader(Shader *shader) {
-        g_opengl_shaders.Resize(g_opengl_shaders.GetLength() + 1);
-        OpenGLShader &opengl_shader = g_opengl_shaders.GetLast();
-
+        AssetId shader_id = shader->GetAssetInfo().id;
         const ShaderData &data = shader->GetData();
 
-        opengl_shader.id = shader->GetAssetInfo().id;
+        OpenGLShader opengl_shader;
+        opengl_shader.id = shader_id;
         opengl_shader.program = OpenGLShaderCompiler::Compile(data.vertex_source.c_str(), data.fragment_source.c_str()).program;
+
+        g_opengl_shaders.Insert(shader_id, opengl_shader);
     }
 
 }
