@@ -2,20 +2,13 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/graphics/graphics_device_object.hpp"
+#include "hyperion/graphics/graphics_types.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Graphics {
 
-    enum class GraphicsShaderType {
-        Unknown,
-
-        Vertex = BIT(0),
-        Pixel  = BIT(1),
-    };
-    HYP_CREATE_ENUM_FLAG_OPERATORS(GraphicsShaderType);
-
     struct GraphicsShaderDescription : public GraphicsDeviceObjectDescription {
-        GraphicsShaderType type;
+        GraphicsShaderStageFlags stage;
 
         uint64 byte_code_size = 0;
         const void *byte_code = nullptr;

@@ -86,16 +86,16 @@ namespace Hyperion {
             mesh_data.indices.Add(face.mIndices[2]);
         }
 
-        sub_meshes.Add({ GetMeshTopologyForPrimitiveType(mesh->mPrimitiveTypes), index_count, index_offset, static_cast<uint32>(vertex_offset) });
+        sub_meshes.Add({ GetTopologyForPrimitiveType(mesh->mPrimitiveTypes), index_count, index_offset, static_cast<uint32>(vertex_offset) });
     }
 
     //--------------------------------------------------------------
-    MeshTopology AssimpMeshLoader::GetMeshTopologyForPrimitiveType(uint32 primitive_type) {
+    Graphics::GraphicsTopology AssimpMeshLoader::GetTopologyForPrimitiveType(uint32 primitive_type) {
         switch (primitive_type) {
-            case aiPrimitiveType_TRIANGLE: return MeshTopology::Triangles;
-            case aiPrimitiveType_LINE: return MeshTopology::Lines;
-            case aiPrimitiveType_POINT: return MeshTopology::Points;
-            default: HYP_LOG_ERROR("MeshImporter", "Mesh contains an unsupported primitive type!"); return MeshTopology::Triangles;
+            case aiPrimitiveType_TRIANGLE: return Graphics::GraphicsTopology::Triangles;
+            case aiPrimitiveType_LINE: return Graphics::GraphicsTopology::Lines;
+            case aiPrimitiveType_POINT: return Graphics::GraphicsTopology::Points;
+            default: HYP_LOG_ERROR("MeshImporter", "Mesh contains an unsupported primitive type!"); return Graphics::GraphicsTopology::Triangles;
         }
     }
 

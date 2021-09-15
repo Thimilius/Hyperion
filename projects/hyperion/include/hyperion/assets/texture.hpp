@@ -13,19 +13,19 @@ namespace Hyperion {
     public:
         inline AssetType GetAssetType() const override { return AssetType::Texture; }
 
-        virtual Rendering::TextureDimension GetDimension() const = 0;
+        virtual Graphics::GraphicsTextureDimension GetDimension() const = 0;
 
-        inline Rendering::TextureFormat GetFormat() const { return m_format; }
+        inline Graphics::GraphicsTextureFormat GetFormat() const { return m_format; }
         inline const Rendering::TextureAttributes &GetAttributes() const { return m_attributes; }
     protected:
-        Rendering::TextureFormat m_format;
+        Graphics::GraphicsTextureFormat m_format;
         Rendering::TextureAttributes m_attributes;
     };
 
     struct Texture2DCreationParameters {
         uint32 width;
         uint32 height;
-        Rendering::TextureFormat format;
+        Graphics::GraphicsTextureFormat format;
         Rendering::TextureAttributes attributes;
     };
 
@@ -35,7 +35,7 @@ namespace Hyperion {
         Texture2D(AssetInfo info, Texture2DCreationParameters parameters, const Array<uint8> &pixels);
         ~Texture2D() = default;
     public:
-        Rendering::TextureDimension GetDimension() const override { return Rendering::TextureDimension::Texture2D; }
+        Graphics::GraphicsTextureDimension GetDimension() const override { return Graphics::GraphicsTextureDimension::Texture2D; }
 
         inline uint32 GetWidth() const { return m_width; }
         inline uint32 GetHeight() const { return m_height; }

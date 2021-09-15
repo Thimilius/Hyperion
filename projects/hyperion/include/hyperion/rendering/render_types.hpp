@@ -8,72 +8,17 @@
 #include "hyperion/core/math/vector4.hpp"
 #include "hyperion/core/math/matrix3x3.hpp"
 #include "hyperion/core/math/matrix4x4.hpp"
+#include "hyperion/graphics/graphics_types.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-    enum class TextureDimension {
-        Texture2D,
-        TextureCubemap
-    };
-
-    enum class TextureFormat {
-        RGBA32,
-        RGB24,
-        R8
-    };
-
-    enum class TextureWrapMode {
-        Clamp,
-        Border,
-        Repeat,
-        MirroredRepeat
-    };
-
-    enum class TextureFilter {
-        Point,
-        Bilinear,
-        Trilinear
-    };
-
-    enum class TextureAnisotropicFilter {
-        None,
-        Times2,
-        Times4,
-        Times8,
-        Times16
-    };
-
     struct TextureAttributes {
-        TextureWrapMode wrap_mode = TextureWrapMode::Clamp;
-        TextureFilter filter = TextureFilter::Bilinear;
-        TextureAnisotropicFilter anisotropic_filter = TextureAnisotropicFilter::None;
+        Graphics::GraphicsTextureWrapMode wrap_mode = Graphics::GraphicsTextureWrapMode::Clamp;
+        Graphics::GraphicsTextureFilter filter = Graphics::GraphicsTextureFilter::Bilinear;
+        Graphics::GraphicsTextureAnisotropicFilter anisotropic_filter = Graphics::GraphicsTextureAnisotropicFilter::None;
         bool8 use_mipmaps = true;
     };
-
-    struct TextureSize {
-        uint32 width;
-        uint32 height;
-    };
-
-    enum class RenderTextureFormat {
-        RGBA32,
-        UInt32,
-        Depth24Stencil8,
-    };
-
-    struct RenderTextureAttachment {
-        RenderTextureFormat format;
-        TextureAttributes parameters;
-    };
-
-    enum class ShaderStageFlags {
-        None,
-
-        Vertex = BIT(0),
-        Fragment = BIT(1),
-    };
-    HYP_CREATE_ENUM_FLAG_OPERATORS(ShaderStageFlags);
 
     enum class ShaderLightMode {
         Unknown,
@@ -88,10 +33,10 @@ namespace Hyperion::Rendering {
 
     struct ShaderData {
         ShaderAttributes attributes;
-        ShaderStageFlags stage_flags;
+        Graphics::GraphicsShaderStageFlags stage_flags;
 
         String vertex_source;
-        String fragment_source;
+        String pixel_source;
     };
 
     using MaterialPropertyId = uint64;
@@ -159,26 +104,13 @@ namespace Hyperion::Rendering {
         uint32 dimension;
     };
 
-    enum class IndexFormat {
-        UInt16,
-        UInt32
-    };
-
-    enum class MeshTopology {
-        Points,
-        Lines,
-        LineStrip,
-        Triangles
-    };
-
     struct SubMesh {
-        MeshTopology topology;
+        Graphics::GraphicsTopology topology;
 
         uint32 index_count;
         uint32 index_offset;
         uint32 vertex_offset;
     };
-
 
     enum class CameraClearMode {
         Nothing,

@@ -4,6 +4,9 @@
 //--------------------- Definition Include ---------------------
 #include "hyperion/rendering/shader/shader_pre_processor.hpp"
 
+//------------------------- Namespaces -------------------------
+using namespace Hyperion::Graphics;
+
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
@@ -40,11 +43,11 @@ namespace Hyperion::Rendering {
         EndShaderStage(result, m_position);
 
         // Check that we found both a vertex and fragment source.
-        if ((result.data.stage_flags & ShaderStageFlags::Vertex) != ShaderStageFlags::Vertex) {
+        if ((result.data.stage_flags & GraphicsShaderStageFlags::Vertex) != GraphicsShaderStageFlags::Vertex) {
             HYP_LOG_ERROR("OpenGL", "Shader does not contain a vertex shader!");
             return result;
-        } else if ((result.data.stage_flags & ShaderStageFlags::Fragment) != ShaderStageFlags::Fragment) {
-            HYP_LOG_ERROR("OpenGL", "Shader does not contain a fragment shader!");
+        } else if ((result.data.stage_flags & GraphicsShaderStageFlags::Pixel) != GraphicsShaderStageFlags::Pixel) {
+            HYP_LOG_ERROR("OpenGL", "Shader does not contain a pixel shader!");
             return result;
         }
 
@@ -73,8 +76,8 @@ namespace Hyperion::Rendering {
                 SkipBlankspace();
                 String type_string = AdvanceUntilWhitespaceOrEndOfLine();
 
-                ShaderStageFlags shader_stage = GetShaderStageFromString(type_string);
-                if (shader_stage == ShaderStageFlags::None) {
+                GraphicsShaderStageFlags shader_stage = GetShaderStageFromString(type_string);
+                if (shader_stage == GraphicsShaderStageFlags::Unknown) {
                     HYP_LOG_ERROR("OpenGL", "Invalid shader stage specifier: '{}'!", type_string);
                     return false;
                 }
@@ -110,13 +113,13 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void ShaderPreProcessor::EndShaderStage(ShaderPreProcessResult &result, uint64 end_position) {
-        if (m_current_shader_stage != ShaderStageFlags::None) {
+        if (m_current_shader_stage != GraphicsShaderStageFlags::Unknown) {
             uint64 source_length = end_position - m_current_shader_type_directive_end;
             String source = m_source.substr(m_current_shader_type_directive_end, source_length);
             
             switch (m_current_shader_stage) {
-                case ShaderStageFlags::Vertex: result.data.vertex_source = source;
-                case ShaderStageFlags::Fragment: result.data.fragment_source = source;
+                case GraphicsShaderStageFlags::Vertex: result.data.vertex_source = source;
+                case GraphicsShaderStageFlags::Pixel: result.data.pixel_source = source;
             }
         }
     }
@@ -206,13 +209,13 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    ShaderStageFlags ShaderPreProcessor::GetShaderStageFromString(const String &string) {
+    GraphicsShaderStageFlags ShaderPreProcessor::GetShaderStageFromString(const String &string) {
         if (string == "vertex") {
-            return ShaderStageFlags::Vertex;
+            return GraphicsShaderStageFlags::Vertex;
         } else if (string == "fragment") {
-            return ShaderStageFlags::Fragment;
+            return GraphicsShaderStageFlags::Pixel;
         } else {
-            return ShaderStageFlags::None;
+            return GraphicsShaderStageFlags::Unknown;
         }
     }
 

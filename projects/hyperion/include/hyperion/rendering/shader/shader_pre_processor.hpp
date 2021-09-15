@@ -38,13 +38,13 @@ namespace Hyperion::Rendering {
 
         bool IsDirective(const char *directive, const char *start);
     private:
-        static ShaderStageFlags GetShaderStageFromString(const String &string);
+        static Graphics::GraphicsShaderStageFlags GetShaderStageFromString(const String &string);
         static ShaderLightMode GetShaderLightModeFromString(const String &string);
     private:
         String m_source;
         uint64 m_position;
 
-        ShaderStageFlags m_current_shader_stage = ShaderStageFlags::None;
+        Graphics::GraphicsShaderStageFlags m_current_shader_stage = Graphics::GraphicsShaderStageFlags::Unknown;
         uint64 m_current_shader_type_directive_end;
 
         bool m_property_light_mode_set = false;

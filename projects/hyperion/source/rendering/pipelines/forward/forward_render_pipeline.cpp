@@ -11,13 +11,16 @@
 #include "hyperion/core/threading/scope_lock.hpp"
 #include "hyperion/graphics/graphics_context.hpp"
 #include "hyperion/rendering/frame/render_frame.hpp"
-#include "hyperion/graphics/driver/opengl/opengl_shader_compiler.hpp"
+#include "hyperion/graphics/driver/opengl/opengl_graphics_shader_compiler.hpp"
+#include "hyperion/graphics/driver/opengl/opengl_graphics_utilities.hpp"
 
 //------------------------- Namespaces -------------------------
 using namespace Hyperion::Graphics;
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
+
+    // TEMP: For now we just use OpenGL directly and don't really bother with the graphics abstractions.
 
     struct OpenGLShader {
         AssetId id;
@@ -147,17 +150,6 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    GLenum GetGLMeshTopology(MeshTopology mesh_topology) {
-        switch (mesh_topology) {
-            case MeshTopology::Points: return GL_POINTS;
-            case MeshTopology::Lines: return GL_LINES;
-            case MeshTopology::LineStrip: return GL_LINE_STRIP;
-            case MeshTopology::Triangles: return GL_TRIANGLES;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
-        }
-    }
-
-    //--------------------------------------------------------------
     void ForwardRenderPipeline::Initialize(GraphicsContext *graphics_context) {
         graphics_context->CreateDeviceAndSwapChain(&m_device, &m_device_context, &m_swap_chain);
 
@@ -222,10 +214,11 @@ namespace Hyperion::Rendering {
                     for (const RenderFrameMeshObject &render_frame_mesh_object : grouped_mesh.objects) {
                         glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, render_frame_mesh_object.local_to_world.elements);
 
-                        // TODO: We should also group by sub meshes.
+                        // NOTE: We may also want to group by sub meshes.
                         SubMesh sub_mesh = opengl_mesh.sub_meshes[render_frame_mesh_object.sub_mesh_index];
                         void *index_offset = reinterpret_cast<void *>(static_cast<uint32>(sub_mesh.index_offset) * sizeof(uint32));
-                        glDrawElementsBaseVertex(GetGLMeshTopology(sub_mesh.topology), sub_mesh.index_count, GL_UNSIGNED_INT, index_offset, sub_mesh.vertex_offset);
+                        GLenum topology = OpenGLGraphicsUtilities::GetTopology(sub_mesh.topology);
+                        glDrawElementsBaseVertex(topology, sub_mesh.index_count, GL_UNSIGNED_INT, index_offset, sub_mesh.vertex_offset);
                     }
                 }
             }
@@ -342,7 +335,7 @@ namespace Hyperion::Rendering {
 
         OpenGLShader opengl_shader;
         opengl_shader.id = shader_id;
-        opengl_shader.program = OpenGLShaderCompiler::Compile(data.vertex_source.c_str(), data.fragment_source.c_str()).program;
+        opengl_shader.program = OpenGLGraphicsShaderCompiler::Compile(data.vertex_source.c_str(), data.pixel_source.c_str()).program;
 
         g_opengl_shaders.Insert(shader_id, opengl_shader);
     }

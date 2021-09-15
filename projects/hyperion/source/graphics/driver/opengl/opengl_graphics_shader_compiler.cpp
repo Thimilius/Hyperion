@@ -2,14 +2,14 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/graphics/driver/opengl/opengl_shader_compiler.hpp"
+#include "hyperion/graphics/driver/opengl/opengl_graphics_shader_compiler.hpp"
 
 //-------------------- Definition Namespace --------------------
-namespace Hyperion::Rendering {
+namespace Hyperion::Graphics {
 
     //--------------------------------------------------------------
-    OpenGLShaderCompilationResult OpenGLShaderCompiler::Compile(const char *vertex_source, const char *fragment_source) {
-        OpenGLShaderCompilationResult result = { };
+    OpenGLGraphicsShaderCompilationResult OpenGLGraphicsShaderCompiler::Compile(const char *vertex_source, const char *fragment_source) {
+        OpenGLGraphicsShaderCompilationResult result = { };
         result.success = false;
 
         GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);

@@ -15,7 +15,7 @@ namespace Hyperion {
     private:
         void LoadSubMesh(const aiMesh *mesh, MeshData &mesh_data, Array<Rendering::SubMesh> &sub_meshes);
     private:
-        static Rendering::MeshTopology GetMeshTopologyForPrimitiveType(uint32 primitive_type);
+        static Graphics::GraphicsTopology GetTopologyForPrimitiveType(uint32 primitive_type);
     };
 
 }
