@@ -10,7 +10,7 @@
 #include <hyperion/core/random.hpp>
 #include <hyperion/core/app/time.hpp>
 #include <hyperion/core/io/file_system.hpp>
-#include <hyperion/ecs/component/components.hpp>
+#include <hyperion/ecs/component/components/components.hpp>
 #include <hyperion/ecs/system/transform_system.hpp>
 #include <hyperion/ecs/world/world_manager.hpp>
 #include <hyperion/ecs/world/world_serializer.hpp>
@@ -18,7 +18,7 @@
 //------------------------- Namespaces -------------------------
 using namespace Hyperion;
 
-#define HYP_STRESS_TEST
+//#define HYP_STRESS_TEST
 
 //-------------------- Definition Namespace --------------------
 namespace Sandbox {

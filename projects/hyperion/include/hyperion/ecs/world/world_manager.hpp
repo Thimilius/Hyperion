@@ -12,14 +12,14 @@ namespace Hyperion {
 namespace Hyperion {
 
     class WorldManager final {
-    private:
-        WorldManager() = delete;
-        ~WorldManager() = delete;
     public:
         static World *CreateWorld();
         static void DestroyWorld(World *world);
 
         static void SetActiveWorld(World *world);
+    private:
+        WorldManager() = delete;
+        ~WorldManager() = delete;
     private:
         static void Initialize();
         static void Update();

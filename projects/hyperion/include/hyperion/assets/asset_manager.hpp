@@ -26,9 +26,6 @@ namespace Hyperion {
     };
 
     class AssetManager final {
-    private:
-        AssetManager() = delete;
-        ~AssetManager() = delete;
     public:
         static Material *CreateMaterial(Shader *shader);
 
@@ -40,6 +37,9 @@ namespace Hyperion {
         static Shader *CreateShader(const String &source);
 
         static void Unload(Asset *asset);
+    private:
+        AssetManager() = delete;
+        ~AssetManager() = delete;
     private:
         static void Initialize();
         static void LateUpdate();
