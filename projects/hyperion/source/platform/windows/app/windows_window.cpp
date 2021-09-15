@@ -2,7 +2,7 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/platform/windows/windows_window.hpp"
+#include "hyperion/platform/windows/app/windows_window.hpp"
 
 //---------------------- Library Includes ----------------------
 #include <Dbt.h>

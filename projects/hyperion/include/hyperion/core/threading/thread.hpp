@@ -1,33 +1,8 @@
 #pragma once
 
-//--------------- C++ Standard Library Includes ----------------
-#include <thread>
-
-//---------------------- Project Includes ----------------------
-#include "hyperion/common.hpp"
-
-//-------------------- Definition Namespace --------------------
-namespace Hyperion::Threading {
-
-    using ThreadId = uint32;
-    using ThreadStartFunction = std::function<void()>;
-    using ParameterizedThreadStartFunction = std::function<void(void *)>;
-
-    class Thread final {
-    public:
-        ThreadId GetId();
-
-        void Start(const ThreadStartFunction &start_function);
-        void Start(const ParameterizedThreadStartFunction &parameterized_start_function, void *parameter);
-        void Join();
-
-        void SetName(const String &name);
-    public:
-        static uint32 GetSupportedThreadCount();
-        static ThreadId GetCurrentThreadId();
-        static void Sleep(uint32 milliseconds);
-    private:
-        std::thread m_thread;
-    };
-
-}
+#ifdef HYP_PLATFORM_WINDOWS
+#include "hyperion/platform/windows/threading/windows_thread.hpp"
+namespace Hyperion::Threading { using Thread = WindowsThread; }
+#else 
+#error Platform not implemented
+#endif

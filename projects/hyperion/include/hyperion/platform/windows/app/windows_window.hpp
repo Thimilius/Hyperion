@@ -9,7 +9,7 @@
 #include "hyperion/core/app/events/app_event.hpp"
 #include "hyperion/core/math/vector2.hpp"
 #include "hyperion/graphics/graphics_backend.hpp"
-#include "hyperion/platform/windows/windows_input.hpp"
+#include "hyperion/platform/windows/app/windows_input.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {

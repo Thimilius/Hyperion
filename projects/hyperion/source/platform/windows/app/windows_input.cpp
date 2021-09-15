@@ -2,7 +2,7 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/platform/windows/windows_input.hpp"
+#include "hyperion/platform/windows/app/windows_input.hpp"
 
 //---------------------- Library Includes ----------------------
 #include <Windows.h>

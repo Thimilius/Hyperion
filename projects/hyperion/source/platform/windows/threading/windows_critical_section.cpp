@@ -2,7 +2,7 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/platform/windows/windows_critical_section.hpp"
+#include "hyperion/platform/windows/threading/windows_critical_section.hpp"
 
 //---------------------- Library Includes ----------------------
 #include <Windows.h>
