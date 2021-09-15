@@ -36,7 +36,7 @@ namespace Hyperion::Rendering {
         Graphics::GraphicsShaderStageFlags stage_flags;
 
         String vertex_source;
-        String pixel_source;
+        String fragment_source;
     };
 
     using MaterialPropertyId = uint64;

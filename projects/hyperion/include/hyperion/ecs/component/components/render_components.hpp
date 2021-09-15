@@ -36,5 +36,4 @@ namespace Hyperion {
         uint32 sub_mesh_index = 0;
     };
 
-
 }

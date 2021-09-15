@@ -31,7 +31,8 @@ namespace Sandbox {
 
     World *g_world;
     EntityId g_camera;
-    EntityId g_cube;
+    EntityId g_parent;
+    EntityId g_child;
     Material *g_material;
 
     //--------------------------------------------------------------
@@ -45,7 +46,7 @@ namespace Sandbox {
         CameraComponent *camera = g_world->GetComponent<CameraComponent>(g_camera);
         camera->background_color = Color(0.0f, 1.0f, 1.0f, 1.0f);
 
-        TransformComponent *camera_transform = g_world->GetComponent<TransformComponent>(g_camera);
+        LocalTransformComponent *camera_transform = g_world->GetComponent<LocalTransformComponent>(g_camera);
 #ifdef HYP_STRESS_TEST
         camera_transform->position = Vector3(0.0f, 15.0f, 0.0f);
         camera_transform->rotation = Quaternion::FromEulerAngles(-45.0f, -45.0f, 0.0f);
@@ -67,7 +68,7 @@ namespace Sandbox {
                 material->SetColor("u_color", Color(Random::Get(), Random::Get(), Random::Get(), 1.0f));
 
                 EntityId entity = g_world->CreateEntity();
-                TransformComponent *transform = g_world->GetComponent<TransformComponent>(entity);
+                LocalTransformComponent *transform = g_world->GetComponent<LocalTransformComponent>(entity);
                 transform->position = Vector3(x * 2.0f, 0.0f, -z * 2.0f);
                 RenderMeshComponent *render_mesh = g_world->AddComponent<RenderMeshComponent>(entity);
                 render_mesh->material = material;
@@ -75,8 +76,12 @@ namespace Sandbox {
             }
         }
 #else
-        g_cube = g_world->CreateEntity();
-        RenderMeshComponent *render_mesh = g_world->AddComponent<RenderMeshComponent>(g_cube);
+        g_parent = g_world->CreateEntity();
+        g_child = g_world->CreateEntity();
+
+        g_world->GetHierarchy().SetParent(g_child, g_parent);
+
+        RenderMeshComponent *render_mesh = g_world->AddComponent<RenderMeshComponent>(g_parent);
         render_mesh->material = g_material;
         render_mesh->mesh = mesh;
 #endif
@@ -93,15 +98,15 @@ namespace Sandbox {
 
         Quaternion rotation = Quaternion::FromEulerAngles(0.0f, Time::GetTime() * 25.0f, 0.0f);
 #ifdef HYP_STRESS_TEST
-        auto view = g_world->GetView<TransformComponent, RenderMeshComponent>();
+        auto view = g_world->GetView<LocalTransformComponent, RenderMeshComponent>();
         for (EntityId entity : view) {
-            TransformComponent *transform = g_world->GetComponent<TransformComponent>(entity);
+            LocalTransformComponent *transform = g_world->GetComponent<LocalTransformComponent>(entity);
             transform->rotation = rotation;
             RenderMeshComponent *render_mesh = g_world->GetComponent<RenderMeshComponent>(entity);
             render_mesh->material->SetColor("u_color", Color(Random::Get(), Random::Get(), Random::Get(), 1.0f));
         }
 #else
-        TransformComponent *transform = g_world->GetComponent<TransformComponent>(g_cube);
+        LocalTransformComponent *transform = g_world->GetComponent<LocalTransformComponent>(g_parent);
         transform->rotation = rotation;
 #endif
     }

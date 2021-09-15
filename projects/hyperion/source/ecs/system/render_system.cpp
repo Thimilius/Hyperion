@@ -20,15 +20,15 @@ namespace Hyperion::Rendering {
     void CameraSystem::Run(World *world) {
         RenderFrame *render_frame = RenderEngine::GetMainRenderFrame();
 
-        auto view = world->GetView<TransformComponent, CameraComponent>();
+        auto view = world->GetView<LocalTransformComponent, CameraComponent>();
         for (EntityId entity : view) {
-            TransformComponent *transform = world->GetComponent<TransformComponent>(entity);
+            LocalTransformComponent *local_transform = world->GetComponent<LocalTransformComponent>(entity);
             CameraComponent *camera = world->GetComponent<CameraComponent>(entity);
 
             CameraProjectionMode projection_mode = camera->projection_mode;
-            Vector3 position = transform->position;
-            Vector3 up = transform->rotation * Vector3::Up();
-            Vector3 forward = transform->rotation * Vector3::Forward();
+            Vector3 position = local_transform->position;
+            Vector3 up = local_transform->rotation * Vector3::Up();
+            Vector3 forward = local_transform->rotation * Vector3::Forward();
             float32 fov = camera->fov;
             float32 orthographic_size = camera->orthographic_size;
             float32 near_plane = camera->near_plane;
@@ -68,7 +68,7 @@ namespace Hyperion::Rendering {
             render_frame_camera.projection_mode = projection_mode;
             render_frame_camera.clear_mode = camera->clear_mode;
             render_frame_camera.background_color = camera->background_color;
-            render_frame_camera.position = transform->position;
+            render_frame_camera.position = local_transform->position;
             render_frame_camera.forward = forward;
             render_frame_camera.up = up;
             render_frame_camera.fov = fov;

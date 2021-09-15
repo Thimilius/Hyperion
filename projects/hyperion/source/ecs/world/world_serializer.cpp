@@ -36,9 +36,9 @@ namespace Hyperion {
                 yaml_emitter << YAML::EndMap;
             }
 
-            TransformComponent *transform = world->GetComponent<TransformComponent>(entity);
+            LocalTransformComponent *transform = world->GetComponent<LocalTransformComponent>(entity);
             if (transform != nullptr) {
-                yaml_emitter << YAML::Key << "Transform";
+                yaml_emitter << YAML::Key << "LocalTransform";
                 yaml_emitter << YAML::BeginMap;
                 {
                     yaml_emitter << YAML::Key << "position";

@@ -46,7 +46,7 @@ namespace Hyperion::Rendering {
         if ((result.data.stage_flags & GraphicsShaderStageFlags::Vertex) != GraphicsShaderStageFlags::Vertex) {
             HYP_LOG_ERROR("OpenGL", "Shader does not contain a vertex shader!");
             return result;
-        } else if ((result.data.stage_flags & GraphicsShaderStageFlags::Pixel) != GraphicsShaderStageFlags::Pixel) {
+        } else if ((result.data.stage_flags & GraphicsShaderStageFlags::Fragment) != GraphicsShaderStageFlags::Fragment) {
             HYP_LOG_ERROR("OpenGL", "Shader does not contain a pixel shader!");
             return result;
         }
@@ -119,7 +119,7 @@ namespace Hyperion::Rendering {
             
             switch (m_current_shader_stage) {
                 case GraphicsShaderStageFlags::Vertex: result.data.vertex_source = source;
-                case GraphicsShaderStageFlags::Pixel: result.data.pixel_source = source;
+                case GraphicsShaderStageFlags::Fragment: result.data.fragment_source = source;
             }
         }
     }
@@ -213,7 +213,7 @@ namespace Hyperion::Rendering {
         if (string == "vertex") {
             return GraphicsShaderStageFlags::Vertex;
         } else if (string == "fragment") {
-            return GraphicsShaderStageFlags::Pixel;
+            return GraphicsShaderStageFlags::Fragment;
         } else {
             return GraphicsShaderStageFlags::Unknown;
         }

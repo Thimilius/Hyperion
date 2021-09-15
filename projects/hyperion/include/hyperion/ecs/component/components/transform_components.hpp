@@ -9,10 +9,16 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    struct TransformComponent {
+    struct LocalTransformComponent {
         Vector3 position = Vector3::Zero();
         Quaternion rotation = Quaternion::Identity();
         Vector3 scale = Vector3::One();
+    };
+
+    struct DerivedTransformComponent {
+        Vector3 derived_position = Vector3::Zero();
+        Quaternion derived_rotation = Quaternion::Identity();
+        Vector3 derived_scale = Vector3::One();
     };
 
     struct LocalToWorldComponent {
@@ -20,13 +26,13 @@ namespace Hyperion {
     };
 
     struct HierarchyComponent {
-        uint64 child_count = 0;
-
         EntityId parent = Entity::EMPTY;
 
-        EntityId first = Entity::EMPTY;
-        EntityId prev = Entity::EMPTY;
-        EntityId next = Entity::EMPTY;
+        uint64 child_count = 0;
+        EntityId first_child = Entity::EMPTY;
+
+        EntityId previous_sibling = Entity::EMPTY;
+        EntityId next_sibling = Entity::EMPTY;
     };
 
 }

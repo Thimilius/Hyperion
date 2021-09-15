@@ -12,21 +12,23 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     World::World() {
+        m_hierarchy.m_world = this;
+
         for (const ComponentInfo &component_info : ComponentRegistry::GetComponents()) {
-            m_component_pools.Add(ComponentPool(component_info));
+            m_storage.component_pools.Add(ComponentPool(component_info));
         }
     }
 
     //--------------------------------------------------------------
     bool8 World::IsValidId(EntityId id) const {
         EntityIndex index = EntityUtilities::GetIndex(id);
-        return index < m_entities.GetLength() && m_entities[index].id == id;
+        return index < m_storage.entities.GetLength() && m_storage.entities[index].id == id;
     }
 
     //--------------------------------------------------------------
     EntityGuid World::GetGuid(EntityId id) const {
         if (IsValidId(id)) {
-            return m_entities[EntityUtilities::GetIndex(id)].guid;
+            return m_storage.entities[EntityUtilities::GetIndex(id)].guid;
         } else {
             HYP_LOG_WARN("Entity", "Trying to get GUID from nonexistent entity with id {}.", id);
             return EntityGuid();
@@ -36,22 +38,22 @@ namespace Hyperion {
     //--------------------------------------------------------------
     EntityId World::CreateEntity(EntityPrimitive primitive, EntityGuid guid) {
         EntityId id;
-        if (m_available <= 0) {
-            m_entities.Add({ EntityUtilities::CreateId(static_cast<EntityIndex>(m_entities.GetLength()), 0), guid });
-            id = m_entities.GetLast().id;
+        if (m_storage.available <= 0) {
+            m_storage.entities.Add({ EntityUtilities::CreateId(static_cast<EntityIndex>(m_storage.entities.GetLength()), 0), guid });
+            id = m_storage.entities.GetLast().id;
         } else {
-            EntityIndex new_index = m_next;
-            m_next = EntityUtilities::GetIndex(m_entities[new_index].id);
-            m_available--;
+            EntityIndex new_index = m_storage.next;
+            m_storage.next = EntityUtilities::GetIndex(m_storage.entities[new_index].id);
+            m_storage.available--;
 
-            EntityId new_id = EntityUtilities::CreateId(new_index, EntityUtilities::GetVersion(m_entities[new_index].id));
-            m_entities[new_index].id = new_id;
-            m_entities[new_index].guid = guid;
+            EntityId new_id = EntityUtilities::CreateId(new_index, EntityUtilities::GetVersion(m_storage.entities[new_index].id));
+            m_storage.entities[new_index].id = new_id;
+            m_storage.entities[new_index].guid = guid;
 
             id = new_id;
         }
 
-        for (ComponentPool &component_pool : m_component_pools) {
+        for (ComponentPool &component_pool : m_storage.component_pools) {
             component_pool.FitIntoPool(id);
         }
 
@@ -63,16 +65,20 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void World::DestroyEntity(EntityId id) {
         if (IsValidId(id)) {
-            EntityId new_id = EntityUtilities::CreateId(m_next, EntityUtilities::GetVersion(id) + 1);
+            {
+                m_hierarchy.m_roots.Remove(id);
+            }
+
+            EntityId new_id = EntityUtilities::CreateId(m_storage.next, EntityUtilities::GetVersion(id) + 1);
             EntityIndex index = EntityUtilities::GetIndex(id);
 
-            m_next = index;
-            m_available++;
+            m_storage.next = index;
+            m_storage.available++;
 
-            EntityDescription &entity_description = m_entities[index];
+            EntityDescription &entity_description = m_storage.entities[index];
             entity_description.id = new_id;
 
-            for (ComponentPool &component_pool : m_component_pools) {
+            for (ComponentPool &component_pool : m_storage.component_pools) {
                 component_pool.RemoveComponent(id);
             }
         } else {
@@ -84,8 +90,14 @@ namespace Hyperion {
     void World::AddComponentsForPrimitive(EntityId id, EntityPrimitive primitive) {
         if (primitive != EntityPrimitive::Empty) {
             AddComponent<TagComponent>(id);
-            AddComponent<TransformComponent>(id);
+            AddComponent<LocalTransformComponent>(id);
+            AddComponent<DerivedTransformComponent>(id);
             AddComponent<LocalToWorldComponent>(id);
+            AddComponent<HierarchyComponent>(id);
+
+            {
+                m_hierarchy.m_roots.Add(id);
+            }
         }
 
         switch (primitive) {

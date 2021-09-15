@@ -335,7 +335,7 @@ namespace Hyperion::Rendering {
 
         OpenGLShader opengl_shader;
         opengl_shader.id = shader_id;
-        opengl_shader.program = OpenGLGraphicsShaderCompiler::Compile(data.vertex_source.c_str(), data.pixel_source.c_str()).program;
+        opengl_shader.program = OpenGLGraphicsShaderCompiler::Compile(data.vertex_source.c_str(), data.fragment_source.c_str()).program;
 
         g_opengl_shaders.Insert(shader_id, opengl_shader);
     }

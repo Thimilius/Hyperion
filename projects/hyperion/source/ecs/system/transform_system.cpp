@@ -13,11 +13,11 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void LocalToWorldSystem::Run(World *world) {
-        auto view = world->GetView<TransformComponent, LocalToWorldComponent>();
+        auto view = world->GetView<LocalTransformComponent, LocalToWorldComponent>();
         for (EntityId entity : view) {
-            TransformComponent *transform = world->GetComponent<TransformComponent>(entity);
+            LocalTransformComponent *local_transform = world->GetComponent<LocalTransformComponent>(entity);
             LocalToWorldComponent *local_to_world = world->GetComponent<LocalToWorldComponent>(entity);
-            local_to_world->local_to_world = Matrix4x4::TRS(transform->position, transform->rotation, transform->scale);
+            local_to_world->local_to_world = Matrix4x4::TRS(local_transform->position, local_transform->rotation, local_transform->scale);
         }
     }
 

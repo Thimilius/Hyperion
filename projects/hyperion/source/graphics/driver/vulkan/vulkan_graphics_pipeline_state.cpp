@@ -108,13 +108,13 @@ namespace Hyperion::Graphics {
         vertex_shader_state_create_info.module = static_cast<VulkanGraphicsShader *>(description.vertex_shader)->GetShaderModule();
         vertex_shader_state_create_info.pName = description.vertex_shader->GetDescription().entry_point;
 
-        HYP_ASSERT(description.pixel_shader);
-        HYP_ASSERT(description.pixel_shader->GetDescription().stage == GraphicsShaderStageFlags::Pixel);
+        HYP_ASSERT(description.fragment_shader);
+        HYP_ASSERT(description.fragment_shader->GetDescription().stage == GraphicsShaderStageFlags::Fragment);
         VkPipelineShaderStageCreateInfo pixel_shader_state_create_info = { };
         pixel_shader_state_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
         pixel_shader_state_create_info.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-        pixel_shader_state_create_info.module = static_cast<VulkanGraphicsShader *>(description.pixel_shader)->GetShaderModule();
-        pixel_shader_state_create_info.pName = description.pixel_shader->GetDescription().entry_point;
+        pixel_shader_state_create_info.module = static_cast<VulkanGraphicsShader *>(description.fragment_shader)->GetShaderModule();
+        pixel_shader_state_create_info.pName = description.fragment_shader->GetDescription().entry_point;
 
         VkPipelineShaderStageCreateInfo shader_stages[] = { vertex_shader_state_create_info, pixel_shader_state_create_info };
 

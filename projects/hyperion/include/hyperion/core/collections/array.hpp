@@ -41,8 +41,15 @@ namespace Hyperion {
         inline void Add(const T &item) { m_vector.push_back(item); }
         inline void Add(T &&item) { m_vector.push_back(item); }
         
-        inline void Remove(const T &item) { m_vector.erase(std::remove(begin(), end(), item)); }
-        inline void Remove(Iterator first, Iterator last, const T &item) { m_vector.erase(std::remove(first, last, item)); }
+        inline bool Remove(const T &item) { 
+            auto it = std::remove(begin(), end(), item);
+            if (it == end()) {
+                return false;
+            } else {
+                m_vector.erase(it);
+                return true;
+            }
+        }
         inline void RemoveLast() { m_vector.pop_back(); }
 
         inline void Clear() { m_vector.clear(); }

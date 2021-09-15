@@ -46,7 +46,8 @@ namespace Hyperion {
         ComponentRegistry::Register<SpriteComponent>();
         ComponentRegistry::Register<RenderMeshComponent>();
 
-        ComponentRegistry::Register<TransformComponent>();
+        ComponentRegistry::Register<LocalTransformComponent>();
+        ComponentRegistry::Register<DerivedTransformComponent>();
         ComponentRegistry::Register<LocalToWorldComponent>();
         ComponentRegistry::Register<HierarchyComponent>();
     }

@@ -3,6 +3,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/ecs/component/component_pool.hpp"
 #include "hyperion/ecs/entity/entity_utilities.hpp"
+#include "hyperion/ecs/world/world_hierarchy.hpp"
 #include "hyperion/ecs/world/world_view.hpp"
 
 //-------------------- Forward Declarations --------------------
@@ -13,6 +14,14 @@ namespace Hyperion {
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    struct WorldStorage {
+        Array<EntityDescription> entities;
+        uint64 available = 0;
+        EntityIndex next = EntityUtilities::GetIndex(Entity::EMPTY);
+
+        Array<ComponentPool> component_pools;
+    };
+
     class World final {
     private:
         World();
@@ -20,6 +29,9 @@ namespace Hyperion {
     public:
         inline String GetName() const { return m_name; }
         inline void SetName(const String &name) { m_name = name; }
+
+        inline WorldHierarchy &GetHierarchy() { return m_hierarchy; }
+        inline const WorldHierarchy &GetHierarchy() const { return m_hierarchy; }
 
         bool8 IsValidId(EntityId id) const;
         EntityGuid GetGuid(EntityId id) const;
@@ -31,7 +43,7 @@ namespace Hyperion {
         T *AddComponent(EntityId id) {
             if (IsValidId(id)) {
                 ComponentId component_id = ComponentRegistry::GetId<T>();
-                ComponentPool &component_pool = m_component_pools[component_id];
+                ComponentPool &component_pool = m_storage.component_pools[component_id];
 
                 byte *component_data = component_pool.AddComponent(id);
                 if (component_data != nullptr) {
@@ -51,7 +63,7 @@ namespace Hyperion {
         bool8 HasComponent(EntityId id) {
             if (IsValidId(id)) {
                 ComponentId component_id = ComponentRegistry::GetId<T>();
-                ComponentPool &component_pool = m_component_pools[component_id];
+                ComponentPool &component_pool = m_storage.component_pools[component_id];
                 return component_pool.HasComponent(id);
             } else {
                 HYP_LOG_WARN("Entity", "Trying to check component type of nonexistent entity with id {}.", id);
@@ -63,7 +75,7 @@ namespace Hyperion {
         T *GetComponent(EntityId id) {
             if (IsValidId(id)) {
                 ComponentId component_id = ComponentRegistry::GetId<T>();
-                ComponentPool &component_pool = m_component_pools[component_id];
+                ComponentPool &component_pool = m_storage.component_pools[component_id];
                 byte *component_data = component_pool.GetComponent(id);
                 return reinterpret_cast<T *>(component_data);
             } else {
@@ -76,7 +88,7 @@ namespace Hyperion {
         void RemoveComponent(EntityId id) {
             if (IsValidId(id)) {
                 ComponentId component_id = ComponentRegistry::GetId<T>();
-                ComponentPool &component_pool = m_component_pools[component_id];
+                ComponentPool &component_pool = m_storage.component_pools[component_id];
                 if (!component_pool.RemoveComponent(id)) {
                     HYP_LOG_WARN("Entity", "Trying to remove nonexistent component type from entity whith id {}.", id);
                 }
@@ -92,11 +104,8 @@ namespace Hyperion {
     private:
         String m_name = "World";
 
-        Array<EntityDescription> m_entities;
-        uint64 m_available = 0;
-        EntityIndex m_next = EntityUtilities::GetIndex(Entity::EMPTY);
-        
-        Array<ComponentPool> m_component_pools;
+        WorldHierarchy m_hierarchy;
+        WorldStorage m_storage;
     private:
     private:
         friend class Hyperion::WorldManager;

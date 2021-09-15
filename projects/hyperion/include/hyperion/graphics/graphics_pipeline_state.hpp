@@ -19,7 +19,7 @@ namespace Hyperion::Graphics {
         GraphicsRenderPass *render_pass;
 
         GraphicsShader *vertex_shader;
-        GraphicsShader *pixel_shader;
+        GraphicsShader *fragment_shader;
     };
 
     class GraphicsPipelineState : public GraphicsDeviceObject {
