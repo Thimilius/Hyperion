@@ -19,7 +19,7 @@ namespace Hyperion::Graphics {
 
     //--------------------------------------------------------------
     OpenGLGraphicsTexture::~OpenGLGraphicsTexture() {
-        glDeleteTextures(1, &m_texture_id);
+
     }
 
     //--------------------------------------------------------------

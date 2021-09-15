@@ -4,6 +4,7 @@ bullet3/3.07
 fmt/7.1.3
 freetype/2.10.4
 stb/20200203
+yaml-cpp/0.7.0
 
 [generators]
 premake
@@ -19,3 +20,4 @@ freetype/2.10.4:with_brotli=False
 freetype/2.10.4:with_bzip2=False
 freetype/2.10.4:with_png=False
 freetype/2.10.4:with_zlib=False
+yaml-cpp/0.7.0:shared=False

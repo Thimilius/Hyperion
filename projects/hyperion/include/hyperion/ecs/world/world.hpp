@@ -18,10 +18,13 @@ namespace Hyperion {
         World();
         ~World() = default;
     public:
+        inline String GetName() const { return m_name; }
+        inline void SetName(const String &name) { m_name = name; }
+
         bool8 IsValidId(EntityId id) const;
         EntityGuid GetGuid(EntityId id) const;
 
-        EntityId CreateEntity(EntityPrimitive primitive = EntityPrimitive::Base);
+        EntityId CreateEntity(EntityPrimitive primitive = EntityPrimitive::Base, EntityGuid guid = EntityGuid::Generate());
         void DestroyEntity(EntityId id);
 
         template<typename T>
@@ -87,6 +90,8 @@ namespace Hyperion {
     private:
         void AddComponentsForPrimitive(EntityId id, EntityPrimitive primitive);
     private:
+        String m_name = "World";
+
         Array<EntityDescription> m_entities;
         uint64 m_available = 0;
         EntityIndex m_next = EntityUtilities::GetIndex(Entity::EMPTY);
