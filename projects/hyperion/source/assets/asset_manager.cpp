@@ -11,63 +11,80 @@
 #include "hyperion/assets/texture.hpp"
 #include "hyperion/assets/loader/image_loader.hpp"
 #include "hyperion/assets/loader/mesh_loader.hpp"
+#include "hyperion/assets/utilities/mesh_generator.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     //--------------------------------------------------------------
     Material *AssetManager::CreateMaterial(Shader *shader) {
-        Material *material = new Material(GetNextAssetInfo(), shader);
-        s_materials.Add(material);
+        AssetInfo info = GetNextAssetInfo();
+        Material *material = new Material(info, shader);
+        s_materials.Insert(info.id, material);
         return material;
     }
 
     //--------------------------------------------------------------
+    Mesh *AssetManager::GetMeshPrimitive(MeshPrimitive mesh_primitive) {
+        switch (mesh_primitive) {
+            case MeshPrimitive::Quad: return s_primitives.mesh_quad;
+            case MeshPrimitive::Plane: return s_primitives.mesh_plane;
+            case MeshPrimitive::Cube: return s_primitives.mesh_cube;
+            case MeshPrimitive::Sphere: return s_primitives.mesh_sphere;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
+        }
+    }
+
+    //--------------------------------------------------------------
     Mesh *AssetManager::CreateMesh() {
-        Mesh *mesh = new Mesh(GetNextAssetInfo());
-        s_meshes.Add(mesh);
+        AssetInfo info = GetNextAssetInfo();
+        Mesh *mesh = new Mesh(info);
+        s_meshes.Insert(info.id, mesh);
         return mesh;
     }
 
     //--------------------------------------------------------------
     Texture2D *AssetManager::CreateTexture2D() {
-        Texture2D *texture = new Texture2D(GetNextAssetInfo());
-        s_textures.Add(texture);
+        AssetInfo info = GetNextAssetInfo();
+        Texture2D *texture = new Texture2D(info);
+        s_textures.Insert(info.id, texture);
         return texture;
     }
 
     //--------------------------------------------------------------
     Shader *AssetManager::CreateShader(const String &source) {
-        Shader *shader = new Shader(GetNextAssetInfo(), source);
-        s_shaders.Add(shader);
+        AssetInfo info = GetNextAssetInfo();
+        Shader *shader = new Shader(info, source);
+        s_shaders.Insert(info.id, shader);
         return shader;
     }
 
     //--------------------------------------------------------------
     void AssetManager::Unload(Asset *asset) {
+        AssetId asset_id = asset->GetAssetInfo().id;
         switch (asset->GetAssetType()) {
             case AssetType::Material: {
                 Material *material = static_cast<Material *>(asset);
-                HYP_ASSERT(s_materials.Contains(material));
-                s_materials.Remove(material);
+                HYP_ASSERT(s_materials.Contains(asset_id));
+                s_materials.Remove(asset_id);
                 break;
             }
             case AssetType::Mesh: {
                 Mesh *mesh = static_cast<Mesh *>(asset);
-                HYP_ASSERT(s_meshes.Contains(mesh));
-                s_meshes.Remove(mesh);
+                HYP_ASSERT(s_meshes.Contains(asset_id));
+                s_meshes.Remove(asset_id);
                 break;
             }
             case AssetType::Shader: {
                 Shader *shader = static_cast<Shader *>(asset);
-                HYP_ASSERT(s_shaders.Contains(shader));
-                s_shaders.Remove(shader);
+                HYP_ASSERT(s_shaders.Contains(asset_id));
+                s_shaders.Remove(asset_id);
                 break;
             }
             case AssetType::Texture: {
                 Texture *texture = static_cast<Texture *>(asset);
-                HYP_ASSERT(s_textures.Contains(texture));
-                s_textures.Remove(texture);
+                HYP_ASSERT(s_textures.Contains(asset_id));
+                s_textures.Remove(asset_id);
                 break;
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
@@ -81,6 +98,8 @@ namespace Hyperion {
     void AssetManager::Initialize() {
         ImageLoader::Initialize();
         MeshLoader::Initialize();
+
+        InitializePrimitives();
     }
 
     //--------------------------------------------------------------
@@ -95,6 +114,14 @@ namespace Hyperion {
     void AssetManager::Shutdown() {
         ImageLoader::Shutdown();
         MeshLoader::Shutdown();
+    }
+
+    //--------------------------------------------------------------
+    void AssetManager::InitializePrimitives() {
+        s_primitives.mesh_quad = MeshGenerator::GenerateQuad(1.0f, 1.0f);
+        s_primitives.mesh_plane = MeshGenerator::GeneratePlane(10.0f, 10.0f);
+        s_primitives.mesh_cube = MeshGenerator::GenerateCube(1.0f);
+        s_primitives.mesh_sphere = MeshGenerator::GenerateSphere(0.5f);
     }
 
     //--------------------------------------------------------------

@@ -18,7 +18,7 @@
 //------------------------- Namespaces -------------------------
 using namespace Hyperion;
 
-//#define HYP_STRESS_TEST
+#define HYP_STRESS_TEST
 
 //-------------------- Definition Namespace --------------------
 namespace Sandbox {
@@ -57,7 +57,7 @@ namespace Sandbox {
         Shader *shader = AssetManager::CreateShader(FileSystem::ReadAllText("data/shaders/standard.shader"));
         g_material = AssetManager::CreateMaterial(shader);
 
-        Mesh *mesh = MeshLoader::Load("data/models/monkey.obj").Unwrap();
+        Mesh *mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Cube); MeshLoader::Load("data/models/monkey.obj").Unwrap();
 
 #ifdef HYP_STRESS_TEST
         float32 size = 100;
