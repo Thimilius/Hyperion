@@ -3,6 +3,7 @@
 //---------------------- Library Includes ----------------------
 #include <hyperion/core/app/application.hpp>
 
+//-------------------- Definition Namespace --------------------
 namespace Sandbox {
 
     class SandboxApplication : public Hyperion::Application {

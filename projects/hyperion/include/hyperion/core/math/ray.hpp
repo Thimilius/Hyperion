@@ -10,6 +10,7 @@ namespace Hyperion {
         Vector3 origin;
         Vector3 direction;
 
+        Ray();
         Ray(Vector3 origin, Vector3 direction);
 
         Vector3 GetPoint(float32 t) const;

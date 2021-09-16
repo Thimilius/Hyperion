@@ -9,6 +9,7 @@
 #include "hyperion/core/app/display.hpp"
 #include "hyperion/ecs/component/components/render_components.hpp"
 #include "hyperion/ecs/component/components/transform_components.hpp"
+#include "hyperion/ecs/utilities/camera_utilities.hpp"
 #include "hyperion/ecs/world/world.hpp"
 #include "hyperion/rendering/render_engine.hpp"
 #include "hyperion/rendering/frame/render_frame.hpp"
@@ -25,38 +26,10 @@ namespace Hyperion::Rendering {
             LocalTransformComponent *local_transform = world->GetComponent<LocalTransformComponent>(entity);
             CameraComponent *camera = world->GetComponent<CameraComponent>(entity);
 
-            CameraProjectionMode projection_mode = camera->projection_mode;
-            Vector3 position = local_transform->position;
-            Vector3 up = local_transform->rotation * Vector3::Up();
-            Vector3 forward = local_transform->rotation * Vector3::Forward();
-            float32 fov = camera->fov;
-            float32 orthographic_size = camera->orthographic_size;
-            float32 near_plane = camera->near_plane;
-            float32 far_plane = camera->far_plane;
+            CameraUtilities::RecalculateMatricies(camera, local_transform);
+
             uint32 display_width = Display::GetWidth();
             uint32 display_height = Display::GetHeight();
-            float32 aspect_ratio = static_cast<float32>(display_width) / static_cast<float32>(display_height);
-
-            Matrix4x4 view_matrix = Matrix4x4::LookAt(position, position + forward, up);
-            Matrix4x4 projection_matrix;
-            switch (projection_mode) {
-                case CameraProjectionMode::Perspective: {
-                    projection_matrix = Matrix4x4::Perspective(fov, aspect_ratio, near_plane, far_plane);
-                    break;
-                }
-                case CameraProjectionMode::Orthographic: {
-                    projection_matrix = Matrix4x4::Orthographic(
-                        -orthographic_size * aspect_ratio,
-                        orthographic_size * aspect_ratio,
-                        -orthographic_size, orthographic_size,
-                        near_plane,
-                        far_plane);
-                    break;
-                }
-                default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
-            }
-            Matrix4x4 view_projection_matrix = projection_matrix * view_matrix;
-
             CameraViewportClipping &viewport_clipping = camera->viewport_clipping;
             CameraViewport viewport;
             viewport.x = static_cast<uint32>(Math::Clamp01(viewport_clipping.x) * display_width);
@@ -65,23 +38,23 @@ namespace Hyperion::Rendering {
             viewport.height = static_cast<uint32>(Math::Clamp01(viewport_clipping.height) * display_height);
 
             RenderFrameCamera &render_frame_camera = render_frame->AddCamera();
-            render_frame_camera.projection_mode = projection_mode;
+            render_frame_camera.projection_mode = camera->projection_mode;
             render_frame_camera.clear_mode = camera->clear_mode;
             render_frame_camera.background_color = camera->background_color;
             render_frame_camera.visibility_mask = camera->visibility_mask;
             render_frame_camera.position = local_transform->position;
-            render_frame_camera.forward = forward;
-            render_frame_camera.up = up;
-            render_frame_camera.fov = fov;
-            render_frame_camera.orthographic_size = orthographic_size;
-            render_frame_camera.near_plane = near_plane;
-            render_frame_camera.far_plane = far_plane;
-            render_frame_camera.view_matrix = view_matrix;
-            render_frame_camera.inverse_view_matrix = view_matrix.Inverted();
-            render_frame_camera.projection_matrix = projection_matrix;
-            render_frame_camera.inverse_projection_matrix = projection_matrix.Inverted();
-            render_frame_camera.view_projection_matrix = view_projection_matrix;
-            render_frame_camera.inverse_view_projection_matrix = view_projection_matrix.Inverted();
+            render_frame_camera.forward = local_transform->rotation * Vector3::Forward();
+            render_frame_camera.up = local_transform->rotation * Vector3::Up();
+            render_frame_camera.fov = camera->fov;
+            render_frame_camera.orthographic_size = camera->orthographic_size;
+            render_frame_camera.near_plane = camera->near_plane;
+            render_frame_camera.far_plane = camera->far_plane;
+            render_frame_camera.view_matrix = camera->view_matrix;
+            render_frame_camera.inverse_view_matrix = camera->view_matrix.Inverted();
+            render_frame_camera.projection_matrix = camera->projection_matrix;
+            render_frame_camera.inverse_projection_matrix = camera->projection_matrix.Inverted();
+            render_frame_camera.view_projection_matrix = camera->view_projection_matrix;
+            render_frame_camera.inverse_view_projection_matrix = camera->view_projection_matrix.Inverted();
             render_frame_camera.viewport = { 0, 0, display_width, display_height };
         }
     }

@@ -25,6 +25,14 @@ namespace Hyperion {
         float32 orthographic_size = 2.75f;
 
         Rendering::CameraViewportClipping viewport_clipping = { 0.0f, 0.0f, 1.0f, 1.0f };
+
+        Matrix4x4 view_matrix = Matrix4x4::Identity();
+        Matrix4x4 projection_matrix = Matrix4x4::Identity();
+        Matrix4x4 view_projection_matrix = Matrix4x4::Identity();
+
+        Matrix4x4 inverse_view_matrix = Matrix4x4::Identity();
+        Matrix4x4 inverse_projection_matrix = Matrix4x4::Identity();
+        Matrix4x4 inverse_view_projection_matrix = Matrix4x4::Identity();
     };
 
     struct SpriteComponent {

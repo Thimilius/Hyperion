@@ -15,6 +15,9 @@
 #include <hyperion/ecs/world/world_manager.hpp>
 #include <hyperion/ecs/world/world_serializer.hpp>
 
+//---------------------- Project Includes ----------------------
+#include "sandbox/camera_controller.hpp"
+
 //------------------------- Namespaces -------------------------
 using namespace Hyperion;
 
@@ -34,6 +37,8 @@ namespace Sandbox {
     EntityId g_parent;
     EntityId g_child;
 
+    CameraController *g_camera_controller;
+
     //--------------------------------------------------------------
     void SandboxApplication::OnInitialize() {
         UpdateTitle();
@@ -44,6 +49,9 @@ namespace Sandbox {
         g_camera = g_world->CreateEntity(EntityPrimitive::Camera);
         CameraComponent *camera = g_world->GetComponent<CameraComponent>(g_camera);
         camera->background_color = Color(0.0f, 1.0f, 1.0f, 1.0f);
+
+        g_camera_controller = new FirstPersonCameraController(g_camera);
+        g_camera_controller->Reset(g_world);
 
         LocalTransformComponent *camera_transform = g_world->GetComponent<LocalTransformComponent>(g_camera);
 #ifdef HYP_STRESS_TEST
@@ -92,7 +100,6 @@ namespace Sandbox {
         String world_data = WorldSerializer::Serialize(g_world);
         HYP_TRACE("\n{}", world_data);
         World *world = WorldSerializer::Deserialize(world_data);
-        auto t = world->GetComponent<CameraComponent>(g_camera);
 #endif
     }
 
@@ -104,6 +111,8 @@ namespace Sandbox {
         if (Input::IsKeyDown(KeyCode::F1)) {
             GetWindow()->SetWindowMode(GetWindow()->GetWindowMode() == WindowMode::Borderless ? WindowMode::Windowed : WindowMode::Borderless);
         }
+
+        g_camera_controller->Update(g_world, delta_time);
 
         Quaternion rotation = Quaternion::FromEulerAngles(0.0f, Time::GetTime() * 25.0f, 0.0f);
 

@@ -27,6 +27,8 @@ namespace Hyperion::Rendering {
         float32 fov;
         float32 orthographic_size;
 
+        CameraViewport viewport;
+
         Matrix4x4 view_matrix;
         Matrix4x4 projection_matrix;
         Matrix4x4 view_projection_matrix;
@@ -34,8 +36,6 @@ namespace Hyperion::Rendering {
         Matrix4x4 inverse_view_matrix;
         Matrix4x4 inverse_projection_matrix;
         Matrix4x4 inverse_view_projection_matrix;
-
-        CameraViewport viewport;
     };
 
 }
