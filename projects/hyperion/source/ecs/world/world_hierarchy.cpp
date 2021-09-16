@@ -127,7 +127,13 @@ namespace Hyperion {
 
         // Remove relation to old parent.
         if (entity_hierarchy->parent == Entity::EMPTY) {
-            m_roots.Remove(entity);
+            if (m_first_root == entity) {
+                m_first_root = entity_hierarchy->next_sibling;
+            }
+            if (m_last_root == entity) {
+                m_last_root = entity_hierarchy->previous_sibling;
+            }
+            m_root_count--;
         } else {
             HierarchyComponent *old_parent_hierarchy = m_world->GetComponent<HierarchyComponent>(entity_hierarchy->parent);
             HYP_ASSERT(old_parent_hierarchy);
@@ -143,18 +149,19 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void WorldHierarchy::AddRootRelation(EntityId entity, HierarchyComponent *entity_hierarchy) {
-        if (m_roots.IsEmpty()) {
+        if (m_root_count == 0) {
+            m_first_root = entity;
             entity_hierarchy->previous_sibling = Entity::EMPTY;
         } else {
-            EntityId old_last_root = m_roots.GetLast();
-            HierarchyComponent *old_last_root_hierarchy = m_world->GetComponent<HierarchyComponent>(old_last_root);
+            HierarchyComponent *old_last_root_hierarchy = m_world->GetComponent<HierarchyComponent>(m_last_root);
             HYP_ASSERT(old_last_root_hierarchy);
             old_last_root_hierarchy->next_sibling = entity;
-            entity_hierarchy->previous_sibling = old_last_root;
+            entity_hierarchy->previous_sibling = m_last_root;
         }
         entity_hierarchy->parent = Entity::EMPTY;
         entity_hierarchy->next_sibling = Entity::EMPTY;
-        m_roots.Add(entity);
+        m_last_root = entity;
+        m_root_count++;
     }
 
 }

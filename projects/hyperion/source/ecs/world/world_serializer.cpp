@@ -292,8 +292,16 @@ namespace Hyperion {
 
         yaml_emitter << YAML::BeginMap;
         yaml_emitter << YAML::Key << "name" << YAML::Value << world->GetName();
-        yaml_emitter << YAML::Key << "entities" << YAML::Value << YAML::BeginSeq;
+        yaml_emitter << YAML::Key << "hierarchy" << YAML::Value << YAML::BeginMap;
+        {
+            WorldHierarchy *world_hierarchy = world->GetHierarchy();
+            yaml_emitter << YAML::Key << "root_count" << YAML::Value << world_hierarchy->GetRootCount();
+            yaml_emitter << YAML::Key << "first_root" << YAML::Value << world->GetGuid(world_hierarchy->GetFirstRoot()).ToString();
+            yaml_emitter << YAML::Key << "last_root" << YAML::Value << world->GetGuid(world_hierarchy->GetLastRoot()).ToString();
+        }
+        yaml_emitter << YAML::EndMap;
 
+        yaml_emitter << YAML::Key << "entities" << YAML::Value << YAML::BeginSeq;
         auto view = world->GetView();
         for (EntityId entity : view) {
             yaml_emitter << YAML::BeginMap;
@@ -447,6 +455,24 @@ namespace Hyperion {
         }
 
         // In the second phase we do a detailed load of the entities which includes resolving references.
+        YAML::Node yaml_hierarchy = yaml_world["hierarchy"];
+        if (yaml_hierarchy && yaml_hierarchy.IsMap()) {
+            WorldHierarchy *world_hierarchy = world->GetHierarchy();
+
+            YAML::Node yaml_hierarchy_root_count = yaml_hierarchy["root_count"];
+            if (yaml_hierarchy_root_count) {
+                world_hierarchy->m_root_count = yaml_hierarchy_root_count.as<uint64>();
+            }
+            YAML::Node yaml_hierarchy_first_root = yaml_hierarchy["first_root"];
+            if (yaml_hierarchy_first_root) {
+                world_hierarchy->m_first_root = yaml_hierarchy_first_root.IsNull() ? Entity::EMPTY : world->GetByGuid(EntityGuid::Generate(yaml_hierarchy_first_root.as<String>()));
+            }
+            YAML::Node yaml_hierarchy_last_root = yaml_hierarchy["last_root"];
+            if (yaml_hierarchy_last_root) {
+                world_hierarchy->m_last_root = yaml_hierarchy_last_root.IsNull() ? Entity::EMPTY : world->GetByGuid(EntityGuid::Generate(yaml_hierarchy_last_root.as<String>()));
+            }
+        }
+
         if (yaml_entities && yaml_entities.IsSequence()) {
             for (auto yaml_entity : yaml_entities) {
                 if (yaml_entity && yaml_entity.IsMap()) {

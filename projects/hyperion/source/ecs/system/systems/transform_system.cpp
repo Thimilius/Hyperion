@@ -12,9 +12,12 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void HierarchyTransformSystem::Run(World *world) {
-        const Array<EntityId> &roots = world->GetHierarchy()->GetRoots();
-        for (EntityId root : roots) {
+        EntityId root = world->GetHierarchy()->GetFirstRoot();
+        uint64 root_count = world->GetHierarchy()->GetRootCount();
+        for (uint64 i = 0; i < root_count; i++) {
+            HierarchyComponent *root_hierarchy = world->GetComponent<HierarchyComponent>(root);
             UpdateBranch(world, root, world->GetComponent<HierarchyComponent>(root), nullptr);
+            root = root_hierarchy->next_sibling;
         }
     }
 

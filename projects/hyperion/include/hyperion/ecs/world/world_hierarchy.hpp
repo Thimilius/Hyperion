@@ -7,6 +7,7 @@
 namespace Hyperion {
     struct HierarchyComponent;
     class World;
+    class WorldSerializer;
 }
 
 //-------------------- Definition Namespace --------------------
@@ -25,7 +26,9 @@ namespace Hyperion {
 
     class WorldHierarchy final {
     public:
-        const Array<EntityId> &GetRoots() const { return m_roots; }
+        EntityId GetRootCount() const { return m_root_count; }
+        EntityId GetFirstRoot() const { return m_first_root; }
+        EntityId GetLastRoot() const { return m_last_root; }
 
         void SetParent(EntityId entity, EntityId parent, WorldHierarchyTransformUpdate update = WorldHierarchyTransformUpdate::None);
 
@@ -39,10 +42,12 @@ namespace Hyperion {
     private:
         World *m_world;
 
-        // TODO: Make this an implicit list as well.
-        Array<EntityId> m_roots;
+        uint64 m_root_count = 0;
+        EntityId m_first_root = Entity::EMPTY;
+        EntityId m_last_root = Entity::EMPTY;
     private:
         friend class Hyperion::World;
+        friend class Hyperion::WorldSerializer;
     };
 
 }
