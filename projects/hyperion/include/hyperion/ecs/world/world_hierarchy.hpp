@@ -18,6 +18,11 @@ namespace Hyperion {
         All,
     };
 
+    enum class WorldHierarchyDestructionPolicy {
+        DestroyChildren,
+        KeepChildrenAsRoots,
+    };
+
     class WorldHierarchy final {
     public:
         const Array<EntityId> &GetRoots() const { return m_roots; }
@@ -26,7 +31,11 @@ namespace Hyperion {
 
         void UpdateTransform(WorldHierarchyTransformUpdate update = WorldHierarchyTransformUpdate::Branch, EntityId branch = Entity::EMPTY);
     private:
-        void AddRoot(EntityId entity, HierarchyComponent *entity_hierarchy);
+        void HandleEntityCreation(EntityId entity);
+        void HandleEntityDestruction(EntityId entity, WorldHierarchyDestructionPolicy destruction_policy);
+
+        void RemoveOldRelations(EntityId entity, HierarchyComponent *entity_hierarchy);
+        void AddRootRelation(EntityId entity, HierarchyComponent *entity_hierarchy);
     private:
         World *m_world;
         Array<EntityId> m_roots;

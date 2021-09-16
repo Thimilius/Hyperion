@@ -20,14 +20,14 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    bool8 World::IsValidId(EntityId id) const {
+    bool8 World::IsAlive(EntityId id) const {
         EntityIndex index = EntityUtilities::GetIndex(id);
         return index < m_storage.entities.GetLength() && m_storage.entities[index].id == id;
     }
 
     //--------------------------------------------------------------
     EntityGuid World::GetGuid(EntityId id) const {
-        if (IsValidId(id)) {
+        if (IsAlive(id)) {
             return m_storage.entities[EntityUtilities::GetIndex(id)].guid;
         } else {
             HYP_LOG_WARN("Entity", "Trying to get GUID from nonexistent entity with id {}.", id);
@@ -59,15 +59,15 @@ namespace Hyperion {
 
         AddComponentsForPrimitive(id, primitive);
 
+        m_hierarchy.HandleEntityCreation(id);
+
         return id;
     }
 
     //--------------------------------------------------------------
-    void World::DestroyEntity(EntityId id) {
-        if (IsValidId(id)) {
-            {
-                m_hierarchy.m_roots.Remove(id);
-            }
+    void World::DestroyEntity(EntityId id, WorldHierarchyDestructionPolicy hierarchy_destruction_policy) {
+        if (IsAlive(id)) {
+            m_hierarchy.HandleEntityDestruction(id, hierarchy_destruction_policy);
 
             EntityId new_id = EntityUtilities::CreateId(m_storage.next, EntityUtilities::GetVersion(id) + 1);
             EntityIndex index = EntityUtilities::GetIndex(id);
@@ -93,9 +93,7 @@ namespace Hyperion {
             AddComponent<LocalTransformComponent>(id);
             AddComponent<DerivedTransformComponent>(id);
             AddComponent<LocalToWorldComponent>(id);
-            HierarchyComponent *hierarchy = AddComponent<HierarchyComponent>(id);
-
-            m_hierarchy.AddRoot(id, hierarchy);
+            AddComponent<HierarchyComponent>(id);
         }
 
         switch (primitive) {

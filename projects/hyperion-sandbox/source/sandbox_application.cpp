@@ -18,7 +18,7 @@
 //------------------------- Namespaces -------------------------
 using namespace Hyperion;
 
-#define HYP_STRESS_TEST
+//#define HYP_STRESS_TEST
 
 //-------------------- Definition Namespace --------------------
 namespace Sandbox {
@@ -55,6 +55,7 @@ namespace Sandbox {
 #endif
 
         Shader *shader = AssetManager::CreateShader(FileSystem::ReadAllText("data/shaders/standard.shader"));
+        Material *material = AssetManager::CreateMaterial(shader);
         Mesh *mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Cube); MeshLoader::Load("data/models/monkey.obj").Unwrap();
 
         g_parent = g_world->CreateEntity();
@@ -73,20 +74,20 @@ namespace Sandbox {
                 render_mesh->material = material;
                 render_mesh->mesh = mesh;
 
-                g_world->GetHierarchy().SetParent(entity, g_parent);
+                g_world->GetHierarchy()->SetParent(entity, g_parent);
             }
         }
 #else
         RenderMeshComponent *parent_render_mesh = g_world->AddComponent<RenderMeshComponent>(g_parent);
-        parent_render_mesh->material = g_material;
+        parent_render_mesh->material = material;
         parent_render_mesh->mesh = mesh;
 
         g_child = g_world->CreateEntity();
         RenderMeshComponent *child_render_mesh = g_world->AddComponent<RenderMeshComponent>(g_child);
-        child_render_mesh->material = g_material;
+        child_render_mesh->material = material;
         child_render_mesh->mesh = mesh;
         g_world->GetComponent<LocalTransformComponent>(g_child)->position = Vector3(2.0f, 0.0f, 0.0f);
-        g_world->GetHierarchy().SetParent(g_child, g_parent);
+        g_world->GetHierarchy()->SetParent(g_child, g_parent);
 #endif
     }
 

@@ -12,7 +12,8 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void HierarchyTransformSystem::Run(World *world) {
-        for (EntityId root : world->GetHierarchy().GetRoots()) {
+        const Array<EntityId> &roots = world->GetHierarchy()->GetRoots();
+        for (EntityId root : roots) {
             UpdateBranch(world, root, world->GetComponent<HierarchyComponent>(root), nullptr);
         }
     }

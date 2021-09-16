@@ -30,18 +30,19 @@ namespace Hyperion {
         inline String GetName() const { return m_name; }
         inline void SetName(const String &name) { m_name = name; }
 
-        inline WorldHierarchy &GetHierarchy() { return m_hierarchy; }
-        inline const WorldHierarchy &GetHierarchy() const { return m_hierarchy; }
+        inline WorldHierarchy *GetHierarchy() { return &m_hierarchy; }
+        inline const WorldHierarchy *GetHierarchy() const { return &m_hierarchy; }
 
-        bool8 IsValidId(EntityId id) const;
+        bool8 IsAlive(EntityId id) const;
+
         EntityGuid GetGuid(EntityId id) const;
 
         EntityId CreateEntity(EntityPrimitive primitive = EntityPrimitive::Base, EntityGuid guid = EntityGuid::Generate());
-        void DestroyEntity(EntityId id);
+        void DestroyEntity(EntityId id, WorldHierarchyDestructionPolicy hierarchy_destruction_policy = WorldHierarchyDestructionPolicy::DestroyChildren);
 
         template<typename T>
         T *AddComponent(EntityId id) {
-            if (IsValidId(id)) {
+            if (IsAlive(id)) {
                 ComponentId component_id = ComponentRegistry::GetId<T>();
                 ComponentPool &component_pool = m_storage.component_pools[component_id];
 
@@ -61,7 +62,7 @@ namespace Hyperion {
 
         template<typename T>
         bool8 HasComponent(EntityId id) {
-            if (IsValidId(id)) {
+            if (IsAlive(id)) {
                 ComponentId component_id = ComponentRegistry::GetId<T>();
                 ComponentPool &component_pool = m_storage.component_pools[component_id];
                 return component_pool.HasComponent(id);
@@ -73,7 +74,7 @@ namespace Hyperion {
 
         template<typename T>
         T *GetComponent(EntityId id) {
-            if (IsValidId(id)) {
+            if (IsAlive(id)) {
                 ComponentId component_id = ComponentRegistry::GetId<T>();
                 ComponentPool &component_pool = m_storage.component_pools[component_id];
                 byte *component_data = component_pool.GetComponent(id);
@@ -86,7 +87,7 @@ namespace Hyperion {
 
         template<typename T>
         void RemoveComponent(EntityId id) {
-            if (IsValidId(id)) {
+            if (IsAlive(id)) {
                 ComponentId component_id = ComponentRegistry::GetId<T>();
                 ComponentPool &component_pool = m_storage.component_pools[component_id];
                 if (!component_pool.RemoveComponent(id)) {
