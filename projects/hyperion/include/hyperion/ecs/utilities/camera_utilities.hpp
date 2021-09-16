@@ -14,9 +14,9 @@ namespace Hyperion {
     public:
         static Vector3 ScreenToWorldPoint(CameraComponent *camera, Vector3 screen_point);
         static Vector2 WorldToScreenPoint(CameraComponent *camera, Vector3 world_point);
-        static Ray ScreenPointToRay(CameraComponent *camera, LocalTransformComponent *local_transform, Vector2 screen_point);
+        static Ray ScreenPointToRay(CameraComponent *camera, DerivedTransformComponent *derived_transform, Vector2 screen_point);
 
-        static void RecalculateMatricies(CameraComponent *camera, LocalTransformComponent *local_transform);
+        static void RecalculateMatricies(CameraComponent *camera, DerivedTransformComponent *derived_transform);
     private:
         CameraUtilities() = delete;
         ~CameraUtilities() = delete;

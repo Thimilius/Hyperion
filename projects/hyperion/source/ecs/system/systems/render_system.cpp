@@ -10,6 +10,7 @@
 #include "hyperion/ecs/component/components/render_components.hpp"
 #include "hyperion/ecs/component/components/transform_components.hpp"
 #include "hyperion/ecs/utilities/camera_utilities.hpp"
+#include "hyperion/ecs/utilities/transform_utilities.hpp"
 #include "hyperion/ecs/world/world.hpp"
 #include "hyperion/rendering/render_engine.hpp"
 #include "hyperion/rendering/frame/render_frame.hpp"
@@ -21,12 +22,12 @@ namespace Hyperion::Rendering {
     void CameraSystem::Run(World *world) {
         RenderFrame *render_frame = RenderEngine::GetMainRenderFrame();
 
-        auto view = world->GetView<LocalTransformComponent, CameraComponent>();
+        auto view = world->GetView<DerivedTransformComponent, CameraComponent>();
         for (EntityId entity : view) {
-            LocalTransformComponent *local_transform = world->GetComponent<LocalTransformComponent>(entity);
+            DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(entity);
             CameraComponent *camera = world->GetComponent<CameraComponent>(entity);
 
-            CameraUtilities::RecalculateMatricies(camera, local_transform);
+            CameraUtilities::RecalculateMatricies(camera, derived_transform);
 
             uint32 display_width = Display::GetWidth();
             uint32 display_height = Display::GetHeight();
@@ -42,9 +43,9 @@ namespace Hyperion::Rendering {
             render_frame_camera.clear_mode = camera->clear_mode;
             render_frame_camera.background_color = camera->background_color;
             render_frame_camera.visibility_mask = camera->visibility_mask;
-            render_frame_camera.position = local_transform->position;
-            render_frame_camera.forward = local_transform->rotation * Vector3::Forward();
-            render_frame_camera.up = local_transform->rotation * Vector3::Up();
+            render_frame_camera.position = derived_transform->position;
+            render_frame_camera.forward = TransformUtilities::GetForward(derived_transform);
+            render_frame_camera.up = TransformUtilities::GetUp(derived_transform);
             render_frame_camera.fov = camera->fov;
             render_frame_camera.orthographic_size = camera->orthographic_size;
             render_frame_camera.near_plane = camera->near_plane;

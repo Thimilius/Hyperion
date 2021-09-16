@@ -9,7 +9,7 @@
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
     struct CameraComponent;
-    struct LocalTransformComponent;
+    struct DerivedTransformComponent;
     class World;
 }
 
@@ -55,7 +55,7 @@ namespace Sandbox {
         void Reset(Hyperion::World *world) override;
         void Update(Hyperion::World *world, float32 delta_time) override;
     private:
-        Hyperion::Vector3 GetPositionUnderMouse(Hyperion::CameraComponent *camera, Hyperion::LocalTransformComponent *local_transform) const;
+        Hyperion::Vector3 GetPositionUnderMouse(Hyperion::CameraComponent *camera, Hyperion::DerivedTransformComponent *derived_transform) const;
         Hyperion::Vector3 GetXZPlanePosition(Hyperion::Vector3 position, Hyperion::Vector3 forward) const;
         Hyperion::Vector3 GetLookAtPosition(Hyperion::Vector3 look_at_position, Hyperion::Vector3 position, Hyperion::Vector3 forward) const;
         float32 ClampAngle(float32 angle, float32 min, float32 max) const;
@@ -63,10 +63,10 @@ namespace Sandbox {
         Hyperion::Plane m_xz_plane = Hyperion::Plane(Hyperion::Vector3::Up(), 0);
         float32 m_xz_plane_distance = 1.0f;
 
-        float32 m_rotation_axis_x;
-        float32 m_rotation_axis_y;
-        float32 m_rotation_velocity_x;
-        float32 m_rotation_velocity_y;
+        float32 m_rotation_axis_x = 0.0f;
+        float32 m_rotation_axis_y = 0.0f;
+        float32 m_rotation_velocity_x = 0.0f;
+        float32 m_rotation_velocity_y = 0.0f;
         float32 m_zoom = 1.0f;
 
         Hyperion::Vector3 m_last_position;

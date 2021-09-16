@@ -50,7 +50,7 @@ namespace Sandbox {
         CameraComponent *camera = g_world->GetComponent<CameraComponent>(g_camera);
         camera->background_color = Color(0.0f, 1.0f, 1.0f, 1.0f);
 
-        g_camera_controller = new FirstPersonCameraController(g_camera);
+        g_camera_controller = new LookAroundCameraController(g_camera);
         g_camera_controller->Reset(g_world);
 
         LocalTransformComponent *camera_transform = g_world->GetComponent<LocalTransformComponent>(g_camera);
@@ -113,6 +113,9 @@ namespace Sandbox {
         }
 
         g_camera_controller->Update(g_world, delta_time);
+        if (Input::IsKeyDown(KeyCode::R)) {
+            g_camera_controller->Reset(g_world);
+        }
 
         Quaternion rotation = Quaternion::FromEulerAngles(0.0f, Time::GetTime() * 25.0f, 0.0f);
 

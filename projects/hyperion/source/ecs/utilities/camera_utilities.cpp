@@ -7,6 +7,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/display.hpp"
 #include "hyperion/core/math/vector4.hpp"
+#include "hyperion/ecs/utilities/transform_utilities.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -39,7 +40,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Ray CameraUtilities::ScreenPointToRay(CameraComponent *camera, LocalTransformComponent *local_transform, Vector2 screen_point) {
+    Ray CameraUtilities::ScreenPointToRay(CameraComponent *camera, DerivedTransformComponent *derived_transform, Vector2 screen_point) {
         float32 display_width = static_cast<float32>(Display::GetWidth());
         float32 display_height = static_cast<float32>(Display::GetHeight());
 
@@ -53,7 +54,7 @@ namespace Hyperion {
                 view.w = 0.0f;
                 Vector4 world = camera->inverse_view_matrix * view;
 
-                return Ray(local_transform->position, Vector3(world.x, world.y, world.z));
+                return Ray(derived_transform->position, Vector3(world.x, world.y, world.z));
             }
             case Rendering::CameraProjectionMode::Orthographic: {
                 float32 aspect_ratio = display_width / display_height;
@@ -66,22 +67,22 @@ namespace Hyperion {
                 float32 ray_x = (screen_point.x - (display_width / 2.0f)) / display_width * (r - l);
                 float32 ray_y = (screen_point.y - (display_height / 2.0f)) / display_height * (t - b);
 
-                Vector3 current_right = local_transform->rotation * Vector3::Right();
-                Vector3 current_up = local_transform->rotation * Vector3::Up();
-                Vector3 current_forward = local_transform->rotation * Vector3::Forward();
+                Vector3 right = TransformUtilities::GetRight(derived_transform);
+                Vector3 up = TransformUtilities::GetUp(derived_transform);
+                Vector3 forward = TransformUtilities::GetForward(derived_transform);
 
-                Vector3 position = local_transform->position + (current_right * ray_x) + (current_up * ray_y) + (current_forward * camera->near_plane);
-                return Ray(position, current_forward);
+                Vector3 position = derived_transform->position + (right * ray_x) + (up * ray_y) + (forward * camera->near_plane);
+                return Ray(position, forward);
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return Ray();
         }
     }
 
     //--------------------------------------------------------------
-    void CameraUtilities::RecalculateMatricies(CameraComponent *camera, LocalTransformComponent *local_transform) {
-        Vector3 position = local_transform->position;
-        Vector3 up = local_transform->rotation * Vector3::Up();
-        Vector3 forward = local_transform->rotation * Vector3::Forward();
+    void CameraUtilities::RecalculateMatricies(CameraComponent *camera, DerivedTransformComponent *derived_transform) {
+        Vector3 position = derived_transform->position;
+        Vector3 up = TransformUtilities::GetUp(derived_transform);
+        Vector3 forward = TransformUtilities::GetForward(derived_transform);
         float32 fov = camera->fov;
         float32 orthographic_size = camera->orthographic_size;
         float32 near_plane = camera->near_plane;

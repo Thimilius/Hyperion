@@ -7,6 +7,7 @@
 #include <hyperion/ecs/component/components/render_components.hpp>
 #include <hyperion/ecs/component/components/transform_components.hpp>
 #include <hyperion/ecs/utilities/camera_utilities.hpp>
+#include <hyperion/ecs/utilities/transform_utilities.hpp>
 #include <hyperion/ecs/world/world.hpp>
 
 //------------------------- Namespaces -------------------------
@@ -18,6 +19,7 @@ namespace Sandbox {
     //--------------------------------------------------------------
     void FirstPersonCameraController::Reset(World *world) {
         LocalTransformComponent *local_transform = world->GetComponent<LocalTransformComponent>(m_camera);
+        DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(m_camera);
         CameraComponent *camera = world->GetComponent<CameraComponent>(m_camera);
 
         Vector3 position = Vector3(2, 2, 2);
@@ -34,7 +36,8 @@ namespace Sandbox {
         float32 orthographic_size = 2.75f;
         m_orthographic_size_target = orthographic_size;
 
-        local_transform->position = position;
+        local_transform->position = TransformUtilities::WorldToLocalPosition(world, m_camera, position);
+        derived_transform->position = position;
         camera->fov = fov;
         camera->orthographic_size = orthographic_size;
     }
@@ -42,10 +45,11 @@ namespace Sandbox {
     //--------------------------------------------------------------
     void FirstPersonCameraController::Update(World *world, float32 delta_time) {
         LocalTransformComponent *local_transform = world->GetComponent<LocalTransformComponent>(m_camera);
+        DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(m_camera);
         CameraComponent *camera = world->GetComponent<CameraComponent>(m_camera);
 
-        Vector3 position = local_transform->position;
-        Vector3 euler_angles = local_transform->rotation.ToEulerAngles();
+        Vector3 position = derived_transform->position;
+        Vector3 euler_angles = derived_transform->rotation.ToEulerAngles();
 
         float32 fov = camera->fov;
         float32 orthographic_size = camera->orthographic_size;
@@ -125,45 +129,45 @@ namespace Sandbox {
             float32 acceleration = Input::IsKeyHold(KeyCode::Alt) ? m_acceleration * 5.0f : m_acceleration;
             float32 camera_acceleration = acceleration * delta_time;
 
-            Vector3 current_right = local_transform->rotation * Vector3::Right();
-            Vector3 current_forward = local_transform->rotation * Vector3::Forward();
+            Vector3 right = TransformUtilities::GetRight(derived_transform);
+            Vector3 forward = TransformUtilities::GetForward(derived_transform);
 
-            Vector3 forward = camera_acceleration * current_forward;
-            Vector3 right = camera_acceleration * current_right;
-            Vector3 up = camera_acceleration * Vector3::Up();
+            Vector3 velocity_forward = camera_acceleration * forward;
+            Vector3 velocity_right = camera_acceleration * right;
+            Vector3 velocity_up = camera_acceleration * Vector3::Up();
 
             position += m_velocity * delta_time;
 
             if (Input::IsKeyHold(KeyCode::W)) {
-                m_velocity += forward;
+                m_velocity += velocity_forward;
             }
             if (Input::IsKeyHold(KeyCode::S)) {
-                m_velocity -= forward;
+                m_velocity -= velocity_forward;
             }
             if (Input::IsKeyHold(KeyCode::A)) {
-                m_velocity -= right;
+                m_velocity -= velocity_right;
             }
             if (Input::IsKeyHold(KeyCode::D)) {
-                m_velocity += right;
+                m_velocity += velocity_right;
             }
             if (Input::IsKeyHold(KeyCode::LeftShift) || Input::IsKeyHold(KeyCode::RightShift)) {
-                m_velocity -= up;
+                m_velocity -= velocity_up;
             }
             if (Input::IsKeyHold(KeyCode::Space)) {
-                m_velocity += up;
+                m_velocity += velocity_up;
             }
 
             Vector2 left_stick = Input::GetGamepadAxis(Gamepad::Gamepad1, GamepadAxis::LeftStick);
-            m_velocity += forward * left_stick.y;
-            m_velocity += right * left_stick.x;
-            m_velocity += up * Input::GetGamepadAxis(Gamepad::Gamepad1, GamepadAxis::RightTrigger).x;
-            m_velocity -= up * Input::GetGamepadAxis(Gamepad::Gamepad1, GamepadAxis::LeftTrigger).x;
+            m_velocity += velocity_forward * left_stick.y;
+            m_velocity += velocity_right * left_stick.x;
+            m_velocity += velocity_up * Input::GetGamepadAxis(Gamepad::Gamepad1, GamepadAxis::RightTrigger).x;
+            m_velocity -= velocity_up * Input::GetGamepadAxis(Gamepad::Gamepad1, GamepadAxis::LeftTrigger).x;
 
             m_velocity -= m_friction * delta_time * m_velocity;
         }
 
-        local_transform->position = position;
-        local_transform->rotation = Quaternion::FromEulerAngles(euler_angles);
+        local_transform->position = TransformUtilities::WorldToLocalPosition(world, m_camera, position);
+        local_transform->rotation = TransformUtilities::WorldToLocalRotation(world, m_camera, Quaternion::FromEulerAngles(euler_angles));
         camera->fov = fov;
         camera->orthographic_size = orthographic_size;
     }
@@ -171,24 +175,26 @@ namespace Sandbox {
     //--------------------------------------------------------------
     void LookAroundCameraController::Update(World *world, float32 delta_time) {
         LocalTransformComponent *local_transform = world->GetComponent<LocalTransformComponent>(m_camera);
+        DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(m_camera);
         CameraComponent *camera = world->GetComponent<CameraComponent>(m_camera);
 
-        Vector3 current_right = local_transform->rotation * Vector3::Right();
-        Vector3 current_up = local_transform->rotation * Vector3::Up();
-        Vector3 current_forward = local_transform->rotation * Vector3::Forward();
+        Vector3 right = TransformUtilities::GetRight(derived_transform);
+        Vector3 up = TransformUtilities::GetUp(derived_transform);
+        Vector3 forward = TransformUtilities::GetForward(derived_transform);
 
         Vector2 current_mouse_position = Input::GetMousePosition();
         Vector2 mouse_position_difference = m_last_mouse_position - current_mouse_position;
         float32 mouse_axis_x = mouse_position_difference.x;
         float32 mouse_axis_y = mouse_position_difference.y;
 
+
+        Vector3 position = derived_transform->position;
         {
             if (Input::IsMouseButtonHold(MouseButtonCode::Middle)) {
-                Vector3 position = local_transform->position;
-                position += current_right * mouse_axis_x * m_xz_plane_distance * m_movement_speed;
-                position += (current_up + current_forward).Normalized() * mouse_axis_y * m_xz_plane_distance * m_movement_speed;
+                position += right * mouse_axis_x * m_xz_plane_distance * m_movement_speed;
+                position += (up + forward).Normalized() * mouse_axis_y * m_xz_plane_distance * m_movement_speed;
 
-                local_transform->position = position;
+                local_transform->position = TransformUtilities::WorldToLocalPosition(world, m_camera, position);
             }
         }
 
@@ -207,10 +213,10 @@ namespace Sandbox {
             m_zoom = Math::Clamp(m_zoom, 0.05f, 1000.0f);
             m_xz_plane_distance = Math::Lerp(m_xz_plane_distance, m_zoom, 15.0f * delta_time);
 
-            Vector3 plane_position = GetXZPlanePosition(local_transform->position, current_forward);
+            Vector3 plane_position = GetXZPlanePosition(position, forward);
             Vector3 position = (rotation * Vector3(0, 0, m_xz_plane_distance)) + plane_position;
-            local_transform->rotation = rotation;
-            local_transform->position = position;
+            local_transform->position = TransformUtilities::WorldToLocalPosition(world, m_camera, position);
+            local_transform->rotation = TransformUtilities::WorldToLocalRotation(world, m_camera, rotation);
 
             m_rotation_velocity_x = Math::Lerp(m_rotation_velocity_x, 0.0f, 50.0f * delta_time);
             m_rotation_velocity_y = Math::Lerp(m_rotation_velocity_y, 0.0f, 50.0f * delta_time);
@@ -221,14 +227,18 @@ namespace Sandbox {
     //--------------------------------------------------------------
     void LookAroundCameraController::Reset(World *world) {
         LocalTransformComponent *local_transform = world->GetComponent<LocalTransformComponent>(m_camera);
+        DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(m_camera);
         CameraComponent *camera = world->GetComponent<CameraComponent>(m_camera);
-
-        Vector3 current_forward = local_transform->rotation * Vector3::Forward();
 
         Vector3 euler_angles = Vector3(-45, 45, 0);
 
-        local_transform->rotation = Quaternion::FromEulerAngles(euler_angles);
-        local_transform->position = GetLookAtPosition(Vector3::Zero(), local_transform->position, current_forward);
+        // We have to set the rotation first, so that the conversion to world position is correct.
+        Quaternion rotation = Quaternion::FromEulerAngles(euler_angles);
+        local_transform->rotation = TransformUtilities::WorldToLocalRotation(world, m_camera, rotation);
+        derived_transform->rotation = rotation;
+        Vector3 position = GetLookAtPosition(Vector3::Zero(), derived_transform->position, TransformUtilities::GetForward(derived_transform));
+        local_transform->position = TransformUtilities::WorldToLocalPosition(world, m_camera, position);
+        derived_transform->position = position;
 
         m_rotation_axis_x = euler_angles.x;
         m_rotation_axis_y = euler_angles.y;
@@ -238,9 +248,9 @@ namespace Sandbox {
     }
 
     //--------------------------------------------------------------
-    Vector3 LookAroundCameraController::GetPositionUnderMouse(CameraComponent *camera, LocalTransformComponent *local_transform) const {
-        CameraUtilities::RecalculateMatricies(camera, local_transform);
-        Ray ray = CameraUtilities::ScreenPointToRay(camera, local_transform, Input::GetMousePosition());
+    Vector3 LookAroundCameraController::GetPositionUnderMouse(CameraComponent *camera, DerivedTransformComponent *derived_transform) const {
+        CameraUtilities::RecalculateMatricies(camera, derived_transform);
+        Ray ray = CameraUtilities::ScreenPointToRay(camera, derived_transform, Input::GetMousePosition());
         float32 hit_distance = 0;
         m_xz_plane.Intersects(ray, hit_distance);
         return ray.GetPoint(hit_distance);
