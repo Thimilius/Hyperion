@@ -3,7 +3,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/guid.hpp"
 #include "hyperion/ecs/component/component_registry.hpp"
-#include "hyperion/ecs/entity/entity_types.hpp"
+#include "hyperion/ecs/entity/entity_utilities.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -38,7 +38,7 @@ namespace Hyperion {
 
         ComponentInfo m_component_info;
     private:
-        inline static const uint32 SPARSE_ELEMENT = 0xFFFFFFFF;
+        inline static const uint32 SPARSE_ELEMENT = EntityUtilities::GetIndex(Entity::EMPTY);
     };
 
 }

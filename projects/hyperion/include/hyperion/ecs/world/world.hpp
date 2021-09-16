@@ -16,6 +16,7 @@ namespace Hyperion {
 
     struct WorldStorage {
         Array<EntityDescription> entities;
+        Map<EntityGuid, EntityId> entities_by_guid;
         uint64 available = 0;
         EntityIndex next = EntityUtilities::GetIndex(Entity::EMPTY);
 
@@ -36,6 +37,7 @@ namespace Hyperion {
         bool8 IsAlive(EntityId id) const;
 
         EntityGuid GetGuid(EntityId id) const;
+        EntityId GetByGuid(EntityGuid guid) const;
 
         EntityId CreateEntity(EntityPrimitive primitive = EntityPrimitive::Base, EntityGuid guid = EntityGuid::Generate());
         void DestroyEntity(EntityId id, WorldHierarchyDestructionPolicy hierarchy_destruction_policy = WorldHierarchyDestructionPolicy::DestroyChildren);

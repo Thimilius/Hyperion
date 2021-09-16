@@ -38,6 +38,8 @@ namespace Hyperion {
         void AddRootRelation(EntityId entity, HierarchyComponent *entity_hierarchy);
     private:
         World *m_world;
+
+        // TODO: Make this an implicit list as well.
         Array<EntityId> m_roots;
     private:
         friend class Hyperion::World;

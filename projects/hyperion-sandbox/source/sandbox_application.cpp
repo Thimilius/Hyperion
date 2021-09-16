@@ -88,6 +88,11 @@ namespace Sandbox {
         child_render_mesh->mesh = mesh;
         g_world->GetComponent<LocalTransformComponent>(g_child)->position = Vector3(2.0f, 0.0f, 0.0f);
         g_world->GetHierarchy()->SetParent(g_child, g_parent);
+
+        String world_data = WorldSerializer::Serialize(g_world);
+        HYP_TRACE("\n{}", world_data);
+        World *world = WorldSerializer::Deserialize(world_data);
+        auto t = world->GetComponent<CameraComponent>(g_camera);
 #endif
     }
 

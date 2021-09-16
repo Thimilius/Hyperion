@@ -36,6 +36,17 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    EntityId World::GetByGuid(EntityGuid guid) const {
+        auto it = m_storage.entities_by_guid.Find(guid);
+        if (it == m_storage.entities_by_guid.end()) {
+            HYP_LOG_WARN("Entity", "Trying to get id from nonexistent entity with guid {}.", guid.ToString());
+            return Entity::EMPTY;
+        } else {
+            return it->second;
+        }
+    }
+
+    //--------------------------------------------------------------
     EntityId World::CreateEntity(EntityPrimitive primitive, EntityGuid guid) {
         EntityId id;
         if (m_storage.available <= 0) {
@@ -52,6 +63,7 @@ namespace Hyperion {
 
             id = new_id;
         }
+        m_storage.entities_by_guid.Insert(guid, id);
 
         for (ComponentPool &component_pool : m_storage.component_pools) {
             component_pool.FitIntoPool(id);
@@ -77,6 +89,8 @@ namespace Hyperion {
 
             EntityDescription &entity_description = m_storage.entities[index];
             entity_description.id = new_id;
+
+            m_storage.entities_by_guid.Remove(entity_description.guid);
 
             for (ComponentPool &component_pool : m_storage.component_pools) {
                 component_pool.RemoveComponent(id);
