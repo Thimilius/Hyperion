@@ -6,9 +6,9 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/ecs/component/components/components.hpp"
-#include "hyperion/ecs/system/asset_system.hpp"
-#include "hyperion/ecs/system/transform_system.hpp"
-#include "hyperion/ecs/system/render_system.hpp"
+#include "hyperion/ecs/system/systems/asset_system.hpp"
+#include "hyperion/ecs/system/systems/transform_system.hpp"
+#include "hyperion/ecs/system/systems/render_system.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {

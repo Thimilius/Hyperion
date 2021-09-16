@@ -2,7 +2,7 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/ecs/system/asset_system.hpp"
+#include "hyperion/ecs/system/systems/asset_system.hpp"
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset_manager.hpp"

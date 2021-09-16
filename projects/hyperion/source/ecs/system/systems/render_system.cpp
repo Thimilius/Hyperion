@@ -2,7 +2,7 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/ecs/system/render_system.hpp"
+#include "hyperion/ecs/system/systems/render_system.hpp"
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset_manager.hpp"

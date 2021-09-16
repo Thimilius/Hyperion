@@ -2,7 +2,7 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/ecs/system/transform_system.hpp"
+#include "hyperion/ecs/system/systems/transform_system.hpp"
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/ecs/component/components/transform_components.hpp"
