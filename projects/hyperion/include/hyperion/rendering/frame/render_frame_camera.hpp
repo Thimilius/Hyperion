@@ -10,28 +10,30 @@
 namespace Hyperion::Rendering {
 
     struct RenderFrameCamera {
-        CameraProjectionMode projection_mode = CameraProjectionMode::Perspective;
+        CameraProjectionMode projection_mode;
 
-        CameraClearMode clear_mode = CameraClearMode::Color;
-        Color background_color = Color::Black();
+        CameraClearMode clear_mode;
+        Color background_color;
 
-        Vector3 position = Vector3(0, 0, 0);
-        Vector3 forward = Vector3(0, 0, -1);
-        Vector3 up = Vector3(0, 1, 0);
+        RenderLayerMask visibility_mask;
 
-        float32 near_plane = 0.1f;
-        float32 far_plane = 1000.0f;
+        Vector3 position;
+        Vector3 forward;
+        Vector3 up;
 
-        float32 fov = 90.0f;
-        float32 orthographic_size = 2.75f;
+        float32 near_plane;
+        float32 far_plane;
 
-        Matrix4x4 view_matrix = Matrix4x4::Identity();
-        Matrix4x4 projection_matrix = Matrix4x4::Identity();
-        Matrix4x4 view_projection_matrix = Matrix4x4::Identity();
+        float32 fov;
+        float32 orthographic_size;
 
-        Matrix4x4 inverse_view_matrix = Matrix4x4::Identity();
-        Matrix4x4 inverse_projection_matrix = Matrix4x4::Identity();
-        Matrix4x4 inverse_view_projection_matrix = Matrix4x4::Identity();
+        Matrix4x4 view_matrix;
+        Matrix4x4 projection_matrix;
+        Matrix4x4 view_projection_matrix;
+
+        Matrix4x4 inverse_view_matrix;
+        Matrix4x4 inverse_projection_matrix;
+        Matrix4x4 inverse_view_projection_matrix;
 
         CameraViewport viewport;
     };

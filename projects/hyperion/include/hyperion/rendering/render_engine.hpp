@@ -1,5 +1,8 @@
 #pragma once
 
+//--------------- C++ Standard Library Includes ----------------
+#include <atomic>
+
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/application_settings.hpp"
 #include "hyperion/core/app/window.hpp"

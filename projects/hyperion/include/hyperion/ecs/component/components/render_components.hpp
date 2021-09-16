@@ -16,6 +16,8 @@ namespace Hyperion {
         Rendering::CameraClearMode clear_mode = Rendering::CameraClearMode::Color;
         Color background_color = Color::Black();
 
+        Rendering::RenderLayerMask visibility_mask = Rendering::RenderLayerMask::Everything;
+
         float32 near_plane = 0.1f;
         float32 far_plane = 1000.0f;
 
@@ -31,9 +33,12 @@ namespace Hyperion {
     };
 
     struct RenderMeshComponent {
-        Material *material = nullptr;
         Mesh *mesh = nullptr;
         uint32 sub_mesh_index = 0;
+
+        Material *material = nullptr;
+
+        Rendering::RenderLayerMask layer_mask = Rendering::RenderLayerMask::Default;
     };
 
 }

@@ -68,6 +68,7 @@ namespace Hyperion::Rendering {
             render_frame_camera.projection_mode = projection_mode;
             render_frame_camera.clear_mode = camera->clear_mode;
             render_frame_camera.background_color = camera->background_color;
+            render_frame_camera.visibility_mask = camera->visibility_mask;
             render_frame_camera.position = local_transform->position;
             render_frame_camera.forward = forward;
             render_frame_camera.up = up;
@@ -106,9 +107,10 @@ namespace Hyperion::Rendering {
 
             RenderFrameMeshObject &render_frame_mesh_object = render_frame->AddMeshObject();
             render_frame_mesh_object.local_to_world = local_to_world->local_to_world;
-            render_frame_mesh_object.material = render_mesh->material;
             render_frame_mesh_object.mesh = render_mesh->mesh;
             render_frame_mesh_object.sub_mesh_index = render_mesh->sub_mesh_index;
+            render_frame_mesh_object.material = render_mesh->material;
+            render_frame_mesh_object.layer_mask = render_mesh->layer_mask;
         }
     }
 

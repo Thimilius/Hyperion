@@ -13,9 +13,12 @@ namespace Hyperion::Rendering {
     };
 
     struct RenderFrameMeshObject : public RenderFrameObject {
-        Material *material;
         Mesh *mesh;
         uint32 sub_mesh_index;
+
+        Material *material;
+
+        RenderLayerMask layer_mask;
     };
 
     struct RenderFrameSpriteObject : public RenderFrameObject {

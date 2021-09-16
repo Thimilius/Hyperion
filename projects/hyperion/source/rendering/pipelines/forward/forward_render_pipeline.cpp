@@ -67,10 +67,14 @@ namespace Hyperion::Rendering {
     };
 
     //--------------------------------------------------------------
-    Array<GroupedShader> GroupObjects(RenderFrame *render_frame) {
+    Array<GroupedShader> GroupObjects(const Array<RenderFrameMeshObject> &mesh_objects, RenderLayerMask visibility_mask) {
         Array<GroupedShader> grouped_shaders;
 
-        for (const RenderFrameMeshObject &render_frame_mesh_object : render_frame->GetMeshObjects()) {
+        for (const RenderFrameMeshObject &render_frame_mesh_object : mesh_objects) {
+            if ((render_frame_mesh_object.layer_mask & visibility_mask) != render_frame_mesh_object.layer_mask) {
+                continue;
+            }
+
             AssetId material_id = render_frame_mesh_object.material->GetAssetInfo().id;
             AssetId shader_id = render_frame_mesh_object.material->GetShader()->GetAssetInfo().id;
             AssetId mesh_id = render_frame_mesh_object.mesh->GetAssetInfo().id;
@@ -166,9 +170,8 @@ namespace Hyperion::Rendering {
     void ForwardRenderPipeline::Render(RenderFrame *render_frame) {
         LoadAssets(render_frame);
 
-        g_grouped_shaders = GroupObjects(render_frame);
-
         for (const RenderFrameCamera &render_frame_camera : render_frame->GetCameras()) {
+            g_grouped_shaders = GroupObjects(render_frame->GetMeshObjects(), render_frame_camera.visibility_mask);
             RenderCamera(render_frame_camera, render_frame);
         }
     }
