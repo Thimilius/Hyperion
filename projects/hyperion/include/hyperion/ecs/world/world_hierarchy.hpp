@@ -5,6 +5,7 @@
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
+    struct HierarchyComponent;
     class World;
 }
 
@@ -16,6 +17,8 @@ namespace Hyperion {
         const Array<EntityId> &GetRoots() const { return m_roots; }
 
         void SetParent(EntityId entity, EntityId parent);
+    private:
+        void AddRoot(EntityId entity, HierarchyComponent *entity_hierarchy);
     private:
         World *m_world;
         Array<EntityId> m_roots;

@@ -79,8 +79,6 @@ namespace Sandbox {
         g_parent = g_world->CreateEntity();
         g_child = g_world->CreateEntity();
 
-        g_world->GetHierarchy().SetParent(g_child, g_parent);
-
         RenderMeshComponent *render_mesh = g_world->AddComponent<RenderMeshComponent>(g_parent);
         render_mesh->material = g_material;
         render_mesh->mesh = mesh;

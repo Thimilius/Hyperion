@@ -93,11 +93,9 @@ namespace Hyperion {
             AddComponent<LocalTransformComponent>(id);
             AddComponent<DerivedTransformComponent>(id);
             AddComponent<LocalToWorldComponent>(id);
-            AddComponent<HierarchyComponent>(id);
+            HierarchyComponent *hierarchy = AddComponent<HierarchyComponent>(id);
 
-            {
-                m_hierarchy.m_roots.Add(id);
-            }
+            m_hierarchy.AddRoot(id, hierarchy);
         }
 
         switch (primitive) {
