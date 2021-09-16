@@ -55,8 +55,11 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void WorldManager::Update() {
         if (s_active_world) {
-            // Transformation
+            // Transform
             {
+                HierarchyTransformSystem hierarchy_transform_system;
+                hierarchy_transform_system.Run(s_active_world);
+
                 LocalToWorldSystem local_to_world_system;
                 local_to_world_system.Run(s_active_world);
             }

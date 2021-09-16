@@ -18,7 +18,7 @@
 //------------------------- Namespaces -------------------------
 using namespace Hyperion;
 
-//#define HYP_STRESS_TEST
+#define HYP_STRESS_TEST
 
 //-------------------- Definition Namespace --------------------
 namespace Sandbox {
@@ -33,7 +33,6 @@ namespace Sandbox {
     EntityId g_camera;
     EntityId g_parent;
     EntityId g_child;
-    Material *g_material;
 
     //--------------------------------------------------------------
     void SandboxApplication::OnInitialize() {
@@ -56,9 +55,9 @@ namespace Sandbox {
 #endif
 
         Shader *shader = AssetManager::CreateShader(FileSystem::ReadAllText("data/shaders/standard.shader"));
-        g_material = AssetManager::CreateMaterial(shader);
-
         Mesh *mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Cube); MeshLoader::Load("data/models/monkey.obj").Unwrap();
+
+        g_parent = g_world->CreateEntity();
 
 #ifdef HYP_STRESS_TEST
         float32 size = 100;
@@ -73,15 +72,21 @@ namespace Sandbox {
                 RenderMeshComponent *render_mesh = g_world->AddComponent<RenderMeshComponent>(entity);
                 render_mesh->material = material;
                 render_mesh->mesh = mesh;
+
+                g_world->GetHierarchy().SetParent(entity, g_parent);
             }
         }
 #else
-        g_parent = g_world->CreateEntity();
-        g_child = g_world->CreateEntity();
+        RenderMeshComponent *parent_render_mesh = g_world->AddComponent<RenderMeshComponent>(g_parent);
+        parent_render_mesh->material = g_material;
+        parent_render_mesh->mesh = mesh;
 
-        RenderMeshComponent *render_mesh = g_world->AddComponent<RenderMeshComponent>(g_parent);
-        render_mesh->material = g_material;
-        render_mesh->mesh = mesh;
+        g_child = g_world->CreateEntity();
+        RenderMeshComponent *child_render_mesh = g_world->AddComponent<RenderMeshComponent>(g_child);
+        child_render_mesh->material = g_material;
+        child_render_mesh->mesh = mesh;
+        g_world->GetComponent<LocalTransformComponent>(g_child)->position = Vector3(2.0f, 0.0f, 0.0f);
+        g_world->GetHierarchy().SetParent(g_child, g_parent);
 #endif
     }
 
@@ -95,6 +100,10 @@ namespace Sandbox {
         }
 
         Quaternion rotation = Quaternion::FromEulerAngles(0.0f, Time::GetTime() * 25.0f, 0.0f);
+
+        LocalTransformComponent *transform = g_world->GetComponent<LocalTransformComponent>(g_parent);
+        transform->rotation = rotation;
+
 #ifdef HYP_STRESS_TEST
         auto view = g_world->GetView<LocalTransformComponent, RenderMeshComponent>();
         for (EntityId entity : view) {
@@ -103,9 +112,6 @@ namespace Sandbox {
             RenderMeshComponent *render_mesh = g_world->GetComponent<RenderMeshComponent>(entity);
             render_mesh->material->SetColor("u_color", Color(Random::Get(), Random::Get(), Random::Get(), 1.0f));
         }
-#else
-        LocalTransformComponent *transform = g_world->GetComponent<LocalTransformComponent>(g_parent);
-        transform->rotation = rotation;
 #endif
     }
 

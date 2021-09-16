@@ -16,9 +16,13 @@ namespace Hyperion {
         EntityGuid guid;
     };
 
-    namespace Entity {
+    class Entity final {
+    public:
         inline static constexpr EntityId EMPTY = 0xFFFFFFFF;
-    }
+    private:
+        Entity() = delete;
+        ~Entity() = delete;
+    };
 
     enum class EntityPrimitive {
         Empty,

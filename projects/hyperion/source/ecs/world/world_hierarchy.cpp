@@ -6,6 +6,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/ecs/component/components/components.hpp"
+#include "hyperion/ecs/system/systems/transform_system.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -14,7 +15,7 @@ namespace Hyperion {
     // That includes trusting the entities have the proper components and that there are no circular references.
 
     //--------------------------------------------------------------
-    void WorldHierarchy::SetParent(EntityId entity, EntityId parent) {
+    void WorldHierarchy::SetParent(EntityId entity, EntityId parent, WorldHierarchyTransformUpdate update) {
         if (!m_world->IsValidId(entity)) {
             HYP_LOG_WARN("Entity", "Trying to set parent of nonexistent entity with id {}.", entity);
             return;
@@ -73,6 +74,29 @@ namespace Hyperion {
             entity_hierarchy->next_sibling = Entity::EMPTY;
             new_parent_hierarchy->last_child = entity;
             new_parent_hierarchy->child_count++;
+        }
+
+        UpdateTransform(update, entity);
+    }
+
+    //--------------------------------------------------------------
+    void WorldHierarchy::UpdateTransform(WorldHierarchyTransformUpdate update, EntityId branch) {
+        if (update == WorldHierarchyTransformUpdate::Branch) {
+            if (m_world->IsValidId(branch)) {
+                HierarchyComponent *branch_hierarchy = m_world->GetComponent<HierarchyComponent>(branch);
+                DerivedTransformComponent *parent_derived_transform = nullptr;
+                if (branch_hierarchy->parent != Entity::EMPTY) {
+                    parent_derived_transform = m_world->GetComponent<DerivedTransformComponent>(branch_hierarchy->parent);
+                }
+
+                HierarchyTransformSystem hierarchy_transform_system;
+                hierarchy_transform_system.UpdateBranch(m_world, branch, branch_hierarchy, parent_derived_transform);
+            } else {
+                HYP_LOG_WARN("Entity", "Trying to update transform of nonexistent entity with id {}.", branch);
+            }
+        } else if (update == WorldHierarchyTransformUpdate::All) {
+            HierarchyTransformSystem hierarchy_transform_system;
+            hierarchy_transform_system.Run(m_world);
         }
     }
 

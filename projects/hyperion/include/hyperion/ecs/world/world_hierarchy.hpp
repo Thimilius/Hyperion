@@ -12,11 +12,19 @@ namespace Hyperion {
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    enum class WorldHierarchyTransformUpdate {
+        None,
+        Branch,
+        All,
+    };
+
     class WorldHierarchy final {
     public:
         const Array<EntityId> &GetRoots() const { return m_roots; }
 
-        void SetParent(EntityId entity, EntityId parent);
+        void SetParent(EntityId entity, EntityId parent, WorldHierarchyTransformUpdate update = WorldHierarchyTransformUpdate::None);
+
+        void UpdateTransform(WorldHierarchyTransformUpdate update = WorldHierarchyTransformUpdate::Branch, EntityId branch = Entity::EMPTY);
     private:
         void AddRoot(EntityId entity, HierarchyComponent *entity_hierarchy);
     private:

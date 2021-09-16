@@ -16,9 +16,9 @@ namespace Hyperion {
     };
 
     struct DerivedTransformComponent {
-        Vector3 derived_position = Vector3::Zero();
-        Quaternion derived_rotation = Quaternion::Identity();
-        Vector3 derived_scale = Vector3::One();
+        Vector3 position = Vector3::Zero();
+        Quaternion rotation = Quaternion::Identity();
+        Vector3 scale = Vector3::One();
     };
 
     struct LocalToWorldComponent {
