@@ -6,8 +6,8 @@
 #include <hyperion/core/app/input.hpp>
 #include <hyperion/ecs/component/components/render_components.hpp>
 #include <hyperion/ecs/component/components/transform_components.hpp>
-#include <hyperion/ecs/utilities/camera_utilities.hpp>
-#include <hyperion/ecs/utilities/transform_utilities.hpp>
+#include <hyperion/ecs/component/components/utilities/camera_utilities.hpp>
+#include <hyperion/ecs/component/components/utilities/transform_utilities.hpp>
 #include <hyperion/ecs/world/world.hpp>
 
 //------------------------- Namespaces -------------------------
@@ -18,7 +18,6 @@ namespace Sandbox {
 
     //--------------------------------------------------------------
     void FirstPersonCameraController::Reset(World *world) {
-        LocalTransformComponent *local_transform = world->GetComponent<LocalTransformComponent>(m_camera);
         DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(m_camera);
         CameraComponent *camera = world->GetComponent<CameraComponent>(m_camera);
 
@@ -36,15 +35,14 @@ namespace Sandbox {
         float32 orthographic_size = 2.75f;
         m_orthographic_size_target = orthographic_size;
 
-        local_transform->position = TransformUtilities::WorldToLocalPosition(world, m_camera, position);
-        derived_transform->position = position;
+        TransformUtilities::SetPosition(world, m_camera, position);
+
         camera->fov = fov;
         camera->orthographic_size = orthographic_size;
     }
 
     //--------------------------------------------------------------
     void FirstPersonCameraController::Update(World *world, float32 delta_time) {
-        LocalTransformComponent *local_transform = world->GetComponent<LocalTransformComponent>(m_camera);
         DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(m_camera);
         CameraComponent *camera = world->GetComponent<CameraComponent>(m_camera);
 
@@ -166,15 +164,14 @@ namespace Sandbox {
             m_velocity -= m_friction * delta_time * m_velocity;
         }
 
-        local_transform->position = TransformUtilities::WorldToLocalPosition(world, m_camera, position);
-        local_transform->rotation = TransformUtilities::WorldToLocalRotation(world, m_camera, Quaternion::FromEulerAngles(euler_angles));
+        TransformUtilities::SetPosition(world, m_camera, position);
+        TransformUtilities::SetRotation(world, m_camera, Quaternion::FromEulerAngles(euler_angles));
         camera->fov = fov;
         camera->orthographic_size = orthographic_size;
     }
 
     //--------------------------------------------------------------
     void LookAroundCameraController::Update(World *world, float32 delta_time) {
-        LocalTransformComponent *local_transform = world->GetComponent<LocalTransformComponent>(m_camera);
         DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(m_camera);
         CameraComponent *camera = world->GetComponent<CameraComponent>(m_camera);
 
@@ -194,7 +191,7 @@ namespace Sandbox {
                 position += right * mouse_axis_x * m_xz_plane_distance * m_movement_speed;
                 position += (up + forward).Normalized() * mouse_axis_y * m_xz_plane_distance * m_movement_speed;
 
-                local_transform->position = TransformUtilities::WorldToLocalPosition(world, m_camera, position);
+                TransformUtilities::SetPosition(world, m_camera, position);
             }
         }
 
@@ -215,8 +212,9 @@ namespace Sandbox {
 
             Vector3 plane_position = GetXZPlanePosition(position, forward);
             Vector3 position = (rotation * Vector3(0, 0, m_xz_plane_distance)) + plane_position;
-            local_transform->position = TransformUtilities::WorldToLocalPosition(world, m_camera, position);
-            local_transform->rotation = TransformUtilities::WorldToLocalRotation(world, m_camera, rotation);
+
+            TransformUtilities::SetPosition(world, m_camera, position);
+            TransformUtilities::SetRotation(world, m_camera, rotation);
 
             m_rotation_velocity_x = Math::Lerp(m_rotation_velocity_x, 0.0f, 50.0f * delta_time);
             m_rotation_velocity_y = Math::Lerp(m_rotation_velocity_y, 0.0f, 50.0f * delta_time);
@@ -226,7 +224,6 @@ namespace Sandbox {
 
     //--------------------------------------------------------------
     void LookAroundCameraController::Reset(World *world) {
-        LocalTransformComponent *local_transform = world->GetComponent<LocalTransformComponent>(m_camera);
         DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(m_camera);
         CameraComponent *camera = world->GetComponent<CameraComponent>(m_camera);
 
@@ -234,11 +231,9 @@ namespace Sandbox {
 
         // We have to set the rotation first, so that the conversion to world position is correct.
         Quaternion rotation = Quaternion::FromEulerAngles(euler_angles);
-        local_transform->rotation = TransformUtilities::WorldToLocalRotation(world, m_camera, rotation);
-        derived_transform->rotation = rotation;
+        TransformUtilities::SetRotation(world, m_camera, rotation);
         Vector3 position = GetLookAtPosition(Vector3::Zero(), derived_transform->position, TransformUtilities::GetForward(derived_transform));
-        local_transform->position = TransformUtilities::WorldToLocalPosition(world, m_camera, position);
-        derived_transform->position = position;
+        TransformUtilities::SetPosition(world, m_camera, position);
 
         m_rotation_axis_x = euler_angles.x;
         m_rotation_axis_y = euler_angles.y;

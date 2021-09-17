@@ -2,12 +2,12 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/ecs/utilities/camera_utilities.hpp"
+#include "hyperion/ecs/component/components/utilities/camera_utilities.hpp"
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/display.hpp"
 #include "hyperion/core/math/vector4.hpp"
-#include "hyperion/ecs/utilities/transform_utilities.hpp"
+#include "hyperion/ecs/component/components/utilities/transform_utilities.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
