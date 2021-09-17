@@ -21,7 +21,7 @@
 //------------------------- Namespaces -------------------------
 using namespace Hyperion;
 
-//#define HYP_STRESS_TEST
+#define HYP_STRESS_TEST
 
 //-------------------- Definition Namespace --------------------
 namespace Sandbox {

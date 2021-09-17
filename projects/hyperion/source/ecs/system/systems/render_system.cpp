@@ -20,6 +20,8 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void CameraSystem::Run(World *world) {
+        HYP_PROFILE_SCOPE("CameraSystem");
+
         RenderFrame *render_frame = RenderEngine::GetMainRenderFrame();
 
         auto view = world->GetView<DerivedTransformComponent, CameraComponent>();
@@ -62,6 +64,8 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void SpriteSystem::Run(World *world) {
+        HYP_PROFILE_SCOPE("SpriteSystem");
+
         RenderFrame *render_frame = RenderEngine::GetMainRenderFrame();
 
         auto view = world->GetView<LocalToWorldComponent, SpriteComponent>();
@@ -73,6 +77,8 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void RenderMeshSystem::Run(World *world) {
+        HYP_PROFILE_SCOPE("RenderMeshSystem");
+
         RenderFrame *render_frame = RenderEngine::GetMainRenderFrame();
         auto view = world->GetView<LocalToWorldComponent, RenderMeshComponent>();
         for (EntityId entity : view) {

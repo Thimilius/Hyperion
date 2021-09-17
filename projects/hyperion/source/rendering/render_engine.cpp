@@ -54,12 +54,22 @@ namespace Hyperion::Rendering {
         switch (s_render_settings.threading_mode) {
             case RenderThreadingMode::SingleThreaded: {
                 SynchronizeMainAndRenderThread();
-                s_render_pipeline->Render(s_render_frame);
-                s_graphics_context->SwapBuffers();
+                {
+                    HYP_PROFILE_SCOPE("Render");
+                    s_render_pipeline->Render(s_render_frame);
+                }
+                
+                {
+                    HYP_PROFILE_SCOPE("Present");
+                    s_graphics_context->SwapBuffers();
+                }
                 break;
             }
             case RenderThreadingMode::MultiThreaded: {
-                RenderThreadSynchronization::WaitForRenderDone();
+                {
+                    HYP_PROFILE_CATEGORY("WaitForRenderDone", ProfileCategory::Wait);
+                    RenderThreadSynchronization::WaitForRenderDone();
+                }
                 SynchronizeMainAndRenderThread();
                 RenderThreadSynchronization::NotifySwapDone();
                 break;
@@ -103,17 +113,27 @@ namespace Hyperion::Rendering {
     void RenderEngine::RT_Loop(void *parameter) {
         RT_Initialize(static_cast<Window *>(parameter));
         
+        HYP_PROFILE_THREAD("Render Thread");
         while (true) {
             if (s_render_thread_should_exit) {
                 break;
             }
 
-            RenderThreadSynchronization::WaitForSwapDone();
+            {
+                HYP_PROFILE_CATEGORY("WaitForSwapDone", ProfileCategory::Wait);
+                RenderThreadSynchronization::WaitForSwapDone();
+            }
+            
+            {
+                HYP_PROFILE_SCOPE("Render");
+                s_render_pipeline->Render(s_render_frame);
+            }
 
-            s_render_pipeline->Render(s_render_frame);
-
-            s_graphics_context->SwapBuffers();
-            RenderThreadSynchronization::NotifyRenderDone();
+            {
+                HYP_PROFILE_SCOPE("Present");
+                s_graphics_context->SwapBuffers();
+                RenderThreadSynchronization::NotifyRenderDone();
+            }
         }
 
         RT_Shutdown();
@@ -126,6 +146,8 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void RenderEngine::SynchronizeMainAndRenderThread() {
+        HYP_PROFILE_SCOPE("SynchronizeMainAndRenderThread");
+
         RenderFrame *temp = s_main_frame;
         s_main_frame = s_render_frame;
         s_render_frame = temp;

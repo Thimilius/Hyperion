@@ -36,6 +36,8 @@ namespace Hyperion {
         });
 
         if (it != m_properties.end()) {
+            Threading::ScopeLock lock(GetLocker());
+
             MaterialProperty &property = *it;
             if (property.type == MaterialPropertyType::Color) {
                 property.storage.color = value;

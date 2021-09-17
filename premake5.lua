@@ -119,6 +119,10 @@ project "hyperion"
 		}
 		includedirs { package_bullet_includedirs }
 
+	filter "configurations:profile"
+		files { "%{prj.location}/vendor/optick/source/**" }
+		includedirs { "%{prj.location}/vendor/optick/include" }
+
 	filter "system:windows"
 		files {
 			"%{prj.location}/include/hyperion/platform/windows/**.hpp",

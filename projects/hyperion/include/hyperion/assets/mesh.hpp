@@ -43,10 +43,11 @@ namespace Hyperion {
     public:
         inline AssetType GetAssetType() const override { return AssetType::Mesh; }
 
-        inline const MeshData &GetData() const { return m_data; }
         inline const MeshVertexFormat &GetVertexFormat() const { return m_vertex_format; }
         inline const Array<Rendering::SubMesh> &GetSubMeshes() { return m_sub_meshes; }
         inline uint32 GetSubMeshCount() const { return static_cast<uint32>(m_sub_meshes.GetLength()); }
+
+        inline const MeshData &GetData() const { return m_data; }
         void SetData(const MeshData &data, const Array<Rendering::SubMesh> &sub_meshes);
 
         inline BoundingBox GetBounds() const { return m_bounds; }

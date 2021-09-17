@@ -35,3 +35,4 @@
 #include "hyperion/core/math/vector2.hpp"
 #include "hyperion/core/math/vector3.hpp"
 #include "hyperion/core/math/vector4.hpp"
+#include "hyperion/core/profiling/profile.hpp"

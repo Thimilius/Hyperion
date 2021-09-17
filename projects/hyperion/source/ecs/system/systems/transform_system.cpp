@@ -12,6 +12,8 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void HierarchyTransformSystem::Run(World *world) {
+        HYP_PROFILE_SCOPE("HierarchyTransformSystem");
+
         EntityId root = world->GetHierarchy()->GetFirstRoot();
         uint64 root_count = world->GetHierarchy()->GetRootCount();
         for (uint64 i = 0; i < root_count; i++) {
@@ -47,6 +49,8 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void LocalToWorldSystem::Run(World *world) {
+        HYP_PROFILE_SCOPE("LocalToWorldSystem");
+
         auto view = world->GetView<DerivedTransformComponent, LocalToWorldComponent>();
         for (EntityId entity : view) {
             DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(entity);
