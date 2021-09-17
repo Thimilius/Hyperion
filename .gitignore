@@ -11,7 +11,6 @@ build/
 Makefile
 run_tree/*.exe
 run_tree/*.dll
-run_tree/data/managed/
 
 # Visual Studio Code
 .vscode/*
