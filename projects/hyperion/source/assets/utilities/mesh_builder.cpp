@@ -48,9 +48,8 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     Mesh *MeshBuilder::CreateMesh() {
-        Mesh *mesh = AssetManager::CreateMesh();
-        SetToMesh(mesh);
-        return mesh;
+        Array<SubMesh> sub_meshes = { { Graphics::GraphicsTopology::Triangles, m_index_count, 0, 0 } };
+        return AssetManager::CreateMesh(m_mesh_data, sub_meshes);
     }
 
     //--------------------------------------------------------------

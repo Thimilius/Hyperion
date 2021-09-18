@@ -9,7 +9,7 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-    struct RenderFrameCamera {
+    struct RenderFrameContextCamera {
         CameraProjectionMode projection_mode;
 
         CameraClearMode clear_mode;

@@ -22,7 +22,7 @@ namespace Hyperion::Rendering {
     void CameraSystem::Run(World *world) {
         HYP_PROFILE_SCOPE("CameraSystem");
 
-        RenderFrame *render_frame = RenderEngine::GetMainRenderFrame();
+        RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
 
         auto view = world->GetView<DerivedTransformComponent, CameraComponent>();
         for (EntityId entity : view) {
@@ -40,25 +40,25 @@ namespace Hyperion::Rendering {
             viewport.width = static_cast<uint32>(Math::Clamp01(viewport_clipping.width) * display_width);
             viewport.height = static_cast<uint32>(Math::Clamp01(viewport_clipping.height) * display_height);
 
-            RenderFrameCamera &render_frame_camera = render_frame->AddCamera();
-            render_frame_camera.projection_mode = camera->projection_mode;
-            render_frame_camera.clear_mode = camera->clear_mode;
-            render_frame_camera.background_color = camera->background_color;
-            render_frame_camera.visibility_mask = camera->visibility_mask;
-            render_frame_camera.position = derived_transform->position;
-            render_frame_camera.forward = TransformUtilities::GetForward(derived_transform);
-            render_frame_camera.up = TransformUtilities::GetUp(derived_transform);
-            render_frame_camera.fov = camera->fov;
-            render_frame_camera.orthographic_size = camera->orthographic_size;
-            render_frame_camera.near_plane = camera->near_plane;
-            render_frame_camera.far_plane = camera->far_plane;
-            render_frame_camera.view_matrix = camera->view_matrix;
-            render_frame_camera.inverse_view_matrix = camera->view_matrix.Inverted();
-            render_frame_camera.projection_matrix = camera->projection_matrix;
-            render_frame_camera.inverse_projection_matrix = camera->projection_matrix.Inverted();
-            render_frame_camera.view_projection_matrix = camera->view_projection_matrix;
-            render_frame_camera.inverse_view_projection_matrix = camera->view_projection_matrix.Inverted();
-            render_frame_camera.viewport = { 0, 0, display_width, display_height };
+            RenderFrameContextCamera &render_frame_context_camera = render_frame_context.AddCamera();
+            render_frame_context_camera.projection_mode = camera->projection_mode;
+            render_frame_context_camera.clear_mode = camera->clear_mode;
+            render_frame_context_camera.background_color = camera->background_color;
+            render_frame_context_camera.visibility_mask = camera->visibility_mask;
+            render_frame_context_camera.position = derived_transform->position;
+            render_frame_context_camera.forward = TransformUtilities::GetForward(derived_transform);
+            render_frame_context_camera.up = TransformUtilities::GetUp(derived_transform);
+            render_frame_context_camera.fov = camera->fov;
+            render_frame_context_camera.orthographic_size = camera->orthographic_size;
+            render_frame_context_camera.near_plane = camera->near_plane;
+            render_frame_context_camera.far_plane = camera->far_plane;
+            render_frame_context_camera.view_matrix = camera->view_matrix;
+            render_frame_context_camera.inverse_view_matrix = camera->view_matrix.Inverted();
+            render_frame_context_camera.projection_matrix = camera->projection_matrix;
+            render_frame_context_camera.inverse_projection_matrix = camera->projection_matrix.Inverted();
+            render_frame_context_camera.view_projection_matrix = camera->view_projection_matrix;
+            render_frame_context_camera.inverse_view_projection_matrix = camera->view_projection_matrix.Inverted();
+            render_frame_context_camera.viewport = { 0, 0, display_width, display_height };
         }
     }
 
@@ -66,12 +66,15 @@ namespace Hyperion::Rendering {
     void SpriteSystem::Run(World *world) {
         HYP_PROFILE_SCOPE("SpriteSystem");
 
-        RenderFrame *render_frame = RenderEngine::GetMainRenderFrame();
+        RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
 
         auto view = world->GetView<LocalToWorldComponent, SpriteComponent>();
         for (EntityId entity : view) {
             LocalToWorldComponent *local_to_world = world->GetComponent<LocalToWorldComponent>(entity);
             SpriteComponent *sprite = world->GetComponent<SpriteComponent>(entity);
+            RenderFrameContextSpriteObject &render_frame_context_sprite_object = render_frame_context.AddSpriteObject();
+            render_frame_context_sprite_object.local_to_world = local_to_world->local_to_world;
+            render_frame_context_sprite_object.color = sprite->color;
         }
     }
 
@@ -79,18 +82,19 @@ namespace Hyperion::Rendering {
     void RenderMeshSystem::Run(World *world) {
         HYP_PROFILE_SCOPE("RenderMeshSystem");
 
-        RenderFrame *render_frame = RenderEngine::GetMainRenderFrame();
+        RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
+
         auto view = world->GetView<LocalToWorldComponent, RenderMeshComponent>();
         for (EntityId entity : view) {
             LocalToWorldComponent *local_to_world = world->GetComponent<LocalToWorldComponent>(entity);
             RenderMeshComponent *render_mesh = world->GetComponent<RenderMeshComponent>(entity);
 
-            RenderFrameMeshObject &render_frame_mesh_object = render_frame->AddMeshObject();
-            render_frame_mesh_object.local_to_world = local_to_world->local_to_world;
-            render_frame_mesh_object.mesh = render_mesh->mesh;
-            render_frame_mesh_object.sub_mesh_index = render_mesh->sub_mesh_index;
-            render_frame_mesh_object.material = render_mesh->material;
-            render_frame_mesh_object.layer_mask = render_mesh->layer_mask;
+            RenderFrameContextMeshObject &render_frame_context_mesh_object = render_frame_context.AddMeshObject();
+            render_frame_context_mesh_object.local_to_world = local_to_world->local_to_world;
+            render_frame_context_mesh_object.mesh = render_mesh->mesh;
+            render_frame_context_mesh_object.sub_mesh_index = render_mesh->sub_mesh_index;
+            render_frame_context_mesh_object.material = render_mesh->material;
+            render_frame_context_mesh_object.layer_mask = render_mesh->layer_mask;
         }
     }
 

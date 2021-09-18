@@ -17,10 +17,26 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
+    Texture2D *AssetManager::CreateTexture2D() {
+        AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
+        Texture2D *texture = new Texture2D(info);
+        s_textures.Insert(info.guid, texture);
+        return texture;
+    }
+
+    //--------------------------------------------------------------
+    Shader *AssetManager::CreateShader(const String &source) {
+        AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
+        Shader *shader = new Shader(info, source);
+        s_shaders.Insert(info.guid, shader);
+        return shader;
+    }
+
+    //--------------------------------------------------------------
     Material *AssetManager::CreateMaterial(Shader *shader) {
-        AssetInfo info = GetNextAssetInfo();
+        AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
         Material *material = new Material(info, shader);
-        s_materials.Insert(info.id, material);
+        s_materials.Insert(info.guid, material);
         return material;
     }
 
@@ -37,54 +53,45 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     Mesh *AssetManager::CreateMesh() {
-        AssetInfo info = GetNextAssetInfo();
+        AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
         Mesh *mesh = new Mesh(info);
-        s_meshes.Insert(info.id, mesh);
+        s_meshes.Insert(info.guid, mesh);
+        return mesh;
+    }
+
+    Mesh *AssetManager::CreateMesh(const MeshData &data, const Array<Rendering::SubMesh> &sub_meshes, AssetDataAccess data_access) {
+        AssetInfo info = GetNextAssetInfo(data_access);
+        Mesh *mesh = new Mesh(info, data, sub_meshes);
+        s_meshes.Insert(info.guid, mesh);
         return mesh;
     }
 
     //--------------------------------------------------------------
-    Texture2D *AssetManager::CreateTexture2D() {
-        AssetInfo info = GetNextAssetInfo();
-        Texture2D *texture = new Texture2D(info);
-        s_textures.Insert(info.id, texture);
-        return texture;
-    }
-
-    //--------------------------------------------------------------
-    Shader *AssetManager::CreateShader(const String &source) {
-        AssetInfo info = GetNextAssetInfo();
-        Shader *shader = new Shader(info, source);
-        s_shaders.Insert(info.id, shader);
-        return shader;
-    }
-
-    //--------------------------------------------------------------
     void AssetManager::Unload(Asset *asset) {
-        AssetId asset_id = asset->GetAssetInfo().id;
+        AssetGuid asset_guid = asset->GetAssetInfo().guid;
         switch (asset->GetAssetType()) {
             case AssetType::Material: {
                 Material *material = static_cast<Material *>(asset);
-                HYP_ASSERT(s_materials.Contains(asset_id));
-                s_materials.Remove(asset_id);
+                HYP_ASSERT(s_materials.Contains(asset_guid));
+                s_materials.Remove(asset_guid);
                 break;
             }
             case AssetType::Mesh: {
                 Mesh *mesh = static_cast<Mesh *>(asset);
-                HYP_ASSERT(s_meshes.Contains(asset_id));
-                s_meshes.Remove(asset_id);
+                HYP_ASSERT(s_meshes.Contains(asset_guid));
+                s_meshes.Remove(asset_guid);
                 break;
             }
             case AssetType::Shader: {
                 Shader *shader = static_cast<Shader *>(asset);
-                HYP_ASSERT(s_shaders.Contains(asset_id));
-                s_shaders.Remove(asset_id);
+                HYP_ASSERT(s_shaders.Contains(asset_guid));
+                s_shaders.Remove(asset_guid);
                 break;
             }
             case AssetType::Texture: {
                 Texture *texture = static_cast<Texture *>(asset);
-                HYP_ASSERT(s_textures.Contains(asset_id));
-                s_textures.Remove(asset_id);
+                HYP_ASSERT(s_textures.Contains(asset_guid));
+                s_textures.Remove(asset_guid);
                 break;
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
@@ -130,8 +137,8 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    AssetInfo AssetManager::GetNextAssetInfo() {
-        return { s_id_counter++, AssetGuid::Generate() };
+    AssetInfo AssetManager::GetNextAssetInfo(AssetDataAccess data_access) {
+        return { s_id_counter++, AssetGuid::Generate(), data_access };
     }
 
 }

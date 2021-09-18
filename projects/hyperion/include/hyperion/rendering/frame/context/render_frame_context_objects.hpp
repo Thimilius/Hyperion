@@ -8,11 +8,11 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-    struct RenderFrameObject {
+    struct RenderFrameContextObject {
         Matrix4x4 local_to_world;
     };
 
-    struct RenderFrameMeshObject : public RenderFrameObject {
+    struct RenderFrameContextMeshObject : public RenderFrameContextObject {
         Mesh *mesh;
         uint32 sub_mesh_index;
 
@@ -21,7 +21,7 @@ namespace Hyperion::Rendering {
         RenderLayerMask layer_mask;
     };
 
-    struct RenderFrameSpriteObject : public RenderFrameObject {
+    struct RenderFrameContextSpriteObject : public RenderFrameContextObject {
         Color color;
     };
 

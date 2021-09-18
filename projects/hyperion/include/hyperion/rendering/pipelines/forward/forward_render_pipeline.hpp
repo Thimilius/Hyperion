@@ -11,7 +11,7 @@ namespace Hyperion {
     class Shader;
 
     namespace Rendering {
-        struct RenderFrameCamera;
+        struct RenderFrameContextCamera;
     }
 }
 
@@ -24,7 +24,7 @@ namespace Hyperion::Rendering {
         void Render(RenderFrame *render_view) override;
         void Shutdown() override;
     private:
-        void RenderCamera(const RenderFrameCamera &render_frame_camera, RenderFrame *render_frame);
+        void RenderCamera(const RenderFrameContextCamera &render_frame_context_camera, RenderFrame *render_frame);
 
         void LoadAssets(RenderFrame *render_frame);
         void LoadMaterial(Material *material);

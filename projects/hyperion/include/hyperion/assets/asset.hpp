@@ -23,9 +23,16 @@ namespace Hyperion {
     using AssetId = uint64;
     using AssetGuid = Guid;
 
+    enum class AssetDataAccess {
+        None,
+        ReadAndWrite
+    };
+
     struct AssetInfo {
         AssetId id;
         AssetGuid guid;
+
+        AssetDataAccess data_access;
     };
 
     class Asset : public INonCopyable {
@@ -35,10 +42,10 @@ namespace Hyperion {
     public:
         inline const AssetInfo &GetAssetInfo() const { return m_info; }
         inline bool8 IsDirty() const { return m_is_dirty; }
-        inline const Threading::CriticalSection &GetLocker() const { return m_locker; }
 
         virtual AssetType GetAssetType() const = 0;
     protected:
+        bool ValidateDataAccess() const;
         void SetDirty();
     private:
         void ResetDirty();

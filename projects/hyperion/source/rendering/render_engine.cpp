@@ -50,8 +50,8 @@ namespace Hyperion::Rendering {
     // That would of course help with performance for some workloads... but the first paragraph still stands.
     // 
     // ────────────────────────────────────────────────────────────────────────────────────
-    // RENDER CONTEXT:
-    // The RenderContext is the interaction point between the ECS and the rendering engine.
+    // RENDER FRAME CONTEXT:
+    // The RenderFrameContext is the interaction point between the ECS and the rendering engine.
     // Render systems take the different components and extract every object, camera, light, etc. and copies it into the context.
     // It can be thought of as the snapshot of the simulated world with all the data required to render it.
     // 
@@ -70,7 +70,7 @@ namespace Hyperion::Rendering {
     // One used by the Main Thread to fill it with data and the other one used by the Render Thread to read from it.
     // It acts as a double buffer so that the synchronization point between the two threads is therefore a simple pointer swap.
     // 
-    // The RenderFrame owns the RenderContext as that contains all relevant ECS data and asset references.
+    // The RenderFrame owns the RenderFrameContext as that contains all relevant ECS data and asset references.
     // That alone however is not enough as we do not yet know HOW to render the data in the context.
     // Because of that another purpose for the RenderFrame is to act as a command buffer for high level render commands.
     // This is mainly inspired by the Scriptable Render Pipeline from Unity.
@@ -97,7 +97,7 @@ namespace Hyperion::Rendering {
     // The RenderDriver is the lowest point in the rendering API stack.
     // A RenderDriver lives on the Render Thread and gets passed the corresponding RenderFrame for reading.
     // For every underlying graphics API there exists a RenderDriver whose job is twofold:
-    //     1. Loading/Unloading of GPU assets taken from RenderContext
+    //     1. Loading/Unloading of GPU assets taken from RenderFrameContext
     //     2. Translation of RenderFrame commands to graphics API commands
     // 
     // NOTE: There was a plan to have a full grown graphics API abstraction layer with implementations for every graphics API.

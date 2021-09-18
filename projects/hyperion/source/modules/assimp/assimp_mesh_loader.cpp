@@ -48,9 +48,7 @@ namespace Hyperion {
             LoadSubMesh(scene->mMeshes[i], mesh_data, sub_meshes);
         }
 
-        Mesh *mesh = AssetManager::CreateMesh();
-        mesh->SetData(mesh_data, sub_meshes);
-        return mesh;
+        return AssetManager::CreateMesh(mesh_data, sub_meshes);
     }
 
     //--------------------------------------------------------------

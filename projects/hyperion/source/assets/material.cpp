@@ -36,8 +36,6 @@ namespace Hyperion {
         });
 
         if (it != m_properties.end()) {
-            Threading::ScopeLock lock(GetLocker());
-
             MaterialProperty &property = *it;
             if (property.type == MaterialPropertyType::Color) {
                 property.storage.color = value;
@@ -55,7 +53,6 @@ namespace Hyperion {
     Material::Material(AssetInfo info, Shader *shader) : Asset(info) {
         m_shader = shader;
 
-        Threading::ScopeLock lock(GetLocker());
         m_properties = shader->GetDefaultProperties();
 
         SetDirty();

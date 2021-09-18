@@ -20,8 +20,6 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Shader::PreProcess(const String &source) {
-        Threading::ScopeLock lock(GetLocker());
-
         ShaderPreProcessor pre_processor(source);
         ShaderPreProcessResult pre_process_result = pre_processor.PreProcess();
         if (pre_process_result.success) {

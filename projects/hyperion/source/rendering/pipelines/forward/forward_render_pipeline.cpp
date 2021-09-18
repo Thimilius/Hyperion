@@ -53,7 +53,7 @@ namespace Hyperion::Rendering {
     struct GroupedMesh {
         OpenGLMesh *mesh;
 
-        Array<RenderFrameMeshObject> objects;
+        Array<RenderFrameContextMeshObject> objects;
     };
     struct GroupedMaterial {
         OpenGLMaterial *material;
@@ -67,19 +67,19 @@ namespace Hyperion::Rendering {
     };
 
     //--------------------------------------------------------------
-    Array<GroupedShader> GroupObjects(const Array<RenderFrameMeshObject> &mesh_objects, RenderLayerMask visibility_mask) {
+    Array<GroupedShader> GroupObjects(const Array<RenderFrameContextMeshObject> &mesh_objects, RenderLayerMask visibility_mask) {
         HYP_PROFILE_CATEGORY("GroupObjects", ProfileCategory::Rendering);
 
         Array<GroupedShader> grouped_shaders;
 
-        for (const RenderFrameMeshObject &render_frame_mesh_object : mesh_objects) {
-            if ((render_frame_mesh_object.layer_mask & visibility_mask) != render_frame_mesh_object.layer_mask) {
+        for (const RenderFrameContextMeshObject &render_frame_context_mesh_object : mesh_objects) {
+            if ((render_frame_context_mesh_object.layer_mask & visibility_mask) != render_frame_context_mesh_object.layer_mask) {
                 continue;
             }
 
-            AssetId material_id = render_frame_mesh_object.material->GetAssetInfo().id;
-            AssetId shader_id = render_frame_mesh_object.material->GetShader()->GetAssetInfo().id;
-            AssetId mesh_id = render_frame_mesh_object.mesh->GetAssetInfo().id;
+            AssetId material_id = render_frame_context_mesh_object.material->GetAssetInfo().id;
+            AssetId shader_id = render_frame_context_mesh_object.material->GetShader()->GetAssetInfo().id;
+            AssetId mesh_id = render_frame_context_mesh_object.mesh->GetAssetInfo().id;
 
             auto shaders_it = std::find_if(grouped_shaders.begin(), grouped_shaders.end(), [shader_id](const GroupedShader &grouped_shader) {
                 return grouped_shader.shader->id == shader_id;
@@ -118,7 +118,7 @@ namespace Hyperion::Rendering {
                 grouped_mesh = &meshes.Get(mesh_id);
             }
 
-            grouped_mesh->objects.Add(render_frame_mesh_object);
+            grouped_mesh->objects.Add(render_frame_context_mesh_object);
         }
 
         return grouped_shaders;
@@ -174,9 +174,9 @@ namespace Hyperion::Rendering {
 
         LoadAssets(render_frame);
 
-        for (const RenderFrameCamera &render_frame_camera : render_frame->GetCameras()) {
-            g_grouped_shaders = GroupObjects(render_frame->GetMeshObjects(), render_frame_camera.visibility_mask);
-            RenderCamera(render_frame_camera, render_frame);
+        for (const RenderFrameContextCamera &render_frame_context_camera : render_frame->GetContext().GetCameras()) {
+            g_grouped_shaders = GroupObjects(render_frame->GetContext().GetMeshObjects(), render_frame_context_camera.visibility_mask);
+            RenderCamera(render_frame_context_camera, render_frame);
         }
     }
 
@@ -186,14 +186,14 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void ForwardRenderPipeline::RenderCamera(const RenderFrameCamera &render_frame_camera, RenderFrame *render_frame) {
+    void ForwardRenderPipeline::RenderCamera(const RenderFrameContextCamera &render_frame_context_camera, RenderFrame *render_frame) {
         HYP_PROFILE_CATEGORY("RenderCamera", ProfileCategory::Rendering);
 
-        const CameraViewport &viewport = render_frame_camera.viewport;
+        const CameraViewport &viewport = render_frame_context_camera.viewport;
 
         {
             glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
-            Color background_color = render_frame_camera.background_color;
+            Color background_color = render_frame_context_camera.background_color;
             glClearColor(background_color.r, background_color.g, background_color.b, background_color.a);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         }
@@ -203,8 +203,8 @@ namespace Hyperion::Rendering {
 
             const OpenGLShader &opengl_shader = *grouped_shader.shader;
             glUseProgram(opengl_shader.program);
-            glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_view"), 1, GL_FALSE, render_frame_camera.view_matrix.elements);
-            glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_projection"), 1, GL_FALSE, render_frame_camera.projection_matrix.elements);
+            glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_view"), 1, GL_FALSE, render_frame_context_camera.view_matrix.elements);
+            glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_projection"), 1, GL_FALSE, render_frame_context_camera.projection_matrix.elements);
 
             for (const auto [material_id, grouped_material] : grouped_shader.materials) {
                 HYP_PROFILE_SCOPE("RenderGroupedMaterial");
@@ -226,13 +226,13 @@ namespace Hyperion::Rendering {
                     glBindVertexArray(opengl_mesh.vertex_array);
 
                     GLint model_location = glGetUniformLocation(opengl_shader.program, "u_model");
-                    for (const RenderFrameMeshObject &render_frame_mesh_object : grouped_mesh.objects) {
+                    for (const RenderFrameContextMeshObject &render_frame_context_mesh_object : grouped_mesh.objects) {
                         HYP_PROFILE_SCOPE("RenderFrameMeshObject");
 
-                        glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, render_frame_mesh_object.local_to_world.elements);
+                        glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, render_frame_context_mesh_object.local_to_world.elements);
 
                         // NOTE: We may also want to group by sub meshes.
-                        SubMesh sub_mesh = opengl_mesh.sub_meshes[render_frame_mesh_object.sub_mesh_index];
+                        SubMesh sub_mesh = opengl_mesh.sub_meshes[render_frame_context_mesh_object.sub_mesh_index];
                         void *index_offset = reinterpret_cast<void *>(static_cast<uint32>(sub_mesh.index_offset) * sizeof(uint32));
                         GLenum topology = OpenGLGraphicsUtilities::GetTopology(sub_mesh.topology);
                         glDrawElementsBaseVertex(topology, sub_mesh.index_count, GL_UNSIGNED_INT, index_offset, sub_mesh.vertex_offset);
@@ -246,9 +246,7 @@ namespace Hyperion::Rendering {
     void ForwardRenderPipeline::LoadAssets(RenderFrame *render_frame) {
         HYP_PROFILE_SCOPE("LoadAssets");
 
-        for (Asset *asset : render_frame->GetAssetsToLoad()) {
-            Threading::ScopeLock lock(asset->GetLocker());
-
+        for (Asset *asset : render_frame->GetContext().GetAssetsToLoad()) {
             switch (asset->GetAssetType()) {
                 case AssetType::Material: LoadMaterial(static_cast<Material *>(asset)); break;
                 case AssetType::Mesh: LoadMesh(static_cast<Mesh *>(asset)); break;

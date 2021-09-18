@@ -47,12 +47,12 @@ namespace Hyperion {
         inline const Array<Rendering::SubMesh> &GetSubMeshes() { return m_sub_meshes; }
         inline uint32 GetSubMeshCount() const { return static_cast<uint32>(m_sub_meshes.GetLength()); }
 
-        inline const MeshData &GetData() const { return m_data; }
+        const MeshData &GetData() const;
         void SetData(const MeshData &data, const Array<Rendering::SubMesh> &sub_meshes);
 
         inline BoundingBox GetBounds() const { return m_bounds; }
     private:
-        static BoundingBox CalculateBounds(const Array<Vector3> &positions);
+        void SetDataInternal(const MeshData &data, const Array<Rendering::SubMesh> &sub_meshes);
     private:
         MeshData m_data;
         MeshVertexFormat m_vertex_format;

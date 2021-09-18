@@ -10,9 +10,14 @@ namespace Hyperion {
     class Engine;
     class Material;
     class Mesh;
+    struct MeshData;
     class Shader;
     class Texture;
     class Texture2D;
+
+    namespace Rendering {
+        struct SubMesh;
+    }
 }
 
 //-------------------- Definition Namespace --------------------
@@ -27,14 +32,15 @@ namespace Hyperion {
 
     class AssetManager final {
     public:
+        static Texture2D *CreateTexture2D();
+
+        static Shader *CreateShader(const String &source);
+
         static Material *CreateMaterial(Shader *shader);
 
         static Mesh *GetMeshPrimitive(MeshPrimitive mesh_primitive);
         static Mesh *CreateMesh();
-
-        static Texture2D *CreateTexture2D();
-
-        static Shader *CreateShader(const String &source);
+        static Mesh *CreateMesh(const MeshData &data, const Array<Rendering::SubMesh> &sub_meshes, AssetDataAccess data_access = AssetDataAccess::None);
 
         static void Unload(Asset *asset);
     private:
@@ -49,12 +55,12 @@ namespace Hyperion {
 
         static void AddDirtyAsset(Asset *asset);
 
-        static AssetInfo GetNextAssetInfo();
+        static AssetInfo GetNextAssetInfo(AssetDataAccess data_access);
     private:
-        inline static Map<AssetId, Material *> s_materials;
-        inline static Map<AssetId, Mesh *> s_meshes;
-        inline static Map<AssetId, Shader *> s_shaders;
-        inline static Map<AssetId, Texture *> s_textures;
+        inline static Map<AssetGuid, Material *> s_materials;
+        inline static Map<AssetGuid, Mesh *> s_meshes;
+        inline static Map<AssetGuid, Shader *> s_shaders;
+        inline static Map<AssetGuid, Texture *> s_textures;
 
         inline static struct Primitives {
             Mesh *mesh_quad;
