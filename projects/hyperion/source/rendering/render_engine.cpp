@@ -52,13 +52,11 @@ namespace Hyperion::Rendering {
     // Render systems take the different components and extract every object, camera, light, etc. and copies it into the context.
     // It can be thought of as the snapshot of the simulated world with all the data required to render it.
     // 
-    // The Render Context also contains every asset that needs to be loaded/unloaded on the GPU.
+    // The RenderFrameContext also contains every asset that needs to be loaded/unloaded on the GPU.
     // That includes meshes, shaders, materials, textures, ...
-    // An important difference here is that, unlike the ECS components, the data for these assets is NOT copied.
-    // They get just passed along as a reference.
-    // Every asset has a critical section which is used to synchronize the access in mainly two scenarios:
-    //     1. When writing data on the Main Thread
-    //     2. When reading data on the Render Thread
+    // The data for shaders and materials is always copied which is usually fine as it is quite lightweight.
+    // The bigger data from meshes and textures is ONLY copied when the asset is set to AssetDataAccess::ReadAndWrite.
+    // In most cases the asset is set to AssetDataAccess::None which means the data can simply be moved and no copy has to be made.
     // 
     // ────────────────────────────────────────────────────────────────────────────────────
     // RENDER FRAME:

@@ -42,6 +42,7 @@ namespace Hyperion {
         BoundingBox m_bounds;
     private:
         friend class Hyperion::AssetManager;
+        friend class Hyperion::AssetLoadSystem;
     };
 
 }

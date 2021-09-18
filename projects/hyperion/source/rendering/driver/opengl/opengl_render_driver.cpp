@@ -101,35 +101,41 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void LoadMaterial(Material *material) {
+    void LoadShader(RenderFrameContextAssetShader &shader) {
+        HYP_PROFILE_SCOPE("LoadShader");
+
+        // FIXME: Handle shader compilation errors.
+        OpenGLShader opengl_shader;
+        opengl_shader.id = shader.id;
+        opengl_shader.program = OpenGLRenderDriverShaderCompiler::Compile(shader.data.vertex_source.c_str(), shader.data.fragment_source.c_str()).program;
+
+        g_opengl_shaders.Insert(shader.id, opengl_shader);
+    }
+
+    //--------------------------------------------------------------
+    void LoadMaterial(RenderFrameContextAssetMaterial &material) {
         HYP_PROFILE_SCOPE("LoadMaterial");
 
-        AssetId material_id = material->GetAssetInfo().id;
-
-        auto material_it = g_opengl_materials.Find(material_id);
+        auto material_it = g_opengl_materials.Find(material.id);
         if (material_it == g_opengl_materials.end()) {
-            AssetId shader_id = material->GetShader()->GetAssetInfo().id;
-
             OpenGLMaterial opengl_material;
-            opengl_material.id = material_id;
-            opengl_material.shader = &g_opengl_shaders.Get(shader_id);;
-            opengl_material.properties = material->GetProperties();
+            opengl_material.id = material.id;
+            opengl_material.shader = &g_opengl_shaders.Get(material.shader_id);;
+            opengl_material.properties = std::move(material.properties);
 
-            g_opengl_materials.Insert(material_id, opengl_material);
+            g_opengl_materials.Insert(material.id, opengl_material);
         } else {
             OpenGLMaterial &opengl_material = material_it->second;
-            opengl_material.properties = material->GetProperties();
+            opengl_material.properties = std::move(material.properties);
         }
     }
 
     //--------------------------------------------------------------
-    void LoadMesh(Mesh *mesh) {
+    void LoadMesh(RenderFrameContextAssetMesh &mesh) {
         HYP_PROFILE_SCOPE("LoadMesh");
 
-        AssetId mesh_id = mesh->GetAssetInfo().id;
-
-        const MeshData &data = mesh->GetData();
-        const MeshVertexFormat &vertex_format = mesh->GetVertexFormat();
+        const MeshData &data = mesh.data;
+        const MeshVertexFormat &vertex_format = mesh.vertex_format;
 
         bool8 has_normals = data.normals.GetLength() > 0;
         bool8 has_colors = data.colors.GetLength() > 0;
@@ -162,8 +168,8 @@ namespace Hyperion::Rendering {
         }
 
         OpenGLMesh opengl_mesh;
-        opengl_mesh.id = mesh_id;
-        opengl_mesh.sub_meshes = mesh->GetSubMeshes();
+        opengl_mesh.id = mesh.id;
+        opengl_mesh.sub_meshes = std::move(mesh.sub_meshes);
 
         glCreateBuffers(1, &opengl_mesh.vertex_buffer);
         glNamedBufferData(opengl_mesh.vertex_buffer, vertices.GetLength(), vertices.GetData(), GL_STATIC_DRAW);
@@ -191,33 +197,24 @@ namespace Hyperion::Rendering {
             relative_offset += GetGLVertexAttributeSizeForVertexAttribute(vertex_attribute.type, vertex_attribute.dimension);
         }
 
-        g_opengl_meshes.Insert(mesh_id, opengl_mesh);
+        g_opengl_meshes.Insert(mesh.id, opengl_mesh);
     }
 
     //--------------------------------------------------------------
-    void LoadShader(Shader *shader) {
-        HYP_PROFILE_SCOPE("LoadShader");
-
-        AssetId shader_id = shader->GetAssetInfo().id;
-        const ShaderData &data = shader->GetData();
-
-        OpenGLShader opengl_shader;
-        opengl_shader.id = shader_id;
-        opengl_shader.program = OpenGLRenderDriverShaderCompiler::Compile(data.vertex_source.c_str(), data.fragment_source.c_str()).program;
-
-        g_opengl_shaders.Insert(shader_id, opengl_shader);
-    }
-
-    //--------------------------------------------------------------
-    void LoadAssets(RenderFrame *render_frame) {
+    void LoadAssets(RenderFrameContext &render_frame_context) {
         HYP_PROFILE_SCOPE("LoadAssets");
 
-        for (Asset *asset : render_frame->GetContext().GetAssetsToLoad()) {
-            switch (asset->GetAssetType()) {
-                case AssetType::Material: LoadMaterial(static_cast<Material *>(asset)); break;
-                case AssetType::Mesh: LoadMesh(static_cast<Mesh *>(asset)); break;
-                case AssetType::Shader: LoadShader(static_cast<Shader *>(asset)); break;
-            }
+        // The order in which we load the assets is important.
+        // For example a material might reference a shader which should always be loaded first.
+
+        for (RenderFrameContextAssetShader &shader : render_frame_context.GetShadersToLoad()) {
+            LoadShader(shader);
+        }
+        for (RenderFrameContextAssetMaterial &material : render_frame_context.GetMaterialsToLoad()) {
+            LoadMaterial(material);
+        }
+        for (RenderFrameContextAssetMesh &mesh : render_frame_context.GetMeshesToLoad()) {
+            LoadMesh(mesh);
         }
     }
 
@@ -349,7 +346,7 @@ namespace Hyperion::Rendering {
     void OpenGLRenderDriver::Render(RenderFrame *render_frame) {
         HYP_PROFILE_CATEGORY("Render", ProfileCategory::Rendering);
 
-        LoadAssets(render_frame);
+        LoadAssets(render_frame->GetContext());
 
         for (const RenderFrameContextCamera &render_frame_context_camera : render_frame->GetContext().GetCameras()) {
             g_grouped_shaders = GroupObjects(render_frame->GetContext().GetMeshObjects(), render_frame_context_camera.visibility_mask);

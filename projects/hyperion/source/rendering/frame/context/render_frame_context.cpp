@@ -9,17 +9,32 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void RenderFrameContext::Clear() {
-        m_assets_to_load.Clear();
+        m_materials_to_load.Clear();
+        m_meshes_to_load.Clear();
+        m_shaders_to_load.Clear();
         m_assets_to_unload.Clear();
 
         m_cameras.Clear();
         m_mesh_objects.Clear();
+        m_sprite_objects.Clear();
     }
 
     //--------------------------------------------------------------
-    void RenderFrameContext::AddAssetToLoad(Asset *asset) {
-        HYP_ASSERT(!m_assets_to_load.Contains(asset));
-        m_assets_to_load.Add(asset);
+    RenderFrameContextAssetMaterial &RenderFrameContext::AddMaterialAssetToLoad() {
+        m_materials_to_load.Resize(m_materials_to_load.GetLength() + 1);
+        return m_materials_to_load.GetLast();
+    }
+
+    //--------------------------------------------------------------
+    RenderFrameContextAssetMesh &RenderFrameContext::AddMeshAssetToLoad() {
+        m_meshes_to_load.Resize(m_meshes_to_load.GetLength() + 1);
+        return m_meshes_to_load.GetLast();
+    }
+
+    //--------------------------------------------------------------
+    RenderFrameContextAssetShader &RenderFrameContext::AddShaderAssetToLoad() {
+        m_shaders_to_load.Resize(m_shaders_to_load.GetLength() + 1);
+        return m_shaders_to_load.GetLast();
     }
 
     //--------------------------------------------------------------
