@@ -2,6 +2,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset.hpp"
+#include "hyperion/rendering/types/render_types_mesh.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -10,14 +11,9 @@ namespace Hyperion {
     class Engine;
     class Material;
     class Mesh;
-    struct MeshData;
     class Shader;
     class Texture;
     class Texture2D;
-
-    namespace Rendering {
-        struct SubMesh;
-    }
 }
 
 //-------------------- Definition Namespace --------------------
@@ -40,7 +36,7 @@ namespace Hyperion {
 
         static Mesh *GetMeshPrimitive(MeshPrimitive mesh_primitive);
         static Mesh *CreateMesh();
-        static Mesh *CreateMesh(const MeshData &data, const Array<Rendering::SubMesh> &sub_meshes, AssetDataAccess data_access = AssetDataAccess::None);
+        static Mesh *CreateMesh(const Rendering::MeshData &data, const Rendering::SubMeshes &sub_meshes, AssetDataAccess data_access = AssetDataAccess::None);
 
         static void Unload(Asset *asset);
     private:

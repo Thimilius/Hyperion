@@ -15,22 +15,22 @@ namespace Hyperion::Rendering {
         const Array<AssetId> &GetAssetsToUnload() const { return m_assets_to_unload; }
 
         const Array<RenderFrameContextCamera> &GetCameras() const { return m_cameras; }
-        const Array<RenderFrameContextMeshObject> &GetMeshObjects() const { return m_mesh_objects; }
-        const Array<RenderFrameContextSpriteObject> &GetSpriteObjects() const { return m_sprite_objects; }
+        const Array<RenderFrameContextObjectMesh> &GetMeshObjects() const { return m_mesh_objects; }
+        const Array<RenderFrameContextObjectSprite> &GetSpriteObjects() const { return m_sprite_objects; }
 
         void AddAssetToLoad(Asset *asset);
         void AddAssetToUnload(AssetId asset_id);
 
         RenderFrameContextCamera &AddCamera();
-        RenderFrameContextMeshObject &AddMeshObject();
-        RenderFrameContextSpriteObject &AddSpriteObject();
+        RenderFrameContextObjectMesh &AddMeshObject();
+        RenderFrameContextObjectSprite &AddSpriteObject();
     private:
         Array<AssetId> m_assets_to_unload;
         Array<Asset *> m_assets_to_load;
 
         Array<RenderFrameContextCamera> m_cameras;
-        Array<RenderFrameContextMeshObject> m_mesh_objects;
-        Array<RenderFrameContextSpriteObject> m_sprite_objects;
+        Array<RenderFrameContextObjectMesh> m_mesh_objects;
+        Array<RenderFrameContextObjectSprite> m_sprite_objects;
     };
 
 }

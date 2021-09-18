@@ -43,7 +43,7 @@ namespace Hyperion {
         }
 
         MeshData mesh_data;
-        Array<SubMesh> sub_meshes;
+        SubMeshes sub_meshes;
         for (uint32 i = 0; i < scene->mNumMeshes; i++) {
             LoadSubMesh(scene->mMeshes[i], mesh_data, sub_meshes);
         }
@@ -52,7 +52,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void AssimpMeshLoader::LoadSubMesh(const aiMesh *mesh, MeshData &mesh_data, Array<SubMesh> &sub_meshes) {
+    void AssimpMeshLoader::LoadSubMesh(const aiMesh *mesh, MeshData &mesh_data, SubMeshes &sub_meshes) {
         // Make sure the mesh has all necessary components.
         if (!mesh->HasPositions() || !mesh->HasNormals() || !mesh->HasTextureCoords(0)) {
             HYP_LOG_ERROR("MeshImporter", "Mesh does not contain basic relevant data!");
@@ -88,12 +88,12 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Graphics::GraphicsTopology AssimpMeshLoader::GetTopologyForPrimitiveType(uint32 primitive_type) {
+    MeshTopology AssimpMeshLoader::GetTopologyForPrimitiveType(uint32 primitive_type) {
         switch (primitive_type) {
-            case aiPrimitiveType_TRIANGLE: return Graphics::GraphicsTopology::Triangles;
-            case aiPrimitiveType_LINE: return Graphics::GraphicsTopology::Lines;
-            case aiPrimitiveType_POINT: return Graphics::GraphicsTopology::Points;
-            default: HYP_LOG_ERROR("MeshImporter", "Mesh contains an unsupported primitive type!"); return Graphics::GraphicsTopology::Triangles;
+            case aiPrimitiveType_TRIANGLE: return MeshTopology::Triangles;
+            case aiPrimitiveType_LINE: return MeshTopology::Lines;
+            case aiPrimitiveType_POINT: return MeshTopology::Points;
+            default: HYP_LOG_ERROR("MeshImporter", "Mesh contains an unsupported primitive type!"); return MeshTopology::Triangles;
         }
     }
 

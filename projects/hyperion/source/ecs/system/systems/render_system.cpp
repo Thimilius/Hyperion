@@ -72,7 +72,7 @@ namespace Hyperion::Rendering {
         for (EntityId entity : view) {
             LocalToWorldComponent *local_to_world = world->GetComponent<LocalToWorldComponent>(entity);
             SpriteComponent *sprite = world->GetComponent<SpriteComponent>(entity);
-            RenderFrameContextSpriteObject &render_frame_context_sprite_object = render_frame_context.AddSpriteObject();
+            RenderFrameContextObjectSprite &render_frame_context_sprite_object = render_frame_context.AddSpriteObject();
             render_frame_context_sprite_object.local_to_world = local_to_world->local_to_world;
             render_frame_context_sprite_object.color = sprite->color;
         }
@@ -89,7 +89,7 @@ namespace Hyperion::Rendering {
             LocalToWorldComponent *local_to_world = world->GetComponent<LocalToWorldComponent>(entity);
             RenderMeshComponent *render_mesh = world->GetComponent<RenderMeshComponent>(entity);
 
-            RenderFrameContextMeshObject &render_frame_context_mesh_object = render_frame_context.AddMeshObject();
+            RenderFrameContextObjectMesh &render_frame_context_mesh_object = render_frame_context.AddMeshObject();
             render_frame_context_mesh_object.local_to_world = local_to_world->local_to_world;
             render_frame_context_mesh_object.mesh = render_mesh->mesh;
             render_frame_context_mesh_object.sub_mesh_index = render_mesh->sub_mesh_index;

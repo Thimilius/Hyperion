@@ -5,7 +5,8 @@
 #include "hyperion/assets/mesh.hpp"
 #include "hyperion/assets/texture.hpp"
 #include "hyperion/core/color.hpp"
-#include "hyperion/rendering/render_types.hpp"
+#include "hyperion/rendering/types/render_types_camera.hpp"
+#include "hyperion/rendering/types/render_types_general.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -16,7 +17,7 @@ namespace Hyperion {
         Rendering::CameraClearMode clear_mode = Rendering::CameraClearMode::Color;
         Color background_color = Color::Black();
 
-        Rendering::RenderLayerMask visibility_mask = Rendering::RenderLayerMask::Everything;
+        Rendering::LayerMask visibility_mask = Rendering::LayerMask::Everything;
 
         float32 near_plane = 0.1f;
         float32 far_plane = 1000.0f;
@@ -46,7 +47,7 @@ namespace Hyperion {
 
         Material *material = nullptr;
 
-        Rendering::RenderLayerMask layer_mask = Rendering::RenderLayerMask::Default;
+        Rendering::LayerMask layer_mask = Rendering::LayerMask::Default;
     };
 
 }

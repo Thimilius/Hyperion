@@ -1,7 +1,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/guid.hpp"
+#include "hyperion/assets/asset_types.hpp"
 #include "hyperion/core/threading/critical_section.hpp"
 
 //-------------------- Forward Declarations --------------------
@@ -12,28 +12,6 @@ namespace Hyperion {
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
-
-    enum class AssetType {
-        Material,
-        Mesh,
-        Shader,
-        Texture
-    };
-
-    using AssetId = uint64;
-    using AssetGuid = Guid;
-
-    enum class AssetDataAccess {
-        None,
-        ReadAndWrite
-    };
-
-    struct AssetInfo {
-        AssetId id;
-        AssetGuid guid;
-
-        AssetDataAccess data_access;
-    };
 
     class Asset : public INonCopyable {
     protected:

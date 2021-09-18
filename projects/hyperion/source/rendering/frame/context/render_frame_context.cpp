@@ -35,13 +35,13 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    RenderFrameContextMeshObject &RenderFrameContext::AddMeshObject() {
+    RenderFrameContextObjectMesh &RenderFrameContext::AddMeshObject() {
         m_mesh_objects.Resize(m_mesh_objects.GetLength() + 1);
         return m_mesh_objects.GetLast();
     }
 
     //--------------------------------------------------------------
-    RenderFrameContextSpriteObject &RenderFrameContext::AddSpriteObject() {
+    RenderFrameContextObjectSprite &RenderFrameContext::AddSpriteObject() {
         m_sprite_objects.Resize(m_sprite_objects.GetLength() + 1);
         return m_sprite_objects.GetLast();
     }

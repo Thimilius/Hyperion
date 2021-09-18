@@ -16,15 +16,4 @@ namespace Hyperion::Graphics {
 #endif
     }
 
-    //--------------------------------------------------------------
-    GLenum OpenGLGraphicsUtilities::GetTopology(GraphicsTopology mesh_topology) {
-        switch (mesh_topology) {
-            case GraphicsTopology::Points: return GL_POINTS;
-            case GraphicsTopology::Lines: return GL_LINES;
-            case GraphicsTopology::LineStrip: return GL_LINE_STRIP;
-            case GraphicsTopology::Triangles: return GL_TRIANGLES;
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
-        }
-    }
-
 }

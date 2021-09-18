@@ -1,7 +1,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/rendering/render_types.hpp"
+#include "hyperion/rendering/types/render_types_shader.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
@@ -38,13 +38,13 @@ namespace Hyperion::Rendering {
 
         bool IsDirective(const char *directive, const char *start);
     private:
-        static Graphics::GraphicsShaderStageFlags GetShaderStageFromString(const String &string);
+        static ShaderStageFlags GetShaderStageFromString(const String &string);
         static ShaderLightMode GetShaderLightModeFromString(const String &string);
     private:
         String m_source;
         uint64 m_position;
 
-        Graphics::GraphicsShaderStageFlags m_current_shader_stage = Graphics::GraphicsShaderStageFlags::Unknown;
+        ShaderStageFlags m_current_shader_stage = ShaderStageFlags::Unknown;
         uint64 m_current_shader_type_directive_end;
 
         bool m_property_light_mode_set = false;

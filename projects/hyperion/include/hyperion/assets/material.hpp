@@ -2,7 +2,6 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/shader.hpp"
-#include "hyperion/rendering/render_types.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {

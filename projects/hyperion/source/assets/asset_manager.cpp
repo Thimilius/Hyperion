@@ -59,7 +59,7 @@ namespace Hyperion {
         return mesh;
     }
 
-    Mesh *AssetManager::CreateMesh(const MeshData &data, const Array<Rendering::SubMesh> &sub_meshes, AssetDataAccess data_access) {
+    Mesh *AssetManager::CreateMesh(const Rendering::MeshData &data, const Rendering::SubMeshes &sub_meshes, AssetDataAccess data_access) {
         AssetInfo info = GetNextAssetInfo(data_access);
         Mesh *mesh = new Mesh(info, data, sub_meshes);
         s_meshes.Insert(info.guid, mesh);

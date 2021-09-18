@@ -4,7 +4,8 @@
 #include "hyperion/core/color.hpp"
 #include "hyperion/core/math/matrix4x4.hpp"
 #include "hyperion/core/math/vector3.hpp"
-#include "hyperion/rendering/render_types.hpp"
+#include "hyperion/rendering/types/render_types_camera.hpp"
+#include "hyperion/rendering/types/render_types_general.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
@@ -15,7 +16,7 @@ namespace Hyperion::Rendering {
         CameraClearMode clear_mode;
         Color background_color;
 
-        RenderLayerMask visibility_mask;
+        LayerMask visibility_mask;
 
         Vector3 position;
         Vector3 forward;

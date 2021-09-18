@@ -12,16 +12,16 @@ namespace Hyperion::Rendering {
         Matrix4x4 local_to_world;
     };
 
-    struct RenderFrameContextMeshObject : public RenderFrameContextObject {
+    struct RenderFrameContextObjectMesh : public RenderFrameContextObject {
         Mesh *mesh;
         uint32 sub_mesh_index;
 
         Material *material;
 
-        RenderLayerMask layer_mask;
+        LayerMask layer_mask;
     };
 
-    struct RenderFrameContextSpriteObject : public RenderFrameContextObject {
+    struct RenderFrameContextObjectSprite : public RenderFrameContextObject {
         Color color;
     };
 

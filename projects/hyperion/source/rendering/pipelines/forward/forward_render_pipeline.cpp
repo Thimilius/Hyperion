@@ -53,7 +53,7 @@ namespace Hyperion::Rendering {
     struct GroupedMesh {
         OpenGLMesh *mesh;
 
-        Array<RenderFrameContextMeshObject> objects;
+        Array<RenderFrameContextObjectMesh> objects;
     };
     struct GroupedMaterial {
         OpenGLMaterial *material;
@@ -67,19 +67,19 @@ namespace Hyperion::Rendering {
     };
 
     //--------------------------------------------------------------
-    Array<GroupedShader> GroupObjects(const Array<RenderFrameContextMeshObject> &mesh_objects, RenderLayerMask visibility_mask) {
+    Array<GroupedShader> GroupObjects(const Array<RenderFrameContextObjectMesh> &mesh_objects, LayerMask visibility_mask) {
         HYP_PROFILE_CATEGORY("GroupObjects", ProfileCategory::Rendering);
 
         Array<GroupedShader> grouped_shaders;
 
-        for (const RenderFrameContextMeshObject &render_frame_context_mesh_object : mesh_objects) {
-            if ((render_frame_context_mesh_object.layer_mask & visibility_mask) != render_frame_context_mesh_object.layer_mask) {
+        for (const RenderFrameContextObjectMesh &render_frame_context_object_mesh : mesh_objects) {
+            if ((render_frame_context_object_mesh.layer_mask & visibility_mask) != render_frame_context_object_mesh.layer_mask) {
                 continue;
             }
 
-            AssetId material_id = render_frame_context_mesh_object.material->GetAssetInfo().id;
-            AssetId shader_id = render_frame_context_mesh_object.material->GetShader()->GetAssetInfo().id;
-            AssetId mesh_id = render_frame_context_mesh_object.mesh->GetAssetInfo().id;
+            AssetId material_id = render_frame_context_object_mesh.material->GetAssetInfo().id;
+            AssetId shader_id = render_frame_context_object_mesh.material->GetShader()->GetAssetInfo().id;
+            AssetId mesh_id = render_frame_context_object_mesh.mesh->GetAssetInfo().id;
 
             auto shaders_it = std::find_if(grouped_shaders.begin(), grouped_shaders.end(), [shader_id](const GroupedShader &grouped_shader) {
                 return grouped_shader.shader->id == shader_id;
@@ -118,10 +118,21 @@ namespace Hyperion::Rendering {
                 grouped_mesh = &meshes.Get(mesh_id);
             }
 
-            grouped_mesh->objects.Add(render_frame_context_mesh_object);
+            grouped_mesh->objects.Add(render_frame_context_object_mesh);
         }
 
         return grouped_shaders;
+    }
+
+    //--------------------------------------------------------------
+    GLenum GetGLTopology(MeshTopology mesh_topology) {
+        switch (mesh_topology) {
+            case MeshTopology::Points: return GL_POINTS;
+            case MeshTopology::Lines: return GL_LINES;
+            case MeshTopology::LineStrip: return GL_LINE_STRIP;
+            case MeshTopology::Triangles: return GL_TRIANGLES;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
     }
 
     //--------------------------------------------------------------
@@ -226,7 +237,7 @@ namespace Hyperion::Rendering {
                     glBindVertexArray(opengl_mesh.vertex_array);
 
                     GLint model_location = glGetUniformLocation(opengl_shader.program, "u_model");
-                    for (const RenderFrameContextMeshObject &render_frame_context_mesh_object : grouped_mesh.objects) {
+                    for (const RenderFrameContextObjectMesh &render_frame_context_mesh_object : grouped_mesh.objects) {
                         HYP_PROFILE_SCOPE("RenderFrameMeshObject");
 
                         glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, render_frame_context_mesh_object.local_to_world.elements);
@@ -234,7 +245,7 @@ namespace Hyperion::Rendering {
                         // NOTE: We may also want to group by sub meshes.
                         SubMesh sub_mesh = opengl_mesh.sub_meshes[render_frame_context_mesh_object.sub_mesh_index];
                         void *index_offset = reinterpret_cast<void *>(static_cast<uint32>(sub_mesh.index_offset) * sizeof(uint32));
-                        GLenum topology = OpenGLGraphicsUtilities::GetTopology(sub_mesh.topology);
+                        GLenum topology = GetGLTopology(sub_mesh.topology);
                         glDrawElementsBaseVertex(topology, sub_mesh.index_count, GL_UNSIGNED_INT, index_offset, sub_mesh.vertex_offset);
                     }
                 }

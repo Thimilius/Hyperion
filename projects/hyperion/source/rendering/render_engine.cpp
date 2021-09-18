@@ -79,6 +79,7 @@ namespace Hyperion::Rendering {
     //         - General (All objects)
     //         - Detailed (Single object)
     //     - Setting up camera properties
+    //     - Rasterizer state
     //     - Render passes
     //     - Render targets:
     //         - Setting

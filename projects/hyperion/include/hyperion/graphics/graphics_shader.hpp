@@ -2,14 +2,11 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/graphics/graphics_device_object.hpp"
-#include "hyperion/graphics/graphics_types.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Graphics {
 
     struct GraphicsShaderDescription : public GraphicsDeviceObjectDescription {
-        GraphicsShaderStageFlags stage;
-
         uint64 byte_code_size = 0;
         const void *byte_code = nullptr;
 

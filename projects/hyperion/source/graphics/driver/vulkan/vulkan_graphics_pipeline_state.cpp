@@ -101,7 +101,6 @@ namespace Hyperion::Graphics {
         HYP_VULKAN_CHECK(vkCreatePipelineLayout(device->GetDevice(), &pipeline_layout_create_info, nullptr, &m_pipeline_layout));
 
         HYP_ASSERT(description.vertex_shader);
-        HYP_ASSERT(description.vertex_shader->GetDescription().stage == GraphicsShaderStageFlags::Vertex);
         VkPipelineShaderStageCreateInfo vertex_shader_state_create_info = { };
         vertex_shader_state_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
         vertex_shader_state_create_info.stage = VK_SHADER_STAGE_VERTEX_BIT;
@@ -109,7 +108,6 @@ namespace Hyperion::Graphics {
         vertex_shader_state_create_info.pName = description.vertex_shader->GetDescription().entry_point;
 
         HYP_ASSERT(description.fragment_shader);
-        HYP_ASSERT(description.fragment_shader->GetDescription().stage == GraphicsShaderStageFlags::Fragment);
         VkPipelineShaderStageCreateInfo pixel_shader_state_create_info = { };
         pixel_shader_state_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
         pixel_shader_state_create_info.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
