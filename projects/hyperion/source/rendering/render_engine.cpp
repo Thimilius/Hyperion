@@ -147,7 +147,7 @@ namespace Hyperion::Rendering {
     //--------------------------------------------------------------
     void RenderEngine::Render() {
         {
-            HYP_PROFILE_SCOPE("Render");
+            HYP_PROFILE_SCOPE("PipelineRender");
             s_render_pipeline->Render(s_main_frame);
         }
 
