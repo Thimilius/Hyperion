@@ -8,17 +8,15 @@
 #include "hyperion/core/app/window_settings.hpp"
 #include "hyperion/core/app/events/app_event.hpp"
 #include "hyperion/core/math/vector2.hpp"
-#include "hyperion/graphics/graphics_backend.hpp"
 #include "hyperion/platform/windows/app/windows_input.hpp"
+#include "hyperion/rendering/render_backend.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
     class Engine;
 
-    namespace Graphics {
-        class GraphicsContext;
-    }
     namespace Rendering {
+        class IRenderDriverContext;
         class RenderEngine;
     }
 }
@@ -56,7 +54,7 @@ namespace Hyperion {
 
         void SetIcon(const String &path);
     private:
-        Graphics::GraphicsContext *CreateGraphicsContext(Graphics::GraphicsBackend graphics_backend);
+        Rendering::IRenderDriverContext *CreateRenderDriverContext(Rendering::RenderBackend render_backend);
 
         void Poll();
         void Show();

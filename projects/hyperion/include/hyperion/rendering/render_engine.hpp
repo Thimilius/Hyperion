@@ -7,7 +7,7 @@
 #include "hyperion/core/app/application_settings.hpp"
 #include "hyperion/core/app/window.hpp"
 #include "hyperion/core/threading/thread.hpp"
-#include "hyperion/graphics/graphics_context.hpp"
+#include "hyperion/rendering/driver/render_driver_context.hpp"
 #include "hyperion/rendering/frame/render_frame.hpp"
 
 //-------------------- Forward Declarations --------------------
@@ -24,7 +24,7 @@ namespace Hyperion::Rendering {
 
     class RenderEngine final {
     public:
-        inline static Graphics::GraphicsBackend GetBackend() { return s_render_settings.graphics_backend; }
+        inline static RenderBackend GetBackend() { return s_render_settings.backend; }
         inline static RenderFrame *GetMainRenderFrame() { return s_main_frame; }
     private:
         RenderEngine() = delete;
@@ -37,14 +37,14 @@ namespace Hyperion::Rendering {
 
         static void RequestExit();
 
+        static void InitializeGraphicsContext(Window *window);
+        static void ShutdownGraphicsContext();
+
+        static void SwapRenderFrames();
+
         static void RT_Initialize(Window *window);
         static void RT_Loop(void *parameter);
         static void RT_Shutdown();
-
-        static void InitializeGraphicsContextAndPipeline(Window *window);
-        static void ShutdownGraphicsContextAndPipeline();
-
-        static void SynchronizeMainAndRenderThread();
     private: 
         inline static RenderSettings s_render_settings;
         
@@ -57,7 +57,7 @@ namespace Hyperion::Rendering {
         inline static RenderFrame *s_render_frame;
 
         inline static IRenderPipeline *s_render_pipeline;
-        inline static Graphics::GraphicsContext *s_graphics_context;
+        inline static IRenderDriverContext *s_render_driver_context;
     private:
         friend class Hyperion::Engine;
     };

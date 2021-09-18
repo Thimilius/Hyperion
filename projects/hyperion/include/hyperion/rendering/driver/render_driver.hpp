@@ -8,16 +8,9 @@ namespace Hyperion::Rendering {
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-    enum class RenderPipeline {
-        Forward,
-        Deferred,
-
-        Custom
-    };
-
-    class IRenderPipeline {
+    class IRenderDriver {
     public:
-        virtual ~IRenderPipeline() = default;
+        virtual ~IRenderDriver() = default;
     public:
         virtual void Initialize() = 0;
         virtual void Render(RenderFrame *render_frame) = 0;

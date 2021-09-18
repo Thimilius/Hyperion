@@ -28,7 +28,7 @@ namespace Sandbox {
 
     //--------------------------------------------------------------
     void SandboxApplication::OnSetup(ApplicationSettings &settings) {
-        settings.render.graphics_backend = Graphics::GraphicsBackend::OpenGL;
+        settings.render.backend = Rendering::RenderBackend::OpenGL;
         settings.render.threading_mode = Rendering::RenderThreadingMode::MultiThreaded;
     }
 

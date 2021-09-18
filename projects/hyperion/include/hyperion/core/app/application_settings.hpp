@@ -4,8 +4,8 @@
 #include "hyperion/audio/audio_backend.hpp"
 #include "hyperion/core/engine_loop.hpp"
 #include "hyperion/core/app/window_settings.hpp"
-#include "hyperion/graphics/graphics_backend.hpp"
 #include "hyperion/physics/physics_backend.hpp"
+#include "hyperion/rendering/render_backend.hpp"
 #include "hyperion/rendering/pipelines/render_pipeline.hpp"
 #include "hyperion/rendering/threading/render_threading_mode.hpp"
 
@@ -29,7 +29,7 @@ namespace Hyperion {
     };
 
     struct RenderSettings {
-        Graphics::GraphicsBackend graphics_backend = Graphics::GraphicsBackend::OpenGL;
+        Rendering::RenderBackend backend = Rendering::RenderBackend::OpenGL;
 
         Rendering::RenderPipeline pipeline = Rendering::RenderPipeline::Forward;
         Rendering::IRenderPipeline *custom_pipeline = nullptr;

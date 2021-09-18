@@ -8,9 +8,6 @@
 #include "hyperion/rendering/pipelines/forward/forward_render_pipeline.hpp"
 #include "hyperion/rendering/threading/render_thread_synchronization.hpp"
 
-//------------------------- Namespaces -------------------------
-using namespace Hyperion::Graphics;
-
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
@@ -129,7 +126,7 @@ namespace Hyperion::Rendering {
 
         switch (settings.threading_mode) {
             case RenderThreadingMode::SingleThreaded: {
-                InitializeGraphicsContextAndPipeline(window);
+                InitializeGraphicsContext(window);
                 break;
             }
             case RenderThreadingMode::MultiThreaded: {
@@ -146,22 +143,26 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void RenderEngine::Initialize() {
-
+        s_render_pipeline->Initialize();
     }
 
     //--------------------------------------------------------------
     void RenderEngine::Render() {
+        {
+            HYP_PROFILE_SCOPE("Render");
+            s_render_pipeline->Render(s_main_frame);
+        }
+
         switch (s_render_settings.threading_mode) {
             case RenderThreadingMode::SingleThreaded: {
-                SynchronizeMainAndRenderThread();
+                SwapRenderFrames();
                 {
                     HYP_PROFILE_SCOPE("Render");
-                    s_render_pipeline->Render(s_render_frame);
+                    s_render_driver_context->GetDriver()->Render(s_render_frame);
                 }
-                
                 {
                     HYP_PROFILE_SCOPE("Present");
-                    s_graphics_context->SwapBuffers();
+                    s_render_driver_context->SwapBuffers();
                 }
                 break;
             }
@@ -170,7 +171,7 @@ namespace Hyperion::Rendering {
                     HYP_PROFILE_CATEGORY("WaitForRenderDone", ProfileCategory::Wait);
                     RenderThreadSynchronization::WaitForRenderDone();
                 }
-                SynchronizeMainAndRenderThread();
+                SwapRenderFrames();
                 RenderThreadSynchronization::NotifySwapDone();
                 break;
             }
@@ -180,9 +181,12 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void RenderEngine::Shutdown() {
+        s_render_pipeline->Shutdown();
+        delete s_render_pipeline;
+
         switch (s_render_settings.threading_mode) {
             case RenderThreadingMode::SingleThreaded: {
-                ShutdownGraphicsContextAndPipeline();
+                ShutdownGraphicsContext();
                 break;
             }
             case RenderThreadingMode::MultiThreaded: {
@@ -201,8 +205,35 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
+    void RenderEngine::SwapRenderFrames() {
+        HYP_PROFILE_SCOPE("SwitchRenderFrames");
+
+        RenderFrame *temp = s_main_frame;
+        s_main_frame = s_render_frame;
+        s_render_frame = temp;
+
+        s_main_frame->Clear();
+    }
+
+    //--------------------------------------------------------------
+    void RenderEngine::InitializeGraphicsContext(Window *window) {
+        s_render_driver_context = window->CreateRenderDriverContext(s_render_settings.backend);
+        s_render_driver_context->Initialize(RenderDriverContextDescriptor());
+        s_render_driver_context->SetVSyncMode(VSyncMode::DontSync);
+        s_render_driver_context->GetDriver()->Initialize();
+    }
+
+    //--------------------------------------------------------------
+    void RenderEngine::ShutdownGraphicsContext() {
+        s_render_driver_context->GetDriver()->Shutdown();
+
+        s_render_driver_context->Shutdown();
+        delete s_render_driver_context;
+    }
+
+    //--------------------------------------------------------------
     void RenderEngine::RT_Initialize(Window *window) {
-        InitializeGraphicsContextAndPipeline(window);
+        InitializeGraphicsContext(window);
 
         RenderThreadSynchronization::NotifyRenderReady();
         RenderThreadSynchronization::WaitForMainReady();
@@ -226,12 +257,12 @@ namespace Hyperion::Rendering {
             
             {
                 HYP_PROFILE_SCOPE("Render");
-                s_render_pipeline->Render(s_render_frame);
+                s_render_driver_context->GetDriver()->Render(s_render_frame);
             }
 
             {
                 HYP_PROFILE_SCOPE("Present");
-                s_graphics_context->SwapBuffers();
+                s_render_driver_context->SwapBuffers();
                 RenderThreadSynchronization::NotifyRenderDone();
             }
         }
@@ -241,36 +272,7 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void RenderEngine::RT_Shutdown() {
-        ShutdownGraphicsContextAndPipeline();
-    }
-
-    //--------------------------------------------------------------
-    void RenderEngine::SynchronizeMainAndRenderThread() {
-        HYP_PROFILE_SCOPE("SynchronizeMainAndRenderThread");
-
-        RenderFrame *temp = s_main_frame;
-        s_main_frame = s_render_frame;
-        s_render_frame = temp;
-
-        s_main_frame->Clear();
-    }
-
-    //--------------------------------------------------------------
-    void RenderEngine::InitializeGraphicsContextAndPipeline(Window *window) {
-        s_graphics_context = window->CreateGraphicsContext(s_render_settings.graphics_backend);
-        s_graphics_context->Initialize(GraphicsContextDescriptor());
-        s_graphics_context->SetVSyncMode(VSyncMode::DontSync);
-
-        s_render_pipeline->Initialize(s_graphics_context);
-    }
-
-    //--------------------------------------------------------------
-    void RenderEngine::ShutdownGraphicsContextAndPipeline() {
-        s_render_pipeline->Shutdown();
-        delete s_render_pipeline;
-
-        s_graphics_context->Shutdown();
-        delete s_graphics_context;
+        ShutdownGraphicsContext();
     }
 
 }

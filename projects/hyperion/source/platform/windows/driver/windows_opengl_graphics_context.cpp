@@ -2,7 +2,7 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/platform/windows/driver/windows_opengl_graphics_context.hpp"
+#include "hyperion/platform/windows/driver/windows_opengl_render_driver_context.hpp"
 
 //---------------------- Library Includes ----------------------
 #include <glad/glad_wgl.h>
@@ -11,17 +11,17 @@
 #include "hyperion/core/engine.hpp"
 
 //-------------------- Definition Namespace --------------------
-namespace Hyperion::Graphics {
+namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
-    WindowsOpenGLGraphicsContext::WindowsOpenGLGraphicsContext(HDC device_context, HDC helper_device_context) {
+    WindowsOpenGLRenderDriverContext::WindowsOpenGLRenderDriverContext(HDC device_context, HDC helper_device_context) {
         m_device_context = device_context;
 
         LoadOpenGLExtensions(helper_device_context);
     }
 
     //--------------------------------------------------------------
-    void WindowsOpenGLGraphicsContext::Initialize(const GraphicsContextDescriptor &descriptor) {
+    void WindowsOpenGLRenderDriverContext::Initialize(const RenderDriverContextDescriptor &descriptor) {
         const int32 pixel_attributes[] = {
                 WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
                 WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
@@ -77,23 +77,23 @@ namespace Hyperion::Graphics {
             HYP_PANIC_MESSAGE("Graphics", "Failed to load OpenGL extensions!");
         }
 
-        OpenGLGraphicsContext::Initialize(descriptor);
+        OpenGLRenderDriverContext::Initialize(descriptor);
     }
 
     //--------------------------------------------------------------
-    void WindowsOpenGLGraphicsContext::Shutdown() {
-        OpenGLGraphicsContext::Shutdown();
+    void WindowsOpenGLRenderDriverContext::Shutdown() {
+        OpenGLRenderDriverContext::Shutdown();
 
         wglDeleteContext(m_opengl_context);
     }
 
     //--------------------------------------------------------------
-    void WindowsOpenGLGraphicsContext::SwapBuffers() {
+    void WindowsOpenGLRenderDriverContext::SwapBuffers() {
         ::SwapBuffers(m_device_context);
     }
 
     //--------------------------------------------------------------
-    void WindowsOpenGLGraphicsContext::SetVSyncMode(VSyncMode vsync_mode) {
+    void WindowsOpenGLRenderDriverContext::SetVSyncMode(VSyncMode vsync_mode) {
         int32 swap_interval = 0;
         switch (vsync_mode) {
             case VSyncMode::DontSync: swap_interval = 0; break;
@@ -105,7 +105,7 @@ namespace Hyperion::Graphics {
     }
 
     //--------------------------------------------------------------
-    void WindowsOpenGLGraphicsContext::LoadOpenGLExtensions(HDC helper_device_context) {
+    void WindowsOpenGLRenderDriverContext::LoadOpenGLExtensions(HDC helper_device_context) {
         PIXELFORMATDESCRIPTOR pixel_format_descriptor = { 0 };
         pixel_format_descriptor.nSize = sizeof(pixel_format_descriptor);
         pixel_format_descriptor.nVersion = 1;

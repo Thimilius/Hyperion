@@ -16,9 +16,7 @@
 #include "hyperion/core/app/events/key_events.hpp"
 #include "hyperion/core/app/events/mouse_events.hpp"
 #include "hyperion/core/app/events/window_events.hpp"
-#include "hyperion/graphics/driver/null/null_graphics_context.hpp"
-#include "hyperion/platform/windows/driver/windows_opengl_graphics_context.hpp"
-#include "hyperion/platform/windows/driver/windows_vulkan_graphics_context.hpp"
+#include "hyperion/platform/windows/driver/windows_opengl_render_driver_context.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -201,12 +199,9 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Graphics::GraphicsContext *WindowsWindow::CreateGraphicsContext(Graphics::GraphicsBackend graphics_backend) {
-        switch (graphics_backend) {
-            case Graphics::GraphicsBackend::None: {
-                return new Graphics::NullGraphicsContext();
-            }
-            case Graphics::GraphicsBackend::OpenGL: {
+    Rendering::IRenderDriverContext *WindowsWindow::CreateRenderDriverContext(Rendering::RenderBackend render_backend) {
+        switch (render_backend) {
+            case Rendering::RenderBackend::OpenGL: {
                 // To create a proper OpenGL context we need a second helper window.
                 const auto helper_window_class_name = L"HYPERION_HELPER_WINDOW_CLASS";
                 HINSTANCE instance = GetModuleHandleW(nullptr);
@@ -240,16 +235,16 @@ namespace Hyperion {
                     nullptr
                 );
 
-                Graphics::GraphicsContext *graphics_context = new Graphics::WindowsOpenGLGraphicsContext(GetDC(m_window_handle), GetDC(helper_window));
+                Rendering::IRenderDriverContext *render_driver_context = new Rendering::WindowsOpenGLRenderDriverContext(GetDC(m_window_handle), GetDC(helper_window));
 
                 // We can destroy the helper window now that we have the proper context.
                 UnregisterClassW(helper_window_class_name, instance);
                 DestroyWindow(helper_window);
 
-                return graphics_context;
+                return render_driver_context;
             }
-            case Graphics::GraphicsBackend::Vulkan: {
-                return new Graphics::WindowsVulkanGraphicsContext(m_window_handle);
+            case Rendering::RenderBackend::Vulkan: {
+                return nullptr;
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
