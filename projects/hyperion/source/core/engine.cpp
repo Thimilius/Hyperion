@@ -44,9 +44,9 @@ namespace Hyperion {
         EngineLoopSystem &engine_loop = s_settings.core.engine_loop;
         engine_loop.initilization.name = "Initilization";
         engine_loop.initilization.sub_systems = {
-            { "MemoryStatsInitilization", []() { HYP_PROFILE_SCOPE("MemoryStatsInitilization"); MemoryStats::ResetFrameMemory(); } },
+            { "MemoryStatsInitilization", []() { HYP_PROFILE_SCOPE("EngineLoop.MemoryStatsInitilization"); MemoryStats::ResetFrameMemory(); } },
             { "TimeInitilization", []() {
-                HYP_PROFILE_SCOPE("TimeInitilization");
+                HYP_PROFILE_SCOPE("EngineLoop.TimeInitilization");
 
                 float32 now = Time::s_timer.ElapsedSeconds();
                 float32 delta_time = static_cast<float32>(now - Time::s_last_time);
@@ -69,26 +69,26 @@ namespace Hyperion {
                 Time::s_fps = static_cast<uint32>(1.0f / delta_time_average);
                 Time::s_frame_counter++;
             } },
-            { "InputInitilization", []() { HYP_PROFILE_SCOPE("InputInitilization"); s_application->GetWindow()->Poll(); } }
+            { "InputInitilization", []() { HYP_PROFILE_SCOPE("EngineLoop.InputInitilization"); s_application->GetWindow()->Poll(); } }
         };
         engine_loop.fixed_update.name = "FixedUpdate";
         engine_loop.fixed_update.sub_systems = {
-            { "ApplicationFixedUpdate", []() { HYP_PROFILE_SCOPE("ApplicationFixedUpdate"); s_application->OnFixedUpdate(Time::GetFixedDeltaTime()); } },
-            { "TimeFixedUpdate", []() { HYP_PROFILE_SCOPE("TimeFixedUpdate"); Time::s_accumulator -= Time::GetFixedDeltaTime(); } }
+            { "ApplicationFixedUpdate", []() { HYP_PROFILE_SCOPE("EngineLoop.ApplicationFixedUpdate"); s_application->OnFixedUpdate(Time::GetFixedDeltaTime()); } },
+            { "TimeFixedUpdate", []() { HYP_PROFILE_SCOPE("EngineLoop.TimeFixedUpdate"); Time::s_accumulator -= Time::GetFixedDeltaTime(); } }
         };
         engine_loop.tick.name = "Tick";
         engine_loop.tick.sub_systems = {
-            { "ApplicationTick", []() { HYP_PROFILE_SCOPE("ApplicationTick"); s_application->OnTick(); } }
+            { "ApplicationTick", []() { HYP_PROFILE_SCOPE("EngineLoop.ApplicationTick"); s_application->OnTick(); } }
         };
         engine_loop.update.name = "Update";
         engine_loop.update.sub_systems = {
-            { "ApplicationUpdate", []() { HYP_PROFILE_SCOPE("ApplicationUpdate"); s_application->OnUpdate(Time::GetDeltaTime()); } },
-            { "WorldManagerUpdate", []() { HYP_PROFILE_SCOPE("WorldManagerUpdate"); WorldManager::Update(); }}
+            { "ApplicationUpdate", []() { HYP_PROFILE_SCOPE("EngineLoop.ApplicationUpdate"); s_application->OnUpdate(Time::GetDeltaTime()); } },
+            { "WorldManagerUpdate", []() { HYP_PROFILE_SCOPE("EngineLoop.WorldManagerUpdate"); WorldManager::Update(); }}
         };
         engine_loop.late_update.name = "LateUpdate";
         engine_loop.late_update.sub_systems = {
-            { "AssetManagerLateUpdate", []() { HYP_PROFILE_SCOPE("AssetManagerLateUpdate");AssetManager::LateUpdate(); } },
-            { "RenderEngineLateUpdate", []() { HYP_PROFILE_SCOPE("RenderEngineLateUpdate");Rendering::RenderEngine::Render(); } }
+            { "AssetManagerLateUpdate", []() { HYP_PROFILE_SCOPE("EngineLoop.AssetManagerLateUpdate");AssetManager::LateUpdate(); } },
+            { "RenderEngineLateUpdate", []() { HYP_PROFILE_SCOPE("EngineLoop.RenderEngineLateUpdate");Rendering::RenderEngine::Render(); } }
         };
     }
 
@@ -157,32 +157,32 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void Engine::Iterate() {
-        HYP_PROFILE_SCOPE("Iterate");
+        HYP_PROFILE_SCOPE("Engine.Iterate");
 
         const EngineLoopSystem &engine_loop = s_settings.core.engine_loop;
 
         {
-            HYP_PROFILE_SCOPE("Initialization");
+            HYP_PROFILE_SCOPE("EngineLoop.Initialization");
             ExecuteEngineLoopSubSystem(engine_loop.initilization);
         }
         while (Time::s_accumulator > Time::GetFixedDeltaTime()) {
-            HYP_PROFILE_SCOPE("FixedUpdate");
+            HYP_PROFILE_SCOPE("EngineLoop.FixedUpdate");
             ExecuteEngineLoopSubSystem(engine_loop.fixed_update);
         }
         if (Time::OnInterval(1.0f)) {
-            HYP_PROFILE_SCOPE("Tick");
+            HYP_PROFILE_SCOPE("EngineLoop.Tick");
             ExecuteEngineLoopSubSystem(engine_loop.tick);
         }
         {
-            HYP_PROFILE_SCOPE("PreUpdate");
+            HYP_PROFILE_SCOPE("EngineLoop.PreUpdate");
             ExecuteEngineLoopSubSystem(engine_loop.pre_update);
         }
         {
-            HYP_PROFILE_SCOPE("Update");
+            HYP_PROFILE_SCOPE("EngineLoop.Update");
             ExecuteEngineLoopSubSystem(engine_loop.update);
         }
         {
-            HYP_PROFILE_SCOPE("LateUpdate");
+            HYP_PROFILE_SCOPE("EngineLoop.LateUpdate");
             ExecuteEngineLoopSubSystem(engine_loop.late_update);
         }
     }

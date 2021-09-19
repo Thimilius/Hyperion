@@ -136,6 +136,7 @@ function linkhyperion()
 
 	includedirs { "projects/hyperion/include" }
 	includedirs { package_fmt_includedirs }
+	includedirs { "projects/hyperion/vendor/optick/include" }
 
 	links { "hyperion" }
 	

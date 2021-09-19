@@ -13,6 +13,8 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     Array<byte> FileSystem::ReadAllBytes(const String &path) {
+        HYP_PROFILE_SCOPE("FileSystem.ReadAllBytes");
+
         Array<byte> result;
 
         std::ifstream file(path, std::ios::ate | std::ios::binary);
@@ -31,6 +33,8 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     String FileSystem::ReadAllText(const String &path) {
+        HYP_PROFILE_SCOPE("FileSystem.ReadAllText");
+
         std::ifstream file(path, std::ios::ate);
         if (!file.is_open()) {
             HYP_LOG_ERROR("Engine", "Failed to open file: '{}'!", GetAbsoluteFilePath(path));
@@ -47,6 +51,8 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     Array<String> FileSystem::ReadAllLines(const String &path) {
+        HYP_PROFILE_SCOPE("FileSystem.ReadAllLines");
+
         Array<String> result;
 
         std::ifstream file(path);
@@ -65,22 +71,30 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void FileSystem::WriteAllText(const String &path, const String &text) {
+        HYP_PROFILE_SCOPE("FileSystem.WriteAllText");
+
         std::ofstream file(path);
         file.write(text.data(), text.length());
     }
 
     //--------------------------------------------------------------
     void FileSystem::Delete(const String &path) {
+        HYP_PROFILE_SCOPE("FileSystem.Delete");
+
         std::filesystem::remove(path);
     }
 
     //--------------------------------------------------------------
     bool8 FileSystem::Exists(const String &path) {
+        HYP_PROFILE_SCOPE("FileSystem.Exists");
+
         return std::filesystem::exists(path);
     }
 
     //--------------------------------------------------------------
     String FileSystem::GetAbsoluteFilePath(const String& path) {
+        HYP_PROFILE_SCOPE("FileSystem.GetAbsoluteFilePath");
+
         return std::filesystem::absolute(path).u8string();
     }
 

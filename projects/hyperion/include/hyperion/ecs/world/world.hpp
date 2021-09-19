@@ -44,6 +44,8 @@ namespace Hyperion {
 
         template<typename T>
         T *AddComponent(EntityId id) {
+            HYP_PROFILE_SCOPE("World.AddComponent");
+
             if (IsAlive(id)) {
                 ComponentId component_id = ComponentRegistry::GetId<T>();
                 ComponentPool &component_pool = m_storage.component_pools[component_id];
@@ -64,6 +66,8 @@ namespace Hyperion {
 
         template<typename T>
         bool8 HasComponent(EntityId id) {
+            HYP_PROFILE_SCOPE("World.HasComponent");
+
             if (IsAlive(id)) {
                 ComponentId component_id = ComponentRegistry::GetId<T>();
                 ComponentPool &component_pool = m_storage.component_pools[component_id];
@@ -76,6 +80,8 @@ namespace Hyperion {
 
         template<typename T>
         T *GetComponent(EntityId id) {
+            HYP_PROFILE_SCOPE("World.GetComponent");
+
             if (IsAlive(id)) {
                 ComponentId component_id = ComponentRegistry::GetId<T>();
                 ComponentPool &component_pool = m_storage.component_pools[component_id];
@@ -89,6 +95,8 @@ namespace Hyperion {
 
         template<typename T>
         void RemoveComponent(EntityId id) {
+            HYP_PROFILE_SCOPE("World.RemoveComponent");
+
             if (IsAlive(id)) {
                 ComponentId component_id = ComponentRegistry::GetId<T>();
                 ComponentPool &component_pool = m_storage.component_pools[component_id];

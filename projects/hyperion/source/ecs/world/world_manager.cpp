@@ -15,6 +15,8 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     World *WorldManager::CreateWorld() {
+        HYP_PROFILE_SCOPE("WorldManager.CreateWorld");
+
         World *world = new World();
         s_worlds.Add(world);
         return world;
@@ -22,6 +24,8 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void WorldManager::DestroyWorld(World *world) {
+        HYP_PROFILE_SCOPE("WorldManager.DestroyWorld");
+
         HYP_ASSERT(world);
 
         if (s_active_world == world) {
@@ -54,9 +58,13 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void WorldManager::Update() {
+        HYP_PROFILE_SCOPE("WorldManager.Update");
+
         if (s_active_world) {
             // Transform
             {
+                HYP_PROFILE_SCOPE("WorldManager.Update.Transform");
+
                 HierarchyTransformSystem hierarchy_transform_system;
                 hierarchy_transform_system.Run(s_active_world);
 
@@ -66,6 +74,8 @@ namespace Hyperion {
 
             // Assets
             {
+                HYP_PROFILE_SCOPE("WorldManager.Update.Assets");
+
                 AssetLoadSystem asset_load_system;
                 asset_load_system.Run(s_active_world);
 
@@ -75,6 +85,8 @@ namespace Hyperion {
 
             // Rendering
             {
+                HYP_PROFILE_SCOPE("WorldManager.Update.Rendering");
+
                 Rendering::CameraSystem camera_system;
                 camera_system.Run(s_active_world);
 

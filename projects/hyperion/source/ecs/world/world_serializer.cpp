@@ -288,6 +288,8 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     String WorldSerializer::Serialize(World *world) {
+        HYP_PROFILE_SCOPE("WorldSerializer.Serialize");
+
         YAML::Emitter yaml_emitter;
 
         yaml_emitter << YAML::BeginMap;
@@ -435,6 +437,8 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     World *WorldSerializer::Deserialize(const String &data) {
+        HYP_PROFILE_SCOPE("WorldSerializer.Deserialize");
+
         // TEMP: For now we assume that assets referenced by components are already loaded and we can just grab the pointer.
 
         YAML::Node yaml_world = YAML::Load(data);

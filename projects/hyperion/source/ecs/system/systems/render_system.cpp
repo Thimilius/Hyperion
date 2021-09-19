@@ -20,7 +20,7 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void CameraSystem::Run(World *world) {
-        HYP_PROFILE_SCOPE("CameraSystem");
+        HYP_PROFILE_SCOPE("CameraSystem.Run");
 
         RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
 
@@ -64,7 +64,7 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void SpriteSystem::Run(World *world) {
-        HYP_PROFILE_SCOPE("SpriteSystem");
+        HYP_PROFILE_SCOPE("SpriteSystem.Run");
 
         RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
 
@@ -80,7 +80,7 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void RenderMeshSystem::Run(World *world) {
-        HYP_PROFILE_SCOPE("RenderMeshSystem");
+        HYP_PROFILE_SCOPE("RenderMeshSystem.Run");
 
         RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
 

@@ -157,7 +157,7 @@ namespace Hyperion::Rendering {
     //--------------------------------------------------------------
     void RenderEngine::Render() {
         {
-            HYP_PROFILE_SCOPE("PipelineRender");
+            HYP_PROFILE_SCOPE("RenderEngine.RenderPipeline");
             s_render_pipeline->Render(s_main_frame);
         }
 
@@ -165,18 +165,18 @@ namespace Hyperion::Rendering {
             case RenderThreadingMode::SingleThreaded: {
                 SwapRenderFrames();
                 {
-                    HYP_PROFILE_SCOPE("Render");
+                    HYP_PROFILE_SCOPE("RenderEngine.RenderDriver");
                     s_render_driver_context->GetDriver()->Render(s_render_frame);
                 }
                 {
-                    HYP_PROFILE_SCOPE("Present");
+                    HYP_PROFILE_SCOPE("RenderEngine.Present");
                     s_render_driver_context->SwapBuffers();
                 }
                 break;
             }
             case RenderThreadingMode::MultiThreaded: {
                 {
-                    HYP_PROFILE_CATEGORY("WaitForRenderDone", ProfileCategory::Wait);
+                    HYP_PROFILE_CATEGORY("RenderEngine.WaitForRenderDone", ProfileCategory::Wait);
                     RenderThreadSynchronization::WaitForRenderDone();
                 }
                 SwapRenderFrames();
@@ -214,7 +214,7 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void RenderEngine::SwapRenderFrames() {
-        HYP_PROFILE_SCOPE("SwapRenderFrames");
+        HYP_PROFILE_SCOPE("RenderEngine.SwapRenderFrames");
 
         RenderFrame *temp = s_main_frame;
         s_main_frame = s_render_frame;
@@ -261,17 +261,17 @@ namespace Hyperion::Rendering {
             s_render_driver_context->SetVSyncMode(s_vsync_mode);
 
             {
-                HYP_PROFILE_CATEGORY("WaitForSwapDone", ProfileCategory::Wait);
+                HYP_PROFILE_CATEGORY("RenderEngine.WaitForSwapDone", ProfileCategory::Wait);
                 RenderThreadSynchronization::WaitForSwapDone();
             }
             
             {
-                HYP_PROFILE_SCOPE("Render");
+                HYP_PROFILE_SCOPE("RenderEngine.RenderDriver");
                 s_render_driver_context->GetDriver()->Render(s_render_frame);
             }
 
             {
-                HYP_PROFILE_SCOPE("Present");
+                HYP_PROFILE_SCOPE("RenderEngine.Present");
                 s_render_driver_context->SwapBuffers();
                 RenderThreadSynchronization::NotifyRenderDone();
             }

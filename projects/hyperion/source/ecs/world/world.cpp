@@ -28,6 +28,8 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     EntityGuid World::GetGuid(EntityId id) const {
+        HYP_PROFILE_SCOPE("World.GetGuid");
+
         if (IsAlive(id)) {
             return m_storage.entities[EntityUtilities::GetIndex(id)].guid;
         } else {
@@ -38,6 +40,8 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     EntityId World::GetByGuid(EntityGuid guid) const {
+        HYP_PROFILE_SCOPE("World.GetByGuid");
+
         auto it = m_storage.entities_by_guid.Find(guid);
         if (it == m_storage.entities_by_guid.end()) {
             HYP_LOG_WARN("Entity", "Trying to get id from nonexistent entity with guid {}.", guid.ToString());
@@ -49,6 +53,8 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     EntityId World::CreateEntity(EntityPrimitive primitive, EntityGuid guid) {
+        HYP_PROFILE_SCOPE("World.CreateEntity");
+
         EntityId id;
         if (m_storage.available <= 0) {
             m_storage.entities.Add({ EntityUtilities::CreateId(static_cast<EntityIndex>(m_storage.entities.GetLength()), 0), guid });
@@ -79,6 +85,8 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void World::DestroyEntity(EntityId id, WorldHierarchyDestructionPolicy hierarchy_destruction_policy) {
+        HYP_PROFILE_SCOPE("World.DestroyEntity");
+
         if (IsAlive(id)) {
             m_hierarchy.HandleEntityDestruction(id, hierarchy_destruction_policy);
 

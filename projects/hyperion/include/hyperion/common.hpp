@@ -26,4 +26,5 @@
 #include "hyperion/core/result.hpp"
 #include "hyperion/core/string_utils.hpp"
 #include "hyperion/core/log.hpp"
+#include "hyperion/core/profiling/profile.hpp"
 #include "hyperion/core/threading/scope_lock.hpp"

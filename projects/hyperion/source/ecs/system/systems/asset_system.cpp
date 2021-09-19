@@ -17,7 +17,7 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void AssetLoadSystem::Run(World *world) {
-        HYP_PROFILE_SCOPE("AssetLoadSystem");
+        HYP_PROFILE_SCOPE("AssetLoadSystem.Run");
 
         RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
         for (Asset *asset : AssetManager::s_assets_to_load) {
@@ -70,7 +70,7 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void AssetUnloadSystem::Run(World *world) {
-        HYP_PROFILE_SCOPE("AssetUnloadSystem");
+        HYP_PROFILE_SCOPE("AssetUnloadSystem.Run");
 
         RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
         for (Asset *asset : AssetManager::s_assets_to_unload) {

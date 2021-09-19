@@ -20,6 +20,12 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
+    void RenderFrameContext::AddAssetToUnload(AssetId asset_id) {
+        HYP_ASSERT(!m_assets_to_unload.Contains(asset_id));
+        m_assets_to_unload.Add(asset_id);
+    }
+
+    //--------------------------------------------------------------
     RenderFrameContextAssetMaterial &RenderFrameContext::AddMaterialAssetToLoad() {
         m_materials_to_load.Resize(m_materials_to_load.GetLength() + 1);
         return m_materials_to_load.GetLast();
@@ -35,12 +41,6 @@ namespace Hyperion::Rendering {
     RenderFrameContextAssetShader &RenderFrameContext::AddShaderAssetToLoad() {
         m_shaders_to_load.Resize(m_shaders_to_load.GetLength() + 1);
         return m_shaders_to_load.GetLast();
-    }
-
-    //--------------------------------------------------------------
-    void RenderFrameContext::AddAssetToUnload(AssetId asset_id) {
-        HYP_ASSERT(!m_assets_to_unload.Contains(asset_id));
-        m_assets_to_unload.Add(asset_id);
     }
 
     //--------------------------------------------------------------
