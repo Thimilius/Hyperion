@@ -116,8 +116,7 @@ namespace Hyperion::Rendering {
 
                     const RenderFrameContextCamera &render_frame_context_camera = render_frame->GetContext().GetCameras()[state.camera_index];
 
-                    // HACK: We need a seperate shader/material for drawing gizmos.
-                    const OpenGLShader &opengl_shader = m_opengl_shaders.begin()->second;
+                    const OpenGLShader &opengl_shader = m_opengl_shaders.Get(command.data.draw_gizmos.shader_id);
                     glUseProgram(opengl_shader.program);
                     glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_view"), 1, GL_FALSE, render_frame_context_camera.view_matrix.elements);
                     glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_projection"), 1, GL_FALSE, render_frame_context_camera.projection_matrix.elements);
@@ -130,6 +129,7 @@ namespace Hyperion::Rendering {
 
                         const OpenGLMesh &opengl_mesh = m_opengl_meshes.Get(command.data.draw_gizmos.grid.mesh_id);
                         glBindVertexArray(opengl_mesh.vertex_array);
+                        glEnableVertexAttribArray(3);
                         SubMesh sub_mesh = opengl_mesh.sub_meshes[0];
                         void *index_offset = reinterpret_cast<void *>(static_cast<uint32>(sub_mesh.index_offset) * sizeof(uint32));
                         GLenum topology = GetGLTopology(sub_mesh.topology);

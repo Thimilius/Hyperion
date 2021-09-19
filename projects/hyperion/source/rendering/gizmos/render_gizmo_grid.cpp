@@ -27,24 +27,24 @@ namespace Hyperion::Rendering {
             float32 from_point = static_cast<float32>(x);
             Color color = (x % GRID_CHUNK_SIZE) == 0 ? GRID_SPECIAL_COLOR : GRID_NORMAL_COLOR;
             mesh_data.positions[index] = Vector3(from_point, 0, to_point);
-            mesh_data.indices[index] = index;
             mesh_data.colors[index] = color;
+            mesh_data.indices[index] = index;
             index++;
             mesh_data.positions[index] = Vector3(from_point, 0, -to_point);
-            mesh_data.indices[index] = index;
             mesh_data.colors[index] = color;
+            mesh_data.indices[index] = index;
             index++;
         }
         for (int32 z = -half_grid_size; z <= half_grid_size; z++) {
             float32 from_point = static_cast<float32>(z);
             Color color = (z % GRID_CHUNK_SIZE) == 0 ? GRID_SPECIAL_COLOR : GRID_NORMAL_COLOR;
             mesh_data.positions[index] = Vector3(to_point, 0, from_point);
-            mesh_data.indices[index] = index;
             mesh_data.colors[index] = color;
+            mesh_data.indices[index] = index;
             index++;
             mesh_data.positions[index] = Vector3(-to_point, 0, from_point);
-            mesh_data.indices[index] = index;
             mesh_data.colors[index] = color;
+            mesh_data.indices[index] = index;
             index++;
         }
 

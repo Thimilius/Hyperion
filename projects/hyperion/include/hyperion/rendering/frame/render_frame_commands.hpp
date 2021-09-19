@@ -34,6 +34,8 @@ namespace Hyperion::Rendering {
 
             } draw_all;
             struct DrawGizmos {
+                AssetId shader_id;
+
                 struct Grid {
                     bool8 should_draw;
                     Matrix4x4 local_to_world;

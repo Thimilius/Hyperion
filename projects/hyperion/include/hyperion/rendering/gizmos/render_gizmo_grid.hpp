@@ -18,8 +18,8 @@ namespace Hyperion::Rendering {
         inline static RenderGizmoGridType s_type;
         inline static Mesh *s_mesh;
 
-        inline static const Color GRID_NORMAL_COLOR = Color(0.1f, 0.1f, 0.1f, 0.5f);
-        inline static const Color GRID_SPECIAL_COLOR = Color(0.5f, 0.5f, 0.5f, 0.75f);
+        inline static const Color GRID_NORMAL_COLOR = Color(0.1f, 0.1f, 0.1f, 1.0f);
+        inline static const Color GRID_SPECIAL_COLOR = Color(0.5f, 0.5f, 0.5f, 1.0f);
         inline static const int32 GRID_SIZE = 100;
         inline static const int32 GRID_CHUNK_SIZE = 10;
     private:

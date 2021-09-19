@@ -1,8 +1,8 @@
 #light_mode none
 
 #type vertex
-#version 410 core
-
+#version 450 core
+	
 layout(location = 0) in vec3 a_position;
 layout(location = 3) in vec4 a_color;
 
@@ -10,14 +10,12 @@ out V2F {
 	vec4 color;
 } o_v2f;
 
-uniform struct Transform {
-	mat4 model;
-	mat4 view;
-	mat4 projection;
-} u_transform;
+uniform mat4 u_model;
+uniform mat4 u_view;
+uniform mat4 u_projection;
 
 vec4 obj_to_clip_space(vec3 position) {
-	return u_transform.projection * u_transform.view * u_transform.model * vec4(position, 1.0);
+	return u_projection * u_view * u_model * vec4(position, 1.0);
 }
 
 void main() {
@@ -27,12 +25,9 @@ void main() {
 }
 
 #type fragment
-#version 410 core
+#version 450 core
 
 layout(location = 0) out vec4 o_color;
-#ifdef HYP_EDITOR
-layout(location = 1) out uint o_entity_id;
-#endif
 
 in V2F {
 	vec4 color;
@@ -40,7 +35,4 @@ in V2F {
 
 void main() {
 	o_color = i_v2f.color;
-#ifdef HYP_EDITOR
-	o_entity_id = 0;
-#endif
 }

@@ -30,6 +30,7 @@ namespace Hyperion {
     Shader *AssetManager::GetShaderPrimitive(ShaderPrimitive shader_primitive) {
         switch (shader_primitive) {
             case ShaderPrimitive::Standard: return s_primitives.shader_standard;
+            case ShaderPrimitive::Gizmo: return s_primitives.shader_gizmo;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }
@@ -180,6 +181,8 @@ namespace Hyperion {
     void AssetManager::InitializePrimitives() {
         s_primitives.shader_standard = CreateShader(FileSystem::ReadAllText("data/shaders/standard.shader"));
         SetNewGuid(s_primitives.shader_standard, "{6AFEA19E-547B-41F5-A008-4473AE771E06}");
+        s_primitives.shader_gizmo = CreateShader(FileSystem::ReadAllText("data/shaders/gizmo.shader"));
+        SetNewGuid(s_primitives.shader_gizmo, "{F05F02F1-A7E1-42B7-9618-F13AB38BCA87}");
 
         s_primitives.material_default = CreateMaterial(s_primitives.shader_standard);
         SetNewGuid(s_primitives.material_default, "{B2463C27-7FD8-44A2-BC53-2AD74FAA7979}");

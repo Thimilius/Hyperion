@@ -50,8 +50,6 @@ namespace Sandbox {
 
         WorldManager::SetActiveWorld(g_world);
         g_camera = g_world->CreateEntity(EntityPrimitive::Camera);
-        CameraComponent *camera = g_world->GetComponent<CameraComponent>(g_camera);
-        camera->background_color = Color(0.0f, 1.0f, 1.0f, 1.0f);
 
         g_camera_controller = new LookAroundCameraController(g_camera);
         g_camera_controller->Reset(g_world);

@@ -5,6 +5,7 @@
 #include "hyperion/rendering/frame/render_frame.hpp"
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/rendering/gizmos/render_gizmo_grid.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -37,6 +38,7 @@ namespace Hyperion::Rendering {
     //--------------------------------------------------------------
     void RenderFrame::DrawGizmos() {
         RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::DrawGizmos);
+        command.data.draw_gizmos.shader_id = AssetManager::GetShaderPrimitive(ShaderPrimitive::Gizmo)->GetAssetInfo().id;
         command.data.draw_gizmos.grid.should_draw = true;
         command.data.draw_gizmos.grid.local_to_world = Matrix4x4::Identity();
         command.data.draw_gizmos.grid.type = RenderGizmoGrid::GetGridType();
