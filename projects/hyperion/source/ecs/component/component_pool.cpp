@@ -28,7 +28,6 @@ namespace Hyperion {
 
             byte *component_data = m_component_list.GetData() + current_size;
             return component_data;
-
         } else {
             return nullptr;
         }

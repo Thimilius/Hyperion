@@ -1,6 +1,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/ecs/component/component_types.hpp"
 #include "hyperion/ecs/component/component_pool.hpp"
 #include "hyperion/ecs/entity/entity_utilities.hpp"
 #include "hyperion/ecs/world/world_hierarchy.hpp"
@@ -21,6 +22,7 @@ namespace Hyperion {
         EntityIndex next = EntityUtilities::GetIndex(Entity::EMPTY);
 
         Array<ComponentPool> component_pools;
+        Array<ComponentCallbacks> component_callbacks;
     };
 
     class World final {
@@ -53,6 +55,9 @@ namespace Hyperion {
                 byte *component_data = component_pool.AddComponent(id);
                 if (component_data != nullptr) {
                     T *component = new(component_data) T();
+                    for (ComponentCallback callback : m_storage.component_callbacks[component_id].added) {
+                        callback(this, id);
+                    }
                     return component;
                 } else {
                     HYP_LOG_WARN("Entity", "Trying to add already existent component type to entity with id {}.", id);
@@ -100,7 +105,11 @@ namespace Hyperion {
             if (IsAlive(id)) {
                 ComponentId component_id = ComponentRegistry::GetId<T>();
                 ComponentPool &component_pool = m_storage.component_pools[component_id];
-                if (!component_pool.RemoveComponent(id)) {
+                if (component_pool.RemoveComponent(id)) {
+                    for (ComponentCallback callback : m_storage.component_callbacks[component_id].removed) {
+                        callback(this, id);
+                    }
+                } else {
                     HYP_LOG_WARN("Entity", "Trying to remove nonexistent component type from entity whith id {}.", id);
                 }
             } else {
@@ -110,6 +119,18 @@ namespace Hyperion {
 
         template<typename... T>
         WorldView<T ...> GetView() { return WorldView<T ...>(this); }
+
+        template<typename T>
+        void OnComponentAdded(ComponentCallback callback) {
+            ComponentId component_id = ComponentRegistry::GetId<T>();
+            m_storage.component_callbacks[component_id].added.Add(callback);
+        }
+
+        template<typename T>
+        void OnComponentRemoved(ComponentCallback callback) {
+            ComponentId component_id = ComponentRegistry::GetId<T>();
+            m_storage.component_callbacks[component_id].removed.Add(callback);
+        }
     private:
         void AddComponentsForPrimitive(EntityId id, EntityPrimitive primitive);
     private:

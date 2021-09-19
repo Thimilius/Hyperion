@@ -1,7 +1,12 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/common.hpp"
+#include "hyperion/ecs/entity/entity_types.hpp"
+
+//-------------------- Forward Declarations --------------------
+namespace Hyperion {
+    class World;
+}
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -14,6 +19,13 @@ namespace Hyperion {
         ComponentId id;
         uint64 element_size;
         ComponentDestructorFunction destructor;
+    };
+
+    using ComponentCallback = void(*)(World *, EntityId);
+    
+    struct ComponentCallbacks {
+        Array<ComponentCallback> added;
+        Array<ComponentCallback> removed;
     };
 
 }

@@ -15,6 +15,8 @@
 - SoLoud
 
 ## ECS
+- GetOrAddComponent
+- System execution order
 - Entity/Component duplication
 - Component pool pointer stability (if necessary)
 
