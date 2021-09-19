@@ -256,10 +256,7 @@ namespace Hyperion {
 
         if (m_is_focused) {
             switch (m_cursor_mode) {
-                case CursorMode::Default: {
-                    ClipCursor(nullptr);
-                    break;
-                }
+                case CursorMode::Default: break;
                 case CursorMode::Confined: {
                     RECT window_rect;
                     GetWindowRect(m_window_handle, &window_rect);
