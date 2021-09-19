@@ -12,6 +12,7 @@
 
 //------------------------- Namespaces -------------------------
 using namespace Hyperion;
+using namespace Hyperion::Rendering;
 
 //-------------------- Definition Namespace --------------------
 namespace Sandbox {
@@ -105,12 +106,12 @@ namespace Sandbox {
         {
             float32 wheel = Input::GetMouseScroll();
             switch (camera->projection_mode) {
-                case Rendering::CameraProjectionMode::Perspective: {
+                case CameraProjectionMode::Perspective: {
                     m_fov_target -= wheel * 5.0f;
                     m_fov_target = Math::Clamp(m_fov_target, 25, 120);
                     break;
                 }
-                case Rendering::CameraProjectionMode::Orthographic: {
+                case CameraProjectionMode::Orthographic: {
                     m_orthographic_size_target -= wheel * 0.25f;
                     m_orthographic_size_target = Math::Clamp(m_orthographic_size_target, 0.1f, 10);
                     break;

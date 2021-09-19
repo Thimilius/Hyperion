@@ -9,15 +9,15 @@
 #include "hyperion/rendering/types/render_types_general.hpp"
 
 //-------------------- Definition Namespace --------------------
-namespace Hyperion {
+namespace Hyperion::Rendering {
 
     struct CameraComponent {
-        Rendering::CameraProjectionMode projection_mode = Rendering::CameraProjectionMode::Perspective;
+        CameraProjectionMode projection_mode = CameraProjectionMode::Perspective;
 
-        Rendering::CameraClearMode clear_mode = Rendering::CameraClearMode::Color;
+        CameraClearMode clear_mode = CameraClearMode::Color;
         Color background_color = Color::Black();
 
-        Rendering::LayerMask visibility_mask = Rendering::LayerMask::Everything;
+        LayerMask visibility_mask = LayerMask::Everything;
 
         float32 near_plane = 0.1f;
         float32 far_plane = 1000.0f;
@@ -25,7 +25,7 @@ namespace Hyperion {
         float32 fov = 90.0f;
         float32 orthographic_size = 2.75f;
 
-        Rendering::CameraViewportClipping viewport_clipping = { 0.0f, 0.0f, 1.0f, 1.0f };
+        CameraViewportClipping viewport_clipping = { 0.0f, 0.0f, 1.0f, 1.0f };
 
         Matrix4x4 view_matrix = Matrix4x4::Identity();
         Matrix4x4 projection_matrix = Matrix4x4::Identity();
@@ -47,7 +47,7 @@ namespace Hyperion {
 
         Material *material = nullptr;
 
-        Rendering::LayerMask layer_mask = Rendering::LayerMask::Default;
+        LayerMask layer_mask = LayerMask::Default;
     };
 
 }

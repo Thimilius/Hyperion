@@ -266,6 +266,8 @@ namespace Hyperion::Rendering {
         } else {
             OpenGLMaterial &opengl_material = material_it->second;
             opengl_material.properties = std::move(material.properties);
+
+            HYP_TRACE("Color: {}", opengl_material.properties[0].storage.color.ToString());
         }
     }
 

@@ -376,7 +376,7 @@ namespace Hyperion {
                 yaml_emitter << YAML::EndMap;
             }
 
-            CameraComponent *camera = world->GetComponent<CameraComponent>(entity);
+            Rendering::CameraComponent *camera = world->GetComponent<Rendering::CameraComponent>(entity);
             if (camera != nullptr) {
                 yaml_emitter << YAML::Key << "Camera";
                 yaml_emitter << YAML::BeginMap;
@@ -404,12 +404,12 @@ namespace Hyperion {
                 yaml_emitter << YAML::EndMap;
             }
 
-            SpriteComponent *sprite = world->GetComponent<SpriteComponent>(entity);
+            Rendering::SpriteComponent *sprite = world->GetComponent<Rendering::SpriteComponent>(entity);
             if (sprite != nullptr) {
                 yaml_emitter << YAML::Key << "Sprite" << YAML::Null;
             }
 
-            RenderMeshComponent *render_mesh = world->GetComponent<RenderMeshComponent>(entity);
+            Rendering::RenderMeshComponent *render_mesh = world->GetComponent<Rendering::RenderMeshComponent>(entity);
             if (render_mesh != nullptr) {
                 yaml_emitter << YAML::Key << "RenderMesh";
                 yaml_emitter << YAML::BeginMap;
@@ -548,7 +548,7 @@ namespace Hyperion {
 
                         YAML::Node yaml_camera = yaml_entity["Camera"];
                         if (yaml_camera && yaml_camera.IsMap()) {
-                            CameraComponent *camera = world->AddComponent<CameraComponent>(entity);
+                            Rendering::CameraComponent *camera = world->AddComponent<Rendering::CameraComponent>(entity);
 
                             YAML::Node yaml_camera_projection_mode = yaml_camera["projection_mode"];
                             if (yaml_camera_projection_mode) {
@@ -604,11 +604,11 @@ namespace Hyperion {
                         }
                         YAML::Node yaml_sprite = yaml_entity["Sprite"];
                         if (yaml_sprite && yaml_sprite.IsMap()) {
-                            SpriteComponent *sprite = world->AddComponent<SpriteComponent>(entity);
+                            Rendering::SpriteComponent *sprite = world->AddComponent<Rendering::SpriteComponent>(entity);
                         }
                         YAML::Node yaml_render_mesh = yaml_entity["RenderMesh"];
                         if (yaml_render_mesh && yaml_render_mesh.IsMap()) {
-                            RenderMeshComponent *render_mesh = world->AddComponent<RenderMeshComponent>(entity);
+                            Rendering::RenderMeshComponent *render_mesh = world->AddComponent<Rendering::RenderMeshComponent>(entity);
                         }
                     }
                 }

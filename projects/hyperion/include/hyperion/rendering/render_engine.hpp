@@ -26,6 +26,9 @@ namespace Hyperion::Rendering {
     public:
         inline static RenderBackend GetBackend() { return s_render_settings.backend; }
         inline static RenderFrame *GetMainRenderFrame() { return s_main_frame; }
+
+        inline static VSyncMode GetVSyncMode() { return s_vsync_mode; }
+        static void SetVSyncMode(VSyncMode vsync_mode);
     private:
         RenderEngine() = delete;
         ~RenderEngine() = delete;
@@ -48,16 +51,17 @@ namespace Hyperion::Rendering {
     private: 
         inline static RenderSettings s_render_settings;
         
+        inline static IRenderPipeline *s_render_pipeline;
+        inline static IRenderDriverContext *s_render_driver_context;
+
         inline static Threading::Thread s_render_thread;
         inline static std::atomic<bool8> s_render_thread_should_exit;
+        inline static std::atomic<VSyncMode> s_vsync_mode;
 
         inline static RenderFrame s_first_frame;
         inline static RenderFrame s_second_frame;
         inline static RenderFrame *s_main_frame;
         inline static RenderFrame *s_render_frame;
-
-        inline static IRenderPipeline *s_render_pipeline;
-        inline static IRenderDriverContext *s_render_driver_context;
     private:
         friend class Hyperion::Engine;
     };

@@ -113,8 +113,8 @@ namespace Hyperion {
         switch (primitive) {
             case EntityPrimitive::Empty: break;
             case EntityPrimitive::Base: break;
-            case EntityPrimitive::Camera: AddComponent<CameraComponent>(id); break;
-            case EntityPrimitive::Sprite: AddComponent<SpriteComponent>(id); break;
+            case EntityPrimitive::Camera: AddComponent<Rendering::CameraComponent>(id); break;
+            case EntityPrimitive::Sprite: AddComponent<Rendering::SpriteComponent>(id); break;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
         }
     }

@@ -10,7 +10,7 @@
 #include "hyperion/ecs/component/components/utilities/transform_utilities.hpp"
 
 //-------------------- Definition Namespace --------------------
-namespace Hyperion {
+namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     Vector3 CameraUtilities::ScreenToWorldPoint(CameraComponent *camera, Vector3 screen_point) {
@@ -45,7 +45,7 @@ namespace Hyperion {
         float32 display_height = static_cast<float32>(Display::GetHeight());
 
         switch (camera->projection_mode) {
-            case Rendering::CameraProjectionMode::Perspective: {
+            case CameraProjectionMode::Perspective: {
                 float32 ndc_x = (2.0f * screen_point.x) / display_width - 1.0f;
                 float32 ndc_y = (2.0f * screen_point.y) / display_height - 1.0f;
                 Vector4 clip = Vector4(ndc_x, ndc_y, -1.0f, 1.0f);
@@ -56,7 +56,7 @@ namespace Hyperion {
 
                 return Ray(derived_transform->position, Vector3(world.x, world.y, world.z));
             }
-            case Rendering::CameraProjectionMode::Orthographic: {
+            case CameraProjectionMode::Orthographic: {
                 float32 aspect_ratio = display_width / display_height;
 
                 float32 l = -camera->orthographic_size * aspect_ratio;
@@ -94,11 +94,11 @@ namespace Hyperion {
         Matrix4x4 view_matrix = Matrix4x4::LookAt(position, position + forward, up);
         Matrix4x4 projection_matrix;
         switch (camera->projection_mode) {
-            case Rendering::CameraProjectionMode::Perspective: {
+            case CameraProjectionMode::Perspective: {
                 projection_matrix = Matrix4x4::Perspective(fov, aspect_ratio, near_plane, far_plane);
                 break;
             }
-            case Rendering::CameraProjectionMode::Orthographic: {
+            case CameraProjectionMode::Orthographic: {
                 projection_matrix = Matrix4x4::Orthographic(
                     -orthographic_size * aspect_ratio,
                     orthographic_size * aspect_ratio,

@@ -47,9 +47,9 @@ namespace Hyperion {
         ComponentRegistry::Register<LocalToWorldComponent>();
         ComponentRegistry::Register<HierarchyComponent>();
         
-        ComponentRegistry::Register<CameraComponent>();
-        ComponentRegistry::Register<SpriteComponent>();
-        ComponentRegistry::Register<RenderMeshComponent>();
+        ComponentRegistry::Register<Rendering::CameraComponent>();
+        ComponentRegistry::Register<Rendering::SpriteComponent>();
+        ComponentRegistry::Register<Rendering::RenderMeshComponent>();
     }
 
     //--------------------------------------------------------------

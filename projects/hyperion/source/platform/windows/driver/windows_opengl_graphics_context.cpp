@@ -42,10 +42,10 @@ namespace Hyperion::Rendering {
 
         PIXELFORMATDESCRIPTOR pixel_format_descriptor;
         if (!DescribePixelFormat(m_device_context, pixel_format, sizeof(pixel_format_descriptor), &pixel_format_descriptor)) {
-            HYP_PANIC_MESSAGE("Graphics", "Failed to describe pixel format for OpenGL context!");
+            HYP_PANIC_MESSAGE("Rendering", "Failed to describe pixel format for OpenGL context!");
         }
         if (!SetPixelFormat(m_device_context, pixel_format, &pixel_format_descriptor)) {
-            HYP_PANIC_MESSAGE("Graphics", "Failed to set pixel format for OpenGL context!");
+            HYP_PANIC_MESSAGE("Rendering", "Failed to set pixel format for OpenGL context!");
         }
 
 #ifdef HYP_DEBUG
@@ -68,13 +68,13 @@ namespace Hyperion::Rendering {
 #endif
         m_opengl_context = wglCreateContextAttribsARB(m_device_context, nullptr, context_attributes);
         if (!m_opengl_context) {
-            HYP_PANIC_MESSAGE("Graphics", "Failed to create OpenGL context!");
+            HYP_PANIC_MESSAGE("Rendering", "Failed to create OpenGL context!");
         }
 
         wglMakeCurrent(m_device_context, m_opengl_context);
 
         if (!gladLoadGL()) {
-            HYP_PANIC_MESSAGE("Graphics", "Failed to load OpenGL extensions!");
+            HYP_PANIC_MESSAGE("Rendering", "Failed to load OpenGL extensions!");
         }
 
         OpenGLRenderDriverContext::Initialize(descriptor);
@@ -117,19 +117,19 @@ namespace Hyperion::Rendering {
 
         int32 pixel_format = ChoosePixelFormat(helper_device_context, &pixel_format_descriptor);
         if (!SetPixelFormat(helper_device_context, pixel_format, &pixel_format_descriptor)) {
-            HYP_PANIC_MESSAGE("Graphics", "Failed to set pixel format for temporary OpenGL context!");
+            HYP_PANIC_MESSAGE("Rendering", "Failed to set pixel format for temporary OpenGL context!");
         }
 
         HGLRC temp_context = wglCreateContext(helper_device_context);
         if (!temp_context) {
-            HYP_PANIC_MESSAGE("Graphics", "Failed to create temporary OpenGL context!");
+            HYP_PANIC_MESSAGE("Rendering", "Failed to create temporary OpenGL context!");
         }
 
         wglMakeCurrent(helper_device_context, temp_context);
 
         GLADloadproc extension_loader = (GLADloadproc)wglGetProcAddress;
         if (!gladLoadWGLLoader(extension_loader, helper_device_context)) {
-            HYP_PANIC_MESSAGE("Graphics", "Failed to load windows OpenGL extensions!");
+            HYP_PANIC_MESSAGE("Rendering", "Failed to load windows OpenGL extensions!");
         }
 
         wglMakeCurrent(helper_device_context, nullptr);

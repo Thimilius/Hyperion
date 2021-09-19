@@ -8,7 +8,7 @@
 #include "hyperion/ecs/component/components/transform_components.hpp"
 
 //-------------------- Definition Namespace --------------------
-namespace Hyperion {
+namespace Hyperion::Rendering {
 
     class CameraUtilities final {
     public:

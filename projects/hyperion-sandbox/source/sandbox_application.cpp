@@ -14,12 +14,14 @@
 #include <hyperion/ecs/system/systems/transform_system.hpp>
 #include <hyperion/ecs/world/world_manager.hpp>
 #include <hyperion/ecs/world/world_serializer.hpp>
+#include <hyperion/rendering/render_engine.hpp>
 
 //---------------------- Project Includes ----------------------
 #include "sandbox/camera_controller.hpp"
 
 //------------------------- Namespaces -------------------------
 using namespace Hyperion;
+using namespace Hyperion::Rendering;
 
 //#define HYP_STRESS_TEST
 
@@ -30,12 +32,15 @@ namespace Sandbox {
     void SandboxApplication::OnSetup(ApplicationSettings &settings) {
         settings.render.backend = Rendering::RenderBackend::OpenGL;
         settings.render.threading_mode = Rendering::RenderThreadingMode::MultiThreaded;
+        settings.render.vsync_mode = Rendering::VSyncMode::DontSync;
     }
 
     World *g_world;
     EntityId g_camera;
     EntityId g_parent;
     EntityId g_child;
+
+    Material *g_material;
 
     CameraController *g_camera_controller;
 
@@ -63,7 +68,7 @@ namespace Sandbox {
 #endif
 
         Shader *shader = AssetManager::CreateShader(FileSystem::ReadAllText("data/shaders/standard.shader"));
-        Material *material = AssetManager::CreateMaterial(shader);
+        g_material = AssetManager::CreateMaterial(shader);
         Mesh *mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Cube);
 
         g_parent = g_world->CreateEntity();
@@ -87,12 +92,12 @@ namespace Sandbox {
         }
 #else
         RenderMeshComponent *parent_render_mesh = g_world->AddComponent<RenderMeshComponent>(g_parent);
-        parent_render_mesh->material = material;
+        parent_render_mesh->material = g_material;
         parent_render_mesh->mesh = mesh;
 
         g_child = g_world->CreateEntity();
         RenderMeshComponent *child_render_mesh = g_world->AddComponent<RenderMeshComponent>(g_child);
-        child_render_mesh->material = material;
+        child_render_mesh->material = g_material;
         child_render_mesh->mesh = mesh;
         g_world->GetComponent<LocalTransformComponent>(g_child)->position = Vector3(2.0f, 0.0f, 0.0f);
         g_world->GetHierarchy()->SetParent(g_child, g_parent);
@@ -110,6 +115,13 @@ namespace Sandbox {
         }
         if (Input::IsKeyDown(KeyCode::F1)) {
             GetWindow()->SetWindowMode(GetWindow()->GetWindowMode() == WindowMode::Borderless ? WindowMode::Windowed : WindowMode::Borderless);
+        }
+        if (Input::IsKeyDown(KeyCode::F2)) {
+            Rendering::RenderEngine::SetVSyncMode(
+                Rendering::RenderEngine::GetVSyncMode() == Rendering::VSyncMode::DontSync ?
+                Rendering::VSyncMode::EveryVBlank :
+                Rendering::VSyncMode::DontSync);
+            UpdateTitle();
         }
 
         g_camera_controller->Update(g_world, delta_time);
@@ -140,7 +152,8 @@ namespace Sandbox {
 
     //--------------------------------------------------------------
     void SandboxApplication::UpdateTitle() {
-        String title = StringUtils::Format("Hyperion - FPS: {} ({:.2f}ms)", Time::GetFPS(), Time::GetFrameTime());
+        String vsync = Rendering::RenderEngine::GetVSyncMode() == Rendering::VSyncMode::DontSync ? "Off" : "On";
+        String title = StringUtils::Format("Hyperion - FPS: {} ({:.2f}ms) - VSync: {}", Time::GetFPS(), Time::GetFrameTime(), vsync);
         GetWindow()->SetTitle(title);
     }
 

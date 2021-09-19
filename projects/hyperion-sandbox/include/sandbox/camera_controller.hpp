@@ -8,9 +8,12 @@
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
-    struct CameraComponent;
     struct DerivedTransformComponent;
     class World;
+
+    namespace Rendering {
+        struct CameraComponent;
+    }
 }
 
 //-------------------- Definition Namespace --------------------
@@ -55,7 +58,7 @@ namespace Sandbox {
         void Reset(Hyperion::World *world) override;
         void Update(Hyperion::World *world, float32 delta_time) override;
     private:
-        Hyperion::Vector3 GetPositionUnderMouse(Hyperion::CameraComponent *camera, Hyperion::DerivedTransformComponent *derived_transform) const;
+        Hyperion::Vector3 GetPositionUnderMouse(Hyperion::Rendering::CameraComponent *camera, Hyperion::DerivedTransformComponent *derived_transform) const;
         Hyperion::Vector3 GetXZPlanePosition(Hyperion::Vector3 position, Hyperion::Vector3 forward) const;
         Hyperion::Vector3 GetLookAtPosition(Hyperion::Vector3 look_at_position, Hyperion::Vector3 position, Hyperion::Vector3 forward) const;
         float32 ClampAngle(float32 angle, float32 min, float32 max) const;
