@@ -18,6 +18,7 @@ namespace Hyperion::Rendering {
         void SetCamera(uint64 camera_index);
         void Clear(ClearFlags clear_flags, Color clear_color);
         void DrawAll();
+        void DrawGizmos();
     private:
         RenderFrameCommand &CreateCommand(RenderFrameCommandType type);
     private:

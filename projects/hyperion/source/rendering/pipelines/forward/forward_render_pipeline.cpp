@@ -23,6 +23,7 @@ namespace Hyperion::Rendering {
         render_frame->SetCamera(0);
         render_frame->Clear(ClearFlags::All, Color::Cyan());
         render_frame->DrawAll();
+        render_frame->DrawGizmos();
     }
 
     //--------------------------------------------------------------

@@ -4,6 +4,9 @@
 //--------------------- Definition Include ---------------------
 #include "hyperion/rendering/frame/render_frame.hpp"
 
+//---------------------- Project Includes ----------------------
+#include "hyperion/rendering/gizmos/render_gizmo_grid.hpp"
+
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
@@ -29,6 +32,15 @@ namespace Hyperion::Rendering {
     //--------------------------------------------------------------
     void RenderFrame::DrawAll() {
         RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::DrawAll);
+    }
+
+    //--------------------------------------------------------------
+    void RenderFrame::DrawGizmos() {
+        RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::DrawGizmos);
+        command.data.draw_gizmos.grid.should_draw = true;
+        command.data.draw_gizmos.grid.local_to_world = Matrix4x4::Identity();
+        command.data.draw_gizmos.grid.type = RenderGizmoGrid::GetGridType();
+        command.data.draw_gizmos.grid.mesh_id = RenderGizmoGrid::GetGridMesh()->GetAssetInfo().id;
     }
 
     //--------------------------------------------------------------

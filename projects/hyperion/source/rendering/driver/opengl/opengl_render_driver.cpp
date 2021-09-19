@@ -1,3 +1,4 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
@@ -70,7 +71,7 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void OpenGLRenderDriver::Shutdown() {
-
+        // NOTE: We could bother unloading every asset on the GPU but that is pretty much just a waste of time.
     }
 
     //--------------------------------------------------------------
@@ -110,6 +111,35 @@ namespace Hyperion::Rendering {
 
                     break;
                 }
+                case RenderFrameCommandType::DrawGizmos: {
+                    HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawGizmos");
+
+                    const RenderFrameContextCamera &render_frame_context_camera = render_frame->GetContext().GetCameras()[state.camera_index];
+
+                    // HACK: We need a seperate shader/material for drawing gizmos.
+                    const OpenGLShader &opengl_shader = m_opengl_shaders.begin()->second;
+                    glUseProgram(opengl_shader.program);
+                    glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_view"), 1, GL_FALSE, render_frame_context_camera.view_matrix.elements);
+                    glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_projection"), 1, GL_FALSE, render_frame_context_camera.projection_matrix.elements);
+
+                    if (command.data.draw_gizmos.grid.should_draw) {
+                        glEnable(GL_BLEND);
+
+                        GLint model_location = glGetUniformLocation(opengl_shader.program, "u_model");
+                        glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, command.data.draw_gizmos.grid.local_to_world.elements);
+
+                        const OpenGLMesh &opengl_mesh = m_opengl_meshes.Get(command.data.draw_gizmos.grid.mesh_id);
+                        glBindVertexArray(opengl_mesh.vertex_array);
+                        SubMesh sub_mesh = opengl_mesh.sub_meshes[0];
+                        void *index_offset = reinterpret_cast<void *>(static_cast<uint32>(sub_mesh.index_offset) * sizeof(uint32));
+                        GLenum topology = GetGLTopology(sub_mesh.topology);
+                        glDrawElementsBaseVertex(topology, sub_mesh.index_count, GL_UNSIGNED_INT, index_offset, sub_mesh.vertex_offset);
+
+                        glDisable(GL_BLEND);
+                    }
+
+                    break;
+                }
                 default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
             }
         }
@@ -122,7 +152,7 @@ namespace Hyperion::Rendering {
         for (const GroupedShader &grouped_shader : m_grouped_shaders) {
             HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderGroupedShader");
 
-            const OpenGLShader &opengl_shader = *grouped_shader.shader;
+            OpenGLShader opengl_shader = *grouped_shader.shader;
             glUseProgram(opengl_shader.program);
             glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_view"), 1, GL_FALSE, render_frame_context_camera.view_matrix.elements);
             glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_projection"), 1, GL_FALSE, render_frame_context_camera.projection_matrix.elements);
@@ -149,7 +179,7 @@ namespace Hyperion::Rendering {
                     GLint model_location = glGetUniformLocation(opengl_shader.program, "u_model");
                     for (const RenderFrameContextObjectMesh &render_frame_context_mesh_object : grouped_mesh.objects) {
                         HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameMeshObject");
-
+                        
                         glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, render_frame_context_mesh_object.local_to_world.elements);
 
                         // NOTE: We may also want to group by sub meshes.
