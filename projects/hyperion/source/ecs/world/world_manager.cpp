@@ -40,16 +40,16 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void WorldManager::Initialize() {
-        ComponentRegistry::Register<TagComponent>();
+        ComponentRegistry::Register<TagComponent>("Tag");
 
-        ComponentRegistry::Register<LocalTransformComponent>();
-        ComponentRegistry::Register<DerivedTransformComponent>();
-        ComponentRegistry::Register<LocalToWorldComponent>();
-        ComponentRegistry::Register<HierarchyComponent>();
+        ComponentRegistry::Register<LocalTransformComponent>("LocalTransform");
+        ComponentRegistry::Register<DerivedTransformComponent>("DerivedTransform");
+        ComponentRegistry::Register<LocalToWorldComponent>("LocalToWorld");
+        ComponentRegistry::Register<HierarchyComponent>("Hierarchy");
         
-        ComponentRegistry::Register<Rendering::CameraComponent>();
-        ComponentRegistry::Register<Rendering::SpriteComponent>();
-        ComponentRegistry::Register<Rendering::RenderMeshComponent>();
+        ComponentRegistry::Register<Rendering::CameraComponent>("Camera");
+        ComponentRegistry::Register<Rendering::SpriteComponent>("Sprite");
+        ComponentRegistry::Register<Rendering::RenderMeshComponent>("RenderMesh");
     }
 
     //--------------------------------------------------------------

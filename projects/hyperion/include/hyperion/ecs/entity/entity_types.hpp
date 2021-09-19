@@ -22,8 +22,13 @@ namespace Hyperion {
 
     enum class EntityPrimitive {
         Empty,
-        
         Base,
+
+        Quad,
+        Plane,
+        Cube,
+        Sphere,
+
         Camera,
         Sprite
     };

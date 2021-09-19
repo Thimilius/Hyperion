@@ -8,9 +8,9 @@
 #include <yaml-cpp/yaml.h>
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/ecs/component/components/components.hpp"
 #include "hyperion/ecs/world/world_manager.hpp"
-
 
 namespace YAML {
 
@@ -385,6 +385,8 @@ namespace Hyperion {
 
                     yaml_emitter << YAML::Key << "clear_mode" << static_cast<uint64>(camera->clear_mode);
                     yaml_emitter << YAML::Key << "background_color" << camera->background_color;
+                    
+                    yaml_emitter << YAML::Key << "visibility_mask" << YAML::Value << static_cast<uint64>(camera->visibility_mask);
 
                     yaml_emitter << YAML::Key << "near_plane" << camera->near_plane;
                     yaml_emitter << YAML::Key << "far_plane" << camera->far_plane;
@@ -414,9 +416,10 @@ namespace Hyperion {
                 yaml_emitter << YAML::Key << "RenderMesh";
                 yaml_emitter << YAML::BeginMap;
                 {
-                    yaml_emitter << YAML::Key << "material" << YAML::Value << render_mesh->material->GetAssetInfo().guid.ToString();
                     yaml_emitter << YAML::Key << "mesh" << YAML::Value << render_mesh->mesh->GetAssetInfo().guid.ToString();
                     yaml_emitter << YAML::Key << "sub_mesh_index" << YAML::Value << render_mesh->sub_mesh_index;
+                    yaml_emitter << YAML::Key << "material" << YAML::Value << render_mesh->material->GetAssetInfo().guid.ToString();
+                    yaml_emitter << YAML::Key << "layer_mask" << YAML::Value << static_cast<uint64>(render_mesh->layer_mask);
                 }
                 yaml_emitter << YAML::EndMap;
             }
@@ -432,6 +435,8 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     World *WorldSerializer::Deserialize(const String &data) {
+        // TEMP: For now we assume that assets referenced by components are already loaded and we can just grab the pointer.
+
         YAML::Node yaml_world = YAML::Load(data);
         World *world = WorldManager::CreateWorld();
 
@@ -509,11 +514,11 @@ namespace Hyperion {
                             }
                         }
                         YAML::Node yaml_derived_transform = yaml_entity["DerivedTransform"];
-                        if (yaml_derived_transform && yaml_derived_transform.IsMap()) {
+                        if (yaml_derived_transform) {
                             world->AddComponent<DerivedTransformComponent>(entity);
                         }
                         YAML::Node yaml_local_to_world = yaml_entity["LocalToWorld"];
-                        if (yaml_local_to_world && yaml_local_to_world.IsMap()) {
+                        if (yaml_local_to_world) {
                             world->AddComponent<LocalToWorldComponent>(entity);
                         }
                         YAML::Node yaml_hierarchy = yaml_entity["Hierarchy"];
@@ -562,6 +567,10 @@ namespace Hyperion {
                             if (yaml_camera_background_color) {
                                 camera->background_color = yaml_camera_background_color.as<Color>();
                             }
+                            YAML::Node yaml_camera_visibility_mask = yaml_camera["visibility_mask"];
+                            if (yaml_camera_visibility_mask) {
+                                camera->visibility_mask = static_cast<Rendering::LayerMask>(yaml_camera_visibility_mask.as<uint64>());
+                            }
                             YAML::Node yaml_camera_near_plane = yaml_camera["near_plane"];
                             if (yaml_camera_near_plane) {
                                 camera->near_plane = yaml_camera_near_plane.as<float32>();
@@ -609,6 +618,23 @@ namespace Hyperion {
                         YAML::Node yaml_render_mesh = yaml_entity["RenderMesh"];
                         if (yaml_render_mesh && yaml_render_mesh.IsMap()) {
                             Rendering::RenderMeshComponent *render_mesh = world->AddComponent<Rendering::RenderMeshComponent>(entity);
+
+                            YAML::Node yaml_render_mesh_mesh = yaml_render_mesh["mesh"];
+                            if (yaml_render_mesh_mesh) {
+                                render_mesh->mesh = yaml_render_mesh_mesh.IsNull() ? nullptr : AssetManager::GetMeshByGuid(AssetGuid::Generate(yaml_render_mesh_mesh.as<String>()));
+                            }
+                            YAML::Node yaml_render_mesh_sub_mesh_index = yaml_render_mesh["sub_mesh_index"];
+                            if (yaml_render_mesh_sub_mesh_index) {
+                                render_mesh->sub_mesh_index = yaml_render_mesh_sub_mesh_index.as<uint32>();
+                            }
+                            YAML::Node yaml_render_mesh_material = yaml_render_mesh["material"];
+                            if (yaml_render_mesh_material) {
+                                render_mesh->material = yaml_render_mesh_material.IsNull() ? nullptr : AssetManager::GetMaterialByGuid(AssetGuid::Generate(yaml_render_mesh_material.as<String>()));
+                            }
+                            YAML::Node yaml_render_mesh_layer_mask = yaml_render_mesh["layer_mask"];
+                            if (yaml_render_mesh_layer_mask) {
+                                render_mesh->layer_mask = static_cast<Rendering::LayerMask>(yaml_render_mesh_layer_mask.as<uint64>());
+                            }
                         }
                     }
                 }

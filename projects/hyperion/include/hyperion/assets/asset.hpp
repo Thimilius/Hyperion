@@ -2,7 +2,6 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset_types.hpp"
-#include "hyperion/core/threading/critical_section.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -31,8 +30,6 @@ namespace Hyperion {
         AssetInfo m_info;
 
         bool8 m_is_dirty = false;
-
-        Threading::CriticalSection m_locker;
     private:
         friend class Hyperion::AssetManager;
         friend class Hyperion::AssetLoadSystem;

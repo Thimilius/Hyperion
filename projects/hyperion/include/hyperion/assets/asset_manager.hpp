@@ -19,6 +19,14 @@ namespace Hyperion {
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    enum class ShaderPrimitive {
+        Standard,
+    };
+
+    enum class MaterialPrimitive {
+        Default
+    };
+
     enum class MeshPrimitive {
         Quad,
         Plane,
@@ -30,11 +38,16 @@ namespace Hyperion {
     public:
         static Texture2D *CreateTexture2D();
 
+        static Shader *GetShaderPrimitive(ShaderPrimitive shader_primitive);
+        static Shader *GetShaderByGuid(AssetGuid guid);
         static Shader *CreateShader(const String &source);
 
+        static Material *GetMaterialPrimitive(MaterialPrimitive material_primitive);
+        static Material *GetMaterialByGuid(AssetGuid guid);
         static Material *CreateMaterial(Shader *shader);
 
         static Mesh *GetMeshPrimitive(MeshPrimitive mesh_primitive);
+        static Mesh *GetMeshByGuid(AssetGuid guid);
         static Mesh *CreateMesh();
         static Mesh *CreateMesh(const Rendering::MeshData &data, const Rendering::SubMeshes &sub_meshes, AssetDataAccess data_access = AssetDataAccess::None);
 
@@ -48,6 +61,7 @@ namespace Hyperion {
         static void Shutdown();
 
         static void InitializePrimitives();
+        static void SetNewGuid(Asset *asset, const String &guid);
 
         static void AddDirtyAsset(Asset *asset);
 
@@ -59,6 +73,10 @@ namespace Hyperion {
         inline static Map<AssetGuid, Texture *> s_textures;
 
         inline static struct Primitives {
+            Shader *shader_standard;
+
+            Material *material_default;
+
             Mesh *mesh_quad;
             Mesh *mesh_plane;
             Mesh *mesh_cube;

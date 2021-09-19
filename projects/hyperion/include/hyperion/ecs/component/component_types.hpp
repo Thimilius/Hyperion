@@ -10,6 +10,7 @@ namespace Hyperion {
     using ComponentDestructorFunction = void(*)(const void *);
 
     struct ComponentInfo {
+        String name;
         ComponentId id;
         uint64 element_size;
         ComponentDestructorFunction destructor;

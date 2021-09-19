@@ -12,6 +12,7 @@
 #include "hyperion/assets/loader/image_loader.hpp"
 #include "hyperion/assets/loader/mesh_loader.hpp"
 #include "hyperion/assets/utilities/mesh_generator.hpp"
+#include "hyperion/core/io/file_system.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -25,11 +26,49 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    Shader *AssetManager::GetShaderPrimitive(ShaderPrimitive shader_primitive) {
+        switch (shader_primitive) {
+            case ShaderPrimitive::Standard: return s_primitives.shader_standard;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
+        }
+    }
+
+    //--------------------------------------------------------------
+    Shader *AssetManager::GetShaderByGuid(AssetGuid guid) {
+        auto it = s_shaders.Find(guid);
+        if (it == s_shaders.end()) {
+            HYP_LOG_ERROR("Asset", "The shader with guid {} does not exist!", guid.ToString());
+            return nullptr;
+        } else {
+            return it->second;
+        }
+    }
+
+    //--------------------------------------------------------------
     Shader *AssetManager::CreateShader(const String &source) {
         AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
         Shader *shader = new Shader(info, source);
         s_shaders.Insert(info.guid, shader);
         return shader;
+    }
+
+    //--------------------------------------------------------------
+    Material *AssetManager::GetMaterialPrimitive(MaterialPrimitive material_primitive) {
+        switch (material_primitive) {
+            case MaterialPrimitive::Default: return s_primitives.material_default;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
+        }
+    }
+
+    //--------------------------------------------------------------
+    Material *AssetManager::GetMaterialByGuid(AssetGuid guid) {
+        auto it = s_materials.Find(guid);
+        if (it == s_materials.end()) {
+            HYP_LOG_ERROR("Asset", "The material with guid {} does not exist!", guid.ToString());
+            return nullptr;
+        } else {
+            return it->second;
+        }
     }
 
     //--------------------------------------------------------------
@@ -48,6 +87,17 @@ namespace Hyperion {
             case MeshPrimitive::Cube: return s_primitives.mesh_cube;
             case MeshPrimitive::Sphere: return s_primitives.mesh_sphere;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
+        }
+    }
+
+    //--------------------------------------------------------------
+    Mesh *AssetManager::GetMeshByGuid(AssetGuid guid) {
+        auto it = s_meshes.Find(guid);
+        if (it == s_meshes.end()) {
+            HYP_LOG_ERROR("Asset", "The mesh with guid {} does not exist!", guid.ToString());
+            return nullptr;
+        } else {
+            return it->second;
         }
     }
 
@@ -125,10 +175,60 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void AssetManager::InitializePrimitives() {
+        s_primitives.shader_standard = CreateShader(FileSystem::ReadAllText("data/shaders/standard.shader"));
+        SetNewGuid(s_primitives.shader_standard, "{6AFEA19E-547B-41F5-A008-4473AE771E06}");
+
+        s_primitives.material_default = CreateMaterial(s_primitives.shader_standard);
+        SetNewGuid(s_primitives.material_default, "{B2463C27-7FD8-44A2-BC53-2AD74FAA7979}");
+
         s_primitives.mesh_quad = MeshGenerator::GenerateQuad(1.0f, 1.0f);
+        SetNewGuid(s_primitives.material_default, "{D54B554E-2BED-4F36-AF12-9C20C83F4EFB}");
         s_primitives.mesh_plane = MeshGenerator::GeneratePlane(10.0f, 10.0f);
+        SetNewGuid(s_primitives.material_default, "{F5464C26-BA78-418D-8DFF-CC67A189DE47}");
         s_primitives.mesh_cube = MeshGenerator::GenerateCube(1.0f);
+        SetNewGuid(s_primitives.material_default, "{36E92468-41BB-4B06-918B-958ED7F5DD43}");
         s_primitives.mesh_sphere = MeshGenerator::GenerateSphere(0.5f);
+        SetNewGuid(s_primitives.material_default, "{93DFBF96-D7DB-40B7-91C3-89C6FB1B1E49}");
+    }
+
+    //--------------------------------------------------------------
+    void AssetManager::SetNewGuid(Asset *asset, const String &guid) {
+        AssetGuid old_guid = asset->GetAssetInfo().guid;
+        AssetGuid new_guid = AssetGuid::Generate(guid);
+
+        switch (asset->GetAssetType()) {
+            case AssetType::Material: {
+                Material *material = static_cast<Material *>(asset);
+                HYP_ASSERT(s_materials.Contains(old_guid));
+                s_materials.Remove(old_guid);
+                s_materials.Insert(new_guid, material);
+                break;
+            }
+            case AssetType::Mesh: {
+                Mesh *mesh = static_cast<Mesh *>(asset);
+                HYP_ASSERT(s_meshes.Contains(old_guid));
+                s_meshes.Remove(old_guid);
+                s_meshes.Insert(new_guid, mesh);
+                break;
+            }
+            case AssetType::Shader: {
+                Shader *shader = static_cast<Shader *>(asset);
+                HYP_ASSERT(s_shaders.Contains(old_guid));
+                s_shaders.Remove(old_guid);
+                s_shaders.Insert(new_guid, shader);
+                break;
+            }
+            case AssetType::Texture: {
+                Texture *texture = static_cast<Texture *>(asset);
+                HYP_ASSERT(s_textures.Contains(old_guid));
+                s_textures.Remove(old_guid);
+                s_textures.Insert(new_guid, texture);
+                break;
+            }
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        }
+
+        asset->m_info.guid = new_guid;
     }
 
     //--------------------------------------------------------------

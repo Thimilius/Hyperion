@@ -40,8 +40,6 @@ namespace Sandbox {
     EntityId g_parent;
     EntityId g_child;
 
-    Material *g_material;
-
     CameraController *g_camera_controller;
 
     //--------------------------------------------------------------
@@ -66,45 +64,24 @@ namespace Sandbox {
         camera_transform->position = Vector3(0.0f, 1.5f, 3.0f);
         camera_transform->rotation = Quaternion::FromEulerAngles(-25.0f, 0.0f, 0.0f);
 #endif
-
-        Shader *shader = AssetManager::CreateShader(FileSystem::ReadAllText("data/shaders/standard.shader"));
-        g_material = AssetManager::CreateMaterial(shader);
-        Mesh *mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Cube);
-
-        g_parent = g_world->CreateEntity();
-
+        g_parent = g_world->CreateEntity(EntityPrimitive::Sphere);
 #ifdef HYP_STRESS_TEST
         float32 size = 100;
         for (float32 x = 0; x < size; x++) {
             for (float32 z = 0; z < size; z++) {
-                Material *material = AssetManager::CreateMaterial(shader);
+                Material *material = AssetManager::CreateMaterial(AssetManager::GetShaderPrimitive(ShaderPrimitive::Standard));
                 material->SetColor("u_color", Color(Random::Get(), Random::Get(), Random::Get(), 1.0f));
 
-                EntityId entity = g_world->CreateEntity();
-                LocalTransformComponent *transform = g_world->GetComponent<LocalTransformComponent>(entity);
-                transform->position = Vector3(x * 2.0f, 0.0f, -z * 2.0f);
-                RenderMeshComponent *render_mesh = g_world->AddComponent<RenderMeshComponent>(entity);
-                render_mesh->material = material;
-                render_mesh->mesh = mesh;
-
+                EntityId entity = g_world->CreateEntity(EntityPrimitive::Cube);
+                g_world->GetComponent<LocalTransformComponent>(entity)->position = Vector3(x * 2.0f, 0.0f, -z * 2.0f);
+                g_world->GetComponent<RenderMeshComponent>(entity)->material = material;
                 g_world->GetHierarchy()->SetParent(entity, g_parent);
             }
         }
 #else
-        RenderMeshComponent *parent_render_mesh = g_world->AddComponent<RenderMeshComponent>(g_parent);
-        parent_render_mesh->material = g_material;
-        parent_render_mesh->mesh = mesh;
-
-        g_child = g_world->CreateEntity();
-        RenderMeshComponent *child_render_mesh = g_world->AddComponent<RenderMeshComponent>(g_child);
-        child_render_mesh->material = g_material;
-        child_render_mesh->mesh = mesh;
+        g_child = g_world->CreateEntity(EntityPrimitive::Cube);
         g_world->GetComponent<LocalTransformComponent>(g_child)->position = Vector3(2.0f, 0.0f, 0.0f);
         g_world->GetHierarchy()->SetParent(g_child, g_parent);
-
-        String world_data = WorldSerializer::Serialize(g_world);
-        HYP_TRACE("\n{}", world_data);
-        World *world = WorldSerializer::Deserialize(world_data);
 #endif
     }
 
@@ -128,6 +105,12 @@ namespace Sandbox {
         if (Input::IsKeyDown(KeyCode::R)) {
             g_camera_controller->Reset(g_world);
         }
+
+        //String world_data = WorldSerializer::Serialize(g_world);
+        //World *world = WorldSerializer::Deserialize(world_data);
+        //WorldManager::SetActiveWorld(world);
+        //WorldManager::DestroyWorld(g_world);
+        //g_world = world;
 
         Quaternion rotation = Quaternion::FromEulerAngles(0.0f, Time::GetTime() * 25.0f, 0.0f);
 

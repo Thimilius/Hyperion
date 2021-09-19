@@ -5,6 +5,7 @@
 #include "hyperion/ecs/world/world.hpp"
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/ecs/component/components/components.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -113,6 +114,23 @@ namespace Hyperion {
         switch (primitive) {
             case EntityPrimitive::Empty: break;
             case EntityPrimitive::Base: break;
+            case EntityPrimitive::Quad:
+            case EntityPrimitive::Plane:
+            case EntityPrimitive::Cube:
+            case EntityPrimitive::Sphere: {
+                Rendering::RenderMeshComponent *render_mesh = AddComponent<Rendering::RenderMeshComponent>(id);
+                render_mesh->material = AssetManager::GetMaterialPrimitive(MaterialPrimitive::Default);
+
+                switch (primitive) {
+                    case EntityPrimitive::Quad: render_mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Quad); break;
+                    case EntityPrimitive::Plane: render_mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Plane); break;
+                    case EntityPrimitive::Cube: render_mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Cube); break;
+                    case EntityPrimitive::Sphere: render_mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Sphere); break;
+                    default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+                }
+
+                break;
+            }
             case EntityPrimitive::Camera: AddComponent<Rendering::CameraComponent>(id); break;
             case EntityPrimitive::Sprite: AddComponent<Rendering::SpriteComponent>(id); break;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;

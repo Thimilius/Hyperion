@@ -17,8 +17,9 @@ namespace Hyperion {
         }
 
         template<typename T>
-        inline static void Register() {
+        inline static void Register(const String &name) {
             ComponentInfo component_info;
+            component_info.name = name;
             component_info.id = GetId<T>();
             component_info.element_size = sizeof(T);
             component_info.destructor = [](const void *component) { static_cast<const T *>(component)->~T(); };
