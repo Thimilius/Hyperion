@@ -5,6 +5,7 @@
 #include "hyperion/assets/utilities/mesh_generator.hpp"
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/assets/utilities/mesh_builder.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -149,6 +150,49 @@ namespace Hyperion {
         }
 
         return mesh_builder.CreateMesh();
+    }
+
+    //--------------------------------------------------------------
+    Mesh *MeshGenerator::GenerateGrid(const GridMeshGenerationSettings &settings) {
+        int32 half_grid_size = settings.size / 2;
+        float32 to_point = static_cast<float32>(half_grid_size);
+
+        // We have to remember that we are actually drawing always one more line that the actual size of the grid.
+        uint32 grid_vertex_count = ((settings.size + 1) * 4);
+        Rendering::MeshData mesh_data;
+        mesh_data.positions.Resize(grid_vertex_count);
+        mesh_data.colors.Resize(grid_vertex_count);
+        mesh_data.indices.Resize(grid_vertex_count);
+
+        uint32 index = 0;
+        for (int32 x = -half_grid_size; x <= half_grid_size; x++) {
+            float32 from_point = static_cast<float32>(x);
+            Color color = (x % settings.chunk_size) == 0 ? settings.chunk_color : settings.normal_color;
+            mesh_data.positions[index] = Vector3(from_point, 0, to_point);
+            mesh_data.colors[index] = color;
+            mesh_data.indices[index] = index;
+            index++;
+            mesh_data.positions[index] = Vector3(from_point, 0, -to_point);
+            mesh_data.colors[index] = color;
+            mesh_data.indices[index] = index;
+            index++;
+        }
+        for (int32 z = -half_grid_size; z <= half_grid_size; z++) {
+            float32 from_point = static_cast<float32>(z);
+            Color color = (z % settings.chunk_size) == 0 ? settings.chunk_color : settings.normal_color;
+            mesh_data.positions[index] = Vector3(to_point, 0, from_point);
+            mesh_data.colors[index] = color;
+            mesh_data.indices[index] = index;
+            index++;
+            mesh_data.positions[index] = Vector3(-to_point, 0, from_point);
+            mesh_data.colors[index] = color;
+            mesh_data.indices[index] = index;
+            index++;
+        }
+
+        Rendering::SubMeshes sub_meshes = { { Rendering::MeshTopology::Lines, grid_vertex_count, 0, 0 } };
+
+        return AssetManager::CreateMesh(mesh_data, sub_meshes);
     }
 
 }

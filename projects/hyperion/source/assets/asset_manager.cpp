@@ -13,7 +13,6 @@
 #include "hyperion/assets/loader/mesh_loader.hpp"
 #include "hyperion/assets/utilities/mesh_generator.hpp"
 #include "hyperion/core/io/file_system.hpp"
-#include "hyperion/rendering/gizmos/render_gizmo_grid.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -159,8 +158,6 @@ namespace Hyperion {
         MeshLoader::Initialize();
 
         InitializePrimitives();
-
-        Rendering::RenderGizmoGrid::Initialize();
     }
 
     //--------------------------------------------------------------

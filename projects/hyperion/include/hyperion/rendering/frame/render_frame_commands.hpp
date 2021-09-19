@@ -4,7 +4,7 @@
 #include "hyperion/assets/asset_types.hpp"
 #include "hyperion/core/color.hpp"
 #include "hyperion/core/math/matrix4x4.hpp"
-#include "hyperion/rendering/gizmos/render_gizmo_types.hpp"
+#include "hyperion/rendering/render_gizmos.hpp"
 #include "hyperion/rendering/types/render_types_general.hpp"
 
 //-------------------- Definition Namespace --------------------

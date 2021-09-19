@@ -151,6 +151,8 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void RenderEngine::Initialize() {
+        RenderGizmos::Initialize();
+
         s_render_pipeline->Initialize();
     }
 

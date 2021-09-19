@@ -6,7 +6,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset_manager.hpp"
-#include "hyperion/rendering/gizmos/render_gizmo_grid.hpp"
+#include "hyperion/rendering/render_gizmos.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
@@ -41,8 +41,8 @@ namespace Hyperion::Rendering {
         command.data.draw_gizmos.shader_id = AssetManager::GetShaderPrimitive(ShaderPrimitive::Gizmo)->GetAssetInfo().id;
         command.data.draw_gizmos.grid.should_draw = true;
         command.data.draw_gizmos.grid.local_to_world = Matrix4x4::Identity();
-        command.data.draw_gizmos.grid.type = RenderGizmoGrid::GetGridType();
-        command.data.draw_gizmos.grid.mesh_id = RenderGizmoGrid::GetGridMesh()->GetAssetInfo().id;
+        command.data.draw_gizmos.grid.type = RenderGizmos::GetGridType();
+        command.data.draw_gizmos.grid.mesh_id = RenderGizmos::GetGridMesh()->GetAssetInfo().id;
     }
 
     //--------------------------------------------------------------
