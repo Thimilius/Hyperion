@@ -117,8 +117,10 @@ namespace Hyperion {
             }
         }
 
-        template<typename... T>
-        WorldView<T ...> GetView() { return WorldView<T ...>(this); }
+        template<typename... Component, typename... Exclude>
+        WorldView<GetComponents<Component ...>, ExcludeComponents<Exclude ...>> GetView(ExcludeComponents<Exclude ...> = {}) {
+            return WorldView<GetComponents<Component ...>, ExcludeComponents<Exclude ...>>(this);
+        }
 
         template<typename T>
         void OnComponentAdded(ComponentCallback callback) {
@@ -141,7 +143,7 @@ namespace Hyperion {
     private:
     private:
         friend class Hyperion::WorldManager;
-        template<typename... T>
+        template<typename... Types>
         friend class Hyperion::WorldView;
     };
 
