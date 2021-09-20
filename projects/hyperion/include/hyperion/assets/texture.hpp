@@ -20,30 +20,31 @@ namespace Hyperion {
     protected:
         Rendering::TextureFormat m_format;
         Rendering::TextureAttributes m_attributes;
-    };
-
-    struct Texture2DCreationParameters {
-        uint32 width;
-        uint32 height;
-        Rendering::TextureFormat format;
-        Rendering::TextureAttributes attributes;
+    private:
+        friend class Hyperion::AssetLoadSystem;
     };
 
     class Texture2D final : public Texture {
     private:
-        Texture2D(AssetInfo info) : Texture(info) { }
-        Texture2D(AssetInfo info, Texture2DCreationParameters parameters, const Array<uint8> &pixels);
+        Texture2D(AssetInfo info, const Rendering::Texture2DParameters &parameters);
+        Texture2D(AssetInfo info, const Rendering::Texture2DParameters &parameters, const Rendering::TexturePixelData &pixels);
         ~Texture2D() = default;
     public:
         Rendering::TextureDimension GetDimension() const override { return Rendering::TextureDimension::Texture2D; }
 
         inline uint32 GetWidth() const { return m_width; }
         inline uint32 GetHeight() const { return m_height; }
+
+        const Rendering::TexturePixelData &GetPixels() const;
+        void SetPixels(const Rendering::TexturePixelData &data);
+    private:
+        void SetPixelsInternal(const Rendering::TexturePixelData &data);
     private:
         uint32 m_width;
         uint32 m_height;
-        Array<byte> m_pixels;
+        Rendering::TexturePixelData m_pixels;
     private:
+        friend class Hyperion::AssetLoadSystem;
         friend class Hyperion::AssetManager;
     };
 

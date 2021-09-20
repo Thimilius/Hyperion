@@ -18,9 +18,17 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    Texture2D *AssetManager::CreateTexture2D() {
+    Texture2D *AssetManager::CreateTexture2D(const Rendering::Texture2DParameters &parameters) {
         AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
-        Texture2D *texture = new Texture2D(info);
+        Texture2D *texture = new Texture2D(info, parameters);
+        s_textures.Insert(info.guid, texture);
+        return texture;
+    }
+
+    //--------------------------------------------------------------
+    Texture2D *AssetManager::CreateTexture2D(const Rendering::Texture2DParameters &parameters, const Rendering::TexturePixelData &pixels, AssetDataAccess data_access) {
+        AssetInfo info = GetNextAssetInfo(data_access);
+        Texture2D *texture = new Texture2D(info, parameters, pixels);
         s_textures.Insert(info.guid, texture);
         return texture;
     }

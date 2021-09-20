@@ -1,8 +1,11 @@
 # TODO
 
+## App
+- Multiple windows
+- Internal event queue
+
 ## Assets
 - Textures
-    - 2D
     - Cubemaps
     - RenderTextures
 - Support for all material property types

@@ -3,6 +3,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset.hpp"
 #include "hyperion/rendering/types/render_types_mesh.hpp"
+#include "hyperion/rendering/types/render_types_texture.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -37,7 +38,8 @@ namespace Hyperion {
 
     class AssetManager final {
     public:
-        static Texture2D *CreateTexture2D();
+        static Texture2D *CreateTexture2D(const Rendering::Texture2DParameters &parameters);
+        static Texture2D *CreateTexture2D(const Rendering::Texture2DParameters &parameters, const Rendering::TexturePixelData &pixels, AssetDataAccess data_access = AssetDataAccess::None);
 
         static Shader *GetShaderPrimitive(ShaderPrimitive shader_primitive);
         static Shader *GetShaderByGuid(AssetGuid guid);

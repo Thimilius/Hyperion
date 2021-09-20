@@ -5,12 +5,19 @@
 #include "hyperion/rendering/types/render_types_material.hpp"
 #include "hyperion/rendering/types/render_types_mesh.hpp"
 #include "hyperion/rendering/types/render_types_shader.hpp"
+#include "hyperion/rendering/types/render_types_texture.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
     struct RenderFrameContextAsset {
         AssetId id;
+    };
+
+    struct RenderFrameContextAssetTexture2D : public RenderFrameContextAsset {
+        Texture2DParameters parameters;
+        uint32 mipmap_count;
+        TexturePixelData pixels;
     };
 
     struct RenderFrameContextAssetShader : public RenderFrameContextAsset {

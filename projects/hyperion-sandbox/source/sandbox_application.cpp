@@ -6,6 +6,7 @@
 #include <hyperion/assets/asset_manager.hpp>
 #include <hyperion/assets/material.hpp>
 #include <hyperion/assets/loader/mesh_loader.hpp>
+#include <hyperion/assets/loader/image_loader.hpp>
 #include <hyperion/assets/utilities/mesh_generator.hpp>
 #include <hyperion/core/random.hpp>
 #include <hyperion/core/app/time.hpp>
@@ -54,7 +55,6 @@ namespace Sandbox {
 
         g_camera_controller = new LookAroundCameraController(g_camera);
         g_camera_controller->Reset(g_world);
-
         LocalTransformComponent *camera_transform = g_world->GetComponent<LocalTransformComponent>(g_camera);
 #ifdef HYP_STRESS_TEST
         camera_transform->position = Vector3(0.0f, 15.0f, 0.0f);
@@ -63,6 +63,13 @@ namespace Sandbox {
         camera_transform->position = Vector3(0.0f, 1.5f, 3.0f);
         camera_transform->rotation = Quaternion::FromEulerAngles(-25.0f, 0.0f, 0.0f);
 #endif
+
+        Image *image = ImageLoader::Load("data/textures/earth.png").Unwrap();
+        Texture2DParameters parameters;
+        parameters.width = image->GetWidth();
+        parameters.height = image->GetHeight();
+        Texture2D *texture_2d = AssetManager::CreateTexture2D(parameters, image->GetPixels());
+
         g_parent = g_world->CreateEntity(EntityPrimitive::Sphere);
 #ifdef HYP_STRESS_TEST
         float32 size = 100;

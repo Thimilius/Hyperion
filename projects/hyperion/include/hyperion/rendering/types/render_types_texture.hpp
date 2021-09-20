@@ -51,4 +51,14 @@ namespace Hyperion::Rendering {
         bool8 use_mipmaps = true;
     };
 
+    struct Texture2DParameters {
+        TextureFormat format = TextureFormat::RGB24;
+        TextureAttributes attributes = TextureAttributes();
+
+        uint32 width = 0;
+        uint32 height = 0;
+    };
+
+    using TexturePixelData = Array<byte>;
+
 }

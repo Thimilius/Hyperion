@@ -13,27 +13,30 @@ namespace Hyperion::Rendering {
         void Clear();
 
         Array<AssetId> &GetAssetsToUnload() { return m_assets_to_unload; }
-        Array<RenderFrameContextAssetMaterial> &GetMaterialsToLoad() { return m_materials_to_load; }
-        Array<RenderFrameContextAssetMesh> &GetMeshesToLoad() { return m_meshes_to_load; }
-        Array<RenderFrameContextAssetShader> &GetShadersToLoad() { return m_shaders_to_load; }
+        Array<RenderFrameContextAssetTexture2D> &GetTexture2DAssetsToLoad() {return m_texture_2ds_to_load; }
+        Array<RenderFrameContextAssetShader> &GetShaderAssetsToLoad() { return m_shaders_to_load; }
+        Array<RenderFrameContextAssetMaterial> &GetMaterialAssetsToLoad() { return m_materials_to_load; }
+        Array<RenderFrameContextAssetMesh> &GetMeshAssetsToLoad() { return m_meshes_to_load; }
 
         const Array<RenderFrameContextCamera> &GetCameras() const { return m_cameras; }
         const Array<RenderFrameContextObjectMesh> &GetMeshObjects() const { return m_mesh_objects; }
         const Array<RenderFrameContextObjectSprite> &GetSpriteObjects() const { return m_sprite_objects; }
 
         void AddAssetToUnload(AssetId asset_id);
+        RenderFrameContextAssetTexture2D &AddTexture2DAssetToLoad();
+        RenderFrameContextAssetShader &AddShaderAssetToLoad();
         RenderFrameContextAssetMaterial &AddMaterialAssetToLoad();
         RenderFrameContextAssetMesh &AddMeshAssetToLoad();
-        RenderFrameContextAssetShader &AddShaderAssetToLoad();
 
         RenderFrameContextCamera &AddCamera();
         RenderFrameContextObjectMesh &AddMeshObject();
         RenderFrameContextObjectSprite &AddSpriteObject();
     private:
         Array<AssetId> m_assets_to_unload;
+        Array<RenderFrameContextAssetTexture2D> m_texture_2ds_to_load;
+        Array<RenderFrameContextAssetShader> m_shaders_to_load;
         Array<RenderFrameContextAssetMaterial> m_materials_to_load;
         Array<RenderFrameContextAssetMesh> m_meshes_to_load;
-        Array<RenderFrameContextAssetShader> m_shaders_to_load;
 
         Array<RenderFrameContextCamera> m_cameras;
         Array<RenderFrameContextObjectMesh> m_mesh_objects;

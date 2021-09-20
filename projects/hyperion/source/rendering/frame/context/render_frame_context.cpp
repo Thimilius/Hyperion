@@ -9,10 +9,11 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void RenderFrameContext::Clear() {
+        m_assets_to_unload.Clear();
+        m_texture_2ds_to_load.Clear();
         m_materials_to_load.Clear();
         m_meshes_to_load.Clear();
         m_shaders_to_load.Clear();
-        m_assets_to_unload.Clear();
 
         m_cameras.Clear();
         m_mesh_objects.Clear();
@@ -23,6 +24,12 @@ namespace Hyperion::Rendering {
     void RenderFrameContext::AddAssetToUnload(AssetId asset_id) {
         HYP_ASSERT(!m_assets_to_unload.Contains(asset_id));
         m_assets_to_unload.Add(asset_id);
+    }
+
+    //--------------------------------------------------------------
+    RenderFrameContextAssetTexture2D &RenderFrameContext::AddTexture2DAssetToLoad() {
+        m_texture_2ds_to_load.Resize(m_texture_2ds_to_load.GetLength() + 1);
+        return m_texture_2ds_to_load.GetLast();
     }
 
     //--------------------------------------------------------------

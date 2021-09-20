@@ -11,6 +11,119 @@
 namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
+    uint32 GetBytesPerPixelForTextureFormat(TextureFormat format) {
+        switch (format) {
+            case TextureFormat::RGBA32: return 4;
+            case TextureFormat::RGB24: return 3;
+            case TextureFormat::R8: return 1;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    //--------------------------------------------------------------
+    void SetUnpackAlignmentForTextureFormat(TextureFormat format) {
+        GLint alignment = 4;
+        switch (format) {
+            case Hyperion::Rendering::TextureFormat::RGB24: alignment = 4; break;
+            case Hyperion::Rendering::TextureFormat::RGBA32: alignment = 4; break;
+            case Hyperion::Rendering::TextureFormat::R8: alignment = 1; break;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        }
+        glPixelStorei(GL_UNPACK_ALIGNMENT, alignment);
+    }
+
+    //--------------------------------------------------------------
+    void FlipTextureHorizontally(uint32 width, uint32 height, TextureFormat format, Array<byte> &pixels) {
+        uint32 stride = width * GetBytesPerPixelForTextureFormat(format);
+        Array<byte> temp_buffer(stride);
+        byte *temp_buffer_data = temp_buffer.GetData();
+
+        byte *data = pixels.GetData();
+
+        for (uint32 row = 0; row < height / 2; row++) {
+            uint8 *source = data + (row * stride);
+            uint8 *destination = data + (((height - 1) - row) * stride);
+
+            std::memcpy(temp_buffer_data, source, stride);
+            std::memcpy(source, destination, stride);
+            std::memcpy(destination, temp_buffer_data, stride);
+        }
+    }
+
+    //--------------------------------------------------------------
+    GLenum GetTextureFormat(TextureFormat format) {
+        switch (format) {
+            case TextureFormat::RGB24: return GL_RGB;
+            case TextureFormat::RGBA32: return GL_RGBA;
+            case TextureFormat::R8: return GL_RED;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    //--------------------------------------------------------------
+    GLenum GetTextureFormatType(TextureFormat format_type) {
+        switch (format_type) {
+            case TextureFormat::RGB24: return GL_UNSIGNED_BYTE;
+            case TextureFormat::RGBA32: return GL_UNSIGNED_BYTE;
+            case TextureFormat::R8: return GL_UNSIGNED_BYTE;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    //--------------------------------------------------------------
+    GLenum GetTextureInternalFormat(TextureFormat internal_format) {
+        switch (internal_format) {
+            case TextureFormat::RGB24: return GL_RGB8;
+            case TextureFormat::RGBA32: return GL_RGBA8;
+            case TextureFormat::R8: return GL_R8;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    //--------------------------------------------------------------
+    GLint GetTextureWrapMode(TextureWrapMode wrap_mode) {
+        switch (wrap_mode) {
+            case TextureWrapMode::Clamp: return GL_CLAMP_TO_EDGE;
+            case TextureWrapMode::Border: return GL_CLAMP_TO_BORDER;
+            case TextureWrapMode::Repeat: return GL_REPEAT;
+            case TextureWrapMode::MirroredRepeat: return GL_MIRRORED_REPEAT;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    //--------------------------------------------------------------
+    GLint GetTextureMinFilter(TextureFilter filter) {
+        switch (filter) {
+            case TextureFilter::Point: return GL_NEAREST_MIPMAP_NEAREST;
+            case TextureFilter::Bilinear: return GL_LINEAR_MIPMAP_NEAREST;
+            case TextureFilter::Trilinear: return GL_LINEAR_MIPMAP_LINEAR;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return GL_NEAREST_MIPMAP_NEAREST;
+        }
+    }
+
+    //--------------------------------------------------------------
+    GLint GetTextureMaxFilter(TextureFilter filter) {
+        switch (filter) {
+            case TextureFilter::Point: return GL_NEAREST;
+            case TextureFilter::Bilinear: return GL_LINEAR;
+            case TextureFilter::Trilinear: return GL_LINEAR;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return GL_NEAREST;
+        }
+    }
+
+    //--------------------------------------------------------------
+    GLfloat GetTextureAnisotropicFilter(TextureAnisotropicFilter anisotropic_filter) {
+        switch (anisotropic_filter) {
+            case TextureAnisotropicFilter::None: return 1.0f;
+            case TextureAnisotropicFilter::Times2: return 2.0f;
+            case TextureAnisotropicFilter::Times4: return 4.0f;
+            case TextureAnisotropicFilter::Times8: return 8.0f;
+            case TextureAnisotropicFilter::Times16: return 16.0f;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 1.0f;
+        }
+    }
+
+    //--------------------------------------------------------------
     GLenum GetGLTopology(MeshTopology mesh_topology) {
         switch (mesh_topology) {
             case MeshTopology::Points: return GL_POINTS;
@@ -180,7 +293,6 @@ namespace Hyperion::Rendering {
                         
                         glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, render_frame_context_mesh_object.local_to_world.elements);
 
-                        // NOTE: We may also want to group by sub meshes.
                         SubMesh sub_mesh = opengl_mesh.sub_meshes[render_frame_context_mesh_object.sub_mesh_index];
                         RenderSubMesh(sub_mesh);
                     }
@@ -269,17 +381,51 @@ namespace Hyperion::Rendering {
         HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadAssets");
 
         // The order in which we load the assets is important.
-        // For example a material might reference a shader which should always be loaded first.
+        // For example a material might reference a shader or texture which should always be loaded first.
 
-        for (RenderFrameContextAssetShader &shader : render_frame_context.GetShadersToLoad()) {
+        for (RenderFrameContextAssetShader &shader : render_frame_context.GetShaderAssetsToLoad()) {
             LoadShader(shader);
         }
-        for (RenderFrameContextAssetMaterial &material : render_frame_context.GetMaterialsToLoad()) {
+        for (RenderFrameContextAssetTexture2D &texture_2d : render_frame_context.GetTexture2DAssetsToLoad()) {
+            LoadTexture2D(texture_2d);
+        }
+        for (RenderFrameContextAssetMaterial &material : render_frame_context.GetMaterialAssetsToLoad()) {
             LoadMaterial(material);
         }
-        for (RenderFrameContextAssetMesh &mesh : render_frame_context.GetMeshesToLoad()) {
+        for (RenderFrameContextAssetMesh &mesh : render_frame_context.GetMeshAssetsToLoad()) {
             LoadMesh(mesh);
         }
+    }
+
+    //--------------------------------------------------------------
+    void OpenGLRenderDriver::LoadTexture2D(RenderFrameContextAssetTexture2D &texture_2d) {
+        HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadTexture2D");
+
+        OpenGLTexture opengl_texture;
+        opengl_texture.id = texture_2d.id;
+
+        glCreateTextures(GL_TEXTURE_2D, 1, &opengl_texture.texture);
+
+        SetTextureAttributes(opengl_texture.texture, texture_2d.parameters.attributes);
+
+        TextureFormat format = texture_2d.parameters.format;
+        GLsizei width = texture_2d.parameters.width;
+        GLsizei height = texture_2d.parameters.height;
+        GLenum internal_format = GetTextureInternalFormat(format);
+        GLsizei mipmap_count = texture_2d.parameters.attributes.use_mipmaps ? Math::Max(texture_2d.mipmap_count, 1) : 1;
+        glTextureStorage2D(opengl_texture.texture, mipmap_count, internal_format, width, height);
+
+        FlipTextureHorizontally(texture_2d.parameters.width, texture_2d.parameters.height, format, texture_2d.pixels);
+        GLenum format_value = GetTextureFormat(format);
+        GLenum format_type = GetTextureFormatType(format);
+        SetUnpackAlignmentForTextureFormat(format);
+        glTextureSubImage2D(opengl_texture.texture, 0, 0, 0, width, height, format_value, format_type, texture_2d.pixels.GetData());
+
+        if (texture_2d.parameters.attributes.use_mipmaps) {
+            glGenerateTextureMipmap(opengl_texture.texture);
+        }
+
+        m_opengl_textures.Insert(texture_2d.id, opengl_texture);
     }
 
     //--------------------------------------------------------------
@@ -380,6 +526,21 @@ namespace Hyperion::Rendering {
         }
 
         m_opengl_meshes.Insert(mesh.id, opengl_mesh);
+    }
+
+    //--------------------------------------------------------------
+    void OpenGLRenderDriver::SetTextureAttributes(GLuint texture, TextureAttributes attributes) {
+        GLint wrap_mode = GetTextureWrapMode(attributes.wrap_mode);
+        glTextureParameteri(texture, GL_TEXTURE_WRAP_S, wrap_mode);
+        glTextureParameteri(texture, GL_TEXTURE_WRAP_T, wrap_mode);
+
+        GLint min_filter = GetTextureMinFilter(attributes.filter);
+        GLint mag_filter = GetTextureMaxFilter(attributes.filter);
+        glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, min_filter);
+        glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, mag_filter);
+
+        GLfloat anisotropic_filter_value = GetTextureAnisotropicFilter(attributes.anisotropic_filter);
+        glTextureParameterf(texture, GL_TEXTURE_MAX_ANISOTROPY, anisotropic_filter_value);
     }
 
 }

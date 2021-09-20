@@ -18,6 +18,10 @@ namespace Hyperion::Rendering {
         GLuint program;
     };
 
+    struct OpenGLTexture : public OpenGLAsset {
+        GLuint texture;
+    };
+
     struct OpenGLMaterial : public OpenGLAsset {
         MaterialPropertyCollection properties;
 
@@ -70,14 +74,18 @@ namespace Hyperion::Rendering {
         void GroupObjects(const Array<RenderFrameContextObjectMesh> &mesh_objects, LayerMask visibility_mask);
 
         void LoadAssets(RenderFrameContext &render_frame_context);
+        void LoadTexture2D(RenderFrameContextAssetTexture2D &texture_2d);
         void LoadShader(RenderFrameContextAssetShader &shader);
         void LoadMaterial(RenderFrameContextAssetMaterial &material);
         void LoadMesh(RenderFrameContextAssetMesh &mesh);
         void UnloadAssets(RenderFrameContext &render_frame_context);
+
+        void SetTextureAttributes(GLuint texture, TextureAttributes attributes);
     private:
         RenderStats m_stats;
 
         Map<AssetId, OpenGLShader> m_opengl_shaders;
+        Map<AssetId, OpenGLTexture> m_opengl_textures;
         Map<AssetId, OpenGLMaterial> m_opengl_materials;
         Map<AssetId, OpenGLMesh> m_opengl_meshes;
 
