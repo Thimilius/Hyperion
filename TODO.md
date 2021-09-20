@@ -16,7 +16,6 @@
 
 ## ECS
 - GetOrAddComponent
-- Exclude components in views
 - System execution order
 - Entity/Component duplication
 - Component pool pointer stability (if necessary)

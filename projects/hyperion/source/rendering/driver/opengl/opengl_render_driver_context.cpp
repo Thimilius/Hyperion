@@ -26,8 +26,8 @@ namespace Hyperion::Rendering {
         QueryProperties();
         QueryLimits();
 
-        HYP_LOG_INFO("Rendering", "Initialized OpenGL graphics driver!");
-        HYP_LOG_INFO("Rendering", "{} {}", m_properties.version, m_properties.renderer);
+        HYP_LOG_INFO("OpenGL", "Initialized graphics driver!");
+        HYP_LOG_INFO("OpenGL", "{} {}", m_properties.version, m_properties.renderer);
     }
 
     //--------------------------------------------------------------
@@ -50,7 +50,7 @@ namespace Hyperion::Rendering {
             String extension = reinterpret_cast<const char *>(glGetStringi(GL_EXTENSIONS, i));
             m_extensions.Add(extension);
             if constexpr (g_log_extensions) {
-                HYP_LOG_INFO("Rendering", "OpenGL extension: '{}' available!", extension);
+                HYP_LOG_INFO("OpenGL", "Extension: '{}' available!", extension);
             }
         }
     }
@@ -82,7 +82,7 @@ namespace Hyperion::Rendering {
     //--------------------------------------------------------------
     void OpenGLRenderDriverContext::CheckExtension(const String &extension) {
         if (std::find(m_extensions.begin(), m_extensions.end(), extension) == m_extensions.end()) {
-            HYP_PANIC_MESSAGE("Rendering", "Manditory OpenGL extension: '{}' not available!", extension);
+            HYP_PANIC_MESSAGE("OpenGL", "Manditory extension: '{}' not available!", extension);
         }
     }
 
@@ -115,12 +115,12 @@ namespace Hyperion::Rendering {
 
         const char *log_string_format = "Severity: {}, Source: {}, Type: {}, ID: {},\nMessage: {}";
         switch (severity) {
-            case GL_DEBUG_SEVERITY_HIGH: HYP_LOG_ERROR("Rendering", log_string_format, "High", source_string, type_string, id, message); break;
-            case GL_DEBUG_SEVERITY_MEDIUM: HYP_LOG_WARN("Rendering", log_string_format, "Medium", source_string, type_string, id, message); break;
-            case GL_DEBUG_SEVERITY_LOW: HYP_LOG_WARN("Rendering", log_string_format, "Low", source_string, type_string, id, message); break;
+            case GL_DEBUG_SEVERITY_HIGH: HYP_LOG_ERROR("OpenGL", log_string_format, "High", source_string, type_string, id, message); break;
+            case GL_DEBUG_SEVERITY_MEDIUM: HYP_LOG_WARN("OpenGL", log_string_format, "Medium", source_string, type_string, id, message); break;
+            case GL_DEBUG_SEVERITY_LOW: HYP_LOG_WARN("OpenGL", log_string_format, "Low", source_string, type_string, id, message); break;
             case GL_DEBUG_SEVERITY_NOTIFICATION: {
                 if constexpr (g_log_notifications) {
-                    HYP_LOG_INFO("Rendering", log_string_format, "Notification", source_string, type_string, id, message);
+                    HYP_LOG_INFO("OpenGL", log_string_format, "Notification", source_string, type_string, id, message);
                 }
                 break;
             }
