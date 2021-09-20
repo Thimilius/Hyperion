@@ -6,7 +6,6 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset_manager.hpp"
-#include "hyperion/core/app/display.hpp"
 #include "hyperion/ecs/component/components/render_components.hpp"
 #include "hyperion/ecs/component/components/transform_components.hpp"
 #include "hyperion/ecs/component/components/utilities/camera_utilities.hpp"
@@ -31,15 +30,6 @@ namespace Hyperion::Rendering {
 
             CameraUtilities::RecalculateMatricies(camera, derived_transform);
 
-            uint32 display_width = Display::GetWidth();
-            uint32 display_height = Display::GetHeight();
-            CameraViewportClipping &viewport_clipping = camera->viewport_clipping;
-            CameraViewport viewport;
-            viewport.x = static_cast<uint32>(Math::Clamp01(viewport_clipping.x) * display_width);
-            viewport.y = static_cast<uint32>(Math::Clamp01(viewport_clipping.y) * display_height);
-            viewport.width = static_cast<uint32>(Math::Clamp01(viewport_clipping.width) * display_width);
-            viewport.height = static_cast<uint32>(Math::Clamp01(viewport_clipping.height) * display_height);
-
             RenderFrameContextCamera &render_frame_context_camera = render_frame_context.AddCamera();
             render_frame_context_camera.projection_mode = camera->projection_mode;
             render_frame_context_camera.clear_mode = camera->clear_mode;
@@ -58,7 +48,7 @@ namespace Hyperion::Rendering {
             render_frame_context_camera.inverse_projection_matrix = camera->projection_matrix.Inverted();
             render_frame_context_camera.view_projection_matrix = camera->view_projection_matrix;
             render_frame_context_camera.inverse_view_projection_matrix = camera->view_projection_matrix.Inverted();
-            render_frame_context_camera.viewport = { 0, 0, display_width, display_height };
+            render_frame_context_camera.viewport = CameraUtilities::CalculateViewportFromClipping(camera->viewport_clipping);
         }
     }
 

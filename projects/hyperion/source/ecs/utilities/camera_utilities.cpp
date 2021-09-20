@@ -87,9 +87,8 @@ namespace Hyperion::Rendering {
         float32 orthographic_size = camera->orthographic_size;
         float32 near_plane = camera->near_plane;
         float32 far_plane = camera->far_plane;
-        uint32 display_width = Display::GetWidth();
-        uint32 display_height = Display::GetHeight();
-        float32 aspect_ratio = static_cast<float32>(display_width) / static_cast<float32>(display_height);
+        CameraViewport viewport = CalculateViewportFromClipping(camera->viewport_clipping);
+        float32 aspect_ratio = static_cast<float32>(viewport.width) / static_cast<float32>(viewport.height);
 
         Matrix4x4 view_matrix = Matrix4x4::LookAt(position, position + forward, up);
         Matrix4x4 projection_matrix;
@@ -117,6 +116,19 @@ namespace Hyperion::Rendering {
         camera->inverse_projection_matrix = projection_matrix.Inverted();
         camera->view_projection_matrix = view_projection_matrix;
         camera->inverse_view_projection_matrix = view_projection_matrix.Inverted();
+    }
+
+    //--------------------------------------------------------------
+    CameraViewport CameraUtilities::CalculateViewportFromClipping(CameraViewportClipping viewport_clipping) {
+        uint32 display_width = Display::GetWidth();
+        uint32 display_height = Display::GetHeight();
+
+        CameraViewport viewport;
+        viewport.x = static_cast<uint32>(Math::Clamp01(viewport_clipping.x) * display_width);
+        viewport.y = static_cast<uint32>(Math::Clamp01(viewport_clipping.y) * display_height);
+        viewport.width = static_cast<uint32>(Math::Clamp01(viewport_clipping.width) * display_width);
+        viewport.height = static_cast<uint32>(Math::Clamp01(viewport_clipping.height) * display_height);
+        return viewport;
     }
 
 }

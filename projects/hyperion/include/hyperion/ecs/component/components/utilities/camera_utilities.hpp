@@ -17,6 +17,7 @@ namespace Hyperion::Rendering {
         static Ray ScreenPointToRay(CameraComponent *camera, DerivedTransformComponent *derived_transform, Vector2 screen_point);
 
         static void RecalculateMatricies(CameraComponent *camera, DerivedTransformComponent *derived_transform);
+        static CameraViewport CalculateViewportFromClipping(CameraViewportClipping viewport_clipping);
     private:
         CameraUtilities() = delete;
         ~CameraUtilities() = delete;
