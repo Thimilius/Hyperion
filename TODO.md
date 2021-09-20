@@ -15,7 +15,7 @@
 - SoLoud
 
 ## ECS
-- GetOrAddComponent
+- Hierarchy should use callbacks for adding/removing entities
 - System execution order
 - Entity/Component duplication
 - Component pool pointer stability (if necessary)

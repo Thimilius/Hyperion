@@ -99,16 +99,46 @@ namespace Hyperion {
         }
 
         template<typename T>
+        T *GetOrAddComponent(EntityId id) {
+            HYP_PROFILE_SCOPE("World.GetOrAddComponent");
+
+            if (IsAlive(id)) {
+                ComponentId component_id = ComponentRegistry::GetId<T>();
+                ComponentPool &component_pool = m_storage.component_pools[component_id];
+                if (component_pool.HasComponent(id)) {
+                    byte *component_data = component_pool.GetComponent(id);
+                    return reinterpret_cast<T *>(component_data);
+                } else {
+                    byte *component_data = component_pool.AddComponent(id);
+                    if (component_data != nullptr) {
+                        T *component = new(component_data) T();
+                        for (ComponentCallback callback : m_storage.component_callbacks[component_id].added) {
+                            callback(this, id);
+                        }
+                        return component;
+                    } else {
+                        HYP_LOG_WARN("Entity", "Trying to add already existent component type to entity with id {}.", id);
+                        return nullptr;
+                    }
+                }
+            } else {
+                HYP_LOG_WARN("Entity", "Trying to get or add component from nonexistent entity with id {}.", id);
+                return nullptr;
+            }
+        }
+
+        template<typename T>
         void RemoveComponent(EntityId id) {
             HYP_PROFILE_SCOPE("World.RemoveComponent");
 
             if (IsAlive(id)) {
                 ComponentId component_id = ComponentRegistry::GetId<T>();
                 ComponentPool &component_pool = m_storage.component_pools[component_id];
-                if (component_pool.RemoveComponent(id)) {
+                if (component_pool.HasComponent(id)) {
                     for (ComponentCallback callback : m_storage.component_callbacks[component_id].removed) {
                         callback(this, id);
                     }
+                    component_pool.RemoveComponent(id)
                 } else {
                     HYP_LOG_WARN("Entity", "Trying to remove nonexistent component type from entity whith id {}.", id);
                 }

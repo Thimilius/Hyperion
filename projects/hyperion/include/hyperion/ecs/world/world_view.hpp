@@ -1,5 +1,6 @@
 #pragma once
 
+//--------------- C++ Standard Library Includes ----------------
 #include <array>
 
 //---------------------- Project Includes ----------------------
@@ -81,10 +82,8 @@ namespace Hyperion {
                 if constexpr (EXCLUDE_IDS_LENGTH > 0) {
                     for (uint64 i = 0; i < EXCLUDE_IDS_LENGTH; i++) {
                         ComponentPool &component_pool = m_world->m_storage.component_pools[EXCLUDE_IDS[i]];
-                        if (&component_pool != m_smallest_pool) {
-                            if (component_pool.HasComponent(id)) {
-                                return true;
-                            }
+                        if (component_pool.HasComponent(id)) {
+                            return true;
                         }
                     }
                 }
@@ -133,11 +132,9 @@ namespace Hyperion {
                     if constexpr (EXCLUDE_IDS_LENGTH > 0) {
                         for (uint64 i = 0; i < EXCLUDE_IDS_LENGTH; i++) {
                             ComponentPool &component_pool = m_world->m_storage.component_pools[EXCLUDE_IDS[i]];
-                            if (&component_pool != m_smallest_pool) {
-                                if (component_pool.HasComponent(id)) {
-                                    index++;
-                                    goto L_CHECK_NEXT_ENTITY;
-                                }
+                            if (component_pool.HasComponent(id)) {
+                                index++;
+                                goto L_CHECK_NEXT_ENTITY;
                             }
                         }
                     }
