@@ -84,14 +84,14 @@ namespace Hyperion::Rendering {
                 case RenderFrameCommandType::SetCamera: {
                     HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.SetCamera");
 
-                    state.camera_index = command.data.set_camera.camera_index;
+                    m_state.camera_index = command.data.set_camera.camera_index;
 
                     break;
                 }
                 case RenderFrameCommandType::Clear: {
                     HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.Clear");
 
-                    const RenderFrameContextCamera &render_frame_context_camera = render_frame->GetContext().GetCameras()[state.camera_index];
+                    const RenderFrameContextCamera &render_frame_context_camera = render_frame->GetContext().GetCameras()[m_state.camera_index];
 
                     const CameraViewport &viewport = render_frame_context_camera.viewport;
                     glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
@@ -104,7 +104,7 @@ namespace Hyperion::Rendering {
                 case RenderFrameCommandType::DrawAll: {
                     HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawAll");
 
-                    const RenderFrameContextCamera &render_frame_context_camera = render_frame->GetContext().GetCameras()[state.camera_index];
+                    const RenderFrameContextCamera &render_frame_context_camera = render_frame->GetContext().GetCameras()[m_state.camera_index];
 
                     GroupObjects(render_frame->GetContext().GetMeshObjects(), render_frame_context_camera.visibility_mask);
                     RenderCamera(render_frame_context_camera);
@@ -114,7 +114,7 @@ namespace Hyperion::Rendering {
                 case RenderFrameCommandType::DrawGizmos: {
                     HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawGizmos");
 
-                    const RenderFrameContextCamera &render_frame_context_camera = render_frame->GetContext().GetCameras()[state.camera_index];
+                    const RenderFrameContextCamera &render_frame_context_camera = render_frame->GetContext().GetCameras()[m_state.camera_index];
 
                     const OpenGLShader &opengl_shader = m_opengl_shaders.Get(command.data.draw_gizmos.shader_id);
                     glUseProgram(opengl_shader.program);
@@ -129,11 +129,9 @@ namespace Hyperion::Rendering {
 
                         const OpenGLMesh &opengl_mesh = m_opengl_meshes.Get(command.data.draw_gizmos.grid.mesh_id);
                         glBindVertexArray(opengl_mesh.vertex_array);
-                        glEnableVertexAttribArray(3);
+
                         SubMesh sub_mesh = opengl_mesh.sub_meshes[0];
-                        void *index_offset = reinterpret_cast<void *>(static_cast<uint32>(sub_mesh.index_offset) * sizeof(uint32));
-                        GLenum topology = GetGLTopology(sub_mesh.topology);
-                        glDrawElementsBaseVertex(topology, sub_mesh.index_count, GL_UNSIGNED_INT, index_offset, sub_mesh.vertex_offset);
+                        RenderSubMesh(sub_mesh);
 
                         glDisable(GL_BLEND);
                     }
@@ -184,13 +182,23 @@ namespace Hyperion::Rendering {
 
                         // NOTE: We may also want to group by sub meshes.
                         SubMesh sub_mesh = opengl_mesh.sub_meshes[render_frame_context_mesh_object.sub_mesh_index];
-                        void *index_offset = reinterpret_cast<void *>(static_cast<uint32>(sub_mesh.index_offset) * sizeof(uint32));
-                        GLenum topology = GetGLTopology(sub_mesh.topology);
-                        glDrawElementsBaseVertex(topology, sub_mesh.index_count, GL_UNSIGNED_INT, index_offset, sub_mesh.vertex_offset);
+                        RenderSubMesh(sub_mesh);
                     }
                 }
             }
         }
+    }
+
+    //--------------------------------------------------------------
+    void OpenGLRenderDriver::RenderSubMesh(const SubMesh &sub_mesh) {
+        void *index_offset = reinterpret_cast<void *>(static_cast<uint32>(sub_mesh.index_offset) * sizeof(uint32));
+
+        m_stats.draw_calls += 1;
+        m_stats.vertex_count += sub_mesh.vertex_count;
+        m_stats.triangle_count += sub_mesh.index_count;
+
+        GLenum topology = GetGLTopology(sub_mesh.topology);
+        glDrawElementsBaseVertex(topology, sub_mesh.index_count, GL_UNSIGNED_INT, index_offset, sub_mesh.vertex_offset);
     }
 
     //--------------------------------------------------------------
@@ -210,7 +218,7 @@ namespace Hyperion::Rendering {
 
             auto shaders_it = std::find_if(grouped_shaders.begin(), grouped_shaders.end(), [shader_id](const GroupedShader &grouped_shader) {
                 return grouped_shader.shader->id == shader_id;
-                });
+            });
             GroupedShader *grouped_shader = nullptr;
             if (shaders_it == grouped_shaders.end()) {
                 GroupedShader new_grouped_shader;

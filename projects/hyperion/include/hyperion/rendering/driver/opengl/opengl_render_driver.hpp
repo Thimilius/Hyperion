@@ -60,9 +60,13 @@ namespace Hyperion::Rendering {
         void Initialize() override;
         void Render(RenderFrame *render_frame) override;
         void Shutdown() override;
+
+        inline void ResetStats() override { m_stats = RenderStats(); }
+        inline RenderStats GetStats() const override { return m_stats; }
     private:
         void ExecuteRenderFrameCommands(RenderFrame *render_frame);
         void RenderCamera(const RenderFrameContextCamera &render_frame_context_camera);
+        void RenderSubMesh(const SubMesh &sub_mesh);
         void GroupObjects(const Array<RenderFrameContextObjectMesh> &mesh_objects, LayerMask visibility_mask);
 
         void LoadAssets(RenderFrameContext &render_frame_context);
@@ -71,11 +75,13 @@ namespace Hyperion::Rendering {
         void LoadMesh(RenderFrameContextAssetMesh &mesh);
         void UnloadAssets(RenderFrameContext &render_frame_context);
     private:
+        RenderStats m_stats;
+
         Map<AssetId, OpenGLShader> m_opengl_shaders;
         Map<AssetId, OpenGLMaterial> m_opengl_materials;
         Map<AssetId, OpenGLMesh> m_opengl_meshes;
 
-        OpenGLState state;
+        OpenGLState m_state;
 
         Array<GroupedShader> m_grouped_shaders;
     };

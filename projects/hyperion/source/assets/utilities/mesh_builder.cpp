@@ -21,6 +21,7 @@ namespace Hyperion {
         m_mesh_data.texture0.Clear();
         m_mesh_data.indices.Clear();
 
+        m_vertex_count = 0;
         m_index_count = 0;
     }
 
@@ -29,6 +30,8 @@ namespace Hyperion {
         m_mesh_data.positions.Add(position);
         m_mesh_data.normals.Add(normal);
         m_mesh_data.texture0.Add(texture0);
+
+        m_vertex_count += 1;
     }
 
     //--------------------------------------------------------------
@@ -36,6 +39,8 @@ namespace Hyperion {
         m_mesh_data.positions.Add(position);
         m_mesh_data.colors.Add(color);
         m_mesh_data.texture0.Add(texture0);
+
+        m_vertex_count += 1;
     }
 
     //--------------------------------------------------------------
@@ -48,13 +53,13 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     Mesh *MeshBuilder::CreateMesh() {
-        Array<SubMesh> sub_meshes = { { Rendering::MeshTopology::Triangles, m_index_count, 0, 0 } };
+        Array<SubMesh> sub_meshes = { { Rendering::MeshTopology::Triangles, m_vertex_count, 0, m_index_count, 0 } };
         return AssetManager::CreateMesh(m_mesh_data, sub_meshes);
     }
 
     //--------------------------------------------------------------
     void MeshBuilder::SetToMesh(Mesh *mesh) {
-        Array<SubMesh> sub_meshes = { { Rendering::MeshTopology::Triangles, m_index_count, 0, 0 } };
+        Array<SubMesh> sub_meshes = { { Rendering::MeshTopology::Triangles, m_vertex_count, 0, m_index_count, 0 } };
         mesh->SetData(m_mesh_data, sub_meshes);
     }
 

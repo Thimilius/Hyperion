@@ -1,5 +1,8 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
+#include "hyperion/rendering/render_stats.hpp"
+
 //-------------------- Forward Declarations --------------------
 namespace Hyperion::Rendering {
     class RenderFrame;
@@ -15,6 +18,9 @@ namespace Hyperion::Rendering {
         virtual void Initialize() = 0;
         virtual void Render(RenderFrame *render_frame) = 0;
         virtual void Shutdown() = 0;
+
+        virtual void ResetStats() = 0;
+        virtual RenderStats GetStats() const = 0;
     };
 
 }

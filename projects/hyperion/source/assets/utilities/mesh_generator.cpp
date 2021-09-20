@@ -190,8 +190,7 @@ namespace Hyperion {
             index++;
         }
 
-        Rendering::SubMeshes sub_meshes = { { Rendering::MeshTopology::Lines, grid_vertex_count, 0, 0 } };
-
+        Rendering::SubMeshes sub_meshes = { { Rendering::MeshTopology::Lines, grid_vertex_count, 0, grid_vertex_count, 0 } };
         return AssetManager::CreateMesh(mesh_data, sub_meshes);
     }
 

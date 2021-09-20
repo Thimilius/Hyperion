@@ -7,6 +7,7 @@
 #include "hyperion/core/app/application_settings.hpp"
 #include "hyperion/core/app/window.hpp"
 #include "hyperion/core/threading/thread.hpp"
+#include "hyperion/rendering/render_stats.hpp"
 #include "hyperion/rendering/driver/render_driver_context.hpp"
 #include "hyperion/rendering/frame/render_frame.hpp"
 
@@ -26,6 +27,7 @@ namespace Hyperion::Rendering {
     public:
         inline static RenderBackend GetBackend() { return s_render_settings.backend; }
         inline static RenderFrame *GetMainRenderFrame() { return s_main_frame; }
+        inline static RenderStats GetStats() { return s_render_stats; }
 
         inline static VSyncMode GetVSyncMode() { return s_vsync_mode; }
         static void SetVSyncMode(VSyncMode vsync_mode);
@@ -43,6 +45,7 @@ namespace Hyperion::Rendering {
         static void InitializeGraphicsContext(Window *window);
         static void ShutdownGraphicsContext();
 
+        static void RenderDriver();
         static void SwapRenderFrames();
 
         static void RT_Initialize(Window *window);
@@ -50,7 +53,8 @@ namespace Hyperion::Rendering {
         static void RT_Shutdown();
     private: 
         inline static RenderSettings s_render_settings;
-        
+        inline static RenderStats s_render_stats;
+
         inline static IRenderPipeline *s_render_pipeline;
         inline static IRenderDriverContext *s_render_driver_context;
 

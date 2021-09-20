@@ -60,11 +60,11 @@ namespace Hyperion {
         }
 
         uint64 vertex_offset = mesh_data.positions.GetLength();
-        uint32 vertex_size = mesh->mNumVertices;
-        mesh_data.positions.Reserve(vertex_offset + vertex_size);
-        mesh_data.normals.Reserve(vertex_offset + vertex_size);
-        mesh_data.texture0.Reserve(vertex_offset + vertex_size);
-        for (uint32 i = 0; i < vertex_size; i++) {
+        uint32 vertex_count = mesh->mNumVertices;
+        mesh_data.positions.Reserve(vertex_offset + vertex_count);
+        mesh_data.normals.Reserve(vertex_offset + vertex_count);
+        mesh_data.texture0.Reserve(vertex_offset + vertex_count);
+        for (uint32 i = 0; i < vertex_count; i++) {
             aiVector3D position = mesh->mVertices[i];
             mesh_data.positions.Add(Vector3(position.x, position.y, position.z));
             aiVector3D normal = mesh->mNormals[i];
@@ -84,7 +84,7 @@ namespace Hyperion {
             mesh_data.indices.Add(face.mIndices[2]);
         }
 
-        sub_meshes.Add({ GetTopologyForPrimitiveType(mesh->mPrimitiveTypes), index_count, index_offset, static_cast<uint32>(vertex_offset) });
+        sub_meshes.Add({ GetTopologyForPrimitiveType(mesh->mPrimitiveTypes), vertex_count, static_cast<uint32>(vertex_offset), index_count, index_offset });
     }
 
     //--------------------------------------------------------------

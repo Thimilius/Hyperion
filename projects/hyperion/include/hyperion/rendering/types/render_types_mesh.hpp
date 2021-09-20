@@ -42,9 +42,10 @@ namespace Hyperion::Rendering {
     struct SubMesh {
         MeshTopology topology;
 
+        uint32 vertex_count;
+        uint32 vertex_offset;
         uint32 index_count;
         uint32 index_offset;
-        uint32 vertex_offset;
     };
 
     using SubMeshes = Array<SubMesh>;

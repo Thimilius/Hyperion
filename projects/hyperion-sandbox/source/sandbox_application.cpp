@@ -48,6 +48,7 @@ namespace Sandbox {
 
         g_world = WorldManager::CreateWorld();
 
+
         WorldManager::SetActiveWorld(g_world);
         g_camera = g_world->CreateEntity(EntityPrimitive::Camera);
 
@@ -96,7 +97,6 @@ namespace Sandbox {
                 Rendering::RenderEngine::GetVSyncMode() == Rendering::VSyncMode::DontSync ?
                 Rendering::VSyncMode::EveryVBlank :
                 Rendering::VSyncMode::DontSync);
-            UpdateTitle();
         }
 
         g_camera_controller->Update(g_world, delta_time);
@@ -118,17 +118,20 @@ namespace Sandbox {
             render_mesh->material->SetColor("u_color", Color(Random::Get(), Random::Get(), Random::Get(), 1.0f));
         }
 #endif
-    }
-
-    //--------------------------------------------------------------
-    void SandboxApplication::OnTick() {
         UpdateTitle();
     }
 
     //--------------------------------------------------------------
+    void SandboxApplication::OnTick() {
+
+    }
+
+    //--------------------------------------------------------------
     void SandboxApplication::UpdateTitle() {
+        String format = "Hyperion - FPS: {} ({:.2f}ms) - VSync: {} - Draw calls: {}, Vertices: {}, Triangles: {}";
+        RenderStats render_stats = Rendering::RenderEngine::GetStats();
         String vsync = Rendering::RenderEngine::GetVSyncMode() == Rendering::VSyncMode::DontSync ? "Off" : "On";
-        String title = StringUtils::Format("Hyperion - FPS: {} ({:.2f}ms) - VSync: {}", Time::GetFPS(), Time::GetFrameTime(), vsync);
+        String title = StringUtils::Format(format, Time::GetFPS(), Time::GetFrameTime(), vsync, render_stats.draw_calls, render_stats.vertex_count, render_stats.triangle_count);
         GetWindow()->SetTitle(title);
     }
 

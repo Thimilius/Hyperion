@@ -166,10 +166,8 @@ namespace Hyperion::Rendering {
         switch (s_render_settings.threading_mode) {
             case RenderThreadingMode::SingleThreaded: {
                 SwapRenderFrames();
-                {
-                    HYP_PROFILE_SCOPE("RenderEngine.RenderDriver");
-                    s_render_driver_context->GetDriver()->Render(s_render_frame);
-                }
+                RenderDriver();
+
                 {
                     HYP_PROFILE_SCOPE("RenderEngine.Present");
                     s_render_driver_context->SwapBuffers();
@@ -215,6 +213,15 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
+    void RenderEngine::RenderDriver() {
+        HYP_PROFILE_SCOPE("RenderEngine.RenderDriver");
+
+        IRenderDriver *render_driver = s_render_driver_context->GetDriver();
+        render_driver->ResetStats();
+        render_driver->Render(s_render_frame);
+    }
+
+    //--------------------------------------------------------------
     void RenderEngine::SwapRenderFrames() {
         HYP_PROFILE_SCOPE("RenderEngine.SwapRenderFrames");
 
@@ -223,6 +230,8 @@ namespace Hyperion::Rendering {
         s_render_frame = temp;
 
         s_main_frame->Clear();
+
+        s_render_stats = s_render_driver_context->GetDriver()->GetStats();
     }
 
     //--------------------------------------------------------------
@@ -267,10 +276,7 @@ namespace Hyperion::Rendering {
                 RenderThreadSynchronization::WaitForSwapDone();
             }
             
-            {
-                HYP_PROFILE_SCOPE("RenderEngine.RenderDriver");
-                s_render_driver_context->GetDriver()->Render(s_render_frame);
-            }
+            RenderDriver();
 
             {
                 HYP_PROFILE_SCOPE("RenderEngine.Present");

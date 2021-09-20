@@ -18,6 +18,7 @@ namespace Hyperion {
         void SetToMesh(Mesh *mesh);
     private:
         Rendering::MeshData m_mesh_data;
+        uint32 m_vertex_count = 0;
         uint32 m_index_count = 0;
     };
 
