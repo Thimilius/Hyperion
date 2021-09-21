@@ -153,13 +153,13 @@ namespace Hyperion {
         }
 
         template<typename T>
-        void OnComponentAdded(ComponentCallback callback) {
+        void OnComponentAdded(const ComponentCallback &callback) {
             ComponentId component_id = ComponentRegistry::GetId<T>();
             m_storage.component_callbacks[component_id].added.Add(callback);
         }
 
         template<typename T>
-        void OnComponentRemoved(ComponentCallback callback) {
+        void OnComponentRemoved(const ComponentCallback &callback) {
             ComponentId component_id = ComponentRegistry::GetId<T>();
             m_storage.component_callbacks[component_id].removed.Add(callback);
         }

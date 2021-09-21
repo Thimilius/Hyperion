@@ -49,7 +49,6 @@ namespace Sandbox {
 
         g_world = WorldManager::CreateWorld();
 
-
         WorldManager::SetActiveWorld(g_world);
         g_camera = g_world->CreateEntity(EntityPrimitive::Camera);
 

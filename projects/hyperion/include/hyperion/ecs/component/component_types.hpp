@@ -21,7 +21,7 @@ namespace Hyperion {
         ComponentDestructorFunction destructor;
     };
 
-    using ComponentCallback = void(*)(World *, EntityId);
+    using ComponentCallback = Delegate<void(World *, EntityId)>;
     
     struct ComponentCallbacks {
         Array<ComponentCallback> added;
