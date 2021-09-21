@@ -1,7 +1,6 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/render/types/render_types_material.hpp"
 #include "hyperion/render/types/render_types_shader.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -10,8 +9,7 @@ namespace Hyperion::Rendering {
     struct ShaderPreProcessResult {
         bool success;
 
-        ShaderData shader_data;
-        MaterialPropertyCollection properties;
+        ShaderData data;
     };
 
     class ShaderPreProcessor {
@@ -40,11 +38,11 @@ namespace Hyperion::Rendering {
 
         bool IsDirective(const char *directive, const char *start);
     private:
-        static MaterialProperty CreateMaterialProperty(const String &name, MaterialPropertyType type);
+        static ShaderProperty CreateShaderProperty(const String &name, ShaderPropertyType type);
 
         static ShaderStageFlags GetShaderStageFromString(const String &string);
         static ShaderLightMode GetShaderLightModeFromString(const String &string);
-        static MaterialPropertyType GetMaterialPropertyType(const String &string);
+        static ShaderPropertyType GetShaderPropertyType(const String &string);
     private:
         String m_source;
         uint64 m_position;

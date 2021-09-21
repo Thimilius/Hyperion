@@ -40,10 +40,10 @@ namespace Hyperion::Rendering {
         EndShaderStage(result, m_position);
 
         // Check that we found both a vertex and fragment source.
-        if ((result.shader_data.stage_flags & ShaderStageFlags::Vertex) != ShaderStageFlags::Vertex) {
+        if ((result.data.stage_flags & ShaderStageFlags::Vertex) != ShaderStageFlags::Vertex) {
             HYP_LOG_ERROR("OpenGL", "Shader does not contain a vertex shader!");
             return result;
-        } else if ((result.shader_data.stage_flags & ShaderStageFlags::Fragment) != ShaderStageFlags::Fragment) {
+        } else if ((result.data.stage_flags & ShaderStageFlags::Fragment) != ShaderStageFlags::Fragment) {
             HYP_LOG_ERROR("OpenGL", "Shader does not contain a pixel shader!");
             return result;
         }
@@ -79,7 +79,7 @@ namespace Hyperion::Rendering {
                     return false;
                 }
 
-                result.shader_data.stage_flags |= shader_stage;
+                result.data.stage_flags |= shader_stage;
                 m_current_shader_stage = shader_stage;
                 m_current_shader_type_directive_end = m_position;
             }
@@ -97,7 +97,7 @@ namespace Hyperion::Rendering {
             if (m_property_light_mode_set) {
                 HYP_LOG_WARN("OpenGL", "The shader light mode was already set!");
             } else {
-                result.shader_data.attributes.light_mode = shader_light_mode;
+                result.data.attributes.light_mode = shader_light_mode;
                 m_property_light_mode_set = true;
             }
 
@@ -114,13 +114,13 @@ namespace Hyperion::Rendering {
 
             SkipBlankspace();
             String property_type_string = AdvanceUntilWhitespaceOrEndOfLine();
-            MaterialPropertyType property_type = GetMaterialPropertyType(property_type_string);
-            if (property_type == MaterialPropertyType::Unknown) {
+            ShaderPropertyType property_type = GetShaderPropertyType(property_type_string);
+            if (property_type == ShaderPropertyType::Unknown) {
                 HYP_LOG_ERROR("OpenGL", "Invalid property type specifier: '{}'!", property_type_string);
                 return false;
             }
 
-            result.properties.Add(CreateMaterialProperty(property_name, property_type));
+            result.data.properties.Add(CreateShaderProperty(property_name, property_type));
         }
 
         return true;
@@ -133,8 +133,8 @@ namespace Hyperion::Rendering {
             String source = m_source.substr(m_current_shader_type_directive_end, source_length);
             
             switch (m_current_shader_stage) {
-                case ShaderStageFlags::Vertex: result.shader_data.vertex_source = source;
-                case ShaderStageFlags::Fragment: result.shader_data.fragment_source = source;
+                case ShaderStageFlags::Vertex: result.data.vertex_source = source;
+                case ShaderStageFlags::Fragment: result.data.fragment_source = source;
             }
         }
     }
@@ -224,18 +224,19 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    MaterialProperty ShaderPreProcessor::CreateMaterialProperty(const String &name, MaterialPropertyType type) {
-        MaterialProperty result;
-        result.id = MaterialProperty::PropertyToId(name);
+    ShaderProperty ShaderPreProcessor::CreateShaderProperty(const String &name, ShaderPropertyType type) {
+        ShaderProperty result;
+        result.name = name;
+        result.id = ShaderProperty::PropertyToId(name);
         result.type = type;
 
         // TODO: Add proper support for default values.
         switch (type) {
-            case MaterialPropertyType::Float: result.storage.float32 = 0.0f; break;
-            case MaterialPropertyType::Int: result.storage.int32 = 0; break;
-            case MaterialPropertyType::Vector: result.storage.vector4 = Vector4(); break;
-            case MaterialPropertyType::Color: result.storage.color = Color::White(); break;
-            case MaterialPropertyType::Matrix: result.storage.matrix4x4 = Matrix4x4::Identity(); break;
+            case ShaderPropertyType::Float: result.storage.float32 = 0.0f; break;
+            case ShaderPropertyType::Int: result.storage.int32 = 0; break;
+            case ShaderPropertyType::Vector: result.storage.vector4 = Vector4(); break;
+            case ShaderPropertyType::Color: result.storage.color = Color::White(); break;
+            case ShaderPropertyType::Matrix: result.storage.matrix4x4 = Matrix4x4::Identity(); break;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
         }
 
@@ -265,19 +266,19 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    MaterialPropertyType ShaderPreProcessor::GetMaterialPropertyType(const String &string) {
+    ShaderPropertyType ShaderPreProcessor::GetShaderPropertyType(const String &string) {
         if (string == "Float") {
-            return MaterialPropertyType::Float;
+            return ShaderPropertyType::Float;
         } else if (string == "Int") {
-            return MaterialPropertyType::Int;
+            return ShaderPropertyType::Int;
         } else if (string == "Vector") {
-            return MaterialPropertyType::Vector;
+            return ShaderPropertyType::Vector;
         } else if (string == "Color") {
-            return MaterialPropertyType::Color;
+            return ShaderPropertyType::Color;
         } else if (string == "Matrix") {
-            return MaterialPropertyType::Matrix;
+            return ShaderPropertyType::Matrix;
         } else {
-            return MaterialPropertyType::Unknown;
+            return ShaderPropertyType::Unknown;
         }
     }
 

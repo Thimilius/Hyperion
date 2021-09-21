@@ -246,7 +246,7 @@ namespace Hyperion::Rendering {
                         glBindVertexArray(opengl_mesh.vertex_array);
 
                         SubMesh sub_mesh = opengl_mesh.sub_meshes[0];
-                        RenderSubMesh(sub_mesh);
+                        DrawSubMesh(sub_mesh);
 
                         glDisable(GL_BLEND);
                     }
@@ -256,75 +256,6 @@ namespace Hyperion::Rendering {
                 default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
             }
         }
-    }
-
-    //--------------------------------------------------------------
-    void OpenGLRenderDriver::RenderCamera(const RenderFrameContextEnvironment &environment, const Array<RenderFrameContextLight> &lights, const RenderFrameContextCamera &camera) {
-        HYP_PROFILE_CATEGORY("OpenGLRenderDriver.RenderCamera", ProfileCategory::Rendering);
-
-        for (const GroupedShader &grouped_shader : m_grouped_shaders) {
-            HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderGroupedShader");
-
-            OpenGLShader opengl_shader = *grouped_shader.shader;
-            glUseProgram(opengl_shader.program);
-            glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_view"), 1, GL_FALSE, camera.view_matrix.elements);
-            glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_projection"), 1, GL_FALSE, camera.projection_matrix.elements);
-
-            Color ambient_color = environment.ambient_light.intensity * environment.ambient_light.color;
-            glProgramUniform3f(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_lighting.ambient_color"), ambient_color.r, ambient_color.g, ambient_color.b);
-
-            // Because of how the frame context gets populated, we know that the first light (if present and directional) is the main light.
-            auto light_it = lights.begin();
-            if (light_it != lights.end() && light_it->type == LightType::Directional) {
-                const RenderFrameContextLight &main_light = *light_it;
-                glProgramUniform1f(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_lighting.main_light.intensity"), main_light.intensity);
-                glProgramUniform4f(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_lighting.main_light.color"), main_light.color.r, main_light.color.g, main_light.color.b, main_light.color.a);
-                glProgramUniform3f(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_lighting.main_light.direction"), main_light.direction.x, main_light.direction.y, main_light.direction.z);
-            }
-
-            for (const auto [material_id, grouped_material] : grouped_shader.materials) {
-                HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderGroupedMaterial");
-
-                const OpenGLMaterial &opengl_material = *grouped_material.material;
-
-                GLint color_location = glGetUniformLocation(opengl_shader.program, "m_color");
-                for (const MaterialProperty &property : opengl_material.properties) {
-                    if (property.type == MaterialPropertyType::Color) {
-                        Color color = property.storage.color;
-                        glProgramUniform4f(opengl_shader.program, color_location, color.r, color.g, color.b, color.a);
-                    }
-                }
-
-                for (const auto [mesh_id, grouped_mesh] : grouped_material.meshes) {
-                    HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderGroupedMesh");
-
-                    const OpenGLMesh &opengl_mesh = *grouped_mesh.mesh;
-                    glBindVertexArray(opengl_mesh.vertex_array);
-
-                    GLint model_location = glGetUniformLocation(opengl_shader.program, "u_model");
-                    for (const RenderFrameContextObjectMesh &render_frame_context_mesh_object : grouped_mesh.objects) {
-                        HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameMeshObject");
-                        
-                        glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, render_frame_context_mesh_object.local_to_world.elements);
-
-                        SubMesh sub_mesh = opengl_mesh.sub_meshes[render_frame_context_mesh_object.sub_mesh_index];
-                        RenderSubMesh(sub_mesh);
-                    }
-                }
-            }
-        }
-    }
-
-    //--------------------------------------------------------------
-    void OpenGLRenderDriver::RenderSubMesh(const SubMesh &sub_mesh) {
-        void *index_offset = reinterpret_cast<void *>(static_cast<uint32>(sub_mesh.index_offset) * sizeof(uint32));
-
-        m_stats.draw_calls += 1;
-        m_stats.vertex_count += sub_mesh.vertex_count;
-        m_stats.triangle_count += sub_mesh.index_count;
-
-        GLenum topology = GetGLTopology(sub_mesh.topology);
-        glDrawElementsBaseVertex(topology, sub_mesh.index_count, GL_UNSIGNED_INT, index_offset, sub_mesh.vertex_offset);
     }
 
     //--------------------------------------------------------------
@@ -383,6 +314,105 @@ namespace Hyperion::Rendering {
         }
 
         m_grouped_shaders = std::move(grouped_shaders);
+    }
+
+    //--------------------------------------------------------------
+    void OpenGLRenderDriver::RenderCamera(const RenderFrameContextEnvironment &environment, const Array<RenderFrameContextLight> &lights, const RenderFrameContextCamera &camera) {
+        HYP_PROFILE_CATEGORY("OpenGLRenderDriver.RenderCamera", ProfileCategory::Rendering);
+
+        for (const GroupedShader &grouped_shader : m_grouped_shaders) {
+            HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderGroupedShader");
+
+            const OpenGLShader &opengl_shader = *grouped_shader.shader;
+            glUseProgram(opengl_shader.program);
+            glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_view"), 1, GL_FALSE, camera.view_matrix.elements);
+            glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_projection"), 1, GL_FALSE, camera.projection_matrix.elements);
+
+            Color ambient_color = environment.ambient_light.intensity * environment.ambient_light.color;
+            glProgramUniform3f(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_lighting.ambient_color"), ambient_color.r, ambient_color.g, ambient_color.b);
+
+            // Because of how the frame context gets populated, we know that the first light (if present and directional) is the main light.
+            auto light_it = lights.begin();
+            if (light_it != lights.end() && light_it->type == LightType::Directional) {
+                const RenderFrameContextLight &main_light = *light_it;
+                glProgramUniform1f(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_lighting.main_light.intensity"), main_light.intensity);
+                glProgramUniform4f(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_lighting.main_light.color"), main_light.color.r, main_light.color.g, main_light.color.b, main_light.color.a);
+                glProgramUniform3f(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_lighting.main_light.direction"), main_light.direction.x, main_light.direction.y, main_light.direction.z);
+            }
+
+            for (const auto [material_id, grouped_material] : grouped_shader.materials) {
+                HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderGroupedMaterial");
+
+                UseMaterial(opengl_shader, *grouped_material.material);
+
+                for (const auto &[mesh_id, grouped_mesh] : grouped_material.meshes) {
+                    HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderGroupedMesh");
+
+                    const OpenGLMesh &opengl_mesh = *grouped_mesh.mesh;
+                    glBindVertexArray(opengl_mesh.vertex_array);
+
+                    GLint model_location = glGetUniformLocation(opengl_shader.program, "u_model");
+                    for (const RenderFrameContextObjectMesh &render_frame_context_mesh_object : grouped_mesh.objects) {
+                        HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameMeshObject");
+                        
+                        glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, render_frame_context_mesh_object.local_to_world.elements);
+
+                        SubMesh sub_mesh = opengl_mesh.sub_meshes[render_frame_context_mesh_object.sub_mesh_index];
+                        DrawSubMesh(sub_mesh);
+                    }
+                }
+            }
+        }
+    }
+
+    //--------------------------------------------------------------
+    void OpenGLRenderDriver::UseMaterial(const OpenGLShader &opengl_shader, const OpenGLMaterial &opengl_material) {
+        HYP_PROFILE_SCOPE("OpenGLRenderDriver.UseMaterial");
+
+        MaterialPropertyIndex index = 0;
+        for (const MaterialProperty &property : opengl_material.properties) {
+            GLint location = opengl_shader.locations[index++];
+
+            switch (property.type) {
+                case ShaderPropertyType::Int: {
+                    glProgramUniform1i(opengl_shader.program, location, property.storage.int32);
+                    break;
+                }
+                case ShaderPropertyType::Float: {
+                    glProgramUniform1f(opengl_shader.program, location, property.storage.float32);
+                    break;
+                }
+                case ShaderPropertyType::Vector: {
+                    Vector4 vector = property.storage.vector4;
+                    glProgramUniform4f(opengl_shader.program, location, vector.x, vector.y, vector.z, vector.w);
+                    break;
+                }
+                case ShaderPropertyType::Color: {
+                    Color color = property.storage.color;
+                    glProgramUniform4f(opengl_shader.program, location, color.r, color.g, color.b, color.a);
+                    break;
+                }
+                case ShaderPropertyType::Matrix: {
+                    glProgramUniformMatrix4fv(opengl_shader.program, location, 1, GL_FALSE, property.storage.matrix4x4.elements);
+                    break;
+                }
+                default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+            }
+        }
+    }
+
+    //--------------------------------------------------------------
+    void OpenGLRenderDriver::DrawSubMesh(const SubMesh &sub_mesh) {
+        HYP_PROFILE_SCOPE("OpenGLRenderDriver.DrawSubMesh");
+
+        void *index_offset = reinterpret_cast<void *>(static_cast<uint32>(sub_mesh.index_offset) * sizeof(uint32));
+
+        m_stats.draw_calls += 1;
+        m_stats.vertex_count += sub_mesh.vertex_count;
+        m_stats.triangle_count += sub_mesh.index_count;
+
+        GLenum topology = GetGLTopology(sub_mesh.topology);
+        glDrawElementsBaseVertex(topology, sub_mesh.index_count, GL_UNSIGNED_INT, index_offset, sub_mesh.vertex_offset);
     }
 
     //--------------------------------------------------------------
@@ -450,6 +480,11 @@ namespace Hyperion::Rendering {
         OpenGLShader opengl_shader;
         opengl_shader.id = shader.id;
         opengl_shader.program = OpenGLRenderDriverShaderCompiler::Compile(shader.data.vertex_source.c_str(), shader.data.fragment_source.c_str()).program;
+
+        opengl_shader.locations.Resize(shader.data.properties.GetLength());
+        for (const ShaderProperty &property : shader.data.properties) {
+            opengl_shader.locations.Add(glGetUniformLocation(opengl_shader.program, property.name.c_str()));
+        }
 
         m_opengl_shaders.Insert(shader.id, opengl_shader);
     }

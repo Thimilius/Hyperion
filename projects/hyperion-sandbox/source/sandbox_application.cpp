@@ -24,7 +24,7 @@
 using namespace Hyperion;
 using namespace Hyperion::Rendering;
 
-//#define HYP_STRESS_TEST
+#define HYP_STRESS_TEST
 
 //-------------------- Definition Namespace --------------------
 namespace Sandbox {
@@ -32,7 +32,7 @@ namespace Sandbox {
     //--------------------------------------------------------------
     void SandboxApplication::OnSetup(ApplicationSettings &settings) {
         settings.render.backend = Rendering::RenderBackend::OpenGL;
-        settings.render.threading_mode = Rendering::RenderThreadingMode::MultiThreaded;
+        settings.render.threading_mode = Rendering::RenderThreadingMode::SingleThreaded;
         settings.render.vsync_mode = Rendering::VSyncMode::DontSync;
     }
 
@@ -71,7 +71,7 @@ namespace Sandbox {
         for (float32 x = 0; x < size; x++) {
             for (float32 z = 0; z < size; z++) {
                 Material *material = AssetManager::CreateMaterial(AssetManager::GetShaderPrimitive(ShaderPrimitive::Standard));
-                material->SetColor("u_color", Color(Random::Get(), Random::Get(), Random::Get(), 1.0f));
+                material->SetColor("m_color", Color(Random::Get(), Random::Get(), Random::Get(), 1.0f));
 
                 EntityId entity = g_world->CreateEntity(EntityPrimitive::Cube);
                 g_world->GetComponent<LocalTransformComponent>(entity)->position = Vector3(x * 2.0f, 0.0f, -z * 2.0f);
@@ -120,7 +120,7 @@ namespace Sandbox {
             LocalTransformComponent *transform = g_world->GetComponent<LocalTransformComponent>(entity);
             transform->rotation = rotation;
             RenderMeshComponent *render_mesh = g_world->GetComponent<RenderMeshComponent>(entity);
-            render_mesh->material->SetColor("u_color", Color(Random::Get(), Random::Get(), Random::Get(), 1.0f));
+            render_mesh->material->SetColor("m_color", Color(Random::Get(), Random::Get(), Random::Get(), 1.0f));
         }
 #endif
         UpdateTitle();

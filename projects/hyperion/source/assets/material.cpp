@@ -10,11 +10,11 @@ using namespace Hyperion::Rendering;
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    float32 Material::GetFloat(MaterialPropertyId id) const {
+    float32 Material::GetFloat(ShaderPropertyId id) const {
         auto it = m_property_indices.Find(id);
         if (it != m_property_indices.end()) {
             const MaterialProperty &property = m_properties.Get(it->second);
-            if (property.type == MaterialPropertyType::Float) {
+            if (property.type == ShaderPropertyType::Float) {
                 return property.storage.float32;
             } else {
                 HYP_LOG_WARN("Material", "Trying to get float material property that is not a float.");
@@ -27,11 +27,11 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void Material::SetFloat(MaterialPropertyId id, float32 value) {
+    void Material::SetFloat(ShaderPropertyId id, float32 value) {
         auto it = m_property_indices.Find(id);
         if (it != m_property_indices.end()) {
             MaterialProperty &property = m_properties.Get(it->second);
-            if (property.type == MaterialPropertyType::Float) {
+            if (property.type == ShaderPropertyType::Float) {
                 property.storage.float32 = value;
                 SetDirty();
             } else {
@@ -44,11 +44,11 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    int32 Material::GetInt(Rendering::MaterialPropertyId id) const {
+    int32 Material::GetInt(Rendering::ShaderPropertyId id) const {
         auto it = m_property_indices.Find(id);
         if (it != m_property_indices.end()) {
             const MaterialProperty &property = m_properties.Get(it->second);
-            if (property.type == MaterialPropertyType::Int) {
+            if (property.type == ShaderPropertyType::Int) {
                 return property.storage.int32;
             } else {
                 HYP_LOG_WARN("Material", "Trying to get int material property that is not an int.");
@@ -61,11 +61,11 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void Material::SetInt(Rendering::MaterialPropertyId id, int32 value) {
+    void Material::SetInt(Rendering::ShaderPropertyId id, int32 value) {
         auto it = m_property_indices.Find(id);
         if (it != m_property_indices.end()) {
             MaterialProperty &property = m_properties.Get(it->second);
-            if (property.type == MaterialPropertyType::Int) {
+            if (property.type == ShaderPropertyType::Int) {
                 property.storage.int32 = value;
                 SetDirty();
             } else {
@@ -77,11 +77,11 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Vector4 Material::GetVector(Rendering::MaterialPropertyId id) const {
+    Vector4 Material::GetVector(Rendering::ShaderPropertyId id) const {
         auto it = m_property_indices.Find(id);
         if (it != m_property_indices.end()) {
             const MaterialProperty &property = m_properties.Get(it->second);
-            if (property.type == MaterialPropertyType::Vector) {
+            if (property.type == ShaderPropertyType::Vector) {
                 return property.storage.vector4;
             } else {
                 HYP_LOG_WARN("Material", "Trying to get vector material property that is not a vector.");
@@ -94,11 +94,11 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void Material::SetVector(Rendering::MaterialPropertyId id, Vector4 value) {
+    void Material::SetVector(Rendering::ShaderPropertyId id, Vector4 value) {
         auto it = m_property_indices.Find(id);
         if (it != m_property_indices.end()) {
             MaterialProperty &property = m_properties.Get(it->second);
-            if (property.type == MaterialPropertyType::Vector) {
+            if (property.type == ShaderPropertyType::Vector) {
                 property.storage.vector4 = value;
                 SetDirty();
             } else {
@@ -110,11 +110,11 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Color Material::GetColor(MaterialPropertyId id) const {
+    Color Material::GetColor(ShaderPropertyId id) const {
         auto it = m_property_indices.Find(id);
         if (it != m_property_indices.end()) {
             const MaterialProperty &property = m_properties.Get(it->second);
-            if (property.type == MaterialPropertyType::Color) {
+            if (property.type == ShaderPropertyType::Color) {
                 return property.storage.color;
             } else {
                 HYP_LOG_WARN("Material", "Trying to get color material property that is not a color.");
@@ -127,11 +127,11 @@ namespace Hyperion {
     }
     
     //--------------------------------------------------------------
-    void Material::SetColor(MaterialPropertyId id, Color value) {
+    void Material::SetColor(ShaderPropertyId id, Color value) {
         auto it = m_property_indices.Find(id);
         if (it != m_property_indices.end()) {
             MaterialProperty &property = m_properties.Get(it->second);
-            if (property.type == MaterialPropertyType::Color) {
+            if (property.type == ShaderPropertyType::Color) {
                 property.storage.color = value;
                 SetDirty();
             } else {
@@ -143,11 +143,11 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Matrix4x4 Material::GetMatrix(Rendering::MaterialPropertyId id) const {
+    Matrix4x4 Material::GetMatrix(Rendering::ShaderPropertyId id) const {
         auto it = m_property_indices.Find(id);
         if (it != m_property_indices.end()) {
             const MaterialProperty &property = m_properties.Get(it->second);
-            if (property.type == MaterialPropertyType::Matrix) {
+            if (property.type == ShaderPropertyType::Matrix) {
                 return property.storage.matrix4x4;
             } else {
                 HYP_LOG_WARN("Material", "Trying to get matrix material property that is not a matrix.");
@@ -160,11 +160,11 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void Material::SetMatrix(Rendering::MaterialPropertyId id, const Matrix4x4 &value) {
+    void Material::SetMatrix(Rendering::ShaderPropertyId id, const Matrix4x4 &value) {
         auto it = m_property_indices.Find(id);
         if (it != m_property_indices.end()) {
             MaterialProperty &property = m_properties.Get(it->second);
-            if (property.type == MaterialPropertyType::Matrix) {
+            if (property.type == ShaderPropertyType::Matrix) {
                 property.storage.matrix4x4 = value;
                 SetDirty();
             } else {
@@ -177,14 +177,31 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void Material::ResetToDefaults() {
+        const ShaderPropertyCollection &shader_properties = m_shader->GetData().properties;
+        uint64 shader_property_count = shader_properties.GetLength();
+
+        m_properties.Resize(shader_property_count);
+        m_property_indices.Reserve(shader_property_count);
+
+        for (MaterialPropertyIndex i = 0; i < shader_property_count; i++) {
+            const ShaderProperty &shader_property = shader_properties[i];
+            MaterialProperty &material_property = m_properties[i];
+
+            material_property.id = shader_property.id;
+            material_property.type = shader_property.type;
+            material_property.storage = shader_property.storage;
+
+            m_property_indices.Insert(shader_property.id, i);
+        }
+
+        SetDirty();
+    }
+
+    //--------------------------------------------------------------
     Material::Material(AssetInfo info, Shader *shader) : Asset(info) {
         m_shader = shader;
-
-        m_properties = shader->GetDefaultProperties();
-        MaterialPropertyIndex index = 0;
-        for (const MaterialProperty &property : m_properties) {
-            m_property_indices.Insert(property.id, index++);
-        }
+        ResetToDefaults();
 
         SetDirty();
     }

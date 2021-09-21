@@ -8,7 +8,6 @@
 - Textures
     - Cubemaps
     - RenderTextures
-- Support for all material property types
 - Fonts
 - Texture atlas
 - Serialization
@@ -33,9 +32,9 @@
 ## Rendering
 - Textures
 - Framebuffers
-- Lights
-- Store uniform locations
+- Multiple Lights
 - Uniform buffers
+- Async readback of textures/buffers
 
 ### Shaders
 - Proper shader language

@@ -23,8 +23,7 @@ namespace Hyperion {
         ShaderPreProcessor pre_processor(source);
         ShaderPreProcessResult pre_process_result = pre_processor.PreProcess();
         if (pre_process_result.success) {
-            m_data = pre_process_result.shader_data;
-            m_default_properties = std::move(pre_process_result.properties);
+            m_data = std::move(pre_process_result.data);
 
             SetDirty();
         } else {
