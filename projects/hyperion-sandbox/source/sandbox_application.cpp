@@ -65,12 +65,6 @@ namespace Sandbox {
         camera_transform->rotation = Quaternion::FromEulerAngles(-25.0f, 0.0f, 0.0f);
 #endif
 
-        Image *image = ImageLoader::Load("data/textures/earth.png").Unwrap();
-        Texture2DParameters parameters;
-        parameters.width = image->GetWidth();
-        parameters.height = image->GetHeight();
-        Texture2D *texture_2d = AssetManager::CreateTexture2D(parameters, image->GetPixels());
-
         g_parent = g_world->CreateEntity(EntityPrimitive::Sphere);
 #ifdef HYP_STRESS_TEST
         float32 size = 100;

@@ -14,6 +14,8 @@ namespace Hyperion {
 
         inline const Rendering::ShaderData &GetData() const { return m_data; }
         inline const Rendering::MaterialPropertyCollection &GetDefaultProperties() const { return m_default_properties; }
+    public:
+        inline static Rendering::MaterialPropertyId PropertyToId(const String &name) { return std::hash<String>{}(name); }
     private:
         Shader(AssetInfo info) : Asset(info) { }
         Shader(AssetInfo info, const String &source);

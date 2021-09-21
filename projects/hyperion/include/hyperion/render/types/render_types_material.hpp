@@ -12,6 +12,7 @@
 namespace Hyperion::Rendering {
 
     using MaterialPropertyId = uint64;
+    using MaterialPropertyIndex = uint64;
 
     enum class MaterialPropertyType {
         Float32,
@@ -49,10 +50,9 @@ namespace Hyperion::Rendering {
         MaterialPropertyId id;
         MaterialPropertyType type;
         MaterialPropertyStorage storage = { };
-
-        inline static MaterialPropertyId NameToId(const String &name) { return std::hash<String>{}(name); }
     };
 
     using MaterialPropertyCollection = Array<MaterialProperty>;
+    using MaterialPropertyIndices = Map<MaterialPropertyId, MaterialPropertyIndex>;
 
 }

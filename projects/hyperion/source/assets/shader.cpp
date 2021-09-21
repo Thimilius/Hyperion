@@ -28,7 +28,7 @@ namespace Hyperion {
 
         // TEMP: This will get extracted by the pre processor.
         MaterialProperty property;
-        property.id = MaterialProperty::NameToId("u_color");
+        property.id = PropertyToId("u_color");
         property.type = MaterialPropertyType::Color;
         property.storage.color = Color::White();
         m_default_properties.Add(property);

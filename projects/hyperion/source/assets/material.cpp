@@ -11,12 +11,9 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     Color Material::GetColor(MaterialPropertyId id) const {
-        auto it = std::find_if(m_properties.begin(), m_properties.end(), [id](const MaterialProperty &property) {
-            return property.id == id;
-        });
-
-        if (it != m_properties.end()) {
-            const MaterialProperty &property = *it;
+        auto it = m_property_indices.Find(id);
+        if (it != m_property_indices.end()) {
+            const MaterialProperty &property = m_properties.Get(it->second);
             if (property.type == MaterialPropertyType::Color) {
                 return property.storage.color;
             } else {
@@ -31,12 +28,9 @@ namespace Hyperion {
     
     //--------------------------------------------------------------
     void Material::SetColor(MaterialPropertyId id, Color value) {
-        auto it = std::find_if(m_properties.begin(), m_properties.end(), [id](const MaterialProperty &property) {
-            return property.id == id;
-        });
-
-        if (it != m_properties.end()) {
-            MaterialProperty &property = *it;
+        auto it = m_property_indices.Find(id);
+        if (it != m_property_indices.end()) {
+            MaterialProperty &property = m_properties.Get(it->second);
             if (property.type == MaterialPropertyType::Color) {
                 property.storage.color = value;
             } else {
@@ -54,6 +48,10 @@ namespace Hyperion {
         m_shader = shader;
 
         m_properties = shader->GetDefaultProperties();
+        MaterialPropertyIndex index = 0;
+        for (const MaterialProperty &property : m_properties) {
+            m_property_indices.Insert(property.id, index++);
+        }
 
         SetDirty();
     }
