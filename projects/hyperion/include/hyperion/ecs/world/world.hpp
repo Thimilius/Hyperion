@@ -4,6 +4,7 @@
 #include "hyperion/ecs/component/component_types.hpp"
 #include "hyperion/ecs/component/component_pool.hpp"
 #include "hyperion/ecs/entity/entity_utilities.hpp"
+#include "hyperion/ecs/world/world_environment.hpp"
 #include "hyperion/ecs/world/world_hierarchy.hpp"
 #include "hyperion/ecs/world/world_view.hpp"
 #include "hyperion/physics/physics_world.hpp"
@@ -33,6 +34,8 @@ namespace Hyperion {
     public:
         inline String GetName() const { return m_name; }
         inline void SetName(const String &name) { m_name = name; }
+        inline WorldEnvironment &GetEnvironment() { return m_environment; }
+        inline const WorldEnvironment &GetEnvironment() const { return m_environment; }
 
         inline WorldHierarchy *GetHierarchy() { return &m_hierarchy; }
         inline const WorldHierarchy *GetHierarchy() const { return &m_hierarchy; }
@@ -170,6 +173,7 @@ namespace Hyperion {
         void AddComponentsForPrimitive(EntityId id, EntityPrimitive primitive);
     private:
         String m_name = "World";
+        WorldEnvironment m_environment;
 
         WorldHierarchy m_hierarchy;
         WorldStorage m_storage;

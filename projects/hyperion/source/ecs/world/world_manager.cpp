@@ -103,6 +103,9 @@ namespace Hyperion {
             {
                 HYP_PROFILE_SCOPE("WorldManager.Update.Rendering");
 
+                Rendering::EnvironmentSystem environment_system;
+                environment_system.Run(s_active_world);
+
                 Rendering::CameraSystem camera_system;
                 camera_system.Run(s_active_world);
 

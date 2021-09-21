@@ -6,6 +6,11 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
+    class EnvironmentSystem : public ISystem {
+    public:
+        void Run(World *world) override;
+    };
+
     class CameraSystem : public ISystem {
     public:
         void Run(World *world) override;

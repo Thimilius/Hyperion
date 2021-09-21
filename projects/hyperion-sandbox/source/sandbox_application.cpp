@@ -24,7 +24,7 @@
 using namespace Hyperion;
 using namespace Hyperion::Rendering;
 
-#define HYP_STRESS_TEST
+//#define HYP_STRESS_TEST
 
 //-------------------- Definition Namespace --------------------
 namespace Sandbox {
@@ -38,6 +38,7 @@ namespace Sandbox {
 
     World *g_world;
     EntityId g_camera;
+    EntityId g_light;
     EntityId g_parent;
     EntityId g_child;
 
@@ -50,8 +51,8 @@ namespace Sandbox {
         g_world = WorldManager::CreateWorld();
 
         WorldManager::SetActiveWorld(g_world);
-        g_world->CreateEntity(EntityPrimitive::DirectionalLight);
         g_camera = g_world->CreateEntity(EntityPrimitive::Camera);
+        g_light = g_world->CreateEntity(EntityPrimitive::DirectionalLight);
 
         g_camera_controller = new LookAroundCameraController(g_camera);
         g_camera_controller->Reset(g_world);
@@ -111,6 +112,8 @@ namespace Sandbox {
         if (Input::IsKeyDown(KeyCode::R)) {
             g_camera_controller->Reset(g_world);
         }
+
+        g_world->GetComponent<LocalTransformComponent>(g_light)->rotation = Quaternion::FromEulerAngles(-Time::GetTime() * 25.0f, 0.0f, 0.0f);
 
         Quaternion rotation = Quaternion::FromEulerAngles(0.0f, Time::GetTime() * 25.0f, 0.0f);
 

@@ -222,7 +222,7 @@ namespace Hyperion::Rendering {
                     const RenderFrameContextCamera &render_frame_context_camera = render_frame_context.GetCameras()[m_state.camera_index];
 
                     GroupObjects(render_frame_context.GetMeshObjects(), render_frame_context_camera.visibility_mask);
-                    RenderCamera(render_frame_context.GetLights(), render_frame_context_camera);
+                    RenderCamera(render_frame_context.GetEnvironment(), render_frame_context.GetLights(), render_frame_context_camera);
 
                     break;
                 }
@@ -259,7 +259,7 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void OpenGLRenderDriver::RenderCamera(const Array<RenderFrameContextLight> &lights, const RenderFrameContextCamera &render_frame_context_camera) {
+    void OpenGLRenderDriver::RenderCamera(const RenderFrameContextEnvironment &environment, const Array<RenderFrameContextLight> &lights, const RenderFrameContextCamera &camera) {
         HYP_PROFILE_CATEGORY("OpenGLRenderDriver.RenderCamera", ProfileCategory::Rendering);
 
         for (const GroupedShader &grouped_shader : m_grouped_shaders) {
@@ -267,10 +267,11 @@ namespace Hyperion::Rendering {
 
             OpenGLShader opengl_shader = *grouped_shader.shader;
             glUseProgram(opengl_shader.program);
-            glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_view"), 1, GL_FALSE, render_frame_context_camera.view_matrix.elements);
-            glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_projection"), 1, GL_FALSE, render_frame_context_camera.projection_matrix.elements);
+            glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_view"), 1, GL_FALSE, camera.view_matrix.elements);
+            glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_projection"), 1, GL_FALSE, camera.projection_matrix.elements);
 
-            glProgramUniform3f(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_lighting.ambient_color"), 0.2f, 0.2f, 0.2f);
+            Color ambient_color = environment.ambient_light.intensity * environment.ambient_light.color;
+            glProgramUniform3f(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_lighting.ambient_color"), ambient_color.r, ambient_color.g, ambient_color.b);
 
             // Because of how the frame context gets populated, we know that the first light (if present and directional) is the main light.
             auto light_it = lights.begin();

@@ -18,6 +18,18 @@
 namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
+    void EnvironmentSystem::Run(World *world) {
+        HYP_PROFILE_SCOPE("EnvironmentSystem.Run");
+
+        RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
+
+        const WorldEnvironment &world_environment = world->GetEnvironment();
+        RenderFrameContextEnvironment &render_frame_context_environment = render_frame_context.GetEnvironment();
+        render_frame_context_environment.ambient_light.intensity = world_environment.ambient_light.intensity;
+        render_frame_context_environment.ambient_light.color = world_environment.ambient_light.color;
+    }
+
+    //--------------------------------------------------------------
     void CameraSystem::Run(World *world) {
         HYP_PROFILE_SCOPE("CameraSystem.Run");
 
