@@ -24,12 +24,17 @@ namespace Hyperion {
         Empty,
         Base,
 
+        Camera,
+
+        DirectionalLight,
+        PointLight,
+        SpotLight,
+
         Quad,
         Plane,
         Cube,
         Sphere,
 
-        Camera,
         Sprite
     };
 

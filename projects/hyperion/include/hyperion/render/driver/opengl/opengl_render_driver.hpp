@@ -69,7 +69,7 @@ namespace Hyperion::Rendering {
         inline RenderStats GetStats() const override { return m_stats; }
     private:
         void ExecuteRenderFrameCommands(RenderFrame *render_frame);
-        void RenderCamera(const RenderFrameContextCamera &render_frame_context_camera);
+        void RenderCamera(const Array<RenderFrameContextLight> &lights, const RenderFrameContextCamera &render_frame_context_camera);
         void RenderSubMesh(const SubMesh &sub_mesh);
         void GroupObjects(const Array<RenderFrameContextObjectMesh> &mesh_objects, LayerMask visibility_mask);
 

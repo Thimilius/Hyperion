@@ -3,6 +3,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/render/frame/context/render_frame_context_assets.hpp"
 #include "hyperion/render/frame/context/render_frame_context_camera.hpp"
+#include "hyperion/render/frame/context/render_frame_context_light.hpp"
 #include "hyperion/render/frame/context/render_frame_context_objects.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -19,6 +20,7 @@ namespace Hyperion::Rendering {
         Array<RenderFrameContextAssetMesh> &GetMeshAssetsToLoad() { return m_meshes_to_load; }
 
         const Array<RenderFrameContextCamera> &GetCameras() const { return m_cameras; }
+        const Array<RenderFrameContextLight> &GetLights() const { return m_lights; }
         const Array<RenderFrameContextObjectMesh> &GetMeshObjects() const { return m_mesh_objects; }
         const Array<RenderFrameContextObjectSprite> &GetSpriteObjects() const { return m_sprite_objects; }
 
@@ -29,6 +31,7 @@ namespace Hyperion::Rendering {
         RenderFrameContextAssetMesh &AddMeshAssetToLoad();
 
         RenderFrameContextCamera &AddCamera();
+        RenderFrameContextLight &AddLight();
         RenderFrameContextObjectMesh &AddMeshObject();
         RenderFrameContextObjectSprite &AddSpriteObject();
     private:
@@ -39,6 +42,7 @@ namespace Hyperion::Rendering {
         Array<RenderFrameContextAssetMesh> m_meshes_to_load;
 
         Array<RenderFrameContextCamera> m_cameras;
+        Array<RenderFrameContextLight> m_lights;
         Array<RenderFrameContextObjectMesh> m_mesh_objects;
         Array<RenderFrameContextObjectSprite> m_sprite_objects;
     };

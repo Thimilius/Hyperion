@@ -15,7 +15,7 @@ namespace Hyperion::Rendering {
 
         Clear,
 
-        DrawAll,
+        DrawMeshes,
         DrawGizmos
     };
 
@@ -30,9 +30,9 @@ namespace Hyperion::Rendering {
                 ClearFlags flags;
                 Color color;
             } clear;
-            struct DrawAll {
+            struct DrawMeshes {
 
-            } draw_all;
+            } draw_meshes;
             struct DrawGizmos {
                 AssetId shader_id;
 

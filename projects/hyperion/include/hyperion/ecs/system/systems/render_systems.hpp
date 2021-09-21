@@ -11,6 +11,11 @@ namespace Hyperion::Rendering {
         void Run(World *world) override;
     };
 
+    class LightSystem : public ISystem {
+    public:
+        void Run(World *world) override;
+    };
+
     class SpriteSystem : public ISystem {
     public:
         void Run(World *world) override;

@@ -13,6 +13,8 @@ namespace Hyperion::Physics {
 
     //--------------------------------------------------------------
     void UpdateColliderTransformSystem::Run(World *world) {
+        HYP_PROFILE_SCOPE("UpdateColliderTransformSystem.Run");
+
         auto box_collider_view = world->GetView<DerivedTransformComponent, BoxColliderComponent>();
         for (EntityId entity : box_collider_view) {
             DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(entity);

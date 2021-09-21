@@ -53,6 +53,52 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
+    void LightSystem::Run(World *world) {
+        HYP_PROFILE_SCOPE("LightSystem.Run");
+
+        RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
+
+        auto directional_view = world->GetView<DerivedTransformComponent, DirectionalLightComponent>();
+        for (EntityId entity : directional_view) {
+            DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(entity);
+            DirectionalLightComponent *directional_light = world->GetComponent<DirectionalLightComponent>(entity);
+
+            RenderFrameContextLight &render_frame_context_light = render_frame_context.AddLight();
+            render_frame_context_light.type = LightType::Directional;
+            render_frame_context_light.intensity = directional_light->intensity;
+            render_frame_context_light.color = directional_light->color;
+            render_frame_context_light.direction = TransformUtilities::GetForward(derived_transform);
+        }
+
+        auto point_view = world->GetView<DerivedTransformComponent, PointLightComponent>();
+        for (EntityId entity : point_view) {
+            DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(entity);
+            PointLightComponent *point_light = world->GetComponent<PointLightComponent>(entity);
+
+            RenderFrameContextLight &render_frame_context_light = render_frame_context.AddLight();
+            render_frame_context_light.type = LightType::Point;
+            render_frame_context_light.intensity = point_light->intensity;
+            render_frame_context_light.color = point_light->color;
+            render_frame_context_light.position = derived_transform->position;
+            render_frame_context_light.range = point_light->range;
+        }
+
+        auto spot_view = world->GetView<DerivedTransformComponent, SpotLightComponent>();
+        for (EntityId entity : point_view) {
+            DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(entity);
+            SpotLightComponent *spot_light = world->GetComponent<SpotLightComponent>(entity);
+
+            RenderFrameContextLight &render_frame_context_light = render_frame_context.AddLight();
+            render_frame_context_light.type = LightType::Spot;
+            render_frame_context_light.intensity = spot_light->intensity;
+            render_frame_context_light.color = spot_light->color;
+            render_frame_context_light.position = derived_transform->position;
+            render_frame_context_light.inner_spot_radius = spot_light->inner_spot_radius;
+            render_frame_context_light.outer_spot_radius = spot_light->outer_spot_radius;
+        }
+    }
+
+    //--------------------------------------------------------------
     void SpriteSystem::Run(World *world) {
         HYP_PROFILE_SCOPE("SpriteSystem.Run");
 
@@ -62,6 +108,7 @@ namespace Hyperion::Rendering {
         for (EntityId entity : view) {
             LocalToWorldComponent *local_to_world = world->GetComponent<LocalToWorldComponent>(entity);
             SpriteComponent *sprite = world->GetComponent<SpriteComponent>(entity);
+
             RenderFrameContextObjectSprite &render_frame_context_sprite_object = render_frame_context.AddSpriteObject();
             render_frame_context_sprite_object.local_to_world = local_to_world->local_to_world;
             render_frame_context_sprite_object.color = sprite->color;

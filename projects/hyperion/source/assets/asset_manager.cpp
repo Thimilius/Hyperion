@@ -37,6 +37,7 @@ namespace Hyperion {
     Shader *AssetManager::GetShaderPrimitive(ShaderPrimitive shader_primitive) {
         switch (shader_primitive) {
             case ShaderPrimitive::Standard: return s_primitives.shader_standard;
+            case ShaderPrimitive::Unlit: return s_primitives.shader_unlit;
             case ShaderPrimitive::Gizmo: return s_primitives.shader_gizmo;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
@@ -65,6 +66,7 @@ namespace Hyperion {
     Material *AssetManager::GetMaterialPrimitive(MaterialPrimitive material_primitive) {
         switch (material_primitive) {
             case MaterialPrimitive::Default: return s_primitives.material_default;
+            case MaterialPrimitive::Unlit: return s_primitives.material_unlit;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }
@@ -186,11 +188,15 @@ namespace Hyperion {
     void AssetManager::InitializePrimitives() {
         s_primitives.shader_standard = CreateShader(FileSystem::ReadAllText("data/shaders/standard.shader"));
         SetNewGuid(s_primitives.shader_standard, "{6AFEA19E-547B-41F5-A008-4473AE771E06}");
+        s_primitives.shader_unlit = CreateShader(FileSystem::ReadAllText("data/shaders/unlit.shader"));
+        SetNewGuid(s_primitives.shader_unlit, "{23AA53FE-6A47-4571-BC47-00EAAFA2F54B}");
         s_primitives.shader_gizmo = CreateShader(FileSystem::ReadAllText("data/shaders/gizmo.shader"));
         SetNewGuid(s_primitives.shader_gizmo, "{F05F02F1-A7E1-42B7-9618-F13AB38BCA87}");
 
         s_primitives.material_default = CreateMaterial(s_primitives.shader_standard);
         SetNewGuid(s_primitives.material_default, "{B2463C27-7FD8-44A2-BC53-2AD74FAA7979}");
+        s_primitives.material_unlit = CreateMaterial(s_primitives.shader_unlit);
+        SetNewGuid(s_primitives.material_unlit, "{C718D97E-A0D9-4567-AFE6-F264B8C29730}");
 
         s_primitives.mesh_quad = MeshGenerator::GenerateQuad(1.0f, 1.0f);
         SetNewGuid(s_primitives.material_default, "{D54B554E-2BED-4F36-AF12-9C20C83F4EFB}");

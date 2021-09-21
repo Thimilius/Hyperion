@@ -128,6 +128,10 @@ namespace Hyperion {
         switch (primitive) {
             case EntityPrimitive::Empty: break;
             case EntityPrimitive::Base: break;
+            case EntityPrimitive::Camera: AddComponent<Rendering::CameraComponent>(id); break;
+            case EntityPrimitive::DirectionalLight: AddComponent<Rendering::DirectionalLightComponent>(id); break;
+            case EntityPrimitive::PointLight: AddComponent<Rendering::PointLightComponent>(id); break;
+            case EntityPrimitive::SpotLight: AddComponent<Rendering::SpotLightComponent>(id); break;
             case EntityPrimitive::Quad:
             case EntityPrimitive::Plane:
             case EntityPrimitive::Cube:
@@ -153,7 +157,6 @@ namespace Hyperion {
 
                 break;
             }
-            case EntityPrimitive::Camera: AddComponent<Rendering::CameraComponent>(id); break;
             case EntityPrimitive::Sprite: AddComponent<Rendering::SpriteComponent>(id); break;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
         }

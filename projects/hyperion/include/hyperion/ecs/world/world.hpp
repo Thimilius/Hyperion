@@ -141,7 +141,7 @@ namespace Hyperion {
                     for (ComponentCallback callback : m_storage.component_callbacks[component_id].removed) {
                         callback(this, id);
                     }
-                    component_pool.RemoveComponent(id)
+                    component_pool.RemoveComponent(id);
                 } else {
                     HYP_LOG_WARN("Entity", "Trying to remove nonexistent component type from entity whith id {}.", id);
                 }

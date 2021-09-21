@@ -59,6 +59,9 @@ namespace Hyperion {
         ComponentRegistry::Register<Rendering::CameraComponent>("Camera");
         ComponentRegistry::Register<Rendering::SpriteComponent>("Sprite");
         ComponentRegistry::Register<Rendering::RenderMeshComponent>("RenderMesh");
+        ComponentRegistry::Register<Rendering::DirectionalLightComponent>("DirectionalLight");
+        ComponentRegistry::Register<Rendering::PointLightComponent>("PointLight");
+        ComponentRegistry::Register<Rendering::SpotLightComponent>("SpotLight");
     }
 
     //--------------------------------------------------------------
@@ -102,6 +105,9 @@ namespace Hyperion {
 
                 Rendering::CameraSystem camera_system;
                 camera_system.Run(s_active_world);
+
+                Rendering::LightSystem light_system;
+                light_system.Run(s_active_world);
 
                 Rendering::SpriteSystem sprite_system;
                 sprite_system.Run(s_active_world);

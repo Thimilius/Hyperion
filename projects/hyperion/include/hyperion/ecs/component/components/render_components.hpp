@@ -50,4 +50,22 @@ namespace Hyperion::Rendering {
         LayerMask layer_mask = LayerMask::Default;
     };
 
+    struct LightComponent {
+        float32 intensity = 1.0f;
+        Color color = Color::White();
+    };
+
+    struct DirectionalLightComponent : public LightComponent {
+          
+    };
+
+    struct PointLightComponent : public LightComponent {
+        float32 range = 10.0f;
+    };
+
+    struct SpotLightComponent : public LightComponent {
+        float32 inner_spot_radius = 1.0f;
+        float32 outer_spot_radius = 1.0f;
+    };
+
 }

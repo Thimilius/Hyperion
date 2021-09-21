@@ -24,7 +24,7 @@
 using namespace Hyperion;
 using namespace Hyperion::Rendering;
 
-//#define HYP_STRESS_TEST
+#define HYP_STRESS_TEST
 
 //-------------------- Definition Namespace --------------------
 namespace Sandbox {
@@ -50,6 +50,7 @@ namespace Sandbox {
         g_world = WorldManager::CreateWorld();
 
         WorldManager::SetActiveWorld(g_world);
+        g_world->CreateEntity(EntityPrimitive::DirectionalLight);
         g_camera = g_world->CreateEntity(EntityPrimitive::Camera);
 
         g_camera_controller = new LookAroundCameraController(g_camera);
@@ -81,6 +82,7 @@ namespace Sandbox {
                 g_world->GetComponent<LocalTransformComponent>(entity)->position = Vector3(x * 2.0f, 0.0f, -z * 2.0f);
                 g_world->GetComponent<RenderMeshComponent>(entity)->material = material;
                 g_world->GetHierarchy()->SetParent(entity, g_parent);
+                g_world->RemoveComponent<Physics::BoxColliderComponent>(entity);
             }
         }
 #else

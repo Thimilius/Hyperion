@@ -16,6 +16,7 @@ namespace Hyperion::Rendering {
         m_shaders_to_load.Clear();
 
         m_cameras.Clear();
+        m_lights.Clear();
         m_mesh_objects.Clear();
         m_sprite_objects.Clear();
     }
@@ -54,6 +55,12 @@ namespace Hyperion::Rendering {
     RenderFrameContextCamera &RenderFrameContext::AddCamera() {
         m_cameras.Resize(m_cameras.GetLength() + 1);
         return m_cameras.GetLast();
+    }
+
+    //--------------------------------------------------------------
+    RenderFrameContextLight &RenderFrameContext::AddLight() {
+        m_lights.Resize(m_lights.GetLength() + 1);
+        return m_lights.GetLast();
     }
 
     //--------------------------------------------------------------

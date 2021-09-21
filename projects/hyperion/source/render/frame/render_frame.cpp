@@ -31,8 +31,8 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void RenderFrame::DrawAll() {
-        RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::DrawAll);
+    void RenderFrame::DrawMeshes() {
+        RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::DrawMeshes);
     }
 
     //--------------------------------------------------------------

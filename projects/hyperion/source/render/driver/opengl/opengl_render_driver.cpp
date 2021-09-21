@@ -191,6 +191,8 @@ namespace Hyperion::Rendering {
     void OpenGLRenderDriver::ExecuteRenderFrameCommands(RenderFrame *render_frame) {
         HYP_PROFILE_SCOPE("OpenGLRenderDriver.ExecuteRenderFrameCommands");
 
+        const RenderFrameContext &render_frame_context = render_frame->GetContext();
+
         const Array<RenderFrameCommand> &commands = render_frame->GetCommands();
         for (const RenderFrameCommand &command : commands) {
             switch (command.type) {
@@ -204,7 +206,7 @@ namespace Hyperion::Rendering {
                 case RenderFrameCommandType::Clear: {
                     HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.Clear");
 
-                    const RenderFrameContextCamera &render_frame_context_camera = render_frame->GetContext().GetCameras()[m_state.camera_index];
+                    const RenderFrameContextCamera &render_frame_context_camera = render_frame_context.GetCameras()[m_state.camera_index];
 
                     const CameraViewport &viewport = render_frame_context_camera.viewport;
                     glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
@@ -214,20 +216,20 @@ namespace Hyperion::Rendering {
 
                     break;
                 }
-                case RenderFrameCommandType::DrawAll: {
-                    HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawAll");
+                case RenderFrameCommandType::DrawMeshes: {
+                    HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawMeshes");
 
-                    const RenderFrameContextCamera &render_frame_context_camera = render_frame->GetContext().GetCameras()[m_state.camera_index];
+                    const RenderFrameContextCamera &render_frame_context_camera = render_frame_context.GetCameras()[m_state.camera_index];
 
-                    GroupObjects(render_frame->GetContext().GetMeshObjects(), render_frame_context_camera.visibility_mask);
-                    RenderCamera(render_frame_context_camera);
+                    GroupObjects(render_frame_context.GetMeshObjects(), render_frame_context_camera.visibility_mask);
+                    RenderCamera(render_frame_context.GetLights(), render_frame_context_camera);
 
                     break;
                 }
                 case RenderFrameCommandType::DrawGizmos: {
                     HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawGizmos");
 
-                    const RenderFrameContextCamera &render_frame_context_camera = render_frame->GetContext().GetCameras()[m_state.camera_index];
+                    const RenderFrameContextCamera &render_frame_context_camera = render_frame_context.GetCameras()[m_state.camera_index];
 
                     const OpenGLShader &opengl_shader = m_opengl_shaders.Get(command.data.draw_gizmos.shader_id);
                     glUseProgram(opengl_shader.program);
@@ -257,7 +259,7 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void OpenGLRenderDriver::RenderCamera(const RenderFrameContextCamera &render_frame_context_camera) {
+    void OpenGLRenderDriver::RenderCamera(const Array<RenderFrameContextLight> &lights, const RenderFrameContextCamera &render_frame_context_camera) {
         HYP_PROFILE_CATEGORY("OpenGLRenderDriver.RenderCamera", ProfileCategory::Rendering);
 
         for (const GroupedShader &grouped_shader : m_grouped_shaders) {
@@ -267,6 +269,17 @@ namespace Hyperion::Rendering {
             glUseProgram(opengl_shader.program);
             glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_view"), 1, GL_FALSE, render_frame_context_camera.view_matrix.elements);
             glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_projection"), 1, GL_FALSE, render_frame_context_camera.projection_matrix.elements);
+
+            glProgramUniform3f(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_lighting.ambient_color"), 0.2f, 0.2f, 0.2f);
+
+            // Because of how the frame context gets populated, we know that the first light (if present and directional) is the main light.
+            auto light_it = lights.begin();
+            if (light_it != lights.end() && light_it->type == LightType::Directional) {
+                const RenderFrameContextLight &main_light = *light_it;
+                glProgramUniform1f(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_lighting.main_light.intensity"), main_light.intensity);
+                glProgramUniform4f(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_lighting.main_light.color"), main_light.color.r, main_light.color.g, main_light.color.b, main_light.color.a);
+                glProgramUniform3f(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_lighting.main_light.direction"), main_light.direction.x, main_light.direction.y, main_light.direction.z);
+            }
 
             for (const auto [material_id, grouped_material] : grouped_shader.materials) {
                 HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderGroupedMaterial");

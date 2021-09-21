@@ -22,11 +22,13 @@ namespace Hyperion {
 
     enum class ShaderPrimitive {
         Standard,
+        Unlit,
         Gizmo,
     };
 
     enum class MaterialPrimitive {
-        Default
+        Default,
+        Unlit
     };
 
     enum class MeshPrimitive {
@@ -77,9 +79,11 @@ namespace Hyperion {
 
         inline static struct Primitives {
             Shader *shader_standard;
+            Shader *shader_unlit;
             Shader *shader_gizmo;
 
             Material *material_default;
+            Material *material_unlit;
 
             Mesh *mesh_quad;
             Mesh *mesh_plane;
