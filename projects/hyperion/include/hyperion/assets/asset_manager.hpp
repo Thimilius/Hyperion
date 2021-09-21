@@ -2,8 +2,8 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset.hpp"
-#include "hyperion/rendering/types/render_types_mesh.hpp"
-#include "hyperion/rendering/types/render_types_texture.hpp"
+#include "hyperion/render/types/render_types_mesh.hpp"
+#include "hyperion/render/types/render_types_texture.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {

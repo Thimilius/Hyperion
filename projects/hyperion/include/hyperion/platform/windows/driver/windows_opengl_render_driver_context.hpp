@@ -4,7 +4,7 @@
 #include <Windows.h>
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/rendering/driver/opengl/opengl_render_driver_context.hpp"
+#include "hyperion/render/driver/opengl/opengl_render_driver_context.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {

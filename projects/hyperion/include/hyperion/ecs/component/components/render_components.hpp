@@ -5,8 +5,8 @@
 #include "hyperion/assets/mesh.hpp"
 #include "hyperion/assets/texture.hpp"
 #include "hyperion/core/color.hpp"
-#include "hyperion/rendering/types/render_types_camera.hpp"
-#include "hyperion/rendering/types/render_types_general.hpp"
+#include "hyperion/render/types/render_types_camera.hpp"
+#include "hyperion/render/types/render_types_general.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {

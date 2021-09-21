@@ -6,10 +6,10 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/ecs/component/components/components.hpp"
-#include "hyperion/ecs/system/systems/asset_system.hpp"
-#include "hyperion/ecs/system/systems/physics_system.hpp"
-#include "hyperion/ecs/system/systems/transform_system.hpp"
-#include "hyperion/ecs/system/systems/render_system.hpp"
+#include "hyperion/ecs/system/systems/asset_systems.hpp"
+#include "hyperion/ecs/system/systems/physics_systems.hpp"
+#include "hyperion/ecs/system/systems/transform_systems.hpp"
+#include "hyperion/ecs/system/systems/render_systems.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {

@@ -5,10 +5,10 @@
 #include "hyperion/core/engine_loop.hpp"
 #include "hyperion/core/app/window_settings.hpp"
 #include "hyperion/physics/physics_backend.hpp"
-#include "hyperion/rendering/render_backend.hpp"
-#include "hyperion/rendering/driver/render_driver_context_types.hpp"
-#include "hyperion/rendering/pipelines/render_pipeline.hpp"
-#include "hyperion/rendering/threading/render_threading_mode.hpp"
+#include "hyperion/render/render_backend.hpp"
+#include "hyperion/render/driver/render_driver_context_types.hpp"
+#include "hyperion/render/pipelines/render_pipeline.hpp"
+#include "hyperion/render/threading/render_threading_mode.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {

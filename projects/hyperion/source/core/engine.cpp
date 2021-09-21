@@ -20,7 +20,7 @@
 #include "hyperion/core/memory/memory.hpp"
 #include "hyperion/ecs/world/world_manager.hpp"
 #include "hyperion/physics/physics_engine.hpp"
-#include "hyperion/rendering/render_engine.hpp"
+#include "hyperion/render/render_engine.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {

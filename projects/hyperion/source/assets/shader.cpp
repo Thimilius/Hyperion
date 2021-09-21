@@ -5,7 +5,7 @@
 #include "hyperion/assets/shader.hpp"
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/rendering/shader/shader_pre_processor.hpp"
+#include "hyperion/render/shader/shader_pre_processor.hpp"
 
 //------------------------- Namespaces -------------------------
 using namespace Hyperion::Rendering;

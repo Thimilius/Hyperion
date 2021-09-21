@@ -6,7 +6,7 @@
 #include "hyperion/core/math/bounding_box.hpp"
 #include "hyperion/core/math/vector2.hpp"
 #include "hyperion/core/math/vector3.hpp"
-#include "hyperion/rendering/types/render_types_mesh.hpp"
+#include "hyperion/render/types/render_types_mesh.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
