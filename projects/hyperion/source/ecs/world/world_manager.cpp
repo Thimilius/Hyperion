@@ -7,6 +7,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/ecs/component/components/components.hpp"
 #include "hyperion/ecs/system/systems/asset_system.hpp"
+#include "hyperion/ecs/system/systems/physics_system.hpp"
 #include "hyperion/ecs/system/systems/transform_system.hpp"
 #include "hyperion/ecs/system/systems/render_system.hpp"
 
@@ -44,6 +45,7 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void WorldManager::Initialize() {
+        ComponentRegistry::Register<NameComponent>("Name");
         ComponentRegistry::Register<TagComponent>("Tag");
 
         ComponentRegistry::Register<LocalTransformComponent>("LocalTransform");
@@ -51,6 +53,9 @@ namespace Hyperion {
         ComponentRegistry::Register<LocalToWorldComponent>("LocalToWorld");
         ComponentRegistry::Register<HierarchyComponent>("Hierarchy");
         
+        ComponentRegistry::Register<Physics::BoxColliderComponent>("BoxCollider");
+        ComponentRegistry::Register<Physics::SphereColliderComponent>("SphereCollider");
+
         ComponentRegistry::Register<Rendering::CameraComponent>("Camera");
         ComponentRegistry::Register<Rendering::SpriteComponent>("Sprite");
         ComponentRegistry::Register<Rendering::RenderMeshComponent>("RenderMesh");
@@ -70,6 +75,14 @@ namespace Hyperion {
 
                 LocalToWorldSystem local_to_world_system;
                 local_to_world_system.Run(s_active_world);
+            }
+
+            // Physics
+            {
+                HYP_PROFILE_SCOPE("WorldManager.Update.Physics");
+
+                Physics::UpdateColliderTransformSystem update_collider_transform_system;
+                update_collider_transform_system.Run(s_active_world);
             }
 
             // Assets

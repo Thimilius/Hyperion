@@ -6,6 +6,7 @@
 #include "hyperion/ecs/entity/entity_utilities.hpp"
 #include "hyperion/ecs/world/world_hierarchy.hpp"
 #include "hyperion/ecs/world/world_view.hpp"
+#include "hyperion/physics/physics_world.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -35,6 +36,8 @@ namespace Hyperion {
 
         inline WorldHierarchy *GetHierarchy() { return &m_hierarchy; }
         inline const WorldHierarchy *GetHierarchy() const { return &m_hierarchy; }
+
+        inline Physics::IPhysicsWorld *GetPhysicsWorld() const { return m_physics_world; }
 
         bool8 IsAlive(EntityId id) const;
 
@@ -170,6 +173,8 @@ namespace Hyperion {
 
         WorldHierarchy m_hierarchy;
         WorldStorage m_storage;
+
+        Physics::IPhysicsWorld *m_physics_world;
     private:
     private:
         friend class Hyperion::WorldManager;

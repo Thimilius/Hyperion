@@ -6,6 +6,10 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    struct NameComponent {
+        String name;
+    };
+
     struct TagComponent {
         String tag;
     };

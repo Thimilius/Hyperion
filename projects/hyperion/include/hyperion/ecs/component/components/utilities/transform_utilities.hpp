@@ -44,7 +44,6 @@ namespace Hyperion {
             if (hierarchy->parent == Entity::EMPTY) {
                 return position;
             } else {
-                LocalTransformComponent *local_transform = world->GetComponent<LocalTransformComponent>(entity);
                 DerivedTransformComponent *parent_derived_transform = world->GetComponent<DerivedTransformComponent>(hierarchy->parent);
                 return (parent_derived_transform->rotation.Inverted() * (position - parent_derived_transform->position)) / parent_derived_transform->scale;
             }
@@ -55,7 +54,6 @@ namespace Hyperion {
             if (hierarchy->parent == Entity::EMPTY) {
                 return position;
             } else {
-                LocalTransformComponent *local_transform = world->GetComponent<LocalTransformComponent>(entity);
                 DerivedTransformComponent *parent_derived_transform = world->GetComponent<DerivedTransformComponent>(hierarchy->parent);
                 return (parent_derived_transform->rotation * (parent_derived_transform->scale * position)) + parent_derived_transform->position;
             }

@@ -7,6 +7,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/ecs/component/components/components.hpp"
+#include "hyperion/physics/physics_engine.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -21,6 +22,8 @@ namespace Hyperion {
             m_storage.component_pools.Add(ComponentPool(component_info));
         }
         m_storage.component_callbacks.Resize(component_count);
+
+        m_physics_world = Physics::PhysicsEngine::CreateWorld(this);
     }
 
     //--------------------------------------------------------------
@@ -115,7 +118,7 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void World::AddComponentsForPrimitive(EntityId id, EntityPrimitive primitive) {
         if (primitive != EntityPrimitive::Empty) {
-            AddComponent<TagComponent>(id);
+            AddComponent<NameComponent>(id);
             AddComponent<LocalTransformComponent>(id);
             AddComponent<DerivedTransformComponent>(id);
             AddComponent<LocalToWorldComponent>(id);
@@ -135,8 +138,16 @@ namespace Hyperion {
                 switch (primitive) {
                     case EntityPrimitive::Quad: render_mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Quad); break;
                     case EntityPrimitive::Plane: render_mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Plane); break;
-                    case EntityPrimitive::Cube: render_mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Cube); break;
-                    case EntityPrimitive::Sphere: render_mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Sphere); break;
+                    case EntityPrimitive::Cube: {
+                        render_mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Cube);
+                        AddComponent<Physics::BoxColliderComponent>(id);
+                        break;
+                    }
+                    case EntityPrimitive::Sphere: {
+                        render_mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Sphere);
+                        AddComponent<Physics::SphereColliderComponent>(id);
+                        break;
+                    }
                     default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
                 }
 

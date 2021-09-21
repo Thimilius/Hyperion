@@ -19,12 +19,14 @@
 
 ## ECS
 - Hierarchy should use callbacks for adding/removing entities
+- Hierarchy callbacks for transform updates
 - System execution order
 - Entity/Component duplication
 - Component pool pointer stability (if necessary)
 
 ## Physics
-- Bullet
+- Proper updating of colliders and their transforms
+- Rigidbodies
 
 ## Rendering
 - Textures

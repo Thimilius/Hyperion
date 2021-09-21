@@ -12,6 +12,7 @@
 #include <hyperion/core/app/time.hpp>
 #include <hyperion/core/io/file_system.hpp>
 #include <hyperion/ecs/component/components/components.hpp>
+#include <hyperion/ecs/component/components/utilities/camera_utilities.hpp>
 #include <hyperion/ecs/system/systems/transform_system.hpp>
 #include <hyperion/ecs/world/world_manager.hpp>
 #include <hyperion/ecs/world/world_serializer.hpp>
