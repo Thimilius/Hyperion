@@ -1,3 +1,5 @@
+#property m_color Color
+
 #light_mode forward
 
 #type vertex
@@ -22,8 +24,8 @@ void main() {
 
 layout(location = 0) out vec4 o_color;
 
-uniform vec4 u_color;
+uniform vec4 m_color;
 
 void main() {
-	o_color = u_color;
+	o_color = m_color;
 }

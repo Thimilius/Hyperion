@@ -1,3 +1,5 @@
+#property m_color Color
+
 #light_mode forward
 
 #type vertex
@@ -63,7 +65,7 @@ struct Lighting {
 	Light main_light;
 };
 
-uniform vec4 u_color;
+uniform vec4 m_color;
 uniform Lighting u_lighting;
 
 vec3 calculate_phong_directional_light(vec3 position, vec3 normal, Light light) {
@@ -86,5 +88,5 @@ vec4 calculate_phong_lighting(vec3 position, vec3 normal) {
 void main() {
 	vec4 lighting_color = calculate_phong_lighting(i_v2f.position, i_v2f.normal);
 	
-	o_color = lighting_color * u_color;
+	o_color = lighting_color * m_color;
 }

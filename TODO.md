@@ -39,9 +39,10 @@
 
 ### Shaders
 - Proper shader language
-    - Properties
+    - Default values for properties
 	- Render queue
 	- Rasterizer state
+	- New (and better/prettier) syntax
 - Recompilation/Hot loading
 
 ## Scripting

@@ -287,7 +287,7 @@ namespace Hyperion::Rendering {
 
                 const OpenGLMaterial &opengl_material = *grouped_material.material;
 
-                GLint color_location = glGetUniformLocation(opengl_shader.program, "u_color");
+                GLint color_location = glGetUniformLocation(opengl_shader.program, "m_color");
                 for (const MaterialProperty &property : opengl_material.properties) {
                     if (property.type == MaterialPropertyType::Color) {
                         Color color = property.storage.color;

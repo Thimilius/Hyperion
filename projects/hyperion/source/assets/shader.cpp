@@ -23,17 +23,13 @@ namespace Hyperion {
         ShaderPreProcessor pre_processor(source);
         ShaderPreProcessResult pre_process_result = pre_processor.PreProcess();
         if (pre_process_result.success) {
-            m_data = pre_process_result.data;
+            m_data = pre_process_result.shader_data;
+            m_default_properties = std::move(pre_process_result.properties);
+
+            SetDirty();
+        } else {
+            // TODO: Use fallback shader.
         }
-
-        // TEMP: This will get extracted by the pre processor.
-        MaterialProperty property;
-        property.id = PropertyToId("u_color");
-        property.type = MaterialPropertyType::Color;
-        property.storage.color = Color::White();
-        m_default_properties.Add(property);
-
-        SetDirty();
     }
 
 }
