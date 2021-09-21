@@ -9,6 +9,8 @@
     - Cubemaps
     - RenderTextures
 - Support for all material property types
+- Fonts
+- Texture atlas
 - Serialization
 - Duplication
 - Error shader/material

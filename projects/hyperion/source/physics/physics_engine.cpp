@@ -17,7 +17,7 @@ namespace Hyperion::Physics {
 #ifdef HYP_PHYSICS_BULLET
         s_physics_driver = new BulletPhysicsDriver();
 #else
-        s_physics_driver = new DummyPhysicsDriver();
+        s_physics_driver = new NullPhysicsDriver();
 #endif
 
         s_physics_driver->Initialize();

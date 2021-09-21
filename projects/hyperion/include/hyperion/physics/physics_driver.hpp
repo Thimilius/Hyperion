@@ -21,4 +21,16 @@ namespace Hyperion::Physics {
         virtual void Shutdown() = 0;
     };
 
+    class NullPhysicsDriver : public IPhysicsDriver {
+    public:
+        virtual PhysicsBackend GetBackend() const { return PhysicsBackend::None; }
+
+        virtual IPhysicsWorld *CreatePhysicsWorld(World *world) { return new NullPhysicsWorld(); }
+        virtual void DestroyPhysicsWorld(IPhysicsWorld *world) { delete world; }
+
+        virtual void Initialize() { HYP_LOG_INFO("Physics", "Initialized Null audio driver!"); }
+        virtual void FixedUpdate(float32 delta_time) { }
+        virtual void Shutdown() { }
+    };
+
 }
