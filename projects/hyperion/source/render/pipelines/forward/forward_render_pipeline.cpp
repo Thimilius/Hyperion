@@ -21,7 +21,11 @@ namespace Hyperion::Rendering {
     //--------------------------------------------------------------
     void ForwardRenderPipeline::Render(RenderFrame *render_frame) {
         render_frame->SetCamera(0);
-        render_frame->Clear(ClearFlags::All, Color::Cyan());
+
+        RenderFrameCommandBuffer command_buffer;
+        command_buffer.ClearRenderTarget(ClearFlags::All, Color::Cyan());
+        render_frame->ExecuteCommandBuffer(command_buffer);
+
         render_frame->DrawMeshes();
         render_frame->DrawGizmos();
     }

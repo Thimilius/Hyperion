@@ -19,15 +19,20 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void RenderFrame::SetCamera(uint64 camera_index) {
+        RenderFrameCommandSetCamera set_camera;
+        set_camera.camera_index = camera_index;
+
         RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::SetCamera);
-        command.data.set_camera.camera_index = camera_index;
+        command.data = set_camera;
     }
 
     //--------------------------------------------------------------
-    void RenderFrame::Clear(ClearFlags clear_flags, Color clear_color) {
-        RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::Clear);
-        command.data.clear.flags = clear_flags;
-        command.data.clear.color = clear_color;
+    void RenderFrame::ExecuteCommandBuffer(const RenderFrameCommandBuffer &command_buffer) {
+        RenderFrameCommandExecuteCommandBuffer execute_command_buffer;
+        execute_command_buffer.command_buffer = command_buffer;
+
+        RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::ExecuteCommandBuffer);
+        command.data = execute_command_buffer;
     }
 
     //--------------------------------------------------------------
@@ -37,12 +42,15 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void RenderFrame::DrawGizmos() {
+        RenderFrameCommandDrawGizmos draw_gizmos;
+        draw_gizmos.shader_id = AssetManager::GetShaderPrimitive(ShaderPrimitive::Gizmo)->GetAssetInfo().id;
+        draw_gizmos.grid.should_draw = true;
+        draw_gizmos.grid.local_to_world = Matrix4x4::Identity();
+        draw_gizmos.grid.type = RenderGizmos::GetGridType();
+        draw_gizmos.grid.mesh_id = RenderGizmos::GetGridMesh()->GetAssetInfo().id;
+
         RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::DrawGizmos);
-        command.data.draw_gizmos.shader_id = AssetManager::GetShaderPrimitive(ShaderPrimitive::Gizmo)->GetAssetInfo().id;
-        command.data.draw_gizmos.grid.should_draw = true;
-        command.data.draw_gizmos.grid.local_to_world = Matrix4x4::Identity();
-        command.data.draw_gizmos.grid.type = RenderGizmos::GetGridType();
-        command.data.draw_gizmos.grid.mesh_id = RenderGizmos::GetGridMesh()->GetAssetInfo().id;
+        command.data = draw_gizmos;
     }
 
     //--------------------------------------------------------------

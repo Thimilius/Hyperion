@@ -193,27 +193,41 @@ namespace Hyperion::Rendering {
 
         const RenderFrameContext &render_frame_context = render_frame->GetContext();
 
-        const Array<RenderFrameCommand> &commands = render_frame->GetCommands();
-        for (const RenderFrameCommand &command : commands) {
-            switch (command.type) {
+        const Array<RenderFrameCommand> &frame_commands = render_frame->GetCommands();
+        for (const RenderFrameCommand &frame_command : frame_commands) {
+            switch (frame_command.type) {
                 case RenderFrameCommandType::SetCamera: {
                     HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.SetCamera");
 
-                    m_state.camera_index = command.data.set_camera.camera_index;
+                    const RenderFrameCommandSetCamera &set_camera = std::get<RenderFrameCommandSetCamera>(frame_command.data);
+                    m_state.camera_index = set_camera.camera_index;
 
                     break;
                 }
-                case RenderFrameCommandType::Clear: {
-                    HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.Clear");
+                case RenderFrameCommandType::ExecuteCommandBuffer: {
+                    HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.ExecuteCommandBuffer");
 
-                    const RenderFrameContextCamera &render_frame_context_camera = render_frame_context.GetCameras()[m_state.camera_index];
+                    const RenderFrameCommandExecuteCommandBuffer &execute_command_buffer = std::get<RenderFrameCommandExecuteCommandBuffer>(frame_command.data);
 
-                    const CameraViewport &viewport = render_frame_context_camera.viewport;
-                    glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
-                    Color background_color = render_frame_context_camera.background_color;
-                    glClearColor(background_color.r, background_color.g, background_color.b, background_color.a);
-                    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+                    const Array<RenderFrameCommandBufferCommand> &buffer_commands = execute_command_buffer.command_buffer.GetCommands();
+                    for (const RenderFrameCommandBufferCommand &buffer_command : buffer_commands) {
+                        switch (buffer_command.type) {
+                            case RenderFrameCommandBufferCommandType::ClearRenderTarget: {
+                                HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.Clear");
 
+                                const RenderFrameContextCamera &render_frame_context_camera = render_frame_context.GetCameras()[m_state.camera_index];
+
+                                const CameraViewport &viewport = render_frame_context_camera.viewport;
+                                glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+                                Color background_color = render_frame_context_camera.background_color;
+                                glClearColor(background_color.r, background_color.g, background_color.b, background_color.a);
+                                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+                                break;
+                            }
+                            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+                        }
+                    }
+                    
                     break;
                 }
                 case RenderFrameCommandType::DrawMeshes: {
@@ -229,20 +243,23 @@ namespace Hyperion::Rendering {
                 case RenderFrameCommandType::DrawGizmos: {
                     HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawGizmos");
 
+                    const RenderFrameCommandDrawGizmos &draw_gizmos = std::get<RenderFrameCommandDrawGizmos>(frame_command.data);
+
+
                     const RenderFrameContextCamera &render_frame_context_camera = render_frame_context.GetCameras()[m_state.camera_index];
 
-                    const OpenGLShader &opengl_shader = m_opengl_shaders.Get(command.data.draw_gizmos.shader_id);
+                    const OpenGLShader &opengl_shader = m_opengl_shaders.Get(draw_gizmos.shader_id);
                     glUseProgram(opengl_shader.program);
                     glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_view"), 1, GL_FALSE, render_frame_context_camera.view_matrix.elements);
                     glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_projection"), 1, GL_FALSE, render_frame_context_camera.projection_matrix.elements);
 
-                    if (command.data.draw_gizmos.grid.should_draw) {
+                    if (draw_gizmos.grid.should_draw) {
                         glEnable(GL_BLEND);
 
                         GLint model_location = glGetUniformLocation(opengl_shader.program, "u_model");
-                        glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, command.data.draw_gizmos.grid.local_to_world.elements);
+                        glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, draw_gizmos.grid.local_to_world.elements);
 
-                        const OpenGLMesh &opengl_mesh = m_opengl_meshes.Get(command.data.draw_gizmos.grid.mesh_id);
+                        const OpenGLMesh &opengl_mesh = m_opengl_meshes.Get(draw_gizmos.grid.mesh_id);
                         glBindVertexArray(opengl_mesh.vertex_array);
 
                         SubMesh sub_mesh = opengl_mesh.sub_meshes[0];
