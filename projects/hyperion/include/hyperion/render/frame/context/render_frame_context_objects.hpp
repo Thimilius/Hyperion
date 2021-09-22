@@ -10,6 +10,7 @@ namespace Hyperion::Rendering {
 
     struct RenderFrameContextObject {
         Matrix4x4 local_to_world;
+        Vector3 position;
     };
 
     struct RenderFrameContextObjectMesh : public RenderFrameContextObject {

@@ -51,34 +51,58 @@ in V2F {
 } i_v2f;
 
 struct Light {
-	float intensity;
 	vec4 color;
-	
 	vec3 direction;
-	
+	float intensity;
 	vec3 position;
 	float range;
-	
 	float spot_inner_radius;
 	float spot_outer_radius;
 };
 
-struct Lighting {
-	vec3 ambient_color;
+layout(std140, binding = 1) uniform Lighting {
+	vec4 ambient_color;
 
 	Light main_light;
-};
+	
+	Light point_lights[128];
+} u_lighting;
+uniform uint u_light_count;
+uniform uvec4 u_light_indices;
 
 uniform vec4 m_color;
-uniform Lighting u_lighting;
+
+float calculate_light_attenuation(float distance, float light_range) {
+	float attenuation_linear = 4.5 / light_range;
+	float attenuation_quadratic = 75.0 / (light_range * light_range);
+	return 1.0 / (1.0 + attenuation_linear * distance + attenuation_quadratic * distance * distance);
+}
 
 vec3 calculate_phong_directional_light(vec3 position, vec3 normal, Light light) {
+	// Diffuse
 	float diffuse_intensity = light.intensity;
 	vec3 to_light_direction = normalize(-light.direction);
 	diffuse_intensity = diffuse_intensity * max(dot(normal, to_light_direction), 0.0);
 	vec3 diffuse_lighting = diffuse_intensity * light.color.rgb;
 	
+	// Final lighting
 	vec3 lighting_color = diffuse_lighting;
+
+	return lighting_color;
+}
+
+vec3 calculate_phong_point_light(vec3 position, vec3 normal, Light light) {
+	// Diffuse
+	float diffuse_intensity = light.intensity;
+	vec3 to_light_direction = normalize(light.position - position);
+	diffuse_intensity = diffuse_intensity * max(dot(normal, to_light_direction), 0.0);
+	vec3 diffuse_lighting = diffuse_intensity * light.color.rgb;
+	
+	// Attenuation
+	float attenuation = calculate_light_attenuation(distance(light.position, position), light.range);
+	
+	// Final lighting
+	vec3 lighting_color = attenuation * diffuse_lighting;
 
 	return lighting_color;
 }
@@ -86,7 +110,12 @@ vec3 calculate_phong_directional_light(vec3 position, vec3 normal, Light light) 
 vec4 calculate_phong_lighting(vec3 position, vec3 normal) {
 	vec3 main_lighting = calculate_phong_directional_light(position, normal, u_lighting.main_light);
 
-	return vec4(main_lighting + u_lighting.ambient_color, 1.0);
+	vec3 point_lighting;
+	for (int i = 0; i < u_light_count; i++) {
+		point_lighting += calculate_phong_point_light(position, normal, u_lighting.point_lights[u_light_indices[i]]);
+	}
+
+	return vec4(main_lighting + point_lighting + u_lighting.ambient_color.rgb, 1.0);
 }
 
 void main() {

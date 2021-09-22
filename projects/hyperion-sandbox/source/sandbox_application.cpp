@@ -32,7 +32,7 @@ namespace Sandbox {
     //--------------------------------------------------------------
     void SandboxApplication::OnSetup(ApplicationSettings &settings) {
         settings.render.backend = Rendering::RenderBackend::OpenGL;
-        settings.render.threading_mode = Rendering::RenderThreadingMode::SingleThreaded;
+        settings.render.threading_mode = Rendering::RenderThreadingMode::MultiThreaded;
         settings.render.vsync_mode = Rendering::VSyncMode::DontSync;
     }
 
@@ -70,15 +70,25 @@ namespace Sandbox {
         float32 size = 100;
         for (float32 x = 0; x < size; x++) {
             for (float32 z = 0; z < size; z++) {
-                Material *material = AssetManager::CreateMaterial(AssetManager::GetShaderPrimitive(ShaderPrimitive::Standard));
-                material->SetColor("m_color", Color(Random::Get(), Random::Get(), Random::Get(), 1.0f));
+                //Material *material = AssetManager::CreateMaterial(AssetManager::GetShaderPrimitive(ShaderPrimitive::Standard));
+                //material->SetColor("m_color", Color(Random::Get(), Random::Get(), Random::Get(), 1.0f));
 
                 EntityId entity = g_world->CreateEntity(EntityPrimitive::Cube);
                 g_world->GetComponent<LocalTransformComponent>(entity)->position = Vector3(x * 2.0f, 0.0f, -z * 2.0f);
-                g_world->GetComponent<RenderMeshComponent>(entity)->material = material;
+                //g_world->GetComponent<RenderMeshComponent>(entity)->material = material;
                 g_world->GetHierarchy()->SetParent(entity, g_parent);
                 g_world->RemoveComponent<Physics::BoxColliderComponent>(entity);
             }
+        }
+
+        for (uint32 i = 0; i < 128; i++) {
+            float32 x = Random::Get() * size * 2.0f;
+            float32 z = Random::Get() * size * 2.0f;
+
+            EntityId point_light = g_world->CreateEntity(EntityPrimitive::PointLight);
+            g_world->GetComponent<LocalTransformComponent>(point_light)->position = Vector3(x, 1.0f, -z);
+            g_world->GetComponent<PointLightComponent>(point_light)->color = Color(Random::Get(), Random::Get(), Random::Get(), 1.0f);
+            g_world->GetComponent<PointLightComponent>(point_light)->intensity = 2.5f;
         }
 #else
         g_child = g_world->CreateEntity(EntityPrimitive::Cube);
@@ -107,20 +117,16 @@ namespace Sandbox {
             g_camera_controller->Reset(g_world);
         }
 
-        g_world->GetComponent<LocalTransformComponent>(g_light)->rotation = Quaternion::FromEulerAngles(-Time::GetTime() * 25.0f, 0.0f, 0.0f);
-
-        Quaternion rotation = Quaternion::FromEulerAngles(0.0f, Time::GetTime() * 25.0f, 0.0f);
-
-        LocalTransformComponent *transform = g_world->GetComponent<LocalTransformComponent>(g_parent);
-        transform->rotation = rotation;
+        g_world->GetComponent<LocalTransformComponent>(g_parent)->rotation = Quaternion::FromEulerAngles(0.0f, Math::Sin(Time::GetTime()) * 45.0f, 0.0f);
 
 #ifdef HYP_STRESS_TEST
-        auto view = g_world->GetView<LocalTransformComponent, RenderMeshComponent>();
+        Quaternion rotation = Quaternion::FromEulerAngles(0.0f, Time::GetTime() * 25.0f, 0.0f);
+        auto view = g_world->GetView<LocalTransformComponent, RenderMeshComponent>(ExcludeComponents<Physics::SphereColliderComponent>());
         for (EntityId entity : view) {
             LocalTransformComponent *transform = g_world->GetComponent<LocalTransformComponent>(entity);
             transform->rotation = rotation;
-            RenderMeshComponent *render_mesh = g_world->GetComponent<RenderMeshComponent>(entity);
-            render_mesh->material->SetColor("m_color", Color(Random::Get(), Random::Get(), Random::Get(), 1.0f));
+            //RenderMeshComponent *render_mesh = g_world->GetComponent<RenderMeshComponent>(entity);
+            //render_mesh->material->SetColor("m_color", Color(Random::Get(), Random::Get(), Random::Get(), 1.0f));
         }
 #endif
         UpdateTitle();

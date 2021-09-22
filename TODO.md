@@ -32,8 +32,10 @@
 ## Rendering
 - Textures
 - Framebuffers
-- Multiple Lights
-- Uniform buffers
+- Lighting
+    - Storage buffers
+	- Move lighting setup into render pipeline
+- Control per object data in render pipeline
 - Async readback of textures/buffers
 
 ### Shaders

@@ -1,6 +1,8 @@
 //----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
+#include <array>
+
 //--------------------- Definition Include ---------------------
 #include "hyperion/render/driver/opengl/opengl_render_driver.hpp"
 
@@ -177,6 +179,10 @@ namespace Hyperion::Rendering {
         glNamedBufferData(m_state.camera_uniform_buffer, sizeof(OpenGLUniformBufferCamera), nullptr, GL_DYNAMIC_DRAW);
         glBindBufferBase(GL_UNIFORM_BUFFER, 0, m_state.camera_uniform_buffer);
 
+        glCreateBuffers(1, &m_state.lighting_uniform_buffer);
+        glNamedBufferData(m_state.lighting_uniform_buffer, sizeof(OpenGLUniformBufferLighting), nullptr, GL_DYNAMIC_DRAW);
+        glBindBufferBase(GL_UNIFORM_BUFFER, 1, m_state.lighting_uniform_buffer);
+
         GLint buffer_bindings = 0;
         glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &buffer_bindings);
     }
@@ -214,7 +220,6 @@ namespace Hyperion::Rendering {
                     OpenGLUniformBufferCamera uniform_buffer_camera;
                     uniform_buffer_camera.camera_view_matrix = render_frame_context_camera.view_matrix;
                     uniform_buffer_camera.camera_projection_matrix = render_frame_context_camera.projection_matrix;
-
                     glNamedBufferSubData(m_state.camera_uniform_buffer, 0, sizeof(OpenGLUniformBufferCamera), &uniform_buffer_camera);
 
                     break;
@@ -250,7 +255,7 @@ namespace Hyperion::Rendering {
 
                     const RenderFrameContextCamera &render_frame_context_camera = render_frame_context.GetCameras()[m_state.camera_index];
 
-                    GroupObjects(render_frame_context.GetMeshObjects(), render_frame_context_camera.visibility_mask);
+                    GroupObjects(render_frame_context, render_frame_context_camera.visibility_mask);
                     RenderCamera(render_frame_context.GetEnvironment(), render_frame_context.GetLights(), render_frame_context_camera);
 
                     break;
@@ -286,11 +291,12 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void OpenGLRenderDriver::GroupObjects(const Array<RenderFrameContextObjectMesh> &mesh_objects, LayerMask visibility_mask) {
+    void OpenGLRenderDriver::GroupObjects(const RenderFrameContext &render_frame_context, LayerMask visibility_mask) {
         HYP_PROFILE_CATEGORY("OpenGLRenderDriver.GroupObjects", ProfileCategory::Rendering);
 
         Array<GroupedShader> grouped_shaders;
 
+        const Array<RenderFrameContextObjectMesh> &mesh_objects = render_frame_context.GetMeshObjects();
         for (const RenderFrameContextObjectMesh &render_frame_context_object_mesh : mesh_objects) {
             if ((render_frame_context_object_mesh.layer_mask & visibility_mask) != render_frame_context_object_mesh.layer_mask) {
                 continue;
@@ -337,10 +343,77 @@ namespace Hyperion::Rendering {
                 grouped_mesh = &meshes.Get(mesh_id);
             }
 
-            grouped_mesh->objects.Add(render_frame_context_object_mesh);
+            GroupedObject grouped_object;
+            grouped_object.local_to_world = render_frame_context_object_mesh.local_to_world;
+            grouped_object.sub_mesh_index = render_frame_context_object_mesh.sub_mesh_index;
+            // TODO: The setup of light indices should somehow be controllable by the render pipeline.
+            SetupPerObjectLightIndices(render_frame_context, grouped_object, render_frame_context_object_mesh.position);
+
+            grouped_mesh->objects.Add(grouped_object);
         }
 
-        m_grouped_shaders = std::move(grouped_shaders);
+        {
+            HYP_PROFILE_SCOPE("OpenGLRenderDriver.MoveGroupedShaders");
+
+            m_grouped_shaders = std::move(grouped_shaders);
+        }
+    }
+
+    //--------------------------------------------------------------
+    void OpenGLRenderDriver::SetupPerObjectLightIndices(const RenderFrameContext &render_frame_context, GroupedObject &grouped_object, Vector3 object_position) {
+        HYP_PROFILE_SCOPE("OpenGLRenderDriver.SetupPerObjectLightIndices");
+
+        // HACK: Currently this is pretty hardcoded for 4 light indices per object (and a maximum of 128 global lights).
+
+        grouped_object.light_count = 0;
+        grouped_object.light_indices[0] = UINT32_MAX;
+        grouped_object.light_indices[1] = UINT32_MAX;
+        grouped_object.light_indices[2] = UINT32_MAX;
+        grouped_object.light_indices[3] = UINT32_MAX;
+
+        uint32 light_count = 0;
+        uint32 light_index = 0;
+        float32 smallest_distances[4] = { FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX };
+        for (const RenderFrameContextLight &light : render_frame_context.GetLights()) {
+            if (light.type == LightType::Point && light_index < 128) {
+                float32 distance_to_light = (light.position - object_position).SqrMagnitude();
+
+                // Is the light even in range?
+                if (distance_to_light <= (light.range * light.range)) {
+                    if (distance_to_light < smallest_distances[0]) {
+                        smallest_distances[0] = distance_to_light;
+
+                        grouped_object.light_indices[3] = grouped_object.light_indices[2];
+                        grouped_object.light_indices[2] = grouped_object.light_indices[1];
+                        grouped_object.light_indices[1] = grouped_object.light_indices[0];
+                        grouped_object.light_indices[0] = light_index;
+                    } else if (distance_to_light < smallest_distances[1]) {
+                        smallest_distances[1] = distance_to_light;
+
+                        grouped_object.light_indices[3] = grouped_object.light_indices[2];
+                        grouped_object.light_indices[2] = grouped_object.light_indices[1];
+                        grouped_object.light_indices[1] = light_index;
+                    } else if (distance_to_light < smallest_distances[2]) {
+                        smallest_distances[2] = distance_to_light;
+
+                        grouped_object.light_indices[3] = grouped_object.light_indices[2];
+                        grouped_object.light_indices[2] = light_index;
+                    } else if (distance_to_light < smallest_distances[3]) {
+                        smallest_distances[3] = distance_to_light;
+                        
+                        grouped_object.light_indices[3] = light_index;
+                    }
+                }
+
+                light_index++;
+            }
+        }
+
+        for (uint64 i = 0; i < 4; i++) {
+            if (grouped_object.light_indices[i] != UINT32_MAX) {
+                grouped_object.light_count++;
+            }
+        }
     }
 
     //--------------------------------------------------------------
@@ -353,16 +426,31 @@ namespace Hyperion::Rendering {
             const OpenGLShader &opengl_shader = *grouped_shader.shader;
             glUseProgram(opengl_shader.program);
 
-            Color ambient_color = environment.ambient_light.intensity * environment.ambient_light.color;
-            glProgramUniform3f(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_lighting.ambient_color"), ambient_color.r, ambient_color.g, ambient_color.b);
+            // TODO: The lighting is dependent on the actual render pipeline.
+            // This means the complete setup of the lighting buffer should be done in the render pipeline.
+            {
+                OpenGLUniformBufferLighting uniform_buffer_lighting;
+                uniform_buffer_lighting.ambient_color = environment.ambient_light.intensity * environment.ambient_light.color;
 
-            // Because of how the frame context gets populated, we know that the first light (if present and directional) is the main light.
-            auto light_it = lights.begin();
-            if (light_it != lights.end() && light_it->type == LightType::Directional) {
-                const RenderFrameContextLight &main_light = *light_it;
-                glProgramUniform1f(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_lighting.main_light.intensity"), main_light.intensity);
-                glProgramUniform4f(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_lighting.main_light.color"), main_light.color.r, main_light.color.g, main_light.color.b, main_light.color.a);
-                glProgramUniform3f(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_lighting.main_light.direction"), main_light.direction.x, main_light.direction.y, main_light.direction.z);
+                // Because of how the frame context gets populated, we know that the first light (if present and directional) is the main light.
+                auto light_it = lights.begin();
+                if (light_it != lights.end() && light_it->type == LightType::Directional) {
+                    const RenderFrameContextLight &main_light = *light_it;
+                    CopyFrameLightToOpenGLLight(main_light, uniform_buffer_lighting.main_light);
+                }
+
+                uint64 point_light_index = 0;
+                for (const RenderFrameContextLight &light : lights) {
+                    if (light.type == LightType::Point) {
+                        // HACK: For now we just ignore every light that is beyond our hardcoded limit.
+
+                        if (point_light_index < 128) {
+                            CopyFrameLightToOpenGLLight(light, uniform_buffer_lighting.point_lights[point_light_index++]);
+                        }
+                    }
+                }
+
+                glNamedBufferSubData(m_state.lighting_uniform_buffer, 0, sizeof(OpenGLUniformBufferLighting), &uniform_buffer_lighting);
             }
 
             for (const auto [material_id, grouped_material] : grouped_shader.materials) {
@@ -377,17 +465,32 @@ namespace Hyperion::Rendering {
                     glBindVertexArray(opengl_mesh.vertex_array);
 
                     GLint model_location = glGetUniformLocation(opengl_shader.program, "u_model");
-                    for (const RenderFrameContextObjectMesh &render_frame_context_mesh_object : grouped_mesh.objects) {
+                    GLint light_count_location = glGetUniformLocation(opengl_shader.program, "u_light_count");
+                    GLint light_indices_location = glGetUniformLocation(opengl_shader.program, "u_light_indices");
+                    for (const GroupedObject &object : grouped_mesh.objects) {
                         HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameMeshObject");
-                        
-                        glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, render_frame_context_mesh_object.local_to_world.elements);
 
-                        SubMesh sub_mesh = opengl_mesh.sub_meshes[render_frame_context_mesh_object.sub_mesh_index];
+                        glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, object.local_to_world.elements);
+                        glProgramUniform1ui(opengl_shader.program, light_count_location, object.light_count);
+                        glProgramUniform4uiv(opengl_shader.program, light_indices_location, 1, object.light_indices);
+
+                        SubMesh sub_mesh = opengl_mesh.sub_meshes[object.sub_mesh_index];
                         DrawSubMesh(sub_mesh);
                     }
                 }
             }
         }
+    }
+
+    //--------------------------------------------------------------
+    void OpenGLRenderDriver::CopyFrameLightToOpenGLLight(const RenderFrameContextLight &frame_light, OpenGLLight &opengl_light) {
+        opengl_light.color = frame_light.color;
+        opengl_light.intensity = frame_light.intensity;
+        opengl_light.direction = frame_light.direction;
+        opengl_light.position = frame_light.position;
+        opengl_light.range = frame_light.range;
+        opengl_light.spot_inner_radius = frame_light.inner_spot_radius;
+        opengl_light.spot_outer_radius = frame_light.outer_spot_radius;
     }
 
     //--------------------------------------------------------------

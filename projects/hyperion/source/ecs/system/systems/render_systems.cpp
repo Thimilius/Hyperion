@@ -96,7 +96,7 @@ namespace Hyperion::Rendering {
         }
 
         auto spot_view = world->GetView<DerivedTransformComponent, SpotLightComponent>();
-        for (EntityId entity : point_view) {
+        for (EntityId entity : spot_view) {
             DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(entity);
             SpotLightComponent *spot_light = world->GetComponent<SpotLightComponent>(entity);
 
@@ -123,6 +123,7 @@ namespace Hyperion::Rendering {
 
             RenderFrameContextObjectSprite &render_frame_context_sprite_object = render_frame_context.AddSpriteObject();
             render_frame_context_sprite_object.local_to_world = local_to_world->local_to_world;
+            render_frame_context_sprite_object.position = Vector3(local_to_world->local_to_world.columns[3]);
             render_frame_context_sprite_object.color = sprite->color;
         }
     }
@@ -140,6 +141,7 @@ namespace Hyperion::Rendering {
 
             RenderFrameContextObjectMesh &render_frame_context_mesh_object = render_frame_context.AddMeshObject();
             render_frame_context_mesh_object.local_to_world = local_to_world->local_to_world;
+            render_frame_context_mesh_object.position = Vector3(local_to_world->local_to_world.columns[3]);
             render_frame_context_mesh_object.mesh = render_mesh->mesh;
             render_frame_context_mesh_object.sub_mesh_index = render_mesh->sub_mesh_index;
             render_frame_context_mesh_object.material = render_mesh->material;
