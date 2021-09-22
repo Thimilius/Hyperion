@@ -57,8 +57,14 @@ namespace Hyperion::Rendering {
         Map<AssetId, GroupedMaterial> materials;
     };
 
+    struct OpenGLUniformBufferCamera {
+        Matrix4x4 camera_view_matrix;
+        Matrix4x4 camera_projection_matrix;
+    };
+
     struct OpenGLState {
         uint64 camera_index;
+        GLuint camera_uniform_buffer;
     };
 
     class OpenGLRenderDriver final : public IRenderDriver {

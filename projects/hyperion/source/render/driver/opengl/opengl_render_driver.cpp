@@ -172,6 +172,13 @@ namespace Hyperion::Rendering {
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
         glFrontFace(GL_CW);
+
+        glCreateBuffers(1, &m_state.camera_uniform_buffer);
+        glNamedBufferData(m_state.camera_uniform_buffer, sizeof(OpenGLUniformBufferCamera), nullptr, GL_DYNAMIC_DRAW);
+        glBindBufferBase(GL_UNIFORM_BUFFER, 0, m_state.camera_uniform_buffer);
+
+        GLint buffer_bindings = 0;
+        glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &buffer_bindings);
     }
 
     //--------------------------------------------------------------
@@ -201,6 +208,14 @@ namespace Hyperion::Rendering {
 
                     const RenderFrameCommandSetCamera &set_camera = std::get<RenderFrameCommandSetCamera>(frame_command.data);
                     m_state.camera_index = set_camera.camera_index;
+
+                    const RenderFrameContextCamera &render_frame_context_camera = render_frame_context.GetCameras()[m_state.camera_index];
+
+                    OpenGLUniformBufferCamera uniform_buffer_camera;
+                    uniform_buffer_camera.camera_view_matrix = render_frame_context_camera.view_matrix;
+                    uniform_buffer_camera.camera_projection_matrix = render_frame_context_camera.projection_matrix;
+
+                    glNamedBufferSubData(m_state.camera_uniform_buffer, 0, sizeof(OpenGLUniformBufferCamera), &uniform_buffer_camera);
 
                     break;
                 }
@@ -245,13 +260,8 @@ namespace Hyperion::Rendering {
 
                     const RenderFrameCommandDrawGizmos &draw_gizmos = std::get<RenderFrameCommandDrawGizmos>(frame_command.data);
 
-
-                    const RenderFrameContextCamera &render_frame_context_camera = render_frame_context.GetCameras()[m_state.camera_index];
-
                     const OpenGLShader &opengl_shader = m_opengl_shaders.Get(draw_gizmos.shader_id);
                     glUseProgram(opengl_shader.program);
-                    glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_view"), 1, GL_FALSE, render_frame_context_camera.view_matrix.elements);
-                    glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_projection"), 1, GL_FALSE, render_frame_context_camera.projection_matrix.elements);
 
                     if (draw_gizmos.grid.should_draw) {
                         glEnable(GL_BLEND);
@@ -342,8 +352,6 @@ namespace Hyperion::Rendering {
 
             const OpenGLShader &opengl_shader = *grouped_shader.shader;
             glUseProgram(opengl_shader.program);
-            glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_view"), 1, GL_FALSE, camera.view_matrix.elements);
-            glProgramUniformMatrix4fv(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_projection"), 1, GL_FALSE, camera.projection_matrix.elements);
 
             Color ambient_color = environment.ambient_light.intensity * environment.ambient_light.color;
             glProgramUniform3f(opengl_shader.program, glGetUniformLocation(opengl_shader.program, "u_lighting.ambient_color"), ambient_color.r, ambient_color.g, ambient_color.b);

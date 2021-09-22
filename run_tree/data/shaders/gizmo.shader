@@ -10,12 +10,16 @@ out V2F {
 	vec4 color;
 } o_v2f;
 
+layout(std140, binding = 0) uniform Camera
+{
+  mat4 view;
+  mat4 projection;
+} u_camera;
+
 uniform mat4 u_model;
-uniform mat4 u_view;
-uniform mat4 u_projection;
 
 vec4 obj_to_clip_space(vec3 position) {
-	return u_projection * u_view * u_model * vec4(position, 1.0);
+	return u_camera.projection * u_camera.view * u_model * vec4(position, 1.0);
 }
 
 void main() {
