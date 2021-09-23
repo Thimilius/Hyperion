@@ -29,3 +29,4 @@
 #include "hyperion/core/delegate.hpp"
 #include "hyperion/core/profiling/profile.hpp"
 #include "hyperion/core/threading/scope_lock.hpp"
+#include "hyperion/core/meta/factory.hpp"
