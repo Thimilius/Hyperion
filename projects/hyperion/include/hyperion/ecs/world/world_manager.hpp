@@ -22,6 +22,7 @@ namespace Hyperion {
         WorldManager() = delete;
         ~WorldManager() = delete;
     private:
+        static void ReflectTypes();
         static void Initialize();
         static void Update();
         static void Shutdown();

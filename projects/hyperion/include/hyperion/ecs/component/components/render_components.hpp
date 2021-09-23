@@ -5,13 +5,14 @@
 #include "hyperion/assets/mesh.hpp"
 #include "hyperion/assets/texture.hpp"
 #include "hyperion/core/color.hpp"
+#include "hyperion/ecs/component/component.hpp"
 #include "hyperion/render/types/render_types_camera.hpp"
 #include "hyperion/render/types/render_types_general.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-    struct CameraComponent {
+    struct CameraComponent : public IComponent {
         CameraProjectionMode projection_mode = CameraProjectionMode::Perspective;
 
         CameraClearMode clear_mode = CameraClearMode::Color;
@@ -36,12 +37,12 @@ namespace Hyperion::Rendering {
         Matrix4x4 inverse_view_projection_matrix = Matrix4x4::Identity();
     };
 
-    struct SpriteComponent {
+    struct SpriteComponent : public IComponent {
         Color color = Color::White();
         Texture2D *texture = nullptr;
     };
 
-    struct RenderMeshComponent {
+    struct RenderMeshComponent : public IComponent {
         Mesh *mesh = nullptr;
         uint32 sub_mesh_index = 0;
 
@@ -50,7 +51,7 @@ namespace Hyperion::Rendering {
         LayerMask layer_mask = LayerMask::Default;
     };
 
-    struct LightComponent {
+    struct LightComponent : public IComponent {
         float32 intensity = 1.0f;
         Color color = Color::White();
     };

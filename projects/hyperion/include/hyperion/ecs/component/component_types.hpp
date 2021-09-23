@@ -1,6 +1,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/ecs/component/component.hpp"
 #include "hyperion/ecs/entity/entity_types.hpp"
 
 //-------------------- Forward Declarations --------------------
@@ -12,13 +13,13 @@ namespace Hyperion {
 namespace Hyperion {
 
     using ComponentId = uint32;
-    using ComponentDestructorFunction = void(*)(const void *);
 
     struct ComponentInfo {
-        String name;
         ComponentId id;
+
+        MetaType type;
         uint64 element_size;
-        ComponentDestructorFunction destructor;
+        MetaTrivialDestructor destructor;
     };
 
     using ComponentCallback = Delegate<void(World *, EntityId)>;

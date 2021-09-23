@@ -16,9 +16,9 @@ namespace Hyperion {
     World::World() {
         m_hierarchy.m_world = this;
 
-        uint64 component_count = ComponentRegistry::GetComponents().GetLength();
+        uint64 component_count = ComponentRegistry::GetComponentInfos().GetLength();
         m_storage.component_pools.Reserve(component_count);
-        for (const ComponentInfo &component_info : ComponentRegistry::GetComponents()) {
+        for (const ComponentInfo &component_info : ComponentRegistry::GetComponentInfos()) {
             m_storage.component_pools.Add(ComponentPool(component_info));
         }
         m_storage.component_callbacks.Resize(component_count);

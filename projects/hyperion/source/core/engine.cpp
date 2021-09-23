@@ -131,6 +131,8 @@ namespace Hyperion {
                 .Property<&Color::b>("b")
                 .Property<&Color::a>("a");
         }
+
+        WorldManager::ReflectTypes();
     }
 
     //--------------------------------------------------------------

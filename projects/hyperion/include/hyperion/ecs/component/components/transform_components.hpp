@@ -4,28 +4,29 @@
 #include "hyperion/core/math/matrix4x4.hpp"
 #include "hyperion/core/math/vector3.hpp"
 #include "hyperion/core/math/quaternion.hpp"
+#include "hyperion/ecs/component/component.hpp"
 #include "hyperion/ecs/entity/entity_types.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    struct LocalTransformComponent {
+    struct LocalTransformComponent : public IComponent {
         Vector3 position = Vector3::Zero();
         Quaternion rotation = Quaternion::Identity();
         Vector3 scale = Vector3::One();
     };
 
-    struct DerivedTransformComponent {
+    struct DerivedTransformComponent : public IComponent {
         Vector3 position = Vector3::Zero();
         Quaternion rotation = Quaternion::Identity();
         Vector3 scale = Vector3::One();
     };
 
-    struct LocalToWorldComponent {
+    struct LocalToWorldComponent : public IComponent {
         Matrix4x4 local_to_world = Matrix4x4::Identity();
     };
 
-    struct HierarchyComponent {
+    struct HierarchyComponent : public IComponent {
         EntityId parent = Entity::EMPTY;
 
         EntityId previous_sibling = Entity::EMPTY;

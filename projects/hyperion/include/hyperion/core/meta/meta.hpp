@@ -966,7 +966,9 @@ namespace Hyperion {
     private:
         const Internal::MetaTypeNode *node;
     private:
-        template<typename...> friend struct Internal::MetaInfoNode;
+        template<typename...>
+        friend struct Internal::MetaInfoNode;
+        friend struct std::hash<MetaType>;
     };
 
     inline bool operator!=(const MetaType &lhs, const MetaType &rhs) { return !(lhs == rhs); }
@@ -1042,5 +1044,16 @@ namespace Hyperion {
         }
 
     }
+
+}
+
+namespace std {
+
+    template <>
+    struct hash<Hyperion::MetaType> {
+        std::size_t operator()(const Hyperion::MetaType &type) const {
+            return hash<const Hyperion::Internal::MetaTypeNode *>()(type.node);
+        }
+    };
 
 }

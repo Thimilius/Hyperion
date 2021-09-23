@@ -11,6 +11,7 @@ namespace Hyperion {
 
     template<typename T>
     class Array {
+    public:
         using Iterator = typename std::vector<T>::iterator;
         using ConstIterator = typename std::vector<T>::const_iterator;
         using ReverseIterator = typename std::vector<T>::reverse_iterator;

@@ -3,33 +3,33 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/ecs/component/component_types.hpp"
 
+//-------------------- Forward Declarations --------------------
+namespace Hyperion {
+    class WorldManager;
+}
+
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     class ComponentRegistry final {
     public:
-        inline static const Array<ComponentInfo> &GetComponents() { return s_components; }
+        inline static const Array<ComponentInfo> &GetComponentInfos() { return s_component_infos; }
 
         template<typename T>
         inline static ComponentId GetId() {
-            static ComponentId component_id = s_component_counter++;
-            return component_id;
-        }
-
-        template<typename T>
-        inline static void Register(const String &name) {
-            ComponentInfo component_info;
-            component_info.name = name;
-            component_info.id = GetId<T>();
-            component_info.element_size = sizeof(T);
-            component_info.destructor = [](const void *component) { static_cast<const T *>(component)->~T(); };
-
-            s_components.Add(component_info);
+            // NOTE: This method/lookup is probably not as fast as it could be.
+            // And it really should because it is pretty much THE hottest path in the engine.
+            return s_component_ids.Get(MetaRegistry::Resolve<T>());
         }
     private:
-        inline static Array<ComponentInfo> s_components;
+        static void Initialize();
+    private:
+        inline static Map<MetaType, ComponentId> s_component_ids;
+        inline static Array<ComponentInfo> s_component_infos;
 
         inline static ComponentId s_component_counter = 0;
+    private:
+        friend class Hyperion::WorldManager;
     };
 
 }

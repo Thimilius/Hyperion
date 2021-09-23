@@ -44,25 +44,49 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void WorldManager::ReflectTypes() {
+        MetaRegistry::Reflect<IComponent>("IComponent");
+
+        MetaRegistry::Reflect<NameComponent>("NameComponent")
+            .Base<IComponent>()
+            .Property<&NameComponent::name>("name");
+        MetaRegistry::Reflect<TagComponent>("TagComponent")
+            .Base<IComponent>()
+            .Property<&TagComponent::tag>("tag");
+        MetaRegistry::Reflect<ArchetypeComponent>("ArchetypeComponent")
+            .Base<IComponent>();
+
+        MetaRegistry::Reflect<LocalTransformComponent>("LocalTransformComponent")
+            .Base<IComponent>();
+        MetaRegistry::Reflect<DerivedTransformComponent>("DerivedTransformComponent")
+            .Base<IComponent>();
+        MetaRegistry::Reflect<LocalToWorldComponent>("LocalToWorldComponent")
+            .Base<IComponent>();
+        MetaRegistry::Reflect<HierarchyComponent>("HierarchyComponent")
+            .Base<IComponent>();
+
+        MetaRegistry::Reflect<Physics::BoxColliderComponent>("BoxColliderComponent")
+            .Base<IComponent>();
+        MetaRegistry::Reflect<Physics::SphereColliderComponent>("SphereColliderComponent")
+            .Base<IComponent>();
+
+        MetaRegistry::Reflect<Rendering::CameraComponent>("CameraComponent")
+            .Base<IComponent>();
+        MetaRegistry::Reflect<Rendering::SpriteComponent>("SpriteComponent")
+            .Base<IComponent>();
+        MetaRegistry::Reflect<Rendering::RenderMeshComponent>("RenderMeshComponent")
+            .Base<IComponent>();
+        MetaRegistry::Reflect<Rendering::DirectionalLightComponent>("DirectionalLightComponent")
+            .Base<IComponent>();
+        MetaRegistry::Reflect<Rendering::PointLightComponent>("PointLightComponent")
+            .Base<IComponent>();
+        MetaRegistry::Reflect<Rendering::SpotLightComponent>("SpotLightComponent")
+            .Base<IComponent>();
+    }
+
+    //--------------------------------------------------------------
     void WorldManager::Initialize() {
-        ComponentRegistry::Register<NameComponent>("Name");
-        ComponentRegistry::Register<TagComponent>("Tag");
-        ComponentRegistry::Register<ArchetypeComponent>("Archetype");
-
-        ComponentRegistry::Register<LocalTransformComponent>("LocalTransform");
-        ComponentRegistry::Register<DerivedTransformComponent>("DerivedTransform");
-        ComponentRegistry::Register<LocalToWorldComponent>("LocalToWorld");
-        ComponentRegistry::Register<HierarchyComponent>("Hierarchy");
-        
-        ComponentRegistry::Register<Physics::BoxColliderComponent>("BoxCollider");
-        ComponentRegistry::Register<Physics::SphereColliderComponent>("SphereCollider");
-
-        ComponentRegistry::Register<Rendering::CameraComponent>("Camera");
-        ComponentRegistry::Register<Rendering::SpriteComponent>("Sprite");
-        ComponentRegistry::Register<Rendering::RenderMeshComponent>("RenderMesh");
-        ComponentRegistry::Register<Rendering::DirectionalLightComponent>("DirectionalLight");
-        ComponentRegistry::Register<Rendering::PointLightComponent>("PointLight");
-        ComponentRegistry::Register<Rendering::SpotLightComponent>("SpotLight");
+        ComponentRegistry::Initialize();
     }
 
     //--------------------------------------------------------------
