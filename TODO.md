@@ -23,6 +23,7 @@
 - Hierarchy callbacks for transform updates
 - System execution order
 - Entity/Component duplication
+- Archetypes with overwrites
 - Component pool pointer stability (if necessary)
 
 ## Physics

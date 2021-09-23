@@ -59,6 +59,33 @@ namespace Hyperion {
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    enum class MetaPrimitiveType {
+        None,
+
+        Bool,
+
+        Int8,
+        Int16,
+        Int32,
+        Int64,
+        UInt8,
+        UInt16,
+        UInt32,
+        UInt64,
+
+        Float32,
+        Float64,
+
+        String,
+
+        Vector2,
+        Vector3,
+        Vector4,
+        Quaternion,
+
+        Color
+    };
+
     namespace Internal {
 
         struct MetaAttributeNode {
@@ -151,6 +178,7 @@ namespace Hyperion {
 
             std::size_t identifier;
             String name;
+            MetaPrimitiveType primitive_type;
             MetaTypeNode * next;
             MetaAttributeNode * attribute;
             const bool is_void;
@@ -790,6 +818,7 @@ namespace Hyperion {
         MetaType(const Internal::MetaTypeNode *curr) : node{curr} {}
     public:
         String GetName() const { return node->name; }
+        MetaPrimitiveType GetPrimitiveType() const { return node->primitive_type; }
         bool IsVoid() const { return node->is_void; }
         bool IsIntegral() const { return node->is_integral; }
         bool IsFloatingPoint() const { return node->is_floating_point; }
@@ -972,6 +1001,7 @@ namespace Hyperion {
                 static MetaTypeNode node{
                     {},
                     {},
+                    MetaPrimitiveType::None,
                     nullptr,
                     nullptr,
                     std::is_void_v<Type>,

@@ -93,10 +93,50 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    uint32 Engine::Run() {
-        s_running = true;
+    void Engine::RegisterTypes() {
+        // Primitive types
+        {
+            MetaRegistry::Reflect<bool8>().Type("bool", MetaPrimitiveType::Bool);
+            MetaRegistry::Reflect<int8>().Type("int8", MetaPrimitiveType::Int8);
+            MetaRegistry::Reflect<int16>().Type("int16", MetaPrimitiveType::Int16);
+            MetaRegistry::Reflect<int32>().Type("int32", MetaPrimitiveType::Int32);
+            MetaRegistry::Reflect<int64>().Type("int64", MetaPrimitiveType::Int64);
+            MetaRegistry::Reflect<uint8>().Type("uint8", MetaPrimitiveType::UInt8);
+            MetaRegistry::Reflect<uint16>().Type("uint16", MetaPrimitiveType::UInt16);
+            MetaRegistry::Reflect<uint32>().Type("uint32", MetaPrimitiveType::UInt32);
+            MetaRegistry::Reflect<uint64>().Type("uint64", MetaPrimitiveType::UInt64);
+            MetaRegistry::Reflect<float32>().Type("float32", MetaPrimitiveType::UInt64);
+            MetaRegistry::Reflect<float64>().Type("float64", MetaPrimitiveType::UInt64);
+            MetaRegistry::Reflect<String>().Type("String", MetaPrimitiveType::String);
+            MetaRegistry::Reflect<Vector2>().Type("Vector2", MetaPrimitiveType::Vector2)
+                .Property<&Vector2::x>("x")
+                .Property<&Vector2::y>("y");
+            MetaRegistry::Reflect<Vector3>().Type("Vector3", MetaPrimitiveType::Vector3)
+                .Property<&Vector3::x>("x")
+                .Property<&Vector3::y>("y")
+                .Property<&Vector3::z>("z");
+            MetaRegistry::Reflect<Vector4>().Type("Vector4", MetaPrimitiveType::Vector4)
+                .Property<&Vector4::x>("x")
+                .Property<&Vector4::y>("y")
+                .Property<&Vector4::z>("z")
+                .Property<&Vector4::w>("w");
+            MetaRegistry::Reflect<Quaternion>().Type("Quaternion", MetaPrimitiveType::Quaternion)
+                .Property<&Quaternion::x>("x")
+                .Property<&Quaternion::y>("y")
+                .Property<&Quaternion::z>("z")
+                .Property<&Quaternion::w>("w");
+            MetaRegistry::Reflect<Color>().Type("Color", MetaPrimitiveType::Color)
+                .Property<&Color::r>("r")
+                .Property<&Color::g>("g")
+                .Property<&Color::b>("b")
+                .Property<&Color::a>("a");
+        }
+    }
 
+    //--------------------------------------------------------------
+    uint32 Engine::Run() {
         s_application = Application::GetInstance();
+        s_application->RegisterTypes();
         s_application->OnSetup(s_settings);
 
         PreInitialize();
@@ -106,6 +146,7 @@ namespace Hyperion {
         PostInitialize();
         s_application->GetWindow()->Show();
 
+        s_running = true;
         while (s_running) {
             HYP_PROFILE_FRAME("Main Thread");
 

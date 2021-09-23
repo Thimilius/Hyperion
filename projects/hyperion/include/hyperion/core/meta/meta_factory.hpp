@@ -39,6 +39,11 @@
 #include "hyperion/core/meta/meta_policy.hpp"
 #include "hyperion/core/meta/meta.hpp"
 
+//-------------------- Forward Declarations --------------------
+namespace Hyperion {
+    class Engine;
+}
+
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
@@ -242,17 +247,7 @@ namespace Hyperion {
     public:
         template<typename... Attribute>
         MetaFactory Type(const String &name, Attribute &&... attribute) {
-            assert(!Internal::MetaTypeInfo<T>::type);
-            auto *node = Internal::MetaTypeInfo<T>::Resolve();
-            node->identifier = std::hash<String>{}(name);
-            node->name = name;
-            node->next = Internal::MetaTypeInfo<>::type;
-            node->attribute = Attributes<T>(std::forward<Attribute>(attribute)...);
-            assert(!Duplicate(node->identifier, node->next));
-            Internal::MetaTypeInfo<T>::type = node;
-            Internal::MetaTypeInfo<>::type = node;
-
-            return *this;
+            return Type(name, MetaPrimitiveType::None, attribute ...);
         }
 
         template<typename Base>
@@ -613,6 +608,22 @@ namespace Hyperion {
             return registered;
         }
     private:
+        template<typename... Attribute>
+        MetaFactory Type(const String &name, MetaPrimitiveType primitive_type, Attribute &&... attribute) {
+            assert(!Internal::MetaTypeInfo<T>::type);
+            auto *node = Internal::MetaTypeInfo<T>::Resolve();
+            node->identifier = std::hash<String>{}(name);
+            node->name = name;
+            node->primitive_type = primitive_type;
+            node->next = Internal::MetaTypeInfo<>::type;
+            node->attribute = Attributes<T>(std::forward<Attribute>(attribute)...);
+            assert(!Duplicate(node->identifier, node->next));
+            Internal::MetaTypeInfo<T>::type = node;
+            Internal::MetaTypeInfo<>::type = node;
+
+            return *this;
+        }
+
         template<typename Node>
         bool Duplicate(const std::size_t identifier, const Node *node) {
             return node && (node->identifier == identifier || Duplicate(identifier, node->next));
@@ -685,6 +696,8 @@ namespace Hyperion {
                 *node->underlying = nullptr;
             }
         }
+    private:
+        friend class Hyperion::Engine;
     };
 
     class MetaRegistry final {

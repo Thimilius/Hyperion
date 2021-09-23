@@ -24,6 +24,7 @@ namespace Hyperion {
     protected:
         Application();
 
+        virtual void RegisterTypes() { }
         virtual void OnSetup(ApplicationSettings &settings) { }
         virtual void OnInitialize() { }
         virtual void OnUpdate(float32 delta_time) { }

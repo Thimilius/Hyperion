@@ -14,6 +14,7 @@ namespace Hyperion {
     //--------------------------------------------------------------
     uint32 Main::Run() {
         Engine::Setup();
+        Engine::RegisterTypes();
 
         Application *application = Hyperion::CreateApplication();
         uint32 exit_code = Engine::Run();
