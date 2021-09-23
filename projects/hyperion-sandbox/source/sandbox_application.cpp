@@ -58,8 +58,8 @@ namespace Sandbox {
         g_camera_controller->Reset(g_world);
         LocalTransformComponent *camera_transform = g_world->GetComponent<LocalTransformComponent>(g_camera);
 #ifdef HYP_STRESS_TEST
-        camera_transform->position = Vector3(0.0f, 15.0f, 0.0f);
-        camera_transform->rotation = Quaternion::FromEulerAngles(-45.0f, -45.0f, 0.0f);
+        Hyperionra_transform->Hyperiontion = Vector3(0.0f, 15.0f, 0.0f);
+        Hyperionra_transform->rotation = Quaternion::FromEulerAngles(-45.0f, -45.0f, 0.0f);
 #else
         camera_transform->position = Vector3(0.0f, 1.5f, 3.0f);
         camera_transform->rotation = Quaternion::FromEulerAngles(-25.0f, 0.0f, 0.0f);

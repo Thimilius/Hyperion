@@ -27,14 +27,14 @@
 // ────────────────────────────────────────────────────────────────────────────────────
 
 //-------------------- Definition Namespace --------------------
-namespace meta {
+namespace Hyperion {
 
-    struct as_alias_t {};
+    struct MetaPolicyAsAlias { };
 
-    constexpr as_alias_t as_alias;
+    constexpr MetaPolicyAsAlias AS_ALIAS;
 
-    struct as_is_t {};
+    struct MetaPolicyAsIs { };
 
-    struct as_void_t {};
+    struct MetaPolicyAsVoid { };
 
 }
