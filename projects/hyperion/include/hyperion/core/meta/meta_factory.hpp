@@ -615,6 +615,7 @@ namespace Hyperion {
             node->identifier = std::hash<String>{}(name);
             node->name = name;
             node->primitive_type = primitive_type;
+            node->trivial_destructor = [](const void *instance) { static_cast<const T *>(instance)->~T(); };
             node->next = Internal::MetaTypeInfo<>::type;
             node->attribute = Attributes<T>(std::forward<Attribute>(attribute)...);
             assert(!Duplicate(node->identifier, node->next));

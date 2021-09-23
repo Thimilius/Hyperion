@@ -86,6 +86,8 @@ namespace Hyperion {
         Color
     };
 
+    using MetaTrivialDestructor = void(*)(const void *);
+
     namespace Internal {
 
         struct MetaAttributeNode {
@@ -179,6 +181,8 @@ namespace Hyperion {
             std::size_t identifier;
             String name;
             MetaPrimitiveType primitive_type;
+            MetaTrivialDestructor trivial_destructor;
+            size_type size;
             MetaTypeNode * next;
             MetaAttributeNode * attribute;
             const bool is_void;
@@ -819,6 +823,8 @@ namespace Hyperion {
     public:
         String GetName() const { return node->name; }
         MetaPrimitiveType GetPrimitiveType() const { return node->primitive_type; }
+        MetaTrivialDestructor GetTrivialDestructor() const { return node->trivial_destructor; }
+        size_type GetSize() const { return node->size; }
         bool IsVoid() const { return node->is_void; }
         bool IsIntegral() const { return node->is_integral; }
         bool IsFloatingPoint() const { return node->is_floating_point; }
@@ -835,7 +841,7 @@ namespace Hyperion {
 
         template<typename Op>
         std::enable_if_t<std::is_invocable_v<Op, Hyperion::MetaBase>, void>
-        ForEachBases(Op op) const {
+        ForEachBase(Op op) const {
             Internal::Iterate<&Internal::MetaTypeNode::base>([op = std::move(op)](auto *curr) {
                 op(curr->clazz());
             }, node);
@@ -1002,6 +1008,8 @@ namespace Hyperion {
                     {},
                     {},
                     MetaPrimitiveType::None,
+                    nullptr,
+                    sizeof(Type),
                     nullptr,
                     nullptr,
                     std::is_void_v<Type>,
