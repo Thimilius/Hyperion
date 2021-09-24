@@ -131,13 +131,13 @@ namespace Sandbox {
 
 #ifdef HYP_STRESS_TEST
         Quaternion rotation = Quaternion::FromEulerAngles(0.0f, Time::GetTime() * 25.0f, 0.0f);
-        auto view = g_world->GetView<LocalTransformComponent, RenderMeshComponent>(ExcludeComponents<Physics::SphereColliderComponent>());
+        auto view = g_world->GetView<LocalTransformComponent, MeshComponent>(ExcludeComponents<Physics::SphereColliderComponent>());
         for (EntityId entity : view) {
             LocalTransformComponent *transform = g_world->GetComponent<LocalTransformComponent>(entity);
             transform->rotation = rotation;
 #ifdef HYP_STRESS_TEST_EXTREME
-            RenderMeshComponent *render_mesh = g_world->GetComponent<RenderMeshComponent>(entity);
-            render_mesh->material->SetColor("m_color", Color(Random::Get(), Random::Get(), Random::Get(), 1.0f));
+            RenderMeshComponent *mesh = g_world->GetComponent<RenderMeshComponent>(entity);
+            mesh->material->SetColor("m_color", Color(Random::Get(), Random::Get(), Random::Get(), 1.0f));
 #endif
         }
 #endif

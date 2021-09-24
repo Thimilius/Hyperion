@@ -78,15 +78,15 @@ namespace Hyperion {
             .Base<IComponent>();
         MetaRegistry::Reflect<Rendering::SpriteComponent>("SpriteComponent")
             .Base<IComponent>();
-        MetaRegistry::Reflect<Rendering::RenderMeshComponent>("RenderMeshComponent")
+        MetaRegistry::Reflect<Rendering::MeshComponent>("MeshComponent")
+            .Base<IComponent>();
+        MetaRegistry::Reflect<Rendering::MeshBoundsComponent>("BoundsComponent")
             .Base<IComponent>();
         MetaRegistry::Reflect<Rendering::DirectionalLightComponent>("DirectionalLightComponent")
             .Base<IComponent>();
         MetaRegistry::Reflect<Rendering::PointLightComponent>("PointLightComponent")
             .Base<IComponent>();
         MetaRegistry::Reflect<Rendering::SpotLightComponent>("SpotLightComponent")
-            .Base<IComponent>();
-        MetaRegistry::Reflect<Rendering::RenderBoundsComponent>("RenderBoundsComponent")
             .Base<IComponent>();
     }
 
@@ -134,8 +134,8 @@ namespace Hyperion {
             {
                 HYP_PROFILE_SCOPE("WorldManager.Update.Rendering");
 
-                Rendering::RenderBoundsSystem render_bounds_system;
-                render_bounds_system.Run(s_active_world);
+                Rendering::MeshBoundsSystem bounds_system;
+                bounds_system.Run(s_active_world);
 
                 Rendering::EnvironmentSystem environment_system;
                 environment_system.Run(s_active_world);
@@ -149,8 +149,8 @@ namespace Hyperion {
                 Rendering::SpriteSystem sprite_system;
                 sprite_system.Run(s_active_world);
 
-                Rendering::RenderMeshSystem render_mesh_system;
-                render_mesh_system.Run(s_active_world);
+                Rendering::MeshSystem mesh_system;
+                mesh_system.Run(s_active_world);
             }
         }
     }

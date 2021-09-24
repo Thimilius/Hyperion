@@ -32,7 +32,6 @@
 - Rigidbodies
 
 ## Rendering
-- Rename RenderMeshComponent to MeshComponent
 - Frustum culling for lights
 - Textures
 - Framebuffers

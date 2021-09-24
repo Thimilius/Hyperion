@@ -19,19 +19,18 @@
 namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
-    void RenderBoundsSystem::Run(World *world) {
+    void MeshBoundsSystem::Run(World *world) {
         HYP_PROFILE_SCOPE("RenderBoundsSystem.Run");
 
-        auto view = world->GetView<LocalToWorldComponent, RenderBoundsComponent, RenderMeshComponent>(ExcludeComponents<DisabledComponent, StaticComponent>());
+        auto view = world->GetView<LocalToWorldComponent, MeshBoundsComponent, MeshComponent>(ExcludeComponents<DisabledComponent, StaticComponent>());
         for (EntityId entity : view) {
             LocalToWorldComponent *local_to_world = world->GetComponent<LocalToWorldComponent>(entity);
-            RenderBoundsComponent *render_bounds = world->GetComponent<RenderBoundsComponent>(entity);
-            RenderMeshComponent *render_mesh = world->GetComponent<RenderMeshComponent>(entity);
+            MeshBoundsComponent *mesh_bounds = world->GetComponent<MeshBoundsComponent>(entity);
+            MeshComponent *mesh = world->GetComponent<MeshComponent>(entity);
 
-            Mesh *mesh = render_mesh->mesh;
-            if (mesh) {
-                BoundingBox world_bounds = BoundingBox::Transform(local_to_world->local_to_world, mesh->GetBounds());
-                render_bounds->bounds = world_bounds;
+            if (mesh->mesh) {
+                BoundingBox world_bounds = BoundingBox::Transform(local_to_world->local_to_world, mesh->mesh->GetBounds());
+                mesh_bounds->bounds = world_bounds;
             }
         }
     }
@@ -148,25 +147,25 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void RenderMeshSystem::Run(World *world) {
+    void MeshSystem::Run(World *world) {
         HYP_PROFILE_SCOPE("RenderMeshSystem.Run");
 
         RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
 
-        auto view = world->GetView<LocalToWorldComponent, RenderBoundsComponent, RenderMeshComponent>(ExcludeComponents<DisabledComponent>());
+        auto view = world->GetView<LocalToWorldComponent, MeshBoundsComponent, MeshComponent>(ExcludeComponents<DisabledComponent>());
         for (EntityId entity : view) {
             LocalToWorldComponent *local_to_world = world->GetComponent<LocalToWorldComponent>(entity);
-            RenderBoundsComponent *render_bounds = world->GetComponent<RenderBoundsComponent>(entity);
-            RenderMeshComponent *render_mesh = world->GetComponent<RenderMeshComponent>(entity);
+            MeshBoundsComponent *mesh_bounds = world->GetComponent<MeshBoundsComponent>(entity);
+            MeshComponent *mesh = world->GetComponent<MeshComponent>(entity);
 
             RenderFrameContextObjectMesh &render_frame_context_mesh_object = render_frame_context.AddMeshObject();
             render_frame_context_mesh_object.local_to_world = local_to_world->local_to_world;
             render_frame_context_mesh_object.position = Vector3(local_to_world->local_to_world.columns[3]);
-            render_frame_context_mesh_object.mesh = render_mesh->mesh;
-            render_frame_context_mesh_object.sub_mesh_index = render_mesh->sub_mesh_index;
-            render_frame_context_mesh_object.material = render_mesh->material;
-            render_frame_context_mesh_object.layer_mask = render_mesh->layer_mask;
-            render_frame_context_mesh_object.bounds = render_bounds->bounds;
+            render_frame_context_mesh_object.mesh = mesh->mesh;
+            render_frame_context_mesh_object.sub_mesh_index = mesh->sub_mesh_index;
+            render_frame_context_mesh_object.material = mesh->material;
+            render_frame_context_mesh_object.layer_mask = mesh->layer_mask;
+            render_frame_context_mesh_object.bounds = mesh_bounds->bounds;
         }
     }
 

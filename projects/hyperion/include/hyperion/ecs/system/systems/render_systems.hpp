@@ -6,7 +6,7 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-    class RenderBoundsSystem : public ISystem {
+    class MeshBoundsSystem : public ISystem {
     public:
         void Run(World *world) override;
     };
@@ -31,7 +31,7 @@ namespace Hyperion::Rendering {
         void Run(World *world) override;
     };
 
-    class RenderMeshSystem : public ISystem {
+    class MeshSystem : public ISystem {
     public:
         void Run(World *world) override;
     };

@@ -136,26 +136,26 @@ namespace Hyperion {
             case EntityPrimitive::Plane:
             case EntityPrimitive::Cube:
             case EntityPrimitive::Sphere: {
-                Rendering::RenderMeshComponent *render_mesh = AddComponent<Rendering::RenderMeshComponent>(id);
-                render_mesh->material = AssetManager::GetMaterialPrimitive(MaterialPrimitive::Default);
+                Rendering::MeshComponent *mesh = AddComponent<Rendering::MeshComponent>(id);
+                mesh->material = AssetManager::GetMaterialPrimitive(MaterialPrimitive::Default);
 
                 switch (primitive) {
-                    case EntityPrimitive::Quad: render_mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Quad); break;
-                    case EntityPrimitive::Plane: render_mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Plane); break;
+                    case EntityPrimitive::Quad: mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Quad); break;
+                    case EntityPrimitive::Plane: mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Plane); break;
                     case EntityPrimitive::Cube: {
-                        render_mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Cube);
+                        mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Cube);
                         AddComponent<Physics::BoxColliderComponent>(id);
                         break;
                     }
                     case EntityPrimitive::Sphere: {
-                        render_mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Sphere);
+                        mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Sphere);
                         AddComponent<Physics::SphereColliderComponent>(id);
                         break;
                     }
                     default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
                 }
 
-                AddComponent<Rendering::RenderBoundsComponent>(id)->bounds = render_mesh->mesh->GetBounds();
+                AddComponent<Rendering::MeshBoundsComponent>(id)->bounds = mesh->mesh->GetBounds();
 
                 break;
             }

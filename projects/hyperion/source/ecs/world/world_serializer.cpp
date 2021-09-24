@@ -413,15 +413,15 @@ namespace Hyperion {
                 yaml_emitter << YAML::Key << "Sprite" << YAML::Null;
             }
 
-            Rendering::RenderMeshComponent *render_mesh = world->GetComponent<Rendering::RenderMeshComponent>(entity);
-            if (render_mesh != nullptr) {
-                yaml_emitter << YAML::Key << "RenderMesh";
+            Rendering::MeshComponent *mesh = world->GetComponent<Rendering::MeshComponent>(entity);
+            if (mesh != nullptr) {
+                yaml_emitter << YAML::Key << "Mesh";
                 yaml_emitter << YAML::BeginMap;
                 {
-                    yaml_emitter << YAML::Key << "mesh" << YAML::Value << render_mesh->mesh->GetAssetInfo().guid.ToString();
-                    yaml_emitter << YAML::Key << "sub_mesh_index" << YAML::Value << render_mesh->sub_mesh_index;
-                    yaml_emitter << YAML::Key << "material" << YAML::Value << render_mesh->material->GetAssetInfo().guid.ToString();
-                    yaml_emitter << YAML::Key << "layer_mask" << YAML::Value << static_cast<uint64>(render_mesh->layer_mask);
+                    yaml_emitter << YAML::Key << "mesh" << YAML::Value << mesh->mesh->GetAssetInfo().guid.ToString();
+                    yaml_emitter << YAML::Key << "sub_mesh_index" << YAML::Value << mesh->sub_mesh_index;
+                    yaml_emitter << YAML::Key << "material" << YAML::Value << mesh->material->GetAssetInfo().guid.ToString();
+                    yaml_emitter << YAML::Key << "layer_mask" << YAML::Value << static_cast<uint64>(mesh->layer_mask);
                 }
                 yaml_emitter << YAML::EndMap;
             }
@@ -619,25 +619,25 @@ namespace Hyperion {
                         if (yaml_sprite && yaml_sprite.IsMap()) {
                             Rendering::SpriteComponent *sprite = world->AddComponent<Rendering::SpriteComponent>(entity);
                         }
-                        YAML::Node yaml_render_mesh = yaml_entity["RenderMesh"];
+                        YAML::Node yaml_render_mesh = yaml_entity["Mesh"];
                         if (yaml_render_mesh && yaml_render_mesh.IsMap()) {
-                            Rendering::RenderMeshComponent *render_mesh = world->AddComponent<Rendering::RenderMeshComponent>(entity);
+                            Rendering::MeshComponent *mesh = world->AddComponent<Rendering::MeshComponent>(entity);
 
                             YAML::Node yaml_render_mesh_mesh = yaml_render_mesh["mesh"];
                             if (yaml_render_mesh_mesh) {
-                                render_mesh->mesh = yaml_render_mesh_mesh.IsNull() ? nullptr : AssetManager::GetMeshByGuid(AssetGuid::Generate(yaml_render_mesh_mesh.as<String>()));
+                                mesh->mesh = yaml_render_mesh_mesh.IsNull() ? nullptr : AssetManager::GetMeshByGuid(AssetGuid::Generate(yaml_render_mesh_mesh.as<String>()));
                             }
                             YAML::Node yaml_render_mesh_sub_mesh_index = yaml_render_mesh["sub_mesh_index"];
                             if (yaml_render_mesh_sub_mesh_index) {
-                                render_mesh->sub_mesh_index = yaml_render_mesh_sub_mesh_index.as<uint32>();
+                                mesh->sub_mesh_index = yaml_render_mesh_sub_mesh_index.as<uint32>();
                             }
                             YAML::Node yaml_render_mesh_material = yaml_render_mesh["material"];
                             if (yaml_render_mesh_material) {
-                                render_mesh->material = yaml_render_mesh_material.IsNull() ? nullptr : AssetManager::GetMaterialByGuid(AssetGuid::Generate(yaml_render_mesh_material.as<String>()));
+                                mesh->material = yaml_render_mesh_material.IsNull() ? nullptr : AssetManager::GetMaterialByGuid(AssetGuid::Generate(yaml_render_mesh_material.as<String>()));
                             }
                             YAML::Node yaml_render_mesh_layer_mask = yaml_render_mesh["layer_mask"];
                             if (yaml_render_mesh_layer_mask) {
-                                render_mesh->layer_mask = static_cast<Rendering::LayerMask>(yaml_render_mesh_layer_mask.as<uint64>());
+                                mesh->layer_mask = static_cast<Rendering::LayerMask>(yaml_render_mesh_layer_mask.as<uint64>());
                             }
                         }
                     }

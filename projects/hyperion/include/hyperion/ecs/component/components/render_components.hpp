@@ -43,13 +43,17 @@ namespace Hyperion::Rendering {
         Texture2D *texture = nullptr;
     };
 
-    struct RenderMeshComponent : public IComponent {
+    struct MeshComponent : public IComponent {
         Mesh *mesh = nullptr;
         uint32 sub_mesh_index = 0;
 
         Material *material = nullptr;
 
         LayerMask layer_mask = LayerMask::Default;
+    };
+
+    struct MeshBoundsComponent : public IComponent {
+        BoundingBox bounds;
     };
 
     struct LightComponent : public IComponent {
@@ -68,10 +72,6 @@ namespace Hyperion::Rendering {
     struct SpotLightComponent : public LightComponent {
         float32 inner_spot_radius = 1.0f;
         float32 outer_spot_radius = 1.0f;
-    };
-
-    struct RenderBoundsComponent : public IComponent {
-        BoundingBox bounds;
     };
 
 }
