@@ -80,7 +80,9 @@ namespace Hyperion {
             .Base<IComponent>();
         MetaRegistry::Reflect<Rendering::MeshComponent>("MeshComponent")
             .Base<IComponent>();
-        MetaRegistry::Reflect<Rendering::MeshBoundsComponent>("BoundsComponent")
+        MetaRegistry::Reflect<Rendering::LocalMeshBoundsComponent>("LocalMeshBoundsComponent")
+            .Base<IComponent>();
+        MetaRegistry::Reflect<Rendering::WorldMeshBoundsComponent>("WorldMeshBoundsComponent")
             .Base<IComponent>();
         MetaRegistry::Reflect<Rendering::DirectionalLightComponent>("DirectionalLightComponent")
             .Base<IComponent>();

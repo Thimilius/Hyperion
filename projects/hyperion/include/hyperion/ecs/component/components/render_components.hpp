@@ -52,7 +52,11 @@ namespace Hyperion::Rendering {
         LayerMask layer_mask = LayerMask::Default;
     };
 
-    struct MeshBoundsComponent : public IComponent {
+    struct LocalMeshBoundsComponent : public IComponent {
+        BoundingBox bounds;
+    };
+
+    struct WorldMeshBoundsComponent : public IComponent {
         BoundingBox bounds;
     };
 

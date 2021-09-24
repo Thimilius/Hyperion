@@ -155,7 +155,9 @@ namespace Hyperion {
                     default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
                 }
 
-                AddComponent<Rendering::MeshBoundsComponent>(id)->bounds = mesh->mesh->GetBounds();
+                BoundingBox bounds = mesh->mesh->GetBounds();
+                AddComponent<Rendering::LocalMeshBoundsComponent>(id)->bounds = bounds;
+                AddComponent<Rendering::WorldMeshBoundsComponent>(id)->bounds = bounds;
 
                 break;
             }

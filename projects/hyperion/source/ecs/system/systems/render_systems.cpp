@@ -22,16 +22,13 @@ namespace Hyperion::Rendering {
     void MeshBoundsSystem::Run(World *world) {
         HYP_PROFILE_SCOPE("RenderBoundsSystem.Run");
 
-        auto view = world->GetView<LocalToWorldComponent, MeshBoundsComponent, MeshComponent>(ExcludeComponents<DisabledComponent, StaticComponent>());
+        auto view = world->GetView<LocalToWorldComponent, LocalMeshBoundsComponent, WorldMeshBoundsComponent>(ExcludeComponents<DisabledComponent, StaticComponent>());
         for (EntityId entity : view) {
             LocalToWorldComponent *local_to_world = world->GetComponent<LocalToWorldComponent>(entity);
-            MeshBoundsComponent *mesh_bounds = world->GetComponent<MeshBoundsComponent>(entity);
-            MeshComponent *mesh = world->GetComponent<MeshComponent>(entity);
+            LocalMeshBoundsComponent *local_mesh_bounds = world->GetComponent<LocalMeshBoundsComponent>(entity);
+            WorldMeshBoundsComponent *world_mesh_bounds = world->GetComponent<WorldMeshBoundsComponent>(entity);
 
-            if (mesh->mesh) {
-                BoundingBox world_bounds = BoundingBox::Transform(local_to_world->local_to_world, mesh->mesh->GetBounds());
-                mesh_bounds->bounds = world_bounds;
-            }
+            world_mesh_bounds->bounds = BoundingBox::Transform(local_to_world->local_to_world, local_mesh_bounds->bounds);
         }
     }
 
@@ -152,10 +149,10 @@ namespace Hyperion::Rendering {
 
         RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
 
-        auto view = world->GetView<LocalToWorldComponent, MeshBoundsComponent, MeshComponent>(ExcludeComponents<DisabledComponent>());
+        auto view = world->GetView<LocalToWorldComponent, WorldMeshBoundsComponent, MeshComponent>(ExcludeComponents<DisabledComponent>());
         for (EntityId entity : view) {
             LocalToWorldComponent *local_to_world = world->GetComponent<LocalToWorldComponent>(entity);
-            MeshBoundsComponent *mesh_bounds = world->GetComponent<MeshBoundsComponent>(entity);
+            WorldMeshBoundsComponent *world_mesh_bounds = world->GetComponent<WorldMeshBoundsComponent>(entity);
             MeshComponent *mesh = world->GetComponent<MeshComponent>(entity);
 
             RenderFrameContextObjectMesh &render_frame_context_mesh_object = render_frame_context.AddMeshObject();
@@ -165,7 +162,7 @@ namespace Hyperion::Rendering {
             render_frame_context_mesh_object.sub_mesh_index = mesh->sub_mesh_index;
             render_frame_context_mesh_object.material = mesh->material;
             render_frame_context_mesh_object.layer_mask = mesh->layer_mask;
-            render_frame_context_mesh_object.bounds = mesh_bounds->bounds;
+            render_frame_context_mesh_object.bounds = world_mesh_bounds->bounds;
         }
     }
 
