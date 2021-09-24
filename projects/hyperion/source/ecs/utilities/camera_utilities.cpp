@@ -130,5 +130,94 @@ namespace Hyperion::Rendering {
         viewport.height = static_cast<uint32>(Math::Clamp01(viewport_clipping.height) * display_height);
         return viewport;
     }
+    
+    //--------------------------------------------------------------
+    Array<Plane> CameraUtilities::ExtractFrustumPlanes(Matrix4x4 view_projection) {
+        float32 left_plane[4];
+        for (int32 i = 3; i >= 0; i--) {
+            left_plane[i] = view_projection.columns[i].w + view_projection.columns[i].x;
+        }
+        float32 right_plane[4];
+        for (int32 i = 3; i >= 0; i--) {
+            right_plane[i] = view_projection.columns[i].w - view_projection.columns[i].x;
+        }
+        float32 bottom_plane[4];
+        for (int32 i = 3; i >= 0; i--) {
+            bottom_plane[i] = view_projection.columns[i].w + view_projection.columns[i].y;
+        }
+        float32 top_plane[4];
+        for (int32 i = 3; i >= 0; i--) {
+            top_plane[i] = view_projection.columns[i].w - view_projection.columns[i].y;
+        }
+        float32 near_plane[4];
+        for (int32 i = 3; i >= 0; i--) {
+            near_plane[i] = view_projection.columns[i].w + view_projection.columns[i].z;
+        }
+        float32 far_plane[4];
+        for (int32 i = 3; i >= 0; i--) {
+            far_plane[i] = view_projection.columns[i].w - view_projection.columns[i].z;
+        }
+
+        // We do not use the constructor of plane because it would normalize our normal and we explicitly want to do that ourselves.
+        Array<Plane> frustum_planes;
+        frustum_planes.Resize(6);
+        frustum_planes[0].normal = Vector3(left_plane[0], left_plane[1], left_plane[2]);
+        frustum_planes[0].distance = left_plane[3];
+        frustum_planes[1].normal = Vector3(right_plane[0], right_plane[1], right_plane[2]);
+        frustum_planes[1].distance = right_plane[3];
+        frustum_planes[2].normal = Vector3(top_plane[0], top_plane[1], top_plane[2]);
+        frustum_planes[2].distance = top_plane[3];
+        frustum_planes[3].normal = Vector3(bottom_plane[0], bottom_plane[1], bottom_plane[2]);
+        frustum_planes[3].distance = bottom_plane[3];
+        frustum_planes[4].normal = Vector3(near_plane[0], near_plane[1], near_plane[2]);
+        frustum_planes[4].distance = near_plane[3];
+        frustum_planes[5].normal = Vector3(far_plane[0], far_plane[1], far_plane[2]);
+        frustum_planes[5].distance = far_plane[3];
+
+        for (int32 i = 0; i < 6; i++) {
+            Plane &plane = frustum_planes[i];
+
+            float32 magnitude = plane.normal.Magnitude();
+            plane.normal.x /= magnitude;
+            plane.normal.y /= magnitude;
+            plane.normal.z /= magnitude;
+            plane.distance /= magnitude;
+        }
+
+        return frustum_planes;
+    }
+
+    //--------------------------------------------------------------
+    bool CameraUtilities::IsInsideFrustum(const Array<Plane> &frustum_planes, BoundingBox bounds) {
+        HYP_ASSERT(frustum_planes.GetLength() == 6);
+
+        Vector3 furthest_away_from_axis;
+
+        for (size_t i = 0; i < 6; i++) {
+            Plane plane = frustum_planes[i];
+
+            if (plane.normal.x < 0.0f) {
+                furthest_away_from_axis.x = bounds.min.x;
+            } else {
+                furthest_away_from_axis.x = bounds.max.x;
+            }
+            if (plane.normal.y < 0.0f) {
+                furthest_away_from_axis.y = bounds.min.y;
+            } else {
+                furthest_away_from_axis.y = bounds.max.y;
+            }
+            if (plane.normal.z < 0.0f) {
+                furthest_away_from_axis.z = bounds.min.z;
+            } else {
+                furthest_away_from_axis.z = bounds.max.z;
+            }
+
+            if (plane.normal.Dot(furthest_away_from_axis) + plane.distance < 0.0f) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
 }

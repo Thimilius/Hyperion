@@ -153,20 +153,25 @@ namespace Hyperion::Rendering {
 
         RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
 
+        const RenderFrameContextCamera &camera = render_frame_context.GetCameras()[0];
+        Array<Plane> frustum_planes = CameraUtilities::ExtractFrustumPlanes(camera.view_projection_matrix);
+
         auto view = world->GetView<LocalToWorldComponent, RenderBoundsComponent, RenderMeshComponent>(ExcludeComponents<DisabledComponent>());
         for (EntityId entity : view) {
             LocalToWorldComponent *local_to_world = world->GetComponent<LocalToWorldComponent>(entity);
             RenderBoundsComponent *render_bounds = world->GetComponent<RenderBoundsComponent>(entity);
             RenderMeshComponent *render_mesh = world->GetComponent<RenderMeshComponent>(entity);
 
-            RenderFrameContextObjectMesh &render_frame_context_mesh_object = render_frame_context.AddMeshObject();
-            render_frame_context_mesh_object.local_to_world = local_to_world->local_to_world;
-            render_frame_context_mesh_object.position = Vector3(local_to_world->local_to_world.columns[3]);
-            render_frame_context_mesh_object.mesh = render_mesh->mesh;
-            render_frame_context_mesh_object.sub_mesh_index = render_mesh->sub_mesh_index;
-            render_frame_context_mesh_object.material = render_mesh->material;
-            render_frame_context_mesh_object.layer_mask = render_mesh->layer_mask;
-            render_frame_context_mesh_object.bounds = render_bounds->bounds;
+            if (CameraUtilities::IsInsideFrustum(frustum_planes, render_bounds->bounds)) {
+                RenderFrameContextObjectMesh &render_frame_context_mesh_object = render_frame_context.AddMeshObject();
+                render_frame_context_mesh_object.local_to_world = local_to_world->local_to_world;
+                render_frame_context_mesh_object.position = Vector3(local_to_world->local_to_world.columns[3]);
+                render_frame_context_mesh_object.mesh = render_mesh->mesh;
+                render_frame_context_mesh_object.sub_mesh_index = render_mesh->sub_mesh_index;
+                render_frame_context_mesh_object.material = render_mesh->material;
+                render_frame_context_mesh_object.layer_mask = render_mesh->layer_mask;
+                render_frame_context_mesh_object.bounds = render_bounds->bounds;
+            }
         }
     }
 

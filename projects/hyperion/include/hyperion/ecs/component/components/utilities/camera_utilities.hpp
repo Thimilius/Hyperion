@@ -4,6 +4,8 @@
 #include "hyperion/core/math/ray.hpp"
 #include "hyperion/core/math/vector2.hpp"
 #include "hyperion/core/math/vector3.hpp"
+#include "hyperion/core/math/plane.hpp"
+#include "hyperion/core/math/bounding_box.hpp"
 #include "hyperion/ecs/component/components/render_components.hpp"
 #include "hyperion/ecs/component/components/transform_components.hpp"
 
@@ -18,6 +20,9 @@ namespace Hyperion::Rendering {
 
         static void RecalculateMatricies(CameraComponent *camera, DerivedTransformComponent *derived_transform);
         static CameraViewport CalculateViewportFromClipping(CameraViewportClipping viewport_clipping);
+
+        static Array<Plane> ExtractFrustumPlanes(Matrix4x4 view_projection);
+        static bool IsInsideFrustum(const Array<Plane> &frustum_planes, BoundingBox bounds);
     private:
         CameraUtilities() = delete;
         ~CameraUtilities() = delete;

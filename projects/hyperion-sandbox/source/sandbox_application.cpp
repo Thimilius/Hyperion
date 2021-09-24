@@ -24,7 +24,7 @@
 using namespace Hyperion;
 using namespace Hyperion::Rendering;
 
-//#define HYP_STRESS_TEST
+#define HYP_STRESS_TEST
 //#define HYP_STRESS_TEST_EXTREME
 
 //-------------------- Definition Namespace --------------------
@@ -92,7 +92,7 @@ namespace Sandbox {
             EntityId point_light = g_world->CreateEntity(EntityPrimitive::PointLight);
             g_world->GetComponent<LocalTransformComponent>(point_light)->position = Vector3(x, 1.0f, -z);
             g_world->GetComponent<PointLightComponent>(point_light)->color = Color(Random::Get(), Random::Get(), Random::Get(), 1.0f);
-            g_world->GetComponent<PointLightComponent>(point_light)->intensity = 2.5f;
+            g_world->GetComponent<PointLightComponent>(point_light)->intensity = 5.0f;
         }
 #else
         g_child = g_world->CreateEntity(EntityPrimitive::Cube);
