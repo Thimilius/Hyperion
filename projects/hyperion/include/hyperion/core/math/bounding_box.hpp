@@ -1,8 +1,8 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/math/ray.hpp"
 #include "hyperion/core/math/matrix4x4.hpp"
+#include "hyperion/core/math/ray.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
