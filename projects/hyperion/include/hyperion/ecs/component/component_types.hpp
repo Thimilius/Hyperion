@@ -19,7 +19,9 @@ namespace Hyperion {
 
         MetaType type;
         uint64 element_size;
+
         MetaTrivialDestructor destructor;
+        MetaInPlaceConstructor constructor;
     };
 
     using ComponentCallback = Delegate<void(World *, EntityId)>;

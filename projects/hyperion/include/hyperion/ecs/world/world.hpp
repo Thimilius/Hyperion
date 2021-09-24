@@ -75,12 +75,47 @@ namespace Hyperion {
             }
         }
 
+        void *AddComponent(ComponentId component_id, EntityId id) {
+            HYP_PROFILE_SCOPE("World.AddComponent");
+
+            if (IsAlive(id)) {
+                ComponentPool &component_pool = m_storage.component_pools[component_id];
+
+                byte *component_data = component_pool.AddComponent(id);
+                if (component_data != nullptr) {
+                    void *component = component_pool.GetComponentInfo().constructor(component_data);
+                    for (ComponentCallback callback : m_storage.component_callbacks[component_id].added) {
+                        callback(this, id);
+                    }
+                    return component;
+                } else {
+                    HYP_LOG_WARN("Entity", "Trying to add already existent component type to entity with id {}.", id);
+                    return nullptr;
+                }
+            } else {
+                HYP_LOG_WARN("Entity", "Trying to add component to nonexistent entity with id {}.", id);
+                return nullptr;
+            }
+        }
+
         template<typename T>
         bool8 HasComponent(EntityId id) {
             HYP_PROFILE_SCOPE("World.HasComponent");
 
             if (IsAlive(id)) {
                 ComponentId component_id = ComponentRegistry::GetId<T>();
+                ComponentPool &component_pool = m_storage.component_pools[component_id];
+                return component_pool.HasComponent(id);
+            } else {
+                HYP_LOG_WARN("Entity", "Trying to check component type of nonexistent entity with id {}.", id);
+                return false;
+            }
+        }
+
+        bool8 HasComponent(ComponentId component_id, EntityId id) {
+            HYP_PROFILE_SCOPE("World.HasComponent");
+
+            if (IsAlive(id)) {
                 ComponentPool &component_pool = m_storage.component_pools[component_id];
                 return component_pool.HasComponent(id);
             } else {
@@ -98,6 +133,18 @@ namespace Hyperion {
                 ComponentPool &component_pool = m_storage.component_pools[component_id];
                 byte *component_data = component_pool.GetComponent(id);
                 return reinterpret_cast<T *>(component_data);
+            } else {
+                HYP_LOG_WARN("Entity", "Trying to get component from nonexistent entity with id {}.", id);
+                return nullptr;
+            }
+        }
+
+        void *GetComponent(ComponentId component_id, EntityId id) {
+            HYP_PROFILE_SCOPE("World.GetComponent");
+
+            if (IsAlive(id)) {
+                ComponentPool &component_pool = m_storage.component_pools[component_id];
+                return component_pool.GetComponent(id);
             } else {
                 HYP_LOG_WARN("Entity", "Trying to get component from nonexistent entity with id {}.", id);
                 return nullptr;
@@ -139,6 +186,24 @@ namespace Hyperion {
 
             if (IsAlive(id)) {
                 ComponentId component_id = ComponentRegistry::GetId<T>();
+                ComponentPool &component_pool = m_storage.component_pools[component_id];
+                if (component_pool.HasComponent(id)) {
+                    for (ComponentCallback callback : m_storage.component_callbacks[component_id].removed) {
+                        callback(this, id);
+                    }
+                    component_pool.RemoveComponent(id);
+                } else {
+                    HYP_LOG_WARN("Entity", "Trying to remove nonexistent component type from entity whith id {}.", id);
+                }
+            } else {
+                HYP_LOG_WARN("Entity", "Trying to remove component from nonexistent entity with id {}.", id);
+            }
+        }
+
+        void RemoveComponent(ComponentId component_id, EntityId id) {
+            HYP_PROFILE_SCOPE("World.RemoveComponent");
+
+            if (IsAlive(id)) {
                 ComponentPool &component_pool = m_storage.component_pools[component_id];
                 if (component_pool.HasComponent(id)) {
                     for (ComponentCallback callback : m_storage.component_callbacks[component_id].removed) {

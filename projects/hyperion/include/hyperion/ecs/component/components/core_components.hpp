@@ -13,6 +13,14 @@ namespace Hyperion {
 
     struct TagComponent : public IComponent {
         String tag;
+
+        TagComponent() {
+            HYP_TRACE("TAG Constructor");
+        }
+
+        ~TagComponent() {
+            HYP_TRACE("TAG Destructor");
+        }
     };
 
     struct DisabledComponent : public IComponent {

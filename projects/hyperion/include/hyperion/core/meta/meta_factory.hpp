@@ -622,6 +622,10 @@ namespace Hyperion {
             Internal::MetaTypeInfo<T>::type = node;
             Internal::MetaTypeInfo<>::type = node;
 
+            if constexpr (std::is_default_constructible_v<T>) {
+                node->in_place_constructor = [](void *address) { return static_cast<void *>(new (address) T()); };
+            }
+
             return *this;
         }
 

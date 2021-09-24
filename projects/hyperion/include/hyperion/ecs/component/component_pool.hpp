@@ -19,6 +19,7 @@ namespace Hyperion {
     public:
         inline uint64 GetEntityCount() const { return m_entity_list.GetLength(); }
         inline EntityId GetEntity(EntityIndex index) const { return m_entity_list[index]; }
+        inline const ComponentInfo &GetComponentInfo() const { return m_component_info; }
 
         byte *AddComponent(EntityId id);
         bool8 HasComponent(EntityId id);

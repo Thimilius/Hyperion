@@ -87,6 +87,7 @@ namespace Hyperion {
     };
 
     using MetaTrivialDestructor = void(*)(const void *);
+    using MetaInPlaceConstructor = void *(*)(void *);
 
     namespace Internal {
 
@@ -182,6 +183,7 @@ namespace Hyperion {
             String name;
             MetaPrimitiveType primitive_type;
             MetaTrivialDestructor trivial_destructor;
+            MetaInPlaceConstructor in_place_constructor;
             size_type size;
             MetaTypeNode *next;
             MetaAttributeNode *attribute;
@@ -546,16 +548,17 @@ namespace Hyperion {
 
     class MetaHandle {
     public:
-        MetaHandle() : node{nullptr}, instance{nullptr} { }
-        MetaHandle(Any &Any) : node{Any.node}, instance{Any.instance} { }
+        inline MetaHandle() : node{nullptr}, instance{nullptr} { }
+        inline MetaHandle(MetaType type, void *instance);
+        inline MetaHandle(Any &Any) : node{Any.node}, instance{Any.instance} { }
         template<typename Type, typename = std::enable_if_t<!std::is_same_v<std::remove_cv_t<std::remove_reference_t<Type>>, MetaHandle>>>
-        MetaHandle(Type &obj) : node{Internal::MetaTypeInfo<Type>::Resolve()}, instance{&obj} { }
+        inline MetaHandle(Type &obj) : node{Internal::MetaTypeInfo<Type>::Resolve()}, instance{&obj} { }
     public:
         inline Hyperion::MetaType GetType() const;
-        const void *GetData() const { return instance; }
-        void *GetData() { return const_cast<void *>(std::as_const(*this).GetData()); }
+        inline const void *GetData() const { return instance; }
+        inline void *GetData() { return const_cast<void *>(std::as_const(*this).GetData()); }
 
-        explicit operator bool8() const { return instance; }
+        inline explicit operator bool8() const { return instance; }
     private:
         const Internal::MetaTypeNode *node;
         void *instance;
@@ -824,6 +827,7 @@ namespace Hyperion {
         String GetName() const { return node->name; }
         MetaPrimitiveType GetPrimitiveType() const { return node->primitive_type; }
         MetaTrivialDestructor GetTrivialDestructor() const { return node->trivial_destructor; }
+        MetaInPlaceConstructor GetInPlaceConstructor() const { return node->in_place_constructor; }
         size_type GetSize() const { return node->size; }
         bool8 IsVoid() const { return node->is_void; }
         bool8 IsIntegral() const { return node->is_integral; }
@@ -892,7 +896,7 @@ namespace Hyperion {
         template<typename Op>
         std::enable_if_t<std::is_invocable_v<Op, Hyperion::MetaProperty>, void>
         ForEachProperty(Op op) const {
-            Internal::Iterate<&Internal::MetaTypeNode::MetaProperty>([op = std::move(op)](auto *curr) {
+            Internal::Iterate<&Internal::MetaTypeNode::data>([op = std::move(op)](auto *curr) {
                 op(curr->clazz());
             }, node);
         }
@@ -966,6 +970,7 @@ namespace Hyperion {
     private:
         const Internal::MetaTypeNode *node;
     private:
+        friend class MetaHandle;
         template<typename...>
         friend struct Internal::MetaInfoNode;
         friend struct std::hash<MetaType>;
@@ -977,6 +982,8 @@ namespace Hyperion {
         node = MetaHandle.node;
         instance = MetaHandle.instance;
     }
+
+    inline MetaHandle::MetaHandle(MetaType type, void *instance) : node(type.node), instance(instance) { }
 
     inline Hyperion::MetaType Any::GetType() const { return node ? node->clazz() : Hyperion::MetaType{ }; }
     inline Hyperion::MetaType MetaHandle::GetType() const { return node ? node->clazz() : Hyperion::MetaType{ }; }
@@ -1010,6 +1017,7 @@ namespace Hyperion {
                     { },
                     { },
                     MetaPrimitiveType::None,
+                    nullptr,
                     nullptr,
                     sizeof(Type),
                     nullptr,

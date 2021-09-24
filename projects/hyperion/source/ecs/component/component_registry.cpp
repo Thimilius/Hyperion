@@ -35,6 +35,7 @@ namespace Hyperion {
             component_info.type = component_type;
             component_info.element_size = component_type.GetSize();
             component_info.destructor = component_type.GetTrivialDestructor();
+            component_info.constructor = component_type.GetInPlaceConstructor();
 
             s_component_infos.Add(component_info);
             s_component_ids.Insert(component_type, s_component_counter);
