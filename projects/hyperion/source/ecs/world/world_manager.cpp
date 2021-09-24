@@ -53,6 +53,10 @@ namespace Hyperion {
         MetaRegistry::Reflect<TagComponent>("TagComponent")
             .Base<IComponent>()
             .Property<&TagComponent::tag>("tag");
+        MetaRegistry::Reflect<DisabledComponent>("DisabledComponent")
+            .Base<IComponent>();
+        MetaRegistry::Reflect<StaticComponent>("StaticComponent")
+            .Base<IComponent>();
         MetaRegistry::Reflect<ArchetypeComponent>("ArchetypeComponent")
             .Base<IComponent>();
 

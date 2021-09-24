@@ -42,7 +42,7 @@ namespace Hyperion {
         inline void Add(const T &item) { m_vector.push_back(item); }
         inline void Add(T &&item) { m_vector.push_back(item); }
         
-        inline bool Remove(const T &item) { 
+        inline bool8 Remove(const T &item) {
             auto it = std::remove(begin(), end(), item);
             if (it == end()) {
                 return false;

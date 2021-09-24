@@ -7,7 +7,7 @@
 namespace Hyperion::Rendering {
 
     struct ShaderPreProcessResult {
-        bool success;
+        bool8 success;
 
         ShaderData data;
     };
@@ -18,7 +18,7 @@ namespace Hyperion::Rendering {
     public:
         ShaderPreProcessResult PreProcess();
     private:
-        bool HandleDirective(ShaderPreProcessResult &result);
+        bool8 HandleDirective(ShaderPreProcessResult &result);
         void EndShaderStage(ShaderPreProcessResult &result, uint64 end_position);
         void AddDefine(const String &define);
 
@@ -31,12 +31,12 @@ namespace Hyperion::Rendering {
         void SkipBlankspace();
         void SkipToNextLine();
 
-        bool IsAtEnd();
-        bool IsAlpha(char c);
-        bool IsNumeric(char c);
-        bool IsWhitespace(char c);
+        bool8 IsAtEnd();
+        bool8 IsAlpha(char c);
+        bool8 IsNumeric(char c);
+        bool8 IsWhitespace(char c);
 
-        bool IsDirective(const char *directive, const char *start);
+        bool8 IsDirective(const char *directive, const char *start);
     private:
         static ShaderProperty CreateShaderProperty(const String &name, ShaderPropertyType type);
 
@@ -50,7 +50,7 @@ namespace Hyperion::Rendering {
         ShaderStageFlags m_current_shader_stage = ShaderStageFlags::Unknown;
         uint64 m_current_shader_type_directive_end;
 
-        bool m_property_light_mode_set = false;
+        bool8 m_property_light_mode_set = false;
     };
 
 }

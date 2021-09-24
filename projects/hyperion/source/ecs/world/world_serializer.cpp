@@ -25,7 +25,7 @@ namespace YAML {
             return node;
         }
 
-        static bool decode(const Node &node, Hyperion::Vector2 &vector) {
+        static bool8 decode(const Node &node, Hyperion::Vector2 &vector) {
             if (!node.IsMap() || node.size() != 2) {
                 return false;
             }
@@ -68,7 +68,7 @@ namespace YAML {
             return node;
         }
 
-        static bool decode(const Node &node, Hyperion::Vector3 &vector) {
+        static bool8 decode(const Node &node, Hyperion::Vector3 &vector) {
             if (!node.IsMap() || node.size() != 3) {
                 return false;
             }
@@ -119,7 +119,7 @@ namespace YAML {
             return node;
         }
 
-        static bool decode(const Node &node, Hyperion::Vector4 &vector) {
+        static bool8 decode(const Node &node, Hyperion::Vector4 &vector) {
             if (!node.IsMap() || node.size() != 4) {
                 return false;
             }
@@ -177,7 +177,7 @@ namespace YAML {
             return node;
         }
 
-        static bool decode(const Node &node, Hyperion::Quaternion &quaternion) {
+        static bool8 decode(const Node &node, Hyperion::Quaternion &quaternion) {
             if (!node.IsMap() || node.size() != 4) {
                 return false;
             }
@@ -235,7 +235,7 @@ namespace YAML {
             return node;
         }
 
-        static bool decode(const Node &node, Hyperion::Color &color) {
+        static bool8 decode(const Node &node, Hyperion::Color &color) {
             if (!node.IsMap() || node.size() != 4) {
                 return false;
             }

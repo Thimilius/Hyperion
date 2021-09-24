@@ -30,7 +30,7 @@ namespace Hyperion::Physics {
         delete m_collision_world;
     }
     //--------------------------------------------------------------
-    bool BulletPhysicsWorld::Raycast(Ray ray, RaycastResult &result, float32 distance) {
+    bool8 BulletPhysicsWorld::Raycast(Ray ray, RaycastResult &result, float32 distance) {
         HYP_PROFILE_SCOPE("BulletPhysicsWorld.Raycast");
 
         btVector3 from = btVector3(ray.origin.x, ray.origin.y, ray.origin.z);

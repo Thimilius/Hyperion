@@ -5,6 +5,7 @@
 #include "hyperion/ecs/system/systems/transform_systems.hpp"
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/ecs/component/components/core_components.hpp"
 #include "hyperion/ecs/world/world.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -18,7 +19,11 @@ namespace Hyperion {
         uint64 root_count = world->GetHierarchy()->GetRootCount();
         for (uint64 i = 0; i < root_count; i++) {
             HierarchyComponent *root_hierarchy = world->GetComponent<HierarchyComponent>(root);
-            UpdateBranch(world, root, world->GetComponent<HierarchyComponent>(root), nullptr);
+            bool8 is_not_disabled = world->GetComponent<DisabledComponent>(root) == nullptr;
+            bool8 is_not_static = world->GetComponent<StaticComponent>(root) == nullptr;
+            if (is_not_disabled && is_not_static) {
+                UpdateBranch(world, root, world->GetComponent<HierarchyComponent>(root), nullptr);
+            }
             root = root_hierarchy->next_sibling;
         }
     }
@@ -44,7 +49,11 @@ namespace Hyperion {
         EntityId child = branch_hierarchy->first_child;
         for (uint64 i = 0; i < branch_hierarchy->child_count; i++) {
             HierarchyComponent *child_hierarchy = world->GetComponent<HierarchyComponent>(child);
-            UpdateBranch(world, child, child_hierarchy, derived_transform);
+            bool8 is_not_disabled = world->GetComponent<DisabledComponent>(child) == nullptr;
+            bool8 is_not_static = world->GetComponent<StaticComponent>(child) == nullptr;
+            if (is_not_disabled && is_not_static) {
+                UpdateBranch(world, child, child_hierarchy, derived_transform);
+            }
             child = child_hierarchy->next_sibling;
         }
     }
@@ -53,7 +62,7 @@ namespace Hyperion {
     void LocalToWorldSystem::Run(World *world) {
         HYP_PROFILE_SCOPE("LocalToWorldSystem.Run");
 
-        auto view = world->GetView<DerivedTransformComponent, LocalToWorldComponent>();
+        auto view = world->GetView<DerivedTransformComponent, LocalToWorldComponent>(ExcludeComponents<DisabledComponent, StaticComponent>());
         for (EntityId entity : view) {
             DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(entity);
             LocalToWorldComponent *local_to_world = world->GetComponent<LocalToWorldComponent>(entity);

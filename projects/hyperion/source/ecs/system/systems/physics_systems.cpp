@@ -5,6 +5,7 @@
 #include "hyperion/ecs/system/systems/physics_systems.hpp"
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/ecs/component/components/core_components.hpp"
 #include "hyperion/ecs/component/components/transform_components.hpp"
 #include "hyperion/ecs/world/world.hpp"
 
@@ -15,14 +16,14 @@ namespace Hyperion::Physics {
     void UpdateColliderTransformSystem::Run(World *world) {
         HYP_PROFILE_SCOPE("UpdateColliderTransformSystem.Run");
 
-        auto box_collider_view = world->GetView<DerivedTransformComponent, BoxColliderComponent>();
+        auto box_collider_view = world->GetView<DerivedTransformComponent, BoxColliderComponent>(ExcludeComponents<DisabledComponent, StaticComponent>());
         for (EntityId entity : box_collider_view) {
             DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(entity);
             BoxColliderComponent *box_collider = world->GetComponent<BoxColliderComponent>(entity);
             world->GetPhysicsWorld()->UpdateBoxColliderTransform(world, entity, box_collider, derived_transform);
         }
 
-        auto sphere_collider_view = world->GetView<DerivedTransformComponent, SphereColliderComponent>();
+        auto sphere_collider_view = world->GetView<DerivedTransformComponent, SphereColliderComponent>(ExcludeComponents<DisabledComponent, StaticComponent>());
         for (EntityId entity : sphere_collider_view) {
             DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(entity);
             SphereColliderComponent *sphere_collider = world->GetComponent<SphereColliderComponent>(entity);

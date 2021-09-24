@@ -22,7 +22,7 @@ namespace Hyperion {
 
         virtual AssetType GetAssetType() const = 0;
     protected:
-        bool ValidateDataAccess() const;
+        bool8 ValidateDataAccess() const;
         void SetDirty();
     private:
         void ResetDirty();

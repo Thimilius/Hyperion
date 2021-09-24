@@ -54,7 +54,7 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    bool ShaderPreProcessor::HandleDirective(ShaderPreProcessResult &result) {
+    bool8 ShaderPreProcessor::HandleDirective(ShaderPreProcessResult &result) {
         uint64 directive_start_position = m_position;
         Advance();
 
@@ -199,27 +199,27 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    bool ShaderPreProcessor::IsAtEnd() {
+    bool8 ShaderPreProcessor::IsAtEnd() {
         return m_position >= m_source.size();
     }
 
     //--------------------------------------------------------------
-    bool ShaderPreProcessor::IsAlpha(char c) {
+    bool8 ShaderPreProcessor::IsAlpha(char c) {
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';;
     }
 
     //--------------------------------------------------------------
-    bool ShaderPreProcessor::IsNumeric(char c) {
+    bool8 ShaderPreProcessor::IsNumeric(char c) {
         return c >= '0' && c <= '9';
     }
 
     //--------------------------------------------------------------
-    bool ShaderPreProcessor::IsWhitespace(char c) {
+    bool8 ShaderPreProcessor::IsWhitespace(char c) {
         return c == ' ' || c == '\t' || c == '\r';
     }
 
     //--------------------------------------------------------------
-    bool ShaderPreProcessor::IsDirective(const char *directive, const char *start) {
+    bool8 ShaderPreProcessor::IsDirective(const char *directive, const char *start) {
         return std::memcmp(directive, (void *)start, std::strlen(directive)) == 0;
     }
 

@@ -27,7 +27,7 @@ namespace Hyperion {
         for (Asset *asset : AssetManager::s_assets_to_load) {
             AssetInfo info = asset->GetAssetInfo();
             AssetId asset_id = info.id;
-            bool can_move = info.data_access == AssetDataAccess::None;
+            bool8 can_move = info.data_access == AssetDataAccess::None;
 
             switch (asset->GetAssetType()) {
                 case AssetType::Texture: {

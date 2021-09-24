@@ -12,7 +12,7 @@
 #include <hyperion/core/app/time.hpp>
 #include <hyperion/core/io/file_system.hpp>
 #include <hyperion/ecs/component/components/components.hpp>
-#include <hyperion/ecs/component/components/utilities/camera_utilities.hpp>
+#include <hyperion/ecs/component/components/utilities/transform_utilities.hpp>
 #include <hyperion/ecs/world/world_manager.hpp>
 #include <hyperion/ecs/world/world_serializer.hpp>
 #include <hyperion/render/render_engine.hpp>
@@ -25,6 +25,7 @@ using namespace Hyperion;
 using namespace Hyperion::Rendering;
 
 //#define HYP_STRESS_TEST
+//#define HYP_STRESS_TEST_EXTREME
 
 //-------------------- Definition Namespace --------------------
 namespace Sandbox {
@@ -70,12 +71,15 @@ namespace Sandbox {
         float32 size = 100;
         for (float32 x = 0; x < size; x++) {
             for (float32 z = 0; z < size; z++) {
+#ifdef HYP_STRESS_TEST_EXTREME
                 Material *material = AssetManager::CreateMaterial(AssetManager::GetShaderPrimitive(ShaderPrimitive::Standard));
                 material->SetColor("m_color", Color(Random::Get(), Random::Get(), Random::Get(), 1.0f));
-
+#endif
                 EntityId entity = g_world->CreateEntity(EntityPrimitive::Cube);
                 g_world->GetComponent<LocalTransformComponent>(entity)->position = Vector3(x * 2.0f, 0.0f, -z * 2.0f);
+#ifdef HYP_STRESS_TEST_EXTREME
                 g_world->GetComponent<RenderMeshComponent>(entity)->material = material;
+#endif
                 g_world->GetHierarchy()->SetParent(entity, g_parent);
                 g_world->RemoveComponent<Physics::BoxColliderComponent>(entity);
             }
@@ -125,8 +129,10 @@ namespace Sandbox {
         for (EntityId entity : view) {
             LocalTransformComponent *transform = g_world->GetComponent<LocalTransformComponent>(entity);
             transform->rotation = rotation;
+#ifdef HYP_STRESS_TEST_EXTREME
             RenderMeshComponent *render_mesh = g_world->GetComponent<RenderMeshComponent>(entity);
             render_mesh->material->SetColor("m_color", Color(Random::Get(), Random::Get(), Random::Get(), 1.0f));
+#endif
         }
 #endif
         UpdateTitle();

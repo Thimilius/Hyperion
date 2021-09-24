@@ -94,10 +94,10 @@ namespace Hyperion {
             return m_function(m_instance, std::forward<Args>(args)...);
         }
 
-        explicit operator bool() const { return !(m_function == nullptr); }
+        explicit operator bool8() const { return !(m_function == nullptr); }
 
-        bool operator==(const Delegate<Ret(Args...)> &other) const { return m_function == other.m_function && m_instance == other.m_instance; }
-        bool operator!=(const Delegate<Ret(Args...)> &other) const { return !(*this == other); }
+        bool8 operator==(const Delegate<Ret(Args...)> &other) const { return m_function == other.m_function && m_instance == other.m_instance; }
+        bool8 operator!=(const Delegate<Ret(Args...)> &other) const { return !(*this == other); }
     private:
         FunctionType *m_function;
         const void *m_instance;

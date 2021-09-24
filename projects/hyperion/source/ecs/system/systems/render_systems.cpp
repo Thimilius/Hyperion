@@ -6,6 +6,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset_manager.hpp"
+#include "hyperion/ecs/component/components/core_components.hpp"
 #include "hyperion/ecs/component/components/render_components.hpp"
 #include "hyperion/ecs/component/components/transform_components.hpp"
 #include "hyperion/ecs/component/components/utilities/camera_utilities.hpp"
@@ -35,7 +36,7 @@ namespace Hyperion::Rendering {
 
         RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
 
-        auto view = world->GetView<DerivedTransformComponent, CameraComponent>();
+        auto view = world->GetView<DerivedTransformComponent, CameraComponent>(ExcludeComponents<DisabledComponent>());
         for (EntityId entity : view) {
             DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(entity);
             CameraComponent *camera = world->GetComponent<CameraComponent>(entity);
@@ -70,7 +71,7 @@ namespace Hyperion::Rendering {
 
         RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
 
-        auto directional_view = world->GetView<DerivedTransformComponent, DirectionalLightComponent>();
+        auto directional_view = world->GetView<DerivedTransformComponent, DirectionalLightComponent>(ExcludeComponents<DisabledComponent>());
         for (EntityId entity : directional_view) {
             DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(entity);
             DirectionalLightComponent *directional_light = world->GetComponent<DirectionalLightComponent>(entity);
@@ -82,7 +83,7 @@ namespace Hyperion::Rendering {
             render_frame_context_light.direction = TransformUtilities::GetForward(derived_transform);
         }
 
-        auto point_view = world->GetView<DerivedTransformComponent, PointLightComponent>();
+        auto point_view = world->GetView<DerivedTransformComponent, PointLightComponent>(ExcludeComponents<DisabledComponent>());
         for (EntityId entity : point_view) {
             DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(entity);
             PointLightComponent *point_light = world->GetComponent<PointLightComponent>(entity);
@@ -95,7 +96,7 @@ namespace Hyperion::Rendering {
             render_frame_context_light.range = point_light->range;
         }
 
-        auto spot_view = world->GetView<DerivedTransformComponent, SpotLightComponent>();
+        auto spot_view = world->GetView<DerivedTransformComponent, SpotLightComponent>(ExcludeComponents<DisabledComponent>());
         for (EntityId entity : spot_view) {
             DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(entity);
             SpotLightComponent *spot_light = world->GetComponent<SpotLightComponent>(entity);
@@ -116,7 +117,7 @@ namespace Hyperion::Rendering {
 
         RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
 
-        auto view = world->GetView<LocalToWorldComponent, SpriteComponent>();
+        auto view = world->GetView<LocalToWorldComponent, SpriteComponent>(ExcludeComponents<DisabledComponent>());
         for (EntityId entity : view) {
             LocalToWorldComponent *local_to_world = world->GetComponent<LocalToWorldComponent>(entity);
             SpriteComponent *sprite = world->GetComponent<SpriteComponent>(entity);
@@ -134,7 +135,7 @@ namespace Hyperion::Rendering {
 
         RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
 
-        auto view = world->GetView<LocalToWorldComponent, RenderMeshComponent>();
+        auto view = world->GetView<LocalToWorldComponent, RenderMeshComponent>(ExcludeComponents<DisabledComponent>());
         for (EntityId entity : view) {
             LocalToWorldComponent *local_to_world = world->GetComponent<LocalToWorldComponent>(entity);
             RenderMeshComponent *render_mesh = world->GetComponent<RenderMeshComponent>(entity);

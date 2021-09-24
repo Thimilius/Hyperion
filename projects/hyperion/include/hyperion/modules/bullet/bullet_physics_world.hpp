@@ -21,7 +21,7 @@ namespace Hyperion::Physics {
         BulletPhysicsWorld(World *world, BulletPhysicsDriver *driver);
         ~BulletPhysicsWorld();
 
-        bool Raycast(Ray ray, RaycastResult &result, float32 distance) override;
+        bool8 Raycast(Ray ray, RaycastResult &result, float32 distance) override;
 
         void UpdateBoxCollider(World *world, EntityId entity, BoxColliderComponent *box_collider, DerivedTransformComponent *derived_transform) override;
         void UpdateBoxColliderTransform(World *world, EntityId entity, BoxColliderComponent *box_collider, DerivedTransformComponent *derived_transform) override;

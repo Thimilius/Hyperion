@@ -18,7 +18,7 @@ namespace Hyperion::Physics {
     public:
         virtual ~IPhysicsWorld() = default;
     public:
-        virtual bool Raycast(Ray ray, RaycastResult &result, float32 distance = 1000.0f) = 0;
+        virtual bool8 Raycast(Ray ray, RaycastResult &result, float32 distance = 1000.0f) = 0;
 
         virtual void UpdateBoxCollider(World *world, EntityId entity, BoxColliderComponent *box_collider, DerivedTransformComponent *derived_transform) = 0;
         virtual void UpdateBoxColliderTransform(World *world, EntityId entity, BoxColliderComponent *box_collider, DerivedTransformComponent *derived_transform) = 0;
@@ -28,7 +28,7 @@ namespace Hyperion::Physics {
 
     class NullPhysicsWorld : public IPhysicsWorld {
     public:
-        virtual bool Raycast(Ray ray, RaycastResult &result, float32 distance = 1000.0f) { return false; }
+        virtual bool8 Raycast(Ray ray, RaycastResult &result, float32 distance = 1000.0f) { return false; }
 
         virtual void UpdateBoxCollider(World *world, EntityId entity, BoxColliderComponent *box_collider, DerivedTransformComponent *derived_transform) { }
         virtual void UpdateBoxColliderTransform(World *world, EntityId entity, BoxColliderComponent *box_collider, DerivedTransformComponent *derived_transform) { }
