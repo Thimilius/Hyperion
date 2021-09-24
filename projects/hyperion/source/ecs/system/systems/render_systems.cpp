@@ -19,6 +19,20 @@
 namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
+    void RenderBoundsSystem::Run(World *world) {
+        HYP_PROFILE_SCOPE("RenderBoundsSystem.Run");
+
+        auto view = world->GetView<LocalToWorldComponent, RenderBoundsComponent>(ExcludeComponents<DisabledComponent, StaticComponent>());
+        for (EntityId entity : view) {
+            LocalToWorldComponent *local_to_world = world->GetComponent<LocalToWorldComponent>(entity);
+            RenderBoundsComponent *render_bounds = world->GetComponent<RenderBoundsComponent>(entity);
+
+            BoundingBox world_bounds= BoundingBox::Transform(local_to_world->local_to_world, render_bounds->bounds);
+            render_bounds->bounds = world_bounds;
+        }
+    }
+
+    //--------------------------------------------------------------
     void EnvironmentSystem::Run(World *world) {
         HYP_PROFILE_SCOPE("EnvironmentSystem.Run");
 

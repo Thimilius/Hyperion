@@ -96,6 +96,47 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    BoundingBox BoundingBox::Transform(const Matrix4x4 &local_to_world, const BoundingBox &local) {
+        Vector3 positions[8] = {
+            local_to_world * Vector3(local.min.x, local.min.y, local.min.z),
+            local_to_world * Vector3(local.min.x, local.min.y, local.max.z),
+            local_to_world * Vector3(local.min.x, local.max.y, local.min.z),
+            local_to_world * Vector3(local.min.x, local.max.y, local.max.z),
+            local_to_world * Vector3(local.max.x, local.min.y, local.min.z),
+            local_to_world * Vector3(local.max.x, local.min.y, local.max.z),
+            local_to_world * Vector3(local.max.x, local.max.y, local.min.z),
+            local_to_world * Vector3(local.max.x, local.max.y, local.max.z),
+        };
+        
+        Vector3 min = Vector3(FLT_MAX, FLT_MAX, FLT_MAX);
+        Vector3 max = Vector3(FLT_MIN, FLT_MIN, FLT_MIN);
+        for (uint32 i = 0; i < 8; i++) {
+            Vector3 position = positions[i];
+
+            if (position.x < min.x) {
+                min.x = position.x;
+            }
+            if (position.y < min.y) {
+                min.y = position.y;
+            }
+            if (position.z < min.z) {
+                min.z = position.z;
+            }
+            if (position.x > max.x) {
+                max.x = position.x;
+            }
+            if (position.y > max.y) {
+                max.y = position.y;
+            }
+            if (position.z > max.z) {
+                max.z = position.z;
+            }
+        }
+
+        return BoundingBox(min, max);
+    }
+
+    //--------------------------------------------------------------
     bool8 BoundingBox::operator==(const BoundingBox &other) const {
         return min == other.min && max != other.max;
     }

@@ -5,6 +5,7 @@
 #include "hyperion/assets/mesh.hpp"
 #include "hyperion/assets/texture.hpp"
 #include "hyperion/core/color.hpp"
+#include "hyperion/core/math/bounding_box.hpp"
 #include "hyperion/ecs/component/component.hpp"
 #include "hyperion/render/types/render_types_camera.hpp"
 #include "hyperion/render/types/render_types_general.hpp"
@@ -67,6 +68,10 @@ namespace Hyperion::Rendering {
     struct SpotLightComponent : public LightComponent {
         float32 inner_spot_radius = 1.0f;
         float32 outer_spot_radius = 1.0f;
+    };
+
+    struct RenderBoundsComponent : public IComponent {
+        BoundingBox bounds;
     };
 
 }

@@ -155,6 +155,8 @@ namespace Hyperion {
                     default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
                 }
 
+                AddComponent<Rendering::RenderBoundsComponent>(id)->bounds = render_mesh->mesh->GetBounds();
+
                 break;
             }
             case EntityPrimitive::Sprite: AddComponent<Rendering::SpriteComponent>(id); break;

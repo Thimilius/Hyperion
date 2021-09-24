@@ -86,6 +86,8 @@ namespace Hyperion {
             .Base<IComponent>();
         MetaRegistry::Reflect<Rendering::SpotLightComponent>("SpotLightComponent")
             .Base<IComponent>();
+        MetaRegistry::Reflect<Rendering::RenderBoundsComponent>("RenderBoundsComponent")
+            .Base<IComponent>();
     }
 
     //--------------------------------------------------------------
@@ -131,6 +133,9 @@ namespace Hyperion {
             // Rendering
             {
                 HYP_PROFILE_SCOPE("WorldManager.Update.Rendering");
+
+                Rendering::RenderBoundsSystem render_bounds_system;
+                render_bounds_system.Run(s_active_world);
 
                 Rendering::EnvironmentSystem environment_system;
                 environment_system.Run(s_active_world);
