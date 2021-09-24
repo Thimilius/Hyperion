@@ -44,10 +44,11 @@ namespace Hyperion::Rendering {
     void RenderFrame::DrawGizmos() {
         RenderFrameCommandDrawGizmos draw_gizmos;
         draw_gizmos.shader_id = AssetManager::GetShaderPrimitive(ShaderPrimitive::Gizmo)->GetAssetInfo().id;
-        draw_gizmos.grid.should_draw = true;
+        draw_gizmos.grid.should_draw = RenderGizmos::GetShouldDrawGrid();
         draw_gizmos.grid.local_to_world = Matrix4x4::Identity();
         draw_gizmos.grid.type = RenderGizmos::GetGridType();
         draw_gizmos.grid.mesh_id = RenderGizmos::GetGridMesh()->GetAssetInfo().id;
+        draw_gizmos.should_draw_all_bounds = RenderGizmos::GetShouldDrawAllBounds();
 
         RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::DrawGizmos);
         command.data = draw_gizmos;

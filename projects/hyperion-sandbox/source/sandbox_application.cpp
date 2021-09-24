@@ -24,7 +24,7 @@
 using namespace Hyperion;
 using namespace Hyperion::Rendering;
 
-#define HYP_STRESS_TEST
+//#define HYP_STRESS_TEST
 //#define HYP_STRESS_TEST_EXTREME
 
 //-------------------- Definition Namespace --------------------
@@ -114,6 +114,12 @@ namespace Sandbox {
                 Rendering::RenderEngine::GetVSyncMode() == Rendering::VSyncMode::DontSync ?
                 Rendering::VSyncMode::EveryVBlank :
                 Rendering::VSyncMode::DontSync);
+        }
+        if (Input::IsKeyDown(KeyCode::F3)) {
+            Rendering::RenderGizmos::SetShouldDrawGrid(!Rendering::RenderGizmos::GetShouldDrawGrid());
+        }
+        if (Input::IsKeyDown(KeyCode::F4)) {
+            Rendering::RenderGizmos::SetShouldDrawAllBounds(!Rendering::RenderGizmos::GetShouldDrawAllBounds());
         }
 
         g_camera_controller->Update(g_world, delta_time);

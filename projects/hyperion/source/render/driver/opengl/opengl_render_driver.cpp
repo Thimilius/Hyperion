@@ -43,8 +43,8 @@ namespace Hyperion::Rendering {
         byte *data = pixels.GetData();
 
         for (uint32 row = 0; row < height / 2; row++) {
-            uint8 *source = data + (row * stride);
-            uint8 *destination = data + (((height - 1) - row) * stride);
+            byte *source = data + (row * stride);
+            byte *destination = data + (((height - 1) - row) * stride);
 
             std::memcpy(temp_buffer_data, source, stride);
             std::memcpy(source, destination, stride);
@@ -268,10 +268,11 @@ namespace Hyperion::Rendering {
                     const OpenGLShader &opengl_shader = m_opengl_shaders.Get(draw_gizmos.shader_id);
                     glUseProgram(opengl_shader.program);
 
+                    GLint model_location = glGetUniformLocation(opengl_shader.program, "u_model");
+
                     if (draw_gizmos.grid.should_draw) {
                         glEnable(GL_BLEND);
 
-                        GLint model_location = glGetUniformLocation(opengl_shader.program, "u_model");
                         glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, draw_gizmos.grid.local_to_world.elements);
 
                         const OpenGLMesh &opengl_mesh = m_opengl_meshes.Get(draw_gizmos.grid.mesh_id);
@@ -281,6 +282,14 @@ namespace Hyperion::Rendering {
                         DrawSubMesh(sub_mesh);
 
                         glDisable(GL_BLEND);
+                    }
+
+                    if (draw_gizmos.should_draw_all_bounds) {
+                        glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, Matrix4x4::Identity().elements);
+
+                        for (const RenderFrameContextObjectMesh &object : render_frame_context.GetMeshObjects()) {
+                            DrawRenderBounds(object.bounds);
+                        }
                     }
 
                     break;
@@ -544,6 +553,77 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
+    void OpenGLRenderDriver::DrawRenderBounds(const BoundingBox &bounds) {
+        Color color = Color::Red();
+
+        struct ImmediateVertex {
+            Vector3 position;
+            Color color;
+        };
+
+        Array<ImmediateVertex> data;
+        data.Resize(8);
+
+        data[0].position = Vector3(bounds.min.x, bounds.min.y, bounds.min.z);
+        data[0].color = color;
+        data[1].position = Vector3(bounds.min.x, bounds.min.y, bounds.max.z);
+        data[1].color = color;
+        data[2].position = Vector3(bounds.min.x, bounds.max.y, bounds.min.z);
+        data[2].color = color;
+        data[3].position = Vector3(bounds.min.x, bounds.max.y, bounds.max.z);
+        data[3].color = color;
+        data[4].position = Vector3(bounds.max.x, bounds.min.y, bounds.min.z);
+        data[4].color = color;
+        data[5].position = Vector3(bounds.max.x, bounds.min.y, bounds.max.z);
+        data[5].color = color;
+        data[6].position = Vector3(bounds.max.x, bounds.max.y, bounds.min.z);
+        data[6].color = color;
+        data[7].position = Vector3(bounds.max.x, bounds.max.y, bounds.max.z);
+        data[7].color = color;
+
+        if (m_state.render_bounds_vertex_buffer == UINT32_MAX) {
+            glCreateBuffers(1, &m_state.render_bounds_vertex_buffer);
+            glNamedBufferData(m_state.render_bounds_vertex_buffer, data.GetLength() * sizeof(ImmediateVertex), data.GetData(), GL_DYNAMIC_DRAW);
+
+            Array<uint32> indices = {
+                0, 1,
+                1, 5,
+                5, 4,
+                4, 0,
+
+                0, 2,
+                1, 3,
+                5, 7,
+                4, 6,
+
+                2, 3,
+                3, 7,
+                7, 6,
+                6, 2,
+            };
+
+            glCreateBuffers(1, &m_state.render_bounds_index_buffer);
+            glNamedBufferData(m_state.render_bounds_index_buffer, indices.GetLength() * sizeof(uint32), indices.GetData(), GL_STATIC_DRAW);
+
+            glCreateVertexArrays(1, &m_state.render_bounds_vertex_array);
+            glVertexArrayVertexBuffer(m_state.render_bounds_vertex_array, 0, m_state.render_bounds_vertex_buffer, 0, sizeof(ImmediateVertex));
+            glVertexArrayElementBuffer(m_state.render_bounds_vertex_array, m_state.render_bounds_index_buffer);
+
+            glEnableVertexArrayAttrib(m_state.render_bounds_vertex_array, 0);
+            glVertexArrayAttribFormat(m_state.render_bounds_vertex_array, 0, 3, GL_FLOAT, false, 0);
+            glVertexArrayAttribBinding(m_state.render_bounds_vertex_array, 0, 0);
+            glEnableVertexArrayAttrib(m_state.render_bounds_vertex_array, 3);
+            glVertexArrayAttribFormat(m_state.render_bounds_vertex_array, 3, 4, GL_FLOAT, false, sizeof(Vector3));
+            glVertexArrayAttribBinding(m_state.render_bounds_vertex_array, 3, 0);
+        } else {
+            glNamedBufferSubData(m_state.render_bounds_vertex_buffer, 0, data.GetLength() * sizeof(ImmediateVertex), data.GetData());
+        }
+
+        glBindVertexArray(m_state.render_bounds_vertex_array);
+        glDrawElementsBaseVertex(GL_LINES, 24, GL_UNSIGNED_INT, 0, 0);
+    }
+
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::UnloadAssets(RenderFrameContext &render_frame_context) {
         HYP_PROFILE_SCOPE("OpenGLRenderDriver.UnloadAssets");
     }
@@ -647,7 +727,7 @@ namespace Hyperion::Rendering {
         bool8 has_texture0 = data.texture0.GetLength() > 0;
 
         uint32 vertex_count = static_cast<uint32>(data.positions.GetLength());
-        Array<uint8> vertices(vertex_count * vertex_format.stride);
+        Array<byte> vertices(vertex_count * vertex_format.stride);
         for (uint32 i = 0; i < vertex_count; i++) {
             uint32 index = i * vertex_format.stride;
 

@@ -42,6 +42,8 @@ namespace Hyperion::Rendering {
             RenderGizmoGridType type;
             AssetId mesh_id;
         } grid;
+
+        bool8 should_draw_all_bounds;
     };
 
     struct RenderFrameCommand {

@@ -95,6 +95,10 @@ namespace Hyperion::Rendering {
         GLuint camera_uniform_buffer;
 
         GLuint lighting_uniform_buffer;
+
+        GLuint render_bounds_vertex_buffer;
+        GLuint render_bounds_index_buffer;
+        GLuint render_bounds_vertex_array;
     };
 
     class OpenGLRenderDriver final : public IRenderDriver {
@@ -113,6 +117,7 @@ namespace Hyperion::Rendering {
         void CopyFrameLightToOpenGLLight(const RenderFrameContextLight &frame_light, OpenGLLight &opengl_light);
         void UseMaterial(const OpenGLShader &opengl_shader, const OpenGLMaterial &opengl_material);
         void DrawSubMesh(const SubMesh &sub_mesh);
+        void DrawRenderBounds(const BoundingBox &bounds);
 
         void LoadAssets(RenderFrameContext &render_frame_context);
         void LoadTexture2D(RenderFrameContextAssetTexture2D &texture_2d);
