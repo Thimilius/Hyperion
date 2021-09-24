@@ -21,7 +21,6 @@ namespace Hyperion {
         bool8 Intersects(Ray ray, float32 &hit_distance) const;
         bool8 Contains(Vector3 point) const;
 
-
         String ToString() const;
 
         static BoundingBox Transform(const Matrix4x4 &local_to_world, const BoundingBox &local);

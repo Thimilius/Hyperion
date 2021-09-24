@@ -111,9 +111,9 @@ namespace Hyperion::Rendering {
         inline RenderStats GetStats() const override { return m_stats; }
     private:
         void ExecuteRenderFrameCommands(RenderFrame *render_frame);
-        void GroupObjects(const RenderFrameContext &render_frame_context, LayerMask visibility_mask);
+        void GroupObjects(RenderFrame *render_frame, CullingResults culling_results, DrawingParametes drawing_parameters);
         void SetupPerObjectLightIndices(const RenderFrameContext &render_frame_context, GroupedObject &grouped_object, Vector3 object_position);
-        void RenderCamera(const RenderFrameContextEnvironment &environment, const Array<RenderFrameContextLight> &lights, const RenderFrameContextCamera &camera);
+        void RenderCamera(const RenderFrameContextEnvironment &environment, const Array<RenderFrameContextLight> &lights, const RenderFrameContextCamera &camera, DrawingParametes drawing_parameters);
         void CopyFrameLightToOpenGLLight(const RenderFrameContextLight &frame_light, OpenGLLight &opengl_light);
         void UseMaterial(const OpenGLShader &opengl_shader, const OpenGLMaterial &opengl_material);
         void DrawSubMesh(const SubMesh &sub_mesh);

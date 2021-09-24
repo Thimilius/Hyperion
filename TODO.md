@@ -3,6 +3,7 @@
 ## App
 - Multiple windows
 - Internal event queue
+- Time Main Thread and Render Thread individually
 
 ## Assets
 - Textures
@@ -32,7 +33,7 @@
 
 ## Rendering
 - Rename RenderMeshComponent to MeshComponent
-- Simple frustum culling
+- Frustum culling for lights
 - Textures
 - Framebuffers
 - Lighting

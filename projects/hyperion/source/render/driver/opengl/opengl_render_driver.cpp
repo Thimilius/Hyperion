@@ -253,10 +253,12 @@ namespace Hyperion::Rendering {
                 case RenderFrameCommandType::DrawMeshes: {
                     HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawMeshes");
 
+                    const RenderFrameCommandDrawMeshes &draw_meshes = std::get<RenderFrameCommandDrawMeshes>(frame_command.data);
+
                     const RenderFrameContextCamera &render_frame_context_camera = render_frame_context.GetCameras()[m_state.camera_index];
 
-                    GroupObjects(render_frame_context, render_frame_context_camera.visibility_mask);
-                    RenderCamera(render_frame_context.GetEnvironment(), render_frame_context.GetLights(), render_frame_context_camera);
+                    GroupObjects(render_frame, draw_meshes.culling_results, draw_meshes.drawing_parameters);
+                    RenderCamera(render_frame_context.GetEnvironment(), render_frame_context.GetLights(), render_frame_context_camera, draw_meshes.drawing_parameters);
 
                     break;
                 }
@@ -300,14 +302,19 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void OpenGLRenderDriver::GroupObjects(const RenderFrameContext &render_frame_context, LayerMask visibility_mask) {
+    void OpenGLRenderDriver::GroupObjects(RenderFrame *render_frame, CullingResults culling_results, DrawingParametes drawing_parameters) {
         HYP_PROFILE_CATEGORY("OpenGLRenderDriver.GroupObjects", ProfileCategory::Rendering);
 
         Array<GroupedShader> grouped_shaders;
 
+        const RenderFrameContext &render_frame_context = render_frame->GetContext();
         const Array<RenderFrameContextObjectMesh> &mesh_objects = render_frame_context.GetMeshObjects();
-        for (const RenderFrameContextObjectMesh &render_frame_context_object_mesh : mesh_objects) {
-            if ((render_frame_context_object_mesh.layer_mask & visibility_mask) != render_frame_context_object_mesh.layer_mask) {
+        const Array<uint32> &visible_objects = render_frame->GetCullingStorage(culling_results.index).indices;
+
+        for (uint32 index : visible_objects) {
+            const RenderFrameContextObjectMesh &render_frame_context_object_mesh = mesh_objects[index];
+
+            if ((render_frame_context_object_mesh.layer_mask & drawing_parameters.filter_mask) != render_frame_context_object_mesh.layer_mask) {
                 continue;
             }
 
@@ -355,8 +362,12 @@ namespace Hyperion::Rendering {
             GroupedObject grouped_object;
             grouped_object.local_to_world = render_frame_context_object_mesh.local_to_world;
             grouped_object.sub_mesh_index = render_frame_context_object_mesh.sub_mesh_index;
-            // TODO: The setup of light indices should somehow be controllable by the render pipeline.
-            SetupPerObjectLightIndices(render_frame_context, grouped_object, render_frame_context_object_mesh.position);
+
+            // TODO: Can we make this check here at compile time and divert the runtime check to the call site of GroupObjects?
+            // This would save this branch check on every iteration.
+            if ((drawing_parameters.per_object_data & PerObjectData::LightIndices) == PerObjectData::LightIndices) {
+                SetupPerObjectLightIndices(render_frame_context, grouped_object, render_frame_context_object_mesh.position);
+            }
 
             grouped_mesh->objects.Add(grouped_object);
         }
@@ -383,6 +394,8 @@ namespace Hyperion::Rendering {
         uint32 light_count = 0;
         uint32 light_index = 0;
         float32 smallest_distances[4] = { FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX };
+
+        // TODO: Add culling for lights.
         for (const RenderFrameContextLight &light : render_frame_context.GetLights()) {
             if (light.type == LightType::Point && light_index < 128) {
                 float32 distance_to_light = (light.position - object_position).SqrMagnitude();
@@ -426,7 +439,7 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void OpenGLRenderDriver::RenderCamera(const RenderFrameContextEnvironment &environment, const Array<RenderFrameContextLight> &lights, const RenderFrameContextCamera &camera) {
+    void OpenGLRenderDriver::RenderCamera(const RenderFrameContextEnvironment &environment, const Array<RenderFrameContextLight> &lights, const RenderFrameContextCamera &camera, DrawingParametes drawing_parameters) {
         HYP_PROFILE_CATEGORY("OpenGLRenderDriver.RenderCamera", ProfileCategory::Rendering);
 
         for (const GroupedShader &grouped_shader : m_grouped_shaders) {
@@ -480,8 +493,10 @@ namespace Hyperion::Rendering {
                         HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameMeshObject");
 
                         glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, object.local_to_world.elements);
-                        glProgramUniform1ui(opengl_shader.program, light_count_location, object.light_count);
-                        glProgramUniform4uiv(opengl_shader.program, light_indices_location, 1, object.light_indices);
+                        if ((drawing_parameters.per_object_data & PerObjectData::LightIndices) == PerObjectData::LightIndices) {
+                            glProgramUniform1ui(opengl_shader.program, light_count_location, object.light_count);
+                            glProgramUniform4uiv(opengl_shader.program, light_indices_location, 1, object.light_indices);
+                        }
 
                         SubMesh sub_mesh = opengl_mesh.sub_meshes[object.sub_mesh_index];
                         DrawSubMesh(sub_mesh);

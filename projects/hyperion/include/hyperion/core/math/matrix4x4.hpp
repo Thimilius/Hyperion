@@ -15,7 +15,7 @@ namespace Hyperion {
     // [  1  5  9 13 ]
     // [  2  6 10 14 ]
     // [  3  7 11 15 ]
-    // Furthermore matricies are always right-handed with the y-axis as up.
+    // Furthermore matrices are always right-handed with the y-axis as up.
 
     struct Matrix4x4 {
         union {

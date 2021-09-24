@@ -29,8 +29,25 @@ namespace Hyperion::Rendering {
         RenderFrameCommandBuffer command_buffer;
     };
 
-    struct RenderFrameCommandDrawMeshes {
+    struct CullingResults {
+        uint32 index;
+    };
 
+    enum PerObjectData {
+        None,
+
+        LightIndices
+    };
+    HYP_CREATE_ENUM_FLAG_OPERATORS(PerObjectData);
+
+    struct DrawingParametes {
+        LayerMask filter_mask = LayerMask::Everything;
+        PerObjectData per_object_data = PerObjectData::None;
+    };
+
+    struct RenderFrameCommandDrawMeshes {
+        CullingResults culling_results;
+        DrawingParametes drawing_parameters;
     };
 
     struct RenderFrameCommandDrawGizmos {

@@ -1,7 +1,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/common.hpp"
+#include "hyperion/core/math/matrix4x4.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
@@ -56,5 +56,10 @@ namespace Hyperion::Rendering {
         All = Color | Depth | Stencil
     };
     HYP_CREATE_ENUM_FLAG_OPERATORS(ClearFlags);
+
+    struct CullingParameters {
+        Matrix4x4 matrix;
+        LayerMask mask;
+    };
 
 }
