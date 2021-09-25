@@ -645,22 +645,22 @@ namespace Hyperion {
 
         template<typename Owner, typename Attribute, typename... Other>
         Internal::MetaAttributeNode *Attributes(Attribute &&attribute, Other &&... other) {
-            static std::remove_cv_t<std::remove_reference_t<Attribute>> attribute{ };
+            static std::remove_cv_t<std::remove_reference_t<Attribute>> attrib{ };
 
             static Internal::MetaAttributeNode node{
                 nullptr,
                 []() -> Any {
-                    return std::as_const(std::get<0>(attribute));
+                    return std::as_const(std::get<0>(attrib));
                 },
                 []() -> Any {
-                    return std::as_const(std::get<1>(attribute));
+                    return std::as_const(std::get<1>(attrib));
                 },
-                []() -> Hyperion::attribute {
+                []() -> Hyperion::MetaAttribute {
                     return &node;
                 }
             };
 
-            attribute = std::forward<Attribute>(attribute);
+            attrib = std::forward<Attribute>(attribute);
             node.next = Attributes<Owner>(std::forward<Other>(other)...);
             assert(!Duplicate(Any{ std::get<0>(attribute) }, node.next));
             return &node;

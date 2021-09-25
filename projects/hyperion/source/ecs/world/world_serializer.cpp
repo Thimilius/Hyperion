@@ -286,6 +286,25 @@ namespace YAML {
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    Array<MetaProperty> GetPropertiesToSerialize(MetaType type) {
+        Array<MetaProperty> properties;
+        type.ForEachProperty([&properties](MetaProperty property) {
+            MetaAttribute property_serialize_attribute = property.GetAttribute(PropertyAttribute::Serialize);
+            if (property_serialize_attribute) {
+                Any property_attribute_value = property_serialize_attribute.GetValue();
+                if (property_attribute_value.GetType().GetPrimitiveType() == MetaPrimitiveType::Bool) {
+                    bool8 should_serialize = property_attribute_value.Cast<bool8>();
+                    if (!should_serialize) {
+                        return;
+                    }
+                }
+            }
+
+            properties.Add(property);
+        });
+        return properties;
+    }
+
     //--------------------------------------------------------------
     String WorldSerializer::Serialize(World *world) {
         HYP_PROFILE_SCOPE("WorldSerializer.Serialize");
@@ -303,127 +322,84 @@ namespace Hyperion {
         }
         yaml_emitter << YAML::EndMap;
 
+        const Array<ComponentInfo> &component_infos = ComponentRegistry::GetComponentInfos();
+
         yaml_emitter << YAML::Key << "entities" << YAML::Value << YAML::BeginSeq;
         auto view = world->GetView();
         for (EntityId entity : view) {
             yaml_emitter << YAML::BeginMap;
             yaml_emitter << YAML::Key << "Entity" << YAML::Value << world->GetGuid(entity).ToString();
 
-            TagComponent *tag = world->GetComponent<TagComponent>(entity);
-            if (tag != nullptr) {
-                yaml_emitter << YAML::Key << "Tag";
-                yaml_emitter << YAML::BeginMap;
-                {
-                    yaml_emitter << YAML::Key << "tag" << YAML::Value << tag->tag;
-                }
-                yaml_emitter << YAML::EndMap;
-            }
+            for (const ComponentInfo &component_info : component_infos) {
+                MetaType component_type = component_info.type;
+                void *component = world->GetComponent(component_info.id, entity);
+                MetaHandle component_handle = MetaHandle(component_type, component);
+                if (component) {
+                    yaml_emitter << YAML::Key << component_type.GetName();
 
-            LocalTransformComponent *transform = world->GetComponent<LocalTransformComponent>(entity);
-            if (transform != nullptr) {
-                yaml_emitter << YAML::Key << "LocalTransform";
-                yaml_emitter << YAML::BeginMap;
-                {
-                    yaml_emitter << YAML::Key << "position" << YAML::Value << transform->position;
-                    yaml_emitter << YAML::Key << "rotation" << YAML::Value << transform->rotation;
-                    yaml_emitter << YAML::Key << "scale" << YAML::Value << transform->scale;
-                }
-                yaml_emitter << YAML::EndMap;
-            }
-
-            DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(entity);
-            if (derived_transform != nullptr) {
-                yaml_emitter << YAML::Key << "DerivedTransform" << YAML::Null;
-            }
-
-            LocalToWorldComponent *local_to_world = world->GetComponent<LocalToWorldComponent>(entity);
-            if (local_to_world != nullptr) {
-                yaml_emitter << YAML::Key << "LocalToWorld" << YAML::Null;
-            }
-
-            HierarchyComponent *hierarchy = world->GetComponent<HierarchyComponent>(entity);
-            if (hierarchy != nullptr) {
-                yaml_emitter << YAML::Key << "Hierarchy";
-                yaml_emitter << YAML::BeginMap;
-                {
-                    if (hierarchy->parent == Entity::EMPTY) {
-                        yaml_emitter << YAML::Key << "parent" << YAML::Null;
-                    } else {
-                        yaml_emitter << YAML::Key << "parent" << world->GetGuid(hierarchy->parent).ToString();
+                    Array<MetaProperty> properties = GetPropertiesToSerialize(component_type);
+                    if (properties.IsEmpty()) {
+                        yaml_emitter << YAML::Null;
+                        continue;
                     }
 
-                    if (hierarchy->previous_sibling == Entity::EMPTY) {
-                        yaml_emitter << YAML::Key << "previous_sibling" << YAML::Null;
-                    } else {
-                        yaml_emitter << YAML::Key << "previous_sibling" << world->GetGuid(hierarchy->previous_sibling).ToString();
-                    }
-                    if (hierarchy->next_sibling == Entity::EMPTY) {
-                        yaml_emitter << YAML::Key << "next_sibling" << YAML::Null;
-                    } else {
-                        yaml_emitter << YAML::Key << "next_sibling" << world->GetGuid(hierarchy->next_sibling).ToString();
-                    }
-
-                    yaml_emitter << YAML::Key << "child_count" << hierarchy->child_count;
-                    if (hierarchy->first_child == Entity::EMPTY) {
-                        yaml_emitter << YAML::Key << "first_child" << YAML::Null;
-                    } else {
-                        yaml_emitter << YAML::Key << "first_child" << world->GetGuid(hierarchy->first_child).ToString();
-                    }
-                    if (hierarchy->last_child == Entity::EMPTY) {
-                        yaml_emitter << YAML::Key << "last_child" << YAML::Null;
-                    } else {
-                        yaml_emitter << YAML::Key << "last_child" << world->GetGuid(hierarchy->last_child).ToString();
-                    }
-                }
-                yaml_emitter << YAML::EndMap;
-            }
-
-            Rendering::CameraComponent *camera = world->GetComponent<Rendering::CameraComponent>(entity);
-            if (camera != nullptr) {
-                yaml_emitter << YAML::Key << "Camera";
-                yaml_emitter << YAML::BeginMap;
-                {
-                    yaml_emitter << YAML::Key << "projection_mode" << static_cast<uint64>(camera->projection_mode);
-
-                    yaml_emitter << YAML::Key << "clear_mode" << static_cast<uint64>(camera->clear_mode);
-                    yaml_emitter << YAML::Key << "background_color" << camera->background_color;
-                    
-                    yaml_emitter << YAML::Key << "visibility_mask" << YAML::Value << static_cast<uint64>(camera->visibility_mask);
-
-                    yaml_emitter << YAML::Key << "near_plane" << camera->near_plane;
-                    yaml_emitter << YAML::Key << "far_plane" << camera->far_plane;
-
-                    yaml_emitter << YAML::Key << "fov" << camera->fov;
-                    yaml_emitter << YAML::Key << "orthographic_size" << camera->orthographic_size;
-
-                    yaml_emitter << YAML::Key << "viewport_clipping";
-                    yaml_emitter << YAML::Flow;
                     yaml_emitter << YAML::BeginMap;
-                    yaml_emitter << YAML::Key << "x" << YAML::Value << camera->viewport_clipping.x;
-                    yaml_emitter << YAML::Key << "y" << YAML::Value << camera->viewport_clipping.y;
-                    yaml_emitter << YAML::Key << "width" << YAML::Value << camera->viewport_clipping.width;
-                    yaml_emitter << YAML::Key << "height" << YAML::Value << camera->viewport_clipping.height;
+                    for (auto it = properties.rbegin(); it != properties.rend(); ++it) {
+                        MetaProperty property = *it;
+
+                        MetaType property_type = property.GetType();
+                        yaml_emitter << YAML::Key << property.GetName() << YAML::Value;
+                        Any property_value = property.Get(component_handle);
+
+                        // Check for special property treatment when serializing.
+                        MetaAttribute property_serialize_as_attribute = property.GetAttribute(PropertyAttribute::SpecialSerialize);
+                        if (property_serialize_as_attribute) {
+                            Any property_serialize_as_attribute_value = property_serialize_as_attribute.GetValue();
+                            PropertySpecialSerialize serialize_as = property_serialize_as_attribute_value.Cast<PropertySpecialSerialize>();
+                            if (serialize_as == PropertySpecialSerialize::EntityIdAsGuid) {
+                                EntityId entity_id = property_value.Cast<EntityId>();
+                                if (entity_id == Entity::EMPTY) {
+                                    yaml_emitter << YAML::Null;
+                                } else {
+                                    yaml_emitter << world->GetGuid(entity_id).ToString();
+                                }
+                                continue;
+                            }
+                        }
+
+                        MetaPrimitiveType primitive_type = property_type.GetPrimitiveType();
+
+                        // HACK: For now we only support primitive types.
+                        if (primitive_type == MetaPrimitiveType::None) {
+                            HYP_LOG_WARN("Serializer", "Unsupported property type {} on property: {}::{}", property_type.GetName(), component_handle.GetType().GetName(), property.GetName());
+                            continue;
+                        }
+
+                        switch (primitive_type) {
+                            case MetaPrimitiveType::Bool: yaml_emitter << property_value.Cast<bool8>(); break;
+                            case MetaPrimitiveType::Int8: yaml_emitter << property_value.Cast<int8>(); break;
+                            case MetaPrimitiveType::Int16: yaml_emitter << property_value.Cast<int16>(); break;
+                            case MetaPrimitiveType::Int32: yaml_emitter << property_value.Cast<int32>(); break;
+                            case MetaPrimitiveType::Int64: yaml_emitter << property_value.Cast<int64>(); break;
+                            case MetaPrimitiveType::UInt8: yaml_emitter << property_value.Cast<uint8>(); break;
+                            case MetaPrimitiveType::UInt16: yaml_emitter << property_value.Cast<uint16>(); break;
+                            case MetaPrimitiveType::UInt32: yaml_emitter << property_value.Cast<uint32>(); break;
+                            case MetaPrimitiveType::UInt64: yaml_emitter << property_value.Cast<uint64>(); break;
+                            case MetaPrimitiveType::Float32: yaml_emitter << property_value.Cast<float32>(); break;
+                            case MetaPrimitiveType::Float64: yaml_emitter << property_value.Cast<float64>(); break;
+                            case MetaPrimitiveType::Vector2: yaml_emitter << property_value.Cast<Vector2>(); break;
+                            case MetaPrimitiveType::Vector3: yaml_emitter << property_value.Cast<Vector3>(); break;
+                            case MetaPrimitiveType::Vector4: yaml_emitter << property_value.Cast<Vector4>(); break;
+                            case MetaPrimitiveType::Quaternion: yaml_emitter << property_value.Cast<Quaternion>(); break;
+                            case MetaPrimitiveType::Matrix4x4: break;
+                            case MetaPrimitiveType::String: yaml_emitter << property_value.Cast<String>(); break;
+                            case MetaPrimitiveType::Color: yaml_emitter << property_value.Cast<Color>(); break;
+                            case MetaPrimitiveType::None:
+                            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+                        }
+                    }
                     yaml_emitter << YAML::EndMap;
                 }
-                yaml_emitter << YAML::EndMap;
-            }
-
-            Rendering::SpriteComponent *sprite = world->GetComponent<Rendering::SpriteComponent>(entity);
-            if (sprite != nullptr) {
-                yaml_emitter << YAML::Key << "Sprite" << YAML::Null;
-            }
-
-            Rendering::MeshComponent *mesh = world->GetComponent<Rendering::MeshComponent>(entity);
-            if (mesh != nullptr) {
-                yaml_emitter << YAML::Key << "Mesh";
-                yaml_emitter << YAML::BeginMap;
-                {
-                    yaml_emitter << YAML::Key << "mesh" << YAML::Value << mesh->mesh->GetAssetInfo().guid.ToString();
-                    yaml_emitter << YAML::Key << "sub_mesh_index" << YAML::Value << mesh->sub_mesh_index;
-                    yaml_emitter << YAML::Key << "material" << YAML::Value << mesh->material->GetAssetInfo().guid.ToString();
-                    yaml_emitter << YAML::Key << "layer_mask" << YAML::Value << static_cast<uint64>(mesh->layer_mask);
-                }
-                yaml_emitter << YAML::EndMap;
             }
 
             yaml_emitter << YAML::EndMap;
@@ -464,6 +440,7 @@ namespace Hyperion {
         }
 
         // In the second phase we do a detailed load of the entities which includes resolving references.
+
         YAML::Node yaml_hierarchy = yaml_world["hierarchy"];
         if (yaml_hierarchy && yaml_hierarchy.IsMap()) {
             WorldHierarchy *world_hierarchy = world->GetHierarchy();
@@ -490,154 +467,82 @@ namespace Hyperion {
                         EntityGuid guid = EntityGuid::Generate(yaml_entity_guid.as<String>());
                         EntityId entity = world->GetByGuid(guid);
 
-                        YAML::Node yaml_tag = yaml_entity["Tag"];
-                        if (yaml_tag && yaml_tag.IsMap()) {
-                            TagComponent *tag = world->AddComponent<TagComponent>(entity);
-                            
-                            YAML::Node yaml_tag_tag = yaml_tag["tag"];
-                            if (yaml_tag_tag && yaml_tag_tag.IsScalar()) {
-                                tag->tag = yaml_tag_tag.as<String>();
-                            }
-                        }
+                        for (auto pair : yaml_entity) {
+                            String component_type_string = pair.first.as<String>();
 
-                        YAML::Node yaml_local_transform = yaml_entity["LocalTransform"];
-                        if (yaml_local_transform && yaml_local_transform.IsMap()) {
-                            LocalTransformComponent *local_transform = world->AddComponent<LocalTransformComponent>(entity);
+                            if (component_type_string == "Entity") {
+                                continue;
+                            }
 
-                            YAML::Node yaml_local_transform_position = yaml_local_transform["position"];
-                            if (yaml_local_transform_position) {
-                                local_transform->position = yaml_local_transform_position.as<Vector3>();
-                            }
-                            YAML::Node yaml_local_transform_rotation = yaml_local_transform["rotation"];
-                            if (yaml_local_transform_rotation) {
-                                local_transform->rotation = yaml_local_transform_rotation.as<Quaternion>();
-                            }
-                            YAML::Node yaml_local_transform_scale = yaml_local_transform["scale"];
-                            if (yaml_local_transform_scale) {
-                                local_transform->scale = yaml_local_transform_scale.as<Vector3>();
-                            }
-                        }
-                        YAML::Node yaml_derived_transform = yaml_entity["DerivedTransform"];
-                        if (yaml_derived_transform) {
-                            world->AddComponent<DerivedTransformComponent>(entity);
-                        }
-                        YAML::Node yaml_local_to_world = yaml_entity["LocalToWorld"];
-                        if (yaml_local_to_world) {
-                            world->AddComponent<LocalToWorldComponent>(entity);
-                        }
-                        YAML::Node yaml_hierarchy = yaml_entity["Hierarchy"];
-                        if (yaml_hierarchy && yaml_hierarchy.IsMap()) {
-                            HierarchyComponent *hierarchy = world->AddComponent<HierarchyComponent>(entity);
+                            YAML::Node yaml_component = pair.second;
 
-                            YAML::Node yaml_hierarchy_parent = yaml_hierarchy["parent"];
-                            if (yaml_hierarchy_parent) {
-                                hierarchy->parent = yaml_hierarchy_parent.IsNull() ? Entity::EMPTY : world->GetByGuid(EntityGuid::Generate(yaml_hierarchy_parent.as<String>()));
+                            MetaType component_type = MetaRegistry::Resolve(component_type_string);
+                            if (!component_type) {
+                                HYP_LOG_ERROR("Serializer", "Failed to resolve component type: {}", component_type_string);
+                                continue;
                             }
-                            YAML::Node yaml_hierarchy_previous_sibling = yaml_hierarchy["previous_sibling"];
-                            if (yaml_hierarchy_previous_sibling) {
-                                hierarchy->previous_sibling = yaml_hierarchy_previous_sibling.IsNull() ? Entity::EMPTY : world->GetByGuid(EntityGuid::Generate(yaml_hierarchy_previous_sibling.as<String>()));
-                            }
-                            YAML::Node yaml_hierarchy_next_sibling = yaml_hierarchy["next_sibling"];
-                            if (yaml_hierarchy_next_sibling) {
-                                hierarchy->next_sibling = yaml_hierarchy_next_sibling.IsNull() ? Entity::EMPTY : world->GetByGuid(EntityGuid::Generate(yaml_hierarchy_next_sibling.as<String>()));
-                            }
-                            YAML::Node yaml_hierarchy_child_count = yaml_hierarchy["child_count"];
-                            if (yaml_hierarchy_child_count) {
-                                hierarchy->child_count = yaml_hierarchy_child_count.as<uint64>();
-                            }
-                            YAML::Node yaml_hierarchy_first_child = yaml_hierarchy["first_child"];
-                            if (yaml_hierarchy_first_child) {
-                                hierarchy->first_child = yaml_hierarchy_first_child.IsNull() ? Entity::EMPTY : world->GetByGuid(EntityGuid::Generate(yaml_hierarchy_first_child.as<String>()));
-                            }
-                            YAML::Node yaml_hierarchy_last_child = yaml_hierarchy["last_child"];
-                            if (yaml_hierarchy_last_child) {
-                                hierarchy->last_child = yaml_hierarchy_last_child.IsNull() ? Entity::EMPTY : world->GetByGuid(EntityGuid::Generate(yaml_hierarchy_last_child.as<String>()));
-                            }
-                        }
 
-                        YAML::Node yaml_camera = yaml_entity["Camera"];
-                        if (yaml_camera && yaml_camera.IsMap()) {
-                            Rendering::CameraComponent *camera = world->AddComponent<Rendering::CameraComponent>(entity);
+                            ComponentId component_id = ComponentRegistry::GetId(component_type);
+                            void *component = world->AddComponent(component_id, entity);
+                            MetaHandle component_handle = MetaHandle(component_type, component);
 
-                            YAML::Node yaml_camera_projection_mode = yaml_camera["projection_mode"];
-                            if (yaml_camera_projection_mode) {
-                                camera->projection_mode = static_cast<Rendering::CameraProjectionMode>(yaml_camera_projection_mode.as<uint64>());
+                            Array<MetaProperty> properties = GetPropertiesToSerialize(component_type);
+                            if (properties.IsEmpty()) {
+                                continue;
                             }
-                            YAML::Node yaml_camera_clear_mode = yaml_camera["projection_mode"];
-                            if (yaml_camera_clear_mode) {
-                                camera->clear_mode = static_cast<Rendering::CameraClearMode>(yaml_camera_clear_mode.as<uint64>());
-                            }
-                            YAML::Node yaml_camera_background_color = yaml_camera["background_color"];
-                            if (yaml_camera_background_color) {
-                                camera->background_color = yaml_camera_background_color.as<Color>();
-                            }
-                            YAML::Node yaml_camera_visibility_mask = yaml_camera["visibility_mask"];
-                            if (yaml_camera_visibility_mask) {
-                                camera->visibility_mask = static_cast<Rendering::LayerMask>(yaml_camera_visibility_mask.as<uint64>());
-                            }
-                            YAML::Node yaml_camera_near_plane = yaml_camera["near_plane"];
-                            if (yaml_camera_near_plane) {
-                                camera->near_plane = yaml_camera_near_plane.as<float32>();
-                            }
-                            YAML::Node yaml_camera_far_plane = yaml_camera["far_plane"];
-                            if (yaml_camera_far_plane) {
-                                camera->far_plane = yaml_camera_far_plane.as<float32>();
-                            }
-                            YAML::Node yaml_camera_fov = yaml_camera["fov"];
-                            if (yaml_camera_fov) {
-                                camera->fov = yaml_camera_fov.as<float32>();
-                            }
-                            YAML::Node yaml_camera_orthographic_size = yaml_camera["orthographic_size"];
-                            if (yaml_camera_orthographic_size) {
-                                camera->orthographic_size = yaml_camera_orthographic_size.as<float32>();
-                            }
-                            YAML::Node yaml_camera_viewport_clipping = yaml_camera["viewport_clipping"];
-                            if (yaml_camera_viewport_clipping && yaml_camera_viewport_clipping.IsMap()) {
-                                Rendering::CameraViewportClipping viewport_clipping;
 
-                                YAML::Node yaml_camera_viewport_clipping_x = yaml_camera_viewport_clipping["x"];
-                                if (yaml_camera_viewport_clipping_x) {
-                                    viewport_clipping.x = yaml_camera_viewport_clipping_x.as<float32>();
-                                }
-                                YAML::Node yaml_camera_viewport_clipping_y = yaml_camera_viewport_clipping["y"];
-                                if (yaml_camera_viewport_clipping_y) {
-                                    viewport_clipping.y = yaml_camera_viewport_clipping_y.as<float32>();
-                                }
-                                YAML::Node yaml_camera_viewport_clipping_width = yaml_camera_viewport_clipping["width"];
-                                if (yaml_camera_viewport_clipping_width) {
-                                    viewport_clipping.width = yaml_camera_viewport_clipping_width.as<float32>();
-                                }
-                                YAML::Node yaml_camera_viewport_clipping_height = yaml_camera_viewport_clipping["height"];
-                                if (yaml_camera_viewport_clipping_height) {
-                                    viewport_clipping.height = yaml_camera_viewport_clipping_height.as<float32>();
+                            for (MetaProperty property : properties) {
+                                MetaType property_type = property.GetType();
+
+                                String property_name = property.GetName();
+                                YAML::Node yaml_property = yaml_component[property_name];
+
+                                MetaPrimitiveType primitive_type = property_type.GetPrimitiveType();
+
+                                MetaAttribute property_serialize_as_attribute = property.GetAttribute(PropertyAttribute::SpecialSerialize);
+                                if (property_serialize_as_attribute) {
+                                    Any property_serialize_as_attribute_value = property_serialize_as_attribute.GetValue();
+                                    PropertySpecialSerialize serialize_as = property_serialize_as_attribute_value.Cast<PropertySpecialSerialize>();
+                                    if (serialize_as == PropertySpecialSerialize::EntityIdAsGuid) {
+                                        if (yaml_property.IsNull()) {
+                                            property.Set(component_handle, Entity::EMPTY);
+                                        } else {
+                                            EntityGuid guid = EntityGuid::Generate(yaml_property.as<String>());
+                                            EntityId id = world->GetByGuid(guid);
+                                            property.Set(component_handle, id);
+                                        }
+                                        continue;
+                                    }
                                 }
 
-                                camera->viewport_clipping = viewport_clipping;
-                            }
-                        }
-                        YAML::Node yaml_sprite = yaml_entity["Sprite"];
-                        if (yaml_sprite && yaml_sprite.IsMap()) {
-                            Rendering::SpriteComponent *sprite = world->AddComponent<Rendering::SpriteComponent>(entity);
-                        }
-                        YAML::Node yaml_render_mesh = yaml_entity["Mesh"];
-                        if (yaml_render_mesh && yaml_render_mesh.IsMap()) {
-                            Rendering::MeshComponent *mesh = world->AddComponent<Rendering::MeshComponent>(entity);
+                                // HACK: For now we only support primitive types.
+                                if (primitive_type == MetaPrimitiveType::None) {
+                                    HYP_LOG_WARN("Serializer", "Unsupported property type {} on property: {}::{}", property_type.GetName(), component_handle.GetType().GetName(), property.GetName());
+                                    continue;
+                                }
 
-                            YAML::Node yaml_render_mesh_mesh = yaml_render_mesh["mesh"];
-                            if (yaml_render_mesh_mesh) {
-                                mesh->mesh = yaml_render_mesh_mesh.IsNull() ? nullptr : AssetManager::GetMeshByGuid(AssetGuid::Generate(yaml_render_mesh_mesh.as<String>()));
-                            }
-                            YAML::Node yaml_render_mesh_sub_mesh_index = yaml_render_mesh["sub_mesh_index"];
-                            if (yaml_render_mesh_sub_mesh_index) {
-                                mesh->sub_mesh_index = yaml_render_mesh_sub_mesh_index.as<uint32>();
-                            }
-                            YAML::Node yaml_render_mesh_material = yaml_render_mesh["material"];
-                            if (yaml_render_mesh_material) {
-                                mesh->material = yaml_render_mesh_material.IsNull() ? nullptr : AssetManager::GetMaterialByGuid(AssetGuid::Generate(yaml_render_mesh_material.as<String>()));
-                            }
-                            YAML::Node yaml_render_mesh_layer_mask = yaml_render_mesh["layer_mask"];
-                            if (yaml_render_mesh_layer_mask) {
-                                mesh->layer_mask = static_cast<Rendering::LayerMask>(yaml_render_mesh_layer_mask.as<uint64>());
+                                switch (primitive_type) {
+                                    case MetaPrimitiveType::Bool: property.Set(component_handle, yaml_property.as<bool8>()); break;
+                                    case MetaPrimitiveType::Int8: property.Set(component_handle, yaml_property.as<int8>()); break;
+                                    case MetaPrimitiveType::Int16: property.Set(component_handle, yaml_property.as<int16>()); break;
+                                    case MetaPrimitiveType::Int32: property.Set(component_handle, yaml_property.as<int32>()); break;
+                                    case MetaPrimitiveType::Int64: property.Set(component_handle, yaml_property.as<int64>()); break;
+                                    case MetaPrimitiveType::UInt8: property.Set(component_handle, yaml_property.as<uint8>()); break;
+                                    case MetaPrimitiveType::UInt16: property.Set(component_handle, yaml_property.as<uint16>()); break;
+                                    case MetaPrimitiveType::UInt32: property.Set(component_handle, yaml_property.as<uint32>()); break;
+                                    case MetaPrimitiveType::UInt64: property.Set(component_handle, yaml_property.as<uint64>()); break;
+                                    case MetaPrimitiveType::Float32: property.Set(component_handle, yaml_property.as<float32>()); break;
+                                    case MetaPrimitiveType::Float64: property.Set(component_handle, yaml_property.as<float64>()); break;
+                                    case MetaPrimitiveType::Vector2: property.Set(component_handle, yaml_property.as<Vector2>()); break;
+                                    case MetaPrimitiveType::Vector3: property.Set(component_handle, yaml_property.as<Vector3>()); break;
+                                    case MetaPrimitiveType::Vector4: property.Set(component_handle, yaml_property.as<Vector4>()); break;
+                                    case MetaPrimitiveType::Quaternion:property.Set(component_handle, yaml_property.as<Quaternion>()); break;
+                                    case MetaPrimitiveType::Matrix4x4: break;
+                                    case MetaPrimitiveType::String: property.Set(component_handle, yaml_property.as<String>()); break;
+                                    case MetaPrimitiveType::Color: property.Set(component_handle, yaml_property.as<Color>()); break;
+                                    case MetaPrimitiveType::None:
+                                    default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+                                }
                             }
                         }
                     }

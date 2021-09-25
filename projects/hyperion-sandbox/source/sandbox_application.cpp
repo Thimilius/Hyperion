@@ -24,7 +24,7 @@
 using namespace Hyperion;
 using namespace Hyperion::Rendering;
 
-#define HYP_STRESS_TEST
+//#define HYP_STRESS_TEST
 //#define HYP_STRESS_TEST_EXTREME
 
 //-------------------- Definition Namespace --------------------
@@ -99,6 +99,11 @@ namespace Sandbox {
         g_world->GetComponent<LocalTransformComponent>(g_child)->position = Vector3(2.0f, 0.0f, 0.0f);
         g_world->GetHierarchy()->SetParent(g_child, g_parent);
 #endif
+        String data = WorldSerializer::Serialize(g_world);
+        HYP_TRACE("\n{}", data);
+        World *world = WorldSerializer::Deserialize(data);
+        String data2 = WorldSerializer::Serialize(g_world);
+        HYP_TRACE("\n{}", data2);
     }
 
     //--------------------------------------------------------------

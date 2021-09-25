@@ -107,7 +107,6 @@ namespace Hyperion {
             MetaRegistry::Reflect<uint64>().Type("uint64", MetaPrimitiveType::UInt64);
             MetaRegistry::Reflect<float32>().Type("float32", MetaPrimitiveType::UInt64);
             MetaRegistry::Reflect<float64>().Type("float64", MetaPrimitiveType::UInt64);
-            MetaRegistry::Reflect<String>().Type("String", MetaPrimitiveType::String);
             MetaRegistry::Reflect<Vector2>().Type("Vector2", MetaPrimitiveType::Vector2)
                 .Property<&Vector2::x>("x")
                 .Property<&Vector2::y>("y");
@@ -125,11 +124,14 @@ namespace Hyperion {
                 .Property<&Quaternion::y>("y")
                 .Property<&Quaternion::z>("z")
                 .Property<&Quaternion::w>("w");
+            MetaRegistry::Reflect<Matrix4x4>().Type("Matrix4x4", MetaPrimitiveType::Matrix4x4);
+            MetaRegistry::Reflect<String>().Type("String", MetaPrimitiveType::String);
             MetaRegistry::Reflect<Color>().Type("Color", MetaPrimitiveType::Color)
                 .Property<&Color::r>("r")
                 .Property<&Color::g>("g")
                 .Property<&Color::b>("b")
                 .Property<&Color::a>("a");
+            //MetaRegistry::Reflect<EntityId>().Type("EntityId", MetaPrimitiveType::EntityId);
         }
 
         WorldManager::ReflectTypes();

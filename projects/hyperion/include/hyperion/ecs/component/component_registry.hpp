@@ -16,10 +16,12 @@ namespace Hyperion {
         inline static const Array<ComponentInfo> &GetComponentInfos() { return s_component_infos; }
 
         template<typename T>
-        inline static ComponentId GetId() {
+        inline static ComponentId GetId() { return GetId(MetaRegistry::Resolve<T>()); }
+
+        inline static ComponentId GetId(MetaType type) {
             // NOTE: This method/lookup is probably not as fast as it could be.
             // And it really should because it is pretty much THE hottest path in the engine.
-            return s_component_ids.Get(MetaRegistry::Resolve<T>());
+            return s_component_ids.Get(type);
         }
     private:
         static void Initialize();

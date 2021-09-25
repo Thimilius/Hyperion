@@ -76,14 +76,16 @@ namespace Hyperion {
         Float32,
         Float64,
 
-        String,
-
         Vector2,
         Vector3,
         Vector4,
         Quaternion,
+        Matrix4x4,
 
-        Color
+        String,
+        Color,
+
+        EntityId
     };
 
     using MetaTrivialDestructor = void(*)(const void *);
@@ -950,7 +952,7 @@ namespace Hyperion {
         template<typename Op>
         std::enable_if_t<std::is_invocable_v<Op, Hyperion::MetaAttribute>, void>
         ForEachAttribute(Op op) const {
-            Internal::Iterate<&Internal::MetaTypeNode::MetaAttribute>([op = std::move(op)](auto *curr) {
+            Internal::Iterate<&Internal::MetaTypeNode::attribute>([op = std::move(op)](auto *curr) {
                 op(curr->clazz());
             }, node);
         }
@@ -958,7 +960,7 @@ namespace Hyperion {
         template<typename Key>
         std::enable_if_t<!std::is_invocable_v<Key, Hyperion::MetaAttribute>, Hyperion::MetaAttribute>
         GetAttribute(Key &&key) const {
-            const auto *curr = Internal::FindIf<&Internal::MetaTypeNode::MetaAttribute>([key = Any{std::forward<Key>(key)}](auto *candidate) {
+            const auto *curr = Internal::FindIf<&Internal::MetaTypeNode::attribute>([key = Any{std::forward<Key>(key)}](auto *candidate) {
                 return candidate->key() == key;
             }, node);
 

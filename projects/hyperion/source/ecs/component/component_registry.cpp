@@ -27,7 +27,7 @@ namespace Hyperion {
 
         // We collected all component types beforehand so that we can loop over them in reverse order.
         // We do this because the first reflected component is going to be at the end and we want to register it as the first.
-        for (Array<MetaType>::ReverseIterator it = component_types.rbegin(); it != component_types.rend(); ++it) {
+        for (auto it = component_types.rbegin(); it != component_types.rend(); ++it) {
             MetaType component_type = *it;
 
             ComponentInfo component_info;

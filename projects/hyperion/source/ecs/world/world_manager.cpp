@@ -61,13 +61,26 @@ namespace Hyperion {
             .Base<IComponent>();
 
         MetaRegistry::Reflect<LocalTransformComponent>("LocalTransformComponent")
-            .Base<IComponent>();
+            .Base<IComponent>()
+            .Property<&LocalTransformComponent::position>("position")
+            .Property<&LocalTransformComponent::rotation>("rotation")
+            .Property<&LocalTransformComponent::scale>("scale");
         MetaRegistry::Reflect<DerivedTransformComponent>("DerivedTransformComponent")
-            .Base<IComponent>();
+            .Base<IComponent>()
+            .Property<&DerivedTransformComponent::position>("position", std::make_pair(PropertyAttribute::Serialize, false))
+            .Property<&DerivedTransformComponent::rotation>("rotation", std::make_pair(PropertyAttribute::Serialize, false))
+            .Property<&DerivedTransformComponent::scale>("scale", std::make_pair(PropertyAttribute::Serialize, false));
         MetaRegistry::Reflect<LocalToWorldComponent>("LocalToWorldComponent")
-            .Base<IComponent>();
+            .Base<IComponent>()
+            .Property<&LocalToWorldComponent::local_to_world>("local_to_world", std::make_pair(PropertyAttribute::Serialize, false));
         MetaRegistry::Reflect<HierarchyComponent>("HierarchyComponent")
-            .Base<IComponent>();
+            .Base<IComponent>()
+            .Property<&HierarchyComponent::parent>("parent", std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::EntityIdAsGuid))
+            .Property<&HierarchyComponent::previous_sibling>("previous_sibling", std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::EntityIdAsGuid))
+            .Property<&HierarchyComponent::next_sibling>("next_sibling", std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::EntityIdAsGuid))
+            .Property<&HierarchyComponent::child_count>("child_count")
+            .Property<&HierarchyComponent::first_child>("first_child", std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::EntityIdAsGuid))
+            .Property<&HierarchyComponent::last_child>("last_child", std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::EntityIdAsGuid));
 
         MetaRegistry::Reflect<Physics::BoxColliderComponent>("BoxColliderComponent")
             .Base<IComponent>();
