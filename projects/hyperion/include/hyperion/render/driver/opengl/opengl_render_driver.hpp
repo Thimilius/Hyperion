@@ -96,7 +96,7 @@ namespace Hyperion::Rendering {
 
         GLuint lighting_uniform_buffer;
 
-        GLuint render_bounds_vertex_buffer;
+        GLuint render_bounds_vertex_buffer = -1;
         GLuint render_bounds_index_buffer;
         GLuint render_bounds_vertex_array;
     };
