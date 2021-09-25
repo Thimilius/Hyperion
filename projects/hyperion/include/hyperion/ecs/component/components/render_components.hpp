@@ -63,6 +63,8 @@ namespace Hyperion::Rendering {
     struct LightComponent : public IComponent {
         float32 intensity = 1.0f;
         Color color = Color::White();
+    protected:
+        LightComponent() = default;
     };
 
     struct DirectionalLightComponent : public LightComponent {

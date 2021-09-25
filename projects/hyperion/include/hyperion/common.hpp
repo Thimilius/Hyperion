@@ -4,8 +4,6 @@
 #include <memory>
 #include <functional>
 
-#define BIT(x) (1 << x)
-
 #ifdef HYP_DEBUG
     #ifdef _MSC_VER
         #define HYP_DEBUG_BREAK __debugbreak()
@@ -17,6 +15,7 @@
 #endif
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/core/bit.hpp"
 #include "hyperion/core/assert.hpp"
 #include "hyperion/core/collections/collections.hpp"
 #include "hyperion/core/enum.hpp"

@@ -386,14 +386,34 @@ namespace Hyperion {
             if (property_serialize_as_attribute) {
                 Any property_serialize_as_attribute_value = property_serialize_as_attribute.GetValue();
                 PropertySpecialSerialize serialize_as = property_serialize_as_attribute_value.Cast<PropertySpecialSerialize>();
-                if (serialize_as == PropertySpecialSerialize::EntityIdAsGuid) {
-                    EntityId entity_id = property_value.Cast<EntityId>();
-                    if (entity_id == Entity::EMPTY) {
-                        yaml_emitter << YAML::Null;
-                    } else {
-                        yaml_emitter << world->GetGuid(entity_id).ToString();
+                switch (serialize_as) {
+                    case PropertySpecialSerialize::Raw: break;
+                    case PropertySpecialSerialize::EntityIdAsGuid: {
+                        HYP_ASSERT(property_type == MetaRegistry::Resolve<EntityId>());
+
+                        EntityId entity_id = property_value.Cast<EntityId>();
+                        if (entity_id == Entity::EMPTY) {
+                            yaml_emitter << YAML::Null;
+                        } else {
+                            yaml_emitter << world->GetGuid(entity_id).ToString();
+                        }
+
+                        continue;
                     }
-                    continue;
+                    case PropertySpecialSerialize::PointerAsAssetGuid: {
+                        // NOTE: This way of serializing references to assets feels a little hacky.
+                        HYP_ASSERT(property_type.IsPointer());
+
+                        Asset *asset = *reinterpret_cast<Asset **>(property_value.GetData());
+                        if (asset) {
+                            yaml_emitter << asset->GetAssetInfo().guid.ToString();
+                        } else {
+                            yaml_emitter << YAML::Null;
+                        }
+
+                        continue;
+                    }
+                    default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
                 }
             }
 
@@ -459,15 +479,42 @@ namespace Hyperion {
             if (property_serialize_as_attribute) {
                 Any property_serialize_as_attribute_value = property_serialize_as_attribute.GetValue();
                 PropertySpecialSerialize serialize_as = property_serialize_as_attribute_value.Cast<PropertySpecialSerialize>();
-                if (serialize_as == PropertySpecialSerialize::EntityIdAsGuid) {
-                    if (yaml_property.IsNull()) {
-                        property.Set(handle, Entity::EMPTY);
-                    } else {
-                        EntityGuid guid = EntityGuid::Generate(yaml_property.as<String>());
-                        EntityId id = world->GetByGuid(guid);
-                        property.Set(handle, id);
+                switch (serialize_as) {
+                    case PropertySpecialSerialize::Raw: break;
+                    case PropertySpecialSerialize::EntityIdAsGuid: {
+                        HYP_ASSERT(property_type == MetaRegistry::Resolve<EntityId>());
+
+                        if (yaml_property.IsNull()) {
+                            property.Set(handle, Entity::EMPTY);
+                        } else {
+                            EntityGuid guid = EntityGuid::Generate(yaml_property.as<String>());
+                            EntityId id = world->GetByGuid(guid);
+                            property.Set(handle, id);
+                        }
+
+                        continue;
                     }
-                    continue;
+                    case PropertySpecialSerialize::PointerAsAssetGuid: {
+                        // NOTE: This way of serializing references to assets feels a little hacky.
+                        
+                        HYP_ASSERT(property_type.IsPointer());
+
+                        if (yaml_property.IsNull()) {
+                            property.Set(handle, nullptr);
+                        } else {
+                            AssetGuid guid = AssetGuid::Generate(yaml_property.as<String>());
+                            if (property_type == MetaRegistry::Resolve<Material *>()) {
+                                Material *material = AssetManager::GetMaterialByGuid(guid);
+                                property.Set(handle, material);
+                            } else if (property_type == MetaRegistry::Resolve<Mesh *>()) {
+                                Mesh *mesh = AssetManager::GetMeshByGuid(guid);
+                                property.Set(handle, mesh);
+                            }
+                        }
+
+                        continue;
+                    }
+                    default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
                 }
             }
             

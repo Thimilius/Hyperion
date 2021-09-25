@@ -13,14 +13,18 @@ namespace Hyperion {
 
         Array<MetaType> component_types;
         MetaRegistry::Resolve([base_component_type, &component_types](MetaType type) {
-            bool8 is_component = false;
-            type.ForEachBase([base_component_type, &is_component](MetaBase base) {
+            if (!type.IsDefaultConstructable()) {
+                return;
+            }
+
+            bool8 has_component_base = false;
+            type.ForEachBase([base_component_type, &has_component_base](MetaBase base) {
                 if (base.GetType() == base_component_type) {
-                    is_component = true;
+                    has_component_base = true;
                 }
             });
 
-            if (is_component) {
+            if (has_component_base) {
                 component_types.Add(type);
             }
         });

@@ -199,13 +199,13 @@ namespace Hyperion {
         SetNewGuid(s_primitives.material_unlit, "{C718D97E-A0D9-4567-AFE6-F264B8C29730}");
 
         s_primitives.mesh_quad = MeshGenerator::GenerateQuad(1.0f, 1.0f);
-        SetNewGuid(s_primitives.material_default, "{D54B554E-2BED-4F36-AF12-9C20C83F4EFB}");
+        SetNewGuid(s_primitives.mesh_quad, "{D54B554E-2BED-4F36-AF12-9C20C83F4EFB}");
         s_primitives.mesh_plane = MeshGenerator::GeneratePlane(10.0f, 10.0f);
-        SetNewGuid(s_primitives.material_default, "{F5464C26-BA78-418D-8DFF-CC67A189DE47}");
+        SetNewGuid(s_primitives.mesh_plane, "{F5464C26-BA78-418D-8DFF-CC67A189DE47}");
         s_primitives.mesh_cube = MeshGenerator::GenerateCube(1.0f);
-        SetNewGuid(s_primitives.material_default, "{36E92468-41BB-4B06-918B-958ED7F5DD43}");
+        SetNewGuid(s_primitives.mesh_cube, "{36E92468-41BB-4B06-918B-958ED7F5DD43}");
         s_primitives.mesh_sphere = MeshGenerator::GenerateSphere(0.5f);
-        SetNewGuid(s_primitives.material_default, "{93DFBF96-D7DB-40B7-91C3-89C6FB1B1E49}");
+        SetNewGuid(s_primitives.mesh_sphere, "{93DFBF96-D7DB-40B7-91C3-89C6FB1B1E49}");
     }
 
     //--------------------------------------------------------------

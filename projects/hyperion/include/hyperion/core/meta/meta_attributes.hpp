@@ -10,6 +10,7 @@ namespace Hyperion {
     enum class PropertySpecialSerialize {
         Raw,
         EntityIdAsGuid,
+        PointerAsAssetGuid
     };
 
     enum class PropertyAttribute {

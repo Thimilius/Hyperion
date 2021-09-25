@@ -36,6 +36,8 @@
 #include <cassert>
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/core/bit.hpp"
+#include "hyperion/core/enum.hpp"
 #include "hyperion/core/string_utils.hpp"
 
 //-------------------- Forward Declarations --------------------
@@ -58,6 +60,19 @@ namespace Hyperion {
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
+
+    enum class MetaTypeTraits {
+        None = 0,
+
+        IsVoid                 = BIT(0),
+        IsArithmetic           = BIT(1),
+        IsPointer              = BIT(2),
+        IsEnum                 = BIT(3),
+        IsArray                = BIT(4),
+        IsClass                = BIT(5),
+        IsDefaultConstructable = BIT(6),
+    };
+    HYP_CREATE_ENUM_FLAG_OPERATORS(MetaTypeTraits);
 
     enum class MetaPrimitiveType {
         None,
@@ -183,24 +198,13 @@ namespace Hyperion {
 
             std::size_t identifier;
             String name;
+            MetaTypeTraits traits;
             MetaPrimitiveType primitive_type;
             MetaTrivialDestructor trivial_destructor;
             MetaInPlaceConstructor in_place_constructor;
             size_type size;
             MetaTypeNode *next;
             MetaAttributeNode *attribute;
-            const bool8 is_void;
-            const bool8 is_integral;
-            const bool8 is_floating_point;
-            const bool8 is_array;
-            const bool8 is_enum;
-            const bool8 is_union;
-            const bool8 is_class;
-            const bool8 is_pointer;
-            const bool8 is_function_pointer;
-            const bool8 is_member_object_pointer;
-            const bool8 is_member_function_pointer;
-            const size_type extent;
 
             bool8(* const compare)(const void *, const void *);
             MetaType(* const remove_pointer)();
@@ -720,7 +724,6 @@ namespace Hyperion {
 
         template<typename Type>
         bool8 Set(MetaHandle MetaHandle, std::size_t index, Type &&value) const {
-            assert(index < node->ref()->extent);
             return node->set(MetaHandle, index, std::forward<Type>(value));
         }
 
@@ -729,7 +732,6 @@ namespace Hyperion {
         }
 
         Any Get(MetaHandle MetaHandle, std::size_t index) const {
-            assert(index < node->ref()->extent);
             return node->get(MetaHandle, index);
         }
 
@@ -831,18 +833,13 @@ namespace Hyperion {
         MetaTrivialDestructor GetTrivialDestructor() const { return node->trivial_destructor; }
         MetaInPlaceConstructor GetInPlaceConstructor() const { return node->in_place_constructor; }
         size_type GetSize() const { return node->size; }
-        bool8 IsVoid() const { return node->is_void; }
-        bool8 IsIntegral() const { return node->is_integral; }
-        bool8 IsFloatingPoint() const { return node->is_floating_point; }
-        bool8 IsArray() const { return node->is_array; }
-        bool8 IsEnum() const { return node->is_enum; }
-        bool8 IsUnion() const { return node->is_union; }
-        bool8 IsClass() const { return node->is_class; }
-        bool8 IsPointer() const { return node->is_pointer; }
-        bool8 IsFunctionPointer() const { return node->is_function_pointer; }
-        bool8 IsMemberObjectPointer() const { return node->is_member_object_pointer; }
-        bool8 IsMemberFunctionPointer() const { return node->is_member_function_pointer; }
-        size_type GetExtent() const { return node->extent; }
+        bool8 IsVoid() const { return (node->traits & MetaTypeTraits::IsVoid) == MetaTypeTraits::IsVoid; }
+        bool8 IsArithmetic() const { return (node->traits & MetaTypeTraits::IsArithmetic) == MetaTypeTraits::IsArithmetic; }
+        bool8 IsPointer() const { return (node->traits & MetaTypeTraits::IsPointer) == MetaTypeTraits::IsPointer; }
+        bool8 IsEnum() const { return (node->traits & MetaTypeTraits::IsEnum) == MetaTypeTraits::IsEnum; }
+        bool8 IsArray() const { return (node->traits & MetaTypeTraits::IsArray) == MetaTypeTraits::IsArray; }
+        bool8 IsClass() const { return (node->traits & MetaTypeTraits::IsClass) == MetaTypeTraits::IsClass; }
+        bool8 IsDefaultConstructable() const { return (node->traits & MetaTypeTraits::IsDefaultConstructable) == MetaTypeTraits::IsDefaultConstructable; }
         Hyperion::MetaType RemovePointer() const { return node->remove_pointer(); }
 
         template<typename Op>
@@ -1018,24 +1015,20 @@ namespace Hyperion {
                 static MetaTypeNode node{
                     { },
                     { },
+                    MetaTypeTraits::None |
+                    (std::is_void_v<Type> ? MetaTypeTraits::IsVoid : MetaTypeTraits::None) |
+                    (std::is_arithmetic_v<Type> ? MetaTypeTraits::IsArithmetic : MetaTypeTraits::None) | 
+                    (std::is_pointer_v<Type> ? MetaTypeTraits::IsPointer : MetaTypeTraits::None) | 
+                    (std::is_enum_v<Type> ? MetaTypeTraits::IsEnum : MetaTypeTraits::None) | 
+                    (std::is_array_v<Type> ? MetaTypeTraits::IsArray : MetaTypeTraits::None) | 
+                    (std::is_class_v<Type> ? MetaTypeTraits::IsClass : MetaTypeTraits::None) | 
+                    (std::is_default_constructible_v<Type> ? MetaTypeTraits::IsDefaultConstructable : MetaTypeTraits::None),
                     MetaPrimitiveType::None,
                     nullptr,
                     nullptr,
                     sizeof(Type),
                     nullptr,
                     nullptr,
-                    std::is_void_v<Type>,
-                    std::is_integral_v<Type>,
-                    std::is_floating_point_v<Type>,
-                    std::is_array_v<Type>,
-                    std::is_enum_v<Type>,
-                    std::is_union_v<Type>,
-                    std::is_class_v<Type>,
-                    std::is_pointer_v<Type>,
-                    std::is_pointer_v<Type> && std::is_function_v<std::remove_pointer_t<Type>>,
-                    std::is_member_object_pointer_v<Type>,
-                    std::is_member_function_pointer_v<Type>,
-                    std::extent_v<Type>,
                     [](const void *lhs, const void *rhs) {
                         return Compare<Type>(0, lhs, rhs);
                     },

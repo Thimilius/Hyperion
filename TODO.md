@@ -42,7 +42,6 @@
 
 ## Serialization
 - Support for arrays and maps
-- Include base types in serialization
 - Generic YAML serialization
 - Assets
 - Binary serialization

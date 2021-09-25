@@ -168,7 +168,9 @@ namespace Hyperion {
                 .Property<&Rendering::SpriteComponent::color>("color");
             MetaRegistry::Reflect<Rendering::MeshComponent>("MeshComponent")
                 .Base<IComponent>()
+                .Property<&Rendering::MeshComponent::mesh>("mesh", std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::PointerAsAssetGuid))
                 .Property<&Rendering::MeshComponent::sub_mesh_index>("sub_mesh_index")
+                .Property<&Rendering::MeshComponent::material>("material", std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::PointerAsAssetGuid))
                 .Property<&Rendering::MeshComponent::layer_mask>("layer_mask");
             MetaRegistry::Reflect<Rendering::LocalMeshBoundsComponent>("LocalMeshBoundsComponent")
                 .Base<IComponent>()
@@ -176,12 +178,19 @@ namespace Hyperion {
             MetaRegistry::Reflect<Rendering::WorldMeshBoundsComponent>("WorldMeshBoundsComponent")
                 .Base<IComponent>()
                 .Property<&Rendering::WorldMeshBoundsComponent::bounds>("bounds", std::make_pair(PropertyAttribute::Serialize, false));
+            MetaRegistry::Reflect<Rendering::LightComponent>("LightComponent")
+                .Base<IComponent>()
+                .Property<&Rendering::LightComponent::intensity>("intensity")
+                .Property<&Rendering::LightComponent::color>("color");
             MetaRegistry::Reflect<Rendering::DirectionalLightComponent>("DirectionalLightComponent")
-                .Base<IComponent>();
+                .Base<Rendering::LightComponent>();
             MetaRegistry::Reflect<Rendering::PointLightComponent>("PointLightComponent")
-                .Base<IComponent>();
+                .Base<Rendering::LightComponent>()
+                .Property<&Rendering::PointLightComponent::range>("range");
             MetaRegistry::Reflect<Rendering::SpotLightComponent>("SpotLightComponent")
-                .Base<IComponent>();
+                .Base<Rendering::LightComponent>()
+                .Property<&Rendering::SpotLightComponent::inner_spot_radius>("inner_spot_radius")
+                .Property<&Rendering::SpotLightComponent::outer_spot_radius>("outer_spot_radius");
         }
     }
 
