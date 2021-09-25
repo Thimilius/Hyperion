@@ -19,7 +19,7 @@ namespace Hyperion::Rendering {
         CameraClearMode clear_mode = CameraClearMode::Color;
         Color background_color = Color::Black();
 
-        LayerMask visibility_mask = LayerMask::Everything;
+        LayerMask culling_mask = LayerMask::Everything;
 
         float32 near_plane = 0.1f;
         float32 far_plane = 1000.0f;

@@ -24,7 +24,7 @@ namespace Hyperion::Rendering {
         const RenderFrameContextCamera &camera = render_frame->GetContext().GetCameras()[0];
         CullingParameters culling_parameters;
         culling_parameters.matrix = camera.view_projection_matrix;
-        culling_parameters.mask = camera.visibility_mask;
+        culling_parameters.mask = camera.culling_mask;
         CullingResults culling_results = render_frame->Cull(culling_parameters);
 
         render_frame->SetCamera(0);

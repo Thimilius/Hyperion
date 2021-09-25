@@ -61,7 +61,7 @@ namespace Hyperion::Rendering {
             render_frame_context_camera.projection_mode = camera->projection_mode;
             render_frame_context_camera.clear_mode = camera->clear_mode;
             render_frame_context_camera.background_color = camera->background_color;
-            render_frame_context_camera.visibility_mask = camera->visibility_mask;
+            render_frame_context_camera.culling_mask = camera->culling_mask;
             render_frame_context_camera.position = derived_transform->position;
             render_frame_context_camera.forward = TransformUtilities::GetForward(derived_transform);
             render_frame_context_camera.up = TransformUtilities::GetUp(derived_transform);

@@ -419,7 +419,15 @@ namespace Hyperion {
                 case MetaPrimitiveType::String: yaml_emitter << property_value.Cast<String>(); break;
                 case MetaPrimitiveType::Color: yaml_emitter << property_value.Cast<Color>(); break;
                 case MetaPrimitiveType::None: {
-                    if (!property_type.IsPointer() && property_type.IsClass()) {
+                    if (property_type.IsEnum()) {
+                        switch (property_type.GetSize()) {
+                            case 1: yaml_emitter << *reinterpret_cast<int8 *>(property_value.GetData()); break;
+                            case 2: yaml_emitter << *reinterpret_cast<int16 *>(property_value.GetData()); break;
+                            case 4: yaml_emitter << *reinterpret_cast<int32 *>(property_value.GetData()); break;
+                            case 8: yaml_emitter << *reinterpret_cast<int64 *>(property_value.GetData()); break;
+                            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+                        }
+                    } else if (!property_type.IsPointer() && property_type.IsClass()) {
                         SerializeType(yaml_emitter, world, property_type, property_value.GetData());
                     } else {
                         HYP_LOG_WARN("Serializer", "Unsupported property type {} on property: {}::{}", property_type.GetName(), handle.GetType().GetName(), property.GetName());
@@ -483,7 +491,15 @@ namespace Hyperion {
                 case MetaPrimitiveType::String: property.Set(handle, yaml_property.as<String>()); break;
                 case MetaPrimitiveType::Color: property.Set(handle, yaml_property.as<Color>()); break;
                 case MetaPrimitiveType::None: {
-                    if (!property_type.IsPointer() && property_type.IsClass()) {
+                    if (property_type.IsEnum()) {
+                        switch (property_type.GetSize()) {
+                            case 1: property.Set(handle, yaml_property.as<int8>()); break;
+                            case 2: property.Set(handle, yaml_property.as<int16>()); break;
+                            case 4: property.Set(handle, yaml_property.as<int32>()); break;
+                            case 8: property.Set(handle, yaml_property.as<int64>()); break;
+                            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+                        }
+                    } else if (!property_type.IsPointer() && property_type.IsClass()) {
                         // NOTE: This might not be the best way to do it as it creates unnecessary copies of the property.
                         Any property_value = property.Get(handle);
                         DeserializeType(yaml_property, world, property_type, property_value.GetData());

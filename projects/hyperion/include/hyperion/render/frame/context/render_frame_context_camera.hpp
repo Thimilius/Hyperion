@@ -16,7 +16,7 @@ namespace Hyperion::Rendering {
         CameraClearMode clear_mode;
         Color background_color;
 
-        LayerMask visibility_mask;
+        LayerMask culling_mask;
 
         Vector3 position;
         Vector3 forward;

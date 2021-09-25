@@ -45,6 +45,60 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void WorldManager::ReflectTypes() {
+        // Basic component types
+        {
+            MetaRegistry::Reflect<Rendering::LayerMask>("LayerMask", std::make_pair(TypeAttribute::EnumFlags, true))
+                .Property<Rendering::LayerMask::Nothing>("Nothing")
+                .Property<Rendering::LayerMask::Layer1>("Layer1")
+                .Property<Rendering::LayerMask::Layer2>("Layer2")
+                .Property<Rendering::LayerMask::Layer3>("Layer3")
+                .Property<Rendering::LayerMask::Layer4>("Layer4")
+                .Property<Rendering::LayerMask::Layer5>("Layer5")
+                .Property<Rendering::LayerMask::Layer6>("Layer6")
+                .Property<Rendering::LayerMask::Layer7>("Layer7")
+                .Property<Rendering::LayerMask::Layer8>("Layer8")
+                .Property<Rendering::LayerMask::Layer9>("Layer9")
+                .Property<Rendering::LayerMask::Layer10>("Layer10")
+                .Property<Rendering::LayerMask::Layer11>("Layer11")
+                .Property<Rendering::LayerMask::Layer12>("Layer12")
+                .Property<Rendering::LayerMask::Layer13>("Layer13")
+                .Property<Rendering::LayerMask::Layer14>("Layer14")
+                .Property<Rendering::LayerMask::Layer15>("Layer15")
+                .Property<Rendering::LayerMask::Layer16>("Layer16")
+                .Property<Rendering::LayerMask::Layer17>("Layer17")
+                .Property<Rendering::LayerMask::Layer18>("Layer18")
+                .Property<Rendering::LayerMask::Layer19>("Layer19")
+                .Property<Rendering::LayerMask::Layer20>("Layer20")
+                .Property<Rendering::LayerMask::Layer21>("Layer21")
+                .Property<Rendering::LayerMask::Layer22>("Layer22")
+                .Property<Rendering::LayerMask::Layer23>("Layer23")
+                .Property<Rendering::LayerMask::Layer24>("Layer24")
+                .Property<Rendering::LayerMask::Layer25>("Layer25")
+                .Property<Rendering::LayerMask::Layer26>("Layer26")
+                .Property<Rendering::LayerMask::Layer27>("Layer27")
+                .Property<Rendering::LayerMask::Layer28>("Layer28")
+                .Property<Rendering::LayerMask::Layer29>("Layer29")
+                .Property<Rendering::LayerMask::Layer30>("Layer30")
+                .Property<Rendering::LayerMask::Layer31>("Layer31")
+                .Property<Rendering::LayerMask::Everything>("Everything");
+
+            MetaRegistry::Reflect<Rendering::CameraProjectionMode>("CameraProjectionMode")
+                .Property<Rendering::CameraProjectionMode::Perspective>("Perspective")
+                .Property<Rendering::CameraProjectionMode::Orthographic>("Orthographic");
+
+            MetaRegistry::Reflect<Rendering::CameraClearMode>("CameraClearMode")
+                .Property<Rendering::CameraClearMode::Nothing>("Nothing")
+                .Property<Rendering::CameraClearMode::Depth>("Depth")
+                .Property<Rendering::CameraClearMode::Color>("Color")
+                .Property<Rendering::CameraClearMode::Skybox>("Skybox");
+
+            MetaRegistry::Reflect<Rendering::CameraViewportClipping>("CameraViewportClipping")
+                .Property<&Rendering::CameraViewportClipping::x>("x")
+                .Property<&Rendering::CameraViewportClipping::y>("y")
+                .Property<&Rendering::CameraViewportClipping::width>("width")
+                .Property<&Rendering::CameraViewportClipping::height>("height");
+        }
+
         // Components
         {
             MetaRegistry::Reflect<IComponent>("IComponent");
@@ -93,11 +147,29 @@ namespace Hyperion {
                 .Property<&Physics::SphereColliderComponent::radius>("radius");
 
             MetaRegistry::Reflect<Rendering::CameraComponent>("CameraComponent")
-                .Base<IComponent>();
+                .Base<IComponent>()
+                .Property<&Rendering::CameraComponent::projection_mode>("projection_mode")
+                .Property<&Rendering::CameraComponent::clear_mode>("clear_mode")
+                .Property<&Rendering::CameraComponent::background_color>("background_color")
+                .Property<&Rendering::CameraComponent::culling_mask>("culling_mask")
+                .Property<&Rendering::CameraComponent::near_plane>("near_plane")
+                .Property<&Rendering::CameraComponent::far_plane>("far_plane")
+                .Property<&Rendering::CameraComponent::fov>("fov")
+                .Property<&Rendering::CameraComponent::orthographic_size>("orthographic_size")
+                .Property<&Rendering::CameraComponent::viewport_clipping>("viewport_clipping")
+                .Property<&Rendering::CameraComponent::view_matrix>("view_matrix", std::make_pair(PropertyAttribute::Serialize, false))
+                .Property<&Rendering::CameraComponent::projection_matrix>("projection_matrix", std::make_pair(PropertyAttribute::Serialize, false))
+                .Property<&Rendering::CameraComponent::view_projection_matrix>("view_projection_matrix", std::make_pair(PropertyAttribute::Serialize, false))
+                .Property<&Rendering::CameraComponent::inverse_view_matrix>("inverse_view_matrix", std::make_pair(PropertyAttribute::Serialize, false))
+                .Property<&Rendering::CameraComponent::inverse_projection_matrix>("inverse_projection_matrix", std::make_pair(PropertyAttribute::Serialize, false))
+                .Property<&Rendering::CameraComponent::inverse_view_projection_matrix>("inverse_view_projection_matrix", std::make_pair(PropertyAttribute::Serialize, false));
             MetaRegistry::Reflect<Rendering::SpriteComponent>("SpriteComponent")
-                .Base<IComponent>();
+                .Base<IComponent>()
+                .Property<&Rendering::SpriteComponent::color>("color");
             MetaRegistry::Reflect<Rendering::MeshComponent>("MeshComponent")
-                .Base<IComponent>();
+                .Base<IComponent>()
+                .Property<&Rendering::MeshComponent::sub_mesh_index>("sub_mesh_index")
+                .Property<&Rendering::MeshComponent::layer_mask>("layer_mask");
             MetaRegistry::Reflect<Rendering::LocalMeshBoundsComponent>("LocalMeshBoundsComponent")
                 .Base<IComponent>()
                 .Property<&Rendering::LocalMeshBoundsComponent::bounds>("bounds");
