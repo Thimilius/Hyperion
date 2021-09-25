@@ -124,14 +124,29 @@ namespace Hyperion {
                 .Property<&Quaternion::y>("y")
                 .Property<&Quaternion::z>("z")
                 .Property<&Quaternion::w>("w");
-            MetaRegistry::Reflect<Matrix4x4>().Type("Matrix4x4", MetaPrimitiveType::Matrix4x4);
+            MetaRegistry::Reflect<Matrix4x4>().Type("Matrix4x4", MetaPrimitiveType::Matrix4x4)
+                .Property<&Matrix4x4::m11>("m11")
+                .Property<&Matrix4x4::m21>("m21")
+                .Property<&Matrix4x4::m31>("m31")
+                .Property<&Matrix4x4::m41>("m41")
+                .Property<&Matrix4x4::m12>("m12")
+                .Property<&Matrix4x4::m22>("m22")
+                .Property<&Matrix4x4::m32>("m32")
+                .Property<&Matrix4x4::m42>("m42")
+                .Property<&Matrix4x4::m13>("m13")
+                .Property<&Matrix4x4::m23>("m23")
+                .Property<&Matrix4x4::m33>("m33")
+                .Property<&Matrix4x4::m43>("m43")
+                .Property<&Matrix4x4::m14>("m14")
+                .Property<&Matrix4x4::m24>("m24")
+                .Property<&Matrix4x4::m34>("m34")
+                .Property<&Matrix4x4::m44>("m44");
             MetaRegistry::Reflect<String>().Type("String", MetaPrimitiveType::String);
             MetaRegistry::Reflect<Color>().Type("Color", MetaPrimitiveType::Color)
                 .Property<&Color::r>("r")
                 .Property<&Color::g>("g")
                 .Property<&Color::b>("b")
                 .Property<&Color::a>("a");
-            //MetaRegistry::Reflect<EntityId>().Type("EntityId", MetaPrimitiveType::EntityId);
         }
 
         WorldManager::ReflectTypes();

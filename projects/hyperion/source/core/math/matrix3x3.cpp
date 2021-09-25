@@ -40,12 +40,12 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Vector3 Matrix3x3::GetRow(int index) const {
+    Vector3 Matrix3x3::GetRow(int32 index) const {
         return Vector3(elements[index + 0 * 3], elements[index + 1 * 3], elements[index + 2 * 3]);
     }
 
     //--------------------------------------------------------------
-    void Matrix3x3::SetRow(int index, const Vector3 &row) {
+    void Matrix3x3::SetRow(int32 index, const Vector3 &row) {
         elements[index + 0 * 3] = row.x;
         elements[index + 1 * 3] = row.y;
         elements[index + 2 * 3] = row.z;

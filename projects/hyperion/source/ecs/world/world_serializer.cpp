@@ -280,6 +280,63 @@ namespace YAML {
         return emitter;
     }
 
+
+    //--------------------------------------------------------------
+    template<>
+    struct convert<Hyperion::Matrix4x4> {
+        static Node encode(const Hyperion::Matrix4x4 &matrix) {
+            Node node;
+            node["row1"] = matrix.GetRow(0);
+            node["row2"] = matrix.GetRow(1);
+            node["row3"] = matrix.GetRow(2);
+            node["row4"] = matrix.GetRow(3);
+            return node;
+        }
+
+        static bool8 decode(const Node &node, Hyperion::Matrix4x4 &matrix) {
+            if (!node.IsMap() || node.size() != 4) {
+                return false;
+            }
+
+            auto yaml_r = node["row1"];
+            if (!yaml_r || !yaml_r.IsMap()) {
+                return false;
+            }
+            matrix.SetRow(0, yaml_r.as<Hyperion::Vector4>());
+
+            auto yaml_g = node["row2"];
+            if (!yaml_g || !yaml_g.IsMap()) {
+                return false;
+            }
+            matrix.SetRow(1, yaml_r.as<Hyperion::Vector4>());
+
+            auto yaml_b = node["row3"];
+            if (!yaml_b || !yaml_b.IsMap()) {
+                return false;
+            }
+            matrix.SetRow(2, yaml_r.as<Hyperion::Vector4>());
+
+            auto yaml_a = node["row4"];
+            if (!yaml_a || !yaml_a.IsMap()) {
+                return false;
+            }
+            matrix.SetRow(3, yaml_r.as<Hyperion::Vector4>());
+
+            return true;
+        }
+    };
+
+    //--------------------------------------------------------------
+    Emitter &operator <<(Emitter &emitter, const Hyperion::Matrix4x4 &matrix) {
+        emitter << BeginMap;
+        emitter << Key << "row1" << Value << matrix.GetRow(0);
+        emitter << Key << "row2" << Value << matrix.GetRow(1);
+        emitter << Key << "row3" << Value << matrix.GetRow(2);
+        emitter << Key << "row4" << Value << matrix.GetRow(3);
+        emitter << EndMap;
+        return emitter;
+    }
+
 }
 
 
@@ -366,7 +423,7 @@ namespace Hyperion {
                                 continue;
                             }
                         }
-
+                        
                         MetaPrimitiveType primitive_type = property_type.GetPrimitiveType();
 
                         // HACK: For now we only support primitive types.
@@ -391,7 +448,7 @@ namespace Hyperion {
                             case MetaPrimitiveType::Vector3: yaml_emitter << property_value.Cast<Vector3>(); break;
                             case MetaPrimitiveType::Vector4: yaml_emitter << property_value.Cast<Vector4>(); break;
                             case MetaPrimitiveType::Quaternion: yaml_emitter << property_value.Cast<Quaternion>(); break;
-                            case MetaPrimitiveType::Matrix4x4: break;
+                            case MetaPrimitiveType::Matrix4x4: yaml_emitter << property_value.Cast<Matrix4x4>(); break;
                             case MetaPrimitiveType::String: yaml_emitter << property_value.Cast<String>(); break;
                             case MetaPrimitiveType::Color: yaml_emitter << property_value.Cast<Color>(); break;
                             case MetaPrimitiveType::None:
@@ -536,8 +593,8 @@ namespace Hyperion {
                                     case MetaPrimitiveType::Vector2: property.Set(component_handle, yaml_property.as<Vector2>()); break;
                                     case MetaPrimitiveType::Vector3: property.Set(component_handle, yaml_property.as<Vector3>()); break;
                                     case MetaPrimitiveType::Vector4: property.Set(component_handle, yaml_property.as<Vector4>()); break;
-                                    case MetaPrimitiveType::Quaternion:property.Set(component_handle, yaml_property.as<Quaternion>()); break;
-                                    case MetaPrimitiveType::Matrix4x4: break;
+                                    case MetaPrimitiveType::Quaternion: property.Set(component_handle, yaml_property.as<Quaternion>()); break;
+                                    case MetaPrimitiveType::Matrix4x4: property.Set(component_handle, yaml_property.as<Matrix4x4>()); break;
                                     case MetaPrimitiveType::String: property.Set(component_handle, yaml_property.as<String>()); break;
                                     case MetaPrimitiveType::Color: property.Set(component_handle, yaml_property.as<Color>()); break;
                                     case MetaPrimitiveType::None:

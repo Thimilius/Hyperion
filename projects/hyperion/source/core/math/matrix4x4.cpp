@@ -204,12 +204,12 @@ namespace Hyperion {
 
 
     //--------------------------------------------------------------
-    Vector4 Matrix4x4::GetRow(int index) const {
+    Vector4 Matrix4x4::GetRow(int32 index) const {
         return Vector4(elements[index + 0 * 4], elements[index + 1 * 4], elements[index + 2 * 4], elements[index + 3 * 4]);
     }
 
     //--------------------------------------------------------------
-    void Matrix4x4::SetRow(int index, const Vector4 &row) {
+    void Matrix4x4::SetRow(int32 index, const Vector4 &row) {
         elements[index + 0 * 4] = row.x;
         elements[index + 1 * 4] = row.y;
         elements[index + 2 * 4] = row.z;

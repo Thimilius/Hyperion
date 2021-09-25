@@ -20,7 +20,32 @@ namespace Hyperion {
     struct Matrix4x4 {
         union {
             float32 elements[16];
+            struct {
+                float32 m11;
+                float32 m21;
+                float32 m31;
+                float32 m41;
+                float32 m12;
+                float32 m22;
+                float32 m32;
+                float32 m42;
+                float32 m13;
+                float32 m23;
+                float32 m33;
+                float32 m43;
+                float32 m14;
+                float32 m24;
+                float32 m34;
+                float32 m44;
+            };
+
             Vector4 columns[4];
+            struct {
+                Vector4 column1;
+                Vector4 column2;
+                Vector4 column3;
+                Vector4 column4;
+            };
         };
 
         Matrix4x4();
@@ -37,8 +62,8 @@ namespace Hyperion {
         Matrix4x4 Inverted() const;
         Matrix4x4 Transposed() const;
 
-        Vector4 GetRow(int index) const;
-        void SetRow(int index, const Vector4 &row);
+        Vector4 GetRow(int32 index) const;
+        void SetRow(int32 index, const Vector4 &row);
 
         String ToString() const;
 
