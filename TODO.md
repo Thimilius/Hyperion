@@ -11,7 +11,6 @@
     - RenderTextures
 - Fonts
 - Texture atlas
-- Serialization
 - Duplication
 - Error shader/material
 - Data update for textures/meshes
@@ -40,6 +39,13 @@
 	- Move lighting setup into render pipeline
 - Control per object data in render pipeline
 - Async readback of textures/buffers
+
+## Serialization
+- Support for arrays and maps
+- Include base types in serialization
+- Generic YAML serialization
+- Assets
+- Binary serialization
 
 ### Shaders
 - Proper shader language

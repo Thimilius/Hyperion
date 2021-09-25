@@ -102,7 +102,7 @@ namespace Sandbox {
         String data = WorldSerializer::Serialize(g_world);
         HYP_TRACE("\n{}", data);
         World *world = WorldSerializer::Deserialize(data);
-        String data2 = WorldSerializer::Serialize(g_world);
+        String data2 = WorldSerializer::Serialize(world);
         HYP_TRACE("\n{}", data2);
     }
 

@@ -45,64 +45,72 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void WorldManager::ReflectTypes() {
-        MetaRegistry::Reflect<IComponent>("IComponent");
+        // Components
+        {
+            MetaRegistry::Reflect<IComponent>("IComponent");
 
-        MetaRegistry::Reflect<NameComponent>("NameComponent")
-            .Base<IComponent>()
-            .Property<&NameComponent::name>("name");
-        MetaRegistry::Reflect<TagComponent>("TagComponent")
-            .Base<IComponent>()
-            .Property<&TagComponent::tag>("tag");
-        MetaRegistry::Reflect<DisabledComponent>("DisabledComponent")
-            .Base<IComponent>();
-        MetaRegistry::Reflect<StaticComponent>("StaticComponent")
-            .Base<IComponent>();
-        MetaRegistry::Reflect<ArchetypeComponent>("ArchetypeComponent")
-            .Base<IComponent>();
+            MetaRegistry::Reflect<NameComponent>("NameComponent")
+                .Base<IComponent>()
+                .Property<&NameComponent::name>("name");
+            MetaRegistry::Reflect<TagComponent>("TagComponent")
+                .Base<IComponent>()
+                .Property<&TagComponent::tag>("tag");
+            MetaRegistry::Reflect<DisabledComponent>("DisabledComponent")
+                .Base<IComponent>();
+            MetaRegistry::Reflect<StaticComponent>("StaticComponent")
+                .Base<IComponent>();
+            MetaRegistry::Reflect<ArchetypeComponent>("ArchetypeComponent")
+                .Base<IComponent>();
 
-        MetaRegistry::Reflect<LocalTransformComponent>("LocalTransformComponent")
-            .Base<IComponent>()
-            .Property<&LocalTransformComponent::position>("position")
-            .Property<&LocalTransformComponent::rotation>("rotation")
-            .Property<&LocalTransformComponent::scale>("scale");
-        MetaRegistry::Reflect<DerivedTransformComponent>("DerivedTransformComponent")
-            .Base<IComponent>()
-            .Property<&DerivedTransformComponent::position>("position", std::make_pair(PropertyAttribute::Serialize, false))
-            .Property<&DerivedTransformComponent::rotation>("rotation", std::make_pair(PropertyAttribute::Serialize, false))
-            .Property<&DerivedTransformComponent::scale>("scale", std::make_pair(PropertyAttribute::Serialize, false));
-        MetaRegistry::Reflect<LocalToWorldComponent>("LocalToWorldComponent")
-            .Base<IComponent>()
-            .Property<&LocalToWorldComponent::local_to_world>("local_to_world", std::make_pair(PropertyAttribute::Serialize, false));
-        MetaRegistry::Reflect<HierarchyComponent>("HierarchyComponent")
-            .Base<IComponent>()
-            .Property<&HierarchyComponent::parent>("parent", std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::EntityIdAsGuid))
-            .Property<&HierarchyComponent::previous_sibling>("previous_sibling", std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::EntityIdAsGuid))
-            .Property<&HierarchyComponent::next_sibling>("next_sibling", std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::EntityIdAsGuid))
-            .Property<&HierarchyComponent::child_count>("child_count")
-            .Property<&HierarchyComponent::first_child>("first_child", std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::EntityIdAsGuid))
-            .Property<&HierarchyComponent::last_child>("last_child", std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::EntityIdAsGuid));
+            MetaRegistry::Reflect<LocalTransformComponent>("LocalTransformComponent")
+                .Base<IComponent>()
+                .Property<&LocalTransformComponent::position>("position")
+                .Property<&LocalTransformComponent::rotation>("rotation")
+                .Property<&LocalTransformComponent::scale>("scale");
+            MetaRegistry::Reflect<DerivedTransformComponent>("DerivedTransformComponent")
+                .Base<IComponent>()
+                .Property<&DerivedTransformComponent::position>("position", std::make_pair(PropertyAttribute::Serialize, false))
+                .Property<&DerivedTransformComponent::rotation>("rotation", std::make_pair(PropertyAttribute::Serialize, false))
+                .Property<&DerivedTransformComponent::scale>("scale", std::make_pair(PropertyAttribute::Serialize, false));
+            MetaRegistry::Reflect<LocalToWorldComponent>("LocalToWorldComponent")
+                .Base<IComponent>()
+                .Property<&LocalToWorldComponent::local_to_world>("local_to_world", std::make_pair(PropertyAttribute::Serialize, false));
+            MetaRegistry::Reflect<HierarchyComponent>("HierarchyComponent")
+                .Base<IComponent>()
+                .Property<&HierarchyComponent::parent>("parent", std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::EntityIdAsGuid))
+                .Property<&HierarchyComponent::previous_sibling>("previous_sibling", std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::EntityIdAsGuid))
+                .Property<&HierarchyComponent::next_sibling>("next_sibling", std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::EntityIdAsGuid))
+                .Property<&HierarchyComponent::child_count>("child_count")
+                .Property<&HierarchyComponent::first_child>("first_child", std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::EntityIdAsGuid))
+                .Property<&HierarchyComponent::last_child>("last_child", std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::EntityIdAsGuid));
 
-        MetaRegistry::Reflect<Physics::BoxColliderComponent>("BoxColliderComponent")
-            .Base<IComponent>();
-        MetaRegistry::Reflect<Physics::SphereColliderComponent>("SphereColliderComponent")
-            .Base<IComponent>();
+            MetaRegistry::Reflect<Physics::BoxColliderComponent>("BoxColliderComponent")
+                .Base<IComponent>()
+                .Property<&Physics::BoxColliderComponent::origin>("origin")
+                .Property<&Physics::BoxColliderComponent::size>("size");
+            MetaRegistry::Reflect<Physics::SphereColliderComponent>("SphereColliderComponent")
+                .Base<IComponent>()
+                .Property<&Physics::SphereColliderComponent::radius>("radius");
 
-        MetaRegistry::Reflect<Rendering::CameraComponent>("CameraComponent")
-            .Base<IComponent>();
-        MetaRegistry::Reflect<Rendering::SpriteComponent>("SpriteComponent")
-            .Base<IComponent>();
-        MetaRegistry::Reflect<Rendering::MeshComponent>("MeshComponent")
-            .Base<IComponent>();
-        MetaRegistry::Reflect<Rendering::LocalMeshBoundsComponent>("LocalMeshBoundsComponent")
-            .Base<IComponent>();
-        MetaRegistry::Reflect<Rendering::WorldMeshBoundsComponent>("WorldMeshBoundsComponent")
-            .Base<IComponent>();
-        MetaRegistry::Reflect<Rendering::DirectionalLightComponent>("DirectionalLightComponent")
-            .Base<IComponent>();
-        MetaRegistry::Reflect<Rendering::PointLightComponent>("PointLightComponent")
-            .Base<IComponent>();
-        MetaRegistry::Reflect<Rendering::SpotLightComponent>("SpotLightComponent")
-            .Base<IComponent>();
+            MetaRegistry::Reflect<Rendering::CameraComponent>("CameraComponent")
+                .Base<IComponent>();
+            MetaRegistry::Reflect<Rendering::SpriteComponent>("SpriteComponent")
+                .Base<IComponent>();
+            MetaRegistry::Reflect<Rendering::MeshComponent>("MeshComponent")
+                .Base<IComponent>();
+            MetaRegistry::Reflect<Rendering::LocalMeshBoundsComponent>("LocalMeshBoundsComponent")
+                .Base<IComponent>()
+                .Property<&Rendering::LocalMeshBoundsComponent::bounds>("bounds");
+            MetaRegistry::Reflect<Rendering::WorldMeshBoundsComponent>("WorldMeshBoundsComponent")
+                .Base<IComponent>()
+                .Property<&Rendering::WorldMeshBoundsComponent::bounds>("bounds", std::make_pair(PropertyAttribute::Serialize, false));
+            MetaRegistry::Reflect<Rendering::DirectionalLightComponent>("DirectionalLightComponent")
+                .Base<IComponent>();
+            MetaRegistry::Reflect<Rendering::PointLightComponent>("PointLightComponent")
+                .Base<IComponent>();
+            MetaRegistry::Reflect<Rendering::SpotLightComponent>("SpotLightComponent")
+                .Base<IComponent>();
+        }
     }
 
     //--------------------------------------------------------------

@@ -105,8 +105,8 @@ namespace Hyperion {
             MetaRegistry::Reflect<uint16>().Type("uint16", MetaPrimitiveType::UInt16);
             MetaRegistry::Reflect<uint32>().Type("uint32", MetaPrimitiveType::UInt32);
             MetaRegistry::Reflect<uint64>().Type("uint64", MetaPrimitiveType::UInt64);
-            MetaRegistry::Reflect<float32>().Type("float32", MetaPrimitiveType::UInt64);
-            MetaRegistry::Reflect<float64>().Type("float64", MetaPrimitiveType::UInt64);
+            MetaRegistry::Reflect<float32>().Type("float32", MetaPrimitiveType::Float32);
+            MetaRegistry::Reflect<float64>().Type("float64", MetaPrimitiveType::Float64);
             MetaRegistry::Reflect<Vector2>().Type("Vector2", MetaPrimitiveType::Vector2)
                 .Property<&Vector2::x>("x")
                 .Property<&Vector2::y>("y");
@@ -147,6 +147,26 @@ namespace Hyperion {
                 .Property<&Color::g>("g")
                 .Property<&Color::b>("b")
                 .Property<&Color::a>("a");
+        }
+
+        {
+            MetaRegistry::Reflect<BoundingBox>("BoundingBox")
+                .Property<&BoundingBox::min>("min")
+                .Property<&BoundingBox::max>("max");
+            MetaRegistry::Reflect<BoundingSphere>("BoundingSphere")
+                .Property<&BoundingSphere::origin>("origin")
+                .Property<&BoundingSphere::radius>("radius");
+            MetaRegistry::Reflect<Plane>("Plane")
+                .Property<&Plane::normal>("normal")
+                .Property<&Plane::distance>("distance");
+            MetaRegistry::Reflect<Ray>("Ray")
+                .Property<&Ray::origin>("origin")
+                .Property<&Ray::direction>("direction");
+            MetaRegistry::Reflect<Rect>("Rect")
+                .Property<&Rect::x>("x")
+                .Property<&Rect::y>("y")
+                .Property<&Rect::width>("width")
+                .Property<&Rect::height>("height");
         }
 
         WorldManager::ReflectTypes();
