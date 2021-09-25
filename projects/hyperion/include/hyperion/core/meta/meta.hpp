@@ -282,8 +282,7 @@ namespace Hyperion {
         }
 
         template<auto Member, typename Op>
-        auto FindIf(Op op, const MetaTypeNode *node)
-        -> decltype(FindIf(op, node->*Member)) {
+        auto FindIf(Op op, const MetaTypeNode *node) -> decltype(FindIf(op, node->*Member)) {
             decltype(FindIf(op, node->*Member)) ret = nullptr;
 
             if(node) {
@@ -325,11 +324,11 @@ namespace Hyperion {
         }
 
         template<typename... Args, std::size_t... Indexes>
-        inline auto Ctor(std::index_sequence<Indexes...>, const MetaTypeNode *node) {
+        inline auto Constructor(std::index_sequence<Indexes...>, const MetaTypeNode *node) {
             return Internal::FindIf([](auto *candidate) {
                 return candidate->size == sizeof...(Args) &&
                         (([](auto *from, auto *to) {
-                            return Internal::CanCastOrConvert<&Internal::MetaTypeNode::MetaBase>(from, to)
+                            return Internal::CanCastOrConvert<&Internal::MetaTypeNode::base>(from, to)
                                     || Internal::CanCastOrConvert<&Internal::MetaTypeNode::conv>(from, to);
                         }(Internal::MetaTypeInfo<Args>::Resolve(), candidate->arg(Indexes))) && ...);
             }, node->ctor);
@@ -650,7 +649,7 @@ namespace Hyperion {
             std::array<Any, sizeof...(Args)> arguments{{std::forward<Args>(args)...}};
             Any Any{ };
 
-            if(sizeof...(Args) == size()) {
+            if(sizeof...(Args) == GetSize()) {
                 Any = node->invoke(arguments.MetaProperty());
             }
 
@@ -785,7 +784,7 @@ namespace Hyperion {
             std::array<Any, sizeof...(Args)> arguments{{Hyperion::MetaHandle{args}...}};
             Any Any{ };
 
-            if(sizeof...(Args) == size()) {
+            if(sizeof...(Args) == GetSize()) {
                 Any = node->invoke(MetaHandle, arguments.data());
             }
 
@@ -805,7 +804,7 @@ namespace Hyperion {
         GetAttribute(Key &&key) const {
             const auto *curr = Internal::FindIf([key = Any{std::forward<Key>(key)}](auto *candidate) {
                 return candidate->key() == key;
-            }, node->MetaAttribute);
+            }, node->attribute);
 
             return curr ? curr->clazz() : Hyperion::MetaAttribute{ };
         }
@@ -884,7 +883,7 @@ namespace Hyperion {
 
         template<typename... Args>
         Hyperion::MetaConstructor GetConstructor() const {
-            const auto *curr = Internal::MetaConstructor<Args...>(std::make_index_sequence<sizeof...(Args)>{ }, node);
+            const auto *curr = Internal::Constructor<Args...>(std::make_index_sequence<sizeof...(Args)>{ }, node);
             return curr ? curr->clazz() : Hyperion::MetaConstructor{ };
         }
 

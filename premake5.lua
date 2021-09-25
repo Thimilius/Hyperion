@@ -68,7 +68,7 @@ project "hyperion"
 	location "projects/hyperion"
 	
 	language "C++"
-	cppdialect "C++17"
+	cppdialect "C++20"
 	architecture "x86_64"
 	kind "StaticLib"
 	
@@ -103,7 +103,6 @@ project "hyperion"
 		"%{prj.location}/vendor/vulkan/include",
 	}
 	includedirs { package_assimp_includedirs }
-	includedirs { package_fmt_includedirs }
 	includedirs { package_freetype_includedirs }
 	includedirs { package_nlohmann_includedirs }
 	includedirs { package_stb_includedirs }
@@ -135,7 +134,6 @@ function linkhyperion()
 	filter { }
 
 	includedirs { "projects/hyperion/include" }
-	includedirs { package_fmt_includedirs }
 	includedirs { "projects/hyperion/vendor/optick/include" }
 
 	links { "hyperion" }
@@ -149,20 +147,16 @@ function linkhyperion()
 	
 	filter { "system:windows", "configurations:debug" }
 		libdirs { package_assimp_debug_libdirs }
-		libdirs { package_fmt_debug_libdirs }
 		libdirs { package_freetype_debug_libdirs }
 		libdirs { package_yaml_debug_libdirs }
 		links { package_assimp_debug_links }
-		links { package_fmt_debug_links }
 		links { package_freetype_debug_links }
 		links { package_yaml_debug_links }
 	filter { "system:windows", "configurations:profile or release" }
 		libdirs { package_assimp_release_libdirs }
-		libdirs { package_fmt_release_libdirs }
 		libdirs { package_freetype_release_libdirs }
 		libdirs { package_yaml_release_libdirs }
 		links { package_assimp_release_links }
-		links { package_fmt_release_links }
 		links { package_freetype_release_links }
 		links { package_yaml_release_links }
 
@@ -181,7 +175,7 @@ project "hyperion-sandbox"
 	location "projects/hyperion-sandbox"
 	
 	language "C++"
-	cppdialect "C++17"
+	cppdialect "C++20"
 	architecture "x86_64"
 	kind "WindowedApp"
 	

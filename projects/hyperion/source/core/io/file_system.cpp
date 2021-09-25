@@ -95,7 +95,7 @@ namespace Hyperion {
     String FileSystem::GetAbsoluteFilePath(const String& path) {
         HYP_PROFILE_SCOPE("FileSystem.GetAbsoluteFilePath");
 
-        return std::filesystem::absolute(path).u8string();
+        return std::filesystem::absolute(path).string();
     }
 
 }

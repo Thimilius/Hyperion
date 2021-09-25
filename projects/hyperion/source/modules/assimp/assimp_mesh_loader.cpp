@@ -35,11 +35,11 @@ namespace Hyperion {
         const aiScene *scene = importer.ReadFile(path, g_assimp_import_flags);
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
             HYP_LOG_ERROR("MeshImporter", "Failed to load mesh: '{}'", path);
-            return Error::InvalidMesh;
+            return { Error::InvalidMesh };
         };
         if (scene->mNumMeshes == 0) {
             HYP_LOG_ERROR("MeshImporter", "The loaded mesh '{}' does not contain any meshes!", path);
-            return Error::InvalidMesh;
+            return { Error::InvalidMesh };
         }
 
         MeshData mesh_data;
@@ -48,7 +48,7 @@ namespace Hyperion {
             LoadSubMesh(scene->mMeshes[i], mesh_data, sub_meshes);
         }
 
-        return AssetManager::CreateMesh(mesh_data, sub_meshes);
+        return { AssetManager::CreateMesh(mesh_data, sub_meshes) };
     }
 
     //--------------------------------------------------------------

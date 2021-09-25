@@ -26,9 +26,9 @@ namespace Hyperion::Rendering {
     void SetUnpackAlignmentForTextureFormat(TextureFormat format) {
         GLint alignment = 4;
         switch (format) {
-            case Hyperion::Rendering::TextureFormat::RGB24: alignment = 4; break;
-            case Hyperion::Rendering::TextureFormat::RGBA32: alignment = 4; break;
-            case Hyperion::Rendering::TextureFormat::R8: alignment = 1; break;
+            case TextureFormat::RGB24: alignment = 4; break;
+            case TextureFormat::RGBA32: alignment = 4; break;
+            case TextureFormat::R8: alignment = 1; break;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
         glPixelStorei(GL_UNPACK_ALIGNMENT, alignment);

@@ -103,6 +103,7 @@ namespace Hyperion {
         }
     }
 
+    //--------------------------------------------------------------
     uint32 ComponentPool::GetSparseIndex(EntityId id) {
         return EntityUtilities::GetIndex(id) % MAX_ENTITIES_PER_PAGE;
     }

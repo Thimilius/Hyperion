@@ -1,10 +1,8 @@
 #pragma once
 
 //--------------- C++ Standard Library Includes ----------------
+#include <format>
 #include <string>
-
-//---------------------- Library Includes ----------------------
-#include <fmt/format.h>
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/collections/array.hpp"
@@ -18,13 +16,13 @@ namespace Hyperion {
     class StringUtils {
     public:
         template<typename ...Args>
-        inline static String Format(const char *format, Args... args) {
-            return fmt::format(format, args...);
+        inline static String Format(const char *fmt, Args... args) {
+            return std::format(fmt, args...);
         }
 
         template<typename ...Args>
-        inline static String Format(const String &format, Args... args) {
-            return fmt::format(format, args...);
+        inline static String Format(const String &fmt, Args... args) {
+            return std::format(fmt, args...);
         }
 
         inline static bool8 EndsWith(String const &string, String const &ending) {

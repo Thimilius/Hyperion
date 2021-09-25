@@ -9,6 +9,7 @@
 //--------------- C++ Standard Library Includes ----------------
 #include <algorithm>
 #include <filesystem>
+#include <format>
 #include <functional>
 #include <iterator>
 #include <memory>
@@ -16,9 +17,6 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-
-//---------------------- Library Includes ----------------------
-#include <fmt/format.h>
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
