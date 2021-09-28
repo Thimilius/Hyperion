@@ -179,10 +179,6 @@ namespace Hyperion::Rendering {
         glNamedBufferData(m_state.camera_uniform_buffer, sizeof(OpenGLUniformBufferCamera), nullptr, GL_DYNAMIC_DRAW);
         glBindBufferBase(GL_UNIFORM_BUFFER, 0, m_state.camera_uniform_buffer);
 
-        glCreateBuffers(1, &m_state.lighting_uniform_buffer);
-        glNamedBufferData(m_state.lighting_uniform_buffer, sizeof(OpenGLUniformBufferLighting), nullptr, GL_DYNAMIC_DRAW);
-        glBindBufferBase(GL_UNIFORM_BUFFER, 1, m_state.lighting_uniform_buffer);
-
         GLint buffer_bindings = 0;
         glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &buffer_bindings);
     }
@@ -233,7 +229,7 @@ namespace Hyperion::Rendering {
                     for (const RenderFrameCommandBufferCommand &buffer_command : buffer_commands) {
                         switch (buffer_command.type) {
                             case RenderFrameCommandBufferCommandType::ClearRenderTarget: {
-                                HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.Clear");
+                                HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommandBufferCommand.Clear");
 
                                 const RenderFrameContextCamera &render_frame_context_camera = render_frame_context.GetCameras()[m_state.camera_index];
 
@@ -242,6 +238,32 @@ namespace Hyperion::Rendering {
                                 Color background_color = render_frame_context_camera.background_color;
                                 glClearColor(background_color.r, background_color.g, background_color.b, background_color.a);
                                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+                                break;
+                            }
+                            case RenderFrameCommandBufferCommandType::SetGlobalBuffer: {
+                                HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommandBufferCommand.SetGlobalBuffer");
+
+                                const RenderFrameCommandBufferCommandSetGlobalBuffer &set_global_buffer = std::get<RenderFrameCommandBufferCommandSetGlobalBuffer>(buffer_command.data);
+                                auto &data = set_global_buffer.render_buffer.GetData();
+
+                                // HACK: This is kind of stupid.
+                                // We need something more sophisticated which abstracts the proper shader uniform names and binding points.
+                                GLuint buffer_id = -1;
+                                if (set_global_buffer.id == 0) {
+                                    buffer_id = m_state.lighting_uniform_buffer;
+
+                                    if (buffer_id == -1) {
+                                        glCreateBuffers(1, &buffer_id);
+                                        glNamedBufferData(buffer_id, data.GetLength(), data.GetData(), GL_DYNAMIC_DRAW);
+                                        glBindBufferBase(GL_UNIFORM_BUFFER, 1, buffer_id);
+
+                                        m_state.lighting_uniform_buffer = buffer_id;
+
+                                        return;
+                                    }
+                                }
+
+                                glNamedBufferSubData(buffer_id, 0, data.GetLength(), data.GetData());
                                 break;
                             }
                             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
@@ -448,33 +470,6 @@ namespace Hyperion::Rendering {
             const OpenGLShader &opengl_shader = *grouped_shader.shader;
             glUseProgram(opengl_shader.program);
 
-            // TODO: The lighting is dependent on the actual render pipeline.
-            // This means the complete setup of the lighting buffer should be done in the render pipeline.
-            {
-                OpenGLUniformBufferLighting uniform_buffer_lighting;
-                uniform_buffer_lighting.ambient_color = environment.ambient_light.intensity * environment.ambient_light.color;
-
-                // Because of how the frame context gets populated, we know that the first light (if present and directional) is the main light.
-                auto light_it = lights.begin();
-                if (light_it != lights.end() && light_it->type == LightType::Directional) {
-                    const RenderFrameContextLight &main_light = *light_it;
-                    CopyFrameLightToOpenGLLight(main_light, uniform_buffer_lighting.main_light);
-                }
-
-                uint64 point_light_index = 0;
-                for (const RenderFrameContextLight &light : lights) {
-                    if (light.type == LightType::Point) {
-                        // HACK: For now we just ignore every light that is beyond our hardcoded limit.
-
-                        if (point_light_index < 128) {
-                            CopyFrameLightToOpenGLLight(light, uniform_buffer_lighting.point_lights[point_light_index++]);
-                        }
-                    }
-                }
-
-                glNamedBufferSubData(m_state.lighting_uniform_buffer, 0, sizeof(OpenGLUniformBufferLighting), &uniform_buffer_lighting);
-            }
-
             for (const auto [material_id, grouped_material] : grouped_shader.materials) {
                 HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderGroupedMaterial");
 
@@ -504,17 +499,6 @@ namespace Hyperion::Rendering {
                 }
             }
         }
-    }
-
-    //--------------------------------------------------------------
-    void OpenGLRenderDriver::CopyFrameLightToOpenGLLight(const RenderFrameContextLight &frame_light, OpenGLLight &opengl_light) {
-        opengl_light.color = frame_light.color;
-        opengl_light.intensity = frame_light.intensity;
-        opengl_light.direction = frame_light.direction;
-        opengl_light.position = frame_light.position;
-        opengl_light.range = frame_light.range;
-        opengl_light.spot_inner_radius = frame_light.inner_spot_radius;
-        opengl_light.spot_outer_radius = frame_light.outer_spot_radius;
     }
 
     //--------------------------------------------------------------

@@ -36,8 +36,7 @@
 - Framebuffers
 - Lighting
     - Storage buffers
-	- Move lighting setup into render pipeline
-- Control per object data in render pipeline
+- Better global buffer abstraction
 - Async readback of textures/buffers
 
 ## Serialization

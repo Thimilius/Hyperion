@@ -70,31 +70,11 @@ namespace Hyperion::Rendering {
         Matrix4x4 camera_projection_matrix;
     };
 
-    struct OpenGLLight {
-        Color color;
-        Vector3 direction;
-        float32 intensity;
-        Vector3 position;
-        float32 range;
-        float32 spot_inner_radius;
-        float32 spot_outer_radius;
-
-        float32 padding[2];
-    };
-
-    struct OpenGLUniformBufferLighting {
-        Color ambient_color;
-
-        OpenGLLight main_light;
-
-        OpenGLLight point_lights[128];
-    };
-
     struct OpenGLState {
         uint64 camera_index;
         GLuint camera_uniform_buffer;
 
-        GLuint lighting_uniform_buffer;
+        GLuint lighting_uniform_buffer = -1;
 
         GLuint render_bounds_vertex_buffer = -1;
         GLuint render_bounds_index_buffer;
@@ -114,7 +94,6 @@ namespace Hyperion::Rendering {
         void GroupObjects(RenderFrame *render_frame, CullingResults culling_results, DrawingParametes drawing_parameters);
         void SetupPerObjectLightIndices(const RenderFrameContext &render_frame_context, GroupedObject &grouped_object, Vector3 object_position);
         void RenderCamera(const RenderFrameContextEnvironment &environment, const Array<RenderFrameContextLight> &lights, const RenderFrameContextCamera &camera, DrawingParametes drawing_parameters);
-        void CopyFrameLightToOpenGLLight(const RenderFrameContextLight &frame_light, OpenGLLight &opengl_light);
         void UseMaterial(const OpenGLShader &opengl_shader, const OpenGLMaterial &opengl_material);
         void DrawSubMesh(const SubMesh &sub_mesh);
         void DrawRenderBounds(const BoundingBox &bounds);

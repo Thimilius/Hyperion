@@ -23,6 +23,16 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
+    void RenderFrameCommandBuffer::SetGlobalBuffer(ShaderPropertyId id, RenderBuffer &&render_buffer) {
+        RenderFrameCommandBufferCommandSetGlobalBuffer set_global_buffer;
+        set_global_buffer.id = id;
+        set_global_buffer.render_buffer = render_buffer;
+
+        RenderFrameCommandBufferCommand &command = CreateCommand(RenderFrameCommandBufferCommandType::SetGlobalBuffer);
+        command.data = set_global_buffer;
+    }
+
+    //--------------------------------------------------------------
     RenderFrameCommandBufferCommand &RenderFrameCommandBuffer::CreateCommand(RenderFrameCommandBufferCommandType type) {
         m_commands.Resize(m_commands.GetLength() + 1);
         RenderFrameCommandBufferCommand &command = m_commands.GetLast();
