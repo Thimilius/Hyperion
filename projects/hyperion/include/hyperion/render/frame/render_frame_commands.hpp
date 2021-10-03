@@ -40,9 +40,22 @@ namespace Hyperion::Rendering {
     };
     HYP_CREATE_ENUM_FLAG_OPERATORS(PerObjectData);
 
+    enum class SortingCriteria {
+        None,
+
+        Opaque,
+        Transparent
+    };
+
+    struct SortingSettings {
+        SortingCriteria criteria = SortingCriteria::Opaque;
+        Vector3 camera_position;
+    };
+
     struct DrawingParametes {
         LayerMask filter_mask = LayerMask::Everything;
         PerObjectData per_object_data = PerObjectData::None;
+        SortingSettings sorting_settings;
     };
 
     struct RenderFrameCommandDrawMeshes {

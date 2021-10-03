@@ -279,7 +279,7 @@ namespace Hyperion::Rendering {
 
                     const RenderFrameContextCamera &render_frame_context_camera = render_frame_context.GetCameras()[m_state.camera_index];
 
-                    GroupObjects(render_frame, draw_meshes.culling_results, draw_meshes.drawing_parameters);
+                    PrepareObjects(render_frame, draw_meshes.culling_results, draw_meshes.drawing_parameters);
                     RenderCamera(render_frame_context.GetEnvironment(), render_frame_context.GetLights(), render_frame_context_camera, draw_meshes.drawing_parameters);
 
                     break;
@@ -324,7 +324,7 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void OpenGLRenderDriver::GroupObjects(RenderFrame *render_frame, CullingResults culling_results, DrawingParametes drawing_parameters) {
+    void OpenGLRenderDriver::PrepareObjects(RenderFrame *render_frame, CullingResults culling_results, DrawingParametes drawing_parameters) {
         HYP_PROFILE_CATEGORY("OpenGLRenderDriver.GroupObjects", ProfileCategory::Rendering);
 
         Array<GroupedShader> grouped_shaders;
@@ -333,7 +333,8 @@ namespace Hyperion::Rendering {
         const Array<RenderFrameContextObjectMesh> &mesh_objects = render_frame_context.GetMeshObjects();
         const Array<uint32> &visible_objects = render_frame->GetCullingStorage(culling_results.index).indices;
 
-        for (uint32 index : visible_objects) {
+        Array<uint32> sorted_objects = SortObjects(visible_objects, mesh_objects, drawing_parameters.sorting_settings);
+        for (uint32 index : sorted_objects) {
             const RenderFrameContextObjectMesh &render_frame_context_object_mesh = mesh_objects[index];
 
             if ((render_frame_context_object_mesh.layer_mask & drawing_parameters.filter_mask) != render_frame_context_object_mesh.layer_mask) {
@@ -399,6 +400,45 @@ namespace Hyperion::Rendering {
 
             m_grouped_shaders = std::move(grouped_shaders);
         }
+    }
+
+    //--------------------------------------------------------------
+    Array<uint32> OpenGLRenderDriver::SortObjects(const Array<uint32> visible_objects, const Array<RenderFrameContextObjectMesh> &mesh_objects, SortingSettings sorting_settings) {
+        HYP_PROFILE_SCOPE("OpenGLRenderDriver.SortObjects");
+
+        Array<uint32> sorted_objects = visible_objects;
+        Vector3 camera_position = sorting_settings.camera_position;
+
+        switch (sorting_settings.criteria) 	{
+            case SortingCriteria::None: break;
+            case SortingCriteria::Opaque: {
+                std::sort(sorted_objects.begin(), sorted_objects.end(), [mesh_objects, camera_position](uint32 a, uint32 b) {
+                    const RenderFrameContextObjectMesh &mesh_a = mesh_objects[a];
+                    const RenderFrameContextObjectMesh &mesh_b = mesh_objects[b];
+
+                    float32 distance_sqr_a = (camera_position - mesh_a.position).SqrMagnitude();
+                    float32 distance_sqr_b = (camera_position - mesh_b.position).SqrMagnitude();
+
+                    return distance_sqr_a < distance_sqr_b;
+                });
+                break;
+            }
+            case SortingCriteria::Transparent: {
+                std::sort(sorted_objects.begin(), sorted_objects.end(), [mesh_objects, camera_position](uint32 a, uint32 b) {
+                    const RenderFrameContextObjectMesh &mesh_a = mesh_objects[a];
+                    const RenderFrameContextObjectMesh &mesh_b = mesh_objects[b];
+
+                    float32 distance_sqr_a = (camera_position - mesh_a.position).SqrMagnitude();
+                    float32 distance_sqr_b = (camera_position - mesh_b.position).SqrMagnitude();
+
+                    return distance_sqr_a > distance_sqr_b;
+                    });
+                break;
+            }
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+        }
+        
+        return sorted_objects;
     }
 
     //--------------------------------------------------------------

@@ -34,6 +34,8 @@ namespace Hyperion::Rendering {
         DrawingParametes drawing_parameters;
         drawing_parameters.filter_mask = LayerMask::Everything;
         drawing_parameters.per_object_data = PerObjectData::LightIndices;
+        drawing_parameters.sorting_settings.camera_position = camera.position;
+        drawing_parameters.sorting_settings.criteria = SortingCriteria::Opaque;
         render_frame->DrawMeshes(culling_results, drawing_parameters);
 
         render_frame->DrawGizmos();
