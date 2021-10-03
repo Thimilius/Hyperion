@@ -24,7 +24,7 @@
 using namespace Hyperion;
 using namespace Hyperion::Rendering;
 
-#define HYP_STRESS_TEST
+//#define HYP_STRESS_TEST
 //#define HYP_STRESS_TEST_EXTREME
 
 //-------------------- Definition Namespace --------------------

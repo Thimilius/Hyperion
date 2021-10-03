@@ -687,7 +687,7 @@ namespace Hyperion::Rendering {
         opengl_shader.id = shader.id;
         opengl_shader.program = OpenGLRenderDriverShaderCompiler::Compile(shader.data.vertex_source.c_str(), shader.data.fragment_source.c_str()).program;
 
-        opengl_shader.locations.Resize(shader.data.properties.GetLength());
+        opengl_shader.locations.Reserve(shader.data.properties.GetLength());
         for (const ShaderProperty &property : shader.data.properties) {
             opengl_shader.locations.Add(glGetUniformLocation(opengl_shader.program, property.name.c_str()));
         }
