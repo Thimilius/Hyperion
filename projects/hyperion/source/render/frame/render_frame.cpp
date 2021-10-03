@@ -17,14 +17,6 @@ namespace Hyperion::Rendering {
     void RenderFrame::Clear() {
         m_context.Clear();
         m_commands.Clear();
-        m_culling_storages.Clear();
-    }
-
-    //--------------------------------------------------------------
-    const CullingStorage &RenderFrame::GetCullingStorage(uint32 index) const {
-        HYP_ASSERT(index < m_culling_storages.GetLength());
-
-        return m_culling_storages[index];
     }
 
     //--------------------------------------------------------------
@@ -34,10 +26,6 @@ namespace Hyperion::Rendering {
         Array<Plane> frustum_planes = CameraUtilities::ExtractFrustumPlanes(parameters.matrix);
 
         CullingResults result;
-        result.index = static_cast<uint32>(m_culling_storages.GetLength());
-
-        m_culling_storages.Resize(m_culling_storages.GetLength() + 1);
-        CullingStorage &storage = m_culling_storages.GetLast();
 
         uint32 index = 0;
         for (const RenderFrameContextObjectMesh &object : m_context.GetMeshObjects()) {
@@ -45,7 +33,7 @@ namespace Hyperion::Rendering {
             bool8 is_in_layer = (object.layer_mask & parameters.mask) == object.layer_mask;
 
             if (is_inside_frustum && is_in_layer) {
-                storage.indices.Add(index);
+                result.visible_objects.Add(index);
             }
 
             index++;
@@ -73,10 +61,48 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void RenderFrame::DrawMeshes(CullingResults culling_results, DrawingParametes drawing_parameters) {
+    void RenderFrame::DrawMeshes(CullingResults &culling_results, DrawingParametes drawing_parameters) {
         RenderFrameCommandDrawMeshes draw_meshes;
         draw_meshes.culling_results = culling_results;
         draw_meshes.drawing_parameters = drawing_parameters;
+        draw_meshes.sorted_objects = std::move(culling_results.visible_objects);
+
+        // We do the sorting on the Main Thread.
+        {
+            HYP_PROFILE_SCOPE("RenderFrame.SortObjects");
+
+            const Array<RenderFrameContextObjectMesh> &mesh_objects = m_context.GetMeshObjects();
+            Vector3 camera_position = drawing_parameters.sorting_settings.camera_position;
+
+            switch (drawing_parameters.sorting_settings.criteria) {
+                case SortingCriteria::None: break;
+                case SortingCriteria::Opaque: {
+                    std::sort(draw_meshes.sorted_objects.begin(), draw_meshes.sorted_objects.end(), [mesh_objects, camera_position](uint32 a, uint32 b) {
+                        const RenderFrameContextObjectMesh &mesh_a = mesh_objects[a];
+                        const RenderFrameContextObjectMesh &mesh_b = mesh_objects[b];
+
+                        float32 distance_sqr_a = (camera_position - mesh_a.position).SqrMagnitude();
+                        float32 distance_sqr_b = (camera_position - mesh_b.position).SqrMagnitude();
+
+                        return distance_sqr_a < distance_sqr_b;
+                    });
+                    break;
+                }
+                case SortingCriteria::Transparent: {
+                    std::sort(draw_meshes.sorted_objects.begin(), draw_meshes.sorted_objects.end(), [mesh_objects, camera_position](uint32 a, uint32 b) {
+                        const RenderFrameContextObjectMesh &mesh_a = mesh_objects[a];
+                        const RenderFrameContextObjectMesh &mesh_b = mesh_objects[b];
+
+                        float32 distance_sqr_a = (camera_position - mesh_a.position).SqrMagnitude();
+                        float32 distance_sqr_b = (camera_position - mesh_b.position).SqrMagnitude();
+
+                        return distance_sqr_a > distance_sqr_b;
+                    });
+                    break;
+                }
+                default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+            }
+        }
 
         RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::DrawMeshes);
         command.data = draw_meshes;

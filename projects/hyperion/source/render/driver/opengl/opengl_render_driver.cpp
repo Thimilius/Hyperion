@@ -279,7 +279,7 @@ namespace Hyperion::Rendering {
 
                     const RenderFrameContextCamera &render_frame_context_camera = render_frame_context.GetCameras()[m_state.camera_index];
 
-                    PrepareObjects(render_frame, draw_meshes.culling_results, draw_meshes.drawing_parameters);
+                    PrepareObjects(render_frame, draw_meshes.sorted_objects, draw_meshes.drawing_parameters);
                     RenderCamera(render_frame_context.GetEnvironment(), render_frame_context.GetLights(), render_frame_context_camera, draw_meshes.drawing_parameters);
 
                     break;
@@ -324,16 +324,14 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void OpenGLRenderDriver::PrepareObjects(RenderFrame *render_frame, CullingResults culling_results, DrawingParametes drawing_parameters) {
-        HYP_PROFILE_CATEGORY("OpenGLRenderDriver.GroupObjects", ProfileCategory::Rendering);
+    void OpenGLRenderDriver::PrepareObjects(RenderFrame *render_frame, const Array<uint32> &sorted_objects, DrawingParametes drawing_parameters) {
+        HYP_PROFILE_SCOPE("OpenGLRenderDriver.PrepareObjects");
 
         Array<GroupedShader> grouped_shaders;
 
         const RenderFrameContext &render_frame_context = render_frame->GetContext();
         const Array<RenderFrameContextObjectMesh> &mesh_objects = render_frame_context.GetMeshObjects();
-        const Array<uint32> &visible_objects = render_frame->GetCullingStorage(culling_results.index).indices;
 
-        Array<uint32> sorted_objects = SortObjects(visible_objects, mesh_objects, drawing_parameters.sorting_settings);
         for (uint32 index : sorted_objects) {
             const RenderFrameContextObjectMesh &render_frame_context_object_mesh = mesh_objects[index];
 
@@ -403,45 +401,6 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    Array<uint32> OpenGLRenderDriver::SortObjects(const Array<uint32> visible_objects, const Array<RenderFrameContextObjectMesh> &mesh_objects, SortingSettings sorting_settings) {
-        HYP_PROFILE_SCOPE("OpenGLRenderDriver.SortObjects");
-
-        Array<uint32> sorted_objects = visible_objects;
-        Vector3 camera_position = sorting_settings.camera_position;
-
-        switch (sorting_settings.criteria) 	{
-            case SortingCriteria::None: break;
-            case SortingCriteria::Opaque: {
-                std::sort(sorted_objects.begin(), sorted_objects.end(), [mesh_objects, camera_position](uint32 a, uint32 b) {
-                    const RenderFrameContextObjectMesh &mesh_a = mesh_objects[a];
-                    const RenderFrameContextObjectMesh &mesh_b = mesh_objects[b];
-
-                    float32 distance_sqr_a = (camera_position - mesh_a.position).SqrMagnitude();
-                    float32 distance_sqr_b = (camera_position - mesh_b.position).SqrMagnitude();
-
-                    return distance_sqr_a < distance_sqr_b;
-                });
-                break;
-            }
-            case SortingCriteria::Transparent: {
-                std::sort(sorted_objects.begin(), sorted_objects.end(), [mesh_objects, camera_position](uint32 a, uint32 b) {
-                    const RenderFrameContextObjectMesh &mesh_a = mesh_objects[a];
-                    const RenderFrameContextObjectMesh &mesh_b = mesh_objects[b];
-
-                    float32 distance_sqr_a = (camera_position - mesh_a.position).SqrMagnitude();
-                    float32 distance_sqr_b = (camera_position - mesh_b.position).SqrMagnitude();
-
-                    return distance_sqr_a > distance_sqr_b;
-                    });
-                break;
-            }
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
-        }
-        
-        return sorted_objects;
-    }
-
-    //--------------------------------------------------------------
     void OpenGLRenderDriver::SetupPerObjectLightIndices(const RenderFrameContext &render_frame_context, GroupedObject &grouped_object, Vector3 object_position) {
         HYP_PROFILE_SCOPE("OpenGLRenderDriver.SetupPerObjectLightIndices");
 
@@ -502,7 +461,7 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void OpenGLRenderDriver::RenderCamera(const RenderFrameContextEnvironment &environment, const Array<RenderFrameContextLight> &lights, const RenderFrameContextCamera &camera, DrawingParametes drawing_parameters) {
-        HYP_PROFILE_CATEGORY("OpenGLRenderDriver.RenderCamera", ProfileCategory::Rendering);
+        HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderCamera");
 
         for (const GroupedShader &grouped_shader : m_grouped_shaders) {
             HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderGroupedShader");

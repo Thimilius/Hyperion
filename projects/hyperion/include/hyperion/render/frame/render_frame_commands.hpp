@@ -30,7 +30,7 @@ namespace Hyperion::Rendering {
     };
 
     struct CullingResults {
-        uint32 index;
+        Array<uint32> visible_objects;
     };
 
     enum PerObjectData {
@@ -61,6 +61,7 @@ namespace Hyperion::Rendering {
     struct RenderFrameCommandDrawMeshes {
         CullingResults culling_results;
         DrawingParametes drawing_parameters;
+        Array<uint32> sorted_objects;
     };
 
     struct RenderFrameCommandDrawGizmos {
