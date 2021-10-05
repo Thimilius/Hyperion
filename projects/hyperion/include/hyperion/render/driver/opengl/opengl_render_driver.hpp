@@ -95,6 +95,7 @@ namespace Hyperion::Rendering {
         void PrepareObjects(RenderFrame *render_frame, const Array<uint32> &sorted_objects, DrawingParametes drawing_parameters);
         void SetupPerObjectLightIndices(const RenderFrameContext &render_frame_context, GroupedObject &grouped_object, Vector3 object_position);
         void RenderCamera(const RenderFrameContextEnvironment &environment, const Array<RenderFrameContextLight> &lights, const RenderFrameContextCamera &camera, DrawingParametes drawing_parameters);
+        void UseShader(const OpenGLShader &opengl_shader);
         void UseMaterial(const OpenGLShader &opengl_shader, const OpenGLMaterial &opengl_material);
         void DrawSubMesh(const SubMesh &sub_mesh);
         void DrawRenderBounds(const BoundingBox &bounds);

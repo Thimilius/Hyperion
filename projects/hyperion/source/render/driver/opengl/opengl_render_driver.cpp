@@ -170,13 +170,7 @@ namespace Hyperion::Rendering {
     //--------------------------------------------------------------
     void OpenGLRenderDriver::Initialize() {
         glEnable(GL_DEPTH_TEST);
-
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
         glFrontFace(GL_CW);
-
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         glCreateBuffers(1, &m_state.camera_uniform_buffer);
         glNamedBufferData(m_state.camera_uniform_buffer, sizeof(OpenGLUniformBufferCamera), nullptr, GL_DYNAMIC_DRAW);
@@ -237,6 +231,9 @@ namespace Hyperion::Rendering {
                                 glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
                                 Color background_color = render_frame_context_camera.background_color;
                                 glClearColor(background_color.r, background_color.g, background_color.b, background_color.a);
+                                
+                                // We have to make sure that we can clear the depth buffer by enabling the depth mask.
+                                glDepthMask(GL_TRUE);
                                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
                                 break;
                             }
@@ -288,6 +285,10 @@ namespace Hyperion::Rendering {
                     HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawGizmos");
 
                     const RenderFrameCommandDrawGizmos &draw_gizmos = std::get<RenderFrameCommandDrawGizmos>(frame_command.data);
+
+                    glDepthMask(GL_FALSE);
+                    glEnable(GL_BLEND);
+                    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
                     const OpenGLShader &opengl_shader = m_opengl_shaders.Get(draw_gizmos.shader_id);
                     glUseProgram(opengl_shader.program);
@@ -474,7 +475,7 @@ namespace Hyperion::Rendering {
             HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderGroupedShader");
 
             const OpenGLShader &opengl_shader = *grouped_shader.shader;
-            glUseProgram(opengl_shader.program);
+            UseShader(opengl_shader);
 
             for (const auto [material_id, grouped_material] : grouped_shader.materials) {
                 HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderGroupedMaterial");
@@ -505,6 +506,55 @@ namespace Hyperion::Rendering {
                 }
             }
         }
+    }
+
+    //--------------------------------------------------------------
+    void OpenGLRenderDriver::UseShader(const OpenGLShader &opengl_shader) {
+        HYP_PROFILE_SCOPE("OpenGLRenderDriver.UseShader");
+
+        ShaderAttributes attributes = opengl_shader.attributes;
+        switch (attributes.z_write) {
+            case ShaderZWrite::On: {
+                glDepthMask(GL_TRUE);
+                break;
+            }
+            case ShaderZWrite::Off: {
+                glDepthMask(GL_FALSE);
+                break;
+            }
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+        }
+        switch (attributes.blending_mode) 	{
+            case ShaderBlendingMode::On: { 
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                break;
+            }
+            case ShaderBlendingMode::Off: {
+                glDisable(GL_BLEND);
+                break;
+            }
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+        }
+        switch (attributes.culling_mode) 	{
+            case ShaderCullingMode::Off: {
+                glDisable(GL_CULL_FACE);
+                break;
+            }
+            case ShaderCullingMode::Front: {
+                glEnable(GL_CULL_FACE);
+                glCullFace(GL_FRONT);
+                break;
+            }
+            case ShaderCullingMode::Back: {
+                glEnable(GL_CULL_FACE);
+                glCullFace(GL_BACK);
+                break;
+            }
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+        }
+        
+        glUseProgram(opengl_shader.program);
     }
 
     //--------------------------------------------------------------

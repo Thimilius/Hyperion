@@ -19,6 +19,44 @@ namespace Hyperion::Rendering {
     };
     HYP_CREATE_ENUM_FLAG_OPERATORS(ShaderStageFlags);
 
+    enum class ShaderRenderOrder {
+        Unknown,
+
+        Opaque,
+        Transparent
+    };
+    
+    enum class ShaderCullingMode {
+        Unknown,
+
+        Off,
+        Front,
+        Back,
+    };
+
+    enum class ShaderBlendingMode {
+        Unknown,
+
+        On,
+        Off,
+    };
+
+    enum class ShaderZWrite {
+        Unknown,
+
+        On,
+        Off
+    };
+
+    struct ShaderAttributes {
+        ShaderRenderOrder render_order = ShaderRenderOrder::Opaque;
+
+        ShaderCullingMode culling_mode = ShaderCullingMode::Back;
+        // TODO: Properly add ability to specify blending mode.
+        ShaderBlendingMode blending_mode = ShaderBlendingMode::Off;
+        ShaderZWrite z_write = ShaderZWrite::On;
+    };
+
     enum class ShaderPropertyType {
         Unknown,
 
@@ -29,13 +67,6 @@ namespace Hyperion::Rendering {
         Matrix,
 
         Texture
-    };
-
-    enum class ShaderRenderOrder {
-        Unknown,
-
-        Opaque,
-        Transparent
     };
 
     union ShaderPropertyStorage {
@@ -55,10 +86,6 @@ namespace Hyperion::Rendering {
         ShaderPropertyStorage storage = { };
 
         inline static ShaderPropertyId PropertyToId(const String &name) { return std::hash<String>{}(name); }
-    };
-
-    struct ShaderAttributes {
-        ShaderRenderOrder render_order = ShaderRenderOrder::Opaque;
     };
 
     using ShaderPropertyCollection = Array<ShaderProperty>;

@@ -42,6 +42,9 @@ namespace Hyperion::Rendering {
 
         static ShaderStageFlags GetShaderStageFromString(const String &string);
         static ShaderRenderOrder GetShaderRenderOrderFromString(const String &string);
+        static ShaderCullingMode GetShaderCullingModeFromString(const String &string);
+        static ShaderBlendingMode GetShaderBlendingModeFromString(const String &string);
+        static ShaderZWrite GetShaderZWriteFromString(const String &string);
         static ShaderPropertyType GetShaderPropertyType(const String &string);
     private:
         String m_source;
@@ -49,8 +52,6 @@ namespace Hyperion::Rendering {
 
         ShaderStageFlags m_current_shader_stage = ShaderStageFlags::Unknown;
         uint64 m_current_shader_type_directive_end;
-
-        bool8 m_property_light_mode_set = false;
     };
 
 }

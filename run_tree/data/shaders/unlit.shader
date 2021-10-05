@@ -3,6 +3,10 @@
 
 #render_order transparent
 
+#culling_mode off
+#blending_mode on
+#z_write off
+
 #type vertex
 #version 450 core
 	

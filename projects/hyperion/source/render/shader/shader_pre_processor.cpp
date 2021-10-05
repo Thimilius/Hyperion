@@ -92,18 +92,58 @@ namespace Hyperion::Rendering {
             String render_order_string = AdvanceUntilWhitespaceOrEndOfLine();
             uint64 directive_full_length = m_position - directive_start_position;
 
-            ShaderRenderOrder shader_render_order = GetShaderRenderOrderFromString(render_order_string);
-            if (shader_render_order == ShaderRenderOrder::Unknown) {
+            ShaderRenderOrder render_order_shader = GetShaderRenderOrderFromString(render_order_string);
+            if (render_order_shader == ShaderRenderOrder::Unknown) {
                 HYP_LOG_ERROR("OpenGL", "Invalid shader render order specifier: '{}'!", render_order_string);
                 return false;
             }
 
-            if (m_property_light_mode_set) {
-                HYP_LOG_WARN("OpenGL", "The shader render order was already set!");
-            } else {
-                result.data.attributes.render_order = shader_render_order;
-                m_property_light_mode_set = true;
+            result.data.attributes.render_order = render_order_shader;
+
+            m_source = m_source.replace(directive_start_position, directive_full_length, "");
+            m_position = directive_start_position;
+        } else if (IsDirective("culling_mode", directive_start)) {
+            SkipBlankspace();
+            String culling_mode_string = AdvanceUntilWhitespaceOrEndOfLine();
+            uint64 directive_full_length = m_position - directive_start_position;
+
+            ShaderCullingMode culling_mode_shader = GetShaderCullingModeFromString(culling_mode_string);
+            if (culling_mode_shader == ShaderCullingMode::Unknown) {
+                HYP_LOG_ERROR("OpenGL", "Invalid shader culling mode specifier: '{}'!", culling_mode_string);
+                return false;
             }
+
+            result.data.attributes.culling_mode = culling_mode_shader;
+
+            m_source = m_source.replace(directive_start_position, directive_full_length, "");
+            m_position = directive_start_position;
+        } else if (IsDirective("blending_mode", directive_start)) {
+            SkipBlankspace();
+            String blending_mode_string = AdvanceUntilWhitespaceOrEndOfLine();
+            uint64 directive_full_length = m_position - directive_start_position;
+
+            ShaderBlendingMode blending_mode_shader = GetShaderBlendingModeFromString(blending_mode_string);
+            if (blending_mode_shader == ShaderBlendingMode::Unknown) {
+                HYP_LOG_ERROR("OpenGL", "Invalid shader blending mode specifier: '{}'!", blending_mode_string);
+                return false;
+            }
+
+            result.data.attributes.blending_mode = blending_mode_shader;
+
+            m_source = m_source.replace(directive_start_position, directive_full_length, "");
+            m_position = directive_start_position;
+        } else if (IsDirective("z_write", directive_start)) {
+            SkipBlankspace();
+            String z_write_string = AdvanceUntilWhitespaceOrEndOfLine();
+            uint64 directive_full_length = m_position - directive_start_position;
+
+            ShaderZWrite z_write_shader = GetShaderZWriteFromString(z_write_string);
+            if (z_write_shader == ShaderZWrite::Unknown) {
+                HYP_LOG_ERROR("OpenGL", "Invalid shader z write specifier: '{}'!", z_write_string);
+                return false;
+            }
+
+            result.data.attributes.z_write = z_write_shader;
 
             m_source = m_source.replace(directive_start_position, directive_full_length, "");
             m_position = directive_start_position;
@@ -270,6 +310,40 @@ namespace Hyperion::Rendering {
         }
     }
 
+    //--------------------------------------------------------------
+    ShaderCullingMode ShaderPreProcessor::GetShaderCullingModeFromString(const String &string) {
+        if (string == "off") {
+            return ShaderCullingMode::Off;
+        } else if (string == "front") {
+            return ShaderCullingMode::Front;
+        } else if (string == "back") {
+            return ShaderCullingMode::Back;
+        } else {
+            return ShaderCullingMode::Unknown;
+        }
+    }
+
+    //--------------------------------------------------------------
+    ShaderBlendingMode ShaderPreProcessor::GetShaderBlendingModeFromString(const String &string) {
+        if (string == "on") {
+            return ShaderBlendingMode::On;
+        } else if (string == "off") {
+            return ShaderBlendingMode::Off;
+        } else {
+            return ShaderBlendingMode::Unknown;
+        }
+    }
+
+    //--------------------------------------------------------------
+    ShaderZWrite ShaderPreProcessor::GetShaderZWriteFromString(const String &string) {
+        if (string == "on") {
+            return ShaderZWrite::On;
+        } else if (string == "off") {
+            return ShaderZWrite::Off;
+        } else {
+            return ShaderZWrite::Unknown;
+        }
+    }
     //--------------------------------------------------------------
     ShaderPropertyType ShaderPreProcessor::GetShaderPropertyType(const String &string) {
         if (string == "Float") {
