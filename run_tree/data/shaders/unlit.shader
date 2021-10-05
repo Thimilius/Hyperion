@@ -1,6 +1,6 @@
 #property m_color Color
 
-#light_mode forward
+#render_order opaque
 
 #type vertex
 #version 450 core

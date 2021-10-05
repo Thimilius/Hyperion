@@ -1,7 +1,7 @@
 #property m_color Color
 #property m_texture Texture
 
-#light_mode forward
+#render_order opaque
 
 #type vertex
 #version 450 core

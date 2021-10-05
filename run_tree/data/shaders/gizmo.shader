@@ -1,4 +1,4 @@
-#light_mode none
+#render_order opaque
 
 #type vertex
 #version 450 core

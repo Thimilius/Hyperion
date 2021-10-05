@@ -31,11 +31,11 @@ namespace Hyperion::Rendering {
         Texture
     };
 
-    enum class ShaderLightMode {
+    enum class ShaderRenderOrder {
         Unknown,
 
-        None,
-        Forward,
+        Opaque,
+        Transparent
     };
 
     union ShaderPropertyStorage {
@@ -58,7 +58,7 @@ namespace Hyperion::Rendering {
     };
 
     struct ShaderAttributes {
-        ShaderLightMode light_mode = ShaderLightMode::None;
+        ShaderRenderOrder render_order = ShaderRenderOrder::Opaque;
     };
 
     using ShaderPropertyCollection = Array<ShaderProperty>;

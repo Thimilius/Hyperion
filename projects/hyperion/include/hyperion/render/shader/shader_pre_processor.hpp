@@ -41,7 +41,7 @@ namespace Hyperion::Rendering {
         static ShaderProperty CreateShaderProperty(const String &name, ShaderPropertyType type);
 
         static ShaderStageFlags GetShaderStageFromString(const String &string);
-        static ShaderLightMode GetShaderLightModeFromString(const String &string);
+        static ShaderRenderOrder GetShaderRenderOrderFromString(const String &string);
         static ShaderPropertyType GetShaderPropertyType(const String &string);
     private:
         String m_source;

@@ -87,21 +87,21 @@ namespace Hyperion::Rendering {
                 m_current_shader_stage = shader_stage;
                 m_current_shader_type_directive_end = m_position;
             }
-        } else if (IsDirective("light_mode", directive_start)) {
+        } else if (IsDirective("render_order", directive_start)) {
             SkipBlankspace();
-            String light_mode_string = AdvanceUntilWhitespaceOrEndOfLine();
+            String render_order_string = AdvanceUntilWhitespaceOrEndOfLine();
             uint64 directive_full_length = m_position - directive_start_position;
 
-            ShaderLightMode shader_light_mode = GetShaderLightModeFromString(light_mode_string);
-            if (shader_light_mode == ShaderLightMode::Unknown) {
-                HYP_LOG_ERROR("OpenGL", "Invalid shader light mode specifier: '{}'!", light_mode_string);
+            ShaderRenderOrder shader_render_order = GetShaderRenderOrderFromString(render_order_string);
+            if (shader_render_order == ShaderRenderOrder::Unknown) {
+                HYP_LOG_ERROR("OpenGL", "Invalid shader render order specifier: '{}'!", render_order_string);
                 return false;
             }
 
             if (m_property_light_mode_set) {
-                HYP_LOG_WARN("OpenGL", "The shader light mode was already set!");
+                HYP_LOG_WARN("OpenGL", "The shader render order was already set!");
             } else {
-                result.data.attributes.light_mode = shader_light_mode;
+                result.data.attributes.render_order = shader_render_order;
                 m_property_light_mode_set = true;
             }
 
@@ -260,13 +260,13 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    ShaderLightMode ShaderPreProcessor::GetShaderLightModeFromString(const String &string) {
-        if (string == "none") {
-            return ShaderLightMode::None;
-        } else if (string == "forward") {
-            return ShaderLightMode::Forward;
+    ShaderRenderOrder ShaderPreProcessor::GetShaderRenderOrderFromString(const String &string) {
+        if (string == "opaque") {
+            return ShaderRenderOrder::Opaque;
+        } else if (string == "transparent") {
+            return ShaderRenderOrder::Transparent;
         } else {
-            return ShaderLightMode::Unknown;
+            return ShaderRenderOrder::Unknown;
         }
     }
 
