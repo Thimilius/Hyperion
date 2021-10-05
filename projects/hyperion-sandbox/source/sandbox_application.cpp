@@ -24,7 +24,7 @@
 using namespace Hyperion;
 using namespace Hyperion::Rendering;
 
-#ifdef HYP_RELEASE
+#if HYP_RELEASE || HYP_PROFILE
     #define HYP_STRESS_TEST
     //#define HYP_STRESS_TEST_EXTREME
 #endif

@@ -24,7 +24,7 @@ namespace Hyperion::Rendering {
         render_frame->SetCamera(0);
 
         RenderFrameCommandBuffer command_buffer;
-        command_buffer.ClearRenderTarget(ClearFlags::All, Color::Cyan());
+        command_buffer.ClearRenderTarget(ClearFlags::All, camera.background_color);
         ForwardRenderLighting::SetupLighting(render_frame->GetContext(), command_buffer);
         render_frame->ExecuteCommandBuffer(command_buffer);
 

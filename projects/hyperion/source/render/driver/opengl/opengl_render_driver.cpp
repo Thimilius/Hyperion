@@ -168,6 +168,21 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
+    GLbitfield GetGLClearFlags(ClearFlags clear_flags) {
+        GLbitfield result = 0;
+        if ((clear_flags & ClearFlags::Color) == ClearFlags::Color) {
+            result |= GL_COLOR_BUFFER_BIT;
+        }
+        if ((clear_flags & ClearFlags::Depth) == ClearFlags::Depth) {
+            result |= GL_DEPTH_BUFFER_BIT;
+        }
+        if ((clear_flags & ClearFlags::Stencil) == ClearFlags::Stencil) {
+            result |= GL_STENCIL_BUFFER_BIT;
+        }
+        return result;
+    }
+
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::Initialize() {
         glEnable(GL_DEPTH_TEST);
         glFrontFace(GL_CW);
@@ -225,16 +240,18 @@ namespace Hyperion::Rendering {
                             case RenderFrameCommandBufferCommandType::ClearRenderTarget: {
                                 HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommandBufferCommand.Clear");
 
-                                const RenderFrameContextCamera &render_frame_context_camera = render_frame_context.GetCameras()[m_state.camera_index];
+                                const RenderFrameCommandBufferCommandClearRenderTarget &clear_render_target = std::get<RenderFrameCommandBufferCommandClearRenderTarget>(buffer_command.data);
 
+                                const RenderFrameContextCamera &render_frame_context_camera = render_frame_context.GetCameras()[m_state.camera_index];
                                 const CameraViewport &viewport = render_frame_context_camera.viewport;
                                 glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
-                                Color background_color = render_frame_context_camera.background_color;
+
+                                Color background_color = clear_render_target.color;
                                 glClearColor(background_color.r, background_color.g, background_color.b, background_color.a);
                                 
                                 // We have to make sure that we can clear the depth buffer by enabling the depth mask.
                                 glDepthMask(GL_TRUE);
-                                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+                                glClear(GetGLClearFlags(clear_render_target.flags));
                                 break;
                             }
                             case RenderFrameCommandBufferCommandType::SetGlobalBuffer: {
@@ -477,7 +494,7 @@ namespace Hyperion::Rendering {
             const OpenGLShader &opengl_shader = *grouped_shader.shader;
             UseShader(opengl_shader);
 
-            for (const auto [material_id, grouped_material] : grouped_shader.materials) {
+            for (const auto &[material_id, grouped_material] : grouped_shader.materials) {
                 HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderGroupedMaterial");
 
                 UseMaterial(opengl_shader, *grouped_material.material);
