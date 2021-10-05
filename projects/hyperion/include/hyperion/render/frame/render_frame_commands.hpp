@@ -34,7 +34,7 @@ namespace Hyperion::Rendering {
     };
 
     enum PerObjectData {
-        None,
+        Nothing,
 
         LightIndices
     };
@@ -54,7 +54,8 @@ namespace Hyperion::Rendering {
 
     struct DrawingParametes {
         LayerMask filter_mask = LayerMask::Everything;
-        PerObjectData per_object_data = PerObjectData::None;
+        PerObjectData per_object_data = PerObjectData::Nothing;
+        ShaderRenderOrder render_order = ShaderRenderOrder::Opaque;
         SortingSettings sorting_settings;
     };
 

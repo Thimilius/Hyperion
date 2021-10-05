@@ -65,7 +65,7 @@ namespace Hyperion::Rendering {
         RenderFrameCommandDrawMeshes draw_meshes;
         draw_meshes.culling_results = culling_results;
         draw_meshes.drawing_parameters = drawing_parameters;
-        draw_meshes.sorted_objects = std::move(culling_results.visible_objects);
+        draw_meshes.sorted_objects = culling_results.visible_objects;
 
         // We do the sorting on the Main Thread.
         {

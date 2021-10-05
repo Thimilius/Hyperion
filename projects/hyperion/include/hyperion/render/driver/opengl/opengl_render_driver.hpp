@@ -15,8 +15,9 @@ namespace Hyperion::Rendering {
     };
     
     struct OpenGLShader : public OpenGLAsset {
-        Array<GLint> locations;
+        ShaderAttributes attributes;
 
+        Array<GLint> locations;
         GLuint program;
     };
 

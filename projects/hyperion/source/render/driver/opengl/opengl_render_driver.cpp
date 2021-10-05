@@ -175,12 +175,12 @@ namespace Hyperion::Rendering {
         glCullFace(GL_BACK);
         glFrontFace(GL_CW);
 
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         glCreateBuffers(1, &m_state.camera_uniform_buffer);
         glNamedBufferData(m_state.camera_uniform_buffer, sizeof(OpenGLUniformBufferCamera), nullptr, GL_DYNAMIC_DRAW);
         glBindBufferBase(GL_UNIFORM_BUFFER, 0, m_state.camera_uniform_buffer);
-
-        GLint buffer_bindings = 0;
-        glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, &buffer_bindings);
     }
 
     //--------------------------------------------------------------
@@ -295,8 +295,6 @@ namespace Hyperion::Rendering {
                     GLint model_location = glGetUniformLocation(opengl_shader.program, "u_model");
 
                     if (draw_gizmos.grid.should_draw) {
-                        glEnable(GL_BLEND);
-
                         glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, draw_gizmos.grid.local_to_world.elements);
 
                         const OpenGLMesh &opengl_mesh = m_opengl_meshes.Get(draw_gizmos.grid.mesh_id);
@@ -304,8 +302,6 @@ namespace Hyperion::Rendering {
 
                         SubMesh sub_mesh = opengl_mesh.sub_meshes[0];
                         DrawSubMesh(sub_mesh);
-
-                        glDisable(GL_BLEND);
                     }
 
                     if (draw_gizmos.should_draw_all_bounds) {
@@ -342,6 +338,17 @@ namespace Hyperion::Rendering {
             AssetId material_id = render_frame_context_object_mesh.material->GetAssetInfo().id;
             AssetId shader_id = render_frame_context_object_mesh.material->GetShader()->GetAssetInfo().id;
             AssetId mesh_id = render_frame_context_object_mesh.mesh->GetAssetInfo().id;
+
+            auto opengl_shader_it = m_opengl_shaders.Find(shader_id);
+            if (opengl_shader_it == m_opengl_shaders.end()) {
+                HYP_LOG_ERROR("OpenGL", "Failed to retrieve OpenGL shader!");
+                continue;
+            } else {
+                ShaderRenderOrder render_order = opengl_shader_it->second.attributes.render_order;
+                if (render_order != drawing_parameters.render_order) {
+                    continue;
+                }
+            }
 
             auto shaders_it = std::find_if(grouped_shaders.begin(), grouped_shaders.end(), [shader_id](const GroupedShader &grouped_shader) {
                 return grouped_shader.shader->id == shader_id;
@@ -699,7 +706,9 @@ namespace Hyperion::Rendering {
         // FIXME: Handle shader compilation errors.
         OpenGLShader opengl_shader;
         opengl_shader.id = shader.id;
+        opengl_shader.attributes = shader.data.attributes;
         opengl_shader.program = OpenGLRenderDriverShaderCompiler::Compile(shader.data.vertex_source.c_str(), shader.data.fragment_source.c_str()).program;
+
 
         opengl_shader.locations.Reserve(shader.data.properties.GetLength());
         for (const ShaderProperty &property : shader.data.properties) {

@@ -100,6 +100,19 @@ namespace Sandbox {
         g_child = g_world->CreateEntity(EntityPrimitive::Cube);
         g_world->GetComponent<LocalTransformComponent>(g_child)->position = Vector3(2.0f, 0.0f, 0.0f);
         g_world->GetHierarchy()->SetParent(g_child, g_parent);
+
+        Image *image = ImageLoader::Load("icon/icon.png").Unwrap();
+        Texture2DParameters parameters;
+        parameters.format = TextureFormat::RGBA32;
+        parameters.width = image->GetWidth();
+        parameters.height = image->GetHeight();
+        Texture2D *texture = AssetManager::CreateTexture2D(parameters, image->GetPixels());
+        delete image;
+        Material *material = AssetManager::CreateMaterial(AssetManager::GetShaderPrimitive(ShaderPrimitive::Unlit));
+        material->SetTexture("m_texture", texture);
+        EntityId quad = g_world->CreateEntity(EntityPrimitive::Quad);
+        g_world->GetComponent<MeshComponent>(quad)->material = material;
+        g_world->GetComponent<LocalTransformComponent>(quad)->position = Vector3(0.0f, 2.0f, 0.0f);
 #endif
         //String data = WorldSerializer::Serialize(g_world);
         //HYP_TRACE("\n{}", data);
