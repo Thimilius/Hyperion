@@ -20,7 +20,7 @@ namespace Hyperion {
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    enum class TexturePrimitive {
+    enum class Texture2DPrimitive {
         White,
     };
 
@@ -44,7 +44,9 @@ namespace Hyperion {
 
     class AssetManager final {
     public:
-        static Texture2D *GetTexturePrimitive(TexturePrimitive texture_primitive);
+        static Texture2D *GetTexture2DPrimitive(Texture2DPrimitive texture_2d_primitive);
+        static Texture2D *GetTexture2DByGuid(AssetGuid guid);
+        static Texture2D *GetTexture2DById(AssetId id);
         static Texture2D *CreateTexture2D(const Rendering::Texture2DParameters &parameters);
         static Texture2D *CreateTexture2D(const Rendering::Texture2DParameters &parameters, const Rendering::TexturePixelData &pixels, AssetDataAccess data_access = AssetDataAccess::None);
 
@@ -83,7 +85,7 @@ namespace Hyperion {
         inline static Map<AssetGuid, Texture *> s_textures;
 
         inline static struct Primitives {
-            Texture2D *texture_white;
+            Texture2D *texture_2d_white;
 
             Shader *shader_standard;
             Shader *shader_unlit;

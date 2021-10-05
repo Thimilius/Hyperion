@@ -18,10 +18,46 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    Texture2D *AssetManager::GetTexturePrimitive(TexturePrimitive texture_primitive) {
-        switch (texture_primitive) 	{
-            case Hyperion::TexturePrimitive::White: return s_primitives.texture_white;
+    Texture2D *AssetManager::GetTexture2DPrimitive(Texture2DPrimitive texture_2d_primitive) {
+        switch (texture_2d_primitive) 	{
+            case Hyperion::Texture2DPrimitive::White: return s_primitives.texture_2d_white;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
+        }
+    }
+
+    //--------------------------------------------------------------
+    Texture2D *AssetManager::GetTexture2DByGuid(AssetGuid guid) {
+        auto it = s_textures.Find(guid);
+        if (it == s_textures.end()) {
+            HYP_LOG_ERROR("Asset", "The texture with guid {} does not exist!", guid.ToString());
+            return nullptr;
+        } else {
+            Texture *texture = it->second;
+            if (texture->GetDimension() == Rendering::TextureDimension::Texture2D) {
+                return static_cast<Texture2D *>(texture);
+            } else {
+                HYP_LOG_ERROR("Asset", "The texture with guid {} is not a 2D texture!", guid.ToString());
+                return nullptr;
+            }
+        }
+    }
+
+    //--------------------------------------------------------------
+    Texture2D *AssetManager::GetTexture2DById(AssetId id) {
+        auto it = std::find_if(s_textures.begin(), s_textures.end(), [id](const auto &pair) {
+            return pair.second->GetAssetInfo().id == id;
+        });
+        if (it == s_textures.end()) {
+            HYP_LOG_ERROR("Asset", "The texture with id {} does not exist!", id);
+            return nullptr;
+        } else {
+            Texture *texture = it->second;
+            if (texture->GetDimension() == Rendering::TextureDimension::Texture2D) {
+                return static_cast<Texture2D *>(texture);
+            } else {
+                HYP_LOG_ERROR("Asset", "The texture with id {} is not a 2D texture!", id);
+                return nullptr;
+            }
         }
     }
 
@@ -195,13 +231,13 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void AssetManager::InitializePrimitives() {
         Rendering::Texture2DParameters texture_parameters;
-        texture_parameters.format = Rendering::TextureFormat::RGB24;
+        texture_parameters.format = Rendering::TextureFormat::RGBA32;
         texture_parameters.width = 2;
         texture_parameters.height = 2;
         Array<byte> texture_pixels;
-        texture_pixels.Resize(4 * 3, 0xFF);
-        s_primitives.texture_white = CreateTexture2D(texture_parameters, texture_pixels);
-        SetNewGuid(s_primitives.texture_white, "{DAD9FD91-8932-4A1E-B086-56F64DC20EF7}");
+        texture_pixels.Resize(4 * 4, 0xFF);
+        s_primitives.texture_2d_white = CreateTexture2D(texture_parameters, texture_pixels);
+        SetNewGuid(s_primitives.texture_2d_white, "{DAD9FD91-8932-4A1E-B086-56F64DC20EF7}");
 
         s_primitives.shader_standard = CreateShader(FileSystem::ReadAllText("data/shaders/standard.shader"));
         SetNewGuid(s_primitives.shader_standard, "{6AFEA19E-547B-41F5-A008-4473AE771E06}");

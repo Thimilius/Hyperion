@@ -2,6 +2,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/shader.hpp"
+#include "hyperion/assets/texture.hpp"
 #include "hyperion/render/types/render_types_material.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -38,6 +39,11 @@ namespace Hyperion {
         inline Matrix4x4 GetMatrix(const String &name) const { return GetMatrix(Shader::PropertyToId(name)); }
         void SetMatrix(Rendering::ShaderPropertyId id, const Matrix4x4 &value);
         inline void SetMatrix(const String &name, const Matrix4x4 &value) { SetMatrix(Shader::PropertyToId(name), value); }
+
+        Texture2D *GetTexture(Rendering::ShaderPropertyId id) const;
+        inline Texture2D *GetTexture(const String &name) const { return GetTexture(Shader::PropertyToId(name)); }
+        void SetTexture(Rendering::ShaderPropertyId id, const Texture2D *value);
+        inline void SetTexture(const String &name, const Texture2D *value) { SetTexture(Shader::PropertyToId(name), value); }
 
         void ResetToDefaults();
     private:

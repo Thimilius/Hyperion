@@ -1,4 +1,5 @@
 #property m_color Color
+#property m_texture Texture
 
 #light_mode forward
 
@@ -7,10 +8,12 @@
 	
 layout(location = 0) in vec3 a_position;
 layout(location = 1) in vec3 a_normal;
+layout(location = 4) in vec2 a_texture0;
 
 out V2F {
 	vec3 position;
 	vec3 normal;
+	vec2 texture0;
 } o_v2f;
 
 layout(std140, binding = 0) uniform Camera
@@ -36,6 +39,7 @@ vec4 obj_to_clip_space(vec3 position) {
 void main() {
 	o_v2f.position = obj_to_world_space(a_position);
 	o_v2f.normal = normal_to_world_space(a_normal);
+	o_v2f.texture0 = a_texture0;
 
 	gl_Position = obj_to_clip_space(a_position);
 }
@@ -48,6 +52,7 @@ layout(location = 0) out vec4 o_color;
 in V2F {
 	vec3 position;
 	vec3 normal;
+	vec2 texture0;
 } i_v2f;
 
 struct Light {
@@ -71,6 +76,7 @@ uniform uint u_light_count;
 uniform uvec4 u_light_indices;
 
 uniform vec4 m_color;
+uniform sampler2D m_texture;
 
 float calculate_light_attenuation(float distance, float light_range) {
 	float attenuation_linear = 4.5 / light_range;
@@ -119,7 +125,8 @@ vec4 calculate_phong_lighting(vec3 position, vec3 normal) {
 }
 
 void main() {
+	vec4 texture_color = texture(m_texture, i_v2f.texture0);
 	vec4 lighting_color = calculate_phong_lighting(i_v2f.position, i_v2f.normal);
 	
-	o_color = lighting_color * m_color;
+	o_color = texture_color * lighting_color * m_color;
 }

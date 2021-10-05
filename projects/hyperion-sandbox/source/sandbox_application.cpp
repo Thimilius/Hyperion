@@ -24,8 +24,10 @@
 using namespace Hyperion;
 using namespace Hyperion::Rendering;
 
-//#define HYP_STRESS_TEST
-//#define HYP_STRESS_TEST_EXTREME
+#ifdef HYP_RELEASE
+    #define HYP_STRESS_TEST
+    //#define HYP_STRESS_TEST_EXTREME
+#endif
 
 //-------------------- Definition Namespace --------------------
 namespace Sandbox {
@@ -78,7 +80,7 @@ namespace Sandbox {
                 EntityId entity = g_world->CreateEntity(EntityPrimitive::Cube);
                 g_world->GetComponent<LocalTransformComponent>(entity)->position = Vector3(x * 2.0f, 0.0f, -z * 2.0f);
 #ifdef HYP_STRESS_TEST_EXTREME
-                g_world->GetComponent<RenderMeshComponent>(entity)->material = material;
+                g_world->GetComponent<MeshComponent>(entity)->material = material;
 #endif
                 g_world->GetHierarchy()->SetParent(entity, g_parent);
                 g_world->RemoveComponent<Physics::BoxColliderComponent>(entity);
@@ -141,7 +143,7 @@ namespace Sandbox {
             LocalTransformComponent *transform = g_world->GetComponent<LocalTransformComponent>(entity);
             transform->rotation = rotation;
 #ifdef HYP_STRESS_TEST_EXTREME
-            RenderMeshComponent *mesh = g_world->GetComponent<RenderMeshComponent>(entity);
+            MeshComponent *mesh = g_world->GetComponent<MeshComponent>(entity);
             mesh->material->SetColor("m_color", Color(Random::Get(), Random::Get(), Random::Get(), 1.0f));
 #endif
         }

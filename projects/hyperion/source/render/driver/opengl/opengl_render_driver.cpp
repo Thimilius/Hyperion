@@ -504,6 +504,7 @@ namespace Hyperion::Rendering {
     void OpenGLRenderDriver::UseMaterial(const OpenGLShader &opengl_shader, const OpenGLMaterial &opengl_material) {
         HYP_PROFILE_SCOPE("OpenGLRenderDriver.UseMaterial");
 
+        uint32 texture_unit = 0;
         MaterialPropertyIndex index = 0;
         for (const MaterialProperty &property : opengl_material.properties) {
             GLint location = opengl_shader.locations[index++];
@@ -529,6 +530,19 @@ namespace Hyperion::Rendering {
                 }
                 case ShaderPropertyType::Matrix: {
                     glProgramUniformMatrix4fv(opengl_shader.program, location, 1, GL_FALSE, property.storage.matrix4x4.elements);
+                    break;
+                }
+                case ShaderPropertyType::Texture: {
+                    // TODO: This updating of textures is quite expensive and should be done more performant.
+                    auto it = m_opengl_textures.Find(property.storage.texture);
+                    if (it == m_opengl_textures.end()) {
+                        HYP_LOG_ERROR("OpenGL", "Trying to set non existing texture shader property!");
+                    } else {
+                        GLuint texture = it->second.texture;
+                        glBindTextureUnit(texture_unit, texture);
+                        glProgramUniform1i(opengl_shader.program, location, texture_unit);
+                        texture_unit++;
+                    }
                     break;
                 }
                 default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;

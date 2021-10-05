@@ -31,11 +31,11 @@
 - Rigidbodies
 
 ## Rendering
-- Frustum culling for lights
-- Textures
 - Framebuffers
 - Lighting
+	- Spotlights
     - Storage buffers
+	- Frustum culling
 - Better global buffer abstraction
 - Async readback of textures/buffers
 

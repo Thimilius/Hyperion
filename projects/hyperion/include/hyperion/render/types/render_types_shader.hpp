@@ -1,6 +1,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/assets/asset_types.hpp"
 #include "hyperion/core/color.hpp"
 #include "hyperion/core/math/vector4.hpp"
 #include "hyperion/core/math/matrix4x4.hpp"
@@ -26,6 +27,8 @@ namespace Hyperion::Rendering {
         Vector,
         Color,
         Matrix,
+
+        Texture
     };
 
     enum class ShaderLightMode {
@@ -41,6 +44,7 @@ namespace Hyperion::Rendering {
         Vector4 vector4;
         Color color;
         Matrix4x4 matrix4x4;
+        AssetId texture;
     };
 
     struct ShaderProperty {

@@ -1,7 +1,11 @@
+//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
 #include "hyperion/assets/material.hpp"
+
+//---------------------- Project Includes ----------------------
+#include "hyperion/assets/asset_manager.hpp"
 
 //------------------------- Namespaces -------------------------
 using namespace Hyperion::Rendering;
@@ -173,7 +177,43 @@ namespace Hyperion {
         } else {
             HYP_LOG_WARN("Material", "Trying to set nonexistent material property.");
         }
+    }
 
+    //--------------------------------------------------------------
+    Texture2D *Material::GetTexture(Rendering::ShaderPropertyId id) const {
+        auto it = m_property_indices.Find(id);
+        if (it != m_property_indices.end()) {
+            const MaterialProperty &property = m_properties.Get(it->second);
+            if (property.type == ShaderPropertyType::Texture) {
+                return AssetManager::GetTexture2DById(property.storage.texture);
+            } else {
+                HYP_LOG_WARN("Material", "Trying to get texture material property that is not a texture.");
+                return nullptr;
+            }
+        } else {
+            HYP_LOG_WARN("Material", "Trying to get nonexistent material property.");
+            return nullptr;
+        }
+    }
+
+    //--------------------------------------------------------------
+    void Material::SetTexture(Rendering::ShaderPropertyId id, const Texture2D *value) {
+        auto it = m_property_indices.Find(id);
+        if (it != m_property_indices.end()) {
+            MaterialProperty &property = m_properties.Get(it->second);
+            if (property.type == ShaderPropertyType::Texture) {
+                if (value == nullptr) {
+                    HYP_LOG_WARN("Material", "Trying to set texture material property with a null texture.");
+                } else {
+                    property.storage.texture = value->GetAssetInfo().id;
+                    SetDirty();
+                }
+            } else {
+                HYP_LOG_WARN("Material", "Trying to set texture material property that is not a texture.");
+            }
+        } else {
+            HYP_LOG_WARN("Material", "Trying to set nonexistent material property.");
+        }
     }
 
     //--------------------------------------------------------------
