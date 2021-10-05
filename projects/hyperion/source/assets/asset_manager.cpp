@@ -18,6 +18,14 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
+    Texture2D *AssetManager::GetTexturePrimitive(TexturePrimitive texture_primitive) {
+        switch (texture_primitive) 	{
+            case Hyperion::TexturePrimitive::White: return s_primitives.texture_white;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
+        }
+    }
+
+    //--------------------------------------------------------------
     Texture2D *AssetManager::CreateTexture2D(const Rendering::Texture2DParameters &parameters) {
         AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
         Texture2D *texture = new Texture2D(info, parameters);
@@ -186,6 +194,15 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void AssetManager::InitializePrimitives() {
+        Rendering::Texture2DParameters texture_parameters;
+        texture_parameters.format = Rendering::TextureFormat::RGB24;
+        texture_parameters.width = 2;
+        texture_parameters.height = 2;
+        Array<byte> texture_pixels;
+        texture_pixels.Resize(4 * 3, 0xFF);
+        s_primitives.texture_white = CreateTexture2D(texture_parameters, texture_pixels);
+        SetNewGuid(s_primitives.texture_white, "{DAD9FD91-8932-4A1E-B086-56F64DC20EF7}");
+
         s_primitives.shader_standard = CreateShader(FileSystem::ReadAllText("data/shaders/standard.shader"));
         SetNewGuid(s_primitives.shader_standard, "{6AFEA19E-547B-41F5-A008-4473AE771E06}");
         s_primitives.shader_unlit = CreateShader(FileSystem::ReadAllText("data/shaders/unlit.shader"));
