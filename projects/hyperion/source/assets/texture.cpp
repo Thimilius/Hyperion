@@ -4,6 +4,9 @@
 //--------------------- Definition Include ---------------------
 #include "hyperion/assets/texture.hpp"
 
+//---------------------- Project Includes ----------------------
+#include "hyperion/assets/utilities/texture_utilities.hpp"
+
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
@@ -13,6 +16,10 @@ namespace Hyperion {
         m_height = parameters.height;
         m_format = parameters.format;
         m_attributes = parameters.attributes;
+
+        if (m_attributes.use_mipmaps) {
+            m_mipmap_count = TextureUtilities::CalculateMipmapCount(m_width, m_height);
+        }
     }
 
     //--------------------------------------------------------------

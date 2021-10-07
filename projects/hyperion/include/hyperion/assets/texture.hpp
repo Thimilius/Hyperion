@@ -34,6 +34,7 @@ namespace Hyperion {
 
         inline uint32 GetWidth() const { return m_width; }
         inline uint32 GetHeight() const { return m_height; }
+        inline uint32 GetMipmapCount() const { return m_mipmap_count; }
 
         const Rendering::TexturePixelData &GetPixels() const;
         void SetPixels(const Rendering::TexturePixelData &data);
@@ -42,6 +43,7 @@ namespace Hyperion {
     private:
         uint32 m_width;
         uint32 m_height;
+        uint32 m_mipmap_count = 0;
         Rendering::TexturePixelData m_pixels;
     private:
         friend class Hyperion::AssetLoadSystem;

@@ -750,7 +750,7 @@ namespace Hyperion::Rendering {
         GLsizei width = texture_2d.parameters.width;
         GLsizei height = texture_2d.parameters.height;
         GLenum internal_format = GetTextureInternalFormat(format);
-        GLsizei mipmap_count = texture_2d.parameters.attributes.use_mipmaps ? Math::Max(texture_2d.mipmap_count, 1) : 1;
+        GLsizei mipmap_count = Math::Max(texture_2d.mipmap_count, 1);
         glTextureStorage2D(opengl_texture.texture, mipmap_count, internal_format, width, height);
 
         FlipTextureHorizontally(texture_2d.parameters.width, texture_2d.parameters.height, format, texture_2d.pixels);

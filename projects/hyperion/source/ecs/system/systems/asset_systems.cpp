@@ -43,6 +43,7 @@ namespace Hyperion {
                             render_frame_context_asset_texture_2d.parameters.attributes = texture_2d->GetAttributes();
                             render_frame_context_asset_texture_2d.parameters.width = texture_2d->GetWidth();
                             render_frame_context_asset_texture_2d.parameters.height = texture_2d->GetHeight();
+                            render_frame_context_asset_texture_2d.mipmap_count = texture_2d->GetMipmapCount();
                             if (can_move) {
                                 render_frame_context_asset_texture_2d.pixels = std::move(texture_2d->m_pixels);
 
