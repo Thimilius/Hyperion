@@ -16,10 +16,7 @@ namespace Hyperion {
         m_height = parameters.height;
         m_format = parameters.format;
         m_attributes = parameters.attributes;
-
-        if (m_attributes.use_mipmaps) {
-            m_mipmap_count = TextureUtilities::CalculateMipmapCount(m_width, m_height);
-        }
+        m_mipmap_count = TextureUtilities::CalculateMipmapCount(m_width, m_height);
     }
 
     //--------------------------------------------------------------
@@ -45,6 +42,16 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void Texture2D::SetPixelsInternal(const Rendering::TexturePixelData &data) {
         m_pixels = data;
+
+        SetDirty();
+    }
+
+    //--------------------------------------------------------------
+    RenderTexture::RenderTexture(AssetInfo info, const Rendering::RenderTextureParameters &parameters) : Texture(info) {
+        m_width = parameters.width;
+        m_height = parameters.height;
+        m_attachments = parameters.attachments;
+        m_mipmap_count = TextureUtilities::CalculateMipmapCount(m_width, m_height);
 
         SetDirty();
     }

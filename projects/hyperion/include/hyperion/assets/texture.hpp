@@ -50,4 +50,24 @@ namespace Hyperion {
         friend class Hyperion::AssetManager;
     };
 
+    class RenderTexture final : public Texture {
+    private:
+        RenderTexture(AssetInfo info, const Rendering::RenderTextureParameters &parameters);
+        ~RenderTexture() = default;
+    public:
+        Rendering::TextureDimension GetDimension() const override { return Rendering::TextureDimension::RenderTexture; }
+        
+        inline uint32 GetWidth() const { return m_width; }
+        inline uint32 GetHeight() const { return m_height; }
+        inline uint32 GetMipmapCount() const { return m_mipmap_count; }
+        inline const Array<Rendering::RenderTextureAttachment> GetAttachments() const { return m_attachments; }
+    private:
+        uint32 m_width;
+        uint32 m_height;
+        uint32 m_mipmap_count = 0;
+        Array<Rendering::RenderTextureAttachment> m_attachments;
+    private:
+        friend class Hyperion::AssetManager;
+    };
+
 }

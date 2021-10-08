@@ -25,6 +25,16 @@ namespace Hyperion::Rendering {
         GLuint texture;
     };
 
+    struct OpenGLRenderTextureAttachment {
+        GLuint attachment;
+    };
+
+    struct OpenGLRenderTexture : public OpenGLAsset {
+        GLuint framebuffer;
+        Array<OpenGLRenderTextureAttachment> attachments;
+        uint32 color_attachment_count = 0;
+    };
+
     struct OpenGLMaterial : public OpenGLAsset {
         MaterialPropertyCollection properties;
 
@@ -102,6 +112,7 @@ namespace Hyperion::Rendering {
 
         void LoadAssets(RenderFrameContext &render_frame_context);
         void LoadTexture2D(RenderFrameContextAssetTexture2D &texture_2d);
+        void LoadRenderTexture(RenderFrameContextAssetRenderTexture &render_texture);
         void LoadShader(RenderFrameContextAssetShader &shader);
         void LoadMaterial(RenderFrameContextAssetMaterial &material);
         void LoadMesh(RenderFrameContextAssetMesh &mesh);
@@ -113,6 +124,7 @@ namespace Hyperion::Rendering {
 
         Map<AssetId, OpenGLShader> m_opengl_shaders;
         Map<AssetId, OpenGLTexture> m_opengl_textures;
+        Map<AssetId, OpenGLRenderTexture> m_opengl_render_textures;
         Map<AssetId, OpenGLMaterial> m_opengl_materials;
         Map<AssetId, OpenGLMesh> m_opengl_meshes;
 

@@ -78,6 +78,14 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    RenderTexture *AssetManager::CreateRenderTexture(const Rendering::RenderTextureParameters &parameters) {
+        AssetInfo info = GetNextAssetInfo(AssetDataAccess::None);
+        RenderTexture *render_texture = new RenderTexture(info, parameters);
+        s_textures.Insert(info.guid, render_texture);
+        return render_texture;
+    }
+
+    //--------------------------------------------------------------
     Shader *AssetManager::GetShaderPrimitive(ShaderPrimitive shader_primitive) {
         switch (shader_primitive) {
             case ShaderPrimitive::Standard: return s_primitives.shader_standard;

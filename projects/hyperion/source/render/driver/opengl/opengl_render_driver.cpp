@@ -124,6 +124,15 @@ namespace Hyperion::Rendering {
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 1.0f;
         }
     }
+    
+    //--------------------------------------------------------------
+    GLenum GetRenderTextureInternalFormat(RenderTextureFormat internal_format) {
+        switch (internal_format) {
+            case RenderTextureFormat::RGBA32: return GL_RGBA8;
+            case RenderTextureFormat::UInt32: return GL_R32UI;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
 
     //--------------------------------------------------------------
     GLenum GetGLTopology(MeshTopology mesh_topology) {
@@ -727,6 +736,9 @@ namespace Hyperion::Rendering {
         for (RenderFrameContextAssetTexture2D &texture_2d : render_frame_context.GetTexture2DAssetsToLoad()) {
             LoadTexture2D(texture_2d);
         }
+        for (RenderFrameContextAssetRenderTexture &render_texture : render_frame_context.GetRenderTextureAssetsToLoad()) {
+            LoadRenderTexture(render_texture);
+        }
         for (RenderFrameContextAssetMaterial &material : render_frame_context.GetMaterialAssetsToLoad()) {
             LoadMaterial(material);
         }
@@ -764,6 +776,57 @@ namespace Hyperion::Rendering {
         }
 
         m_opengl_textures.Insert(texture_2d.id, opengl_texture);
+    }
+
+    //--------------------------------------------------------------
+    void OpenGLRenderDriver::LoadRenderTexture(RenderFrameContextAssetRenderTexture &render_texture) {
+        HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadRenderTexture");
+
+        // TODO: We should do some sort of validation.
+
+        uint64 attachment_count = render_texture.parameters.attachments.GetLength();
+
+        OpenGLRenderTexture opengl_render_texture;
+        opengl_render_texture.id = render_texture.id;
+        opengl_render_texture.attachments.Resize(attachment_count);
+
+        uint32 width = render_texture.parameters.width;
+        uint32 height = render_texture.parameters.height;
+
+        glCreateFramebuffers(1, &opengl_render_texture.framebuffer);
+        
+        uint32 color_attachment_index = 0;
+        for (uint32 i = 0; i < attachment_count; i++) {
+            const RenderTextureAttachment &attachment = render_texture.parameters.attachments[i];
+            OpenGLRenderTextureAttachment &opengl_attachment = opengl_render_texture.attachments[i];
+
+            if (attachment.format == RenderTextureFormat::Depth24Stencil8) {
+                glCreateRenderbuffers(1, &opengl_attachment.attachment);
+                glNamedRenderbufferStorage(opengl_attachment.attachment, GL_DEPTH24_STENCIL8, width, height);
+                glNamedFramebufferRenderbuffer(opengl_render_texture.framebuffer, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, opengl_attachment.attachment);
+            } else {
+                glCreateTextures(GL_TEXTURE_2D, 1, &opengl_attachment.attachment);
+
+                TextureAttributes attributes = attachment.attributes;
+                SetTextureAttributes(opengl_attachment.attachment, attributes);
+
+                GLenum internal_format = GetRenderTextureInternalFormat(attachment.format);
+                GLsizei mipmap_count = attributes.use_mipmaps ? Math::Max(render_texture.mipmap_count, 1) : 1;
+                glTextureStorage2D(opengl_attachment.attachment, mipmap_count, internal_format, width, height);
+
+                GLenum attachment_index = GL_COLOR_ATTACHMENT0 + color_attachment_index;
+                glNamedFramebufferTexture(opengl_render_texture.framebuffer, attachment_index, opengl_attachment.attachment, 0);
+                color_attachment_index++;
+            }
+
+            
+        }
+
+        opengl_render_texture.color_attachment_count = color_attachment_index;
+
+        if (glCheckNamedFramebufferStatus(opengl_render_texture.framebuffer, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            HYP_LOG_ERROR("OpenGL", "Failed to create render texture!");
+        }
     }
 
     //--------------------------------------------------------------

@@ -15,6 +15,7 @@ namespace Hyperion {
     class Shader;
     class Texture;
     class Texture2D;
+    class RenderTexture;
 }
 
 //-------------------- Definition Namespace --------------------
@@ -49,6 +50,8 @@ namespace Hyperion {
         static Texture2D *GetTexture2DById(AssetId id);
         static Texture2D *CreateTexture2D(const Rendering::Texture2DParameters &parameters);
         static Texture2D *CreateTexture2D(const Rendering::Texture2DParameters &parameters, const Rendering::TexturePixelData &pixels, AssetDataAccess data_access = AssetDataAccess::None);
+
+        static RenderTexture *CreateRenderTexture(const Rendering::RenderTextureParameters &parameters);
 
         static Shader *GetShaderPrimitive(ShaderPrimitive shader_primitive);
         static Shader *GetShaderByGuid(AssetGuid guid);

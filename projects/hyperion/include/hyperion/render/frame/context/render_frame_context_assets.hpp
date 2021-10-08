@@ -20,6 +20,11 @@ namespace Hyperion::Rendering {
         TexturePixelData pixels;
     };
 
+    struct RenderFrameContextAssetRenderTexture : public RenderFrameContextAsset {
+        RenderTextureParameters parameters;
+        uint32 mipmap_count;
+    };
+
     struct RenderFrameContextAssetShader : public RenderFrameContextAsset {
         ShaderData data;
     };

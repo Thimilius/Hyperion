@@ -4,12 +4,23 @@
 //--------------------- Definition Include ---------------------
 #include "hyperion/render/pipelines/forward/forward_render_pipeline.hpp"
 
+//---------------------- Project Includes ----------------------
+#include "hyperion/assets/asset_manager.hpp"
+
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void ForwardRenderPipeline::Initialize() {
+        RenderTextureParameters parameters;
+        parameters.width = 1280;
+        parameters.height = 720;
+        parameters.attachments = {
+            { RenderTextureFormat::Depth24Stencil8, TextureAttributes() },
+            { RenderTextureFormat::RGBA32, TextureAttributes() }
+        };
 
+        AssetManager::CreateRenderTexture(parameters);
     }
 
     //--------------------------------------------------------------

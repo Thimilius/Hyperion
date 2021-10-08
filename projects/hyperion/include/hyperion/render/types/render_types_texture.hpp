@@ -8,7 +8,8 @@ namespace Hyperion::Rendering {
 
     enum class TextureDimension {
         Texture2D,
-        TextureCubemap
+        TextureCubemap,
+        RenderTexture
     };
 
     enum class TextureFormat {
@@ -38,12 +39,6 @@ namespace Hyperion::Rendering {
         Times16
     };
 
-    enum class RenderTextureFormat {
-        RGBA32,
-        UInt32,
-        Depth24Stencil8,
-    };
-
     struct TextureAttributes {
         TextureWrapMode wrap_mode = TextureWrapMode::Clamp;
         TextureFilter filter = TextureFilter::Bilinear;
@@ -60,5 +55,23 @@ namespace Hyperion::Rendering {
     };
 
     using TexturePixelData = Array<byte>;
+
+    enum class RenderTextureFormat {
+        RGBA32,
+        UInt32,
+        Depth24Stencil8,
+    };
+
+    struct RenderTextureAttachment {
+        RenderTextureFormat format;
+        TextureAttributes attributes;
+    };
+
+    struct RenderTextureParameters {
+        Array<Rendering::RenderTextureAttachment> attachments;
+
+        uint32 width = 0;
+        uint32 height = 0;
+    };
 
 }

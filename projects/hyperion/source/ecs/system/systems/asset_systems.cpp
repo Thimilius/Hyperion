@@ -54,6 +54,16 @@ namespace Hyperion {
                             }
                             break;
                         }
+                        case TextureDimension::RenderTexture: {
+                            RenderTexture *render_texture = static_cast<RenderTexture *>(texture);
+                            RenderFrameContextAssetRenderTexture &render_frame_context_asset_render_texture = render_frame_context.AddRenderTextureAssetToLoad();
+                            render_frame_context_asset_render_texture.id = asset_id;
+                            render_frame_context_asset_render_texture.parameters.attachments = render_texture->GetAttachments();
+                            render_frame_context_asset_render_texture.parameters.width = render_texture->GetWidth();
+                            render_frame_context_asset_render_texture.parameters.height = render_texture->GetHeight();
+                            render_frame_context_asset_render_texture.mipmap_count = render_texture->GetMipmapCount();
+                            break;
+                        }
                         default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
                     }
                     break;
