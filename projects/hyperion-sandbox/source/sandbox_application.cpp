@@ -119,6 +119,10 @@ namespace Sandbox {
         //World *world = WorldSerializer::Deserialize(data);
         //String data2 = WorldSerializer::Serialize(world);
         //HYP_TRACE("\n{}", data2);
+
+        EntityArchetype *archetype = g_world->CreateArchetype(g_parent);
+        EntityId copy = g_world->Instantiate(archetype);
+        g_world->GetComponent<LocalTransformComponent>(copy)->position = Vector3(0.0f, 0.0f, 2.0f);
     }
 
     //--------------------------------------------------------------

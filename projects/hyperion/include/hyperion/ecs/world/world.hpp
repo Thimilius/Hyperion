@@ -3,6 +3,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/ecs/component/component_types.hpp"
 #include "hyperion/ecs/component/component_pool.hpp"
+#include "hyperion/ecs/entity/entity_archetype.hpp"
 #include "hyperion/ecs/entity/entity_utilities.hpp"
 #include "hyperion/ecs/world/world_environment.hpp"
 #include "hyperion/ecs/world/world_hierarchy.hpp"
@@ -49,6 +50,9 @@ namespace Hyperion {
 
         EntityId CreateEntity(EntityPrimitive primitive = EntityPrimitive::Base, EntityGuid guid = EntityGuid::Generate());
         void DestroyEntity(EntityId id, WorldHierarchyDestructionPolicy hierarchy_destruction_policy = WorldHierarchyDestructionPolicy::DestroyChildren);
+
+        EntityArchetype *CreateArchetype(EntityId id);
+        EntityId Instantiate(EntityArchetype *archetype);
 
         template<typename T>
         T *AddComponent(EntityId id) {

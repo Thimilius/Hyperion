@@ -31,7 +31,7 @@ namespace Hyperion {
 
         // Add relation to new parent and siblings.
         if (parent == Entity::EMPTY) {
-            AddRootRelation(entity, entity_hierarchy);
+            AddRootRelation(entity, entity_hierarchy, WorldHierarchyRootPolicy::KeepChildren);
         } else {
             HierarchyComponent *new_parent_hierarchy = m_world->GetComponent<HierarchyComponent>(parent);
             HYP_ASSERT(new_parent_hierarchy);
@@ -79,7 +79,7 @@ namespace Hyperion {
     void WorldHierarchy::HandleEntityCreation(EntityId entity) {
         HierarchyComponent *hierarchy = m_world->GetComponent<HierarchyComponent>(entity);
         if (hierarchy) {
-            AddRootRelation(entity, hierarchy);
+            AddRootRelation(entity, hierarchy, WorldHierarchyRootPolicy::RemoveChildren);
         }
     }
 
@@ -148,7 +148,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void WorldHierarchy::AddRootRelation(EntityId entity, HierarchyComponent *entity_hierarchy) {
+    void WorldHierarchy::AddRootRelation(EntityId entity, HierarchyComponent *entity_hierarchy, WorldHierarchyRootPolicy root_policy) {
         if (m_root_count == 0) {
             m_first_root = entity;
             entity_hierarchy->previous_sibling = Entity::EMPTY;
@@ -162,6 +162,12 @@ namespace Hyperion {
         entity_hierarchy->next_sibling = Entity::EMPTY;
         m_last_root = entity;
         m_root_count++;
+
+        if (root_policy == WorldHierarchyRootPolicy::RemoveChildren) {
+            entity_hierarchy->child_count = 0;
+            entity_hierarchy->first_child = Entity::EMPTY;
+            entity_hierarchy->last_child = Entity::EMPTY;
+        }
     }
 
 }

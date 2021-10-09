@@ -52,13 +52,17 @@ namespace Hyperion {
 
     using EntityArchetypeRemovedComponents = Array<ComponentId>;
     using EntityArchetypeOverwrites = Map<ComponentId, Array<EntityArchetypeOverwrite>>;
+    using EntityArchetypeComponentStorage = Map<ComponentId, Array<byte>>;
 
     class EntityArchetype final {
     public:
-          
+        EntityArchetype(EntityGuid guid, EntityArchetypeComponentStorage storage);
+    public:
+        inline EntityGuid GetGuid() const { return m_guid; }
+        inline const EntityArchetypeComponentStorage &GetStorage() const { return m_storage; }
     private:
         EntityGuid m_guid;
-        Map<ComponentId, Array<byte>> m_components;
+        EntityArchetypeComponentStorage m_storage;
     };
 
 }

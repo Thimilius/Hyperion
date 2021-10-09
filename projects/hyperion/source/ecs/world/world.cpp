@@ -116,6 +116,48 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    EntityArchetype *World::CreateArchetype(EntityId id) {
+        ArchetypeComponent *archetype_component = GetComponent<ArchetypeComponent>(id);
+        if (archetype_component != nullptr) {
+            return archetype_component->archetype;
+        }
+
+        EntityArchetypeComponentStorage storage;
+
+        for (const ComponentInfo &component_info : ComponentRegistry::GetComponentInfos()) {
+            byte *component = static_cast<byte *>(GetComponent(component_info.id, id));
+            if (component != nullptr) {
+                Array<byte> component_data(component, component + component_info.element_size);
+                storage.Insert(component_info.id, component_data);
+            }
+        }
+
+        EntityArchetype *archetype = new EntityArchetype(EntityGuid::Generate(), storage);
+        archetype_component = AddComponent<ArchetypeComponent>(id);
+        archetype_component->archetype = archetype;
+
+        return archetype;
+    }
+
+    //--------------------------------------------------------------
+    EntityId World::Instantiate(EntityArchetype *archetype) {
+        HYP_ASSERT(archetype);
+
+        EntityId copy = CreateEntity(EntityPrimitive::Empty);
+
+        EntityArchetypeComponentStorage storage = archetype->GetStorage();
+        for (auto &[component_id, component_data] : storage) {
+            uint64 element_size = m_storage.component_pools[component_id].GetComponentInfo().element_size;
+            byte *component = static_cast<byte *>(AddComponent(component_id, copy));
+            std::memcpy(component, component_data.GetData(), element_size);
+        }
+
+        m_hierarchy.HandleEntityCreation(copy);
+
+        return copy;
+    }
+
+    //--------------------------------------------------------------
     void World::AddComponentsForPrimitive(EntityId id, EntityPrimitive primitive) {
         if (primitive != EntityPrimitive::Empty) {
             AddComponent<NameComponent>(id);

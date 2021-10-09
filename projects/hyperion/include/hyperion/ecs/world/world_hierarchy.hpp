@@ -25,6 +25,11 @@ namespace Hyperion {
     };
 
     class WorldHierarchy final {
+    private:
+        enum class WorldHierarchyRootPolicy {
+            KeepChildren,
+            RemoveChildren
+        };
     public:
         EntityId GetRootCount() const { return m_root_count; }
         EntityId GetFirstRoot() const { return m_first_root; }
@@ -38,7 +43,7 @@ namespace Hyperion {
         void HandleEntityDestruction(EntityId entity, WorldHierarchyDestructionPolicy destruction_policy);
 
         void RemoveOldRelations(EntityId entity, HierarchyComponent *entity_hierarchy);
-        void AddRootRelation(EntityId entity, HierarchyComponent *entity_hierarchy);
+        void AddRootRelation(EntityId entity, HierarchyComponent *entity_hierarchy, WorldHierarchyRootPolicy root_policy);
     private:
         World *m_world;
 
