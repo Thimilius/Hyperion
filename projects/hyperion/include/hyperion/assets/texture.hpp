@@ -2,6 +2,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset.hpp"
+#include "hyperion/render/types/render_types_general.hpp"
 #include "hyperion/render/types/render_types_texture.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -61,6 +62,8 @@ namespace Hyperion {
         inline uint32 GetHeight() const { return m_height; }
         inline uint32 GetMipmapCount() const { return m_mipmap_count; }
         inline const Array<Rendering::RenderTextureAttachment> GetAttachments() const { return m_attachments; }
+
+        Rendering::RenderTargetId GetRenderTargetId() const;
     private:
         uint32 m_width;
         uint32 m_height;

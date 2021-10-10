@@ -9,6 +9,7 @@
 namespace Hyperion {
     class Material;
     class Mesh;
+    class RenderTexture;
     class Shader;
 
     namespace Rendering {
@@ -24,6 +25,8 @@ namespace Hyperion::Rendering {
         void Initialize() override;
         void Render(RenderFrame *render_view) override;
         void Shutdown() override;
+    private:
+        RenderTexture *m_target_render_texture;
     };
 
 }

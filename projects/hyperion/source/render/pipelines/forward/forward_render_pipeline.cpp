@@ -20,7 +20,7 @@ namespace Hyperion::Rendering {
             { RenderTextureFormat::RGBA32, TextureAttributes() }
         };
 
-        AssetManager::CreateRenderTexture(parameters);
+        m_target_render_texture = AssetManager::CreateRenderTexture(parameters);
     }
 
     //--------------------------------------------------------------
@@ -35,6 +35,9 @@ namespace Hyperion::Rendering {
         render_frame->SetCamera(0);
 
         RenderFrameCommandBuffer command_buffer;
+        command_buffer.SetRenderTarget(RenderTargetId::Default());
+        command_buffer.ClearRenderTarget(ClearFlags::All, Color::Black());
+        command_buffer.SetRenderTarget(m_target_render_texture->GetRenderTargetId());
         command_buffer.ClearRenderTarget(ClearFlags::All, camera.background_color);
         ForwardRenderLighting::SetupLighting(render_frame->GetContext(), command_buffer);
         render_frame->ExecuteCommandBuffer(command_buffer);

@@ -263,6 +263,29 @@ namespace Hyperion::Rendering {
                                 glClear(GetGLClearFlags(clear_render_target.flags));
                                 break;
                             }
+                            case RenderFrameCommandBufferCommandType::SetRenderTarget: {
+                                HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommandBufferCommand.SetRenderTarget");
+
+                                const RenderFrameCommandBufferCommandSetRenderTarget &set_render_target = std::get<RenderFrameCommandBufferCommandSetRenderTarget>(buffer_command.data);
+
+                                GLuint framebuffer = 0;
+                                if (set_render_target.id.id != RenderTargetId::Default().id) {
+                                    OpenGLRenderTexture &opengl_render_texture = m_opengl_render_textures.Get(set_render_target.id.id);
+
+                                    // We have to specify that we want to draw into all color attachments of the render texture.          
+                                    uint32 color_attachment_count = opengl_render_texture.color_attachment_count;
+                                    Array<GLenum> buffers(color_attachment_count);
+                                    for (GLenum i = 0; i < color_attachment_count; i++) {
+                                        buffers[i] = GL_COLOR_ATTACHMENT0 + i;
+                                    }
+                                    glNamedFramebufferDrawBuffers(opengl_render_texture.framebuffer, color_attachment_count, buffers.GetData());
+
+                                    framebuffer = opengl_render_texture.framebuffer;
+                                }
+
+                                glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+                                break;
+                            }
                             case RenderFrameCommandBufferCommandType::SetGlobalBuffer: {
                                 HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommandBufferCommand.SetGlobalBuffer");
 
@@ -824,9 +847,12 @@ namespace Hyperion::Rendering {
 
         opengl_render_texture.color_attachment_count = color_attachment_index;
 
-        if (glCheckNamedFramebufferStatus(opengl_render_texture.framebuffer, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        if (glCheckNamedFramebufferStatus(opengl_render_texture.framebuffer, GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE) {
+            m_opengl_render_textures.Insert(render_texture.id, opengl_render_texture);
+        } else {
             HYP_LOG_ERROR("OpenGL", "Failed to create render texture!");
         }
+
     }
 
     //--------------------------------------------------------------

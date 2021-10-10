@@ -23,6 +23,15 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
+    void RenderFrameCommandBuffer::SetRenderTarget(RenderTargetId id) {
+        RenderFrameCommandBufferCommandSetRenderTarget set_render_target;
+        set_render_target.id = id;
+
+        RenderFrameCommandBufferCommand &command = CreateCommand(RenderFrameCommandBufferCommandType::SetRenderTarget);
+        command.data = set_render_target;
+    }
+
+    //--------------------------------------------------------------
     void RenderFrameCommandBuffer::SetGlobalBuffer(ShaderPropertyId id, RenderBuffer &&render_buffer) {
         RenderFrameCommandBufferCommandSetGlobalBuffer set_global_buffer;
         set_global_buffer.id = id;

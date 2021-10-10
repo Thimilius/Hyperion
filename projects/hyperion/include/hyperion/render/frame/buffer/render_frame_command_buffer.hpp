@@ -13,6 +13,8 @@ namespace Hyperion::Rendering {
         const Array<RenderFrameCommandBufferCommand> &GetCommands() const { return m_commands; }
 
         void ClearRenderTarget(ClearFlags clear_flags, Color clear_color);
+        void SetRenderTarget(RenderTargetId id);
+
         void SetGlobalBuffer(ShaderPropertyId id, RenderBuffer &&render_buffer);
     private:
         RenderFrameCommandBufferCommand &CreateCommand(RenderFrameCommandBufferCommandType type);

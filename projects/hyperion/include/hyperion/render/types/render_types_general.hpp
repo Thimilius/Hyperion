@@ -1,6 +1,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/assets/asset_types.hpp"
 #include "hyperion/core/math/matrix4x4.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -60,6 +61,12 @@ namespace Hyperion::Rendering {
     struct CullingParameters {
         Matrix4x4 matrix;
         LayerMask mask;
+    };
+
+    struct RenderTargetId {
+        AssetId id;
+
+        inline static RenderTargetId Default() { return { 0xFFFFFFFF }; }
     };
 
 }
