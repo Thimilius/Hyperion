@@ -32,6 +32,16 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
+    void RenderFrameCommandBuffer::Blit(RenderTargetId destination, RenderTargetId source) {
+        RenderFrameCommandBufferCommandBlit blit;
+        blit.destination = destination;
+        blit.source = source;
+
+        RenderFrameCommandBufferCommand &command = CreateCommand(RenderFrameCommandBufferCommandType::Blit);
+        command.data = blit;
+    }
+
+    //--------------------------------------------------------------
     void RenderFrameCommandBuffer::SetGlobalBuffer(ShaderPropertyId id, RenderBuffer &&render_buffer) {
         RenderFrameCommandBufferCommandSetGlobalBuffer set_global_buffer;
         set_global_buffer.id = id;

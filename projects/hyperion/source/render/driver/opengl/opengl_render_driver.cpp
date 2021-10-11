@@ -286,6 +286,29 @@ namespace Hyperion::Rendering {
                                 glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
                                 break;
                             }
+                            case RenderFrameCommandBufferCommandType::Blit: {
+                                HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommandBufferCommand.Blit");
+
+                                const RenderFrameCommandBufferCommandBlit &blit = std::get<RenderFrameCommandBufferCommandBlit>(buffer_command.data);
+                                
+                                GLuint destination_framebuffer = 0;
+                                if (blit.destination.id != RenderTargetId::Default().id) {
+                                    destination_framebuffer = m_opengl_render_textures.Get(blit.destination.id).framebuffer;
+                                }
+                                GLuint source_framebuffer = 0;
+                                if (blit.source.id != RenderTargetId::Default().id) {
+                                    source_framebuffer = m_opengl_render_textures.Get(blit.source.id).framebuffer;
+                                }
+
+                                GLint width = 1280;
+                                GLint height = 720;
+                                GLbitfield mask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
+
+                                // TODO: Add support for blitting with a material.
+                                glBlitNamedFramebuffer(source_framebuffer, destination_framebuffer, 0, 0, width, height, 0, 0, width, height, mask, GL_NEAREST);
+
+                                break;
+                            }
                             case RenderFrameCommandBufferCommandType::SetGlobalBuffer: {
                                 HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommandBufferCommand.SetGlobalBuffer");
 
@@ -744,6 +767,8 @@ namespace Hyperion::Rendering {
     //--------------------------------------------------------------
     void OpenGLRenderDriver::UnloadAssets(RenderFrameContext &render_frame_context) {
         HYP_PROFILE_SCOPE("OpenGLRenderDriver.UnloadAssets");
+
+        render_frame_context.GetAssetsToUnload();
     }
 
     //--------------------------------------------------------------

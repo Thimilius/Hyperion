@@ -14,6 +14,7 @@ namespace Hyperion::Rendering {
 
         void ClearRenderTarget(ClearFlags clear_flags, Color clear_color);
         void SetRenderTarget(RenderTargetId id);
+        void Blit(RenderTargetId destination, RenderTargetId source);
 
         void SetGlobalBuffer(ShaderPropertyId id, RenderBuffer &&render_buffer);
     private:

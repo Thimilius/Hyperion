@@ -34,13 +34,15 @@ namespace Hyperion::Rendering {
 
         render_frame->SetCamera(0);
 
-        RenderFrameCommandBuffer command_buffer;
-        command_buffer.SetRenderTarget(RenderTargetId::Default());
-        command_buffer.ClearRenderTarget(ClearFlags::All, Color::Black());
-        command_buffer.SetRenderTarget(m_target_render_texture->GetRenderTargetId());
-        command_buffer.ClearRenderTarget(ClearFlags::All, camera.background_color);
-        ForwardRenderLighting::SetupLighting(render_frame->GetContext(), command_buffer);
-        render_frame->ExecuteCommandBuffer(command_buffer);
+        {
+            RenderFrameCommandBuffer command_buffer;
+            command_buffer.SetRenderTarget(RenderTargetId::Default());
+            command_buffer.ClearRenderTarget(ClearFlags::All, Color::Black());
+            command_buffer.SetRenderTarget(m_target_render_texture->GetRenderTargetId());
+            command_buffer.ClearRenderTarget(ClearFlags::All, camera.background_color);
+            ForwardRenderLighting::SetupLighting(render_frame->GetContext(), command_buffer);
+            render_frame->ExecuteCommandBuffer(command_buffer);
+        }
 
         DrawingParametes drawing_parameters_opaque;
         drawing_parameters_opaque.filter_mask = LayerMask::Everything;
@@ -59,6 +61,12 @@ namespace Hyperion::Rendering {
         render_frame->DrawMeshes(culling_results, drawing_parameters_transparent);
 
         render_frame->DrawGizmos();
+
+        {
+            RenderFrameCommandBuffer command_buffer;
+            command_buffer.Blit(RenderTargetId::Default(), m_target_render_texture->GetRenderTargetId());
+            render_frame->ExecuteCommandBuffer(command_buffer);
+        }
     }
 
     //--------------------------------------------------------------

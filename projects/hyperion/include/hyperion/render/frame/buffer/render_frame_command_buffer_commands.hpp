@@ -15,6 +15,7 @@ namespace Hyperion::Rendering {
     enum class RenderFrameCommandBufferCommandType {
         ClearRenderTarget,
         SetRenderTarget,
+        Blit,
         SetGlobalBuffer,
     };
 
@@ -25,6 +26,11 @@ namespace Hyperion::Rendering {
     
     struct RenderFrameCommandBufferCommandSetRenderTarget {
         RenderTargetId id;
+    };
+
+    struct RenderFrameCommandBufferCommandBlit {
+        RenderTargetId destination;
+        RenderTargetId source;
     };
 
     struct RenderFrameCommandBufferCommandSetGlobalBuffer {
@@ -38,6 +44,7 @@ namespace Hyperion::Rendering {
         std::variant<
             RenderFrameCommandBufferCommandClearRenderTarget,
             RenderFrameCommandBufferCommandSetRenderTarget,
+            RenderFrameCommandBufferCommandBlit,
             RenderFrameCommandBufferCommandSetGlobalBuffer
         > data;
     };
