@@ -6,7 +6,6 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/ecs/component/components/components.hpp"
-#include "hyperion/ecs/system/systems/asset_systems.hpp"
 #include "hyperion/ecs/system/systems/physics_systems.hpp"
 #include "hyperion/ecs/system/systems/transform_systems.hpp"
 #include "hyperion/ecs/system/systems/render_systems.hpp"
@@ -221,17 +220,6 @@ namespace Hyperion {
 
                 Physics::UpdateColliderTransformSystem update_collider_transform_system;
                 update_collider_transform_system.Run(s_active_world);
-            }
-
-            // Assets
-            {
-                HYP_PROFILE_SCOPE("WorldManager.Update.Assets");
-
-                AssetLoadSystem asset_load_system;
-                asset_load_system.Run(s_active_world);
-
-                AssetUnloadSystem asset_unload_system;
-                asset_unload_system.Run(s_active_world);
             }
 
             // Rendering

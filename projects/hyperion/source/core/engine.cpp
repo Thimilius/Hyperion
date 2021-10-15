@@ -87,8 +87,9 @@ namespace Hyperion {
         };
         engine_loop.late_update.name = "LateUpdate";
         engine_loop.late_update.sub_systems = {
-            { "AssetManagerLateUpdate", []() { HYP_PROFILE_SCOPE("EngineLoop.AssetManagerLateUpdate");AssetManager::LateUpdate(); } },
-            { "RenderEngineLateUpdate", []() { HYP_PROFILE_SCOPE("EngineLoop.RenderEngineLateUpdate");Rendering::RenderEngine::Render(); } }
+            { "RenderEngineLateUpdate", []() { HYP_PROFILE_SCOPE("EngineLoop.RenderEngineLateUpdate"); Rendering::RenderEngine::Render(); } },
+            { "AssetManagerLateUpdate", []() { HYP_PROFILE_SCOPE("EngineLoop.AssetManagerLateUpdate"); AssetManager::LateUpdate(); } },
+            { "RenderEngineSynchronize", []() { HYP_PROFILE_SCOPE("EngineLoop.RenderEngineSynchronize"); Rendering::RenderEngine::Present(); } }
         };
     }
 

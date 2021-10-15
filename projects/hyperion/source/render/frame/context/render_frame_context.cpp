@@ -9,12 +9,17 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void RenderFrameContext::Clear() {
-        m_assets_to_unload.Clear();
+        m_texture_2ds_to_unload.Clear();
+        m_render_textures_to_unload.Clear();
+        m_shaders_to_unload.Clear();
+        m_materials_to_unload.Clear();
+        m_meshes_to_unload.Clear();
+
         m_texture_2ds_to_load.Clear();
         m_render_textures_to_load.Clear();
+        m_shaders_to_load.Clear();
         m_materials_to_load.Clear();
         m_meshes_to_load.Clear();
-        m_shaders_to_load.Clear();
 
         m_cameras.Clear();
         m_lights.Clear();
@@ -23,9 +28,33 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void RenderFrameContext::AddAssetToUnload(AssetId asset_id) {
-        HYP_ASSERT(!m_assets_to_unload.Contains(asset_id));
-        m_assets_to_unload.Add(asset_id);
+    void RenderFrameContext::AddTexture2DToUnload(AssetId asset_id) {
+        HYP_ASSERT(!m_texture_2ds_to_unload.Contains(asset_id));
+        m_texture_2ds_to_unload.Add(asset_id);
+    }
+
+    //--------------------------------------------------------------
+    void RenderFrameContext::AddRenderTextureToUnload(AssetId asset_id) {
+        HYP_ASSERT(!m_render_textures_to_unload.Contains(asset_id));
+        m_render_textures_to_unload.Add(asset_id);
+    }
+
+    //--------------------------------------------------------------
+    void RenderFrameContext::AddShaderToUnload(AssetId asset_id) {
+        HYP_ASSERT(!m_shaders_to_unload.Contains(asset_id));
+        m_shaders_to_unload.Add(asset_id);
+    }
+
+    //--------------------------------------------------------------
+    void RenderFrameContext::AddMaterialToUnload(AssetId asset_id) {
+        HYP_ASSERT(!m_materials_to_unload.Contains(asset_id));
+        m_materials_to_unload.Add(asset_id);
+    }
+
+    //--------------------------------------------------------------
+    void RenderFrameContext::AddMeshToUnload(AssetId asset_id) {
+        HYP_ASSERT(!m_meshes_to_unload.Contains(asset_id));
+        m_meshes_to_unload.Add(asset_id);
     }
 
     //--------------------------------------------------------------

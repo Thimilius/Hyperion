@@ -13,6 +13,7 @@
 #include "hyperion/assets/loader/mesh_loader.hpp"
 #include "hyperion/assets/utilities/mesh_generator.hpp"
 #include "hyperion/core/io/file_system.hpp"
+#include "hyperion/ecs/system/systems/asset_systems.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -224,6 +225,16 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void AssetManager::LateUpdate() {
+        HYP_PROFILE_SCOPE("AssetManager.LateUpdate");
+
+        {
+            AssetLoadSystem asset_load_system;
+            asset_load_system.Run(nullptr);
+
+            AssetUnloadSystem asset_unload_system;
+            asset_unload_system.Run(nullptr);
+        }
+
         for (Asset *asset : s_assets_to_unload) {
             delete asset;
         }

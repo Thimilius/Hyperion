@@ -6,25 +6,36 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset_manager.hpp"
+#include "hyperion/core/app/display.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
-    void ForwardRenderPipeline::Initialize() {
+    RenderTexture *CreateRenderTexture(uint32 width, uint32 height) {
         RenderTextureParameters parameters;
-        parameters.width = 1280;
-        parameters.height = 720;
+        parameters.width = width;
+        parameters.height = height;
         parameters.attachments = {
             { RenderTextureFormat::Depth24Stencil8, TextureAttributes() },
             { RenderTextureFormat::RGBA32, TextureAttributes() }
         };
 
-        m_target_render_texture = AssetManager::CreateRenderTexture(parameters);
+        return AssetManager::CreateRenderTexture(parameters);
+    }
+
+    //--------------------------------------------------------------
+    void ForwardRenderPipeline::Initialize() {
+        m_target_render_texture = CreateRenderTexture(Display::GetWidth(), Display::GetHeight());
     }
 
     //--------------------------------------------------------------
     void ForwardRenderPipeline::Render(RenderFrame *render_frame) {
+        if (m_target_render_texture->GetWidth() != Display::GetWidth() || m_target_render_texture->GetHeight() != Display::GetHeight()) {
+            AssetManager::Unload(m_target_render_texture);
+            m_target_render_texture = CreateRenderTexture(Display::GetWidth(), Display::GetHeight());
+        }
+
         // HACK: We need a better way to get/set a camera.
         const RenderFrameContextCamera &camera = render_frame->GetContext().GetCameras()[0];
         CullingParameters culling_parameters;

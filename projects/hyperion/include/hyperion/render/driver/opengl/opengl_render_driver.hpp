@@ -26,13 +26,18 @@ namespace Hyperion::Rendering {
     };
 
     struct OpenGLRenderTextureAttachment {
+        RenderTextureFormat format;
+
         GLuint attachment;
     };
 
     struct OpenGLRenderTexture : public OpenGLAsset {
-        GLuint framebuffer;
-        Array<OpenGLRenderTextureAttachment> attachments;
+        uint32 width;
+        uint32 height;
         uint32 color_attachment_count = 0;
+        Array<OpenGLRenderTextureAttachment> attachments;
+
+        GLuint framebuffer;
     };
 
     struct OpenGLMaterial : public OpenGLAsset {

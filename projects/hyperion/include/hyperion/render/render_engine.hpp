@@ -136,6 +136,7 @@ namespace Hyperion::Rendering {
         static void PreInitialize(const RenderSettings &settings, Window *window);
         static void Initialize();
         static void Render();
+        static void Present();
         static void Shutdown();
 
         static void RequestExit();

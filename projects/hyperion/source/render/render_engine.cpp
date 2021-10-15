@@ -60,11 +60,12 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void RenderEngine::Render() {
-        {
-            HYP_PROFILE_SCOPE("RenderEngine.RenderPipeline");
-            s_render_pipeline->Render(s_main_frame);
-        }
+        HYP_PROFILE_SCOPE("RenderEngine.RenderPipeline");
+        s_render_pipeline->Render(s_main_frame);
+    }
 
+    //--------------------------------------------------------------
+    void RenderEngine::Present() {
         switch (s_render_settings.threading_mode) {
             case RenderThreadingMode::SingleThreaded: {
                 SwapRenderFrames();

@@ -123,7 +123,38 @@ namespace Hyperion {
 
         RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
         for (Asset *asset : AssetManager::s_assets_to_unload) {
-            render_frame_context.AddAssetToUnload(asset->GetAssetInfo().id);
+            AssetId asset_id = asset->GetAssetInfo().id;
+
+            switch (asset->GetAssetType()) 	{
+                case AssetType::Texture: {
+                    Texture *texture = static_cast<Texture *>(asset);
+                    switch (texture->GetDimension()) {
+                        case TextureDimension::Texture2D: {
+                            render_frame_context.AddTexture2DToUnload(asset_id);
+                            break;
+                        }
+                        case TextureDimension::RenderTexture: {
+                            render_frame_context.AddRenderTextureToUnload(asset_id);
+                            break;
+                        }
+                        default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+                    }
+                    break;
+                }
+                case AssetType::Material: {
+                    render_frame_context.AddMaterialToUnload(asset_id);
+                    break;
+                }
+                case AssetType::Mesh: {
+                    render_frame_context.AddMeshToUnload(asset_id);
+                    break;
+                }
+                case AssetType::Shader: {
+                    render_frame_context.AddShaderToUnload(asset_id);
+                    break;
+                }
+                default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+            }
         }
     }
 

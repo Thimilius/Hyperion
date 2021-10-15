@@ -7,6 +7,7 @@
 #include "hyperion/render/driver/opengl/opengl_render_driver.hpp"
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/core/app/display.hpp"
 #include "hyperion/render/driver/opengl/opengl_render_driver_shader_compiler.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -291,21 +292,42 @@ namespace Hyperion::Rendering {
 
                                 const RenderFrameCommandBufferCommandBlit &blit = std::get<RenderFrameCommandBufferCommandBlit>(buffer_command.data);
                                 
-                                GLuint destination_framebuffer = 0;
-                                if (blit.destination.id != RenderTargetId::Default().id) {
-                                    destination_framebuffer = m_opengl_render_textures.Get(blit.destination.id).framebuffer;
-                                }
+                                GLint source_width = Display::GetWidth();
+                                GLint source_height = Display::GetHeight();
                                 GLuint source_framebuffer = 0;
                                 if (blit.source.id != RenderTargetId::Default().id) {
-                                    source_framebuffer = m_opengl_render_textures.Get(blit.source.id).framebuffer;
+                                    const OpenGLRenderTexture &opengl_render_texture = m_opengl_render_textures.Get(blit.source.id);
+                                    source_width = opengl_render_texture.width;
+                                    source_height = opengl_render_texture.height;
+                                    source_framebuffer = opengl_render_texture.framebuffer;
                                 }
 
-                                GLint width = 1280;
-                                GLint height = 720;
+                                GLint destination_width = Display::GetWidth();
+                                GLint destination_height = Display::GetHeight();
+                                GLuint destination_framebuffer = 0;
+                                if (blit.destination.id != RenderTargetId::Default().id) {
+                                    const OpenGLRenderTexture &opengl_render_texture = m_opengl_render_textures.Get(blit.destination.id);
+                                    destination_width = opengl_render_texture.width;
+                                    destination_height = opengl_render_texture.height;
+                                    destination_framebuffer = opengl_render_texture.framebuffer;
+                                }
+                                
                                 GLbitfield mask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
 
                                 // TODO: Add support for blitting with a material.
-                                glBlitNamedFramebuffer(source_framebuffer, destination_framebuffer, 0, 0, width, height, 0, 0, width, height, mask, GL_NEAREST);
+                                glBlitNamedFramebuffer(
+                                    source_framebuffer,
+                                    destination_framebuffer,
+                                    0,
+                                    0,
+                                    source_width,
+                                    source_height,
+                                    0,
+                                    0,
+                                    destination_width,
+                                    destination_height,
+                                    mask,
+                                    GL_NEAREST);
 
                                 break;
                             }
@@ -768,7 +790,38 @@ namespace Hyperion::Rendering {
     void OpenGLRenderDriver::UnloadAssets(RenderFrameContext &render_frame_context) {
         HYP_PROFILE_SCOPE("OpenGLRenderDriver.UnloadAssets");
 
-        render_frame_context.GetAssetsToUnload();
+        for (AssetId shader_id : render_frame_context.GetShaderAssetsToUnload()) {
+            glDeleteProgram(m_opengl_shaders.Get(shader_id).program);
+            m_opengl_shaders.Remove(shader_id);
+        }
+        for (AssetId texture_2d_id : render_frame_context.GetTexture2DAssetsToUnload()) {
+            GLuint texture = m_opengl_textures.Get(texture_2d_id).texture;
+            glDeleteTextures(1, &texture);
+            m_opengl_textures.Remove(texture_2d_id);
+        }
+        for (AssetId render_texture_id : render_frame_context.GetRenderTextureAssetsToUnload()) {
+            OpenGLRenderTexture &opengl_render_texture = m_opengl_render_textures.Get(render_texture_id);
+            for (OpenGLRenderTextureAttachment &opengl_attachment : opengl_render_texture.attachments) {
+                if (opengl_attachment.format == RenderTextureFormat::Depth24Stencil8) {
+                    glDeleteRenderbuffers(1, &opengl_attachment.attachment);
+                } else {
+                    glDeleteTextures(1, &opengl_attachment.attachment);
+                }
+            }
+            m_opengl_render_textures.Remove(render_texture_id);
+        }
+        for (AssetId material_id : render_frame_context.GetMaterialAssetsToUnload()) {
+            m_opengl_materials.Remove(material_id);
+        }
+        for (AssetId mesh_id : render_frame_context.GetMeshAssetsToUnload()) {
+            OpenGLMesh &opengl_mesh = m_opengl_meshes.Get(mesh_id);
+
+            glDeleteBuffers(1, &opengl_mesh.vertex_buffer);
+            glDeleteBuffers(1, &opengl_mesh.index_buffer);
+            glDeleteVertexArrays(1, &opengl_mesh.vertex_array);
+
+            m_opengl_meshes.Remove(mesh_id);
+        }
     }
 
     //--------------------------------------------------------------
@@ -833,13 +886,14 @@ namespace Hyperion::Rendering {
         // TODO: We should do some sort of validation.
 
         uint64 attachment_count = render_texture.parameters.attachments.GetLength();
+        uint32 width = render_texture.parameters.width;
+        uint32 height = render_texture.parameters.height;
 
         OpenGLRenderTexture opengl_render_texture;
         opengl_render_texture.id = render_texture.id;
         opengl_render_texture.attachments.Resize(attachment_count);
-
-        uint32 width = render_texture.parameters.width;
-        uint32 height = render_texture.parameters.height;
+        opengl_render_texture.width = width;
+        opengl_render_texture.height = height;
 
         glCreateFramebuffers(1, &opengl_render_texture.framebuffer);
         
@@ -847,6 +901,7 @@ namespace Hyperion::Rendering {
         for (uint32 i = 0; i < attachment_count; i++) {
             const RenderTextureAttachment &attachment = render_texture.parameters.attachments[i];
             OpenGLRenderTextureAttachment &opengl_attachment = opengl_render_texture.attachments[i];
+            opengl_attachment.format = attachment.format;
 
             if (attachment.format == RenderTextureFormat::Depth24Stencil8) {
                 glCreateRenderbuffers(1, &opengl_attachment.attachment);
@@ -866,8 +921,6 @@ namespace Hyperion::Rendering {
                 glNamedFramebufferTexture(opengl_render_texture.framebuffer, attachment_index, opengl_attachment.attachment, 0);
                 color_attachment_index++;
             }
-
-            
         }
 
         opengl_render_texture.color_attachment_count = color_attachment_index;
