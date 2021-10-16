@@ -87,6 +87,9 @@ namespace Hyperion::Rendering {
     };
 
     struct OpenGLState {
+        GLuint fullscreen_shader;
+        GLuint fullscreen_vertex_array;
+
         uint64 camera_index;
         GLuint camera_uniform_buffer;
 

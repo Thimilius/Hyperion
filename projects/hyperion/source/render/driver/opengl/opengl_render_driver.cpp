@@ -17,6 +17,40 @@ namespace Hyperion::Rendering {
         glEnable(GL_DEPTH_TEST);
         glFrontFace(GL_CW);
 
+        const char *fullscreen_vertex = R"(
+            #version 410 core
+
+            out V2F {
+	            vec2 texture0;
+            } o_v2f;
+
+            void main() {
+	            vec2 vertices[3] = vec2[3](vec2(-1.0, -1.0f), vec2(-1.0, 3.0), vec2(3.0f, -1.0));
+	            vec4 position = vec4(vertices[gl_VertexID], 0.0, 1.0);
+
+	            o_v2f.texture0 = 0.5 * position.xy + vec2(0.5);
+
+	            gl_Position = position;
+            }
+        )";
+        const char *fullscreen_fragment = R"(
+            #version 410 core
+
+            layout(location = 0) out vec4 o_color;
+
+            in V2F {
+	            vec2 texture0;
+            } i_v2f;
+
+            uniform sampler2D u_texture;
+
+            void main() {
+	            o_color = texture(u_texture, i_v2f.texture0);
+            }
+        )";
+        glCreateVertexArrays(1, &m_state.fullscreen_vertex_array);
+        m_state.fullscreen_shader = OpenGLRenderDriverShaderCompiler::Compile(fullscreen_vertex, fullscreen_fragment).program;
+
         glCreateBuffers(1, &m_state.camera_uniform_buffer);
         glNamedBufferData(m_state.camera_uniform_buffer, sizeof(OpenGLUniformBufferCamera), nullptr, GL_DYNAMIC_DRAW);
         glBindBufferBase(GL_UNIFORM_BUFFER, 0, m_state.camera_uniform_buffer);
@@ -115,11 +149,14 @@ namespace Hyperion::Rendering {
                                 GLint source_width = Display::GetWidth();
                                 GLint source_height = Display::GetHeight();
                                 GLuint source_framebuffer = 0;
+                                GLuint source_color_attachment = 0;
                                 if (blit.source.id != RenderTargetId::Default().id) {
                                     const OpenGLRenderTexture &opengl_render_texture = m_opengl_render_textures.Get(blit.source.id);
                                     source_width = opengl_render_texture.width;
                                     source_height = opengl_render_texture.height;
                                     source_framebuffer = opengl_render_texture.framebuffer;
+
+                                    source_color_attachment = opengl_render_texture.attachments.Get(1).attachment;
                                 }
 
                                 GLint destination_width = Display::GetWidth();
@@ -132,22 +169,36 @@ namespace Hyperion::Rendering {
                                     destination_framebuffer = opengl_render_texture.framebuffer;
                                 }
                                 
-                                GLbitfield mask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
+                                // Catch the case where we copy from the default back buffer.
+                                if (source_framebuffer == 0) {
+                                    GLbitfield mask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
 
-                                // TODO: Add support for blitting with a material.
-                                glBlitNamedFramebuffer(
-                                    source_framebuffer,
-                                    destination_framebuffer,
-                                    0,
-                                    0,
-                                    source_width,
-                                    source_height,
-                                    0,
-                                    0,
-                                    destination_width,
-                                    destination_height,
-                                    mask,
-                                    GL_NEAREST);
+                                    glBlitNamedFramebuffer(
+                                        source_framebuffer,
+                                        destination_framebuffer,
+                                        0,
+                                        0,
+                                        source_width,
+                                        source_height,
+                                        0,
+                                        0,
+                                        destination_width,
+                                        destination_height,
+                                        mask,
+                                        GL_NEAREST);
+                                } else {
+                                    GLuint current_framebuffer = 0;
+                                    glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, reinterpret_cast<GLint *>(&current_framebuffer));
+
+                                    glBindFramebuffer(GL_FRAMEBUFFER, destination_framebuffer);
+
+                                    glUseProgram(m_state.fullscreen_shader);
+                                    glBindTextureUnit(0, source_color_attachment);
+                                    glBindVertexArray(m_state.fullscreen_vertex_array);
+                                    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+                                    glBindFramebuffer(GL_FRAMEBUFFER, current_framebuffer);
+                                }
 
                                 break;
                             }
