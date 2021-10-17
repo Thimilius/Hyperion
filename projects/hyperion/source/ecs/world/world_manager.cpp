@@ -96,6 +96,10 @@ namespace Hyperion {
                 .Property<&Rendering::CameraViewportClipping::y>("y")
                 .Property<&Rendering::CameraViewportClipping::width>("width")
                 .Property<&Rendering::CameraViewportClipping::height>("height");
+
+            MetaRegistry::Reflect<UI::UIScalingMode>("UIScalingMode")
+                .Property<UI::UIScalingMode::ScaleWithScreenSize>("ScaleWithScreenSize")
+                .Property<UI::UIScalingMode::ConstantPixelSize>("ConstantPixelSize");
         }
 
         // Components
@@ -190,6 +194,11 @@ namespace Hyperion {
                 .Base<Rendering::LightComponent>()
                 .Property<&Rendering::SpotLightComponent::inner_spot_radius>("inner_spot_radius")
                 .Property<&Rendering::SpotLightComponent::outer_spot_radius>("outer_spot_radius");
+
+            MetaRegistry::Reflect<UI::UIViewComponent>("UIView")
+                .Base<IComponent>()
+                .Property<&UI::UIViewComponent::scaling_mode>("scaling_mode")
+                .Property<&UI::UIViewComponent::reference_resolution>("reference_resolution");
         }
     }
 

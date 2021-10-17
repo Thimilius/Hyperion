@@ -5,6 +5,11 @@
 #include "hyperion/core/math/vector2.hpp"
 #include "hyperion/core/math/vector3.hpp"
 
+//-------------------- Forward Declarations --------------------
+namespace Hyperion::UI {
+    class UIElement;
+}
+
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::UI {
 

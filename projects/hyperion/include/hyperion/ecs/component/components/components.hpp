@@ -5,3 +5,4 @@
 #include "hyperion/ecs/component/components/physics_components.hpp"
 #include "hyperion/ecs/component/components/render_components.hpp"
 #include "hyperion/ecs/component/components/transform_components.hpp"
+#include "hyperion/ecs/component/components/ui_components.hpp"
