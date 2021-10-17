@@ -30,6 +30,7 @@ namespace Hyperion::Rendering {
         inline const Array<RenderFrameContextLight> &GetLights() const { return m_lights; }
         inline const Array<RenderFrameContextObjectMesh> &GetMeshObjects() const { return m_mesh_objects; }
         inline const Array<RenderFrameContextObjectSprite> &GetSpriteObjects() const { return m_sprite_objects; }
+        inline const Array<RenderFrameContextObjectUI> &GetUIObjects() const { return m_ui_objects; }
 
         void AddTexture2DToUnload(AssetId asset_id);
         void AddRenderTextureToUnload(AssetId asset_id);
@@ -47,6 +48,7 @@ namespace Hyperion::Rendering {
         RenderFrameContextLight &AddLight();
         RenderFrameContextObjectMesh &AddMeshObject();
         RenderFrameContextObjectSprite &AddSpriteObject();
+        RenderFrameContextObjectUI &AddUIObject();
     private:
         Array<AssetId> m_texture_2ds_to_unload;
         Array<AssetId> m_render_textures_to_unload;
@@ -64,6 +66,7 @@ namespace Hyperion::Rendering {
         Array<RenderFrameContextLight> m_lights;
         Array<RenderFrameContextObjectMesh> m_mesh_objects;
         Array<RenderFrameContextObjectSprite> m_sprite_objects;
+        Array<RenderFrameContextObjectUI> m_ui_objects;
     };
 
 }

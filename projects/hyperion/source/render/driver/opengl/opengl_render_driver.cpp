@@ -242,7 +242,16 @@ namespace Hyperion::Rendering {
                     const RenderFrameContextCamera &render_frame_context_camera = render_frame_context.GetCameras()[m_state.camera_index];
 
                     PrepareObjects(render_frame, draw_meshes.sorted_objects, draw_meshes.drawing_parameters);
-                    RenderCamera(render_frame_context.GetEnvironment(), render_frame_context.GetLights(), render_frame_context_camera, draw_meshes.drawing_parameters);
+                    DrawMeshes(render_frame_context.GetEnvironment(), render_frame_context.GetLights(), render_frame_context_camera, draw_meshes.drawing_parameters);
+
+                    break;
+                }
+                case RenderFrameCommandType::DrawUI: {
+                    HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawUI");
+
+                    const RenderFrameCommandDrawUI &draw_ui = std::get<RenderFrameCommandDrawUI>(frame_command.data);
+
+                    DrawUI(render_frame_context.GetUIObjects());
 
                     break;
                 }
@@ -433,7 +442,7 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void OpenGLRenderDriver::RenderCamera(const RenderFrameContextEnvironment &environment, const Array<RenderFrameContextLight> &lights, const RenderFrameContextCamera &camera, DrawingParametes drawing_parameters) {
+    void OpenGLRenderDriver::DrawMeshes(const RenderFrameContextEnvironment &environment, const Array<RenderFrameContextLight> &lights, const RenderFrameContextCamera &camera, DrawingParametes drawing_parameters) {
         HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderCamera");
 
         for (const GroupedShader &grouped_shader : m_grouped_shaders) {
@@ -584,6 +593,18 @@ namespace Hyperion::Rendering {
 
         GLenum topology = OpenGLUtilities::GetTopology(sub_mesh.topology);
         glDrawElementsBaseVertex(topology, sub_mesh.index_count, GL_UNSIGNED_INT, index_offset, sub_mesh.vertex_offset);
+    }
+
+    //--------------------------------------------------------------
+    void OpenGLRenderDriver::DrawUI(const Array<RenderFrameContextObjectUI> &elements) {
+        for (const RenderFrameContextObjectUI &element : elements) {
+            AssetId mesh_id = element.mesh->GetAssetInfo().id;
+
+            OpenGLMesh &opengl_mesh = m_opengl_meshes.Get(mesh_id);
+            glBindVertexArray(opengl_mesh.vertex_array);
+
+            DrawSubMesh(opengl_mesh.sub_meshes[0]);
+        }
     }
 
     //--------------------------------------------------------------

@@ -109,6 +109,14 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
+    void RenderFrame::DrawUI() {
+        RenderFrameCommandDrawUI draw_ui;
+
+        RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::DrawUI);
+        command.data = draw_ui;
+    }
+
+    //--------------------------------------------------------------
     void RenderFrame::DrawGizmos() {
         RenderFrameCommandDrawGizmos draw_gizmos;
         draw_gizmos.shader_id = AssetManager::GetShaderPrimitive(ShaderPrimitive::Gizmo)->GetAssetInfo().id;

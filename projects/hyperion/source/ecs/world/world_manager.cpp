@@ -9,6 +9,7 @@
 #include "hyperion/ecs/system/systems/physics_systems.hpp"
 #include "hyperion/ecs/system/systems/transform_systems.hpp"
 #include "hyperion/ecs/system/systems/render_systems.hpp"
+#include "hyperion/ecs/system/systems/ui_systems.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -212,6 +213,14 @@ namespace Hyperion {
         HYP_PROFILE_SCOPE("WorldManager.Update");
 
         if (s_active_world) {
+            // UI
+            {
+                HYP_PROFILE_SCOPE("WorldManager.Update.UI");
+
+                UI::UISystem ui_system;
+                ui_system.Run(s_active_world);
+            }
+
             // Transform
             {
                 HYP_PROFILE_SCOPE("WorldManager.Update.Transform");
@@ -247,11 +256,14 @@ namespace Hyperion {
                 Rendering::LightSystem light_system;
                 light_system.Run(s_active_world);
 
-                Rendering::SpriteSystem sprite_system;
-                sprite_system.Run(s_active_world);
+                Rendering::SpriteRenderSystem sprite_render_system;
+                sprite_render_system.Run(s_active_world);
 
-                Rendering::MeshSystem mesh_system;
-                mesh_system.Run(s_active_world);
+                Rendering::MeshRenderSystem mesh_render_system;
+                mesh_render_system.Run(s_active_world);
+
+                Rendering::UIRenderSystem ui_render_system;
+                ui_render_system.Run(s_active_world);
             }
         }
     }

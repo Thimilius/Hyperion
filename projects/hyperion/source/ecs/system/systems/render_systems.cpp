@@ -9,11 +9,15 @@
 #include "hyperion/ecs/component/components/core_components.hpp"
 #include "hyperion/ecs/component/components/render_components.hpp"
 #include "hyperion/ecs/component/components/transform_components.hpp"
+#include "hyperion/ecs/component/components/ui_components.hpp"
 #include "hyperion/ecs/component/components/utilities/camera_utilities.hpp"
 #include "hyperion/ecs/component/components/utilities/transform_utilities.hpp"
 #include "hyperion/ecs/world/world.hpp"
 #include "hyperion/render/render_engine.hpp"
 #include "hyperion/render/frame/render_frame.hpp"
+
+//------------------------- Namespaces -------------------------
+using namespace Hyperion::UI;
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
@@ -126,7 +130,7 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void SpriteSystem::Run(World *world) {
+    void SpriteRenderSystem::Run(World *world) {
         HYP_PROFILE_SCOPE("SpriteSystem.Run");
 
         RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
@@ -144,7 +148,7 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void MeshSystem::Run(World *world) {
+    void MeshRenderSystem::Run(World *world) {
         HYP_PROFILE_SCOPE("RenderMeshSystem.Run");
 
         RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
@@ -163,6 +167,36 @@ namespace Hyperion::Rendering {
             render_frame_context_mesh_object.material = mesh->material;
             render_frame_context_mesh_object.layer_mask = mesh->layer_mask;
             render_frame_context_mesh_object.bounds = world_mesh_bounds->bounds;
+        }
+    }
+
+    //--------------------------------------------------------------
+    void UIRenderSystem::Run(World *world) {
+        HYP_PROFILE_SCOPE("UIRenderSystem.Run");
+
+        RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
+
+        auto view = world->GetView<UIViewComponent>(ExcludeComponents<DisabledComponent>());
+        for (EntityId entity : view) {
+            UIViewComponent *ui_view_component = world->GetComponent<UIViewComponent>(entity);
+
+            RenderElement(ui_view_component->root_element, render_frame_context);
+        }
+    }
+
+    //--------------------------------------------------------------
+    void UIRenderSystem::RenderElement(UIElement *element, RenderFrameContext &render_frame_context) {
+        if (element && element->IsEnabled()) {
+            UIElementRenderer ui_element_renderer = element->GetRenderer();
+
+            RenderFrameContextObjectUI &render_frame_context_ui_object = render_frame_context.AddUIObject();
+            render_frame_context_ui_object.mesh = ui_element_renderer.mesh;
+            render_frame_context_ui_object.color = Color::White();
+            render_frame_context_ui_object.texture = nullptr;
+
+            for (UIElement *child : element->GetHierarchy().GetChildren()) {
+                RenderElement(child, render_frame_context);
+            }
         }
     }
 

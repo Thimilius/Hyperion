@@ -25,6 +25,7 @@ namespace Hyperion::Rendering {
         m_lights.Clear();
         m_mesh_objects.Clear();
         m_sprite_objects.Clear();
+        m_ui_objects.Clear();
     }
 
     //--------------------------------------------------------------
@@ -109,6 +110,12 @@ namespace Hyperion::Rendering {
     RenderFrameContextObjectSprite &RenderFrameContext::AddSpriteObject() {
         m_sprite_objects.Resize(m_sprite_objects.GetLength() + 1);
         return m_sprite_objects.GetLast();
+    }
+
+    //--------------------------------------------------------------
+    RenderFrameContextObjectUI &RenderFrameContext::AddUIObject() {
+        m_ui_objects.Resize(m_ui_objects.GetLength() + 1);
+        return m_ui_objects.GetLast();
     }
 
 }

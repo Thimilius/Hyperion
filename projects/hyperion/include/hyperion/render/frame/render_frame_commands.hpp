@@ -18,6 +18,7 @@ namespace Hyperion::Rendering {
         ExecuteCommandBuffer,
 
         DrawMeshes,
+        DrawUI,
         DrawGizmos
     };
 
@@ -65,6 +66,10 @@ namespace Hyperion::Rendering {
         Array<uint32> sorted_objects;
     };
 
+    struct RenderFrameCommandDrawUI {
+
+    };
+
     struct RenderFrameCommandDrawGizmos {
         AssetId shader_id;
 
@@ -85,6 +90,7 @@ namespace Hyperion::Rendering {
             RenderFrameCommandSetCamera,
             RenderFrameCommandExecuteCommandBuffer,
             RenderFrameCommandDrawMeshes,
+            RenderFrameCommandDrawUI,
             RenderFrameCommandDrawGizmos
         > data;
     };

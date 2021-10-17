@@ -29,4 +29,11 @@ namespace Hyperion::Rendering {
         Color color;
     };
 
+    struct RenderFrameContextObjectUI {
+        Mesh *mesh;
+
+        Color color;
+        Texture2D *texture;
+    };
+
 }
