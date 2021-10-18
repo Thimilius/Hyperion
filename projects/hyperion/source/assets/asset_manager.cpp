@@ -92,6 +92,7 @@ namespace Hyperion {
             case ShaderPrimitive::Standard: return s_primitives.shader_standard;
             case ShaderPrimitive::Unlit: return s_primitives.shader_unlit;
             case ShaderPrimitive::Gizmo: return s_primitives.shader_gizmo;
+            case ShaderPrimitive::UI: return s_primitives.shader_ui;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }
@@ -120,6 +121,7 @@ namespace Hyperion {
         switch (material_primitive) {
             case MaterialPrimitive::Default: return s_primitives.material_default;
             case MaterialPrimitive::Unlit: return s_primitives.material_unlit;
+            case MaterialPrimitive::UI: return s_primitives.material_ui;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
         }
     }
@@ -264,11 +266,15 @@ namespace Hyperion {
         SetNewGuid(s_primitives.shader_unlit, "{23AA53FE-6A47-4571-BC47-00EAAFA2F54B}");
         s_primitives.shader_gizmo = CreateShader(FileSystem::ReadAllText("data/shaders/gizmo.shader"));
         SetNewGuid(s_primitives.shader_gizmo, "{F05F02F1-A7E1-42B7-9618-F13AB38BCA87}");
+        s_primitives.shader_ui = CreateShader(FileSystem::ReadAllText("data/shaders/ui.shader"));
+        SetNewGuid(s_primitives.shader_ui, "{D1D71E77-6EA7-4B5D-A7D3-C5C07D1F5386}");
 
         s_primitives.material_default = CreateMaterial(s_primitives.shader_standard);
         SetNewGuid(s_primitives.material_default, "{B2463C27-7FD8-44A2-BC53-2AD74FAA7979}");
         s_primitives.material_unlit = CreateMaterial(s_primitives.shader_unlit);
         SetNewGuid(s_primitives.material_unlit, "{C718D97E-A0D9-4567-AFE6-F264B8C29730}");
+        s_primitives.material_ui = CreateMaterial(s_primitives.shader_ui);
+        SetNewGuid(s_primitives.material_ui, "{8367D740-AF57-4C1C-AFAC-BE0C6847D8C3}");
 
         s_primitives.mesh_quad = MeshGenerator::GenerateQuad(1.0f, 1.0f);
         SetNewGuid(s_primitives.mesh_quad, "{D54B554E-2BED-4F36-AF12-9C20C83F4EFB}");

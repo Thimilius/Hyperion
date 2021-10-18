@@ -162,9 +162,10 @@ namespace Hyperion::Rendering {
             RenderFrameContextObjectMesh &render_frame_context_mesh_object = render_frame_context.AddMeshObject();
             render_frame_context_mesh_object.local_to_world = local_to_world->local_to_world;
             render_frame_context_mesh_object.position = Vector3(local_to_world->local_to_world.columns[3]);
-            render_frame_context_mesh_object.mesh = mesh->mesh;
+            render_frame_context_mesh_object.mesh_id = mesh->mesh->GetAssetInfo().id;
             render_frame_context_mesh_object.sub_mesh_index = mesh->sub_mesh_index;
-            render_frame_context_mesh_object.material = mesh->material;
+            render_frame_context_mesh_object.shader_id = mesh->material->GetShader()->GetAssetInfo().id;
+            render_frame_context_mesh_object.material_id = mesh->material->GetAssetInfo().id;
             render_frame_context_mesh_object.layer_mask = mesh->layer_mask;
             render_frame_context_mesh_object.bounds = world_mesh_bounds->bounds;
         }
@@ -186,13 +187,18 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void UIRenderSystem::RenderElement(UIElement *element, RenderFrameContext &render_frame_context) {
+
         if (element && element->IsEnabled()) {
             UIElementRenderer ui_element_renderer = element->GetRenderer();
 
+            Material *ui_material = AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI);
+
             RenderFrameContextObjectUI &render_frame_context_ui_object = render_frame_context.AddUIObject();
-            render_frame_context_ui_object.mesh = ui_element_renderer.mesh;
+            render_frame_context_ui_object.mesh_id = ui_element_renderer.mesh->GetAssetInfo().id;
+            render_frame_context_ui_object.shader_id = ui_material->GetShader()->GetAssetInfo().id;
+            render_frame_context_ui_object.material_id = ui_material->GetAssetInfo().id;
             render_frame_context_ui_object.color = Color::White();
-            render_frame_context_ui_object.texture = nullptr;
+            render_frame_context_ui_object.texture_id = AssetInfo::INVALID_ID;
 
             for (UIElement *child : element->GetHierarchy().GetChildren()) {
                 RenderElement(child, render_frame_context);

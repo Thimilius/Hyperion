@@ -14,46 +14,88 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void OpenGLRenderDriver::Initialize() {
-        glEnable(GL_DEPTH_TEST);
-        glFrontFace(GL_CW);
+        {
+            glEnable(GL_DEPTH_TEST);
+            glFrontFace(GL_CW);
+        }
 
-        const char *fullscreen_vertex = R"(
-            #version 410 core
+        {
+            const char *fullscreen_vertex = R"(
+                #version 450 core
 
-            out V2F {
-	            vec2 texture0;
-            } o_v2f;
+                out V2F {
+	                vec2 texture0;
+                } o_v2f;
 
-            void main() {
-	            vec2 vertices[3] = vec2[3](vec2(-1.0, -1.0f), vec2(-1.0, 3.0), vec2(3.0f, -1.0));
-	            vec4 position = vec4(vertices[gl_VertexID], 0.0, 1.0);
+                void main() {
+	                vec2 vertices[3] = vec2[3](vec2(-1.0, -1.0f), vec2(-1.0, 3.0), vec2(3.0f, -1.0));
+	                vec4 position = vec4(vertices[gl_VertexID], 0.0, 1.0);
 
-	            o_v2f.texture0 = 0.5 * position.xy + vec2(0.5);
+	                o_v2f.texture0 = 0.5 * position.xy + vec2(0.5);
 
-	            gl_Position = position;
-            }
-        )";
-        const char *fullscreen_fragment = R"(
-            #version 410 core
+	                gl_Position = position;
+                }
+            )";
+            const char *fullscreen_fragment = R"(
+                #version 450 core
 
-            layout(location = 0) out vec4 o_color;
+                layout(location = 0) out vec4 o_color;
 
-            in V2F {
-	            vec2 texture0;
-            } i_v2f;
+                in V2F {
+	                vec2 texture0;
+                } i_v2f;
 
-            uniform sampler2D u_texture;
+                uniform sampler2D u_texture;
 
-            void main() {
-	            o_color = texture(u_texture, i_v2f.texture0);
-            }
-        )";
-        glCreateVertexArrays(1, &m_state.fullscreen_vertex_array);
-        m_state.fullscreen_shader = OpenGLRenderDriverShaderCompiler::Compile(fullscreen_vertex, fullscreen_fragment).program;
+                void main() {
+	                o_color = texture(u_texture, i_v2f.texture0);
+                }
+            )";
+            m_state.fullscreen_shader = OpenGLRenderDriverShaderCompiler::Compile(fullscreen_vertex, fullscreen_fragment).program;
+            glCreateVertexArrays(1, &m_state.fullscreen_vertex_array);
+        }
 
-        glCreateBuffers(1, &m_state.camera_uniform_buffer);
-        glNamedBufferData(m_state.camera_uniform_buffer, sizeof(OpenGLUniformBufferCamera), nullptr, GL_DYNAMIC_DRAW);
-        glBindBufferBase(GL_UNIFORM_BUFFER, 0, m_state.camera_uniform_buffer);
+        {
+            glCreateBuffers(1, &m_state.camera_uniform_buffer);
+            glNamedBufferData(m_state.camera_uniform_buffer, sizeof(OpenGLUniformBufferCamera), nullptr, GL_DYNAMIC_DRAW);
+            glBindBufferBase(GL_UNIFORM_BUFFER, 0, m_state.camera_uniform_buffer);
+        }
+
+        {
+            glCreateBuffers(1, &m_state.render_bounds_vertex_buffer);
+            glNamedBufferData(m_state.render_bounds_vertex_buffer, 8 * sizeof(OpenGLImmediateVertex), nullptr, GL_DYNAMIC_DRAW);
+
+            Array<uint32> indices = {
+                0, 1,
+                1, 5,
+                5, 4,
+                4, 0,
+
+                0, 2,
+                1, 3,
+                5, 7,
+                4, 6,
+
+                2, 3,
+                3, 7,
+                7, 6,
+                6, 2,
+            };
+
+            glCreateBuffers(1, &m_state.render_bounds_index_buffer);
+            glNamedBufferData(m_state.render_bounds_index_buffer, indices.GetLength() * sizeof(uint32), indices.GetData(), GL_STATIC_DRAW);
+
+            glCreateVertexArrays(1, &m_state.render_bounds_vertex_array);
+            glVertexArrayVertexBuffer(m_state.render_bounds_vertex_array, 0, m_state.render_bounds_vertex_buffer, 0, sizeof(OpenGLImmediateVertex));
+            glVertexArrayElementBuffer(m_state.render_bounds_vertex_array, m_state.render_bounds_index_buffer);
+
+            glEnableVertexArrayAttrib(m_state.render_bounds_vertex_array, 0);
+            glVertexArrayAttribFormat(m_state.render_bounds_vertex_array, 0, 3, GL_FLOAT, false, 0);
+            glVertexArrayAttribBinding(m_state.render_bounds_vertex_array, 0, 0);
+            glEnableVertexArrayAttrib(m_state.render_bounds_vertex_array, 3);
+            glVertexArrayAttribFormat(m_state.render_bounds_vertex_array, 3, 4, GL_FLOAT, false, sizeof(Vector3));
+            glVertexArrayAttribBinding(m_state.render_bounds_vertex_array, 3, 0);
+        }
     }
 
     //--------------------------------------------------------------
@@ -239,10 +281,8 @@ namespace Hyperion::Rendering {
 
                     const RenderFrameCommandDrawMeshes &draw_meshes = std::get<RenderFrameCommandDrawMeshes>(frame_command.data);
 
-                    const RenderFrameContextCamera &render_frame_context_camera = render_frame_context.GetCameras()[m_state.camera_index];
-
                     PrepareObjects(render_frame, draw_meshes.sorted_objects, draw_meshes.drawing_parameters);
-                    DrawMeshes(render_frame_context.GetEnvironment(), render_frame_context.GetLights(), render_frame_context_camera, draw_meshes.drawing_parameters);
+                    DrawMeshes(render_frame_context.GetEnvironment(), render_frame_context.GetLights(), draw_meshes.drawing_parameters);
 
                     break;
                 }
@@ -306,13 +346,13 @@ namespace Hyperion::Rendering {
         for (uint32 index : sorted_objects) {
             const RenderFrameContextObjectMesh &render_frame_context_object_mesh = mesh_objects[index];
 
+            AssetId shader_id = render_frame_context_object_mesh.shader_id;
+            AssetId material_id = render_frame_context_object_mesh.material_id;
+            AssetId mesh_id = render_frame_context_object_mesh.mesh_id;
+
             if ((render_frame_context_object_mesh.layer_mask & drawing_parameters.filter_mask) != render_frame_context_object_mesh.layer_mask) {
                 continue;
             }
-
-            AssetId material_id = render_frame_context_object_mesh.material->GetAssetInfo().id;
-            AssetId shader_id = render_frame_context_object_mesh.material->GetShader()->GetAssetInfo().id;
-            AssetId mesh_id = render_frame_context_object_mesh.mesh->GetAssetInfo().id;
 
             auto opengl_shader_it = m_opengl_shaders.Find(shader_id);
             if (opengl_shader_it == m_opengl_shaders.end()) {
@@ -442,8 +482,8 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void OpenGLRenderDriver::DrawMeshes(const RenderFrameContextEnvironment &environment, const Array<RenderFrameContextLight> &lights, const RenderFrameContextCamera &camera, DrawingParametes drawing_parameters) {
-        HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderCamera");
+    void OpenGLRenderDriver::DrawMeshes(const RenderFrameContextEnvironment &environment, const Array<RenderFrameContextLight> &lights, DrawingParametes drawing_parameters) {
+        HYP_PROFILE_SCOPE("OpenGLRenderDriver.DrawMeshes");
 
         for (const GroupedShader &grouped_shader : m_grouped_shaders) {
             HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderGroupedShader");
@@ -460,7 +500,7 @@ namespace Hyperion::Rendering {
                     HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderGroupedMesh");
 
                     const OpenGLMesh &opengl_mesh = *grouped_mesh.mesh;
-                    glBindVertexArray(opengl_mesh.vertex_array);
+                    UseMesh(opengl_mesh);
 
                     GLint model_location = glGetUniformLocation(opengl_shader.program, "u_model");
                     GLint light_count_location = glGetUniformLocation(opengl_shader.program, "u_light_count");
@@ -483,6 +523,91 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
+    void OpenGLRenderDriver::DrawSubMesh(const SubMesh &sub_mesh) {
+        HYP_PROFILE_SCOPE("OpenGLRenderDriver.DrawSubMesh");
+
+        void *index_offset = reinterpret_cast<void *>(static_cast<uint32>(sub_mesh.index_offset) * sizeof(uint32));
+
+        m_stats.draw_calls += 1;
+        m_stats.vertex_count += sub_mesh.vertex_count;
+        m_stats.triangle_count += sub_mesh.index_count;
+
+        GLenum topology = OpenGLUtilities::GetTopology(sub_mesh.topology);
+        glDrawElementsBaseVertex(topology, sub_mesh.index_count, GL_UNSIGNED_INT, index_offset, sub_mesh.vertex_offset);
+    }
+
+    //--------------------------------------------------------------
+    void OpenGLRenderDriver::DrawUI(const Array<RenderFrameContextObjectUI> &elements) {
+        {
+            float32 width = static_cast<float32>(Display::GetWidth());
+            float32 height = static_cast<float32>(Display::GetHeight());
+
+            OpenGLUniformBufferCamera uniform_buffer_camera;
+            uniform_buffer_camera.camera_view_matrix = Matrix4x4::Identity();
+            uniform_buffer_camera.camera_projection_matrix = Matrix4x4::Orthographic(0.0f, width, 0.0f, height, -1.0f, 0.0f);
+            glNamedBufferSubData(m_state.camera_uniform_buffer, 0, sizeof(OpenGLUniformBufferCamera), &uniform_buffer_camera);
+        }
+
+        for (const RenderFrameContextObjectUI &element : elements) {
+            const OpenGLShader &opengl_shader = m_opengl_shaders.Get(element.shader_id);
+            UseShader(opengl_shader);
+
+            const OpenGLMaterial &opengl_material = m_opengl_materials.Get(element.material_id);
+            UseMaterial(opengl_shader, opengl_material);
+            {
+                GLint color_location = glGetUniformLocation(opengl_shader.program, "u_color");
+                if (color_location >= 0) {
+                    Color color = element.color;
+                    glProgramUniform4f(opengl_shader.program, color_location, color.r, color.g, color.b, color.a);
+                }
+
+                GLint texture_location = glGetUniformLocation(opengl_shader.program, "u_texture");
+                if (texture_location >= 0) {
+                    const OpenGLTexture &opengl_texture = m_opengl_textures.Get(element.texture_id);
+
+                    glBindTextureUnit(0, opengl_texture.texture);
+                    glProgramUniform1i(opengl_shader.program, texture_location, 0);
+                }
+            }
+
+            OpenGLMesh &opengl_mesh = m_opengl_meshes.Get(element.mesh_id);
+            UseMesh(opengl_mesh);
+
+            DrawSubMesh(opengl_mesh.sub_meshes[0]);
+        }
+    }
+
+    //--------------------------------------------------------------
+    void OpenGLRenderDriver::DrawRenderBounds(const BoundingBox &bounds) {
+        Color color = Color::Red();
+
+        Array<OpenGLImmediateVertex> data;
+        data.Resize(8);
+
+        data[0].position = Vector3(bounds.min.x, bounds.min.y, bounds.min.z);
+        data[0].color = color;
+        data[1].position = Vector3(bounds.min.x, bounds.min.y, bounds.max.z);
+        data[1].color = color;
+        data[2].position = Vector3(bounds.min.x, bounds.max.y, bounds.min.z);
+        data[2].color = color;
+        data[3].position = Vector3(bounds.min.x, bounds.max.y, bounds.max.z);
+        data[3].color = color;
+        data[4].position = Vector3(bounds.max.x, bounds.min.y, bounds.min.z);
+        data[4].color = color;
+        data[5].position = Vector3(bounds.max.x, bounds.min.y, bounds.max.z);
+        data[5].color = color;
+        data[6].position = Vector3(bounds.max.x, bounds.max.y, bounds.min.z);
+        data[6].color = color;
+        data[7].position = Vector3(bounds.max.x, bounds.max.y, bounds.max.z);
+        data[7].color = color;
+
+        glNamedBufferSubData(m_state.render_bounds_vertex_buffer, 0, data.GetLength() * sizeof(OpenGLImmediateVertex), data.GetData());
+
+        glBindVertexArray(m_state.render_bounds_vertex_array);
+        glDrawElementsBaseVertex(GL_LINES, 24, GL_UNSIGNED_INT, 0, 0);
+    }
+
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::UseShader(const OpenGLShader &opengl_shader) {
         HYP_PROFILE_SCOPE("OpenGLRenderDriver.UseShader");
 
@@ -498,8 +623,8 @@ namespace Hyperion::Rendering {
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
         }
-        switch (attributes.blending_mode) 	{
-            case ShaderBlendingMode::On: { 
+        switch (attributes.blending_mode) {
+            case ShaderBlendingMode::On: {
                 glEnable(GL_BLEND);
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                 break;
@@ -510,7 +635,7 @@ namespace Hyperion::Rendering {
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
         }
-        switch (attributes.culling_mode) 	{
+        switch (attributes.culling_mode) {
             case ShaderCullingMode::Off: {
                 glDisable(GL_CULL_FACE);
                 break;
@@ -527,7 +652,7 @@ namespace Hyperion::Rendering {
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
         }
-        
+
         glUseProgram(opengl_shader.program);
     }
 
@@ -582,100 +707,8 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void OpenGLRenderDriver::DrawSubMesh(const SubMesh &sub_mesh) {
-        HYP_PROFILE_SCOPE("OpenGLRenderDriver.DrawSubMesh");
-
-        void *index_offset = reinterpret_cast<void *>(static_cast<uint32>(sub_mesh.index_offset) * sizeof(uint32));
-
-        m_stats.draw_calls += 1;
-        m_stats.vertex_count += sub_mesh.vertex_count;
-        m_stats.triangle_count += sub_mesh.index_count;
-
-        GLenum topology = OpenGLUtilities::GetTopology(sub_mesh.topology);
-        glDrawElementsBaseVertex(topology, sub_mesh.index_count, GL_UNSIGNED_INT, index_offset, sub_mesh.vertex_offset);
-    }
-
-    //--------------------------------------------------------------
-    void OpenGLRenderDriver::DrawUI(const Array<RenderFrameContextObjectUI> &elements) {
-        for (const RenderFrameContextObjectUI &element : elements) {
-            AssetId mesh_id = element.mesh->GetAssetInfo().id;
-
-            OpenGLMesh &opengl_mesh = m_opengl_meshes.Get(mesh_id);
-            glBindVertexArray(opengl_mesh.vertex_array);
-
-            DrawSubMesh(opengl_mesh.sub_meshes[0]);
-        }
-    }
-
-    //--------------------------------------------------------------
-    void OpenGLRenderDriver::DrawRenderBounds(const BoundingBox &bounds) {
-        Color color = Color::Red();
-
-        struct ImmediateVertex {
-            Vector3 position;
-            Color color;
-        };
-
-        Array<ImmediateVertex> data;
-        data.Resize(8);
-
-        data[0].position = Vector3(bounds.min.x, bounds.min.y, bounds.min.z);
-        data[0].color = color;
-        data[1].position = Vector3(bounds.min.x, bounds.min.y, bounds.max.z);
-        data[1].color = color;
-        data[2].position = Vector3(bounds.min.x, bounds.max.y, bounds.min.z);
-        data[2].color = color;
-        data[3].position = Vector3(bounds.min.x, bounds.max.y, bounds.max.z);
-        data[3].color = color;
-        data[4].position = Vector3(bounds.max.x, bounds.min.y, bounds.min.z);
-        data[4].color = color;
-        data[5].position = Vector3(bounds.max.x, bounds.min.y, bounds.max.z);
-        data[5].color = color;
-        data[6].position = Vector3(bounds.max.x, bounds.max.y, bounds.min.z);
-        data[6].color = color;
-        data[7].position = Vector3(bounds.max.x, bounds.max.y, bounds.max.z);
-        data[7].color = color;
-
-        if (m_state.render_bounds_vertex_buffer == UINT32_MAX) {
-            glCreateBuffers(1, &m_state.render_bounds_vertex_buffer);
-            glNamedBufferData(m_state.render_bounds_vertex_buffer, data.GetLength() * sizeof(ImmediateVertex), data.GetData(), GL_DYNAMIC_DRAW);
-
-            Array<uint32> indices = {
-                0, 1,
-                1, 5,
-                5, 4,
-                4, 0,
-
-                0, 2,
-                1, 3,
-                5, 7,
-                4, 6,
-
-                2, 3,
-                3, 7,
-                7, 6,
-                6, 2,
-            };
-
-            glCreateBuffers(1, &m_state.render_bounds_index_buffer);
-            glNamedBufferData(m_state.render_bounds_index_buffer, indices.GetLength() * sizeof(uint32), indices.GetData(), GL_STATIC_DRAW);
-
-            glCreateVertexArrays(1, &m_state.render_bounds_vertex_array);
-            glVertexArrayVertexBuffer(m_state.render_bounds_vertex_array, 0, m_state.render_bounds_vertex_buffer, 0, sizeof(ImmediateVertex));
-            glVertexArrayElementBuffer(m_state.render_bounds_vertex_array, m_state.render_bounds_index_buffer);
-
-            glEnableVertexArrayAttrib(m_state.render_bounds_vertex_array, 0);
-            glVertexArrayAttribFormat(m_state.render_bounds_vertex_array, 0, 3, GL_FLOAT, false, 0);
-            glVertexArrayAttribBinding(m_state.render_bounds_vertex_array, 0, 0);
-            glEnableVertexArrayAttrib(m_state.render_bounds_vertex_array, 3);
-            glVertexArrayAttribFormat(m_state.render_bounds_vertex_array, 3, 4, GL_FLOAT, false, sizeof(Vector3));
-            glVertexArrayAttribBinding(m_state.render_bounds_vertex_array, 3, 0);
-        } else {
-            glNamedBufferSubData(m_state.render_bounds_vertex_buffer, 0, data.GetLength() * sizeof(ImmediateVertex), data.GetData());
-        }
-
-        glBindVertexArray(m_state.render_bounds_vertex_array);
-        glDrawElementsBaseVertex(GL_LINES, 24, GL_UNSIGNED_INT, 0, 0);
+    void OpenGLRenderDriver::UseMesh(const OpenGLMesh &opengl_mesh) {
+        glBindVertexArray(opengl_mesh.vertex_array);
     }
 
     //--------------------------------------------------------------

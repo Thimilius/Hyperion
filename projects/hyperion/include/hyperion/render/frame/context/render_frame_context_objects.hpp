@@ -3,6 +3,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/math/bounding_box.hpp"
 #include "hyperion/core/math/matrix4x4.hpp"
+#include "hyperion/assets/asset_types.hpp"
 #include "hyperion/assets/material.hpp"
 #include "hyperion/assets/mesh.hpp"
 
@@ -15,10 +16,11 @@ namespace Hyperion::Rendering {
     };
 
     struct RenderFrameContextObjectMesh : public RenderFrameContextObject {
-        Mesh *mesh;
+        AssetId mesh_id;
         uint32 sub_mesh_index;
 
-        Material *material;
+        AssetId shader_id;
+        AssetId material_id;
 
         LayerMask layer_mask;
 
@@ -30,10 +32,13 @@ namespace Hyperion::Rendering {
     };
 
     struct RenderFrameContextObjectUI {
-        Mesh *mesh;
+        AssetId mesh_id;
+
+        AssetId shader_id;
+        AssetId material_id;
 
         Color color;
-        Texture2D *texture;
+        AssetId texture_id;
     };
 
 }

@@ -26,6 +26,8 @@ namespace Hyperion {
         AssetGuid guid;
 
         AssetDataAccess data_access;
+
+        inline static constexpr AssetId INVALID_ID = -1;
     };
 
 }

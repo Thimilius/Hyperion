@@ -17,10 +17,9 @@ out V2F {
 	vec2 texture0;
 } o_v2f;
 
-layout(std140, binding = 0) uniform Camera
-{
-  mat4 view;
-  mat4 projection;
+layout(std140, binding = 0) uniform Camera {
+	mat4 view;
+	mat4 projection;
 } u_camera;
 
 uniform mat4 u_model;

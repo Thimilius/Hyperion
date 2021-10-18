@@ -90,6 +90,8 @@ namespace Hyperion::Rendering {
         GLuint fullscreen_shader;
         GLuint fullscreen_vertex_array;
 
+        GLuint ui_shader;
+
         uint64 camera_index;
         GLuint camera_uniform_buffer;
 
@@ -98,6 +100,11 @@ namespace Hyperion::Rendering {
         GLuint render_bounds_vertex_buffer = -1;
         GLuint render_bounds_index_buffer;
         GLuint render_bounds_vertex_array;
+    };
+
+    struct OpenGLImmediateVertex {
+        Vector3 position;
+        Color color;
     };
 
     class OpenGLRenderDriver final : public IRenderDriver {
@@ -112,12 +119,14 @@ namespace Hyperion::Rendering {
         void ExecuteRenderFrameCommands(RenderFrame *render_frame);
         void PrepareObjects(RenderFrame *render_frame, const Array<uint32> &sorted_objects, DrawingParametes drawing_parameters);
         void SetupPerObjectLightIndices(const RenderFrameContext &render_frame_context, GroupedObject &grouped_object, Vector3 object_position);
-        void DrawMeshes(const RenderFrameContextEnvironment &environment, const Array<RenderFrameContextLight> &lights, const RenderFrameContextCamera &camera, DrawingParametes drawing_parameters);
-        void UseShader(const OpenGLShader &opengl_shader);
-        void UseMaterial(const OpenGLShader &opengl_shader, const OpenGLMaterial &opengl_material);
+        void DrawMeshes(const RenderFrameContextEnvironment &environment, const Array<RenderFrameContextLight> &lights, DrawingParametes drawing_parameters);
         void DrawSubMesh(const SubMesh &sub_mesh);
         void DrawUI(const Array<RenderFrameContextObjectUI> &elements);
         void DrawRenderBounds(const BoundingBox &bounds);
+
+        void UseShader(const OpenGLShader &opengl_shader);
+        void UseMaterial(const OpenGLShader &opengl_shader, const OpenGLMaterial &opengl_material);
+        void UseMesh(const OpenGLMesh &opengl_mesh);
 
         void LoadAssets(RenderFrameContext &render_frame_context);
         void LoadTexture2D(RenderFrameContextAssetTexture2D &texture_2d);
