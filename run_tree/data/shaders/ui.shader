@@ -1,5 +1,8 @@
 #render_order transparent
 
+#blending_mode on
+#z_write off
+
 #type vertex
 #version 450 core
 

@@ -73,6 +73,8 @@ namespace Hyperion::Rendering {
 
         render_frame->DrawGizmos();
 
+        render_frame->DrawUI();
+
         {
             RenderFrameCommandBuffer command_buffer;
             command_buffer.Blit(RenderTargetId::Default(), m_target_render_texture->GetRenderTargetId());

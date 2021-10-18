@@ -187,18 +187,19 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void UIRenderSystem::RenderElement(UIElement *element, RenderFrameContext &render_frame_context) {
+        HYP_PROFILE_SCOPE("UIRenderSystem.RenderElement");
 
         if (element && element->IsEnabled()) {
-            UIElementRenderer ui_element_renderer = element->GetRenderer();
+            const UIElementRenderer &ui_element_renderer = element->GetRenderer();
 
             Material *ui_material = AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI);
 
             RenderFrameContextObjectUI &render_frame_context_ui_object = render_frame_context.AddUIObject();
-            render_frame_context_ui_object.mesh_id = ui_element_renderer.mesh->GetAssetInfo().id;
+            render_frame_context_ui_object.mesh_id = ui_element_renderer.GetMesh()->GetAssetInfo().id;
             render_frame_context_ui_object.shader_id = ui_material->GetShader()->GetAssetInfo().id;
             render_frame_context_ui_object.material_id = ui_material->GetAssetInfo().id;
             render_frame_context_ui_object.color = Color::White();
-            render_frame_context_ui_object.texture_id = AssetInfo::INVALID_ID;
+            render_frame_context_ui_object.texture_id = AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetAssetInfo().id;
 
             for (UIElement *child : element->GetHierarchy().GetChildren()) {
                 RenderElement(child, render_frame_context);

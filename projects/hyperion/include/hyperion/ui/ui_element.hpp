@@ -15,13 +15,22 @@ namespace Hyperion::UI {
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::UI {
 
-    struct UIElementRenderer {
-        Mesh *mesh;
-    };
-
     struct UIElementStyle {
         Color color = Color::White();
         float32 opcacity = 1.0f;
+    };
+    
+    class UIElementRenderer {
+    public:
+        inline Mesh *GetMesh() const { return m_mesh; }
+
+        void RebuildMesh();
+    private:
+        UIElement *m_element = nullptr;
+
+        Mesh *m_mesh = nullptr;
+    private:
+        friend class Hyperion::UI::UIElement;
     };
 
     class UIElementHierarchy {
@@ -35,18 +44,24 @@ namespace Hyperion::UI {
 
     class UIElement {
     public:
-        UIElement() = default;
+        UIElement();
     public:
         inline bool8 IsEnabled() const { return m_enabled; }
         inline void SetEnabled(bool8 enabled) { m_enabled = enabled; }
 
-        UIElementRenderer GetRenderer() const { return m_renderer; }
+        inline UIElementRenderer &GetRenderer() { return m_renderer; }
+        inline const UIElementRenderer &GetRenderer() const { return m_renderer; }
 
         inline UIElementStyle &GetStyle() { return m_style; }
         inline const UIElementStyle &GeStyle() const { return m_style; }
 
         inline UIElementHierarchy &GetHierarchy() { return m_hierarchy; }
         inline const UIElementHierarchy &GetHierarchy() const { return m_hierarchy; }
+
+        void GetLocalCorners(Vector3 corners[4]) const;
+        void GetWorldCorners(Vector3 corners[4]) const;
+    private:
+        void RecalculateTransform();
     private:
         bool8 m_enabled = true;
 
@@ -63,8 +78,12 @@ namespace Hyperion::UI {
         Vector2 m_anchor_max = Vector2(0.5f, 0.5f);
         Vector3 m_anchored_position = Vector3(0.0f, 0.0f, 0.0f);
 
+        Matrix4x4 m_transform = Matrix4x4::Identity();
+
         UIElementStyle m_style;
         UIElementHierarchy m_hierarchy;
+    private:
+        friend class Hyperion::UI::UIElementRenderer;
     };
 
 }

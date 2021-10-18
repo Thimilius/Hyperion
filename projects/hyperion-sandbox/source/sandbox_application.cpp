@@ -114,15 +114,12 @@ namespace Sandbox {
         g_world->GetComponent<MeshComponent>(quad)->material = material;
         g_world->GetComponent<LocalTransformComponent>(quad)->position = Vector3(0.0f, 2.0f, 0.0f);
 #endif
-        //String data = WorldSerializer::Serialize(g_world);
-        //HYP_TRACE("\n{}", data);
-        //World *world = WorldSerializer::Deserialize(data);
-        //String data2 = WorldSerializer::Serialize(world);
-        //HYP_TRACE("\n{}", data2);
 
-        EntityArchetype *archetype = g_world->CreateArchetype(g_parent);
-        EntityId copy = g_world->Instantiate(archetype);
-        g_world->GetComponent<LocalTransformComponent>(copy)->position = Vector3(0.0f, 0.0f, 2.0f);
+        EntityId ui = g_world->CreateEntity();
+        UI::UIViewComponent *ui_view = g_world->AddComponent<UI::UIViewComponent>(ui);
+        UI::UIElement *ui_element = new UI::UIElement();
+        ui_element->GetRenderer().RebuildMesh();
+        ui_view->root_element = ui_element;
     }
 
     //--------------------------------------------------------------

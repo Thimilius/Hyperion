@@ -539,12 +539,12 @@ namespace Hyperion::Rendering {
     //--------------------------------------------------------------
     void OpenGLRenderDriver::DrawUI(const Array<RenderFrameContextObjectUI> &elements) {
         {
-            float32 width = static_cast<float32>(Display::GetWidth());
-            float32 height = static_cast<float32>(Display::GetHeight());
+            float32 half_width = static_cast<float32>(Display::GetWidth()) / 2.0f;
+            float32 half_height = static_cast<float32>(Display::GetHeight()) / 2.0f;
 
             OpenGLUniformBufferCamera uniform_buffer_camera;
             uniform_buffer_camera.camera_view_matrix = Matrix4x4::Identity();
-            uniform_buffer_camera.camera_projection_matrix = Matrix4x4::Orthographic(0.0f, width, 0.0f, height, -1.0f, 0.0f);
+            uniform_buffer_camera.camera_projection_matrix = Matrix4x4::Orthographic(-half_width, half_width, -half_height, half_height, -1.0f, 1.0f);
             glNamedBufferSubData(m_state.camera_uniform_buffer, 0, sizeof(OpenGLUniformBufferCamera), &uniform_buffer_camera);
         }
 
@@ -563,10 +563,12 @@ namespace Hyperion::Rendering {
 
                 GLint texture_location = glGetUniformLocation(opengl_shader.program, "u_texture");
                 if (texture_location >= 0) {
-                    const OpenGLTexture &opengl_texture = m_opengl_textures.Get(element.texture_id);
+                    if (element.texture_id != AssetInfo::INVALID_ID) {
+                        const OpenGLTexture &opengl_texture = m_opengl_textures.Get(element.texture_id);
 
-                    glBindTextureUnit(0, opengl_texture.texture);
-                    glProgramUniform1i(opengl_shader.program, texture_location, 0);
+                        glBindTextureUnit(0, opengl_texture.texture);
+                        glProgramUniform1i(opengl_shader.program, texture_location, 0);
+                    }
                 }
             }
 
