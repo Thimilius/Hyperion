@@ -63,12 +63,12 @@ namespace Hyperion::UI {
 
         bool8 ContainsScreenPoint(Vector2 screen_point);
 
-        void Rebuild(MeshBuilder &mesh_builder);
+        void Rebuild(float32 ui_scale, MeshBuilder &mesh_builder);
     protected:
         virtual void OnRebuildLayout();
         virtual void OnRebuildGeometry(MeshBuilder &mesh_builder);
     private:
-        void RecalculateTransform();
+        void RecalculateTransform(float32 ui_scale);
     private:
         bool8 m_enabled = true;
         bool8 m_is_dirty = true;

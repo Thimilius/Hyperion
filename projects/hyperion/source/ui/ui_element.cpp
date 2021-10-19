@@ -195,8 +195,10 @@ namespace Hyperion::UI {
     }
 
     //--------------------------------------------------------------
-    void UIElement::Rebuild(MeshBuilder &mesh_builder) {
+    void UIElement::Rebuild(float32 ui_scale, MeshBuilder &mesh_builder) {
         m_is_dirty = false;
+
+        RecalculateTransform(ui_scale);
 
         OnRebuildLayout();
         OnRebuildGeometry(mesh_builder);
@@ -204,7 +206,7 @@ namespace Hyperion::UI {
 
     //--------------------------------------------------------------
     void UIElement::OnRebuildLayout() {
-        RecalculateTransform();
+
     }
 
     //--------------------------------------------------------------
@@ -227,20 +229,7 @@ namespace Hyperion::UI {
     }
 
     //--------------------------------------------------------------
-    void UIElement::RecalculateTransform() {
-        float32 display_width = static_cast<float32>(Display::GetWidth());
-        float32 display_height = static_cast<float32>(Display::GetHeight());
-
-        float32 ui_scale = 1.0f;
-        {
-            float32 log_base = 2;
-            float32 log_width = Math::Log(display_width / 1280) / Math::Log(log_base);
-            float32 log_height = Math::Log(display_height / 720) / Math::Log(log_base);
-            float32 log_weighted_average = Math::Lerp(log_width, log_height, 0.5f);
-            float32 computed_scale = Math::Pow(log_base, log_weighted_average);
-            ui_scale = computed_scale;
-        }
-
+    void UIElement::RecalculateTransform(float32 ui_scale) {
         Vector2 size = m_size;
         UIElement *parent = m_hierarchy.GetParent();
 
@@ -248,7 +237,7 @@ namespace Hyperion::UI {
         {
             float32 inverse_ui_scale = 1.0f / ui_scale;
             Vector2 parent_pivot = parent ? parent->m_pivot : Vector2(0.5f, 0.5f);
-            Vector2 parent_size = parent ? parent->m_rect.size : Vector2(inverse_ui_scale * display_width, inverse_ui_scale * display_height);
+            Vector2 parent_size = parent ? parent->m_rect.size : Vector2(inverse_ui_scale * Display::GetWidth(), inverse_ui_scale * Display::GetHeight());
             Vector2 half_parent_size = parent_size / 2.0f;
 
             float32 anchor_x = m_anchor_max.x - m_anchor_min.x;
