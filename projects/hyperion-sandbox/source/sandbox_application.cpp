@@ -16,6 +16,7 @@
 #include <hyperion/ecs/world/world_manager.hpp>
 #include <hyperion/ecs/world/world_serializer.hpp>
 #include <hyperion/render/render_engine.hpp>
+#include <hyperion/ui/ui_button.hpp>
 
 //---------------------- Project Includes ----------------------
 #include "sandbox/camera_controller.hpp"
@@ -46,7 +47,7 @@ namespace Sandbox {
     EntityId g_parent;
     EntityId g_child;
     UIElement *g_parent_ui_element;
-    UIElement *g_child_ui_element;
+    UIButton *g_child_ui_element;
 
     CameraController *g_camera_controller;
 
@@ -121,7 +122,8 @@ namespace Sandbox {
         g_parent_ui_element->SetAnchorPreset(UIAnchorPreset::TopStretchHorizontal);
         g_parent_ui_element->GetStyle().SetColor(Color::White());
 
-        g_child_ui_element = new UIElement();
+        g_child_ui_element = new UIButton();
+        g_child_ui_element->RegisterClickCallback([]() { HYP_TRACE("CLICK"); });
         g_child_ui_element->GetStyle().SetColor(Color::Red());
         g_child_ui_element->SetAnchorPreset(UIAnchorPreset::MiddleLeft);
         g_parent_ui_element->GetHierarchy().AddChild(g_child_ui_element);
