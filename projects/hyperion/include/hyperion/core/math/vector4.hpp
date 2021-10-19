@@ -42,7 +42,7 @@ namespace Hyperion {
         bool8 operator==(const Vector4 &other) const;
         bool8 operator!=(const Vector4 &other) const;
 
-        Vector4 &operator-();
+        Vector4 operator-();
 
         Vector4 &operator+=(const Vector4 &other);
         Vector4 &operator-=(const Vector4 &other);

@@ -128,13 +128,8 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Vector4 &Vector4::operator-() {
-        x = -x;
-        y = -y;
-        z = -z;
-        w = -w;
-
-        return *this;
+    Vector4 Vector4::operator-() {
+        return Vector4(-x, -y, -z, -w);
     }
 
     //--------------------------------------------------------------

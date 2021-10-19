@@ -241,7 +241,7 @@ namespace Hyperion::UI {
             float32 anchor_y_size = anchor_y * parent_size.y;
             size.x += anchor_x * parent_size.x;
             size.y += anchor_y * parent_size.y;
-            m_rect = Rect(Vector2(-m_pivot.x, -m_pivot.y) * size, size);
+            m_rect = Rect(-m_pivot * size, size);
 
             // First we have our local position which acts as a simple offset.
             final_local_position = Vector3(m_local_position, 0.0f);

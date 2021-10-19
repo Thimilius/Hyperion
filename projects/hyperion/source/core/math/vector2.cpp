@@ -98,11 +98,8 @@ namespace Hyperion {
         return !(*this == other);
     }
 
-    Vector2 &Vector2::operator-() {
-        x = -x;
-        y = -y;
-
-        return *this;
+    Vector2 Vector2::operator-() {
+        return Vector2(-x, -y);
     }
 
     //--------------------------------------------------------------
@@ -330,11 +327,8 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Vector2Int &Vector2Int::operator-() {
-        x = -x;
-        y = -y;
-
-        return *this;
+    Vector2Int Vector2Int::operator-() {
+        return Vector2Int(-x, -y);
     }
 
     //--------------------------------------------------------------

@@ -123,6 +123,7 @@ namespace Sandbox {
 
         g_child_ui_element = new UIElement();
         g_child_ui_element->GetStyle().color = Color::Red();
+        g_child_ui_element->SetAnchorPreset(UIAnchorPreset::MiddleLeft);
         g_parent_ui_element->GetHierarchy().AddChild(g_child_ui_element);
 
         EntityId ui = g_world->CreateEntity();

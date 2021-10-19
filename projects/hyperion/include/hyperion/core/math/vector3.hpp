@@ -50,7 +50,7 @@ namespace Hyperion {
         bool8 operator==(const Vector3 &other) const;
         bool8 operator!=(const Vector3 &other) const;
 
-        Vector3 &operator-();
+        Vector3 operator-();
 
         Vector3 &operator+=(const Vector3 &other);
         Vector3 &operator-=(const Vector3 &other);
@@ -118,7 +118,7 @@ namespace Hyperion {
         bool8 operator==(const Vector3Int &other) const;
         bool8 operator!=(const Vector3Int &other) const;
 
-        Vector3Int &operator-();
+        Vector3Int operator-();
 
         Vector3Int &operator+=(const Vector3Int &other);
         Vector3Int &operator-=(const Vector3Int &other);

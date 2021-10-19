@@ -35,7 +35,7 @@ namespace Hyperion {
         bool8 operator==(const Vector2 &other) const;
         bool8 operator!=(const Vector2 &other) const;
 
-        Vector2 &operator-();
+        Vector2 operator-();
 
         Vector2 &operator+=(const Vector2 &other);
         Vector2 &operator-=(const Vector2 &other);
@@ -95,7 +95,7 @@ namespace Hyperion {
         bool8 operator==(const Vector2Int &other) const;
         bool8 operator!=(const Vector2Int &other) const;
 
-        Vector2Int &operator-();
+        Vector2Int operator-();
 
         Vector2Int &operator+=(const Vector2Int &other);
         Vector2Int &operator-=(const Vector2Int &other);

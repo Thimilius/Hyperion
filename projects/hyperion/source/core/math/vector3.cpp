@@ -120,12 +120,8 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Vector3 &Vector3::operator-() {
-        x = -x;
-        y = -y;
-        z = -z;
-
-        return *this;
+    Vector3 Vector3::operator-() {
+        return Vector3(-x, -y, -z);
     }
 
     //--------------------------------------------------------------
@@ -371,12 +367,8 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Vector3Int &Vector3Int::operator-() {
-        x = -x;
-        y = -y;
-        z = -z;
-
-        return *this;
+    Vector3Int Vector3Int::operator-() {
+        return Vector3Int(-x, -y, -z);
     }
 
     //--------------------------------------------------------------
