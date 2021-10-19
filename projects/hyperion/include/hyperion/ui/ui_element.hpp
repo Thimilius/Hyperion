@@ -21,6 +21,21 @@ namespace Hyperion::UI {
         float32 opcacity = 1.0f;
     };
     
+    class UIElementHierarchy {
+    public:
+        inline UIElement *GetParent() const { return m_parent; }
+        inline const Array<UIElement *> &GetChildren() const { return m_children; }
+
+        void AddChild(UIElement *child);
+    private:
+        UIElement *m_element = nullptr;
+
+        UIElement *m_parent = nullptr;
+        Array<UIElement *> m_children;
+    private:
+        friend class Hyperion::UI::UIElement;
+    };
+
     class UIElementRenderer {
     public:
         inline Mesh *GetMesh() const { return m_mesh; }
@@ -32,15 +47,6 @@ namespace Hyperion::UI {
         Mesh *m_mesh = nullptr;
     private:
         friend class Hyperion::UI::UIElement;
-    };
-
-    class UIElementHierarchy {
-    public:
-        inline UIElement *GetParent() const { return m_parent; }
-        inline const Array<UIElement *> &GetChildren() const { return m_children; }
-    private:
-        UIElement *m_parent = nullptr;
-        Array<UIElement *> m_children;
     };
 
     class UIElement {
@@ -70,8 +76,6 @@ namespace Hyperion::UI {
     private:
         bool8 m_enabled = true;
 
-        UIElementRenderer m_renderer;
-
         Vector2 m_local_position = Vector2(0.0f, 0.0f);
         float32 m_local_rotation = 0.0f;
         Vector2 m_local_scale = Vector2(1.0f, 1.0f);
@@ -84,12 +88,17 @@ namespace Hyperion::UI {
         Vector2 m_anchor_max = Vector2(0.5f, 0.5f);
         Vector3 m_anchored_position = Vector3(0.0f, 0.0f, 0.0f);
 
+        Vector3 m_derived_position;
+        Quaternion m_derived_rotation;
+        Vector3 m_derived_scale;
         // TODO: We should be able to just use a 3x3 matrix.
         Matrix4x4 m_transform = Matrix4x4::Identity();
 
+        UIElementRenderer m_renderer;
         UIElementStyle m_style;
         UIElementHierarchy m_hierarchy;
     private:
+        friend class Hyperion::UI::UIElementHierarchy;
         friend class Hyperion::UI::UIElementRenderer;
     };
 

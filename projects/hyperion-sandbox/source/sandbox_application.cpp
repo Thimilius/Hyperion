@@ -45,7 +45,8 @@ namespace Sandbox {
     EntityId g_light;
     EntityId g_parent;
     EntityId g_child;
-    UIElement *g_ui_element;
+    UIElement *g_parent_ui_element;
+    UIElement *g_child_ui_element;
 
     CameraController *g_camera_controller;
 
@@ -116,12 +117,17 @@ namespace Sandbox {
         g_world->GetComponent<MeshComponent>(quad)->material = material;
         g_world->GetComponent<LocalTransformComponent>(quad)->position = Vector3(0.0f, 2.0f, 0.0f);
 #endif
+        g_parent_ui_element = new UIElement();
+        g_parent_ui_element->SetAnchorPreset(UIAnchorPreset::TopStretchHorizontal);
+        g_parent_ui_element->GetStyle().color = Color::White();
+
+        g_child_ui_element = new UIElement();
+        g_child_ui_element->GetStyle().color = Color::Red();
+        g_parent_ui_element->GetHierarchy().AddChild(g_child_ui_element);
 
         EntityId ui = g_world->CreateEntity();
         UIViewComponent *ui_view = g_world->AddComponent<UIViewComponent>(ui);
-        g_ui_element = new UIElement();
-        g_ui_element->SetAnchorPreset(UIAnchorPreset::TopStretchHorizontal);
-        ui_view->root_element = g_ui_element;
+        ui_view->root_element = g_parent_ui_element;
     }
 
     //--------------------------------------------------------------
@@ -166,8 +172,9 @@ namespace Sandbox {
 #endif
         UpdateTitle();
 
-        g_ui_element->GetRenderer().RebuildMesh();
-        if (g_ui_element->ContainsScreenPoint(Input::GetMousePosition())) {
+        g_parent_ui_element->GetRenderer().RebuildMesh();
+        g_child_ui_element->GetRenderer().RebuildMesh();
+        if (g_parent_ui_element->ContainsScreenPoint(Input::GetMousePosition())) {
             HYP_TRACE("HIT");
         }
     }

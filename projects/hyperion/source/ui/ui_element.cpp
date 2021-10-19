@@ -13,6 +13,17 @@
 namespace Hyperion::UI {
 
     //--------------------------------------------------------------
+    void UIElementHierarchy::AddChild(UIElement *child) {
+        m_children.Add(child);
+        if (child->GetHierarchy().m_parent != nullptr) {
+            child->GetHierarchy().m_parent->GetHierarchy().m_children.Remove(child);
+        }
+        child->GetHierarchy().m_parent = m_element;
+
+        child->RecalculateTransform();
+    }
+
+    //--------------------------------------------------------------
     void UIElementRenderer::RebuildMesh() {
         m_element->RecalculateTransform();
 
@@ -36,6 +47,7 @@ namespace Hyperion::UI {
     //--------------------------------------------------------------
     UIElement::UIElement() {
         m_renderer.m_element = this;
+        m_hierarchy.m_element = this;
 
         RecalculateTransform();
     }
@@ -203,50 +215,60 @@ namespace Hyperion::UI {
         float32 display_width = static_cast<float32>(Display::GetWidth());
         float32 display_height = static_cast<float32>(Display::GetHeight());
 
-        float32 scale = 1.0f;
+        float32 ui_scale = 1.0f;
         {
             float32 log_base = 2;
             float32 log_width = Math::Log(display_width / 1280) / Math::Log(log_base);
             float32 log_height = Math::Log(display_height / 720) / Math::Log(log_base);
             float32 log_weighted_average = Math::Lerp(log_width, log_height, 0.5f);
             float32 computed_scale = Math::Pow(log_base, log_weighted_average);
-            scale = computed_scale;
+            ui_scale = computed_scale;
         }
-        float32 inverse_scale = 1.0f / scale;
 
-        Vector2 pivot = m_pivot;
         Vector2 size = m_size;
-
         UIElement *parent = m_hierarchy.GetParent();
-        Vector2 parent_pivot = parent ? parent->m_pivot : Vector2(0.5f, 0.5f);
-        Vector2 parent_size = parent ? parent->m_rect.size : Vector2(inverse_scale * display_width, inverse_scale * display_height);
-        Vector2 half_parent_size = parent_size / 2.0f;
 
-        float32 anchor_x = m_anchor_max.x - m_anchor_min.x;
-        float32 anchor_y = m_anchor_max.y - m_anchor_min.y;
-        float32 anchor_x_size = anchor_x * parent_size.x;
-        float32 anchor_y_size = anchor_y * parent_size.y;
-        size.x += anchor_x * parent_size.x;
-        size.y += anchor_y * parent_size.y;
-        m_rect = Rect(-pivot * size, size);
+        Vector3 final_local_position;
+        {
+            float32 inverse_ui_scale = 1.0f / ui_scale;
+            Vector2 parent_pivot = parent ? parent->m_pivot : Vector2(0.5f, 0.5f);
+            Vector2 parent_size = parent ? parent->m_rect.size : Vector2(inverse_ui_scale * display_width, inverse_ui_scale * display_height);
+            Vector2 half_parent_size = parent_size / 2.0f;
 
-        // First we have our anchored position which acts as a simple offset.
-        Vector3 local_position = Vector3(m_local_position, 0.0f);
-        // We have to take into account the parent pivot which has an effect on our local position.
-        local_position.x += (1.0f - parent_pivot.x) * parent_size.x - half_parent_size.x;
-        local_position.y += (1.0f - parent_pivot.y) * parent_size.y - half_parent_size.y;
-        // Now we need to take into account our own pivot.
-        local_position.x += m_anchor_min.x * parent_size.x - half_parent_size.x;
-        local_position.y += m_anchor_min.y * parent_size.y - half_parent_size.y;
-        // And finally our anchoring.
-        local_position.x += (m_pivot.x) * anchor_x_size;
-        local_position.y += (m_pivot.y) * anchor_y_size;
+            float32 anchor_x = m_anchor_max.x - m_anchor_min.x;
+            float32 anchor_y = m_anchor_max.y - m_anchor_min.y;
+            float32 anchor_x_size = anchor_x * parent_size.x;
+            float32 anchor_y_size = anchor_y * parent_size.y;
+            size.x += anchor_x * parent_size.x;
+            size.y += anchor_y * parent_size.y;
+            m_rect = Rect(Vector2(-m_pivot.x, -m_pivot.y) * size, size);
 
-        Vector3 derived_position = scale * local_position;
-        Quaternion derived_rotation = Quaternion::FromAxisAngle(Vector3::Forward(), m_local_rotation);
-        Vector3 derived_scale = Vector3(scale * m_local_scale, 0.0f);
+            // First we have our local position which acts as a simple offset.
+            final_local_position = Vector3(m_local_position, 0.0f);
+            // We have to take into account the parent pivot which has an effect on our local position.
+            final_local_position.x += (1.0f - parent_pivot.x) * parent_size.x - half_parent_size.x;
+            final_local_position.y += (1.0f - parent_pivot.y) * parent_size.y - half_parent_size.y;
+            // Now we need to take into account our own pivot.
+            final_local_position.x += m_anchor_min.x * parent_size.x - half_parent_size.x;
+            final_local_position.y += m_anchor_min.y * parent_size.y - half_parent_size.y;
+            // And finally our anchoring.
+            final_local_position.x += m_pivot.x * anchor_x_size;
+            final_local_position.y += m_pivot.y * anchor_y_size;
+        }
 
-        m_transform = Matrix4x4::TRS(derived_position, derived_rotation, derived_scale);
+        {
+            if (parent == nullptr) {
+                m_derived_position = ui_scale * final_local_position;
+                m_derived_rotation = Quaternion::FromAxisAngle(Vector3::Forward(), m_local_rotation);
+                m_derived_scale = Vector3(ui_scale * m_local_scale, 1.0f);
+            } else {
+                m_derived_position = parent->m_derived_rotation * (parent->m_derived_scale * final_local_position);
+                m_derived_position += parent->m_derived_position;
+                m_derived_rotation = parent->m_derived_rotation * Quaternion::FromAxisAngle(Vector3::Forward(), m_local_rotation);
+                m_derived_scale = parent->m_derived_scale * Vector3(m_local_scale, 1.0f);
+            }
+            m_transform = Matrix4x4::TRS(m_derived_position, m_derived_rotation, m_derived_scale);
+        }
     }
 
 }

@@ -198,7 +198,7 @@ namespace Hyperion::Rendering {
             render_frame_context_ui_object.mesh_id = ui_element_renderer.GetMesh()->GetAssetInfo().id;
             render_frame_context_ui_object.shader_id = ui_material->GetShader()->GetAssetInfo().id;
             render_frame_context_ui_object.material_id = ui_material->GetAssetInfo().id;
-            render_frame_context_ui_object.color = Color::White();
+            render_frame_context_ui_object.color = element->GetStyle().color;
             render_frame_context_ui_object.texture_id = AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetAssetInfo().id;
 
             for (UIElement *child : element->GetHierarchy().GetChildren()) {
