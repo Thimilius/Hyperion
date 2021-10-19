@@ -31,7 +31,7 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void ForwardRenderPipeline::Render(RenderFrame *render_frame) {
-        if (m_target_render_texture->GetWidth() != Display::GetWidth() || m_target_render_texture->GetHeight() != Display::GetHeight()) {
+        if (Display::HasChangedSize()) {
             AssetManager::Unload(m_target_render_texture);
             m_target_render_texture = CreateRenderTexture(Display::GetWidth(), Display::GetHeight());
         }

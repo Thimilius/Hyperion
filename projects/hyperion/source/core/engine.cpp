@@ -211,7 +211,8 @@ namespace Hyperion {
         HYP_ASSERT_MESSAGE(s_settings.core.fixed_delta_time > 0, "Fixed delta time must be greater than zero!");
         Time::s_fixed_delta_time = s_settings.core.fixed_delta_time;
 
-        Display::UpdateSize(s_settings.window.width, s_settings.window.height);
+        Display::s_width = s_settings.window.width;
+        Display::s_height = s_settings.window.height;
         
         Window *window = new Window(s_settings.window);
         window->SetAppEventCallback(Engine::OnAppEvent);
@@ -279,10 +280,11 @@ namespace Hyperion {
         dispatcher.Dispatch<WindowCloseAppEvent>([](WindowCloseAppEvent &window_close_event) {
             Exit();
         });
+        Display::s_size_changed = false;
         dispatcher.Dispatch<WindowResizeAppEvent>([](WindowResizeAppEvent &window_resize_event) {
-            uint32 width = window_resize_event.GetWidth();
-            uint32 height = window_resize_event.GetHeight();
-            Display::UpdateSize(width, height);
+            Display::s_width = window_resize_event.GetWidth();
+            Display::s_height = window_resize_event.GetHeight();
+            Display::s_size_changed = true;
         });
 
         dispatcher.Dispatch<KeyPressedAppEvent>([](KeyPressedAppEvent &key_pressed_event) {

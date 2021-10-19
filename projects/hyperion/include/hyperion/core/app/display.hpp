@@ -42,23 +42,21 @@ namespace Hyperion {
         inline static const Array<DisplayInfo> &GetDisplayInfos() { return s_display_infos; }
         static DisplayInfo::DisplayModeInfo GetCurrentDisplayModeInfo();
 
-        inline static uint32 GetWidth() { return s_cached_width; }
-        inline static uint32 GetHeight() { return s_cached_height; }
+        inline static bool8 HasChangedSize() { return s_size_changed; }
+
+        inline static uint32 GetWidth() { return s_width; }
+        inline static uint32 GetHeight() { return s_height; }
     private:
         Display() = delete;
         ~Display() = delete;
     private:
         static void UpdateDisplayInfos();
-
-        inline static void UpdateSize(uint32 width, uint32 height) {
-            s_cached_width = width;
-            s_cached_height = height;
-        }
     private:
         inline static Array<DisplayInfo> s_display_infos;
 
-        inline static uint32 s_cached_width;
-        inline static uint32 s_cached_height;
+        inline static uint32 s_width;
+        inline static uint32 s_height;
+        inline static bool8 s_size_changed = false;
     private:
         friend class Hyperion::Application;
         friend class Hyperion::Engine;
