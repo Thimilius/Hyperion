@@ -78,35 +78,38 @@ namespace Hyperion::UI {
                 Array<UIElement *> hovered_elements;
                 RaycastElements(ui_view->root_element, Input::GetMousePosition(), hovered_elements);
                 
-
                 if (!hovered_elements.IsEmpty()) {
                     // The array we get back will be depth sorted in reverse.
                     // This means the top most hovered element we are interested in is at the end.
                     UIElement *hovered_element = hovered_elements.GetLast();
 
                     if (state.hovered_element) {
-                        // POINTER EXIT
-                        state.hovered_element->GetRenderer().color = Color::White();
-                        state.hovered_element->GetStyle().SetOpacity(1.0f);
+                        SendEvent(state.hovered_element, UIEventType::PointerExit);
                     }
                     state.hovered_element = hovered_element;
 
-                    // POINTER ENTER
-                    state.hovered_element->GetRenderer().color = Color::Grey();
-                    state.hovered_element->GetStyle().SetOpacity(0.5f);
+                    SendEvent(state.hovered_element, UIEventType::PointerEnter);
                 } else {
                     if (state.hovered_element) {
-                        // POINTER EXIT
-                        state.hovered_element->GetRenderer().color = Color::White();
-                        state.hovered_element->GetStyle().SetOpacity(1.0f);
-
+                        SendEvent(state.hovered_element, UIEventType::PointerExit);
                         state.hovered_element = nullptr;
                     }
                 }
 
-                if (Input::IsMouseButtonUp(MouseButtonCode::Left)) {
-                    if (state.hovered_element) {
-                        // CLICK
+                if (state.hovered_element) {
+                    if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
+                        SendEvent(state.hovered_element, UIEventType::PointerDown);
+                    }
+                    if (Input::IsMouseButtonUp(MouseButtonCode::Left)) {
+                        SendEvent(state.hovered_element, UIEventType::PointerUp);
+                        SendEvent(state.hovered_element, UIEventType::PointerClick);
+                    }
+
+                    if (Input::HasMouseMoved()) {
+                        SendEvent(state.hovered_element, UIEventType::PointerMove);
+                    }
+                    if (Input::HasMouseScrolled()) {
+                        SendEvent(state.hovered_element, UIEventType::PointerScroll);
                     }
                 }
 
@@ -116,14 +119,23 @@ namespace Hyperion::UI {
     }
 
     //--------------------------------------------------------------
-    void UIEventSystem::RaycastElements(UIElement *element, Vector2 screen_point, Array<UIElement *> &raycasted) {
-        if (element->ContainsScreenPoint(screen_point)) {
+    void UIEventSystem::RaycastElements(UIElement *element, Vector2Int screen_point, Array<UIElement *> &raycasted) {
+        if (element->ContainsScreenPoint(screen_point.ToFloat())) {
             raycasted.Add(element);
         }
 
         for (UIElement *child : element->GetHierarchy().GetChildren()) {
             RaycastElements(child, screen_point, raycasted);
         }
+    }
+
+    //--------------------------------------------------------------
+    void UIEventSystem::SendEvent(UIElement *element, UIEventType type) {
+        UIEvent event;
+        event.m_type = type;
+        event.m_pointer_position = Input::GetMousePosition(); // FIXME: This is in the wrong coordinate space!
+        event.m_pointer_scroll = Input::GetMouseScroll();
+        element->OnEvent(event);
     }
 
 }

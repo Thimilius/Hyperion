@@ -185,6 +185,15 @@ namespace Hyperion::UI {
     }
 
     //--------------------------------------------------------------
+    void UIElement::OnEvent(UIEvent &event) {
+        if (event.GetType() == UIEventType::PointerEnter) {
+            m_renderer.color = Color::Grey();
+        } else if (event.GetType() == UIEventType::PointerExit) {
+            m_renderer.color = Color::White();
+        }
+    }
+
+    //--------------------------------------------------------------
     bool8 UIElement::ContainsScreenPoint(Vector2 screen_point) {
         // We have to transform the screen point to have the origin in the middle of the screen.
         float32 display_width = static_cast<float32>(Display::GetWidth());

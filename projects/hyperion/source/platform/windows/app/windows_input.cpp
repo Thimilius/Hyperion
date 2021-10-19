@@ -88,7 +88,7 @@ namespace Hyperion {
             m_mouse_scroll = mouse_scrolled_event.GetScroll();
         });
         dispatcher.Dispatch<MouseMovedAppEvent>([this](MouseMovedAppEvent &mouse_moved_event) {
-            m_mouse_position = Vector2(mouse_moved_event.GetX(), mouse_moved_event.GetY());
+            m_mouse_position = Vector2Int(mouse_moved_event.GetX(), mouse_moved_event.GetY());
         });
         dispatcher.Dispatch<MouseButtonPressedAppEvent>([this](MouseButtonPressedAppEvent &mouse_button_pressed_event) {
             OnMouseButtonEvent(mouse_button_pressed_event, true);
@@ -118,6 +118,7 @@ namespace Hyperion {
                 memcpy(&gamepad.buttons_last, &gamepad.buttons, sizeof(gamepad.buttons_last));
             }
 
+            m_last_mouse_position = m_mouse_position;
             m_mouse_scroll = 0.0f;
         }
         

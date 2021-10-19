@@ -7,6 +7,7 @@
 #include "hyperion/core/math/rect.hpp"
 #include "hyperion/core/math/vector2.hpp"
 #include "hyperion/core/math/vector3.hpp"
+#include "hyperion/ui/ui_event.hpp"
 #include "hyperion/ui/ui_types.hpp"
 
 //-------------------- Forward Declarations --------------------
@@ -80,7 +81,8 @@ namespace Hyperion::UI {
 
         void SetAnchorPreset(UIAnchorPreset preset);
 
-        bool8 ContainsScreenPoint(Vector2 screen_point);
+        virtual void OnEvent(UIEvent &event);
+        virtual bool8 ContainsScreenPoint(Vector2 screen_point);
 
         void Rebuild(float32 ui_scale, MeshBuilder &mesh_builder);
     protected:

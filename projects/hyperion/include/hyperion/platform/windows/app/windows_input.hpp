@@ -23,8 +23,10 @@ namespace Hyperion {
         bool8 IsKeyHold(KeyCode key_code) const override { return m_keys[static_cast<int32>(key_code)]; }
         bool8 IsKeyUp(KeyCode key_code) const override { return m_keys_up[static_cast<int32>(key_code)]; }
 
-        Vector2 GetMousePosition() const override { return m_mouse_position; }
+        Vector2Int GetMousePosition() const override { return m_mouse_position; }
+        bool8 HasMouseMoved() const override { return m_last_mouse_position != m_mouse_position; }
         float32 GetMouseScroll() const override { return m_mouse_scroll; }
+        bool8 HasMouseScrolled() const override { return m_mouse_scroll != 0.0f; }
 
         bool8 IsMouseButtonDown(MouseButtonCode mouse_button_code) const override { return m_mouse_buttons_down[static_cast<int32>(mouse_button_code)]; }
         bool8 IsMouseButtonHold(MouseButtonCode mouse_button_code) const override { return m_mouse_buttons[static_cast<int32>(mouse_button_code)]; }
@@ -65,7 +67,8 @@ namespace Hyperion {
         bool8 m_mouse_buttons_last[static_cast<int32>(MouseButtonCode::Last)];
         bool8 m_mouse_buttons_up[static_cast<int32>(MouseButtonCode::Last)];
 
-        Vector2 m_mouse_position;
+        Vector2Int m_mouse_position;
+        Vector2Int m_last_mouse_position;
         float32 m_mouse_scroll;
 
         struct GamepadState {

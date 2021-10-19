@@ -40,18 +40,18 @@ namespace Hyperion {
 
     class MouseMovedAppEvent : public AppEvent {
     public:
-        MouseMovedAppEvent(float32 x, float32 y) : m_x(x), m_y(y) { }
+        MouseMovedAppEvent(uint32 x, uint32 y) : m_x(x), m_y(y) { }
 
-        inline float32 GetX() const { return m_x; }
-        inline float32 GetY() const { return m_y; }
+        inline int32 GetX() const { return m_x; }
+        inline int32 GetY() const { return m_y; }
 
         AppEventType GetType() const override { return AppEventType::MouseMoved; }
         AppEventCategory GetCategory() const override { return AppEventCategory::Input & AppEventCategory::Mouse; }
     public:
         static AppEventType GetStaticType() { return AppEventType::MouseMoved; }
     private:
-        float32 m_x;
-        float32 m_y;
+        int32 m_x;
+        int32 m_y;
     };
 
     class MouseScrolledAppEvent : public AppEvent {

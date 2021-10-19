@@ -90,6 +90,7 @@ namespace Hyperion {
         Vector2Int &Multiply(int32 value);
         Vector2Int &Divide(int32 value);
 
+        Vector2 ToFloat() const;
         String ToString() const;
 
         bool8 operator==(const Vector2Int &other) const;

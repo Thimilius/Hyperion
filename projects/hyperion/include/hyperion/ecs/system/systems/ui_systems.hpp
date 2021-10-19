@@ -18,7 +18,8 @@ namespace Hyperion::UI {
     public:
         void Run(World *world) override;
     private:
-        static void RaycastElements(UIElement *element, Vector2 screen_point, Array<UIElement *> &raycasted);
+        static void RaycastElements(UIElement *element, Vector2Int screen_point, Array<UIElement *> &raycasted);
+        static void SendEvent(UIElement *element, UIEventType type);
     };
 
 }

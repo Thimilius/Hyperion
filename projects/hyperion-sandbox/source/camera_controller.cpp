@@ -56,13 +56,13 @@ namespace Sandbox {
         // Handle everything related to rotation.
         {
             if (Input::IsMouseButtonDown(MouseButtonCode::Right) || Input::IsMouseButtonDown(MouseButtonCode::Middle)) {
-                m_last_mouse_position = Input::GetMousePosition();
+                m_last_mouse_position = Input::GetMousePosition().ToFloat();
             }
 
             float32 x_offset = 0.0f;
             float32 y_offset = 0.0f;
             if (Input::IsMouseButtonHold(MouseButtonCode::Right) || Input::IsMouseButtonHold(MouseButtonCode::Middle)) {
-                Vector2 mouse_position = Input::GetMousePosition();
+                Vector2 mouse_position = Input::GetMousePosition().ToFloat();
                 x_offset = mouse_position.x - m_last_mouse_position.x;
                 y_offset = mouse_position.y - m_last_mouse_position.y;
                 m_last_mouse_position.x = mouse_position.x;
@@ -180,7 +180,7 @@ namespace Sandbox {
         Vector3 up = TransformUtilities::GetUp(derived_transform);
         Vector3 forward = TransformUtilities::GetForward(derived_transform);
 
-        Vector2 current_mouse_position = Input::GetMousePosition();
+        Vector2 current_mouse_position = Input::GetMousePosition().ToFloat();
         Vector2 mouse_position_difference = m_last_mouse_position - current_mouse_position;
         float32 mouse_axis_x = mouse_position_difference.x;
         float32 mouse_axis_y = mouse_position_difference.y;
@@ -246,7 +246,7 @@ namespace Sandbox {
     //--------------------------------------------------------------
     Vector3 LookAroundCameraController::GetPositionUnderMouse(CameraComponent *camera, DerivedTransformComponent *derived_transform) const {
         CameraUtilities::RecalculateMatricies(camera, derived_transform);
-        Ray ray = CameraUtilities::ScreenPointToRay(camera, derived_transform, Input::GetMousePosition());
+        Ray ray = CameraUtilities::ScreenPointToRay(camera, derived_transform, Input::GetMousePosition().ToFloat());
         float32 hit_distance = 0;
         m_xz_plane.Intersects(ray, hit_distance);
         return ray.GetPoint(hit_distance);

@@ -312,6 +312,11 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    Vector2 Vector2Int::ToFloat() const {
+        return Vector2(static_cast<float32>(x), static_cast<float32>(y));
+    }
+
+    //--------------------------------------------------------------
     String Vector2Int::ToString() const {
         return StringUtils::Format("({}, {})", x, y);
     }

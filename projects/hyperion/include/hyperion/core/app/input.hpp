@@ -228,8 +228,10 @@ namespace Hyperion {
         virtual bool8 IsKeyHold(KeyCode key_code) const = 0;
         virtual bool8 IsKeyUp(KeyCode key_code) const = 0;
 
-        virtual Vector2 GetMousePosition() const = 0;
+        virtual Vector2Int GetMousePosition() const = 0;
+        virtual bool8 HasMouseMoved() const = 0;
         virtual float32 GetMouseScroll() const = 0;
+        virtual bool8 HasMouseScrolled() const = 0;
         virtual bool8 IsMouseButtonDown(MouseButtonCode mouse_button_code) const = 0;
         virtual bool8 IsMouseButtonHold(MouseButtonCode mouse_button_code) const = 0;
         virtual bool8 IsMouseButtonUp(MouseButtonCode mouse_button_code) const = 0;
@@ -260,8 +262,10 @@ namespace Hyperion {
         inline static bool8 IsKeyHold(KeyCode key_code) { return s_input_implementation->IsKeyHold(key_code); }
         inline static bool8 IsKeyUp(KeyCode key_code) { return s_input_implementation->IsKeyUp(key_code); }
 
-        inline static Vector2 GetMousePosition() { return s_input_implementation->GetMousePosition(); }
+        inline static Vector2Int GetMousePosition() { return s_input_implementation->GetMousePosition(); }
+        inline static bool8 HasMouseMoved() { return s_input_implementation->HasMouseMoved(); }
         inline static float32 GetMouseScroll() { return s_input_implementation->GetMouseScroll(); }
+        inline static bool8 HasMouseScrolled() { return s_input_implementation->HasMouseScrolled(); }
         inline static bool8 IsMouseButtonDown(MouseButtonCode mouse_button_code) { return s_input_implementation->IsMouseButtonDown(mouse_button_code); }
         inline static bool8 IsMouseButtonHold(MouseButtonCode mouse_button_code) { return s_input_implementation->IsMouseButtonHold(mouse_button_code); }
         inline static bool8 IsMouseButtonUp(MouseButtonCode mouse_button_code) { return s_input_implementation->IsMouseButtonUp(mouse_button_code); }

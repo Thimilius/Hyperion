@@ -687,9 +687,9 @@ namespace Hyperion {
                 int32 x = GET_X_LPARAM(l_param);
                 int32 y = GET_Y_LPARAM(l_param);
                 
-                float32 height = static_cast<float32>(window->m_height);
+                int32 height = window->m_height;
 
-                MouseMovedAppEvent event(static_cast<float32>(x), height - static_cast<float32>(y));
+                MouseMovedAppEvent event(x, height - y);
                 window->DispatchAppEvent(event);
                 break;
             }
