@@ -32,4 +32,9 @@ namespace Hyperion::UI {
         StretchAll,
     };
 
+    enum class UIVisibility {
+        Visible,
+        Hidden
+    };
+
 }

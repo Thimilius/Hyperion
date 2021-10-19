@@ -189,15 +189,21 @@ namespace Hyperion::Rendering {
     void UIRenderSystem::RenderElement(UIElement *element, RenderFrameContext &render_frame_context) {
         HYP_PROFILE_SCOPE("UIRenderSystem.RenderElement");
 
-        if (element && element->IsEnabled()) {
-            Material *ui_material = AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI);
+        if (element && element->GetStyle().GetVisibility() == UIVisibility::Visible) {
+            UIElementRenderer renderer = element->GetRenderer();
+            Color color = renderer.color;
+            color.a *= element->GetStyle().GetOpacity();
 
-            RenderFrameContextObjectUI &render_frame_context_ui_object = render_frame_context.AddUIObject();
-            render_frame_context_ui_object.mesh_id = element->GetMesh()->GetAssetInfo().id;
-            render_frame_context_ui_object.shader_id = ui_material->GetShader()->GetAssetInfo().id;
-            render_frame_context_ui_object.material_id = ui_material->GetAssetInfo().id;
-            render_frame_context_ui_object.color = element->GetStyle().color;
-            render_frame_context_ui_object.texture_id = AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetAssetInfo().id;
+            if (color.a > 0.0f) {
+                Material *ui_material = AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI);
+
+                RenderFrameContextObjectUI &render_frame_context_ui_object = render_frame_context.AddUIObject();
+                render_frame_context_ui_object.mesh_id = renderer.mesh->GetAssetInfo().id;
+                render_frame_context_ui_object.shader_id = ui_material->GetShader()->GetAssetInfo().id;
+                render_frame_context_ui_object.material_id = ui_material->GetAssetInfo().id;
+                render_frame_context_ui_object.color = color;
+                render_frame_context_ui_object.texture_id = AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetAssetInfo().id;
+            }
 
             for (UIElement *child : element->GetHierarchy().GetChildren()) {
                 RenderElement(child, render_frame_context);

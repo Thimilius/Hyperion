@@ -119,10 +119,10 @@ namespace Sandbox {
 #endif
         g_parent_ui_element = new UIElement();
         g_parent_ui_element->SetAnchorPreset(UIAnchorPreset::TopStretchHorizontal);
-        g_parent_ui_element->GetStyle().color = Color::White();
+        g_parent_ui_element->GetStyle().SetColor(Color::White());
 
         g_child_ui_element = new UIElement();
-        g_child_ui_element->GetStyle().color = Color::Red();
+        g_child_ui_element->GetStyle().SetColor(Color::Red());
         g_child_ui_element->SetAnchorPreset(UIAnchorPreset::MiddleLeft);
         g_parent_ui_element->GetHierarchy().AddChild(g_child_ui_element);
 

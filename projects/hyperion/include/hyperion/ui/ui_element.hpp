@@ -17,11 +17,32 @@ namespace Hyperion::UI {
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::UI {
 
-    struct UIElementStyle {
+    struct UIElementRenderer {
+        Mesh *mesh = nullptr;
+
         Color color = Color::White();
-        float32 opcacity = 1.0f;
     };
-    
+
+    class UIElementStyle {
+    public:
+        inline UIVisibility GetVisibility() const { return m_visibility; }
+        void SetVisibility(UIVisibility visibility) { m_visibility = visibility; }
+
+        inline Color GetColor() const { return m_color; }
+        void SetColor(Color color);
+
+        inline float32 GetOpacity() const { return m_opacity; }
+        void SetOpacity(float32 opacity);
+    private:
+        UIElement *m_element = nullptr;
+
+        UIVisibility m_visibility = UIVisibility::Visible;
+        Color m_color = Color::White();
+        float32 m_opacity = 1.0f;
+    private:
+        friend class Hyperion::UI::UIElement;
+    };
+
     class UIElementHierarchy {
     public:
         inline UIElement *GetParent() const { return m_parent; }
@@ -41,14 +62,12 @@ namespace Hyperion::UI {
     public:
         UIElement();
     public:
-        inline bool8 IsEnabled() const { return m_enabled; }
-        inline void SetEnabled(bool8 enabled) { m_enabled = enabled; }
-
         inline bool8 IsDirty() const { return m_is_dirty; }
         inline void MarkDirty() { m_is_dirty = true; }
         void MarkHierarchyDirty();
 
-        inline Mesh *GetMesh() const { return m_mesh; }
+        inline UIElementRenderer &GetRenderer() { return m_renderer; }
+        inline const UIElementRenderer &GetRenderer() const { return m_renderer; }
 
         inline UIElementStyle &GetStyle() { return m_style; }
         inline const UIElementStyle &GeStyle() const { return m_style; }
@@ -70,7 +89,6 @@ namespace Hyperion::UI {
     private:
         void RecalculateTransform(float32 ui_scale);
     private:
-        bool8 m_enabled = true;
         bool8 m_is_dirty = true;
 
         Vector2 m_local_position = Vector2(0.0f, 0.0f);
@@ -91,8 +109,7 @@ namespace Hyperion::UI {
         // TODO: We should be able to just use a 3x3 matrix.
         Matrix4x4 m_transform = Matrix4x4::Identity();
 
-        Mesh *m_mesh = nullptr;
-
+        UIElementRenderer m_renderer;
         UIElementStyle m_style;
         UIElementHierarchy m_hierarchy;
     private:

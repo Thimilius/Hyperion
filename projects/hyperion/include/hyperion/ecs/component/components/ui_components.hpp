@@ -13,6 +13,10 @@ namespace Hyperion::UI {
 
         UIScalingMode scaling_mode = UIScalingMode::ScaleWithScreenSize;
         Vector2 reference_resolution = Vector2(1280, 720);
+
+        struct State {
+            UIElement *hovered_element = nullptr;
+        } state;
     };
 
 }

@@ -12,6 +12,18 @@
 namespace Hyperion::UI {
 
     //--------------------------------------------------------------
+    void UIElementStyle::SetColor(Color color) {
+        m_color = color;
+        m_element->MarkDirty();
+    }
+
+    //--------------------------------------------------------------
+    void UIElementStyle::SetOpacity(float32 opacity) {
+        m_opacity = opacity;
+        m_element->MarkDirty();
+    }
+
+    //--------------------------------------------------------------
     void UIElementHierarchy::AddChild(UIElement *child) {
         m_children.Add(child);
         if (child->GetHierarchy().m_parent != nullptr) {
@@ -24,6 +36,7 @@ namespace Hyperion::UI {
 
     //--------------------------------------------------------------
     UIElement::UIElement() {
+        m_style.m_element = this;
         m_hierarchy.m_element = this;
     }
 
@@ -213,10 +226,10 @@ namespace Hyperion::UI {
     void UIElement::OnRebuildGeometry(MeshBuilder &mesh_builder) {
         mesh_builder.Clear();
 
-        Color color = Color::White();
-
         Vector3 world_corners[4];
         GetWorldCorners(world_corners);
+        Color color = m_style.m_color;
+
         mesh_builder.AddVertex(world_corners[0], color, Vector2(1.0f, 1.0f));
         mesh_builder.AddVertex(world_corners[1], color, Vector2(1.0f, 0.0f));
         mesh_builder.AddVertex(world_corners[2], color, Vector2(0.0f, 0.0f));
@@ -224,8 +237,8 @@ namespace Hyperion::UI {
         mesh_builder.AddTriangle(0, 1, 2);
         mesh_builder.AddTriangle(0, 2, 3);
 
-        AssetManager::Unload(m_mesh);
-        m_mesh = mesh_builder.CreateMesh();
+        AssetManager::Unload(m_renderer.mesh);
+        m_renderer.mesh = mesh_builder.CreateMesh();
     }
 
     //--------------------------------------------------------------
