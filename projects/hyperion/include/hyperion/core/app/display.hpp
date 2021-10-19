@@ -50,12 +50,19 @@ namespace Hyperion {
         Display() = delete;
         ~Display() = delete;
     private:
+        static void Initialize(uint32 width, uint32 height);
+
+        static void UpdateSize();
+        static void SetSize(uint32 width, uint32 height);
+
         static void UpdateDisplayInfos();
     private:
         inline static Array<DisplayInfo> s_display_infos;
 
         inline static uint32 s_width;
         inline static uint32 s_height;
+        inline static uint32 s_last_width;
+        inline static uint32 s_last_height;
         inline static bool8 s_size_changed = false;
     private:
         friend class Hyperion::Application;

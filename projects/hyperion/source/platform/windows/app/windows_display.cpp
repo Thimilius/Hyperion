@@ -42,6 +42,33 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void Display::Initialize(uint32 width, uint32 height) {
+        s_width = width;
+        s_height = height;
+        s_last_width = width;
+        s_last_height = height;
+        s_size_changed = true;
+    }
+
+    //--------------------------------------------------------------
+    void Display::UpdateSize() {
+        s_size_changed = false;
+        if (s_width != s_last_width || s_height != s_last_height) {
+            s_last_width = s_width;
+            s_last_height = s_height;
+            s_size_changed = true;
+        }
+    }
+
+    //--------------------------------------------------------------
+    void Display::SetSize(uint32 width, uint32 height) {
+        s_last_width = Display::s_width;
+        s_last_height = Display::s_height;
+        s_width = width;
+        s_height = height;
+    }
+
+    //--------------------------------------------------------------
     void Display::UpdateDisplayInfos() {
         DISPLAY_DEVICEA display_device = { 0 };
         display_device.cb = sizeof(display_device);

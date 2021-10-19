@@ -69,7 +69,15 @@ namespace Hyperion {
                 Time::s_fps = static_cast<uint32>(1.0f / delta_time_average);
                 Time::s_frame_counter++;
             } },
-            { "InputInitilization", []() { HYP_PROFILE_SCOPE("EngineLoop.InputInitilization"); s_application->GetWindow()->Poll(); } }
+            { "InputInitilization", []() { HYP_PROFILE_SCOPE("EngineLoop.InputInitilization"); s_application->GetWindow()->Poll(); } },
+            { "DisplayInitilization", []() {
+                HYP_PROFILE_SCOPE("EngineLoop.DisplayInitilization");
+
+                // NOTE: The order in which we check for this size change ist important.
+                // We have to do it after the input initilization to properly handle resizing which might start inner engine iterations.
+
+                Display::UpdateSize();
+            } }
         };
         engine_loop.fixed_update.name = "FixedUpdate";
         engine_loop.fixed_update.sub_systems = {
@@ -211,9 +219,8 @@ namespace Hyperion {
         HYP_ASSERT_MESSAGE(s_settings.core.fixed_delta_time > 0, "Fixed delta time must be greater than zero!");
         Time::s_fixed_delta_time = s_settings.core.fixed_delta_time;
 
-        Display::s_width = s_settings.window.width;
-        Display::s_height = s_settings.window.height;
-        
+        Display::Initialize(s_settings.window.width, s_settings.window.height);
+
         Window *window = new Window(s_settings.window);
         window->SetAppEventCallback(Engine::OnAppEvent);
         s_application->m_window = window;
@@ -247,6 +254,7 @@ namespace Hyperion {
             HYP_PROFILE_SCOPE("EngineLoop.Initialization");
             ExecuteEngineLoopSubSystem(engine_loop.initilization);
         }
+
         while (Time::s_accumulator > Time::GetFixedDeltaTime()) {
             HYP_PROFILE_SCOPE("EngineLoop.FixedUpdate");
             ExecuteEngineLoopSubSystem(engine_loop.fixed_update);
@@ -280,11 +288,9 @@ namespace Hyperion {
         dispatcher.Dispatch<WindowCloseAppEvent>([](WindowCloseAppEvent &window_close_event) {
             Exit();
         });
-        Display::s_size_changed = false;
         dispatcher.Dispatch<WindowResizeAppEvent>([](WindowResizeAppEvent &window_resize_event) {
-            Display::s_width = window_resize_event.GetWidth();
-            Display::s_height = window_resize_event.GetHeight();
-            Display::s_size_changed = true;
+            Display::SetSize(window_resize_event.GetWidth(), window_resize_event.GetHeight());
+            
         });
 
         dispatcher.Dispatch<KeyPressedAppEvent>([](KeyPressedAppEvent &key_pressed_event) {
