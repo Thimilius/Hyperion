@@ -23,6 +23,7 @@
 //------------------------- Namespaces -------------------------
 using namespace Hyperion;
 using namespace Hyperion::Rendering;
+using namespace Hyperion::UI;
 
 #if HYP_RELEASE || HYP_PROFILE
     #define HYP_STRESS_TEST
@@ -44,6 +45,7 @@ namespace Sandbox {
     EntityId g_light;
     EntityId g_parent;
     EntityId g_child;
+    UIElement *g_ui_element;
 
     CameraController *g_camera_controller;
 
@@ -116,10 +118,10 @@ namespace Sandbox {
 #endif
 
         EntityId ui = g_world->CreateEntity();
-        UI::UIViewComponent *ui_view = g_world->AddComponent<UI::UIViewComponent>(ui);
-        UI::UIElement *ui_element = new UI::UIElement();
-        ui_element->GetRenderer().RebuildMesh();
-        ui_view->root_element = ui_element;
+        UIViewComponent *ui_view = g_world->AddComponent<UIViewComponent>(ui);
+        g_ui_element = new UIElement();
+        g_ui_element->SetAnchorPreset(UIAnchorPreset::TopStretchHorizontal);
+        ui_view->root_element = g_ui_element;
     }
 
     //--------------------------------------------------------------
@@ -163,6 +165,11 @@ namespace Sandbox {
         }
 #endif
         UpdateTitle();
+
+        g_ui_element->GetRenderer().RebuildMesh();
+        if (g_ui_element->ContainsScreenPoint(Input::GetMousePosition())) {
+            HYP_TRACE("HIT");
+        }
     }
 
     //--------------------------------------------------------------

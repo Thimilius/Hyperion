@@ -6,6 +6,7 @@
 #include "hyperion/core/math/rect.hpp"
 #include "hyperion/core/math/vector2.hpp"
 #include "hyperion/core/math/vector3.hpp"
+#include "hyperion/ui/ui_types.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion::UI {
@@ -60,6 +61,10 @@ namespace Hyperion::UI {
 
         void GetLocalCorners(Vector3 corners[4]) const;
         void GetWorldCorners(Vector3 corners[4]) const;
+
+        void SetAnchorPreset(UIAnchorPreset preset);
+
+        bool8 ContainsScreenPoint(Vector2 screen_point);
     private:
         void RecalculateTransform();
     private:
@@ -67,8 +72,9 @@ namespace Hyperion::UI {
 
         UIElementRenderer m_renderer;
 
-        Vector2 m_position = Vector2(0.0f, 0.0f);
-        float32 m_rotation = 0.0f;
+        Vector2 m_local_position = Vector2(0.0f, 0.0f);
+        float32 m_local_rotation = 0.0f;
+        Vector2 m_local_scale = Vector2(1.0f, 1.0f);
 
         Rect m_rect = Rect(0.0f, 0.0f, 100.0f, 100.0f);
         Vector2 m_size = Vector2(100.0f, 100.0f);
@@ -78,6 +84,7 @@ namespace Hyperion::UI {
         Vector2 m_anchor_max = Vector2(0.5f, 0.5f);
         Vector3 m_anchored_position = Vector3(0.0f, 0.0f, 0.0f);
 
+        // TODO: We should be able to just use a 3x3 matrix.
         Matrix4x4 m_transform = Matrix4x4::Identity();
 
         UIElementStyle m_style;

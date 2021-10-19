@@ -184,6 +184,10 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void AssetManager::Unload(Asset *asset) {
+        if (asset == nullptr) {
+            return;
+        }
+
         AssetGuid asset_guid = asset->GetAssetInfo().guid;
         switch (asset->GetAssetType()) {
             case AssetType::Material: {

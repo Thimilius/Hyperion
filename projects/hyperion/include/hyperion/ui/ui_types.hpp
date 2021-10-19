@@ -8,4 +8,28 @@ namespace Hyperion::UI {
         ConstantPixelSize
     };
 
+    enum class UIAnchorPreset {
+        TopLeft,
+        TopCenter,
+        TopRight,
+
+        MiddleLeft,
+        MiddleCenter,
+        MiddleRight,
+
+        BottomLeft,
+        BottomCenter,
+        BottomRight,
+
+        TopStretchHorizontal,
+        MiddleStretchHorizontal,
+        BottomStretchHorizontal,
+
+        LeftStretchVertical,
+        CenterStretchVertical,
+        RightStretchVertical,
+
+        StretchAll,
+    };
+
 }
