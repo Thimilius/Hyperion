@@ -10,8 +10,8 @@ namespace Hyperion {
     class HierarchyTransformSystem : public ISystem {
     public:
         void Run(World *world) override;
-
-        void UpdateBranch(World *world, EntityId root, HierarchyComponent *root_hierarchy, DerivedTransformComponent *parent_derived_transform);
+    public:
+        static void UpdateBranch(World *world, EntityId root, HierarchyComponent *root_hierarchy, DerivedTransformComponent *parent_derived_transform);
     };
 
     class LocalToWorldSystem : public ISystem {

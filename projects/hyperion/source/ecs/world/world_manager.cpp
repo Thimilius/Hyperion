@@ -217,8 +217,11 @@ namespace Hyperion {
             {
                 HYP_PROFILE_SCOPE("WorldManager.Update.UI");
 
-                UI::UISystem ui_system;
-                ui_system.Run(s_active_world);
+                UI::UILayoutSystem ui_layout_system;
+                ui_layout_system.Run(s_active_world);
+
+                UI::UIEventSystem ui_event_system;
+                ui_event_system.Run(s_active_world);
             }
 
             // Transform

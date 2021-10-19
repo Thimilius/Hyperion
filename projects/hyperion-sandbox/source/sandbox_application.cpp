@@ -172,12 +172,6 @@ namespace Sandbox {
         }
 #endif
         UpdateTitle();
-
-        g_parent_ui_element->GetRenderer().RebuildMesh();
-        g_child_ui_element->GetRenderer().RebuildMesh();
-        if (g_parent_ui_element->ContainsScreenPoint(Input::GetMousePosition())) {
-            HYP_TRACE("HIT");
-        }
     }
 
     //--------------------------------------------------------------

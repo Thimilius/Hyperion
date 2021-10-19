@@ -64,8 +64,7 @@ namespace Hyperion {
                     parent_derived_transform = m_world->GetComponent<DerivedTransformComponent>(branch_hierarchy->parent);
                 }
 
-                HierarchyTransformSystem hierarchy_transform_system;
-                hierarchy_transform_system.UpdateBranch(m_world, branch, branch_hierarchy, parent_derived_transform);
+                HierarchyTransformSystem::UpdateBranch(m_world, branch, branch_hierarchy, parent_derived_transform);
             } else {
                 HYP_LOG_WARN("Entity", "Trying to update transform of nonexistent entity with id {}.", branch);
             }

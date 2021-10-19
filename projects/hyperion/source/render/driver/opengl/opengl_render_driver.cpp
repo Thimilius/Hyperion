@@ -100,8 +100,8 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void OpenGLRenderDriver::Render(RenderFrame *render_frame) {
-        UnloadAssets(render_frame->GetContext());
         LoadAssets(render_frame->GetContext());
+        UnloadAssets(render_frame->GetContext());
 
         ExecuteRenderFrameCommands(render_frame);
     }

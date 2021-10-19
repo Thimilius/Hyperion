@@ -6,7 +6,6 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset_manager.hpp"
-#include "hyperion/assets/utilities/mesh_builder.hpp"
 #include "hyperion/core/app/display.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -20,36 +19,21 @@ namespace Hyperion::UI {
         }
         child->GetHierarchy().m_parent = m_element;
 
-        child->RecalculateTransform();
-    }
-
-    //--------------------------------------------------------------
-    void UIElementRenderer::RebuildMesh() {
-        m_element->RecalculateTransform();
-
-        MeshBuilder mesh_builder;
-
-        Color color = Color::White();
-
-        Vector3 world_corners[4];
-        m_element->GetWorldCorners(world_corners);
-        mesh_builder.AddVertex(world_corners[0], color, Vector2(1.0f, 1.0f));
-        mesh_builder.AddVertex(world_corners[1], color, Vector2(1.0f, 0.0f));
-        mesh_builder.AddVertex(world_corners[2], color, Vector2(0.0f, 0.0f));
-        mesh_builder.AddVertex(world_corners[3], color, Vector2(0.0f, 1.0f));
-        mesh_builder.AddTriangle(0, 1, 2);
-        mesh_builder.AddTriangle(0, 2, 3);
-
-        AssetManager::Unload(m_mesh);
-        m_mesh = mesh_builder.CreateMesh();
+        m_element->MarkHierarchyDirty();
     }
 
     //--------------------------------------------------------------
     UIElement::UIElement() {
-        m_renderer.m_element = this;
         m_hierarchy.m_element = this;
+    }
 
-        RecalculateTransform();
+    //--------------------------------------------------------------
+    void UIElement::MarkHierarchyDirty() {
+        MarkDirty();
+
+        for (UIElement *child : m_hierarchy.m_children) {
+            child->MarkHierarchyDirty();
+        }
     }
 
     //--------------------------------------------------------------
@@ -184,7 +168,7 @@ namespace Hyperion::UI {
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
 
-        RecalculateTransform();
+        MarkHierarchyDirty();
     }
 
     //--------------------------------------------------------------
@@ -208,6 +192,38 @@ namespace Hyperion::UI {
 
         // NOTE: Counter clockwise order of points is important.
         return (is_left(p1, p4, screen_point) >= 0.0f && is_left(p4, p3, screen_point) >= 0.0f && is_left(p3, p2, screen_point) >= 0.0f && is_left(p2, p1, screen_point) >= 0.0f);
+    }
+
+    //--------------------------------------------------------------
+    void UIElement::Rebuild(MeshBuilder &mesh_builder) {
+        m_is_dirty = false;
+
+        OnRebuildLayout();
+        OnRebuildGeometry(mesh_builder);
+    }
+
+    //--------------------------------------------------------------
+    void UIElement::OnRebuildLayout() {
+        RecalculateTransform();
+    }
+
+    //--------------------------------------------------------------
+    void UIElement::OnRebuildGeometry(MeshBuilder &mesh_builder) {
+        mesh_builder.Clear();
+
+        Color color = Color::White();
+
+        Vector3 world_corners[4];
+        GetWorldCorners(world_corners);
+        mesh_builder.AddVertex(world_corners[0], color, Vector2(1.0f, 1.0f));
+        mesh_builder.AddVertex(world_corners[1], color, Vector2(1.0f, 0.0f));
+        mesh_builder.AddVertex(world_corners[2], color, Vector2(0.0f, 0.0f));
+        mesh_builder.AddVertex(world_corners[3], color, Vector2(0.0f, 1.0f));
+        mesh_builder.AddTriangle(0, 1, 2);
+        mesh_builder.AddTriangle(0, 2, 3);
+
+        AssetManager::Unload(m_mesh);
+        m_mesh = mesh_builder.CreateMesh();
     }
 
     //--------------------------------------------------------------

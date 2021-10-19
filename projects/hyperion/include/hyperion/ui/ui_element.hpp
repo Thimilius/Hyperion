@@ -3,6 +3,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/material.hpp"
 #include "hyperion/assets/mesh.hpp"
+#include "hyperion/assets/utilities/mesh_builder.hpp"
 #include "hyperion/core/math/rect.hpp"
 #include "hyperion/core/math/vector2.hpp"
 #include "hyperion/core/math/vector3.hpp"
@@ -36,19 +37,6 @@ namespace Hyperion::UI {
         friend class Hyperion::UI::UIElement;
     };
 
-    class UIElementRenderer {
-    public:
-        inline Mesh *GetMesh() const { return m_mesh; }
-
-        void RebuildMesh();
-    private:
-        UIElement *m_element = nullptr;
-
-        Mesh *m_mesh = nullptr;
-    private:
-        friend class Hyperion::UI::UIElement;
-    };
-
     class UIElement {
     public:
         UIElement();
@@ -56,8 +44,11 @@ namespace Hyperion::UI {
         inline bool8 IsEnabled() const { return m_enabled; }
         inline void SetEnabled(bool8 enabled) { m_enabled = enabled; }
 
-        inline UIElementRenderer &GetRenderer() { return m_renderer; }
-        inline const UIElementRenderer &GetRenderer() const { return m_renderer; }
+        inline bool8 IsDirty() const { return m_is_dirty; }
+        inline void MarkDirty() { m_is_dirty = true; }
+        void MarkHierarchyDirty();
+
+        inline Mesh *GetMesh() const { return m_mesh; }
 
         inline UIElementStyle &GetStyle() { return m_style; }
         inline const UIElementStyle &GeStyle() const { return m_style; }
@@ -71,10 +62,16 @@ namespace Hyperion::UI {
         void SetAnchorPreset(UIAnchorPreset preset);
 
         bool8 ContainsScreenPoint(Vector2 screen_point);
+
+        void Rebuild(MeshBuilder &mesh_builder);
+    protected:
+        virtual void OnRebuildLayout();
+        virtual void OnRebuildGeometry(MeshBuilder &mesh_builder);
     private:
         void RecalculateTransform();
     private:
         bool8 m_enabled = true;
+        bool8 m_is_dirty = true;
 
         Vector2 m_local_position = Vector2(0.0f, 0.0f);
         float32 m_local_rotation = 0.0f;
@@ -94,12 +91,12 @@ namespace Hyperion::UI {
         // TODO: We should be able to just use a 3x3 matrix.
         Matrix4x4 m_transform = Matrix4x4::Identity();
 
-        UIElementRenderer m_renderer;
+        Mesh *m_mesh = nullptr;
+
         UIElementStyle m_style;
         UIElementHierarchy m_hierarchy;
     private:
         friend class Hyperion::UI::UIElementHierarchy;
-        friend class Hyperion::UI::UIElementRenderer;
     };
 
 }
