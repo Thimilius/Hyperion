@@ -209,6 +209,7 @@ namespace Hyperion::Rendering {
                     render_frame_context_ui_object.texture.id = texture_id;
                     render_frame_context_ui_object.texture.dimension = renderer.texture ? renderer.texture->GetDimension() : TextureDimension::Texture2D;
                     render_frame_context_ui_object.texture.render_texture_attchment_index = renderer.render_texture_attachment_index;
+                    render_frame_context_ui_object.enable_blending = renderer.enable_blending;
                 }
             }
 

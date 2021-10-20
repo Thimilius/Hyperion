@@ -39,6 +39,8 @@ namespace Hyperion::Rendering {
 
         Color color;
         ShaderPropertyStorage::Texture texture;
+
+        bool8 enable_blending;
     };
 
 }

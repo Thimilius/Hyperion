@@ -45,12 +45,14 @@ namespace Sandbox {
         settings.render.vsync_mode = Rendering::VSyncMode::DontSync;
     }
 
+    const uint32 UI_HEADER_SIZE = 25;
+
     World *g_world;
     EntityId g_camera;
     EntityId g_light;
     EntityId g_parent;
     EntityId g_child;
-    UIElement *g_parent_ui_element;
+    UIElement *g_header_ui_element;
     UIElement *g_render_ui_element;
     UIButton *g_child_ui_element;
     ForwardRenderPipeline *g_render_pipeline;
@@ -62,13 +64,12 @@ namespace Sandbox {
         UpdateTitle();
 
         g_render_pipeline = static_cast<ForwardRenderPipeline *>(RenderEngine::GetPipeline());
-        g_render_pipeline->SetRenderTargetSize(Display::GetWidth(), Display::GetHeight() - 100);
+        g_render_pipeline->SetRenderTargetSize(Display::GetWidth(), Display::GetHeight() - UI_HEADER_SIZE);
 
         g_world = WorldManager::CreateWorld();
         WorldManager::SetActiveWorld(g_world);
 
         g_camera = g_world->CreateEntity(EntityPrimitive::Camera);
-        g_world->GetComponent<CameraComponent>(g_camera)->viewport_clipping.height = 1.0f - (100.0f / 1280.0f);
         g_light = g_world->CreateEntity(EntityPrimitive::DirectionalLight);
 
         g_camera_controller = new LookAroundCameraController(g_camera);
@@ -134,26 +135,22 @@ namespace Sandbox {
 
         g_render_ui_element = new UIElement();
         g_render_ui_element->SetAnchorPreset(UIAnchorPreset::StretchAll);
-        g_render_ui_element->SetOffsetMax(Vector2(0.0f, 100.0f));
+        g_render_ui_element->SetOffsetMax(Vector2(0.0f, UI_HEADER_SIZE));
         g_render_ui_element->GetRenderer().texture = g_render_pipeline->GetTargetRenderTexture();
         g_render_ui_element->GetRenderer().render_texture_attachment_index = 1;
+        g_render_ui_element->GetRenderer().enable_blending = false;
         root_element->GetHierarchy().AddChild(g_render_ui_element);
 
-        g_parent_ui_element = new UIElement();
-        g_parent_ui_element->SetAnchorPreset(UIAnchorPreset::TopStretchHorizontal);
-        g_parent_ui_element->GetStyle().SetColor(Color::Green());
-        root_element->GetHierarchy().AddChild(g_parent_ui_element);
-
-        g_child_ui_element = new UIButton();
-        g_child_ui_element->RegisterClickCallback([]() { HYP_TRACE("CLICK"); });
-        g_child_ui_element->GetStyle().SetColor(Color::Red());
-        g_child_ui_element->SetAnchorPreset(UIAnchorPreset::MiddleLeft);
-        g_parent_ui_element->GetHierarchy().AddChild(g_child_ui_element);
+        g_header_ui_element = new UIElement();
+        g_header_ui_element->SetSize(Vector2(0.0f, UI_HEADER_SIZE));
+        g_header_ui_element->SetAnchorPreset(UIAnchorPreset::TopStretchHorizontal);
+        g_header_ui_element->GetStyle().SetColor(Color::Grey());
+        root_element->GetHierarchy().AddChild(g_header_ui_element);
 
         UILabel *label = new UILabel();
-        label->SetFont(FontLoader::LoadFont("data/fonts/consola.ttf", 36, FontCharacterSet::LatinSupplement));
+        label->SetFont(FontLoader::LoadFont("data/fonts/consola.ttf", 24, FontCharacterSet::LatinSupplement));
         label->SetText("Hello there!");
-        g_parent_ui_element->GetHierarchy().AddChild(label);
+        g_header_ui_element->GetHierarchy().AddChild(label);
 
         EntityId ui = g_world->CreateEntity();
         UIViewComponent *ui_view = g_world->AddComponent<UIViewComponent>(ui);
@@ -202,8 +199,9 @@ namespace Sandbox {
 #endif
         UpdateTitle();
 
+        g_world->GetComponent<CameraComponent>(g_camera)->viewport_clipping.height = (Display::GetHeight() - UI_HEADER_SIZE) / static_cast<float32>(Display::GetHeight());
         if (Display::HasChangedSize()) {
-            g_render_pipeline->SetRenderTargetSize(Display::GetWidth(), Display::GetHeight() - 100);
+            g_render_pipeline->SetRenderTargetSize(Display::GetWidth(), Display::GetHeight() - UI_HEADER_SIZE);
         }
     }
 

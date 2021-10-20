@@ -560,6 +560,9 @@ namespace Hyperion::Rendering {
 
             const OpenGLMaterial &opengl_material = m_opengl_materials.Get(element.material_id);
             UseMaterial(opengl_shader, opengl_material);
+            if (!element.enable_blending) {
+                glDisable(GL_BLEND);
+            }
             {
                 GLint color_location = glGetUniformLocation(opengl_shader.program, "u_color");
                 if (color_location >= 0) {
@@ -574,10 +577,10 @@ namespace Hyperion::Rendering {
                     }
                 }
             }
-
+            
             OpenGLMesh &opengl_mesh = m_opengl_meshes.Get(element.mesh_id);
             UseMesh(opengl_mesh);
-
+            
             DrawSubMesh(opengl_mesh.sub_meshes[0]);
         }
     }
