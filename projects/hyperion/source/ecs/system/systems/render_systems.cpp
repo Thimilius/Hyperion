@@ -206,7 +206,9 @@ namespace Hyperion::Rendering {
                     render_frame_context_ui_object.shader_id = material->GetShader()->GetAssetInfo().id;
                     render_frame_context_ui_object.material_id = material->GetAssetInfo().id;
                     render_frame_context_ui_object.color = color;
-                    render_frame_context_ui_object.texture_id = texture_id;
+                    render_frame_context_ui_object.texture.id = texture_id;
+                    render_frame_context_ui_object.texture.dimension = renderer.texture ? renderer.texture->GetDimension() : TextureDimension::Texture2D;
+                    render_frame_context_ui_object.texture.render_texture_attchment_index = renderer.render_texture_attachment_index;
                 }
             }
 

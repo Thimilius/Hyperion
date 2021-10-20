@@ -77,7 +77,7 @@ namespace Hyperion::Rendering {
         Color color;
         Matrix4x4 matrix4x4;
 
-        struct {
+        struct Texture {
             AssetId id = AssetInfo::INVALID_ID;
             TextureDimension dimension = TextureDimension::Texture2D;
             uint32 render_texture_attchment_index = 0;

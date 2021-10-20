@@ -24,7 +24,8 @@ namespace Hyperion::UI {
         Material *material = nullptr;
 
         Color color = Color::White();
-        Texture2D *texture = nullptr;
+        Texture *texture = nullptr;
+        uint32 render_texture_attachment_index = 0;
     };
 
     class UIElementStyle {

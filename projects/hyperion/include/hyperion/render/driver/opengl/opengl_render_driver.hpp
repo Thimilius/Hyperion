@@ -126,6 +126,7 @@ namespace Hyperion::Rendering {
 
         void UseShader(const OpenGLShader &opengl_shader);
         void UseMaterial(const OpenGLShader &opengl_shader, const OpenGLMaterial &opengl_material);
+        void SetMaterialTextureProperty(ShaderPropertyStorage::Texture texture_property, uint32 texture_unit, GLuint program, GLuint location);
         void UseMesh(const OpenGLMesh &opengl_mesh);
 
         void LoadAssets(RenderFrameContext &render_frame_context);

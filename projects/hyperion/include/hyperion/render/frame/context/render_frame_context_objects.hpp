@@ -38,7 +38,7 @@ namespace Hyperion::Rendering {
         AssetId material_id;
 
         Color color;
-        AssetId texture_id;
+        ShaderPropertyStorage::Texture texture;
     };
 
 }

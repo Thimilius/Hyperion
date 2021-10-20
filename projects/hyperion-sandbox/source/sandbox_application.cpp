@@ -49,6 +49,7 @@ namespace Sandbox {
     EntityId g_parent;
     EntityId g_child;
     UIElement *g_parent_ui_element;
+    UIElement *g_render_ui_element;
     UIButton *g_child_ui_element;
 
     CameraController *g_camera_controller;
@@ -120,9 +121,20 @@ namespace Sandbox {
         g_world->GetComponent<MeshComponent>(quad)->material = material;
         g_world->GetComponent<LocalTransformComponent>(quad)->position = Vector3(0.0f, 2.0f, 0.0f);
 #endif
+        UIElement *root_element = new UIElement();
+        root_element->SetAnchorPreset(UIAnchorPreset::StretchAll);
+        root_element->GetStyle().SetVisibility(UIVisibility::Visible);
+
+        g_render_ui_element = new UIElement();
+        g_render_ui_element->SetAnchorPreset(UIAnchorPreset::StretchAll);
+        g_render_ui_element->SetOffsetMax(Vector2(0.0f, 100.0f));
+        g_render_ui_element->GetStyle().SetColor(Color::Blue());
+        root_element->GetHierarchy().AddChild(g_render_ui_element);
+
         g_parent_ui_element = new UIElement();
         g_parent_ui_element->SetAnchorPreset(UIAnchorPreset::TopStretchHorizontal);
         g_parent_ui_element->GetStyle().SetColor(Color::Green());
+        root_element->GetHierarchy().AddChild(g_parent_ui_element);
 
         g_child_ui_element = new UIButton();
         g_child_ui_element->RegisterClickCallback([]() { HYP_TRACE("CLICK"); });
@@ -137,7 +149,7 @@ namespace Sandbox {
 
         EntityId ui = g_world->CreateEntity();
         UIViewComponent *ui_view = g_world->AddComponent<UIViewComponent>(ui);
-        ui_view->root_element = g_parent_ui_element;
+        ui_view->root_element = root_element;
     }
 
     //--------------------------------------------------------------

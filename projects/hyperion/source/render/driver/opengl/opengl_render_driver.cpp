@@ -563,13 +563,10 @@ namespace Hyperion::Rendering {
                     glProgramUniform4f(opengl_shader.program, color_location, color.r, color.g, color.b, color.a);
                 }
 
-                GLint texture_location = glGetUniformLocation(opengl_shader.program, "u_texture");
-                if (texture_location >= 0) {
-                    if (element.texture_id != AssetInfo::INVALID_ID) {
-                        const OpenGLTexture &opengl_texture = m_opengl_textures.Get(element.texture_id);
-
-                        glBindTextureUnit(0, opengl_texture.texture);
-                        glProgramUniform1i(opengl_shader.program, texture_location, 0);
+                if (element.texture.id != AssetInfo::INVALID_ID) {
+                    GLint texture_location = glGetUniformLocation(opengl_shader.program, "u_texture");
+                    if (texture_location >= 0) {
+                        SetMaterialTextureProperty(element.texture, 0, opengl_shader.program, texture_location);
                     }
                 }
             }
@@ -693,37 +690,42 @@ namespace Hyperion::Rendering {
                     break;
                 }
                 case ShaderPropertyType::Texture: {
-                    // NOTE: This updating of textures is quite expensive and should be done more performant.
-
-                    GLuint texture = 0;
-                    if (property.storage.texture.dimension == TextureDimension::RenderTexture) {
-                        // TODO: We should do more validation when setting a render texture.
-                        auto it = m_opengl_render_textures.Find(property.storage.texture.id);
-                        if (it == m_opengl_render_textures.end()) {
-                            HYP_LOG_ERROR("OpenGL", "Trying to set non existing render texture as shader property!");
-                            break;
-                        } else {
-                            const OpenGLRenderTextureAttachment &opengl_attachment = it->second.attachments[property.storage.texture.render_texture_attchment_index];
-                            texture = opengl_attachment.attachment;
-                        }
-                    } else {
-                        auto it = m_opengl_textures.Find(property.storage.texture.id);
-                        if (it == m_opengl_textures.end()) {
-                            HYP_LOG_ERROR("OpenGL", "Trying to set non existing texture as shader property!");
-                            break;
-                        } else {
-                            texture = it->second.texture;
-                        }
-                    }
-
-                    glBindTextureUnit(texture_unit, texture);
-                    glProgramUniform1i(opengl_shader.program, location, texture_unit);
+                    SetMaterialTextureProperty(property.storage.texture, texture_unit, opengl_shader.program, location);
                     texture_unit++;
                     break;
                 }
                 default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
             }
         }
+    }
+
+    //--------------------------------------------------------------
+    void OpenGLRenderDriver::SetMaterialTextureProperty(ShaderPropertyStorage::Texture texture_property, uint32 texture_unit, GLuint program, GLuint location) {
+        // NOTE: This setting of textures is quite expensive and could probably be done more performant.
+
+        GLuint texture = 0;
+        if (texture_property.dimension == TextureDimension::RenderTexture) {
+            // TODO: We should do more validation when setting a render texture.
+            auto it = m_opengl_render_textures.Find(texture_property.id);
+            if (it == m_opengl_render_textures.end()) {
+                HYP_LOG_ERROR("OpenGL", "Trying to set non existing render texture as shader property!");
+                return;
+            } else {
+                const OpenGLRenderTextureAttachment &opengl_attachment = it->second.attachments[texture_property.render_texture_attchment_index];
+                texture = opengl_attachment.attachment;
+            }
+        } else {
+            auto it = m_opengl_textures.Find(texture_property.id);
+            if (it == m_opengl_textures.end()) {
+                HYP_LOG_ERROR("OpenGL", "Trying to set non existing texture as shader property!");
+                return;
+            } else {
+                texture = it->second.texture;
+            }
+        }
+
+        glBindTextureUnit(texture_unit, texture);
+        glProgramUniform1i(program, location, texture_unit);
     }
 
     //--------------------------------------------------------------
