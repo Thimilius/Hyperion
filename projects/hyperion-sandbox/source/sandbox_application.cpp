@@ -5,8 +5,9 @@
 #include <hyperion/entry_point.hpp>
 #include <hyperion/assets/asset_manager.hpp>
 #include <hyperion/assets/material.hpp>
-#include <hyperion/assets/loader/mesh_loader.hpp>
+#include <hyperion/assets/loader/font_loader.hpp>
 #include <hyperion/assets/loader/image_loader.hpp>
+#include <hyperion/assets/loader/mesh_loader.hpp>
 #include <hyperion/assets/utilities/mesh_generator.hpp>
 #include <hyperion/core/random.hpp>
 #include <hyperion/core/app/time.hpp>
@@ -131,6 +132,8 @@ namespace Sandbox {
         EntityId ui = g_world->CreateEntity();
         UIViewComponent *ui_view = g_world->AddComponent<UIViewComponent>(ui);
         ui_view->root_element = g_parent_ui_element;
+
+        FontLoader::LoadFont("data/fonts/consola.ttf", 36, FontCharacterSet::LatinSupplement);
     }
 
     //--------------------------------------------------------------

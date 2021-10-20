@@ -2,6 +2,8 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset.hpp"
+#include "hyperion/assets/font_types.hpp"
+#include "hyperion/assets/texture_atlas_types.hpp"
 #include "hyperion/render/types/render_types_mesh.hpp"
 #include "hyperion/render/types/render_types_texture.hpp"
 
@@ -10,11 +12,15 @@ namespace Hyperion {
     class AssetLoadSystem;
     class AssetUnloadSystem;
     class Engine;
+    class Font;
     class Material;
     class Mesh;
     class Shader;
     class Texture;
     class Texture2D;
+    template<typename K, typename V>
+    class TextureAtlas;
+    class TextureAtlasBase;
     class RenderTexture;
 }
 
@@ -53,7 +59,17 @@ namespace Hyperion {
         static Texture2D *CreateTexture2D(const Rendering::Texture2DParameters &parameters);
         static Texture2D *CreateTexture2D(const Rendering::Texture2DParameters &parameters, const Rendering::TexturePixelData &pixels, AssetDataAccess data_access = AssetDataAccess::None);
 
+        template<typename K, typename V>
+        static TextureAtlas<K, V> *CreateTextureAtlas(Texture2D *texture, const Map<K, TextureAtlasElement<V>> &elements) {
+            AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
+            TextureAtlas<K, V> *texture_atlas = new TextureAtlas<K, V>(info, texture, elements);
+            s_texture_atlases.Insert(info.guid, texture_atlas);
+            return texture_atlas;
+        }
+
         static RenderTexture *CreateRenderTexture(const Rendering::RenderTextureParameters &parameters);
+
+        static Font *CreateFont(uint32 size, FontCharacterSet character_set, FontAtlas *font_atlas, SpecialFontGlyphs special_glyphs);
 
         static Shader *GetShaderPrimitive(ShaderPrimitive shader_primitive);
         static Shader *GetShaderByGuid(AssetGuid guid);
@@ -84,10 +100,12 @@ namespace Hyperion {
 
         static AssetInfo GetNextAssetInfo(AssetDataAccess data_access);
     private:
+        inline static Map<AssetGuid, Texture *> s_textures;
+        inline static Map<AssetGuid, TextureAtlasBase *> s_texture_atlases;
+        inline static Map<AssetGuid, Font *> s_fonts;
+        inline static Map<AssetGuid, Shader *> s_shaders;
         inline static Map<AssetGuid, Material *> s_materials;
         inline static Map<AssetGuid, Mesh *> s_meshes;
-        inline static Map<AssetGuid, Shader *> s_shaders;
-        inline static Map<AssetGuid, Texture *> s_textures;
 
         inline static struct Primitives {
             Texture2D *texture_2d_white;

@@ -7,10 +7,12 @@
 namespace Hyperion {
 
     enum class AssetType {
+        Font,
         Material,
         Mesh,
         Shader,
-        Texture
+        Texture,
+        TextureAtlas
     };
 
     using AssetId = uint64;

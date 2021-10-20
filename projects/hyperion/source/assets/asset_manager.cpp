@@ -9,6 +9,7 @@
 #include "hyperion/assets/mesh.hpp"
 #include "hyperion/assets/shader.hpp"
 #include "hyperion/assets/texture.hpp"
+#include "hyperion/assets/loader/font_loader.hpp"
 #include "hyperion/assets/loader/image_loader.hpp"
 #include "hyperion/assets/loader/mesh_loader.hpp"
 #include "hyperion/assets/utilities/mesh_generator.hpp"
@@ -84,6 +85,13 @@ namespace Hyperion {
         RenderTexture *render_texture = new RenderTexture(info, parameters);
         s_textures.Insert(info.guid, render_texture);
         return render_texture;
+    }
+
+    Font *AssetManager::CreateFont(uint32 size, FontCharacterSet character_set, FontAtlas *font_atlas, SpecialFontGlyphs special_glyphs) {
+        AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
+        Font *font = new Font(info ,size, character_set, font_atlas, special_glyphs);
+        s_fonts.Insert(info.guid, font);
+        return font;
     }
 
     //--------------------------------------------------------------
@@ -225,6 +233,7 @@ namespace Hyperion {
     void AssetManager::Initialize() {
         ImageLoader::Initialize();
         MeshLoader::Initialize();
+        FontLoader::Initialize();
 
         InitializePrimitives();
     }
@@ -249,8 +258,9 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void AssetManager::Shutdown() {
-        ImageLoader::Shutdown();
+        FontLoader::Shutdown();
         MeshLoader::Shutdown();
+        ImageLoader::Shutdown();
     }
 
     //--------------------------------------------------------------
