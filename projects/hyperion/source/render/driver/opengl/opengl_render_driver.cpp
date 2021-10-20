@@ -234,6 +234,8 @@ namespace Hyperion::Rendering {
 
                                     glBindFramebuffer(GL_FRAMEBUFFER, destination_framebuffer);
 
+                                    glDisable(GL_BLEND);
+
                                     glUseProgram(m_state.fullscreen_shader);
                                     glBindTextureUnit(0, source_color_attachment);
                                     glBindVertexArray(m_state.fullscreen_vertex_array);

@@ -13,15 +13,19 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     RenderTexture *CreateRenderTexture(uint32 width, uint32 height) {
-        RenderTextureParameters parameters;
-        parameters.width = width;
-        parameters.height = height;
-        parameters.attachments = {
-            { RenderTextureFormat::Depth24Stencil8, TextureAttributes() },
-            { RenderTextureFormat::RGBA32, TextureAttributes() }
+        TextureAttributes render_texture_attributes;
+        render_texture_attributes.filter = TextureFilter::Point;
+        render_texture_attributes.use_mipmaps = false;
+
+        RenderTextureParameters render_texture_parameters;
+        render_texture_parameters.width = width;
+        render_texture_parameters.height = height;
+        render_texture_parameters.attachments = {
+            { RenderTextureFormat::Depth24Stencil8, render_texture_attributes },
+            { RenderTextureFormat::RGBA32, render_texture_attributes }
         };
 
-        return AssetManager::CreateRenderTexture(parameters);
+        return AssetManager::CreateRenderTexture(render_texture_parameters);
     }
 
     //--------------------------------------------------------------

@@ -49,5 +49,5 @@ void main() {
 	float texture_alpha = texture(u_texture, i_v2f.texture0).r;
 	color.a *= texture_alpha;
 
-	o_color = vec4(1, 1, 1, texture(u_texture, i_v2f.texture0).r);
+	o_color = color;
 }
