@@ -52,6 +52,14 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void MeshBuilder::Transform(const Matrix4x4 &transformation) {
+        for (uint32 i = 0; i < m_mesh_data.positions.GetLength(); i++) {
+            Vector3 transformed_position = transformation * m_mesh_data.positions[i];
+            m_mesh_data.positions[i] = transformed_position;
+        }
+    }
+
+    //--------------------------------------------------------------
     Mesh *MeshBuilder::CreateMesh() {
         Array<SubMesh> sub_meshes = { { Rendering::MeshTopology::Triangles, m_vertex_count, 0, m_index_count, 0 } };
         return AssetManager::CreateMesh(m_mesh_data, sub_meshes);

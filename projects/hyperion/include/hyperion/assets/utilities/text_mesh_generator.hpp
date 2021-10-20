@@ -17,7 +17,8 @@ namespace Hyperion {
         Color color = Color::White();
 
         Rect rect = Rect();
-        float32 scale = 1.0f;
+        Quaternion rotation = Quaternion::Identity();
+        Vector2 scale = Vector2(1.0f, 1.0f);
     };
 
     class TextMeshGenerator final {

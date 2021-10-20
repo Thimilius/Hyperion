@@ -14,6 +14,8 @@ namespace Hyperion {
         void AddVertex(Vector3 position, Color color, Vector2 texture0);
         void AddTriangle(uint32 a, uint32 b, uint32 c);
 
+        void Transform(const Matrix4x4 &transformation);
+
         Mesh *CreateMesh();
         void SetToMesh(Mesh *mesh);
     private:

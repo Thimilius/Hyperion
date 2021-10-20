@@ -131,7 +131,7 @@ namespace Sandbox {
         g_parent_ui_element->GetHierarchy().AddChild(g_child_ui_element);
 
         UILabel *label = new UILabel();
-        label->SetFont(FontLoader::LoadFont("data/fonts/montserrat_regular.ttf", 36, FontCharacterSet::LatinSupplement));
+        label->SetFont(FontLoader::LoadFont("data/fonts/consola.ttf", 36, FontCharacterSet::LatinSupplement));
         label->SetText("Hello there!");
         g_parent_ui_element->GetHierarchy().AddChild(label);
 
