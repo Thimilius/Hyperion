@@ -18,6 +18,7 @@
 #include <hyperion/ecs/world/world_serializer.hpp>
 #include <hyperion/render/render_engine.hpp>
 #include <hyperion/ui/ui_button.hpp>
+#include <hyperion/ui/ui_label.hpp>
 
 //---------------------- Project Includes ----------------------
 #include "sandbox/camera_controller.hpp"
@@ -129,11 +130,14 @@ namespace Sandbox {
         g_child_ui_element->SetAnchorPreset(UIAnchorPreset::MiddleLeft);
         g_parent_ui_element->GetHierarchy().AddChild(g_child_ui_element);
 
+        UILabel *label = new UILabel();
+        label->SetFont(FontLoader::LoadFont("data/fonts/consola.ttf", 36, FontCharacterSet::LatinSupplement));
+        label->SetText("Hello there!");
+        g_parent_ui_element->GetHierarchy().AddChild(label);
+
         EntityId ui = g_world->CreateEntity();
         UIViewComponent *ui_view = g_world->AddComponent<UIViewComponent>(ui);
         ui_view->root_element = g_parent_ui_element;
-
-        FontLoader::LoadFont("data/fonts/consola.ttf", 36, FontCharacterSet::LatinSupplement);
     }
 
     //--------------------------------------------------------------

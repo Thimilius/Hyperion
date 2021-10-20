@@ -191,18 +191,24 @@ namespace Hyperion::Rendering {
 
         if (element && element->GetStyle().GetVisibility() == UIVisibility::Visible) {
             UIElementRenderer renderer = element->GetRenderer();
-            Color color = renderer.color;
-            color.a *= element->GetStyle().GetOpacity();
 
-            if (color.a > 0.0f) {
-                Material *ui_material = AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI);
+            Mesh *mesh = renderer.mesh;
+            if (mesh != nullptr) {
+                Color color = renderer.color;
+                color.a *= element->GetStyle().GetOpacity();
 
-                RenderFrameContextObjectUI &render_frame_context_ui_object = render_frame_context.AddUIObject();
-                render_frame_context_ui_object.mesh_id = renderer.mesh->GetAssetInfo().id;
-                render_frame_context_ui_object.shader_id = ui_material->GetShader()->GetAssetInfo().id;
-                render_frame_context_ui_object.material_id = ui_material->GetAssetInfo().id;
-                render_frame_context_ui_object.color = color;
-                render_frame_context_ui_object.texture_id = AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetAssetInfo().id;
+                if (color.a > 0.0f) {
+                    Material *ui_material = AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI);
+
+                    AssetId texture_id = renderer.texture ? renderer.texture->GetAssetInfo().id : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetAssetInfo().id;
+
+                    RenderFrameContextObjectUI &render_frame_context_ui_object = render_frame_context.AddUIObject();
+                    render_frame_context_ui_object.mesh_id = renderer.mesh->GetAssetInfo().id;
+                    render_frame_context_ui_object.shader_id = ui_material->GetShader()->GetAssetInfo().id;
+                    render_frame_context_ui_object.material_id = ui_material->GetAssetInfo().id;
+                    render_frame_context_ui_object.color = color;
+                    render_frame_context_ui_object.texture_id = texture_id;
+                }
             }
 
             for (UIElement *child : element->GetHierarchy().GetChildren()) {

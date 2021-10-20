@@ -22,6 +22,7 @@ namespace Hyperion::UI {
         Mesh *mesh = nullptr;
 
         Color color = Color::White();
+        Texture2D *texture = nullptr;
     };
 
     class UIElementStyle {
