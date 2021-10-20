@@ -30,14 +30,13 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void ForwardRenderPipeline::Initialize() {
-        m_target_render_texture = CreateRenderTexture(Display::GetWidth(), Display::GetHeight());
+        m_target_render_texture = CreateRenderTexture(m_render_target_width, m_render_target_height);
     }
 
     //--------------------------------------------------------------
     void ForwardRenderPipeline::Render(RenderFrame *render_frame) {
-        if (Display::HasChangedSize()) {
-            AssetManager::Unload(m_target_render_texture);
-            m_target_render_texture = CreateRenderTexture(Display::GetWidth(), Display::GetHeight());
+        if (m_target_render_texture->GetWidth() != m_render_target_width || m_target_render_texture->GetHeight() != m_render_target_height) {
+            m_target_render_texture->Resize(m_render_target_width, m_render_target_height);
         }
 
         // HACK: We need a better way to get/set a camera.
@@ -77,18 +76,24 @@ namespace Hyperion::Rendering {
 
         render_frame->DrawGizmos();
 
-        render_frame->DrawUI();
-
         {
             RenderFrameCommandBuffer command_buffer;
-            command_buffer.Blit(RenderTargetId::Default(), m_target_render_texture->GetRenderTargetId());
+            command_buffer.SetRenderTarget(RenderTargetId::Default());
             render_frame->ExecuteCommandBuffer(command_buffer);
         }
+
+        render_frame->DrawUI();
     }
 
     //--------------------------------------------------------------
     void ForwardRenderPipeline::Shutdown() {
 
+    }
+
+    //--------------------------------------------------------------
+    void ForwardRenderPipeline::SetRenderTargetSize(uint32 width, uint32 height) {
+        m_render_target_width = width;
+        m_render_target_height = height;
     }
 
 }

@@ -25,7 +25,12 @@ namespace Hyperion::Rendering {
         void Initialize() override;
         void Render(RenderFrame *render_view) override;
         void Shutdown() override;
+
+        void SetRenderTargetSize(uint32 width, uint32 height);
+        inline RenderTexture *GetTargetRenderTexture() const { return m_target_render_texture; }
     private:
+        uint32 m_render_target_width;
+        uint32 m_render_target_height;
         RenderTexture *m_target_render_texture;
     };
 

@@ -541,13 +541,17 @@ namespace Hyperion::Rendering {
     //--------------------------------------------------------------
     void OpenGLRenderDriver::DrawUI(const Array<RenderFrameContextObjectUI> &elements) {
         {
-            float32 half_width = static_cast<float32>(Display::GetWidth()) / 2.0f;
-            float32 half_height = static_cast<float32>(Display::GetHeight()) / 2.0f;
+            uint32 width = Display::GetWidth();
+            uint32 height = Display::GetHeight();
+            float32 half_width = static_cast<float32>(width) / 2.0f;
+            float32 half_height = static_cast<float32>(height) / 2.0f;
 
             OpenGLUniformBufferCamera uniform_buffer_camera;
             uniform_buffer_camera.camera_view_matrix = Matrix4x4::Identity();
             uniform_buffer_camera.camera_projection_matrix = Matrix4x4::Orthographic(-half_width, half_width, -half_height, half_height, -1.0f, 1.0f);
             glNamedBufferSubData(m_state.camera_uniform_buffer, 0, sizeof(OpenGLUniformBufferCamera), &uniform_buffer_camera);
+
+            glViewport(0, 0, width, height);
         }
 
         for (const RenderFrameContextObjectUI &element : elements) {
@@ -734,44 +738,6 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void OpenGLRenderDriver::UnloadAssets(RenderFrameContext &render_frame_context) {
-        HYP_PROFILE_SCOPE("OpenGLRenderDriver.UnloadAssets");
-
-        for (AssetId shader_id : render_frame_context.GetShaderAssetsToUnload()) {
-            glDeleteProgram(m_opengl_shaders.Get(shader_id).program);
-            m_opengl_shaders.Remove(shader_id);
-        }
-        for (AssetId texture_2d_id : render_frame_context.GetTexture2DAssetsToUnload()) {
-            GLuint texture = m_opengl_textures.Get(texture_2d_id).texture;
-            glDeleteTextures(1, &texture);
-            m_opengl_textures.Remove(texture_2d_id);
-        }
-        for (AssetId render_texture_id : render_frame_context.GetRenderTextureAssetsToUnload()) {
-            OpenGLRenderTexture &opengl_render_texture = m_opengl_render_textures.Get(render_texture_id);
-            for (OpenGLRenderTextureAttachment &opengl_attachment : opengl_render_texture.attachments) {
-                if (opengl_attachment.format == RenderTextureFormat::Depth24Stencil8) {
-                    glDeleteRenderbuffers(1, &opengl_attachment.attachment);
-                } else {
-                    glDeleteTextures(1, &opengl_attachment.attachment);
-                }
-            }
-            m_opengl_render_textures.Remove(render_texture_id);
-        }
-        for (AssetId material_id : render_frame_context.GetMaterialAssetsToUnload()) {
-            m_opengl_materials.Remove(material_id);
-        }
-        for (AssetId mesh_id : render_frame_context.GetMeshAssetsToUnload()) {
-            OpenGLMesh &opengl_mesh = m_opengl_meshes.Get(mesh_id);
-
-            glDeleteBuffers(1, &opengl_mesh.vertex_buffer);
-            glDeleteBuffers(1, &opengl_mesh.index_buffer);
-            glDeleteVertexArrays(1, &opengl_mesh.vertex_array);
-
-            m_opengl_meshes.Remove(mesh_id);
-        }
-    }
-
-    //--------------------------------------------------------------
     void OpenGLRenderDriver::LoadAssets(RenderFrameContext &render_frame_context) {
         HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadAssets");
 
@@ -829,6 +795,10 @@ namespace Hyperion::Rendering {
     //--------------------------------------------------------------
     void OpenGLRenderDriver::LoadRenderTexture(RenderFrameContextAssetRenderTexture &render_texture) {
         HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadRenderTexture");
+
+        if (m_opengl_render_textures.Contains(render_texture.id)) {
+            UnloadRenderTexture(render_texture.id);
+        }
 
         // TODO: We should do some sort of validation.
 
@@ -985,6 +955,49 @@ namespace Hyperion::Rendering {
         }
 
         m_opengl_meshes.Insert(mesh.id, opengl_mesh);
+    }
+
+    //--------------------------------------------------------------
+    void OpenGLRenderDriver::UnloadAssets(RenderFrameContext &render_frame_context) {
+        HYP_PROFILE_SCOPE("OpenGLRenderDriver.UnloadAssets");
+
+        for (AssetId shader_id : render_frame_context.GetShaderAssetsToUnload()) {
+            glDeleteProgram(m_opengl_shaders.Get(shader_id).program);
+            m_opengl_shaders.Remove(shader_id);
+        }
+        for (AssetId texture_2d_id : render_frame_context.GetTexture2DAssetsToUnload()) {
+            GLuint texture = m_opengl_textures.Get(texture_2d_id).texture;
+            glDeleteTextures(1, &texture);
+            m_opengl_textures.Remove(texture_2d_id);
+        }
+        for (AssetId render_texture_id : render_frame_context.GetRenderTextureAssetsToUnload()) {
+            UnloadRenderTexture(render_texture_id);
+        }
+        for (AssetId material_id : render_frame_context.GetMaterialAssetsToUnload()) {
+            m_opengl_materials.Remove(material_id);
+        }
+        for (AssetId mesh_id : render_frame_context.GetMeshAssetsToUnload()) {
+            OpenGLMesh &opengl_mesh = m_opengl_meshes.Get(mesh_id);
+
+            glDeleteBuffers(1, &opengl_mesh.vertex_buffer);
+            glDeleteBuffers(1, &opengl_mesh.index_buffer);
+            glDeleteVertexArrays(1, &opengl_mesh.vertex_array);
+
+            m_opengl_meshes.Remove(mesh_id);
+        }
+    }
+
+    //--------------------------------------------------------------
+    void OpenGLRenderDriver::UnloadRenderTexture(AssetId render_texture_id) {
+        OpenGLRenderTexture &opengl_render_texture = m_opengl_render_textures.Get(render_texture_id);
+        for (OpenGLRenderTextureAttachment &opengl_attachment : opengl_render_texture.attachments) {
+            if (opengl_attachment.format == RenderTextureFormat::Depth24Stencil8) {
+                glDeleteRenderbuffers(1, &opengl_attachment.attachment);
+            } else {
+                glDeleteTextures(1, &opengl_attachment.attachment);
+            }
+        }
+        m_opengl_render_textures.Remove(render_texture_id);
     }
 
     //--------------------------------------------------------------

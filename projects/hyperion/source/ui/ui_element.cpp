@@ -249,11 +249,7 @@ namespace Hyperion::UI {
 
     //--------------------------------------------------------------
     void UIElement::OnEvent(UIEvent &event) {
-        if (event.GetType() == UIEventType::PointerEnter) {
-            m_renderer.color = Color::Grey();
-        } else if (event.GetType() == UIEventType::PointerExit) {
-            m_renderer.color = Color::White();
-        }
+
     }
 
     //--------------------------------------------------------------

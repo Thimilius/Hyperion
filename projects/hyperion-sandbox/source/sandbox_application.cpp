@@ -10,6 +10,7 @@
 #include <hyperion/assets/loader/mesh_loader.hpp>
 #include <hyperion/assets/utilities/mesh_generator.hpp>
 #include <hyperion/core/random.hpp>
+#include <hyperion/core/app/display.hpp>
 #include <hyperion/core/app/time.hpp>
 #include <hyperion/core/io/file_system.hpp>
 #include <hyperion/ecs/component/components/components.hpp>
@@ -17,6 +18,7 @@
 #include <hyperion/ecs/world/world_manager.hpp>
 #include <hyperion/ecs/world/world_serializer.hpp>
 #include <hyperion/render/render_engine.hpp>
+#include <hyperion/render/pipelines/forward/forward_render_pipeline.hpp>
 #include <hyperion/ui/ui_button.hpp>
 #include <hyperion/ui/ui_label.hpp>
 
@@ -51,6 +53,7 @@ namespace Sandbox {
     UIElement *g_parent_ui_element;
     UIElement *g_render_ui_element;
     UIButton *g_child_ui_element;
+    ForwardRenderPipeline *g_render_pipeline;
 
     CameraController *g_camera_controller;
 
@@ -58,10 +61,14 @@ namespace Sandbox {
     void SandboxApplication::OnInitialize() {
         UpdateTitle();
 
+        g_render_pipeline = static_cast<ForwardRenderPipeline *>(RenderEngine::GetPipeline());
+        g_render_pipeline->SetRenderTargetSize(Display::GetWidth(), Display::GetHeight() - 100);
+
         g_world = WorldManager::CreateWorld();
         WorldManager::SetActiveWorld(g_world);
 
         g_camera = g_world->CreateEntity(EntityPrimitive::Camera);
+        g_world->GetComponent<CameraComponent>(g_camera)->viewport_clipping.height = 1.0f - (100.0f / 1280.0f);
         g_light = g_world->CreateEntity(EntityPrimitive::DirectionalLight);
 
         g_camera_controller = new LookAroundCameraController(g_camera);
@@ -128,7 +135,8 @@ namespace Sandbox {
         g_render_ui_element = new UIElement();
         g_render_ui_element->SetAnchorPreset(UIAnchorPreset::StretchAll);
         g_render_ui_element->SetOffsetMax(Vector2(0.0f, 100.0f));
-        g_render_ui_element->GetStyle().SetColor(Color::Blue());
+        g_render_ui_element->GetRenderer().texture = g_render_pipeline->GetTargetRenderTexture();
+        g_render_ui_element->GetRenderer().render_texture_attachment_index = 1;
         root_element->GetHierarchy().AddChild(g_render_ui_element);
 
         g_parent_ui_element = new UIElement();
@@ -193,6 +201,10 @@ namespace Sandbox {
         }
 #endif
         UpdateTitle();
+
+        if (Display::HasChangedSize()) {
+            g_render_pipeline->SetRenderTargetSize(Display::GetWidth(), Display::GetHeight() - 100);
+        }
     }
 
     //--------------------------------------------------------------

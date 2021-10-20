@@ -64,6 +64,8 @@ namespace Hyperion {
         inline const Array<Rendering::RenderTextureAttachment> GetAttachments() const { return m_attachments; }
 
         Rendering::RenderTargetId GetRenderTargetId() const;
+
+        void Resize(uint32 width, uint32 height);
     private:
         uint32 m_width;
         uint32 m_height;
