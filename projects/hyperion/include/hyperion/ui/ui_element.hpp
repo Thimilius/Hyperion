@@ -20,6 +20,8 @@ namespace Hyperion::UI {
 
     struct UIElementRenderer {
         Mesh *mesh = nullptr;
+        
+        Material *material = nullptr;
 
         Color color = Color::White();
         Texture2D *texture = nullptr;
@@ -88,7 +90,7 @@ namespace Hyperion::UI {
         void Rebuild(float32 ui_scale, MeshBuilder &mesh_builder);
     protected:
         virtual void OnRebuildLayout();
-        virtual void OnRebuildGeometry(MeshBuilder &mesh_builder);
+        virtual void OnRebuildGeometry(float32 ui_scale, MeshBuilder &mesh_builder);
     private:
         void RecalculateTransform(float32 ui_scale);
     private:

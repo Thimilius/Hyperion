@@ -223,7 +223,7 @@ namespace Hyperion::UI {
         RecalculateTransform(ui_scale);
 
         OnRebuildLayout();
-        OnRebuildGeometry(mesh_builder);
+        OnRebuildGeometry(ui_scale, mesh_builder);
     }
 
     //--------------------------------------------------------------
@@ -232,7 +232,7 @@ namespace Hyperion::UI {
     }
 
     //--------------------------------------------------------------
-    void UIElement::OnRebuildGeometry(MeshBuilder &mesh_builder) {
+    void UIElement::OnRebuildGeometry(float32 ui_scale, MeshBuilder &mesh_builder) {
         mesh_builder.Clear();
 
         Vector3 world_corners[4];

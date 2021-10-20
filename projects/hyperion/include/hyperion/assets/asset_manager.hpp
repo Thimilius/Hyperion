@@ -36,12 +36,14 @@ namespace Hyperion {
         Unlit,
         Gizmo,
         UI,
+        Font,
     };
 
     enum class MaterialPrimitive {
         Default,
         Unlit,
         UI,
+        Font,
     };
 
     enum class MeshPrimitive {
@@ -114,10 +116,12 @@ namespace Hyperion {
             Shader *shader_unlit;
             Shader *shader_gizmo;
             Shader *shader_ui;
+            Shader *shader_font;
 
             Material *material_default;
             Material *material_unlit;
             Material *material_ui;
+            Material *material_font;
 
             Mesh *mesh_quad;
             Mesh *mesh_plane;

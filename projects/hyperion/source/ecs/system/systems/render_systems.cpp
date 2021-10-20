@@ -198,14 +198,13 @@ namespace Hyperion::Rendering {
                 color.a *= element->GetStyle().GetOpacity();
 
                 if (color.a > 0.0f) {
-                    Material *ui_material = AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI);
-
+                    Material *material = renderer.material ? renderer.material : AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI);
                     AssetId texture_id = renderer.texture ? renderer.texture->GetAssetInfo().id : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetAssetInfo().id;
 
                     RenderFrameContextObjectUI &render_frame_context_ui_object = render_frame_context.AddUIObject();
                     render_frame_context_ui_object.mesh_id = renderer.mesh->GetAssetInfo().id;
-                    render_frame_context_ui_object.shader_id = ui_material->GetShader()->GetAssetInfo().id;
-                    render_frame_context_ui_object.material_id = ui_material->GetAssetInfo().id;
+                    render_frame_context_ui_object.shader_id = material->GetShader()->GetAssetInfo().id;
+                    render_frame_context_ui_object.material_id = material->GetAssetInfo().id;
                     render_frame_context_ui_object.color = color;
                     render_frame_context_ui_object.texture_id = texture_id;
                 }

@@ -12,6 +12,11 @@
 namespace Hyperion::UI {
 
     //--------------------------------------------------------------
+    UILabel::UILabel() {
+        GetRenderer().material = AssetManager::GetMaterialPrimitive(MaterialPrimitive::Font);
+    }
+
+    //--------------------------------------------------------------
     void UILabel::SetFont(Font *font) {
         if (m_font != font) {
             m_font = font;
@@ -39,7 +44,7 @@ namespace Hyperion::UI {
     }
 
     //--------------------------------------------------------------
-    void UILabel::OnRebuildGeometry(MeshBuilder &mesh_builder) {
+    void UILabel::OnRebuildGeometry(float32 ui_scale, MeshBuilder &mesh_builder) {
         if (m_font == nullptr || m_text == "") {
             return;
         }
@@ -54,7 +59,7 @@ namespace Hyperion::UI {
         settings.font = m_font;
         settings.alignment = m_alignment;
         settings.color = GetStyle().GetColor();
-        settings.scale = 1.0f;
+        settings.scale = ui_scale;
         settings.rect = Rect(Vector2(world_corners[2]), Vector2(world_corners[0] - world_corners[2]));
 
         AssetManager::Unload(GetRenderer().mesh);
