@@ -37,4 +37,18 @@ namespace Hyperion::UI {
         Hidden
     };
 
+    enum class UITextAlignment {
+        TopLeft,
+        TopCenter,
+        TopRight,
+
+        MiddleLeft,
+        MiddleCenter,
+        MiddleRight,
+
+        BottomLeft,
+        BottomCenter,
+        BottomRight,
+    };
+
 }
