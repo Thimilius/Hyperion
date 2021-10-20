@@ -5,6 +5,7 @@
 #include "hyperion/core/color.hpp"
 #include "hyperion/core/math/vector4.hpp"
 #include "hyperion/core/math/matrix4x4.hpp"
+#include "hyperion/render/types/render_types_texture.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
@@ -75,7 +76,12 @@ namespace Hyperion::Rendering {
         Vector4 vector4;
         Color color;
         Matrix4x4 matrix4x4;
-        AssetId texture;
+
+        struct {
+            AssetId id = AssetInfo::INVALID_ID;
+            TextureDimension dimension = TextureDimension::Texture2D;
+            uint32 render_texture_attchment_index = 0;
+        } texture;
     };
 
     struct ShaderProperty {

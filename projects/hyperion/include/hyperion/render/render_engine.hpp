@@ -127,6 +127,8 @@ namespace Hyperion::Rendering {
         inline static RenderFrame *GetMainRenderFrame() { return s_main_frame; }
         inline static RenderStats GetStats() { return s_render_stats; }
 
+        inline static IRenderPipeline *GetPipeline() { return s_render_pipeline; }
+
         inline static VSyncMode GetVSyncMode() { return s_vsync_mode; }
         static void SetVSyncMode(VSyncMode vsync_mode);
     private:

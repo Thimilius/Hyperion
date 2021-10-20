@@ -693,16 +693,32 @@ namespace Hyperion::Rendering {
                     break;
                 }
                 case ShaderPropertyType::Texture: {
-                    // TODO: This updating of textures is quite expensive and should be done more performant.
-                    auto it = m_opengl_textures.Find(property.storage.texture);
-                    if (it == m_opengl_textures.end()) {
-                        HYP_LOG_ERROR("OpenGL", "Trying to set non existing texture shader property!");
+                    // NOTE: This updating of textures is quite expensive and should be done more performant.
+
+                    GLuint texture = 0;
+                    if (property.storage.texture.dimension == TextureDimension::RenderTexture) {
+                        // TODO: We should do more validation when setting a render texture.
+                        auto it = m_opengl_render_textures.Find(property.storage.texture.id);
+                        if (it == m_opengl_render_textures.end()) {
+                            HYP_LOG_ERROR("OpenGL", "Trying to set non existing render texture as shader property!");
+                            break;
+                        } else {
+                            const OpenGLRenderTextureAttachment &opengl_attachment = it->second.attachments[property.storage.texture.render_texture_attchment_index];
+                            texture = opengl_attachment.attachment;
+                        }
                     } else {
-                        GLuint texture = it->second.texture;
-                        glBindTextureUnit(texture_unit, texture);
-                        glProgramUniform1i(opengl_shader.program, location, texture_unit);
-                        texture_unit++;
+                        auto it = m_opengl_textures.Find(property.storage.texture.id);
+                        if (it == m_opengl_textures.end()) {
+                            HYP_LOG_ERROR("OpenGL", "Trying to set non existing texture as shader property!");
+                            break;
+                        } else {
+                            texture = it->second.texture;
+                        }
                     }
+
+                    glBindTextureUnit(texture_unit, texture);
+                    glProgramUniform1i(opengl_shader.program, location, texture_unit);
+                    texture_unit++;
                     break;
                 }
                 default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;

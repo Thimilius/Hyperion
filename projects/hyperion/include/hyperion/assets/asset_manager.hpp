@@ -61,6 +61,10 @@ namespace Hyperion {
         static Texture2D *CreateTexture2D(const Rendering::Texture2DParameters &parameters);
         static Texture2D *CreateTexture2D(const Rendering::Texture2DParameters &parameters, const Rendering::TexturePixelData &pixels, AssetDataAccess data_access = AssetDataAccess::None);
 
+        static RenderTexture *GetRenderTextureByGuid(AssetGuid guid);
+        static RenderTexture *GetRenderTextureById(AssetId id);
+        static RenderTexture *CreateRenderTexture(const Rendering::RenderTextureParameters &parameters);
+
         template<typename K, typename V>
         static TextureAtlas<K, V> *CreateTextureAtlas(Texture2D *texture, const Map<K, TextureAtlasElement<V>> &elements) {
             AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
@@ -68,8 +72,6 @@ namespace Hyperion {
             s_texture_atlases.Insert(info.guid, texture_atlas);
             return texture_atlas;
         }
-
-        static RenderTexture *CreateRenderTexture(const Rendering::RenderTextureParameters &parameters);
 
         static Font *CreateFont(uint32 size, FontCharacterSet character_set, FontAtlas *font_atlas, SpecialFontGlyphs special_glyphs);
 

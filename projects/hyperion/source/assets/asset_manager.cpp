@@ -80,6 +80,42 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    RenderTexture *AssetManager::GetRenderTextureByGuid(AssetGuid guid) {
+        auto it = s_textures.Find(guid);
+        if (it == s_textures.end()) {
+            HYP_LOG_ERROR("Asset", "The texture with guid {} does not exist!", guid.ToString());
+            return nullptr;
+        } else {
+            Texture *texture = it->second;
+            if (texture->GetDimension() == Rendering::TextureDimension::RenderTexture) {
+                return static_cast<RenderTexture *>(texture);
+            } else {
+                HYP_LOG_ERROR("Asset", "The texture with guid {} is not a render texture!", guid.ToString());
+                return nullptr;
+            }
+        }
+    }
+
+    //--------------------------------------------------------------
+    RenderTexture *AssetManager::GetRenderTextureById(AssetId id) {
+        auto it = std::find_if(s_textures.begin(), s_textures.end(), [id](const auto &pair) {
+            return pair.second->GetAssetInfo().id == id;
+        });
+        if (it == s_textures.end()) {
+            HYP_LOG_ERROR("Asset", "The texture with id {} does not exist!", id);
+            return nullptr;
+        } else {
+            Texture *texture = it->second;
+            if (texture->GetDimension() == Rendering::TextureDimension::RenderTexture) {
+                return static_cast<RenderTexture *>(texture);
+            } else {
+                HYP_LOG_ERROR("Asset", "The texture with id {} is not a render texture!", id);
+                return nullptr;
+            }
+        }
+    }
+
+    //--------------------------------------------------------------
     RenderTexture *AssetManager::CreateRenderTexture(const Rendering::RenderTextureParameters &parameters) {
         AssetInfo info = GetNextAssetInfo(AssetDataAccess::None);
         RenderTexture *render_texture = new RenderTexture(info, parameters);

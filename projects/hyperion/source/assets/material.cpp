@@ -180,12 +180,17 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Texture2D *Material::GetTexture(Rendering::ShaderPropertyId id) const {
+    Texture *Material::GetTexture(Rendering::ShaderPropertyId id) const {
         auto it = m_property_indices.Find(id);
         if (it != m_property_indices.end()) {
             const MaterialProperty &property = m_properties.Get(it->second);
             if (property.type == ShaderPropertyType::Texture) {
-                return AssetManager::GetTexture2DById(property.storage.texture);
+                AssetId texture_id = property.storage.texture.id;
+                switch (property.storage.texture.dimension) {
+                    case TextureDimension::Texture2D: return AssetManager::GetTexture2DById(texture_id);
+                    case TextureDimension::RenderTexture: return AssetManager::GetRenderTextureById(texture_id);
+                    default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
+                }
             } else {
                 HYP_LOG_WARN("Material", "Trying to get texture material property that is not a texture.");
                 return nullptr;
@@ -197,7 +202,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    void Material::SetTexture(Rendering::ShaderPropertyId id, const Texture2D *value) {
+    void Material::SetTexture(Rendering::ShaderPropertyId id, const Texture *value) {
         auto it = m_property_indices.Find(id);
         if (it != m_property_indices.end()) {
             MaterialProperty &property = m_properties.Get(it->second);
@@ -205,7 +210,30 @@ namespace Hyperion {
                 if (value == nullptr) {
                     HYP_LOG_WARN("Material", "Trying to set texture material property with a null texture.");
                 } else {
-                    property.storage.texture = value->GetAssetInfo().id;
+                    property.storage.texture.id = value->GetAssetInfo().id;
+                    property.storage.texture.dimension = value->GetDimension();
+                    SetDirty();
+                }
+            } else {
+                HYP_LOG_WARN("Material", "Trying to set texture material property that is not a texture.");
+            }
+        } else {
+            HYP_LOG_WARN("Material", "Trying to set nonexistent material property.");
+        }
+    }
+
+    //--------------------------------------------------------------
+    void Material::SetTexture(Rendering::ShaderPropertyId id, const RenderTexture *value, uint32 attachment_index) {
+        auto it = m_property_indices.Find(id);
+        if (it != m_property_indices.end()) {
+            MaterialProperty &property = m_properties.Get(it->second);
+            if (property.type == ShaderPropertyType::Texture) {
+                if (value == nullptr) {
+                    HYP_LOG_WARN("Material", "Trying to set texture material property with a null texture.");
+                } else {
+                    property.storage.texture.id = value->GetAssetInfo().id;
+                    property.storage.texture.dimension = TextureDimension::RenderTexture;
+                    property.storage.texture.render_texture_attchment_index = attachment_index;
                     SetDirty();
                 }
             } else {
