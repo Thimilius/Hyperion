@@ -123,6 +123,7 @@ project "hyperion"
 		includedirs { "%{prj.location}/vendor/optick/include" }
 
 	filter "system:windows"
+		buildoptions { "/MP" }
 		files {
 			"%{prj.location}/include/hyperion/platform/windows/**.hpp",
 			"%{prj.location}/source/platform/windows/**.cpp",
@@ -196,6 +197,7 @@ project "hyperion-sandbox"
 	includedirs { "%{prj.location}/include" }
 		
     filter "system:windows"
+		buildoptions { "/MP" }
 		files { "%{prj.location}/resource.rc" }
 		postbuildcommands {
 		    "{COPY} %{cfg.targetdir}/%{prj.name}.exe ../../run_tree/hyperion.exe*"
