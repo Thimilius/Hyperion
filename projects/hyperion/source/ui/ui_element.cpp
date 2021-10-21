@@ -24,6 +24,12 @@ namespace Hyperion::UI {
     }
 
     //--------------------------------------------------------------
+    void UIElementStyle::SetColorBlock(const UIColorBlock &color_block) {
+        m_color_block = color_block;
+        m_element->MarkDirty();
+    }
+
+    //--------------------------------------------------------------
     void UIElementHierarchy::AddChild(UIElement *child) {
         m_children.Add(child);
         if (child->GetHierarchy().m_parent != nullptr) {
@@ -249,7 +255,16 @@ namespace Hyperion::UI {
 
     //--------------------------------------------------------------
     void UIElement::OnEvent(UIEvent &event) {
-
+        UIEventType event_type = event.GetType();
+        if (event_type == UIEventType::PointerDown) {
+            GetRenderer().color = m_style.m_color_block.pressed_color;
+        } else if (event_type == UIEventType::PointerUp) {
+            GetRenderer().color = m_style.m_color_block.highlight_color;
+        } else if (event_type == UIEventType::PointerEnter) {
+            GetRenderer().color = m_style.m_color_block.highlight_color;
+        } else if (event_type == UIEventType::PointerExit) {
+            GetRenderer().color = m_style.m_color_block.normal_color;
+        }
     }
 
     //--------------------------------------------------------------

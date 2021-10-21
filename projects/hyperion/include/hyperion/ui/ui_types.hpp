@@ -51,4 +51,10 @@ namespace Hyperion::UI {
         BottomRight,
     };
 
+    struct UIColorBlock {
+        Color normal_color = Color::White();
+        Color highlight_color = Color::White();
+        Color pressed_color = Color::White();
+    };
+
 }

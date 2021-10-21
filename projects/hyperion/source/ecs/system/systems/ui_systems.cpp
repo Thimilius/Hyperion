@@ -78,19 +78,21 @@ namespace Hyperion::UI {
                 Array<UIElement *> hovered_elements;
                 RaycastElements(ui_view->root_element, Input::GetMousePosition(), hovered_elements);
                 
-                if (!hovered_elements.IsEmpty()) {
+                if (!hovered_elements.IsEmpty() && state.pressed_element == nullptr) {
                     // The array we get back will be depth sorted in reverse.
                     // This means the top most hovered element we are interested in is at the end.
                     UIElement *hovered_element = hovered_elements.GetLast();
 
-                    if (state.hovered_element) {
-                        SendEvent(state.hovered_element, UIEventType::PointerExit);
-                    }
-                    state.hovered_element = hovered_element;
+                    if (state.hovered_element != hovered_element) {
+                        if (state.hovered_element) {
+                            SendEvent(state.hovered_element, UIEventType::PointerExit);
+                        }
 
-                    SendEvent(state.hovered_element, UIEventType::PointerEnter);
+                        state.hovered_element = hovered_element;
+                        SendEvent(state.hovered_element, UIEventType::PointerEnter);
+                    }
                 } else {
-                    if (state.hovered_element) {
+                    if (state.hovered_element && state.pressed_element == nullptr) {
                         SendEvent(state.hovered_element, UIEventType::PointerExit);
                         state.hovered_element = nullptr;
                     }
@@ -99,17 +101,26 @@ namespace Hyperion::UI {
                 if (state.hovered_element) {
                     if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
                         SendEvent(state.hovered_element, UIEventType::PointerDown);
+                        state.pressed_element = state.hovered_element;
                     }
                     if (Input::IsMouseButtonUp(MouseButtonCode::Left)) {
                         SendEvent(state.hovered_element, UIEventType::PointerUp);
                         SendEvent(state.hovered_element, UIEventType::PointerClick);
+                        state.pressed_element = nullptr;
                     }
 
-                    if (Input::HasMouseMoved()) {
+                    if (Input::HasMouseMoved() && state.pressed_element == nullptr) {
                         SendEvent(state.hovered_element, UIEventType::PointerMove);
                     }
-                    if (Input::HasMouseScrolled()) {
+                    if (Input::HasMouseScrolled() && state.pressed_element == nullptr) {
                         SendEvent(state.hovered_element, UIEventType::PointerScroll);
+                    }
+                }
+
+                if (state.pressed_element) {
+                    if (Input::IsMouseButtonUp(MouseButtonCode::Left)) {
+                        SendEvent(state.pressed_element, UIEventType::PointerUp);
+                        state.pressed_element = nullptr;
                     }
                 }
 

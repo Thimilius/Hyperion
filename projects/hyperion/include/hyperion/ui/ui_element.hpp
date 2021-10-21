@@ -40,12 +40,17 @@ namespace Hyperion::UI {
 
         inline float32 GetOpacity() const { return m_opacity; }
         void SetOpacity(float32 opacity);
+
+        inline UIColorBlock &GetColorBlock() { return m_color_block; }
+        inline const UIColorBlock &GetColorBlock() const { return m_color_block; }
+        void SetColorBlock(const UIColorBlock &color_block);
     private:
         UIElement *m_element = nullptr;
 
         UIVisibility m_visibility = UIVisibility::Visible;
         Color m_color = Color::White();
         float32 m_opacity = 1.0f;
+        UIColorBlock m_color_block;
     private:
         friend class Hyperion::UI::UIElement;
     };
@@ -63,6 +68,11 @@ namespace Hyperion::UI {
         Array<UIElement *> m_children;
     private:
         friend class Hyperion::UI::UIElement;
+    };
+
+    struct UIElementState {
+        bool8 is_highlighted = false;
+        bool8 is_pressed = false;
     };
 
     class UIElement {
@@ -142,6 +152,7 @@ namespace Hyperion::UI {
         UIElementRenderer m_renderer;
         UIElementStyle m_style;
         UIElementHierarchy m_hierarchy;
+        UIElementState m_state;
     private:
         friend class Hyperion::UI::UIElementHierarchy;
     };
