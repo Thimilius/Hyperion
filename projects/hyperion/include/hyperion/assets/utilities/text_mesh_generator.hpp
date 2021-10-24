@@ -26,7 +26,7 @@ namespace Hyperion {
         static Mesh *GenerateMesh(const TextMeshGenerationSettings &settings);
         static Mesh *GenerateMesh(const TextMeshGenerationSettings &settings, MeshBuilder &mesh_builder);
     private:
-        static Vector2 GetPosition(UI::UITextAlignment text_alignment, Vector2 text_size, Rect rect);
+        static Vector2 GetPosition(UI::UITextAlignment text_alignment, TextSize text_size, Rect rect);
     private:
         TextMeshGenerator() = delete;
         ~TextMeshGenerator() = delete;

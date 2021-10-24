@@ -7,6 +7,12 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    struct TextSize {
+        float32 width;
+        float32 height;
+        float32 baseline_offset;
+    };
+
     class Font final : public Asset {
     public:
         AssetType GetAssetType() const override { return AssetType::Font; }
@@ -17,7 +23,7 @@ namespace Hyperion {
         const FontAtlasElement &GetElement(uint32 codepoint) const;
         inline const SpecialFontGlyphs &GetSpecialGlyphs() const { return m_special_glyphs; }
 
-        Vector2 GetTextSize(const String &text, float32 scale) const;
+        TextSize GetTextSize(const String &text, float32 scale) const;
     private:
         Font(AssetInfo info) : Asset(info) { }
         Font(AssetInfo info, uint32 size, FontCharacterSet character_set, FontAtlas *font_atlas, SpecialFontGlyphs special_glyphs);

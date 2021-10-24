@@ -22,7 +22,7 @@ namespace Hyperion {
         float32 scale_x = settings.scale.x;
         float32 scale_y = settings.scale.y;
 
-        Vector2 text_size = font->GetTextSize(settings.text, scale_x);
+        TextSize text_size = font->GetTextSize(settings.text, scale_x);
         Vector2 position = GetPosition(settings.alignment, text_size, settings.rect);
         Vector2 intial_position = position;
 
@@ -72,53 +72,50 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Vector2 TextMeshGenerator::GetPosition(UI::UITextAlignment text_alignment, Vector2 text_size, Rect rect) {
+    Vector2 TextMeshGenerator::GetPosition(UI::UITextAlignment text_alignment, TextSize text_size, Rect rect) {
         Vector2 position = Vector2();
 
         switch (text_alignment) {
             case UI::UITextAlignment::TopLeft: {
-                position = Vector2(rect.position.x, rect.GetMax().y - text_size.y);
+                position = Vector2(rect.position.x, rect.GetMax().y - text_size.height - text_size.baseline_offset);
                 break;
             }
             case UI::UITextAlignment::TopCenter: {
-                position = Vector2(rect.GetCenter().x - (text_size.x / 2.0f), rect.GetMax().y - text_size.y);
+                position = Vector2(rect.GetCenter().x - (text_size.width / 2.0f), rect.GetMax().y - text_size.height - text_size.baseline_offset);
                 break;
             }
             case UI::UITextAlignment::TopRight: {
                 Vector2 max = rect.GetMax();
-                position = Vector2(max.x - text_size.x, max.y - text_size.y);
+                position = Vector2(max.x - text_size.width, max.y - text_size.height - text_size.baseline_offset);
                 break;
             }
             case UI::UITextAlignment::MiddleLeft: {
-                position = Vector2(rect.position.x, rect.GetCenter().y - (text_size.y / 2.0f));
+                position = Vector2(rect.position.x, rect.GetCenter().y - (text_size.height / 2.0f));
                 break;
             }
             case UI::UITextAlignment::MiddleCenter: {
                 Vector2 center = rect.GetCenter();
-                position = Vector2(center.x - (text_size.x / 2.0f), center.y - (text_size.y / 2.0f));
+                position = Vector2(center.x - (text_size.width / 2.0f), center.y - (text_size.height / 2.0f));
                 break;
             }
             case UI::UITextAlignment::MiddleRight: {
-                position = Vector2(rect.GetMax().x - text_size.x, rect.GetCenter().y - (text_size.y / 2.0f));
+                position = Vector2(rect.GetMax().x - text_size.width, rect.GetCenter().y - (text_size.height / 2.0f));
                 break;
             }
             case UI::UITextAlignment::BottomLeft: {
-                position = Vector2(rect.position.x, rect.position.y);
+                position = Vector2(rect.position.x, rect.position.y + text_size.baseline_offset);
                 break;
             }
             case UI::UITextAlignment::BottomCenter: {
-                position = Vector2(rect.GetCenter().x - (text_size.x / 2.0f), rect.position.y);
+                position = Vector2(rect.GetCenter().x - (text_size.width / 2.0f), rect.position.y + text_size.baseline_offset);
                 break;
             }
             case UI::UITextAlignment::BottomRight: {
-                position = Vector2(rect.GetMax().x - text_size.x, rect.position.y);
+                position = Vector2(rect.GetMax().x - text_size.width, rect.position.y + text_size.baseline_offset);
                 break;
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         }
-
-        position.x = Math::Round(position.x);
-        position.y = Math::Round(position.y);
 
         return Vector3(position, 0.0f);
     }

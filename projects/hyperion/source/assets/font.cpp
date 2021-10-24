@@ -26,11 +26,13 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Vector2 Font::GetTextSize(const String &text, float32 scale) const {
-        float32 max_width = FLT_MIN;
-        float32 max_height = FLT_MIN;
+    TextSize Font::GetTextSize(const String &text, float32 scale) const {
+        float32 max_width = -FLT_MAX;
+        float32 max_height = -FLT_MAX;
+        float32 max_glyph_baseline_offset = -FLT_MAX;
         float32 current_width = 0.0f;
         float32 current_height = 0.0f;
+        float32 current_glyph_baseline_offset = 0.0f;
 
         Array<uint32> codepoints = StringUtils::GetCodepointsUtf8(text);
         for (uint32 codepoint : codepoints) {
@@ -56,6 +58,10 @@ namespace Hyperion {
             if (current_height > max_height) {
                 max_height = current_height;
             }
+            current_glyph_baseline_offset = (glyph.size.y - glyph.bearing.y) * scale;
+            if (current_glyph_baseline_offset > max_glyph_baseline_offset) {
+                max_glyph_baseline_offset = current_glyph_baseline_offset;
+            }
         }
 
         if (current_width > max_width) {
@@ -64,7 +70,12 @@ namespace Hyperion {
         if (current_height > max_height) {
             max_height = current_height;
         }
-        return Vector2(max_width, max_height);
+
+        TextSize text_size;
+        text_size.width = max_width;
+        text_size.height = max_height;
+        text_size.baseline_offset = max_glyph_baseline_offset;
+        return text_size;
     }
 
 }
