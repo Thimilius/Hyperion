@@ -1000,6 +1000,8 @@ namespace Hyperion::Rendering {
                 glDeleteTextures(1, &opengl_attachment.attachment);
             }
         }
+        glDeleteFramebuffers(1, &opengl_render_texture.framebuffer);
+
         m_opengl_render_textures.Remove(render_texture_id);
     }
 
