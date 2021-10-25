@@ -8,9 +8,6 @@
 ## Assets
 - Textures
     - Cubemaps
-    - RenderTextures
-- Fonts
-- Texture atlas
 - Duplication
 - Error shader/material
 - Data update for textures/meshes
@@ -31,12 +28,10 @@
 - Rigidbodies
 
 ## Rendering
-- Framebuffers
 - Lighting
 	- Spotlights
     - Storage buffers
 	- Frustum culling
-- Better global buffer abstraction
 - Async readback of textures/buffers
 
 ## Serialization
@@ -57,5 +52,7 @@
 - .NET 5/6 or Mono?
 
 ## UI
-- Immediate or Retained? (Maybe both?)
-- Font rendering (Rasterized or SDF?)
+- Shadow effect for ui elements
+- Immediate mode API
+- Font rendering
+    - SDF

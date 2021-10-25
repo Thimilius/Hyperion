@@ -49,6 +49,7 @@ namespace Hyperion::Editor {
     UIElement *g_render_ui_element;
     UIButton *g_child_ui_element;
     UILabel *g_label;
+    UILabel *g_label_shadow;
 
     CameraController *g_camera_controller;
 
@@ -104,10 +105,22 @@ namespace Hyperion::Editor {
         g_header_ui_element->GetStyle().SetColor(Color::Grey());
         root_element->GetHierarchy().AddChild(g_header_ui_element);
 
+        Font *consola_font = FontLoader::LoadFont("data/fonts/consola.ttf", 12, FontCharacterSet::LatinSupplement);
+
+        g_label_shadow = new UILabel();
+        g_label_shadow->SetFont(consola_font);
+        g_label_shadow->SetAlignment(UITextAlignment::MiddleLeft);
+        g_label_shadow->SetAnchorPreset(UIAnchorPreset::StretchAll);
+        g_label_shadow->SetOffsetMin(Vector2(5.0f, 0.0f));
+        g_label_shadow->GetStyle().SetColor(Color::Black());
+        g_label_shadow->SetPosition(Vector2(1.0f, -1.0f));
+        g_header_ui_element->GetHierarchy().AddChild(g_label_shadow);
+
         g_label = new UILabel();
-        g_label->SetFont(FontLoader::LoadFont("data/fonts/consola.ttf", 12, FontCharacterSet::LatinSupplement));
-        g_label->SetAlignment(UITextAlignment::MiddleRight);
+        g_label->SetFont(consola_font);
+        g_label->SetAlignment(UITextAlignment::MiddleLeft);
         g_label->SetAnchorPreset(UIAnchorPreset::StretchAll);
+        g_label->SetOffsetMin(Vector2(5.0f, 0.0f));
         g_header_ui_element->GetHierarchy().AddChild(g_label);
 
         EntityId ui = g_world->CreateEntity();
@@ -115,7 +128,7 @@ namespace Hyperion::Editor {
         ui_view->scaling_mode = UIScalingMode::ConstantPixelSize;
         ui_view->root_element = root_element;
 
-        UpdateTitle();
+        UpdateStats();
     }
 
     //--------------------------------------------------------------
@@ -146,7 +159,7 @@ namespace Hyperion::Editor {
 
         g_world->GetComponent<LocalTransformComponent>(g_parent)->rotation = Quaternion::FromEulerAngles(0.0f, Math::Sin(Time::GetTime()) * 45.0f, 0.0f);
 
-        UpdateTitle();
+        UpdateStats();
 
         g_world->GetComponent<CameraComponent>(g_camera)->viewport_clipping.height = (Display::GetHeight() - UI_HEADER_SIZE) / static_cast<float32>(Display::GetHeight());
         if (Display::HasChangedSize()) {
@@ -160,15 +173,14 @@ namespace Hyperion::Editor {
     }
 
     //--------------------------------------------------------------
-    void EditorApplication::UpdateTitle() {
-        String format = "Hyperion - FPS: {} ({:.2f}ms) - VSync: {} - Draw calls: {}, Vertices: {}, Triangles: {} - Memory: {}";
+    void EditorApplication::UpdateStats() {
+        String format = "FPS: {} ({:.2f}ms) - VSync: {} - Draw calls: {}, Vertices: {}, Triangles: {} - Memory: {}";
         RenderStats render_stats = Rendering::RenderEngine::GetStats();
         String vsync = Rendering::RenderEngine::GetVSyncMode() == Rendering::VSyncMode::DontSync ? "Off" : "On";
         uint64 memory = MemoryStats::GetGlobalMemory();
         String title = StringUtils::Format(format, Time::GetFPS(), Time::GetFrameTime(), vsync, render_stats.draw_calls, render_stats.vertex_count, render_stats.triangle_count, memory);
-
-        GetWindow()->SetTitle(title);
         g_label->SetText(title);
+        g_label_shadow->SetText(title);
     }
 
 }
