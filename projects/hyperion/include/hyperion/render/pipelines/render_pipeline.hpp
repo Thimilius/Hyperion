@@ -1,8 +1,12 @@
 #pragma once
 
 //-------------------- Forward Declarations --------------------
-namespace Hyperion::Rendering {
-    class RenderFrame;
+namespace Hyperion {
+    class RenderTexture;
+
+    namespace Rendering {
+        class RenderFrame;
+    }
 }
 
 //-------------------- Definition Namespace --------------------
@@ -22,6 +26,10 @@ namespace Hyperion::Rendering {
         virtual void Initialize() = 0;
         virtual void Render(RenderFrame *render_frame) = 0;
         virtual void Shutdown() = 0;
+
+        virtual void SetRenderTargetSize(uint32 width, uint32 height) = 0;
+        virtual RenderTexture *GetTargetRenderTexture() const = 0;
+        virtual void SetShouldBlitToScreen(bool8 should_blit_to_screen) = 0;
     };
 
 }

@@ -17,26 +17,26 @@ namespace Hyperion {
 }
 
 //-------------------- Definition Namespace --------------------
-namespace Sandbox {
+namespace Hyperion {
 
     class CameraController {
     public:
-        CameraController(Hyperion::EntityId camera) : m_camera(camera) { }
+        CameraController(EntityId camera) : m_camera(camera) { }
     public:
-        virtual void Reset(Hyperion::World *world) = 0;
-        virtual void Update(Hyperion::World *world, float32 delta_time) = 0;
+        virtual void Reset(World *world) = 0;
+        virtual void Update(World *world, float32 delta_time) = 0;
     protected:
-        Hyperion::EntityId m_camera;
+        EntityId m_camera;
     };
 
     class FirstPersonCameraController : public CameraController {
     public:
-        FirstPersonCameraController(Hyperion::EntityId camera) : CameraController(camera) { }
+        FirstPersonCameraController(EntityId camera) : CameraController(camera) { }
     public:
-        void Reset(Hyperion::World *world) override;
-        void Update(Hyperion::World *world, float32 delta_time) override;
+        void Reset(World *world) override;
+        void Update(World *world, float32 delta_time) override;
     private:
-        Hyperion::Vector3 m_velocity;
+        Vector3 m_velocity;
         float32 m_acceleration = 100.0f;
         float32 m_friction = 10.0f;
 
@@ -45,7 +45,7 @@ namespace Sandbox {
         float32 m_target_pitch = m_pitch;
         float32 m_target_yaw = m_yaw;
 
-        Hyperion::Vector2 m_last_mouse_position;
+        Vector2 m_last_mouse_position;
 
         float32 m_fov_target = 90.0f;
         float32 m_orthographic_size_target;
@@ -53,17 +53,17 @@ namespace Sandbox {
 
     class LookAroundCameraController : public CameraController {
     public:
-        LookAroundCameraController(Hyperion::EntityId camera) : CameraController(camera) { }
+        LookAroundCameraController(EntityId camera) : CameraController(camera) { }
     public:
-        void Reset(Hyperion::World *world) override;
-        void Update(Hyperion::World *world, float32 delta_time) override;
+        void Reset(World *world) override;
+        void Update(World *world, float32 delta_time) override;
     private:
-        Hyperion::Vector3 GetPositionUnderMouse(Hyperion::Rendering::CameraComponent *camera, Hyperion::DerivedTransformComponent *derived_transform) const;
-        Hyperion::Vector3 GetXZPlanePosition(Hyperion::Vector3 position, Hyperion::Vector3 forward) const;
-        Hyperion::Vector3 GetLookAtPosition(Hyperion::Vector3 look_at_position, Hyperion::Vector3 position, Hyperion::Vector3 forward) const;
+        Vector3 GetPositionUnderMouse(Rendering::CameraComponent *camera, DerivedTransformComponent *derived_transform) const;
+        Vector3 GetXZPlanePosition(Vector3 position, Vector3 forward) const;
+        Vector3 GetLookAtPosition(Vector3 look_at_position, Vector3 position, Vector3 forward) const;
         float32 ClampAngle(float32 angle, float32 min, float32 max) const;
     private:
-        Hyperion::Plane m_xz_plane = Hyperion::Plane(Hyperion::Vector3::Up(), 0);
+        Plane m_xz_plane = Plane(Vector3::Up(), 0);
         float32 m_xz_plane_distance = 1.0f;
 
         float32 m_rotation_axis_x = 0.0f;
@@ -72,8 +72,8 @@ namespace Sandbox {
         float32 m_rotation_velocity_y = 0.0f;
         float32 m_zoom = 1.0f;
 
-        Hyperion::Vector3 m_last_position;
-        Hyperion::Vector2 m_last_mouse_position;
+        Vector3 m_last_position;
+        Vector2 m_last_mouse_position;
 
         float32 m_rotation_speed = 5.0f;
         float32 m_movement_speed = 0.001f;

@@ -78,7 +78,11 @@ namespace Hyperion::Rendering {
 
         {
             RenderFrameCommandBuffer command_buffer;
-            command_buffer.SetRenderTarget(RenderTargetId::Default());
+            if (m_should_blit_to_screen) {
+                command_buffer.Blit(RenderTargetId::Default(), m_target_render_texture->GetRenderTargetId());
+            } else {
+                command_buffer.SetRenderTarget(RenderTargetId::Default());
+            }
             render_frame->ExecuteCommandBuffer(command_buffer);
         }
 

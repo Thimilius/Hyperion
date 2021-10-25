@@ -1,5 +1,5 @@
 //--------------------- Definition Include ---------------------
-#include "sandbox/sandbox_application.hpp"
+#include "hyperion/editor/editor_application.hpp"
 
 //---------------------- Library Includes ----------------------
 #include <hyperion/entry_point.hpp>
@@ -25,35 +25,37 @@
 #include <hyperion/ui/ui_label.hpp>
 
 //------------------------- Namespaces -------------------------
-using namespace Hyperion;
 using namespace Hyperion::Rendering;
-
-#if HYP_RELEASE || HYP_PROFILE
-    #define HYP_STRESS_TEST
-    //#define HYP_STRESS_TEST_EXTREME
-#endif
+using namespace Hyperion::UI;
 
 //-------------------- Definition Namespace --------------------
-namespace Sandbox {
+namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
-    void SandboxApplication::OnSetup(ApplicationSettings &settings) {
+    void EditorApplication::OnSetup(ApplicationSettings &settings) {
         settings.render.backend = Rendering::RenderBackend::OpenGL;
         settings.render.threading_mode = Rendering::RenderThreadingMode::MultiThreaded;
         settings.render.vsync_mode = Rendering::VSyncMode::DontSync;
     }
+
+    const uint32 UI_HEADER_SIZE = 25;
 
     World *g_world;
     EntityId g_camera;
     EntityId g_light;
     EntityId g_parent;
     EntityId g_child;
+    UIElement *g_header_ui_element;
+    UIElement *g_render_ui_element;
+    UIButton *g_child_ui_element;
+    UILabel *g_label;
 
     CameraController *g_camera_controller;
 
     //--------------------------------------------------------------
-    void SandboxApplication::OnInitialize() {
-        RenderEngine::GetPipeline()->SetRenderTargetSize(Display::GetWidth(), Display::GetHeight());
+    void EditorApplication::OnInitialize() {
+        RenderEngine::GetPipeline()->SetShouldBlitToScreen(false);
+        RenderEngine::GetPipeline()->SetRenderTargetSize(Display::GetWidth(), Display::GetHeight() - UI_HEADER_SIZE);
 
         g_world = WorldManager::CreateWorld();
         WorldManager::SetActiveWorld(g_world);
@@ -66,34 +68,7 @@ namespace Sandbox {
         LocalTransformComponent *camera_transform = g_world->GetComponent<LocalTransformComponent>(g_camera);
 
         g_parent = g_world->CreateEntity(EntityPrimitive::Sphere);
-#ifdef HYP_STRESS_TEST
-        float32 size = 100;
-        for (float32 x = 0; x < size; x++) {
-            for (float32 z = 0; z < size; z++) {
-#ifdef HYP_STRESS_TEST_EXTREME
-                Material *material = AssetManager::CreateMaterial(AssetManager::GetShaderPrimitive(ShaderPrimitive::Standard));
-                material->SetColor("m_color", Color(Random::Get(), Random::Get(), Random::Get(), 1.0f));
-#endif
-                EntityId entity = g_world->CreateEntity(EntityPrimitive::Cube);
-                g_world->GetComponent<LocalTransformComponent>(entity)->position = Vector3(x * 2.0f, 0.0f, -z * 2.0f);
-#ifdef HYP_STRESS_TEST_EXTREME
-                g_world->GetComponent<MeshComponent>(entity)->material = material;
-#endif
-                g_world->GetHierarchy()->SetParent(entity, g_parent);
-                g_world->RemoveComponent<Physics::BoxColliderComponent>(entity);
-            }
-        }
 
-        for (uint32 i = 0; i < 128; i++) {
-            float32 x = Random::Get() * size * 2.0f;
-            float32 z = Random::Get() * size * 2.0f;
-
-            EntityId point_light = g_world->CreateEntity(EntityPrimitive::PointLight);
-            g_world->GetComponent<LocalTransformComponent>(point_light)->position = Vector3(x, 1.0f, -z);
-            g_world->GetComponent<PointLightComponent>(point_light)->color = Color(Random::Get(), Random::Get(), Random::Get(), 1.0f);
-            g_world->GetComponent<PointLightComponent>(point_light)->intensity = 5.0f;
-        }
-#else
         g_child = g_world->CreateEntity(EntityPrimitive::Cube);
         g_world->GetComponent<LocalTransformComponent>(g_child)->position = Vector3(2.0f, 0.0f, 0.0f);
         g_world->GetHierarchy()->SetParent(g_child, g_parent);
@@ -110,13 +85,41 @@ namespace Sandbox {
         EntityId quad = g_world->CreateEntity(EntityPrimitive::Quad);
         g_world->GetComponent<MeshComponent>(quad)->material = material;
         g_world->GetComponent<LocalTransformComponent>(quad)->position = Vector3(0.0f, 2.0f, 0.0f);
-#endif
+
+        UIElement *root_element = new UIElement();
+        root_element->SetAnchorPreset(UIAnchorPreset::StretchAll);
+        root_element->GetStyle().SetVisibility(UIVisibility::Visible);
+
+        g_render_ui_element = new UIElement();
+        g_render_ui_element->SetAnchorPreset(UIAnchorPreset::StretchAll);
+        g_render_ui_element->SetOffsetMax(Vector2(0.0f, UI_HEADER_SIZE));
+        g_render_ui_element->GetRenderer().texture = RenderEngine::GetPipeline()->GetTargetRenderTexture();
+        g_render_ui_element->GetRenderer().render_texture_attachment_index = 1;
+        g_render_ui_element->GetRenderer().enable_blending = false;
+        root_element->GetHierarchy().AddChild(g_render_ui_element);
+
+        g_header_ui_element = new UIElement();
+        g_header_ui_element->SetSize(Vector2(0.0f, UI_HEADER_SIZE));
+        g_header_ui_element->SetAnchorPreset(UIAnchorPreset::TopStretchHorizontal);
+        g_header_ui_element->GetStyle().SetColor(Color::Grey());
+        root_element->GetHierarchy().AddChild(g_header_ui_element);
+
+        g_label = new UILabel();
+        g_label->SetFont(FontLoader::LoadFont("data/fonts/consola.ttf", 12, FontCharacterSet::LatinSupplement));
+        g_label->SetAlignment(UITextAlignment::MiddleRight);
+        g_label->SetAnchorPreset(UIAnchorPreset::StretchAll);
+        g_header_ui_element->GetHierarchy().AddChild(g_label);
+
+        EntityId ui = g_world->CreateEntity();
+        UIViewComponent *ui_view = g_world->AddComponent<UIViewComponent>(ui);
+        ui_view->scaling_mode = UIScalingMode::ConstantPixelSize;
+        ui_view->root_element = root_element;
 
         UpdateTitle();
     }
 
     //--------------------------------------------------------------
-    void SandboxApplication::OnUpdate(float32 delta_time) {
+    void EditorApplication::OnUpdate(float32 delta_time) {
         if (Input::IsKeyHold(KeyCode::Control) && Input::IsKeyDown(KeyCode::W)) {
             Exit();
         }
@@ -143,44 +146,34 @@ namespace Sandbox {
 
         g_world->GetComponent<LocalTransformComponent>(g_parent)->rotation = Quaternion::FromEulerAngles(0.0f, Math::Sin(Time::GetTime()) * 45.0f, 0.0f);
 
-#ifdef HYP_STRESS_TEST
-        Quaternion rotation = Quaternion::FromEulerAngles(0.0f, Time::GetTime() * 25.0f, 0.0f);
-        auto view = g_world->GetView<LocalTransformComponent, MeshComponent>(ExcludeComponents<Physics::SphereColliderComponent>());
-        for (EntityId entity : view) {
-            LocalTransformComponent *transform = g_world->GetComponent<LocalTransformComponent>(entity);
-            transform->rotation = rotation;
-#ifdef HYP_STRESS_TEST_EXTREME
-            MeshComponent *mesh = g_world->GetComponent<MeshComponent>(entity);
-            mesh->material->SetColor("m_color", Color(Random::Get(), Random::Get(), Random::Get(), 1.0f));
-#endif
-        }
-#endif
         UpdateTitle();
 
+        g_world->GetComponent<CameraComponent>(g_camera)->viewport_clipping.height = (Display::GetHeight() - UI_HEADER_SIZE) / static_cast<float32>(Display::GetHeight());
         if (Display::HasChangedSize()) {
-            RenderEngine::GetPipeline()->SetRenderTargetSize(Display::GetWidth(), Display::GetHeight());
+            RenderEngine::GetPipeline()->SetRenderTargetSize(Display::GetWidth(), Display::GetHeight() - UI_HEADER_SIZE);
         }
     }
 
     //--------------------------------------------------------------
-    void SandboxApplication::OnTick() {
+    void EditorApplication::OnTick() {
 
     }
 
     //--------------------------------------------------------------
-    void SandboxApplication::UpdateTitle() {
-        String format = "Sandbox - FPS: {} ({:.2f}ms) - VSync: {} - Draw calls: {}, Vertices: {}, Triangles: {} - Memory: {}";
+    void EditorApplication::UpdateTitle() {
+        String format = "Hyperion - FPS: {} ({:.2f}ms) - VSync: {} - Draw calls: {}, Vertices: {}, Triangles: {} - Memory: {}";
         RenderStats render_stats = Rendering::RenderEngine::GetStats();
         String vsync = Rendering::RenderEngine::GetVSyncMode() == Rendering::VSyncMode::DontSync ? "Off" : "On";
         uint64 memory = MemoryStats::GetGlobalMemory();
         String title = StringUtils::Format(format, Time::GetFPS(), Time::GetFrameTime(), vsync, render_stats.draw_calls, render_stats.vertex_count, render_stats.triangle_count, memory);
 
         GetWindow()->SetTitle(title);
+        g_label->SetText(title);
     }
 
 }
 
 //--------------------------------------------------------------
-Application *Hyperion::CreateApplication() {
-    return new Sandbox::SandboxApplication();
+Hyperion::Application *Hyperion::CreateApplication() {
+    return new Hyperion::Editor::EditorApplication();
 }

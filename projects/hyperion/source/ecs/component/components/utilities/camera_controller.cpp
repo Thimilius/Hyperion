@@ -1,21 +1,23 @@
+//----------------- Precompiled Header Include -----------------
+#include "hyppch.hpp"
+
 //--------------------- Definition Include ---------------------
-#include "sandbox/camera_controller.hpp"
+#include "hyperion/ecs/component/components/utilities/camera_controller.hpp"
 
 //---------------------- Library Includes ----------------------
-#include <hyperion/core/math/math.hpp>
-#include <hyperion/core/app/input.hpp>
-#include <hyperion/ecs/component/components/render_components.hpp>
-#include <hyperion/ecs/component/components/transform_components.hpp>
-#include <hyperion/ecs/component/components/utilities/camera_utilities.hpp>
-#include <hyperion/ecs/component/components/utilities/transform_utilities.hpp>
-#include <hyperion/ecs/world/world.hpp>
+#include "hyperion/core/math/math.hpp"
+#include "hyperion/core/app/input.hpp"
+#include "hyperion/ecs/component/components/render_components.hpp"
+#include "hyperion/ecs/component/components/transform_components.hpp"
+#include "hyperion/ecs/component/components/utilities/camera_utilities.hpp"
+#include "hyperion/ecs/component/components/utilities/transform_utilities.hpp"
+#include "hyperion/ecs/world/world.hpp"
 
 //------------------------- Namespaces -------------------------
-using namespace Hyperion;
 using namespace Hyperion::Rendering;
 
 //-------------------- Definition Namespace --------------------
-namespace Sandbox {
+namespace Hyperion {
 
     //--------------------------------------------------------------
     void FirstPersonCameraController::Reset(World *world) {
