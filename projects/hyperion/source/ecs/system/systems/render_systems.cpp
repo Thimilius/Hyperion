@@ -194,14 +194,36 @@ namespace Hyperion::Rendering {
 
             Mesh *mesh = renderer.mesh;
             if (mesh != nullptr) {
+                float32 opacity = element->GetStyle().GetOpacity();
+
                 Color color = renderer.color;
-                color.a *= element->GetStyle().GetOpacity();
+                color.a *= opacity;
 
                 if (color.a > 0.0f) {
                     Material *material = renderer.material ? renderer.material : AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI);
                     AssetId texture_id = renderer.texture ? renderer.texture->GetAssetInfo().id : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetAssetInfo().id;
 
+                    // Because of the simple ui layering of elements we have to render the shadow first.
+                    if (element->GetStyle().GetShadow().enabled) {
+                        Color shadow_color = element->GetStyle().GetShadow().color;
+                        shadow_color.a *= opacity;
+
+                        if (shadow_color.a > 0.0f) {
+                            RenderFrameContextObjectUI &render_frame_context_ui_object_shadow = render_frame_context.AddUIObject();
+                            render_frame_context_ui_object_shadow.local_to_world = Matrix4x4::Translate(Vector3(element->GetStyle().GetShadow().offset, 0.0f));
+                            render_frame_context_ui_object_shadow.mesh_id = renderer.mesh->GetAssetInfo().id;
+                            render_frame_context_ui_object_shadow.shader_id = material->GetShader()->GetAssetInfo().id;
+                            render_frame_context_ui_object_shadow.material_id = material->GetAssetInfo().id;
+                            render_frame_context_ui_object_shadow.color = shadow_color;
+                            render_frame_context_ui_object_shadow.texture.id = texture_id;
+                            render_frame_context_ui_object_shadow.texture.dimension = renderer.texture ? renderer.texture->GetDimension() : TextureDimension::Texture2D;
+                            render_frame_context_ui_object_shadow.texture.render_texture_attchment_index = renderer.render_texture_attachment_index;
+                            render_frame_context_ui_object_shadow.enable_blending = renderer.enable_blending;
+                        }
+                    }
+
                     RenderFrameContextObjectUI &render_frame_context_ui_object = render_frame_context.AddUIObject();
+                    render_frame_context_ui_object.local_to_world = Matrix4x4::Identity();
                     render_frame_context_ui_object.mesh_id = renderer.mesh->GetAssetInfo().id;
                     render_frame_context_ui_object.shader_id = material->GetShader()->GetAssetInfo().id;
                     render_frame_context_ui_object.material_id = material->GetAssetInfo().id;

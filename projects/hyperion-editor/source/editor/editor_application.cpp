@@ -48,8 +48,8 @@ namespace Hyperion::Editor {
     UIElement *g_header_ui_element;
     UIElement *g_render_ui_element;
     UIButton *g_child_ui_element;
-    UILabel *g_label;
-    UILabel *g_label_shadow;
+    UILabel *g_label_fps;
+    UILabel *g_label_render_stats;
 
     CameraController *g_camera_controller;
 
@@ -107,28 +107,28 @@ namespace Hyperion::Editor {
 
         Font *consola_font = FontLoader::LoadFont("data/fonts/consola.ttf", 12, FontCharacterSet::LatinSupplement);
 
-        g_label_shadow = new UILabel();
-        g_label_shadow->SetFont(consola_font);
-        g_label_shadow->SetAlignment(UITextAlignment::MiddleLeft);
-        g_label_shadow->SetAnchorPreset(UIAnchorPreset::StretchAll);
-        g_label_shadow->SetOffsetMin(Vector2(5.0f, 0.0f));
-        g_label_shadow->GetStyle().SetColor(Color::Black());
-        g_label_shadow->SetPosition(Vector2(1.0f, -1.0f));
-        g_header_ui_element->GetHierarchy().AddChild(g_label_shadow);
+        g_label_fps = new UILabel();
+        g_label_fps->SetFont(consola_font);
+        g_label_fps->SetAlignment(UITextAlignment::MiddleLeft);
+        g_label_fps->SetAnchorPreset(UIAnchorPreset::StretchAll);
+        g_label_fps->SetOffsetMin(Vector2(5.0f, 0.0f));
+        g_label_fps->GetStyle().GetShadow().enabled = true;
+        g_header_ui_element->GetHierarchy().AddChild(g_label_fps);
 
-        g_label = new UILabel();
-        g_label->SetFont(consola_font);
-        g_label->SetAlignment(UITextAlignment::MiddleLeft);
-        g_label->SetAnchorPreset(UIAnchorPreset::StretchAll);
-        g_label->SetOffsetMin(Vector2(5.0f, 0.0f));
-        g_header_ui_element->GetHierarchy().AddChild(g_label);
+        g_label_render_stats = new UILabel();
+        g_label_render_stats->SetFont(consola_font);
+        g_label_render_stats->SetAlignment(UITextAlignment::MiddleRight);
+        g_label_render_stats->SetAnchorPreset(UIAnchorPreset::StretchAll);
+        g_label_render_stats->SetOffsetMax(Vector2(5.0f, 0.0f));
+        g_label_render_stats->GetStyle().GetShadow().enabled = true;
+        g_header_ui_element->GetHierarchy().AddChild(g_label_render_stats);
 
         EntityId ui = g_world->CreateEntity();
         UIViewComponent *ui_view = g_world->AddComponent<UIViewComponent>(ui);
         ui_view->scaling_mode = UIScalingMode::ConstantPixelSize;
         ui_view->root_element = root_element;
-
-        UpdateStats();
+        
+        UpdateTexts();
     }
 
     //--------------------------------------------------------------
@@ -159,7 +159,7 @@ namespace Hyperion::Editor {
 
         g_world->GetComponent<LocalTransformComponent>(g_parent)->rotation = Quaternion::FromEulerAngles(0.0f, Math::Sin(Time::GetTime()) * 45.0f, 0.0f);
 
-        UpdateStats();
+        UpdateTexts();
 
         g_world->GetComponent<CameraComponent>(g_camera)->viewport_clipping.height = (Display::GetHeight() - UI_HEADER_SIZE) / static_cast<float32>(Display::GetHeight());
         if (Display::HasChangedSize()) {
@@ -173,14 +173,14 @@ namespace Hyperion::Editor {
     }
 
     //--------------------------------------------------------------
-    void EditorApplication::UpdateStats() {
-        String format = "FPS: {} ({:.2f}ms) - VSync: {} - Draw calls: {}, Vertices: {}, Triangles: {} - Memory: {}";
-        RenderStats render_stats = Rendering::RenderEngine::GetStats();
+    void EditorApplication::UpdateTexts() {
         String vsync = Rendering::RenderEngine::GetVSyncMode() == Rendering::VSyncMode::DontSync ? "Off" : "On";
-        uint64 memory = MemoryStats::GetGlobalMemory();
-        String title = StringUtils::Format(format, Time::GetFPS(), Time::GetFrameTime(), vsync, render_stats.draw_calls, render_stats.vertex_count, render_stats.triangle_count, memory);
-        g_label->SetText(title);
-        g_label_shadow->SetText(title);
+        String fps_text = StringUtils::Format("FPS: {} ({:.2f}ms) - VSync : {}", Time::GetFPS(), Time::GetFrameTime(), vsync);
+        g_label_fps->SetText(fps_text);
+
+        RenderStats render_stats = Rendering::RenderEngine::GetStats();
+        String render_stats_title = StringUtils::Format("Draw calls: {}, Vertices: {}, Triangles: {}", render_stats.draw_calls, render_stats.vertex_count, render_stats.triangle_count);
+        g_label_render_stats->SetText(render_stats_title);
     }
 
 }

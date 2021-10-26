@@ -31,7 +31,7 @@ namespace Hyperion::Rendering {
         Color color;
     };
 
-    struct RenderFrameContextObjectUI {
+    struct RenderFrameContextObjectUI : public RenderFrameContextObject {
         AssetId mesh_id;
 
         AssetId shader_id;

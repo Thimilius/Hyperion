@@ -30,6 +30,12 @@ namespace Hyperion::UI {
     }
 
     //--------------------------------------------------------------
+    void UIElementStyle::SetShadow(const UIShadow &shadow) {
+        m_shadow = shadow;
+        m_element->MarkDirty();
+    }
+
+    //--------------------------------------------------------------
     void UIElementHierarchy::AddChild(UIElement *child) {
         m_children.Add(child);
         if (child->GetHierarchy().m_parent != nullptr) {
@@ -74,6 +80,13 @@ namespace Hyperion::UI {
         m_local_scale = scale;
 
         MarkHierarchyDirty();
+    }
+
+    //--------------------------------------------------------------
+    Rect UIElement::GetWorldRect() const {
+        Vector3 world_corners[4];
+        GetWorldCorners(world_corners);
+        return Rect(Vector2(world_corners[2]), Vector2(world_corners[0] - world_corners[2]));
     }
 
     //--------------------------------------------------------------

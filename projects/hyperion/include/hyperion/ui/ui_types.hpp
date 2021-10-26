@@ -57,4 +57,10 @@ namespace Hyperion::UI {
         Color pressed_color = Color::White();
     };
 
+    struct UIShadow {
+        bool enabled = false;
+        Color color = Color::Black();
+        Vector2 offset = Vector2(1.0f, -1.0f);
+    };
+
 }

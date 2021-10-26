@@ -44,6 +44,10 @@ namespace Hyperion::UI {
         inline UIColorBlock &GetColorBlock() { return m_color_block; }
         inline const UIColorBlock &GetColorBlock() const { return m_color_block; }
         void SetColorBlock(const UIColorBlock &color_block);
+
+        inline UIShadow &GetShadow() { return m_shadow; }
+        inline const UIShadow &GetShadow() const { return m_shadow; }
+        void SetShadow(const UIShadow &shadow);
     private:
         UIElement *m_element = nullptr;
 
@@ -51,6 +55,7 @@ namespace Hyperion::UI {
         Color m_color = Color::White();
         float32 m_opacity = 1.0f;
         UIColorBlock m_color_block;
+        UIShadow m_shadow;
     private:
         friend class Hyperion::UI::UIElement;
     };
@@ -94,6 +99,7 @@ namespace Hyperion::UI {
         void SetScale(Vector2 scale);
 
         inline Rect GetLocalRect() const { return m_rect; }
+        Rect GetWorldRect() const;
         inline Vector2 GetSize() const { return m_size; }
         void SetSize(Vector2 size);
         inline Vector2 GetPivot() const { return m_pivot; }

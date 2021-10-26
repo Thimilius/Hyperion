@@ -564,6 +564,11 @@ namespace Hyperion::Rendering {
                 glDisable(GL_BLEND);
             }
             {
+                GLint model_location = glGetUniformLocation(opengl_shader.program, "u_model");
+                if (model_location) {
+                    glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, element.local_to_world.elements);
+                }
+
                 GLint color_location = glGetUniformLocation(opengl_shader.program, "u_color");
                 if (color_location >= 0) {
                     Color color = element.color;

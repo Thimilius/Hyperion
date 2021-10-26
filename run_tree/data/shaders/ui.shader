@@ -20,8 +20,10 @@ layout(std140, binding = 0) uniform Camera {
 	mat4 projection;
 } u_camera;
 
+uniform mat4 u_model;
+
 vec4 obj_to_clip_space(vec3 position) {
-	return u_camera.projection * u_camera.view * vec4(position, 1.0);
+	return u_camera.projection * u_camera.view * u_model * vec4(position, 1.0);
 }
 
 void main() {

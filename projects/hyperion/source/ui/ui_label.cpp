@@ -51,15 +51,12 @@ namespace Hyperion::UI {
 
         mesh_builder.Clear();
 
-        Vector3 world_corners[4];
-        GetWorldCorners(world_corners);
-
         TextMeshGenerationSettings settings;
         settings.text = m_text;
         settings.font = m_font;
         settings.alignment = m_alignment;
         settings.color = GetStyle().GetColor();
-        settings.rect = Rect(Vector2(world_corners[2]), Vector2(world_corners[0] - world_corners[2]));
+        settings.rect = GetWorldRect();
         settings.scale = GetDerivedScale();
         settings.rotation = GetDerivedRotation();
 
