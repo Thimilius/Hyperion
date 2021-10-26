@@ -6,11 +6,12 @@
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
     namespace Rendering {
-        class RenderFrameContext;
+        struct RenderFrameContextObjectUI;
     }
 
     namespace UI {
         class UIElement;
+        struct UIViewComponent;
     }
 }
 
@@ -50,8 +51,10 @@ namespace Hyperion::Rendering {
     class UIRenderSystem : public ISystem {
     public:
         void Run(World *world) override;
+    public:
+        static void Run(UI::UIViewComponent *ui_view, Delegate<RenderFrameContextObjectUI &()> ui_object_adder);
     private:
-        void RenderElement(UI::UIElement *element, RenderFrameContext &render_frame_context);
+        static void RenderElement(UI::UIElement *element, Delegate<RenderFrameContextObjectUI &()> ui_object_adder);
     };
 
 }

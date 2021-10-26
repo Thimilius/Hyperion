@@ -176,17 +176,24 @@ namespace Hyperion::Rendering {
         HYP_PROFILE_SCOPE("UIRenderSystem.Run");
 
         RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
+        Delegate<RenderFrameContextObjectUI &()> ui_object_adder;
+        ui_object_adder.Connect<&RenderFrameContext::AddUIObject>(&render_frame_context);
 
         auto view = world->GetView<UIViewComponent>(ExcludeComponents<DisabledComponent>());
         for (EntityId entity : view) {
-            UIViewComponent *ui_view_component = world->GetComponent<UIViewComponent>(entity);
+            UIViewComponent *ui_view = world->GetComponent<UIViewComponent>(entity);
 
-            RenderElement(ui_view_component->root_element, render_frame_context);
+            Run(ui_view, ui_object_adder);
         }
     }
 
     //--------------------------------------------------------------
-    void UIRenderSystem::RenderElement(UIElement *element, RenderFrameContext &render_frame_context) {
+    void UIRenderSystem::Run(UIViewComponent *ui_view, Delegate<RenderFrameContextObjectUI &()> ui_object_adder) {
+        RenderElement(ui_view->root_element, ui_object_adder);
+    }
+
+    //--------------------------------------------------------------
+    void UIRenderSystem::RenderElement(UIElement *element, Delegate<RenderFrameContextObjectUI &()> ui_object_adder) {
         HYP_PROFILE_SCOPE("UIRenderSystem.RenderElement");
 
         if (element && element->GetStyle().GetVisibility() == UIVisibility::Visible) {
@@ -209,7 +216,7 @@ namespace Hyperion::Rendering {
                         shadow_color.a *= opacity;
 
                         if (shadow_color.a > 0.0f) {
-                            RenderFrameContextObjectUI &render_frame_context_ui_object_shadow = render_frame_context.AddUIObject();
+                            RenderFrameContextObjectUI &render_frame_context_ui_object_shadow = ui_object_adder();
                             render_frame_context_ui_object_shadow.local_to_world = Matrix4x4::Translate(Vector3(element->GetStyle().GetShadow().offset, 0.0f));
                             render_frame_context_ui_object_shadow.mesh_id = renderer.mesh->GetAssetInfo().id;
                             render_frame_context_ui_object_shadow.shader_id = material->GetShader()->GetAssetInfo().id;
@@ -222,7 +229,7 @@ namespace Hyperion::Rendering {
                         }
                     }
 
-                    RenderFrameContextObjectUI &render_frame_context_ui_object = render_frame_context.AddUIObject();
+                    RenderFrameContextObjectUI &render_frame_context_ui_object = ui_object_adder();
                     render_frame_context_ui_object.local_to_world = Matrix4x4::Identity();
                     render_frame_context_ui_object.mesh_id = renderer.mesh->GetAssetInfo().id;
                     render_frame_context_ui_object.shader_id = material->GetShader()->GetAssetInfo().id;
@@ -236,7 +243,7 @@ namespace Hyperion::Rendering {
             }
 
             for (UIElement *child : element->GetHierarchy().GetChildren()) {
-                RenderElement(child, render_frame_context);
+                RenderElement(child, ui_object_adder);
             }
         }
     }

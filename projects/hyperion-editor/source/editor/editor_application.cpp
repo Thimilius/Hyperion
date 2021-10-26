@@ -17,6 +17,8 @@
 #include <hyperion/ecs/component/components/components.hpp>
 #include <hyperion/ecs/component/components/utilities/camera_controller.hpp>
 #include <hyperion/ecs/component/components/utilities/transform_utilities.hpp>
+#include <hyperion/ecs/system/systems/render_systems.hpp>
+#include <hyperion/ecs/system/systems/ui_systems.hpp>
 #include <hyperion/ecs/world/world_manager.hpp>
 #include <hyperion/ecs/world/world_serializer.hpp>
 #include <hyperion/render/render_engine.hpp>
@@ -45,6 +47,7 @@ namespace Hyperion::Editor {
     EntityId g_light;
     EntityId g_parent;
     EntityId g_child;
+    UIElement *g_root_element;
     UIElement *g_header_ui_element;
     UIElement *g_render_ui_element;
     UIButton *g_child_ui_element;
@@ -90,45 +93,59 @@ namespace Hyperion::Editor {
         UIElement *root_element = new UIElement();
         root_element->SetAnchorPreset(UIAnchorPreset::StretchAll);
         root_element->GetStyle().SetVisibility(UIVisibility::Visible);
+        root_element->GetStyle().SetOpacity(0.0f);
 
-        g_render_ui_element = new UIElement();
-        g_render_ui_element->SetAnchorPreset(UIAnchorPreset::StretchAll);
-        g_render_ui_element->SetOffsetMax(Vector2(0.0f, UI_HEADER_SIZE));
-        g_render_ui_element->GetRenderer().texture = RenderEngine::GetPipeline()->GetTargetRenderTexture();
-        g_render_ui_element->GetRenderer().render_texture_attachment_index = 1;
-        g_render_ui_element->GetRenderer().enable_blending = false;
-        root_element->GetHierarchy().AddChild(g_render_ui_element);
-
-        g_header_ui_element = new UIElement();
-        g_header_ui_element->SetSize(Vector2(0.0f, UI_HEADER_SIZE));
-        g_header_ui_element->SetAnchorPreset(UIAnchorPreset::TopStretchHorizontal);
-        g_header_ui_element->GetStyle().SetColor(Color::Grey());
-        root_element->GetHierarchy().AddChild(g_header_ui_element);
-
-        Font *consola_font = FontLoader::LoadFont("data/fonts/consola.ttf", 12, FontCharacterSet::LatinSupplement);
-
-        g_label_fps = new UILabel();
-        g_label_fps->SetFont(consola_font);
-        g_label_fps->SetAlignment(UITextAlignment::MiddleLeft);
-        g_label_fps->SetAnchorPreset(UIAnchorPreset::StretchAll);
-        g_label_fps->SetOffsetMin(Vector2(5.0f, 0.0f));
-        g_label_fps->GetStyle().GetShadow().enabled = true;
-        g_header_ui_element->GetHierarchy().AddChild(g_label_fps);
-
-        g_label_render_stats = new UILabel();
-        g_label_render_stats->SetFont(consola_font);
-        g_label_render_stats->SetAlignment(UITextAlignment::MiddleRight);
-        g_label_render_stats->SetAnchorPreset(UIAnchorPreset::StretchAll);
-        g_label_render_stats->SetOffsetMax(Vector2(5.0f, 0.0f));
-        g_label_render_stats->GetStyle().GetShadow().enabled = true;
-        g_header_ui_element->GetHierarchy().AddChild(g_label_render_stats);
+        UIButton *ui_element = new UIButton();
+        ui_element->RegisterClickCallback([]() {
+            HYP_TRACE("CLICK");
+        });
+        ui_element->GetStyle().GetColorBlock().highlight_color = Color::Green();
+        ui_element->GetStyle().GetColorBlock().pressed_color = Color::Red();
+        root_element->GetHierarchy().AddChild(ui_element);
 
         EntityId ui = g_world->CreateEntity();
         UIViewComponent *ui_view = g_world->AddComponent<UIViewComponent>(ui);
-        ui_view->scaling_mode = UIScalingMode::ConstantPixelSize;
         ui_view->root_element = root_element;
-        
-        UpdateTexts();
+
+        {
+            g_root_element = new UIElement();
+            g_root_element->SetAnchorPreset(UIAnchorPreset::StretchAll);
+            g_root_element->GetStyle().SetVisibility(UIVisibility::Visible);
+
+            g_render_ui_element = new UIElement();
+            g_render_ui_element->SetAnchorPreset(UIAnchorPreset::StretchAll);
+            g_render_ui_element->SetOffsetMax(Vector2(0.0f, UI_HEADER_SIZE));
+            g_render_ui_element->GetRenderer().texture = RenderEngine::GetPipeline()->GetTargetRenderTexture();
+            g_render_ui_element->GetRenderer().render_texture_attachment_index = 1;
+            g_render_ui_element->GetRenderer().enable_blending = false;
+            g_root_element->GetHierarchy().AddChild(g_render_ui_element);
+
+            g_header_ui_element = new UIElement();
+            g_header_ui_element->SetSize(Vector2(0.0f, UI_HEADER_SIZE));
+            g_header_ui_element->SetAnchorPreset(UIAnchorPreset::TopStretchHorizontal);
+            g_header_ui_element->GetStyle().SetColor(Color::Grey());
+            g_root_element->GetHierarchy().AddChild(g_header_ui_element);
+
+            Font *consola_font = FontLoader::LoadFont("data/fonts/consola.ttf", 12, FontCharacterSet::LatinSupplement);
+
+            g_label_fps = new UILabel();
+            g_label_fps->SetFont(consola_font);
+            g_label_fps->SetAlignment(UITextAlignment::MiddleLeft);
+            g_label_fps->SetAnchorPreset(UIAnchorPreset::StretchAll);
+            g_label_fps->SetOffsetMin(Vector2(5.0f, 0.0f));
+            g_label_fps->GetStyle().GetShadow().enabled = true;
+            g_header_ui_element->GetHierarchy().AddChild(g_label_fps);
+
+            g_label_render_stats = new UILabel();
+            g_label_render_stats->SetFont(consola_font);
+            g_label_render_stats->SetAlignment(UITextAlignment::MiddleRight);
+            g_label_render_stats->SetAnchorPreset(UIAnchorPreset::StretchAll);
+            g_label_render_stats->SetOffsetMax(Vector2(5.0f, 0.0f));
+            g_label_render_stats->GetStyle().GetShadow().enabled = true;
+            g_header_ui_element->GetHierarchy().AddChild(g_label_render_stats);
+
+            UpdateTexts();
+        }
     }
 
     //--------------------------------------------------------------
@@ -164,6 +181,20 @@ namespace Hyperion::Editor {
         g_world->GetComponent<CameraComponent>(g_camera)->viewport_clipping.height = (Display::GetHeight() - UI_HEADER_SIZE) / static_cast<float32>(Display::GetHeight());
         if (Display::HasChangedSize()) {
             RenderEngine::GetPipeline()->SetRenderTargetSize(Display::GetWidth(), Display::GetHeight() - UI_HEADER_SIZE);
+        }
+
+        {
+            UIViewComponent editor_ui_view;
+            editor_ui_view.scaling_mode = UIScalingMode::ConstantPixelSize;
+            editor_ui_view.root_element = g_root_element;
+
+            UIRebuildSystem::Run(&editor_ui_view);
+            UIEventSystem::Run(&editor_ui_view);
+
+            RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
+            Delegate<RenderFrameContextObjectUI &()> ui_object_adder;
+            ui_object_adder.Connect<&RenderFrameContext::AddEditorUIObject>(&render_frame_context);
+            UIRenderSystem::Run(&editor_ui_view, ui_object_adder);
         }
     }
 

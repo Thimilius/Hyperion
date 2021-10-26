@@ -22,7 +22,8 @@ namespace Hyperion::Rendering {
         void ExecuteCommandBuffer(const RenderFrameCommandBuffer &command_buffer);
         void DrawMeshes(CullingResults &culling_results, DrawingParametes drawing_parameters);
         void DrawUI();
-        void DrawGizmos();
+        void DrawEditorGizmos();
+        void DrawEditorUI();
     private:
         RenderFrameCommand &CreateCommand(RenderFrameCommandType type);
     private:

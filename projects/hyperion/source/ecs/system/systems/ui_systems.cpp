@@ -22,33 +22,36 @@ namespace Hyperion::UI {
         for (EntityId entity : view) {
             UIViewComponent *ui_view = world->GetComponent<UIViewComponent>(entity);
 
-            if (ui_view->root_element) {
-                float32 ui_scale = 1.0f;
-                switch (ui_view->scaling_mode) {
-                    case UIScalingMode::ScaleWithScreenSize:
-                    {
-                        float32 display_width = static_cast<float32>(Display::GetWidth());
-                        float32 display_height = static_cast<float32>(Display::GetHeight());
+            Run(ui_view);
+        }
+    }
 
-                        float32 log_base = 2;
-                        float32 log_width = Math::Log(display_width / ui_view->reference_resolution.x) / Math::Log(log_base);
-                        float32 log_height = Math::Log(display_height / ui_view->reference_resolution.y) / Math::Log(log_base);
-                        float32 log_weighted_average = Math::Lerp(log_width, log_height, 0.5f);
-                        float32 computed_scale = Math::Pow(log_base, log_weighted_average);
-                        ui_scale = computed_scale;
-                        break;
-                    }
-                    case UIScalingMode::ConstantPixelSize:
-                    {
-                        ui_scale = 1.0f;
-                        break;
-                    }
-                    default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+    //--------------------------------------------------------------
+    void UIRebuildSystem::Run(UIViewComponent *ui_view) {
+        if (ui_view->root_element) {
+            float32 ui_scale = 1.0f;
+            switch (ui_view->scaling_mode) {
+                case UIScalingMode::ScaleWithScreenSize: {
+                    float32 display_width = static_cast<float32>(Display::GetWidth());
+                    float32 display_height = static_cast<float32>(Display::GetHeight());
+
+                    float32 log_base = 2;
+                    float32 log_width = Math::Log(display_width / ui_view->reference_resolution.x) / Math::Log(log_base);
+                    float32 log_height = Math::Log(display_height / ui_view->reference_resolution.y) / Math::Log(log_base);
+                    float32 log_weighted_average = Math::Lerp(log_width, log_height, 0.5f);
+                    float32 computed_scale = Math::Pow(log_base, log_weighted_average);
+                    ui_scale = computed_scale;
+                    break;
                 }
-
-                MeshBuilder mesh_builder;
-                Rebuild(ui_view->root_element, ui_scale, mesh_builder);
+                case UIScalingMode::ConstantPixelSize: {
+                    ui_scale = 1.0f;
+                    break;
+                }
+                default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
             }
+
+            MeshBuilder mesh_builder;
+            Rebuild(ui_view->root_element, ui_scale, mesh_builder);
         }
     }
 
@@ -72,60 +75,67 @@ namespace Hyperion::UI {
         for (EntityId entity : view) {
             UIViewComponent *ui_view = world->GetComponent<UIViewComponent>(entity);
 
-            if (ui_view->root_element) {
-                UIViewComponent::State state = ui_view->state;
+            Run(ui_view);
+        }
+    }
 
-                Array<UIElement *> hovered_elements;
-                RaycastElements(ui_view->root_element, Input::GetMousePosition(), hovered_elements);
-                
-                if (!hovered_elements.IsEmpty() && state.pressed_element == nullptr) {
-                    // The array we get back will be depth sorted in reverse.
-                    // This means the top most hovered element we are interested in is at the end.
-                    UIElement *hovered_element = hovered_elements.GetLast();
+    //--------------------------------------------------------------
+    void UIEventSystem::Run(UIViewComponent *ui_view) {
+        if (ui_view->root_element) {
+            UIViewComponent::State state = ui_view->state;
 
-                    if (state.hovered_element != hovered_element) {
-                        if (state.hovered_element) {
-                            SendEvent(state.hovered_element, UIEventType::PointerExit);
-                        }
+            Array<UIElement *> hovered_elements;
+            RaycastElements(ui_view->root_element, Input::GetMousePosition(), hovered_elements);
 
-                        state.hovered_element = hovered_element;
-                        SendEvent(state.hovered_element, UIEventType::PointerEnter);
-                    }
-                } else {
-                    if (state.hovered_element && state.pressed_element == nullptr) {
+            // FIXME: Fix mouse events not being captured and send properly.
+
+            if (!hovered_elements.IsEmpty()) {
+                // The array we get back will be depth sorted in reverse.
+                // This means the top most hovered element we are interested in is at the end.
+                UIElement *hovered_element = hovered_elements.GetLast();
+
+                if (state.hovered_element != hovered_element) {
+                    if (state.hovered_element) {
                         SendEvent(state.hovered_element, UIEventType::PointerExit);
-                        state.hovered_element = nullptr;
                     }
-                }
 
+                    state.hovered_element = hovered_element;
+                    SendEvent(state.hovered_element, UIEventType::PointerEnter);
+                }
+            } else {
                 if (state.hovered_element) {
-                    if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
-                        SendEvent(state.hovered_element, UIEventType::PointerDown);
-                        state.pressed_element = state.hovered_element;
-                    }
-                    if (Input::IsMouseButtonUp(MouseButtonCode::Left)) {
-                        SendEvent(state.hovered_element, UIEventType::PointerUp);
-                        SendEvent(state.hovered_element, UIEventType::PointerClick);
-                        state.pressed_element = nullptr;
-                    }
-
-                    if (Input::HasMouseMoved() && state.pressed_element == nullptr) {
-                        SendEvent(state.hovered_element, UIEventType::PointerMove);
-                    }
-                    if (Input::HasMouseScrolled() && state.pressed_element == nullptr) {
-                        SendEvent(state.hovered_element, UIEventType::PointerScroll);
-                    }
+                    SendEvent(state.hovered_element, UIEventType::PointerExit);
+                    state.hovered_element = nullptr;
                 }
-
-                if (state.pressed_element) {
-                    if (Input::IsMouseButtonUp(MouseButtonCode::Left)) {
-                        SendEvent(state.pressed_element, UIEventType::PointerUp);
-                        state.pressed_element = nullptr;
-                    }
-                }
-
-                ui_view->state = state;
             }
+
+            if (state.hovered_element) {
+                if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
+                    SendEvent(state.hovered_element, UIEventType::PointerDown);
+                    state.pressed_element = state.hovered_element;
+                }
+                if (Input::IsMouseButtonUp(MouseButtonCode::Left)) {
+                    SendEvent(state.hovered_element, UIEventType::PointerUp);
+                    SendEvent(state.hovered_element, UIEventType::PointerClick);
+                    state.pressed_element = nullptr;
+                }
+
+                if (Input::HasMouseMoved()) {
+                    SendEvent(state.hovered_element, UIEventType::PointerMove);
+                }
+                if (Input::HasMouseScrolled()) {
+                    SendEvent(state.hovered_element, UIEventType::PointerScroll);
+                }
+            }
+
+            if (state.pressed_element) {
+                if (Input::IsMouseButtonUp(MouseButtonCode::Left)) {
+                    SendEvent(state.pressed_element, UIEventType::PointerUp);
+                    state.pressed_element = nullptr;
+                }
+            }
+
+            ui_view->state = state;
         }
     }
 

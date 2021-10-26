@@ -31,6 +31,7 @@ namespace Hyperion::Rendering {
         inline const Array<RenderFrameContextObjectMesh> &GetMeshObjects() const { return m_mesh_objects; }
         inline const Array<RenderFrameContextObjectSprite> &GetSpriteObjects() const { return m_sprite_objects; }
         inline const Array<RenderFrameContextObjectUI> &GetUIObjects() const { return m_ui_objects; }
+        inline const Array<RenderFrameContextObjectUI> &GetEditorUIObjects() const { return m_editor_ui_objects; }
 
         RenderFrameContextAssetTexture2D &AddTexture2DAssetToLoad();
         RenderFrameContextAssetRenderTexture &AddRenderTextureAssetToLoad();
@@ -49,6 +50,7 @@ namespace Hyperion::Rendering {
         RenderFrameContextObjectMesh &AddMeshObject();
         RenderFrameContextObjectSprite &AddSpriteObject();
         RenderFrameContextObjectUI &AddUIObject();
+        RenderFrameContextObjectUI &AddEditorUIObject();
     private:
         Array<RenderFrameContextAssetTexture2D> m_texture_2ds_to_load;
         Array<RenderFrameContextAssetRenderTexture> m_render_textures_to_load;
@@ -67,6 +69,7 @@ namespace Hyperion::Rendering {
         Array<RenderFrameContextObjectMesh> m_mesh_objects;
         Array<RenderFrameContextObjectSprite> m_sprite_objects;
         Array<RenderFrameContextObjectUI> m_ui_objects;
+        Array<RenderFrameContextObjectUI> m_editor_ui_objects;
     };
 
 }

@@ -291,43 +291,48 @@ namespace Hyperion::Rendering {
                 case RenderFrameCommandType::DrawUI: {
                     HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawUI");
 
-                    const RenderFrameCommandDrawUI &draw_ui = std::get<RenderFrameCommandDrawUI>(frame_command.data);
-
                     DrawUI(render_frame_context.GetUIObjects());
 
                     break;
                 }
-                case RenderFrameCommandType::DrawGizmos: {
+                case RenderFrameCommandType::DrawEditorGizmos: {
                     HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawGizmos");
 
-                    const RenderFrameCommandDrawGizmos &draw_gizmos = std::get<RenderFrameCommandDrawGizmos>(frame_command.data);
+                    const RenderFrameCommandDrawEditorGizmos &draw_editor_gizmos = std::get<RenderFrameCommandDrawEditorGizmos>(frame_command.data);
 
                     glDepthMask(GL_FALSE);
                     glEnable(GL_BLEND);
                     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-                    const OpenGLShader &opengl_shader = m_opengl_shaders.Get(draw_gizmos.shader_id);
+                    const OpenGLShader &opengl_shader = m_opengl_shaders.Get(draw_editor_gizmos.shader_id);
                     glUseProgram(opengl_shader.program);
 
                     GLint model_location = glGetUniformLocation(opengl_shader.program, "u_model");
 
-                    if (draw_gizmos.grid.should_draw) {
-                        glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, draw_gizmos.grid.local_to_world.elements);
+                    if (draw_editor_gizmos.grid.should_draw) {
+                        glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, draw_editor_gizmos.grid.local_to_world.elements);
 
-                        const OpenGLMesh &opengl_mesh = m_opengl_meshes.Get(draw_gizmos.grid.mesh_id);
+                        const OpenGLMesh &opengl_mesh = m_opengl_meshes.Get(draw_editor_gizmos.grid.mesh_id);
                         glBindVertexArray(opengl_mesh.vertex_array);
 
                         SubMesh sub_mesh = opengl_mesh.sub_meshes[0];
                         DrawSubMesh(sub_mesh);
                     }
 
-                    if (draw_gizmos.should_draw_all_bounds) {
+                    if (draw_editor_gizmos.should_draw_all_bounds) {
                         glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, Matrix4x4::Identity().elements);
 
                         for (const RenderFrameContextObjectMesh &object : render_frame_context.GetMeshObjects()) {
                             DrawRenderBounds(object.bounds);
                         }
                     }
+
+                    break;
+                }
+                case RenderFrameCommandType::DrawEditorUI: {
+                    HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawEditorUI");
+
+                    DrawUI(render_frame_context.GetEditorUIObjects());
 
                     break;
                 }

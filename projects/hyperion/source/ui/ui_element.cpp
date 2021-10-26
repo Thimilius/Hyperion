@@ -269,6 +269,9 @@ namespace Hyperion::UI {
     //--------------------------------------------------------------
     void UIElement::OnEvent(UIEvent &event) {
         UIEventType event_type = event.GetType();
+
+        // TODO: Properly keep track of own selection state.
+
         if (event_type == UIEventType::PointerDown) {
             GetRenderer().color = m_style.m_color_block.pressed_color;
         } else if (event_type == UIEventType::PointerUp) {

@@ -74,7 +74,8 @@ namespace Hyperion::Rendering {
         drawing_parameters_transparent.sorting_settings.criteria = SortingCriteria::Transparent;
         render_frame->DrawMeshes(culling_results, drawing_parameters_transparent);
 
-        render_frame->DrawGizmos();
+        render_frame->DrawEditorGizmos();
+        render_frame->DrawUI();
 
         {
             RenderFrameCommandBuffer command_buffer;
@@ -86,7 +87,7 @@ namespace Hyperion::Rendering {
             render_frame->ExecuteCommandBuffer(command_buffer);
         }
 
-        render_frame->DrawUI();
+        render_frame->DrawEditorUI();
     }
 
     //--------------------------------------------------------------

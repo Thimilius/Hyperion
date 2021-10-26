@@ -52,7 +52,6 @@
 - .NET 5/6 or Mono?
 
 ## UI
-- Shadow effect for ui elements
 - Immediate mode API
 - Font rendering
     - SDF

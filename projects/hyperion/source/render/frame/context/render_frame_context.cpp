@@ -26,6 +26,7 @@ namespace Hyperion::Rendering {
         m_mesh_objects.Clear();
         m_sprite_objects.Clear();
         m_ui_objects.Clear();
+        m_editor_ui_objects.Clear();
     }
 
     //--------------------------------------------------------------
@@ -116,6 +117,12 @@ namespace Hyperion::Rendering {
     RenderFrameContextObjectUI &RenderFrameContext::AddUIObject() {
         m_ui_objects.Resize(m_ui_objects.GetLength() + 1);
         return m_ui_objects.GetLast();
+    }
+
+    //--------------------------------------------------------------
+    RenderFrameContextObjectUI &RenderFrameContext::AddEditorUIObject() {
+        m_editor_ui_objects.Resize(m_editor_ui_objects.GetLength() + 1);
+        return m_editor_ui_objects.GetLast();
     }
 
 }

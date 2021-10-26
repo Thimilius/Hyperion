@@ -19,7 +19,9 @@ namespace Hyperion::Rendering {
 
         DrawMeshes,
         DrawUI,
-        DrawGizmos
+
+        DrawEditorGizmos,
+        DrawEditorUI,
     };
 
     struct RenderFrameCommandSetCamera {
@@ -70,7 +72,7 @@ namespace Hyperion::Rendering {
 
     };
 
-    struct RenderFrameCommandDrawGizmos {
+    struct RenderFrameCommandDrawEditorGizmos {
         AssetId shader_id;
 
         struct Grid {
@@ -83,6 +85,10 @@ namespace Hyperion::Rendering {
         bool8 should_draw_all_bounds;
     };
 
+    struct RenderFrameCommandDrawEditorUI {
+
+    };
+
     struct RenderFrameCommand {
         RenderFrameCommandType type;
 
@@ -91,7 +97,8 @@ namespace Hyperion::Rendering {
             RenderFrameCommandExecuteCommandBuffer,
             RenderFrameCommandDrawMeshes,
             RenderFrameCommandDrawUI,
-            RenderFrameCommandDrawGizmos
+            RenderFrameCommandDrawEditorGizmos,
+            RenderFrameCommandDrawEditorUI
         > data;
     };
 
