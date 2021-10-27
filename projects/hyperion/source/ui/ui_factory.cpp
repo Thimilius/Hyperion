@@ -45,4 +45,20 @@ namespace Hyperion::UI {
         return button;
     }
 
+    //--------------------------------------------------------------
+    void UIFactory::Initialize() {
+        MetaRegistry::Reflect<UIElement>("UIElement");
+
+        MetaRegistry::Reflect<UIButton>("UIButton")
+            .Base<UIElement>();
+
+        MetaRegistry::Reflect<UILabel>("UILabel")
+            .Base<UIElement>();
+    }
+
+    //--------------------------------------------------------------
+    void UIFactory::Shutdown() {
+
+    }
+
 }

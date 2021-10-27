@@ -83,7 +83,8 @@ namespace Hyperion::UI {
         bool8 is_pressed = false;
     };
 
-    class UIElement {
+    class UIElement : public Object {
+        HYP_OBJECT(UIElement);
     public:
         UIElement();
     public:
@@ -124,7 +125,7 @@ namespace Hyperion::UI {
         inline UIElementRenderer &GetRenderer() { return m_renderer; }
         inline const UIElementRenderer &GetRenderer() const { return m_renderer; }
         inline UIElementStyle &GetStyle() { return m_style; }
-        inline const UIElementStyle &GeStyle() const { return m_style; }
+        inline const UIElementStyle &GetStyle() const { return m_style; }
         inline UIElementHierarchy &GetHierarchy() { return m_hierarchy; }
         inline const UIElementHierarchy &GetHierarchy() const { return m_hierarchy; }
 

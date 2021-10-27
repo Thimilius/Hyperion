@@ -8,6 +8,7 @@
 namespace Hyperion::UI {
 
     class UILabel : public UIElement {
+        HYP_OBJECT(UILabel);
     public:
         UILabel();
     public:
