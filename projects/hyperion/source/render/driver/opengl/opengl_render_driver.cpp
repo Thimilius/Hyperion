@@ -570,7 +570,7 @@ namespace Hyperion::Rendering {
             }
             {
                 GLint model_location = glGetUniformLocation(opengl_shader.program, "u_model");
-                if (model_location) {
+                if (model_location >= 0) {
                     glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, element.local_to_world.elements);
                 }
 
@@ -948,15 +948,15 @@ namespace Hyperion::Rendering {
         glNamedBufferData(opengl_mesh.index_buffer, data.indices.GetLength() * sizeof(data.indices[0]), data.indices.GetData(), GL_STATIC_DRAW);
         opengl_mesh.index_count = static_cast<GLsizei>(data.indices.GetLength());
 
+        GLuint binding_index = 0;
         GLsizei stride = vertex_format.stride;
         GLuint relative_offset = 0;
         glCreateVertexArrays(1, &opengl_mesh.vertex_array);
-        glVertexArrayVertexBuffer(opengl_mesh.vertex_array, 0, opengl_mesh.vertex_buffer, 0, stride);
+        glVertexArrayVertexBuffer(opengl_mesh.vertex_array, binding_index, opengl_mesh.vertex_buffer, 0, stride);
         glVertexArrayElementBuffer(opengl_mesh.vertex_array, opengl_mesh.index_buffer);
 
         for (VertexAttribute vertex_attribute : vertex_format.attributes) {
             GLuint attribute_index = OpenGLUtilities::GetAttributeIndexForVertextAttributeSize(vertex_attribute.kind);
-            GLuint binding_index = 0;
             GLint size = vertex_attribute.dimension;
             GLenum type = OpenGLUtilities::GetVertexAttributeType(vertex_attribute.type);
 
