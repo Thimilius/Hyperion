@@ -990,13 +990,18 @@ namespace Hyperion::Rendering {
             m_opengl_materials.Remove(material_id);
         }
         for (AssetId mesh_id : render_frame_context.GetMeshAssetsToUnload()) {
-            OpenGLMesh &opengl_mesh = m_opengl_meshes.Get(mesh_id);
+            auto mesh_it = m_opengl_meshes.Find(mesh_id);
+            if (mesh_it == m_opengl_meshes.end()) {
+                HYP_LOG_ERROR("OpenGL", "Trying to delete mesh {} which does not exist!", mesh_id);
+            } else {
+                OpenGLMesh &opengl_mesh = mesh_it->second;
 
-            glDeleteBuffers(1, &opengl_mesh.vertex_buffer);
-            glDeleteBuffers(1, &opengl_mesh.index_buffer);
-            glDeleteVertexArrays(1, &opengl_mesh.vertex_array);
+                glDeleteBuffers(1, &opengl_mesh.vertex_buffer);
+                glDeleteBuffers(1, &opengl_mesh.index_buffer);
+                glDeleteVertexArrays(1, &opengl_mesh.vertex_array);
 
-            m_opengl_meshes.Remove(mesh_id);
+                m_opengl_meshes.Remove(mesh_id);
+            }
         }
     }
 

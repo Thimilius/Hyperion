@@ -3,6 +3,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/ui/ui_button.hpp"
 #include "hyperion/ui/ui_label.hpp"
+#include "hyperion/ui/ui_toggle.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -16,8 +17,9 @@ namespace Hyperion::UI {
     public:
         static UIElement *CreateElement();
         static UIElement *CreateRoot();
-        static UILabel *CreateLabel();
         static UIButton *CreateButton();
+        static UILabel *CreateLabel();
+        static UIToggle *CreateToggle();
     private:
         static void Initialize();
         static void Shutdown();

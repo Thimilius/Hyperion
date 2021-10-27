@@ -40,6 +40,8 @@ namespace Hyperion::Editor {
     }
 
     const uint32 UI_HEADER_SIZE = 25;
+    const Color UI_NORMAL_COLOR = Color(0.25f, 0.25f, 0.25f, 1.0f);
+    const Color UI_HIGHLIGHT_COLOR = Color(0.0f, 0.4f, 0.8f, 1.0f);
 
     World *g_world;
     EntityId g_camera;
@@ -94,13 +96,6 @@ namespace Hyperion::Editor {
 
         UIElement *root_element = UIFactory::CreateRoot();
 
-        UIButton *ui_button = UIFactory::CreateButton();
-        ui_button->SetAnchorPreset(UIAnchorPreset::BottomLeft);
-        ui_button->RegisterClickCallback([]() {
-            HYP_TRACE("CLICK");
-        });
-        root_element->GetHierarchy().AddChild(ui_button);
-
         EntityId ui = g_world->CreateEntity();
         UIViewComponent *ui_view = g_world->AddComponent<UIViewComponent>(ui);
         ui_view->root_element = root_element;
@@ -117,10 +112,17 @@ namespace Hyperion::Editor {
             g_root_element->GetHierarchy().AddChild(g_render_ui_element);
 
             g_header_ui_element = UIFactory::CreateElement();
-            g_header_ui_element->SetSize(Vector2(0.0f, UI_HEADER_SIZE));
+            g_header_ui_element->SetSize(Vector2(0.0f, UI_HEADER_SIZE - 1));
             g_header_ui_element->SetAnchorPreset(UIAnchorPreset::TopStretchHorizontal);
-            g_header_ui_element->GetStyle().SetColor(Color::Grey());
+            g_header_ui_element->GetStyle().SetColor(UI_NORMAL_COLOR);
             g_root_element->GetHierarchy().AddChild(g_header_ui_element);
+
+            UIElement *g_header_seperator_ui_element = UIFactory::CreateElement();
+            g_header_seperator_ui_element->SetAnchorPreset(UIAnchorPreset::TopStretchHorizontal);
+            g_header_seperator_ui_element->SetSize(Vector2(0.0f, 1.0f));
+            g_header_seperator_ui_element->SetPosition(Vector2(0.0f, -static_cast<float32>(UI_HEADER_SIZE - 1)));
+            g_header_seperator_ui_element->GetStyle().SetColor(UI_HIGHLIGHT_COLOR);
+            g_root_element->GetHierarchy().AddChild(g_header_seperator_ui_element);
 
             Font *consola_font = FontLoader::LoadFont("data/fonts/consola.ttf", 12, FontCharacterSet::LatinSupplement);
 
@@ -139,6 +141,13 @@ namespace Hyperion::Editor {
             g_label_render_stats->SetOffsetMax(Vector2(5.0f, 0.0f));
             g_label_render_stats->GetStyle().GetShadow().enabled = true;
             g_header_ui_element->GetHierarchy().AddChild(g_label_render_stats);
+
+            UIToggle *ui_toggle = UIFactory::CreateToggle();
+            ui_toggle->SetSize(Vector2(25.0f, 0.0f));
+            ui_toggle->SetAnchorPreset(UIAnchorPreset::CenterStretchVertical);
+            ui_toggle->GetStyle().SetColor(UI_NORMAL_COLOR);
+            ui_toggle->SetToggleOnColor(UI_HIGHLIGHT_COLOR);
+            g_header_ui_element->GetHierarchy().AddChild(ui_toggle);
 
             g_editor_ui_view.scaling_mode = UIScalingMode::ConstantPixelSize;
             g_editor_ui_view.root_element = g_root_element;

@@ -7,6 +7,13 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::UI {
 
+    const UIColorBlock SELECTION_COLOR_BLOCK = {
+        Color(1.0f, 1.0f, 1.0f, 1.0f),
+        Color(0.9f, 0.9f, 0.9f, 1.0f),
+        Color(0.75f, 0.75f, 0.75f, 1.0f),
+        Color(0.75f, 0.75f, 0.75f, 0.5f)
+    };
+
     //--------------------------------------------------------------
     UIElement *UIFactory::CreateElement() {
         return new UIElement();
@@ -22,22 +29,10 @@ namespace Hyperion::UI {
     }
 
     //--------------------------------------------------------------
-    UILabel *UIFactory::CreateLabel() {
-        UILabel *label = new UILabel();
-        label->SetName("Label");
-        label->SetText("New Label");
-        label->SetSize(Vector2(150.0f, 40.0f));
-        return label;
-    }
-
-    //--------------------------------------------------------------
     UIButton *UIFactory::CreateButton() {
         UIButton *button = new UIButton();
         button->SetName("Button");
-        button->GetStyle().GetColorBlock().normal_color = Color(1.0f, 1.0f, 1.0f, 1.0f);
-        button->GetStyle().GetColorBlock().highlight_color = Color(0.9f, 0.9f, 0.9f, 1.0f);
-        button->GetStyle().GetColorBlock().pressed_color = Color(0.75f, 0.75f, 0.75f, 1.0f);
-        button->GetStyle().GetColorBlock().disabled_color = Color(0.75f, 0.75f, 0.75f, 0.5f);
+        button->GetStyle().SetColorBlock(SELECTION_COLOR_BLOCK);
         button->SetSize(Vector2(150.0f, 40.0f));
 
         UILabel *label = CreateLabel();
@@ -49,6 +44,33 @@ namespace Hyperion::UI {
     }
 
     //--------------------------------------------------------------
+    UILabel *UIFactory::CreateLabel() {
+        UILabel *label = new UILabel();
+        label->SetName("Label");
+        label->SetText("New Label");
+        label->SetSize(Vector2(150.0f, 40.0f));
+        return label;
+    }
+
+    //--------------------------------------------------------------
+    UIToggle *UIFactory::CreateToggle() {
+        UIElement *toggle_graphic = CreateElement();
+        toggle_graphic->SetName("Toggle Graphic");
+        toggle_graphic->SetAnchorPreset(UIAnchorPreset::StretchAll);
+        toggle_graphic->SetOffsetMin(Vector2(3.0f, 3.0f));
+        toggle_graphic->SetOffsetMax(Vector2(3.0f, 3.0f));
+
+        UIToggle *toggle = new UIToggle();
+        toggle->SetName("Toggle");
+        toggle->GetStyle().SetColorBlock(SELECTION_COLOR_BLOCK);
+        toggle->SetSize(Vector2(16.0f, 16.0f));
+        toggle->SetToggleGraphic(toggle_graphic);
+        toggle->SetToggleOnColor(Color::Grey());
+        toggle->GetHierarchy().AddChild(toggle_graphic);
+        return toggle;
+    }
+
+    //--------------------------------------------------------------
     void UIFactory::Initialize() {
         MetaRegistry::Reflect<UIElement>("UIElement");
 
@@ -56,6 +78,9 @@ namespace Hyperion::UI {
             .Base<UIElement>();
 
         MetaRegistry::Reflect<UILabel>("UILabel")
+            .Base<UIElement>();
+
+        MetaRegistry::Reflect<UIToggle>("UIToggle")
             .Base<UIElement>();
     }
 

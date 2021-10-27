@@ -1,5 +1,6 @@
 #pragma once
 
+//---------------------- Project Includes ----------------------
 #include "hyperion/core/meta/meta.hpp"
 #include "hyperion/core/meta/meta_factory.hpp"
 
@@ -8,6 +9,7 @@
         inline virtual MetaType GetType() const override { return MetaRegistry::Resolve<TYPE>(); } \
     private:                                                                                       \
 
+//-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
     class Object {
