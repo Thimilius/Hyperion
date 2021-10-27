@@ -1,21 +1,21 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/render/render_context_types.hpp"
 #include "hyperion/render/driver/render_driver.hpp"
-#include "hyperion/render/driver/render_driver_context_types.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-    class IRenderDriverContext : public INonCopyable {
+    class IRenderContext : public INonCopyable {
     public:
-        virtual ~IRenderDriverContext() = default;
+        virtual ~IRenderContext() = default;
     public:
-        virtual RenderDriverContextProperties GetProperties() const = 0;
+        virtual RenderContextProperties GetProperties() const = 0;
 
         virtual IRenderDriver *GetDriver() = 0;
 
-        virtual void Initialize(const RenderDriverContextDescriptor &descriptor) = 0;
+        virtual void Initialize(const RenderContextDescriptor &descriptor) = 0;
         virtual void Shutdown() = 0;
 
         virtual void SwapBuffers() = 0; 

@@ -7,8 +7,8 @@
 #include "hyperion/core/app/application_settings.hpp"
 #include "hyperion/core/app/window.hpp"
 #include "hyperion/core/threading/thread.hpp"
+#include "hyperion/render/render_context.hpp"
 #include "hyperion/render/render_stats.hpp"
-#include "hyperion/render/driver/render_driver_context.hpp"
 #include "hyperion/render/frame/render_frame.hpp"
 
 //-------------------- Forward Declarations --------------------
@@ -115,10 +115,10 @@ namespace Hyperion::Rendering {
     // This is mainly inspired by Godot which also employs that exact concept.
     // 
     // ────────────────────────────────────────────────────────────────────────────────────
-    // RENDER DRIVER CONTEXT:
-    // The RenderDriverContext represents the graphics context of the underlying API.
+    // RENDER CONTEXT:
+    // The RenderContext represents the graphics context of the underlying API.
     // It's mainly responsible for initializing the graphics API, loading extensions and presenting the final render output.
-    // The RenderDriverContext gets implemented by every graphics API and additionally on a lower level by the underlying platform.
+    // The RenderContext gets implemented by every graphics API and additionally on a lower level by the underlying platform.
     // ────────────────────────────────────────────────────────────────────────────────────
 
     class RenderEngine final {
@@ -157,7 +157,7 @@ namespace Hyperion::Rendering {
         inline static RenderStats s_render_stats;
 
         inline static IRenderPipeline *s_render_pipeline;
-        inline static IRenderDriverContext *s_render_driver_context;
+        inline static IRenderContext *s_render_driver_context;
 
         inline static Threading::Thread s_render_thread;
         inline static std::atomic<bool8> s_render_thread_should_exit;

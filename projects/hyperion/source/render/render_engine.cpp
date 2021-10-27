@@ -140,7 +140,7 @@ namespace Hyperion::Rendering {
     //--------------------------------------------------------------
     void RenderEngine::InitializeGraphicsContext(Window *window) {
         s_render_driver_context = window->CreateRenderDriverContext(s_render_settings.backend);
-        s_render_driver_context->Initialize(RenderDriverContextDescriptor());
+        s_render_driver_context->Initialize(RenderContextDescriptor());
         s_render_driver_context->SetVSyncMode(s_vsync_mode);
         s_render_driver_context->GetDriver()->Initialize();
     }

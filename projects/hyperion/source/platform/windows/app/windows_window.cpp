@@ -16,7 +16,7 @@
 #include "hyperion/core/app/events/key_events.hpp"
 #include "hyperion/core/app/events/mouse_events.hpp"
 #include "hyperion/core/app/events/window_events.hpp"
-#include "hyperion/platform/windows/driver/windows_opengl_render_driver_context.hpp"
+#include "hyperion/platform/windows/driver/windows_opengl_render_context.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -199,7 +199,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Rendering::IRenderDriverContext *WindowsWindow::CreateRenderDriverContext(Rendering::RenderBackend render_backend) {
+    Rendering::IRenderContext *WindowsWindow::CreateRenderDriverContext(Rendering::RenderBackend render_backend) {
         switch (render_backend) {
             case Rendering::RenderBackend::OpenGL: {
                 // To create a proper OpenGL context we need a second helper window.
@@ -235,7 +235,7 @@ namespace Hyperion {
                     nullptr
                 );
 
-                Rendering::IRenderDriverContext *render_driver_context = new Rendering::WindowsOpenGLRenderDriverContext(GetDC(m_window_handle), GetDC(helper_window));
+                Rendering::IRenderContext *render_driver_context = new Rendering::WindowsOpenGLRenderContext(GetDC(m_window_handle), GetDC(helper_window));
 
                 // We can destroy the helper window now that we have the proper context.
                 UnregisterClassW(helper_window_class_name, instance);

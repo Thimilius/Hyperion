@@ -16,7 +16,7 @@ namespace Hyperion {
     class Engine;
 
     namespace Rendering {
-        class IRenderDriverContext;
+        class IRenderContext;
         class RenderEngine;
     }
 }
@@ -54,7 +54,7 @@ namespace Hyperion {
 
         void SetIcon(const String &path);
     private:
-        Rendering::IRenderDriverContext *CreateRenderDriverContext(Rendering::RenderBackend render_backend);
+        Rendering::IRenderContext *CreateRenderDriverContext(Rendering::RenderBackend render_backend);
 
         void Poll();
         void Show();

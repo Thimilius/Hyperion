@@ -4,16 +4,16 @@
 #include <Windows.h>
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/render/driver/opengl/opengl_render_driver_context.hpp"
+#include "hyperion/render/driver/opengl/opengl_render_context.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-    class WindowsOpenGLRenderDriverContext : public OpenGLRenderDriverContext {
+    class WindowsOpenGLRenderContext : public OpenGLRenderContext {
     public:
-        WindowsOpenGLRenderDriverContext(HDC device_context, HDC helper_device_context);
+        WindowsOpenGLRenderContext(HDC device_context, HDC helper_device_context);
     public:
-        void Initialize(const RenderDriverContextDescriptor &descriptor) override;
+        void Initialize(const RenderContextDescriptor &descriptor) override;
         void Shutdown() override;
         
         void SwapBuffers() override;

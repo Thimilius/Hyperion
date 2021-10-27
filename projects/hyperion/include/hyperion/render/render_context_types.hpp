@@ -12,13 +12,13 @@ namespace Hyperion::Rendering {
         EverySecondVBlank
     };
 
-    struct RenderDriverContextProperties {
+    struct RenderContextProperties {
         String vendor;
         String renderer;
         String version;
     };
 
-    struct RenderDriverContextDescriptor {
+    struct RenderContextDescriptor {
         int32 color_bits = 32;
         int32 depth_bits = 24;
         int32 stencil_bits = 8;

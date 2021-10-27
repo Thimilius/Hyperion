@@ -4,13 +4,13 @@
 #include <glad/glad.h>
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/render/driver/render_driver_context.hpp"
+#include "hyperion/render/render_context.hpp"
 #include "hyperion/render/driver/opengl/opengl_render_driver.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-    struct OpenGLRenderDriverContextLimits {
+    struct OpenGLRenderContextLimits {
         uint32 max_texture_units;
         uint32 max_texture_size;
 
@@ -21,18 +21,18 @@ namespace Hyperion::Rendering {
         uint32 max_framebuffer_height;
     };
 
-    class OpenGLRenderDriverContext : public IRenderDriverContext {
+    class OpenGLRenderContext : public IRenderContext {
     public:
-        virtual ~OpenGLRenderDriverContext() override = default;
+        virtual ~OpenGLRenderContext() override = default;
     public:
-        inline RenderDriverContextProperties GetProperties() const override { return m_properties; }
+        inline RenderContextProperties GetProperties() const override { return m_properties; }
 
         inline IRenderDriver *GetDriver() { return &m_render_driver; }
 
-        inline const OpenGLRenderDriverContextLimits &GetLimits() const { return m_limits; }
+        inline const OpenGLRenderContextLimits &GetLimits() const { return m_limits; }
         inline const Array<String> &GetExtensions() const { return m_extensions; }
 
-        void Initialize(const RenderDriverContextDescriptor &descriptor) override;
+        void Initialize(const RenderContextDescriptor &descriptor) override;
         void Shutdown() override;
     private:
         void InitializeDebug();
@@ -46,8 +46,8 @@ namespace Hyperion::Rendering {
     private:
         static void GLAPIENTRY DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *user_pointer);
     private:
-        RenderDriverContextProperties m_properties;
-        OpenGLRenderDriverContextLimits m_limits;
+        RenderContextProperties m_properties;
+        OpenGLRenderContextLimits m_limits;
         Array<String> m_extensions;
 
         OpenGLRenderDriver m_render_driver;

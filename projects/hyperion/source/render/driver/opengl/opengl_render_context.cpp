@@ -2,7 +2,7 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/render/driver/opengl/opengl_render_driver_context.hpp"
+#include "hyperion/render/driver/opengl/opengl_render_context.hpp"
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/engine.hpp"
@@ -15,7 +15,7 @@ namespace Hyperion::Rendering {
     constexpr bool8 g_log_notifications = false;
 
     //--------------------------------------------------------------
-    void OpenGLRenderDriverContext::Initialize(const RenderDriverContextDescriptor &descriptor) {
+    void OpenGLRenderContext::Initialize(const RenderContextDescriptor &descriptor) {
 #ifdef HYP_DEBUG
         InitializeDebug();
 #endif
@@ -31,19 +31,19 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void OpenGLRenderDriverContext::Shutdown() {
+    void OpenGLRenderContext::Shutdown() {
 
     }
 
     //--------------------------------------------------------------
-    void OpenGLRenderDriverContext::InitializeDebug() {
+    void OpenGLRenderContext::InitializeDebug() {
         glDebugMessageCallback(DebugMessageCallback, nullptr);
         glEnable(GL_DEBUG_OUTPUT);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
     }
 
     //--------------------------------------------------------------
-    void OpenGLRenderDriverContext::QueryExtensions() {
+    void OpenGLRenderContext::QueryExtensions() {
         int32 extension_count;
         glGetIntegerv(GL_NUM_EXTENSIONS, &extension_count);
         for (int32 i = 0; i < extension_count; i++) {
@@ -56,14 +56,14 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void OpenGLRenderDriverContext::QueryProperties() {
+    void OpenGLRenderContext::QueryProperties() {
         m_properties.vendor = reinterpret_cast<const char *>(glGetString(GL_VENDOR));
         m_properties.renderer = reinterpret_cast<const char *>(glGetString(GL_RENDERER));
         m_properties.version = reinterpret_cast<const char *>(glGetString(GL_VERSION));
     }
 
     //--------------------------------------------------------------
-    void OpenGLRenderDriverContext::QueryLimits() {
+    void OpenGLRenderContext::QueryLimits() {
         glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, reinterpret_cast<GLint *>(&m_limits.max_texture_units));
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, reinterpret_cast<GLint *>(&m_limits.max_texture_size));
         glGetIntegerv(GL_MAX_SAMPLES, reinterpret_cast<GLint *>(&m_limits.max_msaa_samples));
@@ -73,21 +73,21 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void OpenGLRenderDriverContext::CheckExtensions() {
+    void OpenGLRenderContext::CheckExtensions() {
         CheckExtension("GL_ARB_direct_state_access");
         CheckExtension("GL_EXT_direct_state_access");
         CheckExtension("GL_ARB_texture_filter_anisotropic");
     }
 
     //--------------------------------------------------------------
-    void OpenGLRenderDriverContext::CheckExtension(const String &extension) {
+    void OpenGLRenderContext::CheckExtension(const String &extension) {
         if (std::find(m_extensions.begin(), m_extensions.end(), extension) == m_extensions.end()) {
             HYP_PANIC_MESSAGE("OpenGL", "Manditory extension: '{}' not available!", extension);
         }
     }
 
     //--------------------------------------------------------------
-    void OpenGLRenderDriverContext::DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *user_pointer) {
+    void OpenGLRenderContext::DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *user_pointer) {
         const char *source_string;
         switch (source) {
             case GL_DEBUG_SOURCE_API:             source_string = "API"; break;
