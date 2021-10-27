@@ -841,6 +841,27 @@ namespace Hyperion {
         bool8 IsDefaultConstructable() const { return (node->traits & MetaTypeTraits::IsDefaultConstructable) == MetaTypeTraits::IsDefaultConstructable; }
         Hyperion::MetaType RemovePointer() const { return node->remove_pointer(); }
 
+        template<typename T>
+        bool8 IsDerivedFrom() {
+            Internal::MetaTypeNode *type_node = Internal::MetaInfoNode<T>::Resolve();
+            return IsDerivedFrom(type_node->clazz());
+        }
+
+        bool8 IsDerivedFrom(MetaType type) {
+            if (*this == type) {
+                return true;
+            }
+
+            bool8 has_base = false;
+            ForEachBase([type, &has_base](MetaBase base) {
+                if (base.GetType() == type) {
+                    has_base = true;
+                }
+            });
+
+            return has_base;
+        }
+
         template<typename Op>
         std::enable_if_t<std::is_invocable_v<Op, Hyperion::MetaBase>, void>
         ForEachBase(Op op) const {

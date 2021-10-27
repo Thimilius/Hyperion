@@ -9,22 +9,13 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void ComponentRegistry::Initialize() {
-        MetaType base_component_type = MetaRegistry::Resolve<IComponent>();
-
         Array<MetaType> component_types;
-        MetaRegistry::Resolve([base_component_type, &component_types](MetaType type) {
+        MetaRegistry::Resolve([&component_types](MetaType type) {
             if (!type.IsDefaultConstructable()) {
                 return;
             }
 
-            bool8 has_component_base = false;
-            type.ForEachBase([base_component_type, &has_component_base](MetaBase base) {
-                if (base.GetType() == base_component_type) {
-                    has_component_base = true;
-                }
-            });
-
-            if (has_component_base) {
+            if (type.IsDerivedFrom<IComponent>()) {
                 component_types.Add(type);
             }
         });

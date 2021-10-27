@@ -18,6 +18,15 @@ namespace Hyperion::UI {
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::UI {
 
+    class UIQuery final {
+    public:
+        template<typename T>
+        static T *Query(UIElement *element, const String &name = "");
+    private:
+        UIQuery() = delete;
+        ~UIQuery() = delete;
+    };
+
     struct UIElementRenderer {
         Mesh *mesh = nullptr;
         
@@ -122,6 +131,10 @@ namespace Hyperion::UI {
         inline Vector2 GetOffsetMax() const { return m_offset_max; }
         void SetOffsetMax(Vector2 offset_max);
 
+        void SetAnchorPreset(UIAnchorPreset preset);
+        void GetLocalCorners(Vector3 corners[4]) const;
+        void GetWorldCorners(Vector3 corners[4]) const;
+
         inline UIElementRenderer &GetRenderer() { return m_renderer; }
         inline const UIElementRenderer &GetRenderer() const { return m_renderer; }
         inline UIElementStyle &GetStyle() { return m_style; }
@@ -129,15 +142,12 @@ namespace Hyperion::UI {
         inline UIElementHierarchy &GetHierarchy() { return m_hierarchy; }
         inline const UIElementHierarchy &GetHierarchy() const { return m_hierarchy; }
 
-        void GetLocalCorners(Vector3 corners[4]) const;
-        void GetWorldCorners(Vector3 corners[4]) const;
-
-        void SetAnchorPreset(UIAnchorPreset preset);
-
         virtual void OnEvent(UIEvent &event);
         virtual bool8 ContainsScreenPoint(Vector2 screen_point);
 
         void Rebuild(float32 ui_scale, MeshBuilder &mesh_builder);
+
+        template<typename T> T *Q(const String &name = "") { return UIQuery::Query<T>(this, name); }
     protected:
         virtual void OnRebuildLayout();
         virtual void OnRebuildGeometry(MeshBuilder &mesh_builder);
@@ -171,5 +181,31 @@ namespace Hyperion::UI {
     private:
         friend class Hyperion::UI::UIElementHierarchy;
     };
+
+    template<typename T>
+    T *UIQuery::Query(UIElement *element, const String &name) {
+        if (element) {
+            if (element->GetType().IsDerivedFrom(MetaRegistry::Resolve<T>())) {
+                if (name != "") {
+                    if (element->GetName() == name) {
+                        return static_cast<T *>(element);
+                    }
+                } else {
+                    return static_cast<T *>(element);
+                }
+            }
+
+            for (UIElement *child : element->GetHierarchy().GetChildren()) {
+                T *canidate = Query<T>(child, name);
+                if (canidate) {
+                    return canidate;
+                }
+            }
+
+            return nullptr;
+        }
+
+        return nullptr;
+    }
 
 }
