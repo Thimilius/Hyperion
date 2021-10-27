@@ -23,8 +23,7 @@
 #include <hyperion/ecs/world/world_serializer.hpp>
 #include <hyperion/render/render_engine.hpp>
 #include <hyperion/render/pipelines/forward/forward_render_pipeline.hpp>
-#include <hyperion/ui/ui_button.hpp>
-#include <hyperion/ui/ui_label.hpp>
+#include <hyperion/ui/ui_factory.hpp>
 
 //------------------------- Namespaces -------------------------
 using namespace Hyperion::Rendering;
@@ -108,11 +107,9 @@ namespace Hyperion::Editor {
         ui_view->root_element = root_element;
 
         {
-            g_root_element = new UIElement();
-            g_root_element->SetAnchorPreset(UIAnchorPreset::StretchAll);
-            g_root_element->GetStyle().SetVisibility(UIVisibility::Visible);
+            g_root_element = UIFactory::CreateRoot();
 
-            g_render_ui_element = new UIElement();
+            g_render_ui_element = UIFactory::CreateElement();
             g_render_ui_element->SetAnchorPreset(UIAnchorPreset::StretchAll);
             g_render_ui_element->SetOffsetMax(Vector2(0.0f, UI_HEADER_SIZE));
             g_render_ui_element->GetRenderer().texture = RenderEngine::GetPipeline()->GetTargetRenderTexture();
@@ -120,7 +117,7 @@ namespace Hyperion::Editor {
             g_render_ui_element->GetRenderer().enable_blending = false;
             g_root_element->GetHierarchy().AddChild(g_render_ui_element);
 
-            g_header_ui_element = new UIElement();
+            g_header_ui_element = UIFactory::CreateElement();
             g_header_ui_element->SetSize(Vector2(0.0f, UI_HEADER_SIZE));
             g_header_ui_element->SetAnchorPreset(UIAnchorPreset::TopStretchHorizontal);
             g_header_ui_element->GetStyle().SetColor(Color::Grey());
@@ -128,7 +125,7 @@ namespace Hyperion::Editor {
 
             Font *consola_font = FontLoader::LoadFont("data/fonts/consola.ttf", 12, FontCharacterSet::LatinSupplement);
 
-            g_label_fps = new UILabel();
+            g_label_fps = UIFactory::CreateLabel();
             g_label_fps->SetFont(consola_font);
             g_label_fps->SetAlignment(UITextAlignment::MiddleLeft);
             g_label_fps->SetAnchorPreset(UIAnchorPreset::StretchAll);
@@ -136,7 +133,7 @@ namespace Hyperion::Editor {
             g_label_fps->GetStyle().GetShadow().enabled = true;
             g_header_ui_element->GetHierarchy().AddChild(g_label_fps);
 
-            g_label_render_stats = new UILabel();
+            g_label_render_stats = UIFactory::CreateLabel();
             g_label_render_stats->SetFont(consola_font);
             g_label_render_stats->SetAlignment(UITextAlignment::MiddleRight);
             g_label_render_stats->SetAnchorPreset(UIAnchorPreset::StretchAll);
