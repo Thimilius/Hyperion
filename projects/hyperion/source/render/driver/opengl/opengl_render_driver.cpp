@@ -6,7 +6,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/display.hpp"
-#include "hyperion/render/driver/opengl/opengl_render_driver_shader_compiler.hpp"
+#include "hyperion/render/driver/opengl/opengl_shader_compiler.hpp"
 #include "hyperion/render/driver/opengl/opengl_utilities.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -51,7 +51,7 @@ namespace Hyperion::Rendering {
 	                o_color = texture(u_texture, i_v2f.texture0);
                 }
             )";
-            m_state.fullscreen_shader = OpenGLRenderDriverShaderCompiler::Compile(fullscreen_vertex, fullscreen_fragment).program;
+            m_state.fullscreen_shader = OpenGLShaderCompiler::Compile(fullscreen_vertex, fullscreen_fragment).program;
             glCreateVertexArrays(1, &m_state.fullscreen_vertex_array);
         }
 
@@ -871,7 +871,7 @@ namespace Hyperion::Rendering {
         OpenGLShader opengl_shader;
         opengl_shader.id = shader.id;
         opengl_shader.attributes = shader.data.attributes;
-        opengl_shader.program = OpenGLRenderDriverShaderCompiler::Compile(shader.data.vertex_source.c_str(), shader.data.fragment_source.c_str()).program;
+        opengl_shader.program = OpenGLShaderCompiler::Compile(shader.data.vertex_source.c_str(), shader.data.fragment_source.c_str()).program;
 
 
         opengl_shader.locations.Reserve(shader.data.properties.GetLength());

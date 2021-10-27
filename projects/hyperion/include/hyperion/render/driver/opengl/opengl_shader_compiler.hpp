@@ -9,18 +9,18 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-    struct OpenGLRenderDriverShaderCompilationResult {
+    struct OpenGLShaderCompilationResult {
         bool8 success;
 
         GLuint program;
     };
 
-    class OpenGLRenderDriverShaderCompiler {
-    private:
-        OpenGLRenderDriverShaderCompiler() = delete;
-        ~OpenGLRenderDriverShaderCompiler() = delete;
+    class OpenGLShaderCompiler {
     public:
-        static OpenGLRenderDriverShaderCompilationResult Compile(const char *vertex_source, const char *fragment_source);
+        static OpenGLShaderCompilationResult Compile(const char *vertex_source, const char *fragment_source);
+    private:
+        OpenGLShaderCompiler() = delete;
+        ~OpenGLShaderCompiler() = delete;
     };
 
 }
