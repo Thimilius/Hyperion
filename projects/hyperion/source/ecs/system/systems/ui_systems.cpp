@@ -87,8 +87,6 @@ namespace Hyperion::UI {
             Array<UIElement *> hovered_elements;
             RaycastElements(ui_view->root_element, Input::GetMousePosition(), hovered_elements);
 
-            // FIXME: Fix mouse events not being captured and send properly.
-
             if (!hovered_elements.IsEmpty()) {
                 // The array we get back will be depth sorted in reverse.
                 // This means the top most hovered element we are interested in is at the end.
@@ -109,6 +107,13 @@ namespace Hyperion::UI {
                 }
             }
 
+            if (state.pressed_element) {
+                if (Input::IsMouseButtonUp(MouseButtonCode::Left)) {
+                    SendEvent(state.pressed_element, UIEventType::PointerUp);
+                    state.pressed_element = nullptr;
+                }
+            }
+
             if (state.hovered_element) {
                 if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
                     SendEvent(state.hovered_element, UIEventType::PointerDown);
@@ -125,13 +130,6 @@ namespace Hyperion::UI {
                 }
                 if (Input::HasMouseScrolled()) {
                     SendEvent(state.hovered_element, UIEventType::PointerScroll);
-                }
-            }
-
-            if (state.pressed_element) {
-                if (Input::IsMouseButtonUp(MouseButtonCode::Left)) {
-                    SendEvent(state.pressed_element, UIEventType::PointerUp);
-                    state.pressed_element = nullptr;
                 }
             }
 

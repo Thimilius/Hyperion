@@ -62,6 +62,17 @@ namespace Hyperion::UI {
     }
 
     //--------------------------------------------------------------
+    void UIElement::SetInteractable(bool8 is_interactable) {
+        m_state.is_interactable = is_interactable;
+
+        if (!m_state.is_interactable) {
+            GetRenderer().color = m_style.m_color_block.disabled_color;
+        } else {
+            GetRenderer().color = m_style.m_color_block.normal_color;
+        }
+    }
+
+    //--------------------------------------------------------------
     void UIElement::SetPosition(Vector2 position) {
         m_local_position = position;
 
@@ -270,21 +281,33 @@ namespace Hyperion::UI {
     void UIElement::OnEvent(UIEvent &event) {
         UIEventType event_type = event.GetType();
 
-        // TODO: Properly keep track of own selection state.
-
         if (event_type == UIEventType::PointerDown) {
-            GetRenderer().color = m_style.m_color_block.pressed_color;
+            m_state.is_pressed = true;
         } else if (event_type == UIEventType::PointerUp) {
-            GetRenderer().color = m_style.m_color_block.highlight_color;
+            m_state.is_pressed = false;
         } else if (event_type == UIEventType::PointerEnter) {
-            GetRenderer().color = m_style.m_color_block.highlight_color;
+            m_state.is_highlighted = true;
         } else if (event_type == UIEventType::PointerExit) {
+            m_state.is_highlighted = false;
+        }
+
+        if (!m_state.is_interactable) {
+            GetRenderer().color = m_style.m_color_block.disabled_color;
+        } else if (m_state.is_pressed) {
+            GetRenderer().color = m_style.m_color_block.pressed_color;
+        } else if (m_state.is_highlighted) {
+            GetRenderer().color = m_style.m_color_block.highlight_color;
+        } else {
             GetRenderer().color = m_style.m_color_block.normal_color;
         }
     }
 
     //--------------------------------------------------------------
     bool8 UIElement::ContainsScreenPoint(Vector2 screen_point) {
+        if (!m_state.is_raycast_target) {
+            return false;
+        }
+
         // We have to transform the screen point to have the origin in the middle of the screen.
         float32 display_width = static_cast<float32>(Display::GetWidth());
         float32 display_height = static_cast<float32>(Display::GetHeight());

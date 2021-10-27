@@ -16,6 +16,7 @@ namespace Hyperion::UI {
     UIElement *UIFactory::CreateRoot() {
         UIElement *root = new UIElement();
         root->SetAnchorPreset(UIAnchorPreset::StretchAll);
+        root->GetStyle().SetOpacity(0.0f);
         return root;
     }
 
@@ -30,6 +31,10 @@ namespace Hyperion::UI {
     //--------------------------------------------------------------
     UIButton *UIFactory::CreateButton() {
         UIButton *button = new UIButton();
+        button->GetStyle().GetColorBlock().normal_color = Color(1.0f, 1.0f, 1.0f, 1.0f);
+        button->GetStyle().GetColorBlock().highlight_color = Color(0.9f, 0.9f, 0.9f, 1.0f);
+        button->GetStyle().GetColorBlock().pressed_color = Color(0.75f, 0.75f, 0.75f, 1.0f);
+        button->GetStyle().GetColorBlock().disabled_color = Color(0.75f, 0.75f, 0.75f, 0.5f);
         button->SetSize(Vector2(150.0f, 40.0f));
 
         UILabel *label = CreateLabel();

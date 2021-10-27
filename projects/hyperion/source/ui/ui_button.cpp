@@ -8,9 +8,16 @@
 namespace Hyperion::UI {
 
     //--------------------------------------------------------------
+    UIButton::UIButton() {
+        SetRaycastTarget(true);
+    }
+
+    //--------------------------------------------------------------
     void UIButton::Click() {
-        if (m_click_callback) {
-            m_click_callback();
+        if (IsInteractable()) {
+            if (m_click_callback) {
+                m_click_callback();
+            }
         }
     }
 

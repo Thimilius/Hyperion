@@ -76,6 +76,9 @@ namespace Hyperion::UI {
     };
 
     struct UIElementState {
+        bool8 is_interactable = true;
+        bool8 is_raycast_target = false;
+
         bool8 is_highlighted = false;
         bool8 is_pressed = false;
     };
@@ -87,6 +90,11 @@ namespace Hyperion::UI {
         inline bool8 IsDirty() const { return m_is_dirty; }
         inline void MarkDirty() { m_is_dirty = true; }
         void MarkHierarchyDirty();
+
+        inline bool8 IsInteractable() const { return m_state.is_interactable; }
+        void SetInteractable(bool8 is_interactable);
+        inline bool8 IsRaycastTarget() const { return m_state.is_raycast_target; }
+        void SetRaycastTarget(bool8 is_raycast_target) { m_state.is_raycast_target = is_raycast_target; }
 
         inline Vector2 GetPosition() const { return m_local_position; }
         inline Vector2 GetDerivedPosition() const { return m_derived_position; }

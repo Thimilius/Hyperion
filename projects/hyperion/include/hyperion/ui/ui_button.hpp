@@ -10,6 +10,8 @@ namespace Hyperion::UI {
 
     class UIButton : public UIElement {
     public:
+        UIButton();
+    public:
         void Click();
 
         void RegisterClickCallback(const UIButtonClickCallback &callback);

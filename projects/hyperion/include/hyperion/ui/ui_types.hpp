@@ -55,12 +55,20 @@ namespace Hyperion::UI {
         Color normal_color = Color::White();
         Color highlight_color = Color::White();
         Color pressed_color = Color::White();
+        Color disabled_color = Color::White();
     };
 
     struct UIShadow {
         bool enabled = false;
         Color color = Color::Black();
         Vector2 offset = Vector2(1.0f, -1.0f);
+    };
+
+    enum class UISelectionState {
+        Normal,
+        Highlighted,
+        Pressed,
+        Disabled,
     };
 
 }

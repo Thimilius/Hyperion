@@ -46,6 +46,8 @@ namespace Hyperion::Editor {
     EntityId g_light;
     EntityId g_parent;
     EntityId g_child;
+
+    UIViewComponent g_editor_ui_view;
     UIElement *g_root_element;
     UIElement *g_header_ui_element;
     UIElement *g_render_ui_element;
@@ -82,6 +84,7 @@ namespace Hyperion::Editor {
         parameters.format = TextureFormat::RGBA32;
         parameters.width = image->GetWidth();
         parameters.height = image->GetHeight();
+        parameters.attributes.anisotropic_filter = TextureAnisotropicFilter::Times16;
         Texture2D *texture = AssetManager::CreateTexture2D(parameters, image->GetPixels());
         Material *material = AssetManager::CreateMaterial(AssetManager::GetShaderPrimitive(ShaderPrimitive::Unlit));
         material->SetTexture("m_texture", texture);
@@ -89,18 +92,14 @@ namespace Hyperion::Editor {
         g_world->GetComponent<MeshComponent>(quad)->material = material;
         g_world->GetComponent<LocalTransformComponent>(quad)->position = Vector3(0.0f, 2.0f, 0.0f);
 
-        UIElement *root_element = new UIElement();
-        root_element->SetAnchorPreset(UIAnchorPreset::StretchAll);
-        root_element->GetStyle().SetVisibility(UIVisibility::Visible);
-        root_element->GetStyle().SetOpacity(0.0f);
+        UIElement *root_element = UIFactory::CreateRoot();
 
-        UIButton *ui_element = new UIButton();
-        ui_element->RegisterClickCallback([]() {
+        UIButton *ui_button = UIFactory::CreateButton();
+        ui_button->SetAnchorPreset(UIAnchorPreset::BottomLeft);
+        ui_button->RegisterClickCallback([]() {
             HYP_TRACE("CLICK");
         });
-        ui_element->GetStyle().GetColorBlock().highlight_color = Color::Green();
-        ui_element->GetStyle().GetColorBlock().pressed_color = Color::Red();
-        root_element->GetHierarchy().AddChild(ui_element);
+        root_element->GetHierarchy().AddChild(ui_button);
 
         EntityId ui = g_world->CreateEntity();
         UIViewComponent *ui_view = g_world->AddComponent<UIViewComponent>(ui);
@@ -140,6 +139,9 @@ namespace Hyperion::Editor {
             g_label_render_stats->SetOffsetMax(Vector2(5.0f, 0.0f));
             g_label_render_stats->GetStyle().GetShadow().enabled = true;
             g_header_ui_element->GetHierarchy().AddChild(g_label_render_stats);
+
+            g_editor_ui_view.scaling_mode = UIScalingMode::ConstantPixelSize;
+            g_editor_ui_view.root_element = g_root_element;
 
             UpdateTexts();
         }
@@ -181,17 +183,13 @@ namespace Hyperion::Editor {
         }
 
         {
-            UIViewComponent editor_ui_view;
-            editor_ui_view.scaling_mode = UIScalingMode::ConstantPixelSize;
-            editor_ui_view.root_element = g_root_element;
-
-            UIRebuildSystem::Run(&editor_ui_view);
-            UIEventSystem::Run(&editor_ui_view);
+            UIRebuildSystem::Run(&g_editor_ui_view);
+            UIEventSystem::Run(&g_editor_ui_view);
 
             RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
             Delegate<RenderFrameContextObjectUI &()> ui_object_adder;
             ui_object_adder.Connect<&RenderFrameContext::AddEditorUIObject>(&render_frame_context);
-            UIRenderSystem::Run(&editor_ui_view, ui_object_adder);
+            UIRenderSystem::Run(&g_editor_ui_view, ui_object_adder);
         }
     }
 
