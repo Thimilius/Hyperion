@@ -109,20 +109,20 @@ namespace Hyperion::Editor {
             g_render_ui_element->GetRenderer().texture = RenderEngine::GetPipeline()->GetTargetRenderTexture();
             g_render_ui_element->GetRenderer().render_texture_attachment_index = 1;
             g_render_ui_element->GetRenderer().enable_blending = false;
-            g_root_element->GetHierarchy().AddChild(g_render_ui_element);
+            g_render_ui_element->GetHierarchy().SetParent(g_root_element);
 
             g_header_ui_element = UIFactory::CreateElement();
             g_header_ui_element->SetSize(Vector2(0.0f, UI_HEADER_SIZE - 1));
             g_header_ui_element->SetAnchorPreset(UIAnchorPreset::TopStretchHorizontal);
             g_header_ui_element->GetStyle().SetColor(UI_NORMAL_COLOR);
-            g_root_element->GetHierarchy().AddChild(g_header_ui_element);
+            g_header_ui_element->GetHierarchy().SetParent(g_root_element);
 
             UIElement *g_header_seperator_ui_element = UIFactory::CreateElement();
             g_header_seperator_ui_element->SetAnchorPreset(UIAnchorPreset::TopStretchHorizontal);
             g_header_seperator_ui_element->SetSize(Vector2(0.0f, 1.0f));
             g_header_seperator_ui_element->SetPosition(Vector2(0.0f, -static_cast<float32>(UI_HEADER_SIZE - 1)));
             g_header_seperator_ui_element->GetStyle().SetColor(UI_HIGHLIGHT_COLOR);
-            g_root_element->GetHierarchy().AddChild(g_header_seperator_ui_element);
+            g_header_seperator_ui_element->GetHierarchy().SetParent(g_root_element);
 
             Font *consola_font = FontLoader::LoadFont("data/fonts/consola.ttf", 12, FontCharacterSet::LatinSupplement);
 
@@ -132,7 +132,7 @@ namespace Hyperion::Editor {
             g_label_fps->SetAnchorPreset(UIAnchorPreset::StretchAll);
             g_label_fps->SetOffsetMin(Vector2(5.0f, 0.0f));
             g_label_fps->GetStyle().GetShadow().enabled = true;
-            g_header_ui_element->GetHierarchy().AddChild(g_label_fps);
+            g_label_fps->GetHierarchy().SetParent(g_header_ui_element);
 
             g_label_render_stats = UIFactory::CreateLabel();
             g_label_render_stats->SetFont(consola_font);
@@ -140,14 +140,14 @@ namespace Hyperion::Editor {
             g_label_render_stats->SetAnchorPreset(UIAnchorPreset::StretchAll);
             g_label_render_stats->SetOffsetMax(Vector2(5.0f, 0.0f));
             g_label_render_stats->GetStyle().GetShadow().enabled = true;
-            g_header_ui_element->GetHierarchy().AddChild(g_label_render_stats);
+            g_label_render_stats->GetHierarchy().SetParent(g_header_ui_element);
 
             UIToggle *ui_toggle = UIFactory::CreateToggle();
             ui_toggle->SetSize(Vector2(25.0f, 0.0f));
             ui_toggle->SetAnchorPreset(UIAnchorPreset::CenterStretchVertical);
             ui_toggle->GetStyle().SetColor(UI_NORMAL_COLOR);
             ui_toggle->SetToggleOnColor(UI_HIGHLIGHT_COLOR);
-            g_header_ui_element->GetHierarchy().AddChild(ui_toggle);
+            ui_toggle->GetHierarchy().SetParent(g_header_ui_element);
 
             g_editor_ui_view.scaling_mode = UIScalingMode::ConstantPixelSize;
             g_editor_ui_view.root_element = g_root_element;

@@ -72,8 +72,9 @@ namespace Hyperion::UI {
     class UIElementHierarchy {
     public:
         inline UIElement *GetParent() const { return m_parent; }
-        inline const Array<UIElement *> &GetChildren() const { return m_children; }
+        void SetParent(UIElement *parent);
 
+        inline const Array<UIElement *> &GetChildren() const { return m_children; }
         void AddChild(UIElement *child);
     private:
         UIElement *m_element = nullptr;

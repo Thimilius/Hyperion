@@ -35,15 +35,35 @@ namespace Hyperion::UI {
         m_element->MarkDirty();
     }
 
+    // FIXME: Check for hierarchy cycles.
+
+    //--------------------------------------------------------------
+    void UIElementHierarchy::SetParent(UIElement *parent) {
+        if (parent != m_parent) {
+            if (m_parent) {
+                m_parent->m_hierarchy.m_children.Remove(m_element);
+            }
+
+            if (parent) {
+                parent->m_hierarchy.m_children.Add(m_element);
+            }
+            m_parent = parent;
+
+            parent->MarkHierarchyDirty();
+        }
+    }
+
     //--------------------------------------------------------------
     void UIElementHierarchy::AddChild(UIElement *child) {
-        m_children.Add(child);
-        if (child->GetHierarchy().m_parent != nullptr) {
-            child->GetHierarchy().m_parent->GetHierarchy().m_children.Remove(child);
-        }
-        child->GetHierarchy().m_parent = m_element;
+        if (child && !m_children.Contains(child)) {
+            m_children.Add(child);
+            if (child->m_hierarchy.m_parent != nullptr) {
+                child->m_hierarchy.m_parent->m_hierarchy.m_children.Remove(child);
+            }
+            child->m_hierarchy.m_parent = m_element;
 
-        m_element->MarkHierarchyDirty();
+            m_element->MarkHierarchyDirty();
+        }
     }
 
     //--------------------------------------------------------------
