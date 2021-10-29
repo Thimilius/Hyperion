@@ -159,15 +159,15 @@ namespace Hyperion::UI {
     }
 
     //--------------------------------------------------------------
-    void UIElement::SetOffsetMin(Vector2 offset_min) {
-        m_offset_min = offset_min;
+    void UIElement::SetAnchorOffsetMin(Vector2 anchor_offset_min) {
+        m_anchor_offset_min = anchor_offset_min;
 
         MarkHierarchyDirty();
     }
 
     //--------------------------------------------------------------
-    void UIElement::SetOffsetMax(Vector2 offset_max) {
-        m_offset_max = offset_max;
+    void UIElement::SetAnchorOffsetMax(Vector2 anchor_offset_max) {
+        m_anchor_offset_max = anchor_offset_max;
 
         MarkHierarchyDirty();
     }
@@ -411,8 +411,8 @@ namespace Hyperion::UI {
             float32 anchor_y_size = anchor_y * parent_size.y;
             size.x += anchor_x * parent_size.x;
             size.y += anchor_y * parent_size.y;
-            size.x -= m_offset_min.x + m_offset_max.x;
-            size.y -= m_offset_min.y + m_offset_max.y;
+            size.x -= m_anchor_offset_min.x + m_anchor_offset_max.x;
+            size.y -= m_anchor_offset_min.y + m_anchor_offset_max.y;
             m_rect = Rect(-m_pivot * size, size);
 
             // First we have our local position which acts as a simple offset.
@@ -427,8 +427,8 @@ namespace Hyperion::UI {
             final_local_position.x += m_pivot.x * anchor_x_size;
             final_local_position.y += m_pivot.y * anchor_y_size;
             // And finally the anchoring offset.
-            final_local_position.x += (m_offset_min.x / 2.0f) - (m_offset_max.x / 2.0f);
-            final_local_position.y += (m_offset_min.y / 2.0f) - (m_offset_max.y / 2.0f);
+            final_local_position.x += ((1.0f - m_pivot.x) * m_anchor_offset_min.x) - ((1.0f - m_pivot.x) * m_anchor_offset_max.x);
+            final_local_position.y += ((1.0f - m_pivot.y) * m_anchor_offset_min.y) - ((1.0f - m_pivot.y) * m_anchor_offset_max.y);
         }
 
         {

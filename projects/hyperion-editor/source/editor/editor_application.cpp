@@ -107,7 +107,7 @@ namespace Hyperion::Editor {
 
             g_render_ui_element = UIFactory::CreateElement();
             g_render_ui_element->SetAnchorPreset(UIAnchorPreset::StretchAll);
-            g_render_ui_element->SetOffsetMax(Vector2(0.0f, UI_HEADER_SIZE));
+            g_render_ui_element->SetAnchorOffsetMax(Vector2(0.0f, UI_HEADER_SIZE));
             g_render_ui_element->GetRenderer().texture = RenderEngine::GetPipeline()->GetTargetRenderTexture();
             g_render_ui_element->GetRenderer().render_texture_attachment_index = 1;
             g_render_ui_element->GetRenderer().enable_blending = false;
@@ -133,7 +133,7 @@ namespace Hyperion::Editor {
             g_label_stats->SetFont(consola_font);
             g_label_stats->SetAlignment(UITextAlignment::MiddleRight);
             g_label_stats->SetAnchorPreset(UIAnchorPreset::StretchAll);
-            g_label_stats->SetOffsetMax(Vector2(5.0f, 0.0f));
+            g_label_stats->SetAnchorOffsetMax(Vector2(5.0f, 0.0f));
             g_label_stats->GetStyle().GetShadow().enabled = true;
             g_label_stats->GetHierarchy().SetParent(g_header_ui_element);
 
@@ -152,6 +152,7 @@ namespace Hyperion::Editor {
                 toggle_label->SetAnchorPreset(UIAnchorPreset::StretchAll);
                 toggle_label->SetFont(font);
                 toggle_label->SetText(text);
+                toggle_label->GetStyle().GetShadow().enabled = true;
                 ui_toggle->SetToggleGraphic(toggle_label);
                 return ui_toggle;
             };
@@ -180,9 +181,10 @@ namespace Hyperion::Editor {
             camera_reset_button->SetPosition(Vector2(75.0f, 0.0f));
             camera_reset_button->GetStyle().SetColor(UI_NORMAL_COLOR);
             camera_reset_button->GetHierarchy().SetParent(g_header_ui_element);
-            UILabel *camera_reset_label = camera_reset_button->Q<UILabel>();
+            UILabel *camera_reset_label = camera_reset_button->Q<UILabel>("");
             camera_reset_label->SetFont(icon_font);
             camera_reset_label->SetText("\uf03d");
+            camera_reset_label->GetStyle().GetShadow().enabled = true;
             camera_reset_button->RegisterClickCallback([]() {
                 g_camera_controller->Reset(g_world);
             });

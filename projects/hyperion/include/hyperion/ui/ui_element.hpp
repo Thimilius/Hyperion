@@ -128,10 +128,10 @@ namespace Hyperion::UI {
         void SetAnchorMin(Vector2 anchor_min);
         inline Vector2 GetAnchorMax() const { return m_anchor_max; }
         void SetAnchorMax(Vector2 anchor_max);
-        inline Vector2 GetOffsetMin() const { return m_offset_min; }
-        void SetOffsetMin(Vector2 offset_min);
-        inline Vector2 GetOffsetMax() const { return m_offset_max; }
-        void SetOffsetMax(Vector2 offset_max);
+        inline Vector2 GetAnchorOffsetMin() const { return m_anchor_offset_min; }
+        void SetAnchorOffsetMin(Vector2 anchor_offset_min);
+        inline Vector2 GetAnchorOffsetMax() const { return m_anchor_offset_max; }
+        void SetAnchorOffsetMax(Vector2 anchor_offset_max);
 
         void SetAnchorPreset(UIAnchorPreset preset);
         void GetLocalCorners(Vector3 corners[4]) const;
@@ -173,8 +173,8 @@ namespace Hyperion::UI {
         Vector2 m_pivot = Vector2(0.5f, 0.5f);
         Vector2 m_anchor_min = Vector2(0.5f, 0.5f);
         Vector2 m_anchor_max = Vector2(0.5f, 0.5f);
-        Vector2 m_offset_min = Vector2(0.0f, 0.0f);
-        Vector2 m_offset_max = Vector2(0.0f, 0.0f);
+        Vector2 m_anchor_offset_min = Vector2(0.0f, 0.0f);
+        Vector2 m_anchor_offset_max = Vector2(0.0f, 0.0f);
 
         UIElementRenderer m_renderer;
         UIElementStyle m_style;

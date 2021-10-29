@@ -36,9 +36,10 @@ namespace Hyperion::UI {
         button->SetSize(Vector2(150.0f, 40.0f));
 
         UILabel *label = CreateLabel();
+        label->SetName("Button Label");
         label->SetText("Button");
         label->SetAnchorPreset(UIAnchorPreset::StretchAll);
-        button->GetHierarchy().AddChild(label);
+        label->GetHierarchy().SetParent(button);
 
         return button;
     }
@@ -57,8 +58,8 @@ namespace Hyperion::UI {
         UIElement *toggle_graphic = CreateElement();
         toggle_graphic->SetName("Toggle Graphic");
         toggle_graphic->SetAnchorPreset(UIAnchorPreset::StretchAll);
-        toggle_graphic->SetOffsetMin(Vector2(3.0f, 3.0f));
-        toggle_graphic->SetOffsetMax(Vector2(3.0f, 3.0f));
+        toggle_graphic->SetAnchorOffsetMin(Vector2(3.0f, 3.0f));
+        toggle_graphic->SetAnchorOffsetMax(Vector2(3.0f, 3.0f));
 
         UIToggle *toggle = new UIToggle();
         toggle->SetName("Toggle");
@@ -67,6 +68,7 @@ namespace Hyperion::UI {
         toggle->SetToggleGraphic(toggle_graphic);
         toggle->SetToggleOnColor(Color::Grey());
         toggle->GetHierarchy().AddChild(toggle_graphic);
+
         return toggle;
     }
 
