@@ -67,6 +67,16 @@ namespace Hyperion::UI {
     }
 
     //--------------------------------------------------------------
+    void UIElementHierarchy::RemoveChildren() {
+        // TODO: We need a properly defined way to "destroy" ui elements.
+
+        for (UIElement *child : m_children) {
+            delete child;
+        }
+        m_children.Clear();
+    }
+
+    //--------------------------------------------------------------
     UIElement::UIElement() {
         m_style.m_element = this;
         m_hierarchy.m_element = this;

@@ -76,6 +76,7 @@ namespace Hyperion::UI {
 
         inline const Array<UIElement *> &GetChildren() const { return m_children; }
         void AddChild(UIElement *child);
+        void RemoveChildren();
     private:
         UIElement *m_element = nullptr;
 

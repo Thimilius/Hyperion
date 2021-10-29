@@ -146,9 +146,7 @@ namespace Hyperion::Editor {
                 ui_toggle->SetToggleOnColor(UI_HIGHLIGHT_COLOR);
                 ui_toggle->SetToggleOffColor(Color::White());
                 ui_toggle->GetHierarchy().SetParent(parent);
-                UIElement *toggle_child = ui_toggle->GetHierarchy().GetChildren().Get(0);
-                toggle_child->GetHierarchy().SetParent(nullptr);
-                delete toggle_child;
+                ui_toggle->GetHierarchy().RemoveChildren();
                 UILabel *toggle_label = UIFactory::CreateLabel();
                 toggle_label->GetHierarchy().SetParent(ui_toggle);
                 toggle_label->SetAnchorPreset(UIAnchorPreset::StretchAll);
