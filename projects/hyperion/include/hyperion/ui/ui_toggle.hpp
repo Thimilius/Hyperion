@@ -24,8 +24,8 @@ namespace Hyperion::UI {
         inline Color GetToggleOffColor() const { return m_toggle_off_color; }
         void SetToggleOffColor(Color toggle_off_color);
 
-        void RegisterClickCallback(const UIToggleCallback &callback);
-        void UnregisterClickCallback();
+        void RegisterToggleCallback(const UIToggleCallback &callback);
+        void UnregisterToggleCallback();
 
         virtual void OnEvent(UIEvent &event) override;
     private:

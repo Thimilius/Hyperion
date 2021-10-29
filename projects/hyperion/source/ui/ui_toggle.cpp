@@ -51,12 +51,12 @@ namespace Hyperion::UI {
         StateTransition();
     }
     //--------------------------------------------------------------
-    void UIToggle::RegisterClickCallback(const UIToggleCallback &callback) {
+    void UIToggle::RegisterToggleCallback(const UIToggleCallback &callback) {
         m_toggle_callback = callback;
     }
 
     //--------------------------------------------------------------
-    void UIToggle::UnregisterClickCallback() {
+    void UIToggle::UnregisterToggleCallback() {
         m_toggle_callback = UIToggleCallback();
     }
 

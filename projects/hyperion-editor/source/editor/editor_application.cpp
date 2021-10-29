@@ -54,8 +54,10 @@ namespace Hyperion::Editor {
     UIElement *g_header_ui_element;
     UIElement *g_render_ui_element;
     UIButton *g_child_ui_element;
-    UILabel *g_label_fps;
-    UILabel *g_label_render_stats;
+    UILabel *g_label_stats;
+    UIToggle *g_vsync_toggle;
+    UIToggle *g_grid_toggle;
+    UIToggle *g_bounds_toggle;
 
     CameraController *g_camera_controller;
 
@@ -125,34 +127,72 @@ namespace Hyperion::Editor {
             g_header_seperator_ui_element->GetHierarchy().SetParent(g_root_element);
 
             Font *consola_font = FontLoader::LoadFont("data/fonts/consola.ttf", 12, FontCharacterSet::LatinSupplement);
+            Font *icon_font = FontLoader::LoadFont("data/fonts/font_awesome_solid.otf", 12, FontCharacterSet::All);
 
-            g_label_fps = UIFactory::CreateLabel();
-            g_label_fps->SetFont(consola_font);
-            g_label_fps->SetAlignment(UITextAlignment::MiddleLeft);
-            g_label_fps->SetAnchorPreset(UIAnchorPreset::StretchAll);
-            g_label_fps->SetOffsetMin(Vector2(5.0f, 0.0f));
-            g_label_fps->GetStyle().GetShadow().enabled = true;
-            g_label_fps->GetHierarchy().SetParent(g_header_ui_element);
+            g_label_stats = UIFactory::CreateLabel();
+            g_label_stats->SetFont(consola_font);
+            g_label_stats->SetAlignment(UITextAlignment::MiddleRight);
+            g_label_stats->SetAnchorPreset(UIAnchorPreset::StretchAll);
+            g_label_stats->SetOffsetMax(Vector2(5.0f, 0.0f));
+            g_label_stats->GetStyle().GetShadow().enabled = true;
+            g_label_stats->GetHierarchy().SetParent(g_header_ui_element);
 
-            g_label_render_stats = UIFactory::CreateLabel();
-            g_label_render_stats->SetFont(consola_font);
-            g_label_render_stats->SetAlignment(UITextAlignment::MiddleRight);
-            g_label_render_stats->SetAnchorPreset(UIAnchorPreset::StretchAll);
-            g_label_render_stats->SetOffsetMax(Vector2(5.0f, 0.0f));
-            g_label_render_stats->GetStyle().GetShadow().enabled = true;
-            g_label_render_stats->GetHierarchy().SetParent(g_header_ui_element);
+            auto create_toggle = [](UIElement *parent, float32 x_offset, Font *font, const String &text) -> UIToggle * {
+                UIToggle *ui_toggle = UIFactory::CreateToggle();
+                ui_toggle->SetSize(Vector2(25.0f, 0.0f));
+                ui_toggle->SetAnchorPreset(UIAnchorPreset::LeftStretchVertical);
+                ui_toggle->SetPosition(Vector2(x_offset, 0.0f));
+                ui_toggle->GetStyle().SetColor(UI_NORMAL_COLOR);
+                ui_toggle->SetToggleOnColor(UI_HIGHLIGHT_COLOR);
+                ui_toggle->SetToggleOffColor(Color::White());
+                ui_toggle->GetHierarchy().SetParent(parent);
+                UIElement *toggle_child = ui_toggle->GetHierarchy().GetChildren().Get(0);
+                toggle_child->GetHierarchy().SetParent(nullptr);
+                delete toggle_child;
+                UILabel *toggle_label = UIFactory::CreateLabel();
+                toggle_label->GetHierarchy().SetParent(ui_toggle);
+                toggle_label->SetAnchorPreset(UIAnchorPreset::StretchAll);
+                toggle_label->SetFont(font);
+                toggle_label->SetText(text);
+                ui_toggle->SetToggleGraphic(toggle_label);
+                return ui_toggle;
+            };
 
-            UIToggle *ui_toggle = UIFactory::CreateToggle();
-            ui_toggle->SetSize(Vector2(25.0f, 0.0f));
-            ui_toggle->SetAnchorPreset(UIAnchorPreset::CenterStretchVertical);
-            ui_toggle->GetStyle().SetColor(UI_NORMAL_COLOR);
-            ui_toggle->SetToggleOnColor(UI_HIGHLIGHT_COLOR);
-            ui_toggle->GetHierarchy().SetParent(g_header_ui_element);
+            g_vsync_toggle = create_toggle(g_header_ui_element, 0.0f, icon_font, "\uf108");
+            g_vsync_toggle->SetIsOn(Rendering::RenderEngine::GetVSyncMode() != Rendering::VSyncMode::DontSync);
+            g_vsync_toggle->RegisterToggleCallback([](bool8 is_on) {
+                Rendering::RenderEngine::SetVSyncMode(
+                    Rendering::RenderEngine::GetVSyncMode() == Rendering::VSyncMode::DontSync ?
+                    Rendering::VSyncMode::EveryVBlank :
+                    Rendering::VSyncMode::DontSync);
+            });
+            g_grid_toggle = create_toggle(g_header_ui_element, 25.0f, icon_font, "\uf850");
+            g_grid_toggle->SetIsOn(Rendering::RenderGizmos::GetShouldDrawGrid());
+            g_grid_toggle->RegisterToggleCallback([](bool8 is_on) {
+                Rendering::RenderGizmos::SetShouldDrawGrid(is_on);
+            });
+            g_bounds_toggle = create_toggle(g_header_ui_element, 50.0f, icon_font, "\uf247");
+            g_bounds_toggle->SetIsOn(Rendering::RenderGizmos::GetShouldDrawAllBounds());
+            g_bounds_toggle->RegisterToggleCallback([](bool8 is_on) {
+                Rendering::RenderGizmos::SetShouldDrawAllBounds(is_on);
+            });
+            UIButton *camera_reset_button = UIFactory::CreateButton();
+            camera_reset_button->SetSize(Vector2(25.0f, 0.0f));
+            camera_reset_button->SetAnchorPreset(UIAnchorPreset::LeftStretchVertical);
+            camera_reset_button->SetPosition(Vector2(75.0f, 0.0f));
+            camera_reset_button->GetStyle().SetColor(UI_NORMAL_COLOR);
+            camera_reset_button->GetHierarchy().SetParent(g_header_ui_element);
+            UILabel *camera_reset_label = camera_reset_button->Q<UILabel>();
+            camera_reset_label->SetFont(icon_font);
+            camera_reset_label->SetText("\uf03d");
+            camera_reset_button->RegisterClickCallback([]() {
+                g_camera_controller->Reset(g_world);
+            });
 
             g_editor_ui_view.scaling_mode = UIScalingMode::ConstantPixelSize;
             g_editor_ui_view.root_element = g_root_element;
 
-            UpdateTexts();
+            UpdateStats();
         }
     }
 
@@ -165,16 +205,13 @@ namespace Hyperion::Editor {
             GetWindow()->SetWindowMode(GetWindow()->GetWindowMode() == WindowMode::Borderless ? WindowMode::Windowed : WindowMode::Borderless);
         }
         if (Input::IsKeyDown(KeyCode::F2)) {
-            Rendering::RenderEngine::SetVSyncMode(
-                Rendering::RenderEngine::GetVSyncMode() == Rendering::VSyncMode::DontSync ?
-                Rendering::VSyncMode::EveryVBlank :
-                Rendering::VSyncMode::DontSync);
+            g_vsync_toggle->Toggle();
         }
         if (Input::IsKeyDown(KeyCode::F3)) {
-            Rendering::RenderGizmos::SetShouldDrawGrid(!Rendering::RenderGizmos::GetShouldDrawGrid());
+            g_grid_toggle->Toggle();
         }
         if (Input::IsKeyDown(KeyCode::F4)) {
-            Rendering::RenderGizmos::SetShouldDrawAllBounds(!Rendering::RenderGizmos::GetShouldDrawAllBounds());
+            g_bounds_toggle->Toggle();
         }
 
         g_camera_controller->Update(g_world, delta_time);
@@ -184,7 +221,7 @@ namespace Hyperion::Editor {
 
         g_world->GetComponent<LocalTransformComponent>(g_parent)->rotation = Quaternion::FromEulerAngles(0.0f, Math::Sin(Time::GetTime()) * 45.0f, 0.0f);
 
-        UpdateTexts();
+        UpdateStats();
 
         g_world->GetComponent<CameraComponent>(g_camera)->viewport_clipping.height = (Display::GetHeight() - UI_HEADER_SIZE) / static_cast<float32>(Display::GetHeight());
         if (Display::HasChangedSize()) {
@@ -208,14 +245,11 @@ namespace Hyperion::Editor {
     }
 
     //--------------------------------------------------------------
-    void EditorApplication::UpdateTexts() {
-        String vsync = Rendering::RenderEngine::GetVSyncMode() == Rendering::VSyncMode::DontSync ? "Off" : "On";
-        String fps_text = StringUtils::Format("FPS: {} ({:.2f}ms) - VSync : {}", Time::GetFPS(), Time::GetFrameTime(), vsync);
-        g_label_fps->SetText(fps_text);
-
+    void EditorApplication::UpdateStats() {
+        String stats_format = "FPS: {} ({:.2f}ms) - Draw calls: {}, Vertices: {}, Triangles: {}";
         RenderStats render_stats = Rendering::RenderEngine::GetStats();
-        String render_stats_title = StringUtils::Format("Draw calls: {}, Vertices: {}, Triangles: {}", render_stats.draw_calls, render_stats.vertex_count, render_stats.triangle_count);
-        g_label_render_stats->SetText(render_stats_title);
+        String stats_title = StringUtils::Format(stats_format, Time::GetFPS(), Time::GetFrameTime(), render_stats.draw_calls, render_stats.vertex_count, render_stats.triangle_count);
+        g_label_stats->SetText(stats_title);
     }
 
 }

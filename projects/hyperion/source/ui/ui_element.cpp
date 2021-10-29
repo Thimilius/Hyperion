@@ -44,12 +44,12 @@ namespace Hyperion::UI {
                 m_parent->m_hierarchy.m_children.Remove(m_element);
             }
 
+            m_parent = parent;
+            
             if (parent) {
                 parent->m_hierarchy.m_children.Add(m_element);
+                parent->MarkHierarchyDirty();
             }
-            m_parent = parent;
-
-            parent->MarkHierarchyDirty();
         }
     }
 
