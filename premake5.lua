@@ -55,6 +55,7 @@ workspace "hyperion"
 		defines { "HYP_PLATFORM_WINDOWS", "_CRT_SECURE_NO_WARNINGS", "_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS" }
 		systemversion "latest"
 		linkoptions { "/IGNORE:4099" }
+		buildoptions { "/MP /utf-8" }
 
 	filter "options:audio=none"
 		defines { "HYP_AUDIO_NONE" }
@@ -123,7 +124,6 @@ project "hyperion"
 		includedirs { "%{prj.location}/vendor/optick/include" }
 
 	filter "system:windows"
-		buildoptions { "/MP" }
 		files {
 			"%{prj.location}/include/hyperion/platform/windows/**.hpp",
 			"%{prj.location}/source/platform/windows/**.cpp",
@@ -197,7 +197,6 @@ project "hyperion-sandbox"
 	includedirs { "%{prj.location}/include" }
 		
     filter "system:windows"
-		buildoptions { "/MP" }
 		files { "%{prj.location}/resource.rc" }
 		postbuildcommands {
 		    "{COPY} %{cfg.targetdir}/%{prj.name}.exe ../../run_tree/hyperion.exe*"
@@ -215,7 +214,7 @@ project "hyperion-editor"
 	exceptionhandling "Off"
 	rtti "Off"
 	flags { "FatalCompileWarnings" }
-	
+
 	linkhyperion()
 
 	files {
@@ -228,7 +227,6 @@ project "hyperion-editor"
 	includedirs { "%{prj.location}/include" }
 		
     filter "system:windows"
-		buildoptions { "/MP" }
 		files { "%{prj.location}/resource.rc" }
 		postbuildcommands {
 		    "{COPY} %{cfg.targetdir}/%{prj.name}.exe ../../run_tree/hyperion.exe*"
