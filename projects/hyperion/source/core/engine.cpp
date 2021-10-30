@@ -91,6 +91,7 @@ namespace Hyperion {
         };
         engine_loop.update.name = "Update";
         engine_loop.update.sub_systems = {
+            { "AssetManagerPreUpdate", []() { HYP_PROFILE_SCOPE("EngineLoop.AssetManagerPreUpdate"); AssetManager::PreUpdate(); }},
             { "ApplicationUpdate", []() { HYP_PROFILE_SCOPE("EngineLoop.ApplicationUpdate"); s_application->OnUpdate(Time::GetDeltaTime()); } },
             { "WorldManagerUpdate", []() { HYP_PROFILE_SCOPE("EngineLoop.WorldManagerUpdate"); WorldManager::Update(); }}
         };

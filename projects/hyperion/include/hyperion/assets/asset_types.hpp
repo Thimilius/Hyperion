@@ -32,4 +32,8 @@ namespace Hyperion {
         inline static constexpr AssetId INVALID_ID = -1;
     };
 
+    struct AssetResourceInfo {
+        String path;
+    };
+
 }

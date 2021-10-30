@@ -14,8 +14,13 @@ using namespace Hyperion::Rendering;
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    Shader::Shader(AssetInfo info, const String &source) : Asset(info) {
+    void Shader::Recompile(const String &source) {
         PreProcess(source);
+    }
+
+    //--------------------------------------------------------------
+    Shader::Shader(AssetInfo info, const String &source) : Asset(info) {
+        Recompile(source);
     }
 
     //--------------------------------------------------------------

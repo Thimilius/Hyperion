@@ -4,6 +4,7 @@
 #include "hyperion/assets/asset.hpp"
 #include "hyperion/assets/font_types.hpp"
 #include "hyperion/assets/texture_atlas_types.hpp"
+#include "hyperion/core/io/file_watcher.hpp"
 #include "hyperion/render/types/render_types_mesh.hpp"
 #include "hyperion/render/types/render_types_texture.hpp"
 
@@ -77,7 +78,7 @@ namespace Hyperion {
 
         static Shader *GetShaderPrimitive(ShaderPrimitive shader_primitive);
         static Shader *GetShaderByGuid(AssetGuid guid);
-        static Shader *CreateShader(const String &source);
+        static Shader *CreateShader(const String &path);
 
         static Material *GetMaterialPrimitive(MaterialPrimitive material_primitive);
         static Material *GetMaterialByGuid(AssetGuid guid);
@@ -94,6 +95,7 @@ namespace Hyperion {
         ~AssetManager() = delete;
     private:
         static void Initialize();
+        static void PreUpdate();
         static void LateUpdate();
         static void Shutdown();
 
@@ -110,6 +112,8 @@ namespace Hyperion {
         inline static Map<AssetGuid, Shader *> s_shaders;
         inline static Map<AssetGuid, Material *> s_materials;
         inline static Map<AssetGuid, Mesh *> s_meshes;
+
+        inline static FileWatcher *s_shader_watcher;
 
         inline static struct Primitives {
             Texture2D *texture_2d_white;

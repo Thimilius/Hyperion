@@ -6,6 +6,8 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
+    // TODO: Use Result type.
+
     class FileSystem final {
     public:
         static Array<byte> ReadAllBytes(const String &path);

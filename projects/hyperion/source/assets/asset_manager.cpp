@@ -13,6 +13,7 @@
 #include "hyperion/assets/loader/image_loader.hpp"
 #include "hyperion/assets/loader/mesh_loader.hpp"
 #include "hyperion/assets/utilities/mesh_generator.hpp"
+#include "hyperion/core/app/input.hpp"
 #include "hyperion/core/io/file_system.hpp"
 #include "hyperion/ecs/system/systems/asset_systems.hpp"
 
@@ -155,9 +156,11 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Shader *AssetManager::CreateShader(const String &source) {
+    Shader *AssetManager::CreateShader(const String &path) {
+        String source = FileSystem::ReadAllText(path);
         AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
         Shader *shader = new Shader(info, source);
+        shader->m_resource_info.path = path;
         s_shaders.Insert(info.guid, shader);
         return shader;
     }
@@ -275,6 +278,24 @@ namespace Hyperion {
         FontLoader::Initialize();
 
         InitializePrimitives();
+
+        s_shader_watcher = new FileWatcher("data/shaders/", [](FileWatcherFileStatus status, const String &path, const String &filename, const String &extension) {
+            if (status == FileWatcherFileStatus::Modified) {
+                for (auto [id, shader] : s_shaders) {
+                    const AssetResourceInfo &resource_info = shader->GetResourceInfo();
+                    if (resource_info.path == path) {
+                        shader->Recompile(FileSystem::ReadAllText(resource_info.path));
+                    }
+                }
+            }
+        }, false);
+    }
+
+    //--------------------------------------------------------------
+    void AssetManager::PreUpdate() {
+        HYP_PROFILE_SCOPE("AssetManager.PreUpdate");
+
+        s_shader_watcher->Update();
     }
 
     //--------------------------------------------------------------
@@ -313,15 +334,15 @@ namespace Hyperion {
         s_primitives.texture_2d_white = CreateTexture2D(texture_parameters, texture_pixels);
         SetNewGuid(s_primitives.texture_2d_white, "{DAD9FD91-8932-4A1E-B086-56F64DC20EF7}");
 
-        s_primitives.shader_standard = CreateShader(FileSystem::ReadAllText("data/shaders/standard.shader"));
+        s_primitives.shader_standard = CreateShader("data/shaders/standard.shader");
         SetNewGuid(s_primitives.shader_standard, "{6AFEA19E-547B-41F5-A008-4473AE771E06}");
-        s_primitives.shader_unlit = CreateShader(FileSystem::ReadAllText("data/shaders/unlit.shader"));
+        s_primitives.shader_unlit = CreateShader("data/shaders/unlit.shader");
         SetNewGuid(s_primitives.shader_unlit, "{23AA53FE-6A47-4571-BC47-00EAAFA2F54B}");
-        s_primitives.shader_gizmo = CreateShader(FileSystem::ReadAllText("data/shaders/gizmo.shader"));
+        s_primitives.shader_gizmo = CreateShader("data/shaders/gizmo.shader");
         SetNewGuid(s_primitives.shader_gizmo, "{F05F02F1-A7E1-42B7-9618-F13AB38BCA87}");
-        s_primitives.shader_ui = CreateShader(FileSystem::ReadAllText("data/shaders/ui.shader"));
+        s_primitives.shader_ui = CreateShader("data/shaders/ui.shader");
         SetNewGuid(s_primitives.shader_ui, "{D1D71E77-6EA7-4B5D-A7D3-C5C07D1F5386}");
-        s_primitives.shader_font = CreateShader(FileSystem::ReadAllText("data/shaders/font.shader"));
+        s_primitives.shader_font = CreateShader("data/shaders/font.shader");
         SetNewGuid(s_primitives.shader_font, "{97566962-2BEF-4D77-9813-27FC6F73375F}");
 
         s_primitives.material_default = CreateMaterial(s_primitives.shader_standard);

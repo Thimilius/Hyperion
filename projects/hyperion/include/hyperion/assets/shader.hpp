@@ -12,6 +12,8 @@ namespace Hyperion {
         inline AssetType GetAssetType() const override { return AssetType::Shader; }
 
         inline const Rendering::ShaderData &GetData() const { return m_data; }
+
+        void Recompile(const String &source);
     public:
         inline static Rendering::ShaderPropertyId PropertyToId(const String &name) { return Rendering::ShaderProperty::PropertyToId(name); }
     private:

@@ -873,13 +873,17 @@ namespace Hyperion::Rendering {
         opengl_shader.attributes = shader.data.attributes;
         opengl_shader.program = OpenGLShaderCompiler::Compile(shader.data.vertex_source.c_str(), shader.data.fragment_source.c_str()).program;
 
-
         opengl_shader.locations.Reserve(shader.data.properties.GetLength());
         for (const ShaderProperty &property : shader.data.properties) {
             opengl_shader.locations.Add(glGetUniformLocation(opengl_shader.program, property.name.c_str()));
         }
 
-        m_opengl_shaders.Insert(shader.id, opengl_shader);
+        auto shader_it = m_opengl_shaders.Find(shader.id);
+        if (shader_it == m_opengl_shaders.end()) {
+            m_opengl_shaders.Insert(shader.id, opengl_shader);
+        } else {
+            shader_it->second = opengl_shader;
+        }
     }
 
     //--------------------------------------------------------------

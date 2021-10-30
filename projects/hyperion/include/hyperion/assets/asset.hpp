@@ -18,6 +18,7 @@ namespace Hyperion {
         virtual ~Asset() = default;
     public:
         inline const AssetInfo &GetAssetInfo() const { return m_info; }
+        inline const AssetResourceInfo &GetResourceInfo() const { return m_resource_info; }
         inline bool8 IsDirty() const { return m_is_dirty; }
 
         virtual AssetType GetAssetType() const = 0;
@@ -28,6 +29,7 @@ namespace Hyperion {
         void ResetDirty();
     private:
         AssetInfo m_info;
+        AssetResourceInfo m_resource_info;
 
         bool8 m_is_dirty = false;
     private:
