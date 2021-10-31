@@ -11,6 +11,7 @@ namespace Hyperion {
     public:
         inline AssetType GetAssetType() const override { return AssetType::Shader; }
 
+        inline bool8 IsValid() const { return m_is_valid; }
         inline const Rendering::ShaderData &GetData() const { return m_data; }
 
         void Recompile(const String &source);
@@ -22,6 +23,7 @@ namespace Hyperion {
     private:
         void PreProcess(const String &source);
     private:
+        bool8 m_is_valid = false;
         Rendering::ShaderData m_data;
     private:
         friend class Hyperion::AssetManager;

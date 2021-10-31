@@ -26,6 +26,7 @@ namespace Hyperion::Rendering {
     };
 
     struct RenderFrameContextAssetShader : public RenderFrameContextAsset {
+        bool8 is_valid;
         ShaderData data;
     };
 

@@ -20,6 +20,39 @@ namespace Hyperion::Rendering {
         }
 
         {
+            const char *error_vertex = R"(
+                #version 450 core
+
+                layout(location = 0) in vec3 a_position;
+
+                layout(std140, binding = 0) uniform Camera {
+	                mat4 view;
+	                mat4 projection;
+                } u_camera;
+
+                uniform mat4 u_model;
+
+                vec4 obj_to_clip_space(vec3 position) {
+	                return u_camera.projection * u_camera.view * u_model * vec4(position, 1.0);
+                }
+
+                void main() {
+	                gl_Position = obj_to_clip_space(a_position);
+                }
+            )";
+            const char *error_fragment = R"(
+                #version 450 core
+
+                layout(location = 0) out vec4 o_color;
+
+                void main() {
+	                o_color = vec4(1, 0, 1, 1);
+                }
+            )";
+            m_state.error_shader.program = OpenGLShaderCompiler::Compile(error_vertex, error_fragment).program;
+        }
+
+        {
             const char *fullscreen_vertex = R"(
                 #version 450 core
 
@@ -681,7 +714,10 @@ namespace Hyperion::Rendering {
         uint32 texture_unit = 0;
         MaterialPropertyIndex index = 0;
         for (const MaterialProperty &property : opengl_material.properties) {
-            GLint location = opengl_shader.locations[index++];
+            GLint location = -1;
+            if (index < opengl_shader.locations.GetLength()) {
+                location = opengl_shader.locations[index++];
+            }
 
             switch (property.type) {
                 case ShaderPropertyType::Int: {
@@ -867,15 +903,24 @@ namespace Hyperion::Rendering {
     void OpenGLRenderDriver::LoadShader(RenderFrameContextAssetShader &shader) {
         HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadShader");
 
-        // FIXME: Handle shader compilation errors.
         OpenGLShader opengl_shader;
         opengl_shader.id = shader.id;
         opengl_shader.attributes = shader.data.attributes;
-        opengl_shader.program = OpenGLShaderCompiler::Compile(shader.data.vertex_source.c_str(), shader.data.fragment_source.c_str()).program;
 
-        opengl_shader.locations.Reserve(shader.data.properties.GetLength());
-        for (const ShaderProperty &property : shader.data.properties) {
-            opengl_shader.locations.Add(glGetUniformLocation(opengl_shader.program, property.name.c_str()));
+        if (shader.is_valid) {
+            OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(shader.data.vertex_source.c_str(), shader.data.fragment_source.c_str());
+            if (compilation_result.success) {
+                opengl_shader.program = compilation_result.program;
+
+                opengl_shader.locations.Reserve(shader.data.properties.GetLength());
+                for (const ShaderProperty &property : shader.data.properties) {
+                    opengl_shader.locations.Add(glGetUniformLocation(opengl_shader.program, property.name.c_str()));
+                }
+            } else {
+                opengl_shader.program = m_state.error_shader.program;
+            }
+        } else {
+            opengl_shader.program = m_state.error_shader.program;
         }
 
         auto shader_it = m_opengl_shaders.Find(shader.id);

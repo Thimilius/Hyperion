@@ -106,6 +106,7 @@ namespace Hyperion {
                     Shader *shader = static_cast<Shader *>(asset);
                     RenderFrameContextAssetShader &render_frame_context_asset_shader = render_frame_context.AddShaderAssetToLoad();
                     render_frame_context_asset_shader.id = asset_id;
+                    render_frame_context_asset_shader.is_valid = shader->IsValid();
                     render_frame_context_asset_shader.data = shader->GetData();
                     break;
                 }

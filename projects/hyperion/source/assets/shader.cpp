@@ -29,11 +29,12 @@ namespace Hyperion {
         ShaderPreProcessResult pre_process_result = pre_processor.PreProcess();
         if (pre_process_result.success) {
             m_data = std::move(pre_process_result.data);
-
-            SetDirty();
+            m_is_valid = true;
         } else {
-            // TODO: Use fallback shader.
+            m_is_valid = false;
         }
+
+        SetDirty();
     }
 
 }
