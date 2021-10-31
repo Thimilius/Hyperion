@@ -17,6 +17,8 @@ namespace Hyperion::Rendering {
         void Blit(RenderTargetId destination, RenderTargetId source);
 
         void SetGlobalBuffer(ShaderPropertyId id, RenderBuffer &&render_buffer);
+
+        void RequestAsyncReadback(RenderTargetId id, uint32 attachment_index, RectInt region, AsyncRequestCallback callback);
     private:
         RenderFrameCommandBufferCommand &CreateCommand(RenderFrameCommandBufferCommandType type);
     private:

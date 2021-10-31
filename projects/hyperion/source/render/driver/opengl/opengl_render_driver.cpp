@@ -305,6 +305,41 @@ namespace Hyperion::Rendering {
                                 glNamedBufferSubData(buffer_id, 0, data.GetLength(), data.GetData());
                                 break;
                             }
+                            case RenderFrameCommandBufferCommandType::RequestAsyncReadback: {
+                                HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommandBufferCommand.RequestAsyncReadback");
+
+                                const RenderFrameCommandBufferCommandRequestAsyncReadback &request_async_readback = std::get<RenderFrameCommandBufferCommandRequestAsyncReadback>(buffer_command.data);
+
+                                auto render_texture_it = m_opengl_render_textures.Find(request_async_readback.render_target_id.id);
+                                if (render_texture_it != m_opengl_render_textures.end()) {
+                                    AsyncRequest &async_request = render_frame->AddAsyncRequests();
+                                    async_request.callback = request_async_readback.callback;
+                                    async_request.result.region = request_async_readback.region;
+
+                                    const OpenGLRenderTexture &render_texture = render_texture_it->second;
+                                    const OpenGLRenderTextureAttachment &attachment = render_texture.attachments[request_async_readback.attachment_index];
+                                    RenderTextureFormat format = attachment.format;
+                                    HYP_ASSERT(format != RenderTextureFormat::Depth24Stencil8);
+
+                                    // Make sure we are not out of bounds when accessing the render texture.
+                                    RectInt region = request_async_readback.region;
+                                    bool8 x_range_is_not_valid = region.x < 0 || (region.width + region.x) < 0 || (region.width + region.x) > static_cast<int32>(render_texture.width);
+                                    bool8 y_range_is_not_valid = region.y < 0 || (region.height + region.y) < 0 || (region.height + region.y) > static_cast<int32>(render_texture.height);
+                                    if (x_range_is_not_valid || y_range_is_not_valid) {
+                                        HYP_LOG_ERROR("OpenGL", "Trying to read out-of-bounds data of a render texture!");
+                                    } else {
+                                        // We want to make sure that the buffer we got passed does actually have enough space.
+                                        GLsizei buffer_size = OpenGLUtilities::GetRenderTextureBufferSize(region, format);
+                                        async_request.result.data.Resize(buffer_size);
+
+                                        GLenum format_value = OpenGLUtilities::GetRenderTextureFormat(format);
+                                        GLenum format_type = OpenGLUtilities::GetRenderTextureFormatType(format);
+
+                                        glGetTextureSubImage(attachment.attachment, 0, region.x, region.y, 0, region.width, region.height, 1, format_value, format_type, buffer_size, async_request.result.data.GetData());
+                                    }
+                                }
+                                break;
+                            }
                             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
                         }
                     }

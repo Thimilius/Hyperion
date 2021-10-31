@@ -52,6 +52,18 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
+    void RenderFrameCommandBuffer::RequestAsyncReadback(RenderTargetId id, uint32 attachment_index, RectInt region, AsyncRequestCallback callback) {
+        RenderFrameCommandBufferCommandRequestAsyncReadback request_async_readback;
+        request_async_readback.render_target_id = id;
+        request_async_readback.attachment_index = attachment_index;
+        request_async_readback.region = region;
+        request_async_readback.callback = callback;
+
+        RenderFrameCommandBufferCommand &command = CreateCommand(RenderFrameCommandBufferCommandType::RequestAsyncReadback);
+        command.data = request_async_readback;
+    }
+
+    //--------------------------------------------------------------
     RenderFrameCommandBufferCommand &RenderFrameCommandBuffer::CreateCommand(RenderFrameCommandBufferCommandType type) {
         m_commands.Resize(m_commands.GetLength() + 1);
         RenderFrameCommandBufferCommand &command = m_commands.GetLast();

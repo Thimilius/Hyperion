@@ -12,9 +12,10 @@ namespace Hyperion::Rendering {
     public:
         void Clear();
 
-        RenderFrameContext &GetContext() { return m_context; }
-        const RenderFrameContext &GetContext() const { return m_context; }
-        const Array<RenderFrameCommand> &GetCommands() const { return m_commands; }
+        inline RenderFrameContext &GetContext() { return m_context; }
+        inline const RenderFrameContext &GetContext() const { return m_context; }
+        inline const Array<RenderFrameCommand> &GetCommands() const { return m_commands; }
+        inline const Array<AsyncRequest> &GetAsyncRequests() const { return m_async_requests; }
 
         CullingResults Cull(CullingParameters parameters);
 
@@ -24,11 +25,14 @@ namespace Hyperion::Rendering {
         void DrawUI();
         void DrawEditorGizmos();
         void DrawEditorUI();
+
+        AsyncRequest &AddAsyncRequests();
     private:
         RenderFrameCommand &CreateCommand(RenderFrameCommandType type);
     private:
         RenderFrameContext m_context;
         Array<RenderFrameCommand> m_commands;
+        Array<AsyncRequest> m_async_requests;
     };
 
 }

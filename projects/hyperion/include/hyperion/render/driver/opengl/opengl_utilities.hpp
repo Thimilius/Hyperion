@@ -27,6 +27,9 @@ namespace Hyperion::Rendering {
         static GLfloat GetTextureAnisotropicFilter(TextureAnisotropicFilter anisotropic_filter);
 
         static GLenum GetRenderTextureInternalFormat(RenderTextureFormat internal_format);
+        static GLenum GetRenderTextureFormat(RenderTextureFormat format);
+        static GLenum GetRenderTextureFormatType(RenderTextureFormat format_type);
+        static GLsizei GetRenderTextureBufferSize(RectInt region, RenderTextureFormat format);
 
         static GLenum GetTopology(MeshTopology mesh_topology);
         static GLuint GetAttributeIndexForVertextAttributeSize(VertexAttributeKind kind);

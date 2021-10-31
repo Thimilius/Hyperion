@@ -132,9 +132,13 @@ namespace Hyperion::Rendering {
         s_main_frame = s_render_frame;
         s_render_frame = temp;
 
-        s_main_frame->Clear();
-
+        // The main frame is now the old render frame which means the async request can be read back from there.
+        for (const AsyncRequest &async_request : s_main_frame->GetAsyncRequests()) {
+            async_request.callback(async_request.result);
+        }
         s_render_stats = s_render_driver_context->GetDriver()->GetStats();
+        
+        s_main_frame->Clear();
     }
 
     //--------------------------------------------------------------

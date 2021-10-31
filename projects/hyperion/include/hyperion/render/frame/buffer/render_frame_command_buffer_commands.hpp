@@ -17,6 +17,7 @@ namespace Hyperion::Rendering {
         SetRenderTarget,
         Blit,
         SetGlobalBuffer,
+        RequestAsyncReadback,
     };
 
     struct RenderFrameCommandBufferCommandClearRenderTarget {
@@ -38,6 +39,26 @@ namespace Hyperion::Rendering {
         RenderBuffer render_buffer;
     };
 
+    struct AsyncRequestResult {
+        RectInt region;
+
+        Array<byte> data;
+    };
+
+    using AsyncRequestCallback = std::function<void(const AsyncRequestResult &)>;
+
+    struct AsyncRequest {
+        AsyncRequestResult result;
+        AsyncRequestCallback callback;
+    };
+
+    struct RenderFrameCommandBufferCommandRequestAsyncReadback {
+        RenderTargetId render_target_id;
+        uint32 attachment_index;
+        RectInt region;
+        AsyncRequestCallback callback;
+    };
+
     struct RenderFrameCommandBufferCommand {
         RenderFrameCommandBufferCommandType type;
 
@@ -45,7 +66,8 @@ namespace Hyperion::Rendering {
             RenderFrameCommandBufferCommandClearRenderTarget,
             RenderFrameCommandBufferCommandSetRenderTarget,
             RenderFrameCommandBufferCommandBlit,
-            RenderFrameCommandBufferCommandSetGlobalBuffer
+            RenderFrameCommandBufferCommandSetGlobalBuffer,
+            RenderFrameCommandBufferCommandRequestAsyncReadback
         > data;
     };
 

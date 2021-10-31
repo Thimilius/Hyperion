@@ -145,6 +145,34 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
+    GLenum OpenGLUtilities::GetRenderTextureFormat(RenderTextureFormat format) {
+        switch (format) {
+            case RenderTextureFormat::RGBA32: return GL_RGBA;
+            case RenderTextureFormat::UInt32: return GL_RED_INTEGER;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    //--------------------------------------------------------------
+    GLenum OpenGLUtilities::GetRenderTextureFormatType(RenderTextureFormat format_type) {
+        switch (format_type) {
+            case RenderTextureFormat::RGBA32: return GL_UNSIGNED_BYTE;
+            case RenderTextureFormat::UInt32: return GL_UNSIGNED_INT;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    //--------------------------------------------------------------
+    GLsizei OpenGLUtilities::GetRenderTextureBufferSize(RectInt region, RenderTextureFormat format) {
+        GLsizei region_size = region.width * region.height;
+        switch (format) {
+            case RenderTextureFormat::RGBA32: return region_size * 4 * sizeof(byte);
+            case RenderTextureFormat::UInt32: return region_size * 1 * sizeof(uint32);
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+        }
+    }
+
+    //--------------------------------------------------------------
     GLenum OpenGLUtilities::GetTopology(MeshTopology mesh_topology) {
         switch (mesh_topology) {
             case MeshTopology::Points: return GL_POINTS;

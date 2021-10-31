@@ -17,6 +17,7 @@ namespace Hyperion::Rendering {
     void RenderFrame::Clear() {
         m_context.Clear();
         m_commands.Clear();
+        m_async_requests.Clear();
     }
 
     //--------------------------------------------------------------
@@ -136,6 +137,12 @@ namespace Hyperion::Rendering {
 
         RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::DrawEditorUI);
         command.data = draw_editor_ui;
+    }
+
+    //--------------------------------------------------------------
+    AsyncRequest &RenderFrame::AddAsyncRequests() {
+        m_async_requests.Resize(m_async_requests.GetLength() + 1);
+        return m_async_requests.GetLast();
     }
 
     //--------------------------------------------------------------
