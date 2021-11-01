@@ -4,9 +4,6 @@
 //--------------------- Definition Include ---------------------
 #include "hyperion/render/driver/opengl/opengl_render_context.hpp"
 
-//---------------------- Project Includes ----------------------
-#include "hyperion/core/engine.hpp"
-
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 

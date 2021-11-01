@@ -7,6 +7,10 @@
 namespace Hyperion::Editor {
 
     class EditorApplication : public Application {
+    public:
+        void EnterRuntime();
+        void PauseRuntime();
+        void ExitRuntime();
     protected:
         void OnSetup(ApplicationSettings& settings) override;
         void OnInitialize() override;

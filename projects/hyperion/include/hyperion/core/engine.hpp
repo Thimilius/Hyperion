@@ -11,6 +11,9 @@ namespace Hyperion {
     class Main;
     class WindowsWindow;
 
+    namespace Editor {
+        class EditorApplication;
+    }
     namespace Rendering {
         class RenderEngine;
     }
@@ -18,6 +21,13 @@ namespace Hyperion {
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
+
+    enum class EngineMode {
+        Runtime,
+        Editor,
+        EditorRuntimePlaying,
+        EditorRuntimePaused,
+    };
 
     class Engine final {
     public:
@@ -27,6 +37,8 @@ namespace Hyperion {
             String message = StringUtils::Format(message_format, args...);
             PanicInternal(title, message);
         }
+
+        static EngineMode GetEngineMode();
     private:
         Engine() = delete;
         ~Engine() = delete;
@@ -35,6 +47,10 @@ namespace Hyperion {
         static void RegisterTypes();
         static uint32 Run();
         static void Exit();
+
+#ifdef HYP_EDITOR
+        static void SetEngineMode(EngineMode mode);
+#endif
 
         static void PreInitialize();
         static void Initialize();
@@ -46,14 +62,26 @@ namespace Hyperion {
         static void ExecuteEngineLoopSubSystem(const EngineLoopSubSystem &engine_loop_sub_system);
 
         static void PanicInternal(const String &title, const String &message);
+    public:
+#ifdef HYP_EDITOR
+        inline static constexpr bool8 IS_EDITOR = true;
+#else
+        inline static constexpr bool8 IS_EDITOR = false;
+#endif
     private:
         inline static ApplicationSettings s_settings;
         inline static Application *s_application;
         inline static std::atomic<bool8> s_running = false;
+#ifdef HYP_EDITOR
+        inline static EngineMode s_mode = EngineMode::Editor;
+#else
+        inline static EngineMode s_mode = EngineMode::Runtime;
+#endif
     private:
         friend class Hyperion::Application;
         friend class Hyperion::Main;
         friend class Hyperion::WindowsWindow;
+        friend class Hyperion::Editor::EditorApplication;
     };
 
 }

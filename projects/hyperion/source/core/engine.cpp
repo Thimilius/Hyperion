@@ -27,6 +27,15 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
+    EngineMode Engine::GetEngineMode() {
+        if constexpr (Engine::IS_EDITOR) {
+            return s_mode;
+        } else {
+            return EngineMode::Runtime;
+        }
+    }
+
+    //--------------------------------------------------------------
     void Engine::Setup() {
         // We initialize the operating system first to get logging ability.
         OperatingSystem::Initialize();
@@ -181,6 +190,7 @@ namespace Hyperion {
         }
 
         WorldManager::ReflectTypes();
+        UI::UIFactory::ReflectTypes();
     }
 
     //--------------------------------------------------------------
@@ -215,6 +225,11 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void Engine::SetEngineMode(EngineMode mode) {
+        s_mode = mode;
+    }
+
+    //--------------------------------------------------------------
     void Engine::PreInitialize() {
         HYP_ASSERT_MESSAGE(s_settings.core.max_delta_time > 0, "Max delta time must be greater than zero!");
         Time::s_max_delta_time = s_settings.core.max_delta_time;
@@ -239,7 +254,6 @@ namespace Hyperion {
         Physics::PhysicsEngine::Initialize();
 
         WorldManager::Initialize();
-        UI::UIFactory::Initialize();
     }
 
     //--------------------------------------------------------------
@@ -308,7 +322,6 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void Engine::Shutdown() {
         // When shutting down we have to be very careful about the order.
-        UI::UIFactory::Shutdown();
         WorldManager::Shutdown();
 
         Physics::PhysicsEngine::Shutdown();

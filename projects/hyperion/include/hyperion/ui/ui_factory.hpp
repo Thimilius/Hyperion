@@ -21,8 +21,7 @@ namespace Hyperion::UI {
         static UILabel *CreateLabel();
         static UIToggle *CreateToggle();
     private:
-        static void Initialize();
-        static void Shutdown();
+        static void ReflectTypes();
     private:
         UIFactory() = delete;
         ~UIFactory() = delete;

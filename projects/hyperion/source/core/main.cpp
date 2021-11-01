@@ -5,7 +5,6 @@
 #include "hyperion/core/main.hpp"
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/engine.hpp"
 #include "hyperion/core/app/application.hpp"
 
 //-------------------- Definition Namespace --------------------

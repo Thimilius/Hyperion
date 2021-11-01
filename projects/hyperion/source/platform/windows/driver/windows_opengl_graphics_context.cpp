@@ -7,9 +7,6 @@
 //---------------------- Library Includes ----------------------
 #include <glad/glad_wgl.h>
 
-//---------------------- Project Includes ----------------------
-#include "hyperion/core/engine.hpp"
-
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 

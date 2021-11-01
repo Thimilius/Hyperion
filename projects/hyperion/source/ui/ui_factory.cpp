@@ -73,7 +73,7 @@ namespace Hyperion::UI {
     }
 
     //--------------------------------------------------------------
-    void UIFactory::Initialize() {
+    void UIFactory::ReflectTypes() {
         MetaRegistry::Reflect<UIElement>("UIElement");
 
         MetaRegistry::Reflect<UIButton>("UIButton")
@@ -84,11 +84,6 @@ namespace Hyperion::UI {
 
         MetaRegistry::Reflect<UIToggle>("UIToggle")
             .Base<UIElement>();
-    }
-
-    //--------------------------------------------------------------
-    void UIFactory::Shutdown() {
-
     }
 
 }

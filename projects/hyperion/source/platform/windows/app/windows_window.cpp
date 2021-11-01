@@ -9,7 +9,6 @@
 #include <Windowsx.h>
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/engine.hpp"
 #include "hyperion/core/app/events/app_event.hpp"
 #include "hyperion/core/app/events/display_events.hpp"
 #include "hyperion/core/app/events/gamepad_events.hpp"

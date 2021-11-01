@@ -4,9 +4,6 @@
 //--------------------- Definition Include ---------------------
 #include "hyperion/core/app/application.hpp"
 
-//---------------------- Project Includes ----------------------
-#include "hyperion/core/engine.hpp"
-
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
