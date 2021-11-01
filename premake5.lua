@@ -13,6 +13,11 @@ workspace "hyperion"
 
 	configurations { "debug", "profile", "release" }
 
+	newoption {   
+		trigger = "editor",   
+		description = "Compiles the engine with editor support"
+	}
+
 	newoption {
 		trigger = audio_backend_option,
 		value = "API",
@@ -56,6 +61,9 @@ workspace "hyperion"
 		systemversion "latest"
 		linkoptions { "/IGNORE:4099" }
 		buildoptions { "/MP /utf-8" }
+
+	filter "options:editor"
+		defines { "HYP_EDITOR" }
 
 	filter "options:audio=none"
 		defines { "HYP_AUDIO_NONE" }
