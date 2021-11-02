@@ -55,9 +55,10 @@ namespace Hyperion::Editor {
             const uint32 *data = reinterpret_cast<const uint32 *>(result.data.GetData());
             if (result.data.GetLength() >= 4) {
                 uint32 id = *data;
-                HYP_TRACE("ID: {}", id);
+                //HYP_TRACE("ID: {}", id);
             }
         });
+        render_frame->ExecuteCommandBuffer(command_buffer);
 
         render_frame->DrawEditorUI();
     }

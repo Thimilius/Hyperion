@@ -9,7 +9,6 @@
 - Textures
     - Cubemaps
 - Duplication
-- Error shader/material
 - Data update for textures/meshes
 
 ## Audio
@@ -32,7 +31,9 @@
 	- Spotlights
     - Storage buffers
 	- Frustum culling
-- Async readback of textures/buffers
+- Async readback
+	- Textures
+	- Buffers
 
 ## Serialization
 - Support for arrays and maps
@@ -43,10 +44,7 @@
 ### Shaders
 - Proper shader language
     - Default values for properties
-	- Render queue
-	- Rasterizer state
 	- New (and better/prettier) syntax
-- Recompilation/Hot loading
 
 ## Scripting
 - .NET 5/6 or Mono?

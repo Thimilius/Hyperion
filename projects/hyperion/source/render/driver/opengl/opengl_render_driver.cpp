@@ -6,6 +6,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/display.hpp"
+#include "hyperion/render/driver/opengl/opengl_debug_group.hpp"
 #include "hyperion/render/driver/opengl/opengl_shader_compiler.hpp"
 #include "hyperion/render/driver/opengl/opengl_utilities.hpp"
 
@@ -190,6 +191,7 @@ namespace Hyperion::Rendering {
             switch (frame_command.type) {
                 case RenderFrameCommandType::SetCamera: {
                     HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.SetCamera");
+                    OpenGLDebugGroup debug_group("SetCamera");
 
                     const RenderFrameCommandSetCamera &set_camera = std::get<RenderFrameCommandSetCamera>(frame_command.data);
                     m_state.camera_index = set_camera.camera_index;
@@ -205,6 +207,7 @@ namespace Hyperion::Rendering {
                 }
                 case RenderFrameCommandType::ExecuteCommandBuffer: {
                     HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.ExecuteCommandBuffer");
+                    OpenGLDebugGroup debug_group("ExecuteCommandBuffer");
 
                     const RenderFrameCommandExecuteCommandBuffer &execute_command_buffer = std::get<RenderFrameCommandExecuteCommandBuffer>(frame_command.data);
 
@@ -213,6 +216,7 @@ namespace Hyperion::Rendering {
                         switch (buffer_command.type) {
                             case RenderFrameCommandBufferCommandType::ClearRenderTarget: {
                                 HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommandBufferCommand.Clear");
+                                OpenGLDebugGroup debug_group("ClearRenderTarget");
 
                                 const RenderFrameCommandBufferCommandClearRenderTarget &clear_render_target = std::get<RenderFrameCommandBufferCommandClearRenderTarget>(buffer_command.data);
 
@@ -230,6 +234,7 @@ namespace Hyperion::Rendering {
                             }
                             case RenderFrameCommandBufferCommandType::SetRenderTarget: {
                                 HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommandBufferCommand.SetRenderTarget");
+                                OpenGLDebugGroup debug_group("SetRenderTarget");
 
                                 const RenderFrameCommandBufferCommandSetRenderTarget &set_render_target = std::get<RenderFrameCommandBufferCommandSetRenderTarget>(buffer_command.data);
 
@@ -239,6 +244,7 @@ namespace Hyperion::Rendering {
                             }
                             case RenderFrameCommandBufferCommandType::Blit: {
                                 HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommandBufferCommand.Blit");
+                                OpenGLDebugGroup debug_group("Blit");
 
                                 const RenderFrameCommandBufferCommandBlit &blit = std::get<RenderFrameCommandBufferCommandBlit>(buffer_command.data);
                                 
@@ -303,6 +309,7 @@ namespace Hyperion::Rendering {
                             }
                             case RenderFrameCommandBufferCommandType::SetGlobalBuffer: {
                                 HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommandBufferCommand.SetGlobalBuffer");
+                                OpenGLDebugGroup debug_group("SetGlobalBuffer");
 
                                 const RenderFrameCommandBufferCommandSetGlobalBuffer &set_global_buffer = std::get<RenderFrameCommandBufferCommandSetGlobalBuffer>(buffer_command.data);
                                 auto &data = set_global_buffer.render_buffer.GetData();
@@ -329,6 +336,7 @@ namespace Hyperion::Rendering {
                             }
                             case RenderFrameCommandBufferCommandType::RequestAsyncReadback: {
                                 HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommandBufferCommand.RequestAsyncReadback");
+                                OpenGLDebugGroup debug_group("RequestAsyncReadback");
 
                                 const RenderFrameCommandBufferCommandRequestAsyncReadback &request_async_readback = std::get<RenderFrameCommandBufferCommandRequestAsyncReadback>(buffer_command.data);
 
@@ -372,6 +380,7 @@ namespace Hyperion::Rendering {
                 }
                 case RenderFrameCommandType::DrawMeshes: {
                     HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawMeshes");
+                    OpenGLDebugGroup debug_group("DrawMeshes");
 
                     const RenderFrameCommandDrawMeshes &draw_meshes = std::get<RenderFrameCommandDrawMeshes>(frame_command.data);
 
@@ -382,6 +391,7 @@ namespace Hyperion::Rendering {
                 }
                 case RenderFrameCommandType::DrawUI: {
                     HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawUI");
+                    OpenGLDebugGroup debug_group("DrawUI");
 
                     DrawUI(render_frame_context.GetUIObjects());
 
@@ -389,6 +399,7 @@ namespace Hyperion::Rendering {
                 }
                 case RenderFrameCommandType::DrawObjectIds: {
                     HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawObjectIds");
+                    OpenGLDebugGroup debug_group("DrawObjectIds");
 
                     const RenderFrameCommandDrawObjectIds &draw_object_ids = std::get<RenderFrameCommandDrawObjectIds>(frame_command.data);
 
@@ -398,6 +409,7 @@ namespace Hyperion::Rendering {
                 }
                 case RenderFrameCommandType::DrawGizmos: {
                     HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawGizmos");
+                    OpenGLDebugGroup debug_group("DrawGizmos");
 
                     const RenderFrameCommandDrawGizmos &draw_gizmos = std::get<RenderFrameCommandDrawGizmos>(frame_command.data);
 
@@ -414,7 +426,7 @@ namespace Hyperion::Rendering {
                         glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, draw_gizmos.grid.local_to_world.elements);
 
                         const OpenGLMesh &opengl_mesh = m_opengl_meshes.Get(draw_gizmos.grid.mesh_id);
-                        glBindVertexArray(opengl_mesh.vertex_array);
+                        UseMesh(opengl_mesh);
 
                         SubMesh sub_mesh = opengl_mesh.sub_meshes[0];
                         DrawSubMesh(sub_mesh);
@@ -432,6 +444,7 @@ namespace Hyperion::Rendering {
                 }
                 case RenderFrameCommandType::DrawEditorUI: {
                     HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawEditorUI");
+                    OpenGLDebugGroup debug_group("DrawEditorUI");
 
                     DrawUI(render_frame_context.GetEditorUIObjects());
 
@@ -606,6 +619,7 @@ namespace Hyperion::Rendering {
 
                 for (const auto &[mesh_id, grouped_mesh] : grouped_material.meshes) {
                     HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderGroupedMesh");
+                    OpenGLDebugGroup debug_group("DrawMesh");
 
                     const OpenGLMesh &opengl_mesh = *grouped_mesh.mesh;
                     UseMesh(opengl_mesh);
@@ -669,6 +683,8 @@ namespace Hyperion::Rendering {
             if (!element.enable_blending) {
                 glDisable(GL_BLEND);
             }
+
+            OpenGLDebugGroup debug_group("DrawMesh");
             {
                 GLint model_location = glGetUniformLocation(opengl_shader.program, "u_model");
                 if (model_location >= 0) {
@@ -709,14 +725,19 @@ namespace Hyperion::Rendering {
 
         GLuint framebuffer = 0;
         glGetIntegerv(GL_FRAMEBUFFER_BINDING, reinterpret_cast<GLint *>(&framebuffer));
+
         UseRenderTexture(render_target_id);
+        OpenGLRenderTexture &opengl_render_texture = m_opengl_render_textures.Get(render_target_id.id);
         glDepthMask(GL_TRUE);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        GLuint clear_value = UINT32_MAX;
+        glClearNamedFramebufferuiv(opengl_render_texture.framebuffer, GL_COLOR, GL_NONE, &clear_value);
+        glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         const OpenGLShader &opengl_shader = m_state.object_id_shader;
         UseShader(opengl_shader);
 
         for (const RenderFrameContextObjectMesh &mesh_object : render_frame_context.GetMeshObjects()) {
+            OpenGLDebugGroup debug_group("DrawMesh");
             OpenGLMesh &opengl_mesh = m_opengl_meshes.Get(mesh_object.mesh_id);
 
             GLint model_location = glGetUniformLocation(opengl_shader.program, "u_model");
@@ -764,6 +785,9 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void OpenGLRenderDriver::UseRenderTexture(RenderTargetId render_target_id) {
+        HYP_PROFILE_SCOPE("OpenGLRenderDriver.UseRenderTexture");
+        OpenGLDebugGroup debug_group("UseRenderTexture");
+
         GLuint framebuffer = 0;
         if (render_target_id.id != RenderTargetId::Default().id) {
             OpenGLRenderTexture &opengl_render_texture = m_opengl_render_textures.Get(render_target_id.id);
@@ -785,6 +809,7 @@ namespace Hyperion::Rendering {
     //--------------------------------------------------------------
     void OpenGLRenderDriver::UseShader(const OpenGLShader &opengl_shader) {
         HYP_PROFILE_SCOPE("OpenGLRenderDriver.UseShader");
+        OpenGLDebugGroup debug_group("UseShader");
 
         ShaderAttributes attributes = opengl_shader.attributes;
         switch (attributes.z_write) {
@@ -834,6 +859,7 @@ namespace Hyperion::Rendering {
     //--------------------------------------------------------------
     void OpenGLRenderDriver::UseMaterial(const OpenGLShader &opengl_shader, const OpenGLMaterial &opengl_material) {
         HYP_PROFILE_SCOPE("OpenGLRenderDriver.UseMaterial");
+        OpenGLDebugGroup debug_group("UseMaterial");
 
         uint32 texture_unit = 0;
         MaterialPropertyIndex index = 0;
@@ -907,12 +933,15 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void OpenGLRenderDriver::UseMesh(const OpenGLMesh &opengl_mesh) {
+        OpenGLDebugGroup debug_group("UseMesh");
+
         glBindVertexArray(opengl_mesh.vertex_array);
     }
 
     //--------------------------------------------------------------
     void OpenGLRenderDriver::LoadAssets(RenderFrameContext &render_frame_context) {
         HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadAssets");
+        OpenGLDebugGroup debug_group("LoadAssets");
 
         // The order in which we load the assets is important.
         // For example a material might reference a shader or texture which should always be loaded first.
@@ -1146,6 +1175,7 @@ namespace Hyperion::Rendering {
     //--------------------------------------------------------------
     void OpenGLRenderDriver::UnloadAssets(RenderFrameContext &render_frame_context) {
         HYP_PROFILE_SCOPE("OpenGLRenderDriver.UnloadAssets");
+        OpenGLDebugGroup debug_group("UnloadAssets");
 
         for (AssetId shader_id : render_frame_context.GetShaderAssetsToUnload()) {
             glDeleteProgram(m_opengl_shaders.Get(shader_id).program);
