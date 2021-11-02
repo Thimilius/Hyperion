@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿//------------------------ Header Guard ------------------------
+#pragma once
 
 // ────────────────────────────────────────────────────────────────────────────────────
 // NOTE: Implementation taken from: https://github.com/skypjack/entt

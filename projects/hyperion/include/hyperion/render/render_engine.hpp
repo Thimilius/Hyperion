@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿//------------------------ Header Guard ------------------------
+#pragma once
 
 //--------------- C++ Standard Library Includes ----------------
 #include <atomic>

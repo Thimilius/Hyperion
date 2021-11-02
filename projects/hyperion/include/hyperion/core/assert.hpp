@@ -1,3 +1,4 @@
+//------------------------ Header Guard ------------------------
 #pragma once
 
 #ifdef HYP_ENABLE_ASSERTS

@@ -1,3 +1,4 @@
+//------------------------ Header Guard ------------------------
 #pragma once
 
 #define HYP_CREATE_ENUM_FLAG_OPERATORS(ENUM)                                 \

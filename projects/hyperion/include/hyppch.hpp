@@ -1,3 +1,4 @@
+//------------------------ Header Guard ------------------------
 #pragma once
 
 //---------------- C Standard Library Includes -----------------

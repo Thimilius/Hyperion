@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿//------------------------ Header Guard ------------------------
+#pragma once
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/ecs/entity/entity_types.hpp"

@@ -1,3 +1,4 @@
+//------------------------ Header Guard ------------------------
 #pragma once
 
 #define WIN_API extern "C" __declspec(dllimport)
