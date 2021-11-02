@@ -392,35 +392,35 @@ namespace Hyperion::Rendering {
 
                     const RenderFrameCommandDrawObjectIds &draw_object_ids = std::get<RenderFrameCommandDrawObjectIds>(frame_command.data);
 
-                    DrawObjectIds(render_frame_context.GetMeshObjects(), draw_object_ids.render_target_id);
+                    DrawObjectIds(render_frame_context, draw_object_ids.render_target_id);
 
                     break;
                 }
-                case RenderFrameCommandType::DrawEditorGizmos: {
+                case RenderFrameCommandType::DrawGizmos: {
                     HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawGizmos");
 
-                    const RenderFrameCommandDrawEditorGizmos &draw_editor_gizmos = std::get<RenderFrameCommandDrawEditorGizmos>(frame_command.data);
+                    const RenderFrameCommandDrawGizmos &draw_gizmos = std::get<RenderFrameCommandDrawGizmos>(frame_command.data);
 
                     glDepthMask(GL_FALSE);
                     glEnable(GL_BLEND);
                     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-                    const OpenGLShader &opengl_shader = m_opengl_shaders.Get(draw_editor_gizmos.shader_id);
+                    const OpenGLShader &opengl_shader = m_opengl_shaders.Get(draw_gizmos.shader_id);
                     glUseProgram(opengl_shader.program);
 
                     GLint model_location = glGetUniformLocation(opengl_shader.program, "u_model");
 
-                    if (draw_editor_gizmos.grid.should_draw) {
-                        glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, draw_editor_gizmos.grid.local_to_world.elements);
+                    if (draw_gizmos.grid.should_draw) {
+                        glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, draw_gizmos.grid.local_to_world.elements);
 
-                        const OpenGLMesh &opengl_mesh = m_opengl_meshes.Get(draw_editor_gizmos.grid.mesh_id);
+                        const OpenGLMesh &opengl_mesh = m_opengl_meshes.Get(draw_gizmos.grid.mesh_id);
                         glBindVertexArray(opengl_mesh.vertex_array);
 
                         SubMesh sub_mesh = opengl_mesh.sub_meshes[0];
                         DrawSubMesh(sub_mesh);
                     }
 
-                    if (draw_editor_gizmos.should_draw_all_bounds) {
+                    if (draw_gizmos.should_draw_all_bounds) {
                         glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, Matrix4x4::Identity().elements);
 
                         for (const RenderFrameContextObjectMesh &object : render_frame_context.GetMeshObjects()) {
@@ -697,7 +697,16 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void OpenGLRenderDriver::DrawObjectIds(const Array<RenderFrameContextObjectMesh> &mesh_objects, RenderTargetId render_target_id) {
+    void OpenGLRenderDriver::DrawObjectIds(const RenderFrameContext &render_frame_context, RenderTargetId render_target_id) {
+        {
+            const RenderFrameContextCamera &render_frame_context_camera = render_frame_context.GetCameras()[m_state.camera_index];
+
+            OpenGLUniformBufferCamera uniform_buffer_camera;
+            uniform_buffer_camera.camera_view_matrix = render_frame_context_camera.view_matrix;
+            uniform_buffer_camera.camera_projection_matrix = render_frame_context_camera.projection_matrix;
+            glNamedBufferSubData(m_state.camera_uniform_buffer, 0, sizeof(OpenGLUniformBufferCamera), &uniform_buffer_camera);
+        }
+
         GLuint framebuffer = 0;
         glGetIntegerv(GL_FRAMEBUFFER_BINDING, reinterpret_cast<GLint *>(&framebuffer));
         UseRenderTexture(render_target_id);
@@ -707,7 +716,7 @@ namespace Hyperion::Rendering {
         const OpenGLShader &opengl_shader = m_state.object_id_shader;
         UseShader(opengl_shader);
 
-        for (const RenderFrameContextObjectMesh &mesh_object : mesh_objects) {
+        for (const RenderFrameContextObjectMesh &mesh_object : render_frame_context.GetMeshObjects()) {
             OpenGLMesh &opengl_mesh = m_opengl_meshes.Get(mesh_object.mesh_id);
 
             GLint model_location = glGetUniformLocation(opengl_shader.program, "u_model");

@@ -126,7 +126,7 @@ namespace Hyperion::Rendering {
         void DrawMeshes(const RenderFrameContextEnvironment &environment, const Array<RenderFrameContextLight> &lights, DrawingParametes drawing_parameters);
         void DrawSubMesh(const SubMesh &sub_mesh);
         void DrawUI(const Array<RenderFrameContextObjectUI> &elements);
-        void DrawObjectIds(const Array<RenderFrameContextObjectMesh> &mesh_objects, RenderTargetId render_target_id);
+        void DrawObjectIds(const RenderFrameContext &render_frame_context, RenderTargetId render_target_id);
         void DrawRenderBounds(const BoundingBox &bounds);
 
         void UseRenderTexture(RenderTargetId render_target_id);

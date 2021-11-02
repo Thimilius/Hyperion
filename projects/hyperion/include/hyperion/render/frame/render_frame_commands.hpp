@@ -19,9 +19,9 @@ namespace Hyperion::Rendering {
 
         DrawMeshes,
         DrawUI,
+        DrawGizmos,
         DrawObjectIds,
 
-        DrawEditorGizmos,
         DrawEditorUI,
     };
 
@@ -77,7 +77,7 @@ namespace Hyperion::Rendering {
         RenderTargetId render_target_id;
     };
 
-    struct RenderFrameCommandDrawEditorGizmos {
+    struct RenderFrameCommandDrawGizmos {
         AssetId shader_id;
 
         struct Grid {
@@ -103,7 +103,7 @@ namespace Hyperion::Rendering {
             RenderFrameCommandDrawMeshes,
             RenderFrameCommandDrawUI,
             RenderFrameCommandDrawObjectIds,
-            RenderFrameCommandDrawEditorGizmos,
+            RenderFrameCommandDrawGizmos,
             RenderFrameCommandDrawEditorUI
         > data;
     };

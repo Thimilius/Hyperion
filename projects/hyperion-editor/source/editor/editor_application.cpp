@@ -26,6 +26,9 @@
 #include <hyperion/render/pipelines/forward/forward_render_pipeline.hpp>
 #include <hyperion/ui/ui_factory.hpp>
 
+//---------------------- Project Includes ----------------------
+#include "hyperion/editor/editor_render_pipeline.hpp"
+
 //------------------------- Namespaces -------------------------
 using namespace Hyperion::Rendering;
 using namespace Hyperion::UI;
@@ -53,6 +56,8 @@ namespace Hyperion::Editor {
         settings.render.backend = Rendering::RenderBackend::OpenGL;
         settings.render.threading_mode = Rendering::RenderThreadingMode::MultiThreaded;
         settings.render.vsync_mode = Rendering::VSyncMode::DontSync;
+        settings.render.pipeline = Rendering::RenderPipeline::Custom;
+        settings.render.custom_pipeline = new EditorRenderPipeline();
     }
 
     const uint32 UI_HEADER_SIZE = 25;
@@ -79,7 +84,6 @@ namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
     void EditorApplication::OnInitialize() {
-        RenderEngine::GetPipeline()->SetShouldBlitToScreen(false);
         RenderEngine::GetPipeline()->SetRenderTargetSize(Display::GetWidth(), Display::GetHeight() - UI_HEADER_SIZE);
 
         {

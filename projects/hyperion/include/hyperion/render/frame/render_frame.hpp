@@ -24,7 +24,7 @@ namespace Hyperion::Rendering {
         void DrawMeshes(CullingResults &culling_results, DrawingParametes drawing_parameters);
         void DrawUI();
         void DrawObjectIds(RenderTargetId render_target_id);
-        void DrawEditorGizmos();
+        void DrawGizmos();
         void DrawEditorUI();
 
         AsyncRequest &AddAsyncRequest();

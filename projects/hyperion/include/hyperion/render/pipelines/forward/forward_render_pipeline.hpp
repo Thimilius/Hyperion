@@ -26,14 +26,15 @@ namespace Hyperion::Rendering {
         void Render(RenderFrame *render_view) override;
         void Shutdown() override;
 
+        inline uint32 GetRenderTargetWidth() const override { return m_render_target_width; }
+        inline uint32 GetRenderTargetHeight() const override { return m_render_target_height; }
         void SetRenderTargetSize(uint32 width, uint32 height) override;
-        RenderTexture *GetTargetRenderTexture() const override { return m_target_render_texture; }
-        void SetShouldBlitToScreen(bool8 should_blit_to_screen) override { m_should_blit_to_screen = should_blit_to_screen; }
+        inline RenderTexture *GetTargetRenderTexture() const override { return m_target_render_texture; }
+        inline void SetShouldBlitToScreen(bool8 should_blit_to_screen) override { m_should_blit_to_screen = should_blit_to_screen; }
     private:
         uint32 m_render_target_width;
         uint32 m_render_target_height;
         RenderTexture *m_target_render_texture = nullptr;
-        RenderTexture *m_object_ids_render_texture = nullptr;
         bool8 m_should_blit_to_screen = true;
     };
 
