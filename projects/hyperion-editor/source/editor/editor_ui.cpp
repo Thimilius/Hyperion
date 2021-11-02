@@ -10,6 +10,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/editor/editor_style.hpp"
+#include "hyperion/editor/editor_world_camera.hpp"
 
 //------------------------- Namespaces -------------------------
 using namespace Hyperion::Rendering;
@@ -105,7 +106,7 @@ namespace Hyperion::Editor {
         camera_reset_label->SetText("\uf03d");
         camera_reset_label->GetStyle().GetShadow().enabled = true;
         camera_reset_button->RegisterClickCallback([]() {
-            //g_camera_controller->Reset(g_world);
+            EditorWorldCamera::Reset();
         });
 
         UpdateStats();

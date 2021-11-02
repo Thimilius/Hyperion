@@ -6,6 +6,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset_manager.hpp"
+#include "hyperion/core/app/display.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
@@ -17,8 +18,8 @@ namespace Hyperion::Rendering {
         render_texture_attributes.use_mipmaps = false;
 
         RenderTextureParameters render_texture_parameters;
-        render_texture_parameters.width = m_render_target_width;
-        render_texture_parameters.height = m_render_target_height;
+        render_texture_parameters.width = m_should_resize_to_screen ? Display::GetWidth() : m_render_target_width;
+        render_texture_parameters.height = m_should_resize_to_screen ? Display::GetHeight() : m_render_target_height;
         render_texture_parameters.attachments = {
             { RenderTextureFormat::RGBA32, render_texture_attributes },
             { RenderTextureFormat::Depth24Stencil8, render_texture_attributes },
@@ -29,8 +30,14 @@ namespace Hyperion::Rendering {
 
     //--------------------------------------------------------------
     void ForwardRenderPipeline::Render(RenderFrame *render_frame) {
-        if (m_target_render_texture->GetWidth() != m_render_target_width || m_target_render_texture->GetHeight() != m_render_target_height) {
-            m_target_render_texture->Resize(m_render_target_width, m_render_target_height);
+        if (m_should_resize_to_screen) {
+            if (Display::HasChangedSize()) {
+                m_target_render_texture->Resize(m_render_target_width, m_render_target_height);
+            }
+        } else {
+            if (m_target_render_texture->GetWidth() != m_render_target_width || m_target_render_texture->GetHeight() != m_render_target_height) {
+                m_target_render_texture->Resize(m_render_target_width, m_render_target_height);
+            }
         }
 
         // HACK: We need a better way to get/set a camera.

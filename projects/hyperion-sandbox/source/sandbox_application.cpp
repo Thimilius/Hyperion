@@ -53,8 +53,6 @@ namespace Sandbox {
 
     //--------------------------------------------------------------
     void SandboxApplication::OnInitialize() {
-        RenderEngine::GetPipeline()->SetRenderTargetSize(Display::GetWidth(), Display::GetHeight());
-
         g_world = WorldManager::CreateWorld();
         WorldManager::SetActiveWorld(g_world);
 
@@ -156,10 +154,6 @@ namespace Sandbox {
         }
 #endif
         UpdateTitle();
-
-        if (Display::HasChangedSize()) {
-            RenderEngine::GetPipeline()->SetRenderTargetSize(Display::GetWidth(), Display::GetHeight());
-        }
     }
 
     //--------------------------------------------------------------

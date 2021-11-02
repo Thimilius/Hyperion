@@ -4,7 +4,11 @@
 //---------------------- Library Includes ----------------------
 #include <hyperion/assets/asset_manager.hpp>
 #include <hyperion/core/app/input.hpp>
+#include <hyperion/core/app/display.hpp>
 #include <hyperion/render/pipelines/forward/forward_render_pipeline.hpp>
+
+//---------------------- Project Includes ----------------------
+#include "hyperion/editor/editor_style.hpp"
 
 //------------------------- Namespaces -------------------------
 using namespace Hyperion::Rendering;
@@ -15,11 +19,13 @@ namespace Hyperion::Editor {
     //--------------------------------------------------------------
     EditorRenderPipeline::EditorRenderPipeline() {
         m_wrapped_pipeline = new ForwardRenderPipeline();
-        m_wrapped_pipeline->SetShouldBlitToScreen(false);
+        SetShouldBlitToScreen(false);
+        SetShouldResizeToScreen(false);
     }
 
     //--------------------------------------------------------------
     void EditorRenderPipeline::Initialize() {
+        SetRenderTargetSize(Display::GetWidth(), Display::GetHeight() - EditorStyle::HEADER_SIZE);
         m_wrapped_pipeline->Initialize();
 
         TextureAttributes render_texture_attributes;
@@ -39,26 +45,33 @@ namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
     void EditorRenderPipeline::Render(RenderFrame *render_frame) {
-        m_wrapped_pipeline->Render(render_frame);
-        
-        if (m_object_ids_render_texture->GetWidth() != GetRenderTargetWidth() || m_object_ids_render_texture->GetHeight() != GetRenderTargetHeight()) {
+        if (Display::HasChangedSize()) {
+            SetRenderTargetSize(Display::GetWidth(), Display::GetHeight() - EditorStyle::HEADER_SIZE);
             m_object_ids_render_texture->Resize(GetRenderTargetWidth(), GetRenderTargetHeight());
         }
 
-        render_frame->DrawObjectIds(m_object_ids_render_texture->GetRenderTargetId());
+        m_wrapped_pipeline->Render(render_frame);
 
-        RectInt region;
-        region.position = Input::GetMousePosition();
-        region.size = Vector2Int(1, 1);
-        RenderFrameCommandBuffer command_buffer;
-        command_buffer.RequestAsyncReadback(m_object_ids_render_texture->GetRenderTargetId(), 0, region, [](const AsyncRequestResult &result) {
-            const uint32 *data = reinterpret_cast<const uint32 *>(result.data.GetData());
-            if (result.data.GetLength() >= 4) {
-                uint32 id = *data;
-                //HYP_TRACE("ID: {}", id);
-            }
-        });
-        render_frame->ExecuteCommandBuffer(command_buffer);
+        Vector2Int mouse_position = Input::GetMousePosition();
+        int32 x = 0;
+        int32 y = 0;
+        int32 width = GetRenderTargetWidth();
+        int32 height = GetRenderTargetHeight();
+        if (mouse_position.x >= x && mouse_position.x < width && mouse_position.y >= y && mouse_position.y < height) {
+            render_frame->DrawObjectIds(m_object_ids_render_texture->GetRenderTargetId());
+
+            RectInt region;
+            region.position = mouse_position;
+            region.size = Vector2Int(1, 1);
+            RenderFrameCommandBuffer command_buffer;
+            command_buffer.RequestAsyncReadback(m_object_ids_render_texture->GetRenderTargetId(), 0, region, [](const AsyncRequestResult &result) {
+                const uint32 *data = reinterpret_cast<const uint32 *>(result.data.GetData());
+                if (result.data.GetLength() >= 4) {
+                    uint32 id = *data;
+                }
+            });
+            render_frame->ExecuteCommandBuffer(command_buffer);
+        }
 
         render_frame->DrawEditorUI();
     }

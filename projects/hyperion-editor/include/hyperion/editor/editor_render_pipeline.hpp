@@ -21,6 +21,7 @@ namespace Hyperion::Editor {
         inline RenderTexture *GetTargetRenderTexture() const override { return m_wrapped_pipeline->GetTargetRenderTexture(); }
 
         inline void SetShouldBlitToScreen(bool8 should_blit_to_screen) override { m_wrapped_pipeline->SetShouldBlitToScreen(should_blit_to_screen); }
+        inline void SetShouldResizeToScreen(bool8 should_resize_to_screen) override { m_wrapped_pipeline->SetShouldResizeToScreen(should_resize_to_screen); }
     private:
         Rendering::IRenderPipeline *m_wrapped_pipeline = nullptr;
 

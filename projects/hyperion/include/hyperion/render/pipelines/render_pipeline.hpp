@@ -36,6 +36,7 @@ namespace Hyperion::Rendering {
         virtual RenderTexture *GetTargetRenderTexture() const = 0;
 
         virtual void SetShouldBlitToScreen(bool8 should_blit_to_screen) = 0;
+        virtual void SetShouldResizeToScreen(bool8 should_resize_to_screen) = 0;
     };
 
 }

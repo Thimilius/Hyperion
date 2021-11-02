@@ -23,6 +23,7 @@
 #include "hyperion/editor/editor_render_pipeline.hpp"
 #include "hyperion/editor/editor_style.hpp"
 #include "hyperion/editor/editor_ui.hpp"
+#include "hyperion/editor/editor_world_camera.hpp"
 
 //------------------------- Namespaces -------------------------
 using namespace Hyperion::Rendering;
@@ -61,12 +62,8 @@ namespace Hyperion::Editor {
     EntityId g_parent;
     EntityId g_child;
 
-    CameraController *g_camera_controller;
-
     //--------------------------------------------------------------
     void EditorApplication::OnInitialize() {
-        RenderEngine::GetPipeline()->SetRenderTargetSize(Display::GetWidth(), Display::GetHeight() - EditorStyle::HEADER_SIZE);
-
         EditorUI::Initialize();
 
         {
@@ -75,10 +72,6 @@ namespace Hyperion::Editor {
 
             g_camera = g_world->CreateEntity(EntityPrimitive::Camera);
             g_light = g_world->CreateEntity(EntityPrimitive::DirectionalLight);
-
-            g_camera_controller = new LookAroundCameraController(g_camera);
-            g_camera_controller->Reset(g_world);
-            LocalTransformComponent *camera_transform = g_world->GetComponent<LocalTransformComponent>(g_camera);
 
             g_parent = g_world->CreateEntity(EntityPrimitive::Sphere);
 
@@ -105,12 +98,15 @@ namespace Hyperion::Editor {
             EntityId ui = g_world->CreateEntity();
             UIViewComponent *ui_view = g_world->AddComponent<UIViewComponent>(ui);
             ui_view->root_element = root_element;
+
+            EditorWorldCamera::Initialize(g_camera, g_world);
         }
     }
 
     //--------------------------------------------------------------
     void EditorApplication::OnUpdate(float32 delta_time) {
         EditorUI::Update();
+        EditorWorldCamera::Update(delta_time, g_camera, g_world);
 
         if (Input::IsKeyHold(KeyCode::Control) && Input::IsKeyDown(KeyCode::W)) {
             Exit();
@@ -126,19 +122,8 @@ namespace Hyperion::Editor {
             }
         }
 
-        g_camera_controller->Update(g_world, delta_time);
-        if (Input::IsKeyDown(KeyCode::R)) {
-            g_camera_controller->Reset(g_world);
-        }
-
         if (Engine::GetEngineMode() == EngineMode::EditorRuntimePlaying) {
             g_world->GetComponent<LocalTransformComponent>(g_parent)->rotation = Quaternion::FromEulerAngles(0.0f, Math::Sin(Time::GetTime()) * 45.0f, 0.0f);
-        }
-
-        uint32 render_target_height = Display::GetHeight() - EditorStyle::HEADER_SIZE;
-        g_world->GetComponent<CameraComponent>(g_camera)->viewport_clipping.height = render_target_height / static_cast<float32>(Display::GetHeight());
-        if (Display::HasChangedSize()) {
-            RenderEngine::GetPipeline()->SetRenderTargetSize(Display::GetWidth(), render_target_height);
         }
     }
 
