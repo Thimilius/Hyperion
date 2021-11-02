@@ -33,6 +33,7 @@ namespace Hyperion::Rendering {
         uint32 m_render_target_width;
         uint32 m_render_target_height;
         RenderTexture *m_target_render_texture = nullptr;
+        RenderTexture *m_object_ids_render_texture = nullptr;
         bool8 m_should_blit_to_screen = true;
     };
 

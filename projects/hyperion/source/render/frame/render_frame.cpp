@@ -118,6 +118,15 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
+    void RenderFrame::DrawObjectIds(RenderTargetId render_target_id) {
+        RenderFrameCommandDrawObjectIds draw_object_ids;
+        draw_object_ids.render_target_id = render_target_id;
+
+        RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::DrawObjectIds);
+        command.data = draw_object_ids;
+    }
+
+    //--------------------------------------------------------------
     void RenderFrame::DrawEditorGizmos() {
         RenderFrameCommandDrawEditorGizmos draw_editor_gizmos;
         draw_editor_gizmos.shader_id = AssetManager::GetShaderPrimitive(ShaderPrimitive::Gizmo)->GetAssetInfo().id;
@@ -140,7 +149,7 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    AsyncRequest &RenderFrame::AddAsyncRequests() {
+    AsyncRequest &RenderFrame::AddAsyncRequest() {
         m_async_requests.Resize(m_async_requests.GetLength() + 1);
         return m_async_requests.GetLast();
     }

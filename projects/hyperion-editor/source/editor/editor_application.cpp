@@ -127,7 +127,7 @@ namespace Hyperion::Editor {
             g_render_ui_element->SetAnchorPreset(UIAnchorPreset::StretchAll);
             g_render_ui_element->SetAnchorOffsetMax(Vector2(0.0f, UI_HEADER_SIZE));
             g_render_ui_element->GetRenderer().texture = RenderEngine::GetPipeline()->GetTargetRenderTexture();
-            g_render_ui_element->GetRenderer().render_texture_attachment_index = 1;
+            g_render_ui_element->GetRenderer().render_texture_attachment_index = 0;
             g_render_ui_element->GetRenderer().enable_blending = false;
             g_render_ui_element->GetHierarchy().SetParent(g_root_element);
 

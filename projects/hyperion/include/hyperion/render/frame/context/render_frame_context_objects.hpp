@@ -9,8 +9,11 @@
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
+    
+    using RenderFrameContextObjectId = uint32;
 
     struct RenderFrameContextObject {
+        RenderFrameContextObjectId id;
         Matrix4x4 local_to_world;
         Vector3 position;
     };

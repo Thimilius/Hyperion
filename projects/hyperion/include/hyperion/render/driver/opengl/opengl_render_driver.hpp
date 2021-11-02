@@ -89,6 +89,8 @@ namespace Hyperion::Rendering {
     struct OpenGLState {
         OpenGLShader error_shader;
 
+        OpenGLShader object_id_shader;
+
         GLuint fullscreen_shader;
         GLuint fullscreen_vertex_array;
 
@@ -124,8 +126,10 @@ namespace Hyperion::Rendering {
         void DrawMeshes(const RenderFrameContextEnvironment &environment, const Array<RenderFrameContextLight> &lights, DrawingParametes drawing_parameters);
         void DrawSubMesh(const SubMesh &sub_mesh);
         void DrawUI(const Array<RenderFrameContextObjectUI> &elements);
+        void DrawObjectIds(const Array<RenderFrameContextObjectMesh> &mesh_objects, RenderTargetId render_target_id);
         void DrawRenderBounds(const BoundingBox &bounds);
 
+        void UseRenderTexture(RenderTargetId render_target_id);
         void UseShader(const OpenGLShader &opengl_shader);
         void UseMaterial(const OpenGLShader &opengl_shader, const OpenGLMaterial &opengl_material);
         void SetMaterialTextureProperty(ShaderPropertyStorage::Texture texture_property, uint32 texture_unit, GLuint program, GLuint location);

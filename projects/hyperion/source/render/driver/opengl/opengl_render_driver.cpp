@@ -18,7 +18,7 @@ namespace Hyperion::Rendering {
             glEnable(GL_DEPTH_TEST);
             glFrontFace(GL_CW);
         }
-
+        
         {
             const char *error_vertex = R"(
                 #version 450 core
@@ -50,6 +50,41 @@ namespace Hyperion::Rendering {
                 }
             )";
             m_state.error_shader.program = OpenGLShaderCompiler::Compile(error_vertex, error_fragment).program;
+        }
+
+        {
+            const char *object_id_vertex = R"(
+                #version 450 core
+
+                layout(location = 0) in vec3 a_position;
+
+                layout(std140, binding = 0) uniform Camera {
+	                mat4 view;
+	                mat4 projection;
+                } u_camera;
+
+                uniform mat4 u_model;
+
+                vec4 obj_to_clip_space(vec3 position) {
+	                return u_camera.projection * u_camera.view * u_model * vec4(position, 1.0);
+                }
+
+                void main() {
+	                gl_Position = obj_to_clip_space(a_position);
+                }
+            )";
+            const char *object_id_fragment = R"(
+                #version 450 core
+
+                layout(location = 0) out uint o_object_id;
+
+                uniform uint u_object_id;
+
+                void main() {
+	                o_object_id = u_object_id;
+                }
+            )";
+            m_state.object_id_shader.program = OpenGLShaderCompiler::Compile(object_id_vertex, object_id_fragment).program;
         }
 
         {
@@ -198,22 +233,8 @@ namespace Hyperion::Rendering {
 
                                 const RenderFrameCommandBufferCommandSetRenderTarget &set_render_target = std::get<RenderFrameCommandBufferCommandSetRenderTarget>(buffer_command.data);
 
-                                GLuint framebuffer = 0;
-                                if (set_render_target.id.id != RenderTargetId::Default().id) {
-                                    OpenGLRenderTexture &opengl_render_texture = m_opengl_render_textures.Get(set_render_target.id.id);
-
-                                    // We have to specify that we want to draw into all color attachments of the render texture.          
-                                    uint32 color_attachment_count = opengl_render_texture.color_attachment_count;
-                                    Array<GLenum> buffers(color_attachment_count);
-                                    for (GLenum i = 0; i < color_attachment_count; i++) {
-                                        buffers[i] = GL_COLOR_ATTACHMENT0 + i;
-                                    }
-                                    glNamedFramebufferDrawBuffers(opengl_render_texture.framebuffer, color_attachment_count, buffers.GetData());
-
-                                    framebuffer = opengl_render_texture.framebuffer;
-                                }
-
-                                glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+                                UseRenderTexture(set_render_target.id);
+                                
                                 break;
                             }
                             case RenderFrameCommandBufferCommandType::Blit: {
@@ -231,7 +252,8 @@ namespace Hyperion::Rendering {
                                     source_height = opengl_render_texture.height;
                                     source_framebuffer = opengl_render_texture.framebuffer;
 
-                                    source_color_attachment = opengl_render_texture.attachments.Get(1).attachment;
+                                    // TODO: Use correct attachment.
+                                    source_color_attachment = opengl_render_texture.attachments.Get(0).attachment;
                                 }
 
                                 GLint destination_width = Display::GetWidth();
@@ -312,7 +334,7 @@ namespace Hyperion::Rendering {
 
                                 auto render_texture_it = m_opengl_render_textures.Find(request_async_readback.render_target_id.id);
                                 if (render_texture_it != m_opengl_render_textures.end()) {
-                                    AsyncRequest &async_request = render_frame->AddAsyncRequests();
+                                    AsyncRequest &async_request = render_frame->AddAsyncRequest();
                                     async_request.callback = request_async_readback.callback;
                                     async_request.result.region = request_async_readback.region;
 
@@ -335,7 +357,9 @@ namespace Hyperion::Rendering {
                                         GLenum format_value = OpenGLUtilities::GetRenderTextureFormat(format);
                                         GLenum format_type = OpenGLUtilities::GetRenderTextureFormatType(format);
 
-                                        glGetTextureSubImage(attachment.attachment, 0, region.x, region.y, 0, region.width, region.height, 1, format_value, format_type, buffer_size, async_request.result.data.GetData());
+                                        glBindFramebuffer(GL_READ_FRAMEBUFFER, render_texture.framebuffer);
+                                        glNamedFramebufferReadBuffer(render_texture.framebuffer, GL_COLOR_ATTACHMENT0);
+                                        glReadnPixels(region.x, region.y, region.width, region.height, format_value, format_type, buffer_size, async_request.result.data.GetData());
                                     }
                                 }
                                 break;
@@ -360,6 +384,15 @@ namespace Hyperion::Rendering {
                     HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawUI");
 
                     DrawUI(render_frame_context.GetUIObjects());
+
+                    break;
+                }
+                case RenderFrameCommandType::DrawObjectIds: {
+                    HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawObjectIds");
+
+                    const RenderFrameCommandDrawObjectIds &draw_object_ids = std::get<RenderFrameCommandDrawObjectIds>(frame_command.data);
+
+                    DrawObjectIds(render_frame_context.GetMeshObjects(), draw_object_ids.render_target_id);
 
                     break;
                 }
@@ -664,6 +697,33 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
+    void OpenGLRenderDriver::DrawObjectIds(const Array<RenderFrameContextObjectMesh> &mesh_objects, RenderTargetId render_target_id) {
+        GLuint framebuffer = 0;
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING, reinterpret_cast<GLint *>(&framebuffer));
+        UseRenderTexture(render_target_id);
+        glDepthMask(GL_TRUE);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+        const OpenGLShader &opengl_shader = m_state.object_id_shader;
+        UseShader(opengl_shader);
+
+        for (const RenderFrameContextObjectMesh &mesh_object : mesh_objects) {
+            OpenGLMesh &opengl_mesh = m_opengl_meshes.Get(mesh_object.mesh_id);
+
+            GLint model_location = glGetUniformLocation(opengl_shader.program, "u_model");
+            glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, mesh_object.local_to_world.elements);
+
+            GLint object_id_location = glGetUniformLocation(opengl_shader.program, "u_object_id");
+            glProgramUniform1ui(opengl_shader.program, object_id_location, mesh_object.id);
+
+            UseMesh(opengl_mesh);
+            DrawSubMesh(opengl_mesh.sub_meshes[mesh_object.sub_mesh_index]);
+        }
+
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    }
+
+    //--------------------------------------------------------------
     void OpenGLRenderDriver::DrawRenderBounds(const BoundingBox &bounds) {
         Color color = Color::Red();
 
@@ -691,6 +751,26 @@ namespace Hyperion::Rendering {
 
         glBindVertexArray(m_state.render_bounds_vertex_array);
         glDrawElementsBaseVertex(GL_LINES, 24, GL_UNSIGNED_INT, 0, 0);
+    }
+
+    //--------------------------------------------------------------
+    void OpenGLRenderDriver::UseRenderTexture(RenderTargetId render_target_id) {
+        GLuint framebuffer = 0;
+        if (render_target_id.id != RenderTargetId::Default().id) {
+            OpenGLRenderTexture &opengl_render_texture = m_opengl_render_textures.Get(render_target_id.id);
+
+            // We have to specify that we want to draw into all color attachments of the render texture.          
+            uint32 color_attachment_count = opengl_render_texture.color_attachment_count;
+            Array<GLenum> buffers(color_attachment_count);
+            for (GLenum i = 0; i < color_attachment_count; i++) {
+                buffers[i] = GL_COLOR_ATTACHMENT0 + i;
+            }
+            glNamedFramebufferDrawBuffers(opengl_render_texture.framebuffer, color_attachment_count, buffers.GetData());
+
+            framebuffer = opengl_render_texture.framebuffer;
+        }
+
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     }
 
     //--------------------------------------------------------------
