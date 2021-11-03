@@ -24,7 +24,7 @@ namespace Hyperion {
         const FontAtlasElement &GetElement(uint32 codepoint) const;
         inline const SpecialFontGlyphs &GetSpecialGlyphs() const { return m_special_glyphs; }
 
-        TextSize GetTextSize(const String &text, float32 scale) const;
+        TextSize GetTextSize(const Array<uint32> &codepoints, uint32 codepoint_offset, float32 scale, bool8 line_only) const;
     private:
         Font(AssetInfo info) : Asset(info) { }
         Font(AssetInfo info, uint32 size, FontCharacterSet character_set, FontAtlas *font_atlas, SpecialFontGlyphs special_glyphs);

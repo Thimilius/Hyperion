@@ -212,18 +212,18 @@ namespace Hyperion::Editor {
         }
 
         if (EditorSelection::HasSelection()) {
+            World *world = EditorApplication::GetWorld();
             EntityId entity = EditorSelection::GetSelection();
 
-            String format = "Entity: {}\n";
-            World *world = EditorApplication::GetWorld();
+            String text = StringUtils::Format("Entity:\nId: {} - Guid: {}\n\n", entity, world->GetGuid(entity).ToString());
             for (const ComponentInfo &component_info : ComponentRegistry::GetComponentInfos()) {
                 void *component = world->GetComponent(component_info.id, entity);
                 if (component) {
-                    format += StringUtils::Format("{}\n", component_info.type.GetName());
+                    text += StringUtils::Format("{}\n\n", component_info.type.GetName());
                 }
             }
 
-            s_label_selection->SetText(StringUtils::Format(format, entity));
+            s_label_selection->SetText(text);
         } else {
             s_label_selection->SetText("No entity selected!");
         }

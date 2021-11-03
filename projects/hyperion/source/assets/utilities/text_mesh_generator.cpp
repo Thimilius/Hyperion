@@ -22,21 +22,26 @@ namespace Hyperion {
         float32 scale_x = settings.scale.x;
         float32 scale_y = settings.scale.y;
 
-        TextSize text_size = font->GetTextSize(settings.text, scale_x);
+        uint32 codepoint_offset = 0;
+        Array<uint32> codepoints = StringUtils::GetCodepointsUtf8(settings.text);
+
+        TextSize text_size = font->GetTextSize(codepoints, 0, scale_x, true);
         Vector2 position = GetPosition(settings.alignment, text_size, settings.rect);
         Vector2 intial_position = position;
 
-        Array<uint32> codepoints = StringUtils::GetCodepointsUtf8(settings.text);
-        uint32 index = 0;
+        uint32 triangle_index = 0;
         for (uint32 codepoint : codepoints) {
+            codepoint_offset++;
+
             // We first handle the special characters.
             switch (codepoint) {
                 case ' ': position.x += font->GetSpecialGlyphs().space.advance * scale_x; continue;
                 case '\t': position.x += font->GetSpecialGlyphs().space.advance * 4 * scale_x; continue; // Tab is equivalent to 4 whitespaces.
                 case '\r': continue; // Carriage return gets just straight up ignored. 
-                case '\n':
-                {
-                    position.x = intial_position.x;
+                case '\n': {
+                    TextSize text_size = font->GetTextSize(codepoints, codepoint_offset, scale_x, true);
+                    Vector2 new_position = GetPosition(settings.alignment, text_size, settings.rect);
+                    position.x = new_position.x;
                     position.y -= font->GetSize() * scale_y;
                     continue;
                 }
@@ -54,10 +59,10 @@ namespace Hyperion {
             mesh_builder.AddVertex(Vector3(x_pos + width, y_pos + height, 0.0f), color, element.uv_top_right);
             mesh_builder.AddVertex(Vector3(x_pos + width, y_pos, 0.0f), color, element.uv_bottom_right);
             mesh_builder.AddVertex(Vector3(x_pos, y_pos, 0.0f), color, element.uv_bottom_left);
-            mesh_builder.AddTriangle(index, index + 1, index + 2);
-            mesh_builder.AddTriangle(index, index + 2, index + 3);
+            mesh_builder.AddTriangle(triangle_index, triangle_index + 1, triangle_index + 2);
+            mesh_builder.AddTriangle(triangle_index, triangle_index + 2, triangle_index + 3);
 
-            index += 4;
+            triangle_index += 4;
             position.x += glyph.advance * scale_x;
         }
 

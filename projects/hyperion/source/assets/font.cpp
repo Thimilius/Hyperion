@@ -26,7 +26,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    TextSize Font::GetTextSize(const String &text, float32 scale) const {
+    TextSize Font::GetTextSize(const Array<uint32> &codepoints, uint32 codepoint_offset, float32 scale, bool8 line_only) const {
         float32 max_width = -FLT_MAX;
         float32 max_height = -FLT_MAX;
         float32 max_glyph_baseline_offset = -FLT_MAX;
@@ -34,21 +34,25 @@ namespace Hyperion {
         float32 current_height = 0.0f;
         float32 current_glyph_baseline_offset = 0.0f;
 
-        Array<uint32> codepoints = StringUtils::GetCodepointsUtf8(text);
-        for (uint32 codepoint : codepoints) {
+        for (uint32 i = codepoint_offset; i < codepoints.GetLength(); i++) {
+            uint32 codepoint = codepoints[i];
             // We first handle the special characters.
             switch (codepoint) {
                 case ' ': current_width += GetSpecialGlyphs().space.advance * scale; continue;
                 case '\t': current_width += GetSpecialGlyphs().space.advance * 4 * scale; continue; // Tab is equivalent to 4 whitespaces.
                 case '\r': continue; // Carriage return gets just straight up ignored. 
-                case '\n':
-                {
+                case '\n': {
                     // If we have multiple lines, we are essentially searching for the widest line.
                     if (current_width > max_width) {
                         max_width = current_width;
                     }
                     current_width = 0.0f;
-                    continue;
+
+                    if (line_only) {
+                        goto end;
+                    } else {
+                        continue;
+                    }
                 }
             }
 
@@ -64,6 +68,7 @@ namespace Hyperion {
             }
         }
 
+        end:
         if (current_width > max_width) {
             max_width = current_width;
         }

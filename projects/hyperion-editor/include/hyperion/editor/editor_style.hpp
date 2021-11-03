@@ -13,7 +13,7 @@ namespace Hyperion::Editor {
 
         inline static const uint32 HEADER_SIZE = 25;
         inline static const uint32 FOOTER_SIZE = 250;
-        inline static const uint32 SIDEBAR_SIZE = 250;
+        inline static const uint32 SIDEBAR_SIZE = 400;
 
         inline static const Color NORMAL = Color(0.25f, 0.25f, 0.25f, 1.0f);
         inline static const Color NORMAL_DARK = Color(0.2f, 0.2f, 0.2f, 1.0f);
