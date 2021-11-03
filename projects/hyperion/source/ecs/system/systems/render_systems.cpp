@@ -52,35 +52,48 @@ namespace Hyperion::Rendering {
     void CameraSystem::Run(World *world) {
         HYP_PROFILE_SCOPE("CameraSystem.Run");
 
-        RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
+        // HACK: This should be done better.
+        if constexpr (Engine::IS_EDITOR) {
+            return;
+        }
 
         auto view = world->GetView<DerivedTransformComponent, CameraComponent>(ExcludeComponents<DisabledComponent>());
+        uint32 index = 0;
         for (EntityId entity : view) {
             DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(entity);
             CameraComponent *camera = world->GetComponent<CameraComponent>(entity);
 
-            CameraUtilities::RecalculateMatricies(camera, derived_transform);
-
-            RenderFrameContextCamera &render_frame_context_camera = render_frame_context.AddCamera();
-            render_frame_context_camera.projection_mode = camera->projection_mode;
-            render_frame_context_camera.clear_mode = camera->clear_mode;
-            render_frame_context_camera.background_color = camera->background_color;
-            render_frame_context_camera.culling_mask = camera->culling_mask;
-            render_frame_context_camera.position = derived_transform->position;
-            render_frame_context_camera.forward = TransformUtilities::GetForward(derived_transform);
-            render_frame_context_camera.up = TransformUtilities::GetUp(derived_transform);
-            render_frame_context_camera.fov = camera->fov;
-            render_frame_context_camera.orthographic_size = camera->orthographic_size;
-            render_frame_context_camera.near_plane = camera->near_plane;
-            render_frame_context_camera.far_plane = camera->far_plane;
-            render_frame_context_camera.view_matrix = camera->view_matrix;
-            render_frame_context_camera.inverse_view_matrix = camera->view_matrix.Inverted();
-            render_frame_context_camera.projection_matrix = camera->projection_matrix;
-            render_frame_context_camera.inverse_projection_matrix = camera->projection_matrix.Inverted();
-            render_frame_context_camera.view_projection_matrix = camera->view_projection_matrix;
-            render_frame_context_camera.inverse_view_projection_matrix = camera->view_projection_matrix.Inverted();
-            render_frame_context_camera.viewport = CameraUtilities::CalculateViewportFromClipping(camera->viewport_clipping);
+            Run(derived_transform, camera, index++, false);
         }
+    }
+
+    //--------------------------------------------------------------
+    void CameraSystem::Run(DerivedTransformComponent *derived_transform, CameraComponent *camera, uint32 index, bool8 is_editor_camera) {
+        RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
+
+        CameraUtilities::RecalculateMatricies(camera, derived_transform);
+
+        RenderFrameContextCamera &render_frame_context_camera = render_frame_context.AddCamera();
+        render_frame_context_camera.index = index++;
+        render_frame_context_camera.projection_mode = camera->projection_mode;
+        render_frame_context_camera.clear_mode = camera->clear_mode;
+        render_frame_context_camera.background_color = camera->background_color;
+        render_frame_context_camera.culling_mask = camera->culling_mask;
+        render_frame_context_camera.position = derived_transform->position;
+        render_frame_context_camera.forward = TransformUtilities::GetForward(derived_transform);
+        render_frame_context_camera.up = TransformUtilities::GetUp(derived_transform);
+        render_frame_context_camera.fov = camera->fov;
+        render_frame_context_camera.orthographic_size = camera->orthographic_size;
+        render_frame_context_camera.near_plane = camera->near_plane;
+        render_frame_context_camera.far_plane = camera->far_plane;
+        render_frame_context_camera.view_matrix = camera->view_matrix;
+        render_frame_context_camera.inverse_view_matrix = camera->view_matrix.Inverted();
+        render_frame_context_camera.projection_matrix = camera->projection_matrix;
+        render_frame_context_camera.inverse_projection_matrix = camera->projection_matrix.Inverted();
+        render_frame_context_camera.view_projection_matrix = camera->view_projection_matrix;
+        render_frame_context_camera.inverse_view_projection_matrix = camera->view_projection_matrix.Inverted();
+        render_frame_context_camera.viewport = CameraUtilities::CalculateViewportFromClipping(camera->viewport_clipping);
+        render_frame_context_camera.is_editor_camera = is_editor_camera;
     }
 
     //--------------------------------------------------------------

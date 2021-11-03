@@ -61,7 +61,10 @@ namespace Hyperion::Rendering {
     //--------------------------------------------------------------
     void RenderEngine::Render() {
         HYP_PROFILE_SCOPE("RenderEngine.RenderPipeline");
-        s_render_pipeline->Render(s_main_frame);
+
+        for (const RenderFrameContextCamera &camera : s_main_frame->GetContext().GetCameras()) {
+            s_render_pipeline->Render(s_main_frame, camera);
+        }
     }
 
     //--------------------------------------------------------------

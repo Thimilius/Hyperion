@@ -49,14 +49,15 @@ namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
     void EditorApplication::OnSetup(ApplicationSettings &settings) {
+        s_render_pipeline = new EditorRenderPipeline();
+
         settings.render.backend = Rendering::RenderBackend::OpenGL;
         settings.render.threading_mode = Rendering::RenderThreadingMode::MultiThreaded;
         settings.render.vsync_mode = Rendering::VSyncMode::DontSync;
         settings.render.pipeline = Rendering::RenderPipeline::Custom;
-        settings.render.custom_pipeline = new EditorRenderPipeline();
+        settings.render.custom_pipeline = s_render_pipeline;
     }
 
-    World *g_world;
     EntityId g_camera;
     EntityId g_light;
     EntityId g_parent;
@@ -67,17 +68,17 @@ namespace Hyperion::Editor {
         EditorUI::Initialize();
 
         {
-            g_world = WorldManager::CreateWorld();
-            WorldManager::SetActiveWorld(g_world);
+            s_world = WorldManager::CreateWorld();
+            WorldManager::SetActiveWorld(s_world);
 
-            g_camera = g_world->CreateEntity(EntityPrimitive::Camera);
-            g_light = g_world->CreateEntity(EntityPrimitive::DirectionalLight);
+            g_camera = s_world->CreateEntity(EntityPrimitive::Camera);
+            g_light = s_world->CreateEntity(EntityPrimitive::DirectionalLight);
 
-            g_parent = g_world->CreateEntity(EntityPrimitive::Sphere);
+            g_parent = s_world->CreateEntity(EntityPrimitive::Sphere);
 
-            g_child = g_world->CreateEntity(EntityPrimitive::Cube);
-            g_world->GetComponent<LocalTransformComponent>(g_child)->position = Vector3(2.0f, 0.0f, 0.0f);
-            g_world->GetHierarchy()->SetParent(g_child, g_parent);
+            g_child = s_world->CreateEntity(EntityPrimitive::Cube);
+            s_world->GetComponent<LocalTransformComponent>(g_child)->position = Vector3(2.0f, 0.0f, 0.0f);
+            s_world->GetHierarchy()->SetParent(g_child, g_parent);
 
             std::unique_ptr<Image> image;
             image.reset(ImageLoader::Load("icon/icon.png").Unwrap());
@@ -89,24 +90,24 @@ namespace Hyperion::Editor {
             Texture2D *texture = AssetManager::CreateTexture2D(parameters, image->GetPixels());
             Material *material = AssetManager::CreateMaterial(AssetManager::GetShaderPrimitive(ShaderPrimitive::Unlit));
             material->SetTexture("m_texture", texture);
-            EntityId quad = g_world->CreateEntity(EntityPrimitive::Quad);
-            g_world->GetComponent<MeshComponent>(quad)->material = material;
-            g_world->GetComponent<LocalTransformComponent>(quad)->position = Vector3(0.0f, 2.0f, 0.0f);
+            EntityId quad = s_world->CreateEntity(EntityPrimitive::Quad);
+            s_world->GetComponent<MeshComponent>(quad)->material = material;
+            s_world->GetComponent<LocalTransformComponent>(quad)->position = Vector3(0.0f, 2.0f, 0.0f);
 
             UIElement *root_element = UIFactory::CreateRoot();
 
-            EntityId ui = g_world->CreateEntity();
-            UIViewComponent *ui_view = g_world->AddComponent<UIViewComponent>(ui);
+            EntityId ui = s_world->CreateEntity();
+            UIViewComponent *ui_view = s_world->AddComponent<UIViewComponent>(ui);
             ui_view->root_element = root_element;
 
-            EditorWorldCamera::Initialize(g_camera, g_world);
+            EditorWorldCamera::Initialize(g_camera, s_world);
         }
     }
 
     //--------------------------------------------------------------
     void EditorApplication::OnUpdate(float32 delta_time) {
         EditorUI::Update();
-        EditorWorldCamera::Update(delta_time, g_camera, g_world);
+        EditorWorldCamera::Update(delta_time, g_camera, s_world);
 
         if (Input::IsKeyHold(KeyCode::Control) && Input::IsKeyDown(KeyCode::W)) {
             Exit();
@@ -123,8 +124,10 @@ namespace Hyperion::Editor {
         }
 
         if (Engine::GetEngineMode() == EngineMode::EditorRuntimePlaying) {
-            g_world->GetComponent<LocalTransformComponent>(g_parent)->rotation = Quaternion::FromEulerAngles(0.0f, Math::Sin(Time::GetTime()) * 45.0f, 0.0f);
+            s_world->GetComponent<LocalTransformComponent>(g_parent)->rotation = Quaternion::FromEulerAngles(0.0f, Math::Sin(Time::GetTime()) * 45.0f, 0.0f);
         }
+
+        s_render_pipeline->Update();
     }
 
     //--------------------------------------------------------------

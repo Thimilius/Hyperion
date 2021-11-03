@@ -12,6 +12,8 @@
 namespace Hyperion::Rendering {
 
     struct RenderFrameContextCamera {
+        uint32 index;
+
         CameraProjectionMode projection_mode;
 
         CameraClearMode clear_mode;
@@ -38,6 +40,10 @@ namespace Hyperion::Rendering {
         Matrix4x4 inverse_view_matrix;
         Matrix4x4 inverse_projection_matrix;
         Matrix4x4 inverse_view_projection_matrix;
+
+#ifdef HYP_EDITOR
+        bool8 is_editor_camera = false;
+#endif
     };
 
 }

@@ -6,7 +6,10 @@
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
+    struct DerivedTransformComponent;
+
     namespace Rendering {
+        struct CameraComponent;
         struct RenderFrameContextObjectUI;
     }
 
@@ -32,6 +35,8 @@ namespace Hyperion::Rendering {
     class CameraSystem : public ISystem {
     public:
         void Run(World *world) override;
+    public:
+        static void Run(DerivedTransformComponent *derived_transform, CameraComponent *camera, uint32 index, bool8 is_editor_camera);
     };
 
     class LightSystem : public ISystem {

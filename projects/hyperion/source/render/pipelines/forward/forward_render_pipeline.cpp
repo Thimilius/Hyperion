@@ -29,7 +29,7 @@ namespace Hyperion::Rendering {
     }
 
     //--------------------------------------------------------------
-    void ForwardRenderPipeline::Render(RenderFrame *render_frame) {
+    void ForwardRenderPipeline::Render(RenderFrame *render_frame, const RenderFrameContextCamera &camera) {
         if (m_should_resize_to_screen) {
             if (Display::HasChangedSize()) {
                 m_target_render_texture->Resize(m_render_target_width, m_render_target_height);
@@ -40,14 +40,12 @@ namespace Hyperion::Rendering {
             }
         }
 
-        // HACK: We need a better way to get/set a camera.
-        const RenderFrameContextCamera &camera = render_frame->GetContext().GetCameras()[0];
         CullingParameters culling_parameters;
         culling_parameters.matrix = camera.view_projection_matrix;
         culling_parameters.mask = camera.culling_mask;
         CullingResults culling_results = render_frame->Cull(culling_parameters);
 
-        render_frame->SetCamera(0);
+        render_frame->SetCamera(camera.index);
 
         {
             RenderFrameCommandBuffer command_buffer;

@@ -24,7 +24,7 @@ namespace Hyperion::Rendering {
     class ForwardRenderPipeline : public IRenderPipeline {
     public:
         void Initialize() override;
-        void Render(RenderFrame *render_view) override;
+        void Render(RenderFrame *render_view, const RenderFrameContextCamera &camera) override;
         void Shutdown() override;
 
         inline uint32 GetRenderTargetWidth() const override { return m_render_target_width; }

@@ -10,6 +10,7 @@ namespace Hyperion {
 
     namespace Rendering {
         class RenderFrame;
+        struct RenderFrameContextCamera;
     }
 }
 
@@ -28,7 +29,7 @@ namespace Hyperion::Rendering {
         virtual ~IRenderPipeline() = default;
     public:
         virtual void Initialize() = 0;
-        virtual void Render(RenderFrame *render_frame) = 0;
+        virtual void Render(RenderFrame *render_frame, const RenderFrameContextCamera &camera) = 0;
         virtual void Shutdown() = 0;
 
         virtual uint32 GetRenderTargetWidth() const = 0;

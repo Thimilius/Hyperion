@@ -2,6 +2,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/core/math/ray.hpp"
 #include "hyperion/ecs/entity/entity_types.hpp"
 #include "hyperion/ecs/component/components/physics_components.hpp"
 #include "hyperion/ecs/component/components/transform_components.hpp"

@@ -7,26 +7,23 @@
 #include <hyperion/ecs/component/components/render_components.hpp>
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/editor/editor_application.hpp"
 #include "hyperion/editor/editor_style.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Editor {
 
-    static World *g_world;
-
     //--------------------------------------------------------------
     void EditorWorldCamera::Initialize(EntityId camera, World *world) {
-        g_world = world;
-
         s_camera_controller = new LookAroundCameraController(camera);
         s_camera_controller->Reset(world);
     }
 
     //--------------------------------------------------------------
     void EditorWorldCamera::Update(float32 delta_time, EntityId camera, World *world) {
-        s_camera_controller->Update(g_world, delta_time);
+        s_camera_controller->Update(world, delta_time);
         if (Input::IsKeyDown(KeyCode::R)) {
-            s_camera_controller->Reset(g_world);
+            s_camera_controller->Reset(world);
         }
 
         uint32 render_target_height = Display::GetHeight() - EditorStyle::HEADER_SIZE;
@@ -36,7 +33,7 @@ namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
     void EditorWorldCamera::Reset() {
-        s_camera_controller->Reset(g_world);
+        s_camera_controller->Reset(EditorApplication::GetWorld());
     }
 
 }

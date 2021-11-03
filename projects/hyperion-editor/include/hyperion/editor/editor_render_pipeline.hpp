@@ -13,7 +13,7 @@ namespace Hyperion::Editor {
         EditorRenderPipeline();
     public:
         void Initialize() override;
-        void Render(Rendering::RenderFrame *render_frame) override;
+        void Render(Rendering::RenderFrame *render_frame, const Rendering::RenderFrameContextCamera &camera) override;
         void Shutdown() override;
 
         inline uint32 GetRenderTargetWidth() const override { return m_wrapped_pipeline->GetRenderTargetWidth(); }
@@ -23,6 +23,8 @@ namespace Hyperion::Editor {
 
         inline void SetShouldBlitToScreen(bool8 should_blit_to_screen) override { m_wrapped_pipeline->SetShouldBlitToScreen(should_blit_to_screen); }
         inline void SetShouldResizeToScreen(bool8 should_resize_to_screen) override { m_wrapped_pipeline->SetShouldResizeToScreen(should_resize_to_screen); }
+
+        void Update();
     private:
         Rendering::IRenderPipeline *m_wrapped_pipeline = nullptr;
 
