@@ -21,12 +21,16 @@ namespace Hyperion::Editor {
         inline uint32 GetRenderTargetHeight() const override { return m_wrapped_pipeline->GetRenderTargetHeight(); }
         inline void SetRenderTargetSize(uint32 width, uint32 height) override { m_wrapped_pipeline->SetRenderTargetSize(width, height); }
         inline RenderTexture *GetTargetRenderTexture() const override { return m_wrapped_pipeline->GetTargetRenderTexture(); }
+        inline RenderTexture *GetEditorTargetRenderTexture() const { return m_editor_render_texture; }
 
         inline void SetShouldBlitToScreen(bool8 should_blit_to_screen) override { m_wrapped_pipeline->SetShouldBlitToScreen(should_blit_to_screen); }
         inline void SetShouldResizeToScreen(bool8 should_resize_to_screen) override { m_wrapped_pipeline->SetShouldResizeToScreen(should_resize_to_screen); }
     private:
+        void RenderEditor(Rendering::RenderFrame *render_frame);
+    private:
         Rendering::IRenderPipeline *m_wrapped_pipeline = nullptr;
 
+        RenderTexture *m_editor_render_texture = nullptr;
         RenderTexture *m_object_ids_render_texture = nullptr;
     };
 

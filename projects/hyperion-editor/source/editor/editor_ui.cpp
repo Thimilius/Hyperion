@@ -9,8 +9,9 @@
 #include <hyperion/render/render_engine.hpp>
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/editor/editor_style.hpp"
+#include "hyperion/editor/editor_application.hpp"
 #include "hyperion/editor/editor_camera.hpp"
+#include "hyperion/editor/editor_style.hpp"
 
 //------------------------- Namespaces -------------------------
 using namespace Hyperion::Rendering;
@@ -28,13 +29,21 @@ namespace Hyperion::Editor {
         s_ui_view.root_element = s_root_element;
         s_ui_view.scaling_mode = UIScalingMode::ConstantPixelSize;
 
-        s_render_ui_element = UIFactory::CreateElement();
-        s_render_ui_element->SetAnchorPreset(UIAnchorPreset::StretchAll);
-        s_render_ui_element->SetAnchorOffsetMax(Vector2(0.0f, EditorStyle::HEADER_SIZE));
-        s_render_ui_element->GetRenderer().texture = RenderEngine::GetPipeline()->GetTargetRenderTexture();
-        s_render_ui_element->GetRenderer().render_texture_attachment_index = 0;
-        s_render_ui_element->GetRenderer().enable_blending = false;
-        s_render_ui_element->GetHierarchy().SetParent(s_root_element);
+        s_render_runtime_ui_element = UIFactory::CreateElement();
+        s_render_runtime_ui_element->SetAnchorPreset(UIAnchorPreset::StretchAll);
+        s_render_runtime_ui_element->SetAnchorOffsetMax(Vector2(0.0f, EditorStyle::HEADER_SIZE));
+        s_render_runtime_ui_element->GetRenderer().texture = EditorApplication::GetRenderPipeline()->GetTargetRenderTexture();
+        s_render_runtime_ui_element->GetRenderer().render_texture_attachment_index = 0;
+        s_render_runtime_ui_element->GetRenderer().enable_blending = false;
+        s_render_runtime_ui_element->GetHierarchy().SetParent(s_root_element);
+
+        s_render_editor_ui_element = UIFactory::CreateElement();
+        s_render_editor_ui_element->SetAnchorPreset(UIAnchorPreset::StretchAll);
+        s_render_editor_ui_element->SetAnchorOffsetMax(Vector2(0.0f, EditorStyle::HEADER_SIZE));
+        s_render_editor_ui_element->GetRenderer().texture = EditorApplication::GetRenderPipeline()->GetEditorTargetRenderTexture();
+        s_render_editor_ui_element->GetRenderer().render_texture_attachment_index = 0;
+        s_render_editor_ui_element->GetRenderer().enable_blending = false;
+        s_render_editor_ui_element->GetHierarchy().SetParent(s_root_element);
 
         s_header_ui_element = UIFactory::CreateElement();
         s_header_ui_element->SetSize(Vector2(0.0f, EditorStyle::HEADER_SIZE - 1));

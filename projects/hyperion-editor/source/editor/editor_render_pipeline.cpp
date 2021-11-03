@@ -14,6 +14,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/editor/editor_application.hpp"
+#include "hyperion/editor/editor_camera.hpp"
 #include "hyperion/editor/editor_style.hpp"
 
 //------------------------- Namespaces -------------------------
@@ -38,15 +39,26 @@ namespace Hyperion::Editor {
         render_texture_attributes.filter = TextureFilter::Point;
         render_texture_attributes.use_mipmaps = false;
 
-        RenderTextureParameters render_texture_parameters;
-        render_texture_parameters.width = m_wrapped_pipeline->GetRenderTargetWidth();
-        render_texture_parameters.height = m_wrapped_pipeline->GetRenderTargetHeight();
-        render_texture_parameters.attachments = {
-            { RenderTextureFormat::UInt32, render_texture_attributes },
-            { RenderTextureFormat::Depth24Stencil8, render_texture_attributes },
-        };
-
-        m_object_ids_render_texture = AssetManager::CreateRenderTexture(render_texture_parameters);
+        {
+            RenderTextureParameters render_texture_parameters;
+            render_texture_parameters.width = m_wrapped_pipeline->GetRenderTargetWidth();
+            render_texture_parameters.height = m_wrapped_pipeline->GetRenderTargetHeight();
+            render_texture_parameters.attachments = {
+                { RenderTextureFormat::UInt32, render_texture_attributes },
+                { RenderTextureFormat::Depth24Stencil8, render_texture_attributes },
+            };
+            m_object_ids_render_texture = AssetManager::CreateRenderTexture(render_texture_parameters);
+        }
+        {
+            RenderTextureParameters render_texture_parameters;
+            render_texture_parameters.width = m_wrapped_pipeline->GetRenderTargetWidth();
+            render_texture_parameters.height = m_wrapped_pipeline->GetRenderTargetHeight();
+            render_texture_parameters.attachments = {
+                { RenderTextureFormat::RGBA32, render_texture_attributes },
+                { RenderTextureFormat::Depth24Stencil8, render_texture_attributes },
+            };
+            m_editor_render_texture = AssetManager::CreateRenderTexture(render_texture_parameters);
+        }
     }
 
     //--------------------------------------------------------------
@@ -54,9 +66,43 @@ namespace Hyperion::Editor {
         if (Display::HasChangedSize()) {
             SetRenderTargetSize(Display::GetWidth(), Display::GetHeight() - EditorStyle::HEADER_SIZE);
             m_object_ids_render_texture->Resize(GetRenderTargetWidth(), GetRenderTargetHeight());
+            m_editor_render_texture->Resize(GetRenderTargetWidth(), GetRenderTargetHeight());
         }
 
         m_wrapped_pipeline->Render(render_frame, cameras);
+
+        RenderEditor(render_frame);
+    }
+
+    //--------------------------------------------------------------
+    void EditorRenderPipeline::RenderCamera(RenderFrame *render_frame, const RenderFrameContextCamera *camera) {
+        m_wrapped_pipeline->RenderCamera(render_frame, camera);
+    }
+
+    //--------------------------------------------------------------
+    void EditorRenderPipeline::Shutdown() {
+        m_wrapped_pipeline->Shutdown();
+    }
+
+    //--------------------------------------------------------------
+    void EditorRenderPipeline::RenderEditor(RenderFrame *render_frame) {
+        {
+            RenderFrameCommandBuffer command_buffer;
+            command_buffer.SetRenderTarget(m_editor_render_texture->GetRenderTargetId());
+            command_buffer.ClearRenderTarget(ClearFlags::All, Color::Black());
+            render_frame->ExecuteCommandBuffer(command_buffer);
+        }
+
+        RenderFrameContextCamera editor_camera = EditorCamera::GetContextCamera();
+        editor_camera.index = static_cast<uint32>(RenderEngine::GetMainRenderFrame()->GetContext().GetCameras().GetLength());
+        RenderEngine::GetMainRenderFrame()->GetContext().AddCamera() = editor_camera;
+        m_wrapped_pipeline->RenderCamera(render_frame, &editor_camera);
+
+        {
+            RenderFrameCommandBuffer command_buffer;
+            command_buffer.SetRenderTarget(RenderTargetId::Default());
+            render_frame->ExecuteCommandBuffer(command_buffer);
+        }
 
         Vector2Int mouse_position = Input::GetMousePosition();
         int32 x = 0;
@@ -75,20 +121,10 @@ namespace Hyperion::Editor {
                 if (result.data.GetLength() >= 4) {
                     uint32 id = *data;
                 }
-            });
+                });
             render_frame->ExecuteCommandBuffer(command_buffer);
         }
         render_frame->DrawEditorUI();
-    }
-
-    //--------------------------------------------------------------
-    void EditorRenderPipeline::RenderCamera(RenderFrame *render_frame, const RenderFrameContextCamera *camera) {
-        m_wrapped_pipeline->RenderCamera(render_frame, camera);
-    }
-
-    //--------------------------------------------------------------
-    void EditorRenderPipeline::Shutdown() {
-        m_wrapped_pipeline->Shutdown();
     }
     
 }

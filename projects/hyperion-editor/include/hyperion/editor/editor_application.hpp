@@ -12,6 +12,7 @@ namespace Hyperion::Editor {
     class EditorApplication : public Application {
     public:
         inline static World *GetWorld() { return s_world; }
+        inline static EditorRenderPipeline *GetRenderPipeline() { return s_render_pipeline; }
 
         static void EnterRuntime();
         static void PauseRuntime();

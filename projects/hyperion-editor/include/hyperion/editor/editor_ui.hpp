@@ -25,7 +25,8 @@ namespace Hyperion::Editor {
         inline static UI::UIViewComponent s_ui_view;
         inline static UI::UIElement *s_root_element;
         inline static UI::UIElement *s_header_ui_element;
-        inline static UI::UIElement *s_render_ui_element;
+        inline static UI::UIElement *s_render_runtime_ui_element;
+        inline static UI::UIElement *s_render_editor_ui_element;
         inline static UI::UIButton *s_child_ui_element;
         inline static UI::UILabel *s_label_stats;
         inline static UI::UIToggle *s_toggle_vsync;
