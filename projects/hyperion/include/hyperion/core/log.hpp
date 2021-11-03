@@ -45,10 +45,13 @@ namespace Hyperion {
         Client
     };
 
+    using LogCallback = std::function<void(LogType, LogLevel, const char *, const String &)>;
+
     class Log final {
     public:
         inline static void SetLevel(LogLevel level) { s_level = level; }
-        
+        inline static void SetCallback(LogCallback callback) { s_callback = callback; }
+
         template<typename ...Args>
         static void LogMessage(LogType type, LogLevel level, const char *system, const char *message_format, Args... args) {
             std::time_t current_time = std::time(&current_time);
@@ -56,8 +59,12 @@ namespace Hyperion {
             char prefix_buffer[30];
             strftime(prefix_buffer, sizeof(prefix_buffer), "[%H:%M:%S]", time_info);
 
-            String message = StringUtils::Format("{} - [{}] - {}\n", prefix_buffer, system, StringUtils::Format(message_format, args...));
+            String formatted_message = StringUtils::Format(message_format, args...);
+            if (s_callback) {
+                s_callback(type, level, system, formatted_message);
+            }
 
+            String message = StringUtils::Format("{} - [{}] - {}\n", prefix_buffer, system, formatted_message);
             LogMessageInternal(level, message);
         }
     private:
@@ -69,6 +76,7 @@ namespace Hyperion {
         static LogColor GetLogColor(LogLevel level);
     private:
         inline static LogLevel s_level;
+        inline static LogCallback s_callback;
     };
 
 }
