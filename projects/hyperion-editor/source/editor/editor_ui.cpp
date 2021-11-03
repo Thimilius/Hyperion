@@ -11,6 +11,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/editor/editor_application.hpp"
 #include "hyperion/editor/editor_camera.hpp"
+#include "hyperion/editor/editor_selection.hpp"
 #include "hyperion/editor/editor_style.hpp"
 
 //------------------------- Namespaces -------------------------
@@ -157,6 +158,14 @@ namespace Hyperion::Editor {
             left_bar_container->SetAnchorOffsetMin(Vector2(3.0f, 3.0f));
             left_bar_container->GetStyle().SetColor(EditorStyle::NORMAL);
             left_bar_container->GetHierarchy().SetParent(left_bar);
+
+            s_label_selection = UIFactory::CreateLabel();
+            s_label_selection->SetFont(s_font_text);
+            s_label_selection->SetAlignment(UITextAlignment::TopCenter);
+            s_label_selection->SetAnchorPreset(UIAnchorPreset::StretchAll);
+            s_label_selection->SetAnchorOffsetMax(Vector2(0.0f, 4.0f));
+            s_label_selection->GetStyle().GetShadow().enabled = true;
+            s_label_selection->GetHierarchy().SetParent(left_bar_container);
         }
         
         // Footer.
@@ -200,6 +209,23 @@ namespace Hyperion::Editor {
                 s_preview_editor_ui_element->GetStyle().SetVisibility(UIVisibility::Visible);
                 s_preview_runtime_ui_element->GetStyle().SetVisibility(UIVisibility::Hidden);
             }
+        }
+
+        if (EditorSelection::HasSelection()) {
+            EntityId entity = EditorSelection::GetSelection();
+
+            String format = "Entity: {}\n";
+            World *world = EditorApplication::GetWorld();
+            for (const ComponentInfo &component_info : ComponentRegistry::GetComponentInfos()) {
+                void *component = world->GetComponent(component_info.id, entity);
+                if (component) {
+                    format += StringUtils::Format("{}\n", component_info.type.GetName());
+                }
+            }
+
+            s_label_selection->SetText(StringUtils::Format(format, entity));
+        } else {
+            s_label_selection->SetText("No entity selected!");
         }
 
         {

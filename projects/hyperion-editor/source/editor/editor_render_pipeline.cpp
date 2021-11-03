@@ -17,6 +17,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/editor/editor_application.hpp"
 #include "hyperion/editor/editor_camera.hpp"
+#include "hyperion/editor/editor_selection.hpp"
 #include "hyperion/editor/editor_style.hpp"
 #include "hyperion/editor/editor_ui.hpp"
 
@@ -127,6 +128,11 @@ namespace Hyperion::Editor {
                     const uint32 *data = reinterpret_cast<const uint32 *>(result.data.GetData());
                     if (result.data.GetLength() >= 4) {
                         uint32 id = *data;
+                        if (id == UINT32_MAX) {
+                            EditorSelection::Select(Entity::EMPTY);
+                        } else {
+                            EditorSelection::Select(EntityUtilities::CreateFromSmallId(id));
+                        }
                     }
                 });
                 render_frame->ExecuteCommandBuffer(command_buffer);
