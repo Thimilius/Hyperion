@@ -4,12 +4,12 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::UI {
 
-    enum class UIScalingMode {
+    enum class ScalingMode {
         ScaleWithScreenSize,
         ConstantPixelSize
     };
 
-    enum class UIAnchorPreset {
+    enum class AnchorPreset {
         TopLeft,
         TopCenter,
         TopRight,
@@ -33,12 +33,12 @@ namespace Hyperion::UI {
         StretchAll,
     };
 
-    enum class UIVisibility {
+    enum class Visibility {
         Visible,
         Hidden
     };
 
-    enum class UITextAlignment {
+    enum class TextAlignment {
         TopLeft,
         TopCenter,
         TopRight,
@@ -52,20 +52,20 @@ namespace Hyperion::UI {
         BottomRight,
     };
 
-    struct UIColorBlock {
+    struct ColorBlock {
         Color normal_color = Color::White();
         Color highlight_color = Color::White();
         Color pressed_color = Color::White();
         Color disabled_color = Color::White();
     };
 
-    struct UIShadow {
+    struct Shadow {
         bool enabled = false;
         Color color = Color::Black();
         Vector2 offset = Vector2(1.0f, -1.0f);
     };
 
-    enum class UISelectionState {
+    enum class SelectionState {
         Normal,
         Highlighted,
         Pressed,

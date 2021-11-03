@@ -98,9 +98,9 @@ namespace Hyperion {
                 .Property<&Rendering::CameraViewportClipping::width>("width")
                 .Property<&Rendering::CameraViewportClipping::height>("height");
 
-            MetaRegistry::Reflect<UI::UIScalingMode>("UIScalingMode")
-                .Property<UI::UIScalingMode::ScaleWithScreenSize>("ScaleWithScreenSize")
-                .Property<UI::UIScalingMode::ConstantPixelSize>("ConstantPixelSize");
+            MetaRegistry::Reflect<UI::ScalingMode>("UIScalingMode")
+                .Property<UI::ScalingMode::ScaleWithScreenSize>("ScaleWithScreenSize")
+                .Property<UI::ScalingMode::ConstantPixelSize>("ConstantPixelSize");
         }
 
         // Components

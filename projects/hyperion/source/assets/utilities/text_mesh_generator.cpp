@@ -77,45 +77,45 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Vector2 TextMeshGenerator::GetPosition(UI::UITextAlignment text_alignment, TextSize text_size, Rect rect) {
+    Vector2 TextMeshGenerator::GetPosition(UI::TextAlignment text_alignment, TextSize text_size, Rect rect) {
         Vector2 position = Vector2();
 
         switch (text_alignment) {
-            case UI::UITextAlignment::TopLeft: {
+            case UI::TextAlignment::TopLeft: {
                 position = Vector2(rect.position.x, rect.GetMax().y - text_size.height - text_size.baseline_offset);
                 break;
             }
-            case UI::UITextAlignment::TopCenter: {
+            case UI::TextAlignment::TopCenter: {
                 position = Vector2(rect.GetCenter().x - (text_size.width / 2.0f), rect.GetMax().y - text_size.height - text_size.baseline_offset);
                 break;
             }
-            case UI::UITextAlignment::TopRight: {
+            case UI::TextAlignment::TopRight: {
                 Vector2 max = rect.GetMax();
                 position = Vector2(max.x - text_size.width, max.y - text_size.height - text_size.baseline_offset);
                 break;
             }
-            case UI::UITextAlignment::MiddleLeft: {
+            case UI::TextAlignment::MiddleLeft: {
                 position = Vector2(rect.position.x, rect.GetCenter().y - (text_size.height / 2.0f));
                 break;
             }
-            case UI::UITextAlignment::MiddleCenter: {
+            case UI::TextAlignment::MiddleCenter: {
                 Vector2 center = rect.GetCenter();
                 position = Vector2(center.x - (text_size.width / 2.0f), center.y - (text_size.height / 2.0f));
                 break;
             }
-            case UI::UITextAlignment::MiddleRight: {
+            case UI::TextAlignment::MiddleRight: {
                 position = Vector2(rect.GetMax().x - text_size.width, rect.GetCenter().y - (text_size.height / 2.0f));
                 break;
             }
-            case UI::UITextAlignment::BottomLeft: {
+            case UI::TextAlignment::BottomLeft: {
                 position = Vector2(rect.position.x, rect.position.y + text_size.baseline_offset);
                 break;
             }
-            case UI::UITextAlignment::BottomCenter: {
+            case UI::TextAlignment::BottomCenter: {
                 position = Vector2(rect.GetCenter().x - (text_size.width / 2.0f), rect.position.y + text_size.baseline_offset);
                 break;
             }
-            case UI::UITextAlignment::BottomRight: {
+            case UI::TextAlignment::BottomRight: {
                 position = Vector2(rect.GetMax().x - text_size.width, rect.position.y + text_size.baseline_offset);
                 break;
             }

@@ -24,13 +24,13 @@ namespace Hyperion::UI {
     }
 
     //--------------------------------------------------------------
-    void UIElementStyle::SetColorBlock(const UIColorBlock &color_block) {
+    void UIElementStyle::SetColorBlock(const ColorBlock &color_block) {
         m_color_block = color_block;
         m_element->MarkDirty();
     }
 
     //--------------------------------------------------------------
-    void UIElementStyle::SetShadow(const UIShadow &shadow) {
+    void UIElementStyle::SetShadow(const Shadow &shadow) {
         m_shadow = shadow;
         m_element->MarkDirty();
     }
@@ -196,105 +196,105 @@ namespace Hyperion::UI {
     }
 
     //--------------------------------------------------------------
-    void UIElement::SetAnchorPreset(UIAnchorPreset anchor_preset) {
+    void UIElement::SetAnchorPreset(AnchorPreset anchor_preset) {
         switch (anchor_preset) {
-            case UIAnchorPreset::TopLeft: {
+            case AnchorPreset::TopLeft: {
                 m_anchor_min = Vector2(0.0f, 1.0f);
                 m_anchor_max = Vector2(0.0f, 1.0f);
                 m_pivot = Vector2(0.0f, 1.0f);
                 break;
             }
-            case UIAnchorPreset::TopCenter: {
+            case AnchorPreset::TopCenter: {
                 m_anchor_min = Vector2(0.5f, 1.0f);
                 m_anchor_max = Vector2(0.5f, 1.0f);
                 m_pivot = Vector2(0.5f, 1.0f);
                 break;
             }
-            case UIAnchorPreset::TopRight: {
+            case AnchorPreset::TopRight: {
                 m_anchor_min = Vector2(1.0f, 1.0f);
                 m_anchor_max = Vector2(1.0f, 1.0f);
                 m_pivot = Vector2(1.0f, 1.0f);
                 break;
             }
-            case UIAnchorPreset::MiddleLeft: {
+            case AnchorPreset::MiddleLeft: {
                 m_anchor_min = Vector2(0.0f, 0.5f);
                 m_anchor_max = Vector2(0.0f, 0.5f);
                 m_pivot = Vector2(0.0f, 0.5f);
                 break;
             }
-            case UIAnchorPreset::MiddleCenter: {
+            case AnchorPreset::MiddleCenter: {
                 m_anchor_min = Vector2(0.5f, 0.5f);
                 m_anchor_max = Vector2(0.5f, 0.5f);
                 m_pivot = Vector2(0.5f, 0.5f);
                 break;
             }
-            case UIAnchorPreset::MiddleRight: {
+            case AnchorPreset::MiddleRight: {
                 m_anchor_min = Vector2(1.0f, 0.5f);
                 m_anchor_max = Vector2(1.0f, 0.5f);
                 m_pivot = Vector2(1.0f, 0.5f);
                 break;
             }
-            case UIAnchorPreset::BottomLeft: {
+            case AnchorPreset::BottomLeft: {
                 m_anchor_min = Vector2(0.0f, 0.0f);
                 m_anchor_max = Vector2(0.0f, 0.0f);
                 m_pivot = Vector2(0.0f, 0.0f);
                 break;
             }
-            case UIAnchorPreset::BottomCenter: {
+            case AnchorPreset::BottomCenter: {
                 m_anchor_min = Vector2(0.5f, 0.0f);
                 m_anchor_max = Vector2(0.5f, 0.0f);
                 m_pivot = Vector2(0.5f, 0.0f);
                 break;
             }
-            case UIAnchorPreset::BottomRight: {
+            case AnchorPreset::BottomRight: {
                 m_anchor_min = Vector2(1.0f, 0.0f);
                 m_anchor_max = Vector2(1.0f, 0.0f);
                 m_pivot = Vector2(1.0f, 0.0f);
                 break;
             }
-            case UIAnchorPreset::TopStretchHorizontal: {
+            case AnchorPreset::TopStretchHorizontal: {
                 m_anchor_min = Vector2(0.0f, 1.0f);
                 m_anchor_max = Vector2(1.0f, 1.0f);
                 m_pivot = Vector2(0.5f, 1.0f);
                 m_size.x = 0.0f;
                 break;
             }
-            case UIAnchorPreset::MiddleStretchHorizontal: {
+            case AnchorPreset::MiddleStretchHorizontal: {
                 m_anchor_min = Vector2(0.0f, 0.5f);
                 m_anchor_max = Vector2(1.0f, 0.5f);
                 m_pivot = Vector2(0.5f, 0.5f);
                 m_size.x = 0.0f;
                 break;
             }
-            case UIAnchorPreset::BottomStretchHorizontal: {
+            case AnchorPreset::BottomStretchHorizontal: {
                 m_anchor_min = Vector2(0.0f, 0.0f);
                 m_anchor_max = Vector2(1.0f, 0.0f);
                 m_pivot = Vector2(0.5f, 0.0f);
                 m_size.x = 0.0f;
                 break;
             }
-            case UIAnchorPreset::LeftStretchVertical: {
+            case AnchorPreset::LeftStretchVertical: {
                 m_anchor_min = Vector2(0.0f, 0.0f);
                 m_anchor_max = Vector2(0.0f, 1.0f);
                 m_pivot = Vector2(0.0f, 0.5f);
                 m_size.y = 0.0f;
                 break;
             }
-            case UIAnchorPreset::CenterStretchVertical: {
+            case AnchorPreset::CenterStretchVertical: {
                 m_anchor_min = Vector2(0.5f, 0.0f);
                 m_anchor_max = Vector2(0.5f, 1.0f);
                 m_pivot = Vector2(0.5f, 0.5f);
                 m_size.y = 0.0f;
                 break;
             }
-            case UIAnchorPreset::RightStretchVertical: {
+            case AnchorPreset::RightStretchVertical: {
                 m_anchor_min = Vector2(1.0f, 0.0f);
                 m_anchor_max = Vector2(1.0f, 1.0f);
                 m_pivot = Vector2(1.0f, 0.5f);
                 m_size.y = 0.0f;
                 break;
             }
-            case UIAnchorPreset::StretchAll: {
+            case AnchorPreset::StretchAll: {
                 m_anchor_min = Vector2(0.0f, 0.0f);
                 m_anchor_max = Vector2(1.0f, 1.0f);
                 m_pivot = Vector2(0.5f, 0.5f);

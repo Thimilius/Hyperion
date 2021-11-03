@@ -200,7 +200,7 @@ namespace Hyperion::Rendering {
     void UIRenderSystem::RenderElement(UIElement *element, Delegate<RenderFrameContextObjectUI &()> ui_object_adder) {
         HYP_PROFILE_SCOPE("UIRenderSystem.RenderElement");
 
-        if (element && element->GetStyle().GetVisibility() == UIVisibility::Visible) {
+        if (element && element->GetStyle().GetVisibility() == Visibility::Visible) {
             UIElementRenderer renderer = element->GetRenderer();
 
             Mesh *mesh = renderer.mesh;

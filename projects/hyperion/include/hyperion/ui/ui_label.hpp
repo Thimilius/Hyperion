@@ -19,14 +19,14 @@ namespace Hyperion::UI {
         inline String GetText() const { return m_text; }
         void SetText(const String &text);
 
-        inline UI::UITextAlignment GetTextAlignment() const { return m_alignment; }
-        void SetAlignment(UI::UITextAlignment alignment);
+        inline UI::TextAlignment GetTextAlignment() const { return m_alignment; }
+        void SetAlignment(UI::TextAlignment alignment);
     protected:
         void OnRebuildGeometry(MeshBuilder &mesh_builder) override;
     private:
         Font *m_font = nullptr;
         String m_text;
-        UI::UITextAlignment m_alignment = UI::UITextAlignment::MiddleCenter;
+        UI::TextAlignment m_alignment = UI::TextAlignment::MiddleCenter;
     };
 
 }

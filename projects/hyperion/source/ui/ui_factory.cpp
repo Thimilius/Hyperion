@@ -7,7 +7,7 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::UI {
 
-    const UIColorBlock SELECTION_COLOR_BLOCK = {
+    const ColorBlock SELECTION_COLOR_BLOCK = {
         Color(1.0f, 1.0f, 1.0f, 1.0f),
         Color(0.9f, 0.9f, 0.9f, 1.0f),
         Color(0.75f, 0.75f, 0.75f, 1.0f),
@@ -23,7 +23,7 @@ namespace Hyperion::UI {
     UIElement *UIFactory::CreateRoot() {
         UIElement *root = new UIElement();
         root->SetName("Root");
-        root->SetAnchorPreset(UIAnchorPreset::StretchAll);
+        root->SetAnchorPreset(AnchorPreset::StretchAll);
         root->GetStyle().SetOpacity(0.0f);
         return root;
     }
@@ -38,7 +38,7 @@ namespace Hyperion::UI {
         UILabel *label = CreateLabel();
         label->SetName("Button Label");
         label->SetText("Button");
-        label->SetAnchorPreset(UIAnchorPreset::StretchAll);
+        label->SetAnchorPreset(AnchorPreset::StretchAll);
         label->GetHierarchy().SetParent(button);
 
         return button;
@@ -57,7 +57,7 @@ namespace Hyperion::UI {
     UIToggle *UIFactory::CreateToggle() {
         UIElement *toggle_graphic = CreateElement();
         toggle_graphic->SetName("Toggle Graphic");
-        toggle_graphic->SetAnchorPreset(UIAnchorPreset::StretchAll);
+        toggle_graphic->SetAnchorPreset(AnchorPreset::StretchAll);
         toggle_graphic->SetAnchorOffsetMin(Vector2(3.0f, 3.0f));
         toggle_graphic->SetAnchorOffsetMax(Vector2(3.0f, 3.0f));
 

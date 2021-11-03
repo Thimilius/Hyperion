@@ -42,8 +42,8 @@ namespace Hyperion::UI {
 
     class UIElementStyle {
     public:
-        inline UIVisibility GetVisibility() const { return m_visibility; }
-        void SetVisibility(UIVisibility visibility) { m_visibility = visibility; }
+        inline Visibility GetVisibility() const { return m_visibility; }
+        void SetVisibility(Visibility visibility) { m_visibility = visibility; }
 
         inline Color GetColor() const { return m_color; }
         void SetColor(Color color);
@@ -51,21 +51,21 @@ namespace Hyperion::UI {
         inline float32 GetOpacity() const { return m_opacity; }
         void SetOpacity(float32 opacity);
 
-        inline UIColorBlock &GetColorBlock() { return m_color_block; }
-        inline const UIColorBlock &GetColorBlock() const { return m_color_block; }
-        void SetColorBlock(const UIColorBlock &color_block);
+        inline ColorBlock &GetColorBlock() { return m_color_block; }
+        inline const ColorBlock &GetColorBlock() const { return m_color_block; }
+        void SetColorBlock(const ColorBlock &color_block);
 
-        inline UIShadow &GetShadow() { return m_shadow; }
-        inline const UIShadow &GetShadow() const { return m_shadow; }
-        void SetShadow(const UIShadow &shadow);
+        inline Shadow &GetShadow() { return m_shadow; }
+        inline const Shadow &GetShadow() const { return m_shadow; }
+        void SetShadow(const Shadow &shadow);
     private:
         UIElement *m_element = nullptr;
 
-        UIVisibility m_visibility = UIVisibility::Visible;
+        Visibility m_visibility = Visibility::Visible;
         Color m_color = Color::White();
         float32 m_opacity = 1.0f;
-        UIColorBlock m_color_block;
-        UIShadow m_shadow;
+        ColorBlock m_color_block;
+        Shadow m_shadow;
     private:
         friend class Hyperion::UI::UIElement;
     };
@@ -134,7 +134,7 @@ namespace Hyperion::UI {
         inline Vector2 GetAnchorOffsetMax() const { return m_anchor_offset_max; }
         void SetAnchorOffsetMax(Vector2 anchor_offset_max);
 
-        void SetAnchorPreset(UIAnchorPreset preset);
+        void SetAnchorPreset(AnchorPreset preset);
         void GetLocalCorners(Vector3 corners[4]) const;
         void GetWorldCorners(Vector3 corners[4]) const;
 

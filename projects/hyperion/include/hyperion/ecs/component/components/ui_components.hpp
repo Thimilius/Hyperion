@@ -12,7 +12,7 @@ namespace Hyperion::UI {
     struct UIViewComponent : public IComponent {
         UIElement *root_element = nullptr;
 
-        UIScalingMode scaling_mode = UIScalingMode::ScaleWithScreenSize;
+        ScalingMode scaling_mode = ScalingMode::ScaleWithScreenSize;
         Vector2 reference_resolution = Vector2(1280, 720);
 
         struct State {

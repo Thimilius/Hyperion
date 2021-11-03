@@ -35,7 +35,7 @@ namespace Hyperion::UI {
     }
 
     //--------------------------------------------------------------
-    void UILabel::SetAlignment(UI::UITextAlignment alignment) {
+    void UILabel::SetAlignment(UI::TextAlignment alignment) {
         if (m_alignment != alignment) {
             m_alignment = alignment;
 

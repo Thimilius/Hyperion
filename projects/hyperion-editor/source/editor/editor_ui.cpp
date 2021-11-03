@@ -28,12 +28,12 @@ namespace Hyperion::Editor {
 
         s_root_element = UIFactory::CreateRoot();
         s_ui_view.root_element = s_root_element;
-        s_ui_view.scaling_mode = UIScalingMode::ConstantPixelSize;
+        s_ui_view.scaling_mode = ScalingMode::ConstantPixelSize;
 
         // Preview
         {
             UIElement *preview = UIFactory::CreateElement();
-            preview->SetAnchorPreset(UIAnchorPreset::StretchAll);
+            preview->SetAnchorPreset(AnchorPreset::StretchAll);
             preview->SetAnchorOffsetMax(Vector2(0.0f, EditorStyle::HEADER_SIZE));
             preview->SetAnchorOffsetMin(Vector2(EditorStyle::SIDEBAR_SIZE, EditorStyle::FOOTER_SIZE));
             preview->GetStyle().SetColor(EditorStyle::HIGHLIGHT);
@@ -41,25 +41,25 @@ namespace Hyperion::Editor {
 
             UIElement *preview_header = UIFactory::CreateElement();
             preview_header->SetSize(Vector2(0.0f, EditorStyle::HEADER_SIZE));
-            preview_header->SetAnchorPreset(UIAnchorPreset::TopStretchHorizontal);
+            preview_header->SetAnchorPreset(AnchorPreset::TopStretchHorizontal);
             preview_header->GetStyle().SetColor(EditorStyle::NORMAL);
             preview_header->GetHierarchy().SetParent(preview);
 
             s_preview_container_ui_element = UIFactory::CreateElement();
-            s_preview_container_ui_element->SetAnchorPreset(UIAnchorPreset::StretchAll);
+            s_preview_container_ui_element->SetAnchorPreset(AnchorPreset::StretchAll);
             s_preview_container_ui_element->SetAnchorOffsetMax(Vector2(0.0f, EditorStyle::HEADER_SIZE));
             s_preview_container_ui_element->GetStyle().SetColor(EditorStyle::HIGHLIGHT);
             s_preview_container_ui_element->GetHierarchy().SetParent(preview);
 
             s_preview_runtime_ui_element = UIFactory::CreateElement();
-            s_preview_runtime_ui_element->SetAnchorPreset(UIAnchorPreset::StretchAll);
+            s_preview_runtime_ui_element->SetAnchorPreset(AnchorPreset::StretchAll);
             s_preview_runtime_ui_element->GetRenderer().texture = EditorApplication::GetRenderPipeline()->GetTargetRenderTexture();
             s_preview_runtime_ui_element->GetRenderer().render_texture_attachment_index = 0;
             s_preview_runtime_ui_element->GetRenderer().enable_blending = false;
             s_preview_runtime_ui_element->GetHierarchy().SetParent(s_preview_container_ui_element);
 
             s_preview_editor_ui_element = UIFactory::CreateElement();
-            s_preview_editor_ui_element->SetAnchorPreset(UIAnchorPreset::StretchAll);
+            s_preview_editor_ui_element->SetAnchorPreset(AnchorPreset::StretchAll);
             s_preview_editor_ui_element->GetRenderer().texture = EditorApplication::GetRenderPipeline()->GetEditorTargetRenderTexture();
             s_preview_editor_ui_element->GetRenderer().render_texture_attachment_index = 0;
             s_preview_editor_ui_element->GetRenderer().enable_blending = false;
@@ -68,7 +68,7 @@ namespace Hyperion::Editor {
             auto create_toggle = [](UIElement *parent, float32 x_offset, Font *font, const String &text) -> UIToggle * {
                 UIToggle *ui_toggle = UIFactory::CreateToggle();
                 ui_toggle->SetSize(Vector2(25.0f, 0.0f));
-                ui_toggle->SetAnchorPreset(UIAnchorPreset::LeftStretchVertical);
+                ui_toggle->SetAnchorPreset(AnchorPreset::LeftStretchVertical);
                 ui_toggle->SetPosition(Vector2(x_offset, 0.0f));
                 ui_toggle->GetStyle().SetColor(EditorStyle::NORMAL);
                 ui_toggle->SetToggleOnColor(EditorStyle::HIGHLIGHT);
@@ -77,7 +77,7 @@ namespace Hyperion::Editor {
                 ui_toggle->GetHierarchy().RemoveChildren();
                 UILabel *toggle_label = UIFactory::CreateLabel();
                 toggle_label->GetHierarchy().SetParent(ui_toggle);
-                toggle_label->SetAnchorPreset(UIAnchorPreset::StretchAll);
+                toggle_label->SetAnchorPreset(AnchorPreset::StretchAll);
                 toggle_label->SetFont(font);
                 toggle_label->SetText(text);
                 toggle_label->GetStyle().GetShadow().enabled = true;
@@ -105,7 +105,7 @@ namespace Hyperion::Editor {
             });
             UIButton *camera_reset_button = UIFactory::CreateButton();
             camera_reset_button->SetSize(Vector2(25.0f, 0.0f));
-            camera_reset_button->SetAnchorPreset(UIAnchorPreset::LeftStretchVertical);
+            camera_reset_button->SetAnchorPreset(AnchorPreset::LeftStretchVertical);
             camera_reset_button->SetPosition(Vector2(75.0f, 0.0f));
             camera_reset_button->GetStyle().SetColor(EditorStyle::NORMAL);
             camera_reset_button->GetHierarchy().SetParent(preview_header);
@@ -119,8 +119,8 @@ namespace Hyperion::Editor {
 
             s_label_stats = UIFactory::CreateLabel();
             s_label_stats->SetFont(s_font_text);
-            s_label_stats->SetAlignment(UITextAlignment::MiddleRight);
-            s_label_stats->SetAnchorPreset(UIAnchorPreset::StretchAll);
+            s_label_stats->SetAlignment(TextAlignment::MiddleRight);
+            s_label_stats->SetAnchorPreset(AnchorPreset::StretchAll);
             s_label_stats->SetAnchorOffsetMax(Vector2(5.0f, 0.0f));
             s_label_stats->GetStyle().GetShadow().enabled = true;
             s_label_stats->GetHierarchy().SetParent(preview_header);
@@ -130,12 +130,12 @@ namespace Hyperion::Editor {
         {
             UIElement *top_bar = UIFactory::CreateElement();
             top_bar->SetSize(Vector2(0.0f, EditorStyle::HEADER_SIZE - 1));
-            top_bar->SetAnchorPreset(UIAnchorPreset::TopStretchHorizontal);
+            top_bar->SetAnchorPreset(AnchorPreset::TopStretchHorizontal);
             top_bar->GetStyle().SetColor(EditorStyle::NORMAL);
             top_bar->GetHierarchy().SetParent(s_root_element);
 
             UIElement *top_bar_container = UIFactory::CreateElement();
-            top_bar_container->SetAnchorPreset(UIAnchorPreset::TopStretchHorizontal);
+            top_bar_container->SetAnchorPreset(AnchorPreset::TopStretchHorizontal);
             top_bar_container->SetSize(Vector2(0.0f, 1.0f));
             top_bar_container->SetPosition(Vector2(0.0f, -static_cast<float32>(EditorStyle::HEADER_SIZE - 1)));
             top_bar_container->GetStyle().SetColor(EditorStyle::HIGHLIGHT);
@@ -146,14 +146,14 @@ namespace Hyperion::Editor {
         {
             UIElement *left_bar = UIFactory::CreateElement();
             left_bar->SetSize(Vector2(EditorStyle::SIDEBAR_SIZE, 0.0f));
-            left_bar->SetAnchorPreset(UIAnchorPreset::LeftStretchVertical);
+            left_bar->SetAnchorPreset(AnchorPreset::LeftStretchVertical);
             left_bar->SetAnchorOffsetMax(Vector2(0.0f, EditorStyle::HEADER_SIZE));
             left_bar->SetAnchorOffsetMin(Vector2(0.0f, EditorStyle::FOOTER_SIZE));
             left_bar->GetStyle().SetColor(EditorStyle::NORMAL_DARK);
             left_bar->GetHierarchy().SetParent(s_root_element);
 
             UIElement *left_bar_container = UIFactory::CreateElement();
-            left_bar_container->SetAnchorPreset(UIAnchorPreset::StretchAll);
+            left_bar_container->SetAnchorPreset(AnchorPreset::StretchAll);
             left_bar_container->SetAnchorOffsetMax(Vector2(3.0f, 3.0f));
             left_bar_container->SetAnchorOffsetMin(Vector2(3.0f, 3.0f));
             left_bar_container->GetStyle().SetColor(EditorStyle::NORMAL);
@@ -161,8 +161,8 @@ namespace Hyperion::Editor {
 
             s_label_selection = UIFactory::CreateLabel();
             s_label_selection->SetFont(s_font_text);
-            s_label_selection->SetAlignment(UITextAlignment::TopCenter);
-            s_label_selection->SetAnchorPreset(UIAnchorPreset::StretchAll);
+            s_label_selection->SetAlignment(TextAlignment::TopCenter);
+            s_label_selection->SetAnchorPreset(AnchorPreset::StretchAll);
             s_label_selection->SetAnchorOffsetMax(Vector2(0.0f, 4.0f));
             s_label_selection->GetStyle().GetShadow().enabled = true;
             s_label_selection->GetHierarchy().SetParent(left_bar_container);
@@ -172,12 +172,12 @@ namespace Hyperion::Editor {
         {
             UIElement *bottom_bar = UIFactory::CreateElement();
             bottom_bar->SetSize(Vector2(0.0f, EditorStyle::FOOTER_SIZE));
-            bottom_bar->SetAnchorPreset(UIAnchorPreset::BottomStretchHorizontal);
+            bottom_bar->SetAnchorPreset(AnchorPreset::BottomStretchHorizontal);
             bottom_bar->GetStyle().SetColor(EditorStyle::NORMAL_DARK);
             bottom_bar->GetHierarchy().SetParent(s_root_element);
 
             UIElement *bottom_bar_container = UIFactory::CreateElement();
-            bottom_bar_container->SetAnchorPreset(UIAnchorPreset::StretchAll);
+            bottom_bar_container->SetAnchorPreset(AnchorPreset::StretchAll);
             bottom_bar_container->SetAnchorOffsetMax(Vector2(3.0f, 3.0f));
             bottom_bar_container->SetAnchorOffsetMin(Vector2(3.0f, 3.0f));
             bottom_bar_container->GetStyle().SetColor(EditorStyle::NORMAL);
@@ -202,12 +202,12 @@ namespace Hyperion::Editor {
         }
 
         if (Input::IsKeyDown(KeyCode::F6)) {
-            if (s_preview_editor_ui_element->GetStyle().GetVisibility() == UIVisibility::Visible) {
-                s_preview_editor_ui_element->GetStyle().SetVisibility(UIVisibility::Hidden);
-                s_preview_runtime_ui_element->GetStyle().SetVisibility(UIVisibility::Visible);
+            if (s_preview_editor_ui_element->GetStyle().GetVisibility() == Visibility::Visible) {
+                s_preview_editor_ui_element->GetStyle().SetVisibility(Visibility::Hidden);
+                s_preview_runtime_ui_element->GetStyle().SetVisibility(Visibility::Visible);
             } else {
-                s_preview_editor_ui_element->GetStyle().SetVisibility(UIVisibility::Visible);
-                s_preview_runtime_ui_element->GetStyle().SetVisibility(UIVisibility::Hidden);
+                s_preview_editor_ui_element->GetStyle().SetVisibility(Visibility::Visible);
+                s_preview_runtime_ui_element->GetStyle().SetVisibility(Visibility::Hidden);
             }
         }
 

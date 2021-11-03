@@ -31,7 +31,7 @@ namespace Hyperion::UI {
         if (ui_view->root_element) {
             float32 ui_scale = 1.0f;
             switch (ui_view->scaling_mode) {
-                case UIScalingMode::ScaleWithScreenSize: {
+                case ScalingMode::ScaleWithScreenSize: {
                     float32 display_width = static_cast<float32>(Display::GetWidth());
                     float32 display_height = static_cast<float32>(Display::GetHeight());
 
@@ -43,7 +43,7 @@ namespace Hyperion::UI {
                     ui_scale = computed_scale;
                     break;
                 }
-                case UIScalingMode::ConstantPixelSize: {
+                case ScalingMode::ConstantPixelSize: {
                     ui_scale = 1.0f;
                     break;
                 }
