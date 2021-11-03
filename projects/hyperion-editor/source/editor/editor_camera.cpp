@@ -70,10 +70,9 @@ namespace Hyperion::Editor {
         }
 
         {
-            uint32 width = EditorUI::GetPreviewWidth();
-            uint32 height = EditorUI::GetPreviewHeight();
-            float32 viewport_clipping_height = height / static_cast<float32>(Display::GetHeight());
-            s_camera.viewport_clipping.width = width / static_cast<float32>(Display::GetWidth());
+            RectInt preview_rect = EditorUI::GetPreviewRect();
+            float32 viewport_clipping_height = preview_rect.height / static_cast<float32>(Display::GetHeight());
+            s_camera.viewport_clipping.width = preview_rect.width / static_cast<float32>(Display::GetWidth());
             s_camera.viewport_clipping.height = viewport_clipping_height;
         }
 

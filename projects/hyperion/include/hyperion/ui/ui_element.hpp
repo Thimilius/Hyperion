@@ -151,6 +151,8 @@ namespace Hyperion::UI {
         void Rebuild(float32 ui_scale, MeshBuilder &mesh_builder);
 
         template<typename T> T *Q(const String &name = "") { return UIQuery::Query<T>(this, name); }
+    public:
+        static Vector2 ScreenPointToUISpacePoint(Vector2 screen_point);
     protected:
         virtual void OnRebuildLayout();
         virtual void OnRebuildGeometry(MeshBuilder &mesh_builder);

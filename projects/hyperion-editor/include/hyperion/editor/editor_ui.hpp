@@ -14,8 +14,8 @@ namespace Hyperion::Editor {
         static void Initialize();
         static void Update();
 
-        static uint32 GetPreviewWidth() { return static_cast<uint32>(s_preview_container_ui_element == nullptr ? 1280 : s_preview_container_ui_element->GetWorldRect().width); }
-        static uint32 GetPreviewHeight() { return static_cast<uint32>(s_preview_container_ui_element == nullptr ? 720 : s_preview_container_ui_element->GetWorldRect().height); }
+        inline static UI::UIElement *GetPreviewElement() { return s_preview_container_ui_element; }
+        static RectInt GetPreviewRect();
     private:
         EditorUI() = delete;
         ~EditorUI() = delete;

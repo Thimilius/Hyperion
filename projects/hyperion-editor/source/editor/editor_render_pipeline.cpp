@@ -5,12 +5,14 @@
 #include <hyperion/assets/asset_manager.hpp>
 #include <hyperion/core/app/input.hpp>
 #include <hyperion/core/app/display.hpp>
+#include <hyperion/core/math/math.hpp>
 #include <hyperion/ecs/component/components/core_components.hpp>
 #include <hyperion/ecs/component/components/render_components.hpp>
 #include <hyperion/ecs/system/systems/render_systems.hpp>
 #include <hyperion/ecs/world/world.hpp>
 #include <hyperion/render/render_engine.hpp>
 #include <hyperion/render/pipelines/forward/forward_render_pipeline.hpp>
+#include <hyperion/ui/ui_element.hpp>
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/editor/editor_application.hpp"
@@ -103,35 +105,41 @@ namespace Hyperion::Editor {
             render_frame->ExecuteCommandBuffer(command_buffer);
         }
 
-        Vector2Int mouse_position = Input::GetMousePosition();
-        int32 x = 0;
-        int32 y = 0;
-        int32 width = GetRenderTargetWidth();
-        int32 height = GetRenderTargetHeight();
-        if (mouse_position.x >= x && mouse_position.x < width && mouse_position.y >= y && mouse_position.y < height) {
-            render_frame->DrawObjectIds(m_object_ids_render_texture->GetRenderTargetId());
+        if (Input::IsMouseButtonUp(MouseButtonCode::Left)) {
+            Vector2 mouse_position = Input::GetMousePosition().ToFloat();
+            Vector2 ui_space_point = UI::UIElement::ScreenPointToUISpacePoint(mouse_position);
+            if (EditorUI::GetPreviewElement()->ContainsScreenPoint(mouse_position)) {
+                render_frame->DrawObjectIds(m_object_ids_render_texture->GetRenderTargetId());
 
-            RectInt region;
-            region.position = mouse_position;
-            region.size = Vector2Int(1, 1);
-            RenderFrameCommandBuffer command_buffer;
-            command_buffer.RequestAsyncReadback(m_object_ids_render_texture->GetRenderTargetId(), 0, region, [](const AsyncRequestResult &result) {
-                const uint32 *data = reinterpret_cast<const uint32 *>(result.data.GetData());
-                if (result.data.GetLength() >= 4) {
-                    uint32 id = *data;
-                    //HYP_TRACE("Mosue Position: {}, Id: {}", Input::GetMousePosition().ToString(), id);
-                }
-            });
-            render_frame->ExecuteCommandBuffer(command_buffer);
+                Rect rect = EditorUI::GetPreviewElement()->GetWorldRect();
+                Vector2 point = ui_space_point;
+                point.x -= rect.x;
+                point.y -= rect.y;
+                point.x = Math::Clamp(point.x, 0.0f, rect.width - 1);
+                point.y = Math::Clamp(point.y, 0.0f, rect.height - 1);
+
+                RectInt region;
+                region.position = Vector2Int(static_cast<int32>(point.x), static_cast<int32>(point.y));
+                region.size = Vector2Int(1, 1);
+
+                RenderFrameCommandBuffer command_buffer;
+                command_buffer.RequestAsyncReadback(m_object_ids_render_texture->GetRenderTargetId(), 0, region, [](const AsyncRequestResult &result) {
+                    const uint32 *data = reinterpret_cast<const uint32 *>(result.data.GetData());
+                    if (result.data.GetLength() >= 4) {
+                        uint32 id = *data;
+                    }
+                });
+                render_frame->ExecuteCommandBuffer(command_buffer);
+            }
         }
+        
         render_frame->DrawEditorUI();
     }
 
     //--------------------------------------------------------------
     void EditorRenderPipeline::UpdateSize() {
-        uint32 width = EditorUI::GetPreviewWidth();
-        uint32 height = EditorUI::GetPreviewHeight();
-        SetRenderTargetSize(width, height);
+        RectInt preview_rect = EditorUI::GetPreviewRect();
+        SetRenderTargetSize(preview_rect.width, preview_rect.height);
     }
     
 }

@@ -139,7 +139,7 @@ namespace Hyperion::UI {
 
     //--------------------------------------------------------------
     void UIEventSystem::RaycastElements(UIElement *element, Vector2Int screen_point, Array<UIElement *> &raycasted) {
-        if (element->ContainsScreenPoint(screen_point.ToFloat())) {
+        if (element->IsRaycastTarget() && element->ContainsScreenPoint(screen_point.ToFloat())) {
             raycasted.Add(element);
         }
 

@@ -213,6 +213,16 @@ namespace Hyperion::Editor {
     }
 
     //--------------------------------------------------------------
+    RectInt EditorUI::GetPreviewRect() {
+        if (s_preview_container_ui_element == nullptr) {
+            return { 0, 0, 1280, 720 };
+        } else {
+            Rect rect = s_preview_container_ui_element->GetWorldRect();
+            return { static_cast<int32>(rect.x), static_cast<int32>(rect.y), static_cast<int32>(rect.width), static_cast<int32>(rect.height) };
+        }
+    }
+
+    //--------------------------------------------------------------
     void EditorUI::UpdateStats() {
         String stats_format = "FPS: {} ({:.2f}ms) - Draw calls: {}, Vertices: {}, Triangles: {}";
         RenderStats render_stats = Rendering::RenderEngine::GetStats();

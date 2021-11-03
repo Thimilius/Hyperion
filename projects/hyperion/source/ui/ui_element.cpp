@@ -334,15 +334,7 @@ namespace Hyperion::UI {
 
     //--------------------------------------------------------------
     bool8 UIElement::ContainsScreenPoint(Vector2 screen_point) {
-        if (!m_state.is_raycast_target) {
-            return false;
-        }
-
-        // We have to transform the screen point to have the origin in the middle of the screen.
-        float32 display_width = static_cast<float32>(Display::GetWidth());
-        float32 display_height = static_cast<float32>(Display::GetHeight());
-        screen_point.x -= display_width / 2.0f;
-        screen_point.y -= display_height / 2.0f;
+        Vector2 ui_space_point = ScreenPointToUISpacePoint(screen_point);
 
         auto is_left = [](Vector2 p0, Vector2 p1, Vector2 p2) {
             return ((p1.x - p0.x) * (p2.y - p0.y) - (p2.x - p0.x) * (p1.y - p0.y));
@@ -356,7 +348,7 @@ namespace Hyperion::UI {
         Vector2 p4 = world_corners[3];
 
         // NOTE: Counter clockwise order of points is important.
-        return (is_left(p1, p4, screen_point) >= 0.0f && is_left(p4, p3, screen_point) >= 0.0f && is_left(p3, p2, screen_point) >= 0.0f && is_left(p2, p1, screen_point) >= 0.0f);
+        return (is_left(p1, p4, ui_space_point) >= 0.0f && is_left(p4, p3, ui_space_point) >= 0.0f && is_left(p3, p2, ui_space_point) >= 0.0f && is_left(p2, p1, ui_space_point) >= 0.0f);
     }
 
     //--------------------------------------------------------------
@@ -370,8 +362,17 @@ namespace Hyperion::UI {
     }
 
     //--------------------------------------------------------------
-    void UIElement::OnRebuildLayout() {
+    Vector2 UIElement::ScreenPointToUISpacePoint(Vector2 screen_point) {
+        float32 display_width = static_cast<float32>(Display::GetWidth());
+        float32 display_height = static_cast<float32>(Display::GetHeight());
+        screen_point.x -= display_width / 2.0f;
+        screen_point.y -= display_height / 2.0f;
+        return screen_point;
+    }
 
+    //--------------------------------------------------------------
+    void UIElement::OnRebuildLayout() {
+        
     }
 
     //--------------------------------------------------------------
