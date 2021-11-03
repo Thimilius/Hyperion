@@ -38,20 +38,6 @@ namespace Hyperion::UI {
         Hidden
     };
 
-    enum class TextAlignment {
-        TopLeft,
-        TopCenter,
-        TopRight,
-
-        MiddleLeft,
-        MiddleCenter,
-        MiddleRight,
-
-        BottomLeft,
-        BottomCenter,
-        BottomRight,
-    };
-
     struct ColorBlock {
         Color normal_color = Color::White();
         Color highlight_color = Color::White();
@@ -70,6 +56,41 @@ namespace Hyperion::UI {
         Highlighted,
         Pressed,
         Disabled,
+    };
+    
+    enum class LayoutType {
+        None,
+        Horizontal,
+        Vertical,
+        Grid,
+    };
+
+    enum class ChildAlignment {
+        TopLeft,
+        TopCenter,
+        TopRight,
+
+        MiddleLeft,
+        MiddleCenter,
+        MiddleRight,
+
+        BottomLeft,
+        BottomCenter,
+        BottomRight,
+    };
+
+    enum class TextAlignment {
+        TopLeft,
+        TopCenter,
+        TopRight,
+
+        MiddleLeft,
+        MiddleCenter,
+        MiddleRight,
+
+        BottomLeft,
+        BottomCenter,
+        BottomRight,
     };
 
 }

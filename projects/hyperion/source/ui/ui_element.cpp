@@ -372,7 +372,74 @@ namespace Hyperion::UI {
 
     //--------------------------------------------------------------
     void UIElement::OnRebuildLayout() {
-        
+        if (m_layout.layout_type == LayoutType::None) {
+            return;
+        }
+
+        // We first have to gather all relevant dimensions and sizes.
+        Vector2 layout_size = Vector2();
+        for (UIElement *child : m_hierarchy.m_children) {
+            if (child->m_layout.ignore_layout) {
+                continue;
+            }
+
+            Vector2 size = child->GetSize();
+            switch (m_layout.layout_type) {
+                case LayoutType::Horizontal: {
+                    layout_size.x += size.x + m_layout.spacing.x;
+                    if (size.y > layout_size.y) {
+                        layout_size.y = size.y;
+                    }
+                    break;
+                }
+                case LayoutType::Vertical: {
+                    if (size.x > layout_size.x) {
+                        layout_size.x = size.x;
+                    }
+                    layout_size.y += size.y + m_layout.spacing.y;
+                    break;
+                }
+                default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+            }
+
+            child->SetAnchorPreset(AnchorPreset::BottomLeft);
+        }
+        if (!m_hierarchy.m_children.IsEmpty()) {
+            switch (m_layout.layout_type) {
+                case LayoutType::Horizontal: {
+                    layout_size.x -= m_layout.spacing.x;
+                    break;
+                }
+                case LayoutType::Vertical: {
+                    layout_size.y -= m_layout.spacing.y;
+                    break;
+                }
+                default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+            }
+        }
+
+        Rect rect = GetLocalRect();
+        Vector2 offset = GetLayoutPosition(m_layout.child_alignment, Vector2(rect.width, rect.height), layout_size);
+        for (UIElement *child : m_hierarchy.m_children) {
+            if (child->m_layout.ignore_layout) {
+                continue;
+            }
+
+            child->SetPosition(offset);
+
+            Vector2 size = child->GetSize();
+            switch (m_layout.layout_type) {
+                case LayoutType::Horizontal: {
+                    offset.x += size.x + m_layout.spacing.x;
+                    break;
+                }
+                case LayoutType::Vertical: {
+                    offset.y += size.y + m_layout.spacing.y;
+                    break;
+                }
+                default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+            }
+        }
     }
 
     //--------------------------------------------------------------
@@ -445,6 +512,53 @@ namespace Hyperion::UI {
             }
             m_transform = Matrix4x4::TRS(m_derived_position, m_derived_rotation, m_derived_scale);
         }
+    }
+
+    //--------------------------------------------------------------
+    Vector2 UIElement::GetLayoutPosition(ChildAlignment child_alignment, Vector2 container_layout, Vector2 layout_size) {
+        Vector2 position = Vector2();
+
+        switch (child_alignment) {
+            case ChildAlignment::TopLeft: {
+                position = Vector2(0.0f, container_layout.y - layout_size.y);
+                break;
+            }
+            case ChildAlignment::TopCenter: {
+                position = Vector2((container_layout.x / 2.0f) - (layout_size.x / 2.0f), container_layout.y - layout_size.y);
+                break;
+            }
+            case ChildAlignment::TopRight: {
+                position = Vector2(container_layout.x - layout_size.x, container_layout.y - layout_size.y);
+                break;
+            }
+            case ChildAlignment::MiddleLeft: {
+                position = Vector2(0.0f, (container_layout.y / 2.0f) - (layout_size.y / 2.0f));
+                break;
+            }
+            case ChildAlignment::MiddleCenter: {
+                position = Vector2((container_layout.x / 2.0f) - (layout_size.x / 2.0f), (container_layout.y / 2.0f) - (layout_size.y / 2.0f));
+                break;
+            }
+            case ChildAlignment::MiddleRight: {
+                position = Vector2(container_layout.x - layout_size.x, (container_layout.y / 2.0f) - (layout_size.y / 2.0f));
+                break;
+            }
+            case ChildAlignment::BottomLeft: {
+                position = Vector2(0.0f, 0.0f);
+                break;
+            }
+            case ChildAlignment::BottomCenter: {
+                position = Vector2((container_layout.x / 2.0f) - (layout_size.x / 2.0f), 0.0f);
+                break;
+            }
+            case ChildAlignment::BottomRight: {
+                position = Vector2(container_layout.x - layout_size.x, 0.0f);
+                break;
+            }
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        }
+
+        return Vector3(position, 0.0f);
     }
 
 }

@@ -1195,6 +1195,7 @@ namespace Hyperion::Rendering {
             auto mesh_it = m_opengl_meshes.Find(mesh_id);
             if (mesh_it == m_opengl_meshes.end()) {
                 HYP_LOG_ERROR("OpenGL", "Trying to delete mesh {} which does not exist!", mesh_id);
+                HYP_DEBUG_BREAK;
             } else {
                 OpenGLMesh &opengl_mesh = mesh_it->second;
 

@@ -30,102 +30,6 @@ namespace Hyperion::Editor {
         s_ui_view.root_element = s_root_element;
         s_ui_view.scaling_mode = ScalingMode::ConstantPixelSize;
 
-        // Preview
-        {
-            UIElement *preview = UIFactory::CreateElement();
-            preview->SetAnchorPreset(AnchorPreset::StretchAll);
-            preview->SetAnchorOffsetMax(Vector2(0.0f, EditorStyle::HEADER_SIZE));
-            preview->SetAnchorOffsetMin(Vector2(EditorStyle::SIDEBAR_SIZE, EditorStyle::FOOTER_SIZE));
-            preview->GetStyle().SetColor(EditorStyle::HIGHLIGHT);
-            preview->GetHierarchy().SetParent(s_root_element);
-
-            UIElement *preview_header = UIFactory::CreateElement();
-            preview_header->SetSize(Vector2(0.0f, EditorStyle::HEADER_SIZE));
-            preview_header->SetAnchorPreset(AnchorPreset::TopStretchHorizontal);
-            preview_header->GetStyle().SetColor(EditorStyle::NORMAL);
-            preview_header->GetHierarchy().SetParent(preview);
-
-            s_preview_container_ui_element = UIFactory::CreateElement();
-            s_preview_container_ui_element->SetAnchorPreset(AnchorPreset::StretchAll);
-            s_preview_container_ui_element->SetAnchorOffsetMax(Vector2(0.0f, EditorStyle::HEADER_SIZE));
-            s_preview_container_ui_element->GetStyle().SetColor(EditorStyle::HIGHLIGHT);
-            s_preview_container_ui_element->GetHierarchy().SetParent(preview);
-
-            s_preview_runtime_ui_element = UIFactory::CreateElement();
-            s_preview_runtime_ui_element->SetAnchorPreset(AnchorPreset::StretchAll);
-            s_preview_runtime_ui_element->GetRenderer().texture = EditorApplication::GetRenderPipeline()->GetTargetRenderTexture();
-            s_preview_runtime_ui_element->GetRenderer().render_texture_attachment_index = 0;
-            s_preview_runtime_ui_element->GetRenderer().enable_blending = false;
-            s_preview_runtime_ui_element->GetHierarchy().SetParent(s_preview_container_ui_element);
-
-            s_preview_editor_ui_element = UIFactory::CreateElement();
-            s_preview_editor_ui_element->SetAnchorPreset(AnchorPreset::StretchAll);
-            s_preview_editor_ui_element->GetRenderer().texture = EditorApplication::GetRenderPipeline()->GetEditorTargetRenderTexture();
-            s_preview_editor_ui_element->GetRenderer().render_texture_attachment_index = 0;
-            s_preview_editor_ui_element->GetRenderer().enable_blending = false;
-            s_preview_editor_ui_element->GetHierarchy().SetParent(s_preview_container_ui_element);
-
-            auto create_toggle = [](UIElement *parent, float32 x_offset, Font *font, const String &text) -> UIToggle * {
-                UIToggle *ui_toggle = UIFactory::CreateToggle();
-                ui_toggle->SetSize(Vector2(25.0f, 0.0f));
-                ui_toggle->SetAnchorPreset(AnchorPreset::LeftStretchVertical);
-                ui_toggle->SetPosition(Vector2(x_offset, 0.0f));
-                ui_toggle->GetStyle().SetColor(EditorStyle::NORMAL);
-                ui_toggle->SetToggleOnColor(EditorStyle::HIGHLIGHT);
-                ui_toggle->SetToggleOffColor(Color::White());
-                ui_toggle->GetHierarchy().SetParent(parent);
-                ui_toggle->GetHierarchy().RemoveChildren();
-                UILabel *toggle_label = UIFactory::CreateLabel();
-                toggle_label->GetHierarchy().SetParent(ui_toggle);
-                toggle_label->SetAnchorPreset(AnchorPreset::StretchAll);
-                toggle_label->SetFont(font);
-                toggle_label->SetText(text);
-                toggle_label->GetStyle().GetShadow().enabled = true;
-                ui_toggle->SetToggleGraphic(toggle_label);
-                return ui_toggle;
-            };
-
-            s_toggle_vsync = create_toggle(preview_header, 0.0f, s_font_icon, "\uf108");
-            s_toggle_vsync->SetIsOn(Rendering::RenderEngine::GetVSyncMode() != Rendering::VSyncMode::DontSync);
-            s_toggle_vsync->RegisterToggleCallback([](bool8 is_on) {
-                Rendering::RenderEngine::SetVSyncMode(
-                    Rendering::RenderEngine::GetVSyncMode() == Rendering::VSyncMode::DontSync ?
-                    Rendering::VSyncMode::EveryVBlank :
-                    Rendering::VSyncMode::DontSync);
-            });
-            s_toggle_grid = create_toggle(preview_header, 25.0f, s_font_icon, "\uf850");
-            s_toggle_grid->SetIsOn(Rendering::RenderGizmos::GetShouldDrawGrid());
-            s_toggle_grid->RegisterToggleCallback([](bool8 is_on) {
-                Rendering::RenderGizmos::SetShouldDrawGrid(is_on);
-            });
-            s_toggle_grounds = create_toggle(preview_header, 50.0f, s_font_icon, "\uf247");
-            s_toggle_grounds->SetIsOn(Rendering::RenderGizmos::GetShouldDrawAllBounds());
-            s_toggle_grounds->RegisterToggleCallback([](bool8 is_on) {
-                Rendering::RenderGizmos::SetShouldDrawAllBounds(is_on);
-            });
-            UIButton *camera_reset_button = UIFactory::CreateButton();
-            camera_reset_button->SetSize(Vector2(25.0f, 0.0f));
-            camera_reset_button->SetAnchorPreset(AnchorPreset::LeftStretchVertical);
-            camera_reset_button->SetPosition(Vector2(75.0f, 0.0f));
-            camera_reset_button->GetStyle().SetColor(EditorStyle::NORMAL);
-            camera_reset_button->GetHierarchy().SetParent(preview_header);
-            UILabel *camera_reset_label = camera_reset_button->Q<UILabel>("");
-            camera_reset_label->SetFont(s_font_icon);
-            camera_reset_label->SetText("\uf03d");
-            camera_reset_label->GetStyle().GetShadow().enabled = true;
-            camera_reset_button->RegisterClickCallback([]() {
-                EditorCamera::Reset();
-            });
-
-            s_label_stats = UIFactory::CreateLabel();
-            s_label_stats->SetFont(s_font_text);
-            s_label_stats->SetAlignment(TextAlignment::MiddleRight);
-            s_label_stats->SetAnchorPreset(AnchorPreset::StretchAll);
-            s_label_stats->SetAnchorOffsetMax(Vector2(5.0f, 0.0f));
-            s_label_stats->GetStyle().GetShadow().enabled = true;
-            s_label_stats->GetHierarchy().SetParent(preview_header);
-        }
-        
         // Header.
         {
             UIElement *top_bar = UIFactory::CreateElement();
@@ -167,7 +71,7 @@ namespace Hyperion::Editor {
             s_label_selection->GetStyle().GetShadow().enabled = true;
             s_label_selection->GetHierarchy().SetParent(left_bar_container);
         }
-        
+
         // Footer.
         {
             UIElement *bottom_bar = UIFactory::CreateElement();
@@ -184,6 +88,101 @@ namespace Hyperion::Editor {
             bottom_bar_container->GetHierarchy().SetParent(bottom_bar);
         }
 
+        // Preview
+        {
+            UIElement *preview = UIFactory::CreateElement();
+            preview->SetAnchorPreset(AnchorPreset::StretchAll);
+            preview->SetAnchorOffsetMax(Vector2(0.0f, EditorStyle::HEADER_SIZE));
+            preview->SetAnchorOffsetMin(Vector2(EditorStyle::SIDEBAR_SIZE, EditorStyle::FOOTER_SIZE));
+            preview->GetStyle().SetColor(EditorStyle::HIGHLIGHT);
+            preview->GetHierarchy().SetParent(s_root_element);
+
+            UIElement *preview_header = UIFactory::CreateElement();
+            preview_header->SetSize(Vector2(0.0f, EditorStyle::HEADER_SIZE));
+            preview_header->SetAnchorPreset(AnchorPreset::TopStretchHorizontal);
+            preview_header->GetStyle().SetColor(EditorStyle::NORMAL);
+            preview_header->GetHierarchy().SetParent(preview);
+            preview_header->GetLayout().layout_type = LayoutType::Horizontal;
+            preview_header->GetLayout().child_alignment = ChildAlignment::MiddleLeft;
+
+            s_preview_container_ui_element = UIFactory::CreateElement();
+            s_preview_container_ui_element->SetAnchorPreset(AnchorPreset::StretchAll);
+            s_preview_container_ui_element->SetAnchorOffsetMax(Vector2(0.0f, EditorStyle::HEADER_SIZE));
+            s_preview_container_ui_element->GetStyle().SetColor(EditorStyle::HIGHLIGHT);
+            s_preview_container_ui_element->GetHierarchy().SetParent(preview);
+
+            s_preview_runtime_ui_element = UIFactory::CreateElement();
+            s_preview_runtime_ui_element->SetAnchorPreset(AnchorPreset::StretchAll);
+            s_preview_runtime_ui_element->GetRenderer().texture = EditorApplication::GetRenderPipeline()->GetTargetRenderTexture();
+            s_preview_runtime_ui_element->GetRenderer().render_texture_attachment_index = 0;
+            s_preview_runtime_ui_element->GetRenderer().enable_blending = false;
+            s_preview_runtime_ui_element->GetHierarchy().SetParent(s_preview_container_ui_element);
+
+            s_preview_editor_ui_element = UIFactory::CreateElement();
+            s_preview_editor_ui_element->SetAnchorPreset(AnchorPreset::StretchAll);
+            s_preview_editor_ui_element->GetRenderer().texture = EditorApplication::GetRenderPipeline()->GetEditorTargetRenderTexture();
+            s_preview_editor_ui_element->GetRenderer().render_texture_attachment_index = 0;
+            s_preview_editor_ui_element->GetRenderer().enable_blending = false;
+            s_preview_editor_ui_element->GetHierarchy().SetParent(s_preview_container_ui_element);
+
+            auto create_toggle = [](UIElement *parent, Font *font, const String &text) -> UIToggle * {
+                UIToggle *ui_toggle = UIFactory::CreateToggle();
+                ui_toggle->SetSize(Vector2(25.0f, 25.0f));
+                ui_toggle->GetStyle().SetColor(EditorStyle::NORMAL);
+                ui_toggle->SetToggleOnColor(EditorStyle::HIGHLIGHT);
+                ui_toggle->SetToggleOffColor(Color::White());
+                ui_toggle->GetHierarchy().SetParent(parent);
+                ui_toggle->GetHierarchy().RemoveChildren();
+                UILabel *toggle_label = UIFactory::CreateLabel();
+                toggle_label->GetHierarchy().SetParent(ui_toggle);
+                toggle_label->SetAnchorPreset(AnchorPreset::StretchAll);
+                toggle_label->SetFont(font);
+                toggle_label->SetText(text);
+                toggle_label->GetStyle().GetShadow().enabled = true;
+                ui_toggle->SetToggleGraphic(toggle_label);
+                return ui_toggle;
+            };
+
+            s_toggle_vsync = create_toggle(preview_header, s_font_icon, "\uf108");
+            s_toggle_vsync->SetIsOn(Rendering::RenderEngine::GetVSyncMode() != Rendering::VSyncMode::DontSync);
+            s_toggle_vsync->RegisterToggleCallback([](bool8 is_on) {
+                Rendering::RenderEngine::SetVSyncMode(
+                    Rendering::RenderEngine::GetVSyncMode() == Rendering::VSyncMode::DontSync ?
+                    Rendering::VSyncMode::EveryVBlank :
+                    Rendering::VSyncMode::DontSync);
+            });
+            s_toggle_grid = create_toggle(preview_header, s_font_icon, "\uf850");
+            s_toggle_grid->SetIsOn(Rendering::RenderGizmos::GetShouldDrawGrid());
+            s_toggle_grid->RegisterToggleCallback([](bool8 is_on) {
+                Rendering::RenderGizmos::SetShouldDrawGrid(is_on);
+            });
+            s_toggle_grounds = create_toggle(preview_header, s_font_icon, "\uf247");
+            s_toggle_grounds->SetIsOn(Rendering::RenderGizmos::GetShouldDrawAllBounds());
+            s_toggle_grounds->RegisterToggleCallback([](bool8 is_on) {
+                Rendering::RenderGizmos::SetShouldDrawAllBounds(is_on);
+            });
+            UIButton *camera_reset_button = UIFactory::CreateButton();
+            camera_reset_button->SetSize(Vector2(25.0f, 25.0f));
+            camera_reset_button->GetStyle().SetColor(EditorStyle::NORMAL);
+            camera_reset_button->GetHierarchy().SetParent(preview_header);
+            UILabel *camera_reset_label = camera_reset_button->Q<UILabel>();
+            camera_reset_label->SetFont(s_font_icon);
+            camera_reset_label->SetText("\uf03d");
+            camera_reset_label->GetStyle().GetShadow().enabled = true;
+            camera_reset_button->RegisterClickCallback([]() {
+                EditorCamera::Reset();
+            });
+
+            s_label_stats = UIFactory::CreateLabel();
+            s_label_stats->SetFont(s_font_text);
+            s_label_stats->SetAlignment(TextAlignment::MiddleRight);
+            s_label_stats->SetAnchorPreset(AnchorPreset::StretchAll);
+            s_label_stats->SetAnchorOffsetMax(Vector2(5.0f, 0.0f));
+            s_label_stats->GetStyle().GetShadow().enabled = true;
+            s_label_stats->GetHierarchy().SetParent(preview_header);
+            s_label_stats->GetLayout().ignore_layout = true;
+        }
+        
         UpdateStats();
     }
 

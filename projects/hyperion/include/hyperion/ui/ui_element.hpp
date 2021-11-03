@@ -40,6 +40,13 @@ namespace Hyperion::UI {
         bool8 enable_blending = true;
     };
 
+    struct UIElementLayout {
+        bool8 ignore_layout = false;
+        LayoutType layout_type = LayoutType::None;
+        ChildAlignment child_alignment = ChildAlignment::TopLeft;
+        Vector2 spacing = Vector2(0.0f, 0.0f);
+    };
+
     class UIElementStyle {
     public:
         inline Visibility GetVisibility() const { return m_visibility; }
@@ -140,6 +147,8 @@ namespace Hyperion::UI {
 
         inline UIElementRenderer &GetRenderer() { return m_renderer; }
         inline const UIElementRenderer &GetRenderer() const { return m_renderer; }
+        inline UIElementLayout &GetLayout() { return m_layout; }
+        inline const UIElementLayout &GetLayout() const { return m_layout; }
         inline UIElementStyle &GetStyle() { return m_style; }
         inline const UIElementStyle &GetStyle() const { return m_style; }
         inline UIElementHierarchy &GetHierarchy() { return m_hierarchy; }
@@ -158,6 +167,8 @@ namespace Hyperion::UI {
         virtual void OnRebuildGeometry(MeshBuilder &mesh_builder);
     private:
         void RecalculateTransform(float32 ui_scale);
+    private:
+        static Vector2 GetLayoutPosition(ChildAlignment child_alignment, Vector2 container_size, Vector2 layout_size);
     private:
         bool8 m_is_dirty = true;
 
@@ -180,6 +191,7 @@ namespace Hyperion::UI {
         Vector2 m_anchor_offset_max = Vector2(0.0f, 0.0f);
 
         UIElementRenderer m_renderer;
+        UIElementLayout m_layout;
         UIElementStyle m_style;
         UIElementHierarchy m_hierarchy;
         UIElementState m_state;
