@@ -92,7 +92,6 @@ namespace Hyperion::Rendering {
     //     - Render targets:
     //         - Setting
     //         - Blitting
-    // NOTE: Currently there is no frustum culling at all.
     // 
     // ────────────────────────────────────────────────────────────────────────────────────
     // RENDER PIPELINE:

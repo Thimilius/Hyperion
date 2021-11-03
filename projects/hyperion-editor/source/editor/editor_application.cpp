@@ -126,8 +126,6 @@ namespace Hyperion::Editor {
         if (Engine::GetEngineMode() == EngineMode::EditorRuntimePlaying) {
             s_world->GetComponent<LocalTransformComponent>(g_parent)->rotation = Quaternion::FromEulerAngles(0.0f, Math::Sin(Time::GetTime()) * 45.0f, 0.0f);
         }
-
-        s_render_pipeline->Update();
     }
 
     //--------------------------------------------------------------

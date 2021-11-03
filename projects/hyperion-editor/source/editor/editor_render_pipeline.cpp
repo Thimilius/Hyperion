@@ -50,58 +50,45 @@ namespace Hyperion::Editor {
     }
 
     //--------------------------------------------------------------
-    void EditorRenderPipeline::Render(RenderFrame *render_frame, const RenderFrameContextCamera &camera) {
+    void EditorRenderPipeline::Render(RenderFrame *render_frame, const Array<const RenderFrameContextCamera *> cameras) {
         if (Display::HasChangedSize()) {
             SetRenderTargetSize(Display::GetWidth(), Display::GetHeight() - EditorStyle::HEADER_SIZE);
             m_object_ids_render_texture->Resize(GetRenderTargetWidth(), GetRenderTargetHeight());
         }
 
-        m_wrapped_pipeline->Render(render_frame, camera);
+        m_wrapped_pipeline->Render(render_frame, cameras);
 
-        if (camera.is_editor_camera) {
-            Vector2Int mouse_position = Input::GetMousePosition();
-            int32 x = 0;
-            int32 y = 0;
-            int32 width = GetRenderTargetWidth();
-            int32 height = GetRenderTargetHeight();
-            if (mouse_position.x >= x && mouse_position.x < width && mouse_position.y >= y && mouse_position.y < height) {
-                render_frame->DrawObjectIds(m_object_ids_render_texture->GetRenderTargetId());
+        Vector2Int mouse_position = Input::GetMousePosition();
+        int32 x = 0;
+        int32 y = 0;
+        int32 width = GetRenderTargetWidth();
+        int32 height = GetRenderTargetHeight();
+        if (mouse_position.x >= x && mouse_position.x < width && mouse_position.y >= y && mouse_position.y < height) {
+            render_frame->DrawObjectIds(m_object_ids_render_texture->GetRenderTargetId());
 
-                RectInt region;
-                region.position = mouse_position;
-                region.size = Vector2Int(1, 1);
-                RenderFrameCommandBuffer command_buffer;
-                command_buffer.RequestAsyncReadback(m_object_ids_render_texture->GetRenderTargetId(), 0, region, [](const AsyncRequestResult &result) {
-                    const uint32 *data = reinterpret_cast<const uint32 *>(result.data.GetData());
-                    if (result.data.GetLength() >= 4) {
-                        uint32 id = *data;
-                    }
-                });
-                render_frame->ExecuteCommandBuffer(command_buffer);
-            }
+            RectInt region;
+            region.position = mouse_position;
+            region.size = Vector2Int(1, 1);
+            RenderFrameCommandBuffer command_buffer;
+            command_buffer.RequestAsyncReadback(m_object_ids_render_texture->GetRenderTargetId(), 0, region, [](const AsyncRequestResult &result) {
+                const uint32 *data = reinterpret_cast<const uint32 *>(result.data.GetData());
+                if (result.data.GetLength() >= 4) {
+                    uint32 id = *data;
+                }
+            });
+            render_frame->ExecuteCommandBuffer(command_buffer);
         }
-
         render_frame->DrawEditorUI();
+    }
+
+    //--------------------------------------------------------------
+    void EditorRenderPipeline::RenderCamera(RenderFrame *render_frame, const RenderFrameContextCamera *camera) {
+        m_wrapped_pipeline->RenderCamera(render_frame, camera);
     }
 
     //--------------------------------------------------------------
     void EditorRenderPipeline::Shutdown() {
         m_wrapped_pipeline->Shutdown();
     }
-
-    //--------------------------------------------------------------
-    void EditorRenderPipeline::Update() {
-        World *world = EditorApplication::GetWorld();
-        RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
-
-        auto view = world->GetView<DerivedTransformComponent, CameraComponent>(ExcludeComponents<DisabledComponent>());
-        uint32 index = 0;
-        for (EntityId entity : view) {
-            DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(entity);
-            CameraComponent *camera = world->GetComponent<CameraComponent>(entity);
-        
-            CameraSystem::Run(derived_transform, camera, index++, true);
-        }
-    }
-
+    
 }

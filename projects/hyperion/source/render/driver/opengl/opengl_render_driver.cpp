@@ -203,6 +203,9 @@ namespace Hyperion::Rendering {
                     uniform_buffer_camera.camera_projection_matrix = render_frame_context_camera.projection_matrix;
                     glNamedBufferSubData(m_state.camera_uniform_buffer, 0, sizeof(OpenGLUniformBufferCamera), &uniform_buffer_camera);
 
+                    const CameraViewport &viewport = render_frame_context_camera.viewport;
+                    glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+
                     break;
                 }
                 case RenderFrameCommandType::ExecuteCommandBuffer: {
@@ -219,10 +222,6 @@ namespace Hyperion::Rendering {
                                 OpenGLDebugGroup debug_group("ClearRenderTarget");
 
                                 const RenderFrameCommandBufferCommandClearRenderTarget &clear_render_target = std::get<RenderFrameCommandBufferCommandClearRenderTarget>(buffer_command.data);
-
-                                const RenderFrameContextCamera &render_frame_context_camera = render_frame_context.GetCameras()[m_state.camera_index];
-                                const CameraViewport &viewport = render_frame_context_camera.viewport;
-                                glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
 
                                 Color background_color = clear_render_target.color;
                                 glClearColor(background_color.r, background_color.g, background_color.b, background_color.a);
