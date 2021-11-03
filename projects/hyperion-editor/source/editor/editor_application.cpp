@@ -72,6 +72,8 @@ namespace Hyperion::Editor {
             WorldManager::SetActiveWorld(s_world);
 
             g_camera = s_world->CreateEntity(EntityPrimitive::Camera);
+            s_world->GetComponent<LocalTransformComponent>(g_camera)->position = Vector3(0.0f, 1.0f, 5.0f);
+
             g_light = s_world->CreateEntity(EntityPrimitive::DirectionalLight);
 
             g_parent = s_world->CreateEntity(EntityPrimitive::Sphere);

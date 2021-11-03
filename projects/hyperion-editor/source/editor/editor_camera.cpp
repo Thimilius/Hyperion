@@ -11,6 +11,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/editor/editor_application.hpp"
 #include "hyperion/editor/editor_style.hpp"
+#include "hyperion/editor/editor_ui.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Editor {
@@ -69,8 +70,10 @@ namespace Hyperion::Editor {
         }
 
         {
-            uint32 render_target_height = Display::GetHeight() - EditorStyle::HEADER_SIZE;
-            float32 viewport_clipping_height = (Display::GetHeight() - EditorStyle::HEADER_SIZE) / static_cast<float32>(Display::GetHeight());
+            uint32 width = EditorUI::GetPreviewWidth();
+            uint32 height = EditorUI::GetPreviewHeight();
+            float32 viewport_clipping_height = height / static_cast<float32>(Display::GetHeight());
+            s_camera.viewport_clipping.width = width / static_cast<float32>(Display::GetWidth());
             s_camera.viewport_clipping.height = viewport_clipping_height;
         }
 

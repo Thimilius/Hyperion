@@ -16,6 +16,7 @@
 #include "hyperion/editor/editor_application.hpp"
 #include "hyperion/editor/editor_camera.hpp"
 #include "hyperion/editor/editor_style.hpp"
+#include "hyperion/editor/editor_ui.hpp"
 
 //------------------------- Namespaces -------------------------
 using namespace Hyperion::Rendering;
@@ -32,7 +33,7 @@ namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
     void EditorRenderPipeline::Initialize() {
-        SetRenderTargetSize(Display::GetWidth(), Display::GetHeight() - EditorStyle::HEADER_SIZE);
+        UpdateSize();
         m_wrapped_pipeline->Initialize();
 
         TextureAttributes render_texture_attributes;
@@ -63,11 +64,9 @@ namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
     void EditorRenderPipeline::Render(RenderFrame *render_frame, const Array<const RenderFrameContextCamera *> cameras) {
-        if (Display::HasChangedSize()) {
-            SetRenderTargetSize(Display::GetWidth(), Display::GetHeight() - EditorStyle::HEADER_SIZE);
-            m_object_ids_render_texture->Resize(GetRenderTargetWidth(), GetRenderTargetHeight());
-            m_editor_render_texture->Resize(GetRenderTargetWidth(), GetRenderTargetHeight());
-        }
+        UpdateSize();
+        m_object_ids_render_texture->Resize(GetRenderTargetWidth(), GetRenderTargetHeight());
+        m_editor_render_texture->Resize(GetRenderTargetWidth(), GetRenderTargetHeight());
 
         m_wrapped_pipeline->Render(render_frame, cameras);
 
@@ -120,11 +119,19 @@ namespace Hyperion::Editor {
                 const uint32 *data = reinterpret_cast<const uint32 *>(result.data.GetData());
                 if (result.data.GetLength() >= 4) {
                     uint32 id = *data;
+                    //HYP_TRACE("Mosue Position: {}, Id: {}", Input::GetMousePosition().ToString(), id);
                 }
-                });
+            });
             render_frame->ExecuteCommandBuffer(command_buffer);
         }
         render_frame->DrawEditorUI();
+    }
+
+    //--------------------------------------------------------------
+    void EditorRenderPipeline::UpdateSize() {
+        uint32 width = EditorUI::GetPreviewWidth();
+        uint32 height = EditorUI::GetPreviewHeight();
+        SetRenderTargetSize(width, height);
     }
     
 }

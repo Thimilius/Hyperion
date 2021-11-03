@@ -27,6 +27,7 @@ namespace Hyperion::Editor {
         inline void SetShouldResizeToScreen(bool8 should_resize_to_screen) override { m_wrapped_pipeline->SetShouldResizeToScreen(should_resize_to_screen); }
     private:
         void RenderEditor(Rendering::RenderFrame *render_frame);
+        void UpdateSize();
     private:
         Rendering::IRenderPipeline *m_wrapped_pipeline = nullptr;
 

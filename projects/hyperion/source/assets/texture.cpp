@@ -64,10 +64,12 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void RenderTexture::Resize(uint32 width, uint32 height) {
-        m_width = width;
-        m_height = height;
+        if (m_width != width || m_height != height) {
+            m_width = width;
+            m_height = height;
 
-        SetDirty();
+            SetDirty();
+        }
     }
 
 }

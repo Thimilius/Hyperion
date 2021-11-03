@@ -13,6 +13,9 @@ namespace Hyperion::Editor {
     public:
         static void Initialize();
         static void Update();
+
+        static uint32 GetPreviewWidth() { return static_cast<uint32>(s_preview_container_ui_element == nullptr ? 1280 : s_preview_container_ui_element->GetWorldRect().width); }
+        static uint32 GetPreviewHeight() { return static_cast<uint32>(s_preview_container_ui_element == nullptr ? 720 : s_preview_container_ui_element->GetWorldRect().height); }
     private:
         EditorUI() = delete;
         ~EditorUI() = delete;
@@ -24,10 +27,9 @@ namespace Hyperion::Editor {
 
         inline static UI::UIViewComponent s_ui_view;
         inline static UI::UIElement *s_root_element;
-        inline static UI::UIElement *s_header_ui_element;
-        inline static UI::UIElement *s_render_runtime_ui_element;
-        inline static UI::UIElement *s_render_editor_ui_element;
-        inline static UI::UIButton *s_child_ui_element;
+        inline static UI::UIElement *s_preview_container_ui_element;
+        inline static UI::UIElement *s_preview_runtime_ui_element;
+        inline static UI::UIElement *s_preview_editor_ui_element;
         inline static UI::UILabel *s_label_stats;
         inline static UI::UIToggle *s_toggle_vsync;
         inline static UI::UIToggle *s_toggle_grid;
