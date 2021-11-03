@@ -23,7 +23,7 @@
 #include "hyperion/editor/editor_render_pipeline.hpp"
 #include "hyperion/editor/editor_style.hpp"
 #include "hyperion/editor/editor_ui.hpp"
-#include "hyperion/editor/editor_world_camera.hpp"
+#include "hyperion/editor/editor_camera.hpp"
 
 //------------------------- Namespaces -------------------------
 using namespace Hyperion::Rendering;
@@ -100,14 +100,14 @@ namespace Hyperion::Editor {
             UIViewComponent *ui_view = s_world->AddComponent<UIViewComponent>(ui);
             ui_view->root_element = root_element;
 
-            EditorWorldCamera::Initialize(g_camera, s_world);
+            EditorCamera::Initialize(g_camera, s_world);
         }
     }
 
     //--------------------------------------------------------------
     void EditorApplication::OnUpdate(float32 delta_time) {
         EditorUI::Update();
-        EditorWorldCamera::Update(delta_time, g_camera, s_world);
+        EditorCamera::Update(delta_time, g_camera, s_world);
 
         if (Input::IsKeyHold(KeyCode::Control) && Input::IsKeyDown(KeyCode::W)) {
             Exit();

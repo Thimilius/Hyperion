@@ -1,5 +1,5 @@
 //--------------------- Definition Include ---------------------
-#include "hyperion/editor/editor_world_camera.hpp"
+#include "hyperion/editor/editor_camera.hpp"
 
 //---------------------- Library Includes ----------------------
 #include <hyperion/core/app/display.hpp>
@@ -14,13 +14,13 @@
 namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
-    void EditorWorldCamera::Initialize(EntityId camera, World *world) {
+    void EditorCamera::Initialize(EntityId camera, World *world) {
         s_camera_controller = new LookAroundCameraController(camera);
         s_camera_controller->Reset(world);
     }
 
     //--------------------------------------------------------------
-    void EditorWorldCamera::Update(float32 delta_time, EntityId camera, World *world) {
+    void EditorCamera::Update(float32 delta_time, EntityId camera, World *world) {
         s_camera_controller->Update(world, delta_time);
         if (Input::IsKeyDown(KeyCode::R)) {
             s_camera_controller->Reset(world);
@@ -32,7 +32,7 @@ namespace Hyperion::Editor {
     }
 
     //--------------------------------------------------------------
-    void EditorWorldCamera::Reset() {
+    void EditorCamera::Reset() {
         s_camera_controller->Reset(EditorApplication::GetWorld());
     }
 

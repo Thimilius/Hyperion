@@ -8,14 +8,14 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Editor {
 
-    class EditorWorldCamera final {
+    class EditorCamera final {
     public:
         static void Initialize(EntityId camera, World *world);
         static void Update(float32 delta_time, EntityId camera, World *world);
         static void Reset();
     private:
-        EditorWorldCamera() = delete;
-        ~EditorWorldCamera() = delete;
+        EditorCamera() = delete;
+        ~EditorCamera() = delete;
     private:
         inline static CameraController *s_camera_controller;
     };
