@@ -179,17 +179,17 @@ namespace Hyperion::Rendering {
         
         HYP_PROFILE_THREAD("Render Thread");
         while (true) {
-            if (s_render_thread_should_exit) {
-                break;
+            {
+                HYP_PROFILE_CATEGORY("RenderEngine.WaitForSwapDone", ProfileCategory::Wait);
+                RenderThreadSynchronization::WaitForSwapDone();
+
+                if (s_render_thread_should_exit) {
+                    break;
+                }
             }
 
             s_render_driver_context->SetVSyncMode(s_vsync_mode);
 
-            {
-                HYP_PROFILE_CATEGORY("RenderEngine.WaitForSwapDone", ProfileCategory::Wait);
-                RenderThreadSynchronization::WaitForSwapDone();
-            }
-            
             RenderDriver();
 
             {
