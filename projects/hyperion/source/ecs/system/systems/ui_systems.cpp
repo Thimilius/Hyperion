@@ -110,6 +110,12 @@ namespace Hyperion::UI {
             if (state.pressed_element) {
                 if (Input::IsMouseButtonUp(MouseButtonCode::Left)) {
                     SendEvent(state.pressed_element, UIEventType::PointerUp);
+
+                    // We only send the click to the button we are hovering and have pressed
+                    if (state.hovered_element == state.pressed_element) {
+                        SendEvent(state.hovered_element, UIEventType::PointerClick);
+                    }
+
                     state.pressed_element = nullptr;
                 }
             }
@@ -121,7 +127,6 @@ namespace Hyperion::UI {
                 }
                 if (Input::IsMouseButtonUp(MouseButtonCode::Left)) {
                     SendEvent(state.hovered_element, UIEventType::PointerUp);
-                    SendEvent(state.hovered_element, UIEventType::PointerClick);
                     state.pressed_element = nullptr;
                 }
 
