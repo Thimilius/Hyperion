@@ -39,10 +39,10 @@ namespace Hyperion::UI {
     };
 
     struct ColorBlock {
-        Color normal_color = Color::White();
-        Color highlight_color = Color::White();
-        Color pressed_color = Color::White();
-        Color disabled_color = Color::White();
+        Color normal_color = Color(1.0f, 1.0f, 1.0f, 1.0f);
+        Color highlight_color = Color(0.9f, 0.9f, 0.9f, 1.0f);
+        Color pressed_color = Color(0.75f, 0.75f, 0.75f, 1.0f);
+        Color disabled_color = Color(0.6f, 0.6f, 0.6f, 0.5f);
     };
 
     struct Shadow {

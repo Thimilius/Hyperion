@@ -34,17 +34,23 @@ namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
     void EditorApplication::EnterRuntime() {
-        Engine::SetEngineMode(EngineMode::EditorRuntimePlaying);
+        if (Engine::GetEngineMode() == EngineMode::Editor || Engine::GetEngineMode() == EngineMode::EditorRuntimePaused) {
+            Engine::SetEngineMode(EngineMode::EditorRuntimePlaying);
+        }
     }
 
     //--------------------------------------------------------------
     void EditorApplication::PauseRuntime() {
-        Engine::SetEngineMode(EngineMode::EditorRuntimePaused);
+        if (Engine::GetEngineMode() == EngineMode::EditorRuntimePlaying) {
+            Engine::SetEngineMode(EngineMode::EditorRuntimePaused);
+        }
     }
 
     //--------------------------------------------------------------
     void EditorApplication::ExitRuntime() {
-        Engine::SetEngineMode(EngineMode::Editor);
+        if (Engine::GetEngineMode() == EngineMode::EditorRuntimePlaying || Engine::GetEngineMode() == EngineMode::EditorRuntimePaused) {
+            Engine::SetEngineMode(EngineMode::Editor);
+        }
     }
 
     //--------------------------------------------------------------

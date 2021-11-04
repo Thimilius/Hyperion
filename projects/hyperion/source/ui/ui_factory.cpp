@@ -7,13 +7,6 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::UI {
 
-    const ColorBlock SELECTION_COLOR_BLOCK = {
-        Color(1.0f, 1.0f, 1.0f, 1.0f),
-        Color(0.9f, 0.9f, 0.9f, 1.0f),
-        Color(0.75f, 0.75f, 0.75f, 1.0f),
-        Color(0.75f, 0.75f, 0.75f, 0.5f)
-    };
-
     //--------------------------------------------------------------
     UIElement *UIFactory::CreateElement() {
         return new UIElement();
@@ -32,7 +25,6 @@ namespace Hyperion::UI {
     UIButton *UIFactory::CreateButton() {
         UIButton *button = new UIButton();
         button->SetName("Button");
-        button->GetStyle().SetColorBlock(SELECTION_COLOR_BLOCK);
         button->SetSize(Vector2(150.0f, 40.0f));
 
         UILabel *label = CreateLabel();
@@ -63,7 +55,6 @@ namespace Hyperion::UI {
 
         UIToggle *toggle = new UIToggle();
         toggle->SetName("Toggle");
-        toggle->GetStyle().SetColorBlock(SELECTION_COLOR_BLOCK);
         toggle->SetSize(Vector2(16.0f, 16.0f));
         toggle->SetToggleGraphic(toggle_graphic);
         toggle->SetToggleOnColor(Color::Grey());
