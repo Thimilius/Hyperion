@@ -35,14 +35,14 @@ namespace Hyperion::Editor {
             UIElement *top_bar = UIFactory::CreateElement();
             top_bar->SetSize(Vector2(0.0f, EditorStyle::HEADER_SIZE - 1));
             top_bar->SetAnchorPreset(AnchorPreset::TopStretchHorizontal);
-            top_bar->GetStyle().SetColor(EditorStyle::NORMAL);
+            top_bar->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
             top_bar->GetHierarchy().SetParent(s_root_element);
 
             UIElement *top_bar_container = UIFactory::CreateElement();
             top_bar_container->SetAnchorPreset(AnchorPreset::TopStretchHorizontal);
             top_bar_container->SetSize(Vector2(0.0f, 1.0f));
             top_bar_container->SetPosition(Vector2(0.0f, -static_cast<float32>(EditorStyle::HEADER_SIZE - 1)));
-            top_bar_container->GetStyle().SetColor(EditorStyle::HIGHLIGHT);
+            top_bar_container->GetStyle().SetColor(EditorStyle::COLOR_HIGHLIGHT);
             top_bar_container->GetHierarchy().SetParent(s_root_element);
         }
 
@@ -53,14 +53,14 @@ namespace Hyperion::Editor {
             left_bar->SetAnchorPreset(AnchorPreset::LeftStretchVertical);
             left_bar->SetAnchorOffsetMax(Vector2(0.0f, EditorStyle::HEADER_SIZE));
             left_bar->SetAnchorOffsetMin(Vector2(0.0f, EditorStyle::FOOTER_SIZE));
-            left_bar->GetStyle().SetColor(EditorStyle::NORMAL_DARK);
+            left_bar->GetStyle().SetColor(EditorStyle::COLOR_NORMAL_DARK);
             left_bar->GetHierarchy().SetParent(s_root_element);
 
             UIElement *left_bar_container = UIFactory::CreateElement();
             left_bar_container->SetAnchorPreset(AnchorPreset::StretchAll);
             left_bar_container->SetAnchorOffsetMax(Vector2(3.0f, 3.0f));
             left_bar_container->SetAnchorOffsetMin(Vector2(3.0f, 3.0f));
-            left_bar_container->GetStyle().SetColor(EditorStyle::NORMAL);
+            left_bar_container->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
             left_bar_container->GetHierarchy().SetParent(left_bar);
 
             s_label_selection = UIFactory::CreateLabel();
@@ -77,14 +77,14 @@ namespace Hyperion::Editor {
             UIElement *bottom_bar = UIFactory::CreateElement();
             bottom_bar->SetSize(Vector2(0.0f, EditorStyle::FOOTER_SIZE));
             bottom_bar->SetAnchorPreset(AnchorPreset::BottomStretchHorizontal);
-            bottom_bar->GetStyle().SetColor(EditorStyle::NORMAL_DARK);
+            bottom_bar->GetStyle().SetColor(EditorStyle::COLOR_NORMAL_DARK);
             bottom_bar->GetHierarchy().SetParent(s_root_element);
 
             UIElement *bottom_bar_container = UIFactory::CreateElement();
             bottom_bar_container->SetAnchorPreset(AnchorPreset::StretchAll);
             bottom_bar_container->SetAnchorOffsetMax(Vector2(3.0f, 3.0f));
             bottom_bar_container->SetAnchorOffsetMin(Vector2(3.0f, 3.0f));
-            bottom_bar_container->GetStyle().SetColor(EditorStyle::NORMAL);
+            bottom_bar_container->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
             bottom_bar_container->GetHierarchy().SetParent(bottom_bar);
         }
 
@@ -94,13 +94,13 @@ namespace Hyperion::Editor {
             preview->SetAnchorPreset(AnchorPreset::StretchAll);
             preview->SetAnchorOffsetMax(Vector2(0.0f, EditorStyle::HEADER_SIZE));
             preview->SetAnchorOffsetMin(Vector2(EditorStyle::SIDEBAR_SIZE, EditorStyle::FOOTER_SIZE));
-            preview->GetStyle().SetColor(EditorStyle::NORMAL);
+            preview->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
             preview->GetHierarchy().SetParent(s_root_element);
 
             UIElement *preview_header = UIFactory::CreateElement();
             preview_header->SetSize(Vector2(0.0f, EditorStyle::HEADER_SIZE));
             preview_header->SetAnchorPreset(AnchorPreset::TopStretchHorizontal);
-            preview_header->GetStyle().SetColor(EditorStyle::NORMAL);
+            preview_header->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
             preview_header->GetHierarchy().SetParent(preview);
 
             UIElement *preview_header_left = UIFactory::CreateElement();
@@ -120,7 +120,7 @@ namespace Hyperion::Editor {
             s_preview_container_ui_element = UIFactory::CreateElement();
             s_preview_container_ui_element->SetAnchorPreset(AnchorPreset::StretchAll);
             s_preview_container_ui_element->SetAnchorOffsetMax(Vector2(0.0f, EditorStyle::HEADER_SIZE));
-            s_preview_container_ui_element->GetStyle().SetColor(EditorStyle::HIGHLIGHT);
+            s_preview_container_ui_element->GetStyle().SetColor(EditorStyle::COLOR_HIGHLIGHT);
             s_preview_container_ui_element->GetHierarchy().SetParent(preview);
 
             s_preview_runtime_ui_element = UIFactory::CreateElement();
@@ -140,8 +140,8 @@ namespace Hyperion::Editor {
             auto create_toggle = [](UIElement *parent, Font *font, const String &text, bool8 is_on, UIToggleCallback callback) -> UIToggle * {
                 UIToggle *ui_toggle = UIFactory::CreateToggle();
                 ui_toggle->SetSize(Vector2(25.0f, 25.0f));
-                ui_toggle->GetStyle().SetColor(EditorStyle::NORMAL);
-                ui_toggle->SetToggleOnColor(EditorStyle::HIGHLIGHT);
+                ui_toggle->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
+                ui_toggle->SetToggleOnColor(EditorStyle::COLOR_HIGHLIGHT);
                 ui_toggle->SetToggleOffColor(Color::White());
                 ui_toggle->GetHierarchy().SetParent(parent);
                 ui_toggle->GetHierarchy().RemoveChildren();
@@ -159,7 +159,7 @@ namespace Hyperion::Editor {
             auto create_button = [](UIElement *parent, Font *font, const String &text, UIButtonClickCallback callback = UIButtonClickCallback()) -> UIButton * {
                 UIButton *button = UIFactory::CreateButton();
                 button->SetSize(Vector2(25.0f, 25.0f));
-                button->GetStyle().SetColor(EditorStyle::NORMAL);
+                button->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
                 button->GetHierarchy().SetParent(parent);
                 UILabel *button_label = button->Q<UILabel>();
                 button_label->SetFont(font);
@@ -196,10 +196,10 @@ namespace Hyperion::Editor {
                 play_button->RegisterClickCallback([play_button, pause_button, stop_button]() {
                     EditorApplication::EnterRuntime();
 
-                    play_button->GetStyle().SetColor(EditorStyle::HIGHLIGHT);
+                    play_button->GetStyle().SetColor(EditorStyle::COLOR_HIGHLIGHT);
                     play_button->SetInteractable(false);
 
-                    pause_button->GetStyle().SetColor(EditorStyle::NORMAL);
+                    pause_button->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
                     pause_button->SetInteractable(true);
 
                     stop_button->SetInteractable(true);
@@ -207,10 +207,10 @@ namespace Hyperion::Editor {
                 pause_button->RegisterClickCallback([play_button, pause_button, stop_button]() {
                     EditorApplication::PauseRuntime();
 
-                    play_button->GetStyle().SetColor(EditorStyle::NORMAL);
+                    play_button->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
                     play_button->SetInteractable(true);
 
-                    pause_button->GetStyle().SetColor(EditorStyle::HIGHLIGHT);
+                    pause_button->GetStyle().SetColor(EditorStyle::COLOR_HIGHLIGHT);
                     pause_button->SetInteractable(false);
 
                     stop_button->SetInteractable(true);
@@ -218,10 +218,10 @@ namespace Hyperion::Editor {
                 stop_button->RegisterClickCallback([play_button, pause_button, stop_button]() {
                     EditorApplication::ExitRuntime();
 
-                    play_button->GetStyle().SetColor(EditorStyle::NORMAL);
+                    play_button->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
                     play_button->SetInteractable(true);
 
-                    pause_button->GetStyle().SetColor(EditorStyle::NORMAL);
+                    pause_button->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
                     pause_button->SetInteractable(false);
 
                     stop_button->SetInteractable(false);

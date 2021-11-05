@@ -9,8 +9,6 @@ build/
 *.filters
 *.cache
 Makefile
-run_tree/*.exe
-run_tree/*.dll
 
 # Visual Studio Code
 .vscode/*
@@ -19,3 +17,8 @@ run_tree/*.dll
 !.vscode/launch.json
 !.vscode/extensions.json
 *.code-workspace
+
+# Run-Tree
+run_tree/*.exe
+run_tree/*.dll
+run_tree/*.world
