@@ -1,14 +1,12 @@
 //------------------------ Header Guard ------------------------
 #pragma once
 
-//---------------------- Library Includes ----------------------
-#include <Windows.h>
-
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/input.hpp"
 #include "hyperion/core/app/window_settings.hpp"
 #include "hyperion/core/app/events/app_event.hpp"
 #include "hyperion/core/math/vector2.hpp"
+#include "hyperion/platform/windows/windows_types.hpp"
 #include "hyperion/platform/windows/app/windows_input.hpp"
 #include "hyperion/render/render_backend.hpp"
 
@@ -99,7 +97,7 @@ namespace Hyperion {
         UINT_PTR m_timer;
         
         // We store the last window placement in order to switch correctly between windowed and borderless mode.
-        WINDOWPLACEMENT m_previous_placement;
+        void *m_previous_placement;
 
         // To distinguish the two shift keys we explicily store their previous state.
         // That way we can send out the correct key released events when appropriate.

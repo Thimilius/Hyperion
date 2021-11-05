@@ -1,6 +1,7 @@
 //------------------------ Header Guard ------------------------
 #pragma once
 
+#define CALLBACK    __stdcall
 #define WIN_API extern "C" __declspec(dllimport)
 #define WIN_API_CALLCONV __stdcall
 
@@ -67,4 +68,3 @@ typedef struct _PROCESSOR_POWER_INFORMATION {
     ULONG MaxIdleState;
     ULONG CurrentIdleState;
 } PROCESSOR_POWER_INFORMATION, *PPROCESSOR_POWER_INFORMATION;
-

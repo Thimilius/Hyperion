@@ -5,8 +5,9 @@
 #include "hyperion/platform/windows/app/windows_window.hpp"
 
 //---------------------- Library Includes ----------------------
-#include <Dbt.h>
+#include <Windows.h>
 #include <Windowsx.h>
+#include <Dbt.h>
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/events/app_event.hpp"
@@ -33,6 +34,8 @@ namespace Hyperion {
 
         m_input = static_cast<WindowsInput *>(Input::s_input_implementation);
 
+        m_previous_placement = new WINDOWPLACEMENT();
+
         SetupWindow(settings);
         
         SetTitle(settings.title);
@@ -44,6 +47,7 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     WindowsWindow::~WindowsWindow() {
+        delete reinterpret_cast<WINDOWPLACEMENT *>(m_previous_placement);
         DestroyWindow(m_window_handle);
     }
 
@@ -108,10 +112,12 @@ namespace Hyperion {
         // This already needs to be set here for all later message callbacks.
         m_window_mode = window_mode;
 
+        WINDOWPLACEMENT *previous_placement = reinterpret_cast<WINDOWPLACEMENT *>(m_previous_placement);
+
         switch (window_mode) {
             case WindowMode::Windowed: {
                 SetWindowLongW(m_window_handle, GWL_STYLE, window_styles | (WS_OVERLAPPEDWINDOW));
-                SetWindowPlacement(m_window_handle, &m_previous_placement);
+                SetWindowPlacement(m_window_handle, previous_placement);
 
                 Vector2 size = GetActualWindowSize(m_width, m_height);
 
@@ -120,7 +126,7 @@ namespace Hyperion {
                 break;
             }
             case WindowMode::Borderless: {
-                GetWindowPlacement(m_window_handle, &m_previous_placement);
+                GetWindowPlacement(m_window_handle, previous_placement);
 
                 MONITORINFO monitor_info = { sizeof(monitor_info) };
                 GetMonitorInfoW(MonitorFromWindow(m_window_handle, MONITOR_DEFAULTTOPRIMARY), &monitor_info);
