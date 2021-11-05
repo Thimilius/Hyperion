@@ -242,6 +242,8 @@ namespace Hyperion {
     private:
         void AddComponentsForPrimitive(EntityId id, EntityPrimitive primitive);
     private:
+        static String GetNameForPrimitive(EntityPrimitive primitive);
+    private:
         String m_name = "World";
         WorldEnvironment m_environment;
 

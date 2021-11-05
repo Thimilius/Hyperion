@@ -160,7 +160,7 @@ namespace Hyperion {
     //--------------------------------------------------------------
     void World::AddComponentsForPrimitive(EntityId id, EntityPrimitive primitive) {
         if (primitive != EntityPrimitive::Empty) {
-            AddComponent<NameComponent>(id);
+            AddComponent<NameComponent>(id)->name = GetNameForPrimitive(primitive);
             AddComponent<LocalTransformComponent>(id);
             AddComponent<DerivedTransformComponent>(id);
             AddComponent<LocalToWorldComponent>(id);
@@ -205,6 +205,24 @@ namespace Hyperion {
             }
             case EntityPrimitive::Sprite: AddComponent<Rendering::SpriteComponent>(id); break;
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+        }
+    }
+
+    //--------------------------------------------------------------
+    String World::GetNameForPrimitive(EntityPrimitive primitive) {
+        switch (primitive) {
+            case EntityPrimitive::Empty: return "Empty";
+            case EntityPrimitive::Base: return "Entity";
+            case EntityPrimitive::Camera: return "Camera";
+            case EntityPrimitive::DirectionalLight: return "DirectionalLight";
+            case EntityPrimitive::PointLight: return "PointLight";
+            case EntityPrimitive::SpotLight: return "SpotLight";
+            case EntityPrimitive::Quad: return "Quad";
+            case EntityPrimitive::Plane: return "Plane";
+            case EntityPrimitive::Cube: return "Cube";
+            case EntityPrimitive::Sphere: return "Sphere";
+            case EntityPrimitive::Sprite: return "Sprite";
+            default: return "Entity";
         }
     }
 
