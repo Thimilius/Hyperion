@@ -35,6 +35,7 @@ namespace Hyperion {
         m_input = static_cast<WindowsInput *>(Input::s_input_implementation);
 
         m_previous_placement = new WINDOWPLACEMENT();
+        m_start_state = settings.window_state;
 
         SetupWindow(settings);
         
@@ -281,7 +282,12 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void WindowsWindow::Show() {
-        ShowWindow(m_window_handle, SW_SHOWNORMAL);
+        switch (m_start_state) {
+            case WindowState::Normal: ShowWindow(m_window_handle, SW_SHOWNORMAL); break;
+            case WindowState::Minimized: ShowWindow(m_window_handle, SW_SHOWMINIMIZED); break;
+            case WindowState::Maximized: ShowWindow(m_window_handle, SW_SHOWMAXIMIZED); break;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        }
     }
 
     //--------------------------------------------------------------

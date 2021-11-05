@@ -29,6 +29,7 @@ namespace Hyperion {
         uint32 min_height = 360;
 
         WindowMode window_mode = WindowMode::Windowed;
+        WindowState window_state = WindowState::Normal;
     };
 
 }

@@ -63,8 +63,9 @@ namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
     void EditorApplication::OnSetup(ApplicationSettings &settings) {
-        s_render_pipeline = new EditorRenderPipeline();
+        settings.window.window_state = WindowState::Maximized;
 
+        s_render_pipeline = new EditorRenderPipeline();
         settings.render.backend = Rendering::RenderBackend::OpenGL;
         settings.render.threading_mode = Rendering::RenderThreadingMode::MultiThreaded;
         settings.render.vsync_mode = Rendering::VSyncMode::DontSync;

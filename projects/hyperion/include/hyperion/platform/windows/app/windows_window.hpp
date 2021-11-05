@@ -96,6 +96,8 @@ namespace Hyperion {
         HWND m_window_handle;
         UINT_PTR m_timer;
         
+        WindowState m_start_state;
+
         // We store the last window placement in order to switch correctly between windowed and borderless mode.
         void *m_previous_placement;
 
