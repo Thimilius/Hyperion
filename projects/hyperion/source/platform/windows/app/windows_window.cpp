@@ -28,14 +28,15 @@ namespace Hyperion {
         m_height = settings.height;
         m_min_width = settings.min_width;
         m_min_height = settings.min_height;
-        m_window_state = WindowState::Normal;
+        m_window_state = m_window_start_state;
+        m_window_start_state = settings.window_state;
         m_cursor_is_visible = true;
         m_cursor_mode = CursorMode::Default;
+        m_menu = settings.menu;
 
         m_input = static_cast<WindowsInput *>(Input::s_input_implementation);
 
         m_previous_placement = new WINDOWPLACEMENT();
-        m_start_state = settings.window_state;
 
         SetupWindow(settings);
         
@@ -78,10 +79,10 @@ namespace Hyperion {
                     SetWindowState(WindowState::Normal);
                 }
 
-                Vector2 size = GetActualWindowSize(width, height);
+                Vector2Int size = GetActualWindowSize(width, height);
 
                 uint32 flags = SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER;
-                SetWindowPos(m_window_handle, nullptr, 0, 0, static_cast<uint32>(size.x), static_cast<uint32>(size.y), flags);
+                SetWindowPos(m_window_handle, nullptr, 0, 0, size.x, size.y, flags);
                 break;
             }
             case WindowMode::Borderless: {
@@ -120,10 +121,10 @@ namespace Hyperion {
                 SetWindowLongW(m_window_handle, GWL_STYLE, window_styles | (WS_OVERLAPPEDWINDOW));
                 SetWindowPlacement(m_window_handle, previous_placement);
 
-                Vector2 size = GetActualWindowSize(m_width, m_height);
+                Vector2Int size = GetActualWindowSize(m_width, m_height);
 
                 uint32 flags = SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED;
-                SetWindowPos(m_window_handle, nullptr, 0, 0, static_cast<uint32>(size.x), static_cast<uint32>(size.y), flags);
+                SetWindowPos(m_window_handle, nullptr, 0, 0, size.x, size.y, flags);
                 break;
             }
             case WindowMode::Borderless: {
@@ -282,7 +283,7 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void WindowsWindow::Show() {
-        switch (m_start_state) {
+        switch (m_window_start_state) {
             case WindowState::Normal: ShowWindow(m_window_handle, SW_SHOWNORMAL); break;
             case WindowState::Minimized: ShowWindow(m_window_handle, SW_SHOWMINIMIZED); break;
             case WindowState::Maximized: ShowWindow(m_window_handle, SW_SHOWMAXIMIZED); break;
@@ -294,6 +295,35 @@ namespace Hyperion {
     void WindowsWindow::SetAppEventCallback(const AppEventCallbackFunction &app_event_callback) {
         m_app_event_callback = app_event_callback;
         m_input->SetEventCallback(app_event_callback);
+    }
+
+    //--------------------------------------------------------------
+    HMENU CreateSubMenu(const Array<MenuItem> &items, uint32 &identifier) {
+        HMENU sub_menu = CreateMenu();
+
+        for (const MenuItem &item : items) {
+            WideString wide_text = StringUtils::Utf8ToUtf16(item.text);
+
+            MENUITEMINFOW item_info = { };
+            item_info.cbSize = sizeof(MENUITEMINFOW);
+            item_info.fMask = MIIM_FTYPE | MIIM_ID | MIIM_STRING | MIIM_STATE;
+            item_info.fType = MFT_STRING;
+            item_info.fState = MFS_ENABLED | MFS_UNHILITE;
+            item_info.wID = identifier++;
+            item_info.dwTypeData = wide_text.data();
+
+            bool8 is_sub_menu = !item.sub_items.IsEmpty();
+            HMENU sub_sub_menu = nullptr;
+            if (is_sub_menu) {
+                sub_sub_menu = CreateSubMenu(item.sub_items, identifier);
+                item_info.fMask |= MIIM_SUBMENU;
+                item_info.hSubMenu = sub_sub_menu;
+            }
+
+            InsertMenuItemW(sub_menu, -1, true, &item_info);
+        }
+
+        return sub_menu;
     }
 
     //--------------------------------------------------------------
@@ -320,7 +350,35 @@ namespace Hyperion {
             HYP_PANIC_MESSAGE("Engine", "Failed to register windows window class!");
         }
 
-        Vector2 size = GetActualWindowSize(settings.width, settings.height);
+        Vector2Int size = GetActualWindowSize(settings.width, settings.height);
+
+        uint32 identifier = 1;
+        HMENU menu = nullptr;
+        if (!settings.menu.items.IsEmpty()) {
+            menu = CreateMenu();
+
+            for (const MenuItem &item : settings.menu.items) {
+                WideString wide_text = StringUtils::Utf8ToUtf16(item.text);
+
+                MENUITEMINFOW item_info = { };
+                item_info.cbSize = sizeof(MENUITEMINFOW);
+                item_info.fMask = MIIM_FTYPE | MIIM_ID | MIIM_STRING | MIIM_STATE;
+                item_info.fType = MFT_STRING;
+                item_info.fState = MFS_ENABLED | MFS_UNHILITE;
+                item_info.wID = identifier++;
+                item_info.dwTypeData = wide_text.data();
+
+                bool8 is_sub_menu = !item.sub_items.IsEmpty();
+                HMENU sub_menu = nullptr;
+                if (is_sub_menu) {
+                    sub_menu = CreateSubMenu(item.sub_items, identifier);
+                    item_info.fMask |= MIIM_SUBMENU;
+                    item_info.hSubMenu = sub_menu;
+                }
+
+                InsertMenuItemW(menu, -1, true, &item_info);
+            }
+        }
 
         m_window_handle = CreateWindowExW(
             0,
@@ -329,10 +387,10 @@ namespace Hyperion {
             window_styles,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
-            static_cast<uint32>(size.x),
-            static_cast<uint32>(size.y),
+            size.x,
+            size.y,
             nullptr,
-            nullptr,
+            menu,
             instance,
             this
         );
@@ -347,14 +405,15 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    Vector2 WindowsWindow::GetActualWindowSize(uint32 client_width, uint32 client_height) const {
+    Vector2Int WindowsWindow::GetActualWindowSize(uint32 client_width, uint32 client_height) const {
+        bool8 has_menu = !m_menu.items.IsEmpty();
         RECT window_rect = { 0 };
         window_rect.right = static_cast<LONG>(client_width);
         window_rect.bottom = static_cast<LONG>(client_height);
-        if (!AdjustWindowRect(&window_rect, GetWindowLongW(m_window_handle, GWL_STYLE), false)) {
+        if (!AdjustWindowRect(&window_rect, GetWindowLongW(m_window_handle, GWL_STYLE), true)) {
             HYP_PANIC_MESSAGE("Engine", "Failed to calculate window size!");
         }
-        return Vector2(static_cast<float32>(window_rect.right - window_rect.left), static_cast<float32>(window_rect.bottom - window_rect.top));
+        return Vector2Int(window_rect.right - window_rect.left, window_rect.bottom - window_rect.top);
     }
 
     //--------------------------------------------------------------
@@ -622,6 +681,22 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    const MenuItem *FindMenuItem(const Array<MenuItem> &items, uint32 &identifier_counter, uint32 identifier) {
+        for (const MenuItem &item : items) {
+            if (identifier_counter == identifier) {
+                return &item;
+            }
+            identifier_counter++;
+
+            const MenuItem *found_item = FindMenuItem(item.sub_items, identifier_counter, identifier);
+            if (found_item) {
+                return found_item;
+            }
+        }
+        return nullptr;
+    }
+
+    //--------------------------------------------------------------
     LRESULT WindowsWindow::MessageCallback(HWND window_handle, uint32 message, WPARAM w_param, LPARAM l_param) {
         LRESULT result = 0;
 
@@ -741,9 +816,9 @@ namespace Hyperion {
                 MINMAXINFO *min_max_info = (MINMAXINFO *)l_param;
                 // We need the check for the window pointer here because we get the GETMINMAXINFO message before the CREATE message.
                 if (window) {
-                    Vector2 min_size = window->GetActualWindowSize(window->m_min_width, window->m_min_height);
-                    min_max_info->ptMinTrackSize.x = static_cast<LONG>(min_size.x);
-                    min_max_info->ptMinTrackSize.y = static_cast<LONG>(min_size.y);
+                    Vector2Int min_size = window->GetActualWindowSize(window->m_min_width, window->m_min_height);
+                    min_max_info->ptMinTrackSize.x = min_size.x;
+                    min_max_info->ptMinTrackSize.y = min_size.y;
                 }
                 break;
             }
@@ -785,6 +860,22 @@ namespace Hyperion {
                 if (w_param == window->m_timer) {
                     Engine::Iterate();
                 }
+                break;
+            }
+
+            case WM_COMMAND: {
+                uint32 identifier = LOWORD(w_param);
+                if (identifier < 1) {
+                    break;
+                }
+
+                // We need to find the menu item the identifier belongs to and invoke the callback on that.
+                uint32 identifier_counter = 1;
+                const MenuItem *item = FindMenuItem(window->m_menu.items, identifier_counter, identifier);
+                if (item && item->callback) {
+                    item->callback(*item);
+                }
+
                 break;
             }
 

@@ -2,7 +2,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/common.hpp"
+#include "hyperion/core/app/menu.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -25,11 +25,13 @@ namespace Hyperion {
         uint32 width = 1280;
         uint32 height = 720;
 
-        uint32 min_width = 640;
-        uint32 min_height = 360;
+        uint32 min_width = 960;
+        uint32 min_height = 540;
 
         WindowMode window_mode = WindowMode::Windowed;
         WindowState window_state = WindowState::Normal;
+
+        Menu menu;
     };
 
 }

@@ -62,7 +62,7 @@ namespace Hyperion {
         void SetAppEventCallback(const AppEventCallbackFunction &app_event_callback);
 
         void SetupWindow(const WindowSettings &settings);
-        Vector2 GetActualWindowSize(uint32 client_width, uint32 client_height) const;
+        Vector2Int GetActualWindowSize(uint32 client_width, uint32 client_height) const;
         void DispatchAppEvent(AppEvent &app_event) const;
         void DispatchKeyAppEvent(KeyCode key_code, bool8 is_down) const;
 
@@ -83,6 +83,9 @@ namespace Hyperion {
 
         WindowMode m_window_mode;
         WindowState m_window_state;
+        WindowState m_window_start_state;
+
+        Menu m_menu;
 
         bool8 m_is_focused;
 
@@ -90,17 +93,13 @@ namespace Hyperion {
         bool8 m_cursor_is_visible;
 
         AppEventCallbackFunction m_app_event_callback;
-
         WindowsInput *m_input;
 
         HWND m_window_handle;
         UINT_PTR m_timer;
-        
-        WindowState m_start_state;
 
         // We store the last window placement in order to switch correctly between windowed and borderless mode.
         void *m_previous_placement;
-
         // To distinguish the two shift keys we explicily store their previous state.
         // That way we can send out the correct key released events when appropriate.
         mutable bool8 m_left_shift_last_down = false;

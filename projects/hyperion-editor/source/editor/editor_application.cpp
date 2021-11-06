@@ -63,7 +63,12 @@ namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
     void EditorApplication::OnSetup(ApplicationSettings &settings) {
-        settings.window.window_state = WindowState::Maximized;
+        settings.window.menu.items.Add({ "File", { }, {
+            { "New", [](auto _) { HYP_TRACE("NEW"); }, {}},
+            { "Open", [](auto _) { HYP_TRACE("OPEN"); } , { } },
+            { "Save", [](auto _) { HYP_TRACE("SAVE"); } , { } },
+        } });
+        settings.window.menu.items.Add({ "Edit", { }, { } });
 
         s_render_pipeline = new EditorRenderPipeline();
         settings.render.backend = Rendering::RenderBackend::OpenGL;
