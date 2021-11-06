@@ -40,21 +40,17 @@ namespace Hyperion {
         static AppEventType GetStaticType() { return AppEventType::KeyReleased; }
     };
 
-    class KeyTypedAppEvent : public AppEvent {
+    class KeyTypedAppEvent : public KeyAppEvent {
     public:
-        KeyTypedAppEvent(uint32 character, KeyModifier key_modifier) : m_character(character), m_key_modifier(key_modifier) { }
+        KeyTypedAppEvent(uint32 character, KeyCode key_code, KeyModifier key_modifier) : KeyAppEvent(key_code, key_modifier), m_character(character) { }
 
         inline uint32 GetCharacter() const { return m_character; }
-        inline KeyModifier GetKeyModifier() const { return m_key_modifier; }
-        inline bool8 HasKeyModifier(KeyModifier key_modifier) const { return (m_key_modifier & key_modifier) == key_modifier; }
-
+        
         AppEventType GetType() const override { return AppEventType::KeyTyped; }
-        AppEventCategory GetCategory() const override { return AppEventCategory::Input | AppEventCategory::Keyboard; }
     public:
         static AppEventType GetStaticType() { return AppEventType::KeyTyped; }
     private:
         uint32 m_character;
-        KeyModifier m_key_modifier;
     };
 
 }

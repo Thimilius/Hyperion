@@ -70,6 +70,7 @@ namespace Hyperion {
         void DispatchAppEvent(AppEvent &app_event) const;
         void DispatchKeyAppEvent(KeyCode key_code, bool8 is_down) const;
 
+        KeyCode TranslateKeyCode(uint32 virtual_key) const;
         KeyCode TranslateKeyCode(uint32 w_param, uint32 l_param, bool8 is_down);
         MouseButtonCode TranslateMouseButtonCode(uint32 code) const;
         KeyModifier GetKeyModifier() const;

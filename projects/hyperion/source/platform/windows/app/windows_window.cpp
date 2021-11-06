@@ -477,66 +477,8 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    KeyCode WindowsWindow::TranslateKeyCode(uint32 w_param, uint32 l_param, bool8 is_down) {
-        // Left and right keys need to be distinguished as extended keys.
-        if (w_param == VK_CONTROL) {
-            // Alt-Gr sends both left control and alt right messages.
-            // We are only interested in the alt right message, so we need to discard the left control message.
-            MSG next_message;
-            if (PeekMessageW(&next_message, nullptr, 0, 0, PM_NOREMOVE)) {
-                if (next_message.message == WM_KEYDOWN || next_message.message == WM_SYSKEYDOWN || next_message.message == WM_KEYUP || next_message.message == WM_SYSKEYUP) {
-                    DWORD message_time = GetMessageTime();
-                    if (next_message.wParam == VK_MENU && (next_message.lParam & 0x01000000) && next_message.time == message_time) {
-                        DispatchKeyAppEvent(KeyCode::AltGr, is_down);
-
-                        // Next message is right alt down so discard this.
-                        return KeyCode::None;
-                    }
-                }
-            }
-
-            DispatchKeyAppEvent(KeyCode::Control, is_down);
-
-            if (l_param & 0x01000000) {
-                return KeyCode::RightControl;
-            } else {
-                return KeyCode::LeftControl;
-            }
-        } else if (w_param == VK_SHIFT) {
-            DispatchKeyAppEvent(KeyCode::Shift, is_down);
-
-            // Left and right shift keys are not send as extended keys and therefore need to be queried explicitly.
-            bool8 previous_left_shift_down = m_left_shift_last_down;
-            bool8 previous_right_shift_down = m_right_shift_last_down;
-            m_left_shift_last_down = GetKeyState(VK_LSHIFT) & 0x8000;
-            m_right_shift_last_down = GetAsyncKeyState(VK_RSHIFT) & 0x8000;
-
-            if (m_left_shift_last_down) {
-                return KeyCode::LeftShift;
-            } else if (m_right_shift_last_down) {
-                return KeyCode::RightShift;
-            } else {
-                // If neither the right nor the left shift key is down this means they just got released.
-                // So send out the corresponding key released event.
-                if (previous_left_shift_down) {
-                    return KeyCode::LeftShift;
-                } else if (previous_right_shift_down) {
-                    return KeyCode::RightShift;
-                } else {
-                    return KeyCode::None;
-                }
-            }
-        } else if (w_param == VK_MENU) {
-            DispatchKeyAppEvent(KeyCode::Alt, is_down);
-
-            if (l_param & 0x01000000) {
-                return KeyCode::RightAlt;
-            } else {
-                return KeyCode::LeftAlt;
-            }
-        }
-
-        switch (w_param) {
+    KeyCode WindowsWindow::TranslateKeyCode(uint32 virtual_key) const {
+        switch (virtual_key) {
             case '1': return KeyCode::Alpha1;
             case '2': return KeyCode::Alpha2;
             case '3': return KeyCode::Alpha3;
@@ -601,6 +543,16 @@ namespace Hyperion {
             case VK_LEFT: return KeyCode::Left;
             case VK_RIGHT: return KeyCode::Right;
 
+            case VK_LCONTROL: return KeyCode::LeftControl;
+            case VK_RCONTROL: return KeyCode::RightControl;
+            case VK_CONTROL: return KeyCode::Control;
+
+            case VK_LSHIFT: return KeyCode::LeftShift;
+            case VK_RSHIFT: return KeyCode::RightShift;
+            case VK_SHIFT: return KeyCode::Shift;
+
+            case VK_MENU: return KeyCode::Alt;
+
             case VK_NUMLOCK: return KeyCode::Numlock;
             case VK_CAPITAL: return KeyCode::Capslock;
 
@@ -653,6 +605,69 @@ namespace Hyperion {
 
             default: return KeyCode::None;
         }
+    }
+
+    //--------------------------------------------------------------
+    KeyCode WindowsWindow::TranslateKeyCode(uint32 w_param, uint32 l_param, bool8 is_down) {
+        // Left and right keys need to be distinguished as extended keys.
+        if (w_param == VK_CONTROL) {
+            // Alt-Gr sends both left control and alt right messages.
+            // We are only interested in the alt right message, so we need to discard the left control message.
+            MSG next_message;
+            if (PeekMessageW(&next_message, nullptr, 0, 0, PM_NOREMOVE)) {
+                if (next_message.message == WM_KEYDOWN || next_message.message == WM_SYSKEYDOWN || next_message.message == WM_KEYUP || next_message.message == WM_SYSKEYUP) {
+                    DWORD message_time = GetMessageTime();
+                    if (next_message.wParam == VK_MENU && (next_message.lParam & 0x01000000) && next_message.time == message_time) {
+                        DispatchKeyAppEvent(KeyCode::AltGr, is_down);
+
+                        // Next message is right alt down so discard this.
+                        return KeyCode::None;
+                    }
+                }
+            }
+
+            DispatchKeyAppEvent(KeyCode::Control, is_down);
+
+            if (l_param & 0x01000000) {
+                return KeyCode::RightControl;
+            } else {
+                return KeyCode::LeftControl;
+            }
+        } else if (w_param == VK_SHIFT) {
+            DispatchKeyAppEvent(KeyCode::Shift, is_down);
+
+            // Left and right shift keys are not send as extended keys and therefore need to be queried explicitly.
+            bool8 previous_left_shift_down = m_left_shift_last_down;
+            bool8 previous_right_shift_down = m_right_shift_last_down;
+            m_left_shift_last_down = GetKeyState(VK_LSHIFT) & 0x8000;
+            m_right_shift_last_down = GetAsyncKeyState(VK_RSHIFT) & 0x8000;
+
+            if (m_left_shift_last_down) {
+                return KeyCode::LeftShift;
+            } else if (m_right_shift_last_down) {
+                return KeyCode::RightShift;
+            } else {
+                // If neither the right nor the left shift key is down this means they just got released.
+                // So send out the corresponding key released event.
+                if (previous_left_shift_down) {
+                    return KeyCode::LeftShift;
+                } else if (previous_right_shift_down) {
+                    return KeyCode::RightShift;
+                } else {
+                    return KeyCode::None;
+                }
+            }
+        } else if (w_param == VK_MENU) {
+            DispatchKeyAppEvent(KeyCode::Alt, is_down);
+
+            if (l_param & 0x01000000) {
+                return KeyCode::RightAlt;
+            } else {
+                return KeyCode::LeftAlt;
+            }
+        }
+
+        return TranslateKeyCode(w_param);
     }
 
     //--------------------------------------------------------------
@@ -732,7 +747,10 @@ namespace Hyperion {
             case WM_CHAR: 
             case WM_SYSCHAR: {
                 uint32 character = static_cast<uint32>(w_param);
-                KeyTypedAppEvent event(character, window->GetKeyModifier());
+                byte scancode = (reinterpret_cast<byte *>(&l_param))[2];
+                uint32 virtual_key = MapVirtualKeyW(scancode, MAPVK_VSC_TO_VK_EX);
+                KeyCode key_code = window->TranslateKeyCode(virtual_key);
+                KeyTypedAppEvent event(character, key_code, window->GetKeyModifier());
                 window->DispatchAppEvent(event);
                 break;
             }
