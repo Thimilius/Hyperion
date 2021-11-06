@@ -83,6 +83,9 @@ namespace Hyperion {
         dispatcher.Dispatch<KeyReleasedAppEvent>([this](KeyReleasedAppEvent &key_released_event) {
             OnKeyEvent(key_released_event, false);
         });
+        dispatcher.Dispatch<KeyTypedAppEvent>([this](KeyTypedAppEvent &key_type_event) {
+            m_keys_typed.Add(key_type_event.GetCharacter());
+        });
 
         dispatcher.Dispatch<MouseScrolledAppEvent>([this](MouseScrolledAppEvent &mouse_scrolled_event) {
             m_mouse_scroll = mouse_scrolled_event.GetScroll();
@@ -105,6 +108,7 @@ namespace Hyperion {
             memset(&m_keys_down, false, sizeof(m_keys_down));
             memset(&m_keys_up, false, sizeof(m_keys_up));
             memcpy(&m_keys_last, &m_keys, sizeof(m_keys_last));
+            m_keys_typed.Clear();
 
             memset(&m_mouse_buttons_down, false, sizeof(m_mouse_buttons_down));
             memset(&m_mouse_buttons_up, false, sizeof(m_mouse_buttons_up));
@@ -180,6 +184,7 @@ namespace Hyperion {
         memset(&m_keys_up, false, sizeof(m_keys_up));
         memset(&m_keys, false, sizeof(m_keys));
         memset(&m_keys_last, false, sizeof(m_keys_last));
+        m_keys_typed.Clear();
 
         m_mouse_scroll = 0.0f;
 

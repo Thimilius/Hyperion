@@ -228,6 +228,7 @@ namespace Hyperion {
         virtual bool8 IsKeyDown(KeyCode key_code) const = 0;
         virtual bool8 IsKeyHold(KeyCode key_code) const = 0;
         virtual bool8 IsKeyUp(KeyCode key_code) const = 0;
+        virtual const Array<uint32> &GetKeysTyped() const = 0;
 
         virtual Vector2Int GetMousePosition() const = 0;
         virtual bool8 HasMouseMoved() const = 0;
@@ -262,6 +263,7 @@ namespace Hyperion {
         inline static bool8 IsKeyDown(KeyCode key_code) { return s_input_implementation->IsKeyDown(key_code); }
         inline static bool8 IsKeyHold(KeyCode key_code) { return s_input_implementation->IsKeyHold(key_code); }
         inline static bool8 IsKeyUp(KeyCode key_code) { return s_input_implementation->IsKeyUp(key_code); }
+        inline static const Array<uint32> &GetKeysTyped() { return s_input_implementation->GetKeysTyped(); }
 
         inline static Vector2Int GetMousePosition() { return s_input_implementation->GetMousePosition(); }
         inline static bool8 HasMouseMoved() { return s_input_implementation->HasMouseMoved(); }

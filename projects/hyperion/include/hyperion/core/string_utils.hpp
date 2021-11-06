@@ -46,7 +46,9 @@ namespace Hyperion {
             return *input ? static_cast<uint32>(*input) + 33 * Hash(input + 1) : 5381;
         }
 
-        static Array<uint32> GetCodepointsUtf8(const String &string);
+        static Array<uint32> GetCodepointsFromUtf8(const String &string);
+        static String GetUtf8FromCodepoint(uint32 codepoint);
+        static String GetUtf8FromCodepoints(const Array<uint32> &codepoints);
 
         static WideString Utf8ToUtf16(const String &string);
         static String Utf16ToUtf8(const WideString &string);

@@ -13,8 +13,8 @@
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    Array<uint32> StringUtils::GetCodepointsUtf8(const String &string) {
-        // Implementation from https://github.com/sheredom/utf8.h/blob/master/utf8.h.
+    Array<uint32> StringUtils::GetCodepointsFromUtf8(const String &string) {
+        // Implementation from https://github.com/sheredom/utf8.h/blob/master/utf8.h#L1145.
         const char *s = string.c_str();
 
         Array<uint32> codepoints;
@@ -43,6 +43,54 @@ namespace Hyperion {
         }
 
         return codepoints;
+    }
+
+    //--------------------------------------------------------------
+    String StringUtils::GetUtf8FromCodepoint(uint32 codepoint) {
+        String result;
+
+        if (0 == (0xffffff80 & codepoint)) {
+            // 1-byte/7-bit ascii
+            // (0b0xxxxxxx)
+            result.resize(1);
+            char *data = result.data();
+            data[0] = static_cast<char>(codepoint);
+        } else if (0 == (0xfffff800 & codepoint)) {
+            // 2-byte/11-bit utf8 code point
+            // (0b110xxxxx 0b10xxxxxx)
+            result.resize(2);
+            char *data = result.data();
+            data[0] = static_cast<char>(0xc0 | static_cast<char>((codepoint >> 6) & 0x1f));
+            data[1] = static_cast<char>(0xc0 | static_cast<char>((codepoint >> 6) & 0x1f));
+        } else if (0 == (0xffff0000 & codepoint)) {
+            // 3-byte/16-bit utf8 code point
+            // (0b1110xxxx 0b10xxxxxx 0b10xxxxxx)
+            result.resize(3);
+            char *data = result.data();
+            data[0] = static_cast<char>(0xe0 | static_cast<char>((codepoint >> 12) & 0x0f));
+            data[1] = static_cast<char>(0x80 | static_cast<char>((codepoint >> 6) & 0x3f));
+            data[2] = static_cast<char>(0x80 | static_cast<char>((codepoint) & 0x3f));
+        } else if (0 == (0xffe00000 & codepoint)) {
+            // 4-byte/21-bit utf8 code point
+            // (0b11110xxx 0b10xxxxxx 0b10xxxxxx 0b10xxxxxx)
+            result.resize(4);
+            char *data = result.data();
+            data[0] = static_cast<char>(0xf0 | static_cast<char>((codepoint >> 18) & 0x07));
+            data[1] = static_cast<char>(0x80 | static_cast<char>((codepoint >> 12) & 0x3f));
+            data[2] = static_cast<char>(0x80 | static_cast<char>((codepoint >> 6) & 0x3f));
+            data[3] = static_cast<char>(0x80 | static_cast<char>((codepoint) & 0x3f));
+        }
+
+        return result;
+    }
+
+    //--------------------------------------------------------------
+    String StringUtils::GetUtf8FromCodepoints(const Array<uint32> &codepoints) {
+        String result;
+        for (uint32 codepoint : codepoints) {
+            result += GetUtf8FromCodepoint(codepoint);
+        }
+        return result;
     }
 
     //--------------------------------------------------------------

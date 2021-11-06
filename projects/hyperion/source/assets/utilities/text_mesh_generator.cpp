@@ -23,7 +23,7 @@ namespace Hyperion {
         float32 scale_y = settings.scale.y;
 
         uint32 codepoint_offset = 0;
-        Array<uint32> codepoints = StringUtils::GetCodepointsUtf8(settings.text);
+        Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(settings.text);
 
         TextSize text_size = font->GetTextSize(codepoints, 0, scale_x, true);
         Vector2 position = GetPosition(settings.alignment, text_size, settings.rect);
