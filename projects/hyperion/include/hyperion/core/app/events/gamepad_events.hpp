@@ -14,7 +14,7 @@ namespace Hyperion {
 
         inline Gamepad GetGamepad() const { return m_gamepad; }
 
-        AppEventCategory GetCategory() const override { return AppEventCategory::Input & AppEventCategory::Gamepad; }
+        AppEventCategory GetCategory() const override { return AppEventCategory::Input | AppEventCategory::Gamepad; }
     private:
         Gamepad m_gamepad;
     };

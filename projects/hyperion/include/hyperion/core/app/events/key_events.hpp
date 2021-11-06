@@ -16,7 +16,7 @@ namespace Hyperion {
         inline KeyModifier GetKeyModifier() const { return m_key_modifier; }
         inline bool8 HasKeyModifier(KeyModifier key_modifier) const { return (m_key_modifier & key_modifier) == key_modifier; }
 
-        AppEventCategory GetCategory() const override { return AppEventCategory::Input & AppEventCategory::Keyboard; }
+        AppEventCategory GetCategory() const override { return AppEventCategory::Input | AppEventCategory::Keyboard; }
     private:
         KeyCode m_key_code;
         KeyModifier m_key_modifier;
@@ -49,7 +49,7 @@ namespace Hyperion {
         inline bool8 HasKeyModifier(KeyModifier key_modifier) const { return (m_key_modifier & key_modifier) == key_modifier; }
 
         AppEventType GetType() const override { return AppEventType::KeyTyped; }
-        AppEventCategory GetCategory() const override { return AppEventCategory::Input & AppEventCategory::Keyboard; }
+        AppEventCategory GetCategory() const override { return AppEventCategory::Input | AppEventCategory::Keyboard; }
     public:
         static AppEventType GetStaticType() { return AppEventType::KeyTyped; }
     private:

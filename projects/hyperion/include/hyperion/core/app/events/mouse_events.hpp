@@ -15,7 +15,7 @@ namespace Hyperion {
         inline MouseButtonCode GetMouseButtonCode() const { return m_mouse_button_code; }
         inline bool8 HasKeyModifier(KeyModifier key_modifier) const { return (m_key_modifier & key_modifier) == key_modifier; }
 
-        AppEventCategory GetCategory() const override { return AppEventCategory::Input & AppEventCategory::Mouse & AppEventCategory::MouseButton; }
+        AppEventCategory GetCategory() const override { return AppEventCategory::Input | AppEventCategory::Mouse | AppEventCategory::MouseButton; }
     private:
         MouseButtonCode m_mouse_button_code;
         KeyModifier m_key_modifier;
@@ -47,7 +47,7 @@ namespace Hyperion {
         inline int32 GetY() const { return m_y; }
 
         AppEventType GetType() const override { return AppEventType::MouseMoved; }
-        AppEventCategory GetCategory() const override { return AppEventCategory::Input & AppEventCategory::Mouse; }
+        AppEventCategory GetCategory() const override { return AppEventCategory::Input | AppEventCategory::Mouse; }
     public:
         static AppEventType GetStaticType() { return AppEventType::MouseMoved; }
     private:
@@ -62,7 +62,7 @@ namespace Hyperion {
         inline float32 GetScroll() const { return m_scroll; }
 
         AppEventType GetType() const override { return AppEventType::MouseScrolled; }
-        AppEventCategory GetCategory() const override { return AppEventCategory::Input & AppEventCategory::Mouse; }
+        AppEventCategory GetCategory() const override { return AppEventCategory::Input | AppEventCategory::Mouse; }
     public:
         static AppEventType GetStaticType() { return AppEventType::MouseScrolled; }
     private:
