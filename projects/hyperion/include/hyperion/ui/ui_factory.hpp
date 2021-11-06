@@ -3,6 +3,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/ui/ui_button.hpp"
+#include "hyperion/ui/ui_input_field.hpp"
 #include "hyperion/ui/ui_label.hpp"
 #include "hyperion/ui/ui_toggle.hpp"
 
@@ -21,6 +22,7 @@ namespace Hyperion::UI {
         static UIButton *CreateButton();
         static UILabel *CreateLabel();
         static UIToggle *CreateToggle();
+        static UIInputField *CreateInputField();
     private:
         static void ReflectTypes();
     private:

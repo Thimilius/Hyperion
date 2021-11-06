@@ -35,16 +35,18 @@ namespace Hyperion::UI {
         inline float32 GetPointerScroll() const { return m_pointer_scroll; }
         inline Vector2Int GetPointerPosition() const { return m_pointer_position; }
 
-        inline uint32 GetKeyTyped() const { return m_key_typed; }
+        inline KeyCode GetKeyCode() const { return m_key_code; }
         inline KeyModifier GetKeyModifier() const { return m_key_modifier; }
+        inline uint32 GetKeyTyped() const { return m_key_typed; }
     private:
         UIEventType m_type;
 
         Vector2Int m_pointer_position;
         float32 m_pointer_scroll = 0;
-
-        uint32 m_key_typed = 0;
+         
+        KeyCode m_key_code = KeyCode::None;
         KeyModifier m_key_modifier = KeyModifier::None;
+        uint32 m_key_typed = 0;
     private:
         friend class Hyperion::UI::UIEventSystem;
     };

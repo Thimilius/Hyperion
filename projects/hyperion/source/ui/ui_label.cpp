@@ -35,7 +35,7 @@ namespace Hyperion::UI {
     }
 
     //--------------------------------------------------------------
-    void UILabel::SetAlignment(UI::TextAlignment alignment) {
+    void UILabel::SetTextAlignment(UI::TextAlignment alignment) {
         if (m_alignment != alignment) {
             m_alignment = alignment;
 
@@ -46,9 +46,14 @@ namespace Hyperion::UI {
     //--------------------------------------------------------------
     void UILabel::OnRebuildGeometry(MeshBuilder &mesh_builder) {
         if (m_font == nullptr || m_text == "") {
+            if (m_font == nullptr) {
+                GetRenderer().texture = nullptr;
+            }
+            if (m_text == "") {
+                GetRenderer().mesh = nullptr;
+            }
             return;
         }
-
         mesh_builder.Clear();
 
         TextMeshGenerationSettings settings;

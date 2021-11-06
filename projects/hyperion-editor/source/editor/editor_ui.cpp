@@ -161,7 +161,7 @@ namespace Hyperion::Editor {
 
             s_label_selection = UIFactory::CreateLabel();
             s_label_selection->SetFont(s_font_text);
-            s_label_selection->SetAlignment(TextAlignment::TopCenter);
+            s_label_selection->SetTextAlignment(TextAlignment::TopCenter);
             s_label_selection->SetAnchorPreset(AnchorPreset::StretchAll);
             s_label_selection->SetAnchorOffsetMax(Vector2(0.0f, 4.0f));
             s_label_selection->GetStyle().GetShadow().enabled = true;
@@ -183,6 +183,16 @@ namespace Hyperion::Editor {
             bottom_bar_container->SetAnchorOffsetMin(Vector2(3.0f, 3.0f));
             bottom_bar_container->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
             bottom_bar_container->GetHierarchy().SetParent(bottom_bar);
+
+            UIInputField *input_field = UIFactory::CreateInputField();
+            input_field->SetAnchorPreset(AnchorPreset::MiddleCenter);
+            input_field->SetSize(Vector2(140.0f, 25.0f));
+            input_field->GetStyle().SetColor(EditorStyle::COLOR_NORMAL_DARK);
+            input_field->GetHierarchy().SetParent(bottom_bar_container);
+            UILabel *input_label = input_field->Q<UILabel>();
+            input_label->SetFont(s_font_text);
+            input_label->GetStyle().SetColor(Color::White());
+            input_label->GetStyle().GetShadow().enabled = true;
         }
 
         // Footer.
@@ -216,12 +226,46 @@ namespace Hyperion::Editor {
             preview_header->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
             preview_header->GetHierarchy().SetParent(preview);
 
-            UIElement *preview_header_left = UIFactory::CreateElement();
-            preview_header_left->SetAnchorPreset(AnchorPreset::StretchAll);
-            preview_header_left->GetStyle().SetOpacity(0.0f);
-            preview_header_left->GetHierarchy().SetParent(preview_header);
-            preview_header_left->GetLayout().layout_type = LayoutType::Horizontal;
-            preview_header_left->GetLayout().child_alignment = ChildAlignment::MiddleLeft;
+            // Preview Header.
+            {
+                UIElement *preview_header_left = UIFactory::CreateElement();
+                preview_header_left->SetAnchorPreset(AnchorPreset::StretchAll);
+                preview_header_left->GetStyle().SetOpacity(0.0f);
+                preview_header_left->GetHierarchy().SetParent(preview_header);
+                preview_header_left->GetLayout().layout_type = LayoutType::Horizontal;
+                preview_header_left->GetLayout().child_alignment = ChildAlignment::MiddleLeft;
+
+                // Left.
+                {
+                    s_toggle_vsync = create_toggle(preview_header_left, s_font_icon, "\uf108", Rendering::RenderEngine::GetVSyncMode() != Rendering::VSyncMode::DontSync, [](bool8 is_on) {
+                        Rendering::RenderEngine::SetVSyncMode(
+                            Rendering::RenderEngine::GetVSyncMode() == Rendering::VSyncMode::DontSync ?
+                            Rendering::VSyncMode::EveryVBlank :
+                            Rendering::VSyncMode::DontSync);
+                    });
+                    s_toggle_grid = create_toggle(preview_header_left, s_font_icon, "\uf850", Rendering::RenderGizmos::GetShouldDrawGrid(), [](bool8 is_on) {
+                        Rendering::RenderGizmos::SetShouldDrawGrid(is_on);
+                    });
+                    s_toggle_grounds = create_toggle(preview_header_left, s_font_icon, "\uf247", Rendering::RenderGizmos::GetShouldDrawAllBounds(), [](bool8 is_on) {
+                        Rendering::RenderGizmos::SetShouldDrawAllBounds(is_on);
+                    });
+                    create_button(preview_header_left, s_font_icon, "\uf03d", []() {
+                        EditorCamera::Reset();
+                    });
+                }
+
+                // Right.
+                {
+                    s_label_stats = UIFactory::CreateLabel();
+                    s_label_stats->SetFont(s_font_text);
+                    s_label_stats->SetTextAlignment(TextAlignment::MiddleRight);
+                    s_label_stats->SetAnchorPreset(AnchorPreset::StretchAll);
+                    s_label_stats->SetAnchorOffsetMax(Vector2(5.0f, 0.0f));
+                    s_label_stats->GetStyle().GetShadow().enabled = true;
+                    s_label_stats->GetHierarchy().SetParent(preview_header);
+                    s_label_stats->GetLayout().ignore_layout = true;
+                }
+            }
 
             s_preview_container_ui_element = UIFactory::CreateElement();
             s_preview_container_ui_element->SetAnchorPreset(AnchorPreset::StretchAll);
@@ -242,37 +286,6 @@ namespace Hyperion::Editor {
             s_preview_editor_ui_element->GetRenderer().render_texture_attachment_index = 0;
             s_preview_editor_ui_element->GetRenderer().enable_blending = false;
             s_preview_editor_ui_element->GetHierarchy().SetParent(s_preview_container_ui_element);
-
-            // Left.
-            {
-                s_toggle_vsync = create_toggle(preview_header_left, s_font_icon, "\uf108", Rendering::RenderEngine::GetVSyncMode() != Rendering::VSyncMode::DontSync, [](bool8 is_on) {
-                    Rendering::RenderEngine::SetVSyncMode(
-                        Rendering::RenderEngine::GetVSyncMode() == Rendering::VSyncMode::DontSync ?
-                        Rendering::VSyncMode::EveryVBlank :
-                        Rendering::VSyncMode::DontSync);
-                });
-                s_toggle_grid = create_toggle(preview_header_left, s_font_icon, "\uf850", Rendering::RenderGizmos::GetShouldDrawGrid(), [](bool8 is_on) {
-                    Rendering::RenderGizmos::SetShouldDrawGrid(is_on);
-                });
-                s_toggle_grounds = create_toggle(preview_header_left, s_font_icon, "\uf247", Rendering::RenderGizmos::GetShouldDrawAllBounds(), [](bool8 is_on) {
-                    Rendering::RenderGizmos::SetShouldDrawAllBounds(is_on);
-                });
-                create_button(preview_header_left, s_font_icon, "\uf03d", []() {
-                    EditorCamera::Reset();
-                });
-            }
-            
-            // Right.
-            {
-                s_label_stats = UIFactory::CreateLabel();
-                s_label_stats->SetFont(s_font_text);
-                s_label_stats->SetAlignment(TextAlignment::MiddleRight);
-                s_label_stats->SetAnchorPreset(AnchorPreset::StretchAll);
-                s_label_stats->SetAnchorOffsetMax(Vector2(5.0f, 0.0f));
-                s_label_stats->GetStyle().GetShadow().enabled = true;
-                s_label_stats->GetHierarchy().SetParent(preview_header);
-                s_label_stats->GetLayout().ignore_layout = true;
-            }
         }
         
         UpdateStats();
@@ -341,9 +354,6 @@ namespace Hyperion::Editor {
 
     //--------------------------------------------------------------
     void EditorUI::UpdateStats() {
-        //String stats_format = "FPS: {} ({:.2f}ms) - Draw calls: {}, Vertices: {}, Triangles: {}";
-        //RenderStats render_stats = Rendering::RenderEngine::GetStats();
-        //String stats_title = StringUtils::Format(stats_format, Time::GetFPS(), Time::GetFrameTime(), render_stats.draw_calls, render_stats.vertex_count, render_stats.triangle_count);
         String stats_format = "FPS: {} ({:.2f}ms)";
         String stats_title = StringUtils::Format(stats_format, Time::GetFPS(), Time::GetFrameTime());
         s_label_stats->SetText(stats_title);

@@ -95,9 +95,9 @@ namespace Hyperion::UI {
     };
 
     struct UIElementState {
-        bool8 is_interactable = true;
         bool8 is_raycast_target = false;
 
+        bool8 is_interactable = true;
         bool8 is_highlighted = false;
         bool8 is_pressed = false;
         bool8 is_selected = false;
@@ -112,10 +112,13 @@ namespace Hyperion::UI {
         inline void MarkDirty() { m_is_dirty = true; }
         void MarkHierarchyDirty();
 
-        inline bool8 IsInteractable() const { return m_state.is_interactable; }
-        void SetInteractable(bool8 is_interactable);
         inline bool8 IsRaycastTarget() const { return m_state.is_raycast_target; }
         void SetRaycastTarget(bool8 is_raycast_target) { m_state.is_raycast_target = is_raycast_target; }
+        inline bool8 IsInteractable() const { return m_state.is_interactable; }
+        void SetInteractable(bool8 is_interactable);
+        inline bool8 IsHighlighted() const { return m_state.is_highlighted; }
+        inline bool8 IsPressed() const { return m_state.is_pressed; }
+        inline bool8 IsSelected() const { return m_state.is_selected; }
 
         inline Vector2 GetPosition() const { return m_local_position; }
         inline Vector2 GetDerivedPosition() const { return m_derived_position; }
@@ -164,6 +167,10 @@ namespace Hyperion::UI {
     public:
         static Vector2 ScreenPointToUISpacePoint(Vector2 screen_point);
     protected:
+        SelectionState GetSelectionState() const;
+
+        virtual void DoStateTransition(SelectionState state);
+
         virtual void OnRebuildLayout();
         virtual void OnRebuildGeometry(MeshBuilder &mesh_builder);
     private:

@@ -66,13 +66,6 @@ namespace Hyperion {
             position.x += glyph.advance * scale_x;
         }
 
-        if (settings.rotation != Quaternion::Identity()) {
-            // We need to rotate around the center, which involves setting the proper transformation.
-            Vector2 center = settings.rect.GetCenter();
-            Matrix4x4 transformation = Matrix4x4::Translate(Vector3(center, 0.0f)) * Matrix4x4::Rotate(settings.rotation) * Matrix4x4::Translate(-Vector3(center, 0.0f));
-            mesh_builder.Transform(transformation);
-        }
-
         return mesh_builder.CreateMesh();
     }
 

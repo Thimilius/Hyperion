@@ -325,17 +325,7 @@ namespace Hyperion::UI {
             m_state.is_selected = false;
         }
 
-        if (!m_state.is_interactable) {
-            GetRenderer().color = m_style.m_color_block.disabled_color;
-        } else if (m_state.is_pressed) {
-            GetRenderer().color = m_style.m_color_block.pressed_color;
-        } else if (m_state.is_selected) {
-            GetRenderer().color = m_style.m_color_block.selected_color;
-        } else if (m_state.is_highlighted) {
-            GetRenderer().color = m_style.m_color_block.highlighted_color;
-        }  else {
-            GetRenderer().color = m_style.m_color_block.normal_color;
-        }
+        DoStateTransition(GetSelectionState());
     }
 
     //--------------------------------------------------------------
@@ -374,6 +364,33 @@ namespace Hyperion::UI {
         screen_point.x -= display_width / 2.0f;
         screen_point.y -= display_height / 2.0f;
         return screen_point;
+    }
+
+    //--------------------------------------------------------------
+    SelectionState UIElement::GetSelectionState() const {
+        if (!m_state.is_interactable) {
+            return SelectionState::Disabled;
+        } else if (m_state.is_pressed) {
+            return SelectionState::Pressed;
+        } else if (m_state.is_selected) {
+            return SelectionState::Selected;
+        } else if (m_state.is_highlighted) {
+            return SelectionState::Highlighted;
+        } else {
+            return SelectionState::Normal;
+        }
+    }
+
+    //--------------------------------------------------------------
+    void UIElement::DoStateTransition(SelectionState state) {
+        switch (state) {
+            case SelectionState::Highlighted: GetRenderer().color = m_style.m_color_block.highlighted_color; break;
+            case SelectionState::Pressed: GetRenderer().color = m_style.m_color_block.pressed_color; break;
+            case SelectionState::Selected: GetRenderer().color = m_style.m_color_block.selected_color; break;
+            case SelectionState::Disabled: GetRenderer().color = m_style.m_color_block.disabled_color; break;
+            case SelectionState::Normal:
+            default: GetRenderer().color = m_style.m_color_block.normal_color; break;
+        }
     }
 
     //--------------------------------------------------------------

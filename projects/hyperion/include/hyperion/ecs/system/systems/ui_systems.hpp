@@ -30,7 +30,7 @@ namespace Hyperion::UI {
         static void Run(UIViewComponent *ui_view);
     private:
         static void RaycastElements(UIElement *element, Vector2Int screen_point, Array<UIElement *> &raycasted);
-        static void SendEvent(UIElement *element, UIEventType type, uint32 key_typed = 0, KeyModifier key_modifier = KeyModifier::None);
+        static void SendEvent(UIElement *element, UIEventType type, KeyCode key_code = KeyCode::None, KeyModifier key_modifier = KeyModifier::None, uint32 key_typed = 0);
     };
 
 }

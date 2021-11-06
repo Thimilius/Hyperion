@@ -20,7 +20,7 @@ namespace Hyperion::UI {
         void SetText(const String &text);
 
         inline UI::TextAlignment GetTextAlignment() const { return m_alignment; }
-        void SetAlignment(UI::TextAlignment alignment);
+        void SetTextAlignment(UI::TextAlignment alignment);
     protected:
         void OnRebuildGeometry(MeshBuilder &mesh_builder) override;
     private:
