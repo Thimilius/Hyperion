@@ -26,10 +26,6 @@
 #include "hyperion/editor/editor_style.hpp"
 #include "hyperion/editor/editor_ui.hpp"
 
-//------------------------- Namespaces -------------------------
-using namespace Hyperion::Rendering;
-using namespace Hyperion::UI;
-
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Editor {
 

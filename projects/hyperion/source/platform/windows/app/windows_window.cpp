@@ -23,13 +23,14 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     WindowsWindow::WindowsWindow(const WindowSettings &settings) {
+        m_settings = settings;
+
         m_title = settings.title;
         m_width = settings.width;
         m_height = settings.height;
         m_min_width = settings.min_width;
         m_min_height = settings.min_height;
-        m_window_state = m_window_start_state;
-        m_window_start_state = settings.window_state;
+        m_window_state = settings.window_state;
         m_cursor_is_visible = true;
         m_cursor_mode = CursorMode::Default;
         m_menu = settings.menu;
@@ -122,9 +123,12 @@ namespace Hyperion {
                 SetWindowPlacement(m_window_handle, previous_placement);
 
                 Vector2Int size = GetActualWindowSize(m_width, m_height);
-
                 uint32 flags = SWP_NOMOVE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED;
                 SetWindowPos(m_window_handle, nullptr, 0, 0, size.x, size.y, flags);
+
+                if (m_settings.hide_menu_in_borderless_mode) {
+                    SetMenu(m_window_handle, m_menu_handle);
+                }
                 break;
             }
             case WindowMode::Borderless: {
@@ -138,8 +142,11 @@ namespace Hyperion {
                 LONG y = monitor_info.rcMonitor.top;
                 LONG width = monitor_info.rcMonitor.right - monitor_info.rcMonitor.left;
                 LONG height = monitor_info.rcMonitor.bottom - monitor_info.rcMonitor.top;
-
                 SetWindowPos(m_window_handle, HWND_TOP, x, y, width, height, SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+
+                if (m_settings.hide_menu_in_borderless_mode) {
+                    SetMenu(m_window_handle, nullptr);
+                }
                 break;
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
@@ -283,7 +290,7 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void WindowsWindow::Show() {
-        switch (m_window_start_state) {
+        switch (m_window_state) {
             case WindowState::Normal: ShowWindow(m_window_handle, SW_SHOWNORMAL); break;
             case WindowState::Minimized: ShowWindow(m_window_handle, SW_SHOWMINIMIZED); break;
             case WindowState::Maximized: ShowWindow(m_window_handle, SW_SHOWMAXIMIZED); break;
@@ -295,35 +302,6 @@ namespace Hyperion {
     void WindowsWindow::SetAppEventCallback(const AppEventCallbackFunction &app_event_callback) {
         m_app_event_callback = app_event_callback;
         m_input->SetEventCallback(app_event_callback);
-    }
-
-    //--------------------------------------------------------------
-    HMENU CreateSubMenu(const Array<MenuItem> &items, uint32 &identifier) {
-        HMENU sub_menu = CreateMenu();
-
-        for (const MenuItem &item : items) {
-            WideString wide_text = StringUtils::Utf8ToUtf16(item.text);
-
-            MENUITEMINFOW item_info = { };
-            item_info.cbSize = sizeof(MENUITEMINFOW);
-            item_info.fMask = MIIM_FTYPE | MIIM_ID | MIIM_STRING | MIIM_STATE;
-            item_info.fType = MFT_STRING;
-            item_info.fState = MFS_ENABLED | MFS_UNHILITE;
-            item_info.wID = identifier++;
-            item_info.dwTypeData = wide_text.data();
-
-            bool8 is_sub_menu = !item.sub_items.IsEmpty();
-            HMENU sub_sub_menu = nullptr;
-            if (is_sub_menu) {
-                sub_sub_menu = CreateSubMenu(item.sub_items, identifier);
-                item_info.fMask |= MIIM_SUBMENU;
-                item_info.hSubMenu = sub_sub_menu;
-            }
-
-            InsertMenuItemW(sub_menu, -1, true, &item_info);
-        }
-
-        return sub_menu;
     }
 
     //--------------------------------------------------------------
@@ -353,9 +331,8 @@ namespace Hyperion {
         Vector2Int size = GetActualWindowSize(settings.width, settings.height);
 
         uint32 identifier = 1;
-        HMENU menu = nullptr;
         if (!settings.menu.items.IsEmpty()) {
-            menu = CreateMenu();
+            m_menu_handle = CreateMenu();
 
             for (const MenuItem &item : settings.menu.items) {
                 WideString wide_text = StringUtils::Utf8ToUtf16(item.text);
@@ -376,7 +353,7 @@ namespace Hyperion {
                     item_info.hSubMenu = sub_menu;
                 }
 
-                InsertMenuItemW(menu, -1, true, &item_info);
+                InsertMenuItemW(m_menu_handle, -1, true, &item_info);
             }
         }
 
@@ -390,7 +367,7 @@ namespace Hyperion {
             size.x,
             size.y,
             nullptr,
-            menu,
+            m_menu_handle,
             instance,
             this
         );
@@ -414,6 +391,51 @@ namespace Hyperion {
             HYP_PANIC_MESSAGE("Engine", "Failed to calculate window size!");
         }
         return Vector2Int(window_rect.right - window_rect.left, window_rect.bottom - window_rect.top);
+    }
+
+    //--------------------------------------------------------------
+    HMENU WindowsWindow::CreateSubMenu(const Array<MenuItem> &items, uint32 &identifier) {
+        HMENU sub_menu = CreateMenu();
+
+        for (const MenuItem &item : items) {
+            WideString wide_text = StringUtils::Utf8ToUtf16(item.text);
+
+            MENUITEMINFOW item_info = { };
+            item_info.cbSize = sizeof(MENUITEMINFOW);
+            item_info.fMask = MIIM_FTYPE | MIIM_ID | MIIM_STRING | MIIM_STATE;
+            item_info.fType = MFT_STRING;
+            item_info.fState = MFS_ENABLED | MFS_UNHILITE;
+            item_info.wID = identifier++;
+            item_info.dwTypeData = wide_text.data();
+
+            bool8 is_sub_menu = !item.sub_items.IsEmpty();
+            HMENU sub_sub_menu = nullptr;
+            if (is_sub_menu) {
+                sub_sub_menu = CreateSubMenu(item.sub_items, identifier);
+                item_info.fMask |= MIIM_SUBMENU;
+                item_info.hSubMenu = sub_sub_menu;
+            }
+
+            InsertMenuItemW(sub_menu, -1, true, &item_info);
+        }
+
+        return sub_menu;
+    }
+
+    //--------------------------------------------------------------
+    const MenuItem *WindowsWindow::FindMenuItem(const Array<MenuItem> &items, uint32 &identifier_counter, uint32 identifier) {
+        for (const MenuItem &item : items) {
+            if (identifier_counter == identifier) {
+                return &item;
+            }
+            identifier_counter++;
+
+            const MenuItem *found_item = FindMenuItem(item.sub_items, identifier_counter, identifier);
+            if (found_item) {
+                return found_item;
+            }
+        }
+        return nullptr;
     }
 
     //--------------------------------------------------------------
@@ -455,7 +477,7 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    KeyCode WindowsWindow::TranslateKeyCode(uint32 w_param, uint32 l_param, bool8 is_down) const {
+    KeyCode WindowsWindow::TranslateKeyCode(uint32 w_param, uint32 l_param, bool8 is_down) {
         // Left and right keys need to be distinguished as extended keys.
         if (w_param == VK_CONTROL) {
             // Alt-Gr sends both left control and alt right messages.
@@ -681,22 +703,6 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
-    const MenuItem *FindMenuItem(const Array<MenuItem> &items, uint32 &identifier_counter, uint32 identifier) {
-        for (const MenuItem &item : items) {
-            if (identifier_counter == identifier) {
-                return &item;
-            }
-            identifier_counter++;
-
-            const MenuItem *found_item = FindMenuItem(item.sub_items, identifier_counter, identifier);
-            if (found_item) {
-                return found_item;
-            }
-        }
-        return nullptr;
-    }
-
-    //--------------------------------------------------------------
     LRESULT WindowsWindow::MessageCallback(HWND window_handle, uint32 message, WPARAM w_param, LPARAM l_param) {
         LRESULT result = 0;
 
@@ -849,15 +855,15 @@ namespace Hyperion {
             }
 
             case WM_ENTERSIZEMOVE: {
-                window->m_timer = SetTimer(window->m_window_handle, 1, USER_TIMER_MINIMUM, nullptr);
+                window->m_timer_handle = SetTimer(window->m_window_handle, 1, USER_TIMER_MINIMUM, nullptr);
                 break;
             }
             case WM_EXITSIZEMOVE: {
-                KillTimer(window->m_window_handle, window->m_timer);
+                KillTimer(window->m_window_handle, window->m_timer_handle);
                 break;
             }
             case WM_TIMER: {
-                if (w_param == window->m_timer) {
+                if (w_param == window->m_timer_handle) {
                     Engine::Iterate();
                 }
                 break;
@@ -871,7 +877,7 @@ namespace Hyperion {
 
                 // We need to find the menu item the identifier belongs to and invoke the callback on that.
                 uint32 identifier_counter = 1;
-                const MenuItem *item = FindMenuItem(window->m_menu.items, identifier_counter, identifier);
+                const MenuItem *item = window->FindMenuItem(window->m_menu.items, identifier_counter, identifier);
                 if (item && item->callback) {
                     item->callback(*item);
                 }

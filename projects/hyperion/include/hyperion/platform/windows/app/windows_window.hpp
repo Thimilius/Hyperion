@@ -63,10 +63,14 @@ namespace Hyperion {
 
         void SetupWindow(const WindowSettings &settings);
         Vector2Int GetActualWindowSize(uint32 client_width, uint32 client_height) const;
+
+        HMENU CreateSubMenu(const Array<MenuItem> &items, uint32 &identifier);
+        const MenuItem *FindMenuItem(const Array<MenuItem> &items, uint32 &identifier_counter, uint32 identifier);
+
         void DispatchAppEvent(AppEvent &app_event) const;
         void DispatchKeyAppEvent(KeyCode key_code, bool8 is_down) const;
 
-        KeyCode TranslateKeyCode(uint32 w_param, uint32 l_param, bool8 is_down) const;
+        KeyCode TranslateKeyCode(uint32 w_param, uint32 l_param, bool8 is_down);
         MouseButtonCode TranslateMouseButtonCode(uint32 code) const;
         KeyModifier GetKeyModifier() const;
         uint32 GetMouseButtonFromMessage(uint32 message, uint32 w_param) const;
@@ -74,36 +78,33 @@ namespace Hyperion {
         static LRESULT CALLBACK MessageCallback(HWND window_handle, uint32 message, WPARAM first_message_param, LPARAM second_message_param);
     private:
         String m_title;
-
         uint32 m_width;
         uint32 m_height;
-
         uint32 m_min_width;
         uint32 m_min_height;
-
         WindowMode m_window_mode;
         WindowState m_window_state;
-        WindowState m_window_start_state;
-
         Menu m_menu;
 
-        bool8 m_is_focused;
+        WindowSettings m_settings;
 
+        bool8 m_is_focused;
         CursorMode m_cursor_mode;
         bool8 m_cursor_is_visible;
 
         AppEventCallbackFunction m_app_event_callback;
-        WindowsInput *m_input;
+        WindowsInput *m_input = nullptr;
 
-        HWND m_window_handle;
-        UINT_PTR m_timer;
+        HMENU m_menu_handle = nullptr;
+        HWND m_window_handle = nullptr;
+        UINT_PTR m_timer_handle;
 
         // We store the last window placement in order to switch correctly between windowed and borderless mode.
-        void *m_previous_placement;
+        void *m_previous_placement = nullptr;
         // To distinguish the two shift keys we explicily store their previous state.
         // That way we can send out the correct key released events when appropriate.
-        mutable bool8 m_left_shift_last_down = false;
-        mutable bool8 m_right_shift_last_down = false;
+        bool8 m_left_shift_last_down = false;
+        bool8 m_right_shift_last_down = false;
     private:
         friend class Hyperion::Engine;
         friend class Hyperion::Rendering::RenderEngine;

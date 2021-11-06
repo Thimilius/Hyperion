@@ -10,6 +10,7 @@ struct HWND__;
 struct HKEY__;
 struct HDC__;
 struct HICON__;
+struct HMENU__;
 
 typedef unsigned char BYTE;
 typedef signed int BOOL;
@@ -46,6 +47,7 @@ typedef HKEY__ *HKEY;
 typedef HDC__ *HDC;
 typedef HICON__ *HICON;
 typedef HICON__ *HCURSOR;
+typedef HMENU__ *HMENU;
 
 struct Critical_Section {
     void *Data1[1];

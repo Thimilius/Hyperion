@@ -32,6 +32,7 @@ namespace Hyperion {
         WindowState window_state = WindowState::Normal;
 
         Menu menu;
+        bool8 hide_menu_in_borderless_mode = true;
     };
 
 }
