@@ -67,7 +67,7 @@ namespace Hyperion::Editor {
             UIElement *header = UIFactory::CreateElement();
             header->SetSize(Vector2(0.0f, EditorStyle::HEADER_SIZE - 1));
             header->SetAnchorPreset(AnchorPreset::TopStretchHorizontal);
-            header->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
+            header->GetStyle().SetColor(EditorStyle::COLOR_NORMAL_DARK);
             header->GetHierarchy().SetParent(s_root_element);
 
             UIElement *header_seperator = UIFactory::CreateElement();
@@ -77,12 +77,27 @@ namespace Hyperion::Editor {
             header_seperator->GetStyle().SetColor(EditorStyle::COLOR_HIGHLIGHT);
             header_seperator->GetHierarchy().SetParent(s_root_element);
 
+            UIElement *header_left = UIFactory::CreateElement();
+            header_left->SetAnchorPreset(AnchorPreset::StretchAll);
+            header_left->GetStyle().SetOpacity(0.0f);
+            header_left->GetHierarchy().SetParent(header);
+            header_left->GetLayout().layout_type = LayoutType::Horizontal;
+            header_left->GetLayout().child_alignment = ChildAlignment::MiddleLeft;
+
             UIElement *header_middle = UIFactory::CreateElement();
             header_middle->SetAnchorPreset(AnchorPreset::StretchAll);
             header_middle->GetStyle().SetOpacity(0.0f);
             header_middle->GetHierarchy().SetParent(header);
             header_middle->GetLayout().layout_type = LayoutType::Horizontal;
             header_middle->GetLayout().child_alignment = ChildAlignment::MiddleCenter;
+
+            // Left.
+            {
+                create_button(header_left, s_font_icon, "\uf245", { });
+                create_button(header_left, s_font_icon, "\uf0b2", { });
+                create_button(header_left, s_font_icon, "\uf2f1", { });
+                create_button(header_left, s_font_icon, "\uf424", { });
+            }
 
             // Middle.
             {
@@ -175,7 +190,7 @@ namespace Hyperion::Editor {
             UIElement *footer = UIFactory::CreateElement();
             footer->SetSize(Vector2(0.0f, EditorStyle::FOOTER_SIZE - 1));
             footer->SetAnchorPreset(AnchorPreset::BottomStretchHorizontal);
-            footer->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
+            footer->GetStyle().SetColor(EditorStyle::COLOR_NORMAL_DARK);
             footer->GetHierarchy().SetParent(s_root_element);
 
             UIElement *footer_seperator = UIFactory::CreateElement();
