@@ -18,6 +18,7 @@ namespace Hyperion::UI {
         struct State {
             UIElement *hovered_element = nullptr;
             UIElement *pressed_element = nullptr;
+            UIElement *selected_element = nullptr;
         } state;
     };
 

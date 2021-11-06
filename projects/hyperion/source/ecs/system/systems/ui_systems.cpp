@@ -105,6 +105,13 @@ namespace Hyperion::UI {
                     SendEvent(state.hovered_element, UIEventType::PointerExit);
                     state.hovered_element = nullptr;
                 }
+
+                if (state.selected_element) {
+                    if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
+                        SendEvent(state.selected_element, UIEventType::Deselect);
+                        state.selected_element = nullptr;
+                    }
+                }
             }
 
             if (state.pressed_element) {
@@ -114,6 +121,12 @@ namespace Hyperion::UI {
                     // We only send the click to the button we are hovering and have pressed
                     if (state.hovered_element == state.pressed_element) {
                         SendEvent(state.hovered_element, UIEventType::PointerClick);
+
+                        if (state.hovered_element != state.selected_element) {
+                            state.selected_element = state.hovered_element;
+
+                            SendEvent(state.selected_element, UIEventType::Select);
+                        }
                     }
 
                     state.pressed_element = nullptr;
@@ -124,6 +137,11 @@ namespace Hyperion::UI {
                 if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
                     SendEvent(state.hovered_element, UIEventType::PointerDown);
                     state.pressed_element = state.hovered_element;
+
+                    if (state.selected_element) {
+                        SendEvent(state.selected_element, UIEventType::Deselect);
+                        state.selected_element = nullptr;
+                    }
                 }
                 if (Input::IsMouseButtonUp(MouseButtonCode::Left)) {
                     SendEvent(state.hovered_element, UIEventType::PointerUp);
@@ -136,6 +154,10 @@ namespace Hyperion::UI {
                 if (Input::HasMouseScrolled()) {
                     SendEvent(state.hovered_element, UIEventType::PointerScroll);
                 }
+            }
+
+            if (state.selected_element) {
+                SendEvent(state.selected_element, UIEventType::SelectUpdate);
             }
 
             ui_view->state = state;

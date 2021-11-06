@@ -16,7 +16,11 @@ namespace Hyperion::UI {
         PointerUp,
         PointerMove,
         PointerScroll,
-        PointerClick
+        PointerClick,
+
+        Select,
+        SelectUpdate,
+        Deselect
     };
 
     struct UIEvent {

@@ -100,6 +100,7 @@ namespace Hyperion::UI {
 
         bool8 is_highlighted = false;
         bool8 is_pressed = false;
+        bool8 is_selected = false;
     };
 
     class UIElement : public Object {

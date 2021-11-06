@@ -40,13 +40,14 @@ namespace Hyperion::UI {
 
     struct ColorBlock {
         Color normal_color = Color(1.0f, 1.0f, 1.0f, 1.0f);
-        Color highlight_color = Color(0.9f, 0.9f, 0.9f, 1.0f);
+        Color highlighted_color = Color(0.9f, 0.9f, 0.9f, 1.0f);
         Color pressed_color = Color(0.75f, 0.75f, 0.75f, 1.0f);
+        Color selected_color = Color(1.0f, 1.0f, 1.0f, 1.0f);
         Color disabled_color = Color(0.6f, 0.6f, 0.6f, 0.5f);
     };
 
     struct Shadow {
-        bool enabled = false;
+        bool8 enabled = false;
         Color color = Color::Black();
         Vector2 offset = Vector2(1.0f, -1.0f);
     };

@@ -319,15 +319,21 @@ namespace Hyperion::UI {
             m_state.is_highlighted = true;
         } else if (event_type == UIEventType::PointerExit) {
             m_state.is_highlighted = false;
+        } else if (event_type == UIEventType::Select) {
+            m_state.is_selected = true;
+        } else if (event_type == UIEventType::Deselect) {
+            m_state.is_selected = false;
         }
 
         if (!m_state.is_interactable) {
             GetRenderer().color = m_style.m_color_block.disabled_color;
         } else if (m_state.is_pressed) {
             GetRenderer().color = m_style.m_color_block.pressed_color;
+        } else if (m_state.is_selected) {
+            GetRenderer().color = m_style.m_color_block.selected_color;
         } else if (m_state.is_highlighted) {
-            GetRenderer().color = m_style.m_color_block.highlight_color;
-        } else {
+            GetRenderer().color = m_style.m_color_block.highlighted_color;
+        }  else {
             GetRenderer().color = m_style.m_color_block.normal_color;
         }
     }
