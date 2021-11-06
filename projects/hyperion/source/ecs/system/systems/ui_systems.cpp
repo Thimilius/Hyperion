@@ -7,6 +7,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/display.hpp"
 #include "hyperion/core/app/input.hpp"
+#include "hyperion/core/app/events/key_events.hpp"
 #include "hyperion/ecs/component/components/core_components.hpp"
 #include "hyperion/ecs/component/components/ui_components.hpp"
 #include "hyperion/ecs/world/world.hpp"
@@ -158,6 +159,13 @@ namespace Hyperion::UI {
 
             if (state.selected_element) {
                 SendEvent(state.selected_element, UIEventType::SelectUpdate);
+
+                for (AppEvent *app_event : Input::GetEvents()) {
+                    if (app_event->GetType() == AppEventType::KeyTyped) {
+                        KeyTypedAppEvent *key_typed_event = static_cast<KeyTypedAppEvent *>(app_event);
+                        SendEvent(state.selected_element, UIEventType::KeyTyped, key_typed_event->GetCharacter(), key_typed_event->GetKeyModifier());
+                    }
+                }
             }
 
             ui_view->state = state;
@@ -176,11 +184,13 @@ namespace Hyperion::UI {
     }
 
     //--------------------------------------------------------------
-    void UIEventSystem::SendEvent(UIElement *element, UIEventType type) {
+    void UIEventSystem::SendEvent(UIElement *element, UIEventType type, uint32 key_typed, KeyModifier key_modifier) {
         UIEvent event;
         event.m_type = type;
         event.m_pointer_position = Input::GetMousePosition(); // FIXME: This is in the wrong coordinate space!
         event.m_pointer_scroll = Input::GetMouseScroll();
+        event.m_key_typed = key_typed;
+        event.m_key_modifier = key_modifier;
         element->OnEvent(event);
     }
 

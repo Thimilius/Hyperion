@@ -32,9 +32,11 @@ namespace Hyperion::UI {
 
     //--------------------------------------------------------------
     void UIToggle::SetToggleGraphic(UIElement *toggle_graphic) {
-        m_toggle_graphic = toggle_graphic;
+        if (m_toggle_graphic != toggle_graphic) {
+            m_toggle_graphic = toggle_graphic;
 
-        StateTransition();
+            StateTransition();
+        }
     }
 
     //--------------------------------------------------------------

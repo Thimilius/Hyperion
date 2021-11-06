@@ -2,6 +2,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/core/app/input_types.hpp"
 #include "hyperion/ecs/system/system.hpp"
 #include "hyperion/ui/ui_element.hpp"
 
@@ -29,7 +30,7 @@ namespace Hyperion::UI {
         static void Run(UIViewComponent *ui_view);
     private:
         static void RaycastElements(UIElement *element, Vector2Int screen_point, Array<UIElement *> &raycasted);
-        static void SendEvent(UIElement *element, UIEventType type);
+        static void SendEvent(UIElement *element, UIEventType type, uint32 key_typed = 0, KeyModifier key_modifier = KeyModifier::None);
     };
 
 }

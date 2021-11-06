@@ -44,11 +44,13 @@ namespace Hyperion {
         bool8 IsGamepadButtonDown(Gamepad gamepad, GamepadButtonCode gamepad_button_code) const override { return m_gamepads[static_cast<int32>(gamepad)].buttons_down[static_cast<int32>(gamepad_button_code)]; }
         bool8 IsGamepadButtonHold(Gamepad gamepad, GamepadButtonCode gamepad_button_code) const override { return m_gamepads[static_cast<int32>(gamepad)].buttons[static_cast<int32>(gamepad_button_code)]; }
         bool8 IsGamepadButtonUp(Gamepad gamepad, GamepadButtonCode gamepad_button_code) const override { return m_gamepads[static_cast<int32>(gamepad)].buttons_up[static_cast<int32>(gamepad_button_code)]; }
+
+        inline const Array<AppEvent *> &GetEvents() const override { return m_events; }
     private:
         void OnAppEvent(AppEvent &app_event);
         void Update();
         void Reset();
-
+        
         void QueryConnectedGamepads();
 
         void OnKeyEvent(KeyAppEvent &key_app_event, bool8 down);
@@ -87,6 +89,8 @@ namespace Hyperion {
         Array<Gamepad> m_gamepads_connected;
         GamepadState m_gamepads[static_cast<int32>(Gamepad::Last)];
         float32 m_gamepad_dead_zone = 0.25f;
+
+        Array<AppEvent *> m_events;
     private:
         friend class Hyperion::WindowsWindow;
     };

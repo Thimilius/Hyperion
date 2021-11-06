@@ -70,6 +70,18 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void WindowsInput::OnAppEvent(AppEvent &app_event) {
+        // We keep track of all input events in this frame.
+        if (app_event.IsInCategory(AppEventCategory::Input)) {
+            AppEventDispatcher dispatcher(app_event);
+            dispatcher.Dispatch<KeyPressedAppEvent>([this](KeyPressedAppEvent &event) { m_events.Add(new KeyPressedAppEvent(event)); });
+            dispatcher.Dispatch<KeyReleasedAppEvent>([this](KeyReleasedAppEvent &event) { m_events.Add(new KeyReleasedAppEvent(event)); });
+            dispatcher.Dispatch<KeyTypedAppEvent>([this](KeyTypedAppEvent &event) { m_events.Add(new KeyTypedAppEvent(event)); });
+            dispatcher.Dispatch<MouseButtonPressedAppEvent>([this](MouseButtonPressedAppEvent &event) { m_events.Add(new MouseButtonPressedAppEvent(event)); });
+            dispatcher.Dispatch<MouseButtonReleasedAppEvent>([this](MouseButtonReleasedAppEvent &event) { m_events.Add(new MouseButtonReleasedAppEvent(event)); });
+            dispatcher.Dispatch<MouseScrolledAppEvent>([this](MouseScrolledAppEvent &event) { m_events.Add(new MouseScrolledAppEvent(event)); });
+            dispatcher.Dispatch<MouseMovedAppEvent>([this](MouseMovedAppEvent &event) { m_events.Add(new MouseMovedAppEvent(event)); });
+        }
+        
         AppEventDispatcher dispatcher(app_event);
 
         dispatcher.Dispatch<WindowFocusAppEvent>([this](WindowFocusAppEvent &window_focus_event){
@@ -87,17 +99,17 @@ namespace Hyperion {
             m_keys_typed.Add(key_type_event.GetCharacter());
         });
 
-        dispatcher.Dispatch<MouseScrolledAppEvent>([this](MouseScrolledAppEvent &mouse_scrolled_event) {
-            m_mouse_scroll = mouse_scrolled_event.GetScroll();
-        });
-        dispatcher.Dispatch<MouseMovedAppEvent>([this](MouseMovedAppEvent &mouse_moved_event) {
-            m_mouse_position = Vector2Int(mouse_moved_event.GetX(), mouse_moved_event.GetY());
-        });
         dispatcher.Dispatch<MouseButtonPressedAppEvent>([this](MouseButtonPressedAppEvent &mouse_button_pressed_event) {
             OnMouseButtonEvent(mouse_button_pressed_event, true);
         });
         dispatcher.Dispatch<MouseButtonReleasedAppEvent>([this](MouseButtonReleasedAppEvent &mouse_button_released_event) {
             OnMouseButtonEvent(mouse_button_released_event, false);
+        });
+        dispatcher.Dispatch<MouseScrolledAppEvent>([this](MouseScrolledAppEvent &mouse_scrolled_event) {
+            m_mouse_scroll = mouse_scrolled_event.GetScroll();
+        });
+        dispatcher.Dispatch<MouseMovedAppEvent>([this](MouseMovedAppEvent &mouse_moved_event) {
+            m_mouse_position = Vector2Int(mouse_moved_event.GetX(), mouse_moved_event.GetY());
         });
     }
 
@@ -124,6 +136,11 @@ namespace Hyperion {
 
             m_last_mouse_position = m_mouse_position;
             m_mouse_scroll = 0.0f;
+
+            for (AppEvent *event : m_events) {
+                delete event;
+            }
+            m_events.Clear();
         }
         
         if (m_gamepad_input_active) {
@@ -205,6 +222,11 @@ namespace Hyperion {
                 gamepad.axes[j] = Vector2();
             }
         }
+
+        for (AppEvent *event : m_events) {
+            delete event;
+        }
+        m_events.Clear();
     }
 
     //--------------------------------------------------------------
