@@ -86,6 +86,8 @@ namespace Hyperion::UI {
                 SetText(GetText() + StringUtils::GetUtf8FromCodepoint(key_typed));
             }
         }
+
+        MarkDirty();
     }
 
     //--------------------------------------------------------------
@@ -97,6 +99,40 @@ namespace Hyperion::UI {
         }
 
         UIElement::DoStateTransition(state);
+    }
+
+    //--------------------------------------------------------------
+    void UIInputField::OnRebuildGeometry(MeshBuilder &mesh_builder) {
+        UIElement::OnRebuildGeometry(mesh_builder);
+
+        if (!IsSelected()) {
+            return;
+        }
+        if (m_input_label == nullptr) {
+            return;
+        }
+        Font *font = m_input_label->GetFont();
+        if (font == nullptr) {
+            return;
+        }
+
+        Vector3 corners[4];
+        GetLocalCorners(corners);
+
+        Vector3 top_left = corners[static_cast<uint32>(Corner::TopLeft)];
+        Vector3 bottom_left = corners[static_cast<uint32>(Corner::BottomLeft)];
+        float32 local_size = top_left.y - bottom_left.y;
+        float32 font_size = font->GetSize() + 4.0f;
+        float32 caret_width = 2.0f;
+
+        if (local_size >= font_size) {
+            corners[static_cast<uint32>(Corner::TopRight)] = Vector3(top_left.x + caret_width, top_left.y, 0.0f);
+            corners[static_cast<uint32>(Corner::BottomRight)] = Vector3(bottom_left.x + caret_width, bottom_left.y, 0.0f);
+            corners[static_cast<uint32>(Corner::BottomLeft)] = Vector3(bottom_left, 0.0f);
+            corners[static_cast<uint32>(Corner::TopLeft)] = Vector3(top_left, 0.0f);
+            
+            AddQuad(mesh_builder, corners, Color::White());
+        }
     }
 
 }

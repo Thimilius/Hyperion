@@ -21,6 +21,8 @@ namespace Hyperion::UI {
     protected:
         void OnEvent(UIEvent &event) override;
         void DoStateTransition(SelectionState state) override;
+
+        void OnRebuildGeometry(MeshBuilder &mesh_builder) override;
     private:
         String m_text;
 

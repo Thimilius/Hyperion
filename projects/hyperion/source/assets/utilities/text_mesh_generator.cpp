@@ -10,11 +10,12 @@ namespace Hyperion {
     //--------------------------------------------------------------
     Mesh *TextMeshGenerator::GenerateMesh(const TextMeshGenerationSettings &settings) {
         MeshBuilder mesh_builder;
-        return GenerateMesh(settings, mesh_builder);
+        GenerateMesh(settings, mesh_builder);
+        return mesh_builder.CreateMesh();
     }
 
     //--------------------------------------------------------------
-    Mesh *TextMeshGenerator::GenerateMesh(const TextMeshGenerationSettings &settings, MeshBuilder &mesh_builder) {
+    void TextMeshGenerator::GenerateMesh(const TextMeshGenerationSettings &settings, MeshBuilder &mesh_builder) {
         mesh_builder.Clear();
 
         Font *font = settings.font;
@@ -65,8 +66,6 @@ namespace Hyperion {
             triangle_index += 4;
             position.x += glyph.advance * scale_x;
         }
-
-        return mesh_builder.CreateMesh();
     }
 
     //--------------------------------------------------------------

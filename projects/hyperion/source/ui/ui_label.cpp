@@ -45,16 +45,13 @@ namespace Hyperion::UI {
 
     //--------------------------------------------------------------
     void UILabel::OnRebuildGeometry(MeshBuilder &mesh_builder) {
-        if (m_font == nullptr || m_text == "") {
-            if (m_font == nullptr) {
-                GetRenderer().texture = nullptr;
-            }
-            if (m_text == "") {
-                GetRenderer().mesh = nullptr;
-            }
+        if (m_font == nullptr) {
+            GetRenderer().texture = nullptr;
             return;
         }
-        mesh_builder.Clear();
+        if (m_text == "") {
+            return;
+        }
 
         TextMeshGenerationSettings settings;
         settings.text = m_text;
@@ -64,9 +61,8 @@ namespace Hyperion::UI {
         settings.rect = GetWorldRect();
         settings.scale = GetDerivedScale();
         settings.rotation = GetDerivedRotation();
+        TextMeshGenerator::GenerateMesh(settings, mesh_builder);
 
-        AssetManager::Unload(GetRenderer().mesh);
-        GetRenderer().mesh = TextMeshGenerator::GenerateMesh(settings, mesh_builder);
         GetRenderer().texture = m_font->GetTexture();
     }
 

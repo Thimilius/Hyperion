@@ -148,6 +148,7 @@ namespace Hyperion::UI {
         void SetAnchorPreset(AnchorPreset preset);
         void GetLocalCorners(Vector3 corners[4]) const;
         void GetWorldCorners(Vector3 corners[4]) const;
+        void TransformCorners(Vector3 corners[4]) const;
 
         inline UIElementRenderer &GetRenderer() { return m_renderer; }
         inline const UIElementRenderer &GetRenderer() const { return m_renderer; }
@@ -173,6 +174,8 @@ namespace Hyperion::UI {
 
         virtual void OnRebuildLayout();
         virtual void OnRebuildGeometry(MeshBuilder &mesh_builder);
+
+        void AddQuad(MeshBuilder &mesh_builder, Vector3 corners[4], Color color);
     private:
         void RecalculateTransform(float32 ui_scale);
     private:

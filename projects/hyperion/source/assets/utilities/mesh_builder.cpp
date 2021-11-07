@@ -14,18 +14,6 @@ using namespace Hyperion::Rendering;
 namespace Hyperion {
 
     //--------------------------------------------------------------
-    void MeshBuilder::Clear() {
-        m_mesh_data.positions.Clear();
-        m_mesh_data.normals.Clear();
-        m_mesh_data.colors.Clear();
-        m_mesh_data.texture0.Clear();
-        m_mesh_data.indices.Clear();
-
-        m_vertex_count = 0;
-        m_index_count = 0;
-    }
-
-    //--------------------------------------------------------------
     void MeshBuilder::AddVertex(Vector3 position, Vector3 normal, Vector2 texture0) {
         m_mesh_data.positions.Add(position);
         m_mesh_data.normals.Add(normal);
@@ -45,9 +33,9 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void MeshBuilder::AddTriangle(uint32 a, uint32 b, uint32 c) {
-        m_mesh_data.indices.Add(a);
-        m_mesh_data.indices.Add(b);
-        m_mesh_data.indices.Add(c);
+        m_mesh_data.indices.Add(m_index_offset + a);
+        m_mesh_data.indices.Add(m_index_offset + b);
+        m_mesh_data.indices.Add(m_index_offset + c);
         m_index_count += 3;
     }
 
@@ -61,14 +49,31 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     Mesh *MeshBuilder::CreateMesh() {
-        Array<SubMesh> sub_meshes = { { Rendering::MeshTopology::Triangles, m_vertex_count, 0, m_index_count, 0 } };
-        return AssetManager::CreateMesh(m_mesh_data, sub_meshes);
+        if (IsEmpty()) {
+            return nullptr;
+        } else {
+            Array<SubMesh> sub_meshes = { { Rendering::MeshTopology::Triangles, m_vertex_count, 0, m_index_count, 0 } };
+            return AssetManager::CreateMesh(m_mesh_data, sub_meshes);
+        }
     }
 
     //--------------------------------------------------------------
     void MeshBuilder::SetToMesh(Mesh *mesh) {
         Array<SubMesh> sub_meshes = { { Rendering::MeshTopology::Triangles, m_vertex_count, 0, m_index_count, 0 } };
         mesh->SetData(m_mesh_data, sub_meshes);
+    }
+
+    //--------------------------------------------------------------
+    void MeshBuilder::Clear() {
+        m_mesh_data.positions.Clear();
+        m_mesh_data.normals.Clear();
+        m_mesh_data.colors.Clear();
+        m_mesh_data.texture0.Clear();
+        m_mesh_data.indices.Clear();
+
+        m_vertex_count = 0;
+        m_index_count = 0;
+        m_index_offset = 0;
     }
 
 }

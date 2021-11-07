@@ -214,6 +214,7 @@ namespace Hyperion::Rendering {
                     Material *material = renderer.material ? renderer.material : AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI);
                     AssetId texture_id = renderer.texture ? renderer.texture->GetAssetInfo().id : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetAssetInfo().id;
 
+                    // FIXME: The shadow should be moved into the mesh of the element itself.
                     // Because of the simple ui layering of elements we have to render the shadow first.
                     if (element->GetStyle().GetShadow().enabled) {
                         Color shadow_color = element->GetStyle().GetShadow().color;

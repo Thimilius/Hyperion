@@ -179,10 +179,10 @@ namespace Hyperion::UI {
         Vector2 min = m_rect.GetMin();
         Vector2 max = m_rect.GetMax();
 
-        corners[0] = Vector3(max.x, max.y, 0.0f);
-        corners[1] = Vector3(max.x, min.y, 0.0f);
-        corners[2] = Vector3(min.x, min.y, 0.0f);
-        corners[3] = Vector3(min.x, max.y, 0.0f);
+        corners[static_cast<uint32>(Corner::TopRight)] = Vector3(max.x, max.y, 0.0f);
+        corners[static_cast<uint32>(Corner::BottomRight)] = Vector3(max.x, min.y, 0.0f);
+        corners[static_cast<uint32>(Corner::BottomLeft)] = Vector3(min.x, min.y, 0.0f);
+        corners[static_cast<uint32>(Corner::TopLeft)] = Vector3(min.x, max.y, 0.0f);
     }
 
     //--------------------------------------------------------------
@@ -190,6 +190,13 @@ namespace Hyperion::UI {
         HYP_ASSERT(corners);
 
         GetLocalCorners(corners);
+        TransformCorners(corners);
+    }
+
+    //--------------------------------------------------------------
+    void UIElement::TransformCorners(Vector3 corners[4]) const {
+        HYP_ASSERT(corners);
+
         for (uint64 i = 0; i < 4; i++) {
             corners[i] = m_transform * corners[i];
         }
@@ -354,7 +361,11 @@ namespace Hyperion::UI {
         RecalculateTransform(ui_scale);
 
         OnRebuildLayout();
+
+        mesh_builder.Clear();
         OnRebuildGeometry(mesh_builder);
+        AssetManager::Unload(m_renderer.mesh);
+        m_renderer.mesh = mesh_builder.CreateMesh();
     }
 
     //--------------------------------------------------------------
@@ -467,21 +478,25 @@ namespace Hyperion::UI {
 
     //--------------------------------------------------------------
     void UIElement::OnRebuildGeometry(MeshBuilder &mesh_builder) {
-        mesh_builder.Clear();
+        Vector3 corners[4];
+        GetLocalCorners(corners);
 
-        Vector3 world_corners[4];
-        GetWorldCorners(world_corners);
-        Color color = m_style.m_color;
+        AddQuad(mesh_builder, corners, m_style.m_color);
+    }
 
-        mesh_builder.AddVertex(world_corners[0], color, Vector2(1.0f, 1.0f));
-        mesh_builder.AddVertex(world_corners[1], color, Vector2(1.0f, 0.0f));
-        mesh_builder.AddVertex(world_corners[2], color, Vector2(0.0f, 0.0f));
-        mesh_builder.AddVertex(world_corners[3], color, Vector2(0.0f, 1.0f));
+    //--------------------------------------------------------------
+    void UIElement::AddQuad(MeshBuilder &mesh_builder, Vector3 corners[4], Color color) {
+        HYP_ASSERT(corners);
+
+        TransformCorners(corners);
+
+        mesh_builder.AddVertex(corners[static_cast<uint32>(Corner::TopRight)], color, Vector2(1.0f, 1.0f));
+        mesh_builder.AddVertex(corners[static_cast<uint32>(Corner::BottomRight)], color, Vector2(1.0f, 0.0f));
+        mesh_builder.AddVertex(corners[static_cast<uint32>(Corner::BottomLeft)], color, Vector2(0.0f, 0.0f));
+        mesh_builder.AddVertex(corners[static_cast<uint32>(Corner::TopLeft)], color, Vector2(0.0f, 1.0f));
         mesh_builder.AddTriangle(0, 1, 2);
         mesh_builder.AddTriangle(0, 2, 3);
-
-        AssetManager::Unload(m_renderer.mesh);
-        m_renderer.mesh = mesh_builder.CreateMesh();
+        mesh_builder.AddIndexOffset(4);
     }
 
     //--------------------------------------------------------------

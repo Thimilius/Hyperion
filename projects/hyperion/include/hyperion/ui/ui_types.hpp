@@ -9,6 +9,13 @@ namespace Hyperion::UI {
         ConstantPixelSize
     };
 
+    enum class Corner {
+        TopRight,
+        BottomRight,
+        BottomLeft,
+        TopLeft
+    };
+
     enum class AnchorPreset {
         TopLeft,
         TopCenter,
