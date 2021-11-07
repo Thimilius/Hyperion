@@ -18,7 +18,6 @@ namespace Hyperion {
         Color color = Color::White();
 
         Rect rect = Rect();
-        Quaternion rotation = Quaternion::Identity();
         Vector2 scale = Vector2(1.0f, 1.0f);
     };
 

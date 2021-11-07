@@ -49,7 +49,7 @@ namespace Hyperion::UI {
             return;
         }
 
-        Rect rect = GetWorldRect();
+        Rect rect = GetLocalRect();
         rect.position += shadow_offset;
         RebuildTextGeometry(mesh_builder, shadow_color, rect);
     }
@@ -60,8 +60,11 @@ namespace Hyperion::UI {
             return;
         }
 
-        Rect rect = GetWorldRect();
+        Rect rect = GetLocalRect();
         RebuildTextGeometry(mesh_builder, GetStyle().GetColor(), rect);
+
+        // This transformation also affects the shadow vertices that may be present.
+        mesh_builder.Transform(GetTransform());
 
         GetRenderer().texture = m_font->GetTexture();
     }
@@ -72,8 +75,7 @@ namespace Hyperion::UI {
         settings.text = m_text;
         settings.font = m_font;
         settings.alignment = m_alignment;
-        settings.scale = GetDerivedScale();
-        settings.rotation = GetDerivedRotation();
+        settings.scale = GetScale();
         settings.color = color;
         settings.rect = rect;
         TextMeshGenerator::GenerateMesh(settings, mesh_builder);

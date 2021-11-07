@@ -129,6 +129,7 @@ namespace Hyperion::UI {
         inline Vector2 GetScale() const { return m_local_scale; }
         inline Vector2 GetDerivedScale() const { return m_derived_scale; }
         void SetScale(Vector2 scale);
+        inline Matrix4x4 GetTransform() const { return m_transform; }
 
         inline Rect GetLocalRect() const { return m_rect; }
         Rect GetWorldRect() const;
