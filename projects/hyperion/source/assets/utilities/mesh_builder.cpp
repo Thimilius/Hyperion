@@ -40,6 +40,50 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    void MeshBuilder::AddQuad(Vector3 corners[4], Vector3 normal) {
+        AddVertex(corners[0], normal, Vector2(1.0f, 1.0f));
+        AddVertex(corners[1], normal, Vector2(1.0f, 0.0f));
+        AddVertex(corners[2], normal, Vector2(0.0f, 0.0f));
+        AddVertex(corners[3], normal, Vector2(0.0f, 1.0f));
+        AddTriangle(0, 1, 2);
+        AddTriangle(0, 2, 3);
+        AddIndexOffset(4);
+    }
+
+    //--------------------------------------------------------------
+    void MeshBuilder::AddQuad(Vector3 corners[4], Vector3 normal, Vector2 uvs[4]) {
+        AddVertex(corners[0], normal, uvs[0]);
+        AddVertex(corners[1], normal, uvs[1]);
+        AddVertex(corners[2], normal, uvs[2]);
+        AddVertex(corners[3], normal, uvs[3]);
+        AddTriangle(0, 1, 2);
+        AddTriangle(0, 2, 3);
+        AddIndexOffset(4);
+    }
+
+    //--------------------------------------------------------------
+    void MeshBuilder::AddQuad(Vector3 corners[4], Color color) {
+        AddVertex(corners[0], color, Vector2(1.0f, 1.0f));
+        AddVertex(corners[1], color, Vector2(1.0f, 0.0f));
+        AddVertex(corners[2], color, Vector2(0.0f, 0.0f));
+        AddVertex(corners[3], color, Vector2(0.0f, 1.0f));
+        AddTriangle(0, 1, 2);
+        AddTriangle(0, 2, 3);
+        AddIndexOffset(4);
+    }
+
+    //--------------------------------------------------------------
+    void MeshBuilder::AddQuad(Vector3 corners[4], Color color, Vector2 uvs[4]) {
+        AddVertex(corners[0], color, uvs[0]);
+        AddVertex(corners[1], color, uvs[1]);
+        AddVertex(corners[2], color, uvs[2]);
+        AddVertex(corners[3], color, uvs[3]);
+        AddTriangle(0, 1, 2);
+        AddTriangle(0, 2, 3);
+        AddIndexOffset(4);
+    }
+
+    //--------------------------------------------------------------
     void MeshBuilder::Transform(const Matrix4x4 &transformation) {
         for (uint32 i = 0; i < m_mesh_data.positions.GetLength(); i++) {
             Vector3 transformed_position = transformation * m_mesh_data.positions[i];

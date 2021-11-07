@@ -15,19 +15,18 @@ namespace Hyperion {
     Mesh *MeshGenerator::GenerateQuad(float32 width, float32 height) {
         float32 half_width = width / 2.0f;
         float32 half_height = height / 2.0f;
+        Vector3 corners[4] = {
+            Vector3(half_width, half_height, 0.0f),
+            Vector3(half_width, -half_height, 0.0f),
+            Vector3(-half_width, -half_height, 0.0f),
+            Vector3(-half_width, half_height, 0.0f)
+        };
 
         // The quad should face the camera (right-handed).
         Vector3 normal = Vector3::Back();
 
         MeshBuilder mesh_builder;
-
-        mesh_builder.AddVertex(Vector3(half_width, half_height, 0.0f), normal, Vector2(1.0f, 1.0f));
-        mesh_builder.AddVertex(Vector3(half_width, -half_height, 0.0f), normal, Vector2(1.0f, 0.0f));
-        mesh_builder.AddVertex(Vector3(-half_width, -half_height, 0.0f), normal, Vector2(0.0f, 0.0f));
-        mesh_builder.AddVertex(Vector3(-half_width, half_height, 0.0f), normal, Vector2(0.0f, 1.0f));
-        mesh_builder.AddTriangle(0, 1, 2);
-        mesh_builder.AddTriangle(0, 2, 3);
-
+        mesh_builder.AddQuad(corners, normal);
         return mesh_builder.CreateMesh();
     }
 
@@ -35,20 +34,19 @@ namespace Hyperion {
     Mesh *MeshGenerator::GeneratePlane(float32 width, float32 height) {
         float32 half_width = width / 2.0f;
         float32 half_height = height / 2.0f;
+        // Remember that we are right-handed and therefore -z is into the screen!
+        Vector3 corners[4] = {
+            Vector3(half_width, 0.0f, -half_height),
+            Vector3(half_width, 0.0f, half_height),
+            Vector3(-half_width, 0.0f, half_height),
+            Vector3(-half_width, 0.0f, -half_height)
+        };
 
         // The plane should face up.
         Vector3 normal = Vector3::Up();
 
         MeshBuilder mesh_builder;
-
-        // Remember that we are right-handed and therefore -z is into the screen!
-        mesh_builder.AddVertex(Vector3(half_width, 0.0f, -half_height), normal, Vector2(1.0f, 1.0f));
-        mesh_builder.AddVertex(Vector3(half_width, 0.0f, half_height), normal, Vector2(1.0f, 0.0f));
-        mesh_builder.AddVertex(Vector3(-half_width, 0.0f, half_height), normal, Vector2(0.0f, 0.0f));
-        mesh_builder.AddVertex(Vector3(-half_width, 0.0f, -half_height), normal, Vector2(0.0f, 1.0f));
-        mesh_builder.AddTriangle(0, 1, 2);
-        mesh_builder.AddTriangle(0, 2, 3);
-
+        mesh_builder.AddQuad(corners, normal);
         return mesh_builder.CreateMesh();
     }
 
@@ -59,49 +57,44 @@ namespace Hyperion {
         float32 half_size = size / 2.0f;
 
         // Forward and back as seen from the center of the cube (aka right-handed)!
+        Vector3 corners[4];
 
         // Forward (-z)
-        mesh_builder.AddVertex(Vector3(half_size, -half_size, -half_size), Vector3::Forward(), Vector2(0.0f, 0.0f));
-        mesh_builder.AddVertex(Vector3(half_size, half_size, -half_size), Vector3::Forward(), Vector2(0.0f, 1.0f));
-        mesh_builder.AddVertex(Vector3(-half_size, half_size, -half_size), Vector3::Forward(), Vector2(1.0f, 1.0f));
-        mesh_builder.AddVertex(Vector3(-half_size, -half_size, -half_size), Vector3::Forward(), Vector2(1.0f, 0.0f));
-        mesh_builder.AddTriangle(0, 1, 2);
-        mesh_builder.AddTriangle(0, 2, 3);
+        corners[0] = Vector3(half_size, -half_size, -half_size);
+        corners[1] = Vector3(half_size, half_size, -half_size);
+        corners[2] = Vector3(-half_size, half_size, -half_size);
+        corners[3] = Vector3(-half_size, -half_size, -half_size);
+        mesh_builder.AddQuad(corners, Vector3::Forward());
         // Right (+x)
-        mesh_builder.AddVertex(Vector3(half_size, -half_size, half_size), Vector3::Right(), Vector2(0.0f, 0.0f));
-        mesh_builder.AddVertex(Vector3(half_size, half_size, half_size), Vector3::Right(), Vector2(0.0f, 1.0f));
-        mesh_builder.AddVertex(Vector3(half_size, half_size, -half_size), Vector3::Right(), Vector2(1.0f, 1.0f));
-        mesh_builder.AddVertex(Vector3(half_size, -half_size, -half_size), Vector3::Right(), Vector2(1.0f, 0.0f));
-        mesh_builder.AddTriangle(4, 5, 6);
-        mesh_builder.AddTriangle(4, 6, 7);
+        corners[0] = Vector3(half_size, -half_size, half_size);
+        corners[1] = Vector3(half_size, half_size, half_size);
+        corners[2] = Vector3(half_size, half_size, -half_size);
+        corners[3] = Vector3(half_size, -half_size, -half_size);
+        mesh_builder.AddQuad(corners, Vector3::Right());
         // Back (+z)
-        mesh_builder.AddVertex(Vector3(-half_size, -half_size, half_size), Vector3::Back(), Vector2(0.0f, 0.0f));
-        mesh_builder.AddVertex(Vector3(-half_size, half_size, half_size), Vector3::Back(), Vector2(0.0f, 1.0f));
-        mesh_builder.AddVertex(Vector3(half_size, half_size, half_size), Vector3::Back(), Vector2(1.0f, 1.0f));
-        mesh_builder.AddVertex(Vector3(half_size, -half_size, half_size), Vector3::Back(), Vector2(1.0f, 0.0f));
-        mesh_builder.AddTriangle(8, 9, 10);
-        mesh_builder.AddTriangle(8, 10, 11);
+        corners[0] = Vector3(-half_size, -half_size, half_size);
+        corners[1] = Vector3(-half_size, half_size, half_size);
+        corners[2] = Vector3(half_size, half_size, half_size);
+        corners[3] = Vector3(half_size, -half_size, half_size);
+        mesh_builder.AddQuad(corners, Vector3::Back());
         // Left (-x)
-        mesh_builder.AddVertex(Vector3(-half_size, -half_size, -half_size), Vector3::Left(), Vector2(0.0f, 0.0f));
-        mesh_builder.AddVertex(Vector3(-half_size, half_size, -half_size), Vector3::Left(), Vector2(0.0f, 1.0f));
-        mesh_builder.AddVertex(Vector3(-half_size, half_size, half_size), Vector3::Left(), Vector2(1.0f, 1.0f));
-        mesh_builder.AddVertex(Vector3(-half_size, -half_size, half_size), Vector3::Left(), Vector2(1.0f, 0.0f));
-        mesh_builder.AddTriangle(12, 13, 14);
-        mesh_builder.AddTriangle(12, 14, 15);
+        corners[0] = Vector3(-half_size, -half_size, -half_size);
+        corners[1] = Vector3(-half_size, half_size, -half_size);
+        corners[2] = Vector3(-half_size, half_size, half_size);
+        corners[3] = Vector3(-half_size, -half_size, half_size);
+        mesh_builder.AddQuad(corners, Vector3::Left());
         // Up (+y)
-        mesh_builder.AddVertex(Vector3(-half_size, half_size, half_size), Vector3::Up(), Vector2(0.0f, 0.0f));
-        mesh_builder.AddVertex(Vector3(-half_size, half_size, -half_size), Vector3::Up(), Vector2(0.0f, 1.0f));
-        mesh_builder.AddVertex(Vector3(half_size, half_size, -half_size), Vector3::Up(), Vector2(1.0f, 1.0f));
-        mesh_builder.AddVertex(Vector3(half_size, half_size, half_size), Vector3::Up(), Vector2(1.0f, 0.0f));
-        mesh_builder.AddTriangle(16, 17, 18);
-        mesh_builder.AddTriangle(16, 18, 19);
+        corners[0] = Vector3(-half_size, half_size, half_size);
+        corners[1] = Vector3(-half_size, half_size, -half_size);
+        corners[2] = Vector3(half_size, half_size, -half_size);
+        corners[3] = Vector3(half_size, half_size, half_size);
+        mesh_builder.AddQuad(corners, Vector3::Up());
         // Down (-y)
-        mesh_builder.AddVertex(Vector3(-half_size, -half_size, -half_size), Vector3::Down(), Vector2(0.0f, 0.0f));
-        mesh_builder.AddVertex(Vector3(-half_size, -half_size, half_size), Vector3::Down(), Vector2(0.0f, 1.0f));
-        mesh_builder.AddVertex(Vector3(half_size, -half_size, half_size), Vector3::Down(), Vector2(1.0f, 1.0f));
-        mesh_builder.AddVertex(Vector3(half_size, -half_size, -half_size), Vector3::Down(), Vector2(1.0f, 0.0f));
-        mesh_builder.AddTriangle(20, 21, 22);
-        mesh_builder.AddTriangle(20, 22, 23);
+        corners[0] = Vector3(-half_size, -half_size, -half_size);
+        corners[1] = Vector3(-half_size, -half_size, half_size);
+        corners[2] = Vector3(half_size, -half_size, half_size);
+        corners[3] = Vector3(half_size, -half_size, -half_size);
+        mesh_builder.AddQuad(corners, Vector3::Down());
 
         return mesh_builder.CreateMesh();
     }

@@ -19,6 +19,11 @@ namespace Hyperion {
         void AddVertex(Vector3 position, Color color, Vector2 texture0);
         void AddTriangle(uint32 a, uint32 b, uint32 c);
 
+        void AddQuad(Vector3 corners[4], Vector3 normal);
+        void AddQuad(Vector3 corners[4], Vector3 normal, Vector2 uvs[4]);
+        void AddQuad(Vector3 corners[4], Color color);
+        void AddQuad(Vector3 corners[4], Color color, Vector2 uvs[4]);
+
         void Transform(const Matrix4x4 &transformation);
 
         Mesh *CreateMesh();

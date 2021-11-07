@@ -54,14 +54,20 @@ namespace Hyperion {
             float32 width = glyph.size.x * scale_x;
             float32 height = glyph.size.y * scale_y;
 
-            mesh_builder.AddVertex(Vector3(x_pos, y_pos + height, 0.0f), color, element.uv_top_left);
-            mesh_builder.AddVertex(Vector3(x_pos + width, y_pos + height, 0.0f), color, element.uv_top_right);
-            mesh_builder.AddVertex(Vector3(x_pos + width, y_pos, 0.0f), color, element.uv_bottom_right);
-            mesh_builder.AddVertex(Vector3(x_pos, y_pos, 0.0f), color, element.uv_bottom_left);
-            mesh_builder.AddTriangle(0, 1, 2);
-            mesh_builder.AddTriangle(0, 2, 3);
-            mesh_builder.AddIndexOffset(4);
-
+            Vector3 corners[4] = {
+                Vector3(x_pos, y_pos + height, 0.0f),
+                Vector3(x_pos + width, y_pos + height, 0.0f),
+                Vector3(x_pos + width, y_pos, 0.0f),
+                Vector3(x_pos, y_pos, 0.0f)
+            };
+            Vector2 uvs[4] = {
+                element.uv_top_left,
+                element.uv_top_right,
+                element.uv_bottom_right,
+                element.uv_bottom_left,
+            };
+            mesh_builder.AddQuad(corners, color, uvs);
+            
             position.x += glyph.advance * scale_x;
         }
     }

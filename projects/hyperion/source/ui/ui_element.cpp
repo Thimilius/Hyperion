@@ -179,10 +179,10 @@ namespace Hyperion::UI {
         Vector2 min = m_rect.GetMin();
         Vector2 max = m_rect.GetMax();
 
-        corners[static_cast<uint32>(Corner::TopRight)] = Vector3(max.x, max.y, 0.0f);
-        corners[static_cast<uint32>(Corner::BottomRight)] = Vector3(max.x, min.y, 0.0f);
-        corners[static_cast<uint32>(Corner::BottomLeft)] = Vector3(min.x, min.y, 0.0f);
-        corners[static_cast<uint32>(Corner::TopLeft)] = Vector3(min.x, max.y, 0.0f);
+        corners[0] = Vector3(max.x, max.y, 0.0f);
+        corners[1] = Vector3(max.x, min.y, 0.0f);
+        corners[2] = Vector3(min.x, min.y, 0.0f);
+        corners[3] = Vector3(min.x, max.y, 0.0f);
     }
 
     //--------------------------------------------------------------
@@ -510,13 +510,7 @@ namespace Hyperion::UI {
 
         TransformCorners(corners);
 
-        mesh_builder.AddVertex(corners[static_cast<uint32>(Corner::TopRight)], color, Vector2(1.0f, 1.0f));
-        mesh_builder.AddVertex(corners[static_cast<uint32>(Corner::BottomRight)], color, Vector2(1.0f, 0.0f));
-        mesh_builder.AddVertex(corners[static_cast<uint32>(Corner::BottomLeft)], color, Vector2(0.0f, 0.0f));
-        mesh_builder.AddVertex(corners[static_cast<uint32>(Corner::TopLeft)], color, Vector2(0.0f, 1.0f));
-        mesh_builder.AddTriangle(0, 1, 2);
-        mesh_builder.AddTriangle(0, 2, 3);
-        mesh_builder.AddIndexOffset(4);
+        mesh_builder.AddQuad(corners, color);
     }
 
     //--------------------------------------------------------------
