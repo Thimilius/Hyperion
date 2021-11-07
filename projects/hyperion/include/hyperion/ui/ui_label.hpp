@@ -22,7 +22,11 @@ namespace Hyperion::UI {
         inline UI::TextAlignment GetTextAlignment() const { return m_alignment; }
         void SetTextAlignment(UI::TextAlignment alignment);
     protected:
+        void OnRebuildShadowGeometry(MeshBuilder &mesh_builder, Color shadow_color, Vector2 shadow_offset) override;
         void OnRebuildGeometry(MeshBuilder &mesh_builder) override;
+    private:
+        void RebuildTextGeometry(MeshBuilder &mesh_builder, Color color, Rect rect);
+        bool8 ValidateGeometryToRebuild();
     private:
         Font *m_font = nullptr;
         String m_text;

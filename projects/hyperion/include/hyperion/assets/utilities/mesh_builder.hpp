@@ -12,10 +12,11 @@ namespace Hyperion {
         inline bool8 IsEmpty() const { return m_vertex_count == 0 || m_index_count == 0; }
         inline uint32 GetVertextCount() const { return m_vertex_count; }
         inline uint32 GetIndexCount() const { return m_index_count; }
+        inline uint32 GetIndexOffset() const { return m_index_offset; }
+        inline void AddIndexOffset(uint32 offset) { m_index_offset += offset; }
 
         void AddVertex(Vector3 position, Vector3 normal, Vector2 texture0);
         void AddVertex(Vector3 position, Color color, Vector2 texture0);
-        inline void AddIndexOffset(uint32 offset) { m_index_offset += offset; }
         void AddTriangle(uint32 a, uint32 b, uint32 c);
 
         void Transform(const Matrix4x4 &transformation);

@@ -363,6 +363,15 @@ namespace Hyperion::UI {
         OnRebuildLayout();
 
         mesh_builder.Clear();
+        Shadow shadow = GetStyle().GetShadow();
+        if (shadow.enabled) {
+            Color shadow_color = shadow.color;
+            shadow_color.a *= GetStyle().GetOpacity();
+
+            if (shadow_color.a > 0.0f) {
+                OnRebuildShadowGeometry(mesh_builder, shadow_color, shadow.offset);
+            }
+        }
         OnRebuildGeometry(mesh_builder);
         AssetManager::Unload(m_renderer.mesh);
         m_renderer.mesh = mesh_builder.CreateMesh();
@@ -474,6 +483,17 @@ namespace Hyperion::UI {
                 default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
             }
         }
+    }
+
+    //--------------------------------------------------------------
+    void UIElement::OnRebuildShadowGeometry(MeshBuilder &mesh_builder, Color shadow_color, Vector2 shadow_offset) {
+        Vector3 corners[4];
+        GetLocalCorners(corners);
+        for (uint64 i = 0; i < 4; i++) {
+            corners[i] += Vector3(shadow_offset, 0.0f);
+        }
+
+        AddQuad(mesh_builder, corners, shadow_color);
     }
 
     //--------------------------------------------------------------

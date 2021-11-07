@@ -16,8 +16,6 @@ namespace Hyperion {
 
     //--------------------------------------------------------------
     void TextMeshGenerator::GenerateMesh(const TextMeshGenerationSettings &settings, MeshBuilder &mesh_builder) {
-        mesh_builder.Clear();
-
         Font *font = settings.font;
         Color color = settings.color;
         float32 scale_x = settings.scale.x;
@@ -30,7 +28,7 @@ namespace Hyperion {
         Vector2 position = GetPosition(settings.alignment, text_size, settings.rect);
         Vector2 intial_position = position;
 
-        uint32 triangle_index = 0;
+        uint32 triangle_index = mesh_builder.GetIndexOffset();
         for (uint32 codepoint : codepoints) {
             codepoint_offset++;
 
@@ -60,10 +58,10 @@ namespace Hyperion {
             mesh_builder.AddVertex(Vector3(x_pos + width, y_pos + height, 0.0f), color, element.uv_top_right);
             mesh_builder.AddVertex(Vector3(x_pos + width, y_pos, 0.0f), color, element.uv_bottom_right);
             mesh_builder.AddVertex(Vector3(x_pos, y_pos, 0.0f), color, element.uv_bottom_left);
-            mesh_builder.AddTriangle(triangle_index, triangle_index + 1, triangle_index + 2);
-            mesh_builder.AddTriangle(triangle_index, triangle_index + 2, triangle_index + 3);
+            mesh_builder.AddTriangle(0, 1, 2);
+            mesh_builder.AddTriangle(0, 2, 3);
+            mesh_builder.AddIndexOffset(4);
 
-            triangle_index += 4;
             position.x += glyph.advance * scale_x;
         }
     }

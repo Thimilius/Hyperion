@@ -173,6 +173,7 @@ namespace Hyperion::UI {
         virtual void DoStateTransition(SelectionState state);
 
         virtual void OnRebuildLayout();
+        virtual void OnRebuildShadowGeometry(MeshBuilder &mesh_builder, Color shadow_color, Vector2 shadow_offset);
         virtual void OnRebuildGeometry(MeshBuilder &mesh_builder);
 
         void AddQuad(MeshBuilder &mesh_builder, Vector3 corners[4], Color color);

@@ -44,26 +44,52 @@ namespace Hyperion::UI {
     }
 
     //--------------------------------------------------------------
-    void UILabel::OnRebuildGeometry(MeshBuilder &mesh_builder) {
-        if (m_font == nullptr) {
-            GetRenderer().texture = nullptr;
-            return;
-        }
-        if (m_text == "") {
+    void UILabel::OnRebuildShadowGeometry(MeshBuilder &mesh_builder, Color shadow_color, Vector2 shadow_offset) {
+        if (!ValidateGeometryToRebuild()) {
             return;
         }
 
+        Rect rect = GetWorldRect();
+        rect.position += shadow_offset;
+        RebuildTextGeometry(mesh_builder, shadow_color, rect);
+    }
+
+    //--------------------------------------------------------------
+    void UILabel::OnRebuildGeometry(MeshBuilder &mesh_builder) {
+        if (!ValidateGeometryToRebuild()) {
+            return;
+        }
+
+        Rect rect = GetWorldRect();
+        RebuildTextGeometry(mesh_builder, GetStyle().GetColor(), rect);
+
+        GetRenderer().texture = m_font->GetTexture();
+    }
+
+    //--------------------------------------------------------------
+    void UILabel::RebuildTextGeometry(MeshBuilder &mesh_builder, Color color, Rect rect) {
         TextMeshGenerationSettings settings;
         settings.text = m_text;
         settings.font = m_font;
         settings.alignment = m_alignment;
-        settings.color = GetStyle().GetColor();
-        settings.rect = GetWorldRect();
         settings.scale = GetDerivedScale();
         settings.rotation = GetDerivedRotation();
+        settings.color = color;
+        settings.rect = rect;
         TextMeshGenerator::GenerateMesh(settings, mesh_builder);
+    }
 
-        GetRenderer().texture = m_font->GetTexture();
+    //--------------------------------------------------------------
+    bool8 UILabel::ValidateGeometryToRebuild() {
+        if (m_font == nullptr) {
+            GetRenderer().texture = nullptr;
+            return false;
+        }
+        if (m_text == "") {
+            return false;
+        }
+
+        return true;
     }
 
 }
