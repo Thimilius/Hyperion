@@ -48,8 +48,8 @@ namespace Hyperion::UI {
                 if (key_code == KeyCode::Back) {
                     String text = GetText();
                     if (text != "") {
-                        // FIXME: This is not compatible with utf-8!
-                        text.resize(text.size() - 1);
+                        uint32 codepoint_size = StringUtils::GetLastUtf8CodepointSize(text);
+                        text.resize(text.size() - codepoint_size);
                         SetText(text);
                     }
                     return;
@@ -120,17 +120,17 @@ namespace Hyperion::UI {
         Vector3 corners[4];
         GetLocalCorners(corners);
 
-        Vector3 top_left = corners[static_cast<uint32>(Corner::TopLeft)];
-        Vector3 bottom_left = corners[static_cast<uint32>(Corner::BottomLeft)];
+        Vector3 top_left = corners[3];
+        Vector3 bottom_left = corners[2];
         float32 local_size = top_left.y - bottom_left.y;
         float32 font_size = font->GetSize() + 4.0f;
         float32 caret_width = 2.0f;
 
         if (local_size >= font_size) {
-            corners[static_cast<uint32>(Corner::TopRight)] = Vector3(top_left.x + caret_width, top_left.y, 0.0f);
-            corners[static_cast<uint32>(Corner::BottomRight)] = Vector3(bottom_left.x + caret_width, bottom_left.y, 0.0f);
-            corners[static_cast<uint32>(Corner::BottomLeft)] = Vector3(bottom_left, 0.0f);
-            corners[static_cast<uint32>(Corner::TopLeft)] = Vector3(top_left, 0.0f);
+            corners[0] = Vector3(top_left.x + caret_width, top_left.y, 0.0f);
+            corners[1] = Vector3(bottom_left.x + caret_width, bottom_left.y, 0.0f);
+            corners[2] = Vector3(bottom_left, 0.0f);
+            corners[3] = Vector3(top_left, 0.0f);
             
             AddQuad(mesh_builder, corners, Color::White());
         }

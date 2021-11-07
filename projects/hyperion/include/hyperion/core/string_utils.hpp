@@ -49,6 +49,7 @@ namespace Hyperion {
         static Array<uint32> GetCodepointsFromUtf8(const String &string);
         static String GetUtf8FromCodepoint(uint32 codepoint);
         static String GetUtf8FromCodepoints(const Array<uint32> &codepoints);
+        static uint32 GetLastUtf8CodepointSize(const String &string);
 
         static WideString Utf8ToUtf16(const String &string);
         static String Utf16ToUtf8(const WideString &string);

@@ -94,6 +94,21 @@ namespace Hyperion {
     }
 
     //--------------------------------------------------------------
+    uint32 StringUtils::GetLastUtf8CodepointSize(const String &string) {
+        uint32 codepoint_size = 0;
+        auto it = string.rbegin();
+        while (it != string.end()) {
+            codepoint_size++;
+            char c = *it;
+            if ((c & 0b11000000) != 0b10000000) {
+                break;
+            }
+            it++;
+        }
+        return codepoint_size;
+    }
+
+    //--------------------------------------------------------------
     WideString StringUtils::Utf8ToUtf16(const String &string) {
 #ifdef HYP_PLATFORM_WINDOWS
         int32 string_length = static_cast<int32>(string.length());
