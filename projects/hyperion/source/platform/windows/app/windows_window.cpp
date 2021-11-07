@@ -746,10 +746,14 @@ namespace Hyperion {
 
             case WM_CHAR: 
             case WM_SYSCHAR: {
-                uint32 character = static_cast<uint32>(w_param);
+                uint32 utf16_codepoint = static_cast<uint32>(w_param);
                 byte scancode = (reinterpret_cast<byte *>(&l_param))[2];
                 uint32 virtual_key = MapVirtualKeyW(scancode, MAPVK_VSC_TO_VK_EX);
                 KeyCode key_code = window->TranslateKeyCode(virtual_key);
+
+                WideString wide_string = WideString(1, static_cast<wchar_t>(utf16_codepoint));
+                String character = StringUtils::Utf16ToUtf8(wide_string);
+
                 KeyTypedAppEvent event(character, key_code, window->GetKeyModifier());
                 window->DispatchAppEvent(event);
                 break;

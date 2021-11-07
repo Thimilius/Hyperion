@@ -116,7 +116,7 @@ project "hyperion"
 	includedirs { package_nlohmann_includedirs }
 	includedirs { package_stb_includedirs }
 	includedirs { package_yaml_includedirs }
-			
+	
 	filter "files:projects/hyperion/vendor/**"
 		flags { "NoPCH" }
 

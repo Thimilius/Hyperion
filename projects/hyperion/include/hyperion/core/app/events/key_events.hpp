@@ -42,15 +42,15 @@ namespace Hyperion {
 
     class KeyTypedAppEvent : public KeyAppEvent {
     public:
-        KeyTypedAppEvent(uint32 character, KeyCode key_code, KeyModifier key_modifier) : KeyAppEvent(key_code, key_modifier), m_character(character) { }
+        KeyTypedAppEvent(const String &character, KeyCode key_code, KeyModifier key_modifier) : KeyAppEvent(key_code, key_modifier), m_character(character) { }
 
-        inline uint32 GetCharacter() const { return m_character; }
+        inline String GetCharacter() const { return m_character; }
         
         AppEventType GetType() const override { return AppEventType::KeyTyped; }
     public:
         static AppEventType GetStaticType() { return AppEventType::KeyTyped; }
     private:
-        uint32 m_character;
+        String m_character;
     };
 
 }

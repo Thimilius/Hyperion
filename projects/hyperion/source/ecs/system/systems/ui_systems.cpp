@@ -186,7 +186,7 @@ namespace Hyperion::UI {
     }
 
     //--------------------------------------------------------------
-    void UIEventSystem::SendEvent(UIElement *element, UIEventType type, KeyCode key_code, KeyModifier key_modifier, uint32 key_typed) {
+    void UIEventSystem::SendEvent(UIElement *element, UIEventType type, KeyCode key_code, KeyModifier key_modifier, const String &key_typed) {
         UIEvent event;
         event.m_type = type;
         event.m_pointer_position = Input::GetMousePosition(); // FIXME: This is in the wrong coordinate space!

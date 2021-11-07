@@ -37,7 +37,7 @@ namespace Hyperion::UI {
 
         inline KeyCode GetKeyCode() const { return m_key_code; }
         inline KeyModifier GetKeyModifier() const { return m_key_modifier; }
-        inline uint32 GetKeyTyped() const { return m_key_typed; }
+        inline String GetKeyTyped() const { return m_key_typed; }
     private:
         UIEventType m_type;
 
@@ -46,7 +46,7 @@ namespace Hyperion::UI {
          
         KeyCode m_key_code = KeyCode::None;
         KeyModifier m_key_modifier = KeyModifier::None;
-        uint32 m_key_typed = 0;
+        String m_key_typed;
     private:
         friend class Hyperion::UI::UIEventSystem;
     };

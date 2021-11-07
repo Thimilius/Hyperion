@@ -1,4 +1,4 @@
-//--------------------- Definition Include ---------------------
+﻿//--------------------- Definition Include ---------------------
 #include "hyperion/editor/editor_ui.hpp"
 
 //---------------------- Library Includes ----------------------
@@ -326,7 +326,7 @@ namespace Hyperion::Editor {
                     text += StringUtils::Format("{}\n\n", component_info.type.GetName());
                 }
             }
-
+            
             s_label_selection->SetText(text);
         } else {
             s_label_selection->SetText("No entity selected!");

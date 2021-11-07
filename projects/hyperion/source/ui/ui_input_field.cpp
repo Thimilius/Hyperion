@@ -43,11 +43,12 @@ namespace Hyperion::UI {
         } else if (event.GetType() == UIEventType::KeyTyped) {
             if (m_input_label) {
                 KeyCode key_code = event.GetKeyCode();
-                uint32 key_typed = event.GetKeyTyped();
+                String key_typed = event.GetKeyTyped();
 
                 if (key_code == KeyCode::Back) {
                     String text = GetText();
                     if (text != "") {
+                        // FIXME: This is not compatible with utf-8!
                         text.resize(text.size() - 1);
                         SetText(text);
                     }
@@ -83,7 +84,7 @@ namespace Hyperion::UI {
                     return;
                 }
 
-                SetText(GetText() + StringUtils::GetUtf8FromCodepoint(key_typed));
+                SetText(GetText() + key_typed);
             }
         }
 

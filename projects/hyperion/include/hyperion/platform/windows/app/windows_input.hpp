@@ -23,7 +23,7 @@ namespace Hyperion {
         bool8 IsKeyDown(KeyCode key_code) const override { return m_keys_down[static_cast<int32>(key_code)]; }
         bool8 IsKeyHold(KeyCode key_code) const override { return m_keys[static_cast<int32>(key_code)]; }
         bool8 IsKeyUp(KeyCode key_code) const override { return m_keys_up[static_cast<int32>(key_code)]; }
-        const Array<uint32> &GetKeysTyped() const override { return m_keys_typed; }
+        const Array<String> &GetKeysTyped() const override { return m_keys_typed; }
 
         Vector2Int GetMousePosition() const override { return m_mouse_position; }
         bool8 HasMouseMoved() const override { return m_last_mouse_position != m_mouse_position; }
@@ -65,7 +65,7 @@ namespace Hyperion {
         bool8 m_keys[static_cast<int32>(KeyCode::Last)];
         bool8 m_keys_last[static_cast<int32>(KeyCode::Last)];
         bool8 m_keys_up[static_cast<int32>(KeyCode::Last)];
-        Array<uint32> m_keys_typed;
+        Array<String> m_keys_typed;
 
         bool8 m_mouse_buttons_down[static_cast<int32>(MouseButtonCode::Last)];
         bool8 m_mouse_buttons[static_cast<int32>(MouseButtonCode::Last)];

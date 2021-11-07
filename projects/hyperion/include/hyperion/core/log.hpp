@@ -53,7 +53,7 @@ namespace Hyperion {
         inline static void SetCallback(LogCallback callback) { s_callback = callback; }
 
         template<typename ...Args>
-        static void LogMessage(LogType type, LogLevel level, const char *system, const char *message_format, Args... args) {
+        static void LogMessage(LogType type, LogLevel level, const char *system, const String &message_format, Args... args) {
             std::time_t current_time = std::time(&current_time);
             std::tm *time_info = std::localtime(&current_time);
             char prefix_buffer[30];
@@ -81,13 +81,11 @@ namespace Hyperion {
 
 }
 
-#define HYP_LOG(s, m, ...)       Hyperion::Log::LogMessage(LogType::Core, LogLevel::Trace, s, m, ##__VA_ARGS__)
 #define HYP_LOG_TRACE(s, m, ...) Hyperion::Log::LogMessage(LogType::Core, LogLevel::Trace, s, m, ##__VA_ARGS__)
 #define HYP_LOG_INFO(s, m, ...)  Hyperion::Log::LogMessage(LogType::Core, LogLevel::Info, s, m, ##__VA_ARGS__)
 #define HYP_LOG_WARN(s, m, ...)  Hyperion::Log::LogMessage(LogType::Core, LogLevel::Warning, s, m, ##__VA_ARGS__)
 #define HYP_LOG_ERROR(s, m, ...) Hyperion::Log::LogMessage(LogType::Core, LogLevel::Error, s, m, ##__VA_ARGS__)
 
-#define HYP(m, ...)       Hyperion::Log::LogMessage(LogType::Client, LogLevel::Trace, "Client", m, ##__VA_ARGS__)
 #define HYP_TRACE(m, ...) Hyperion::Log::LogMessage(LogType::Client, LogLevel::Trace, "Client", m, ##__VA_ARGS__)
 #define HYP_INFO(m, ...)  Hyperion::Log::LogMessage(LogType::Client, LogLevel::Info, "Client", m, ##__VA_ARGS__)
 #define HYP_WARN(m, ...)  Hyperion::Log::LogMessage(LogType::Client, LogLevel::Warning, "Client", m, ##__VA_ARGS__)
