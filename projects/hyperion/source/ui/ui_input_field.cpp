@@ -19,6 +19,8 @@ namespace Hyperion::UI {
 
             if (m_input_label) {
                 m_input_label->SetText(text);
+
+                MarkDirty();
             }
         }
     }
@@ -27,6 +29,26 @@ namespace Hyperion::UI {
     void UIInputField::SetInputLabel(UILabel *input_label) {
         if (m_input_label != input_label) {
             m_input_label = input_label;
+
+            MarkDirty();
+        }
+    }
+
+    //--------------------------------------------------------------
+    void UIInputField::SetCaretWidth(float32 caret_width) {
+        if (m_caret_width != caret_width) {
+            m_caret_width = caret_width;
+
+            MarkDirty();
+        }
+    }
+
+    //--------------------------------------------------------------
+    void UIInputField::SetCaretColor(Color caret_color) {
+        if (m_caret_color != caret_color) {
+            m_caret_color = caret_color;
+
+            MarkDirty();
         }
     }
 
@@ -40,6 +62,26 @@ namespace Hyperion::UI {
 
         } else if (event.GetType() == UIEventType::Deselect) {
 
+        } else if (event.GetType() == UIEventType::KeyPressed) {
+            KeyCode key_code = event.GetKeyCode();
+
+            if (key_code == KeyCode::Delete) {
+                return;
+            } else if (key_code == KeyCode::Return) {
+                return;
+            } else if (key_code == KeyCode::Left) {
+                return;
+            } else if (key_code == KeyCode::Right) {
+                return;
+            } else if (key_code == KeyCode::Up) {
+                return;
+            } else if (key_code == KeyCode::Down) {
+                return;
+            } else if (key_code == KeyCode::Home) {
+                return;
+            } else if (key_code == KeyCode::End) {
+                return;
+            }
         } else if (event.GetType() == UIEventType::KeyTyped) {
             if (m_input_label) {
                 KeyCode key_code = event.GetKeyCode();
@@ -53,21 +95,9 @@ namespace Hyperion::UI {
                         SetText(text);
                     }
                     return;
-                } else if (key_code == KeyCode::Delete) {
-                    return;
                 } else if (key_code == KeyCode::Return) {
                     return;
-                } else if (key_code == KeyCode::Left) {
-                    return;
-                } else if (key_code == KeyCode::Right) {
-                    return;
-                } else if (key_code == KeyCode::Up) {
-                    return;
-                } else if (key_code == KeyCode::Down) {
-                    return;
-                } else if (key_code == KeyCode::Home) {
-                    return;
-                } else if (key_code == KeyCode::End) {
+                } else if (key_code == KeyCode::Escape) {
                     return;
                 }
 
@@ -124,15 +154,14 @@ namespace Hyperion::UI {
         Vector3 bottom_left = corners[2];
         float32 local_size = top_left.y - bottom_left.y;
         float32 font_size = font->GetSize() + 4.0f;
-        float32 caret_width = 2.0f;
 
         if (local_size >= font_size) {
-            corners[0] = Vector3(top_left.x + caret_width, top_left.y, 0.0f);
-            corners[1] = Vector3(bottom_left.x + caret_width, bottom_left.y, 0.0f);
+            corners[0] = Vector3(top_left.x + m_caret_width, top_left.y, 0.0f);
+            corners[1] = Vector3(bottom_left.x + m_caret_width, bottom_left.y, 0.0f);
             corners[2] = Vector3(bottom_left, 0.0f);
             corners[3] = Vector3(top_left, 0.0f);
             
-            AddQuad(mesh_builder, corners, Color::White());
+            AddQuad(mesh_builder, corners, m_caret_color);
         }
     }
 

@@ -25,6 +25,7 @@ namespace Hyperion::UI {
         SelectUpdate,
         Deselect,
 
+        KeyPressed,
         KeyTyped,
     };
 

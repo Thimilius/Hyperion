@@ -18,6 +18,11 @@ namespace Hyperion::UI {
 
         inline UILabel *GetInputLabel() const { return m_input_label; }
         void SetInputLabel(UILabel *input_label);
+
+        inline float32 GetCaretWidth() const { return m_caret_width; }
+        void SetCaretWidth(float32 caret_width);
+        inline Color GetCaretColor() const { return m_caret_color; }
+        void SetCaretColor(Color caret_color);
     protected:
         void OnEvent(UIEvent &event) override;
         void DoStateTransition(SelectionState state) override;
@@ -27,6 +32,9 @@ namespace Hyperion::UI {
         String m_text;
 
         UILabel *m_input_label = nullptr;
+
+        float32 m_caret_width = 1.0f;
+        Color m_caret_color = Color::White();
     };
 
 }

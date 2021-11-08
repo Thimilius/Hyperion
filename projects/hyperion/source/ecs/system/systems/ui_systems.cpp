@@ -163,7 +163,10 @@ namespace Hyperion::UI {
                 SendEvent(state.selected_element, UIEventType::SelectUpdate);
 
                 for (AppEvent *app_event : Input::GetEvents()) {
-                    if (app_event->GetType() == AppEventType::KeyTyped) {
+                    if (app_event->GetType() == AppEventType::KeyPressed) {
+                        KeyPressedAppEvent *event = static_cast<KeyPressedAppEvent *>(app_event);
+                        SendEvent(state.selected_element, UIEventType::KeyPressed, event->GetKeyCode(), event->GetKeyModifier());
+                    } else if (app_event->GetType() == AppEventType::KeyTyped) {
                         KeyTypedAppEvent *event = static_cast<KeyTypedAppEvent *>(app_event);
                         SendEvent(state.selected_element, UIEventType::KeyTyped, event->GetKeyCode(), event->GetKeyModifier(), event->GetCharacter());
                     }
