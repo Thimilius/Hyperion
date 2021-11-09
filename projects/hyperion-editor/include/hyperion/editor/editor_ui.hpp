@@ -40,6 +40,8 @@ namespace Hyperion::Editor {
         inline static UI::UIToggle *s_toggle_vsync;
         inline static UI::UIToggle *s_toggle_grid;
         inline static UI::UIToggle *s_toggle_grounds;
+        inline static UI::UIToggle *s_toggle_runtime_preview;
+        inline static UI::UIToggle *s_toggle_editor_preview;
 
         inline static UI::UILabel *s_label_stats;
         inline static UI::UILabel *s_label_properties;

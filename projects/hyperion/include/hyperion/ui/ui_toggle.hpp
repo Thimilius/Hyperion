@@ -16,7 +16,7 @@ namespace Hyperion::UI {
     public:
         inline bool8 IsOn() const { return m_is_on; }
         void SetIsOn(bool8 is_on);
-        void Toggle();
+        void Toggle(bool8 send_callback = true);
 
         inline UIElement *GetToggleGraphic() const { return m_toggle_graphic; }
         void SetToggleGraphic(UIElement *toggle_graphic);

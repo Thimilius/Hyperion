@@ -20,13 +20,15 @@ namespace Hyperion::UI {
     }
 
     //--------------------------------------------------------------
-    void UIToggle::Toggle() {
+    void UIToggle::Toggle(bool8 send_callback) {
         m_is_on = !m_is_on;
 
         StateTransition();
 
-        if (m_toggle_callback) {
-            m_toggle_callback(m_is_on);
+        if (send_callback) {
+            if (m_toggle_callback) {
+                m_toggle_callback(m_is_on);
+            }
         }
     }
 

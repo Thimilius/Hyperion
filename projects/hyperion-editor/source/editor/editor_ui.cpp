@@ -254,15 +254,15 @@ namespace Hyperion::Editor {
 
             // Preview Header.
             {
-                UIElement *preview_header_left = UIFactory::CreateElement();
-                preview_header_left->SetAnchorPreset(AnchorPreset::StretchAll);
-                preview_header_left->GetStyle().SetOpacity(0.0f);
-                preview_header_left->GetHierarchy().SetParent(preview_header);
-                preview_header_left->GetLayout().layout_type = LayoutType::Horizontal;
-                preview_header_left->GetLayout().child_alignment = ChildAlignment::MiddleLeft;
-
                 // Left.
                 {
+                    UIElement *preview_header_left = UIFactory::CreateElement();
+                    preview_header_left->SetAnchorPreset(AnchorPreset::StretchAll);
+                    preview_header_left->GetStyle().SetOpacity(0.0f);
+                    preview_header_left->GetHierarchy().SetParent(preview_header);
+                    preview_header_left->GetLayout().layout_type = LayoutType::Horizontal;
+                    preview_header_left->GetLayout().child_alignment = ChildAlignment::MiddleLeft;
+
                     s_toggle_vsync = create_toggle(preview_header_left, s_font_icon, "\uf108", Rendering::RenderEngine::GetVSyncMode() != Rendering::VSyncMode::DontSync, [](bool8 is_on) {
                         Rendering::RenderEngine::SetVSyncMode(
                             Rendering::RenderEngine::GetVSyncMode() == Rendering::VSyncMode::DontSync ?
@@ -277,6 +277,30 @@ namespace Hyperion::Editor {
                     });
                     create_button(preview_header_left, s_font_icon, "\uf03d", []() {
                         EditorCamera::Reset();
+                    });
+                }
+
+                // Middle.
+                {
+                    UIElement *preview_header_middle = UIFactory::CreateElement();
+                    preview_header_middle->SetAnchorPreset(AnchorPreset::StretchAll);
+                    preview_header_middle->GetStyle().SetOpacity(0.0f);
+                    preview_header_middle->GetHierarchy().SetParent(preview_header);
+                    preview_header_middle->GetLayout().layout_type = LayoutType::Horizontal;
+                    preview_header_middle->GetLayout().child_alignment = ChildAlignment::MiddleCenter;
+
+                    s_toggle_editor_preview = create_toggle(preview_header_middle, s_font_icon, "\uf1b3", true, { });
+                    s_toggle_runtime_preview = create_toggle(preview_header_middle, s_font_icon, "\uf11b", false, { });
+
+                    s_toggle_editor_preview->RegisterToggleCallback([](bool8 is_on) {
+                        s_preview_editor_ui_element->GetStyle().SetVisibility(Visibility::Visible);
+                        s_preview_runtime_ui_element->GetStyle().SetVisibility(Visibility::Hidden);
+                        s_toggle_runtime_preview->Toggle(false);
+                    });
+                    s_toggle_runtime_preview->RegisterToggleCallback([](bool8 is_on) {
+                        s_preview_runtime_ui_element->GetStyle().SetVisibility(Visibility::Visible);
+                        s_preview_editor_ui_element->GetStyle().SetVisibility(Visibility::Hidden);
+                        s_toggle_editor_preview->Toggle(false);
                     });
                 }
 
@@ -299,19 +323,20 @@ namespace Hyperion::Editor {
             s_preview_container_ui_element->GetStyle().SetColor(EditorStyle::COLOR_HIGHLIGHT);
             s_preview_container_ui_element->GetHierarchy().SetParent(preview);
 
-            s_preview_runtime_ui_element = UIFactory::CreateElement();
-            s_preview_runtime_ui_element->SetAnchorPreset(AnchorPreset::StretchAll);
-            s_preview_runtime_ui_element->GetRenderer().texture = EditorApplication::GetRenderPipeline()->GetTargetRenderTexture();
-            s_preview_runtime_ui_element->GetRenderer().render_texture_attachment_index = 0;
-            s_preview_runtime_ui_element->GetRenderer().enable_blending = false;
-            s_preview_runtime_ui_element->GetHierarchy().SetParent(s_preview_container_ui_element);
-
             s_preview_editor_ui_element = UIFactory::CreateElement();
             s_preview_editor_ui_element->SetAnchorPreset(AnchorPreset::StretchAll);
             s_preview_editor_ui_element->GetRenderer().texture = EditorApplication::GetRenderPipeline()->GetEditorTargetRenderTexture();
             s_preview_editor_ui_element->GetRenderer().render_texture_attachment_index = 0;
             s_preview_editor_ui_element->GetRenderer().enable_blending = false;
             s_preview_editor_ui_element->GetHierarchy().SetParent(s_preview_container_ui_element);
+
+            s_preview_runtime_ui_element = UIFactory::CreateElement();
+            s_preview_runtime_ui_element->SetAnchorPreset(AnchorPreset::StretchAll);
+            s_preview_runtime_ui_element->GetRenderer().texture = EditorApplication::GetRenderPipeline()->GetTargetRenderTexture();
+            s_preview_runtime_ui_element->GetRenderer().render_texture_attachment_index = 0;
+            s_preview_runtime_ui_element->GetRenderer().enable_blending = false;
+            s_preview_runtime_ui_element->GetHierarchy().SetParent(s_preview_container_ui_element);
+            s_preview_runtime_ui_element->GetStyle().SetVisibility(Visibility::Hidden);
         }
     }
 
@@ -328,12 +353,10 @@ namespace Hyperion::Editor {
         }
 
         if (Input::IsKeyDown(KeyCode::F6)) {
-            if (s_preview_editor_ui_element->GetStyle().GetVisibility() == Visibility::Visible) {
-                s_preview_editor_ui_element->GetStyle().SetVisibility(Visibility::Hidden);
-                s_preview_runtime_ui_element->GetStyle().SetVisibility(Visibility::Visible);
+            if (s_toggle_editor_preview->IsOn()) {
+                s_toggle_runtime_preview->Toggle();
             } else {
-                s_preview_editor_ui_element->GetStyle().SetVisibility(Visibility::Visible);
-                s_preview_runtime_ui_element->GetStyle().SetVisibility(Visibility::Hidden);
+                s_toggle_editor_preview->Toggle();
             }
         }
 
