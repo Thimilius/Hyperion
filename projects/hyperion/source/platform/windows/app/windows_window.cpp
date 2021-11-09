@@ -387,7 +387,7 @@ namespace Hyperion {
         RECT window_rect = { 0 };
         window_rect.right = static_cast<LONG>(client_width);
         window_rect.bottom = static_cast<LONG>(client_height);
-        if (!AdjustWindowRect(&window_rect, GetWindowLongW(m_window_handle, GWL_STYLE), true)) {
+        if (!AdjustWindowRect(&window_rect, GetWindowLongW(m_window_handle, GWL_STYLE), has_menu)) {
             HYP_PANIC_MESSAGE("Engine", "Failed to calculate window size!");
         }
         return Vector2Int(window_rect.right - window_rect.left, window_rect.bottom - window_rect.top);

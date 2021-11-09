@@ -17,9 +17,14 @@ namespace Hyperion::Rendering {
         render_texture_attributes.filter = TextureFilter::Point;
         render_texture_attributes.use_mipmaps = false;
 
+        if (m_should_resize_to_screen) {
+            m_render_target_width = Display::GetWidth();
+            m_render_target_height = Display::GetHeight();
+        }
+
         RenderTextureParameters render_texture_parameters;
-        render_texture_parameters.width = m_should_resize_to_screen ? Display::GetWidth() : m_render_target_width;
-        render_texture_parameters.height = m_should_resize_to_screen ? Display::GetHeight() : m_render_target_height;
+        render_texture_parameters.width = m_render_target_width;
+        render_texture_parameters.height = m_render_target_height;
         render_texture_parameters.attachments = {
             { RenderTextureFormat::RGBA32, render_texture_attributes },
             { RenderTextureFormat::Depth24Stencil8, render_texture_attributes },
@@ -32,6 +37,8 @@ namespace Hyperion::Rendering {
     void ForwardRenderPipeline::Render(RenderFrame *render_frame, const Array<const RenderFrameContextCamera *> cameras) {
         if (m_should_resize_to_screen) {
             if (Display::HasChangedSize()) {
+                m_render_target_width = Display::GetWidth();
+                m_render_target_height = Display::GetHeight();
                 m_target_render_texture->Resize(m_render_target_width, m_render_target_height);
             }
         } else {
