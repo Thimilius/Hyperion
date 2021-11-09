@@ -65,7 +65,7 @@ namespace Hyperion::Editor {
         // Header.
         {
             UIElement *header = UIFactory::CreateElement();
-            header->SetSize(Vector2(0.0f, EditorStyle::HEADER_SIZE - 1));
+            header->SetSize(Vector2(0.0f, EditorStyle::HEADER_WIDTH - 1));
             header->SetAnchorPreset(AnchorPreset::TopStretchHorizontal);
             header->GetStyle().SetColor(EditorStyle::COLOR_NORMAL_DARK);
             header->GetHierarchy().SetParent(s_root_element);
@@ -73,7 +73,7 @@ namespace Hyperion::Editor {
             UIElement *header_seperator = UIFactory::CreateElement();
             header_seperator->SetAnchorPreset(AnchorPreset::TopStretchHorizontal);
             header_seperator->SetSize(Vector2(0.0f, 1.0f));
-            header_seperator->SetPosition(Vector2(0.0f, -static_cast<float32>(EditorStyle::HEADER_SIZE - 1)));
+            header_seperator->SetPosition(Vector2(0.0f, -static_cast<float32>(EditorStyle::HEADER_WIDTH - 1)));
             header_seperator->GetStyle().SetColor(EditorStyle::COLOR_HIGHLIGHT);
             header_seperator->GetHierarchy().SetParent(s_root_element);
 
@@ -142,38 +142,64 @@ namespace Hyperion::Editor {
             }
         }
 
-        // Left Bar.
+        // Hierarchy Panel.
         {
-            UIElement *left_bar = UIFactory::CreateElement();
-            left_bar->SetSize(Vector2(EditorStyle::SIDE_BAR_SIZE, 0.0f));
-            left_bar->SetAnchorPreset(AnchorPreset::LeftStretchVertical);
-            left_bar->SetAnchorOffsetMax(Vector2(0.0f, EditorStyle::HEADER_SIZE));
-            left_bar->SetAnchorOffsetMin(Vector2(0.0f, EditorStyle::BOTTOM_BAR_SIZE));
-            left_bar->GetStyle().SetColor(EditorStyle::COLOR_NORMAL_DARK);
-            left_bar->GetHierarchy().SetParent(s_root_element);
+            UIElement *hierarchy_panel = UIFactory::CreateElement();
+            hierarchy_panel->SetSize(Vector2(EditorStyle::LEFT_BAR_WIDTH, 0.0f));
+            hierarchy_panel->SetAnchorPreset(AnchorPreset::LeftStretchVertical);
+            hierarchy_panel->SetAnchorMin(Vector2(0.0f, 0.5f));
+            hierarchy_panel->SetAnchorOffsetMax(Vector2(0.0f, EditorStyle::HEADER_WIDTH));
+            hierarchy_panel->GetStyle().SetColor(EditorStyle::COLOR_NORMAL_DARK);
+            hierarchy_panel->GetHierarchy().SetParent(s_root_element);
 
-            UIElement *left_bar_container = UIFactory::CreateElement();
-            left_bar_container->SetAnchorPreset(AnchorPreset::StretchAll);
-            left_bar_container->SetAnchorOffsetMax(Vector2(3.0f, 3.0f));
-            left_bar_container->SetAnchorOffsetMin(Vector2(3.0f, 3.0f));
-            left_bar_container->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
-            left_bar_container->GetHierarchy().SetParent(left_bar);
+            UIElement *hierarchy_container = UIFactory::CreateElement();
+            hierarchy_container->SetAnchorPreset(AnchorPreset::StretchAll);
+            hierarchy_container->SetAnchorOffsetMax(Vector2(3.0f, 3.0f));
+            hierarchy_container->SetAnchorOffsetMin(Vector2(3.0f, 3.0f));
+            hierarchy_container->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
+            hierarchy_container->GetHierarchy().SetParent(hierarchy_panel);
 
-            s_label_selection = UIFactory::CreateLabel();
-            s_label_selection->SetFont(s_font_text);
-            s_label_selection->SetTextAlignment(TextAlignment::TopCenter);
-            s_label_selection->SetAnchorPreset(AnchorPreset::StretchAll);
-            s_label_selection->SetAnchorOffsetMax(Vector2(0.0f, 4.0f));
-            s_label_selection->GetStyle().GetShadow().enabled = true;
-            s_label_selection->GetHierarchy().SetParent(left_bar_container);
+            s_label_hierarchy = UIFactory::CreateLabel();
+            s_label_hierarchy->SetFont(s_font_text);
+            s_label_hierarchy->SetTextAlignment(TextAlignment::TopLeft);
+            s_label_hierarchy->SetAnchorPreset(AnchorPreset::StretchAll);
+            s_label_hierarchy->SetAnchorOffsetMax(Vector2(0.0f, 4.0f));
+            s_label_hierarchy->GetStyle().GetShadow().enabled = true;
+            s_label_hierarchy->GetHierarchy().SetParent(hierarchy_container);
+        }
+
+        // Properties Panel.
+        {
+            UIElement *properties_panel = UIFactory::CreateElement();
+            properties_panel->SetSize(Vector2(EditorStyle::LEFT_BAR_WIDTH, 0.0f));
+            properties_panel->SetAnchorPreset(AnchorPreset::LeftStretchVertical);
+            properties_panel->SetAnchorMax(Vector2(0.0f, 0.5f));
+            properties_panel->SetAnchorOffsetMin(Vector2(0.0f, EditorStyle::FOOTER_WIDTH));
+            properties_panel->GetStyle().SetColor(EditorStyle::COLOR_NORMAL_DARK);
+            properties_panel->GetHierarchy().SetParent(s_root_element);
+
+            UIElement *properties_container = UIFactory::CreateElement();
+            properties_container->SetAnchorPreset(AnchorPreset::StretchAll);
+            properties_container->SetAnchorOffsetMax(Vector2(3.0f, 3.0f));
+            properties_container->SetAnchorOffsetMin(Vector2(3.0f, 3.0f));
+            properties_container->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
+            properties_container->GetHierarchy().SetParent(properties_panel);
+
+            s_label_properties = UIFactory::CreateLabel();
+            s_label_properties->SetFont(s_font_text);
+            s_label_properties->SetTextAlignment(TextAlignment::TopCenter);
+            s_label_properties->SetAnchorPreset(AnchorPreset::StretchAll);
+            s_label_properties->SetAnchorOffsetMax(Vector2(0.0f, 4.0f));
+            s_label_properties->GetStyle().GetShadow().enabled = true;
+            s_label_properties->GetHierarchy().SetParent(properties_container);
         }
 
         // Bottom Bar.
         {
             UIElement *bottom_bar = UIFactory::CreateElement();
-            bottom_bar->SetSize(Vector2(0.0f, EditorStyle::BOTTOM_BAR_SIZE));
+            bottom_bar->SetSize(Vector2(0.0f, EditorStyle::BOTTOM_BAR_WIDTH));
             bottom_bar->SetAnchorPreset(AnchorPreset::BottomStretchHorizontal);
-            bottom_bar->SetAnchorOffsetMin(Vector2(0.0f, EditorStyle::FOOTER_SIZE));
+            bottom_bar->SetAnchorOffsetMin(Vector2(EditorStyle::LEFT_BAR_WIDTH, EditorStyle::FOOTER_WIDTH));
             bottom_bar->GetStyle().SetColor(EditorStyle::COLOR_NORMAL_DARK);
             bottom_bar->GetHierarchy().SetParent(s_root_element);
 
@@ -198,7 +224,7 @@ namespace Hyperion::Editor {
         // Footer.
         {
             UIElement *footer = UIFactory::CreateElement();
-            footer->SetSize(Vector2(0.0f, EditorStyle::FOOTER_SIZE - 1));
+            footer->SetSize(Vector2(0.0f, EditorStyle::FOOTER_WIDTH - 1));
             footer->SetAnchorPreset(AnchorPreset::BottomStretchHorizontal);
             footer->GetStyle().SetColor(EditorStyle::COLOR_NORMAL_DARK);
             footer->GetHierarchy().SetParent(s_root_element);
@@ -206,22 +232,22 @@ namespace Hyperion::Editor {
             UIElement *footer_seperator = UIFactory::CreateElement();
             footer_seperator->SetAnchorPreset(AnchorPreset::BottomStretchHorizontal);
             footer_seperator->SetSize(Vector2(0.0f, 1.0f));
-            footer_seperator->SetPosition(Vector2(0.0f, static_cast<float32>(EditorStyle::FOOTER_SIZE - 1)));
+            footer_seperator->SetPosition(Vector2(0.0f, static_cast<float32>(EditorStyle::FOOTER_WIDTH - 1)));
             footer_seperator->GetStyle().SetColor(EditorStyle::COLOR_HIGHLIGHT);
             footer_seperator->GetHierarchy().SetParent(s_root_element);
         }
 
-        // Preview
+        // Preview Panel.
         {
             UIElement *preview = UIFactory::CreateElement();
             preview->SetAnchorPreset(AnchorPreset::StretchAll);
-            preview->SetAnchorOffsetMax(Vector2(0.0f, EditorStyle::HEADER_SIZE));
-            preview->SetAnchorOffsetMin(Vector2(EditorStyle::SIDE_BAR_SIZE, EditorStyle::BOTTOM_BAR_SIZE));
+            preview->SetAnchorOffsetMax(Vector2(0.0f, EditorStyle::HEADER_WIDTH));
+            preview->SetAnchorOffsetMin(Vector2(EditorStyle::LEFT_BAR_WIDTH, EditorStyle::BOTTOM_BAR_WIDTH));
             preview->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
             preview->GetHierarchy().SetParent(s_root_element);
 
             UIElement *preview_header = UIFactory::CreateElement();
-            preview_header->SetSize(Vector2(0.0f, EditorStyle::HEADER_SIZE));
+            preview_header->SetSize(Vector2(0.0f, EditorStyle::HEADER_WIDTH));
             preview_header->SetAnchorPreset(AnchorPreset::TopStretchHorizontal);
             preview_header->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
             preview_header->GetHierarchy().SetParent(preview);
@@ -269,7 +295,7 @@ namespace Hyperion::Editor {
 
             s_preview_container_ui_element = UIFactory::CreateElement();
             s_preview_container_ui_element->SetAnchorPreset(AnchorPreset::StretchAll);
-            s_preview_container_ui_element->SetAnchorOffsetMax(Vector2(0.0f, EditorStyle::HEADER_SIZE));
+            s_preview_container_ui_element->SetAnchorOffsetMax(Vector2(0.0f, EditorStyle::HEADER_WIDTH));
             s_preview_container_ui_element->GetStyle().SetColor(EditorStyle::COLOR_HIGHLIGHT);
             s_preview_container_ui_element->GetHierarchy().SetParent(preview);
 
@@ -287,14 +313,10 @@ namespace Hyperion::Editor {
             s_preview_editor_ui_element->GetRenderer().enable_blending = false;
             s_preview_editor_ui_element->GetHierarchy().SetParent(s_preview_container_ui_element);
         }
-        
-        UpdateStats();
     }
 
     //--------------------------------------------------------------
     void EditorUI::Update() {
-        UpdateStats();
-
         if (Input::IsKeyDown(KeyCode::F2)) {
             s_toggle_vsync->Toggle();
         }
@@ -315,31 +337,11 @@ namespace Hyperion::Editor {
             }
         }
 
-        if (EditorSelection::HasSelection()) {
-            World *world = EditorApplication::GetWorld();
-            EntityId entity = EditorSelection::GetSelection();
-
-            String text = StringUtils::Format("Entity:\nId: {} - Guid: {}\n\n", entity, world->GetGuid(entity).ToString());
-            for (const ComponentInfo &component_info : ComponentRegistry::GetComponentInfos()) {
-                void *component = world->GetComponent(component_info.id, entity);
-                if (component) {
-                    text += StringUtils::Format("{}\n\n", component_info.type.GetName());
-                }
-            }
-            
-            s_label_selection->SetText(text);
-        } else {
-            s_label_selection->SetText("No entity selected!");
-        }
-
-        {
-            UIRebuildSystem::Run(&s_ui_view);
-            UIEventSystem::Run(&s_ui_view);
-            RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
-            Delegate<RenderFrameContextObjectUI &()> ui_object_adder;
-            ui_object_adder.Connect<&RenderFrameContext::AddEditorUIObject>(&render_frame_context);
-            UIRenderSystem::Run(&s_ui_view, ui_object_adder);
-        }
+        UpdateStatsLabel();
+        UpdateHierarchyLabel();
+        UpdateSelectionLabel();
+        
+        UpdateSystems();
     }
 
     //--------------------------------------------------------------
@@ -353,10 +355,79 @@ namespace Hyperion::Editor {
     }
 
     //--------------------------------------------------------------
-    void EditorUI::UpdateStats() {
+    void EditorUI::UpdateStatsLabel() {
         String stats_format = "FPS: {} ({:.2f}ms)";
         String stats_title = StringUtils::Format(stats_format, Time::GetFPS(), Time::GetFrameTime());
         s_label_stats->SetText(stats_title);
+    }
+
+    
+    //--------------------------------------------------------------
+    void EditorUI::UpdateHierarchyLabel() {
+        World *world = EditorApplication::GetWorld();
+
+        String hierarchy_text;
+        EntityId root = world->GetHierarchy()->GetFirstRoot();
+        uint64 root_count = world->GetHierarchy()->GetRootCount();
+        for (uint64 i = 0; i < root_count; i++) {
+            HierarchyComponent *root_hierarchy = world->GetComponent<HierarchyComponent>(root);
+            UpdateHierarchyLabelBranch(world, root, root_hierarchy, hierarchy_text, 0);
+            root = root_hierarchy->next_sibling;
+        }
+        s_label_hierarchy->SetText(hierarchy_text);
+    }
+
+    //--------------------------------------------------------------
+    void EditorUI::UpdateHierarchyLabelBranch(World *world, EntityId branch, HierarchyComponent *branch_hierarchy, String &hierarchy_text, uint32 depth) {
+        NameComponent *name = world->GetComponent<NameComponent>(branch);
+        for (uint32 i = 0; i < depth; i++) {
+            hierarchy_text += "\t";
+        }
+
+        if (name) {
+            hierarchy_text += name->name + "\n";
+        }
+        else {
+            hierarchy_text += "Entity";
+        }
+
+        EntityId child = branch_hierarchy->first_child;
+        for (uint64 i = 0; i < branch_hierarchy->child_count; i++) {
+            HierarchyComponent *child_hierarchy = world->GetComponent<HierarchyComponent>(child);
+            UpdateHierarchyLabelBranch(world, child, child_hierarchy, hierarchy_text, depth + 1);
+            child = child_hierarchy->next_sibling;
+        }
+    }
+
+    //--------------------------------------------------------------
+    void EditorUI::UpdateSelectionLabel() {
+        if (EditorSelection::HasSelection()) {
+            World *world = EditorApplication::GetWorld();
+            EntityId entity = EditorSelection::GetSelection();
+
+            String text = StringUtils::Format("Entity:\nId: {} - Guid: {}\n\n", entity, world->GetGuid(entity).ToString());
+            for (const ComponentInfo &component_info : ComponentRegistry::GetComponentInfos()) {
+                void *component = world->GetComponent(component_info.id, entity);
+                if (component) {
+                    text += StringUtils::Format("{}\n\n", component_info.type.GetName());
+                }
+            }
+
+            s_label_properties->SetText(text);
+        }
+        else {
+            s_label_properties->SetText("No entity selected!");
+        }
+    }
+
+    //--------------------------------------------------------------
+    void EditorUI::UpdateSystems() {
+        UIRebuildSystem::Run(&s_ui_view);
+        UIEventSystem::Run(&s_ui_view);
+        RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
+        Delegate<RenderFrameContextObjectUI &()> ui_object_adder;
+        ui_object_adder.Connect<&RenderFrameContext::AddEditorUIObject>(&render_frame_context);
+        UIRenderSystem::Run(&s_ui_view, ui_object_adder);
     }
 
 }

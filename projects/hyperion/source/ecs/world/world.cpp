@@ -214,9 +214,9 @@ namespace Hyperion {
             case EntityPrimitive::Empty: return "Empty";
             case EntityPrimitive::Base: return "Entity";
             case EntityPrimitive::Camera: return "Camera";
-            case EntityPrimitive::DirectionalLight: return "DirectionalLight";
-            case EntityPrimitive::PointLight: return "PointLight";
-            case EntityPrimitive::SpotLight: return "SpotLight";
+            case EntityPrimitive::DirectionalLight: return "Directional Light";
+            case EntityPrimitive::PointLight: return "Point Light";
+            case EntityPrimitive::SpotLight: return "Spot Light";
             case EntityPrimitive::Quad: return "Quad";
             case EntityPrimitive::Plane: return "Plane";
             case EntityPrimitive::Cube: return "Cube";
