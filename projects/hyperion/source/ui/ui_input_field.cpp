@@ -103,18 +103,30 @@ namespace Hyperion::UI {
 
                 if ((event.GetKeyModifier() & KeyModifier::Control) == KeyModifier::Control) {
                     if (key_code == KeyCode::A) {
-
+                        return;
                     } else if (key_code == KeyCode::C) {
-
+                        return;
                     } else if (key_code == KeyCode::V) {
-
+                        return;
                     } else if (key_code == KeyCode::X) {
-
+                        return;
                     }
-                    return;
                 }
 
-                SetText(GetText() + key_typed);
+                Font *font = m_input_label->GetFont();
+                if (font) {
+                    bool8 has_characters = true;
+                    Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(key_typed);
+                    for (uint32 codepoint : codepoints) {
+                        if (!font->HasCodepoint(codepoint)) {
+                            has_characters = false;
+                        }
+                    }
+                
+                    if (has_characters) {
+                        SetText(GetText() + key_typed);
+                    }
+                }
             }
         }
 

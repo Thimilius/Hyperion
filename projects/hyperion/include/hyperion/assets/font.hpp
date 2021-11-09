@@ -21,6 +21,7 @@ namespace Hyperion {
         inline uint32 GetSize() const { return m_size; }
         inline Texture2D *GetTexture() const { return m_font_atlas->GetTexture(); }
         const FontGlyph &GetGlyph(uint32 codepoint) const;
+        inline bool8 HasCodepoint(uint32 codepoint) const { return m_font_atlas->HasElement(codepoint); }
         const FontAtlasElement &GetElement(uint32 codepoint) const;
         inline const SpecialFontGlyphs &GetSpecialGlyphs() const { return m_special_glyphs; }
 

@@ -21,7 +21,8 @@ namespace Hyperion {
     public:
         inline Texture2D *GetTexture() const { return m_texture; }
 
-        inline const TextureAtlasElement<V> &GetElement(K key) const {
+        inline bool8 HasElement(const K &key) const { return m_elements.Contains(key); }
+        inline const TextureAtlasElement<V> &GetElement(const K &key) const {
             // TODO: Handle not finding an element.
             auto it = m_elements.Find(key);
             const TextureAtlasElement<V> &element = it->second;
