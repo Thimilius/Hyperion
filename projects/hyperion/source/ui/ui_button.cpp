@@ -37,6 +37,8 @@ namespace Hyperion::UI {
 
         if (event.GetType() == UIEventType::PointerClick) {
             Click();
+        } else if (event.GetType() == UIEventType::Submit) {
+            Click();
         }
     }
 

@@ -293,13 +293,25 @@ namespace Hyperion::Editor {
                     s_toggle_runtime_preview = create_toggle(preview_header_middle, s_font_icon, "\uf11b", false, { });
 
                     s_toggle_editor_preview->RegisterToggleCallback([](bool8 is_on) {
-                        s_preview_editor_ui_element->GetStyle().SetVisibility(Visibility::Visible);
-                        s_preview_runtime_ui_element->GetStyle().SetVisibility(Visibility::Hidden);
+                        if (is_on) {
+                            s_preview_editor_ui_element->GetStyle().SetVisibility(Visibility::Visible);
+                            s_preview_runtime_ui_element->GetStyle().SetVisibility(Visibility::Hidden);
+                        } else {
+                            s_preview_editor_ui_element->GetStyle().SetVisibility(Visibility::Hidden);
+                            s_preview_runtime_ui_element->GetStyle().SetVisibility(Visibility::Visible);
+                        }
+                        
                         s_toggle_runtime_preview->Toggle(false);
                     });
                     s_toggle_runtime_preview->RegisterToggleCallback([](bool8 is_on) {
-                        s_preview_runtime_ui_element->GetStyle().SetVisibility(Visibility::Visible);
-                        s_preview_editor_ui_element->GetStyle().SetVisibility(Visibility::Hidden);
+                        if (is_on) {
+                            s_preview_editor_ui_element->GetStyle().SetVisibility(Visibility::Hidden);
+                            s_preview_runtime_ui_element->GetStyle().SetVisibility(Visibility::Visible);
+                        } else {
+                            s_preview_editor_ui_element->GetStyle().SetVisibility(Visibility::Visible);
+                            s_preview_runtime_ui_element->GetStyle().SetVisibility(Visibility::Hidden);
+                        }
+
                         s_toggle_editor_preview->Toggle(false);
                     });
                 }

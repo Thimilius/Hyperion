@@ -70,6 +70,8 @@ namespace Hyperion::UI {
 
         if (event.GetType() == UIEventType::PointerClick) {
             Toggle();
+        } else if (event.GetType() == UIEventType::Submit) {
+            Toggle();
         }
     }
 

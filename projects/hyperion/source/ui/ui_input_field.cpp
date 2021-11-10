@@ -62,6 +62,10 @@ namespace Hyperion::UI {
 
         } else if (event.GetType() == UIEventType::Deselect) {
 
+        } else if (event.GetType() == UIEventType::Submit) {
+            
+        } else if (event.GetType() == UIEventType::Cancel) {
+            SetText("");
         } else if (event.GetType() == UIEventType::KeyPressed) {
             KeyCode key_code = event.GetKeyCode();
 

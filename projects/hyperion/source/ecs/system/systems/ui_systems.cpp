@@ -162,6 +162,13 @@ namespace Hyperion::UI {
             if (state.selected_element) {
                 SendEvent(state.selected_element, UIEventType::SelectUpdate);
 
+                if (Input::IsKeyDown(KeyCode::Return)) {
+                    SendEvent(state.selected_element, UIEventType::Submit);
+                }
+                if (Input::IsKeyDown(KeyCode::Escape)) {
+                    SendEvent(state.selected_element, UIEventType::Cancel);
+                }
+
                 for (AppEvent *app_event : Input::GetEvents()) {
                     if (app_event->GetType() == AppEventType::KeyPressed) {
                         KeyPressedAppEvent *event = static_cast<KeyPressedAppEvent *>(app_event);
