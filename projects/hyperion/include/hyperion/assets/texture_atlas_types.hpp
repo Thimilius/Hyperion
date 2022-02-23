@@ -7,14 +7,14 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    template<typename T>
-    struct TextureAtlasElement {
-        Vector2 uv_top_left;
-        Vector2 uv_top_right;
-        Vector2 uv_bottom_right;
-        Vector2 uv_bottom_left;
+  template<typename T>
+  struct TextureAtlasElement {
+    Vector2 uv_top_left;
+    Vector2 uv_top_right;
+    Vector2 uv_bottom_right;
+    Vector2 uv_bottom_left;
 
-        T payload;
-    };
+    T payload;
+  };
 
 }

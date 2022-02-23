@@ -7,15 +7,15 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    //--------------------------------------------------------------
-    Application::Application() {
-        HYP_ASSERT_MESSAGE(!s_instance, "Trying to create application more than once!");
-        s_instance = this;
-    }
+  //--------------------------------------------------------------
+  Application::Application() {
+    HYP_ASSERT_MESSAGE(!s_instance, "Trying to create application more than once!");
+    s_instance = this;
+  }
 
-    //--------------------------------------------------------------
-    void Application::Exit() {
-        Engine::Exit();
-    }
+  //--------------------------------------------------------------
+  void Application::Exit() {
+    Engine::Exit();
+  }
 
 }

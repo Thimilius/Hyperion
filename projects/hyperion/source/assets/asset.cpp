@@ -10,28 +10,28 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    //--------------------------------------------------------------
-    bool8 Asset::ValidateDataAccess() const {
-        if (m_info.data_access == AssetDataAccess::None) {
-            HYP_LOG_ERROR("Asset", "Trying to read/write data on an asset that is not marked for read and write!");
-            return false;
-        } else {
-            return true;
-        }
+  //--------------------------------------------------------------
+  bool8 Asset::ValidateDataAccess() const {
+    if (m_info.data_access == AssetDataAccess::None) {
+      HYP_LOG_ERROR("Asset", "Trying to read/write data on an asset that is not marked for read and write!");
+      return false;
+    } else {
+      return true;
     }
+  }
 
-    //--------------------------------------------------------------
-    void Asset::SetDirty() {
-        if (!m_is_dirty) {
-            m_is_dirty = true;
+  //--------------------------------------------------------------
+  void Asset::SetDirty() {
+    if (!m_is_dirty) {
+      m_is_dirty = true;
 
-            AssetManager::AddDirtyAsset(this);
-        }
+      AssetManager::AddDirtyAsset(this);
     }
+  }
 
-    //--------------------------------------------------------------
-    void Asset::ResetDirty() {
-        m_is_dirty = false;
-    }
+  //--------------------------------------------------------------
+  void Asset::ResetDirty() {
+    m_is_dirty = false;
+  }
 
 }

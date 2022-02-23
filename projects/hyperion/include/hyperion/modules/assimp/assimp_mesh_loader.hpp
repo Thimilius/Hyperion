@@ -10,13 +10,13 @@ struct aiMesh;
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    class AssimpMeshLoader : public IMeshLoader {
-    public:
-        Result<Mesh *, Error> Load(const String &path) override;
-    private:
-        void LoadSubMesh(const aiMesh *mesh, Rendering::MeshData &mesh_data, Rendering::SubMeshes &sub_meshes);
-    private:
-        static Rendering::MeshTopology GetTopologyForPrimitiveType(uint32 primitive_type);
-    };
+  class AssimpMeshLoader : public IMeshLoader {
+  public:
+    Result<Mesh *, Error> Load(const String &path) override;
+  private:
+    void LoadSubMesh(const aiMesh *mesh, Rendering::MeshData &mesh_data, Rendering::SubMeshes &sub_meshes);
+  private:
+    static Rendering::MeshTopology GetTopologyForPrimitiveType(uint32 primitive_type);
+  };
 
 }

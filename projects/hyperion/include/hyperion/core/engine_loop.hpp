@@ -7,21 +7,21 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    using EngineLoopUpdateFunction = void(*)();
+  using EngineLoopUpdateFunction = void(*)();
 
-    struct EngineLoopSubSystem {
-        String name;
-        EngineLoopUpdateFunction update_function = nullptr;
-        Array<EngineLoopSubSystem> sub_systems;
-    };
+  struct EngineLoopSubSystem {
+    String name;
+    EngineLoopUpdateFunction update_function = nullptr;
+    Array<EngineLoopSubSystem> sub_systems;
+  };
 
-    struct EngineLoopSystem {
-        EngineLoopSubSystem initilization;
-        EngineLoopSubSystem fixed_update;
-        EngineLoopSubSystem tick;
-        EngineLoopSubSystem pre_update;
-        EngineLoopSubSystem update;
-        EngineLoopSubSystem late_update;
-    };
+  struct EngineLoopSystem {
+    EngineLoopSubSystem initilization;
+    EngineLoopSubSystem fixed_update;
+    EngineLoopSubSystem tick;
+    EngineLoopSubSystem pre_update;
+    EngineLoopSubSystem update;
+    EngineLoopSubSystem late_update;
+  };
 
 }

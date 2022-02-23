@@ -14,48 +14,48 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    struct CoreSettings {
-        EngineLoopSystem engine_loop;
+  struct CoreSettings {
+    EngineLoopSystem engine_loop;
 
-        float32 max_delta_time = 0.15f;
-        float32 fixed_delta_time = 1.0f / 60.0f;
+    float32 max_delta_time = 0.15f;
+    float32 fixed_delta_time = 1.0f / 60.0f;
 
-        bool8 allow_altf4 = true;
-    };
+    bool8 allow_altf4 = true;
+  };
 
-    struct AssetSettings {
-        bool8 hot_loading = true;
+  struct AssetSettings {
+    bool8 hot_loading = true;
 
-        String shader_path = "data/shaders/";
-        String texture_path = "data/textures/";
-    };
+    String shader_path = "data/shaders/";
+    String texture_path = "data/textures/";
+  };
 
-    struct RenderSettings {
-        Rendering::RenderBackend backend = Rendering::RenderBackend::OpenGL;
+  struct RenderSettings {
+    Rendering::RenderBackend backend = Rendering::RenderBackend::OpenGL;
 
-        Rendering::RenderPipeline pipeline = Rendering::RenderPipeline::Forward;
-        Rendering::IRenderPipeline *custom_pipeline = nullptr;
+    Rendering::RenderPipeline pipeline = Rendering::RenderPipeline::Forward;
+    Rendering::IRenderPipeline *custom_pipeline = nullptr;
 
-        Rendering::VSyncMode vsync_mode = Rendering::VSyncMode::DontSync;
+    Rendering::VSyncMode vsync_mode = Rendering::VSyncMode::DontSync;
 
-        Rendering::RenderThreadingMode threading_mode = Rendering::RenderThreadingMode::MultiThreaded;
-    };
+    Rendering::RenderThreadingMode threading_mode = Rendering::RenderThreadingMode::MultiThreaded;
+  };
 
-    struct ScriptingSettings {
-        String runtime_path = "data/mono/";
-        String library_path = "data/managed/";
+  struct ScriptingSettings {
+    String runtime_path = "data/mono/";
+    String library_path = "data/managed/";
 
-        bool8 wait_for_debugger = false;
-        uint32 debugger_port = 12345;
-        uint32 debugger_wait_timeout = 3000;
-    };
+    bool8 wait_for_debugger = false;
+    uint32 debugger_port = 12345;
+    uint32 debugger_wait_timeout = 3000;
+  };
 
-    struct ApplicationSettings {
-        CoreSettings core;
-        WindowSettings window;
-        AssetSettings assets;
-        RenderSettings render;
-        ScriptingSettings scripting;
-    };
+  struct ApplicationSettings {
+    CoreSettings core;
+    WindowSettings window;
+    AssetSettings assets;
+    RenderSettings render;
+    ScriptingSettings scripting;
+  };
 
 }

@@ -7,13 +7,13 @@
 
 namespace Hyperion::Physics {
 
-    struct BoxColliderComponent : public IComponent {
-        Vector3 origin = Vector3::Zero();
-        Vector3 size = Vector3::One();
-    };
+  struct BoxColliderComponent : public IComponent {
+    Vector3 origin = Vector3::Zero();
+    Vector3 size = Vector3::One();
+  };
 
-    struct SphereColliderComponent : public IComponent {
-        float32 radius = 0.5f;
-    };
+  struct SphereColliderComponent : public IComponent {
+    float32 radius = 0.5f;
+  };
 
 }

@@ -7,9 +7,9 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Physics {
 
-    class UpdateColliderTransformSystem : public ISystem {
-    public:
-        void Run(World *world) override;
-    };
+  class UpdateColliderTransformSystem : public ISystem {
+  public:
+    void Run(World *world) override;
+  };
 
 }

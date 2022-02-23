@@ -6,18 +6,18 @@
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
-    class Mesh;
+  class Mesh;
 }
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    class MeshUtilities final {
-    public:
-        static BoundingBox CalculateBounds(const Array<Vector3> &positions);
-    private:
-        MeshUtilities() = delete;
-        ~MeshUtilities() = delete;
-    };
+  class MeshUtilities final {
+  public:
+    static BoundingBox CalculateBounds(const Array<Vector3> &positions);
+  private:
+    MeshUtilities() = delete;
+    ~MeshUtilities() = delete;
+  };
 
 }

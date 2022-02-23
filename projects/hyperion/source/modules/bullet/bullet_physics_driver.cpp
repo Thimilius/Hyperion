@@ -10,31 +10,31 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Physics {
 
-    //--------------------------------------------------------------
-    IPhysicsWorld *BulletPhysicsDriver::CreatePhysicsWorld(World *world) {
-        return new BulletPhysicsWorld(world, this);
-    }
+  //--------------------------------------------------------------
+  IPhysicsWorld *BulletPhysicsDriver::CreatePhysicsWorld(World *world) {
+    return new BulletPhysicsWorld(world, this);
+  }
 
-    //--------------------------------------------------------------
-    void BulletPhysicsDriver::DestroyPhysicsWorld(IPhysicsWorld *world) {
-        delete world;
-    }
+  //--------------------------------------------------------------
+  void BulletPhysicsDriver::DestroyPhysicsWorld(IPhysicsWorld *world) {
+    delete world;
+  }
 
-    //--------------------------------------------------------------
-    void BulletPhysicsDriver::Initialize() {
-        m_collision_configuration = new btDefaultCollisionConfiguration();
+  //--------------------------------------------------------------
+  void BulletPhysicsDriver::Initialize() {
+    m_collision_configuration = new btDefaultCollisionConfiguration();
 
-        HYP_LOG_INFO("Physics", "Initialized Bullet physics driver!");
-    }
+    HYP_LOG_INFO("Physics", "Initialized Bullet physics driver!");
+  }
 
-    //--------------------------------------------------------------
-    void BulletPhysicsDriver::FixedUpdate(float32 delta_time) {
+  //--------------------------------------------------------------
+  void BulletPhysicsDriver::FixedUpdate(float32 delta_time) {
 
-    }
+  }
 
-    //--------------------------------------------------------------
-    void BulletPhysicsDriver::Shutdown() {
-        delete m_collision_configuration;
-    }
+  //--------------------------------------------------------------
+  void BulletPhysicsDriver::Shutdown() {
+    delete m_collision_configuration;
+  }
 
 }

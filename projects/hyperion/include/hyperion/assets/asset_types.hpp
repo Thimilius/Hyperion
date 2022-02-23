@@ -7,34 +7,34 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    enum class AssetType {
-        Font,
-        Material,
-        Mesh,
-        Shader,
-        Texture,
-        TextureAtlas
-    };
+  enum class AssetType {
+    Font,
+    Material,
+    Mesh,
+    Shader,
+    Texture,
+    TextureAtlas
+  };
 
-    using AssetId = uint64;
-    using AssetGuid = Guid;
+  using AssetId = uint64;
+  using AssetGuid = Guid;
 
-    enum class AssetDataAccess {
-        None,
-        ReadAndWrite
-    };
+  enum class AssetDataAccess {
+    None,
+    ReadAndWrite
+  };
 
-    struct AssetInfo {
-        AssetId id;
-        AssetGuid guid;
+  struct AssetInfo {
+    AssetId id;
+    AssetGuid guid;
 
-        AssetDataAccess data_access;
+    AssetDataAccess data_access;
 
-        inline static constexpr AssetId INVALID_ID = -1;
-    };
+    inline static constexpr AssetId INVALID_ID = -1;
+  };
 
-    struct AssetResourceInfo {
-        String path;
-    };
+  struct AssetResourceInfo {
+    String path;
+  };
 
 }

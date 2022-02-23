@@ -50,23 +50,23 @@ typedef HICON__ *HCURSOR;
 typedef HMENU__ *HMENU;
 
 struct Critical_Section {
-    void *Data1[1];
-    long Data2[2];
-    void *Data3[3];
+  void *Data1[1];
+  long Data2[2];
+  void *Data3[3];
 };
 
 struct Overlapped {
-    void *Data1[3];
-    unsigned long Data2[2];
+  void *Data1[3];
+  unsigned long Data2[2];
 };
 typedef Overlapped *LPOverlapped;
 
 // RANT: Apparently Microsoft forgot to include this definition in their header files. What the hell!?!?
 typedef struct _PROCESSOR_POWER_INFORMATION {
-    ULONG Number;
-    ULONG MaxMhz;
-    ULONG CurrentMhz;
-    ULONG MhzLimit;
-    ULONG MaxIdleState;
-    ULONG CurrentIdleState;
+  ULONG Number;
+  ULONG MaxMhz;
+  ULONG CurrentMhz;
+  ULONG MhzLimit;
+  ULONG MaxIdleState;
+  ULONG CurrentIdleState;
 } PROCESSOR_POWER_INFORMATION, *PPROCESSOR_POWER_INFORMATION;

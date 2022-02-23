@@ -4,9 +4,9 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-    enum class RenderBackend {
-        OpenGL,
-        Vulkan,
-    };
+  enum class RenderBackend {
+    OpenGL,
+    Vulkan,
+  };
 
 }

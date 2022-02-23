@@ -13,20 +13,20 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-    class CameraUtilities final {
-    public:
-        static Vector3 ScreenToWorldPoint(CameraComponent *camera, Vector3 screen_point);
-        static Vector2 WorldToScreenPoint(CameraComponent *camera, Vector3 world_point);
-        static Ray ScreenPointToRay(CameraComponent *camera, DerivedTransformComponent *derived_transform, Vector2 screen_point);
+  class CameraUtilities final {
+  public:
+    static Vector3 ScreenToWorldPoint(CameraComponent *camera, Vector3 screen_point);
+    static Vector2 WorldToScreenPoint(CameraComponent *camera, Vector3 world_point);
+    static Ray ScreenPointToRay(CameraComponent *camera, DerivedTransformComponent *derived_transform, Vector2 screen_point);
 
-        static void RecalculateMatricies(CameraComponent *camera, DerivedTransformComponent *derived_transform);
-        static CameraViewport CalculateViewportFromClipping(CameraViewportClipping viewport_clipping);
+    static void RecalculateMatricies(CameraComponent *camera, DerivedTransformComponent *derived_transform);
+    static CameraViewport CalculateViewportFromClipping(CameraViewportClipping viewport_clipping);
 
-        static Array<Plane> ExtractFrustumPlanes(Matrix4x4 view_projection);
-        static bool IsInsideFrustum(const Array<Plane> &frustum_planes, BoundingBox bounds);
-    private:
-        CameraUtilities() = delete;
-        ~CameraUtilities() = delete;
-    };
+    static Array<Plane> ExtractFrustumPlanes(Matrix4x4 view_projection);
+    static bool IsInsideFrustum(const Array<Plane> &frustum_planes, BoundingBox bounds);
+  private:
+    CameraUtilities() = delete;
+    ~CameraUtilities() = delete;
+  };
 
 }

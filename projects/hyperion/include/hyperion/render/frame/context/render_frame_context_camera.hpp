@@ -11,35 +11,35 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-    struct RenderFrameContextCamera {
-        uint32 index;
+  struct RenderFrameContextCamera {
+    uint32 index;
 
-        CameraProjectionMode projection_mode;
+    CameraProjectionMode projection_mode;
 
-        CameraClearMode clear_mode;
-        Color background_color;
+    CameraClearMode clear_mode;
+    Color background_color;
 
-        LayerMask culling_mask;
+    LayerMask culling_mask;
 
-        Vector3 position;
-        Vector3 forward;
-        Vector3 up;
+    Vector3 position;
+    Vector3 forward;
+    Vector3 up;
 
-        float32 near_plane;
-        float32 far_plane;
+    float32 near_plane;
+    float32 far_plane;
 
-        float32 fov;
-        float32 orthographic_size;
+    float32 fov;
+    float32 orthographic_size;
 
-        CameraViewport viewport;
+    CameraViewport viewport;
 
-        Matrix4x4 view_matrix;
-        Matrix4x4 projection_matrix;
-        Matrix4x4 view_projection_matrix;
+    Matrix4x4 view_matrix;
+    Matrix4x4 projection_matrix;
+    Matrix4x4 view_projection_matrix;
 
-        Matrix4x4 inverse_view_matrix;
-        Matrix4x4 inverse_projection_matrix;
-        Matrix4x4 inverse_view_projection_matrix;
-    };
+    Matrix4x4 inverse_view_matrix;
+    Matrix4x4 inverse_projection_matrix;
+    Matrix4x4 inverse_view_projection_matrix;
+  };
 
 }

@@ -7,15 +7,15 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-    using MaterialPropertyIndex = uint64;
+  using MaterialPropertyIndex = uint64;
 
-    struct MaterialProperty {
-        ShaderPropertyId id;
-        ShaderPropertyType type;
-        ShaderPropertyStorage storage = { };
-    };
+  struct MaterialProperty {
+    ShaderPropertyId id;
+    ShaderPropertyType type;
+    ShaderPropertyStorage storage = { };
+  };
 
-    using MaterialPropertyCollection = Array<MaterialProperty>;
-    using MaterialPropertyIndices = Map<ShaderPropertyId, MaterialPropertyIndex>;
+  using MaterialPropertyCollection = Array<MaterialProperty>;
+  using MaterialPropertyIndices = Map<ShaderPropertyId, MaterialPropertyIndex>;
 
 }

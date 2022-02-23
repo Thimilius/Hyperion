@@ -11,100 +11,100 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-    using ShaderPropertyId = uint64;
+  using ShaderPropertyId = uint64;
 
-    enum class ShaderStageFlags {
-        Unknown,
+  enum class ShaderStageFlags {
+    Unknown,
 
-        Vertex = BIT(0),
-        Fragment = BIT(1),
-    };
-    HYP_CREATE_ENUM_FLAG_OPERATORS(ShaderStageFlags);
+    Vertex = BIT(0),
+    Fragment = BIT(1),
+  };
+  HYP_CREATE_ENUM_FLAG_OPERATORS(ShaderStageFlags);
 
-    enum class ShaderRenderOrder {
-        Unknown,
+  enum class ShaderRenderOrder {
+    Unknown,
 
-        Opaque,
-        Transparent
-    };
-    
-    enum class ShaderCullingMode {
-        Unknown,
+    Opaque,
+    Transparent
+  };
 
-        Off,
-        Front,
-        Back,
-    };
+  enum class ShaderCullingMode {
+    Unknown,
 
-    enum class ShaderBlendingMode {
-        Unknown,
+    Off,
+    Front,
+    Back,
+  };
 
-        On,
-        Off,
-    };
+  enum class ShaderBlendingMode {
+    Unknown,
 
-    enum class ShaderZWrite {
-        Unknown,
+    On,
+    Off,
+  };
 
-        On,
-        Off
-    };
+  enum class ShaderZWrite {
+    Unknown,
 
-    struct ShaderAttributes {
-        ShaderRenderOrder render_order = ShaderRenderOrder::Opaque;
+    On,
+    Off
+  };
 
-        ShaderCullingMode culling_mode = ShaderCullingMode::Back;
-        // TODO: Properly add ability to specify blending mode.
-        ShaderBlendingMode blending_mode = ShaderBlendingMode::Off;
-        ShaderZWrite z_write = ShaderZWrite::On;
-    };
+  struct ShaderAttributes {
+    ShaderRenderOrder render_order = ShaderRenderOrder::Opaque;
 
-    enum class ShaderPropertyType {
-        Unknown,
+    ShaderCullingMode culling_mode = ShaderCullingMode::Back;
+    // TODO: Properly add ability to specify blending mode.
+    ShaderBlendingMode blending_mode = ShaderBlendingMode::Off;
+    ShaderZWrite z_write = ShaderZWrite::On;
+  };
 
-        Float,
-        Int,
-        Vector,
-        Color,
-        Matrix,
+  enum class ShaderPropertyType {
+    Unknown,
 
-        Texture
-    };
+    Float,
+    Int,
+    Vector,
+    Color,
+    Matrix,
 
-    union ShaderPropertyStorage {
-        float32 float32;
-        int32 int32;
-        Vector4 vector4;
-        Color color;
-        Matrix4x4 matrix4x4;
+    Texture
+  };
 
-        struct Texture {
-            AssetId id = AssetInfo::INVALID_ID;
-            TextureDimension dimension = TextureDimension::Texture2D;
-            uint32 render_texture_attchment_index = 0;
-        } texture;
-    };
+  union ShaderPropertyStorage {
+    float32 float32;
+    int32 int32;
+    Vector4 vector4;
+    Color color;
+    Matrix4x4 matrix4x4;
 
-    struct ShaderProperty {
-        String name;
+    struct Texture {
+      AssetId id = AssetInfo::INVALID_ID;
+      TextureDimension dimension = TextureDimension::Texture2D;
+      uint32 render_texture_attchment_index = 0;
+    } texture;
+  };
 
-        ShaderPropertyId id;
-        ShaderPropertyType type;
-        ShaderPropertyStorage storage = { };
+  struct ShaderProperty {
+    String name;
 
-        inline static ShaderPropertyId PropertyToId(const String &name) { return std::hash<String>{}(name); }
-    };
+    ShaderPropertyId id;
+    ShaderPropertyType type;
+    ShaderPropertyStorage storage = { };
 
-    using ShaderPropertyCollection = Array<ShaderProperty>;
+    inline static ShaderPropertyId PropertyToId(const String &name) { return std::hash<String>{}(name); }
+  };
 
-    struct ShaderData {
-        ShaderAttributes attributes;
-        ShaderPropertyCollection properties;
+  using ShaderPropertyCollection = Array<ShaderProperty>;
 
-        ShaderStageFlags stage_flags;
+  struct ShaderData {
+    ShaderAttributes attributes;
+    ShaderPropertyCollection properties;
 
-        String vertex_source;
-        String fragment_source;
-    };
+    ShaderStageFlags stage_flags;
+
+    String vertex_source;
+    String fragment_source;
+  };
 
 }

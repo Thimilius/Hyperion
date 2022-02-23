@@ -13,17 +13,17 @@
 //--------------------------------------------------------------
 void *operator new(size_t size) {
 #ifdef HYP_DEBUG
-    Hyperion::MemoryStats::s_global_memory += size;
-    Hyperion::MemoryStats::s_frame_memory += size;
+  Hyperion::MemoryStats::s_global_memory += size;
+  Hyperion::MemoryStats::s_frame_memory += size;
 #endif
-    return std::malloc(size);
+  return std::malloc(size);
 }
 
 //--------------------------------------------------------------
 void operator delete(void *memory, size_t size) {
 #ifdef HYP_DEBUG
-    Hyperion::MemoryStats::s_global_memory -= size;
-    Hyperion::MemoryStats::s_frame_memory -= size;
+  Hyperion::MemoryStats::s_global_memory -= size;
+  Hyperion::MemoryStats::s_frame_memory -= size;
 #endif
-    std::free(memory);
+  std::free(memory);
 }

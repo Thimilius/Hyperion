@@ -10,11 +10,11 @@ namespace Hyperion { using Guid = WindowsGuid; }
 
 namespace std {
 
-    template <>
-    struct hash<Hyperion::Guid> {
-        std::size_t operator()(const Hyperion::Guid &guid) const {
-            return (hash<uint64>()(guid.m_data[0]) ^ (hash<uint64>()(guid.m_data[1]) << 1)) >> 1;
-        }
-    };
+  template <>
+  struct hash<Hyperion::Guid> {
+    std::size_t operator()(const Hyperion::Guid &guid) const {
+      return (hash<uint64>()(guid.m_data[0]) ^ (hash<uint64>()(guid.m_data[1]) << 1)) >> 1;
+    }
+  };
 
 }

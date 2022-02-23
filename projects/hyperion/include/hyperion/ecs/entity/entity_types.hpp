@@ -7,36 +7,36 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    using EntityId = uint64;
-    using EntityIndex = uint32;
-    using EntityVersion = uint32;
-    using EntityGuid = Guid;
+  using EntityId = uint64;
+  using EntityIndex = uint32;
+  using EntityVersion = uint32;
+  using EntityGuid = Guid;
 
-    struct EntityDescription {
-        EntityId id;
-        EntityGuid guid;
-    };
+  struct EntityDescription {
+    EntityId id;
+    EntityGuid guid;
+  };
 
-    namespace Entity {
-        inline static constexpr EntityId EMPTY = 0xFFFFFFFF;
-    }
+  namespace Entity {
+    inline static constexpr EntityId EMPTY = 0xFFFFFFFF;
+  }
 
-    enum class EntityPrimitive {
-        Empty,
-        Base,
+  enum class EntityPrimitive {
+    Empty,
+    Base,
 
-        Camera,
+    Camera,
 
-        DirectionalLight,
-        PointLight,
-        SpotLight,
+    DirectionalLight,
+    PointLight,
+    SpotLight,
 
-        Quad,
-        Plane,
-        Cube,
-        Sphere,
+    Quad,
+    Plane,
+    Cube,
+    Sphere,
 
-        Sprite
-    };
+    Sprite
+  };
 
 }

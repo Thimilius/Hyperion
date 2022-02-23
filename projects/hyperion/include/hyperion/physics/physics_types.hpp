@@ -7,16 +7,16 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Physics {
 
-    enum class ColliderType {
-        BoxCollider,
-        SphereCollider
-    };
+  enum class ColliderType {
+    BoxCollider,
+    SphereCollider
+  };
 
-    struct RaycastResult {
-        Vector3 point = Vector3::Zero();
-        Vector3 normal = Vector3::Zero();
+  struct RaycastResult {
+    Vector3 point = Vector3::Zero();
+    Vector3 normal = Vector3::Zero();
 
-        EntityId entity;
-    };
+    EntityId entity;
+  };
 
 }

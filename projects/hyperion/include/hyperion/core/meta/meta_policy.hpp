@@ -30,12 +30,12 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    struct MetaPolicyAsAlias { };
+  struct MetaPolicyAsAlias { };
 
-    constexpr MetaPolicyAsAlias AS_ALIAS;
+  constexpr MetaPolicyAsAlias AS_ALIAS;
 
-    struct MetaPolicyAsIs { };
+  struct MetaPolicyAsIs { };
 
-    struct MetaPolicyAsVoid { };
+  struct MetaPolicyAsVoid { };
 
 }

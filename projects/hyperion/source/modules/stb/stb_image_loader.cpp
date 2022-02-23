@@ -14,32 +14,32 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    //--------------------------------------------------------------
-    bool8 StbImageLoader::SupportsExtension(const String &extension) const {
-        return std::find(s_supported_extensions.begin(), s_supported_extensions.end(), extension) != s_supported_extensions.end();
+  //--------------------------------------------------------------
+  bool8 StbImageLoader::SupportsExtension(const String &extension) const {
+    return std::find(s_supported_extensions.begin(), s_supported_extensions.end(), extension) != s_supported_extensions.end();
+  }
+
+  //--------------------------------------------------------------
+  Result<Image *, Error> StbImageLoader::Load(const String &path, bool8 flip_vertically) {
+    if (!FileSystem::Exists(path)) {
+      return { Error::FileDoesNotExist };
     }
 
-    //--------------------------------------------------------------
-    Result<Image *, Error> StbImageLoader::Load(const String &path, bool8 flip_vertically) {
-        if (!FileSystem::Exists(path)) {
-            return { Error::FileDoesNotExist };
-        }
+    stbi_set_flip_vertically_on_load(flip_vertically);
 
-        stbi_set_flip_vertically_on_load(flip_vertically);
+    int32 width = 0;
+    int32 height = 0;
+    int32 channels = 0;
+    byte *buffer = stbi_load(path.c_str(), &width, &height, &channels, 0);
 
-        int32 width = 0;
-        int32 height = 0;
-        int32 channels = 0;
-        byte *buffer = stbi_load(path.c_str(), &width, &height, &channels, 0);
-
-        if (!buffer) {
-            return { Error::ImageLoadFailed };
-        }
-
-        Array<byte> pixels(buffer, buffer + (width * height * channels));
-        stbi_image_free(buffer);
-
-        return { Image::Create(width, height, channels, std::move(pixels)) };
+    if (!buffer) {
+      return { Error::ImageLoadFailed };
     }
+
+    Array<byte> pixels(buffer, buffer + (width * height * channels));
+    stbi_image_free(buffer);
+
+    return { Image::Create(width, height, channels, std::move(pixels)) };
+  }
 
 }

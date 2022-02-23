@@ -12,23 +12,23 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Physics {
 
-    //--------------------------------------------------------------
-    void UpdateColliderTransformSystem::Run(World *world) {
-        HYP_PROFILE_SCOPE("UpdateColliderTransformSystem.Run");
+  //--------------------------------------------------------------
+  void UpdateColliderTransformSystem::Run(World *world) {
+    HYP_PROFILE_SCOPE("UpdateColliderTransformSystem.Run");
 
-        auto box_collider_view = world->GetView<DerivedTransformComponent, BoxColliderComponent>(ExcludeComponents<DisabledComponent, StaticComponent>());
-        for (EntityId entity : box_collider_view) {
-            DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(entity);
-            BoxColliderComponent *box_collider = world->GetComponent<BoxColliderComponent>(entity);
-            world->GetPhysicsWorld()->UpdateBoxColliderTransform(world, entity, box_collider, derived_transform);
-        }
-
-        auto sphere_collider_view = world->GetView<DerivedTransformComponent, SphereColliderComponent>(ExcludeComponents<DisabledComponent, StaticComponent>());
-        for (EntityId entity : sphere_collider_view) {
-            DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(entity);
-            SphereColliderComponent *sphere_collider = world->GetComponent<SphereColliderComponent>(entity);
-            world->GetPhysicsWorld()->UpdateSphereColliderTransform(world, entity, sphere_collider, derived_transform);
-        }
+    auto box_collider_view = world->GetView<DerivedTransformComponent, BoxColliderComponent>(ExcludeComponents<DisabledComponent, StaticComponent>());
+    for (EntityId entity : box_collider_view) {
+      DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(entity);
+      BoxColliderComponent *box_collider = world->GetComponent<BoxColliderComponent>(entity);
+      world->GetPhysicsWorld()->UpdateBoxColliderTransform(world, entity, box_collider, derived_transform);
     }
+
+    auto sphere_collider_view = world->GetView<DerivedTransformComponent, SphereColliderComponent>(ExcludeComponents<DisabledComponent, StaticComponent>());
+    for (EntityId entity : sphere_collider_view) {
+      DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(entity);
+      SphereColliderComponent *sphere_collider = world->GetComponent<SphereColliderComponent>(entity);
+      world->GetPhysicsWorld()->UpdateSphereColliderTransform(world, entity, sphere_collider, derived_transform);
+    }
+  }
 
 }

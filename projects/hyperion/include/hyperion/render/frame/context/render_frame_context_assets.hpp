@@ -11,35 +11,35 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-    struct RenderFrameContextAsset {
-        AssetId id;
-    };
+  struct RenderFrameContextAsset {
+    AssetId id;
+  };
 
-    struct RenderFrameContextAssetTexture2D : public RenderFrameContextAsset {
-        Texture2DParameters parameters;
-        uint32 mipmap_count;
-        TexturePixelData pixels;
-    };
+  struct RenderFrameContextAssetTexture2D : public RenderFrameContextAsset {
+    Texture2DParameters parameters;
+    uint32 mipmap_count;
+    TexturePixelData pixels;
+  };
 
-    struct RenderFrameContextAssetRenderTexture : public RenderFrameContextAsset {
-        RenderTextureParameters parameters;
-        uint32 mipmap_count;
-    };
+  struct RenderFrameContextAssetRenderTexture : public RenderFrameContextAsset {
+    RenderTextureParameters parameters;
+    uint32 mipmap_count;
+  };
 
-    struct RenderFrameContextAssetShader : public RenderFrameContextAsset {
-        bool8 is_valid;
-        ShaderData data;
-    };
+  struct RenderFrameContextAssetShader : public RenderFrameContextAsset {
+    bool8 is_valid;
+    ShaderData data;
+  };
 
-    struct RenderFrameContextAssetMaterial : public RenderFrameContextAsset {
-        AssetId shader_id;
-        MaterialPropertyCollection properties;
-    };
+  struct RenderFrameContextAssetMaterial : public RenderFrameContextAsset {
+    AssetId shader_id;
+    MaterialPropertyCollection properties;
+  };
 
-    struct RenderFrameContextAssetMesh : public RenderFrameContextAsset {
-        MeshData data;
-        MeshVertexFormat vertex_format;
-        SubMeshes sub_meshes;
-    };
+  struct RenderFrameContextAssetMesh : public RenderFrameContextAsset {
+    MeshData data;
+    MeshVertexFormat vertex_format;
+    SubMeshes sub_meshes;
+  };
 
 }

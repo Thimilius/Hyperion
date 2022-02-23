@@ -10,74 +10,74 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    enum class LogColor {
-        Black,
-        
-        Red,
-        Green,
-        Blue,
+  enum class LogColor {
+    Black,
 
-        Yellow,
-        Magenta,
-        Cyan,
+    Red,
+    Green,
+    Blue,
 
-        DarkRed,
-        DarkGreen,
-        DarkBlue,
+    Yellow,
+    Magenta,
+    Cyan,
 
-        DarkYellow,
-        DarkMagenta,
-        DarkCyan,
+    DarkRed,
+    DarkGreen,
+    DarkBlue,
 
-        Grey,
-        White
-    };
+    DarkYellow,
+    DarkMagenta,
+    DarkCyan,
 
-    enum class LogLevel {
-        Trace,
-        Info,
-        Warning,
-        Error
-    };
+    Grey,
+    White
+  };
 
-    enum class LogType {
-        Core,
-        Client
-    };
+  enum class LogLevel {
+    Trace,
+    Info,
+    Warning,
+    Error
+  };
 
-    using LogCallback = std::function<void(LogType, LogLevel, const char *, const String &)>;
+  enum class LogType {
+    Core,
+    Client
+  };
 
-    class Log final {
-    public:
-        inline static void SetLevel(LogLevel level) { s_level = level; }
-        inline static void SetCallback(LogCallback callback) { s_callback = callback; }
+  using LogCallback = std::function<void(LogType, LogLevel, const char *, const String &)>;
 
-        template<typename ...Args>
-        static void LogMessage(LogType type, LogLevel level, const char *system, const String &message_format, Args... args) {
-            std::time_t current_time = std::time(&current_time);
-            std::tm *time_info = std::localtime(&current_time);
-            char prefix_buffer[30];
-            strftime(prefix_buffer, sizeof(prefix_buffer), "[%H:%M:%S]", time_info);
+  class Log final {
+  public:
+    inline static void SetLevel(LogLevel level) { s_level = level; }
+    inline static void SetCallback(LogCallback callback) { s_callback = callback; }
 
-            String formatted_message = StringUtils::Format(message_format, args...);
-            if (s_callback) {
-                s_callback(type, level, system, formatted_message);
-            }
+    template<typename ...Args>
+    static void LogMessage(LogType type, LogLevel level, const char *system, const String &message_format, Args... args) {
+      std::time_t current_time = std::time(&current_time);
+      std::tm *time_info = std::localtime(&current_time);
+      char prefix_buffer[30];
+      strftime(prefix_buffer, sizeof(prefix_buffer), "[%H:%M:%S]", time_info);
 
-            String message = StringUtils::Format("{} - [{}] - {}\n", prefix_buffer, system, formatted_message);
-            LogMessageInternal(level, message);
-        }
-    private:
-        Log() = delete;
-        ~Log() = delete;
-    private:
-        static void LogMessageInternal(LogLevel level, String message);
+      String formatted_message = StringUtils::Format(message_format, args...);
+      if (s_callback) {
+        s_callback(type, level, system, formatted_message);
+      }
 
-        static LogColor GetLogColor(LogLevel level);
-    private:
-        inline static LogLevel s_level;
-        inline static LogCallback s_callback;
-    };
+      String message = StringUtils::Format("{} - [{}] - {}\n", prefix_buffer, system, formatted_message);
+      LogMessageInternal(level, message);
+    }
+  private:
+    Log() = delete;
+    ~Log() = delete;
+  private:
+    static void LogMessageInternal(LogLevel level, String message);
+
+    static LogColor GetLogColor(LogLevel level);
+  private:
+    inline static LogLevel s_level;
+    inline static LogCallback s_callback;
+  };
 
 }
 

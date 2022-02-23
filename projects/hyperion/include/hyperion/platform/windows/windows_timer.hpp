@@ -7,17 +7,17 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    class WindowsTimer {
-    public:
-        WindowsTimer();
-    public:
-        float32 ElapsedSeconds() const;
-        float32 ElapsedMilliSeconds() const;
+  class WindowsTimer {
+  public:
+    WindowsTimer();
+  public:
+    float32 ElapsedSeconds() const;
+    float32 ElapsedMilliSeconds() const;
 
-        void Reset();
-    private:
-        uint64 m_start;
-        float64 m_frequency;
-    };
+    void Reset();
+  private:
+    uint64 m_start;
+    float64 m_frequency;
+  };
 
 }

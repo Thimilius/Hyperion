@@ -7,14 +7,14 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    class AssetLoadSystem : public ISystem {
-    public:
-        void Run(World *world) override;
-    };
+  class AssetLoadSystem : public ISystem {
+  public:
+    void Run(World *world) override;
+  };
 
-    class AssetUnloadSystem : public ISystem {
-    public:
-        void Run(World *world) override;
-    };
+  class AssetUnloadSystem : public ISystem {
+  public:
+    void Run(World *world) override;
+  };
 
 }

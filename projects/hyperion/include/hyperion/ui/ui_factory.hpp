@@ -9,27 +9,27 @@
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
-    class Engine;
+  class Engine;
 }
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::UI {
 
-    class UIFactory final {
-    public:
-        static UIElement *CreateElement();
-        static UIElement *CreateRoot();
-        static UIButton *CreateButton();
-        static UILabel *CreateLabel();
-        static UIToggle *CreateToggle();
-        static UIInputField *CreateInputField();
-    private:
-        static void ReflectTypes();
-    private:
-        UIFactory() = delete;
-        ~UIFactory() = delete;
-    private:
-        friend class Hyperion::Engine;
-    };
+  class UIFactory final {
+  public:
+    static UIElement *CreateElement();
+    static UIElement *CreateRoot();
+    static UIButton *CreateButton();
+    static UILabel *CreateLabel();
+    static UIToggle *CreateToggle();
+    static UIInputField *CreateInputField();
+  private:
+    static void ReflectTypes();
+  private:
+    UIFactory() = delete;
+    ~UIFactory() = delete;
+  private:
+    friend class Hyperion::Engine;
+  };
 
 }

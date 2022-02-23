@@ -6,9 +6,9 @@
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Threading {
-    
-    using ThreadId = uint32;
-    using ThreadStartFunction = std::function<void()>;
-    using ParameterizedThreadStartFunction = std::function<void(void *)>;
+
+  using ThreadId = uint32;
+  using ThreadStartFunction = std::function<void()>;
+  using ParameterizedThreadStartFunction = std::function<void(void *)>;
 
 }

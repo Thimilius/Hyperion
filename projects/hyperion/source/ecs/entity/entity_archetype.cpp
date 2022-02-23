@@ -7,10 +7,10 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    //--------------------------------------------------------------
-    EntityArchetype::EntityArchetype(EntityGuid guid, EntityArchetypeComponentStorage storage) {
-        m_guid = guid;
-        m_storage = storage;
-    }
+  //--------------------------------------------------------------
+  EntityArchetype::EntityArchetype(EntityGuid guid, EntityArchetypeComponentStorage storage) {
+    m_guid = guid;
+    m_storage = storage;
+  }
 
 }

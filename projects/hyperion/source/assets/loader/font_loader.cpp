@@ -10,16 +10,16 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    //--------------------------------------------------------------
-    void FontLoader::Initialize() {
-        s_font_loader = new FreetypeFontLoader();
-        s_font_loader->Initialize();
-    }
+  //--------------------------------------------------------------
+  void FontLoader::Initialize() {
+    s_font_loader = new FreetypeFontLoader();
+    s_font_loader->Initialize();
+  }
 
-    //--------------------------------------------------------------
-    void FontLoader::Shutdown() {
-        s_font_loader->Shutdown();
-        delete s_font_loader;
-    }
+  //--------------------------------------------------------------
+  void FontLoader::Shutdown() {
+    s_font_loader->Shutdown();
+    delete s_font_loader;
+  }
 
 }

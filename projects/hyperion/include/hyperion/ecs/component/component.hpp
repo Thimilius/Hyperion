@@ -4,11 +4,11 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    struct IComponent {
-    public:
-        virtual ~IComponent() = default;
-    protected:
-        IComponent() = default;
-    };
+  struct IComponent {
+  public:
+    virtual ~IComponent() = default;
+  protected:
+    IComponent() = default;
+  };
 
 }

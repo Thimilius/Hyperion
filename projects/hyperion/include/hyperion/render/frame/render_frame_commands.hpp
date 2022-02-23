@@ -13,100 +13,100 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-    enum class RenderFrameCommandType {
-        SetCamera,
+  enum class RenderFrameCommandType {
+    SetCamera,
 
-        ExecuteCommandBuffer,
+    ExecuteCommandBuffer,
 
-        DrawMeshes,
-        DrawUI,
-        DrawGizmos,
-        DrawObjectIds,
+    DrawMeshes,
+    DrawUI,
+    DrawGizmos,
+    DrawObjectIds,
 
-        DrawEditorUI,
-    };
+    DrawEditorUI,
+  };
 
-    struct RenderFrameCommandSetCamera {
-        uint64 camera_index;
-    };
+  struct RenderFrameCommandSetCamera {
+    uint64 camera_index;
+  };
 
-    struct RenderFrameCommandExecuteCommandBuffer {
-        RenderFrameCommandBuffer command_buffer;
-    };
+  struct RenderFrameCommandExecuteCommandBuffer {
+    RenderFrameCommandBuffer command_buffer;
+  };
 
-    struct CullingResults {
-        Array<uint32> visible_objects;
-    };
+  struct CullingResults {
+    Array<uint32> visible_objects;
+  };
 
-    enum PerObjectData {
-        Nothing,
+  enum PerObjectData {
+    Nothing,
 
-        LightIndices
-    };
-    HYP_CREATE_ENUM_FLAG_OPERATORS(PerObjectData);
+    LightIndices
+  };
+  HYP_CREATE_ENUM_FLAG_OPERATORS(PerObjectData);
 
-    enum class SortingCriteria {
-        None,
+  enum class SortingCriteria {
+    None,
 
-        Opaque,
-        Transparent
-    };
+    Opaque,
+    Transparent
+  };
 
-    struct SortingSettings {
-        SortingCriteria criteria = SortingCriteria::Opaque;
-        Vector3 camera_position;
-    };
+  struct SortingSettings {
+    SortingCriteria criteria = SortingCriteria::Opaque;
+    Vector3 camera_position;
+  };
 
-    struct DrawingParametes {
-        LayerMask filter_mask = LayerMask::Everything;
-        PerObjectData per_object_data = PerObjectData::Nothing;
-        ShaderRenderOrder render_order = ShaderRenderOrder::Opaque;
-        SortingSettings sorting_settings;
-    };
+  struct DrawingParametes {
+    LayerMask filter_mask = LayerMask::Everything;
+    PerObjectData per_object_data = PerObjectData::Nothing;
+    ShaderRenderOrder render_order = ShaderRenderOrder::Opaque;
+    SortingSettings sorting_settings;
+  };
 
-    struct RenderFrameCommandDrawMeshes {
-        CullingResults culling_results;
-        DrawingParametes drawing_parameters;
-        Array<uint32> sorted_objects;
-    };
+  struct RenderFrameCommandDrawMeshes {
+    CullingResults culling_results;
+    DrawingParametes drawing_parameters;
+    Array<uint32> sorted_objects;
+  };
 
-    struct RenderFrameCommandDrawUI {
+  struct RenderFrameCommandDrawUI {
 
-    };
+  };
 
-    struct RenderFrameCommandDrawObjectIds {
-        RenderTargetId render_target_id;
-    };
+  struct RenderFrameCommandDrawObjectIds {
+    RenderTargetId render_target_id;
+  };
 
-    struct RenderFrameCommandDrawGizmos {
-        AssetId shader_id;
+  struct RenderFrameCommandDrawGizmos {
+    AssetId shader_id;
 
-        struct Grid {
-            bool8 should_draw;
-            Matrix4x4 local_to_world;
-            RenderGizmoGridType type;
-            AssetId mesh_id;
-        } grid;
+    struct Grid {
+      bool8 should_draw;
+      Matrix4x4 local_to_world;
+      RenderGizmoGridType type;
+      AssetId mesh_id;
+    } grid;
 
-        bool8 should_draw_all_bounds;
-    };
+    bool8 should_draw_all_bounds;
+  };
 
-    struct RenderFrameCommandDrawEditorUI {
+  struct RenderFrameCommandDrawEditorUI {
 
-    };
+  };
 
-    struct RenderFrameCommand {
-        RenderFrameCommandType type;
+  struct RenderFrameCommand {
+    RenderFrameCommandType type;
 
-        std::variant<
-            RenderFrameCommandSetCamera,
-            RenderFrameCommandExecuteCommandBuffer,
-            RenderFrameCommandDrawMeshes,
-            RenderFrameCommandDrawUI,
-            RenderFrameCommandDrawObjectIds,
-            RenderFrameCommandDrawGizmos,
-            RenderFrameCommandDrawEditorUI
-        > data;
-    };
+    std::variant<
+      RenderFrameCommandSetCamera,
+      RenderFrameCommandExecuteCommandBuffer,
+      RenderFrameCommandDrawMeshes,
+      RenderFrameCommandDrawUI,
+      RenderFrameCommandDrawObjectIds,
+      RenderFrameCommandDrawGizmos,
+      RenderFrameCommandDrawEditorUI
+    > data;
+  };
 
 }

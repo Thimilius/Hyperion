@@ -7,14 +7,14 @@
 //-------------------- Definition Namespace --------------------
 namespace Sandbox {
 
-    class SandboxApplication : public Hyperion::Application {
-    protected:
-        void OnSetup(Hyperion::ApplicationSettings& settings) override;
-        void OnInitialize() override;
-        void OnUpdate(float32 delta_time) override;
-        void OnTick() override;
-    private:
-        void UpdateTitle();
-    };
+  class SandboxApplication : public Hyperion::Application {
+  protected:
+    void OnSetup(Hyperion::ApplicationSettings &settings) override;
+    void OnInitialize() override;
+    void OnUpdate(float32 delta_time) override;
+    void OnTick() override;
+  private:
+    void UpdateTitle();
+  };
 
 }

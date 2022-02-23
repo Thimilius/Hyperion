@@ -11,91 +11,91 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    //--------------------------------------------------------------
-    Array<byte> FileSystem::ReadAllBytes(const String &path) {
-        HYP_PROFILE_SCOPE("FileSystem.ReadAllBytes");
+  //--------------------------------------------------------------
+  Array<byte> FileSystem::ReadAllBytes(const String &path) {
+    HYP_PROFILE_SCOPE("FileSystem.ReadAllBytes");
 
-        Array<byte> result;
+    Array<byte> result;
 
-        std::ifstream file(path, std::ios::ate | std::ios::binary);
-        if (!file.is_open()) {
-            HYP_LOG_ERROR("Engine", "Failed to open file: '{}'!", GetAbsoluteFilePath(path));
-            return result;
-        }
-
-        uint64 size = file.tellg();
-        result.Resize(size);
-        file.seekg(0);
-        file.read(reinterpret_cast<char *>(result.GetData()), size);
-
-        return result;
+    std::ifstream file(path, std::ios::ate | std::ios::binary);
+    if (!file.is_open()) {
+      HYP_LOG_ERROR("Engine", "Failed to open file: '{}'!", GetAbsoluteFilePath(path));
+      return result;
     }
 
-    //--------------------------------------------------------------
-    String FileSystem::ReadAllText(const String &path) {
-        HYP_PROFILE_SCOPE("FileSystem.ReadAllText");
+    uint64 size = file.tellg();
+    result.Resize(size);
+    file.seekg(0);
+    file.read(reinterpret_cast<char *>(result.GetData()), size);
 
-        std::ifstream file(path, std::ios::ate);
-        if (!file.is_open()) {
-            HYP_LOG_ERROR("Engine", "Failed to open file: '{}'!", GetAbsoluteFilePath(path));
-            return String();
-        }
+    return result;
+  }
 
-        uint64 size = file.tellg();
-        String buffer(size, ' ');
-        file.seekg(0);
-        file.read(buffer.data(), size);
+  //--------------------------------------------------------------
+  String FileSystem::ReadAllText(const String &path) {
+    HYP_PROFILE_SCOPE("FileSystem.ReadAllText");
 
-        return buffer;
+    std::ifstream file(path, std::ios::ate);
+    if (!file.is_open()) {
+      HYP_LOG_ERROR("Engine", "Failed to open file: '{}'!", GetAbsoluteFilePath(path));
+      return String();
     }
 
-    //--------------------------------------------------------------
-    Array<String> FileSystem::ReadAllLines(const String &path) {
-        HYP_PROFILE_SCOPE("FileSystem.ReadAllLines");
+    uint64 size = file.tellg();
+    String buffer(size, ' ');
+    file.seekg(0);
+    file.read(buffer.data(), size);
 
-        Array<String> result;
+    return buffer;
+  }
 
-        std::ifstream file(path);
-        if (!file.is_open()) {
-            HYP_LOG_ERROR("Engine", "Failed to open file: '{}'!", GetAbsoluteFilePath(path));
-            return result;
-        }
+  //--------------------------------------------------------------
+  Array<String> FileSystem::ReadAllLines(const String &path) {
+    HYP_PROFILE_SCOPE("FileSystem.ReadAllLines");
 
-        String line;
-        while (std::getline(file, line)) {
-            result.Add(std::move(line));
-        }
+    Array<String> result;
 
-        return result;
+    std::ifstream file(path);
+    if (!file.is_open()) {
+      HYP_LOG_ERROR("Engine", "Failed to open file: '{}'!", GetAbsoluteFilePath(path));
+      return result;
     }
 
-    //--------------------------------------------------------------
-    void FileSystem::WriteAllText(const String &path, const String &text) {
-        HYP_PROFILE_SCOPE("FileSystem.WriteAllText");
-
-        std::ofstream file(path);
-        file.write(text.data(), text.length());
+    String line;
+    while (std::getline(file, line)) {
+      result.Add(std::move(line));
     }
 
-    //--------------------------------------------------------------
-    void FileSystem::Delete(const String &path) {
-        HYP_PROFILE_SCOPE("FileSystem.Delete");
+    return result;
+  }
 
-        std::filesystem::remove(path);
-    }
+  //--------------------------------------------------------------
+  void FileSystem::WriteAllText(const String &path, const String &text) {
+    HYP_PROFILE_SCOPE("FileSystem.WriteAllText");
 
-    //--------------------------------------------------------------
-    bool8 FileSystem::Exists(const String &path) {
-        HYP_PROFILE_SCOPE("FileSystem.Exists");
+    std::ofstream file(path);
+    file.write(text.data(), text.length());
+  }
 
-        return std::filesystem::exists(path);
-    }
+  //--------------------------------------------------------------
+  void FileSystem::Delete(const String &path) {
+    HYP_PROFILE_SCOPE("FileSystem.Delete");
 
-    //--------------------------------------------------------------
-    String FileSystem::GetAbsoluteFilePath(const String& path) {
-        HYP_PROFILE_SCOPE("FileSystem.GetAbsoluteFilePath");
+    std::filesystem::remove(path);
+  }
 
-        return std::filesystem::absolute(path).string();
-    }
+  //--------------------------------------------------------------
+  bool8 FileSystem::Exists(const String &path) {
+    HYP_PROFILE_SCOPE("FileSystem.Exists");
+
+    return std::filesystem::exists(path);
+  }
+
+  //--------------------------------------------------------------
+  String FileSystem::GetAbsoluteFilePath(const String &path) {
+    HYP_PROFILE_SCOPE("FileSystem.GetAbsoluteFilePath");
+
+    return std::filesystem::absolute(path).string();
+  }
 
 }

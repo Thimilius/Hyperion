@@ -14,63 +14,63 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-    enum class RenderFrameCommandBufferCommandType {
-        ClearRenderTarget,
-        SetRenderTarget,
-        Blit,
-        SetGlobalBuffer,
-        RequestAsyncReadback,
-    };
+  enum class RenderFrameCommandBufferCommandType {
+    ClearRenderTarget,
+    SetRenderTarget,
+    Blit,
+    SetGlobalBuffer,
+    RequestAsyncReadback,
+  };
 
-    struct RenderFrameCommandBufferCommandClearRenderTarget {
-        ClearFlags flags;
-        Color color;
-    };
-    
-    struct RenderFrameCommandBufferCommandSetRenderTarget {
-        RenderTargetId id;
-    };
+  struct RenderFrameCommandBufferCommandClearRenderTarget {
+    ClearFlags flags;
+    Color color;
+  };
 
-    struct RenderFrameCommandBufferCommandBlit {
-        RenderTargetId destination;
-        RenderTargetId source;
-    };
+  struct RenderFrameCommandBufferCommandSetRenderTarget {
+    RenderTargetId id;
+  };
 
-    struct RenderFrameCommandBufferCommandSetGlobalBuffer {
-        ShaderPropertyId id;
-        RenderBuffer render_buffer;
-    };
+  struct RenderFrameCommandBufferCommandBlit {
+    RenderTargetId destination;
+    RenderTargetId source;
+  };
 
-    struct AsyncRequestResult {
-        RectInt region;
+  struct RenderFrameCommandBufferCommandSetGlobalBuffer {
+    ShaderPropertyId id;
+    RenderBuffer render_buffer;
+  };
 
-        Array<byte> data;
-    };
+  struct AsyncRequestResult {
+    RectInt region;
 
-    using AsyncRequestCallback = std::function<void(const AsyncRequestResult &)>;
+    Array<byte> data;
+  };
 
-    struct AsyncRequest {
-        AsyncRequestResult result;
-        AsyncRequestCallback callback;
-    };
+  using AsyncRequestCallback = std::function<void(const AsyncRequestResult &)>;
 
-    struct RenderFrameCommandBufferCommandRequestAsyncReadback {
-        RenderTargetId render_target_id;
-        uint32 attachment_index;
-        RectInt region;
-        AsyncRequestCallback callback;
-    };
+  struct AsyncRequest {
+    AsyncRequestResult result;
+    AsyncRequestCallback callback;
+  };
 
-    struct RenderFrameCommandBufferCommand {
-        RenderFrameCommandBufferCommandType type;
+  struct RenderFrameCommandBufferCommandRequestAsyncReadback {
+    RenderTargetId render_target_id;
+    uint32 attachment_index;
+    RectInt region;
+    AsyncRequestCallback callback;
+  };
 
-        std::variant<
-            RenderFrameCommandBufferCommandClearRenderTarget,
-            RenderFrameCommandBufferCommandSetRenderTarget,
-            RenderFrameCommandBufferCommandBlit,
-            RenderFrameCommandBufferCommandSetGlobalBuffer,
-            RenderFrameCommandBufferCommandRequestAsyncReadback
-        > data;
-    };
+  struct RenderFrameCommandBufferCommand {
+    RenderFrameCommandBufferCommandType type;
+
+    std::variant<
+      RenderFrameCommandBufferCommandClearRenderTarget,
+      RenderFrameCommandBufferCommandSetRenderTarget,
+      RenderFrameCommandBufferCommandBlit,
+      RenderFrameCommandBufferCommandSetGlobalBuffer,
+      RenderFrameCommandBufferCommandRequestAsyncReadback
+    > data;
+  };
 
 }

@@ -10,21 +10,21 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Threading {
 
-    class WindowsThread final {
-    public:
-        ThreadId GetId();
+  class WindowsThread final {
+  public:
+    ThreadId GetId();
 
-        void Start(const ThreadStartFunction &start_function);
-        void Start(const ParameterizedThreadStartFunction &parameterized_start_function, void *parameter);
-        void Join();
+    void Start(const ThreadStartFunction &start_function);
+    void Start(const ParameterizedThreadStartFunction &parameterized_start_function, void *parameter);
+    void Join();
 
-        void SetName(const String &name);
-    public:
-        static uint32 GetSupportedThreadCount();
-        static ThreadId GetCurrentThreadId();
-        static void Sleep(uint32 milliseconds);
-    private:
-        std::thread m_thread;
-    };
+    void SetName(const String &name);
+  public:
+    static uint32 GetSupportedThreadCount();
+    static ThreadId GetCurrentThreadId();
+    static void Sleep(uint32 milliseconds);
+  private:
+    std::thread m_thread;
+  };
 
 }

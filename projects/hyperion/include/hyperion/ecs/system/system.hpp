@@ -3,17 +3,17 @@
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
-    class World;
+  class World;
 }
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    class ISystem {
-    public:
-        virtual ~ISystem() = default;
-    public:
-        virtual void Run(World *world) = 0;
-    };
+  class ISystem {
+  public:
+    virtual ~ISystem() = default;
+  public:
+    virtual void Run(World *world) = 0;
+  };
 
 }

@@ -7,10 +7,10 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-    class OpenGLDebugGroup {
-    public:
-        OpenGLDebugGroup(const String &message);
-        ~OpenGLDebugGroup();
-    };
+  class OpenGLDebugGroup {
+  public:
+    OpenGLDebugGroup(const String &message);
+    ~OpenGLDebugGroup();
+  };
 
 }

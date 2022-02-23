@@ -10,14 +10,14 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    //--------------------------------------------------------------
-    void MeshLoader::Initialize() {
-        s_mesh_loader = new AssimpMeshLoader();
-    }
+  //--------------------------------------------------------------
+  void MeshLoader::Initialize() {
+    s_mesh_loader = new AssimpMeshLoader();
+  }
 
-    //--------------------------------------------------------------
-    void MeshLoader::Shutdown() {
-        delete s_mesh_loader;
-    }
+  //--------------------------------------------------------------
+  void MeshLoader::Shutdown() {
+    delete s_mesh_loader;
+  }
 
 }

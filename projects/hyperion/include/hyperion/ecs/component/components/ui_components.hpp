@@ -9,17 +9,17 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::UI {
 
-    struct UIViewComponent : public IComponent {
-        UIElement *root_element = nullptr;
+  struct UIViewComponent : public IComponent {
+    UIElement *root_element = nullptr;
 
-        ScalingMode scaling_mode = ScalingMode::ScaleWithScreenSize;
-        Vector2 reference_resolution = Vector2(1280, 720);
+    ScalingMode scaling_mode = ScalingMode::ScaleWithScreenSize;
+    Vector2 reference_resolution = Vector2(1280, 720);
 
-        struct State {
-            UIElement *hovered_element = nullptr;
-            UIElement *pressed_element = nullptr;
-            UIElement *selected_element = nullptr;
-        } state;
-    };
+    struct State {
+      UIElement *hovered_element = nullptr;
+      UIElement *pressed_element = nullptr;
+      UIElement *selected_element = nullptr;
+    } state;
+  };
 
 }

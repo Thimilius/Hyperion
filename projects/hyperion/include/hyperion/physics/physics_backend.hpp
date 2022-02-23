@@ -4,9 +4,9 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Physics {
 
-    enum class PhysicsBackend {
-        None,
-        Bullet
-    };
+  enum class PhysicsBackend {
+    None,
+    Bullet
+  };
 
 }

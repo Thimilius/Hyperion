@@ -10,18 +10,18 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-    //--------------------------------------------------------------
-    OpenGLDebugGroup::OpenGLDebugGroup(const String &message) {
+  //--------------------------------------------------------------
+  OpenGLDebugGroup::OpenGLDebugGroup(const String &message) {
 #ifdef HYP_DEBUG
-        glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, static_cast<GLsizei>(message.length()), message.c_str());
+    glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, static_cast<GLsizei>(message.length()), message.c_str());
 #endif
-    }
+  }
 
-    //--------------------------------------------------------------
-    OpenGLDebugGroup::~OpenGLDebugGroup() {
+  //--------------------------------------------------------------
+  OpenGLDebugGroup::~OpenGLDebugGroup() {
 #ifdef HYP_DEBUG
-        glPopDebugGroup();
+    glPopDebugGroup();
 #endif
-    }
+  }
 
 }

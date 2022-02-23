@@ -7,13 +7,13 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    enum class FileWatcherFileStatus {
-        None,
-        Created,
-        Modified,
-        Deleted
-    };
+  enum class FileWatcherFileStatus {
+    None,
+    Created,
+    Modified,
+    Deleted
+  };
 
-    using FileWatcherCallbackFunction = std::function<void(FileWatcherFileStatus, const String &, const String &, const String &)>;
+  using FileWatcherCallbackFunction = std::function<void(FileWatcherFileStatus, const String &, const String &, const String &)>;
 
 }

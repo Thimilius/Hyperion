@@ -10,41 +10,41 @@
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
-    
-    using RenderFrameContextObjectId = uint32;
 
-    struct RenderFrameContextObject {
-        RenderFrameContextObjectId id;
-        Matrix4x4 local_to_world;
-        Vector3 position;
-    };
+  using RenderFrameContextObjectId = uint32;
 
-    struct RenderFrameContextObjectMesh : public RenderFrameContextObject {
-        AssetId mesh_id;
-        uint32 sub_mesh_index;
+  struct RenderFrameContextObject {
+    RenderFrameContextObjectId id;
+    Matrix4x4 local_to_world;
+    Vector3 position;
+  };
 
-        AssetId shader_id;
-        AssetId material_id;
+  struct RenderFrameContextObjectMesh : public RenderFrameContextObject {
+    AssetId mesh_id;
+    uint32 sub_mesh_index;
 
-        LayerMask layer_mask;
+    AssetId shader_id;
+    AssetId material_id;
 
-        BoundingBox bounds;
-    };
+    LayerMask layer_mask;
 
-    struct RenderFrameContextObjectSprite : public RenderFrameContextObject {
-        Color color;
-    };
+    BoundingBox bounds;
+  };
 
-    struct RenderFrameContextObjectUI : public RenderFrameContextObject {
-        AssetId mesh_id;
+  struct RenderFrameContextObjectSprite : public RenderFrameContextObject {
+    Color color;
+  };
 
-        AssetId shader_id;
-        AssetId material_id;
+  struct RenderFrameContextObjectUI : public RenderFrameContextObject {
+    AssetId mesh_id;
 
-        Color color;
-        ShaderPropertyStorage::Texture texture;
+    AssetId shader_id;
+    AssetId material_id;
 
-        bool8 enable_blending;
-    };
+    Color color;
+    ShaderPropertyStorage::Texture texture;
+
+    bool8 enable_blending;
+  };
 
 }

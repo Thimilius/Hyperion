@@ -6,13 +6,13 @@
 #include <functional>
 
 #ifdef HYP_DEBUG
-    #ifdef _MSC_VER
-        #define HYP_DEBUG_BREAK __debugbreak()
-    #else
-        #define HYP_DEBUG_BREAK
-    #endif
+#ifdef _MSC_VER
+#define HYP_DEBUG_BREAK __debugbreak()
 #else
-    #define HYP_DEBUG_BREAK
+#define HYP_DEBUG_BREAK
+#endif
+#else
+#define HYP_DEBUG_BREAK
 #endif
 
 //---------------------- Project Includes ----------------------

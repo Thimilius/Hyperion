@@ -7,12 +7,12 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    class Random final {
-    public:
-        static float32 Get();
-    private:
-        Random() = delete;
-        ~Random() = delete;
-    };
+  class Random final {
+  public:
+    static float32 Get();
+  private:
+    Random() = delete;
+    ~Random() = delete;
+  };
 
 }

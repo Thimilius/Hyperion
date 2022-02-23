@@ -7,9 +7,9 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    //--------------------------------------------------------------
-    float32 Random::Get() {
-        return static_cast<float32>(rand()) / static_cast<float32>(RAND_MAX);
-    }
+  //--------------------------------------------------------------
+  float32 Random::Get() {
+    return static_cast<float32>(rand()) / static_cast<float32>(RAND_MAX);
+  }
 
 }

@@ -7,23 +7,23 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    // TODO: Use Result type.
+  // TODO: Use Result type.
 
-    class FileSystem final {
-    public:
-        static Array<byte> ReadAllBytes(const String &path);
-        static String ReadAllText(const String &path);
-        static Array<String> ReadAllLines(const String &path);
+  class FileSystem final {
+  public:
+    static Array<byte> ReadAllBytes(const String &path);
+    static String ReadAllText(const String &path);
+    static Array<String> ReadAllLines(const String &path);
 
-        static void WriteAllText(const String &path, const String &text);
+    static void WriteAllText(const String &path, const String &text);
 
-        static void Delete(const String &path);
-        static bool8 Exists(const String &path);
+    static void Delete(const String &path);
+    static bool8 Exists(const String &path);
 
-        static String GetAbsoluteFilePath(const String &path);
-    private:
-        FileSystem() = delete;
-        ~FileSystem() = delete;
-    };
+    static String GetAbsoluteFilePath(const String &path);
+  private:
+    FileSystem() = delete;
+    ~FileSystem() = delete;
+  };
 
 }

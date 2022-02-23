@@ -7,34 +7,34 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-    struct ForwardLight {
-        Color color;
-        Vector3 direction;
-        float32 intensity;
-        Vector3 position;
-        float32 range;
-        float32 spot_inner_radius;
-        float32 spot_outer_radius;
+  struct ForwardLight {
+    Color color;
+    Vector3 direction;
+    float32 intensity;
+    Vector3 position;
+    float32 range;
+    float32 spot_inner_radius;
+    float32 spot_outer_radius;
 
-        float32 padding[2];
-    };
+    float32 padding[2];
+  };
 
-    struct ForwardLightingBuffer {
-        Color ambient_color;
+  struct ForwardLightingBuffer {
+    Color ambient_color;
 
-        ForwardLight main_light;
+    ForwardLight main_light;
 
-        ForwardLight point_lights[128];
-    };
+    ForwardLight point_lights[128];
+  };
 
-    class ForwardRenderLighting final {
-    public:
-        static void SetupLighting(RenderFrameContext &context, RenderFrameCommandBuffer &command_buffer);
-    private:
-        ForwardRenderLighting() = delete;
-        ~ForwardRenderLighting() = delete;
-    private:
-        static void CopyFrameLightToLight(const RenderFrameContextLight &frame_light, ForwardLight &light);
-    };
+  class ForwardRenderLighting final {
+  public:
+    static void SetupLighting(RenderFrameContext &context, RenderFrameCommandBuffer &command_buffer);
+  private:
+    ForwardRenderLighting() = delete;
+    ~ForwardRenderLighting() = delete;
+  private:
+    static void CopyFrameLightToLight(const RenderFrameContextLight &frame_light, ForwardLight &light);
+  };
 
 }

@@ -11,7 +11,7 @@
 #define HYP_PROFILE_TAG(name, ...) OPTICK_TAG(name, __VA_ARGS__)
 
 namespace Hyperion {
-    using ProfileCategory = Optick::Category;
+  using ProfileCategory = Optick::Category;
 }
 
 #else
@@ -22,38 +22,38 @@ namespace Hyperion {
 #define HYP_PROFILE_TAG(name, ...)
 
 namespace Hyperion {
-    enum class ProfileCategory {
-		None,
-		AI,
-		Animation,
-		Audio,
-		Debug,
-		Camera,
-		Cloth,
-		GameLogic,
-		Input,
-		Navigation,
-		Network,
-		Physics,
-		Rendering,
-		Scene,
-		Script,
-		Streaming,
-		UI,
-		VFX,
-		Visibility,
-		Wait,
-		WaitEmpty,
-		IO,
-		GPU_Cloth,
-		GPU_Lighting,
-		GPU_PostFX,
-		GPU_Reflections,
-		GPU_Scene,
-		GPU_Shadows,
-		GPU_UI,
-		GPU_VFX,
-		GPU_Water,
-    };
+  enum class ProfileCategory {
+    None,
+    AI,
+    Animation,
+    Audio,
+    Debug,
+    Camera,
+    Cloth,
+    GameLogic,
+    Input,
+    Navigation,
+    Network,
+    Physics,
+    Rendering,
+    Scene,
+    Script,
+    Streaming,
+    UI,
+    VFX,
+    Visibility,
+    Wait,
+    WaitEmpty,
+    IO,
+    GPU_Cloth,
+    GPU_Lighting,
+    GPU_PostFX,
+    GPU_Reflections,
+    GPU_Scene,
+    GPU_Shadows,
+    GPU_UI,
+    GPU_VFX,
+    GPU_Water,
+  };
 }
 #endif

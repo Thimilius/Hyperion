@@ -8,15 +8,15 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    class WindowsCriticalSection : INonCopyable {
-    public:
-        WindowsCriticalSection();
-        ~WindowsCriticalSection();
-    public:
-        void Lock() const;
-        void Unlock() const;
-    private:
-        mutable Critical_Section m_critical_section;
-    };
+  class WindowsCriticalSection : INonCopyable {
+  public:
+    WindowsCriticalSection();
+    ~WindowsCriticalSection();
+  public:
+    void Lock() const;
+    void Unlock() const;
+  private:
+    mutable Critical_Section m_critical_section;
+  };
 
 }

@@ -7,29 +7,29 @@
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
-    class World;
+  class World;
 }
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    using ComponentId = uint32;
+  using ComponentId = uint32;
 
-    struct ComponentInfo {
-        ComponentId id;
+  struct ComponentInfo {
+    ComponentId id;
 
-        MetaType type;
-        uint64 element_size;
+    MetaType type;
+    uint64 element_size;
 
-        MetaTrivialDestructor destructor;
-        MetaInPlaceConstructor constructor;
-    };
+    MetaTrivialDestructor destructor;
+    MetaInPlaceConstructor constructor;
+  };
 
-    using ComponentCallback = Delegate<void(World *, EntityId)>;
-    
-    struct ComponentCallbacks {
-        Array<ComponentCallback> added;
-        Array<ComponentCallback> removed;
-    };
+  using ComponentCallback = Delegate<void(World *, EntityId)>;
+
+  struct ComponentCallbacks {
+    Array<ComponentCallback> added;
+    Array<ComponentCallback> removed;
+  };
 
 }

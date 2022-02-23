@@ -4,8 +4,8 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Audio {
 
-    enum class AudioBackend {
-        None,
-    };
+  enum class AudioBackend {
+    None,
+  };
 
 }

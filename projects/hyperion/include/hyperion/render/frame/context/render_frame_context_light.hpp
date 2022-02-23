@@ -9,19 +9,19 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-    struct RenderFrameContextLight {
-        LightType type;
+  struct RenderFrameContextLight {
+    LightType type;
 
-        Color color;
-        float32 intensity;
+    Color color;
+    float32 intensity;
 
-        Vector3 direction;
-        Vector3 position;
+    Vector3 direction;
+    Vector3 position;
 
-        float32 range = 10.0f;
+    float32 range = 10.0f;
 
-        float32 inner_spot_radius = 1.0f;
-        float32 outer_spot_radius = 1.0f;
-    };
+    float32 inner_spot_radius = 1.0f;
+    float32 outer_spot_radius = 1.0f;
+  };
 
 }

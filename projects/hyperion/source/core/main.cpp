@@ -10,16 +10,16 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-    //--------------------------------------------------------------
-    uint32 Main::Run() {
-        Engine::Setup();
-        Engine::RegisterTypes();
+  //--------------------------------------------------------------
+  uint32 Main::Run() {
+    Engine::Setup();
+    Engine::RegisterTypes();
 
-        Application *application = Hyperion::CreateApplication();
-        uint32 exit_code = Engine::Run();
-        delete application;
+    Application *application = Hyperion::CreateApplication();
+    uint32 exit_code = Engine::Run();
+    delete application;
 
-        return exit_code;
-    }
+    return exit_code;
+  }
 
 }
