@@ -102,4 +102,9 @@ namespace Hyperion::UI {
     BottomRight,
   };
 
+  enum class InputFieldLineType {
+    SingleLine,
+    MultiLine
+  };
+
 }

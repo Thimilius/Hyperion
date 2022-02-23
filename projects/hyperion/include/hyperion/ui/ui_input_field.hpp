@@ -19,6 +19,9 @@ namespace Hyperion::UI {
     inline UILabel *GetInputLabel() const { return m_input_label; }
     void SetInputLabel(UILabel *input_label);
 
+    inline InputFieldLineType GetLineType() const { return m_line_type; }
+    void SetLineType(InputFieldLineType line_type);
+
     inline float32 GetCaretWidth() const { return m_caret_width; }
     void SetCaretWidth(float32 caret_width);
     inline Color GetCaretColor() const { return m_caret_color; }
@@ -30,6 +33,8 @@ namespace Hyperion::UI {
     void OnRebuildGeometry(MeshBuilder &mesh_builder) override;
   private:
     String m_text;
+
+    InputFieldLineType m_line_type = InputFieldLineType::SingleLine;
 
     UILabel *m_input_label = nullptr;
 

@@ -35,6 +35,15 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
+  void UIInputField::SetLineType(InputFieldLineType line_type) {
+    if (m_line_type != line_type) {
+      m_line_type = line_type;
+
+      MarkDirty();
+    }
+  }
+
+  //--------------------------------------------------------------
   void UIInputField::SetCaretWidth(float32 caret_width) {
     if (m_caret_width != caret_width) {
       m_caret_width = caret_width;
@@ -103,6 +112,11 @@ namespace Hyperion::UI {
         }
         return;
       } else if (key_code == KeyCode::Return) {
+        if (m_line_type == InputFieldLineType::SingleLine) {
+          SetText("");
+        } else if (m_line_type == InputFieldLineType::MultiLine) {
+          SetText(GetText() + "\n");
+        }
         return;
       } else if (key_code == KeyCode::Escape) {
         return;
