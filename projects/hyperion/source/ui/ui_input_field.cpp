@@ -57,13 +57,13 @@ namespace Hyperion::UI {
     UIElement::OnEvent(event);
 
     if (event.GetType() == UIEventType::Select) {
-
+      MarkDirty();
     } else if (event.GetType() == UIEventType::SelectUpdate) {
 
     } else if (event.GetType() == UIEventType::Deselect) {
-
+      MarkDirty();
     } else if (event.GetType() == UIEventType::Submit) {
-
+      MarkDirty();
     } else if (event.GetType() == UIEventType::Cancel) {
       SetText("");
     } else if (event.GetType() == UIEventType::KeyPressed) {
@@ -87,54 +87,56 @@ namespace Hyperion::UI {
         return;
       }
     } else if (event.GetType() == UIEventType::KeyTyped) {
-      if (m_input_label) {
-        KeyCode key_code = event.GetKeyCode();
-        String key_typed = event.GetKeyTyped();
+      if (!m_input_label) {
+        return;
+      }
 
-        if (key_code == KeyCode::Back) {
-          String text = GetText();
-          if (text != "") {
-            uint32 codepoint_size = StringUtils::GetLastUtf8CodepointSize(text);
-            text.resize(text.size() - codepoint_size);
-            SetText(text);
-          }
+      KeyCode key_code = event.GetKeyCode();
+      String key_typed = event.GetKeyTyped();
+
+      if (key_code == KeyCode::Back) {
+        String text = GetText();
+        if (text != "") {
+          uint32 codepoint_size = StringUtils::GetLastUtf8CodepointSize(text);
+          text.resize(text.size() - codepoint_size);
+          SetText(text);
+        }
+        return;
+      } else if (key_code == KeyCode::Return) {
+        return;
+      } else if (key_code == KeyCode::Escape) {
+        return;
+      }
+
+      if ((event.GetKeyModifier() & KeyModifier::Control) == KeyModifier::Control) {
+        if (key_code == KeyCode::A) {
           return;
-        } else if (key_code == KeyCode::Return) {
+        } else if (key_code == KeyCode::C) {
           return;
-        } else if (key_code == KeyCode::Escape) {
+        } else if (key_code == KeyCode::V) {
+          return;
+        } else if (key_code == KeyCode::X) {
           return;
         }
+      }
 
-        if ((event.GetKeyModifier() & KeyModifier::Control) == KeyModifier::Control) {
-          if (key_code == KeyCode::A) {
-            return;
-          } else if (key_code == KeyCode::C) {
-            return;
-          } else if (key_code == KeyCode::V) {
-            return;
-          } else if (key_code == KeyCode::X) {
-            return;
+      Font *font = m_input_label->GetFont();
+      if (font) {
+        bool8 has_characters = true;
+        Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(key_typed);
+        for (uint32 codepoint : codepoints) {
+          if (codepoint == ' ' || codepoint == '\t') {
+            continue;
+          } else if (!font->HasCodepoint(codepoint)) {
+            has_characters = false;
           }
         }
 
-        Font *font = m_input_label->GetFont();
-        if (font) {
-          bool8 has_characters = true;
-          Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(key_typed);
-          for (uint32 codepoint : codepoints) {
-            if (!font->HasCodepoint(codepoint)) {
-              has_characters = false;
-            }
-          }
-
-          if (has_characters) {
-            SetText(GetText() + key_typed);
-          }
+        if (has_characters) {
+          SetText(GetText() + key_typed);
         }
       }
     }
-
-    MarkDirty();
   }
 
   //--------------------------------------------------------------

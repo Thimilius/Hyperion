@@ -212,7 +212,7 @@ namespace Hyperion::Editor {
 
       UIInputField *input_field = UIFactory::CreateInputField();
       input_field->SetAnchorPreset(AnchorPreset::MiddleCenter);
-      input_field->SetSize(Vector2(140.0f, 25.0f));
+      input_field->SetSize(Vector2(600.0f, 25.0f));
       input_field->GetStyle().SetColor(EditorStyle::COLOR_NORMAL_DARK);
       input_field->GetHierarchy().SetParent(bottom_bar_container);
       UILabel *input_label = input_field->Q<UILabel>();
