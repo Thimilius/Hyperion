@@ -76,9 +76,6 @@ namespace Hyperion::Editor {
 
   //--------------------------------------------------------------
   void EditorApplication::OnInitialize() {
-    EditorUI::Initialize();
-    EditorCamera::Initialize();
-
     if (FileSystem::Exists(WORLD_PATH)) {
       String text = FileSystem::ReadAllText(WORLD_PATH);
       s_world = WorldSerializer::Deserialize(text);
@@ -97,6 +94,9 @@ namespace Hyperion::Editor {
       FileSystem::WriteAllText(WORLD_PATH, text);
     }
     WorldManager::SetActiveWorld(s_world);
+
+    EditorUI::Initialize();
+    EditorCamera::Initialize();
   }
 
   //--------------------------------------------------------------

@@ -253,9 +253,9 @@ namespace Hyperion::Editor {
       preview_header->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
       preview_header->GetHierarchy().SetParent(preview);
 
-      // Preview Header.
+// Preview Header.
       {
-        // Left.
+      // Left.
         {
           UIElement *preview_header_left = UIFactory::CreateElement();
           preview_header_left->SetAnchorPreset(AnchorPreset::StretchAll);
@@ -351,6 +351,18 @@ namespace Hyperion::Editor {
       s_preview_runtime_ui_element->GetHierarchy().SetParent(s_preview_container_ui_element);
       s_preview_runtime_ui_element->GetStyle().SetVisibility(Visibility::Hidden);
     }
+
+    {
+      World *world = EditorApplication::GetWorld();
+
+      EntityCallback created_callback;
+      created_callback.Connect<EditorUI::OnEntityCreated>();
+      world->RegisterOnEntityCreated(created_callback);
+
+      EntityCallback destroyed_callback;
+      destroyed_callback.Connect<EditorUI::OnEntityDestroyed>();
+      world->RegisterOnEntityDestroyed(destroyed_callback);
+    }
   }
 
   //--------------------------------------------------------------
@@ -388,6 +400,16 @@ namespace Hyperion::Editor {
       Rect rect = s_preview_container_ui_element->GetWorldRect();
       return { static_cast<int32>(rect.x), static_cast<int32>(rect.y), static_cast<int32>(rect.width), static_cast<int32>(rect.height) };
     }
+  }
+
+  //--------------------------------------------------------------
+  void EditorUI::OnEntityCreated(World *world, EntityId id) {
+    HYP_TRACE("Created Entity");
+  }
+
+  //--------------------------------------------------------------
+  void EditorUI::OnEntityDestroyed(World *world, EntityId id) {
+    HYP_TRACE("Destroyed Entity");
   }
 
   //--------------------------------------------------------------

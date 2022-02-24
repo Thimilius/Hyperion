@@ -228,16 +228,44 @@ namespace Hyperion {
       return WorldView<GetComponents<Component ...>, ExcludeComponents<Exclude ...>>(this);
     }
 
+    inline void RegisterOnEntityCreated(const EntityCallback &callback) {
+      m_entity_created_callbacks.Add(callback);
+    }
+
+    inline void UnregisterOnEntityCreated(const EntityCallback &callback) {
+      m_entity_created_callbacks.Remove(callback);
+    }
+
+    inline void RegisterOnEntityDestroyed(const EntityCallback &callback) {
+      m_entity_destroyed_callbacks.Add(callback);
+    }
+
+    inline void UnregisterOnEntityDestroyed(const EntityCallback &callback) {
+      m_entity_destroyed_callbacks.Remove(callback);
+    }
+
     template<typename T>
-    void OnComponentAdded(const ComponentCallback &callback) {
+    inline void RegisterOnComponentAdded(const ComponentCallback &callback) {
       ComponentId component_id = ComponentRegistry::GetId<T>();
       m_storage.component_callbacks[component_id].added.Add(callback);
     }
 
     template<typename T>
-    void OnComponentRemoved(const ComponentCallback &callback) {
+    inline void UnregisterOnComponentAdded(const ComponentCallback &callback) {
+      ComponentId component_id = ComponentRegistry::GetId<T>();
+      m_storage.component_callbacks[component_id].added.Remove(callback);
+    }
+
+    template<typename T>
+    inline void RegisterOnComponentRemoved(const ComponentCallback &callback) {
       ComponentId component_id = ComponentRegistry::GetId<T>();
       m_storage.component_callbacks[component_id].removed.Add(callback);
+    }
+
+    template<typename T>
+    inline void UnregisterOnComponentRemoved(const ComponentCallback &callback) {
+      ComponentId component_id = ComponentRegistry::GetId<T>();
+      m_storage.component_callbacks[component_id].removed.Remove(callback);
     }
   private:
     void AddComponentsForPrimitive(EntityId id, EntityPrimitive primitive);
@@ -249,6 +277,9 @@ namespace Hyperion {
 
     WorldHierarchy m_hierarchy;
     WorldStorage m_storage;
+
+    Array<EntityCallback> m_entity_created_callbacks;
+    Array<EntityCallback> m_entity_destroyed_callbacks;
 
     Physics::IPhysicsWorld *m_physics_world;
   private:

@@ -20,6 +20,9 @@ namespace Hyperion::Editor {
     EditorUI() = delete;
     ~EditorUI() = delete;
   private:
+    static void OnEntityCreated(World *world, EntityId id);
+    static void OnEntityDestroyed(World *world, EntityId id);
+    
     static void UpdateStatsLabel();
     static void UpdateHierarchyLabel();
     static void UpdateHierarchyLabelBranch(World *world, EntityId branch, HierarchyComponent *branch_hierarchy, String &hierarchy_text, uint32 depth);

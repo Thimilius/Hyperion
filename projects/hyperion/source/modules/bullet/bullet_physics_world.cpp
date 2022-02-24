@@ -17,10 +17,10 @@ namespace Hyperion::Physics {
     btCollisionConfiguration *collision_configuration = driver->m_collision_configuration;
     m_collision_world = new btCollisionWorld(new btCollisionDispatcher(collision_configuration), new btDbvtBroadphase(), collision_configuration);
 
-    world->OnComponentAdded<BoxColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::AddBoxCollider>, this });
-    world->OnComponentRemoved<BoxColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::RemoveBoxCollider>, this });
-    world->OnComponentAdded<SphereColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::AddSphereCollider>, this });
-    world->OnComponentRemoved<SphereColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::RemoveSphereCollider>, this });
+    world->RegisterOnComponentAdded<BoxColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::AddBoxCollider>, this });
+    world->RegisterOnComponentRemoved<BoxColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::RemoveBoxCollider>, this });
+    world->RegisterOnComponentAdded<SphereColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::AddSphereCollider>, this });
+    world->RegisterOnComponentRemoved<SphereColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::RemoveSphereCollider>, this });
   }
 
   //--------------------------------------------------------------

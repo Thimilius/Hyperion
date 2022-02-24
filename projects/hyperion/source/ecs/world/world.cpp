@@ -86,6 +86,10 @@ namespace Hyperion {
 
     m_hierarchy.HandleEntityCreation(id);
 
+    for (auto callback : m_entity_created_callbacks) {
+      callback(this, id);
+    }
+
     return id;
   }
 
@@ -94,6 +98,10 @@ namespace Hyperion {
     HYP_PROFILE_SCOPE("World.DestroyEntity");
 
     if (IsAlive(id)) {
+      for (auto callback : m_entity_destroyed_callbacks) {
+        callback(this, id);
+      }
+
       m_hierarchy.HandleEntityDestruction(id, hierarchy_destruction_policy);
 
       EntityId new_id = EntityUtilities::CreateId(m_storage.next, EntityUtilities::GetVersion(id) + 1);

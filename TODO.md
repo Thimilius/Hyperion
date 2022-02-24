@@ -15,7 +15,7 @@
 - SoLoud
 
 ## ECS
-- Hierarchy should use callbacks for adding/removing entities
+- Hierarchy should use callbacks when adding/removing HierarchyComponent
 - Hierarchy callbacks for transform updates
 - System execution order
 - Entity/Component duplication
