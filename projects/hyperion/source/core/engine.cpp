@@ -79,7 +79,7 @@ namespace Hyperion {
             Time::s_fps = static_cast<uint32>(1.0f / delta_time_average);
             Time::s_frame_counter++;
         } },
-        { "InputInitilization", []() { HYP_PROFILE_SCOPE("EngineLoop.InputInitilization"); s_application->GetWindow()->Poll(); } },
+        { "InputInitilization", []() { HYP_PROFILE_SCOPE("EngineLoop.InputInitilization"); s_application->GetMainWindow()->Poll(); } },
         { "DisplayInitilization", []() {
             HYP_PROFILE_SCOPE("EngineLoop.DisplayInitilization");
 
@@ -204,7 +204,7 @@ namespace Hyperion {
     Initialize();
     s_application->OnInitialize();
     PostInitialize();
-    s_application->GetWindow()->Show();
+    s_application->GetMainWindow()->Show();
 
     s_running = true;
     while (s_running) {
@@ -240,7 +240,7 @@ namespace Hyperion {
 
     Window *window = new Window(s_settings.window);
     window->SetAppEventCallback(Engine::OnAppEvent);
-    s_application->m_window = window;
+    s_application->m_main_window = window;
 
     Rendering::RenderEngine::PreInitialize(s_settings.render, window);
   }
@@ -329,7 +329,7 @@ namespace Hyperion {
 
     Rendering::RenderEngine::Shutdown();
 
-    delete s_application->GetWindow();
+    delete s_application->GetMainWindow();
   }
 
   //--------------------------------------------------------------

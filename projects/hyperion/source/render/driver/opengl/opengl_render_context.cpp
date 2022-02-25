@@ -13,7 +13,7 @@ namespace Hyperion::Rendering {
   constexpr GLenum LOG_SEVERITY = GL_DEBUG_SEVERITY_HIGH;
 
   //--------------------------------------------------------------
-  void OpenGLRenderContext::Initialize(const RenderContextDescriptor &descriptor) {
+  void OpenGLRenderContext::Initialize(Window *main_window, const RenderContextDescriptor &descriptor) {
 #ifdef HYP_DEBUG
     InitializeDebug();
 #endif

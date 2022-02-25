@@ -143,13 +143,13 @@ namespace Hyperion::Rendering {
 
     static void RequestExit();
 
-    static void InitializeGraphicsContext(Window *window);
+    static void InitializeGraphicsContext(Window *main_window);
     static void ShutdownGraphicsContext();
 
     static void RenderDriver();
     static void SwapRenderFrames();
 
-    static void RT_Initialize(Window *window);
+    static void RT_Initialize(Window *main_window);
     static void RT_Loop(void *parameter);
     static void RT_Shutdown();
   private:

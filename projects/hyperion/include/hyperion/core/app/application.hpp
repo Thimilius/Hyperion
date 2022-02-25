@@ -17,7 +17,7 @@ namespace Hyperion {
   public:
     virtual ~Application() = default;
   public:
-    inline Window *GetWindow() const { return m_window; }
+    inline Window *GetMainWindow() const { return m_main_window; }
 
     void Exit();
   public:
@@ -33,7 +33,7 @@ namespace Hyperion {
     virtual void OnTick() { }
     virtual void OnShutdown() { }
   private:
-    Window *m_window;
+    Window *m_main_window;
   private:
     inline static Application *s_instance;
   private:

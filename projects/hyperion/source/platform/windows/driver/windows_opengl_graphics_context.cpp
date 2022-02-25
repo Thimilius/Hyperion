@@ -2,6 +2,7 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
+#include "hyperion/core/app/window.hpp"
 #include "hyperion/platform/windows/driver/windows_opengl_render_context.hpp"
 
 //---------------------- Library Includes ----------------------
@@ -11,14 +12,14 @@
 namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
-  WindowsOpenGLRenderContext::WindowsOpenGLRenderContext(HDC device_context, HDC helper_device_context) {
-    m_device_context = device_context;
-
+  WindowsOpenGLRenderContext::WindowsOpenGLRenderContext(HDC helper_device_context) {
     LoadOpenGLExtensions(helper_device_context);
   }
 
   //--------------------------------------------------------------
-  void WindowsOpenGLRenderContext::Initialize(const RenderContextDescriptor &descriptor) {
+  void WindowsOpenGLRenderContext::Initialize(Window *main_window, const RenderContextDescriptor &descriptor) {
+    HDC device_context = GetDC(static_cast<HWND>(main_window->GetNativePointer()));
+
     const int32 pixel_attributes[] = {
             WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
             WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
@@ -35,13 +36,13 @@ namespace Hyperion::Rendering {
     };
     int32 pixel_format;
     uint32 formats_count;
-    wglChoosePixelFormatARB(m_device_context, pixel_attributes, nullptr, 1, &pixel_format, &formats_count);
+    wglChoosePixelFormatARB(device_context, pixel_attributes, nullptr, 1, &pixel_format, &formats_count);
 
     PIXELFORMATDESCRIPTOR pixel_format_descriptor;
-    if (!DescribePixelFormat(m_device_context, pixel_format, sizeof(pixel_format_descriptor), &pixel_format_descriptor)) {
+    if (!DescribePixelFormat(device_context, pixel_format, sizeof(pixel_format_descriptor), &pixel_format_descriptor)) {
       HYP_PANIC_MESSAGE("OpenGL", "Failed to describe pixel format for context!");
     }
-    if (!SetPixelFormat(m_device_context, pixel_format, &pixel_format_descriptor)) {
+    if (!SetPixelFormat(device_context, pixel_format, &pixel_format_descriptor)) {
       HYP_PANIC_MESSAGE("OpenGL", "Failed to set pixel format for context!");
     }
 
@@ -63,18 +64,18 @@ namespace Hyperion::Rendering {
         0
     };
 #endif
-    m_opengl_context = wglCreateContextAttribsARB(m_device_context, nullptr, context_attributes);
+    m_opengl_context = wglCreateContextAttribsARB(device_context, nullptr, context_attributes);
     if (!m_opengl_context) {
       HYP_PANIC_MESSAGE("OpenGL", "Failed to create context!");
     }
 
-    wglMakeCurrent(m_device_context, m_opengl_context);
+    wglMakeCurrent(device_context, m_opengl_context);
 
     if (!gladLoadGL()) {
       HYP_PANIC_MESSAGE("OpenGL", "Failed to load extensions!");
     }
 
-    OpenGLRenderContext::Initialize(descriptor);
+    OpenGLRenderContext::Initialize(main_window, descriptor);
   }
 
   //--------------------------------------------------------------
@@ -85,8 +86,21 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void WindowsOpenGLRenderContext::SwapBuffers() {
-    ::SwapBuffers(m_device_context);
+  void WindowsOpenGLRenderContext::MakeCurrent(Window *window) {
+    HWND window_handle = static_cast<HWND>(window->GetNativePointer());
+
+    HDC device_context = GetDC(window_handle);
+    wglMakeCurrent(device_context, m_opengl_context);
+    ReleaseDC(window_handle, device_context);
+  }
+
+  //--------------------------------------------------------------
+  void WindowsOpenGLRenderContext::SwapBuffers(Window *window) {
+    HWND window_handle = static_cast<HWND>(window->GetNativePointer());
+
+    HDC device_context = GetDC(window_handle);
+    ::SwapBuffers(device_context);
+    ReleaseDC(window_handle, device_context);
   }
 
   //--------------------------------------------------------------

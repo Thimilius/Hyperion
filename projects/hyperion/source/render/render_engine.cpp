@@ -5,6 +5,7 @@
 #include "hyperion/render/render_engine.hpp"
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/core/app/application.hpp"
 #include "hyperion/render/pipelines/forward/forward_render_pipeline.hpp"
 #include "hyperion/render/threading/render_thread_synchronization.hpp"
 
@@ -21,7 +22,7 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void RenderEngine::PreInitialize(const RenderSettings &settings, Window *window) {
+  void RenderEngine::PreInitialize(const RenderSettings &settings, Window *main_window) {
     s_render_settings = settings;
     s_vsync_mode = settings.vsync_mode;
 
@@ -35,14 +36,12 @@ namespace Hyperion::Rendering {
     s_render_frame = &s_second_frame;
 
     switch (settings.threading_mode) {
-      case RenderThreadingMode::SingleThreaded:
-      {
-        InitializeGraphicsContext(window);
+      case RenderThreadingMode::SingleThreaded: {
+        InitializeGraphicsContext(main_window);
         break;
       }
-      case RenderThreadingMode::MultiThreaded:
-      {
-        s_render_thread.Start(RT_Loop, window);
+      case RenderThreadingMode::MultiThreaded: {
+        s_render_thread.Start(RT_Loop, main_window);
         s_render_thread.SetName("Render Thread");
 
         RenderThreadSynchronization::NotifyMainReady();
@@ -75,6 +74,8 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void RenderEngine::Present() {
+    Window *main_window = Application::GetInstance()->GetMainWindow();
+
     switch (s_render_settings.threading_mode) {
       case RenderThreadingMode::SingleThreaded:
       {
@@ -83,7 +84,7 @@ namespace Hyperion::Rendering {
 
         {
           HYP_PROFILE_SCOPE("RenderEngine.Present");
-          s_render_driver_context->SwapBuffers();
+          s_render_driver_context->SwapBuffers(main_window);
         }
         break;
       }
@@ -155,9 +156,9 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void RenderEngine::InitializeGraphicsContext(Window *window) {
-    s_render_driver_context = window->CreateRenderDriverContext(s_render_settings.backend);
-    s_render_driver_context->Initialize(RenderContextDescriptor());
+  void RenderEngine::InitializeGraphicsContext(Window *main_window) {
+    s_render_driver_context = Window::CreateRenderDriverContext(s_render_settings.backend, main_window);
+    s_render_driver_context->Initialize(main_window, RenderContextDescriptor());
     s_render_driver_context->SetVSyncMode(s_vsync_mode);
     s_render_driver_context->GetDriver()->Initialize();
   }
@@ -171,8 +172,8 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void RenderEngine::RT_Initialize(Window *window) {
-    InitializeGraphicsContext(window);
+  void RenderEngine::RT_Initialize(Window *main_window) {
+    InitializeGraphicsContext(main_window);
 
     RenderThreadSynchronization::NotifyRenderReady();
     RenderThreadSynchronization::WaitForMainReady();
@@ -181,7 +182,9 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void RenderEngine::RT_Loop(void *parameter) {
-    RT_Initialize(static_cast<Window *>(parameter));
+    Window *main_window = static_cast<Window *>(parameter);
+
+    RT_Initialize(main_window);
 
     HYP_PROFILE_THREAD("Render Thread");
     while (true) {
@@ -195,12 +198,13 @@ namespace Hyperion::Rendering {
       }
 
       s_render_driver_context->SetVSyncMode(s_vsync_mode);
+      //s_render_driver_context->MakeCurrent(main_window);
 
       RenderDriver();
 
       {
         HYP_PROFILE_SCOPE("RenderEngine.Present");
-        s_render_driver_context->SwapBuffers();
+        s_render_driver_context->SwapBuffers(main_window);
         RenderThreadSynchronization::NotifyRenderDone();
       }
     }

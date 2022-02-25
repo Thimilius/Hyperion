@@ -33,7 +33,7 @@ namespace Hyperion::Rendering {
     inline const OpenGLRenderContextLimits &GetLimits() const { return m_limits; }
     inline const Array<String> &GetExtensions() const { return m_extensions; }
 
-    void Initialize(const RenderContextDescriptor &descriptor) override;
+    void Initialize(Window *main_window, const RenderContextDescriptor &descriptor) override;
     void Shutdown() override;
   private:
     void InitializeDebug();

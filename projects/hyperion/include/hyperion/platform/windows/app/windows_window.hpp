@@ -53,8 +53,6 @@ namespace Hyperion {
 
     void SetIcon(const String &path);
   private:
-    Rendering::IRenderContext *CreateRenderDriverContext(Rendering::RenderBackend render_backend);
-
     void Poll();
     void Show();
 
@@ -75,6 +73,8 @@ namespace Hyperion {
     MouseButtonCode TranslateMouseButtonCode(uint32 code) const;
     KeyModifier GetKeyModifier() const;
     uint32 GetMouseButtonFromMessage(uint32 message, uint32 w_param) const;
+  public:
+    static Rendering::IRenderContext *CreateRenderDriverContext(Rendering::RenderBackend render_backend, WindowsWindow *main_window);
   private:
     static LRESULT CALLBACK MessageCallback(HWND window_handle, uint32 message, WPARAM first_message_param, LPARAM second_message_param);
   private:

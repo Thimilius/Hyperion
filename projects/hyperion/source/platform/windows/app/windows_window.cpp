@@ -220,60 +220,6 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  Rendering::IRenderContext *WindowsWindow::CreateRenderDriverContext(Rendering::RenderBackend render_backend) {
-    switch (render_backend) {
-      case Rendering::RenderBackend::OpenGL:
-      {
-        // To create a proper OpenGL context we need a second helper window.
-        const auto helper_window_class_name = L"HYPERION_HELPER_WINDOW_CLASS";
-        HINSTANCE instance = GetModuleHandleW(nullptr);
-        if (!instance) {
-          HYP_PANIC_MESSAGE("Engine", "Failed to get windows application instance!");
-        }
-
-        WNDCLASSEXW window_class = { 0 };
-        window_class.cbSize = sizeof(window_class);
-        window_class.lpszClassName = helper_window_class_name;
-        window_class.style = CS_HREDRAW | CS_VREDRAW;
-        window_class.hInstance = instance;
-        window_class.lpfnWndProc = &DefWindowProcW;
-
-        if (!RegisterClassExW(&window_class)) {
-          HYP_PANIC_MESSAGE("Engine", "Failed to register windows window class!");
-        }
-
-        HWND helper_window = CreateWindowExW(
-          0,
-          helper_window_class_name,
-          L"Hyperion helper window",
-          0,
-          CW_USEDEFAULT,
-          CW_USEDEFAULT,
-          CW_USEDEFAULT,
-          CW_USEDEFAULT,
-          nullptr,
-          nullptr,
-          instance,
-          nullptr
-        );
-
-        Rendering::IRenderContext *render_driver_context = new Rendering::WindowsOpenGLRenderContext(GetDC(m_window_handle), GetDC(helper_window));
-
-        // We can destroy the helper window now that we have the proper context.
-        UnregisterClassW(helper_window_class_name, instance);
-        DestroyWindow(helper_window);
-
-        return render_driver_context;
-      }
-      case Rendering::RenderBackend::Vulkan:
-      {
-        return nullptr;
-      }
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
-    }
-  }
-
-  //--------------------------------------------------------------
   void WindowsWindow::Poll() {
     m_input->Update();
 
@@ -724,6 +670,56 @@ namespace Hyperion {
       }
     } else {
       return 0;
+    }
+  }
+
+  //--------------------------------------------------------------
+  Rendering::IRenderContext *WindowsWindow::CreateRenderDriverContext(Rendering::RenderBackend render_backend, WindowsWindow *main_window) {
+    switch (render_backend) {
+      case Rendering::RenderBackend::OpenGL: {
+        // To create a proper OpenGL context we need a second helper window.
+        const auto helper_window_class_name = L"HYPERION_HELPER_WINDOW_CLASS";
+        HINSTANCE instance = GetModuleHandleW(nullptr);
+        if (!instance) {
+          HYP_PANIC_MESSAGE("Engine", "Failed to get windows application instance!");
+        }
+
+        WNDCLASSEXW window_class = { 0 };
+        window_class.cbSize = sizeof(window_class);
+        window_class.lpszClassName = helper_window_class_name;
+        window_class.style = CS_HREDRAW | CS_VREDRAW;
+        window_class.hInstance = instance;
+        window_class.lpfnWndProc = &DefWindowProcW;
+
+        if (!RegisterClassExW(&window_class)) {
+          HYP_PANIC_MESSAGE("Engine", "Failed to register windows window class!");
+        }
+
+        HWND helper_window_handle = CreateWindowExW(
+          0,
+          helper_window_class_name,
+          L"Hyperion helper window",
+          0,
+          CW_USEDEFAULT,
+          CW_USEDEFAULT,
+          CW_USEDEFAULT,
+          CW_USEDEFAULT,
+          nullptr,
+          nullptr,
+          instance,
+          nullptr
+        );
+
+        HDC helper_dc = GetDC(helper_window_handle);
+        Rendering::IRenderContext *render_driver_context = new Rendering::WindowsOpenGLRenderContext(helper_dc);
+
+        // We can destroy the helper window now that we have the proper context.
+        UnregisterClassW(helper_window_class_name, instance);
+        DestroyWindow(helper_window_handle);
+
+        return render_driver_context;
+      }
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
     }
   }
 

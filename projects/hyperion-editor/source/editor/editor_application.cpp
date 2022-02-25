@@ -108,7 +108,7 @@ namespace Hyperion::Editor {
       Exit();
     }
     if (Input::IsKeyDown(KeyCode::F1)) {
-      GetWindow()->SetWindowMode(GetWindow()->GetWindowMode() == WindowMode::Borderless ? WindowMode::Windowed : WindowMode::Borderless);
+      GetMainWindow()->SetWindowMode(GetMainWindow()->GetWindowMode() == WindowMode::Borderless ? WindowMode::Windowed : WindowMode::Borderless);
     }
     if (Input::IsKeyDown(KeyCode::F5)) {
       if (Engine::GetEngineMode() == EngineMode::Editor) {
