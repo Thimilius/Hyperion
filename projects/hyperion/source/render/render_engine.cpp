@@ -4,6 +4,9 @@
 //--------------------- Definition Include ---------------------
 #include "hyperion/render/render_engine.hpp"
 
+//---------------------- Library Includes ----------------------
+#include <glad/glad_wgl.h>
+
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/application.hpp"
 #include "hyperion/render/pipelines/forward/forward_render_pipeline.hpp"
@@ -11,6 +14,9 @@
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
+
+  bool8 g_use_second_window = false;
+  Window *g_second_window;
 
   //--------------------------------------------------------------
   void RenderEngine::SetVSyncMode(VSyncMode vsync_mode) {
@@ -50,6 +56,39 @@ namespace Hyperion::Rendering {
       }
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
     }
+
+    if (g_use_second_window) {
+      g_second_window = new Window(WindowSettings());
+      HDC device_context = GetDC(static_cast<HWND>(g_second_window->GetNativeHandle()));
+      auto descriptor = RenderContextDescriptor();
+      const int32 pixel_attributes[] = {
+              WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
+              WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
+              WGL_DOUBLE_BUFFER_ARB, GL_TRUE,
+              WGL_ACCELERATION_ARB, WGL_FULL_ACCELERATION_ARB,
+              WGL_PIXEL_TYPE_ARB, WGL_TYPE_RGBA_ARB,
+              WGL_COLOR_BITS_ARB, descriptor.color_bits,
+              WGL_DEPTH_BITS_ARB, descriptor.depth_bits,
+              WGL_STENCIL_BITS_ARB, descriptor.stencil_bits,
+              WGL_ACCUM_BITS_ARB, 0,
+              WGL_SAMPLE_BUFFERS_ARB, descriptor.msaa_samples > 0 ? 1 : 0,
+              WGL_SAMPLES_ARB, descriptor.msaa_samples,
+              0
+      };
+      int32 pixel_format;
+      uint32 formats_count;
+      wglChoosePixelFormatARB(device_context, pixel_attributes, nullptr, 1, &pixel_format, &formats_count);
+
+      PIXELFORMATDESCRIPTOR pixel_format_descriptor;
+      if (!DescribePixelFormat(device_context, pixel_format, sizeof(pixel_format_descriptor), &pixel_format_descriptor)) {
+        HYP_PANIC_MESSAGE("OpenGL", "Failed to describe pixel format for context!");
+      }
+      if (!SetPixelFormat(device_context, pixel_format, &pixel_format_descriptor)) {
+        HYP_PANIC_MESSAGE("OpenGL", "Failed to set pixel format for context!");
+      }
+
+      g_second_window->Show();
+    }
   }
 
   //--------------------------------------------------------------
@@ -81,11 +120,7 @@ namespace Hyperion::Rendering {
       {
         SwapRenderFrames();
         RenderDriver();
-
-        {
-          HYP_PROFILE_SCOPE("RenderEngine.Present");
-          s_render_driver_context->SwapBuffers(main_window);
-        }
+        SwapBuffers();
         break;
       }
       case RenderThreadingMode::MultiThreaded:
@@ -108,13 +143,11 @@ namespace Hyperion::Rendering {
     delete s_render_pipeline;
 
     switch (s_render_settings.threading_mode) {
-      case RenderThreadingMode::SingleThreaded:
-      {
+      case RenderThreadingMode::SingleThreaded: {
         ShutdownGraphicsContext();
         break;
       }
-      case RenderThreadingMode::MultiThreaded:
-      {
+      case RenderThreadingMode::MultiThreaded: {
         s_render_thread_should_exit = true;
         RenderThreadSynchronization::NotifySwapDone();
         s_render_thread.Join();
@@ -133,9 +166,17 @@ namespace Hyperion::Rendering {
   void RenderEngine::RenderDriver() {
     HYP_PROFILE_SCOPE("RenderEngine.RenderDriver");
 
+    Window *main_window = Application::GetInstance()->GetMainWindow();
+    s_render_driver_context->MakeCurrent(main_window);
     IRenderDriver *render_driver = s_render_driver_context->GetDriver();
     render_driver->ResetStats();
     render_driver->Render(s_render_frame);
+
+    if (g_use_second_window) {
+      s_render_driver_context->MakeCurrent(g_second_window);
+      s_render_frame->GetContext().ClearAssets();
+      render_driver->Render(s_render_frame);
+    }
   }
 
   //--------------------------------------------------------------
@@ -153,6 +194,22 @@ namespace Hyperion::Rendering {
     s_render_stats = s_render_driver_context->GetDriver()->GetStats();
 
     s_main_frame->Clear();
+  }
+
+  //--------------------------------------------------------------
+  void RenderEngine::SwapBuffers() {
+    HYP_PROFILE_SCOPE("RenderEngine.Present");
+
+    Window *main_window = Application::GetInstance()->GetMainWindow();
+    s_render_driver_context->SwapBuffers(main_window);
+
+    if (g_use_second_window) {
+      s_render_driver_context->SwapBuffers(g_second_window);
+    }
+
+    if (s_render_settings.threading_mode == RenderThreadingMode::MultiThreaded) {
+      RenderThreadSynchronization::NotifyRenderDone();
+    }
   }
 
   //--------------------------------------------------------------
@@ -198,15 +255,10 @@ namespace Hyperion::Rendering {
       }
 
       s_render_driver_context->SetVSyncMode(s_vsync_mode);
-      //s_render_driver_context->MakeCurrent(main_window);
 
       RenderDriver();
 
-      {
-        HYP_PROFILE_SCOPE("RenderEngine.Present");
-        s_render_driver_context->SwapBuffers(main_window);
-        RenderThreadSynchronization::NotifyRenderDone();
-      }
+      SwapBuffers();
     }
 
     RT_Shutdown();

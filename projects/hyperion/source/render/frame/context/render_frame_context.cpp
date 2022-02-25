@@ -9,6 +9,18 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void RenderFrameContext::Clear() {
+    ClearAssets();
+
+    m_cameras.Clear();
+    m_lights.Clear();
+    m_mesh_objects.Clear();
+    m_sprite_objects.Clear();
+    m_ui_objects.Clear();
+    m_editor_ui_objects.Clear();
+  }
+
+  //--------------------------------------------------------------
+  void RenderFrameContext::ClearAssets() {
     m_texture_2ds_to_load.Clear();
     m_render_textures_to_load.Clear();
     m_shaders_to_load.Clear();
@@ -20,13 +32,6 @@ namespace Hyperion::Rendering {
     m_shaders_to_unload.Clear();
     m_materials_to_unload.Clear();
     m_meshes_to_unload.Clear();
-
-    m_cameras.Clear();
-    m_lights.Clear();
-    m_mesh_objects.Clear();
-    m_sprite_objects.Clear();
-    m_ui_objects.Clear();
-    m_editor_ui_objects.Clear();
   }
 
   //--------------------------------------------------------------

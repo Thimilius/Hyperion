@@ -148,6 +148,7 @@ namespace Hyperion::Rendering {
 
     static void RenderDriver();
     static void SwapRenderFrames();
+    static void SwapBuffers();
 
     static void RT_Initialize(Window *main_window);
     static void RT_Loop(void *parameter);

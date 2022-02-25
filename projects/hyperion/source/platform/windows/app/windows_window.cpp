@@ -280,8 +280,11 @@ namespace Hyperion {
     // This allows to have proper rendering while resizing or moving the window.
     window_class.hbrBackground = nullptr;
 
-    if (!RegisterClassExW(&window_class)) {
-      HYP_PANIC_MESSAGE("Engine", "Failed to register windows window class!");
+    if (!s_window_class_registered) {
+      if (!RegisterClassExW(&window_class)) {
+        HYP_PANIC_MESSAGE("Engine", "Failed to register windows window class!");
+      }
+      s_window_class_registered = true;
     }
 
     Vector2Int size = GetActualWindowSize(settings.width, settings.height);

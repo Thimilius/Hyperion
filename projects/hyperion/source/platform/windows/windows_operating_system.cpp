@@ -178,7 +178,7 @@ namespace Hyperion {
 
     OPENFILENAMEW open_file_options = { };
     open_file_options.lStructSize = sizeof(open_file_options);
-    open_file_options.hwndOwner = static_cast<HWND>(Application::GetInstance()->GetMainWindow()->GetNativePointer());
+    open_file_options.hwndOwner = static_cast<HWND>(Application::GetInstance()->GetMainWindow()->GetNativeHandle());
     open_file_options.nMaxFile = sizeof(file_output);
     open_file_options.lpstrFile = file_output;
     open_file_options.lpstrFilter = L"All\0*.*\0";
@@ -201,7 +201,7 @@ namespace Hyperion {
 
     OPENFILENAMEW save_file_options = { };
     save_file_options.lStructSize = sizeof(save_file_options);
-    save_file_options.hwndOwner = static_cast<HWND>(Application::GetInstance()->GetMainWindow()->GetNativePointer());
+    save_file_options.hwndOwner = static_cast<HWND>(Application::GetInstance()->GetMainWindow()->GetNativeHandle());
     save_file_options.nMaxFile = sizeof(file_output);
     save_file_options.lpstrFile = file_output;
     save_file_options.lpstrFilter = L"All\0*.*\0";

@@ -28,7 +28,7 @@ namespace Hyperion {
     WindowsWindow(const WindowSettings &settings);
     ~WindowsWindow();
   public:
-    void *GetNativePointer() const { return m_window_handle; }
+    void *GetNativeHandle() const { return m_window_handle; }
 
     inline const String &GetTitle() const { return m_title; }
     void SetTitle(const String &title);
@@ -106,6 +106,8 @@ namespace Hyperion {
     // That way we can send out the correct key released events when appropriate.
     bool8 m_left_shift_last_down = false;
     bool8 m_right_shift_last_down = false;
+  private:
+    inline static bool8 s_window_class_registered = false;
   private:
     friend class Hyperion::Engine;
     friend class Hyperion::Rendering::RenderEngine;

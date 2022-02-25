@@ -18,7 +18,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void WindowsOpenGLRenderContext::Initialize(Window *main_window, const RenderContextDescriptor &descriptor) {
-    HDC device_context = GetDC(static_cast<HWND>(main_window->GetNativePointer()));
+    HDC device_context = GetDC(static_cast<HWND>(main_window->GetNativeHandle()));
 
     const int32 pixel_attributes[] = {
             WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
@@ -87,7 +87,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void WindowsOpenGLRenderContext::MakeCurrent(Window *window) {
-    HWND window_handle = static_cast<HWND>(window->GetNativePointer());
+    HWND window_handle = static_cast<HWND>(window->GetNativeHandle());
 
     HDC device_context = GetDC(window_handle);
     wglMakeCurrent(device_context, m_opengl_context);
@@ -96,7 +96,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void WindowsOpenGLRenderContext::SwapBuffers(Window *window) {
-    HWND window_handle = static_cast<HWND>(window->GetNativePointer());
+    HWND window_handle = static_cast<HWND>(window->GetNativeHandle());
 
     HDC device_context = GetDC(window_handle);
     ::SwapBuffers(device_context);

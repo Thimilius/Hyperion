@@ -14,6 +14,7 @@ namespace Hyperion::Rendering {
   class RenderFrameContext final : public INonCopyable {
   public:
     void Clear();
+    void ClearAssets();
 
     inline Array<RenderFrameContextAssetTexture2D> &GetTexture2DAssetsToLoad() { return m_texture_2ds_to_load; }
     inline Array<RenderFrameContextAssetRenderTexture> &GetRenderTextureAssetsToLoad() { return m_render_textures_to_load; }
