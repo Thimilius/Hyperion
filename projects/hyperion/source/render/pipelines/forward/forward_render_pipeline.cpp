@@ -48,7 +48,7 @@ namespace Hyperion::Rendering {
     }
 
     {
-      RenderFrameCommandBuffer command_buffer;
+      RenderCommandBuffer command_buffer;
       command_buffer.SetRenderTarget(RenderTargetId::Default());
       command_buffer.ClearRenderTarget(ClearFlags::All, Color::Black());
       command_buffer.SetRenderTarget(m_target_render_texture->GetRenderTargetId());
@@ -62,7 +62,7 @@ namespace Hyperion::Rendering {
 
     render_frame->DrawUI();
     {
-      RenderFrameCommandBuffer command_buffer;
+      RenderCommandBuffer command_buffer;
       if (m_should_blit_to_screen) {
         command_buffer.Blit(RenderTargetId::Default(), m_target_render_texture->GetRenderTargetId());
       } else {
@@ -81,7 +81,7 @@ namespace Hyperion::Rendering {
 
     render_frame->SetCamera(camera->index);
     {
-      RenderFrameCommandBuffer command_buffer;
+      RenderCommandBuffer command_buffer;
       command_buffer.ClearRenderTarget(ClearFlags::All, camera->background_color);
       render_frame->ExecuteCommandBuffer(command_buffer);
     }

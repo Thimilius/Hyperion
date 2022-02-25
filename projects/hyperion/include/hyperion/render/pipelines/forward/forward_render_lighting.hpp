@@ -29,7 +29,7 @@ namespace Hyperion::Rendering {
 
   class ForwardRenderLighting final {
   public:
-    static void SetupLighting(RenderFrameContext &context, RenderFrameCommandBuffer &command_buffer);
+    static void SetupLighting(RenderFrameContext &context, RenderCommandBuffer &command_buffer);
   private:
     ForwardRenderLighting() = delete;
     ~ForwardRenderLighting() = delete;

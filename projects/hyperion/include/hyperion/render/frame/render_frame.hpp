@@ -3,12 +3,13 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/render/assets/render_assets_context.hpp"
+#include "hyperion/render/command/render_command_buffer.hpp"
 #include "hyperion/render/frame/render_frame_commands.hpp"
-#include "hyperion/render/frame/buffer/render_frame_command_buffer.hpp"
 #include "hyperion/render/frame/context/render_frame_context.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
+
 
   class RenderFrame final : public INonCopyable {
   public:
@@ -19,26 +20,26 @@ namespace Hyperion::Rendering {
     inline RenderAssetContext &GetAssetContext() { return m_asset_context; }
     inline const RenderAssetContext &GetAssetContext() const { return m_asset_context; }
     inline const Array<RenderFrameCommand> &GetCommands() const { return m_commands; }
-    inline const Array<AsyncRequest> &GetAsyncRequests() const { return m_async_requests; }
 
     CullingResults Cull(CullingParameters parameters);
 
     void SetCamera(uint64 camera_index);
-    void ExecuteCommandBuffer(const RenderFrameCommandBuffer &command_buffer);
+    void ExecuteCommandBuffer(const RenderCommandBuffer &command_buffer);
     void DrawMeshes(CullingResults &culling_results, DrawingParametes drawing_parameters);
     void DrawUI();
     void DrawObjectIds(RenderTargetId render_target_id);
     void DrawGizmos();
     void DrawEditorUI();
 
-    AsyncRequest &AddAsyncRequest();
+    inline const Array<AsyncRequestResult> &GetAsyncRequestResults() const { return m_async_request_results; }
+    AsyncRequestResult &AddAsyncRequestResult();
   private:
     RenderFrameCommand &CreateCommand(RenderFrameCommandType type);
   private:
     RenderFrameContext m_context;
     RenderAssetContext m_asset_context;
     Array<RenderFrameCommand> m_commands;
-    Array<AsyncRequest> m_async_requests;
+    Array<AsyncRequestResult> m_async_request_results;
   };
 
 }

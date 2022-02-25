@@ -89,7 +89,7 @@ namespace Hyperion::Editor {
   //--------------------------------------------------------------
   void EditorRenderPipeline::RenderEditor(RenderFrame *render_frame) {
     {
-      RenderFrameCommandBuffer command_buffer;
+      RenderCommandBuffer command_buffer;
       command_buffer.SetRenderTarget(m_editor_render_texture->GetRenderTargetId());
       command_buffer.ClearRenderTarget(ClearFlags::All, Color::Black());
       render_frame->ExecuteCommandBuffer(command_buffer);
@@ -101,7 +101,7 @@ namespace Hyperion::Editor {
     m_wrapped_pipeline->RenderCamera(render_frame, &editor_camera);
 
     {
-      RenderFrameCommandBuffer command_buffer;
+      RenderCommandBuffer command_buffer;
       command_buffer.SetRenderTarget(RenderTargetId::Default());
       render_frame->ExecuteCommandBuffer(command_buffer);
     }
@@ -123,8 +123,8 @@ namespace Hyperion::Editor {
         region.position = Vector2Int(static_cast<int32>(point.x), static_cast<int32>(point.y));
         region.size = Vector2Int(1, 1);
 
-        RenderFrameCommandBuffer command_buffer;
-        command_buffer.RequestAsyncReadback(m_object_ids_render_texture->GetRenderTargetId(), 0, region, [](const AsyncRequestResult &result) {
+        RenderCommandBuffer command_buffer;
+        command_buffer.RequestAsyncReadback(m_object_ids_render_texture->GetRenderTargetId(), 0, region, [](auto &result) {
           const uint32 *data = reinterpret_cast<const uint32 *>(result.data.GetData());
           if (result.data.GetLength() >= 4) {
             uint32 id = *data;

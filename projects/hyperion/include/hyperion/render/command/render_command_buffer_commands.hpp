@@ -14,7 +14,7 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-  enum class RenderFrameCommandBufferCommandType {
+  enum class RenderCommandBufferCommandType {
     ClearRenderTarget,
     SetRenderTarget,
     Blit,
@@ -22,54 +22,54 @@ namespace Hyperion::Rendering {
     RequestAsyncReadback,
   };
 
-  struct RenderFrameCommandBufferCommandClearRenderTarget {
+  struct RenderCommandBufferCommandClearRenderTarget {
     ClearFlags flags;
     Color color;
   };
 
-  struct RenderFrameCommandBufferCommandSetRenderTarget {
+  struct RenderCommandBufferCommandSetRenderTarget {
     RenderTargetId id;
   };
 
-  struct RenderFrameCommandBufferCommandBlit {
+  struct RenderCommandBufferCommandBlit {
     RenderTargetId destination;
     RenderTargetId source;
   };
 
-  struct RenderFrameCommandBufferCommandSetGlobalBuffer {
+  struct RenderCommandBufferCommandSetGlobalBuffer {
     ShaderPropertyId id;
     RenderBuffer render_buffer;
   };
 
-  struct AsyncRequestResult {
+  struct AsyncRequestCallbackResult {
     RectInt region;
 
     Array<byte> data;
   };
 
-  using AsyncRequestCallback = std::function<void(const AsyncRequestResult &)>;
+  using AsyncRequestCallback = std::function<void(const AsyncRequestCallbackResult &)>;
 
-  struct AsyncRequest {
-    AsyncRequestResult result;
+  struct AsyncRequestResult {
     AsyncRequestCallback callback;
+    AsyncRequestCallbackResult result;
   };
 
-  struct RenderFrameCommandBufferCommandRequestAsyncReadback {
+  struct RenderCommandBufferCommandRequestAsyncReadback {
     RenderTargetId render_target_id;
     uint32 attachment_index;
     RectInt region;
     AsyncRequestCallback callback;
   };
 
-  struct RenderFrameCommandBufferCommand {
-    RenderFrameCommandBufferCommandType type;
+  struct RenderCommandBufferCommand {
+    RenderCommandBufferCommandType type;
 
     std::variant<
-      RenderFrameCommandBufferCommandClearRenderTarget,
-      RenderFrameCommandBufferCommandSetRenderTarget,
-      RenderFrameCommandBufferCommandBlit,
-      RenderFrameCommandBufferCommandSetGlobalBuffer,
-      RenderFrameCommandBufferCommandRequestAsyncReadback
+      RenderCommandBufferCommandClearRenderTarget,
+      RenderCommandBufferCommandSetRenderTarget,
+      RenderCommandBufferCommandBlit,
+      RenderCommandBufferCommandSetGlobalBuffer,
+      RenderCommandBufferCommandRequestAsyncReadback
     > data;
   };
 

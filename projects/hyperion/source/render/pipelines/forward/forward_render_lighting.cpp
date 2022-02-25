@@ -8,7 +8,7 @@
 namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
-  void ForwardRenderLighting::SetupLighting(RenderFrameContext &context, RenderFrameCommandBuffer &command_buffer) {
+  void ForwardRenderLighting::SetupLighting(RenderFrameContext &context, RenderCommandBuffer &command_buffer) {
     RenderFrameContextEnvironment environment = context.GetEnvironment();
     auto &lights = context.GetLights();
     RenderBuffer render_buffer_lighting = RenderBuffer(sizeof(ForwardLightingBuffer));

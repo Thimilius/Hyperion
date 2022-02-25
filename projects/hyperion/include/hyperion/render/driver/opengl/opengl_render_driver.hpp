@@ -122,7 +122,8 @@ namespace Hyperion::Rendering {
     inline void ResetStats() override { m_stats = RenderStats(); }
     inline RenderStats GetStats() const override { return m_stats; }
   private:
-    void ExecuteRenderFrameCommands(RenderFrame *render_frame);
+    void ExecuteRenderFrame(RenderFrame *render_frame);
+    void ExecuteCommandBuffer(RenderFrame *render_frame, const RenderCommandBuffer &command_buffer);
     void PrepareObjects(RenderFrame *render_frame, const Array<uint32> &sorted_objects, DrawingParametes drawing_parameters);
     void SetupPerObjectLightIndices(const RenderFrameContext &render_frame_context, GroupedObject &grouped_object, Vector3 object_position);
     void DrawMeshes(const RenderFrameContextEnvironment &environment, const Array<RenderFrameContextLight> &lights, DrawingParametes drawing_parameters);

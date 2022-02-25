@@ -18,7 +18,7 @@ namespace Hyperion::Rendering {
     m_context.Clear();
     m_asset_context.Clear();
     m_commands.Clear();
-    m_async_requests.Clear();
+    m_async_request_results.Clear();
   }
 
   //--------------------------------------------------------------
@@ -54,7 +54,7 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void RenderFrame::ExecuteCommandBuffer(const RenderFrameCommandBuffer &command_buffer) {
+  void RenderFrame::ExecuteCommandBuffer(const RenderCommandBuffer &command_buffer) {
     RenderFrameCommandExecuteCommandBuffer execute_command_buffer;
     execute_command_buffer.command_buffer = command_buffer;
 
@@ -152,9 +152,9 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  AsyncRequest &RenderFrame::AddAsyncRequest() {
-    m_async_requests.Resize(m_async_requests.GetLength() + 1);
-    return m_async_requests.GetLast();
+  AsyncRequestResult &RenderFrame::AddAsyncRequestResult() {
+    m_async_request_results.Resize(m_async_request_results.GetLength() + 1);
+    return m_async_request_results.GetLast();
   }
 
   //--------------------------------------------------------------

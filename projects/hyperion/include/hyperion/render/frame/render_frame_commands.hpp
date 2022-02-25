@@ -8,7 +8,7 @@
 #include "hyperion/assets/asset_types.hpp"
 #include "hyperion/core/math/matrix4x4.hpp"
 #include "hyperion/render/render_gizmos.hpp"
-#include "hyperion/render/frame/buffer/render_frame_command_buffer.hpp"
+#include "hyperion/render/command/render_command_buffer.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
@@ -31,7 +31,7 @@ namespace Hyperion::Rendering {
   };
 
   struct RenderFrameCommandExecuteCommandBuffer {
-    RenderFrameCommandBuffer command_buffer;
+    RenderCommandBuffer command_buffer;
   };
 
   struct CullingResults {

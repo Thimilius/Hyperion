@@ -2,16 +2,16 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/render/frame/buffer/render_frame_command_buffer_commands.hpp"
+#include "hyperion/render/command/render_command_buffer_commands.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-  class RenderFrameCommandBuffer {
+  class RenderCommandBuffer {
   public:
     void Clear();
 
-    const Array<RenderFrameCommandBufferCommand> &GetCommands() const { return m_commands; }
+    const Array<RenderCommandBufferCommand> &GetCommands() const { return m_commands; }
 
     void ClearRenderTarget(ClearFlags clear_flags, Color clear_color);
     void SetRenderTarget(RenderTargetId id);
@@ -21,9 +21,9 @@ namespace Hyperion::Rendering {
 
     void RequestAsyncReadback(RenderTargetId id, uint32 attachment_index, RectInt region, AsyncRequestCallback callback);
   private:
-    RenderFrameCommandBufferCommand &CreateCommand(RenderFrameCommandBufferCommandType type);
+    RenderCommandBufferCommand &CreateCommand(RenderCommandBufferCommandType type);
   private:
-    Array<RenderFrameCommandBufferCommand> m_commands;
+    Array<RenderCommandBufferCommand> m_commands;
   };
 
 }
