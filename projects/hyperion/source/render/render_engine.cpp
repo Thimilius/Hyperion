@@ -168,13 +168,17 @@ namespace Hyperion::Rendering {
 
     Window *main_window = Application::GetInstance()->GetMainWindow();
     s_render_driver_context->MakeCurrent(main_window);
+
     IRenderDriver *render_driver = s_render_driver_context->GetDriver();
+
+    render_driver->HandleAssets(s_render_frame->GetAssetContext());
     render_driver->ResetStats();
     render_driver->Render(s_render_frame);
 
     if (g_use_second_window) {
+      s_render_frame->GetAssetContext().Clear();
+
       s_render_driver_context->MakeCurrent(g_second_window);
-      s_render_frame->GetContext().ClearAssets();
       render_driver->Render(s_render_frame);
     }
   }

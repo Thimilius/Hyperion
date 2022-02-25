@@ -11,32 +11,32 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-  struct RenderFrameContextAsset {
+  struct RenderAsset {
     AssetId id;
   };
 
-  struct RenderFrameContextAssetTexture2D : public RenderFrameContextAsset {
+  struct RenderAssetTexture2D : public RenderAsset {
     Texture2DParameters parameters;
     uint32 mipmap_count;
     TexturePixelData pixels;
   };
 
-  struct RenderFrameContextAssetRenderTexture : public RenderFrameContextAsset {
+  struct RenderAssetRenderTexture : public RenderAsset {
     RenderTextureParameters parameters;
     uint32 mipmap_count;
   };
 
-  struct RenderFrameContextAssetShader : public RenderFrameContextAsset {
+  struct RenderAssetShader : public RenderAsset {
     bool8 is_valid;
     ShaderData data;
   };
 
-  struct RenderFrameContextAssetMaterial : public RenderFrameContextAsset {
+  struct RenderAssetMaterial : public RenderAsset {
     AssetId shader_id;
     MaterialPropertyCollection properties;
   };
 
-  struct RenderFrameContextAssetMesh : public RenderFrameContextAsset {
+  struct RenderAssetMesh : public RenderAsset {
     MeshData data;
     MeshVertexFormat vertex_format;
     SubMeshes sub_meshes;

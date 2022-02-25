@@ -23,7 +23,7 @@ namespace Hyperion {
   void AssetLoadSystem::Run(World *world) {
     HYP_PROFILE_SCOPE("AssetLoadSystem.Run");
 
-    RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
+    RenderAssetContext &asset_context = RenderEngine::GetMainRenderFrame()->GetAssetContext();
     for (Asset *asset : AssetManager::s_assets_to_load) {
       AssetInfo info = asset->GetAssetInfo();
       AssetId asset_id = info.id;
@@ -39,32 +39,32 @@ namespace Hyperion {
             case TextureDimension::Texture2D:
             {
               Texture2D *texture_2d = static_cast<Texture2D *>(texture);
-              RenderFrameContextAssetTexture2D &render_frame_context_asset_texture_2d = render_frame_context.AddTexture2DAssetToLoad();
-              render_frame_context_asset_texture_2d.id = asset_id;
-              render_frame_context_asset_texture_2d.parameters.format = texture_2d->GetFormat();
-              render_frame_context_asset_texture_2d.parameters.attributes = texture_2d->GetAttributes();
-              render_frame_context_asset_texture_2d.parameters.width = texture_2d->GetWidth();
-              render_frame_context_asset_texture_2d.parameters.height = texture_2d->GetHeight();
-              render_frame_context_asset_texture_2d.mipmap_count = texture_2d->GetMipmapCount();
+              RenderAssetTexture2D &render_asset_texture_2d = asset_context.AddTexture2DAssetToLoad();
+              render_asset_texture_2d.id = asset_id;
+              render_asset_texture_2d.parameters.format = texture_2d->GetFormat();
+              render_asset_texture_2d.parameters.attributes = texture_2d->GetAttributes();
+              render_asset_texture_2d.parameters.width = texture_2d->GetWidth();
+              render_asset_texture_2d.parameters.height = texture_2d->GetHeight();
+              render_asset_texture_2d.mipmap_count = texture_2d->GetMipmapCount();
               if (can_move) {
-                render_frame_context_asset_texture_2d.pixels = std::move(texture_2d->m_pixels);
+                render_asset_texture_2d.pixels = std::move(texture_2d->m_pixels);
 
                 // Get the pixels into a valid state after the move.
                 texture_2d->m_pixels.Clear();
               } else {
-                render_frame_context_asset_texture_2d.pixels = texture_2d->GetPixels();
+                render_asset_texture_2d.pixels = texture_2d->GetPixels();
               }
               break;
             }
             case TextureDimension::RenderTexture:
             {
               RenderTexture *render_texture = static_cast<RenderTexture *>(texture);
-              RenderFrameContextAssetRenderTexture &render_frame_context_asset_render_texture = render_frame_context.AddRenderTextureAssetToLoad();
-              render_frame_context_asset_render_texture.id = asset_id;
-              render_frame_context_asset_render_texture.parameters.attachments = render_texture->GetAttachments();
-              render_frame_context_asset_render_texture.parameters.width = render_texture->GetWidth();
-              render_frame_context_asset_render_texture.parameters.height = render_texture->GetHeight();
-              render_frame_context_asset_render_texture.mipmap_count = render_texture->GetMipmapCount();
+              RenderAssetRenderTexture &render_asset_render_texture = asset_context.AddRenderTextureAssetToLoad();
+              render_asset_render_texture.id = asset_id;
+              render_asset_render_texture.parameters.attachments = render_texture->GetAttachments();
+              render_asset_render_texture.parameters.width = render_texture->GetWidth();
+              render_asset_render_texture.parameters.height = render_texture->GetHeight();
+              render_asset_render_texture.mipmap_count = render_texture->GetMipmapCount();
               break;
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
@@ -76,10 +76,10 @@ namespace Hyperion {
           HYP_PROFILE_SCOPE("AssetLoadSystem.LoadMaterial");
 
           Material *material = static_cast<Material *>(asset);
-          RenderFrameContextAssetMaterial &render_frame_context_asset_material = render_frame_context.AddMaterialAssetToLoad();
-          render_frame_context_asset_material.id = asset_id;
-          render_frame_context_asset_material.shader_id = material->GetShader()->GetAssetInfo().id;
-          render_frame_context_asset_material.properties = material->GetProperties();
+          RenderAssetMaterial &render_asset_material = asset_context.AddMaterialAssetToLoad();
+          render_asset_material.id = asset_id;
+          render_asset_material.shader_id = material->GetShader()->GetAssetInfo().id;
+          render_asset_material.properties = material->GetProperties();
           break;
         }
         case AssetType::Mesh:
@@ -87,12 +87,12 @@ namespace Hyperion {
           HYP_PROFILE_SCOPE("AssetLoadSystem.LoadMesh");
 
           Mesh *mesh = static_cast<Mesh *>(asset);
-          RenderFrameContextAssetMesh &render_frame_context_asset_mesh = render_frame_context.AddMeshAssetToLoad();
-          render_frame_context_asset_mesh.id = asset_id;
-          render_frame_context_asset_mesh.vertex_format = mesh->GetVertexFormat();
-          render_frame_context_asset_mesh.sub_meshes = mesh->GetSubMeshes();
+          RenderAssetMesh &render_asset_mesh = asset_context.AddMeshAssetToLoad();
+          render_asset_mesh.id = asset_id;
+          render_asset_mesh.vertex_format = mesh->GetVertexFormat();
+          render_asset_mesh.sub_meshes = mesh->GetSubMeshes();
           if (can_move) {
-            render_frame_context_asset_mesh.data = std::move(mesh->m_data);
+            render_asset_mesh.data = std::move(mesh->m_data);
 
             // Get the data into a valid state after the move.
             mesh->m_data.positions.Clear();
@@ -101,7 +101,7 @@ namespace Hyperion {
             mesh->m_data.texture0.Clear();
             mesh->m_data.indices.Clear();
           } else {
-            render_frame_context_asset_mesh.data = mesh->GetData();
+            render_asset_mesh.data = mesh->GetData();
           }
           break;
         }
@@ -110,10 +110,10 @@ namespace Hyperion {
           HYP_PROFILE_SCOPE("AssetLoadSystem.LoadShader");
 
           Shader *shader = static_cast<Shader *>(asset);
-          RenderFrameContextAssetShader &render_frame_context_asset_shader = render_frame_context.AddShaderAssetToLoad();
-          render_frame_context_asset_shader.id = asset_id;
-          render_frame_context_asset_shader.is_valid = shader->IsValid();
-          render_frame_context_asset_shader.data = shader->GetData();
+          RenderAssetShader &render_asset_shader = asset_context.AddShaderAssetToLoad();
+          render_asset_shader.id = asset_id;
+          render_asset_shader.is_valid = shader->IsValid();
+          render_asset_shader.data = shader->GetData();
           break;
         }
         default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
@@ -128,7 +128,7 @@ namespace Hyperion {
   void AssetUnloadSystem::Run(World *world) {
     HYP_PROFILE_SCOPE("AssetUnloadSystem.Run");
 
-    RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
+    RenderAssetContext &asset_context = RenderEngine::GetMainRenderFrame()->GetAssetContext();
     for (Asset *asset : AssetManager::s_assets_to_unload) {
       AssetId asset_id = asset->GetAssetInfo().id;
 
@@ -139,12 +139,12 @@ namespace Hyperion {
           switch (texture->GetDimension()) {
             case TextureDimension::Texture2D:
             {
-              render_frame_context.AddTexture2DToUnload(asset_id);
+              asset_context.AddTexture2DToUnload(asset_id);
               break;
             }
             case TextureDimension::RenderTexture:
             {
-              render_frame_context.AddRenderTextureToUnload(asset_id);
+              asset_context.AddRenderTextureToUnload(asset_id);
               break;
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
@@ -153,17 +153,17 @@ namespace Hyperion {
         }
         case AssetType::Material:
         {
-          render_frame_context.AddMaterialToUnload(asset_id);
+          asset_context.AddMaterialToUnload(asset_id);
           break;
         }
         case AssetType::Mesh:
         {
-          render_frame_context.AddMeshToUnload(asset_id);
+          asset_context.AddMeshToUnload(asset_id);
           break;
         }
         case AssetType::Shader:
         {
-          render_frame_context.AddShaderToUnload(asset_id);
+          asset_context.AddShaderToUnload(asset_id);
           break;
         }
         default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;

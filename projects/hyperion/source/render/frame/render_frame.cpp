@@ -16,6 +16,7 @@ namespace Hyperion::Rendering {
   //--------------------------------------------------------------
   void RenderFrame::Clear() {
     m_context.Clear();
+    m_asset_context.Clear();
     m_commands.Clear();
     m_async_requests.Clear();
   }

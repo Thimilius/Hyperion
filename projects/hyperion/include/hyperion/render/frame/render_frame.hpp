@@ -2,6 +2,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/render/assets/render_assets_context.hpp"
 #include "hyperion/render/frame/render_frame_commands.hpp"
 #include "hyperion/render/frame/buffer/render_frame_command_buffer.hpp"
 #include "hyperion/render/frame/context/render_frame_context.hpp"
@@ -15,6 +16,8 @@ namespace Hyperion::Rendering {
 
     inline RenderFrameContext &GetContext() { return m_context; }
     inline const RenderFrameContext &GetContext() const { return m_context; }
+    inline RenderAssetContext &GetAssetContext() { return m_asset_context; }
+    inline const RenderAssetContext &GetAssetContext() const { return m_asset_context; }
     inline const Array<RenderFrameCommand> &GetCommands() const { return m_commands; }
     inline const Array<AsyncRequest> &GetAsyncRequests() const { return m_async_requests; }
 
@@ -33,6 +36,7 @@ namespace Hyperion::Rendering {
     RenderFrameCommand &CreateCommand(RenderFrameCommandType type);
   private:
     RenderFrameContext m_context;
+    RenderAssetContext m_asset_context;
     Array<RenderFrameCommand> m_commands;
     Array<AsyncRequest> m_async_requests;
   };

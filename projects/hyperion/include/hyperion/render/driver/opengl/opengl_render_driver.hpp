@@ -115,6 +115,7 @@ namespace Hyperion::Rendering {
   class OpenGLRenderDriver final : public IRenderDriver {
   public:
     void Initialize() override;
+    void HandleAssets(RenderAssetContext &asset_context) override;
     void Render(RenderFrame *render_frame) override;
     void Shutdown() override;
 
@@ -136,13 +137,13 @@ namespace Hyperion::Rendering {
     void SetMaterialTextureProperty(ShaderPropertyStorage::Texture texture_property, uint32 texture_unit, GLuint program, GLuint location);
     void UseMesh(const OpenGLMesh &opengl_mesh);
 
-    void LoadAssets(RenderFrameContext &render_frame_context);
-    void LoadTexture2D(RenderFrameContextAssetTexture2D &texture_2d);
-    void LoadRenderTexture(RenderFrameContextAssetRenderTexture &render_texture);
-    void LoadShader(RenderFrameContextAssetShader &shader);
-    void LoadMaterial(RenderFrameContextAssetMaterial &material);
-    void LoadMesh(RenderFrameContextAssetMesh &mesh);
-    void UnloadAssets(RenderFrameContext &render_frame_context);
+    void LoadAssets(RenderAssetContext &asset_context);
+    void LoadTexture2D(RenderAssetTexture2D &texture_2d);
+    void LoadRenderTexture(RenderAssetRenderTexture &render_texture);
+    void LoadShader(RenderAssetShader &shader);
+    void LoadMaterial(RenderAssetMaterial &material);
+    void LoadMesh(RenderAssetMesh &mesh);
+    void UnloadAssets(RenderAssetContext &asset_context);
     void UnloadRenderTexture(AssetId render_texture_id);
 
     void SetTextureAttributes(GLuint texture, TextureAttributes attributes);

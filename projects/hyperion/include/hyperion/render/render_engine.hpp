@@ -65,7 +65,9 @@ namespace Hyperion::Rendering {
   // Render systems take the different components and extract every object, camera, light, etc. and copies it into the context.
   // It can be thought of as the snapshot of the simulated world with all the data required to render it.
   // 
-  // The RenderFrameContext also contains every asset that needs to be loaded/unloaded on the GPU.
+  // ────────────────────────────────────────────────────────────────────────────────────
+  // RENDER ASSET CONTEXT:
+  // The RenderAssetContext contains every asset that needs to be loaded/unloaded on the GPU.
   // That includes meshes, shaders, materials, textures, ...
   // The data for shaders and materials is always copied which is usually fine as it is quite lightweight.
   // The bigger data from meshes and textures is ONLY copied when the asset is set to AssetDataAccess::ReadAndWrite.
@@ -78,7 +80,7 @@ namespace Hyperion::Rendering {
   // One used by the Main Thread to fill it with data and the other one used by the Render Thread to read from it.
   // It acts as a double buffer so that the synchronization point between the two threads is therefore a simple pointer swap.
   // 
-  // The RenderFrame owns the RenderFrameContext as that contains all relevant ECS data and asset references.
+  // The RenderFrame owns the RenderFrameContext and RenderAssetContext as those contains all relevant ECS data and asset references.
   // That alone however is not enough as we do not yet know HOW to render the data in the context.
   // Because of that another purpose for the RenderFrame is to act as a command buffer for high level render commands.
   // This is mainly inspired by the Scriptable Render Pipeline from Unity.

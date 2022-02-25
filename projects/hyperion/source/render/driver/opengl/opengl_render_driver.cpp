@@ -22,103 +22,103 @@ namespace Hyperion::Rendering {
 
     {
       const char *error_vertex = R"(
-          #version 450 core
+        #version 450 core
 
-          layout(location = 0) in vec3 a_position;
+        layout(location = 0) in vec3 a_position;
 
-          layout(std140, binding = 0) uniform Camera {
-	          mat4 view;
-	          mat4 projection;
-          } u_camera;
+        layout(std140, binding = 0) uniform Camera {
+	        mat4 view;
+	        mat4 projection;
+        } u_camera;
 
-          uniform mat4 u_model;
+        uniform mat4 u_model;
 
-          vec4 obj_to_clip_space(vec3 position) {
-	          return u_camera.projection * u_camera.view * u_model * vec4(position, 1.0);
-          }
+        vec4 obj_to_clip_space(vec3 position) {
+	        return u_camera.projection * u_camera.view * u_model * vec4(position, 1.0);
+        }
 
-          void main() {
-	          gl_Position = obj_to_clip_space(a_position);
-          }
+        void main() {
+	        gl_Position = obj_to_clip_space(a_position);
+        }
       )";
       const char *error_fragment = R"(
-          #version 450 core
+        #version 450 core
 
-          layout(location = 0) out vec4 o_color;
+        layout(location = 0) out vec4 o_color;
 
-          void main() {
-	          o_color = vec4(1, 0, 1, 1);
-          }
+        void main() {
+	        o_color = vec4(1, 0, 1, 1);
+        }
       )";
       m_state.error_shader.program = OpenGLShaderCompiler::Compile(error_vertex, error_fragment).program;
     }
 
     {
       const char *object_id_vertex = R"(
-          #version 450 core
+        #version 450 core
 
-          layout(location = 0) in vec3 a_position;
+        layout(location = 0) in vec3 a_position;
 
-          layout(std140, binding = 0) uniform Camera {
-	          mat4 view;
-	          mat4 projection;
-          } u_camera;
+        layout(std140, binding = 0) uniform Camera {
+	        mat4 view;
+	        mat4 projection;
+        } u_camera;
 
-          uniform mat4 u_model;
+        uniform mat4 u_model;
 
-          vec4 obj_to_clip_space(vec3 position) {
-	          return u_camera.projection * u_camera.view * u_model * vec4(position, 1.0);
-          }
+        vec4 obj_to_clip_space(vec3 position) {
+	        return u_camera.projection * u_camera.view * u_model * vec4(position, 1.0);
+        }
 
-          void main() {
-	          gl_Position = obj_to_clip_space(a_position);
-          }
+        void main() {
+	        gl_Position = obj_to_clip_space(a_position);
+        }
       )";
       const char *object_id_fragment = R"(
-          #version 450 core
+        #version 450 core
 
-          layout(location = 0) out uint o_object_id;
+        layout(location = 0) out uint o_object_id;
 
-          uniform uint u_object_id;
+        uniform uint u_object_id;
 
-          void main() {
-	          o_object_id = u_object_id;
-          }
+        void main() {
+	        o_object_id = u_object_id;
+        }
       )";
       m_state.object_id_shader.program = OpenGLShaderCompiler::Compile(object_id_vertex, object_id_fragment).program;
     }
 
     {
       const char *fullscreen_vertex = R"(
-          #version 450 core
+        #version 450 core
 
-          out V2F {
-	          vec2 texture0;
-          } o_v2f;
+        out V2F {
+	        vec2 texture0;
+        } o_v2f;
 
-          void main() {
-	          vec2 vertices[3] = vec2[3](vec2(-1.0, -1.0f), vec2(-1.0, 3.0), vec2(3.0f, -1.0));
-	          vec4 position = vec4(vertices[gl_VertexID], 0.0, 1.0);
+        void main() {
+	        vec2 vertices[3] = vec2[3](vec2(-1.0, -1.0f), vec2(-1.0, 3.0), vec2(3.0f, -1.0));
+	        vec4 position = vec4(vertices[gl_VertexID], 0.0, 1.0);
 
-	          o_v2f.texture0 = 0.5 * position.xy + vec2(0.5);
+	        o_v2f.texture0 = 0.5 * position.xy + vec2(0.5);
 
-	          gl_Position = position;
-          }
+	        gl_Position = position;
+        }
       )";
       const char *fullscreen_fragment = R"(
-          #version 450 core
+        #version 450 core
 
-          layout(location = 0) out vec4 o_color;
+        layout(location = 0) out vec4 o_color;
 
-          in V2F {
-	          vec2 texture0;
-          } i_v2f;
+        in V2F {
+	        vec2 texture0;
+        } i_v2f;
 
-          uniform sampler2D u_texture;
+        uniform sampler2D u_texture;
 
-          void main() {
-	          o_color = texture(u_texture, i_v2f.texture0);
-          }
+        void main() {
+	        o_color = texture(u_texture, i_v2f.texture0);
+        }
       )";
       m_state.fullscreen_shader = OpenGLShaderCompiler::Compile(fullscreen_vertex, fullscreen_fragment).program;
       glCreateVertexArrays(1, &m_state.fullscreen_vertex_array);
@@ -168,10 +168,13 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::Render(RenderFrame *render_frame) {
-    LoadAssets(render_frame->GetContext());
-    UnloadAssets(render_frame->GetContext());
+  void OpenGLRenderDriver::HandleAssets(RenderAssetContext &asset_context) {
+    LoadAssets(asset_context);
+    UnloadAssets(asset_context);
+  }
 
+  //--------------------------------------------------------------
+  void OpenGLRenderDriver::Render(RenderFrame *render_frame) {
     ExecuteRenderFrameCommands(render_frame);
   }
 
@@ -963,32 +966,32 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::LoadAssets(RenderFrameContext &render_frame_context) {
+  void OpenGLRenderDriver::LoadAssets(RenderAssetContext &asset_context) {
     HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadAssets");
     OpenGLDebugGroup debug_group("LoadAssets");
 
     // The order in which we load the assets is important.
     // For example a material might reference a shader or texture which should always be loaded first.
 
-    for (RenderFrameContextAssetShader &shader : render_frame_context.GetShaderAssetsToLoad()) {
+    for (RenderAssetShader &shader : asset_context.GetShaderAssetsToLoad()) {
       LoadShader(shader);
     }
-    for (RenderFrameContextAssetTexture2D &texture_2d : render_frame_context.GetTexture2DAssetsToLoad()) {
+    for (RenderAssetTexture2D &texture_2d : asset_context.GetTexture2DAssetsToLoad()) {
       LoadTexture2D(texture_2d);
     }
-    for (RenderFrameContextAssetRenderTexture &render_texture : render_frame_context.GetRenderTextureAssetsToLoad()) {
+    for (RenderAssetRenderTexture &render_texture : asset_context.GetRenderTextureAssetsToLoad()) {
       LoadRenderTexture(render_texture);
     }
-    for (RenderFrameContextAssetMaterial &material : render_frame_context.GetMaterialAssetsToLoad()) {
+    for (RenderAssetMaterial &material : asset_context.GetMaterialAssetsToLoad()) {
       LoadMaterial(material);
     }
-    for (RenderFrameContextAssetMesh &mesh : render_frame_context.GetMeshAssetsToLoad()) {
+    for (RenderAssetMesh &mesh : asset_context.GetMeshAssetsToLoad()) {
       LoadMesh(mesh);
     }
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::LoadTexture2D(RenderFrameContextAssetTexture2D &texture_2d) {
+  void OpenGLRenderDriver::LoadTexture2D(RenderAssetTexture2D &texture_2d) {
     HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadTexture2D");
 
     OpenGLTexture opengl_texture;
@@ -1019,7 +1022,7 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::LoadRenderTexture(RenderFrameContextAssetRenderTexture &render_texture) {
+  void OpenGLRenderDriver::LoadRenderTexture(RenderAssetRenderTexture &render_texture) {
     HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadRenderTexture");
 
     if (m_opengl_render_textures.Contains(render_texture.id)) {
@@ -1077,7 +1080,7 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::LoadShader(RenderFrameContextAssetShader &shader) {
+  void OpenGLRenderDriver::LoadShader(RenderAssetShader &shader) {
     HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadShader");
 
     OpenGLShader opengl_shader;
@@ -1109,7 +1112,7 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::LoadMaterial(RenderFrameContextAssetMaterial &material) {
+  void OpenGLRenderDriver::LoadMaterial(RenderAssetMaterial &material) {
     HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadMaterial");
 
     auto material_it = m_opengl_materials.Find(material.id);
@@ -1127,7 +1130,7 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::LoadMesh(RenderFrameContextAssetMesh &mesh) {
+  void OpenGLRenderDriver::LoadMesh(RenderAssetMesh &mesh) {
     HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadMesh");
 
     const MeshData &data = mesh.data;
@@ -1197,26 +1200,26 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::UnloadAssets(RenderFrameContext &render_frame_context) {
+  void OpenGLRenderDriver::UnloadAssets(RenderAssetContext &asset_context) {
     HYP_PROFILE_SCOPE("OpenGLRenderDriver.UnloadAssets");
     OpenGLDebugGroup debug_group("UnloadAssets");
 
-    for (AssetId shader_id : render_frame_context.GetShaderAssetsToUnload()) {
+    for (AssetId shader_id : asset_context.GetShaderAssetsToUnload()) {
       glDeleteProgram(m_opengl_shaders.Get(shader_id).program);
       m_opengl_shaders.Remove(shader_id);
     }
-    for (AssetId texture_2d_id : render_frame_context.GetTexture2DAssetsToUnload()) {
+    for (AssetId texture_2d_id : asset_context.GetTexture2DAssetsToUnload()) {
       GLuint texture = m_opengl_textures.Get(texture_2d_id).texture;
       glDeleteTextures(1, &texture);
       m_opengl_textures.Remove(texture_2d_id);
     }
-    for (AssetId render_texture_id : render_frame_context.GetRenderTextureAssetsToUnload()) {
+    for (AssetId render_texture_id : asset_context.GetRenderTextureAssetsToUnload()) {
       UnloadRenderTexture(render_texture_id);
     }
-    for (AssetId material_id : render_frame_context.GetMaterialAssetsToUnload()) {
+    for (AssetId material_id : asset_context.GetMaterialAssetsToUnload()) {
       m_opengl_materials.Remove(material_id);
     }
-    for (AssetId mesh_id : render_frame_context.GetMeshAssetsToUnload()) {
+    for (AssetId mesh_id : asset_context.GetMeshAssetsToUnload()) {
       auto mesh_it = m_opengl_meshes.Find(mesh_id);
       if (mesh_it == m_opengl_meshes.end()) {
         HYP_LOG_ERROR("OpenGL", "Trying to delete mesh {} which does not exist!", mesh_id);
