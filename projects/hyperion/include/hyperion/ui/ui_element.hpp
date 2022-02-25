@@ -112,13 +112,13 @@ namespace Hyperion::UI {
     inline void MarkDirty() { m_is_dirty = true; }
     void MarkHierarchyDirty();
 
-    inline bool8 IsRaycastTarget() const { return m_state.is_raycast_target; }
-    void SetRaycastTarget(bool8 is_raycast_target) { m_state.is_raycast_target = is_raycast_target; }
-    inline bool8 IsInteractable() const { return m_state.is_interactable; }
+    inline bool8 IsRaycastTarget() const { return m_static.is_raycast_target; }
+    void SetRaycastTarget(bool8 is_raycast_target) { m_static.is_raycast_target = is_raycast_target; }
+    inline bool8 IsInteractable() const { return m_static.is_interactable; }
     void SetInteractable(bool8 is_interactable);
-    inline bool8 IsHighlighted() const { return m_state.is_highlighted; }
-    inline bool8 IsPressed() const { return m_state.is_pressed; }
-    inline bool8 IsSelected() const { return m_state.is_selected; }
+    inline bool8 IsHighlighted() const { return m_static.is_highlighted; }
+    inline bool8 IsPressed() const { return m_static.is_pressed; }
+    inline bool8 IsSelected() const { return m_static.is_selected; }
 
     inline Vector2 GetPosition() const { return m_local_position; }
     inline Vector2 GetDerivedPosition() const { return m_derived_position; }
@@ -207,7 +207,7 @@ namespace Hyperion::UI {
     UIElementLayout m_layout;
     UIElementStyle m_style;
     UIElementHierarchy m_hierarchy;
-    UIElementState m_state;
+    UIElementState m_static;
   private:
     friend class Hyperion::UI::UIElementHierarchy;
   };

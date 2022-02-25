@@ -20,157 +20,13 @@ namespace Hyperion::Rendering {
       glFrontFace(GL_CW);
     }
 
-    {
-      const char *error_vertex = R"(
-        #version 450 core
-
-        layout(location = 0) in vec3 a_position;
-
-        layout(std140, binding = 0) uniform Camera {
-	        mat4 view;
-	        mat4 projection;
-        } u_camera;
-
-        uniform mat4 u_model;
-
-        vec4 obj_to_clip_space(vec3 position) {
-	        return u_camera.projection * u_camera.view * u_model * vec4(position, 1.0);
-        }
-
-        void main() {
-	        gl_Position = obj_to_clip_space(a_position);
-        }
-      )";
-      const char *error_fragment = R"(
-        #version 450 core
-
-        layout(location = 0) out vec4 o_color;
-
-        void main() {
-	        o_color = vec4(1, 0, 1, 1);
-        }
-      )";
-      m_state.error_shader.program = OpenGLShaderCompiler::Compile(error_vertex, error_fragment).program;
-    }
-
-    {
-      const char *object_id_vertex = R"(
-        #version 450 core
-
-        layout(location = 0) in vec3 a_position;
-
-        layout(std140, binding = 0) uniform Camera {
-	        mat4 view;
-	        mat4 projection;
-        } u_camera;
-
-        uniform mat4 u_model;
-
-        vec4 obj_to_clip_space(vec3 position) {
-	        return u_camera.projection * u_camera.view * u_model * vec4(position, 1.0);
-        }
-
-        void main() {
-	        gl_Position = obj_to_clip_space(a_position);
-        }
-      )";
-      const char *object_id_fragment = R"(
-        #version 450 core
-
-        layout(location = 0) out uint o_object_id;
-
-        uniform uint u_object_id;
-
-        void main() {
-	        o_object_id = u_object_id;
-        }
-      )";
-      m_state.object_id_shader.program = OpenGLShaderCompiler::Compile(object_id_vertex, object_id_fragment).program;
-    }
-
-    {
-      const char *fullscreen_vertex = R"(
-        #version 450 core
-
-        out V2F {
-	        vec2 texture0;
-        } o_v2f;
-
-        void main() {
-	        vec2 vertices[3] = vec2[3](vec2(-1.0, -1.0f), vec2(-1.0, 3.0), vec2(3.0f, -1.0));
-	        vec4 position = vec4(vertices[gl_VertexID], 0.0, 1.0);
-
-	        o_v2f.texture0 = 0.5 * position.xy + vec2(0.5);
-
-	        gl_Position = position;
-        }
-      )";
-      const char *fullscreen_fragment = R"(
-        #version 450 core
-
-        layout(location = 0) out vec4 o_color;
-
-        in V2F {
-	        vec2 texture0;
-        } i_v2f;
-
-        uniform sampler2D u_texture;
-
-        void main() {
-	        o_color = texture(u_texture, i_v2f.texture0);
-        }
-      )";
-      m_state.fullscreen_shader = OpenGLShaderCompiler::Compile(fullscreen_vertex, fullscreen_fragment).program;
-      glCreateVertexArrays(1, &m_state.fullscreen_vertex_array);
-    }
-
-    {
-      glCreateBuffers(1, &m_state.camera_uniform_buffer);
-      glNamedBufferData(m_state.camera_uniform_buffer, sizeof(OpenGLUniformBufferCamera), nullptr, GL_DYNAMIC_DRAW);
-      glBindBufferBase(GL_UNIFORM_BUFFER, 0, m_state.camera_uniform_buffer);
-    }
-
-    {
-      glCreateBuffers(1, &m_state.render_bounds_vertex_buffer);
-      glNamedBufferData(m_state.render_bounds_vertex_buffer, 8 * sizeof(OpenGLImmediateVertex), nullptr, GL_DYNAMIC_DRAW);
-
-      Array<uint32> indices = {
-          0, 1,
-          1, 5,
-          5, 4,
-          4, 0,
-
-          0, 2,
-          1, 3,
-          5, 7,
-          4, 6,
-
-          2, 3,
-          3, 7,
-          7, 6,
-          6, 2,
-      };
-
-      glCreateBuffers(1, &m_state.render_bounds_index_buffer);
-      glNamedBufferData(m_state.render_bounds_index_buffer, indices.GetLength() * sizeof(uint32), indices.GetData(), GL_STATIC_DRAW);
-
-      glCreateVertexArrays(1, &m_state.render_bounds_vertex_array);
-      glVertexArrayVertexBuffer(m_state.render_bounds_vertex_array, 0, m_state.render_bounds_vertex_buffer, 0, sizeof(OpenGLImmediateVertex));
-      glVertexArrayElementBuffer(m_state.render_bounds_vertex_array, m_state.render_bounds_index_buffer);
-
-      glEnableVertexArrayAttrib(m_state.render_bounds_vertex_array, 0);
-      glVertexArrayAttribFormat(m_state.render_bounds_vertex_array, 0, 3, GL_FLOAT, false, 0);
-      glVertexArrayAttribBinding(m_state.render_bounds_vertex_array, 0, 0);
-      glEnableVertexArrayAttrib(m_state.render_bounds_vertex_array, 3);
-      glVertexArrayAttribFormat(m_state.render_bounds_vertex_array, 3, 4, GL_FLOAT, false, sizeof(Vector3));
-      glVertexArrayAttribBinding(m_state.render_bounds_vertex_array, 3, 0);
-    }
+    m_storage.Initialize();
   }
 
   //--------------------------------------------------------------
   void OpenGLRenderDriver::HandleAssets(RenderAssetContext &asset_context) {
-    LoadAssets(asset_context);
-    UnloadAssets(asset_context);
+    m_storage.LoadAssets(asset_context);
+    m_storage.UnloadAssets(asset_context);
   }
 
   //--------------------------------------------------------------
@@ -198,14 +54,14 @@ namespace Hyperion::Rendering {
           OpenGLDebugGroup debug_group("SetCamera");
 
           const RenderFrameCommandSetCamera &set_camera = std::get<RenderFrameCommandSetCamera>(frame_command.data);
-          m_state.camera_index = set_camera.camera_index;
+          m_static.camera_index = set_camera.camera_index;
 
-          const RenderFrameContextCamera &render_frame_context_camera = render_frame_context.GetCameras()[m_state.camera_index];
+          const RenderFrameContextCamera &render_frame_context_camera = render_frame_context.GetCameras()[m_static.camera_index];
 
           OpenGLUniformBufferCamera uniform_buffer_camera;
           uniform_buffer_camera.camera_view_matrix = render_frame_context_camera.view_matrix;
           uniform_buffer_camera.camera_projection_matrix = render_frame_context_camera.projection_matrix;
-          glNamedBufferSubData(m_state.camera_uniform_buffer, 0, sizeof(OpenGLUniformBufferCamera), &uniform_buffer_camera);
+          glNamedBufferSubData(m_storage.GetStatic().camera_uniform_buffer, 0, sizeof(OpenGLUniformBufferCamera), &uniform_buffer_camera);
 
           const CameraViewport &viewport = render_frame_context_camera.viewport;
           glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
@@ -266,7 +122,7 @@ namespace Hyperion::Rendering {
           glEnable(GL_BLEND);
           glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-          const OpenGLShader &opengl_shader = m_opengl_shaders.Get(draw_gizmos.shader_id);
+          const OpenGLShader &opengl_shader = m_storage.GetShader(draw_gizmos.shader_id);
           glUseProgram(opengl_shader.program);
 
           GLint model_location = glGetUniformLocation(opengl_shader.program, "u_model");
@@ -274,7 +130,7 @@ namespace Hyperion::Rendering {
           if (draw_gizmos.grid.should_draw) {
             glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, draw_gizmos.grid.local_to_world.elements);
 
-            const OpenGLMesh &opengl_mesh = m_opengl_meshes.Get(draw_gizmos.grid.mesh_id);
+            const OpenGLMesh &opengl_mesh = m_storage.GetMesh(draw_gizmos.grid.mesh_id);
             UseMesh(opengl_mesh);
 
             SubMesh sub_mesh = opengl_mesh.sub_meshes[0];
@@ -350,7 +206,7 @@ namespace Hyperion::Rendering {
           GLuint source_framebuffer = 0;
           GLuint source_color_attachment = 0;
           if (blit.source.id != RenderTargetId::Default().id) {
-            const OpenGLRenderTexture &opengl_render_texture = m_opengl_render_textures.Get(blit.source.id);
+            const OpenGLRenderTexture &opengl_render_texture = m_storage.GetRenderTexture(blit.source.id);
             source_width = opengl_render_texture.width;
             source_height = opengl_render_texture.height;
             source_framebuffer = opengl_render_texture.framebuffer;
@@ -363,7 +219,7 @@ namespace Hyperion::Rendering {
           GLint destination_height = Display::GetHeight();
           GLuint destination_framebuffer = 0;
           if (blit.destination.id != RenderTargetId::Default().id) {
-            const OpenGLRenderTexture &opengl_render_texture = m_opengl_render_textures.Get(blit.destination.id);
+            const OpenGLRenderTexture &opengl_render_texture = m_storage.GetRenderTexture(blit.destination.id);
             destination_width = opengl_render_texture.width;
             destination_height = opengl_render_texture.height;
             destination_framebuffer = opengl_render_texture.framebuffer;
@@ -394,9 +250,9 @@ namespace Hyperion::Rendering {
 
             glDisable(GL_BLEND);
 
-            glUseProgram(m_state.fullscreen_shader);
+            glUseProgram(m_storage.GetStatic().fullscreen_shader);
             glBindTextureUnit(0, source_color_attachment);
-            glBindVertexArray(m_state.fullscreen_vertex_array);
+            glBindVertexArray(m_storage.GetStatic().fullscreen_vertex_array);
             glDrawArrays(GL_TRIANGLES, 0, 3);
 
             glBindFramebuffer(GL_FRAMEBUFFER, current_framebuffer);
@@ -416,14 +272,14 @@ namespace Hyperion::Rendering {
           // We need something more sophisticated which abstracts the proper shader uniform names and binding points.
           GLuint buffer_id = -1;
           if (set_global_buffer.id == 0) {
-            buffer_id = m_state.lighting_uniform_buffer;
+            buffer_id = m_static.lighting_uniform_buffer;
 
             if (buffer_id == -1) {
               glCreateBuffers(1, &buffer_id);
               glNamedBufferData(buffer_id, data.GetLength(), data.GetData(), GL_DYNAMIC_DRAW);
               glBindBufferBase(GL_UNIFORM_BUFFER, 1, buffer_id);
 
-              m_state.lighting_uniform_buffer = buffer_id;
+              m_static.lighting_uniform_buffer = buffer_id;
 
               return;
             }
@@ -439,8 +295,8 @@ namespace Hyperion::Rendering {
 
           const RenderCommandBufferCommandRequestAsyncReadback &request_async_readback = std::get<RenderCommandBufferCommandRequestAsyncReadback>(buffer_command.data);
 
-          auto render_texture_it = m_opengl_render_textures.Find(request_async_readback.render_target_id.id);
-          if (render_texture_it != m_opengl_render_textures.end()) {
+          auto render_texture_it = m_storage.FindRenderTexture(request_async_readback.render_target_id.id);
+          if (render_texture_it != m_storage.GetRenderTextureEnd()) {
             AsyncRequestResult &async_request_result = render_frame->AddAsyncRequestResult();
             async_request_result.callback = request_async_readback.callback;
             async_request_result.result.region = request_async_readback.region;
@@ -496,8 +352,8 @@ namespace Hyperion::Rendering {
         continue;
       }
 
-      auto opengl_shader_it = m_opengl_shaders.Find(shader_id);
-      if (opengl_shader_it == m_opengl_shaders.end()) {
+      auto opengl_shader_it = m_storage.FindShader(shader_id);
+      if (opengl_shader_it == m_storage.GetShaderEnd()) {
         HYP_LOG_ERROR("OpenGL", "Failed to retrieve OpenGL shader!");
         continue;
       } else {
@@ -513,7 +369,7 @@ namespace Hyperion::Rendering {
       GroupedShader *grouped_shader = nullptr;
       if (shaders_it == grouped_shaders.end()) {
         GroupedShader new_grouped_shader;
-        new_grouped_shader.shader = &m_opengl_shaders.Get(shader_id);
+        new_grouped_shader.shader = &m_storage.GetShader(shader_id);
         grouped_shaders.Add(new_grouped_shader);
         grouped_shader = &grouped_shaders.GetLast();
       } else {
@@ -525,7 +381,7 @@ namespace Hyperion::Rendering {
       GroupedMaterial *grouped_material = nullptr;
       if (materials_it == materials.end()) {
         GroupedMaterial new_grouped_material;
-        new_grouped_material.material = &m_opengl_materials.Get(material_id);
+        new_grouped_material.material = &m_storage.GetMaterial(material_id);
         materials.Insert(material_id, new_grouped_material);
         grouped_material = &materials.Get(material_id);
       } else {
@@ -537,7 +393,7 @@ namespace Hyperion::Rendering {
       GroupedMesh *grouped_mesh = nullptr;
       if (meshes_it == meshes.end()) {
         GroupedMesh new_grouped_material;
-        new_grouped_material.mesh = &m_opengl_meshes.Get(mesh_id);
+        new_grouped_material.mesh = &m_storage.GetMesh(mesh_id);
         meshes.Insert(mesh_id, new_grouped_material);
         grouped_mesh = &meshes.Get(mesh_id);
       } else {
@@ -690,16 +546,16 @@ namespace Hyperion::Rendering {
       OpenGLUniformBufferCamera uniform_buffer_camera;
       uniform_buffer_camera.camera_view_matrix = Matrix4x4::Identity();
       uniform_buffer_camera.camera_projection_matrix = Matrix4x4::Orthographic(-half_width, half_width, -half_height, half_height, -1.0f, 1.0f);
-      glNamedBufferSubData(m_state.camera_uniform_buffer, 0, sizeof(OpenGLUniformBufferCamera), &uniform_buffer_camera);
+      glNamedBufferSubData(m_storage.GetStatic().camera_uniform_buffer, 0, sizeof(OpenGLUniformBufferCamera), &uniform_buffer_camera);
 
       glViewport(0, 0, width, height);
     }
 
     for (const RenderFrameContextObjectUI &element : elements) {
-      const OpenGLShader &opengl_shader = m_opengl_shaders.Get(element.shader_id);
+      const OpenGLShader &opengl_shader = m_storage.GetShader(element.shader_id);
       UseShader(opengl_shader);
 
-      const OpenGLMaterial &opengl_material = m_opengl_materials.Get(element.material_id);
+      const OpenGLMaterial &opengl_material = m_storage.GetMaterial(element.material_id);
       UseMaterial(opengl_shader, opengl_material);
       if (!element.enable_blending) {
         glDisable(GL_BLEND);
@@ -726,7 +582,7 @@ namespace Hyperion::Rendering {
         }
       }
 
-      OpenGLMesh &opengl_mesh = m_opengl_meshes.Get(element.mesh_id);
+      const OpenGLMesh &opengl_mesh = m_storage.GetMesh(element.mesh_id);
       UseMesh(opengl_mesh);
 
       DrawSubMesh(opengl_mesh.sub_meshes[0]);
@@ -736,30 +592,30 @@ namespace Hyperion::Rendering {
   //--------------------------------------------------------------
   void OpenGLRenderDriver::DrawObjectIds(const RenderFrameContext &render_frame_context, RenderTargetId render_target_id) {
     {
-      const RenderFrameContextCamera &render_frame_context_camera = render_frame_context.GetCameras()[m_state.camera_index];
+      const RenderFrameContextCamera &render_frame_context_camera = render_frame_context.GetCameras()[m_static.camera_index];
 
       OpenGLUniformBufferCamera uniform_buffer_camera;
       uniform_buffer_camera.camera_view_matrix = render_frame_context_camera.view_matrix;
       uniform_buffer_camera.camera_projection_matrix = render_frame_context_camera.projection_matrix;
-      glNamedBufferSubData(m_state.camera_uniform_buffer, 0, sizeof(OpenGLUniformBufferCamera), &uniform_buffer_camera);
+      glNamedBufferSubData(m_storage.GetStatic().camera_uniform_buffer, 0, sizeof(OpenGLUniformBufferCamera), &uniform_buffer_camera);
     }
 
     GLuint framebuffer = 0;
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, reinterpret_cast<GLint *>(&framebuffer));
 
     UseRenderTexture(render_target_id);
-    OpenGLRenderTexture &opengl_render_texture = m_opengl_render_textures.Get(render_target_id.id);
+    const OpenGLRenderTexture &opengl_render_texture = m_storage.GetRenderTexture(render_target_id.id);
     glDepthMask(GL_TRUE);
     GLuint clear_value = UINT32_MAX;
     glClearNamedFramebufferuiv(opengl_render_texture.framebuffer, GL_COLOR, GL_NONE, &clear_value);
     glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    const OpenGLShader &opengl_shader = m_state.object_id_shader;
+    const OpenGLShader &opengl_shader = m_storage.GetStatic().object_id_shader;
     UseShader(opengl_shader);
 
     for (const RenderFrameContextObjectMesh &mesh_object : render_frame_context.GetMeshObjects()) {
       OpenGLDebugGroup debug_group("DrawMesh");
-      OpenGLMesh &opengl_mesh = m_opengl_meshes.Get(mesh_object.mesh_id);
+      const OpenGLMesh &opengl_mesh = m_storage.GetMesh(mesh_object.mesh_id);
 
       GLint model_location = glGetUniformLocation(opengl_shader.program, "u_model");
       glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, mesh_object.local_to_world.elements);
@@ -798,9 +654,9 @@ namespace Hyperion::Rendering {
     data[7].position = Vector3(bounds.max.x, bounds.max.y, bounds.max.z);
     data[7].color = color;
 
-    glNamedBufferSubData(m_state.render_bounds_vertex_buffer, 0, data.GetLength() * sizeof(OpenGLImmediateVertex), data.GetData());
+    glNamedBufferSubData(m_storage.GetStatic().render_bounds_vertex_buffer, 0, data.GetLength() * sizeof(OpenGLImmediateVertex), data.GetData());
 
-    glBindVertexArray(m_state.render_bounds_vertex_array);
+    glBindVertexArray(m_storage.GetStatic().render_bounds_vertex_array);
     glDrawElementsBaseVertex(GL_LINES, 24, GL_UNSIGNED_INT, 0, 0);
   }
 
@@ -811,7 +667,7 @@ namespace Hyperion::Rendering {
 
     GLuint framebuffer = 0;
     if (render_target_id.id != RenderTargetId::Default().id) {
-      OpenGLRenderTexture &opengl_render_texture = m_opengl_render_textures.Get(render_target_id.id);
+      const OpenGLRenderTexture &opengl_render_texture = m_storage.GetRenderTexture(render_target_id.id);
 
       // We have to specify that we want to draw into all color attachments of the render texture.          
       uint32 color_attachment_count = opengl_render_texture.color_attachment_count;
@@ -943,8 +799,8 @@ namespace Hyperion::Rendering {
     GLuint texture = 0;
     if (texture_property.dimension == TextureDimension::RenderTexture) {
       // TODO: We should do more validation when setting a render texture.
-      auto it = m_opengl_render_textures.Find(texture_property.id);
-      if (it == m_opengl_render_textures.end()) {
+      auto it = m_storage.FindRenderTexture(texture_property.id);
+      if (it == m_storage.GetRenderTextureEnd()) {
         HYP_LOG_ERROR("OpenGL", "Trying to set non existing render texture as shader property!");
         return;
       } else {
@@ -952,8 +808,8 @@ namespace Hyperion::Rendering {
         texture = opengl_attachment.attachment;
       }
     } else {
-      auto it = m_opengl_textures.Find(texture_property.id);
-      if (it == m_opengl_textures.end()) {
+      auto it = m_storage.FindTexture2D(texture_property.id);
+      if (it == m_storage.GetTexture2DEnd()) {
         HYP_LOG_ERROR("OpenGL", "Trying to set non existing texture as shader property!");
         return;
       } else {
@@ -970,307 +826,6 @@ namespace Hyperion::Rendering {
     OpenGLDebugGroup debug_group("UseMesh");
 
     glBindVertexArray(opengl_mesh.vertex_array);
-  }
-
-  //--------------------------------------------------------------
-  void OpenGLRenderDriver::LoadAssets(RenderAssetContext &asset_context) {
-    HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadAssets");
-    OpenGLDebugGroup debug_group("LoadAssets");
-
-    // The order in which we load the assets is important.
-    // For example a material might reference a shader or texture which should always be loaded first.
-
-    for (RenderAssetShader &shader : asset_context.GetShaderAssetsToLoad()) {
-      LoadShader(shader);
-    }
-    for (RenderAssetTexture2D &texture_2d : asset_context.GetTexture2DAssetsToLoad()) {
-      LoadTexture2D(texture_2d);
-    }
-    for (RenderAssetRenderTexture &render_texture : asset_context.GetRenderTextureAssetsToLoad()) {
-      LoadRenderTexture(render_texture);
-    }
-    for (RenderAssetMaterial &material : asset_context.GetMaterialAssetsToLoad()) {
-      LoadMaterial(material);
-    }
-    for (RenderAssetMesh &mesh : asset_context.GetMeshAssetsToLoad()) {
-      LoadMesh(mesh);
-    }
-  }
-
-  //--------------------------------------------------------------
-  void OpenGLRenderDriver::LoadTexture2D(RenderAssetTexture2D &texture_2d) {
-    HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadTexture2D");
-
-    OpenGLTexture opengl_texture;
-    opengl_texture.id = texture_2d.id;
-
-    glCreateTextures(GL_TEXTURE_2D, 1, &opengl_texture.texture);
-
-    SetTextureAttributes(opengl_texture.texture, texture_2d.parameters.attributes);
-
-    TextureFormat format = texture_2d.parameters.format;
-    GLsizei width = texture_2d.parameters.width;
-    GLsizei height = texture_2d.parameters.height;
-    GLenum internal_format = OpenGLUtilities::GetTextureInternalFormat(format);
-    GLsizei mipmap_count = Math::Max(texture_2d.mipmap_count, 1);
-    glTextureStorage2D(opengl_texture.texture, mipmap_count, internal_format, width, height);
-
-    OpenGLUtilities::FlipTextureHorizontally(texture_2d.parameters.width, texture_2d.parameters.height, format, texture_2d.pixels);
-    GLenum format_value = OpenGLUtilities::GetTextureFormat(format);
-    GLenum format_type = OpenGLUtilities::GetTextureFormatType(format);
-    OpenGLUtilities::SetUnpackAlignmentForTextureFormat(format);
-    glTextureSubImage2D(opengl_texture.texture, 0, 0, 0, width, height, format_value, format_type, texture_2d.pixels.GetData());
-
-    if (texture_2d.parameters.attributes.use_mipmaps) {
-      glGenerateTextureMipmap(opengl_texture.texture);
-    }
-
-    m_opengl_textures.Insert(texture_2d.id, opengl_texture);
-  }
-
-  //--------------------------------------------------------------
-  void OpenGLRenderDriver::LoadRenderTexture(RenderAssetRenderTexture &render_texture) {
-    HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadRenderTexture");
-
-    if (m_opengl_render_textures.Contains(render_texture.id)) {
-      UnloadRenderTexture(render_texture.id);
-    }
-
-    // TODO: We should do some sort of validation.
-
-    uint64 attachment_count = render_texture.parameters.attachments.GetLength();
-    uint32 width = render_texture.parameters.width;
-    uint32 height = render_texture.parameters.height;
-
-    OpenGLRenderTexture opengl_render_texture;
-    opengl_render_texture.id = render_texture.id;
-    opengl_render_texture.attachments.Resize(attachment_count);
-    opengl_render_texture.width = width;
-    opengl_render_texture.height = height;
-
-    glCreateFramebuffers(1, &opengl_render_texture.framebuffer);
-
-    uint32 color_attachment_index = 0;
-    for (uint32 i = 0; i < attachment_count; i++) {
-      const RenderTextureAttachment &attachment = render_texture.parameters.attachments[i];
-      OpenGLRenderTextureAttachment &opengl_attachment = opengl_render_texture.attachments[i];
-      opengl_attachment.format = attachment.format;
-
-      if (attachment.format == RenderTextureFormat::Depth24Stencil8) {
-        glCreateRenderbuffers(1, &opengl_attachment.attachment);
-        glNamedRenderbufferStorage(opengl_attachment.attachment, GL_DEPTH24_STENCIL8, width, height);
-        glNamedFramebufferRenderbuffer(opengl_render_texture.framebuffer, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, opengl_attachment.attachment);
-      } else {
-        glCreateTextures(GL_TEXTURE_2D, 1, &opengl_attachment.attachment);
-
-        TextureAttributes attributes = attachment.attributes;
-        SetTextureAttributes(opengl_attachment.attachment, attributes);
-
-        GLenum internal_format = OpenGLUtilities::GetRenderTextureInternalFormat(attachment.format);
-        GLsizei mipmap_count = attributes.use_mipmaps ? Math::Max(render_texture.mipmap_count, 1) : 1;
-        glTextureStorage2D(opengl_attachment.attachment, mipmap_count, internal_format, width, height);
-
-        GLenum attachment_index = GL_COLOR_ATTACHMENT0 + color_attachment_index;
-        glNamedFramebufferTexture(opengl_render_texture.framebuffer, attachment_index, opengl_attachment.attachment, 0);
-        color_attachment_index++;
-      }
-    }
-
-    opengl_render_texture.color_attachment_count = color_attachment_index;
-
-    if (glCheckNamedFramebufferStatus(opengl_render_texture.framebuffer, GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE) {
-      m_opengl_render_textures.Insert(render_texture.id, opengl_render_texture);
-    } else {
-      HYP_LOG_ERROR("OpenGL", "Failed to create render texture!");
-    }
-
-  }
-
-  //--------------------------------------------------------------
-  void OpenGLRenderDriver::LoadShader(RenderAssetShader &shader) {
-    HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadShader");
-
-    OpenGLShader opengl_shader;
-    opengl_shader.id = shader.id;
-    opengl_shader.attributes = shader.data.attributes;
-
-    if (shader.is_valid) {
-      OpenGLShaderCompilationResult compilation_result = OpenGLShaderCompiler::Compile(shader.data.vertex_source.c_str(), shader.data.fragment_source.c_str());
-      if (compilation_result.success) {
-        opengl_shader.program = compilation_result.program;
-
-        opengl_shader.locations.Reserve(shader.data.properties.GetLength());
-        for (const ShaderProperty &property : shader.data.properties) {
-          opengl_shader.locations.Add(glGetUniformLocation(opengl_shader.program, property.name.c_str()));
-        }
-      } else {
-        opengl_shader.program = m_state.error_shader.program;
-      }
-    } else {
-      opengl_shader.program = m_state.error_shader.program;
-    }
-
-    auto shader_it = m_opengl_shaders.Find(shader.id);
-    if (shader_it == m_opengl_shaders.end()) {
-      m_opengl_shaders.Insert(shader.id, opengl_shader);
-    } else {
-      shader_it->second = opengl_shader;
-    }
-  }
-
-  //--------------------------------------------------------------
-  void OpenGLRenderDriver::LoadMaterial(RenderAssetMaterial &material) {
-    HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadMaterial");
-
-    auto material_it = m_opengl_materials.Find(material.id);
-    if (material_it == m_opengl_materials.end()) {
-      OpenGLMaterial opengl_material;
-      opengl_material.id = material.id;
-      opengl_material.shader = &m_opengl_shaders.Get(material.shader_id);;
-      opengl_material.properties = std::move(material.properties);
-
-      m_opengl_materials.Insert(material.id, opengl_material);
-    } else {
-      OpenGLMaterial &opengl_material = material_it->second;
-      opengl_material.properties = std::move(material.properties);
-    }
-  }
-
-  //--------------------------------------------------------------
-  void OpenGLRenderDriver::LoadMesh(RenderAssetMesh &mesh) {
-    HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadMesh");
-
-    const MeshData &data = mesh.data;
-    const MeshVertexFormat &vertex_format = mesh.vertex_format;
-
-    bool8 has_normals = data.normals.GetLength() > 0;
-    bool8 has_colors = data.colors.GetLength() > 0;
-    bool8 has_texture0 = data.texture0.GetLength() > 0;
-
-    uint32 vertex_count = static_cast<uint32>(data.positions.GetLength());
-    Array<byte> vertices(vertex_count * vertex_format.stride);
-    for (uint32 i = 0; i < vertex_count; i++) {
-      uint32 index = i * vertex_format.stride;
-
-      Vector3 &position = reinterpret_cast<Vector3 &>(vertices[index]);
-      position = data.positions[i];
-      index += MeshVertexFormat::VERTEX_ATTRIBUTE_SIZE_POSITION;
-
-      if (has_normals) {
-        Vector3 &normal = reinterpret_cast<Vector3 &>(vertices[index]);
-        normal = data.normals[i];
-        index += MeshVertexFormat::VERTEX_ATTRIBUTE_SIZE_NORMAL;
-      }
-      if (has_colors) {
-        Vector4 &color = reinterpret_cast<Vector4 &>(vertices[index]);
-        color = data.colors[i];
-        index += MeshVertexFormat::VERTEX_ATTRIBUTE_SIZE_COLOR;
-      }
-      if (has_texture0) {
-        Vector2 &texture0 = reinterpret_cast<Vector2 &>(vertices[index]);
-        texture0 = data.texture0[i];
-        index += MeshVertexFormat::VERTEX_ATTRIBUTE_SIZE_TEXTURE0;
-      }
-    }
-
-    OpenGLMesh opengl_mesh;
-    opengl_mesh.id = mesh.id;
-    opengl_mesh.sub_meshes = std::move(mesh.sub_meshes);
-
-    glCreateBuffers(1, &opengl_mesh.vertex_buffer);
-    glNamedBufferData(opengl_mesh.vertex_buffer, vertices.GetLength(), vertices.GetData(), GL_STATIC_DRAW);
-
-    glCreateBuffers(1, &opengl_mesh.index_buffer);
-    glNamedBufferData(opengl_mesh.index_buffer, data.indices.GetLength() * sizeof(data.indices[0]), data.indices.GetData(), GL_STATIC_DRAW);
-    opengl_mesh.index_count = static_cast<GLsizei>(data.indices.GetLength());
-
-    GLuint binding_index = 0;
-    GLsizei stride = vertex_format.stride;
-    GLuint relative_offset = 0;
-    glCreateVertexArrays(1, &opengl_mesh.vertex_array);
-    glVertexArrayVertexBuffer(opengl_mesh.vertex_array, binding_index, opengl_mesh.vertex_buffer, 0, stride);
-    glVertexArrayElementBuffer(opengl_mesh.vertex_array, opengl_mesh.index_buffer);
-
-    for (VertexAttribute vertex_attribute : vertex_format.attributes) {
-      GLuint attribute_index = OpenGLUtilities::GetAttributeIndexForVertextAttributeSize(vertex_attribute.kind);
-      GLint size = vertex_attribute.dimension;
-      GLenum type = OpenGLUtilities::GetVertexAttributeType(vertex_attribute.type);
-
-      glEnableVertexArrayAttrib(opengl_mesh.vertex_array, attribute_index);
-      glVertexArrayAttribFormat(opengl_mesh.vertex_array, attribute_index, size, type, false, relative_offset);
-      glVertexArrayAttribBinding(opengl_mesh.vertex_array, attribute_index, binding_index);
-
-      relative_offset += OpenGLUtilities::GetVertexAttributeSizeForVertexAttribute(vertex_attribute.type, vertex_attribute.dimension);
-    }
-
-    m_opengl_meshes.Insert(mesh.id, opengl_mesh);
-  }
-
-  //--------------------------------------------------------------
-  void OpenGLRenderDriver::UnloadAssets(RenderAssetContext &asset_context) {
-    HYP_PROFILE_SCOPE("OpenGLRenderDriver.UnloadAssets");
-    OpenGLDebugGroup debug_group("UnloadAssets");
-
-    for (AssetId shader_id : asset_context.GetShaderAssetsToUnload()) {
-      glDeleteProgram(m_opengl_shaders.Get(shader_id).program);
-      m_opengl_shaders.Remove(shader_id);
-    }
-    for (AssetId texture_2d_id : asset_context.GetTexture2DAssetsToUnload()) {
-      GLuint texture = m_opengl_textures.Get(texture_2d_id).texture;
-      glDeleteTextures(1, &texture);
-      m_opengl_textures.Remove(texture_2d_id);
-    }
-    for (AssetId render_texture_id : asset_context.GetRenderTextureAssetsToUnload()) {
-      UnloadRenderTexture(render_texture_id);
-    }
-    for (AssetId material_id : asset_context.GetMaterialAssetsToUnload()) {
-      m_opengl_materials.Remove(material_id);
-    }
-    for (AssetId mesh_id : asset_context.GetMeshAssetsToUnload()) {
-      auto mesh_it = m_opengl_meshes.Find(mesh_id);
-      if (mesh_it == m_opengl_meshes.end()) {
-        HYP_LOG_ERROR("OpenGL", "Trying to delete mesh {} which does not exist!", mesh_id);
-        HYP_DEBUG_BREAK;
-      } else {
-        OpenGLMesh &opengl_mesh = mesh_it->second;
-
-        glDeleteBuffers(1, &opengl_mesh.vertex_buffer);
-        glDeleteBuffers(1, &opengl_mesh.index_buffer);
-        glDeleteVertexArrays(1, &opengl_mesh.vertex_array);
-
-        m_opengl_meshes.Remove(mesh_id);
-      }
-    }
-  }
-
-  //--------------------------------------------------------------
-  void OpenGLRenderDriver::UnloadRenderTexture(AssetId render_texture_id) {
-    OpenGLRenderTexture &opengl_render_texture = m_opengl_render_textures.Get(render_texture_id);
-    for (OpenGLRenderTextureAttachment &opengl_attachment : opengl_render_texture.attachments) {
-      if (opengl_attachment.format == RenderTextureFormat::Depth24Stencil8) {
-        glDeleteRenderbuffers(1, &opengl_attachment.attachment);
-      } else {
-        glDeleteTextures(1, &opengl_attachment.attachment);
-      }
-    }
-    glDeleteFramebuffers(1, &opengl_render_texture.framebuffer);
-
-    m_opengl_render_textures.Remove(render_texture_id);
-  }
-
-  //--------------------------------------------------------------
-  void OpenGLRenderDriver::SetTextureAttributes(GLuint texture, TextureAttributes attributes) {
-    GLint wrap_mode = OpenGLUtilities::GetTextureWrapMode(attributes.wrap_mode);
-    glTextureParameteri(texture, GL_TEXTURE_WRAP_S, wrap_mode);
-    glTextureParameteri(texture, GL_TEXTURE_WRAP_T, wrap_mode);
-
-    GLint min_filter = OpenGLUtilities::GetTextureMinFilter(attributes.filter);
-    GLint mag_filter = OpenGLUtilities::GetTextureMaxFilter(attributes.filter);
-    glTextureParameteri(texture, GL_TEXTURE_MIN_FILTER, min_filter);
-    glTextureParameteri(texture, GL_TEXTURE_MAG_FILTER, mag_filter);
-
-    GLfloat anisotropic_filter_value = OpenGLUtilities::GetTextureAnisotropicFilter(attributes.anisotropic_filter);
-    glTextureParameterf(texture, GL_TEXTURE_MAX_ANISOTROPY, anisotropic_filter_value);
   }
 
 }

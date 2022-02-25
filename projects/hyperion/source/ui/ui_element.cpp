@@ -93,9 +93,9 @@ namespace Hyperion::UI {
 
   //--------------------------------------------------------------
   void UIElement::SetInteractable(bool8 is_interactable) {
-    m_state.is_interactable = is_interactable;
+    m_static.is_interactable = is_interactable;
 
-    if (!m_state.is_interactable) {
+    if (!m_static.is_interactable) {
       GetRenderer().color = m_style.m_color_block.disabled_color;
     } else {
       GetRenderer().color = m_style.m_color_block.normal_color;
@@ -335,17 +335,17 @@ namespace Hyperion::UI {
     UIEventType event_type = event.GetType();
 
     if (event_type == UIEventType::PointerDown) {
-      m_state.is_pressed = true;
+      m_static.is_pressed = true;
     } else if (event_type == UIEventType::PointerUp) {
-      m_state.is_pressed = false;
+      m_static.is_pressed = false;
     } else if (event_type == UIEventType::PointerEnter) {
-      m_state.is_highlighted = true;
+      m_static.is_highlighted = true;
     } else if (event_type == UIEventType::PointerExit) {
-      m_state.is_highlighted = false;
+      m_static.is_highlighted = false;
     } else if (event_type == UIEventType::Select) {
-      m_state.is_selected = true;
+      m_static.is_selected = true;
     } else if (event_type == UIEventType::Deselect) {
-      m_state.is_selected = false;
+      m_static.is_selected = false;
     }
 
     DoStateTransition(GetSelectionState());
@@ -404,13 +404,13 @@ namespace Hyperion::UI {
 
   //--------------------------------------------------------------
   SelectionState UIElement::GetSelectionState() const {
-    if (!m_state.is_interactable) {
+    if (!m_static.is_interactable) {
       return SelectionState::Disabled;
-    } else if (m_state.is_pressed) {
+    } else if (m_static.is_pressed) {
       return SelectionState::Pressed;
-    } else if (m_state.is_selected) {
+    } else if (m_static.is_selected) {
       return SelectionState::Selected;
-    } else if (m_state.is_highlighted) {
+    } else if (m_static.is_highlighted) {
       return SelectionState::Highlighted;
     } else {
       return SelectionState::Normal;

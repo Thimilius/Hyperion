@@ -6,55 +6,11 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/render/driver/render_driver.hpp"
+#include "hyperion/render/driver/opengl/opengl_storage.hpp"
 #include "hyperion/render/frame/render_frame.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
-
-  struct OpenGLAsset {
-    AssetId id;
-  };
-
-  struct OpenGLShader : public OpenGLAsset {
-    ShaderAttributes attributes;
-
-    Array<GLint> locations;
-    GLuint program;
-  };
-
-  struct OpenGLTexture : public OpenGLAsset {
-    GLuint texture;
-  };
-
-  struct OpenGLRenderTextureAttachment {
-    RenderTextureFormat format;
-
-    GLuint attachment;
-  };
-
-  struct OpenGLRenderTexture : public OpenGLAsset {
-    uint32 width;
-    uint32 height;
-    uint32 color_attachment_count = 0;
-    Array<OpenGLRenderTextureAttachment> attachments;
-
-    GLuint framebuffer;
-  };
-
-  struct OpenGLMaterial : public OpenGLAsset {
-    MaterialPropertyCollection properties;
-
-    OpenGLShader *shader;
-  };
-
-  struct OpenGLMesh : public OpenGLAsset {
-    Array<SubMesh> sub_meshes;
-
-    GLsizei index_count;
-    GLuint vertex_buffer;
-    GLuint index_buffer;
-    GLuint vertex_array;
-  };
 
   struct GroupedObject {
     Matrix4x4 local_to_world;
@@ -65,51 +21,26 @@ namespace Hyperion::Rendering {
   };
 
   struct GroupedMesh {
-    OpenGLMesh *mesh;
+    const OpenGLMesh *mesh;
 
     Array<GroupedObject> objects;
   };
 
   struct GroupedMaterial {
-    OpenGLMaterial *material;
+    const OpenGLMaterial *material;
 
     Map<AssetId, GroupedMesh> meshes;
   };
 
   struct GroupedShader {
-    OpenGLShader *shader;
+    const OpenGLShader *shader;
 
     Map<AssetId, GroupedMaterial> materials;
   };
 
-  struct OpenGLUniformBufferCamera {
-    Matrix4x4 camera_view_matrix;
-    Matrix4x4 camera_projection_matrix;
-  };
-
   struct OpenGLState {
-    OpenGLShader error_shader;
-
-    OpenGLShader object_id_shader;
-
-    GLuint fullscreen_shader;
-    GLuint fullscreen_vertex_array;
-
-    GLuint ui_shader;
-
     uint64 camera_index;
-    GLuint camera_uniform_buffer;
-
     GLuint lighting_uniform_buffer = -1;
-
-    GLuint render_bounds_vertex_buffer = -1;
-    GLuint render_bounds_index_buffer;
-    GLuint render_bounds_vertex_array;
-  };
-
-  struct OpenGLImmediateVertex {
-    Vector3 position;
-    Color color;
   };
 
   class OpenGLRenderDriver final : public IRenderDriver {
@@ -137,27 +68,11 @@ namespace Hyperion::Rendering {
     void UseMaterial(const OpenGLShader &opengl_shader, const OpenGLMaterial &opengl_material);
     void SetMaterialTextureProperty(ShaderPropertyStorage::Texture texture_property, uint32 texture_unit, GLuint program, GLuint location);
     void UseMesh(const OpenGLMesh &opengl_mesh);
-
-    void LoadAssets(RenderAssetContext &asset_context);
-    void LoadTexture2D(RenderAssetTexture2D &texture_2d);
-    void LoadRenderTexture(RenderAssetRenderTexture &render_texture);
-    void LoadShader(RenderAssetShader &shader);
-    void LoadMaterial(RenderAssetMaterial &material);
-    void LoadMesh(RenderAssetMesh &mesh);
-    void UnloadAssets(RenderAssetContext &asset_context);
-    void UnloadRenderTexture(AssetId render_texture_id);
-
-    void SetTextureAttributes(GLuint texture, TextureAttributes attributes);
   private:
     RenderStats m_stats;
 
-    Map<AssetId, OpenGLShader> m_opengl_shaders;
-    Map<AssetId, OpenGLTexture> m_opengl_textures;
-    Map<AssetId, OpenGLRenderTexture> m_opengl_render_textures;
-    Map<AssetId, OpenGLMaterial> m_opengl_materials;
-    Map<AssetId, OpenGLMesh> m_opengl_meshes;
-
-    OpenGLState m_state;
+    OpenGLState m_static;
+    OpenGLStorage m_storage;
 
     Array<GroupedShader> m_grouped_shaders;
   };

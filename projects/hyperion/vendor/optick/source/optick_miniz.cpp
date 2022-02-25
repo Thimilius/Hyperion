@@ -2246,14 +2246,14 @@ extern "C" {
 #define TINFL_MEMSET(p, c, l) memset(p, c, l)
 
 #define TINFL_CR_BEGIN  \
-    switch (r->m_state) \
+    switch (r->m_static) \
     {                   \
         case 0:
 #define TINFL_CR_RETURN(state_index, result) \
     do                                       \
     {                                        \
         status = result;                     \
-        r->m_state = state_index;            \
+        r->m_static = state_index;            \
         goto common_exit;                    \
         case state_index:;                   \
     }                                        \

@@ -2,6 +2,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/core/non_copyable.hpp"
 #include "hyperion/render/assets/render_assets_context.hpp"
 #include "hyperion/render/command/render_command_buffer.hpp"
 #include "hyperion/render/frame/render_frame_commands.hpp"

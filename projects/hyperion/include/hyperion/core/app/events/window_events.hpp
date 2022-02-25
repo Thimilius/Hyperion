@@ -56,16 +56,16 @@ namespace Hyperion {
 
   class WindowStateChangedAppEvent : public AppEvent {
   public:
-    WindowStateChangedAppEvent(WindowState state) : m_state(state) { }
+    WindowStateChangedAppEvent(WindowState state) : m_static(state) { }
 
-    inline WindowState GetState() const { return m_state; }
+    inline WindowState GetState() const { return m_static; }
 
     AppEventType GetType() const override { return AppEventType::WindowStateChanged; }
     AppEventCategory GetCategory() const override { return AppEventCategory::Window; }
   public:
     static AppEventType GetStaticType() { return AppEventType::WindowStateChanged; }
   private:
-    WindowState m_state;
+    WindowState m_static;
   };
 
 }
