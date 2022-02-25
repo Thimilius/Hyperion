@@ -212,8 +212,10 @@ namespace Hyperion::Editor {
 
       UIInputField *input_field = UIFactory::CreateInputField();
       input_field->SetLineType(InputFieldLineType::MultiLine);
-      input_field->SetAnchorPreset(AnchorPreset::MiddleCenter);
-      input_field->SetSize(Vector2(600.0f, 150.0f));
+      input_field->SetSize(Vector2(0.0f, 150.0f));
+      input_field->SetAnchorPreset(AnchorPreset::MiddleStretchHorizontal);
+      input_field->SetAnchorOffsetMin(Vector2(100.0f, 0.0f));
+      input_field->SetAnchorOffsetMax(Vector2(100.0f, 0.0f));
       input_field->GetStyle().SetColor(EditorStyle::COLOR_NORMAL_DARK);
       input_field->GetHierarchy().SetParent(bottom_bar_container);
       UILabel *input_label = input_field->Q<UILabel>();
@@ -253,9 +255,9 @@ namespace Hyperion::Editor {
       preview_header->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
       preview_header->GetHierarchy().SetParent(preview);
 
-// Preview Header.
+      // Preview Header.
       {
-      // Left.
+        // Left.
         {
           UIElement *preview_header_left = UIFactory::CreateElement();
           preview_header_left->SetAnchorPreset(AnchorPreset::StretchAll);
