@@ -25,7 +25,7 @@ namespace Hyperion::Editor {
     
     static void UpdateStatsLabel();
     static void UpdateHierarchyLabel();
-    static void UpdateHierarchyLabelBranch(World *world, EntityId branch, HierarchyComponent *branch_hierarchy, String &hierarchy_text, uint32 depth);
+    static void UpdateHierarchyLabelBranch(World *world, EntityId branch, HierarchyComponent *branch_hierarchy, uint32 depth);
     static void UpdateSelectionLabel();
 
     static void UpdateSystems();
@@ -49,6 +49,10 @@ namespace Hyperion::Editor {
     inline static UI::UILabel *s_label_stats;
     inline static UI::UILabel *s_label_properties;
     inline static UI::UILabel *s_label_hierarchy;
+
+    inline static UI::UIElement *s_hierarchy_container;
+
+    inline static Map<EntityId, UI::UIButton *> s_hierarchy;
   };
 
 }

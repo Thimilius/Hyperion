@@ -152,20 +152,12 @@ namespace Hyperion::Editor {
       hierarchy_panel->GetStyle().SetColor(EditorStyle::COLOR_NORMAL_DARK);
       hierarchy_panel->GetHierarchy().SetParent(s_root_element);
 
-      UIElement *hierarchy_container = UIFactory::CreateElement();
-      hierarchy_container->SetAnchorPreset(AnchorPreset::StretchAll);
-      hierarchy_container->SetAnchorOffsetMax(Vector2(3.0f, 3.0f));
-      hierarchy_container->SetAnchorOffsetMin(Vector2(3.0f, 3.0f));
-      hierarchy_container->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
-      hierarchy_container->GetHierarchy().SetParent(hierarchy_panel);
-
-      s_label_hierarchy = UIFactory::CreateLabel();
-      s_label_hierarchy->SetFont(s_font_text);
-      s_label_hierarchy->SetTextAlignment(TextAlignment::TopLeft);
-      s_label_hierarchy->SetAnchorPreset(AnchorPreset::StretchAll);
-      s_label_hierarchy->SetAnchorOffsetMax(Vector2(0.0f, 4.0f));
-      s_label_hierarchy->GetStyle().GetShadow().enabled = true;
-      s_label_hierarchy->GetHierarchy().SetParent(hierarchy_container);
+      s_hierarchy_container = UIFactory::CreateElement();
+      s_hierarchy_container->SetAnchorPreset(AnchorPreset::StretchAll);
+      s_hierarchy_container->SetAnchorOffsetMax(Vector2(3.0f, 3.0f));
+      s_hierarchy_container->SetAnchorOffsetMin(Vector2(3.0f, 3.0f));
+      s_hierarchy_container->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
+      s_hierarchy_container->GetHierarchy().SetParent(hierarchy_panel);
     }
 
     // Properties Panel.
@@ -364,6 +356,14 @@ namespace Hyperion::Editor {
       EntityCallback destroyed_callback;
       destroyed_callback.Connect<EditorUI::OnEntityDestroyed>();
       world->RegisterOnEntityDestroyed(destroyed_callback);
+
+      EntityId root = world->GetHierarchy()->GetFirstRoot();
+      uint64 root_count = world->GetHierarchy()->GetRootCount();
+      for (uint64 i = 0; i < root_count; i++) {
+        HierarchyComponent *root_hierarchy = world->GetComponent<HierarchyComponent>(root);
+        UpdateHierarchyLabelBranch(world, root, root_hierarchy, 0);
+        root = root_hierarchy->next_sibling;
+      }
     }
   }
 
@@ -421,39 +421,47 @@ namespace Hyperion::Editor {
     s_label_stats->SetText(stats_title);
   }
 
-
   //--------------------------------------------------------------
   void EditorUI::UpdateHierarchyLabel() {
-    World *world = EditorApplication::GetWorld();
 
-    String hierarchy_text;
-    EntityId root = world->GetHierarchy()->GetFirstRoot();
-    uint64 root_count = world->GetHierarchy()->GetRootCount();
-    for (uint64 i = 0; i < root_count; i++) {
-      HierarchyComponent *root_hierarchy = world->GetComponent<HierarchyComponent>(root);
-      UpdateHierarchyLabelBranch(world, root, root_hierarchy, hierarchy_text, 0);
-      root = root_hierarchy->next_sibling;
-    }
-    s_label_hierarchy->SetText(hierarchy_text);
   }
 
   //--------------------------------------------------------------
-  void EditorUI::UpdateHierarchyLabelBranch(World *world, EntityId branch, HierarchyComponent *branch_hierarchy, String &hierarchy_text, uint32 depth) {
+  void EditorUI::UpdateHierarchyLabelBranch(World *world, EntityId branch, HierarchyComponent *branch_hierarchy, uint32 depth) {
+    String hierarchy_text;
+
     NameComponent *name = world->GetComponent<NameComponent>(branch);
     for (uint32 i = 0; i < depth; i++) {
       hierarchy_text += "\t";
     }
 
     if (name) {
-      hierarchy_text += name->name + "\n";
+      hierarchy_text += name->name;
     } else {
       hierarchy_text += "Entity";
     }
 
+    UIButton *hierarchy_button = UIFactory::CreateButton();
+    hierarchy_button->SetSize(Vector2(0.0f, 15.0f));
+    hierarchy_button->SetAnchorPreset(AnchorPreset::TopStretchHorizontal);
+    hierarchy_button->GetHierarchy().SetParent(s_hierarchy_container);
+    hierarchy_button->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
+    hierarchy_button->SetPosition(Vector2(0.0f, s_hierarchy.GetLength() * -15.0f));
+    hierarchy_button->RegisterClickCallback([branch]() { 
+      EditorSelection::Select(branch);
+    });
+    UILabel *input_label = hierarchy_button->Q<UILabel>();
+    input_label->SetFont(s_font_text);
+    input_label->SetText(hierarchy_text);
+    input_label->SetTextAlignment(TextAlignment::MiddleLeft);
+    input_label->GetStyle().SetColor(Color::White());
+    input_label->GetStyle().GetShadow().enabled = true;
+    s_hierarchy.Insert(branch, hierarchy_button);
+
     EntityId child = branch_hierarchy->first_child;
     for (uint64 i = 0; i < branch_hierarchy->child_count; i++) {
       HierarchyComponent *child_hierarchy = world->GetComponent<HierarchyComponent>(child);
-      UpdateHierarchyLabelBranch(world, child, child_hierarchy, hierarchy_text, depth + 1);
+      UpdateHierarchyLabelBranch(world, child, child_hierarchy, depth + 1);
       child = child_hierarchy->next_sibling;
     }
   }
