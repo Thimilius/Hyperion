@@ -22,7 +22,8 @@ namespace Hyperion::Editor {
   private:
     static void OnEntityCreated(World *world, EntityId id);
     static void OnEntityDestroyed(World *world, EntityId id);
-    
+    static void OnEditorSelection(EntityId old_selection, EntityId new_selection);
+
     static void UpdateStatsLabel();
     static void UpdateHierarchyLabel();
     static void UpdateHierarchyLabelBranch(World *world, EntityId branch, HierarchyComponent *branch_hierarchy, uint32 depth);

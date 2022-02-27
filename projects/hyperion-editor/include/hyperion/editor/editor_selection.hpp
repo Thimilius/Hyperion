@@ -7,16 +7,31 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Editor {
 
+  using EditorSelectionCallback = Delegate<void(EntityId, EntityId)>;
+
   class EditorSelection final {
   public:
     static bool8 HasSelection() { return s_selection != Entity::EMPTY; }
     static EntityId GetSelection() { return s_selection; }
-    static void Select(EntityId selection) { s_selection = selection; }
+    static void Select(EntityId selection) {
+      if (s_selection != selection) {
+        EntityId old_selection = s_selection;
+        s_selection = selection;
+
+        for (auto callback : s_callbacks) {
+          callback(old_selection, selection);
+        }
+      }
+    }
+
+    static void RegisterSelectionCallback(const EditorSelectionCallback &callback) { s_callbacks.Add(callback); }
+    static void UnregisterSelectionCallback(const EditorSelectionCallback &callback) { s_callbacks.Remove(callback); }
   private:
     EditorSelection() = delete;
     ~EditorSelection() = delete;
   private:
     inline static EntityId s_selection = Entity::EMPTY;
+    inline static Array<EditorSelectionCallback> s_callbacks;
   };
 
 }

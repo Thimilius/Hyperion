@@ -364,6 +364,10 @@ namespace Hyperion::Editor {
         UpdateHierarchyLabelBranch(world, root, root_hierarchy, 0);
         root = root_hierarchy->next_sibling;
       }
+
+      EditorSelectionCallback selection_callback;
+      selection_callback.Connect<EditorUI::OnEditorSelection>();
+      EditorSelection::RegisterSelectionCallback(selection_callback);
     }
   }
 
@@ -412,6 +416,16 @@ namespace Hyperion::Editor {
   //--------------------------------------------------------------
   void EditorUI::OnEntityDestroyed(World *world, EntityId id) {
     HYP_TRACE("Destroyed Entity");
+  }
+
+  //--------------------------------------------------------------
+  void EditorUI::OnEditorSelection(EntityId old_selection, EntityId new_selection) {
+    if (old_selection != Entity::EMPTY) {
+      s_hierarchy.Get(old_selection)->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
+    }
+    if (new_selection != Entity::EMPTY) {
+      s_hierarchy.Get(new_selection)->GetStyle().SetColor(EditorStyle::COLOR_HIGHLIGHT);
+    }
   }
 
   //--------------------------------------------------------------
