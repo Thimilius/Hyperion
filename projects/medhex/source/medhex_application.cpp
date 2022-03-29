@@ -47,12 +47,30 @@ namespace Medhex {
   CameraController *g_camera_controller;
 
   //--------------------------------------------------------------
+  void SetMaterialByIndex(World *world, EntityId entity, Material *material, uint32 index) {
+    world->GetComponent<MeshComponent>(world->GetHierarchy()->GetChild(entity, index))->material = material;
+  }
+
+  //--------------------------------------------------------------
   void MedhexApplication::OnInitialize() {
+    RenderGizmos::SetShouldDrawGrid(false);
+
     g_world = WorldManager::CreateWorld();
     WorldManager::SetActiveWorld(g_world);
 
     g_camera = g_world->CreateEntity(EntityPrimitive::Camera);
     g_light = g_world->CreateEntity(EntityPrimitive::DirectionalLight);
+    g_world->GetComponent<LocalTransformComponent>(g_light)->rotation = Quaternion::FromEulerAngles(-45.0f, 45.0f, 0.0f);
+
+    Material *material_ground = AssetManager::CreateMaterial(AssetManager::GetShaderPrimitive(ShaderPrimitive::Standard));
+    material_ground->SetColor("m_color", Color(0.8862745f, 0.5137255f, 0.3411765f, 1.0f));
+    Material *material_grass = AssetManager::CreateMaterial(AssetManager::GetShaderPrimitive(ShaderPrimitive::Standard));
+    material_grass->SetColor("m_color", Color(0.2065237f, 0.8584906f, 0.6385639f, 1.0f));
+
+    Mesh *mesh = MeshLoader::Load("data/models/medieval/grass.obj").Unwrap();
+    EntityId hex = g_world->CreateMultiMeshEntity(mesh);
+    SetMaterialByIndex(g_world, hex, material_ground, 0);
+    SetMaterialByIndex(g_world, hex, material_grass, 1);
 
     g_camera_controller = new LookAroundCameraController(g_camera);
     g_camera_controller->Reset(g_world);
@@ -95,18 +113,17 @@ namespace Medhex {
 
   //--------------------------------------------------------------
   void MedhexApplication::UpdateTitle() {
-    String format = "Medhex - FPS: {} ({:.2f}ms) - VSync: {} - Draw calls: {}, Vertices: {}, Triangles: {} - Memory: {}";
+    String format = "Medhex - FPS: {} ({:.2f}ms) - VSync: {} - Draw calls: {}, Vertices: {}, Triangles: {}";
     RenderStats render_stats = RenderEngine::GetStats();
     String vsync = RenderEngine::GetVSyncMode() == VSyncMode::DontSync ? "Off" : "On";
-    uint64 memory = MemoryStats::GetGlobalMemory();
     String title = StringUtils::Format(format,
       Time::GetFPS(),
       Time::GetFrameTime(),
       vsync,
       render_stats.draw_calls,
       render_stats.vertex_count,
-      render_stats.triangle_count,
-      memory);
+      render_stats.triangle_count
+    );
 
     GetMainWindow()->SetTitle(title);
   }
