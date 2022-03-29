@@ -34,10 +34,10 @@ using namespace Hyperion::Rendering;
 #endif
 
 //-------------------- Definition Namespace --------------------
-namespace Sandbox {
+namespace Medhex {
 
   //--------------------------------------------------------------
-  void SandboxApplication::OnSetup(ApplicationSettings &settings) {
+  void MedhexApplication::OnSetup(ApplicationSettings &settings) {
     settings.render.backend = Rendering::RenderBackend::OpenGL;
     settings.render.threading_mode = Rendering::RenderThreadingMode::MultiThreaded;
     settings.render.vsync_mode = Rendering::VSyncMode::DontSync;
@@ -52,7 +52,7 @@ namespace Sandbox {
   CameraController *g_camera_controller;
 
   //--------------------------------------------------------------
-  void SandboxApplication::OnInitialize() {
+  void MedhexApplication::OnInitialize() {
     g_world = WorldManager::CreateWorld();
     WorldManager::SetActiveWorld(g_world);
 
@@ -114,7 +114,7 @@ namespace Sandbox {
   }
 
   //--------------------------------------------------------------
-  void SandboxApplication::OnUpdate(float32 delta_time) {
+  void MedhexApplication::OnUpdate(float32 delta_time) {
     if (Input::IsKeyHold(KeyCode::Control) && Input::IsKeyDown(KeyCode::W)) {
       Exit();
     }
@@ -157,12 +157,12 @@ namespace Sandbox {
   }
 
   //--------------------------------------------------------------
-  void SandboxApplication::OnTick() {
+  void MedhexApplication::OnTick() {
 
   }
 
   //--------------------------------------------------------------
-  void SandboxApplication::UpdateTitle() {
+  void MedhexApplication::UpdateTitle() {
     String format = "Sandbox - FPS: {} ({:.2f}ms) - VSync: {} - Draw calls: {}, Vertices: {}, Triangles: {} - Memory: {}";
     RenderStats render_stats = Rendering::RenderEngine::GetStats();
     String vsync = Rendering::RenderEngine::GetVSyncMode() == Rendering::VSyncMode::DontSync ? "Off" : "On";
@@ -183,5 +183,5 @@ namespace Sandbox {
 
 //--------------------------------------------------------------
 Application *Hyperion::CreateApplication() {
-  return new Sandbox::SandboxApplication();
+  return new Medhex::MedhexApplication();
 }

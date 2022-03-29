@@ -12,8 +12,8 @@ namespace Medhex {
     void OnSetup(Hyperion::ApplicationSettings &settings) override;
     void OnInitialize() override;
     void OnUpdate(float32 delta_time) override;
-    void OnTick() override;
   private:
+    void UpdateInput(float32 delta_time);
     void UpdateTitle();
   };
 
