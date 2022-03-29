@@ -94,6 +94,27 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
+  EntityId World::CreateMultiMeshEntity(Mesh *mesh) {
+    EntityId entity = Entity::EMPTY;
+    if (mesh->GetSubMeshCount() == 1) {
+      entity = CreateEntity(EntityPrimitive::Cube);
+      GetComponent<Rendering::MeshComponent>(entity)->mesh = mesh;
+    } else {
+      entity = CreateEntity(EntityPrimitive::Base);
+      for (uint32 i = 0; i < mesh->GetSubMeshCount(); i++) {
+        EntityId child = CreateEntity(EntityPrimitive::Cube);
+        Rendering::MeshComponent *mesh_component = GetComponent<Rendering::MeshComponent>(child);
+        mesh_component->mesh = mesh;
+        mesh_component->sub_mesh_index = i;
+        GetHierarchy()->SetParent(child, entity);
+      }
+    }
+
+    GetComponent<NameComponent>(entity)->name = "MultiMesh";
+    return entity;
+  }
+
+  //--------------------------------------------------------------
   void World::DestroyEntity(EntityId id, WorldHierarchyDestructionPolicy hierarchy_destruction_policy) {
     HYP_PROFILE_SCOPE("World.DestroyEntity");
 

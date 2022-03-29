@@ -13,6 +13,7 @@
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
+  class Mesh;
   class WorldManager;
 }
 
@@ -50,6 +51,7 @@ namespace Hyperion {
     EntityId GetByGuid(EntityGuid guid) const;
 
     EntityId CreateEntity(EntityPrimitive primitive = EntityPrimitive::Base, EntityGuid guid = EntityGuid::Generate());
+    EntityId CreateMultiMeshEntity(Mesh *mesh);
     void DestroyEntity(EntityId id, WorldHierarchyDestructionPolicy hierarchy_destruction_policy = WorldHierarchyDestructionPolicy::DestroyChildren);
 
     EntityArchetype *CreateArchetype(EntityId id);
