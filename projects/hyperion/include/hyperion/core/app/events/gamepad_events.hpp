@@ -10,6 +10,8 @@ namespace Hyperion {
 
   class GamepadAppEvent : public AppEvent {
   public:
+    virtual ~GamepadAppEvent() = default;
+  public:
     GamepadAppEvent(Gamepad gamepad) : m_gamepad(gamepad) { }
 
     inline Gamepad GetGamepad() const { return m_gamepad; }
@@ -20,6 +22,8 @@ namespace Hyperion {
   };
 
   class GamepadButtonAppEvent : public GamepadAppEvent {
+  public:
+    virtual ~GamepadButtonAppEvent() = default;
   public:
     GamepadButtonAppEvent(Gamepad gamepad, GamepadButtonCode button_code) : GamepadAppEvent(gamepad), m_button_code(button_code) { }
 

@@ -43,6 +43,8 @@ namespace Hyperion {
 
     class AppEvent {
     public:
+      virtual ~AppEvent() = default;
+    public:
       inline bool8 IsHandled() const { return m_handled; }
       inline void Handle() { m_handled = false; }
 

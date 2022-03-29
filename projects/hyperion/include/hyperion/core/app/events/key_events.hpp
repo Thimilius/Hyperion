@@ -10,6 +10,8 @@ namespace Hyperion {
 
   class KeyAppEvent : public AppEvent {
   public:
+    virtual ~KeyAppEvent() = default;
+  public:
     KeyAppEvent(KeyCode key_code, KeyModifier key_modifier) : m_key_code(key_code), m_key_modifier(key_modifier) { }
 
     inline KeyCode GetKeyCode() const { return m_key_code; }

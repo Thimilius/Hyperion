@@ -10,6 +10,8 @@ namespace Hyperion {
 
   class MouseButtonAppEvent : public AppEvent {
   public:
+    virtual ~MouseButtonAppEvent() = default;
+  public:
     MouseButtonAppEvent(MouseButtonCode mouse_button_code, KeyModifier key_modifier) : m_mouse_button_code(mouse_button_code), m_key_modifier(key_modifier) { }
 
     inline MouseButtonCode GetMouseButtonCode() const { return m_mouse_button_code; }
