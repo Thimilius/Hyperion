@@ -55,19 +55,46 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
+  EntityId WorldHierarchy::GetChild(EntityId parent, uint32 index) {
+    if (!m_world->IsAlive(parent)) {
+      HYP_LOG_WARN("Entity", "Trying to get child of nonexistent entity with id {}.", parent);
+      return Entity::EMPTY;
+    }
+
+    HierarchyComponent *parent_hierarchy = m_world->GetComponent<HierarchyComponent>(parent);
+    HYP_ASSERT(parent_hierarchy);
+    if (index < 0 || index >= parent_hierarchy->child_count) {
+      return Entity::EMPTY;
+    }
+
+    uint32 current_index = 0;
+    EntityId current_child = parent_hierarchy->first_child;
+    while (current_index < index) {
+      HierarchyComponent *child_hierarchy = m_world->GetComponent<HierarchyComponent>(current_child);
+      HYP_ASSERT(child_hierarchy);
+      current_child = child_hierarchy->next_sibling;
+      current_index++;
+    }
+
+    return current_child;
+  }
+
+  //--------------------------------------------------------------
   void WorldHierarchy::UpdateTransform(WorldHierarchyTransformUpdate update, EntityId branch) {
     if (update == WorldHierarchyTransformUpdate::Branch) {
-      if (m_world->IsAlive(branch)) {
-        HierarchyComponent *branch_hierarchy = m_world->GetComponent<HierarchyComponent>(branch);
-        DerivedTransformComponent *parent_derived_transform = nullptr;
-        if (branch_hierarchy->parent != Entity::EMPTY) {
-          parent_derived_transform = m_world->GetComponent<DerivedTransformComponent>(branch_hierarchy->parent);
-        }
-
-        HierarchyTransformSystem::UpdateBranch(m_world, branch, branch_hierarchy, parent_derived_transform);
-      } else {
+      if (!m_world->IsAlive(branch)) {
         HYP_LOG_WARN("Entity", "Trying to update transform of nonexistent entity with id {}.", branch);
       }
+
+      HierarchyComponent *branch_hierarchy = m_world->GetComponent<HierarchyComponent>(branch);
+      HYP_ASSERT(branch_hierarchy);
+      DerivedTransformComponent *parent_derived_transform = nullptr;
+      if (branch_hierarchy->parent != Entity::EMPTY) {
+        parent_derived_transform = m_world->GetComponent<DerivedTransformComponent>(branch_hierarchy->parent);
+        HYP_ASSERT(parent_derived_transform);
+      }
+
+      HierarchyTransformSystem::UpdateBranch(m_world, branch, branch_hierarchy, parent_derived_transform);
     } else if (update == WorldHierarchyTransformUpdate::All) {
       HierarchyTransformSystem hierarchy_transform_system;
       hierarchy_transform_system.Run(m_world);

@@ -37,6 +37,7 @@ namespace Hyperion {
     EntityId GetLastRoot() const { return m_last_root; }
 
     void SetParent(EntityId entity, EntityId parent, WorldHierarchyTransformUpdate update = WorldHierarchyTransformUpdate::None);
+    EntityId GetChild(EntityId parent, uint32 index);
 
     void UpdateTransform(WorldHierarchyTransformUpdate update = WorldHierarchyTransformUpdate::Branch, EntityId branch = Entity::EMPTY);
   private:
