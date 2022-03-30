@@ -57,7 +57,7 @@ namespace Hyperion::Rendering {
     Vector3 camera_position;
   };
 
-  struct DrawingParametes {
+  struct DrawingParameters {
     LayerMask filter_mask = LayerMask::Everything;
     PerObjectData per_object_data = PerObjectData::Nothing;
     ShaderRenderOrder render_order = ShaderRenderOrder::Opaque;
@@ -66,7 +66,7 @@ namespace Hyperion::Rendering {
 
   struct RenderFrameCommandDrawMeshes {
     CullingResults culling_results;
-    DrawingParametes drawing_parameters;
+    DrawingParameters drawing_parameters;
     Array<uint32> sorted_objects;
   };
 

@@ -63,7 +63,7 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void RenderFrame::DrawMeshes(CullingResults &culling_results, DrawingParametes drawing_parameters) {
+  void RenderFrame::DrawMeshes(CullingResults &culling_results, DrawingParameters drawing_parameters) {
     RenderFrameCommandDrawMeshes draw_meshes;
     draw_meshes.culling_results = culling_results;
     draw_meshes.drawing_parameters = drawing_parameters;

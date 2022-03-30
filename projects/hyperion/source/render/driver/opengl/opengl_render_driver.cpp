@@ -333,7 +333,7 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::PrepareObjects(RenderFrame *render_frame, const Array<uint32> &sorted_objects, DrawingParametes drawing_parameters) {
+  void OpenGLRenderDriver::PrepareObjects(RenderFrame *render_frame, const Array<uint32> &sorted_objects, DrawingParameters drawing_parameters) {
     HYP_PROFILE_SCOPE("OpenGLRenderDriver.PrepareObjects");
 
     Array<GroupedShader> grouped_shaders;
@@ -480,7 +480,7 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::DrawMeshes(const RenderFrameContextEnvironment &environment, const Array<RenderFrameContextLight> &lights, DrawingParametes drawing_parameters) {
+  void OpenGLRenderDriver::DrawMeshes(const RenderFrameContextEnvironment &environment, const Array<RenderFrameContextLight> &lights, DrawingParameters drawing_parameters) {
     HYP_PROFILE_SCOPE("OpenGLRenderDriver.DrawMeshes");
 
     for (const GroupedShader &grouped_shader : m_grouped_shaders) {

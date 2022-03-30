@@ -86,7 +86,7 @@ namespace Hyperion::Rendering {
       render_frame->ExecuteCommandBuffer(command_buffer);
     }
 
-    DrawingParametes drawing_parameters_opaque;
+    DrawingParameters drawing_parameters_opaque;
     drawing_parameters_opaque.filter_mask = LayerMask::Everything;
     drawing_parameters_opaque.per_object_data = PerObjectData::LightIndices;
     drawing_parameters_opaque.render_order = ShaderRenderOrder::Opaque;
@@ -94,7 +94,7 @@ namespace Hyperion::Rendering {
     drawing_parameters_opaque.sorting_settings.criteria = SortingCriteria::Opaque;
     render_frame->DrawMeshes(culling_results, drawing_parameters_opaque);
 
-    DrawingParametes drawing_parameters_transparent;
+    DrawingParameters drawing_parameters_transparent;
     drawing_parameters_transparent.filter_mask = LayerMask::Everything;
     drawing_parameters_transparent.per_object_data = PerObjectData::Nothing;
     drawing_parameters_transparent.render_order = ShaderRenderOrder::Transparent;

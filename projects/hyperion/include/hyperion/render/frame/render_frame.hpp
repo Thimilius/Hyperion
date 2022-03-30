@@ -26,7 +26,7 @@ namespace Hyperion::Rendering {
 
     void SetCamera(uint64 camera_index);
     void ExecuteCommandBuffer(const RenderCommandBuffer &command_buffer);
-    void DrawMeshes(CullingResults &culling_results, DrawingParametes drawing_parameters);
+    void DrawMeshes(CullingResults &culling_results, DrawingParameters drawing_parameters);
     void DrawUI();
     void DrawObjectIds(RenderTargetId render_target_id);
     void DrawGizmos();
