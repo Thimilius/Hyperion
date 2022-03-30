@@ -9,6 +9,7 @@ namespace Medhex {
 
   class MedhexApplication : public Hyperion::Application {
   protected:
+    void RegisterTypes() override;
     void OnSetup(Hyperion::ApplicationSettings &settings) override;
     void OnInitialize() override;
     void OnUpdate(float32 delta_time) override;

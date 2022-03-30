@@ -31,6 +31,12 @@ using namespace Hyperion::Rendering;
 //-------------------- Definition Namespace --------------------
 namespace Medhex {
 
+  struct HexComponent : public IComponent {
+    int32 q = 0;
+    int32 r = 0;
+    int32 s = 0;
+  };
+
   //--------------------------------------------------------------
   void MedhexApplication::OnSetup(ApplicationSettings &settings) {
     settings.render.backend = RenderBackend::OpenGL;
@@ -44,16 +50,57 @@ namespace Medhex {
   EntityId g_parent;
   EntityId g_child;
 
+  Mesh *g_mesh_hex;
+  Material *g_material_ground;
+  Material *g_material_grass;
+
   CameraController *g_camera_controller;
 
   //--------------------------------------------------------------
-  void SetMaterialByIndex(World *world, EntityId entity, Material *material, uint32 index) {
-    world->GetComponent<MeshComponent>(world->GetHierarchy()->GetChild(entity, index))->material = material;
+  void SetMaterialByIndex(EntityId entity, Material *material, uint32 index) {
+    g_world->GetComponent<MeshComponent>(g_world->GetHierarchy()->GetChild(entity, index))->material = material;
+  }
+
+  //--------------------------------------------------------------
+  EntityId CreateHex(int32 q, int32 r) {
+    EntityId entity = g_world->CreateMultiMeshEntity(g_mesh_hex);
+    SetMaterialByIndex(entity, g_material_ground, 0);
+    SetMaterialByIndex(entity, g_material_grass, 1);
+
+    HexComponent *hex = g_world->AddComponent<HexComponent>(entity);
+    hex->q = q;
+    hex->r = r;
+    hex->s = -q - r;
+
+    LocalTransformComponent *transform = g_world->GetComponent<LocalTransformComponent>(entity);
+
+    float32 size = 0.5773503f;
+    float32 width = Math::Sqrt(3.0f) * size;
+    float32 height = 2.0f * size;
+
+    float32 horizontal = width;
+    float32 vertical = height * 3.0f / 4.0f;
+
+    transform->position = Vector3(horizontal * (q + r / 2.0f), 0.0f, -vertical * r);
+
+    return entity;
+  }
+
+  //--------------------------------------------------------------
+  void MedhexApplication::RegisterTypes() {
+    MetaRegistry::Reflect<HexComponent>("HexComponent")
+      .Base<IComponent>();
   }
 
   //--------------------------------------------------------------
   void MedhexApplication::OnInitialize() {
     RenderGizmos::SetShouldDrawGrid(false);
+
+    g_mesh_hex = MeshLoader::Load("data/models/medieval/grass.obj").Unwrap();
+    g_material_ground = AssetManager::CreateMaterial(AssetManager::GetShaderPrimitive(ShaderPrimitive::Standard));
+    g_material_ground->SetColor("m_color", Color(0.8862745f, 0.5137255f, 0.3411765f, 1.0f));
+    g_material_grass = AssetManager::CreateMaterial(AssetManager::GetShaderPrimitive(ShaderPrimitive::Standard));
+    g_material_grass->SetColor("m_color", Color(0.2065237f, 0.8584906f, 0.6385639f, 1.0f));
 
     g_world = WorldManager::CreateWorld();
     WorldManager::SetActiveWorld(g_world);
@@ -61,19 +108,16 @@ namespace Medhex {
     g_camera = g_world->CreateEntity(EntityPrimitive::Camera);
     g_light = g_world->CreateEntity(EntityPrimitive::DirectionalLight);
     g_world->GetComponent<LocalTransformComponent>(g_light)->rotation = Quaternion::FromEulerAngles(-45.0f, 45.0f, 0.0f);
-
-    Material *material_ground = AssetManager::CreateMaterial(AssetManager::GetShaderPrimitive(ShaderPrimitive::Standard));
-    material_ground->SetColor("m_color", Color(0.8862745f, 0.5137255f, 0.3411765f, 1.0f));
-    Material *material_grass = AssetManager::CreateMaterial(AssetManager::GetShaderPrimitive(ShaderPrimitive::Standard));
-    material_grass->SetColor("m_color", Color(0.2065237f, 0.8584906f, 0.6385639f, 1.0f));
-
-    Mesh *mesh = MeshLoader::Load("data/models/medieval/grass.obj").Unwrap();
-    EntityId hex = g_world->CreateMultiMeshEntity(mesh);
-    SetMaterialByIndex(g_world, hex, material_ground, 0);
-    SetMaterialByIndex(g_world, hex, material_grass, 1);
-
     g_camera_controller = new LookAroundCameraController(g_camera);
     g_camera_controller->Reset(g_world);
+
+    int32 map_size = 10;
+    for (int32 r = 0; r < map_size; r++) {
+      int32 r_offset = r >> 1;
+      for (int32 q = 0 - r_offset; q < map_size - r_offset; q++) {
+        CreateHex(q, r);
+      }
+    }
 
     UpdateTitle();
   }
