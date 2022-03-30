@@ -29,7 +29,7 @@ namespace Hyperion {
     aiProcess_FlipWindingOrder |      // Flip winding order to be clockwise.                                           
     aiProcess_ValidateDataStructure;  // Validation.
 
-//--------------------------------------------------------------
+  //--------------------------------------------------------------
   Result<Mesh *, Error> AssimpMeshLoader::Load(const String &path) {
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(path, g_assimp_import_flags);
