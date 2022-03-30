@@ -64,11 +64,11 @@ project "hyperion"
             "%{prj.location}/vendor/glad/source/glad_wgl.c"
 		}
 		
-function linkhyperion()
+function linkhyperion(path)
 	filter { }
 
-	includedirs { "projects/hyperion/include" }
-	includedirs { "projects/hyperion/vendor/optick/include" }
+	includedirs { path .. "projects/hyperion/include" }
+	includedirs { path .. "projects/hyperion/vendor/optick/include" }
 
 	links { "hyperion" }
 	
@@ -76,7 +76,7 @@ function linkhyperion()
 		defines { "HYP_CONSOLE" }
 
 	filter "system:windows"
-		libdirs { "projects/hyperion/vendor/vulkan/lib/windows" }
+		libdirs { path .. "projects/hyperion/vendor/vulkan/lib/windows" }
 		links { "opengl32", "PowrProf", "vulkan-1" }
 	
 	filter { "system:windows", "configurations:debug" }
@@ -102,65 +102,4 @@ function linkhyperion()
 		links { package_bullet_release_links }
 		
 	filter { }
-
 end
-
-project "hyperion-sandbox"
-	location "projects/hyperion-sandbox"
-	
-	language "C++"
-	cppdialect "C++20"
-	architecture "x86_64"
-	kind "WindowedApp"
-	
-	staticruntime "On"
-	exceptionhandling "Off"
-	rtti "Off"
-	flags { "FatalCompileWarnings" }
-	
-	linkhyperion()
-
-	files {
-		"%{prj.location}/**.hpp",
-		"%{prj.location}/**.h",
-		"%{prj.location}/**.c",
-		"%{prj.location}/**.cpp"
-	}
-	excludes { "%{prj.location}/resource.rc" }
-	includedirs { "%{prj.location}/include" }
-		
-    filter "system:windows"
-		files { "%{prj.location}/resource.rc" }
-		postbuildcommands {
-		    "{COPY} %{cfg.targetdir}/%{prj.name}.exe ../../run_tree/hyperion.exe*"
-	    }
-		
-project "hyperion-editor"
-	location "projects/hyperion-editor"
-	
-	language "C++"
-	cppdialect "C++20"
-	architecture "x86_64"
-	kind "WindowedApp"
-	
-	staticruntime "On"
-	exceptionhandling "Off"
-	rtti "Off"
-	flags { "FatalCompileWarnings" }
-
-	linkhyperion()
-
-	files {
-		"%{prj.location}/**.hpp",
-		"%{prj.location}/**.h",
-		"%{prj.location}/**.c",
-		"%{prj.location}/**.cpp"
-	}
-	excludes { "%{prj.location}/resource.rc" }
-	includedirs { "%{prj.location}/include" }
-		
-    filter "system:windows"
-		files { "%{prj.location}/resource.rc" }
-		postbuildcommands {
-		    "{COPY} %{cfg.targetdir}/%{prj.name}.exe ../../run_tree/hyperion.exe*"
-	    }

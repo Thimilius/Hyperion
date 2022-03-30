@@ -1,6 +1,0 @@
-#ifndef HYP_EDITOR_RESOURCES
-#define HYP_EDITOR_RESOURCES
-
-MAINICON ICON "../../../run_tree/icon/icon.ico"
-
-#endif
