@@ -35,6 +35,8 @@ namespace Medhex {
     int32 q = 0;
     int32 r = 0;
     int32 s = 0;
+
+    float32 seed = 0.0f;
   };
 
   //--------------------------------------------------------------
@@ -119,6 +121,10 @@ namespace Medhex {
       }
     }
 
+    for (EntityId hex : g_world->GetView<HexComponent>()) {
+      g_world->GetComponent<HexComponent>(hex)->seed = Random::Get() * Math::PI * 2.0f;
+    }
+
     UpdateTitle();
   }
 
@@ -126,6 +132,10 @@ namespace Medhex {
   void MedhexApplication::OnUpdate(float32 delta_time) {
     UpdateInput(delta_time);
     UpdateTitle();
+
+    for (EntityId hex : g_world->GetView<HexComponent>()) {
+      g_world->GetComponent<LocalTransformComponent>(hex)->position.y = 0.25f * Math::Sin(Time::GetTime() + g_world->GetComponent<HexComponent>(hex)->seed);
+    }
   }
 
   //--------------------------------------------------------------

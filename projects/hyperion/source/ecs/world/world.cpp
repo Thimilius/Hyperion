@@ -97,12 +97,12 @@ namespace Hyperion {
   EntityId World::CreateMultiMeshEntity(Mesh *mesh) {
     EntityId entity = Entity::EMPTY;
     if (mesh->GetSubMeshCount() == 1) {
-      entity = CreateEntity(EntityPrimitive::Cube);
+      entity = CreateEntity(EntityPrimitive::Quad);
       GetComponent<Rendering::MeshComponent>(entity)->mesh = mesh;
     } else {
       entity = CreateEntity(EntityPrimitive::Base);
       for (uint32 i = 0; i < mesh->GetSubMeshCount(); i++) {
-        EntityId child = CreateEntity(EntityPrimitive::Cube);
+        EntityId child = CreateEntity(EntityPrimitive::Quad);
         Rendering::MeshComponent *mesh_component = GetComponent<Rendering::MeshComponent>(child);
         mesh_component->mesh = mesh;
         mesh_component->sub_mesh_index = i;
