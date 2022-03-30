@@ -99,14 +99,17 @@ namespace Hyperion {
     if (mesh->GetSubMeshCount() == 1) {
       entity = CreateEntity(EntityPrimitive::Quad);
       GetComponent<Rendering::MeshComponent>(entity)->mesh = mesh;
+      GetComponent<Rendering::LocalMeshBoundsComponent>(entity)->bounds = mesh->GetBounds();
     } else {
       entity = CreateEntity(EntityPrimitive::Base);
       for (uint32 i = 0; i < mesh->GetSubMeshCount(); i++) {
         EntityId child = CreateEntity(EntityPrimitive::Quad);
+        GetHierarchy()->SetParent(child, entity);
+
         Rendering::MeshComponent *mesh_component = GetComponent<Rendering::MeshComponent>(child);
         mesh_component->mesh = mesh;
         mesh_component->sub_mesh_index = i;
-        GetHierarchy()->SetParent(child, entity);
+        GetComponent<Rendering::LocalMeshBoundsComponent>(child)->bounds = mesh->GetBounds();
       }
     }
 
