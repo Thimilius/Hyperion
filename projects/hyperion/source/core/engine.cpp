@@ -224,10 +224,12 @@ namespace Hyperion {
     s_running = false;
   }
 
+#ifdef HYP_EDITOR
   //--------------------------------------------------------------
   void Engine::SetEngineMode(EngineMode mode) {
     s_mode = mode;
   }
+#endif
 
   //--------------------------------------------------------------
   void Engine::PreInitialize() {

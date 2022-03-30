@@ -1,3 +1,5 @@
+include "packages.lua"
+
 project "hyperion"
 	location "projects/hyperion"
 	
