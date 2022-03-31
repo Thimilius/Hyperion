@@ -67,6 +67,7 @@ namespace Hyperion {
     if (m_width != width || m_height != height) {
       m_width = width;
       m_height = height;
+      m_mipmap_count = TextureUtilities::CalculateMipmapCount(m_width, m_height);
 
       SetDirty();
     }
