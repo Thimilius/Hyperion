@@ -48,8 +48,8 @@ namespace Hyperion::Editor {
       render_texture_parameters.width = m_wrapped_pipeline->GetRenderTargetWidth();
       render_texture_parameters.height = m_wrapped_pipeline->GetRenderTargetHeight();
       render_texture_parameters.attachments = {
-          { RenderTextureFormat::UInt32, render_texture_attributes },
-          { RenderTextureFormat::Depth24Stencil8, render_texture_attributes },
+        { RenderTextureFormat::UInt32, render_texture_attributes, true },
+        { RenderTextureFormat::Depth24Stencil8, render_texture_attributes, false },
       };
       m_object_ids_render_texture = AssetManager::CreateRenderTexture(render_texture_parameters);
     }
@@ -58,8 +58,8 @@ namespace Hyperion::Editor {
       render_texture_parameters.width = m_wrapped_pipeline->GetRenderTargetWidth();
       render_texture_parameters.height = m_wrapped_pipeline->GetRenderTargetHeight();
       render_texture_parameters.attachments = {
-          { RenderTextureFormat::RGBA32, render_texture_attributes },
-          { RenderTextureFormat::Depth24Stencil8, render_texture_attributes },
+        { RenderTextureFormat::RGBA32, render_texture_attributes, true },
+        { RenderTextureFormat::Depth24Stencil8, render_texture_attributes, false },
       };
       m_editor_render_texture = AssetManager::CreateRenderTexture(render_texture_parameters);
     }
@@ -109,6 +109,7 @@ namespace Hyperion::Editor {
     if (Input::IsMouseButtonUp(MouseButtonCode::Left)) {
       Vector2 mouse_position = Input::GetMousePosition().ToFloat();
       Vector2 ui_space_point = UI::UIElement::ScreenPointToUISpacePoint(mouse_position);
+
       if (EditorUI::GetPreviewElement()->ContainsScreenPoint(mouse_position)) {
         render_frame->DrawObjectIds(m_object_ids_render_texture->GetRenderTargetId());
 

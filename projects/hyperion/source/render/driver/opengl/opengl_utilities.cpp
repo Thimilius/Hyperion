@@ -13,7 +13,7 @@ namespace Hyperion::Rendering {
     if ((clear_flags & ClearFlags::Color) == ClearFlags::Color) {
       result |= GL_COLOR_BUFFER_BIT;
     }
-    if ((clear_flags & ClearFlags::Depth) == ClearFlags::Depth) {
+    if ((clear_flags & ClearFlags::Depth24) == ClearFlags::Depth24) {
       result |= GL_DEPTH_BUFFER_BIT;
     }
     if ((clear_flags & ClearFlags::Stencil) == ClearFlags::Stencil) {
@@ -136,16 +136,41 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
+  bool8 OpenGLUtilities::IsRenderTextureFormatAColor(RenderTextureFormat format) {
+    switch (format) {
+      case RenderTextureFormat::RGBA32:
+      case RenderTextureFormat::UInt32: return true;
+      case RenderTextureFormat::Depth24:
+      case RenderTextureFormat::Depth24Stencil8: return false;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return false;
+    }
+  }
+
+  //--------------------------------------------------------------
+  GLenum OpenGLUtilities::GetRenderTextureAttachmentType(RenderTextureFormat format) {
+    switch (format) {
+      case RenderTextureFormat::RGBA32: return GL_COLOR_ATTACHMENT0;
+      case RenderTextureFormat::UInt32: return GL_COLOR_ATTACHMENT0;
+      case RenderTextureFormat::Depth24: return GL_DEPTH_ATTACHMENT;
+      case RenderTextureFormat::Depth24Stencil8: return GL_DEPTH_STENCIL_ATTACHMENT;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return false;
+    }
+  }
+
+  //--------------------------------------------------------------
   GLenum OpenGLUtilities::GetRenderTextureInternalFormat(RenderTextureFormat internal_format) {
     switch (internal_format) {
       case RenderTextureFormat::RGBA32: return GL_RGBA8;
       case RenderTextureFormat::UInt32: return GL_R32UI;
+      case RenderTextureFormat::Depth24: return GL_DEPTH_COMPONENT24;
+      case RenderTextureFormat::Depth24Stencil8: return GL_DEPTH24_STENCIL8;
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
     }
   }
 
   //--------------------------------------------------------------
   GLenum OpenGLUtilities::GetRenderTextureFormat(RenderTextureFormat format) {
+    // FIXME: Missing formats.
     switch (format) {
       case RenderTextureFormat::RGBA32: return GL_RGBA;
       case RenderTextureFormat::UInt32: return GL_RED_INTEGER;
@@ -155,6 +180,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   GLenum OpenGLUtilities::GetRenderTextureFormatType(RenderTextureFormat format_type) {
+    // FIXME: Missing formats.
     switch (format_type) {
       case RenderTextureFormat::RGBA32: return GL_UNSIGNED_BYTE;
       case RenderTextureFormat::UInt32: return GL_UNSIGNED_INT;
@@ -164,6 +190,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   GLsizei OpenGLUtilities::GetRenderTextureBufferSize(RectInt region, RenderTextureFormat format) {
+    // FIXME: Missing formats.
     GLsizei region_size = region.width * region.height;
     switch (format) {
       case RenderTextureFormat::RGBA32: return region_size * 4 * sizeof(byte);

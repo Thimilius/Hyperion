@@ -91,6 +91,15 @@ namespace Hyperion::Rendering {
 
           break;
         }
+        case RenderFrameCommandType::DrawShadows:
+        {
+          HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawShadows");
+          OpenGLDebugGroup debug_group("DrawShadows");
+
+          const RenderFrameCommandDrawShadows &draw_shadows = std::get<RenderFrameCommandDrawShadows>(frame_command.data);
+
+          break;
+        }
         case RenderFrameCommandType::DrawUI:
         {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawUI");
@@ -668,15 +677,6 @@ namespace Hyperion::Rendering {
     GLuint framebuffer = 0;
     if (render_target_id.id != RenderTargetId::Default().id) {
       const OpenGLRenderTexture &opengl_render_texture = m_storage.GetRenderTexture(render_target_id.id);
-
-      // We have to specify that we want to draw into all color attachments of the render texture.          
-      uint32 color_attachment_count = opengl_render_texture.color_attachment_count;
-      Array<GLenum> buffers(color_attachment_count);
-      for (GLenum i = 0; i < color_attachment_count; i++) {
-        buffers[i] = GL_COLOR_ATTACHMENT0 + i;
-      }
-      glNamedFramebufferDrawBuffers(opengl_render_texture.framebuffer, color_attachment_count, buffers.GetData());
-
       framebuffer = opengl_render_texture.framebuffer;
     }
 

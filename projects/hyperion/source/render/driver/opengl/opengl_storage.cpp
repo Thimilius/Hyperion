@@ -242,37 +242,51 @@ namespace Hyperion::Rendering {
     uint32 color_attachment_index = 0;
     for (uint32 i = 0; i < attachment_count; i++) {
       const RenderTextureAttachment &attachment = render_texture.parameters.attachments[i];
-      OpenGLRenderTextureAttachment &opengl_attachment = opengl_render_texture.attachments[i];
-      opengl_attachment.format = attachment.format;
+      RenderTextureFormat format = attachment.format;
 
-      if (attachment.format == RenderTextureFormat::Depth24Stencil8) {
-        glCreateRenderbuffers(1, &opengl_attachment.attachment);
-        glNamedRenderbufferStorage(opengl_attachment.attachment, GL_DEPTH24_STENCIL8, width, height);
-        glNamedFramebufferRenderbuffer(opengl_render_texture.framebuffer, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, opengl_attachment.attachment);
-      } else {
+      OpenGLRenderTextureAttachment &opengl_attachment = opengl_render_texture.attachments[i];
+      opengl_attachment.format = format;
+
+      GLenum opengl_attachment_type = OpenGLUtilities::GetRenderTextureAttachmentType(format);
+      // For a color attachment we will always get GL_COLOR_ATTACHMENT0.
+      // This means we need to get the proper index for the color attachment.
+      if (OpenGLUtilities::IsRenderTextureFormatAColor(format)) {
+        opengl_attachment_type += color_attachment_index;
+        color_attachment_index++;
+      }
+      GLenum opengl_internal_format = OpenGLUtilities::GetRenderTextureInternalFormat(format);
+
+      // A readable attachment will be created as a texture otherwise as a renderbuffer.
+      if (attachment.readable) {
         glCreateTextures(GL_TEXTURE_2D, 1, &opengl_attachment.attachment);
 
         TextureAttributes attributes = attachment.attributes;
         SetTextureAttributes(opengl_attachment.attachment, attributes);
 
-        GLenum internal_format = OpenGLUtilities::GetRenderTextureInternalFormat(attachment.format);
         GLsizei mipmap_count = attributes.use_mipmaps ? Math::Max(render_texture.mipmap_count, 1) : 1;
-        glTextureStorage2D(opengl_attachment.attachment, mipmap_count, internal_format, width, height);
+        glTextureStorage2D(opengl_attachment.attachment, mipmap_count, opengl_internal_format, width, height);
 
-        GLenum attachment_index = GL_COLOR_ATTACHMENT0 + color_attachment_index;
-        glNamedFramebufferTexture(opengl_render_texture.framebuffer, attachment_index, opengl_attachment.attachment, 0);
-        color_attachment_index++;
+        glNamedFramebufferTexture(opengl_render_texture.framebuffer, opengl_attachment_type, opengl_attachment.attachment, 0);
+      } else {
+        glCreateRenderbuffers(1, &opengl_attachment.attachment);
+        glNamedRenderbufferStorage(opengl_attachment.attachment, opengl_internal_format, width, height);
+        glNamedFramebufferRenderbuffer(opengl_render_texture.framebuffer, opengl_attachment_type, GL_RENDERBUFFER, opengl_attachment.attachment);
       }
     }
 
-    opengl_render_texture.color_attachment_count = color_attachment_index;
+    // For now we specify that we want to draw into all color attachments of the render texture.
+    uint32 color_attachment_count = color_attachment_index;
+    Array<GLenum> buffers(color_attachment_count);
+    for (GLenum i = 0; i < color_attachment_count; i++) {
+      buffers[i] = GL_COLOR_ATTACHMENT0 + i;
+    }
+    glNamedFramebufferDrawBuffers(opengl_render_texture.framebuffer, color_attachment_count, buffers.GetData());
 
     if (glCheckNamedFramebufferStatus(opengl_render_texture.framebuffer, GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE) {
       m_render_textures.Insert(render_texture.id, opengl_render_texture);
     } else {
       HYP_LOG_ERROR("OpenGL", "Failed to create render texture!");
     }
-
   }
 
   //--------------------------------------------------------------

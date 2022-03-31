@@ -19,6 +19,7 @@ namespace Hyperion::Rendering {
     ExecuteCommandBuffer,
 
     DrawMeshes,
+    DrawShadows,
     DrawUI,
     DrawGizmos,
     DrawObjectIds,
@@ -64,10 +65,18 @@ namespace Hyperion::Rendering {
     SortingSettings sorting_settings;
   };
 
+  struct ShadowParameters {
+    uint32 light_index = 0;
+  };
+
   struct RenderFrameCommandDrawMeshes {
     CullingResults culling_results;
     DrawingParameters drawing_parameters;
     Array<uint32> sorted_objects;
+  };
+
+  struct RenderFrameCommandDrawShadows {
+    ShadowParameters shadow_parameters;
   };
 
   struct RenderFrameCommandDrawUI {
@@ -102,6 +111,7 @@ namespace Hyperion::Rendering {
       RenderFrameCommandSetCamera,
       RenderFrameCommandExecuteCommandBuffer,
       RenderFrameCommandDrawMeshes,
+      RenderFrameCommandDrawShadows,
       RenderFrameCommandDrawUI,
       RenderFrameCommandDrawObjectIds,
       RenderFrameCommandDrawGizmos,

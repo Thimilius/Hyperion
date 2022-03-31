@@ -27,6 +27,8 @@ namespace Hyperion::Rendering {
     static GLint GetTextureMaxFilter(TextureFilter filter);
     static GLfloat GetTextureAnisotropicFilter(TextureAnisotropicFilter anisotropic_filter);
 
+    static bool8 IsRenderTextureFormatAColor(RenderTextureFormat format);
+    static GLenum GetRenderTextureAttachmentType(RenderTextureFormat format);
     static GLenum GetRenderTextureInternalFormat(RenderTextureFormat internal_format);
     static GLenum GetRenderTextureFormat(RenderTextureFormat format);
     static GLenum GetRenderTextureFormatType(RenderTextureFormat format_type);

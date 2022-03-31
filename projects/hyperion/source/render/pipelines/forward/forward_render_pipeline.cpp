@@ -26,8 +26,8 @@ namespace Hyperion::Rendering {
     render_texture_parameters.width = m_render_target_width;
     render_texture_parameters.height = m_render_target_height;
     render_texture_parameters.attachments = {
-        { RenderTextureFormat::RGBA32, render_texture_attributes },
-        { RenderTextureFormat::Depth24Stencil8, render_texture_attributes },
+      { RenderTextureFormat::RGBA32, render_texture_attributes, true },
+      { RenderTextureFormat::Depth24Stencil8, render_texture_attributes, false },
     };
 
     m_target_render_texture = AssetManager::CreateRenderTexture(render_texture_parameters);

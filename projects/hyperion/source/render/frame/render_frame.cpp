@@ -113,6 +113,15 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
+  void RenderFrame::DrawShadows(ShadowParameters shadow_parameters) {
+    RenderFrameCommandDrawShadows draw_shadows;
+    draw_shadows.shadow_parameters = shadow_parameters;
+
+    RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::DrawShadows);
+    command.data = draw_shadows;
+  }
+
+  //--------------------------------------------------------------
   void RenderFrame::DrawUI() {
     RenderFrameCommandDrawUI draw_ui;
 

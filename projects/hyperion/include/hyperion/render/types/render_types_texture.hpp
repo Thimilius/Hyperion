@@ -60,12 +60,14 @@ namespace Hyperion::Rendering {
   enum class RenderTextureFormat {
     RGBA32,
     UInt32,
+    Depth24,
     Depth24Stencil8,
   };
 
   struct RenderTextureAttachment {
     RenderTextureFormat format;
     TextureAttributes attributes;
+    bool8 readable = true;
   };
 
   struct RenderTextureParameters {
