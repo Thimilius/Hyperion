@@ -1,6 +1,9 @@
 //------------------------ Header Guard ------------------------
 #pragma once
 
+//---------------------- Library Includes ----------------------
+#include <vulkan/vulkan.h>
+
 //---------------------- Project Includes ----------------------
 #include "hyperion/render/render_context.hpp"
 #include "hyperion/render/driver/vulkan/vulkan_render_driver.hpp"
@@ -17,9 +20,13 @@ namespace Hyperion::Rendering {
     void Initialize(Window *main_window, const RenderContextDescriptor &descriptor) override;
     void Shutdown() override;
   private:
+    void CreateInstance();
+  private:
     RenderContextProperties m_properties;
 
     VulkanRenderDriver m_render_driver;
+
+    VkInstance m_instance;
   };
 
 }

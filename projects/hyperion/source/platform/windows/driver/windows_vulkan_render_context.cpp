@@ -9,12 +9,12 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void WindowsVulkanRenderContext::Initialize(Window *main_window, const RenderContextDescriptor &descriptor) {
-
+    VulkanRenderContext::Initialize(main_window, descriptor);
   }
 
   //--------------------------------------------------------------
   void WindowsVulkanRenderContext::Shutdown() {
-
+    VulkanRenderContext::Shutdown();
   }
 
   //--------------------------------------------------------------
