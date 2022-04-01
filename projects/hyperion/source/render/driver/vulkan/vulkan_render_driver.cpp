@@ -27,9 +27,4 @@ namespace Hyperion::Rendering {
 
   }
 
-  //--------------------------------------------------------------
-  void VulkanRenderDriver::ResetStats() {
-
-  }
-
 }

@@ -43,15 +43,12 @@ namespace Hyperion::Rendering {
     GLuint lighting_uniform_buffer = -1;
   };
 
-  class OpenGLRenderDriver final : public IRenderDriver {
+  class OpenGLRenderDriver final : public RenderDriver {
   public:
     void Initialize() override;
     void HandleAssets(RenderAssetContext &asset_context) override;
     void Render(RenderFrame *render_frame) override;
     void Shutdown() override;
-
-    inline void ResetStats() override { m_stats = RenderStats(); }
-    inline RenderStats GetStats() const override { return m_stats; }
   private:
     void ExecuteRenderFrame(RenderFrame *render_frame);
     void ExecuteCommandBuffer(RenderFrame *render_frame, const RenderCommandBuffer &command_buffer);
@@ -69,8 +66,6 @@ namespace Hyperion::Rendering {
     void SetMaterialTextureProperty(ShaderPropertyStorage::Texture texture_property, uint32 texture_unit, GLuint program, GLuint location);
     void UseMesh(const OpenGLMesh &opengl_mesh);
   private:
-    RenderStats m_stats;
-
     OpenGLState m_static;
     OpenGLStorage m_storage;
 
