@@ -20,11 +20,15 @@ namespace Hyperion::Rendering {
     void Initialize(Window *main_window, const RenderContextDescriptor &descriptor) override;
     void Shutdown() override;
   private:
+    void QueryLayersAndExtensions();
     void CreateInstance();
   private:
     RenderContextProperties m_properties;
 
     VulkanRenderDriver m_render_driver;
+
+    Array<VkLayerProperties> m_instance_layers;
+    Array<VkExtensionProperties> m_instance_extensions;
 
     VkInstance m_instance;
   };
