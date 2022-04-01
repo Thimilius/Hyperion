@@ -17,6 +17,7 @@
 #include "hyperion/core/app/events/mouse_events.hpp"
 #include "hyperion/core/app/events/window_events.hpp"
 #include "hyperion/platform/windows/driver/windows_opengl_render_context.hpp"
+#include "hyperion/platform/windows/driver/windows_vulkan_render_context.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -720,6 +721,10 @@ namespace Hyperion {
         UnregisterClassW(helper_window_class_name, instance);
         DestroyWindow(helper_window_handle);
 
+        return render_driver_context;
+      }
+      case Rendering::RenderBackend::Vulkan: {
+        Rendering::IRenderContext *render_driver_context = new Rendering::WindowsVulkanRenderContext();
         return render_driver_context;
       }
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;

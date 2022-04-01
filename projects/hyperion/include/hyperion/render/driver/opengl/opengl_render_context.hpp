@@ -24,8 +24,6 @@ namespace Hyperion::Rendering {
 
   class OpenGLRenderContext : public IRenderContext {
   public:
-    virtual ~OpenGLRenderContext() override = default;
-  public:
     inline RenderContextProperties GetProperties() const override { return m_properties; }
 
     inline IRenderDriver *GetDriver() { return &m_render_driver; }

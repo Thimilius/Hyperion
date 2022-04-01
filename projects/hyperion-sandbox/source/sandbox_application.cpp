@@ -38,7 +38,7 @@ namespace Medhex {
 
   //--------------------------------------------------------------
   void MedhexApplication::OnSetup(ApplicationSettings &settings) {
-    settings.render.backend = Rendering::RenderBackend::OpenGL;
+    settings.render.backend = Rendering::RenderBackend::Vulkan;
     settings.render.threading_mode = Rendering::RenderThreadingMode::MultiThreaded;
     settings.render.vsync_mode = Rendering::VSyncMode::DontSync;
   }

@@ -62,7 +62,7 @@ namespace Hyperion::Rendering {
 
   struct MeshVertexFormat {
     uint32 stride;
-    Array<Rendering::VertexAttribute> attributes;
+    Array<VertexAttribute> attributes;
 
     inline static uint32 VERTEX_ATTRIBUTE_SIZE_POSITION = sizeof(float32) * 3;
     inline static uint32 VERTEX_ATTRIBUTE_SIZE_NORMAL = sizeof(float32) * 3;

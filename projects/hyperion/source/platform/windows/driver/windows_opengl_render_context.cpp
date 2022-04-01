@@ -2,8 +2,10 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/core/app/window.hpp"
 #include "hyperion/platform/windows/driver/windows_opengl_render_context.hpp"
+
+//---------------------- Project Includes ----------------------
+#include "hyperion/core/app/window.hpp"
 
 //---------------------- Library Includes ----------------------
 #include <glad/glad_wgl.h>

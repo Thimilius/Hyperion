@@ -11,7 +11,6 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-
   class RenderFrame final : public INonCopyable {
   public:
     void Clear();
