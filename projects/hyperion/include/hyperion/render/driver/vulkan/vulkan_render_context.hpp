@@ -8,6 +8,11 @@
 #include "hyperion/render/render_context.hpp"
 #include "hyperion/render/driver/vulkan/vulkan_render_driver.hpp"
 
+//-------------------- Forward Declarations --------------------
+namespace Hyperion::Rendering {
+  class VulkanRenderDriver;
+}
+
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
@@ -24,6 +29,8 @@ namespace Hyperion::Rendering {
     RenderContextProperties GetProperties() const override { return m_properties; }
 
     IRenderDriver *GetDriver() override { return &m_render_driver; }
+    VkInstance GetInstance() const { return m_instance; }
+    VkPhysicalDevice GetPhysicalDevice() const { return m_physical_device; }
 
     void Initialize(Window *main_window, const RenderContextDescriptor &descriptor) override;
     void Shutdown() override;
@@ -63,6 +70,8 @@ namespace Hyperion::Rendering {
 #ifdef HYP_DEBUG
     VkDebugUtilsMessengerEXT m_debug_messenger = VK_NULL_HANDLE;
 #endif
+  private:
+    friend class VulkanRenderDriver;
   };
 
 }

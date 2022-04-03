@@ -22,6 +22,8 @@ namespace Hyperion::Rendering {
 #endif
     PickPhysicalDevice();
 
+    m_render_driver.Setup(this);
+
     HYP_LOG_INFO("Vulkan", "Initialized Vulkan graphics driver!");
   }
 
