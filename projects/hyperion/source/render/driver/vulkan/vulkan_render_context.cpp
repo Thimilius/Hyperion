@@ -17,10 +17,12 @@ namespace Hyperion::Rendering {
   void VulkanRenderContext::Initialize(Window *main_window, const RenderContextDescriptor &descriptor) {
     QueryLayersAndExtensions();
     CreateInstance();
-
 #ifdef HYP_DEBUG
     RegisterDebugMessageCallback();
 #endif
+    PickPhysicalDevice();
+
+    HYP_LOG_INFO("Vulkan", "Initialized Vulkan graphics driver!");
   }
 
   //--------------------------------------------------------------
@@ -82,6 +84,50 @@ namespace Hyperion::Rendering {
     HYP_VULKAN_CHECK(vkCreateInstance(&instance_create_info, nullptr, &m_instance), "Failed to create vulkan instance!");
   }
 
+#ifdef HYP_DEBUG
+  //--------------------------------------------------------------
+  void VulkanRenderContext::RegisterDebugMessageCallback() {
+    VkDebugUtilsMessengerCreateInfoEXT messenger_create_info = { };
+    messenger_create_info.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+    messenger_create_info.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+    messenger_create_info.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT
+      | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT
+      | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+    messenger_create_info.pfnUserCallback = DebugMessageCallback;
+    messenger_create_info.pUserData = nullptr;
+
+    auto creation_function = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(LoadFunction("vkCreateDebugUtilsMessengerEXT"));
+    HYP_VULKAN_CHECK(creation_function(m_instance, &messenger_create_info, nullptr, &m_debug_messenger), "Failed to create debug messenger!");
+  }
+#endif
+
+  //--------------------------------------------------------------
+  void VulkanRenderContext::PickPhysicalDevice() {
+    uint32 device_count = 0;
+    HYP_VULKAN_CHECK(vkEnumeratePhysicalDevices(m_instance, &device_count, nullptr), "Failed to get physical device count!");
+    if (device_count == 0) {
+      HYP_PANIC_MESSAGE("Vulkan", "Failed to find physical device with Vulkan support!");
+    }
+
+    Array<VkPhysicalDevice> physical_devices;
+    physical_devices.Resize(device_count);
+    HYP_VULKAN_CHECK(vkEnumeratePhysicalDevices(m_instance, &device_count, physical_devices.GetData()), "Failed to get physical devices!");
+
+    struct QueueIndices {
+      int32 i;
+    };
+
+    for (auto device : physical_devices) {
+      if (IsDeviceSuitable(device)) {
+        m_physical_device = device;
+        break;
+      }
+    }
+    if (m_physical_device == VK_NULL_HANDLE) {
+      HYP_PANIC_MESSAGE("Vulkan", "Failed to find suitable physical device!");
+    }
+  }
+
   //--------------------------------------------------------------
   Array<const char *> VulkanRenderContext::GetAndValidateInstanceLayer() {
     Array<const char *> layers;
@@ -136,25 +182,6 @@ namespace Hyperion::Rendering {
     return false;
   }
 
-#ifdef HYP_DEBUG
-  //--------------------------------------------------------------
-  void VulkanRenderContext::RegisterDebugMessageCallback() {
-    VkDebugUtilsMessengerCreateInfoEXT messenger_create_info = { };
-    messenger_create_info.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-    messenger_create_info.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT
-      | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT
-      | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-    messenger_create_info.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT
-      | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT
-      | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-    messenger_create_info.pfnUserCallback = DebugMessageCallback;
-    messenger_create_info.pUserData = nullptr;
-
-    auto creation_function = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(LoadFunction("vkCreateDebugUtilsMessengerEXT"));
-    HYP_VULKAN_CHECK(creation_function(m_instance, &messenger_create_info, nullptr, &m_debug_messenger), "Failed to create debug messenger!");
-  }
-#endif
-
   //--------------------------------------------------------------
   void *VulkanRenderContext::LoadFunction(const char *name) {
     void *function = vkGetInstanceProcAddr(m_instance, name);
@@ -167,14 +194,51 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
+  bool8 VulkanRenderContext::IsDeviceSuitable(VkPhysicalDevice device) {
+    VkPhysicalDeviceProperties device_properties;
+    vkGetPhysicalDeviceProperties(device, &device_properties);
+    VkPhysicalDeviceFeatures device_features;
+    vkGetPhysicalDeviceFeatures(device, &device_features);
+
+    QueueFamilyIndices indices = FindQueueFamilyIndices(device);
+    return indices.IsValid();
+  }
+
+  //--------------------------------------------------------------
+  VulkanRenderContext::QueueFamilyIndices VulkanRenderContext::FindQueueFamilyIndices(VkPhysicalDevice device) {
+    QueueFamilyIndices indices = { };
+    indices.graphics_family = -1;
+
+    uint32 queue_family_count = 0;
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &queue_family_count, nullptr);
+
+    Array<VkQueueFamilyProperties> queue_families;
+    queue_families.Resize(queue_family_count);
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &queue_family_count, queue_families.GetData());
+
+    for (int32 i = 0; i < static_cast<int32>(queue_family_count); i++) {
+      VkQueueFamilyProperties &queue_family = queue_families[i];
+      if (queue_family.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+        indices.graphics_family = i;
+      }
+    }
+
+    return indices;
+  }
+
+  //--------------------------------------------------------------
   VKAPI_ATTR VkBool32 VKAPI_CALL VulkanRenderContext::DebugMessageCallback(
     VkDebugUtilsMessageSeverityFlagBitsEXT severity,
     VkDebugUtilsMessageTypeFlagsEXT type,
     const VkDebugUtilsMessengerCallbackDataEXT *callback_data,
     void *user_data) {
 
-    HYP_LOG_ERROR("Vulkan", "Validation: {}", callback_data->pMessage);
-    HYP_DEBUG_BREAK;
+    if (severity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {
+      HYP_LOG_ERROR("Vulkan", "Validation: {}", callback_data->pMessage);
+      HYP_DEBUG_BREAK;
+    } else if (severity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
+      HYP_LOG_WARN("Vulkan", "Validation: {}", callback_data->pMessage);
+    }
 
     return VK_FALSE;
   }

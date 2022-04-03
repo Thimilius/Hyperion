@@ -12,6 +12,14 @@
 namespace Hyperion::Rendering {
 
   class VulkanRenderContext : public IRenderContext {
+  private:
+    struct QueueFamilyIndices {
+      int32 graphics_family = -1;
+
+      bool IsValid() {
+        return graphics_family >= 0;
+      }
+    };
   public:
     RenderContextProperties GetProperties() const override { return m_properties; }
 
@@ -22,13 +30,18 @@ namespace Hyperion::Rendering {
   private:
     void QueryLayersAndExtensions();
     void CreateInstance();
+#ifdef HYP_DEBUG
+    void RegisterDebugMessageCallback();
+#endif
+    void PickPhysicalDevice();
 
     Array<const char *> GetAndValidateInstanceLayer();
     bool8 SupportsInstanceLayer(const char *layer_name);
     Array<const char *> GetAndValidateInstanceExtensions();
     bool8 SupportsInstanceExtension(const char *extension_name);
 
-    void RegisterDebugMessageCallback();
+    bool8 IsDeviceSuitable(VkPhysicalDevice device);
+    QueueFamilyIndices FindQueueFamilyIndices(VkPhysicalDevice device);
 
     void *LoadFunction(const char *name);
   private:
@@ -45,9 +58,10 @@ namespace Hyperion::Rendering {
     Array<VkLayerProperties> m_instance_layers;
     Array<VkExtensionProperties> m_instance_extensions;
 
-    VkInstance m_instance;
+    VkInstance m_instance = VK_NULL_HANDLE;
+    VkPhysicalDevice m_physical_device = VK_NULL_HANDLE;
 #ifdef HYP_DEBUG
-    VkDebugUtilsMessengerEXT m_debug_messenger;
+    VkDebugUtilsMessengerEXT m_debug_messenger = VK_NULL_HANDLE;
 #endif
   };
 
