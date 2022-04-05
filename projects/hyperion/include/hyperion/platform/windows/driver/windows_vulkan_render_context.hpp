@@ -18,6 +18,10 @@ namespace Hyperion::Rendering {
     void MakeCurrent(Window *window) override;
     void SwapBuffers(Window *window) override;
     void SetVSyncMode(VSyncMode vsync_mode) override;
+  protected:
+    Array<const char *> GetRequiredExtensions() const override;
+
+    VkResult CreateSurface(Window *window, VkInstance instance, VkSurfaceKHR *surface) override;
   };
 
 }

@@ -34,11 +34,16 @@ namespace Hyperion::Rendering {
 
     void Initialize(Window *main_window, const RenderContextDescriptor &descriptor) override;
     void Shutdown() override;
+  protected:
+    virtual Array<const char *> GetRequiredExtensions() const;
+
+    virtual VkResult CreateSurface(Window *window, VkInstance instance, VkSurfaceKHR *surface) = 0;
   private:
     void QueryLayersAndExtensions();
     void CreateInstance();
 #ifdef HYP_DEBUG
     void RegisterDebugMessageCallback();
+    void FillDebugMessengerCreateInfoStruct(VkDebugUtilsMessengerCreateInfoEXT *messenger_create_info);
 #endif
     void PickPhysicalDevice();
 
@@ -70,6 +75,7 @@ namespace Hyperion::Rendering {
 #ifdef HYP_DEBUG
     VkDebugUtilsMessengerEXT m_debug_messenger = VK_NULL_HANDLE;
 #endif
+    VkSurfaceKHR m_surface;
   private:
     friend class VulkanRenderDriver;
   };

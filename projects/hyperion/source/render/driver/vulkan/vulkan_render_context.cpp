@@ -10,8 +10,8 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-  constexpr bool8 LOG_LAYERS = false;
-  constexpr bool8 LOG_EXTENSIONS = false;
+  constexpr bool8 LOG_LAYERS = true;
+  constexpr bool8 LOG_EXTENSIONS = true;
 
   //--------------------------------------------------------------
   void VulkanRenderContext::Initialize(Window *main_window, const RenderContextDescriptor &descriptor) {
@@ -24,11 +24,17 @@ namespace Hyperion::Rendering {
 
     m_render_driver.Setup(this);
 
+    if (CreateSurface(main_window, m_instance, &m_surface) != VK_SUCCESS) {
+      HYP_PANIC_MESSAGE("Vulkan", "Failed to create surface!");
+    }
+
     HYP_LOG_INFO("Vulkan", "Initialized Vulkan graphics driver!");
   }
 
   //--------------------------------------------------------------
   void VulkanRenderContext::Shutdown() {
+    vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
+
 #ifdef HYP_DEBUG
     auto debug_messenger_destroy_function = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(LoadFunction("vkDestroyDebugUtilsMessengerEXT"));
     debug_messenger_destroy_function(m_instance, m_debug_messenger, nullptr);
@@ -83,6 +89,12 @@ namespace Hyperion::Rendering {
     instance_create_info.ppEnabledExtensionNames = extensions.GetData();
     instance_create_info.enabledExtensionCount = static_cast<uint32>(extensions.GetLength());
 
+#ifdef HYP_DEBUG
+    VkDebugUtilsMessengerCreateInfoEXT debug_messenger_create_info = { };
+    FillDebugMessengerCreateInfoStruct(&debug_messenger_create_info);
+    instance_create_info.pNext = &debug_messenger_create_info;
+#endif
+
     HYP_VULKAN_CHECK(vkCreateInstance(&instance_create_info, nullptr, &m_instance), "Failed to create vulkan instance!");
   }
 
@@ -90,16 +102,21 @@ namespace Hyperion::Rendering {
   //--------------------------------------------------------------
   void VulkanRenderContext::RegisterDebugMessageCallback() {
     VkDebugUtilsMessengerCreateInfoEXT messenger_create_info = { };
-    messenger_create_info.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-    messenger_create_info.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-    messenger_create_info.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT
-      | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT
-      | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-    messenger_create_info.pfnUserCallback = DebugMessageCallback;
-    messenger_create_info.pUserData = nullptr;
+    FillDebugMessengerCreateInfoStruct(&messenger_create_info);
 
     auto creation_function = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(LoadFunction("vkCreateDebugUtilsMessengerEXT"));
     HYP_VULKAN_CHECK(creation_function(m_instance, &messenger_create_info, nullptr, &m_debug_messenger), "Failed to create debug messenger!");
+  }
+
+  //--------------------------------------------------------------
+  void VulkanRenderContext::FillDebugMessengerCreateInfoStruct(VkDebugUtilsMessengerCreateInfoEXT *messenger_create_info) {
+    messenger_create_info->sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+    messenger_create_info->messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+    messenger_create_info->messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT
+      | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT
+      | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+    messenger_create_info->pfnUserCallback = DebugMessageCallback;
+    messenger_create_info->pUserData = nullptr;
   }
 #endif
 
@@ -114,10 +131,6 @@ namespace Hyperion::Rendering {
     Array<VkPhysicalDevice> physical_devices;
     physical_devices.Resize(device_count);
     HYP_VULKAN_CHECK(vkEnumeratePhysicalDevices(m_instance, &device_count, physical_devices.GetData()), "Failed to get physical devices!");
-
-    struct QueueIndices {
-      int32 i;
-    };
 
     for (auto device : physical_devices) {
       if (IsDeviceSuitable(device)) {
@@ -159,11 +172,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   Array<const char *> VulkanRenderContext::GetAndValidateInstanceExtensions() {
-    Array<const char *> extensions;
-
-#ifdef HYP_DEBUG
-    extensions.Add(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-#endif
+    Array<const char *> extensions = GetRequiredExtensions();
 
     for (auto extension : extensions) {
       if (!SupportsInstanceExtension(extension)) {
@@ -204,6 +213,19 @@ namespace Hyperion::Rendering {
 
     QueueFamilyIndices indices = FindQueueFamilyIndices(device);
     return indices.IsValid();
+  }
+
+  //--------------------------------------------------------------
+  Array<const char *> VulkanRenderContext::GetRequiredExtensions() const {
+    Array<const char *> extensions;
+
+    extensions.Add(VK_KHR_SURFACE_EXTENSION_NAME);
+
+#ifdef HYP_DEBUG
+    extensions.Add(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+#endif
+
+    return extensions;
   }
 
   //--------------------------------------------------------------
