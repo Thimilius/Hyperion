@@ -16,15 +16,16 @@ namespace Hyperion::Rendering {
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-  class VulkanRenderContext : public IRenderContext {
-  private:
-    struct QueueFamilyIndices {
-      int32 graphics_family = -1;
+  struct VulkanQueueFamilyIndices {
+    int32 graphics_family = -1;
+    int32 presentation_family = -1;
 
-      bool IsValid() {
-        return graphics_family >= 0;
-      }
-    };
+    bool IsValid() {
+      return graphics_family >= 0 && presentation_family >= 0;
+    }
+  };
+
+  class VulkanRenderContext : public IRenderContext {
   public:
     RenderContextProperties GetProperties() const override { return m_properties; }
 
@@ -53,7 +54,7 @@ namespace Hyperion::Rendering {
     bool8 SupportsInstanceExtension(const char *extension_name);
 
     bool8 IsDeviceSuitable(VkPhysicalDevice device);
-    QueueFamilyIndices FindQueueFamilyIndices(VkPhysicalDevice device);
+    VulkanQueueFamilyIndices FindQueueFamilyIndices(VkPhysicalDevice device);
 
     void *LoadFunction(const char *name);
   private:

@@ -20,13 +20,12 @@ namespace Hyperion::Rendering {
 #ifdef HYP_DEBUG
     RegisterDebugMessageCallback();
 #endif
-    PickPhysicalDevice();
-
-    m_render_driver.Setup(this);
-
     if (CreateSurface(main_window, m_instance, &m_surface) != VK_SUCCESS) {
       HYP_PANIC_MESSAGE("Vulkan", "Failed to create surface!");
     }
+    PickPhysicalDevice();
+
+    m_render_driver.Setup(this);
 
     HYP_LOG_INFO("Vulkan", "Initialized Vulkan graphics driver!");
   }
@@ -211,7 +210,7 @@ namespace Hyperion::Rendering {
     VkPhysicalDeviceFeatures device_features;
     vkGetPhysicalDeviceFeatures(device, &device_features);
 
-    QueueFamilyIndices indices = FindQueueFamilyIndices(device);
+    VulkanQueueFamilyIndices indices = FindQueueFamilyIndices(device);
     return indices.IsValid();
   }
 
@@ -229,9 +228,10 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  VulkanRenderContext::QueueFamilyIndices VulkanRenderContext::FindQueueFamilyIndices(VkPhysicalDevice device) {
-    QueueFamilyIndices indices = { };
+  VulkanQueueFamilyIndices VulkanRenderContext::FindQueueFamilyIndices(VkPhysicalDevice device) {
+    VulkanQueueFamilyIndices indices = { };
     indices.graphics_family = -1;
+    indices.presentation_family = -1;
 
     uint32 queue_family_count = 0;
     vkGetPhysicalDeviceQueueFamilyProperties(device, &queue_family_count, nullptr);
@@ -244,6 +244,12 @@ namespace Hyperion::Rendering {
       VkQueueFamilyProperties &queue_family = queue_families[i];
       if (queue_family.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
         indices.graphics_family = i;
+      }
+
+      VkBool32 presentation_supported = false;
+      vkGetPhysicalDeviceSurfaceSupportKHR(device, i, m_surface, &presentation_supported);
+      if (presentation_supported) {
+        indices.presentation_family = i;
       }
     }
 
