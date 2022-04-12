@@ -27,6 +27,7 @@ namespace Hyperion::Rendering {
     PickPhysicalDevice();
     CreateLogicalDevice();
     CreateSwapChain();
+    CreateImageViews();
 
     m_render_driver.Setup(this);
 
@@ -35,6 +36,9 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void VulkanRenderContext::Shutdown() {
+    for (auto swapchain_image_view : m_swapchain_image_views) {
+      vkDestroyImageView(m_device, swapchain_image_view, nullptr);
+    }
     vkDestroySwapchainKHR(m_device, m_swapchain, nullptr);
     vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
     
@@ -392,6 +396,29 @@ namespace Hyperion::Rendering {
       extent.height = std::clamp(extent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
 
       return extent;
+    }
+  }
+
+  //--------------------------------------------------------------
+  void VulkanRenderContext::CreateImageViews() {
+    m_swapchain_image_views.Resize(m_swapchain_images.GetLength());
+    for (uint32 i = 0; i < m_swapchain_images.GetLength(); i++) {
+      VkImageViewCreateInfo create_info = { };
+      create_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+      create_info.image = m_swapchain_images[i];
+      create_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
+      create_info.format = m_swapchain_image_format;
+      create_info.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+      create_info.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+      create_info.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+      create_info.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+      create_info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+      create_info.subresourceRange.baseMipLevel = 0;
+      create_info.subresourceRange.levelCount = 1;
+      create_info.subresourceRange.baseArrayLayer = 0;
+      create_info.subresourceRange.layerCount = 1;
+
+      HYP_VULKAN_CHECK(vkCreateImageView(m_device, &create_info, nullptr, &m_swapchain_image_views[i]), "Failed to create swapchain image view!");
     }
   }
 

@@ -70,6 +70,8 @@ namespace Hyperion::Rendering {
     VkPresentModeKHR ChoosePresentMode(const Array<VkPresentModeKHR> present_modes);
     VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities);
 
+    void CreateImageViews();
+
     void *LoadFunction(const char *name);
   private:
     static VKAPI_ATTR VkBool32 VKAPI_CALL DebugMessageCallback(
@@ -97,9 +99,10 @@ namespace Hyperion::Rendering {
     
     VkSurfaceKHR m_surface;
     VkSwapchainKHR m_swapchain;
-    Array<VkImage> m_swapchain_images;
     VkFormat m_swapchain_image_format;
     VkExtent2D m_swapchain_extent;
+    Array<VkImage> m_swapchain_images;
+    Array<VkImageView> m_swapchain_image_views;
   private:
     friend class VulkanRenderDriver;
   };
