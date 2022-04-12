@@ -36,8 +36,8 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  Array<const char *> WindowsVulkanRenderContext::GetRequiredExtensions() const {
-    Array<const char *> extensions = VulkanRenderContext::GetRequiredExtensions();
+  Array<const char *> WindowsVulkanRenderContext::GetRequiredInstanceExtensions() const {
+    Array<const char *> extensions = VulkanRenderContext::GetRequiredInstanceExtensions();
     extensions.Add(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
     return extensions;
   }

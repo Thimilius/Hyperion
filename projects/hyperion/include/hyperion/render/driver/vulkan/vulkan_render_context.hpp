@@ -25,6 +25,12 @@ namespace Hyperion::Rendering {
     }
   };
 
+  struct VulkanSwapchainSupportDetails {
+    VkSurfaceCapabilitiesKHR capabilities;
+    Array<VkSurfaceFormatKHR> formats;
+    Array<VkPresentModeKHR> present_modes;
+  };
+
   class VulkanRenderContext : public IRenderContext {
   public:
     RenderContextProperties GetProperties() const override { return m_properties; }
@@ -36,7 +42,8 @@ namespace Hyperion::Rendering {
     void Initialize(Window *main_window, const RenderContextDescriptor &descriptor) override;
     void Shutdown() override;
   protected:
-    virtual Array<const char *> GetRequiredExtensions() const;
+    virtual Array<const char *> GetRequiredInstanceExtensions() const;
+    virtual Array<const char *> GetRequiredDeviceExtensions() const;
 
     virtual VkResult CreateSurface(Window *window, VkInstance instance, VkSurfaceKHR *surface) = 0;
   private:
@@ -47,14 +54,21 @@ namespace Hyperion::Rendering {
     void FillDebugMessengerCreateInfoStruct(VkDebugUtilsMessengerCreateInfoEXT *messenger_create_info);
 #endif
     void PickPhysicalDevice();
-
     Array<const char *> GetAndValidateInstanceLayer();
     bool8 SupportsInstanceLayer(const char *layer_name);
     Array<const char *> GetAndValidateInstanceExtensions();
     bool8 SupportsInstanceExtension(const char *extension_name);
-
     bool8 IsDeviceSuitable(VkPhysicalDevice device);
     VulkanQueueFamilyIndices FindQueueFamilyIndices(VkPhysicalDevice device);
+    bool8 CheckDeviceExtensionSupport(VkPhysicalDevice device);
+    VulkanSwapchainSupportDetails QuerySwapchainSupportDetails(VkPhysicalDevice device);
+    
+    void CreateLogicalDevice();
+
+    void CreateSwapChain();
+    VkSurfaceFormatKHR ChooseSwapChainFormat(const Array<VkSurfaceFormatKHR> formats);
+    VkPresentModeKHR ChoosePresentMode(const Array<VkPresentModeKHR> present_modes);
+    VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities);
 
     void *LoadFunction(const char *name);
   private:
@@ -76,7 +90,16 @@ namespace Hyperion::Rendering {
 #ifdef HYP_DEBUG
     VkDebugUtilsMessengerEXT m_debug_messenger = VK_NULL_HANDLE;
 #endif
+    
+    VkDevice m_device;
+    VkQueue m_graphics_queue;
+    VkQueue m_presentation_queue;
+    
     VkSurfaceKHR m_surface;
+    VkSwapchainKHR m_swapchain;
+    Array<VkImage> m_swapchain_images;
+    VkFormat m_swapchain_image_format;
+    VkExtent2D m_swapchain_extent;
   private:
     friend class VulkanRenderDriver;
   };

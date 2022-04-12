@@ -23,13 +23,8 @@ namespace Hyperion::Rendering {
     void Shutdown() override;
   private:
     void Setup(VulkanRenderContext *context);
-    void CreateLogicalDevice();
   private:
     VulkanRenderContext *m_context;
-
-    VkDevice m_device;
-    VkQueue m_graphics_queue;
-    VkQueue m_presentation_queue;
   private:
     friend class VulkanRenderContext;
   };
