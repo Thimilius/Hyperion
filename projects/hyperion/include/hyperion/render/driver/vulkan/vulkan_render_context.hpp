@@ -72,7 +72,10 @@ namespace Hyperion::Rendering {
 
     void CreateImageViews();
 
+    void CreateRenderPass();
+
     void CreateGraphicsPipeline();
+    VkShaderModule CreateShaderModule(const Array<byte> &code);
 
     void *LoadFunction(const char *name);
   private:
@@ -105,6 +108,10 @@ namespace Hyperion::Rendering {
     VkExtent2D m_swapchain_extent;
     Array<VkImage> m_swapchain_images;
     Array<VkImageView> m_swapchain_image_views;
+
+    VkRenderPass m_render_pass;
+    VkPipelineLayout m_pipeline_layout;
+    VkPipeline m_pipeline;
   private:
     friend class VulkanRenderDriver;
   };
