@@ -72,6 +72,8 @@ namespace Hyperion::Rendering {
 
     void CreateImageViews();
 
+    void CreateGraphicsPipeline();
+
     void *LoadFunction(const char *name);
   private:
     static VKAPI_ATTR VkBool32 VKAPI_CALL DebugMessageCallback(

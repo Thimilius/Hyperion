@@ -363,6 +363,58 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
+  void VulkanRenderContext::CreateSwapChain() {
+    VulkanSwapchainSupportDetails swapchain_support_details = QuerySwapchainSupportDetails(m_physical_device);
+
+    VkSurfaceFormatKHR surface_format = ChooseSwapChainFormat(swapchain_support_details.formats);
+    VkPresentModeKHR present_mode = ChoosePresentMode(swapchain_support_details.present_modes);
+    VkExtent2D extent = ChooseSwapExtent(swapchain_support_details.capabilities);
+
+    uint32 image_count = swapchain_support_details.capabilities.minImageCount + 1;
+    if (swapchain_support_details.capabilities.maxImageCount > 0 && image_count > swapchain_support_details.capabilities.maxImageCount) {
+      image_count = swapchain_support_details.capabilities.maxImageCount;
+    }
+
+    VkSwapchainCreateInfoKHR create_info = { };
+    create_info.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+    create_info.surface = m_surface;
+    create_info.minImageCount = image_count;
+    create_info.imageColorSpace = surface_format.colorSpace;
+    create_info.imageFormat = surface_format.format;
+    create_info.imageExtent = extent;
+    create_info.imageArrayLayers = 1;
+    create_info.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+
+    VulkanQueueFamilyIndices indices = FindQueueFamilyIndices(m_physical_device);
+    uint32 queue_family_indices[] = { static_cast<uint32>(indices.graphics_family), static_cast<uint32>(indices.presentation_family) };
+    if (indices.graphics_family != indices.presentation_family) {
+      create_info.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+      create_info.queueFamilyIndexCount = 2;
+      create_info.pQueueFamilyIndices = queue_family_indices;
+    } else {
+      create_info.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+      create_info.queueFamilyIndexCount = 0;
+      create_info.pQueueFamilyIndices = nullptr;
+    }
+
+    create_info.preTransform = swapchain_support_details.capabilities.currentTransform;
+    create_info.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+    create_info.presentMode = present_mode;
+    create_info.clipped = VK_TRUE;
+    create_info.oldSwapchain = VK_NULL_HANDLE;
+
+    HYP_VULKAN_CHECK(vkCreateSwapchainKHR(m_device, &create_info, nullptr, &m_swapchain), "Failed to create swapchain!");
+
+    m_swapchain_image_format = surface_format.format;
+    m_swapchain_extent = extent;
+
+    uint32 swapchain_image_count = 0;
+    HYP_VULKAN_CHECK(vkGetSwapchainImagesKHR(m_device, m_swapchain, &swapchain_image_count, nullptr), "Failed to get swapchain image count!");
+    m_swapchain_images.Resize(swapchain_image_count);
+    HYP_VULKAN_CHECK(vkGetSwapchainImagesKHR(m_device, m_swapchain, &swapchain_image_count, m_swapchain_images.GetData()), "Failed to get swapchain images!");
+  }
+
+  //--------------------------------------------------------------
   VkSurfaceFormatKHR VulkanRenderContext::ChooseSwapChainFormat(const Array<VkSurfaceFormatKHR> formats) {
     for (const VkSurfaceFormatKHR &format : formats) {
       if (format.format == VK_FORMAT_R8G8B8A8_SRGB && format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
@@ -423,55 +475,8 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void VulkanRenderContext::CreateSwapChain() {
-    VulkanSwapchainSupportDetails swapchain_support_details = QuerySwapchainSupportDetails(m_physical_device);
+  void VulkanRenderContext::CreateGraphicsPipeline() {
 
-    VkSurfaceFormatKHR surface_format = ChooseSwapChainFormat(swapchain_support_details.formats);
-    VkPresentModeKHR present_mode = ChoosePresentMode(swapchain_support_details.present_modes);
-    VkExtent2D extent = ChooseSwapExtent(swapchain_support_details.capabilities);
-
-    uint32 image_count = swapchain_support_details.capabilities.minImageCount + 1;
-    if (swapchain_support_details.capabilities.maxImageCount > 0 && image_count > swapchain_support_details.capabilities.maxImageCount) {
-      image_count = swapchain_support_details.capabilities.maxImageCount;
-    }
-
-    VkSwapchainCreateInfoKHR create_info = { };
-    create_info.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-    create_info.surface = m_surface;
-    create_info.minImageCount = image_count;
-    create_info.imageColorSpace = surface_format.colorSpace;
-    create_info.imageFormat = surface_format.format;
-    create_info.imageExtent = extent;
-    create_info.imageArrayLayers = 1;
-    create_info.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-    
-    VulkanQueueFamilyIndices indices = FindQueueFamilyIndices(m_physical_device);
-    uint32 queue_family_indices[] = { static_cast<uint32>(indices.graphics_family), static_cast<uint32>(indices.presentation_family) };
-    if (indices.graphics_family != indices.presentation_family) {
-      create_info.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
-      create_info.queueFamilyIndexCount = 2;
-      create_info.pQueueFamilyIndices = queue_family_indices;
-    } else {
-      create_info.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
-      create_info.queueFamilyIndexCount = 0;
-      create_info.pQueueFamilyIndices = nullptr;
-    }
-
-    create_info.preTransform = swapchain_support_details.capabilities.currentTransform;
-    create_info.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-    create_info.presentMode = present_mode;
-    create_info.clipped = VK_TRUE;
-    create_info.oldSwapchain = VK_NULL_HANDLE;
-
-    HYP_VULKAN_CHECK(vkCreateSwapchainKHR(m_device, &create_info, nullptr, &m_swapchain), "Failed to create swapchain!");
-
-    m_swapchain_image_format = surface_format.format;
-    m_swapchain_extent = extent;
-
-    uint32 swapchain_image_count = 0;
-    HYP_VULKAN_CHECK(vkGetSwapchainImagesKHR(m_device, m_swapchain, &swapchain_image_count, nullptr), "Failed to get swapchain image count!");
-    m_swapchain_images.Resize(swapchain_image_count);
-    HYP_VULKAN_CHECK(vkGetSwapchainImagesKHR(m_device, m_swapchain, &swapchain_image_count, m_swapchain_images.GetData()), "Failed to get swapchain images!");
   }
 
   //--------------------------------------------------------------
