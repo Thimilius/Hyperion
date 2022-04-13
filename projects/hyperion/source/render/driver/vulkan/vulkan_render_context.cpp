@@ -775,8 +775,13 @@ namespace Hyperion::Rendering {
     void *user_data) {
 
     if (severity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {
+      // HACK: This probably comes up because of a synchronization issue when resizing the window with multiple threads.
+      if (String(callback_data->pMessage).contains("VUID-VkSwapchainCreateInfoKHR-imageExtent-01274")) {
+        return VK_FALSE;
+      }
+
       HYP_LOG_ERROR("Vulkan", "Validation: {}", callback_data->pMessage);
-      //HYP_DEBUG_BREAK;
+      HYP_DEBUG_BREAK;
     } else if (severity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
       HYP_LOG_WARN("Vulkan", "Validation: {}", callback_data->pMessage);
     }
