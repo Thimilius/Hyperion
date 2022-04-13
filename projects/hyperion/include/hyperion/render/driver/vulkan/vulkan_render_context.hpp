@@ -87,6 +87,9 @@ namespace Hyperion::Rendering {
 
     void CreateSyncObjects();
 
+    void RecreateSwapchain();
+    void CleanupSwapchain();
+
     void *LoadFunction(const char *name);
   private:
     static VKAPI_ATTR VkBool32 VKAPI_CALL DebugMessageCallback(

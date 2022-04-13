@@ -43,6 +43,8 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void VulkanRenderContext::Shutdown() {
+    CleanupSwapchain();
+
     for (uint32 i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
       vkDestroySemaphore(m_device, m_image_available_semaphores[i], nullptr);
       vkDestroySemaphore(m_device, m_render_finished_semaphores[i], nullptr);
@@ -51,20 +53,6 @@ namespace Hyperion::Rendering {
 
     vkDestroyCommandPool(m_device, m_command_pool, nullptr);
 
-    for (auto framebuffer : m_swapchain_framebuffers) {
-      vkDestroyFramebuffer(m_device, framebuffer, nullptr);
-    }
-
-    vkDestroyPipeline(m_device, m_graphics_pipeline, nullptr);
-    vkDestroyRenderPass(m_device, m_render_pass, nullptr);
-    vkDestroyPipelineLayout(m_device, m_pipeline_layout, nullptr);
-
-    for (auto swapchain_image_view : m_swapchain_image_views) {
-      vkDestroyImageView(m_device, swapchain_image_view, nullptr);
-    }
-    vkDestroySwapchainKHR(m_device, m_swapchain, nullptr);
-    vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
-    
     vkDestroyDevice(m_device, nullptr);
 
 #ifdef HYP_DEBUG
@@ -72,6 +60,7 @@ namespace Hyperion::Rendering {
     debug_messenger_destroy_function(m_instance, m_debug_messenger, nullptr);
 #endif
 
+    vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
     vkDestroyInstance(m_instance, nullptr);
   }
 
@@ -750,6 +739,35 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
+  void VulkanRenderContext::RecreateSwapchain() {
+    vkDeviceWaitIdle(m_device);
+
+    CleanupSwapchain();
+
+    CreateSwapChain();
+    CreateImageViews();
+    CreateRenderPass();
+    CreateGraphicsPipeline();
+    CreateFramebuffers();
+  }
+
+  //--------------------------------------------------------------
+  void VulkanRenderContext::CleanupSwapchain() {
+    for (auto framebuffer : m_swapchain_framebuffers) {
+      vkDestroyFramebuffer(m_device, framebuffer, nullptr);
+    }
+
+    vkDestroyPipeline(m_device, m_graphics_pipeline, nullptr);
+    vkDestroyRenderPass(m_device, m_render_pass, nullptr);
+    vkDestroyPipelineLayout(m_device, m_pipeline_layout, nullptr);
+
+    for (auto swapchain_image_view : m_swapchain_image_views) {
+      vkDestroyImageView(m_device, swapchain_image_view, nullptr);
+    }
+    vkDestroySwapchainKHR(m_device, m_swapchain, nullptr);
+  }
+
+  //--------------------------------------------------------------
   VKAPI_ATTR VkBool32 VKAPI_CALL VulkanRenderContext::DebugMessageCallback(
     VkDebugUtilsMessageSeverityFlagBitsEXT severity,
     VkDebugUtilsMessageTypeFlagsEXT type,
@@ -758,7 +776,7 @@ namespace Hyperion::Rendering {
 
     if (severity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {
       HYP_LOG_ERROR("Vulkan", "Validation: {}", callback_data->pMessage);
-      HYP_DEBUG_BREAK;
+      //HYP_DEBUG_BREAK;
     } else if (severity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
       HYP_LOG_WARN("Vulkan", "Validation: {}", callback_data->pMessage);
     }
