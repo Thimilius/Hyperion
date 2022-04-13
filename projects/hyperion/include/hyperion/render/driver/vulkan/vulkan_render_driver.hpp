@@ -27,6 +27,8 @@ namespace Hyperion::Rendering {
     void RecordCommandBuffer(VkCommandBuffer command_buffer, uint32 image_index);
   private:
     VulkanRenderContext *m_context;
+
+    uint32 m_current_frame_index = 0;
   private:
     friend class VulkanRenderContext;
   };

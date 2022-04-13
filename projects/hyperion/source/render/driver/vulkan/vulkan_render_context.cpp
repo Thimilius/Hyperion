@@ -33,7 +33,7 @@ namespace Hyperion::Rendering {
     CreateGraphicsPipeline();
     CreateFramebuffers();
     CreateCommandPool();
-    CreateCommandBuffer();
+    CreateCommandBuffers();
     CreateSyncObjects();
 
     m_render_driver.Setup(this);
@@ -43,9 +43,11 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void VulkanRenderContext::Shutdown() {
-    vkDestroySemaphore(m_device, m_image_available_semaphore, nullptr);
-    vkDestroySemaphore(m_device, m_render_finished_semaphore, nullptr);
-    vkDestroyFence(m_device, m_in_flight_fence, nullptr);
+    for (uint32 i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+      vkDestroySemaphore(m_device, m_image_available_semaphores[i], nullptr);
+      vkDestroySemaphore(m_device, m_render_finished_semaphores[i], nullptr);
+      vkDestroyFence(m_device, m_in_flight_fences[i], nullptr);
+    }
 
     vkDestroyCommandPool(m_device, m_command_pool, nullptr);
 
@@ -715,18 +717,24 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void VulkanRenderContext::CreateCommandBuffer() {
+  void VulkanRenderContext::CreateCommandBuffers() {
+    m_command_buffers.Resize(MAX_FRAMES_IN_FLIGHT);
+
     VkCommandBufferAllocateInfo allocate_info = { };
     allocate_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     allocate_info.commandPool = m_command_pool;
     allocate_info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-    allocate_info.commandBufferCount = 1;
+    allocate_info.commandBufferCount = static_cast<uint32>(m_command_buffers.GetLength());
 
-    HYP_VULKAN_CHECK(vkAllocateCommandBuffers(m_device, &allocate_info, &m_command_buffer), "Failed to allocate command buffer!");
+    HYP_VULKAN_CHECK(vkAllocateCommandBuffers(m_device, &allocate_info, m_command_buffers.GetData()), "Failed to allocate command buffers!");
   }
 
   //--------------------------------------------------------------
   void VulkanRenderContext::CreateSyncObjects() {
+    m_image_available_semaphores.Resize(MAX_FRAMES_IN_FLIGHT);
+    m_render_finished_semaphores.Resize(MAX_FRAMES_IN_FLIGHT);
+    m_in_flight_fences.Resize(MAX_FRAMES_IN_FLIGHT);
+
     VkSemaphoreCreateInfo semaphore_create_info = { };
     semaphore_create_info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
@@ -734,9 +742,11 @@ namespace Hyperion::Rendering {
     fence_create_info.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
     fence_create_info.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-    HYP_VULKAN_CHECK(vkCreateSemaphore(m_device, &semaphore_create_info, nullptr, &m_image_available_semaphore), "Failed to create semaphore!");
-    HYP_VULKAN_CHECK(vkCreateSemaphore(m_device, &semaphore_create_info, nullptr, &m_render_finished_semaphore), "Failed to create semaphore!");
-    HYP_VULKAN_CHECK(vkCreateFence(m_device, &fence_create_info, nullptr, &m_in_flight_fence), "Failed to create fence!");
+    for (uint32 i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+      HYP_VULKAN_CHECK(vkCreateSemaphore(m_device, &semaphore_create_info, nullptr, &m_image_available_semaphores[i]), "Failed to create semaphore!");
+      HYP_VULKAN_CHECK(vkCreateSemaphore(m_device, &semaphore_create_info, nullptr, &m_render_finished_semaphores[i]), "Failed to create semaphore!");
+      HYP_VULKAN_CHECK(vkCreateFence(m_device, &fence_create_info, nullptr, &m_in_flight_fences[i]), "Failed to create fence!");
+    }
   }
 
   //--------------------------------------------------------------

@@ -83,7 +83,7 @@ namespace Hyperion::Rendering {
 
     void CreateCommandPool();
 
-    void CreateCommandBuffer();
+    void CreateCommandBuffers();
 
     void CreateSyncObjects();
 
@@ -94,6 +94,8 @@ namespace Hyperion::Rendering {
       VkDebugUtilsMessageTypeFlagsEXT type,
       const VkDebugUtilsMessengerCallbackDataEXT *callback_data,
       void *user_data);
+  public:
+    static const uint32 MAX_FRAMES_IN_FLIGHT = 2;
   private:
     RenderContextProperties m_properties;
 
@@ -125,11 +127,11 @@ namespace Hyperion::Rendering {
     VkPipeline m_graphics_pipeline;
 
     VkCommandPool m_command_pool;
-    VkCommandBuffer m_command_buffer;
+    Array<VkCommandBuffer> m_command_buffers;
 
-    VkSemaphore m_image_available_semaphore;
-    VkSemaphore m_render_finished_semaphore;
-    VkFence m_in_flight_fence;
+    Array<VkSemaphore> m_image_available_semaphores;
+    Array<VkSemaphore> m_render_finished_semaphores;
+    Array<VkFence> m_in_flight_fences;
   private:
     friend class VulkanRenderDriver;
   };

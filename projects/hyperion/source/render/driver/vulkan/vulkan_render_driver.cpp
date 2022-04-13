@@ -26,29 +26,29 @@ namespace Hyperion::Rendering {
   void VulkanRenderDriver::Render(RenderFrame *render_frame) {
     VkDevice device = m_context->m_device;
 
-    vkWaitForFences(device, 1, &m_context->m_in_flight_fence, VK_TRUE, UINT64_MAX);
-    vkResetFences(device, 1, &m_context->m_in_flight_fence);
+    vkWaitForFences(device, 1, &m_context->m_in_flight_fences[m_current_frame_index], VK_TRUE, UINT64_MAX);
+    vkResetFences(device, 1, &m_context->m_in_flight_fences[m_current_frame_index]);
 
     uint32 image_index = 0;
-    vkAcquireNextImageKHR(device, m_context->m_swapchain, UINT64_MAX, m_context->m_image_available_semaphore, VK_NULL_HANDLE, &image_index);
+    vkAcquireNextImageKHR(device, m_context->m_swapchain, UINT64_MAX, m_context->m_image_available_semaphores[m_current_frame_index], VK_NULL_HANDLE, &image_index);
 
-    vkResetCommandBuffer(m_context->m_command_buffer, 0);
-    RecordCommandBuffer(m_context->m_command_buffer, image_index);
+    vkResetCommandBuffer(m_context->m_command_buffers[m_current_frame_index], 0);
+    RecordCommandBuffer(m_context->m_command_buffers[m_current_frame_index], image_index);
 
     VkSubmitInfo submit_info = { };
     submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-    VkSemaphore wait_semaphores[] = { m_context->m_image_available_semaphore };
+    VkSemaphore wait_semaphores[] = { m_context->m_image_available_semaphores[m_current_frame_index] };
     VkPipelineStageFlags wait_stages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
     submit_info.waitSemaphoreCount = 1;
     submit_info.pWaitSemaphores = wait_semaphores;
     submit_info.pWaitDstStageMask = wait_stages;
     submit_info.commandBufferCount = 1;
-    submit_info.pCommandBuffers = &m_context->m_command_buffer;
-    VkSemaphore signal_semaphores[] = { m_context->m_render_finished_semaphore };
+    submit_info.pCommandBuffers = &m_context->m_command_buffers[m_current_frame_index];
+    VkSemaphore signal_semaphores[] = { m_context->m_render_finished_semaphores[m_current_frame_index] };
     submit_info.signalSemaphoreCount = 1;
     submit_info.pSignalSemaphores = signal_semaphores;
     
-    HYP_VULKAN_CHECK(vkQueueSubmit(m_context->m_graphics_queue, 1, &submit_info, m_context->m_in_flight_fence), "Failed to submit command buffer!");
+    HYP_VULKAN_CHECK(vkQueueSubmit(m_context->m_graphics_queue, 1, &submit_info, m_context->m_in_flight_fences[m_current_frame_index]), "Failed to submit command buffer!");
 
     VkPresentInfoKHR present_info = { };
     present_info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -61,6 +61,8 @@ namespace Hyperion::Rendering {
     present_info.pResults = nullptr;
 
     vkQueuePresentKHR(m_context->m_presentation_queue, &present_info);
+
+    m_current_frame_index = (m_current_frame_index + 1) % VulkanRenderContext::MAX_FRAMES_IN_FLIGHT;
   }
 
   //--------------------------------------------------------------
