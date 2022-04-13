@@ -23,6 +23,8 @@ namespace Hyperion::Rendering {
     void Shutdown() override;
   private:
     void Setup(VulkanRenderContext *context);
+
+    void RecordCommandBuffer(VkCommandBuffer command_buffer, uint32 image_index);
   private:
     VulkanRenderContext *m_context;
   private:

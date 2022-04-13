@@ -26,11 +26,6 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void WindowsVulkanRenderContext::SwapBuffers(Window *window) {
-
-  }
-
-  //--------------------------------------------------------------
   void WindowsVulkanRenderContext::SetVSyncMode(VSyncMode vsync_mode) {
     
   }

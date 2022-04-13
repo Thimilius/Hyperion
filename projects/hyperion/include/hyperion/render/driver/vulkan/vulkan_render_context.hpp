@@ -41,6 +41,8 @@ namespace Hyperion::Rendering {
 
     void Initialize(Window *main_window, const RenderContextDescriptor &descriptor) override;
     void Shutdown() override;
+
+    void SwapBuffers(Window *window) override;
   protected:
     virtual Array<const char *> GetRequiredInstanceExtensions() const;
     virtual Array<const char *> GetRequiredDeviceExtensions() const;
@@ -77,6 +79,14 @@ namespace Hyperion::Rendering {
     void CreateGraphicsPipeline();
     VkShaderModule CreateShaderModule(const Array<byte> &code);
 
+    void CreateFramebuffers();
+
+    void CreateCommandPool();
+
+    void CreateCommandBuffer();
+
+    void CreateSyncObjects();
+
     void *LoadFunction(const char *name);
   private:
     static VKAPI_ATTR VkBool32 VKAPI_CALL DebugMessageCallback(
@@ -108,10 +118,18 @@ namespace Hyperion::Rendering {
     VkExtent2D m_swapchain_extent;
     Array<VkImage> m_swapchain_images;
     Array<VkImageView> m_swapchain_image_views;
+    Array<VkFramebuffer> m_swapchain_framebuffers;
 
     VkRenderPass m_render_pass;
     VkPipelineLayout m_pipeline_layout;
-    VkPipeline m_pipeline;
+    VkPipeline m_graphics_pipeline;
+
+    VkCommandPool m_command_pool;
+    VkCommandBuffer m_command_buffer;
+
+    VkSemaphore m_image_available_semaphore;
+    VkSemaphore m_render_finished_semaphore;
+    VkFence m_in_flight_fence;
   private:
     friend class VulkanRenderDriver;
   };

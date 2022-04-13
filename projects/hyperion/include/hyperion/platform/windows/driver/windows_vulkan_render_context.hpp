@@ -16,7 +16,6 @@ namespace Hyperion::Rendering {
     void Shutdown() override;
 
     void MakeCurrent(Window *window) override;
-    void SwapBuffers(Window *window) override;
     void SetVSyncMode(VSyncMode vsync_mode) override;
   protected:
     Array<const char *> GetRequiredInstanceExtensions() const override;

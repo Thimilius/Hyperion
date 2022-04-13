@@ -31,6 +31,10 @@ namespace Hyperion::Rendering {
     CreateImageViews();
     CreateRenderPass();
     CreateGraphicsPipeline();
+    CreateFramebuffers();
+    CreateCommandPool();
+    CreateCommandBuffer();
+    CreateSyncObjects();
 
     m_render_driver.Setup(this);
 
@@ -39,7 +43,17 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void VulkanRenderContext::Shutdown() {
-    vkDestroyPipeline(m_device, m_pipeline, nullptr);
+    vkDestroySemaphore(m_device, m_image_available_semaphore, nullptr);
+    vkDestroySemaphore(m_device, m_render_finished_semaphore, nullptr);
+    vkDestroyFence(m_device, m_in_flight_fence, nullptr);
+
+    vkDestroyCommandPool(m_device, m_command_pool, nullptr);
+
+    for (auto framebuffer : m_swapchain_framebuffers) {
+      vkDestroyFramebuffer(m_device, framebuffer, nullptr);
+    }
+
+    vkDestroyPipeline(m_device, m_graphics_pipeline, nullptr);
     vkDestroyRenderPass(m_device, m_render_pass, nullptr);
     vkDestroyPipelineLayout(m_device, m_pipeline_layout, nullptr);
 
@@ -57,6 +71,11 @@ namespace Hyperion::Rendering {
 #endif
 
     vkDestroyInstance(m_instance, nullptr);
+  }
+
+  //--------------------------------------------------------------
+  void VulkanRenderContext::SwapBuffers(Window *window) {
+    
   }
 
   //--------------------------------------------------------------
@@ -502,12 +521,22 @@ namespace Hyperion::Rendering {
     subpass.colorAttachmentCount = 1;
     subpass.pColorAttachments = &color_attachment_reference;
 
+    VkSubpassDependency subpass_dependency = { };
+    subpass_dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+    subpass_dependency.dstSubpass = 0;
+    subpass_dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    subpass_dependency.srcAccessMask = 0;
+    subpass_dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    subpass_dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
     VkRenderPassCreateInfo create_info = { };
     create_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
     create_info.attachmentCount = 1;
     create_info.pAttachments = &color_attachment;
     create_info.subpassCount = 1;
     create_info.pSubpasses = &subpass;
+    create_info.dependencyCount = 1;
+    create_info.pDependencies = &subpass_dependency;
 
     HYP_VULKAN_CHECK(vkCreateRenderPass(m_device, &create_info, nullptr, &m_render_pass), "Failed to create render pass!");
   }
@@ -633,7 +662,7 @@ namespace Hyperion::Rendering {
     create_info.basePipelineHandle = VK_NULL_HANDLE;
     create_info.basePipelineIndex = -1;
 
-    HYP_VULKAN_CHECK(vkCreateGraphicsPipelines(m_device, VK_NULL_HANDLE, 1, &create_info, nullptr, &m_pipeline), "Failed to create graphics pipeline!");
+    HYP_VULKAN_CHECK(vkCreateGraphicsPipelines(m_device, VK_NULL_HANDLE, 1, &create_info, nullptr, &m_graphics_pipeline), "Failed to create graphics pipeline!");
 
     vkDestroyShaderModule(m_device, fragment_shader_module, nullptr);
     vkDestroyShaderModule(m_device, vertex_shader_module, nullptr);
@@ -649,6 +678,65 @@ namespace Hyperion::Rendering {
     VkShaderModule shader_module;
     HYP_VULKAN_CHECK(vkCreateShaderModule(m_device, &create_info, nullptr, &shader_module), "Failed to create shader module!");
     return shader_module;
+  }
+
+  //--------------------------------------------------------------
+  void VulkanRenderContext::CreateFramebuffers() {
+    m_swapchain_framebuffers.Resize(m_swapchain_image_views.GetLength());
+
+    for (uint32 i = 0; i < m_swapchain_image_views.GetLength(); i++) {
+      VkImageView attachments[] = {
+        m_swapchain_image_views[i]
+      };
+
+      VkFramebufferCreateInfo create_info = { };
+      create_info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+      create_info.renderPass = m_render_pass;
+      create_info.attachmentCount = 1;
+      create_info.pAttachments = attachments;
+      create_info.width = m_swapchain_extent.width;
+      create_info.height = m_swapchain_extent.height;
+      create_info.layers = 1;
+
+      HYP_VULKAN_CHECK(vkCreateFramebuffer(m_device, &create_info, nullptr, &m_swapchain_framebuffers[i]), "Failed to create framebuffer!");
+    }
+  }
+
+  //--------------------------------------------------------------
+  void VulkanRenderContext::CreateCommandPool() {
+    VulkanQueueFamilyIndices indices = FindQueueFamilyIndices(m_physical_device);
+
+    VkCommandPoolCreateInfo create_info = { };
+    create_info.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+    create_info.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+    create_info.queueFamilyIndex = indices.graphics_family;
+
+    HYP_VULKAN_CHECK(vkCreateCommandPool(m_device, &create_info, nullptr, &m_command_pool), "Failed to create command pool!");
+  }
+
+  //--------------------------------------------------------------
+  void VulkanRenderContext::CreateCommandBuffer() {
+    VkCommandBufferAllocateInfo allocate_info = { };
+    allocate_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocate_info.commandPool = m_command_pool;
+    allocate_info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    allocate_info.commandBufferCount = 1;
+
+    HYP_VULKAN_CHECK(vkAllocateCommandBuffers(m_device, &allocate_info, &m_command_buffer), "Failed to allocate command buffer!");
+  }
+
+  //--------------------------------------------------------------
+  void VulkanRenderContext::CreateSyncObjects() {
+    VkSemaphoreCreateInfo semaphore_create_info = { };
+    semaphore_create_info.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+    VkFenceCreateInfo fence_create_info = { };
+    fence_create_info.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+    fence_create_info.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+
+    HYP_VULKAN_CHECK(vkCreateSemaphore(m_device, &semaphore_create_info, nullptr, &m_image_available_semaphore), "Failed to create semaphore!");
+    HYP_VULKAN_CHECK(vkCreateSemaphore(m_device, &semaphore_create_info, nullptr, &m_render_finished_semaphore), "Failed to create semaphore!");
+    HYP_VULKAN_CHECK(vkCreateFence(m_device, &fence_create_info, nullptr, &m_in_flight_fence), "Failed to create fence!");
   }
 
   //--------------------------------------------------------------
