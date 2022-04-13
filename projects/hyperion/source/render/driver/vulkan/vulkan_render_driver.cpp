@@ -5,6 +5,7 @@
 #include "hyperion/render/driver/vulkan/vulkan_render_driver.hpp"
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/core/app/display.hpp"
 #include "hyperion/render/driver/vulkan/vulkan_render_context.hpp"
 #include "hyperion/render/driver/vulkan/vulkan_utilities.hpp"
 #include "hyperion/render/frame/render_frame.hpp"
@@ -107,6 +108,18 @@ namespace Hyperion::Rendering {
 
     vkCmdBeginRenderPass(command_buffer, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
     vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_context->m_graphics_pipeline);
+    VkViewport viewport = { };
+    viewport.x = 0.0f;
+    viewport.y = 0.0f;
+    viewport.width = static_cast<float32>(Display::GetWidth());
+    viewport.height = static_cast<float32>(Display::GetHeight());
+    viewport.minDepth = 0.0f;
+    viewport.maxDepth = 1.0f;
+    vkCmdSetViewport(command_buffer, 0, 1, &viewport);
+    VkRect2D scissor = { };
+    scissor.offset = { 0, 0 };
+    scissor.extent = { Display::GetWidth(), Display::GetHeight() };
+    vkCmdSetScissor(command_buffer, 0, 1, &scissor);
     vkCmdDraw(command_buffer, 3, 1, 0, 0);
     vkCmdEndRenderPass(command_buffer);
 

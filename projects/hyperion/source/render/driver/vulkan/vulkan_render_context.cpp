@@ -45,6 +45,10 @@ namespace Hyperion::Rendering {
   void VulkanRenderContext::Shutdown() {
     CleanupSwapchain();
 
+    vkDestroyPipeline(m_device, m_graphics_pipeline, nullptr);
+    vkDestroyRenderPass(m_device, m_render_pass, nullptr);
+    vkDestroyPipelineLayout(m_device, m_pipeline_layout, nullptr);
+
     for (uint32 i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
       vkDestroySemaphore(m_device, m_image_available_semaphores[i], nullptr);
       vkDestroySemaphore(m_device, m_render_finished_semaphores[i], nullptr);
@@ -453,7 +457,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   VkExtent2D VulkanRenderContext::ChooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities) {
-    if (capabilities.currentExtent.width != UINT32_MAX) {
+    if (capabilities.currentExtent.width != UINT32_MAX && capabilities.currentExtent.width != 0) {
       return capabilities.currentExtent;
     } else {
       VkExtent2D extent = {
@@ -461,8 +465,10 @@ namespace Hyperion::Rendering {
         Display::GetHeight()
       }; 
 
-      extent.width = std::clamp(extent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
-      extent.height = std::clamp(extent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
+      if (capabilities.currentExtent.width != 0) {
+        extent.width = std::clamp(extent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
+        extent.height = std::clamp(extent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
+      }
 
       return extent;
     }
@@ -635,6 +641,16 @@ namespace Hyperion::Rendering {
 
     HYP_VULKAN_CHECK(vkCreatePipelineLayout(m_device, &layout_create_info, nullptr, &m_pipeline_layout), "Failed to create pipeline layout!");
 
+    VkDynamicState dynamic_states[] = {
+      VK_DYNAMIC_STATE_VIEWPORT,
+      VK_DYNAMIC_STATE_SCISSOR
+    };
+
+    VkPipelineDynamicStateCreateInfo dynamic_state_create_info = { };
+    dynamic_state_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+    dynamic_state_create_info.dynamicStateCount = 2;
+    dynamic_state_create_info.pDynamicStates = dynamic_states;
+
     VkGraphicsPipelineCreateInfo create_info = { };
     create_info.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
     create_info.stageCount = 2;
@@ -646,7 +662,7 @@ namespace Hyperion::Rendering {
     create_info.pMultisampleState = &multisample_create_info;
     create_info.pDepthStencilState = nullptr;
     create_info.pColorBlendState = &color_blend_state_create_info;
-    create_info.pDynamicState = nullptr;
+    create_info.pDynamicState = &dynamic_state_create_info;
     create_info.layout = m_pipeline_layout;
     create_info.renderPass = m_render_pass;
     create_info.subpass = 0;
@@ -747,7 +763,6 @@ namespace Hyperion::Rendering {
     CreateSwapChain();
     CreateImageViews();
     CreateRenderPass();
-    CreateGraphicsPipeline();
     CreateFramebuffers();
   }
 
@@ -756,10 +771,6 @@ namespace Hyperion::Rendering {
     for (auto framebuffer : m_swapchain_framebuffers) {
       vkDestroyFramebuffer(m_device, framebuffer, nullptr);
     }
-
-    vkDestroyPipeline(m_device, m_graphics_pipeline, nullptr);
-    vkDestroyRenderPass(m_device, m_render_pass, nullptr);
-    vkDestroyPipelineLayout(m_device, m_pipeline_layout, nullptr);
 
     for (auto swapchain_image_view : m_swapchain_image_views) {
       vkDestroyImageView(m_device, swapchain_image_view, nullptr);
@@ -775,7 +786,8 @@ namespace Hyperion::Rendering {
     void *user_data) {
 
     if (severity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {
-      // HACK: This probably comes up because of a synchronization issue when resizing the window with multiple threads.
+      // HACK: This message comes up because of a synchronization issue when resizing the window with multiple threads.
+      // Additionally it is triggered when minimizing the window to a size of (0, 0) which we also ignore for now...
       if (String(callback_data->pMessage).contains("VUID-VkSwapchainCreateInfoKHR-imageExtent-01274")) {
         return VK_FALSE;
       }
