@@ -1,7 +1,7 @@
 include "packages.lua"
 
 project "hyperion"
-	location "projects/hyperion"
+	location "hyperion"
 	
 	language "C++"
 	cppdialect "C++20"
@@ -44,7 +44,7 @@ project "hyperion"
 	includedirs { package_stb_includedirs }
 	includedirs { package_yaml_includedirs }
 	
-	filter "files:projects/hyperion/vendor/**"
+	filter "files:hyperion/vendor/**"
 		flags { "NoPCH" }
 
 	filter "options:physics=bullet"
@@ -69,8 +69,8 @@ project "hyperion"
 function linkhyperion(path)
 	filter { }
 
-	includedirs { path .. "projects/hyperion/include" }
-	includedirs { path .. "projects/hyperion/vendor/optick/include" }
+	includedirs { path .. "hyperion/include" }
+	includedirs { path .. "hyperion/vendor/optick/include" }
 
 	links { "hyperion" }
 	
@@ -78,7 +78,7 @@ function linkhyperion(path)
 		defines { "HYP_CONSOLE" }
 
 	filter "system:windows"
-		libdirs { path .. "projects/hyperion/vendor/vulkan/lib/windows" }
+		libdirs { path .. "hyperion/vendor/vulkan/lib/windows" }
 		links { "opengl32", "PowrProf", "vulkan-1" }
 	
 	filter { "system:windows", "configurations:debug" }

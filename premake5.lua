@@ -76,7 +76,7 @@ workspace "hyperion"
 include "project.lua"
 
 project "hyperion-sandbox"
-	location "projects/hyperion-sandbox"
+	location "hyperion-sandbox"
 	
 	language "C++"
 	cppdialect "C++20"
@@ -106,7 +106,7 @@ project "hyperion-sandbox"
 	    }
 		
 project "hyperion-editor"
-	location "projects/hyperion-editor"
+	location "hyperion-editor"
 	
 	language "C++"
 	cppdialect "C++20"
