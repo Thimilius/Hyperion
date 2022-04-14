@@ -15,9 +15,6 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-  bool8 g_use_second_window = false;
-  Window *g_second_window;
-
   //--------------------------------------------------------------
   void RenderEngine::SetVSyncMode(VSyncMode vsync_mode) {
     s_vsync_mode = vsync_mode;
@@ -58,39 +55,6 @@ namespace Hyperion::Rendering {
       }
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         break;
-    }
-
-    if (g_use_second_window) {
-      g_second_window = new Window(WindowSettings());
-      HDC device_context = GetDC(static_cast<HWND>(g_second_window->GetNativeHandle()));
-      auto descriptor = RenderContextDescriptor();
-      const int32 pixel_attributes[] = {
-        WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
-        WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
-        WGL_DOUBLE_BUFFER_ARB, GL_TRUE,
-        WGL_ACCELERATION_ARB, WGL_FULL_ACCELERATION_ARB,
-        WGL_PIXEL_TYPE_ARB, WGL_TYPE_RGBA_ARB,
-        WGL_COLOR_BITS_ARB, descriptor.color_bits,
-        WGL_DEPTH_BITS_ARB, descriptor.depth_bits,
-        WGL_STENCIL_BITS_ARB, descriptor.stencil_bits,
-        WGL_ACCUM_BITS_ARB, 0,
-        WGL_SAMPLE_BUFFERS_ARB, descriptor.msaa_samples > 0 ? 1 : 0,
-        WGL_SAMPLES_ARB, descriptor.msaa_samples,
-        0
-      };
-      int32 pixel_format;
-      uint32 formats_count;
-      wglChoosePixelFormatARB(device_context, pixel_attributes, nullptr, 1, &pixel_format, &formats_count);
-
-      PIXELFORMATDESCRIPTOR pixel_format_descriptor;
-      if (!DescribePixelFormat(device_context, pixel_format, sizeof(pixel_format_descriptor), &pixel_format_descriptor)) {
-        HYP_PANIC_MESSAGE("OpenGL", "Failed to describe pixel format for context!");
-      }
-      if (!SetPixelFormat(device_context, pixel_format, &pixel_format_descriptor)) {
-        HYP_PANIC_MESSAGE("OpenGL", "Failed to set pixel format for context!");
-      }
-
-      g_second_window->Show();
     }
   }
 
@@ -177,13 +141,6 @@ namespace Hyperion::Rendering {
     render_driver->HandleAssets(s_render_frame->GetAssetContext());
     render_driver->ResetStats();
     render_driver->Render(s_render_frame);
-
-    if (g_use_second_window) {
-      s_render_frame->GetAssetContext().Clear();
-
-      s_render_driver_context->MakeCurrent(g_second_window);
-      render_driver->Render(s_render_frame);
-    }
   }
 
   //--------------------------------------------------------------
@@ -209,10 +166,6 @@ namespace Hyperion::Rendering {
 
     Window *main_window = Application::GetInstance()->GetMainWindow();
     s_render_driver_context->SwapBuffers(main_window);
-
-    if (g_use_second_window) {
-      s_render_driver_context->SwapBuffers(g_second_window);
-    }
 
     if (s_render_settings.threading_mode == RenderThreadingMode::MultiThreaded) {
       RenderThreadSynchronization::NotifyRenderDone();
