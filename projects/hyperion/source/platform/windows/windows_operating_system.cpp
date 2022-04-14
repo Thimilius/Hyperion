@@ -237,7 +237,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   String WindowsOperatingSystem::OpenFileDialog(const String &title, const String &filter) {
-    WCHAR file_output[MAX_PATH] = { 0 };
+    WCHAR file_output[MAX_PATH] = { };
 
     WideString title_utf16 = StringUtils::Utf8ToUtf16(title);
 
@@ -260,7 +260,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   String WindowsOperatingSystem::SaveFileDialog(const String &title, const String &filter) {
-    WCHAR file_output[MAX_PATH] = { 0 };
+    WCHAR file_output[MAX_PATH] = { };
 
     WideString title_utf16 = StringUtils::Utf8ToUtf16(title);
 

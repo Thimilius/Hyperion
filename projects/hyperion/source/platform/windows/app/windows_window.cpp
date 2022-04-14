@@ -266,7 +266,7 @@ namespace Hyperion {
       HYP_PANIC_MESSAGE("Engine", "Failed to get windows application instance!");
     }
 
-    WNDCLASSEXW window_class = { 0 };
+    WNDCLASSEXW window_class = { };
     window_class.cbSize = sizeof(window_class);
     window_class.lpszClassName = window_class_name;
     window_class.style = CS_HREDRAW | CS_VREDRAW;
@@ -340,7 +340,7 @@ namespace Hyperion {
   //--------------------------------------------------------------
   Vector2Int WindowsWindow::GetActualWindowSize(uint32 client_width, uint32 client_height) const {
     bool8 has_menu = !m_menu.items.IsEmpty();
-    RECT window_rect = { 0 };
+    RECT window_rect = { };
     window_rect.right = static_cast<LONG>(client_width);
     window_rect.bottom = static_cast<LONG>(client_height);
     if (!AdjustWindowRect(&window_rect, GetWindowLongW(m_window_handle, GWL_STYLE), has_menu)) {
@@ -685,7 +685,7 @@ namespace Hyperion {
           HYP_PANIC_MESSAGE("Engine", "Failed to get windows application instance!");
         }
 
-        WNDCLASSEXW window_class = { 0 };
+        WNDCLASSEXW window_class = { };
         window_class.cbSize = sizeof(window_class);
         window_class.lpszClassName = helper_window_class_name;
         window_class.style = CS_HREDRAW | CS_VREDRAW;

@@ -255,7 +255,7 @@ namespace Hyperion::Rendering {
 #ifdef HYP_DEBUG
     instance_extensions.Add(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 #endif
-
+    
     return instance_extensions;
   }
 

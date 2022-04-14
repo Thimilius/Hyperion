@@ -123,7 +123,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void WindowsOpenGLRenderContext::LoadOpenGLExtensions(HDC helper_device_context) {
-    PIXELFORMATDESCRIPTOR pixel_format_descriptor = { 0 };
+    PIXELFORMATDESCRIPTOR pixel_format_descriptor = { };
     pixel_format_descriptor.nSize = sizeof(pixel_format_descriptor);
     pixel_format_descriptor.nVersion = 1;
     pixel_format_descriptor.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;

@@ -28,7 +28,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   EngineMode Engine::GetEngineMode() {
-    if constexpr (Engine::IS_EDITOR) {
+    if constexpr (IS_EDITOR) {
       return s_mode;
     } else {
       return EngineMode::Runtime;
@@ -52,17 +52,17 @@ namespace Hyperion {
     HYP_LOG_INFO("Engine", "Primary display: {}x{} @{} Hz", mode_info.width, mode_info.height, mode_info.refresh_rate);
 
     EngineLoopSystem &engine_loop = s_settings.core.engine_loop;
-    engine_loop.initilization.name = "Initilization";
-    engine_loop.initilization.sub_systems = {
+    engine_loop.initialization.name = "Initialization";
+    engine_loop.initialization.sub_systems = {
       {
-        "MemoryStatsInitilization", []() {
-          HYP_PROFILE_SCOPE("EngineLoop.MemoryStatsInitilization");
+        "MemoryStatsInitialization", []() {
+          HYP_PROFILE_SCOPE("EngineLoop.MemoryStatsInitialization");
           MemoryStats::ResetFrameMemory();
         }
       },
       {
-        "TimeInitilization", []() {
-          HYP_PROFILE_SCOPE("EngineLoop.TimeInitilization");
+        "TimeInitialization", []() {
+          HYP_PROFILE_SCOPE("EngineLoop.TimeInitialization");
 
           float32 now = Time::s_timer.ElapsedSeconds();
           float32 delta_time = static_cast<float32>(now - Time::s_last_time);
@@ -87,17 +87,17 @@ namespace Hyperion {
         }
       },
       {
-        "InputInitilization", []() {
-          HYP_PROFILE_SCOPE("EngineLoop.InputInitilization");
+        "InputInitialization", []() {
+          HYP_PROFILE_SCOPE("EngineLoop.InputInitialization");
           s_application->GetMainWindow()->Poll();
         }
       },
       {
-        "DisplayInitilization", []() {
-          HYP_PROFILE_SCOPE("EngineLoop.DisplayInitilization");
+        "DisplayInitialization", []() {
+          HYP_PROFILE_SCOPE("EngineLoop.DisplayInitialization");
 
           // NOTE: The order in which we check for this size change ist important.
-          // We have to do it after the input initilization to properly handle resizing which might start inner engine iterations.
+          // We have to do it after the input initialization to properly handle resizing which might start inner engine iterations.
 
           Display::UpdateSize();
         }
@@ -328,7 +328,7 @@ namespace Hyperion {
 
     {
       HYP_PROFILE_SCOPE("EngineLoop.Initialization");
-      ExecuteEngineLoopSubSystem(engine_loop.initilization);
+      ExecuteEngineLoopSubSystem(engine_loop.initialization);
     }
 
     while (Time::s_accumulator > Time::GetFixedDeltaTime()) {

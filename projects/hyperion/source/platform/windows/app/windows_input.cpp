@@ -146,7 +146,7 @@ namespace Hyperion {
     if (m_gamepad_input_active) {
       for (DWORD i = 0; i < m_gamepads_connected.GetLength(); i++) {
         Gamepad gamepad = m_gamepads_connected[i];
-        XINPUT_STATE state = { 0 };
+        XINPUT_STATE state = { };
         DWORD result = g_xinput_get_state(GetIdFromGamepad(gamepad), &state);
 
         if (result != ERROR_SUCCESS) {
@@ -232,7 +232,7 @@ namespace Hyperion {
   //--------------------------------------------------------------
   void WindowsInput::QueryConnectedGamepads() {
     for (DWORD gamepad_id = 0; gamepad_id < XUSER_MAX_COUNT; gamepad_id++) {
-      XINPUT_STATE state = { 0 };
+      XINPUT_STATE state = { };
       DWORD result = g_xinput_get_state(gamepad_id, &state);
 
       Gamepad gamepad = GetGamepadFromId(gamepad_id);

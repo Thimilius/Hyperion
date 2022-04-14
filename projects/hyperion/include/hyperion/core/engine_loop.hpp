@@ -16,7 +16,7 @@ namespace Hyperion {
   };
 
   struct EngineLoopSystem {
-    EngineLoopSubSystem initilization;
+    EngineLoopSubSystem initialization;
     EngineLoopSubSystem fixed_update;
     EngineLoopSubSystem tick;
     EngineLoopSubSystem pre_update;

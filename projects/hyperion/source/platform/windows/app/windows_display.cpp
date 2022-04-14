@@ -12,7 +12,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   DisplayInfo::DisplayModeInfo Display::GetCurrentDisplayModeInfo() {
-    DISPLAY_DEVICEA display_device = { 0 };
+    DISPLAY_DEVICEA display_device = { };
     display_device.cb = sizeof(display_device);
 
     int32 device_number = 0;
@@ -20,7 +20,7 @@ namespace Hyperion {
       device_number++;
 
       if (display_device.StateFlags & DISPLAY_DEVICE_ATTACHED_TO_DESKTOP && display_device.StateFlags & DISPLAY_DEVICE_PRIMARY_DEVICE) {
-        DEVMODEA dev_mode = { 0 };
+        DEVMODEA dev_mode = { };
         dev_mode.dmSize = sizeof(dev_mode);
         uint32 display_mode_number = 0;
 
@@ -70,7 +70,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   void Display::UpdateDisplayInfos() {
-    DISPLAY_DEVICEA display_device = { 0 };
+    DISPLAY_DEVICEA display_device = { };
     display_device.cb = sizeof(display_device);
 
     s_display_infos.Clear();
@@ -84,7 +84,7 @@ namespace Hyperion {
         display_info.m_name = String(display_device.DeviceName);
         display_info.m_is_primary = display_device.StateFlags & DISPLAY_DEVICE_PRIMARY_DEVICE;
 
-        DEVMODEA dev_mode = { 0 };
+        DEVMODEA dev_mode = { };
         dev_mode.dmSize = sizeof(dev_mode);
         uint32 display_mode_number = 0;
         while (EnumDisplaySettingsA(display_device.DeviceName, display_mode_number, &dev_mode)) {
