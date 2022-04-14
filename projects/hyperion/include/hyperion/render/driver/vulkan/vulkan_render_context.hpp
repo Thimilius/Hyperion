@@ -87,6 +87,9 @@ namespace Hyperion::Rendering {
 
     void CreateSyncObjects();
 
+    void CreateVertexBuffer();
+    uint32 FindMemoryType(uint32 type_filter, VkMemoryPropertyFlags properties);
+
     void RecreateSwapchain();
     void CleanupSwapchain();
 
@@ -135,6 +138,9 @@ namespace Hyperion::Rendering {
     Array<VkSemaphore> m_image_available_semaphores;
     Array<VkSemaphore> m_render_finished_semaphores;
     Array<VkFence> m_in_flight_fences;
+
+    VkBuffer m_vertex_buffer;
+    VkDeviceMemory m_vertex_buffer_memory;
   private:
     friend class VulkanRenderDriver;
   };

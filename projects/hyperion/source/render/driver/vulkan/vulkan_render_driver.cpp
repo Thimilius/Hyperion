@@ -93,19 +93,6 @@ namespace Hyperion::Rendering {
 
     HYP_VULKAN_CHECK(vkBeginCommandBuffer(command_buffer, &begin_info), "Failed to begin command buffer!");
 
-    VkRenderPassBeginInfo render_pass_begin_info = { };
-    render_pass_begin_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    render_pass_begin_info.renderPass = m_context->m_render_pass;
-    render_pass_begin_info.framebuffer = m_context->m_swapchain_framebuffers[image_index];
-    render_pass_begin_info.renderArea.offset = { 0, 0 };
-    render_pass_begin_info.renderArea.extent = m_context->m_swapchain_extent;
-
-    VkClearValue clear_color = { { { 0.0f, 0.0f, 0.0f, 1.0f } } };
-    render_pass_begin_info.clearValueCount = 1;
-    render_pass_begin_info.pClearValues = &clear_color;
-
-    vkCmdBeginRenderPass(command_buffer, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
-    vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_context->m_graphics_pipeline);
     VkViewport viewport = { };
     viewport.x = 0.0f;
     viewport.y = 0.0f;
@@ -118,6 +105,20 @@ namespace Hyperion::Rendering {
     scissor.offset = { 0, 0 };
     scissor.extent = { Display::GetWidth(), Display::GetHeight() };
     vkCmdSetScissor(command_buffer, 0, 1, &scissor);
+
+    VkRenderPassBeginInfo render_pass_begin_info = { };
+    render_pass_begin_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    render_pass_begin_info.renderPass = m_context->m_render_pass;
+    render_pass_begin_info.framebuffer = m_context->m_swapchain_framebuffers[image_index];
+    render_pass_begin_info.renderArea.offset = { 0, 0 };
+    render_pass_begin_info.renderArea.extent = m_context->m_swapchain_extent;
+    VkClearValue clear_color = { { { 0.0f, 0.0f, 0.0f, 1.0f } } };
+    render_pass_begin_info.clearValueCount = 1;
+    render_pass_begin_info.pClearValues = &clear_color;
+    vkCmdBeginRenderPass(command_buffer, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
+    vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_context->m_graphics_pipeline);
+    VkDeviceSize buffer_offsets = 0;
+    vkCmdBindVertexBuffers(command_buffer, 0, 1, &m_context->m_vertex_buffer, &buffer_offsets);
     vkCmdDraw(command_buffer, 3, 1, 0, 0);
     vkCmdEndRenderPass(command_buffer);
 

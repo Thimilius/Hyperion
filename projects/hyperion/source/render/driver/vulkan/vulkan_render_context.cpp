@@ -15,6 +15,42 @@ namespace Hyperion::Rendering {
   constexpr bool8 LOG_LAYERS = false;
   constexpr bool8 LOG_EXTENSIONS = false;
 
+  struct VulkanVertex {
+    Vector2 position;
+    Vector3 color;
+
+    static VkVertexInputBindingDescription GetBindingDescription() {
+      VkVertexInputBindingDescription binding_description = { };
+      binding_description.binding = 0;
+      binding_description.stride = sizeof(VulkanVertex);
+      binding_description.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+      return binding_description;
+    }
+
+    static Array<VkVertexInputAttributeDescription> GetAttributeDescriptions() {
+      Array<VkVertexInputAttributeDescription> attribute_descriptions = { };
+      attribute_descriptions.Resize(2);
+
+      attribute_descriptions[0].binding = 0;
+      attribute_descriptions[0].location = 0;
+      attribute_descriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
+      attribute_descriptions[0].offset = offsetof(VulkanVertex, position);
+
+      attribute_descriptions[1].binding = 0;
+      attribute_descriptions[1].location = 1;
+      attribute_descriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+      attribute_descriptions[1].offset = offsetof(VulkanVertex, color);
+
+      return attribute_descriptions;
+    }
+  };
+
+  const Array<VulkanVertex> g_vertices = {
+    { { 0.0f, -0.5f}, { 1.0f, 0.0f, 0.0f } },
+    { { 0.5f,  0.5f}, { 0.0f, 1.0f, 0.0f } },
+    { {-0.5f,  0.5f}, { 0.0f, 0.0f, 1.0f } }
+  };
+
   //--------------------------------------------------------------
   void VulkanRenderContext::Initialize(Window *main_window, const RenderContextDescriptor &descriptor) {
     QueryLayersAndExtensions();
@@ -35,6 +71,7 @@ namespace Hyperion::Rendering {
     CreateCommandPool();
     CreateCommandBuffers();
     CreateSyncObjects();
+    CreateVertexBuffer();
 
     m_render_driver.Setup(this);
 
@@ -45,8 +82,10 @@ namespace Hyperion::Rendering {
   void VulkanRenderContext::Shutdown() {
     CleanupSwapchain();
 
+    vkDestroyBuffer(m_device, m_vertex_buffer, nullptr);
+    vkFreeMemory(m_device, m_vertex_buffer_memory, nullptr);
+
     vkDestroyPipeline(m_device, m_graphics_pipeline, nullptr);
-    vkDestroyRenderPass(m_device, m_render_pass, nullptr);
     vkDestroyPipelineLayout(m_device, m_pipeline_layout, nullptr);
 
     for (uint32 i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
@@ -560,12 +599,15 @@ namespace Hyperion::Rendering {
 
     VkPipelineShaderStageCreateInfo shader_stages[] = { vertex_shader_stage_create_info, fragment_shader_stage_create_info };
 
+    VkVertexInputBindingDescription binding_description = VulkanVertex::GetBindingDescription();
+    Array<VkVertexInputAttributeDescription> attribute_descriptions = VulkanVertex::GetAttributeDescriptions();
+
     VkPipelineVertexInputStateCreateInfo vertex_input_create_info = { };
     vertex_input_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-    vertex_input_create_info.vertexBindingDescriptionCount = 0;
-    vertex_input_create_info.pVertexBindingDescriptions = nullptr;
-    vertex_input_create_info.vertexAttributeDescriptionCount = 0;
-    vertex_input_create_info.pVertexAttributeDescriptions = nullptr;
+    vertex_input_create_info.vertexBindingDescriptionCount = 1;
+    vertex_input_create_info.pVertexBindingDescriptions = &binding_description;
+    vertex_input_create_info.vertexAttributeDescriptionCount = static_cast<uint32>(attribute_descriptions.GetLength());
+    vertex_input_create_info.pVertexAttributeDescriptions = attribute_descriptions.GetData();
 
     VkPipelineInputAssemblyStateCreateInfo input_assembly_create_info = { };
     input_assembly_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -758,6 +800,46 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
+  void VulkanRenderContext::CreateVertexBuffer() {
+    VkBufferCreateInfo create_info = { };
+    create_info.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    create_info.size = g_vertices.GetLength() * sizeof(g_vertices[0]);
+    create_info.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+    create_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    HYP_VULKAN_CHECK(vkCreateBuffer(m_device, &create_info, nullptr, &m_vertex_buffer), "Failed to create vertex buffer!");
+
+    VkMemoryRequirements memory_requirements;
+    vkGetBufferMemoryRequirements(m_device, m_vertex_buffer, &memory_requirements);
+    VkMemoryAllocateInfo allocate_info = { };
+    allocate_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    allocate_info.allocationSize = memory_requirements.size;
+    allocate_info.memoryTypeIndex = FindMemoryType(memory_requirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+    HYP_VULKAN_CHECK(vkAllocateMemory(m_device, &allocate_info, nullptr, &m_vertex_buffer_memory), "Failed to allocate vertex buffer memory!");
+
+    HYP_VULKAN_CHECK(vkBindBufferMemory(m_device, m_vertex_buffer, m_vertex_buffer_memory, 0), "Failed to bind vertex buffer memory!");
+
+    void *memory;
+    HYP_VULKAN_CHECK(vkMapMemory(m_device, m_vertex_buffer_memory, 0, create_info.size, 0, &memory), "Failed to map vertex buffer memory!");
+    std::memcpy(memory, g_vertices.GetData(), create_info.size);
+    vkUnmapMemory(m_device, m_vertex_buffer_memory);
+  }
+
+  //--------------------------------------------------------------
+  uint32 VulkanRenderContext::FindMemoryType(uint32 type_filter, VkMemoryPropertyFlags properties) {
+    VkPhysicalDeviceMemoryProperties memory_properties;
+    vkGetPhysicalDeviceMemoryProperties(m_physical_device, &memory_properties);
+
+    for (uint32 i = 0; i < memory_properties.memoryTypeCount; i++) {
+      if (type_filter & (1 << i) && (memory_properties.memoryTypes[i].propertyFlags & properties) == properties) {
+        return i;
+      }
+    }
+
+    HYP_LOG_ERROR("Vulkan", "Failed to find suitable memory type!");
+    return 0;
+  }
+
+  //--------------------------------------------------------------
   void VulkanRenderContext::RecreateSwapchain() {
     vkDeviceWaitIdle(m_device);
 
@@ -779,6 +861,8 @@ namespace Hyperion::Rendering {
       vkDestroyImageView(m_device, swapchain_image_view, nullptr);
     }
     vkDestroySwapchainKHR(m_device, m_swapchain, nullptr);
+
+    vkDestroyRenderPass(m_device, m_render_pass, nullptr);
   }
 
   //--------------------------------------------------------------
