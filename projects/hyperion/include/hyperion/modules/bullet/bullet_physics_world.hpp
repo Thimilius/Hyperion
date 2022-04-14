@@ -27,7 +27,8 @@ namespace Hyperion::Physics {
     void UpdateBoxCollider(World *world, EntityId entity, BoxColliderComponent *box_collider, DerivedTransformComponent *derived_transform) override;
     void UpdateBoxColliderTransform(World *world, EntityId entity, BoxColliderComponent *box_collider, DerivedTransformComponent *derived_transform) override;
     void UpdateSphereCollider(World *world, EntityId entity, SphereColliderComponent *sphere_collider) override;
-    void UpdateSphereColliderTransform(World *world, EntityId entity, SphereColliderComponent *sphere_collider, DerivedTransformComponent *derived_transform) override;
+    void UpdateSphereColliderTransform(World *world, EntityId entity, SphereColliderComponent *sphere_collider,
+                                       DerivedTransformComponent *derived_transform) override;
   private:
     void AddBoxCollider(World *world, EntityId entity);
     void RemoveBoxCollider(World *world, EntityId entity);

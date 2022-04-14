@@ -12,18 +12,15 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   Vector4::Vector4()
-    : x(0), y(0), z(0), w(0) {
-  }
+    : x(0), y(0), z(0), w(0) { }
 
   //--------------------------------------------------------------
   Vector4::Vector4(float32 x, float32 y, float32 z, float32 w)
-    : x(x), y(y), z(z), w(w) {
-  }
+    : x(x), y(y), z(z), w(w) { }
 
   //--------------------------------------------------------------
   Vector4::Vector4(const Vector3 &vec3, float32 w)
-    : x(vec3.x), y(vec3.y), z(vec3.z), w(w) {
-  }
+    : x(vec3.x), y(vec3.y), z(vec3.z), w(w) { }
 
   //--------------------------------------------------------------
   Vector4 &Vector4::Add(const Vector4 &other) {
@@ -157,7 +154,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   bool8 Vector4::operator<(const Vector4 &other) const {
-    return x < other.x &&y < other.y &&z < other.z &&w < other.w;
+    return x < other.x && y < other.y && z < other.z && w < other.w;
   }
 
   //--------------------------------------------------------------

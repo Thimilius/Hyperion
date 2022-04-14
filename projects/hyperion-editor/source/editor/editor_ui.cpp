@@ -30,7 +30,7 @@ namespace Hyperion::Editor {
     s_ui_view.root_element = s_root_element;
     s_ui_view.scaling_mode = ScalingMode::ConstantPixelSize;
 
-    auto create_toggle = [](UIElement *parent, Font *font, const String &text, bool8 is_on, UIToggleCallback callback) -> UIToggle * {
+    auto create_toggle = [](UIElement *parent, Font *font, const String &text, bool8 is_on, UIToggleCallback callback) -> UIToggle* {
       UIToggle *ui_toggle = UIFactory::CreateToggle();
       ui_toggle->SetSize(Vector2(25.0f, 25.0f));
       ui_toggle->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
@@ -49,7 +49,7 @@ namespace Hyperion::Editor {
       ui_toggle->SetToggleGraphic(toggle_label);
       return ui_toggle;
     };
-    auto create_button = [](UIElement *parent, Font *font, const String &text, UIButtonClickCallback callback = UIButtonClickCallback()) -> UIButton * {
+    auto create_button = [](UIElement *parent, Font *font, const String &text, UIButtonClickCallback callback = UIButtonClickCallback()) -> UIButton* {
       UIButton *button = UIFactory::CreateButton();
       button->SetSize(Vector2(25.0f, 25.0f));
       button->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
@@ -258,12 +258,13 @@ namespace Hyperion::Editor {
           preview_header_left->GetLayout().layout_type = LayoutType::Horizontal;
           preview_header_left->GetLayout().child_alignment = ChildAlignment::MiddleLeft;
 
-          s_toggle_vsync = create_toggle(preview_header_left, s_font_icon, "\uf108", Rendering::RenderEngine::GetVSyncMode() != Rendering::VSyncMode::DontSync, [](bool8 is_on) {
-            Rendering::RenderEngine::SetVSyncMode(
-              Rendering::RenderEngine::GetVSyncMode() == Rendering::VSyncMode::DontSync ?
-              Rendering::VSyncMode::EveryVBlank :
-              Rendering::VSyncMode::DontSync);
-          });
+          s_toggle_vsync = create_toggle(preview_header_left, s_font_icon, "\uf108", Rendering::RenderEngine::GetVSyncMode() != Rendering::VSyncMode::DontSync,
+                                         [](bool8 is_on) {
+                                           Rendering::RenderEngine::SetVSyncMode(
+                                             Rendering::RenderEngine::GetVSyncMode() == Rendering::VSyncMode::DontSync
+                                               ? Rendering::VSyncMode::EveryVBlank
+                                               : Rendering::VSyncMode::DontSync);
+                                         });
           s_toggle_grid = create_toggle(preview_header_left, s_font_icon, "\uf850", Rendering::RenderGizmos::GetShouldDrawGrid(), [](bool8 is_on) {
             Rendering::RenderGizmos::SetShouldDrawGrid(is_on);
           });
@@ -436,9 +437,7 @@ namespace Hyperion::Editor {
   }
 
   //--------------------------------------------------------------
-  void EditorUI::UpdateHierarchyLabel() {
-
-  }
+  void EditorUI::UpdateHierarchyLabel() { }
 
   //--------------------------------------------------------------
   void EditorUI::UpdateHierarchyLabelBranch(World *world, EntityId branch, HierarchyComponent *branch_hierarchy, uint32 depth) {
@@ -461,7 +460,7 @@ namespace Hyperion::Editor {
     hierarchy_button->GetHierarchy().SetParent(s_hierarchy_container);
     hierarchy_button->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
     hierarchy_button->SetPosition(Vector2(0.0f, s_hierarchy.GetLength() * -15.0f));
-    hierarchy_button->RegisterClickCallback([branch]() { 
+    hierarchy_button->RegisterClickCallback([branch]() {
       EditorSelection::Select(branch);
     });
     UILabel *input_label = hierarchy_button->Q<UILabel>();

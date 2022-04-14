@@ -129,20 +129,20 @@ namespace Hyperion::Rendering {
       glNamedBufferData(m_static.render_bounds_vertex_buffer, 8 * sizeof(OpenGLImmediateVertex), nullptr, GL_DYNAMIC_DRAW);
 
       Array<uint32> indices = {
-          0, 1,
-          1, 5,
-          5, 4,
-          4, 0,
+        0, 1,
+        1, 5,
+        5, 4,
+        4, 0,
 
-          0, 2,
-          1, 3,
-          5, 7,
-          4, 6,
+        0, 2,
+        1, 3,
+        5, 7,
+        4, 6,
 
-          2, 3,
-          3, 7,
-          7, 6,
-          6, 2,
+        2, 3,
+        3, 7,
+        7, 6,
+        6, 2,
       };
 
       glCreateBuffers(1, &m_static.render_bounds_index_buffer);

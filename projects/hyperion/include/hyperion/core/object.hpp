@@ -8,7 +8,7 @@
 #define HYP_OBJECT(TYPE)                                                                           \
     public:                                                                                        \
         inline virtual MetaType GetType() const override { return MetaRegistry::Resolve<TYPE>(); } \
-    private:                                                                                       \
+    private:
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {

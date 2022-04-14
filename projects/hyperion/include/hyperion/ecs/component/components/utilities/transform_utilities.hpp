@@ -23,7 +23,8 @@ namespace Hyperion {
         local_transform->position = position;
       } else {
         DerivedTransformComponent *parent_derived_transform = world->GetComponent<DerivedTransformComponent>(hierarchy->parent);
-        local_transform->position = (parent_derived_transform->rotation.Inverted() * (position - parent_derived_transform->position)) / parent_derived_transform->scale;
+        local_transform->position = (parent_derived_transform->rotation.Inverted() * (position - parent_derived_transform->position)) / parent_derived_transform
+          ->scale;
       }
       world->GetHierarchy()->UpdateTransform(WorldHierarchyTransformUpdate::Branch, entity);
     }
@@ -81,6 +82,7 @@ namespace Hyperion {
         return parent_derived_transform->rotation * local_transform->rotation;
       }
     }
+
   private:
     TransformUtilities() = delete;
     ~TransformUtilities() = delete;

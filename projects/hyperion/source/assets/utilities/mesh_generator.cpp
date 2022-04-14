@@ -16,10 +16,10 @@ namespace Hyperion {
     float32 half_width = width / 2.0f;
     float32 half_height = height / 2.0f;
     Vector3 corners[4] = {
-        Vector3(half_width, half_height, 0.0f),
-        Vector3(half_width, -half_height, 0.0f),
-        Vector3(-half_width, -half_height, 0.0f),
-        Vector3(-half_width, half_height, 0.0f)
+      Vector3(half_width, half_height, 0.0f),
+      Vector3(half_width, -half_height, 0.0f),
+      Vector3(-half_width, -half_height, 0.0f),
+      Vector3(-half_width, half_height, 0.0f)
     };
 
     // The quad should face the camera (right-handed).
@@ -36,10 +36,10 @@ namespace Hyperion {
     float32 half_height = height / 2.0f;
     // Remember that we are right-handed and therefore -z is into the screen!
     Vector3 corners[4] = {
-        Vector3(half_width, 0.0f, -half_height),
-        Vector3(half_width, 0.0f, half_height),
-        Vector3(-half_width, 0.0f, half_height),
-        Vector3(-half_width, 0.0f, -half_height)
+      Vector3(half_width, 0.0f, -half_height),
+      Vector3(half_width, 0.0f, half_height),
+      Vector3(-half_width, 0.0f, half_height),
+      Vector3(-half_width, 0.0f, -half_height)
     };
 
     // The plane should face up.

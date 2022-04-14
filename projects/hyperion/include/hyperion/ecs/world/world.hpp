@@ -226,7 +226,7 @@ namespace Hyperion {
     }
 
     template<typename... Component, typename... Exclude>
-    WorldView<GetComponents<Component ...>, ExcludeComponents<Exclude ...>> GetView(ExcludeComponents<Exclude ...> = { }) {
+    WorldView<GetComponents<Component ...>, ExcludeComponents<Exclude ...>> GetView(ExcludeComponents<Exclude ...>  = { }) {
       return WorldView<GetComponents<Component ...>, ExcludeComponents<Exclude ...>>(this);
     }
 
@@ -269,6 +269,7 @@ namespace Hyperion {
       ComponentId component_id = ComponentRegistry::GetId<T>();
       m_storage.component_callbacks[component_id].removed.Remove(callback);
     }
+
   private:
     void AddComponentsForPrimitive(EntityId id, EntityPrimitive primitive);
   private:

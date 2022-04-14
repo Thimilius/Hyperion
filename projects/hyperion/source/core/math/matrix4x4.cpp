@@ -202,7 +202,6 @@ namespace Hyperion {
     );
   }
 
-
   //--------------------------------------------------------------
   Vector4 Matrix4x4::GetRow(int32 index) const {
     return Vector4(elements[index + 0 * 4], elements[index + 1 * 4], elements[index + 2 * 4], elements[index + 3 * 4]);
@@ -218,7 +217,8 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   String Matrix4x4::ToString() const {
-    return StringUtils::Format("({:.2f}, {:.2f}, {:.2f}, {:.2f})\n({:.2f}, {:.2f}, {:.2f}, {:.2f})\n({:.2f}, {:.2f}, {:.2f}, {:.2f})\n({:.2f}, {:.2f}, {:.2f}, {:.2f})\n",
+    return StringUtils::Format(
+      "({:.2f}, {:.2f}, {:.2f}, {:.2f})\n({:.2f}, {:.2f}, {:.2f}, {:.2f})\n({:.2f}, {:.2f}, {:.2f}, {:.2f})\n({:.2f}, {:.2f}, {:.2f}, {:.2f})\n",
       columns[0].x, columns[1].x, columns[2].x, columns[3].x,
       columns[0].y, columns[1].y, columns[2].y, columns[3].y,
       columns[0].z, columns[1].z, columns[2].z, columns[3].z,

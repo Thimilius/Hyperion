@@ -276,13 +276,20 @@ namespace Hyperion::Rendering {
 
     // TODO: Add proper support for default values.
     switch (type) {
-      case ShaderPropertyType::Float: result.storage.float32 = 0.0f; break;
-      case ShaderPropertyType::Int: result.storage.int32 = 0; break;
-      case ShaderPropertyType::Vector: result.storage.vector4 = Vector4(); break;
-      case ShaderPropertyType::Color: result.storage.color = Color::White(); break;
-      case ShaderPropertyType::Matrix: result.storage.matrix4x4 = Matrix4x4::Identity(); break;
-      case ShaderPropertyType::Texture: result.storage.texture.id = AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetAssetInfo().id; break;
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+      case ShaderPropertyType::Float: result.storage.float32 = 0.0f;
+        break;
+      case ShaderPropertyType::Int: result.storage.int32 = 0;
+        break;
+      case ShaderPropertyType::Vector: result.storage.vector4 = Vector4();
+        break;
+      case ShaderPropertyType::Color: result.storage.color = Color::White();
+        break;
+      case ShaderPropertyType::Matrix: result.storage.matrix4x4 = Matrix4x4::Identity();
+        break;
+      case ShaderPropertyType::Texture: result.storage.texture.id = AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetAssetInfo().id;
+        break;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        break;
     }
 
     return result;
@@ -344,6 +351,7 @@ namespace Hyperion::Rendering {
       return ShaderZWrite::Unknown;
     }
   }
+
   //--------------------------------------------------------------
   ShaderPropertyType ShaderPreProcessor::GetShaderPropertyType(const String &string) {
     if (string == "Float") {

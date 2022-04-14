@@ -38,8 +38,8 @@ namespace Hyperion {
     Result() = default;
     ~Result() = default;
 
-    Result(Ok<T> value) : m_okay_value(std::move(value)), m_error_value{ }, m_okay_contains_value(true) { }
-    Result(Err<E> error) : m_okay_value{ }, m_error_value(std::move(error)), m_okay_contains_value(false) { }
+    Result(Ok<T> value) : m_okay_value(std::move(value)), m_error_value { }, m_okay_contains_value(true) { }
+    Result(Err<E> error) : m_okay_value { }, m_error_value(std::move(error)), m_okay_contains_value(false) { }
 
     bool8 &IsOk() { return m_okay_contains_value; }
     const bool8 &IsOk() const { return m_okay_contains_value; }

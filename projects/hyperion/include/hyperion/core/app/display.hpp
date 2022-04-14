@@ -26,6 +26,7 @@ namespace Hyperion {
         return width == other.width && height == other.height && bits_per_pixel == other.bits_per_pixel && refresh_rate == other.refresh_rate;
       }
     };
+
   public:
     inline const String &GetName() const { return m_name; }
     inline bool8 IsPrimary() const { return m_is_primary; }

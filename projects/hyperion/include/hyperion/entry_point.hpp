@@ -9,6 +9,6 @@ extern Hyperion::Application *Hyperion::CreateApplication();
 
 #ifdef HYP_PLATFORM_WINDOWS
 #include "hyperion/platform/windows/windows_entry_point.hpp"
-#else 
+#else
 #error Platform not implemented
 #endif

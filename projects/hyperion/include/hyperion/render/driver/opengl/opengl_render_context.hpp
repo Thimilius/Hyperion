@@ -43,7 +43,8 @@ namespace Hyperion::Rendering {
     void CheckExtensions();
     void CheckExtension(const String &extension);
   private:
-    static void GLAPIENTRY DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *user_pointer);
+    static void GLAPIENTRY DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message,
+                                                const void *user_pointer);
   private:
     RenderContextProperties m_properties;
     OpenGLRenderContextLimits m_limits;

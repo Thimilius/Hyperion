@@ -89,6 +89,7 @@ namespace Hyperion {
     inline static float32 Map(float32 value, float32 input_start, float32 input_end, float32 output_start, float32 output_end) {
       return output_start + ((output_end - output_start) / (input_end - input_start)) * (value - input_start);
     }
+
   private:
     Math() = delete;
     ~Math() = delete;

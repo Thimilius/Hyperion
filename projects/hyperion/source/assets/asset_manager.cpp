@@ -24,7 +24,8 @@ namespace Hyperion {
   Texture2D *AssetManager::GetTexture2DPrimitive(Texture2DPrimitive texture_2d_primitive) {
     switch (texture_2d_primitive) {
       case Hyperion::Texture2DPrimitive::White: return s_primitives.texture_2d_white;
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        return nullptr;
     }
   }
 
@@ -73,7 +74,8 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  Texture2D *AssetManager::CreateTexture2D(const Rendering::Texture2DParameters &parameters, const Rendering::TexturePixelData &pixels, AssetDataAccess data_access) {
+  Texture2D *AssetManager::CreateTexture2D(const Rendering::Texture2DParameters &parameters, const Rendering::TexturePixelData &pixels,
+                                           AssetDataAccess data_access) {
     AssetInfo info = GetNextAssetInfo(data_access);
     Texture2D *texture = new Texture2D(info, parameters, pixels);
     s_textures.Insert(info.guid, texture);
@@ -140,7 +142,8 @@ namespace Hyperion {
       case ShaderPrimitive::Gizmo: return s_primitives.shader_gizmo;
       case ShaderPrimitive::UI: return s_primitives.shader_ui;
       case ShaderPrimitive::Font: return s_primitives.shader_font;
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        return nullptr;
     }
   }
 
@@ -172,7 +175,8 @@ namespace Hyperion {
       case MaterialPrimitive::Unlit: return s_primitives.material_unlit;
       case MaterialPrimitive::UI: return s_primitives.material_ui;
       case MaterialPrimitive::Font: return s_primitives.material_font;
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        return nullptr;
     }
   }
 
@@ -202,7 +206,8 @@ namespace Hyperion {
       case MeshPrimitive::Plane: return s_primitives.mesh_plane;
       case MeshPrimitive::Cube: return s_primitives.mesh_cube;
       case MeshPrimitive::Sphere: return s_primitives.mesh_sphere;
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        return nullptr;
     }
   }
 
@@ -240,29 +245,25 @@ namespace Hyperion {
 
     AssetGuid asset_guid = asset->GetAssetInfo().guid;
     switch (asset->GetAssetType()) {
-      case AssetType::Material:
-      {
+      case AssetType::Material: {
         Material *material = static_cast<Material *>(asset);
         HYP_ASSERT(s_materials.Contains(asset_guid));
         s_materials.Remove(asset_guid);
         break;
       }
-      case AssetType::Mesh:
-      {
+      case AssetType::Mesh: {
         Mesh *mesh = static_cast<Mesh *>(asset);
         HYP_ASSERT(s_meshes.Contains(asset_guid));
         s_meshes.Remove(asset_guid);
         break;
       }
-      case AssetType::Shader:
-      {
+      case AssetType::Shader: {
         Shader *shader = static_cast<Shader *>(asset);
         HYP_ASSERT(s_shaders.Contains(asset_guid));
         s_shaders.Remove(asset_guid);
         break;
       }
-      case AssetType::Texture:
-      {
+      case AssetType::Texture: {
         Texture *texture = static_cast<Texture *>(asset);
         HYP_ASSERT(s_textures.Contains(asset_guid));
         s_textures.Remove(asset_guid);
@@ -374,32 +375,28 @@ namespace Hyperion {
     AssetGuid new_guid = AssetGuid::Generate(guid);
 
     switch (asset->GetAssetType()) {
-      case AssetType::Material:
-      {
+      case AssetType::Material: {
         Material *material = static_cast<Material *>(asset);
         HYP_ASSERT(s_materials.Contains(old_guid));
         s_materials.Remove(old_guid);
         s_materials.Insert(new_guid, material);
         break;
       }
-      case AssetType::Mesh:
-      {
+      case AssetType::Mesh: {
         Mesh *mesh = static_cast<Mesh *>(asset);
         HYP_ASSERT(s_meshes.Contains(old_guid));
         s_meshes.Remove(old_guid);
         s_meshes.Insert(new_guid, mesh);
         break;
       }
-      case AssetType::Shader:
-      {
+      case AssetType::Shader: {
         Shader *shader = static_cast<Shader *>(asset);
         HYP_ASSERT(s_shaders.Contains(old_guid));
         s_shaders.Remove(old_guid);
         s_shaders.Insert(new_guid, shader);
         break;
       }
-      case AssetType::Texture:
-      {
+      case AssetType::Texture: {
         Texture *texture = static_cast<Texture *>(asset);
         HYP_ASSERT(s_textures.Contains(old_guid));
         s_textures.Remove(old_guid);

@@ -59,6 +59,7 @@ struct Overlapped {
   void *Data1[3];
   unsigned long Data2[2];
 };
+
 typedef Overlapped *LPOverlapped;
 
 // RANT: Apparently Microsoft forgot to include this definition in their header files. What the hell!?!?

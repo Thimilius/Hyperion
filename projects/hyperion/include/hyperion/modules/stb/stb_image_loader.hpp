@@ -15,13 +15,13 @@ namespace Hyperion {
     Result<Image *, Error> Load(const String &path, bool8 flip_vertically) override;
   private:
     inline static Array<String> s_supported_extensions = {
-        ".png",
-        ".jpg",
-        ".jpeg",
-        ".gif",
-        ".bmp",
-        ".tga",
-        ".psd"
+      ".png",
+      ".jpg",
+      ".jpeg",
+      ".gif",
+      ".bmp",
+      ".tga",
+      ".psd"
     };
   };
 

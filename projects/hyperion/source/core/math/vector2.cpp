@@ -9,18 +9,15 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   Vector2::Vector2()
-    : x(0), y(0) {
-  }
+    : x(0), y(0) { }
 
   //--------------------------------------------------------------
   Vector2::Vector2(float32 x, float32 y)
-    : x(x), y(y) {
-  }
+    : x(x), y(y) { }
 
   //--------------------------------------------------------------
   Vector2::Vector2(const Vector3 &Vector3)
-    : x(Vector3.x), y(Vector3.y) {
-  }
+    : x(Vector3.x), y(Vector3.y) { }
 
   //--------------------------------------------------------------
   Vector2 &Vector2::Add(const Vector2 &other) {
@@ -127,7 +124,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   bool8 Vector2::operator<(const Vector2 &other) const {
-    return x < other.x &&y < other.y;
+    return x < other.x && y < other.y;
   }
 
   //--------------------------------------------------------------
@@ -240,18 +237,15 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   Vector2Int::Vector2Int()
-    : x(0), y(0) {
-  }
+    : x(0), y(0) { }
 
   //--------------------------------------------------------------
   Vector2Int::Vector2Int(int32 x, int32 y)
-    : x(x), y(y) {
-  }
+    : x(x), y(y) { }
 
   //--------------------------------------------------------------
   Vector2Int::Vector2Int(const Vector3Int &Vector3)
-    : x(Vector3.x), y(Vector3.y) {
-  }
+    : x(Vector3.x), y(Vector3.y) { }
 
   //--------------------------------------------------------------
   Vector2Int &Vector2Int::Add(const Vector2Int &other) {
@@ -364,7 +358,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   bool8 Vector2Int::operator<(const Vector2Int &other) const {
-    return x < other.x &&y < other.y;
+    return x < other.x && y < other.y;
   }
 
   //--------------------------------------------------------------

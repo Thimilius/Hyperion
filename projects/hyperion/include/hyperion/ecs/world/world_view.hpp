@@ -24,7 +24,8 @@ namespace Hyperion {
   template<typename... Types>
   struct ExcludeComponents : public ComponentTypesList<Types ...> { };
 
-  template<typename... Types> class WorldView;
+  template<typename... Types>
+  class WorldView;
 
   template<typename... Component, typename... Exclude>
   class WorldView<GetComponents<Component ...>, ExcludeComponents<Exclude ...>> {
@@ -91,6 +92,7 @@ namespace Hyperion {
 
         return false;
       }
+
     private:
       EntityIndex m_index;
 
@@ -100,6 +102,7 @@ namespace Hyperion {
       const std::array<ComponentId, COMPONENT_IDS_LENGTH> COMPONENT_IDS = { ComponentRegistry::GetId<Component>() ... };
       const std::array<ComponentId, EXCLUDE_IDS_LENGTH> EXCLUDE_IDS = { ComponentRegistry::GetId<Exclude>() ... };
     };
+
   public:
     WorldView(World *world) : m_world(world) {
       uint64 smallest_entity_count = UINT64_MAX;
@@ -111,6 +114,7 @@ namespace Hyperion {
         }
       }
     }
+
   public:
     const Iterator begin() const {
       EntityIndex index = 0;
@@ -147,6 +151,7 @@ namespace Hyperion {
 
       return Iterator(index, m_world, m_smallest_pool);
     }
+
     const Iterator end() const {
       EntityIndex index;
       if constexpr (ALL_COMPONENTS) {
@@ -156,6 +161,7 @@ namespace Hyperion {
       }
       return Iterator(index, m_world, m_smallest_pool);
     }
+
   private:
     World *m_world;
     ComponentPool *m_smallest_pool;

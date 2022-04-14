@@ -78,8 +78,7 @@ namespace Hyperion::Rendering {
 
       switch (drawing_parameters.sorting_settings.criteria) {
         case SortingCriteria::None: break;
-        case SortingCriteria::Opaque:
-        {
+        case SortingCriteria::Opaque: {
           std::sort(draw_meshes.sorted_objects.begin(), draw_meshes.sorted_objects.end(), [mesh_objects, camera_position](uint32 a, uint32 b) {
             const RenderFrameContextObjectMesh &mesh_a = mesh_objects[a];
             const RenderFrameContextObjectMesh &mesh_b = mesh_objects[b];
@@ -91,8 +90,7 @@ namespace Hyperion::Rendering {
           });
           break;
         }
-        case SortingCriteria::Transparent:
-        {
+        case SortingCriteria::Transparent: {
           std::sort(draw_meshes.sorted_objects.begin(), draw_meshes.sorted_objects.end(), [mesh_objects, camera_position](uint32 a, uint32 b) {
             const RenderFrameContextObjectMesh &mesh_a = mesh_objects[a];
             const RenderFrameContextObjectMesh &mesh_b = mesh_objects[b];
@@ -104,7 +102,8 @@ namespace Hyperion::Rendering {
           });
           break;
         }
-        default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+        default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+          break;
       }
     }
 

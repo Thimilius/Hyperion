@@ -136,10 +136,13 @@ namespace Hyperion {
       MetaRegistry::Reflect<HierarchyComponent>("HierarchyComponent")
         .Base<IComponent>()
         .Property<&HierarchyComponent::parent>("parent", std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::EntityIdAsGuid))
-        .Property<&HierarchyComponent::previous_sibling>("previous_sibling", std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::EntityIdAsGuid))
-        .Property<&HierarchyComponent::next_sibling>("next_sibling", std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::EntityIdAsGuid))
+        .Property<&HierarchyComponent::previous_sibling>("previous_sibling",
+                                                         std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::EntityIdAsGuid))
+        .Property<&HierarchyComponent::next_sibling>(
+          "next_sibling", std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::EntityIdAsGuid))
         .Property<&HierarchyComponent::child_count>("child_count")
-        .Property<&HierarchyComponent::first_child>("first_child", std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::EntityIdAsGuid))
+        .Property<&HierarchyComponent::first_child>(
+          "first_child", std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::EntityIdAsGuid))
         .Property<&HierarchyComponent::last_child>("last_child", std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::EntityIdAsGuid));
 
       MetaRegistry::Reflect<Physics::BoxColliderComponent>("BoxColliderComponent")
@@ -166,7 +169,8 @@ namespace Hyperion {
         .Property<&Rendering::CameraComponent::view_projection_matrix>("view_projection_matrix", std::make_pair(PropertyAttribute::Serialize, false))
         .Property<&Rendering::CameraComponent::inverse_view_matrix>("inverse_view_matrix", std::make_pair(PropertyAttribute::Serialize, false))
         .Property<&Rendering::CameraComponent::inverse_projection_matrix>("inverse_projection_matrix", std::make_pair(PropertyAttribute::Serialize, false))
-        .Property<&Rendering::CameraComponent::inverse_view_projection_matrix>("inverse_view_projection_matrix", std::make_pair(PropertyAttribute::Serialize, false));
+        .Property<&Rendering::CameraComponent::inverse_view_projection_matrix>("inverse_view_projection_matrix",
+                                                                               std::make_pair(PropertyAttribute::Serialize, false));
       MetaRegistry::Reflect<Rendering::SpriteComponent>("SpriteComponent")
         .Base<IComponent>()
         .Property<&Rendering::SpriteComponent::color>("color");
@@ -174,7 +178,8 @@ namespace Hyperion {
         .Base<IComponent>()
         .Property<&Rendering::MeshComponent::mesh>("mesh", std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::PointerAsAssetGuid))
         .Property<&Rendering::MeshComponent::sub_mesh_index>("sub_mesh_index")
-        .Property<&Rendering::MeshComponent::material>("material", std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::PointerAsAssetGuid))
+        .Property<&Rendering::MeshComponent::material>(
+          "material", std::make_pair(PropertyAttribute::SpecialSerialize, PropertySpecialSerialize::PointerAsAssetGuid))
         .Property<&Rendering::MeshComponent::layer_mask>("layer_mask");
       MetaRegistry::Reflect<Rendering::LocalMeshBoundsComponent>("LocalMeshBoundsComponent")
         .Base<IComponent>()

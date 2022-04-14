@@ -29,7 +29,10 @@ namespace Hyperion::Physics {
     virtual IPhysicsWorld *CreatePhysicsWorld(World *world) { return new NullPhysicsWorld(); }
     virtual void DestroyPhysicsWorld(IPhysicsWorld *world) { delete world; }
 
-    virtual void Initialize() { HYP_LOG_INFO("Physics", "Initialized Null physics driver!"); }
+    virtual void Initialize() {
+      HYP_LOG_INFO("Physics", "Initialized Null physics driver!");
+    }
+
     virtual void FixedUpdate(float32 delta_time) { }
     virtual void Shutdown() { }
   };

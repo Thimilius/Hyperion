@@ -125,8 +125,10 @@ namespace Hyperion {
       EntityId next_child = child_hierarchy->next_sibling;
 
       switch (destruction_policy) {
-        case WorldHierarchyDestructionPolicy::DestroyChildren: m_world->DestroyEntity(child); break;
-        case WorldHierarchyDestructionPolicy::KeepChildrenAsRoots: SetParent(child, Entity::EMPTY); break;
+        case WorldHierarchyDestructionPolicy::DestroyChildren: m_world->DestroyEntity(child);
+          break;
+        case WorldHierarchyDestructionPolicy::KeepChildrenAsRoots: SetParent(child, Entity::EMPTY);
+          break;
         default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
       }
 

@@ -12,13 +12,11 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   Rect::Rect(Vector2 position, Vector2 size)
-    : position(position), size(size) {
-  }
+    : position(position), size(size) { }
 
   //--------------------------------------------------------------
   Rect::Rect(float32 x, float32 y, float32 width, float32 height)
-    : x(x), y(y), width(width), height(height) {
-  }
+    : x(x), y(y), width(width), height(height) { }
 
   //--------------------------------------------------------------
   Vector2 Rect::GetMin() const {
@@ -39,13 +37,13 @@ namespace Hyperion {
   bool8 Rect::Intersects(const Rect &other) const {
     Vector2 this_max = GetMax();
     Vector2 other_max = other.GetMax();
-    return other_max.x > x && other.x < this_max.x &&other_max.y > y && other.y < this_max.y;
+    return other_max.x > x && other.x < this_max.x && other_max.y > y && other.y < this_max.y;
   }
 
   //--------------------------------------------------------------
   bool8 Rect::Contains(Vector2 point) const {
     Vector2 max = GetMax();
-    return point.x >= x && point.x < max.x &&point.y >= y && point.y < max.y;
+    return point.x >= x && point.x < max.x && point.y >= y && point.y < max.y;
   }
 
   //--------------------------------------------------------------
@@ -68,13 +66,11 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   RectInt::RectInt(Vector2Int position, Vector2Int size)
-    : position(position), size(size) {
-  }
+    : position(position), size(size) { }
 
   //--------------------------------------------------------------
   RectInt::RectInt(int32 x, int32 y, int32 width, int32 height)
-    : x(x), y(y), width(width), height(height) {
-  }
+    : x(x), y(y), width(width), height(height) { }
 
   //--------------------------------------------------------------
   Vector2Int RectInt::GetMin() const {
@@ -95,13 +91,13 @@ namespace Hyperion {
   bool8 RectInt::Intersects(const RectInt &other) const {
     Vector2Int this_max = GetMax();
     Vector2Int other_max = other.GetMax();
-    return other_max.x > x && other.x < this_max.x &&other_max.y > y && other.y < this_max.y;
+    return other_max.x > x && other.x < this_max.x && other_max.y > y && other.y < this_max.y;
   }
 
   //--------------------------------------------------------------
   bool8 RectInt::Contains(Vector2Int point) const {
     Vector2Int max = GetMax();
-    return point.x >= x && point.x < max.x &&point.y >= y && point.y < max.y;
+    return point.x >= x && point.x < max.x && point.y >= y && point.y < max.y;
   }
 
   //--------------------------------------------------------------

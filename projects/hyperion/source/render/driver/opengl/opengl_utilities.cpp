@@ -28,7 +28,8 @@ namespace Hyperion::Rendering {
       case TextureFormat::RGBA32: return 4;
       case TextureFormat::RGB24: return 3;
       case TextureFormat::R8: return 1;
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        return 0;
     }
   }
 
@@ -36,9 +37,12 @@ namespace Hyperion::Rendering {
   void OpenGLUtilities::SetUnpackAlignmentForTextureFormat(TextureFormat format) {
     GLint alignment = 4;
     switch (format) {
-      case TextureFormat::RGB24: alignment = 4; break;
-      case TextureFormat::RGBA32: alignment = 4; break;
-      case TextureFormat::R8: alignment = 1; break;
+      case TextureFormat::RGB24: alignment = 4;
+        break;
+      case TextureFormat::RGBA32: alignment = 4;
+        break;
+      case TextureFormat::R8: alignment = 1;
+        break;
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
     }
     glPixelStorei(GL_UNPACK_ALIGNMENT, alignment);
@@ -68,7 +72,8 @@ namespace Hyperion::Rendering {
       case TextureFormat::RGB24: return GL_RGB;
       case TextureFormat::RGBA32: return GL_RGBA;
       case TextureFormat::R8: return GL_RED;
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        return 0;
     }
   }
 
@@ -78,7 +83,8 @@ namespace Hyperion::Rendering {
       case TextureFormat::RGB24: return GL_UNSIGNED_BYTE;
       case TextureFormat::RGBA32: return GL_UNSIGNED_BYTE;
       case TextureFormat::R8: return GL_UNSIGNED_BYTE;
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        return 0;
     }
   }
 
@@ -88,7 +94,8 @@ namespace Hyperion::Rendering {
       case TextureFormat::RGB24: return GL_RGB8;
       case TextureFormat::RGBA32: return GL_RGBA8;
       case TextureFormat::R8: return GL_R8;
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        return 0;
     }
   }
 
@@ -99,7 +106,8 @@ namespace Hyperion::Rendering {
       case TextureWrapMode::Border: return GL_CLAMP_TO_BORDER;
       case TextureWrapMode::Repeat: return GL_REPEAT;
       case TextureWrapMode::MirroredRepeat: return GL_MIRRORED_REPEAT;
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        return 0;
     }
   }
 
@@ -109,7 +117,8 @@ namespace Hyperion::Rendering {
       case TextureFilter::Point: return GL_NEAREST_MIPMAP_NEAREST;
       case TextureFilter::Bilinear: return GL_LINEAR_MIPMAP_NEAREST;
       case TextureFilter::Trilinear: return GL_LINEAR_MIPMAP_LINEAR;
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return GL_NEAREST_MIPMAP_NEAREST;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        return GL_NEAREST_MIPMAP_NEAREST;
     }
   }
 
@@ -119,7 +128,8 @@ namespace Hyperion::Rendering {
       case TextureFilter::Point: return GL_NEAREST;
       case TextureFilter::Bilinear: return GL_LINEAR;
       case TextureFilter::Trilinear: return GL_LINEAR;
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return GL_NEAREST;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        return GL_NEAREST;
     }
   }
 
@@ -131,7 +141,8 @@ namespace Hyperion::Rendering {
       case TextureAnisotropicFilter::Times4: return 4.0f;
       case TextureAnisotropicFilter::Times8: return 8.0f;
       case TextureAnisotropicFilter::Times16: return 16.0f;
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 1.0f;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        return 1.0f;
     }
   }
 
@@ -142,7 +153,8 @@ namespace Hyperion::Rendering {
       case RenderTextureFormat::UInt32: return true;
       case RenderTextureFormat::Depth24:
       case RenderTextureFormat::Depth24Stencil8: return false;
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return false;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        return false;
     }
   }
 
@@ -153,7 +165,8 @@ namespace Hyperion::Rendering {
       case RenderTextureFormat::UInt32: return GL_COLOR_ATTACHMENT0;
       case RenderTextureFormat::Depth24: return GL_DEPTH_ATTACHMENT;
       case RenderTextureFormat::Depth24Stencil8: return GL_DEPTH_STENCIL_ATTACHMENT;
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return false;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        return false;
     }
   }
 
@@ -164,7 +177,8 @@ namespace Hyperion::Rendering {
       case RenderTextureFormat::UInt32: return GL_R32UI;
       case RenderTextureFormat::Depth24: return GL_DEPTH_COMPONENT24;
       case RenderTextureFormat::Depth24Stencil8: return GL_DEPTH24_STENCIL8;
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        return 0;
     }
   }
 
@@ -174,7 +188,8 @@ namespace Hyperion::Rendering {
     switch (format) {
       case RenderTextureFormat::RGBA32: return GL_RGBA;
       case RenderTextureFormat::UInt32: return GL_RED_INTEGER;
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        return 0;
     }
   }
 
@@ -184,7 +199,8 @@ namespace Hyperion::Rendering {
     switch (format_type) {
       case RenderTextureFormat::RGBA32: return GL_UNSIGNED_BYTE;
       case RenderTextureFormat::UInt32: return GL_UNSIGNED_INT;
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        return 0;
     }
   }
 
@@ -195,7 +211,8 @@ namespace Hyperion::Rendering {
     switch (format) {
       case RenderTextureFormat::RGBA32: return region_size * 4 * sizeof(byte);
       case RenderTextureFormat::UInt32: return region_size * 1 * sizeof(uint32);
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        return 0;
     }
   }
 
@@ -206,7 +223,8 @@ namespace Hyperion::Rendering {
       case MeshTopology::Lines: return GL_LINES;
       case MeshTopology::LineStrip: return GL_LINE_STRIP;
       case MeshTopology::Triangles: return GL_TRIANGLES;
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        return 0;
     }
   }
 
@@ -221,7 +239,8 @@ namespace Hyperion::Rendering {
       case VertexAttributeKind::Texture1: return 5;
       case VertexAttributeKind::Texture2: return 6;
       case VertexAttributeKind::Texture3: return 7;
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        return 0;
     }
   }
 
@@ -229,7 +248,8 @@ namespace Hyperion::Rendering {
   GLenum OpenGLUtilities::GetVertexAttributeType(VertexAttributeType vertex_attribute_type) {
     switch (vertex_attribute_type) {
       case VertexAttributeType::Float32: return GL_FLOAT;
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        return 0;
     }
   }
 
@@ -237,7 +257,8 @@ namespace Hyperion::Rendering {
   GLuint OpenGLUtilities::GetVertexAttributeSizeForVertexAttribute(VertexAttributeType vertex_attribute_type, uint32 dimension) {
     switch (vertex_attribute_type) {
       case VertexAttributeType::Float32: return sizeof(float32) * dimension;
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        return 0;
     }
   }
 

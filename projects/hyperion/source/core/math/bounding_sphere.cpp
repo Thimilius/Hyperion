@@ -12,8 +12,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   BoundingSphere::BoundingSphere(Vector3 origin, float32 radius)
-    : origin(origin), radius(radius) {
-  }
+    : origin(origin), radius(radius) { }
 
   //--------------------------------------------------------------
   bool8 BoundingSphere::Intersects(Ray ray, float32 &hit_distance) const {

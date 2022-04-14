@@ -205,119 +205,103 @@ namespace Hyperion::UI {
   //--------------------------------------------------------------
   void UIElement::SetAnchorPreset(AnchorPreset anchor_preset) {
     switch (anchor_preset) {
-      case AnchorPreset::TopLeft:
-      {
+      case AnchorPreset::TopLeft: {
         m_anchor_min = Vector2(0.0f, 1.0f);
         m_anchor_max = Vector2(0.0f, 1.0f);
         m_pivot = Vector2(0.0f, 1.0f);
         break;
       }
-      case AnchorPreset::TopCenter:
-      {
+      case AnchorPreset::TopCenter: {
         m_anchor_min = Vector2(0.5f, 1.0f);
         m_anchor_max = Vector2(0.5f, 1.0f);
         m_pivot = Vector2(0.5f, 1.0f);
         break;
       }
-      case AnchorPreset::TopRight:
-      {
+      case AnchorPreset::TopRight: {
         m_anchor_min = Vector2(1.0f, 1.0f);
         m_anchor_max = Vector2(1.0f, 1.0f);
         m_pivot = Vector2(1.0f, 1.0f);
         break;
       }
-      case AnchorPreset::MiddleLeft:
-      {
+      case AnchorPreset::MiddleLeft: {
         m_anchor_min = Vector2(0.0f, 0.5f);
         m_anchor_max = Vector2(0.0f, 0.5f);
         m_pivot = Vector2(0.0f, 0.5f);
         break;
       }
-      case AnchorPreset::MiddleCenter:
-      {
+      case AnchorPreset::MiddleCenter: {
         m_anchor_min = Vector2(0.5f, 0.5f);
         m_anchor_max = Vector2(0.5f, 0.5f);
         m_pivot = Vector2(0.5f, 0.5f);
         break;
       }
-      case AnchorPreset::MiddleRight:
-      {
+      case AnchorPreset::MiddleRight: {
         m_anchor_min = Vector2(1.0f, 0.5f);
         m_anchor_max = Vector2(1.0f, 0.5f);
         m_pivot = Vector2(1.0f, 0.5f);
         break;
       }
-      case AnchorPreset::BottomLeft:
-      {
+      case AnchorPreset::BottomLeft: {
         m_anchor_min = Vector2(0.0f, 0.0f);
         m_anchor_max = Vector2(0.0f, 0.0f);
         m_pivot = Vector2(0.0f, 0.0f);
         break;
       }
-      case AnchorPreset::BottomCenter:
-      {
+      case AnchorPreset::BottomCenter: {
         m_anchor_min = Vector2(0.5f, 0.0f);
         m_anchor_max = Vector2(0.5f, 0.0f);
         m_pivot = Vector2(0.5f, 0.0f);
         break;
       }
-      case AnchorPreset::BottomRight:
-      {
+      case AnchorPreset::BottomRight: {
         m_anchor_min = Vector2(1.0f, 0.0f);
         m_anchor_max = Vector2(1.0f, 0.0f);
         m_pivot = Vector2(1.0f, 0.0f);
         break;
       }
-      case AnchorPreset::TopStretchHorizontal:
-      {
+      case AnchorPreset::TopStretchHorizontal: {
         m_anchor_min = Vector2(0.0f, 1.0f);
         m_anchor_max = Vector2(1.0f, 1.0f);
         m_pivot = Vector2(0.5f, 1.0f);
         m_size.x = 0.0f;
         break;
       }
-      case AnchorPreset::MiddleStretchHorizontal:
-      {
+      case AnchorPreset::MiddleStretchHorizontal: {
         m_anchor_min = Vector2(0.0f, 0.5f);
         m_anchor_max = Vector2(1.0f, 0.5f);
         m_pivot = Vector2(0.5f, 0.5f);
         m_size.x = 0.0f;
         break;
       }
-      case AnchorPreset::BottomStretchHorizontal:
-      {
+      case AnchorPreset::BottomStretchHorizontal: {
         m_anchor_min = Vector2(0.0f, 0.0f);
         m_anchor_max = Vector2(1.0f, 0.0f);
         m_pivot = Vector2(0.5f, 0.0f);
         m_size.x = 0.0f;
         break;
       }
-      case AnchorPreset::LeftStretchVertical:
-      {
+      case AnchorPreset::LeftStretchVertical: {
         m_anchor_min = Vector2(0.0f, 0.0f);
         m_anchor_max = Vector2(0.0f, 1.0f);
         m_pivot = Vector2(0.0f, 0.5f);
         m_size.y = 0.0f;
         break;
       }
-      case AnchorPreset::CenterStretchVertical:
-      {
+      case AnchorPreset::CenterStretchVertical: {
         m_anchor_min = Vector2(0.5f, 0.0f);
         m_anchor_max = Vector2(0.5f, 1.0f);
         m_pivot = Vector2(0.5f, 0.5f);
         m_size.y = 0.0f;
         break;
       }
-      case AnchorPreset::RightStretchVertical:
-      {
+      case AnchorPreset::RightStretchVertical: {
         m_anchor_min = Vector2(1.0f, 0.0f);
         m_anchor_max = Vector2(1.0f, 1.0f);
         m_pivot = Vector2(1.0f, 0.5f);
         m_size.y = 0.0f;
         break;
       }
-      case AnchorPreset::StretchAll:
-      {
+      case AnchorPreset::StretchAll: {
         m_anchor_min = Vector2(0.0f, 0.0f);
         m_anchor_max = Vector2(1.0f, 1.0f);
         m_pivot = Vector2(0.5f, 0.5f);
@@ -367,7 +351,8 @@ namespace Hyperion::UI {
     Vector2 p4 = world_corners[3];
 
     // NOTE: Counter clockwise order of points is important.
-    return (is_left(p1, p4, ui_space_point) >= 0.0f && is_left(p4, p3, ui_space_point) >= 0.0f && is_left(p3, p2, ui_space_point) >= 0.0f && is_left(p2, p1, ui_space_point) >= 0.0f);
+    return (is_left(p1, p4, ui_space_point) >= 0.0f && is_left(p4, p3, ui_space_point) >= 0.0f && is_left(p3, p2, ui_space_point) >= 0.0f &&
+      is_left(p2, p1, ui_space_point) >= 0.0f);
   }
 
   //--------------------------------------------------------------
@@ -420,12 +405,17 @@ namespace Hyperion::UI {
   //--------------------------------------------------------------
   void UIElement::DoStateTransition(SelectionState state) {
     switch (state) {
-      case SelectionState::Highlighted: GetRenderer().color = m_style.m_color_block.highlighted_color; break;
-      case SelectionState::Pressed: GetRenderer().color = m_style.m_color_block.pressed_color; break;
-      case SelectionState::Selected: GetRenderer().color = m_style.m_color_block.selected_color; break;
-      case SelectionState::Disabled: GetRenderer().color = m_style.m_color_block.disabled_color; break;
+      case SelectionState::Highlighted: GetRenderer().color = m_style.m_color_block.highlighted_color;
+        break;
+      case SelectionState::Pressed: GetRenderer().color = m_style.m_color_block.pressed_color;
+        break;
+      case SelectionState::Selected: GetRenderer().color = m_style.m_color_block.selected_color;
+        break;
+      case SelectionState::Disabled: GetRenderer().color = m_style.m_color_block.disabled_color;
+        break;
       case SelectionState::Normal:
-      default: GetRenderer().color = m_style.m_color_block.normal_color; break;
+      default: GetRenderer().color = m_style.m_color_block.normal_color;
+        break;
     }
   }
 
@@ -444,40 +434,38 @@ namespace Hyperion::UI {
 
       Vector2 size = child->GetSize();
       switch (m_layout.layout_type) {
-        case LayoutType::Horizontal:
-        {
+        case LayoutType::Horizontal: {
           layout_size.x += size.x + m_layout.spacing.x;
           if (size.y > layout_size.y) {
             layout_size.y = size.y;
           }
           break;
         }
-        case LayoutType::Vertical:
-        {
+        case LayoutType::Vertical: {
           if (size.x > layout_size.x) {
             layout_size.x = size.x;
           }
           layout_size.y += size.y + m_layout.spacing.y;
           break;
         }
-        default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+        default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+          break;
       }
 
       child->SetAnchorPreset(AnchorPreset::BottomLeft);
     }
     if (!m_hierarchy.m_children.IsEmpty()) {
       switch (m_layout.layout_type) {
-        case LayoutType::Horizontal:
-        {
+        case LayoutType::Horizontal: {
           layout_size.x -= m_layout.spacing.x;
           break;
         }
-        case LayoutType::Vertical:
-        {
+        case LayoutType::Vertical: {
           layout_size.y -= m_layout.spacing.y;
           break;
         }
-        default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+        default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+          break;
       }
     }
 
@@ -492,17 +480,16 @@ namespace Hyperion::UI {
 
       Vector2 size = child->GetSize();
       switch (m_layout.layout_type) {
-        case LayoutType::Horizontal:
-        {
+        case LayoutType::Horizontal: {
           offset.x += size.x + m_layout.spacing.x;
           break;
         }
-        case LayoutType::Vertical:
-        {
+        case LayoutType::Vertical: {
           offset.y += size.y + m_layout.spacing.y;
           break;
         }
-        default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+        default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+          break;
       }
     }
   }
@@ -593,48 +580,39 @@ namespace Hyperion::UI {
     Vector2 position = Vector2();
 
     switch (child_alignment) {
-      case ChildAlignment::TopLeft:
-      {
+      case ChildAlignment::TopLeft: {
         position = Vector2(0.0f, container_layout.y - layout_size.y);
         break;
       }
-      case ChildAlignment::TopCenter:
-      {
+      case ChildAlignment::TopCenter: {
         position = Vector2((container_layout.x / 2.0f) - (layout_size.x / 2.0f), container_layout.y - layout_size.y);
         break;
       }
-      case ChildAlignment::TopRight:
-      {
+      case ChildAlignment::TopRight: {
         position = Vector2(container_layout.x - layout_size.x, container_layout.y - layout_size.y);
         break;
       }
-      case ChildAlignment::MiddleLeft:
-      {
+      case ChildAlignment::MiddleLeft: {
         position = Vector2(0.0f, (container_layout.y / 2.0f) - (layout_size.y / 2.0f));
         break;
       }
-      case ChildAlignment::MiddleCenter:
-      {
+      case ChildAlignment::MiddleCenter: {
         position = Vector2((container_layout.x / 2.0f) - (layout_size.x / 2.0f), (container_layout.y / 2.0f) - (layout_size.y / 2.0f));
         break;
       }
-      case ChildAlignment::MiddleRight:
-      {
+      case ChildAlignment::MiddleRight: {
         position = Vector2(container_layout.x - layout_size.x, (container_layout.y / 2.0f) - (layout_size.y / 2.0f));
         break;
       }
-      case ChildAlignment::BottomLeft:
-      {
+      case ChildAlignment::BottomLeft: {
         position = Vector2(0.0f, 0.0f);
         break;
       }
-      case ChildAlignment::BottomCenter:
-      {
+      case ChildAlignment::BottomCenter: {
         position = Vector2((container_layout.x / 2.0f) - (layout_size.x / 2.0f), 0.0f);
         break;
       }
-      case ChildAlignment::BottomRight:
-      {
+      case ChildAlignment::BottomRight: {
         position = Vector2(container_layout.x - layout_size.x, 0.0f);
         break;
       }

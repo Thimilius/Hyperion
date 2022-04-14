@@ -30,14 +30,12 @@ namespace Hyperion {
       bool8 can_move = info.data_access == AssetDataAccess::None;
 
       switch (asset->GetAssetType()) {
-        case AssetType::Texture:
-        {
+        case AssetType::Texture: {
           HYP_PROFILE_SCOPE("AssetLoadSystem.LoadTexture");
 
           Texture *texture = static_cast<Texture *>(asset);
           switch (texture->GetDimension()) {
-            case TextureDimension::Texture2D:
-            {
+            case TextureDimension::Texture2D: {
               Texture2D *texture_2d = static_cast<Texture2D *>(texture);
               RenderAssetTexture2D &render_asset_texture_2d = asset_context.AddTexture2DAssetToLoad();
               render_asset_texture_2d.id = asset_id;
@@ -56,8 +54,7 @@ namespace Hyperion {
               }
               break;
             }
-            case TextureDimension::RenderTexture:
-            {
+            case TextureDimension::RenderTexture: {
               RenderTexture *render_texture = static_cast<RenderTexture *>(texture);
               RenderAssetRenderTexture &render_asset_render_texture = asset_context.AddRenderTextureAssetToLoad();
               render_asset_render_texture.id = asset_id;
@@ -67,12 +64,12 @@ namespace Hyperion {
               render_asset_render_texture.mipmap_count = render_texture->GetMipmapCount();
               break;
             }
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+              break;
           }
           break;
         }
-        case AssetType::Material:
-        {
+        case AssetType::Material: {
           HYP_PROFILE_SCOPE("AssetLoadSystem.LoadMaterial");
 
           Material *material = static_cast<Material *>(asset);
@@ -82,8 +79,7 @@ namespace Hyperion {
           render_asset_material.properties = material->GetProperties();
           break;
         }
-        case AssetType::Mesh:
-        {
+        case AssetType::Mesh: {
           HYP_PROFILE_SCOPE("AssetLoadSystem.LoadMesh");
 
           Mesh *mesh = static_cast<Mesh *>(asset);
@@ -105,8 +101,7 @@ namespace Hyperion {
           }
           break;
         }
-        case AssetType::Shader:
-        {
+        case AssetType::Shader: {
           HYP_PROFILE_SCOPE("AssetLoadSystem.LoadShader");
 
           Shader *shader = static_cast<Shader *>(asset);
@@ -116,7 +111,8 @@ namespace Hyperion {
           render_asset_shader.data = shader->GetData();
           break;
         }
-        default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+        default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+          break;
       }
 
       asset->ResetDirty();
@@ -133,40 +129,36 @@ namespace Hyperion {
       AssetId asset_id = asset->GetAssetInfo().id;
 
       switch (asset->GetAssetType()) {
-        case AssetType::Texture:
-        {
+        case AssetType::Texture: {
           Texture *texture = static_cast<Texture *>(asset);
           switch (texture->GetDimension()) {
-            case TextureDimension::Texture2D:
-            {
+            case TextureDimension::Texture2D: {
               asset_context.AddTexture2DToUnload(asset_id);
               break;
             }
-            case TextureDimension::RenderTexture:
-            {
+            case TextureDimension::RenderTexture: {
               asset_context.AddRenderTextureToUnload(asset_id);
               break;
             }
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+              break;
           }
           break;
         }
-        case AssetType::Material:
-        {
+        case AssetType::Material: {
           asset_context.AddMaterialToUnload(asset_id);
           break;
         }
-        case AssetType::Mesh:
-        {
+        case AssetType::Mesh: {
           asset_context.AddMeshToUnload(asset_id);
           break;
         }
-        case AssetType::Shader:
-        {
+        case AssetType::Shader: {
           asset_context.AddShaderToUnload(asset_id);
           break;
         }
-        default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+        default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+          break;
       }
     }
   }

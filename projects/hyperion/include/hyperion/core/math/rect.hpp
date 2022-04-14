@@ -10,6 +10,7 @@ namespace Hyperion {
   struct Rect {
     union {
       Vector2 position;
+
       struct {
         float32 x;
         float32 y;
@@ -18,6 +19,7 @@ namespace Hyperion {
 
     union {
       Vector2 size;
+
       struct {
         float32 width;
         float32 height;
@@ -44,6 +46,7 @@ namespace Hyperion {
   struct RectInt {
     union {
       Vector2Int position;
+
       struct {
         int32 x;
         int32 y;
@@ -52,6 +55,7 @@ namespace Hyperion {
 
     union {
       Vector2Int size;
+
       struct {
         int32 width;
         int32 height;

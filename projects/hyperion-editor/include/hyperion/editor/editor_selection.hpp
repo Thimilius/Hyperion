@@ -13,6 +13,7 @@ namespace Hyperion::Editor {
   public:
     static bool8 HasSelection() { return s_selection != Entity::EMPTY; }
     static EntityId GetSelection() { return s_selection; }
+
     static void Select(EntityId selection) {
       if (s_selection != selection) {
         EntityId old_selection = s_selection;

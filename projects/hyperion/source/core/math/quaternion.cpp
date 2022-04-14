@@ -12,13 +12,11 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   Quaternion::Quaternion(float32 x, float32 y, float32 z, float32 w)
-    : x(x), y(y), z(z), w(w) {
-  }
+    : x(x), y(y), z(z), w(w) { }
 
   //--------------------------------------------------------------
   Quaternion::Quaternion(Vector3 xyz, float32 w)
-    : x(xyz.x), y(xyz.y), z(xyz.z), w(w) {
-  }
+    : x(xyz.x), y(xyz.y), z(xyz.z), w(w) { }
 
   //--------------------------------------------------------------
   Vector3 Quaternion::ToEulerAngles() const {

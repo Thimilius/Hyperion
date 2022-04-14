@@ -44,6 +44,7 @@ namespace Hyperion::Rendering {
 
     LightIndices
   };
+
   HYP_CREATE_ENUM_FLAG_OPERATORS(PerObjectData);
 
   enum class SortingCriteria {
@@ -79,9 +80,7 @@ namespace Hyperion::Rendering {
     ShadowParameters shadow_parameters;
   };
 
-  struct RenderFrameCommandDrawUI {
-
-  };
+  struct RenderFrameCommandDrawUI { };
 
   struct RenderFrameCommandDrawObjectIds {
     RenderTargetId render_target_id;
@@ -100,9 +99,7 @@ namespace Hyperion::Rendering {
     bool8 should_draw_all_bounds;
   };
 
-  struct RenderFrameCommandDrawEditorUI {
-
-  };
+  struct RenderFrameCommandDrawEditorUI { };
 
   struct RenderFrameCommand {
     RenderFrameCommandType type;

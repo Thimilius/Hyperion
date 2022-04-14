@@ -56,8 +56,7 @@ namespace Hyperion {
 
   namespace Internal {
     struct MetaTypeNode;
-  }
-}
+  }}
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -73,6 +72,7 @@ namespace Hyperion {
     IsClass = BIT(5),
     IsDefaultConstructable = BIT(6),
   };
+
   HYP_CREATE_ENUM_FLAG_OPERATORS(MetaTypeTraits);
 
   enum class MetaPrimitiveType {
@@ -112,9 +112,9 @@ namespace Hyperion {
     struct MetaAttributeNode {
       MetaAttributeNode *next;
 
-      Any(*const key)();
-      Any(*const value)();
-      MetaAttribute(*const clazz)();
+      Any (*const key)();
+      Any (*const value)();
+      MetaAttribute (*const clazz)();
     };
 
     struct MetaBaseNode {
@@ -124,7 +124,7 @@ namespace Hyperion {
 
       MetaTypeNode *(*const ref)();
       void *(*const cast)(void *);
-      MetaBase(*const clazz)();
+      MetaBase (*const clazz)();
     };
 
     struct MetaConversionNode {
@@ -133,8 +133,8 @@ namespace Hyperion {
       MetaConversionNode *next;
 
       MetaTypeNode *(*const ref)();
-      Any(*const convert)(const void *);
-      MetaConversion(*const clazz)();
+      Any (*const convert)(const void *);
+      MetaConversion (*const clazz)();
     };
 
     struct MetaConstructorNode {
@@ -147,16 +147,16 @@ namespace Hyperion {
       const size_type size;
 
       MetaTypeNode *(*const arg)(size_type);
-      Any(*const invoke)(Any *const);
-      MetaConstructor(*const clazz)();
+      Any (*const invoke)(Any *const);
+      MetaConstructor (*const clazz)();
     };
 
     struct MetaDestructorNode {
       MetaDestructorNode **const underlying;
       MetaTypeNode *const parent;
 
-      bool8(*const invoke)(MetaHandle);
-      MetaDestructor(*const clazz)();
+      bool8 (*const invoke)(MetaHandle);
+      MetaDestructor (*const clazz)();
     };
 
     struct MetaPropertyNode {
@@ -170,9 +170,9 @@ namespace Hyperion {
       const bool8 is_static;
 
       MetaTypeNode *(*const ref)();
-      bool8(*const set)(MetaHandle, Any, Any);
-      Any(*const get)(MetaHandle, Any);
-      MetaProperty(*const clazz)();
+      bool8 (*const set)(MetaHandle, Any, Any);
+      Any (*const get)(MetaHandle, Any);
+      MetaProperty (*const clazz)();
     };
 
     struct MetaFunctionNode {
@@ -190,8 +190,8 @@ namespace Hyperion {
 
       MetaTypeNode *(*const ret)();
       MetaTypeNode *(*const arg)(size_type);
-      Any(*const invoke)(MetaHandle, Any *);
-      MetaFunction(*const clazz)();
+      Any (*const invoke)(MetaHandle, Any *);
+      MetaFunction (*const clazz)();
     };
 
     struct MetaTypeNode {
@@ -207,16 +207,16 @@ namespace Hyperion {
       MetaTypeNode *next;
       MetaAttributeNode *attribute;
 
-      bool8(*const compare)(const void *, const void *);
-      MetaType(*const remove_pointer)();
-      MetaType(*const clazz)();
+      bool8 (*const compare)(const void *, const void *);
+      MetaType (*const remove_pointer)();
+      MetaType (*const clazz)();
 
-      MetaBaseNode *base{ nullptr };
-      MetaConversionNode *conv{ nullptr };
-      MetaConstructorNode *ctor{ nullptr };
-      MetaDestructorNode *dtor{ nullptr };
-      MetaPropertyNode *data{ nullptr };
-      MetaFunctionNode *func{ nullptr };
+      MetaBaseNode *base { nullptr };
+      MetaConversionNode *conv { nullptr };
+      MetaConstructorNode *ctor { nullptr };
+      MetaDestructorNode *dtor { nullptr };
+      MetaPropertyNode *data { nullptr };
+      MetaFunctionNode *func { nullptr };
     };
 
     template<typename...>
@@ -328,7 +328,7 @@ namespace Hyperion {
     inline auto Constructor(std::index_sequence<Indexes...>, const MetaTypeNode *node) {
       return Internal::FindIf([](auto *candidate) {
         return candidate->size == sizeof...(Args) &&
-          (([](auto *from, auto *to) {
+        (([](auto *from, auto *to) {
           return Internal::CanCastOrConvert<&Internal::MetaTypeNode::base>(from, to)
             || Internal::CanCastOrConvert<&Internal::MetaTypeNode::conv>(from, to);
         }(Internal::MetaTypeInfo<Args>::Resolve(), candidate->arg(Indexes))) && ...);
@@ -344,10 +344,10 @@ namespace Hyperion {
     using destroy_fn_type = void(void *);
     using steal_fn_type = void *(storage_type &, void *, destroy_fn_type *);
   public:
-    Any() : storage{ }, instance{ nullptr }, node{ nullptr }, destroy_fn{ nullptr }, copy_fn{ nullptr }, steal_fn{ nullptr } { }
+    Any() : storage { }, instance { nullptr }, node { nullptr }, destroy_fn { nullptr }, copy_fn { nullptr }, steal_fn { nullptr } { }
 
     template<typename Type, typename... Args>
-    explicit Any(std::in_place_type_t<Type>, [[maybe_unused]] Args &&... args) : Any{ } {
+    explicit Any(std::in_place_type_t<Type>, [[maybe_unused]] Args &&... args) : Any { } {
       node = Internal::MetaTypeInfo<Type>::Resolve();
 
       if constexpr (!std::is_void_v<Type>) {
@@ -360,7 +360,7 @@ namespace Hyperion {
     }
 
     template<typename Type>
-    explicit Any(std::reference_wrapper<Type> type) : Any{ } {
+    explicit Any(std::reference_wrapper<Type> type) : Any { } {
       node = Internal::MetaTypeInfo<Type>::Resolve();
       instance = &type.get();
     }
@@ -368,9 +368,9 @@ namespace Hyperion {
     inline Any(MetaHandle MetaHandle);
 
     template<typename Type, typename = std::enable_if_t<!std::is_same_v<std::remove_cv_t<std::remove_reference_t<Type>>, Any>>>
-    Any(Type &&type) : Any{ std::in_place_type<std::remove_cv_t<std::remove_reference_t<Type>>>, std::forward<Type>(type) } { }
+    Any(Type &&type) : Any { std::in_place_type<std::remove_cv_t<std::remove_reference_t<Type>>>, std::forward<Type>(type) } { }
 
-    Any(const Any &other) : Any{ } {
+    Any(const Any &other) : Any { } {
       node = other.node;
       instance = other.copy_fn ? other.copy_fn(storage, other.instance) : other.instance;
       destroy_fn = other.destroy_fn;
@@ -378,13 +378,14 @@ namespace Hyperion {
       steal_fn = other.steal_fn;
     }
 
-    Any(Any &&other) : Any{ } { Swap(*this, other); }
+    Any(Any &&other) : Any { } { Swap(*this, other); }
 
     ~Any() {
       if (destroy_fn) {
         destroy_fn(instance);
       }
     }
+
   public:
     inline Hyperion::MetaType GetType() const;
     const void *GetData() const { return instance; }
@@ -414,7 +415,7 @@ namespace Hyperion {
 
     template<typename Type>
     Any Convert() const {
-      Any Any{ };
+      Any Any { };
 
       if (const auto *type = Internal::MetaTypeInfo<Type>::Resolve(); node == type) {
         Any = *static_cast<const Type *>(instance);
@@ -446,15 +447,17 @@ namespace Hyperion {
     }
 
     template<typename Type, typename... Args>
-    void Emplace(Args&& ... args) {
-      *this = Any{ std::in_place_type_t<Type>{ }, std::forward<Args>(args)... };
+    void Emplace(Args && ... args) {
+      *this = Any { std::in_place_type_t<Type> { }, std::forward<Args>(args)... };
     }
 
     template<typename Type, typename = std::enable_if_t<!std::is_same_v<std::remove_cv_t<std::remove_reference_t<Type>>, Any>>>
-    Any &operator=(Type &&type) { return (*this = Any{ std::forward<Type>(type) }); }
-    Any &operator=(const Any &other) { return (*this = Any{ other }); }
+    Any &operator=(Type &&type) { return (*this = Any { std::forward<Type>(type) }); }
+
+    Any &operator=(const Any &other) { return (*this = Any { other }); }
+
     Any &operator=(Any &&other) {
-      Any Any{ std::move(other) };
+      Any Any { std::move(other) };
       Swap(Any, *this);
       return *this;
     }
@@ -483,13 +486,14 @@ namespace Hyperion {
       std::swap(lhs.copy_fn, rhs.copy_fn);
       std::swap(lhs.steal_fn, rhs.steal_fn);
     }
+
   private:
     template<typename Type, typename = std::void_t<>>
     struct type_traits {
       template<typename... Args>
       static void *instance(storage_type &storage, Args &&... args) {
         auto instance = std::make_unique<Type>(std::forward<Args>(args)...);
-        new (&storage) Type *{ instance.get() };
+        new(&storage) Type * { instance.get() };
         return instance.release();
       }
 
@@ -503,13 +507,13 @@ namespace Hyperion {
 
       static void *copy(storage_type &storage, const void *other) {
         auto instance = std::make_unique<Type>(*static_cast<const Type *>(other));
-        new (&storage) Type *{ instance.get() };
+        new(&storage) Type * { instance.get() };
         return instance.release();
       }
 
       static void *steal(storage_type &to, void *from, destroy_fn_type *) {
         auto *instance = static_cast<Type *>(from);
-        new (&to) Type *{ instance };
+        new(&to) Type * { instance };
         return instance;
       }
     };
@@ -518,7 +522,7 @@ namespace Hyperion {
     struct type_traits<Type, std::enable_if_t<sizeof(Type) <= sizeof(void *) && std::is_nothrow_move_constructible_v<Type>>> {
       template<typename... Args>
       static void *instance(storage_type &storage, Args &&... args) {
-        return new (&storage) Type{ std::forward<Args>(args)... };
+        return new(&storage) Type { std::forward<Args>(args)... };
       }
 
       static void destroy(void *instance) {
@@ -530,15 +534,16 @@ namespace Hyperion {
       }
 
       static void *copy(storage_type &storage, const void *instance) {
-        return new (&storage) Type{ *static_cast<const Type *>(instance) };
+        return new(&storage) Type { *static_cast<const Type *>(instance) };
       }
 
       static void *steal(storage_type &to, void *from, destroy_fn_type *destroy_fn) {
-        void *instance = new (&to) Type{ std::move(*static_cast<Type *>(from)) };
+        void *instance = new(&to) Type { std::move(*static_cast<Type *>(from)) };
         destroy_fn(from);
         return instance;
       }
     };
+
   private:
     storage_type storage;
     void *instance;
@@ -554,11 +559,13 @@ namespace Hyperion {
 
   class MetaHandle {
   public:
-    inline MetaHandle() : node{ nullptr }, instance{ nullptr } { }
+    inline MetaHandle() : node { nullptr }, instance { nullptr } { }
     inline MetaHandle(MetaType type, void *instance);
-    inline MetaHandle(Any &Any) : node{ Any.node }, instance{ Any.instance } { }
+    inline MetaHandle(Any &Any) : node { Any.node }, instance { Any.instance } { }
+
     template<typename Type, typename = std::enable_if_t<!std::is_same_v<std::remove_cv_t<std::remove_reference_t<Type>>, MetaHandle>>>
-    inline MetaHandle(Type &obj) : node{ Internal::MetaTypeInfo<Type>::Resolve() }, instance{ &obj } { }
+    inline MetaHandle(Type &obj) : node { Internal::MetaTypeInfo<Type>::Resolve() }, instance { &obj } { }
+
   public:
     inline Hyperion::MetaType GetType() const;
     inline const void *GetData() const { return instance; }
@@ -574,9 +581,9 @@ namespace Hyperion {
 
   class MetaAttribute {
   public:
-    MetaAttribute() : node{ nullptr } { }
+    MetaAttribute() : node { nullptr } { }
   private:
-    MetaAttribute(const Internal::MetaAttributeNode *curr) : node{ curr } { }
+    MetaAttribute(const Internal::MetaAttributeNode *curr) : node { curr } { }
   public:
     inline Any GetKey() const { return node->key(); }
     inline Any GetValue() const { return node->value(); }
@@ -586,16 +593,17 @@ namespace Hyperion {
   private:
     const Internal::MetaAttributeNode *node;
   private:
-    template<typename> friend class MetaFactory;
+    template<typename>
+    friend class MetaFactory;
   };
 
   inline bool8 operator!=(const MetaAttribute &lhs, const MetaAttribute &rhs) { return !(lhs == rhs); }
 
   class MetaBase {
   public:
-    MetaBase() : node{ nullptr } { }
+    MetaBase() : node { nullptr } { }
   private:
-    MetaBase(const Internal::MetaBaseNode *curr) : node{ curr } { }
+    MetaBase(const Internal::MetaBaseNode *curr) : node { curr } { }
   public:
     inline Hyperion::MetaType GetParentType() const;
     inline Hyperion::MetaType GetType() const;
@@ -607,16 +615,17 @@ namespace Hyperion {
   private:
     const Internal::MetaBaseNode *node;
   private:
-    template<typename> friend class MetaFactory;
+    template<typename>
+    friend class MetaFactory;
   };
 
   inline bool8 operator!=(const MetaBase &lhs, const MetaBase &rhs) { return !(lhs == rhs); }
 
   class MetaConversion {
   public:
-    MetaConversion() : node{ nullptr } { }
+    MetaConversion() : node { nullptr } { }
   private:
-    MetaConversion(const Internal::MetaConversionNode *curr) : node{ curr } { }
+    MetaConversion(const Internal::MetaConversionNode *curr) : node { curr } { }
   public:
     inline Hyperion::MetaType GetParentType() const;
     inline Hyperion::MetaType GetType() const;
@@ -628,7 +637,8 @@ namespace Hyperion {
   private:
     const Internal::MetaConversionNode *node;
   private:
-    template<typename> friend class MetaFactory;
+    template<typename>
+    friend class MetaFactory;
   };
 
   inline bool8 operator!=(const MetaConversion &lhs, const MetaConversion &rhs) { return !(lhs == rhs); }
@@ -637,9 +647,9 @@ namespace Hyperion {
   public:
     using size_type = typename Internal::MetaConstructorNode::size_type;
   public:
-    MetaConstructor() : node{ nullptr } { }
+    MetaConstructor() : node { nullptr } { }
   private:
-    MetaConstructor(const Internal::MetaConstructorNode *curr) : node{ curr } { }
+    MetaConstructor(const Internal::MetaConstructorNode *curr) : node { curr } { }
   public:
     inline Hyperion::MetaType GetParentType() const;
     size_type GetSize() const { return node->size; }
@@ -647,8 +657,8 @@ namespace Hyperion {
 
     template<typename... Args>
     Any Invoke(Args &&... args) const {
-      std::array<Any, sizeof...(Args)> arguments{ {std::forward<Args>(args)...} };
-      Any Any{ };
+      std::array<Any, sizeof...(Args)> arguments { { std::forward<Args>(args)... } };
+      Any Any { };
 
       if (sizeof...(Args) == GetSize()) {
         Any = node->invoke(arguments.MetaProperty());
@@ -659,7 +669,7 @@ namespace Hyperion {
 
     template<typename Op>
     std::enable_if_t<std::is_invocable_v<Op, Hyperion::MetaAttribute>, void>
-      ForEachAttribute(Op op) const {
+    ForEachAttribute(Op op) const {
       Internal::Iterate([op = std::move(op)](auto *curr) {
         op(curr->clazz());
       }, node->attribute);
@@ -667,12 +677,12 @@ namespace Hyperion {
 
     template<typename Key>
     std::enable_if_t<!std::is_invocable_v<Key, Hyperion::MetaAttribute>, Hyperion::MetaAttribute>
-      GetAttribute(Key &&key) const {
-      const auto *curr = Internal::FindIf([key = Any{ std::forward<Key>(key) }](auto *candidate) {
+    GetAttribute(Key &&key) const {
+      const auto *curr = Internal::FindIf([key = Any { std::forward<Key>(key) }](auto *candidate) {
         return candidate->key() == key;
       }, node->attribute);
 
-      return curr ? curr->clazz() : Hyperion::MetaAttribute{ };
+      return curr ? curr->clazz() : Hyperion::MetaAttribute { };
     }
 
     explicit operator bool8() const { return node; }
@@ -680,16 +690,17 @@ namespace Hyperion {
   private:
     const Internal::MetaConstructorNode *node;
   private:
-    template<typename> friend class MetaFactory;
+    template<typename>
+    friend class MetaFactory;
   };
 
   inline bool8 operator!=(const MetaConstructor &lhs, const MetaConstructor &rhs) { return !(lhs == rhs); }
 
   class MetaDestructor {
   public:
-    MetaDestructor() : node{ nullptr } { }
+    MetaDestructor() : node { nullptr } { }
   private:
-    MetaDestructor(const Internal::MetaDestructorNode *curr) : node{ curr } { }
+    MetaDestructor(const Internal::MetaDestructorNode *curr) : node { curr } { }
   public:
     inline Hyperion::MetaType GetParentType() const;
 
@@ -700,16 +711,17 @@ namespace Hyperion {
   private:
     const Internal::MetaDestructorNode *node;
   private:
-    template<typename> friend class MetaFactory;
+    template<typename>
+    friend class MetaFactory;
   };
 
   inline bool8 operator!=(const MetaDestructor &lhs, const MetaDestructor &rhs) { return !(lhs == rhs); }
 
   class MetaProperty {
   public:
-    MetaProperty() : node{ nullptr } { }
+    MetaProperty() : node { nullptr } { }
   private:
-    MetaProperty(const Internal::MetaPropertyNode *curr) : node{ curr } { }
+    MetaProperty(const Internal::MetaPropertyNode *curr) : node { curr } { }
   public:
     String GetName() const { return node->name; }
     inline Hyperion::MetaType GetParentType() const;
@@ -719,7 +731,7 @@ namespace Hyperion {
 
     template<typename Type>
     bool8 Set(MetaHandle MetaHandle, Type &&value) const {
-      return node->set(MetaHandle, Any{ }, std::forward<Type>(value));
+      return node->set(MetaHandle, Any { }, std::forward<Type>(value));
     }
 
     template<typename Type>
@@ -728,7 +740,7 @@ namespace Hyperion {
     }
 
     Any Get(MetaHandle MetaHandle) const {
-      return node->get(MetaHandle, Any{ });
+      return node->get(MetaHandle, Any { });
     }
 
     Any Get(MetaHandle MetaHandle, std::size_t index) const {
@@ -737,7 +749,7 @@ namespace Hyperion {
 
     template<typename Op>
     std::enable_if_t<std::is_invocable_v<Op, Hyperion::MetaAttribute>, void>
-      ForEachAttribute(Op op) const {
+    ForEachAttribute(Op op) const {
       Internal::Iterate([op = std::move(op)](auto *curr) {
         op(curr->clazz());
       }, node->attribute);
@@ -745,12 +757,12 @@ namespace Hyperion {
 
     template<typename Key>
     std::enable_if_t<!std::is_invocable_v<Key, Hyperion::MetaAttribute>, Hyperion::MetaAttribute>
-      GetAttribute(Key &&key) const {
-      const auto *curr = Internal::FindIf([key = Any{ std::forward<Key>(key) }](auto *candidate) {
+    GetAttribute(Key &&key) const {
+      const auto *curr = Internal::FindIf([key = Any { std::forward<Key>(key) }](auto *candidate) {
         return candidate->key() == key;
       }, node->attribute);
 
-      return curr ? curr->clazz() : Hyperion::MetaAttribute{ };
+      return curr ? curr->clazz() : Hyperion::MetaAttribute { };
     }
 
     explicit operator bool8() const { return node; }
@@ -758,7 +770,8 @@ namespace Hyperion {
   private:
     const Internal::MetaPropertyNode *node;
   private:
-    template<typename> friend class MetaFactory;
+    template<typename>
+    friend class MetaFactory;
   };
 
   inline bool8 operator!=(const MetaProperty &lhs, const MetaProperty &rhs) { return !(lhs == rhs); }
@@ -767,9 +780,9 @@ namespace Hyperion {
   public:
     using size_type = typename Internal::MetaFunctionNode::size_type;
   public:
-    MetaFunction() : node{ nullptr } { }
+    MetaFunction() : node { nullptr } { }
   private:
-    MetaFunction(const Internal::MetaFunctionNode *curr) : node{ curr } { }
+    MetaFunction(const Internal::MetaFunctionNode *curr) : node { curr } { }
   public:
     String GetName() const { return node->name; }
     inline Hyperion::MetaType GetParentType() const;
@@ -782,8 +795,8 @@ namespace Hyperion {
     template<typename... Args>
     Any Invoke(MetaHandle MetaHandle, Args &&... args) const {
       // makes aliasing on the values and passes forward references if any
-      std::array<Any, sizeof...(Args)> arguments{ {Hyperion::MetaHandle{args}...} };
-      Any Any{ };
+      std::array<Any, sizeof...(Args)> arguments { { Hyperion::MetaHandle { args }... } };
+      Any Any { };
 
       if (sizeof...(Args) == GetSize()) {
         Any = node->invoke(MetaHandle, arguments.data());
@@ -794,7 +807,7 @@ namespace Hyperion {
 
     template<typename Op>
     std::enable_if_t<std::is_invocable_v<Op, Hyperion::MetaAttribute>, void>
-      ForEachAttribute(Op op) const {
+    ForEachAttribute(Op op) const {
       Internal::Iterate([op = std::move(op)](auto *curr) {
         op(curr->clazz());
       }, node->attribute);
@@ -802,12 +815,12 @@ namespace Hyperion {
 
     template<typename Key>
     std::enable_if_t<!std::is_invocable_v<Key, Hyperion::MetaAttribute>, Hyperion::MetaAttribute>
-      GetAttribute(Key &&key) const {
-      const auto *curr = Internal::FindIf([key = Any{ std::forward<Key>(key) }](auto *candidate) {
+    GetAttribute(Key &&key) const {
+      const auto *curr = Internal::FindIf([key = Any { std::forward<Key>(key) }](auto *candidate) {
         return candidate->key() == key;
       }, node->attribute);
 
-      return curr ? curr->clazz() : Hyperion::MetaAttribute{ };
+      return curr ? curr->clazz() : Hyperion::MetaAttribute { };
     }
 
     explicit operator bool8() const { return node; }
@@ -815,7 +828,8 @@ namespace Hyperion {
   private:
     const Internal::MetaFunctionNode *node;
   private:
-    template<typename> friend class MetaFactory;
+    template<typename>
+    friend class MetaFactory;
   };
 
   inline bool8 operator!=(const MetaFunction &lhs, const MetaFunction &rhs) { return !(lhs == rhs); }
@@ -824,9 +838,9 @@ namespace Hyperion {
   public:
     using size_type = typename Internal::MetaTypeNode::size_type;
   public:
-    MetaType() : node{ nullptr } { }
+    MetaType() : node { nullptr } { }
   private:
-    MetaType(const Internal::MetaTypeNode *curr) : node{ curr } { }
+    MetaType(const Internal::MetaTypeNode *curr) : node { curr } { }
   public:
     String GetName() const { return node->name; }
     MetaPrimitiveType GetPrimitiveType() const { return node->primitive_type; }
@@ -865,19 +879,19 @@ namespace Hyperion {
 
     template<typename Op>
     std::enable_if_t<std::is_invocable_v<Op, Hyperion::MetaBase>, void>
-      ForEachBase(Op op) const {
+    ForEachBase(Op op) const {
       Internal::Iterate<&Internal::MetaTypeNode::base>([op = std::move(op)](auto *curr) {
         op(curr->clazz());
       }, node);
     }
 
     Hyperion::MetaBase GetBase(const String &name) const {
-      const std::size_t identifier = std::hash<String>{ }(name);
+      const std::size_t identifier = std::hash<String> { }(name);
       const auto *curr = Internal::FindIf<&Internal::MetaTypeNode::base>([identifier](auto *candidate) {
         return candidate->ref()->identifier == identifier;
       }, node);
 
-      return curr ? curr->clazz() : Hyperion::MetaBase{ };
+      return curr ? curr->clazz() : Hyperion::MetaBase { };
     }
 
     template<typename Op>
@@ -893,7 +907,7 @@ namespace Hyperion {
         return candidate->ref() == type;
       }, node);
 
-      return curr ? curr->clazz() : Hyperion::MetaConversion{ };
+      return curr ? curr->clazz() : Hyperion::MetaConversion { };
     }
 
     template<typename Op>
@@ -905,54 +919,54 @@ namespace Hyperion {
 
     template<typename... Args>
     Hyperion::MetaConstructor GetConstructor() const {
-      const auto *curr = Internal::Constructor<Args...>(std::make_index_sequence<sizeof...(Args)>{ }, node);
-      return curr ? curr->clazz() : Hyperion::MetaConstructor{ };
+      const auto *curr = Internal::Constructor<Args...>(std::make_index_sequence<sizeof...(Args)> { }, node);
+      return curr ? curr->clazz() : Hyperion::MetaConstructor { };
     }
 
     Hyperion::MetaDestructor GetDestructor() const {
-      return node->dtor ? node->dtor->clazz() : Hyperion::MetaDestructor{ };
+      return node->dtor ? node->dtor->clazz() : Hyperion::MetaDestructor { };
     }
 
     template<typename Op>
     std::enable_if_t<std::is_invocable_v<Op, Hyperion::MetaProperty>, void>
-      ForEachProperty(Op op) const {
+    ForEachProperty(Op op) const {
       Internal::Iterate<&Internal::MetaTypeNode::data>([op = std::move(op)](auto *curr) {
         op(curr->clazz());
       }, node);
     }
 
     Hyperion::MetaProperty GetProperty(const String &name) const {
-      const std::size_t identifier = std::hash<String>{ }(name);
+      const std::size_t identifier = std::hash<String> { }(name);
       const auto *curr = Internal::FindIf<&Internal::MetaTypeNode::data>([identifier](auto *candidate) {
         return candidate->identifier == identifier;
       }, node);
 
-      return curr ? curr->clazz() : Hyperion::MetaProperty{ };
+      return curr ? curr->clazz() : Hyperion::MetaProperty { };
     }
 
     template<typename Op>
     std::enable_if_t<std::is_invocable_v<Op, Hyperion::MetaFunction>, void>
-      ForEachFunction(Op op) const {
+    ForEachFunction(Op op) const {
       Internal::Iterate<&Internal::MetaTypeNode::func>([op = std::move(op)](auto *curr) {
         op(curr->clazz());
       }, node);
     }
 
     Hyperion::MetaFunction GetFunction(const String &name) const {
-      const std::size_t identifier = std::hash<String>{ }(name);
+      const std::size_t identifier = std::hash<String> { }(name);
       const auto *curr = Internal::FindIf<&Internal::MetaTypeNode::func>([identifier](auto *candidate) {
         return candidate->identifier == identifier;
       }, node);
 
-      return curr ? curr->clazz() : Hyperion::MetaFunction{ };
+      return curr ? curr->clazz() : Hyperion::MetaFunction { };
     }
 
     template<typename... Args>
     Any Construct(Args &&... args) const {
-      std::array<Any, sizeof...(Args)> arguments{ {std::forward<Args>(args)...} };
-      Any Any{ };
+      std::array<Any, sizeof...(Args)> arguments { { std::forward<Args>(args)... } };
+      Any Any { };
 
-      Internal::FindIf<&Internal::MetaTypeNode::ctor>([data = arguments.data(), &Any](auto *curr)->bool8 {
+      Internal::FindIf<&Internal::MetaTypeNode::ctor>([data = arguments.data(), &Any](auto *curr)-> bool8 {
         if (curr->size == sizeof...(args)) {
           Any = curr->invoke(data);
         }
@@ -969,7 +983,7 @@ namespace Hyperion {
 
     template<typename Op>
     std::enable_if_t<std::is_invocable_v<Op, Hyperion::MetaAttribute>, void>
-      ForEachAttribute(Op op) const {
+    ForEachAttribute(Op op) const {
       Internal::Iterate<&Internal::MetaTypeNode::attribute>([op = std::move(op)](auto *curr) {
         op(curr->clazz());
       }, node);
@@ -977,12 +991,12 @@ namespace Hyperion {
 
     template<typename Key>
     std::enable_if_t<!std::is_invocable_v<Key, Hyperion::MetaAttribute>, Hyperion::MetaAttribute>
-      GetAttribute(Key &&key) const {
-      const auto *curr = Internal::FindIf<&Internal::MetaTypeNode::attribute>([key = Any{ std::forward<Key>(key) }](auto *candidate) {
+    GetAttribute(Key &&key) const {
+      const auto *curr = Internal::FindIf<&Internal::MetaTypeNode::attribute>([key = Any { std::forward<Key>(key) }](auto *candidate) {
         return candidate->key() == key;
       }, node);
 
-      return curr ? curr->clazz() : Hyperion::MetaAttribute{ };
+      return curr ? curr->clazz() : Hyperion::MetaAttribute { };
     }
 
     explicit operator bool8() const { return node; }
@@ -998,32 +1012,39 @@ namespace Hyperion {
 
   inline bool8 operator!=(const MetaType &lhs, const MetaType &rhs) { return !(lhs == rhs); }
 
-  inline Any::Any(MetaHandle MetaHandle) : Any{ } {
+  inline Any::Any(MetaHandle MetaHandle) : Any { } {
     node = MetaHandle.node;
     instance = MetaHandle.instance;
   }
 
   inline MetaHandle::MetaHandle(MetaType type, void *instance) : node(type.node), instance(instance) { }
 
-  inline Hyperion::MetaType Any::GetType() const { return node ? node->clazz() : Hyperion::MetaType{ }; }
-  inline Hyperion::MetaType MetaHandle::GetType() const { return node ? node->clazz() : Hyperion::MetaType{ }; }
+  inline Hyperion::MetaType Any::GetType() const { return node ? node->clazz() : Hyperion::MetaType { }; }
+  inline Hyperion::MetaType MetaHandle::GetType() const { return node ? node->clazz() : Hyperion::MetaType { }; }
   inline Hyperion::MetaType MetaBase::GetParentType() const { return node->parent->clazz(); }
   inline Hyperion::MetaType MetaBase::GetType() const { return node->ref()->clazz(); }
   inline Hyperion::MetaType MetaConversion::GetParentType() const { return node->parent->clazz(); }
   inline Hyperion::MetaType MetaConversion::GetType() const { return node->ref()->clazz(); }
   inline Hyperion::MetaType MetaConstructor::GetParentType() const { return node->parent->clazz(); }
-  inline Hyperion::MetaType MetaConstructor::GetArgumentType(size_type index) const { return index < GetSize() ? node->arg(index)->clazz() : Hyperion::MetaType{ }; }
+
+  inline Hyperion::MetaType MetaConstructor::GetArgumentType(size_type index) const {
+    return index < GetSize() ? node->arg(index)->clazz() : Hyperion::MetaType { };
+  }
+
   inline Hyperion::MetaType MetaDestructor::GetParentType() const { return node->parent->clazz(); }
   inline Hyperion::MetaType MetaProperty::GetParentType() const { return node->parent->clazz(); }
   inline Hyperion::MetaType MetaProperty::GetType() const { return node->ref()->clazz(); }
   inline Hyperion::MetaType MetaFunction::GetParentType() const { return node->parent->clazz(); }
   inline Hyperion::MetaType MetaFunction::GetReturnType() const { return node->ret()->clazz(); }
-  inline Hyperion::MetaType MetaFunction::GetArgumentType(size_type index) const { return index < GetSize() ? node->arg(index)->clazz() : Hyperion::MetaType{ }; }
+
+  inline Hyperion::MetaType MetaFunction::GetArgumentType(size_type index) const {
+    return index < GetSize() ? node->arg(index)->clazz() : Hyperion::MetaType { };
+  }
 
   namespace Internal {
 
     template<typename Type, typename = std::enable_if_t<!std::is_void_v<Type> && !std::is_function_v<Type>>>
-    static auto Compare(int, const void *lhs, const void *rhs) -> decltype(std::declval<Type>() == std::declval<Type>(), bool8{ }) {
+    static auto Compare(int, const void *lhs, const void *rhs) -> decltype(std::declval<Type>() == std::declval<Type>(), bool8 { }) {
       return *static_cast<const Type *>(lhs) == *static_cast<const Type *>(rhs);
     }
 
@@ -1033,32 +1054,32 @@ namespace Hyperion {
     template<typename Type>
     inline MetaTypeNode *MetaInfoNode<Type>::Resolve() {
       if (!type) {
-        static MetaTypeNode node{
-            { },
-            { },
-            MetaTypeTraits::None |
-            (std::is_void_v<Type> ? MetaTypeTraits::IsVoid : MetaTypeTraits::None) |
-            (std::is_arithmetic_v<Type> ? MetaTypeTraits::IsArithmetic : MetaTypeTraits::None) |
-            (std::is_pointer_v<Type> ? MetaTypeTraits::IsPointer : MetaTypeTraits::None) |
-            (std::is_enum_v<Type> ? MetaTypeTraits::IsEnum : MetaTypeTraits::None) |
-            (std::is_array_v<Type> ? MetaTypeTraits::IsArray : MetaTypeTraits::None) |
-            (std::is_class_v<Type> ? MetaTypeTraits::IsClass : MetaTypeTraits::None) |
-            (std::is_default_constructible_v<Type> ? MetaTypeTraits::IsDefaultConstructable : MetaTypeTraits::None),
-            MetaPrimitiveType::None,
-            nullptr,
-            nullptr,
-            sizeof(Type),
-            nullptr,
-            nullptr,
-            [](const void *lhs, const void *rhs) {
-                return Compare<Type>(0, lhs, rhs);
-            },
-            []() -> Hyperion::MetaType {
-                return Internal::MetaTypeInfo<std::remove_pointer_t<Type>>::Resolve();
-            },
-            []() -> Hyperion::MetaType {
-                return &node;
-            }
+        static MetaTypeNode node {
+          { },
+          { },
+          MetaTypeTraits::None |
+          (std::is_void_v<Type> ? MetaTypeTraits::IsVoid : MetaTypeTraits::None) |
+          (std::is_arithmetic_v<Type> ? MetaTypeTraits::IsArithmetic : MetaTypeTraits::None) |
+          (std::is_pointer_v<Type> ? MetaTypeTraits::IsPointer : MetaTypeTraits::None) |
+          (std::is_enum_v<Type> ? MetaTypeTraits::IsEnum : MetaTypeTraits::None) |
+          (std::is_array_v<Type> ? MetaTypeTraits::IsArray : MetaTypeTraits::None) |
+          (std::is_class_v<Type> ? MetaTypeTraits::IsClass : MetaTypeTraits::None) |
+          (std::is_default_constructible_v<Type> ? MetaTypeTraits::IsDefaultConstructable : MetaTypeTraits::None),
+          MetaPrimitiveType::None,
+          nullptr,
+          nullptr,
+          sizeof(Type),
+          nullptr,
+          nullptr,
+          [](const void *lhs, const void *rhs) {
+            return Compare<Type>(0, lhs, rhs);
+          },
+          []() -> Hyperion::MetaType {
+            return Internal::MetaTypeInfo<std::remove_pointer_t<Type>>::Resolve();
+          },
+          []() -> Hyperion::MetaType {
+            return &node;
+          }
         };
 
         type = &node;
@@ -1067,13 +1088,11 @@ namespace Hyperion {
       return type;
     }
 
-  }
-
-}
+  }}
 
 namespace std {
 
-  template <>
+  template<>
   struct hash<Hyperion::MetaType> {
     std::size_t operator()(const Hyperion::MetaType &type) const {
       return hash<const Hyperion::Internal::MetaTypeNode *>()(type.node);

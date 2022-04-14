@@ -75,8 +75,7 @@ namespace Hyperion {
     }
 
     switch (m_window_mode) {
-      case WindowMode::Windowed:
-      {
+      case WindowMode::Windowed: {
         // If we are maximized we first restore the window to be normal.
         if (m_window_state == WindowState::Maximized) {
           SetWindowState(WindowState::Normal);
@@ -88,8 +87,7 @@ namespace Hyperion {
         SetWindowPos(m_window_handle, nullptr, 0, 0, size.x, size.y, flags);
         break;
       }
-      case WindowMode::Borderless:
-      {
+      case WindowMode::Borderless: {
         // In borderless mode we do not resize because we would probably not fill the screen anymore.
         break;
       }
@@ -121,8 +119,7 @@ namespace Hyperion {
     WINDOWPLACEMENT *previous_placement = reinterpret_cast<WINDOWPLACEMENT *>(m_previous_placement);
 
     switch (window_mode) {
-      case WindowMode::Windowed:
-      {
+      case WindowMode::Windowed: {
         SetWindowLongW(m_window_handle, GWL_STYLE, window_styles | (WS_OVERLAPPEDWINDOW));
         SetWindowPlacement(m_window_handle, previous_placement);
 
@@ -135,8 +132,7 @@ namespace Hyperion {
         }
         break;
       }
-      case WindowMode::Borderless:
-      {
+      case WindowMode::Borderless: {
         GetWindowPlacement(m_window_handle, previous_placement);
 
         MONITORINFO monitor_info = { sizeof(monitor_info) };
@@ -166,18 +162,15 @@ namespace Hyperion {
 
     bool8 result = true;
     switch (window_state) {
-      case WindowState::Normal:
-      {
+      case WindowState::Normal: {
         result = ShowWindow(m_window_handle, SW_RESTORE);
         break;
       }
-      case WindowState::Minimized:
-      {
+      case WindowState::Minimized: {
         result = ShowWindow(m_window_handle, SW_MINIMIZE);
         break;
       }
-      case WindowState::Maximized:
-      {
+      case WindowState::Maximized: {
         // We only maximize in windowed mode.
         if (m_window_mode == WindowMode::Windowed) {
           result = ShowWindow(m_window_handle, SW_MAXIMIZE);
@@ -227,14 +220,14 @@ namespace Hyperion {
     if (m_is_focused) {
       switch (m_cursor_mode) {
         case CursorMode::Default: break;
-        case CursorMode::Confined:
-        {
+        case CursorMode::Confined: {
           RECT window_rect;
           GetWindowRect(m_window_handle, &window_rect);
           ClipCursor(&window_rect);
           break;
         }
-        default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+        default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+          break;
       }
     }
 
@@ -248,9 +241,12 @@ namespace Hyperion {
   //--------------------------------------------------------------
   void WindowsWindow::Show() {
     switch (m_window_state) {
-      case WindowState::Normal: ShowWindow(m_window_handle, SW_SHOWNORMAL); break;
-      case WindowState::Minimized: ShowWindow(m_window_handle, SW_SHOWMINIMIZED); break;
-      case WindowState::Maximized: ShowWindow(m_window_handle, SW_SHOWMAXIMIZED); break;
+      case WindowState::Normal: ShowWindow(m_window_handle, SW_SHOWNORMAL);
+        break;
+      case WindowState::Minimized: ShowWindow(m_window_handle, SW_SHOWMINIMIZED);
+        break;
+      case WindowState::Maximized: ShowWindow(m_window_handle, SW_SHOWMAXIMIZED);
+        break;
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
     }
   }
@@ -575,7 +571,8 @@ namespace Hyperion {
       // We are only interested in the alt right message, so we need to discard the left control message.
       MSG next_message;
       if (PeekMessageW(&next_message, nullptr, 0, 0, PM_NOREMOVE)) {
-        if (next_message.message == WM_KEYDOWN || next_message.message == WM_SYSKEYDOWN || next_message.message == WM_KEYUP || next_message.message == WM_SYSKEYUP) {
+        if (next_message.message == WM_KEYDOWN || next_message.message == WM_SYSKEYDOWN || next_message.message == WM_KEYUP || next_message.message ==
+          WM_SYSKEYUP) {
           DWORD message_time = GetMessageTime();
           if (next_message.wParam == VK_MENU && (next_message.lParam & 0x01000000) && next_message.time == message_time) {
             DispatchKeyAppEvent(KeyCode::AltGr, is_down);
@@ -727,7 +724,8 @@ namespace Hyperion {
         Rendering::IRenderContext *render_driver_context = new Rendering::WindowsVulkanRenderContext();
         return render_driver_context;
       }
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        return nullptr;
     }
   }
 
@@ -739,31 +737,27 @@ namespace Hyperion {
     WindowsWindow *window = static_cast<WindowsWindow *>(reinterpret_cast<void *>(GetWindowLongPtrW(window_handle, GWLP_USERDATA)));
 
     switch (message) {
-      case WM_CREATE:
-      {
+      case WM_CREATE: {
         SetWindowLongPtrW(window_handle, GWLP_USERDATA, (LONG_PTR)((CREATESTRUCT *)l_param)->lpCreateParams);
         SetWindowPos(window_handle, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
         break;
       }
 
-      case WM_DEVICECHANGE:
-      {
+      case WM_DEVICECHANGE: {
         if (w_param == DBT_DEVNODES_CHANGED) {
           window->m_input->QueryConnectedGamepads();
         }
         break;
       }
 
-      case WM_DISPLAYCHANGE:
-      {
+      case WM_DISPLAYCHANGE: {
         DisplayChangeAppEvent event;
         window->DispatchAppEvent(event);
         break;
       }
 
       case WM_CHAR:
-      case WM_SYSCHAR:
-      {
+      case WM_SYSCHAR: {
         uint32 utf16_codepoint = static_cast<uint32>(w_param);
         byte scancode = (reinterpret_cast<byte *>(&l_param))[2];
         uint32 virtual_key = MapVirtualKeyW(scancode, MAPVK_VSC_TO_VK_EX);
@@ -778,16 +772,14 @@ namespace Hyperion {
       }
 
       case WM_KEYDOWN:
-      case WM_SYSKEYDOWN:
-      {
+      case WM_SYSKEYDOWN: {
         KeyCode key_code = window->TranslateKeyCode(static_cast<uint32>(w_param), static_cast<uint32>(l_param), true);
         window->DispatchKeyAppEvent(key_code, true);
         break;
       }
 
       case WM_KEYUP:
-      case WM_SYSKEYUP:
-      {
+      case WM_SYSKEYUP: {
         KeyCode key_code = window->TranslateKeyCode(static_cast<uint32>(w_param), static_cast<uint32>(l_param), false);
         window->DispatchKeyAppEvent(key_code, false);
         break;
@@ -796,8 +788,7 @@ namespace Hyperion {
       case WM_LBUTTONDOWN:
       case WM_RBUTTONDOWN:
       case WM_MBUTTONDOWN:
-      case WM_XBUTTONDOWN:
-      {
+      case WM_XBUTTONDOWN: {
         SetCapture(window->m_window_handle);
 
         uint32 code = window->GetMouseButtonFromMessage(static_cast<uint32>(message), static_cast<uint32>(w_param));
@@ -809,8 +800,7 @@ namespace Hyperion {
       case WM_LBUTTONUP:
       case WM_RBUTTONUP:
       case WM_MBUTTONUP:
-      case WM_XBUTTONUP:
-      {
+      case WM_XBUTTONUP: {
         ReleaseCapture();
 
         uint32 code = window->GetMouseButtonFromMessage(static_cast<uint32>(message), static_cast<uint32>(w_param));
@@ -819,8 +809,7 @@ namespace Hyperion {
         break;
       }
 
-      case WM_MOUSEMOVE:
-      {
+      case WM_MOUSEMOVE: {
         int32 x = GET_X_LPARAM(l_param);
         int32 y = GET_Y_LPARAM(l_param);
 
@@ -831,22 +820,24 @@ namespace Hyperion {
         break;
       }
 
-      case WM_MOUSEWHEEL:
-      {
+      case WM_MOUSEWHEEL: {
         int16 scroll = GET_WHEEL_DELTA_WPARAM(w_param);
         MouseScrolledAppEvent event(scroll / static_cast<float32>(WHEEL_DELTA));
         window->DispatchAppEvent(event);
         break;
       };
 
-      case WM_SIZE:
-      {
+      case WM_SIZE: {
         WindowState window_state;
         switch (w_param) {
-          case SIZE_RESTORED: window_state = WindowState::Normal; break;
-          case SIZE_MINIMIZED: window_state = WindowState::Minimized; break;
-          case SIZE_MAXIMIZED: window_state = WindowState::Maximized; break;
-          default: window_state = WindowState::Normal; break;
+          case SIZE_RESTORED: window_state = WindowState::Normal;
+            break;
+          case SIZE_MINIMIZED: window_state = WindowState::Minimized;
+            break;
+          case SIZE_MAXIMIZED: window_state = WindowState::Maximized;
+            break;
+          default: window_state = WindowState::Normal;
+            break;
         }
 
         uint32 width = LOWORD(l_param);
@@ -865,8 +856,7 @@ namespace Hyperion {
         break;
       }
 
-      case WM_GETMINMAXINFO:
-      {
+      case WM_GETMINMAXINFO: {
         MINMAXINFO *min_max_info = (MINMAXINFO *)l_param;
         // We need the check for the window pointer here because we get the GETMINMAXINFO message before the CREATE message.
         if (window) {
@@ -877,23 +867,20 @@ namespace Hyperion {
         break;
       }
 
-      case WM_MOVE:
-      {
+      case WM_MOVE: {
         WindowMovedAppEvent event;
         window->DispatchAppEvent(event);
         break;
       }
 
-      case WM_CLOSE:
-      {
+      case WM_CLOSE: {
         WindowCloseAppEvent event;
         window->DispatchAppEvent(event);
         break;
       }
 
       case WM_SETFOCUS:
-      case WM_KILLFOCUS:
-      {
+      case WM_KILLFOCUS: {
         bool8 focused = message == WM_SETFOCUS;
         window->m_is_focused = focused;
 
@@ -905,26 +892,22 @@ namespace Hyperion {
         break;
       }
 
-      case WM_ENTERSIZEMOVE:
-      {
+      case WM_ENTERSIZEMOVE: {
         window->m_timer_handle = SetTimer(window->m_window_handle, 1, USER_TIMER_MINIMUM, nullptr);
         break;
       }
-      case WM_EXITSIZEMOVE:
-      {
+      case WM_EXITSIZEMOVE: {
         KillTimer(window->m_window_handle, window->m_timer_handle);
         break;
       }
-      case WM_TIMER:
-      {
+      case WM_TIMER: {
         if (w_param == window->m_timer_handle) {
           Engine::Iterate();
         }
         break;
       }
 
-      case WM_COMMAND:
-      {
+      case WM_COMMAND: {
         uint32 identifier = LOWORD(w_param);
         if (identifier < 1) {
           break;
@@ -940,8 +923,7 @@ namespace Hyperion {
         break;
       }
 
-      default:
-      {
+      default: {
         result = DefWindowProcW(window_handle, message, w_param, l_param);
       }
     }

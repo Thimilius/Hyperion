@@ -54,9 +54,9 @@ namespace Hyperion {
   //--------------------------------------------------------------
   String Matrix3x3::ToString() const {
     return StringUtils::Format("({:.2f}, {:.2f}, {:.2f})\n({:.2f}, {:.2f}, {:.2f})\n({:.2f}, {:.2f}, {:.2f})\n",
-      columns[0].x, columns[1].x, columns[2].x,
-      columns[0].y, columns[1].y, columns[2].y,
-      columns[0].z, columns[1].z, columns[2].z
+                               columns[0].x, columns[1].x, columns[2].x,
+                               columns[0].y, columns[1].y, columns[2].y,
+                               columns[0].z, columns[1].z, columns[2].z
     );
   }
 

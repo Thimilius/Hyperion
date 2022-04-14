@@ -14,7 +14,6 @@ namespace Hyperion {
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-
   class InputImplementation {
   public:
     virtual ~InputImplementation() = default;
@@ -71,12 +70,25 @@ namespace Hyperion {
 
     inline static const Array<Gamepad> &GetConnectedGamepads() { return s_input_implementation->GetConnectedGamepads(); }
     inline static Vector2 GetGamepadAxis(Gamepad gamepad, GamepadAxis axis) { return s_input_implementation->GetGamepadAxis(gamepad, axis); }
-    inline static void SetGamepadVibration(Gamepad gamepad, float32 left_vibration, float32 right_vibration) { s_input_implementation->SetGamepadVibration(gamepad, left_vibration, right_vibration); }
+
+    inline static void SetGamepadVibration(Gamepad gamepad, float32 left_vibration, float32 right_vibration) {
+      s_input_implementation->SetGamepadVibration(gamepad, left_vibration, right_vibration);
+    }
+
     inline static float32 GetGamepadDeadZone() { return s_input_implementation->GetGamepadDeadZone(); }
     inline static void GetGamepadDeadZone(float32 gamepad_dead_zone) { s_input_implementation->SetGamepadDeadZone(gamepad_dead_zone); }
-    inline static bool8 IsGamepadButtonDown(Gamepad gamepad, GamepadButtonCode gamepad_button_code) { return s_input_implementation->IsGamepadButtonDown(gamepad, gamepad_button_code); }
-    inline static bool8 IsGamepadButtonHold(Gamepad gamepad, GamepadButtonCode gamepad_button_code) { return s_input_implementation->IsGamepadButtonHold(gamepad, gamepad_button_code); }
-    inline static bool8 IsGamepadButtonUp(Gamepad gamepad, GamepadButtonCode gamepad_button_code) { return s_input_implementation->IsGamepadButtonUp(gamepad, gamepad_button_code); }
+
+    inline static bool8 IsGamepadButtonDown(Gamepad gamepad, GamepadButtonCode gamepad_button_code) {
+      return s_input_implementation->IsGamepadButtonDown(gamepad, gamepad_button_code);
+    }
+
+    inline static bool8 IsGamepadButtonHold(Gamepad gamepad, GamepadButtonCode gamepad_button_code) {
+      return s_input_implementation->IsGamepadButtonHold(gamepad, gamepad_button_code);
+    }
+
+    inline static bool8 IsGamepadButtonUp(Gamepad gamepad, GamepadButtonCode gamepad_button_code) {
+      return s_input_implementation->IsGamepadButtonUp(gamepad, gamepad_button_code);
+    }
 
     inline static const Array<AppEvent *> &GetEvents() { return s_input_implementation->GetEvents(); }
   private:

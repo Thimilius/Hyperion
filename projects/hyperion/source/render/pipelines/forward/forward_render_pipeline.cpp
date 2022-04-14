@@ -106,9 +106,7 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void ForwardRenderPipeline::Shutdown() {
-
-  }
+  void ForwardRenderPipeline::Shutdown() { }
 
   //--------------------------------------------------------------
   void ForwardRenderPipeline::SetRenderTargetSize(uint32 width, uint32 height) {

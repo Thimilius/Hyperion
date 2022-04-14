@@ -19,6 +19,7 @@ namespace Hyperion::Rendering {
     Vertex = BIT(0),
     Fragment = BIT(1),
   };
+
   HYP_CREATE_ENUM_FLAG_OPERATORS(ShaderStageFlags);
 
   enum class ShaderRenderOrder {
@@ -92,7 +93,7 @@ namespace Hyperion::Rendering {
     ShaderPropertyType type;
     ShaderPropertyStorage storage = { };
 
-    inline static ShaderPropertyId PropertyToId(const String &name) { return std::hash<String>{}(name); }
+    inline static ShaderPropertyId PropertyToId(const String &name) { return std::hash<String> { }(name); }
   };
 
   using ShaderPropertyCollection = Array<ShaderProperty>;

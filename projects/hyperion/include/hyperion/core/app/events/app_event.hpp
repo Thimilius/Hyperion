@@ -39,21 +39,22 @@ namespace Hyperion {
     MouseButton = BIT(5),
     Gamepad = BIT(6)
   };
+
   HYP_CREATE_ENUM_FLAG_OPERATORS(AppEventCategory)
 
-    class AppEvent {
-    public:
-      virtual ~AppEvent() = default;
-    public:
-      inline bool8 IsHandled() const { return m_handled; }
-      inline void Handle() { m_handled = false; }
+  class AppEvent {
+  public:
+    virtual ~AppEvent() = default;
+  public:
+    inline bool8 IsHandled() const { return m_handled; }
+    inline void Handle() { m_handled = false; }
 
-      virtual AppEventType GetType() const = 0;
-      virtual AppEventCategory GetCategory() const = 0;
+    virtual AppEventType GetType() const = 0;
+    virtual AppEventCategory GetCategory() const = 0;
 
-      inline bool8 IsInCategory(AppEventCategory category) const { return (GetCategory() & category) == category; }
-    private:
-      bool8 m_handled = false;
+    inline bool8 IsInCategory(AppEventCategory category) const { return (GetCategory() & category) == category; }
+  private:
+    bool8 m_handled = false;
   };
 
   using AppEventCallbackFunction = std::function<void(AppEvent &)>;
@@ -72,6 +73,7 @@ namespace Hyperion {
       }
       return false;
     }
+
   private:
     AppEvent &m_app_event;
   };

@@ -38,11 +38,12 @@ namespace Hyperion {
       uint32 codepoint = codepoints[i];
       // We first handle the special characters.
       switch (codepoint) {
-        case ' ': current_width += GetSpecialGlyphs().space.advance * scale; continue;
-        case '\t': current_width += GetSpecialGlyphs().space.advance * 4 * scale; continue; // Tab is equivalent to 4 whitespaces.
+        case ' ': current_width += GetSpecialGlyphs().space.advance * scale;
+          continue;
+        case '\t': current_width += GetSpecialGlyphs().space.advance * 4 * scale;
+          continue; // Tab is equivalent to 4 whitespaces.
         case '\r': continue; // Carriage return gets just straight up ignored. 
-        case '\n':
-        {
+        case '\n': {
           // If we have multiple lines, we are essentially searching for the widest line.
           if (current_width > max_width) {
             max_width = current_width;

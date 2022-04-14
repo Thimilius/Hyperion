@@ -26,4 +26,4 @@ inline void operator|=(ENUM& lhs, ENUM const rhs)                            \
 inline void operator&=(ENUM& lhs, ENUM const rhs)                            \
 {                                                                            \
     lhs = static_cast<ENUM>(static_cast<int>(lhs) & static_cast<int>(rhs));  \
-}                                                                            
+}

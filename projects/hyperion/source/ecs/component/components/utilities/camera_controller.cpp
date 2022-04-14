@@ -108,14 +108,12 @@ namespace Hyperion {
     {
       float32 wheel = Input::GetMouseScroll();
       switch (camera->projection_mode) {
-        case CameraProjectionMode::Perspective:
-        {
+        case CameraProjectionMode::Perspective: {
           m_fov_target -= wheel * 5.0f;
           m_fov_target = Math::Clamp(m_fov_target, 25, 120);
           break;
         }
-        case CameraProjectionMode::Orthographic:
-        {
+        case CameraProjectionMode::Orthographic: {
           m_orthographic_size_target -= wheel * 0.25f;
           m_orthographic_size_target = Math::Clamp(m_orthographic_size_target, 0.1f, 10);
           break;
@@ -188,7 +186,6 @@ namespace Hyperion {
     Vector2 mouse_position_difference = m_last_mouse_position - current_mouse_position;
     float32 mouse_axis_x = mouse_position_difference.x;
     float32 mouse_axis_y = mouse_position_difference.y;
-
 
     Vector3 position = derived_transform->position;
     {

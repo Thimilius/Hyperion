@@ -34,6 +34,7 @@ namespace Hyperion {
     inline static bool8 BetweenInterval(float32 interval, float32 offset = 0.0f) {
       return Math::ModF(s_time - offset, interval * 2) >= interval;
     }
+
   private:
     Time() = delete;
     ~Time() = delete;

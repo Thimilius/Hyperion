@@ -41,9 +41,17 @@ namespace Hyperion {
     float32 GetGamepadDeadZone() const override { return m_gamepad_dead_zone; }
     void SetGamepadDeadZone(float32 gamepad_dead_zone) { m_gamepad_dead_zone = gamepad_dead_zone; }
 
-    bool8 IsGamepadButtonDown(Gamepad gamepad, GamepadButtonCode gamepad_button_code) const override { return m_gamepads[static_cast<int32>(gamepad)].buttons_down[static_cast<int32>(gamepad_button_code)]; }
-    bool8 IsGamepadButtonHold(Gamepad gamepad, GamepadButtonCode gamepad_button_code) const override { return m_gamepads[static_cast<int32>(gamepad)].buttons[static_cast<int32>(gamepad_button_code)]; }
-    bool8 IsGamepadButtonUp(Gamepad gamepad, GamepadButtonCode gamepad_button_code) const override { return m_gamepads[static_cast<int32>(gamepad)].buttons_up[static_cast<int32>(gamepad_button_code)]; }
+    bool8 IsGamepadButtonDown(Gamepad gamepad, GamepadButtonCode gamepad_button_code) const override {
+      return m_gamepads[static_cast<int32>(gamepad)].buttons_down[static_cast<int32>(gamepad_button_code)];
+    }
+
+    bool8 IsGamepadButtonHold(Gamepad gamepad, GamepadButtonCode gamepad_button_code) const override {
+      return m_gamepads[static_cast<int32>(gamepad)].buttons[static_cast<int32>(gamepad_button_code)];
+    }
+
+    bool8 IsGamepadButtonUp(Gamepad gamepad, GamepadButtonCode gamepad_button_code) const override {
+      return m_gamepads[static_cast<int32>(gamepad)].buttons_up[static_cast<int32>(gamepad_button_code)];
+    }
 
     inline const Array<AppEvent *> &GetEvents() const override { return m_events; }
   private:

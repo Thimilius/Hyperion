@@ -12,8 +12,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   Ray::Ray(Vector3 origin, Vector3 direction) :
-    origin(origin), direction(direction.Normalized()) {
-  }
+    origin(origin), direction(direction.Normalized()) { }
 
   //--------------------------------------------------------------
   Vector3 Ray::GetPoint(float32 t) const {

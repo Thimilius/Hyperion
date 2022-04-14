@@ -61,7 +61,8 @@ namespace Hyperion {
     static Texture2D *GetTexture2DByGuid(AssetGuid guid);
     static Texture2D *GetTexture2DById(AssetId id);
     static Texture2D *CreateTexture2D(const Rendering::Texture2DParameters &parameters);
-    static Texture2D *CreateTexture2D(const Rendering::Texture2DParameters &parameters, const Rendering::TexturePixelData &pixels, AssetDataAccess data_access = AssetDataAccess::None);
+    static Texture2D *CreateTexture2D(const Rendering::Texture2DParameters &parameters, const Rendering::TexturePixelData &pixels,
+                                      AssetDataAccess data_access = AssetDataAccess::None);
 
     static RenderTexture *GetRenderTextureByGuid(AssetGuid guid);
     static RenderTexture *GetRenderTextureById(AssetId id);

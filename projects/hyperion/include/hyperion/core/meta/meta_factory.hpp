@@ -46,15 +46,13 @@ namespace Hyperion {
 }
 
 //-------------------- Definition Namespace --------------------
-namespace Hyperion {
-
-  namespace Internal {
+namespace Hyperion { namespace Internal {
 
     template<typename>
     struct FunctionHelper;
 
     template<typename Ret, typename... Args>
-    struct FunctionHelper<Ret(Args...)> {
+    struct FunctionHelper<Ret(Args ...)> {
       using return_type = std::remove_cv_t<std::remove_reference_t<Ret>>;
       using args_type = std::tuple<std::remove_cv_t<std::remove_reference_t<Args>>...>;
 
@@ -62,26 +60,26 @@ namespace Hyperion {
       static constexpr auto is_const = false;
 
       static auto arg(typename Internal::MetaFunctionNode::size_type index) {
-        return std::array<MetaTypeNode *, sizeof...(Args)>{ { MetaTypeInfo<Args>::Resolve()... }} [index] ;
+        return std::array<MetaTypeNode *, sizeof...(Args)> { { MetaTypeInfo<Args>::Resolve()... } }[index];
       }
     };
 
     template<typename Ret, typename... Args>
-    struct FunctionHelper<Ret(Args...) const> : FunctionHelper<Ret(Args...)> {
+    struct FunctionHelper<Ret(Args ...) const> : FunctionHelper<Ret(Args ...)> {
       static constexpr auto is_const = true;
     };
 
     template<typename Ret, typename... Args, typename Class>
-    constexpr FunctionHelper<Ret(Args...)>
-      ToFunctionHelper(Ret(Class:: *)(Args...));
+    constexpr FunctionHelper<Ret(Args ...)>
+    ToFunctionHelper(Ret (Class::*)(Args ...));
 
     template<typename Ret, typename... Args, typename Class>
-    constexpr FunctionHelper<Ret(Args...) const>
-      ToFunctionHelper(Ret(Class:: *)(Args...) const);
+    constexpr FunctionHelper<Ret(Args ...) const>
+    ToFunctionHelper(Ret (Class::*)(Args ...) const);
 
     template<typename Ret, typename... Args>
-    constexpr FunctionHelper<Ret(Args...)>
-      ToFunctionHelper(Ret(*)(Args...));
+    constexpr FunctionHelper<Ret(Args ...)>
+    ToFunctionHelper(Ret (*)(Args ...));
 
     constexpr void ToFunctionHelper(...);
 
@@ -91,10 +89,10 @@ namespace Hyperion {
     template<typename T, typename... Args, std::size_t... Indexes>
     Any Construct(Any *const args, std::index_sequence<Indexes...>) {
       [[maybe_unused]] auto direct = std::make_tuple((args + Indexes)->TryCast<Args>()...);
-      Any Any{ };
+      Any Any { };
 
       if (((std::get<Indexes>(direct) || (args + Indexes)->Convert<Args>()) && ...)) {
-        Any = T{ (std::get<Indexes>(direct) ? *std::get<Indexes>(direct) : (args + Indexes)->Cast<Args>())... };
+        Any = T { (std::get<Indexes>(direct) ? *std::get<Indexes>(direct) : (args + Indexes)->Cast<Args>())... };
       }
 
       return Any;
@@ -109,7 +107,7 @@ namespace Hyperion {
           using helper_type = FunctionHelperType<decltype(Data)>;
           using data_type = std::tuple_element_t<!std::is_member_function_pointer_v<decltype(Data)>, typename helper_type::args_type>;
           static_assert(std::is_invocable_v<decltype(Data), T &, data_type>);
-          auto *clazz = Any{ MetaHandle }.TryCast<T>();
+          auto *clazz = Any { MetaHandle }.TryCast<T>();
           auto *direct = value.TryCast<data_type>();
 
           if (clazz && (direct || value.Convert<data_type>())) {
@@ -119,7 +117,7 @@ namespace Hyperion {
         } else if constexpr (std::is_member_object_pointer_v<decltype(Data)>) {
           using data_type = std::remove_cv_t<std::remove_reference_t<decltype(std::declval<T>().*Data)>>;
           static_assert(std::is_invocable_v<decltype(Data), T *>);
-          auto *clazz = Any{ MetaHandle }.TryCast<T>();
+          auto *clazz = Any { MetaHandle }.TryCast<T>();
 
           if constexpr (std::is_array_v<data_type>) {
             using underlying_type = std::remove_extent_t<data_type>;
@@ -169,36 +167,36 @@ namespace Hyperion {
     Any Getter([[maybe_unused]] MetaHandle MetaHandle, [[maybe_unused]] Any index) {
       auto dispatch = [](auto &&value) {
         if constexpr (std::is_same_v<Policy, MetaPolicyAsVoid>) {
-          return Any{ std::in_place_type<void> };
+          return Any { std::in_place_type<void> };
         } else if constexpr (std::is_same_v<Policy, MetaPolicyAsAlias>) {
-          return Any{ std::ref(std::forward<decltype(value)>(value)) };
+          return Any { std::ref(std::forward<decltype(value)>(value)) };
         } else {
           static_assert(std::is_same_v<Policy, MetaPolicyAsIs>);
-          return Any{ std::forward<decltype(value)>(value) };
+          return Any { std::forward<decltype(value)>(value) };
         }
       };
 
       if constexpr (std::is_function_v<std::remove_pointer_t<decltype(Data)>> || std::is_member_function_pointer_v<decltype(Data)>) {
         static_assert(std::is_invocable_v<decltype(Data), T &>);
-        auto *clazz = Any{ MetaHandle }.TryCast<T>();
-        return clazz ? dispatch(std::invoke(Data, *clazz)) : Any{ };
+        auto *clazz = Any { MetaHandle }.TryCast<T>();
+        return clazz ? dispatch(std::invoke(Data, *clazz)) : Any { };
       } else if constexpr (std::is_member_object_pointer_v<decltype(Data)>) {
         using data_type = std::remove_cv_t<std::remove_reference_t<decltype(std::declval<T>().*Data)>>;
         static_assert(std::is_invocable_v<decltype(Data), T *>);
-        auto *clazz = Any{ MetaHandle }.TryCast<T>();
+        auto *clazz = Any { MetaHandle }.TryCast<T>();
 
         if constexpr (std::is_array_v<data_type>) {
           auto *idx = index.TryCast<std::size_t>();
-          return (clazz && idx) ? dispatch(std::invoke(Data, clazz)[*idx]) : Any{ };
+          return (clazz && idx) ? dispatch(std::invoke(Data, clazz)[*idx]) : Any { };
         } else {
-          return clazz ? dispatch(std::invoke(Data, clazz)) : Any{ };
+          return clazz ? dispatch(std::invoke(Data, clazz)) : Any { };
         }
       } else {
         static_assert(std::is_pointer_v<std::decay_t<decltype(Data)>>);
 
         if constexpr (std::is_array_v<std::remove_pointer_t<decltype(Data)>>) {
           auto *idx = index.TryCast<std::size_t>();
-          return idx ? dispatch((*Data)[*idx]) : Any{ };
+          return idx ? dispatch((*Data)[*idx]) : Any { };
         } else {
           return dispatch(*Data);
         }
@@ -212,12 +210,12 @@ namespace Hyperion {
       auto dispatch = [](auto *... args) {
         if constexpr (std::is_void_v<typename helper_type::return_type> || std::is_same_v<Policy, MetaPolicyAsVoid>) {
           std::invoke(Candidate, *args...);
-          return Any{ std::in_place_type<void> };
+          return Any { std::in_place_type<void> };
         } else if constexpr (std::is_same_v<Policy, MetaPolicyAsAlias>) {
-          return Any{ std::ref(std::invoke(Candidate, *args...)) };
+          return Any { std::ref(std::invoke(Candidate, *args...)) };
         } else {
           static_assert(std::is_same_v<Policy, MetaPolicyAsIs>);
-          return Any{ std::invoke(Candidate, *args...) };
+          return Any { std::invoke(Candidate, *args...) };
         }
       };
 
@@ -232,10 +230,10 @@ namespace Hyperion {
       }(args + Indexes, (args + Indexes)->TryCast<std::tuple_element_t<Indexes, typename helper_type::args_type>>())...);
 
       if constexpr (std::is_function_v<std::remove_pointer_t<decltype(Candidate)>>) {
-        return (std::get<Indexes>(direct) && ...) ? dispatch(std::get<Indexes>(direct)...) : Any{ };
+        return (std::get<Indexes>(direct) && ...) ? dispatch(std::get<Indexes>(direct)...) : Any { };
       } else {
-        auto *clazz = Any{ MetaHandle }.TryCast<T>();
-        return (clazz && (std::get<Indexes>(direct) && ...)) ? dispatch(clazz, std::get<Indexes>(direct)...) : Any{ };
+        auto *clazz = Any { MetaHandle }.TryCast<T>();
+        return (clazz && (std::get<Indexes>(direct) && ...)) ? dispatch(clazz, std::get<Indexes>(direct)...) : Any { };
       }
     }
 
@@ -256,17 +254,17 @@ namespace Hyperion {
       static_assert(std::is_base_of_v<Base, T>);
       auto *const type = Internal::MetaTypeInfo<T>::Resolve();
 
-      static Internal::MetaBaseNode node{
-          &Internal::MetaTypeInfo<T>::template base<Base>,
-          type,
-          nullptr,
-          &Internal::MetaTypeInfo<Base>::Resolve,
-          [](void *instance) -> void * {
-              return static_cast<Base *>(static_cast<T *>(instance));
-          },
-          []() -> Hyperion::MetaBase {
-              return &node;
-          }
+      static Internal::MetaBaseNode node {
+        &Internal::MetaTypeInfo<T>::template base<Base>,
+        type,
+        nullptr,
+        &Internal::MetaTypeInfo<Base>::Resolve,
+        [](void *instance) -> void* {
+          return static_cast<Base *>(static_cast<T *>(instance));
+        },
+        []() -> Hyperion::MetaBase {
+          return &node;
+        }
       };
 
       node.next = type->base;
@@ -282,17 +280,17 @@ namespace Hyperion {
       static_assert(std::is_convertible_v<T, To>);
       auto *const type = Internal::MetaTypeInfo<T>::Resolve();
 
-      static Internal::MetaConversionNode node{
-          &Internal::MetaTypeInfo<T>::template conv<To>,
-          type,
-          nullptr,
-          &Internal::MetaTypeInfo<To>::Resolve,
-          [](const void *instance) -> Any {
-              return static_cast<To>(*static_cast<const T *>(instance));
-          },
-          []() -> Hyperion::MetaConversion {
-              return &node;
-          }
+      static Internal::MetaConversionNode node {
+        &Internal::MetaTypeInfo<T>::template conv<To>,
+        type,
+        nullptr,
+        &Internal::MetaTypeInfo<To>::Resolve,
+        [](const void *instance) -> Any {
+          return static_cast<To>(*static_cast<const T *>(instance));
+        },
+        []() -> Hyperion::MetaConversion {
+          return &node;
+        }
       };
 
       node.next = type->conv;
@@ -308,17 +306,17 @@ namespace Hyperion {
       using conv_type = std::invoke_result_t<decltype(Candidate), T &>;
       auto *const type = Internal::MetaTypeInfo<T>::Resolve();
 
-      static Internal::MetaConversionNode node{
-          &Internal::MetaTypeInfo<T>::template conv<conv_type>,
-          type,
-          nullptr,
-          &Internal::MetaTypeInfo<conv_type>::Resolve,
-          [](const void *instance) -> Any {
-              return std::invoke(Candidate, *static_cast<const T *>(instance));
-          },
-          []() -> Hyperion::MetaConversion {
-              return &node;
-          }
+      static Internal::MetaConversionNode node {
+        &Internal::MetaTypeInfo<T>::template conv<conv_type>,
+        type,
+        nullptr,
+        &Internal::MetaTypeInfo<conv_type>::Resolve,
+        [](const void *instance) -> Any {
+          return std::invoke(Candidate, *static_cast<const T *>(instance));
+        },
+        []() -> Hyperion::MetaConversion {
+          return &node;
+        }
       };
 
       node.next = type->conv;
@@ -335,19 +333,19 @@ namespace Hyperion {
       static_assert(std::is_same_v<typename helper_type::return_type, T>);
       auto *const type = Internal::MetaTypeInfo<T>::Resolve();
 
-      static Internal::MetaConstructorNode node{
-          &Internal::MetaTypeInfo<T>::template ctor<typename helper_type::args_type>,
-          type,
-          nullptr,
-          nullptr,
-          helper_type::size,
-          &helper_type::arg,
-          [](Any *const Any) {
-              return Internal::Invoke<T, Func, Policy>({ }, Any, std::make_index_sequence<helper_type::size>{ });
-          },
-          []() -> Hyperion::MetaConstructor {
-              return &node;
-          }
+      static Internal::MetaConstructorNode node {
+        &Internal::MetaTypeInfo<T>::template ctor<typename helper_type::args_type>,
+        type,
+        nullptr,
+        nullptr,
+        helper_type::size,
+        &helper_type::arg,
+        [](Any *const Any) {
+          return Internal::Invoke<T, Func, Policy>({ }, Any, std::make_index_sequence<helper_type::size> { });
+        },
+        []() -> Hyperion::MetaConstructor {
+          return &node;
+        }
       };
 
       node.next = type->ctor;
@@ -361,22 +359,22 @@ namespace Hyperion {
 
     template<typename... Args, typename... Attribute>
     MetaFactory Constructor(Attribute &&... attribute) {
-      using helper_type = Internal::FunctionHelperType<T(*)(Args...)>;
+      using helper_type = Internal::FunctionHelperType<T(*)(Args ...)>;
       auto *const type = Internal::MetaTypeInfo<T>::Resolve();
 
-      static Internal::MetaConstructorNode node{
-          &Internal::MetaTypeInfo<T>::template ctor<typename helper_type::args_type>,
-          type,
-          nullptr,
-          nullptr,
-          helper_type::size,
-          &helper_type::arg,
-          [](Any *const Any) {
-              return Internal::Construct<T, std::remove_cv_t<std::remove_reference_t<Args>>...>(Any, std::make_index_sequence<helper_type::size>{ });
-          },
-          []() -> Hyperion::MetaConstructor {
-              return &node;
-          }
+      static Internal::MetaConstructorNode node {
+        &Internal::MetaTypeInfo<T>::template ctor<typename helper_type::args_type>,
+        type,
+        nullptr,
+        nullptr,
+        helper_type::size,
+        &helper_type::arg,
+        [](Any *const Any) {
+          return Internal::Construct<T, std::remove_cv_t<std::remove_reference_t<Args>>...>(Any, std::make_index_sequence<helper_type::size> { });
+        },
+        []() -> Hyperion::MetaConstructor {
+          return &node;
+        }
       };
 
       node.next = type->ctor;
@@ -393,21 +391,21 @@ namespace Hyperion {
       static_assert(std::is_invocable_v<decltype(Func), T &>);
       auto *const type = Internal::MetaTypeInfo<T>::Resolve();
 
-      static Internal::MetaDestructorNode node{
-          &Internal::MetaTypeInfo<T>::template dtor<Func>,
-          type,
-          [](MetaHandle MetaHandle) {
-              const auto valid = (MetaHandle.type() == Internal::MetaTypeInfo<T>::Resolve()->clazz());
+      static Internal::MetaDestructorNode node {
+        &Internal::MetaTypeInfo<T>::template dtor<Func>,
+        type,
+        [](MetaHandle MetaHandle) {
+          const auto valid = (MetaHandle.type() == Internal::MetaTypeInfo<T>::Resolve()->clazz());
 
-              if (valid) {
-                  std::invoke(Func, *Any{MetaHandle}.TryCast<T>());
-              }
-
-              return valid;
-          },
-          []() -> Hyperion::MetaDestructor {
-              return &node;
+          if (valid) {
+            std::invoke(Func, *Any { MetaHandle }.TryCast<T>());
           }
+
+          return valid;
+        },
+        []() -> Hyperion::MetaDestructor {
+          return &node;
+        }
       };
 
       assert(!Internal::MetaTypeInfo<T>::type->dtor);
@@ -426,21 +424,21 @@ namespace Hyperion {
       if constexpr (std::is_same_v<T, decltype(Data)>) {
         static_assert(std::is_same_v<Policy, MetaPolicyAsIs>);
 
-        static Internal::MetaPropertyNode node{
-            &Internal::MetaTypeInfo<T>::template data<Data>,
-            { },
-            { },
-            type,
-            nullptr,
-            nullptr,
-            true,
-            true,
-            &Internal::MetaTypeInfo<T>::Resolve,
-            [](MetaHandle, Any, Any) { return false; },
-            [](MetaHandle, Any) -> Any { return Data; },
-            []() -> Hyperion::MetaProperty {
-                return &node;
-            }
+        static Internal::MetaPropertyNode node {
+          &Internal::MetaTypeInfo<T>::template data<Data>,
+          { },
+          { },
+          type,
+          nullptr,
+          nullptr,
+          true,
+          true,
+          &Internal::MetaTypeInfo<T>::Resolve,
+          [](MetaHandle, Any, Any) { return false; },
+          [](MetaHandle, Any) -> Any { return Data; },
+          []() -> Hyperion::MetaProperty {
+            return &node;
+          }
         };
 
         node.attribute = Attributes<std::integral_constant<T, Data>>(std::forward<Attribute>(attribute)...);
@@ -448,21 +446,21 @@ namespace Hyperion {
       } else if constexpr (std::is_member_object_pointer_v<decltype(Data)>) {
         using data_type = std::remove_reference_t<decltype(std::declval<T>().*Data)>;
 
-        static Internal::MetaPropertyNode node{
-            &Internal::MetaTypeInfo<T>::template data<Data>,
-            { },
-            { },
-            type,
-            nullptr,
-            nullptr,
-            std::is_const_v<data_type>,
-            !std::is_member_object_pointer_v<decltype(Data)>,
-            &Internal::MetaTypeInfo<data_type>::Resolve,
-            &Internal::Setter<std::is_const_v<data_type>, T, Data>,
-            &Internal::Getter<T, Data, Policy>,
-            []() -> Hyperion::MetaProperty {
-                return &node;
-            }
+        static Internal::MetaPropertyNode node {
+          &Internal::MetaTypeInfo<T>::template data<Data>,
+          { },
+          { },
+          type,
+          nullptr,
+          nullptr,
+          std::is_const_v<data_type>,
+          !std::is_member_object_pointer_v<decltype(Data)>,
+          &Internal::MetaTypeInfo<data_type>::Resolve,
+          &Internal::Setter<std::is_const_v<data_type>, T, Data>,
+          &Internal::Getter<T, Data, Policy>,
+          []() -> Hyperion::MetaProperty {
+            return &node;
+          }
         };
 
         node.attribute = Attributes<std::integral_constant<decltype(Data), Data>>(std::forward<Attribute>(attribute)...);
@@ -471,28 +469,28 @@ namespace Hyperion {
         static_assert(std::is_pointer_v<std::decay_t<decltype(Data)>>);
         using data_type = std::remove_pointer_t<std::decay_t<decltype(Data)>>;
 
-        static Internal::MetaPropertyNode node{
-            &Internal::MetaTypeInfo<T>::template data<Data>,
-            { },
-            { },
-            type,
-            nullptr,
-            nullptr,
-            std::is_const_v<data_type>,
-            !std::is_member_object_pointer_v<decltype(Data)>,
-            &Internal::MetaTypeInfo<data_type>::Resolve,
-            &Internal::Setter<std::is_const_v<data_type>, T, Data>,
-            &Internal::Getter<T, Data, Policy>,
-            []() -> Hyperion::MetaProperty {
-                return &node;
-            }
+        static Internal::MetaPropertyNode node {
+          &Internal::MetaTypeInfo<T>::template data<Data>,
+          { },
+          { },
+          type,
+          nullptr,
+          nullptr,
+          std::is_const_v<data_type>,
+          !std::is_member_object_pointer_v<decltype(Data)>,
+          &Internal::MetaTypeInfo<data_type>::Resolve,
+          &Internal::Setter<std::is_const_v<data_type>, T, Data>,
+          &Internal::Getter<T, Data, Policy>,
+          []() -> Hyperion::MetaProperty {
+            return &node;
+          }
         };
 
         node.attribute = Attributes<std::integral_constant<decltype(Data), Data>>(std::forward<Attribute>(attribute)...);
         curr = &node;
       }
 
-      curr->identifier = std::hash<String>{ }(name);
+      curr->identifier = std::hash<String> { }(name);
       curr->name = name;
       curr->next = type->data;
       assert(!Duplicate(curr->identifier, curr->next));
@@ -510,24 +508,24 @@ namespace Hyperion {
       static_assert(std::is_invocable_v<decltype(Setter), T &, underlying_type>);
       auto *const type = Internal::MetaTypeInfo<T>::Resolve();
 
-      static Internal::MetaPropertyNode node{
-          &Internal::MetaTypeInfo<T>::template data<Setter, Getter>,
-          { },
-          { },
-          type,
-          nullptr,
-          nullptr,
-          false,
-          false,
-          &Internal::MetaTypeInfo<underlying_type>::Resolve,
-          &Internal::Setter<false, T, Setter>,
-          &Internal::Getter<T, Getter, Policy>,
-          []() -> Hyperion::MetaProperty {
-              return &node;
-          }
+      static Internal::MetaPropertyNode node {
+        &Internal::MetaTypeInfo<T>::template data<Setter, Getter>,
+        { },
+        { },
+        type,
+        nullptr,
+        nullptr,
+        false,
+        false,
+        &Internal::MetaTypeInfo<underlying_type>::Resolve,
+        &Internal::Setter<false, T, Setter>,
+        &Internal::Getter<T, Getter, Policy>,
+        []() -> Hyperion::MetaProperty {
+          return &node;
+        }
       };
 
-      node.identifier = std::hash<String>{ }(name);
+      node.identifier = std::hash<String> { }(name);
       node.name = name;
       node.next = type->data;
       node.attribute = Attributes<owner_type>(std::forward<Attribute>(attribute)...);
@@ -545,27 +543,27 @@ namespace Hyperion {
       using helper_type = Internal::FunctionHelperType<decltype(Candidate)>;
       auto *const type = Internal::MetaTypeInfo<T>::Resolve();
 
-      static Internal::MetaFunctionNode node{
-          &Internal::MetaTypeInfo<T>::template func<Candidate>,
-          { },
-          { },
-          type,
-          nullptr,
-          nullptr,
-          helper_type::size,
-          helper_type::is_const,
-          !std::is_member_function_pointer_v<decltype(Candidate)>,
-          &Internal::MetaTypeInfo<std::conditional_t<std::is_same_v<Policy, MetaPolicyAsVoid>, void, typename helper_type::return_type>>::Resolve,
-          &helper_type::arg,
-          [](MetaHandle MetaHandle, Any *Any) {
-              return Internal::Invoke<T, Candidate, Policy>(MetaHandle, Any, std::make_index_sequence<helper_type::size>{ });
-          },
-          []() -> Hyperion::MetaFunction {
-              return &node;
-          }
+      static Internal::MetaFunctionNode node {
+        &Internal::MetaTypeInfo<T>::template func<Candidate>,
+        { },
+        { },
+        type,
+        nullptr,
+        nullptr,
+        helper_type::size,
+        helper_type::is_const,
+        !std::is_member_function_pointer_v<decltype(Candidate)>,
+        &Internal::MetaTypeInfo<std::conditional_t<std::is_same_v<Policy, MetaPolicyAsVoid>, void, typename helper_type::return_type>>::Resolve,
+        &helper_type::arg,
+        [](MetaHandle MetaHandle, Any *Any) {
+          return Internal::Invoke<T, Candidate, Policy>(MetaHandle, Any, std::make_index_sequence<helper_type::size> { });
+        },
+        []() -> Hyperion::MetaFunction {
+          return &node;
+        }
       };
 
-      node.identifier = std::hash<String>{ }(name);
+      node.identifier = std::hash<String> { }(name);
       node.name = name;
       node.next = type->func;
       node.attribute = Attributes<owner_type>(std::forward<Attribute>(attribute)...);
@@ -608,12 +606,13 @@ namespace Hyperion {
 
       return registered;
     }
+
   private:
     template<typename... Attribute>
     MetaFactory Type(const String &name, MetaPrimitiveType primitive_type, Attribute &&... attribute) {
       assert(!Internal::MetaTypeInfo<T>::type);
       auto *node = Internal::MetaTypeInfo<T>::Resolve();
-      node->identifier = std::hash<String>{ }(name);
+      node->identifier = std::hash<String> { }(name);
       node->name = name;
       node->primitive_type = primitive_type;
       node->trivial_destructor = [](const void *instance) { static_cast<const T *>(instance)->~T(); };
@@ -624,7 +623,7 @@ namespace Hyperion {
       Internal::MetaTypeInfo<>::type = node;
 
       if constexpr (std::is_default_constructible_v<T>) {
-        node->in_place_constructor = [](void *address) { return static_cast<void *>(new (address) T()); };
+        node->in_place_constructor = [](void *address) { return static_cast<void *>(new(address) T()); };
       }
 
       return *this;
@@ -646,19 +645,19 @@ namespace Hyperion {
 
     template<typename Owner, typename Attribute, typename... Other>
     Internal::MetaAttributeNode *Attributes(Attribute &&attribute, Other &&... other) {
-      static std::remove_cv_t<std::remove_reference_t<Attribute>> attrib{ };
+      static std::remove_cv_t<std::remove_reference_t<Attribute>> attrib { };
 
-      static Internal::MetaAttributeNode node{
-          nullptr,
-          []() -> Any {
-              return std::as_const(std::get<0>(attrib));
-          },
-          []() -> Any {
-              return std::as_const(std::get<1>(attrib));
-          },
-          []() -> Hyperion::MetaAttribute {
-              return &node;
-          }
+      static Internal::MetaAttributeNode node {
+        nullptr,
+        []() -> Any {
+          return std::as_const(std::get<0>(attrib));
+        },
+        []() -> Any {
+          return std::as_const(std::get<1>(attrib));
+        },
+        []() -> Hyperion::MetaAttribute {
+          return &node;
+        }
       };
 
       attrib = std::forward<Attribute>(attribute);
@@ -702,6 +701,7 @@ namespace Hyperion {
         *node->underlying = nullptr;
       }
     }
+
   private:
     friend class Hyperion::Engine;
   };
@@ -710,30 +710,30 @@ namespace Hyperion {
   public:
     template<typename T, typename... Attribute>
     inline static MetaFactory<T> Reflect(const String &name, Attribute &&... attribute) {
-      return MetaFactory<T>{ }.Type(name, std::forward<Attribute>(attribute)...);
+      return MetaFactory<T> { }.Type(name, std::forward<Attribute>(attribute)...);
     }
 
     template<typename T>
-    inline static MetaFactory<T> Reflect() { return MetaFactory<T>{ }; }
+    inline static MetaFactory<T> Reflect() { return MetaFactory<T> { }; }
 
     template<typename T>
-    inline static bool8 Unregister() { return MetaFactory<T>{ }.Unregister(); }
+    inline static bool8 Unregister() { return MetaFactory<T> { }.Unregister(); }
 
     template<typename T>
     inline static MetaType Resolve() { return Internal::MetaTypeInfo<T>::Resolve()->clazz(); }
 
     inline static MetaType Resolve(const String &name) {
-      const std::size_t identifier = std::hash<String>{ }(name);
+      const std::size_t identifier = std::hash<String> { }(name);
       const auto *curr = Internal::FindIf([identifier](auto *node) {
         return node->identifier == identifier;
       }, Internal::MetaTypeInfo<>::type);
 
-      return curr ? curr->clazz() : MetaType{ };
+      return curr ? curr->clazz() : MetaType { };
     }
 
     template<typename Op>
     inline static std::enable_if_t<std::is_invocable_v<Op, MetaType>, void>
-      Resolve(Op op) {
+    Resolve(Op op) {
       Internal::Iterate([op = std::move(op)](auto *node) {
         op(node->clazz());
       }, Internal::MetaTypeInfo<>::type);

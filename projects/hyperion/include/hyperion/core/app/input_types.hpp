@@ -163,9 +163,10 @@ namespace Hyperion {
     Capslock = BIT(4),
     Numlock = BIT(5)
   };
+
   HYP_CREATE_ENUM_FLAG_OPERATORS(KeyModifier)
 
-    enum class Gamepad {
+  enum class Gamepad {
     Gamepad1,
     Gamepad2,
     Gamepad3,

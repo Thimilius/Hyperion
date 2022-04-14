@@ -5,7 +5,8 @@
 namespace Hyperion {
 
   enum class TypeAttribute {
-    EnumFlags, // Value: bool8, Default: false
+    EnumFlags,
+    // Value: bool8, Default: false
   };
 
   enum class PropertySpecialSerialize {
@@ -15,7 +16,8 @@ namespace Hyperion {
   };
 
   enum class PropertyAttribute {
-    Serialize, // Value: bool8, Default: true
+    Serialize,
+    // Value: bool8, Default: true
     SpecialSerialize // Value: PropertySpecialSerialize, Default: PropertySpecialSerialize::Raw
   };
 

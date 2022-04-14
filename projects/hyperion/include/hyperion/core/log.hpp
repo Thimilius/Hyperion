@@ -53,7 +53,7 @@ namespace Hyperion {
     inline static void SetCallback(LogCallback callback) { s_callback = callback; }
 
     template<typename ...Args>
-    static void LogMessage(LogType type, LogLevel level, const char *system, const String &message_format, Args... args) {
+    static void LogMessage(LogType type, LogLevel level, const char *system, const String &message_format, Args ... args) {
       std::time_t current_time = std::time(&current_time);
       std::tm *time_info = std::localtime(&current_time);
       char prefix_buffer[30];
@@ -67,6 +67,7 @@ namespace Hyperion {
       String message = StringUtils::Format("{} - [{}] - {}\n", prefix_buffer, system, formatted_message);
       LogMessageInternal(level, message);
     }
+
   private:
     Log() = delete;
     ~Log() = delete;

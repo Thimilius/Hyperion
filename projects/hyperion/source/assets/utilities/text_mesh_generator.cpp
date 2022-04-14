@@ -34,11 +34,12 @@ namespace Hyperion {
 
       // We first handle the special characters.
       switch (codepoint) {
-        case ' ': position.x += font->GetSpecialGlyphs().space.advance * scale_x; continue;
-        case '\t': position.x += font->GetSpecialGlyphs().space.advance * 4 * scale_x; continue; // Tab is equivalent to 4 whitespaces.
+        case ' ': position.x += font->GetSpecialGlyphs().space.advance * scale_x;
+          continue;
+        case '\t': position.x += font->GetSpecialGlyphs().space.advance * 4 * scale_x;
+          continue; // Tab is equivalent to 4 whitespaces.
         case '\r': continue; // Carriage return gets just straight up ignored. 
-        case '\n':
-        {
+        case '\n': {
           TextSize text_size = font->GetTextSize(codepoints, codepoint_offset, scale_x, true);
           Vector2 new_position = GetPosition(settings.alignment, text_size, settings.rect);
           position.x = new_position.x;
@@ -56,16 +57,16 @@ namespace Hyperion {
       float32 height = glyph.size.y * scale_y;
 
       Vector3 corners[4] = {
-          Vector3(x_pos, y_pos + height, 0.0f),
-          Vector3(x_pos + width, y_pos + height, 0.0f),
-          Vector3(x_pos + width, y_pos, 0.0f),
-          Vector3(x_pos, y_pos, 0.0f)
+        Vector3(x_pos, y_pos + height, 0.0f),
+        Vector3(x_pos + width, y_pos + height, 0.0f),
+        Vector3(x_pos + width, y_pos, 0.0f),
+        Vector3(x_pos, y_pos, 0.0f)
       };
       Vector2 uvs[4] = {
-          element.uv_top_left,
-          element.uv_top_right,
-          element.uv_bottom_right,
-          element.uv_bottom_left,
+        element.uv_top_left,
+        element.uv_top_right,
+        element.uv_bottom_right,
+        element.uv_bottom_left,
       };
       mesh_builder.AddQuad(corners, color, uvs);
 
@@ -78,50 +79,41 @@ namespace Hyperion {
     Vector2 position = Vector2();
 
     switch (text_alignment) {
-      case UI::TextAlignment::TopLeft:
-      {
+      case UI::TextAlignment::TopLeft: {
         position = Vector2(rect.position.x, rect.GetMax().y - text_size.height - text_size.baseline_offset);
         break;
       }
-      case UI::TextAlignment::TopCenter:
-      {
+      case UI::TextAlignment::TopCenter: {
         position = Vector2(rect.GetCenter().x - (text_size.width / 2.0f), rect.GetMax().y - text_size.height - text_size.baseline_offset);
         break;
       }
-      case UI::TextAlignment::TopRight:
-      {
+      case UI::TextAlignment::TopRight: {
         Vector2 max = rect.GetMax();
         position = Vector2(max.x - text_size.width, max.y - text_size.height - text_size.baseline_offset);
         break;
       }
-      case UI::TextAlignment::MiddleLeft:
-      {
+      case UI::TextAlignment::MiddleLeft: {
         position = Vector2(rect.position.x, rect.GetCenter().y - (text_size.height / 2.0f));
         break;
       }
-      case UI::TextAlignment::MiddleCenter:
-      {
+      case UI::TextAlignment::MiddleCenter: {
         Vector2 center = rect.GetCenter();
         position = Vector2(center.x - (text_size.width / 2.0f), center.y - (text_size.height / 2.0f));
         break;
       }
-      case UI::TextAlignment::MiddleRight:
-      {
+      case UI::TextAlignment::MiddleRight: {
         position = Vector2(rect.GetMax().x - text_size.width, rect.GetCenter().y - (text_size.height / 2.0f));
         break;
       }
-      case UI::TextAlignment::BottomLeft:
-      {
+      case UI::TextAlignment::BottomLeft: {
         position = Vector2(rect.position.x, rect.position.y + text_size.baseline_offset);
         break;
       }
-      case UI::TextAlignment::BottomCenter:
-      {
+      case UI::TextAlignment::BottomCenter: {
         position = Vector2(rect.GetCenter().x - (text_size.width / 2.0f), rect.position.y + text_size.baseline_offset);
         break;
       }
-      case UI::TextAlignment::BottomRight:
-      {
+      case UI::TextAlignment::BottomRight: {
         position = Vector2(rect.GetMax().x - text_size.width, rect.position.y + text_size.baseline_offset);
         break;
       }

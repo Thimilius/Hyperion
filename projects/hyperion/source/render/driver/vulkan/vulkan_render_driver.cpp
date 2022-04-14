@@ -14,14 +14,10 @@
 namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
-  void VulkanRenderDriver::Initialize() {
-
-  }
+  void VulkanRenderDriver::Initialize() { }
 
   //--------------------------------------------------------------
-  void VulkanRenderDriver::HandleAssets(RenderAssetContext &asset_context) {
-    
-  }
+  void VulkanRenderDriver::HandleAssets(RenderAssetContext &asset_context) { }
 
   //--------------------------------------------------------------
   void VulkanRenderDriver::Render(RenderFrame *render_frame) {
@@ -30,7 +26,8 @@ namespace Hyperion::Rendering {
     vkWaitForFences(device, 1, &m_context->m_in_flight_fences[m_current_frame_index], VK_TRUE, UINT64_MAX);
 
     uint32 image_index = 0;
-    VkResult present_result = vkAcquireNextImageKHR(device, m_context->m_swapchain, UINT64_MAX, m_context->m_image_available_semaphores[m_current_frame_index], VK_NULL_HANDLE, &image_index);
+    VkResult present_result = vkAcquireNextImageKHR(device, m_context->m_swapchain, UINT64_MAX, m_context->m_image_available_semaphores[m_current_frame_index],
+                                                    VK_NULL_HANDLE, &image_index);
     if (present_result == VK_ERROR_OUT_OF_DATE_KHR) {
       m_context->RecreateSwapchain();
     } else if (present_result != VK_SUCCESS && present_result != VK_SUBOPTIMAL_KHR) {
@@ -55,8 +52,9 @@ namespace Hyperion::Rendering {
     VkSemaphore signal_semaphores[] = { m_context->m_render_finished_semaphores[m_current_frame_index] };
     submit_info.signalSemaphoreCount = 1;
     submit_info.pSignalSemaphores = signal_semaphores;
-    
-    HYP_VULKAN_CHECK(vkQueueSubmit(m_context->m_graphics_queue, 1, &submit_info, m_context->m_in_flight_fences[m_current_frame_index]), "Failed to submit command buffer!");
+
+    HYP_VULKAN_CHECK(vkQueueSubmit(m_context->m_graphics_queue, 1, &submit_info, m_context->m_in_flight_fences[m_current_frame_index]),
+                     "Failed to submit command buffer!");
 
     VkPresentInfoKHR present_info = { };
     present_info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -102,7 +100,7 @@ namespace Hyperion::Rendering {
     render_pass_begin_info.renderArea.offset = { 0, 0 };
     render_pass_begin_info.renderArea.extent = m_context->m_swapchain_extent;
 
-    VkClearValue clear_color = {{{ 0.0f, 0.0f, 0.0f, 1.0f }}};
+    VkClearValue clear_color = { { { 0.0f, 0.0f, 0.0f, 1.0f } } };
     render_pass_begin_info.clearValueCount = 1;
     render_pass_begin_info.pClearValues = &clear_color;
 

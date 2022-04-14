@@ -15,8 +15,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   Color::Color(float32 r, float32 g, float32 b, float32 a)
-    : r(r), g(g), b(b), a(a) {
-  }
+    : r(r), g(g), b(b), a(a) { }
 
   //--------------------------------------------------------------
   String Color::ToString() const {

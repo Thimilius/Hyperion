@@ -43,9 +43,9 @@ namespace Hyperion {
     HYP_LOG_INFO("Engine", "Initializing...");
     OperatingSystemInfo operating_system_info = OperatingSystem::GetSystemInfo();
     HYP_LOG_INFO("Engine", "Processor Count: {} | Processor Frequency: {:.2f} Ghz | Physical Memory: {:.2f} GB",
-      operating_system_info.processor_info.processor_count,
-      static_cast<float32>(operating_system_info.processor_info.processor_mhz_frequency / 1000.0f),
-      static_cast<float32>(operating_system_info.memory_info.total_physical_memory / (1024.0f * 1024.0f * 1024.0f)));
+                 operating_system_info.processor_info.processor_count,
+                 static_cast<float32>(operating_system_info.processor_info.processor_mhz_frequency / 1000.0f),
+                 static_cast<float32>(operating_system_info.memory_info.total_physical_memory / (1024.0f * 1024.0f * 1024.0f)));
 
     Display::UpdateDisplayInfos();
     DisplayInfo::DisplayModeInfo mode_info = Display::GetCurrentDisplayModeInfo();
@@ -54,61 +54,120 @@ namespace Hyperion {
     EngineLoopSystem &engine_loop = s_settings.core.engine_loop;
     engine_loop.initilization.name = "Initilization";
     engine_loop.initilization.sub_systems = {
-        { "MemoryStatsInitilization", []() { HYP_PROFILE_SCOPE("EngineLoop.MemoryStatsInitilization"); MemoryStats::ResetFrameMemory(); } },
-        { "TimeInitilization", []() {
-            HYP_PROFILE_SCOPE("EngineLoop.TimeInitilization");
+      {
+        "MemoryStatsInitilization", []() {
+          HYP_PROFILE_SCOPE("EngineLoop.MemoryStatsInitilization");
+          MemoryStats::ResetFrameMemory();
+        }
+      },
+      {
+        "TimeInitilization", []() {
+          HYP_PROFILE_SCOPE("EngineLoop.TimeInitilization");
 
-            float32 now = Time::s_timer.ElapsedSeconds();
-            float32 delta_time = static_cast<float32>(now - Time::s_last_time);
-            if (delta_time > Time::GetMaxDeltaTime()) {
-                delta_time = Time::GetMaxDeltaTime();
-            }
-            Time::s_last_time = now;
-            Time::s_accumulator += delta_time;
-            Time::s_delta_time = delta_time;
-            Time::s_time += delta_time;
+          float32 now = Time::s_timer.ElapsedSeconds();
+          float32 delta_time = static_cast<float32>(now - Time::s_last_time);
+          if (delta_time > Time::GetMaxDeltaTime()) {
+            delta_time = Time::GetMaxDeltaTime();
+          }
+          Time::s_last_time = now;
+          Time::s_accumulator += delta_time;
+          Time::s_delta_time = delta_time;
+          Time::s_time += delta_time;
 
-            // Accumulate frame times and calculate the average to get more robust frame times and fps.
-            Time::s_past_delta_times[Time::s_frame_counter % Time::MAX_PAST_DELTA_TIMES] = delta_time;
-            float32 delta_time_average = 0.0f;
-            for (uint64 i = 0; i < Time::MAX_PAST_DELTA_TIMES; i++) {
-                delta_time_average += Time::s_past_delta_times[i];
-            }
-            delta_time_average /= Time::MAX_PAST_DELTA_TIMES;
-            Time::s_frame_time = delta_time_average * 1000.0f;
-            Time::s_fps = static_cast<uint32>(1.0f / delta_time_average);
-            Time::s_frame_counter++;
-        } },
-        { "InputInitilization", []() { HYP_PROFILE_SCOPE("EngineLoop.InputInitilization"); s_application->GetMainWindow()->Poll(); } },
-        { "DisplayInitilization", []() {
-            HYP_PROFILE_SCOPE("EngineLoop.DisplayInitilization");
+          // Accumulate frame times and calculate the average to get more robust frame times and fps.
+          Time::s_past_delta_times[Time::s_frame_counter % Time::MAX_PAST_DELTA_TIMES] = delta_time;
+          float32 delta_time_average = 0.0f;
+          for (uint64 i = 0; i < Time::MAX_PAST_DELTA_TIMES; i++) {
+            delta_time_average += Time::s_past_delta_times[i];
+          }
+          delta_time_average /= Time::MAX_PAST_DELTA_TIMES;
+          Time::s_frame_time = delta_time_average * 1000.0f;
+          Time::s_fps = static_cast<uint32>(1.0f / delta_time_average);
+          Time::s_frame_counter++;
+        }
+      },
+      {
+        "InputInitilization", []() {
+          HYP_PROFILE_SCOPE("EngineLoop.InputInitilization");
+          s_application->GetMainWindow()->Poll();
+        }
+      },
+      {
+        "DisplayInitilization", []() {
+          HYP_PROFILE_SCOPE("EngineLoop.DisplayInitilization");
 
-            // NOTE: The order in which we check for this size change ist important.
-            // We have to do it after the input initilization to properly handle resizing which might start inner engine iterations.
+          // NOTE: The order in which we check for this size change ist important.
+          // We have to do it after the input initilization to properly handle resizing which might start inner engine iterations.
 
-            Display::UpdateSize();
-        } }
+          Display::UpdateSize();
+        }
+      }
     };
     engine_loop.fixed_update.name = "FixedUpdate";
     engine_loop.fixed_update.sub_systems = {
-        { "ApplicationFixedUpdate", []() { HYP_PROFILE_SCOPE("EngineLoop.ApplicationFixedUpdate"); s_application->OnFixedUpdate(Time::GetFixedDeltaTime()); } },
-        { "TimeFixedUpdate", []() { HYP_PROFILE_SCOPE("EngineLoop.TimeFixedUpdate"); Time::s_accumulator -= Time::GetFixedDeltaTime(); } }
+      {
+        "ApplicationFixedUpdate", []() {
+          HYP_PROFILE_SCOPE("EngineLoop.ApplicationFixedUpdate");
+          s_application->OnFixedUpdate(Time::GetFixedDeltaTime());
+        }
+      },
+      {
+        "TimeFixedUpdate", []() {
+          HYP_PROFILE_SCOPE("EngineLoop.TimeFixedUpdate");
+          Time::s_accumulator -= Time::GetFixedDeltaTime();
+        }
+      }
     };
     engine_loop.tick.name = "Tick";
     engine_loop.tick.sub_systems = {
-        { "ApplicationTick", []() { HYP_PROFILE_SCOPE("EngineLoop.ApplicationTick"); s_application->OnTick(); } }
+      {
+        "ApplicationTick", []() {
+          HYP_PROFILE_SCOPE("EngineLoop.ApplicationTick");
+          s_application->OnTick();
+        }
+      }
     };
     engine_loop.update.name = "Update";
     engine_loop.update.sub_systems = {
-        { "AssetManagerPreUpdate", []() { HYP_PROFILE_SCOPE("EngineLoop.AssetManagerPreUpdate"); AssetManager::PreUpdate(); }},
-        { "ApplicationUpdate", []() { HYP_PROFILE_SCOPE("EngineLoop.ApplicationUpdate"); s_application->OnUpdate(Time::GetDeltaTime()); } },
-        { "WorldManagerUpdate", []() { HYP_PROFILE_SCOPE("EngineLoop.WorldManagerUpdate"); WorldManager::Update(); }}
+      {
+        "AssetManagerPreUpdate", []() {
+          HYP_PROFILE_SCOPE("EngineLoop.AssetManagerPreUpdate");
+          AssetManager::PreUpdate();
+        }
+      },
+      {
+        "ApplicationUpdate", []() {
+          HYP_PROFILE_SCOPE("EngineLoop.ApplicationUpdate");
+          s_application->OnUpdate(Time::GetDeltaTime());
+        }
+      },
+      {
+        "WorldManagerUpdate", []() {
+          HYP_PROFILE_SCOPE("EngineLoop.WorldManagerUpdate");
+          WorldManager::Update();
+        }
+      }
     };
     engine_loop.late_update.name = "LateUpdate";
     engine_loop.late_update.sub_systems = {
-        { "RenderEngineLateUpdate", []() { HYP_PROFILE_SCOPE("EngineLoop.RenderEngineLateUpdate"); Rendering::RenderEngine::Render(); } },
-        { "AssetManagerLateUpdate", []() { HYP_PROFILE_SCOPE("EngineLoop.AssetManagerLateUpdate"); AssetManager::LateUpdate(); } },
-        { "RenderEngineSynchronize", []() { HYP_PROFILE_SCOPE("EngineLoop.RenderEngineSynchronize"); Rendering::RenderEngine::Present(); } }
+      {
+        "RenderEngineLateUpdate", []() {
+          HYP_PROFILE_SCOPE("EngineLoop.RenderEngineLateUpdate");
+          Rendering::RenderEngine::Render();
+        }
+      },
+      {
+        "AssetManagerLateUpdate", []() {
+          HYP_PROFILE_SCOPE("EngineLoop.AssetManagerLateUpdate");
+          AssetManager::LateUpdate();
+        }
+      },
+      {
+        "RenderEngineSynchronize", []() {
+          HYP_PROFILE_SCOPE("EngineLoop.RenderEngineSynchronize");
+          Rendering::RenderEngine::Present();
+        }
+      }
     };
   }
 
@@ -128,45 +187,45 @@ namespace Hyperion {
       MetaRegistry::Reflect<float32>().Type("float32", MetaPrimitiveType::Float32);
       MetaRegistry::Reflect<float64>().Type("float64", MetaPrimitiveType::Float64);
       MetaRegistry::Reflect<Vector2>().Type("Vector2", MetaPrimitiveType::Vector2)
-        .Property<&Vector2::x>("x")
-        .Property<&Vector2::y>("y");
+                                      .Property<&Vector2::x>("x")
+                                      .Property<&Vector2::y>("y");
       MetaRegistry::Reflect<Vector3>().Type("Vector3", MetaPrimitiveType::Vector3)
-        .Property<&Vector3::x>("x")
-        .Property<&Vector3::y>("y")
-        .Property<&Vector3::z>("z");
+                                      .Property<&Vector3::x>("x")
+                                      .Property<&Vector3::y>("y")
+                                      .Property<&Vector3::z>("z");
       MetaRegistry::Reflect<Vector4>().Type("Vector4", MetaPrimitiveType::Vector4)
-        .Property<&Vector4::x>("x")
-        .Property<&Vector4::y>("y")
-        .Property<&Vector4::z>("z")
-        .Property<&Vector4::w>("w");
+                                      .Property<&Vector4::x>("x")
+                                      .Property<&Vector4::y>("y")
+                                      .Property<&Vector4::z>("z")
+                                      .Property<&Vector4::w>("w");
       MetaRegistry::Reflect<Quaternion>().Type("Quaternion", MetaPrimitiveType::Quaternion)
-        .Property<&Quaternion::x>("x")
-        .Property<&Quaternion::y>("y")
-        .Property<&Quaternion::z>("z")
-        .Property<&Quaternion::w>("w");
+                                         .Property<&Quaternion::x>("x")
+                                         .Property<&Quaternion::y>("y")
+                                         .Property<&Quaternion::z>("z")
+                                         .Property<&Quaternion::w>("w");
       MetaRegistry::Reflect<Matrix4x4>().Type("Matrix4x4", MetaPrimitiveType::Matrix4x4)
-        .Property<&Matrix4x4::m11>("m11")
-        .Property<&Matrix4x4::m21>("m21")
-        .Property<&Matrix4x4::m31>("m31")
-        .Property<&Matrix4x4::m41>("m41")
-        .Property<&Matrix4x4::m12>("m12")
-        .Property<&Matrix4x4::m22>("m22")
-        .Property<&Matrix4x4::m32>("m32")
-        .Property<&Matrix4x4::m42>("m42")
-        .Property<&Matrix4x4::m13>("m13")
-        .Property<&Matrix4x4::m23>("m23")
-        .Property<&Matrix4x4::m33>("m33")
-        .Property<&Matrix4x4::m43>("m43")
-        .Property<&Matrix4x4::m14>("m14")
-        .Property<&Matrix4x4::m24>("m24")
-        .Property<&Matrix4x4::m34>("m34")
-        .Property<&Matrix4x4::m44>("m44");
+                                        .Property<&Matrix4x4::m11>("m11")
+                                        .Property<&Matrix4x4::m21>("m21")
+                                        .Property<&Matrix4x4::m31>("m31")
+                                        .Property<&Matrix4x4::m41>("m41")
+                                        .Property<&Matrix4x4::m12>("m12")
+                                        .Property<&Matrix4x4::m22>("m22")
+                                        .Property<&Matrix4x4::m32>("m32")
+                                        .Property<&Matrix4x4::m42>("m42")
+                                        .Property<&Matrix4x4::m13>("m13")
+                                        .Property<&Matrix4x4::m23>("m23")
+                                        .Property<&Matrix4x4::m33>("m33")
+                                        .Property<&Matrix4x4::m43>("m43")
+                                        .Property<&Matrix4x4::m14>("m14")
+                                        .Property<&Matrix4x4::m24>("m24")
+                                        .Property<&Matrix4x4::m34>("m34")
+                                        .Property<&Matrix4x4::m44>("m44");
       MetaRegistry::Reflect<String>().Type("String", MetaPrimitiveType::String);
       MetaRegistry::Reflect<Color>().Type("Color", MetaPrimitiveType::Color)
-        .Property<&Color::r>("r")
-        .Property<&Color::g>("g")
-        .Property<&Color::b>("b")
-        .Property<&Color::a>("a");
+                                    .Property<&Color::r>("r")
+                                    .Property<&Color::g>("g")
+                                    .Property<&Color::b>("b")
+                                    .Property<&Color::a>("a");
     }
 
     {
@@ -259,9 +318,7 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  void Engine::PostInitialize() {
-
-  }
+  void Engine::PostInitialize() { }
 
   //--------------------------------------------------------------
   void Engine::Iterate() {

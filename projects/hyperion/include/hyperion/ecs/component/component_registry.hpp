@@ -24,6 +24,7 @@ namespace Hyperion {
       // And it really should because it is pretty much THE hottest path in the engine.
       return s_component_ids.Get(type);
     }
+
   private:
     static void Initialize();
   private:

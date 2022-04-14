@@ -9,13 +9,11 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   Plane::Plane()
-    : normal(Vector3::Up()), distance(0) {
-  }
+    : normal(Vector3::Up()), distance(0) { }
 
   //--------------------------------------------------------------
   Plane::Plane(Vector3 normal, float32 distance)
-    : normal(normal.Normalized()), distance(distance) {
-  }
+    : normal(normal.Normalized()), distance(distance) { }
 
   //--------------------------------------------------------------
   Plane::Plane(Vector3 normal, Vector3 point) {

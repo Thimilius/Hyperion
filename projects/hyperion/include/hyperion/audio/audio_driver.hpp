@@ -22,7 +22,10 @@ namespace Hyperion::Audio {
   public:
     AudioBackend GetBackend() const override { return AudioBackend::None; }
 
-    void Initialize() override { HYP_LOG_INFO("Audio", "Initialized Null audio driver!"); }
+    void Initialize() override {
+      HYP_LOG_INFO("Audio", "Initialized Null audio driver!");
+    }
+
     void Shutdown() override { }
   };
 

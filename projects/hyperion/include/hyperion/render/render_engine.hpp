@@ -18,8 +18,7 @@ namespace Hyperion {
 
   namespace Rendering {
     class IRenderPipeline;
-  }
-}
+  }}
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {

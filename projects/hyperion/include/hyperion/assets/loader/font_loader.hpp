@@ -27,7 +27,10 @@ namespace Hyperion {
 
   class FontLoader final {
   public:
-    static Font *LoadFont(const String &path, uint32 font_size, FontCharacterSet character_set) { return s_font_loader->LoadFont(path, font_size, character_set); }
+    static Font *LoadFont(const String &path, uint32 font_size, FontCharacterSet character_set) {
+      return s_font_loader->LoadFont(path, font_size, character_set);
+    }
+
   private:
     FontLoader() = delete;
     ~FontLoader() = delete;

@@ -22,7 +22,8 @@ namespace Hyperion {
       case LogLevel::Info: return LogColor::DarkGreen;
       case LogLevel::Warning: return LogColor::DarkYellow;
       case LogLevel::Error: return LogColor::DarkRed;
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return LogColor::White;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        return LogColor::White;
     }
   }
 

@@ -19,15 +19,15 @@ using namespace Hyperion::Rendering;
 namespace Hyperion {
 
   static uint32 g_assimp_import_flags =
-    aiProcess_GenNormals |            // Make sure we have normals.
-    aiProcess_GenUVCoords |           // Make sure we have uvs.
-    aiProcess_CalcTangentSpace |      // Create binormals/tangents.
-    aiProcess_Triangulate |           // Make sure we have triangles.
+    aiProcess_GenNormals | // Make sure we have normals.
+    aiProcess_GenUVCoords | // Make sure we have uvs.
+    aiProcess_CalcTangentSpace | // Create binormals/tangents.
+    aiProcess_Triangulate | // Make sure we have triangles.
     aiProcess_JoinIdenticalVertices | // Join verticies to optimize for indexed rendering.
-    aiProcess_SortByPType |           // Split meshes by primitive type.
-    aiProcess_OptimizeMeshes |        // Batch draws where possible.
-    aiProcess_FlipWindingOrder |      // Flip winding order to be clockwise.                                           
-    aiProcess_ValidateDataStructure;  // Validation.
+    aiProcess_SortByPType | // Split meshes by primitive type.
+    aiProcess_OptimizeMeshes | // Batch draws where possible.
+    aiProcess_FlipWindingOrder | // Flip winding order to be clockwise.                                           
+    aiProcess_ValidateDataStructure; // Validation.
 
   //--------------------------------------------------------------
   Result<Mesh *, Error> AssimpMeshLoader::Load(const String &path) {
@@ -93,7 +93,8 @@ namespace Hyperion {
       case aiPrimitiveType_TRIANGLE: return MeshTopology::Triangles;
       case aiPrimitiveType_LINE: return MeshTopology::Lines;
       case aiPrimitiveType_POINT: return MeshTopology::Points;
-      default: HYP_LOG_ERROR("MeshImporter", "Mesh contains an unsupported primitive type!"); return MeshTopology::Triangles;
+      default: HYP_LOG_ERROR("MeshImporter", "Mesh contains an unsupported primitive type!");
+        return MeshTopology::Triangles;
     }
   }
 

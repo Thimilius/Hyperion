@@ -37,15 +37,15 @@ namespace Hyperion {
   struct DelegateConnectionArguments { };
 
   template<auto Func>
-  inline constexpr DelegateConnectionArguments<Func> ConnectionArguments{ };
+  inline constexpr DelegateConnectionArguments<Func> ConnectionArguments { };
 
   template<typename>
   class Delegate;
 
   template<typename Ret, typename... Args>
-  class Delegate<Ret(Args...)> {
+  class Delegate<Ret(Args ...)> {
   private:
-    using FunctionType = Ret(const void *, Args...);
+    using FunctionType = Ret(const void *, Args ...);
   public:
     Delegate() : m_function(nullptr), m_instance(nullptr) { }
 
@@ -54,6 +54,7 @@ namespace Hyperion {
 
     template<auto Candidate, typename Type>
     Delegate(DelegateConnectionArguments<Candidate>, Type &&value_or_instance) { Connect<Candidate>(std::forward<Type>(value_or_instance)); }
+
   public:
     inline const void *GetInstance() { return m_instance; }
 
@@ -61,7 +62,7 @@ namespace Hyperion {
     void Connect() {
       m_instance = nullptr;
 
-      m_function = [](const void *, Args... args) -> Ret {
+      m_function = [](const void *, Args ... args) -> Ret {
         return Ret(std::invoke(Candidate, std::forward<Args>(args)...));
       };
     }
@@ -70,7 +71,7 @@ namespace Hyperion {
     void Connect(Type &value_or_instance) {
       m_instance = &value_or_instance;
 
-      m_function = [](const void *payload, Args... args) -> Ret {
+      m_function = [](const void *payload, Args ... args) -> Ret {
         Type *curr = static_cast<Type *>(const_cast<void *>(payload));
         return Ret(std::invoke(Candidate, *curr, std::forward<Args>(args)...));
       };
@@ -80,7 +81,7 @@ namespace Hyperion {
     void Connect(Type *value_or_instance) {
       m_instance = value_or_instance;
 
-      m_function = [](const void *payload, Args... args) -> Ret {
+      m_function = [](const void *payload, Args ... args) -> Ret {
         Type *curr = static_cast<Type *>(const_cast<void *>(payload));
         return Ret(std::invoke(Candidate, *curr, std::forward<Args>(args)...));
       };
@@ -91,14 +92,14 @@ namespace Hyperion {
       m_instance = nullptr;
     }
 
-    Ret operator()(Args... args) const {
+    Ret operator()(Args ... args) const {
       return m_function(m_instance, std::forward<Args>(args)...);
     }
 
     explicit operator bool8() const { return !(m_function == nullptr); }
 
-    bool8 operator==(const Delegate<Ret(Args...)> &other) const { return m_function == other.m_function && m_instance == other.m_instance; }
-    bool8 operator!=(const Delegate<Ret(Args...)> &other) const { return !(*this == other); }
+    bool8 operator==(const Delegate<Ret(Args ...)> &other) const { return m_function == other.m_function && m_instance == other.m_instance; }
+    bool8 operator!=(const Delegate<Ret(Args ...)> &other) const { return !(*this == other); }
   private:
     FunctionType *m_function;
     const void *m_instance;

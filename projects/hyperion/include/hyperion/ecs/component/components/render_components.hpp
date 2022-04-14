@@ -68,9 +68,7 @@ namespace Hyperion::Rendering {
     LightComponent() = default;
   };
 
-  struct DirectionalLightComponent : public LightComponent {
-
-  };
+  struct DirectionalLightComponent : public LightComponent { };
 
   struct PointLightComponent : public LightComponent {
     float32 range = 10.0f;

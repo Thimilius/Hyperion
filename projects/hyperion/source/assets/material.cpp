@@ -189,7 +189,8 @@ namespace Hyperion {
         switch (property.storage.texture.dimension) {
           case TextureDimension::Texture2D: return AssetManager::GetTexture2DById(texture_id);
           case TextureDimension::RenderTexture: return AssetManager::GetRenderTextureById(texture_id);
-          default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
+          default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+            return nullptr;
         }
       } else {
         HYP_LOG_WARN("Material", "Trying to get texture material property that is not a texture.");

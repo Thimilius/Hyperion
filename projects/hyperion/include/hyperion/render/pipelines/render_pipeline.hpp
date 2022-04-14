@@ -11,8 +11,7 @@ namespace Hyperion {
   namespace Rendering {
     class RenderFrame;
     struct RenderFrameContextCamera;
-  }
-}
+  }}
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {

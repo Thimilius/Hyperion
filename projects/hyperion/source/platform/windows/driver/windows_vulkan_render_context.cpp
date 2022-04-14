@@ -21,14 +21,10 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void WindowsVulkanRenderContext::MakeCurrent(Window *window) {
-
-  }
+  void WindowsVulkanRenderContext::MakeCurrent(Window *window) { }
 
   //--------------------------------------------------------------
-  void WindowsVulkanRenderContext::SetVSyncMode(VSyncMode vsync_mode) {
-    
-  }
+  void WindowsVulkanRenderContext::SetVSyncMode(VSyncMode vsync_mode) { }
 
   //--------------------------------------------------------------
   Array<const char *> WindowsVulkanRenderContext::GetRequiredInstanceExtensions() const {

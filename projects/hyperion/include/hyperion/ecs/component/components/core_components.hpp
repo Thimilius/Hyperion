@@ -16,13 +16,9 @@ namespace Hyperion {
     String tag;
   };
 
-  struct DisabledComponent : public IComponent {
+  struct DisabledComponent : public IComponent { };
 
-  };
-
-  struct StaticComponent : public IComponent {
-
-  };
+  struct StaticComponent : public IComponent { };
 
   // NOTE: The archetype component deviates quite heavily from regular components.
   // For example: We are fine with storing dynamic data here.

@@ -12,8 +12,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   BoundingBox::BoundingBox(Vector3 min, Vector3 max)
-    : min(min), max(max) {
-  }
+    : min(min), max(max) { }
 
   //--------------------------------------------------------------
   Vector3 BoundingBox::GetSize() const {
@@ -99,14 +98,14 @@ namespace Hyperion {
   //--------------------------------------------------------------
   BoundingBox BoundingBox::Transform(const Matrix4x4 &local_to_world, const BoundingBox &local) {
     Vector3 positions[8] = {
-        local_to_world * Vector3(local.min.x, local.min.y, local.min.z),
-        local_to_world * Vector3(local.min.x, local.min.y, local.max.z),
-        local_to_world * Vector3(local.min.x, local.max.y, local.min.z),
-        local_to_world * Vector3(local.min.x, local.max.y, local.max.z),
-        local_to_world * Vector3(local.max.x, local.min.y, local.min.z),
-        local_to_world * Vector3(local.max.x, local.min.y, local.max.z),
-        local_to_world * Vector3(local.max.x, local.max.y, local.min.z),
-        local_to_world * Vector3(local.max.x, local.max.y, local.max.z),
+      local_to_world * Vector3(local.min.x, local.min.y, local.min.z),
+      local_to_world * Vector3(local.min.x, local.min.y, local.max.z),
+      local_to_world * Vector3(local.min.x, local.max.y, local.min.z),
+      local_to_world * Vector3(local.min.x, local.max.y, local.max.z),
+      local_to_world * Vector3(local.max.x, local.min.y, local.min.z),
+      local_to_world * Vector3(local.max.x, local.min.y, local.max.z),
+      local_to_world * Vector3(local.max.x, local.max.y, local.min.z),
+      local_to_world * Vector3(local.max.x, local.max.y, local.max.z),
     };
 
     Vector3 min = Vector3(FLT_MAX, FLT_MAX, FLT_MAX);

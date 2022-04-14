@@ -14,8 +14,7 @@ namespace Hyperion {
 
   namespace Rendering {
     struct CameraComponent;
-  }
-}
+  }}
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {

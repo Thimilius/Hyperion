@@ -123,9 +123,7 @@ namespace Medhex {
     }
     if (Input::IsKeyDown(KeyCode::F2)) {
       Rendering::RenderEngine::SetVSyncMode(
-        Rendering::RenderEngine::GetVSyncMode() == Rendering::VSyncMode::DontSync ?
-        Rendering::VSyncMode::EveryVBlank :
-        Rendering::VSyncMode::DontSync);
+        Rendering::RenderEngine::GetVSyncMode() == Rendering::VSyncMode::DontSync ? Rendering::VSyncMode::EveryVBlank : Rendering::VSyncMode::DontSync);
     }
     if (Input::IsKeyDown(KeyCode::F3)) {
       Rendering::RenderGizmos::SetShouldDrawGrid(!Rendering::RenderGizmos::GetShouldDrawGrid());
@@ -157,9 +155,7 @@ namespace Medhex {
   }
 
   //--------------------------------------------------------------
-  void MedhexApplication::OnTick() {
-
-  }
+  void MedhexApplication::OnTick() { }
 
   //--------------------------------------------------------------
   void MedhexApplication::UpdateTitle() {
@@ -168,13 +164,13 @@ namespace Medhex {
     String vsync = Rendering::RenderEngine::GetVSyncMode() == Rendering::VSyncMode::DontSync ? "Off" : "On";
     uint64 memory = MemoryStats::GetGlobalMemory();
     String title = StringUtils::Format(format,
-      Time::GetFPS(),
-      Time::GetFrameTime(),
-      vsync,
-      render_stats.draw_calls,
-      render_stats.vertex_count,
-      render_stats.triangle_count,
-      memory);
+                                       Time::GetFPS(),
+                                       Time::GetFrameTime(),
+                                       vsync,
+                                       render_stats.draw_calls,
+                                       render_stats.vertex_count,
+                                       render_stats.triangle_count,
+                                       memory);
 
     GetMainWindow()->SetTitle(title);
   }

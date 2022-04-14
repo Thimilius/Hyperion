@@ -28,9 +28,7 @@ namespace Hyperion::Physics {
   }
 
   //--------------------------------------------------------------
-  void BulletPhysicsDriver::FixedUpdate(float32 delta_time) {
-
-  }
+  void BulletPhysicsDriver::FixedUpdate(float32 delta_time) { }
 
   //--------------------------------------------------------------
   void BulletPhysicsDriver::Shutdown() {

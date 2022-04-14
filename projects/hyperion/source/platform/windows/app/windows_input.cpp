@@ -273,7 +273,8 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   void WindowsInput::HandleGamepadButtonCode(Gamepad gamepad, GamepadButtonCode button_code, bool8 down) {
-    m_gamepads[static_cast<int32>(gamepad)].buttons_down[static_cast<int32>(button_code)] = !m_gamepads[static_cast<int32>(gamepad)].buttons_last[static_cast<int32>(button_code)] && down;
+    m_gamepads[static_cast<int32>(gamepad)].buttons_down[static_cast<int32>(button_code)] = !m_gamepads[static_cast<int32>(gamepad)].buttons_last[static_cast<
+      int32>(button_code)] && down;
     m_gamepads[static_cast<int32>(gamepad)].buttons[static_cast<int32>(button_code)] = down;
     if (down) {
       GamepadButtonPressedAppEvent event(gamepad, button_code);
@@ -294,7 +295,8 @@ namespace Hyperion {
       case 1: return Gamepad::Gamepad2;
       case 2: return Gamepad::Gamepad3;
       case 3: return Gamepad::Gamepad4;
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return Gamepad::Gamepad1;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        return Gamepad::Gamepad1;
     }
   }
 
@@ -305,7 +307,8 @@ namespace Hyperion {
       case Gamepad::Gamepad2: return 1;
       case Gamepad::Gamepad3: return 2;
       case Gamepad::Gamepad4: return 3;
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return 0;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        return 0;
     }
   }
 

@@ -46,6 +46,7 @@ namespace Hyperion::Rendering {
     Default = Layer1,
     Everything = 0xFFFFFFFF,
   };
+
   HYP_CREATE_ENUM_FLAG_OPERATORS(LayerMask);
 
   enum class ClearFlags {
@@ -57,6 +58,7 @@ namespace Hyperion::Rendering {
 
     All = Color | Depth24 | Stencil
   };
+
   HYP_CREATE_ENUM_FLAG_OPERATORS(ClearFlags);
 
   struct CullingParameters {

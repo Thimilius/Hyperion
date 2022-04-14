@@ -202,34 +202,38 @@ namespace Hyperion {
     switch (primitive) {
       case EntityPrimitive::Empty: break;
       case EntityPrimitive::Base: break;
-      case EntityPrimitive::Camera: AddComponent<Rendering::CameraComponent>(id); break;
-      case EntityPrimitive::DirectionalLight: AddComponent<Rendering::DirectionalLightComponent>(id); break;
-      case EntityPrimitive::PointLight: AddComponent<Rendering::PointLightComponent>(id); break;
-      case EntityPrimitive::SpotLight: AddComponent<Rendering::SpotLightComponent>(id); break;
+      case EntityPrimitive::Camera: AddComponent<Rendering::CameraComponent>(id);
+        break;
+      case EntityPrimitive::DirectionalLight: AddComponent<Rendering::DirectionalLightComponent>(id);
+        break;
+      case EntityPrimitive::PointLight: AddComponent<Rendering::PointLightComponent>(id);
+        break;
+      case EntityPrimitive::SpotLight: AddComponent<Rendering::SpotLightComponent>(id);
+        break;
       case EntityPrimitive::Quad:
       case EntityPrimitive::Plane:
       case EntityPrimitive::Cube:
-      case EntityPrimitive::Sphere:
-      {
+      case EntityPrimitive::Sphere: {
         Rendering::MeshComponent *mesh = AddComponent<Rendering::MeshComponent>(id);
         mesh->material = AssetManager::GetMaterialPrimitive(MaterialPrimitive::Default);
 
         switch (primitive) {
-          case EntityPrimitive::Quad: mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Quad); break;
-          case EntityPrimitive::Plane: mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Plane); break;
-          case EntityPrimitive::Cube:
-          {
+          case EntityPrimitive::Quad: mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Quad);
+            break;
+          case EntityPrimitive::Plane: mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Plane);
+            break;
+          case EntityPrimitive::Cube: {
             mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Cube);
             AddComponent<Physics::BoxColliderComponent>(id);
             break;
           }
-          case EntityPrimitive::Sphere:
-          {
+          case EntityPrimitive::Sphere: {
             mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Sphere);
             AddComponent<Physics::SphereColliderComponent>(id);
             break;
           }
-          default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+          default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+            break;
         }
 
         BoundingBox bounds = mesh->mesh->GetBounds();
@@ -238,8 +242,10 @@ namespace Hyperion {
 
         break;
       }
-      case EntityPrimitive::Sprite: AddComponent<Rendering::SpriteComponent>(id); break;
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+      case EntityPrimitive::Sprite: AddComponent<Rendering::SpriteComponent>(id);
+        break;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        break;
     }
   }
 

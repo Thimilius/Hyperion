@@ -25,7 +25,8 @@ namespace Hyperion {
       case Error::ImageLoadFailed: return "ImageLoadFailed";
       case Error::NoLoaderAvailable: return "NoLoaderAvailable";
       case Error::InvalidMesh: return "InvalidMesh";
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return {};
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        return { };
     }
   }
 

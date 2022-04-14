@@ -26,7 +26,8 @@ namespace Hyperion::Rendering {
   void MeshBoundsSystem::Run(World *world) {
     HYP_PROFILE_SCOPE("RenderBoundsSystem.Run");
 
-    auto view = world->GetView<LocalToWorldComponent, LocalMeshBoundsComponent, WorldMeshBoundsComponent>(ExcludeComponents<DisabledComponent, StaticComponent>());
+    auto view = world->GetView<LocalToWorldComponent, LocalMeshBoundsComponent, WorldMeshBoundsComponent>(
+      ExcludeComponents<DisabledComponent, StaticComponent>());
     for (EntityId entity : view) {
       LocalToWorldComponent *local_to_world = world->GetComponent<LocalToWorldComponent>(entity);
       LocalMeshBoundsComponent *local_mesh_bounds = world->GetComponent<LocalMeshBoundsComponent>(entity);
@@ -212,7 +213,9 @@ namespace Hyperion::Rendering {
 
         if (color.a > 0.0f) {
           Material *material = renderer.material ? renderer.material : AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI);
-          AssetId texture_id = renderer.texture ? renderer.texture->GetAssetInfo().id : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetAssetInfo().id;
+          AssetId texture_id = renderer.texture
+                                 ? renderer.texture->GetAssetInfo().id
+                                 : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetAssetInfo().id;
 
           RenderFrameContextObjectUI &render_frame_context_ui_object = ui_object_adder();
           render_frame_context_ui_object.local_to_world = Matrix4x4::Identity();

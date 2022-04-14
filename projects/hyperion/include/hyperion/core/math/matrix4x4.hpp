@@ -21,6 +21,7 @@ namespace Hyperion {
   struct Matrix4x4 {
     union {
       float32 elements[16];
+
       struct {
         float32 m11;
         float32 m21;
@@ -41,6 +42,7 @@ namespace Hyperion {
       };
 
       Vector4 columns[4];
+
       struct {
         Vector4 column1;
         Vector4 column2;

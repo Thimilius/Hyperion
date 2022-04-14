@@ -17,12 +17,12 @@ namespace Hyperion {
   class StringUtils {
   public:
     template<typename ...Args>
-    inline static String Format(const char *fmt, Args... args) {
+    inline static String Format(const char *fmt, Args ... args) {
       return std::format(fmt, args...);
     }
 
     template<typename ...Args>
-    inline static String Format(const String &fmt, Args... args) {
+    inline static String Format(const String &fmt, Args ... args) {
       return std::format(fmt, args...);
     }
 

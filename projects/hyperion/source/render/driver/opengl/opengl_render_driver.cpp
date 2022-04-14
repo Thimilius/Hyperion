@@ -48,8 +48,7 @@ namespace Hyperion::Rendering {
     const Array<RenderFrameCommand> &frame_commands = render_frame->GetCommands();
     for (const RenderFrameCommand &frame_command : frame_commands) {
       switch (frame_command.type) {
-        case RenderFrameCommandType::SetCamera:
-        {
+        case RenderFrameCommandType::SetCamera: {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.SetCamera");
           OpenGLDebugGroup debug_group("SetCamera");
 
@@ -68,8 +67,7 @@ namespace Hyperion::Rendering {
 
           break;
         }
-        case RenderFrameCommandType::ExecuteCommandBuffer:
-        {
+        case RenderFrameCommandType::ExecuteCommandBuffer: {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.ExecuteCommandBuffer");
           OpenGLDebugGroup debug_group("ExecuteCommandBuffer");
 
@@ -79,8 +77,7 @@ namespace Hyperion::Rendering {
 
           break;
         }
-        case RenderFrameCommandType::DrawMeshes:
-        {
+        case RenderFrameCommandType::DrawMeshes: {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawMeshes");
           OpenGLDebugGroup debug_group("DrawMeshes");
 
@@ -91,8 +88,7 @@ namespace Hyperion::Rendering {
 
           break;
         }
-        case RenderFrameCommandType::DrawShadows:
-        {
+        case RenderFrameCommandType::DrawShadows: {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawShadows");
           OpenGLDebugGroup debug_group("DrawShadows");
 
@@ -100,8 +96,7 @@ namespace Hyperion::Rendering {
 
           break;
         }
-        case RenderFrameCommandType::DrawUI:
-        {
+        case RenderFrameCommandType::DrawUI: {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawUI");
           OpenGLDebugGroup debug_group("DrawUI");
 
@@ -109,8 +104,7 @@ namespace Hyperion::Rendering {
 
           break;
         }
-        case RenderFrameCommandType::DrawObjectIds:
-        {
+        case RenderFrameCommandType::DrawObjectIds: {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawObjectIds");
           OpenGLDebugGroup debug_group("DrawObjectIds");
 
@@ -120,8 +114,7 @@ namespace Hyperion::Rendering {
 
           break;
         }
-        case RenderFrameCommandType::DrawGizmos:
-        {
+        case RenderFrameCommandType::DrawGizmos: {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawGizmos");
           OpenGLDebugGroup debug_group("DrawGizmos");
 
@@ -156,8 +149,7 @@ namespace Hyperion::Rendering {
 
           break;
         }
-        case RenderFrameCommandType::DrawEditorUI:
-        {
+        case RenderFrameCommandType::DrawEditorUI: {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawEditorUI");
           OpenGLDebugGroup debug_group("DrawEditorUI");
 
@@ -165,7 +157,8 @@ namespace Hyperion::Rendering {
 
           break;
         }
-        default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+        default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+          break;
       }
     }
   }
@@ -177,8 +170,7 @@ namespace Hyperion::Rendering {
     const Array<RenderCommandBufferCommand> &buffer_commands = command_buffer.GetCommands();
     for (const RenderCommandBufferCommand &buffer_command : buffer_commands) {
       switch (buffer_command.type) {
-        case RenderCommandBufferCommandType::ClearRenderTarget:
-        {
+        case RenderCommandBufferCommandType::ClearRenderTarget: {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommandBufferCommand.Clear");
           OpenGLDebugGroup debug_group("ClearRenderTarget");
 
@@ -192,8 +184,7 @@ namespace Hyperion::Rendering {
           glClear(OpenGLUtilities::GetClearFlags(clear_render_target.flags));
           break;
         }
-        case RenderCommandBufferCommandType::SetRenderTarget:
-        {
+        case RenderCommandBufferCommandType::SetRenderTarget: {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommandBufferCommand.SetRenderTarget");
           OpenGLDebugGroup debug_group("SetRenderTarget");
 
@@ -203,8 +194,7 @@ namespace Hyperion::Rendering {
 
           break;
         }
-        case RenderCommandBufferCommandType::Blit:
-        {
+        case RenderCommandBufferCommandType::Blit: {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommandBufferCommand.Blit");
           OpenGLDebugGroup debug_group("Blit");
 
@@ -269,8 +259,7 @@ namespace Hyperion::Rendering {
 
           break;
         }
-        case RenderCommandBufferCommandType::SetGlobalBuffer:
-        {
+        case RenderCommandBufferCommandType::SetGlobalBuffer: {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommandBufferCommand.SetGlobalBuffer");
           OpenGLDebugGroup debug_group("SetGlobalBuffer");
 
@@ -297,12 +286,12 @@ namespace Hyperion::Rendering {
           glNamedBufferSubData(buffer_id, 0, data.GetLength(), data.GetData());
           break;
         }
-        case RenderCommandBufferCommandType::RequestAsyncReadback:
-        {
+        case RenderCommandBufferCommandType::RequestAsyncReadback: {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommandBufferCommand.RequestAsyncReadback");
           OpenGLDebugGroup debug_group("RequestAsyncReadback");
 
-          const RenderCommandBufferCommandRequestAsyncReadback &request_async_readback = std::get<RenderCommandBufferCommandRequestAsyncReadback>(buffer_command.data);
+          const RenderCommandBufferCommandRequestAsyncReadback &request_async_readback = std::get<RenderCommandBufferCommandRequestAsyncReadback>(
+            buffer_command.data);
 
           auto render_texture_it = m_storage.FindRenderTexture(request_async_readback.render_target_id.id);
           if (render_texture_it != m_storage.GetRenderTextureEnd()) {
@@ -318,7 +307,8 @@ namespace Hyperion::Rendering {
             // Make sure we are not out of bounds when accessing the render texture.
             RectInt region = request_async_readback.region;
             bool8 x_range_is_not_valid = region.x < 0 || (region.width + region.x) < 0 || (region.width + region.x) > static_cast<int32>(render_texture.width);
-            bool8 y_range_is_not_valid = region.y < 0 || (region.height + region.y) < 0 || (region.height + region.y) > static_cast<int32>(render_texture.height);
+            bool8 y_range_is_not_valid = region.y < 0 || (region.height + region.y) < 0 || (region.height + region.y) > static_cast<int32>(render_texture.
+              height);
             if (x_range_is_not_valid || y_range_is_not_valid) {
               HYP_LOG_ERROR("OpenGL", "Trying to read out-of-bounds data of a render texture!");
             } else {
@@ -331,12 +321,14 @@ namespace Hyperion::Rendering {
 
               glBindFramebuffer(GL_READ_FRAMEBUFFER, render_texture.framebuffer);
               glNamedFramebufferReadBuffer(render_texture.framebuffer, GL_COLOR_ATTACHMENT0);
-              glReadnPixels(region.x, region.y, region.width, region.height, format_value, format_type, buffer_size, async_request_result.result.data.GetData());
+              glReadnPixels(region.x, region.y, region.width, region.height, format_value, format_type, buffer_size,
+                            async_request_result.result.data.GetData());
             }
           }
           break;
         }
-        default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+        default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+          break;
       }
     }
   }
@@ -489,7 +481,8 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::DrawMeshes(const RenderFrameContextEnvironment &environment, const Array<RenderFrameContextLight> &lights, DrawingParameters drawing_parameters) {
+  void OpenGLRenderDriver::DrawMeshes(const RenderFrameContextEnvironment &environment, const Array<RenderFrameContextLight> &lights,
+                                      DrawingParameters drawing_parameters) {
     HYP_PROFILE_SCOPE("OpenGLRenderDriver.DrawMeshes");
 
     for (const GroupedShader &grouped_shader : m_grouped_shaders) {
@@ -690,51 +683,47 @@ namespace Hyperion::Rendering {
 
     ShaderAttributes attributes = opengl_shader.attributes;
     switch (attributes.z_write) {
-      case ShaderZWrite::On:
-      {
+      case ShaderZWrite::On: {
         glDepthMask(GL_TRUE);
         break;
       }
-      case ShaderZWrite::Off:
-      {
+      case ShaderZWrite::Off: {
         glDepthMask(GL_FALSE);
         break;
       }
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        break;
     }
     switch (attributes.blending_mode) {
-      case ShaderBlendingMode::On:
-      {
+      case ShaderBlendingMode::On: {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         break;
       }
-      case ShaderBlendingMode::Off:
-      {
+      case ShaderBlendingMode::Off: {
         glDisable(GL_BLEND);
         break;
       }
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        break;
     }
     switch (attributes.culling_mode) {
-      case ShaderCullingMode::Off:
-      {
+      case ShaderCullingMode::Off: {
         glDisable(GL_CULL_FACE);
         break;
       }
-      case ShaderCullingMode::Front:
-      {
+      case ShaderCullingMode::Front: {
         glEnable(GL_CULL_FACE);
         glCullFace(GL_FRONT);
         break;
       }
-      case ShaderCullingMode::Back:
-      {
+      case ShaderCullingMode::Back: {
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
         break;
       }
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        break;
     }
 
     glUseProgram(opengl_shader.program);
@@ -754,40 +743,35 @@ namespace Hyperion::Rendering {
       }
 
       switch (property.type) {
-        case ShaderPropertyType::Int:
-        {
+        case ShaderPropertyType::Int: {
           glProgramUniform1i(opengl_shader.program, location, property.storage.int32);
           break;
         }
-        case ShaderPropertyType::Float:
-        {
+        case ShaderPropertyType::Float: {
           glProgramUniform1f(opengl_shader.program, location, property.storage.float32);
           break;
         }
-        case ShaderPropertyType::Vector:
-        {
+        case ShaderPropertyType::Vector: {
           Vector4 vector = property.storage.vector4;
           glProgramUniform4f(opengl_shader.program, location, vector.x, vector.y, vector.z, vector.w);
           break;
         }
-        case ShaderPropertyType::Color:
-        {
+        case ShaderPropertyType::Color: {
           Color color = property.storage.color;
           glProgramUniform4f(opengl_shader.program, location, color.r, color.g, color.b, color.a);
           break;
         }
-        case ShaderPropertyType::Matrix:
-        {
+        case ShaderPropertyType::Matrix: {
           glProgramUniformMatrix4fv(opengl_shader.program, location, 1, GL_FALSE, property.storage.matrix4x4.elements);
           break;
         }
-        case ShaderPropertyType::Texture:
-        {
+        case ShaderPropertyType::Texture: {
           SetMaterialTextureProperty(property.storage.texture, texture_unit, opengl_shader.program, location);
           texture_unit++;
           break;
         }
-        default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+        default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+          break;
       }
     }
   }

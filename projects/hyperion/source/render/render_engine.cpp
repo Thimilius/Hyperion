@@ -33,8 +33,10 @@ namespace Hyperion::Rendering {
     s_vsync_mode = settings.vsync_mode;
 
     switch (s_render_settings.pipeline) {
-      case RenderPipeline::Forward: s_render_pipeline = new ForwardRenderPipeline(); break;
-      case RenderPipeline::Custom: s_render_pipeline = s_render_settings.custom_pipeline; break;
+      case RenderPipeline::Forward: s_render_pipeline = new ForwardRenderPipeline();
+        break;
+      case RenderPipeline::Custom: s_render_pipeline = s_render_settings.custom_pipeline;
+        break;
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
     }
 
@@ -54,7 +56,8 @@ namespace Hyperion::Rendering {
         RenderThreadSynchronization::WaitForRenderReady();
         break;
       }
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        break;
     }
 
     if (g_use_second_window) {
@@ -62,18 +65,18 @@ namespace Hyperion::Rendering {
       HDC device_context = GetDC(static_cast<HWND>(g_second_window->GetNativeHandle()));
       auto descriptor = RenderContextDescriptor();
       const int32 pixel_attributes[] = {
-              WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
-              WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
-              WGL_DOUBLE_BUFFER_ARB, GL_TRUE,
-              WGL_ACCELERATION_ARB, WGL_FULL_ACCELERATION_ARB,
-              WGL_PIXEL_TYPE_ARB, WGL_TYPE_RGBA_ARB,
-              WGL_COLOR_BITS_ARB, descriptor.color_bits,
-              WGL_DEPTH_BITS_ARB, descriptor.depth_bits,
-              WGL_STENCIL_BITS_ARB, descriptor.stencil_bits,
-              WGL_ACCUM_BITS_ARB, 0,
-              WGL_SAMPLE_BUFFERS_ARB, descriptor.msaa_samples > 0 ? 1 : 0,
-              WGL_SAMPLES_ARB, descriptor.msaa_samples,
-              0
+        WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
+        WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
+        WGL_DOUBLE_BUFFER_ARB, GL_TRUE,
+        WGL_ACCELERATION_ARB, WGL_FULL_ACCELERATION_ARB,
+        WGL_PIXEL_TYPE_ARB, WGL_TYPE_RGBA_ARB,
+        WGL_COLOR_BITS_ARB, descriptor.color_bits,
+        WGL_DEPTH_BITS_ARB, descriptor.depth_bits,
+        WGL_STENCIL_BITS_ARB, descriptor.stencil_bits,
+        WGL_ACCUM_BITS_ARB, 0,
+        WGL_SAMPLE_BUFFERS_ARB, descriptor.msaa_samples > 0 ? 1 : 0,
+        WGL_SAMPLES_ARB, descriptor.msaa_samples,
+        0
       };
       int32 pixel_format;
       uint32 formats_count;
@@ -116,15 +119,13 @@ namespace Hyperion::Rendering {
     Window *main_window = Application::GetInstance()->GetMainWindow();
 
     switch (s_render_settings.threading_mode) {
-      case RenderThreadingMode::SingleThreaded:
-      {
+      case RenderThreadingMode::SingleThreaded: {
         SwapRenderFrames();
         RenderDriver();
         SwapBuffers();
         break;
       }
-      case RenderThreadingMode::MultiThreaded:
-      {
+      case RenderThreadingMode::MultiThreaded: {
         {
           HYP_PROFILE_CATEGORY("RenderEngine.WaitForRenderDone", ProfileCategory::Wait);
           RenderThreadSynchronization::WaitForRenderDone();
@@ -133,7 +134,8 @@ namespace Hyperion::Rendering {
         RenderThreadSynchronization::NotifySwapDone();
         break;
       }
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        break;
     }
   }
 
@@ -153,7 +155,8 @@ namespace Hyperion::Rendering {
         s_render_thread.Join();
         break;
       }
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+        break;
     }
   }
 

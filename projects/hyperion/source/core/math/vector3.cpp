@@ -9,23 +9,19 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   Vector3::Vector3()
-    : x(0), y(0), z(0) {
-  }
+    : x(0), y(0), z(0) { }
 
   //--------------------------------------------------------------
   Vector3::Vector3(float32 x, float32 y, float32 z)
-    : x(x), y(y), z(z) {
-  }
+    : x(x), y(y), z(z) { }
 
   //--------------------------------------------------------------
   Vector3::Vector3(const Vector2 &vec2, float32 z)
-    : x(vec2.x), y(vec2.y), z(z) {
-  }
+    : x(vec2.x), y(vec2.y), z(z) { }
 
   //--------------------------------------------------------------
   Vector3::Vector3(const Vector4 &vec4)
-    : x(vec4.x), y(vec4.y), z(vec4.z) {
-  }
+    : x(vec4.x), y(vec4.y), z(vec4.z) { }
 
   //--------------------------------------------------------------
   Vector3 &Vector3::Add(const Vector3 &other) {
@@ -150,7 +146,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   bool8 Vector3::operator<(const Vector3 &other) const {
-    return x < other.x &&y < other.y &&z < other.z;
+    return x < other.x && y < other.y && z < other.z;
   }
 
   //--------------------------------------------------------------
@@ -273,18 +269,15 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   Vector3Int::Vector3Int()
-    : x(0), y(0), z(0) {
-  }
+    : x(0), y(0), z(0) { }
 
   //--------------------------------------------------------------
   Vector3Int::Vector3Int(int32 x, int32 y, int32 z)
-    : x(x), y(y), z(z) {
-  }
+    : x(x), y(y), z(z) { }
 
   //--------------------------------------------------------------
   Vector3Int::Vector3Int(const Vector2Int &vec2, int32 z)
-    : x(vec2.x), y(vec2.y), z(z) {
-  }
+    : x(vec2.x), y(vec2.y), z(z) { }
 
   //--------------------------------------------------------------
   Vector3Int &Vector3Int::Add(const Vector3Int &other) {
@@ -400,7 +393,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   bool8 Vector3Int::operator<(const Vector3Int &other) const {
-    return x < other.x &&y < other.y &&z < other.z;
+    return x < other.x && y < other.y && z < other.z;
   }
 
   //--------------------------------------------------------------

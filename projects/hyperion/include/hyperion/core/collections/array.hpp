@@ -20,8 +20,10 @@ namespace Hyperion {
   public:
     inline Array() { }
     inline Array(uint64 size) : m_vector(size) { }
+
     template<typename Iterator>
     inline Array(Iterator first, Iterator last) : m_vector(first, last) { }
+
     inline Array(std::initializer_list<T> init) : m_vector(init) { }
   public:
     inline uint64 GetLength() const { return m_vector.size(); }
@@ -35,7 +37,7 @@ namespace Hyperion {
     inline const T &Get(uint64 index) const { return m_vector.at(index); }
     inline T &GetFirst() { return m_vector.front(); }
     inline const T &GetFirst() const { return m_vector.front(); }
-    inline T &GetLast() { return  m_vector.back(); }
+    inline T &GetLast() { return m_vector.back(); }
     inline const T &GetLast() const { return m_vector.back(); }
 
     inline bool8 Contains(const T &item) const { return std::find(begin(), end(), item) != end(); }
@@ -52,6 +54,7 @@ namespace Hyperion {
         return true;
       }
     }
+
     inline void RemoveLast() { m_vector.pop_back(); }
 
     inline void Clear() { m_vector.clear(); }

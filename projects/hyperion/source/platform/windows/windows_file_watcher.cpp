@@ -81,15 +81,12 @@ namespace Hyperion {
     FileWatcherFileStatus status;
     switch (action) {
       case FILE_ACTION_RENAMED_NEW_NAME:
-      case FILE_ACTION_ADDED:
-        status = FileWatcherFileStatus::Created;
+      case FILE_ACTION_ADDED: status = FileWatcherFileStatus::Created;
         break;
       case FILE_ACTION_RENAMED_OLD_NAME:
-      case FILE_ACTION_REMOVED:
-        status = FileWatcherFileStatus::Deleted;
+      case FILE_ACTION_REMOVED: status = FileWatcherFileStatus::Deleted;
         break;
-      case FILE_ACTION_MODIFIED:
-        status = FileWatcherFileStatus::Modified;
+      case FILE_ACTION_MODIFIED: status = FileWatcherFileStatus::Modified;
         break;
     }
 
@@ -120,9 +117,9 @@ namespace Hyperion {
         if (watch_struct->watcher->m_path.back() == '\\' || watch_struct->watcher->m_path.back() == '/') {
           has_seperator = true;
         }
-        String path = has_seperator ?
-          StringUtils::Format("{}{}", watch_struct->watcher->m_path, filename) :
-          StringUtils::Format("{}/{}", watch_struct->watcher->m_path, filename);
+        String path = has_seperator
+                        ? StringUtils::Format("{}{}", watch_struct->watcher->m_path, filename)
+                        : StringUtils::Format("{}/{}", watch_struct->watcher->m_path, filename);
 
         String extension = filename.substr(filename.find_last_of("."));
 

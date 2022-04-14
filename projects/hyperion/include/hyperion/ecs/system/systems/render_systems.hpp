@@ -5,16 +5,14 @@
 #include "hyperion/ecs/system/system.hpp"
 
 //-------------------- Forward Declarations --------------------
-namespace Hyperion {
-  namespace Rendering {
+namespace Hyperion { namespace Rendering {
     struct RenderFrameContextObjectUI;
   }
 
   namespace UI {
     class UIElement;
     struct UIViewComponent;
-  }
-}
+  }}
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {

@@ -32,8 +32,7 @@ namespace Hyperion::UI {
     if (ui_view->root_element) {
       float32 ui_scale = 1.0f;
       switch (ui_view->scaling_mode) {
-        case ScalingMode::ScaleWithScreenSize:
-        {
+        case ScalingMode::ScaleWithScreenSize: {
           float32 display_width = static_cast<float32>(Display::GetWidth());
           float32 display_height = static_cast<float32>(Display::GetHeight());
 
@@ -45,12 +44,12 @@ namespace Hyperion::UI {
           ui_scale = computed_scale;
           break;
         }
-        case ScalingMode::ConstantPixelSize:
-        {
+        case ScalingMode::ConstantPixelSize: {
           ui_scale = 1.0f;
           break;
         }
-        default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+        default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+          break;
       }
 
       MeshBuilder mesh_builder;

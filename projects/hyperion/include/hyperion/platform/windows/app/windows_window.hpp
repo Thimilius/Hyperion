@@ -17,8 +17,7 @@ namespace Hyperion {
   namespace Rendering {
     class IRenderContext;
     class RenderEngine;
-  }
-}
+  }}
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {

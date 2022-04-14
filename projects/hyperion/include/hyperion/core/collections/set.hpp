@@ -17,8 +17,10 @@ namespace Hyperion {
     using ConstIterator = typename std::unordered_set<T>::const_iterator;
   public:
     inline Set() { }
+
     template<typename Iterator>
     inline Set(Iterator first, Iterator last) : m_set(first, last) { }
+
     inline Set(std::initializer_list<T> init) : m_set(init) { }
   public:
     inline uint64 GetLength() const { return m_set.size(); }

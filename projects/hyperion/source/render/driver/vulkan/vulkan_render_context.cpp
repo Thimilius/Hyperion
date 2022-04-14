@@ -69,9 +69,7 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void VulkanRenderContext::SwapBuffers(Window *window) {
-    
-  }
+  void VulkanRenderContext::SwapBuffers(Window *window) { }
 
   //--------------------------------------------------------------
   void VulkanRenderContext::QueryLayersAndExtensions() {
@@ -304,7 +302,8 @@ namespace Hyperion::Rendering {
 
     Array<VkExtensionProperties> available_extensions;
     available_extensions.Resize(device_extension_count);
-    HYP_VULKAN_CHECK(vkEnumerateDeviceExtensionProperties(device, nullptr, &device_extension_count, available_extensions.GetData()), "Failed to get device extensions!");
+    HYP_VULKAN_CHECK(vkEnumerateDeviceExtensionProperties(device, nullptr, &device_extension_count, available_extensions.GetData()),
+                     "Failed to get device extensions!");
 
     Array<const char *> required_extensions = GetRequiredDeviceExtensions();
 
@@ -335,14 +334,17 @@ namespace Hyperion::Rendering {
     HYP_VULKAN_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface, &device_surface_format_count, nullptr), "Failed to get device format count!");
     if (device_surface_format_count != 0) {
       details.formats.Resize(device_surface_format_count);
-      HYP_VULKAN_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface, &device_surface_format_count, details.formats.GetData()), "Failed to get device formats!");
+      HYP_VULKAN_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface, &device_surface_format_count, details.formats.GetData()),
+                       "Failed to get device formats!");
     }
 
     uint32 device_surface_present_mode_count = 0;
-    HYP_VULKAN_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface, &device_surface_present_mode_count, nullptr), "Failed to get device present mode count!");
+    HYP_VULKAN_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface, &device_surface_present_mode_count, nullptr),
+                     "Failed to get device present mode count!");
     if (device_surface_present_mode_count != 0) {
       details.present_modes.Resize(device_surface_present_mode_count);
-      HYP_VULKAN_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface, &device_surface_present_mode_count, details.present_modes.GetData()), "Failed to get device present modes!");
+      HYP_VULKAN_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface, &device_surface_present_mode_count, details.present_modes.GetData()),
+                       "Failed to get device present modes!");
     }
 
     return details;
@@ -463,7 +465,7 @@ namespace Hyperion::Rendering {
       VkExtent2D extent = {
         Display::GetWidth(),
         Display::GetHeight()
-      }; 
+      };
 
       if (capabilities.currentExtent.width != 0) {
         extent.width = std::clamp(extent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
@@ -555,7 +557,7 @@ namespace Hyperion::Rendering {
     fragment_shader_stage_create_info.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
     fragment_shader_stage_create_info.module = fragment_shader_module;
     fragment_shader_stage_create_info.pName = "main";
-    
+
     VkPipelineShaderStageCreateInfo shader_stages[] = { vertex_shader_stage_create_info, fragment_shader_stage_create_info };
 
     VkPipelineVertexInputStateCreateInfo vertex_input_create_info = { };
@@ -669,7 +671,8 @@ namespace Hyperion::Rendering {
     create_info.basePipelineHandle = VK_NULL_HANDLE;
     create_info.basePipelineIndex = -1;
 
-    HYP_VULKAN_CHECK(vkCreateGraphicsPipelines(m_device, VK_NULL_HANDLE, 1, &create_info, nullptr, &m_graphics_pipeline), "Failed to create graphics pipeline!");
+    HYP_VULKAN_CHECK(vkCreateGraphicsPipelines(m_device, VK_NULL_HANDLE, 1, &create_info, nullptr, &m_graphics_pipeline),
+                     "Failed to create graphics pipeline!");
 
     vkDestroyShaderModule(m_device, fragment_shader_module, nullptr);
     vkDestroyShaderModule(m_device, vertex_shader_module, nullptr);
@@ -681,7 +684,7 @@ namespace Hyperion::Rendering {
     create_info.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
     create_info.codeSize = code.GetLength();
     create_info.pCode = reinterpret_cast<const uint32 *>(code.GetData());
-    
+
     VkShaderModule shader_module;
     HYP_VULKAN_CHECK(vkCreateShaderModule(m_device, &create_info, nullptr, &shader_module), "Failed to create shader module!");
     return shader_module;

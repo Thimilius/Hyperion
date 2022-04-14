@@ -47,9 +47,7 @@ namespace Hyperion {
   // Adding new components is special as these components are just regularly added to the entity.
   // ────────────────────────────────────────────────────────────────────────────────────
 
-  struct EntityArchetypeOverwrite {
-
-  };
+  struct EntityArchetypeOverwrite { };
 
   using EntityArchetypeRemovedComponents = Array<ComponentId>;
   using EntityArchetypeOverwrites = Map<ComponentId, Array<EntityArchetypeOverwrite>>;

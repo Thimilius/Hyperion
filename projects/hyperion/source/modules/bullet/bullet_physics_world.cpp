@@ -29,6 +29,7 @@ namespace Hyperion::Physics {
     delete m_collision_world->getDispatcher();
     delete m_collision_world;
   }
+
   //--------------------------------------------------------------
   bool8 BulletPhysicsWorld::Raycast(Ray ray, RaycastResult &result, float32 distance) {
     HYP_PROFILE_SCOPE("BulletPhysicsWorld.Raycast");
@@ -76,7 +77,8 @@ namespace Hyperion::Physics {
   }
 
   //--------------------------------------------------------------
-  void BulletPhysicsWorld::UpdateBoxColliderTransform(World *world, EntityId entity, BoxColliderComponent *box_collider, DerivedTransformComponent *derived_transform) {
+  void BulletPhysicsWorld::UpdateBoxColliderTransform(World *world, EntityId entity, BoxColliderComponent *box_collider,
+                                                      DerivedTransformComponent *derived_transform) {
     HYP_PROFILE_SCOPE("BulletPhysicsWorld.UpdateBoxColliderTransform");
 
     btCollisionObject *collision_object = m_box_colliders.Get(entity);
@@ -100,7 +102,8 @@ namespace Hyperion::Physics {
   }
 
   //--------------------------------------------------------------
-  void BulletPhysicsWorld::UpdateSphereColliderTransform(World *world, EntityId entity, SphereColliderComponent *sphere_collider, DerivedTransformComponent *derived_transform) {
+  void BulletPhysicsWorld::UpdateSphereColliderTransform(World *world, EntityId entity, SphereColliderComponent *sphere_collider,
+                                                         DerivedTransformComponent *derived_transform) {
     HYP_PROFILE_SCOPE("BulletPhysicsWorld.UpdateSphereColliderTransform");
 
     btCollisionObject *collision_object = m_sphere_colliders.Get(entity);

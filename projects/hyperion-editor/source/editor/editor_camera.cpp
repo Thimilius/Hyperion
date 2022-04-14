@@ -32,7 +32,6 @@ namespace Hyperion::Editor {
     float32 mouse_axis_x = mouse_position_difference.x;
     float32 mouse_axis_y = mouse_position_difference.y;
 
-
     Vector3 position = s_transform.position;
     {
       if (Input::IsMouseButtonHold(MouseButtonCode::Middle)) {

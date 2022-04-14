@@ -64,7 +64,7 @@ namespace Hyperion::Rendering {
     VulkanQueueFamilyIndices FindQueueFamilyIndices(VkPhysicalDevice device);
     bool8 CheckDeviceExtensionSupport(VkPhysicalDevice device);
     VulkanSwapchainSupportDetails QuerySwapchainSupportDetails(VkPhysicalDevice device);
-    
+
     void CreateLogicalDevice();
 
     void CreateSwapChain();
@@ -112,11 +112,11 @@ namespace Hyperion::Rendering {
 #ifdef HYP_DEBUG
     VkDebugUtilsMessengerEXT m_debug_messenger = VK_NULL_HANDLE;
 #endif
-    
+
     VkDevice m_device;
     VkQueue m_graphics_queue;
     VkQueue m_presentation_queue;
-    
+
     VkSurfaceKHR m_surface;
     VkSwapchainKHR m_swapchain;
     VkFormat m_swapchain_image_format;

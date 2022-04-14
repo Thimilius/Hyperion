@@ -20,7 +20,8 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  Texture2D::Texture2D(AssetInfo info, const Rendering::Texture2DParameters &parameters, const Rendering::TexturePixelData &pixels) : Texture2D(info, parameters) {
+  Texture2D::Texture2D(AssetInfo info, const Rendering::Texture2DParameters &parameters, const Rendering::TexturePixelData &pixels) : Texture2D(
+    info, parameters) {
     SetPixelsInternal(pixels);
   }
 

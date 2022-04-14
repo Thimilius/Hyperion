@@ -24,6 +24,7 @@ namespace Hyperion {
       m_pixel_data.Resize(width * height);
       m_pixel_buffer = m_pixel_data.GetData();
     }
+
   public:
     bool AddElement(K key, const V &value, uint32 element_width, uint32 element_height, byte *element_buffer) {
       // Make sure we have enough space in the texture atlas to put the new element into it.
@@ -83,6 +84,7 @@ namespace Hyperion {
       TextureAtlas<K, V> *texture_atlas = AssetManager::CreateTextureAtlas(texture, m_elements);
       return texture_atlas;
     }
+
   private:
     uint32 m_width;
     uint32 m_height;

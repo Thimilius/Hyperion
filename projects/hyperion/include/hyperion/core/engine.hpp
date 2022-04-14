@@ -15,10 +15,10 @@ namespace Hyperion {
   namespace Editor {
     class EditorApplication;
   }
+
   namespace Rendering {
     class RenderEngine;
-  }
-}
+  }}
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -33,7 +33,7 @@ namespace Hyperion {
   class Engine final {
   public:
     template<typename ...Args>
-    static void Panic(const String &system, const String &message_format, Args... args) {
+    static void Panic(const String &system, const String &message_format, Args ... args) {
       String title = StringUtils::Format("{} error!", system);
       String message = StringUtils::Format(message_format, args...);
       PanicInternal(title, message);

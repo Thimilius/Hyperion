@@ -67,9 +67,7 @@ namespace Hyperion::UI {
 
     if (event.GetType() == UIEventType::Select) {
       MarkDirty();
-    } else if (event.GetType() == UIEventType::SelectUpdate) {
-
-    } else if (event.GetType() == UIEventType::Deselect) {
+    } else if (event.GetType() == UIEventType::SelectUpdate) { } else if (event.GetType() == UIEventType::Deselect) {
       MarkDirty();
     } else if (event.GetType() == UIEventType::Submit) {
       MarkDirty();

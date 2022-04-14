@@ -46,7 +46,10 @@ namespace Hyperion {
     void SetTexture(Rendering::ShaderPropertyId id, const Texture *value);
     inline void SetTexture(const String &name, const Texture *value) { SetTexture(Shader::PropertyToId(name), value); }
     void SetTexture(Rendering::ShaderPropertyId id, const RenderTexture *value, uint32 attachment_index);
-    inline void SetTexture(const String &name, const RenderTexture *value, uint32 attachment_index) { SetTexture(Shader::PropertyToId(name), value, attachment_index); }
+
+    inline void SetTexture(const String &name, const RenderTexture *value, uint32 attachment_index) {
+      SetTexture(Shader::PropertyToId(name), value, attachment_index);
+    }
 
     void ResetToDefaults();
   private:

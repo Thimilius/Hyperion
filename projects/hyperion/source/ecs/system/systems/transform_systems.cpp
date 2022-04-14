@@ -29,7 +29,8 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  void HierarchyTransformSystem::UpdateBranch(World *world, EntityId branch, HierarchyComponent *branch_hierarchy, DerivedTransformComponent *parent_derived_transform) {
+  void HierarchyTransformSystem::UpdateBranch(World *world, EntityId branch, HierarchyComponent *branch_hierarchy,
+                                              DerivedTransformComponent *parent_derived_transform) {
     HYP_PROFILE_SCOPE("HierarchyTransformSystem.UpdateBranch");
 
     LocalTransformComponent *local_transform = world->GetComponent<LocalTransformComponent>(branch);

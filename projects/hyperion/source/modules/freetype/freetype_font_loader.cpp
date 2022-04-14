@@ -28,7 +28,8 @@ namespace Hyperion {
     uint32 TEXTURE_ATLAS_PADDING = 4;
     // NOTE: Setting the pixel size does not guarantee that the bitmaps are at most of that height.
     // We first have to compute this actual height and pass it to the atlas packer so that every bitmap can fit properly.
-    uint32 actual_font_height = static_cast<uint32>(Math::Round(static_cast<float32>((font_face->bbox.yMax - font_face->bbox.yMin) * font_size) / static_cast<float32>(font_face->units_per_EM)));
+    uint32 actual_font_height = static_cast<uint32>(Math::Round(
+      static_cast<float32>((font_face->bbox.yMax - font_face->bbox.yMin) * font_size) / static_cast<float32>(font_face->units_per_EM)));
     TextureAtlasPacker<uint32, FontGlyph> texture_atlas_packer(TEXTURE_ATLAS_SIZE, TEXTURE_ATLAS_SIZE, TEXTURE_ATLAS_PADDING, actual_font_height);
 
     SpecialFontGlyphs special_glyphs;
@@ -39,10 +40,14 @@ namespace Hyperion {
       // Skip characters that are not part of the set we want to load.
       bool should_load_character = false;
       switch (character_set) {
-        case FontCharacterSet::ASCII: should_load_character = (character >= 0x20 && character <= 0x7F); break;
-        case FontCharacterSet::LatinSupplement: should_load_character = (character >= 0x20 && character <= 0xFF); break;
-        case FontCharacterSet::All: should_load_character = true; break;
-        default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+        case FontCharacterSet::ASCII: should_load_character = (character >= 0x20 && character <= 0x7F);
+          break;
+        case FontCharacterSet::LatinSupplement: should_load_character = (character >= 0x20 && character <= 0xFF);
+          break;
+        case FontCharacterSet::All: should_load_character = true;
+          break;
+        default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+          break;
       }
 
       if (should_load_character) {
