@@ -37,6 +37,7 @@ project "hyperion"
 		
 		"%{prj.location}/vendor/glad/include",
 		"%{prj.location}/vendor/vulkan/include",
+		"%{prj.location}/vendor/shaderc/include"
 	}
 	includedirs { package_assimp_includedirs }
 	includedirs { package_freetype_includedirs }
@@ -79,7 +80,22 @@ function linkhyperion(path)
 
 	filter "system:windows"
 		libdirs { path .. "hyperion/vendor/vulkan/lib/windows" }
-		links { "opengl32", "PowrProf", "vulkan-1" }
+		links {
+			"PowrProf",
+
+			"opengl32",
+
+			"vulkan-1",
+			"shaderc",
+			"glslang",
+			"HLSL",
+			"OGLCompiler",
+			"OSDependent",
+			"shaderc_util",
+			"SPIRV",
+			"SPIRV-Tools",
+			"SPIRV-Tools-opt"
+		}
 	
 	filter { "system:windows", "configurations:debug" }
 		libdirs { package_assimp_debug_libdirs }
