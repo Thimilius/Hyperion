@@ -102,7 +102,7 @@ project "hyperion-sandbox"
     filter "system:windows"
 		files { "%{prj.location}/resource.rc" }
 		postbuildcommands {
-		    "{COPY} %{cfg.targetdir}/%{prj.name}.exe ../../run_tree/hyperion.exe*"
+		    "{COPY} %{cfg.targetdir}/%{prj.name}.exe ../run_tree/hyperion.exe*"
 	    }
 		
 project "hyperion-editor"
@@ -132,5 +132,5 @@ project "hyperion-editor"
     filter "system:windows"
 		files { "%{prj.location}/resource.rc" }
 		postbuildcommands {
-		    "{COPY} %{cfg.targetdir}/%{prj.name}.exe ../../run_tree/hyperion.exe*"
+		    "{COPY} %{cfg.targetdir}/%{prj.name}.exe ../run_tree/hyperion.exe*"
 	    }
