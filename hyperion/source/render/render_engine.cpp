@@ -158,6 +158,8 @@ namespace Hyperion::Rendering {
     s_render_stats = s_render_driver_context->GetDriver()->GetStats();
 
     s_main_frame->Clear();
+
+    s_render_should_resize = s_main_should_resize;
   }
 
   //--------------------------------------------------------------

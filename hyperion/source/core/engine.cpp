@@ -364,9 +364,11 @@ namespace Hyperion {
     dispatcher.Dispatch<WindowCloseAppEvent>([](WindowCloseAppEvent &window_close_event) {
       Exit();
     });
+
+    Rendering::RenderEngine::s_main_should_resize = false;
     dispatcher.Dispatch<WindowResizeAppEvent>([](WindowResizeAppEvent &window_resize_event) {
       Display::SetSize(window_resize_event.GetWidth(), window_resize_event.GetHeight());
-
+      Rendering::RenderEngine::s_main_should_resize = true;
     });
 
     dispatcher.Dispatch<KeyPressedAppEvent>([](KeyPressedAppEvent &key_pressed_event) {

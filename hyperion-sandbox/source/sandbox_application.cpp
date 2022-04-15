@@ -29,7 +29,7 @@ using namespace Hyperion;
 using namespace Hyperion::Rendering;
 
 #if HYP_RELEASE || HYP_PROFILE
-#define HYP_STRESS_TEST
+//#define HYP_STRESS_TEST
 //#define HYP_STRESS_TEST_EXTREME
 #endif
 
@@ -38,9 +38,9 @@ namespace Medhex {
 
   //--------------------------------------------------------------
   void MedhexApplication::OnSetup(ApplicationSettings &settings) {
-    settings.render.backend = Rendering::RenderBackend::Vulkan;
-    settings.render.threading_mode = Rendering::RenderThreadingMode::MultiThreaded;
-    settings.render.vsync_mode = Rendering::VSyncMode::DontSync;
+    settings.render.backend = RenderBackend::Vulkan;
+    settings.render.threading_mode = RenderThreadingMode::MultiThreaded;
+    settings.render.vsync_mode = VSyncMode::DontSync;
   }
 
   World *g_world;

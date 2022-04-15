@@ -6,6 +6,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/display.hpp"
+#include "hyperion/render/render_engine.hpp"
 #include "hyperion/render/driver/vulkan/vulkan_render_context.hpp"
 #include "hyperion/render/driver/vulkan/vulkan_utilities.hpp"
 #include "hyperion/render/frame/render_frame.hpp"
@@ -24,6 +25,10 @@ namespace Hyperion::Rendering {
     VkDevice device = m_context->m_device;
 
     vkWaitForFences(device, 1, &m_context->m_in_flight_fences[m_current_frame_index], VK_TRUE, UINT64_MAX);
+
+    if (RenderEngine::RenderShouldResize()) {
+      m_context->RecreateSwapchain();
+    }
 
     uint32 image_index = 0;
     VkResult present_result = vkAcquireNextImageKHR(device, m_context->m_swapchain, UINT64_MAX, m_context->m_image_available_semaphores[m_current_frame_index],

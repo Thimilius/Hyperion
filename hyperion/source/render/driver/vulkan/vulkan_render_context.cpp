@@ -849,6 +849,8 @@ namespace Hyperion::Rendering {
     CreateImageViews();
     CreateRenderPass();
     CreateFramebuffers();
+
+    vkDeviceWaitIdle(m_device);
   }
 
   //--------------------------------------------------------------
@@ -875,6 +877,8 @@ namespace Hyperion::Rendering {
     if (severity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {
       // HACK: This message comes up because of a synchronization issue when resizing the window with multiple threads.
       // Additionally it is triggered when minimizing the window to a size of (0, 0) which we also ignore for now...
+      // It may also be a false warning as it appears to be a potential bug: https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/1340.
+      // As the warning does not appear when using a single thread, it is more likely the synchronization issue.
       if (String(callback_data->pMessage).contains("VUID-VkSwapchainCreateInfoKHR-imageExtent-01274")) {
         return VK_FALSE;
       }

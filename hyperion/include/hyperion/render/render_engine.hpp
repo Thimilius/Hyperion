@@ -132,6 +132,8 @@ namespace Hyperion::Rendering {
 
     inline static VSyncMode GetVSyncMode() { return s_vsync_mode; }
     static void SetVSyncMode(VSyncMode vsync_mode);
+
+    inline static bool8 RenderShouldResize() { return s_render_should_resize; }
   private:
     RenderEngine() = delete;
     ~RenderEngine() = delete;
@@ -169,6 +171,9 @@ namespace Hyperion::Rendering {
     inline static RenderFrame s_second_frame;
     inline static RenderFrame *s_main_frame;
     inline static RenderFrame *s_render_frame;
+
+    inline static bool8 s_main_should_resize;
+    inline static bool8 s_render_should_resize;
   private:
     friend class Hyperion::Engine;
   };
