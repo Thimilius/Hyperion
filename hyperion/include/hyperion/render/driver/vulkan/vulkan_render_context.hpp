@@ -89,6 +89,8 @@ namespace Hyperion::Rendering {
 
     void CreateVertexBuffer();
     uint32 FindMemoryType(uint32 type_filter, VkMemoryPropertyFlags properties);
+    void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer &buffer, VkDeviceMemory &buffer_memory);
+    void CopyBuffer(VkBuffer source_buffer, VkBuffer destination_buffer, VkDeviceSize size);
 
     void RecreateSwapchain();
     void CleanupSwapchain();

@@ -801,27 +801,33 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void VulkanRenderContext::CreateVertexBuffer() {
-    VkBufferCreateInfo create_info = { };
-    create_info.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-    create_info.size = g_vertices.GetLength() * sizeof(g_vertices[0]);
-    create_info.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-    create_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-    HYP_VULKAN_CHECK(vkCreateBuffer(m_device, &create_info, nullptr, &m_vertex_buffer), "Failed to create vertex buffer!");
+    VkDeviceSize buffer_size = g_vertices.GetLength() * sizeof(g_vertices[0]);
 
-    VkMemoryRequirements memory_requirements;
-    vkGetBufferMemoryRequirements(m_device, m_vertex_buffer, &memory_requirements);
-    VkMemoryAllocateInfo allocate_info = { };
-    allocate_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-    allocate_info.allocationSize = memory_requirements.size;
-    allocate_info.memoryTypeIndex = FindMemoryType(memory_requirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-    HYP_VULKAN_CHECK(vkAllocateMemory(m_device, &allocate_info, nullptr, &m_vertex_buffer_memory), "Failed to allocate vertex buffer memory!");
-
-    HYP_VULKAN_CHECK(vkBindBufferMemory(m_device, m_vertex_buffer, m_vertex_buffer_memory, 0), "Failed to bind vertex buffer memory!");
-
+    VkBuffer staging_buffer;
+    VkDeviceMemory staging_buffer_memory;
+    CreateBuffer(
+      buffer_size,
+      VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+      staging_buffer,
+      staging_buffer_memory
+    );
     void *memory;
-    HYP_VULKAN_CHECK(vkMapMemory(m_device, m_vertex_buffer_memory, 0, create_info.size, 0, &memory), "Failed to map vertex buffer memory!");
-    std::memcpy(memory, g_vertices.GetData(), create_info.size);
-    vkUnmapMemory(m_device, m_vertex_buffer_memory);
+    HYP_VULKAN_CHECK(vkMapMemory(m_device, staging_buffer_memory, 0, buffer_size, 0, &memory), "Failed to map vertex buffer memory!");
+    std::memcpy(memory, g_vertices.GetData(), buffer_size);
+    vkUnmapMemory(m_device, staging_buffer_memory);
+
+    CreateBuffer(
+      buffer_size,
+      VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+      VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+      m_vertex_buffer,
+      m_vertex_buffer_memory
+    );
+    CopyBuffer(staging_buffer, m_vertex_buffer, buffer_size);
+
+    vkDestroyBuffer(m_device, staging_buffer, nullptr);
+    vkFreeMemory(m_device, staging_buffer_memory, nullptr);
   }
 
   //--------------------------------------------------------------
@@ -837,6 +843,58 @@ namespace Hyperion::Rendering {
 
     HYP_LOG_ERROR("Vulkan", "Failed to find suitable memory type!");
     return 0;
+  }
+
+  //--------------------------------------------------------------
+  void VulkanRenderContext::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer &buffer, VkDeviceMemory &buffer_memory) {
+    VkBufferCreateInfo create_info = { };
+    create_info.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    create_info.size = size;
+    create_info.usage = usage;
+    create_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    HYP_VULKAN_CHECK(vkCreateBuffer(m_device, &create_info, nullptr, &buffer), "Failed to create buffer!");
+
+    VkMemoryRequirements memory_requirements;
+    vkGetBufferMemoryRequirements(m_device, buffer, &memory_requirements);
+    VkMemoryAllocateInfo allocate_info = { };
+    allocate_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    allocate_info.allocationSize = memory_requirements.size;
+    allocate_info.memoryTypeIndex = FindMemoryType(memory_requirements.memoryTypeBits, properties);
+    HYP_VULKAN_CHECK(vkAllocateMemory(m_device, &allocate_info, nullptr, &buffer_memory), "Failed to allocate buffer memory!");
+
+    HYP_VULKAN_CHECK(vkBindBufferMemory(m_device, buffer, buffer_memory, 0), "Failed to bind buffer memory!");
+  }
+
+  //--------------------------------------------------------------
+  void VulkanRenderContext::CopyBuffer(VkBuffer source_buffer, VkBuffer destination_buffer, VkDeviceSize size) {
+    VkCommandBufferAllocateInfo allocate_info = { };
+    allocate_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocate_info.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    allocate_info.commandPool = m_command_pool;
+    allocate_info.commandBufferCount = 1;
+    VkCommandBuffer command_buffer;
+    HYP_VULKAN_CHECK(vkAllocateCommandBuffers(m_device, &allocate_info, &command_buffer), "Failed to allocate command buffer!");
+
+    VkCommandBufferBeginInfo begin_info = { };
+    begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    begin_info.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+    HYP_VULKAN_CHECK(vkBeginCommandBuffer(command_buffer, &begin_info), "Failed to begin command buffer!");
+    VkBufferCopy copy_region = { };
+    copy_region.srcOffset = 0;
+    copy_region.dstOffset = 0;
+    copy_region.size = size;
+    vkCmdCopyBuffer(command_buffer, source_buffer, destination_buffer, 1, &copy_region);
+    HYP_VULKAN_CHECK(vkEndCommandBuffer(command_buffer), "Failed to end command buffer!");
+
+    VkSubmitInfo submit_info = { };
+    submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    submit_info.commandBufferCount = 1;
+    submit_info.pCommandBuffers = &command_buffer;
+
+    HYP_VULKAN_CHECK(vkQueueSubmit(m_graphics_queue, 1, &submit_info, VK_NULL_HANDLE), "Failed to submit command buffer!");
+    HYP_VULKAN_CHECK(vkQueueWaitIdle(m_graphics_queue), "Failed to wait for device!");
+
+    vkFreeCommandBuffers(m_device, m_command_pool, 1, &command_buffer);
   }
 
   //--------------------------------------------------------------
