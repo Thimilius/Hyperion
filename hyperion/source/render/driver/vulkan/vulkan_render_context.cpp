@@ -46,9 +46,15 @@ namespace Hyperion::Rendering {
   };
 
   const Array<VulkanVertex> g_vertices = {
-    { { 0.0f, -0.5f}, { 1.0f, 0.0f, 0.0f } },
-    { { 0.5f,  0.5f}, { 0.0f, 1.0f, 0.0f } },
-    { {-0.5f,  0.5f}, { 0.0f, 0.0f, 1.0f } }
+    { {-0.5f, -0.5f}, { 1.0f, 0.0f, 0.0f } },
+    { { 0.5f, -0.5f}, { 0.0f, 1.0f, 0.0f } },
+    { { 0.5f,  0.5f}, { 0.0f, 0.0f, 1.0f } },
+    { {-0.5f,  0.5f}, { 1.0f, 1.0f, 1.0f } },
+  };
+
+  const Array<uint16> g_indices = {
+    0, 1, 2,
+    0, 2, 3,
   };
 
   //--------------------------------------------------------------
@@ -72,6 +78,7 @@ namespace Hyperion::Rendering {
     CreateCommandBuffers();
     CreateSyncObjects();
     CreateVertexBuffer();
+    CreateIndexBuffer();
 
     m_render_driver.Setup(this);
 
@@ -84,6 +91,8 @@ namespace Hyperion::Rendering {
 
     vkDestroyBuffer(m_device, m_vertex_buffer, nullptr);
     vkFreeMemory(m_device, m_vertex_buffer_memory, nullptr);
+    vkDestroyBuffer(m_device, m_index_buffer, nullptr);
+    vkFreeMemory(m_device, m_index_buffer_memory, nullptr);
 
     vkDestroyPipeline(m_device, m_graphics_pipeline, nullptr);
     vkDestroyPipelineLayout(m_device, m_pipeline_layout, nullptr);
@@ -825,6 +834,37 @@ namespace Hyperion::Rendering {
       m_vertex_buffer_memory
     );
     CopyBuffer(staging_buffer, m_vertex_buffer, buffer_size);
+
+    vkDestroyBuffer(m_device, staging_buffer, nullptr);
+    vkFreeMemory(m_device, staging_buffer_memory, nullptr);
+  }
+
+  //--------------------------------------------------------------
+  void VulkanRenderContext::CreateIndexBuffer() {
+    VkDeviceSize buffer_size = g_indices.GetLength() * sizeof(g_indices[0]);
+
+    VkBuffer staging_buffer;
+    VkDeviceMemory staging_buffer_memory;
+    CreateBuffer(
+      buffer_size,
+      VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+      staging_buffer,
+      staging_buffer_memory
+    );
+    void *memory;
+    HYP_VULKAN_CHECK(vkMapMemory(m_device, staging_buffer_memory, 0, buffer_size, 0, &memory), "Failed to map index buffer memory!");
+    std::memcpy(memory, g_indices.GetData(), buffer_size);
+    vkUnmapMemory(m_device, staging_buffer_memory);
+
+    CreateBuffer(
+      buffer_size,
+      VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+      VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+      m_index_buffer,
+      m_index_buffer_memory
+    );
+    CopyBuffer(staging_buffer, m_index_buffer, buffer_size);
 
     vkDestroyBuffer(m_device, staging_buffer, nullptr);
     vkFreeMemory(m_device, staging_buffer_memory, nullptr);

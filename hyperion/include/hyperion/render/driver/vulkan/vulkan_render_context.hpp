@@ -88,6 +88,7 @@ namespace Hyperion::Rendering {
     void CreateSyncObjects();
 
     void CreateVertexBuffer();
+    void CreateIndexBuffer();
     uint32 FindMemoryType(uint32 type_filter, VkMemoryPropertyFlags properties);
     void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer &buffer, VkDeviceMemory &buffer_memory);
     void CopyBuffer(VkBuffer source_buffer, VkBuffer destination_buffer, VkDeviceSize size);
@@ -143,6 +144,8 @@ namespace Hyperion::Rendering {
 
     VkBuffer m_vertex_buffer;
     VkDeviceMemory m_vertex_buffer_memory;
+    VkBuffer m_index_buffer;
+    VkDeviceMemory m_index_buffer_memory;
   private:
     friend class VulkanRenderDriver;
   };

@@ -124,7 +124,8 @@ namespace Hyperion::Rendering {
     vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_context->m_graphics_pipeline);
     VkDeviceSize buffer_offsets = 0;
     vkCmdBindVertexBuffers(command_buffer, 0, 1, &m_context->m_vertex_buffer, &buffer_offsets);
-    vkCmdDraw(command_buffer, 3, 1, 0, 0);
+    vkCmdBindIndexBuffer(command_buffer, m_context->m_index_buffer, 0, VK_INDEX_TYPE_UINT16);
+    vkCmdDrawIndexed(command_buffer, 6, 1, 0, 0, 0);
     vkCmdEndRenderPass(command_buffer);
 
     HYP_VULKAN_CHECK(vkEndCommandBuffer(command_buffer), "Failed to record command buffer!");
