@@ -7,6 +7,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/display.hpp"
 #include "hyperion/core/io/file_system.hpp"
+#include "hyperion/render/driver/vulkan/vulkan_shader_compiler.hpp"
 #include "hyperion/render/driver/vulkan/vulkan_utilities.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -590,16 +591,14 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void VulkanRenderContext::CreateGraphicsPipeline() {
-    Array<byte> vertex_code = FileSystem::ReadAllBytes("data/shaders/vulkan/vert.spv");
-    VkShaderModule vertex_shader_module = CreateShaderModule(vertex_code);
+    VkShaderModule vertex_shader_module = VulkanShaderCompiler::CompileModule(m_device, "data/shaders/vulkan/shader.vert", VK_SHADER_STAGE_VERTEX_BIT);
     VkPipelineShaderStageCreateInfo vertex_shader_stage_create_info = { };
     vertex_shader_stage_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
     vertex_shader_stage_create_info.stage = VK_SHADER_STAGE_VERTEX_BIT;
     vertex_shader_stage_create_info.module = vertex_shader_module;
     vertex_shader_stage_create_info.pName = "main";
 
-    Array<byte> fragment_code = FileSystem::ReadAllBytes("data/shaders/vulkan/frag.spv");
-    VkShaderModule fragment_shader_module = CreateShaderModule(fragment_code);
+    VkShaderModule fragment_shader_module = VulkanShaderCompiler::CompileModule(m_device, "data/shaders/vulkan/shader.frag", VK_SHADER_STAGE_FRAGMENT_BIT);
     VkPipelineShaderStageCreateInfo fragment_shader_stage_create_info = { };
     fragment_shader_stage_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
     fragment_shader_stage_create_info.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
@@ -727,18 +726,6 @@ namespace Hyperion::Rendering {
 
     vkDestroyShaderModule(m_device, fragment_shader_module, nullptr);
     vkDestroyShaderModule(m_device, vertex_shader_module, nullptr);
-  }
-
-  //--------------------------------------------------------------
-  VkShaderModule VulkanRenderContext::CreateShaderModule(const Array<byte> &code) {
-    VkShaderModuleCreateInfo create_info = { };
-    create_info.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-    create_info.codeSize = code.GetLength();
-    create_info.pCode = reinterpret_cast<const uint32 *>(code.GetData());
-
-    VkShaderModule shader_module;
-    HYP_VULKAN_CHECK(vkCreateShaderModule(m_device, &create_info, nullptr, &shader_module), "Failed to create shader module!");
-    return shader_module;
   }
 
   //--------------------------------------------------------------

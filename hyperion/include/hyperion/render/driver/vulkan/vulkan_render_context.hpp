@@ -77,7 +77,6 @@ namespace Hyperion::Rendering {
     void CreateRenderPass();
 
     void CreateGraphicsPipeline();
-    VkShaderModule CreateShaderModule(const Array<byte> &code);
 
     void CreateFramebuffers();
 
