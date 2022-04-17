@@ -2,6 +2,7 @@
 assimp/5.0.1
 bullet3/3.07
 freetype/2.10.4
+shaderc/2021.1
 stb/20200203
 yaml-cpp/0.7.0
 
@@ -19,4 +20,5 @@ freetype/2.10.4:with_brotli=False
 freetype/2.10.4:with_bzip2=False
 freetype/2.10.4:with_png=False
 freetype/2.10.4:with_zlib=False
+shaderc/2021.1:shared=False
 yaml-cpp/0.7.0:shared=False
