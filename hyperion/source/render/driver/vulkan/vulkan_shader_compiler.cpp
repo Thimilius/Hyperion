@@ -28,7 +28,8 @@ namespace Hyperion::Rendering {
     shaderc::Compiler compiler;
     shaderc::SpvCompilationResult compilation_result = compiler.CompileGlslToSpv(source, shader_kind, file_path.c_str());
     if (compilation_result.GetCompilationStatus() != shaderc_compilation_status_success) {
-      HYP_LOG_ERROR("Vulkan", "Failed to compile shader module!");
+      HYP_LOG_ERROR("Vulkan", "Failed to compile shader module:\n{}", compilation_result.GetErrorMessage());
+      HYP_DEBUG_BREAK;
       return nullptr;
     }
 
