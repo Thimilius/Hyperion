@@ -4,6 +4,7 @@ bullet3/3.07
 freetype/2.10.4
 shaderc/2021.1
 stb/20200203
+vulkan-memory-allocator/2.3.0
 yaml-cpp/0.7.0
 
 [generators]

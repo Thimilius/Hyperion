@@ -42,8 +42,9 @@ project "hyperion"
 	includedirs { package_freetype_includedirs }
 	includedirs { package_shaderc_includedirs }
 	includedirs { package_stb_includedirs }
+	includedirs { package_vulkan_memory_allocator_includedirs }
 	includedirs { package_yaml_includedirs }
-	
+
 	filter "files:hyperion/vendor/**"
 		flags { "NoPCH" }
 
