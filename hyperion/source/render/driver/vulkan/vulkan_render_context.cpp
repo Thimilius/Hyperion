@@ -4,6 +4,10 @@
 //--------------------- Definition Include ---------------------
 #include "hyperion/render/driver/vulkan/vulkan_render_context.hpp"
 
+//---------------------- Library Includes ----------------------
+#define VMA_IMPLEMENTATION
+#include "vk_mem_alloc.h"
+
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/display.hpp"
 #include "hyperion/core/io/file_system.hpp"
@@ -78,6 +82,7 @@ namespace Hyperion::Rendering {
     CreateCommandPool();
     CreateCommandBuffers();
     CreateSyncObjects();
+    CreateAllocator();
     CreateVertexBuffer();
     CreateIndexBuffer();
 
@@ -89,32 +94,7 @@ namespace Hyperion::Rendering {
   //--------------------------------------------------------------
   void VulkanRenderContext::Shutdown() {
     CleanupSwapchain();
-
-    vkDestroyBuffer(m_device, m_vertex_buffer, nullptr);
-    vkFreeMemory(m_device, m_vertex_buffer_memory, nullptr);
-    vkDestroyBuffer(m_device, m_index_buffer, nullptr);
-    vkFreeMemory(m_device, m_index_buffer_memory, nullptr);
-
-    vkDestroyPipeline(m_device, m_graphics_pipeline, nullptr);
-    vkDestroyPipelineLayout(m_device, m_pipeline_layout, nullptr);
-
-    for (uint32 i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-      vkDestroySemaphore(m_device, m_image_available_semaphores[i], nullptr);
-      vkDestroySemaphore(m_device, m_render_finished_semaphores[i], nullptr);
-      vkDestroyFence(m_device, m_in_flight_fences[i], nullptr);
-    }
-
-    vkDestroyCommandPool(m_device, m_command_pool, nullptr);
-
-    vkDestroyDevice(m_device, nullptr);
-
-#ifdef HYP_DEBUG
-    auto debug_messenger_destroy_function = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(LoadFunction("vkDestroyDebugUtilsMessengerEXT"));
-    debug_messenger_destroy_function(m_instance, m_debug_messenger, nullptr);
-#endif
-
-    vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
-    vkDestroyInstance(m_instance, nullptr);
+    Cleanup();
   }
 
   //--------------------------------------------------------------
@@ -796,34 +776,45 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
+  void VulkanRenderContext::CreateAllocator() {
+    VmaAllocatorCreateInfo create_info = { };
+    create_info.flags = 0;
+    create_info.physicalDevice = m_physical_device;
+    create_info.device = m_device;
+    create_info.pHeapSizeLimit = 0;
+    create_info.instance = m_instance;
+
+    vmaCreateAllocator(&create_info, &m_allocator);
+  }
+
+  //--------------------------------------------------------------
   void VulkanRenderContext::CreateVertexBuffer() {
     VkDeviceSize buffer_size = g_vertices.GetLength() * sizeof(g_vertices[0]);
 
     VkBuffer staging_buffer;
-    VkDeviceMemory staging_buffer_memory;
+    VmaAllocation staging_buffer_memory;
     CreateBuffer(
       buffer_size,
       VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+      VMA_MEMORY_USAGE_CPU_ONLY,
       staging_buffer,
       staging_buffer_memory
     );
     void *memory;
-    HYP_VULKAN_CHECK(vkMapMemory(m_device, staging_buffer_memory, 0, buffer_size, 0, &memory), "Failed to map vertex buffer memory!");
+    HYP_VULKAN_CHECK(vmaMapMemory(m_allocator, staging_buffer_memory, &memory), "Failed to map vertex buffer memory!");
     std::memcpy(memory, g_vertices.GetData(), buffer_size);
-    vkUnmapMemory(m_device, staging_buffer_memory);
+    vmaUnmapMemory(m_allocator, staging_buffer_memory);
 
     CreateBuffer(
       buffer_size,
       VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-      VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+      VMA_MEMORY_USAGE_GPU_ONLY,
       m_vertex_buffer,
       m_vertex_buffer_memory
     );
     CopyBuffer(staging_buffer, m_vertex_buffer, buffer_size);
 
-    vkDestroyBuffer(m_device, staging_buffer, nullptr);
-    vkFreeMemory(m_device, staging_buffer_memory, nullptr);
+    vmaDestroyBuffer(m_allocator, staging_buffer, staging_buffer_memory);
   }
 
   //--------------------------------------------------------------
@@ -831,30 +822,29 @@ namespace Hyperion::Rendering {
     VkDeviceSize buffer_size = g_indices.GetLength() * sizeof(g_indices[0]);
 
     VkBuffer staging_buffer;
-    VkDeviceMemory staging_buffer_memory;
+    VmaAllocation staging_buffer_memory;
     CreateBuffer(
       buffer_size,
       VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+      VMA_MEMORY_USAGE_CPU_ONLY,
       staging_buffer,
       staging_buffer_memory
     );
     void *memory;
-    HYP_VULKAN_CHECK(vkMapMemory(m_device, staging_buffer_memory, 0, buffer_size, 0, &memory), "Failed to map index buffer memory!");
+    HYP_VULKAN_CHECK(vmaMapMemory(m_allocator, staging_buffer_memory, &memory), "Failed to map index buffer memory!");
     std::memcpy(memory, g_indices.GetData(), buffer_size);
-    vkUnmapMemory(m_device, staging_buffer_memory);
+    vmaUnmapMemory(m_allocator, staging_buffer_memory);
 
     CreateBuffer(
       buffer_size,
       VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
-      VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+      VMA_MEMORY_USAGE_GPU_ONLY,
       m_index_buffer,
       m_index_buffer_memory
     );
     CopyBuffer(staging_buffer, m_index_buffer, buffer_size);
 
-    vkDestroyBuffer(m_device, staging_buffer, nullptr);
-    vkFreeMemory(m_device, staging_buffer_memory, nullptr);
+    vmaDestroyBuffer(m_allocator, staging_buffer, staging_buffer_memory);
   }
 
   //--------------------------------------------------------------
@@ -873,23 +863,17 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void VulkanRenderContext::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer &buffer, VkDeviceMemory &buffer_memory) {
+  void VulkanRenderContext::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VmaMemoryUsage memory_usage, VkBuffer &buffer, VmaAllocation &buffer_memory) {
     VkBufferCreateInfo create_info = { };
     create_info.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
     create_info.size = size;
     create_info.usage = usage;
     create_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-    HYP_VULKAN_CHECK(vkCreateBuffer(m_device, &create_info, nullptr, &buffer), "Failed to create buffer!");
 
-    VkMemoryRequirements memory_requirements;
-    vkGetBufferMemoryRequirements(m_device, buffer, &memory_requirements);
-    VkMemoryAllocateInfo allocate_info = { };
-    allocate_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-    allocate_info.allocationSize = memory_requirements.size;
-    allocate_info.memoryTypeIndex = FindMemoryType(memory_requirements.memoryTypeBits, properties);
-    HYP_VULKAN_CHECK(vkAllocateMemory(m_device, &allocate_info, nullptr, &buffer_memory), "Failed to allocate buffer memory!");
+    VmaAllocationCreateInfo allocation_create_info = { };
+    allocation_create_info.usage = memory_usage;
 
-    HYP_VULKAN_CHECK(vkBindBufferMemory(m_device, buffer, buffer_memory, 0), "Failed to bind buffer memory!");
+    HYP_VULKAN_CHECK(vmaCreateBuffer(m_allocator, &create_info, &allocation_create_info, &buffer, &buffer_memory, nullptr), "Failed to create buffer!");
   }
 
   //--------------------------------------------------------------
@@ -950,6 +934,34 @@ namespace Hyperion::Rendering {
     vkDestroySwapchainKHR(m_device, m_swapchain, nullptr);
 
     vkDestroyRenderPass(m_device, m_render_pass, nullptr);
+  }
+
+  //--------------------------------------------------------------
+  void VulkanRenderContext::Cleanup() {
+    vmaDestroyBuffer(m_allocator, m_vertex_buffer, m_vertex_buffer_memory);
+    vmaDestroyBuffer(m_allocator, m_index_buffer, m_index_buffer_memory);
+    vmaDestroyAllocator(m_allocator);
+
+    vkDestroyPipeline(m_device, m_graphics_pipeline, nullptr);
+    vkDestroyPipelineLayout(m_device, m_pipeline_layout, nullptr);
+
+    for (uint32 i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+      vkDestroySemaphore(m_device, m_image_available_semaphores[i], nullptr);
+      vkDestroySemaphore(m_device, m_render_finished_semaphores[i], nullptr);
+      vkDestroyFence(m_device, m_in_flight_fences[i], nullptr);
+    }
+
+    vkDestroyCommandPool(m_device, m_command_pool, nullptr);
+
+    vkDestroyDevice(m_device, nullptr);
+
+#ifdef HYP_DEBUG
+    auto debug_messenger_destroy_function = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(LoadFunction("vkDestroyDebugUtilsMessengerEXT"));
+    debug_messenger_destroy_function(m_instance, m_debug_messenger, nullptr);
+#endif
+
+    vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
+    vkDestroyInstance(m_instance, nullptr);
   }
 
   //--------------------------------------------------------------

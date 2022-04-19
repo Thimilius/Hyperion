@@ -3,6 +3,7 @@
 
 //---------------------- Library Includes ----------------------
 #include <vulkan/vulkan.h>
+#include <vk_mem_alloc.h>
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/render/render_context.hpp"
@@ -86,14 +87,18 @@ namespace Hyperion::Rendering {
 
     void CreateSyncObjects();
 
+    void CreateAllocator();
+
     void CreateVertexBuffer();
     void CreateIndexBuffer();
     uint32 FindMemoryType(uint32 type_filter, VkMemoryPropertyFlags properties);
-    void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer &buffer, VkDeviceMemory &buffer_memory);
+    void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VmaMemoryUsage memory_usage, VkBuffer &buffer, VmaAllocation &buffer_memory);
     void CopyBuffer(VkBuffer source_buffer, VkBuffer destination_buffer, VkDeviceSize size);
 
     void RecreateSwapchain();
     void CleanupSwapchain();
+
+    void Cleanup();
 
     void *LoadFunction(const char *name);
   private:
@@ -141,10 +146,12 @@ namespace Hyperion::Rendering {
     Array<VkSemaphore> m_render_finished_semaphores;
     Array<VkFence> m_in_flight_fences;
 
+    VmaAllocator m_allocator;
+
     VkBuffer m_vertex_buffer;
-    VkDeviceMemory m_vertex_buffer_memory;
+    VmaAllocation m_vertex_buffer_memory;
     VkBuffer m_index_buffer;
-    VkDeviceMemory m_index_buffer_memory;
+    VmaAllocation m_index_buffer_memory;
   private:
     friend class VulkanRenderDriver;
   };
