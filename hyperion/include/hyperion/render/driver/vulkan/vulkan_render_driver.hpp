@@ -24,7 +24,8 @@ namespace Hyperion::Rendering {
   private:
     void Setup(VulkanRenderContext *context);
 
-    void RecordCommandBuffer(VkCommandBuffer command_buffer, uint32 image_index);
+    void RecordCommandBuffer(VkCommandBuffer command_buffer, uint32 image_index, uint32 frame_index);
+    void UpdateUniformBuffer(uint32 frame_index);
   private:
     VulkanRenderContext *m_context;
 

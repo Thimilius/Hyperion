@@ -32,6 +32,12 @@ namespace Hyperion::Rendering {
     Array<VkPresentModeKHR> present_modes;
   };
 
+  struct VulkanUniformBufferObject {
+    Matrix4x4 model;
+    Matrix4x4 view;
+    Matrix4x4 projection;
+  };
+
   class VulkanRenderContext : public IRenderContext {
   public:
     RenderContextProperties GetProperties() const override { return m_properties; }
@@ -77,6 +83,8 @@ namespace Hyperion::Rendering {
 
     void CreateRenderPass();
 
+    void CreateDescriptorSetLayout();
+
     void CreateGraphicsPipeline();
 
     void CreateFramebuffers();
@@ -94,6 +102,10 @@ namespace Hyperion::Rendering {
     uint32 FindMemoryType(uint32 type_filter, VkMemoryPropertyFlags properties);
     void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VmaMemoryUsage memory_usage, VkBuffer &buffer, VmaAllocation &buffer_memory);
     void CopyBuffer(VkBuffer source_buffer, VkBuffer destination_buffer, VkDeviceSize size);
+
+    void CreateUniformBuffers();
+    void CreateDescriptorPool();
+    void CreateDescriptorSets();
 
     void RecreateSwapchain();
     void CleanupSwapchain();
@@ -136,6 +148,7 @@ namespace Hyperion::Rendering {
     Array<VkFramebuffer> m_swapchain_framebuffers;
 
     VkRenderPass m_render_pass;
+    VkDescriptorSetLayout m_descriptor_set_layout;
     VkPipelineLayout m_pipeline_layout;
     VkPipeline m_graphics_pipeline;
 
@@ -152,6 +165,12 @@ namespace Hyperion::Rendering {
     VmaAllocation m_vertex_buffer_memory;
     VkBuffer m_index_buffer;
     VmaAllocation m_index_buffer_memory;
+
+    VkDescriptorPool m_descriptor_pool;
+    Array<VkDescriptorSet> m_descriptor_sets;
+
+    Array<VkBuffer> m_uniform_buffers;
+    Array<VmaAllocation> m_uniform_buffer_memories;
   private:
     friend class VulkanRenderDriver;
   };

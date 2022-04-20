@@ -6,6 +6,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/display.hpp"
+#include "hyperion/core/app/time.hpp"
 #include "hyperion/render/render_engine.hpp"
 #include "hyperion/render/driver/vulkan/vulkan_render_context.hpp"
 #include "hyperion/render/driver/vulkan/vulkan_utilities.hpp"
@@ -39,11 +40,13 @@ namespace Hyperion::Rendering {
       HYP_PANIC_MESSAGE("Vulkan", "Failed to acquire swapchain image!");
     }
 
+    UpdateUniformBuffer(m_current_frame_index);
+
     // Only reset the fence if we are submitting work.
     vkResetFences(device, 1, &m_context->m_in_flight_fences[m_current_frame_index]);
 
     vkResetCommandBuffer(m_context->m_command_buffers[m_current_frame_index], 0);
-    RecordCommandBuffer(m_context->m_command_buffers[m_current_frame_index], image_index);
+    RecordCommandBuffer(m_context->m_command_buffers[m_current_frame_index], image_index, m_current_frame_index);
 
     VkSubmitInfo submit_info = { };
     submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -90,7 +93,7 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void VulkanRenderDriver::RecordCommandBuffer(VkCommandBuffer command_buffer, uint32 image_index) {
+  void VulkanRenderDriver::RecordCommandBuffer(VkCommandBuffer command_buffer, uint32 image_index, uint32 frame_index) {
     VkCommandBufferBeginInfo begin_info = { };
     begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     begin_info.flags = 0;
@@ -125,10 +128,26 @@ namespace Hyperion::Rendering {
     VkDeviceSize buffer_offsets = 0;
     vkCmdBindVertexBuffers(command_buffer, 0, 1, &m_context->m_vertex_buffer, &buffer_offsets);
     vkCmdBindIndexBuffer(command_buffer, m_context->m_index_buffer, 0, VK_INDEX_TYPE_UINT16);
+    vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_context->m_pipeline_layout, 0, 1, &m_context->m_descriptor_sets[frame_index], 0, nullptr);
     vkCmdDrawIndexed(command_buffer, 6, 1, 0, 0, 0);
     vkCmdEndRenderPass(command_buffer);
 
     HYP_VULKAN_CHECK(vkEndCommandBuffer(command_buffer), "Failed to record command buffer!");
+  }
+
+  //--------------------------------------------------------------
+  void VulkanRenderDriver::UpdateUniformBuffer(uint32 frame_index) {
+    VulkanUniformBufferObject ubo;
+    ubo.model = Matrix4x4::Rotate(Vector3(0.0f, 0.0f, 1.0f), Time::GetTime() * 25.0f);
+    ubo.view = Matrix4x4::LookAt(Vector3(2.0f, 2.0f, 2.0f), Vector3::Zero(), Vector3(0.0f, 1.0f, 0.0f));
+    float32 aspect_ratio = m_context->m_swapchain_extent.width / static_cast<float32>(m_context->m_swapchain_extent.height);
+    ubo.projection = Matrix4x4::Perspective(45.0f, aspect_ratio, 0.1f, 10.0f);
+    ubo.projection.elements[5] *= -1;
+
+    void *data;
+    vmaMapMemory(m_context->m_allocator, m_context->m_uniform_buffer_memories[frame_index], &data);
+    std::memcpy(data, &ubo, sizeof(ubo));
+    vmaUnmapMemory(m_context->m_allocator, m_context->m_uniform_buffer_memories[frame_index]);
   }
 
 }

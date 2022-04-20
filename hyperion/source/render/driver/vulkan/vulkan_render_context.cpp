@@ -77,6 +77,7 @@ namespace Hyperion::Rendering {
     CreateSwapChain();
     CreateImageViews();
     CreateRenderPass();
+    CreateDescriptorSetLayout();
     CreateGraphicsPipeline();
     CreateFramebuffers();
     CreateCommandPool();
@@ -85,6 +86,9 @@ namespace Hyperion::Rendering {
     CreateAllocator();
     CreateVertexBuffer();
     CreateIndexBuffer();
+    CreateUniformBuffers();
+    CreateDescriptorPool();
+    CreateDescriptorSets();
 
     m_render_driver.Setup(this);
 
@@ -570,6 +574,23 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
+  void VulkanRenderContext::CreateDescriptorSetLayout() {
+    VkDescriptorSetLayoutBinding layout_binding = { };
+    layout_binding.binding = 0;
+    layout_binding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    layout_binding.descriptorCount = 1;
+    layout_binding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+    layout_binding.pImmutableSamplers = nullptr;
+
+    VkDescriptorSetLayoutCreateInfo create_info = { };
+    create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+    create_info.bindingCount = 1;
+    create_info.pBindings = &layout_binding;
+
+    HYP_VULKAN_CHECK(vkCreateDescriptorSetLayout(m_device, &create_info, nullptr, &m_descriptor_set_layout), "Failed to create descriptor set layout!");
+  }
+
+  //--------------------------------------------------------------
   void VulkanRenderContext::CreateGraphicsPipeline() {
     VkShaderModule vertex_shader_module = VulkanShaderCompiler::CompileModule(m_device, "data/shaders/vulkan/shader.vert", VK_SHADER_STAGE_VERTEX_BIT);
     VkPipelineShaderStageCreateInfo vertex_shader_stage_create_info = { };
@@ -628,7 +649,7 @@ namespace Hyperion::Rendering {
     rasterization_state_create_info.polygonMode = VK_POLYGON_MODE_FILL;
     rasterization_state_create_info.lineWidth = 1.0f;
     rasterization_state_create_info.cullMode = VK_CULL_MODE_BACK_BIT;
-    rasterization_state_create_info.frontFace = VK_FRONT_FACE_CLOCKWISE;
+    rasterization_state_create_info.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE; // TEMP: This should be clockwise.
     rasterization_state_create_info.depthBiasEnable = VK_FALSE;
     rasterization_state_create_info.depthBiasConstantFactor = 0.0f;
     rasterization_state_create_info.depthBiasClamp = 0.0f;
@@ -666,8 +687,8 @@ namespace Hyperion::Rendering {
 
     VkPipelineLayoutCreateInfo layout_create_info = { };
     layout_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-    layout_create_info.setLayoutCount = 0;
-    layout_create_info.pSetLayouts = nullptr;
+    layout_create_info.setLayoutCount = 1;
+    layout_create_info.pSetLayouts = &m_descriptor_set_layout;
     layout_create_info.pushConstantRangeCount = 0;
     layout_create_info.pPushConstantRanges = nullptr;
 
@@ -909,6 +930,65 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
+  void VulkanRenderContext::CreateUniformBuffers() {
+    m_uniform_buffers.Resize(MAX_FRAMES_IN_FLIGHT);
+    m_uniform_buffer_memories.Resize(MAX_FRAMES_IN_FLIGHT);
+
+    VkDeviceSize buffer_size = sizeof(VulkanUniformBufferObject);
+    for (uint32 i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+      CreateBuffer(buffer_size, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VMA_MEMORY_USAGE_CPU_ONLY, m_uniform_buffers[i], m_uniform_buffer_memories[i]);
+    }
+  }
+
+  //--------------------------------------------------------------
+  void VulkanRenderContext::CreateDescriptorPool() {
+    VkDescriptorPoolSize size = { };
+    size.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    size.descriptorCount = static_cast<uint32>(MAX_FRAMES_IN_FLIGHT);
+
+    VkDescriptorPoolCreateInfo create_info = { };
+    create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+    create_info.poolSizeCount = 1;
+    create_info.pPoolSizes = &size;
+    create_info.maxSets = static_cast<uint32>(MAX_FRAMES_IN_FLIGHT);
+
+    HYP_VULKAN_CHECK(vkCreateDescriptorPool(m_device, &create_info, nullptr, &m_descriptor_pool), "Failed to create descriptor pool!");
+  }
+
+  //--------------------------------------------------------------
+  void VulkanRenderContext::CreateDescriptorSets() {
+    Array<VkDescriptorSetLayout> layouts = { m_descriptor_set_layout, m_descriptor_set_layout };
+    VkDescriptorSetAllocateInfo allocation_info = { };
+    allocation_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+    allocation_info.descriptorPool = m_descriptor_pool;
+    allocation_info.descriptorSetCount = static_cast<uint32>(MAX_FRAMES_IN_FLIGHT);
+    allocation_info.pSetLayouts = layouts.GetData();
+
+    m_descriptor_sets.Resize(MAX_FRAMES_IN_FLIGHT);
+    HYP_VULKAN_CHECK(vkAllocateDescriptorSets(m_device, &allocation_info, m_descriptor_sets.GetData()), "Failed to allocate descriptor sets!");
+
+    for (uint32 i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+      VkDescriptorBufferInfo buffer_info = { };
+      buffer_info.buffer = m_uniform_buffers[i];
+      buffer_info.offset = 0;
+      buffer_info.range = sizeof(VulkanUniformBufferObject);
+
+      VkWriteDescriptorSet descriptor_write = { };
+      descriptor_write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+      descriptor_write.dstSet = m_descriptor_sets[i];
+      descriptor_write.dstBinding = 0;
+      descriptor_write.dstArrayElement = 0;
+      descriptor_write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+      descriptor_write.descriptorCount = 1;
+      descriptor_write.pBufferInfo = &buffer_info;
+      descriptor_write.pImageInfo = nullptr;
+      descriptor_write.pTexelBufferView = nullptr;
+
+      vkUpdateDescriptorSets(m_device, 1, &descriptor_write, 0, nullptr);
+    }
+  }
+
+  //--------------------------------------------------------------
   void VulkanRenderContext::RecreateSwapchain() {
     vkDeviceWaitIdle(m_device);
 
@@ -938,10 +1018,16 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void VulkanRenderContext::Cleanup() {
+    for (uint32 i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+      vmaDestroyBuffer(m_allocator, m_uniform_buffers[i], m_uniform_buffer_memories[i]);
+    }
+
     vmaDestroyBuffer(m_allocator, m_vertex_buffer, m_vertex_buffer_memory);
     vmaDestroyBuffer(m_allocator, m_index_buffer, m_index_buffer_memory);
     vmaDestroyAllocator(m_allocator);
 
+    vkDestroyDescriptorPool(m_device, m_descriptor_pool, nullptr);
+    vkDestroyDescriptorSetLayout(m_device, m_descriptor_set_layout, nullptr);
     vkDestroyPipeline(m_device, m_graphics_pipeline, nullptr);
     vkDestroyPipelineLayout(m_device, m_pipeline_layout, nullptr);
 
