@@ -25,6 +25,7 @@ namespace Hyperion::Rendering {
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE; return nullptr;
     }
 
+    // NOTE: For some reason this compiler "appears" to leak memory based on our global new and delete overwrites.
     shaderc::Compiler compiler;
     shaderc::SpvCompilationResult compilation_result = compiler.CompileGlslToSpv(source, shader_kind, file_path.c_str());
     if (compilation_result.GetCompilationStatus() != shaderc_compilation_status_success) {
