@@ -6,6 +6,7 @@ shaderc/2021.1
 stb/20200203
 vulkan-memory-allocator/2.3.0
 yaml-cpp/0.7.0
+rttr/0.9.6
 
 [generators]
 premake
@@ -23,3 +24,5 @@ freetype/2.10.4:with_png=False
 freetype/2.10.4:with_zlib=False
 shaderc/2021.1:shared=False
 yaml-cpp/0.7.0:shared=False
+rttr/0.9.6:shared=False
+rttr/0.9.6:with_rtti=False

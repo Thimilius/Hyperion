@@ -41,6 +41,7 @@ project "hyperion"
 	includedirs { package_assimp_includedirs }
 	includedirs { package_freetype_includedirs }
 	includedirs { package_shaderc_includedirs }
+	includedirs { package_rttr_includedirs }
 	includedirs { package_stb_includedirs }
 	includedirs { package_vulkan_memory_allocator_includedirs }
 	includedirs { package_yaml_includedirs }
@@ -72,6 +73,7 @@ function linkhyperion(path)
 
 	includedirs { path .. "hyperion/include" }
 	includedirs { path .. "hyperion/vendor/optick/include" }
+	includedirs { package_rttr_includedirs }
 
 	links { "hyperion" }
 	
@@ -92,19 +94,23 @@ function linkhyperion(path)
 		libdirs { package_assimp_debug_libdirs }
 		libdirs { package_freetype_debug_libdirs }
 		libdirs { package_yaml_debug_libdirs }
+		libdirs { package_rttr_debug_libdirs }
 		libdirs { package_shaderc_debug_libdirs }
 		links { package_assimp_debug_links }
 		links { package_freetype_debug_links }
 		links { package_yaml_debug_links }
+		links { package_rttr_debug_links }
 		links { package_shaderc_debug_links }
 	filter { "system:windows", "configurations:profile or release" }
 		libdirs { package_assimp_release_libdirs }
 		libdirs { package_freetype_release_libdirs }
 		libdirs { package_yaml_release_libdirs }
+		libdirs { package_rttr_release_libdirs }
 		libdirs { package_shaderc_release_libdirs }
 		links { package_assimp_release_links }
 		links { package_freetype_release_links }
 		links { package_yaml_release_links }
+		links { package_rttr_release_links }
 		links { package_shaderc_release_links }
 
 	filter { "system:windows", "configurations:debug", "options:physics=bullet" }
