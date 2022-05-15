@@ -2,12 +2,12 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/meta/meta.hpp"
-#include "hyperion/core/meta/meta_factory.hpp"
+#include "hyperion/core/reflection.hpp"
+#include "hyperion/core/string_utils.hpp"
 
-#define HYP_OBJECT(TYPE)                                                                           \
-    public:                                                                                        \
-        inline virtual MetaType GetType() const override { return MetaRegistry::Resolve<TYPE>(); } \
+#define HYP_OBJECT(TYPE)                                                           \
+    public:                                                                        \
+        inline virtual Type GetType() const override { return Type::get<TYPE>(); } \
     private:
 
 //-------------------- Definition Namespace --------------------
@@ -17,7 +17,7 @@ namespace Hyperion {
   public:
     virtual ~Object() = default;
   public:
-    inline virtual MetaType GetType() const { return MetaRegistry::Resolve<Object>(); }
+    inline virtual Type GetType() const { return Type::get<Object>(); }
 
     inline String GetName() const { return m_name; }
     inline void SetName(const String &name) { m_name = name; }

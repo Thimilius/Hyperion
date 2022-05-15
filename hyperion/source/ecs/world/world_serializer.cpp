@@ -342,271 +342,194 @@ namespace YAML {
 namespace Hyperion {
 
   //--------------------------------------------------------------
-  Array<MetaProperty> GetPropertiesToSerialize(MetaType type) {
-    Array<MetaProperty> properties;
-    type.ForEachProperty([&properties](MetaProperty property) {
-      MetaAttribute property_serialize_attribute = property.GetAttribute(PropertyAttribute::Serialize);
-      if (property_serialize_attribute) {
-        Any property_attribute_value = property_serialize_attribute.GetValue();
-        if (property_attribute_value.GetType().GetPrimitiveType() == MetaPrimitiveType::Bool) {
-          bool8 should_serialize = property_attribute_value.Cast<bool8>();
+  Array<Property> GetPropertiesToSerialize(Type type) {
+    Array<Property> properties;
+    for (Property property : type.get_properties()) {
+      Variant property_metadata_serialize = property.get_metadata(PropertyAttribute::Serialize);
+      if (property_metadata_serialize.is_valid()) {
+        if (property_metadata_serialize.is_type<bool8>()) {
+          bool8 should_serialize = property_metadata_serialize.to_bool();
           if (!should_serialize) {
-            return;
+            continue;
           }
         }
       }
 
+      // TODO: We should also sort out any types we know we do not support.
+      
       properties.Add(property);
-    });
+    }
     return properties;
   }
 
   //--------------------------------------------------------------
-  void SerializeType(YAML::Emitter &yaml_emitter, World *world, MetaType type, void *instance) {
-    Array<MetaProperty> properties = GetPropertiesToSerialize(type);
+  void SerializeType(YAML::Emitter &yaml_emitter, World *world, Type type, void *object) {
+    Array<Property> properties = GetPropertiesToSerialize(type);
     if (properties.IsEmpty()) {
       yaml_emitter << YAML::Null;
       return;
     }
 
-    MetaHandle handle = MetaHandle(type, instance);
+    Instance instance = Reflection::CreateInstanceFromRaw(type, object);
 
     yaml_emitter << YAML::BeginMap;
-    for (auto it = properties.rbegin(); it != properties.rend(); ++it) {
-      MetaProperty property = *it;
+    for (Property property : properties) {
+      Type property_type = property.get_type();
+      yaml_emitter << YAML::Key << property.get_name().to_string() << YAML::Value;
+      Variant property_value = property.get_value(instance);
 
-      MetaType property_type = property.GetType();
-      yaml_emitter << YAML::Key << property.GetName() << YAML::Value;
-      Any property_value = property.Get(handle);
-
-      // Check for special property treatment when serializing.
-      MetaAttribute property_serialize_as_attribute = property.GetAttribute(PropertyAttribute::SpecialSerialize);
-      if (property_serialize_as_attribute) {
-        Any property_serialize_as_attribute_value = property_serialize_as_attribute.GetValue();
-        PropertySpecialSerialize serialize_as = property_serialize_as_attribute_value.Cast<PropertySpecialSerialize>();
-        switch (serialize_as) {
-          case PropertySpecialSerialize::Raw: break;
-          case PropertySpecialSerialize::EntityIdAsGuid: {
-            HYP_ASSERT(property_type == MetaRegistry::Resolve<EntityId>());
-
-            EntityId entity_id = property_value.Cast<EntityId>();
-            if (entity_id == Entity::EMPTY) {
-              yaml_emitter << YAML::Null;
-            } else {
-              yaml_emitter << world->GetGuid(entity_id).ToString();
-            }
-
-            continue;
-          }
-          case PropertySpecialSerialize::PointerAsAssetGuid: {
-            // NOTE: This way of serializing references to assets feels a little hacky.
-            HYP_ASSERT(property_type.IsPointer());
-
-            Asset *asset = *reinterpret_cast<Asset **>(property_value.GetData());
-            if (asset) {
-              yaml_emitter << asset->GetAssetInfo().guid.ToString();
-            } else {
-              yaml_emitter << YAML::Null;
-            }
-
-            continue;
-          }
-          default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-            break;
+      // TODO: Missing handling of special types/subtypes of EntityId and Asset.
+      // TODO: Add handling of arrays, sequential containers and associative containers
+      
+      if (property_type.is_arithmetic()) {
+        if (property_type == Type::get<bool8>()) {
+          yaml_emitter << property_value.to_bool();
+        } else if (property_type == Type::get<int8>()) {
+          yaml_emitter << property_value.to_int8();
+        } else if (property_type == Type::get<int16>()) {
+          yaml_emitter << property_value.to_int16();
+        } else if (property_type == Type::get<int32>()) {
+          yaml_emitter << property_value.to_int32();
+        } else if (property_type == Type::get<int64>()) {
+          yaml_emitter << property_value.to_int64();
+        } else if (property_type == Type::get<uint8>()) {
+          yaml_emitter << property_value.to_uint8();
+        } else if (property_type == Type::get<uint16>()) {
+          yaml_emitter << property_value.to_uint16();
+        } else if (property_type == Type::get<uint32>()) {
+          yaml_emitter << property_value.to_uint32();
+        } else if (property_type == Type::get<uint64>()) {
+          yaml_emitter << property_value.to_uint64();
+        } else if (property_type == Type::get<float32>()) {
+          yaml_emitter << property_value.to_float();
+        } else if (property_type == Type::get<float64>()) {
+          yaml_emitter << property_value.to_double();
         }
-      }
-
-      MetaPrimitiveType primitive_type = property_type.GetPrimitiveType();
-
-      switch (primitive_type) {
-        case MetaPrimitiveType::Bool: yaml_emitter << property_value.Cast<bool8>();
-          break;
-        case MetaPrimitiveType::Int8: yaml_emitter << property_value.Cast<int8>();
-          break;
-        case MetaPrimitiveType::Int16: yaml_emitter << property_value.Cast<int16>();
-          break;
-        case MetaPrimitiveType::Int32: yaml_emitter << property_value.Cast<int32>();
-          break;
-        case MetaPrimitiveType::Int64: yaml_emitter << property_value.Cast<int64>();
-          break;
-        case MetaPrimitiveType::UInt8: yaml_emitter << property_value.Cast<uint8>();
-          break;
-        case MetaPrimitiveType::UInt16: yaml_emitter << property_value.Cast<uint16>();
-          break;
-        case MetaPrimitiveType::UInt32: yaml_emitter << property_value.Cast<uint32>();
-          break;
-        case MetaPrimitiveType::UInt64: yaml_emitter << property_value.Cast<uint64>();
-          break;
-        case MetaPrimitiveType::Float32: yaml_emitter << property_value.Cast<float32>();
-          break;
-        case MetaPrimitiveType::Float64: yaml_emitter << property_value.Cast<float64>();
-          break;
-        case MetaPrimitiveType::Vector2: yaml_emitter << property_value.Cast<Vector2>();
-          break;
-        case MetaPrimitiveType::Vector3: yaml_emitter << property_value.Cast<Vector3>();
-          break;
-        case MetaPrimitiveType::Vector4: yaml_emitter << property_value.Cast<Vector4>();
-          break;
-        case MetaPrimitiveType::Quaternion: yaml_emitter << property_value.Cast<Quaternion>();
-          break;
-        case MetaPrimitiveType::Matrix4x4: yaml_emitter << property_value.Cast<Matrix4x4>();
-          break;
-        case MetaPrimitiveType::String: yaml_emitter << property_value.Cast<String>();
-          break;
-        case MetaPrimitiveType::Color: yaml_emitter << property_value.Cast<Color>();
-          break;
-        case MetaPrimitiveType::None: {
-          if (property_type.IsEnum()) {
-            switch (property_type.GetSize()) {
-              case 1: yaml_emitter << *reinterpret_cast<int8 *>(property_value.GetData());
-                break;
-              case 2: yaml_emitter << *reinterpret_cast<int16 *>(property_value.GetData());
-                break;
-              case 4: yaml_emitter << *reinterpret_cast<int32 *>(property_value.GetData());
-                break;
-              case 8: yaml_emitter << *reinterpret_cast<int64 *>(property_value.GetData());
-                break;
-              default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-                break;
-            }
-          } else if (!property_type.IsPointer() && property_type.IsClass()) {
-            SerializeType(yaml_emitter, world, property_type, property_value.GetData());
-          } else {
-            HYP_LOG_WARN("Serializer", "Unsupported property type {} on property: {}::{}", property_type.GetName(), handle.GetType().GetName(),
-                         property.GetName());
-          }
-          break;
+      } else if (property_type.is_enumeration()) {
+        uint64 enum_size = property_type.get_sizeof();
+        switch (enum_size) {
+          case 1: yaml_emitter << property_value.to_int8(); break;
+          case 2: yaml_emitter << property_value.to_int16(); break;
+          case 4: yaml_emitter << property_value.to_int32(); break;
+          case 8: yaml_emitter << property_value.to_int64(); break;
+          default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
         }
-        default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-          break;
+      } else if (property_type == Type::get<String>()) {
+        yaml_emitter << property_value.to_string();
+      } else if (property_type == Type::get<Vector2>()) {
+        yaml_emitter << property_value.get_value<Vector2>();
+      } else if (property_type == Type::get<Vector3>()) {
+        yaml_emitter << property_value.get_value<Vector3>();
+      } else if (property_type == Type::get<Vector4>()) {
+        yaml_emitter << property_value.get_value<Vector4>();
+      } else if (property_type == Type::get<Quaternion>()) {
+        yaml_emitter << property_value.get_value<Quaternion>();
+      } else if (property_type == Type::get<Matrix4x4>()) {
+        yaml_emitter << property_value.get_value<Matrix4x4>();
+      } else if (property_type == Type::get<Color>()) {
+        yaml_emitter << property_value.get_value<Color>();
+      } else if (property_type.is_pointer()) {
+        void *pointer = property_value.convert<void *>();
+        SerializeType(yaml_emitter, world, property_type, pointer);
+      } else {
+        HYP_LOG_WARN(
+          "Serializer",
+          "Unsupported property type {} on property: {}::{}",
+          property_type.get_name().to_string(),
+          instance.get_type().get_name().to_string(),
+          property.get_name().to_string());
       }
+      
     }
+    
     yaml_emitter << YAML::EndMap;
   }
 
-  void DeserializeType(YAML::Node yaml, World *world, MetaType type, void *instance) {
-    Array<MetaProperty> properties = GetPropertiesToSerialize(type);
+  void DeserializeType(YAML::Node yaml, World *world, Type type, void *object) {
+    Array<Property> properties = GetPropertiesToSerialize(type);
     if (properties.IsEmpty()) {
       return;
     }
 
-    MetaHandle handle = MetaHandle(type, instance);
-    for (MetaProperty property : properties) {
-      MetaType property_type = property.GetType();
+    Instance instance = Reflection::CreateInstanceFromRaw(type, object);
+    for (Property property : properties) {
+      Type property_type = property.get_type();
 
-      String property_name = property.GetName();
+      String property_name = property.get_name().to_string();
       YAML::Node yaml_property = yaml[property_name];
 
-      MetaPrimitiveType primitive_type = property_type.GetPrimitiveType();
-
-      MetaAttribute property_serialize_as_attribute = property.GetAttribute(PropertyAttribute::SpecialSerialize);
-      if (property_serialize_as_attribute) {
-        Any property_serialize_as_attribute_value = property_serialize_as_attribute.GetValue();
-        PropertySpecialSerialize serialize_as = property_serialize_as_attribute_value.Cast<PropertySpecialSerialize>();
-        switch (serialize_as) {
-          case PropertySpecialSerialize::Raw: break;
-          case PropertySpecialSerialize::EntityIdAsGuid: {
-            HYP_ASSERT(property_type == MetaRegistry::Resolve<EntityId>());
-
-            if (yaml_property.IsNull()) {
-              property.Set(handle, Entity::EMPTY);
-            } else {
-              EntityGuid guid = EntityGuid::Generate(yaml_property.as<String>());
-              EntityId id = world->GetByGuid(guid);
-              property.Set(handle, id);
-            }
-
-            continue;
-          }
-          case PropertySpecialSerialize::PointerAsAssetGuid: {
-            // NOTE: This way of serializing references to assets feels a little hacky.
-
-            HYP_ASSERT(property_type.IsPointer());
-
-            if (yaml_property.IsNull()) {
-              property.Set(handle, nullptr);
-            } else {
-              AssetGuid guid = AssetGuid::Generate(yaml_property.as<String>());
-              if (property_type == MetaRegistry::Resolve<Material *>()) {
-                Material *material = AssetManager::GetMaterialByGuid(guid);
-                property.Set(handle, material);
-              } else if (property_type == MetaRegistry::Resolve<Mesh *>()) {
-                Mesh *mesh = AssetManager::GetMeshByGuid(guid);
-                property.Set(handle, mesh);
-              }
-            }
-
-            continue;
-          }
-          default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-            break;
+      bool8 setting_property_success = false; 
+      if (property_type.is_arithmetic()) {
+        if (property_type == Type::get<bool8>()) {
+          setting_property_success = property.set_value(instance, yaml_property.as<bool8>());
+        } else if (property_type == Type::get<int8>()) {
+          setting_property_success = property.set_value(instance, yaml_property.as<int8>());
+        } else if (property_type == Type::get<int16>()) {
+          setting_property_success = property.set_value(instance, yaml_property.as<int16>());
+        } else if (property_type == Type::get<int32>()) {
+          setting_property_success = property.set_value(instance, yaml_property.as<int32>());
+        } else if (property_type == Type::get<int64>()) {
+          setting_property_success = property.set_value(instance, yaml_property.as<int64>());
+        } else if (property_type == Type::get<uint8>()) {
+          setting_property_success = property.set_value(instance, yaml_property.as<uint8>());
+        } else if (property_type == Type::get<uint16>()) {
+          setting_property_success = property.set_value(instance, yaml_property.as<uint16>());
+        } else if (property_type == Type::get<uint32>()) {
+          setting_property_success = property.set_value(instance, yaml_property.as<uint32>());
+        } else if (property_type == Type::get<uint64>()) {
+          setting_property_success = property.set_value(instance, yaml_property.as<uint64>());
+        } else if (property_type == Type::get<float32>()) {
+          setting_property_success = property.set_value(instance, yaml_property.as<float32>());
+        } else if (property_type == Type::get<float64>()) {
+          setting_property_success = property.set_value(instance, yaml_property.as<float64>());
         }
+      } else if (property_type.is_enumeration()) {
+        uint64 enum_size = property_type.get_sizeof();
+        switch (enum_size) {
+          case 1: setting_property_success = property.set_value(instance, yaml_property.as<int8>()); break;
+          case 2: setting_property_success = property.set_value(instance, yaml_property.as<int16>()); break;
+          case 4: setting_property_success = property.set_value(instance, yaml_property.as<int32>()); break;
+          case 8: setting_property_success = property.set_value(instance, yaml_property.as<int64>()); break;
+          default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+        }
+      } else if (property_type == Type::get<String>()) {
+        setting_property_success = property.set_value(instance, yaml_property.as<String>());
+      } else if (property_type == Type::get<Vector2>()) {
+        setting_property_success = property.set_value(instance, yaml_property.as<Vector2>());
+      } else if (property_type == Type::get<Vector3>()) {
+        setting_property_success = property.set_value(instance, yaml_property.as<Vector3>());
+      } else if (property_type == Type::get<Vector4>()) {
+        setting_property_success = property.set_value(instance, yaml_property.as<Vector4>());
+      } else if (property_type == Type::get<Quaternion>()) {
+        setting_property_success = property.set_value(instance, yaml_property.as<Quaternion>());
+      } else if (property_type == Type::get<Matrix4x4>()) {
+        setting_property_success = property.set_value(instance, yaml_property.as<Matrix4x4>());
+      } else if (property_type == Type::get<Color>()) {
+        setting_property_success = property.set_value(instance, yaml_property.as<Color>());
+      } else if (property_type.is_pointer()) {
+        // NOTE: This might not be the best way to do it as it creates unnecessary copies of the property.
+        Variant property_value = property.get_value(instance);
+        void *pointer = property_value.convert<void *>();
+        DeserializeType(yaml_property, world, property_type, pointer);
+        setting_property_success = property.set_value(instance, property_value);
+      } else {
+        HYP_LOG_WARN(
+          "Serializer",
+          "Unsupported property type {} on property: {}::{}",
+          property_type.get_name().to_string(),
+          instance.get_type().get_name().to_string(),
+          property.get_name().to_string()
+        );
       }
 
-      switch (primitive_type) {
-        case MetaPrimitiveType::Bool: property.Set(handle, yaml_property.as<bool8>());
-          break;
-        case MetaPrimitiveType::Int8: property.Set(handle, yaml_property.as<int8>());
-          break;
-        case MetaPrimitiveType::Int16: property.Set(handle, yaml_property.as<int16>());
-          break;
-        case MetaPrimitiveType::Int32: property.Set(handle, yaml_property.as<int32>());
-          break;
-        case MetaPrimitiveType::Int64: property.Set(handle, yaml_property.as<int64>());
-          break;
-        case MetaPrimitiveType::UInt8: property.Set(handle, yaml_property.as<uint8>());
-          break;
-        case MetaPrimitiveType::UInt16: property.Set(handle, yaml_property.as<uint16>());
-          break;
-        case MetaPrimitiveType::UInt32: property.Set(handle, yaml_property.as<uint32>());
-          break;
-        case MetaPrimitiveType::UInt64: property.Set(handle, yaml_property.as<uint64>());
-          break;
-        case MetaPrimitiveType::Float32: property.Set(handle, yaml_property.as<float32>());
-          break;
-        case MetaPrimitiveType::Float64: property.Set(handle, yaml_property.as<float64>());
-          break;
-        case MetaPrimitiveType::Vector2: property.Set(handle, yaml_property.as<Vector2>());
-          break;
-        case MetaPrimitiveType::Vector3: property.Set(handle, yaml_property.as<Vector3>());
-          break;
-        case MetaPrimitiveType::Vector4: property.Set(handle, yaml_property.as<Vector4>());
-          break;
-        case MetaPrimitiveType::Quaternion: property.Set(handle, yaml_property.as<Quaternion>());
-          break;
-        case MetaPrimitiveType::Matrix4x4: property.Set(handle, yaml_property.as<Matrix4x4>());
-          break;
-        case MetaPrimitiveType::String: property.Set(handle, yaml_property.as<String>());
-          break;
-        case MetaPrimitiveType::Color: property.Set(handle, yaml_property.as<Color>());
-          break;
-        case MetaPrimitiveType::None: {
-          if (property_type.IsEnum()) {
-            switch (property_type.GetSize()) {
-              case 1: property.Set(handle, yaml_property.as<int8>());
-                break;
-              case 2: property.Set(handle, yaml_property.as<int16>());
-                break;
-              case 4: property.Set(handle, yaml_property.as<int32>());
-                break;
-              case 8: property.Set(handle, yaml_property.as<int64>());
-                break;
-              default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-                break;
-            }
-          } else if (!property_type.IsPointer() && property_type.IsClass()) {
-            // NOTE: This might not be the best way to do it as it creates unnecessary copies of the property.
-            Any property_value = property.Get(handle);
-            DeserializeType(yaml_property, world, property_type, property_value.GetData());
-            property.Set(handle, property_value);
-          } else {
-            HYP_LOG_WARN("Serializer", "Unsupported property type {} on property: {}::{}", property_type.GetName(), handle.GetType().GetName(),
-                         property.GetName());
-          }
-          break;
-        }
-        default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-          break;
+      if (!setting_property_success) {
+        HYP_LOG_ERROR(
+          "Serializer",
+          "Setting of property {}::{} of type {} was not successful",
+          instance.get_type().get_name().to_string(),
+          property.get_name().to_string(),
+          property_type.get_name().to_string()
+        );
       }
     }
   }
@@ -637,12 +560,10 @@ namespace Hyperion {
       yaml_emitter << YAML::Key << "Entity" << YAML::Value << world->GetGuid(entity).ToString();
 
       for (const ComponentInfo &component_info : component_infos) {
-        //MetaType component_type = component_info.type;
-        MetaType component_type;
+        Type component_type = *component_info.type;
         void *component = world->GetComponent(component_info.id, entity);
-        MetaHandle component_handle = MetaHandle(component_type, component);
         if (component) {
-          yaml_emitter << YAML::Key << component_type.GetName();
+          yaml_emitter << YAML::Key << component_type.get_name().to_string();
           SerializeType(yaml_emitter, world, component_type, component);
         }
       }
@@ -733,7 +654,7 @@ namespace Hyperion {
 
               ComponentId component_id = ComponentRegistry::GetId(component_type);
               void *component = world->AddComponent(component_id, entity);
-              //DeserializeType(yaml_component, world, component_type, component);
+              DeserializeType(yaml_component, world, component_type, component);
             }
           }
         }

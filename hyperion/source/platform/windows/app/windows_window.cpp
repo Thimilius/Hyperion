@@ -64,7 +64,7 @@ namespace Hyperion {
       HYP_PANIC_MESSAGE("Engine", "Failed to set window title!");
     }
     if (!SetConsoleTitleW(title_utf16)) {
-      HYP_PANIC_MESSAGE("Engine", "Failed to set console window title!");
+      //HYP_PANIC_MESSAGE("Engine", "Failed to set console window title!");
     }
   }
 

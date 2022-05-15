@@ -97,7 +97,7 @@ namespace Hyperion {
   uint32 StringUtils::GetLastUtf8CodepointSize(const String &string) {
     uint32 codepoint_size = 0;
     auto it = string.rbegin();
-    while (it != string.end()) {
+    while (it != string.rend()) {
       codepoint_size++;
       char c = *it;
       if ((c & 0b11000000) != 0b10000000) {

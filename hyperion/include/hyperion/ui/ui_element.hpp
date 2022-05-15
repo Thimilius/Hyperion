@@ -217,7 +217,9 @@ namespace Hyperion::UI {
   template<typename T>
   T *UIQuery::Query(UIElement *element, const String &name) {
     if (element) {
-      if (element->GetType().IsDerivedFrom(MetaRegistry::Resolve<T>())) {
+      Type searched_type = Type::get<T>();
+      Type element_type = element->GetType();
+      if (element_type == searched_type || element_type.is_derived_from(searched_type)) {
         if (name != "") {
           if (element->GetName() == name) {
             return static_cast<T *>(element);
@@ -228,9 +230,9 @@ namespace Hyperion::UI {
       }
 
       for (UIElement *child : element->GetHierarchy().GetChildren()) {
-        T *canidate = Query<T>(child, name);
-        if (canidate) {
-          return canidate;
+        T *candidate = Query<T>(child, name);
+        if (candidate) {
+          return candidate;
         }
       }
 
