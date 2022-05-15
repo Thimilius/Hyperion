@@ -637,7 +637,8 @@ namespace Hyperion {
       yaml_emitter << YAML::Key << "Entity" << YAML::Value << world->GetGuid(entity).ToString();
 
       for (const ComponentInfo &component_info : component_infos) {
-        MetaType component_type = component_info.type;
+        //MetaType component_type = component_info.type;
+        MetaType component_type;
         void *component = world->GetComponent(component_info.id, entity);
         MetaHandle component_handle = MetaHandle(component_type, component);
         if (component) {
@@ -722,8 +723,8 @@ namespace Hyperion {
                 continue;
               }
 
-              MetaType component_type = MetaRegistry::Resolve(component_type_string);
-              if (!component_type) {
+              Type component_type = Type::get_by_name(component_type_string);
+              if (!component_type.is_valid()) {
                 HYP_LOG_ERROR("Serializer", "Failed to resolve component type: {}", component_type_string);
                 continue;
               }
@@ -732,7 +733,7 @@ namespace Hyperion {
 
               ComponentId component_id = ComponentRegistry::GetId(component_type);
               void *component = world->AddComponent(component_id, entity);
-              DeserializeType(yaml_component, world, component_type, component);
+              //DeserializeType(yaml_component, world, component_type, component);
             }
           }
         }

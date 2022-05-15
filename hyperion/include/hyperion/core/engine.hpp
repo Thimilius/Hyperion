@@ -45,7 +45,6 @@ namespace Hyperion {
     ~Engine() = delete;
   private:
     static void Setup();
-    static void RegisterTypes();
     static uint32 Run();
     static void Exit();
 

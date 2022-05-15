@@ -489,7 +489,7 @@ namespace Hyperion::Editor {
       for (const ComponentInfo &component_info : ComponentRegistry::GetComponentInfos()) {
         void *component = world->GetComponent(component_info.id, entity);
         if (component) {
-          text += StringUtils::Format("{}\n\n", component_info.type.GetName());
+          text += StringUtils::Format("{}\n\n", component_info.type->get_name().to_string());
         }
       }
 

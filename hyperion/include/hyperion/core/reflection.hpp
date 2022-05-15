@@ -10,7 +10,7 @@ namespace Hyperion {
   using Type = rttr::type;
   using Variant = rttr::variant;
   using Instance = rttr::instance;
-
+  
   class Reflection final {
   public:
     inline static Instance CreateInstanceFromType(void *data, Type type) {

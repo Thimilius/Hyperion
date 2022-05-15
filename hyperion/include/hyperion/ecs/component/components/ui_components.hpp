@@ -2,14 +2,13 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/ecs/component/component.hpp"
 #include "hyperion/ui/ui_element.hpp"
 #include "hyperion/ui/ui_types.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::UI {
 
-  struct UIViewComponent : public IComponent {
+  struct UIViewComponent {
     UIElement *root_element = nullptr;
 
     ScalingMode scaling_mode = ScalingMode::ScaleWithScreenSize;

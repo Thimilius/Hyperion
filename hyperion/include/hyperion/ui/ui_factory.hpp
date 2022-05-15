@@ -24,12 +24,8 @@ namespace Hyperion::UI {
     static UIToggle *CreateToggle();
     static UIInputField *CreateInputField();
   private:
-    static void ReflectTypes();
-  private:
     UIFactory() = delete;
     ~UIFactory() = delete;
-  private:
-    friend class Hyperion::Engine;
   };
 
 }

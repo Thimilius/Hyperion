@@ -83,21 +83,4 @@ namespace Hyperion::UI {
     return input_field;
   }
 
-  //--------------------------------------------------------------
-  void UIFactory::ReflectTypes() {
-    MetaRegistry::Reflect<UIElement>("UIElement");
-
-    MetaRegistry::Reflect<UIButton>("UIButton")
-      .Base<UIElement>();
-
-    MetaRegistry::Reflect<UILabel>("UILabel")
-      .Base<UIElement>();
-
-    MetaRegistry::Reflect<UIToggle>("UIToggle")
-      .Base<UIElement>();
-
-    MetaRegistry::Reflect<UIInputField>("UIInputField")
-      .Base<UIElement>();
-  }
-
 }
