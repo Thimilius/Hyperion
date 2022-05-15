@@ -1,5 +1,10 @@
 # TODO
 
+## New Reflection System
+- Rewrite component registration to be explicit instead of implicit
+- Rewrite serialization
+- Remove old meta stuff
+
 ## App
 - Multiple windows
 - Internal event queue
@@ -15,6 +20,7 @@
 - SoLoud
 
 ## ECS
+- Make EntityId a distinct type
 - Hierarchy should use callbacks when adding/removing HierarchyComponent
 - Hierarchy callbacks for transform updates
 - System execution order
@@ -27,6 +33,7 @@
 - Rigidbodies
 
 ## Rendering
+- VULKAN
 - Lighting
 	- Spotlights
     - Storage buffers
@@ -47,7 +54,7 @@
 	- New (and better/prettier) syntax
 
 ## Scripting
-- .NET 5/6 or Mono?
+- .NET 6 or Mono?
 
 ## UI
 - Immediate mode API
