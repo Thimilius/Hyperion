@@ -37,6 +37,8 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   void Engine::Setup() {
+    RegisterTypes();
+    
     // We initialize the operating system first to get logging ability.
     OperatingSystem::Initialize();
 
@@ -172,8 +174,92 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
+  void Engine::RegisterTypes() {
+    Registration::class_<Vector2>(HYP_NAME_OF_TYPE(Vector2))
+      .constructor()
+      .property("x", &Vector2::x)
+      .property("y", &Vector2::y);
+
+    Registration::class_<Vector3>(HYP_NAME_OF_TYPE(Vector3))
+      .constructor()
+      .property("x", &Vector3::x)
+      .property("y", &Vector3::y)
+      .property("z", &Vector3::z);
+
+    Registration::class_<Vector4>(HYP_NAME_OF_TYPE(Vector4))
+      .constructor()
+      .property("x", &Vector4::x)
+      .property("y", &Vector4::y)
+      .property("z", &Vector4::z)
+      .property("w", &Vector4::w);
+
+    Registration::class_<Quaternion>(HYP_NAME_OF_TYPE(Quaternion))
+      .constructor()
+      .property("x", &Quaternion::x)
+      .property("y", &Quaternion::y)
+      .property("z", &Quaternion::z)
+      .property("w", &Quaternion::w);
+
+    Registration::class_<Matrix4x4>(HYP_NAME_OF_TYPE(Matrix4x4))
+      .constructor()
+      .property("m11", &Matrix4x4::m11)
+      .property("m21", &Matrix4x4::m21)
+      .property("m31", &Matrix4x4::m31)
+      .property("m41", &Matrix4x4::m41)
+      .property("m12", &Matrix4x4::m12)
+      .property("m22", &Matrix4x4::m22)
+      .property("m32", &Matrix4x4::m32)
+      .property("m42", &Matrix4x4::m42)
+      .property("m13", &Matrix4x4::m13)
+      .property("m23", &Matrix4x4::m23)
+      .property("m33", &Matrix4x4::m33)
+      .property("m43", &Matrix4x4::m43)
+      .property("m14", &Matrix4x4::m14)
+      .property("m24", &Matrix4x4::m24)
+      .property("m34", &Matrix4x4::m34)
+      .property("m44", &Matrix4x4::m44);
+    
+    Registration::class_<Color>(HYP_NAME_OF_TYPE(Color))
+      .constructor()
+      .property("r", &Color::r)
+      .property("g", &Color::g)
+      .property("b", &Color::b)
+      .property("a", &Color::a);
+
+    Registration::class_<BoundingBox>(HYP_NAME_OF_TYPE(BoundingBox))
+      .constructor()
+      .property("min", &BoundingBox::min)
+      .property("max", &BoundingBox::max);
+
+    Registration::class_<BoundingSphere>(HYP_NAME_OF_TYPE(BoundingSphere))
+      .constructor()
+      .property("origin", &BoundingSphere::origin)
+      .property("radius", &BoundingSphere::radius);
+
+    Registration::class_<Plane>(HYP_NAME_OF_TYPE(Plane))
+      .constructor()
+      .property("normal", &Plane::normal)
+      .property("distance", &Plane::distance);
+
+    Registration::class_<Ray>(HYP_NAME_OF_TYPE(Ray))
+      .constructor()
+      .property("origin", &Ray::origin)
+      .property("direction", &Ray::direction);
+
+    Registration::class_<Rect>(HYP_NAME_OF_TYPE(Rect))
+      .constructor()
+      .property("x", &Rect::x)
+      .property("y", &Rect::y)
+      .property("width", &Rect::width)
+      .property("height", &Rect::height);
+
+    ComponentRegistry::RegisterTypes();
+  }
+
+  //--------------------------------------------------------------
   uint32 Engine::Run() {
     s_application = Application::GetInstance();
+    s_application->OnRegisterTypes();
     s_application->OnSetup(s_settings);
 
     PreInitialize();

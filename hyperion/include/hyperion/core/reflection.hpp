@@ -4,13 +4,27 @@
 //---------------------- Library Includes ----------------------
 #include <rttr/registration.h>
 
+#define HYP_REFLECT_REGISTER RTTR_REGISTRATION
+
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
   using Variant = rttr::variant;
   using Instance = rttr::instance;
   using Type = rttr::type;
-  using Property = rttr::property; 
+  using Property = rttr::property;
+  using Registration = rttr::registration;
+
+  template<typename Enum_Type>
+  RTTR_INLINE auto Value(rttr::string_view name, Enum_Type value)
+  {
+    return rttr::value(name, value);
+  }
+
+  RTTR_INLINE auto Metadata(Variant key, Variant value)
+  {
+    return rttr::metadata(key, value);
+  }
   
   class Reflection final {
   public:

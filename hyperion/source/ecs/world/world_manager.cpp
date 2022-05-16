@@ -45,7 +45,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   void WorldManager::Initialize() {
-    ComponentRegistry::RegisterCoreComponents();
+    
   }
 
   //--------------------------------------------------------------

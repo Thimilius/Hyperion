@@ -6,6 +6,7 @@
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
+  class Engine;
   class WorldManager;
 }
 
@@ -47,6 +48,7 @@ namespace Hyperion {
       s_component_counter++;
     }
   private:
+    static void RegisterTypes();
     static void RegisterCoreComponents();
   private:
     inline static Map<Type, ComponentId> s_component_ids;
@@ -54,6 +56,7 @@ namespace Hyperion {
 
     inline static ComponentId s_component_counter = 0;
   private:
+    friend class Hyperion::Engine;
     friend class Hyperion::WorldManager;
   };
 

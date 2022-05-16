@@ -4,5 +4,9 @@
 //---------------------- Library Includes ----------------------
 #include <nameof/nameof.hpp>
 
-#define HYP_NAME_OF(...) NAMEOF(__VA_ARGS__)
-#define HYP_NAME_OF_TYPE(...) NAMEOF_SHORT_TYPE(__VA_ARGS__)
+//---------------------- Project Includes ----------------------
+#include "hyperion/core/string_utils.hpp"
+
+#define HYP_NAME_OF(...) String(NAMEOF(__VA_ARGS__))
+#define HYP_NAME_OF_TYPE(...) String(NAMEOF_SHORT_TYPE(__VA_ARGS__))
+#define HYP_NAME_OF_ENUM(...) String(NAMEOF_ENUM_CONST(__VA_ARGS__))
