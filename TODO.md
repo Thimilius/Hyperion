@@ -1,10 +1,5 @@
 # TODO
 
-## New Reflection System
-- Rewrite component registration to be explicit instead of implicit
-- Rewrite serialization
-- Remove old meta stuff
-
 ## App
 - Multiple windows
 - Internal event queue
@@ -20,7 +15,6 @@
 - SoLoud
 
 ## ECS
-- Make EntityId a distinct type
 - Hierarchy should use callbacks when adding/removing HierarchyComponent
 - Hierarchy callbacks for transform updates
 - System execution order

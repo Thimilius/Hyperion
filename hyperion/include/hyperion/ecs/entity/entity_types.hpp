@@ -12,11 +12,26 @@ namespace Hyperion {
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
-
-  using EntityId = uint64;
+  
+  using EntityIdType = uint64;
   using EntityIndex = uint32;
   using EntityVersion = uint32;
   using EntityGuid = Guid;
+
+  struct EntityId {
+    uint64 id;
+
+    EntityId() : id(0xFFFFFFFF) { }
+    EntityId(EntityIdType id) : id(id) { }
+
+    bool8 operator==(const EntityId &other) const { return id == other.id; }
+    bool8 operator!=(const EntityId &other) const { return !(*this == other); }
+    operator uint64() const { return id; }
+  };
+
+  namespace Entity {
+    inline static const EntityId EMPTY = { 0xFFFFFFFF };
+  }
 
   using EntityCallback = Delegate<void(World *, EntityId)>;
 
@@ -24,10 +39,6 @@ namespace Hyperion {
     EntityId id;
     EntityGuid guid;
   };
-
-  namespace Entity {
-    inline static constexpr EntityId EMPTY = 0xFFFFFFFF;
-  }
 
   enum class EntityPrimitive {
     Empty,
@@ -47,4 +58,22 @@ namespace Hyperion {
     Sprite
   };
 
+}
+
+namespace std {
+  
+  template <>
+    struct std::formatter<Hyperion::EntityId> : std::formatter<Hyperion::EntityIdType> {
+    auto format(Hyperion::EntityId id, std::format_context& ctx) {
+      return std::formatter<Hyperion::EntityIdType>::format(id.id, ctx);
+    }
+  };
+
+  template<>
+  struct hash<Hyperion::EntityId> {
+    std::size_t operator()(const Hyperion::EntityId &id) const {
+      return hash<Hyperion::EntityIdType>()(id.id);
+    }
+  };
+  
 }

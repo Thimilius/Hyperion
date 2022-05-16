@@ -49,7 +49,7 @@ namespace Hyperion::Physics {
       btVector3 normal = result_callback.m_hitNormalWorld;
       result.point = Vector3(point.x(), point.y(), point.z());
       result.normal = Vector3(normal.x(), normal.y(), normal.z());
-      result.entity = reinterpret_cast<EntityId>(result_callback.m_collisionObject->getUserPointer());
+      result.entity = reinterpret_cast<EntityIdType>(result_callback.m_collisionObject->getUserPointer());
       return true;
     } else {
       return false;
@@ -163,7 +163,7 @@ namespace Hyperion::Physics {
 
   //--------------------------------------------------------------
   void BulletPhysicsWorld::AddCollider(ColliderStorage &collider_storage, EntityId entity, btCollisionObject *collision_object) {
-    collision_object->setUserPointer(reinterpret_cast<void *>(entity));
+    collision_object->setUserPointer(reinterpret_cast<void *>(entity.id));
     m_collision_world->addCollisionObject(collision_object);
     collider_storage.Insert(entity, collision_object);
   }
