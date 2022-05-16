@@ -36,6 +36,7 @@ project "hyperion"
 		"%{prj.location}/include",
 		
 		"%{prj.location}/vendor/glad/include",
+		"%{prj.location}/vendor/nameof/include",
 		"%{prj.location}/vendor/vulkan/include",
 	}
 	includedirs { package_assimp_includedirs }
@@ -72,6 +73,7 @@ function linkhyperion(path)
 	filter { }
 
 	includedirs { path .. "hyperion/include" }
+	includedirs { path .. "hyperion/vendor/nameof/include" }
 	includedirs { path .. "hyperion/vendor/optick/include" }
 	includedirs { package_rttr_includedirs }
 

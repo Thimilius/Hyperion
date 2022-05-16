@@ -18,8 +18,8 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/bit.hpp"
 #include "hyperion/core/assert.hpp"
-#include "hyperion/core/collections/collections.hpp"
 #include "hyperion/core/enum.hpp"
+#include "hyperion/core/name_of.hpp"
 #include "hyperion/core/error.hpp"
 #include "hyperion/core/non_copyable.hpp"
 #include "hyperion/core/types.hpp"
@@ -29,5 +29,6 @@
 #include "hyperion/core/delegate.hpp"
 #include "hyperion/core/reflection.hpp"
 #include "hyperion/core/object.hpp"
+#include "hyperion/core/collections/collections.hpp"
 #include "hyperion/core/profiling/profile.hpp"
 #include "hyperion/core/threading/scope_lock.hpp"
