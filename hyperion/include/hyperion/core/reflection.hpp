@@ -29,9 +29,13 @@ namespace Hyperion {
   class Reflection final {
   public:
     inline static Instance CreateInstanceFromRaw(Type type, void *object) {
-      Instance i = object;
-      (reinterpret_cast<rttr::detail::data_address_container *>(&i))->m_type = type;
-      return i;
+      Instance instance = object;
+      (reinterpret_cast<rttr::detail::data_address_container *>(&instance))->m_type = type;
+      return instance;
+    }
+
+    inline static void *GetVariantData(Variant &variant) {
+      return rttr::detail::unsafe_variant_cast<void *>(&variant);
     }
   private:
     Reflection() = delete;

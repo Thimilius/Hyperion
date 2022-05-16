@@ -87,6 +87,10 @@ namespace Hyperion::Editor {
     EntityId child = s_world->CreateEntity(EntityPrimitive::Sphere);
     s_world->GetComponent<LocalTransformComponent>(child)->position = Vector3(2.0f, 0.0f, 0.0f);
     s_world->GetHierarchy()->SetParent(child, parent);
+
+    String yaml = WorldSerializer::Serialize(s_world);
+    HYP_TRACE("\n{}", yaml);
+    WorldSerializer::Deserialize(yaml);
     
     WorldManager::SetActiveWorld(s_world);
 

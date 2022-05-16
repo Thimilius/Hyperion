@@ -111,13 +111,13 @@ namespace Hyperion {
       
       Registration::class_<DerivedTransformComponent>(HYP_NAME_OF_TYPE(DerivedTransformComponent))
         .constructor<>()
-        .property("position", &DerivedTransformComponent::position)
-        .property("rotation", &DerivedTransformComponent::rotation)
-        .property("scale", &DerivedTransformComponent::scale);
+        .property("position", &DerivedTransformComponent::position)(Metadata(PropertyAttribute::Serialize, false))
+        .property("rotation", &DerivedTransformComponent::rotation)(Metadata(PropertyAttribute::Serialize, false))
+        .property("scale", &DerivedTransformComponent::scale)(Metadata(PropertyAttribute::Serialize, false));
 
       Registration::class_<LocalToWorldComponent>(HYP_NAME_OF_TYPE(LocalToWorldComponent))
         .constructor<>()
-        .property("local_to_world", &LocalToWorldComponent::local_to_world);
+        .property("local_to_world", &LocalToWorldComponent::local_to_world)(Metadata(PropertyAttribute::Serialize, false));
 
       Registration::class_<HierarchyComponent>(HYP_NAME_OF_TYPE(HierarchyComponent))
         .constructor<>()

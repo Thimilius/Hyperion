@@ -431,15 +431,18 @@ namespace Hyperion {
       } else if (property_type.is_pointer()) {
         void *pointer = property_value.convert<void *>();
         SerializeType(yaml_emitter, world, property_type, pointer);
+      } else if (property_type.is_class()) {
+        void *property_object = Reflection::GetVariantData(property_value);
+        SerializeType(yaml_emitter, world, property_type, property_object);
       } else {
         HYP_LOG_WARN(
           "Serializer",
           "Unsupported property type {} on property: {}::{}",
           property_type.get_name().to_string(),
           instance.get_type().get_name().to_string(),
-          property.get_name().to_string());
+          property.get_name().to_string()
+        );
       }
-      
     }
     
     yaml_emitter << YAML::EndMap;
@@ -485,13 +488,17 @@ namespace Hyperion {
         }
       } else if (property_type.is_enumeration()) {
         uint64 enum_size = property_type.get_sizeof();
+        Variant property_enum_variant;
         switch (enum_size) {
-          case 1: setting_property_success = property.set_value(instance, yaml_property.as<int8>()); break;
-          case 2: setting_property_success = property.set_value(instance, yaml_property.as<int16>()); break;
-          case 4: setting_property_success = property.set_value(instance, yaml_property.as<int32>()); break;
-          case 8: setting_property_success = property.set_value(instance, yaml_property.as<int64>()); break;
+          case 1: property_enum_variant = yaml_property.as<int8>(); break;
+          case 2: property_enum_variant = yaml_property.as<int16>(); break;
+          case 4: property_enum_variant = yaml_property.as<int32>(); break;
+          case 8: property_enum_variant = yaml_property.as<int64>(); break;
           default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
         }
+        const Type &property_type_reference = property_type;
+        property_enum_variant.convert(property_type_reference);
+        setting_property_success = property.set_value(instance, property_enum_variant);
       } else if (property_type == Type::get<String>()) {
         setting_property_success = property.set_value(instance, yaml_property.as<String>());
       } else if (property_type == Type::get<Vector2>()) {
@@ -510,6 +517,12 @@ namespace Hyperion {
         // NOTE: This might not be the best way to do it as it creates unnecessary copies of the property.
         Variant property_value = property.get_value(instance);
         void *pointer = property_value.convert<void *>();
+        DeserializeType(yaml_property, world, property_type, pointer);
+        setting_property_success = property.set_value(instance, property_value);
+      } else if (property_type.is_class()) {
+        // NOTE: This might not be the best way to do it as it creates unnecessary copies of the property.
+        Variant property_value = property.get_value(instance);
+        void *pointer = Reflection::GetVariantData(property_value);
         DeserializeType(yaml_property, world, property_type, pointer);
         setting_property_success = property.set_value(instance, property_value);
       } else {
