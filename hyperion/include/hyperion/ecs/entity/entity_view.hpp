@@ -25,17 +25,17 @@ namespace Hyperion {
   struct ExcludeComponents : public ComponentTypesList<Types ...> { };
 
   template<typename... Types>
-  class WorldView;
+  class EntityView;
 
   template<typename... Component, typename... Exclude>
-  class WorldView<GetComponents<Component ...>, ExcludeComponents<Exclude ...>> {
+  class EntityView<GetComponents<Component ...>, ExcludeComponents<Exclude ...>> {
   private:
     inline static constexpr uint64 COMPONENT_IDS_LENGTH = (sizeof...(Component));
     inline static constexpr uint64 EXCLUDE_IDS_LENGTH = (sizeof...(Exclude));
 
     inline static constexpr bool8 ALL_COMPONENTS = (sizeof...(Component)) == 0;
 
-    static_assert((COMPONENT_IDS_LENGTH > 0) || (ALL_COMPONENTS && EXCLUDE_IDS_LENGTH == 0), "Exclude only is not supported");
+    static_assert((COMPONENT_IDS_LENGTH > 0) || (ALL_COMPONENTS && EXCLUDE_IDS_LENGTH == 0), "Exclude only is not supported!");
   public:
     class Iterator {
     public:
@@ -104,7 +104,7 @@ namespace Hyperion {
     };
 
   public:
-    WorldView(World *world) : m_world(world) {
+    EntityView(World *world) : m_world(world) {
       uint64 smallest_entity_count = UINT64_MAX;
       for (uint64 i = 0; i < COMPONENT_IDS_LENGTH; i++) {
         ComponentPool &component_pool = m_world->m_storage.component_pools[COMPONENT_IDS[i]];
@@ -116,7 +116,7 @@ namespace Hyperion {
     }
 
   public:
-    const Iterator begin() const {
+    Iterator begin() const {
       EntityIndex index = 0;
       if constexpr (!ALL_COMPONENTS) {
         while (index < m_smallest_pool->GetEntityCount()) {
@@ -152,7 +152,7 @@ namespace Hyperion {
       return Iterator(index, m_world, m_smallest_pool);
     }
 
-    const Iterator end() const {
+    Iterator end() const {
       EntityIndex index;
       if constexpr (ALL_COMPONENTS) {
         index = static_cast<EntityIndex>(m_world->m_storage.entities.GetLength());

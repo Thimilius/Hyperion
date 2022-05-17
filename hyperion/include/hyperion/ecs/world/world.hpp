@@ -6,9 +6,9 @@
 #include "hyperion/ecs/component/component_pool.hpp"
 #include "hyperion/ecs/entity/entity_archetype.hpp"
 #include "hyperion/ecs/entity/entity_utilities.hpp"
+#include "hyperion/ecs/entity/entity_view.hpp"
 #include "hyperion/ecs/world/world_environment.hpp"
 #include "hyperion/ecs/world/world_hierarchy.hpp"
-#include "hyperion/ecs/world/world_view.hpp"
 #include "hyperion/physics/physics_world.hpp"
 
 //-------------------- Forward Declarations --------------------
@@ -226,8 +226,8 @@ namespace Hyperion {
     }
 
     template<typename... Component, typename... Exclude>
-    WorldView<GetComponents<Component ...>, ExcludeComponents<Exclude ...>> GetView(ExcludeComponents<Exclude ...>  = { }) {
-      return WorldView<GetComponents<Component ...>, ExcludeComponents<Exclude ...>>(this);
+    EntityView<GetComponents<Component ...>, ExcludeComponents<Exclude ...>> GetView(ExcludeComponents<Exclude ...>  = { }) {
+      return EntityView<GetComponents<Component ...>, ExcludeComponents<Exclude ...>>(this);
     }
 
     inline void RegisterOnEntityCreated(const EntityCallback &callback) {
@@ -286,10 +286,9 @@ namespace Hyperion {
 
     Physics::IPhysicsWorld *m_physics_world;
   private:
-  private:
     friend class Hyperion::WorldManager;
     template<typename... Types>
-    friend class Hyperion::WorldView;
+    friend class Hyperion::EntityView;
   };
 
 }

@@ -31,7 +31,6 @@ namespace Hyperion {
       KeepChildren,
       RemoveChildren
     };
-
   public:
     EntityId GetRootCount() const { return m_root_count; }
     EntityId GetFirstRoot() const { return m_first_root; }
