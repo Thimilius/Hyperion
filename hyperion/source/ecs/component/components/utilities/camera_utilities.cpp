@@ -18,7 +18,7 @@ namespace Hyperion::Rendering {
     float32 display_height = static_cast<float32>(Display::GetHeight());
 
     float32 x = screen_point.x / display_width * 2.0f - 1.0f;
-    float32 y = screen_point.y / display_width * 2.0f - 1.0f;
+    float32 y = screen_point.y / display_height * 2.0f - 1.0f;
     Vector4 world = Vector4(x, y, screen_point.z * 2.0f - 1.0f, 1.0f);
     world = camera->inverse_view_projection_matrix * world;
     world = world * (1.0f / world.w);
@@ -80,7 +80,7 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void CameraUtilities::RecalculateMatricies(CameraComponent *camera, DerivedTransformComponent *derived_transform) {
+  void CameraUtilities::RecalculateMatrices(CameraComponent *camera, DerivedTransformComponent *derived_transform) {
     Vector3 position = derived_transform->position;
     Vector3 up = TransformUtilities::GetUp(derived_transform);
     Vector3 forward = TransformUtilities::GetForward(derived_transform);

@@ -20,9 +20,8 @@ using namespace Hyperion::Rendering;
 namespace Hyperion {
 
   //--------------------------------------------------------------
-  void FirstPersonCameraController::Reset(World *world) {
-    DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(m_camera);
-    CameraComponent *camera = world->GetComponent<CameraComponent>(m_camera);
+  void FirstPersonCameraController::Reset(EntityManager *manager) {
+    CameraComponent *camera = manager->GetComponent<CameraComponent>(m_camera);
 
     Vector3 position = Vector3(2, 2, 2);
 
@@ -38,16 +37,16 @@ namespace Hyperion {
     float32 orthographic_size = 2.75f;
     m_orthographic_size_target = orthographic_size;
 
-    TransformUtilities::SetPosition(world, m_camera, position);
+    TransformUtilities::SetPosition(manager, m_camera, position);
 
     camera->fov = fov;
     camera->orthographic_size = orthographic_size;
   }
 
   //--------------------------------------------------------------
-  void FirstPersonCameraController::Update(World *world, float32 delta_time) {
-    DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(m_camera);
-    CameraComponent *camera = world->GetComponent<CameraComponent>(m_camera);
+  void FirstPersonCameraController::Update(EntityManager *manager, float32 delta_time) {
+    DerivedTransformComponent *derived_transform = manager->GetComponent<DerivedTransformComponent>(m_camera);
+    CameraComponent *camera = manager->GetComponent<CameraComponent>(m_camera);
 
     Vector3 position = derived_transform->position;
     Vector3 euler_angles = derived_transform->rotation.ToEulerAngles();
@@ -167,16 +166,15 @@ namespace Hyperion {
       m_velocity -= m_friction * delta_time * m_velocity;
     }
 
-    TransformUtilities::SetPosition(world, m_camera, position);
-    TransformUtilities::SetRotation(world, m_camera, Quaternion::FromEulerAngles(euler_angles));
+    TransformUtilities::SetPosition(manager, m_camera, position);
+    TransformUtilities::SetRotation(manager, m_camera, Quaternion::FromEulerAngles(euler_angles));
     camera->fov = fov;
     camera->orthographic_size = orthographic_size;
   }
 
   //--------------------------------------------------------------
-  void LookAroundCameraController::Update(World *world, float32 delta_time) {
-    DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(m_camera);
-    CameraComponent *camera = world->GetComponent<CameraComponent>(m_camera);
+  void LookAroundCameraController::Update(EntityManager *manager, float32 delta_time) {
+    DerivedTransformComponent *derived_transform = manager->GetComponent<DerivedTransformComponent>(m_camera);
 
     Vector3 right = TransformUtilities::GetRight(derived_transform);
     Vector3 up = TransformUtilities::GetUp(derived_transform);
@@ -193,7 +191,7 @@ namespace Hyperion {
         position += right * mouse_axis_x * m_xz_plane_distance * m_movement_speed;
         position += (up + forward).Normalized() * mouse_axis_y * m_xz_plane_distance * m_movement_speed;
 
-        TransformUtilities::SetPosition(world, m_camera, position);
+        TransformUtilities::SetPosition(manager, m_camera, position);
       }
     }
 
@@ -213,10 +211,10 @@ namespace Hyperion {
       m_xz_plane_distance = Math::Lerp(m_xz_plane_distance, m_zoom, 15.0f * delta_time);
 
       Vector3 plane_position = GetXZPlanePosition(position, forward);
-      Vector3 position = (rotation * Vector3(0, 0, m_xz_plane_distance)) + plane_position;
+      Vector3 new_position = (rotation * Vector3(0, 0, m_xz_plane_distance)) + plane_position;
 
-      TransformUtilities::SetPosition(world, m_camera, position);
-      TransformUtilities::SetRotation(world, m_camera, rotation);
+      TransformUtilities::SetPosition(manager, m_camera, new_position);
+      TransformUtilities::SetRotation(manager, m_camera, rotation);
 
       m_rotation_velocity_x = Math::Lerp(m_rotation_velocity_x, 0.0f, 50.0f * delta_time);
       m_rotation_velocity_y = Math::Lerp(m_rotation_velocity_y, 0.0f, 50.0f * delta_time);
@@ -225,17 +223,16 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  void LookAroundCameraController::Reset(World *world) {
-    DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(m_camera);
-    CameraComponent *camera = world->GetComponent<CameraComponent>(m_camera);
+  void LookAroundCameraController::Reset(EntityManager *manager) {
+    DerivedTransformComponent *derived_transform = manager->GetComponent<DerivedTransformComponent>(m_camera);
 
     Vector3 euler_angles = Vector3(-45, 45, 0);
 
     // We have to set the rotation first, so that the conversion to world position is correct.
     Quaternion rotation = Quaternion::FromEulerAngles(euler_angles);
-    TransformUtilities::SetRotation(world, m_camera, rotation);
+    TransformUtilities::SetRotation(manager, m_camera, rotation);
     Vector3 position = GetLookAtPosition(Vector3::Zero(), derived_transform->position, TransformUtilities::GetForward(derived_transform));
-    TransformUtilities::SetPosition(world, m_camera, position);
+    TransformUtilities::SetPosition(manager, m_camera, position);
 
     m_rotation_axis_x = euler_angles.x;
     m_rotation_axis_y = euler_angles.y;
@@ -246,7 +243,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   Vector3 LookAroundCameraController::GetPositionUnderMouse(CameraComponent *camera, DerivedTransformComponent *derived_transform) const {
-    CameraUtilities::RecalculateMatricies(camera, derived_transform);
+    CameraUtilities::RecalculateMatrices(camera, derived_transform);
     Ray ray = CameraUtilities::ScreenPointToRay(camera, derived_transform, Input::GetMousePosition().ToFloat());
     float32 hit_distance = 0;
     m_xz_plane.Intersects(ray, hit_distance);

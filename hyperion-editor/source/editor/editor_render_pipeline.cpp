@@ -6,19 +6,15 @@
 #include <hyperion/core/app/input.hpp>
 #include <hyperion/core/app/display.hpp>
 #include <hyperion/core/math/math.hpp>
-#include <hyperion/ecs/component/components/core_components.hpp>
 #include <hyperion/ecs/component/components/render_components.hpp>
-#include <hyperion/ecs/system/systems/render_systems.hpp>
 #include <hyperion/ecs/world/world.hpp>
 #include <hyperion/render/render_engine.hpp>
 #include <hyperion/render/pipelines/forward/forward_render_pipeline.hpp>
 #include <hyperion/ui/ui_element.hpp>
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/editor/editor_application.hpp"
 #include "hyperion/editor/editor_camera.hpp"
 #include "hyperion/editor/editor_selection.hpp"
-#include "hyperion/editor/editor_style.hpp"
 #include "hyperion/editor/editor_ui.hpp"
 
 //------------------------- Namespaces -------------------------

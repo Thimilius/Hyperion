@@ -70,12 +70,12 @@ namespace Hyperion::Editor {
       header->GetStyle().SetColor(EditorStyle::COLOR_NORMAL_DARK);
       header->GetHierarchy().SetParent(s_root_element);
 
-      UIElement *header_seperator = UIFactory::CreateElement();
-      header_seperator->SetAnchorPreset(AnchorPreset::TopStretchHorizontal);
-      header_seperator->SetSize(Vector2(0.0f, 1.0f));
-      header_seperator->SetPosition(Vector2(0.0f, -static_cast<float32>(EditorStyle::HEADER_WIDTH - 1)));
-      header_seperator->GetStyle().SetColor(EditorStyle::COLOR_HIGHLIGHT);
-      header_seperator->GetHierarchy().SetParent(s_root_element);
+      UIElement *header_separator = UIFactory::CreateElement();
+      header_separator->SetAnchorPreset(AnchorPreset::TopStretchHorizontal);
+      header_separator->SetSize(Vector2(0.0f, 1.0f));
+      header_separator->SetPosition(Vector2(0.0f, -static_cast<float32>(EditorStyle::HEADER_WIDTH - 1)));
+      header_separator->GetStyle().SetColor(EditorStyle::COLOR_HIGHLIGHT);
+      header_separator->GetHierarchy().SetParent(s_root_element);
 
       UIElement *header_left = UIFactory::CreateElement();
       header_left->SetAnchorPreset(AnchorPreset::StretchAll);
@@ -224,12 +224,12 @@ namespace Hyperion::Editor {
       footer->GetStyle().SetColor(EditorStyle::COLOR_NORMAL_DARK);
       footer->GetHierarchy().SetParent(s_root_element);
 
-      UIElement *footer_seperator = UIFactory::CreateElement();
-      footer_seperator->SetAnchorPreset(AnchorPreset::BottomStretchHorizontal);
-      footer_seperator->SetSize(Vector2(0.0f, 1.0f));
-      footer_seperator->SetPosition(Vector2(0.0f, static_cast<float32>(EditorStyle::FOOTER_WIDTH - 1)));
-      footer_seperator->GetStyle().SetColor(EditorStyle::COLOR_HIGHLIGHT);
-      footer_seperator->GetHierarchy().SetParent(s_root_element);
+      UIElement *footer_separator = UIFactory::CreateElement();
+      footer_separator->SetAnchorPreset(AnchorPreset::BottomStretchHorizontal);
+      footer_separator->SetSize(Vector2(0.0f, 1.0f));
+      footer_separator->SetPosition(Vector2(0.0f, static_cast<float32>(EditorStyle::FOOTER_WIDTH - 1)));
+      footer_separator->GetStyle().SetColor(EditorStyle::COLOR_HIGHLIGHT);
+      footer_separator->GetHierarchy().SetParent(s_root_element);
     }
 
     // Preview Panel.
@@ -349,20 +349,21 @@ namespace Hyperion::Editor {
 
     {
       World *world = EditorApplication::GetWorld();
+      EntityManager *manager = world->GetEntityManager();
 
       EntityCallback created_callback;
       created_callback.Connect<EditorUI::OnEntityCreated>();
-      world->RegisterOnEntityCreated(created_callback);
+      manager->RegisterOnEntityCreated(created_callback);
 
       EntityCallback destroyed_callback;
       destroyed_callback.Connect<EditorUI::OnEntityDestroyed>();
-      world->RegisterOnEntityDestroyed(destroyed_callback);
+      manager->RegisterOnEntityDestroyed(destroyed_callback);
 
       EntityId root = world->GetHierarchy()->GetFirstRoot();
       uint64 root_count = world->GetHierarchy()->GetRootCount();
       for (uint64 i = 0; i < root_count; i++) {
-        HierarchyComponent *root_hierarchy = world->GetComponent<HierarchyComponent>(root);
-        UpdateHierarchyLabelBranch(world, root, root_hierarchy, 0);
+        HierarchyComponent *root_hierarchy = manager->GetComponent<HierarchyComponent>(root);
+        UpdateHierarchyLabelBranch(manager, root, root_hierarchy, 0);
         root = root_hierarchy->next_sibling;
       }
 
@@ -410,12 +411,12 @@ namespace Hyperion::Editor {
   }
 
   //--------------------------------------------------------------
-  void EditorUI::OnEntityCreated(World *world, EntityId id) {
+  void EditorUI::OnEntityCreated(EntityManager *manager, EntityId id) {
     HYP_TRACE("Created Entity");
   }
 
   //--------------------------------------------------------------
-  void EditorUI::OnEntityDestroyed(World *world, EntityId id) {
+  void EditorUI::OnEntityDestroyed(EntityManager *manager, EntityId id) {
     HYP_TRACE("Destroyed Entity");
   }
 
@@ -440,10 +441,10 @@ namespace Hyperion::Editor {
   void EditorUI::UpdateHierarchyLabel() { }
 
   //--------------------------------------------------------------
-  void EditorUI::UpdateHierarchyLabelBranch(World *world, EntityId branch, HierarchyComponent *branch_hierarchy, uint32 depth) {
+  void EditorUI::UpdateHierarchyLabelBranch(EntityManager *manager, EntityId branch, HierarchyComponent *branch_hierarchy, uint32 depth) {
     String hierarchy_text;
 
-    NameComponent *name = world->GetComponent<NameComponent>(branch);
+    NameComponent *name = manager->GetComponent<NameComponent>(branch);
     for (uint32 i = 0; i < depth; i++) {
       hierarchy_text += "\t";
     }
@@ -473,8 +474,8 @@ namespace Hyperion::Editor {
 
     EntityId child = branch_hierarchy->first_child;
     for (uint64 i = 0; i < branch_hierarchy->child_count; i++) {
-      HierarchyComponent *child_hierarchy = world->GetComponent<HierarchyComponent>(child);
-      UpdateHierarchyLabelBranch(world, child, child_hierarchy, depth + 1);
+      HierarchyComponent *child_hierarchy = manager->GetComponent<HierarchyComponent>(child);
+      UpdateHierarchyLabelBranch(manager, child, child_hierarchy, depth + 1);
       child = child_hierarchy->next_sibling;
     }
   }
@@ -483,11 +484,12 @@ namespace Hyperion::Editor {
   void EditorUI::UpdateSelectionLabel() {
     if (EditorSelection::HasSelection()) {
       World *world = EditorApplication::GetWorld();
+      EntityManager *manager = world->GetEntityManager();
       EntityId entity = EditorSelection::GetSelection();
 
-      String text = StringUtils::Format("Entity:\nId: {} - Guid: {}\n\n", entity, world->GetGuid(entity).ToString());
+      String text = StringUtils::Format("Entity:\nId: {} - Guid: {}\n\n", entity, manager->GetGuid(entity).ToString());
       for (const ComponentInfo &component_info : ComponentRegistry::GetComponentInfos()) {
-        void *component = world->GetComponent(component_info.id, entity);
+        void *component = manager->GetComponent(component_info.id, entity);
         if (component) {
           text += StringUtils::Format("{}\n\n", component_info.type->get_name().to_string());
         }

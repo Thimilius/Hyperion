@@ -5,9 +5,9 @@
 #include <hyperion/core/app/application.hpp>
 
 //-------------------- Definition Namespace --------------------
-namespace Medhex {
+namespace Sandbox {
 
-  class MedhexApplication : public Hyperion::Application {
+  class SandboxApplication final : public Hyperion::Application {
   protected:
     void OnSetup(Hyperion::ApplicationSettings &settings) override;
     void OnInitialize() override;

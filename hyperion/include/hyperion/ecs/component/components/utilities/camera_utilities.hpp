@@ -19,7 +19,7 @@ namespace Hyperion::Rendering {
     static Vector2 WorldToScreenPoint(CameraComponent *camera, Vector3 world_point);
     static Ray ScreenPointToRay(CameraComponent *camera, DerivedTransformComponent *derived_transform, Vector2 screen_point);
 
-    static void RecalculateMatricies(CameraComponent *camera, DerivedTransformComponent *derived_transform);
+    static void RecalculateMatrices(CameraComponent *camera, DerivedTransformComponent *derived_transform);
     static CameraViewport CalculateViewportFromClipping(CameraViewportClipping viewport_clipping);
 
     static Array<Plane> ExtractFrustumPlanes(Matrix4x4 view_projection);

@@ -6,7 +6,7 @@
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
-  class World;
+  class EntityManager;
 }
 
 //-------------------- Definition Namespace --------------------
@@ -27,7 +27,7 @@ namespace Hyperion {
     ComponentDestructor destructor;
   };
 
-  using ComponentCallback = Delegate<void(World *, EntityId)>;
+  using ComponentCallback = Delegate<void(EntityManager *, EntityId)>;
 
   struct ComponentCallbacks {
     Array<ComponentCallback> added;

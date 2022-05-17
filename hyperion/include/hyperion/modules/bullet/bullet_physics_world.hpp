@@ -8,8 +8,12 @@
 #include "hyperion/physics/physics_world.hpp"
 
 //-------------------- Forward Declarations --------------------
-namespace Hyperion::Physics {
-  class BulletPhysicsDriver;
+namespace Hyperion {
+  class World;
+  
+  namespace Physics {
+    class BulletPhysicsDriver;
+  }
 }
 
 //-------------------- Definition Namespace --------------------
@@ -20,20 +24,21 @@ namespace Hyperion::Physics {
   class BulletPhysicsWorld final : public IPhysicsWorld {
   public:
     BulletPhysicsWorld(World *world, BulletPhysicsDriver *driver);
-    ~BulletPhysicsWorld();
+    ~BulletPhysicsWorld() override;
 
     bool8 Raycast(Ray ray, RaycastResult &result, float32 distance) override;
 
-    void UpdateBoxCollider(World *world, EntityId entity, BoxColliderComponent *box_collider, DerivedTransformComponent *derived_transform) override;
-    void UpdateBoxColliderTransform(World *world, EntityId entity, BoxColliderComponent *box_collider, DerivedTransformComponent *derived_transform) override;
-    void UpdateSphereCollider(World *world, EntityId entity, SphereColliderComponent *sphere_collider) override;
-    void UpdateSphereColliderTransform(World *world, EntityId entity, SphereColliderComponent *sphere_collider,
+    void UpdateBoxCollider(EntityManager *manager, EntityId entity, BoxColliderComponent *box_collider, DerivedTransformComponent *derived_transform) override;
+    void UpdateBoxColliderTransform(EntityManager *manager, EntityId entity, BoxColliderComponent *box_collider,
+                                    DerivedTransformComponent *derived_transform) override;
+    void UpdateSphereCollider(EntityManager *manager, EntityId entity, SphereColliderComponent *sphere_collider) override;
+    void UpdateSphereColliderTransform(EntityManager *manager, EntityId entity, SphereColliderComponent *sphere_collider,
                                        DerivedTransformComponent *derived_transform) override;
   private:
-    void AddBoxCollider(World *world, EntityId entity);
-    void RemoveBoxCollider(World *world, EntityId entity);
-    void AddSphereCollider(World *world, EntityId entity);
-    void RemoveSphereCollider(World *world, EntityId entity);
+    void AddBoxCollider(EntityManager *manager, EntityId entity);
+    void RemoveBoxCollider(EntityManager *manager, EntityId entity);
+    void AddSphereCollider(EntityManager *manager, EntityId entity);
+    void RemoveSphereCollider(EntityManager *manager, EntityId entity);
 
     void AddCollider(ColliderStorage &collider_storage, EntityId entity, btCollisionObject *collision_object);
     void RemoveCollider(ColliderStorage &collider_storage, EntityId entity);

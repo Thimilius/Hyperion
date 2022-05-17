@@ -17,10 +17,11 @@ namespace Hyperion::Physics {
     btCollisionConfiguration *collision_configuration = driver->m_collision_configuration;
     m_collision_world = new btCollisionWorld(new btCollisionDispatcher(collision_configuration), new btDbvtBroadphase(), collision_configuration);
 
-    world->RegisterOnComponentAdded<BoxColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::AddBoxCollider>, this });
-    world->RegisterOnComponentRemoved<BoxColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::RemoveBoxCollider>, this });
-    world->RegisterOnComponentAdded<SphereColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::AddSphereCollider>, this });
-    world->RegisterOnComponentRemoved<SphereColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::RemoveSphereCollider>, this });
+    EntityManager *manager = world->GetEntityManager();
+    manager->RegisterOnComponentAdded<BoxColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::AddBoxCollider>, this });
+    manager->RegisterOnComponentRemoved<BoxColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::RemoveBoxCollider>, this });
+    manager->RegisterOnComponentAdded<SphereColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::AddSphereCollider>, this });
+    manager->RegisterOnComponentRemoved<SphereColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::RemoveSphereCollider>, this });
   }
 
   //--------------------------------------------------------------
@@ -57,7 +58,7 @@ namespace Hyperion::Physics {
   }
 
   //--------------------------------------------------------------
-  void BulletPhysicsWorld::UpdateBoxCollider(World *world, EntityId entity, BoxColliderComponent *box_collider, DerivedTransformComponent *derived_transform) {
+  void BulletPhysicsWorld::UpdateBoxCollider(EntityManager *manager, EntityId entity, BoxColliderComponent *box_collider, DerivedTransformComponent *derived_transform) {
     HYP_PROFILE_SCOPE("BulletPhysicsWorld.UpdateBoxCollider");
 
     btCollisionObject *collision_object = m_box_colliders.Get(entity);
@@ -77,7 +78,7 @@ namespace Hyperion::Physics {
   }
 
   //--------------------------------------------------------------
-  void BulletPhysicsWorld::UpdateBoxColliderTransform(World *world, EntityId entity, BoxColliderComponent *box_collider,
+  void BulletPhysicsWorld::UpdateBoxColliderTransform(EntityManager *manager, EntityId entity, BoxColliderComponent *box_collider,
                                                       DerivedTransformComponent *derived_transform) {
     HYP_PROFILE_SCOPE("BulletPhysicsWorld.UpdateBoxColliderTransform");
 
@@ -90,7 +91,7 @@ namespace Hyperion::Physics {
   }
 
   //--------------------------------------------------------------
-  void BulletPhysicsWorld::UpdateSphereCollider(World *world, EntityId entity, SphereColliderComponent *sphere_collider) {
+  void BulletPhysicsWorld::UpdateSphereCollider(EntityManager *manager, EntityId entity, SphereColliderComponent *sphere_collider) {
     HYP_PROFILE_SCOPE("BulletPhysicsWorld.UpdateSphereCollider");
 
     btCollisionObject *collision_object = m_sphere_colliders.Get(entity);
@@ -102,7 +103,7 @@ namespace Hyperion::Physics {
   }
 
   //--------------------------------------------------------------
-  void BulletPhysicsWorld::UpdateSphereColliderTransform(World *world, EntityId entity, SphereColliderComponent *sphere_collider,
+  void BulletPhysicsWorld::UpdateSphereColliderTransform(EntityManager *manager, EntityId entity, SphereColliderComponent *sphere_collider,
                                                          DerivedTransformComponent *derived_transform) {
     HYP_PROFILE_SCOPE("BulletPhysicsWorld.UpdateSphereColliderTransform");
 
@@ -114,11 +115,11 @@ namespace Hyperion::Physics {
   }
 
   //--------------------------------------------------------------
-  void BulletPhysicsWorld::AddBoxCollider(World *world, EntityId entity) {
+  void BulletPhysicsWorld::AddBoxCollider(EntityManager *manager, EntityId entity) {
     HYP_PROFILE_SCOPE("BulletPhysicsWorld.AddBoxCollider");
 
-    BoxColliderComponent *box_collider = world->GetComponent<BoxColliderComponent>(entity);
-    DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(entity);
+    BoxColliderComponent *box_collider = manager->GetComponent<BoxColliderComponent>(entity);
+    DerivedTransformComponent *derived_transform = manager->GetComponent<DerivedTransformComponent>(entity);
     HYP_ASSERT(derived_transform);
 
     btCollisionObject *collision_object = new btCollisionObject();
@@ -132,18 +133,18 @@ namespace Hyperion::Physics {
   }
 
   //--------------------------------------------------------------
-  void BulletPhysicsWorld::RemoveBoxCollider(World *world, EntityId entity) {
+  void BulletPhysicsWorld::RemoveBoxCollider(EntityManager *manager, EntityId entity) {
     HYP_PROFILE_SCOPE("BulletPhysicsWorld.RemoveBoxCollider");
 
     RemoveCollider(m_box_colliders, entity);
   }
 
   //--------------------------------------------------------------
-  void BulletPhysicsWorld::AddSphereCollider(World *world, EntityId entity) {
+  void BulletPhysicsWorld::AddSphereCollider(EntityManager *manager, EntityId entity) {
     HYP_PROFILE_SCOPE("BulletPhysicsWorld.AddSphereCollider");
 
-    SphereColliderComponent *sphere_collider = world->GetComponent<SphereColliderComponent>(entity);
-    DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(entity);
+    SphereColliderComponent *sphere_collider = manager->GetComponent<SphereColliderComponent>(entity);
+    DerivedTransformComponent *derived_transform = manager->GetComponent<DerivedTransformComponent>(entity);
     HYP_ASSERT(derived_transform);
 
     btCollisionObject *collision_object = new btCollisionObject();
@@ -155,7 +156,7 @@ namespace Hyperion::Physics {
   }
 
   //--------------------------------------------------------------
-  void BulletPhysicsWorld::RemoveSphereCollider(World *world, EntityId entity) {
+  void BulletPhysicsWorld::RemoveSphereCollider(EntityManager *manager, EntityId entity) {
     HYP_PROFILE_SCOPE("BulletPhysicsWorld.RemoveSphereCollider");
 
     RemoveCollider(m_sphere_colliders, entity);

@@ -16,12 +16,12 @@
 namespace Hyperion::UI {
 
   //--------------------------------------------------------------
-  void UIRebuildSystem::Run(World *world) {
+  void UIRebuildSystem::Run(EntityManager *manager) {
     HYP_PROFILE_SCOPE("UIRebuildSystem.Run");
 
-    auto view = world->GetView<UIViewComponent>(ExcludeComponents<DisabledComponent>());
+    auto view = manager->GetView<UIViewComponent>(ExcludeComponents<DisabledComponent>());
     for (EntityId entity : view) {
-      UIViewComponent *ui_view = world->GetComponent<UIViewComponent>(entity);
+      UIViewComponent *ui_view = manager->GetComponent<UIViewComponent>(entity);
 
       Run(ui_view);
     }
@@ -70,12 +70,12 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
-  void UIEventSystem::Run(World *world) {
+  void UIEventSystem::Run(EntityManager *manager) {
     HYP_PROFILE_SCOPE("UIEventSystem.Run");
 
-    auto view = world->GetView<UIViewComponent>(ExcludeComponents<DisabledComponent>());
+    auto view = manager->GetView<UIViewComponent>(ExcludeComponents<DisabledComponent>());
     for (EntityId entity : view) {
-      UIViewComponent *ui_view = world->GetComponent<UIViewComponent>(entity);
+      UIViewComponent *ui_view = manager->GetComponent<UIViewComponent>(entity);
 
       Run(ui_view);
     }

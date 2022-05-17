@@ -8,16 +8,17 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-  class HierarchyTransformSystem : public ISystem {
+  class HierarchyTransformSystem final : public ISystem {
   public:
-    void Run(World *world) override;
+    void Run(EntityManager *manager) override;
   public:
-    static void UpdateBranch(World *world, EntityId root, HierarchyComponent *root_hierarchy, DerivedTransformComponent *parent_derived_transform);
+    static void UpdateBranch(EntityManager *manager, EntityId branch, HierarchyComponent *branch_hierarchy,
+                             DerivedTransformComponent *parent_derived_transform);
   };
 
-  class LocalToWorldSystem : public ISystem {
+  class LocalToWorldSystem final : public ISystem {
   public:
-    void Run(World *world) override;
+    void Run(EntityManager *manager) override;
   };
 
 }

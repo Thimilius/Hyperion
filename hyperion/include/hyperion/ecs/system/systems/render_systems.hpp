@@ -17,39 +17,39 @@ namespace Hyperion { namespace Rendering {
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-  class MeshBoundsSystem : public ISystem {
+  class MeshBoundsSystem final : public ISystem {
   public:
-    void Run(World *world) override;
+    void Run(EntityManager *manager) override;
   };
 
-  class EnvironmentSystem : public ISystem {
+  class EnvironmentSystem final : public ISystem {
   public:
-    void Run(World *world) override;
+    void Run(EntityManager *manager) override;
   };
 
-  class CameraSystem : public ISystem {
+  class CameraSystem final : public ISystem {
   public:
-    void Run(World *world) override;
+    void Run(EntityManager *manager) override;
   };
 
-  class LightSystem : public ISystem {
+  class LightSystem final : public ISystem {
   public:
-    void Run(World *world) override;
+    void Run(EntityManager *manager) override;
   };
 
-  class SpriteRenderSystem : public ISystem {
+  class SpriteRenderSystem final : public ISystem {
   public:
-    void Run(World *world) override;
+    void Run(EntityManager *manager) override;
   };
 
-  class MeshRenderSystem : public ISystem {
+  class MeshRenderSystem final : public ISystem {
   public:
-    void Run(World *world) override;
+    void Run(EntityManager *manager) override;
   };
 
-  class UIRenderSystem : public ISystem {
+  class UIRenderSystem final : public ISystem {
   public:
-    void Run(World *world) override;
+    void Run(EntityManager *manager) override;
   public:
     static void Run(UI::UIViewComponent *ui_view, Delegate<RenderFrameContextObjectUI &()> ui_object_adder);
   private:

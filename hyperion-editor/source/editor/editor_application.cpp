@@ -77,13 +77,15 @@ namespace Hyperion::Editor {
       s_world = WorldSerializer::Deserialize(text);
     } else {
       s_world = WorldManager::CreateWorld();
-      EntityId camera = s_world->CreateEntity(EntityPrimitive::Camera);
-      s_world->GetComponent<LocalTransformComponent>(camera)->position = Vector3(0.0f, 1.0f, 5.0f);
-      EntityId light = s_world->CreateEntity(EntityPrimitive::DirectionalLight);
-      s_world->GetComponent<LocalTransformComponent>(light)->rotation = Quaternion::FromEulerAngles(-30.0f, 20.0f, 0.0f);
-      EntityId parent = s_world->CreateEntity(EntityPrimitive::Cube);
-      EntityId child = s_world->CreateEntity(EntityPrimitive::Sphere);
-      s_world->GetComponent<LocalTransformComponent>(child)->position = Vector3(2.0f, 0.0f, 0.0f);
+      EntityManager *manager = s_world->GetEntityManager();
+      
+      EntityId camera = manager->CreateEntity(EntityPrimitive::Camera);
+      manager->GetComponent<LocalTransformComponent>(camera)->position = Vector3(0.0f, 1.0f, 5.0f);
+      EntityId light = manager->CreateEntity(EntityPrimitive::DirectionalLight);
+      manager->GetComponent<LocalTransformComponent>(light)->rotation = Quaternion::FromEulerAngles(-30.0f, 20.0f, 0.0f);
+      EntityId parent = manager->CreateEntity(EntityPrimitive::Cube);
+      EntityId child = manager->CreateEntity(EntityPrimitive::Sphere);
+      manager->GetComponent<LocalTransformComponent>(child)->position = Vector3(2.0f, 0.0f, 0.0f);
       s_world->GetHierarchy()->SetParent(child, parent);
 
       String text = WorldSerializer::Serialize(s_world);

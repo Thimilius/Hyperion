@@ -20,7 +20,7 @@ using namespace Hyperion::Rendering;
 namespace Hyperion {
 
   //--------------------------------------------------------------
-  void AssetLoadSystem::Run(World *world) {
+  void AssetLoadSystem::Run(EntityManager *manager) {
     HYP_PROFILE_SCOPE("AssetLoadSystem.Run");
 
     RenderAssetContext &asset_context = RenderEngine::GetMainRenderFrame()->GetAssetContext();
@@ -121,7 +121,7 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  void AssetUnloadSystem::Run(World *world) {
+  void AssetUnloadSystem::Run(EntityManager *manager) {
     HYP_PROFILE_SCOPE("AssetUnloadSystem.Run");
 
     RenderAssetContext &asset_context = RenderEngine::GetMainRenderFrame()->GetAssetContext();

@@ -53,15 +53,17 @@ namespace Hyperion {
     HYP_PROFILE_SCOPE("WorldManager.Update");
 
     if (s_active_world) {
+      EntityManager *entity_manager = s_active_world->GetEntityManager();
+      
       // UI
       {
         HYP_PROFILE_SCOPE("WorldManager.Update.UI");
 
         UI::UIRebuildSystem ui_rebuild_system;
-        ui_rebuild_system.Run(s_active_world);
+        ui_rebuild_system.Run(entity_manager);
 
         UI::UIEventSystem ui_event_system;
-        ui_event_system.Run(s_active_world);
+        ui_event_system.Run(entity_manager);
       }
 
       // Transform
@@ -69,10 +71,10 @@ namespace Hyperion {
         HYP_PROFILE_SCOPE("WorldManager.Update.Transform");
 
         HierarchyTransformSystem hierarchy_transform_system;
-        hierarchy_transform_system.Run(s_active_world);
+        hierarchy_transform_system.Run(entity_manager);
 
         LocalToWorldSystem local_to_world_system;
-        local_to_world_system.Run(s_active_world);
+        local_to_world_system.Run(entity_manager);
       }
 
       // Physics
@@ -80,7 +82,7 @@ namespace Hyperion {
         HYP_PROFILE_SCOPE("WorldManager.Update.Physics");
 
         Physics::UpdateColliderTransformSystem update_collider_transform_system;
-        update_collider_transform_system.Run(s_active_world);
+        update_collider_transform_system.Run(entity_manager);
       }
 
       // Rendering
@@ -88,25 +90,25 @@ namespace Hyperion {
         HYP_PROFILE_SCOPE("WorldManager.Update.Rendering");
 
         Rendering::MeshBoundsSystem bounds_system;
-        bounds_system.Run(s_active_world);
+        bounds_system.Run(entity_manager);
 
         Rendering::EnvironmentSystem environment_system;
-        environment_system.Run(s_active_world);
+        environment_system.Run(entity_manager);
 
         Rendering::CameraSystem camera_system;
-        camera_system.Run(s_active_world);
+        camera_system.Run(entity_manager);
 
         Rendering::LightSystem light_system;
-        light_system.Run(s_active_world);
+        light_system.Run(entity_manager);
 
         Rendering::SpriteRenderSystem sprite_render_system;
-        sprite_render_system.Run(s_active_world);
+        sprite_render_system.Run(entity_manager);
 
         Rendering::MeshRenderSystem mesh_render_system;
-        mesh_render_system.Run(s_active_world);
+        mesh_render_system.Run(entity_manager);
 
         Rendering::UIRenderSystem ui_render_system;
-        ui_render_system.Run(s_active_world);
+        ui_render_system.Run(entity_manager);
       }
     }
   }

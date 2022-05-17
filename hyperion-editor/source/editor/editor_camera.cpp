@@ -9,7 +9,6 @@
 #include <hyperion/ecs/component/components/utilities/camera_utilities.hpp>
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/editor/editor_application.hpp"
 #include "hyperion/editor/editor_style.hpp"
 #include "hyperion/editor/editor_ui.hpp"
 
@@ -58,9 +57,9 @@ namespace Hyperion::Editor {
       m_xz_plane_distance = Math::Lerp(m_xz_plane_distance, m_zoom, 15.0f * delta_time);
 
       Vector3 plane_position = GetXZPlanePosition(position, forward);
-      Vector3 position = (rotation * Vector3(0, 0, m_xz_plane_distance)) + plane_position;
+      Vector3 new_position = (rotation * Vector3(0, 0, m_xz_plane_distance)) + plane_position;
 
-      s_transform.position = position;
+      s_transform.position = new_position;
       s_transform.rotation = rotation;
 
       m_rotation_velocity_x = Math::Lerp(m_rotation_velocity_x, 0.0f, 50.0f * delta_time);
@@ -99,7 +98,7 @@ namespace Hyperion::Editor {
 
   //--------------------------------------------------------------
   Rendering::RenderFrameContextCamera EditorCamera::GetContextCamera() {
-    Rendering::CameraUtilities::RecalculateMatricies(&s_camera, &s_transform);
+    Rendering::CameraUtilities::RecalculateMatrices(&s_camera, &s_transform);
 
     Rendering::RenderFrameContextCamera render_frame_context_camera;
     render_frame_context_camera.projection_mode = s_camera.projection_mode;
@@ -126,7 +125,7 @@ namespace Hyperion::Editor {
 
   //--------------------------------------------------------------
   Vector3 EditorCamera::GetPositionUnderMouse() {
-    Rendering::CameraUtilities::RecalculateMatricies(&s_camera, &s_transform);
+    Rendering::CameraUtilities::RecalculateMatrices(&s_camera, &s_transform);
     Ray ray = Rendering::CameraUtilities::ScreenPointToRay(&s_camera, &s_transform, Input::GetMousePosition().ToFloat());
     float32 hit_distance = 0;
     m_xz_plane.Intersects(ray, hit_distance);

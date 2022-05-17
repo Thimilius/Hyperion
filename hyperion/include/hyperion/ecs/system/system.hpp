@@ -3,7 +3,7 @@
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
-  class World;
+  class EntityManager;
 }
 
 //-------------------- Definition Namespace --------------------
@@ -13,7 +13,7 @@ namespace Hyperion {
   public:
     virtual ~ISystem() = default;
   public:
-    virtual void Run(World *world) = 0;
+    virtual void Run(EntityManager *manager) = 0;
   };
 
 }

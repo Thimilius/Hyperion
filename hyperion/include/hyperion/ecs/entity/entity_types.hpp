@@ -7,7 +7,7 @@
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
-  class World;
+  class EntityManager;
 }
 
 //-------------------- Definition Namespace --------------------
@@ -33,7 +33,7 @@ namespace Hyperion {
     inline static const EntityId EMPTY = { 0xFFFFFFFF };
   }
 
-  using EntityCallback = Delegate<void(World *, EntityId)>;
+  using EntityCallback = Delegate<void(EntityManager *, EntityId)>;
 
   struct EntityDescription {
     EntityId id;

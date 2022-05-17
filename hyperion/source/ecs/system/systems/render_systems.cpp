@@ -23,45 +23,45 @@ using namespace Hyperion::UI;
 namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
-  void MeshBoundsSystem::Run(World *world) {
+  void MeshBoundsSystem::Run(EntityManager *manager) {
     HYP_PROFILE_SCOPE("RenderBoundsSystem.Run");
 
-    auto view = world->GetView<LocalToWorldComponent, LocalMeshBoundsComponent, WorldMeshBoundsComponent>(
+    auto view = manager->GetView<LocalToWorldComponent, LocalMeshBoundsComponent, WorldMeshBoundsComponent>(
       ExcludeComponents<DisabledComponent, StaticComponent>());
     for (EntityId entity : view) {
-      LocalToWorldComponent *local_to_world = world->GetComponent<LocalToWorldComponent>(entity);
-      LocalMeshBoundsComponent *local_mesh_bounds = world->GetComponent<LocalMeshBoundsComponent>(entity);
-      WorldMeshBoundsComponent *world_mesh_bounds = world->GetComponent<WorldMeshBoundsComponent>(entity);
+      LocalToWorldComponent *local_to_world = manager->GetComponent<LocalToWorldComponent>(entity);
+      LocalMeshBoundsComponent *local_mesh_bounds = manager->GetComponent<LocalMeshBoundsComponent>(entity);
+      WorldMeshBoundsComponent *world_mesh_bounds = manager->GetComponent<WorldMeshBoundsComponent>(entity);
 
       world_mesh_bounds->bounds = BoundingBox::Transform(local_to_world->local_to_world, local_mesh_bounds->bounds);
     }
   }
 
   //--------------------------------------------------------------
-  void EnvironmentSystem::Run(World *world) {
+  void EnvironmentSystem::Run(EntityManager *manager) {
     HYP_PROFILE_SCOPE("EnvironmentSystem.Run");
 
     RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
 
-    const WorldEnvironment &world_environment = world->GetEnvironment();
+    const WorldEnvironment &world_environment = manager->GetWorld()->GetEnvironment();
     RenderFrameContextEnvironment &render_frame_context_environment = render_frame_context.GetEnvironment();
     render_frame_context_environment.ambient_light.intensity = world_environment.ambient_light.intensity;
     render_frame_context_environment.ambient_light.color = world_environment.ambient_light.color;
   }
 
   //--------------------------------------------------------------
-  void CameraSystem::Run(World *world) {
+  void CameraSystem::Run(EntityManager *manager) {
     HYP_PROFILE_SCOPE("CameraSystem.Run");
 
     RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
 
-    auto view = world->GetView<DerivedTransformComponent, CameraComponent>(ExcludeComponents<DisabledComponent>());
+    auto view = manager->GetView<DerivedTransformComponent, CameraComponent>(ExcludeComponents<DisabledComponent>());
     uint32 index = 0;
     for (EntityId entity : view) {
-      DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(entity);
-      CameraComponent *camera = world->GetComponent<CameraComponent>(entity);
+      DerivedTransformComponent *derived_transform = manager->GetComponent<DerivedTransformComponent>(entity);
+      CameraComponent *camera = manager->GetComponent<CameraComponent>(entity);
 
-      CameraUtilities::RecalculateMatricies(camera, derived_transform);
+      CameraUtilities::RecalculateMatrices(camera, derived_transform);
 
       RenderFrameContextCamera &render_frame_context_camera = render_frame_context.AddCamera();
       render_frame_context_camera.index = index++;
@@ -87,15 +87,15 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void LightSystem::Run(World *world) {
+  void LightSystem::Run(EntityManager *manager) {
     HYP_PROFILE_SCOPE("LightSystem.Run");
 
     RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
 
-    auto directional_view = world->GetView<DerivedTransformComponent, DirectionalLightComponent>(ExcludeComponents<DisabledComponent>());
+    auto directional_view = manager->GetView<DerivedTransformComponent, DirectionalLightComponent>(ExcludeComponents<DisabledComponent>());
     for (EntityId entity : directional_view) {
-      DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(entity);
-      DirectionalLightComponent *directional_light = world->GetComponent<DirectionalLightComponent>(entity);
+      DerivedTransformComponent *derived_transform = manager->GetComponent<DerivedTransformComponent>(entity);
+      DirectionalLightComponent *directional_light = manager->GetComponent<DirectionalLightComponent>(entity);
 
       RenderFrameContextLight &render_frame_context_light = render_frame_context.AddLight();
       render_frame_context_light.type = LightType::Directional;
@@ -104,10 +104,10 @@ namespace Hyperion::Rendering {
       render_frame_context_light.direction = TransformUtilities::GetForward(derived_transform);
     }
 
-    auto point_view = world->GetView<DerivedTransformComponent, PointLightComponent>(ExcludeComponents<DisabledComponent>());
+    auto point_view = manager->GetView<DerivedTransformComponent, PointLightComponent>(ExcludeComponents<DisabledComponent>());
     for (EntityId entity : point_view) {
-      DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(entity);
-      PointLightComponent *point_light = world->GetComponent<PointLightComponent>(entity);
+      DerivedTransformComponent *derived_transform = manager->GetComponent<DerivedTransformComponent>(entity);
+      PointLightComponent *point_light = manager->GetComponent<PointLightComponent>(entity);
 
       RenderFrameContextLight &render_frame_context_light = render_frame_context.AddLight();
       render_frame_context_light.type = LightType::Point;
@@ -117,10 +117,10 @@ namespace Hyperion::Rendering {
       render_frame_context_light.range = point_light->range;
     }
 
-    auto spot_view = world->GetView<DerivedTransformComponent, SpotLightComponent>(ExcludeComponents<DisabledComponent>());
+    auto spot_view = manager->GetView<DerivedTransformComponent, SpotLightComponent>(ExcludeComponents<DisabledComponent>());
     for (EntityId entity : spot_view) {
-      DerivedTransformComponent *derived_transform = world->GetComponent<DerivedTransformComponent>(entity);
-      SpotLightComponent *spot_light = world->GetComponent<SpotLightComponent>(entity);
+      DerivedTransformComponent *derived_transform = manager->GetComponent<DerivedTransformComponent>(entity);
+      SpotLightComponent *spot_light = manager->GetComponent<SpotLightComponent>(entity);
 
       RenderFrameContextLight &render_frame_context_light = render_frame_context.AddLight();
       render_frame_context_light.type = LightType::Spot;
@@ -133,15 +133,15 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void SpriteRenderSystem::Run(World *world) {
+  void SpriteRenderSystem::Run(EntityManager *manager) {
     HYP_PROFILE_SCOPE("SpriteSystem.Run");
 
     RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
 
-    auto view = world->GetView<LocalToWorldComponent, SpriteComponent>(ExcludeComponents<DisabledComponent>());
+    auto view = manager->GetView<LocalToWorldComponent, SpriteComponent>(ExcludeComponents<DisabledComponent>());
     for (EntityId entity : view) {
-      LocalToWorldComponent *local_to_world = world->GetComponent<LocalToWorldComponent>(entity);
-      SpriteComponent *sprite = world->GetComponent<SpriteComponent>(entity);
+      LocalToWorldComponent *local_to_world = manager->GetComponent<LocalToWorldComponent>(entity);
+      SpriteComponent *sprite = manager->GetComponent<SpriteComponent>(entity);
 
       RenderFrameContextObjectSprite &render_frame_context_sprite_object = render_frame_context.AddSpriteObject();
       render_frame_context_sprite_object.id = EntityUtilities::CreateSmallId(entity);
@@ -152,16 +152,16 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void MeshRenderSystem::Run(World *world) {
+  void MeshRenderSystem::Run(EntityManager *manager) {
     HYP_PROFILE_SCOPE("RenderMeshSystem.Run");
 
     RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
 
-    auto view = world->GetView<LocalToWorldComponent, WorldMeshBoundsComponent, MeshComponent>(ExcludeComponents<DisabledComponent>());
+    auto view = manager->GetView<LocalToWorldComponent, WorldMeshBoundsComponent, MeshComponent>(ExcludeComponents<DisabledComponent>());
     for (EntityId entity : view) {
-      LocalToWorldComponent *local_to_world = world->GetComponent<LocalToWorldComponent>(entity);
-      WorldMeshBoundsComponent *world_mesh_bounds = world->GetComponent<WorldMeshBoundsComponent>(entity);
-      MeshComponent *mesh = world->GetComponent<MeshComponent>(entity);
+      LocalToWorldComponent *local_to_world = manager->GetComponent<LocalToWorldComponent>(entity);
+      WorldMeshBoundsComponent *world_mesh_bounds = manager->GetComponent<WorldMeshBoundsComponent>(entity);
+      MeshComponent *mesh = manager->GetComponent<MeshComponent>(entity);
 
       RenderFrameContextObjectMesh &render_frame_context_mesh_object = render_frame_context.AddMeshObject();
       render_frame_context_mesh_object.id = EntityUtilities::GetIndex(entity);
@@ -177,16 +177,16 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void UIRenderSystem::Run(World *world) {
+  void UIRenderSystem::Run(EntityManager *manager) {
     HYP_PROFILE_SCOPE("UIRenderSystem.Run");
 
     RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
     Delegate<RenderFrameContextObjectUI &()> ui_object_adder;
     ui_object_adder.Connect<&RenderFrameContext::AddUIObject>(&render_frame_context);
 
-    auto view = world->GetView<UIViewComponent>(ExcludeComponents<DisabledComponent>());
+    auto view = manager->GetView<UIViewComponent>(ExcludeComponents<DisabledComponent>());
     for (EntityId entity : view) {
-      UIViewComponent *ui_view = world->GetComponent<UIViewComponent>(entity);
+      UIViewComponent *ui_view = manager->GetComponent<UIViewComponent>(entity);
 
       Run(ui_view, ui_object_adder);
     }
@@ -214,8 +214,8 @@ namespace Hyperion::Rendering {
         if (color.a > 0.0f) {
           Material *material = renderer.material ? renderer.material : AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI);
           AssetId texture_id = renderer.texture
-                                 ? renderer.texture->GetAssetInfo().id
-                                 : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetAssetInfo().id;
+           ? renderer.texture->GetAssetInfo().id
+           : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetAssetInfo().id;
 
           RenderFrameContextObjectUI &render_frame_context_ui_object = ui_object_adder();
           render_frame_context_ui_object.local_to_world = Matrix4x4::Identity();

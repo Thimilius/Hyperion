@@ -2,7 +2,6 @@
 #pragma once
 
 //---------------------- Library Includes ----------------------
-#include <hyperion/core/color.hpp>
 #include <hyperion/ecs/component/components/components.hpp>
 #include <hyperion/ui/ui_factory.hpp>
 
@@ -20,13 +19,13 @@ namespace Hyperion::Editor {
     EditorUI() = delete;
     ~EditorUI() = delete;
   private:
-    static void OnEntityCreated(World *world, EntityId id);
-    static void OnEntityDestroyed(World *world, EntityId id);
+    static void OnEntityCreated(EntityManager *manager, EntityId id);
+    static void OnEntityDestroyed(EntityManager *manager, EntityId id);
     static void OnEditorSelection(EntityId old_selection, EntityId new_selection);
 
     static void UpdateStatsLabel();
     static void UpdateHierarchyLabel();
-    static void UpdateHierarchyLabelBranch(World *world, EntityId branch, HierarchyComponent *branch_hierarchy, uint32 depth);
+    static void UpdateHierarchyLabelBranch(EntityManager *manager, EntityId branch, HierarchyComponent *branch_hierarchy, uint32 depth);
     static void UpdateSelectionLabel();
 
     static void UpdateSystems();

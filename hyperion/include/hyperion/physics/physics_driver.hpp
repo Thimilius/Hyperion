@@ -22,19 +22,17 @@ namespace Hyperion::Physics {
     virtual void Shutdown() = 0;
   };
 
-  class NullPhysicsDriver : public IPhysicsDriver {
+  class NullPhysicsDriver final : public IPhysicsDriver {
   public:
-    virtual PhysicsBackend GetBackend() const { return PhysicsBackend::None; }
+    PhysicsBackend GetBackend() const override { return PhysicsBackend::None; }
 
-    virtual IPhysicsWorld *CreatePhysicsWorld(World *world) { return new NullPhysicsWorld(); }
-    virtual void DestroyPhysicsWorld(IPhysicsWorld *world) { delete world; }
+    IPhysicsWorld *CreatePhysicsWorld(World *world) override { return new NullPhysicsWorld(); }
+    void DestroyPhysicsWorld(IPhysicsWorld *world) override { delete world; }
 
-    virtual void Initialize() {
-      HYP_LOG_INFO("Physics", "Initialized Null physics driver!");
-    }
+    void Initialize() override { HYP_LOG_INFO("Physics", "Initialized Null physics driver!"); }
 
-    virtual void FixedUpdate(float32 delta_time) { }
-    virtual void Shutdown() { }
+    void FixedUpdate(float32 delta_time) override { }
+    void Shutdown() override { }
   };
 
 }

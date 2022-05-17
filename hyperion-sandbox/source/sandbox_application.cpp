@@ -34,10 +34,10 @@ using namespace Hyperion::Rendering;
 #endif
 
 //-------------------- Definition Namespace --------------------
-namespace Medhex {
+namespace Sandbox {
 
   //--------------------------------------------------------------
-  void MedhexApplication::OnSetup(ApplicationSettings &settings) {
+  void SandboxApplication::OnSetup(ApplicationSettings &settings) {
     settings.render.backend = RenderBackend::Vulkan;
     settings.render.threading_mode = RenderThreadingMode::MultiThreaded;
     settings.render.vsync_mode = VSyncMode::DontSync;
@@ -52,18 +52,20 @@ namespace Medhex {
   CameraController *g_camera_controller;
 
   //--------------------------------------------------------------
-  void MedhexApplication::OnInitialize() {
+  void SandboxApplication::OnInitialize() {
     g_world = WorldManager::CreateWorld();
     WorldManager::SetActiveWorld(g_world);
 
-    g_camera = g_world->CreateEntity(EntityPrimitive::Camera);
-    g_light = g_world->CreateEntity(EntityPrimitive::DirectionalLight);
+    EntityManager *manager = g_world->GetEntityManager();
+    
+    g_camera = manager->CreateEntity(EntityPrimitive::Camera);
+    g_light = manager->CreateEntity(EntityPrimitive::DirectionalLight);
 
     g_camera_controller = new LookAroundCameraController(g_camera);
-    g_camera_controller->Reset(g_world);
-    LocalTransformComponent *camera_transform = g_world->GetComponent<LocalTransformComponent>(g_camera);
+    g_camera_controller->Reset(manager);
+    LocalTransformComponent *camera_transform = manager->GetComponent<LocalTransformComponent>(g_camera);
 
-    g_parent = g_world->CreateEntity(EntityPrimitive::Sphere);
+    g_parent = manager->CreateEntity(EntityPrimitive::Sphere);
 #ifdef HYP_STRESS_TEST
     float32 size = 100;
     for (float32 x = 0; x < size; x++) {
@@ -72,13 +74,13 @@ namespace Medhex {
         Material *material = AssetManager::CreateMaterial(AssetManager::GetShaderPrimitive(ShaderPrimitive::Standard));
         material->SetColor("m_color", Color(Random::Get(), Random::Get(), Random::Get(), 1.0f));
 #endif
-        EntityId entity = g_world->CreateEntity(EntityPrimitive::Cube);
-        g_world->GetComponent<LocalTransformComponent>(entity)->position = Vector3(x * 2.0f, 0.0f, -z * 2.0f);
+        EntityId entity = manager->CreateEntity(EntityPrimitive::Cube);
+        manager->GetComponent<LocalTransformComponent>(entity)->position = Vector3(x * 2.0f, 0.0f, -z * 2.0f);
 #ifdef HYP_STRESS_TEST_EXTREME
-        g_world->GetComponent<MeshComponent>(entity)->material = material;
+        manager->GetComponent<MeshComponent>(entity)->material = material;
 #endif
         g_world->GetHierarchy()->SetParent(entity, g_parent);
-        g_world->RemoveComponent<Physics::BoxColliderComponent>(entity);
+        manager->RemoveComponent<Physics::BoxColliderComponent>(entity);
       }
     }
 
@@ -86,14 +88,14 @@ namespace Medhex {
       float32 x = Random::Get() * size * 2.0f;
       float32 z = Random::Get() * size * 2.0f;
 
-      EntityId point_light = g_world->CreateEntity(EntityPrimitive::PointLight);
-      g_world->GetComponent<LocalTransformComponent>(point_light)->position = Vector3(x, 1.0f, -z);
-      g_world->GetComponent<PointLightComponent>(point_light)->color = Color(Random::Get(), Random::Get(), Random::Get(), 1.0f);
-      g_world->GetComponent<PointLightComponent>(point_light)->intensity = 5.0f;
+      EntityId point_light = manager->CreateEntity(EntityPrimitive::PointLight);
+      manager->GetComponent<LocalTransformComponent>(point_light)->position = Vector3(x, 1.0f, -z);
+      manager->GetComponent<PointLightComponent>(point_light)->color = Color(Random::Get(), Random::Get(), Random::Get(), 1.0f);
+      manager->GetComponent<PointLightComponent>(point_light)->intensity = 5.0f;
     }
 #else
-    g_child = g_world->CreateEntity(EntityPrimitive::Cube);
-    g_world->GetComponent<LocalTransformComponent>(g_child)->position = Vector3(2.0f, 0.0f, 0.0f);
+    g_child = manager->CreateEntity(EntityPrimitive::Cube);
+    manager->GetComponent<LocalTransformComponent>(g_child)->position = Vector3(2.0f, 0.0f, 0.0f);
     g_world->GetHierarchy()->SetParent(g_child, g_parent);
 
     std::unique_ptr<Image> image;
@@ -105,16 +107,16 @@ namespace Medhex {
     Texture2D *texture = AssetManager::CreateTexture2D(parameters, image->GetPixels());
     Material *material = AssetManager::CreateMaterial(AssetManager::GetShaderPrimitive(ShaderPrimitive::Unlit));
     material->SetTexture("m_texture", texture);
-    EntityId quad = g_world->CreateEntity(EntityPrimitive::Quad);
-    g_world->GetComponent<MeshComponent>(quad)->material = material;
-    g_world->GetComponent<LocalTransformComponent>(quad)->position = Vector3(0.0f, 2.0f, 0.0f);
+    EntityId quad = manager->CreateEntity(EntityPrimitive::Quad);
+    manager->GetComponent<MeshComponent>(quad)->material = material;
+    manager->GetComponent<LocalTransformComponent>(quad)->position = Vector3(0.0f, 2.0f, 0.0f);
 #endif
 
     UpdateTitle();
   }
 
   //--------------------------------------------------------------
-  void MedhexApplication::OnUpdate(float32 delta_time) {
+  void SandboxApplication::OnUpdate(float32 delta_time) {
     if (Input::IsKeyHold(KeyCode::Control) && Input::IsKeyDown(KeyCode::W)) {
       Exit();
     }
@@ -132,21 +134,23 @@ namespace Medhex {
       Rendering::RenderGizmos::SetShouldDrawAllBounds(!Rendering::RenderGizmos::GetShouldDrawAllBounds());
     }
 
-    g_camera_controller->Update(g_world, delta_time);
+    EntityManager *manager = g_world->GetEntityManager();
+    
+    g_camera_controller->Update(manager, delta_time);
     if (Input::IsKeyDown(KeyCode::R)) {
-      g_camera_controller->Reset(g_world);
+      g_camera_controller->Reset(manager);
     }
 
-    g_world->GetComponent<LocalTransformComponent>(g_parent)->rotation = Quaternion::FromEulerAngles(0.0f, Math::Sin(Time::GetTime()) * 45.0f, 0.0f);
+    manager->GetComponent<LocalTransformComponent>(g_parent)->rotation = Quaternion::FromEulerAngles(0.0f, Math::Sin(Time::GetTime()) * 45.0f, 0.0f);
 
 #ifdef HYP_STRESS_TEST
     Quaternion rotation = Quaternion::FromEulerAngles(0.0f, Time::GetTime() * 25.0f, 0.0f);
-    auto view = g_world->GetView<LocalTransformComponent, MeshComponent>(ExcludeComponents<Physics::SphereColliderComponent>());
+    auto view = manager->GetView<LocalTransformComponent, MeshComponent>(ExcludeComponents<Physics::SphereColliderComponent>());
     for (EntityId entity : view) {
-      LocalTransformComponent *transform = g_world->GetComponent<LocalTransformComponent>(entity);
+      LocalTransformComponent *transform = manager->GetComponent<LocalTransformComponent>(entity);
       transform->rotation = rotation;
 #ifdef HYP_STRESS_TEST_EXTREME
-      MeshComponent *mesh = g_world->GetComponent<MeshComponent>(entity);
+      MeshComponent *mesh = manager->GetComponent<MeshComponent>(entity);
       mesh->material->SetColor("m_color", Color(Random::Get(), Random::Get(), Random::Get(), 1.0f));
 #endif
     }
@@ -155,10 +159,10 @@ namespace Medhex {
   }
 
   //--------------------------------------------------------------
-  void MedhexApplication::OnTick() { }
+  void SandboxApplication::OnTick() { }
 
   //--------------------------------------------------------------
-  void MedhexApplication::UpdateTitle() {
+  void SandboxApplication::UpdateTitle() {
     String format = "Sandbox - FPS: {} ({:.2f}ms) - VSync: {} - Draw calls: {}, Vertices: {}, Triangles: {} - Memory: {}";
     RenderStats render_stats = Rendering::RenderEngine::GetStats();
     String vsync = Rendering::RenderEngine::GetVSyncMode() == Rendering::VSyncMode::DontSync ? "Off" : "On";
@@ -179,5 +183,5 @@ namespace Medhex {
 
 //--------------------------------------------------------------
 Application *Hyperion::CreateApplication() {
-  return new Medhex::MedhexApplication();
+  return new Sandbox::SandboxApplication();
 }

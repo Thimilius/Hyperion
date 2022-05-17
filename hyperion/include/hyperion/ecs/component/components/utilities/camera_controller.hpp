@@ -10,7 +10,7 @@
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
   struct DerivedTransformComponent;
-  class World;
+  class EntityManager;
 
   namespace Rendering {
     struct CameraComponent;
@@ -22,19 +22,20 @@ namespace Hyperion {
   class CameraController {
   public:
     CameraController(EntityId camera) : m_camera(camera) { }
+    virtual ~CameraController() = default;
   public:
-    virtual void Reset(World *world) = 0;
-    virtual void Update(World *world, float32 delta_time) = 0;
+    virtual void Reset(EntityManager *manager) = 0;
+    virtual void Update(EntityManager *manager, float32 delta_time) = 0;
   protected:
     EntityId m_camera;
   };
 
-  class FirstPersonCameraController : public CameraController {
+  class FirstPersonCameraController final : public CameraController {
   public:
     FirstPersonCameraController(EntityId camera) : CameraController(camera) { }
   public:
-    void Reset(World *world) override;
-    void Update(World *world, float32 delta_time) override;
+    void Reset(EntityManager *manager) override;
+    void Update(EntityManager *manager, float32 delta_time) override;
   private:
     Vector3 m_velocity;
     float32 m_acceleration = 100.0f;
@@ -48,15 +49,15 @@ namespace Hyperion {
     Vector2 m_last_mouse_position;
 
     float32 m_fov_target = 90.0f;
-    float32 m_orthographic_size_target;
+    float32 m_orthographic_size_target = 0;
   };
 
-  class LookAroundCameraController : public CameraController {
+  class LookAroundCameraController final : public CameraController {
   public:
     LookAroundCameraController(EntityId camera) : CameraController(camera) { }
   public:
-    void Reset(World *world) override;
-    void Update(World *world, float32 delta_time) override;
+    void Reset(EntityManager *manager) override;
+    void Update(EntityManager *manager, float32 delta_time) override;
   private:
     Vector3 GetPositionUnderMouse(Rendering::CameraComponent *camera, DerivedTransformComponent *derived_transform) const;
     Vector3 GetXZPlanePosition(Vector3 position, Vector3 forward) const;

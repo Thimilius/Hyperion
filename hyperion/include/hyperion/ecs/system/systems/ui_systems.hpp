@@ -16,7 +16,7 @@ namespace Hyperion::UI {
 
   class UIRebuildSystem : public ISystem {
   public:
-    void Run(World *world) override;
+    void Run(EntityManager *manager) override;
   public:
     static void Run(UIViewComponent *ui_view);
   private:
@@ -25,7 +25,7 @@ namespace Hyperion::UI {
 
   class UIEventSystem : public ISystem {
   public:
-    void Run(World *world) override;
+    void Run(EntityManager *manager) override;
   public:
     static void Run(UIViewComponent *ui_view);
   private:

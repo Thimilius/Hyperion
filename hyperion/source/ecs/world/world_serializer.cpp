@@ -361,7 +361,7 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  void SerializeType(YAML::Emitter &yaml_emitter, World *world, Type type, void *object) {
+  void SerializeType(YAML::Emitter &yaml_emitter, EntityManager *manager, Type type, void *object) {
     Array<Property> properties = GetPropertiesToSerialize(type);
     if (properties.IsEmpty()) {
       yaml_emitter << YAML::Null;
@@ -434,7 +434,7 @@ namespace Hyperion {
         if (id == Entity::EMPTY) {
           yaml_emitter << YAML::Null;  
         } else {
-          yaml_emitter <<  world->GetGuid(id).ToString();
+          yaml_emitter << manager->GetGuid(id).ToString();
         }
       } else if (property_type.is_pointer()) {
         void *pointer = *static_cast<void **>(Reflection::GetVariantData(property_value));
@@ -446,14 +446,14 @@ namespace Hyperion {
             Asset *asset = static_cast<Asset *>(pointer);
             yaml_emitter << asset->GetAssetInfo().guid.ToString();
           } else {
-            SerializeType(yaml_emitter, world, property_type, pointer);  
+            SerializeType(yaml_emitter, manager, property_type, pointer);  
           }
         } else {
           yaml_emitter << YAML::Null;
         }
       } else if (property_type.is_class()) {
         void *property_object = Reflection::GetVariantData(property_value);
-        SerializeType(yaml_emitter, world, property_type, property_object);
+        SerializeType(yaml_emitter, manager, property_type, property_object);
       } else {
         HYP_LOG_WARN(
           "Serializer",
@@ -468,7 +468,7 @@ namespace Hyperion {
     yaml_emitter << YAML::EndMap;
   }
 
-  void DeserializeType(YAML::Node yaml, World *world, Type type, void *object) {
+  void DeserializeType(YAML::Node yaml, EntityManager *manager, Type type, void *object) {
     Array<Property> properties = GetPropertiesToSerialize(type);
     if (properties.IsEmpty()) {
       return;
@@ -537,7 +537,7 @@ namespace Hyperion {
         EntityId id;
         if (!yaml_property.IsNull()) {
           EntityGuid guid = EntityGuid::Generate(yaml_property.as<String>());
-          id = world->GetByGuid(guid);
+          id = manager->GetByGuid(guid);
         }
         setting_property_success = property.set_value(instance, id);
       } else if (property_type.is_pointer()) {
@@ -557,7 +557,7 @@ namespace Hyperion {
             }
           } else {
             void *pointer = *static_cast<void **>(Reflection::GetVariantData(property_value));
-            DeserializeType(yaml_property, world, property_type, pointer);
+            DeserializeType(yaml_property, manager, property_type, pointer);
           }
         }
         
@@ -566,7 +566,7 @@ namespace Hyperion {
         if (!yaml_property.IsNull()) {
           Variant property_value = property.get_value(instance);
           void *pointer = Reflection::GetVariantData(property_value);
-          DeserializeType(yaml_property, world, property_type, pointer);
+          DeserializeType(yaml_property, manager, property_type, pointer);
           setting_property_success = property.set_value(instance, property_value);  
         }
       } else {
@@ -595,6 +595,8 @@ namespace Hyperion {
   String WorldSerializer::Serialize(World *world) {
     HYP_PROFILE_SCOPE("WorldSerializer.Serialize");
 
+    EntityManager *manager = world->GetEntityManager();
+    
     YAML::Emitter yaml_emitter;
 
     yaml_emitter << YAML::BeginMap;
@@ -603,25 +605,25 @@ namespace Hyperion {
     {
       EntityHierarchy *hierarchy = world->GetHierarchy();
       yaml_emitter << YAML::Key << "root_count" << YAML::Value << hierarchy->GetRootCount();
-      yaml_emitter << YAML::Key << "first_root" << YAML::Value << world->GetGuid(hierarchy->GetFirstRoot()).ToString();
-      yaml_emitter << YAML::Key << "last_root" << YAML::Value << world->GetGuid(hierarchy->GetLastRoot()).ToString();
+      yaml_emitter << YAML::Key << "first_root" << YAML::Value << manager->GetGuid(hierarchy->GetFirstRoot()).ToString();
+      yaml_emitter << YAML::Key << "last_root" << YAML::Value << manager->GetGuid(hierarchy->GetLastRoot()).ToString();
     }
     yaml_emitter << YAML::EndMap;
 
     const Array<ComponentInfo> &component_infos = ComponentRegistry::GetComponentInfos();
 
     yaml_emitter << YAML::Key << "entities" << YAML::Value << YAML::BeginSeq;
-    auto view = world->GetView();
+    auto view = manager->GetView();
     for (EntityId entity : view) {
       yaml_emitter << YAML::BeginMap;
-      yaml_emitter << YAML::Key << "Entity" << YAML::Value << world->GetGuid(entity).ToString();
+      yaml_emitter << YAML::Key << "Entity" << YAML::Value << manager->GetGuid(entity).ToString();
 
       for (const ComponentInfo &component_info : component_infos) {
         Type component_type = *component_info.type;
-        void *component = world->GetComponent(component_info.id, entity);
+        void *component = manager->GetComponent(component_info.id, entity);
         if (component) {
           yaml_emitter << YAML::Key << component_type.get_name().to_string();
-          SerializeType(yaml_emitter, world, component_type, component);
+          SerializeType(yaml_emitter, manager, component_type, component);
         }
       }
 
@@ -642,6 +644,7 @@ namespace Hyperion {
     
     YAML::Node yaml_world = YAML::Load(data);
     World *world = WorldManager::CreateWorld();
+    EntityManager *manager = world->GetEntityManager();
 
     YAML::Node yaml_name = yaml_world["name"];
     if (yaml_name) {
@@ -656,7 +659,7 @@ namespace Hyperion {
           YAML::Node yaml_entity_guid = yaml_entity["Entity"];
           if (yaml_entity_guid && yaml_entity_guid.IsScalar()) {
             EntityGuid guid = EntityGuid::Generate(yaml_entity_guid.as<String>());
-            world->CreateEntity(EntityPrimitive::Empty, guid);
+            manager->CreateEntity(EntityPrimitive::Empty, guid);
           }
         }
       }
@@ -675,14 +678,14 @@ namespace Hyperion {
       YAML::Node yaml_hierarchy_first_root = yaml_hierarchy["first_root"];
       if (yaml_hierarchy_first_root) {
         world_hierarchy->m_first_root = yaml_hierarchy_first_root.IsNull()
-          ? Entity::EMPTY
-          : world->GetByGuid(EntityGuid::Generate(yaml_hierarchy_first_root.as<String>()));
+                                        ? Entity::EMPTY
+                                        : manager->GetByGuid(EntityGuid::Generate(yaml_hierarchy_first_root.as<String>()));
       }
       YAML::Node yaml_hierarchy_last_root = yaml_hierarchy["last_root"];
       if (yaml_hierarchy_last_root) {
         world_hierarchy->m_last_root = yaml_hierarchy_last_root.IsNull()
-          ? Entity::EMPTY
-          : world->GetByGuid(EntityGuid::Generate(yaml_hierarchy_last_root.as<String>()));
+                                       ? Entity::EMPTY
+                                       : manager->GetByGuid(EntityGuid::Generate(yaml_hierarchy_last_root.as<String>()));
       }
     }
 
@@ -692,7 +695,7 @@ namespace Hyperion {
           YAML::Node yaml_entity_guid = yaml_entity["Entity"];
           if (yaml_entity_guid && yaml_entity_guid.IsScalar()) {
             EntityGuid guid = EntityGuid::Generate(yaml_entity_guid.as<String>());
-            EntityId entity = world->GetByGuid(guid);
+            EntityId entity = manager->GetByGuid(guid);
 
             for (auto pair : yaml_entity) {
               String component_type_string = pair.first.as<String>();
@@ -710,8 +713,8 @@ namespace Hyperion {
               YAML::Node yaml_component = pair.second;
 
               ComponentId component_id = ComponentRegistry::GetId(component_type);
-              void *component = world->AddComponent(component_id, entity);
-              DeserializeType(yaml_component, world, component_type, component);
+              void *component = manager->AddComponent(component_id, entity);
+              DeserializeType(yaml_component, manager, component_type, component);
             }
           }
         }

@@ -6,6 +6,7 @@
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
+  class EntityManager;
   struct HierarchyComponent;
   class World;
   class WorldSerializer;
@@ -32,6 +33,8 @@ namespace Hyperion {
       RemoveChildren
     };
   public:
+    World *GetWorld() const { return m_world; }
+      
     EntityId GetRootCount() const { return m_root_count; }
     EntityId GetFirstRoot() const { return m_first_root; }
     EntityId GetLastRoot() const { return m_last_root; }
@@ -41,6 +44,8 @@ namespace Hyperion {
 
     void UpdateTransform(EntityHierarchyTransformUpdate update = EntityHierarchyTransformUpdate::Branch, EntityId branch = Entity::EMPTY);
   private:
+    EntityHierarchy() = default;
+  private:
     void HandleEntityCreation(EntityId entity);
     void HandleEntityDestruction(EntityId entity, EntityHierarchyDestructionPolicy destruction_policy);
 
@@ -48,11 +53,13 @@ namespace Hyperion {
     void AddRootRelation(EntityId entity, HierarchyComponent *entity_hierarchy, EntityHierarchyRootPolicy root_policy);
   private:
     World *m_world = nullptr;
+    EntityManager *m_manager = nullptr;
 
     uint64 m_root_count = 0;
     EntityId m_first_root = Entity::EMPTY;
     EntityId m_last_root = Entity::EMPTY;
   private:
+    friend class Hyperion::EntityManager;
     friend class Hyperion::World;
     friend class Hyperion::WorldSerializer;
   };
