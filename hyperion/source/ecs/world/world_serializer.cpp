@@ -354,8 +354,6 @@ namespace Hyperion {
           }
         }
       }
-
-      // TODO: We should also sort out any types we know we do not support.
       
       properties.Add(property);
     }
@@ -416,6 +414,8 @@ namespace Hyperion {
         }
       } else if (property_type == Type::get<String>()) {
         yaml_emitter << property_value.to_string();
+      } else if (property_type == Type::get<Guid>()) {
+        yaml_emitter << property_value.get_value<Guid>().ToString();
       } else if (property_type == Type::get<Vector2>()) {
         yaml_emitter << property_value.get_value<Vector2>();
       } else if (property_type == Type::get<Vector3>()) {
@@ -428,6 +428,13 @@ namespace Hyperion {
         yaml_emitter << property_value.get_value<Matrix4x4>();
       } else if (property_type == Type::get<Color>()) {
         yaml_emitter << property_value.get_value<Color>();
+      } else if (property_type == Type::get<EntityId>()) {
+        EntityId id = property_value.get_value<EntityId>();
+        if (id == Entity::EMPTY) {
+          yaml_emitter << YAML::Null;  
+        } else {
+          yaml_emitter <<  world->GetGuid(id).ToString();
+        }
       } else if (property_type.is_pointer()) {
         void *pointer = property_value.convert<void *>();
         SerializeType(yaml_emitter, world, property_type, pointer);
@@ -501,6 +508,8 @@ namespace Hyperion {
         setting_property_success = property.set_value(instance, property_enum_variant);
       } else if (property_type == Type::get<String>()) {
         setting_property_success = property.set_value(instance, yaml_property.as<String>());
+      } else if (property_type == Type::get<Guid>()) {
+        setting_property_success = property.set_value(instance, yaml_property.as<String>());
       } else if (property_type == Type::get<Vector2>()) {
         setting_property_success = property.set_value(instance, yaml_property.as<Vector2>());
       } else if (property_type == Type::get<Vector3>()) {
@@ -513,18 +522,29 @@ namespace Hyperion {
         setting_property_success = property.set_value(instance, yaml_property.as<Matrix4x4>());
       } else if (property_type == Type::get<Color>()) {
         setting_property_success = property.set_value(instance, yaml_property.as<Color>());
+      } else if (property_type == Type::get<EntityId>()) {
+        EntityId id;
+        if (!yaml_property.IsNull()) {
+          EntityGuid guid = EntityGuid::Generate(yaml_property.as<String>());
+          id = world->GetByGuid(guid);
+        }
+        setting_property_success = property.set_value(instance, id);
       } else if (property_type.is_pointer()) {
-        // NOTE: This might not be the best way to do it as it creates unnecessary copies of the property.
         Variant property_value = property.get_value(instance);
-        void *pointer = property_value.convert<void *>();
-        DeserializeType(yaml_property, world, property_type, pointer);
-        setting_property_success = property.set_value(instance, property_value);
+        if (yaml_property.IsNull()) {
+          property_value = nullptr;            
+        } else {
+          void *pointer = property_value.convert<void *>();
+          DeserializeType(yaml_property, world, property_type, pointer);
+        }
+        setting_property_success = property.set_value(instance, property_value);  
       } else if (property_type.is_class()) {
-        // NOTE: This might not be the best way to do it as it creates unnecessary copies of the property.
-        Variant property_value = property.get_value(instance);
-        void *pointer = Reflection::GetVariantData(property_value);
-        DeserializeType(yaml_property, world, property_type, pointer);
-        setting_property_success = property.set_value(instance, property_value);
+        if (!yaml_property.IsNull()) {
+          Variant property_value = property.get_value(instance);
+          void *pointer = Reflection::GetVariantData(property_value);
+          DeserializeType(yaml_property, world, property_type, pointer);
+          setting_property_success = property.set_value(instance, property_value);  
+        }
       } else {
         HYP_LOG_WARN(
           "Serializer",
@@ -595,7 +615,7 @@ namespace Hyperion {
     HYP_PROFILE_SCOPE("WorldSerializer.Deserialize");
 
     // TEMP: For now we assume that assets referenced by components are already loaded and we can just grab the pointer.
-
+    
     YAML::Node yaml_world = YAML::Load(data);
     World *world = WorldManager::CreateWorld();
 
@@ -631,14 +651,14 @@ namespace Hyperion {
       YAML::Node yaml_hierarchy_first_root = yaml_hierarchy["first_root"];
       if (yaml_hierarchy_first_root) {
         world_hierarchy->m_first_root = yaml_hierarchy_first_root.IsNull()
-                                          ? Entity::EMPTY
-                                          : world->GetByGuid(EntityGuid::Generate(yaml_hierarchy_first_root.as<String>()));
+          ? Entity::EMPTY
+          : world->GetByGuid(EntityGuid::Generate(yaml_hierarchy_first_root.as<String>()));
       }
       YAML::Node yaml_hierarchy_last_root = yaml_hierarchy["last_root"];
       if (yaml_hierarchy_last_root) {
         world_hierarchy->m_last_root = yaml_hierarchy_last_root.IsNull()
-                                         ? Entity::EMPTY
-                                         : world->GetByGuid(EntityGuid::Generate(yaml_hierarchy_last_root.as<String>()));
+          ? Entity::EMPTY
+          : world->GetByGuid(EntityGuid::Generate(yaml_hierarchy_last_root.as<String>()));
       }
     }
 

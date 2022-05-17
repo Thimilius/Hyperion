@@ -10,10 +10,14 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   void ComponentRegistry::RegisterTypes() {
-    // Basic Enums.
+    // Basic Types.
     {
       using namespace Rendering;
       using namespace UI;
+
+      Registration::class_<EntityId>(HYP_NAME_OF_TYPE(EntityId))
+        .constructor()
+        .property("id", &EntityId::id);
       
       Registration::enumeration<LayerMask>(HYP_NAME_OF_TYPE(LayerMask))(
         Value(HYP_NAME_OF_ENUM(LayerMask::Nothing), LayerMask::Nothing),
@@ -67,12 +71,7 @@ namespace Hyperion {
        Value(HYP_NAME_OF_ENUM(ScalingMode::ScaleWithScreenSize), ScalingMode::ScaleWithScreenSize),
        Value(HYP_NAME_OF_ENUM(ScalingMode::ConstantPixelSize), ScalingMode::ConstantPixelSize)
       );
-    }
 
-    // Basic Structs.
-    {
-      using namespace Rendering;
-      
       Registration::class_<CameraViewportClipping>(HYP_NAME_OF_TYPE(CameraViewportClipping))
       .constructor<>()
       .property("x", &CameraViewportClipping::x)
