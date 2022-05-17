@@ -35,7 +35,7 @@ namespace Hyperion {
 
     inline static constexpr bool8 ALL_COMPONENTS = (sizeof...(Component)) == 0;
 
-    static_assert((COMPONENT_IDS_LENGTH > 0) || (ALL_COMPONENTS && EXCLUDE_IDS_LENGTH == 0), "Exclude only is not supported!");
+    static_assert((COMPONENT_IDS_LENGTH > 0) || (ALL_COMPONENTS && EXCLUDE_IDS_LENGTH == 0), "Exclude only is not supported! (Use GetViewAll)");
   public:
     class Iterator {
     public:

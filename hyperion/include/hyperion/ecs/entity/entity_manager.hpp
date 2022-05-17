@@ -4,6 +4,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/ecs/component/component_types.hpp"
 #include "hyperion/ecs/component/component_pool.hpp"
+#include "hyperion/ecs/component/components/core_components.hpp"
 #include "hyperion/ecs/entity/entity_archetype.hpp"
 #include "hyperion/ecs/entity/entity_hierarchy.hpp"
 #include "hyperion/ecs/entity/entity_utilities.hpp"
@@ -218,10 +219,15 @@ namespace Hyperion {
     }
 
     template<typename... Component, typename... Exclude>
-    EntityView<GetComponents<Component ...>, ExcludeComponents<Exclude ...>> GetView(ExcludeComponents<Exclude ...>  = { }) {
-      return EntityView<GetComponents<Component ...>, ExcludeComponents<Exclude ...>>(this);
+    EntityView<GetComponents<Component ...>, ExcludeComponents<DisabledComponent, Exclude ...>> GetView(ExcludeComponents<Exclude ...>  = { }) {
+      return EntityView<GetComponents<Component ...>, ExcludeComponents<DisabledComponent, Exclude ...>>(this);
     }
 
+    template<typename... Component, typename... Exclude>
+    EntityView<GetComponents<Component ...>, ExcludeComponents<Exclude ...>> GetViewAll(ExcludeComponents<Exclude ...>  = { }) {
+      return EntityView<GetComponents<Component ...>, ExcludeComponents<Exclude ...>>(this);
+    }
+    
     inline void RegisterOnEntityCreated(const EntityCallback &callback) {
       m_entity_created_callbacks.Add(callback);
     }

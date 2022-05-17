@@ -63,7 +63,7 @@ namespace Hyperion {
   void LocalToWorldSystem::Run(EntityManager *manager) {
     HYP_PROFILE_SCOPE("LocalToWorldSystem.Run");
 
-    auto view = manager->GetView<DerivedTransformComponent, LocalToWorldComponent>(ExcludeComponents<DisabledComponent, StaticComponent>());
+    auto view = manager->GetView<DerivedTransformComponent, LocalToWorldComponent>();
     for (EntityId entity : view) {
       DerivedTransformComponent *derived_transform = manager->GetComponent<DerivedTransformComponent>(entity);
       LocalToWorldComponent *local_to_world = manager->GetComponent<LocalToWorldComponent>(entity);

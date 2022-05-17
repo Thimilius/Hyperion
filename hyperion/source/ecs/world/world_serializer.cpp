@@ -613,7 +613,7 @@ namespace Hyperion {
     const Array<ComponentInfo> &component_infos = ComponentRegistry::GetComponentInfos();
 
     yaml_emitter << YAML::Key << "entities" << YAML::Value << YAML::BeginSeq;
-    auto view = manager->GetView();
+    auto view = manager->GetViewAll();
     for (EntityId entity : view) {
       yaml_emitter << YAML::BeginMap;
       yaml_emitter << YAML::Key << "Entity" << YAML::Value << manager->GetGuid(entity).ToString();
