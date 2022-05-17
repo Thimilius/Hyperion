@@ -10,6 +10,7 @@
 namespace Hyperion {
 
   class TextureAtlasBase : public Asset {
+    HYP_REFLECT(Asset)
   public:
     inline AssetType GetAssetType() const override { return AssetType::TextureAtlas; }
   protected:
@@ -18,6 +19,7 @@ namespace Hyperion {
 
   template<typename K, typename V>
   class TextureAtlas : public TextureAtlasBase {
+    HYP_REFLECT(TextureAtlasBase)
   public:
     inline Texture2D *GetTexture() const { return m_texture; }
 
@@ -29,7 +31,6 @@ namespace Hyperion {
       const TextureAtlasElement<V> &element = it->second;
       return element;
     }
-
   private:
     TextureAtlas(AssetInfo info) : TextureAtlasBase(info) { }
 
@@ -37,7 +38,6 @@ namespace Hyperion {
       m_texture = texture;
       m_elements = elements;
     }
-
   private:
     Texture2D *m_texture;
     Map<K, TextureAtlasElement<V>> m_elements;

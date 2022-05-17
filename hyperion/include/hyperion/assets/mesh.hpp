@@ -19,6 +19,7 @@ namespace Hyperion {
   //     - To specify a front facing triangle, the indices have to be provided in CLOCKWISE order.
 
   class Mesh final : public Asset {
+    HYP_REFLECT(Asset)
   private:
     Mesh(AssetInfo info) : Asset(info) { }
     Mesh(AssetInfo info, const Rendering::MeshData &data, const Rendering::SubMeshes &sub_meshes);

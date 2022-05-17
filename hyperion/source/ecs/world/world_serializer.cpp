@@ -373,10 +373,11 @@ namespace Hyperion {
     yaml_emitter << YAML::BeginMap;
     for (Property property : properties) {
       Type property_type = property.get_type();
-      yaml_emitter << YAML::Key << property.get_name().to_string() << YAML::Value;
+      String property_name = property.get_name().to_string();
       Variant property_value = property.get_value(instance);
+      
+      yaml_emitter << YAML::Key << property_name << YAML::Value;
 
-      // TODO: Missing handling of special types/subtypes of EntityId and Asset.
       // TODO: Add handling of arrays, sequential containers and associative containers
       
       if (property_type.is_arithmetic()) {
@@ -436,8 +437,20 @@ namespace Hyperion {
           yaml_emitter <<  world->GetGuid(id).ToString();
         }
       } else if (property_type.is_pointer()) {
-        void *pointer = property_value.convert<void *>();
-        SerializeType(yaml_emitter, world, property_type, pointer);
+        void *pointer = *static_cast<void **>(Reflection::GetVariantData(property_value));
+        
+        if (pointer) {
+          // We handle assets directly here to save them by their guid.
+          Type property_type_raw = property_type.get_raw_type();
+          if (property_type_raw == Type::get<Asset>() || property_type_raw.is_derived_from(Type::get<Asset>())) {
+            Asset *asset = static_cast<Asset *>(pointer);
+            yaml_emitter << asset->GetAssetInfo().guid.ToString();
+          } else {
+            SerializeType(yaml_emitter, world, property_type, pointer);  
+          }
+        } else {
+          yaml_emitter << YAML::Null;
+        }
       } else if (property_type.is_class()) {
         void *property_object = Reflection::GetVariantData(property_value);
         SerializeType(yaml_emitter, world, property_type, property_object);
@@ -464,8 +477,8 @@ namespace Hyperion {
     Instance instance = Reflection::CreateInstanceFromRaw(type, object);
     for (Property property : properties) {
       Type property_type = property.get_type();
-
       String property_name = property.get_name().to_string();
+      
       YAML::Node yaml_property = yaml[property_name];
 
       bool8 setting_property_success = false; 
@@ -506,9 +519,7 @@ namespace Hyperion {
         const Type &property_type_reference = property_type;
         property_enum_variant.convert(property_type_reference);
         setting_property_success = property.set_value(instance, property_enum_variant);
-      } else if (property_type == Type::get<String>()) {
-        setting_property_success = property.set_value(instance, yaml_property.as<String>());
-      } else if (property_type == Type::get<Guid>()) {
+      } else if (property_type == Type::get<String>() || property_type == Type::get<Guid>()) {
         setting_property_success = property.set_value(instance, yaml_property.as<String>());
       } else if (property_type == Type::get<Vector2>()) {
         setting_property_success = property.set_value(instance, yaml_property.as<Vector2>());
@@ -531,13 +542,26 @@ namespace Hyperion {
         setting_property_success = property.set_value(instance, id);
       } else if (property_type.is_pointer()) {
         Variant property_value = property.get_value(instance);
+        
         if (yaml_property.IsNull()) {
           property_value = nullptr;            
         } else {
-          void *pointer = property_value.convert<void *>();
-          DeserializeType(yaml_property, world, property_type, pointer);
+          // We handle assets directly here to load them by their guid.
+          Type property_type_raw = property_type.get_raw_type();
+          if (property_type_raw == Type::get<Asset>() || property_type_raw.is_derived_from(Type::get<Asset>())) {
+            AssetGuid guid = AssetGuid::Generate(yaml_property.as<String>());
+            if (property_type_raw == Type::get<Material>()) {
+              property_value = AssetManager::GetMaterialByGuid(guid);
+            } else if (property_type_raw == Type::get<Mesh>()) {
+              property_value = AssetManager::GetMeshByGuid(guid);
+            }
+          } else {
+            void *pointer = *static_cast<void **>(Reflection::GetVariantData(property_value));
+            DeserializeType(yaml_property, world, property_type, pointer);
+          }
         }
-        setting_property_success = property.set_value(instance, property_value);  
+        
+        setting_property_success = property.set_value(instance, property_value);
       } else if (property_type.is_class()) {
         if (!yaml_property.IsNull()) {
           Variant property_value = property.get_value(instance);

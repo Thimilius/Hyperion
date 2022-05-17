@@ -3,13 +3,8 @@
 
 //---------------------- Library Includes ----------------------
 #include <hyperion/entry_point.hpp>
-#include <hyperion/assets/asset_manager.hpp>
-#include <hyperion/assets/material.hpp>
-#include <hyperion/assets/loader/image_loader.hpp>
 #include <hyperion/core/engine.hpp>
 #include <hyperion/core/random.hpp>
-#include <hyperion/core/app/display.hpp>
-#include <hyperion/core/app/time.hpp>
 #include <hyperion/core/io/file_system.hpp>
 #include <hyperion/core/memory/memory.hpp>
 #include <hyperion/ecs/component/components/components.hpp>
@@ -23,7 +18,6 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/editor/editor_camera.hpp"
 #include "hyperion/editor/editor_render_pipeline.hpp"
-#include "hyperion/editor/editor_style.hpp"
 #include "hyperion/editor/editor_ui.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -78,19 +72,23 @@ namespace Hyperion::Editor {
 
   //--------------------------------------------------------------
   void EditorApplication::OnInitialize() {
-    s_world = WorldManager::CreateWorld();
-    EntityId camera = s_world->CreateEntity(EntityPrimitive::Camera);
-    s_world->GetComponent<LocalTransformComponent>(camera)->position = Vector3(0.0f, 1.0f, 5.0f);
-    EntityId light = s_world->CreateEntity(EntityPrimitive::DirectionalLight);
-    s_world->GetComponent<LocalTransformComponent>(light)->rotation = Quaternion::FromEulerAngles(-30.0f, 20.0f, 0.0f);
-    EntityId parent = s_world->CreateEntity(EntityPrimitive::Cube);
-    EntityId child = s_world->CreateEntity(EntityPrimitive::Sphere);
-    s_world->GetComponent<LocalTransformComponent>(child)->position = Vector3(2.0f, 0.0f, 0.0f);
-    s_world->GetHierarchy()->SetParent(child, parent);
+    if (FileSystem::Exists(WORLD_PATH)) {
+      String text = FileSystem::ReadAllText(WORLD_PATH);
+      s_world = WorldSerializer::Deserialize(text);
+    } else {
+      s_world = WorldManager::CreateWorld();
+      EntityId camera = s_world->CreateEntity(EntityPrimitive::Camera);
+      s_world->GetComponent<LocalTransformComponent>(camera)->position = Vector3(0.0f, 1.0f, 5.0f);
+      EntityId light = s_world->CreateEntity(EntityPrimitive::DirectionalLight);
+      s_world->GetComponent<LocalTransformComponent>(light)->rotation = Quaternion::FromEulerAngles(-30.0f, 20.0f, 0.0f);
+      EntityId parent = s_world->CreateEntity(EntityPrimitive::Cube);
+      EntityId child = s_world->CreateEntity(EntityPrimitive::Sphere);
+      s_world->GetComponent<LocalTransformComponent>(child)->position = Vector3(2.0f, 0.0f, 0.0f);
+      s_world->GetHierarchy()->SetParent(child, parent);
 
-    String yaml = WorldSerializer::Serialize(s_world);
-    HYP_TRACE("\n{}", yaml);
-    WorldSerializer::Deserialize(yaml);
+      String text = WorldSerializer::Serialize(s_world);
+      FileSystem::WriteAllText(WORLD_PATH, text);
+    }
     
     WorldManager::SetActiveWorld(s_world);
 

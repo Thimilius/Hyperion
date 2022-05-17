@@ -3,7 +3,9 @@
 
 //---------------------- Library Includes ----------------------
 #include <rttr/registration.h>
+#include <rttr/rttr_enable.h>
 
+#define HYP_REFLECT(...) RTTR_ENABLE(__VA_ARGS__)
 #define HYP_REFLECT_REGISTER RTTR_REGISTRATION
 
 //-------------------- Definition Namespace --------------------

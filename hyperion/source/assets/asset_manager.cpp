@@ -13,7 +13,6 @@
 #include "hyperion/assets/loader/image_loader.hpp"
 #include "hyperion/assets/loader/mesh_loader.hpp"
 #include "hyperion/assets/utilities/mesh_generator.hpp"
-#include "hyperion/core/app/input.hpp"
 #include "hyperion/core/io/file_system.hpp"
 #include "hyperion/ecs/system/systems/asset_systems.hpp"
 
@@ -246,25 +245,21 @@ namespace Hyperion {
     AssetGuid asset_guid = asset->GetAssetInfo().guid;
     switch (asset->GetAssetType()) {
       case AssetType::Material: {
-        Material *material = static_cast<Material *>(asset);
         HYP_ASSERT(s_materials.Contains(asset_guid));
         s_materials.Remove(asset_guid);
         break;
       }
       case AssetType::Mesh: {
-        Mesh *mesh = static_cast<Mesh *>(asset);
         HYP_ASSERT(s_meshes.Contains(asset_guid));
         s_meshes.Remove(asset_guid);
         break;
       }
       case AssetType::Shader: {
-        Shader *shader = static_cast<Shader *>(asset);
         HYP_ASSERT(s_shaders.Contains(asset_guid));
         s_shaders.Remove(asset_guid);
         break;
       }
       case AssetType::Texture: {
-        Texture *texture = static_cast<Texture *>(asset);
         HYP_ASSERT(s_textures.Contains(asset_guid));
         s_textures.Remove(asset_guid);
         break;

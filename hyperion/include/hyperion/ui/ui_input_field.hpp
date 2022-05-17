@@ -9,7 +9,7 @@
 namespace Hyperion::UI {
 
   class UIInputField : public UIElement {
-    HYP_OBJECT(UIInputField);
+    HYP_REFLECT(UIElement)
   public:
     UIInputField();
   public:

@@ -10,6 +10,7 @@
 namespace Hyperion {
 
   class Texture : public Asset {
+    HYP_REFLECT(Asset)
   protected:
     Texture(AssetInfo info) : Asset(info) { }
   public:
@@ -27,6 +28,7 @@ namespace Hyperion {
   };
 
   class Texture2D final : public Texture {
+    HYP_REFLECT(Texture)
   private:
     Texture2D(AssetInfo info, const Rendering::Texture2DParameters &parameters);
     Texture2D(AssetInfo info, const Rendering::Texture2DParameters &parameters, const Rendering::TexturePixelData &pixels);
@@ -53,6 +55,7 @@ namespace Hyperion {
   };
 
   class RenderTexture final : public Texture {
+    HYP_REFLECT(Texture)
   private:
     RenderTexture(AssetInfo info, const Rendering::RenderTextureParameters &parameters);
     ~RenderTexture() = default;

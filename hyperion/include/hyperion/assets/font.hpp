@@ -15,6 +15,7 @@ namespace Hyperion {
   };
 
   class Font final : public Asset {
+    HYP_REFLECT(Asset)
   public:
     AssetType GetAssetType() const override { return AssetType::Font; }
 

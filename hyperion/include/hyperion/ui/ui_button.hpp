@@ -10,7 +10,7 @@ namespace Hyperion::UI {
   using UIButtonClickCallback = std::function<void()>;
 
   class UIButton : public UIElement {
-    HYP_OBJECT(UIButton);
+    HYP_REFLECT(UIElement)
   public:
     UIButton();
   public:

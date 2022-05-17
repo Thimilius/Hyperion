@@ -14,6 +14,7 @@ namespace Hyperion {
 namespace Hyperion {
 
   class Asset : public INonCopyable {
+    HYP_REFLECT(INonCopyable)
   protected:
     Asset(AssetInfo info) : m_info(info) { }
     virtual ~Asset() = default;

@@ -10,7 +10,7 @@ namespace Hyperion::UI {
   using UIToggleCallback = std::function<void(bool8)>;
 
   class UIToggle : public UIElement {
-    HYP_OBJECT(UIToggle);
+    HYP_REFLECT(UIElement)
   public:
     UIToggle();
   public:

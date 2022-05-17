@@ -10,6 +10,7 @@
 namespace Hyperion {
 
   class Material final : public Asset {
+    HYP_REFLECT(Asset)
   public:
     inline AssetType GetAssetType() const override { return AssetType::Material; }
 

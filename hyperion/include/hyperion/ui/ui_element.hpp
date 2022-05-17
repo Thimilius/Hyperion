@@ -104,7 +104,7 @@ namespace Hyperion::UI {
   };
 
   class UIElement : public Object {
-    HYP_OBJECT(UIElement);
+    HYP_REFLECT(Object)
   public:
     UIElement();
   public:
@@ -218,7 +218,7 @@ namespace Hyperion::UI {
   T *UIQuery::Query(UIElement *element, const String &name) {
     if (element) {
       Type searched_type = Type::get<T>();
-      Type element_type = element->GetType();
+      Type element_type = element->get_type();
       if (element_type == searched_type || element_type.is_derived_from(searched_type)) {
         if (name != "") {
           if (element->GetName() == name) {
