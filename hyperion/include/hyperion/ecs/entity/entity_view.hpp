@@ -102,7 +102,6 @@ namespace Hyperion {
       const std::array<ComponentId, COMPONENT_IDS_LENGTH> COMPONENT_IDS = { ComponentRegistry::GetId<Component>() ... };
       const std::array<ComponentId, EXCLUDE_IDS_LENGTH> EXCLUDE_IDS = { ComponentRegistry::GetId<Exclude>() ... };
     };
-
   public:
     EntityView(World *world) : m_world(world) {
       uint64 smallest_entity_count = UINT64_MAX;
@@ -114,7 +113,6 @@ namespace Hyperion {
         }
       }
     }
-
   public:
     Iterator begin() const {
       EntityIndex index = 0;
@@ -161,10 +159,9 @@ namespace Hyperion {
       }
       return Iterator(index, m_world, m_smallest_pool);
     }
-
   private:
-    World *m_world;
-    ComponentPool *m_smallest_pool;
+    World *m_world = nullptr;
+    ComponentPool *m_smallest_pool = nullptr;
 
     // NOTE: The id arrays could probably be constexpr too.
     const std::array<ComponentId, COMPONENT_IDS_LENGTH> COMPONENT_IDS = { ComponentRegistry::GetId<Component>() ... };

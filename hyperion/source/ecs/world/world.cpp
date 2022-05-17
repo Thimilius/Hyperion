@@ -118,7 +118,7 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  void World::DestroyEntity(EntityId id, WorldHierarchyDestructionPolicy hierarchy_destruction_policy) {
+  void World::DestroyEntity(EntityId id, EntityHierarchyDestructionPolicy hierarchy_destruction_policy) {
     HYP_PROFILE_SCOPE("World.DestroyEntity");
 
     if (IsAlive(id)) {

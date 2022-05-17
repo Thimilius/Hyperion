@@ -601,10 +601,10 @@ namespace Hyperion {
     yaml_emitter << YAML::Key << "name" << YAML::Value << world->GetName();
     yaml_emitter << YAML::Key << "hierarchy" << YAML::Value << YAML::BeginMap;
     {
-      WorldHierarchy *world_hierarchy = world->GetHierarchy();
-      yaml_emitter << YAML::Key << "root_count" << YAML::Value << world_hierarchy->GetRootCount();
-      yaml_emitter << YAML::Key << "first_root" << YAML::Value << world->GetGuid(world_hierarchy->GetFirstRoot()).ToString();
-      yaml_emitter << YAML::Key << "last_root" << YAML::Value << world->GetGuid(world_hierarchy->GetLastRoot()).ToString();
+      EntityHierarchy *hierarchy = world->GetHierarchy();
+      yaml_emitter << YAML::Key << "root_count" << YAML::Value << hierarchy->GetRootCount();
+      yaml_emitter << YAML::Key << "first_root" << YAML::Value << world->GetGuid(hierarchy->GetFirstRoot()).ToString();
+      yaml_emitter << YAML::Key << "last_root" << YAML::Value << world->GetGuid(hierarchy->GetLastRoot()).ToString();
     }
     yaml_emitter << YAML::EndMap;
 
@@ -666,7 +666,7 @@ namespace Hyperion {
 
     YAML::Node yaml_hierarchy = yaml_world["hierarchy"];
     if (yaml_hierarchy && yaml_hierarchy.IsMap()) {
-      WorldHierarchy *world_hierarchy = world->GetHierarchy();
+      EntityHierarchy *world_hierarchy = world->GetHierarchy();
 
       YAML::Node yaml_hierarchy_root_count = yaml_hierarchy["root_count"];
       if (yaml_hierarchy_root_count) {

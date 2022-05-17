@@ -26,7 +26,7 @@ namespace Hyperion {
         local_transform->position = (parent_derived_transform->rotation.Inverted() * (position - parent_derived_transform->position)) / parent_derived_transform
           ->scale;
       }
-      world->GetHierarchy()->UpdateTransform(WorldHierarchyTransformUpdate::Branch, entity);
+      world->GetHierarchy()->UpdateTransform(EntityHierarchyTransformUpdate::Branch, entity);
     }
 
     inline static void SetRotation(World *world, EntityId entity, const Quaternion &rotation) {
@@ -38,7 +38,7 @@ namespace Hyperion {
         DerivedTransformComponent *parent_derived_transform = world->GetComponent<DerivedTransformComponent>(hierarchy->parent);
         local_transform->rotation = parent_derived_transform->rotation * local_transform->rotation;
       }
-      world->GetHierarchy()->UpdateTransform(WorldHierarchyTransformUpdate::Branch, entity);
+      world->GetHierarchy()->UpdateTransform(EntityHierarchyTransformUpdate::Branch, entity);
     }
 
     inline static Vector3 WorldToLocalPosition(World *world, EntityId entity, const Vector3 &position) {

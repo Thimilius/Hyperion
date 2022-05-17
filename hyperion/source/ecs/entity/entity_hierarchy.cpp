@@ -2,11 +2,11 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/ecs/world/world_serializer.hpp"
+#include "hyperion/ecs/entity/entity_hierarchy.hpp"
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/ecs/component/components/components.hpp"
 #include "hyperion/ecs/system/systems/transform_systems.hpp"
+#include "hyperion/ecs/world/world.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -15,7 +15,7 @@ namespace Hyperion {
   // That includes trusting the entities have the proper components and that there are no circular references.
 
   //--------------------------------------------------------------
-  void WorldHierarchy::SetParent(EntityId entity, EntityId parent, WorldHierarchyTransformUpdate update) {
+  void EntityHierarchy::SetParent(EntityId entity, EntityId parent, EntityHierarchyTransformUpdate update) {
     if (!m_world->IsAlive(entity)) {
       HYP_LOG_WARN("Entity", "Trying to set parent of nonexistent entity with id {}.", entity);
       return;
@@ -31,7 +31,7 @@ namespace Hyperion {
 
     // Add relation to new parent and siblings.
     if (parent == Entity::EMPTY) {
-      AddRootRelation(entity, entity_hierarchy, WorldHierarchyRootPolicy::KeepChildren);
+      AddRootRelation(entity, entity_hierarchy, EntityHierarchyRootPolicy::KeepChildren);
     } else {
       HierarchyComponent *new_parent_hierarchy = m_world->GetComponent<HierarchyComponent>(parent);
       HYP_ASSERT(new_parent_hierarchy);
@@ -55,7 +55,7 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  EntityId WorldHierarchy::GetChild(EntityId parent, uint32 index) {
+  EntityId EntityHierarchy::GetChild(EntityId parent, uint32 index) {
     if (!m_world->IsAlive(parent)) {
       HYP_LOG_WARN("Entity", "Trying to get child of nonexistent entity with id {}.", parent);
       return Entity::EMPTY;
@@ -80,8 +80,8 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  void WorldHierarchy::UpdateTransform(WorldHierarchyTransformUpdate update, EntityId branch) {
-    if (update == WorldHierarchyTransformUpdate::Branch) {
+  void EntityHierarchy::UpdateTransform(EntityHierarchyTransformUpdate update, EntityId branch) {
+    if (update == EntityHierarchyTransformUpdate::Branch) {
       if (!m_world->IsAlive(branch)) {
         HYP_LOG_WARN("Entity", "Trying to update transform of nonexistent entity with id {}.", branch);
       }
@@ -95,22 +95,22 @@ namespace Hyperion {
       }
 
       HierarchyTransformSystem::UpdateBranch(m_world, branch, branch_hierarchy, parent_derived_transform);
-    } else if (update == WorldHierarchyTransformUpdate::All) {
+    } else if (update == EntityHierarchyTransformUpdate::All) {
       HierarchyTransformSystem hierarchy_transform_system;
       hierarchy_transform_system.Run(m_world);
     }
   }
 
   //--------------------------------------------------------------
-  void WorldHierarchy::HandleEntityCreation(EntityId entity) {
+  void EntityHierarchy::HandleEntityCreation(EntityId entity) {
     HierarchyComponent *hierarchy = m_world->GetComponent<HierarchyComponent>(entity);
     if (hierarchy) {
-      AddRootRelation(entity, hierarchy, WorldHierarchyRootPolicy::RemoveChildren);
+      AddRootRelation(entity, hierarchy, EntityHierarchyRootPolicy::RemoveChildren);
     }
   }
 
   //--------------------------------------------------------------
-  void WorldHierarchy::HandleEntityDestruction(EntityId entity, WorldHierarchyDestructionPolicy destruction_policy) {
+  void EntityHierarchy::HandleEntityDestruction(EntityId entity, EntityHierarchyDestructionPolicy destruction_policy) {
     HierarchyComponent *hierarchy = m_world->GetComponent<HierarchyComponent>(entity);
     if (hierarchy) {
       RemoveOldRelations(entity, hierarchy);
@@ -125,9 +125,9 @@ namespace Hyperion {
       EntityId next_child = child_hierarchy->next_sibling;
 
       switch (destruction_policy) {
-        case WorldHierarchyDestructionPolicy::DestroyChildren: m_world->DestroyEntity(child);
+        case EntityHierarchyDestructionPolicy::DestroyChildren: m_world->DestroyEntity(child);
           break;
-        case WorldHierarchyDestructionPolicy::KeepChildrenAsRoots: SetParent(child, Entity::EMPTY);
+        case EntityHierarchyDestructionPolicy::KeepChildrenAsRoots: SetParent(child, Entity::EMPTY);
           break;
         default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
       }
@@ -135,12 +135,12 @@ namespace Hyperion {
       child = next_child;
     }
 
-    // TODO: In case of WorldHierarchyDestructionPolicy::KeepChildrenAsRoots what should happen to the transform.
+    // TODO: In case of EntityHierarchyDestructionPolicy::KeepChildrenAsRoots what should happen to the transform?
     // We may want to keep the current world transformation.
   }
 
   //--------------------------------------------------------------
-  void WorldHierarchy::RemoveOldRelations(EntityId entity, HierarchyComponent *entity_hierarchy) {
+  void EntityHierarchy::RemoveOldRelations(EntityId entity, HierarchyComponent *entity_hierarchy) {
     // Remove relation to old siblings.
     if (entity_hierarchy->previous_sibling != Entity::EMPTY) {
       HierarchyComponent *old_previous_sibling_hierarchy = m_world->GetComponent<HierarchyComponent>(entity_hierarchy->previous_sibling);
@@ -176,7 +176,7 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  void WorldHierarchy::AddRootRelation(EntityId entity, HierarchyComponent *entity_hierarchy, WorldHierarchyRootPolicy root_policy) {
+  void EntityHierarchy::AddRootRelation(EntityId entity, HierarchyComponent *entity_hierarchy, EntityHierarchyRootPolicy root_policy) {
     if (m_root_count == 0) {
       m_first_root = entity;
       entity_hierarchy->previous_sibling = Entity::EMPTY;
@@ -191,7 +191,7 @@ namespace Hyperion {
     m_last_root = entity;
     m_root_count++;
 
-    if (root_policy == WorldHierarchyRootPolicy::RemoveChildren) {
+    if (root_policy == EntityHierarchyRootPolicy::RemoveChildren) {
       entity_hierarchy->child_count = 0;
       entity_hierarchy->first_child = Entity::EMPTY;
       entity_hierarchy->last_child = Entity::EMPTY;

@@ -5,10 +5,10 @@
 #include "hyperion/ecs/component/component_types.hpp"
 #include "hyperion/ecs/component/component_pool.hpp"
 #include "hyperion/ecs/entity/entity_archetype.hpp"
+#include "hyperion/ecs/entity/entity_hierarchy.hpp"
 #include "hyperion/ecs/entity/entity_utilities.hpp"
 #include "hyperion/ecs/entity/entity_view.hpp"
 #include "hyperion/ecs/world/world_environment.hpp"
-#include "hyperion/ecs/world/world_hierarchy.hpp"
 #include "hyperion/physics/physics_world.hpp"
 
 //-------------------- Forward Declarations --------------------
@@ -40,8 +40,8 @@ namespace Hyperion {
     inline WorldEnvironment &GetEnvironment() { return m_environment; }
     inline const WorldEnvironment &GetEnvironment() const { return m_environment; }
 
-    inline WorldHierarchy *GetHierarchy() { return &m_hierarchy; }
-    inline const WorldHierarchy *GetHierarchy() const { return &m_hierarchy; }
+    inline EntityHierarchy *GetHierarchy() { return &m_hierarchy; }
+    inline const EntityHierarchy *GetHierarchy() const { return &m_hierarchy; }
 
     inline Physics::IPhysicsWorld *GetPhysicsWorld() const { return m_physics_world; }
 
@@ -52,7 +52,7 @@ namespace Hyperion {
 
     EntityId CreateEntity(EntityPrimitive primitive = EntityPrimitive::Base, EntityGuid guid = EntityGuid::Generate());
     EntityId CreateMultiMeshEntity(Mesh *mesh);
-    void DestroyEntity(EntityId id, WorldHierarchyDestructionPolicy hierarchy_destruction_policy = WorldHierarchyDestructionPolicy::DestroyChildren);
+    void DestroyEntity(EntityId id, EntityHierarchyDestructionPolicy hierarchy_destruction_policy = EntityHierarchyDestructionPolicy::DestroyChildren);
 
     EntityArchetype *CreateArchetype(EntityId id);
     EntityId Instantiate(EntityArchetype *archetype);
@@ -278,7 +278,7 @@ namespace Hyperion {
     String m_name = "World";
     WorldEnvironment m_environment;
 
-    WorldHierarchy m_hierarchy;
+    EntityHierarchy m_hierarchy;
     WorldStorage m_storage;
 
     Array<EntityCallback> m_entity_created_callbacks;

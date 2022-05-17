@@ -14,20 +14,20 @@ namespace Hyperion {
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-  enum class WorldHierarchyTransformUpdate {
+  enum class EntityHierarchyTransformUpdate {
     None,
     Branch,
     All,
   };
 
-  enum class WorldHierarchyDestructionPolicy {
+  enum class EntityHierarchyDestructionPolicy {
     DestroyChildren,
     KeepChildrenAsRoots,
   };
 
-  class WorldHierarchy final {
+  class EntityHierarchy final {
   private:
-    enum class WorldHierarchyRootPolicy {
+    enum class EntityHierarchyRootPolicy {
       KeepChildren,
       RemoveChildren
     };
@@ -36,18 +36,18 @@ namespace Hyperion {
     EntityId GetFirstRoot() const { return m_first_root; }
     EntityId GetLastRoot() const { return m_last_root; }
 
-    void SetParent(EntityId entity, EntityId parent, WorldHierarchyTransformUpdate update = WorldHierarchyTransformUpdate::None);
+    void SetParent(EntityId entity, EntityId parent, EntityHierarchyTransformUpdate update = EntityHierarchyTransformUpdate::None);
     EntityId GetChild(EntityId parent, uint32 index);
 
-    void UpdateTransform(WorldHierarchyTransformUpdate update = WorldHierarchyTransformUpdate::Branch, EntityId branch = Entity::EMPTY);
+    void UpdateTransform(EntityHierarchyTransformUpdate update = EntityHierarchyTransformUpdate::Branch, EntityId branch = Entity::EMPTY);
   private:
     void HandleEntityCreation(EntityId entity);
-    void HandleEntityDestruction(EntityId entity, WorldHierarchyDestructionPolicy destruction_policy);
+    void HandleEntityDestruction(EntityId entity, EntityHierarchyDestructionPolicy destruction_policy);
 
     void RemoveOldRelations(EntityId entity, HierarchyComponent *entity_hierarchy);
-    void AddRootRelation(EntityId entity, HierarchyComponent *entity_hierarchy, WorldHierarchyRootPolicy root_policy);
+    void AddRootRelation(EntityId entity, HierarchyComponent *entity_hierarchy, EntityHierarchyRootPolicy root_policy);
   private:
-    World *m_world;
+    World *m_world = nullptr;
 
     uint64 m_root_count = 0;
     EntityId m_first_root = Entity::EMPTY;
