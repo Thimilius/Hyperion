@@ -7,6 +7,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/ecs/component/components/components.hpp"
+#include "hyperion/ecs/component/components/utilities/transform_utilities.hpp"
 #include "hyperion/ecs/world/world.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -183,6 +184,17 @@ namespace Hyperion {
     m_world->m_hierarchy.HandleEntityCreation(copy);
 
     return copy;
+  }
+  
+  //--------------------------------------------------------------
+  void EntityManager::SetEnabled(EntityId entity, bool8 enabled) {
+    bool8 is_disabled = HasComponent<DisabledComponent>(entity);
+    
+    if (enabled && is_disabled) {
+      RemoveComponent<DisabledComponent>(entity);
+    } else if (!is_disabled) {
+      AddComponent<DisabledComponent>(entity);
+    }
   }
 
   //--------------------------------------------------------------

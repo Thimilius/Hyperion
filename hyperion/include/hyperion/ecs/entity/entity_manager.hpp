@@ -47,6 +47,8 @@ namespace Hyperion {
     EntityArchetype *CreateArchetype(EntityId id);
     EntityId Instantiate(EntityArchetype *archetype);
 
+    void SetEnabled(EntityId entity, bool8 enabled);
+    
     template<typename T>
     T *AddComponent(EntityId id) {
       HYP_PROFILE_SCOPE("World.AddComponent");
