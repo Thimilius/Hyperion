@@ -11,7 +11,7 @@ namespace Hyperion::Editor {
 
   class EditorSelection final {
   public:
-    static bool8 HasSelection() { return s_selection != Entity::EMPTY; }
+    static bool8 HasSelection() { return s_selection != EntityId::EMPTY; }
     static EntityId GetSelection() { return s_selection; }
 
     static void Select(EntityId selection) {
@@ -31,7 +31,7 @@ namespace Hyperion::Editor {
     EditorSelection() = delete;
     ~EditorSelection() = delete;
   private:
-    inline static EntityId s_selection = Entity::EMPTY;
+    inline static EntityId s_selection = EntityId::EMPTY;
     inline static Array<EditorSelectionCallback> s_callbacks;
   };
 

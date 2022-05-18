@@ -40,7 +40,7 @@ namespace Hyperion {
 
     ComponentInfo m_component_info;
   private:
-    inline static const uint32 SPARSE_ELEMENT = EntityUtilities::GetIndex(Entity::EMPTY);
+    inline static const uint32 SPARSE_ELEMENT = EntityUtilities::GetIndex(EntityId::EMPTY);
   };
 
 }

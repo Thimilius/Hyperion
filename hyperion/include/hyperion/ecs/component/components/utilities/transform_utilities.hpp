@@ -19,7 +19,7 @@ namespace Hyperion {
     inline static void SetPosition(EntityManager *manager, EntityId entity, const Vector3 &position) {
       HierarchyComponent *hierarchy = manager->GetComponent<HierarchyComponent>(entity);
       LocalTransformComponent *local_transform = manager->GetComponent<LocalTransformComponent>(entity);
-      if (hierarchy->parent == Entity::EMPTY) {
+      if (hierarchy->parent == EntityId::EMPTY) {
         local_transform->position = position;
       } else {
         DerivedTransformComponent *parent_derived_transform = manager->GetComponent<DerivedTransformComponent>(hierarchy->parent);
@@ -32,7 +32,7 @@ namespace Hyperion {
     inline static void SetRotation(EntityManager *manager, EntityId entity, const Quaternion &rotation) {
       HierarchyComponent *hierarchy = manager->GetComponent<HierarchyComponent>(entity);
       LocalTransformComponent *local_transform = manager->GetComponent<LocalTransformComponent>(entity);
-      if (hierarchy->parent == Entity::EMPTY) {
+      if (hierarchy->parent == EntityId::EMPTY) {
         local_transform->rotation = rotation;
       } else {
         DerivedTransformComponent *parent_derived_transform = manager->GetComponent<DerivedTransformComponent>(hierarchy->parent);
@@ -43,7 +43,7 @@ namespace Hyperion {
 
     inline static Vector3 WorldToLocalPosition(EntityManager *manager, EntityId entity, const Vector3 &position) {
       HierarchyComponent *hierarchy = manager->GetComponent<HierarchyComponent>(entity);
-      if (hierarchy->parent == Entity::EMPTY) {
+      if (hierarchy->parent == EntityId::EMPTY) {
         return position;
       } else {
         DerivedTransformComponent *parent_derived_transform = manager->GetComponent<DerivedTransformComponent>(hierarchy->parent);
@@ -53,7 +53,7 @@ namespace Hyperion {
 
     inline static Vector3 LocalToWorldPosition(EntityManager *manager, EntityId entity, const Vector3 &position) {
       HierarchyComponent *hierarchy = manager->GetComponent<HierarchyComponent>(entity);
-      if (hierarchy->parent == Entity::EMPTY) {
+      if (hierarchy->parent == EntityId::EMPTY) {
         return position;
       } else {
         DerivedTransformComponent *parent_derived_transform = manager->GetComponent<DerivedTransformComponent>(hierarchy->parent);
@@ -63,7 +63,7 @@ namespace Hyperion {
 
     inline static Quaternion WorldToLocalRotation(EntityManager *manager, EntityId entity, const Quaternion &rotation) {
       HierarchyComponent *hierarchy = manager->GetComponent<HierarchyComponent>(entity);
-      if (hierarchy->parent == Entity::EMPTY) {
+      if (hierarchy->parent == EntityId::EMPTY) {
         return rotation;
       } else {
         LocalTransformComponent *local_transform = manager->GetComponent<LocalTransformComponent>(entity);
@@ -74,7 +74,7 @@ namespace Hyperion {
 
     inline static Quaternion LocalToWorldRotation(EntityManager *manager, EntityId entity, const Quaternion &rotation) {
       HierarchyComponent *hierarchy = manager->GetComponent<HierarchyComponent>(entity);
-      if (hierarchy->parent == Entity::EMPTY) {
+      if (hierarchy->parent == EntityId::EMPTY) {
         return rotation;
       } else {
         LocalTransformComponent *local_transform = manager->GetComponent<LocalTransformComponent>(entity);

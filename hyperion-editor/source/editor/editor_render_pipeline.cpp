@@ -126,7 +126,7 @@ namespace Hyperion::Editor {
           if (result.data.GetLength() >= 4) {
             uint32 id = *data;
             if (id == UINT32_MAX) {
-              EditorSelection::Select(Entity::EMPTY);
+              EditorSelection::Select(EntityId::EMPTY);
             } else {
               EditorSelection::Select(EntityUtilities::CreateFromSmallId(id));
             }

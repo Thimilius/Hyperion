@@ -19,19 +19,20 @@ namespace Hyperion {
   using EntityGuid = Guid;
 
   struct EntityId {
-    uint64 id;
+    EntityIdType id = EMPTY;
 
-    EntityId() : id(0xFFFFFFFF) { }
+    EntityId() = default;
     EntityId(EntityIdType id) : id(id) { }
 
     bool8 operator==(const EntityId &other) const { return id == other.id; }
     bool8 operator!=(const EntityId &other) const { return !(*this == other); }
-    operator uint64() const { return id; }
-  };
+    bool8 operator==(const EntityIdType &other) const { return id == other; }
+    bool8 operator!=(const EntityIdType &other) const { return !(*this == other); }
+    
+    operator EntityIdType() const { return id; }
 
-  namespace Entity {
-    inline static const EntityId EMPTY = { 0xFFFFFFFF };
-  }
+    inline static constexpr EntityIdType EMPTY = 0xFFFFFFFF;
+  };
 
   using EntityCallback = Delegate<void(EntityManager *, EntityId)>;
 
@@ -71,7 +72,7 @@ namespace std {
 
   template<>
   struct hash<Hyperion::EntityId> {
-    std::size_t operator()(const Hyperion::EntityId &id) const {
+    std::size_t operator()(const Hyperion::EntityId &id) const noexcept {
       return hash<Hyperion::EntityIdType>()(id.id);
     }
   };

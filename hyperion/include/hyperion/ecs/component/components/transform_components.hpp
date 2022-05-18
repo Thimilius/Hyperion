@@ -27,14 +27,14 @@ namespace Hyperion {
   };
 
   struct HierarchyComponent {
-    EntityId parent = Entity::EMPTY;
+    EntityId parent = EntityId::EMPTY;
 
-    EntityId previous_sibling = Entity::EMPTY;
-    EntityId next_sibling = Entity::EMPTY;
+    EntityId previous_sibling = EntityId::EMPTY;
+    EntityId next_sibling = EntityId::EMPTY;
 
     uint64 child_count = 0;
-    EntityId first_child = Entity::EMPTY;
-    EntityId last_child = Entity::EMPTY;
+    EntityId first_child = EntityId::EMPTY;
+    EntityId last_child = EntityId::EMPTY;
   };
 
 }

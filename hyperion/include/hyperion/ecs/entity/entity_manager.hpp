@@ -26,7 +26,7 @@ namespace Hyperion {
     Array<EntityDescription> entities;
     Map<EntityGuid, EntityId> entities_by_guid;
     uint64 available = 0;
-    EntityIndex next = EntityUtilities::GetIndex(Entity::EMPTY);
+    EntityIndex next = EntityUtilities::GetIndex(EntityId::EMPTY);
 
     Array<ComponentPool> component_pools;
     Array<ComponentCallbacks> component_callbacks;

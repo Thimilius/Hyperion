@@ -42,7 +42,7 @@ namespace Hyperion {
     void SetParent(EntityId entity, EntityId parent, EntityHierarchyTransformUpdate update = EntityHierarchyTransformUpdate::None);
     EntityId GetChild(EntityId parent, uint32 index);
 
-    void UpdateTransform(EntityHierarchyTransformUpdate update = EntityHierarchyTransformUpdate::Branch, EntityId branch = Entity::EMPTY);
+    void UpdateTransform(EntityHierarchyTransformUpdate update = EntityHierarchyTransformUpdate::Branch, EntityId branch = EntityId::EMPTY);
   private:
     EntityHierarchy() = default;
   private:
@@ -56,8 +56,8 @@ namespace Hyperion {
     EntityManager *m_manager = nullptr;
 
     uint64 m_root_count = 0;
-    EntityId m_first_root = Entity::EMPTY;
-    EntityId m_last_root = Entity::EMPTY;
+    EntityId m_first_root = EntityId::EMPTY;
+    EntityId m_last_root = EntityId::EMPTY;
   private:
     friend class Hyperion::EntityManager;
     friend class Hyperion::World;

@@ -48,7 +48,7 @@ namespace Hyperion {
     auto it = m_storage.entities_by_guid.Find(guid);
     if (it == m_storage.entities_by_guid.end()) {
       HYP_LOG_WARN("Entity", "Trying to get id from nonexistent entity with guid {}.", guid.ToString());
-      return Entity::EMPTY;
+      return EntityId::EMPTY;
     } else {
       return it->second;
     }
@@ -92,7 +92,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   EntityId EntityManager::CreateMultiMeshEntity(Mesh *mesh) {
-    EntityId entity = Entity::EMPTY;
+    EntityId entity = EntityId::EMPTY;
     if (mesh->GetSubMeshCount() == 1) {
       entity = CreateEntity(EntityPrimitive::Quad);
       GetComponent<Rendering::MeshComponent>(entity)->mesh = mesh;

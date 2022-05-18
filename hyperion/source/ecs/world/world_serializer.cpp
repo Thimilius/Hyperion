@@ -431,7 +431,7 @@ namespace Hyperion {
         yaml_emitter << property_value.get_value<Color>();
       } else if (property_type == Type::get<EntityId>()) {
         EntityId id = property_value.get_value<EntityId>();
-        if (id == Entity::EMPTY) {
+        if (id == EntityId::EMPTY) {
           yaml_emitter << YAML::Null;  
         } else {
           yaml_emitter << manager->GetGuid(id).ToString();
@@ -678,13 +678,13 @@ namespace Hyperion {
       YAML::Node yaml_hierarchy_first_root = yaml_hierarchy["first_root"];
       if (yaml_hierarchy_first_root) {
         world_hierarchy->m_first_root = yaml_hierarchy_first_root.IsNull()
-                                        ? Entity::EMPTY
+                                        ? EntityId::EMPTY
                                         : manager->GetByGuid(EntityGuid::Generate(yaml_hierarchy_first_root.as<String>()));
       }
       YAML::Node yaml_hierarchy_last_root = yaml_hierarchy["last_root"];
       if (yaml_hierarchy_last_root) {
         world_hierarchy->m_last_root = yaml_hierarchy_last_root.IsNull()
-                                       ? Entity::EMPTY
+                                       ? EntityId::EMPTY
                                        : manager->GetByGuid(EntityGuid::Generate(yaml_hierarchy_last_root.as<String>()));
       }
     }

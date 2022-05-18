@@ -422,10 +422,10 @@ namespace Hyperion::Editor {
 
   //--------------------------------------------------------------
   void EditorUI::OnEditorSelection(EntityId old_selection, EntityId new_selection) {
-    if (old_selection != Entity::EMPTY) {
+    if (old_selection != EntityId::EMPTY) {
       s_hierarchy.Get(old_selection)->GetStyle().SetColor(EditorStyle::COLOR_NORMAL);
     }
-    if (new_selection != Entity::EMPTY) {
+    if (new_selection != EntityId::EMPTY) {
       s_hierarchy.Get(new_selection)->GetStyle().SetColor(EditorStyle::COLOR_HIGHLIGHT);
     }
   }
