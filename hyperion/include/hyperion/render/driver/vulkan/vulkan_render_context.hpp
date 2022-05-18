@@ -90,6 +90,10 @@ namespace Hyperion::Rendering {
 
     void CreateGraphicsPipeline();
 
+    void CreateDepthObjects();
+    VkFormat FindDepthFormat();
+    VkFormat FindSupportedFormat(const Array<VkFormat> &candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
+    
     void CreateFramebuffers();
 
     void CreateCommandPool();

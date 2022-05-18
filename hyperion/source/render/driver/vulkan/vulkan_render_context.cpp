@@ -78,6 +78,7 @@ namespace Hyperion::Rendering {
     CreateRenderPass();
     CreateDescriptorSetLayout();
     CreateGraphicsPipeline();
+    CreateDepthObjects();
     CreateFramebuffers();
     CreateCommandPool();
     CreateCommandBuffers();
@@ -736,6 +737,37 @@ namespace Hyperion::Rendering {
 
     vkDestroyShaderModule(m_device, fragment_shader_module, nullptr);
     vkDestroyShaderModule(m_device, vertex_shader_module, nullptr);
+  }
+
+  //--------------------------------------------------------------
+  void VulkanRenderContext::CreateDepthObjects() {
+    FindDepthFormat();
+  }
+
+  //--------------------------------------------------------------
+  VkFormat VulkanRenderContext::FindDepthFormat() {
+    return FindSupportedFormat(
+      { VK_FORMAT_D24_UNORM_S8_UINT, VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT },
+      VK_IMAGE_TILING_OPTIMAL,
+      VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT
+    );
+  }
+
+  //--------------------------------------------------------------
+  VkFormat VulkanRenderContext::FindSupportedFormat(const Array<VkFormat> &candidates, VkImageTiling tiling, VkFormatFeatureFlags features) {
+    for (VkFormat format : candidates) {
+      VkFormatProperties format_properties;
+      vkGetPhysicalDeviceFormatProperties(m_physical_device, format, &format_properties);
+
+      if (tiling == VK_IMAGE_TILING_LINEAR && (format_properties.linearTilingFeatures & features) == features) {
+        return format;
+      } else if (tiling == VK_IMAGE_TILING_OPTIMAL && (format_properties.optimalTilingFeatures & features) == features) {
+        return format;
+      }
+    }
+
+    HYP_PANIC_MESSAGE("Vulkan", "Failed to find supported format!");
+    return VK_FORMAT_UNDEFINED;
   }
 
   //--------------------------------------------------------------
