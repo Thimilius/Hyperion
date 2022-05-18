@@ -195,6 +195,11 @@ namespace Hyperion::Rendering {
     for (auto device : physical_devices) {
       if (IsDeviceSuitable(device)) {
         m_physical_device = device;
+
+        VkPhysicalDeviceProperties device_properties;
+        vkGetPhysicalDeviceProperties(device, &device_properties);
+        HYP_LOG_INFO("Vulkan", "Found suitable physical device: {}", device_properties.deviceName);
+        
         break;
       }
     }
@@ -684,12 +689,17 @@ namespace Hyperion::Rendering {
     color_blend_state_create_info.blendConstants[2] = 0.0f;
     color_blend_state_create_info.blendConstants[3] = 0.0f;
 
+    VkPushConstantRange push_constant_range;
+    push_constant_range.offset = 0;
+    push_constant_range.size = sizeof(VulkanPushConstant);
+    push_constant_range.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+    
     VkPipelineLayoutCreateInfo layout_create_info = { };
     layout_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     layout_create_info.setLayoutCount = 1;
     layout_create_info.pSetLayouts = &m_descriptor_set_layout;
-    layout_create_info.pushConstantRangeCount = 0;
-    layout_create_info.pPushConstantRanges = nullptr;
+    layout_create_info.pushConstantRangeCount = 1;
+    layout_create_info.pPushConstantRanges = &push_constant_range;
 
     HYP_VULKAN_CHECK(vkCreatePipelineLayout(m_device, &layout_create_info, nullptr, &m_pipeline_layout), "Failed to create pipeline layout!");
 

@@ -61,8 +61,10 @@ namespace Hyperion::Rendering {
     submit_info.signalSemaphoreCount = 1;
     submit_info.pSignalSemaphores = signal_semaphores;
 
-    HYP_VULKAN_CHECK(vkQueueSubmit(m_context->m_graphics_queue, 1, &submit_info, m_context->m_in_flight_fences[m_current_frame_index]),
-                     "Failed to submit command buffer!");
+    HYP_VULKAN_CHECK(
+      vkQueueSubmit(m_context->m_graphics_queue, 1, &submit_info, m_context->m_in_flight_fences[m_current_frame_index]),
+      "Failed to submit command buffer!"
+    );
 
     VkPresentInfoKHR present_info = { };
     present_info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -128,7 +130,22 @@ namespace Hyperion::Rendering {
     VkDeviceSize buffer_offsets = 0;
     vkCmdBindVertexBuffers(command_buffer, 0, 1, &m_context->m_vertex_buffer, &buffer_offsets);
     vkCmdBindIndexBuffer(command_buffer, m_context->m_index_buffer, 0, VK_INDEX_TYPE_UINT16);
-    vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_context->m_pipeline_layout, 0, 1, &m_context->m_descriptor_sets[frame_index], 0, nullptr);
+    vkCmdBindDescriptorSets(
+      command_buffer,
+      VK_PIPELINE_BIND_POINT_GRAPHICS,
+      m_context->m_pipeline_layout,
+      0,
+      1,
+      &m_context->m_descriptor_sets[frame_index],
+      0,
+      nullptr
+    );
+    VulkanPushConstant push_constant;
+    push_constant.model = Matrix4x4::Rotate(Vector3(0.0f, 0.0f, 1.0f), Time::GetTime() * 50.0f); 
+    vkCmdPushConstants(command_buffer, m_context->m_pipeline_layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(push_constant), &push_constant);
+    vkCmdDrawIndexed(command_buffer, 6, 1, 0, 0, 0);
+    push_constant.model = Matrix4x4::Translate(0.0f, 0.0f, -1.0f) * Matrix4x4::Rotate(Vector3(0.0f, 0.0f, 1.0f), Time::GetTime() * 25.0f); 
+    vkCmdPushConstants(command_buffer, m_context->m_pipeline_layout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(push_constant), &push_constant);
     vkCmdDrawIndexed(command_buffer, 6, 1, 0, 0, 0);
     vkCmdEndRenderPass(command_buffer);
 
@@ -138,7 +155,6 @@ namespace Hyperion::Rendering {
   //--------------------------------------------------------------
   void VulkanRenderDriver::UpdateUniformBuffer(uint32 frame_index) {
     VulkanUniformBufferObject ubo;
-    ubo.model = Matrix4x4::Rotate(Vector3(0.0f, 0.0f, 1.0f), Time::GetTime() * 25.0f);
     ubo.view = Matrix4x4::LookAt(Vector3(2.0f, 2.0f, 2.0f), Vector3::Zero(), Vector3(0.0f, 1.0f, 0.0f));
     float32 aspect_ratio = static_cast<float32>(m_context->m_swapchain_extent.width) / static_cast<float32>(m_context->m_swapchain_extent.height);
     ubo.projection = Matrix4x4::Perspective(45.0f, aspect_ratio, 0.1f, 10.0f);

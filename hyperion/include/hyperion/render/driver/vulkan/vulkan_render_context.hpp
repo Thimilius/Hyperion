@@ -33,11 +33,14 @@ namespace Hyperion::Rendering {
   };
 
   struct VulkanUniformBufferObject {
-    Matrix4x4 model;
     Matrix4x4 view;
     Matrix4x4 projection;
   };
 
+  struct VulkanPushConstant {
+    Matrix4x4 model;
+  };
+  
   class VulkanRenderContext : public IRenderContext {
   public:
     RenderContextProperties GetProperties() const override { return m_properties; }
