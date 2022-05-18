@@ -3,10 +3,10 @@
 
 //---------------------- Library Includes ----------------------
 #include <hyperion/entry_point.hpp>
-#include <hyperion/core/engine.hpp>
 #include <hyperion/core/random.hpp>
 #include <hyperion/core/io/file_system.hpp>
 #include <hyperion/core/memory/memory.hpp>
+#include <hyperion/core/system/engine.hpp>
 #include <hyperion/ecs/component/components/components.hpp>
 #include <hyperion/ecs/component/components/utilities/camera_controller.hpp>
 #include <hyperion/ecs/component/components/utilities/transform_utilities.hpp>

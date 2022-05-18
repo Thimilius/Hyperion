@@ -2,7 +2,7 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/core/engine.hpp"
+#include "hyperion/core/system/engine.hpp"
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset_manager.hpp"
@@ -10,7 +10,6 @@
 #include "hyperion/core/timer.hpp"
 #include "hyperion/core/app/application.hpp"
 #include "hyperion/core/app/display.hpp"
-#include "hyperion/core/app/input.hpp"
 #include "hyperion/core/app/time.hpp"
 #include "hyperion/core/app/window.hpp"
 #include "hyperion/core/app/events/app_event.hpp"
@@ -18,6 +17,7 @@
 #include "hyperion/core/app/events/key_events.hpp"
 #include "hyperion/core/app/events/window_events.hpp"
 #include "hyperion/core/memory/memory.hpp"
+#include "hyperion/core/system/operating_system.hpp"
 #include "hyperion/ecs/world/world_manager.hpp"
 #include "hyperion/physics/physics_engine.hpp"
 #include "hyperion/render/render_engine.hpp"

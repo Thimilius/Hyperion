@@ -2,7 +2,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/operating_system_types.hpp"
+#include "hyperion/core/system/operating_system_types.hpp"
 #include "hyperion/platform/windows/windows_types.hpp"
 
 //-------------------- Forward Declarations --------------------

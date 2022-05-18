@@ -150,6 +150,8 @@ namespace Hyperion {
         break;
       case LANG_VIETNAMESE: result = OperatingSystemLanguage::Vietnamese;
         break;
+      default: result = OperatingSystemLanguage::Unknown;
+        break;
     }
     return result;
   }
@@ -258,7 +260,7 @@ namespace Hyperion {
     }
   }
 
-  //--------------------------------------------------------------
+  //--------------------------------------------------------------B
   String WindowsOperatingSystem::SaveFileDialog(const String &title, const String &filter) {
     WCHAR file_output[MAX_PATH] = { };
 

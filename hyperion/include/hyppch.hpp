@@ -21,7 +21,6 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
-#include "hyperion/core/engine.hpp"
 #include "hyperion/core/result.hpp"
 #include "hyperion/core/string_utils.hpp"
 #include "hyperion/core/math/bounding_box.hpp"
@@ -36,3 +35,4 @@
 #include "hyperion/core/math/vector3.hpp"
 #include "hyperion/core/math/vector4.hpp"
 #include "hyperion/core/profiling/profile.hpp"
+#include "hyperion/core/system/engine.hpp"

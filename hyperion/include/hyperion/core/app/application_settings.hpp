@@ -3,7 +3,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/audio/audio_backend.hpp"
-#include "hyperion/core/engine_loop.hpp"
+#include "hyperion/core/system/engine_loop.hpp"
 #include "hyperion/core/app/window_settings.hpp"
 #include "hyperion/physics/physics_backend.hpp"
 #include "hyperion/render/render_backend.hpp"

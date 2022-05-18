@@ -72,7 +72,7 @@ namespace Hyperion {
     Log() = delete;
     ~Log() = delete;
   private:
-    static void LogMessageInternal(LogLevel level, String message);
+    static void LogMessageInternal(LogLevel level, const String &message);
 
     static LogColor GetLogColor(LogLevel level);
   private:

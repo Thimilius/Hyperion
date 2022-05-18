@@ -5,14 +5,14 @@
 #include "hyperion/core/log.hpp"
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/operating_system.hpp"
+#include "hyperion/core/system/operating_system.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
   //--------------------------------------------------------------
-  void Log::LogMessageInternal(LogLevel level, String message) {
-    OperatingSystem::PrintToConsole(GetLogColor(level), message.c_str());
+  void Log::LogMessageInternal(LogLevel level, const String &message) {
+    OperatingSystem::PrintToConsole(GetLogColor(level), message);
   }
 
   //--------------------------------------------------------------
