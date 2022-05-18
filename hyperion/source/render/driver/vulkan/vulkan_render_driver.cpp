@@ -113,7 +113,7 @@ namespace Hyperion::Rendering {
     scissor.offset = { 0, 0 };
     scissor.extent = { Display::GetWidth(), Display::GetHeight() };
     vkCmdSetScissor(command_buffer, 0, 1, &scissor);
-
+    
     VkRenderPassBeginInfo render_pass_begin_info = { };
     render_pass_begin_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     render_pass_begin_info.renderPass = m_context->m_render_pass;
@@ -140,7 +140,7 @@ namespace Hyperion::Rendering {
     VulkanUniformBufferObject ubo;
     ubo.model = Matrix4x4::Rotate(Vector3(0.0f, 0.0f, 1.0f), Time::GetTime() * 25.0f);
     ubo.view = Matrix4x4::LookAt(Vector3(2.0f, 2.0f, 2.0f), Vector3::Zero(), Vector3(0.0f, 1.0f, 0.0f));
-    float32 aspect_ratio = m_context->m_swapchain_extent.width / static_cast<float32>(m_context->m_swapchain_extent.height);
+    float32 aspect_ratio = static_cast<float32>(m_context->m_swapchain_extent.width) / static_cast<float32>(m_context->m_swapchain_extent.height);
     ubo.projection = Matrix4x4::Perspective(45.0f, aspect_ratio, 0.1f, 10.0f);
     ubo.projection.elements[5] *= -1;
 

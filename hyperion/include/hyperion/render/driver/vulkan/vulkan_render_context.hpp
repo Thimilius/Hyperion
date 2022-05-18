@@ -75,8 +75,8 @@ namespace Hyperion::Rendering {
     void CreateLogicalDevice();
 
     void CreateSwapChain();
-    VkSurfaceFormatKHR ChooseSwapChainFormat(const Array<VkSurfaceFormatKHR> formats);
-    VkPresentModeKHR ChoosePresentMode(const Array<VkPresentModeKHR> present_modes);
+    VkSurfaceFormatKHR ChooseSwapChainFormat(const Array<VkSurfaceFormatKHR> &formats);
+    VkPresentModeKHR ChoosePresentMode(const Array<VkPresentModeKHR> &present_modes);
     VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities);
 
     void CreateImageViews();
@@ -112,15 +112,12 @@ namespace Hyperion::Rendering {
 
     void Cleanup();
 
-    void *LoadFunction(const char *name);
+    PFN_vkVoidFunction LoadFunction(const char *name);
   private:
-    static VKAPI_ATTR VkBool32 VKAPI_CALL DebugMessageCallback(
-      VkDebugUtilsMessageSeverityFlagBitsEXT severity,
-      VkDebugUtilsMessageTypeFlagsEXT type,
-      const VkDebugUtilsMessengerCallbackDataEXT *callback_data,
-      void *user_data);
+    static VKAPI_ATTR VkBool32 VKAPI_CALL DebugMessageCallback(VkDebugUtilsMessageSeverityFlagBitsEXT severity, VkDebugUtilsMessageTypeFlagsEXT type,
+                                                               const VkDebugUtilsMessengerCallbackDataEXT *callback_data, void *user_data);
   public:
-    static const uint32 MAX_FRAMES_IN_FLIGHT = 2;
+    static constexpr uint32 MAX_FRAMES_IN_FLIGHT = 2;
   private:
     RenderContextProperties m_properties;
 

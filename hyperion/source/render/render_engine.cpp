@@ -30,10 +30,8 @@ namespace Hyperion::Rendering {
     s_vsync_mode = settings.vsync_mode;
 
     switch (s_render_settings.pipeline) {
-      case RenderPipeline::Forward: s_render_pipeline = new ForwardRenderPipeline();
-        break;
-      case RenderPipeline::Custom: s_render_pipeline = s_render_settings.custom_pipeline;
-        break;
+      case RenderPipeline::Forward: s_render_pipeline = new ForwardRenderPipeline(); break;
+      case RenderPipeline::Custom: s_render_pipeline = s_render_settings.custom_pipeline; break;
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
     }
 
@@ -53,8 +51,7 @@ namespace Hyperion::Rendering {
         RenderThreadSynchronization::WaitForRenderReady();
         break;
       }
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-        break;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
     }
   }
 
@@ -80,8 +77,6 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void RenderEngine::Present() {
-    Window *main_window = Application::GetInstance()->GetMainWindow();
-
     switch (s_render_settings.threading_mode) {
       case RenderThreadingMode::SingleThreaded: {
         SwapRenderFrames();
@@ -98,8 +93,7 @@ namespace Hyperion::Rendering {
         RenderThreadSynchronization::NotifySwapDone();
         break;
       }
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-        break;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
     }
   }
 
@@ -119,8 +113,7 @@ namespace Hyperion::Rendering {
         s_render_thread.Join();
         break;
       }
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-        break;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
     }
   }
 
@@ -147,6 +140,9 @@ namespace Hyperion::Rendering {
   void RenderEngine::SwapRenderFrames() {
     HYP_PROFILE_SCOPE("RenderEngine.SwapRenderFrames");
 
+    s_render_stats = s_render_driver_context->GetDriver()->GetStats();
+    s_render_should_resize = s_main_should_resize;
+    
     RenderFrame *temp = s_main_frame;
     s_main_frame = s_render_frame;
     s_render_frame = temp;
@@ -155,11 +151,8 @@ namespace Hyperion::Rendering {
     for (const AsyncRequestResult &async_request_result : s_main_frame->GetAsyncRequestResults()) {
       async_request_result.callback(async_request_result.result);
     }
-    s_render_stats = s_render_driver_context->GetDriver()->GetStats();
 
     s_main_frame->Clear();
-
-    s_render_should_resize = s_main_should_resize;
   }
 
   //--------------------------------------------------------------

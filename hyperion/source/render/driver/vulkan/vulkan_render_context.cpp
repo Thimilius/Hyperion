@@ -10,7 +10,6 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/display.hpp"
-#include "hyperion/core/io/file_system.hpp"
 #include "hyperion/render/driver/vulkan/vulkan_shader_compiler.hpp"
 #include "hyperion/render/driver/vulkan/vulkan_utilities.hpp"
 
@@ -255,8 +254,8 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void *VulkanRenderContext::LoadFunction(const char *name) {
-    void *function = vkGetInstanceProcAddr(m_instance, name);
+  PFN_vkVoidFunction VulkanRenderContext::LoadFunction(const char *name) {
+    PFN_vkVoidFunction function = vkGetInstanceProcAddr(m_instance, name);
     if (function == nullptr) {
       HYP_LOG_ERROR("Vulkan", "Failed to load function with name: {}", name);
       return nullptr;
@@ -471,7 +470,7 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  VkSurfaceFormatKHR VulkanRenderContext::ChooseSwapChainFormat(const Array<VkSurfaceFormatKHR> formats) {
+  VkSurfaceFormatKHR VulkanRenderContext::ChooseSwapChainFormat(const Array<VkSurfaceFormatKHR> &formats) {
     for (const VkSurfaceFormatKHR &format : formats) {
       if (format.format == VK_FORMAT_R8G8B8A8_SRGB && format.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
         return format;
@@ -481,7 +480,7 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  VkPresentModeKHR VulkanRenderContext::ChoosePresentMode(const Array<VkPresentModeKHR> present_modes) {
+  VkPresentModeKHR VulkanRenderContext::ChoosePresentMode(const Array<VkPresentModeKHR> &present_modes) {
     for (const VkPresentModeKHR present_mode : present_modes) {
       if (present_mode == VK_PRESENT_MODE_MAILBOX_KHR) {
         return present_mode;
@@ -648,7 +647,7 @@ namespace Hyperion::Rendering {
     rasterization_state_create_info.rasterizerDiscardEnable = VK_FALSE;
     rasterization_state_create_info.polygonMode = VK_POLYGON_MODE_FILL;
     rasterization_state_create_info.lineWidth = 1.0f;
-    rasterization_state_create_info.cullMode = VK_CULL_MODE_BACK_BIT;
+    rasterization_state_create_info.cullMode = VK_CULL_MODE_NONE;
     rasterization_state_create_info.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE; // TEMP: This should be clockwise.
     rasterization_state_create_info.depthBiasEnable = VK_FALSE;
     rasterization_state_create_info.depthBiasConstantFactor = 0.0f;
@@ -802,7 +801,7 @@ namespace Hyperion::Rendering {
     create_info.flags = 0;
     create_info.physicalDevice = m_physical_device;
     create_info.device = m_device;
-    create_info.pHeapSizeLimit = 0;
+    create_info.pHeapSizeLimit = nullptr;
     create_info.instance = m_instance;
 
     vmaCreateAllocator(&create_info, &m_allocator);
