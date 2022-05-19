@@ -12,7 +12,6 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/events/app_event.hpp"
 #include "hyperion/core/app/events/display_events.hpp"
-#include "hyperion/core/app/events/gamepad_events.hpp"
 #include "hyperion/core/app/events/key_events.hpp"
 #include "hyperion/core/app/events/mouse_events.hpp"
 #include "hyperion/core/app/events/window_events.hpp"
@@ -51,7 +50,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   WindowsWindow::~WindowsWindow() {
-    delete reinterpret_cast<WINDOWPLACEMENT *>(m_previous_placement);
+    delete static_cast<WINDOWPLACEMENT *>(m_previous_placement);
     DestroyWindow(m_window_handle);
   }
 
@@ -61,10 +60,10 @@ namespace Hyperion {
     WideString title_wide = StringUtils::Utf8ToUtf16(title);
     const wchar_t *title_utf16 = title_wide.c_str();
     if (!SetWindowTextW(m_window_handle, title_utf16)) {
-      HYP_PANIC_MESSAGE("Engine", "Failed to set window title!");
+      HYP_LOG_ERROR("Engine", "Failed to set window title!");
     }
     if (!SetConsoleTitleW(title_utf16)) {
-      //HYP_PANIC_MESSAGE("Engine", "Failed to set console window title!");
+      HYP_LOG_WARN("Engine", "Failed to set console window title!");
     }
   }
 
