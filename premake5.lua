@@ -1,3 +1,5 @@
+require "extension"
+
 output_directory_format = "%{cfg.system}-%{cfg.architecture}"
 audio_backend_option = "audio"
 physics_backend_option = "physics"
@@ -99,11 +101,11 @@ project "hyperion-sandbox"
 	excludes { "%{prj.location}/resource.rc" }
 	includedirs { "%{prj.location}/include" }
 		
-    filter "system:windows"
+	filter "system:windows"
 		files { "%{prj.location}/resource.rc" }
 		postbuildcommands {
-		    "{COPY} %{cfg.targetdir}/%{prj.name}.exe ../run_tree/hyperion.exe*"
-	    }
+			"{COPY} %{cfg.targetdir}/%{prj.name}.exe ../run_tree/hyperion.exe*"
+		}
 		
 project "hyperion-editor"
 	location "hyperion-editor"
@@ -129,8 +131,10 @@ project "hyperion-editor"
 	excludes { "%{prj.location}/resource.rc" }
 	includedirs { "%{prj.location}/include" }
 		
-    filter "system:windows"
+	filter "system:windows"
 		files { "%{prj.location}/resource.rc" }
 		postbuildcommands {
-		    "{COPY} %{cfg.targetdir}/%{prj.name}.exe ../run_tree/hyperion.exe*"
-	    }
+			"{COPY} %{cfg.targetdir}/%{prj.name}.exe ../run_tree/hyperion.exe*"
+		}
+
+include "managed.lua"

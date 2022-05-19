@@ -41,20 +41,22 @@ namespace Hyperion {
     auto get_delegate_func = GetFunctionPointer<hostfxr_get_runtime_delegate_fn>(handle, "hostfxr_get_runtime_delegate");
     auto close_func = GetFunctionPointer<hostfxr_close_fn>(handle, "hostfxr_close");
 
-    auto config_path = L"data/managed/DotNetLib.runtimeconfig.json";
+    auto config_path = L"data/managed/Hyperion.runtimeconfig.json";
 
     hostfxr_handle context;
     int result = init_func(config_path, nullptr, &context);
+    assert(result == 0);
 
     load_assembly_and_get_function_pointer_fn load_assembly_and_get_function_pointer;
     result = get_delegate_func(
             context,
             hdt_load_assembly_and_get_function_pointer,
             reinterpret_cast<void **>(&load_assembly_and_get_function_pointer));
+    assert(result == 0);
 
-    const char_t *dotnetlib_path = L"data/managed/DotNetLib.dll";
-    const char_t *dotnet_type = L"DotNetLib.Lib, DotNetLib";
-    const char_t *dotnet_type_method = L"Hello";
+    const char_t *dotnetlib_path = L"data/managed/Hyperion.dll";
+    const char_t *dotnet_type = L"Hyperion.Bootstrapper, Hyperion";
+    const char_t *dotnet_type_method = L"Bootstrap";
     // <SnippetLoadAndGet>
     // Function pointer to managed delegate
     component_entry_point_fn hello = nullptr;
@@ -68,6 +70,8 @@ namespace Hyperion {
     // </SnippetLoadAndGet>
     assert(rc == 0 && hello != nullptr && "Failure: load_assembly_and_get_function_pointer()");
 
+    close_func(context);
+    
     //
     // STEP 4: Run managed code
     //

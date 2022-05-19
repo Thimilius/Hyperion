@@ -1,7 +1,9 @@
 # Directories
 .run/
 .vs/
-build/
+**/obj/
+**/bin/
+**/build/
 
 # Files
 *.sln
@@ -9,6 +11,7 @@ build/
 *.vcxproj
 *.filters
 *.cache
+*.csproj
 Makefile
 
 # Visual Studio Code
@@ -23,3 +26,4 @@ Makefile
 run_tree/*.exe
 run_tree/*.dll
 run_tree/*.world
+run_tree/data/managed/
