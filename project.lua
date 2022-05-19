@@ -29,12 +29,13 @@ project "hyperion"
 		"%{prj.location}/include/hyperion/modules/bullet/**",
 		"%{prj.location}/source/modules/bullet/**",
 
-        "%{prj.location}/vendor/glad/source/glad_wgl.c"
+  	"%{prj.location}/vendor/glad/source/glad_wgl.c"
 	}
 
 	includedirs {
 		"%{prj.location}/include",
 		
+		"%{prj.location}/vendor/dotnet/include",
 		"%{prj.location}/vendor/glad/include",
 		"%{prj.location}/vendor/nameof/include",
 		"%{prj.location}/vendor/vulkan/include",
@@ -66,7 +67,7 @@ project "hyperion"
 			"%{prj.location}/include/hyperion/platform/windows/**.hpp",
 			"%{prj.location}/source/platform/windows/**.cpp",
 
-            "%{prj.location}/vendor/glad/source/glad_wgl.c"
+    	"%{prj.location}/vendor/glad/source/glad_wgl.c"
 		}
 		
 function linkhyperion(path)
