@@ -5,30 +5,26 @@
 #include "hyperion/modules/dotnet/dotnet_scripting_driver.hpp"
 
 //---------------------- Library Includes ----------------------
-#include <Windows.h>
 #include <dotnet/hostfxr.h>
 #include <dotnet/coreclr_delegates.h>
+
+//---------------------- Project Includes ----------------------
+#include "hyperion/core/system/operating_system.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
 
-  template<typename T>
-  T GetFunctionPointer(HMODULE handle, const char *name) {
-    return reinterpret_cast<T>(GetProcAddress(handle, name));
-  }
-
   int Function(int arg, const char *string) {
-    HYP_LOG_INFO("LUL", "Das isses: {}", arg);
+    HYP_LOG_INFO("LUL", "Das isses: {} - {}", arg, string);
     return 7;
   }
   
   //--------------------------------------------------------------
   void DotnetScriptingDriver::Initialize(const ScriptingSettings &settings) {
-    
-    HMODULE handle = LoadLibraryA(settings.runtime_host_path.c_str());
-    auto init_func = GetFunctionPointer<hostfxr_initialize_for_runtime_config_fn>(handle, "hostfxr_initialize_for_runtime_config");
-    auto get_delegate_func = GetFunctionPointer<hostfxr_get_runtime_delegate_fn>(handle, "hostfxr_get_runtime_delegate");
-    auto close_func = GetFunctionPointer<hostfxr_close_fn>(handle, "hostfxr_close");
+    LibraryHandle hostfxr = OperatingSystem::LoadLibrary(settings.runtime_host_path);
+    auto init_func = OperatingSystem::GetFunctionPointer<hostfxr_initialize_for_runtime_config_fn>(hostfxr, "hostfxr_initialize_for_runtime_config");
+    auto get_delegate_func = OperatingSystem::GetFunctionPointer<hostfxr_get_runtime_delegate_fn>(hostfxr, "hostfxr_get_runtime_delegate");
+    auto close_func = OperatingSystem::GetFunctionPointer<hostfxr_close_fn>(hostfxr, "hostfxr_close");
 
     auto config_path = StringUtils::Utf8ToUtf16(settings.library_path + settings.core_library_name + ".runtimeconfig.json");
     
@@ -50,12 +46,13 @@ namespace Hyperion::Scripting {
     // Function pointer to managed delegate
     component_entry_point_fn hello = nullptr;
     int rc = load_assembly_and_get_function_pointer(
-        library_path.c_str(),
-        dotnet_type,
-        dotnet_type_method,
-        nullptr /*delegate_type_name*/,
-        nullptr,
-        (void**)&hello);
+      library_path.c_str(),
+      dotnet_type,
+      dotnet_type_method,
+      nullptr /*delegate_type_name*/,
+      nullptr,
+      reinterpret_cast<void **>(&hello)
+    );
     // </SnippetLoadAndGet>
     assert(rc == 0 && hello != nullptr && "Failure: load_assembly_and_get_function_pointer()");
 

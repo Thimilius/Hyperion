@@ -10,6 +10,8 @@
 #include <psapi.h>
 #include <Shlobj.h>
 
+#undef LoadLibrary
+
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/application.hpp"
 
@@ -238,6 +240,12 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
+  LibraryHandle WindowsOperatingSystem::LoadLibrary(const String &path) {
+    WideString wide_path = StringUtils::Utf8ToUtf16(path);
+    return LoadLibraryW(wide_path.c_str());
+  }
+
+  //--------------------------------------------------------------
   String WindowsOperatingSystem::OpenFileDialog(const String &title, const String &filter) {
     WCHAR file_output[MAX_PATH] = { };
 
@@ -281,6 +289,11 @@ namespace Hyperion {
     } else {
       return String();
     }
+  }
+
+  //--------------------------------------------------------------
+  void *WindowsOperatingSystem::GetFunctionPointerRaw(LibraryHandle handle, const char *name) {
+    return static_cast<void *>(GetProcAddress(handle, name));
   }
 
 }
