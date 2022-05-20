@@ -21,6 +21,7 @@
 #include "hyperion/ecs/world/world_manager.hpp"
 #include "hyperion/physics/physics_engine.hpp"
 #include "hyperion/render/render_engine.hpp"
+#include "hyperion/scripting/scripting_engine.hpp"
 #include "hyperion/ui/ui_factory.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -322,6 +323,8 @@ namespace Hyperion {
     Physics::PhysicsEngine::Initialize();
 
     WorldManager::Initialize();
+
+    Scripting::ScriptingEngine::Initialize(s_settings.scripting);
   }
 
   //--------------------------------------------------------------
@@ -390,6 +393,8 @@ namespace Hyperion {
   //--------------------------------------------------------------
   void Engine::Shutdown() {
     // When shutting down we have to be very careful about the order.
+    Scripting::ScriptingEngine::Shutdown();
+    
     WorldManager::Shutdown();
 
     Physics::PhysicsEngine::Shutdown();

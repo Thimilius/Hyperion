@@ -10,6 +10,7 @@
 #include "hyperion/render/render_context_types.hpp"
 #include "hyperion/render/pipelines/render_pipeline.hpp"
 #include "hyperion/render/threading/render_threading_mode.hpp"
+#include "hyperion/scripting/scripting_backend.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -42,12 +43,12 @@ namespace Hyperion {
   };
 
   struct ScriptingSettings {
-    String runtime_path = "data/mono/";
+    Scripting::ScriptingBackend backend = Scripting::ScriptingBackend::Dotnet;
+    
+    String runtime_host_path = "data/tools/dotnet/host/fxr/6.0.5/hostfxr.dll";
+    
     String library_path = "data/managed/";
-
-    bool8 wait_for_debugger = false;
-    uint32 debugger_port = 12345;
-    uint32 debugger_wait_timeout = 3000;
+    String core_library_name = "Hyperion";
   };
 
   struct ApplicationSettings {

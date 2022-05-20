@@ -9,8 +9,6 @@
 #include <Powrprof.h>
 #include <psapi.h>
 #include <Shlobj.h>
-#include <dotnet/hostfxr.h>
-#include <dotnet/coreclr_delegates.h>
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/application.hpp"
@@ -18,81 +16,12 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-  template<typename T>
-  T GetFunctionPointer(HMODULE handle, const char *name) {
-    return reinterpret_cast<T>(GetProcAddress(handle, name));
-  }
-
-  int Function(int arg, const char *string) {
-    HYP_LOG_INFO("LUL", "Das isses: {}", arg);
-    return 7;
-  }
-  
   //--------------------------------------------------------------
   void WindowsOperatingSystem::Initialize() {
     s_console_handle = GetStdHandle(STD_OUTPUT_HANDLE);
     if (!s_console_handle || s_console_handle == INVALID_HANDLE_VALUE) {
       AllocConsole();
       s_console_handle = GetStdHandle(STD_OUTPUT_HANDLE);
-    }
-
-    HMODULE handle = LoadLibraryA("data/tools/dotnet/host/fxr/6.0.5/hostfxr.dll");
-    auto init_func = GetFunctionPointer<hostfxr_initialize_for_runtime_config_fn>(handle, "hostfxr_initialize_for_runtime_config");
-    auto get_delegate_func = GetFunctionPointer<hostfxr_get_runtime_delegate_fn>(handle, "hostfxr_get_runtime_delegate");
-    auto close_func = GetFunctionPointer<hostfxr_close_fn>(handle, "hostfxr_close");
-
-    auto config_path = L"data/managed/Hyperion.runtimeconfig.json";
-
-    hostfxr_handle context;
-    int result = init_func(config_path, nullptr, &context);
-    assert(result == 0);
-
-    load_assembly_and_get_function_pointer_fn load_assembly_and_get_function_pointer;
-    result = get_delegate_func(
-            context,
-            hdt_load_assembly_and_get_function_pointer,
-            reinterpret_cast<void **>(&load_assembly_and_get_function_pointer));
-    assert(result == 0);
-
-    const char_t *dotnetlib_path = L"data/managed/Hyperion.dll";
-    const char_t *dotnet_type = L"Hyperion.Bootstrapper, Hyperion";
-    const char_t *dotnet_type_method = L"Bootstrap";
-    // <SnippetLoadAndGet>
-    // Function pointer to managed delegate
-    component_entry_point_fn hello = nullptr;
-    int rc = load_assembly_and_get_function_pointer(
-        dotnetlib_path,
-        dotnet_type,
-        dotnet_type_method,
-        nullptr /*delegate_type_name*/,
-        nullptr,
-        (void**)&hello);
-    // </SnippetLoadAndGet>
-    assert(rc == 0 && hello != nullptr && "Failure: load_assembly_and_get_function_pointer()");
-
-    close_func(context);
-    
-    //
-    // STEP 4: Run managed code
-    //
-    struct lib_args
-    {
-      const char_t *message;
-      int number;
-      int (*function)(int, const char *);  
-    };
-    for (int i = 0; i < 3; ++i)
-    {
-      // <SnippetCallManaged>
-      lib_args args
-      {
-        L"from host!",
-        i,
-        Function,
-      };
-
-      hello(&args, sizeof(args));
-      // </SnippetCallManaged>
     }
   }
 
