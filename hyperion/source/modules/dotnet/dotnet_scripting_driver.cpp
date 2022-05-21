@@ -14,10 +14,17 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
 
-  int Function(int arg, const char *string) {
-    HYP_LOG_INFO("LUL", "Das isses: {} - {}", arg, string);
-    return 7;
-  }
+  struct NativeFunctionPointers {
+    void (*log_trace)(const char *);
+  };
+  
+  struct ManagedFunctionPointers {
+    void (*engine_initialize)();
+    void (*engine_update)();
+    void (*engine_shutdown)();
+  };
+
+  ManagedFunctionPointers g_function_pointers;
   
   //--------------------------------------------------------------
   void DotnetScriptingDriver::Initialize(const ScriptingSettings &settings) {
@@ -44,47 +51,41 @@ namespace Hyperion::Scripting {
     auto dotnet_type_method = L"Bootstrap";
     // <SnippetLoadAndGet>
     // Function pointer to managed delegate
-    component_entry_point_fn hello = nullptr;
+    component_entry_point_fn bootstrap = nullptr;
     int rc = load_assembly_and_get_function_pointer(
       library_path.c_str(),
       dotnet_type,
       dotnet_type_method,
       nullptr /*delegate_type_name*/,
       nullptr,
-      reinterpret_cast<void **>(&hello)
+      reinterpret_cast<void **>(&bootstrap)
     );
     // </SnippetLoadAndGet>
-    assert(rc == 0 && hello != nullptr && "Failure: load_assembly_and_get_function_pointer()");
+    assert(rc == 0 && bootstrap != nullptr && "Failure: load_assembly_and_get_function_pointer()");
 
     close_func(context);
-    
+
     //
     // STEP 4: Run managed code
     //
-    struct lib_args
-    {
-      const char_t *message;
-      int number;
-      int (*function)(int, const char *);  
+    struct BootstrapArguments {
+      NativeFunctionPointers native_function_pointers;
+      
+      void (*function_pointers_callback)(ManagedFunctionPointers *);
     };
-    for (int i = 0; i < 3; ++i)
-    {
-      // <SnippetCallManaged>
-      lib_args args
-      {
-        L"from host!",
-        i,
-        Function,
-      };
+    BootstrapArguments args = { };
+    args.native_function_pointers.log_trace = [](const char *message) {
+      HYP_LOG_TRACE("Managed", message);
+    };
+    args.function_pointers_callback = [](ManagedFunctionPointers *pointers) { g_function_pointers = *pointers; };
+    bootstrap(&args, sizeof(args));
 
-      hello(&args, sizeof(args));
-      // </SnippetCallManaged>
-    }
+    g_function_pointers.engine_initialize();
   }
 
   //--------------------------------------------------------------
   void DotnetScriptingDriver::Shutdown() {
-    
+    g_function_pointers.engine_shutdown();
   }
 
 }

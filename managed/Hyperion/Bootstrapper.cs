@@ -1,42 +1,44 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Hyperion
-{
-  internal static class Bootstrapper
-  {
+namespace Hyperion {
+  internal static unsafe class Bootstrapper {
     [StructLayout(LayoutKind.Sequential)]
-    private struct LibArgs
-    {
-      public IntPtr Message;
-      public int Number;
-      public unsafe delegate *unmanaged<int, string, int> Function;
+    private struct NativeFunctionPointers {
+      public readonly delegate *unmanaged<string, void> LogTrace;
+    }
+    
+    [StructLayout(LayoutKind.Sequential)]
+    private struct ManagedFunctionPointers {
+      public delegate *unmanaged<void> EngineInitialize;
+      public delegate *unmanaged<void> EngineUpdate;
+      public delegate *unmanaged<void> EngineShutdown;
+    }
+    
+    [StructLayout(LayoutKind.Sequential)]
+    private struct BootstrapArguments {
+      public readonly NativeFunctionPointers NativeFunctionPointers;
+      public readonly delegate *unmanaged<ManagedFunctionPointers *, void> ForwardPointersCallback;
     }
 
-    internal static int Bootstrap(IntPtr arg, int argLength)
-    {
-      if (argLength < Marshal.SizeOf(typeof(LibArgs)))
-      {
+    internal static int Bootstrap(IntPtr arguments, int argumentSize) {
+      if (argumentSize < Marshal.SizeOf<BootstrapArguments>()) {
         return 1;
       }
 
-      LibArgs libArgs = Marshal.PtrToStructure<LibArgs>(arg);
-      Console.WriteLine($"Hello, world! from {nameof(Bootstrapper)}");
-      PrintLibArgs(libArgs);
+      var bootstrapArguments = Marshal.PtrToStructure<BootstrapArguments>(arguments);
+
+      Bindings.LogTrace = bootstrapArguments.NativeFunctionPointers.LogTrace;
+      
+      var functionPointers = new ManagedFunctionPointers {
+        EngineInitialize = &Engine.Initialize,
+        EngineUpdate = &Engine.Update,
+        EngineShutdown = &Engine.Shutdown
+      };
+
+      bootstrapArguments.ForwardPointersCallback(&functionPointers);
+      
       return 0;
-    }
-
-    private static void PrintLibArgs(LibArgs libArgs)
-    {
-      string message = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? Marshal.PtrToStringUni(libArgs.Message) : Marshal.PtrToStringUTF8(libArgs.Message);
-
-      Console.WriteLine($"-- message: {message}");
-      Console.WriteLine($"-- number: {libArgs.Number}");
-
-      unsafe
-      {
-        Console.WriteLine($"Function Result: {libArgs.Function(13, "Hello there")}");
-      }
     }
   }
 }
