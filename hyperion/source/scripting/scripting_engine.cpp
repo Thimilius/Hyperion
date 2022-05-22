@@ -22,6 +22,11 @@ namespace Hyperion::Scripting {
   }
 
   //--------------------------------------------------------------
+  void ScriptingEngine::Update() {
+    s_scripting_driver->Update();
+  }
+
+  //--------------------------------------------------------------
   void ScriptingEngine::Shutdown() {
     s_scripting_driver->Shutdown();
     delete s_scripting_driver;

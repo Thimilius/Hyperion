@@ -84,6 +84,11 @@ namespace Hyperion::Scripting {
   }
 
   //--------------------------------------------------------------
+  void DotnetScriptingDriver::Update() {
+    g_function_pointers.engine_update();
+  }
+
+  //--------------------------------------------------------------
   void DotnetScriptingDriver::Shutdown() {
     g_function_pointers.engine_shutdown();
   }

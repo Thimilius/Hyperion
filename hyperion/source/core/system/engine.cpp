@@ -149,6 +149,12 @@ namespace Hyperion {
           HYP_PROFILE_SCOPE("EngineLoop.WorldManagerUpdate");
           WorldManager::Update();
         }
+      },
+      {
+        "ScriptingEngineUpdate", []() {
+          HYP_PROFILE_SCOPE("EngineLoop.ScriptingEngineUpdate");
+          Scripting::ScriptingEngine::Update();
+        }
       }
     };
     engine_loop.late_update.name = "LateUpdate";
