@@ -10,7 +10,7 @@ namespace Hyperion {
   class MeshBuilder final {
   public:
     inline bool8 IsEmpty() const { return m_vertex_count == 0 || m_index_count == 0; }
-    inline uint32 GetVertextCount() const { return m_vertex_count; }
+    inline uint32 GetVertexCount() const { return m_vertex_count; }
     inline uint32 GetIndexCount() const { return m_index_count; }
     inline uint32 GetIndexOffset() const { return m_index_offset; }
     inline void AddIndexOffset(uint32 offset) { m_index_offset += offset; }
@@ -25,6 +25,7 @@ namespace Hyperion {
     void AddQuad(Vector3 corners[4], Color color, Vector2 uvs[4]);
 
     void Transform(const Matrix4x4 &transformation);
+    void TransformAndAlignPixels(const Matrix4x4 &transformation, Vector2Int alignment_size);
 
     Mesh *CreateMesh();
     void SetToMesh(Mesh *mesh);

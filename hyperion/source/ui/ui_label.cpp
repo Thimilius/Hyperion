@@ -7,6 +7,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/assets/utilities/text_mesh_generator.hpp"
+#include "hyperion/core/app/display.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::UI {
@@ -64,7 +65,9 @@ namespace Hyperion::UI {
     RebuildTextGeometry(mesh_builder, GetStyle().GetColor(), rect);
 
     // This transformation also affects the shadow vertices that may be present.
-    mesh_builder.Transform(GetTransform());
+    // NOTE: Aligning the positions to pixels is a very heavy operation but we need to do it to get crisp and sharp text.
+    // Because we are using a retained-mode gui this is manageable in terms of performance as it only happens on state change. 
+    mesh_builder.TransformAndAlignPixels(GetTransform(), Vector2Int(Display::GetWidth(), Display::GetHeight()));
 
     GetRenderer().texture = m_font->GetTexture();
   }

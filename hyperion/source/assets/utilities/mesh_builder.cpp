@@ -92,6 +92,33 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
+  void MeshBuilder::TransformAndAlignPixels(const Matrix4x4 &transformation, Vector2Int alignment_size) {
+    bool8 align_x = alignment_size.x % 2 != 0;
+    bool8 align_y = alignment_size.y % 2 != 0;
+    for (uint32 i = 0; i < m_mesh_data.positions.GetLength(); i++) {
+      Vector3 transformed_position = transformation * m_mesh_data.positions[i];
+      
+      float32 x_mod = Math::Abs(Math::FMod(transformed_position.x, 1.0f));
+      if (x_mod == 0.5f) {
+        transformed_position.x = Math::Round(transformed_position.x);
+      }
+      if (align_x) {
+        transformed_position.x += 0.5f;
+      }
+      
+      float32 y_mod = Math::Abs(Math::FMod(transformed_position.y, 1.0f));
+      if (y_mod == 0.5f) {
+        transformed_position.y = Math::Round(transformed_position.y);  
+      }
+      if (align_y) {
+        transformed_position.y += 0.5f;
+      }
+      
+      m_mesh_data.positions[i] = transformed_position;
+    }
+  }
+
+  //--------------------------------------------------------------
   Mesh *MeshBuilder::CreateMesh() {
     if (IsEmpty()) {
       return nullptr;
