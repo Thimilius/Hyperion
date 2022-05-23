@@ -4,12 +4,7 @@ using System.Runtime.InteropServices;
 namespace Hyperion {
   internal static unsafe class Bootstrapper {
     [StructLayout(LayoutKind.Sequential)]
-    private struct NativeFunctionPointers {
-      public readonly delegate *unmanaged<string, void> LogTrace;
-    }
-    
-    [StructLayout(LayoutKind.Sequential)]
-    private struct ManagedFunctionPointers {
+    private struct ManagedBindings {
       public delegate *unmanaged<void> EngineInitialize;
       public delegate *unmanaged<void> EngineUpdate;
       public delegate *unmanaged<void> EngineShutdown;
@@ -17,8 +12,8 @@ namespace Hyperion {
     
     [StructLayout(LayoutKind.Sequential)]
     private struct BootstrapArguments {
-      public readonly NativeFunctionPointers NativeFunctionPointers;
-      public readonly delegate *unmanaged<ManagedFunctionPointers *, void> ForwardPointersCallback;
+      public readonly Bindings.AllBindings NativeBindings;
+      public readonly delegate *unmanaged<ManagedBindings *, void> ForwardManagedBindings;
     }
 
     internal static int Bootstrap(IntPtr arguments, int argumentSize) {
@@ -27,16 +22,15 @@ namespace Hyperion {
       }
 
       var bootstrapArguments = Marshal.PtrToStructure<BootstrapArguments>(arguments);
-
-      Bindings.LogTrace = bootstrapArguments.NativeFunctionPointers.LogTrace;
       
-      var functionPointers = new ManagedFunctionPointers {
+      Bindings.Log = bootstrapArguments.NativeBindings.LogBindings;
+      
+      var functionPointers = new ManagedBindings {
         EngineInitialize = &Engine.Initialize,
         EngineUpdate = &Engine.Update,
         EngineShutdown = &Engine.Shutdown
       };
-
-      bootstrapArguments.ForwardPointersCallback(&functionPointers);
+      bootstrapArguments.ForwardManagedBindings(&functionPointers);
       
       return 0;
     }

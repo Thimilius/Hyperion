@@ -14,17 +14,24 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
 
-  struct NativeFunctionPointers {
+  struct LogBindings {
     void (*log_trace)(const char *);
+    void (*log_info)(const char *);
+    void (*log_warn)(const char *);
+    void (*log_error)(const char *);
   };
   
-  struct ManagedFunctionPointers {
+  struct NativeBindings {
+    LogBindings log_bindings;
+  };
+  
+  struct ManagedBindings {
     void (*engine_initialize)();
     void (*engine_update)();
     void (*engine_shutdown)();
   };
 
-  ManagedFunctionPointers g_function_pointers;
+  ManagedBindings g_managed_bindings;
   
   //--------------------------------------------------------------
   void DotnetScriptingDriver::Initialize(const ScriptingSettings &settings) {
@@ -69,28 +76,37 @@ namespace Hyperion::Scripting {
     // STEP 4: Run managed code
     //
     struct BootstrapArguments {
-      NativeFunctionPointers native_function_pointers;
+      NativeBindings native_function_pointers;
       
-      void (*function_pointers_callback)(ManagedFunctionPointers *);
+      void (*function_pointers_callback)(ManagedBindings *);
     };
     BootstrapArguments args = { };
-    args.native_function_pointers.log_trace = [](const char *message) {
-      HYP_LOG_TRACE("Managed", message);
+    args.native_function_pointers.log_bindings.log_trace = [](const char *message) {
+      HYP_TRACE(message);
     };
-    args.function_pointers_callback = [](ManagedFunctionPointers *pointers) { g_function_pointers = *pointers; };
+    args.native_function_pointers.log_bindings.log_info = [](const char *message) {
+      HYP_INFO(message);
+    };
+    args.native_function_pointers.log_bindings.log_warn = [](const char *message) {
+      HYP_WARN(message);
+    };
+    args.native_function_pointers.log_bindings.log_error = [](const char *message) {
+      HYP_ERROR(message);
+    };
+    args.function_pointers_callback = [](ManagedBindings *pointers) { g_managed_bindings = *pointers; };
     bootstrap(&args, sizeof(args));
 
-    g_function_pointers.engine_initialize();
+    g_managed_bindings.engine_initialize();
   }
 
   //--------------------------------------------------------------
   void DotnetScriptingDriver::Update() {
-    g_function_pointers.engine_update();
+    g_managed_bindings.engine_update();
   }
 
   //--------------------------------------------------------------
   void DotnetScriptingDriver::Shutdown() {
-    g_function_pointers.engine_shutdown();
+    g_managed_bindings.engine_shutdown();
   }
 
 }
