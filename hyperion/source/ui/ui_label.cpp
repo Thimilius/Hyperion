@@ -90,7 +90,7 @@ namespace Hyperion::UI {
       GetRenderer().texture = nullptr;
       return false;
     }
-    if (m_text == "") {
+    if (m_text.empty()) {
       return false;
     }
 

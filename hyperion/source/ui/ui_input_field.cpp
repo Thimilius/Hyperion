@@ -103,7 +103,7 @@ namespace Hyperion::UI {
 
       if (key_code == KeyCode::Back) {
         String text = GetText();
-        if (text != "") {
+        if (!text.empty()) {
           uint32 codepoint_size = StringUtils::GetLastUtf8CodepointSize(text);
           text.resize(text.size() - codepoint_size);
           SetText(text);

@@ -220,7 +220,7 @@ namespace Hyperion::UI {
       Type searched_type = Type::get<T>();
       Type element_type = element->get_type();
       if (element_type == searched_type || element_type.is_derived_from(searched_type)) {
-        if (name != "") {
+        if (!name.empty()) {
           if (element->GetName() == name) {
             return static_cast<T *>(element);
           }
