@@ -20,6 +20,26 @@ namespace Hyperion::UI {
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::UI {
 
+  enum class DockingPosition {
+    Full,
+    Top,
+    Bottom,
+    Left,
+    Right,
+  };
+
+  struct UIImmediateLayout {
+    Vector2 full_size;
+    Vector2 full_pivot;
+    Vector3 full_position;
+
+    Vector2 leftover_size;
+    Vector2 leftover_pivot;
+    Vector3 leftover_position;
+
+    Array<UIImmediateLayout> children;
+  };
+  
   struct UIImmediateMesh {
     Mesh *mesh;
     Material *material;
@@ -34,9 +54,13 @@ namespace Hyperion::UI {
   class UIImmediate final {
   public:
     static void Begin();
+    static void End();
+
+    static void BeginWindow(const String &name, DockingPosition docking_position, float32 extent, Color color, bool8 split = false);
+    static void EndWindow();
+    
     static void DrawRect(Vector2 position, Vector2 size, Color color);
     static void DrawText(const String &text, Font *font, Vector2 position, UI::TextAlignment alignment, Color color);
-    static void End();
   private:
     UIImmediate() = delete;
     ~UIImmediate() = delete;
@@ -45,6 +69,8 @@ namespace Hyperion::UI {
   private:
     inline static MeshBuilder s_mesh_builder;
     inline static Array<UIImmediateMesh> s_meshes;
+
+    inline static Array<UIImmediateLayout> s_layout_stack;
   };
   
 }

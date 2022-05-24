@@ -20,6 +20,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/editor/editor_camera.hpp"
 #include "hyperion/editor/editor_render_pipeline.hpp"
+#include "hyperion/editor/editor_style.hpp"
 #include "hyperion/editor/editor_ui.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -103,6 +104,68 @@ namespace Hyperion::Editor {
     EditorCamera::Initialize();
   }
 
+  void NewUI() {
+    UI::UIImmediate::Begin();
+    {
+      UI::UIImmediate::BeginWindow("Editor", UI::DockingPosition::Full, 0.0f, EditorStyle::COLOR_NORMAL);
+      {
+        UI::UIImmediate::BeginWindow("Header", UI::DockingPosition::Top, EditorStyle::HEADER_WIDTH, EditorStyle::COLOR_NORMAL_DARK);
+        {
+          UI::UIImmediate::BeginWindow("Highlight", UI::DockingPosition::Bottom, 1.0f, EditorStyle::COLOR_HIGHLIGHT);
+          UI::UIImmediate::EndWindow();
+        }
+        UI::UIImmediate::EndWindow();
+        
+        UI::UIImmediate::BeginWindow("Footer", UI::DockingPosition::Bottom, EditorStyle::FOOTER_WIDTH, EditorStyle::COLOR_NORMAL_DARK);
+        {
+          UI::UIImmediate::BeginWindow("Highlight", UI::DockingPosition::Top, 1.0f, EditorStyle::COLOR_HIGHLIGHT);
+          UI::UIImmediate::EndWindow();
+        }
+        UI::UIImmediate::EndWindow();
+        
+        UI::UIImmediate::BeginWindow("Side Panel", UI::DockingPosition::Left, EditorStyle::LEFT_BAR_WIDTH, EditorStyle::COLOR_HIGHLIGHT);
+        {
+          UI::UIImmediate::BeginWindow("Hierarchy", UI::DockingPosition::Top, 0.0f, EditorStyle::COLOR_NORMAL, true);
+          {
+          
+          }
+          UI::UIImmediate::EndWindow();
+
+          UI::UIImmediate::BeginWindow("Properties", UI::DockingPosition::Full, 0.0f, EditorStyle::COLOR_NORMAL);
+          {
+          
+          }
+          UI::UIImmediate::EndWindow();
+        }
+        UI::UIImmediate::EndWindow();
+
+        UI::UIImmediate::BeginWindow("Bottom Panel", UI::DockingPosition::Bottom, EditorStyle::BOTTOM_BAR_WIDTH, EditorStyle::COLOR_HIGHLIGHT);
+        {
+          
+        }
+        UI::UIImmediate::EndWindow();
+
+        UI::UIImmediate::BeginWindow("Preview Panel", UI::DockingPosition::Full, 0.0f, EditorStyle::COLOR_NORMAL);
+        {
+          UI::UIImmediate::BeginWindow("Preview Header", UI::DockingPosition::Top, EditorStyle::HEADER_WIDTH, EditorStyle::COLOR_NORMAL);
+          {
+          
+          }
+          UI::UIImmediate::EndWindow();
+
+          UI::UIImmediate::BeginWindow("Preview", UI::DockingPosition::Full, 0, EditorStyle::COLOR_NORMAL_DARK);
+          {
+          
+          }
+          UI::UIImmediate::EndWindow();
+        }
+        UI::UIImmediate::EndWindow();
+      }
+      UI::UIImmediate::EndWindow();
+    }
+    UI::UIImmediate::End();
+  }
+  
   //--------------------------------------------------------------
   void EditorApplication::OnUpdate(float32 delta_time) {
     EditorUI::Update();
@@ -122,12 +185,7 @@ namespace Hyperion::Editor {
       }
     }
 
-    UI::UIImmediate::Begin();
-    UI::UIImmediate::DrawRect(Vector2(0.0f, 0.0f), Vector2(500.0f, 100.0f), Color::Red());
-    String stats_format = "FPS: {} ({:.2f}ms)";
-    String stats_title = StringUtils::Format(stats_format, Time::GetFPS(), Time::GetFrameTime());
-    UI::UIImmediate::DrawText(stats_title, g_font, Vector2(0.0f, 0.0f), UI::TextAlignment::MiddleCenter, Color::White());
-    UI::UIImmediate::End();
+    NewUI();
   }
 
   //--------------------------------------------------------------
