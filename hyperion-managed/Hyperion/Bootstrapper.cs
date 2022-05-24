@@ -8,8 +8,9 @@ namespace Hyperion {
       public delegate *unmanaged<void> EngineInitialize;
       public delegate *unmanaged<void> EngineUpdate;
       public delegate *unmanaged<void> EngineShutdown;
-      
-      public delegate *unmanaged<IntPtr, IntPtr> CreateManagedWorld;
+
+      public delegate *unmanaged<IntPtr, IntPtr> GetTypeByName;
+      public delegate *unmanaged<IntPtr, IntPtr, IntPtr> CreateManagedObject;
     }
     
     [StructLayout(LayoutKind.Sequential)]
@@ -34,7 +35,8 @@ namespace Hyperion {
         EngineUpdate = &Engine.Update,
         EngineShutdown = &Engine.Shutdown,
         
-        CreateManagedWorld = &World.CreateManagedWorld,
+        GetTypeByName = &Native.GetTypeByName,
+        CreateManagedObject = &Native.CreateManagedObject,
       };
       bootstrapArguments.ForwardManagedBindings(&functionPointers);
       

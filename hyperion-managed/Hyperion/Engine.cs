@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace Hyperion {
@@ -44,7 +45,7 @@ namespace Hyperion {
       world.Name = "Hello World!";
       Log(world.Name);
     }
-
+    
     [UnmanagedCallersOnly]
     internal static void Update() {
       

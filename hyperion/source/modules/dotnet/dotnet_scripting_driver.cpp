@@ -42,11 +42,13 @@ namespace Hyperion::Scripting {
     void (*engine_update)();
     void (*engine_shutdown)();
 
-    void *(*create_managed_world)(World *);
+    void *(*get_type_by_name)(const char *);
+    void *(*create_managed_object)(void *, void *);
   };
 
   ManagedBindings g_managed_bindings;
   Map<World *, void *> g_object_mappings;
+  void *g_type_world;
   
   //--------------------------------------------------------------
   void DotnetScriptingDriver::Initialize(const ScriptingSettings &settings) {
@@ -109,7 +111,7 @@ namespace Hyperion::Scripting {
       World *world = WorldManager::GetActiveWorld();
       auto it = g_object_mappings.Find(world);
       if (it == g_object_mappings.end()) {
-        void *handle = g_managed_bindings.create_managed_world(world);
+        void *handle = g_managed_bindings.create_managed_object(g_type_world, world);
         g_object_mappings.Insert(world, handle); 
         return handle;
       } else {
@@ -125,7 +127,12 @@ namespace Hyperion::Scripting {
       world->SetName(String(name));
     };
     args.function_pointers_callback = [](ManagedBindings *pointers) { g_managed_bindings = *pointers; };
-    bootstrap(&args, sizeof(args));
+
+    if (bootstrap(&args, sizeof(args))) {
+      HYP_PANIC_MESSAGE("Dotnet", "Failed to bootstrap core assembly!");
+    }
+      
+    g_type_world = g_managed_bindings.get_type_by_name("Hyperion.World");
   }
 
   //--------------------------------------------------------------

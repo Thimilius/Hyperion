@@ -3,8 +3,8 @@
 namespace Hyperion {
   public static class WorldManager {
     public static unsafe World GetActiveWorld() {
-      var handle = GCHandle.FromIntPtr(Bindings.WorldManager.GetActiveWorld());
-      return handle.Target as World;
+      var worldHandle = GCHandle.FromIntPtr(Bindings.WorldManager.GetActiveWorld());
+      return worldHandle.Target as World;
     }
   }
 }
