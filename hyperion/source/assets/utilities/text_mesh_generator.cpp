@@ -26,9 +26,7 @@ namespace Hyperion {
 
     TextSize text_size = font->GetTextSize(codepoints, 0, scale_x, true);
     Vector2 position = GetPosition(settings.alignment, text_size, settings.rect);
-    Vector2 intial_position = position;
 
-    uint32 triangle_index = mesh_builder.GetIndexOffset();
     for (uint32 codepoint : codepoints) {
       codepoint_offset++;
 

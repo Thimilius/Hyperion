@@ -106,7 +106,8 @@ namespace Hyperion::Editor {
       Vector2 mouse_position = Input::GetMousePosition().ToFloat();
       Vector2 ui_space_point = UI::UIElement::ScreenPointToUISpacePoint(mouse_position);
 
-      if (EditorUI::GetPreviewElement()->ContainsScreenPoint(mouse_position)) {
+      UI::UIElement *preview_element = EditorUI::GetPreviewElement();
+      if (preview_element && preview_element->ContainsScreenPoint(mouse_position)) {
         render_frame->DrawObjectIds(m_object_ids_render_texture->GetRenderTargetId());
 
         Rect rect = EditorUI::GetPreviewElement()->GetWorldRect();

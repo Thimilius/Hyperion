@@ -3,7 +3,9 @@
 
 //---------------------- Library Includes ----------------------
 #include <hyperion/entry_point.hpp>
+#include <hyperion/assets/loader/font_loader.hpp>
 #include <hyperion/core/random.hpp>
+#include <hyperion/core/app/time.hpp>
 #include <hyperion/core/io/file_system.hpp>
 #include <hyperion/core/memory/memory.hpp>
 #include <hyperion/core/system/engine.hpp>
@@ -13,7 +15,7 @@
 #include <hyperion/ecs/world/world_manager.hpp>
 #include <hyperion/ecs/world/world_serializer.hpp>
 #include <hyperion/render/render_engine.hpp>
-#include <hyperion/ui/ui_factory.hpp>
+#include <hyperion/ui/ui_immediate.hpp>
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/editor/editor_camera.hpp"
@@ -25,6 +27,8 @@ namespace Hyperion::Editor {
 
   const String WORLD_PATH = "world.world";
 
+  Font *g_font;
+  
   //--------------------------------------------------------------
   void EditorApplication::EnterRuntime() {
     if (Engine::GetEngineMode() == EngineMode::Editor || Engine::GetEngineMode() == EngineMode::EditorRuntimePaused) {
@@ -95,6 +99,7 @@ namespace Hyperion::Editor {
     WorldManager::SetActiveWorld(s_world);
 
     EditorUI::Initialize();
+    g_font = FontLoader::LoadFont("data/fonts/consola.ttf", 12, FontCharacterSet::LatinSupplement);
     EditorCamera::Initialize();
   }
 
@@ -116,6 +121,13 @@ namespace Hyperion::Editor {
         ExitRuntime();
       }
     }
+
+    UI::UIImmediate::Begin();
+    UI::UIImmediate::DrawRect(Vector2(0.0f, 0.0f), Vector2(500.0f, 100.0f), Color::Red());
+    String stats_format = "FPS: {} ({:.2f}ms)";
+    String stats_title = StringUtils::Format(stats_format, Time::GetFPS(), Time::GetFrameTime());
+    UI::UIImmediate::DrawText(stats_title, g_font, Vector2(0.0f, 0.0f), UI::TextAlignment::MiddleCenter, Color::White());
+    UI::UIImmediate::End();
   }
 
   //--------------------------------------------------------------

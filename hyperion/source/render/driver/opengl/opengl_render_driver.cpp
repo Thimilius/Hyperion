@@ -559,7 +559,9 @@ namespace Hyperion::Rendering {
 
       const OpenGLMaterial &opengl_material = m_storage.GetMaterial(element.material_id);
       UseMaterial(opengl_shader, opengl_material);
-      if (!element.enable_blending) {
+      if (element.enable_blending) {
+        glEnable(GL_BLEND);
+      } else {
         glDisable(GL_BLEND);
       }
 
