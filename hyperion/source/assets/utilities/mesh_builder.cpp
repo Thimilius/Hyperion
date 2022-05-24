@@ -100,7 +100,7 @@ namespace Hyperion {
       
       float32 x_mod = Math::Abs(Math::FMod(transformed_position.x, 1.0f));
       if (x_mod == 0.5f) {
-        transformed_position.x = Math::Round(transformed_position.x);
+        transformed_position.x = Math::Ceil(transformed_position.x);
       }
       if (align_x) {
         transformed_position.x += 0.5f;
@@ -108,7 +108,7 @@ namespace Hyperion {
       
       float32 y_mod = Math::Abs(Math::FMod(transformed_position.y, 1.0f));
       if (y_mod == 0.5f) {
-        transformed_position.y = Math::Round(transformed_position.y);  
+        transformed_position.y = Math::Ceil(transformed_position.y);  
       }
       if (align_y) {
         transformed_position.y += 0.5f;
