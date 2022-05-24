@@ -334,7 +334,9 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  void Engine::PostInitialize() { }
+  void Engine::PostInitialize() {
+    Scripting::ScriptingEngine::PostInitialize();
+  }
 
   //--------------------------------------------------------------
   void Engine::Iterate() {

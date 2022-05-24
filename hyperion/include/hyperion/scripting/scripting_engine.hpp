@@ -19,6 +19,7 @@ namespace Hyperion::Scripting {
     ~ScriptingEngine() = delete;
   private:
     static void Initialize(const ScriptingSettings &settings);
+    static void PostInitialize();
     static void Update();
     static void Shutdown();
   private:

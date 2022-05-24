@@ -8,6 +8,8 @@ namespace Hyperion {
       public delegate *unmanaged<void> EngineInitialize;
       public delegate *unmanaged<void> EngineUpdate;
       public delegate *unmanaged<void> EngineShutdown;
+      
+      public delegate *unmanaged<IntPtr, IntPtr> CreateManagedWorld;
     }
     
     [StructLayout(LayoutKind.Sequential)]
@@ -24,11 +26,15 @@ namespace Hyperion {
       var bootstrapArguments = Marshal.PtrToStructure<BootstrapArguments>(arguments);
       
       Bindings.Log = bootstrapArguments.NativeBindings.LogBindings;
+      Bindings.WorldManager = bootstrapArguments.NativeBindings.WorldManagerBindings;
+      Bindings.World = bootstrapArguments.NativeBindings.WorldBindings;
       
       var functionPointers = new ManagedBindings {
         EngineInitialize = &Engine.Initialize,
         EngineUpdate = &Engine.Update,
-        EngineShutdown = &Engine.Shutdown
+        EngineShutdown = &Engine.Shutdown,
+        
+        CreateManagedWorld = &World.CreateManagedWorld,
       };
       bootstrapArguments.ForwardManagedBindings(&functionPointers);
       

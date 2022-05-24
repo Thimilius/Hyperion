@@ -22,6 +22,11 @@ namespace Hyperion::Scripting {
   }
 
   //--------------------------------------------------------------
+  void ScriptingEngine::PostInitialize() {
+    s_scripting_driver->PostInitialize();
+  }
+
+  //--------------------------------------------------------------
   void ScriptingEngine::Update() {
     s_scripting_driver->Update();
   }

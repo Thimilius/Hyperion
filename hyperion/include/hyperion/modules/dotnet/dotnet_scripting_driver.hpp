@@ -10,6 +10,7 @@ namespace Hyperion::Scripting {
   class DotnetScriptingDriver final : public IScriptingDriver {
   public:
     void Initialize(const ScriptingSettings &settings) override;
+    void PostInitialize() override;
     void Update() override;
     void Shutdown() override;
   };

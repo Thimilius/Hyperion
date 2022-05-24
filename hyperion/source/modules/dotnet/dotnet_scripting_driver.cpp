@@ -10,6 +10,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/system/operating_system.hpp"
+#include "hyperion/ecs/world/world_manager.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
@@ -20,18 +21,32 @@ namespace Hyperion::Scripting {
     void (*log_warn)(const char *);
     void (*log_error)(const char *);
   };
+
+  struct WorldManagerBindings {
+    void *(*get_active_world)();
+  };
+
+  struct WorldBindings {
+    const char *(*get_name)(void *);
+    void (*set_name)(void *, const char *);
+  };
   
   struct NativeBindings {
     LogBindings log_bindings;
+    WorldManagerBindings world_manager_bindings;
+    WorldBindings world_bindings;
   };
   
   struct ManagedBindings {
     void (*engine_initialize)();
     void (*engine_update)();
     void (*engine_shutdown)();
+
+    void *(*create_managed_world)(World *);
   };
 
   ManagedBindings g_managed_bindings;
+  Map<World *, void *> g_object_mappings;
   
   //--------------------------------------------------------------
   void DotnetScriptingDriver::Initialize(const ScriptingSettings &settings) {
@@ -47,10 +62,7 @@ namespace Hyperion::Scripting {
     assert(result == 0);
 
     load_assembly_and_get_function_pointer_fn load_assembly_and_get_function_pointer;
-    result = get_delegate_func(
-            context,
-            hdt_load_assembly_and_get_function_pointer,
-            reinterpret_cast<void **>(&load_assembly_and_get_function_pointer));
+    result = get_delegate_func(context, hdt_load_assembly_and_get_function_pointer, reinterpret_cast<void **>(&load_assembly_and_get_function_pointer));
     assert(result == 0);
 
     auto library_path = StringUtils::Utf8ToUtf16(settings.library_path + settings.core_library_name + ".dll");
@@ -93,12 +105,34 @@ namespace Hyperion::Scripting {
     args.native_function_pointers.log_bindings.log_error = [](const char *message) {
       HYP_ERROR(message);
     };
+    args.native_function_pointers.world_manager_bindings.get_active_world = []() {
+      World *world = WorldManager::GetActiveWorld();
+      auto it = g_object_mappings.Find(world);
+      if (it == g_object_mappings.end()) {
+        void *handle = g_managed_bindings.create_managed_world(world);
+        g_object_mappings.Insert(world, handle); 
+        return handle;
+      } else {
+        return it->second;
+      }
+    };
+    args.native_function_pointers.world_bindings.get_name = [](void *native_handle) {
+      World *world = static_cast<World *>(native_handle);
+      return world ? world->GetName().c_str() : nullptr;
+    };
+    args.native_function_pointers.world_bindings.set_name = [](void *native_handle, const char *name) {
+      World *world = static_cast<World *>(native_handle);
+      world->SetName(String(name));
+    };
     args.function_pointers_callback = [](ManagedBindings *pointers) { g_managed_bindings = *pointers; };
     bootstrap(&args, sizeof(args));
-
-    g_managed_bindings.engine_initialize();
   }
 
+  //--------------------------------------------------------------
+  void DotnetScriptingDriver::PostInitialize() {
+    g_managed_bindings.engine_initialize();
+  }
+  
   //--------------------------------------------------------------
   void DotnetScriptingDriver::Update() {
     g_managed_bindings.engine_update();

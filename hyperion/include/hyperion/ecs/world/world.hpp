@@ -18,7 +18,7 @@ namespace Hyperion {
 
   class World final {
   public:
-    inline String GetName() const { return m_name; }
+    inline const String &GetName() const { return m_name; }
     inline void SetName(const String &name) { m_name = name; }
     inline WorldEnvironment &GetEnvironment() { return m_environment; }
     inline const WorldEnvironment &GetEnvironment() const { return m_environment; }

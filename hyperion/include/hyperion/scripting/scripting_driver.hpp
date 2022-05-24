@@ -12,6 +12,7 @@ namespace Hyperion::Scripting {
     virtual ~IScriptingDriver() = default;
   public:
     virtual void Initialize(const ScriptingSettings &settings) = 0;
+    virtual void PostInitialize() = 0;
     virtual void Update() = 0;
     virtual void Shutdown() = 0;
   };
@@ -19,6 +20,7 @@ namespace Hyperion::Scripting {
   class NullScriptingDriver final : public IScriptingDriver {
   public:
     void Initialize(const ScriptingSettings &settings) override { HYP_LOG_INFO("Scripting", "Initialized Null scripting driver!"); }
+    void PostInitialize() override { }
     void Update() override { }
     void Shutdown() override { }
   };
