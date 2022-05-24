@@ -1,7 +1,7 @@
 group "managed"
 
 project "Hyperion"
-  location "managed/Hyperion"
+  location "hyperion-managed/Hyperion"
 
   language "C#"
   framework "net6.0"
