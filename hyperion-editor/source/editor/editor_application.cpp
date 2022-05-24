@@ -3,7 +3,6 @@
 
 //---------------------- Library Includes ----------------------
 #include <hyperion/entry_point.hpp>
-#include <hyperion/assets/loader/font_loader.hpp>
 #include <hyperion/core/random.hpp>
 #include <hyperion/core/app/time.hpp>
 #include <hyperion/core/io/file_system.hpp>
@@ -28,8 +27,6 @@ namespace Hyperion::Editor {
 
   const String WORLD_PATH = "world.world";
 
-  Font *g_font;
-  
   //--------------------------------------------------------------
   void EditorApplication::EnterRuntime() {
     if (Engine::GetEngineMode() == EngineMode::Editor || Engine::GetEngineMode() == EngineMode::EditorRuntimePaused) {
@@ -100,11 +97,10 @@ namespace Hyperion::Editor {
     WorldManager::SetActiveWorld(s_world);
 
     EditorUI::Initialize();
-    g_font = FontLoader::LoadFont("data/fonts/consola.ttf", 12, FontCharacterSet::LatinSupplement);
     EditorCamera::Initialize();
   }
 
-  void NewUI() {
+  void TestImmediateUI() {
     UI::UIImmediate::Begin();
     {
       UI::UIImmediate::BeginWindow("Editor", UI::DockingPosition::Full, 0.0f, EditorStyle::COLOR_NORMAL);
@@ -185,7 +181,7 @@ namespace Hyperion::Editor {
       }
     }
 
-    NewUI();
+    //TestImmediateUI();
   }
 
   //--------------------------------------------------------------

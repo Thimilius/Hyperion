@@ -287,29 +287,7 @@ namespace Hyperion {
 
     uint32 identifier = 1;
     if (!settings.menu.items.IsEmpty()) {
-      m_menu_handle = CreateMenu();
-
-      for (const MenuItem &item : settings.menu.items) {
-        WideString wide_text = StringUtils::Utf8ToUtf16(item.text);
-
-        MENUITEMINFOW item_info = { };
-        item_info.cbSize = sizeof(MENUITEMINFOW);
-        item_info.fMask = MIIM_FTYPE | MIIM_ID | MIIM_STRING | MIIM_STATE;
-        item_info.fType = MFT_STRING;
-        item_info.fState = MFS_ENABLED | MFS_UNHILITE;
-        item_info.wID = identifier++;
-        item_info.dwTypeData = wide_text.data();
-
-        bool8 is_sub_menu = !item.sub_items.IsEmpty();
-        HMENU sub_menu = nullptr;
-        if (is_sub_menu) {
-          sub_menu = CreateSubMenu(item.sub_items, identifier);
-          item_info.fMask |= MIIM_SUBMENU;
-          item_info.hSubMenu = sub_menu;
-        }
-
-        InsertMenuItemW(m_menu_handle, -1, true, &item_info);
-      }
+      m_menu_handle = CreateSubMenu(settings.menu.items, identifier);
     }
 
     m_window_handle = CreateWindowExW(
