@@ -3,6 +3,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/application_settings.hpp"
+#include "hyperion/core/system/engine_config.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {

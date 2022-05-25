@@ -18,7 +18,7 @@ namespace Hyperion::Scripting {
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
     }
     
-    s_scripting_driver->Initialize(settings);
+    s_scripting_driver->Initialize();
   }
 
   //--------------------------------------------------------------

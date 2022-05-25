@@ -44,8 +44,6 @@ namespace Hyperion {
 
   struct ScriptingSettings {
     Scripting::ScriptingBackend backend = Scripting::ScriptingBackend::Dotnet;
-    
-    String library_path = "data/managed/";
   };
   
   struct ApplicationSettings {

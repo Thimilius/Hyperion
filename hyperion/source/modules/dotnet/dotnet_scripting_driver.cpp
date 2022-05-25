@@ -46,59 +46,70 @@ namespace Hyperion::Scripting {
     void *(*create_managed_object)(void *, void *);
   };
 
+  struct BootstrapArguments {
+    NativeBindings native_function_pointers;
+    void (*function_pointers_callback)(ManagedBindings *);
+  };
+  
   ManagedBindings g_managed_bindings;
   Map<World *, void *> g_object_mappings;
   void *g_type_world;
   
   //--------------------------------------------------------------
-  void DotnetScriptingDriver::Initialize(const ScriptingSettings &settings) {
-    String runtime_host_path = "data/tools/windows/dotnet/host/fxr/6.0.5/hostfxr.dll";
-    
-    String library_path = "data/managed/";
+  void DotnetScriptingDriver::Initialize() {
+    String runtime_host_path = EngineConfig::GetToolsPath() + "/dotnet/host/fxr/6.0.5/hostfxr.dll";
+    String managed_libraries_path = EngineConfig::GetManagedLibrariesPath();
     String core_library_name = "Hyperion";
+    WideString hostfxr_config_path = StringUtils::Utf8ToUtf16(managed_libraries_path + "/" + core_library_name + ".runtimeconfig.json");
+    
+    String library_path = managed_libraries_path + "/" + core_library_name + ".dll";
+    WideString library_path_wide = StringUtils::Utf8ToUtf16(library_path);
+    String dotnet_type = "Hyperion.Bootstrapper, Hyperion";
+    WideString dotnet_type_wide = StringUtils::Utf8ToUtf16(dotnet_type);
+    String dotnet_type_method = "Bootstrap";
+    WideString dotnet_type_method_wide = StringUtils::Utf8ToUtf16(dotnet_type_method);
 
+    int32 result = 0;
+    
     LibraryHandle hostfxr = OperatingSystem::LoadLibrary(runtime_host_path);
     auto init_func = OperatingSystem::GetFunctionPointer<hostfxr_initialize_for_runtime_config_fn>(hostfxr, "hostfxr_initialize_for_runtime_config");
     auto get_delegate_func = OperatingSystem::GetFunctionPointer<hostfxr_get_runtime_delegate_fn>(hostfxr, "hostfxr_get_runtime_delegate");
     auto close_func = OperatingSystem::GetFunctionPointer<hostfxr_close_fn>(hostfxr, "hostfxr_close");
-
-    auto config_path = StringUtils::Utf8ToUtf16(settings.library_path + core_library_name + ".runtimeconfig.json");
     
-    hostfxr_handle context;
-    int result = init_func(config_path.c_str(), nullptr, &context);
-    assert(result == 0);
+    hostfxr_handle hostfxr_context;
+    result = init_func(hostfxr_config_path.c_str(), nullptr, &hostfxr_context);
+    if (result) {
+      HYP_PANIC_MESSAGE("Scripting", "Failed to initialized hostfxr runtime!");
+    }
 
-    load_assembly_and_get_function_pointer_fn load_assembly_and_get_function_pointer;
-    result = get_delegate_func(context, hdt_load_assembly_and_get_function_pointer, reinterpret_cast<void **>(&load_assembly_and_get_function_pointer));
-    assert(result == 0);
-
-    WideString library_path_wide = StringUtils::Utf8ToUtf16(settings.library_path + core_library_name + ".dll");
-    WideString dotnet_type_wide = L"Hyperion.Bootstrapper, Hyperion";
-    WideString dotnet_type_method_wide = L"Bootstrap";
-    // <SnippetLoadAndGet>
-    // Function pointer to managed delegate
-    component_entry_point_fn bootstrap = nullptr;
-    int rc = load_assembly_and_get_function_pointer(
+    load_assembly_and_get_function_pointer_fn load_assembly_and_get_function_pointer_func;
+    result = get_delegate_func(
+      hostfxr_context,
+      hdt_load_assembly_and_get_function_pointer,
+      reinterpret_cast<void **>(&load_assembly_and_get_function_pointer_func)
+    );
+    if (result) {
+      close_func(hostfxr_context);
+      HYP_PANIC_MESSAGE("Scripting", "Failed to load function from hostfxr: load_assembly_and_get_function_pointer!");
+    }
+    
+    int32 (*bootstrap_func)(BootstrapArguments *) = nullptr;
+    result = load_assembly_and_get_function_pointer_func(
       library_path_wide.c_str(),
       dotnet_type_wide.c_str(),
       dotnet_type_method_wide.c_str(),
-      nullptr /*delegate_type_name*/,
+      UNMANAGEDCALLERSONLY_METHOD,
       nullptr,
-      reinterpret_cast<void **>(&bootstrap)
+      reinterpret_cast<void **>(&bootstrap_func)
     );
-    // </SnippetLoadAndGet>
-    assert(rc == 0 && bootstrap != nullptr && "Failure: load_assembly_and_get_function_pointer()");
+    if (result) {
+      close_func(hostfxr_context);
+      HYP_PANIC_MESSAGE("Scripting", "Failed to load assembly {} and get function pointer for {}-{}!", library_path, dotnet_type, dotnet_type_method);
+    }
 
-    close_func(context);
-
-    //
-    // STEP 4: Run managed code
-    //
-    struct BootstrapArguments {
-      NativeBindings native_function_pointers;
-      
-      void (*function_pointers_callback)(ManagedBindings *);
-    };
+    close_func(hostfxr_context);
+    
+    
     BootstrapArguments args = { };
     args.native_function_pointers.log_bindings.log_trace = [](const char *message) {
       HYP_TRACE(message);
@@ -133,11 +144,13 @@ namespace Hyperion::Scripting {
     };
     args.function_pointers_callback = [](ManagedBindings *pointers) { g_managed_bindings = *pointers; };
 
-    if (bootstrap(&args, sizeof(args))) {
+    if (bootstrap_func(&args)) {
       HYP_PANIC_MESSAGE("Dotnet", "Failed to bootstrap core assembly!");
     }
       
     g_type_world = g_managed_bindings.get_type_by_name("Hyperion.World");
+
+    HYP_LOG_INFO("Scripting", "Initialized .Net6.0 runtime.");
   }
 
   //--------------------------------------------------------------

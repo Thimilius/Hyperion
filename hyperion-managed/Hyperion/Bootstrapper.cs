@@ -19,16 +19,13 @@ namespace Hyperion {
       public readonly delegate *unmanaged<ManagedBindings *, void> ForwardManagedBindings;
     }
 
-    internal static int Bootstrap(IntPtr arguments, int argumentSize) {
-      if (argumentSize < Marshal.SizeOf<BootstrapArguments>()) {
-        return 1;
-      }
-
-      var bootstrapArguments = Marshal.PtrToStructure<BootstrapArguments>(arguments);
+    [UnmanagedCallersOnly]
+    private static int Bootstrap(IntPtr arguments) {
+      var bootstrapArguments = (BootstrapArguments *)arguments;
       
-      Bindings.Log = bootstrapArguments.NativeBindings.LogBindings;
-      Bindings.WorldManager = bootstrapArguments.NativeBindings.WorldManagerBindings;
-      Bindings.World = bootstrapArguments.NativeBindings.WorldBindings;
+      Bindings.Log = bootstrapArguments->NativeBindings.LogBindings;
+      Bindings.WorldManager = bootstrapArguments->NativeBindings.WorldManagerBindings;
+      Bindings.World = bootstrapArguments->NativeBindings.WorldBindings;
       
       var functionPointers = new ManagedBindings {
         EngineInitialize = &Engine.Initialize,
@@ -38,7 +35,7 @@ namespace Hyperion {
         GetTypeByName = &Native.GetTypeByName,
         CreateManagedObject = &Native.CreateManagedObject,
       };
-      bootstrapArguments.ForwardManagedBindings(&functionPointers);
+      bootstrapArguments->ForwardManagedBindings(&functionPointers);
       
       return 0;
     }
