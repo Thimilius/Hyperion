@@ -52,12 +52,17 @@ namespace Hyperion::Scripting {
   
   //--------------------------------------------------------------
   void DotnetScriptingDriver::Initialize(const ScriptingSettings &settings) {
-    LibraryHandle hostfxr = OperatingSystem::LoadLibrary(settings.runtime_host_path);
+    String runtime_host_path = "data/tools/windows/dotnet/host/fxr/6.0.5/hostfxr.dll";
+    
+    String library_path = "data/managed/";
+    String core_library_name = "Hyperion";
+
+    LibraryHandle hostfxr = OperatingSystem::LoadLibrary(runtime_host_path);
     auto init_func = OperatingSystem::GetFunctionPointer<hostfxr_initialize_for_runtime_config_fn>(hostfxr, "hostfxr_initialize_for_runtime_config");
     auto get_delegate_func = OperatingSystem::GetFunctionPointer<hostfxr_get_runtime_delegate_fn>(hostfxr, "hostfxr_get_runtime_delegate");
     auto close_func = OperatingSystem::GetFunctionPointer<hostfxr_close_fn>(hostfxr, "hostfxr_close");
 
-    auto config_path = StringUtils::Utf8ToUtf16(settings.library_path + settings.core_library_name + ".runtimeconfig.json");
+    auto config_path = StringUtils::Utf8ToUtf16(settings.library_path + core_library_name + ".runtimeconfig.json");
     
     hostfxr_handle context;
     int result = init_func(config_path.c_str(), nullptr, &context);
@@ -67,16 +72,16 @@ namespace Hyperion::Scripting {
     result = get_delegate_func(context, hdt_load_assembly_and_get_function_pointer, reinterpret_cast<void **>(&load_assembly_and_get_function_pointer));
     assert(result == 0);
 
-    auto library_path = StringUtils::Utf8ToUtf16(settings.library_path + settings.core_library_name + ".dll");
-    auto dotnet_type = L"Hyperion.Bootstrapper, Hyperion";
-    auto dotnet_type_method = L"Bootstrap";
+    WideString library_path_wide = StringUtils::Utf8ToUtf16(settings.library_path + core_library_name + ".dll");
+    WideString dotnet_type_wide = L"Hyperion.Bootstrapper, Hyperion";
+    WideString dotnet_type_method_wide = L"Bootstrap";
     // <SnippetLoadAndGet>
     // Function pointer to managed delegate
     component_entry_point_fn bootstrap = nullptr;
     int rc = load_assembly_and_get_function_pointer(
-      library_path.c_str(),
-      dotnet_type,
-      dotnet_type_method,
+      library_path_wide.c_str(),
+      dotnet_type_wide.c_str(),
+      dotnet_type_method_wide.c_str(),
       nullptr /*delegate_type_name*/,
       nullptr,
       reinterpret_cast<void **>(&bootstrap)

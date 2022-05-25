@@ -45,12 +45,9 @@ namespace Hyperion {
   struct ScriptingSettings {
     Scripting::ScriptingBackend backend = Scripting::ScriptingBackend::Dotnet;
     
-    String runtime_host_path = "data/tools/dotnet/host/fxr/6.0.5/hostfxr.dll";
-    
     String library_path = "data/managed/";
-    String core_library_name = "Hyperion";
   };
-
+  
   struct ApplicationSettings {
     CoreSettings core;
     WindowSettings window;

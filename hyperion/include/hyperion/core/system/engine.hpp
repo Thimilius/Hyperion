@@ -38,6 +38,8 @@ namespace Hyperion {
       PanicInternal(title, message);
     }
 
+    inline static const ApplicationSettings &GetSettings() { return s_settings; }
+    
     static EngineMode GetEngineMode();
   private:
     Engine() = delete;
