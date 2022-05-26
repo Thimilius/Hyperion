@@ -6,6 +6,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset_manager.hpp"
+#include "hyperion/assets/loader/font_loader.hpp"
 #include "hyperion/assets/utilities/text_mesh_generator.hpp"
 #include "hyperion/core/app/display.hpp"
 #include "hyperion/render/render_engine.hpp"
@@ -13,6 +14,21 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::UI {
 
+  Font *g_font;
+  Vector2 g_cursor_position;
+
+  const float32 SAME_LINE_PADDING = 5.0f;
+  const float32 NEXT_LINE_PADDING = 2.0f;
+
+  //--------------------------------------------------------------
+  void AdvanceCursor(Vector2 size, bool8 same_line = false) {
+    if (same_line) {
+      g_cursor_position.x += size.x + SAME_LINE_PADDING;
+    } else {
+      g_cursor_position.y -= size.y + NEXT_LINE_PADDING;  
+    }
+  }
+  
   //--------------------------------------------------------------
   void UIImmediate::Begin() {
     for (UIImmediateMesh mesh : s_meshes) {
@@ -25,6 +41,12 @@ namespace Hyperion::UI {
     layout.full_size = layout.leftover_size = Vector2(static_cast<float32>(Display::GetWidth()), static_cast<float32>(Display::GetHeight()));
     layout.full_position = layout.leftover_position = Vector3();
     s_layout_stack.Add(layout);
+
+    if (!g_font) {
+      g_font = FontLoader::LoadFont("data/fonts/consola.ttf", 12, FontCharacterSet::LatinSupplement);  
+    }
+
+    g_cursor_position = Vector2(-static_cast<float32>(Display::GetWidth()) / 2.0f, static_cast<float32>(Display::GetHeight()) / 2.0f);
   }
 
   //--------------------------------------------------------------
@@ -178,33 +200,55 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
+  void UIImmediate::Text(const String &text) {
+    TextSize text_size = g_font->GetTextSize(StringUtils::GetCodepointsFromUtf8(text), 0, 1.0f, false);
+    Vector2 size = Vector2(text_size.width, text_size.height);
+    Vector2 position = g_cursor_position;
+
+    DrawText(text, g_font, position, size, TextAlignment::TopLeft, Color::Red());
+
+    AdvanceCursor(size);
+  }
+
+  //--------------------------------------------------------------
+  void UIImmediate::Button(const String &text) {
+    TextSize text_size = g_font->GetTextSize(StringUtils::GetCodepointsFromUtf8(text), 0, 1.0f, false);
+    Vector2 size = Vector2(text_size.width, text_size.height);
+    
+    size.x += 10.0f;
+    size.y += 8.0f;
+    
+    Vector2 position = g_cursor_position;
+
+    DrawRect(position, size, Color::Green());
+    DrawText(text, g_font, position, size, TextAlignment::MiddleCenter, Color::Red());
+
+    AdvanceCursor(size);
+  }
+
+  //--------------------------------------------------------------
   void UIImmediate::DrawRect(Vector2 position, Vector2 size, Color color) {
     Flush();
     
-    Vector2 half_size = size / 2.0f; 
-    
     Vector3 corners[4];
-    corners[0] = Vector3(position.x + half_size.x, position.y + half_size.y, 0.0f);
-    corners[1] = Vector3(position.x + half_size.x, position.y - half_size.y, 0.0f);
-    corners[2] = Vector3(position.x - half_size.x, position.y - half_size.y, 0.0f);
-    corners[3] = Vector3(position.x - half_size.x, position.y + half_size.y, 0.0f);
+    corners[0] = Vector3(position.x + size.x, position.y, 0.0f);
+    corners[1] = Vector3(position.x + size.x, position.y - size.y, 0.0f);
+    corners[2] = Vector3(position.x, position.y - size.y, 0.0f);
+    corners[3] = Vector3(position.x, position.y, 0.0f);
     
     s_mesh_builder.AddQuad(corners, color);
   }
   
   //--------------------------------------------------------------
-  void UIImmediate::DrawText(const String &text, Font *font, Vector2 position, UI::TextAlignment alignment, Color color) {
+  void UIImmediate::DrawText(const String &text, Font *font, Vector2 position, Vector2 size, UI::TextAlignment alignment, Color color) {
     Flush();
-
-    Vector2 size = Vector2(1280, 720.0f);
-    Vector2 half_size = size / 2.0f;
-
+    
     TextMeshGenerationSettings generation_settings;
     generation_settings.text = text;
     generation_settings.font = font;
     generation_settings.alignment = alignment;
     generation_settings.color = color;
-    generation_settings.rect = Rect(position - half_size, size);
+    generation_settings.rect = Rect(Vector2(position.x, position.y - size.y), size);
     generation_settings.scale = Vector2(1.0f, 1.0f);
 
     TextMeshGenerator::GenerateMesh(generation_settings, s_mesh_builder);

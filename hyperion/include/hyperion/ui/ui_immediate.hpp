@@ -58,9 +58,12 @@ namespace Hyperion::UI {
 
     static void BeginWindow(const String &name, DockingPosition docking_position, float32 extent, Color color, bool8 split = false);
     static void EndWindow();
+
+    static void Text(const String &text);
+    static void Button(const String &text);
     
     static void DrawRect(Vector2 position, Vector2 size, Color color);
-    static void DrawText(const String &text, Font *font, Vector2 position, UI::TextAlignment alignment, Color color);
+    static void DrawText(const String &text, Font *font, Vector2 position, Vector2 size, UI::TextAlignment alignment, Color color);
   private:
     UIImmediate() = delete;
     ~UIImmediate() = delete;

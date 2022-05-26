@@ -182,6 +182,14 @@ namespace Hyperion::Editor {
     }
 
     //TestImmediateUI();
+
+    
+    UI::UIImmediate::Begin();
+    for (uint32 i = 0; i < 1; i++) {
+      UI::UIImmediate::Text("Hello there\nThis is me\non a new line");  
+    }
+    UI::UIImmediate::Button("Click me!");
+    UI::UIImmediate::End();
   }
 
   //--------------------------------------------------------------
