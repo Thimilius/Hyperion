@@ -150,7 +150,7 @@ namespace Hyperion::Scripting {
       
     g_type_world = g_managed_bindings.get_type_by_name("Hyperion.World");
 
-    HYP_LOG_INFO("Scripting", "Initialized .Net6.0 runtime.");
+    HYP_LOG_INFO("Scripting", "Initialized .Net6.0 runtime!");
   }
 
   //--------------------------------------------------------------

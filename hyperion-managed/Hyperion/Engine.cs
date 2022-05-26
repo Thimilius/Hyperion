@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace Hyperion {
@@ -34,16 +33,6 @@ namespace Hyperion {
     [UnmanagedCallersOnly]
     internal static void Initialize() {
       s_Loggers.Add(new EngineLogger());
-
-      World world = WorldManager.GetActiveWorld();
-      Log(world.NativeHandle);
-      World world2 = WorldManager.GetActiveWorld();
-      Log(world2.NativeHandle);
-      Log(world == world2);
-      
-      Log(world.Name);
-      world.Name = "Hello World!";
-      Log(world.Name);
     }
     
     [UnmanagedCallersOnly]
