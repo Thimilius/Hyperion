@@ -250,12 +250,12 @@ namespace Hyperion::UI {
   //--------------------------------------------------------------
   void UIImmediate::Text(const String &text) {
     TextSize text_size = g_font->GetTextSize(StringUtils::GetCodepointsFromUtf8(text), 0, 1.0f, false);
-    Vector2 size = Vector2(text_size.width, text_size.height);
+    Vector2 size = Vector2(text_size.width, text_size.height + text_size.baseline_offset);
     Vector2 position = g_cursor_position;
     position.y -= size.y;
     Rect rect = Rect(position, size);
 
-    DrawText(text, g_font, rect, TextAlignment::BottomCenter, Color::White());
+    DrawText(text, g_font, rect, TextAlignment::TopLeft, Color::White());
     
     AdvanceCursor(size);
   }
