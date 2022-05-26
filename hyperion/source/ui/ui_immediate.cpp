@@ -16,10 +16,22 @@ namespace Hyperion::UI {
 
   Font *g_font;
   Vector2 g_cursor_position;
-
+  
   const float32 SAME_LINE_PADDING = 5.0f;
   const float32 NEXT_LINE_PADDING = 2.0f;
 
+  struct UIImmediateState {
+    Vector2 mouse_position;
+    bool8 is_left_mouse_down;
+    bool8 is_left_mouse_hold;
+    bool8 is_left_mouse_up;
+    
+    uint64 hot_widget;
+    uint64 active_widget;
+  };
+
+  UIImmediateState g_state;
+  
   //--------------------------------------------------------------
   void AdvanceCursor(Vector2 size, bool8 same_line = false) {
     if (same_line) {
@@ -27,6 +39,32 @@ namespace Hyperion::UI {
     } else {
       g_cursor_position.y -= size.y + NEXT_LINE_PADDING;  
     }
+  }
+
+  //--------------------------------------------------------------
+  Vector2 ScreenPointToUISpacePoint(Vector2 screen_point) {
+    float32 display_width = static_cast<float32>(Display::GetWidth());
+    float32 display_height = static_cast<float32>(Display::GetHeight());
+    screen_point.x -= display_width / 2.0f;
+    screen_point.y -= display_height / 2.0f;
+    return screen_point;
+  }
+  
+  bool8 IsInsideRect(Rect rect, Vector2 screen_point) {
+    auto is_left = [](Vector2 p0, Vector2 p1, Vector2 p2) {
+      return ((p1.x - p0.x) * (p2.y - p0.y) - (p2.x - p0.x) * (p1.y - p0.y));
+    };
+
+    Vector2 min = rect.GetMin();
+    Vector2 max = rect.GetMax();
+
+    Vector2 p1 = Vector3(max.x, max.y, 0.0f);
+    Vector2 p2 = Vector3(max.x, min.y, 0.0f);
+    Vector2 p3 = Vector3(min.x, min.y, 0.0f);
+    Vector2 p4 = Vector3(min.x, max.y, 0.0f);
+
+    // NOTE: Counter clockwise order of points is important.
+    return is_left(p1, p4, screen_point) >= 0.0f && is_left(p4, p3, screen_point) >= 0.0f && is_left(p3, p2, screen_point) >= 0.0f && is_left(p2, p1, screen_point) >= 0.0f;
   }
   
   //--------------------------------------------------------------
@@ -43,10 +81,16 @@ namespace Hyperion::UI {
     s_layout_stack.Add(layout);
 
     if (!g_font) {
-      g_font = FontLoader::LoadFont("data/fonts/consola.ttf", 12, FontCharacterSet::LatinSupplement);  
+      g_font = FontLoader::LoadFont("data/fonts/space_mono_regular.ttf", 12, FontCharacterSet::LatinSupplement);  
     }
 
     g_cursor_position = Vector2(-static_cast<float32>(Display::GetWidth()) / 2.0f, static_cast<float32>(Display::GetHeight()) / 2.0f);
+
+    g_state.mouse_position = ScreenPointToUISpacePoint(Input::GetMousePosition().ToFloat());
+    g_state.is_left_mouse_down = Input::IsMouseButtonDown(MouseButtonCode::Left);
+    g_state.is_left_mouse_hold = Input::IsMouseButtonHold(MouseButtonCode::Left);
+    g_state.is_left_mouse_up = Input::IsMouseButtonUp(MouseButtonCode::Left);
+    g_state.hot_widget = 0;
   }
 
   //--------------------------------------------------------------
@@ -70,6 +114,10 @@ namespace Hyperion::UI {
       render_frame_context_ui_object.texture.dimension = mesh.texture ? mesh.texture->GetDimension() : Rendering::TextureDimension::Texture2D;
       render_frame_context_ui_object.texture.render_texture_attchment_index = mesh.render_texture_attachment_index;
       render_frame_context_ui_object.enable_blending = mesh.enable_blending;
+    }
+
+    if (g_state.is_left_mouse_up) {
+      g_state.active_widget = 0;
     }
   }
 
@@ -204,43 +252,69 @@ namespace Hyperion::UI {
     TextSize text_size = g_font->GetTextSize(StringUtils::GetCodepointsFromUtf8(text), 0, 1.0f, false);
     Vector2 size = Vector2(text_size.width, text_size.height);
     Vector2 position = g_cursor_position;
+    position.y -= size.y;
+    Rect rect = Rect(position, size);
 
-    DrawText(text, g_font, position, size, TextAlignment::TopLeft, Color::Red());
-
+    DrawText(text, g_font, rect, TextAlignment::BottomCenter, Color::White());
+    
     AdvanceCursor(size);
   }
 
   //--------------------------------------------------------------
-  void UIImmediate::Button(const String &text) {
+  bool8 UIImmediate::Button(const String &text) {
+    uint64 id = std::hash<String>()(text);
+
     TextSize text_size = g_font->GetTextSize(StringUtils::GetCodepointsFromUtf8(text), 0, 1.0f, false);
-    Vector2 size = Vector2(text_size.width, text_size.height);
-    
-    size.x += 10.0f;
-    size.y += 8.0f;
-    
+    Vector2 size = Vector2(text_size.width + 10.0f, text_size.height + 8.0f);
     Vector2 position = g_cursor_position;
+    position.y -= size.y;
+    Rect rect = Rect(position, size);
+    
+    bool8 is_inside = IsInsideRect(rect, g_state.mouse_position);
+    if (is_inside) {
+      g_state.hot_widget = id;
+      if (g_state.active_widget == 0 && g_state.is_left_mouse_down) {
+        g_state.active_widget = id;
+      }
+    }
 
-    DrawRect(position, size, Color::Green());
-    DrawText(text, g_font, position, size, TextAlignment::MiddleCenter, Color::Red());
+    bool8 is_hot_widget = g_state.hot_widget == id;
+    bool8 is_active_widget = g_state.active_widget == id;
+    
+    Color color = Color::Blue();
+    if (is_hot_widget) {
+      color = Color::Yellow();
+    }
+    if (is_active_widget) {
+      color = Color::Green();
+    }
+    
+    DrawRect(rect, color);
+    DrawText(text, g_font, rect, TextAlignment::MiddleCenter, Color::Red());
 
     AdvanceCursor(size);
+
+    return g_state.is_left_mouse_up && is_hot_widget && is_active_widget;
   }
 
   //--------------------------------------------------------------
-  void UIImmediate::DrawRect(Vector2 position, Vector2 size, Color color) {
+  void UIImmediate::DrawRect(Rect rect, Color color) {
     Flush();
+
+    Vector2 min = rect.GetMin();
+    Vector2 max = rect.GetMax();
     
     Vector3 corners[4];
-    corners[0] = Vector3(position.x + size.x, position.y, 0.0f);
-    corners[1] = Vector3(position.x + size.x, position.y - size.y, 0.0f);
-    corners[2] = Vector3(position.x, position.y - size.y, 0.0f);
-    corners[3] = Vector3(position.x, position.y, 0.0f);
+    corners[0] = Vector3(max.x, max.y, 0.0f);
+    corners[1] = Vector3(max.x, min.y, 0.0f);
+    corners[2] = Vector3(min.x, min.y, 0.0f);
+    corners[3] = Vector3(min.x, max.y, 0.0f);
     
     s_mesh_builder.AddQuad(corners, color);
   }
   
   //--------------------------------------------------------------
-  void UIImmediate::DrawText(const String &text, Font *font, Vector2 position, Vector2 size, UI::TextAlignment alignment, Color color) {
+  void UIImmediate::DrawText(const String &text, Font *font, Rect rect, UI::TextAlignment alignment, Color color) {
     Flush();
     
     TextMeshGenerationSettings generation_settings;
@@ -248,7 +322,7 @@ namespace Hyperion::UI {
     generation_settings.font = font;
     generation_settings.alignment = alignment;
     generation_settings.color = color;
-    generation_settings.rect = Rect(Vector2(position.x, position.y - size.y), size);
+    generation_settings.rect = rect;
     generation_settings.scale = Vector2(1.0f, 1.0f);
 
     TextMeshGenerator::GenerateMesh(generation_settings, s_mesh_builder);

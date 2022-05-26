@@ -60,10 +60,10 @@ namespace Hyperion::UI {
     static void EndWindow();
 
     static void Text(const String &text);
-    static void Button(const String &text);
+    static bool8 Button(const String &text);
     
-    static void DrawRect(Vector2 position, Vector2 size, Color color);
-    static void DrawText(const String &text, Font *font, Vector2 position, Vector2 size, UI::TextAlignment alignment, Color color);
+    static void DrawRect(Rect rect, Color color);
+    static void DrawText(const String &text, Font *font, Rect rect, UI::TextAlignment alignment, Color color);
   private:
     UIImmediate() = delete;
     ~UIImmediate() = delete;

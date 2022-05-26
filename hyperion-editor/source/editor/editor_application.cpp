@@ -96,7 +96,7 @@ namespace Hyperion::Editor {
     
     WorldManager::SetActiveWorld(s_world);
 
-    EditorUI::Initialize();
+    //EditorUI::Initialize();
     EditorCamera::Initialize();
   }
 
@@ -164,7 +164,7 @@ namespace Hyperion::Editor {
   
   //--------------------------------------------------------------
   void EditorApplication::OnUpdate(float32 delta_time) {
-    EditorUI::Update();
+    //EditorUI::Update();
     EditorCamera::Update(delta_time);
 
     if (Input::IsKeyHold(KeyCode::Control) && Input::IsKeyDown(KeyCode::W)) {
@@ -183,12 +183,17 @@ namespace Hyperion::Editor {
 
     //TestImmediateUI();
 
-    
     UI::UIImmediate::Begin();
-    for (uint32 i = 0; i < 1; i++) {
-      UI::UIImmediate::Text("Hello there\nThis is me\non a new line");  
+    {
+      UI::UIImmediate::Text("Hello there\nThis is text\non a new line");
+
+      if (UI::UIImmediate::Button("Button 1")) {
+        HYP_TRACE("CLICKED BUTTON 1");
+      }  
+      if (UI::UIImmediate::Button("Button 2")) {
+        HYP_TRACE("CLICKED BUTTON 2");
+      }
     }
-    UI::UIImmediate::Button("Click me!");
     UI::UIImmediate::End();
   }
 

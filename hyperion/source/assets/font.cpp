@@ -29,7 +29,7 @@ namespace Hyperion {
   //--------------------------------------------------------------
   TextSize Font::GetTextSize(const Array<uint32> &codepoints, uint32 codepoint_offset, float32 scale, bool8 line_only) const {
     float32 text_width = -FLT_MAX;
-    float32 text_height = 0;
+    float32 text_height = static_cast<float32>(m_size);
     float32 current_line_width = 0.0f;
     float32 current_line_height = 0.0f;
 
@@ -70,7 +70,6 @@ namespace Hyperion {
     if (current_line_width > text_width) {
       text_width = current_line_width;
     }
-    text_height += m_size;
 
     TextSize text_size = { };
     text_size.width = text_width;
