@@ -8,8 +8,9 @@
 namespace Hyperion {
 
   //--------------------------------------------------------------
-  Font::Font(AssetInfo info, uint32 size, FontCharacterSet character_set, FontAtlas *font_atlas, SpecialFontGlyphs special_glyphs) : Font(info) {
+  Font::Font(AssetInfo info, uint32 size, float32 baseline_offset, FontCharacterSet character_set, FontAtlas *font_atlas, SpecialFontGlyphs special_glyphs) : Font(info) {
     m_size = size;
+    m_baseline_offset = baseline_offset;
     m_character_set = character_set;
     m_font_atlas = font_atlas;
     m_special_glyphs = special_glyphs;
@@ -27,61 +28,54 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   TextSize Font::GetTextSize(const Array<uint32> &codepoints, uint32 codepoint_offset, float32 scale, bool8 line_only) const {
-    float32 max_width = -FLT_MAX;
-    float32 max_height = -FLT_MAX;
-    float32 max_glyph_baseline_offset = -FLT_MAX;
-    float32 current_width = 0.0f;
-    float32 current_height = 0.0f;
-    float32 current_glyph_baseline_offset = 0.0f;
+    float32 text_width = -FLT_MAX;
+    float32 text_height = 0;
+    float32 current_line_width = 0.0f;
+    float32 current_line_height = 0.0f;
 
     for (uint32 i = codepoint_offset; i < codepoints.GetLength(); i++) {
       uint32 codepoint = codepoints[i];
       // We first handle the special characters.
       switch (codepoint) {
-        case ' ': current_width += GetSpecialGlyphs().space.advance * scale;
+        case ' ': current_line_width += GetSpecialGlyphs().space.advance * scale;
           continue;
-        case '\t': current_width += GetSpecialGlyphs().space.advance * 4 * scale;
+        case '\t': current_line_width += GetSpecialGlyphs().space.advance * 4 * scale;
           continue; // Tab is equivalent to 4 whitespaces.
         case '\r': continue; // Carriage return gets just straight up ignored. 
         case '\n': {
           // If we have multiple lines, we are essentially searching for the widest line.
-          if (current_width > max_width) {
-            max_width = current_width;
+          if (current_line_width > text_width) {
+            text_width = current_line_width;
           }
-          current_width = 0.0f;
+          current_line_width = 0.0f;
 
           if (line_only) {
             goto end;
           } else {
+            text_height += m_size; 
             continue;
           }
         }
       }
 
       FontGlyph glyph = GetGlyph(codepoint);
-      current_width += glyph.advance * scale;
-      current_height = glyph.bearing.y * scale;
-      if (current_height > max_height) {
-        max_height = current_height;
-      }
-      current_glyph_baseline_offset = (glyph.size.y - glyph.bearing.y) * scale;
-      if (current_glyph_baseline_offset > max_glyph_baseline_offset) {
-        max_glyph_baseline_offset = current_glyph_baseline_offset;
+      current_line_width += glyph.advance * scale;
+      float32 glyph_height = glyph.bearing.y * scale;
+      if (glyph_height > current_line_height) {
+        current_line_height = glyph_height;
       }
     }
 
   end:
-    if (current_width > max_width) {
-      max_width = current_width;
+    if (current_line_width > text_width) {
+      text_width = current_line_width;
     }
-    if (current_height > max_height) {
-      max_height = current_height;
-    }
+    text_height += m_size;
 
-    TextSize text_size;
-    text_size.width = max_width;
-    text_size.height = max_height;
-    text_size.baseline_offset = max_glyph_baseline_offset;
+    TextSize text_size = { };
+    text_size.width = text_width;
+    text_size.height = text_height;
+    text_size.baseline_offset = m_baseline_offset;
     return text_size;
   }
 

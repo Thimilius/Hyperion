@@ -126,9 +126,9 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  Font *AssetManager::CreateFont(uint32 size, FontCharacterSet character_set, FontAtlas *font_atlas, SpecialFontGlyphs special_glyphs) {
+  Font *AssetManager::CreateFont(uint32 size, float32 baseline_offset, FontCharacterSet character_set, FontAtlas *font_atlas, SpecialFontGlyphs special_glyphs) {
     AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
-    Font *font = new Font(info, size, character_set, font_atlas, special_glyphs);
+    Font *font = new Font(info, size, baseline_offset, character_set, font_atlas, special_glyphs);
     s_fonts.Insert(info.guid, font);
     return font;
   }

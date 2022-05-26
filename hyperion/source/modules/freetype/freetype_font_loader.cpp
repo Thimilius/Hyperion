@@ -34,6 +34,9 @@ namespace Hyperion {
 
     SpecialFontGlyphs special_glyphs;
 
+    float32 max_glyph_baseline_offset = -FLT_MAX;
+    float32 current_glyph_baseline_offset = 0.0f; 
+    
     FT_UInt index;
     FT_ULong character = FT_Get_First_Char(font_face, &index);
     while (true) {
@@ -82,6 +85,11 @@ namespace Hyperion {
         glyph.bearing = Vector2(static_cast<float32>(font_face->glyph->bitmap_left), static_cast<float32>(font_face->glyph->bitmap_top));
         glyph.advance = font_face->glyph->advance.x >> 6;
 
+        current_glyph_baseline_offset = (glyph.size.y - glyph.bearing.y);
+        if (current_glyph_baseline_offset > max_glyph_baseline_offset) {
+          max_glyph_baseline_offset = current_glyph_baseline_offset;
+        }
+        
         if (is_special_character) {
           if (character == ' ') {
             special_glyphs.space = glyph;
@@ -102,7 +110,7 @@ namespace Hyperion {
     FT_Done_Face(font_face);
 
     FontAtlas *font_atlas = texture_atlas_packer.CreateAtlas();
-    return AssetManager::CreateFont(font_size, character_set, font_atlas, special_glyphs);
+    return AssetManager::CreateFont(font_size, max_glyph_baseline_offset / 2.0f, character_set, font_atlas, special_glyphs);
   }
 
   //--------------------------------------------------------------

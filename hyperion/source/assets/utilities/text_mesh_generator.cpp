@@ -38,8 +38,8 @@ namespace Hyperion {
           continue; // Tab is equivalent to 4 whitespaces.
         case '\r': continue; // Carriage return gets just straight up ignored. 
         case '\n': {
-          TextSize text_size = font->GetTextSize(codepoints, codepoint_offset, scale_x, true);
-          Vector2 new_position = GetPosition(settings.alignment, text_size, settings.rect);
+          TextSize new_text_size = font->GetTextSize(codepoints, codepoint_offset, scale_x, true);
+          Vector2 new_position = GetPosition(settings.alignment, new_text_size, settings.rect);
           position.x = new_position.x;
           position.y -= font->GetSize() * scale_y;
           continue;
@@ -78,29 +78,29 @@ namespace Hyperion {
 
     switch (text_alignment) {
       case UI::TextAlignment::TopLeft: {
-        position = Vector2(rect.position.x, rect.GetMax().y - text_size.height - text_size.baseline_offset);
+        position = Vector2(rect.position.x, rect.GetMax().y - text_size.height);
         break;
       }
       case UI::TextAlignment::TopCenter: {
-        position = Vector2(rect.GetCenter().x - (text_size.width / 2.0f), rect.GetMax().y - text_size.height - text_size.baseline_offset);
+        position = Vector2(rect.GetCenter().x - (text_size.width / 2.0f), rect.GetMax().y - text_size.height);
         break;
       }
       case UI::TextAlignment::TopRight: {
         Vector2 max = rect.GetMax();
-        position = Vector2(max.x - text_size.width, max.y - text_size.height - text_size.baseline_offset);
+        position = Vector2(max.x - text_size.width, max.y - text_size.height);
         break;
       }
       case UI::TextAlignment::MiddleLeft: {
-        position = Vector2(rect.position.x, rect.GetCenter().y - (text_size.height / 2.0f));
+        position = Vector2(rect.position.x, rect.GetCenter().y - (text_size.height / 2.0f) + text_size.baseline_offset);
         break;
       }
       case UI::TextAlignment::MiddleCenter: {
         Vector2 center = rect.GetCenter();
-        position = Vector2(center.x - (text_size.width / 2.0f), center.y - (text_size.height / 2.0f));
+        position = Vector2(center.x - (text_size.width / 2.0f), center.y - (text_size.height / 2.0f) + text_size.baseline_offset);
         break;
       }
       case UI::TextAlignment::MiddleRight: {
-        position = Vector2(rect.GetMax().x - text_size.width, rect.GetCenter().y - (text_size.height / 2.0f));
+        position = Vector2(rect.GetMax().x - text_size.width, rect.GetCenter().y - (text_size.height / 2.0f) + text_size.baseline_offset);
         break;
       }
       case UI::TextAlignment::BottomLeft: {

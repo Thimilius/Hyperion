@@ -76,7 +76,7 @@ namespace Hyperion {
       return texture_atlas;
     }
 
-    static Font *CreateFont(uint32 size, FontCharacterSet character_set, FontAtlas *font_atlas, SpecialFontGlyphs special_glyphs);
+    static Font *CreateFont(uint32 size, float32 baseline_offset, FontCharacterSet character_set, FontAtlas *font_atlas, SpecialFontGlyphs special_glyphs);
 
     static Shader *GetShaderPrimitive(ShaderPrimitive shader_primitive);
     static Shader *GetShaderByGuid(AssetGuid guid);

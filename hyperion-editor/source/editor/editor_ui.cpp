@@ -23,7 +23,7 @@ namespace Hyperion::Editor {
 
   //--------------------------------------------------------------
   void EditorUI::Initialize() {
-    s_font_text = FontLoader::LoadFont("data/fonts/consola.ttf", EditorStyle::FONT_SIZE, FontCharacterSet::LatinSupplement);
+    s_font_text = FontLoader::LoadFont("data/fonts/space_mono_regular.ttf", EditorStyle::FONT_SIZE, FontCharacterSet::LatinSupplement);
     s_font_icon = FontLoader::LoadFont("data/fonts/font_awesome_solid.otf", EditorStyle::FONT_SIZE, FontCharacterSet::All);
 
     s_root_element = UIFactory::CreateRoot();

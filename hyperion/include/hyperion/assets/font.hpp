@@ -20,6 +20,7 @@ namespace Hyperion {
     AssetType GetAssetType() const override { return AssetType::Font; }
 
     inline uint32 GetSize() const { return m_size; }
+    inline float32 GetBaselineOffset() const { return m_baseline_offset; }
     inline Texture2D *GetTexture() const { return m_font_atlas->GetTexture(); }
     const FontGlyph &GetGlyph(uint32 codepoint) const;
     inline bool8 HasCodepoint(uint32 codepoint) const { return m_font_atlas->HasElement(codepoint); }
@@ -29,9 +30,10 @@ namespace Hyperion {
     TextSize GetTextSize(const Array<uint32> &codepoints, uint32 codepoint_offset, float32 scale, bool8 line_only) const;
   private:
     Font(AssetInfo info) : Asset(info) { }
-    Font(AssetInfo info, uint32 size, FontCharacterSet character_set, FontAtlas *font_atlas, SpecialFontGlyphs special_glyphs);
+    Font(AssetInfo info, uint32 size, float32 baseline_offset, FontCharacterSet character_set, FontAtlas *font_atlas, SpecialFontGlyphs special_glyphs);
   private:
     uint32 m_size;
+    float32 m_baseline_offset;
     FontCharacterSet m_character_set;
     FontAtlas *m_font_atlas;
     SpecialFontGlyphs m_special_glyphs;
