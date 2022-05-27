@@ -14,30 +14,74 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::UI {
 
-  Font *g_font;
-  Vector2 g_cursor_position;
-  
   const float32 SAME_LINE_PADDING = 5.0f;
   const float32 NEXT_LINE_PADDING = 2.0f;
 
-  struct UIImmediateState {
-    Vector2 mouse_position;
-    bool8 is_left_mouse_down;
-    bool8 is_left_mouse_hold;
-    bool8 is_left_mouse_up;
+  using UIImmediateId = uint64;
+  
+  struct UIImmediateNode {
+    struct UIImmediateNodeId {
+      UIImmediateId id = 0;
+      uint64 last_frame_touched_index = 0;
+    } id;
     
-    uint64 hot_widget;
-    uint64 active_widget;
+    struct UIImmediateNodeHierarchy {
+      UIImmediateNode *parent = nullptr;
+
+      UIImmediateNode *previous_sibling = nullptr;
+      UIImmediateNode *next_sibling = nullptr;
+
+      uint64 child_count = 0;
+      UIImmediateNode *first_child = nullptr;
+      UIImmediateNode *last_child = nullptr;  
+    } hierarchy;
+
+    struct UIImmediateNodeLayout {
+      
+    };
+
+    struct UIImmediateNodeWidget {
+      String text;
+    };
+  };
+
+  struct UIImmediateState {
+    Vector2 mouse_position = Vector2();
+    bool8 is_left_mouse_down = false;
+    bool8 is_left_mouse_hold = false;
+    bool8 is_left_mouse_up = false;
+    
+    UIImmediateId hot_widget = 0;
+    UIImmediateId active_widget = 0;
+
+    uint64 current_frame_index = 0;
+
+    Vector2 cursor_position = Vector2();
+
+    Map<UIImmediateId, UIImmediateNode> node_map;
+    UIImmediateNode root_node;
+    Array<UIImmediateNode *> node_stack;
+    
+    Font *font;
   };
 
   UIImmediateState g_state;
+
+  //--------------------------------------------------------------
+  UIImmediateId GetId(const String &text) {
+    // NOTE: At some point we will need something more robust.
+    // Like a id stack system of some sort.
+    // Or filtering out what goes from the text into the hash with '##'.
+    uint64 id = std::hash<String>()(text);
+    return id;
+  }
   
   //--------------------------------------------------------------
   void AdvanceCursor(Vector2 size, bool8 same_line = false) {
     if (same_line) {
-      g_cursor_position.x += size.x + SAME_LINE_PADDING;
+      g_state.cursor_position.x += size.x + SAME_LINE_PADDING;
     } else {
-      g_cursor_position.y -= size.y + NEXT_LINE_PADDING;  
+      g_state.cursor_position.y -= size.y + NEXT_LINE_PADDING;  
     }
   }
 
@@ -66,6 +110,37 @@ namespace Hyperion::UI {
     // NOTE: Counter clockwise order of points is important.
     return is_left(p1, p4, screen_point) >= 0.0f && is_left(p4, p3, screen_point) >= 0.0f && is_left(p3, p2, screen_point) >= 0.0f && is_left(p2, p1, screen_point) >= 0.0f;
   }
+
+  //--------------------------------------------------------------
+  UIImmediateNode &GetOrCreateNode(UIImmediateId id) {
+    UIImmediateNode *node = nullptr;
+
+    // Try to get cached node.
+    auto it = g_state.node_map.Find(id);
+    if (it == g_state.node_map.end()) {
+      UIImmediateNode new_node = { };
+      new_node.id.id = id;
+      g_state.node_map.Insert(id, new_node);
+      node = &g_state.node_map.Get(id);
+    } else {
+      node = &it->second;
+    }
+    node->id.last_frame_touched_index = g_state.current_frame_index;
+
+    // Put node into hierarchy by appending it as a child.
+    UIImmediateNode &parent = *g_state.node_stack.GetLast();
+    parent.hierarchy.child_count++;
+    if (parent.hierarchy.first_child == nullptr) {
+      parent.hierarchy.first_child = node;
+    }
+    if (parent.hierarchy.last_child != nullptr) {
+      parent.hierarchy.last_child->hierarchy.next_sibling = node;
+    }
+    node->hierarchy.previous_sibling = parent.hierarchy.last_child; 
+    parent.hierarchy.last_child = node;
+
+    return *node;
+  }
   
   //--------------------------------------------------------------
   void UIImmediate::Begin() {
@@ -80,42 +155,33 @@ namespace Hyperion::UI {
     layout.full_position = layout.leftover_position = Vector3();
     s_layout_stack.Add(layout);
 
-    if (!g_font) {
-      g_font = FontLoader::LoadFont("data/fonts/space_mono_regular.ttf", 12, FontCharacterSet::LatinSupplement);  
+    if (!g_state.font) {
+      g_state.font = FontLoader::LoadFont("data/fonts/space_mono_regular.ttf", 12, FontCharacterSet::LatinSupplement);  
     }
-
-    g_cursor_position = Vector2(-static_cast<float32>(Display::GetWidth()) / 2.0f, static_cast<float32>(Display::GetHeight()) / 2.0f);
 
     g_state.mouse_position = ScreenPointToUISpacePoint(Input::GetMousePosition().ToFloat());
     g_state.is_left_mouse_down = Input::IsMouseButtonDown(MouseButtonCode::Left);
     g_state.is_left_mouse_hold = Input::IsMouseButtonHold(MouseButtonCode::Left);
     g_state.is_left_mouse_up = Input::IsMouseButtonUp(MouseButtonCode::Left);
     g_state.hot_widget = 0;
+    g_state.current_frame_index++;
+    g_state.cursor_position = Vector2(-static_cast<float32>(Display::GetWidth()) / 2.0f, static_cast<float32>(Display::GetHeight()) / 2.0f);
+
+    g_state.root_node.id.id = -1;
+    g_state.root_node.id.last_frame_touched_index = g_state.current_frame_index;
+
+    g_state.node_stack.Add(&g_state.root_node);
   }
 
   //--------------------------------------------------------------
   void UIImmediate::End() {
-    Flush();
+    g_state.node_stack.RemoveLast();
     
-    Rendering::RenderFrameContext &render_frame_context = Rendering::RenderEngine::GetMainRenderFrame()->GetContext();
-    for (UIImmediateMesh mesh : s_meshes) {
-      Material *material = mesh.material ? mesh.material : AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI);
-      AssetId texture_id = mesh.texture
-       ? mesh.texture->GetAssetInfo().id
-       : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetAssetInfo().id;
-      
-      Rendering::RenderFrameContextObjectUI &render_frame_context_ui_object = render_frame_context.AddEditorUIObject();
-      render_frame_context_ui_object.local_to_world = Matrix4x4::Identity();
-      render_frame_context_ui_object.mesh_id = mesh.mesh->GetAssetInfo().id;
-      render_frame_context_ui_object.shader_id = material->GetShader()->GetAssetInfo().id;
-      render_frame_context_ui_object.material_id = material->GetAssetInfo().id;
-      render_frame_context_ui_object.color = mesh.color;
-      render_frame_context_ui_object.texture.id = texture_id;
-      render_frame_context_ui_object.texture.dimension = mesh.texture ? mesh.texture->GetDimension() : Rendering::TextureDimension::Texture2D;
-      render_frame_context_ui_object.texture.render_texture_attchment_index = mesh.render_texture_attachment_index;
-      render_frame_context_ui_object.enable_blending = mesh.enable_blending;
-    }
+    Flush();
 
+    Layout();
+    Render();
+    
     if (g_state.is_left_mouse_up) {
       g_state.active_widget = 0;
     }
@@ -249,24 +315,27 @@ namespace Hyperion::UI {
 
   //--------------------------------------------------------------
   void UIImmediate::Text(const String &text) {
-    TextSize text_size = g_font->GetTextSize(StringUtils::GetCodepointsFromUtf8(text), 0, 1.0f, false);
+    UIImmediateNode &node = GetOrCreateNode(GetId(text));
+
+    TextSize text_size = g_state.font->GetTextSize(StringUtils::GetCodepointsFromUtf8(text), 0, 1.0f, false);
     Vector2 size = Vector2(text_size.width, text_size.height + text_size.baseline_offset);
-    Vector2 position = g_cursor_position;
+    Vector2 position = g_state.cursor_position;
     position.y -= size.y;
     Rect rect = Rect(position, size);
 
-    DrawText(text, g_font, rect, TextAlignment::TopLeft, Color::White());
+    DrawText(text, g_state.font, rect, TextAlignment::TopLeft, Color::White());
     
     AdvanceCursor(size);
   }
 
   //--------------------------------------------------------------
   bool8 UIImmediate::Button(const String &text) {
-    uint64 id = std::hash<String>()(text);
-
-    TextSize text_size = g_font->GetTextSize(StringUtils::GetCodepointsFromUtf8(text), 0, 1.0f, false);
+    UIImmediateId id = GetId(text);
+    GetOrCreateNode(id);
+    
+    TextSize text_size = g_state.font->GetTextSize(StringUtils::GetCodepointsFromUtf8(text), 0, 1.0f, false);
     Vector2 size = Vector2(text_size.width + 10.0f, text_size.height + 8.0f);
-    Vector2 position = g_cursor_position;
+    Vector2 position = g_state.cursor_position;
     position.y -= size.y;
     Rect rect = Rect(position, size);
     
@@ -290,7 +359,7 @@ namespace Hyperion::UI {
     }
     
     DrawRect(rect, color);
-    DrawText(text, g_font, rect, TextAlignment::MiddleCenter, Color::Red());
+    DrawText(text, g_state.font, rect, TextAlignment::MiddleCenter, Color::White());
 
     AdvanceCursor(size);
 
@@ -349,4 +418,31 @@ namespace Hyperion::UI {
     s_mesh_builder.Clear();
   }
 
+  //--------------------------------------------------------------
+  void UIImmediate::Layout() {
+    UIImmediateNode &root = g_state.root_node;
+  }
+
+  //--------------------------------------------------------------
+  void UIImmediate::Render() {
+    Rendering::RenderFrameContext &render_frame_context = Rendering::RenderEngine::GetMainRenderFrame()->GetContext();
+    for (UIImmediateMesh mesh : s_meshes) {
+      Material *material = mesh.material ? mesh.material : AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI);
+      AssetId texture_id = mesh.texture
+       ? mesh.texture->GetAssetInfo().id
+       : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetAssetInfo().id;
+      
+      Rendering::RenderFrameContextObjectUI &render_frame_context_ui_object = render_frame_context.AddEditorUIObject();
+      render_frame_context_ui_object.local_to_world = Matrix4x4::Identity();
+      render_frame_context_ui_object.mesh_id = mesh.mesh->GetAssetInfo().id;
+      render_frame_context_ui_object.shader_id = material->GetShader()->GetAssetInfo().id;
+      render_frame_context_ui_object.material_id = material->GetAssetInfo().id;
+      render_frame_context_ui_object.color = mesh.color;
+      render_frame_context_ui_object.texture.id = texture_id;
+      render_frame_context_ui_object.texture.dimension = mesh.texture ? mesh.texture->GetDimension() : Rendering::TextureDimension::Texture2D;
+      render_frame_context_ui_object.texture.render_texture_attchment_index = mesh.render_texture_attachment_index;
+      render_frame_context_ui_object.enable_blending = mesh.enable_blending;
+    }
+  }
+  
 }
