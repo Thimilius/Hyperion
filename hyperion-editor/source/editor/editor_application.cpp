@@ -187,10 +187,10 @@ namespace Hyperion::Editor {
     {
       UI::UIImmediate::Text("Hello there\nThis is text\non a new line");
 
-      if (UI::UIImmediate::Button("Button 1")) {
+      if (UI::UIImmediate::Button("Button 1").clicked) {
         HYP_TRACE("CLICKED BUTTON 1");
       }  
-      if (UI::UIImmediate::Button("Button 2")) {
+      if (UI::UIImmediate::Button("Button 2").right_clicked) {
         HYP_TRACE("CLICKED BUTTON 2");
       }
     }

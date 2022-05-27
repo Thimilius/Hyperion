@@ -22,13 +22,15 @@ namespace Hyperion::UI {
   enum class UIImmediateWidgetFlags {
     None = 0,
 
-    DrawText = BIT(0),
-    DrawShadow = BIT(1),
-    DrawBackground = BIT(2),
-    DrawBackgroundShadow = BIT(3)
+    Interactable = BIT(0),
+    
+    DrawText = BIT(1),
+    DrawShadow = BIT(2),
+    DrawBackground = BIT(3),
+    DrawBackgroundShadow = BIT(4)
   };
   HYP_CREATE_ENUM_FLAG_OPERATORS(UIImmediateWidgetFlags)
-  
+
   struct UIImmediateNode {
     struct UIImmediateNodeId {
       UIImmediateId id = 0;
@@ -63,6 +65,9 @@ namespace Hyperion::UI {
     bool8 is_left_mouse_down = false;
     bool8 is_left_mouse_hold = false;
     bool8 is_left_mouse_up = false;
+    bool8 is_right_mouse_down = false;
+    bool8 is_right_mouse_hold = false;
+    bool8 is_right_mouse_up = false;
     
     UIImmediateId hot_widget = 0;
     UIImmediateId active_widget = 0;
@@ -157,6 +162,34 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
+  UIImmediateInteraction InteractWithNode(UIImmediateNode &node) {
+    if ((node.widget.flags & UIImmediateWidgetFlags::Interactable) == UIImmediateWidgetFlags::Interactable) {
+      UIImmediateInteraction interaction;
+      
+      UIImmediateId id = node.id.id;
+      
+      bool8 is_inside = IsInsideRect(node.layout.rect, g_state.mouse_position);
+      if (is_inside) {
+        g_state.hot_widget = id;
+        if (g_state.active_widget == 0 && (g_state.is_left_mouse_down || g_state.is_right_mouse_down)) {
+          g_state.active_widget = id;
+        }
+      }
+
+      bool8 is_hot_widget = g_state.hot_widget == id;
+      bool8 is_active_widget = g_state.active_widget == id;
+
+      interaction.hovered = is_hot_widget;
+      interaction.clicked = g_state.is_left_mouse_up && is_hot_widget && is_active_widget;
+      interaction.right_clicked = g_state.is_right_mouse_up && is_hot_widget && is_active_widget;
+      
+      return interaction;
+    }
+
+    return UIImmediateInteraction();
+  }
+  
+  //--------------------------------------------------------------
   void IterateHierarchy(UIImmediateNode &parent, const std::function<void(UIImmediateNode &)> &callback) {
     callback(parent);
 
@@ -188,6 +221,9 @@ namespace Hyperion::UI {
     g_state.is_left_mouse_down = Input::IsMouseButtonDown(MouseButtonCode::Left);
     g_state.is_left_mouse_hold = Input::IsMouseButtonHold(MouseButtonCode::Left);
     g_state.is_left_mouse_up = Input::IsMouseButtonUp(MouseButtonCode::Left);
+    g_state.is_right_mouse_down = Input::IsMouseButtonDown(MouseButtonCode::Right);
+    g_state.is_right_mouse_hold = Input::IsMouseButtonHold(MouseButtonCode::Right);
+    g_state.is_right_mouse_up = Input::IsMouseButtonUp(MouseButtonCode::Right);
     g_state.hot_widget = 0;
     g_state.current_frame_index++;
     g_state.cursor_position = Vector2(-static_cast<float32>(Display::GetWidth()) / 2.0f, static_cast<float32>(Display::GetHeight()) / 2.0f);
@@ -339,7 +375,7 @@ namespace Hyperion::UI {
   //--------------------------------------------------------------
   void UIImmediate::Text(const String &text) {
     UIImmediateNode &node = GetOrCreateNode(GetId(text), UIImmediateWidgetFlags::DrawText | UIImmediateWidgetFlags::DrawShadow);
-
+    
     TextSize text_size = g_state.font->GetTextSize(StringUtils::GetCodepointsFromUtf8(text), 0, 1.0f, false);
     Vector2 size = Vector2(text_size.width, text_size.height + text_size.baseline_offset);
     Vector2 position = g_state.cursor_position;
@@ -354,20 +390,15 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
-  bool8 UIImmediate::Button(const String &text) {
+  UIImmediateInteraction UIImmediate::Button(const String &text) {
     UIImmediateId id = GetId(text);
-    UIImmediateNode &node = GetOrCreateNode(id, UIImmediateWidgetFlags::DrawBackground | UIImmediateWidgetFlags::DrawText | UIImmediateWidgetFlags::DrawShadow);
+    UIImmediateWidgetFlags flags = UIImmediateWidgetFlags::Interactable
+      | UIImmediateWidgetFlags::DrawBackground
+      | UIImmediateWidgetFlags::DrawText
+      | UIImmediateWidgetFlags::DrawShadow;
+    UIImmediateNode &node = GetOrCreateNode(id, flags);
     
-    bool8 is_inside = IsInsideRect(node.layout.rect, g_state.mouse_position);
-    if (is_inside) {
-      g_state.hot_widget = id;
-      if (g_state.active_widget == 0 && g_state.is_left_mouse_down) {
-        g_state.active_widget = id;
-      }
-    }
-
-    bool8 is_hot_widget = g_state.hot_widget == id;
-    bool8 is_active_widget = g_state.active_widget == id;
+    UIImmediateInteraction interaction = InteractWithNode(node);
     
     TextSize text_size = g_state.font->GetTextSize(StringUtils::GetCodepointsFromUtf8(text), 0, 1.0f, false);
     Vector2 size = Vector2(text_size.width + 10.0f, text_size.height + 8.0f);
@@ -381,7 +412,7 @@ namespace Hyperion::UI {
 
     AdvanceCursor(size);
 
-    return g_state.is_left_mouse_up && is_hot_widget && is_active_widget;
+    return interaction;
   }
 
   //--------------------------------------------------------------

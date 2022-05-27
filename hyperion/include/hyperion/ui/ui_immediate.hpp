@@ -36,8 +36,6 @@ namespace Hyperion::UI {
     Vector2 leftover_size;
     Vector2 leftover_pivot;
     Vector3 leftover_position;
-
-    Array<UIImmediateLayout> children;
   };
   
   struct UIImmediateMesh {
@@ -50,6 +48,12 @@ namespace Hyperion::UI {
     
     uint32 render_texture_attachment_index;
   };
+
+  struct UIImmediateInteraction {
+    bool8 hovered = false;
+    bool8 clicked = false;
+    bool8 right_clicked = false;
+  };
   
   class UIImmediate final {
   public:
@@ -60,7 +64,7 @@ namespace Hyperion::UI {
     static void EndWindow();
 
     static void Text(const String &text);
-    static bool8 Button(const String &text);
+    static UIImmediateInteraction Button(const String &text);
     
     static void DrawRect(Rect rect, Color color);
     static void DrawText(Rect rect, const String &text, Font *font, UI::TextAlignment alignment, Color color);
