@@ -31,28 +31,28 @@ namespace Hyperion::UI {
   };
   HYP_CREATE_ENUM_FLAG_OPERATORS(UIImmediateWidgetFlags)
 
-  struct UIImmediateNode {
-    struct UIImmediateNodeId {
+  struct UIImmediateElement {
+    struct UIImmediateElementId {
       UIImmediateId id = 0;
       uint64 last_frame_touched_index = 0;
     } id;
     
-    struct UIImmediateNodeHierarchy {
-      UIImmediateNode *parent = nullptr;
+    struct UIImmediateElementHierarchy {
+      UIImmediateElement *parent = nullptr;
 
-      UIImmediateNode *previous_sibling = nullptr;
-      UIImmediateNode *next_sibling = nullptr;
+      UIImmediateElement *previous_sibling = nullptr;
+      UIImmediateElement *next_sibling = nullptr;
 
       uint64 child_count = 0;
-      UIImmediateNode *first_child = nullptr;
-      UIImmediateNode *last_child = nullptr;  
+      UIImmediateElement *first_child = nullptr;
+      UIImmediateElement *last_child = nullptr;  
     } hierarchy;
 
-    struct UIImmediateNodeLayout {
+    struct UIImmediateElementLayout {
       Rect rect = Rect();
     } layout;
 
-    struct UIImmediateNodeWidget {
+    struct UIImmediateElementWidget {
       UIImmediateWidgetFlags flags = UIImmediateWidgetFlags::None;
 
       String text = String();
@@ -76,9 +76,9 @@ namespace Hyperion::UI {
 
     Vector2 cursor_position = Vector2();
 
-    Map<UIImmediateId, UIImmediateNode> node_map;
-    UIImmediateNode root_node;
-    Array<UIImmediateNode *> node_stack;
+    Map<UIImmediateId, UIImmediateElement> elements;
+    UIImmediateElement root_element;
+    Array<UIImmediateElement *> element_stack;
     
     Font *font;
   };
@@ -130,45 +130,45 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
-  UIImmediateNode &GetOrCreateNode(UIImmediateId id, UIImmediateWidgetFlags widget_flags) {
-    UIImmediateNode *node = nullptr;
+  UIImmediateElement &GetOrCreateElement(UIImmediateId id, UIImmediateWidgetFlags widget_flags) {
+    UIImmediateElement *element = nullptr;
 
-    // Try to get cached node.
-    auto it = g_state.node_map.Find(id);
-    if (it == g_state.node_map.end()) {
-      UIImmediateNode new_node = { };
-      new_node.id.id = id;
-      new_node.widget.flags = widget_flags;
-      g_state.node_map.Insert(id, new_node);
-      node = &g_state.node_map.Get(id);
+    // Try to get cached element.
+    auto it = g_state.elements.Find(id);
+    if (it == g_state.elements.end()) {
+      UIImmediateElement new_element = { };
+      new_element.id.id = id;
+      new_element.widget.flags = widget_flags;
+      g_state.elements.Insert(id, new_element);
+      element = &g_state.elements.Get(id);
     } else {
-      node = &it->second;
+      element = &it->second;
     }
-    node->id.last_frame_touched_index = g_state.current_frame_index;
+    element->id.last_frame_touched_index = g_state.current_frame_index;
 
-    // Put node into hierarchy by appending it as a child.
-    UIImmediateNode &parent = *g_state.node_stack.GetLast();
+    // Put element into hierarchy by appending it as a child.
+    UIImmediateElement &parent = *g_state.element_stack.GetLast();
     parent.hierarchy.child_count++;
     if (parent.hierarchy.first_child == nullptr) {
-      parent.hierarchy.first_child = node;
+      parent.hierarchy.first_child = element;
     }
     if (parent.hierarchy.last_child != nullptr) {
-      parent.hierarchy.last_child->hierarchy.next_sibling = node;
+      parent.hierarchy.last_child->hierarchy.next_sibling = element;
     }
-    node->hierarchy.previous_sibling = parent.hierarchy.last_child; 
-    parent.hierarchy.last_child = node;
+    element->hierarchy.previous_sibling = parent.hierarchy.last_child; 
+    parent.hierarchy.last_child = element;
 
-    return *node;
+    return *element;
   }
 
   //--------------------------------------------------------------
-  UIImmediateInteraction InteractWithNode(UIImmediateNode &node) {
-    if ((node.widget.flags & UIImmediateWidgetFlags::Interactable) == UIImmediateWidgetFlags::Interactable) {
+  UIImmediateInteraction InteractWithElement(UIImmediateElement &element) {
+    if ((element.widget.flags & UIImmediateWidgetFlags::Interactable) == UIImmediateWidgetFlags::Interactable) {
       UIImmediateInteraction interaction;
       
-      UIImmediateId id = node.id.id;
+      UIImmediateId id = element.id.id;
       
-      bool8 is_inside = IsInsideRect(node.layout.rect, g_state.mouse_position);
+      bool8 is_inside = IsInsideRect(element.layout.rect, g_state.mouse_position);
       if (is_inside) {
         g_state.hot_widget = id;
         if (g_state.active_widget == 0 && (g_state.is_left_mouse_down || g_state.is_right_mouse_down)) {
@@ -190,10 +190,10 @@ namespace Hyperion::UI {
   }
   
   //--------------------------------------------------------------
-  void IterateHierarchy(UIImmediateNode &parent, const std::function<void(UIImmediateNode &)> &callback) {
+  void IterateHierarchy(UIImmediateElement &parent, const std::function<void(UIImmediateElement &)> &callback) {
     callback(parent);
 
-    UIImmediateNode *child = parent.hierarchy.first_child;
+    UIImmediateElement *child = parent.hierarchy.first_child;
     for (uint64 i = 0; i < parent.hierarchy.child_count; ++i) {
       IterateHierarchy(*child, callback);
       child = child->hierarchy.next_sibling;
@@ -228,13 +228,13 @@ namespace Hyperion::UI {
     g_state.current_frame_index++;
     g_state.cursor_position = Vector2(-static_cast<float32>(Display::GetWidth()) / 2.0f, static_cast<float32>(Display::GetHeight()) / 2.0f);
 
-    g_state.root_node = UIImmediateNode();
-    g_state.node_stack.Add(&g_state.root_node);
+    g_state.root_element = UIImmediateElement();
+    g_state.element_stack.Add(&g_state.root_element);
   }
 
   //--------------------------------------------------------------
   void UIImmediate::End() {
-    g_state.node_stack.RemoveLast();
+    g_state.element_stack.RemoveLast();
     
     Flush();
 
@@ -374,7 +374,7 @@ namespace Hyperion::UI {
 
   //--------------------------------------------------------------
   void UIImmediate::Text(const String &text) {
-    UIImmediateNode &node = GetOrCreateNode(GetId(text), UIImmediateWidgetFlags::DrawText | UIImmediateWidgetFlags::DrawShadow);
+    UIImmediateElement &element = GetOrCreateElement(GetId(text), UIImmediateWidgetFlags::DrawText | UIImmediateWidgetFlags::DrawShadow);
     
     TextSize text_size = g_state.font->GetTextSize(StringUtils::GetCodepointsFromUtf8(text), 0, 1.0f, false);
     Vector2 size = Vector2(text_size.width, text_size.height + text_size.baseline_offset);
@@ -382,9 +382,9 @@ namespace Hyperion::UI {
     position.y -= size.y;
     Rect rect = Rect(position, size);
 
-    node.layout.rect = rect;
-    node.widget.text = text;
-    node.widget.text_alignment = TextAlignment::TopLeft;
+    element.layout.rect = rect;
+    element.widget.text = text;
+    element.widget.text_alignment = TextAlignment::TopLeft;
 
     AdvanceCursor(size);
   }
@@ -396,9 +396,9 @@ namespace Hyperion::UI {
       | UIImmediateWidgetFlags::DrawBackground
       | UIImmediateWidgetFlags::DrawText
       | UIImmediateWidgetFlags::DrawShadow;
-    UIImmediateNode &node = GetOrCreateNode(id, flags);
+    UIImmediateElement &element = GetOrCreateElement(id, flags);
     
-    UIImmediateInteraction interaction = InteractWithNode(node);
+    UIImmediateInteraction interaction = InteractWithElement(element);
     
     TextSize text_size = g_state.font->GetTextSize(StringUtils::GetCodepointsFromUtf8(text), 0, 1.0f, false);
     Vector2 size = Vector2(text_size.width + 10.0f, text_size.height + 8.0f);
@@ -406,9 +406,9 @@ namespace Hyperion::UI {
     position.y -= size.y;
     Rect rect = Rect(position, size);
     
-    node.layout.rect = rect;
-    node.widget.text = text;
-    node.widget.text_alignment = TextAlignment::MiddleCenter;
+    element.layout.rect = rect;
+    element.widget.text = text;
+    element.widget.text_alignment = TextAlignment::MiddleCenter;
 
     AdvanceCursor(size);
 
@@ -431,6 +431,10 @@ namespace Hyperion::UI {
   
   //--------------------------------------------------------------
   void UIImmediate::DrawText(Rect rect, const String &text, Font *font, UI::TextAlignment alignment, Color color) {
+    if (text.empty()) {
+      return;
+    }
+    
     TextMeshGenerationSettings generation_settings;
     generation_settings.text = text;
     generation_settings.font = font;
@@ -444,24 +448,6 @@ namespace Hyperion::UI {
   }
   
   //--------------------------------------------------------------
-  void UIImmediate::Flush(Material *material, Texture *texture) {
-    if (s_mesh_builder.IsEmpty()) {
-      return;
-    }
-    
-    UIImmediateMesh immediate_mesh = { };
-    immediate_mesh.mesh = s_mesh_builder.CreateMesh();
-    immediate_mesh.material = material ? material : AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI);
-    immediate_mesh.texture = texture ? texture : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White);
-    immediate_mesh.color = Color::White();
-    immediate_mesh.render_texture_attachment_index = 0;
-    immediate_mesh.enable_blending = true;
-    s_meshes.Add(immediate_mesh);
-
-    s_mesh_builder.Clear();
-  }
-
-  //--------------------------------------------------------------
   void UIImmediate::Layout() {
     
   }
@@ -469,26 +455,30 @@ namespace Hyperion::UI {
   //--------------------------------------------------------------
   void UIImmediate::Render() {
     // TODO: Color, font and shadow info should be part of a style.
-    IterateHierarchy(g_state.root_node, [](UIImmediateNode &node) {
-      if ((node.widget.flags & UIImmediateWidgetFlags::DrawBackgroundShadow) == UIImmediateWidgetFlags::DrawBackgroundShadow) {
-        Rect rect = node.layout.rect;
+    IterateHierarchy(g_state.root_element, [](UIImmediateElement &element) {
+      bool8 draw_background_shadow = (element.widget.flags & UIImmediateWidgetFlags::DrawBackgroundShadow) == UIImmediateWidgetFlags::DrawBackgroundShadow;
+      if (draw_background_shadow) {
+        Rect rect = element.layout.rect;
         rect.position.x += 1.0f;
         rect.position.y += 1.0f;
         DrawRect(rect, Color::Black());
       }
-      if ((node.widget.flags & UIImmediateWidgetFlags::DrawBackground) == UIImmediateWidgetFlags::DrawBackground) {
-        DrawRect(node.layout.rect, Color::Blue());
+      bool8 draw_background = (element.widget.flags & UIImmediateWidgetFlags::DrawBackground) == UIImmediateWidgetFlags::DrawBackground;
+      if (draw_background) {
+        DrawRect(element.layout.rect, Color::Blue());
       }
       Flush();
 
-      if ((node.widget.flags & UIImmediateWidgetFlags::DrawShadow) == UIImmediateWidgetFlags::DrawShadow) {
-        Rect rect = node.layout.rect;
+      bool8 draw_shadow = (element.widget.flags & UIImmediateWidgetFlags::DrawShadow) == UIImmediateWidgetFlags::DrawShadow;
+      if (draw_shadow) {
+        Rect rect = element.layout.rect;
         rect.position.x += 1.0f;
         rect.position.y -= 1.0f;
-        DrawText(rect, node.widget.text, g_state.font, node.widget.text_alignment, Color::Black());
+        DrawText(rect, element.widget.text, g_state.font, element.widget.text_alignment, Color::Black());
       }
-      if ((node.widget.flags & UIImmediateWidgetFlags::DrawText) == UIImmediateWidgetFlags::DrawText) {
-        DrawText(node.layout.rect, node.widget.text, g_state.font, node.widget.text_alignment, Color::White());
+      bool8 draw_text = (element.widget.flags & UIImmediateWidgetFlags::DrawText) == UIImmediateWidgetFlags::DrawText;
+      if (draw_text) {
+        DrawText(element.layout.rect, element.widget.text, g_state.font, element.widget.text_alignment, Color::White());
       }
       Flush(AssetManager::GetMaterialPrimitive(MaterialPrimitive::Font), g_state.font->GetTexture());
     });
@@ -513,4 +503,22 @@ namespace Hyperion::UI {
     }
   }
   
+  //--------------------------------------------------------------
+  void UIImmediate::Flush(Material *material, Texture *texture) {
+    if (s_mesh_builder.IsEmpty()) {
+      return;
+    }
+    
+    UIImmediateMesh immediate_mesh = { };
+    immediate_mesh.mesh = s_mesh_builder.CreateMesh();
+    immediate_mesh.material = material ? material : AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI);
+    immediate_mesh.texture = texture ? texture : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White);
+    immediate_mesh.color = Color::White();
+    immediate_mesh.render_texture_attachment_index = 0;
+    immediate_mesh.enable_blending = true;
+    s_meshes.Add(immediate_mesh);
+
+    s_mesh_builder.Clear();
+  }
+
 }

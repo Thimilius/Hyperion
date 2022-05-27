@@ -72,10 +72,10 @@ namespace Hyperion::UI {
     UIImmediate() = delete;
     ~UIImmediate() = delete;
   private:
-    static void Flush(Material *material = nullptr, Texture *texture = nullptr);
-
     static void Layout();
     static void Render();
+
+    static void Flush(Material *material = nullptr, Texture *texture = nullptr);
   private:
     inline static MeshBuilder s_mesh_builder;
     inline static Array<UIImmediateMesh> s_meshes;

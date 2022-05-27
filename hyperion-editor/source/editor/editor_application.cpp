@@ -191,7 +191,7 @@ namespace Hyperion::Editor {
         HYP_TRACE("CLICKED BUTTON 1");
       }  
       if (UI::UIImmediate::Button("Button 2").right_clicked) {
-        HYP_TRACE("CLICKED BUTTON 2");
+        HYP_TRACE("RIGHT CLICKED BUTTON 2");
       }
     }
     UI::UIImmediate::End();
