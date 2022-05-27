@@ -63,7 +63,7 @@ namespace Hyperion::UI {
     static bool8 Button(const String &text);
     
     static void DrawRect(Rect rect, Color color);
-    static void DrawText(const String &text, Font *font, Rect rect, UI::TextAlignment alignment, Color color);
+    static void DrawText(Rect rect, const String &text, Font *font, UI::TextAlignment alignment, Color color);
   private:
     UIImmediate() = delete;
     ~UIImmediate() = delete;

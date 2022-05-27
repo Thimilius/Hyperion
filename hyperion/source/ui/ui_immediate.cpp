@@ -21,9 +21,11 @@ namespace Hyperion::UI {
 
   enum class UIImmediateWidgetFlags {
     None = 0,
-    
-    DrawBackground = BIT(0),
-    DrawText = BIT(1),
+
+    DrawText = BIT(0),
+    DrawShadow = BIT(1),
+    DrawBackground = BIT(2),
+    DrawBackgroundShadow = BIT(3)
   };
   HYP_CREATE_ENUM_FLAG_OPERATORS(UIImmediateWidgetFlags)
   
@@ -50,7 +52,7 @@ namespace Hyperion::UI {
 
     struct UIImmediateNodeWidget {
       UIImmediateWidgetFlags flags = UIImmediateWidgetFlags::None;
-      
+
       String text = String();
       TextAlignment text_alignment = TextAlignment::TopLeft;
     } widget;
@@ -336,7 +338,7 @@ namespace Hyperion::UI {
 
   //--------------------------------------------------------------
   void UIImmediate::Text(const String &text) {
-    UIImmediateNode &node = GetOrCreateNode(GetId(text), UIImmediateWidgetFlags::DrawText);
+    UIImmediateNode &node = GetOrCreateNode(GetId(text), UIImmediateWidgetFlags::DrawText | UIImmediateWidgetFlags::DrawShadow);
 
     TextSize text_size = g_state.font->GetTextSize(StringUtils::GetCodepointsFromUtf8(text), 0, 1.0f, false);
     Vector2 size = Vector2(text_size.width, text_size.height + text_size.baseline_offset);
@@ -354,15 +356,9 @@ namespace Hyperion::UI {
   //--------------------------------------------------------------
   bool8 UIImmediate::Button(const String &text) {
     UIImmediateId id = GetId(text);
-    UIImmediateNode &node = GetOrCreateNode(id, UIImmediateWidgetFlags::DrawBackground | UIImmediateWidgetFlags::DrawText);
+    UIImmediateNode &node = GetOrCreateNode(id, UIImmediateWidgetFlags::DrawBackground | UIImmediateWidgetFlags::DrawText | UIImmediateWidgetFlags::DrawShadow);
     
-    TextSize text_size = g_state.font->GetTextSize(StringUtils::GetCodepointsFromUtf8(text), 0, 1.0f, false);
-    Vector2 size = Vector2(text_size.width + 10.0f, text_size.height + 8.0f);
-    Vector2 position = g_state.cursor_position;
-    position.y -= size.y;
-    Rect rect = Rect(position, size);
-    
-    bool8 is_inside = IsInsideRect(rect, g_state.mouse_position);
+    bool8 is_inside = IsInsideRect(node.layout.rect, g_state.mouse_position);
     if (is_inside) {
       g_state.hot_widget = id;
       if (g_state.active_widget == 0 && g_state.is_left_mouse_down) {
@@ -372,6 +368,12 @@ namespace Hyperion::UI {
 
     bool8 is_hot_widget = g_state.hot_widget == id;
     bool8 is_active_widget = g_state.active_widget == id;
+    
+    TextSize text_size = g_state.font->GetTextSize(StringUtils::GetCodepointsFromUtf8(text), 0, 1.0f, false);
+    Vector2 size = Vector2(text_size.width + 10.0f, text_size.height + 8.0f);
+    Vector2 position = g_state.cursor_position;
+    position.y -= size.y;
+    Rect rect = Rect(position, size);
     
     node.layout.rect = rect;
     node.widget.text = text;
@@ -384,8 +386,6 @@ namespace Hyperion::UI {
 
   //--------------------------------------------------------------
   void UIImmediate::DrawRect(Rect rect, Color color) {
-    Flush();
-
     Vector2 min = rect.GetMin();
     Vector2 max = rect.GetMax();
     
@@ -399,9 +399,7 @@ namespace Hyperion::UI {
   }
   
   //--------------------------------------------------------------
-  void UIImmediate::DrawText(const String &text, Font *font, Rect rect, UI::TextAlignment alignment, Color color) {
-    Flush();
-    
+  void UIImmediate::DrawText(Rect rect, const String &text, Font *font, UI::TextAlignment alignment, Color color) {
     TextMeshGenerationSettings generation_settings;
     generation_settings.text = text;
     generation_settings.font = font;
@@ -412,8 +410,6 @@ namespace Hyperion::UI {
 
     TextMeshGenerator::GenerateMesh(generation_settings, s_mesh_builder);
     s_mesh_builder.TransformAndAlignPixels(Matrix4x4::Identity(), Vector2Int(Display::GetWidth(), Display::GetHeight()));
-
-    Flush(AssetManager::GetMaterialPrimitive(MaterialPrimitive::Font), font->GetTexture());
   }
   
   //--------------------------------------------------------------
@@ -441,13 +437,29 @@ namespace Hyperion::UI {
 
   //--------------------------------------------------------------
   void UIImmediate::Render() {
+    // TODO: Color, font and shadow info should be part of a style.
     IterateHierarchy(g_state.root_node, [](UIImmediateNode &node) {
+      if ((node.widget.flags & UIImmediateWidgetFlags::DrawBackgroundShadow) == UIImmediateWidgetFlags::DrawBackgroundShadow) {
+        Rect rect = node.layout.rect;
+        rect.position.x += 1.0f;
+        rect.position.y += 1.0f;
+        DrawRect(rect, Color::Black());
+      }
       if ((node.widget.flags & UIImmediateWidgetFlags::DrawBackground) == UIImmediateWidgetFlags::DrawBackground) {
         DrawRect(node.layout.rect, Color::Blue());
       }
-      if ((node.widget.flags & UIImmediateWidgetFlags::DrawText) == UIImmediateWidgetFlags::DrawText) {
-        DrawText(node.widget.text, g_state.font, node.layout.rect, node.widget.text_alignment, Color::White());
+      Flush();
+
+      if ((node.widget.flags & UIImmediateWidgetFlags::DrawShadow) == UIImmediateWidgetFlags::DrawShadow) {
+        Rect rect = node.layout.rect;
+        rect.position.x += 1.0f;
+        rect.position.y -= 1.0f;
+        DrawText(rect, node.widget.text, g_state.font, node.widget.text_alignment, Color::Black());
       }
+      if ((node.widget.flags & UIImmediateWidgetFlags::DrawText) == UIImmediateWidgetFlags::DrawText) {
+        DrawText(node.layout.rect, node.widget.text, g_state.font, node.widget.text_alignment, Color::White());
+      }
+      Flush(AssetManager::GetMaterialPrimitive(MaterialPrimitive::Font), g_state.font->GetTexture());
     });
     
     Rendering::RenderFrameContext &render_frame_context = Rendering::RenderEngine::GetMainRenderFrame()->GetContext();
