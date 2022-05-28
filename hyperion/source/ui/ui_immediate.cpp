@@ -50,6 +50,7 @@ namespace Hyperion::UI {
 
     struct UIImmediateElementLayout {
       UIImmediateSize semantic_size[2] = { };
+      UIImmediateChildLayout child_layout = UIImmediateChildLayout::Vertical;
 
       float32 computed_size[2] = { };
       float32 computed_relative_position[2] = { };
@@ -150,6 +151,9 @@ namespace Hyperion::UI {
     }
     element->id.last_frame_touched_index = g_state.current_frame_index;
 
+    // We have to remember to reset non persistent state.
+    element->hierarchy = { };
+    
     // Put element into hierarchy by appending it as a child.
     UIImmediateElement &parent = *g_state.element_stack.GetLast();
     element->hierarchy.parent = &parent;
@@ -380,11 +384,12 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
-  void UIImmediate::BeginPanel(const String &text, UIImmediateSize size[2]) {
+  void UIImmediate::BeginPanel(const String &text, UIImmediateSize size[2], UIImmediateChildLayout child_layout) {
     UIImmediateElement &element = GetOrCreateElement(GetId(text), UIImmediateWidgetFlags::DrawBackground);
 
     element.layout.semantic_size[0] = size[0];
     element.layout.semantic_size[1] = size[1];
+    element.layout.child_layout = child_layout;
 
     g_state.element_stack.Add(&element);
   }
@@ -398,17 +403,11 @@ namespace Hyperion::UI {
   void UIImmediate::Text(const String &text) {
     UIImmediateElement &element = GetOrCreateElement(GetId(text), UIImmediateWidgetFlags::DrawText | UIImmediateWidgetFlags::DrawShadow);
     
-    TextSize text_size = g_state.font->GetTextSize(StringUtils::GetCodepointsFromUtf8(text), 0, 1.0f, false);
-    Vector2 size = Vector2(text_size.width, text_size.height + text_size.baseline_offset);
-    Vector2 position = g_state.cursor_position;
-    position.y -= size.y;
-    Rect rect = Rect(position, size);
-
-    element.layout.rect = rect;
+    element.layout.semantic_size[0] = { UIImmediateSizeKind::TextContent, 0.0f };
+    element.layout.semantic_size[1] = { UIImmediateSizeKind::TextContent, 0.0f };
+    
     element.widget.text = text;
     element.widget.text_alignment = TextAlignment::TopLeft;
-
-    AdvanceCursor(size);
   }
 
   //--------------------------------------------------------------
@@ -421,18 +420,12 @@ namespace Hyperion::UI {
     UIImmediateElement &element = GetOrCreateElement(id, flags);
     
     UIImmediateInteraction interaction = InteractWithElement(element);
+
+    element.layout.semantic_size[0] = { UIImmediateSizeKind::TextContent, 10.0f };
+    element.layout.semantic_size[1] = { UIImmediateSizeKind::TextContent, 8.0f };
     
-    TextSize text_size = g_state.font->GetTextSize(StringUtils::GetCodepointsFromUtf8(text), 0, 1.0f, false);
-    Vector2 size = Vector2(text_size.width + 10.0f, text_size.height + 8.0f);
-    Vector2 position = g_state.cursor_position;
-    position.y -= size.y;
-    Rect rect = Rect(position, size);
-    
-    element.layout.rect = rect;
     element.widget.text = text;
     element.widget.text_alignment = TextAlignment::MiddleCenter;
-
-    AdvanceCursor(size);
 
     return interaction;
   }
@@ -471,17 +464,19 @@ namespace Hyperion::UI {
   
   //--------------------------------------------------------------
   void UIImmediate::Layout() {
-    // First calculate all independent size kinds likes pixels and text content.
+    // Step 1: Calculate all independent size kinds likes pixels and text content.
     IterateHierarchy(g_state.root_element, [](UIImmediateElement &element) {
       auto calculate_size = [](UIImmediateElement &element, uint32 axis) {
-        if (element.layout.semantic_size[axis].kind == UIImmediateSizeKind::Pixels) {
-          element.layout.computed_size[axis] = element.layout.semantic_size[axis].value;
+        UIImmediateSize &semantic_size = element.layout.semantic_size[axis];
+        
+        if (semantic_size.kind == UIImmediateSizeKind::Pixels) {
+          element.layout.computed_size[axis] = semantic_size.value;
         }
-        if (element.layout.semantic_size[axis].kind == UIImmediateSizeKind::TextContent) {
+        if (semantic_size.kind == UIImmediateSizeKind::TextContent) {
           if (!element.widget.text.empty()) {
             Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(element.widget.text);
             TextSize text_size = g_state.font->GetTextSize(codepoints, 0, 1.0f, false);
-            element.layout.computed_size[axis] = text_size.size[axis];
+            element.layout.computed_size[axis] = text_size.size[axis] + semantic_size.value;
           }
         }
       };
@@ -490,6 +485,7 @@ namespace Hyperion::UI {
       calculate_size(element, 1);
     });
 
+    // Step 2: Calculate all upwards dependent sizes like percentage of parent.
     IterateHierarchy(g_state.root_element, [](UIImmediateElement &element) {
       auto calculate_size = [](UIImmediateElement &element, uint32 axis) {
         if (element.layout.semantic_size[axis].kind == UIImmediateSizeKind::PercentOfParent) {
@@ -510,30 +506,50 @@ namespace Hyperion::UI {
       calculate_size(element, 1);
     });
 
+    // Last step: Calculate relative position based on parents child layout.
     IterateHierarchy(g_state.root_element, [](UIImmediateElement &element) {
       float32 position[2] = { };
-      
+
       // Take into account the position of our parent.
       // Its position is already fully calculated as we are traversing in pre-order.
       UIImmediateElement *parent = element.hierarchy.parent;
       if (parent == nullptr) {
-        // Position (0, 0) is at the center of the screen.
-        // So the root element gets an offset to position it at the top left corner of the screen.
-        position[0] -= static_cast<float32>(Display::GetWidth()) / 2.0f;
-        position[1] += static_cast<float32>(Display::GetHeight()) / 2.0f;
+        
+      }
+
+      if (parent != nullptr) {
+        UIImmediateElement *previous_sibling = element.hierarchy.previous_sibling;
+        if (previous_sibling != nullptr) {
+          switch (parent->layout.child_layout) {
+            case UIImmediateChildLayout::Horizontal: {
+              position[0] += previous_sibling->layout.computed_relative_position[0] + previous_sibling->layout.computed_size[0]; 
+              break;
+            }
+            case UIImmediateChildLayout::Vertical: {
+              position[1] += previous_sibling->layout.computed_relative_position[1] - previous_sibling->layout.computed_size[1];
+              break;
+            }
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+          }
+        }
       }
       
       element.layout.computed_relative_position[0] = position[0];
       element.layout.computed_relative_position[1] = position[1];
-      
-      if (parent != nullptr) {
-        position[0] += parent->layout.computed_relative_position[0];
-        position[1] += parent->layout.computed_relative_position[1];
-      }
-      
+
       // Move to position us properly based on our size.
       Vector2 rect_size = Vector2(element.layout.computed_size[0], element.layout.computed_size[1]);
       Vector2 rect_position = Vector2(position[0], position[1]);
+
+      // Position (0, 0) is at the center of the screen.
+      // So every element gets an offset to position it at the top left corner of the screen.
+      rect_position.x -= static_cast<float32>(Display::GetWidth()) / 2.0f;
+      rect_position.y += static_cast<float32>(Display::GetHeight()) / 2.0f;
+      
+      if (parent != nullptr) {
+        rect_position.x += parent->layout.computed_relative_position[0];
+        rect_position.y += parent->layout.computed_relative_position[1];
+      }
       rect_position.y -= rect_size.y;
       
       element.layout.rect = Rect(rect_position, rect_size);

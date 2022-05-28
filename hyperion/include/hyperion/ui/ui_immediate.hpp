@@ -68,6 +68,11 @@ namespace Hyperion::UI {
     float32 value;
   };
 
+  enum class UIImmediateChildLayout {
+    Horizontal,
+    Vertical
+  };
+
   class UIImmediate final {
   public:
     static void Begin();
@@ -76,7 +81,7 @@ namespace Hyperion::UI {
     static void BeginWindow(const String &name, DockingPosition docking_position, float32 extent, Color color, bool8 split = false);
     static void EndWindow();
 
-    static void BeginPanel(const String &text, UIImmediateSize size[2]);
+    static void BeginPanel(const String &text, UIImmediateSize size[2], UIImmediateChildLayout child_layout);
     static void EndPanel();
     
     static void Text(const String &text);
