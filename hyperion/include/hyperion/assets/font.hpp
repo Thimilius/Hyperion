@@ -9,8 +9,14 @@
 namespace Hyperion {
 
   struct TextSize {
-    float32 width;
-    float32 height;
+    union {
+      float32 size[2];
+      struct {
+        float32 width;
+        float32 height;    
+      };
+    };
+    
     float32 baseline_offset;
   };
 

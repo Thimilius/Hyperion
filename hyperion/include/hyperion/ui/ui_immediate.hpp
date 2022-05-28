@@ -54,7 +54,20 @@ namespace Hyperion::UI {
     bool8 clicked = false;
     bool8 right_clicked = false;
   };
+
+  enum class UIImmediateSizeKind {
+    None,
+    Pixels,
+    TextContent,
+    PercentOfParent,
+    ChildrenSum
+  };
   
+  struct UIImmediateSize {
+    UIImmediateSizeKind kind;
+    float32 value;
+  };
+
   class UIImmediate final {
   public:
     static void Begin();
@@ -63,6 +76,9 @@ namespace Hyperion::UI {
     static void BeginWindow(const String &name, DockingPosition docking_position, float32 extent, Color color, bool8 split = false);
     static void EndWindow();
 
+    static void BeginPanel(const String &text, UIImmediateSize size[2]);
+    static void EndPanel();
+    
     static void Text(const String &text);
     static UIImmediateInteraction Button(const String &text);
     

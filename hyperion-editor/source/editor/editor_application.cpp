@@ -185,6 +185,13 @@ namespace Hyperion::Editor {
 
     UI::UIImmediate::Begin();
     {
+      UI::UIImmediateSize size[2] = { { UI::UIImmediateSizeKind::Pixels, 50.0f }, { UI::UIImmediateSizeKind::PercentOfParent, 1.0f } };
+      UI::UIImmediate::BeginPanel("Panel", size);
+      {
+        
+      }
+      UI::UIImmediate::EndPanel();
+      
       UI::UIImmediate::Text("Hello there\nThis is text\non a new line");
 
       if (UI::UIImmediate::Button("Button 1").clicked) {
