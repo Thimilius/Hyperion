@@ -54,6 +54,10 @@ namespace Hyperion::UI {
 
       float32 computed_size[2] = { };
       float32 computed_relative_position[2] = { };
+
+      uint32 fill_child_count = { };
+      float32 computed_child_size_sum[2] = { };
+      
       Rect rect = Rect();
     } layout;
 
@@ -83,9 +87,10 @@ namespace Hyperion::UI {
 
     Vector2 cursor_position = Vector2();
 
-    Map<UIImmediateId, UIImmediateElement> elements;
     UIImmediateElement root_element;
     Array<UIImmediateElement *> element_stack;
+    Map<UIImmediateId, UIImmediateElement> persistent_elements;
+    Map<UIImmediateId, UIImmediateElement> temporary_elements;
     
     Font *font;
   };
@@ -137,17 +142,33 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
+  void PlaceElementInHierarchy(UIImmediateElement &element) {
+    // Put element into hierarchy by appending it as a child.
+    UIImmediateElement &parent = *g_state.element_stack.GetLast();
+    element.hierarchy.parent = &parent;
+    parent.hierarchy.child_count++;
+    if (parent.hierarchy.first_child == nullptr) {
+      parent.hierarchy.first_child = &element;
+    }
+    if (parent.hierarchy.last_child != nullptr) {
+      parent.hierarchy.last_child->hierarchy.next_sibling = &element;
+    }
+    element.hierarchy.previous_sibling = parent.hierarchy.last_child; 
+    parent.hierarchy.last_child = &element;
+  }
+  
+  //--------------------------------------------------------------
   UIImmediateElement &GetOrCreateElement(UIImmediateId id, UIImmediateWidgetFlags widget_flags) {
     UIImmediateElement *element = nullptr;
 
     // Try to get cached element.
-    auto it = g_state.elements.Find(id);
-    if (it == g_state.elements.end()) {
+    auto it = g_state.persistent_elements.Find(id);
+    if (it == g_state.persistent_elements.end()) {
       UIImmediateElement new_element = { };
       new_element.id.id = id;
       new_element.widget.flags = widget_flags;
-      g_state.elements.Insert(id, new_element);
-      element = &g_state.elements.Get(id);
+      g_state.persistent_elements.Insert(id, new_element);
+      element = &g_state.persistent_elements.Get(id);
     } else {
       element = &it->second;
     }
@@ -155,23 +176,27 @@ namespace Hyperion::UI {
 
     // We have to remember to reset non persistent state.
     element->hierarchy = { };
+    Rect rect = element->layout.rect;
+    element->layout = { };
+    element->layout.rect = rect;
     
-    // Put element into hierarchy by appending it as a child.
-    UIImmediateElement &parent = *g_state.element_stack.GetLast();
-    element->hierarchy.parent = &parent;
-    parent.hierarchy.child_count++;
-    if (parent.hierarchy.first_child == nullptr) {
-      parent.hierarchy.first_child = element;
-    }
-    if (parent.hierarchy.last_child != nullptr) {
-      parent.hierarchy.last_child->hierarchy.next_sibling = element;
-    }
-    element->hierarchy.previous_sibling = parent.hierarchy.last_child; 
-    parent.hierarchy.last_child = element;
+    PlaceElementInHierarchy(*element);
 
     return *element;
   }
 
+  //--------------------------------------------------------------
+  UIImmediateElement &CreateTemporaryElement() {
+    UIImmediateId temporary_id = g_state.temporary_elements.GetLength();
+    
+    UIImmediateElement new_element = { };
+    g_state.temporary_elements.Insert(temporary_id, new_element);
+    UIImmediateElement &element = g_state.temporary_elements.Get(temporary_id);
+    PlaceElementInHierarchy(element);
+    
+    return element;
+  }
+  
   //--------------------------------------------------------------
   UIImmediateInteraction InteractWithElement(UIImmediateElement &element) {
     if ((element.widget.flags & UIImmediateWidgetFlags::Interactable) == UIImmediateWidgetFlags::Interactable) {
@@ -237,6 +262,8 @@ namespace Hyperion::UI {
     g_state.root_element.layout.semantic_size[0]= { UIImmediateSizeKind::PercentOfParent, 1.0f };
     g_state.root_element.layout.semantic_size[1]= { UIImmediateSizeKind::PercentOfParent, 1.0f };
     g_state.element_stack.Add(&g_state.root_element);
+
+    g_state.temporary_elements.Clear();
   }
 
   //--------------------------------------------------------------
@@ -269,6 +296,35 @@ namespace Hyperion::UI {
   //--------------------------------------------------------------
   void UIImmediate::EndPanel() {
     g_state.element_stack.RemoveLast();    
+  }
+
+  //--------------------------------------------------------------
+  void UIImmediate::FillSpace() {
+    Space(UI::UIImmediateSizeKind::AutoFill, 0.0f);
+  }
+
+  //--------------------------------------------------------------
+  void UIImmediate::Space(UIImmediateSizeKind kind, float32 value) {
+    UIImmediateElement &element = CreateTemporaryElement();
+
+    uint64 space_axis = 0;
+    uint64 fill_axis = 1;
+    switch (element.hierarchy.parent->layout.child_layout) {
+      case UIImmediateChildLayout::Horizontal: {
+        space_axis = 0;
+        fill_axis = 1;
+        break;
+      }
+      case UIImmediateChildLayout::Vertical: {
+        space_axis = 1;
+        fill_axis = 0;
+        break;
+      }
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+    }
+
+    element.layout.semantic_size[space_axis] = { kind, value };
+    element.layout.semantic_size[fill_axis] = { UIImmediateSizeKind::PercentOfParent, 1.0f };
   }
 
   //--------------------------------------------------------------
@@ -342,16 +398,23 @@ namespace Hyperion::UI {
     IterateHierarchy(g_state.root_element, [](UIImmediateElement &element) {
       auto calculate_size = [](UIImmediateElement &element, uint32 axis) {
         UIImmediateSize &semantic_size = element.layout.semantic_size[axis];
-        
+
+        float32 computed_size = 0.0f;
         if (semantic_size.kind == UIImmediateSizeKind::Pixels) {
-          element.layout.computed_size[axis] = semantic_size.value;
+          computed_size = semantic_size.value;
         }
         if (semantic_size.kind == UIImmediateSizeKind::TextContent) {
           if (!element.widget.text.empty()) {
             Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(element.widget.text);
             TextSize text_size = g_state.font->GetTextSize(codepoints, 0, 1.0f, false);
-            element.layout.computed_size[axis] = text_size.size[axis] + semantic_size.value;
+            computed_size = text_size.size[axis] + semantic_size.value;
           }
+        }
+
+        element.layout.computed_size[axis] = computed_size;
+
+        if (element.hierarchy.parent != nullptr) {
+          element.hierarchy.parent->layout.computed_child_size_sum[axis] += computed_size;
         }
       };
 
@@ -371,8 +434,20 @@ namespace Hyperion::UI {
           } else {
             parent_size = parent->layout.computed_size[axis];
           }
+          float32 computed_size = percent * parent_size;
           
-          element.layout.computed_size[axis] = percent * parent_size;
+          element.layout.computed_size[axis] = computed_size;
+
+          if (parent != nullptr) {
+            parent->layout.computed_child_size_sum[axis] += computed_size;
+          }
+        }
+
+        if (element.layout.semantic_size[axis].kind == UIImmediateSizeKind::AutoFill) {
+          UIImmediateElement *parent = element.hierarchy.parent;
+          if (parent != nullptr) {
+            parent->layout.fill_child_count++;
+          }
         }
       };
 
@@ -380,6 +455,24 @@ namespace Hyperion::UI {
       calculate_size(element, 1);
     });
 
+    // Step 3: Calculate fill.
+    IterateHierarchy(g_state.root_element, [](UIImmediateElement &element) {
+      auto calculate_size = [](UIImmediateElement &element, uint32 axis) {
+        if (element.layout.semantic_size[axis].kind == UIImmediateSizeKind::AutoFill) {
+          UIImmediateElement *parent = element.hierarchy.parent;
+          if (parent != nullptr) {
+            float32 parent_size = parent->layout.computed_size[axis];
+            float32 computed_size = parent_size - parent->layout.computed_child_size_sum[axis];  
+
+            element.layout.computed_size[axis] = computed_size / static_cast<float32>(parent->layout.fill_child_count);
+          }
+        }
+      };
+
+      calculate_size(element, 0);
+      calculate_size(element, 1);
+    });
+    
     // Last step: Calculate relative position based on parents child layout.
     IterateHierarchy(g_state.root_element, [](UIImmediateElement &element) {
       float32 position[2] = { };

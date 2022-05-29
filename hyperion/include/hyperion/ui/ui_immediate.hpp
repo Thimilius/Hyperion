@@ -42,7 +42,8 @@ namespace Hyperion::UI {
     Pixels,
     TextContent,
     PercentOfParent,
-    ChildrenSum
+    ChildrenSum,
+    AutoFill
   };
   
   struct UIImmediateSize {
@@ -79,6 +80,9 @@ namespace Hyperion::UI {
     
     static void BeginPanel(const String &text, UIImmediateSize size[2], UIImmediateChildLayout child_layout);
     static void EndPanel();
+
+    static void FillSpace();
+    static void Space(UIImmediateSizeKind kind, float32 value);
 
     static void Text(const String &text);
     static UIImmediateInteraction Button(const String &text);
