@@ -786,10 +786,11 @@ namespace Hyperion {
         break;
       }
 
+      // TODO: Get mouse position outside the window. 
       case WM_MOUSEMOVE: {
         int32 x = GET_X_LPARAM(l_param);
         int32 y = GET_Y_LPARAM(l_param);
-
+        
         int32 height = window->m_height;
 
         MouseMovedAppEvent event(x, height - y);

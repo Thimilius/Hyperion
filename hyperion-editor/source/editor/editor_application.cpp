@@ -138,21 +138,20 @@ namespace Hyperion::Editor {
         if (UI::UIImmediate::Button("Left Aligned Button").clicked) {
           HYP_TRACE("CLICKED BUTTON");
         }
-        UI::UIImmediate::BeginPanel("Header Middle Panel", header_panel_size, UI::UIImmediateChildLayout::Horizontal);
-        {
-          UI::UIImmediate::FillSpace();
-          if (UI::UIImmediate::Button("Center Aligned Button").clicked) {
-            HYP_TRACE("CLICKED BUTTON");
-          }
-          UI::UIImmediate::FillSpace();
-        }
-        UI::UIImmediate::EndPanel();
+
+        UI::UIImmediate::FillSpace();
+        
         if (UI::UIImmediate::Button("Right Aligned Button").clicked) {
           HYP_TRACE("CLICKED BUTTON");
         }
-        if (UI::UIImmediate::Button("Right Aligned Button 2").clicked) {
-          HYP_TRACE("CLICKED BUTTON");
+
+        UI::UIImmediate::BeginCenter();
+        {
+          if (UI::UIImmediate::Button("Center Aligned Button").clicked) {
+            HYP_TRACE("CLICKED BUTTON");
+          }
         }
+        UI::UIImmediate::EndCenter();
       }
       UI::UIImmediate::EndPanel();
 

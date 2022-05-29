@@ -81,8 +81,14 @@ namespace Hyperion::UI {
     static void BeginPanel(const String &text, UIImmediateSize size[2], UIImmediateChildLayout child_layout);
     static void EndPanel();
 
+    static void BeginEmpty();
+    static void EndEmpty();
+    
     static void FillSpace();
     static void Space(UIImmediateSizeKind kind, float32 value);
+
+    static void BeginCenter();
+    static void EndCenter();
 
     static void Text(const String &text);
     static UIImmediateInteraction Button(const String &text);

@@ -22,12 +22,15 @@ namespace Hyperion::UI {
   enum class UIImmediateWidgetFlags {
     None = 0,
 
-    Interactable = BIT(0),
+    Empty = BIT(0),
+    Space = BIT(1),
     
-    DrawText = BIT(1),
-    DrawShadow = BIT(2),
-    DrawBackground = BIT(3),
-    DrawBackgroundShadow = BIT(4)
+    Interactable = BIT(2),
+    
+    DrawText = BIT(3),
+    DrawShadow = BIT(4),
+    DrawBackground = BIT(5),
+    DrawBackgroundShadow = BIT(6)
   };
   HYP_CREATE_ENUM_FLAG_OPERATORS(UIImmediateWidgetFlags)
 
@@ -50,7 +53,9 @@ namespace Hyperion::UI {
 
     struct UIImmediateElementLayout {
       UIImmediateSize semantic_size[2] = { };
+      
       UIImmediateChildLayout child_layout = UIImmediateChildLayout::Vertical;
+      float32 child_layout_offset = 0.0f;
 
       float32 computed_size[2] = { };
       float32 computed_relative_position[2] = { };
@@ -186,10 +191,11 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
-  UIImmediateElement &CreateTemporaryElement() {
+  UIImmediateElement &CreateTemporaryElement(UIImmediateWidgetFlags widget_flags) {
     UIImmediateId temporary_id = g_state.temporary_elements.GetLength();
     
     UIImmediateElement new_element = { };
+    new_element.widget.flags = widget_flags;
     g_state.temporary_elements.Insert(temporary_id, new_element);
     UIImmediateElement &element = g_state.temporary_elements.Get(temporary_id);
     PlaceElementInHierarchy(element);
@@ -295,7 +301,23 @@ namespace Hyperion::UI {
 
   //--------------------------------------------------------------
   void UIImmediate::EndPanel() {
-    g_state.element_stack.RemoveLast();    
+    g_state.element_stack.RemoveLast();
+  }
+
+  //--------------------------------------------------------------
+  void UIImmediate::BeginEmpty() {
+    UIImmediateElement &element = CreateTemporaryElement(UIImmediateWidgetFlags::Empty);
+
+    element.layout.semantic_size[0] = { UIImmediateSizeKind::PercentOfParent, 1.0f };
+    element.layout.semantic_size[1] = { UIImmediateSizeKind::PercentOfParent, 1.0f };
+    element.layout.child_layout = element.hierarchy.parent->layout.child_layout;
+
+    g_state.element_stack.Add(&element);
+  }
+
+  //--------------------------------------------------------------
+  void UIImmediate::EndEmpty() {
+    g_state.element_stack.RemoveLast();
   }
 
   //--------------------------------------------------------------
@@ -305,7 +327,7 @@ namespace Hyperion::UI {
 
   //--------------------------------------------------------------
   void UIImmediate::Space(UIImmediateSizeKind kind, float32 value) {
-    UIImmediateElement &element = CreateTemporaryElement();
+    UIImmediateElement &element = CreateTemporaryElement(UIImmediateWidgetFlags::Space);
 
     uint64 space_axis = 0;
     uint64 fill_axis = 1;
@@ -327,6 +349,18 @@ namespace Hyperion::UI {
     element.layout.semantic_size[fill_axis] = { UIImmediateSizeKind::PercentOfParent, 1.0f };
   }
 
+  //--------------------------------------------------------------
+  void UIImmediate::BeginCenter() {
+    BeginEmpty();
+    FillSpace();
+  }
+
+  //--------------------------------------------------------------
+  void UIImmediate::EndCenter() {
+    FillSpace();
+    EndEmpty();
+  }
+  
   //--------------------------------------------------------------
   void UIImmediate::Text(const String &text) {
     UIImmediateElement &element = GetOrCreateElement(GetId(text), UIImmediateWidgetFlags::DrawText | UIImmediateWidgetFlags::DrawShadow);
@@ -414,7 +448,9 @@ namespace Hyperion::UI {
         element.layout.computed_size[axis] = computed_size;
 
         if (element.hierarchy.parent != nullptr) {
-          element.hierarchy.parent->layout.computed_child_size_sum[axis] += computed_size;
+          if ((element.widget.flags & UIImmediateWidgetFlags::Empty) != UIImmediateWidgetFlags::Empty) {
+            element.hierarchy.parent->layout.computed_child_size_sum[axis] += computed_size;
+          }
         }
       };
 
@@ -451,15 +487,15 @@ namespace Hyperion::UI {
             parent_size = parent->layout.computed_size[axis];
           }
           float32 computed_size = percent * parent_size;
-          
+
           element.layout.computed_size[axis] = computed_size;
-
+          
           if (parent != nullptr) {
-            parent->layout.computed_child_size_sum[axis] += computed_size;
-          }
+            if ((element.widget.flags & UIImmediateWidgetFlags::Empty) != UIImmediateWidgetFlags::Empty) {
+              parent->layout.computed_child_size_sum[axis] += computed_size;
+            }
+          }  
         }
-
-        
       };
 
       calculate_size(element, 0);
@@ -474,7 +510,10 @@ namespace Hyperion::UI {
           if (parent != nullptr) {
             float32 parent_size = parent->layout.computed_size[axis];
             float32 computed_size = parent_size - parent->layout.computed_child_size_sum[axis];  
-            
+
+            if ((element.widget.flags & UIImmediateWidgetFlags::Empty) != UIImmediateWidgetFlags::Empty) {
+              
+            }
             element.layout.computed_size[axis] = computed_size / static_cast<float32>(parent->layout.fill_child_count);
           }
         }
@@ -488,27 +527,22 @@ namespace Hyperion::UI {
     IterateHierarchy(g_state.root_element, [](UIImmediateElement &element) {
       float32 position[2] = { };
 
-      // Take into account the position of our parent.
-      // Its position is already fully calculated as we are traversing in pre-order.
+      // Position ourself next to our previous sibling depending on layout axis.
       UIImmediateElement *parent = element.hierarchy.parent;
-      if (parent == nullptr) {
-        
-      }
-
-      if (parent != nullptr) {
-        UIImmediateElement *previous_sibling = element.hierarchy.previous_sibling;
-        if (previous_sibling != nullptr) {
-          switch (parent->layout.child_layout) {
-            case UIImmediateChildLayout::Horizontal: {
-              position[0] += previous_sibling->layout.computed_relative_position[0] + previous_sibling->layout.computed_size[0]; 
-              break;
-            }
-            case UIImmediateChildLayout::Vertical: {
-              position[1] += previous_sibling->layout.computed_relative_position[1] - previous_sibling->layout.computed_size[1];
-              break;
-            }
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+      bool8 element_is_empty = (element.widget.flags & UIImmediateWidgetFlags::Empty) == UIImmediateWidgetFlags::Empty;
+      if (parent != nullptr && !element_is_empty) {
+        switch (parent->layout.child_layout) {
+          case UIImmediateChildLayout::Horizontal: {
+            position[0] += parent->layout.child_layout_offset;
+            parent->layout.child_layout_offset += element.layout.computed_size[0];
+            break;
           }
+          case UIImmediateChildLayout::Vertical: {
+            position[1] += parent->layout.child_layout_offset;
+            parent->layout.child_layout_offset -= element.layout.computed_size[1];
+            break;
+          }
+          default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
         }
       }
       
@@ -524,6 +558,8 @@ namespace Hyperion::UI {
       rect_position.x -= static_cast<float32>(Display::GetWidth()) / 2.0f;
       rect_position.y += static_cast<float32>(Display::GetHeight()) / 2.0f;
       
+      // Take into account the position of our parent.
+      // Its position is already fully calculated as we are traversing in pre-order.
       if (parent != nullptr) {
         rect_position.x += parent->layout.computed_relative_position[0];
         rect_position.y += parent->layout.computed_relative_position[1];
