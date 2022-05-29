@@ -60,6 +60,8 @@ namespace Hyperion::UI {
     struct UIImmediateElementWidget {
       UIImmediateWidgetFlags flags = UIImmediateWidgetFlags::None;
 
+      UIImmediateTheme theme = UIImmediateTheme();
+      
       String text = String();
       TextAlignment text_alignment = TextAlignment::TopLeft;
     } widget;
@@ -74,8 +76,8 @@ namespace Hyperion::UI {
     bool8 is_right_mouse_hold = false;
     bool8 is_right_mouse_up = false;
     
-    UIImmediateId hot_widget = 0;
-    UIImmediateId active_widget = 0;
+    UIImmediateId hovered_widget = 0;
+    UIImmediateId pressed_widget = 0;
 
     uint64 current_frame_index = 0;
 
@@ -179,18 +181,18 @@ namespace Hyperion::UI {
       
       bool8 is_inside = IsInsideRect(element.layout.rect, g_state.mouse_position);
       if (is_inside) {
-        g_state.hot_widget = id;
-        if (g_state.active_widget == 0 && (g_state.is_left_mouse_down || g_state.is_right_mouse_down)) {
-          g_state.active_widget = id;
+        g_state.hovered_widget = id;
+        if (g_state.pressed_widget == 0 && (g_state.is_left_mouse_down || g_state.is_right_mouse_down)) {
+          g_state.pressed_widget = id;
         }
       }
 
-      bool8 is_hot_widget = g_state.hot_widget == id;
-      bool8 is_active_widget = g_state.active_widget == id;
+      bool8 is_hovered_widget = g_state.hovered_widget == id;
+      bool8 is_pressed_widget = g_state.pressed_widget == id;
 
-      interaction.hovered = is_hot_widget;
-      interaction.clicked = g_state.is_left_mouse_up && is_hot_widget && is_active_widget;
-      interaction.right_clicked = g_state.is_right_mouse_up && is_hot_widget && is_active_widget;
+      interaction.hovered = is_hovered_widget;
+      interaction.clicked = g_state.is_left_mouse_up && is_hovered_widget && is_pressed_widget;
+      interaction.right_clicked = g_state.is_right_mouse_up && is_hovered_widget && is_pressed_widget;
       
       return interaction;
     }
@@ -227,7 +229,7 @@ namespace Hyperion::UI {
     g_state.is_right_mouse_down = Input::IsMouseButtonDown(MouseButtonCode::Right);
     g_state.is_right_mouse_hold = Input::IsMouseButtonHold(MouseButtonCode::Right);
     g_state.is_right_mouse_up = Input::IsMouseButtonUp(MouseButtonCode::Right);
-    g_state.hot_widget = 0;
+    g_state.hovered_widget = 0;
     g_state.current_frame_index++;
     g_state.cursor_position = Vector2(-static_cast<float32>(Display::GetWidth()) / 2.0f, static_cast<float32>(Display::GetHeight()) / 2.0f);
 
@@ -246,8 +248,8 @@ namespace Hyperion::UI {
     Layout();
     Render();
     
-    if (g_state.is_left_mouse_up) {
-      g_state.active_widget = 0;
+    if (g_state.is_left_mouse_up || g_state.is_right_mouse_up) {
+      g_state.pressed_widget = 0;
     }
   }
 
@@ -259,6 +261,8 @@ namespace Hyperion::UI {
     element.layout.semantic_size[1] = size[1];
     element.layout.child_layout = child_layout;
 
+    element.widget.theme = s_panel_theme;
+    
     g_state.element_stack.Add(&element);
   }
 
@@ -274,6 +278,7 @@ namespace Hyperion::UI {
     element.layout.semantic_size[0] = { UIImmediateSizeKind::TextContent, 0.0f };
     element.layout.semantic_size[1] = { UIImmediateSizeKind::TextContent, 0.0f };
     
+    element.widget.theme = s_text_theme;
     element.widget.text = text;
     element.widget.text_alignment = TextAlignment::TopLeft;
   }
@@ -292,6 +297,7 @@ namespace Hyperion::UI {
     element.layout.semantic_size[0] = { UIImmediateSizeKind::TextContent, 10.0f };
     element.layout.semantic_size[1] = { UIImmediateSizeKind::TextContent, 8.0f };
     
+    element.widget.theme = s_button_theme;
     element.widget.text = text;
     element.widget.text_alignment = TextAlignment::MiddleCenter;
 
@@ -428,29 +434,51 @@ namespace Hyperion::UI {
   void UIImmediate::Render() {
     // TODO: Color, font and shadow info should be part of a style.
     IterateHierarchy(g_state.root_element, [](UIImmediateElement &element) {
+      const UIImmediateTheme &theme = element.widget.theme;
+      
       bool8 draw_background_shadow = (element.widget.flags & UIImmediateWidgetFlags::DrawBackgroundShadow) == UIImmediateWidgetFlags::DrawBackgroundShadow;
       if (draw_background_shadow) {
         Rect rect = element.layout.rect;
-        rect.position.x += 1.0f;
-        rect.position.y += 1.0f;
-        DrawRect(rect, Color::Black());
+        rect.position += theme.shadow_offset;
+        DrawRect(rect, theme.shadow_color);
       }
       bool8 draw_background = (element.widget.flags & UIImmediateWidgetFlags::DrawBackground) == UIImmediateWidgetFlags::DrawBackground;
       if (draw_background) {
-        DrawRect(element.layout.rect, Color::Blue());
+        bool8 is_hovered = g_state.hovered_widget == element.id.id;
+        bool8 is_pressed = g_state.pressed_widget == element.id.id;
+
+        Color color = theme.background_color;
+        if (is_hovered) {
+          color = theme.background_color_hover;
+        }
+        if (is_pressed) {
+          color = theme.background_color_pressed;
+        }
+        
+        DrawRect(element.layout.rect, color);
       }
       Flush();
 
       bool8 draw_shadow = (element.widget.flags & UIImmediateWidgetFlags::DrawShadow) == UIImmediateWidgetFlags::DrawShadow;
       if (draw_shadow) {
         Rect rect = element.layout.rect;
-        rect.position.x += 1.0f;
-        rect.position.y -= 1.0f;
-        DrawText(rect, element.widget.text, g_state.font, element.widget.text_alignment, Color::Black());
+        rect.position += theme.shadow_offset;
+        DrawText(rect, element.widget.text, g_state.font, element.widget.text_alignment, theme.shadow_color);
       }
       bool8 draw_text = (element.widget.flags & UIImmediateWidgetFlags::DrawText) == UIImmediateWidgetFlags::DrawText;
       if (draw_text) {
-        DrawText(element.layout.rect, element.widget.text, g_state.font, element.widget.text_alignment, Color::White());
+        bool8 is_hovered = g_state.hovered_widget == element.id.id;
+        bool8 is_pressed = g_state.pressed_widget == element.id.id;
+
+        Color color = theme.text_color;
+        if (is_hovered) {
+          color = theme.text_color_hover;
+        }
+        if (is_pressed) {
+          color = theme.text_color_pressed;
+        }
+        
+        DrawText(element.layout.rect, element.widget.text, g_state.font, element.widget.text_alignment, color);
       }
       Flush(AssetManager::GetMaterialPrimitive(MaterialPrimitive::Font), g_state.font->GetTexture());
     });

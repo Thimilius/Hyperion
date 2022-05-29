@@ -100,68 +100,6 @@ namespace Hyperion::Editor {
     EditorCamera::Initialize();
   }
 
-  void TestImmediateUI() {
-    UI::UIImmediate::Begin();
-    {
-      UI::UIImmediate::BeginWindow("Editor", UI::DockingPosition::Full, 0.0f, EditorStyle::COLOR_NORMAL);
-      {
-        UI::UIImmediate::BeginWindow("Header", UI::DockingPosition::Top, EditorStyle::HEADER_WIDTH, EditorStyle::COLOR_NORMAL_DARK);
-        {
-          UI::UIImmediate::BeginWindow("Highlight", UI::DockingPosition::Bottom, 1.0f, EditorStyle::COLOR_HIGHLIGHT);
-          UI::UIImmediate::EndWindow();
-        }
-        UI::UIImmediate::EndWindow();
-        
-        UI::UIImmediate::BeginWindow("Footer", UI::DockingPosition::Bottom, EditorStyle::FOOTER_WIDTH, EditorStyle::COLOR_NORMAL_DARK);
-        {
-          UI::UIImmediate::BeginWindow("Highlight", UI::DockingPosition::Top, 1.0f, EditorStyle::COLOR_HIGHLIGHT);
-          UI::UIImmediate::EndWindow();
-        }
-        UI::UIImmediate::EndWindow();
-        
-        UI::UIImmediate::BeginWindow("Side Panel", UI::DockingPosition::Left, EditorStyle::LEFT_BAR_WIDTH, EditorStyle::COLOR_HIGHLIGHT);
-        {
-          UI::UIImmediate::BeginWindow("Hierarchy", UI::DockingPosition::Top, 0.0f, EditorStyle::COLOR_NORMAL, true);
-          {
-          
-          }
-          UI::UIImmediate::EndWindow();
-
-          UI::UIImmediate::BeginWindow("Properties", UI::DockingPosition::Full, 0.0f, EditorStyle::COLOR_NORMAL);
-          {
-          
-          }
-          UI::UIImmediate::EndWindow();
-        }
-        UI::UIImmediate::EndWindow();
-
-        UI::UIImmediate::BeginWindow("Bottom Panel", UI::DockingPosition::Bottom, EditorStyle::BOTTOM_BAR_WIDTH, EditorStyle::COLOR_HIGHLIGHT);
-        {
-          
-        }
-        UI::UIImmediate::EndWindow();
-
-        UI::UIImmediate::BeginWindow("Preview Panel", UI::DockingPosition::Full, 0.0f, EditorStyle::COLOR_NORMAL);
-        {
-          UI::UIImmediate::BeginWindow("Preview Header", UI::DockingPosition::Top, EditorStyle::HEADER_WIDTH, EditorStyle::COLOR_NORMAL);
-          {
-          
-          }
-          UI::UIImmediate::EndWindow();
-
-          UI::UIImmediate::BeginWindow("Preview", UI::DockingPosition::Full, 0, EditorStyle::COLOR_NORMAL_DARK);
-          {
-          
-          }
-          UI::UIImmediate::EndWindow();
-        }
-        UI::UIImmediate::EndWindow();
-      }
-      UI::UIImmediate::EndWindow();
-    }
-    UI::UIImmediate::End();
-  }
-  
   //--------------------------------------------------------------
   void EditorApplication::OnUpdate(float32 delta_time) {
     //EditorUI::Update();
@@ -181,10 +119,19 @@ namespace Hyperion::Editor {
       }
     }
 
-    //TestImmediateUI();
-
     UI::UIImmediate::Begin();
     {
+      UI::UIImmediateTheme theme = UI::UIImmediateTheme();
+      theme.background_color = EditorStyle::COLOR_NORMAL;
+      theme.background_color_hover = EditorStyle::COLOR_NORMAL;
+      theme.background_color_pressed = EditorStyle::COLOR_NORMAL;
+      UI::UIImmediate::SetPanelTheme(theme);
+      UI::UIImmediate::SetTextTheme(theme);
+      theme.background_color = EditorStyle::COLOR_NORMAL_DARK;
+      theme.background_color_hover = EditorStyle::COLOR_HIGHLIGHT;
+      theme.background_color_pressed = EditorStyle::COLOR_HIGHLIGHT;
+      UI::UIImmediate::SetButtonTheme(theme);
+      
       UI::UIImmediateSize size[2] = { { UI::UIImmediateSizeKind::Pixels, 250.0f }, { UI::UIImmediateSizeKind::PercentOfParent, 1.0f } };
       UI::UIImmediate::BeginPanel("Panel", size, UI::UIImmediateChildLayout::Vertical);
       {
