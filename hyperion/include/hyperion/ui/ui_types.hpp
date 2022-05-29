@@ -107,4 +107,23 @@ namespace Hyperion::UI {
     MultiLine
   };
 
+  enum class SizeKind {
+    None,
+    Pixels,
+    TextContent,
+    PercentOfParent,
+    ChildrenSum,
+    AutoFill
+  };
+  
+  struct Size {
+    SizeKind kind;
+    float32 value;
+  };
+
+  enum class ChildLayout {
+    Horizontal,
+    Vertical
+  };
+
 }

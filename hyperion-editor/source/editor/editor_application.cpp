@@ -14,7 +14,7 @@
 #include <hyperion/ecs/world/world_manager.hpp>
 #include <hyperion/ecs/world/world_serializer.hpp>
 #include <hyperion/render/render_engine.hpp>
-#include <hyperion/ui/ui_immediate.hpp>
+#include <hyperion/ui/immediate/ui_immediate.hpp>
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/editor/editor_camera.hpp"
@@ -132,8 +132,8 @@ namespace Hyperion::Editor {
       theme.background_color_pressed = EditorStyle::COLOR_HIGHLIGHT;
       UI::UIImmediate::SetButtonTheme(theme);
       
-      UI::UIImmediateSize header_panel_size[2] = { { UI::UIImmediateSizeKind::AutoFill, 0.0f }, { UI::UIImmediateSizeKind::Pixels, 25.0f } };
-      UI::UIImmediate::BeginPanel("Header Panel", header_panel_size, UI::UIImmediateChildLayout::Horizontal);
+      UI::Size header_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::Pixels, 25.0f } };
+      UI::UIImmediate::BeginPanel("Header Panel", header_panel_size, UI::ChildLayout::Horizontal);
       {
         if (UI::UIImmediate::Button("Left Aligned Button").clicked) {
           HYP_TRACE("CLICKED BUTTON");
@@ -155,15 +155,15 @@ namespace Hyperion::Editor {
       }
       UI::UIImmediate::EndPanel();
 
-      UI::UIImmediateSize center_panel_size[2] = { { UI::UIImmediateSizeKind::AutoFill, 0.0f }, { UI::UIImmediateSizeKind::AutoFill, 0.0f } };
-      UI::UIImmediate::BeginPanel("Center Panel", center_panel_size, UI::UIImmediateChildLayout::Horizontal);
+      UI::Size center_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::AutoFill, 0.0f } };
+      UI::UIImmediate::BeginPanel("Center Panel", center_panel_size, UI::ChildLayout::Horizontal);
       {
         
       }
       UI::UIImmediate::EndPanel();
       
-      UI::UIImmediateSize footer_panel_size[2] = { { UI::UIImmediateSizeKind::AutoFill, 0.0f }, { UI::UIImmediateSizeKind::Pixels, 25.0f } };
-      UI::UIImmediate::BeginPanel("Footer Panel", footer_panel_size, UI::UIImmediateChildLayout::Horizontal);
+      UI::Size footer_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::Pixels, 25.0f } };
+      UI::UIImmediate::BeginPanel("Footer Panel", footer_panel_size, UI::ChildLayout::Horizontal);
       {
         
       }
