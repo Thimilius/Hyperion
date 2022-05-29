@@ -45,13 +45,28 @@ namespace Hyperion::UI {
 
   //--------------------------------------------------------------
   void UIImmediate::End() {
-    s_state.element_stack.RemoveLast();
+    if (s_state.element_stack.GetLength() == 1) {
+      s_state.element_stack.RemoveLast();
+    } else {
+      HYP_LOG_ERROR("UI", s_state.element_stack.GetLength() > 1 ? "Forgot a call to UIImmediate::*End!" : "Too many calls to UIImmediate::*End!");
+    }
     
     Flush();
 
     Layout();
     Render();
-    
+
+    for (auto it = s_state.persistent_elements.begin(); it != s_state.persistent_elements.end();) {
+      UIImmediateElement &element = it->second; 
+      element.id.looked_up_this_frame = false;
+      
+      if (element.id.last_frame_touched_index != s_state.current_frame_index) {
+        s_state.persistent_elements.Erase(it++);
+      } else {
+        ++it;  
+      }
+    }
+
     if (s_state.is_left_mouse_up || s_state.is_right_mouse_up) {
       s_state.pressed_widget = 0;
     }
@@ -485,6 +500,13 @@ namespace Hyperion::UI {
     } else {
       element = &it->second;
     }
+
+    // This is just a validation helper to notify when an element gets called twice.
+    // That will happen when the same id is used for supposedly different elements.
+    if (element->id.looked_up_this_frame) {
+      HYP_LOG_ERROR("UI", "Elements share an id - This leads to undefined behaviour!");
+    }
+    element->id.looked_up_this_frame = true;
     element->id.last_frame_touched_index = s_state.current_frame_index;
 
     // We have to remember to reset non persistent state.

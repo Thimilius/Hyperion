@@ -138,7 +138,7 @@ namespace Hyperion::Editor {
         if (UI::UIImmediate::Button("Left Aligned Button").clicked) {
           HYP_TRACE("CLICKED BUTTON");
         }
-
+        
         UI::UIImmediate::FillSpace();
         
         if (UI::UIImmediate::Button("Right Aligned Button").clicked) {

@@ -32,6 +32,7 @@ namespace Hyperion {
 
     inline auto Insert(const K &key, const V &value) { return m_map.insert(std::make_pair(key, value)); }
 
+    inline Iterator Erase(Iterator it) { return m_map.erase(it); }
     inline void Remove(const K &key) { m_map.erase(key); }
 
     inline void Clear() { m_map.clear(); }

@@ -64,6 +64,7 @@ namespace Hyperion::UI {
     struct UIImmediateElementId {
       UIImmediateId id = 0;
       uint64 last_frame_touched_index = 0;
+      bool8 looked_up_this_frame = false;
     } id;
     
     struct UIImmediateElementHierarchy {
