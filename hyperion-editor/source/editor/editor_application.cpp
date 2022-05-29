@@ -132,21 +132,41 @@ namespace Hyperion::Editor {
       theme.background_color_pressed = EditorStyle::COLOR_HIGHLIGHT;
       UI::UIImmediate::SetButtonTheme(theme);
       
-      UI::UIImmediateSize size[2] = { { UI::UIImmediateSizeKind::Pixels, 250.0f }, { UI::UIImmediateSizeKind::PercentOfParent, 1.0f } };
-      UI::UIImmediate::BeginPanel("Panel", size, UI::UIImmediateChildLayout::Vertical);
+      UI::UIImmediateSize header_panel_size[2] = { { UI::UIImmediateSizeKind::AutoFill, 0.0f }, { UI::UIImmediateSizeKind::Pixels, 25.0f } };
+      UI::UIImmediate::BeginPanel("Header Panel", header_panel_size, UI::UIImmediateChildLayout::Horizontal);
       {
-        UI::UIImmediate::Text("Hello there\nThis is text\non a new line");
-        UI::UIImmediate::Text("Hello there\nThis is text\non a new line1");
-        UI::UIImmediate::Text("Hello there\nThis is text\non a new line2");
+        if (UI::UIImmediate::Button("Left Aligned Button").clicked) {
+          HYP_TRACE("CLICKED BUTTON");
+        }
+        UI::UIImmediate::BeginPanel("Header Middle Panel", header_panel_size, UI::UIImmediateChildLayout::Horizontal);
+        {
+          UI::UIImmediate::FillSpace();
+          if (UI::UIImmediate::Button("Center Aligned Button").clicked) {
+            HYP_TRACE("CLICKED BUTTON");
+          }
+          UI::UIImmediate::FillSpace();
+        }
+        UI::UIImmediate::EndPanel();
+        if (UI::UIImmediate::Button("Right Aligned Button").clicked) {
+          HYP_TRACE("CLICKED BUTTON");
+        }
+        if (UI::UIImmediate::Button("Right Aligned Button 2").clicked) {
+          HYP_TRACE("CLICKED BUTTON");
+        }
+      }
+      UI::UIImmediate::EndPanel();
 
-        UI::UIImmediate::FillSpace();
+      UI::UIImmediateSize center_panel_size[2] = { { UI::UIImmediateSizeKind::AutoFill, 0.0f }, { UI::UIImmediateSizeKind::AutoFill, 0.0f } };
+      UI::UIImmediate::BeginPanel("Center Panel", center_panel_size, UI::UIImmediateChildLayout::Horizontal);
+      {
         
-        if (UI::UIImmediate::Button("Button 1").clicked) {
-          HYP_TRACE("CLICKED BUTTON 1");
-        }
-        if (UI::UIImmediate::Button("Button 2").right_clicked) {
-          HYP_TRACE("RIGHT CLICKED BUTTON 2");
-        }
+      }
+      UI::UIImmediate::EndPanel();
+      
+      UI::UIImmediateSize footer_panel_size[2] = { { UI::UIImmediateSizeKind::AutoFill, 0.0f }, { UI::UIImmediateSizeKind::Pixels, 25.0f } };
+      UI::UIImmediate::BeginPanel("Footer Panel", footer_panel_size, UI::UIImmediateChildLayout::Horizontal);
+      {
+        
       }
       UI::UIImmediate::EndPanel();
     }

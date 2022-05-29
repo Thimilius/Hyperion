@@ -425,9 +425,25 @@ namespace Hyperion::UI {
     // Step 2: Calculate all upwards dependent sizes like percentage of parent.
     IterateHierarchy(g_state.root_element, [](UIImmediateElement &element) {
       auto calculate_size = [](UIImmediateElement &element, uint32 axis) {
+        UIImmediateElement *parent = element.hierarchy.parent;
+        
+        // The auto fill should only be applied to the axis which is being used for child layout.
+        if (element.layout.semantic_size[axis].kind == UIImmediateSizeKind::AutoFill) {
+          if (parent != nullptr) {
+            if ((axis == 0 && parent->layout.child_layout == UIImmediateChildLayout::Horizontal) ||
+              (axis == 1 && parent->layout.child_layout == UIImmediateChildLayout::Vertical)) {
+              parent->layout.fill_child_count++;  
+            } else {
+              // Otherwise it should act as a full percentage of parent. 
+              element.layout.semantic_size[axis].kind = UIImmediateSizeKind::PercentOfParent;
+              element.layout.semantic_size[axis].value = 1.0f;
+            }
+          }
+        }
+        
         if (element.layout.semantic_size[axis].kind == UIImmediateSizeKind::PercentOfParent) {
           float32 percent = Math::Clamp01(element.layout.semantic_size[axis].value);
-          UIImmediateElement *parent = element.hierarchy.parent;
+          
           float32 parent_size = 0.0f;
           if (parent == nullptr) {
             parent_size = axis == 0 ? static_cast<float32>(Display::GetWidth()) : static_cast<float32>(Display::GetHeight());
@@ -443,12 +459,7 @@ namespace Hyperion::UI {
           }
         }
 
-        if (element.layout.semantic_size[axis].kind == UIImmediateSizeKind::AutoFill) {
-          UIImmediateElement *parent = element.hierarchy.parent;
-          if (parent != nullptr) {
-            parent->layout.fill_child_count++;
-          }
-        }
+        
       };
 
       calculate_size(element, 0);
@@ -463,7 +474,7 @@ namespace Hyperion::UI {
           if (parent != nullptr) {
             float32 parent_size = parent->layout.computed_size[axis];
             float32 computed_size = parent_size - parent->layout.computed_child_size_sum[axis];  
-
+            
             element.layout.computed_size[axis] = computed_size / static_cast<float32>(parent->layout.fill_child_count);
           }
         }
