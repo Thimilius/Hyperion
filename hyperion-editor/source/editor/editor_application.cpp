@@ -133,19 +133,19 @@ namespace Hyperion::Editor {
       UI::Size header_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::Pixels, 25.0f } };
       UI::UIImmediate::BeginPanel("Header Panel", header_panel_size);
       {
-        if (UI::UIImmediate::Button("Left Aligned Button").clicked) {
+        if (UI::UIImmediate::Button("Left Aligned Button", true).clicked) {
           HYP_TRACE("CLICKED BUTTON");
         }
 
         UI::UIImmediate::FillSpace();
         
-        if (UI::UIImmediate::Button("Right Aligned Button").clicked) {
+        if (UI::UIImmediate::Button("Right Aligned Button", true).clicked) {
           HYP_TRACE("CLICKED BUTTON");
         }
 
         UI::UIImmediate::BeginCenter();
         {
-          if (UI::UIImmediate::Button("Center Aligned Button").clicked) {
+          if (UI::UIImmediate::Button("Center Aligned Button", true).clicked) {
             HYP_TRACE("CLICKED BUTTON");
           }
         }
@@ -194,7 +194,9 @@ namespace Hyperion::Editor {
 
               String stats_format = "FPS: {} ({:.2f}ms)";
               String stats_text = StringUtils::Format(stats_format, Time::GetFPS(), Time::GetFrameTime());
-              UI::UIImmediate::Text(stats_text);
+              UI::UIImmediate::Text(stats_text, UI::TextAlignment::MiddleCenter, true);
+
+              UI::UIImmediate::Space(UI::SizeKind::Pixels, 5.0f);
             }
             UI::UIImmediate::EndPanel();
 

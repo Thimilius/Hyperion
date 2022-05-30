@@ -43,8 +43,13 @@ namespace Hyperion::UI {
 
     static void Separator(UIImmediateTheme *theme = GetDefaultTheme());
 
-    static void Text(const String &text, UIImmediateTheme *theme = GetDefaultTheme());
-    static UIImmediateInteraction Button(const String &text, UIImmediateTheme *theme = GetDefaultTheme());
+    static void Text(
+      const String &text,
+      TextAlignment text_alignment = TextAlignment::TopLeft,
+      bool8 fit_to_parent = false,
+      UIImmediateTheme *theme = GetDefaultTheme()
+    );
+    static UIImmediateInteraction Button(const String &text, bool8 fit_to_parent = false, UIImmediateTheme *theme = GetDefaultTheme());
   private:
     UIImmediate() = delete;
     ~UIImmediate() = delete;
@@ -55,6 +60,8 @@ namespace Hyperion::UI {
     static void DrawRect(Rect rect, Color color);
     static void DrawText(Rect rect, const String &text, Font *font, UI::TextAlignment alignment, Color color);
     static void Flush(Material *material = nullptr, Texture *texture = nullptr);
+
+    static LayoutAxes GetAxesForParentLayout(UIImmediateElement &element);
     
     static UIImmediateId GetId(const String &text);
     

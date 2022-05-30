@@ -169,24 +169,9 @@ namespace Hyperion::UI {
   void UIImmediate::Space(SizeKind kind, float32 value) {
     UIImmediateElement &element = CreateTemporaryElement(UIImmediateWidgetFlags::Space);
 
-    uint64 space_axis = 0;
-    uint64 fill_axis = 1;
-    switch (element.hierarchy.parent->layout.child_layout) {
-      case ChildLayout::Horizontal: {
-        space_axis = 0;
-        fill_axis = 1;
-        break;
-      }
-      case ChildLayout::Vertical: {
-        space_axis = 1;
-        fill_axis = 0;
-        break;
-      }
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
-    }
-
-    element.layout.semantic_size[space_axis] = { kind, value };
-    element.layout.semantic_size[fill_axis] = { SizeKind::PercentOfParent, 1.0f };
+    LayoutAxes layout_axes = GetAxesForParentLayout(element);
+    element.layout.semantic_size[layout_axes.fill_axis] = { SizeKind::PercentOfParent, 1.0f };
+    element.layout.semantic_size[layout_axes.leftover_axis] = { kind, value };
   }
 
   //--------------------------------------------------------------
@@ -205,42 +190,31 @@ namespace Hyperion::UI {
   void UIImmediate::Separator(UIImmediateTheme *theme) {
     UIImmediateElement &element = CreateTemporaryElement(UIImmediateWidgetFlags::Separator);
 
-    uint64 space_axis = 0;
-    uint64 fill_axis = 1;
-    switch (element.hierarchy.parent->layout.child_layout) {
-      case ChildLayout::Horizontal: {
-        space_axis = 0;
-        fill_axis = 1;
-        break;
-      }
-      case ChildLayout::Vertical: {
-        space_axis = 1;
-        fill_axis = 0;
-        break;
-      }
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
-    }
-
-    element.layout.semantic_size[space_axis] = { SizeKind::Pixels, 1.0f };
-    element.layout.semantic_size[fill_axis] = { SizeKind::PercentOfParent, 1.0f };
+    LayoutAxes layout_axes = GetAxesForParentLayout(element);
+    element.layout.semantic_size[layout_axes.fill_axis] = { SizeKind::PercentOfParent, 1.0f };
+    element.layout.semantic_size[layout_axes.leftover_axis] = { SizeKind::Pixels, 1.0f };
     
     element.widget.theme = theme;
   }
 
   //--------------------------------------------------------------
-  void UIImmediate::Text(const String &text, UIImmediateTheme *theme) {
+  void UIImmediate::Text(const String &text, TextAlignment text_alignment, bool8 fit_to_parent, UIImmediateTheme *theme) {
     UIImmediateElement &element = GetOrCreateElement(GetId(text), UIImmediateWidgetFlags::Text);
     
     element.layout.semantic_size[0] = { SizeKind::TextContent, 0.0f };
     element.layout.semantic_size[1] = { SizeKind::TextContent, 0.0f };
+    if (fit_to_parent) {
+      LayoutAxes layout_axes = GetAxesForParentLayout(element);
+      element.layout.semantic_size[layout_axes.fill_axis] = { SizeKind::PercentOfParent, 1.0f };
+    }
     
     element.widget.theme = theme;
     element.widget.text = text;
-    element.widget.text_alignment = TextAlignment::TopLeft;
+    element.widget.text_alignment = text_alignment;
   }
 
   //--------------------------------------------------------------
-  UIImmediateInteraction UIImmediate::Button(const String &text, UIImmediateTheme *theme) {
+  UIImmediateInteraction UIImmediate::Button(const String &text, bool8 fit_to_parent, UIImmediateTheme *theme) {
     UIImmediateId id = GetId(text);
     UIImmediateWidgetFlags flags = UIImmediateWidgetFlags::Button | UIImmediateWidgetFlags::Interactable;
     UIImmediateElement &element = GetOrCreateElement(id, flags);
@@ -249,6 +223,10 @@ namespace Hyperion::UI {
 
     element.layout.semantic_size[0] = { SizeKind::TextContent, 10.0f };
     element.layout.semantic_size[1] = { SizeKind::TextContent, 8.0f };
+    if (fit_to_parent) {
+      LayoutAxes layout_axes = GetAxesForParentLayout(element);
+      element.layout.semantic_size[layout_axes.fill_axis] = { SizeKind::PercentOfParent, 1.0f };
+    }
     
     element.widget.theme = theme;
     element.widget.text = text;
@@ -528,6 +506,25 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
+  LayoutAxes UIImmediate::GetAxesForParentLayout(UIImmediateElement &element) {
+    LayoutAxes axes = { };
+    switch (element.hierarchy.parent->layout.child_layout) {
+      case ChildLayout::Horizontal: {
+        axes.fill_axis = 1;
+        axes.leftover_axis = 0;
+        break;
+      }
+      case ChildLayout::Vertical: {
+        axes.fill_axis = 0;
+        axes.leftover_axis = 1;
+        break;
+      }
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+    }
+    return axes;
+  }
+  
+  //--------------------------------------------------------------
   UIImmediateId UIImmediate::GetId(const String &text) {
     // This is not really performant but works for now.
     String final_text;
@@ -556,7 +553,10 @@ namespace Hyperion::UI {
     };
 
     Vector2 min = rect.GetMin();
+    min.x -= 1.0f;
+    min.y += 1.0f;
     Vector2 max = rect.GetMax();
+    max.x -= 1.0f;
 
     Vector2 p1 = Vector3(max.x, max.y, 0.0f);
     Vector2 p2 = Vector3(max.x, min.y, 0.0f);
