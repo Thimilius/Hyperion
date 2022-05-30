@@ -46,15 +46,24 @@ namespace Hyperion::UI {
 
     static void Separator(UIImmediateTheme *theme = GetDefaultTheme());
 
-    static void Text(
+    static UIImmediateInteraction Text(
       const String &text,
       TextAlignment text_alignment = TextAlignment::TopLeft,
-      bool8 fit_to_parent = false,
+      FitLayout fit_layout = FitLayout::None,
+      bool8 interactable = false,
       UIImmediateTheme *theme = GetDefaultTheme()
     );
-    static UIImmediateInteraction Button(const String &text, bool8 fit_to_parent = false, UIImmediateTheme *theme = GetDefaultTheme());
-    static UIImmediateInteraction TextToggle(bool8 &value, const String &text, bool8 fit_to_parent = false, UIImmediateTheme *theme = GetDefaultTheme());
+    static UIImmediateInteraction Button(const String &text, FitLayout fit_layout = FitLayout::None, UIImmediateTheme *theme = GetDefaultTheme());
+    static UIImmediateInteraction TextToggle(
+      bool8 &value,
+      const String &text,
+      FitLayout fit_layout = FitLayout::None,
+      UIImmediateTheme *theme = GetDefaultTheme()
+    );
     static void Image(const String &id, Texture *texture, Size size[2], bool8 enable_blending = true);
+
+    static Vector2 ScreenPointToUISpacePoint(Vector2 screen_point);
+    static bool8 IsInsideRect(Rect rect, Vector2 screen_point);
   private:
     UIImmediate() = delete;
     ~UIImmediate() = delete;
@@ -69,11 +78,9 @@ namespace Hyperion::UI {
     static void DrawText(Rect rect, const String &text, Font *font, UI::TextAlignment alignment, Color color);
     static void Flush(Material *material = nullptr, Texture *texture = nullptr);
 
+    static void FitToLayout(UIImmediateElement &element, FitLayout fit_layout);
     static LayoutAxes GetAxesForParentLayout(const UIImmediateElement &element);
     
-    static Vector2 ScreenPointToUISpacePoint(Vector2 screen_point);
-    static bool8 IsInsideRect(Rect rect, Vector2 screen_point);
-
     static UIImmediateElement &GetOrCreateElement(UIImmediateId id, UIImmediateWidgetFlags widget_flags);
     static UIImmediateElement &CreateTemporaryElement(UIImmediateWidgetFlags widget_flags);
     static void PlaceElementInHierarchy(UIImmediateElement &element);

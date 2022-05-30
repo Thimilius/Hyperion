@@ -223,33 +223,30 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
-  void UIImmediate::Text(const String &text, TextAlignment text_alignment, bool8 fit_to_parent, UIImmediateTheme *theme) {
-    UIImmediateElement &element = GetOrCreateElement(GetId(text), UIImmediateWidgetFlags::Text);
-    
+  UIImmediateInteraction UIImmediate::Text(const String &text, TextAlignment text_alignment, FitLayout fit_layout, bool8 interactable, UIImmediateTheme *theme) {
+    UIImmediateWidgetFlags widget_flags = interactable ? UIImmediateWidgetFlags::Text | UIImmediateWidgetFlags::Interactable : UIImmediateWidgetFlags::Text; 
+    UIImmediateElement &element = GetOrCreateElement(GetId(text), widget_flags);
+
     element.layout.semantic_size[0] = { SizeKind::TextContent, 0.0f };
     element.layout.semantic_size[1] = { SizeKind::TextContent, 0.0f };
-    if (fit_to_parent) {
-      LayoutAxes layout_axes = GetAxesForParentLayout(element);
-      element.layout.semantic_size[layout_axes.fill_axis] = { SizeKind::PercentOfParent, 1.0f };
-    }
+    FitToLayout(element, fit_layout);
     
     element.widget.theme = theme;
     element.widget.text = text;
     element.widget.text_alignment = text_alignment;
+
+    return InteractWithElement(element);
   }
 
   //--------------------------------------------------------------
-  UIImmediateInteraction UIImmediate::Button(const String &text, bool8 fit_to_parent, UIImmediateTheme *theme) {
+  UIImmediateInteraction UIImmediate::Button(const String &text, FitLayout fit_layout, UIImmediateTheme *theme) {
     UIImmediateId id = GetId(text);
     UIImmediateWidgetFlags flags = UIImmediateWidgetFlags::Button | UIImmediateWidgetFlags::Interactable;
     UIImmediateElement &element = GetOrCreateElement(id, flags);
     
     element.layout.semantic_size[0] = { SizeKind::TextContent, 10.0f };
     element.layout.semantic_size[1] = { SizeKind::TextContent, 8.0f };
-    if (fit_to_parent) {
-      LayoutAxes layout_axes = GetAxesForParentLayout(element);
-      element.layout.semantic_size[layout_axes.fill_axis] = { SizeKind::PercentOfParent, 1.0f };
-    }
+    FitToLayout(element, fit_layout);
     
     element.widget.theme = theme;
     element.widget.text = text;
@@ -259,17 +256,14 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
-  UIImmediateInteraction UIImmediate::TextToggle(bool8 &value, const String &text, bool8 fit_to_parent, UIImmediateTheme *theme) {
+  UIImmediateInteraction UIImmediate::TextToggle(bool8 &value, const String &text, FitLayout fit_layout, UIImmediateTheme *theme) {
     UIImmediateId id = GetId(text);
     UIImmediateWidgetFlags flags = UIImmediateWidgetFlags::Toggle | UIImmediateWidgetFlags::Interactable;
     UIImmediateElement &element = GetOrCreateElement(id, flags);
 
     element.layout.semantic_size[0] = { SizeKind::TextContent, 10.0f };
     element.layout.semantic_size[1] = { SizeKind::TextContent, 8.0f };
-    if (fit_to_parent) {
-      LayoutAxes layout_axes = GetAxesForParentLayout(element);
-      element.layout.semantic_size[layout_axes.fill_axis] = { SizeKind::PercentOfParent, 1.0f };
-    }
+    FitToLayout(element, fit_layout);
     
     UIImmediateInteraction interaction = InteractWithElement(element);
     if (interaction.clicked) {
@@ -293,6 +287,39 @@ namespace Hyperion::UI {
 
     element.widget.texture = texture;
     element.widget.enable_blending = enable_blending;
+  }
+
+  //--------------------------------------------------------------
+  Vector2 UIImmediate::ScreenPointToUISpacePoint(Vector2 screen_point) {
+    float32 display_width = static_cast<float32>(Display::GetWidth());
+    float32 display_height = static_cast<float32>(Display::GetHeight());
+    screen_point.x -= display_width / 2.0f;
+    screen_point.y -= display_height / 2.0f;
+    return screen_point;
+  }
+
+  //--------------------------------------------------------------
+  bool8 UIImmediate::IsInsideRect(Rect rect, Vector2 screen_point) {
+    auto is_left = [](Vector2 p0, Vector2 p1, Vector2 p2) {
+      return ((p1.x - p0.x) * (p2.y - p0.y) - (p2.x - p0.x) * (p1.y - p0.y));
+    };
+
+    Vector2 min = rect.GetMin();
+    min.x -= 1.0f;
+    min.y += 1.0f;
+    Vector2 max = rect.GetMax();
+    max.x -= 1.0f;
+
+    Vector2 p1 = Vector3(max.x, max.y, 0.0f);
+    Vector2 p2 = Vector3(max.x, min.y, 0.0f);
+    Vector2 p3 = Vector3(min.x, min.y, 0.0f);
+    Vector2 p4 = Vector3(min.x, max.y, 0.0f);
+
+    // NOTE: Counter clockwise order of points is important.
+    return is_left(p1, p4, screen_point) >= 0.0f
+      && is_left(p4, p3, screen_point) >= 0.0f
+      && is_left(p3, p2, screen_point) >= 0.0f
+      && is_left(p2, p1, screen_point) >= 0.0f;
   }
 
   //--------------------------------------------------------------
@@ -644,6 +671,22 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
+  void UIImmediate::FitToLayout(UIImmediateElement &element, FitLayout fit_layout) {
+    switch (fit_layout) {
+      case FitLayout::LayoutAxis: {
+        LayoutAxes layout_axes = GetAxesForParentLayout(element);
+        element.layout.semantic_size[layout_axes.fill_axis] = { SizeKind::PercentOfParent, 1.0f };  
+        break;
+      }
+      case FitLayout::BothAxes: {
+        element.layout.semantic_size[0] = { SizeKind::PercentOfParent, 1.0f };
+        element.layout.semantic_size[1] = { SizeKind::PercentOfParent, 1.0f };
+        break;
+      }
+    }
+  }
+
+  //--------------------------------------------------------------
   LayoutAxes UIImmediate::GetAxesForParentLayout(const UIImmediateElement &element) {
     LayoutAxes axes = { };
     switch (element.hierarchy.parent->layout.child_layout) {
@@ -662,38 +705,6 @@ namespace Hyperion::UI {
     return axes;
   }
   
-  //--------------------------------------------------------------
-  Vector2 UIImmediate::ScreenPointToUISpacePoint(Vector2 screen_point) {
-    float32 display_width = static_cast<float32>(Display::GetWidth());
-    float32 display_height = static_cast<float32>(Display::GetHeight());
-    screen_point.x -= display_width / 2.0f;
-    screen_point.y -= display_height / 2.0f;
-    return screen_point;
-  }
-  
-  bool8 UIImmediate::IsInsideRect(Rect rect, Vector2 screen_point) {
-    auto is_left = [](Vector2 p0, Vector2 p1, Vector2 p2) {
-      return ((p1.x - p0.x) * (p2.y - p0.y) - (p2.x - p0.x) * (p1.y - p0.y));
-    };
-
-    Vector2 min = rect.GetMin();
-    min.x -= 1.0f;
-    min.y += 1.0f;
-    Vector2 max = rect.GetMax();
-    max.x -= 1.0f;
-
-    Vector2 p1 = Vector3(max.x, max.y, 0.0f);
-    Vector2 p2 = Vector3(max.x, min.y, 0.0f);
-    Vector2 p3 = Vector3(min.x, min.y, 0.0f);
-    Vector2 p4 = Vector3(min.x, max.y, 0.0f);
-
-    // NOTE: Counter clockwise order of points is important.
-    return is_left(p1, p4, screen_point) >= 0.0f
-      && is_left(p4, p3, screen_point) >= 0.0f
-      && is_left(p3, p2, screen_point) >= 0.0f
-      && is_left(p2, p1, screen_point) >= 0.0f;
-  }
-
   //--------------------------------------------------------------
   UIImmediateElement &UIImmediate::GetOrCreateElement(UIImmediateId id, UIImmediateWidgetFlags widget_flags) {
     UIImmediateElement *element = nullptr;

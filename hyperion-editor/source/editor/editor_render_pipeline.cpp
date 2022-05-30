@@ -5,10 +5,8 @@
 #include <hyperion/assets/asset_manager.hpp>
 #include <hyperion/core/app/display.hpp>
 #include <hyperion/core/math/math.hpp>
-#include <hyperion/ecs/component/components/render_components.hpp>
 #include <hyperion/render/render_engine.hpp>
 #include <hyperion/render/pipelines/forward/forward_render_pipeline.hpp>
-#include <hyperion/ui/ui_element.hpp>
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/editor/editor_camera.hpp"
@@ -99,6 +97,8 @@ namespace Hyperion::Editor {
       render_frame->ExecuteCommandBuffer(command_buffer);
     }
 
+    EditorUI::HandleMouseSelection(render_frame, m_object_ids_render_texture);
+    
     render_frame->DrawEditorUI();
   }
 

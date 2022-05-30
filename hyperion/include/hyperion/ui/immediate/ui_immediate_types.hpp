@@ -155,4 +155,10 @@ namespace Hyperion::UI {
     uint32 leftover_axis;
   };
 
+  enum class FitLayout {
+    None,
+    LayoutAxis,
+    BothAxes
+  };
+  
 }
