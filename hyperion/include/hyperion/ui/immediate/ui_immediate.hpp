@@ -21,9 +21,10 @@ namespace Hyperion::UI {
     static void Begin();
     static void End();
 
-    static void SetPanelTheme(const UIImmediateTheme &theme) { s_panel_theme = theme; }
-    static void SetTextTheme(const UIImmediateTheme &theme) { s_text_theme = theme; }
-    static void SetButtonTheme(const UIImmediateTheme &theme) { s_button_theme = theme; }
+    static UIImmediateTheme *GetDefaultTheme() { return &s_default_theme; }
+    static UIImmediateTheme *CreateTheme(const String &name);
+    static UIImmediateTheme *GetTheme(const String &name);
+    static void DestroyTheme(const String &name);
     
     static void BeginPanel(const String &text, Size size[2], ChildLayout child_layout);
     static void EndPanel();
@@ -67,11 +68,8 @@ namespace Hyperion::UI {
     inline static MeshBuilder s_mesh_builder;
     inline static Array<UIImmediateMesh> s_meshes;
 
-    inline static Font *s_font;
-    
-    inline static UIImmediateTheme s_panel_theme;
-    inline static UIImmediateTheme s_text_theme;
-    inline static UIImmediateTheme s_button_theme;
+    inline static UIImmediateTheme s_default_theme;
+    inline static Map<uint64, UIImmediateTheme> s_themes;
   };
 
 }

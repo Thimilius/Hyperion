@@ -98,6 +98,14 @@ namespace Hyperion::Editor {
 
     //EditorUI::Initialize();
     EditorCamera::Initialize();
+
+    UI::UIImmediateTheme *theme = UI::UIImmediate::GetDefaultTheme();
+    theme->panel_color = EditorStyle::COLOR_NORMAL;
+    theme->panel_color_hover = EditorStyle::COLOR_NORMAL;
+    theme->panel_color_pressed = EditorStyle::COLOR_NORMAL;
+    theme->button_color = EditorStyle::COLOR_NORMAL_DARK;
+    theme->button_color_hover = EditorStyle::COLOR_HIGHLIGHT;
+    theme->button_color_pressed = EditorStyle::COLOR_HIGHLIGHT;
   }
 
   //--------------------------------------------------------------
@@ -121,17 +129,6 @@ namespace Hyperion::Editor {
 
     UI::UIImmediate::Begin();
     {
-      UI::UIImmediateTheme theme = UI::UIImmediateTheme();
-      theme.background_color = EditorStyle::COLOR_NORMAL;
-      theme.background_color_hover = EditorStyle::COLOR_NORMAL;
-      theme.background_color_pressed = EditorStyle::COLOR_NORMAL;
-      UI::UIImmediate::SetPanelTheme(theme);
-      UI::UIImmediate::SetTextTheme(theme);
-      theme.background_color = EditorStyle::COLOR_NORMAL_DARK;
-      theme.background_color_hover = EditorStyle::COLOR_HIGHLIGHT;
-      theme.background_color_pressed = EditorStyle::COLOR_HIGHLIGHT;
-      UI::UIImmediate::SetButtonTheme(theme);
-      
       UI::Size header_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::Pixels, 25.0f } };
       UI::UIImmediate::BeginPanel("Header Panel", header_panel_size, UI::ChildLayout::Horizontal);
       {

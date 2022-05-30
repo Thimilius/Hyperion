@@ -21,8 +21,8 @@ namespace Hyperion::UI {
     }
     s_meshes.Clear();
 
-    if (!s_font) {
-      s_font = FontLoader::LoadFont("data/fonts/space_mono_regular.ttf", 12, FontCharacterSet::LatinSupplement);  
+    if (!s_default_theme.font) {
+      s_default_theme.font = FontLoader::LoadFont("data/fonts/space_mono_regular.ttf", 12, FontCharacterSet::LatinSupplement);  
     }
 
     s_state.mouse_position = ScreenPointToUISpacePoint(Input::GetMousePosition().ToFloat());
@@ -73,14 +73,51 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
+  UIImmediateTheme *UIImmediate::CreateTheme(const String &name) {
+    uint64 id = std::hash<String>()(name);
+
+    if (s_themes.Contains(id)) {
+      HYP_LOG_ERROR("UI", "A theme with the name '{}' already exists!", name);
+    } else {
+      s_themes.Insert(id, s_default_theme);  
+    }
+    
+    return &s_themes.Get(id);
+  }
+
+  //--------------------------------------------------------------
+  UIImmediateTheme *UIImmediate::GetTheme(const String &name) {
+    uint64 id = std::hash<String>()(name);
+    
+    auto it = s_themes.Find(id);
+    if (it == s_themes.end()) {
+      HYP_LOG_ERROR("UI", "A theme with the name '{}' does not exists!", name);
+      return nullptr;
+    } else {
+      return &it->second;
+    }
+  }
+  
+  //--------------------------------------------------------------
+  void UIImmediate::DestroyTheme(const String &name) {
+    uint64 id = std::hash<String>()(name);
+    
+    if (s_themes.Contains(id)) {
+      s_themes.Remove(id);
+    } else {
+      HYP_LOG_ERROR("UI", "A theme with the name '{}' does not exists!", name);
+    }
+  }
+
+  //--------------------------------------------------------------
   void UIImmediate::BeginPanel(const String &text, Size size[2], ChildLayout child_layout) {
-    UIImmediateElement &element = GetOrCreateElement(GetId(text), UIImmediateWidgetFlags::DrawBackground);
+    UIImmediateElement &element = GetOrCreateElement(GetId(text), UIImmediateWidgetFlags::Panel);
 
     element.layout.semantic_size[0] = size[0];
     element.layout.semantic_size[1] = size[1];
     element.layout.child_layout = child_layout;
 
-    element.widget.theme = s_panel_theme;
+    element.widget.theme = GetDefaultTheme();
     
     s_state.element_stack.Add(&element);
   }
@@ -149,12 +186,12 @@ namespace Hyperion::UI {
   
   //--------------------------------------------------------------
   void UIImmediate::Text(const String &text) {
-    UIImmediateElement &element = GetOrCreateElement(GetId(text), UIImmediateWidgetFlags::DrawText | UIImmediateWidgetFlags::DrawShadow);
+    UIImmediateElement &element = GetOrCreateElement(GetId(text), UIImmediateWidgetFlags::Text);
     
     element.layout.semantic_size[0] = { SizeKind::TextContent, 0.0f };
     element.layout.semantic_size[1] = { SizeKind::TextContent, 0.0f };
     
-    element.widget.theme = s_text_theme;
+    element.widget.theme = GetDefaultTheme();
     element.widget.text = text;
     element.widget.text_alignment = TextAlignment::TopLeft;
   }
@@ -162,10 +199,7 @@ namespace Hyperion::UI {
   //--------------------------------------------------------------
   UIImmediateInteraction UIImmediate::Button(const String &text) {
     UIImmediateId id = GetId(text);
-    UIImmediateWidgetFlags flags = UIImmediateWidgetFlags::Interactable
-      | UIImmediateWidgetFlags::DrawBackground
-      | UIImmediateWidgetFlags::DrawText
-      | UIImmediateWidgetFlags::DrawShadow;
+    UIImmediateWidgetFlags flags = UIImmediateWidgetFlags::Button | UIImmediateWidgetFlags::Interactable;
     UIImmediateElement &element = GetOrCreateElement(id, flags);
     
     UIImmediateInteraction interaction = InteractWithElement(element);
@@ -173,7 +207,7 @@ namespace Hyperion::UI {
     element.layout.semantic_size[0] = { SizeKind::TextContent, 10.0f };
     element.layout.semantic_size[1] = { SizeKind::TextContent, 8.0f };
     
-    element.widget.theme = s_button_theme;
+    element.widget.theme = GetDefaultTheme();
     element.widget.text = text;
     element.widget.text_alignment = TextAlignment::MiddleCenter;
 
@@ -194,7 +228,7 @@ namespace Hyperion::UI {
         if (semantic_size.kind == SizeKind::TextContent) {
           if (!element.widget.text.empty()) {
             Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(element.widget.text);
-            TextSize text_size = s_font->GetTextSize(codepoints, 0, 1.0f, false);
+            TextSize text_size = element.widget.theme->font->GetTextSize(codepoints, 0, 1.0f, false);
             computed_size = text_size.size[axis] + semantic_size.value;
           }
         }
@@ -326,44 +360,30 @@ namespace Hyperion::UI {
 
   //--------------------------------------------------------------
   void UIImmediate::Render() {
-    // TODO: Color, font and shadow info should be part of a style.
     IterateHierarchy(s_state.root_element, [](UIImmediateElement &element) {
-      const UIImmediateTheme &theme = element.widget.theme;
-      
-      bool8 draw_background_shadow = (element.widget.flags & UIImmediateWidgetFlags::DrawBackgroundShadow) == UIImmediateWidgetFlags::DrawBackgroundShadow;
-      if (draw_background_shadow) {
-        Rect rect = element.layout.rect;
-        rect.position += theme.shadow_offset;
-        DrawRect(rect, theme.shadow_color);
-      }
-      bool8 draw_background = (element.widget.flags & UIImmediateWidgetFlags::DrawBackground) == UIImmediateWidgetFlags::DrawBackground;
-      if (draw_background) {
-        bool8 is_hovered = s_state.hovered_widget == element.id.id;
-        bool8 is_pressed = s_state.pressed_widget == element.id.id;
+      const UIImmediateTheme &theme = *element.widget.theme;
 
-        Color color = theme.background_color;
+      bool8 is_hovered = s_state.hovered_widget == element.id.id;
+      bool8 is_pressed = s_state.pressed_widget == element.id.id;
+
+      bool8 is_panel = (element.widget.flags & UIImmediateWidgetFlags::Panel) == UIImmediateWidgetFlags::Panel;
+      bool8 is_text = (element.widget.flags & UIImmediateWidgetFlags::Text) == UIImmediateWidgetFlags::Text;
+      bool8 is_button = (element.widget.flags & UIImmediateWidgetFlags::Button) == UIImmediateWidgetFlags::Button;
+      
+      if (is_panel || is_button) {
+        Color color = is_panel ? theme.panel_color : theme.button_color;
         if (is_hovered) {
-          color = theme.background_color_hover;
+          color = is_panel ? theme.panel_color_hover : theme.button_color_hover;
         }
         if (is_pressed) {
-          color = theme.background_color_pressed;
+          color = is_panel ? theme.panel_color_pressed : theme.button_color_pressed;
         }
         
         DrawRect(element.layout.rect, color);
+        Flush();
       }
-      Flush();
 
-      bool8 draw_shadow = (element.widget.flags & UIImmediateWidgetFlags::DrawShadow) == UIImmediateWidgetFlags::DrawShadow;
-      if (draw_shadow) {
-        Rect rect = element.layout.rect;
-        rect.position += theme.shadow_offset;
-        DrawText(rect, element.widget.text, s_font, element.widget.text_alignment, theme.shadow_color);
-      }
-      bool8 draw_text = (element.widget.flags & UIImmediateWidgetFlags::DrawText) == UIImmediateWidgetFlags::DrawText;
-      if (draw_text) {
-        bool8 is_hovered = s_state.hovered_widget == element.id.id;
-        bool8 is_pressed = s_state.pressed_widget == element.id.id;
-
+      if (is_text || is_button) {
         Color color = theme.text_color;
         if (is_hovered) {
           color = theme.text_color_hover;
@@ -372,9 +392,9 @@ namespace Hyperion::UI {
           color = theme.text_color_pressed;
         }
         
-        DrawText(element.layout.rect, element.widget.text, s_font, element.widget.text_alignment, color);
+        DrawText(element.layout.rect, element.widget.text, theme.font, element.widget.text_alignment, color);
+        Flush(AssetManager::GetMaterialPrimitive(MaterialPrimitive::Font), theme.font->GetTexture());
       }
-      Flush(AssetManager::GetMaterialPrimitive(MaterialPrimitive::Font), s_font->GetTexture());
     });
     
     Rendering::RenderFrameContext &render_frame_context = Rendering::RenderEngine::GetMainRenderFrame()->GetContext();

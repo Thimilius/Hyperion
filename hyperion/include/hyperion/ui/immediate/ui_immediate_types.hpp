@@ -33,30 +33,35 @@ namespace Hyperion::UI {
   };
 
   struct UIImmediateTheme {
-    Color background_color = Color::Grey();
-    Color background_color_hover = Color::Grey();
-    Color background_color_pressed = Color::Grey();
-    
+    Color panel_color = Color::Grey();
+    Color panel_color_hover = Color::Grey();
+    Color panel_color_pressed = Color::Grey();
+
     Color text_color = Color::White();
     Color text_color_hover = Color::White();
     Color text_color_pressed = Color::White();
+    
+    Color button_color = Color::Grey();
+    Color button_color_hover = Color::Grey();
+    Color button_color_pressed = Color::Grey();
 
-    Color shadow_color = Color::Black();
-    Vector2 shadow_offset = Vector2(1.0f, -1.0f);
+    bool8 text_shadow_enabled = true;
+    Color text_shadow_color = Color::Black();
+    Vector2 text_shadow_offset = Vector2(1.0f, -1.0f);
+
+    Font *font = nullptr;
   };
   
   enum class UIImmediateWidgetFlags {
     None = 0,
 
-    Empty = BIT(0),
-    Space = BIT(1),
+    Interactable = BIT(0),
     
-    Interactable = BIT(2),
-    
-    DrawText = BIT(3),
-    DrawShadow = BIT(4),
-    DrawBackground = BIT(5),
-    DrawBackgroundShadow = BIT(6)
+    Empty = BIT(1),
+    Space = BIT(2),
+    Panel = BIT(3),
+    Text = BIT(4),
+    Button = BIT(5),
   };
   HYP_CREATE_ENUM_FLAG_OPERATORS(UIImmediateWidgetFlags)
 
@@ -96,7 +101,7 @@ namespace Hyperion::UI {
     struct UIImmediateElementWidget {
       UIImmediateWidgetFlags flags = UIImmediateWidgetFlags::None;
 
-      UIImmediateTheme theme = UIImmediateTheme();
+      UIImmediateTheme *theme = nullptr;
       
       String text = String();
       TextAlignment text_alignment = TextAlignment::TopLeft;
