@@ -104,8 +104,8 @@ namespace Hyperion::Editor {
 
   //--------------------------------------------------------------
   void EditorRenderPipeline::UpdateSize() {
-    RectInt preview_rect = EditorUI::GetPreviewRect();
-    SetRenderTargetSize(preview_rect.width, preview_rect.height);
+    Rect preview_rect = EditorUI::GetPreviewRect();
+    SetRenderTargetSize(static_cast<uint32>(preview_rect.width), static_cast<uint32>(preview_rect.height));
   }
 
 }

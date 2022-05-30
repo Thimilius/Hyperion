@@ -257,14 +257,21 @@ namespace Hyperion::Editor {
   }
 
   //--------------------------------------------------------------
-  RectInt EditorUI::GetPreviewRect() {
+  Rect EditorUI::GetPreviewRect() {
     UIImmediateElement *element = UIImmediate::GetElement(s_preview_element);
     if (element == nullptr) {
-      return { 0, 0, static_cast<int32>(Display::GetWidth()), static_cast<int32>(Display::GetHeight()) };  
+      return { 0, 0, static_cast<float32>(Display::GetWidth()), static_cast<float32>(Display::GetHeight()) };  
     } else {
-      Rect rect = element->layout.rect;
-      return { static_cast<int32>(rect.x), static_cast<int32>(rect.y), static_cast<int32>(rect.width), static_cast<int32>(rect.height) };
+      return element->layout.rect;
     }
+  }
+
+  //--------------------------------------------------------------
+  bool8 EditorUI::IsMouseInsidePreviewRect() {
+    Vector2 mouse_position = Input::GetMousePosition().ToFloat();
+    Vector2 ui_space_point = UIImmediate::ScreenPointToUISpacePoint(mouse_position);
+    Rect rect = EditorUI::GetPreviewRect(); 
+    return UIImmediate::IsInsideRect(rect, ui_space_point);
   }
 
   //--------------------------------------------------------------
@@ -272,14 +279,7 @@ namespace Hyperion::Editor {
     if (Input::IsMouseButtonUp(MouseButtonCode::Left)) {
       Vector2 mouse_position = Input::GetMousePosition().ToFloat();
       Vector2 ui_space_point = UIImmediate::ScreenPointToUISpacePoint(mouse_position);
-
-      RectInt preview_rect = EditorUI::GetPreviewRect(); 
-      Rect rect = {
-        static_cast<float32>(preview_rect.x),
-        static_cast<float32>(preview_rect.y),
-        static_cast<float32>(preview_rect.width),
-        static_cast<float32>(preview_rect.height)
-      };
+      Rect rect = EditorUI::GetPreviewRect(); 
       
       if (UIImmediate::IsInsideRect(rect, ui_space_point)) {
         render_frame->DrawObjectIds(render_texture->GetRenderTargetId());

@@ -2,7 +2,6 @@
 #include "hyperion/editor/editor_camera.hpp"
 
 //---------------------- Library Includes ----------------------
-#include <hyperion/core/app/display.hpp>
 #include <hyperion/core/app/input.hpp>
 #include <hyperion/core/math/math.hpp>
 #include <hyperion/ecs/component/components/render_components.hpp>
@@ -31,9 +30,20 @@ namespace Hyperion::Editor {
     float32 mouse_axis_x = mouse_position_difference.x;
     float32 mouse_axis_y = mouse_position_difference.y;
 
+    bool8 is_inside_preview_rect = EditorUI::IsMouseInsidePreviewRect();
+    if (is_inside_preview_rect) {
+      if (Input::IsMouseButtonDown(MouseButtonCode::Right) || Input::IsMouseButtonDown(MouseButtonCode::Middle)) {
+        m_mouse_captured = true;
+      }
+    }
+    if (Input::IsMouseButtonUp(MouseButtonCode::Right) || Input::IsMouseButtonUp(MouseButtonCode::Middle)) {
+      m_mouse_captured = false;
+    }
+    bool8 should_receive_input = m_mouse_captured || is_inside_preview_rect;
+    
     Vector3 position = s_transform.position;
     {
-      if (Input::IsMouseButtonHold(MouseButtonCode::Middle)) {
+      if (should_receive_input && Input::IsMouseButtonHold(MouseButtonCode::Middle)) {
         position += right * mouse_axis_x * m_xz_plane_distance * m_movement_speed;
         position += (up + forward).Normalized() * mouse_axis_y * m_xz_plane_distance * m_movement_speed;
 
@@ -42,7 +52,7 @@ namespace Hyperion::Editor {
     }
 
     {
-      if (Input::IsMouseButtonHold(MouseButtonCode::Right)) {
+      if (should_receive_input && Input::IsMouseButtonHold(MouseButtonCode::Right)) {
         m_rotation_velocity_x += m_rotation_speed * mouse_axis_x * delta_time;
         m_rotation_velocity_y += m_rotation_speed * mouse_axis_y * delta_time;
       }
@@ -52,7 +62,9 @@ namespace Hyperion::Editor {
       m_rotation_axis_x = ClampAngle(m_rotation_axis_x, -90, 90);
       Quaternion rotation = Quaternion::FromEulerAngles(m_rotation_axis_x, m_rotation_axis_y, 0);
 
-      m_zoom -= Input::GetMouseScroll() * m_xz_plane_distance * m_zoom_speed;
+      if (should_receive_input) {
+        m_zoom -= Input::GetMouseScroll() * m_xz_plane_distance * m_zoom_speed;  
+      }
       m_zoom = Math::Clamp(m_zoom, 0.05f, 1000.0f);
       m_xz_plane_distance = Math::Lerp(m_xz_plane_distance, m_zoom, 15.0f * delta_time);
 
@@ -91,7 +103,7 @@ namespace Hyperion::Editor {
 
   //--------------------------------------------------------------
   Rendering::RenderFrameContextCamera EditorCamera::GetContextCamera() {
-    RectInt preview_rect = EditorUI::GetPreviewRect();
+    Rect preview_rect = EditorUI::GetPreviewRect();
     Rendering::CameraViewport viewport = { 0, 0, static_cast<uint32>(preview_rect.width), static_cast<uint32>(preview_rect.height) };
     
     Rendering::CameraUtilities::RecalculateMatrices(&s_camera, &s_transform, viewport);

@@ -38,6 +38,7 @@ namespace Hyperion::Editor {
     inline static float32 m_rotation_velocity_y = 0.0f;
     inline static float32 m_zoom = 1.0f;
 
+    inline static bool8 m_mouse_captured;
     inline static Vector3 m_last_position;
     inline static Vector2 m_last_mouse_position;
 

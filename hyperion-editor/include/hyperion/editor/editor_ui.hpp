@@ -15,7 +15,8 @@ namespace Hyperion::Editor {
     static void Initialize();
     static void Update();
 
-    static RectInt GetPreviewRect();
+    static Rect GetPreviewRect();
+    static bool8 IsMouseInsidePreviewRect();
 
     static void HandleMouseSelection(Rendering::RenderFrame *render_frame, RenderTexture *render_texture);
   private:
