@@ -786,13 +786,27 @@ namespace Hyperion {
         break;
       }
 
-      // TODO: Get mouse position outside the window. 
+      case WM_NCMOUSEMOVE:
       case WM_MOUSEMOVE: {
-        int32 x = GET_X_LPARAM(l_param);
-        int32 y = GET_Y_LPARAM(l_param);
+        POINTS points = {
+          static_cast<SHORT>(GET_X_LPARAM(l_param)),
+          static_cast<SHORT>(GET_Y_LPARAM(l_param))
+        };
+        POINT point = {
+          points.x,
+          points.y
+        };
+
+        if (message == WM_NCMOUSEMOVE) {
+          ScreenToClient(window_handle, &point);  
+        }
+        
+        int32 x = point.x;
+        int32 y = point.y;
         
         int32 height = window->m_height;
 
+        // We transform the coordinates so that they are relative to the bottom left corner.
         MouseMovedAppEvent event(x, height - y);
         window->DispatchAppEvent(event);
         break;
