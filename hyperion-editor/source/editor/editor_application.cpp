@@ -100,6 +100,7 @@ namespace Hyperion::Editor {
     EditorCamera::Initialize();
 
     UI::UIImmediateTheme *theme = UI::UIImmediate::GetDefaultTheme();
+    theme->separator_color = EditorStyle::COLOR_HIGHLIGHT;
     theme->panel_color = EditorStyle::COLOR_NORMAL;
     theme->panel_color_hover = EditorStyle::COLOR_NORMAL;
     theme->panel_color_pressed = EditorStyle::COLOR_NORMAL;
@@ -130,12 +131,12 @@ namespace Hyperion::Editor {
     UI::UIImmediate::Begin();
     {
       UI::Size header_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::Pixels, 25.0f } };
-      UI::UIImmediate::BeginPanel("Header Panel", header_panel_size, UI::ChildLayout::Horizontal);
+      UI::UIImmediate::BeginPanel("Header Panel", header_panel_size);
       {
         if (UI::UIImmediate::Button("Left Aligned Button").clicked) {
           HYP_TRACE("CLICKED BUTTON");
         }
-        
+
         UI::UIImmediate::FillSpace();
         
         if (UI::UIImmediate::Button("Right Aligned Button").clicked) {
@@ -152,15 +153,19 @@ namespace Hyperion::Editor {
       }
       UI::UIImmediate::EndPanel();
 
+      UI::UIImmediate::Separator();
+      
       UI::Size center_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::AutoFill, 0.0f } };
-      UI::UIImmediate::BeginPanel("Center Panel", center_panel_size, UI::ChildLayout::Horizontal);
+      UI::UIImmediate::BeginPanel("Center Panel", center_panel_size);
       {
         
       }
       UI::UIImmediate::EndPanel();
+
+      UI::UIImmediate::Separator();
       
       UI::Size footer_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::Pixels, 25.0f } };
-      UI::UIImmediate::BeginPanel("Footer Panel", footer_panel_size, UI::ChildLayout::Horizontal);
+      UI::UIImmediate::BeginPanel("Footer Panel", footer_panel_size);
       {
         
       }

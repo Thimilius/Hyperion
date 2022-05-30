@@ -33,6 +33,8 @@ namespace Hyperion::UI {
   };
 
   struct UIImmediateTheme {
+    Color separator_color = Color::White();
+      
     Color panel_color = Color::Grey();
     Color panel_color_hover = Color::Grey();
     Color panel_color_pressed = Color::Grey();
@@ -59,9 +61,10 @@ namespace Hyperion::UI {
     
     Empty = BIT(1),
     Space = BIT(2),
-    Panel = BIT(3),
-    Text = BIT(4),
-    Button = BIT(5),
+    Separator = BIT(3),
+    Panel = BIT(4),
+    Text = BIT(5),
+    Button = BIT(6),
   };
   HYP_CREATE_ENUM_FLAG_OPERATORS(UIImmediateWidgetFlags)
 

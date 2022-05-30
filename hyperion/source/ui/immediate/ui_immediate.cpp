@@ -110,14 +110,14 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
-  void UIImmediate::BeginPanel(const String &text, Size size[2], ChildLayout child_layout) {
+  void UIImmediate::BeginPanel(const String &text, Size size[2], ChildLayout child_layout, UIImmediateTheme *theme) {
     UIImmediateElement &element = GetOrCreateElement(GetId(text), UIImmediateWidgetFlags::Panel);
 
     element.layout.semantic_size[0] = size[0];
     element.layout.semantic_size[1] = size[1];
     element.layout.child_layout = child_layout;
 
-    element.widget.theme = GetDefaultTheme();
+    element.widget.theme = theme;
     
     s_state.element_stack.Add(&element);
   }
@@ -183,21 +183,47 @@ namespace Hyperion::UI {
     FillSpace();
     EndEmpty();
   }
-  
+
   //--------------------------------------------------------------
-  void UIImmediate::Text(const String &text) {
+  void UIImmediate::Separator(UIImmediateTheme *theme) {
+    UIImmediateElement &element = CreateTemporaryElement(UIImmediateWidgetFlags::Separator);
+
+    uint64 space_axis = 0;
+    uint64 fill_axis = 1;
+    switch (element.hierarchy.parent->layout.child_layout) {
+      case ChildLayout::Horizontal: {
+        space_axis = 0;
+        fill_axis = 1;
+        break;
+      }
+      case ChildLayout::Vertical: {
+        space_axis = 1;
+        fill_axis = 0;
+        break;
+      }
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+    }
+
+    element.layout.semantic_size[space_axis] = { SizeKind::Pixels, 1.0f };
+    element.layout.semantic_size[fill_axis] = { SizeKind::PercentOfParent, 1.0f };
+    
+    element.widget.theme = theme;
+  }
+
+  //--------------------------------------------------------------
+  void UIImmediate::Text(const String &text, UIImmediateTheme *theme) {
     UIImmediateElement &element = GetOrCreateElement(GetId(text), UIImmediateWidgetFlags::Text);
     
     element.layout.semantic_size[0] = { SizeKind::TextContent, 0.0f };
     element.layout.semantic_size[1] = { SizeKind::TextContent, 0.0f };
     
-    element.widget.theme = GetDefaultTheme();
+    element.widget.theme = theme;
     element.widget.text = text;
     element.widget.text_alignment = TextAlignment::TopLeft;
   }
 
   //--------------------------------------------------------------
-  UIImmediateInteraction UIImmediate::Button(const String &text) {
+  UIImmediateInteraction UIImmediate::Button(const String &text, UIImmediateTheme *theme) {
     UIImmediateId id = GetId(text);
     UIImmediateWidgetFlags flags = UIImmediateWidgetFlags::Button | UIImmediateWidgetFlags::Interactable;
     UIImmediateElement &element = GetOrCreateElement(id, flags);
@@ -207,7 +233,7 @@ namespace Hyperion::UI {
     element.layout.semantic_size[0] = { SizeKind::TextContent, 10.0f };
     element.layout.semantic_size[1] = { SizeKind::TextContent, 8.0f };
     
-    element.widget.theme = GetDefaultTheme();
+    element.widget.theme = theme;
     element.widget.text = text;
     element.widget.text_alignment = TextAlignment::MiddleCenter;
 
@@ -366,17 +392,22 @@ namespace Hyperion::UI {
       bool8 is_hovered = s_state.hovered_widget == element.id.id;
       bool8 is_pressed = s_state.pressed_widget == element.id.id;
 
+      bool8 is_separator = (element.widget.flags & UIImmediateWidgetFlags::Separator) == UIImmediateWidgetFlags::Separator; 
       bool8 is_panel = (element.widget.flags & UIImmediateWidgetFlags::Panel) == UIImmediateWidgetFlags::Panel;
       bool8 is_text = (element.widget.flags & UIImmediateWidgetFlags::Text) == UIImmediateWidgetFlags::Text;
       bool8 is_button = (element.widget.flags & UIImmediateWidgetFlags::Button) == UIImmediateWidgetFlags::Button;
       
-      if (is_panel || is_button) {
+      if (is_separator || is_panel || is_button) {
         Color color = is_panel ? theme.panel_color : theme.button_color;
         if (is_hovered) {
           color = is_panel ? theme.panel_color_hover : theme.button_color_hover;
         }
         if (is_pressed) {
           color = is_panel ? theme.panel_color_pressed : theme.button_color_pressed;
+        }
+
+        if (is_separator) {
+          color = theme.separator_color;
         }
         
         DrawRect(element.layout.rect, color);

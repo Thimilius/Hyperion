@@ -26,7 +26,7 @@ namespace Hyperion::UI {
     static UIImmediateTheme *GetTheme(const String &name);
     static void DestroyTheme(const String &name);
     
-    static void BeginPanel(const String &text, Size size[2], ChildLayout child_layout);
+    static void BeginPanel(const String &text, Size size[2], ChildLayout child_layout = ChildLayout::Horizontal, UIImmediateTheme *theme = GetDefaultTheme());
     static void EndPanel();
 
     static void BeginEmpty();
@@ -38,8 +38,10 @@ namespace Hyperion::UI {
     static void BeginCenter();
     static void EndCenter();
 
-    static void Text(const String &text);
-    static UIImmediateInteraction Button(const String &text);
+    static void Separator(UIImmediateTheme *theme = GetDefaultTheme());
+
+    static void Text(const String &text, UIImmediateTheme *theme = GetDefaultTheme());
+    static UIImmediateInteraction Button(const String &text, UIImmediateTheme *theme = GetDefaultTheme());
   private:
     UIImmediate() = delete;
     ~UIImmediate() = delete;
