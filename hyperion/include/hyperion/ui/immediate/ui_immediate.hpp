@@ -50,6 +50,7 @@ namespace Hyperion::UI {
       UIImmediateTheme *theme = GetDefaultTheme()
     );
     static UIImmediateInteraction Button(const String &text, bool8 fit_to_parent = false, UIImmediateTheme *theme = GetDefaultTheme());
+    static UIImmediateInteraction TextToggle(bool8 &value, const String &text, bool8 fit_to_parent = false, UIImmediateTheme *theme = GetDefaultTheme());
   private:
     UIImmediate() = delete;
     ~UIImmediate() = delete;
@@ -57,11 +58,14 @@ namespace Hyperion::UI {
     static void Layout();
     static void Render();
 
+    static Color GetBackgroundColor(const UIImmediateElement &element);
+    static Color GetTextColor(const UIImmediateElement &element);
+    
     static void DrawRect(Rect rect, Color color);
     static void DrawText(Rect rect, const String &text, Font *font, UI::TextAlignment alignment, Color color);
     static void Flush(Material *material = nullptr, Texture *texture = nullptr);
 
-    static LayoutAxes GetAxesForParentLayout(UIImmediateElement &element);
+    static LayoutAxes GetAxesForParentLayout(const UIImmediateElement &element);
     
     static UIImmediateId GetId(const String &text);
     

@@ -17,6 +17,7 @@
 #include <hyperion/ui/immediate/ui_immediate.hpp>
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/assets/loader/font_loader.hpp"
 #include "hyperion/editor/editor_camera.hpp"
 #include "hyperion/editor/editor_render_pipeline.hpp"
 #include "hyperion/editor/editor_style.hpp"
@@ -102,11 +103,22 @@ namespace Hyperion::Editor {
     UI::UIImmediateTheme *theme = UI::UIImmediate::GetDefaultTheme();
     theme->separator_color = EditorStyle::COLOR_HIGHLIGHT;
     theme->panel_color = EditorStyle::COLOR_NORMAL;
-    theme->panel_color_hover = EditorStyle::COLOR_NORMAL;
+    theme->panel_color_hovered = EditorStyle::COLOR_NORMAL;
     theme->panel_color_pressed = EditorStyle::COLOR_NORMAL;
     theme->button_color = EditorStyle::COLOR_NORMAL_DARK;
-    theme->button_color_hover = EditorStyle::COLOR_HIGHLIGHT;
+    theme->button_color_hovered = EditorStyle::COLOR_HIGHLIGHT;
     theme->button_color_pressed = EditorStyle::COLOR_HIGHLIGHT;
+    theme->toggle_normal_color = EditorStyle::COLOR_NORMAL_DARK;
+    theme->toggle_normal_color_hovered = EditorStyle::COLOR_NORMAL_DARK;
+    theme->toggle_normal_color_pressed = EditorStyle::COLOR_NORMAL_DARK;
+    theme->toggle_toggled_color = EditorStyle::COLOR_HIGHLIGHT;
+    theme->toggle_toggled_color_hovered = EditorStyle::COLOR_HIGHLIGHT;
+    theme->toggle_toggled_color_pressed = EditorStyle::COLOR_HIGHLIGHT;
+    theme->toggle_toggled_text_color = Color::White();
+    theme->font = FontLoader::LoadFont("data/fonts/space_mono_regular.ttf", EditorStyle::FONT_SIZE, FontCharacterSet::LatinSupplement);
+
+    UI::UIImmediateTheme *icon_theme = UI::UIImmediate::CreateTheme("Icon");
+    icon_theme->font = FontLoader::LoadFont("data/fonts/font_awesome_solid.otf", EditorStyle::FONT_SIZE, FontCharacterSet::All);
   }
 
   //--------------------------------------------------------------
@@ -128,26 +140,18 @@ namespace Hyperion::Editor {
       }
     }
 
+    UI::UIImmediateTheme *icon_theme = UI::UIImmediate::GetTheme("Icon");
+    
     UI::UIImmediate::Begin();
     {
       UI::Size header_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::Pixels, 25.0f } };
       UI::UIImmediate::BeginPanel("Header Panel", header_panel_size);
       {
-        if (UI::UIImmediate::Button("Left Aligned Button", true).clicked) {
-          HYP_TRACE("CLICKED BUTTON");
-        }
-
         UI::UIImmediate::FillSpace();
         
-        if (UI::UIImmediate::Button("Right Aligned Button", true).clicked) {
-          HYP_TRACE("CLICKED BUTTON");
-        }
-
         UI::UIImmediate::BeginCenter();
         {
-          if (UI::UIImmediate::Button("Center Aligned Button", true).clicked) {
-            HYP_TRACE("CLICKED BUTTON");
-          }
+          
         }
         UI::UIImmediate::EndCenter();
       }
@@ -190,6 +194,26 @@ namespace Hyperion::Editor {
             UI::Size preview_header_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::Pixels, 25.0f } };
             UI::UIImmediate::BeginPanel("Preview Header", preview_header_panel_size);
             {
+              bool8 is_vsync = Rendering::RenderEngine::GetVSyncMode() != Rendering::VSyncMode::DontSync;
+              if (UI::UIImmediate::TextToggle(is_vsync, "\uf108", true, icon_theme).clicked) {
+                Rendering::RenderEngine::SetVSyncMode(
+                  Rendering::RenderEngine::GetVSyncMode() == Rendering::VSyncMode::DontSync
+                    ? Rendering::VSyncMode::EveryVBlank
+                    : Rendering::VSyncMode::DontSync
+                );
+              }
+              bool8 should_draw_grid = Rendering::RenderGizmos::GetShouldDrawGrid();
+              if (UI::UIImmediate::TextToggle(should_draw_grid, "\uf850", true, icon_theme).clicked) {
+                Rendering::RenderGizmos::SetShouldDrawGrid(should_draw_grid);
+              }
+              bool8 should_draw_bounds = Rendering::RenderGizmos::GetShouldDrawAllBounds();
+              if (UI::UIImmediate::TextToggle(should_draw_bounds, "\uf247", true, icon_theme).clicked) {
+                Rendering::RenderGizmos::SetShouldDrawAllBounds(should_draw_bounds);
+              }
+              if (UI::UIImmediate::Button("\uf03d", true, icon_theme).clicked) {
+                EditorCamera::Reset();
+              }
+              
               UI::UIImmediate::FillSpace();
 
               String stats_format = "FPS: {} ({:.2f}ms)";
@@ -228,9 +252,7 @@ namespace Hyperion::Editor {
             UI::Size right_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::AutoFill, 0.0f } };
             UI::UIImmediate::BeginPanel("Right Panel", right_panel_size);
             {
-              if (UI::UIImmediate::Button("Center Aligned Button").clicked) {
-                HYP_TRACE("CLICKED BUTTON");
-              }
+              
             }
             UI::UIImmediate::EndPanel();
           }

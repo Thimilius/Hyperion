@@ -219,8 +219,6 @@ namespace Hyperion::UI {
     UIImmediateWidgetFlags flags = UIImmediateWidgetFlags::Button | UIImmediateWidgetFlags::Interactable;
     UIImmediateElement &element = GetOrCreateElement(id, flags);
     
-    UIImmediateInteraction interaction = InteractWithElement(element);
-
     element.layout.semantic_size[0] = { SizeKind::TextContent, 10.0f };
     element.layout.semantic_size[1] = { SizeKind::TextContent, 8.0f };
     if (fit_to_parent) {
@@ -232,6 +230,32 @@ namespace Hyperion::UI {
     element.widget.text = text;
     element.widget.text_alignment = TextAlignment::MiddleCenter;
 
+    return InteractWithElement(element);
+  }
+
+  //--------------------------------------------------------------
+  UIImmediateInteraction UIImmediate::TextToggle(bool8 &value, const String &text, bool8 fit_to_parent, UIImmediateTheme *theme) {
+    UIImmediateId id = GetId(text);
+    UIImmediateWidgetFlags flags = UIImmediateWidgetFlags::Toggle | UIImmediateWidgetFlags::Interactable;
+    UIImmediateElement &element = GetOrCreateElement(id, flags);
+
+    element.layout.semantic_size[0] = { SizeKind::TextContent, 10.0f };
+    element.layout.semantic_size[1] = { SizeKind::TextContent, 8.0f };
+    if (fit_to_parent) {
+      LayoutAxes layout_axes = GetAxesForParentLayout(element);
+      element.layout.semantic_size[layout_axes.fill_axis] = { SizeKind::PercentOfParent, 1.0f };
+    }
+    
+    UIImmediateInteraction interaction = InteractWithElement(element);
+    if (interaction.clicked) {
+      value = !value;
+    }
+
+    element.widget.theme = theme;
+    element.widget.text = text;
+    element.widget.text_alignment = TextAlignment::MiddleCenter;
+    element.widget.toggled = value;
+    
     return interaction;
   }
 
@@ -390,45 +414,27 @@ namespace Hyperion::UI {
     IterateHierarchy(s_state.root_element, [](UIImmediateElement &element) {
       const UIImmediateTheme &theme = *element.widget.theme;
 
-      bool8 is_hovered = s_state.hovered_widget == element.id.id;
-      bool8 is_pressed = s_state.pressed_widget == element.id.id;
-
       bool8 is_separator = (element.widget.flags & UIImmediateWidgetFlags::Separator) == UIImmediateWidgetFlags::Separator; 
       bool8 is_panel = (element.widget.flags & UIImmediateWidgetFlags::Panel) == UIImmediateWidgetFlags::Panel;
       bool8 is_text = (element.widget.flags & UIImmediateWidgetFlags::Text) == UIImmediateWidgetFlags::Text;
       bool8 is_button = (element.widget.flags & UIImmediateWidgetFlags::Button) == UIImmediateWidgetFlags::Button;
+      bool8 is_toggle = (element.widget.flags & UIImmediateWidgetFlags::Toggle) == UIImmediateWidgetFlags::Toggle;
       
-      if (is_separator || is_panel || is_button) {
-        Color color = is_panel ? theme.panel_color : theme.button_color;
-        if (is_hovered) {
-          color = is_panel ? theme.panel_color_hover : theme.button_color_hover;
-        }
-        if (is_pressed) {
-          color = is_panel ? theme.panel_color_pressed : theme.button_color_pressed;
-        }
-
-        if (is_separator) {
-          color = theme.separator_color;
-        }
+      if (is_separator || is_panel || is_button || is_toggle) {
+        Color color = GetBackgroundColor(element);
         
         DrawRect(element.layout.rect, color);
         Flush();
       }
 
-      if (is_text || is_button) {
+      if (is_text || is_button || is_toggle) {
         if (theme.text_shadow_enabled) {
           Rect shadow_rect = element.layout.rect;
           shadow_rect.position += theme.text_shadow_offset;
           DrawText(shadow_rect, element.widget.text, theme.font, element.widget.text_alignment, theme.text_shadow_color);  
         }
-        
-        Color color = theme.text_color;
-        if (is_hovered) {
-          color = theme.text_color_hover;
-        }
-        if (is_pressed) {
-          color = theme.text_color_pressed;
-        }
+
+        Color color = GetTextColor(element);
         
         DrawText(element.layout.rect, element.widget.text, theme.font, element.widget.text_alignment, color);
         Flush(AssetManager::GetMaterialPrimitive(MaterialPrimitive::Font), theme.font->GetTexture());
@@ -454,7 +460,98 @@ namespace Hyperion::UI {
       render_frame_context_ui_object.enable_blending = mesh.enable_blending;
     }
   }
+
+  //--------------------------------------------------------------
+  Color UIImmediate::GetBackgroundColor(const UIImmediateElement &element) {
+    Color result = Color::White();
+    
+    UIImmediateTheme &theme = *element.widget.theme;
+    bool8 is_hovered = s_state.hovered_widget == element.id.id;
+    bool8 is_pressed = s_state.pressed_widget == element.id.id;
+
+    bool8 is_separator = (element.widget.flags & UIImmediateWidgetFlags::Separator) == UIImmediateWidgetFlags::Separator;
+    if (is_separator) {
+      result = theme.separator_color;
+    }
+    
+    bool8 is_panel = (element.widget.flags & UIImmediateWidgetFlags::Panel) == UIImmediateWidgetFlags::Panel;
+    if (is_panel) {
+      result = theme.panel_color;
+      if (is_hovered) {
+        result = theme.panel_color_hovered;
+      }
+      if (is_pressed) {
+        result = theme.panel_color_pressed;
+      }
+    }
+    
+    bool8 is_button = (element.widget.flags & UIImmediateWidgetFlags::Button) == UIImmediateWidgetFlags::Button;
+    if (is_button) {
+      result = theme.button_color;
+      if (is_hovered) {
+        result = theme.button_color_hovered;
+      }
+      if (is_pressed) {
+        result = theme.button_color_pressed;
+      }
+    }
+    
+    bool8 is_toggle = (element.widget.flags & UIImmediateWidgetFlags::Toggle) == UIImmediateWidgetFlags::Toggle;
+    if (is_toggle) {
+      if (element.widget.toggled) {
+        result = theme.toggle_toggled_color;
+        if (is_hovered) {
+          result = theme.toggle_toggled_color_hovered;
+        }
+        if (is_pressed) {
+          result = theme.toggle_toggled_color_pressed;
+        }
+      } else {
+        result = theme.toggle_normal_color;
+        if (is_hovered) {
+          result = theme.toggle_normal_color_hovered;
+        }
+        if (is_pressed) {
+          result = theme.toggle_normal_color_pressed;
+        }
+      }
+    }
+
+    return result;
+  }
   
+  //--------------------------------------------------------------
+  Color UIImmediate::GetTextColor(const UIImmediateElement &element) {
+    Color result = Color::White();
+    
+    UIImmediateTheme &theme = *element.widget.theme;
+    bool8 is_hovered = s_state.hovered_widget == element.id.id;
+    bool8 is_pressed = s_state.pressed_widget == element.id.id;
+
+    bool8 is_text = (element.widget.flags & UIImmediateWidgetFlags::Text) == UIImmediateWidgetFlags::Text;
+    bool8 is_button = (element.widget.flags & UIImmediateWidgetFlags::Button) == UIImmediateWidgetFlags::Button;
+    if (is_text || is_button) {
+      result = theme.text_color;
+      if (is_hovered) {
+        result = theme.text_color_hovered;
+      }
+      if (is_pressed) {
+        result = theme.text_color_pressed;
+      }
+    }
+    
+    bool8 is_toggle = (element.widget.flags & UIImmediateWidgetFlags::Toggle) == UIImmediateWidgetFlags::Toggle;
+    if (is_toggle) {
+      if (element.widget.toggled) {
+        result = theme.toggle_toggled_text_color;
+      } else {
+        result = theme.text_color;
+      }
+    }
+
+    return result;
+  }
+
   //--------------------------------------------------------------
   void UIImmediate::DrawRect(Rect rect, Color color) {
     Vector2 min = rect.GetMin();
@@ -506,7 +603,7 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
-  LayoutAxes UIImmediate::GetAxesForParentLayout(UIImmediateElement &element) {
+  LayoutAxes UIImmediate::GetAxesForParentLayout(const UIImmediateElement &element) {
     LayoutAxes axes = { };
     switch (element.hierarchy.parent->layout.child_layout) {
       case ChildLayout::Horizontal: {

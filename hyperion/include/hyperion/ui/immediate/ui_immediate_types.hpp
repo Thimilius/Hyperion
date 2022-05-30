@@ -36,17 +36,25 @@ namespace Hyperion::UI {
     Color separator_color = Color::White();
       
     Color panel_color = Color::Grey();
-    Color panel_color_hover = Color::Grey();
+    Color panel_color_hovered = Color::Grey();
     Color panel_color_pressed = Color::Grey();
 
     Color text_color = Color::White();
-    Color text_color_hover = Color::White();
+    Color text_color_hovered = Color::White();
     Color text_color_pressed = Color::White();
     
     Color button_color = Color::Grey();
-    Color button_color_hover = Color::Grey();
+    Color button_color_hovered = Color::Grey();
     Color button_color_pressed = Color::Grey();
 
+    Color toggle_normal_color = Color::Grey();
+    Color toggle_normal_color_hovered = Color::Grey();
+    Color toggle_normal_color_pressed = Color::Grey();
+    Color toggle_toggled_color = Color::Grey();
+    Color toggle_toggled_color_hovered = Color::Grey();
+    Color toggle_toggled_color_pressed = Color::Grey();
+    Color toggle_toggled_text_color = Color::White();
+    
     bool8 text_shadow_enabled = true;
     Color text_shadow_color = Color::Black();
     Vector2 text_shadow_offset = Vector2(1.0f, -1.0f);
@@ -65,6 +73,7 @@ namespace Hyperion::UI {
     Panel = BIT(4),
     Text = BIT(5),
     Button = BIT(6),
+    Toggle = BIT(7),
   };
   HYP_CREATE_ENUM_FLAG_OPERATORS(UIImmediateWidgetFlags)
 
@@ -109,6 +118,8 @@ namespace Hyperion::UI {
       
       String text = String();
       TextAlignment text_alignment = TextAlignment::TopLeft;
+
+      bool8 toggled = false;
     } widget;
   };
 
