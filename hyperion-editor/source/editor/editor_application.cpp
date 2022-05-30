@@ -158,7 +158,83 @@ namespace Hyperion::Editor {
       UI::Size center_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::AutoFill, 0.0f } };
       UI::UIImmediate::BeginPanel("Center Panel", center_panel_size);
       {
+        UI::Size left_panel_size[2] = { { UI::SizeKind::PercentOfParent, 0.3f }, { UI::SizeKind::AutoFill, 0.0f } };
+        UI::UIImmediate::BeginPanel("Left Panel", left_panel_size, UI::ChildLayout::Vertical);
+        {
+          UI::Size upper_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::AutoFill, 0.0f } };
+          UI::UIImmediate::BeginPanel("Upper Panel", upper_panel_size);
+          {
+          
+          }
+          UI::UIImmediate::EndPanel();
+
+          UI::UIImmediate::Separator();
+          
+          UI::Size lower_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::AutoFill, 0.0f } };
+          UI::UIImmediate::BeginPanel("Lower Panel", lower_panel_size);
+          {
+          
+          }
+          UI::UIImmediate::EndPanel();
+        }
+        UI::UIImmediate::EndPanel();
+
+        UI::UIImmediate::Separator();
         
+        UI::Size right_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::AutoFill, 0.0f } };
+        UI::UIImmediate::BeginPanel("Right Panel", right_panel_size, UI::ChildLayout::Vertical);
+        {
+          UI::Size preview_container_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::AutoFill, 0.0f } };
+          UI::UIImmediate::BeginPanel("Preview Container", preview_container_panel_size, UI::ChildLayout::Vertical);
+          {
+            UI::Size preview_header_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::Pixels, 25.0f } };
+            UI::UIImmediate::BeginPanel("Preview Header", preview_header_panel_size);
+            {
+              UI::UIImmediate::FillSpace();
+
+              String stats_format = "FPS: {} ({:.2f}ms)";
+              String stats_text = StringUtils::Format(stats_format, Time::GetFPS(), Time::GetFrameTime());
+              UI::UIImmediate::Text(stats_text);
+            }
+            UI::UIImmediate::EndPanel();
+
+            UI::UIImmediate::Separator();
+          
+            UI::Size preview_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::AutoFill, 0.0f } };
+            UI::UIImmediate::BeginPanel("Preview", preview_panel_size);
+            {
+              
+            }
+            UI::UIImmediate::EndPanel();
+          }
+          UI::UIImmediate::EndPanel();
+
+          UI::UIImmediate::Separator();
+          
+          UI::Size lower_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::PercentOfParent, 0.3f } };
+          UI::UIImmediate::BeginPanel("Lower Panel", lower_panel_size);
+          {
+            UI::Size left_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::AutoFill, 0.0f } };
+            UI::UIImmediate::BeginPanel("Left Panel", left_panel_size);
+            {
+          
+            }
+            UI::UIImmediate::EndPanel();
+
+            UI::UIImmediate::Separator();
+          
+            UI::Size right_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::AutoFill, 0.0f } };
+            UI::UIImmediate::BeginPanel("Right Panel", right_panel_size);
+            {
+              if (UI::UIImmediate::Button("Center Aligned Button").clicked) {
+                HYP_TRACE("CLICKED BUTTON");
+              }
+            }
+            UI::UIImmediate::EndPanel();
+          }
+          UI::UIImmediate::EndPanel();
+        }
+        UI::UIImmediate::EndPanel();
       }
       UI::UIImmediate::EndPanel();
 

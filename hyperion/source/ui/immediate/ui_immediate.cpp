@@ -308,6 +308,15 @@ namespace Hyperion::UI {
           }
         }
         
+        if (element.layout.semantic_size[axis].kind == SizeKind::AutoFill) {
+          if (parent != nullptr) {
+            float32 parent_size = parent->layout.computed_size[axis];
+            float32 computed_size = parent_size - parent->layout.computed_child_size_sum[axis];
+            
+            element.layout.computed_size[axis] = computed_size / static_cast<float32>(parent->layout.fill_child_count);
+          }
+        }
+        
         if (element.layout.semantic_size[axis].kind == SizeKind::PercentOfParent) {
           float32 percent = Math::Clamp01(element.layout.semantic_size[axis].value);
           
@@ -340,11 +349,8 @@ namespace Hyperion::UI {
           UIImmediateElement *parent = element.hierarchy.parent;
           if (parent != nullptr) {
             float32 parent_size = parent->layout.computed_size[axis];
-            float32 computed_size = parent_size - parent->layout.computed_child_size_sum[axis];  
-
-            if ((element.widget.flags & UIImmediateWidgetFlags::Empty) != UIImmediateWidgetFlags::Empty) {
-              
-            }
+            float32 computed_size = parent_size - parent->layout.computed_child_size_sum[axis];
+            
             element.layout.computed_size[axis] = computed_size / static_cast<float32>(parent->layout.fill_child_count);
           }
         }
@@ -356,45 +362,45 @@ namespace Hyperion::UI {
     
     // Last step: Calculate relative position based on parents child layout.
     IterateHierarchy(s_state.root_element, [](UIImmediateElement &element) {
-      float32 position[2] = { };
+      float32 relative_position[2] = { };
 
-      // Position ourself next to our previous sibling depending on layout axis.
+      // Position ourself relative to our previous sibling depending on the layout axis of our parent.
       UIImmediateElement *parent = element.hierarchy.parent;
       bool8 element_is_empty = (element.widget.flags & UIImmediateWidgetFlags::Empty) == UIImmediateWidgetFlags::Empty;
       if (parent != nullptr && !element_is_empty) {
         switch (parent->layout.child_layout) {
           case ChildLayout::Horizontal: {
-            position[0] += parent->layout.child_layout_offset;
+            relative_position[0] += parent->layout.child_layout_offset;
             parent->layout.child_layout_offset += element.layout.computed_size[0];
             break;
           }
           case ChildLayout::Vertical: {
-            position[1] += parent->layout.child_layout_offset;
+            relative_position[1] += parent->layout.child_layout_offset;
             parent->layout.child_layout_offset -= element.layout.computed_size[1];
             break;
           }
           default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
         }
       }
-      
-      element.layout.computed_relative_position[0] = position[0];
-      element.layout.computed_relative_position[1] = position[1];
 
-      // Move to position us properly based on our size.
+      float32 absolute_position[2] = { relative_position[0], relative_position[1] };
+      if (parent != nullptr) {
+        absolute_position[0] += parent->layout.computed_absolute_position[0];
+        absolute_position[1] += parent->layout.computed_absolute_position[1];
+      }
+      element.layout.computed_absolute_position[0] = absolute_position[0];
+      element.layout.computed_absolute_position[1] = absolute_position[1];
+      
+      // Properly position us in the correct coordinate space.
       Vector2 rect_size = Vector2(element.layout.computed_size[0], element.layout.computed_size[1]);
-      Vector2 rect_position = Vector2(position[0], position[1]);
+      Vector2 rect_position = Vector2(absolute_position[0], absolute_position[1]);
 
       // Position (0, 0) is at the center of the screen.
       // So every element gets an offset to position it at the top left corner of the screen.
       rect_position.x -= static_cast<float32>(Display::GetWidth()) / 2.0f;
       rect_position.y += static_cast<float32>(Display::GetHeight()) / 2.0f;
-      
-      // Take into account the position of our parent.
-      // Its position is already fully calculated as we are traversing in pre-order.
-      if (parent != nullptr) {
-        rect_position.x += parent->layout.computed_relative_position[0];
-        rect_position.y += parent->layout.computed_relative_position[1];
-      }
+
+      // Every rect is positioned relative to the bottom left corner.
       rect_position.y -= rect_size.y;
       
       element.layout.rect = Rect(rect_position, rect_size);
@@ -432,6 +438,12 @@ namespace Hyperion::UI {
       }
 
       if (is_text || is_button) {
+        if (theme.text_shadow_enabled) {
+          Rect shadow_rect = element.layout.rect;
+          shadow_rect.position += theme.text_shadow_offset;
+          DrawText(shadow_rect, element.widget.text, theme.font, element.widget.text_alignment, theme.text_shadow_color);  
+        }
+        
         Color color = theme.text_color;
         if (is_hovered) {
           color = theme.text_color_hover;

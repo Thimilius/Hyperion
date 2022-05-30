@@ -94,6 +94,7 @@ namespace Hyperion::UI {
 
       float32 computed_size[2] = { };
       float32 computed_relative_position[2] = { };
+      float32 computed_absolute_position[2] = { };
 
       uint32 fill_child_count = { };
       float32 computed_child_size_sum[2] = { };
