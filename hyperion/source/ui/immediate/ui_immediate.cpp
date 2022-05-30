@@ -10,6 +10,7 @@
 #include "hyperion/assets/utilities/text_mesh_generator.hpp"
 #include "hyperion/core/app/display.hpp"
 #include "hyperion/render/render_engine.hpp"
+#include "hyperion/ui/ui_element.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::UI {
@@ -260,6 +261,17 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
+  void UIImmediate::Image(Texture *texture, Size size[2], bool8 enable_blending) {
+    UIImmediateElement &element = CreateTemporaryElement(UIImmediateWidgetFlags::Image);
+    
+    element.layout.semantic_size[0] = size[0];
+    element.layout.semantic_size[1] = size[1];
+
+    element.widget.texture = texture;
+    element.widget.enable_blending = enable_blending;
+  }
+
+  //--------------------------------------------------------------
   void UIImmediate::Layout() {
     // Step 1: Calculate all independent size kinds likes pixels and text content.
     IterateHierarchy(s_state.root_element, [](UIImmediateElement &element) {
@@ -419,12 +431,17 @@ namespace Hyperion::UI {
       bool8 is_text = (element.widget.flags & UIImmediateWidgetFlags::Text) == UIImmediateWidgetFlags::Text;
       bool8 is_button = (element.widget.flags & UIImmediateWidgetFlags::Button) == UIImmediateWidgetFlags::Button;
       bool8 is_toggle = (element.widget.flags & UIImmediateWidgetFlags::Toggle) == UIImmediateWidgetFlags::Toggle;
+      bool8 is_image = (element.widget.flags & UIImmediateWidgetFlags::Image) == UIImmediateWidgetFlags::Image;
       
-      if (is_separator || is_panel || is_button || is_toggle) {
+      if (is_separator || is_panel || is_button || is_toggle || is_image) {
         Color color = GetBackgroundColor(element);
         
         DrawRect(element.layout.rect, color);
-        Flush();
+        if (is_image) {
+          Flush(AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI), element.widget.texture);
+        } else {
+          Flush();
+        }
       }
 
       if (is_text || is_button || is_toggle) {

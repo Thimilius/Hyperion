@@ -74,6 +74,7 @@ namespace Hyperion::UI {
     Text = BIT(5),
     Button = BIT(6),
     Toggle = BIT(7),
+    Image = BIT(8)
   };
   HYP_CREATE_ENUM_FLAG_OPERATORS(UIImmediateWidgetFlags)
 
@@ -120,6 +121,10 @@ namespace Hyperion::UI {
       TextAlignment text_alignment = TextAlignment::TopLeft;
 
       bool8 toggled = false;
+
+      Texture *texture = nullptr;
+      bool8 enable_blending = true;
+      uint32 render_attachment_index = 0;
     } widget;
   };
 

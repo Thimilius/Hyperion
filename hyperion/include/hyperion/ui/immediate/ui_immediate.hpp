@@ -51,6 +51,7 @@ namespace Hyperion::UI {
     );
     static UIImmediateInteraction Button(const String &text, bool8 fit_to_parent = false, UIImmediateTheme *theme = GetDefaultTheme());
     static UIImmediateInteraction TextToggle(bool8 &value, const String &text, bool8 fit_to_parent = false, UIImmediateTheme *theme = GetDefaultTheme());
+    static void Image(Texture *texture, Size size[2], bool8 enable_blending = true);
   private:
     UIImmediate() = delete;
     ~UIImmediate() = delete;

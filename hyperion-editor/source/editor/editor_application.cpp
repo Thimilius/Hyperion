@@ -229,7 +229,8 @@ namespace Hyperion::Editor {
             UI::Size preview_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::AutoFill, 0.0f } };
             UI::UIImmediate::BeginPanel("Preview", preview_panel_size);
             {
-              
+              Texture *texture = GetRenderPipeline()->GetEditorTargetRenderTexture();
+              UI::UIImmediate::Image(texture, preview_panel_size, false);
             }
             UI::UIImmediate::EndPanel();
           }
