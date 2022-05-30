@@ -110,7 +110,23 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
+  void UIImmediate::PushId(const String &text) {
+    s_state.id_stack.Add(text);
+  }
+
+  //--------------------------------------------------------------
+  void UIImmediate::PopId() {
+    if (s_state.id_stack.GetLength() > 0) {
+      s_state.id_stack.RemoveLast();
+    } else {
+      HYP_LOG_ERROR("UI", "The id stack is already empty!");
+    }
+  }
+
+  //--------------------------------------------------------------
   void UIImmediate::BeginPanel(const String &text, Size size[2], ChildLayout child_layout, UIImmediateTheme *theme) {
+    PushId(text);
+    
     UIImmediateElement &element = GetOrCreateElement(GetId(text), UIImmediateWidgetFlags::Panel);
 
     element.layout.semantic_size[0] = size[0];
@@ -124,6 +140,7 @@ namespace Hyperion::UI {
 
   //--------------------------------------------------------------
   void UIImmediate::EndPanel() {
+    PopId();
     s_state.element_stack.RemoveLast();
   }
 
@@ -500,10 +517,15 @@ namespace Hyperion::UI {
 
   //--------------------------------------------------------------
   UIImmediateId UIImmediate::GetId(const String &text) {
-    // NOTE: At some point we will need something more robust.
-    // Like a id stack system of some sort.
-    // Or filtering out what goes from the text into the hash with '##'.
-    uint64 id = std::hash<String>()(text);
+    // This is not really performant but works for now.
+    String final_text;
+    for (const String &id_stack_entry : s_state.id_stack) {
+      final_text += id_stack_entry;
+    }
+    final_text += text;
+    
+    // NOTE: We should allow filtering out what goes from the text into the hash with '##' or similar.
+    uint64 id = std::hash<String>()(final_text);
     return id;
   }
   

@@ -25,6 +25,9 @@ namespace Hyperion::UI {
     static UIImmediateTheme *CreateTheme(const String &name);
     static UIImmediateTheme *GetTheme(const String &name);
     static void DestroyTheme(const String &name);
+
+    static void PushId(const String &text);
+    static void PopId();
     
     static void BeginPanel(const String &text, Size size[2], ChildLayout child_layout = ChildLayout::Horizontal, UIImmediateTheme *theme = GetDefaultTheme());
     static void EndPanel();

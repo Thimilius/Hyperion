@@ -129,6 +129,8 @@ namespace Hyperion::UI {
     Array<UIImmediateElement *> element_stack;
     Map<UIImmediateId, UIImmediateElement> persistent_elements;
     Map<UIImmediateId, UIImmediateElement> temporary_elements;
+
+    Array<String> id_stack;
   };
 
 }
