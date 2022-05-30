@@ -474,7 +474,8 @@ namespace Hyperion::UI {
 
   //--------------------------------------------------------------
   void UIImmediate::Render() {
-    IterateHierarchy(s_state.root_element, [](UIImmediateElement &element) {
+    bool8 last_draw_was_a_simple_rect = false;
+    IterateHierarchy(s_state.root_element, [&last_draw_was_a_simple_rect](UIImmediateElement &element) {
       const UIImmediateTheme &theme = *element.widget.theme;
 
       bool8 is_separator = (element.widget.flags & UIImmediateWidgetFlags::Separator) == UIImmediateWidgetFlags::Separator; 
@@ -483,19 +484,29 @@ namespace Hyperion::UI {
       bool8 is_button = (element.widget.flags & UIImmediateWidgetFlags::Button) == UIImmediateWidgetFlags::Button;
       bool8 is_toggle = (element.widget.flags & UIImmediateWidgetFlags::Toggle) == UIImmediateWidgetFlags::Toggle;
       bool8 is_image = (element.widget.flags & UIImmediateWidgetFlags::Image) == UIImmediateWidgetFlags::Image;
-      
+
       if (is_separator || is_panel || is_button || is_toggle || is_image) {
         Color color = GetBackgroundColor(element);
-        
-        DrawRect(element.layout.rect, color);
+
         if (is_image) {
+          if (last_draw_was_a_simple_rect) {
+            Flush();    
+          }
+          
+          last_draw_was_a_simple_rect = false;
+          DrawRect(element.layout.rect, color);
           Flush(AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI), element.widget.texture);
         } else {
-          Flush();
+          DrawRect(element.layout.rect, color);
+          last_draw_was_a_simple_rect = true;
         }
       }
 
       if (is_text || is_button || is_toggle) {
+        if (last_draw_was_a_simple_rect) {
+          Flush();    
+        }
+        
         if (theme.text_shadow_enabled) {
           Rect shadow_rect = element.layout.rect;
           shadow_rect.position += theme.text_shadow_offset;
@@ -506,8 +517,10 @@ namespace Hyperion::UI {
         
         DrawText(element.layout.rect, element.widget.text, theme.font, element.widget.text_alignment, color);
         Flush(AssetManager::GetMaterialPrimitive(MaterialPrimitive::Font), theme.font->GetTexture());
+        last_draw_was_a_simple_rect = false;
       }
     });
+    Flush();
     
     Rendering::RenderFrameContext &render_frame_context = Rendering::RenderEngine::GetMainRenderFrame()->GetContext();
     for (UIImmediateMesh mesh : s_meshes) {
