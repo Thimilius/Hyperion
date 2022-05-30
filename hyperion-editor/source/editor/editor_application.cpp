@@ -97,33 +97,13 @@ namespace Hyperion::Editor {
     
     WorldManager::SetActiveWorld(s_world);
 
-    //EditorUI::Initialize();
+    EditorUI::Initialize();
     EditorCamera::Initialize();
-
-    UI::UIImmediateTheme *theme = UI::UIImmediate::GetDefaultTheme();
-    theme->separator_color = EditorStyle::COLOR_HIGHLIGHT;
-    theme->panel_color = EditorStyle::COLOR_NORMAL;
-    theme->panel_color_hovered = EditorStyle::COLOR_NORMAL;
-    theme->panel_color_pressed = EditorStyle::COLOR_NORMAL;
-    theme->button_color = EditorStyle::COLOR_NORMAL_DARK;
-    theme->button_color_hovered = EditorStyle::COLOR_HIGHLIGHT;
-    theme->button_color_pressed = EditorStyle::COLOR_HIGHLIGHT;
-    theme->toggle_normal_color = EditorStyle::COLOR_NORMAL_DARK;
-    theme->toggle_normal_color_hovered = EditorStyle::COLOR_NORMAL_DARK;
-    theme->toggle_normal_color_pressed = EditorStyle::COLOR_NORMAL_DARK;
-    theme->toggle_toggled_color = EditorStyle::COLOR_HIGHLIGHT;
-    theme->toggle_toggled_color_hovered = EditorStyle::COLOR_HIGHLIGHT;
-    theme->toggle_toggled_color_pressed = EditorStyle::COLOR_HIGHLIGHT;
-    theme->toggle_toggled_text_color = Color::White();
-    theme->font = FontLoader::LoadFont("data/fonts/space_mono_regular.ttf", EditorStyle::FONT_SIZE, FontCharacterSet::LatinSupplement);
-
-    UI::UIImmediateTheme *icon_theme = UI::UIImmediate::CreateTheme("Icon");
-    icon_theme->font = FontLoader::LoadFont("data/fonts/font_awesome_solid.otf", EditorStyle::FONT_SIZE, FontCharacterSet::All);
   }
 
   //--------------------------------------------------------------
   void EditorApplication::OnUpdate(float32 delta_time) {
-    //EditorUI::Update();
+    EditorUI::Update();
     EditorCamera::Update(delta_time);
 
     if (Input::IsKeyHold(KeyCode::Control) && Input::IsKeyDown(KeyCode::W)) {
@@ -139,140 +119,6 @@ namespace Hyperion::Editor {
         ExitRuntime();
       }
     }
-
-    UI::UIImmediateTheme *icon_theme = UI::UIImmediate::GetTheme("Icon");
-    
-    UI::UIImmediate::Begin();
-    {
-      UI::Size header_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::Pixels, 25.0f } };
-      UI::UIImmediate::BeginPanel("Header Panel", header_panel_size);
-      {
-        UI::UIImmediate::FillSpace();
-        
-        UI::UIImmediate::BeginCenter();
-        {
-          
-        }
-        UI::UIImmediate::EndCenter();
-      }
-      UI::UIImmediate::EndPanel();
-
-      UI::UIImmediate::Separator();
-      
-      UI::Size center_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::AutoFill, 0.0f } };
-      UI::UIImmediate::BeginPanel("Center Panel", center_panel_size);
-      {
-        UI::Size left_panel_size[2] = { { UI::SizeKind::PercentOfParent, 0.3f }, { UI::SizeKind::AutoFill, 0.0f } };
-        UI::UIImmediate::BeginPanel("Left Panel", left_panel_size, UI::ChildLayout::Vertical);
-        {
-          UI::Size upper_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::AutoFill, 0.0f } };
-          UI::UIImmediate::BeginPanel("Upper Panel", upper_panel_size);
-          {
-          
-          }
-          UI::UIImmediate::EndPanel();
-
-          UI::UIImmediate::Separator();
-          
-          UI::Size lower_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::AutoFill, 0.0f } };
-          UI::UIImmediate::BeginPanel("Lower Panel", lower_panel_size);
-          {
-          
-          }
-          UI::UIImmediate::EndPanel();
-        }
-        UI::UIImmediate::EndPanel();
-
-        UI::UIImmediate::Separator();
-        
-        UI::Size right_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::AutoFill, 0.0f } };
-        UI::UIImmediate::BeginPanel("Right Panel", right_panel_size, UI::ChildLayout::Vertical);
-        {
-          UI::Size preview_container_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::AutoFill, 0.0f } };
-          UI::UIImmediate::BeginPanel("Preview Container", preview_container_panel_size, UI::ChildLayout::Vertical);
-          {
-            UI::Size preview_header_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::Pixels, 25.0f } };
-            UI::UIImmediate::BeginPanel("Preview Header", preview_header_panel_size);
-            {
-              bool8 is_vsync = Rendering::RenderEngine::GetVSyncMode() != Rendering::VSyncMode::DontSync;
-              if (UI::UIImmediate::TextToggle(is_vsync, "\uf108", true, icon_theme).clicked) {
-                Rendering::RenderEngine::SetVSyncMode(
-                  Rendering::RenderEngine::GetVSyncMode() == Rendering::VSyncMode::DontSync
-                    ? Rendering::VSyncMode::EveryVBlank
-                    : Rendering::VSyncMode::DontSync
-                );
-              }
-              bool8 should_draw_grid = Rendering::RenderGizmos::GetShouldDrawGrid();
-              if (UI::UIImmediate::TextToggle(should_draw_grid, "\uf850", true, icon_theme).clicked) {
-                Rendering::RenderGizmos::SetShouldDrawGrid(should_draw_grid);
-              }
-              bool8 should_draw_bounds = Rendering::RenderGizmos::GetShouldDrawAllBounds();
-              if (UI::UIImmediate::TextToggle(should_draw_bounds, "\uf247", true, icon_theme).clicked) {
-                Rendering::RenderGizmos::SetShouldDrawAllBounds(should_draw_bounds);
-              }
-              if (UI::UIImmediate::Button("\uf03d", true, icon_theme).clicked) {
-                EditorCamera::Reset();
-              }
-              
-              UI::UIImmediate::FillSpace();
-
-              String stats_format = "FPS: {} ({:.2f}ms)";
-              String stats_text = StringUtils::Format(stats_format, Time::GetFPS(), Time::GetFrameTime());
-              UI::UIImmediate::Text(stats_text, UI::TextAlignment::MiddleCenter, true);
-
-              UI::UIImmediate::Space(UI::SizeKind::Pixels, 5.0f);
-            }
-            UI::UIImmediate::EndPanel();
-
-            UI::UIImmediate::Separator();
-          
-            UI::Size preview_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::AutoFill, 0.0f } };
-            UI::UIImmediate::BeginPanel("Preview", preview_panel_size);
-            {
-              Texture *texture = GetRenderPipeline()->GetEditorTargetRenderTexture();
-              UI::UIImmediate::Image(texture, preview_panel_size, false);
-            }
-            UI::UIImmediate::EndPanel();
-          }
-          UI::UIImmediate::EndPanel();
-
-          UI::UIImmediate::Separator();
-          
-          UI::Size lower_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::PercentOfParent, 0.3f } };
-          UI::UIImmediate::BeginPanel("Lower Panel", lower_panel_size);
-          {
-            UI::Size left_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::AutoFill, 0.0f } };
-            UI::UIImmediate::BeginPanel("Left Panel", left_panel_size);
-            {
-          
-            }
-            UI::UIImmediate::EndPanel();
-
-            UI::UIImmediate::Separator();
-          
-            UI::Size right_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::AutoFill, 0.0f } };
-            UI::UIImmediate::BeginPanel("Right Panel", right_panel_size);
-            {
-              
-            }
-            UI::UIImmediate::EndPanel();
-          }
-          UI::UIImmediate::EndPanel();
-        }
-        UI::UIImmediate::EndPanel();
-      }
-      UI::UIImmediate::EndPanel();
-
-      UI::UIImmediate::Separator();
-      
-      UI::Size footer_panel_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::Pixels, 25.0f } };
-      UI::UIImmediate::BeginPanel("Footer Panel", footer_panel_size);
-      {
-        
-      }
-      UI::UIImmediate::EndPanel();
-    }
-    UI::UIImmediate::End();
   }
 
   //--------------------------------------------------------------

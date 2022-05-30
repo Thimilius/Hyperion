@@ -67,13 +67,6 @@ namespace Hyperion::Editor {
       m_last_mouse_position = current_mouse_position;
     }
 
-    {
-      RectInt preview_rect = EditorUI::GetPreviewRect();
-      float32 viewport_clipping_height = preview_rect.height / static_cast<float32>(Display::GetHeight());
-      s_camera.viewport_clipping.width = preview_rect.width / static_cast<float32>(Display::GetWidth());
-      s_camera.viewport_clipping.height = viewport_clipping_height;
-    }
-
     if (Input::IsKeyDown(KeyCode::R)) {
       Reset();
     }
@@ -98,7 +91,10 @@ namespace Hyperion::Editor {
 
   //--------------------------------------------------------------
   Rendering::RenderFrameContextCamera EditorCamera::GetContextCamera() {
-    Rendering::CameraUtilities::RecalculateMatrices(&s_camera, &s_transform);
+    RectInt preview_rect = EditorUI::GetPreviewRect();
+    Rendering::CameraViewport viewport = { 0, 0, static_cast<uint32>(preview_rect.width), static_cast<uint32>(preview_rect.height) };
+    
+    Rendering::CameraUtilities::RecalculateMatrices(&s_camera, &s_transform, viewport);
 
     Rendering::RenderFrameContextCamera render_frame_context_camera;
     render_frame_context_camera.projection_mode = s_camera.projection_mode;
@@ -118,7 +114,7 @@ namespace Hyperion::Editor {
     render_frame_context_camera.inverse_projection_matrix = s_camera.projection_matrix.Inverted();
     render_frame_context_camera.view_projection_matrix = s_camera.view_projection_matrix;
     render_frame_context_camera.inverse_view_projection_matrix = s_camera.view_projection_matrix.Inverted();
-    render_frame_context_camera.viewport = Rendering::CameraUtilities::CalculateViewportFromClipping(s_camera.viewport_clipping);
+    render_frame_context_camera.viewport = viewport;
 
     return render_frame_context_camera;
   }

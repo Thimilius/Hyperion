@@ -81,6 +81,11 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void CameraUtilities::RecalculateMatrices(CameraComponent *camera, DerivedTransformComponent *derived_transform) {
+    RecalculateMatrices(camera, derived_transform, CalculateViewportFromClipping(camera->viewport_clipping));
+  }
+
+  //--------------------------------------------------------------
+  void CameraUtilities::RecalculateMatrices(CameraComponent *camera, DerivedTransformComponent *derived_transform, CameraViewport viewport) {
     Vector3 position = derived_transform->position;
     Vector3 up = TransformUtilities::GetUp(derived_transform);
     Vector3 forward = TransformUtilities::GetForward(derived_transform);
@@ -88,7 +93,6 @@ namespace Hyperion::Rendering {
     float32 orthographic_size = camera->orthographic_size;
     float32 near_plane = camera->near_plane;
     float32 far_plane = camera->far_plane;
-    CameraViewport viewport = CalculateViewportFromClipping(camera->viewport_clipping);
     float32 aspect_ratio = static_cast<float32>(viewport.width) / static_cast<float32>(viewport.height);
 
     Matrix4x4 view_matrix = Matrix4x4::LookAt(position, position + forward, up);
@@ -104,11 +108,12 @@ namespace Hyperion::Rendering {
           orthographic_size * aspect_ratio,
           -orthographic_size, orthographic_size,
           near_plane,
-          far_plane);
+          far_plane
+        );
         break;
       }
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-        break;
+      break;
     }
     Matrix4x4 view_projection_matrix = projection_matrix * view_matrix;
 
@@ -125,7 +130,7 @@ namespace Hyperion::Rendering {
     uint32 display_width = Display::GetWidth();
     uint32 display_height = Display::GetHeight();
 
-    CameraViewport viewport;
+    CameraViewport viewport = { };
     viewport.x = static_cast<uint32>(Math::Clamp01(viewport_clipping.x) * display_width);
     viewport.y = static_cast<uint32>(Math::Clamp01(viewport_clipping.y) * display_height);
     viewport.width = static_cast<uint32>(Math::Clamp01(viewport_clipping.width) * display_width);

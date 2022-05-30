@@ -3,18 +3,15 @@
 
 //---------------------- Library Includes ----------------------
 #include <hyperion/assets/asset_manager.hpp>
-#include <hyperion/core/app/input.hpp>
 #include <hyperion/core/app/display.hpp>
 #include <hyperion/core/math/math.hpp>
 #include <hyperion/ecs/component/components/render_components.hpp>
-#include <hyperion/ecs/world/world.hpp>
 #include <hyperion/render/render_engine.hpp>
 #include <hyperion/render/pipelines/forward/forward_render_pipeline.hpp>
 #include <hyperion/ui/ui_element.hpp>
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/editor/editor_camera.hpp"
-#include "hyperion/editor/editor_selection.hpp"
 #include "hyperion/editor/editor_ui.hpp"
 
 //------------------------- Namespaces -------------------------
@@ -100,41 +97,6 @@ namespace Hyperion::Editor {
       RenderCommandBuffer command_buffer;
       command_buffer.SetRenderTarget(RenderTargetId::Default());
       render_frame->ExecuteCommandBuffer(command_buffer);
-    }
-
-    if (Input::IsMouseButtonUp(MouseButtonCode::Left)) {
-      Vector2 mouse_position = Input::GetMousePosition().ToFloat();
-      Vector2 ui_space_point = UI::UIElement::ScreenPointToUISpacePoint(mouse_position);
-
-      UI::UIElement *preview_element = EditorUI::GetPreviewElement();
-      if (preview_element && preview_element->ContainsScreenPoint(mouse_position)) {
-        render_frame->DrawObjectIds(m_object_ids_render_texture->GetRenderTargetId());
-
-        Rect rect = EditorUI::GetPreviewElement()->GetWorldRect();
-        Vector2 point = ui_space_point;
-        point.x -= rect.x;
-        point.y -= rect.y;
-        point.x = Math::Clamp(point.x, 0.0f, rect.width - 1);
-        point.y = Math::Clamp(point.y, 0.0f, rect.height - 1);
-
-        RectInt region;
-        region.position = Vector2Int(static_cast<int32>(point.x), static_cast<int32>(point.y));
-        region.size = Vector2Int(1, 1);
-
-        RenderCommandBuffer command_buffer;
-        command_buffer.RequestAsyncReadback(m_object_ids_render_texture->GetRenderTargetId(), 0, region, [](auto &result) {
-          const uint32 *data = reinterpret_cast<const uint32 *>(result.data.GetData());
-          if (result.data.GetLength() >= 4) {
-            uint32 id = *data;
-            if (id == UINT32_MAX) {
-              EditorSelection::Select(EntityId::EMPTY);
-            } else {
-              EditorSelection::Select(EntityUtilities::CreateFromSmallId(id));
-            }
-          }
-        });
-        render_frame->ExecuteCommandBuffer(command_buffer);
-      }
     }
 
     render_frame->DrawEditorUI();

@@ -111,6 +111,20 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
+  UIImmediateId UIImmediate::GetId(const String &text) {
+    // This is not really performant but works for now.
+    String final_text;
+    for (const String &id_stack_entry : s_state.id_stack) {
+      final_text += id_stack_entry;
+    }
+    final_text += text;
+    
+    // NOTE: We should allow filtering out what goes from the text into the hash with '##' or similar.
+    uint64 id = std::hash<String>()(final_text);
+    return id;
+  }
+  
+  //--------------------------------------------------------------
   void UIImmediate::PushId(const String &text) {
     s_state.id_stack.Add(text);
   }
@@ -121,6 +135,16 @@ namespace Hyperion::UI {
       s_state.id_stack.RemoveLast();
     } else {
       HYP_LOG_ERROR("UI", "The id stack is already empty!");
+    }
+  }
+
+  //--------------------------------------------------------------
+  UIImmediateElement *UIImmediate::GetElement(UIImmediateId id) {
+    auto it = s_state.persistent_elements.Find(id);
+    if (it == s_state.persistent_elements.end()) {
+      return nullptr;
+    } else {
+      return &it->second;
     }
   }
 
@@ -261,8 +285,8 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
-  void UIImmediate::Image(Texture *texture, Size size[2], bool8 enable_blending) {
-    UIImmediateElement &element = CreateTemporaryElement(UIImmediateWidgetFlags::Image);
+  void UIImmediate::Image(const String &id, Texture *texture, Size size[2], bool8 enable_blending) {
+    UIImmediateElement &element = GetOrCreateElement(GetId(id), UIImmediateWidgetFlags::Image);
     
     element.layout.semantic_size[0] = size[0];
     element.layout.semantic_size[1] = size[1];
@@ -302,7 +326,7 @@ namespace Hyperion::UI {
       calculate_size(element, 0);
       calculate_size(element, 1);
     });
-
+    
     // Step 2: Calculate all upwards dependent sizes like percentage of parent.
     IterateHierarchy(s_state.root_element, [](UIImmediateElement &element) {
       auto calculate_size = [](UIImmediateElement &element, uint32 axis) {
@@ -636,20 +660,6 @@ namespace Hyperion::UI {
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
     }
     return axes;
-  }
-  
-  //--------------------------------------------------------------
-  UIImmediateId UIImmediate::GetId(const String &text) {
-    // This is not really performant but works for now.
-    String final_text;
-    for (const String &id_stack_entry : s_state.id_stack) {
-      final_text += id_stack_entry;
-    }
-    final_text += text;
-    
-    // NOTE: We should allow filtering out what goes from the text into the hash with '##' or similar.
-    uint64 id = std::hash<String>()(final_text);
-    return id;
   }
   
   //--------------------------------------------------------------
