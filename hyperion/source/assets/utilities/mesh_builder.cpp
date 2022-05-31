@@ -119,12 +119,12 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  Mesh *MeshBuilder::CreateMesh() {
+  Mesh *MeshBuilder::CreateMesh(AssetDataAccess data_access) {
     if (IsEmpty()) {
       return nullptr;
     } else {
       Array<SubMesh> sub_meshes = { { Rendering::MeshTopology::Triangles, m_vertex_count, 0, m_index_count, 0 } };
-      return AssetManager::CreateMesh(m_mesh_data, sub_meshes);
+      return AssetManager::CreateMesh(m_mesh_data, sub_meshes, data_access);
     }
   }
 

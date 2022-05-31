@@ -350,6 +350,7 @@ namespace Hyperion::Rendering {
     bool8 has_colors = data.colors.GetLength() > 0;
     bool8 has_texture0 = data.texture0.GetLength() > 0;
 
+    // Create interleaved data for better access on the GPU.
     uint32 vertex_count = static_cast<uint32>(data.positions.GetLength());
     Array<byte> vertices(vertex_count * vertex_format.stride);
     for (uint32 i = 0; i < vertex_count; i++) {
@@ -375,38 +376,50 @@ namespace Hyperion::Rendering {
         index += MeshVertexFormat::VERTEX_ATTRIBUTE_SIZE_TEXTURE0;
       }
     }
+    
+    auto mesh_it = m_meshes.Find(mesh.id);
+    if (mesh_it == m_meshes.end()) {
+      OpenGLMesh opengl_mesh;
+      opengl_mesh.id = mesh.id;
+      opengl_mesh.sub_meshes = std::move(mesh.sub_meshes);
 
-    OpenGLMesh opengl_mesh;
-    opengl_mesh.id = mesh.id;
-    opengl_mesh.sub_meshes = std::move(mesh.sub_meshes);
+      glCreateBuffers(1, &opengl_mesh.vertex_buffer);
+      glNamedBufferData(opengl_mesh.vertex_buffer, vertices.GetLength(), vertices.GetData(), GL_STATIC_DRAW);
 
-    glCreateBuffers(1, &opengl_mesh.vertex_buffer);
-    glNamedBufferData(opengl_mesh.vertex_buffer, vertices.GetLength(), vertices.GetData(), GL_STATIC_DRAW);
+      glCreateBuffers(1, &opengl_mesh.index_buffer);
+      glNamedBufferData(opengl_mesh.index_buffer, data.indices.GetLength() * sizeof(data.indices[0]), data.indices.GetData(), GL_STATIC_DRAW);
+      opengl_mesh.index_count = static_cast<GLsizei>(data.indices.GetLength());
 
-    glCreateBuffers(1, &opengl_mesh.index_buffer);
-    glNamedBufferData(opengl_mesh.index_buffer, data.indices.GetLength() * sizeof(data.indices[0]), data.indices.GetData(), GL_STATIC_DRAW);
-    opengl_mesh.index_count = static_cast<GLsizei>(data.indices.GetLength());
+      GLuint binding_index = 0;
+      GLsizei stride = vertex_format.stride;
+      GLuint relative_offset = 0;
+      glCreateVertexArrays(1, &opengl_mesh.vertex_array);
+      glVertexArrayVertexBuffer(opengl_mesh.vertex_array, binding_index, opengl_mesh.vertex_buffer, 0, stride);
+      glVertexArrayElementBuffer(opengl_mesh.vertex_array, opengl_mesh.index_buffer);
 
-    GLuint binding_index = 0;
-    GLsizei stride = vertex_format.stride;
-    GLuint relative_offset = 0;
-    glCreateVertexArrays(1, &opengl_mesh.vertex_array);
-    glVertexArrayVertexBuffer(opengl_mesh.vertex_array, binding_index, opengl_mesh.vertex_buffer, 0, stride);
-    glVertexArrayElementBuffer(opengl_mesh.vertex_array, opengl_mesh.index_buffer);
+      for (VertexAttribute vertex_attribute : vertex_format.attributes) {
+        GLuint attribute_index = OpenGLUtilities::GetAttributeIndexForVertextAttributeSize(vertex_attribute.kind);
+        GLint size = vertex_attribute.dimension;
+        GLenum type = OpenGLUtilities::GetVertexAttributeType(vertex_attribute.type);
 
-    for (VertexAttribute vertex_attribute : vertex_format.attributes) {
-      GLuint attribute_index = OpenGLUtilities::GetAttributeIndexForVertextAttributeSize(vertex_attribute.kind);
-      GLint size = vertex_attribute.dimension;
-      GLenum type = OpenGLUtilities::GetVertexAttributeType(vertex_attribute.type);
+        glEnableVertexArrayAttrib(opengl_mesh.vertex_array, attribute_index);
+        glVertexArrayAttribFormat(opengl_mesh.vertex_array, attribute_index, size, type, false, relative_offset);
+        glVertexArrayAttribBinding(opengl_mesh.vertex_array, attribute_index, binding_index);
 
-      glEnableVertexArrayAttrib(opengl_mesh.vertex_array, attribute_index);
-      glVertexArrayAttribFormat(opengl_mesh.vertex_array, attribute_index, size, type, false, relative_offset);
-      glVertexArrayAttribBinding(opengl_mesh.vertex_array, attribute_index, binding_index);
+        relative_offset += OpenGLUtilities::GetVertexAttributeSizeForVertexAttribute(vertex_attribute.type, vertex_attribute.dimension);
+      }
 
-      relative_offset += OpenGLUtilities::GetVertexAttributeSizeForVertexAttribute(vertex_attribute.type, vertex_attribute.dimension);
+      m_meshes.Insert(mesh.id, opengl_mesh);
+    } else {
+      // NOTE: Updating of an existing mesh is currently very restricted.
+      // We assume that the new data we get is the same size as before and that the vertex format did not change.
+
+      OpenGLMesh &opengl_mesh = mesh_it->second;
+      opengl_mesh.sub_meshes = std::move(mesh.sub_meshes);
+
+      glNamedBufferSubData(opengl_mesh.vertex_buffer, 0, vertices.GetLength(), vertices.GetData());
+      glNamedBufferSubData(opengl_mesh.index_buffer, 0, data.indices.GetLength() * sizeof(data.indices[0]), data.indices.GetData());
     }
-
-    m_meshes.Insert(mesh.id, opengl_mesh);
   }
 
   //--------------------------------------------------------------

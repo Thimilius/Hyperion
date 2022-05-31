@@ -44,6 +44,10 @@ namespace Hyperion {
     bool8 has_colors = data.colors.GetLength() > 0;
     bool8 has_texture0 = data.texture0.GetLength() > 0;
 
+    // TODO: We should check/validate if the vertex format changed when setting new data for a mesh. 
+
+    m_vertex_format.attributes.Clear();
+    
     m_vertex_format.attributes.Add({ VertexAttributeKind::Position, VertexAttributeType::Float32, 3 });
     uint32 stride = MeshVertexFormat::VERTEX_ATTRIBUTE_SIZE_POSITION;
 

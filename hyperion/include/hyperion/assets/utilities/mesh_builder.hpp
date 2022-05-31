@@ -27,7 +27,7 @@ namespace Hyperion {
     void Transform(const Matrix4x4 &transformation);
     void TransformAndAlignPixels(const Matrix4x4 &transformation, Vector2Int alignment_size);
 
-    Mesh *CreateMesh();
+    Mesh *CreateMesh(AssetDataAccess data_access = AssetDataAccess::None);
     void SetToMesh(Mesh *mesh);
 
     void Clear();
