@@ -24,6 +24,7 @@ namespace Hyperion::Editor {
         }
       }
     }
+    static void Deselect() { Select(EntityId::EMPTY); }
 
     static void RegisterSelectionCallback(const EditorSelectionCallback &callback) { s_callbacks.Add(callback); }
     static void UnregisterSelectionCallback(const EditorSelectionCallback &callback) { s_callbacks.Remove(callback); }

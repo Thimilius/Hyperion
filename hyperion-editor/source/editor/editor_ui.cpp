@@ -73,7 +73,7 @@ namespace Hyperion::Editor {
     if (Input::IsKeyDown(KeyCode::Delete)) {
       if (EditorSelection::HasSelection()) {
         manager->DestroyEntity(EditorSelection::GetSelection());
-        EditorSelection::Select(EntityId::EMPTY);
+        EditorSelection::Deselect();
       }
     }
     
@@ -109,7 +109,7 @@ namespace Hyperion::Editor {
               if (UIImmediate::Button("\uf1f8", FitLayout::LayoutAxis, icon_theme).clicked) {
                 if (EditorSelection::HasSelection()) {
                   manager->DestroyEntity(EditorSelection::GetSelection());
-                  EditorSelection::Select(EntityId::EMPTY);
+                  EditorSelection::Deselect();
                 }
               }
             }
@@ -128,7 +128,7 @@ namespace Hyperion::Editor {
               }
 
               if (UIImmediate::BeginPanel("Deselect Panel", hierarchy_panel_size, ChildLayout::Vertical, true).clicked) {
-                EditorSelection::Select(EntityId::EMPTY);
+                EditorSelection::Deselect();
               }
               UIImmediate::EndPanel();
             }
@@ -298,7 +298,7 @@ namespace Hyperion::Editor {
           if (result.data.GetLength() >= 4) {
             uint32 id = *data;
             if (id == UINT32_MAX) {
-              EditorSelection::Select(EntityId::EMPTY);
+              EditorSelection::Deselect();
             } else {
               EditorSelection::Select(EntityUtilities::CreateFromSmallId(id));
             }
