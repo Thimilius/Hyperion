@@ -138,7 +138,7 @@ namespace Hyperion::Rendering {
     RenderEngine() = delete;
     ~RenderEngine() = delete;
   private:
-    static void PreInitialize(const RenderSettings &settings, Window *window);
+    static void PreInitialize(const RenderSettings &settings, Window *main_window);
     static void Initialize();
     static void Render();
     static void Present();
@@ -166,6 +166,7 @@ namespace Hyperion::Rendering {
     inline static Threading::Thread s_render_thread;
     inline static std::atomic<bool8> s_render_thread_should_exit;
     inline static std::atomic<VSyncMode> s_vsync_mode;
+    inline static std::atomic<bool8> s_vsync_should_update;
 
     inline static RenderFrame s_first_frame;
     inline static RenderFrame s_second_frame;

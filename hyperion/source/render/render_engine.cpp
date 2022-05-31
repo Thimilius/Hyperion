@@ -17,9 +17,11 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void RenderEngine::SetVSyncMode(VSyncMode vsync_mode) {
+    s_vsync_should_update = true;
     s_vsync_mode = vsync_mode;
 
     if (s_render_settings.threading_mode == RenderThreadingMode::SingleThreaded) {
+      HYP_PROFILE_SCOPE("RenderEngine.SetVSyncMode")
       s_render_driver_context->SetVSyncMode(s_vsync_mode);
     }
   }
@@ -32,6 +34,7 @@ namespace Hyperion::Rendering {
     switch (s_render_settings.pipeline) {
       case RenderPipeline::Forward: s_render_pipeline = new ForwardRenderPipeline(); break;
       case RenderPipeline::Custom: s_render_pipeline = s_render_settings.custom_pipeline; break;
+      case RenderPipeline::Deferred:
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
     }
 
@@ -64,7 +67,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void RenderEngine::Render() {
-    HYP_PROFILE_SCOPE("RenderEngine.RenderPipeline");
+    HYP_PROFILE_SCOPE("RenderEngine.RenderPipeline")
 
     const Array<RenderFrameContextCamera> context_cameras = s_main_frame->GetContext().GetCameras();
     Array<const RenderFrameContextCamera *> cameras;
@@ -86,7 +89,7 @@ namespace Hyperion::Rendering {
       }
       case RenderThreadingMode::MultiThreaded: {
         {
-          HYP_PROFILE_CATEGORY("RenderEngine.WaitForRenderDone", ProfileCategory::Wait);
+          HYP_PROFILE_CATEGORY("RenderEngine.WaitForRenderDone", ProfileCategory::Wait)
           RenderThreadSynchronization::WaitForRenderDone();
         }
         SwapRenderFrames();
@@ -124,10 +127,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void RenderEngine::RenderDriver() {
-    HYP_PROFILE_SCOPE("RenderEngine.RenderDriver");
-
-    Window *main_window = Application::GetInstance()->GetMainWindow();
-    s_render_driver_context->MakeCurrent(main_window);
+    HYP_PROFILE_SCOPE("RenderEngine.RenderDriver")
 
     IRenderDriver *render_driver = s_render_driver_context->GetDriver();
 
@@ -138,7 +138,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void RenderEngine::SwapRenderFrames() {
-    HYP_PROFILE_SCOPE("RenderEngine.SwapRenderFrames");
+    HYP_PROFILE_SCOPE("RenderEngine.SwapRenderFrames")
 
     s_render_stats = s_render_driver_context->GetDriver()->GetStats();
     s_render_should_resize = s_main_should_resize;
@@ -157,7 +157,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void RenderEngine::SwapBuffers() {
-    HYP_PROFILE_SCOPE("RenderEngine.Present");
+    HYP_PROFILE_SCOPE("RenderEngine.Present")
 
     Window *main_window = Application::GetInstance()->GetMainWindow();
     s_render_driver_context->SwapBuffers(main_window);
@@ -198,10 +198,10 @@ namespace Hyperion::Rendering {
 
     RT_Initialize(main_window);
 
-    HYP_PROFILE_THREAD("Render Thread");
+    HYP_PROFILE_THREAD("Render Thread")
     while (true) {
       {
-        HYP_PROFILE_CATEGORY("RenderEngine.WaitForSwapDone", ProfileCategory::Wait);
+        HYP_PROFILE_CATEGORY("RenderEngine.WaitForSwapDone", ProfileCategory::Wait)
         RenderThreadSynchronization::WaitForSwapDone();
 
         if (s_render_thread_should_exit) {
@@ -209,7 +209,14 @@ namespace Hyperion::Rendering {
         }
       }
 
-      s_render_driver_context->SetVSyncMode(s_vsync_mode);
+      {
+        HYP_PROFILE_SCOPE("RenderEngine.SetVSyncMode")
+        
+        if (s_vsync_should_update) {
+          s_render_driver_context->SetVSyncMode(s_vsync_mode);
+          s_vsync_should_update = false;
+        }
+      }
 
       RenderDriver();
 
