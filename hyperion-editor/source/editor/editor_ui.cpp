@@ -347,10 +347,7 @@ namespace Hyperion::Editor {
     String hierarchy_text;
 
     NameComponent *name = manager->GetComponent<NameComponent>(entity);
-    for (uint32 i = 0; i < depth; i++) {
-      hierarchy_text += "\t";
-    }
-
+    
     if (name) {
       hierarchy_text += name->name;
     } else {
@@ -362,13 +359,18 @@ namespace Hyperion::Editor {
       theme = s_selection_theme;
     }
     
-    Size panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 14 } };
+    Size panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 15 } };
     if (UIImmediate::BeginPanel(StringUtils::Format("{}", entity), panel_size, ChildLayout::Horizontal, true, theme).clicked) {
       EditorSelection::Select(entity);
     }
-    UIImmediate::PushId("Name");
-    UIImmediate::Text(hierarchy_text, TextAlignment::MiddleLeft, FitLayout::BothAxes);
-    UIImmediate::PopId();
+    {
+      UIImmediate::Space(SizeKind::Pixels, depth * 20.0f + 5.0f);
+      UIImmediate::Text("\uf1b2", TextAlignment::MiddleCenter, FitLayout::LayoutAxis, false, s_icon_theme);
+      UIImmediate::Space(SizeKind::Pixels, 5.0f);
+      UIImmediate::PushId("Name");
+      UIImmediate::Text(hierarchy_text, TextAlignment::MiddleLeft, FitLayout::BothAxes);
+      UIImmediate::PopId();
+    }
     UIImmediate::EndPanel();
 
     EntityId child = branch_hierarchy->first_child;
