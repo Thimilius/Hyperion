@@ -161,10 +161,11 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
-  void UIImmediate::BeginPanel(const String &text, Size size[2], ChildLayout child_layout, UIImmediateTheme *theme) {
+  UIImmediateInteraction UIImmediate::BeginPanel(const String &text, Size size[2], ChildLayout child_layout, bool8 interactable, UIImmediateTheme *theme) {
     PushId(text);
-    
-    UIImmediateElement &element = GetOrCreateElement(GetId(text), UIImmediateWidgetFlags::Panel);
+
+    UIImmediateWidgetFlags widget_flags = interactable ? UIImmediateWidgetFlags::Panel | UIImmediateWidgetFlags::Interactable : UIImmediateWidgetFlags::Panel;
+    UIImmediateElement &element = GetOrCreateElement(GetId(text), widget_flags);
 
     element.layout.semantic_size[0] = size[0];
     element.layout.semantic_size[1] = size[1];
@@ -173,6 +174,8 @@ namespace Hyperion::UI {
     element.widget.theme = theme;
     
     s_state.element_stack.Add(&element);
+
+    return InteractWithElement(element);
   }
 
   //--------------------------------------------------------------

@@ -32,7 +32,13 @@ namespace Hyperion::UI {
     
     static UIImmediateElement *GetElement(UIImmediateId id);
     
-    static void BeginPanel(const String &text, Size size[2], ChildLayout child_layout = ChildLayout::Horizontal, UIImmediateTheme *theme = GetDefaultTheme());
+    static UIImmediateInteraction BeginPanel(
+      const String &text,
+      Size size[2],
+      ChildLayout child_layout = ChildLayout::Horizontal,
+      bool8 interactable = false,
+      UIImmediateTheme *theme = GetDefaultTheme()
+    );
     static void EndPanel();
 
     static void BeginEmpty();

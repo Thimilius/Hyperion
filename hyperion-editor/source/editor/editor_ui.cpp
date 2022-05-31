@@ -126,6 +126,11 @@ namespace Hyperion::Editor {
                 DrawEntityHierarchy(manager, child, child_hierarchy, 0);
                 child = child_hierarchy->next_sibling;
               }
+
+              if (UIImmediate::BeginPanel("Deselect Panel", hierarchy_panel_size, ChildLayout::Vertical, true).clicked) {
+                EditorSelection::Select(EntityId::EMPTY);
+              }
+              UIImmediate::EndPanel();
             }
             UIImmediate::EndPanel();
           }
@@ -325,10 +330,10 @@ namespace Hyperion::Editor {
     }
     
     Size panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 14 } };
-    UIImmediate::BeginPanel(StringUtils::Format("{}", entity), panel_size, ChildLayout::Horizontal, theme);
-    if (UIImmediate::Text(hierarchy_text, TextAlignment::MiddleLeft, FitLayout::BothAxes, true).clicked) {
+    if (UIImmediate::BeginPanel(StringUtils::Format("{}", entity), panel_size, ChildLayout::Horizontal, true, theme).clicked) {
       EditorSelection::Select(entity);
     }
+    UIImmediate::Text(hierarchy_text, TextAlignment::MiddleLeft, FitLayout::BothAxes);
     UIImmediate::EndPanel();
 
     EntityId child = branch_hierarchy->first_child;
