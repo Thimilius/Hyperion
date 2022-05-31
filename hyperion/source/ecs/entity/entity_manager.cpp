@@ -96,7 +96,6 @@ namespace Hyperion {
     if (mesh->GetSubMeshCount() == 1) {
       entity = CreateEntity(EntityPrimitive::Quad);
       GetComponent<Rendering::MeshComponent>(entity)->mesh = mesh;
-      GetComponent<Rendering::LocalMeshBoundsComponent>(entity)->bounds = mesh->GetBounds();
     } else {
       entity = CreateEntity(EntityPrimitive::Base);
       for (uint32 i = 0; i < mesh->GetSubMeshCount(); i++) {
@@ -106,7 +105,6 @@ namespace Hyperion {
         Rendering::MeshComponent *mesh_component = GetComponent<Rendering::MeshComponent>(child);
         mesh_component->mesh = mesh;
         mesh_component->sub_mesh_index = i;
-        GetComponent<Rendering::LocalMeshBoundsComponent>(child)->bounds = mesh->GetBounds();
       }
     }
 
@@ -244,9 +242,7 @@ namespace Hyperion {
             break;
         }
 
-        BoundingBox bounds = mesh->mesh->GetBounds();
-        AddComponent<Rendering::LocalMeshBoundsComponent>(id)->bounds = bounds;
-        AddComponent<Rendering::WorldMeshBoundsComponent>(id)->bounds = bounds;
+        AddComponent<Rendering::MeshBoundsComponent>(id);
 
         break;
       }

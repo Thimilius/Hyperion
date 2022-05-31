@@ -26,13 +26,15 @@ namespace Hyperion::Rendering {
   void MeshBoundsSystem::Run(EntityManager *manager) {
     HYP_PROFILE_SCOPE("RenderBoundsSystem.Run");
 
-    auto view = manager->GetView<LocalToWorldComponent, LocalMeshBoundsComponent, WorldMeshBoundsComponent>(ExcludeComponents<StaticComponent>());
+    auto view = manager->GetView<LocalToWorldComponent, MeshComponent, MeshBoundsComponent>(ExcludeComponents<StaticComponent>());
     for (EntityId entity : view) {
       LocalToWorldComponent *local_to_world = manager->GetComponent<LocalToWorldComponent>(entity);
-      LocalMeshBoundsComponent *local_mesh_bounds = manager->GetComponent<LocalMeshBoundsComponent>(entity);
-      WorldMeshBoundsComponent *world_mesh_bounds = manager->GetComponent<WorldMeshBoundsComponent>(entity);
+      MeshComponent *mesh = manager->GetComponent<MeshComponent>(entity);
+      MeshBoundsComponent *world_mesh_bounds = manager->GetComponent<MeshBoundsComponent>(entity);
 
-      world_mesh_bounds->bounds = BoundingBox::Transform(local_to_world->local_to_world, local_mesh_bounds->bounds);
+      if (mesh->mesh) {
+        world_mesh_bounds->bounds = BoundingBox::Transform(local_to_world->local_to_world, mesh->mesh->GetBounds());  
+      }
     }
   }
 
@@ -156,10 +158,10 @@ namespace Hyperion::Rendering {
 
     RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
 
-    auto view = manager->GetView<LocalToWorldComponent, WorldMeshBoundsComponent, MeshComponent>();
+    auto view = manager->GetView<LocalToWorldComponent, MeshBoundsComponent, MeshComponent>();
     for (EntityId entity : view) {
       LocalToWorldComponent *local_to_world = manager->GetComponent<LocalToWorldComponent>(entity);
-      WorldMeshBoundsComponent *world_mesh_bounds = manager->GetComponent<WorldMeshBoundsComponent>(entity);
+      MeshBoundsComponent *world_mesh_bounds = manager->GetComponent<MeshBoundsComponent>(entity);
       MeshComponent *mesh = manager->GetComponent<MeshComponent>(entity);
 
       RenderFrameContextObjectMesh &render_frame_context_mesh_object = render_frame_context.AddMeshObject();

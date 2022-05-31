@@ -73,18 +73,18 @@ namespace Hyperion {
       );
 
       Registration::class_<CameraViewportClipping>(HYP_NAME_OF_TYPE(CameraViewportClipping))
-      .constructor<>()
-      .property("x", &CameraViewportClipping::x)
-      .property("y", &CameraViewportClipping::y)
-      .property("width", &CameraViewportClipping::width)
-      .property("height", &CameraViewportClipping::height);
+        .constructor<>()
+        .property("x", &CameraViewportClipping::x)
+        .property("y", &CameraViewportClipping::y)
+        .property("width", &CameraViewportClipping::width)
+        .property("height", &CameraViewportClipping::height);
     }
     
     // Core.
     {
       Registration::class_<NameComponent>(HYP_NAME_OF_TYPE(NameComponent))
-      .constructor<>()
-      .property("name", &NameComponent::name);
+        .constructor<>()
+        .property("name", &NameComponent::name);
 
       Registration::class_<TagComponent>(HYP_NAME_OF_TYPE(TagComponent))
         .constructor<>()
@@ -175,13 +175,9 @@ namespace Hyperion {
         .property("material", &MeshComponent::material)
         .property("layer_mask", &MeshComponent::layer_mask);
 
-      Registration::class_<LocalMeshBoundsComponent>(HYP_NAME_OF_TYPE(LocalMeshBoundsComponent))
+      Registration::class_<MeshBoundsComponent>(HYP_NAME_OF_TYPE(MeshBoundsComponent))
         .constructor<>()
-        .property("bounds", &LocalMeshBoundsComponent::bounds);
-
-      Registration::class_<WorldMeshBoundsComponent>(HYP_NAME_OF_TYPE(WorldMeshBoundsComponent))
-        .constructor<>()
-        .property("bounds", &WorldMeshBoundsComponent::bounds)(Metadata(PropertyAttribute::Serialize, false));
+        .property("bounds", &MeshBoundsComponent::bounds)(Metadata(PropertyAttribute::Serialize, false));
 
       Registration::class_<LightComponent>(HYP_NAME_OF_TYPE(LightComponent))
         .property("intensity", &LightComponent::intensity)
@@ -236,8 +232,7 @@ namespace Hyperion {
     RegisterComponent<Rendering::CameraComponent>();
     RegisterComponent<Rendering::SpriteComponent>();
     RegisterComponent<Rendering::MeshComponent>();
-    RegisterComponent<Rendering::LocalMeshBoundsComponent>();
-    RegisterComponent<Rendering::WorldMeshBoundsComponent>();
+    RegisterComponent<Rendering::MeshBoundsComponent>();
     RegisterComponent<Rendering::DirectionalLightComponent>();
     RegisterComponent<Rendering::PointLightComponent>();
     RegisterComponent<Rendering::SpotLightComponent>();
