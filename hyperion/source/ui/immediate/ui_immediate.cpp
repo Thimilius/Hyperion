@@ -491,6 +491,10 @@ namespace Hyperion::UI {
   void UIImmediate::Render() {
     bool8 last_draw_was_a_simple_rect = false;
     IterateHierarchy(s_state.root_element, [&last_draw_was_a_simple_rect](UIImmediateElement &element) {
+      if (!IsInsideParent(element)) {
+        return;
+      }
+      
       const UIImmediateTheme &theme = *element.widget.theme;
 
       bool8 is_separator = (element.widget.flags & UIImmediateWidgetFlags::Separator) == UIImmediateWidgetFlags::Separator; 
@@ -648,6 +652,8 @@ namespace Hyperion::UI {
     return result;
   }
 
+  
+  
   //--------------------------------------------------------------
   void UIImmediate::DrawRect(Rect rect, Color color) {
     Vector2 min = rect.GetMin();
@@ -721,6 +727,18 @@ namespace Hyperion::UI {
     s_mesh_draws.Add(mesh_draw);
 
     s_mesh_builder.Clear();
+  }
+
+  //--------------------------------------------------------------
+  bool8 UIImmediate::IsInsideParent(const UIImmediateElement &element) {
+    UIImmediateElement *parent = element.hierarchy.parent;
+    if (parent == nullptr) {
+      return true;      
+    } else {
+      Rect element_rect = element.layout.rect;
+      Rect parent_rect = parent->layout.rect;
+      return parent_rect.Intersects(element_rect);
+    }
   }
 
   //--------------------------------------------------------------
@@ -824,6 +842,10 @@ namespace Hyperion::UI {
   
   //--------------------------------------------------------------
   UIImmediateInteraction UIImmediate::InteractWithElement(const UIImmediateElement &element) {
+    if (!IsInsideParent(element)) {
+      return { };
+    }
+      
     if ((element.widget.flags & UIImmediateWidgetFlags::Interactable) == UIImmediateWidgetFlags::Interactable) {
       UIImmediateInteraction interaction;
       
