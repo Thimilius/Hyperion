@@ -5,6 +5,8 @@
 #include "hyperion/ui/immediate/ui_immediate.hpp"
 
 //---------------------- Project Includes ----------------------
+#include <ranges>
+
 #include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/assets/loader/font_loader.hpp"
 #include "hyperion/assets/utilities/text_mesh_generator.hpp"
@@ -17,10 +19,20 @@ namespace Hyperion::UI {
 
   //--------------------------------------------------------------
   void UIImmediate::Begin() {
-    for (UIImmediateMesh mesh : s_meshes) {
+    // Every mesh that is still in the cache was not used in the frame before.
+    for (auto [_, mesh] : s_mesh_cache) {
+      // NOTE: We could probably be a bit smarter about the unloading.
+      // Maybe keeping the mesh around for a bit longer because it might actually be reused again after some time.
+      // But for now unloading instantly is the safest route to prevent high memory usage. 
       AssetManager::Unload(mesh.mesh);
     }
-    s_meshes.Clear();
+    s_mesh_cache.clear();
+    
+    for (UIImmediateMesh mesh : s_meshes_in_use) { 
+      s_mesh_cache.insert(std::make_pair(mesh.vertex_count, mesh));
+    }
+    s_meshes_in_use.Clear();
+    s_mesh_draws.Clear();
 
     if (!s_default_theme.font) {
       s_default_theme.font = FontLoader::LoadFont("data/fonts/space_mono_regular.ttf", 12, FontCharacterSet::LatinSupplement);  
@@ -523,22 +535,22 @@ namespace Hyperion::UI {
     Flush();
     
     Rendering::RenderFrameContext &render_frame_context = Rendering::RenderEngine::GetMainRenderFrame()->GetContext();
-    for (UIImmediateMesh mesh : s_meshes) {
-      Material *material = mesh.material ? mesh.material : AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI);
-      AssetId texture_id = mesh.texture
-       ? mesh.texture->GetAssetInfo().id
+    for (UIImmediateMeshDraw mesh_draw : s_mesh_draws) {
+      Material *material = mesh_draw.material ? mesh_draw.material : AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI);
+      AssetId texture_id = mesh_draw.texture
+       ? mesh_draw.texture->GetAssetInfo().id
        : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetAssetInfo().id;
       
       Rendering::RenderFrameContextObjectUI &render_frame_context_ui_object = render_frame_context.AddEditorUIObject();
       render_frame_context_ui_object.local_to_world = Matrix4x4::Identity();
-      render_frame_context_ui_object.mesh_id = mesh.mesh->GetAssetInfo().id;
+      render_frame_context_ui_object.mesh_id = mesh_draw.mesh.mesh->GetAssetInfo().id;
       render_frame_context_ui_object.shader_id = material->GetShader()->GetAssetInfo().id;
       render_frame_context_ui_object.material_id = material->GetAssetInfo().id;
-      render_frame_context_ui_object.color = mesh.color;
+      render_frame_context_ui_object.color = mesh_draw.color;
       render_frame_context_ui_object.texture.id = texture_id;
-      render_frame_context_ui_object.texture.dimension = mesh.texture ? mesh.texture->GetDimension() : Rendering::TextureDimension::Texture2D;
-      render_frame_context_ui_object.texture.render_texture_attchment_index = mesh.render_texture_attachment_index;
-      render_frame_context_ui_object.enable_blending = mesh.enable_blending;
+      render_frame_context_ui_object.texture.dimension = mesh_draw.texture ? mesh_draw.texture->GetDimension() : Rendering::TextureDimension::Texture2D;
+      render_frame_context_ui_object.texture.render_texture_attchment_index = mesh_draw.render_texture_attachment_index;
+      render_frame_context_ui_object.enable_blending = mesh_draw.enable_blending;
     }
   }
 
@@ -670,15 +682,40 @@ namespace Hyperion::UI {
     if (s_mesh_builder.IsEmpty()) {
       return;
     }
+
+    // Try to reuse a mesh that is the same size (vertex count) that we need.
+    // This way we can just upload the updated data instead of creating a completely new mesh. 
+    UIImmediateMesh mesh = { };
+    uint32 mesh_vertex_count = s_mesh_builder.GetVertexCount();
+    auto it = s_mesh_cache.find(mesh_vertex_count);
+    if (it == s_mesh_cache.end()) {
+      mesh.vertex_count = mesh_vertex_count;
+      mesh.mesh = s_mesh_builder.CreateMesh(AssetDataAccess::ReadAndWrite);
+    } else {
+      mesh = it->second;
+
+      // We reuse the mesh so remove it from the cache so that it can not be reused again in this frame.
+      auto iterator_pair = s_mesh_cache.equal_range(mesh_vertex_count);
+      auto remove_it = iterator_pair.first;
+      for (; remove_it != iterator_pair.second; ++remove_it) {
+        if (remove_it->second.mesh == mesh.mesh) { 
+          s_mesh_cache.erase(remove_it);
+          break;
+        }
+      }
+
+      s_mesh_builder.SetToMesh(mesh.mesh);
+    }
+    s_meshes_in_use.Add(mesh);
     
-    UIImmediateMesh immediate_mesh = { };
-    immediate_mesh.mesh = s_mesh_builder.CreateMesh();
-    immediate_mesh.material = material ? material : AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI);
-    immediate_mesh.texture = texture ? texture : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White);
-    immediate_mesh.color = Color::White();
-    immediate_mesh.render_texture_attachment_index = 0;
-    immediate_mesh.enable_blending = true;
-    s_meshes.Add(immediate_mesh);
+    UIImmediateMeshDraw mesh_draw = { };
+    mesh_draw.mesh = mesh;
+    mesh_draw.material = material ? material : AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI);
+    mesh_draw.texture = texture ? texture : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White);
+    mesh_draw.color = Color::White();
+    mesh_draw.render_texture_attachment_index = 0;
+    mesh_draw.enable_blending = true;
+    s_mesh_draws.Add(mesh_draw);
 
     s_mesh_builder.Clear();
   }

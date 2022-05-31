@@ -16,7 +16,12 @@ namespace Hyperion::UI {
   using UIImmediateId = uint64;
 
   struct UIImmediateMesh {
+    uint32 vertex_count = 0;
     Mesh *mesh = nullptr;
+  };
+  
+  struct UIImmediateMeshDraw {
+    UIImmediateMesh mesh;
     Material *material = nullptr;
     Texture *texture = nullptr;
 

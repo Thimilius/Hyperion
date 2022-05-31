@@ -55,7 +55,8 @@ namespace Hyperion::Editor {
     World *world = EditorApplication::GetWorld();
     EntityManager *manager = world->GetEntityManager();
     EntityHierarchy *hierarchy = world->GetHierarchy();
-    
+    UIImmediateTheme *icon_theme = UIImmediate::GetTheme("Icon");
+
     if (Input::IsKeyDown(KeyCode::F2)) {
       RenderEngine::SetVSyncMode(
         RenderEngine::GetVSyncMode() == VSyncMode::DontSync
@@ -75,21 +76,13 @@ namespace Hyperion::Editor {
         EditorSelection::Select(EntityId::EMPTY);
       }
     }
-  
-    UIImmediateTheme *icon_theme = UIImmediate::GetTheme("Icon");
-
+    
     UIImmediate::Begin();
     {
       Size header_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 25.0f } };
       UIImmediate::BeginPanel("Header Panel", header_panel_size);
       {
-        UIImmediate::FillSpace();
         
-        UIImmediate::BeginCenter();
-        {
-          
-        }
-        UIImmediate::EndCenter();
       }
       UIImmediate::EndPanel();
 

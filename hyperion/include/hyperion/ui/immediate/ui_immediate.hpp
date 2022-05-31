@@ -91,7 +91,9 @@ namespace Hyperion::UI {
     inline static UIImmediateState s_state;
     
     inline static MeshBuilder s_mesh_builder;
-    inline static Array<UIImmediateMesh> s_meshes;
+    inline static Array<UIImmediateMeshDraw> s_mesh_draws;
+    inline static std::unordered_multimap<uint32, UIImmediateMesh> s_mesh_cache;
+    inline static Array<UIImmediateMesh> s_meshes_in_use;
 
     inline static UIImmediateTheme s_default_theme;
     inline static Map<uint64, UIImmediateTheme> s_themes;
