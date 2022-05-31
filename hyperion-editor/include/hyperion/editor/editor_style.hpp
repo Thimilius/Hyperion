@@ -21,6 +21,11 @@ namespace Hyperion::Editor {
     inline static const Color COLOR_NORMAL = Color(0.25f, 0.25f, 0.25f, 1.0f);
     inline static const Color COLOR_NORMAL_DARK = Color(0.2f, 0.2f, 0.2f, 1.0f);
     inline static const Color COLOR_HIGHLIGHT = Color(0.0f, 0.4f, 0.8f, 1.0f);
+    inline static const Color COLOR_HIGHLIGHT_HOVERED = Color(0.0f, 0.5f, 0.9f, 1.0f);
+    inline static const Color COLOR_HIGHLIGHT_PRESSED = Color(0.0f, 0.3f, 0.7f, 1.0f);
+    inline static const Color COLOR_HOVERED = Color(0.3f, 0.3f, 0.3f, 1.0f);
+    inline static const Color COLOR_PRESSED = Color(0.15f, 0.15f, 0.15f, 1.0f);
+    inline static const Color COLOR_FOCUSED = Color(0.0f, 0.2f, 0.4f, 1.0f);
   private:
     EditorStyle() = delete;
     ~EditorStyle() = delete;

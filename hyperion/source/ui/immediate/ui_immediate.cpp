@@ -46,8 +46,8 @@ namespace Hyperion::UI {
     s_state.is_right_mouse_hold = Input::IsMouseButtonHold(MouseButtonCode::Right);
     s_state.is_right_mouse_up = Input::IsMouseButtonUp(MouseButtonCode::Right);
     s_state.keys_typed = Input::GetKeysTyped();
-    s_state.hovered_widget = 0;
-    s_state.focused_widget = s_state.is_left_mouse_down || s_state.is_right_mouse_down ? 0 : s_state.focused_widget; 
+    s_state.hovered_element = 0;
+    s_state.focused_element = s_state.is_left_mouse_down || s_state.is_right_mouse_down ? 0 : s_state.focused_element; 
     s_state.current_frame_index++;
 
     s_state.root_element = UIImmediateElement();
@@ -83,7 +83,7 @@ namespace Hyperion::UI {
     }
 
     if (s_state.is_left_mouse_up || s_state.is_right_mouse_up) {
-      s_state.pressed_widget = 0;
+      s_state.pressed_element = 0;
     }
   }
 
@@ -141,6 +141,11 @@ namespace Hyperion::UI {
     } else {
       HYP_LOG_ERROR("UI", "The id stack is already empty!");
     }
+  }
+
+  //--------------------------------------------------------------
+  bool8 UIImmediate::HasFocusedElement() {
+    return s_state.focused_element != 0;
   }
 
   //--------------------------------------------------------------
@@ -311,7 +316,7 @@ namespace Hyperion::UI {
           } else if (codepoint == '\r') {
             interaction.input_submitted = true;
             // We lose focus on return.
-            s_state.focused_widget = 0;
+            s_state.focused_element = 0;
           }
           
           if (!theme->font->HasCodepoint(codepoint)) {
@@ -620,9 +625,9 @@ namespace Hyperion::UI {
     Color result = Color::White();
     
     UIImmediateTheme &theme = *element.widget.theme;
-    bool8 is_hovered = s_state.hovered_widget == element.id.id;
-    bool8 is_pressed = s_state.pressed_widget == element.id.id;
-    bool8 is_focused = s_state.focused_widget == element.id.id;
+    bool8 is_hovered = s_state.hovered_element == element.id.id;
+    bool8 is_pressed = s_state.pressed_element == element.id.id;
+    bool8 is_focused = s_state.focused_element == element.id.id;
 
     bool8 is_separator = (element.widget.flags & UIImmediateWidgetFlags::Separator) == UIImmediateWidgetFlags::Separator;
     if (is_separator) {
@@ -694,8 +699,8 @@ namespace Hyperion::UI {
     Color result = Color::White();
     
     UIImmediateTheme &theme = *element.widget.theme;
-    bool8 is_hovered = s_state.hovered_widget == element.id.id;
-    bool8 is_pressed = s_state.pressed_widget == element.id.id;
+    bool8 is_hovered = s_state.hovered_element == element.id.id;
+    bool8 is_pressed = s_state.pressed_element == element.id.id;
 
     bool8 is_text = (element.widget.flags & UIImmediateWidgetFlags::Text) == UIImmediateWidgetFlags::Text;
     bool8 is_button = (element.widget.flags & UIImmediateWidgetFlags::Button) == UIImmediateWidgetFlags::Button;
@@ -944,18 +949,18 @@ namespace Hyperion::UI {
       
       bool8 is_inside = IsInsideRect(element.layout.rect, s_state.mouse_position);
       if (is_inside) {
-        s_state.hovered_widget = id;
-        if (s_state.pressed_widget == 0 && (s_state.is_left_mouse_down || s_state.is_right_mouse_down)) {
-          s_state.pressed_widget = id;
+        s_state.hovered_element = id;
+        if (s_state.pressed_element == 0 && (s_state.is_left_mouse_down || s_state.is_right_mouse_down)) {
+          s_state.pressed_element = id;
           if ((element.widget.flags & UIImmediateWidgetFlags::Focusable) == UIImmediateWidgetFlags::Focusable) {
-            s_state.focused_widget = id;  
+            s_state.focused_element = id;  
           }
         }
       }
 
-      bool8 is_hovered_widget = s_state.hovered_widget == id;
-      bool8 is_pressed_widget = s_state.pressed_widget == id;
-      bool8 is_focused_widget = s_state.focused_widget == id;
+      bool8 is_hovered_widget = s_state.hovered_element == id;
+      bool8 is_pressed_widget = s_state.pressed_element == id;
+      bool8 is_focused_widget = s_state.focused_element == id;
 
       interaction.hovered = is_hovered_widget;
       interaction.focused = is_focused_widget;

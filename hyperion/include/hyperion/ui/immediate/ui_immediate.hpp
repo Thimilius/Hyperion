@@ -29,7 +29,8 @@ namespace Hyperion::UI {
     static UIImmediateId GetId(const String &text);
     static void PushId(const String &text);
     static void PopId();
-    
+
+    static bool8 HasFocusedElement();
     static UIImmediateElement *GetElement(UIImmediateId id);
     
     static UIImmediateInteraction BeginPanel(

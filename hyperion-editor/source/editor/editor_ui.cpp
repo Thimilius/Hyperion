@@ -26,32 +26,38 @@ namespace Hyperion::Editor {
     UI::UIImmediateTheme *theme = UI::UIImmediate::GetDefaultTheme();
     theme->separator_color = EditorStyle::COLOR_HIGHLIGHT;
     theme->panel_color = EditorStyle::COLOR_NORMAL;
-    theme->panel_color_hovered = EditorStyle::COLOR_NORMAL;
-    theme->panel_color_pressed = EditorStyle::COLOR_NORMAL;
+    theme->panel_color_hovered = EditorStyle::COLOR_HOVERED;
+    theme->panel_color_pressed = EditorStyle::COLOR_PRESSED;
     theme->button_color = EditorStyle::COLOR_NORMAL_DARK;
-    theme->button_color_hovered = EditorStyle::COLOR_HIGHLIGHT;
-    theme->button_color_pressed = EditorStyle::COLOR_HIGHLIGHT;
+    theme->button_color_hovered = EditorStyle::COLOR_HOVERED;
+    theme->button_color_pressed = EditorStyle::COLOR_PRESSED;
     theme->toggle_normal_color = EditorStyle::COLOR_NORMAL_DARK;
-    theme->toggle_normal_color_hovered = EditorStyle::COLOR_NORMAL_DARK;
-    theme->toggle_normal_color_pressed = EditorStyle::COLOR_NORMAL_DARK;
+    theme->toggle_normal_color_hovered = EditorStyle::COLOR_HOVERED;
+    theme->toggle_normal_color_pressed = EditorStyle::COLOR_PRESSED;
     theme->toggle_toggled_color = EditorStyle::COLOR_HIGHLIGHT;
-    theme->toggle_toggled_color_hovered = EditorStyle::COLOR_HIGHLIGHT;
-    theme->toggle_toggled_color_pressed = EditorStyle::COLOR_HIGHLIGHT;
+    theme->toggle_toggled_color_hovered = EditorStyle::COLOR_HIGHLIGHT_HOVERED;
+    theme->toggle_toggled_color_pressed = EditorStyle::COLOR_HIGHLIGHT_PRESSED;
     theme->toggle_toggled_text_color = Color::White();
     theme->input_color = EditorStyle::COLOR_NORMAL_DARK;
-    theme->input_color_hovered = EditorStyle::COLOR_HIGHLIGHT;
-    theme->input_color_pressed = EditorStyle::COLOR_HIGHLIGHT;
-    theme->input_color_focused = EditorStyle::COLOR_NORMAL_DARK;
+    theme->input_color_hovered = EditorStyle::COLOR_HOVERED;
+    theme->input_color_pressed = EditorStyle::COLOR_PRESSED;
+    theme->input_color_focused = EditorStyle::COLOR_FOCUSED;
     theme->text_shadow_enabled = true;
     theme->font = FontLoader::LoadFont("data/fonts/space_mono_regular.ttf", EditorStyle::FONT_SIZE, FontCharacterSet::LatinSupplement);
 
     s_icon_theme = UI::UIImmediate::CreateTheme("Icon");
     s_icon_theme->font = FontLoader::LoadFont("data/fonts/font_awesome_solid.otf", EditorStyle::FONT_SIZE, FontCharacterSet::All);
+    s_icon_theme->text_shadow_enabled = false;
 
     s_selection_theme = UI::UIImmediate::CreateTheme("Selection");
     s_selection_theme->panel_color = EditorStyle::COLOR_HIGHLIGHT;
-    s_selection_theme->panel_color_hovered = EditorStyle::COLOR_HIGHLIGHT;
-    s_selection_theme->panel_color_pressed = EditorStyle::COLOR_HIGHLIGHT;
+    s_selection_theme->panel_color_hovered = EditorStyle::COLOR_HIGHLIGHT_HOVERED;
+    s_selection_theme->panel_color_pressed = EditorStyle::COLOR_HIGHLIGHT_PRESSED;
+
+    s_panel_theme = UI::UIImmediate::CreateTheme("Panel");
+    s_panel_theme->panel_color = EditorStyle::COLOR_NORMAL;
+    s_panel_theme->panel_color_hovered = EditorStyle::COLOR_NORMAL;
+    s_panel_theme->panel_color_pressed = EditorStyle::COLOR_NORMAL;
   }
 
   //--------------------------------------------------------------
@@ -131,7 +137,7 @@ namespace Hyperion::Editor {
                 child = child_hierarchy->next_sibling;
               }
 
-              if (UIImmediate::BeginPanel("Deselect Panel", hierarchy_panel_size, ChildLayout::Vertical, true).clicked) {
+              if (UIImmediate::BeginPanel("Deselect Panel", hierarchy_panel_size, ChildLayout::Vertical, true, s_panel_theme).clicked) {
                 EditorSelection::Deselect();
               }
               UIImmediate::EndPanel();
@@ -285,6 +291,11 @@ namespace Hyperion::Editor {
       UIImmediate::EndPanel();
     }
     UIImmediate::End();
+  }
+
+  //--------------------------------------------------------------
+  bool8 EditorUI::HasFocusedElement() {
+    return UIImmediate::HasFocusedElement();
   }
 
   //--------------------------------------------------------------

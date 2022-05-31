@@ -15,6 +15,7 @@ namespace Hyperion::Editor {
     static void Initialize();
     static void Update();
 
+    static bool8 HasFocusedElement();
     static Rect GetPreviewRect();
     static bool8 IsMouseInsidePreviewRect();
 
@@ -29,6 +30,7 @@ namespace Hyperion::Editor {
 
     inline static UI::UIImmediateTheme *s_icon_theme;
     inline static UI::UIImmediateTheme *s_selection_theme;
+    inline static UI::UIImmediateTheme *s_panel_theme;
   };
 
 }

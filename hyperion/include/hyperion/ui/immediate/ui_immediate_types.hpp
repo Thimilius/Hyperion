@@ -155,9 +155,9 @@ namespace Hyperion::UI {
     bool8 is_right_mouse_up = false;
     Array<String> keys_typed;
     
-    UIImmediateId hovered_widget = 0;
-    UIImmediateId pressed_widget = 0;
-    UIImmediateId focused_widget = 0;
+    UIImmediateId hovered_element = 0;
+    UIImmediateId pressed_element = 0;
+    UIImmediateId focused_element = 0;
 
     uint64 current_frame_index = 0;
 
