@@ -410,6 +410,8 @@ namespace Hyperion::UI {
 
       calculate_size(element, 0);
       calculate_size(element, 1);
+
+      return true;
     });
     
     // Step 2: Calculate all upwards dependent sizes like percentage of parent.
@@ -463,6 +465,8 @@ namespace Hyperion::UI {
 
       calculate_size(element, 0);
       calculate_size(element, 1);
+
+      return true;
     });
 
     // Step 3: Calculate fill.
@@ -481,6 +485,8 @@ namespace Hyperion::UI {
 
       calculate_size(element, 0);
       calculate_size(element, 1);
+
+      return true;
     });
     
     // Last step: Calculate relative position based on parents child layout.
@@ -527,6 +533,8 @@ namespace Hyperion::UI {
       rect_position.y -= rect_size.y;
       
       element.layout.rect = Rect(rect_position, rect_size);
+      
+      return true;
     });
   }
 
@@ -535,7 +543,7 @@ namespace Hyperion::UI {
     bool8 last_draw_was_a_simple_rect = false;
     IterateHierarchy(s_state.root_element, [&last_draw_was_a_simple_rect](UIImmediateElement &element) {
       if (!IsInsideParent(element)) {
-        return;
+        return false;
       }
       
       const UIImmediateTheme &theme = *element.widget.theme;
@@ -582,6 +590,8 @@ namespace Hyperion::UI {
         Flush(AssetManager::GetMaterialPrimitive(MaterialPrimitive::Font), theme.font->GetTexture());
         last_draw_was_a_simple_rect = false;
       }
+
+      return true;
     });
     Flush();
     
@@ -959,13 +969,13 @@ namespace Hyperion::UI {
   }
   
   //--------------------------------------------------------------
-  void UIImmediate::IterateHierarchy(UIImmediateElement &parent, const std::function<void(UIImmediateElement &)> &callback) {
-    callback(parent);
-
-    UIImmediateElement *child = parent.hierarchy.first_child;
-    for (uint64 i = 0; i < parent.hierarchy.child_count; ++i) {
-      IterateHierarchy(*child, callback);
-      child = child->hierarchy.next_sibling;
+  void UIImmediate::IterateHierarchy(UIImmediateElement &parent, const std::function<bool8(UIImmediateElement &)> &callback) {
+    if (callback(parent)) {
+      UIImmediateElement *child = parent.hierarchy.first_child;
+      for (uint64 i = 0; i < parent.hierarchy.child_count; ++i) {
+        IterateHierarchy(*child, callback);
+        child = child->hierarchy.next_sibling;
+      }  
     }
   }
   

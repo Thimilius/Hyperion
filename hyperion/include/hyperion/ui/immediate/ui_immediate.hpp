@@ -104,7 +104,7 @@ namespace Hyperion::UI {
     static void PlaceElementInHierarchy(UIImmediateElement &element);
     static UIImmediateInteraction InteractWithElement(const UIImmediateElement &element);
 
-    static void IterateHierarchy(UIImmediateElement &parent, const std::function<void(UIImmediateElement &)> &callback);
+    static void IterateHierarchy(UIImmediateElement &parent, const std::function<bool8(UIImmediateElement &)> &callback);
   private:
     inline static UIImmediateState s_state;
     
