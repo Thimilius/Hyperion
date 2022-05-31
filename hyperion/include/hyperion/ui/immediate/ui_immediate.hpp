@@ -26,7 +26,7 @@ namespace Hyperion::UI {
     static UIImmediateTheme *GetTheme(const String &name);
     static void DestroyTheme(const String &name);
 
-    static UIImmediateId GetId(const String &text); 
+    static UIImmediateId GetId(const String &text);
     static void PushId(const String &text);
     static void PopId();
     
@@ -66,7 +66,14 @@ namespace Hyperion::UI {
       FitLayout fit_layout = FitLayout::None,
       UIImmediateTheme *theme = GetDefaultTheme()
     );
-    static void Image(const String &id, Texture *texture, Size size[2], bool8 enable_blending = true);
+    static UIImmediateInteraction Input(
+      const String &id_text,
+      String &text,
+      TextAlignment text_alignment = TextAlignment::TopLeft,
+      FitLayout fit_layout = FitLayout::None,
+      UIImmediateTheme *theme = GetDefaultTheme()
+    );
+    static void Image(const String &id_text, Texture *texture, Size size[2], bool8 enable_blending = true);
 
     static Vector2 ScreenPointToUISpacePoint(Vector2 screen_point);
     static bool8 IsInsideRect(Rect rect, Vector2 screen_point);
@@ -89,7 +96,10 @@ namespace Hyperion::UI {
     static void FitToLayout(UIImmediateElement &element, FitLayout fit_layout);
     static LayoutAxes GetAxesForParentLayout(const UIImmediateElement &element);
     
-    static UIImmediateElement &GetOrCreateElement(UIImmediateId id, UIImmediateWidgetFlags widget_flags);
+    static UIImmediateId HashIdText(const String &id_text);
+    static String GetIdTextFromStack(const String &text);
+    
+    static UIImmediateElement &GetOrCreateElement(const String &id_text, UIImmediateWidgetFlags widget_flags);
     static UIImmediateElement &CreateTemporaryElement(UIImmediateWidgetFlags widget_flags);
     static void PlaceElementInHierarchy(UIImmediateElement &element);
     static UIImmediateInteraction InteractWithElement(const UIImmediateElement &element);

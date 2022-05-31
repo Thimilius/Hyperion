@@ -38,6 +38,10 @@ namespace Hyperion::Editor {
     theme->toggle_toggled_color_hovered = EditorStyle::COLOR_HIGHLIGHT;
     theme->toggle_toggled_color_pressed = EditorStyle::COLOR_HIGHLIGHT;
     theme->toggle_toggled_text_color = Color::White();
+    theme->input_color = EditorStyle::COLOR_NORMAL_DARK;
+    theme->input_color_hovered = EditorStyle::COLOR_HIGHLIGHT;
+    theme->input_color_pressed = EditorStyle::COLOR_HIGHLIGHT;
+    theme->input_color_focused = EditorStyle::COLOR_NORMAL_DARK;
     theme->text_shadow_enabled = true;
     theme->font = FontLoader::LoadFont("data/fonts/space_mono_regular.ttf", EditorStyle::FONT_SIZE, FontCharacterSet::LatinSupplement);
 
@@ -139,26 +143,55 @@ namespace Hyperion::Editor {
           UIImmediate::Separator();
           
           Size lower_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
-          UIImmediate::BeginPanel("Inspection Panel", lower_panel_size);
+          UIImmediate::BeginPanel("Inspection Panel", lower_panel_size, ChildLayout::Vertical);
           {
-            String text = "No entity selected!";
             if (EditorSelection::HasSelection()) {
               EntityId entity = EditorSelection::GetSelection();
-              text = StringUtils::Format(
-                "Entity:\nId: Index: {} - Version: {}\n Guid: {}\n\n",
+              String text = StringUtils::Format(
+                "Entity:\nId: Index: {} - Version: {}\n Guid: {}",
                 EntityUtilities::GetIndex(entity),
                 EntityUtilities::GetVersion(entity),
                 manager->GetGuid(entity).ToString()
               );
+              UIImmediate::Text(text, TextAlignment::TopCenter, FitLayout::LayoutAxis);
+              UIImmediate::Space(SizeKind::Pixels, 10);
+              
               for (const ComponentInfo &component_info : ComponentRegistry::GetComponentInfos()) {
                 void *component = manager->GetComponent(component_info.id, entity);
                 if (component) {
-                  text += StringUtils::Format("{}\n\n", component_info.type->get_name().to_string());
+                  Type component_type = *component_info.type;
+                  UIImmediate::Space(SizeKind::Pixels, 10);
+                  UIImmediate::Text(component_type.get_name().to_string(), TextAlignment::MiddleCenter, FitLayout::LayoutAxis);
+                  
+                  if (component_type == Type::get<NameComponent>()) {
+                    Instance instance = Reflection::CreateInstanceFromRaw(component_type, component);
+                    
+                    for (Property property : component_type.get_properties()) {
+                      Type property_type = property.get_type();
+                      String property_name = property.get_name().to_string();
+                      
+                      Size property_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 20.0f } };
+                      UIImmediate::BeginPanel(property_name, property_panel_size, ChildLayout::Horizontal);
+                      {
+                        String property_label = property_name + ":";
+                        UIImmediate::Text(property_label, TextAlignment::MiddleCenter, FitLayout::LayoutAxis);
+                          
+                        if (property_type == Type::get<String>()) {
+                          String string = property.get_value(instance).get_value<String>();
+                          if (UIImmediate::Input(property_name, string, TextAlignment::MiddleLeft, FitLayout::BothAxes).input_changed) {
+                            property.set_value(instance, string);
+                          }
+                        }
+                      }
+                      UIImmediate::EndPanel();
+                    }
+                  }
                 }
               }
+            } else {
+              String text = "No entity selected!";
+              UIImmediate::Text(text, TextAlignment::TopCenter, FitLayout::LayoutAxis);  
             }
-            
-            UIImmediate::Text(text, TextAlignment::TopCenter, FitLayout::BothAxes);
           }
           UIImmediate::EndPanel();
         }
@@ -333,7 +366,9 @@ namespace Hyperion::Editor {
     if (UIImmediate::BeginPanel(StringUtils::Format("{}", entity), panel_size, ChildLayout::Horizontal, true, theme).clicked) {
       EditorSelection::Select(entity);
     }
+    UIImmediate::PushId("Name");
     UIImmediate::Text(hierarchy_text, TextAlignment::MiddleLeft, FitLayout::BothAxes);
+    UIImmediate::PopId();
     UIImmediate::EndPanel();
 
     EntityId child = branch_hierarchy->first_child;

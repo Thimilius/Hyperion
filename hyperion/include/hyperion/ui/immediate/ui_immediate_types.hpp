@@ -33,8 +33,12 @@ namespace Hyperion::UI {
 
   struct UIImmediateInteraction {
     bool8 hovered = false;
+    bool8 focused = false;
     bool8 clicked = false;
     bool8 right_clicked = false;
+
+    bool8 input_submitted = false;
+    bool8 input_changed = false;
   };
 
   struct UIImmediateTheme {
@@ -59,6 +63,11 @@ namespace Hyperion::UI {
     Color toggle_toggled_color_hovered = Color::Grey();
     Color toggle_toggled_color_pressed = Color::Grey();
     Color toggle_toggled_text_color = Color::White();
+
+    Color input_color = Color::Grey();
+    Color input_color_hovered = Color::Grey();
+    Color input_color_pressed = Color::Grey();
+    Color input_color_focused = Color::Grey();
     
     bool8 text_shadow_enabled = true;
     Color text_shadow_color = Color::Black();
@@ -71,21 +80,24 @@ namespace Hyperion::UI {
     None = 0,
 
     Interactable = BIT(0),
+    Focusable = BIT(1),
     
-    Empty = BIT(1),
-    Space = BIT(2),
-    Separator = BIT(3),
-    Panel = BIT(4),
-    Text = BIT(5),
-    Button = BIT(6),
-    Toggle = BIT(7),
-    Image = BIT(8)
+    Empty = BIT(2),
+    Space = BIT(3),
+    Separator = BIT(4),
+    Panel = BIT(5),
+    Text = BIT(6),
+    Button = BIT(7),
+    Toggle = BIT(8),
+    Input = BIT(9),
+    Image = BIT(10)
   };
   HYP_CREATE_ENUM_FLAG_OPERATORS(UIImmediateWidgetFlags)
 
   struct UIImmediateElement {
     struct UIImmediateElementId {
       UIImmediateId id = 0;
+      String id_text;
       uint64 last_frame_touched_index = 0;
       bool8 looked_up_this_frame = false;
     } id;
@@ -113,7 +125,7 @@ namespace Hyperion::UI {
 
       uint32 fill_child_count = { };
       float32 computed_child_size_sum[2] = { };
-      
+    
       Rect rect = Rect();
     } layout;
 
@@ -141,9 +153,11 @@ namespace Hyperion::UI {
     bool8 is_right_mouse_down = false;
     bool8 is_right_mouse_hold = false;
     bool8 is_right_mouse_up = false;
+    Array<String> keys_typed;
     
     UIImmediateId hovered_widget = 0;
     UIImmediateId pressed_widget = 0;
+    UIImmediateId focused_widget = 0;
 
     uint64 current_frame_index = 0;
 

@@ -45,7 +45,9 @@ namespace Hyperion::UI {
     s_state.is_right_mouse_down = Input::IsMouseButtonDown(MouseButtonCode::Right);
     s_state.is_right_mouse_hold = Input::IsMouseButtonHold(MouseButtonCode::Right);
     s_state.is_right_mouse_up = Input::IsMouseButtonUp(MouseButtonCode::Right);
+    s_state.keys_typed = Input::GetKeysTyped();
     s_state.hovered_widget = 0;
+    s_state.focused_widget = s_state.is_left_mouse_down || s_state.is_right_mouse_down ? 0 : s_state.focused_widget; 
     s_state.current_frame_index++;
 
     s_state.root_element = UIImmediateElement();
@@ -124,18 +126,9 @@ namespace Hyperion::UI {
 
   //--------------------------------------------------------------
   UIImmediateId UIImmediate::GetId(const String &text) {
-    // This is not really performant but works for now.
-    String final_text;
-    for (const String &id_stack_entry : s_state.id_stack) {
-      final_text += id_stack_entry;
-    }
-    final_text += text;
-    
-    // NOTE: We should allow filtering out what goes from the text into the hash with '##' or similar.
-    uint64 id = std::hash<String>()(final_text);
-    return id;
+    return HashIdText(GetIdTextFromStack(text));    
   }
-  
+
   //--------------------------------------------------------------
   void UIImmediate::PushId(const String &text) {
     s_state.id_stack.Add(text);
@@ -162,17 +155,16 @@ namespace Hyperion::UI {
 
   //--------------------------------------------------------------
   UIImmediateInteraction UIImmediate::BeginPanel(const String &text, Size size[2], ChildLayout child_layout, bool8 interactable, UIImmediateTheme *theme) {
-    PushId(text);
-
     UIImmediateWidgetFlags widget_flags = interactable ? UIImmediateWidgetFlags::Panel | UIImmediateWidgetFlags::Interactable : UIImmediateWidgetFlags::Panel;
-    UIImmediateElement &element = GetOrCreateElement(GetId(text), widget_flags);
+    UIImmediateElement &element = GetOrCreateElement(text, widget_flags);
 
     element.layout.semantic_size[0] = size[0];
     element.layout.semantic_size[1] = size[1];
     element.layout.child_layout = child_layout;
 
     element.widget.theme = theme;
-    
+
+    PushId(text);
     s_state.element_stack.Add(&element);
 
     return InteractWithElement(element);
@@ -240,7 +232,7 @@ namespace Hyperion::UI {
   //--------------------------------------------------------------
   UIImmediateInteraction UIImmediate::Text(const String &text, TextAlignment text_alignment, FitLayout fit_layout, bool8 interactable, UIImmediateTheme *theme) {
     UIImmediateWidgetFlags widget_flags = interactable ? UIImmediateWidgetFlags::Text | UIImmediateWidgetFlags::Interactable : UIImmediateWidgetFlags::Text; 
-    UIImmediateElement &element = GetOrCreateElement(GetId(text), widget_flags);
+    UIImmediateElement &element = GetOrCreateElement(text, widget_flags);
 
     element.layout.semantic_size[0] = { SizeKind::TextContent, 0.0f };
     element.layout.semantic_size[1] = { SizeKind::TextContent, 0.0f };
@@ -255,9 +247,8 @@ namespace Hyperion::UI {
 
   //--------------------------------------------------------------
   UIImmediateInteraction UIImmediate::Button(const String &text, FitLayout fit_layout, UIImmediateTheme *theme) {
-    UIImmediateId id = GetId(text);
     UIImmediateWidgetFlags flags = UIImmediateWidgetFlags::Button | UIImmediateWidgetFlags::Interactable;
-    UIImmediateElement &element = GetOrCreateElement(id, flags);
+    UIImmediateElement &element = GetOrCreateElement(text, flags);
     
     element.layout.semantic_size[0] = { SizeKind::TextContent, 10.0f };
     element.layout.semantic_size[1] = { SizeKind::TextContent, 8.0f };
@@ -272,9 +263,8 @@ namespace Hyperion::UI {
 
   //--------------------------------------------------------------
   UIImmediateInteraction UIImmediate::TextToggle(bool8 &value, const String &text, FitLayout fit_layout, UIImmediateTheme *theme) {
-    UIImmediateId id = GetId(text);
     UIImmediateWidgetFlags flags = UIImmediateWidgetFlags::Toggle | UIImmediateWidgetFlags::Interactable;
-    UIImmediateElement &element = GetOrCreateElement(id, flags);
+    UIImmediateElement &element = GetOrCreateElement(text, flags);
 
     element.layout.semantic_size[0] = { SizeKind::TextContent, 10.0f };
     element.layout.semantic_size[1] = { SizeKind::TextContent, 8.0f };
@@ -294,8 +284,59 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
-  void UIImmediate::Image(const String &id, Texture *texture, Size size[2], bool8 enable_blending) {
-    UIImmediateElement &element = GetOrCreateElement(GetId(id), UIImmediateWidgetFlags::Image);
+  UIImmediateInteraction UIImmediate::Input(const String &id_text, String &text, TextAlignment text_alignment, FitLayout fit_layout, UIImmediateTheme *theme) {
+    UIImmediateWidgetFlags flags = UIImmediateWidgetFlags::Input | UIImmediateWidgetFlags::Interactable | UIImmediateWidgetFlags::Focusable;
+    UIImmediateElement &element = GetOrCreateElement(id_text, flags);
+
+    element.layout.semantic_size[0] = { SizeKind::TextContent, 10.0f };
+    element.layout.semantic_size[1] = { SizeKind::TextContent, 8.0f };
+    FitToLayout(element, fit_layout);
+    
+    UIImmediateInteraction interaction = InteractWithElement(element);
+    if (interaction.focused) {
+      for (uint64 i = 0; i < s_state.keys_typed.GetLength(); ++i) {
+        String key_typed = s_state.keys_typed[i];
+        bool8 has_characters = true;
+        Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(key_typed);
+        for (uint32 codepoint : codepoints) {
+          if (codepoint == ' ' || codepoint == '\t') {
+            continue;
+          } else if (codepoint == '\b') {
+            if (!text.empty()) {
+              uint32 codepoint_size = StringUtils::GetLastUtf8CodepointSize(text);
+              text.resize(text.size() - codepoint_size);
+
+              interaction.input_changed = true;
+            }
+          } else if (codepoint == '\r') {
+            interaction.input_submitted = true;
+            // We lose focus on return.
+            s_state.focused_widget = 0;
+          }
+          
+          if (!theme->font->HasCodepoint(codepoint)) {
+            has_characters = false;
+            break;
+          }
+        }
+
+        if (has_characters) {
+          text += key_typed;
+          interaction.input_changed = true;
+        }
+      }
+    }
+
+    element.widget.theme = theme;
+    element.widget.text = text;
+    element.widget.text_alignment = text_alignment;
+
+    return interaction;
+  }
+
+  //--------------------------------------------------------------
+  void UIImmediate::Image(const String &id_text, Texture *texture, Size size[2], bool8 enable_blending) {
+    UIImmediateElement &element = GetOrCreateElement(id_text, UIImmediateWidgetFlags::Image);
     
     element.layout.semantic_size[0] = size[0];
     element.layout.semantic_size[1] = size[1];
@@ -353,6 +394,8 @@ namespace Hyperion::UI {
             Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(element.widget.text);
             TextSize text_size = element.widget.theme->font->GetTextSize(codepoints, 0, 1.0f, false);
             computed_size = text_size.size[axis] + semantic_size.value;
+          } else {
+            computed_size = semantic_size.value;
           }
         }
 
@@ -502,9 +545,10 @@ namespace Hyperion::UI {
       bool8 is_text = (element.widget.flags & UIImmediateWidgetFlags::Text) == UIImmediateWidgetFlags::Text;
       bool8 is_button = (element.widget.flags & UIImmediateWidgetFlags::Button) == UIImmediateWidgetFlags::Button;
       bool8 is_toggle = (element.widget.flags & UIImmediateWidgetFlags::Toggle) == UIImmediateWidgetFlags::Toggle;
+      bool8 is_input = (element.widget.flags & UIImmediateWidgetFlags::Input) == UIImmediateWidgetFlags::Input;
       bool8 is_image = (element.widget.flags & UIImmediateWidgetFlags::Image) == UIImmediateWidgetFlags::Image;
 
-      if (is_separator || is_panel || is_button || is_toggle || is_image) {
+      if (is_separator || is_panel || is_button || is_toggle || is_input || is_image) {
         Color color = GetBackgroundColor(element);
 
         if (is_image) {
@@ -521,7 +565,7 @@ namespace Hyperion::UI {
         }
       }
 
-      if (is_text || is_button || is_toggle) {
+      if (is_text || is_button || is_toggle || is_input) {
         if (last_draw_was_a_simple_rect) {
           Flush();    
         }
@@ -568,6 +612,7 @@ namespace Hyperion::UI {
     UIImmediateTheme &theme = *element.widget.theme;
     bool8 is_hovered = s_state.hovered_widget == element.id.id;
     bool8 is_pressed = s_state.pressed_widget == element.id.id;
+    bool8 is_focused = s_state.focused_widget == element.id.id;
 
     bool8 is_separator = (element.widget.flags & UIImmediateWidgetFlags::Separator) == UIImmediateWidgetFlags::Separator;
     if (is_separator) {
@@ -617,6 +662,20 @@ namespace Hyperion::UI {
       }
     }
 
+    bool8 is_input = (element.widget.flags & UIImmediateWidgetFlags::Input) == UIImmediateWidgetFlags::Input;
+    if (is_input) {
+      result = theme.input_color;
+      if (is_hovered) {
+        result = theme.input_color_hovered;
+      }
+      if (is_pressed) {
+        result = theme.input_color_pressed;
+      }
+      if (is_focused) {
+        result = theme.input_color_focused;
+      }
+    }
+    
     return result;
   }
   
@@ -651,8 +710,6 @@ namespace Hyperion::UI {
 
     return result;
   }
-
-  
   
   //--------------------------------------------------------------
   void UIImmediate::DrawRect(Rect rect, Color color) {
@@ -754,6 +811,8 @@ namespace Hyperion::UI {
         element.layout.semantic_size[1] = { SizeKind::PercentOfParent, 1.0f };
         break;
       }
+      case FitLayout::None: break;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
     }
   }
 
@@ -777,14 +836,36 @@ namespace Hyperion::UI {
   }
   
   //--------------------------------------------------------------
-  UIImmediateElement &UIImmediate::GetOrCreateElement(UIImmediateId id, UIImmediateWidgetFlags widget_flags) {
+  UIImmediateId UIImmediate::HashIdText(const String &id_text) {
+    // NOTE: We should allow filtering out what goes from the text into the hash with '##' or similar.
+    uint64 id = std::hash<String>()(id_text);
+    return id;
+  }
+
+  //--------------------------------------------------------------
+  String UIImmediate::GetIdTextFromStack(const String &text) {
+    // This is not really performant but works for now.
+    String final_text;
+    for (const String &id_stack_entry : s_state.id_stack) {
+      final_text += id_stack_entry;
+    }
+    final_text += text;
+    return final_text;
+  }
+  
+  //--------------------------------------------------------------
+  UIImmediateElement &UIImmediate::GetOrCreateElement(const String &id_text, UIImmediateWidgetFlags widget_flags) {
     UIImmediateElement *element = nullptr;
 
+    String full_id_text = GetIdTextFromStack(id_text);
+    UIImmediateId id = HashIdText(full_id_text);
+    
     // Try to get cached element.
     auto it = s_state.persistent_elements.Find(id);
     if (it == s_state.persistent_elements.end()) {
       UIImmediateElement new_element = { };
       new_element.id.id = id;
+      new_element.id.id_text = full_id_text;
       new_element.widget.flags = widget_flags;
       s_state.persistent_elements.Insert(id, new_element);
       element = &s_state.persistent_elements.Get(id);
@@ -856,20 +937,25 @@ namespace Hyperion::UI {
         s_state.hovered_widget = id;
         if (s_state.pressed_widget == 0 && (s_state.is_left_mouse_down || s_state.is_right_mouse_down)) {
           s_state.pressed_widget = id;
+          if ((element.widget.flags & UIImmediateWidgetFlags::Focusable) == UIImmediateWidgetFlags::Focusable) {
+            s_state.focused_widget = id;  
+          }
         }
       }
 
       bool8 is_hovered_widget = s_state.hovered_widget == id;
       bool8 is_pressed_widget = s_state.pressed_widget == id;
+      bool8 is_focused_widget = s_state.focused_widget == id;
 
       interaction.hovered = is_hovered_widget;
+      interaction.focused = is_focused_widget;
       interaction.clicked = s_state.is_left_mouse_up && is_hovered_widget && is_pressed_widget;
       interaction.right_clicked = s_state.is_right_mouse_up && is_hovered_widget && is_pressed_widget;
       
       return interaction;
     }
 
-    return UIImmediateInteraction();
+    return { };
   }
   
   //--------------------------------------------------------------
