@@ -88,7 +88,7 @@ namespace Hyperion {
       }
       case WindowMode::Borderless: {
         // In borderless mode we do not resize because we would probably not fill the screen anymore.
-        break;
+        return;
       }
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
     }
@@ -111,7 +111,6 @@ namespace Hyperion {
 
     DWORD window_styles = GetWindowLongW(m_window_handle, GWL_STYLE);
 
-    WindowMode last_window_mode = m_window_mode;
     // This already needs to be set here for all later message callbacks.
     m_window_mode = window_mode;
 
