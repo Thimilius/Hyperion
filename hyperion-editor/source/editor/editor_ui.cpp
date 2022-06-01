@@ -5,8 +5,10 @@
 #include <hyperion/assets/loader/font_loader.hpp>
 #include <hyperion/core/app/display.hpp>
 #include <hyperion/core/app/time.hpp>
+#include <hyperion/ecs/component/components/utilities/camera_utilities.hpp>
 #include <hyperion/render/render_engine.hpp>
 #include <hyperion/ui/immediate/ui_immediate.hpp>
+#include <hyperion/ui/immediate/ui_immediate_gizmos.hpp>
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/editor/editor_application.hpp"
@@ -329,6 +331,27 @@ namespace Hyperion::Editor {
       UIImmediate::EndPanel();
     }
     UIImmediate::End();
+
+    if (EditorSelection::HasSelection()) {
+      EntityId entity = EditorSelection::GetSelection();
+      LocalTransformComponent *local_transform = manager->GetComponent<LocalTransformComponent>(entity);
+      DerivedTransformComponent *derived_transform = manager->GetComponent<DerivedTransformComponent>(entity);
+      DerivedTransformComponent *camera_transform = EditorCamera::GetTransform();
+      CameraComponent *camera = EditorCamera::GetCamera();
+
+      // We have to remember to do everything in the space of the preview rect. That includes:
+      //   - Getting the correct mouse position with (0, 0) at the bottom and corner of the preview rect
+      //   - Calculating a ray from that transformed mouse position
+      Rect rect = GetPreviewRect();
+      Vector2 mouse_position = Input::GetMousePosition().ToFloat();
+      Vector2 position = TransformScreenToPreviewPosition(mouse_position);
+      Ray ray = CameraUtilities::ScreenPointToRay(camera, camera_transform, position, Vector2(rect.width, rect.height));
+
+      s_is_in_gizmo = false;
+      if (UIImmediateGizmos::Manipulate(derived_transform, local_transform, camera_transform, ray)) {
+        s_is_in_gizmo = true;
+      }
+    }
   }
 
   //--------------------------------------------------------------
@@ -356,7 +379,7 @@ namespace Hyperion::Editor {
 
   //--------------------------------------------------------------
   void EditorUI::HandleMouseSelection(RenderFrame *render_frame, RenderTexture *render_texture) {
-    if (Input::IsMouseButtonUp(MouseButtonCode::Left)) {
+    if (Input::IsMouseButtonDown(MouseButtonCode::Left) && !s_is_in_gizmo) {
       Vector2 mouse_position = Input::GetMousePosition().ToFloat();
       Vector2 ui_space_point = UIImmediate::ScreenPointToUISpacePoint(mouse_position);
       Rect rect = EditorUI::GetPreviewRect(); 
@@ -391,6 +414,24 @@ namespace Hyperion::Editor {
     }
   }
 
+  //--------------------------------------------------------------
+  Vector2 EditorUI::TransformScreenToPreviewPosition(Vector2 screen_position) {
+    // NOTE: This is local for the preview rect!
+    Rect preview_rect = EditorUI::GetPreviewRect();
+
+    Vector2 ui_space_point = UIImmediate::ScreenPointToUISpacePoint(screen_position);
+    Vector2 point = ui_space_point;
+    point.x -= preview_rect.x;
+    point.y -= preview_rect.y;
+    
+    float32 preview_rect_width = preview_rect.width;
+    float32 preview_rect_height = preview_rect.height;
+    //point.x -= preview_rect_width / 2.0f;
+    //point.y -= preview_rect_height / 2.0f;
+    
+    return point;
+  }
+  
   //--------------------------------------------------------------
   void EditorUI::DrawEntityHierarchy(EntityManager *manager, EntityId entity, HierarchyComponent *branch_hierarchy, uint32 depth) {
     String hierarchy_text;

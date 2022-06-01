@@ -8,11 +8,6 @@
 #include "hyperion/core/math/rect.hpp"
 #include "hyperion/ui/immediate/ui_immediate_types.hpp"
 
-//-------------------- Forward Declarations --------------------
-namespace Hyperion::UI {
-  class UIElement;
-}
-
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::UI {
 

@@ -16,6 +16,9 @@ namespace Hyperion::Editor {
     static void Update(float32 delta_time);
     static void Reset();
 
+    inline static Rendering::CameraComponent *GetCamera() { return &s_camera; }
+    inline static DerivedTransformComponent *GetTransform() { return &s_transform; }
+    
     static Rendering::RenderFrameContextCamera GetContextCamera();
   private:
     static Vector3 GetPositionUnderMouse();

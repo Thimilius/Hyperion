@@ -5,8 +5,6 @@
 #include "hyperion/ui/immediate/ui_immediate.hpp"
 
 //---------------------- Project Includes ----------------------
-#include <ranges>
-
 #include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/assets/loader/font_loader.hpp"
 #include "hyperion/assets/utilities/text_mesh_generator.hpp"

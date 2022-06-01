@@ -43,6 +43,13 @@ namespace Hyperion::Rendering {
   Ray CameraUtilities::ScreenPointToRay(CameraComponent *camera, DerivedTransformComponent *derived_transform, Vector2 screen_point) {
     float32 display_width = static_cast<float32>(Display::GetWidth());
     float32 display_height = static_cast<float32>(Display::GetHeight());
+    return ScreenPointToRay(camera, derived_transform, screen_point, Vector2(display_width, display_height));
+  }
+
+  //--------------------------------------------------------------
+  Ray CameraUtilities::ScreenPointToRay(CameraComponent *camera, DerivedTransformComponent *derived_transform, Vector2 screen_point, Vector2 display_size) {
+    float32 display_width = display_size.x;
+    float32 display_height = display_size.y;
 
     switch (camera->projection_mode) {
       case CameraProjectionMode::Perspective: {
@@ -75,7 +82,7 @@ namespace Hyperion::Rendering {
         return Ray(position, forward);
       }
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-        return Ray();
+      return Ray();
     }
   }
 

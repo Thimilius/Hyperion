@@ -4,7 +4,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/mesh.hpp"
 
-//---------------------- Project Includes ----------------------
+//-------------------- Forward Declarations --------------------
 namespace Hyperion::Rendering {
   class RenderEngine;
 }

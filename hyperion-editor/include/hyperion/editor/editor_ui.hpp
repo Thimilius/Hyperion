@@ -24,6 +24,7 @@ namespace Hyperion::Editor {
     EditorUI() = delete;
     ~EditorUI() = delete;
   private:
+    static Vector2 TransformScreenToPreviewPosition(Vector2 screen_position);
     static void DrawEntityHierarchy(EntityManager *manager, EntityId entity, HierarchyComponent *branch_hierarchy, uint32 depth);
   private:
     inline static UI::UIImmediateId s_preview_element;
@@ -31,6 +32,8 @@ namespace Hyperion::Editor {
     inline static UI::UIImmediateTheme *s_icon_theme;
     inline static UI::UIImmediateTheme *s_selection_theme;
     inline static UI::UIImmediateTheme *s_panel_theme;
+
+    inline static bool8 s_is_in_gizmo;
   };
 
 }

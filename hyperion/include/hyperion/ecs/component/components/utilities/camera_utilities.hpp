@@ -18,6 +18,7 @@ namespace Hyperion::Rendering {
     static Vector3 ScreenToWorldPoint(CameraComponent *camera, Vector3 screen_point);
     static Vector2 WorldToScreenPoint(CameraComponent *camera, Vector3 world_point);
     static Ray ScreenPointToRay(CameraComponent *camera, DerivedTransformComponent *derived_transform, Vector2 screen_point);
+    static Ray ScreenPointToRay(CameraComponent *camera, DerivedTransformComponent *derived_transform, Vector2 screen_point, Vector2 display_size);
 
     static void RecalculateMatrices(CameraComponent *camera, DerivedTransformComponent *derived_transform);
     static void RecalculateMatrices(CameraComponent *camera, DerivedTransformComponent *derived_transform, CameraViewport viewport);
