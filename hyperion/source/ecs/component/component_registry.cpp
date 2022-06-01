@@ -83,6 +83,7 @@ namespace Hyperion {
     // Core.
     {
       Registration::class_<NameComponent>(HYP_NAME_OF_TYPE(NameComponent))
+        (Metadata(TypeMetadata::EditorRemovable, false))
         .constructor<>()
         .property("name", &NameComponent::name);
 
@@ -97,32 +98,33 @@ namespace Hyperion {
         .constructor<>();
 
       Registration::class_<ArchetypeComponent>(HYP_NAME_OF_TYPE(ArchetypeComponent))
+        (Metadata(TypeMetadata::EditorRemovable, false))
         .constructor<>();
     }
 
     // Transform.
     {
       Registration::class_<LocalTransformComponent>(HYP_NAME_OF_TYPE(LocalTransformComponent))
-        (Metadata(TypeMetadata::EditorName, "TransformComponent"))
+        (Metadata(TypeMetadata::EditorName, "TransformComponent"), Metadata(TypeMetadata::EditorRemovable, false))
         .constructor<>()
         .property("position", &LocalTransformComponent::position)
         .property("rotation", &LocalTransformComponent::rotation)
         .property("scale", &LocalTransformComponent::scale);
       
       Registration::class_<DerivedTransformComponent>(HYP_NAME_OF_TYPE(DerivedTransformComponent))
-        (Metadata(TypeMetadata::HideInEditor, true))
+        (Metadata(TypeMetadata::HideInEditor, true), Metadata(TypeMetadata::EditorRemovable, false))
         .constructor<>()
         .property("position", &DerivedTransformComponent::position)(Metadata(PropertyMetadata::Serialize, false))
         .property("rotation", &DerivedTransformComponent::rotation)(Metadata(PropertyMetadata::Serialize, false))
         .property("scale", &DerivedTransformComponent::scale)(Metadata(PropertyMetadata::Serialize, false));
 
       Registration::class_<LocalToWorldComponent>(HYP_NAME_OF_TYPE(LocalToWorldComponent))
-        (Metadata(TypeMetadata::HideInEditor, true))
+        (Metadata(TypeMetadata::HideInEditor, true), Metadata(TypeMetadata::EditorRemovable, false))
         .constructor<>()
         .property("local_to_world", &LocalToWorldComponent::local_to_world)(Metadata(PropertyMetadata::Serialize, false));
 
       Registration::class_<HierarchyComponent>(HYP_NAME_OF_TYPE(HierarchyComponent))
-        (Metadata(TypeMetadata::HideInEditor, true))
+        (Metadata(TypeMetadata::HideInEditor, true), Metadata(TypeMetadata::EditorRemovable, false))
         .constructor<>()
         .property("parent", &HierarchyComponent::parent)
         .property("previous_sibling", &HierarchyComponent::previous_sibling)

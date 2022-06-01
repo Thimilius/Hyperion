@@ -49,8 +49,9 @@ namespace Hyperion {
   };
 
   enum class TypeMetadata {
-    EditorName, // Value: String, Default: Name of type
     HideInEditor, // Value: bool8, Default: false
+    EditorName, // Value: String, Default: Name of type
+    EditorRemovable, // Value: bool8, Default: true
   };
   
 }

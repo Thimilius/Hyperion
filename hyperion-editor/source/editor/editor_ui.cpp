@@ -224,8 +224,33 @@ namespace Hyperion::Editor {
                     component_name = component_type.get_name().to_string();
                   }
                   
-                  UIImmediate::Space(SizeKind::Pixels, 10);
-                  UIImmediate::Text(component_name, TextAlignment::MiddleLeft, FitType::ToLayout);
+                  UIImmediate::Space(SizeKind::Pixels, 10.0f);
+                  Size component_header_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 20.0f } };
+                  UIImmediate::BeginPanel(component_name + "Header", component_header_panel_size);
+                  {
+                    UIImmediate::Space(SizeKind::Pixels, 5.0f);
+                    
+                    UIImmediate::Text(component_name, TextAlignment::MiddleLeft, FitType::ToLayout);
+                    UIImmediate::FillSpace();
+                    
+                    if (UIImmediate::Button("\uf0e2", FitType::ToLayout, icon_theme).clicked) {
+                      component_info.constructor(component);
+                    }
+
+                    bool8 component_removable = true;
+                    Variant removable_metadata = component_type.get_metadata(TypeMetadata::EditorRemovable);
+                    if (removable_metadata.is_valid() && removable_metadata.is_type<bool8>()) {
+                      component_removable = removable_metadata.to_bool();
+                    }
+                    if (component_removable) {
+                      if (UIImmediate::Button("\uf1f8", FitType::ToLayout, icon_theme).clicked) {
+                        manager->RemoveComponent(component_info.id, entity);
+                      }
+                    }
+                    
+                    UIImmediate::Space(SizeKind::Pixels, 5.0f);
+                  }
+                  UIImmediate::EndPanel();
 
                   Instance instance = Reflection::CreateInstanceFromRaw(component_type, component);
                     
@@ -245,25 +270,33 @@ namespace Hyperion::Editor {
                     Size property_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 20.0f } };
                     UIImmediate::BeginPanel(property_name, property_panel_size, ChildLayout::Horizontal);
                     {
+                      UIImmediate::Space(SizeKind::Pixels, 15.0f);
+                      
                       String property_label = property_name + ":";
                       UIImmediate::Text(property_label, TextAlignment::MiddleCenter, FitType::ToLayout);
 
-                      UIImmediate::Space(SizeKind::Pixels, 10.0f);
+                      if (property_type != Type::get<String>()) {
+                        UIImmediate::FillSpace();
+                      } else {
+                        UIImmediate::Space(SizeKind::Pixels, 10.0f);
+                      }
                       
                       Variant property_value = property.get_value(instance);
-                          
+
                       if (property_type == Type::get<String>()) {
                         String string = property_value.get_value<String>();
                         if (UIImmediate::Input(property_name, string, TextAlignment::MiddleLeft, FitType::Fill).input_changed) {
                           property.set_value(instance, string);
                         }
                       } else if (property_type.is_arithmetic()) {
-                        UIImmediate::Text(property_value.to_string(), TextAlignment::MiddleLeft, FitType::Fill);
+                        UIImmediate::Text(property_value.to_string(), TextAlignment::MiddleRight, FitType::ToLayout);
                       } else if (property_type == Type::get<Vector3>()) {
-                        UIImmediate::Text(property_value.get_value<Vector3>().ToString(), TextAlignment::MiddleLeft, FitType::Fill);
+                        UIImmediate::Text(property_value.get_value<Vector3>().ToString(), TextAlignment::MiddleRight, FitType::ToLayout);
                       } else if (property_type == Type::get<Quaternion>()) {
-                        UIImmediate::Text(property_value.get_value<Quaternion>().ToString(), TextAlignment::MiddleLeft, FitType::Fill);
+                        UIImmediate::Text(property_value.get_value<Quaternion>().ToEulerAngles().ToString(), TextAlignment::MiddleRight, FitType::ToLayout);
                       }
+
+                      UIImmediate::Space(SizeKind::Pixels, 5.0f);
                     }
                     UIImmediate::EndPanel();
                   }
@@ -453,18 +486,11 @@ namespace Hyperion::Editor {
 
   //--------------------------------------------------------------
   Vector2 EditorUI::TransformScreenToPreviewPosition(Vector2 screen_position) {
-    // NOTE: This is local for the preview rect!
     Rect preview_rect = EditorUI::GetPreviewRect();
 
-    Vector2 ui_space_point = UIImmediate::ScreenPointToUISpacePoint(screen_position);
-    Vector2 point = ui_space_point;
+    Vector2 point = UIImmediate::ScreenPointToUISpacePoint(screen_position);
     point.x -= preview_rect.x;
     point.y -= preview_rect.y;
-    
-    float32 preview_rect_width = preview_rect.width;
-    float32 preview_rect_height = preview_rect.height;
-    //point.x -= preview_rect_width / 2.0f;
-    //point.y -= preview_rect_height / 2.0f;
     
     return point;
   }
