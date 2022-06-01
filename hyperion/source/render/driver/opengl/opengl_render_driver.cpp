@@ -284,6 +284,19 @@ namespace Hyperion::Rendering {
         DrawRenderBounds(object.bounds);
       }
     }
+    
+    // The transformation gizmos is an overlay so we disable depth testing.
+    glDisable(GL_DEPTH_TEST);
+    if (command.transformation_gizmo.should_draw) {
+      glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, command.transformation_gizmo.local_to_world.elements);
+
+      const OpenGLMesh &opengl_mesh = m_storage.GetMesh(command.transformation_gizmo.mesh_id);
+      UseMesh(opengl_mesh);
+
+      SubMesh sub_mesh = opengl_mesh.sub_meshes[0];
+      DrawSubMesh(sub_mesh);
+    }
+    glEnable(GL_DEPTH_TEST);
   }
 
   //--------------------------------------------------------------

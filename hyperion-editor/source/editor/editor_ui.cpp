@@ -332,12 +332,15 @@ namespace Hyperion::Editor {
     }
     UIImmediate::End();
 
+    RenderGizmos::SetShouldDrawTransformationGizmo(EditorSelection::HasSelection());
     if (EditorSelection::HasSelection()) {
       EntityId entity = EditorSelection::GetSelection();
       LocalTransformComponent *local_transform = manager->GetComponent<LocalTransformComponent>(entity);
       DerivedTransformComponent *derived_transform = manager->GetComponent<DerivedTransformComponent>(entity);
       DerivedTransformComponent *camera_transform = EditorCamera::GetTransform();
       CameraComponent *camera = EditorCamera::GetCamera();
+      
+      RenderGizmos::SetTransformationGizmoTransformation(Matrix4x4::Translate(derived_transform->position));
 
       // We have to remember to do everything in the space of the preview rect. That includes:
       //   - Getting the correct mouse position with (0, 0) at the bottom and corner of the preview rect
@@ -347,10 +350,9 @@ namespace Hyperion::Editor {
       Vector2 position = TransformScreenToPreviewPosition(mouse_position);
       Ray ray = CameraUtilities::ScreenPointToRay(camera, camera_transform, position, Vector2(rect.width, rect.height));
 
-      s_is_in_gizmo = false;
-      if (UIImmediateGizmos::Manipulate(derived_transform, local_transform, camera_transform, ray)) {
-        s_is_in_gizmo = true;
-      }
+      GizmoManipulation manipulation = UIImmediateGizmos::Manipulate(derived_transform, local_transform, camera_transform, ray);
+      s_is_in_gizmo = manipulation.in_transformation;
+      RenderGizmos::SetTransformationGizmoHighlight(manipulation.highlight_axis);
     }
   }
 

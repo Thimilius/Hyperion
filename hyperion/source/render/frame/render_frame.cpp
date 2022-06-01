@@ -145,6 +145,9 @@ namespace Hyperion::Rendering {
     draw_gizmos.grid.local_to_world = Matrix4x4::Identity();
     draw_gizmos.grid.type = RenderGizmos::GetGridType();
     draw_gizmos.grid.mesh_id = RenderGizmos::GetGridMesh()->GetAssetInfo().id;
+    draw_gizmos.transformation_gizmo.should_draw = RenderGizmos::GetShouldDrawTransformationGizmo();
+    draw_gizmos.transformation_gizmo.local_to_world = RenderGizmos::GetTransformationGizmoTransformation();
+    draw_gizmos.transformation_gizmo.mesh_id = RenderGizmos::GetTransformationGizmoMesh()->GetAssetInfo().id;
     draw_gizmos.should_draw_all_bounds = RenderGizmos::GetShouldDrawAllBounds();
 
     RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::DrawGizmos);

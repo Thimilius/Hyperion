@@ -12,6 +12,13 @@ namespace Hyperion::Rendering {
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
+  enum class RenderGizmoAxisHighlight {
+    None,
+    X,
+    Y,
+    Z
+  };
+  
   enum class RenderGizmoGridType {
     XZPlane,
     XYPlane,
@@ -26,14 +33,32 @@ namespace Hyperion::Rendering {
     inline static void SetGridType(RenderGizmoGridType grid_type) { s_grid_type = grid_type; }
     inline static Mesh *GetGridMesh() { return s_grid_mesh; }
 
+    inline static bool8 GetShouldDrawTransformationGizmo() { return s_should_draw_transformation_gizmo; }
+    inline static void SetShouldDrawTransformationGizmo(bool8 should_draw_transformation_gizmo) {
+      s_should_draw_transformation_gizmo = should_draw_transformation_gizmo;
+    }
+    inline static Mesh *GetTransformationGizmoMesh() { return s_transformation_gizmo_mesh; }
+    inline static Matrix4x4 GetTransformationGizmoTransformation() { return s_transformation_gizmo_transformation; }
+    inline static void SetTransformationGizmoTransformation(Matrix4x4 transform) {
+      s_transformation_gizmo_transformation = transform;
+    }
+    static void SetTransformationGizmoHighlight(RenderGizmoAxisHighlight highlight);
+    
     inline static bool GetShouldDrawAllBounds() { return s_should_draw_all_bounds; }
     inline static void SetShouldDrawAllBounds(bool8 should_draw_all_bounds) { s_should_draw_all_bounds = should_draw_all_bounds; }
   private:
     static void Initialize();
+
+    static void RegenerateTransformationGizmoMesh(RenderGizmoAxisHighlight highlight);
   private:
     inline static bool8 s_should_draw_grid = true;
     inline static RenderGizmoGridType s_grid_type = RenderGizmoGridType::XZPlane;
     inline static Mesh *s_grid_mesh;
+
+    inline static bool8 s_should_draw_transformation_gizmo = false;
+    inline static Mesh *s_transformation_gizmo_mesh;
+    inline static Matrix4x4 s_transformation_gizmo_transformation = Matrix4x4::Identity();
+    inline static RenderGizmoAxisHighlight s_transformation_gizmo_highlight = RenderGizmoAxisHighlight::None;
 
     inline static bool8 s_should_draw_all_bounds = false;
   private:

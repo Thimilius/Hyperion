@@ -12,7 +12,7 @@
 namespace Hyperion::UI {
 
   //--------------------------------------------------------------
-  bool8 UIImmediateGizmos::Manipulate(
+  GizmoManipulation UIImmediateGizmos::Manipulate(
     DerivedTransformComponent *derived_transform,
     LocalTransformComponent *local_transform,
     DerivedTransformComponent *camera_transform,
@@ -157,7 +157,17 @@ namespace Hyperion::UI {
       should_move_z = false;
     }
 
-    return should_move_x || should_move_y || should_move_z;
+    GizmoManipulation result = { };
+    result.in_transformation = should_move_x || should_move_y || should_move_z; 
+    if (near_x || should_move_x) {
+      result.highlight_axis = Rendering::RenderGizmoAxisHighlight::X;
+    } else if (near_y || should_move_y) {
+      result.highlight_axis = Rendering::RenderGizmoAxisHighlight::Y;
+    } else if (near_z || should_move_z) {
+      result.highlight_axis = Rendering::RenderGizmoAxisHighlight::Z;
+    }
+    
+    return result;
   }
   
 }

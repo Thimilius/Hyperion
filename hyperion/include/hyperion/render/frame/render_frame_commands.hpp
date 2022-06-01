@@ -96,6 +96,12 @@ namespace Hyperion::Rendering {
       AssetId mesh_id;
     } grid;
 
+    struct TransformationGizmo {
+      bool8 should_draw;
+      Matrix4x4 local_to_world;
+      AssetId mesh_id;
+    } transformation_gizmo;
+
     bool8 should_draw_all_bounds;
   };
 
