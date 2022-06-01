@@ -417,7 +417,7 @@ namespace Hyperion::UI {
       return true;
     });
     
-    // Step 2: Calculate all upwards dependent sizes like percentage of parent.
+    // Step 2: Calculate all upwards dependent sizes like percentage of parent and prepare fill.
     IterateHierarchy(s_state.root_element, [](UIImmediateElement &element) {
       auto calculate_size = [](UIImmediateElement &element, uint32 axis) {
         UIImmediateElement *parent = element.hierarchy.parent;
@@ -492,12 +492,12 @@ namespace Hyperion::UI {
       return true;
     });
     
-    // Last step: Calculate relative position based on parents child layout.
+    // Last step: Calculate relative position to parent and final rect.
     IterateHierarchy(s_state.root_element, [](UIImmediateElement &element) {
-      float32 relative_position[2] = { };
-
-      // Position ourself relative to our previous sibling depending on the layout axis of our parent.
       UIImmediateElement *parent = element.hierarchy.parent;
+      
+      // Position ourself relative to our previous sibling depending on the layout axis of our parent.
+      float32 relative_position[2] = { };
       bool8 element_is_empty = (element.widget.flags & UIImmediateWidgetFlags::Empty) == UIImmediateWidgetFlags::Empty;
       if (parent != nullptr && !element_is_empty) {
         switch (parent->layout.child_layout) {
@@ -519,19 +519,32 @@ namespace Hyperion::UI {
       if (parent != nullptr) {
         absolute_position[0] += parent->layout.computed_absolute_position[0];
         absolute_position[1] += parent->layout.computed_absolute_position[1];
+
+        // For now we restrict every elements size to not overflow the parents size.
+        Rect parent_rect = parent->layout.rect;
+        float32 x = relative_position[0];
+        float32 y = relative_position[1];
+        float32 width = element.layout.computed_size[0];
+        float32 height = element.layout.computed_size[1];
+
+        if (x + width > parent_rect.width) {
+          element.layout.computed_size[0] = width - ((x + width) - parent_rect.width);
+        }
+        if (y + height > parent_rect.height) {
+          element.layout.computed_size[1] = height - ((x + height) - parent_rect.height);
+        }
       }
       element.layout.computed_absolute_position[0] = absolute_position[0];
       element.layout.computed_absolute_position[1] = absolute_position[1];
       
-      // Properly position us in the correct coordinate space.
+      // Properly position us in the correct coordinate space with our final calculated position and size.
       Vector2 rect_size = Vector2(element.layout.computed_size[0], element.layout.computed_size[1]);
-      Vector2 rect_position = Vector2(absolute_position[0], absolute_position[1]);
+      Vector2 rect_position = Vector2(element.layout.computed_absolute_position[0], element.layout.computed_absolute_position[1]);
 
       // Position (0, 0) is at the center of the screen.
       // So every element gets an offset to position it at the top left corner of the screen.
       rect_position.x -= static_cast<float32>(Display::GetWidth()) / 2.0f;
       rect_position.y += static_cast<float32>(Display::GetHeight()) / 2.0f;
-
       // Every rect is positioned relative to the bottom left corner.
       rect_position.y -= rect_size.y;
       
