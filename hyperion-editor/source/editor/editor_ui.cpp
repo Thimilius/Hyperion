@@ -212,8 +212,8 @@ namespace Hyperion::Editor {
               EntityId entity = EditorSelection::GetSelection();
               String text = StringUtils::Format(
                 "Entity\nId: {{Index: {} - Version: {}}}\nGuid: {}",
-                EntityUtilities::GetIndex(entity),
-                EntityUtilities::GetVersion(entity),
+                EntityId::GetIndex(entity),
+                EntityId::GetVersion(entity),
                 manager->GetGuid(entity).ToString()
               );
               UIImmediate::Text(text, TextAlignment::TopCenter, FitType::ToLayout);
@@ -492,7 +492,7 @@ namespace Hyperion::Editor {
             if (id == UINT32_MAX) {
               EditorSelection::Deselect();
             } else {
-              EditorSelection::Select(EntityUtilities::CreateFromSmallId(id));
+              EditorSelection::Select(EntityId::FromSmall(id));
             }
           }
         });

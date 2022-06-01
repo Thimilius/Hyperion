@@ -29,7 +29,7 @@ namespace Hyperion {
     template<typename T>
     inline static void RegisterComponent() {
       static Type component_type = Type::get<T>();
-
+      
       if (s_component_ids.Contains(component_type)) {
         HYP_LOG_ERROR("Entity", "Component {} is already registered!", component_type.get_name().to_string());
         return;

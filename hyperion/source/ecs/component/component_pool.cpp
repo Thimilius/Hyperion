@@ -4,9 +4,6 @@
 //--------------------- Definition Include ---------------------
 #include "hyperion/ecs/component/component_pool.hpp"
 
-//---------------------- Project Includes ----------------------
-#include "hyperion/ecs/entity/entity_utilities.hpp"
-
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
@@ -94,7 +91,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   void ComponentPool::FitIntoPool(EntityId id) {
-    EntityIndex index = EntityUtilities::GetIndex(id);
+    EntityIndex index = EntityId::GetIndex(id);
     uint32 page_index = index / MAX_ENTITIES_PER_PAGE;
 
     if (page_index >= m_entity_index_pages.GetLength()) {
@@ -105,12 +102,12 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   uint32 ComponentPool::GetSparseIndex(EntityId id) {
-    return EntityUtilities::GetIndex(id) % MAX_ENTITIES_PER_PAGE;
+    return EntityId::GetIndex(id) % MAX_ENTITIES_PER_PAGE;
   }
 
   //--------------------------------------------------------------
   Array<uint32> &ComponentPool::GetEntityIndices(EntityId id) {
-    EntityIndex index = EntityUtilities::GetIndex(id);
+    EntityIndex index = EntityId::GetIndex(id);
     uint32 page_index = index / MAX_ENTITIES_PER_PAGE;
     return m_entity_index_pages[page_index];
   }

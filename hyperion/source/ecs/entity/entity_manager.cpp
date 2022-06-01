@@ -25,7 +25,7 @@ namespace Hyperion {
   
   //--------------------------------------------------------------
   bool8 EntityManager::IsAlive(EntityId id) const {
-    EntityIndex index = EntityUtilities::GetIndex(id);
+    EntityIndex index = EntityId::GetIndex(id);
     return index < m_storage.entities.GetLength() && m_storage.entities[index].id == id;
   }
 
@@ -34,7 +34,7 @@ namespace Hyperion {
     HYP_PROFILE_SCOPE("World.GetGuid");
 
     if (IsAlive(id)) {
-      return m_storage.entities[EntityUtilities::GetIndex(id)].guid;
+      return m_storage.entities[EntityId::GetIndex(id)].guid;
     } else {
       HYP_LOG_WARN("Entity", "Trying to get GUID from nonexistent entity with id {}.", id);
       return EntityGuid();
@@ -60,14 +60,14 @@ namespace Hyperion {
 
     EntityId id;
     if (m_storage.available <= 0) {
-      m_storage.entities.Add({ EntityUtilities::CreateId(static_cast<EntityIndex>(m_storage.entities.GetLength()), 0), guid });
+      m_storage.entities.Add({ EntityId::Create(static_cast<EntityIndex>(m_storage.entities.GetLength()), 0), guid });
       id = m_storage.entities.GetLast().id;
     } else {
       EntityIndex new_index = m_storage.next;
-      m_storage.next = EntityUtilities::GetIndex(m_storage.entities[new_index].id);
+      m_storage.next = EntityId::GetIndex(m_storage.entities[new_index].id);
       m_storage.available--;
 
-      EntityId new_id = EntityUtilities::CreateId(new_index, EntityUtilities::GetVersion(m_storage.entities[new_index].id));
+      EntityId new_id = EntityId::Create(new_index, EntityId::GetVersion(m_storage.entities[new_index].id));
       m_storage.entities[new_index].id = new_id;
       m_storage.entities[new_index].guid = guid;
 
@@ -123,8 +123,8 @@ namespace Hyperion {
 
       m_world->m_hierarchy.HandleEntityDestruction(id, hierarchy_destruction_policy);
 
-      EntityId new_id = EntityUtilities::CreateId(m_storage.next, EntityUtilities::GetVersion(id) + 1);
-      EntityIndex index = EntityUtilities::GetIndex(id);
+      EntityId new_id = EntityId::Create(m_storage.next, EntityId::GetVersion(id) + 1);
+      EntityIndex index = EntityId::GetIndex(id);
 
       m_storage.next = index;
       m_storage.available++;

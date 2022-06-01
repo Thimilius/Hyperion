@@ -7,7 +7,6 @@
 #include "hyperion/ecs/component/components/core_components.hpp"
 #include "hyperion/ecs/entity/entity_archetype.hpp"
 #include "hyperion/ecs/entity/entity_hierarchy.hpp"
-#include "hyperion/ecs/entity/entity_utilities.hpp"
 #include "hyperion/ecs/entity/entity_view.hpp"
 #include "hyperion/ecs/world/world_environment.hpp"
 
@@ -26,7 +25,7 @@ namespace Hyperion {
     Array<EntityDescription> entities;
     Map<EntityGuid, EntityId> entities_by_guid;
     uint64 available = 0;
-    EntityIndex next = EntityUtilities::GetIndex(EntityId::EMPTY);
+    EntityIndex next = EntityId::GetIndex(EntityId::EMPTY);
 
     Array<ComponentPool> component_pools;
     Array<ComponentCallbacks> component_callbacks;
