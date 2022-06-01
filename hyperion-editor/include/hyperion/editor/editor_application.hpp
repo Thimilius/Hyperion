@@ -23,6 +23,9 @@ namespace Hyperion::Editor {
     void OnUpdate(float32 delta_time) override;
     void OnTick() override;
   private:
+    void OpenWorld();
+    void SaveWorld();
+  private:
     inline static World *s_world;
 
     inline static EditorRenderPipeline *s_render_pipeline;
