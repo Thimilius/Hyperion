@@ -194,7 +194,7 @@ namespace Hyperion::Editor {
             if (EditorSelection::HasSelection()) {
               EntityId entity = EditorSelection::GetSelection();
               String text = StringUtils::Format(
-                "Entity:\nId: Index: {} - Version: {}\n Guid: {}",
+                "Entity\nId: {{Index: {} - Version: {}}}\nGuid: {}",
                 EntityUtilities::GetIndex(entity),
                 EntityUtilities::GetVersion(entity),
                 manager->GetGuid(entity).ToString()
@@ -206,31 +206,66 @@ namespace Hyperion::Editor {
                 void *component = manager->GetComponent(component_info.id, entity);
                 if (component) {
                   Type component_type = *component_info.type;
-                  UIImmediate::Space(SizeKind::Pixels, 10);
-                  UIImmediate::Text(component_type.get_name().to_string(), TextAlignment::MiddleCenter, FitType::ToLayout);
+
+                  bool8 should_skip_component = false;
+                  Variant hide_metadata = component_type.get_metadata(TypeMetadata::HideInEditor);
+                  if (hide_metadata.is_valid() && hide_metadata.is_type<bool8>()) {
+                    should_skip_component = hide_metadata.to_bool();
+                  }
+                  if (should_skip_component) {
+                    continue;
+                  }
+
+                  String component_name;
+                  Variant name_metadata = component_type.get_metadata(TypeMetadata::EditorName);
+                  if (name_metadata.is_valid() && name_metadata.is_type<String>()) {
+                    component_name = name_metadata.get_value<String>();
+                  } else {
+                    component_name = component_type.get_name().to_string();
+                  }
                   
-                  if (component_type == Type::get<NameComponent>()) {
-                    Instance instance = Reflection::CreateInstanceFromRaw(component_type, component);
+                  UIImmediate::Space(SizeKind::Pixels, 10);
+                  UIImmediate::Text(component_name, TextAlignment::MiddleLeft, FitType::ToLayout);
+
+                  Instance instance = Reflection::CreateInstanceFromRaw(component_type, component);
                     
-                    for (Property property : component_type.get_properties()) {
-                      Type property_type = property.get_type();
-                      String property_name = property.get_name().to_string();
-                      
-                      Size property_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 20.0f } };
-                      UIImmediate::BeginPanel(property_name, property_panel_size, ChildLayout::Horizontal);
-                      {
-                        String property_label = property_name + ":";
-                        UIImmediate::Text(property_label, TextAlignment::MiddleCenter, FitType::ToLayout);
-                          
-                        if (property_type == Type::get<String>()) {
-                          String string = property.get_value(instance).get_value<String>();
-                          if (UIImmediate::Input(property_name, string, TextAlignment::MiddleLeft, FitType::Fill).input_changed) {
-                            property.set_value(instance, string);
-                          }
-                        }
-                      }
-                      UIImmediate::EndPanel();
+                  for (Property property : component_type.get_properties()) {
+                    Type property_type = property.get_type();
+                    String property_name = property.get_name().to_string();
+
+                    bool8 should_skip_property = false;
+                    Variant serialize_metadata = property.get_metadata(PropertyMetadata::Serialize);
+                    if (serialize_metadata.is_valid() && serialize_metadata.is_type<bool8>()) {
+                      should_skip_property = !serialize_metadata.to_bool();
                     }
+                    if (should_skip_property) {
+                      continue;
+                    }
+                      
+                    Size property_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 20.0f } };
+                    UIImmediate::BeginPanel(property_name, property_panel_size, ChildLayout::Horizontal);
+                    {
+                      String property_label = property_name + ":";
+                      UIImmediate::Text(property_label, TextAlignment::MiddleCenter, FitType::ToLayout);
+
+                      UIImmediate::Space(SizeKind::Pixels, 10.0f);
+                      
+                      Variant property_value = property.get_value(instance);
+                          
+                      if (property_type == Type::get<String>()) {
+                        String string = property_value.get_value<String>();
+                        if (UIImmediate::Input(property_name, string, TextAlignment::MiddleLeft, FitType::Fill).input_changed) {
+                          property.set_value(instance, string);
+                        }
+                      } else if (property_type.is_arithmetic()) {
+                        UIImmediate::Text(property_value.to_string(), TextAlignment::MiddleLeft, FitType::Fill);
+                      } else if (property_type == Type::get<Vector3>()) {
+                        UIImmediate::Text(property_value.get_value<Vector3>().ToString(), TextAlignment::MiddleLeft, FitType::Fill);
+                      } else if (property_type == Type::get<Quaternion>()) {
+                        UIImmediate::Text(property_value.get_value<Quaternion>().ToString(), TextAlignment::MiddleLeft, FitType::Fill);
+                      }
+                    }
+                    UIImmediate::EndPanel();
                   }
                 }
               }

@@ -57,19 +57,29 @@ namespace Hyperion::Rendering {
   };
 
   struct LightComponent {
+    HYP_REFLECT()
+  public:
+    virtual ~LightComponent() = default;
+    
     float32 intensity = 1.0f;
     Color color = Color::White();
   protected:
     LightComponent() = default;
   };
 
-  struct DirectionalLightComponent : public LightComponent { };
+  struct DirectionalLightComponent : public LightComponent {
+    HYP_REFLECT(LightComponent)
+  };
 
   struct PointLightComponent : public LightComponent {
+    HYP_REFLECT(LightComponent)
+  public:
     float32 range = 10.0f;
   };
 
   struct SpotLightComponent : public LightComponent {
+    HYP_REFLECT(LightComponent)
+  public:
     float32 inner_spot_radius = 1.0f;
     float32 outer_spot_radius = 1.0f;
   };

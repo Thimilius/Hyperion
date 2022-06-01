@@ -103,22 +103,26 @@ namespace Hyperion {
     // Transform.
     {
       Registration::class_<LocalTransformComponent>(HYP_NAME_OF_TYPE(LocalTransformComponent))
+        (Metadata(TypeMetadata::EditorName, "TransformComponent"))
         .constructor<>()
         .property("position", &LocalTransformComponent::position)
         .property("rotation", &LocalTransformComponent::rotation)
         .property("scale", &LocalTransformComponent::scale);
       
       Registration::class_<DerivedTransformComponent>(HYP_NAME_OF_TYPE(DerivedTransformComponent))
+        (Metadata(TypeMetadata::HideInEditor, true))
         .constructor<>()
-        .property("position", &DerivedTransformComponent::position)(Metadata(PropertyAttribute::Serialize, false))
-        .property("rotation", &DerivedTransformComponent::rotation)(Metadata(PropertyAttribute::Serialize, false))
-        .property("scale", &DerivedTransformComponent::scale)(Metadata(PropertyAttribute::Serialize, false));
+        .property("position", &DerivedTransformComponent::position)(Metadata(PropertyMetadata::Serialize, false))
+        .property("rotation", &DerivedTransformComponent::rotation)(Metadata(PropertyMetadata::Serialize, false))
+        .property("scale", &DerivedTransformComponent::scale)(Metadata(PropertyMetadata::Serialize, false));
 
       Registration::class_<LocalToWorldComponent>(HYP_NAME_OF_TYPE(LocalToWorldComponent))
+        (Metadata(TypeMetadata::HideInEditor, true))
         .constructor<>()
-        .property("local_to_world", &LocalToWorldComponent::local_to_world)(Metadata(PropertyAttribute::Serialize, false));
+        .property("local_to_world", &LocalToWorldComponent::local_to_world)(Metadata(PropertyMetadata::Serialize, false));
 
       Registration::class_<HierarchyComponent>(HYP_NAME_OF_TYPE(HierarchyComponent))
+        (Metadata(TypeMetadata::HideInEditor, true))
         .constructor<>()
         .property("parent", &HierarchyComponent::parent)
         .property("previous_sibling", &HierarchyComponent::previous_sibling)
@@ -157,12 +161,12 @@ namespace Hyperion {
         .property("fov", &CameraComponent::fov)
         .property("orthographic_size", &CameraComponent::orthographic_size)
         .property("viewport_clipping", &CameraComponent::viewport_clipping)
-        .property("view_matrix", &CameraComponent::view_matrix)(Metadata(PropertyAttribute::Serialize, false))
-        .property("projection_matrix", &CameraComponent::projection_matrix)(Metadata(PropertyAttribute::Serialize, false))
-        .property("view_projection_matrix", &CameraComponent::view_projection_matrix)(Metadata(PropertyAttribute::Serialize, false))
-        .property("inverse_view_matrix", &CameraComponent::inverse_view_matrix)(Metadata(PropertyAttribute::Serialize, false))
-        .property("inverse_projection_matrix", &CameraComponent::inverse_projection_matrix)(Metadata(PropertyAttribute::Serialize, false))
-        .property("inverse_view_projection_matrix", &CameraComponent::inverse_view_projection_matrix)(Metadata(PropertyAttribute::Serialize, false));
+        .property("view_matrix", &CameraComponent::view_matrix)(Metadata(PropertyMetadata::Serialize, false))
+        .property("projection_matrix", &CameraComponent::projection_matrix)(Metadata(PropertyMetadata::Serialize, false))
+        .property("view_projection_matrix", &CameraComponent::view_projection_matrix)(Metadata(PropertyMetadata::Serialize, false))
+        .property("inverse_view_matrix", &CameraComponent::inverse_view_matrix)(Metadata(PropertyMetadata::Serialize, false))
+        .property("inverse_projection_matrix", &CameraComponent::inverse_projection_matrix)(Metadata(PropertyMetadata::Serialize, false))
+        .property("inverse_view_projection_matrix", &CameraComponent::inverse_view_projection_matrix)(Metadata(PropertyMetadata::Serialize, false));
 
       Registration::class_<SpriteComponent>(HYP_NAME_OF_TYPE(SpriteComponent))
         .constructor<>()
@@ -176,8 +180,9 @@ namespace Hyperion {
         .property("layer_mask", &MeshComponent::layer_mask);
 
       Registration::class_<MeshBoundsComponent>(HYP_NAME_OF_TYPE(MeshBoundsComponent))
+        (Metadata(TypeMetadata::HideInEditor, true))
         .constructor<>()
-        .property("bounds", &MeshBoundsComponent::bounds)(Metadata(PropertyAttribute::Serialize, false));
+        .property("bounds", &MeshBoundsComponent::bounds)(Metadata(PropertyMetadata::Serialize, false));
 
       Registration::class_<LightComponent>(HYP_NAME_OF_TYPE(LightComponent))
         .property("intensity", &LightComponent::intensity)

@@ -345,7 +345,7 @@ namespace Hyperion {
   Array<Property> GetPropertiesToSerialize(Type type) {
     Array<Property> properties;
     for (Property property : type.get_properties()) {
-      Variant property_metadata_serialize = property.get_metadata(PropertyAttribute::Serialize);
+      Variant property_metadata_serialize = property.get_metadata(PropertyMetadata::Serialize);
       if (property_metadata_serialize.is_valid()) {
         if (property_metadata_serialize.is_type<bool8>()) {
           bool8 should_serialize = property_metadata_serialize.to_bool();

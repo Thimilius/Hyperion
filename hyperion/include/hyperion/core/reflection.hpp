@@ -44,8 +44,13 @@ namespace Hyperion {
     ~Reflection() = delete;
   };
 
-  enum class PropertyAttribute {
+  enum class PropertyMetadata {
     Serialize, // Value: bool8, Default: true
+  };
+
+  enum class TypeMetadata {
+    EditorName, // Value: String, Default: Name of type
+    HideInEditor, // Value: bool8, Default: false
   };
   
 }
