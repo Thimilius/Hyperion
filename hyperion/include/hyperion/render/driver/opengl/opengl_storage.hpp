@@ -82,11 +82,11 @@ namespace Hyperion::Rendering {
 
   class OpenGLStorage final {
   public:
-    inline const OpenGLTexture &GetTexture2D(AssetId id) const { return m_textures.Get(id); };
-    inline const OpenGLRenderTexture &GetRenderTexture(AssetId id) const { return m_render_textures.Get(id); };
-    inline const OpenGLShader &GetShader(AssetId id) const { return m_shaders.Get(id); };
-    inline const OpenGLMaterial &GetMaterial(AssetId id) const { return m_materials.Get(id); };
-    inline const OpenGLMesh &GetMesh(AssetId id) const { return m_meshes.Get(id); };
+    inline const OpenGLTexture &GetTexture2D(AssetId id) const { return m_textures.Get(id); }
+    inline const OpenGLRenderTexture &GetRenderTexture(AssetId id) const { return m_render_textures.Get(id); }
+    inline const OpenGLShader &GetShader(AssetId id) const { return m_shaders.Get(id); }
+    inline const OpenGLMaterial &GetMaterial(AssetId id) const { return m_materials.Get(id); }
+    inline const OpenGLMesh &GetMesh(AssetId id) const { return m_meshes.Get(id); }
 
     inline const OpenGLStaticStorage &GetStatic() const { return m_static; }
 
@@ -116,7 +116,7 @@ namespace Hyperion::Rendering {
     Map<AssetId, OpenGLMaterial> m_materials;
     Map<AssetId, OpenGLMesh> m_meshes;
 
-    OpenGLStaticStorage m_static;
+    OpenGLStaticStorage m_static = OpenGLStaticStorage();
   };
 
 }

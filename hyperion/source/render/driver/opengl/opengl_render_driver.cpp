@@ -43,7 +43,7 @@ namespace Hyperion::Rendering {
   void OpenGLRenderDriver::ExecuteRenderFrame(RenderFrame *render_frame) {
     HYP_PROFILE_SCOPE("OpenGLRenderDriver.ExecuteRenderFrameCommands");
 
-    const RenderFrameContext &render_frame_context = render_frame->GetContext();
+    const RenderFrameContext &context = render_frame->GetContext();
 
     const Array<RenderFrameCommand> &frame_commands = render_frame->GetCommands();
     for (const RenderFrameCommand &frame_command : frame_commands) {
@@ -51,29 +51,18 @@ namespace Hyperion::Rendering {
         case RenderFrameCommandType::SetCamera: {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.SetCamera");
           OpenGLDebugGroup debug_group("SetCamera");
-
-          const RenderFrameCommandSetCamera &set_camera = std::get<RenderFrameCommandSetCamera>(frame_command.data);
-          m_static.camera_index = set_camera.camera_index;
-
-          const RenderFrameContextCamera &render_frame_context_camera = render_frame_context.GetCameras()[m_static.camera_index];
-
-          OpenGLUniformBufferCamera uniform_buffer_camera;
-          uniform_buffer_camera.camera_view_matrix = render_frame_context_camera.view_matrix;
-          uniform_buffer_camera.camera_projection_matrix = render_frame_context_camera.projection_matrix;
-          glNamedBufferSubData(m_storage.GetStatic().camera_uniform_buffer, 0, sizeof(OpenGLUniformBufferCamera), &uniform_buffer_camera);
-
-          const CameraViewport &viewport = render_frame_context_camera.viewport;
-          glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
-
+          
+          const RenderFrameCommandSetCamera &command = std::get<RenderFrameCommandSetCamera>(frame_command.data);
+          ExecuteFrameCommandSetCamera(command, context);
+          
           break;
         }
         case RenderFrameCommandType::ExecuteCommandBuffer: {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.ExecuteCommandBuffer");
           OpenGLDebugGroup debug_group("ExecuteCommandBuffer");
 
-          const RenderFrameCommandExecuteCommandBuffer &execute_command_buffer = std::get<RenderFrameCommandExecuteCommandBuffer>(frame_command.data);
-
-          ExecuteCommandBuffer(render_frame, execute_command_buffer.command_buffer);
+          const RenderFrameCommandExecuteCommandBuffer &command = std::get<RenderFrameCommandExecuteCommandBuffer>(frame_command.data);
+          ExecuteFrameCommandExecuteCommandBuffer(command, render_frame);
 
           break;
         }
@@ -81,10 +70,8 @@ namespace Hyperion::Rendering {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawMeshes");
           OpenGLDebugGroup debug_group("DrawMeshes");
 
-          const RenderFrameCommandDrawMeshes &draw_meshes = std::get<RenderFrameCommandDrawMeshes>(frame_command.data);
-
-          PrepareObjects(render_frame, draw_meshes.sorted_objects, draw_meshes.drawing_parameters);
-          DrawMeshes(render_frame_context.GetEnvironment(), render_frame_context.GetLights(), draw_meshes.drawing_parameters);
+          const RenderFrameCommandDrawMeshes &command = std::get<RenderFrameCommandDrawMeshes>(frame_command.data);
+          ExecuteFrameCommandDrawMeshes(command, render_frame, context);
 
           break;
         }
@@ -92,7 +79,8 @@ namespace Hyperion::Rendering {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawShadows");
           OpenGLDebugGroup debug_group("DrawShadows");
 
-          const RenderFrameCommandDrawShadows &draw_shadows = std::get<RenderFrameCommandDrawShadows>(frame_command.data);
+          const RenderFrameCommandDrawShadows &command = std::get<RenderFrameCommandDrawShadows>(frame_command.data);
+          ExecuteFrameCommandDrawShadows(command);
 
           break;
         }
@@ -100,17 +88,17 @@ namespace Hyperion::Rendering {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawUI");
           OpenGLDebugGroup debug_group("DrawUI");
 
-          DrawUI(render_frame_context.GetUIObjects());
-
+          const RenderFrameCommandDrawUI &command = std::get<RenderFrameCommandDrawUI>(frame_command.data);
+          ExecuteFrameCommandDrawUI(command, context);
+          
           break;
         }
         case RenderFrameCommandType::DrawObjectIds: {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawObjectIds");
           OpenGLDebugGroup debug_group("DrawObjectIds");
 
-          const RenderFrameCommandDrawObjectIds &draw_object_ids = std::get<RenderFrameCommandDrawObjectIds>(frame_command.data);
-
-          DrawObjectIds(render_frame_context, draw_object_ids.render_target_id);
+          const RenderFrameCommandDrawObjectIds &command = std::get<RenderFrameCommandDrawObjectIds>(frame_command.data);
+          ExecuteFrameCommandDrawObjectIds(command, context);
 
           break;
         }
@@ -118,34 +106,8 @@ namespace Hyperion::Rendering {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawGizmos");
           OpenGLDebugGroup debug_group("DrawGizmos");
 
-          const RenderFrameCommandDrawGizmos &draw_gizmos = std::get<RenderFrameCommandDrawGizmos>(frame_command.data);
-
-          glDepthMask(GL_FALSE);
-          glEnable(GL_BLEND);
-          glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-          const OpenGLShader &opengl_shader = m_storage.GetShader(draw_gizmos.shader_id);
-          glUseProgram(opengl_shader.program);
-
-          GLint model_location = glGetUniformLocation(opengl_shader.program, "u_model");
-
-          if (draw_gizmos.grid.should_draw) {
-            glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, draw_gizmos.grid.local_to_world.elements);
-
-            const OpenGLMesh &opengl_mesh = m_storage.GetMesh(draw_gizmos.grid.mesh_id);
-            UseMesh(opengl_mesh);
-
-            SubMesh sub_mesh = opengl_mesh.sub_meshes[0];
-            DrawSubMesh(sub_mesh);
-          }
-
-          if (draw_gizmos.should_draw_all_bounds) {
-            glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, Matrix4x4::Identity().elements);
-
-            for (const RenderFrameContextObjectMesh &object : render_frame_context.GetMeshObjects()) {
-              DrawRenderBounds(object.bounds);
-            }
-          }
+          const RenderFrameCommandDrawGizmos &command = std::get<RenderFrameCommandDrawGizmos>(frame_command.data);
+          ExecuteFrameCommandDrawGizmos(command, context);
 
           break;
         }
@@ -153,7 +115,8 @@ namespace Hyperion::Rendering {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawEditorUI");
           OpenGLDebugGroup debug_group("DrawEditorUI");
 
-          DrawUI(render_frame_context.GetEditorUIObjects());
+          const RenderFrameCommandDrawEditorUI &command = std::get<RenderFrameCommandDrawEditorUI>(frame_command.data);
+          ExecuteFrameCommandDrawEditorUI(command, context);
 
           break;
         }
@@ -164,33 +127,41 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::ExecuteCommandBuffer(RenderFrame *render_frame, const RenderCommandBuffer &command_buffer) {
-    HYP_PROFILE_SCOPE("OpenGLRenderDriver.ExecuteCommandBuffer");
+  void OpenGLRenderDriver::ExecuteFrameCommandSetCamera(const RenderFrameCommandSetCamera &command, const RenderFrameContext &context) {
+    m_static.camera_index = command.camera_index;
 
-    const Array<RenderCommandBufferCommand> &buffer_commands = command_buffer.GetCommands();
-    for (const RenderCommandBufferCommand &buffer_command : buffer_commands) {
-      switch (buffer_command.type) {
+    const RenderFrameContextCamera &render_frame_context_camera = context.GetCameras()[m_static.camera_index];
+
+    OpenGLUniformBufferCamera uniform_buffer_camera;
+    uniform_buffer_camera.camera_view_matrix = render_frame_context_camera.view_matrix;
+    uniform_buffer_camera.camera_projection_matrix = render_frame_context_camera.projection_matrix;
+    glNamedBufferSubData(m_storage.GetStatic().camera_uniform_buffer, 0, sizeof(OpenGLUniformBufferCamera), &uniform_buffer_camera);
+
+    const CameraViewport &viewport = render_frame_context_camera.viewport;
+    glViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+  }
+
+  //--------------------------------------------------------------
+  void OpenGLRenderDriver::ExecuteFrameCommandExecuteCommandBuffer(const RenderFrameCommandExecuteCommandBuffer &command, RenderFrame *render_frame) {
+    const RenderCommandBuffer &command_buffer = command.command_buffer;
+    const Array<RenderCommandBufferCommand> &command_buffer_commands = command_buffer.GetCommands();
+    for (const RenderCommandBufferCommand &command_buffer_command : command_buffer_commands) {
+      switch (command_buffer_command.type) {
         case RenderCommandBufferCommandType::ClearRenderTarget: {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommandBufferCommand.Clear");
           OpenGLDebugGroup debug_group("ClearRenderTarget");
 
-          const RenderCommandBufferCommandClearRenderTarget &clear_render_target = std::get<RenderCommandBufferCommandClearRenderTarget>(buffer_command.data);
+          const RenderCommandBufferCommandClearRenderTarget &buffer_command = std::get<RenderCommandBufferCommandClearRenderTarget>(command_buffer_command.data);
+          ExecuteBufferCommandClearRenderTarget(buffer_command);
 
-          Color background_color = clear_render_target.color;
-          glClearColor(background_color.r, background_color.g, background_color.b, background_color.a);
-
-          // We have to make sure that we can clear the depth buffer by enabling the depth mask.
-          glDepthMask(GL_TRUE);
-          glClear(OpenGLUtilities::GetClearFlags(clear_render_target.flags));
           break;
         }
         case RenderCommandBufferCommandType::SetRenderTarget: {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommandBufferCommand.SetRenderTarget");
           OpenGLDebugGroup debug_group("SetRenderTarget");
 
-          const RenderCommandBufferCommandSetRenderTarget &set_render_target = std::get<RenderCommandBufferCommandSetRenderTarget>(buffer_command.data);
-
-          UseRenderTexture(set_render_target.id);
+          const RenderCommandBufferCommandSetRenderTarget &buffer_command = std::get<RenderCommandBufferCommandSetRenderTarget>(command_buffer_command.data);
+          ExecuteBufferCommandSetRenderTarget(buffer_command);
 
           break;
         }
@@ -198,64 +169,8 @@ namespace Hyperion::Rendering {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommandBufferCommand.Blit");
           OpenGLDebugGroup debug_group("Blit");
 
-          const RenderCommandBufferCommandBlit &blit = std::get<RenderCommandBufferCommandBlit>(buffer_command.data);
-
-          GLint source_width = Display::GetWidth();
-          GLint source_height = Display::GetHeight();
-          GLuint source_framebuffer = 0;
-          GLuint source_color_attachment = 0;
-          if (blit.source.id != RenderTargetId::Default().id) {
-            const OpenGLRenderTexture &opengl_render_texture = m_storage.GetRenderTexture(blit.source.id);
-            source_width = opengl_render_texture.width;
-            source_height = opengl_render_texture.height;
-            source_framebuffer = opengl_render_texture.framebuffer;
-
-            // TODO: Use correct attachment.
-            source_color_attachment = opengl_render_texture.attachments.Get(0).attachment;
-          }
-
-          GLint destination_width = Display::GetWidth();
-          GLint destination_height = Display::GetHeight();
-          GLuint destination_framebuffer = 0;
-          if (blit.destination.id != RenderTargetId::Default().id) {
-            const OpenGLRenderTexture &opengl_render_texture = m_storage.GetRenderTexture(blit.destination.id);
-            destination_width = opengl_render_texture.width;
-            destination_height = opengl_render_texture.height;
-            destination_framebuffer = opengl_render_texture.framebuffer;
-          }
-
-          // Catch the case where we copy from the default back buffer.
-          if (source_framebuffer == 0) {
-            GLbitfield mask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
-
-            glBlitNamedFramebuffer(
-              source_framebuffer,
-              destination_framebuffer,
-              0,
-              0,
-              source_width,
-              source_height,
-              0,
-              0,
-              destination_width,
-              destination_height,
-              mask,
-              GL_NEAREST);
-          } else {
-            GLuint current_framebuffer = 0;
-            glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, reinterpret_cast<GLint *>(&current_framebuffer));
-
-            glBindFramebuffer(GL_FRAMEBUFFER, destination_framebuffer);
-
-            glDisable(GL_BLEND);
-
-            glUseProgram(m_storage.GetStatic().fullscreen_shader);
-            glBindTextureUnit(0, source_color_attachment);
-            glBindVertexArray(m_storage.GetStatic().fullscreen_vertex_array);
-            glDrawArrays(GL_TRIANGLES, 0, 3);
-
-            glBindFramebuffer(GL_FRAMEBUFFER, current_framebuffer);
-          }
+          const RenderCommandBufferCommandBlit &buffer_command = std::get<RenderCommandBufferCommandBlit>(command_buffer_command.data);
+          ExecuteBufferCommandBlit(buffer_command);
 
           break;
         }
@@ -263,72 +178,250 @@ namespace Hyperion::Rendering {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommandBufferCommand.SetGlobalBuffer");
           OpenGLDebugGroup debug_group("SetGlobalBuffer");
 
-          const RenderCommandBufferCommandSetGlobalBuffer &set_global_buffer = std::get<RenderCommandBufferCommandSetGlobalBuffer>(buffer_command.data);
-          auto &data = set_global_buffer.render_buffer.GetData();
-
-          // HACK: This is kind of stupid.
-          // We need something more sophisticated which abstracts the proper shader uniform names and binding points.
-          GLuint buffer_id = -1;
-          if (set_global_buffer.id == 0) {
-            buffer_id = m_static.lighting_uniform_buffer;
-
-            if (buffer_id == -1) {
-              glCreateBuffers(1, &buffer_id);
-              glNamedBufferData(buffer_id, data.GetLength(), data.GetData(), GL_DYNAMIC_DRAW);
-              glBindBufferBase(GL_UNIFORM_BUFFER, 1, buffer_id);
-
-              m_static.lighting_uniform_buffer = buffer_id;
-
-              return;
-            }
-          }
-
-          glNamedBufferSubData(buffer_id, 0, data.GetLength(), data.GetData());
+          const RenderCommandBufferCommandSetGlobalBuffer &buffer_command = std::get<RenderCommandBufferCommandSetGlobalBuffer>(command_buffer_command.data);
+          ExecuteBufferCommandSetGlobalBuffer(buffer_command);
+          
           break;
         }
         case RenderCommandBufferCommandType::RequestAsyncReadback: {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommandBufferCommand.RequestAsyncReadback");
           OpenGLDebugGroup debug_group("RequestAsyncReadback");
 
-          const RenderCommandBufferCommandRequestAsyncReadback &request_async_readback = std::get<RenderCommandBufferCommandRequestAsyncReadback>(
-            buffer_command.data);
+          const RenderCommandBufferCommandRequestAsyncReadback &buffer_command = std::get<RenderCommandBufferCommandRequestAsyncReadback>(command_buffer_command.data);
+          ExecuteBufferCommandRequestAsyncReadback(buffer_command, render_frame);
 
-          auto render_texture_it = m_storage.FindRenderTexture(request_async_readback.render_target_id.id);
-          if (render_texture_it != m_storage.GetRenderTextureEnd()) {
-            AsyncRequestResult &async_request_result = render_frame->AddAsyncRequestResult();
-            async_request_result.callback = request_async_readback.callback;
-            async_request_result.result.region = request_async_readback.region;
-
-            const OpenGLRenderTexture &render_texture = render_texture_it->second;
-            const OpenGLRenderTextureAttachment &attachment = render_texture.attachments[request_async_readback.attachment_index];
-            RenderTextureFormat format = attachment.format;
-            HYP_ASSERT(format != RenderTextureFormat::Depth24Stencil8);
-
-            // Make sure we are not out of bounds when accessing the render texture.
-            RectInt region = request_async_readback.region;
-            bool8 x_range_is_not_valid = region.x < 0 || (region.width + region.x) < 0 || (region.width + region.x) > static_cast<int32>(render_texture.width);
-            bool8 y_range_is_not_valid = region.y < 0 || (region.height + region.y) < 0 || (region.height + region.y) > static_cast<int32>(render_texture.
-              height);
-            if (x_range_is_not_valid || y_range_is_not_valid) {
-              HYP_LOG_ERROR("OpenGL", "Trying to read out-of-bounds data of a render texture!");
-            } else {
-              // We want to make sure that the buffer we got passed does actually have enough space.
-              GLsizei buffer_size = OpenGLUtilities::GetRenderTextureBufferSize(region, format);
-              async_request_result.result.data.Resize(buffer_size);
-
-              GLenum format_value = OpenGLUtilities::GetRenderTextureFormat(format);
-              GLenum format_type = OpenGLUtilities::GetRenderTextureFormatType(format);
-
-              glBindFramebuffer(GL_READ_FRAMEBUFFER, render_texture.framebuffer);
-              glNamedFramebufferReadBuffer(render_texture.framebuffer, GL_COLOR_ATTACHMENT0);
-              glReadnPixels(region.x, region.y, region.width, region.height, format_value, format_type, buffer_size,
-                            async_request_result.result.data.GetData());
-            }
-          }
           break;
         }
         default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
           break;
+      }
+    }
+  }
+
+  //--------------------------------------------------------------
+  void OpenGLRenderDriver::ExecuteFrameCommandDrawMeshes(
+    const RenderFrameCommandDrawMeshes &command,
+    RenderFrame *render_frame,
+    const RenderFrameContext &context) {
+    PrepareObjects(render_frame, command.sorted_objects, command.drawing_parameters);
+    DrawMeshes(context.GetEnvironment(), context.GetLights(), command.drawing_parameters);
+  }
+
+  //--------------------------------------------------------------
+  void OpenGLRenderDriver::ExecuteFrameCommandDrawShadows(const RenderFrameCommandDrawShadows &command) { }
+
+  //--------------------------------------------------------------
+  void OpenGLRenderDriver::ExecuteFrameCommandDrawUI(const RenderFrameCommandDrawUI &command, const RenderFrameContext &context) {
+    DrawUI(context.GetUIObjects());
+  }
+
+  //--------------------------------------------------------------
+  void OpenGLRenderDriver::ExecuteFrameCommandDrawObjectIds(const RenderFrameCommandDrawObjectIds &command, const RenderFrameContext &context) {
+    {
+      const RenderFrameContextCamera &render_frame_context_camera = context.GetCameras()[m_static.camera_index];
+
+      OpenGLUniformBufferCamera uniform_buffer_camera;
+      uniform_buffer_camera.camera_view_matrix = render_frame_context_camera.view_matrix;
+      uniform_buffer_camera.camera_projection_matrix = render_frame_context_camera.projection_matrix;
+      glNamedBufferSubData(m_storage.GetStatic().camera_uniform_buffer, 0, sizeof(OpenGLUniformBufferCamera), &uniform_buffer_camera);
+    }
+
+    GLuint framebuffer = 0;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, reinterpret_cast<GLint *>(&framebuffer));
+
+    UseRenderTexture(command.render_target_id);
+    const OpenGLRenderTexture &opengl_render_texture = m_storage.GetRenderTexture(command.render_target_id.id);
+    glDepthMask(GL_TRUE);
+    GLuint clear_value = UINT32_MAX;
+    glClearNamedFramebufferuiv(opengl_render_texture.framebuffer, GL_COLOR, GL_NONE, &clear_value);
+    glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    const OpenGLShader &opengl_shader = m_storage.GetStatic().object_id_shader;
+    UseShader(opengl_shader);
+
+    for (const RenderFrameContextObjectMesh &mesh_object : context.GetMeshObjects()) {
+      OpenGLDebugGroup debug_group("DrawMesh");
+      const OpenGLMesh &opengl_mesh = m_storage.GetMesh(mesh_object.mesh_id);
+
+      GLint model_location = glGetUniformLocation(opengl_shader.program, "u_model");
+      glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, mesh_object.local_to_world.elements);
+
+      GLint object_id_location = glGetUniformLocation(opengl_shader.program, "u_object_id");
+      glProgramUniform1ui(opengl_shader.program, object_id_location, mesh_object.id);
+
+      UseMesh(opengl_mesh);
+      DrawSubMesh(opengl_mesh.sub_meshes[mesh_object.sub_mesh_index]);
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+  }
+
+  //--------------------------------------------------------------
+  void OpenGLRenderDriver::ExecuteFrameCommandDrawGizmos(const RenderFrameCommandDrawGizmos &command, const RenderFrameContext &context) {
+    glDepthMask(GL_FALSE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    const OpenGLShader &opengl_shader = m_storage.GetShader(command.shader_id);
+    glUseProgram(opengl_shader.program);
+
+    GLint model_location = glGetUniformLocation(opengl_shader.program, "u_model");
+
+    if (command.grid.should_draw) {
+      glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, command.grid.local_to_world.elements);
+
+      const OpenGLMesh &opengl_mesh = m_storage.GetMesh(command.grid.mesh_id);
+      UseMesh(opengl_mesh);
+
+      SubMesh sub_mesh = opengl_mesh.sub_meshes[0];
+      DrawSubMesh(sub_mesh);
+    }
+
+    if (command.should_draw_all_bounds) {
+      glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, Matrix4x4::Identity().elements);
+
+      for (const RenderFrameContextObjectMesh &object : context.GetMeshObjects()) {
+        DrawRenderBounds(object.bounds);
+      }
+    }
+  }
+
+  //--------------------------------------------------------------
+  void OpenGLRenderDriver::ExecuteFrameCommandDrawEditorUI(const RenderFrameCommandDrawEditorUI &command, const RenderFrameContext &context) {
+    DrawUI(context.GetEditorUIObjects());
+  }
+
+  //--------------------------------------------------------------
+  void OpenGLRenderDriver::ExecuteBufferCommandClearRenderTarget(const RenderCommandBufferCommandClearRenderTarget &command) {
+    Color background_color = command.color;
+    glClearColor(background_color.r, background_color.g, background_color.b, background_color.a);
+
+    // We have to make sure that we can clear the depth buffer by enabling the depth mask.
+    glDepthMask(GL_TRUE);
+    glClear(OpenGLUtilities::GetClearFlags(command.flags));
+  }
+
+  //--------------------------------------------------------------
+  void OpenGLRenderDriver::ExecuteBufferCommandSetRenderTarget(const RenderCommandBufferCommandSetRenderTarget &command) {
+    UseRenderTexture(command.id);
+  }
+
+  //--------------------------------------------------------------
+  void OpenGLRenderDriver::ExecuteBufferCommandBlit(const RenderCommandBufferCommandBlit &command) {
+      GLint source_width = Display::GetWidth();
+      GLint source_height = Display::GetHeight();
+      GLuint source_framebuffer = 0;
+      GLuint source_color_attachment = 0;
+      if (command.source.id != RenderTargetId::Default().id) {
+        const OpenGLRenderTexture &opengl_render_texture = m_storage.GetRenderTexture(command.source.id);
+        source_width = opengl_render_texture.width;
+        source_height = opengl_render_texture.height;
+        source_framebuffer = opengl_render_texture.framebuffer;
+
+        // TODO: Use correct attachment.
+        source_color_attachment = opengl_render_texture.attachments.Get(0).attachment;
+      }
+
+      GLint destination_width = Display::GetWidth();
+      GLint destination_height = Display::GetHeight();
+      GLuint destination_framebuffer = 0;
+      if (command.destination.id != RenderTargetId::Default().id) {
+        const OpenGLRenderTexture &opengl_render_texture = m_storage.GetRenderTexture(command.destination.id);
+        destination_width = opengl_render_texture.width;
+        destination_height = opengl_render_texture.height;
+        destination_framebuffer = opengl_render_texture.framebuffer;
+      }
+
+      // Catch the case where we copy from the default back buffer.
+      if (source_framebuffer == 0) {
+        GLbitfield mask = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
+
+        glBlitNamedFramebuffer(
+          source_framebuffer,
+          destination_framebuffer,
+          0,
+          0,
+          source_width,
+          source_height,
+          0,
+          0,
+          destination_width,
+          destination_height,
+          mask,
+          GL_NEAREST);
+      } else {
+        GLuint current_framebuffer = 0;
+        glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, reinterpret_cast<GLint *>(&current_framebuffer));
+
+        glBindFramebuffer(GL_FRAMEBUFFER, destination_framebuffer);
+
+        glDisable(GL_BLEND);
+
+        glUseProgram(m_storage.GetStatic().fullscreen_shader);
+        glBindTextureUnit(0, source_color_attachment);
+        glBindVertexArray(m_storage.GetStatic().fullscreen_vertex_array);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, current_framebuffer);
+      }
+  }
+
+  //--------------------------------------------------------------
+  void OpenGLRenderDriver::ExecuteBufferCommandSetGlobalBuffer(const RenderCommandBufferCommandSetGlobalBuffer &command) {
+    auto &data = command.render_buffer.GetData();
+
+    // HACK: This is kind of stupid.
+    // We need something more sophisticated which abstracts the proper shader uniform names and binding points.
+    GLuint buffer_id = -1;
+    if (command.id == 0) {
+      buffer_id = m_static.lighting_uniform_buffer;
+
+      if (buffer_id == -1) {
+        glCreateBuffers(1, &buffer_id);
+        glNamedBufferData(buffer_id, data.GetLength(), data.GetData(), GL_DYNAMIC_DRAW);
+        glBindBufferBase(GL_UNIFORM_BUFFER, 1, buffer_id);
+
+        m_static.lighting_uniform_buffer = buffer_id;
+
+        return;
+      }
+    }
+
+    glNamedBufferSubData(buffer_id, 0, data.GetLength(), data.GetData());
+  }
+
+  //--------------------------------------------------------------
+  void OpenGLRenderDriver::ExecuteBufferCommandRequestAsyncReadback(const RenderCommandBufferCommandRequestAsyncReadback &command, RenderFrame *render_frame) {
+    auto render_texture_it = m_storage.FindRenderTexture(command.render_target_id.id);
+    if (render_texture_it != m_storage.GetRenderTextureEnd()) {
+      AsyncRequestResult &async_request_result = render_frame->AddAsyncRequestResult();
+      async_request_result.callback = command.callback;
+      async_request_result.result.region = command.region;
+
+      const OpenGLRenderTexture &render_texture = render_texture_it->second;
+      const OpenGLRenderTextureAttachment &attachment = render_texture.attachments[command.attachment_index];
+      RenderTextureFormat format = attachment.format;
+      HYP_ASSERT(format != RenderTextureFormat::Depth24Stencil8);
+
+      // Make sure we are not out of bounds when accessing the render texture.
+      RectInt region = command.region;
+      bool8 x_range_is_not_valid = region.x < 0 || (region.width + region.x) < 0 || (region.width + region.x) > static_cast<int32>(render_texture.width);
+      bool8 y_range_is_not_valid = region.y < 0 || (region.height + region.y) < 0 || (region.height + region.y) > static_cast<int32>(render_texture.
+        height);
+      if (x_range_is_not_valid || y_range_is_not_valid) {
+        HYP_LOG_ERROR("OpenGL", "Trying to read out-of-bounds data of a render texture!");
+      } else {
+        // We want to make sure that the buffer we got passed does actually have enough space.
+        GLsizei buffer_size = OpenGLUtilities::GetRenderTextureBufferSize(region, format);
+        async_request_result.result.data.Resize(buffer_size);
+
+        GLenum format_value = OpenGLUtilities::GetRenderTextureFormat(format);
+        GLenum format_type = OpenGLUtilities::GetRenderTextureFormatType(format);
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, render_texture.framebuffer);
+        glNamedFramebufferReadBuffer(render_texture.framebuffer, GL_COLOR_ATTACHMENT0);
+        glReadnPixels(region.x, region.y, region.width, region.height, format_value, format_type, buffer_size,
+                      async_request_result.result.data.GetData());
       }
     }
   }
@@ -433,7 +526,6 @@ namespace Hyperion::Rendering {
     grouped_object.light_indices[2] = UINT32_MAX;
     grouped_object.light_indices[3] = UINT32_MAX;
 
-    uint32 light_count = 0;
     uint32 light_index = 0;
     float32 smallest_distances[4] = { FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX };
 
@@ -481,8 +573,10 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::DrawMeshes(const RenderFrameContextEnvironment &environment, const Array<RenderFrameContextLight> &lights,
-                                      DrawingParameters drawing_parameters) {
+  void OpenGLRenderDriver::DrawMeshes(
+    const RenderFrameContextEnvironment &environment,
+    const Array<RenderFrameContextLight> &lights,
+    DrawingParameters drawing_parameters) {
     HYP_PROFILE_SCOPE("OpenGLRenderDriver.DrawMeshes");
 
     for (const GroupedShader &grouped_shader : m_grouped_shaders) {
@@ -591,47 +685,6 @@ namespace Hyperion::Rendering {
 
       DrawSubMesh(opengl_mesh.sub_meshes[0]);
     }
-  }
-
-  //--------------------------------------------------------------
-  void OpenGLRenderDriver::DrawObjectIds(const RenderFrameContext &render_frame_context, RenderTargetId render_target_id) {
-    {
-      const RenderFrameContextCamera &render_frame_context_camera = render_frame_context.GetCameras()[m_static.camera_index];
-
-      OpenGLUniformBufferCamera uniform_buffer_camera;
-      uniform_buffer_camera.camera_view_matrix = render_frame_context_camera.view_matrix;
-      uniform_buffer_camera.camera_projection_matrix = render_frame_context_camera.projection_matrix;
-      glNamedBufferSubData(m_storage.GetStatic().camera_uniform_buffer, 0, sizeof(OpenGLUniformBufferCamera), &uniform_buffer_camera);
-    }
-
-    GLuint framebuffer = 0;
-    glGetIntegerv(GL_FRAMEBUFFER_BINDING, reinterpret_cast<GLint *>(&framebuffer));
-
-    UseRenderTexture(render_target_id);
-    const OpenGLRenderTexture &opengl_render_texture = m_storage.GetRenderTexture(render_target_id.id);
-    glDepthMask(GL_TRUE);
-    GLuint clear_value = UINT32_MAX;
-    glClearNamedFramebufferuiv(opengl_render_texture.framebuffer, GL_COLOR, GL_NONE, &clear_value);
-    glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-    const OpenGLShader &opengl_shader = m_storage.GetStatic().object_id_shader;
-    UseShader(opengl_shader);
-
-    for (const RenderFrameContextObjectMesh &mesh_object : render_frame_context.GetMeshObjects()) {
-      OpenGLDebugGroup debug_group("DrawMesh");
-      const OpenGLMesh &opengl_mesh = m_storage.GetMesh(mesh_object.mesh_id);
-
-      GLint model_location = glGetUniformLocation(opengl_shader.program, "u_model");
-      glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, mesh_object.local_to_world.elements);
-
-      GLint object_id_location = glGetUniformLocation(opengl_shader.program, "u_object_id");
-      glProgramUniform1ui(opengl_shader.program, object_id_location, mesh_object.id);
-
-      UseMesh(opengl_mesh);
-      DrawSubMesh(opengl_mesh.sub_meshes[mesh_object.sub_mesh_index]);
-    }
-
-    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
   }
 
   //--------------------------------------------------------------
