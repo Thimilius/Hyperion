@@ -42,13 +42,13 @@ namespace Hyperion::UI {
     );
     static void EndPanel();
 
-    static void BeginEmpty();
+    static void BeginEmpty(const String &id_text);
     static void EndEmpty();
     
     static void FillSpace();
     static void Space(SizeKind kind, float32 value);
 
-    static void BeginCenter();
+    static void BeginCenter(const String &id_text);
     static void EndCenter();
 
     static void Separator(UIImmediateTheme *theme = GetDefaultTheme());
@@ -56,22 +56,22 @@ namespace Hyperion::UI {
     static UIImmediateInteraction Text(
       const String &text,
       TextAlignment text_alignment = TextAlignment::TopLeft,
-      FitLayout fit_layout = FitLayout::None,
+      FitType fit_layout = FitType::None,
       bool8 interactable = false,
       UIImmediateTheme *theme = GetDefaultTheme()
     );
-    static UIImmediateInteraction Button(const String &text, FitLayout fit_layout = FitLayout::None, UIImmediateTheme *theme = GetDefaultTheme());
+    static UIImmediateInteraction Button(const String &text, FitType fit_layout = FitType::None, UIImmediateTheme *theme = GetDefaultTheme());
     static UIImmediateInteraction TextToggle(
       bool8 &value,
       const String &text,
-      FitLayout fit_layout = FitLayout::None,
+      FitType fit_layout = FitType::None,
       UIImmediateTheme *theme = GetDefaultTheme()
     );
     static UIImmediateInteraction Input(
       const String &id_text,
       String &text,
       TextAlignment text_alignment = TextAlignment::TopLeft,
-      FitLayout fit_layout = FitLayout::None,
+      FitType fit_layout = FitType::None,
       UIImmediateTheme *theme = GetDefaultTheme()
     );
     static void Image(const String &id_text, Texture *texture, Size size[2], bool8 enable_blending = true);
@@ -94,8 +94,8 @@ namespace Hyperion::UI {
     
     static bool8 IsInsideParent(const UIImmediateElement &element);
 
-    static void FitToLayout(UIImmediateElement &element, FitLayout fit_layout);
-    static LayoutAxes GetAxesForParentLayout(const UIImmediateElement &element);
+    static void FitToLayout(UIImmediateElement &element, FitType fit_type);
+    static FitLayoutAxes GetLayoutAxesForParentChildLayout(const UIImmediateElement &element);
     
     static UIImmediateId HashIdText(const String &id_text);
     static String GetIdTextFromStack(const String &text);

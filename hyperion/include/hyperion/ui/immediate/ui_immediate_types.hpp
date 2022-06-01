@@ -169,15 +169,4 @@ namespace Hyperion::UI {
     Array<String> id_stack;
   };
 
-  struct LayoutAxes {
-    uint32 fill_axis;
-    uint32 leftover_axis;
-  };
-
-  enum class FitLayout {
-    None,
-    LayoutAxis,
-    BothAxes
-  };
-  
 }

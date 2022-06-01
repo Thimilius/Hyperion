@@ -92,7 +92,45 @@ namespace Hyperion::Editor {
       Size header_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 25.0f } };
       UIImmediate::BeginPanel("Header Panel", header_panel_size);
       {
+        static bool8 translation_tool = true;
+        static bool8 rotation_tool = false;
+        static bool8 scale_tool = false;
         
+        if (UIImmediate::TextToggle(translation_tool, "\uf0b2", FitType::ToLayout, icon_theme).clicked) {
+          translation_tool = true;
+          rotation_tool = false;
+          scale_tool = false;
+        }
+        if (UIImmediate::TextToggle(rotation_tool, "\uf2f1", FitType::ToLayout, icon_theme).clicked) {
+          translation_tool = false;
+          rotation_tool = true;
+          scale_tool = false;
+        }
+        if (UIImmediate::TextToggle(scale_tool, "\uf424", FitType::ToLayout, icon_theme).clicked) {
+          translation_tool = false;
+          rotation_tool = false;
+          scale_tool = true;
+        }
+
+        UIImmediate::BeginCenter("Play Buttons");
+        {
+          if (UIImmediate::Button("\uf04b", FitType::ToLayout, icon_theme).clicked) {
+            
+          }
+          if (UIImmediate::Button("\uf04c", FitType::ToLayout, icon_theme).clicked) {
+            
+          }
+          if (UIImmediate::Button("\uf04d", FitType::ToLayout, icon_theme).clicked) {
+            
+          }
+        }
+        UIImmediate::EndCenter();
+
+        UIImmediate::FillSpace();
+
+        if (UIImmediate::Button("Reset Window", FitType::ToLayout).clicked) {
+          EditorApplication::GetInstance()->GetMainWindow()->SetSize(1280, 720);
+        }
       }
       UIImmediate::EndPanel();
 
@@ -110,13 +148,13 @@ namespace Hyperion::Editor {
             Size hierarchy_header_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 25.0f } };
             UIImmediate::BeginPanel("Hierarchy Header", hierarchy_header_panel_size);
             {
-              if (UIImmediate::Button("\uf067", FitLayout::LayoutAxis, icon_theme).clicked) {
+              if (UIImmediate::Button("\uf067", FitType::ToLayout, icon_theme).clicked) {
                 manager->CreateEntity();
               }
 
               UIImmediate::FillSpace();
               
-              if (UIImmediate::Button("\uf1f8", FitLayout::LayoutAxis, icon_theme).clicked) {
+              if (UIImmediate::Button("\uf1f8", FitType::ToLayout, icon_theme).clicked) {
                 if (EditorSelection::HasSelection()) {
                   manager->DestroyEntity(EditorSelection::GetSelection());
                   EditorSelection::Deselect();
@@ -159,7 +197,7 @@ namespace Hyperion::Editor {
                 EntityUtilities::GetVersion(entity),
                 manager->GetGuid(entity).ToString()
               );
-              UIImmediate::Text(text, TextAlignment::TopCenter, FitLayout::LayoutAxis);
+              UIImmediate::Text(text, TextAlignment::TopCenter, FitType::ToLayout);
               UIImmediate::Space(SizeKind::Pixels, 10);
               
               for (const ComponentInfo &component_info : ComponentRegistry::GetComponentInfos()) {
@@ -167,7 +205,7 @@ namespace Hyperion::Editor {
                 if (component) {
                   Type component_type = *component_info.type;
                   UIImmediate::Space(SizeKind::Pixels, 10);
-                  UIImmediate::Text(component_type.get_name().to_string(), TextAlignment::MiddleCenter, FitLayout::LayoutAxis);
+                  UIImmediate::Text(component_type.get_name().to_string(), TextAlignment::MiddleCenter, FitType::ToLayout);
                   
                   if (component_type == Type::get<NameComponent>()) {
                     Instance instance = Reflection::CreateInstanceFromRaw(component_type, component);
@@ -180,11 +218,11 @@ namespace Hyperion::Editor {
                       UIImmediate::BeginPanel(property_name, property_panel_size, ChildLayout::Horizontal);
                       {
                         String property_label = property_name + ":";
-                        UIImmediate::Text(property_label, TextAlignment::MiddleCenter, FitLayout::LayoutAxis);
+                        UIImmediate::Text(property_label, TextAlignment::MiddleCenter, FitType::ToLayout);
                           
                         if (property_type == Type::get<String>()) {
                           String string = property.get_value(instance).get_value<String>();
-                          if (UIImmediate::Input(property_name, string, TextAlignment::MiddleLeft, FitLayout::BothAxes).input_changed) {
+                          if (UIImmediate::Input(property_name, string, TextAlignment::MiddleLeft, FitType::Fill).input_changed) {
                             property.set_value(instance, string);
                           }
                         }
@@ -196,7 +234,7 @@ namespace Hyperion::Editor {
               }
             } else {
               String text = "No entity selected!";
-              UIImmediate::Text(text, TextAlignment::TopCenter, FitLayout::LayoutAxis);  
+              UIImmediate::Text(text, TextAlignment::TopCenter, FitType::ToLayout);  
             }
           }
           UIImmediate::EndPanel();
@@ -215,7 +253,7 @@ namespace Hyperion::Editor {
             UIImmediate::BeginPanel("Preview Header", preview_header_panel_size);
             {
               bool8 is_vsync = RenderEngine::GetVSyncMode() != VSyncMode::DontSync;
-              if (UIImmediate::TextToggle(is_vsync, "\uf108", FitLayout::LayoutAxis, icon_theme).clicked) {
+              if (UIImmediate::TextToggle(is_vsync, "\uf108", FitType::ToLayout, icon_theme).clicked) {
                 RenderEngine::SetVSyncMode(
                   RenderEngine::GetVSyncMode() == VSyncMode::DontSync
                     ? VSyncMode::EveryVBlank
@@ -223,14 +261,14 @@ namespace Hyperion::Editor {
                 );
               }
               bool8 should_draw_grid = RenderGizmos::GetShouldDrawGrid();
-              if (UIImmediate::TextToggle(should_draw_grid, "\uf850", FitLayout::LayoutAxis, icon_theme).clicked) {
+              if (UIImmediate::TextToggle(should_draw_grid, "\uf850", FitType::ToLayout, icon_theme).clicked) {
                 RenderGizmos::SetShouldDrawGrid(should_draw_grid);
               }
               bool8 should_draw_bounds = RenderGizmos::GetShouldDrawAllBounds();
-              if (UIImmediate::TextToggle(should_draw_bounds, "\uf247", FitLayout::LayoutAxis, icon_theme).clicked) {
+              if (UIImmediate::TextToggle(should_draw_bounds, "\uf247", FitType::ToLayout, icon_theme).clicked) {
                 RenderGizmos::SetShouldDrawAllBounds(should_draw_bounds);
               }
-              if (UIImmediate::Button("\uf03d", FitLayout::LayoutAxis, icon_theme).clicked) {
+              if (UIImmediate::Button("\uf03d", FitType::ToLayout, icon_theme).clicked) {
                 EditorCamera::Reset();
               }
               
@@ -238,7 +276,7 @@ namespace Hyperion::Editor {
 
               String stats_format = "FPS: {} ({:.2f}ms)";
               String stats_text = StringUtils::Format(stats_format, Time::GetFPS(), Time::GetFrameTime());
-              UIImmediate::Text(stats_text, TextAlignment::MiddleCenter, FitLayout::LayoutAxis);
+              UIImmediate::Text(stats_text, TextAlignment::MiddleCenter, FitType::ToLayout);
 
               UIImmediate::Space(SizeKind::Pixels, 5.0f);
             }
@@ -376,10 +414,10 @@ namespace Hyperion::Editor {
     }
     {
       UIImmediate::Space(SizeKind::Pixels, depth * 20.0f + 5.0f);
-      UIImmediate::Text("\uf1b2", TextAlignment::MiddleCenter, FitLayout::LayoutAxis, false, s_icon_theme);
+      UIImmediate::Text("\uf1b2", TextAlignment::MiddleCenter, FitType::ToLayout, false, s_icon_theme);
       UIImmediate::Space(SizeKind::Pixels, 5.0f);
       UIImmediate::PushId("Name");
-      UIImmediate::Text(hierarchy_text, TextAlignment::MiddleLeft, FitLayout::BothAxes);
+      UIImmediate::Text(hierarchy_text, TextAlignment::MiddleLeft, FitType::Fill);
       UIImmediate::PopId();
     }
     UIImmediate::EndPanel();

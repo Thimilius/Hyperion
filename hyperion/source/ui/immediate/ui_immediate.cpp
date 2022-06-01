@@ -182,8 +182,8 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
-  void UIImmediate::BeginEmpty() {
-    UIImmediateElement &element = CreateTemporaryElement(UIImmediateWidgetFlags::Empty);
+  void UIImmediate::BeginEmpty(const String &id_text) {
+    UIImmediateElement &element = GetOrCreateElement(id_text, UIImmediateWidgetFlags::Empty);
 
     element.layout.semantic_size[0] = { SizeKind::PercentOfParent, 1.0f };
     element.layout.semantic_size[1] = { SizeKind::PercentOfParent, 1.0f };
@@ -206,14 +206,14 @@ namespace Hyperion::UI {
   void UIImmediate::Space(SizeKind kind, float32 value) {
     UIImmediateElement &element = CreateTemporaryElement(UIImmediateWidgetFlags::Space);
 
-    LayoutAxes layout_axes = GetAxesForParentLayout(element);
-    element.layout.semantic_size[layout_axes.fill_axis] = { SizeKind::PercentOfParent, 1.0f };
-    element.layout.semantic_size[layout_axes.leftover_axis] = { kind, value };
+    FitLayoutAxes fit_type_axes = GetLayoutAxesForParentChildLayout(element);
+    element.layout.semantic_size[fit_type_axes.fill_axis] = { SizeKind::PercentOfParent, 1.0f };
+    element.layout.semantic_size[fit_type_axes.leftover_axis] = { kind, value };
   }
 
   //--------------------------------------------------------------
-  void UIImmediate::BeginCenter() {
-    BeginEmpty();
+  void UIImmediate::BeginCenter(const String &id_text) {
+    BeginEmpty(id_text);
     FillSpace();
   }
 
@@ -227,21 +227,21 @@ namespace Hyperion::UI {
   void UIImmediate::Separator(UIImmediateTheme *theme) {
     UIImmediateElement &element = CreateTemporaryElement(UIImmediateWidgetFlags::Separator);
 
-    LayoutAxes layout_axes = GetAxesForParentLayout(element);
-    element.layout.semantic_size[layout_axes.fill_axis] = { SizeKind::PercentOfParent, 1.0f };
-    element.layout.semantic_size[layout_axes.leftover_axis] = { SizeKind::Pixels, 1.0f };
+    FitLayoutAxes fit_type_axes = GetLayoutAxesForParentChildLayout(element);
+    element.layout.semantic_size[fit_type_axes.fill_axis] = { SizeKind::PercentOfParent, 1.0f };
+    element.layout.semantic_size[fit_type_axes.leftover_axis] = { SizeKind::Pixels, 1.0f };
     
     element.widget.theme = theme;
   }
 
   //--------------------------------------------------------------
-  UIImmediateInteraction UIImmediate::Text(const String &text, TextAlignment text_alignment, FitLayout fit_layout, bool8 interactable, UIImmediateTheme *theme) {
+  UIImmediateInteraction UIImmediate::Text(const String &text, TextAlignment text_alignment, FitType fit_type, bool8 interactable, UIImmediateTheme *theme) {
     UIImmediateWidgetFlags widget_flags = interactable ? UIImmediateWidgetFlags::Text | UIImmediateWidgetFlags::Interactable : UIImmediateWidgetFlags::Text; 
     UIImmediateElement &element = GetOrCreateElement(text, widget_flags);
 
     element.layout.semantic_size[0] = { SizeKind::TextContent, 0.0f };
     element.layout.semantic_size[1] = { SizeKind::TextContent, 0.0f };
-    FitToLayout(element, fit_layout);
+    FitToLayout(element, fit_type);
     
     element.widget.theme = theme;
     element.widget.text = text;
@@ -251,13 +251,13 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
-  UIImmediateInteraction UIImmediate::Button(const String &text, FitLayout fit_layout, UIImmediateTheme *theme) {
+  UIImmediateInteraction UIImmediate::Button(const String &text, FitType fit_type, UIImmediateTheme *theme) {
     UIImmediateWidgetFlags flags = UIImmediateWidgetFlags::Button | UIImmediateWidgetFlags::Interactable;
     UIImmediateElement &element = GetOrCreateElement(text, flags);
     
     element.layout.semantic_size[0] = { SizeKind::TextContent, 10.0f };
     element.layout.semantic_size[1] = { SizeKind::TextContent, 8.0f };
-    FitToLayout(element, fit_layout);
+    FitToLayout(element, fit_type);
     
     element.widget.theme = theme;
     element.widget.text = text;
@@ -267,13 +267,13 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
-  UIImmediateInteraction UIImmediate::TextToggle(bool8 &value, const String &text, FitLayout fit_layout, UIImmediateTheme *theme) {
+  UIImmediateInteraction UIImmediate::TextToggle(bool8 &value, const String &text, FitType fit_type, UIImmediateTheme *theme) {
     UIImmediateWidgetFlags flags = UIImmediateWidgetFlags::Toggle | UIImmediateWidgetFlags::Interactable;
     UIImmediateElement &element = GetOrCreateElement(text, flags);
 
     element.layout.semantic_size[0] = { SizeKind::TextContent, 10.0f };
     element.layout.semantic_size[1] = { SizeKind::TextContent, 8.0f };
-    FitToLayout(element, fit_layout);
+    FitToLayout(element, fit_type);
     
     UIImmediateInteraction interaction = InteractWithElement(element);
     if (interaction.clicked) {
@@ -289,13 +289,13 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
-  UIImmediateInteraction UIImmediate::Input(const String &id_text, String &text, TextAlignment text_alignment, FitLayout fit_layout, UIImmediateTheme *theme) {
+  UIImmediateInteraction UIImmediate::Input(const String &id_text, String &text, TextAlignment text_alignment, FitType fit_type, UIImmediateTheme *theme) {
     UIImmediateWidgetFlags flags = UIImmediateWidgetFlags::Input | UIImmediateWidgetFlags::Interactable | UIImmediateWidgetFlags::Focusable;
     UIImmediateElement &element = GetOrCreateElement(id_text, flags);
 
     element.layout.semantic_size[0] = { SizeKind::TextContent, 10.0f };
     element.layout.semantic_size[1] = { SizeKind::TextContent, 8.0f };
-    FitToLayout(element, fit_layout);
+    FitToLayout(element, fit_type);
     
     UIImmediateInteraction interaction = InteractWithElement(element);
     if (interaction.focused) {
@@ -814,26 +814,26 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
-  void UIImmediate::FitToLayout(UIImmediateElement &element, FitLayout fit_layout) {
-    switch (fit_layout) {
-      case FitLayout::LayoutAxis: {
-        LayoutAxes layout_axes = GetAxesForParentLayout(element);
-        element.layout.semantic_size[layout_axes.fill_axis] = { SizeKind::PercentOfParent, 1.0f };  
+  void UIImmediate::FitToLayout(UIImmediateElement &element, FitType fit_type) {
+    switch (fit_type) {
+      case FitType::ToLayout: {
+        FitLayoutAxes fit_type_axes = GetLayoutAxesForParentChildLayout(element);
+        element.layout.semantic_size[fit_type_axes.fill_axis] = { SizeKind::PercentOfParent, 1.0f };  
         break;
       }
-      case FitLayout::BothAxes: {
+      case FitType::Fill: {
         element.layout.semantic_size[0] = { SizeKind::PercentOfParent, 1.0f };
         element.layout.semantic_size[1] = { SizeKind::PercentOfParent, 1.0f };
         break;
       }
-      case FitLayout::None: break;
+      case FitType::None: break;
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
     }
   }
 
   //--------------------------------------------------------------
-  LayoutAxes UIImmediate::GetAxesForParentLayout(const UIImmediateElement &element) {
-    LayoutAxes axes = { };
+  FitLayoutAxes UIImmediate::GetLayoutAxesForParentChildLayout(const UIImmediateElement &element) {
+    FitLayoutAxes axes = { };
     switch (element.hierarchy.parent->layout.child_layout) {
       case ChildLayout::Horizontal: {
         axes.fill_axis = 1;

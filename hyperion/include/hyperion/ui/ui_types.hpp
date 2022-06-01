@@ -126,4 +126,15 @@ namespace Hyperion::UI {
     Vertical
   };
 
+  struct FitLayoutAxes {
+    uint32 fill_axis;
+    uint32 leftover_axis;
+  };
+
+  enum class FitType {
+    None,
+    ToLayout,
+    Fill
+  };
+  
 }
