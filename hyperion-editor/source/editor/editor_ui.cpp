@@ -5,6 +5,7 @@
 #include <hyperion/assets/loader/font_loader.hpp>
 #include <hyperion/core/app/display.hpp>
 #include <hyperion/core/app/time.hpp>
+#include <hyperion/core/system/operating_system.hpp>
 #include <hyperion/ecs/component/components/utilities/camera_utilities.hpp>
 #include <hyperion/render/render_engine.hpp>
 #include <hyperion/ui/immediate/ui_immediate.hpp>
@@ -60,6 +61,22 @@ namespace Hyperion::Editor {
     s_panel_theme->panel_color = EditorStyle::COLOR_NORMAL;
     s_panel_theme->panel_color_hovered = EditorStyle::COLOR_NORMAL;
     s_panel_theme->panel_color_pressed = EditorStyle::COLOR_NORMAL;
+
+    s_entity_creation_menu = { {
+      { "Empty", [](auto _) { CreateEntity(EntityPrimitive::Base); }, { } },
+      { "Objects", { }, {
+        { "Cube", [](auto _) { CreateEntity(EntityPrimitive::Cube); }, { } },
+        { "Sphere", [](auto _) { CreateEntity(EntityPrimitive::Sphere); }, { } },
+        { "Plane", [](auto _) { CreateEntity(EntityPrimitive::Plane); }, { } },
+        { "Quad", [](auto _) { CreateEntity(EntityPrimitive::Quad); }, { } },
+      }, },
+      { "Light", { }, {
+        { "Directional Light", [](auto _) { CreateEntity(EntityPrimitive::DirectionalLight); }, { } },
+        { "Point Light", [](auto _) { CreateEntity(EntityPrimitive::PointLight); }, { } },
+        { "Spot Light", [](auto _) { CreateEntity(EntityPrimitive::SpotLight); }, { } },
+      }, },
+      { "Camera", [](auto _) { CreateEntity(EntityPrimitive::Camera); }, { } }
+    } };
   }
 
   //--------------------------------------------------------------
@@ -151,7 +168,7 @@ namespace Hyperion::Editor {
             UIImmediate::BeginPanel("Hierarchy Header", hierarchy_header_panel_size);
             {
               if (UIImmediate::Button("\uf067", FitType::ToLayout, icon_theme).clicked) {
-                manager->CreateEntity();
+                OperatingSystem::OpenContextMenu(s_entity_creation_menu);
               }
 
               UIImmediate::FillSpace();
@@ -485,17 +502,6 @@ namespace Hyperion::Editor {
   }
 
   //--------------------------------------------------------------
-  Vector2 EditorUI::TransformScreenToPreviewPosition(Vector2 screen_position) {
-    Rect preview_rect = EditorUI::GetPreviewRect();
-
-    Vector2 point = UIImmediate::ScreenPointToUISpacePoint(screen_position);
-    point.x -= preview_rect.x;
-    point.y -= preview_rect.y;
-    
-    return point;
-  }
-  
-  //--------------------------------------------------------------
   void EditorUI::DrawEntityHierarchy(EntityManager *manager, EntityId entity, HierarchyComponent *branch_hierarchy, uint32 depth) {
     String hierarchy_text;
 
@@ -534,4 +540,21 @@ namespace Hyperion::Editor {
     }
   }
 
+  //--------------------------------------------------------------
+  void EditorUI::CreateEntity(EntityPrimitive primitive) {
+    EntityId entity = EditorApplication::GetWorld()->GetEntityManager()->CreateEntity(primitive);
+    EditorSelection::Select(entity);
+  }
+
+  //--------------------------------------------------------------
+  Vector2 EditorUI::TransformScreenToPreviewPosition(Vector2 screen_position) {
+    Rect preview_rect = EditorUI::GetPreviewRect();
+
+    Vector2 point = UIImmediate::ScreenPointToUISpacePoint(screen_position);
+    point.x -= preview_rect.x;
+    point.y -= preview_rect.y;
+    
+    return point;
+  }
+  
 }

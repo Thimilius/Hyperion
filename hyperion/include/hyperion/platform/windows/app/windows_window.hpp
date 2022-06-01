@@ -27,6 +27,7 @@ namespace Hyperion {
     WindowsWindow(const WindowSettings &settings);
     ~WindowsWindow();
   public:
+    // TODO: This could probably just use HWND as the return type.
     void *GetNativeHandle() const { return m_window_handle; }
 
     inline const String &GetTitle() const { return m_title; }
@@ -60,9 +61,6 @@ namespace Hyperion {
 
     void SetupWindow(const WindowSettings &settings);
     Vector2Int GetActualWindowSize(uint32 client_width, uint32 client_height) const;
-
-    HMENU CreateSubMenu(const Array<MenuItem> &items, uint32 &identifier);
-    const MenuItem *FindMenuItem(const Array<MenuItem> &items, uint32 &identifier_counter, uint32 identifier);
 
     void DispatchAppEvent(AppEvent &app_event) const;
     void DispatchKeyAppEvent(KeyCode key_code, bool8 is_down) const;

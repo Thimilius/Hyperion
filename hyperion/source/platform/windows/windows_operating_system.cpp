@@ -14,6 +14,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/application.hpp"
+#include "hyperion/platform/windows/app/windows_menu.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -29,7 +30,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   OperatingSystemInfo WindowsOperatingSystem::GetSystemInfo() {
-    OperatingSystemInfo result;
+    OperatingSystemInfo result = { };
 
     SYSTEM_INFO system_info;
     GetNativeSystemInfo(&system_info);
@@ -268,7 +269,7 @@ namespace Hyperion {
     }
   }
 
-  //--------------------------------------------------------------B
+  //--------------------------------------------------------------
   String WindowsOperatingSystem::SaveFileDialog(const String &title, const String &filter) {
     WCHAR file_output[MAX_PATH] = { };
 
@@ -289,6 +290,27 @@ namespace Hyperion {
     } else {
       return String();
     }
+  }
+
+  //--------------------------------------------------------------
+  void WindowsOperatingSystem::OpenContextMenu(const Menu &menu) {
+    HMENU menu_handle = WindowsMenu::CreateMenu(menu, WindowsMenuType::ContextMenu);
+    HWND window_handle = static_cast<HWND>(Application::GetInstance()->GetMainWindow()->GetNativeHandle());
+
+    POINT point = { };
+    GetCursorPos(&point);
+    
+    BOOL identifier = TrackPopupMenuEx(
+      menu_handle,
+      TPM_LEFTALIGN | TPM_TOPALIGN | TPM_RETURNCMD | TPM_RIGHTBUTTON | TPM_NOANIMATION,
+      point.x,
+      point.y,
+      window_handle,
+      nullptr
+    );
+    WindowsMenu::CallMenuItem(menu, identifier);
+    
+    DestroyMenu(menu_handle);
   }
 
   //--------------------------------------------------------------

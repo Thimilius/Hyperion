@@ -15,6 +15,7 @@
 #include "hyperion/core/app/events/key_events.hpp"
 #include "hyperion/core/app/events/mouse_events.hpp"
 #include "hyperion/core/app/events/window_events.hpp"
+#include "hyperion/platform/windows/app/windows_menu.hpp"
 #include "hyperion/platform/windows/driver/windows_opengl_render_context.hpp"
 #include "hyperion/platform/windows/driver/windows_vulkan_render_context.hpp"
 
@@ -284,10 +285,7 @@ namespace Hyperion {
 
     Vector2Int size = GetActualWindowSize(settings.width, settings.height);
 
-    uint32 identifier = 1;
-    if (!settings.menu.items.IsEmpty()) {
-      m_menu_handle = CreateSubMenu(settings.menu.items, identifier);
-    }
+    m_menu_handle = WindowsMenu::CreateMenu(settings.menu, WindowsMenuType::Menu);
 
     m_window_handle = CreateWindowExW(
       0,
@@ -323,51 +321,6 @@ namespace Hyperion {
       HYP_PANIC_MESSAGE("Engine", "Failed to calculate window size!");
     }
     return Vector2Int(window_rect.right - window_rect.left, window_rect.bottom - window_rect.top);
-  }
-
-  //--------------------------------------------------------------
-  HMENU WindowsWindow::CreateSubMenu(const Array<MenuItem> &items, uint32 &identifier) {
-    HMENU sub_menu = CreateMenu();
-
-    for (const MenuItem &item : items) {
-      WideString wide_text = StringUtils::Utf8ToUtf16(item.text);
-
-      MENUITEMINFOW item_info = { };
-      item_info.cbSize = sizeof(MENUITEMINFOW);
-      item_info.fMask = MIIM_FTYPE | MIIM_ID | MIIM_STRING | MIIM_STATE;
-      item_info.fType = MFT_STRING;
-      item_info.fState = MFS_ENABLED | MFS_UNHILITE;
-      item_info.wID = identifier++;
-      item_info.dwTypeData = wide_text.data();
-
-      bool8 is_sub_menu = !item.sub_items.IsEmpty();
-      HMENU sub_sub_menu = nullptr;
-      if (is_sub_menu) {
-        sub_sub_menu = CreateSubMenu(item.sub_items, identifier);
-        item_info.fMask |= MIIM_SUBMENU;
-        item_info.hSubMenu = sub_sub_menu;
-      }
-
-      InsertMenuItemW(sub_menu, -1, true, &item_info);
-    }
-
-    return sub_menu;
-  }
-
-  //--------------------------------------------------------------
-  const MenuItem *WindowsWindow::FindMenuItem(const Array<MenuItem> &items, uint32 &identifier_counter, uint32 identifier) {
-    for (const MenuItem &item : items) {
-      if (identifier_counter == identifier) {
-        return &item;
-      }
-      identifier_counter++;
-
-      const MenuItem *found_item = FindMenuItem(item.sub_items, identifier_counter, identifier);
-      if (found_item) {
-        return found_item;
-      }
-    }
-    return nullptr;
   }
 
   //--------------------------------------------------------------
@@ -900,16 +853,8 @@ namespace Hyperion {
 
       case WM_COMMAND: {
         uint32 identifier = LOWORD(w_param);
-        if (identifier < 1) {
-          break;
-        }
-
-        // We need to find the menu item the identifier belongs to and invoke the callback on that.
-        uint32 identifier_counter = 1;
-        const MenuItem *item = window->FindMenuItem(window->m_menu.items, identifier_counter, identifier);
-        if (item && item->callback) {
-          item->callback(*item);
-        }
+        
+        WindowsMenu::CallMenuItem(window->m_menu, identifier);
 
         break;
       }

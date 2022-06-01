@@ -2,6 +2,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/core/app/menu.hpp"
 #include "hyperion/core/system/operating_system_types.hpp"
 #include "hyperion/platform/windows/windows_types.hpp"
 
@@ -36,6 +37,8 @@ namespace Hyperion {
     // TODO: Make the filter work.
     static String OpenFileDialog(const String &title, const String &filter);
     static String SaveFileDialog(const String &title, const String &filter);
+
+    static void OpenContextMenu(const Menu &menu);
   private:
     static void Initialize();
 
