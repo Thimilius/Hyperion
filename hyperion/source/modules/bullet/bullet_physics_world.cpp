@@ -14,8 +14,10 @@ namespace Hyperion::Physics {
 
   //--------------------------------------------------------------
   BulletPhysicsWorld::BulletPhysicsWorld(World *world, BulletPhysicsDriver *driver) {
-    btCollisionConfiguration *collision_configuration = driver->m_collision_configuration;
-    m_collision_world = new btCollisionWorld(new btCollisionDispatcher(collision_configuration), new btDbvtBroadphase(), collision_configuration);
+    btCollisionConfiguration *collision_configuration = driver->GetCollisionConfiguration();
+    m_collision_dispatcher = new btCollisionDispatcher(collision_configuration);
+    m_broadphase = new btDbvtBroadphase();
+    m_collision_world = new btCollisionWorld(m_collision_dispatcher, m_broadphase, collision_configuration);
 
     EntityManager *manager = world->GetEntityManager();
     manager->RegisterOnComponentAdded<BoxColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::AddBoxCollider>, this });
@@ -26,9 +28,9 @@ namespace Hyperion::Physics {
 
   //--------------------------------------------------------------
   BulletPhysicsWorld::~BulletPhysicsWorld() {
-    delete m_collision_world->getBroadphase();
-    delete m_collision_world->getDispatcher();
     delete m_collision_world;
+    delete m_broadphase;
+    delete m_collision_dispatcher;
   }
 
   //--------------------------------------------------------------

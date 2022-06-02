@@ -124,6 +124,9 @@ namespace Hyperion::Editor {
         ExitRuntime();
       }
     }
+
+    World *world = WorldManager::CreateWorld();
+    WorldManager::DestroyWorld(world);
   }
 
   //--------------------------------------------------------------

@@ -32,7 +32,7 @@ namespace Hyperion {
     inline Physics::IPhysicsWorld *GetPhysicsWorld() const { return m_physics_world; }
   private:
     World();
-    ~World() = default;
+    ~World();
   private:
     String m_name = "World";
     WorldEnvironment m_environment;

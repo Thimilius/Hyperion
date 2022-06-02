@@ -45,6 +45,8 @@ namespace Hyperion::Physics {
     void UpdateTransform(DerivedTransformComponent *transform, btCollisionObject *collision_object, Vector3 position);
   private:
     btCollisionWorld *m_collision_world;
+    btDispatcher *m_collision_dispatcher;
+    btBroadphaseInterface *m_broadphase;
 
     ColliderStorage m_box_colliders;
     ColliderStorage m_sphere_colliders;

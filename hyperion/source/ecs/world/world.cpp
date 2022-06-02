@@ -19,4 +19,9 @@ namespace Hyperion {
     m_physics_world = Physics::PhysicsEngine::CreateWorld(this);
   }
 
+  //--------------------------------------------------------------
+  World::~World() {
+    Physics::PhysicsEngine::DestroyWorld(m_physics_world);
+  }
+
 }

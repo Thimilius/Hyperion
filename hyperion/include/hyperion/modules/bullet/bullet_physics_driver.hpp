@@ -25,10 +25,10 @@ namespace Hyperion::Physics {
     void Initialize() override;
     void FixedUpdate(float32 delta_time) override;
     void Shutdown() override;
+
+    inline btDefaultCollisionConfiguration *GetCollisionConfiguration() const { return m_collision_configuration; }
   private:
-    btDefaultCollisionConfiguration *m_collision_configuration;
-  private:
-    friend class Hyperion::Physics::BulletPhysicsWorld;
+    btDefaultCollisionConfiguration *m_collision_configuration = nullptr;
   };
 
 }
