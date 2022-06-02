@@ -22,6 +22,7 @@ namespace Hyperion::UI {
   class UIImmediateGizmos final {
   public:
     static GizmoManipulation Manipulate(
+      Rendering::RenderGizmoType type,
       DerivedTransformComponent *derived_transform,
       LocalTransformComponent *local_transform,
       DerivedTransformComponent *camera_transform,

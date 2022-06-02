@@ -440,7 +440,7 @@ namespace Hyperion::Editor {
       Vector2 position = TransformScreenToPreviewPosition(mouse_position);
       Ray ray = CameraUtilities::ScreenPointToRay(camera, camera_transform, position, Vector2(rect.width, rect.height));
 
-      GizmoManipulation manipulation = UIImmediateGizmos::Manipulate(derived_transform, local_transform, camera_transform, ray);
+      GizmoManipulation manipulation = UIImmediateGizmos::Manipulate(s_transformation_tool, derived_transform, local_transform, camera_transform, ray);
       s_is_in_gizmo = manipulation.in_transformation;
       RenderGizmos::UpdateTransformationGizmo(s_transformation_tool, manipulation.highlight_axis);
     }
