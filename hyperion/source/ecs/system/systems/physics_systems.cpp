@@ -18,7 +18,7 @@ namespace Hyperion::Physics {
     
     IPhysicsWorld *physics_world = manager->GetWorld()->GetPhysicsWorld();
     
-    auto box_collider_view = manager->GetViewAll<DerivedTransformComponent, BoxColliderComponent>(ExcludeComponents<StaticComponent>());
+    auto box_collider_view = manager->GetView<DerivedTransformComponent, BoxColliderComponent>(ExcludeComponents<StaticComponent>());
     for (EntityId entity : box_collider_view) {
       DerivedTransformComponent *derived_transform = manager->GetComponent<DerivedTransformComponent>(entity);
       BoxColliderComponent *box_collider = manager->GetComponent<BoxColliderComponent>(entity);

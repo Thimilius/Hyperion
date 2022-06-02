@@ -15,6 +15,8 @@ namespace Hyperion {
     inline uint32 GetIndexOffset() const { return m_index_offset; }
     inline void AddIndexOffset(uint32 offset) { m_index_offset += offset; }
 
+    void SetTopology(Rendering::MeshTopology topology) { m_topology = topology; }
+
     void AddVertex(Vector3 position, Vector3 normal, Vector2 texture0);
     void AddVertex(Vector3 position, Color color, Vector2 texture0);
     void AddTriangle(uint32 a, uint32 b, uint32 c);
@@ -24,6 +26,8 @@ namespace Hyperion {
     void AddQuad(Vector3 corners[4], Color color);
     void AddQuad(Vector3 corners[4], Color color, Vector2 uvs[4]);
 
+    void AddLine(Vector3 a, Vector3 b, Color color);
+    
     void Transform(const Matrix4x4 &transformation);
     void TransformAndAlignPixels(const Matrix4x4 &transformation, Vector2Int alignment_size);
 
@@ -36,6 +40,7 @@ namespace Hyperion {
     uint32 m_vertex_count = 0;
     uint32 m_index_count = 0;
     uint32 m_index_offset = 0;
+    Rendering::MeshTopology m_topology = Rendering::MeshTopology::Triangles;
   };
 
 }

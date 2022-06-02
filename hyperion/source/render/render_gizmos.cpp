@@ -34,37 +34,16 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void RenderGizmos::RegenerateTransformationGizmoMesh(RenderGizmoAxisHighlight highlight) {
-    uint32 vertex_count = 6;
-    Rendering::MeshData mesh_data;
-    mesh_data.positions.Resize(vertex_count);
-    mesh_data.colors.Resize(vertex_count);
-    mesh_data.indices.Resize(vertex_count);
-
-    uint32 index = 0;
-    mesh_data.positions[0] = Vector3(0.0f, 0.0f, 0.0f);
-    mesh_data.colors[0] = highlight == RenderGizmoAxisHighlight::X ? Color::Yellow() : Color::Red();
-    mesh_data.indices[0] = index++;
-    mesh_data.positions[1] = Vector3(1.0f, 0.0f, 0.0f);
-    mesh_data.colors[1] = highlight == RenderGizmoAxisHighlight::X ? Color::Yellow() : Color::Red();
-    mesh_data.indices[1] = index++;
-    mesh_data.positions[2] = Vector3(0.0f, 0.0f, 0.0f);
-    mesh_data.colors[2] = highlight == RenderGizmoAxisHighlight::Y ? Color::Yellow() : Color::Green();
-    mesh_data.indices[2] = index++;
-    mesh_data.positions[3] = Vector3(0.0f, 1.0f, 0.0f);
-    mesh_data.colors[3] = highlight == RenderGizmoAxisHighlight::Y ? Color::Yellow() : Color::Green();
-    mesh_data.indices[3] = index++;
-    mesh_data.positions[4] = Vector3(0.0f, 0.0f, 0.0f);
-    mesh_data.colors[4] = highlight == RenderGizmoAxisHighlight::Z ? Color::Yellow() : Color::Blue();
-    mesh_data.indices[4] = index++;
-    mesh_data.positions[5] = Vector3(0.0f, 0.0f, 1.0f);
-    mesh_data.colors[5] = highlight == RenderGizmoAxisHighlight::Z ? Color::Yellow() : Color::Blue();
-    mesh_data.indices[5] = index;
+    MeshBuilder mesh_builder;
+    mesh_builder.SetTopology(MeshTopology::Lines);
+    mesh_builder.AddLine(Vector3::Zero(), Vector3(1.0f, 0.0f, 0.0f), highlight == RenderGizmoAxisHighlight::X ? Color::Yellow() : Color::Red());
+    mesh_builder.AddLine(Vector3::Zero(), Vector3(0.0f, 1.0f, 0.0f), highlight == RenderGizmoAxisHighlight::Y ? Color::Yellow() : Color::Green());
+    mesh_builder.AddLine(Vector3::Zero(), Vector3(0.0f, 0.0f, 1.0f), highlight == RenderGizmoAxisHighlight::Z ? Color::Yellow() : Color::Blue());
     
-    Rendering::SubMeshes sub_meshes = { { Rendering::MeshTopology::Lines, vertex_count, 0, vertex_count, 0 } };
     if (s_transformation_gizmo_mesh) {
-      s_transformation_gizmo_mesh->SetData(mesh_data, sub_meshes);
+      mesh_builder.SetToMesh(s_transformation_gizmo_mesh);
     } else {
-      s_transformation_gizmo_mesh = AssetManager::CreateMesh(mesh_data, sub_meshes, AssetDataAccess::ReadAndWrite);
+      s_transformation_gizmo_mesh = mesh_builder.CreateMesh(AssetDataAccess::ReadAndWrite);
     }
   }
 

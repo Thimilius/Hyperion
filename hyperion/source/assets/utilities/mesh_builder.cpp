@@ -84,6 +84,16 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
+  void MeshBuilder::AddLine(Vector3 a, Vector3 b, Color color) {
+    AddVertex(a, color, Vector2());
+    AddVertex(b, color, Vector2());
+
+    m_mesh_data.indices.Add(m_index_offset++);
+    m_mesh_data.indices.Add(m_index_offset++);
+    m_index_count += 2;
+  }
+
+  //--------------------------------------------------------------
   void MeshBuilder::Transform(const Matrix4x4 &transformation) {
     for (uint32 i = 0; i < m_mesh_data.positions.GetLength(); i++) {
       Vector3 transformed_position = transformation * m_mesh_data.positions[i];
@@ -123,14 +133,14 @@ namespace Hyperion {
     if (IsEmpty()) {
       return nullptr;
     } else {
-      Array<SubMesh> sub_meshes = { { Rendering::MeshTopology::Triangles, m_vertex_count, 0, m_index_count, 0 } };
+      Array<SubMesh> sub_meshes = { { m_topology, m_vertex_count, 0, m_index_count, 0 } };
       return AssetManager::CreateMesh(m_mesh_data, sub_meshes, data_access);
     }
   }
 
   //--------------------------------------------------------------
   void MeshBuilder::SetToMesh(Mesh *mesh) {
-    Array<SubMesh> sub_meshes = { { Rendering::MeshTopology::Triangles, m_vertex_count, 0, m_index_count, 0 } };
+    Array<SubMesh> sub_meshes = { { m_topology, m_vertex_count, 0, m_index_count, 0 } };
     mesh->SetData(m_mesh_data, sub_meshes);
   }
 
