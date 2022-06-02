@@ -24,6 +24,8 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   World *WorldManager::CopyWorld(World *world) {
+    HYP_PROFILE_SCOPE("WorldManager.CopyWorld");
+    
     World *copy = new World(*world);
     s_worlds.Add(copy);
     return copy;

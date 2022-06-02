@@ -42,14 +42,16 @@ namespace Hyperion {
     EntityIndices &entity_indices = GetEntityIndices(id);
     uint32 sparse_index = GetSparseIndex(id);
     uint32 packed_index = entity_indices[sparse_index];
-    if (packed_index == ComponentPool::SPARSE_ELEMENT) {
+    if (packed_index == SPARSE_ELEMENT) {
       entity_indices[sparse_index] = static_cast<uint32>(m_entity_list.GetLength());
       m_entity_list.Add(id);
       uint64 current_size = m_component_data.GetLength();
       m_component_data.Resize(current_size + m_component_info.element_size);
 
       byte *component_data = m_component_data.GetData() + current_size;
-      return m_component_info.constructor(component_data);
+      // We need to call the placement-new constructor to properly construct the type in place.
+      void *component = m_component_info.constructor(component_data);
+      return component;
     } else {
       return nullptr;
     }
@@ -60,7 +62,7 @@ namespace Hyperion {
     EntityIndices &entity_indices = GetEntityIndices(id);
     uint32 sparse_index = GetSparseIndex(id);
     uint32 packed_index = entity_indices[sparse_index];
-    return packed_index != ComponentPool::SPARSE_ELEMENT;
+    return packed_index != SPARSE_ELEMENT;
   }
 
   //--------------------------------------------------------------
@@ -68,7 +70,7 @@ namespace Hyperion {
     EntityIndices &entity_indices = GetEntityIndices(id);
     uint32 sparse_index = GetSparseIndex(id);
     uint32 packed_index = entity_indices[sparse_index];
-    if (packed_index == ComponentPool::SPARSE_ELEMENT) {
+    if (packed_index == SPARSE_ELEMENT) {
       return nullptr;
     } else {
       EntityId packed_id = m_entity_list[packed_index];
@@ -84,8 +86,8 @@ namespace Hyperion {
     EntityIndices &entity_indices = GetEntityIndices(id);
     uint32 sparse_index = GetSparseIndex(id);
     uint32 packed_index = entity_indices[sparse_index];
-    if (packed_index != ComponentPool::SPARSE_ELEMENT) {
-      entity_indices[sparse_index] = ComponentPool::SPARSE_ELEMENT;
+    if (packed_index != SPARSE_ELEMENT) {
+      entity_indices[sparse_index] = SPARSE_ELEMENT;
 
       EntityId packed_id = m_entity_list[packed_index];
       HYP_ASSERT(packed_id == id);
@@ -103,13 +105,18 @@ namespace Hyperion {
       byte *packed_component_data = m_component_data.GetData() + packed_index * m_component_info.element_size;
       byte *repacked_component_data = m_component_data.GetData() + (current_size - m_component_info.element_size);
 
-      m_component_info.destructor(packed_component_data);
-      if (packed_component_data != repacked_component_data) {
-        // NOTE: This is kinda ok but also kinda not.
-        // This memory copying sort of acts as a move constructor which is fine as it does not necessary leak memory.
-        // It should however be noted that calling the actual move constructor for the type would be the proper way to do it.
-        std::memcpy(packed_component_data, repacked_component_data, m_component_info.element_size);
+      void *destination_instance = packed_component_data;
+      void *source_instance = repacked_component_data;
+
+      // If we are the last component in the packed array then we need to call our destructor.
+      // In every other case we call the move assignment operator which clears the memory of our removed component
+      // and properly moves over the data from the component we are repacking. 
+      if (packed_component_data == repacked_component_data) {
+        m_component_info.destructor(source_instance);
+      } else {
+        m_component_info.move_assignment_operator(destination_instance, source_instance);
       }
+      
       m_component_data.Resize(current_size - m_component_info.element_size);
       return true;
     } else {

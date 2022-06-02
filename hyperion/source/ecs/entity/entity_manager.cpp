@@ -174,9 +174,9 @@ namespace Hyperion {
 
     EntityArchetypeComponentStorage storage = archetype->GetStorage();
     for (auto &[component_id, component_data] : storage) {
-      uint64 element_size = m_storage.component_pools[component_id].GetComponentInfo().element_size;
+      const ComponentInfo &component_info = m_storage.component_pools[component_id].GetComponentInfo();
       byte *component = static_cast<byte *>(AddComponent(component_id, copy));
-      std::memcpy(component, component_data.GetData(), element_size);
+      component_info.copy_constructor(component, component_data.GetData());
     }
 
     m_world->m_hierarchy.HandleEntityCreation(copy);

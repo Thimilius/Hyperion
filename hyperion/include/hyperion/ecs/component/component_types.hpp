@@ -14,9 +14,10 @@ namespace Hyperion {
 
   using ComponentId = uint32;
 
-  using ComponentConstructor = void *(*)(void *);
-  using ComponentDestructor = void(*)(const void *);
-  using ComponentCopyConstructor = void *(*)(void *, const void *);
+  using ComponentConstructor = void *(*)(void *address);
+  using ComponentCopyConstructor = void *(*)(void *address, const void *instance);
+  using ComponentMoveAssignmentOperator = void(*)(void *destination_instance, void *source_instance);
+  using ComponentDestructor = void(*)(const void *instance);
   
   struct ComponentInfo {
     ComponentId id;
@@ -26,6 +27,7 @@ namespace Hyperion {
 
     ComponentConstructor constructor;
     ComponentCopyConstructor copy_constructor;
+    ComponentMoveAssignmentOperator move_assignment_operator;
     ComponentDestructor destructor;
   };
 
