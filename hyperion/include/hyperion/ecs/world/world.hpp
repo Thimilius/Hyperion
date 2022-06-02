@@ -33,6 +33,12 @@ namespace Hyperion {
   private:
     World();
     ~World();
+
+    World(const World &other);
+    World &operator=(const World &other);
+  private:
+    void Copy(const World &other);
+    void AssignInternalReferences();
   private:
     String m_name = "World";
     WorldEnvironment m_environment;
@@ -40,7 +46,7 @@ namespace Hyperion {
     EntityManager m_manager;
     EntityHierarchy m_hierarchy;
 
-    Physics::IPhysicsWorld *m_physics_world;
+    Physics::IPhysicsWorld *m_physics_world = nullptr;
   private:
     friend class Hyperion::WorldManager;
     friend class Hyperion::EntityManager;

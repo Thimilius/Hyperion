@@ -16,6 +16,7 @@ namespace Hyperion {
 
   using ComponentConstructor = void *(*)(void *);
   using ComponentDestructor = void(*)(const void *);
+  using ComponentCopyConstructor = void *(*)(void *, const void *);
   
   struct ComponentInfo {
     ComponentId id;
@@ -24,6 +25,7 @@ namespace Hyperion {
     uint64 element_size;
 
     ComponentConstructor constructor;
+    ComponentCopyConstructor copy_constructor;
     ComponentDestructor destructor;
   };
 

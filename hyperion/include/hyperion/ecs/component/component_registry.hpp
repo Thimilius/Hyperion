@@ -40,6 +40,9 @@ namespace Hyperion {
       component_info.type = &component_type;
       component_info.element_size = component_type.get_sizeof();
       component_info.constructor = [](void *address) { return static_cast<void *>(new(address) T()); };
+      component_info.copy_constructor = [](void *address, const void *instance) {
+        return static_cast<void *>(new(address) T(*static_cast<const T *>(instance)));
+      }; 
       component_info.destructor = [](const void *instance) { static_cast<const T *>(instance)->~T(); };
 
       s_component_infos.Add(component_info);

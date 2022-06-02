@@ -16,6 +16,8 @@ namespace Hyperion {
   class ComponentPool final {
   public:
     ComponentPool(ComponentInfo component_info);
+    ComponentPool(const ComponentPool &other);
+    ComponentPool &operator=(const ComponentPool &other);
   public:
     inline uint64 GetEntityCount() const { return m_entity_list.GetLength(); }
     inline EntityId GetEntity(EntityIndex index) const { return m_entity_list[index]; }
@@ -30,14 +32,16 @@ namespace Hyperion {
   private:
     uint32 GetSparseIndex(EntityId id);
     Array<uint32> &GetEntityIndices(EntityId id);
+
+    void Copy(const ComponentPool &other);
   public:
     inline static const uint32 MAX_ENTITIES_PER_PAGE = 2048;
   private:
+    ComponentInfo m_component_info = { };
+    
     EntityIndexPages m_entity_index_pages;
     EntityList m_entity_list;
     ComponentList m_component_list;
-
-    ComponentInfo m_component_info;
   private:
     inline static const uint32 SPARSE_ELEMENT = EntityId::GetIndex(EntityId::EMPTY);
   };

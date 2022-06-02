@@ -13,6 +13,21 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
+  ComponentPool::ComponentPool(const ComponentPool &other) {
+    Copy(other);
+  }
+
+  //--------------------------------------------------------------
+  ComponentPool &ComponentPool::operator=(const ComponentPool &other) {
+    if (this == &other) {
+      return *this;
+    }
+    
+    Copy(other);
+    return *this;    
+  }
+
+  //--------------------------------------------------------------
   byte *ComponentPool::AddComponent(EntityId id) {
     EntityIndices &entity_indices = GetEntityIndices(id);
     uint32 sparse_index = GetSparseIndex(id);
@@ -110,6 +125,24 @@ namespace Hyperion {
     EntityIndex index = EntityId::GetIndex(id);
     uint32 page_index = index / MAX_ENTITIES_PER_PAGE;
     return m_entity_index_pages[page_index];
+  }
+
+  //--------------------------------------------------------------
+  void ComponentPool::Copy(const ComponentPool &other) {
+    m_component_info = other.m_component_info;
+    m_entity_index_pages = other.m_entity_index_pages;
+    m_entity_list = other.m_entity_list;
+    
+    // When copying a component pool we have to remember that we can not simply copy the component data.
+    // We properly need to invoke their copy constructor for proper memory management.
+    m_component_list.Resize(other.m_component_list.GetLength());
+    byte *destination_data = m_component_list.GetData();
+    const byte *source_data = other.m_component_list.GetData();
+    for (uint64 i = 0; i < other.GetEntityCount(); i++) {
+      byte *address = destination_data + i * m_component_info.element_size;
+      const byte *instance = source_data + i * m_component_info.element_size;
+      m_component_info.copy_constructor(address, instance);
+    }
   }
 
 }

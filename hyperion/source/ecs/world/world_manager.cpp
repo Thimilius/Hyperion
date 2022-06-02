@@ -5,7 +5,6 @@
 #include "hyperion/ecs/world/world_manager.hpp"
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/ecs/component/components/components.hpp"
 #include "hyperion/ecs/system/systems/physics_systems.hpp"
 #include "hyperion/ecs/system/systems/transform_systems.hpp"
 #include "hyperion/ecs/system/systems/render_systems.hpp"
@@ -24,6 +23,13 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
+  World *WorldManager::CopyWorld(World *world) {
+    World *copy = new World(*world);
+    s_worlds.Add(copy);
+    return copy;
+  }
+
+  //--------------------------------------------------------------
   void WorldManager::DestroyWorld(World *world) {
     HYP_PROFILE_SCOPE("WorldManager.DestroyWorld");
 
@@ -31,7 +37,6 @@ namespace Hyperion {
 
     if (s_active_world == world) {
       HYP_LOG_WARN("Entity", "Trying to destroy currently active world.");
-      return;
     } else {
       s_worlds.Remove(world);
       delete world;

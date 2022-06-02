@@ -15,8 +15,9 @@ namespace Hyperion {
   class WorldManager final {
   public:
     static World *CreateWorld();
+    static World *CopyWorld(World *world);
     static void DestroyWorld(World *world);
-
+    
     inline static World *GetActiveWorld() { return s_active_world; }
     static void SetActiveWorld(World *world);
   private:

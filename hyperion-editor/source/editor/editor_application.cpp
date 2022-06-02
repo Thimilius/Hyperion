@@ -92,8 +92,11 @@ namespace Hyperion::Editor {
       FileSystem::WriteAllText(WORLD_PATH, text);
     }
     
+    World *copy = WorldManager::CopyWorld(s_world);
+    WorldManager::DestroyWorld(s_world);
+    s_world = copy;
     WorldManager::SetActiveWorld(s_world);
-
+    
     EditorUI::Initialize();
     EditorCamera::Initialize();
   }
