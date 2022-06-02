@@ -16,6 +16,11 @@ namespace Hyperion::Physics {
   }
 
   //--------------------------------------------------------------
+  IPhysicsWorld * BulletPhysicsDriver::CopyPhysicsWorld(World *world, IPhysicsWorld *physics_world) {
+    return new BulletPhysicsWorld(world, this, physics_world);
+  }
+
+  //--------------------------------------------------------------
   void BulletPhysicsDriver::DestroyPhysicsWorld(IPhysicsWorld *world) {
     delete world;
   }

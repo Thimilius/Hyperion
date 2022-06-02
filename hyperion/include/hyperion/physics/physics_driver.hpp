@@ -15,7 +15,8 @@ namespace Hyperion::Physics {
     virtual PhysicsBackend GetBackend() const = 0;
 
     virtual IPhysicsWorld *CreatePhysicsWorld(World *world) = 0;
-    virtual void DestroyPhysicsWorld(IPhysicsWorld *world) = 0;
+    virtual IPhysicsWorld *CopyPhysicsWorld(World *world, IPhysicsWorld *physics_world) = 0;
+    virtual void DestroyPhysicsWorld(IPhysicsWorld *physics_world) = 0;
 
     virtual void Initialize() = 0;
     virtual void FixedUpdate(float32 delta_time) = 0;
@@ -27,7 +28,8 @@ namespace Hyperion::Physics {
     PhysicsBackend GetBackend() const override { return PhysicsBackend::None; }
 
     IPhysicsWorld *CreatePhysicsWorld(World *world) override { return new NullPhysicsWorld(); }
-    void DestroyPhysicsWorld(IPhysicsWorld *world) override { delete world; }
+    IPhysicsWorld *CopyPhysicsWorld(World *world, IPhysicsWorld *physics_world) override { return new NullPhysicsWorld(); }
+    void DestroyPhysicsWorld(IPhysicsWorld *physics_world) override { delete physics_world; }
 
     void Initialize() override { HYP_LOG_INFO("Physics", "Initialized Null physics driver!"); }
 

@@ -55,8 +55,7 @@ namespace Hyperion {
       component_callback.removed.Clear();
     }
 
-    // TODO: Copy physics world.
-    m_physics_world = nullptr;
+    m_physics_world = Physics::PhysicsEngine::CopyWorld(this, other.m_physics_world);
   }
 
   //--------------------------------------------------------------

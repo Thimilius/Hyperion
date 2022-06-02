@@ -24,6 +24,7 @@ namespace Hyperion::Physics {
   class BulletPhysicsWorld final : public IPhysicsWorld {
   public:
     BulletPhysicsWorld(World *world, BulletPhysicsDriver *driver);
+    BulletPhysicsWorld(World *world, BulletPhysicsDriver *driver, IPhysicsWorld *other);
     ~BulletPhysicsWorld() override;
 
     bool8 Raycast(Ray ray, RaycastResult &result, float32 distance) override;
@@ -43,6 +44,9 @@ namespace Hyperion::Physics {
     void AddCollider(ColliderStorage &collider_storage, EntityId entity, btCollisionObject *collision_object);
     void RemoveCollider(ColliderStorage &collider_storage, EntityId entity);
     void UpdateTransform(DerivedTransformComponent *transform, btCollisionObject *collision_object, Vector3 position);
+
+    void CopyColliders(World *world);
+    void ClearColliders();
   private:
     btCollisionWorld *m_collision_world;
     btDispatcher *m_collision_dispatcher;

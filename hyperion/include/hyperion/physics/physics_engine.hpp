@@ -24,7 +24,8 @@ namespace Hyperion::Physics {
     static void Shutdown();
 
     inline static IPhysicsWorld *CreateWorld(World *world) { return s_physics_driver->CreatePhysicsWorld(world); }
-    inline static void DestroyWorld(IPhysicsWorld *world) { return s_physics_driver->DestroyPhysicsWorld(world); }
+    inline static IPhysicsWorld *CopyWorld(World *world, IPhysicsWorld *physics_world) { return s_physics_driver->CopyPhysicsWorld(world, physics_world); }
+    inline static void DestroyWorld(IPhysicsWorld *physics_world) { return s_physics_driver->DestroyPhysicsWorld(physics_world); }
   private:
     inline static IPhysicsDriver *s_physics_driver;
   private:

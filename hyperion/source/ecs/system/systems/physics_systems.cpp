@@ -15,13 +15,8 @@ namespace Hyperion::Physics {
   //--------------------------------------------------------------
   void UpdateColliderTransformSystem::Run(EntityManager *manager) {
     HYP_PROFILE_SCOPE("UpdateColliderTransformSystem.Run");
-
-    // FIXME: This should not be the case. We should always have a valid instance.
-    // This instance may or may not be from a NullPhysicsDriver that does nothing.
+    
     IPhysicsWorld *physics_world = manager->GetWorld()->GetPhysicsWorld();
-    if (physics_world == nullptr) {
-      return;
-    }
     
     auto box_collider_view = manager->GetViewAll<DerivedTransformComponent, BoxColliderComponent>(ExcludeComponents<StaticComponent>());
     for (EntityId entity : box_collider_view) {

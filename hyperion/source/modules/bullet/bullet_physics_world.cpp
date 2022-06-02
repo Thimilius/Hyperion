@@ -13,7 +13,10 @@
 namespace Hyperion::Physics {
 
   //--------------------------------------------------------------
-  BulletPhysicsWorld::BulletPhysicsWorld(World *world, BulletPhysicsDriver *driver) {
+  BulletPhysicsWorld::BulletPhysicsWorld(World *world, BulletPhysicsDriver *driver) : BulletPhysicsWorld(world, driver, nullptr) { }
+
+  //--------------------------------------------------------------
+  BulletPhysicsWorld::BulletPhysicsWorld(World *world, BulletPhysicsDriver *driver, IPhysicsWorld *other) {
     btCollisionConfiguration *collision_configuration = driver->GetCollisionConfiguration();
     m_collision_dispatcher = new btCollisionDispatcher(collision_configuration);
     m_broadphase = new btDbvtBroadphase();
@@ -24,10 +27,16 @@ namespace Hyperion::Physics {
     manager->RegisterOnComponentRemoved<BoxColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::RemoveBoxCollider>, this });
     manager->RegisterOnComponentAdded<SphereColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::AddSphereCollider>, this });
     manager->RegisterOnComponentRemoved<SphereColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::RemoveSphereCollider>, this });
+
+    if (other) {
+      CopyColliders(world);
+    }
   }
 
   //--------------------------------------------------------------
   BulletPhysicsWorld::~BulletPhysicsWorld() {
+    ClearColliders();
+    
     delete m_collision_world;
     delete m_broadphase;
     delete m_collision_dispatcher;
@@ -189,6 +198,40 @@ namespace Hyperion::Physics {
     collision_object->getWorldTransform().setOrigin(btVector3(position.x, position.y, position.z));
     collision_object->getWorldTransform().setRotation(btQuaternion(rotation.x, rotation.y, rotation.z, rotation.w));
     collision_object->getCollisionShape()->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
+  }
+
+  //--------------------------------------------------------------
+  void BulletPhysicsWorld::CopyColliders(World *world) {
+    EntityManager *manager = world->GetEntityManager();
+    
+    auto box_collider_view = manager->GetView<BoxColliderComponent>();
+    for (EntityId entity : box_collider_view) {
+      AddBoxCollider(manager, entity);
+    }
+
+    auto sphere_collider_view = manager->GetView<SphereColliderComponent>();
+    for (EntityId entity : sphere_collider_view) {
+      AddSphereCollider(manager, entity);
+    }
+  }
+
+  //--------------------------------------------------------------
+  void BulletPhysicsWorld::ClearColliders() {
+    for (auto [entity, box_collider_object] : m_box_colliders) {
+      m_collision_world->removeCollisionObject(box_collider_object);
+      
+      delete box_collider_object->getCollisionShape();
+      delete box_collider_object;
+    }
+    m_box_colliders.Clear();
+
+    for (auto [entity, m_sphere_collider] : m_sphere_colliders) {
+      m_collision_world->removeCollisionObject(m_sphere_collider);
+      
+      delete m_sphere_collider->getCollisionShape();
+      delete m_sphere_collider;
+    }
+    m_sphere_colliders.Clear();
   }
 
 }

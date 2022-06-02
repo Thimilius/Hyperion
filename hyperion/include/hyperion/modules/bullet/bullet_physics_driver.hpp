@@ -20,7 +20,8 @@ namespace Hyperion::Physics {
     PhysicsBackend GetBackend() const override { return PhysicsBackend::Bullet; }
 
     IPhysicsWorld *CreatePhysicsWorld(World *world) override;
-    void DestroyPhysicsWorld(IPhysicsWorld *world) override;
+    IPhysicsWorld *CopyPhysicsWorld(World *world, IPhysicsWorld *physics_world) override;
+    void DestroyPhysicsWorld(IPhysicsWorld *physics_world) override;
 
     void Initialize() override;
     void FixedUpdate(float32 delta_time) override;

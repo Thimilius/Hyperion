@@ -92,11 +92,6 @@ namespace Hyperion::Editor {
       FileSystem::WriteAllText(WORLD_PATH, text);
     }
     
-    World *copy = WorldManager::CopyWorld(s_world);
-    WorldManager::DestroyWorld(s_world);
-    s_world = copy;
-    WorldManager::SetActiveWorld(s_world);
-    
     EditorUI::Initialize();
     EditorCamera::Initialize();
   }
@@ -128,8 +123,8 @@ namespace Hyperion::Editor {
       }
     }
 
-    World *world = WorldManager::CreateWorld();
-    WorldManager::DestroyWorld(world);
+    World *copy = WorldManager::CopyWorld(s_world);
+    WorldManager::DestroyWorld(copy);
   }
 
   //--------------------------------------------------------------
