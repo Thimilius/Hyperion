@@ -64,10 +64,10 @@ namespace Hyperion::Editor {
     s_panel_theme->panel_color_pressed = EditorStyle::COLOR_NORMAL;
 
     s_disabled_theme = UI::UIImmediate::CreateTheme("Disabled");
-    s_disabled_theme->text_color = EditorStyle::DISABLED_COLOR;
+    s_disabled_theme->text_color = EditorStyle::COLOR_DISABLED;
 
     s_disabled_icon_theme = UI::UIImmediate::CreateTheme("Disabled Icon", s_icon_theme);
-    s_disabled_icon_theme->text_color = EditorStyle::DISABLED_COLOR;
+    s_disabled_icon_theme->text_color = EditorStyle::COLOR_DISABLED;
     
     s_entity_creation_menu = { {
       { "Empty", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Base); }, { } },
@@ -137,6 +137,8 @@ namespace Hyperion::Editor {
           bool8 is_playing = engine_mode == EngineMode::EditorRuntimePlaying || engine_mode == EngineMode::EditorRuntimePaused;
           if (UIImmediate::TextToggle(is_playing, "\uf04b", FitType::ToLayout, icon_theme).clicked) {
             EditorApplication::EnterRuntime();
+
+            UIImmediate::SetOverlayColor(EditorStyle::COLOR_PLAYMODE_OVERLAY);
           }
           bool8 is_paused = engine_mode == EngineMode::EditorRuntimePaused;
           if (UIImmediate::TextToggle(is_paused, "\uf04c", FitType::ToLayout, icon_theme).clicked) {
@@ -149,6 +151,8 @@ namespace Hyperion::Editor {
             world = EditorApplication::GetWorld();
             manager = world->GetEntityManager();
             hierarchy = world->GetHierarchy();
+
+            UIImmediate::SetOverlayColor(Color::White());
           }
         }
         UIImmediate::EndCenter();

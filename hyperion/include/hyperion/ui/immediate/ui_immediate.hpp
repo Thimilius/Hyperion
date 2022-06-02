@@ -21,6 +21,8 @@ namespace Hyperion::UI {
     static UIImmediateTheme *GetTheme(const String &name);
     static void DestroyTheme(const String &name);
 
+    static void SetOverlayColor(Color color) { s_overlay_color = color; }
+    
     static UIImmediateId GetId(const String &text);
     static void PushId(const String &text);
     static void PopId();
@@ -85,7 +87,7 @@ namespace Hyperion::UI {
 
     static void DrawRect(Rect rect, Color color);
     static void DrawText(Rect rect, const String &text, Font *font, UI::TextAlignment alignment, Color color);
-    static void Flush(Material *material = nullptr, Texture *texture = nullptr);
+    static void Flush(Material *material = nullptr, Texture *texture = nullptr, bool8 affected_by_overlay = true);
     
     static bool8 IsInsideParent(const UIImmediateElement &element);
 
@@ -108,9 +110,11 @@ namespace Hyperion::UI {
     inline static Array<UIImmediateMeshDraw> s_mesh_draws;
     inline static std::unordered_multimap<uint32, UIImmediateMesh> s_mesh_cache;
     inline static Array<UIImmediateMesh> s_meshes_in_use;
-
+    
     inline static UIImmediateTheme s_default_theme;
     inline static Map<uint64, UIImmediateTheme> s_themes;
+    
+    inline static Color s_overlay_color = Color::White();
   };
 
 }

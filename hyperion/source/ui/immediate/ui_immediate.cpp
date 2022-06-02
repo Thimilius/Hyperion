@@ -583,7 +583,7 @@ namespace Hyperion::UI {
           
           last_draw_was_a_simple_rect = false;
           DrawRect(element.layout.rect, color);
-          Flush(AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI), element.widget.texture);
+          Flush(AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI), element.widget.texture, false);
         } else {
           DrawRect(element.layout.rect, color);
           last_draw_was_a_simple_rect = true;
@@ -771,7 +771,7 @@ namespace Hyperion::UI {
   }
   
   //--------------------------------------------------------------
-  void UIImmediate::Flush(Material *material, Texture *texture) {
+  void UIImmediate::Flush(Material *material, Texture *texture, bool8 affected_by_overlay) {
     if (s_mesh_builder.IsEmpty()) {
       return;
     }
@@ -805,7 +805,7 @@ namespace Hyperion::UI {
     mesh_draw.mesh = mesh;
     mesh_draw.material = material ? material : AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI);
     mesh_draw.texture = texture ? texture : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White);
-    mesh_draw.color = Color::White();
+    mesh_draw.color = affected_by_overlay ? s_overlay_color : Color::White();
     mesh_draw.render_texture_attachment_index = 0;
     mesh_draw.enable_blending = true;
     s_mesh_draws.Add(mesh_draw);

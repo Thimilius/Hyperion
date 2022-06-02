@@ -22,7 +22,8 @@ namespace Hyperion::Editor {
     inline static const Color COLOR_HOVERED = Color(0.3f, 0.3f, 0.3f, 1.0f);
     inline static const Color COLOR_PRESSED = Color(0.15f, 0.15f, 0.15f, 1.0f);
     inline static const Color COLOR_FOCUSED = Color(0.0f, 0.2f, 0.4f, 1.0f);
-    inline static const Color DISABLED_COLOR = Color(0.75f, 0.75f, 0.75f, 1.0f);
+    inline static const Color COLOR_DISABLED = Color(0.75f, 0.75f, 0.75f, 1.0f);
+    inline static const Color COLOR_PLAYMODE_OVERLAY = Color(1.0f, 0.75f, 0.75f, 1.0f);
   private:
     EditorStyle() = delete;
     ~EditorStyle() = delete;
