@@ -92,13 +92,15 @@ namespace Hyperion {
         .property("tag", &TagComponent::tag);
 
       Registration::class_<DisabledComponent>(HYP_NAME_OF_TYPE(DisabledComponent))
+        (Metadata(TypeMetadata::HideInEditor, true))
         .constructor<>();
 
       Registration::class_<StaticComponent>(HYP_NAME_OF_TYPE(StaticComponent))
+        (Metadata(TypeMetadata::HideInEditor, true))
         .constructor<>();
 
       Registration::class_<ArchetypeComponent>(HYP_NAME_OF_TYPE(ArchetypeComponent))
-        (Metadata(TypeMetadata::EditorRemovable, false))
+        (Metadata(TypeMetadata::HideInEditor, true))
         .constructor<>();
     }
 

@@ -62,6 +62,12 @@ namespace Hyperion::Editor {
     s_panel_theme->panel_color_hovered = EditorStyle::COLOR_NORMAL;
     s_panel_theme->panel_color_pressed = EditorStyle::COLOR_NORMAL;
 
+    s_disabled_theme = UI::UIImmediate::CreateTheme("Disabled");
+    s_disabled_theme->text_color = EditorStyle::DISABLED_COLOR;
+
+    s_disabled_icon_theme = UI::UIImmediate::CreateTheme("Disabled Icon", s_icon_theme);
+    s_disabled_icon_theme->text_color = EditorStyle::DISABLED_COLOR;
+    
     s_entity_creation_menu = { {
       { "Empty", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Base); }, { } },
       { "Objects", { }, {
@@ -108,7 +114,7 @@ namespace Hyperion::Editor {
     
     UIImmediate::Begin();
     {
-      Size header_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 25.0f } };
+      Size header_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, EditorStyle::HEADER_HEIGHT } };
       UIImmediate::BeginPanel("Header Panel", header_panel_size);
       {
         static bool8 translation_tool = true;
@@ -218,6 +224,11 @@ namespace Hyperion::Editor {
               );
               UIImmediate::Text(text, TextAlignment::TopCenter, FitType::ToLayout);
               UIImmediate::Space(SizeKind::Pixels, 10);
+
+              bool8 is_enabled = !manager->HasComponent<DisabledComponent>(entity);
+              if (UIImmediate::TextToggle(is_enabled, is_enabled ? "\uf06e" : "\uf070", FitType::ToLayout, icon_theme).clicked) {
+                manager->SetEnabled(entity, is_enabled);
+              }
               
               for (const ComponentInfo &component_info : ComponentRegistry::GetComponentInfos()) {
                 void *component = manager->GetComponent(component_info.id, entity);
@@ -251,6 +262,7 @@ namespace Hyperion::Editor {
                     UIImmediate::FillSpace();
                     
                     if (UIImmediate::Button("\uf0e2", FitType::ToLayout, icon_theme).clicked) {
+                      // FIXME: This leaks memory as it does not clear old data properly!
                       component_info.constructor(component);
                     }
 
@@ -408,7 +420,7 @@ namespace Hyperion::Editor {
 
       UIImmediate::Separator();
       
-      Size footer_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 25.0f } };
+      Size footer_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, EditorStyle::FOOTER_HEIGHT } };
       UIImmediate::BeginPanel("Footer Panel", footer_panel_size);
       {
         
@@ -523,11 +535,13 @@ namespace Hyperion::Editor {
       EditorSelection::Select(entity);
     }
     {
+      bool8 is_disabled = manager->HasComponent<DisabledComponent>(entity);
+      
       UIImmediate::Space(SizeKind::Pixels, depth * 20.0f + 5.0f);
-      UIImmediate::Text("\uf1b2", TextAlignment::MiddleCenter, FitType::ToLayout, false, s_icon_theme);
+      UIImmediate::Text("\uf1b2", TextAlignment::MiddleCenter, FitType::ToLayout, false, is_disabled ? s_disabled_icon_theme : s_icon_theme);
       UIImmediate::Space(SizeKind::Pixels, 5.0f);
       UIImmediate::PushId("Name");
-      UIImmediate::Text(hierarchy_text, TextAlignment::MiddleLeft, FitType::Fill);
+      UIImmediate::Text(hierarchy_text, TextAlignment::MiddleLeft, FitType::Fill, false, is_disabled ? s_disabled_theme : UIImmediate::GetDefaultTheme());
       UIImmediate::PopId();
     }
     UIImmediate::EndPanel();

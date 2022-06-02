@@ -34,6 +34,8 @@ namespace Hyperion::Editor {
     inline static UI::UIImmediateTheme *s_icon_theme;
     inline static UI::UIImmediateTheme *s_selection_theme;
     inline static UI::UIImmediateTheme *s_panel_theme;
+    inline static UI::UIImmediateTheme *s_disabled_theme;
+    inline static UI::UIImmediateTheme *s_disabled_icon_theme;
 
     inline static bool8 s_is_in_gizmo;
 

@@ -86,13 +86,14 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
-  UIImmediateTheme *UIImmediate::CreateTheme(const String &name) {
-    uint64 id = std::hash<String>()(name);
+  UIImmediateTheme *UIImmediate::CreateTheme(const String &name, UIImmediateTheme *template_theme) {
+    HYP_ASSERT(template_theme);
 
+    uint64 id = std::hash<String>()(name);
     if (s_themes.Contains(id)) {
       HYP_LOG_ERROR("UI", "A theme with the name '{}' already exists!", name);
     } else {
-      s_themes.Insert(id, s_default_theme);  
+      s_themes.Insert(id, *template_theme);  
     }
     
     return &s_themes.Get(id);

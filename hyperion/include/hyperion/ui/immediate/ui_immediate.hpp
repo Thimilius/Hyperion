@@ -17,7 +17,7 @@ namespace Hyperion::UI {
     static void End();
 
     static UIImmediateTheme *GetDefaultTheme() { return &s_default_theme; }
-    static UIImmediateTheme *CreateTheme(const String &name);
+    static UIImmediateTheme *CreateTheme(const String &name, UIImmediateTheme *template_theme = GetDefaultTheme());
     static UIImmediateTheme *GetTheme(const String &name);
     static void DestroyTheme(const String &name);
 
