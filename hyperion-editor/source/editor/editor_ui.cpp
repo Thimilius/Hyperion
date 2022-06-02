@@ -117,24 +117,17 @@ namespace Hyperion::Editor {
       Size header_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, EditorStyle::HEADER_HEIGHT } };
       UIImmediate::BeginPanel("Header Panel", header_panel_size);
       {
-        static bool8 translation_tool = true;
-        static bool8 rotation_tool = false;
-        static bool8 scale_tool = false;
-        
-        if (UIImmediate::TextToggle(translation_tool, "\uf0b2", FitType::ToLayout, icon_theme).clicked) {
-          translation_tool = true;
-          rotation_tool = false;
-          scale_tool = false;
+        bool8 is_translation_tool = s_transformation_tool == RenderGizmoType::Translate;
+        bool8 is_rotation_tool = s_transformation_tool == RenderGizmoType::Rotate;
+        bool8 is_scale_tool = s_transformation_tool == RenderGizmoType::Scale;
+        if (UIImmediate::TextToggle(is_translation_tool, "\uf0b2", FitType::ToLayout, icon_theme).clicked) {
+          s_transformation_tool = RenderGizmoType::Translate;
         }
-        if (UIImmediate::TextToggle(rotation_tool, "\uf2f1", FitType::ToLayout, icon_theme).clicked) {
-          translation_tool = false;
-          rotation_tool = true;
-          scale_tool = false;
+        if (UIImmediate::TextToggle(is_rotation_tool, "\uf2f1", FitType::ToLayout, icon_theme).clicked) {
+          s_transformation_tool = RenderGizmoType::Rotate;
         }
-        if (UIImmediate::TextToggle(scale_tool, "\uf424", FitType::ToLayout, icon_theme).clicked) {
-          translation_tool = false;
-          rotation_tool = false;
-          scale_tool = true;
+        if (UIImmediate::TextToggle(is_scale_tool, "\uf424", FitType::ToLayout, icon_theme).clicked) {
+          s_transformation_tool = RenderGizmoType::Scale;
         }
 
         UIImmediate::BeginCenter("Play Buttons");
@@ -449,7 +442,7 @@ namespace Hyperion::Editor {
 
       GizmoManipulation manipulation = UIImmediateGizmos::Manipulate(derived_transform, local_transform, camera_transform, ray);
       s_is_in_gizmo = manipulation.in_transformation;
-      RenderGizmos::SetTransformationGizmoHighlight(manipulation.highlight_axis);
+      RenderGizmos::UpdateTransformationGizmo(s_transformation_tool, manipulation.highlight_axis);
     }
   }
 

@@ -94,6 +94,27 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
+  void MeshBuilder::AddCircle(Vector3 origin, float32 radius, Quaternion rotation, Color color, uint32 samples) {
+    Matrix4x4 transformation = Matrix4x4::Rotate(rotation);
+    
+    float32 theta = Math::TAU / static_cast<float32>(samples);
+    for (uint32 i = 0; i < samples; ++i) {
+      float32 a_theta = static_cast<float32>(i) * theta;
+      float32 b_theta = static_cast<float32>(i + 1) * theta;
+      
+      float32 a_sin = Math::Sin(a_theta) * radius;
+      float32 a_cos = Math::Cos(a_theta) * radius;
+      float32 b_sin = Math::Sin(b_theta) * radius;
+      float32 b_cos = Math::Cos(b_theta) * radius;
+      
+      Vector3 a = transformation * (origin + Vector3(a_cos, a_sin, 0.0f));
+      Vector3 b = transformation * (origin + Vector3(b_cos, b_sin, 0.0f));
+      
+      AddLine(a, b, color);
+    }
+  }
+
+  //--------------------------------------------------------------
   void MeshBuilder::Transform(const Matrix4x4 &transformation) {
     for (uint32 i = 0; i < m_mesh_data.positions.GetLength(); i++) {
       Vector3 transformed_position = transformation * m_mesh_data.positions[i];

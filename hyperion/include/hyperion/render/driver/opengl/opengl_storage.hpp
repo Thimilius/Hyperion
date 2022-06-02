@@ -51,6 +51,9 @@ namespace Hyperion::Rendering {
     GLuint vertex_buffer;
     GLuint index_buffer;
     GLuint vertex_array;
+
+    uint64 vertex_buffer_size;
+    uint64 index_buffer_size;
   };
 
   struct OpenGLStaticStorage {

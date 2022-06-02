@@ -6,7 +6,6 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset_manager.hpp"
-#include "hyperion/ecs/system/systems/render_systems.hpp"
 #include "hyperion/ecs/component/components/utilities/camera_utilities.hpp"
 #include "hyperion/render/render_gizmos.hpp"
 

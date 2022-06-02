@@ -27,6 +27,7 @@ namespace Hyperion {
     void AddQuad(Vector3 corners[4], Color color, Vector2 uvs[4]);
 
     void AddLine(Vector3 a, Vector3 b, Color color);
+    void AddCircle(Vector3 origin, float32 radius, Quaternion rotation, Color color, uint32 samples = 50);
     
     void Transform(const Matrix4x4 &transformation);
     void TransformAndAlignPixels(const Matrix4x4 &transformation, Vector2Int alignment_size);

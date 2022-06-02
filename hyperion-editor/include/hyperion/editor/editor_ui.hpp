@@ -5,6 +5,7 @@
 #include <hyperion/core/app/menu.hpp>
 #include <hyperion/core/math/rect.hpp>
 #include <hyperion/ecs/world/world.hpp>
+#include <hyperion/render/render_gizmos.hpp>
 #include <hyperion/render/frame/render_frame.hpp>
 #include <hyperion/ui/immediate/ui_immediate_types.hpp>
 
@@ -38,6 +39,7 @@ namespace Hyperion::Editor {
     inline static UI::UIImmediateTheme *s_disabled_icon_theme;
 
     inline static bool8 s_is_in_gizmo;
+    inline static Rendering::RenderGizmoType s_transformation_tool = Rendering::RenderGizmoType::Translate;
 
     inline static Menu s_entity_creation_menu;
   };

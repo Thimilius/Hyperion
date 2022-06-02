@@ -376,18 +376,23 @@ namespace Hyperion::Rendering {
         index += MeshVertexFormat::VERTEX_ATTRIBUTE_SIZE_TEXTURE0;
       }
     }
+
+    uint64 vertex_buffer_size = vertices.GetLength();
+    uint64 index_buffer_size = data.indices.GetLength() * sizeof(data.indices[0]);
     
     auto mesh_it = m_meshes.Find(mesh.id);
     if (mesh_it == m_meshes.end()) {
       OpenGLMesh opengl_mesh;
       opengl_mesh.id = mesh.id;
       opengl_mesh.sub_meshes = std::move(mesh.sub_meshes);
+      opengl_mesh.vertex_buffer_size = vertex_buffer_size;
+      opengl_mesh.index_buffer_size = index_buffer_size;
 
       glCreateBuffers(1, &opengl_mesh.vertex_buffer);
-      glNamedBufferData(opengl_mesh.vertex_buffer, vertices.GetLength(), vertices.GetData(), GL_STATIC_DRAW);
+      glNamedBufferData(opengl_mesh.vertex_buffer, vertex_buffer_size, vertices.GetData(), GL_STATIC_DRAW);
 
       glCreateBuffers(1, &opengl_mesh.index_buffer);
-      glNamedBufferData(opengl_mesh.index_buffer, data.indices.GetLength() * sizeof(data.indices[0]), data.indices.GetData(), GL_STATIC_DRAW);
+      glNamedBufferData(opengl_mesh.index_buffer, index_buffer_size, data.indices.GetData(), GL_STATIC_DRAW);
       opengl_mesh.index_count = static_cast<GLsizei>(data.indices.GetLength());
 
       GLuint binding_index = 0;
@@ -411,14 +416,23 @@ namespace Hyperion::Rendering {
 
       m_meshes.Insert(mesh.id, opengl_mesh);
     } else {
-      // NOTE: Updating of an existing mesh is currently very restricted.
-      // We assume that the new data we get is the same size as before and that the vertex format did not change.
+      // FIXME: We are not updating a potentially changed vertex format of the mesh.
+      // For that we would need to create the vertex array as well.
 
       OpenGLMesh &opengl_mesh = mesh_it->second;
       opengl_mesh.sub_meshes = std::move(mesh.sub_meshes);
 
-      glNamedBufferSubData(opengl_mesh.vertex_buffer, 0, vertices.GetLength(), vertices.GetData());
-      glNamedBufferSubData(opengl_mesh.index_buffer, 0, data.indices.GetLength() * sizeof(data.indices[0]), data.indices.GetData());
+      if (vertex_buffer_size > opengl_mesh.vertex_buffer_size) {
+        glNamedBufferData(opengl_mesh.vertex_buffer, vertex_buffer_size, vertices.GetData(), GL_STATIC_DRAW);
+      } else {
+        glNamedBufferSubData(opengl_mesh.vertex_buffer, 0, vertex_buffer_size, vertices.GetData());
+      }
+      
+      if (index_buffer_size > opengl_mesh.index_buffer_size) {
+        glNamedBufferData(opengl_mesh.index_buffer, index_buffer_size, data.indices.GetData(), GL_STATIC_DRAW);
+      } else {
+        glNamedBufferSubData(opengl_mesh.index_buffer, 0, index_buffer_size, data.indices.GetData());
+      }
     }
   }
 
