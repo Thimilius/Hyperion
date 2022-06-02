@@ -30,6 +30,7 @@ namespace Hyperion::Editor {
     void SaveWorld();
   private:
     inline static World *s_world;
+    inline static World *s_old_world;
 
     inline static EditorRenderPipeline *s_render_pipeline;
   };

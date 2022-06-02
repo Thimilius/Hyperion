@@ -12,6 +12,7 @@
 #include <hyperion/ui/immediate/ui_immediate_gizmos.hpp>
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/core/system/engine.hpp"
 #include "hyperion/editor/editor_application.hpp"
 #include "hyperion/editor/editor_camera.hpp"
 #include "hyperion/editor/editor_selection.hpp"
@@ -132,23 +133,25 @@ namespace Hyperion::Editor {
 
         UIImmediate::BeginCenter("Play Buttons");
         {
-          if (UIImmediate::Button("\uf04b", FitType::ToLayout, icon_theme).clicked) {
-            
+          EngineMode engine_mode = Engine::GetEngineMode();
+          bool8 is_playing = engine_mode == EngineMode::EditorRuntimePlaying || engine_mode == EngineMode::EditorRuntimePaused;
+          if (UIImmediate::TextToggle(is_playing, "\uf04b", FitType::ToLayout, icon_theme).clicked) {
+            EditorApplication::EnterRuntime();
           }
-          if (UIImmediate::Button("\uf04c", FitType::ToLayout, icon_theme).clicked) {
-            
+          bool8 is_paused = engine_mode == EngineMode::EditorRuntimePaused;
+          if (UIImmediate::TextToggle(is_paused, "\uf04c", FitType::ToLayout, icon_theme).clicked) {
+            EditorApplication::PauseRuntime();
           }
           if (UIImmediate::Button("\uf04d", FitType::ToLayout, icon_theme).clicked) {
-            
+            EditorApplication::ExitRuntime();
+
+            // On exit we need to update our cached pointers because they have become invalid.
+            world = EditorApplication::GetWorld();
+            manager = world->GetEntityManager();
+            hierarchy = world->GetHierarchy();
           }
         }
         UIImmediate::EndCenter();
-
-        UIImmediate::FillSpace();
-
-        if (UIImmediate::Button("Reset Window", FitType::ToLayout).clicked) {
-          EditorApplication::GetInstance()->GetMainWindow()->SetSize(1280, 720);
-        }
       }
       UIImmediate::EndPanel();
 

@@ -28,8 +28,13 @@ namespace Hyperion::Editor {
 
   //--------------------------------------------------------------
   void EditorApplication::EnterRuntime() {
-    if (Engine::GetEngineMode() == EngineMode::Editor || Engine::GetEngineMode() == EngineMode::EditorRuntimePaused) {
+    if (Engine::GetEngineMode() == EngineMode::Editor) {
       Engine::SetEngineMode(EngineMode::EditorRuntimePlaying);
+
+      World *copy = WorldManager::CopyWorld(s_world);
+      WorldManager::SetActiveWorld(copy);
+      s_old_world = s_world;
+      s_world = copy;
     }
   }
 
@@ -37,6 +42,8 @@ namespace Hyperion::Editor {
   void EditorApplication::PauseRuntime() {
     if (Engine::GetEngineMode() == EngineMode::EditorRuntimePlaying) {
       Engine::SetEngineMode(EngineMode::EditorRuntimePaused);
+    } else if (Engine::GetEngineMode() == EngineMode::EditorRuntimePaused) {
+      Engine::SetEngineMode(EngineMode::EditorRuntimePlaying);
     }
   }
 
@@ -45,10 +52,13 @@ namespace Hyperion::Editor {
     if (Engine::GetEngineMode() == EngineMode::EditorRuntimePlaying || Engine::GetEngineMode() == EngineMode::EditorRuntimePaused) {
       Engine::SetEngineMode(EngineMode::Editor);
 
-      WorldManager::SetActiveWorld(nullptr);
-      WorldManager::DestroyWorld(s_world);
-      s_world = WorldSerializer::Deserialize(FileSystem::ReadAllText(WORLD_PATH));
-      WorldManager::SetActiveWorld(s_world);
+      World *world = s_world;
+      WorldManager::SetActiveWorld(s_old_world);
+      WorldManager::DestroyWorld(world);
+      s_world = s_old_world;
+      s_old_world = nullptr;
+
+      EditorSelection::Deselect();
     }
   }
 
