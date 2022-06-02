@@ -18,6 +18,16 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
+  ComponentPool::~ComponentPool() {
+    // We need to call the actual destructor for all our components.
+    byte *data = m_component_data.GetData();
+    for (uint64 i = 0; i < GetEntityCount(); i++) {
+      const byte *instance = data + i * m_component_info.element_size;
+      m_component_info.destructor(instance);
+    }
+  }
+
+  //--------------------------------------------------------------
   ComponentPool &ComponentPool::operator=(const ComponentPool &other) {
     if (this == &other) {
       return *this;
@@ -28,18 +38,18 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  byte *ComponentPool::AddComponent(EntityId id) {
+  void *ComponentPool::AddComponent(EntityId id) {
     EntityIndices &entity_indices = GetEntityIndices(id);
     uint32 sparse_index = GetSparseIndex(id);
     uint32 packed_index = entity_indices[sparse_index];
     if (packed_index == ComponentPool::SPARSE_ELEMENT) {
       entity_indices[sparse_index] = static_cast<uint32>(m_entity_list.GetLength());
       m_entity_list.Add(id);
-      uint64 current_size = m_component_list.GetLength();
-      m_component_list.Resize(current_size + m_component_info.element_size);
+      uint64 current_size = m_component_data.GetLength();
+      m_component_data.Resize(current_size + m_component_info.element_size);
 
-      byte *component_data = m_component_list.GetData() + current_size;
-      return component_data;
+      byte *component_data = m_component_data.GetData() + current_size;
+      return m_component_info.constructor(component_data);
     } else {
       return nullptr;
     }
@@ -64,7 +74,7 @@ namespace Hyperion {
       EntityId packed_id = m_entity_list[packed_index];
       HYP_ASSERT(packed_id == id);
 
-      byte *component_data = m_component_list.GetData() + packed_index * m_component_info.element_size;
+      byte *component_data = m_component_data.GetData() + packed_index * m_component_info.element_size;
       return component_data;
     }
   }
@@ -89,15 +99,18 @@ namespace Hyperion {
         repacked_entity_indices[repacked_sparse_index] = packed_index;
       }
 
-      uint64 current_size = m_component_list.GetLength();
-      byte *packed_component_data = m_component_list.GetData() + packed_index * m_component_info.element_size;
-      byte *repacked_component_data = m_component_list.GetData() + (current_size - m_component_info.element_size);
+      uint64 current_size = m_component_data.GetLength();
+      byte *packed_component_data = m_component_data.GetData() + packed_index * m_component_info.element_size;
+      byte *repacked_component_data = m_component_data.GetData() + (current_size - m_component_info.element_size);
 
       m_component_info.destructor(packed_component_data);
       if (packed_component_data != repacked_component_data) {
+        // NOTE: This is kinda ok but also kinda not.
+        // This memory copying sort of acts as a move constructor which is fine as it does not necessary leak memory.
+        // It should however be noted that calling the actual move constructor for the type would be the proper way to do it.
         std::memcpy(packed_component_data, repacked_component_data, m_component_info.element_size);
       }
-      m_component_list.Resize(current_size - m_component_info.element_size);
+      m_component_data.Resize(current_size - m_component_info.element_size);
       return true;
     } else {
       return false;
@@ -135,9 +148,9 @@ namespace Hyperion {
     
     // When copying a component pool we have to remember that we can not simply copy the component data.
     // We properly need to invoke their copy constructor for proper memory management.
-    m_component_list.Resize(other.m_component_list.GetLength());
-    byte *destination_data = m_component_list.GetData();
-    const byte *source_data = other.m_component_list.GetData();
+    m_component_data.Resize(other.m_component_data.GetLength());
+    byte *destination_data = m_component_data.GetData();
+    const byte *source_data = other.m_component_data.GetData();
     for (uint64 i = 0; i < other.GetEntityCount(); i++) {
       byte *address = destination_data + i * m_component_info.element_size;
       const byte *instance = source_data + i * m_component_info.element_size;

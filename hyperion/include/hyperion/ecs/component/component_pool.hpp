@@ -11,19 +11,20 @@ namespace Hyperion {
   using EntityIndices = Array<uint32>;
   using EntityIndexPages = Array<EntityIndices>;
   using EntityList = Array<EntityId>;
-  using ComponentList = Array<byte>;
+  using ComponentData = Array<byte>;
 
   class ComponentPool final {
   public:
     ComponentPool(ComponentInfo component_info);
     ComponentPool(const ComponentPool &other);
+    ~ComponentPool();
     ComponentPool &operator=(const ComponentPool &other);
   public:
     inline uint64 GetEntityCount() const { return m_entity_list.GetLength(); }
     inline EntityId GetEntity(EntityIndex index) const { return m_entity_list[index]; }
     inline const ComponentInfo &GetComponentInfo() const { return m_component_info; }
 
-    byte *AddComponent(EntityId id);
+    void *AddComponent(EntityId id);
     bool8 HasComponent(EntityId id);
     byte *GetComponent(EntityId id);
     bool8 RemoveComponent(EntityId id);
@@ -41,7 +42,7 @@ namespace Hyperion {
     
     EntityIndexPages m_entity_index_pages;
     EntityList m_entity_list;
-    ComponentList m_component_list;
+    ComponentData m_component_data;
   private:
     inline static const uint32 SPARSE_ELEMENT = EntityId::GetIndex(EntityId::EMPTY);
   };

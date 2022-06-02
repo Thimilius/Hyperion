@@ -57,9 +57,8 @@ namespace Hyperion {
         ComponentId component_id = ComponentRegistry::GetId<T>();
         ComponentPool &component_pool = m_storage.component_pools[component_id];
 
-        byte *component_data = component_pool.AddComponent(id);
-        if (component_data != nullptr) {
-          T *component = new(component_data) T();
+        T *component = static_cast<T *>(component_pool.AddComponent(id));
+        if (component != nullptr) {
           for (ComponentCallback callback : m_storage.component_callbacks[component_id].added) {
             callback(this, id);
           }
@@ -80,9 +79,8 @@ namespace Hyperion {
       if (IsAlive(id)) {
         ComponentPool &component_pool = m_storage.component_pools[component_id];
 
-        byte *component_data = component_pool.AddComponent(id);
-        if (component_data != nullptr) {
-          void *component = component_pool.GetComponentInfo().constructor(component_data);
+        void *component = component_pool.AddComponent(id);
+        if (component != nullptr) {
           for (ComponentCallback callback : m_storage.component_callbacks[component_id].added) {
             callback(this, id);
           }
