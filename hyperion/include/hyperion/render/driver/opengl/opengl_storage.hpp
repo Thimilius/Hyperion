@@ -9,6 +9,17 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
+  enum class OpenGLShaderUniformLocation {
+    Model,
+    Color,
+    Texture,
+    ObjectId,
+    LightCount,
+    LightIndices,
+
+    Last
+  };
+  
   struct OpenGLAsset {
     AssetId id;
   };
@@ -16,8 +27,10 @@ namespace Hyperion::Rendering {
   struct OpenGLShader : public OpenGLAsset {
     ShaderAttributes attributes;
 
-    Array<GLint> locations;
+    Array<GLint> material_locations;
     GLuint program;
+
+    GLint fixed_locations[OpenGLShaderUniformLocation::Last];
   };
 
   struct OpenGLTexture : public OpenGLAsset {

@@ -45,6 +45,8 @@ namespace Hyperion::Rendering {
         }
       )";
       m_static.error_shader.program = OpenGLShaderCompiler::Compile(error_vertex, error_fragment).program;
+      m_static.error_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::Model)] =
+        glGetUniformLocation(m_static.error_shader.program, "u_model");
     }
 
     {
@@ -80,6 +82,10 @@ namespace Hyperion::Rendering {
         }
       )";
       m_static.object_id_shader.program = OpenGLShaderCompiler::Compile(object_id_vertex, object_id_fragment).program;
+      m_static.object_id_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::Model)] =
+        glGetUniformLocation(m_static.object_id_shader.program, "u_model");
+      m_static.object_id_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::ObjectId)] =
+        glGetUniformLocation(m_static.object_id_shader.program, "u_object_id");
     }
 
     {
@@ -163,7 +169,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void OpenGLStorage::LoadAssets(RenderAssetContext &asset_context) {
-    HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadAssets");
+    HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadAssets")
     OpenGLDebugGroup debug_group("LoadAssets");
 
     // The order in which we load the assets is important.
@@ -188,9 +194,9 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void OpenGLStorage::LoadTexture2D(RenderAssetTexture2D &texture_2d) {
-    HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadTexture2D");
+    HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadTexture2D")
 
-    OpenGLTexture opengl_texture;
+    OpenGLTexture opengl_texture = { };
     opengl_texture.id = texture_2d.id;
 
     glCreateTextures(GL_TEXTURE_2D, 1, &opengl_texture.texture);
@@ -219,7 +225,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void OpenGLStorage::LoadRenderTexture(RenderAssetRenderTexture &render_texture) {
-    HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadRenderTexture");
+    HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadRenderTexture")
 
     if (m_render_textures.Contains(render_texture.id)) {
       UnloadRenderTexture(render_texture.id);
@@ -291,7 +297,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void OpenGLStorage::LoadShader(RenderAssetShader &shader) {
-    HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadShader");
+    HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadShader")
 
     OpenGLShader opengl_shader;
     opengl_shader.id = shader.id;
@@ -302,10 +308,19 @@ namespace Hyperion::Rendering {
       if (compilation_result.success) {
         opengl_shader.program = compilation_result.program;
 
-        opengl_shader.locations.Reserve(shader.data.properties.GetLength());
+        opengl_shader.material_locations.Reserve(shader.data.properties.GetLength());
         for (const ShaderProperty &property : shader.data.properties) {
-          opengl_shader.locations.Add(glGetUniformLocation(opengl_shader.program, property.name.c_str()));
+          opengl_shader.material_locations.Add(glGetUniformLocation(opengl_shader.program, property.name.c_str()));
         }
+        
+        opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::Model)] = glGetUniformLocation(opengl_shader.program, "u_model");
+        opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::Color)] = glGetUniformLocation(opengl_shader.program, "u_color");
+        opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::Texture)] = glGetUniformLocation(opengl_shader.program, "u_texture");
+        opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::LightCount)] =
+          glGetUniformLocation(opengl_shader.program, "u_light_count");
+        opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::LightIndices)] =
+          glGetUniformLocation(opengl_shader.program, "u_light_indices");
+        opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::ObjectId)] = glGetUniformLocation(opengl_shader.program, "u_object_id");
       } else {
         opengl_shader.program = m_static.error_shader.program;
       }
@@ -323,7 +338,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void OpenGLStorage::LoadMaterial(RenderAssetMaterial &material) {
-    HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadMaterial");
+    HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadMaterial")
 
     auto material_it = m_materials.Find(material.id);
     if (material_it == m_materials.end()) {
@@ -341,7 +356,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void OpenGLStorage::LoadMesh(RenderAssetMesh &mesh) {
-    HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadMesh");
+    HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadMesh")
 
     const MeshData &data = mesh.data;
     const MeshVertexFormat &vertex_format = mesh.vertex_format;
@@ -438,7 +453,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void OpenGLStorage::UnloadAssets(RenderAssetContext &asset_context) {
-    HYP_PROFILE_SCOPE("OpenGLRenderDriver.UnloadAssets");
+    HYP_PROFILE_SCOPE("OpenGLRenderDriver.UnloadAssets")
     OpenGLDebugGroup debug_group("UnloadAssets");
 
     for (AssetId shader_id : asset_context.GetShaderAssetsToUnload()) {
