@@ -43,6 +43,9 @@ namespace Hyperion {
       component_info.copy_constructor = [](void *address, const void *instance) {
         return static_cast<void *>(new(address) T(*static_cast<const T *>(instance)));
       };
+      component_info.copy_assignment_operator = [](void *destination_instance, void *source_instance) {
+        *static_cast<T *>(destination_instance) = *static_cast<T *>(source_instance);
+      };
       component_info.move_assignment_operator = [](void *destination_instance, void *source_instance) {
         *static_cast<T *>(destination_instance) = std::move(*static_cast<T *>(source_instance));
       };

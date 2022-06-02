@@ -16,6 +16,7 @@ namespace Hyperion {
 
   using ComponentConstructor = void *(*)(void *address);
   using ComponentCopyConstructor = void *(*)(void *address, const void *instance);
+  using ComponentCopyAssignmentOperator = void(*)(void *destination_instance, void *source_instance);
   using ComponentMoveAssignmentOperator = void(*)(void *destination_instance, void *source_instance);
   using ComponentDestructor = void(*)(const void *instance);
   
@@ -27,6 +28,7 @@ namespace Hyperion {
 
     ComponentConstructor constructor;
     ComponentCopyConstructor copy_constructor;
+    ComponentCopyAssignmentOperator copy_assignment_operator;
     ComponentMoveAssignmentOperator move_assignment_operator;
     ComponentDestructor destructor;
   };

@@ -17,6 +17,9 @@ namespace Hyperion::Editor {
     static void EnterRuntime();
     static void PauseRuntime();
     static void ExitRuntime();
+
+    static void CreateEntity(EntityPrimitive primitive);
+    static void DuplicateEntity();
   protected:
     void OnSetup(ApplicationSettings &settings) override;
     void OnInitialize() override;

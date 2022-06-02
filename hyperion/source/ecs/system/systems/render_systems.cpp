@@ -30,10 +30,10 @@ namespace Hyperion::Rendering {
     for (EntityId entity : view) {
       LocalToWorldComponent *local_to_world = manager->GetComponent<LocalToWorldComponent>(entity);
       MeshComponent *mesh = manager->GetComponent<MeshComponent>(entity);
-      MeshBoundsComponent *world_mesh_bounds = manager->GetComponent<MeshBoundsComponent>(entity);
+      MeshBoundsComponent *mesh_bounds = manager->GetComponent<MeshBoundsComponent>(entity);
 
       if (mesh->mesh) {
-        world_mesh_bounds->bounds = BoundingBox::Transform(local_to_world->local_to_world, mesh->mesh->GetBounds());  
+        mesh_bounds->bounds = BoundingBox::Transform(local_to_world->local_to_world, mesh->mesh->GetBounds());  
       }
     }
   }
@@ -161,19 +161,25 @@ namespace Hyperion::Rendering {
     auto view = manager->GetView<LocalToWorldComponent, MeshBoundsComponent, MeshComponent>();
     for (EntityId entity : view) {
       LocalToWorldComponent *local_to_world = manager->GetComponent<LocalToWorldComponent>(entity);
-      MeshBoundsComponent *world_mesh_bounds = manager->GetComponent<MeshBoundsComponent>(entity);
+      MeshBoundsComponent *mesh_bounds = manager->GetComponent<MeshBoundsComponent>(entity);
       MeshComponent *mesh = manager->GetComponent<MeshComponent>(entity);
 
+      Mesh *mesh_mesh = mesh->mesh;
+      Material *material = mesh->material;
+      if (mesh_mesh == nullptr || material == nullptr) {
+        continue;
+      }
+      
       RenderFrameContextObjectMesh &render_frame_context_mesh_object = render_frame_context.AddMeshObject();
       render_frame_context_mesh_object.id = EntityId::CreateSmall(entity);
       render_frame_context_mesh_object.local_to_world = local_to_world->local_to_world;
       render_frame_context_mesh_object.position = Vector3(local_to_world->local_to_world.columns[3]);
-      render_frame_context_mesh_object.mesh_id = mesh->mesh->GetAssetInfo().id;
+      render_frame_context_mesh_object.mesh_id = mesh_mesh->GetAssetInfo().id;
       render_frame_context_mesh_object.sub_mesh_index = mesh->sub_mesh_index;
-      render_frame_context_mesh_object.shader_id = mesh->material->GetShader()->GetAssetInfo().id;
-      render_frame_context_mesh_object.material_id = mesh->material->GetAssetInfo().id;
+      render_frame_context_mesh_object.shader_id = material->GetShader()->GetAssetInfo().id;
+      render_frame_context_mesh_object.material_id = material->GetAssetInfo().id;
       render_frame_context_mesh_object.layer_mask = mesh->layer_mask;
-      render_frame_context_mesh_object.bounds = world_mesh_bounds->bounds;
+      render_frame_context_mesh_object.bounds = mesh_bounds->bounds;
     }
   }
 

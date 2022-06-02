@@ -42,10 +42,11 @@ namespace Hyperion {
 
     EntityId CreateEntity(EntityPrimitive primitive = EntityPrimitive::Base, EntityGuid guid = EntityGuid::Generate());
     EntityId CreateMultiMeshEntity(Mesh *mesh);
+    EntityId InstantiateEntity(EntityId id);
     void DestroyEntity(EntityId id, EntityHierarchyDestructionPolicy hierarchy_destruction_policy = EntityHierarchyDestructionPolicy::DestroyChildren);
 
     EntityArchetype *CreateArchetype(EntityId id);
-    EntityId Instantiate(EntityArchetype *archetype);
+    EntityId InstantiateArchetype(EntityArchetype *archetype);
 
     void SetEnabled(EntityId entity, bool8 enabled);
     

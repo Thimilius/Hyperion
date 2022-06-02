@@ -113,6 +113,43 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
+  EntityId EntityManager::InstantiateEntity(EntityId id) {
+    HYP_PROFILE_SCOPE("World.InstantiateEntity");
+    
+    if (IsAlive(id)) {
+      EntityId instantiated = CreateEntity(EntityPrimitive::Empty);
+
+      // First we add all the components our source entity has.
+      // Because the adding of components is not pointer-stable we have to delay the actual copying of the data into a second step.
+      for (ComponentPool &component_pool : m_storage.component_pools) {
+        if (component_pool.HasComponent(id)) {
+          const ComponentInfo &component_info = component_pool.GetComponentInfo();
+          AddComponent(component_info.id, instantiated);
+        }
+      }
+      
+      // Now we are safe to copy over the actual component data.
+      for (ComponentPool &component_pool : m_storage.component_pools) {
+        void *source_component = component_pool.GetComponent(id);
+        if (source_component) {
+          const ComponentInfo &component_info = component_pool.GetComponentInfo();
+          void *destination_component = component_pool.GetComponent(instantiated);
+          component_info.copy_assignment_operator(destination_component, source_component);
+        }
+      }
+
+      // FIXME: This is currently not correct as it does not copy our potential children. 
+
+      m_world->m_hierarchy.HandleEntityCreation(instantiated);
+      
+      return instantiated;
+    } else {
+      HYP_LOG_WARN("Entity", "Trying to instantiate entity from nonexistent entity with id {}.", id);
+      return EntityId::EMPTY;
+    }
+  }
+
+  //--------------------------------------------------------------
   void EntityManager::DestroyEntity(EntityId id, EntityHierarchyDestructionPolicy hierarchy_destruction_policy) {
     HYP_PROFILE_SCOPE("World.DestroyEntity");
 
@@ -150,12 +187,16 @@ namespace Hyperion {
     }
 
     EntityArchetypeComponentStorage storage;
-
-    for (const ComponentInfo &component_info : ComponentRegistry::GetComponentInfos()) {
-      byte *component = static_cast<byte *>(GetComponent(component_info.id, id));
+    for (ComponentPool &component_pool : m_storage.component_pools) {
+      const ComponentInfo &component_info = component_pool.GetComponentInfo();
+      byte *component = component_pool.GetComponent(id);
       if (component != nullptr) {
-        Array<byte> component_data(component, component + component_info.element_size);
-        storage.Insert(component_info.id, component_data);
+        Array<byte> component_data;
+        component_data.Resize(component_info.element_size);
+
+        component_info.copy_constructor(component_data.GetData(), component);
+        
+        storage.Insert(component_info.id, component_data);  
       }
     }
 
@@ -167,7 +208,7 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  EntityId EntityManager::Instantiate(EntityArchetype *archetype) {
+  EntityId EntityManager::InstantiateArchetype(EntityArchetype *archetype) {
     HYP_ASSERT(archetype);
 
     EntityId copy = CreateEntity(EntityPrimitive::Empty);

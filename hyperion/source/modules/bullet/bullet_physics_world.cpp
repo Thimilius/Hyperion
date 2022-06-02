@@ -128,7 +128,7 @@ namespace Hyperion::Physics {
   //--------------------------------------------------------------
   void BulletPhysicsWorld::AddBoxCollider(EntityManager *manager, EntityId entity) {
     HYP_PROFILE_SCOPE("BulletPhysicsWorld.AddBoxCollider");
-
+    
     BoxColliderComponent *box_collider = manager->GetComponent<BoxColliderComponent>(entity);
     DerivedTransformComponent *derived_transform = manager->GetComponent<DerivedTransformComponent>(entity);
     HYP_ASSERT(derived_transform);

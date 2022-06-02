@@ -63,19 +63,19 @@ namespace Hyperion::Editor {
     s_panel_theme->panel_color_pressed = EditorStyle::COLOR_NORMAL;
 
     s_entity_creation_menu = { {
-      { "Empty", [](auto _) { CreateEntity(EntityPrimitive::Base); }, { } },
+      { "Empty", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Base); }, { } },
       { "Objects", { }, {
-        { "Cube", [](auto _) { CreateEntity(EntityPrimitive::Cube); }, { } },
-        { "Sphere", [](auto _) { CreateEntity(EntityPrimitive::Sphere); }, { } },
-        { "Plane", [](auto _) { CreateEntity(EntityPrimitive::Plane); }, { } },
-        { "Quad", [](auto _) { CreateEntity(EntityPrimitive::Quad); }, { } },
+        { "Cube", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Cube); }, { } },
+        { "Sphere", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Sphere); }, { } },
+        { "Plane", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Plane); }, { } },
+        { "Quad", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Quad); }, { } },
       }, },
       { "Light", { }, {
-        { "Directional Light", [](auto _) { CreateEntity(EntityPrimitive::DirectionalLight); }, { } },
-        { "Point Light", [](auto _) { CreateEntity(EntityPrimitive::PointLight); }, { } },
-        { "Spot Light", [](auto _) { CreateEntity(EntityPrimitive::SpotLight); }, { } },
+        { "Directional Light", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::DirectionalLight); }, { } },
+        { "Point Light", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::PointLight); }, { } },
+        { "Spot Light", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::SpotLight); }, { } },
       }, },
-      { "Camera", [](auto _) { CreateEntity(EntityPrimitive::Camera); }, { } }
+      { "Camera", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Camera); }, { } }
     } };
   }
 
@@ -538,12 +538,6 @@ namespace Hyperion::Editor {
       DrawEntityHierarchy(manager, child, child_hierarchy, depth + 1);
       child = child_hierarchy->next_sibling;
     }
-  }
-
-  //--------------------------------------------------------------
-  void EditorUI::CreateEntity(EntityPrimitive primitive) {
-    EntityId entity = EditorApplication::GetWorld()->GetEntityManager()->CreateEntity(primitive);
-    EditorSelection::Select(entity);
   }
 
   //--------------------------------------------------------------

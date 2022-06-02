@@ -26,8 +26,6 @@ namespace Hyperion::Editor {
     ~EditorUI() = delete;
   private:
     static void DrawEntityHierarchy(EntityManager *manager, EntityId entity, HierarchyComponent *branch_hierarchy, uint32 depth);
-
-    static void CreateEntity(EntityPrimitive primitive);
     
     static Vector2 TransformScreenToPreviewPosition(Vector2 screen_position);
   private:

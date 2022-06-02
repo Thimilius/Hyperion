@@ -53,6 +53,21 @@ namespace Hyperion::Editor {
   }
 
   //--------------------------------------------------------------
+  void EditorApplication::CreateEntity(EntityPrimitive primitive) {
+    EntityId entity = s_world->GetEntityManager()->CreateEntity(primitive);
+    EditorSelection::Select(entity);
+  }
+
+  //--------------------------------------------------------------
+  void EditorApplication::DuplicateEntity() {
+    if (EditorSelection::HasSelection()) {
+      EntityId entity = EditorSelection::GetSelection();
+      EntityId duplicate = s_world->GetEntityManager()->InstantiateEntity(entity);
+      EditorSelection::Select(duplicate);
+    }
+  }
+  
+  //--------------------------------------------------------------
   void EditorApplication::OnSetup(ApplicationSettings &settings) {
     settings.window.menu.items.Add({
       "File", { }, {
@@ -91,6 +106,7 @@ namespace Hyperion::Editor {
       String text = WorldSerializer::Serialize(s_world);
       FileSystem::WriteAllText(WORLD_PATH, text);
     }
+    WorldManager::SetActiveWorld(s_world);
     
     EditorUI::Initialize();
     EditorCamera::Initialize();
@@ -111,6 +127,9 @@ namespace Hyperion::Editor {
       if (Input::IsKeyDown(KeyCode::W)) {
         Exit();  
       }
+      if (Input::IsKeyDown(KeyCode::D)) {
+        DuplicateEntity();
+      }
     }
     if (Input::IsKeyDown(KeyCode::F1)) {
       GetMainWindow()->SetWindowMode(GetMainWindow()->GetWindowMode() == WindowMode::Borderless ? WindowMode::Windowed : WindowMode::Borderless);
@@ -122,9 +141,6 @@ namespace Hyperion::Editor {
         ExitRuntime();
       }
     }
-
-    World *copy = WorldManager::CopyWorld(s_world);
-    WorldManager::DestroyWorld(copy);
   }
 
   //--------------------------------------------------------------
