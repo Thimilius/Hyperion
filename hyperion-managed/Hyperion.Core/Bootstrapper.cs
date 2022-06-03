@@ -36,6 +36,8 @@ namespace Hyperion {
         CreateManagedObject = &Native.CreateManagedObject,
       };
       bootstrapArguments->ForwardManagedBindings(&functionPointers);
+
+      Engine.Bootstrap();
       
       return 0;
     }

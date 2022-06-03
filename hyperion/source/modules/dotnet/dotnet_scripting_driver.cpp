@@ -59,12 +59,12 @@ namespace Hyperion::Scripting {
   void DotnetScriptingDriver::Initialize() {
     String runtime_host_path = EngineConfig::GetToolsPath() + "/dotnet/host/fxr/6.0.5/hostfxr.dll";
     String managed_libraries_path = EngineConfig::GetManagedLibrariesPath();
-    String core_library_name = "Hyperion";
+    String core_library_name = "Hyperion.Core";
     WideString hostfxr_config_path = StringUtils::Utf8ToUtf16(managed_libraries_path + "/" + core_library_name + ".runtimeconfig.json");
     
     String library_path = managed_libraries_path + "/" + core_library_name + ".dll";
     WideString library_path_wide = StringUtils::Utf8ToUtf16(library_path);
-    String dotnet_type = "Hyperion.Bootstrapper, Hyperion";
+    String dotnet_type = "Hyperion.Bootstrapper, " + core_library_name;
     WideString dotnet_type_wide = StringUtils::Utf8ToUtf16(dotnet_type);
     String dotnet_type_method = "Bootstrap";
     WideString dotnet_type_method_wide = StringUtils::Utf8ToUtf16(dotnet_type_method);

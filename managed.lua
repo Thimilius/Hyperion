@@ -1,7 +1,7 @@
 group "managed"
 
-project "Hyperion"
-  location "hyperion-managed/Hyperion"
+project "Hyperion.Core"
+  location "hyperion-managed/Hyperion.Core"
 
   configurations { }
   configurations { "Debug", "Release" }
@@ -17,18 +17,17 @@ project "Hyperion"
   csversion "9.0"
   kind "SharedLib"
   clr "Unsafe"
-
   dynamicloading(true)
+  namespace "Hyperion"
 
   files { "%{prj.location}/**.cs" }
-
   excludes { "%{prj.location}/obj/**.cs" }
 
   postbuildcommands {
-    "{COPY} Hyperion.dll ../../../../../run_tree/data/managed/Hyperion.dll*",
-    "{COPY} Hyperion.pdb ../../../../../run_tree/data/managed/Hyperion.pdb*",
-    "{COPY} Hyperion.deps.json ../../../../../run_tree/data/managed/Hyperion.deps.json*",
-    "{COPY} Hyperion.runtimeconfig.json ../../../../../run_tree/data/managed/Hyperion.runtimeconfig.json*",
+    "{COPY} Hyperion.Core.dll ../../../../../run_tree/data/managed/",
+    "{COPY} Hyperion.Core.pdb ../../../../../run_tree/data/managed/",
+    "{COPY} Hyperion.Core.deps.json ../../../../../run_tree/data/managed/",
+    "{COPY} Hyperion.Core.runtimeconfig.json ../../../../../run_tree/data/managed/",
   }
 
 project "Hyperion.Sandbox"
@@ -47,15 +46,15 @@ project "Hyperion.Sandbox"
   framework "net6.0"
   csversion "9.0"
   kind "SharedLib"
-
   dynamicloading(true)
 
-  files { "%{prj.location}/**.cs" }
+  links { "Hyperion.Core" }
 
+  files { "%{prj.location}/**.cs" }
   excludes { "%{prj.location}/obj/**.cs" }
 
   postbuildcommands {
-    "{COPY} Hyperion.Sandbox.dll ../../../../../run_tree/data/managed/Hyperion.Sandbox.dll*",
-    "{COPY} Hyperion.Sandbox.pdb ../../../../../run_tree/data/managed/Hyperion.Sandbox.pdb*",
-    "{COPY} Hyperion.Sandbox.deps.json ../../../../../run_tree/data/managed/Hyperion.Sandbox.deps.json*",
+    "{COPY} Hyperion.Sandbox.dll ../../../../../run_tree/data/managed/",
+    "{COPY} Hyperion.Sandbox.pdb ../../../../../run_tree/data/managed/",
+    "{COPY} Hyperion.Sandbox.deps.json ../../../../../run_tree/data/managed/",
   }
