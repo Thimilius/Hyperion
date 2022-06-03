@@ -6,7 +6,7 @@ namespace Hyperion {
   internal class ManagedLoadContext : AssemblyLoadContext {
     private readonly AssemblyDependencyResolver m_Resolver;
 
-    public ManagedLoadContext(string pluginPath) {
+    public ManagedLoadContext(string pluginPath) : base(isCollectible: true) {
       m_Resolver = new AssemblyDependencyResolver(pluginPath);
     }
 

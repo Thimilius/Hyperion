@@ -155,17 +155,49 @@ namespace Hyperion::Scripting {
 
   //--------------------------------------------------------------
   void DotnetScriptingDriver::PostInitialize() {
-    g_managed_bindings.engine_initialize();
+    if (Engine::GetEngineMode() == EngineMode::Runtime) {
+      LoadManagedContext();
+    }
   }
-  
+
+  //--------------------------------------------------------------
+  void DotnetScriptingDriver::OnEngineModeChanged(EngineMode old_mode, EngineMode new_mode) {
+    // We do not reload the context in paused state.
+    if (old_mode == EngineMode::EditorRuntimePaused || new_mode == EngineMode::EditorRuntimePaused) {
+      return;
+    }
+    
+    if (new_mode == EngineMode::EditorRuntimePlaying) {
+      LoadManagedContext();
+    } else if (new_mode == EngineMode::Editor) {
+      UnloadManagedContext();
+    }
+  }
+
   //--------------------------------------------------------------
   void DotnetScriptingDriver::Update() {
-    g_managed_bindings.engine_update();
+    if (Engine::GetEngineMode() == EngineMode::Runtime || Engine::GetEngineMode() == EngineMode::EditorRuntimePlaying) {
+      g_managed_bindings.engine_update();
+    }
   }
 
   //--------------------------------------------------------------
   void DotnetScriptingDriver::Shutdown() {
+    if (Engine::GetEngineMode() != EngineMode::Editor) {
+      UnloadManagedContext();
+    }
+  }
+
+  //--------------------------------------------------------------
+  void DotnetScriptingDriver::LoadManagedContext() {
+    g_managed_bindings.engine_initialize();
+    HYP_LOG_INFO("Scripting", "Loaded managed context!");
+  }
+  
+  //--------------------------------------------------------------
+  void DotnetScriptingDriver::UnloadManagedContext() {
     g_managed_bindings.engine_shutdown();
+    HYP_LOG_INFO("Scripting", "Unloaded managed context!");
   }
 
 }

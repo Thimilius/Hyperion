@@ -35,6 +35,8 @@ namespace Hyperion::Editor {
       WorldManager::SetActiveWorld(copy);
       s_old_world = s_world;
       s_world = copy;
+
+      EditorSelection::Deselect();
     }
   }
 

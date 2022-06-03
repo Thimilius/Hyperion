@@ -300,7 +300,12 @@ namespace Hyperion {
 #ifdef HYP_EDITOR
   //--------------------------------------------------------------
   void Engine::SetEngineMode(EngineMode mode) {
-    s_mode = mode;
+    if (s_mode != mode) {
+      EngineMode old_mode = s_mode;
+      s_mode = mode;
+
+      Scripting::ScriptingEngine::OnEngineModeChanged(old_mode, mode);
+    }
   }
 #endif
 
