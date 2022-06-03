@@ -51,24 +51,28 @@ namespace Hyperion {
         // We expect all managed assemblies to be next to us.
         string assemblyDirectory = Path.GetDirectoryName(typeof(Runtime).Assembly.Location);
         string coreAssemblyName = "Hyperion.Core.dll";
-        string fullCoreAssemblyPath = Path.Combine(assemblyDirectory, coreAssemblyName);
-
+        string coreAssemblyPath = Path.Combine(assemblyDirectory, coreAssemblyName);
+        string sandboxAssemblyName = "Hyperion.Sandbox.dll";
+        string sandboxAssemblyPath = Path.Combine(assemblyDirectory, sandboxAssemblyName);
+        
         AssemblyLoadContext loadContext = new RuntimeLoadContext(assemblyDirectory);
+        s_LoadContext = new WeakReference(loadContext);
 
-        // We need an absolute path to load an assembly.
-        Assembly assembly = loadContext.LoadFromAssemblyPath(fullCoreAssemblyPath);
-        Type type = assembly.GetType("Hyperion.Engine");
+        Assembly coreAssembly = loadContext.LoadFromAssemblyPath(coreAssemblyPath);
+        loadContext.LoadFromAssemblyPath(sandboxAssemblyPath);
+        
+        // We need to bootstrap the core assembly (exchange function pointers).
+        Type type = coreAssembly.GetType("Hyperion.Engine");
         type.InvokeMember(
           "Bootstrap",
           BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod,
           null,
           null,
           new object[] {
-            coreBootstrapArgumentsPointer
+            coreBootstrapArgumentsPointer,
+            loadContext.Assemblies
           }
         );
-
-        s_LoadContext = new WeakReference(loadContext);
       } catch (Exception e) {
         s_RuntimeNativeBindings.Exception("Failed to load context!\n" + e);
       }

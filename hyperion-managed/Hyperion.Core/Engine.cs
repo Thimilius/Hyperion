@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace Hyperion {
@@ -20,8 +22,8 @@ namespace Hyperion {
       public readonly delegate *unmanaged<CoreManagedBindings *, void> ManagedBindingsCallback;
     }
 
-    
     private static readonly List<ILogger> s_Loggers = new();
+    private static readonly List<IApplication> s_Applications = new();
 
     public static void Log(object @object) => Log(@object?.ToString());
     public static void Log(string format, params object[] args) => Log(string.Format(format, args));
@@ -48,36 +50,10 @@ namespace Hyperion {
       }
     }
     
-    [UnmanagedCallersOnly]
-    internal static void Initialize() {
-      try {
-        Log("INITIALIZE");
-      } catch (Exception e) {
-        
-      }
-    }
-    
-    [UnmanagedCallersOnly]
-    internal static void Update() {
-      try {
-        Log("Update");
-      } catch (Exception e) {
-        
-      }
-    }
-    
-    [UnmanagedCallersOnly]
-    internal static void Shutdown() {
-      try {
-        Log("Shutdown");
-      } catch (Exception e) {
-        
-      }
-    }
-
-    internal static void Bootstrap(IntPtr coreBootstrapArgumentsPointer) {
+    internal static void Bootstrap(IntPtr coreBootstrapArgumentsPointer, IEnumerable<Assembly> assemblies) {
       CoreBootstrapArguments *coreBootstrapArguments = (CoreBootstrapArguments *)coreBootstrapArgumentsPointer;
 
+      Bindings.Core = coreBootstrapArguments->NativeBindings.CoreBindings;
       Bindings.Log = coreBootstrapArguments->NativeBindings.LogBindings;
       Bindings.World = coreBootstrapArguments->NativeBindings.WorldBindings;
       Bindings.WorldManager = coreBootstrapArguments->NativeBindings.WorldManagerBindings;
@@ -93,6 +69,55 @@ namespace Hyperion {
       coreBootstrapArguments->ManagedBindingsCallback(&coreManagedBindings);
       
       s_Loggers.Add(new EngineLogger());
+
+      RegisterApplications(assemblies);
+    }
+
+    [UnmanagedCallersOnly]
+    private static void Initialize() {
+      try {
+        foreach (IApplication application in s_Applications) {
+          application.Initialize();
+        }
+      } catch (Exception e) {
+        Bindings.Core.Exception(e.ToString());
+      }
+    }
+    
+    [UnmanagedCallersOnly]
+    private static void Update() {
+      try {
+        foreach (IApplication application in s_Applications) {
+          application.Update();
+        }
+      } catch (Exception e) {
+        Bindings.Core.Exception(e.ToString());
+      }
+    }
+    
+    [UnmanagedCallersOnly]
+    private static void Shutdown() {
+      try {
+        foreach (IApplication application in s_Applications) {
+          application.Shutdown();
+        }
+      } catch (Exception e) {
+        Bindings.Core.Exception(e.ToString());
+      }
+    }
+
+    private static void RegisterApplications(IEnumerable<Assembly> assemblies) {
+      Type @interface = typeof(IApplication);
+      IEnumerable<Type> types = assemblies.SelectMany(a => a.GetTypes()).Where(t => !t.IsAbstract && @interface.IsAssignableFrom(t));
+
+      foreach (Type type in types) {
+        try {
+          IApplication callback = Activator.CreateInstance(type) as IApplication;
+          s_Applications.Add(callback);
+        } catch (Exception e) {
+          Log(e);
+        }
+      }
     }
   }
 }

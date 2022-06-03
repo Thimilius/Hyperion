@@ -29,14 +29,14 @@ namespace Hyperion::Editor {
   //--------------------------------------------------------------
   void EditorApplication::EnterRuntime() {
     if (Engine::GetEngineMode() == EngineMode::Editor) {
-      Engine::SetEngineMode(EngineMode::EditorRuntimePlaying);
-
+      EditorSelection::Deselect();
+      
       World *copy = WorldManager::CopyWorld(s_world);
       WorldManager::SetActiveWorld(copy);
       s_old_world = s_world;
       s_world = copy;
 
-      EditorSelection::Deselect();
+      Engine::SetEngineMode(EngineMode::EditorRuntimePlaying);
     }
   }
 
@@ -52,6 +52,8 @@ namespace Hyperion::Editor {
   //--------------------------------------------------------------
   void EditorApplication::ExitRuntime() {
     if (Engine::GetEngineMode() == EngineMode::EditorRuntimePlaying || Engine::GetEngineMode() == EngineMode::EditorRuntimePaused) {
+      EditorSelection::Deselect();
+      
       Engine::SetEngineMode(EngineMode::Editor);
 
       World *world = s_world;
@@ -59,8 +61,6 @@ namespace Hyperion::Editor {
       WorldManager::DestroyWorld(world);
       s_world = s_old_world;
       s_old_world = nullptr;
-
-      EditorSelection::Deselect();
     }
   }
 

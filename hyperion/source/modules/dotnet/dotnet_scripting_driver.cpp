@@ -15,6 +15,10 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
 
+  struct CoreBindings {
+    void (*exception)(const char *);
+  };
+  
   struct LogBindings {
     void (*log_trace)(const char *);
     void (*log_info)(const char *);
@@ -32,6 +36,7 @@ namespace Hyperion::Scripting {
   };
   
   struct CoreNativeBindings {
+    CoreBindings core_bindings;
     LogBindings log_bindings;
     WorldManagerBindings world_manager_bindings;
     WorldBindings world_bindings;
@@ -125,7 +130,11 @@ namespace Hyperion::Scripting {
     }
 
     close_func(hostfxr_context);
-    
+
+    // The native bindings can be cached once globally and do not have to be recreated on context reload.
+    g_core_bootstrap_arguments.native_bindings.core_bindings.exception = [](const char *message) {
+      HYP_LOG_ERROR("Scripting", message);
+    };
     g_core_bootstrap_arguments.native_bindings.log_bindings.log_trace = [](const char *message) {
       HYP_TRACE(message);
     };
@@ -157,8 +166,11 @@ namespace Hyperion::Scripting {
       World *world = static_cast<World *>(native_handle);
       world->SetName(String(name));
     };
-    g_core_bootstrap_arguments.managed_bindings_callback = [](CoreManagedBindings *pointers) {
-      g_core_managed_bindings = *pointers;
+    g_core_bootstrap_arguments.managed_bindings_callback = [](CoreManagedBindings *core_managed_bindings) {
+      g_core_managed_bindings = *core_managed_bindings;
+
+      // This is also the point where we can grab references to types in the core assembly.
+      g_type_world = g_core_managed_bindings.get_type_by_name("Hyperion.World");
     };
 
     // We bootstrap the runtime by providing a callback to get bindings to the managed runtime methods.
@@ -166,13 +178,11 @@ namespace Hyperion::Scripting {
     runtime_arguments.native_bindings.exception = [](const char *message) {
       HYP_PANIC_MESSAGE("Scripting", "{}", message);
     };
-    runtime_arguments.managed_bindings_callback = [](RuntimeManagedBindings *runtime_bindings) {
+    runtime_arguments.managed_bindings_callback = [](RuntimeManagedBindings *runtime_managed_bindings) {
       HYP_LOG_INFO("Scripting", "Setting runtime bindings...");
-      g_runtime_managed_bindings = *runtime_bindings;
+      g_runtime_managed_bindings = *runtime_managed_bindings;
     };
     runtime_bootstrap_func(&runtime_arguments);
-      
-    //g_type_world = g_managed_bindings.get_type_by_name("Hyperion.World");
 
     HYP_LOG_INFO("Scripting", "Initialized .Net6.0 runtime!");
   }
