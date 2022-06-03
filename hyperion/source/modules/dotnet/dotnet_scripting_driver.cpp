@@ -133,19 +133,19 @@ namespace Hyperion::Scripting {
 
     // The native bindings can be cached once globally and do not have to be recreated on context reload.
     g_core_bootstrap_arguments.native_bindings.core_bindings.exception = [](const char *message) {
-      HYP_LOG_ERROR("Scripting", message);
+      HYP_LOG_ERROR("Scripting", "{}", message);
     };
     g_core_bootstrap_arguments.native_bindings.log_bindings.log_trace = [](const char *message) {
-      HYP_TRACE(message);
+      HYP_LOG_TRACE("Scripting", "{}", message);
     };
     g_core_bootstrap_arguments.native_bindings.log_bindings.log_info = [](const char *message) {
-      HYP_INFO(message);
+      HYP_LOG_INFO("Scripting", "{}", message);
     };
     g_core_bootstrap_arguments.native_bindings.log_bindings.log_warn = [](const char *message) {
-      HYP_WARN(message);
+      HYP_LOG_WARN("Scripting", "{}", message);
     };
     g_core_bootstrap_arguments.native_bindings.log_bindings.log_error = [](const char *message) {
-      HYP_ERROR(message);
+      HYP_LOG_ERROR("Scripting", "{}", message);
     };
     g_core_bootstrap_arguments.native_bindings.world_manager_bindings.get_active_world = []() {
       World *world = WorldManager::GetActiveWorld();
@@ -189,35 +189,35 @@ namespace Hyperion::Scripting {
 
   //--------------------------------------------------------------
   void DotnetScriptingDriver::PostInitialize() {
-    if (Engine::GetEngineMode() == EngineMode::Runtime) {
+    if (Engine::GetEngineState() == EngineState::Runtime) {
       LoadManagedContext();
     }
   }
 
   //--------------------------------------------------------------
-  void DotnetScriptingDriver::OnEngineModeChanged(EngineMode old_mode, EngineMode new_mode) {
+  void DotnetScriptingDriver::OnEngineModeChanged(EngineState old_state, EngineState new_state) {
     // We do not reload the context in paused state.
-    if (old_mode == EngineMode::EditorRuntimePaused || new_mode == EngineMode::EditorRuntimePaused) {
+    if (old_state == EngineState::EditorRuntimePaused || new_state == EngineState::EditorRuntimePaused) {
       return;
     }
     
-    if (new_mode == EngineMode::EditorRuntimePlaying) {
+    if (new_state == EngineState::EditorRuntimePlaying) {
       LoadManagedContext();
-    } else if (new_mode == EngineMode::Editor) {
+    } else if (new_state == EngineState::Editor) {
       UnloadManagedContext();
     }
   }
 
   //--------------------------------------------------------------
   void DotnetScriptingDriver::Update() {
-    if (Engine::GetEngineMode() == EngineMode::Runtime || Engine::GetEngineMode() == EngineMode::EditorRuntimePlaying) {
+    if (Engine::GetEngineState() == EngineState::Runtime || Engine::GetEngineState() == EngineState::EditorRuntimePlaying) {
       g_core_managed_bindings.engine_update();
     }
   }
 
   //--------------------------------------------------------------
   void DotnetScriptingDriver::Shutdown() {
-    if (Engine::GetEngineMode() != EngineMode::Editor) {
+    if (Engine::GetEngineState() != EngineState::Editor) {
       UnloadManagedContext();
     }
   }

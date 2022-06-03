@@ -28,11 +28,11 @@
 namespace Hyperion {
 
   //--------------------------------------------------------------
-  EngineMode Engine::GetEngineMode() {
+  EngineState Engine::GetEngineState() {
     if constexpr (IS_EDITOR) {
-      return s_mode;
+      return s_state;
     } else {
-      return EngineMode::Runtime;
+      return EngineState::Runtime;
     }
   }
 
@@ -299,12 +299,12 @@ namespace Hyperion {
 
 #ifdef HYP_EDITOR
   //--------------------------------------------------------------
-  void Engine::SetEngineMode(EngineMode mode) {
-    if (s_mode != mode) {
-      EngineMode old_mode = s_mode;
-      s_mode = mode;
+  void Engine::SetEngineState(EngineState state) {
+    if (s_state != state) {
+      EngineState old_mode = s_state;
+      s_state = state;
 
-      Scripting::ScriptingEngine::OnEngineModeChanged(old_mode, mode);
+      Scripting::ScriptingEngine::OnEngineModeChanged(old_mode, state);
     }
   }
 #endif

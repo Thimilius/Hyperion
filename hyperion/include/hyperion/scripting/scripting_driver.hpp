@@ -13,7 +13,7 @@ namespace Hyperion::Scripting {
   public:
     virtual void Initialize() = 0;
     virtual void PostInitialize() = 0;
-    virtual void OnEngineModeChanged(EngineMode old_mode, EngineMode new_mode) = 0;
+    virtual void OnEngineModeChanged(EngineState old_state, EngineState new_state) = 0;
     virtual void Update() = 0;
     virtual void Shutdown() = 0;
   };
@@ -22,7 +22,7 @@ namespace Hyperion::Scripting {
   public:
     void Initialize() override { HYP_LOG_INFO("Scripting", "Initialized Null scripting driver!"); }
     void PostInitialize() override { }
-    void OnEngineModeChanged(EngineMode old_mode, EngineMode new_mode) override { }
+    void OnEngineModeChanged(EngineState old_state, EngineState new_state) override { }
     void Update() override { }
     void Shutdown() override { }
   };

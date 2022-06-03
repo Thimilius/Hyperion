@@ -27,8 +27,8 @@ namespace Hyperion::Scripting {
   }
 
   //--------------------------------------------------------------
-  void ScriptingEngine::OnEngineModeChanged(EngineMode old_mode, EngineMode new_mode) {
-    s_scripting_driver->OnEngineModeChanged(old_mode, new_mode);
+  void ScriptingEngine::OnEngineModeChanged(EngineState old_state, EngineState new_state) {
+    s_scripting_driver->OnEngineModeChanged(old_state, new_state);
   }
 
   //--------------------------------------------------------------

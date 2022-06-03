@@ -11,7 +11,7 @@ namespace Hyperion::Scripting {
   public:
     void Initialize() override;
     void PostInitialize() override;
-    void OnEngineModeChanged(EngineMode old_mode, EngineMode new_mode) override;
+    void OnEngineModeChanged(EngineState old_state, EngineState new_state) override;
     void Update() override;
     void Shutdown() override;
   private:

@@ -133,14 +133,14 @@ namespace Hyperion::Editor {
 
         UIImmediate::BeginCenter("Play Buttons");
         {
-          EngineMode engine_mode = Engine::GetEngineMode();
-          bool8 is_playing = engine_mode == EngineMode::EditorRuntimePlaying || engine_mode == EngineMode::EditorRuntimePaused;
+          EngineState engine_mode = Engine::GetEngineState();
+          bool8 is_playing = engine_mode == EngineState::EditorRuntimePlaying || engine_mode == EngineState::EditorRuntimePaused;
           if (UIImmediate::TextToggle(is_playing, "\uf04b", FitType::ToLayout, icon_theme).clicked) {
             EditorApplication::EnterRuntime();
 
             UIImmediate::SetOverlayColor(EditorStyle::COLOR_PLAYMODE_OVERLAY);
           }
-          bool8 is_paused = engine_mode == EngineMode::EditorRuntimePaused;
+          bool8 is_paused = engine_mode == EngineState::EditorRuntimePaused;
           if (UIImmediate::TextToggle(is_paused, "\uf04c", FitType::ToLayout, icon_theme).clicked) {
             EditorApplication::PauseRuntime();
           }

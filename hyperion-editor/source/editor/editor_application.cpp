@@ -28,7 +28,7 @@ namespace Hyperion::Editor {
 
   //--------------------------------------------------------------
   void EditorApplication::EnterRuntime() {
-    if (Engine::GetEngineMode() == EngineMode::Editor) {
+    if (Engine::GetEngineState() == EngineState::Editor) {
       EditorSelection::Deselect();
       
       World *copy = WorldManager::CopyWorld(s_world);
@@ -36,25 +36,25 @@ namespace Hyperion::Editor {
       s_old_world = s_world;
       s_world = copy;
 
-      Engine::SetEngineMode(EngineMode::EditorRuntimePlaying);
+      Engine::SetEngineState(EngineState::EditorRuntimePlaying);
     }
   }
 
   //--------------------------------------------------------------
   void EditorApplication::PauseRuntime() {
-    if (Engine::GetEngineMode() == EngineMode::EditorRuntimePlaying) {
-      Engine::SetEngineMode(EngineMode::EditorRuntimePaused);
-    } else if (Engine::GetEngineMode() == EngineMode::EditorRuntimePaused) {
-      Engine::SetEngineMode(EngineMode::EditorRuntimePlaying);
+    if (Engine::GetEngineState() == EngineState::EditorRuntimePlaying) {
+      Engine::SetEngineState(EngineState::EditorRuntimePaused);
+    } else if (Engine::GetEngineState() == EngineState::EditorRuntimePaused) {
+      Engine::SetEngineState(EngineState::EditorRuntimePlaying);
     }
   }
 
   //--------------------------------------------------------------
   void EditorApplication::ExitRuntime() {
-    if (Engine::GetEngineMode() == EngineMode::EditorRuntimePlaying || Engine::GetEngineMode() == EngineMode::EditorRuntimePaused) {
+    if (Engine::GetEngineState() == EngineState::EditorRuntimePlaying || Engine::GetEngineState() == EngineState::EditorRuntimePaused) {
       EditorSelection::Deselect();
       
-      Engine::SetEngineMode(EngineMode::Editor);
+      Engine::SetEngineState(EngineState::Editor);
 
       World *world = s_world;
       WorldManager::SetActiveWorld(s_old_world);
@@ -147,7 +147,7 @@ namespace Hyperion::Editor {
       GetMainWindow()->SetWindowMode(GetMainWindow()->GetWindowMode() == WindowMode::Borderless ? WindowMode::Windowed : WindowMode::Borderless);
     }
     if (Input::IsKeyDown(KeyCode::F5)) {
-      if (Engine::GetEngineMode() == EngineMode::Editor) {
+      if (Engine::GetEngineState() == EngineState::Editor) {
         EnterRuntime();
       } else {
         ExitRuntime();

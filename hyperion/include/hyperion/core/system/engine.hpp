@@ -23,7 +23,7 @@ namespace Hyperion {
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
-  enum class EngineMode {
+  enum class EngineState {
     Runtime,
     Editor,
     EditorRuntimePlaying,
@@ -41,7 +41,7 @@ namespace Hyperion {
 
     inline static const ApplicationSettings &GetSettings() { return s_settings; }
     
-    static EngineMode GetEngineMode();
+    static EngineState GetEngineState();
   private:
     Engine() = delete;
     ~Engine() = delete;
@@ -52,7 +52,7 @@ namespace Hyperion {
     static void Exit();
 
 #ifdef HYP_EDITOR
-    static void SetEngineMode(EngineMode mode);
+    static void SetEngineState(EngineState state);
 #endif
 
     static void PreInitialize();
@@ -76,9 +76,9 @@ namespace Hyperion {
     inline static Application *s_application;
     inline static std::atomic<bool8> s_running = false;
 #ifdef HYP_EDITOR
-    inline static EngineMode s_mode = EngineMode::Editor;
+    inline static EngineState s_state = EngineState::Editor;
 #else
-    inline static EngineMode s_mode = EngineMode::Runtime;
+    inline static EngineMode s_state = EngineMode::Runtime;
 #endif
   private:
     friend class Hyperion::Application;
