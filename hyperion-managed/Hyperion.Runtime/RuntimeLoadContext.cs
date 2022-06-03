@@ -3,10 +3,10 @@ using System.Reflection;
 using System.Runtime.Loader;
 
 namespace Hyperion {
-  internal class ManagedLoadContext : AssemblyLoadContext {
+  internal class RuntimeLoadContext : AssemblyLoadContext {
     private readonly AssemblyDependencyResolver m_Resolver;
 
-    public ManagedLoadContext(string pluginPath) : base(isCollectible: true) {
+    public RuntimeLoadContext(string pluginPath) : base(isCollectible: true) {
       m_Resolver = new AssemblyDependencyResolver(pluginPath);
     }
 

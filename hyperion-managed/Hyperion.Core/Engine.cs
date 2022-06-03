@@ -1,14 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Runtime.Loader;
 
 namespace Hyperion {
-  public static class Engine {
+  public static unsafe class Engine {
+    [StructLayout(LayoutKind.Sequential)]
+    private struct CoreManagedBindings {
+      public delegate *unmanaged<void> EngineInitialize;
+      public delegate *unmanaged<void> EngineUpdate;
+      public delegate *unmanaged<void> EngineShutdown;
+
+      public delegate *unmanaged<IntPtr, IntPtr> GetTypeByName;
+      public delegate *unmanaged<IntPtr, IntPtr, IntPtr> CreateManagedObject;
+    }
+    
+    [StructLayout(LayoutKind.Sequential)]
+    private struct CoreBootstrapArguments {
+      public readonly Bindings.AllBindings NativeBindings;
+      public readonly delegate *unmanaged<CoreManagedBindings *, void> ManagedBindingsCallback;
+    }
+
+    
     private static readonly List<ILogger> s_Loggers = new();
-    private static WeakReference s_LoadContext;
 
     public static void Log(object @object) => Log(@object?.ToString());
     public static void Log(string format, params object[] args) => Log(string.Format(format, args));
@@ -38,45 +51,47 @@ namespace Hyperion {
     [UnmanagedCallersOnly]
     internal static void Initialize() {
       try {
-        // We expect all managed assemblies to be next to us.
-        string assemblyDirectory = Path.GetDirectoryName(typeof(Engine).Assembly.Location);
-        string assemblyToLoad = "Hyperion.Sandbox.dll";
-        string assemblyPath = Path.Combine(assemblyDirectory, assemblyToLoad);
-
-        AssemblyLoadContext loadContext = new ManagedLoadContext(assemblyDirectory);
-
-        // We need an absolute path to load an assembly.
-        Assembly assembly = loadContext.LoadFromAssemblyPath(assemblyPath);
-        Log($"Loaded assembly: {assembly}");
-
-        s_LoadContext = new WeakReference(loadContext);
+        Log("INITIALIZE");
       } catch (Exception e) {
-        Log(e);
+        
       }
     }
     
     [UnmanagedCallersOnly]
     internal static void Update() {
+      try {
+        Log("Update");
+      } catch (Exception e) {
+        
+      }
     }
     
     [UnmanagedCallersOnly]
     internal static void Shutdown() {
       try {
-        AssemblyLoadContext loadContext = s_LoadContext.Target as AssemblyLoadContext;
-        loadContext?.Unload();
-
-        for (int i = 0; s_LoadContext.IsAlive && (i < 10); i++) {
-          GC.Collect();
-          GC.WaitForPendingFinalizers();
-        }
-
-        Log("Unloaded assemblies");
+        Log("Shutdown");
       } catch (Exception e) {
-        Log(e);
+        
       }
     }
 
-    internal static void Bootstrap() {
+    internal static void Bootstrap(IntPtr coreBootstrapArgumentsPointer) {
+      CoreBootstrapArguments *coreBootstrapArguments = (CoreBootstrapArguments *)coreBootstrapArgumentsPointer;
+
+      Bindings.Log = coreBootstrapArguments->NativeBindings.LogBindings;
+      Bindings.World = coreBootstrapArguments->NativeBindings.WorldBindings;
+      Bindings.WorldManager = coreBootstrapArguments->NativeBindings.WorldManagerBindings;
+     
+      CoreManagedBindings coreManagedBindings = new CoreManagedBindings {
+        EngineInitialize = &Initialize,
+        EngineUpdate = &Update,
+        EngineShutdown = &Shutdown,
+        
+        GetTypeByName = &Native.GetTypeByName,
+        CreateManagedObject = &Native.CreateManagedObject,
+      };
+      coreBootstrapArguments->ManagedBindingsCallback(&coreManagedBindings);
+      
       s_Loggers.Add(new EngineLogger());
     }
   }
