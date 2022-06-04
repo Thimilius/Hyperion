@@ -13,7 +13,9 @@ namespace Hyperion {
       public delegate *unmanaged<void> EngineShutdown;
 
       public delegate *unmanaged<IntPtr, IntPtr> GetTypeByName;
+      public delegate *unmanaged<IntPtr, void> DestroyType;
       public delegate *unmanaged<IntPtr, IntPtr, IntPtr> CreateManagedObject;
+      public delegate *unmanaged<IntPtr, void> DestroyManagedObject;
     }
     
     [StructLayout(LayoutKind.Sequential)]
@@ -57,6 +59,7 @@ namespace Hyperion {
       Bindings.Log = coreBootstrapArguments->NativeBindings.LogBindings;
       Bindings.World = coreBootstrapArguments->NativeBindings.WorldBindings;
       Bindings.WorldManager = coreBootstrapArguments->NativeBindings.WorldManagerBindings;
+      Bindings.EntityManager = coreBootstrapArguments->NativeBindings.EntityManagerBindings;
      
       CoreManagedBindings coreManagedBindings = new CoreManagedBindings {
         EngineInitialize = &Initialize,
@@ -64,7 +67,9 @@ namespace Hyperion {
         EngineShutdown = &Shutdown,
         
         GetTypeByName = &Native.GetTypeByName,
+        DestroyType = &Native.DestroyType,
         CreateManagedObject = &Native.CreateManagedObject,
+        DestroyManagedObject = &Native.DestroyManagedObject
       };
       coreBootstrapArguments->ManagedBindingsCallback(&coreManagedBindings);
       

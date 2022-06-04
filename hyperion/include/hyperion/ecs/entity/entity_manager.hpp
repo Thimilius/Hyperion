@@ -34,6 +34,8 @@ namespace Hyperion {
   class EntityManager final {
   public:
     World *GetWorld() const { return m_world; }
+
+    uint64 GetEntityCount() const { return m_storage.entities_by_guid.GetLength(); }
     
     bool8 IsAlive(EntityId id) const;
 

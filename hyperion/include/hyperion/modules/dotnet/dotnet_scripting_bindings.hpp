@@ -6,7 +6,6 @@ namespace Hyperion::Scripting {
   
   using ManagedHandle = void *;
   using NativeHandle = void *;
-  using TypeHandle = void *;
   using ManagedString = const char *;
 
   struct CoreBindings {
@@ -27,13 +26,20 @@ namespace Hyperion::Scripting {
   struct WorldBindings {
     ManagedString (*get_name)(NativeHandle);
     void (*set_name)(NativeHandle, ManagedString);
+
+    ManagedHandle (*get_entity_manager)(NativeHandle);
+  };
+
+  struct EntityManagerBindings {
+    uint32 (*get_entity_count)(NativeHandle);
   };
   
   struct CoreNativeBindings {
-    CoreBindings core_bindings;
-    LogBindings log_bindings;
-    WorldManagerBindings world_manager_bindings;
-    WorldBindings world_bindings;
+    CoreBindings core;
+    LogBindings log;
+    WorldManagerBindings world_manager;
+    WorldBindings world;
+    EntityManagerBindings entity_manager;
   };
   
   struct CoreManagedBindings {
@@ -41,8 +47,11 @@ namespace Hyperion::Scripting {
     void (*engine_update)();
     void (*engine_shutdown)();
 
-    TypeHandle (*get_type_by_name)(ManagedString);
-    ManagedHandle (*create_managed_object)(TypeHandle, NativeHandle);
+    ManagedHandle (*get_type_by_name)(ManagedString);
+    void (*destroy_type)(ManagedHandle);
+    
+    ManagedHandle (*create_managed_object)(ManagedHandle, NativeHandle);
+    void (*destroy_managed_object)(ManagedHandle);
   };
 
   struct CoreBootstrapArguments {
@@ -56,6 +65,7 @@ namespace Hyperion::Scripting {
     inline static CoreManagedBindings *GetManagedBindings() { return &s_core_managed_bindings; }
 
     static void Initialize();
+    static void UnloadMappings();
   private:
     DotnetScriptingBindings() = delete;
     ~DotnetScriptingBindings() = delete;
@@ -64,10 +74,11 @@ namespace Hyperion::Scripting {
     
     inline static CoreManagedBindings s_core_managed_bindings;
 
-    // This assumes that the pointers to objects on the native side stable.
+    // This assumes that the pointers to objects on the native side are stable.
     inline static Map<NativeHandle, ManagedHandle> s_object_mappings;
     
-    inline static TypeHandle s_type_world;
+    inline static ManagedHandle s_type_world;
+    inline static ManagedHandle s_type_entity_manager;
   };
     
 }

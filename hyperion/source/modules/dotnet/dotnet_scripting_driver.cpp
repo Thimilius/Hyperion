@@ -131,6 +131,8 @@ namespace Hyperion::Scripting {
   //--------------------------------------------------------------
   void DotnetScriptingDriver::UnloadManagedContext() {
     DotnetScriptingBindings::GetManagedBindings()->engine_shutdown();
+
+    DotnetScriptingBindings::UnloadMappings();
     
     s_runtime_managed_bindings.unload_context();
     HYP_LOG_INFO("Scripting", "Unloaded managed context!");

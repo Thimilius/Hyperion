@@ -9,6 +9,7 @@ namespace Hyperion {
       internal readonly LogBindings LogBindings;
       internal readonly WorldManagerBindings WorldManagerBindings;
       internal readonly WorldBindings WorldBindings;
+      internal readonly EntityManagerBindings EntityManagerBindings;
     }
     
     [StructLayout(LayoutKind.Sequential)]
@@ -33,11 +34,19 @@ namespace Hyperion {
     internal struct WorldBindings {
       internal readonly delegate *unmanaged<IntPtr, IntPtr> GetName;
       internal readonly delegate *unmanaged<IntPtr, string, void> SetName;
+      
+      internal readonly delegate *unmanaged<IntPtr, IntPtr> GetEntityManager;
+    }
+    
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct EntityManagerBindings {
+      internal readonly delegate *unmanaged<IntPtr, int> GetEntityCount;
     }
     
     internal static CoreBindings Core { get; set; }
     internal static LogBindings Log { get; set; }
     internal static WorldManagerBindings WorldManager { get; set; }
     internal static WorldBindings World { get; set; }
+    internal static EntityManagerBindings EntityManager { get; set; }
   }
 }

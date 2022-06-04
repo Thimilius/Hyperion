@@ -112,6 +112,13 @@ namespace Hyperion::Editor {
         EditorSelection::Deselect();
       }
     }
+
+    EngineState engine_state = Engine::GetEngineState();
+    UIImmediate::SetOverlayColor(
+      engine_state == EngineState::EditorRuntimePaused || engine_state == EngineState::EditorRuntimePlaying
+      ? EditorStyle::COLOR_PLAYMODE_OVERLAY
+      : Color::White()
+    );
     
     UIImmediate::Begin();
     {
@@ -137,8 +144,6 @@ namespace Hyperion::Editor {
           bool8 is_playing = engine_mode == EngineState::EditorRuntimePlaying || engine_mode == EngineState::EditorRuntimePaused;
           if (UIImmediate::TextToggle(is_playing, "\uf04b", FitType::ToLayout, icon_theme).clicked) {
             EditorApplication::EnterRuntime();
-
-            UIImmediate::SetOverlayColor(EditorStyle::COLOR_PLAYMODE_OVERLAY);
           }
           bool8 is_paused = engine_mode == EngineState::EditorRuntimePaused;
           if (UIImmediate::TextToggle(is_paused, "\uf04c", FitType::ToLayout, icon_theme).clicked) {
@@ -151,8 +156,6 @@ namespace Hyperion::Editor {
             world = EditorApplication::GetWorld();
             manager = world->GetEntityManager();
             hierarchy = world->GetHierarchy();
-
-            UIImmediate::SetOverlayColor(Color::White());
           }
         }
         UIImmediate::EndCenter();
