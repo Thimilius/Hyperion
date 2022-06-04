@@ -10,73 +10,10 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/system/operating_system.hpp"
-#include "hyperion/ecs/world/world_manager.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
 
-  struct CoreBindings {
-    void (*exception)(const char *);
-  };
-  
-  struct LogBindings {
-    void (*log_trace)(const char *);
-    void (*log_info)(const char *);
-    void (*log_warn)(const char *);
-    void (*log_error)(const char *);
-  };
-
-  struct WorldManagerBindings {
-    void *(*get_active_world)();
-  };
-
-  struct WorldBindings {
-    const char *(*get_name)(void *);
-    void (*set_name)(void *, const char *);
-  };
-  
-  struct CoreNativeBindings {
-    CoreBindings core_bindings;
-    LogBindings log_bindings;
-    WorldManagerBindings world_manager_bindings;
-    WorldBindings world_bindings;
-  };
-  
-  struct CoreManagedBindings {
-    void (*engine_initialize)();
-    void (*engine_update)();
-    void (*engine_shutdown)();
-
-    void *(*get_type_by_name)(const char *);
-    void *(*create_managed_object)(void *, void *);
-  };
-
-  struct CoreBootstrapArguments {
-    CoreNativeBindings native_bindings;
-    void (*managed_bindings_callback)(CoreManagedBindings *);
-  };
-  
-  struct RuntimeNativeBindings {
-    void (*exception)(const char *);
-  };
-
-  struct RuntimeManagedBindings {
-    void (*load_context)(CoreBootstrapArguments *);
-    void (*unload_context)();
-  };
-
-  struct RuntimeBoostrapArguments {
-    RuntimeNativeBindings native_bindings;
-    void (*managed_bindings_callback)(RuntimeManagedBindings *);
-  };
-
-  RuntimeManagedBindings g_runtime_managed_bindings;
-
-  CoreManagedBindings g_core_managed_bindings;
-  CoreBootstrapArguments g_core_bootstrap_arguments;
-  Map<World *, void *> g_object_mappings;
-  void *g_type_world;
-  
   //--------------------------------------------------------------
   void DotnetScriptingDriver::Initialize() {
     String runtime_host_path = EngineConfig::GetToolsPath() + "/dotnet/host/fxr/6.0.5/hostfxr.dll";
@@ -131,58 +68,19 @@ namespace Hyperion::Scripting {
 
     close_func(hostfxr_context);
 
-    // The native bindings can be cached once globally and do not have to be recreated on context reload.
-    g_core_bootstrap_arguments.native_bindings.core_bindings.exception = [](const char *message) {
-      HYP_LOG_ERROR("Scripting", "{}", message);
-    };
-    g_core_bootstrap_arguments.native_bindings.log_bindings.log_trace = [](const char *message) {
-      HYP_LOG_TRACE("Scripting", "{}", message);
-    };
-    g_core_bootstrap_arguments.native_bindings.log_bindings.log_info = [](const char *message) {
-      HYP_LOG_INFO("Scripting", "{}", message);
-    };
-    g_core_bootstrap_arguments.native_bindings.log_bindings.log_warn = [](const char *message) {
-      HYP_LOG_WARN("Scripting", "{}", message);
-    };
-    g_core_bootstrap_arguments.native_bindings.log_bindings.log_error = [](const char *message) {
-      HYP_LOG_ERROR("Scripting", "{}", message);
-    };
-    g_core_bootstrap_arguments.native_bindings.world_manager_bindings.get_active_world = []() {
-      World *world = WorldManager::GetActiveWorld();
-      auto it = g_object_mappings.Find(world);
-      if (it == g_object_mappings.end()) {
-        void *handle = g_core_managed_bindings.create_managed_object(g_type_world, world);
-        g_object_mappings.Insert(world, handle); 
-        return handle;
-      } else {
-        return it->second;
-      }
-    };
-    g_core_bootstrap_arguments.native_bindings.world_bindings.get_name = [](void *native_handle) {
-      World *world = static_cast<World *>(native_handle);
-      return world ? world->GetName().c_str() : nullptr;
-    };
-    g_core_bootstrap_arguments.native_bindings.world_bindings.set_name = [](void *native_handle, const char *name) {
-      World *world = static_cast<World *>(native_handle);
-      world->SetName(String(name));
-    };
-    g_core_bootstrap_arguments.managed_bindings_callback = [](CoreManagedBindings *core_managed_bindings) {
-      g_core_managed_bindings = *core_managed_bindings;
-
-      // This is also the point where we can grab references to types in the core assembly.
-      g_type_world = g_core_managed_bindings.get_type_by_name("Hyperion.World");
-    };
-
     // We bootstrap the runtime by providing a callback to get bindings to the managed runtime methods.
     RuntimeBoostrapArguments runtime_arguments = { };
-    runtime_arguments.native_bindings.exception = [](const char *message) {
+    runtime_arguments.native_bindings.exception = [](ManagedString message) {
       HYP_PANIC_MESSAGE("Scripting", "{}", message);
     };
     runtime_arguments.managed_bindings_callback = [](RuntimeManagedBindings *runtime_managed_bindings) {
       HYP_LOG_INFO("Scripting", "Setting runtime bindings...");
-      g_runtime_managed_bindings = *runtime_managed_bindings;
+      s_runtime_managed_bindings = *runtime_managed_bindings;
     };
     runtime_bootstrap_func(&runtime_arguments);
+
+    // The bindings have to be setup just once and get exchanged when every time the context gets loaded.
+    DotnetScriptingBindings::Initialize();
 
     HYP_LOG_INFO("Scripting", "Initialized .Net6.0 runtime!");
   }
@@ -211,7 +109,7 @@ namespace Hyperion::Scripting {
   //--------------------------------------------------------------
   void DotnetScriptingDriver::Update() {
     if (Engine::GetEngineState() == EngineState::Runtime || Engine::GetEngineState() == EngineState::EditorRuntimePlaying) {
-      g_core_managed_bindings.engine_update();
+      DotnetScriptingBindings::GetManagedBindings()->engine_update();
     }
   }
 
@@ -224,17 +122,17 @@ namespace Hyperion::Scripting {
 
   //--------------------------------------------------------------
   void DotnetScriptingDriver::LoadManagedContext() {
-    g_runtime_managed_bindings.load_context(&g_core_bootstrap_arguments);
+    s_runtime_managed_bindings.load_context(DotnetScriptingBindings::GetBootstrapArguments());
     HYP_LOG_INFO("Scripting", "Loaded managed context!");
 
-    g_core_managed_bindings.engine_initialize();
+    DotnetScriptingBindings::GetManagedBindings()->engine_initialize();
   }
   
   //--------------------------------------------------------------
   void DotnetScriptingDriver::UnloadManagedContext() {
-    g_core_managed_bindings.engine_shutdown();
+    DotnetScriptingBindings::GetManagedBindings()->engine_shutdown();
     
-    g_runtime_managed_bindings.unload_context();
+    s_runtime_managed_bindings.unload_context();
     HYP_LOG_INFO("Scripting", "Unloaded managed context!");
   }
 
