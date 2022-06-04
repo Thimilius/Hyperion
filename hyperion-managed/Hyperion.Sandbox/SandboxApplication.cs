@@ -10,7 +10,7 @@ namespace Hyperion.Sandbox {
     }
 
     public void Update() {
-      
+      Engine.Log(m_World.Name);
     }
 
     public void Shutdown() {

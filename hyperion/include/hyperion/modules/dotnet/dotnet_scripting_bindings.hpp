@@ -70,6 +70,8 @@ namespace Hyperion::Scripting {
     DotnetScriptingBindings() = delete;
     ~DotnetScriptingBindings() = delete;
   private:
+    static ManagedHandle GetOrCreateManagedObject(ManagedHandle type, NativeHandle native_handle);
+  private:
     inline static CoreBootstrapArguments s_core_bootstrap_arguments;
     
     inline static CoreManagedBindings s_core_managed_bindings;

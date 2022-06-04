@@ -29,14 +29,7 @@ namespace Hyperion::Scripting {
     };
     s_core_bootstrap_arguments.native_bindings.world_manager.get_active_world = []() {
       World *world = WorldManager::GetActiveWorld();
-      auto it = s_object_mappings.Find(world);
-      if (it == s_object_mappings.end()) {
-        ManagedHandle managed_handle = s_core_managed_bindings.create_managed_object(s_type_world, world);
-        s_object_mappings.Insert(world, managed_handle); 
-        return managed_handle;
-      } else {
-        return it->second;
-      }
+      return GetOrCreateManagedObject(s_type_world, world);
     };
     s_core_bootstrap_arguments.native_bindings.world.get_name = [](NativeHandle native_handle) {
       World *world = static_cast<World *>(native_handle);
@@ -49,14 +42,7 @@ namespace Hyperion::Scripting {
     s_core_bootstrap_arguments.native_bindings.world.get_entity_manager = [](NativeHandle native_handle) {
       World *world = static_cast<World *>(native_handle);
       EntityManager *entity_manager = world->GetEntityManager();
-      auto it = s_object_mappings.Find(entity_manager);
-      if (it == s_object_mappings.end()) {
-        ManagedHandle managed_handle = s_core_managed_bindings.create_managed_object(s_type_entity_manager, entity_manager);
-        s_object_mappings.Insert(entity_manager, managed_handle);
-        return managed_handle;
-      } else {
-        return it->second;
-      }
+      return GetOrCreateManagedObject(s_type_entity_manager, entity_manager);
     };
     s_core_bootstrap_arguments.native_bindings.entity_manager.get_entity_count = [](NativeHandle native_handle) {
       EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
@@ -89,6 +75,18 @@ namespace Hyperion::Scripting {
     s_type_world = nullptr;
     s_core_managed_bindings.destroy_type(s_type_entity_manager);
     s_type_entity_manager = nullptr;
+  }
+
+  //--------------------------------------------------------------
+  ManagedHandle DotnetScriptingBindings::GetOrCreateManagedObject(ManagedHandle type, NativeHandle native_handle) {
+    auto it = s_object_mappings.Find(native_handle);
+    if (it == s_object_mappings.end()) {
+      ManagedHandle managed_handle = s_core_managed_bindings.create_managed_object(type, native_handle);
+      s_object_mappings.Insert(native_handle, managed_handle);
+      return managed_handle;
+    } else {
+      return it->second;
+    }
   }
 
 }
