@@ -6,11 +6,13 @@ namespace Hyperion.Sandbox {
     
     public void Initialize() {
       m_World = WorldManager.GetActiveWorld();
-      Engine.Log(m_World.EntityManager.EntityCount);
+      EntityManager entityManager = m_World.EntityManager;
+      EntityId entity = entityManager.CreateEntity();
+      Engine.Log(entity);
     }
 
     public void Update() {
-      Engine.Log(m_World.Name);
+      
     }
 
     public void Shutdown() {

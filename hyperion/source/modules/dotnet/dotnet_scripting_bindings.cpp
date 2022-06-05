@@ -48,6 +48,10 @@ namespace Hyperion::Scripting {
       EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
       return static_cast<uint32>(entity_manager->GetEntityCount());
     };
+    s_core_bootstrap_arguments.native_bindings.entity_manager.create_entity = [](NativeHandle native_handle, EntityId *entity_id) {
+      EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
+      *entity_id = entity_manager->CreateEntity(); 
+    };
 
     // This is the callback were we get the pointers to the managed bindings.
     s_core_bootstrap_arguments.managed_bindings_callback = [](CoreManagedBindings *core_managed_bindings) {

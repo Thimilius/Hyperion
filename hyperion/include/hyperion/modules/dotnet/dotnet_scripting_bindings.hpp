@@ -1,5 +1,6 @@
 ﻿//------------------------ Header Guard ------------------------
 #pragma once
+#include "hyperion/ecs/entity/entity_types.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
@@ -32,6 +33,8 @@ namespace Hyperion::Scripting {
 
   struct EntityManagerBindings {
     uint32 (*get_entity_count)(NativeHandle);
+
+    void (*create_entity)(NativeHandle, EntityId *);
   };
   
   struct CoreNativeBindings {

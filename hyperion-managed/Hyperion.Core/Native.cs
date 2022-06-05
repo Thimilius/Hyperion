@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -35,7 +36,11 @@ namespace Hyperion {
       try {
         Type type = GCHandle.FromIntPtr(typeHandle).Target as Type;
       
-        Object instance = Activator.CreateInstance(type) as Object;
+        // NOTE: Using the Activator may or may not be the fastest route.
+        // One alternative would be to create a compiled Expression and call that instead.
+        // This does however have a one time setup cost which is only worth it when calling this function A LOT.
+        // So for now we just use this easy method and do not bother.
+        Object instance = Activator.CreateInstance(type, true) as Object;
         instance.NativeHandle = nativeHandle;
 
         return GCHandle.ToIntPtr(GCHandle.Alloc(instance));
@@ -49,7 +54,7 @@ namespace Hyperion {
     internal static void DestroyManagedObject(IntPtr managedHandle) {
       try {
         GCHandle gcHandle = GCHandle.FromIntPtr(managedHandle);
-        Object obj = gcHandle.Target as Object;
+        Object obj = (Object)gcHandle.Target;
         
         obj.NativeHandle = IntPtr.Zero;
         
