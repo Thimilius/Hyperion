@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -34,7 +33,7 @@ namespace Hyperion {
     [UnmanagedCallersOnly]
     internal static IntPtr CreateManagedObject(IntPtr typeHandle, IntPtr nativeHandle) {
       try {
-        Type type = GCHandle.FromIntPtr(typeHandle).Target as Type;
+        Type type = GCHandle.FromIntPtr(typeHandle).Get<Type>();
       
         // NOTE: Using the Activator may or may not be the fastest route.
         // One alternative would be to create a compiled Expression and call that instead.
@@ -54,9 +53,9 @@ namespace Hyperion {
     internal static void DestroyManagedObject(IntPtr managedHandle) {
       try {
         GCHandle gcHandle = GCHandle.FromIntPtr(managedHandle);
-        Object obj = (Object)gcHandle.Target;
         
-        obj.NativeHandle = IntPtr.Zero;
+        Object instance = gcHandle.Get<Object>();
+        instance.NativeHandle = IntPtr.Zero;
         
         gcHandle.Free();
       } catch (Exception e) {

@@ -1,6 +1,6 @@
 ﻿namespace Hyperion.Ecs {
   public readonly struct EntityId {
-    public static EntityId Empty => new EntityId(0xFFFFFFFF);
+    public static EntityId Empty => new(0xFFFFFFFF);
 
     public long Value { get; }
 

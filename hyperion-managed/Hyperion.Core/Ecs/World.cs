@@ -7,11 +7,6 @@ namespace Hyperion.Ecs {
       set => Bindings.World.SetName(NativeHandle, value);
     }
 
-    public unsafe EntityManager EntityManager {
-      get {
-        GCHandle handle = GCHandle.FromIntPtr(Bindings.World.GetEntityManager(NativeHandle));
-        return handle.Target as EntityManager;
-      }
-    }
+    public unsafe EntityManager EntityManager => GCHandle.FromIntPtr(Bindings.World.GetEntityManager(NativeHandle)).Get<EntityManager>();
   }
 }
