@@ -243,6 +243,11 @@ namespace Hyperion::UI {
       }
 
       if (Input::IsMouseButtonHold(MouseButtonCode::Left)) {
+        near_x = false;
+        near_y = false;
+        near_z = false;
+          
+        
         if (should_move_x) {
           Vector3 current = x_circle_point - x_circle.center;
           float32 degree = angle(current, offset, x_circle.orientation);
@@ -252,8 +257,7 @@ namespace Hyperion::UI {
 
           offset = current;
 
-          near_y = false;
-          near_z = false;
+          near_x = true;
         }
         if (should_move_y) {
           Vector3 current = y_circle_point - y_circle.center;
@@ -264,8 +268,7 @@ namespace Hyperion::UI {
 
           offset = current;
 
-          near_x = false;
-          near_z = false;
+          near_y = true;
         }
         if (should_move_z) {
           Vector3 current = z_circle_point - z_circle.center;
@@ -276,8 +279,7 @@ namespace Hyperion::UI {
 
           offset = current;
 
-          near_x = false;
-          near_y = false;
+          near_z = true;
         }
       }
     }

@@ -112,6 +112,15 @@ namespace Hyperion::Editor {
         EditorSelection::Deselect();
       }
     }
+    if (Input::IsKeyDown(KeyCode::Q)) {
+      s_transformation_tool = RenderGizmoType::Translate;
+    }
+    if (Input::IsKeyDown(KeyCode::W)) {
+      s_transformation_tool = RenderGizmoType::Rotate;
+    }
+    if (Input::IsKeyDown(KeyCode::E)) {
+      s_transformation_tool = RenderGizmoType::Scale;
+    }
 
     EngineState engine_state = Engine::GetEngineState();
     UIImmediate::SetOverlayColor(
