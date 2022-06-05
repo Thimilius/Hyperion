@@ -66,8 +66,39 @@ namespace Hyperion::UI {
       point = circle.center + circle.radius * (on_plane - circle.center).Normalized();
       return (on_plane - point).Magnitude();
     } else {
-      return 100.0f;
+      Vector3 a = ray.origin - circle.center;
+      Vector3 b = circle.orientation;
+      Vector3 rejection = a - (a.Dot(b) / b.Dot(b)) * b;
+
+      point = circle.radius * rejection.Normalized();
+
+      float32 distance_to_point = Vector3::Cross(ray.direction, point - ray.origin).Magnitude();
+      return distance_to_point;
     }
+  };
+
+  auto angle = [](Vector3 current, Vector3 offset, Vector3 circle_orientation) {
+    float32 dot = current.Dot(offset);
+    dot = Math::Clamp(dot, -1.0f, 1.0f);
+
+    if (dot >= 0.9999999f) {
+      dot = 1.0f;
+    }
+          
+    float32 angle = Math::ACos(dot);
+    float32 degree = Math::RadToDeg(angle);
+
+    float32 lul = Vector3::Cross(offset, current).Dot(circle_orientation);
+    float32 mag = (Vector3::Cross(offset, current) * (circle_orientation)).Magnitude();
+
+    float32 sign = 1.0f;
+    if (mag != 0.0f) {
+      sign = lul / mag;  
+    }
+
+    degree *= sign;
+
+    return degree;
   };
     
   //--------------------------------------------------------------
@@ -194,32 +225,59 @@ namespace Hyperion::UI {
 
       if (near_x) {
         if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
-          offset = x_circle_point;
+          offset = x_circle_point - x_circle.center;
           should_move_x = true;
         }
       }
       if (near_y) {
         if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
-          offset = y_circle_point;
+          offset = y_circle_point - y_circle.center;
           should_move_y = true;
         }
       }
       if (near_z) {
         if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
-          offset = z_circle_point;
+          offset = z_circle_point - z_circle.center;
           should_move_z = true;
         }
       }
 
       if (Input::IsMouseButtonHold(MouseButtonCode::Left)) {
         if (should_move_x) {
+          Vector3 current = x_circle_point - x_circle.center;
+          float32 degree = angle(current, offset, x_circle.orientation);
           
+          Quaternion new_rotation = Quaternion::FromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), degree) * derived_transform->rotation;
+          local_transform->rotation = new_rotation;
+
+          offset = current;
+
+          near_y = false;
+          near_z = false;
         }
         if (should_move_y) {
+          Vector3 current = y_circle_point - y_circle.center;
+          float32 degree = angle(current, offset, y_circle.orientation);
           
+          Quaternion new_rotation = Quaternion::FromAxisAngle(Vector3(0.0f, 1.0f, 0.0f), degree) * derived_transform->rotation;
+          local_transform->rotation = new_rotation;
+
+          offset = current;
+
+          near_x = false;
+          near_z = false;
         }
         if (should_move_z) {
+          Vector3 current = z_circle_point - z_circle.center;
+          float32 degree = angle(current, offset, z_circle.orientation);
           
+          Quaternion new_rotation = Quaternion::FromAxisAngle(Vector3(0.0f, 0.0f, 1.0f), degree) * derived_transform->rotation;
+          local_transform->rotation = new_rotation;
+
+          offset = current;
+
+          near_x = false;
+          near_y = false;
         }
       }
     }
