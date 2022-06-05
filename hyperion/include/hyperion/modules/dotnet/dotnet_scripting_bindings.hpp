@@ -1,6 +1,9 @@
 ﻿//------------------------ Header Guard ------------------------
 #pragma once
+
+//---------------------- Project Includes ----------------------
 #include "hyperion/ecs/entity/entity_types.hpp"
+#include "hyperion/ecs/component/component_types.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
@@ -35,6 +38,8 @@ namespace Hyperion::Scripting {
     uint32 (*get_entity_count)(NativeHandle);
 
     void (*create_entity)(NativeHandle, EntityId *);
+
+    void *(*get_component)(NativeHandle, ManagedHandle, EntityId);
   };
   
   struct CoreNativeBindings {
@@ -84,6 +89,8 @@ namespace Hyperion::Scripting {
     
     inline static ManagedHandle s_type_world;
     inline static ManagedHandle s_type_entity_manager;
+
+    inline static Map<ManagedHandle, ComponentId> s_component_type_map;
   };
     
 }

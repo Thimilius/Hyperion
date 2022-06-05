@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using Hyperion.Ecs;
+using Hyperion.Ecs.Entity;
 
 namespace Hyperion {
   internal static unsafe class Bindings {
@@ -44,6 +44,8 @@ namespace Hyperion {
       internal readonly delegate *unmanaged<IntPtr, int> GetEntityCount;
 
       internal readonly delegate *unmanaged<IntPtr, out EntityId, void> CreateEntity;
+
+      internal readonly delegate *unmanaged<IntPtr, IntPtr, EntityId, IntPtr> GetComponent;
     }
     
     internal static CoreBindings Core { get; set; }

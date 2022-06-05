@@ -1,4 +1,4 @@
-﻿namespace Hyperion.Ecs {
+﻿namespace Hyperion.Ecs.Entity {
   public readonly struct EntityId {
     public static EntityId Empty => new(0xFFFFFFFF);
 

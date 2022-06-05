@@ -50,7 +50,20 @@ namespace Hyperion::Scripting {
     };
     s_core_bootstrap_arguments.native_bindings.entity_manager.create_entity = [](NativeHandle native_handle, EntityId *entity_id) {
       EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
-      *entity_id = entity_manager->CreateEntity(); 
+      *entity_id = entity_manager->CreateEntity(EntityPrimitive::Cube); 
+    };
+    s_core_bootstrap_arguments.native_bindings.entity_manager.get_component = [](NativeHandle native_handle, ManagedHandle type_handle, EntityId id) {
+      EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
+
+      auto it = s_component_type_map.Find(type_handle);
+      if (it == s_component_type_map.end()) {
+        HYP_LOG_ERROR("Scripting", "Failed to find component type for managed type!");
+        return static_cast<void *>(nullptr);
+      } else {
+        ComponentId component_id = it->second;
+        void *component = entity_manager->GetComponent(component_id, id);
+        return component;
+      }
     };
 
     // This is the callback were we get the pointers to the managed bindings.
@@ -58,8 +71,13 @@ namespace Hyperion::Scripting {
       s_core_managed_bindings = *core_managed_bindings;
 
       // This is also the point where we can grab references to types in the core assembly.
-      s_type_world = s_core_managed_bindings.get_type_by_name("Hyperion.Ecs.World");
-      s_type_entity_manager = s_core_managed_bindings.get_type_by_name("Hyperion.Ecs.EntityManager");
+      s_type_world = s_core_managed_bindings.get_type_by_name("Hyperion.Ecs.World.World");
+      s_type_entity_manager = s_core_managed_bindings.get_type_by_name("Hyperion.Ecs.Entity.EntityManager");
+
+      s_component_type_map.Insert(
+        s_core_managed_bindings.get_type_by_name("Hyperion.Ecs.Components.LocalTransformComponent"),
+        ComponentRegistry::GetId<LocalTransformComponent>()
+      );
     };
   }
 

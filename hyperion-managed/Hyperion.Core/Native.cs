@@ -1,9 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace Hyperion {
   internal static unsafe class Native {
+    private static readonly Dictionary<Type, IntPtr> s_TypeHandles = new();
+
+    internal static IntPtr GetTypeHandle<T>() {
+      return s_TypeHandles[typeof(T)];
+    }
+    
     [UnmanagedCallersOnly]
     internal static IntPtr GetTypeByName(IntPtr name) {
       try {
@@ -12,9 +19,13 @@ namespace Hyperion {
         Type type = assembly.GetType(typeName);
         if (type == null) {
           Engine.LogError($"Failed to find type by name: {typeName}!");
+          return IntPtr.Zero;
         }
 
-        return GCHandle.ToIntPtr(GCHandle.Alloc(type));
+        IntPtr handle = GCHandle.ToIntPtr(GCHandle.Alloc(type));
+        s_TypeHandles[type] = handle;
+        
+        return handle;
       } catch (Exception e) {
         Bindings.Core.Exception(e.ToString());
         return IntPtr.Zero;
