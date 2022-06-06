@@ -1,7 +1,6 @@
 ﻿using System.Runtime.InteropServices;
-using Hyperion.Ecs.Entity;
 
-namespace Hyperion.Ecs.World {
+namespace Hyperion.Ecs {
   public class World : Object {
     public unsafe string Name {
       get => Marshal.PtrToStringUTF8(Bindings.World.GetName(NativeHandle));

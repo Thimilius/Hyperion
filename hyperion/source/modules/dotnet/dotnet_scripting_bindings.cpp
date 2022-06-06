@@ -71,11 +71,11 @@ namespace Hyperion::Scripting {
       s_core_managed_bindings = *core_managed_bindings;
 
       // This is also the point where we can grab references to types in the core assembly.
-      s_type_world = s_core_managed_bindings.get_type_by_name("Hyperion.Ecs.World.World");
-      s_type_entity_manager = s_core_managed_bindings.get_type_by_name("Hyperion.Ecs.Entity.EntityManager");
+      s_type_world = s_core_managed_bindings.get_type_by_name("Hyperion.Ecs.World");
+      s_type_entity_manager = s_core_managed_bindings.get_type_by_name("Hyperion.Ecs.EntityManager");
 
       s_component_type_map.Insert(
-        s_core_managed_bindings.get_type_by_name("Hyperion.Ecs.Components.LocalTransformComponent"),
+        s_core_managed_bindings.get_type_by_name("Hyperion.Ecs.LocalTransformComponent"),
         ComponentRegistry::GetId<LocalTransformComponent>()
       );
     };

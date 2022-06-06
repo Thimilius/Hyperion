@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using Hyperion.Ecs.Entity;
+using Hyperion.Ecs;
 
 namespace Hyperion {
   internal static unsafe class Bindings {

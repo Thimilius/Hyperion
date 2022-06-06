@@ -1,6 +1,4 @@
-﻿using Hyperion.Ecs.Components;
-using Hyperion.Ecs.Entity;
-using Hyperion.Ecs.World;
+﻿using Hyperion.Ecs;
 
 namespace Hyperion.Sandbox {
   public class SandboxApplication : IApplication {
