@@ -42,12 +42,18 @@ namespace Hyperion::Scripting {
     void *(*get_component)(NativeHandle, ManagedHandle, EntityId);
   };
   
+  struct NameComponentBindings {
+    ManagedString (*get_name)(NativeHandle, EntityId);
+    void (*set_name)(NativeHandle, EntityId, ManagedString);
+  };
+  
   struct CoreNativeBindings {
     CoreBindings core;
     LogBindings log;
     WorldManagerBindings world_manager;
     WorldBindings world;
     EntityManagerBindings entity_manager;
+    NameComponentBindings name_component;
   };
   
   struct CoreManagedBindings {

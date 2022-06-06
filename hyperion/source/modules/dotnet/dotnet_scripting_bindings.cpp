@@ -65,6 +65,16 @@ namespace Hyperion::Scripting {
         return component;
       }
     };
+    s_core_bootstrap_arguments.native_bindings.name_component.get_name = [](NativeHandle native_handle, EntityId id) {
+      EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
+      NameComponent *name_component = entity_manager->GetComponent<NameComponent>(id);
+      return name_component->name.c_str();
+    };
+    s_core_bootstrap_arguments.native_bindings.name_component.set_name = [](NativeHandle native_handle, EntityId id, ManagedString name) {
+      EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
+      NameComponent *name_component = entity_manager->GetComponent<NameComponent>(id);
+      name_component->name = name;
+    };
 
     // This is the callback were we get the pointers to the managed bindings.
     s_core_bootstrap_arguments.managed_bindings_callback = [](CoreManagedBindings *core_managed_bindings) {
@@ -74,6 +84,10 @@ namespace Hyperion::Scripting {
       s_type_world = s_core_managed_bindings.get_type_by_name("Hyperion.Ecs.World");
       s_type_entity_manager = s_core_managed_bindings.get_type_by_name("Hyperion.Ecs.EntityManager");
 
+      s_component_type_map.Insert(
+        s_core_managed_bindings.get_type_by_name("Hyperion.Ecs.NameComponent"),
+        ComponentRegistry::GetId<NameComponent>()
+      );
       s_component_type_map.Insert(
         s_core_managed_bindings.get_type_by_name("Hyperion.Ecs.LocalTransformComponent"),
         ComponentRegistry::GetId<LocalTransformComponent>()

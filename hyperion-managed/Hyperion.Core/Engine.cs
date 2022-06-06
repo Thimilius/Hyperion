@@ -60,6 +60,7 @@ namespace Hyperion {
       Bindings.World = coreBootstrapArguments->NativeBindings.WorldBindings;
       Bindings.WorldManager = coreBootstrapArguments->NativeBindings.WorldManagerBindings;
       Bindings.EntityManager = coreBootstrapArguments->NativeBindings.EntityManagerBindings;
+      Bindings.NameComponent = coreBootstrapArguments->NativeBindings.NameComponentBindings;
      
       CoreManagedBindings coreManagedBindings = new CoreManagedBindings {
         EngineInitialize = &Initialize,
