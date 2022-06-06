@@ -66,7 +66,7 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  byte *ComponentPool::GetComponent(EntityId id) {
+  void *ComponentPool::GetComponent(EntityId id) {
     EntityIndices &entity_indices = GetEntityIndices(id);
     uint32 sparse_index = GetSparseIndex(id);
     uint32 packed_index = entity_indices[sparse_index];
@@ -154,7 +154,7 @@ namespace Hyperion {
     m_entity_list = other.m_entity_list;
     
     // When copying a component pool we have to remember that we can not simply copy the component data.
-    // We properly need to invoke their copy constructor for proper memory management.
+    // We need to invoke their copy constructor for proper memory management.
     m_component_data.Resize(other.m_component_data.GetLength());
     byte *destination_data = m_component_data.GetData();
     const byte *source_data = other.m_component_data.GetData();

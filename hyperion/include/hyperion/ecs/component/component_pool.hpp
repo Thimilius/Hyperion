@@ -26,7 +26,7 @@ namespace Hyperion {
 
     void *AddComponent(EntityId id);
     bool8 HasComponent(EntityId id);
-    byte *GetComponent(EntityId id);
+    void *GetComponent(EntityId id);
     bool8 RemoveComponent(EntityId id);
 
     void FitIntoPool(EntityId id);
