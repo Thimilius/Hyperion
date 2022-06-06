@@ -50,7 +50,7 @@ namespace Hyperion::Scripting {
     };
     s_core_bootstrap_arguments.native_bindings.entity_manager.create_entity = [](NativeHandle native_handle, EntityId *entity_id) {
       EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
-      *entity_id = entity_manager->CreateEntity(EntityPrimitive::Cube); 
+      *entity_id = entity_manager->CreateEntity(); 
     };
     s_core_bootstrap_arguments.native_bindings.entity_manager.get_component = [](NativeHandle native_handle, ManagedHandle type_handle, EntityId id) {
       EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
@@ -111,6 +111,11 @@ namespace Hyperion::Scripting {
     s_type_world = nullptr;
     s_core_managed_bindings.destroy_type(s_type_entity_manager);
     s_type_entity_manager = nullptr;
+
+    for (auto [managed_handle, component_id] : s_component_type_map) {
+      s_core_managed_bindings.destroy_type(managed_handle);
+    }
+    s_component_type_map.Clear();
   }
 
   //--------------------------------------------------------------

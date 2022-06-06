@@ -109,6 +109,7 @@ namespace Hyperion::Scripting {
   //--------------------------------------------------------------
   void DotnetScriptingDriver::Update() {
     if (Engine::GetEngineState() == EngineState::Runtime || Engine::GetEngineState() == EngineState::EditorRuntimePlaying) {
+      HYP_PROFILE_SCOPE("DotnetScriptingDriver.EngineUpdate")
       DotnetScriptingBindings::GetManagedBindings()->engine_update();
     }
   }
@@ -122,15 +123,25 @@ namespace Hyperion::Scripting {
 
   //--------------------------------------------------------------
   void DotnetScriptingDriver::LoadManagedContext() {
+    HYP_PROFILE_SCOPE("DotnetScriptingDriver.LoadManagedContext")
     s_runtime_managed_bindings.load_context(DotnetScriptingBindings::GetBootstrapArguments());
-    HYP_LOG_INFO("Scripting", "Loaded managed context!");
 
-    DotnetScriptingBindings::GetManagedBindings()->engine_initialize();
+    {
+      HYP_PROFILE_SCOPE("DotnetScriptingDriver.EngineInitialize")
+      DotnetScriptingBindings::GetManagedBindings()->engine_initialize();
+    }
+    
+    HYP_LOG_INFO("Scripting", "Loaded managed context!");
   }
   
   //--------------------------------------------------------------
   void DotnetScriptingDriver::UnloadManagedContext() {
-    DotnetScriptingBindings::GetManagedBindings()->engine_shutdown();
+    HYP_PROFILE_SCOPE("DotnetScriptingDriver.UnloadManagedContext")
+
+    {
+      HYP_PROFILE_SCOPE("DotnetScriptingDriver.EngineShutdown")
+      DotnetScriptingBindings::GetManagedBindings()->engine_shutdown();
+    }
 
     DotnetScriptingBindings::UnloadMappings();
     
