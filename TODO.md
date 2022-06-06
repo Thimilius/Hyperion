@@ -7,30 +7,29 @@
 
 ## Assets
 - Textures
-    - Cubemaps
+	- Cubemaps
 - Duplication
-- Data update for textures/meshes
+- Data update for textures
 
 ## Audio
-- SoLoud
+- SoLoud implementation
 
 ## ECS
 - Hierarchy should use callbacks when adding/removing HierarchyComponent
 - Hierarchy callbacks for transform updates
+- Entity instantiation should include hierarchy
 - System execution order
-- Entity/Component duplication
 - Archetypes with overwrites
-- Component pool pointer stability (if necessary)
 
 ## Physics
 - Proper updating of colliders and their transforms
 - Rigidbodies
 
 ## Rendering
-- VULKAN
+- Proper Vulkan implementation
 - Lighting
 	- Spotlights
-    - Storage buffers
+  - Storage buffers
 	- Frustum culling
 - Async readback
 	- Textures
@@ -44,13 +43,14 @@
 
 ### Shaders
 - Proper shader language
-    - Default values for properties
+  - Default values for properties
 	- New (and better/prettier) syntax
 
 ## Scripting
-- .NET 6 or Mono?
+- Scripting World to better manage entity/component lifetime
 
 ## UI
-- Immediate mode API
+- Immediate
+	- Fix layout
 - Font rendering
     - SDF
