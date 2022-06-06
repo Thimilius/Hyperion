@@ -32,7 +32,7 @@ namespace Hyperion {
     
     operator EntityIdType() const { return id; }
 
-    inline static constexpr EntityIdType EMPTY = 0xFFFFFFFF;
+    inline static constexpr EntityIdType EMPTY = 0xFFFFFFFFFFFFFFFF;
 
     inline static EntityId Create(EntityIndex index, EntityVersion version) {
       return static_cast<EntityId>(index).id | (static_cast<EntityId>(version).id << 32);
@@ -41,8 +41,8 @@ namespace Hyperion {
     inline static EntityIndex GetIndex(EntityId id) { return static_cast<EntityIndex>(id.id); }
     inline static EntityVersion GetVersion(EntityId id) { return id.id >> 32; }
 
-    inline static EntityIdSmallType CreateSmall(EntityId id) { return (0x00FF & GetIndex(id)) | (GetVersion(id) << 16); }
-    inline static EntityId FromSmall(EntityIdSmallType small_id) { return Create(0x00FF & small_id, small_id >> 16); }    
+    inline static EntityIdSmallType CreateSmall(EntityId id) { return (0x0000FFFF & GetIndex(id)) | (GetVersion(id) << 16); }
+    inline static EntityId FromSmall(EntityIdSmallType small_id) { return Create(0x0000FFFF & small_id, small_id >> 16); }    
   };
 
   using EntityCallback = Delegate<void(EntityManager *, EntityId)>;

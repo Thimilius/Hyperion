@@ -36,7 +36,7 @@ namespace Hyperion {
 
     void Copy(const ComponentPool &other);
   public:
-    inline static const uint32 MAX_ENTITIES_PER_PAGE = 2048;
+    inline static constexpr uint32 MAX_ENTITIES_PER_PAGE = 2048;
   private:
     ComponentInfo m_component_info = { };
     
