@@ -33,6 +33,7 @@ namespace Hyperion::Rendering {
 
     inline void SetShouldBlitToScreen(bool8 should_blit_to_screen) override { m_should_blit_to_screen = should_blit_to_screen; }
     inline void SetShouldResizeToScreen(bool8 should_resize_to_screen) override { m_should_resize_to_screen = should_resize_to_screen; }
+    inline void SetShouldDrawGizmos(bool8 should_draw_gizmos) override { m_should_draw_gizmos = should_draw_gizmos; }
   private:
     uint32 m_render_target_width = 0;
     uint32 m_render_target_height = 0;
@@ -40,6 +41,7 @@ namespace Hyperion::Rendering {
 
     bool8 m_should_blit_to_screen = true;
     bool8 m_should_resize_to_screen = true;
+    bool8 m_should_draw_gizmos = true;
   };
 
 }

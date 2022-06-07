@@ -103,7 +103,9 @@ namespace Hyperion::Rendering {
     drawing_parameters_transparent.sorting_settings.criteria = SortingCriteria::Transparent;
     render_frame->DrawMeshes(culling_results, drawing_parameters_transparent);
 
-    render_frame->DrawGizmos();
+    if (m_should_draw_gizmos) {
+      render_frame->DrawGizmos();  
+    }
   }
 
   //--------------------------------------------------------------

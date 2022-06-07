@@ -25,6 +25,7 @@ namespace Hyperion::Editor {
 
     inline void SetShouldBlitToScreen(bool8 should_blit_to_screen) override { m_wrapped_pipeline->SetShouldBlitToScreen(should_blit_to_screen); }
     inline void SetShouldResizeToScreen(bool8 should_resize_to_screen) override { m_wrapped_pipeline->SetShouldResizeToScreen(should_resize_to_screen); }
+    inline void SetShouldDrawGizmos(bool8 should_draw_gizmos) override { m_wrapped_pipeline->SetShouldDrawGizmos(should_draw_gizmos); }
   private:
     void RenderEditor(Rendering::RenderFrame *render_frame);
     void UpdateSize();

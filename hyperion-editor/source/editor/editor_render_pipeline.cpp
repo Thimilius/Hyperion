@@ -27,7 +27,8 @@ namespace Hyperion::Editor {
   void EditorRenderPipeline::Initialize() {
     SetShouldBlitToScreen(false);
     SetShouldResizeToScreen(false);
-    
+    SetShouldDrawGizmos(false);
+
     UpdateSize();
     m_wrapped_pipeline->Initialize();
 
@@ -90,7 +91,9 @@ namespace Hyperion::Editor {
     RenderFrameContextCamera editor_camera = EditorCamera::GetContextCamera();
     editor_camera.index = static_cast<uint32>(RenderEngine::GetMainRenderFrame()->GetContext().GetCameras().GetLength());
     RenderEngine::GetMainRenderFrame()->GetContext().AddCamera() = editor_camera;
+    SetShouldDrawGizmos(true);
     m_wrapped_pipeline->RenderCamera(render_frame, &editor_camera);
+    SetShouldDrawGizmos(false);
 
     {
       RenderCommandBuffer command_buffer;
