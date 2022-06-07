@@ -95,11 +95,11 @@ namespace Hyperion::Scripting {
   //--------------------------------------------------------------
   void DotnetScriptingDriver::OnEngineModeChanged(EngineState old_state, EngineState new_state) {
     // We do not reload the context in paused state.
-    if (old_state == EngineState::EditorRuntimePaused || new_state == EngineState::EditorRuntimePaused) {
+    if (new_state == EngineState::EditorRuntimePaused) {
       return;
     }
     
-    if (new_state == EngineState::EditorRuntimePlaying) {
+    if (new_state == EngineState::EditorRuntimePlaying && old_state != EngineState::EditorRuntimePaused) {
       LoadManagedContext();
     } else if (new_state == EngineState::Editor) {
       UnloadManagedContext();
