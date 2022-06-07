@@ -22,10 +22,9 @@ namespace Hyperion {
       if (display_device.StateFlags & DISPLAY_DEVICE_ATTACHED_TO_DESKTOP && display_device.StateFlags & DISPLAY_DEVICE_PRIMARY_DEVICE) {
         DEVMODEA dev_mode = { };
         dev_mode.dmSize = sizeof(dev_mode);
-        uint32 display_mode_number = 0;
 
         if (EnumDisplaySettingsA(display_device.DeviceName, ENUM_CURRENT_SETTINGS, &dev_mode)) {
-          DisplayInfo::DisplayModeInfo result;
+          DisplayInfo::DisplayModeInfo result = { };
           result.width = dev_mode.dmPelsWidth;
           result.height = dev_mode.dmPelsHeight;
           result.refresh_rate = dev_mode.dmDisplayFrequency;
@@ -40,6 +39,14 @@ namespace Hyperion {
 
     return DisplayInfo::DisplayModeInfo();
   }
+
+#ifdef HYP_EDITOR
+  //--------------------------------------------------------------
+  void Display::SetPreviewSize(uint32 width, uint32 height) {
+    s_preview_width = width;
+    s_preview_height = height;
+  }
+#endif
 
   //--------------------------------------------------------------
   void Display::Initialize(uint32 width, uint32 height) {
@@ -95,7 +102,7 @@ namespace Hyperion {
             continue;
           }
 
-          DisplayInfo::DisplayModeInfo display_mode_info;
+          DisplayInfo::DisplayModeInfo display_mode_info = { };
           display_mode_info.width = dev_mode.dmPelsWidth;
           display_mode_info.height = dev_mode.dmPelsHeight;
           display_mode_info.refresh_rate = dev_mode.dmDisplayFrequency;

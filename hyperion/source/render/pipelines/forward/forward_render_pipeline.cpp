@@ -7,6 +7,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/core/app/display.hpp"
+#include "hyperion/render/pipelines/forward/forward_render_lighting.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
@@ -34,7 +35,7 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void ForwardRenderPipeline::Render(RenderFrame *render_frame, const Array<const RenderFrameContextCamera *> cameras) {
+  void ForwardRenderPipeline::Render(RenderFrame *render_frame, const Array<const RenderFrameContextCamera *> &cameras) {
     if (m_should_resize_to_screen) {
       if (Display::HasChangedSize()) {
         m_render_target_width = Display::GetWidth();

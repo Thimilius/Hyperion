@@ -22,7 +22,9 @@ namespace Hyperion::Rendering {
 
     static void RecalculateMatrices(CameraComponent *camera, DerivedTransformComponent *derived_transform);
     static void RecalculateMatrices(CameraComponent *camera, DerivedTransformComponent *derived_transform, CameraViewport viewport);
+    static void RecalculateMatrices(CameraComponent *camera, Vector3 position, Vector3 up, Vector3 forward, CameraViewport viewport);
     static CameraViewport CalculateViewportFromClipping(CameraViewportClipping viewport_clipping);
+    static CameraViewport CalculateViewportFromClipping(CameraViewportClipping viewport_clipping, Vector2 display_size);
 
     static Array<Plane> ExtractFrustumPlanes(Matrix4x4 view_projection);
     static bool IsInsideFrustum(const Array<Plane> &frustum_planes, BoundingBox bounds);

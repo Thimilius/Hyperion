@@ -16,6 +16,8 @@
 #include <hyperion/render/render_engine.hpp>
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/core/app/display.hpp"
+#include "hyperion/core/app/events/window_events.hpp"
 #include "hyperion/editor/editor_camera.hpp"
 #include "hyperion/editor/editor_render_pipeline.hpp"
 #include "hyperion/editor/editor_selection.hpp"
@@ -153,10 +155,10 @@ namespace Hyperion::Editor {
         ExitRuntime();
       }
     }
-  }
 
-  //--------------------------------------------------------------
-  void EditorApplication::OnTick() { }
+    Vector2 preview_size = EditorUI::GetPreviewRect().size;
+    Display::SetPreviewSize(static_cast<uint32>(preview_size.x), static_cast<uint32>(preview_size.y));
+  }
   
   //--------------------------------------------------------------
   void EditorApplication::OpenWorld() {

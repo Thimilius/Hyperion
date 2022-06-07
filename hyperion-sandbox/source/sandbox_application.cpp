@@ -115,6 +115,8 @@ namespace Sandbox {
 
   //--------------------------------------------------------------
   void SandboxApplication::OnUpdate(float32 delta_time) {
+    Display::SetPreviewSize(Display::GetWidth(), Display::GetHeight());
+    
     if (Input::IsKeyHold(KeyCode::Control) && Input::IsKeyDown(KeyCode::W)) {
       Exit();
     }

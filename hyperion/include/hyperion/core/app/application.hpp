@@ -31,6 +31,7 @@ namespace Hyperion {
     virtual void OnUpdate(float32 delta_time) { }
     virtual void OnFixedUpdate(float32 delta_time) { }
     virtual void OnTick() { }
+    virtual void OnAppEvent(AppEvent &app_event) { }
     virtual void OnShutdown() { }
   private:
     Window *m_main_window;

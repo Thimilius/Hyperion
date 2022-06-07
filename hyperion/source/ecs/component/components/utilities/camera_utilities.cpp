@@ -96,6 +96,11 @@ namespace Hyperion::Rendering {
     Vector3 position = derived_transform->position;
     Vector3 up = TransformUtilities::GetUp(derived_transform);
     Vector3 forward = TransformUtilities::GetForward(derived_transform);
+    return RecalculateMatrices(camera, position, up, forward, viewport);
+  }
+
+  //--------------------------------------------------------------
+  void CameraUtilities::RecalculateMatrices(CameraComponent *camera, Vector3 position, Vector3 up, Vector3 forward, CameraViewport viewport) {
     float32 fov = camera->fov;
     float32 orthographic_size = camera->orthographic_size;
     float32 near_plane = camera->near_plane;
@@ -134,14 +139,18 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   CameraViewport CameraUtilities::CalculateViewportFromClipping(CameraViewportClipping viewport_clipping) {
-    uint32 display_width = Display::GetWidth();
-    uint32 display_height = Display::GetHeight();
+    float32 display_width = static_cast<float32>(Display::GetWidth());
+    float32 display_height = static_cast<float32>(Display::GetHeight());
+    return CalculateViewportFromClipping(viewport_clipping, Vector2(display_width, display_height));
+  }
 
+  //--------------------------------------------------------------
+  CameraViewport CameraUtilities::CalculateViewportFromClipping(CameraViewportClipping viewport_clipping, Vector2 display_size) {
     CameraViewport viewport = { };
-    viewport.x = static_cast<uint32>(Math::Clamp01(viewport_clipping.x) * display_width);
-    viewport.y = static_cast<uint32>(Math::Clamp01(viewport_clipping.y) * display_height);
-    viewport.width = static_cast<uint32>(Math::Clamp01(viewport_clipping.width) * display_width);
-    viewport.height = static_cast<uint32>(Math::Clamp01(viewport_clipping.height) * display_height);
+    viewport.x = static_cast<uint32>(Math::Clamp01(viewport_clipping.x) * display_size.x);
+    viewport.y = static_cast<uint32>(Math::Clamp01(viewport_clipping.y) * display_size.y);
+    viewport.width = static_cast<uint32>(Math::Clamp01(viewport_clipping.width) * display_size.x);
+    viewport.height = static_cast<uint32>(Math::Clamp01(viewport_clipping.height) * display_size.y);
     return viewport;
   }
 

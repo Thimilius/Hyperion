@@ -21,12 +21,13 @@ namespace Hyperion::Editor {
   //--------------------------------------------------------------
   EditorRenderPipeline::EditorRenderPipeline() {
     m_wrapped_pipeline = new ForwardRenderPipeline();
-    SetShouldBlitToScreen(false);
-    SetShouldResizeToScreen(false);
   }
 
   //--------------------------------------------------------------
   void EditorRenderPipeline::Initialize() {
+    SetShouldBlitToScreen(false);
+    SetShouldResizeToScreen(false);
+    
     UpdateSize();
     m_wrapped_pipeline->Initialize();
 
@@ -57,7 +58,7 @@ namespace Hyperion::Editor {
   }
 
   //--------------------------------------------------------------
-  void EditorRenderPipeline::Render(RenderFrame *render_frame, const Array<const RenderFrameContextCamera *> cameras) {
+  void EditorRenderPipeline::Render(RenderFrame *render_frame, const Array<const RenderFrameContextCamera *> &cameras) {
     UpdateSize();
     m_object_ids_render_texture->Resize(GetRenderTargetWidth(), GetRenderTargetHeight());
     m_editor_render_texture->Resize(GetRenderTargetWidth(), GetRenderTargetHeight());

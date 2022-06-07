@@ -9,7 +9,7 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Editor {
 
-  class EditorApplication : public Application {
+  class EditorApplication final : public Application {
   public:
     inline static World *GetWorld() { return s_world; }
     inline static EditorRenderPipeline *GetRenderPipeline() { return s_render_pipeline; }
@@ -24,7 +24,6 @@ namespace Hyperion::Editor {
     void OnSetup(ApplicationSettings &settings) override;
     void OnInitialize() override;
     void OnUpdate(float32 delta_time) override;
-    void OnTick() override;
   private:
     void OpenWorld();
     void SaveWorld();

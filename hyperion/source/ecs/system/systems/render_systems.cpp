@@ -6,6 +6,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset_manager.hpp"
+#include "hyperion/core/app/display.hpp"
 #include "hyperion/ecs/component/components/core_components.hpp"
 #include "hyperion/ecs/component/components/render_components.hpp"
 #include "hyperion/ecs/component/components/transform_components.hpp"
@@ -62,7 +63,13 @@ namespace Hyperion::Rendering {
       DerivedTransformComponent *derived_transform = manager->GetComponent<DerivedTransformComponent>(entity);
       CameraComponent *camera = manager->GetComponent<CameraComponent>(entity);
 
-      CameraUtilities::RecalculateMatrices(camera, derived_transform);
+#ifdef HYP_EDITOR
+      Vector2 display_size = Vector2(static_cast<float32>(Display::GetPreviewWidth()), static_cast<float32>(Display::GetPreviewHeight()));
+#else
+      Vector2 display_size = Vector2(static_cast<float32>(Display::GetWidth()), static_cast<float32>(Display::GetHeight()));
+#endif
+      CameraViewport camera_viewport = CameraUtilities::CalculateViewportFromClipping(camera->viewport_clipping, display_size);
+      CameraUtilities::RecalculateMatrices(camera, derived_transform, camera_viewport);
 
       RenderFrameContextCamera &render_frame_context_camera = render_frame_context.AddCamera();
       render_frame_context_camera.index = index++;
@@ -83,7 +90,7 @@ namespace Hyperion::Rendering {
       render_frame_context_camera.inverse_projection_matrix = camera->projection_matrix.Inverted();
       render_frame_context_camera.view_projection_matrix = camera->view_projection_matrix;
       render_frame_context_camera.inverse_view_projection_matrix = camera->view_projection_matrix.Inverted();
-      render_frame_context_camera.viewport = CameraUtilities::CalculateViewportFromClipping(camera->viewport_clipping);
+      render_frame_context_camera.viewport = camera_viewport;
     }
   }
 

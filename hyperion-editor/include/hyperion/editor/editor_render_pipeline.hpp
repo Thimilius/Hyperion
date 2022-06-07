@@ -8,12 +8,12 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Editor {
 
-  class EditorRenderPipeline : public Rendering::IRenderPipeline {
+  class EditorRenderPipeline final : public Rendering::IRenderPipeline {
   public:
     EditorRenderPipeline();
   public:
     void Initialize() override;
-    void Render(Rendering::RenderFrame *render_frame, const Array<const Rendering::RenderFrameContextCamera *> cameras) override;
+    void Render(Rendering::RenderFrame *render_frame, const Array<const Rendering::RenderFrameContextCamera *> &cameras) override;
     void RenderCamera(Rendering::RenderFrame *render_frame, const Rendering::RenderFrameContextCamera *camera) override;
     void Shutdown() override;
 

@@ -28,7 +28,7 @@ namespace Hyperion::Rendering {
     virtual ~IRenderPipeline() = default;
   public:
     virtual void Initialize() = 0;
-    virtual void Render(RenderFrame *render_frame, const Array<const RenderFrameContextCamera *> cameras) = 0;
+    virtual void Render(RenderFrame *render_frame, const Array<const RenderFrameContextCamera *> &cameras) = 0;
     virtual void RenderCamera(RenderFrame *render_frame, const RenderFrameContextCamera *) = 0;
     virtual void Shutdown() = 0;
 

@@ -380,11 +380,11 @@ namespace Hyperion {
   void Engine::OnAppEvent(AppEvent &app_event) {
     AppEventDispatcher dispatcher(app_event);
 
-    dispatcher.Dispatch<DisplayChangeAppEvent>([](DisplayChangeAppEvent &display_change_event) {
+    dispatcher.Dispatch<DisplayChangeAppEvent>([](DisplayChangeAppEvent &_) {
       Display::UpdateDisplayInfos();
     });
 
-    dispatcher.Dispatch<WindowCloseAppEvent>([](WindowCloseAppEvent &window_close_event) {
+    dispatcher.Dispatch<WindowCloseAppEvent>([](WindowCloseAppEvent &_) {
       Exit();
     });
 
@@ -401,6 +401,8 @@ namespace Hyperion {
         }
       }
     });
+
+    s_application->OnAppEvent(app_event);
   }
 
   //--------------------------------------------------------------

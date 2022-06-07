@@ -48,6 +48,12 @@ namespace Hyperion {
 
     inline static uint32 GetWidth() { return s_width; }
     inline static uint32 GetHeight() { return s_height; }
+
+#ifdef HYP_EDITOR
+    inline static uint32 GetPreviewWidth() { return s_preview_width; }
+    inline static uint32 GetPreviewHeight() { return s_preview_height; }
+    static void SetPreviewSize(uint32 width, uint32 height);
+#endif
   private:
     Display() = delete;
     ~Display() = delete;
@@ -66,6 +72,11 @@ namespace Hyperion {
     inline static uint32 s_last_width;
     inline static uint32 s_last_height;
     inline static bool8 s_size_changed = false;
+
+#ifdef HYP_EDITOR
+    inline static uint32 s_preview_width;
+    inline static uint32 s_preview_height;
+#endif
   private:
     friend class Hyperion::Application;
     friend class Hyperion::Engine;
