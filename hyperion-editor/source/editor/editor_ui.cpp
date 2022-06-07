@@ -153,6 +153,8 @@ namespace Hyperion::Editor {
           bool8 is_playing = engine_mode == EngineState::EditorRuntimePlaying || engine_mode == EngineState::EditorRuntimePaused;
           if (UIImmediate::TextToggle(is_playing, "\uf04b", FitType::ToLayout, icon_theme).clicked) {
             EditorApplication::EnterRuntime();
+
+            s_view_mode = EditorViewMode::Game;
           }
           bool8 is_paused = engine_mode == EngineState::EditorRuntimePaused;
           if (UIImmediate::TextToggle(is_paused, "\uf04c", FitType::ToLayout, icon_theme).clicked) {
@@ -165,6 +167,8 @@ namespace Hyperion::Editor {
             world = EditorApplication::GetWorld();
             manager = world->GetEntityManager();
             hierarchy = world->GetHierarchy();
+
+            s_view_mode = EditorViewMode::Editor;
           }
         }
         UIImmediate::EndCenter();
