@@ -382,6 +382,19 @@ namespace Hyperion::Editor {
               if (UIImmediate::Button("\uf03d", FitType::ToLayout, icon_theme).clicked) {
                 EditorCamera::Reset();
               }
+
+              UIImmediate::BeginCenter("Center");
+              {
+                bool8 in_editor_view = s_view_mode == EditorViewMode::Editor;
+                if (UIImmediate::TextToggle(in_editor_view, "\uf1b3", FitType::ToLayout, icon_theme).clicked) {
+                  s_view_mode = EditorViewMode::Editor;
+                }
+                bool8 in_game_view = s_view_mode == EditorViewMode::Game;
+                if (UIImmediate::TextToggle(in_game_view, "\uf11b", FitType::ToLayout, icon_theme).clicked) {
+                  s_view_mode = EditorViewMode::Game;
+                }
+              }
+              UIImmediate::EndCenter();
               
               UIImmediate::FillSpace();
 
@@ -395,11 +408,18 @@ namespace Hyperion::Editor {
 
             UIImmediate::Separator();
 
+            EditorRenderPipeline *render_pipeline = EditorApplication::GetRenderPipeline();
+            Texture *render_texture = nullptr;
+            if (s_view_mode == EditorViewMode::Editor) {
+              render_texture = render_pipeline->GetEditorTargetRenderTexture();
+            } else {
+              render_texture = render_pipeline->GetTargetRenderTexture();
+            }
+            
             String image_id = "Preview Image";
-            Texture *texture = EditorApplication::GetRenderPipeline()->GetEditorTargetRenderTexture();
-            s_preview_element = UIImmediate::GetId(image_id);
             Size preview_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
-            UIImmediate::Image(image_id, texture, preview_panel_size, false);
+            UIImmediate::Image(image_id, render_texture, preview_panel_size, false);
+            s_preview_element = UIImmediate::GetId(image_id);
           }
           UIImmediate::EndPanel();
 

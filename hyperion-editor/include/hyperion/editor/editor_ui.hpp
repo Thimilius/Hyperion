@@ -12,6 +12,11 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Editor {
 
+  enum class EditorViewMode {
+    Editor,
+    Game
+  };
+  
   class EditorUI final {
   public:
     static void Initialize();
@@ -38,6 +43,8 @@ namespace Hyperion::Editor {
     inline static UI::UIImmediateTheme *s_disabled_theme;
     inline static UI::UIImmediateTheme *s_disabled_icon_theme;
 
+    inline static EditorViewMode s_view_mode = EditorViewMode::Editor;
+    
     inline static bool8 s_is_in_gizmo;
     inline static Rendering::RenderGizmoType s_transformation_tool = Rendering::RenderGizmoType::Translate;
 

@@ -189,7 +189,7 @@ namespace Hyperion {
     EntityArchetypeComponentStorage storage;
     for (ComponentPool &component_pool : m_storage.component_pools) {
       const ComponentInfo &component_info = component_pool.GetComponentInfo();
-      byte *component = component_pool.GetComponent(id);
+      void *component = component_pool.GetComponent(id);
       if (component != nullptr) {
         Array<byte> component_data;
         component_data.Resize(component_info.element_size);
