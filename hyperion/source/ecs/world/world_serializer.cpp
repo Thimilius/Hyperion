@@ -407,10 +407,10 @@ namespace Hyperion {
       } else if (property_type.is_enumeration()) {
         uint64 enum_size = property_type.get_sizeof();
         switch (enum_size) {
-          case 1: yaml_emitter << property_value.to_int8(); break;
-          case 2: yaml_emitter << property_value.to_int16(); break;
-          case 4: yaml_emitter << property_value.to_int32(); break;
-          case 8: yaml_emitter << property_value.to_int64(); break;
+          case 1: yaml_emitter << property_value.to_uint8(); break;
+          case 2: yaml_emitter << property_value.to_uint16(); break;
+          case 4: yaml_emitter << property_value.to_uint32(); break;
+          case 8: yaml_emitter << property_value.to_uint64(); break;
           default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
         }
       } else if (property_type == Type::get<String>()) {
@@ -510,10 +510,10 @@ namespace Hyperion {
         uint64 enum_size = property_type.get_sizeof();
         Variant property_enum_variant;
         switch (enum_size) {
-          case 1: property_enum_variant = yaml_property.as<int8>(); break;
-          case 2: property_enum_variant = yaml_property.as<int16>(); break;
-          case 4: property_enum_variant = yaml_property.as<int32>(); break;
-          case 8: property_enum_variant = yaml_property.as<int64>(); break;
+          case 1: property_enum_variant = yaml_property.as<uint8>(); break;
+          case 2: property_enum_variant = yaml_property.as<uint16>(); break;
+          case 4: property_enum_variant = yaml_property.as<uint32>(); break;
+          case 8: property_enum_variant = yaml_property.as<uint64>(); break;
           default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
         }
         const Type &property_type_reference = property_type;
