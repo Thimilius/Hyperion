@@ -60,7 +60,7 @@ namespace Hyperion::Rendering {
     if (s_transformation_gizmo_mesh) {
       mesh_builder.SetToMesh(s_transformation_gizmo_mesh);
     } else {
-      s_transformation_gizmo_mesh = mesh_builder.CreateMesh(AssetDataAccess::ReadAndWrite);
+      s_transformation_gizmo_mesh = mesh_builder.CreateMesh(AssetDataAccess::Write);
     }
   }
 

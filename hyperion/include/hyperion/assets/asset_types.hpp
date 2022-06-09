@@ -21,6 +21,7 @@ namespace Hyperion {
 
   enum class AssetDataAccess {
     None,
+    Write,
     ReadAndWrite
   };
 

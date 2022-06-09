@@ -70,7 +70,7 @@ namespace Hyperion::Rendering {
   // That includes meshes, shaders, materials, textures, ...
   // The data for shaders and materials is always copied which is usually fine as it is quite lightweight.
   // The bigger data from meshes and textures is ONLY copied when the asset is set to AssetDataAccess::ReadAndWrite.
-  // In most cases the asset is set to AssetDataAccess::None which means the data can simply be moved and no copy has to be made.
+  // In the case where the asset is set to AssetDataAccess::None or AssetDataAccess::Write, the data can simply be moved and no copy has to be made.
   // 
   // ────────────────────────────────────────────────────────────────────────────────────
   // RENDER FRAME:

@@ -783,7 +783,7 @@ namespace Hyperion::UI {
     auto it = s_mesh_cache.find(mesh_vertex_count);
     if (it == s_mesh_cache.end()) {
       mesh.vertex_count = mesh_vertex_count;
-      mesh.mesh = s_mesh_builder.CreateMesh(AssetDataAccess::ReadAndWrite);
+      mesh.mesh = s_mesh_builder.CreateMesh(AssetDataAccess::Write);
     } else {
       mesh = it->second;
 
