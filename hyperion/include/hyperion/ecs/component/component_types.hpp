@@ -13,6 +13,7 @@ namespace Hyperion {
 namespace Hyperion {
 
   using ComponentId = uint32;
+  using ComponentGuid = Guid;
 
   using ComponentConstructor = void *(*)(void *address);
   using ComponentCopyConstructor = void *(*)(void *address, const void *instance);
@@ -22,6 +23,7 @@ namespace Hyperion {
   
   struct ComponentInfo {
     ComponentId id;
+    ComponentGuid guid;
 
     Type *type;
     uint64 element_size;

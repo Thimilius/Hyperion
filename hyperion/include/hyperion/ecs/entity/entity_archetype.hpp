@@ -49,9 +49,9 @@ namespace Hyperion {
 
   struct EntityArchetypeOverwrite { };
 
-  using EntityArchetypeRemovedComponents = Array<ComponentId>;
-  using EntityArchetypeOverwrites = Map<ComponentId, Array<EntityArchetypeOverwrite>>;
-  using EntityArchetypeComponentStorage = Map<ComponentId, Array<byte>>;
+  using EntityArchetypeRemovedComponents = Array<ComponentGuid>;
+  using EntityArchetypeOverwrites = Map<ComponentGuid, Array<EntityArchetypeOverwrite>>;
+  using EntityArchetypeComponentStorage = Map<ComponentGuid, Array<byte>>;
 
   class EntityArchetype final {
   public:

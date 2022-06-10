@@ -221,33 +221,33 @@ namespace Hyperion {
   //--------------------------------------------------------------
   void ComponentRegistry::RegisterCoreComponents() {
     // Core.
-    RegisterComponent<NameComponent>();
-    RegisterComponent<TagComponent>();
-    RegisterComponent<DisabledComponent>();
-    RegisterComponent<StaticComponent>();
-    RegisterComponent<ArchetypeComponent>();
+    RegisterComponent<NameComponent>(ComponentGuid::Generate("{9EECC346-0139-4FEB-9252-2D0902B439C7}"));
+    RegisterComponent<TagComponent>(ComponentGuid::Generate("{2298EE93-F3A9-466D-B349-3D7334F13E5C}"));
+    RegisterComponent<DisabledComponent>(ComponentGuid::Generate("{203140F9-757D-4215-BCEA-600C9DB66C35}"));
+    RegisterComponent<StaticComponent>(ComponentGuid::Generate("{A1B011BD-AFC6-4391-AF6F-69AC07688B7B}"));
+    RegisterComponent<ArchetypeComponent>(ComponentGuid::Generate("{3573658B-21FC-4CF5-8604-3EF43497E7C4}"));
 
     // Transform.
-    RegisterComponent<LocalTransformComponent>();
-    RegisterComponent<DerivedTransformComponent>();
-    RegisterComponent<LocalToWorldComponent>();
-    RegisterComponent<HierarchyComponent>();
+    RegisterComponent<LocalTransformComponent>(ComponentGuid::Generate("{D6A898ED-1DB0-4953-9968-F88DE9A6A623}"));
+    RegisterComponent<DerivedTransformComponent>(ComponentGuid::Generate("{396F41A5-AC04-4981-B8B8-8241A2C0B063}"));
+    RegisterComponent<LocalToWorldComponent>(ComponentGuid::Generate("{2373F570-9262-4F03-AAE7-BC138E262C08}"));
+    RegisterComponent<HierarchyComponent>(ComponentGuid::Generate("{0DADF9FD-4B15-4C8D-A6E6-704CB9398868}"));
 
     // Physics.
-    RegisterComponent<Physics::BoxColliderComponent>();
-    RegisterComponent<Physics::SphereColliderComponent>();
+    RegisterComponent<Physics::BoxColliderComponent>(ComponentGuid::Generate("{720405F6-8E61-4DD1-A799-CDFED8FEDB1C}"));
+    RegisterComponent<Physics::SphereColliderComponent>(ComponentGuid::Generate("{C7696619-E999-4D99-B9EB-9D45DAAFA86B}"));
 
     // Render.
-    RegisterComponent<Rendering::CameraComponent>();
-    RegisterComponent<Rendering::SpriteComponent>();
-    RegisterComponent<Rendering::MeshComponent>();
-    RegisterComponent<Rendering::MeshBoundsComponent>();
-    RegisterComponent<Rendering::DirectionalLightComponent>();
-    RegisterComponent<Rendering::PointLightComponent>();
-    RegisterComponent<Rendering::SpotLightComponent>();
+    RegisterComponent<Rendering::CameraComponent>(ComponentGuid::Generate("{F7F1846D-2735-4232-B70C-B3581AA0F3FB}"));
+    RegisterComponent<Rendering::SpriteComponent>(ComponentGuid::Generate("{6DB57302-33C7-4272-BC70-025D69098DB8}"));
+    RegisterComponent<Rendering::MeshComponent>(ComponentGuid::Generate("{A2DC7626-60C4-42A8-AF76-B2DC34DA07C9}"));
+    RegisterComponent<Rendering::MeshBoundsComponent>(ComponentGuid::Generate("{FBE24F24-BC47-4DE1-89E6-A4634EC8001A}"));
+    RegisterComponent<Rendering::DirectionalLightComponent>(ComponentGuid::Generate("{F4F870A1-1EE4-4401-92E3-E7D6BE4EE9C3}"));
+    RegisterComponent<Rendering::PointLightComponent>(ComponentGuid::Generate("{FB834BDE-300F-40FD-93E2-18EA8F7174E1}"));
+    RegisterComponent<Rendering::SpotLightComponent>(ComponentGuid::Generate("{4C5305A6-CBF2-49CD-9D5C-D5C7B4FAAFF3}"));
 
     // UI.
-    RegisterComponent<UI::UIViewComponent>();
+    RegisterComponent<UI::UIViewComponent>(ComponentGuid::Generate("{484B06AA-B182-411B-8FA7-66DF2245B959}"));
     
     // TODO: When should user-defined components be registered?
   }

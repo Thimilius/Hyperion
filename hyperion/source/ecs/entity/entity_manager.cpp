@@ -196,7 +196,7 @@ namespace Hyperion {
 
         component_info.copy_constructor(component_data.GetData(), component);
         
-        storage.Insert(component_info.id, component_data);  
+        storage.Insert(component_info.guid, component_data);  
       }
     }
 
@@ -214,9 +214,9 @@ namespace Hyperion {
     EntityId copy = CreateEntity(EntityPrimitive::Empty);
 
     EntityArchetypeComponentStorage storage = archetype->GetStorage();
-    for (auto &[component_id, component_data] : storage) {
-      const ComponentInfo &component_info = m_storage.component_pools[component_id].GetComponentInfo();
-      byte *component = static_cast<byte *>(AddComponent(component_id, copy));
+    for (auto &[component_guid, component_data] : storage) {
+      const ComponentInfo &component_info = ComponentRegistry::GetInfo(component_guid);
+      byte *component = static_cast<byte *>(AddComponent(component_info.id, copy));
       component_info.copy_constructor(component, component_data.GetData());
     }
 

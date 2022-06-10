@@ -16,7 +16,6 @@
 - SoLoud implementation
 
 ## ECS
-- Components should have a Guid for stable identification
 - Hierarchy should use callbacks when adding/removing HierarchyComponent
 - Hierarchy callbacks for transform updates
 - Entity instantiation should include hierarchy
