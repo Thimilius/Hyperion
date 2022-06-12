@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace Hyperion.Ecs {
   public class EntityManager : Object {
@@ -23,9 +22,20 @@ namespace Hyperion.Ecs {
 
       return entity;
     }
+
+    public unsafe void DestroyEntity(Entity entity) {
+      entity.Destroy();
+      m_EntityCache.Remove(entity.Id);
+      
+      Bindings.EntityManager.DestroyEntity(NativeHandle, entity.Id);
+    }
     
-    public unsafe ref T GetComponent<T>(EntityId id) where T : struct {
-      return ref Unsafe.AsRef<T>((void *)Bindings.EntityManager.GetComponent(NativeHandle, Native.GetTypeHandle<T>(), id));
+    public unsafe bool HasComponent<T>(EntityId id) where T : Component {
+      return Bindings.EntityManager.HasComponent(NativeHandle, Native.GetTypeHandle<T>(), id);
+    }
+
+    public unsafe void RemoveComponent<T>(EntityId id) where T : Component {
+      Bindings.EntityManager.RemoveComponent(NativeHandle, Native.GetTypeHandle<T>(), id);
     }
   }
 }

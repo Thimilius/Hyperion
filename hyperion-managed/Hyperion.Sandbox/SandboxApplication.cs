@@ -12,12 +12,22 @@ namespace Hyperion.Sandbox {
       
       m_Entity = entityManager.CreateEntity();
       
+      Engine.Log(m_Entity.HasComponent<NameComponent>());
+      
       NameComponent nameComponent = m_Entity.GetComponent<NameComponent>();
       nameComponent.Name = "Hello there!";
       Engine.Log(nameComponent.Name);
 
       NameComponent secondComponent = m_Entity.GetComponent<NameComponent>();
       Engine.Log(nameComponent == secondComponent);
+
+      m_Entity.RemoveComponent<NameComponent>();
+      Engine.Log(nameComponent.Name);
+      
+      entityManager.DestroyEntity(m_Entity);
+      
+      Engine.Log(m_Entity.IsAlive);
+      Engine.Log(nameComponent.Name);
     }
 
     public void Update() {

@@ -54,6 +54,8 @@ namespace Hyperion::Physics {
     void CopyColliders(World *world);
     void ClearColliders();
   private:
+    World *m_world;
+    
     btCollisionWorld *m_collision_world;
     btDispatcher *m_collision_dispatcher;
     btBroadphaseInterface *m_broadphase;

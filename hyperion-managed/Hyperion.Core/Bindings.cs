@@ -45,8 +45,10 @@ namespace Hyperion {
       internal readonly delegate *unmanaged<IntPtr, int> GetEntityCount;
 
       internal readonly delegate *unmanaged<IntPtr, out EntityId, void> CreateEntity;
+      internal readonly delegate *unmanaged<IntPtr, EntityId, void> DestroyEntity;
 
-      internal readonly delegate *unmanaged<IntPtr, IntPtr, EntityId, IntPtr> GetComponent;
+      internal readonly delegate *unmanaged<IntPtr, IntPtr, EntityId, bool> HasComponent;
+      internal readonly delegate *unmanaged<IntPtr, IntPtr, EntityId, void> RemoveComponent;
     }
     
     [StructLayout(LayoutKind.Sequential)]

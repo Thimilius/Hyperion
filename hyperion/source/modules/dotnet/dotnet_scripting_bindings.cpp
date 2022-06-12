@@ -48,21 +48,33 @@ namespace Hyperion::Scripting {
       EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
       return static_cast<uint32>(entity_manager->GetEntityCount());
     };
-    s_core_bootstrap_arguments.native_bindings.entity_manager.create_entity = [](NativeHandle native_handle, EntityId *entity_id) {
+    s_core_bootstrap_arguments.native_bindings.entity_manager.create_entity = [](NativeHandle native_handle, EntityId *id) {
       EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
-      *entity_id = entity_manager->CreateEntity(); 
+      *id = entity_manager->CreateEntity(); 
     };
-    s_core_bootstrap_arguments.native_bindings.entity_manager.get_component = [](NativeHandle native_handle, ManagedHandle type_handle, EntityId id) {
+    s_core_bootstrap_arguments.native_bindings.entity_manager.destroy_entity = [](NativeHandle native_handle, EntityId id) {
       EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
-
+      entity_manager->DestroyEntity(id);
+    };
+    s_core_bootstrap_arguments.native_bindings.entity_manager.has_component = [](NativeHandle native_handle, ManagedHandle type_handle, EntityId id) {
       auto it = s_component_type_map.Find(type_handle);
       if (it == s_component_type_map.end()) {
         HYP_LOG_ERROR("Scripting", "Failed to find component type for managed type!");
-        return static_cast<void *>(nullptr);
+        return false;
       } else {
+        EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
         ComponentId component_id = it->second;
-        void *component = entity_manager->GetComponent(component_id, id);
-        return component;
+        return entity_manager->HasComponent(component_id, id);
+      }
+    };
+    s_core_bootstrap_arguments.native_bindings.entity_manager.remove_component = [](NativeHandle native_handle, ManagedHandle type_handle, EntityId id) {
+      auto it = s_component_type_map.Find(type_handle);
+      if (it == s_component_type_map.end()) {
+        HYP_LOG_ERROR("Scripting", "Failed to find component type for managed type!");
+      } else {
+        EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
+        ComponentId component_id = it->second;
+        entity_manager->RemoveComponent(component_id, id);
       }
     };
     s_core_bootstrap_arguments.native_bindings.name_component.get_name = [](NativeHandle native_handle, EntityId id) {
@@ -87,10 +99,6 @@ namespace Hyperion::Scripting {
       s_component_type_map.Insert(
         s_core_managed_bindings.get_type_by_name("Hyperion.Ecs.NameComponent"),
         ComponentRegistry::GetId<NameComponent>()
-      );
-      s_component_type_map.Insert(
-        s_core_managed_bindings.get_type_by_name("Hyperion.Ecs.LocalTransformComponent"),
-        ComponentRegistry::GetId<LocalTransformComponent>()
       );
     };
   }

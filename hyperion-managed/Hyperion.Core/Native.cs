@@ -18,8 +18,7 @@ namespace Hyperion {
         Assembly assembly = Assembly.GetExecutingAssembly();
         Type type = assembly.GetType(typeName);
         if (type == null) {
-          Engine.LogError($"Failed to find type by name: {typeName}!");
-          return IntPtr.Zero;
+          throw new Exception($"Type with name: '{typeName}' could not be found!");
         }
 
         IntPtr handle = GCHandle.ToIntPtr(GCHandle.Alloc(type));

@@ -17,6 +17,8 @@ namespace Hyperion::Physics {
 
   //--------------------------------------------------------------
   BulletPhysicsWorld::BulletPhysicsWorld(World *world, BulletPhysicsDriver *driver, IPhysicsWorld *other) {
+    m_world = world;
+    
     btCollisionConfiguration *collision_configuration = driver->GetCollisionConfiguration();
     m_collision_dispatcher = new btCollisionDispatcher(collision_configuration);
     m_broadphase = new btDbvtBroadphase();
@@ -27,7 +29,7 @@ namespace Hyperion::Physics {
     manager->RegisterOnComponentRemoved<BoxColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::RemoveBoxCollider>, this });
     manager->RegisterOnComponentAdded<SphereColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::AddSphereCollider>, this });
     manager->RegisterOnComponentRemoved<SphereColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::RemoveSphereCollider>, this });
-
+    
     if (other) {
       CopyColliders(world);
     }
@@ -35,6 +37,12 @@ namespace Hyperion::Physics {
 
   //--------------------------------------------------------------
   BulletPhysicsWorld::~BulletPhysicsWorld() {
+    EntityManager *manager = m_world->GetEntityManager();
+    manager->RegisterOnComponentAdded<BoxColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::AddBoxCollider>, this });
+    manager->RegisterOnComponentRemoved<BoxColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::RemoveBoxCollider>, this });
+    manager->RegisterOnComponentAdded<SphereColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::AddSphereCollider>, this });
+    manager->RegisterOnComponentRemoved<SphereColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::RemoveSphereCollider>, this });
+    
     ClearColliders();
     
     delete m_collision_world;

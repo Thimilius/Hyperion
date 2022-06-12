@@ -38,8 +38,10 @@ namespace Hyperion::Scripting {
     uint32 (*get_entity_count)(NativeHandle);
 
     void (*create_entity)(NativeHandle, EntityId *);
-
-    void *(*get_component)(NativeHandle, ManagedHandle, EntityId);
+    void (*destroy_entity)(NativeHandle, EntityId);
+    
+    bool (*has_component)(NativeHandle, ManagedHandle, EntityId);
+    void (*remove_component)(NativeHandle, ManagedHandle, EntityId);
   };
   
   struct NameComponentBindings {
