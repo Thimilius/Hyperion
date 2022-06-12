@@ -9,7 +9,7 @@
 
     public EntityId(ulong value) { Value = value; }
     
-    public override bool Equals(object obj) => obj is EntityId other && Equals(other); 
+    public override bool Equals(object obj) => obj is EntityId other && Value == other.Value; 
     public override int GetHashCode() => Value.GetHashCode();
     public override string ToString() => Value.ToString();
 
