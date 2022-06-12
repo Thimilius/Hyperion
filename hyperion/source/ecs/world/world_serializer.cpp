@@ -8,7 +8,6 @@
 #include <yaml-cpp/yaml.h>
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/ecs/component/components/components.hpp"
 #include "hyperion/ecs/world/world_manager.hpp"
 
@@ -436,18 +435,13 @@ namespace Hyperion {
         } else {
           yaml_emitter << manager->GetGuid(id).ToString();
         }
+      } else if (property_type == Type::get<AssetHandle>()) {
+        yaml_emitter << property_value.get_value<AssetHandle>().handle.ToString();
       } else if (property_type.is_pointer()) {
         void *pointer = *static_cast<void **>(Reflection::GetVariantData(property_value));
         
         if (pointer) {
-          // We handle assets directly here to save them by their guid.
-          Type property_type_raw = property_type.get_raw_type();
-          if (property_type_raw == Type::get<Asset>() || property_type_raw.is_derived_from(Type::get<Asset>())) {
-            Asset *asset = static_cast<Asset *>(pointer);
-            yaml_emitter << asset->GetAssetInfo().handle.handle.ToString();
-          } else {
-            SerializeType(yaml_emitter, manager, property_type, pointer);  
-          }
+          SerializeType(yaml_emitter, manager, property_type, pointer);
         } else {
           yaml_emitter << YAML::Null;
         }
@@ -540,25 +534,20 @@ namespace Hyperion {
           id = manager->GetByGuid(guid);
         }
         setting_property_success = property.set_value(instance, id);
+      } else if (property_type == Type::get<AssetHandle>()) {
+        AssetHandle handle;
+        if (!yaml_property.IsNull()) {
+          handle = AssetHandleType::Generate(yaml_property.as<String>());
+        }
+        setting_property_success = property.set_value(instance, handle);
       } else if (property_type.is_pointer()) {
         Variant property_value = property.get_value(instance);
         
         if (yaml_property.IsNull()) {
           property_value = nullptr;            
         } else {
-          // We handle assets directly here to load them by their guid.
-          Type property_type_raw = property_type.get_raw_type();
-          if (property_type_raw == Type::get<Asset>() || property_type_raw.is_derived_from(Type::get<Asset>())) {
-            AssetHandle guid = AssetHandleType::Generate(yaml_property.as<String>());
-            if (property_type_raw == Type::get<Material>()) {
-              property_value = AssetManager::GetMaterial(guid);
-            } else if (property_type_raw == Type::get<Mesh>()) {
-              property_value = AssetManager::GetMesh(guid);
-            }
-          } else {
-            void *pointer = *static_cast<void **>(Reflection::GetVariantData(property_value));
-            DeserializeType(yaml_property, manager, property_type, pointer);
-          }
+          void *pointer = *static_cast<void **>(Reflection::GetVariantData(property_value));
+          DeserializeType(yaml_property, manager, property_type, pointer);
         }
         
         setting_property_success = property.set_value(instance, property_value);
@@ -640,7 +629,8 @@ namespace Hyperion {
   World *WorldSerializer::Deserialize(const String &data) {
     HYP_PROFILE_SCOPE("WorldSerializer.Deserialize");
 
-    // TEMP: For now we assume that assets referenced by components are already loaded and we can just grab the pointer.
+    // TEMP: For now we assume that assets referenced by components are already loaded.
+    // Later we should verify that every AssetHandle we have at the end actually points to a loaded asset.
     
     YAML::Node yaml_world = YAML::Load(data);
     World *world = WorldManager::CreateWorld();

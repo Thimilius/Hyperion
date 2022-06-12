@@ -50,6 +50,7 @@ namespace Hyperion {
     AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
     Texture2D *texture = new Texture2D(info, parameters);
     s_textures.Insert(info.handle, texture);
+    s_assets.Insert(info.handle, texture);
     return texture;
   }
 
@@ -59,6 +60,7 @@ namespace Hyperion {
     AssetInfo info = GetNextAssetInfo(data_access);
     Texture2D *texture = new Texture2D(info, parameters, pixels);
     s_textures.Insert(info.handle, texture);
+    s_assets.Insert(info.handle, texture);
     return texture;
   }
 
@@ -84,6 +86,7 @@ namespace Hyperion {
     AssetInfo info = GetNextAssetInfo(AssetDataAccess::None);
     RenderTexture *render_texture = new RenderTexture(info, parameters);
     s_textures.Insert(info.handle, render_texture);
+    s_assets.Insert(info.handle, render_texture);
     return render_texture;
   }
 
@@ -92,6 +95,7 @@ namespace Hyperion {
     AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
     Font *font = new Font(info, size, baseline_offset, character_set, font_atlas, special_glyphs);
     s_fonts.Insert(info.handle, font);
+    s_assets.Insert(info.handle, font);
     return font;
   }
 
@@ -126,6 +130,7 @@ namespace Hyperion {
     Shader *shader = new Shader(info, source);
     shader->m_resource_info.path = path;
     s_shaders.Insert(info.handle, shader);
+    s_assets.Insert(info.handle, shader);
     return shader;
   }
 
@@ -157,6 +162,7 @@ namespace Hyperion {
     AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
     Material *material = new Material(info, shader);
     s_materials.Insert(info.handle, material);
+    s_assets.Insert(info.handle, material);
     return material;
   }
 
@@ -188,6 +194,7 @@ namespace Hyperion {
     AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
     Mesh *mesh = new Mesh(info);
     s_meshes.Insert(info.handle, mesh);
+    s_assets.Insert(info.handle, mesh);
     return mesh;
   }
 
@@ -195,6 +202,7 @@ namespace Hyperion {
     AssetInfo info = GetNextAssetInfo(data_access);
     Mesh *mesh = new Mesh(info, data, sub_meshes);
     s_meshes.Insert(info.handle, mesh);
+    s_assets.Insert(info.handle, mesh);
     return mesh;
   }
 
@@ -205,6 +213,9 @@ namespace Hyperion {
     }
 
     AssetHandle asset_handle = asset->GetAssetInfo().handle;
+    
+    s_assets.Remove(asset_handle);
+    
     switch (asset->GetAssetType()) {
       case AssetType::Material: {
         HYP_ASSERT(s_materials.Contains(asset_handle));
@@ -330,6 +341,10 @@ namespace Hyperion {
   void AssetManager::SetNewHandle(Asset *asset, const String &handle) {
     AssetHandle old_handle = asset->GetAssetInfo().handle;
     AssetHandle new_handle = AssetHandle(AssetHandleType::Generate(handle));
+
+    HYP_ASSERT(s_assets.Contains(old_handle));
+    s_assets.Remove(old_handle);
+    s_assets.Insert(new_handle, asset);
 
     switch (asset->GetAssetType()) {
       case AssetType::Material: {

@@ -57,6 +57,17 @@ namespace Hyperion {
 
   class AssetManager final {
   public:
+    template<typename T>
+    static T *GetAsset(AssetHandle handle) {
+      auto it = s_assets.Find(handle);
+      if (it == s_assets.end()) {
+        HYP_LOG_ERROR("Asset", "The asset with handle {} does not exist!", handle);
+        return nullptr;
+      } else {
+        return it->second;
+      }
+    }
+    
     static Texture2D *GetTexture2DPrimitive(Texture2DPrimitive texture_2d_primitive);
     static Texture2D *GetTexture2D(AssetHandle handle);
     static Texture2D *CreateTexture2D(const Rendering::Texture2DParameters &parameters);
@@ -74,6 +85,7 @@ namespace Hyperion {
       AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
       TextureAtlas<K, V> *texture_atlas = new TextureAtlas<K, V>(info, texture, elements);
       s_texture_atlases.Insert(info.handle, texture_atlas);
+      s_assets.Insert(info.handle, texture_atlas);
       return texture_atlas;
     }
 
@@ -103,19 +115,21 @@ namespace Hyperion {
     static void Shutdown();
 
     static void InitializePrimitives();
-    static void SetNewHandle(Asset *asset, const String &guid);
+    static void SetNewHandle(Asset *asset, const String &handle);
 
     static void AddDirtyAsset(Asset *asset);
 
     static AssetInfo GetNextAssetInfo(AssetDataAccess data_access);
   private:
+    inline static Map<AssetHandle, Asset *> s_assets;
+    
     inline static Map<AssetHandle, Texture *> s_textures;
     inline static Map<AssetHandle, TextureAtlasBase *> s_texture_atlases;
     inline static Map<AssetHandle, Font *> s_fonts;
     inline static Map<AssetHandle, Shader *> s_shaders;
     inline static Map<AssetHandle, Material *> s_materials;
     inline static Map<AssetHandle, Mesh *> s_meshes;
-
+    
     inline static FileWatcher *s_shader_watcher;
 
     inline static struct Primitives {
