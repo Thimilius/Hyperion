@@ -5,6 +5,11 @@
 #include "hyperion/scripting/scripting_driver.hpp"
 #include "hyperion/modules/dotnet/dotnet_scripting_bindings.hpp"
 
+//-------------------- Forward Declarations --------------------
+namespace Hyperion::Scripting {
+  class DotnetScriptingWorld;
+}
+
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
 
@@ -37,7 +42,10 @@ namespace Hyperion::Scripting {
     void LoadManagedContext();
     void UnloadManagedContext();
   private:
+  private:
     inline static RuntimeManagedBindings s_runtime_managed_bindings = { };
+    
+    inline static Array<DotnetScriptingWorld *> s_scripting_worlds;
   };
     
 }

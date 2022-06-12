@@ -3,11 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Hyperion.Ecs {
-  public class Entity {
-    // TODO: Here is a hard problem we need to solve:
-    // How do we update the cache to not contain removed components anymore?
-    // This does not only need to work from the managed side (which is easy)
-    // but also when just doing stuff from the native side.
+  public sealed class Entity {
     private readonly Dictionary<Type, Component> m_ComponentCached = new();
 
     public EntityManager EntityManager { get; }
@@ -60,14 +56,12 @@ namespace Hyperion.Ecs {
         return;
       }
 
+      
       Component component = m_ComponentCached[componentType];
       if (!component.IsAlive) {
         return;
       }
       
-      component.Destroy();
-      m_ComponentCached.Remove(componentType);
-        
       EntityManager.RemoveComponent<T>(Id);
     }
 
@@ -78,6 +72,12 @@ namespace Hyperion.Ecs {
         component.Destroy();
       }
       m_ComponentCached.Clear();
+    }
+
+    internal void OnComponentRemovedNative(Type componentType) {
+      Component component = m_ComponentCached[componentType];
+      component.Destroy();
+      m_ComponentCached.Remove(componentType);
     }
     
     [StackTraceHidden]

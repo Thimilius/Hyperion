@@ -124,29 +124,38 @@ namespace Hyperion::Scripting {
 
   //--------------------------------------------------------------
   IScriptingWorld *DotnetScriptingDriver::CreateWorld(World *world) {
-    return new DotnetScriptingWorld(world, this);
+    DotnetScriptingWorld *scripting_world = new DotnetScriptingWorld(world, this);
+    s_scripting_worlds.Add(scripting_world);
+    return scripting_world;
   }
   
   //--------------------------------------------------------------
   IScriptingWorld *DotnetScriptingDriver::CopyWorld(World *world, IScriptingWorld *scripting_world) {
-    return new DotnetScriptingWorld(world, this);
+    DotnetScriptingWorld *scripting_world_copy = new DotnetScriptingWorld(world, this);
+    s_scripting_worlds.Add(scripting_world_copy);
+    return scripting_world_copy;
   }
   
   //--------------------------------------------------------------
   void DotnetScriptingDriver::DestroyWorld(IScriptingWorld *scripting_world) {
+    s_scripting_worlds.Remove(static_cast<DotnetScriptingWorld *>(scripting_world));
     delete scripting_world;
   }
-  
+
   //--------------------------------------------------------------
   void DotnetScriptingDriver::LoadManagedContext() {
     HYP_PROFILE_SCOPE("DotnetScriptingDriver.LoadManagedContext")
     s_runtime_managed_bindings.load_context(DotnetScriptingBindings::GetBootstrapArguments());
     
+    for (DotnetScriptingWorld *scripting_world : s_scripting_worlds) {
+      scripting_world->OnLoadContext();
+    }
+    
     {
       HYP_PROFILE_SCOPE("DotnetScriptingDriver.EngineInitialize")
       DotnetScriptingBindings::GetManagedBindings()->engine_initialize();
     }
-    
+
     HYP_LOG_INFO("Scripting", "Loaded managed context!");
   }
   
@@ -157,6 +166,10 @@ namespace Hyperion::Scripting {
     {
       HYP_PROFILE_SCOPE("DotnetScriptingDriver.EngineShutdown")
       DotnetScriptingBindings::GetManagedBindings()->engine_shutdown();
+    }
+
+    for (DotnetScriptingWorld *scripting_world : s_scripting_worlds) {
+      scripting_world->OnUnloadContext();
     }
 
     DotnetScriptingBindings::UnloadMappings();

@@ -33,6 +33,8 @@ namespace Hyperion {
     ComponentCopyAssignmentOperator copy_assignment_operator;
     ComponentMoveAssignmentOperator move_assignment_operator;
     ComponentDestructor destructor;
+
+    static constexpr ComponentId INVALID_ID = 0xFFFFFFFF;
   };
 
   using ComponentCallback = Delegate<void(EntityManager *, ComponentId, EntityId)>;

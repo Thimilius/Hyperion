@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Hyperion.Ecs;
 
 namespace Hyperion {
   public static unsafe class Engine {
@@ -14,8 +15,12 @@ namespace Hyperion {
 
       public delegate *unmanaged<IntPtr, IntPtr> GetTypeByName;
       public delegate *unmanaged<IntPtr, void> DestroyType;
+      
       public delegate *unmanaged<IntPtr, IntPtr, IntPtr> CreateManagedObject;
       public delegate *unmanaged<IntPtr, void> DestroyManagedObject;
+      
+      public delegate *unmanaged<IntPtr, EntityId, void> OnEntityDestroyed;
+      public delegate *unmanaged<IntPtr, IntPtr, EntityId, void> OnComponentRemoved;
     }
     
     [StructLayout(LayoutKind.Sequential)]
@@ -69,8 +74,12 @@ namespace Hyperion {
         
         GetTypeByName = &Native.GetTypeByName,
         DestroyType = &Native.DestroyType,
+        
         CreateManagedObject = &Native.CreateManagedObject,
-        DestroyManagedObject = &Native.DestroyManagedObject
+        DestroyManagedObject = &Native.DestroyManagedObject,
+        
+        OnEntityDestroyed = &Native.OnEntityDestroyed,
+        OnComponentRemoved = &Native.OnComponentRemoved
       };
       coreBootstrapArguments->ManagedBindingsCallback(&coreManagedBindings);
       

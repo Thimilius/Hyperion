@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Hyperion.Ecs {
-  public class EntityManager : Object {
-    // TODO: We have the same problem here as the component cache in Entity.
+  public sealed class EntityManager : Object {
     private readonly Dictionary<EntityId, Entity> m_EntityCache = new();
 
     public unsafe int EntityCount => Bindings.EntityManager.GetEntityCount(NativeHandle);
@@ -24,9 +24,6 @@ namespace Hyperion.Ecs {
     }
 
     public unsafe void DestroyEntity(Entity entity) {
-      entity.Destroy();
-      m_EntityCache.Remove(entity.Id);
-      
       Bindings.EntityManager.DestroyEntity(NativeHandle, entity.Id);
     }
     
@@ -36,6 +33,21 @@ namespace Hyperion.Ecs {
 
     public unsafe void RemoveComponent<T>(EntityId id) where T : Component {
       Bindings.EntityManager.RemoveComponent(NativeHandle, Native.GetTypeHandle<T>(), id);
+    }
+
+    internal void OnEntityDestroyedNative(EntityId id) {
+      Entity entity = GetEntityById(id);
+      if (entity == null) {
+        return;
+      }
+      
+      entity.Destroy();
+      m_EntityCache.Remove(entity.Id);
+    }
+    
+    internal void OnComponentRemovedNative(Type componentType, EntityId id) {
+      Entity entity = GetEntityById(id);
+      entity?.OnComponentRemovedNative(componentType);
     }
   }
 }

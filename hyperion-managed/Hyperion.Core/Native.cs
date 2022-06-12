@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Hyperion.Ecs;
 
 namespace Hyperion {
   internal static unsafe class Native {
@@ -71,6 +72,19 @@ namespace Hyperion {
       } catch (Exception e) {
         Bindings.Core.Exception(e.ToString());
       }
+    }
+
+    [UnmanagedCallersOnly]
+    internal static void OnEntityDestroyed(IntPtr entityManagedHandle, EntityId id) {
+      EntityManager entityManager = GCHandle.FromIntPtr(entityManagedHandle).Get<EntityManager>();
+      entityManager.OnEntityDestroyedNative(id);
+    }
+
+    [UnmanagedCallersOnly]
+    internal static void OnComponentRemoved(IntPtr entityManagedHandle, IntPtr componentTypeHandle, EntityId id) {
+      EntityManager entityManager = GCHandle.FromIntPtr(entityManagedHandle).Get<EntityManager>();
+      Type componentType = GCHandle.FromIntPtr(componentTypeHandle).Get<Type>();
+      entityManager.OnComponentRemovedNative(componentType, id);
     }
   }
 }

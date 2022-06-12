@@ -29,7 +29,7 @@ namespace Hyperion::Scripting {
     };
     s_core_bootstrap_arguments.native_bindings.world_manager.get_active_world = []() {
       World *world = WorldManager::GetActiveWorld();
-      return GetOrCreateManagedObject(s_type_world, world);
+      return GetOrCreateManagedObject(GetSpecialType(SpecialType::World), world);
     };
     s_core_bootstrap_arguments.native_bindings.world.get_name = [](NativeHandle native_handle) {
       World *world = static_cast<World *>(native_handle);
@@ -42,7 +42,7 @@ namespace Hyperion::Scripting {
     s_core_bootstrap_arguments.native_bindings.world.get_entity_manager = [](NativeHandle native_handle) {
       World *world = static_cast<World *>(native_handle);
       EntityManager *entity_manager = world->GetEntityManager();
-      return GetOrCreateManagedObject(s_type_entity_manager, entity_manager);
+      return GetOrCreateManagedObject(GetSpecialType(SpecialType::EntityManager), entity_manager);
     };
     s_core_bootstrap_arguments.native_bindings.entity_manager.get_entity_count = [](NativeHandle native_handle) {
       EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
@@ -57,23 +57,18 @@ namespace Hyperion::Scripting {
       entity_manager->DestroyEntity(id);
     };
     s_core_bootstrap_arguments.native_bindings.entity_manager.has_component = [](NativeHandle native_handle, ManagedHandle type_handle, EntityId id) {
-      auto it = s_component_type_map.Find(type_handle);
-      if (it == s_component_type_map.end()) {
-        HYP_LOG_ERROR("Scripting", "Failed to find component type for managed type!");
+      ComponentId component_id = GetComponentIdForManagedType(type_handle);
+      if (component_id == ComponentInfo::INVALID_ID) {
         return false;
       } else {
         EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
-        ComponentId component_id = it->second;
         return entity_manager->HasComponent(component_id, id);
       }
     };
     s_core_bootstrap_arguments.native_bindings.entity_manager.remove_component = [](NativeHandle native_handle, ManagedHandle type_handle, EntityId id) {
-      auto it = s_component_type_map.Find(type_handle);
-      if (it == s_component_type_map.end()) {
-        HYP_LOG_ERROR("Scripting", "Failed to find component type for managed type!");
-      } else {
+      ComponentId component_id = GetComponentIdForManagedType(type_handle);
+      if (component_id != ComponentInfo::INVALID_ID) {
         EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
-        ComponentId component_id = it->second;
         entity_manager->RemoveComponent(component_id, id);
       }
     };
@@ -93,13 +88,10 @@ namespace Hyperion::Scripting {
       s_core_managed_bindings = *core_managed_bindings;
 
       // This is also the point where we can grab references to types in the core assembly.
-      s_type_world = s_core_managed_bindings.get_type_by_name("Hyperion.Ecs.World");
-      s_type_entity_manager = s_core_managed_bindings.get_type_by_name("Hyperion.Ecs.EntityManager");
+      RegisterSpecialType(SpecialType::World, "Hyperion.Ecs.World");
+      RegisterSpecialType(SpecialType::EntityManager, "Hyperion.Ecs.EntityManager");
 
-      s_component_type_map.Insert(
-        s_core_managed_bindings.get_type_by_name("Hyperion.Ecs.NameComponent"),
-        ComponentRegistry::GetId<NameComponent>()
-      );
+      RegisterComponentType<NameComponent>("Hyperion.Ecs.NameComponent");
     };
   }
 
@@ -115,15 +107,16 @@ namespace Hyperion::Scripting {
     s_object_mappings.Clear();
 
     // Types also need to be cleared.
-    s_core_managed_bindings.destroy_type(s_type_world);
-    s_type_world = nullptr;
-    s_core_managed_bindings.destroy_type(s_type_entity_manager);
-    s_type_entity_manager = nullptr;
-
-    for (auto [managed_handle, component_id] : s_component_type_map) {
+    for (uint64 i = 0; i < static_cast<uint64>(SpecialType::Last); i++) {
+      s_core_managed_bindings.destroy_type(s_special_types[i]);
+      s_special_types[i] = nullptr;
+    }
+    
+    for (auto [managed_handle, component_id] : s_managed_component_types_to_id) {
       s_core_managed_bindings.destroy_type(managed_handle);
     }
-    s_component_type_map.Clear();
+    s_id_to_managed_component_types.Clear();
+    s_managed_component_types_to_id.Clear();
   }
 
   //--------------------------------------------------------------
@@ -136,6 +129,33 @@ namespace Hyperion::Scripting {
     } else {
       return it->second;
     }
+  }
+
+  //--------------------------------------------------------------
+  void DotnetScriptingBindings::DestroyManagedObject(NativeHandle native_handle, ManagedHandle managed_handle) {
+    s_core_managed_bindings.destroy_managed_object(managed_handle);
+    s_object_mappings.Remove(native_handle);
+  }
+
+  //--------------------------------------------------------------
+  ComponentId DotnetScriptingBindings::GetComponentIdForManagedType(ManagedHandle component_type_handle) {
+    auto it = s_managed_component_types_to_id.Find(component_type_handle);
+    if (it == s_managed_component_types_to_id.end()) {
+      HYP_LOG_ERROR("Scripting", "Failed to find component id for managed type!");
+      return ComponentInfo::INVALID_ID;
+    } else {
+      return it->second;
+    }
+  }
+
+  //--------------------------------------------------------------
+  ManagedHandle DotnetScriptingBindings::GetManagedTypeForComponentId(ComponentId component_id) {
+    return s_id_to_managed_component_types.Get(component_id);
+  }
+
+  //--------------------------------------------------------------
+  void DotnetScriptingBindings::RegisterSpecialType(SpecialType special_type, const char *full_name) {
+    s_special_types[static_cast<uint32>(special_type)] = s_core_managed_bindings.get_type_by_name(full_name);
   }
 
 }

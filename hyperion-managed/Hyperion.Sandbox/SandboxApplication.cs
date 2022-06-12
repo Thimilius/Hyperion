@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Hyperion.Ecs;
+﻿using Hyperion.Ecs;
 
 namespace Hyperion.Sandbox {
   public class SandboxApplication : IApplication {
@@ -20,18 +19,10 @@ namespace Hyperion.Sandbox {
 
       NameComponent secondComponent = m_Entity.GetComponent<NameComponent>();
       Engine.Log(nameComponent == secondComponent);
-
-      m_Entity.RemoveComponent<NameComponent>();
-      Engine.Log(nameComponent.Name);
-      
-      entityManager.DestroyEntity(m_Entity);
-      
-      Engine.Log(m_Entity.IsAlive);
-      Engine.Log(nameComponent.Name);
     }
 
     public void Update() {
-      
+      Engine.Log(m_Entity.GetComponent<NameComponent>().Name);
     }
 
     public void Shutdown() {
