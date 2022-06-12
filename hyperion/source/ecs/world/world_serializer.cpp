@@ -444,7 +444,7 @@ namespace Hyperion {
           Type property_type_raw = property_type.get_raw_type();
           if (property_type_raw == Type::get<Asset>() || property_type_raw.is_derived_from(Type::get<Asset>())) {
             Asset *asset = static_cast<Asset *>(pointer);
-            yaml_emitter << asset->GetAssetInfo().handle.ToString();
+            yaml_emitter << asset->GetAssetInfo().handle.handle.ToString();
           } else {
             SerializeType(yaml_emitter, manager, property_type, pointer);  
           }
@@ -549,7 +549,7 @@ namespace Hyperion {
           // We handle assets directly here to load them by their guid.
           Type property_type_raw = property_type.get_raw_type();
           if (property_type_raw == Type::get<Asset>() || property_type_raw.is_derived_from(Type::get<Asset>())) {
-            AssetHandle guid = AssetHandle::Generate(yaml_property.as<String>());
+            AssetHandle guid = AssetHandleType::Generate(yaml_property.as<String>());
             if (property_type_raw == Type::get<Material>()) {
               property_value = AssetManager::GetMaterial(guid);
             } else if (property_type_raw == Type::get<Mesh>()) {

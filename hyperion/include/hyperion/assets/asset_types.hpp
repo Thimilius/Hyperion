@@ -16,8 +16,22 @@ namespace Hyperion {
     TextureAtlas
   };
 
-  using AssetHandle = Guid;
+  using AssetHandleType = Guid;
+  
+  struct AssetHandle {
+    AssetHandleType handle;
 
+    AssetHandle() = default;
+    AssetHandle(AssetHandleType handle) : handle(handle) { }
+
+    bool IsValid() const { return handle.IsValid(); }
+    
+    bool8 operator==(const AssetHandle &other) const { return handle == other.handle; }
+    bool8 operator!=(const AssetHandle &other) const { return !(*this == other); }
+    
+    operator AssetHandleType() const { return handle; }
+  };
+  
   enum class AssetDataAccess {
     None,
     Write,
@@ -35,4 +49,22 @@ namespace Hyperion {
     String path;
   };
   
+}
+
+namespace std {
+
+  template<>
+  struct std::formatter<Hyperion::AssetHandle> : std::formatter<Hyperion::AssetHandleType> {
+    auto format(Hyperion::AssetHandle handle, std::format_context& ctx) {
+      return std::formatter<Hyperion::AssetHandleType>::format(handle.handle, ctx);
+    }
+  };
+
+  template<>
+  struct hash<Hyperion::AssetHandle> {
+    std::size_t operator()(const Hyperion::AssetHandle &handle) const noexcept {
+      return hash<Hyperion::AssetHandleType>()(handle.handle);
+    }
+  };
+
 }

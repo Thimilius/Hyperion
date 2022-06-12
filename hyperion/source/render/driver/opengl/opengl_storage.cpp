@@ -474,7 +474,7 @@ namespace Hyperion::Rendering {
     for (AssetHandle mesh_handle : asset_context.GetMeshAssetsToUnload()) {
       auto mesh_it = m_meshes.Find(mesh_handle);
       if (mesh_it == m_meshes.end()) {
-        HYP_LOG_ERROR("OpenGL", "Trying to delete mesh {} which does not exist!", mesh_handle.ToString());
+        HYP_LOG_ERROR("OpenGL", "Trying to delete mesh {} which does not exist!", mesh_handle);
         HYP_DEBUG_BREAK;
       } else {
         OpenGLMesh &opengl_mesh = mesh_it->second;

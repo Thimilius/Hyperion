@@ -32,14 +32,14 @@ namespace Hyperion {
   Texture2D *AssetManager::GetTexture2D(AssetHandle handle) {
     auto it = s_textures.Find(handle);
     if (it == s_textures.end()) {
-      HYP_LOG_ERROR("Asset", "The texture with handle {} does not exist!", handle.ToString());
+      HYP_LOG_ERROR("Asset", "The texture with handle {} does not exist!", handle);
       return nullptr;
     } else {
       Texture *texture = it->second;
       if (texture->GetDimension() == Rendering::TextureDimension::Texture2D) {
         return static_cast<Texture2D *>(texture);
       } else {
-        HYP_LOG_ERROR("Asset", "The texture with handle {} is not a 2D texture!", handle.ToString());
+        HYP_LOG_ERROR("Asset", "The texture with handle {} is not a 2D texture!", handle);
         return nullptr;
       }
     }
@@ -66,14 +66,14 @@ namespace Hyperion {
   RenderTexture *AssetManager::GetRenderTexture(AssetHandle handle) {
     auto it = s_textures.Find(handle);
     if (it == s_textures.end()) {
-      HYP_LOG_ERROR("Asset", "The texture with handle {} does not exist!", handle.ToString());
+      HYP_LOG_ERROR("Asset", "The texture with handle {} does not exist!", handle);
       return nullptr;
     } else {
       Texture *texture = it->second;
       if (texture->GetDimension() == Rendering::TextureDimension::RenderTexture) {
         return static_cast<RenderTexture *>(texture);
       } else {
-        HYP_LOG_ERROR("Asset", "The texture with handle {} is not a render texture!", handle.ToString());
+        HYP_LOG_ERROR("Asset", "The texture with handle {} is not a render texture!", handle);
         return nullptr;
       }
     }
@@ -112,7 +112,7 @@ namespace Hyperion {
   Shader *AssetManager::GetShader(AssetHandle handle) {
     auto it = s_shaders.Find(handle);
     if (it == s_shaders.end()) {
-      HYP_LOG_ERROR("Asset", "The shader with handle {} does not exist!", handle.ToString());
+      HYP_LOG_ERROR("Asset", "The shader with handle {} does not exist!", handle);
       return nullptr;
     } else {
       return it->second;
@@ -145,7 +145,7 @@ namespace Hyperion {
   Material *AssetManager::GetMaterial(AssetHandle handle) {
     auto it = s_materials.Find(handle);
     if (it == s_materials.end()) {
-      HYP_LOG_ERROR("Asset", "The material with handle {} does not exist!", handle.ToString());
+      HYP_LOG_ERROR("Asset", "The material with handle {} does not exist!", handle);
       return nullptr;
     } else {
       return it->second;
@@ -176,7 +176,7 @@ namespace Hyperion {
   Mesh *AssetManager::GetMesh(AssetHandle handle) {
     auto it = s_meshes.Find(handle);
     if (it == s_meshes.end()) {
-      HYP_LOG_ERROR("Asset", "The mesh with handle {} does not exist!", handle.ToString());
+      HYP_LOG_ERROR("Asset", "The mesh with handle {} does not exist!", handle);
       return nullptr;
     } else {
       return it->second;
@@ -329,7 +329,7 @@ namespace Hyperion {
   //--------------------------------------------------------------
   void AssetManager::SetNewHandle(Asset *asset, const String &handle) {
     AssetHandle old_handle = asset->GetAssetInfo().handle;
-    AssetHandle new_handle = AssetHandle::Generate(handle);
+    AssetHandle new_handle = AssetHandle(AssetHandleType::Generate(handle));
 
     switch (asset->GetAssetType()) {
       case AssetType::Material: {
@@ -373,7 +373,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   AssetInfo AssetManager::GetNextAssetInfo(AssetDataAccess data_access) {
-    return { AssetHandle::Generate(), data_access };
+    return { AssetHandleType::Generate(), data_access };
   }
 
 }

@@ -48,7 +48,7 @@
 	- New (and better/prettier) syntax
 
 ## Scripting
-- Scripting World to better manage entity/component lifetime
+- Add more bindings
 
 ## UI
 - Immediate

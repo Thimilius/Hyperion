@@ -14,6 +14,13 @@ namespace Hyperion {
 namespace std {
 
   template<>
+  struct std::formatter<Hyperion::Guid> : std::formatter<Hyperion::String> {
+    auto format(Hyperion::Guid guid, std::format_context& ctx) {
+      return std::formatter<Hyperion::String>::format(guid.ToString(), ctx);
+    }
+  };
+
+  template<>
   struct hash<Hyperion::Guid> {
     std::size_t operator()(const Hyperion::Guid &guid) const noexcept {
       return (hash<uint64>()(guid.m_data[0]) ^ (hash<uint64>()(guid.m_data[1]) << 1)) >> 1;

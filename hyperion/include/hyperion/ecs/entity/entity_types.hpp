@@ -74,8 +74,8 @@ namespace Hyperion {
 
 namespace std {
   
-  template <>
-    struct std::formatter<Hyperion::EntityId> : std::formatter<Hyperion::EntityIdType> {
+  template<>
+  struct std::formatter<Hyperion::EntityId> : std::formatter<Hyperion::EntityIdType> {
     auto format(Hyperion::EntityId id, std::format_context& ctx) {
       return std::formatter<Hyperion::EntityIdType>::format(id.id, ctx);
     }

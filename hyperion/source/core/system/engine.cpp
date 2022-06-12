@@ -278,6 +278,10 @@ namespace Hyperion {
       .property("width", &Rect::width)
       .property("height", &Rect::height);
 
+    Registration::class_<AssetHandle>(HYP_NAME_OF_TYPE(AssetHandle))
+      .constructor()
+      .property("handle", &AssetHandle::handle);
+    
     ComponentRegistry::RegisterTypes();
   }
 
