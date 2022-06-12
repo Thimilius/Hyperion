@@ -29,6 +29,10 @@ namespace Hyperion::Scripting {
     void OnEngineModeChanged(EngineState old_state, EngineState new_state) override;
     void Update() override;
     void Shutdown() override;
+    
+    IScriptingWorld *CreateWorld(World *world) override;
+    IScriptingWorld *CopyWorld(World *world, IScriptingWorld *scripting_world) override;
+    void DestroyWorld(IScriptingWorld *scripting_world) override;
   private:
     void LoadManagedContext();
     void UnloadManagedContext();

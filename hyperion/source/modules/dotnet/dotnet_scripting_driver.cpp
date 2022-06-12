@@ -10,6 +10,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/system/operating_system.hpp"
+#include "hyperion/modules/dotnet/dotnet_scripting_world.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Scripting {
@@ -121,6 +122,21 @@ namespace Hyperion::Scripting {
     }
   }
 
+  //--------------------------------------------------------------
+  IScriptingWorld *DotnetScriptingDriver::CreateWorld(World *world) {
+    return new DotnetScriptingWorld(world, this);
+  }
+  
+  //--------------------------------------------------------------
+  IScriptingWorld *DotnetScriptingDriver::CopyWorld(World *world, IScriptingWorld *scripting_world) {
+    return new DotnetScriptingWorld(world, this);
+  }
+  
+  //--------------------------------------------------------------
+  void DotnetScriptingDriver::DestroyWorld(IScriptingWorld *scripting_world) {
+    delete scripting_world;
+  }
+  
   //--------------------------------------------------------------
   void DotnetScriptingDriver::LoadManagedContext() {
     HYP_PROFILE_SCOPE("DotnetScriptingDriver.LoadManagedContext")

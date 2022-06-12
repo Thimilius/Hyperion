@@ -41,5 +41,20 @@ namespace Hyperion::Scripting {
     s_scripting_driver->Shutdown();
     delete s_scripting_driver;
   }
-
+  
+  //--------------------------------------------------------------
+  IScriptingWorld *ScriptingEngine::CreateWorld(World *world) {
+    return s_scripting_driver->CreateWorld(world);
+  }
+  
+  //--------------------------------------------------------------
+  IScriptingWorld *ScriptingEngine::CopyWorld(World *world, IScriptingWorld *scripting_world) {
+    return s_scripting_driver->CopyWorld(world, scripting_world);
+  }
+  
+  //--------------------------------------------------------------
+  void ScriptingEngine::DestroyWorld(IScriptingWorld *scripting_world) {
+    s_scripting_driver->DestroyWorld(scripting_world);  
+  }
+  
 }

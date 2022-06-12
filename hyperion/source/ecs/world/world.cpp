@@ -6,6 +6,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/physics/physics_engine.hpp"
+#include "hyperion/scripting/scripting_engine.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -15,11 +16,13 @@ namespace Hyperion {
     AssignInternalReferences();
 
     m_physics_world = Physics::PhysicsEngine::CreateWorld(this);
+    m_scripting_world = Scripting::ScriptingEngine::CreateWorld(this);
   }
 
   //--------------------------------------------------------------
   World::~World() {
     Physics::PhysicsEngine::DestroyWorld(m_physics_world);
+    Scripting::ScriptingEngine::DestroyWorld(m_scripting_world);
   }
 
   //--------------------------------------------------------------
@@ -56,6 +59,7 @@ namespace Hyperion {
     }
 
     m_physics_world = Physics::PhysicsEngine::CopyWorld(this, other.m_physics_world);
+    m_scripting_world = Scripting::ScriptingEngine::CopyWorld(this, other.m_scripting_world);
   }
 
   //--------------------------------------------------------------

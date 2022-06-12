@@ -6,6 +6,7 @@
 #include "hyperion/ecs/entity/entity_manager.hpp"
 #include "hyperion/ecs/world/world_environment.hpp"
 #include "hyperion/physics/physics_world.hpp"
+#include "hyperion/scripting/scripting_world.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -30,6 +31,7 @@ namespace Hyperion {
     inline const EntityHierarchy *GetHierarchy() const { return &m_hierarchy; }
 
     inline Physics::IPhysicsWorld *GetPhysicsWorld() const { return m_physics_world; }
+    inline Scripting::IScriptingWorld *GetScriptingWorld() const { return m_scripting_world; }
   private:
     World();
     ~World();
@@ -47,6 +49,7 @@ namespace Hyperion {
     EntityHierarchy m_hierarchy;
 
     Physics::IPhysicsWorld *m_physics_world = nullptr;
+    Scripting::IScriptingWorld *m_scripting_world = nullptr;
   private:
     friend class Hyperion::WorldManager;
     friend class Hyperion::EntityManager;

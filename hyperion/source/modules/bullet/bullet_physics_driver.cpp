@@ -11,21 +11,6 @@
 namespace Hyperion::Physics {
 
   //--------------------------------------------------------------
-  IPhysicsWorld *BulletPhysicsDriver::CreatePhysicsWorld(World *world) {
-    return new BulletPhysicsWorld(world, this);
-  }
-
-  //--------------------------------------------------------------
-  IPhysicsWorld * BulletPhysicsDriver::CopyPhysicsWorld(World *world, IPhysicsWorld *physics_world) {
-    return new BulletPhysicsWorld(world, this, physics_world);
-  }
-
-  //--------------------------------------------------------------
-  void BulletPhysicsDriver::DestroyPhysicsWorld(IPhysicsWorld *world) {
-    delete world;
-  }
-
-  //--------------------------------------------------------------
   void BulletPhysicsDriver::Initialize() {
     m_collision_configuration = new btDefaultCollisionConfiguration();
 
@@ -38,6 +23,21 @@ namespace Hyperion::Physics {
   //--------------------------------------------------------------
   void BulletPhysicsDriver::Shutdown() {
     delete m_collision_configuration;
+  }
+
+  //--------------------------------------------------------------
+  IPhysicsWorld *BulletPhysicsDriver::CreateWorld(World *world) {
+    return new BulletPhysicsWorld(world, this);
+  }
+
+  //--------------------------------------------------------------
+  IPhysicsWorld *BulletPhysicsDriver::CopyWorld(World *world, IPhysicsWorld *physics_world) {
+    return new BulletPhysicsWorld(world, this, physics_world);
+  }
+
+  //--------------------------------------------------------------
+  void BulletPhysicsDriver::DestroyWorld(IPhysicsWorld *physics_world) {
+    delete physics_world;
   }
 
 }

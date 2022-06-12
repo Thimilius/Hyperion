@@ -30,11 +30,17 @@ namespace Hyperion::Physics {
     bool8 Raycast(Ray ray, RaycastResult &result, float32 distance) override;
 
     void UpdateBoxCollider(EntityManager *manager, EntityId entity, BoxColliderComponent *box_collider, DerivedTransformComponent *derived_transform) override;
-    void UpdateBoxColliderTransform(EntityManager *manager, EntityId entity, BoxColliderComponent *box_collider,
-                                    DerivedTransformComponent *derived_transform) override;
+    void UpdateBoxColliderTransform(
+      EntityManager *manager,
+      EntityId entity,
+      BoxColliderComponent *box_collider,
+      DerivedTransformComponent *derived_transform) override;
     void UpdateSphereCollider(EntityManager *manager, EntityId entity, SphereColliderComponent *sphere_collider) override;
-    void UpdateSphereColliderTransform(EntityManager *manager, EntityId entity, SphereColliderComponent *sphere_collider,
-                                       DerivedTransformComponent *derived_transform) override;
+    void UpdateSphereColliderTransform(
+      EntityManager *manager,
+      EntityId entity,
+      SphereColliderComponent *sphere_collider,
+      DerivedTransformComponent *derived_transform) override;
   private:
     void AddBoxCollider(EntityManager *manager, EntityId entity);
     void RemoveBoxCollider(EntityManager *manager, EntityId entity);

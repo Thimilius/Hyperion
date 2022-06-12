@@ -23,26 +23,44 @@ namespace Hyperion::Physics {
   public:
     virtual bool8 Raycast(Ray ray, RaycastResult &result, float32 distance = 1000.0f) = 0;
 
-    virtual void UpdateBoxCollider(EntityManager *manager, EntityId entity, BoxColliderComponent *box_collider,
-                                   DerivedTransformComponent *derived_transform) = 0;
-    virtual void UpdateBoxColliderTransform(EntityManager *manager, EntityId entity, BoxColliderComponent *box_collider,
-                                            DerivedTransformComponent *derived_transform) = 0;
+    virtual void UpdateBoxCollider(
+      EntityManager *manager,
+      EntityId entity,
+      BoxColliderComponent *box_collider,
+      DerivedTransformComponent *derived_transform) = 0;
+    virtual void UpdateBoxColliderTransform(
+      EntityManager *manager,
+      EntityId entity,
+      BoxColliderComponent *box_collider,
+      DerivedTransformComponent *derived_transform) = 0;
     virtual void UpdateSphereCollider(EntityManager *manager, EntityId entity, SphereColliderComponent *sphere_collider) = 0;
-    virtual void UpdateSphereColliderTransform(EntityManager *manager, EntityId entity, SphereColliderComponent *sphere_collider,
-                                               DerivedTransformComponent *derived_transform) = 0;
+    virtual void UpdateSphereColliderTransform(
+      EntityManager *manager,
+      EntityId entity,
+      SphereColliderComponent *sphere_collider,
+      DerivedTransformComponent *derived_transform) = 0;
   };
 
   class NullPhysicsWorld final : public IPhysicsWorld {
   public:
     bool8 Raycast(Ray ray, RaycastResult &result, float32 distance = 1000.0f) override { return false; }
 
-    void UpdateBoxCollider(EntityManager *manager, EntityId entity, BoxColliderComponent *box_collider,
-                                   DerivedTransformComponent *derived_transform) override { }
-    void UpdateBoxColliderTransform(EntityManager *manager, EntityId entity, BoxColliderComponent *box_collider,
-                                            DerivedTransformComponent *derived_transform) override { }
+    void UpdateBoxCollider(
+      EntityManager *manager,
+      EntityId entity,
+      BoxColliderComponent *box_collider,
+      DerivedTransformComponent *derived_transform) override { }
+    void UpdateBoxColliderTransform(
+      EntityManager *manager,
+      EntityId entity,
+      BoxColliderComponent *box_collider,
+      DerivedTransformComponent *derived_transform) override { }
     void UpdateSphereCollider(EntityManager *manager, EntityId entity, SphereColliderComponent *sphere_collider) override { }
-    void UpdateSphereColliderTransform(EntityManager *manager, EntityId entity, SphereColliderComponent *sphere_collider,
-                                               DerivedTransformComponent *derived_transform) override { }
+    void UpdateSphereColliderTransform(
+      EntityManager *manager,
+      EntityId entity,
+      SphereColliderComponent *sphere_collider,
+      DerivedTransformComponent *derived_transform) override { }
   };
 
 }

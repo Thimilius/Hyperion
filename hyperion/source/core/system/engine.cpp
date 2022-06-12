@@ -329,13 +329,13 @@ namespace Hyperion {
   void Engine::Initialize() {
     AssetManager::Initialize();
 
-    Audio::AudioEngine::Initialize();
     Rendering::RenderEngine::Initialize();
+    Audio::AudioEngine::Initialize();
     Physics::PhysicsEngine::Initialize();
 
-    WorldManager::Initialize();
-
     Scripting::ScriptingEngine::Initialize(s_settings.scripting);
+
+    WorldManager::Initialize();
   }
 
   //--------------------------------------------------------------
@@ -408,15 +408,16 @@ namespace Hyperion {
   //--------------------------------------------------------------
   void Engine::Shutdown() {
     // When shutting down we have to be very careful about the order.
-    Scripting::ScriptingEngine::Shutdown();
-    
     WorldManager::Shutdown();
+    
+    Scripting::ScriptingEngine::Shutdown();
 
     Physics::PhysicsEngine::Shutdown();
     Audio::AudioEngine::Shutdown();
-
     Rendering::RenderEngine::Shutdown();
 
+    AssetManager::Shutdown();
+    
     delete s_application->GetMainWindow();
   }
 

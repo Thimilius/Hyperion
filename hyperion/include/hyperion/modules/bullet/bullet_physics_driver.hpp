@@ -15,17 +15,17 @@ namespace Hyperion::Physics {
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Physics {
 
-  class BulletPhysicsDriver : public IPhysicsDriver {
+  class BulletPhysicsDriver final : public IPhysicsDriver {
   public:
     PhysicsBackend GetBackend() const override { return PhysicsBackend::Bullet; }
-
-    IPhysicsWorld *CreatePhysicsWorld(World *world) override;
-    IPhysicsWorld *CopyPhysicsWorld(World *world, IPhysicsWorld *physics_world) override;
-    void DestroyPhysicsWorld(IPhysicsWorld *physics_world) override;
 
     void Initialize() override;
     void FixedUpdate(float32 delta_time) override;
     void Shutdown() override;
+
+    IPhysicsWorld *CreateWorld(World *world) override;
+    IPhysicsWorld *CopyWorld(World *world, IPhysicsWorld *physics_world) override;
+    void DestroyWorld(IPhysicsWorld *physics_world) override;
 
     inline btDefaultCollisionConfiguration *GetCollisionConfiguration() const { return m_collision_configuration; }
   private:
