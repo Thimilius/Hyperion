@@ -2,10 +2,10 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/assets/asset_types.hpp"
 #include "hyperion/core/math/bounding_box.hpp"
 #include "hyperion/core/math/matrix4x4.hpp"
-#include "hyperion/assets/asset_types.hpp"
-#include "hyperion/assets/material.hpp"
+#include "hyperion/render/types/render_types_shader.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {

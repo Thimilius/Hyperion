@@ -106,7 +106,7 @@ namespace Sandbox {
     Material *material = AssetManager::CreateMaterial(AssetManager::GetShaderPrimitive(ShaderPrimitive::Unlit));
     material->SetTexture("m_texture", texture);
     EntityId quad = manager->CreateEntity(EntityPrimitive::Quad);
-    manager->GetComponent<MeshComponent>(quad)->material = material;
+    manager->GetComponent<MeshComponent>(quad)->material = material->GetAssetInfo().handle;
     manager->GetComponent<LocalTransformComponent>(quad)->position = Vector3(0.0f, 2.0f, 0.0f);
 #endif
     

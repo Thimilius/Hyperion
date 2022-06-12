@@ -2,9 +2,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/assets/material.hpp"
-#include "hyperion/assets/mesh.hpp"
-#include "hyperion/assets/texture.hpp"
+#include "hyperion/assets/asset_types.hpp"
 #include "hyperion/core/color.hpp"
 #include "hyperion/core/math/bounding_box.hpp"
 #include "hyperion/render/types/render_types_camera.hpp"
@@ -40,14 +38,14 @@ namespace Hyperion::Rendering {
 
   struct SpriteComponent {
     Color color = Color::White();
-    Texture2D *texture = nullptr;
+    AssetHandle texture;
   };
 
   struct MeshComponent {
-    Mesh *mesh = nullptr;
+    AssetHandle mesh;
     uint32 sub_mesh_index = 0;
 
-    Material *material = nullptr;
+    AssetHandle material;
 
     LayerMask layer_mask = LayerMask::Default;
   };

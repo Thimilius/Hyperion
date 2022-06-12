@@ -95,7 +95,7 @@ namespace Hyperion {
     EntityId entity = EntityId::EMPTY;
     if (mesh->GetSubMeshCount() == 1) {
       entity = CreateEntity(EntityPrimitive::Quad);
-      GetComponent<Rendering::MeshComponent>(entity)->mesh = mesh;
+      GetComponent<Rendering::MeshComponent>(entity)->mesh = mesh->GetAssetInfo().handle;
     } else {
       entity = CreateEntity(EntityPrimitive::Base);
       for (uint32 i = 0; i < mesh->GetSubMeshCount(); i++) {
@@ -103,7 +103,7 @@ namespace Hyperion {
         m_world->m_hierarchy.SetParent(child, entity);
 
         Rendering::MeshComponent *mesh_component = GetComponent<Rendering::MeshComponent>(child);
-        mesh_component->mesh = mesh;
+        mesh_component->mesh = mesh->GetAssetInfo().handle;
         mesh_component->sub_mesh_index = i;
       }
     }
@@ -262,20 +262,20 @@ namespace Hyperion {
       case EntityPrimitive::Cube:
       case EntityPrimitive::Sphere: {
         Rendering::MeshComponent *mesh = AddComponent<Rendering::MeshComponent>(id);
-        mesh->material = AssetManager::GetMaterialPrimitive(MaterialPrimitive::Default);
+        mesh->material = AssetManager::GetMaterialPrimitive(MaterialPrimitive::Default)->GetAssetInfo().handle;
 
         switch (primitive) {
-          case EntityPrimitive::Quad: mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Quad);
+          case EntityPrimitive::Quad: mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Quad)->GetAssetInfo().handle;
             break;
-          case EntityPrimitive::Plane: mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Plane);
+          case EntityPrimitive::Plane: mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Plane)->GetAssetInfo().handle;
             break;
           case EntityPrimitive::Cube: {
-            mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Cube);
+            mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Cube)->GetAssetInfo().handle;
             AddComponent<Physics::BoxColliderComponent>(id);
             break;
           }
           case EntityPrimitive::Sphere: {
-            mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Sphere);
+            mesh->mesh = AssetManager::GetMeshPrimitive(MeshPrimitive::Sphere)->GetAssetInfo().handle;
             AddComponent<Physics::SphereColliderComponent>(id);
             break;
           }

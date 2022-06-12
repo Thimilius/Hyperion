@@ -33,8 +33,9 @@ namespace Hyperion::Rendering {
       MeshComponent *mesh = manager->GetComponent<MeshComponent>(entity);
       MeshBoundsComponent *mesh_bounds = manager->GetComponent<MeshBoundsComponent>(entity);
 
-      if (mesh->mesh) {
-        mesh_bounds->bounds = BoundingBox::Transform(local_to_world->local_to_world, mesh->mesh->GetBounds());  
+      AssetHandle mesh_handle = mesh->mesh;
+      if (mesh_handle.IsValid()) {
+        mesh_bounds->bounds = BoundingBox::Transform(local_to_world->local_to_world, AssetManager::GetMesh(mesh_handle)->GetBounds());  
       }
     }
   }
@@ -171,9 +172,9 @@ namespace Hyperion::Rendering {
       MeshBoundsComponent *mesh_bounds = manager->GetComponent<MeshBoundsComponent>(entity);
       MeshComponent *mesh = manager->GetComponent<MeshComponent>(entity);
 
-      Mesh *mesh_mesh = mesh->mesh;
-      Material *material = mesh->material;
-      if (mesh_mesh == nullptr || material == nullptr) {
+      AssetHandle mesh_handle = mesh->mesh;
+      AssetHandle material_handle = mesh->material;
+      if (!mesh_handle.IsValid() || !material_handle.IsValid()) {
         continue;
       }
       
@@ -181,10 +182,10 @@ namespace Hyperion::Rendering {
       render_frame_context_mesh_object.id = EntityId::CreateSmall(entity);
       render_frame_context_mesh_object.local_to_world = local_to_world->local_to_world;
       render_frame_context_mesh_object.position = Vector3(local_to_world->local_to_world.columns[3]);
-      render_frame_context_mesh_object.mesh_handle = mesh_mesh->GetAssetInfo().handle;
+      render_frame_context_mesh_object.mesh_handle = mesh_handle;
       render_frame_context_mesh_object.sub_mesh_index = mesh->sub_mesh_index;
-      render_frame_context_mesh_object.shader_handle = material->GetShader()->GetAssetInfo().handle;
-      render_frame_context_mesh_object.material_handle = material->GetAssetInfo().handle;
+      render_frame_context_mesh_object.shader_handle = AssetManager::GetMaterial(material_handle)->GetShader()->GetAssetInfo().handle; // TODO: Remove this.
+      render_frame_context_mesh_object.material_handle = material_handle;
       render_frame_context_mesh_object.layer_mask = mesh->layer_mask;
       render_frame_context_mesh_object.bounds = mesh_bounds->bounds;
     }

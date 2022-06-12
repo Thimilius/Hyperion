@@ -3,6 +3,8 @@
 
 //---------------------- Library Includes ----------------------
 #include <hyperion/core/math/plane.hpp>
+#include <hyperion/core/math/vector2.hpp>
+#include <hyperion/core/math/vector3.hpp>
 #include <hyperion/ecs/component/components/transform_components.hpp>
 #include <hyperion/ecs/component/components/render_components.hpp>
 #include <hyperion/render/frame/context/render_frame_context_camera.hpp>
