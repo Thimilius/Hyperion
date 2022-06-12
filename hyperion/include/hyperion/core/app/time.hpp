@@ -40,7 +40,7 @@ namespace Hyperion {
     ~Time() = delete;
   private:
     inline static Timer s_timer;
-    inline static float64 s_last_time = 0.0;
+    inline static float32 s_last_time = 0.0;
     inline static float64 s_accumulator = 0.0;
 
     inline static float32 s_max_delta_time = 0.0f;
@@ -51,7 +51,7 @@ namespace Hyperion {
     inline static uint64 s_frame_counter = 0;
     inline static float32 s_frame_time = 0.0f;
     inline static uint32 s_fps = 0;
-    inline static const uint64 MAX_PAST_DELTA_TIMES = 64;
+    inline static constexpr uint64 MAX_PAST_DELTA_TIMES = 64;
     inline static float32 s_past_delta_times[MAX_PAST_DELTA_TIMES];
   private:
     friend class Hyperion::Engine;

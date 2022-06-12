@@ -45,10 +45,11 @@ namespace Hyperion {
 
     HYP_LOG_INFO("Engine", "Initializing...");
     OperatingSystemInfo operating_system_info = OperatingSystem::GetSystemInfo();
-    HYP_LOG_INFO("Engine", "Processor Count: {} | Processor Frequency: {:.2f} Ghz | Physical Memory: {:.2f} GB",
-                 operating_system_info.processor_info.processor_count,
-                 static_cast<float32>(operating_system_info.processor_info.processor_mhz_frequency / 1000.0f),
-                 static_cast<float32>(operating_system_info.memory_info.total_physical_memory / (1024.0f * 1024.0f * 1024.0f)));
+    HYP_LOG_INFO(
+      "Engine", "Processor Count: {} | Processor Frequency: {:.2f} Ghz | Physical Memory: {:.2f} GB",
+      operating_system_info.processor_info.processor_count,
+      static_cast<float32>(operating_system_info.processor_info.processor_mhz_frequency) / 1000.0f,
+      static_cast<float32>(operating_system_info.memory_info.total_physical_memory) / (1024.0f * 1024.0f * 1024.0f));
 
     Display::UpdateDisplayInfos();
     DisplayInfo::DisplayModeInfo mode_info = Display::GetCurrentDisplayModeInfo();
@@ -61,19 +62,20 @@ namespace Hyperion {
         "MemoryStatsInitialization", []() {
           HYP_PROFILE_SCOPE("EngineLoop.MemoryStatsInitialization");
           MemoryStats::ResetFrameMemory();
-        }
+        },
+        { }
       },
       {
         "TimeInitialization", []() {
           HYP_PROFILE_SCOPE("EngineLoop.TimeInitialization");
 
           float32 now = Time::s_timer.ElapsedSeconds();
-          float32 delta_time = static_cast<float32>(now - Time::s_last_time);
+          float32 delta_time = now - Time::s_last_time;
           if (delta_time > Time::GetMaxDeltaTime()) {
             delta_time = Time::GetMaxDeltaTime();
           }
           Time::s_last_time = now;
-          Time::s_accumulator += delta_time;
+          Time::s_accumulator += static_cast<float64>(delta_time);
           Time::s_delta_time = delta_time;
           Time::s_time += delta_time;
 
@@ -87,13 +89,15 @@ namespace Hyperion {
           Time::s_frame_time = delta_time_average * 1000.0f;
           Time::s_fps = static_cast<uint32>(1.0f / delta_time_average);
           Time::s_frame_counter++;
-        }
+        },
+        { }
       },
       {
         "InputInitialization", []() {
           HYP_PROFILE_SCOPE("EngineLoop.InputInitialization");
           s_application->GetMainWindow()->Poll();
-        }
+        },
+        { }
       },
       {
         "DisplayInitialization", []() {
@@ -103,7 +107,8 @@ namespace Hyperion {
           // We have to do it after the input initialization to properly handle resizing which might start inner engine iterations.
 
           Display::UpdateSize();
-        }
+        },
+        { }
       }
     };
     engine_loop.fixed_update.name = "FixedUpdate";
@@ -112,13 +117,15 @@ namespace Hyperion {
         "ApplicationFixedUpdate", []() {
           HYP_PROFILE_SCOPE("EngineLoop.ApplicationFixedUpdate");
           s_application->OnFixedUpdate(Time::GetFixedDeltaTime());
-        }
+        },
+        { }
       },
       {
         "TimeFixedUpdate", []() {
           HYP_PROFILE_SCOPE("EngineLoop.TimeFixedUpdate");
-          Time::s_accumulator -= Time::GetFixedDeltaTime();
-        }
+          Time::s_accumulator -= static_cast<float64>(Time::GetFixedDeltaTime());
+        },
+        { }
       }
     };
     engine_loop.tick.name = "Tick";
@@ -127,7 +134,8 @@ namespace Hyperion {
         "ApplicationTick", []() {
           HYP_PROFILE_SCOPE("EngineLoop.ApplicationTick");
           s_application->OnTick();
-        }
+        },
+        { }
       }
     };
     engine_loop.update.name = "Update";
@@ -136,25 +144,29 @@ namespace Hyperion {
         "AssetManagerPreUpdate", []() {
           HYP_PROFILE_SCOPE("EngineLoop.AssetManagerPreUpdate");
           AssetManager::PreUpdate();
-        }
+        },
+        { }
       },
       {
         "ApplicationUpdate", []() {
           HYP_PROFILE_SCOPE("EngineLoop.ApplicationUpdate");
           s_application->OnUpdate(Time::GetDeltaTime());
-        }
+        },
+        { }
       },
       {
         "WorldManagerUpdate", []() {
           HYP_PROFILE_SCOPE("EngineLoop.WorldManagerUpdate");
           WorldManager::Update();
-        }
+        },
+        { }
       },
       {
         "ScriptingEngineUpdate", []() {
           HYP_PROFILE_SCOPE("EngineLoop.ScriptingEngineUpdate");
           Scripting::ScriptingEngine::Update();
-        }
+        },
+        { }
       }
     };
     engine_loop.late_update.name = "LateUpdate";
@@ -163,19 +175,22 @@ namespace Hyperion {
         "RenderEngineLateUpdate", []() {
           HYP_PROFILE_SCOPE("EngineLoop.RenderEngineLateUpdate");
           Rendering::RenderEngine::Render();
-        }
+        },
+        { }
       },
       {
         "AssetManagerLateUpdate", []() {
           HYP_PROFILE_SCOPE("EngineLoop.AssetManagerLateUpdate");
           AssetManager::LateUpdate();
-        }
+        },
+        { }
       },
       {
         "RenderEngineSynchronize", []() {
           HYP_PROFILE_SCOPE("EngineLoop.RenderEngineSynchronize");
           Rendering::RenderEngine::Present();
-        }
+        },
+        { }
       }
     };
   }
@@ -354,7 +369,7 @@ namespace Hyperion {
       ExecuteEngineLoopSubSystem(engine_loop.initialization);
     }
 
-    while (Time::s_accumulator > Time::GetFixedDeltaTime()) {
+    while (Time::s_accumulator > static_cast<float64>(Time::GetFixedDeltaTime())) {
       HYP_PROFILE_SCOPE("EngineLoop.FixedUpdate");
       ExecuteEngineLoopSubSystem(engine_loop.fixed_update);
     }
