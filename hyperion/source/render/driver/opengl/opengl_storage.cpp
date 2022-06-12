@@ -197,7 +197,7 @@ namespace Hyperion::Rendering {
     HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadTexture2D")
 
     OpenGLTexture opengl_texture = { };
-    opengl_texture.id = texture_2d.id;
+    opengl_texture.handle = texture_2d.handle;
 
     glCreateTextures(GL_TEXTURE_2D, 1, &opengl_texture.texture);
 
@@ -220,15 +220,15 @@ namespace Hyperion::Rendering {
       glGenerateTextureMipmap(opengl_texture.texture);
     }
 
-    m_textures.Insert(texture_2d.id, opengl_texture);
+    m_textures.Insert(texture_2d.handle, opengl_texture);
   }
 
   //--------------------------------------------------------------
   void OpenGLStorage::LoadRenderTexture(RenderAssetRenderTexture &render_texture) {
     HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadRenderTexture")
 
-    if (m_render_textures.Contains(render_texture.id)) {
-      UnloadRenderTexture(render_texture.id);
+    if (m_render_textures.Contains(render_texture.handle)) {
+      UnloadRenderTexture(render_texture.handle);
     }
 
     // TODO: We should do some sort of validation.
@@ -238,7 +238,7 @@ namespace Hyperion::Rendering {
     uint32 height = render_texture.parameters.height;
 
     OpenGLRenderTexture opengl_render_texture;
-    opengl_render_texture.id = render_texture.id;
+    opengl_render_texture.handle = render_texture.handle;
     opengl_render_texture.attachments.Resize(attachment_count);
     opengl_render_texture.width = width;
     opengl_render_texture.height = height;
@@ -289,7 +289,7 @@ namespace Hyperion::Rendering {
     glNamedFramebufferDrawBuffers(opengl_render_texture.framebuffer, color_attachment_count, buffers.GetData());
 
     if (glCheckNamedFramebufferStatus(opengl_render_texture.framebuffer, GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE) {
-      m_render_textures.Insert(render_texture.id, opengl_render_texture);
+      m_render_textures.Insert(render_texture.handle, opengl_render_texture);
     } else {
       HYP_LOG_ERROR("OpenGL", "Failed to create render texture!");
     }
@@ -300,7 +300,7 @@ namespace Hyperion::Rendering {
     HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadShader")
 
     OpenGLShader opengl_shader;
-    opengl_shader.id = shader.id;
+    opengl_shader.handle = shader.handle;
     opengl_shader.attributes = shader.data.attributes;
 
     if (shader.is_valid) {
@@ -328,9 +328,9 @@ namespace Hyperion::Rendering {
       opengl_shader.program = m_static.error_shader.program;
     }
 
-    auto shader_it = m_shaders.Find(shader.id);
+    auto shader_it = m_shaders.Find(shader.handle);
     if (shader_it == m_shaders.end()) {
-      m_shaders.Insert(shader.id, opengl_shader);
+      m_shaders.Insert(shader.handle, opengl_shader);
     } else {
       shader_it->second = opengl_shader;
     }
@@ -340,14 +340,14 @@ namespace Hyperion::Rendering {
   void OpenGLStorage::LoadMaterial(RenderAssetMaterial &material) {
     HYP_PROFILE_SCOPE("OpenGLRenderDriver.LoadMaterial")
 
-    auto material_it = m_materials.Find(material.id);
+    auto material_it = m_materials.Find(material.handle);
     if (material_it == m_materials.end()) {
       OpenGLMaterial opengl_material;
-      opengl_material.id = material.id;
-      opengl_material.shader = &m_shaders.Get(material.shader_id);;
+      opengl_material.handle = material.handle;
+      opengl_material.shader = &m_shaders.Get(material.shader_handle);;
       opengl_material.properties = std::move(material.properties);
 
-      m_materials.Insert(material.id, opengl_material);
+      m_materials.Insert(material.handle, opengl_material);
     } else {
       OpenGLMaterial &opengl_material = material_it->second;
       opengl_material.properties = std::move(material.properties);
@@ -395,10 +395,10 @@ namespace Hyperion::Rendering {
     uint64 vertex_buffer_size = vertices.GetLength();
     uint64 index_buffer_size = data.indices.GetLength() * sizeof(data.indices[0]);
     
-    auto mesh_it = m_meshes.Find(mesh.id);
+    auto mesh_it = m_meshes.Find(mesh.handle);
     if (mesh_it == m_meshes.end()) {
       OpenGLMesh opengl_mesh;
-      opengl_mesh.id = mesh.id;
+      opengl_mesh.handle = mesh.handle;
       opengl_mesh.sub_meshes = std::move(mesh.sub_meshes);
       opengl_mesh.vertex_buffer_size = vertex_buffer_size;
       opengl_mesh.index_buffer_size = index_buffer_size;
@@ -429,7 +429,7 @@ namespace Hyperion::Rendering {
         relative_offset += OpenGLUtilities::GetVertexAttributeSizeForVertexAttribute(vertex_attribute.type, vertex_attribute.dimension);
       }
 
-      m_meshes.Insert(mesh.id, opengl_mesh);
+      m_meshes.Insert(mesh.handle, opengl_mesh);
     } else {
       // FIXME: We are not updating a potentially changed vertex format of the mesh.
       // For that we would need to create the vertex array as well.
@@ -456,25 +456,25 @@ namespace Hyperion::Rendering {
     HYP_PROFILE_SCOPE("OpenGLRenderDriver.UnloadAssets")
     OpenGLDebugGroup debug_group("UnloadAssets");
 
-    for (AssetId shader_id : asset_context.GetShaderAssetsToUnload()) {
-      glDeleteProgram(m_shaders.Get(shader_id).program);
-      m_shaders.Remove(shader_id);
+    for (AssetHandle shader_handle : asset_context.GetShaderAssetsToUnload()) {
+      glDeleteProgram(m_shaders.Get(shader_handle).program);
+      m_shaders.Remove(shader_handle);
     }
-    for (AssetId texture_2d_id : asset_context.GetTexture2DAssetsToUnload()) {
-      GLuint texture = m_textures.Get(texture_2d_id).texture;
+    for (AssetHandle texture_2d_handle : asset_context.GetTexture2DAssetsToUnload()) {
+      GLuint texture = m_textures.Get(texture_2d_handle).texture;
       glDeleteTextures(1, &texture);
-      m_textures.Remove(texture_2d_id);
+      m_textures.Remove(texture_2d_handle);
     }
-    for (AssetId render_texture_id : asset_context.GetRenderTextureAssetsToUnload()) {
-      UnloadRenderTexture(render_texture_id);
+    for (AssetHandle render_texture_handle : asset_context.GetRenderTextureAssetsToUnload()) {
+      UnloadRenderTexture(render_texture_handle);
     }
-    for (AssetId material_id : asset_context.GetMaterialAssetsToUnload()) {
-      m_materials.Remove(material_id);
+    for (AssetHandle material_handle : asset_context.GetMaterialAssetsToUnload()) {
+      m_materials.Remove(material_handle);
     }
-    for (AssetId mesh_id : asset_context.GetMeshAssetsToUnload()) {
-      auto mesh_it = m_meshes.Find(mesh_id);
+    for (AssetHandle mesh_handle : asset_context.GetMeshAssetsToUnload()) {
+      auto mesh_it = m_meshes.Find(mesh_handle);
       if (mesh_it == m_meshes.end()) {
-        HYP_LOG_ERROR("OpenGL", "Trying to delete mesh {} which does not exist!", mesh_id);
+        HYP_LOG_ERROR("OpenGL", "Trying to delete mesh {} which does not exist!", mesh_handle.ToString());
         HYP_DEBUG_BREAK;
       } else {
         OpenGLMesh &opengl_mesh = mesh_it->second;
@@ -483,14 +483,14 @@ namespace Hyperion::Rendering {
         glDeleteBuffers(1, &opengl_mesh.index_buffer);
         glDeleteVertexArrays(1, &opengl_mesh.vertex_array);
 
-        m_meshes.Remove(mesh_id);
+        m_meshes.Remove(mesh_handle);
       }
     }
   }
 
   //--------------------------------------------------------------
-  void OpenGLStorage::UnloadRenderTexture(AssetId render_texture_id) {
-    OpenGLRenderTexture &opengl_render_texture = m_render_textures.Get(render_texture_id);
+  void OpenGLStorage::UnloadRenderTexture(AssetHandle render_texture_handle) {
+    OpenGLRenderTexture &opengl_render_texture = m_render_textures.Get(render_texture_handle);
     for (OpenGLRenderTextureAttachment &opengl_attachment : opengl_render_texture.attachments) {
       if (opengl_attachment.format == RenderTextureFormat::Depth24Stencil8) {
         glDeleteRenderbuffers(1, &opengl_attachment.attachment);
@@ -500,7 +500,7 @@ namespace Hyperion::Rendering {
     }
     glDeleteFramebuffers(1, &opengl_render_texture.framebuffer);
 
-    m_render_textures.Remove(render_texture_id);
+    m_render_textures.Remove(render_texture_handle);
   }
 
   //--------------------------------------------------------------

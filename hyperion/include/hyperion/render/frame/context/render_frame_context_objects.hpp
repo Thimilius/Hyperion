@@ -6,7 +6,6 @@
 #include "hyperion/core/math/matrix4x4.hpp"
 #include "hyperion/assets/asset_types.hpp"
 #include "hyperion/assets/material.hpp"
-#include "hyperion/assets/mesh.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
@@ -14,19 +13,19 @@ namespace Hyperion::Rendering {
   using RenderFrameContextObjectId = uint32;
 
   struct RenderFrameContextObject {
-    RenderFrameContextObjectId id;
+    RenderFrameContextObjectId id = 0;
     Matrix4x4 local_to_world;
     Vector3 position;
   };
 
   struct RenderFrameContextObjectMesh : public RenderFrameContextObject {
-    AssetId mesh_id;
-    uint32 sub_mesh_index;
+    AssetHandle mesh_handle;
+    uint32 sub_mesh_index = 0;
 
-    AssetId shader_id;
-    AssetId material_id;
+    AssetHandle shader_handle;
+    AssetHandle material_handle;
 
-    LayerMask layer_mask;
+    LayerMask layer_mask = LayerMask::Default;
 
     BoundingBox bounds;
   };
@@ -36,15 +35,15 @@ namespace Hyperion::Rendering {
   };
 
   struct RenderFrameContextObjectUI : public RenderFrameContextObject {
-    AssetId mesh_id;
+    AssetHandle mesh_handle;
 
-    AssetId shader_id;
-    AssetId material_id;
+    AssetHandle shader_handle;
+    AssetHandle material_handle;
 
     Color color;
     ShaderPropertyStorage::Texture texture;
 
-    bool8 enable_blending;
+    bool8 enable_blending = false;
   };
 
 }

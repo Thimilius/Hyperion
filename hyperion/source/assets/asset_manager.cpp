@@ -29,36 +29,17 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  Texture2D *AssetManager::GetTexture2DByGuid(AssetGuid guid) {
-    auto it = s_textures.Find(guid);
+  Texture2D *AssetManager::GetTexture2D(AssetHandle handle) {
+    auto it = s_textures.Find(handle);
     if (it == s_textures.end()) {
-      HYP_LOG_ERROR("Asset", "The texture with guid {} does not exist!", guid.ToString());
+      HYP_LOG_ERROR("Asset", "The texture with handle {} does not exist!", handle.ToString());
       return nullptr;
     } else {
       Texture *texture = it->second;
       if (texture->GetDimension() == Rendering::TextureDimension::Texture2D) {
         return static_cast<Texture2D *>(texture);
       } else {
-        HYP_LOG_ERROR("Asset", "The texture with guid {} is not a 2D texture!", guid.ToString());
-        return nullptr;
-      }
-    }
-  }
-
-  //--------------------------------------------------------------
-  Texture2D *AssetManager::GetTexture2DById(AssetId id) {
-    auto it = std::find_if(s_textures.begin(), s_textures.end(), [id](const auto &pair) {
-      return pair.second->GetAssetInfo().id == id;
-    });
-    if (it == s_textures.end()) {
-      HYP_LOG_ERROR("Asset", "The texture with id {} does not exist!", id);
-      return nullptr;
-    } else {
-      Texture *texture = it->second;
-      if (texture->GetDimension() == Rendering::TextureDimension::Texture2D) {
-        return static_cast<Texture2D *>(texture);
-      } else {
-        HYP_LOG_ERROR("Asset", "The texture with id {} is not a 2D texture!", id);
+        HYP_LOG_ERROR("Asset", "The texture with handle {} is not a 2D texture!", handle.ToString());
         return nullptr;
       }
     }
@@ -68,7 +49,7 @@ namespace Hyperion {
   Texture2D *AssetManager::CreateTexture2D(const Rendering::Texture2DParameters &parameters) {
     AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
     Texture2D *texture = new Texture2D(info, parameters);
-    s_textures.Insert(info.guid, texture);
+    s_textures.Insert(info.handle, texture);
     return texture;
   }
 
@@ -77,41 +58,22 @@ namespace Hyperion {
                                            AssetDataAccess data_access) {
     AssetInfo info = GetNextAssetInfo(data_access);
     Texture2D *texture = new Texture2D(info, parameters, pixels);
-    s_textures.Insert(info.guid, texture);
+    s_textures.Insert(info.handle, texture);
     return texture;
   }
 
   //--------------------------------------------------------------
-  RenderTexture *AssetManager::GetRenderTextureByGuid(AssetGuid guid) {
-    auto it = s_textures.Find(guid);
+  RenderTexture *AssetManager::GetRenderTexture(AssetHandle handle) {
+    auto it = s_textures.Find(handle);
     if (it == s_textures.end()) {
-      HYP_LOG_ERROR("Asset", "The texture with guid {} does not exist!", guid.ToString());
+      HYP_LOG_ERROR("Asset", "The texture with handle {} does not exist!", handle.ToString());
       return nullptr;
     } else {
       Texture *texture = it->second;
       if (texture->GetDimension() == Rendering::TextureDimension::RenderTexture) {
         return static_cast<RenderTexture *>(texture);
       } else {
-        HYP_LOG_ERROR("Asset", "The texture with guid {} is not a render texture!", guid.ToString());
-        return nullptr;
-      }
-    }
-  }
-
-  //--------------------------------------------------------------
-  RenderTexture *AssetManager::GetRenderTextureById(AssetId id) {
-    auto it = std::find_if(s_textures.begin(), s_textures.end(), [id](const auto &pair) {
-      return pair.second->GetAssetInfo().id == id;
-    });
-    if (it == s_textures.end()) {
-      HYP_LOG_ERROR("Asset", "The texture with id {} does not exist!", id);
-      return nullptr;
-    } else {
-      Texture *texture = it->second;
-      if (texture->GetDimension() == Rendering::TextureDimension::RenderTexture) {
-        return static_cast<RenderTexture *>(texture);
-      } else {
-        HYP_LOG_ERROR("Asset", "The texture with id {} is not a render texture!", id);
+        HYP_LOG_ERROR("Asset", "The texture with handle {} is not a render texture!", handle.ToString());
         return nullptr;
       }
     }
@@ -121,7 +83,7 @@ namespace Hyperion {
   RenderTexture *AssetManager::CreateRenderTexture(const Rendering::RenderTextureParameters &parameters) {
     AssetInfo info = GetNextAssetInfo(AssetDataAccess::None);
     RenderTexture *render_texture = new RenderTexture(info, parameters);
-    s_textures.Insert(info.guid, render_texture);
+    s_textures.Insert(info.handle, render_texture);
     return render_texture;
   }
 
@@ -129,7 +91,7 @@ namespace Hyperion {
   Font *AssetManager::CreateFont(uint32 size, float32 baseline_offset, FontCharacterSet character_set, FontAtlas *font_atlas, SpecialFontGlyphs special_glyphs) {
     AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
     Font *font = new Font(info, size, baseline_offset, character_set, font_atlas, special_glyphs);
-    s_fonts.Insert(info.guid, font);
+    s_fonts.Insert(info.handle, font);
     return font;
   }
 
@@ -147,10 +109,10 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  Shader *AssetManager::GetShaderByGuid(AssetGuid guid) {
-    auto it = s_shaders.Find(guid);
+  Shader *AssetManager::GetShader(AssetHandle handle) {
+    auto it = s_shaders.Find(handle);
     if (it == s_shaders.end()) {
-      HYP_LOG_ERROR("Asset", "The shader with guid {} does not exist!", guid.ToString());
+      HYP_LOG_ERROR("Asset", "The shader with handle {} does not exist!", handle.ToString());
       return nullptr;
     } else {
       return it->second;
@@ -163,7 +125,7 @@ namespace Hyperion {
     AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
     Shader *shader = new Shader(info, source);
     shader->m_resource_info.path = path;
-    s_shaders.Insert(info.guid, shader);
+    s_shaders.Insert(info.handle, shader);
     return shader;
   }
 
@@ -180,10 +142,10 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  Material *AssetManager::GetMaterialByGuid(AssetGuid guid) {
-    auto it = s_materials.Find(guid);
+  Material *AssetManager::GetMaterial(AssetHandle handle) {
+    auto it = s_materials.Find(handle);
     if (it == s_materials.end()) {
-      HYP_LOG_ERROR("Asset", "The material with guid {} does not exist!", guid.ToString());
+      HYP_LOG_ERROR("Asset", "The material with handle {} does not exist!", handle.ToString());
       return nullptr;
     } else {
       return it->second;
@@ -194,7 +156,7 @@ namespace Hyperion {
   Material *AssetManager::CreateMaterial(Shader *shader) {
     AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
     Material *material = new Material(info, shader);
-    s_materials.Insert(info.guid, material);
+    s_materials.Insert(info.handle, material);
     return material;
   }
 
@@ -211,10 +173,10 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  Mesh *AssetManager::GetMeshByGuid(AssetGuid guid) {
-    auto it = s_meshes.Find(guid);
+  Mesh *AssetManager::GetMesh(AssetHandle handle) {
+    auto it = s_meshes.Find(handle);
     if (it == s_meshes.end()) {
-      HYP_LOG_ERROR("Asset", "The mesh with guid {} does not exist!", guid.ToString());
+      HYP_LOG_ERROR("Asset", "The mesh with handle {} does not exist!", handle.ToString());
       return nullptr;
     } else {
       return it->second;
@@ -225,14 +187,14 @@ namespace Hyperion {
   Mesh *AssetManager::CreateMesh() {
     AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
     Mesh *mesh = new Mesh(info);
-    s_meshes.Insert(info.guid, mesh);
+    s_meshes.Insert(info.handle, mesh);
     return mesh;
   }
 
   Mesh *AssetManager::CreateMesh(const Rendering::MeshData &data, const Rendering::SubMeshes &sub_meshes, AssetDataAccess data_access) {
     AssetInfo info = GetNextAssetInfo(data_access);
     Mesh *mesh = new Mesh(info, data, sub_meshes);
-    s_meshes.Insert(info.guid, mesh);
+    s_meshes.Insert(info.handle, mesh);
     return mesh;
   }
 
@@ -242,26 +204,26 @@ namespace Hyperion {
       return;
     }
 
-    AssetGuid asset_guid = asset->GetAssetInfo().guid;
+    AssetHandle asset_handle = asset->GetAssetInfo().handle;
     switch (asset->GetAssetType()) {
       case AssetType::Material: {
-        HYP_ASSERT(s_materials.Contains(asset_guid));
-        s_materials.Remove(asset_guid);
+        HYP_ASSERT(s_materials.Contains(asset_handle));
+        s_materials.Remove(asset_handle);
         break;
       }
       case AssetType::Mesh: {
-        HYP_ASSERT(s_meshes.Contains(asset_guid));
-        s_meshes.Remove(asset_guid);
+        HYP_ASSERT(s_meshes.Contains(asset_handle));
+        s_meshes.Remove(asset_handle);
         break;
       }
       case AssetType::Shader: {
-        HYP_ASSERT(s_shaders.Contains(asset_guid));
-        s_shaders.Remove(asset_guid);
+        HYP_ASSERT(s_shaders.Contains(asset_handle));
+        s_shaders.Remove(asset_handle);
         break;
       }
       case AssetType::Texture: {
-        HYP_ASSERT(s_textures.Contains(asset_guid));
-        s_textures.Remove(asset_guid);
+        HYP_ASSERT(s_textures.Contains(asset_handle));
+        s_textures.Remove(asset_handle);
         break;
       }
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
@@ -332,76 +294,76 @@ namespace Hyperion {
     Array<byte> texture_pixels;
     texture_pixels.Resize(4 * 4, 0xFF);
     s_primitives.texture_2d_white = CreateTexture2D(texture_parameters, texture_pixels);
-    SetNewGuid(s_primitives.texture_2d_white, "{DAD9FD91-8932-4A1E-B086-56F64DC20EF7}");
+    SetNewHandle(s_primitives.texture_2d_white, "{DAD9FD91-8932-4A1E-B086-56F64DC20EF7}");
 
     s_primitives.shader_standard = CreateShader("data/shaders/standard.shader");
-    SetNewGuid(s_primitives.shader_standard, "{6AFEA19E-547B-41F5-A008-4473AE771E06}");
+    SetNewHandle(s_primitives.shader_standard, "{6AFEA19E-547B-41F5-A008-4473AE771E06}");
     s_primitives.shader_unlit = CreateShader("data/shaders/unlit.shader");
-    SetNewGuid(s_primitives.shader_unlit, "{23AA53FE-6A47-4571-BC47-00EAAFA2F54B}");
+    SetNewHandle(s_primitives.shader_unlit, "{23AA53FE-6A47-4571-BC47-00EAAFA2F54B}");
     s_primitives.shader_gizmo = CreateShader("data/shaders/gizmo.shader");
-    SetNewGuid(s_primitives.shader_gizmo, "{F05F02F1-A7E1-42B7-9618-F13AB38BCA87}");
+    SetNewHandle(s_primitives.shader_gizmo, "{F05F02F1-A7E1-42B7-9618-F13AB38BCA87}");
     s_primitives.shader_ui = CreateShader("data/shaders/ui.shader");
-    SetNewGuid(s_primitives.shader_ui, "{D1D71E77-6EA7-4B5D-A7D3-C5C07D1F5386}");
+    SetNewHandle(s_primitives.shader_ui, "{D1D71E77-6EA7-4B5D-A7D3-C5C07D1F5386}");
     s_primitives.shader_font = CreateShader("data/shaders/font.shader");
-    SetNewGuid(s_primitives.shader_font, "{97566962-2BEF-4D77-9813-27FC6F73375F}");
+    SetNewHandle(s_primitives.shader_font, "{97566962-2BEF-4D77-9813-27FC6F73375F}");
 
     s_primitives.material_default = CreateMaterial(s_primitives.shader_standard);
-    SetNewGuid(s_primitives.material_default, "{B2463C27-7FD8-44A2-BC53-2AD74FAA7979}");
+    SetNewHandle(s_primitives.material_default, "{B2463C27-7FD8-44A2-BC53-2AD74FAA7979}");
     s_primitives.material_unlit = CreateMaterial(s_primitives.shader_unlit);
-    SetNewGuid(s_primitives.material_unlit, "{C718D97E-A0D9-4567-AFE6-F264B8C29730}");
+    SetNewHandle(s_primitives.material_unlit, "{C718D97E-A0D9-4567-AFE6-F264B8C29730}");
     s_primitives.material_ui = CreateMaterial(s_primitives.shader_ui);
-    SetNewGuid(s_primitives.material_ui, "{8367D740-AF57-4C1C-AFAC-BE0C6847D8C3}");
+    SetNewHandle(s_primitives.material_ui, "{8367D740-AF57-4C1C-AFAC-BE0C6847D8C3}");
     s_primitives.material_font = CreateMaterial(s_primitives.shader_font);
-    SetNewGuid(s_primitives.material_font, "{6FCEDCC2-0156-4E78-AA2F-03AF96C3580A}");
+    SetNewHandle(s_primitives.material_font, "{6FCEDCC2-0156-4E78-AA2F-03AF96C3580A}");
 
     s_primitives.mesh_quad = MeshGenerator::GenerateQuad(1.0f, 1.0f);
-    SetNewGuid(s_primitives.mesh_quad, "{D54B554E-2BED-4F36-AF12-9C20C83F4EFB}");
+    SetNewHandle(s_primitives.mesh_quad, "{D54B554E-2BED-4F36-AF12-9C20C83F4EFB}");
     s_primitives.mesh_plane = MeshGenerator::GeneratePlane(10.0f, 10.0f);
-    SetNewGuid(s_primitives.mesh_plane, "{F5464C26-BA78-418D-8DFF-CC67A189DE47}");
+    SetNewHandle(s_primitives.mesh_plane, "{F5464C26-BA78-418D-8DFF-CC67A189DE47}");
     s_primitives.mesh_cube = MeshGenerator::GenerateCube(1.0f);
-    SetNewGuid(s_primitives.mesh_cube, "{36E92468-41BB-4B06-918B-958ED7F5DD43}");
+    SetNewHandle(s_primitives.mesh_cube, "{36E92468-41BB-4B06-918B-958ED7F5DD43}");
     s_primitives.mesh_sphere = MeshGenerator::GenerateSphere(0.5f);
-    SetNewGuid(s_primitives.mesh_sphere, "{93DFBF96-D7DB-40B7-91C3-89C6FB1B1E49}");
+    SetNewHandle(s_primitives.mesh_sphere, "{93DFBF96-D7DB-40B7-91C3-89C6FB1B1E49}");
   }
 
   //--------------------------------------------------------------
-  void AssetManager::SetNewGuid(Asset *asset, const String &guid) {
-    AssetGuid old_guid = asset->GetAssetInfo().guid;
-    AssetGuid new_guid = AssetGuid::Generate(guid);
+  void AssetManager::SetNewHandle(Asset *asset, const String &handle) {
+    AssetHandle old_handle = asset->GetAssetInfo().handle;
+    AssetHandle new_handle = AssetHandle::Generate(handle);
 
     switch (asset->GetAssetType()) {
       case AssetType::Material: {
         Material *material = static_cast<Material *>(asset);
-        HYP_ASSERT(s_materials.Contains(old_guid));
-        s_materials.Remove(old_guid);
-        s_materials.Insert(new_guid, material);
+        HYP_ASSERT(s_materials.Contains(old_handle));
+        s_materials.Remove(old_handle);
+        s_materials.Insert(new_handle, material);
         break;
       }
       case AssetType::Mesh: {
         Mesh *mesh = static_cast<Mesh *>(asset);
-        HYP_ASSERT(s_meshes.Contains(old_guid));
-        s_meshes.Remove(old_guid);
-        s_meshes.Insert(new_guid, mesh);
+        HYP_ASSERT(s_meshes.Contains(old_handle));
+        s_meshes.Remove(old_handle);
+        s_meshes.Insert(new_handle, mesh);
         break;
       }
       case AssetType::Shader: {
         Shader *shader = static_cast<Shader *>(asset);
-        HYP_ASSERT(s_shaders.Contains(old_guid));
-        s_shaders.Remove(old_guid);
-        s_shaders.Insert(new_guid, shader);
+        HYP_ASSERT(s_shaders.Contains(old_handle));
+        s_shaders.Remove(old_handle);
+        s_shaders.Insert(new_handle, shader);
         break;
       }
       case AssetType::Texture: {
         Texture *texture = static_cast<Texture *>(asset);
-        HYP_ASSERT(s_textures.Contains(old_guid));
-        s_textures.Remove(old_guid);
-        s_textures.Insert(new_guid, texture);
+        HYP_ASSERT(s_textures.Contains(old_handle));
+        s_textures.Remove(old_handle);
+        s_textures.Insert(new_handle, texture);
         break;
       }
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
     }
 
-    asset->m_info.guid = new_guid;
+    asset->m_info.handle = new_handle;
   }
 
   //--------------------------------------------------------------
@@ -411,7 +373,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   AssetInfo AssetManager::GetNextAssetInfo(AssetDataAccess data_access) {
-    return { s_id_counter++, AssetGuid::Generate(), data_access };
+    return { AssetHandle::Generate(), data_access };
   }
 
 }

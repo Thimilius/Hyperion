@@ -615,19 +615,19 @@ namespace Hyperion::UI {
     Rendering::RenderFrameContext &render_frame_context = Rendering::RenderEngine::GetMainRenderFrame()->GetContext();
     for (UIImmediateMeshDraw mesh_draw : s_mesh_draws) {
       Material *material = mesh_draw.material ? mesh_draw.material : AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI);
-      AssetId texture_id = mesh_draw.texture
-       ? mesh_draw.texture->GetAssetInfo().id
-       : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetAssetInfo().id;
+      AssetHandle texture_handle = mesh_draw.texture
+       ? mesh_draw.texture->GetAssetInfo().handle
+       : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetAssetInfo().handle;
       
       Rendering::RenderFrameContextObjectUI &render_frame_context_ui_object = render_frame_context.AddEditorUIObject();
       render_frame_context_ui_object.local_to_world = Matrix4x4::Identity();
-      render_frame_context_ui_object.mesh_id = mesh_draw.mesh.mesh->GetAssetInfo().id;
-      render_frame_context_ui_object.shader_id = material->GetShader()->GetAssetInfo().id;
-      render_frame_context_ui_object.material_id = material->GetAssetInfo().id;
+      render_frame_context_ui_object.mesh_handle = mesh_draw.mesh.mesh->GetAssetInfo().handle;
+      render_frame_context_ui_object.shader_handle = material->GetShader()->GetAssetInfo().handle;
+      render_frame_context_ui_object.material_handle = material->GetAssetInfo().handle;
       render_frame_context_ui_object.color = mesh_draw.color;
-      render_frame_context_ui_object.texture.id = texture_id;
+      render_frame_context_ui_object.texture.handle = texture_handle;
       render_frame_context_ui_object.texture.dimension = mesh_draw.texture ? mesh_draw.texture->GetDimension() : Rendering::TextureDimension::Texture2D;
-      render_frame_context_ui_object.texture.render_texture_attchment_index = mesh_draw.render_texture_attachment_index;
+      render_frame_context_ui_object.texture.render_texture_attachment_index = mesh_draw.render_texture_attachment_index;
       render_frame_context_ui_object.enable_blending = mesh_draw.enable_blending;
     }
   }

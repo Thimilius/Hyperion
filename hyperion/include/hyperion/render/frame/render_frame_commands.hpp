@@ -87,19 +87,19 @@ namespace Hyperion::Rendering {
   };
 
   struct RenderFrameCommandDrawGizmos {
-    AssetId shader_id;
+    AssetHandle shader_handle;
 
     struct Grid {
       bool8 should_draw;
       Matrix4x4 local_to_world;
       RenderGizmoGridType type;
-      AssetId mesh_id;
+      AssetHandle mesh_handle;
     } grid;
 
     struct TransformationGizmo {
       bool8 should_draw;
       Matrix4x4 local_to_world;
-      AssetId mesh_id;
+      AssetHandle mesh_handle;
     } transformation_gizmo;
 
     bool8 should_draw_all_bounds;

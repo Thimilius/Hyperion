@@ -181,10 +181,10 @@ namespace Hyperion::Rendering {
       render_frame_context_mesh_object.id = EntityId::CreateSmall(entity);
       render_frame_context_mesh_object.local_to_world = local_to_world->local_to_world;
       render_frame_context_mesh_object.position = Vector3(local_to_world->local_to_world.columns[3]);
-      render_frame_context_mesh_object.mesh_id = mesh_mesh->GetAssetInfo().id;
+      render_frame_context_mesh_object.mesh_handle = mesh_mesh->GetAssetInfo().handle;
       render_frame_context_mesh_object.sub_mesh_index = mesh->sub_mesh_index;
-      render_frame_context_mesh_object.shader_id = material->GetShader()->GetAssetInfo().id;
-      render_frame_context_mesh_object.material_id = material->GetAssetInfo().id;
+      render_frame_context_mesh_object.shader_handle = material->GetShader()->GetAssetInfo().handle;
+      render_frame_context_mesh_object.material_handle = material->GetAssetInfo().handle;
       render_frame_context_mesh_object.layer_mask = mesh->layer_mask;
       render_frame_context_mesh_object.bounds = mesh_bounds->bounds;
     }
@@ -227,19 +227,19 @@ namespace Hyperion::Rendering {
 
         if (color.a > 0.0f) {
           Material *material = renderer.material ? renderer.material : AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI);
-          AssetId texture_id = renderer.texture
-           ? renderer.texture->GetAssetInfo().id
-           : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetAssetInfo().id;
+          AssetHandle texture_handle = renderer.texture
+           ? renderer.texture->GetAssetInfo().handle
+           : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetAssetInfo().handle;
 
           RenderFrameContextObjectUI &render_frame_context_ui_object = ui_object_adder();
           render_frame_context_ui_object.local_to_world = Matrix4x4::Identity();
-          render_frame_context_ui_object.mesh_id = renderer.mesh->GetAssetInfo().id;
-          render_frame_context_ui_object.shader_id = material->GetShader()->GetAssetInfo().id;
-          render_frame_context_ui_object.material_id = material->GetAssetInfo().id;
+          render_frame_context_ui_object.mesh_handle = renderer.mesh->GetAssetInfo().handle;
+          render_frame_context_ui_object.shader_handle = material->GetShader()->GetAssetInfo().handle;
+          render_frame_context_ui_object.material_handle = material->GetAssetInfo().handle;
           render_frame_context_ui_object.color = color;
-          render_frame_context_ui_object.texture.id = texture_id;
+          render_frame_context_ui_object.texture.handle = texture_handle;
           render_frame_context_ui_object.texture.dimension = renderer.texture ? renderer.texture->GetDimension() : TextureDimension::Texture2D;
-          render_frame_context_ui_object.texture.render_texture_attchment_index = renderer.render_texture_attachment_index;
+          render_frame_context_ui_object.texture.render_texture_attachment_index = renderer.render_texture_attachment_index;
           render_frame_context_ui_object.enable_blending = renderer.enable_blending;
         }
       }

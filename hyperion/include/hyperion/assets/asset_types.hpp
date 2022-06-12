@@ -16,8 +16,7 @@ namespace Hyperion {
     TextureAtlas
   };
 
-  using AssetId = uint64;
-  using AssetGuid = Guid;
+  using AssetHandle = Guid;
 
   enum class AssetDataAccess {
     None,
@@ -25,17 +24,15 @@ namespace Hyperion {
     ReadAndWrite
   };
 
+  // TODO: Replace this with AssetMetadata.
   struct AssetInfo {
-    AssetId id;
-    AssetGuid guid;
+    AssetHandle handle;
 
     AssetDataAccess data_access;
-
-    inline static constexpr AssetId INVALID_ID = -1;
   };
 
   struct AssetResourceInfo {
     String path;
   };
-
+  
 }

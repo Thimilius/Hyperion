@@ -185,10 +185,10 @@ namespace Hyperion {
     if (it != m_property_indices.end()) {
       const MaterialProperty &property = m_properties.Get(it->second);
       if (property.type == ShaderPropertyType::Texture) {
-        AssetId texture_id = property.storage.texture.id;
+        AssetHandle texture_handle = property.storage.texture.handle;
         switch (property.storage.texture.dimension) {
-          case TextureDimension::Texture2D: return AssetManager::GetTexture2DById(texture_id);
-          case TextureDimension::RenderTexture: return AssetManager::GetRenderTextureById(texture_id);
+          case TextureDimension::Texture2D: return AssetManager::GetTexture2D(texture_handle);
+          case TextureDimension::RenderTexture: return AssetManager::GetRenderTexture(texture_handle);
           default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
             return nullptr;
         }
@@ -211,7 +211,7 @@ namespace Hyperion {
         if (value == nullptr) {
           HYP_LOG_WARN("Material", "Trying to set texture material property with a null texture.");
         } else {
-          property.storage.texture.id = value->GetAssetInfo().id;
+          property.storage.texture.handle = value->GetAssetInfo().handle;
           property.storage.texture.dimension = value->GetDimension();
           SetDirty();
         }
@@ -232,9 +232,9 @@ namespace Hyperion {
         if (value == nullptr) {
           HYP_LOG_WARN("Material", "Trying to set texture material property with a null texture.");
         } else {
-          property.storage.texture.id = value->GetAssetInfo().id;
+          property.storage.texture.handle = value->GetAssetInfo().handle;
           property.storage.texture.dimension = TextureDimension::RenderTexture;
-          property.storage.texture.render_texture_attchment_index = attachment_index;
+          property.storage.texture.render_texture_attachment_index = attachment_index;
           SetDirty();
         }
       } else {

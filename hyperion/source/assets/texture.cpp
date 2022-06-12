@@ -59,7 +59,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   Rendering::RenderTargetId RenderTexture::GetRenderTargetId() const {
-    Rendering::RenderTargetId id = { GetAssetInfo().id };
+    Rendering::RenderTargetId id = { GetAssetInfo().handle };
     return id;
   }
 

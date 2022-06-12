@@ -12,7 +12,7 @@
 namespace Hyperion::Rendering {
 
   struct RenderAsset {
-    AssetId id;
+    AssetHandle handle;
   };
 
   struct RenderAssetTexture2D : public RenderAsset {
@@ -32,7 +32,7 @@ namespace Hyperion::Rendering {
   };
 
   struct RenderAssetMaterial : public RenderAsset {
-    AssetId shader_id;
+    AssetHandle shader_handle;
     MaterialPropertyCollection properties;
   };
 

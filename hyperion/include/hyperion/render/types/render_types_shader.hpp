@@ -80,9 +80,9 @@ namespace Hyperion::Rendering {
     Matrix4x4 matrix4x4;
 
     struct Texture {
-      AssetId id = AssetInfo::INVALID_ID;
+      AssetHandle handle;
       TextureDimension dimension = TextureDimension::Texture2D;
-      uint32 render_texture_attchment_index = 0;
+      uint32 render_texture_attachment_index = 0;
     } texture;
   };
 
@@ -102,7 +102,7 @@ namespace Hyperion::Rendering {
     ShaderAttributes attributes;
     ShaderPropertyCollection properties;
 
-    ShaderStageFlags stage_flags;
+    ShaderStageFlags stage_flags = ShaderStageFlags::Unknown;
 
     String vertex_source;
     String fragment_source;

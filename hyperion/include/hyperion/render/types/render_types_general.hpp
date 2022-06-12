@@ -63,13 +63,13 @@ namespace Hyperion::Rendering {
 
   struct CullingParameters {
     Matrix4x4 matrix;
-    LayerMask mask;
+    LayerMask mask = LayerMask::Everything;
   };
 
   struct RenderTargetId {
-    AssetId id;
+    AssetHandle handle;
 
-    inline static RenderTargetId Default() { return { 0xFFFFFFFF }; }
+    inline static RenderTargetId Default() { return RenderTargetId(); }
   };
 
 }

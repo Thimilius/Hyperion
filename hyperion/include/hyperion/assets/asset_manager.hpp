@@ -58,36 +58,37 @@ namespace Hyperion {
   class AssetManager final {
   public:
     static Texture2D *GetTexture2DPrimitive(Texture2DPrimitive texture_2d_primitive);
-    static Texture2D *GetTexture2DByGuid(AssetGuid guid);
-    static Texture2D *GetTexture2DById(AssetId id);
+    static Texture2D *GetTexture2D(AssetHandle handle);
     static Texture2D *CreateTexture2D(const Rendering::Texture2DParameters &parameters);
-    static Texture2D *CreateTexture2D(const Rendering::Texture2DParameters &parameters, const Rendering::TexturePixelData &pixels,
-                                      AssetDataAccess data_access = AssetDataAccess::None);
+    static Texture2D *CreateTexture2D(
+      const Rendering::Texture2DParameters &parameters,
+      const Rendering::TexturePixelData &pixels,
+      AssetDataAccess data_access = AssetDataAccess::None
+    );
 
-    static RenderTexture *GetRenderTextureByGuid(AssetGuid guid);
-    static RenderTexture *GetRenderTextureById(AssetId id);
+    static RenderTexture *GetRenderTexture(AssetHandle handle);
     static RenderTexture *CreateRenderTexture(const Rendering::RenderTextureParameters &parameters);
 
     template<typename K, typename V>
     static TextureAtlas<K, V> *CreateTextureAtlas(Texture2D *texture, const Map<K, TextureAtlasElement<V>> &elements) {
       AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
       TextureAtlas<K, V> *texture_atlas = new TextureAtlas<K, V>(info, texture, elements);
-      s_texture_atlases.Insert(info.guid, texture_atlas);
+      s_texture_atlases.Insert(info.handle, texture_atlas);
       return texture_atlas;
     }
 
     static Font *CreateFont(uint32 size, float32 baseline_offset, FontCharacterSet character_set, FontAtlas *font_atlas, SpecialFontGlyphs special_glyphs);
 
     static Shader *GetShaderPrimitive(ShaderPrimitive shader_primitive);
-    static Shader *GetShaderByGuid(AssetGuid guid);
+    static Shader *GetShader(AssetHandle handle);
     static Shader *CreateShader(const String &path);
 
     static Material *GetMaterialPrimitive(MaterialPrimitive material_primitive);
-    static Material *GetMaterialByGuid(AssetGuid guid);
+    static Material *GetMaterial(AssetHandle handle);
     static Material *CreateMaterial(Shader *shader);
 
     static Mesh *GetMeshPrimitive(MeshPrimitive mesh_primitive);
-    static Mesh *GetMeshByGuid(AssetGuid guid);
+    static Mesh *GetMesh(AssetHandle handle);
     static Mesh *CreateMesh();
     static Mesh *CreateMesh(const Rendering::MeshData &data, const Rendering::SubMeshes &sub_meshes, AssetDataAccess data_access = AssetDataAccess::None);
 
@@ -102,18 +103,18 @@ namespace Hyperion {
     static void Shutdown();
 
     static void InitializePrimitives();
-    static void SetNewGuid(Asset *asset, const String &guid);
+    static void SetNewHandle(Asset *asset, const String &guid);
 
     static void AddDirtyAsset(Asset *asset);
 
     static AssetInfo GetNextAssetInfo(AssetDataAccess data_access);
   private:
-    inline static Map<AssetGuid, Texture *> s_textures;
-    inline static Map<AssetGuid, TextureAtlasBase *> s_texture_atlases;
-    inline static Map<AssetGuid, Font *> s_fonts;
-    inline static Map<AssetGuid, Shader *> s_shaders;
-    inline static Map<AssetGuid, Material *> s_materials;
-    inline static Map<AssetGuid, Mesh *> s_meshes;
+    inline static Map<AssetHandle, Texture *> s_textures;
+    inline static Map<AssetHandle, TextureAtlasBase *> s_texture_atlases;
+    inline static Map<AssetHandle, Font *> s_fonts;
+    inline static Map<AssetHandle, Shader *> s_shaders;
+    inline static Map<AssetHandle, Material *> s_materials;
+    inline static Map<AssetHandle, Mesh *> s_meshes;
 
     inline static FileWatcher *s_shader_watcher;
 
@@ -139,8 +140,6 @@ namespace Hyperion {
 
     inline static Array<Asset *> s_assets_to_load;
     inline static Array<Asset *> s_assets_to_unload;
-
-    inline static AssetId s_id_counter;
   private:
     friend class Hyperion::Asset;
     friend class Hyperion::AssetLoadSystem;

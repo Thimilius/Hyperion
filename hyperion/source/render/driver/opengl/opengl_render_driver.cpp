@@ -230,7 +230,7 @@ namespace Hyperion::Rendering {
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, reinterpret_cast<GLint *>(&framebuffer));
 
     UseRenderTexture(command.render_target_id);
-    const OpenGLRenderTexture &opengl_render_texture = m_storage.GetRenderTexture(command.render_target_id.id);
+    const OpenGLRenderTexture &opengl_render_texture = m_storage.GetRenderTexture(command.render_target_id.handle);
     glDepthMask(GL_TRUE);
     GLuint clear_value = UINT32_MAX;
     glClearNamedFramebufferuiv(opengl_render_texture.framebuffer, GL_COLOR, GL_NONE, &clear_value);
@@ -241,7 +241,7 @@ namespace Hyperion::Rendering {
 
     for (const RenderFrameContextObjectMesh &mesh_object : context.GetMeshObjects()) {
       OpenGLDebugGroup debug_group("DrawMesh");
-      const OpenGLMesh &opengl_mesh = m_storage.GetMesh(mesh_object.mesh_id);
+      const OpenGLMesh &opengl_mesh = m_storage.GetMesh(mesh_object.mesh_handle);
 
       GLint model_location = opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::Model)];
       glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, mesh_object.local_to_world.elements);
@@ -262,7 +262,7 @@ namespace Hyperion::Rendering {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    const OpenGLShader &opengl_shader = m_storage.GetShader(command.shader_id);
+    const OpenGLShader &opengl_shader = m_storage.GetShader(command.shader_handle);
     glUseProgram(opengl_shader.program);
 
     GLuint model_location = opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::Model)];
@@ -270,7 +270,7 @@ namespace Hyperion::Rendering {
     if (command.grid.should_draw) {
       glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, command.grid.local_to_world.elements);
 
-      const OpenGLMesh &opengl_mesh = m_storage.GetMesh(command.grid.mesh_id);
+      const OpenGLMesh &opengl_mesh = m_storage.GetMesh(command.grid.mesh_handle);
       UseMesh(opengl_mesh);
 
       SubMesh sub_mesh = opengl_mesh.sub_meshes[0];
@@ -290,7 +290,7 @@ namespace Hyperion::Rendering {
     if (command.transformation_gizmo.should_draw) {
       glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, command.transformation_gizmo.local_to_world.elements);
 
-      const OpenGLMesh &opengl_mesh = m_storage.GetMesh(command.transformation_gizmo.mesh_id);
+      const OpenGLMesh &opengl_mesh = m_storage.GetMesh(command.transformation_gizmo.mesh_handle);
       UseMesh(opengl_mesh);
 
       SubMesh sub_mesh = opengl_mesh.sub_meshes[0];
@@ -325,8 +325,8 @@ namespace Hyperion::Rendering {
       GLint source_height = Display::GetHeight();
       GLuint source_framebuffer = 0;
       GLuint source_color_attachment = 0;
-      if (command.source.id != RenderTargetId::Default().id) {
-        const OpenGLRenderTexture &opengl_render_texture = m_storage.GetRenderTexture(command.source.id);
+      if (command.source.handle != RenderTargetId::Default().handle) {
+        const OpenGLRenderTexture &opengl_render_texture = m_storage.GetRenderTexture(command.source.handle);
         source_width = opengl_render_texture.width;
         source_height = opengl_render_texture.height;
         source_framebuffer = opengl_render_texture.framebuffer;
@@ -338,8 +338,8 @@ namespace Hyperion::Rendering {
       GLint destination_width = Display::GetWidth();
       GLint destination_height = Display::GetHeight();
       GLuint destination_framebuffer = 0;
-      if (command.destination.id != RenderTargetId::Default().id) {
-        const OpenGLRenderTexture &opengl_render_texture = m_storage.GetRenderTexture(command.destination.id);
+      if (command.destination.handle != RenderTargetId::Default().handle) {
+        const OpenGLRenderTexture &opengl_render_texture = m_storage.GetRenderTexture(command.destination.handle);
         destination_width = opengl_render_texture.width;
         destination_height = opengl_render_texture.height;
         destination_framebuffer = opengl_render_texture.framebuffer;
@@ -405,7 +405,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void OpenGLRenderDriver::ExecuteBufferCommandRequestAsyncReadback(const RenderCommandBufferCommandRequestAsyncReadback &command, RenderFrame *render_frame) {
-    auto render_texture_it = m_storage.FindRenderTexture(command.render_target_id.id);
+    auto render_texture_it = m_storage.FindRenderTexture(command.render_target_id.handle);
     if (render_texture_it != m_storage.GetRenderTextureEnd()) {
       AsyncRequestResult &async_request_result = render_frame->AddAsyncRequestResult();
       async_request_result.callback = command.callback;
@@ -451,15 +451,15 @@ namespace Hyperion::Rendering {
     for (uint32 index : sorted_objects) {
       const RenderFrameContextObjectMesh &render_frame_context_object_mesh = mesh_objects[index];
 
-      AssetId shader_id = render_frame_context_object_mesh.shader_id;
-      AssetId material_id = render_frame_context_object_mesh.material_id;
-      AssetId mesh_id = render_frame_context_object_mesh.mesh_id;
+      AssetHandle shader_handle = render_frame_context_object_mesh.shader_handle;
+      AssetHandle material_handle = render_frame_context_object_mesh.material_handle;
+      AssetHandle mesh_handle = render_frame_context_object_mesh.mesh_handle;
 
       if ((render_frame_context_object_mesh.layer_mask & drawing_parameters.filter_mask) != render_frame_context_object_mesh.layer_mask) {
         continue;
       }
 
-      auto opengl_shader_it = m_storage.FindShader(shader_id);
+      auto opengl_shader_it = m_storage.FindShader(shader_handle);
       if (opengl_shader_it == m_storage.GetShaderEnd()) {
         HYP_LOG_ERROR("OpenGL", "Failed to retrieve OpenGL shader!");
         continue;
@@ -470,41 +470,41 @@ namespace Hyperion::Rendering {
         }
       }
 
-      auto shaders_it = std::find_if(grouped_shaders.begin(), grouped_shaders.end(), [shader_id](const GroupedShader &grouped_shader) {
-        return grouped_shader.shader->id == shader_id;
+      auto shaders_it = std::find_if(grouped_shaders.begin(), grouped_shaders.end(), [shader_handle](const GroupedShader &grouped_shader) {
+        return grouped_shader.shader->handle == shader_handle;
       });
       GroupedShader *grouped_shader = nullptr;
       if (shaders_it == grouped_shaders.end()) {
         GroupedShader new_grouped_shader;
-        new_grouped_shader.shader = &m_storage.GetShader(shader_id);
+        new_grouped_shader.shader = &m_storage.GetShader(shader_handle);
         grouped_shaders.Add(new_grouped_shader);
         grouped_shader = &grouped_shaders.GetLast();
       } else {
         grouped_shader = &*shaders_it;
       }
 
-      Map<AssetId, GroupedMaterial> &materials = grouped_shader->materials;
-      auto materials_it = materials.Find(material_id);
+      Map<AssetHandle, GroupedMaterial> &materials = grouped_shader->materials;
+      auto materials_it = materials.Find(material_handle);
       GroupedMaterial *grouped_material = nullptr;
       if (materials_it == materials.end()) {
         GroupedMaterial new_grouped_material;
-        new_grouped_material.material = &m_storage.GetMaterial(material_id);
-        materials.Insert(material_id, new_grouped_material);
-        grouped_material = &materials.Get(material_id);
+        new_grouped_material.material = &m_storage.GetMaterial(material_handle);
+        materials.Insert(material_handle, new_grouped_material);
+        grouped_material = &materials.Get(material_handle);
       } else {
-        grouped_material = &materials.Get(material_id);
+        grouped_material = &materials.Get(material_handle);
       }
 
-      Map<AssetId, GroupedMesh> &meshes = grouped_material->meshes;
-      auto meshes_it = meshes.Find(mesh_id);
+      Map<AssetHandle, GroupedMesh> &meshes = grouped_material->meshes;
+      auto meshes_it = meshes.Find(mesh_handle);
       GroupedMesh *grouped_mesh = nullptr;
       if (meshes_it == meshes.end()) {
         GroupedMesh new_grouped_material;
-        new_grouped_material.mesh = &m_storage.GetMesh(mesh_id);
-        meshes.Insert(mesh_id, new_grouped_material);
-        grouped_mesh = &meshes.Get(mesh_id);
+        new_grouped_material.mesh = &m_storage.GetMesh(mesh_handle);
+        meshes.Insert(mesh_handle, new_grouped_material);
+        grouped_mesh = &meshes.Get(mesh_handle);
       } else {
-        grouped_mesh = &meshes.Get(mesh_id);
+        grouped_mesh = &meshes.Get(mesh_handle);
       }
 
       GroupedObject grouped_object;
@@ -661,10 +661,10 @@ namespace Hyperion::Rendering {
     }
 
     for (const RenderFrameContextObjectUI &element : elements) {
-      const OpenGLShader &opengl_shader = m_storage.GetShader(element.shader_id);
+      const OpenGLShader &opengl_shader = m_storage.GetShader(element.shader_handle);
       UseShader(opengl_shader);
 
-      const OpenGLMaterial &opengl_material = m_storage.GetMaterial(element.material_id);
+      const OpenGLMaterial &opengl_material = m_storage.GetMaterial(element.material_handle);
       UseMaterial(opengl_shader, opengl_material);
       if (element.enable_blending) {
         glEnable(GL_BLEND);
@@ -685,7 +685,7 @@ namespace Hyperion::Rendering {
           glProgramUniform4f(opengl_shader.program, color_location, color.r, color.g, color.b, color.a);
         }
 
-        if (element.texture.id != AssetInfo::INVALID_ID) {
+        if (element.texture.handle.IsValid()) {
           GLint texture_location = opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::Texture)];
           if (texture_location >= 0) {
             SetMaterialTextureProperty(element.texture, 0, opengl_shader.program, texture_location);
@@ -693,7 +693,7 @@ namespace Hyperion::Rendering {
         }
       }
 
-      const OpenGLMesh &opengl_mesh = m_storage.GetMesh(element.mesh_id);
+      const OpenGLMesh &opengl_mesh = m_storage.GetMesh(element.mesh_handle);
       UseMesh(opengl_mesh);
 
       DrawSubMesh(opengl_mesh.sub_meshes[0]);
@@ -736,8 +736,8 @@ namespace Hyperion::Rendering {
     OpenGLDebugGroup debug_group("UseRenderTexture");
 
     GLuint framebuffer = 0;
-    if (render_target_id.id != RenderTargetId::Default().id) {
-      const OpenGLRenderTexture &opengl_render_texture = m_storage.GetRenderTexture(render_target_id.id);
+    if (render_target_id.handle != RenderTargetId::Default().handle) {
+      const OpenGLRenderTexture &opengl_render_texture = m_storage.GetRenderTexture(render_target_id.handle);
       framebuffer = opengl_render_texture.framebuffer;
     }
 
@@ -851,16 +851,16 @@ namespace Hyperion::Rendering {
     GLuint texture = 0;
     if (texture_property.dimension == TextureDimension::RenderTexture) {
       // TODO: We should do more validation when setting a render texture.
-      auto it = m_storage.FindRenderTexture(texture_property.id);
+      auto it = m_storage.FindRenderTexture(texture_property.handle);
       if (it == m_storage.GetRenderTextureEnd()) {
         HYP_LOG_ERROR("OpenGL", "Trying to set non existing render texture as shader property!");
         return;
       } else {
-        const OpenGLRenderTextureAttachment &opengl_attachment = it->second.attachments[texture_property.render_texture_attchment_index];
+        const OpenGLRenderTextureAttachment &opengl_attachment = it->second.attachments[texture_property.render_texture_attachment_index];
         texture = opengl_attachment.attachment;
       }
     } else {
-      auto it = m_storage.FindTexture2D(texture_property.id);
+      auto it = m_storage.FindTexture2D(texture_property.handle);
       if (it == m_storage.GetTexture2DEnd()) {
         HYP_LOG_ERROR("OpenGL", "Trying to set non existing texture as shader property!");
         return;

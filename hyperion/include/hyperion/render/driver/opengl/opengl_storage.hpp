@@ -21,7 +21,7 @@ namespace Hyperion::Rendering {
   };
   
   struct OpenGLAsset {
-    AssetId id;
+    AssetHandle handle;
   };
 
   struct OpenGLShader : public OpenGLAsset {
@@ -98,19 +98,19 @@ namespace Hyperion::Rendering {
 
   class OpenGLStorage final {
   public:
-    inline const OpenGLTexture &GetTexture2D(AssetId id) const { return m_textures.Get(id); }
-    inline const OpenGLRenderTexture &GetRenderTexture(AssetId id) const { return m_render_textures.Get(id); }
-    inline const OpenGLShader &GetShader(AssetId id) const { return m_shaders.Get(id); }
-    inline const OpenGLMaterial &GetMaterial(AssetId id) const { return m_materials.Get(id); }
-    inline const OpenGLMesh &GetMesh(AssetId id) const { return m_meshes.Get(id); }
+    inline const OpenGLTexture &GetTexture2D(AssetHandle handle) const { return m_textures.Get(handle); }
+    inline const OpenGLRenderTexture &GetRenderTexture(AssetHandle handle) const { return m_render_textures.Get(handle); }
+    inline const OpenGLShader &GetShader(AssetHandle handle) const { return m_shaders.Get(handle); }
+    inline const OpenGLMaterial &GetMaterial(AssetHandle handle) const { return m_materials.Get(handle); }
+    inline const OpenGLMesh &GetMesh(AssetHandle handle) const { return m_meshes.Get(handle); }
 
     inline const OpenGLStaticStorage &GetStatic() const { return m_static; }
 
-    inline auto FindTexture2D(AssetId id) const { return m_textures.Find(id); }
+    inline auto FindTexture2D(AssetHandle handle) const { return m_textures.Find(handle); }
     inline auto GetTexture2DEnd() const { return m_textures.end(); }
-    inline auto FindRenderTexture(AssetId id) const { return m_render_textures.Find(id); }
+    inline auto FindRenderTexture(AssetHandle handle) const { return m_render_textures.Find(handle); }
     inline auto GetRenderTextureEnd() const { return m_render_textures.end(); }
-    inline auto FindShader(AssetId id) const { return m_shaders.Find(id); }
+    inline auto FindShader(AssetHandle handle) const { return m_shaders.Find(handle); }
     inline auto GetShaderEnd() const { return m_shaders.end(); }
 
     void Initialize();
@@ -122,15 +122,15 @@ namespace Hyperion::Rendering {
     void LoadMaterial(RenderAssetMaterial &material);
     void LoadMesh(RenderAssetMesh &mesh);
     void UnloadAssets(RenderAssetContext &asset_context);
-    void UnloadRenderTexture(AssetId render_texture_id);
+    void UnloadRenderTexture(AssetHandle render_texture_handle);
 
     void SetTextureAttributes(GLuint texture, TextureAttributes attributes);
   private:
-    Map<AssetId, OpenGLTexture> m_textures;
-    Map<AssetId, OpenGLRenderTexture> m_render_textures;
-    Map<AssetId, OpenGLShader> m_shaders;
-    Map<AssetId, OpenGLMaterial> m_materials;
-    Map<AssetId, OpenGLMesh> m_meshes;
+    Map<AssetHandle, OpenGLTexture> m_textures;
+    Map<AssetHandle, OpenGLRenderTexture> m_render_textures;
+    Map<AssetHandle, OpenGLShader> m_shaders;
+    Map<AssetHandle, OpenGLMaterial> m_materials;
+    Map<AssetHandle, OpenGLMesh> m_meshes;
 
     OpenGLStaticStorage m_static = OpenGLStaticStorage();
   };

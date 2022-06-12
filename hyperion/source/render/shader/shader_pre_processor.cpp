@@ -286,7 +286,7 @@ namespace Hyperion::Rendering {
         break;
       case ShaderPropertyType::Matrix: result.storage.matrix4x4 = Matrix4x4::Identity();
         break;
-      case ShaderPropertyType::Texture: result.storage.texture.id = AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetAssetInfo().id;
+      case ShaderPropertyType::Texture: result.storage.texture.handle = AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetAssetInfo().handle;
         break;
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         break;

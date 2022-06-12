@@ -29,13 +29,13 @@ namespace Hyperion::Rendering {
   struct GroupedMaterial {
     const OpenGLMaterial *material = nullptr;
 
-    Map<AssetId, GroupedMesh> meshes;
+    Map<AssetHandle, GroupedMesh> meshes;
   };
 
   struct GroupedShader {
     const OpenGLShader *shader = nullptr;
 
-    Map<AssetId, GroupedMaterial> materials;
+    Map<AssetHandle, GroupedMaterial> materials;
   };
 
   struct OpenGLState {
