@@ -10,13 +10,6 @@ namespace Hyperion::Scripting {
   //--------------------------------------------------------------
   DotnetScriptingWorld::DotnetScriptingWorld(World *world, DotnetScriptingDriver *driver) {
     m_world = world;
-
-    // The destruction of entities and removal of components needs to be forwarded to the managed side. 
-    EntityManager *manager = world->GetEntityManager();
-    manager->RegisterOnEntityDestroyed({ ConnectionArguments<&DotnetScriptingWorld::OnEntityDestroyed>, this });
-    for (ComponentInfo info : ComponentRegistry::GetComponentInfos()) {
-      manager->RegisterOnComponentRemoved(info.id, { ConnectionArguments<&DotnetScriptingWorld::OnComponentRemoved>, this });
-    }
   }
   
   //--------------------------------------------------------------
@@ -33,6 +26,18 @@ namespace Hyperion::Scripting {
 
   //--------------------------------------------------------------
   void DotnetScriptingWorld::OnLoadContext() {
+    // The destruction of entities and removal of components needs to be forwarded to the managed side. 
+    EntityManager *manager = m_world->GetEntityManager();
+    manager->RegisterOnEntityDestroyed({ ConnectionArguments<&DotnetScriptingWorld::OnEntityDestroyed>, this });
+    for (ComponentInfo info : ComponentRegistry::GetComponentInfos()) {
+      // We skip components which are treated in a special way.
+      if (info.id == ComponentRegistry::GetId<DisabledComponent>() || info.id == ComponentRegistry::GetId<StaticComponent>()) {
+        continue;
+      }
+      
+      manager->RegisterOnComponentRemoved(info.id, { ConnectionArguments<&DotnetScriptingWorld::OnComponentRemoved>, this });
+    }
+    
     // Managed World and EntityManager instances are always being created.
     m_world_handle = DotnetScriptingBindings::GetOrCreateManagedObject(DotnetScriptingBindings::GetSpecialType(SpecialType::World), m_world);
     m_entity_manager_handle = DotnetScriptingBindings::GetOrCreateManagedObject(
@@ -71,7 +76,10 @@ namespace Hyperion::Scripting {
     }
 
     ManagedHandle component_type_handle = DotnetScriptingBindings::GetManagedTypeForComponentId(component_id);
-    DotnetScriptingBindings::GetManagedBindings()->on_component_removed(m_entity_manager_handle, component_type_handle, id);
+    // TEMP: This check should only be temporary as long as we do not have every native component type as a managed binding.
+    if (component_type_handle != nullptr) {
+      DotnetScriptingBindings::GetManagedBindings()->on_component_removed(m_entity_manager_handle, component_type_handle, id);
+    }
   }
 
 }

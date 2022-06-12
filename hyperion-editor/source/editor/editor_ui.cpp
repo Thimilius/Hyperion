@@ -278,7 +278,7 @@ namespace Hyperion::Editor {
                     UIImmediate::FillSpace();
                     
                     if (UIImmediate::Button("\uf0e2", FitType::ToLayout, icon_theme).clicked) {
-                      // FIXME: This leaks memory as it does not clear old data properly!
+                      component_info.destructor(component);
                       component_info.constructor(component);
                     }
 

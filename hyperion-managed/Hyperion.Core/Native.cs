@@ -76,15 +76,23 @@ namespace Hyperion {
 
     [UnmanagedCallersOnly]
     internal static void OnEntityDestroyed(IntPtr entityManagedHandle, EntityId id) {
-      EntityManager entityManager = GCHandle.FromIntPtr(entityManagedHandle).Get<EntityManager>();
-      entityManager.OnEntityDestroyedNative(id);
+      try {
+        EntityManager entityManager = GCHandle.FromIntPtr(entityManagedHandle).Get<EntityManager>();
+        entityManager.OnEntityDestroyedNative(id);  
+      } catch (Exception e) {
+        Bindings.Core.Exception(e.ToString());
+      }
     }
 
     [UnmanagedCallersOnly]
     internal static void OnComponentRemoved(IntPtr entityManagedHandle, IntPtr componentTypeHandle, EntityId id) {
-      EntityManager entityManager = GCHandle.FromIntPtr(entityManagedHandle).Get<EntityManager>();
-      Type componentType = GCHandle.FromIntPtr(componentTypeHandle).Get<Type>();
-      entityManager.OnComponentRemovedNative(componentType, id);
+      try {
+        EntityManager entityManager = GCHandle.FromIntPtr(entityManagedHandle).Get<EntityManager>();
+        Type componentType = GCHandle.FromIntPtr(componentTypeHandle).Get<Type>();
+        entityManager.OnComponentRemovedNative(componentType, id);  
+      } catch (Exception e) {
+        Bindings.Core.Exception(e.ToString());
+      }
     }
   }
 }

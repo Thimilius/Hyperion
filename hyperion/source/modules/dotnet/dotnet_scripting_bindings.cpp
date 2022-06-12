@@ -150,7 +150,13 @@ namespace Hyperion::Scripting {
 
   //--------------------------------------------------------------
   ManagedHandle DotnetScriptingBindings::GetManagedTypeForComponentId(ComponentId component_id) {
-    return s_id_to_managed_component_types.Get(component_id);
+    auto it = s_id_to_managed_component_types.Find(component_id);
+    if (it == s_id_to_managed_component_types.end()) {
+      HYP_LOG_ERROR("Scripting", "Failed to find managed type for component id!");
+      return nullptr;
+    } else {
+      return it->second;
+    }
   }
 
   //--------------------------------------------------------------

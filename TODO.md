@@ -6,7 +6,7 @@
 - Time Main Thread and Render Thread individually
 
 ## Assets
-- Proper asset handles
+- Asset metadata
 - Textures
 	- Cubemaps
 - Duplication
