@@ -50,9 +50,9 @@ namespace Hyperion {
 
     AssignInternalReferences();
     
-    // FIXME: This should be handled by the copy constructor/assignment operator of the EntityManager.
-    m_manager.m_entity_created_callbacks.Clear();
-    m_manager.m_entity_destroyed_callbacks.Clear();
+    // NOTE: This should probably be handled by the copy constructor/assignment operator of the EntityManager.
+    m_manager.m_storage.entity_created_callbacks.Clear();
+    m_manager.m_storage.entity_destroyed_callbacks.Clear();
     for (ComponentCallbacks &component_callback : m_manager.m_storage.component_callbacks) {
       component_callback.added.Clear();
       component_callback.removed.Clear();

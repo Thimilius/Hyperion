@@ -27,6 +27,9 @@ namespace Hyperion {
     uint64 available = 0;
     EntityIndex next = EntityId::GetIndex(EntityId::EMPTY);
 
+    Array<EntityCallback> entity_created_callbacks;
+    Array<EntityCallback> entity_destroyed_callbacks;
+    
     Array<ComponentPool> component_pools;
     Array<ComponentCallbacks> component_callbacks;
   };
@@ -63,7 +66,7 @@ namespace Hyperion {
         T *component = static_cast<T *>(component_pool.AddComponent(id));
         if (component != nullptr) {
           for (ComponentCallback callback : m_storage.component_callbacks[component_id].added) {
-            callback(this, id);
+            callback(this, component_id, id);
           }
           return component;
         } else {
@@ -85,7 +88,7 @@ namespace Hyperion {
         void *component = component_pool.AddComponent(id);
         if (component != nullptr) {
           for (ComponentCallback callback : m_storage.component_callbacks[component_id].added) {
-            callback(this, id);
+            callback(this, component_id, id);
           }
           return component;
         } else {
@@ -166,7 +169,7 @@ namespace Hyperion {
           if (component_data != nullptr) {
             T *component = new(component_data) T();
             for (ComponentCallback callback : m_storage.component_callbacks[component_id].added) {
-              callback(this, id);
+              callback(this, component_id, id);
             }
             return component;
           } else {
@@ -189,7 +192,7 @@ namespace Hyperion {
         ComponentPool &component_pool = m_storage.component_pools[component_id];
         if (component_pool.HasComponent(id)) {
           for (ComponentCallback callback : m_storage.component_callbacks[component_id].removed) {
-            callback(this, id);
+            callback(this, component_id, id);
           }
           component_pool.RemoveComponent(id);
         } else {
@@ -207,7 +210,7 @@ namespace Hyperion {
         ComponentPool &component_pool = m_storage.component_pools[component_id];
         if (component_pool.HasComponent(id)) {
           for (ComponentCallback callback : m_storage.component_callbacks[component_id].removed) {
-            callback(this, id);
+            callback(this, component_id, id);
           }
           component_pool.RemoveComponent(id);
         } else {
@@ -229,19 +232,19 @@ namespace Hyperion {
     }
     
     inline void RegisterOnEntityCreated(const EntityCallback &callback) {
-      m_entity_created_callbacks.Add(callback);
+      m_storage.entity_created_callbacks.Add(callback);
     }
 
     inline void UnregisterOnEntityCreated(const EntityCallback &callback) {
-      m_entity_created_callbacks.Remove(callback);
+      m_storage.entity_created_callbacks.Remove(callback);
     }
 
     inline void RegisterOnEntityDestroyed(const EntityCallback &callback) {
-      m_entity_destroyed_callbacks.Add(callback);
+      m_storage.entity_destroyed_callbacks.Add(callback);
     }
 
     inline void UnregisterOnEntityDestroyed(const EntityCallback &callback) {
-      m_entity_destroyed_callbacks.Remove(callback);
+      m_storage.entity_destroyed_callbacks.Remove(callback);
     }
 
     template<typename T>
@@ -259,12 +262,20 @@ namespace Hyperion {
     template<typename T>
     inline void RegisterOnComponentRemoved(const ComponentCallback &callback) {
       ComponentId component_id = ComponentRegistry::GetId<T>();
-      m_storage.component_callbacks[component_id].removed.Add(callback);
+      RegisterOnComponentRemoved(component_id, callback);
     }
 
+    inline void RegisterOnComponentRemoved(ComponentId component_id, const ComponentCallback &callback) {
+      m_storage.component_callbacks[component_id].removed.Add(callback);
+    }
+    
     template<typename T>
     inline void UnregisterOnComponentRemoved(const ComponentCallback &callback) {
       ComponentId component_id = ComponentRegistry::GetId<T>();
+      UnregisterOnComponentRemoved(component_id, callback);
+    }
+
+    inline void UnregisterOnComponentRemoved(ComponentId component_id, const ComponentCallback &callback) {
       m_storage.component_callbacks[component_id].removed.Remove(callback);
     }
   private:
@@ -277,9 +288,6 @@ namespace Hyperion {
     World *m_world = nullptr;
     
     EntityManagerStorage m_storage;
-
-    Array<EntityCallback> m_entity_created_callbacks;
-    Array<EntityCallback> m_entity_destroyed_callbacks;
   private:
     friend class Hyperion::World;
     template<typename... Types>

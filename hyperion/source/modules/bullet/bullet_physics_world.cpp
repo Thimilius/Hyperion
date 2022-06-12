@@ -77,7 +77,11 @@ namespace Hyperion::Physics {
   }
 
   //--------------------------------------------------------------
-  void BulletPhysicsWorld::UpdateBoxCollider(EntityManager *manager, EntityId entity, BoxColliderComponent *box_collider, DerivedTransformComponent *derived_transform) {
+  void BulletPhysicsWorld::UpdateBoxCollider(
+    EntityManager *manager,
+    EntityId entity,
+    BoxColliderComponent *box_collider,
+    DerivedTransformComponent *derived_transform) {
     HYP_PROFILE_SCOPE("BulletPhysicsWorld.UpdateBoxCollider");
 
     btCollisionObject *collision_object = m_box_colliders.Get(entity);
@@ -97,8 +101,11 @@ namespace Hyperion::Physics {
   }
 
   //--------------------------------------------------------------
-  void BulletPhysicsWorld::UpdateBoxColliderTransform(EntityManager *manager, EntityId entity, BoxColliderComponent *box_collider,
-                                                      DerivedTransformComponent *derived_transform) {
+  void BulletPhysicsWorld::UpdateBoxColliderTransform(
+    EntityManager *manager,
+    EntityId entity,
+    BoxColliderComponent *box_collider,
+    DerivedTransformComponent *derived_transform) {
     HYP_PROFILE_SCOPE("BulletPhysicsWorld.UpdateBoxColliderTransform");
 
     btCollisionObject *collision_object = m_box_colliders.Get(entity);
@@ -122,8 +129,11 @@ namespace Hyperion::Physics {
   }
 
   //--------------------------------------------------------------
-  void BulletPhysicsWorld::UpdateSphereColliderTransform(EntityManager *manager, EntityId entity, SphereColliderComponent *sphere_collider,
-                                                         DerivedTransformComponent *derived_transform) {
+  void BulletPhysicsWorld::UpdateSphereColliderTransform(
+    EntityManager *manager,
+    EntityId entity,
+    SphereColliderComponent *sphere_collider,
+    DerivedTransformComponent *derived_transform) {
     HYP_PROFILE_SCOPE("BulletPhysicsWorld.UpdateSphereColliderTransform");
 
     btCollisionObject *collision_object = m_sphere_colliders.Get(entity);
@@ -134,7 +144,7 @@ namespace Hyperion::Physics {
   }
 
   //--------------------------------------------------------------
-  void BulletPhysicsWorld::AddBoxCollider(EntityManager *manager, EntityId entity) {
+  void BulletPhysicsWorld::AddBoxCollider(EntityManager *manager, ComponentId component_id, EntityId entity) {
     HYP_PROFILE_SCOPE("BulletPhysicsWorld.AddBoxCollider");
     
     BoxColliderComponent *box_collider = manager->GetComponent<BoxColliderComponent>(entity);
@@ -152,14 +162,14 @@ namespace Hyperion::Physics {
   }
 
   //--------------------------------------------------------------
-  void BulletPhysicsWorld::RemoveBoxCollider(EntityManager *manager, EntityId entity) {
+  void BulletPhysicsWorld::RemoveBoxCollider(EntityManager *manager, ComponentId component_id, EntityId entity) {
     HYP_PROFILE_SCOPE("BulletPhysicsWorld.RemoveBoxCollider");
 
     RemoveCollider(m_box_colliders, entity);
   }
 
   //--------------------------------------------------------------
-  void BulletPhysicsWorld::AddSphereCollider(EntityManager *manager, EntityId entity) {
+  void BulletPhysicsWorld::AddSphereCollider(EntityManager *manager, ComponentId component_id, EntityId entity) {
     HYP_PROFILE_SCOPE("BulletPhysicsWorld.AddSphereCollider");
 
     SphereColliderComponent *sphere_collider = manager->GetComponent<SphereColliderComponent>(entity);
@@ -175,7 +185,7 @@ namespace Hyperion::Physics {
   }
 
   //--------------------------------------------------------------
-  void BulletPhysicsWorld::RemoveSphereCollider(EntityManager *manager, EntityId entity) {
+  void BulletPhysicsWorld::RemoveSphereCollider(EntityManager *manager, ComponentId component_id, EntityId entity) {
     HYP_PROFILE_SCOPE("BulletPhysicsWorld.RemoveSphereCollider");
 
     RemoveCollider(m_sphere_colliders, entity);
@@ -214,12 +224,12 @@ namespace Hyperion::Physics {
     
     auto box_collider_view = manager->GetView<BoxColliderComponent>();
     for (EntityId entity : box_collider_view) {
-      AddBoxCollider(manager, entity);
+      AddBoxCollider(manager, ComponentRegistry::GetId<BoxColliderComponent>(), entity);
     }
 
     auto sphere_collider_view = manager->GetView<SphereColliderComponent>();
     for (EntityId entity : sphere_collider_view) {
-      AddSphereCollider(manager, entity);
+      AddSphereCollider(manager, ComponentRegistry::GetId<SphereColliderComponent>(), entity);
     }
   }
 

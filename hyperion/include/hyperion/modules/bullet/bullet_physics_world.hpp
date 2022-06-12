@@ -5,6 +5,7 @@
 #include <bullet/btBulletCollisionCommon.h>
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/ecs/component/component_types.hpp"
 #include "hyperion/physics/physics_world.hpp"
 
 //-------------------- Forward Declarations --------------------
@@ -42,23 +43,23 @@ namespace Hyperion::Physics {
       SphereColliderComponent *sphere_collider,
       DerivedTransformComponent *derived_transform) override;
   private:
-    void AddBoxCollider(EntityManager *manager, EntityId entity);
-    void RemoveBoxCollider(EntityManager *manager, EntityId entity);
-    void AddSphereCollider(EntityManager *manager, EntityId entity);
-    void RemoveSphereCollider(EntityManager *manager, EntityId entity);
+    void AddBoxCollider(EntityManager *manager, ComponentId component_id,  EntityId entity);
+    void RemoveBoxCollider(EntityManager *manager, ComponentId component_id, EntityId entity);
+    void AddSphereCollider(EntityManager *manager, ComponentId component_id, EntityId entity);
+    void RemoveSphereCollider(EntityManager *manager, ComponentId component_id, EntityId entity);
 
     void AddCollider(ColliderStorage &collider_storage, EntityId entity, btCollisionObject *collision_object);
     void RemoveCollider(ColliderStorage &collider_storage, EntityId entity);
-    void UpdateTransform(DerivedTransformComponent *transform, btCollisionObject *collision_object, Vector3 position);
+    void UpdateTransform(DerivedTransformComponent *derived_transform, btCollisionObject *collision_object, Vector3 position);
 
     void CopyColliders(World *world);
     void ClearColliders();
   private:
-    World *m_world;
+    World *m_world = nullptr;
     
-    btCollisionWorld *m_collision_world;
-    btDispatcher *m_collision_dispatcher;
-    btBroadphaseInterface *m_broadphase;
+    btCollisionWorld *m_collision_world = nullptr;
+    btDispatcher *m_collision_dispatcher = nullptr;
+    btBroadphaseInterface *m_broadphase = nullptr;
 
     ColliderStorage m_box_colliders;
     ColliderStorage m_sphere_colliders;

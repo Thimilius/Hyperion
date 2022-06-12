@@ -83,7 +83,7 @@ namespace Hyperion {
 
     m_world->m_hierarchy.HandleEntityCreation(id);
 
-    for (auto callback : m_entity_created_callbacks) {
+    for (auto callback : m_storage.entity_created_callbacks) {
       callback(this, id);
     }
 
@@ -154,7 +154,7 @@ namespace Hyperion {
     HYP_PROFILE_SCOPE("World.DestroyEntity");
 
     if (IsAlive(id)) {
-      for (auto callback : m_entity_destroyed_callbacks) {
+      for (auto callback : m_storage.entity_destroyed_callbacks) {
         callback(this, id);
       }
 

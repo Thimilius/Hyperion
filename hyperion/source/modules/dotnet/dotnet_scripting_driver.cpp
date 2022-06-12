@@ -141,7 +141,7 @@ namespace Hyperion::Scripting {
   void DotnetScriptingDriver::LoadManagedContext() {
     HYP_PROFILE_SCOPE("DotnetScriptingDriver.LoadManagedContext")
     s_runtime_managed_bindings.load_context(DotnetScriptingBindings::GetBootstrapArguments());
-
+    
     {
       HYP_PROFILE_SCOPE("DotnetScriptingDriver.EngineInitialize")
       DotnetScriptingBindings::GetManagedBindings()->engine_initialize();
