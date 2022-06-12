@@ -19,9 +19,7 @@ namespace Hyperion {
     uint64 root_count = manager->GetWorld()->GetHierarchy()->GetRootCount();
     for (uint64 i = 0; i < root_count; i++) {
       HierarchyComponent *root_hierarchy = manager->GetComponent<HierarchyComponent>(root);
-      bool8 is_not_disabled = manager->GetComponent<DisabledComponent>(root) == nullptr;
-      bool8 is_not_static = manager->GetComponent<StaticComponent>(root) == nullptr;
-      if (is_not_disabled && is_not_static) {
+      if (!manager->HasComponent<StaticComponent>(root)) {
         UpdateBranch(manager, root, manager->GetComponent<HierarchyComponent>(root), nullptr);
       }
       root = root_hierarchy->next_sibling;
@@ -29,8 +27,11 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  void HierarchyTransformSystem::UpdateBranch(EntityManager *manager, EntityId branch, HierarchyComponent *branch_hierarchy,
-                                              DerivedTransformComponent *parent_derived_transform) {
+  void HierarchyTransformSystem::UpdateBranch(
+    EntityManager *manager,
+    EntityId branch,
+    HierarchyComponent *branch_hierarchy,
+    DerivedTransformComponent *parent_derived_transform) {
     HYP_PROFILE_SCOPE("HierarchyTransformSystem.UpdateBranch");
 
     LocalTransformComponent *local_transform = manager->GetComponent<LocalTransformComponent>(branch);
@@ -50,9 +51,7 @@ namespace Hyperion {
     EntityId child = branch_hierarchy->first_child;
     for (uint64 i = 0; i < branch_hierarchy->child_count; i++) {
       HierarchyComponent *child_hierarchy = manager->GetComponent<HierarchyComponent>(child);
-      bool8 is_not_disabled = manager->GetComponent<DisabledComponent>(child) == nullptr;
-      bool8 is_not_static = manager->GetComponent<StaticComponent>(child) == nullptr;
-      if (is_not_disabled && is_not_static) {
+      if (!manager->HasComponent<StaticComponent>(child)) {
         UpdateBranch(manager, child, child_hierarchy, derived_transform);
       }
       child = child_hierarchy->next_sibling;

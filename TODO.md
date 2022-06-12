@@ -55,3 +55,6 @@
 	- Fix layout
 - Font rendering
     - SDF
+
+## Editor
+- Fix position/rotation of child entities with gizmo using WorldToLocal helpers

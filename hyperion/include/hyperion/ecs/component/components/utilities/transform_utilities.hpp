@@ -16,6 +16,7 @@ namespace Hyperion {
     inline static Vector3 GetUp(DerivedTransformComponent *derived_transform) { return derived_transform->rotation * Vector3::Up(); }
     inline static Vector3 GetForward(DerivedTransformComponent *derived_transform) { return derived_transform->rotation * Vector3::Forward(); }
 
+    // TODO: Use WorldToLocalPosition helper.
     inline static void SetPosition(EntityManager *manager, EntityId entity, const Vector3 &position) {
       HierarchyComponent *hierarchy = manager->GetComponent<HierarchyComponent>(entity);
       LocalTransformComponent *local_transform = manager->GetComponent<LocalTransformComponent>(entity);
@@ -29,6 +30,7 @@ namespace Hyperion {
       manager->GetWorld()->GetHierarchy()->UpdateTransform(EntityHierarchyTransformUpdate::Branch, entity);
     }
 
+    // TODO: Use WorldToLocalRotation helper.
     inline static void SetRotation(EntityManager *manager, EntityId entity, const Quaternion &rotation) {
       HierarchyComponent *hierarchy = manager->GetComponent<HierarchyComponent>(entity);
       LocalTransformComponent *local_transform = manager->GetComponent<LocalTransformComponent>(entity);
