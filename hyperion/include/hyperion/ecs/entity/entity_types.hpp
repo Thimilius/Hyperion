@@ -3,7 +3,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/delegate.hpp"
-#include "hyperion/core/guid.hpp"
+#include "hyperion/core/UUID.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -17,7 +17,7 @@ namespace Hyperion {
   using EntityIdSmallType = uint32;
   using EntityIndex = uint32;
   using EntityVersion = uint32;
-  using EntityGuid = Guid;
+  using EntityUUID = UUID;
 
   struct EntityId {
     EntityIdType id = EMPTY;
@@ -49,7 +49,7 @@ namespace Hyperion {
 
   struct EntityDescription {
     EntityId id;
-    EntityGuid guid;
+    EntityUUID uuid;
   };
 
   enum class EntityPrimitive {

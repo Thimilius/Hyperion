@@ -2,7 +2,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/guid.hpp"
+#include "hyperion/core/UUID.hpp"
 #include "hyperion/ecs/component/component_registry.hpp"
 
 //-------------------- Definition Namespace --------------------

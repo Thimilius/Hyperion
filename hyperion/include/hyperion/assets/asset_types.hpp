@@ -2,7 +2,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/guid.hpp"
+#include "hyperion/core/UUID.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -16,7 +16,7 @@ namespace Hyperion {
     TextureAtlas
   };
 
-  using AssetHandleType = Guid;
+  using AssetHandleType = UUID;
   
   struct AssetHandle {
     AssetHandleType handle;

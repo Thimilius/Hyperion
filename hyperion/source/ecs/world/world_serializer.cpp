@@ -414,8 +414,8 @@ namespace Hyperion {
         }
       } else if (property_type == Type::get<String>()) {
         yaml_emitter << property_value.to_string();
-      } else if (property_type == Type::get<Guid>()) {
-        yaml_emitter << property_value.get_value<Guid>().ToString();
+      } else if (property_type == Type::get<UUID>()) {
+        yaml_emitter << property_value.get_value<UUID>().ToString();
       } else if (property_type == Type::get<Vector2>()) {
         yaml_emitter << property_value.get_value<Vector2>();
       } else if (property_type == Type::get<Vector3>()) {
@@ -433,7 +433,7 @@ namespace Hyperion {
         if (id == EntityId::EMPTY) {
           yaml_emitter << YAML::Null;  
         } else {
-          yaml_emitter << manager->GetGuid(id).ToString();
+          yaml_emitter << manager->GetUUID(id).ToString();
         }
       } else if (property_type == Type::get<AssetHandle>()) {
         yaml_emitter << property_value.get_value<AssetHandle>().handle.ToString();
@@ -513,7 +513,7 @@ namespace Hyperion {
         const Type &property_type_reference = property_type;
         property_enum_variant.convert(property_type_reference);
         setting_property_success = property.set_value(instance, property_enum_variant);
-      } else if (property_type == Type::get<String>() || property_type == Type::get<Guid>()) {
+      } else if (property_type == Type::get<String>() || property_type == Type::get<UUID>()) {
         setting_property_success = property.set_value(instance, yaml_property.as<String>());
       } else if (property_type == Type::get<Vector2>()) {
         setting_property_success = property.set_value(instance, yaml_property.as<Vector2>());
@@ -530,8 +530,8 @@ namespace Hyperion {
       } else if (property_type == Type::get<EntityId>()) {
         EntityId id;
         if (!yaml_property.IsNull()) {
-          EntityGuid guid = EntityGuid::Generate(yaml_property.as<String>());
-          id = manager->GetByGuid(guid);
+          EntityUUID uuid = EntityUUID::Generate(yaml_property.as<String>());
+          id = manager->GetByUUID(uuid);
         }
         setting_property_success = property.set_value(instance, id);
       } else if (property_type == Type::get<AssetHandle>()) {
@@ -594,8 +594,8 @@ namespace Hyperion {
     {
       EntityHierarchy *hierarchy = world->GetHierarchy();
       yaml_emitter << YAML::Key << "root_count" << YAML::Value << hierarchy->GetRootCount();
-      yaml_emitter << YAML::Key << "first_root" << YAML::Value << manager->GetGuid(hierarchy->GetFirstRoot()).ToString();
-      yaml_emitter << YAML::Key << "last_root" << YAML::Value << manager->GetGuid(hierarchy->GetLastRoot()).ToString();
+      yaml_emitter << YAML::Key << "first_root" << YAML::Value << manager->GetUUID(hierarchy->GetFirstRoot()).ToString();
+      yaml_emitter << YAML::Key << "last_root" << YAML::Value << manager->GetUUID(hierarchy->GetLastRoot()).ToString();
     }
     yaml_emitter << YAML::EndMap;
 
@@ -605,7 +605,7 @@ namespace Hyperion {
     auto view = manager->GetViewAll();
     for (EntityId entity : view) {
       yaml_emitter << YAML::BeginMap;
-      yaml_emitter << YAML::Key << "Entity" << YAML::Value << manager->GetGuid(entity).ToString();
+      yaml_emitter << YAML::Key << "Entity" << YAML::Value << manager->GetUUID(entity).ToString();
 
       for (const ComponentInfo &component_info : component_infos) {
         Type component_type = *component_info.type;
@@ -641,15 +641,15 @@ namespace Hyperion {
       world->SetName(yaml_name.as<String>());
     }
 
-    // In the first phase we just create all entities with their corresponding guid.
+    // In the first phase we just create all entities with their corresponding UUID.
     YAML::Node yaml_entities = yaml_world["entities"];
     if (yaml_entities && yaml_entities.IsSequence()) {
       for (auto yaml_entity : yaml_entities) {
         if (yaml_entity && yaml_entity.IsMap()) {
-          YAML::Node yaml_entity_guid = yaml_entity["Entity"];
-          if (yaml_entity_guid && yaml_entity_guid.IsScalar()) {
-            EntityGuid guid = EntityGuid::Generate(yaml_entity_guid.as<String>());
-            manager->CreateEntity(EntityPrimitive::Empty, guid);
+          YAML::Node yaml_entity_uuid = yaml_entity["Entity"];
+          if (yaml_entity_uuid && yaml_entity_uuid.IsScalar()) {
+            EntityUUID uuid = EntityUUID::Generate(yaml_entity_uuid.as<String>());
+            manager->CreateEntity(EntityPrimitive::Empty, uuid);
           }
         }
       }
@@ -669,23 +669,23 @@ namespace Hyperion {
       if (yaml_hierarchy_first_root) {
         world_hierarchy->m_first_root = yaml_hierarchy_first_root.IsNull()
                                         ? EntityId::EMPTY
-                                        : manager->GetByGuid(EntityGuid::Generate(yaml_hierarchy_first_root.as<String>()));
+                                        : manager->GetByUUID(EntityUUID::Generate(yaml_hierarchy_first_root.as<String>()));
       }
       YAML::Node yaml_hierarchy_last_root = yaml_hierarchy["last_root"];
       if (yaml_hierarchy_last_root) {
         world_hierarchy->m_last_root = yaml_hierarchy_last_root.IsNull()
                                        ? EntityId::EMPTY
-                                       : manager->GetByGuid(EntityGuid::Generate(yaml_hierarchy_last_root.as<String>()));
+                                       : manager->GetByUUID(EntityUUID::Generate(yaml_hierarchy_last_root.as<String>()));
       }
     }
 
     if (yaml_entities && yaml_entities.IsSequence()) {
       for (auto yaml_entity : yaml_entities) {
         if (yaml_entity && yaml_entity.IsMap()) {
-          YAML::Node yaml_entity_guid = yaml_entity["Entity"];
-          if (yaml_entity_guid && yaml_entity_guid.IsScalar()) {
-            EntityGuid guid = EntityGuid::Generate(yaml_entity_guid.as<String>());
-            EntityId entity = manager->GetByGuid(guid);
+          YAML::Node yaml_entity_uuid = yaml_entity["Entity"];
+          if (yaml_entity_uuid && yaml_entity_uuid.IsScalar()) {
+            EntityUUID uuid = EntityUUID::Generate(yaml_entity_uuid.as<String>());
+            EntityId entity = manager->GetByUUID(uuid);
 
             for (auto pair : yaml_entity) {
               String component_type_string = pair.first.as<String>();

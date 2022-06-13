@@ -30,24 +30,24 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  EntityGuid EntityManager::GetGuid(EntityId id) const {
-    HYP_PROFILE_SCOPE("World.GetGuid");
+  EntityUUID EntityManager::GetUUID(EntityId id) const {
+    HYP_PROFILE_SCOPE("World.GetUUID");
 
     if (IsAlive(id)) {
-      return m_storage.entities[EntityId::GetIndex(id)].guid;
+      return m_storage.entities[EntityId::GetIndex(id)].uuid;
     } else {
-      HYP_LOG_WARN("Entity", "Trying to get GUID from nonexistent entity with id {}.", id);
-      return EntityGuid();
+      HYP_LOG_WARN("Entity", "Trying to get UUID from nonexistent entity with id {}.", id);
+      return EntityUUID();
     }
   }
 
   //--------------------------------------------------------------
-  EntityId EntityManager::GetByGuid(EntityGuid guid) const {
-    HYP_PROFILE_SCOPE("World.GetByGuid");
+  EntityId EntityManager::GetByUUID(EntityUUID uuid) const {
+    HYP_PROFILE_SCOPE("World.GetByUUID");
 
-    auto it = m_storage.entities_by_guid.Find(guid);
-    if (it == m_storage.entities_by_guid.end()) {
-      HYP_LOG_WARN("Entity", "Trying to get id from nonexistent entity with guid {}.", guid.ToString());
+    auto it = m_storage.entities_by_uuid.Find(uuid);
+    if (it == m_storage.entities_by_uuid.end()) {
+      HYP_LOG_WARN("Entity", "Trying to get id from nonexistent entity with UUID {}.", uuid.ToString());
       return EntityId::EMPTY;
     } else {
       return it->second;
@@ -55,12 +55,12 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  EntityId EntityManager::CreateEntity(EntityPrimitive primitive, EntityGuid guid) {
+  EntityId EntityManager::CreateEntity(EntityPrimitive primitive, EntityUUID uuid) {
     HYP_PROFILE_SCOPE("World.CreateEntity");
 
     EntityId id;
     if (m_storage.available <= 0) {
-      m_storage.entities.Add({ EntityId::Create(static_cast<EntityIndex>(m_storage.entities.GetLength()), 0), guid });
+      m_storage.entities.Add({ EntityId::Create(static_cast<EntityIndex>(m_storage.entities.GetLength()), 0), uuid });
       id = m_storage.entities.GetLast().id;
     } else {
       EntityIndex new_index = m_storage.next;
@@ -69,11 +69,11 @@ namespace Hyperion {
 
       EntityId new_id = EntityId::Create(new_index, EntityId::GetVersion(m_storage.entities[new_index].id));
       m_storage.entities[new_index].id = new_id;
-      m_storage.entities[new_index].guid = guid;
+      m_storage.entities[new_index].uuid = uuid;
 
       id = new_id;
     }
-    m_storage.entities_by_guid.Insert(guid, id);
+    m_storage.entities_by_uuid.Insert(uuid, id);
 
     for (ComponentPool &component_pool : m_storage.component_pools) {
       component_pool.FitIntoPool(id);
@@ -169,7 +169,7 @@ namespace Hyperion {
       EntityDescription &entity_description = m_storage.entities[index];
       entity_description.id = new_id;
 
-      m_storage.entities_by_guid.Remove(entity_description.guid);
+      m_storage.entities_by_uuid.Remove(entity_description.uuid);
 
       for (ComponentPool &component_pool : m_storage.component_pools) {
         component_pool.RemoveComponent(id);
@@ -196,11 +196,11 @@ namespace Hyperion {
 
         component_info.copy_constructor(component_data.GetData(), component);
         
-        storage.Insert(component_info.guid, component_data);  
+        storage.Insert(component_info.uuid, component_data);  
       }
     }
 
-    EntityArchetype *archetype = new EntityArchetype(EntityGuid::Generate(), storage);
+    EntityArchetype *archetype = new EntityArchetype(EntityUUID::Generate(), storage);
     archetype_component = AddComponent<ArchetypeComponent>(id);
     archetype_component->archetype = archetype;
 
@@ -214,8 +214,8 @@ namespace Hyperion {
     EntityId copy = CreateEntity(EntityPrimitive::Empty);
 
     EntityArchetypeComponentStorage storage = archetype->GetStorage();
-    for (auto &[component_guid, component_data] : storage) {
-      const ComponentInfo &component_info = ComponentRegistry::GetInfo(component_guid);
+    for (auto &[component_uuid, component_data] : storage) {
+      const ComponentInfo &component_info = ComponentRegistry::GetInfo(component_uuid);
       byte *component = static_cast<byte *>(AddComponent(component_info.id, copy));
       component_info.copy_constructor(component, component_data.GetData());
     }

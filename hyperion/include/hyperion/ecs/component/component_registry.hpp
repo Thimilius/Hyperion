@@ -26,20 +26,20 @@ namespace Hyperion {
       return s_component_ids.Get(type);
     }
 
-    inline static ComponentId GetId(ComponentGuid guid) {
-      return s_guid_to_id.Get(guid);
+    inline static ComponentId GetId(ComponentUUID uuid) {
+      return s_uuid_to_id.Get(uuid);
     }
 
     inline static ComponentInfo GetInfo(ComponentId id) {
       return s_component_infos[id];
     }
     
-    inline static ComponentInfo GetInfo(ComponentGuid guid) {
-      return GetInfo(GetId(guid));
+    inline static ComponentInfo GetInfo(ComponentUUID uuid) {
+      return GetInfo(GetId(uuid));
     }
     
     template<typename T>
-    inline static void RegisterComponent(const ComponentGuid &guid) {
+    inline static void RegisterComponent(const ComponentUUID &uuid) {
       static Type component_type = Type::get<T>();
       
       if (s_component_ids.Contains(component_type)) {
@@ -51,7 +51,7 @@ namespace Hyperion {
       
       ComponentInfo component_info = {};
       component_info.id = id;
-      component_info.guid = guid;
+      component_info.uuid = uuid;
       component_info.type = &component_type;
       component_info.element_size = component_type.get_sizeof();
       component_info.constructor = [](void *address) { return static_cast<void *>(new(address) T()); };
@@ -68,7 +68,7 @@ namespace Hyperion {
 
       s_component_infos.Add(component_info);
       s_component_ids.Insert(component_type, id);
-      s_guid_to_id.Insert(guid, id);
+      s_uuid_to_id.Insert(uuid, id);
       
       s_component_counter++;
     }
@@ -78,7 +78,7 @@ namespace Hyperion {
   private:
     inline static Map<Type, ComponentId> s_component_ids;
     inline static Array<ComponentInfo> s_component_infos;
-    inline static Map<ComponentGuid, ComponentId> s_guid_to_id;
+    inline static Map<ComponentUUID, ComponentId> s_uuid_to_id;
 
     inline static ComponentId s_component_counter = 0;
   private:

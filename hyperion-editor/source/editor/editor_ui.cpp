@@ -236,7 +236,7 @@ namespace Hyperion::Editor {
                 "Entity\nId: {{Index: {} - Version: {}}}\nGuid: {}",
                 EntityId::GetIndex(entity),
                 EntityId::GetVersion(entity),
-                manager->GetGuid(entity).ToString()
+                manager->GetUUID(entity).ToString()
               );
               UIImmediate::Text(text, TextAlignment::TopCenter, FitType::ToLayout);
               UIImmediate::Space(SizeKind::Pixels, 10);

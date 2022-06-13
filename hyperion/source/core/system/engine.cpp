@@ -197,7 +197,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   void Engine::RegisterTypes() {
-    Registration::class_<Guid>(HYP_NAME_OF_TYPE(Guid))
+    Registration::class_<UUID>(HYP_NAME_OF_TYPE(UUID))
       .constructor();
     
     Registration::class_<Vector2>(HYP_NAME_OF_TYPE(Vector2))

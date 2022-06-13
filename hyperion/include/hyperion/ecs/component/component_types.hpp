@@ -13,7 +13,7 @@ namespace Hyperion {
 namespace Hyperion {
 
   using ComponentId = uint32;
-  using ComponentGuid = Guid;
+  using ComponentUUID = UUID;
 
   using ComponentConstructor = void *(*)(void *address);
   using ComponentCopyConstructor = void *(*)(void *address, const void *instance);
@@ -22,17 +22,17 @@ namespace Hyperion {
   using ComponentDestructor = void(*)(const void *instance);
   
   struct ComponentInfo {
-    ComponentId id;
-    ComponentGuid guid;
+    ComponentId id = INVALID_ID;
+    ComponentUUID uuid;
 
-    Type *type;
-    uint64 element_size;
+    Type *type = nullptr;
+    uint64 element_size = 0;
 
-    ComponentConstructor constructor;
-    ComponentCopyConstructor copy_constructor;
-    ComponentCopyAssignmentOperator copy_assignment_operator;
-    ComponentMoveAssignmentOperator move_assignment_operator;
-    ComponentDestructor destructor;
+    ComponentConstructor constructor = { };
+    ComponentCopyConstructor copy_constructor  = { };
+    ComponentCopyAssignmentOperator copy_assignment_operator = { };
+    ComponentMoveAssignmentOperator move_assignment_operator = { };
+    ComponentDestructor destructor = { };
 
     static constexpr ComponentId INVALID_ID = 0xFFFFFFFF;
   };

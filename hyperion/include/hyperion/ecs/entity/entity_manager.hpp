@@ -23,7 +23,7 @@ namespace Hyperion {
 
   struct EntityManagerStorage {
     Array<EntityDescription> entities;
-    Map<EntityGuid, EntityId> entities_by_guid;
+    Map<EntityUUID, EntityId> entities_by_uuid;
     uint64 available = 0;
     EntityIndex next = EntityId::GetIndex(EntityId::EMPTY);
 
@@ -38,14 +38,14 @@ namespace Hyperion {
   public:
     World *GetWorld() const { return m_world; }
 
-    uint64 GetEntityCount() const { return m_storage.entities_by_guid.GetLength(); }
+    uint64 GetEntityCount() const { return m_storage.entities_by_uuid.GetLength(); }
     
     bool8 IsAlive(EntityId id) const;
 
-    EntityGuid GetGuid(EntityId id) const;
-    EntityId GetByGuid(EntityGuid guid) const;
+    EntityUUID GetUUID(EntityId id) const;
+    EntityId GetByUUID(EntityUUID uuid) const;
 
-    EntityId CreateEntity(EntityPrimitive primitive = EntityPrimitive::Base, EntityGuid guid = EntityGuid::Generate());
+    EntityId CreateEntity(EntityPrimitive primitive = EntityPrimitive::Base, EntityUUID uuid = EntityUUID::Generate());
     EntityId CreateMultiMeshEntity(Mesh *mesh);
     EntityId InstantiateEntity(EntityId id);
     void DestroyEntity(EntityId id, EntityHierarchyDestructionPolicy hierarchy_destruction_policy = EntityHierarchyDestructionPolicy::DestroyChildren);

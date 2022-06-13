@@ -8,9 +8,9 @@
 namespace Hyperion {
 
   //--------------------------------------------------------------
-  EntityArchetype::EntityArchetype(EntityGuid guid, EntityArchetypeComponentStorage storage) {
-    m_guid = guid;
-    m_storage = storage;
+  EntityArchetype::EntityArchetype(EntityUUID uuid, EntityArchetypeComponentStorage storage) {
+    m_uuid = uuid;
+    m_storage = std::move(storage);
   }
 
 }
