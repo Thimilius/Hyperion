@@ -1,4 +1,5 @@
-﻿using Hyperion.Ecs;
+﻿using System.Numerics;
+using Hyperion.Ecs;
 
 namespace Hyperion.Sandbox {
   public class SandboxApplication : IApplication {
@@ -23,8 +24,12 @@ namespace Hyperion.Sandbox {
 
     public void Update() {
       Engine.Log(Time.ElapsedTime);
-      if (Input.IsKeyDown(KeyCode.K)) {
-        Engine.Log(m_Entity.GetComponent<NameComponent>().Name);
+
+      LocalTransformComponent localTransformComponent = m_Entity.GetComponent<LocalTransformComponent>();
+      if (Input.IsKeyHold(KeyCode.Up)) {
+        Vector3 position = localTransformComponent.Position;
+        position.X += Time.DeltaTime;
+        localTransformComponent.Position = position; 
       }
     }
 

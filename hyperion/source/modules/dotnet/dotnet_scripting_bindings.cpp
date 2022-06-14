@@ -14,9 +14,12 @@ namespace Hyperion::Scripting {
 
   //--------------------------------------------------------------
   void DotnetScriptingBindings::Initialize() {
+    // Core.
     s_core_bootstrap_arguments.native_bindings.core.exception = [](ManagedString message) {
       HYP_LOG_ERROR("Scripting", "{}", message);
     };
+
+    // Log.
     s_core_bootstrap_arguments.native_bindings.log.log_trace = [](ManagedString message) {
       HYP_LOG_TRACE("Scripting", "{}", message);
     };
@@ -29,12 +32,16 @@ namespace Hyperion::Scripting {
     s_core_bootstrap_arguments.native_bindings.log.log_error = [](ManagedString message) {
       HYP_LOG_ERROR("Scripting", "{}", message);
     };
+
+    // Time.
     s_core_bootstrap_arguments.native_bindings.time.get_time = []() {
       return Time::GetTime();
     };
     s_core_bootstrap_arguments.native_bindings.time.get_delta_time = []() {
       return Time::GetDeltaTime();
     };
+
+    // Input.
     s_core_bootstrap_arguments.native_bindings.input.is_key_down = [](KeyCode key_code) {
       return Input::IsKeyDown(key_code);
     };
@@ -44,10 +51,14 @@ namespace Hyperion::Scripting {
     s_core_bootstrap_arguments.native_bindings.input.is_key_up = [](KeyCode key_code) {
       return Input::IsKeyUp(key_code);
     };
+
+    // WorldManager.
     s_core_bootstrap_arguments.native_bindings.world_manager.get_active_world = []() {
       World *world = WorldManager::GetActiveWorld();
       return GetOrCreateManagedObject(GetSpecialType(SpecialType::World), world);
     };
+
+    // World.
     s_core_bootstrap_arguments.native_bindings.world.get_name = [](NativeHandle native_handle) {
       World *world = static_cast<World *>(native_handle);
       return world ? world->GetName().c_str() : nullptr;
@@ -61,6 +72,8 @@ namespace Hyperion::Scripting {
       EntityManager *entity_manager = world->GetEntityManager();
       return GetOrCreateManagedObject(GetSpecialType(SpecialType::EntityManager), entity_manager);
     };
+
+    // EntityManager.
     s_core_bootstrap_arguments.native_bindings.entity_manager.get_entity_count = [](NativeHandle native_handle) {
       EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
       return static_cast<uint32>(entity_manager->GetEntityCount());
@@ -89,6 +102,8 @@ namespace Hyperion::Scripting {
         entity_manager->RemoveComponent(component_id, id);
       }
     };
+
+    // NameComponent.
     s_core_bootstrap_arguments.native_bindings.name_component.get_name = [](NativeHandle native_handle, EntityId id) {
       EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
       NameComponent *name_component = entity_manager->GetComponent<NameComponent>(id);
@@ -100,6 +115,70 @@ namespace Hyperion::Scripting {
       name_component->name = name;
     };
 
+    // LocalTransformComponent.
+    s_core_bootstrap_arguments.native_bindings.local_transform_component.get_position = [](NativeHandle native_handle, EntityId id, Vector3 *position) {
+      EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
+      LocalTransformComponent *local_transform_component = entity_manager->GetComponent<LocalTransformComponent>(id);
+      *position = local_transform_component->position;
+    };
+    s_core_bootstrap_arguments.native_bindings.local_transform_component.set_position = [](NativeHandle native_handle, EntityId id, Vector3 *position) {
+      EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
+      LocalTransformComponent *local_transform_component = entity_manager->GetComponent<LocalTransformComponent>(id);
+      local_transform_component->position = *position;
+    };
+    s_core_bootstrap_arguments.native_bindings.local_transform_component.get_rotation = [](NativeHandle native_handle, EntityId id, Quaternion *rotation) {
+      EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
+      LocalTransformComponent *local_transform_component = entity_manager->GetComponent<LocalTransformComponent>(id);
+      *rotation = local_transform_component->rotation;
+    };
+    s_core_bootstrap_arguments.native_bindings.local_transform_component.set_rotation = [](NativeHandle native_handle, EntityId id, Quaternion *rotation) {
+      EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
+      LocalTransformComponent *local_transform_component = entity_manager->GetComponent<LocalTransformComponent>(id);
+      local_transform_component->rotation = *rotation;
+    };
+    s_core_bootstrap_arguments.native_bindings.local_transform_component.get_scale = [](NativeHandle native_handle, EntityId id, Vector3 *scale) {
+      EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
+      LocalTransformComponent *local_transform_component = entity_manager->GetComponent<LocalTransformComponent>(id);
+      *scale = local_transform_component->scale;
+    };
+    s_core_bootstrap_arguments.native_bindings.local_transform_component.set_scale = [](NativeHandle native_handle, EntityId id, Vector3 *scale) {
+      EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
+      LocalTransformComponent *local_transform_component = entity_manager->GetComponent<LocalTransformComponent>(id);
+      local_transform_component->scale = *scale;
+    };
+
+    // DerivedTransformComponent.
+    s_core_bootstrap_arguments.native_bindings.derived_transform_component.get_position = [](NativeHandle native_handle, EntityId id, Vector3 *position) {
+      EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
+      DerivedTransformComponent *derived_transform_component = entity_manager->GetComponent<DerivedTransformComponent>(id);
+      *position = derived_transform_component->position;
+    };
+    s_core_bootstrap_arguments.native_bindings.derived_transform_component.set_position = [](NativeHandle native_handle, EntityId id, Vector3 *position) {
+      EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
+      DerivedTransformComponent *derived_transform_component = entity_manager->GetComponent<DerivedTransformComponent>(id);
+      derived_transform_component->position = *position;
+    };
+    s_core_bootstrap_arguments.native_bindings.derived_transform_component.get_rotation = [](NativeHandle native_handle, EntityId id, Quaternion *rotation) {
+      EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
+      DerivedTransformComponent *derived_transform_component = entity_manager->GetComponent<DerivedTransformComponent>(id);
+      *rotation = derived_transform_component->rotation;
+    };
+    s_core_bootstrap_arguments.native_bindings.derived_transform_component.set_rotation = [](NativeHandle native_handle, EntityId id, Quaternion *rotation) {
+      EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
+      DerivedTransformComponent *derived_transform_component = entity_manager->GetComponent<DerivedTransformComponent>(id);
+      derived_transform_component->rotation = *rotation;
+    };
+    s_core_bootstrap_arguments.native_bindings.derived_transform_component.get_scale = [](NativeHandle native_handle, EntityId id, Vector3 *scale) {
+      EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
+      DerivedTransformComponent *derived_transform_component = entity_manager->GetComponent<DerivedTransformComponent>(id);
+      *scale = derived_transform_component->scale;
+    };
+    s_core_bootstrap_arguments.native_bindings.derived_transform_component.set_scale = [](NativeHandle native_handle, EntityId id, Vector3 *scale) {
+      EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
+      DerivedTransformComponent *derived_transform_component = entity_manager->GetComponent<DerivedTransformComponent>(id);
+      derived_transform_component->scale = *scale;
+    };
+
     // This is the callback were we get the pointers to the managed bindings.
     s_core_bootstrap_arguments.managed_bindings_callback = [](CoreManagedBindings *core_managed_bindings) {
       s_core_managed_bindings = *core_managed_bindings;
@@ -109,6 +188,8 @@ namespace Hyperion::Scripting {
       RegisterSpecialType(SpecialType::EntityManager, "Hyperion.Ecs.EntityManager");
 
       RegisterComponentType<NameComponent>("Hyperion.Ecs.NameComponent");
+      RegisterComponentType<LocalTransformComponent>("Hyperion.Ecs.LocalTransformComponent");
+      RegisterComponentType<DerivedTransformComponent>("Hyperion.Ecs.DerivedTransformComponent");
     };
   }
 

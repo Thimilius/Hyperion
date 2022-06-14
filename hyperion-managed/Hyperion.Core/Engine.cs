@@ -69,6 +69,8 @@ namespace Hyperion {
       Bindings.WorldManager = nativeBindings->WorldManagerBindings;
       Bindings.EntityManager = nativeBindings->EntityManagerBindings;
       Bindings.NameComponent = nativeBindings->NameComponentBindings;
+      Bindings.LocalTransformComponent = nativeBindings->LocalTransformComponentBindings;
+      Bindings.DerivedTransformComponent = nativeBindings->DerivedTransformComponentBindings;
      
       CoreManagedBindings coreManagedBindings = new CoreManagedBindings {
         EngineInitialize = &Initialize,

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using Hyperion.Ecs;
 
@@ -8,12 +9,17 @@ namespace Hyperion {
     internal struct AllBindings {
       internal readonly CoreBindings CoreBindings;
       internal readonly LogBindings LogBindings;
+      
       internal readonly TimeBindings TimeBindings;
       internal readonly InputBindings InputBindings;
+      
       internal readonly WorldManagerBindings WorldManagerBindings;
       internal readonly WorldBindings WorldBindings;
       internal readonly EntityManagerBindings EntityManagerBindings;
+      
       internal readonly NameComponentBindings NameComponentBindings;
+      internal readonly LocalTransformComponentBindings LocalTransformComponentBindings;
+      internal readonly DerivedTransformComponentBindings DerivedTransformComponentBindings;
     }
     
     [StructLayout(LayoutKind.Sequential)]
@@ -72,6 +78,26 @@ namespace Hyperion {
       internal readonly delegate *unmanaged<IntPtr, EntityId, string, void> SetName;
     }
     
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct LocalTransformComponentBindings {
+      internal readonly delegate *unmanaged<IntPtr, EntityId, out Vector3, void> GetPosition;
+      internal readonly delegate *unmanaged<IntPtr, EntityId, ref Vector3, void> SetPosition;
+      internal readonly delegate *unmanaged<IntPtr, EntityId, out Quaternion, void> GetRotation;
+      internal readonly delegate *unmanaged<IntPtr, EntityId, ref Quaternion, void> SetRotation;
+      internal readonly delegate *unmanaged<IntPtr, EntityId, out Vector3, void> GetScale;
+      internal readonly delegate *unmanaged<IntPtr, EntityId, ref Vector3, void> SetScale;
+    }
+    
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct DerivedTransformComponentBindings {
+      internal readonly delegate *unmanaged<IntPtr, EntityId, out Vector3, void> GetPosition;
+      internal readonly delegate *unmanaged<IntPtr, EntityId, ref Vector3, void> SetPosition;
+      internal readonly delegate *unmanaged<IntPtr, EntityId, out Quaternion, void> GetRotation;
+      internal readonly delegate *unmanaged<IntPtr, EntityId, ref Quaternion, void> SetRotation;
+      internal readonly delegate *unmanaged<IntPtr, EntityId, out Vector3, void> GetScale;
+      internal readonly delegate *unmanaged<IntPtr, EntityId, ref Vector3, void> SetScale;
+    }
+    
     internal static CoreBindings Core { get; set; }
     internal static LogBindings Log { get; set; }
     internal static TimeBindings Time { get; set; }
@@ -80,5 +106,7 @@ namespace Hyperion {
     internal static WorldBindings World { get; set; }
     internal static EntityManagerBindings EntityManager { get; set; }
     internal static NameComponentBindings NameComponent { get; set; }
+    internal static LocalTransformComponentBindings LocalTransformComponent { get; set; }
+    internal static DerivedTransformComponentBindings DerivedTransformComponent { get; set; }
   }
 }

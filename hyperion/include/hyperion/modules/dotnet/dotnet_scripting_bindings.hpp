@@ -67,16 +67,39 @@ namespace Hyperion::Scripting {
     ManagedString (*get_name)(NativeHandle, EntityId);
     void (*set_name)(NativeHandle, EntityId, ManagedString);
   };
+
+  struct LocalTransformComponentBindings {
+    void (*get_position)(NativeHandle, EntityId, Vector3 *);
+    void (*set_position)(NativeHandle, EntityId, Vector3 *);
+    void (*get_rotation)(NativeHandle, EntityId, Quaternion *);
+    void (*set_rotation)(NativeHandle, EntityId, Quaternion *);
+    void (*get_scale)(NativeHandle, EntityId, Vector3 *);
+    void (*set_scale)(NativeHandle, EntityId, Vector3 *);
+  };
+  
+  struct DerivedTransformComponentBindings {
+    void (*get_position)(NativeHandle, EntityId, Vector3 *);
+    void (*set_position)(NativeHandle, EntityId, Vector3 *);
+    void (*get_rotation)(NativeHandle, EntityId, Quaternion *);
+    void (*set_rotation)(NativeHandle, EntityId, Quaternion *);
+    void (*get_scale)(NativeHandle, EntityId, Vector3 *);
+    void (*set_scale)(NativeHandle, EntityId, Vector3 *);
+  };
   
   struct CoreNativeBindings {
     CoreBindings core;
     LogBindings log;
+    
     TimeBindings time;
     InputBindings input;
+    
     WorldManagerBindings world_manager;
     WorldBindings world;
     EntityManagerBindings entity_manager;
+    
     NameComponentBindings name_component;
+    LocalTransformComponentBindings local_transform_component;
+    DerivedTransformComponentBindings derived_transform_component;
   };
   
   struct CoreManagedBindings {
