@@ -22,6 +22,7 @@ namespace Hyperion.Sandbox {
     }
 
     public void Update() {
+      Engine.Log(Time.ElapsedTime);
       if (Input.IsKeyDown(KeyCode.K)) {
         Engine.Log(m_Entity.GetComponent<NameComponent>().Name);
       }

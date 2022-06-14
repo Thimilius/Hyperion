@@ -77,7 +77,11 @@ namespace Hyperion {
           Time::s_last_time = now;
           Time::s_accumulator += static_cast<float64>(delta_time);
           Time::s_delta_time = delta_time;
-          Time::s_time += delta_time;
+
+          // Time gets only incremented when we are not in a paused state.
+          if (s_state != EngineState::EditorRuntimePaused) {
+            Time::s_time += delta_time;
+          }
 
           // Accumulate frame times and calculate the average to get more robust frame times and fps.
           Time::s_past_delta_times[Time::s_frame_counter % Time::MAX_PAST_DELTA_TIMES] = delta_time;
@@ -320,10 +324,16 @@ namespace Hyperion {
   //--------------------------------------------------------------
   void Engine::SetEngineState(EngineState state) {
     if (s_state != state) {
-      EngineState old_mode = s_state;
+      EngineState old_state = s_state;
       s_state = state;
 
-      Scripting::ScriptingEngine::OnEngineModeChanged(old_mode, state);
+      // The elapsed time gets reset when changing the engine state to a non paused state.
+      if ((state == EngineState::EditorRuntimePlaying && old_state != EngineState::EditorRuntimePaused) || state == EngineState::Editor) {
+        HYP_TRACE("RESET TIME");
+        Time::s_time = 0.0f;
+      }
+      
+      Scripting::ScriptingEngine::OnEngineModeChanged(old_state, state);
     }
   }
 #endif
