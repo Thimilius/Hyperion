@@ -5,6 +5,8 @@
 #include "hyperion/modules/dotnet/dotnet_scripting_bindings.hpp"
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/core/app/input.hpp"
+#include "hyperion/core/app/time.hpp"
 #include "hyperion/ecs/world/world_manager.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -26,6 +28,21 @@ namespace Hyperion::Scripting {
     };
     s_core_bootstrap_arguments.native_bindings.log.log_error = [](ManagedString message) {
       HYP_LOG_ERROR("Scripting", "{}", message);
+    };
+    s_core_bootstrap_arguments.native_bindings.time.get_time = []() {
+      return Time::GetTime();
+    };
+    s_core_bootstrap_arguments.native_bindings.time.get_delta_time = []() {
+      return Time::GetDeltaTime();
+    };
+    s_core_bootstrap_arguments.native_bindings.input.is_key_down = [](KeyCode key_code) {
+      return Input::IsKeyDown(key_code);
+    };
+    s_core_bootstrap_arguments.native_bindings.input.is_key_hold = [](KeyCode key_code) {
+      return Input::IsKeyHold(key_code);
+    };
+    s_core_bootstrap_arguments.native_bindings.input.is_key_up = [](KeyCode key_code) {
+      return Input::IsKeyUp(key_code);
     };
     s_core_bootstrap_arguments.native_bindings.world_manager.get_active_world = []() {
       World *world = WorldManager::GetActiveWorld();

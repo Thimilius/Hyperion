@@ -2,6 +2,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/core/app/input_types.hpp"
 #include "hyperion/ecs/entity/entity_types.hpp"
 #include "hyperion/ecs/component/component_registry.hpp"
 
@@ -30,6 +31,17 @@ namespace Hyperion::Scripting {
     void (*log_error)(ManagedString);
   };
 
+  struct TimeBindings {
+    float32 (*get_time)();
+    float32 (*get_delta_time)();
+  };
+  
+  struct InputBindings {
+    bool8 (*is_key_down)(KeyCode key_code);
+    bool8 (*is_key_hold)(KeyCode key_code);
+    bool8 (*is_key_up)(KeyCode key_code);
+  };
+  
   struct WorldManagerBindings {
     ManagedHandle (*get_active_world)();
   };
@@ -59,6 +71,8 @@ namespace Hyperion::Scripting {
   struct CoreNativeBindings {
     CoreBindings core;
     LogBindings log;
+    TimeBindings time;
+    InputBindings input;
     WorldManagerBindings world_manager;
     WorldBindings world;
     EntityManagerBindings entity_manager;

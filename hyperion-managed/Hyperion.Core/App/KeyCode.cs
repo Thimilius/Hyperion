@@ -1,13 +1,5 @@
-//------------------------ Header Guard ------------------------
-#pragma once
-
-//---------------------- Project Includes ----------------------
-#include "hyperion/core/enum.hpp"
-
-//-------------------- Definition Namespace --------------------
-namespace Hyperion {
-
-  enum class KeyCode {
+﻿namespace Hyperion {
+  public enum KeyCode {
     None,
 
     Alpha0,
@@ -139,80 +131,5 @@ namespace Hyperion {
     NumComma,
 
     Last
-  };
-
-  enum class MouseButtonCode {
-    None,
-
-    Left,
-    Right,
-    Middle,
-
-    Button4,
-    Button5,
-
-    Last
-  };
-
-  enum class KeyModifier {
-    None = 0,
-    Shift = BIT(0),
-    Control = BIT(1),
-    Alt = BIT(2),
-    Super = BIT(3),
-    Capslock = BIT(4),
-    Numlock = BIT(5)
-  };
-
-  HYP_CREATE_ENUM_FLAG_OPERATORS(KeyModifier)
-
-  enum class Gamepad {
-    Gamepad1,
-    Gamepad2,
-    Gamepad3,
-    Gamepad4,
-
-    Last
-  };
-
-  enum class GamepadButtonCode {
-    None,
-
-    Start,
-    Back,
-
-    A,
-    B,
-    X,
-    Y,
-
-    DpadLeft,
-    DpadRight,
-    DpadUp,
-    DpadDown,
-
-    LeftShoulder,
-    RightShoulder,
-
-    LeftThumb,
-    RightThumb,
-
-    Last
-  };
-
-  enum class GamepadAxis {
-    LeftStick,
-    RightStick,
-
-    LeftTrigger,
-    RightTrigger,
-
-    Last
-  };
-
-  enum class CursorMode {
-    Default,
-    Confined
-  };
-
+  }
 }

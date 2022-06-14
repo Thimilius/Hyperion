@@ -8,6 +8,8 @@ namespace Hyperion {
     internal struct AllBindings {
       internal readonly CoreBindings CoreBindings;
       internal readonly LogBindings LogBindings;
+      internal readonly TimeBindings TimeBindings;
+      internal readonly InputBindings InputBindings;
       internal readonly WorldManagerBindings WorldManagerBindings;
       internal readonly WorldBindings WorldBindings;
       internal readonly EntityManagerBindings EntityManagerBindings;
@@ -25,6 +27,19 @@ namespace Hyperion {
       internal readonly delegate *unmanaged<string, void> Info;
       internal readonly delegate *unmanaged<string, void> Warn;
       internal readonly delegate *unmanaged<string, void> Error;  
+    }
+    
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct TimeBindings {
+      internal readonly delegate *unmanaged<float> GetTime;
+      internal readonly delegate *unmanaged<float> GetDeltaTime;
+    }
+    
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct InputBindings {
+      internal readonly delegate *unmanaged<KeyCode, bool> IsKeyDown;
+      internal readonly delegate *unmanaged<KeyCode, bool> IsKeyHold;
+      internal readonly delegate *unmanaged<KeyCode, bool> IsKeyUp;
     }
     
     [StructLayout(LayoutKind.Sequential)]
@@ -59,6 +74,8 @@ namespace Hyperion {
     
     internal static CoreBindings Core { get; set; }
     internal static LogBindings Log { get; set; }
+    internal static TimeBindings Time { get; set; }
+    internal static InputBindings Input { get; set; }
     internal static WorldManagerBindings WorldManager { get; set; }
     internal static WorldBindings World { get; set; }
     internal static EntityManagerBindings EntityManager { get; set; }

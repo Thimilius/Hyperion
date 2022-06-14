@@ -22,7 +22,9 @@ namespace Hyperion.Sandbox {
     }
 
     public void Update() {
-      Engine.Log(m_Entity.GetComponent<NameComponent>().Name);
+      if (Input.IsKeyDown(KeyCode.K)) {
+        Engine.Log(m_Entity.GetComponent<NameComponent>().Name);
+      }
     }
 
     public void Shutdown() {

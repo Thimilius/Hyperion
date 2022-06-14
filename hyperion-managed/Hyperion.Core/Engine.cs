@@ -60,12 +60,15 @@ namespace Hyperion {
     internal static void Bootstrap(IntPtr coreBootstrapArgumentsPointer, IEnumerable<Assembly> assemblies) {
       CoreBootstrapArguments *coreBootstrapArguments = (CoreBootstrapArguments *)coreBootstrapArgumentsPointer;
 
-      Bindings.Core = coreBootstrapArguments->NativeBindings.CoreBindings;
-      Bindings.Log = coreBootstrapArguments->NativeBindings.LogBindings;
-      Bindings.World = coreBootstrapArguments->NativeBindings.WorldBindings;
-      Bindings.WorldManager = coreBootstrapArguments->NativeBindings.WorldManagerBindings;
-      Bindings.EntityManager = coreBootstrapArguments->NativeBindings.EntityManagerBindings;
-      Bindings.NameComponent = coreBootstrapArguments->NativeBindings.NameComponentBindings;
+      Bindings.AllBindings *nativeBindings = &coreBootstrapArguments->NativeBindings;
+      Bindings.Core = nativeBindings->CoreBindings;
+      Bindings.Log = nativeBindings->LogBindings;
+      Bindings.Time = nativeBindings->TimeBindings;
+      Bindings.Input = nativeBindings->InputBindings;
+      Bindings.World = nativeBindings->WorldBindings;
+      Bindings.WorldManager = nativeBindings->WorldManagerBindings;
+      Bindings.EntityManager = nativeBindings->EntityManagerBindings;
+      Bindings.NameComponent = nativeBindings->NameComponentBindings;
      
       CoreManagedBindings coreManagedBindings = new CoreManagedBindings {
         EngineInitialize = &Initialize,
