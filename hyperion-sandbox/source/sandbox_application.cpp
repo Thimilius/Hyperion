@@ -5,25 +5,19 @@
 #include <hyperion/entry_point.hpp>
 #include <hyperion/assets/asset_manager.hpp>
 #include <hyperion/assets/material.hpp>
-#include <hyperion/assets/loader/font_loader.hpp>
 #include <hyperion/assets/loader/image_loader.hpp>
-#include <hyperion/assets/loader/mesh_loader.hpp>
-#include <hyperion/assets/utilities/mesh_generator.hpp>
 #include <hyperion/core/random.hpp>
 #include <hyperion/core/app/display.hpp>
 #include <hyperion/core/app/time.hpp>
-#include <hyperion/core/io/file_system.hpp>
 #include <hyperion/core/memory/memory.hpp>
+#include <hyperion/core/system/engine.hpp>
 #include <hyperion/ecs/component/components/components.hpp>
 #include <hyperion/ecs/component/components/utilities/camera_controller.hpp>
 #include <hyperion/ecs/component/components/utilities/camera_utilities.hpp>
 #include <hyperion/ecs/component/components/utilities/transform_utilities.hpp>
 #include <hyperion/ecs/world/world_manager.hpp>
-#include <hyperion/ecs/world/world_serializer.hpp>
 #include <hyperion/render/render_engine.hpp>
 #include <hyperion/render/pipelines/forward/forward_render_pipeline.hpp>
-
-#include "hyperion/core/system/engine.hpp"
 
 //------------------------- Namespaces -------------------------
 using namespace Hyperion;
@@ -42,6 +36,8 @@ namespace Sandbox {
     settings.render.backend = RenderBackend::OpenGL;
     settings.render.threading_mode = RenderThreadingMode::MultiThreaded;
     settings.render.vsync_mode = VSyncMode::DontSync;
+
+    settings.scripting.assembly_name = "Hyperion.Sandbox.dll";
   }
 
   World *g_world;

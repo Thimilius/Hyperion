@@ -121,13 +121,20 @@ namespace Hyperion::Scripting {
     CoreNativeBindings native_bindings;
     void (*managed_bindings_callback)(CoreManagedBindings *);
   };
+
+  struct LoadContextArguments {
+    const char *core_assembly_name;
+    const char *assembly_name;
+    
+    CoreBootstrapArguments *core_bootstrap_arguments;
+  };
   
   class DotnetScriptingBindings final {
   public:
-    inline static CoreBootstrapArguments *GetBootstrapArguments() { return &s_core_bootstrap_arguments; }
+    inline static LoadContextArguments *GetLoadContextArguments() { return &s_load_context_arguments; }
     inline static CoreManagedBindings *GetManagedBindings() { return &s_core_managed_bindings; }
 
-    static void Initialize();
+    static void Initialize(const ScriptingSettings &settings);
     static void UnloadMappings();
 
     static ManagedHandle GetOrCreateManagedObject(ManagedHandle type, NativeHandle native_handle);
@@ -150,6 +157,7 @@ namespace Hyperion::Scripting {
       s_id_to_managed_component_types.Insert(component_id, component_type_handle);
     }
   private:
+    inline static LoadContextArguments s_load_context_arguments;
     inline static CoreBootstrapArguments s_core_bootstrap_arguments;
     
     inline static CoreManagedBindings s_core_managed_bindings;

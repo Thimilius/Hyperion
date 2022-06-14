@@ -18,7 +18,7 @@ namespace Hyperion::Scripting {
   };
 
   struct RuntimeManagedBindings {
-    void (*load_context)(CoreBootstrapArguments *);
+    void (*load_context)(LoadContextArguments *);
     void (*unload_context)();
   };
 
@@ -29,7 +29,7 @@ namespace Hyperion::Scripting {
 
   class DotnetScriptingDriver final : public IScriptingDriver {
   public:
-    void Initialize() override;
+    void Initialize(const ScriptingSettings &settings) override;
     void PostInitialize() override;
     void OnEngineModeChanged(EngineState old_state, EngineState new_state) override;
     void Update() override;

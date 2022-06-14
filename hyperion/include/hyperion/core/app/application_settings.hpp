@@ -2,10 +2,8 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/audio/audio_backend.hpp"
 #include "hyperion/core/system/engine_loop.hpp"
 #include "hyperion/core/app/window_settings.hpp"
-#include "hyperion/physics/physics_backend.hpp"
 #include "hyperion/render/render_backend.hpp"
 #include "hyperion/render/render_context_types.hpp"
 #include "hyperion/render/pipelines/render_pipeline.hpp"
@@ -44,6 +42,8 @@ namespace Hyperion {
 
   struct ScriptingSettings {
     Scripting::ScriptingBackend backend = Scripting::ScriptingBackend::Dotnet;
+
+    String assembly_name;
   };
   
   struct ApplicationSettings {

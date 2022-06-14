@@ -13,7 +13,7 @@
 namespace Hyperion::Scripting {
 
   //--------------------------------------------------------------
-  void DotnetScriptingBindings::Initialize() {
+  void DotnetScriptingBindings::Initialize(const ScriptingSettings &settings) {
     // Core.
     s_core_bootstrap_arguments.native_bindings.core.exception = [](ManagedString message) {
       HYP_LOG_ERROR("Scripting", "{}", message);
@@ -191,6 +191,10 @@ namespace Hyperion::Scripting {
       RegisterComponentType<LocalTransformComponent>("Hyperion.Ecs.LocalTransformComponent");
       RegisterComponentType<DerivedTransformComponent>("Hyperion.Ecs.DerivedTransformComponent");
     };
+
+    s_load_context_arguments.core_assembly_name = EngineConfig::GetManagedCoreLibraryName();
+    s_load_context_arguments.assembly_name = settings.assembly_name.c_str();
+    s_load_context_arguments.core_bootstrap_arguments = &s_core_bootstrap_arguments;
   }
 
   //--------------------------------------------------------------

@@ -21,7 +21,15 @@ namespace Hyperion {
     public readonly RuntimeNativeBindings NativeBindings;
     public readonly delegate *unmanaged<RuntimeManagedBindings *, void> ManagedBindingsCallback;
   }
-  
+
+  [StructLayout(LayoutKind.Sequential)]
+  internal struct LoadContextArguments {
+    public readonly IntPtr CoreAssemblyName;
+    public readonly IntPtr AssemblyName;
+      
+    public readonly IntPtr CoreBootstrapArguments;
+  }
+
   internal static unsafe class Runtime {
     private static RuntimeNativeBindings s_RuntimeNativeBindings;
     private static WeakReference s_LoadContext;
@@ -46,30 +54,37 @@ namespace Hyperion {
     }
 
     [UnmanagedCallersOnly]
-    private static void LoadContext(IntPtr coreBootstrapArgumentsPointer) {
+    private static void LoadContext(IntPtr loadContextArgumentsPointer) {
       try {
+        LoadContextArguments* loadContextArguments = (LoadContextArguments *)loadContextArgumentsPointer;
+        
         // We expect all managed assemblies to be next to us.
-        string assemblyDirectory = Path.GetDirectoryName(typeof(Runtime).Assembly.Location);
-        string coreAssemblyName = "Hyperion.Core.dll";
-        string coreAssemblyPath = Path.Combine(assemblyDirectory, coreAssemblyName);
-        string sandboxAssemblyName = "Hyperion.Sandbox.dll";
-        string sandboxAssemblyPath = Path.Combine(assemblyDirectory, sandboxAssemblyName);
+        string assemblyDirectory = Path.GetDirectoryName(typeof(Runtime).Assembly.Location)!;
         
         AssemblyLoadContext loadContext = new RuntimeLoadContext(assemblyDirectory);
         s_LoadContext = new WeakReference(loadContext);
 
+        string coreAssemblyName = Marshal.PtrToStringUTF8(loadContextArguments->CoreAssemblyName)!;
+        string coreAssemblyPath = Path.Combine(assemblyDirectory, coreAssemblyName);
         Assembly coreAssembly = loadContext.LoadFromAssemblyPath(coreAssemblyPath);
-        loadContext.LoadFromAssemblyPath(sandboxAssemblyPath);
+        
+        string sandboxAssemblyName = Marshal.PtrToStringUTF8(loadContextArguments->AssemblyName);
+        if (!string.IsNullOrEmpty(sandboxAssemblyName)) {
+          string sandboxAssemblyPath = Path.Combine(assemblyDirectory, sandboxAssemblyName);
+          if (File.Exists(sandboxAssemblyPath)) {
+            loadContext.LoadFromAssemblyPath(sandboxAssemblyPath);  
+          }
+        }
         
         // We need to bootstrap the core assembly (exchange function pointers).
-        Type type = coreAssembly.GetType("Hyperion.Engine");
+        Type type = coreAssembly.GetType("Hyperion.Engine")!;
         type.InvokeMember(
           "Bootstrap",
           BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod,
           null,
           null,
           new object[] {
-            coreBootstrapArgumentsPointer,
+            loadContextArguments->CoreBootstrapArguments,
             loadContext.Assemblies
           }
         );

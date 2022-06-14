@@ -8,7 +8,7 @@
 namespace Hyperion {
 
   //--------------------------------------------------------------
-  String EngineConfig::GetToolsPath() {
+  const char *EngineConfig::GetToolsPath() {
 #ifdef HYP_PLATFORM_WINDOWS
     return "data/tools/windows";
 #else
@@ -17,7 +17,12 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  String EngineConfig::GetManagedLibrariesPath() {
+  const char *EngineConfig::GetManagedCoreLibraryName() {
+    return "Hyperion.Core.dll";
+  }
+
+  //--------------------------------------------------------------
+  const char *EngineConfig::GetManagedLibrariesPath() {
     return "data/managed"; 
   }
 

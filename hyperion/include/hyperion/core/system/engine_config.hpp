@@ -1,17 +1,15 @@
 ﻿//------------------------ Header Guard ------------------------
 #pragma once
 
-//---------------------- Project Includes ----------------------
-#include "hyperion/common.hpp"
-
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
   class EngineConfig final {
   public:
-    static String GetToolsPath();
+    static const char *GetToolsPath();
 
-    static String GetManagedLibrariesPath();
+    static const char *GetManagedCoreLibraryName();
+    static const char *GetManagedLibrariesPath();
   private:
     EngineConfig() = delete;
     ~EngineConfig() = delete;

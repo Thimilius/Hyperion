@@ -16,8 +16,8 @@
 namespace Hyperion::Scripting {
 
   //--------------------------------------------------------------
-  void DotnetScriptingDriver::Initialize() {
-    String runtime_host_path = EngineConfig::GetToolsPath() + "/dotnet/host/fxr/6.0.5/hostfxr.dll";
+  void DotnetScriptingDriver::Initialize(const ScriptingSettings &settings) {
+    String runtime_host_path = String(EngineConfig::GetToolsPath()) + "/dotnet/host/fxr/6.0.5/hostfxr.dll";
     String managed_libraries_path = EngineConfig::GetManagedLibrariesPath();
     String runtime_library_name = "Hyperion.Runtime";
     WideString hostfxr_config_path = StringUtils::Utf8ToUtf16(managed_libraries_path + "/" + runtime_library_name + ".runtimeconfig.json");
@@ -81,7 +81,7 @@ namespace Hyperion::Scripting {
     runtime_bootstrap_func(&runtime_arguments);
 
     // The bindings have to be setup just once and get exchanged when every time the context gets loaded.
-    DotnetScriptingBindings::Initialize();
+    DotnetScriptingBindings::Initialize(settings);
 
     HYP_LOG_INFO("Scripting", "Initialized .Net6.0 runtime!");
   }
@@ -145,7 +145,7 @@ namespace Hyperion::Scripting {
   //--------------------------------------------------------------
   void DotnetScriptingDriver::LoadManagedContext() {
     HYP_PROFILE_SCOPE("DotnetScriptingDriver.LoadManagedContext")
-    s_runtime_managed_bindings.load_context(DotnetScriptingBindings::GetBootstrapArguments());
+    s_runtime_managed_bindings.load_context(DotnetScriptingBindings::GetLoadContextArguments());
     
     for (DotnetScriptingWorld *scripting_world : s_scripting_worlds) {
       scripting_world->OnLoadContext();
