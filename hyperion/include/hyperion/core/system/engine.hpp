@@ -42,6 +42,9 @@ namespace Hyperion {
     inline static const ApplicationSettings &GetSettings() { return s_settings; }
     
     static EngineState GetEngineState();
+#ifdef HYP_EDITOR
+    static void SetEngineState(EngineState state);
+#endif
   private:
     Engine() = delete;
     ~Engine() = delete;
@@ -50,10 +53,6 @@ namespace Hyperion {
     static void RegisterTypes();
     static uint32 Run();
     static void Exit();
-
-#ifdef HYP_EDITOR
-    static void SetEngineState(EngineState state);
-#endif
 
     static void PreInitialize();
     static void Initialize();

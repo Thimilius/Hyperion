@@ -23,6 +23,8 @@
 #include <hyperion/render/render_engine.hpp>
 #include <hyperion/render/pipelines/forward/forward_render_pipeline.hpp>
 
+#include "hyperion/core/system/engine.hpp"
+
 //------------------------- Namespaces -------------------------
 using namespace Hyperion;
 using namespace Hyperion::Rendering;
@@ -52,6 +54,9 @@ namespace Sandbox {
 
   //--------------------------------------------------------------
   void SandboxApplication::OnInitialize() {
+    // NOTE: This is only necessary as we are compiling with Hyperion with editor enabled.
+    Engine::SetEngineState(EngineState::Runtime);
+    
     g_world = WorldManager::CreateWorld();
     WorldManager::SetActiveWorld(g_world);
 
@@ -115,6 +120,7 @@ namespace Sandbox {
 
   //--------------------------------------------------------------
   void SandboxApplication::OnUpdate(float32 delta_time) {
+    // NOTE: This is only necessary as we are compiling with Hyperion with editor enabled.
     Display::SetPreviewSize(Display::GetWidth(), Display::GetHeight());
     
     if (Input::IsKeyHold(KeyCode::Control) && Input::IsKeyDown(KeyCode::W)) {

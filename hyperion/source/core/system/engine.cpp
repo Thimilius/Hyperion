@@ -36,6 +36,23 @@ namespace Hyperion {
     }
   }
 
+#ifdef HYP_EDITOR
+  //--------------------------------------------------------------
+  void Engine::SetEngineState(EngineState state) {
+    if (s_state != state) {
+      EngineState old_state = s_state;
+      s_state = state;
+
+      // The elapsed time gets reset when changing the engine state to a non paused state.
+      if ((state == EngineState::EditorRuntimePlaying && old_state != EngineState::EditorRuntimePaused) || state == EngineState::Editor) {
+        Time::s_time = 0.0f;
+      }
+      
+      Scripting::ScriptingEngine::OnEngineModeChanged(old_state, state);
+    }
+  }
+#endif
+
   //--------------------------------------------------------------
   void Engine::Setup() {
     RegisterTypes();
@@ -319,23 +336,6 @@ namespace Hyperion {
   void Engine::Exit() {
     s_running = false;
   }
-
-#ifdef HYP_EDITOR
-  //--------------------------------------------------------------
-  void Engine::SetEngineState(EngineState state) {
-    if (s_state != state) {
-      EngineState old_state = s_state;
-      s_state = state;
-
-      // The elapsed time gets reset when changing the engine state to a non paused state.
-      if ((state == EngineState::EditorRuntimePlaying && old_state != EngineState::EditorRuntimePaused) || state == EngineState::Editor) {
-        Time::s_time = 0.0f;
-      }
-      
-      Scripting::ScriptingEngine::OnEngineModeChanged(old_state, state);
-    }
-  }
-#endif
 
   //--------------------------------------------------------------
   void Engine::PreInitialize() {
