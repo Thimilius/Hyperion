@@ -98,7 +98,7 @@ namespace Hyperion::Editor {
     settings.render.pipeline = Rendering::RenderPipeline::Custom;
     settings.render.custom_pipeline = s_render_pipeline;
 
-    settings.scripting.assembly_name = "Hyperion.Sandbox.dll";
+    settings.scripting.assembly_name = "Hyperion.Editor.dll";
   }
 
   //--------------------------------------------------------------

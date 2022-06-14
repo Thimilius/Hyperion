@@ -59,6 +59,35 @@ project "Hyperion.Core"
     "{COPY} Hyperion.Core.deps.json ../../../../../run_tree/data/managed/",
   }
 
+  project "Hyperion.Editor"
+  location "hyperion-managed/Hyperion.Editor"
+
+  configurations { }
+  configurations { "Debug", "Release" }
+
+  configmap {
+    ["debug"] = "Debug",
+    ["profile"] = "Release",
+    ["release"] = "Release"
+  }
+
+  language "C#"
+  framework "net6.0"
+  csversion "9.0"
+  kind "SharedLib"
+  dynamicloading(true)
+
+  links { "Hyperion.Core" }
+
+  files { "%{prj.location}/**.cs" }
+  excludes { "%{prj.location}/obj/**.cs" }
+
+  postbuildcommands {
+    "{COPY} Hyperion.Editor.dll ../../../../../run_tree/data/managed/",
+    "{COPY} Hyperion.Editor.pdb ../../../../../run_tree/data/managed/",
+    "{COPY} Hyperion.Editor.deps.json ../../../../../run_tree/data/managed/",
+  }
+
 project "Hyperion.Sandbox"
   location "hyperion-managed/Hyperion.Sandbox"
 
