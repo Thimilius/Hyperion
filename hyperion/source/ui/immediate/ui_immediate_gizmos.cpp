@@ -104,6 +104,8 @@ namespace Hyperion::UI {
   //--------------------------------------------------------------
   GizmoManipulation UIImmediateGizmos::Manipulate(
     Rendering::RenderGizmoType type,
+    EntityManager *entity_manager,
+    EntityId entity,
     DerivedTransformComponent *derived_transform,
     LocalTransformComponent *local_transform,
     DerivedTransformComponent *camera_transform,
@@ -153,19 +155,17 @@ namespace Hyperion::UI {
       
       if (near_x) {
         if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
-          offset = local_transform->position - x_axis_point;
+          offset = derived_transform->position - x_axis_point;
           should_move_x = true;
         }
-      }
-      if (near_y) {
+      } else if (near_y) {
         if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
-          offset = local_transform->position - y_axis_point;
+          offset = derived_transform->position - y_axis_point;
           should_move_y = true;
         }
-      }
-      if (near_z) {
+      } else if (near_z) {
         if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
-          offset = local_transform->position - z_axis_point;
+          offset = derived_transform->position - z_axis_point;
           should_move_z = true;
         }
       }
@@ -182,9 +182,8 @@ namespace Hyperion::UI {
           plane.Intersects(ray, plane_distance);
           x_axis_point.x = ray.GetPoint(plane_distance).x;
           
-          local_transform->position = x_axis_point + offset;
-        }
-        if (should_move_y) {
+          local_transform->position = TransformUtilities::WorldToLocalPosition(entity_manager, entity, x_axis_point + offset);
+        } else if (should_move_y) {
           if (xy_plane_dot > yz_plane_dot) {
             plane = xy_plane;
           } else {
@@ -193,9 +192,8 @@ namespace Hyperion::UI {
           plane.Intersects(ray, plane_distance);
           y_axis_point.y = ray.GetPoint(plane_distance).y;
           
-          local_transform->position = y_axis_point + offset;
-        }
-        if (should_move_z) {
+          local_transform->position = TransformUtilities::WorldToLocalPosition(entity_manager, entity, y_axis_point + offset);
+        } else if (should_move_z) {
           if (xz_plane_dot > yz_plane_dot) {
             plane = xz_plane;
           } else {
@@ -204,7 +202,7 @@ namespace Hyperion::UI {
           plane.Intersects(ray, plane_distance);
           z_axis_point.z = ray.GetPoint(plane_distance).z;
           
-          local_transform->position = z_axis_point + offset;
+          local_transform->position = TransformUtilities::WorldToLocalPosition(entity_manager, entity, z_axis_point + offset);
         }
       }
     } else if (type == Rendering::RenderGizmoType::Rotate) {
@@ -228,14 +226,12 @@ namespace Hyperion::UI {
           offset = x_circle_point - x_circle.center;
           should_move_x = true;
         }
-      }
-      if (near_y) {
+      } else if (near_y) {
         if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
           offset = y_circle_point - y_circle.center;
           should_move_y = true;
         }
-      }
-      if (near_z) {
+      } else if (near_z) {
         if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
           offset = z_circle_point - z_circle.center;
           should_move_z = true;
@@ -246,35 +242,32 @@ namespace Hyperion::UI {
         near_x = false;
         near_y = false;
         near_z = false;
-          
         
         if (should_move_x) {
           Vector3 current = x_circle_point - x_circle.center;
           float32 degree = angle(current, offset, x_circle.orientation);
           
-          Quaternion new_rotation = Quaternion::FromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), degree) * derived_transform->rotation;
+          Quaternion new_rotation = Quaternion::FromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), degree) * local_transform->rotation;
           local_transform->rotation = new_rotation;
 
           offset = current;
 
           near_x = true;
-        }
-        if (should_move_y) {
+        } else if (should_move_y) {
           Vector3 current = y_circle_point - y_circle.center;
           float32 degree = angle(current, offset, y_circle.orientation);
           
-          Quaternion new_rotation = Quaternion::FromAxisAngle(Vector3(0.0f, 1.0f, 0.0f), degree) * derived_transform->rotation;
+          Quaternion new_rotation = Quaternion::FromAxisAngle(Vector3(0.0f, 1.0f, 0.0f), degree) * local_transform->rotation;
           local_transform->rotation = new_rotation;
 
           offset = current;
 
           near_y = true;
-        }
-        if (should_move_z) {
+        } else if (should_move_z) {
           Vector3 current = z_circle_point - z_circle.center;
           float32 degree = angle(current, offset, z_circle.orientation);
           
-          Quaternion new_rotation = Quaternion::FromAxisAngle(Vector3(0.0f, 0.0f, 1.0f), degree) * derived_transform->rotation;
+          Quaternion new_rotation = Quaternion::FromAxisAngle(Vector3(0.0f, 0.0f, 1.0f), degree) * local_transform->rotation;
           local_transform->rotation = new_rotation;
 
           offset = current;

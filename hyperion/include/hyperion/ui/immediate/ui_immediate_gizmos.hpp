@@ -23,6 +23,8 @@ namespace Hyperion::UI {
   public:
     static GizmoManipulation Manipulate(
       Rendering::RenderGizmoType type,
+      EntityManager *entity_manager,
+      EntityId entity,
       DerivedTransformComponent *derived_transform,
       LocalTransformComponent *local_transform,
       DerivedTransformComponent *camera_transform,

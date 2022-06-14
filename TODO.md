@@ -57,4 +57,4 @@
     - SDF
 
 ## Editor
-- Fix position/rotation of child entities with gizmo using WorldToLocal helpers
+- Fix rotation of child entities with gizmo using WorldToLocal helpers
