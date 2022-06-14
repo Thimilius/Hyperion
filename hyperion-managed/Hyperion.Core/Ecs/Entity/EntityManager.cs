@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace Hyperion.Ecs {
-  public sealed class EntityManager : Object {
+  public sealed class EntityManager : NativeObject {
     private readonly Dictionary<EntityId, Entity> m_EntityCache = new();
 
     public unsafe int EntityCount => Bindings.EntityManager.GetEntityCount(NativeHandle);

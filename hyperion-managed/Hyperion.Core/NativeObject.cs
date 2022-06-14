@@ -1,12 +1,12 @@
 ﻿using System;
 
 namespace Hyperion {
-  public class Object {
+  public class NativeObject {
     internal IntPtr NativeHandle;
 
     public bool IsAlive => NativeHandle != IntPtr.Zero;
     
-    protected Object() {
+    protected NativeObject() {
                         
     }
   }

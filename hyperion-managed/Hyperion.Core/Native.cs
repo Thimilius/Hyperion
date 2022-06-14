@@ -50,7 +50,7 @@ namespace Hyperion {
         // One alternative would be to create a compiled Expression and call that instead.
         // This does however have a one time setup cost which is only worth it when calling this function A LOT.
         // So for now we just use this easy method and do not bother.
-        Object instance = Activator.CreateInstance(type, true) as Object;
+        NativeObject instance = Activator.CreateInstance(type, true) as NativeObject;
         instance.NativeHandle = nativeHandle;
 
         return GCHandle.ToIntPtr(GCHandle.Alloc(instance));
@@ -65,7 +65,7 @@ namespace Hyperion {
       try {
         GCHandle gcHandle = GCHandle.FromIntPtr(managedHandle);
         
-        Object instance = gcHandle.Get<Object>();
+        NativeObject instance = gcHandle.Get<NativeObject>();
         instance.NativeHandle = IntPtr.Zero;
         
         gcHandle.Free();
