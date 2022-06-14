@@ -329,7 +329,6 @@ namespace Hyperion {
 
       // The elapsed time gets reset when changing the engine state to a non paused state.
       if ((state == EngineState::EditorRuntimePlaying && old_state != EngineState::EditorRuntimePaused) || state == EngineState::Editor) {
-        HYP_TRACE("RESET TIME");
         Time::s_time = 0.0f;
       }
       

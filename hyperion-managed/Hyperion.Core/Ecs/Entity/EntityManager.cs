@@ -14,8 +14,8 @@ namespace Hyperion.Ecs {
       return entity;
     }
     
-    public unsafe Entity CreateEntity() {
-      Bindings.EntityManager.CreateEntity(NativeHandle, out EntityId id);
+    public unsafe Entity CreateEntity(EntityPrimitive primitive = EntityPrimitive.Base) {
+      Bindings.EntityManager.CreateEntity(NativeHandle, primitive, out EntityId id);
 
       Entity entity = new Entity(this, id);
       m_EntityCache[id] = entity;

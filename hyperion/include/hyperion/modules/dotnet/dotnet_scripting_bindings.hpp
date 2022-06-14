@@ -56,7 +56,7 @@ namespace Hyperion::Scripting {
   struct EntityManagerBindings {
     uint32 (*get_entity_count)(NativeHandle);
 
-    void (*create_entity)(NativeHandle, EntityId *);
+    void (*create_entity)(NativeHandle, EntityPrimitive, EntityId *);
     void (*destroy_entity)(NativeHandle, EntityId);
     
     bool (*has_component)(NativeHandle, ManagedHandle, EntityId);

@@ -78,9 +78,9 @@ namespace Hyperion::Scripting {
       EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
       return static_cast<uint32>(entity_manager->GetEntityCount());
     };
-    s_core_bootstrap_arguments.native_bindings.entity_manager.create_entity = [](NativeHandle native_handle, EntityId *id) {
+    s_core_bootstrap_arguments.native_bindings.entity_manager.create_entity = [](NativeHandle native_handle, EntityPrimitive primitive, EntityId *id) {
       EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);
-      *id = entity_manager->CreateEntity(); 
+      *id = entity_manager->CreateEntity(primitive); 
     };
     s_core_bootstrap_arguments.native_bindings.entity_manager.destroy_entity = [](NativeHandle native_handle, EntityId id) {
       EntityManager *entity_manager = static_cast<EntityManager *>(native_handle);

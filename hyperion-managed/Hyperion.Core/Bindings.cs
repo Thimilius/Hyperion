@@ -65,7 +65,7 @@ namespace Hyperion {
     internal struct EntityManagerBindings {
       internal readonly delegate *unmanaged<IntPtr, int> GetEntityCount;
 
-      internal readonly delegate *unmanaged<IntPtr, out EntityId, void> CreateEntity;
+      internal readonly delegate *unmanaged<IntPtr, EntityPrimitive, out EntityId, void> CreateEntity;
       internal readonly delegate *unmanaged<IntPtr, EntityId, void> DestroyEntity;
 
       internal readonly delegate *unmanaged<IntPtr, IntPtr, EntityId, bool> HasComponent;

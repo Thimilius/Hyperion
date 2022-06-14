@@ -10,27 +10,28 @@ namespace Hyperion.Sandbox {
       m_World = WorldManager.GetActiveWorld();
       EntityManager entityManager = m_World.EntityManager;
       
-      m_Entity = entityManager.CreateEntity();
-      
-      Engine.Log(m_Entity.HasComponent<NameComponent>());
-      
-      NameComponent nameComponent = m_Entity.GetComponent<NameComponent>();
-      nameComponent.Name = "Hello there!";
-      Engine.Log(nameComponent.Name);
-
-      NameComponent secondComponent = m_Entity.GetComponent<NameComponent>();
-      Engine.Log(nameComponent == secondComponent);
+      m_Entity = entityManager.CreateEntity(EntityPrimitive.Cube);
     }
 
     public void Update() {
-      Engine.Log(Time.ElapsedTime);
-
       LocalTransformComponent localTransformComponent = m_Entity.GetComponent<LocalTransformComponent>();
+      Vector3 position = localTransformComponent.Position;
+
+      const float speed = 10.0f;
       if (Input.IsKeyHold(KeyCode.Up)) {
-        Vector3 position = localTransformComponent.Position;
-        position.X += Time.DeltaTime;
-        localTransformComponent.Position = position; 
+        position.Z -= speed * Time.DeltaTime;
       }
+      if (Input.IsKeyHold(KeyCode.Down)) {
+        position.Z += speed * Time.DeltaTime;
+      }
+      if (Input.IsKeyHold(KeyCode.Left)) {
+        position.X -= speed * Time.DeltaTime;
+      }
+      if (Input.IsKeyHold(KeyCode.Right)) {
+        position.X += speed * Time.DeltaTime;
+      }
+      
+      localTransformComponent.Position = position;
     }
 
     public void Shutdown() {
