@@ -14,7 +14,7 @@ namespace Hyperion {
   public:
     inline AssetType GetAssetType() const override { return AssetType::TextureAtlas; }
   protected:
-    TextureAtlasBase(AssetInfo info) : Asset(info) { }
+    TextureAtlasBase(AssetMetadata metadata) : Asset(std::move(metadata)) { }
   };
 
   template<typename K, typename V>
@@ -32,14 +32,14 @@ namespace Hyperion {
       return element;
     }
   private:
-    TextureAtlas(AssetInfo info) : TextureAtlasBase(info) { }
+    TextureAtlas(AssetMetadata metadata) : TextureAtlasBase(std::move(metadata)) { }
 
-    TextureAtlas(AssetInfo info, Texture2D *texture, const Map<K, TextureAtlasElement<V>> &elements) : TextureAtlas(info) {
+    TextureAtlas(AssetMetadata metadata, Texture2D *texture, const Map<K, TextureAtlasElement<V>> &elements) : TextureAtlas(std::move(metadata)) {
       m_texture = texture;
       m_elements = elements;
     }
   private:
-    Texture2D *m_texture;
+    Texture2D *m_texture = nullptr;
     Map<K, TextureAtlasElement<V>> m_elements;
   private:
     friend class Hyperion::AssetManager;

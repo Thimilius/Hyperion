@@ -184,7 +184,7 @@ namespace Hyperion::Rendering {
       render_frame_context_mesh_object.position = Vector3(local_to_world->local_to_world.columns[3]);
       render_frame_context_mesh_object.mesh_handle = mesh_handle;
       render_frame_context_mesh_object.sub_mesh_index = mesh->sub_mesh_index;
-      render_frame_context_mesh_object.shader_handle = AssetManager::GetMaterial(material_handle)->GetShader()->GetAssetInfo().handle; // TODO: Remove this.
+      render_frame_context_mesh_object.shader_handle = AssetManager::GetMaterial(material_handle)->GetShader()->GetMetadata().handle; // TODO: Remove this.
       render_frame_context_mesh_object.material_handle = material_handle;
       render_frame_context_mesh_object.layer_mask = mesh->layer_mask;
       render_frame_context_mesh_object.bounds = mesh_bounds->bounds;
@@ -229,14 +229,14 @@ namespace Hyperion::Rendering {
         if (color.a > 0.0f) {
           Material *material = renderer.material ? renderer.material : AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI);
           AssetHandle texture_handle = renderer.texture
-           ? renderer.texture->GetAssetInfo().handle
-           : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetAssetInfo().handle;
+           ? renderer.texture->GetMetadata().handle
+           : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetMetadata().handle;
 
           RenderFrameContextObjectUI &render_frame_context_ui_object = ui_object_adder();
           render_frame_context_ui_object.local_to_world = Matrix4x4::Identity();
-          render_frame_context_ui_object.mesh_handle = renderer.mesh->GetAssetInfo().handle;
-          render_frame_context_ui_object.shader_handle = material->GetShader()->GetAssetInfo().handle;
-          render_frame_context_ui_object.material_handle = material->GetAssetInfo().handle;
+          render_frame_context_ui_object.mesh_handle = renderer.mesh->GetMetadata().handle;
+          render_frame_context_ui_object.shader_handle = material->GetShader()->GetMetadata().handle;
+          render_frame_context_ui_object.material_handle = material->GetMetadata().handle;
           render_frame_context_ui_object.color = color;
           render_frame_context_ui_object.texture.handle = texture_handle;
           render_frame_context_ui_object.texture.dimension = renderer.texture ? renderer.texture->GetDimension() : TextureDimension::Texture2D;

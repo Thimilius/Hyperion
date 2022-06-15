@@ -19,7 +19,7 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  Shader::Shader(AssetInfo info, const String &source) : Asset(info) {
+  Shader::Shader(AssetMetadata metadata, const String &source) : Asset(std::move(metadata)) {
     Recompile(source);
   }
 

@@ -8,7 +8,14 @@
 namespace Hyperion {
 
   //--------------------------------------------------------------
-  Font::Font(AssetInfo info, uint32 size, float32 baseline_offset, FontCharacterSet character_set, FontAtlas *font_atlas, SpecialFontGlyphs special_glyphs) : Font(info) {
+  Font::Font(
+    AssetMetadata metadata,
+    uint32 size,
+    float32 baseline_offset,
+    FontCharacterSet character_set,
+    FontAtlas *font_atlas,
+    SpecialFontGlyphs special_glyphs
+  ) : Font(std::move(metadata)) {
     m_size = size;
     m_baseline_offset = baseline_offset;
     m_character_set = character_set;

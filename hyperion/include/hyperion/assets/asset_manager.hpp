@@ -82,10 +82,10 @@ namespace Hyperion {
 
     template<typename K, typename V>
     static TextureAtlas<K, V> *CreateTextureAtlas(Texture2D *texture, const Map<K, TextureAtlasElement<V>> &elements) {
-      AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
-      TextureAtlas<K, V> *texture_atlas = new TextureAtlas<K, V>(info, texture, elements);
-      s_texture_atlases.Insert(info.handle, texture_atlas);
-      s_assets.Insert(info.handle, texture_atlas);
+      AssetMetadata metadata = CreateAssetMetadata(AssetType::TextureAtlas, AssetDataAccess::ReadAndWrite);
+      TextureAtlas<K, V> *texture_atlas = new TextureAtlas<K, V>(metadata, texture, elements);
+      s_texture_atlases.Insert(metadata.handle, texture_atlas);
+      s_assets.Insert(metadata.handle, texture_atlas);
       return texture_atlas;
     }
 
@@ -119,7 +119,7 @@ namespace Hyperion {
 
     static void AddDirtyAsset(Asset *asset);
 
-    static AssetInfo GetNextAssetInfo(AssetDataAccess data_access);
+    static AssetMetadata CreateAssetMetadata(AssetType type, AssetDataAccess data_access, const String &file_path = "");
   private:
     inline static Map<AssetHandle, Asset *> s_assets;
     

@@ -54,10 +54,10 @@ namespace Hyperion {
 
     void ResetToDefaults();
   private:
-    Material(AssetInfo info) : Asset(info) { }
-    Material(AssetInfo info, Shader *shader);
+    Material(AssetMetadata metadata) : Asset(std::move(metadata)) { }
+    Material(AssetMetadata metadata, Shader *shader);
   private:
-    Shader *m_shader;
+    Shader *m_shader = nullptr;
     Rendering::MaterialPropertyIndices m_property_indices;
     Rendering::MaterialPropertyCollection m_properties;
   private:

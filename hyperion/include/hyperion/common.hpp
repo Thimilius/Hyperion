@@ -4,6 +4,7 @@
 //--------------- C++ Standard Library Includes ----------------
 #include <memory>
 #include <functional>
+#include <utility>
 
 #ifdef HYP_DEBUG
 #ifdef _MSC_VER

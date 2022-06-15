@@ -20,8 +20,8 @@ namespace Hyperion {
   public:
     inline static Rendering::ShaderPropertyId PropertyToId(const String &name) { return Rendering::ShaderProperty::PropertyToId(name); }
   private:
-    Shader(AssetInfo info) : Asset(info) { }
-    Shader(AssetInfo info, const String &source);
+    Shader(AssetMetadata metadata) : Asset(std::move(metadata)) { }
+    Shader(AssetMetadata metadata, const String &source);
   private:
     void PreProcess(const String &source);
   private:

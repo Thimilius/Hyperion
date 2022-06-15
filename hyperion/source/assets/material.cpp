@@ -211,7 +211,7 @@ namespace Hyperion {
         if (value == nullptr) {
           HYP_LOG_WARN("Material", "Trying to set texture material property with a null texture.");
         } else {
-          property.storage.texture.handle = value->GetAssetInfo().handle;
+          property.storage.texture.handle = value->GetMetadata().handle;
           property.storage.texture.dimension = value->GetDimension();
           SetDirty();
         }
@@ -232,7 +232,7 @@ namespace Hyperion {
         if (value == nullptr) {
           HYP_LOG_WARN("Material", "Trying to set texture material property with a null texture.");
         } else {
-          property.storage.texture.handle = value->GetAssetInfo().handle;
+          property.storage.texture.handle = value->GetMetadata().handle;
           property.storage.texture.dimension = TextureDimension::RenderTexture;
           property.storage.texture.render_texture_attachment_index = attachment_index;
           SetDirty();
@@ -268,7 +268,7 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  Material::Material(AssetInfo info, Shader *shader) : Asset(info) {
+  Material::Material(AssetMetadata metadata, Shader *shader) : Asset(std::move(metadata)) {
     m_shader = shader;
     ResetToDefaults();
 

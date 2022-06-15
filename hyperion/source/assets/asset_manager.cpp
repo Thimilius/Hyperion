@@ -47,20 +47,22 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   Texture2D *AssetManager::CreateTexture2D(const Rendering::Texture2DParameters &parameters) {
-    AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
-    Texture2D *texture = new Texture2D(info, parameters);
-    s_textures.Insert(info.handle, texture);
-    s_assets.Insert(info.handle, texture);
+    AssetMetadata metadata = CreateAssetMetadata(AssetType::Texture, AssetDataAccess::ReadAndWrite);
+    Texture2D *texture = new Texture2D(metadata, parameters);
+    s_textures.Insert(metadata.handle, texture);
+    s_assets.Insert(metadata.handle, texture);
     return texture;
   }
 
   //--------------------------------------------------------------
-  Texture2D *AssetManager::CreateTexture2D(const Rendering::Texture2DParameters &parameters, const Rendering::TexturePixelData &pixels,
-                                           AssetDataAccess data_access) {
-    AssetInfo info = GetNextAssetInfo(data_access);
-    Texture2D *texture = new Texture2D(info, parameters, pixels);
-    s_textures.Insert(info.handle, texture);
-    s_assets.Insert(info.handle, texture);
+  Texture2D *AssetManager::CreateTexture2D(
+    const Rendering::Texture2DParameters &parameters,
+    const Rendering::TexturePixelData &pixels,
+    AssetDataAccess data_access) {
+    AssetMetadata metadata = CreateAssetMetadata(AssetType::Texture, data_access);
+    Texture2D *texture = new Texture2D(metadata, parameters, pixels);
+    s_textures.Insert(metadata.handle, texture);
+    s_assets.Insert(metadata.handle, texture);
     return texture;
   }
 
@@ -83,19 +85,24 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   RenderTexture *AssetManager::CreateRenderTexture(const Rendering::RenderTextureParameters &parameters) {
-    AssetInfo info = GetNextAssetInfo(AssetDataAccess::None);
-    RenderTexture *render_texture = new RenderTexture(info, parameters);
-    s_textures.Insert(info.handle, render_texture);
-    s_assets.Insert(info.handle, render_texture);
+    AssetMetadata metadata = CreateAssetMetadata(AssetType::Texture, AssetDataAccess::None);
+    RenderTexture *render_texture = new RenderTexture(metadata, parameters);
+    s_textures.Insert(metadata.handle, render_texture);
+    s_assets.Insert(metadata.handle, render_texture);
     return render_texture;
   }
 
   //--------------------------------------------------------------
-  Font *AssetManager::CreateFont(uint32 size, float32 baseline_offset, FontCharacterSet character_set, FontAtlas *font_atlas, SpecialFontGlyphs special_glyphs) {
-    AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
-    Font *font = new Font(info, size, baseline_offset, character_set, font_atlas, special_glyphs);
-    s_fonts.Insert(info.handle, font);
-    s_assets.Insert(info.handle, font);
+  Font *AssetManager::CreateFont(
+    uint32 size,
+    float32 baseline_offset,
+    FontCharacterSet character_set,
+    FontAtlas *font_atlas,
+    SpecialFontGlyphs special_glyphs) {
+    AssetMetadata metadata = CreateAssetMetadata(AssetType::Font, AssetDataAccess::ReadAndWrite);
+    Font *font = new Font(metadata, size, baseline_offset, character_set, font_atlas, special_glyphs);
+    s_fonts.Insert(metadata.handle, font);
+    s_assets.Insert(metadata.handle, font);
     return font;
   }
 
@@ -125,12 +132,11 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   Shader *AssetManager::CreateShader(const String &path) {
+    AssetMetadata metadata = CreateAssetMetadata(AssetType::Shader, AssetDataAccess::ReadAndWrite, path);
     String source = FileSystem::ReadAllText(path);
-    AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
-    Shader *shader = new Shader(info, source);
-    shader->m_resource_info.path = path;
-    s_shaders.Insert(info.handle, shader);
-    s_assets.Insert(info.handle, shader);
+    Shader *shader = new Shader(metadata, source);
+    s_shaders.Insert(metadata.handle, shader);
+    s_assets.Insert(metadata.handle, shader);
     return shader;
   }
 
@@ -159,10 +165,10 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   Material *AssetManager::CreateMaterial(Shader *shader) {
-    AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
-    Material *material = new Material(info, shader);
-    s_materials.Insert(info.handle, material);
-    s_assets.Insert(info.handle, material);
+    AssetMetadata metadata = CreateAssetMetadata(AssetType::Material, AssetDataAccess::ReadAndWrite);
+    Material *material = new Material(metadata, shader);
+    s_materials.Insert(metadata.handle, material);
+    s_assets.Insert(metadata.handle, material);
     return material;
   }
 
@@ -191,18 +197,18 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   Mesh *AssetManager::CreateMesh() {
-    AssetInfo info = GetNextAssetInfo(AssetDataAccess::ReadAndWrite);
-    Mesh *mesh = new Mesh(info);
-    s_meshes.Insert(info.handle, mesh);
-    s_assets.Insert(info.handle, mesh);
+    AssetMetadata metadata = CreateAssetMetadata(AssetType::Mesh, AssetDataAccess::ReadAndWrite);
+    Mesh *mesh = new Mesh(metadata);
+    s_meshes.Insert(metadata.handle, mesh);
+    s_assets.Insert(metadata.handle, mesh);
     return mesh;
   }
 
   Mesh *AssetManager::CreateMesh(const Rendering::MeshData &data, const Rendering::SubMeshes &sub_meshes, AssetDataAccess data_access) {
-    AssetInfo info = GetNextAssetInfo(data_access);
-    Mesh *mesh = new Mesh(info, data, sub_meshes);
-    s_meshes.Insert(info.handle, mesh);
-    s_assets.Insert(info.handle, mesh);
+    AssetMetadata metadata = CreateAssetMetadata(AssetType::Mesh, data_access);
+    Mesh *mesh = new Mesh(metadata, data, sub_meshes);
+    s_meshes.Insert(metadata.handle, mesh);
+    s_assets.Insert(metadata.handle, mesh);
     return mesh;
   }
 
@@ -212,7 +218,7 @@ namespace Hyperion {
       return;
     }
 
-    AssetHandle asset_handle = asset->GetAssetInfo().handle;
+    AssetHandle asset_handle = asset->GetMetadata().handle;
     
     s_assets.Remove(asset_handle);
     
@@ -254,10 +260,10 @@ namespace Hyperion {
 
     s_shader_watcher = new FileWatcher("data/shaders/", [](FileWatcherFileStatus status, const String &path, const String &filename, const String &extension) {
       if (status == FileWatcherFileStatus::Modified) {
-        for (auto [id, shader] : s_shaders) {
-          const AssetResourceInfo &resource_info = shader->GetResourceInfo();
-          if (resource_info.path == path) {
-            shader->Recompile(FileSystem::ReadAllText(resource_info.path));
+        for (auto [handle, shader] : s_shaders) {
+          const AssetMetadata &metadata = shader->GetMetadata();
+          if (metadata.file_path == path) {
+            shader->Recompile(FileSystem::ReadAllText(metadata.file_path));
           }
         }
       }
@@ -339,7 +345,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   void AssetManager::SetNewHandle(Asset *asset, const String &handle) {
-    AssetHandle old_handle = asset->GetAssetInfo().handle;
+    AssetHandle old_handle = asset->GetMetadata().handle;
     AssetHandle new_handle = AssetHandle(AssetHandleType::Generate(handle));
 
     HYP_ASSERT(s_assets.Contains(old_handle));
@@ -378,7 +384,7 @@ namespace Hyperion {
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
     }
 
-    asset->m_info.handle = new_handle;
+    asset->m_metadata.handle = new_handle;
   }
 
   //--------------------------------------------------------------
@@ -387,8 +393,14 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  AssetInfo AssetManager::GetNextAssetInfo(AssetDataAccess data_access) {
-    return { AssetHandleType::Generate(), data_access };
+  AssetMetadata AssetManager::CreateAssetMetadata(AssetType type, AssetDataAccess data_access, const String &file_path) {
+    AssetMetadata metadata = { };
+    metadata.handle = AssetHandleType::Generate();
+    metadata.type = type;
+    metadata.data_access = data_access;
+    metadata.file_path = file_path;
+    metadata.is_loaded = true;
+    return metadata;
   }
 
 }

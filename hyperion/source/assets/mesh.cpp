@@ -14,7 +14,7 @@ using namespace Hyperion::Rendering;
 namespace Hyperion {
 
   //--------------------------------------------------------------
-  Mesh::Mesh(AssetInfo info, const MeshData &data, const SubMeshes &sub_meshes) : Mesh(info) {
+  Mesh::Mesh(AssetMetadata metadata, const MeshData &data, const SubMeshes &sub_meshes) : Mesh(std::move(metadata)) {
     SetDataInternal(data, sub_meshes);
   }
 

@@ -5,8 +5,6 @@
 #include "hyperion/assets/asset.hpp"
 #include "hyperion/core/color.hpp"
 #include "hyperion/core/math/bounding_box.hpp"
-#include "hyperion/core/math/vector2.hpp"
-#include "hyperion/core/math/vector3.hpp"
 #include "hyperion/render/types/render_types_mesh.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -21,8 +19,8 @@ namespace Hyperion {
   class Mesh final : public Asset {
     HYP_REFLECT(Asset)
   private:
-    Mesh(AssetInfo info) : Asset(info) { }
-    Mesh(AssetInfo info, const Rendering::MeshData &data, const Rendering::SubMeshes &sub_meshes);
+    Mesh(AssetMetadata metadata) : Asset(std::move(metadata)) { }
+    Mesh(AssetMetadata metadata, const Rendering::MeshData &data, const Rendering::SubMeshes &sub_meshes);
   public:
     inline AssetType GetAssetType() const override { return AssetType::Mesh; }
 
@@ -38,7 +36,7 @@ namespace Hyperion {
     void SetDataInternal(const Rendering::MeshData &data, const Rendering::SubMeshes &sub_meshes);
   private:
     Rendering::MeshData m_data;
-    Rendering::MeshVertexFormat m_vertex_format;
+    Rendering::MeshVertexFormat m_vertex_format = { };
     Rendering::SubMeshes m_sub_meshes;
 
     BoundingBox m_bounds;

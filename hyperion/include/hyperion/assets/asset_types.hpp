@@ -2,12 +2,14 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/UUID.hpp"
+#include "hyperion/core/uuid.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
 
   enum class AssetType {
+    None,
+    
     Font,
     Material,
     Mesh,
@@ -38,17 +40,16 @@ namespace Hyperion {
     ReadAndWrite
   };
 
-  // TODO: Replace this with AssetMetadata.
-  struct AssetInfo {
+  struct AssetMetadata {
     AssetHandle handle;
+    AssetType type = AssetType::None;
 
     AssetDataAccess data_access;
+    
+    String file_path;
+    bool8 is_loaded = false;
   };
-
-  struct AssetResourceInfo {
-    String path;
-  };
-  
+    
 }
 
 namespace std {

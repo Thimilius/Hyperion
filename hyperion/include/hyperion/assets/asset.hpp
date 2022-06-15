@@ -16,11 +16,10 @@ namespace Hyperion {
   class Asset : public INonCopyable {
     HYP_REFLECT(INonCopyable)
   protected:
-    Asset(AssetInfo info) : m_info(info) { }
+    Asset(AssetMetadata metadata) : m_metadata(std::move(metadata)) { }
     virtual ~Asset() = default;
   public:
-    inline const AssetInfo &GetAssetInfo() const { return m_info; }
-    inline const AssetResourceInfo &GetResourceInfo() const { return m_resource_info; }
+    inline const AssetMetadata &GetMetadata() const { return m_metadata; }
     inline bool8 IsDirty() const { return m_is_dirty; }
 
     virtual AssetType GetAssetType() const = 0;
@@ -30,8 +29,7 @@ namespace Hyperion {
   private:
     void ResetDirty();
   private:
-    AssetInfo m_info;
-    AssetResourceInfo m_resource_info;
+    AssetMetadata m_metadata;
 
     bool8 m_is_dirty = false;
   private:

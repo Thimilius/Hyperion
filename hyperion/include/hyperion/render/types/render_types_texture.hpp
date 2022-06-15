@@ -14,6 +14,8 @@ namespace Hyperion::Rendering {
   };
 
   enum class TextureFormat {
+    None,
+    
     RGBA32,
     RGB24,
     R8

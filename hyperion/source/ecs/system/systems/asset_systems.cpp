@@ -25,9 +25,9 @@ namespace Hyperion {
 
     RenderAssetContext &asset_context = RenderEngine::GetMainRenderFrame()->GetAssetContext();
     for (Asset *asset : AssetManager::s_assets_to_load) {
-      AssetInfo info = asset->GetAssetInfo();
-      AssetHandle asset_handle = info.handle;
-      bool8 can_move = info.data_access != AssetDataAccess::ReadAndWrite;
+      const AssetMetadata &metadata = asset->GetMetadata();
+      AssetHandle asset_handle = metadata.handle;
+      bool8 can_move = metadata.data_access != AssetDataAccess::ReadAndWrite;
 
       switch (asset->GetAssetType()) {
         case AssetType::Texture: {
@@ -75,7 +75,7 @@ namespace Hyperion {
           Material *material = static_cast<Material *>(asset);
           RenderAssetMaterial &render_asset_material = asset_context.AddMaterialAssetToLoad();
           render_asset_material.handle = asset_handle;
-          render_asset_material.shader_handle = material->GetShader()->GetAssetInfo().handle;
+          render_asset_material.shader_handle = material->GetShader()->GetMetadata().handle;
           render_asset_material.properties = material->GetProperties();
           break;
         }
@@ -126,7 +126,7 @@ namespace Hyperion {
 
     RenderAssetContext &asset_context = RenderEngine::GetMainRenderFrame()->GetAssetContext();
     for (Asset *asset : AssetManager::s_assets_to_unload) {
-      AssetHandle asset_handle = asset->GetAssetInfo().handle;
+      AssetHandle asset_handle = asset->GetMetadata().handle;
 
       switch (asset->GetAssetType()) {
         case AssetType::Texture: {

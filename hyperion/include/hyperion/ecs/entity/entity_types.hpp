@@ -3,7 +3,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/delegate.hpp"
-#include "hyperion/core/UUID.hpp"
+#include "hyperion/core/uuid.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {

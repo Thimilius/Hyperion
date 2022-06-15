@@ -8,6 +8,8 @@
 namespace Hyperion {
 
   enum class FontCharacterSet {
+    None,
+    
     All,
     ASCII,
     LatinSupplement

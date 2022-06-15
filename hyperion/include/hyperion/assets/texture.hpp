@@ -12,7 +12,7 @@ namespace Hyperion {
   class Texture : public Asset {
     HYP_REFLECT(Asset)
   protected:
-    Texture(AssetInfo info) : Asset(info) { }
+    Texture(AssetMetadata metadata) : Asset(std::move(metadata)) { }
   public:
     inline AssetType GetAssetType() const override { return AssetType::Texture; }
 
@@ -21,7 +21,7 @@ namespace Hyperion {
     inline Rendering::TextureFormat GetFormat() const { return m_format; }
     inline const Rendering::TextureAttributes &GetAttributes() const { return m_attributes; }
   protected:
-    Rendering::TextureFormat m_format;
+    Rendering::TextureFormat m_format = Rendering::TextureFormat::None;
     Rendering::TextureAttributes m_attributes;
   private:
     friend class Hyperion::AssetLoadSystem;
@@ -30,9 +30,9 @@ namespace Hyperion {
   class Texture2D final : public Texture {
     HYP_REFLECT(Texture)
   private:
-    Texture2D(AssetInfo info, const Rendering::Texture2DParameters &parameters);
-    Texture2D(AssetInfo info, const Rendering::Texture2DParameters &parameters, const Rendering::TexturePixelData &pixels);
-    ~Texture2D() = default;
+    Texture2D(AssetMetadata metadata, const Rendering::Texture2DParameters &parameters);
+    Texture2D(AssetMetadata metadata, const Rendering::Texture2DParameters &parameters, const Rendering::TexturePixelData &pixels);
+    ~Texture2D() override = default;
   public:
     Rendering::TextureDimension GetDimension() const override { return Rendering::TextureDimension::Texture2D; }
 
@@ -57,15 +57,15 @@ namespace Hyperion {
   class RenderTexture final : public Texture {
     HYP_REFLECT(Texture)
   private:
-    RenderTexture(AssetInfo info, const Rendering::RenderTextureParameters &parameters);
-    ~RenderTexture() = default;
+    RenderTexture(AssetMetadata metadata, const Rendering::RenderTextureParameters &parameters);
+    ~RenderTexture() override = default;
   public:
     Rendering::TextureDimension GetDimension() const override { return Rendering::TextureDimension::RenderTexture; }
 
     inline uint32 GetWidth() const { return m_width; }
     inline uint32 GetHeight() const { return m_height; }
     inline uint32 GetMipmapCount() const { return m_mipmap_count; }
-    inline const Array<Rendering::RenderTextureAttachment> GetAttachments() const { return m_attachments; }
+    inline const Array<Rendering::RenderTextureAttachment> &GetAttachments() const { return m_attachments; }
 
     Rendering::RenderTargetId GetRenderTargetId() const;
 

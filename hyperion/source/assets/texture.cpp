@@ -11,7 +11,7 @@
 namespace Hyperion {
 
   //--------------------------------------------------------------
-  Texture2D::Texture2D(AssetInfo info, const Rendering::Texture2DParameters &parameters) : Texture(info) {
+  Texture2D::Texture2D(AssetMetadata metadata, const Rendering::Texture2DParameters &parameters) : Texture(std::move(metadata)) {
     m_width = parameters.width;
     m_height = parameters.height;
     m_format = parameters.format;
@@ -20,8 +20,10 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  Texture2D::Texture2D(AssetInfo info, const Rendering::Texture2DParameters &parameters, const Rendering::TexturePixelData &pixels) : Texture2D(
-    info, parameters) {
+  Texture2D::Texture2D(AssetMetadata metadata, const Rendering::Texture2DParameters &parameters, const Rendering::TexturePixelData &pixels) : Texture2D(
+    std::move(metadata),
+    parameters
+  ) {
     SetPixelsInternal(pixels);
   }
 
@@ -32,12 +34,12 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  void Texture2D::SetPixels(const Rendering::TexturePixelData &pixels) {
+  void Texture2D::SetPixels(const Rendering::TexturePixelData &data) {
     if (!ValidateDataAccess()) {
       return;
     }
 
-    SetPixelsInternal(pixels);
+    SetPixelsInternal(data);
   }
 
   //--------------------------------------------------------------
@@ -48,7 +50,7 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  RenderTexture::RenderTexture(AssetInfo info, const Rendering::RenderTextureParameters &parameters) : Texture(info) {
+  RenderTexture::RenderTexture(AssetMetadata metadata, const Rendering::RenderTextureParameters &parameters) : Texture(std::move(metadata)) {
     m_width = parameters.width;
     m_height = parameters.height;
     m_attachments = parameters.attachments;
@@ -59,7 +61,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   Rendering::RenderTargetId RenderTexture::GetRenderTargetId() const {
-    Rendering::RenderTargetId id = { GetAssetInfo().handle };
+    Rendering::RenderTargetId id = { GetMetadata().handle };
     return id;
   }
 

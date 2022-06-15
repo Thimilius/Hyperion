@@ -35,14 +35,14 @@ namespace Hyperion {
 
     TextSize GetTextSize(const Array<uint32> &codepoints, uint32 codepoint_offset, float32 scale, bool8 line_only) const;
   private:
-    Font(AssetInfo info) : Asset(info) { }
-    Font(AssetInfo info, uint32 size, float32 baseline_offset, FontCharacterSet character_set, FontAtlas *font_atlas, SpecialFontGlyphs special_glyphs);
+    Font(AssetMetadata metadata) : Asset(std::move(metadata)) { }
+    Font(AssetMetadata metadata, uint32 size, float32 baseline_offset, FontCharacterSet character_set, FontAtlas *font_atlas, SpecialFontGlyphs special_glyphs);
   private:
-    uint32 m_size;
-    float32 m_baseline_offset;
-    FontCharacterSet m_character_set;
-    FontAtlas *m_font_atlas;
-    SpecialFontGlyphs m_special_glyphs;
+    uint32 m_size = 0;
+    float32 m_baseline_offset = 0;
+    FontCharacterSet m_character_set = FontCharacterSet::None;
+    FontAtlas *m_font_atlas = nullptr;
+    SpecialFontGlyphs m_special_glyphs = { };
   private:
     friend class Hyperion::AssetManager;
   };
