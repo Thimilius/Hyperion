@@ -166,15 +166,17 @@ namespace Hyperion::Editor {
   
   //--------------------------------------------------------------
   void EditorApplication::OpenWorld() {
-    String path = OperatingSystem::OpenFileDialog("Open World", ".world");
-    if (FileSystem::Exists(path) && StringUtils::EndsWith(path, ".world")) {
-      String world_text = FileSystem::ReadAllText(path);
-      World *world = WorldSerializer::Deserialize(world_text);
-      WorldManager::SetActiveWorld(world);
-      WorldManager::DestroyWorld(s_world);
-      s_world = world;
+    if (Engine::GetEngineState() == EngineState::Editor) {
+      String path = OperatingSystem::OpenFileDialog("Open World", ".world");
+      if (FileSystem::Exists(path) && StringUtils::EndsWith(path, ".world")) {
+        String world_text = FileSystem::ReadAllText(path);
+        World *world = WorldSerializer::Deserialize(world_text);
+        WorldManager::SetActiveWorld(world);
+        WorldManager::DestroyWorld(s_world);
+        s_world = world;
 
-      EditorSelection::Deselect();
+        EditorSelection::Deselect();
+      }  
     }
   }
   
