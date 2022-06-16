@@ -10,11 +10,13 @@
 #include <psapi.h>
 #include <Shlobj.h>
 
-#undef LoadLibrary
-
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/application.hpp"
 #include "hyperion/platform/windows/app/windows_menu.hpp"
+
+// Undefine the useless win32 macros. 
+#undef LoadLibrary
+#undef MessageBox
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -191,11 +193,6 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  void WindowsOperatingSystem::DisplayError(const String &title, const String &message) {
-    MessageBoxW(nullptr, StringUtils::Utf8ToUtf16(message).c_str(), StringUtils::Utf8ToUtf16(title).c_str(), MB_OK | MB_ICONERROR);
-  }
-
-  //--------------------------------------------------------------
   void WindowsOperatingSystem::PrintToConsole(LogColor color, const String &message) {
     int16 console_color = 0;
     switch (color) {
@@ -238,6 +235,19 @@ namespace Hyperion {
     unsigned long written_chars = 0;
     WriteConsoleA(s_console_handle, message.c_str(), static_cast<DWORD>(message.length()), &written_chars, nullptr);
     SetConsoleTextAttribute(s_console_handle, console_screen_buffer_info.wAttributes);
+  }
+
+  //--------------------------------------------------------------
+  void WindowsOperatingSystem::MessageBox(MessageBoxType type, const String &title, const String &message) {
+    UINT box_type = MB_OK;
+    switch (type) {
+      case MessageBoxType::Info: box_type |= MB_ICONINFORMATION; break;
+      case MessageBoxType::Warning: box_type |= MB_ICONWARNING; break;
+      case MessageBoxType::Error: box_type |= MB_ICONERROR; break;
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
+    }
+
+    MessageBoxW(nullptr, StringUtils::Utf8ToUtf16(message).c_str(), StringUtils::Utf8ToUtf16(title).c_str(), box_type);
   }
 
   //--------------------------------------------------------------

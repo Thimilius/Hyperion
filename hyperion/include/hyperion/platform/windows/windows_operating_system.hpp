@@ -25,8 +25,9 @@ namespace Hyperion {
     static OperatingSystemLanguage GetSystemLanguage();
     static String GetSpecialFolder(OperatingSystemSpecialFolder special_folder);
 
-    static void DisplayError(const String &title, const String &message);
     static void PrintToConsole(LogColor color, const String &message);
+    
+    static void MessageBox(MessageBoxType type, const String &title, const String &message);
 
     static LibraryHandle LoadLibrary(const String &path);
     template<typename T>

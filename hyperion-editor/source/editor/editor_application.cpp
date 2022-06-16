@@ -83,14 +83,16 @@ namespace Hyperion::Editor {
   
   //--------------------------------------------------------------
   void EditorApplication::OnSetup(ApplicationSettings &settings) {
-    settings.window.menu.items.Add({
+    settings.window.menu.items = { {
       "File", { }, {
-        { "Open World", [this](auto _) { OpenWorld();}, { } },
+        { "Open World", [this](auto _) { OpenWorld(); }, { } },
         { "Save World", [this](auto _) { SaveWorld(); }, { } },
         { "Exit", [this](auto _) { Exit(); }, { } },
-      }
-    });
-    
+    } }, {
+      "Help", { }, {
+        { "About", [this](auto _) { OperatingSystem::MessageBox(MessageBoxType::Info, "About Hyperion", "Hyperion 0.1.0\n"); }, { } }
+    } } };
+
     s_render_pipeline = new EditorRenderPipeline();
     settings.render.backend = Rendering::RenderBackend::OpenGL;
     settings.render.threading_mode = Rendering::RenderThreadingMode::MultiThreaded;

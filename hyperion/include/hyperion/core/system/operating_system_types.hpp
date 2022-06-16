@@ -84,4 +84,10 @@ namespace Hyperion {
     Videos
   };
 
+  enum class MessageBoxType {
+    Info,
+    Warning,
+    Error
+  };
+  
 }

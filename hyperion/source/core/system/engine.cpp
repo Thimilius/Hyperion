@@ -465,7 +465,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   void Engine::PanicInternal(const String &title, const String &message) {
-    OperatingSystem::DisplayError(title, message);
+    OperatingSystem::MessageBox(MessageBoxType::Error, title, message);
     Exit();
   }
 
