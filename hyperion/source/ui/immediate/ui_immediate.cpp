@@ -296,8 +296,8 @@ namespace Hyperion::UI {
     element.layout.semantic_size[1] = { SizeKind::TextContent, 8.0f };
     FitToLayout(element, fit_type);
 
-    // NOTE: This currently does not take into account multiline text.
-    // Furthermore we are not using the sizes for codepoints to increment/decrement the cursor position as we should.
+    // NOTE: Cursor position is a byte offset into the string not a unicode character offset.
+    // That means every modification we make to the cursor has to be converted to the appropriate byte size of the corresponding utf-8 codepoint.
     
     auto decrement_cursor = [](UIImmediateElement &element, int32 size) {
       element.widget.cursor_position.x -= size;
@@ -327,27 +327,26 @@ namespace Hyperion::UI {
             // We lose focus on return.
             s_state.focused_element = 0;
           } else if (key_code == KeyCode::Left) {
-            decrement_cursor(element, 1);
+            decrement_cursor(element, static_cast<int32>(StringUtils::GetCodepointSizeBeforeOffsetFromUtf8(text, element.widget.cursor_position.x)));
           } else if (key_code == KeyCode::Right) {
-            increment_cursor(element, 1, text);
+            increment_cursor(element, static_cast<int32>(StringUtils::GetCodepointSizeFromUtf8(text, element.widget.cursor_position.x)), text);
           } else if (key_code == KeyCode::Home) {
             element.widget.cursor_position = Vector2Int();
           } else if (key_code == KeyCode::End) {
             element.widget.cursor_position = Vector2Int(static_cast<int32>(element.widget.text.size()), 0); 
           } else if (key_code == KeyCode::Back) {
             if (!text.empty()) {
-              uint32 codepoint_size = StringUtils::GetLastUtf8CodepointSize(text);
-              int32 erase_position = element.widget.cursor_position.x - 1;
+              uint32 codepoint_size = StringUtils::GetCodepointSizeBeforeOffsetFromUtf8(text, element.widget.cursor_position.x);
+              int32 erase_position = element.widget.cursor_position.x - static_cast<int32>(codepoint_size);
               if (erase_position >= 0) {
                 text.erase(erase_position, codepoint_size);
-                decrement_cursor(element, 1);
+                decrement_cursor(element, static_cast<int32>(codepoint_size));
                 interaction.input_changed = true;
               }
-              
             }
           } else if (key_code == KeyCode::Delete) {
             if (!text.empty()) {
-              uint32 codepoint_size = StringUtils::GetLastUtf8CodepointSize(text);
+              uint32 codepoint_size = StringUtils::GetCodepointSizeFromUtf8(text, element.widget.cursor_position.x);
               int32 erase_position = element.widget.cursor_position.x;
               if (erase_position >= 0 && erase_position < static_cast<int32>(text.size())) {
                 text.erase(erase_position, codepoint_size);
@@ -361,7 +360,7 @@ namespace Hyperion::UI {
               String clipboard = Input::GetClipboard();
               text.insert(element.widget.cursor_position.x, clipboard);
               increment_cursor(element, static_cast<int32>(clipboard.size()), text);
-              interaction.input_changed = true;  
+              interaction.input_changed = true;
             }
           }
         });
@@ -371,7 +370,7 @@ namespace Hyperion::UI {
           bool8 has_characters = true;
           Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(key_typed);
           for (uint32 codepoint : codepoints) {
-            if (codepoint == ' ' || codepoint == '\t') {
+            if (codepoint == ' ' || codepoint == '\t' || codepoint == '\n' || codepoint == '\r') {
               continue;
             }
             
@@ -383,7 +382,7 @@ namespace Hyperion::UI {
 
           if (has_characters) {
             text.insert(element.widget.cursor_position.x, key_typed);
-            increment_cursor(element, 1, text);
+            increment_cursor(element, static_cast<int32>(key_typed.size()), text);
             interaction.input_changed = true;
           }
         });
@@ -689,7 +688,10 @@ namespace Hyperion::UI {
 
       // Render cursor for input field when focused.
       if (is_input && s_state.focused_element == element.id.id) {
-        if (Time::BetweenInterval(theme.input_cursor_blink_rate, element.animation.focused_time_offset - theme.input_cursor_blink_rate)) {        
+        if (Time::BetweenInterval(theme.input_cursor_blink_rate, element.animation.focused_time_offset - theme.input_cursor_blink_rate)) {
+          // We need to convert the cursor position from a byte offset to a codepoint offset.
+          uint32 codepoint_offset = StringUtils::GetCodepointOffsetFromUtf8(element.widget.text, element.widget.cursor_position.x);
+          
           Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(element.widget.text);
           Vector2 cursor_position = TextUtilities::GetCursorPosition(
             theme.font,
@@ -697,7 +699,7 @@ namespace Hyperion::UI {
             1.0f,
             element.widget.text_alignment,
             rect,
-            element.widget.cursor_position
+            Vector2Int(static_cast<int32>(codepoint_offset), 0)
           );
           
           Rect cursor_rect = {

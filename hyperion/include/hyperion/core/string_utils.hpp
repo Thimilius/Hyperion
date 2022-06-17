@@ -36,7 +36,7 @@ namespace Hyperion {
 
     inline static String GetExtension(const String &string) {
       size_t position = string.find_last_of('.');
-      if (position != string.npos) {
+      if (position != String::npos) {
         return string.substr(position);
       }
       return string;
@@ -49,7 +49,10 @@ namespace Hyperion {
     static Array<uint32> GetCodepointsFromUtf8(const String &string);
     static String GetUtf8FromCodepoint(uint32 codepoint);
     static String GetUtf8FromCodepoints(const Array<uint32> &codepoints);
-    static uint32 GetLastUtf8CodepointSize(const String &string);
+    static uint32 GetCodepointSizeFromUtf8(const String &string, uint32 position);
+    static uint32 GetCodepointSizeBeforeOffsetFromUtf8(const String &string, uint32 offset);
+    static uint32 GetLastCodepointSizeFromUtf8(const String &string);
+    static uint32 GetCodepointOffsetFromUtf8(const String &string, uint32 offset);
 
     static WideString Utf8ToUtf16(const String &string);
     static String Utf16ToUtf8(const WideString &string);

@@ -94,7 +94,45 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  uint32 StringUtils::GetLastUtf8CodepointSize(const String &string) {
+  uint32 StringUtils::GetCodepointSizeFromUtf8(const String &string, uint32 position) {
+    const char *s = string.c_str() + position;
+    if (0xF0 == (0xF8 & s[0])) {
+      // 4 byte utf8 codepoint
+      return 4;
+    } else if (0xE0 == (0xF0 & s[0])) {
+      // 3 byte utf8 codepoint
+      return 3;
+    } else if (0xC0 == (0xE0 & s[0])) {
+      // 2 byte utf8 codepoint
+      return 2;
+    } else {
+      // 1 byte utf8 codepoint otherwise
+      return 1;
+    }
+  }
+
+  //--------------------------------------------------------------
+  uint32 StringUtils::GetCodepointSizeBeforeOffsetFromUtf8(const String &string, uint32 offset) {
+    uint32 codepoint_size = 0;
+
+    // TODO: This is not really safe at all.
+    
+    const char *s = string.c_str();
+    s += offset;
+    while (true) {
+      s--;
+      codepoint_size++;
+      char c = *s;
+      if ((c & 0b11000000) != 0b10000000) {
+        break;
+      }
+    }
+
+    return codepoint_size;
+  }
+
+  //--------------------------------------------------------------
+  uint32 StringUtils::GetLastCodepointSizeFromUtf8(const String &string) {
     uint32 codepoint_size = 0;
     auto it = string.rbegin();
     while (it != string.rend()) {
@@ -103,9 +141,37 @@ namespace Hyperion {
       if ((c & 0b11000000) != 0b10000000) {
         break;
       }
-      it++;
+      ++it;
     }
     return codepoint_size;
+  }
+
+  //--------------------------------------------------------------
+  uint32 StringUtils::GetCodepointOffsetFromUtf8(const String &string, uint32 offset) {
+    uint32 length = 0;
+    
+    // This assumes a valid utf8 string.
+    const char *s = string.c_str();
+    const char *end = s + offset;
+    while (s != end) {
+      if (0xF0 == (0xF8 & s[0])) {
+        // 4 byte utf8 codepoint
+        s += 4;
+      } else if (0xE0 == (0xF0 & s[0])) {
+        // 3 byte utf8 codepoint
+        s += 3;
+      } else if (0xC0 == (0xE0 & s[0])) {
+        // 2 byte utf8 codepoint
+        s += 2;
+      } else {
+        // 1 byte utf8 codepoint otherwise
+        s += 1;
+      }
+
+      length++;
+    }
+
+    return length;
   }
 
   //--------------------------------------------------------------
