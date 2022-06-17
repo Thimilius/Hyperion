@@ -101,7 +101,7 @@ namespace Hyperion::UI {
     static UIImmediateElement &GetOrCreateElement(const String &id_text, UIImmediateWidgetFlags widget_flags);
     static UIImmediateElement &CreateTemporaryElement(UIImmediateWidgetFlags widget_flags);
     static void PlaceElementInHierarchy(UIImmediateElement &element);
-    static UIImmediateInteraction InteractWithElement(const UIImmediateElement &element);
+    static UIImmediateInteraction InteractWithElement(UIImmediateElement &element);
 
     static void IterateHierarchy(UIImmediateElement &parent, const std::function<bool8(UIImmediateElement &)> &callback);
   private:

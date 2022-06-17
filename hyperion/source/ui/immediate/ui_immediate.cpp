@@ -293,9 +293,37 @@ namespace Hyperion::UI {
     element.layout.semantic_size[0] = { SizeKind::TextContent, 10.0f };
     element.layout.semantic_size[1] = { SizeKind::TextContent, 8.0f };
     FitToLayout(element, fit_type);
+
+    // NOTE: This currently does not take into account multiline text.
+    // Furthermore we are not using the sizes for codepoints to increment/decrement the cursor position as we should.
+    
+    auto decrement_cursor = [](UIImmediateElement &element, int32 size) {
+      element.widget.cursor_position.x -= size;
+      if (element.widget.cursor_position.x < 0) {
+        element.widget.cursor_position.x = 0;
+      }
+    };
+    auto increment_cursor = [](UIImmediateElement &element, int32 size, const String &text) {
+      element.widget.cursor_position.x += size;
+      if (element.widget.cursor_position.x > static_cast<int32>(text.size())) {
+        element.widget.cursor_position.x = static_cast<int32>(text.size());
+      }
+    };
     
     UIImmediateInteraction interaction = InteractWithElement(element);
     if (interaction.focused) {
+      for (AppEvent *app_event : Input::GetEvents()) {
+        AppEventDispatcher dispatcher = AppEventDispatcher(*app_event);
+      
+        dispatcher.Dispatch<KeyPressedAppEvent>([&element, &decrement_cursor, &increment_cursor, &text](KeyPressedAppEvent &event) {
+          if (event.GetKeyCode() == KeyCode::Left) {
+            decrement_cursor(element, 1);
+          } else if (event.GetKeyCode() == KeyCode::Right) {
+            increment_cursor(element, 1, text);
+          }
+        });  
+      }
+      
       for (uint64 i = 0; i < s_state.keys_typed.GetLength(); ++i) {
         String key_typed = s_state.keys_typed[i];
         bool8 has_characters = true;
@@ -306,8 +334,11 @@ namespace Hyperion::UI {
           } else if (codepoint == '\b') {
             if (!text.empty()) {
               uint32 codepoint_size = StringUtils::GetLastUtf8CodepointSize(text);
-              text.resize(text.size() - codepoint_size);
-
+              int32 erase_position = element.widget.cursor_position.x - 1;
+              if (erase_position >= 0) {
+                text.erase(erase_position, codepoint_size);  
+              }
+              decrement_cursor(element, 1);
               interaction.input_changed = true;
             }
           } else if (codepoint == '\r') {
@@ -323,7 +354,8 @@ namespace Hyperion::UI {
         }
 
         if (has_characters) {
-          text += key_typed;
+          text.insert(element.widget.cursor_position.x, key_typed);
+          increment_cursor(element, 1, text);
           interaction.input_changed = true;
         }
       }
@@ -972,7 +1004,7 @@ namespace Hyperion::UI {
   }
   
   //--------------------------------------------------------------
-  UIImmediateInteraction UIImmediate::InteractWithElement(const UIImmediateElement &element) {
+  UIImmediateInteraction UIImmediate::InteractWithElement(UIImmediateElement &element) {
     if (!IsInsideParent(element)) {
       return { };
     }
@@ -988,7 +1020,10 @@ namespace Hyperion::UI {
         if (s_state.pressed_element == 0 && (s_state.is_left_mouse_down || s_state.is_right_mouse_down)) {
           s_state.pressed_element = id;
           if ((element.widget.flags & UIImmediateWidgetFlags::Focusable) == UIImmediateWidgetFlags::Focusable) {
-            s_state.focused_element = id;  
+            s_state.focused_element = id;
+
+            // Position the cursor at the end for an input field. 
+            element.widget.cursor_position = Vector2Int(static_cast<int32>(element.widget.text.size()), 0);
           }
         }
       }

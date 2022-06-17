@@ -207,7 +207,7 @@ namespace Hyperion::Rendering {
     GLsizei width = texture_2d.parameters.width;
     GLsizei height = texture_2d.parameters.height;
     GLenum internal_format = OpenGLUtilities::GetTextureInternalFormat(format);
-    GLsizei mipmap_count = Math::Max(texture_2d.mipmap_count, 1);
+    GLsizei mipmap_count = Math::Max(texture_2d.mipmap_count, static_cast<uint32>(1));
     glTextureStorage2D(opengl_texture.texture, mipmap_count, internal_format, width, height);
 
     OpenGLUtilities::FlipTextureHorizontally(texture_2d.parameters.width, texture_2d.parameters.height, format, texture_2d.pixels);
@@ -269,7 +269,7 @@ namespace Hyperion::Rendering {
         TextureAttributes attributes = attachment.attributes;
         SetTextureAttributes(opengl_attachment.attachment, attributes);
 
-        GLsizei mipmap_count = attributes.use_mipmaps ? Math::Max(render_texture.mipmap_count, 1) : 1;
+        GLsizei mipmap_count = attributes.use_mipmaps ? Math::Max(render_texture.mipmap_count, static_cast<uint32>(1)) : 1;
         glTextureStorage2D(opengl_attachment.attachment, mipmap_count, opengl_internal_format, width, height);
 
         glNamedFramebufferTexture(opengl_render_texture.framebuffer, opengl_attachment_type, opengl_attachment.attachment, 0);

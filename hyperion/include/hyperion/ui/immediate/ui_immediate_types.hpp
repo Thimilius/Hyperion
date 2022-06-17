@@ -141,6 +141,8 @@ namespace Hyperion::UI {
 
       bool8 toggled = false;
 
+      Vector2Int cursor_position;
+      
       Texture *texture = nullptr;
       bool8 enable_blending = true;
       uint32 render_attachment_index = 0;
