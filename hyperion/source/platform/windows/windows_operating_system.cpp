@@ -257,6 +257,11 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
+  void WindowsOperatingSystem::UnloadLibrary(LibraryHandle handle) {
+    FreeLibrary(handle);
+  }
+
+  //--------------------------------------------------------------
   String WindowsOperatingSystem::OpenFileDialog(const String &title, const String &filter) {
     WCHAR file_output[MAX_PATH] = { };
 

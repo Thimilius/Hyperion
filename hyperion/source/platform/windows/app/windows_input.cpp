@@ -8,9 +8,12 @@
 #include <Windows.h>
 #include <Xinput.h>
 
+#undef LoadLibrary
+
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/events/app_event.hpp"
 #include "hyperion/core/app/events/window_events.hpp"
+#include "hyperion/core/system/operating_system.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion {
@@ -28,7 +31,7 @@ namespace Hyperion {
     return ERROR_DEVICE_NOT_CONNECTED;
   }
 
-  HMODULE g_xinput_library;
+  LibraryHandle g_xinput_library;
   XInputGetStateFunc g_xinput_get_state = XInputGetStateStub;
   XInputSetStateFunc g_xinput_set_state = XInputSetStateStub;
 
@@ -36,17 +39,17 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   WindowsInput::WindowsInput() {
-    g_xinput_library = LoadLibraryA("xinput1_4.dll");
+    g_xinput_library = OperatingSystem::LoadLibrary("xinput1_4.dll");
     if (!g_xinput_library) {
-      g_xinput_library = LoadLibraryA("xinput1_3.dll");
+      g_xinput_library = OperatingSystem::LoadLibrary("xinput1_3.dll");
     }
 
-    XInputGetStateFunc xinput_get_state = (XInputGetStateFunc)GetProcAddress(g_xinput_library, "XInputGetState");
+    XInputGetStateFunc xinput_get_state = OperatingSystem::GetFunctionPointer<XInputGetStateFunc>(g_xinput_library, "XInputGetState");
     if (xinput_get_state) {
       g_xinput_get_state = xinput_get_state;
     }
 
-    XInputSetStateFunc xinput_set_state = (XInputSetStateFunc)GetProcAddress(g_xinput_library, "XInputSetState");
+    XInputSetStateFunc xinput_set_state = OperatingSystem::GetFunctionPointer<XInputSetStateFunc>(g_xinput_library, "XInputSetState");
     if (xinput_set_state) {
       g_xinput_set_state = xinput_set_state;
     }
@@ -54,7 +57,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   WindowsInput::~WindowsInput() {
-    FreeLibrary(g_xinput_library);
+    OperatingSystem::UnloadLibrary(g_xinput_library);
   }
 
   //--------------------------------------------------------------
@@ -62,12 +65,33 @@ namespace Hyperion {
     uint32 gamepad_id = GetIdFromGamepad(gamepad);
 
     XINPUT_VIBRATION vibration;
-    vibration.wLeftMotorSpeed = (WORD)(Math::Clamp01(left_vibration) * 65535.0f);
-    vibration.wRightMotorSpeed = (WORD)(Math::Clamp01(left_vibration) * 65535.0f);
+    vibration.wLeftMotorSpeed = static_cast<WORD>(Math::Clamp01(left_vibration) * 65535.0f);
+    vibration.wRightMotorSpeed = static_cast<WORD>(Math::Clamp01(left_vibration) * 65535.0f);
 
     g_xinput_set_state(gamepad_id, &vibration);
   }
 
+  //--------------------------------------------------------------
+  String WindowsInput::GetClipboard() const {
+    String result;
+    
+    if (OpenClipboard(nullptr)) {
+      HANDLE clipboard_data = GetClipboardData(CF_UNICODETEXT);
+      if (clipboard_data != nullptr) {
+        WCHAR *text_data = static_cast<WCHAR *>(GlobalLock(clipboard_data));
+        if (text_data) {
+          WideString wide_data = WideString(text_data);
+          GlobalUnlock(clipboard_data);
+          
+          result = StringUtils::Utf16ToUtf8(wide_data);
+        }
+      }
+      CloseClipboard();
+    }
+    
+    return result;
+  }
+  
   //--------------------------------------------------------------
   void WindowsInput::OnAppEvent(AppEvent &app_event) {
     // We keep track of all input events in this frame.
@@ -95,9 +119,6 @@ namespace Hyperion {
     dispatcher.Dispatch<KeyReleasedAppEvent>([this](KeyReleasedAppEvent &key_released_event) {
       OnKeyEvent(key_released_event, false);
     });
-    dispatcher.Dispatch<KeyTypedAppEvent>([this](KeyTypedAppEvent &key_type_event) {
-      m_keys_typed.Add(key_type_event.GetCharacter());
-    });
 
     dispatcher.Dispatch<MouseButtonPressedAppEvent>([this](MouseButtonPressedAppEvent &mouse_button_pressed_event) {
       OnMouseButtonEvent(mouse_button_pressed_event, true);
@@ -120,7 +141,6 @@ namespace Hyperion {
       memset(&m_keys_down, false, sizeof(m_keys_down));
       memset(&m_keys_up, false, sizeof(m_keys_up));
       memcpy(&m_keys_last, &m_keys, sizeof(m_keys_last));
-      m_keys_typed.Clear();
 
       memset(&m_mouse_buttons_down, false, sizeof(m_mouse_buttons_down));
       memset(&m_mouse_buttons_up, false, sizeof(m_mouse_buttons_up));
@@ -178,12 +198,12 @@ namespace Hyperion {
         }
 
         {
-          float32 left_stick_x = (state.Gamepad.sThumbLX + 0.5f) / 32767.5f;
-          float32 left_stick_y = (state.Gamepad.sThumbLY + 0.5f) / 32767.5f;
-          float32 right_stick_x = (state.Gamepad.sThumbRX + 0.5f) / 32767.5f;
-          float32 right_stick_y = (state.Gamepad.sThumbRY + 0.5f) / 32767.5f;
-          float32 left_trigger = state.Gamepad.bLeftTrigger / 255.0f;
-          float32 right_trigger = state.Gamepad.bRightTrigger / 255.0f;
+          float32 left_stick_x = (static_cast<float32>(state.Gamepad.sThumbLX) + 0.5f) / 32767.5f;
+          float32 left_stick_y = (static_cast<float32>(state.Gamepad.sThumbLY) + 0.5f) / 32767.5f;
+          float32 right_stick_x = (static_cast<float32>(state.Gamepad.sThumbRX) + 0.5f) / 32767.5f;
+          float32 right_stick_y = (static_cast<float32>(state.Gamepad.sThumbRY) + 0.5f) / 32767.5f;
+          float32 left_trigger = static_cast<float32>(state.Gamepad.bLeftTrigger) / 255.0f;
+          float32 right_trigger = static_cast<float32>(state.Gamepad.bRightTrigger) / 255.0f;
 
           m_gamepads[static_cast<int32>(gamepad)].axes[static_cast<int32>(GamepadAxis::LeftStick)] = ApplyGamepadDeadzone(left_stick_x, left_stick_y);
           m_gamepads[static_cast<int32>(gamepad)].axes[static_cast<int32>(GamepadAxis::RightStick)] = ApplyGamepadDeadzone(right_stick_x, right_stick_y);
@@ -201,7 +221,6 @@ namespace Hyperion {
     memset(&m_keys_up, false, sizeof(m_keys_up));
     memset(&m_keys, false, sizeof(m_keys));
     memset(&m_keys_last, false, sizeof(m_keys_last));
-    m_keys_typed.Clear();
 
     m_mouse_scroll = 0.0f;
 

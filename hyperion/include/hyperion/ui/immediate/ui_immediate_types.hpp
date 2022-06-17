@@ -164,7 +164,6 @@ namespace Hyperion::UI {
     bool8 is_right_mouse_down = false;
     bool8 is_right_mouse_hold = false;
     bool8 is_right_mouse_up = false;
-    Array<AppEvent *> app_events;
     
     UIImmediateId hovered_element = 0;
     UIImmediateId pressed_element = 0;

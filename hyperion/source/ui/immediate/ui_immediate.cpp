@@ -45,7 +45,6 @@ namespace Hyperion::UI {
     s_state.is_right_mouse_down = Input::IsMouseButtonDown(MouseButtonCode::Right);
     s_state.is_right_mouse_hold = Input::IsMouseButtonHold(MouseButtonCode::Right);
     s_state.is_right_mouse_up = Input::IsMouseButtonUp(MouseButtonCode::Right);
-    s_state.app_events = Input::GetEvents();
     s_state.hovered_element = 0;
     s_state.last_focused_element = s_state.focused_element;
     s_state.focused_element = s_state.is_left_mouse_down || s_state.is_right_mouse_down ? 0 : s_state.focused_element;
@@ -317,7 +316,7 @@ namespace Hyperion::UI {
     
     UIImmediateInteraction interaction = InteractWithElement(element);
     if (interaction.focused) {
-      for (AppEvent *app_event : s_state.app_events) {
+      for (AppEvent *app_event : Input::GetEvents()) {
         AppEventDispatcher dispatcher = AppEventDispatcher(*app_event);
       
         dispatcher.Dispatch<KeyPressedAppEvent>([&element, &decrement_cursor, &increment_cursor, &text, &interaction](KeyPressedAppEvent &pressed_event) {
@@ -354,6 +353,15 @@ namespace Hyperion::UI {
                 text.erase(erase_position, codepoint_size);
                 interaction.input_changed = true;
               }  
+            }
+          }
+
+          if (pressed_event.HasKeyModifier(KeyModifier::Control)) {
+            if (key_code == KeyCode::V) {
+              String clipboard = Input::GetClipboard();
+              text.insert(element.widget.cursor_position.x, clipboard);
+              increment_cursor(element, static_cast<int32>(clipboard.size()), text);
+              interaction.input_changed = true;  
             }
           }
         });

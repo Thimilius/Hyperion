@@ -30,6 +30,7 @@ namespace Hyperion {
     static void MessageBox(MessageBoxType type, const String &title, const String &message);
 
     static LibraryHandle LoadLibrary(const String &path);
+    static void UnloadLibrary(LibraryHandle handle);
     template<typename T>
     static T GetFunctionPointer(LibraryHandle handle, const char *name) {
       return reinterpret_cast<T>(GetFunctionPointerRaw(handle, name));

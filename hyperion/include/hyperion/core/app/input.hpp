@@ -21,7 +21,6 @@ namespace Hyperion {
     virtual bool8 IsKeyDown(KeyCode key_code) const = 0;
     virtual bool8 IsKeyHold(KeyCode key_code) const = 0;
     virtual bool8 IsKeyUp(KeyCode key_code) const = 0;
-    virtual const Array<String> &GetKeysTyped() const = 0;
 
     virtual Vector2Int GetMousePosition() const = 0;
     virtual bool8 HasMouseMoved() const = 0;
@@ -40,6 +39,8 @@ namespace Hyperion {
     virtual bool8 IsGamepadButtonHold(Gamepad gamepad, GamepadButtonCode gamepad_button_code) const = 0;
     virtual bool8 IsGamepadButtonUp(Gamepad gamepad, GamepadButtonCode gamepad_button_code) const = 0;
 
+    virtual String GetClipboard() const = 0;
+    
     virtual const Array<AppEvent *> &GetEvents() const = 0;
   protected:
     inline void DispatchAppEvent(AppEvent &app_event) const {
@@ -58,7 +59,6 @@ namespace Hyperion {
     inline static bool8 IsKeyDown(KeyCode key_code) { return s_input_implementation->IsKeyDown(key_code); }
     inline static bool8 IsKeyHold(KeyCode key_code) { return s_input_implementation->IsKeyHold(key_code); }
     inline static bool8 IsKeyUp(KeyCode key_code) { return s_input_implementation->IsKeyUp(key_code); }
-    inline static const Array<String> &GetKeysTyped() { return s_input_implementation->GetKeysTyped(); }
 
     inline static Vector2Int GetMousePosition() { return s_input_implementation->GetMousePosition(); }
     inline static bool8 HasMouseMoved() { return s_input_implementation->HasMouseMoved(); }
@@ -90,6 +90,8 @@ namespace Hyperion {
       return s_input_implementation->IsGamepadButtonUp(gamepad, gamepad_button_code);
     }
 
+    inline static String GetClipboard() { return s_input_implementation->GetClipboard(); }
+    
     inline static const Array<AppEvent *> &GetEvents() { return s_input_implementation->GetEvents(); }
   private:
     Input() = delete;
