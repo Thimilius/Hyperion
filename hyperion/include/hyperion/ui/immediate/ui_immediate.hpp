@@ -87,7 +87,7 @@ namespace Hyperion::UI {
     static Color GetTextColor(const UIImmediateElement &element);
 
     static void DrawRect(Rect rect, Color color);
-    static void DrawText(Rect rect, const String &text, Font *font, UI::TextAlignment alignment, Color color);
+    static void DrawText(Rect rect, const String &text, Font *font, UI::TextAlignment alignment, Color color, Vector2 offset = Vector2());
     static void Flush(RectInt scissor, Material *material = nullptr, Texture *texture = nullptr, bool8 affected_by_overlay = true);
     
     static bool8 IsInsideParent(const UIImmediateElement &element);

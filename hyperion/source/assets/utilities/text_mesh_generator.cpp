@@ -30,7 +30,7 @@ namespace Hyperion {
     // TODO: We could probably save some time if we were to compute all line sizes and the full text size in one go.
     TextSize full_text_size = TextUtilities::GetTextSize(font, codepoints, 0, scale_x, false);
     TextSize first_line_text_size = TextUtilities::GetTextSize(font, codepoints, 0, scale_x, true);
-    Vector2 position = TextUtilities::GetPosition(settings.alignment, first_line_text_size, full_text_size, settings.rect);
+    Vector2 position = TextUtilities::GetPosition(settings.alignment, first_line_text_size, full_text_size, settings.rect, settings.offset);
 
     for (uint32 codepoint : codepoints) {
       codepoint_offset++;
@@ -44,7 +44,7 @@ namespace Hyperion {
         case '\r': continue; // Carriage return gets just straight up ignored. 
         case '\n': {
           TextSize next_line_text_size = TextUtilities::GetTextSize(font, codepoints, codepoint_offset, scale_x, true);
-          Vector2 new_position = TextUtilities::GetPosition(settings.alignment, next_line_text_size, full_text_size, settings.rect);
+          Vector2 new_position = TextUtilities::GetPosition(settings.alignment, next_line_text_size, full_text_size, settings.rect, settings.offset);
           position.x = new_position.x;
           position.y -= static_cast<float32>(font->GetSize()) * scale_y;
           continue;

@@ -72,6 +72,7 @@ namespace Hyperion::UI {
     Color input_color_pressed = Color::Grey();
     Color input_color_focused = Color::Grey();
     Color input_cursor_color = Color::White();
+    float32 input_cursor_width = 1.0f;
     float32 input_cursor_blink_rate = 0.75f;
     
     bool8 text_shadow_enabled = true;

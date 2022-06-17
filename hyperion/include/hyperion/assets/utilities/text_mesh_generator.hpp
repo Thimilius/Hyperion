@@ -19,6 +19,8 @@ namespace Hyperion {
 
     Rect rect = Rect();
     Vector2 scale = Vector2(1.0f, 1.0f);
+
+    Vector2 offset;
   };
 
   class TextMeshGenerator final {

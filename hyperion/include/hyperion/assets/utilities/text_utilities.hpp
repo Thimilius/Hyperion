@@ -13,7 +13,7 @@ namespace Hyperion {
   public:
     static TextSize GetTextSize(Font *font, const Array<uint32> &codepoints, uint32 codepoint_offset, float32 scale, bool8 line_only);
     
-    static Vector2 GetPosition(UI::TextAlignment text_alignment, TextSize line_size, TextSize full_size, Rect rect);
+    static Vector2 GetPosition(UI::TextAlignment text_alignment, TextSize line_size, TextSize full_size, Rect rect, Vector2 offset = Vector2());
     static Vector2 GetCursorPosition(
       Font *font,
       const Array<uint32> &codepoints,

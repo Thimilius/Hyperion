@@ -16,7 +16,6 @@
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::UI {
-
   //--------------------------------------------------------------
   void UIImmediate::Begin() {
     // Every mesh that is still in the cache was not used in the frame before.
@@ -672,24 +671,10 @@ namespace Hyperion::UI {
         if (last_draw_was_a_simple_rect) {
           Flush(default_scissor);    
         }
-        
-        if (theme.text_shadow_enabled) {
-          Rect shadow_rect = rect;
-          shadow_rect.position += theme.text_shadow_offset;
-          DrawText(shadow_rect, element.widget.text, theme.font, element.widget.text_alignment, theme.text_shadow_color);  
-        }
 
-        Color color = GetTextColor(element);
-        DrawText(rect, element.widget.text, theme.font, element.widget.text_alignment, color);
-        
-        Flush(element_scissor, AssetManager::GetMaterialPrimitive(MaterialPrimitive::Font), theme.font->GetTexture());
-        last_draw_was_a_simple_rect = false;
-      }
-
-      // Render cursor for input field when focused.
-      if (is_input && s_state.focused_element == element.id.id) {
-        if (Time::BetweenInterval(theme.input_cursor_blink_rate, element.animation.focused_time_offset - theme.input_cursor_blink_rate)) {
-          // We need to convert the cursor position from a byte offset to a codepoint offset.
+        Vector2 text_offset;
+        // Figure out wrapping offset.
+        if (is_input && s_state.focused_element == element.id.id) {
           uint32 codepoint_offset = StringUtils::GetCodepointOffsetFromUtf8(element.widget.text, element.widget.cursor_position.x);
           
           Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(element.widget.text);
@@ -701,16 +686,57 @@ namespace Hyperion::UI {
             rect,
             Vector2Int(static_cast<int32>(codepoint_offset), 0)
           );
+
+          if (cursor_position.x > (rect.x + rect.width)) {
+            float32 offset = ((rect.x + rect.width) - cursor_position.x) - theme.input_cursor_width;
+            text_offset.x = offset;
+          }
+        }
+        
+        if (theme.text_shadow_enabled) {
+          Rect shadow_rect = rect;
+          shadow_rect.position += theme.text_shadow_offset;
+          DrawText(shadow_rect, element.widget.text, theme.font, element.widget.text_alignment, theme.text_shadow_color, text_offset);  
+        }
+
+        Color color = GetTextColor(element);
+        DrawText(rect, element.widget.text, theme.font, element.widget.text_alignment, color, text_offset);
+        
+        Flush(element_scissor, AssetManager::GetMaterialPrimitive(MaterialPrimitive::Font), theme.font->GetTexture());
+        last_draw_was_a_simple_rect = false;
+      }
+
+      // Render cursor for input field when focused.
+      if (is_input && s_state.focused_element == element.id.id) {
+        if (Time::BetweenInterval(theme.input_cursor_blink_rate, element.animation.focused_time_offset - theme.input_cursor_blink_rate)) {
+          // We need to convert the cursor position from a byte offset to a utf-8 codepoint offset.
+          uint32 codepoint_offset = StringUtils::GetCodepointOffsetFromUtf8(element.widget.text, element.widget.cursor_position.x);
+          
+          Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(element.widget.text);
+          Vector2 cursor_position = TextUtilities::GetCursorPosition(
+            theme.font,
+            codepoints,
+            1.0f,
+            element.widget.text_alignment,
+            rect,
+            Vector2Int(static_cast<int32>(codepoint_offset), 0)
+          );
+
+          // Add wrapping offset.
+          if (cursor_position.x > (rect.x + rect.width)) {
+            float32 offset = ((rect.x + rect.width) - cursor_position.x) - theme.input_cursor_width;
+            cursor_position.x += offset; 
+          }
           
           Rect cursor_rect = {
             cursor_position.x,
             cursor_position.y,
-            1.0f,
+            theme.input_cursor_width,
             static_cast<float32>(theme.font->GetSize())
           };
           
           DrawRect(cursor_rect, theme.input_cursor_color);
-          Flush(element_scissor);
+          Flush(default_scissor);
           last_draw_was_a_simple_rect = false;
         }
       }
@@ -861,7 +887,7 @@ namespace Hyperion::UI {
   }
   
   //--------------------------------------------------------------
-  void UIImmediate::DrawText(Rect rect, const String &text, Font *font, UI::TextAlignment alignment, Color color) {
+  void UIImmediate::DrawText(Rect rect, const String &text, Font *font, UI::TextAlignment alignment, Color color, Vector2 offset) {
     if (text.empty()) {
       return;
     }
@@ -873,6 +899,7 @@ namespace Hyperion::UI {
     generation_settings.color = color;
     generation_settings.rect = rect;
     generation_settings.scale = Vector2(1.0f, 1.0f);
+    generation_settings.offset = offset;
 
     TextMeshGenerator::GenerateMesh(generation_settings, s_mesh_builder);
     s_mesh_builder.TransformAndAlignPixels(
@@ -1117,3 +1144,4 @@ namespace Hyperion::UI {
   }
   
 }
+ 

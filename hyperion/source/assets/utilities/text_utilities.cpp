@@ -13,7 +13,7 @@ namespace Hyperion {
   }
   
   //--------------------------------------------------------------
-  Vector2 TextUtilities::GetPosition(UI::TextAlignment text_alignment, TextSize line_size, TextSize full_size, Rect rect) {
+  Vector2 TextUtilities::GetPosition(UI::TextAlignment text_alignment, TextSize line_size, TextSize full_size, Rect rect, Vector2 offset) {
     Vector2 position = Vector2();
 
     switch (text_alignment) {
@@ -58,6 +58,8 @@ namespace Hyperion {
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
     }
 
+    position += offset;
+    
     return Vector3(position, 0.0f);
   }
 
