@@ -45,9 +45,10 @@ namespace Hyperion::UI {
     s_state.is_right_mouse_down = Input::IsMouseButtonDown(MouseButtonCode::Right);
     s_state.is_right_mouse_hold = Input::IsMouseButtonHold(MouseButtonCode::Right);
     s_state.is_right_mouse_up = Input::IsMouseButtonUp(MouseButtonCode::Right);
-    s_state.keys_typed = Input::GetKeysTyped();
+    s_state.app_events = Input::GetEvents();
     s_state.hovered_element = 0;
-    s_state.focused_element = s_state.is_left_mouse_down || s_state.is_right_mouse_down ? 0 : s_state.focused_element; 
+    s_state.last_focused_element = s_state.focused_element;
+    s_state.focused_element = s_state.is_left_mouse_down || s_state.is_right_mouse_down ? 0 : s_state.focused_element;
     s_state.current_frame_index++;
 
     s_state.root_element = UIImmediateElement();
@@ -316,52 +317,68 @@ namespace Hyperion::UI {
     
     UIImmediateInteraction interaction = InteractWithElement(element);
     if (interaction.focused) {
-      for (AppEvent *app_event : Input::GetEvents()) {
+      for (AppEvent *app_event : s_state.app_events) {
         AppEventDispatcher dispatcher = AppEventDispatcher(*app_event);
       
-        dispatcher.Dispatch<KeyPressedAppEvent>([&element, &decrement_cursor, &increment_cursor, &text](KeyPressedAppEvent &event) {
-          if (event.GetKeyCode() == KeyCode::Left) {
+        dispatcher.Dispatch<KeyPressedAppEvent>([&element, &decrement_cursor, &increment_cursor, &text, &interaction](KeyPressedAppEvent &pressed_event) {
+          KeyCode key_code = pressed_event.GetKeyCode();
+          if (key_code == KeyCode::Return) {
+            interaction.input_submitted = true;
+            
+            // We lose focus on return.
+            s_state.focused_element = 0;
+          } else if (key_code == KeyCode::Left) {
             decrement_cursor(element, 1);
-          } else if (event.GetKeyCode() == KeyCode::Right) {
+          } else if (key_code == KeyCode::Right) {
             increment_cursor(element, 1, text);
-          }
-        });  
-      }
-      
-      for (uint64 i = 0; i < s_state.keys_typed.GetLength(); ++i) {
-        String key_typed = s_state.keys_typed[i];
-        bool8 has_characters = true;
-        Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(key_typed);
-        for (uint32 codepoint : codepoints) {
-          if (codepoint == ' ' || codepoint == '\t') {
-            continue;
-          } else if (codepoint == '\b') {
+          } else if (key_code == KeyCode::Home) {
+            element.widget.cursor_position = Vector2Int();
+          } else if (key_code == KeyCode::End) {
+            element.widget.cursor_position = Vector2Int(static_cast<int32>(element.widget.text.size()), 0); 
+          } else if (key_code == KeyCode::Back) {
             if (!text.empty()) {
               uint32 codepoint_size = StringUtils::GetLastUtf8CodepointSize(text);
               int32 erase_position = element.widget.cursor_position.x - 1;
               if (erase_position >= 0) {
-                text.erase(erase_position, codepoint_size);  
+                text.erase(erase_position, codepoint_size);
+                decrement_cursor(element, 1);
+                interaction.input_changed = true;
               }
-              decrement_cursor(element, 1);
-              interaction.input_changed = true;
+              
             }
-          } else if (codepoint == '\r') {
-            interaction.input_submitted = true;
-            // We lose focus on return.
-            s_state.focused_element = 0;
+          } else if (key_code == KeyCode::Delete) {
+            if (!text.empty()) {
+              uint32 codepoint_size = StringUtils::GetLastUtf8CodepointSize(text);
+              int32 erase_position = element.widget.cursor_position.x;
+              if (erase_position >= 0 && erase_position < static_cast<int32>(text.size())) {
+                text.erase(erase_position, codepoint_size);
+                interaction.input_changed = true;
+              }  
+            }
           }
-          
-          if (!theme->font->HasCodepoint(codepoint)) {
-            has_characters = false;
-            break;
+        });
+        
+        dispatcher.Dispatch<KeyTypedAppEvent>([&element, &increment_cursor, theme, &interaction, &text](KeyTypedAppEvent &typed_event) {
+          String key_typed = typed_event.GetCharacter();
+          bool8 has_characters = true;
+          Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(key_typed);
+          for (uint32 codepoint : codepoints) {
+            if (codepoint == ' ' || codepoint == '\t') {
+              continue;
+            }
+            
+            if (!theme->font->HasCodepoint(codepoint)) {
+              has_characters = false;
+              break;
+            }
           }
-        }
 
-        if (has_characters) {
-          text.insert(element.widget.cursor_position.x, key_typed);
-          increment_cursor(element, 1, text);
-          interaction.input_changed = true;
-        }
+          if (has_characters) {
+            text.insert(element.widget.cursor_position.x, key_typed);
+            increment_cursor(element, 1, text);
+            interaction.input_changed = true;
+          }
+        });
       }
     }
 
@@ -600,10 +617,10 @@ namespace Hyperion::UI {
 
   //--------------------------------------------------------------
   void UIImmediate::Render() {
-    RectInt scissor = { 0, 0, static_cast<int32>(Display::GetWidth()), static_cast<int32>(Display::GetHeight()) };
+    RectInt default_scissor = { 0, 0, static_cast<int32>(Display::GetWidth()), static_cast<int32>(Display::GetHeight()) };
     
     bool8 last_draw_was_a_simple_rect = false;
-    IterateHierarchy(s_state.root_element, [&last_draw_was_a_simple_rect, scissor](UIImmediateElement &element) {
+    IterateHierarchy(s_state.root_element, [&last_draw_was_a_simple_rect, default_scissor](UIImmediateElement &element) {
       if (!IsInsideParent(element)) {
         return false;
       }
@@ -618,55 +635,53 @@ namespace Hyperion::UI {
       bool8 is_input = (element.widget.flags & UIImmediateWidgetFlags::Input) == UIImmediateWidgetFlags::Input;
       bool8 is_image = (element.widget.flags & UIImmediateWidgetFlags::Image) == UIImmediateWidgetFlags::Image;
 
+      Rect rect = element.layout.rect; 
+      Vector2 screen_point = UISpacePointToScreenPoint(Vector2(rect.x, rect.y));
+      RectInt element_scissor = {
+        static_cast<int32>(screen_point.x),
+        static_cast<int32>(screen_point.y),
+        static_cast<int32>(rect.width),
+        static_cast<int32>(rect.height)
+      };
+      
       if (is_separator || is_panel || is_button || is_toggle || is_input || is_image) {
         Color color = GetBackgroundColor(element);
 
         if (is_image) {
           if (last_draw_was_a_simple_rect) {
-            Flush(scissor);    
+            Flush(default_scissor);    
           }
           
           last_draw_was_a_simple_rect = false;
-          DrawRect(element.layout.rect, color);
-          Flush(scissor, AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI), element.widget.texture, false);
+          DrawRect(rect, color);
+          Flush(default_scissor, AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI), element.widget.texture, false);
         } else {
-          DrawRect(element.layout.rect, color);
+          DrawRect(rect, color);
           last_draw_was_a_simple_rect = true;
         }
       }
 
       if (is_text || is_button || is_toggle || is_input) {
         if (last_draw_was_a_simple_rect) {
-          Flush(scissor);    
+          Flush(default_scissor);    
         }
         
-        Rect text_rect = element.layout.rect;
-        
         if (theme.text_shadow_enabled) {
-          Rect shadow_rect = text_rect;
+          Rect shadow_rect = rect;
           shadow_rect.position += theme.text_shadow_offset;
           DrawText(shadow_rect, element.widget.text, theme.font, element.widget.text_alignment, theme.text_shadow_color);  
         }
 
         Color color = GetTextColor(element);
-        DrawText(text_rect, element.widget.text, theme.font, element.widget.text_alignment, color);
-
-        Vector2 screen_point = UISpacePointToScreenPoint(Vector2(text_rect.x, text_rect.y));
-        RectInt text_scissor = {
-          static_cast<int32>(screen_point.x),
-          static_cast<int32>(screen_point.y),
-          static_cast<int32>(text_rect.width),
-          static_cast<int32>(text_rect.height)
-        };
-        Flush(text_scissor, AssetManager::GetMaterialPrimitive(MaterialPrimitive::Font), theme.font->GetTexture());
+        DrawText(rect, element.widget.text, theme.font, element.widget.text_alignment, color);
+        
+        Flush(element_scissor, AssetManager::GetMaterialPrimitive(MaterialPrimitive::Font), theme.font->GetTexture());
         last_draw_was_a_simple_rect = false;
       }
 
       // Render cursor for input field when focused.
       if (is_input && s_state.focused_element == element.id.id) {
-        if (Time::BetweenInterval(theme.input_cursor_blink_rate, element.animation.focused_time_offset - theme.input_cursor_blink_rate)) {
-          Rect rect = element.layout.rect; 
-        
+        if (Time::BetweenInterval(theme.input_cursor_blink_rate, element.animation.focused_time_offset - theme.input_cursor_blink_rate)) {        
           Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(element.widget.text);
           Vector2 cursor_position = TextUtilities::GetCursorPosition(
             theme.font,
@@ -685,13 +700,14 @@ namespace Hyperion::UI {
           };
           
           DrawRect(cursor_rect, theme.input_cursor_color);
-          last_draw_was_a_simple_rect = true;
+          Flush(element_scissor);
+          last_draw_was_a_simple_rect = false;
         }
       }
       
       return true;
     });
-    Flush(scissor);
+    Flush(default_scissor);
     
     Rendering::RenderFrameContext &render_frame_context = Rendering::RenderEngine::GetMainRenderFrame()->GetContext();
     for (UIImmediateMeshDraw mesh_draw : s_mesh_draws) {
@@ -1051,9 +1067,10 @@ namespace Hyperion::UI {
         if (s_state.pressed_element == 0 && (s_state.is_left_mouse_down || s_state.is_right_mouse_down)) {
           s_state.pressed_element = id;
           if ((element.widget.flags & UIImmediateWidgetFlags::Focusable) == UIImmediateWidgetFlags::Focusable) {
-            if (s_state.focused_element != id) {
-              s_state.focused_element = id;
+            s_state.focused_element = id;
 
+            // We do a check to see that we did not have focus before to reset some state.
+            if (s_state.last_focused_element != id) {
               element.animation.focused_time_offset = Time::GetTime();
               
               // Position the cursor at the end for an input field.

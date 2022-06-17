@@ -5,6 +5,7 @@
 #include "hyperion/assets/font.hpp"
 #include "hyperion/assets/material.hpp"
 #include "hyperion/assets/mesh.hpp"
+#include "hyperion/core/app/events/app_event.hpp"
 #include "hyperion/core/math/rect.hpp"
 #include "hyperion/core/math/vector2.hpp"
 #include "hyperion/ui/ui_event.hpp"
@@ -163,11 +164,12 @@ namespace Hyperion::UI {
     bool8 is_right_mouse_down = false;
     bool8 is_right_mouse_hold = false;
     bool8 is_right_mouse_up = false;
-    Array<String> keys_typed;
+    Array<AppEvent *> app_events;
     
     UIImmediateId hovered_element = 0;
     UIImmediateId pressed_element = 0;
     UIImmediateId focused_element = 0;
+    UIImmediateId last_focused_element = 0;
 
     uint64 current_frame_index = 0;
 
