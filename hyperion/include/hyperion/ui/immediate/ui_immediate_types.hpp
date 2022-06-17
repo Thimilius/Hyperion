@@ -26,6 +26,8 @@ namespace Hyperion::UI {
     Texture *texture = nullptr;
 
     Color color = Color::White();
+
+    RectInt scissor;
     bool8 enable_blending = false;
     
     uint32 render_texture_attachment_index = 0;

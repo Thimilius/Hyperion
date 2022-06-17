@@ -657,9 +657,11 @@ namespace Hyperion::Rendering {
       uniform_buffer_camera.camera_projection_matrix = Matrix4x4::Orthographic(-half_width, half_width, -half_height, half_height, -1.0f, 1.0f);
       glNamedBufferSubData(m_storage.GetStatic().camera_uniform_buffer, 0, sizeof(OpenGLUniformBufferCamera), &uniform_buffer_camera);
 
-      glViewport(0, 0, width, height);
+      glViewport(0, 0, static_cast<int32>(width), static_cast<int32>(height));
     }
 
+    glEnable(GL_SCISSOR_TEST);
+    
     for (const RenderFrameContextObjectUI &element : elements) {
       const OpenGLShader &opengl_shader = m_storage.GetShader(element.shader_handle);
       UseShader(opengl_shader);
@@ -672,6 +674,8 @@ namespace Hyperion::Rendering {
         glDisable(GL_BLEND);
       }
 
+      glScissor(element.scissor.x, element.scissor.y, element.scissor.width, element.scissor.height);
+      
       OpenGLDebugGroup debug_group("DrawMesh");
       {
         GLint model_location = opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::Model)];
@@ -698,6 +702,8 @@ namespace Hyperion::Rendering {
 
       DrawSubMesh(opengl_mesh.sub_meshes[0]);
     }
+
+    glDisable(GL_SCISSOR_TEST);
   }
 
   //--------------------------------------------------------------

@@ -63,8 +63,6 @@ namespace Hyperion::UI {
     } else {
       HYP_LOG_ERROR("UI", s_state.element_stack.GetLength() > 1 ? "Forgot a call to UIImmediate::*End!" : "Too many calls to UIImmediate::*End!");
     }
-    
-    Flush();
 
     Layout();
     Render();
@@ -359,6 +357,15 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
+  Vector2 UIImmediate::UISpacePointToScreenPoint(Vector2 ui_space_point) {
+    float32 display_width = static_cast<float32>(Display::GetWidth());
+    float32 display_height = static_cast<float32>(Display::GetHeight());
+    ui_space_point.x += display_width / 2.0f;
+    ui_space_point.y += display_height / 2.0f;
+    return ui_space_point;
+  }
+
+  //--------------------------------------------------------------
   bool8 UIImmediate::IsInsideRect(Rect rect, Vector2 screen_point) {
     auto is_left = [](Vector2 p0, Vector2 p1, Vector2 p2) {
       return ((p1.x - p0.x) * (p2.y - p0.y) - (p2.x - p0.x) * (p1.y - p0.y));
@@ -557,8 +564,10 @@ namespace Hyperion::UI {
 
   //--------------------------------------------------------------
   void UIImmediate::Render() {
+    RectInt scissor = { 0, 0, static_cast<int32>(Display::GetWidth()), static_cast<int32>(Display::GetHeight()) };
+    
     bool8 last_draw_was_a_simple_rect = false;
-    IterateHierarchy(s_state.root_element, [&last_draw_was_a_simple_rect](UIImmediateElement &element) {
+    IterateHierarchy(s_state.root_element, [&last_draw_was_a_simple_rect, scissor](UIImmediateElement &element) {
       if (!IsInsideParent(element)) {
         return false;
       }
@@ -578,12 +587,12 @@ namespace Hyperion::UI {
 
         if (is_image) {
           if (last_draw_was_a_simple_rect) {
-            Flush();    
+            Flush(scissor);    
           }
           
           last_draw_was_a_simple_rect = false;
           DrawRect(element.layout.rect, color);
-          Flush(AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI), element.widget.texture, false);
+          Flush(scissor, AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI), element.widget.texture, false);
         } else {
           DrawRect(element.layout.rect, color);
           last_draw_was_a_simple_rect = true;
@@ -592,25 +601,34 @@ namespace Hyperion::UI {
 
       if (is_text || is_button || is_toggle || is_input) {
         if (last_draw_was_a_simple_rect) {
-          Flush();    
+          Flush(scissor);    
         }
         
+        Rect text_rect = element.layout.rect;
+        
         if (theme.text_shadow_enabled) {
-          Rect shadow_rect = element.layout.rect;
+          Rect shadow_rect = text_rect;
           shadow_rect.position += theme.text_shadow_offset;
           DrawText(shadow_rect, element.widget.text, theme.font, element.widget.text_alignment, theme.text_shadow_color);  
         }
 
         Color color = GetTextColor(element);
-        
-        DrawText(element.layout.rect, element.widget.text, theme.font, element.widget.text_alignment, color);
-        Flush(AssetManager::GetMaterialPrimitive(MaterialPrimitive::Font), theme.font->GetTexture());
+        DrawText(text_rect, element.widget.text, theme.font, element.widget.text_alignment, color);
+
+        Vector2 screen_point = UISpacePointToScreenPoint(Vector2(text_rect.x, text_rect.y));
+        RectInt text_scissor = {
+          static_cast<int32>(screen_point.x),
+          static_cast<int32>(screen_point.y),
+          static_cast<int32>(text_rect.width),
+          static_cast<int32>(text_rect.height)
+        };
+        Flush(text_scissor, AssetManager::GetMaterialPrimitive(MaterialPrimitive::Font), theme.font->GetTexture());
         last_draw_was_a_simple_rect = false;
       }
 
       return true;
     });
-    Flush();
+    Flush(scissor);
     
     Rendering::RenderFrameContext &render_frame_context = Rendering::RenderEngine::GetMainRenderFrame()->GetContext();
     for (UIImmediateMeshDraw mesh_draw : s_mesh_draws) {
@@ -628,6 +646,7 @@ namespace Hyperion::UI {
       render_frame_context_ui_object.texture.handle = texture_handle;
       render_frame_context_ui_object.texture.dimension = mesh_draw.texture ? mesh_draw.texture->GetDimension() : Rendering::TextureDimension::Texture2D;
       render_frame_context_ui_object.texture.render_texture_attachment_index = mesh_draw.render_texture_attachment_index;
+      render_frame_context_ui_object.scissor = mesh_draw.scissor;
       render_frame_context_ui_object.enable_blending = mesh_draw.enable_blending;
     }
   }
@@ -767,11 +786,14 @@ namespace Hyperion::UI {
     generation_settings.scale = Vector2(1.0f, 1.0f);
 
     TextMeshGenerator::GenerateMesh(generation_settings, s_mesh_builder);
-    s_mesh_builder.TransformAndAlignPixels(Matrix4x4::Identity(), Vector2Int(Display::GetWidth(), Display::GetHeight()));
+    s_mesh_builder.TransformAndAlignPixels(
+      Matrix4x4::Identity(),
+      Vector2Int(static_cast<int32>(Display::GetWidth()), static_cast<int32>(Display::GetHeight()))
+    );
   }
   
   //--------------------------------------------------------------
-  void UIImmediate::Flush(Material *material, Texture *texture, bool8 affected_by_overlay) {
+  void UIImmediate::Flush(RectInt scissor, Material *material, Texture *texture, bool8 affected_by_overlay) {
     if (s_mesh_builder.IsEmpty()) {
       return;
     }
@@ -807,6 +829,7 @@ namespace Hyperion::UI {
     mesh_draw.texture = texture ? texture : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White);
     mesh_draw.color = affected_by_overlay ? s_overlay_color : Color::White();
     mesh_draw.render_texture_attachment_index = 0;
+    mesh_draw.scissor = scissor;
     mesh_draw.enable_blending = true;
     s_mesh_draws.Add(mesh_draw);
 

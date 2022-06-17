@@ -43,6 +43,7 @@ namespace Hyperion::Rendering {
     Color color;
     ShaderPropertyStorage::Texture texture;
 
+    RectInt scissor;
     bool8 enable_blending = false;
   };
 

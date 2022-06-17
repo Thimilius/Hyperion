@@ -73,6 +73,7 @@ namespace Hyperion::UI {
     );
     static void Image(const String &id_text, Texture *texture, Size size[2], bool8 enable_blending = true);
 
+    static Vector2 UISpacePointToScreenPoint(Vector2 ui_space_point);
     static Vector2 ScreenPointToUISpacePoint(Vector2 screen_point);
     static bool8 IsInsideRect(Rect rect, Vector2 screen_point);
   private:
@@ -87,7 +88,7 @@ namespace Hyperion::UI {
 
     static void DrawRect(Rect rect, Color color);
     static void DrawText(Rect rect, const String &text, Font *font, UI::TextAlignment alignment, Color color);
-    static void Flush(Material *material = nullptr, Texture *texture = nullptr, bool8 affected_by_overlay = true);
+    static void Flush(RectInt scissor, Material *material = nullptr, Texture *texture = nullptr, bool8 affected_by_overlay = true);
     
     static bool8 IsInsideParent(const UIImmediateElement &element);
 

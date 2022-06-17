@@ -241,6 +241,7 @@ namespace Hyperion::Rendering {
           render_frame_context_ui_object.texture.handle = texture_handle;
           render_frame_context_ui_object.texture.dimension = renderer.texture ? renderer.texture->GetDimension() : TextureDimension::Texture2D;
           render_frame_context_ui_object.texture.render_texture_attachment_index = renderer.render_texture_attachment_index;
+          render_frame_context_ui_object.scissor = { 0, 0, static_cast<int32>(Display::GetWidth()), static_cast<int32>(Display::GetHeight()) };
           render_frame_context_ui_object.enable_blending = renderer.enable_blending;
         }
       }

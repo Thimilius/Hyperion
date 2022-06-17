@@ -186,20 +186,9 @@ namespace Hyperion::Editor {
       UI::Size top_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::Pixels, 25.0f } };
       UI::UIImmediate::BeginPanel("Top Panel", top_size, UI::ChildLayout::Horizontal, false, red_theme);
       {
-        /*
-        UI::Size center_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::AutoFill, 0.0f } };
-        UI::UIImmediate::Space(UI::SizeKind::Pixels, 25.0f);
-        UI::UIImmediate::BeginPanel("Middle Panel", center_size, UI::ChildLayout::Horizontal, false, yellow_theme);
-        {
-          
-        }
-        UI::UIImmediate::EndPanel();
-        UI::UIImmediate::Space(UI::SizeKind::Pixels, 25.0f);
-        */
-
         UI::UIImmediate::Space(UI::SizeKind::Pixels, 25.0f);
         static String input = "Hello there";
-        UI::UIImmediate::Input("Input", input, UI::TextAlignment::TopLeft, UI::FitType::Fill);
+        UI::UIImmediate::Input("Input", input, UI::TextAlignment::MiddleCenter, UI::FitType::Fill);
         UI::UIImmediate::Space(UI::SizeKind::Pixels, 25.0f);
       }
       UI::UIImmediate::EndPanel();
