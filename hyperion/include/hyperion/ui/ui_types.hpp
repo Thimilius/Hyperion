@@ -112,7 +112,6 @@ namespace Hyperion::UI {
     Pixels,
     TextContent,
     PercentOfParent,
-    ChildrenSum,
     AutoFill
   };
   

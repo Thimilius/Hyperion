@@ -49,8 +49,8 @@ namespace Hyperion::UI {
     s_state.current_frame_index++;
 
     s_state.root_element = UIImmediateElement();
-    s_state.root_element.layout.semantic_size[0]= { SizeKind::PercentOfParent, 1.0f };
-    s_state.root_element.layout.semantic_size[1]= { SizeKind::PercentOfParent, 1.0f };
+    s_state.root_element.layout.semantic_size[0]= { SizeKind::Pixels, static_cast<float32>(Display::GetWidth()) };
+    s_state.root_element.layout.semantic_size[1]= { SizeKind::Pixels, static_cast<float32>(Display::GetHeight()) };
     s_state.element_stack.Add(&s_state.root_element);
 
     s_state.temporary_elements.Clear();
@@ -830,12 +830,12 @@ namespace Hyperion::UI {
     switch (fit_type) {
       case FitType::ToLayout: {
         FitLayoutAxes fit_type_axes = GetLayoutAxesForParentChildLayout(element);
-        element.layout.semantic_size[fit_type_axes.fill_axis] = { SizeKind::PercentOfParent, 1.0f };  
+        element.layout.semantic_size[fit_type_axes.fill_axis] = { SizeKind::AutoFill, 0.0f };  
         break;
       }
       case FitType::Fill: {
-        element.layout.semantic_size[0] = { SizeKind::PercentOfParent, 1.0f };
-        element.layout.semantic_size[1] = { SizeKind::PercentOfParent, 1.0f };
+        element.layout.semantic_size[0] = { SizeKind::AutoFill, 0.0f };
+        element.layout.semantic_size[1] = { SizeKind::AutoFill, 0.0f };
         break;
       }
       case FitType::None: break;
