@@ -10,6 +10,7 @@
 #include "hyperion/assets/utilities/text_mesh_generator.hpp"
 #include "hyperion/assets/utilities/text_utilities.hpp"
 #include "hyperion/core/app/display.hpp"
+#include "hyperion/core/app/time.hpp"
 #include "hyperion/render/render_engine.hpp"
 #include "hyperion/ui/ui_element.hpp"
 
@@ -303,12 +304,14 @@ namespace Hyperion::UI {
       if (element.widget.cursor_position.x < 0) {
         element.widget.cursor_position.x = 0;
       }
+      element.animation.focused_time_offset = Time::GetTime();
     };
     auto increment_cursor = [](UIImmediateElement &element, int32 size, const String &text) {
       element.widget.cursor_position.x += size;
       if (element.widget.cursor_position.x > static_cast<int32>(text.size())) {
         element.widget.cursor_position.x = static_cast<int32>(text.size());
       }
+      element.animation.focused_time_offset = Time::GetTime();
     };
     
     UIImmediateInteraction interaction = InteractWithElement(element);
@@ -661,27 +664,29 @@ namespace Hyperion::UI {
 
       // Render cursor for input field when focused.
       if (is_input && s_state.focused_element == element.id.id) {
-        Rect rect = element.layout.rect; 
+        if (Time::BetweenInterval(theme.input_cursor_blink_rate, element.animation.focused_time_offset - theme.input_cursor_blink_rate)) {
+          Rect rect = element.layout.rect; 
         
-        Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(element.widget.text);
-        Vector2 cursor_position = TextUtilities::GetCursorPosition(
-          theme.font,
-          codepoints,
-          1.0f,
-          element.widget.text_alignment,
-          rect,
-          element.widget.cursor_position
-        );
-
-        Rect cursor_rect = {
-          cursor_position.x,
-          cursor_position.y,
-          1.0f,
-          static_cast<float32>(theme.font->GetSize())
-        };
-        
-        DrawRect(cursor_rect, Color::White());
-        last_draw_was_a_simple_rect = true;
+          Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(element.widget.text);
+          Vector2 cursor_position = TextUtilities::GetCursorPosition(
+            theme.font,
+            codepoints,
+            1.0f,
+            element.widget.text_alignment,
+            rect,
+            element.widget.cursor_position
+          );
+          
+          Rect cursor_rect = {
+            cursor_position.x,
+            cursor_position.y,
+            1.0f,
+            static_cast<float32>(theme.font->GetSize())
+          };
+          
+          DrawRect(cursor_rect, theme.input_cursor_color);
+          last_draw_was_a_simple_rect = true;
+        }
       }
       
       return true;
@@ -1048,6 +1053,8 @@ namespace Hyperion::UI {
           if ((element.widget.flags & UIImmediateWidgetFlags::Focusable) == UIImmediateWidgetFlags::Focusable) {
             if (s_state.focused_element != id) {
               s_state.focused_element = id;
+
+              element.animation.focused_time_offset = Time::GetTime();
               
               // Position the cursor at the end for an input field.
               element.widget.cursor_position = Vector2Int(static_cast<int32>(element.widget.text.size()), 0);

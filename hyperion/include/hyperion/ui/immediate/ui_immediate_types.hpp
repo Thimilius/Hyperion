@@ -70,6 +70,8 @@ namespace Hyperion::UI {
     Color input_color_hovered = Color::Grey();
     Color input_color_pressed = Color::Grey();
     Color input_color_focused = Color::Grey();
+    Color input_cursor_color = Color::White();
+    float32 input_cursor_blink_rate = 0.75f;
     
     bool8 text_shadow_enabled = true;
     Color text_shadow_color = Color::Black();
@@ -147,6 +149,10 @@ namespace Hyperion::UI {
       bool8 enable_blending = true;
       uint32 render_attachment_index = 0;
     } widget;
+
+    struct UIImmediateElementAnimation {
+      float32 focused_time_offset = 0.0f;
+    } animation;
   };
 
   struct UIImmediateState {
