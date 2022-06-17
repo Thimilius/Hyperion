@@ -265,7 +265,7 @@ namespace Hyperion::Rendering {
     const OpenGLShader &opengl_shader = m_storage.GetShader(command.shader_handle);
     glUseProgram(opengl_shader.program);
 
-    GLuint model_location = opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::Model)];
+    GLint model_location = opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::Model)];
     
     if (command.grid.should_draw) {
       glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, command.grid.local_to_world.elements);
