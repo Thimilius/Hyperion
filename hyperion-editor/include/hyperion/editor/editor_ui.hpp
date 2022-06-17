@@ -26,6 +26,8 @@ namespace Hyperion::Editor {
     static Rect GetPreviewRect();
     static bool8 IsMouseInsidePreviewRect();
 
+    static void SetTransformationTool(Rendering::RenderGizmoType transformation_tool) { s_transformation_tool = transformation_tool; }
+    
     static void HandleMouseSelection(Rendering::RenderFrame *render_frame, RenderTexture *render_texture);
   private:
     EditorUI() = delete;

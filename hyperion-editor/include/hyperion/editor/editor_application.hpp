@@ -20,13 +20,13 @@ namespace Hyperion::Editor {
 
     static void CreateEntity(EntityPrimitive primitive);
     static void DuplicateEntity();
+
+    static void OpenWorld();
+    static void SaveWorld();
   protected:
     void OnSetup(ApplicationSettings &settings) override;
     void OnInitialize() override;
     void OnUpdate(float32 delta_time) override;
-  private:
-    void OpenWorld();
-    void SaveWorld();
   private:
     inline static World *s_world;
     inline static World *s_old_world;

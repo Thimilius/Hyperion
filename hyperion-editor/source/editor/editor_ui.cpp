@@ -5,6 +5,7 @@
 #include <hyperion/assets/loader/font_loader.hpp>
 #include <hyperion/core/app/display.hpp>
 #include <hyperion/core/app/time.hpp>
+#include "hyperion/core/system/engine.hpp"
 #include <hyperion/core/system/operating_system.hpp>
 #include <hyperion/ecs/component/components/utilities/camera_utilities.hpp>
 #include <hyperion/render/render_engine.hpp>
@@ -12,7 +13,6 @@
 #include <hyperion/ui/immediate/ui_immediate_gizmos.hpp>
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/core/system/engine.hpp"
 #include "hyperion/editor/editor_application.hpp"
 #include "hyperion/editor/editor_camera.hpp"
 #include "hyperion/editor/editor_selection.hpp"
@@ -92,35 +92,6 @@ namespace Hyperion::Editor {
     EntityManager *manager = world->GetEntityManager();
     EntityHierarchy *hierarchy = world->GetHierarchy();
     UIImmediateTheme *icon_theme = UIImmediate::GetTheme("Icon");
-
-    if (Input::IsKeyDown(KeyCode::F2)) {
-      RenderEngine::SetVSyncMode(
-        RenderEngine::GetVSyncMode() == VSyncMode::DontSync
-          ? VSyncMode::EveryVBlank
-          : VSyncMode::DontSync
-      );
-    }
-    if (Input::IsKeyDown(KeyCode::F3)) {
-      RenderGizmos::SetShouldDrawGrid(!RenderGizmos::GetShouldDrawGrid());
-    }
-    if (Input::IsKeyDown(KeyCode::F4)) {
-      RenderGizmos::SetShouldDrawAllBounds(!RenderGizmos::GetShouldDrawAllBounds());
-    }
-    if (Input::IsKeyDown(KeyCode::Delete)) {
-      if (EditorSelection::HasSelection()) {
-        manager->DestroyEntity(EditorSelection::GetSelection());
-        EditorSelection::Deselect();
-      }
-    }
-    if (Input::IsKeyDown(KeyCode::Q)) {
-      s_transformation_tool = RenderGizmoType::Translate;
-    }
-    if (Input::IsKeyDown(KeyCode::W)) {
-      s_transformation_tool = RenderGizmoType::Rotate;
-    }
-    if (Input::IsKeyDown(KeyCode::E)) {
-      s_transformation_tool = RenderGizmoType::Scale;
-    }
 
     EngineState engine_state = Engine::GetEngineState();
     UIImmediate::SetOverlayColor(

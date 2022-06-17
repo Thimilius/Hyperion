@@ -20,6 +20,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/editor/editor_camera.hpp"
+#include "hyperion/editor/editor_input.hpp"
 #include "hyperion/editor/editor_render_pipeline.hpp"
 #include "hyperion/editor/editor_selection.hpp"
 #include "hyperion/editor/editor_ui.hpp"
@@ -85,6 +86,32 @@ namespace Hyperion::Editor {
   }
   
   //--------------------------------------------------------------
+  void EditorApplication::OpenWorld() {
+    if (Engine::GetEngineState() == EngineState::Editor) {
+      String path = OperatingSystem::OpenFileDialog("Open World", ".world");
+      if (FileSystem::Exists(path) && StringUtils::EndsWith(path, ".world")) {
+        String world_text = FileSystem::ReadAllText(path);
+        World *world = WorldSerializer::Deserialize(world_text);
+        WorldManager::SetActiveWorld(world);
+        WorldManager::DestroyWorld(s_world);
+        s_world = world;
+
+        EditorSelection::Deselect();
+      }  
+    }
+  }
+  
+  //--------------------------------------------------------------
+  void EditorApplication::SaveWorld() {
+    String path = OperatingSystem::SaveFileDialog("Save World", ".world");
+    if (!StringUtils::EndsWith(path, ".world")) {
+      path += ".world";
+    }
+    String world_text = WorldSerializer::Serialize(s_world);
+    FileSystem::WriteAllText(path, world_text);
+  }
+
+  //--------------------------------------------------------------
   void EditorApplication::OnSetup(ApplicationSettings &settings) {
     settings.window.menu.items = { {
       "File", { }, {
@@ -137,35 +164,11 @@ namespace Hyperion::Editor {
 
   //--------------------------------------------------------------
   void EditorApplication::OnUpdate(float32 delta_time) {
+    EditorInput::Update();
 #if !UI_TEST
     EditorUI::Update();
 #endif
     EditorCamera::Update(delta_time);
-
-    if (Input::IsKeyHold(KeyCode::Control)) {
-      if (Input::IsKeyDown(KeyCode::O)) {
-        OpenWorld();
-      }
-      if (Input::IsKeyDown(KeyCode::S)) {
-        SaveWorld();
-      }
-      if (Input::IsKeyDown(KeyCode::W)) {
-        Exit();  
-      }
-      if (Input::IsKeyDown(KeyCode::D)) {
-        DuplicateEntity();
-      }
-    }
-    if (Input::IsKeyDown(KeyCode::F1)) {
-      GetMainWindow()->SetWindowMode(GetMainWindow()->GetWindowMode() == WindowMode::Borderless ? WindowMode::Windowed : WindowMode::Borderless);
-    }
-    if (Input::IsKeyDown(KeyCode::F5)) {
-      if (Engine::GetEngineState() == EngineState::Editor) {
-        EnterRuntime();
-      } else {
-        ExitRuntime();
-      }
-    }
 
     Vector2 preview_size = EditorUI::GetPreviewRect().size;
     Display::SetPreviewSize(static_cast<uint32>(preview_size.x), static_cast<uint32>(preview_size.y));
@@ -219,32 +222,6 @@ namespace Hyperion::Editor {
 #endif
   }
   
-  //--------------------------------------------------------------
-  void EditorApplication::OpenWorld() {
-    if (Engine::GetEngineState() == EngineState::Editor) {
-      String path = OperatingSystem::OpenFileDialog("Open World", ".world");
-      if (FileSystem::Exists(path) && StringUtils::EndsWith(path, ".world")) {
-        String world_text = FileSystem::ReadAllText(path);
-        World *world = WorldSerializer::Deserialize(world_text);
-        WorldManager::SetActiveWorld(world);
-        WorldManager::DestroyWorld(s_world);
-        s_world = world;
-
-        EditorSelection::Deselect();
-      }  
-    }
-  }
-  
-  //--------------------------------------------------------------
-  void EditorApplication::SaveWorld() {
-    String path = OperatingSystem::SaveFileDialog("Save World", ".world");
-    if (!StringUtils::EndsWith(path, ".world")) {
-      path += ".world";
-    }
-    String world_text = WorldSerializer::Serialize(s_world);
-    FileSystem::WriteAllText(path, world_text);
-  }
-
 }
 
 //--------------------------------------------------------------

@@ -53,22 +53,22 @@ namespace Hyperion::UI {
     static UIImmediateInteraction Text(
       const String &text,
       TextAlignment text_alignment = TextAlignment::TopLeft,
-      FitType fit_layout = FitType::None,
+      FitType fit_type = FitType::None,
       bool8 interactable = false,
       UIImmediateTheme *theme = GetDefaultTheme()
     );
-    static UIImmediateInteraction Button(const String &text, FitType fit_layout = FitType::None, UIImmediateTheme *theme = GetDefaultTheme());
+    static UIImmediateInteraction Button(const String &text, FitType fit_type = FitType::None, UIImmediateTheme *theme = GetDefaultTheme());
     static UIImmediateInteraction TextToggle(
       bool8 &value,
       const String &text,
-      FitType fit_layout = FitType::None,
+      FitType fit_type = FitType::None,
       UIImmediateTheme *theme = GetDefaultTheme()
     );
     static UIImmediateInteraction Input(
       const String &id_text,
       String &text,
       TextAlignment text_alignment = TextAlignment::TopLeft,
-      FitType fit_layout = FitType::None,
+      FitType fit_type = FitType::None,
       UIImmediateTheme *theme = GetDefaultTheme()
     );
     static void Image(const String &id_text, Texture *texture, Size size[2], bool8 enable_blending = true);
