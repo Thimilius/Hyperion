@@ -1,6 +1,10 @@
 //------------------------ Header Guard ------------------------
 #pragma once
 
+//---------------------- Project Includes ----------------------
+#include "hyperion/core/color.hpp"
+#include "hyperion/core/math/vector2.hpp"
+
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::UI {
 

@@ -12,7 +12,7 @@
 namespace Hyperion {
 
   struct TextMeshGenerationSettings {
-    String text = "";
+    String text;
     Font *font = nullptr;
     UI::TextAlignment alignment = UI::TextAlignment::MiddleCenter;
     Color color = Color::White();
@@ -25,8 +25,6 @@ namespace Hyperion {
   public:
     static Mesh *GenerateMesh(const TextMeshGenerationSettings &settings);
     static void GenerateMesh(const TextMeshGenerationSettings &settings, MeshBuilder &mesh_builder);
-  private:
-    static Vector2 GetPosition(UI::TextAlignment text_alignment, TextSize line_size, TextSize full_size, Rect rect);
   private:
     TextMeshGenerator() = delete;
     ~TextMeshGenerator() = delete;

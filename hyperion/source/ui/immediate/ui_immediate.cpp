@@ -8,6 +8,7 @@
 #include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/assets/loader/font_loader.hpp"
 #include "hyperion/assets/utilities/text_mesh_generator.hpp"
+#include "hyperion/assets/utilities/text_utilities.hpp"
 #include "hyperion/core/app/display.hpp"
 #include "hyperion/render/render_engine.hpp"
 #include "hyperion/ui/ui_element.hpp"
@@ -435,7 +436,7 @@ namespace Hyperion::UI {
         if (semantic_size.kind == SizeKind::TextContent) {
           if (!element.widget.text.empty()) {
             Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(element.widget.text);
-            TextSize text_size = element.widget.theme->font->GetTextSize(codepoints, 0, 1.0f, false);
+            TextSize text_size =  TextUtilities::GetTextSize(element.widget.theme->font, codepoints, 0, 1.0f, false);
             computed_size = text_size.size[axis] + semantic_size.value;
           } else {
             computed_size = semantic_size.value;
@@ -658,6 +659,31 @@ namespace Hyperion::UI {
         last_draw_was_a_simple_rect = false;
       }
 
+      // Render cursor for input field when focused.
+      if (is_input && s_state.focused_element == element.id.id) {
+        Rect rect = element.layout.rect; 
+        
+        Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(element.widget.text);
+        Vector2 cursor_position = TextUtilities::GetCursorPosition(
+          theme.font,
+          codepoints,
+          1.0f,
+          element.widget.text_alignment,
+          rect,
+          element.widget.cursor_position
+        );
+
+        Rect cursor_rect = {
+          cursor_position.x,
+          cursor_position.y,
+          1.0f,
+          static_cast<float32>(theme.font->GetSize())
+        };
+        
+        DrawRect(cursor_rect, Color::White());
+        last_draw_was_a_simple_rect = true;
+      }
+      
       return true;
     });
     Flush(scissor);
@@ -1020,10 +1046,12 @@ namespace Hyperion::UI {
         if (s_state.pressed_element == 0 && (s_state.is_left_mouse_down || s_state.is_right_mouse_down)) {
           s_state.pressed_element = id;
           if ((element.widget.flags & UIImmediateWidgetFlags::Focusable) == UIImmediateWidgetFlags::Focusable) {
-            s_state.focused_element = id;
-
-            // Position the cursor at the end for an input field. 
-            element.widget.cursor_position = Vector2Int(static_cast<int32>(element.widget.text.size()), 0);
+            if (s_state.focused_element != id) {
+              s_state.focused_element = id;
+              
+              // Position the cursor at the end for an input field.
+              element.widget.cursor_position = Vector2Int(static_cast<int32>(element.widget.text.size()), 0);
+            }
           }
         }
       }
