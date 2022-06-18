@@ -54,6 +54,7 @@ namespace Hyperion {
     EntityId InstantiateArchetype(EntityArchetype *archetype);
 
     void SetEnabled(EntityId entity, bool8 enabled);
+    void SetStatic(EntityId entity, bool8 set_static);
     
     template<typename T>
     T *AddComponent(EntityId id) {

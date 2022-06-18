@@ -363,19 +363,37 @@ namespace Hyperion::Editor {
     {
       if (EditorSelection::HasSelection()) {
         EntityId entity = EditorSelection::GetSelection();
-        String text = StringUtils::Format(
-          "Entity\nId: {{Index: {} - Version: {}}}\nGuid: {}",
-          EntityId::GetIndex(entity),
-          EntityId::GetVersion(entity),
-          manager->GetUUID(entity).ToString()
-        );
-        UIImmediate::Text(text, TextAlignment::TopCenter, FitType::ToLayout);
-        UIImmediate::Space(SizeKind::Pixels, 10);
-
-        bool8 is_enabled = !manager->HasComponent<DisabledComponent>(entity);
-        if (UIImmediate::TextToggle(is_enabled, is_enabled ? "\uf06e" : "\uf070", FitType::ToLayout, s_icon_theme).clicked) {
-          manager->SetEnabled(entity, is_enabled);
+        
+        Size inspection_panel_title_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 15.0f } };
+        UIImmediate::BeginPanel("Entity", inspection_panel_title_size);
+        {
+          UIImmediate::Text("Entity", TextAlignment::TopCenter, FitType::Fill);
         }
+        UIImmediate::EndPanel();
+
+        Size inspection_panel_header_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 25.0f } };
+        UIImmediate::BeginPanel("Header", inspection_panel_header_size);
+        {
+          UIImmediate::Space(SizeKind::Pixels, 5.0f);
+          
+          String uuid_text = StringUtils::Format("UUID: {}", manager->GetUUID(entity).ToString());
+          UIImmediate::Text(uuid_text, TextAlignment::MiddleLeft, FitType::ToLayout);
+          
+          UIImmediate::FillSpace();
+          
+          bool8 is_enabled = !manager->HasComponent<DisabledComponent>(entity);
+          if (UIImmediate::TextToggle(is_enabled, is_enabled ? "\uf06e" : "\uf070", FitType::ToLayout, s_icon_theme).clicked) {
+            manager->SetEnabled(entity, is_enabled);
+          }
+
+          bool8 is_static = manager->HasComponent<StaticComponent>(entity);
+          if (UIImmediate::TextToggle(is_static,"\uf066", FitType::ToLayout, s_icon_theme).clicked) {
+            manager->SetStatic(entity, is_static);
+          }
+
+          UIImmediate::Space(SizeKind::Pixels, 5.0f);
+        }
+        UIImmediate::EndPanel();
         
         for (const ComponentInfo &component_info : ComponentRegistry::GetComponentInfos()) {
           void *component = manager->GetComponent(component_info.id, entity);
@@ -481,7 +499,7 @@ namespace Hyperion::Editor {
     }
     
     UIImmediate::Space(SizeKind::Pixels, 10.0f);
-    Size component_header_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 20.0f } };
+    Size component_header_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 25.0f } };
     UIImmediate::BeginPanel(component_name + "Header", component_header_panel_size);
     {
       UIImmediate::Space(SizeKind::Pixels, 5.0f);
@@ -545,10 +563,11 @@ namespace Hyperion::Editor {
       
       Variant property_value = property.get_value(instance);
 
+      bool8 property_set_successfully = true;
       if (property_type == Type::get<String>()) {
         String string = property_value.get_value<String>();
         if (UIImmediate::Input(property_name, string, TextAlignment::MiddleLeft, FitType::Fill).input_changed) {
-          property.set_value(instance, string);
+          property_set_successfully = property.set_value(instance, string);
         }
       } else if (property_type.is_arithmetic()) {
         UIImmediate::Text(property_value.to_string(), TextAlignment::MiddleRight, FitType::ToLayout);
@@ -558,6 +577,10 @@ namespace Hyperion::Editor {
         UIImmediate::Text(property_value.get_value<Quaternion>().ToEulerAngles().ToString(), TextAlignment::MiddleRight, FitType::ToLayout);
       }
 
+      if (!property_set_successfully) {
+        HYP_LOG_ERROR("Editor", "Failed to set property {}!", property_name);
+      }
+      
       UIImmediate::Space(SizeKind::Pixels, 5.0f);
     }
     UIImmediate::EndPanel();

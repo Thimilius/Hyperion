@@ -237,6 +237,17 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
+  void EntityManager::SetStatic(EntityId entity, bool8 set_static) {
+    bool8 is_static = HasComponent<StaticComponent>(entity);
+    
+    if (set_static && !is_static) {
+      AddComponent<StaticComponent>(entity);
+    } else {
+      RemoveComponent<StaticComponent>(entity);
+    }
+  }
+
+  //--------------------------------------------------------------
   void EntityManager::AddComponentsForPrimitive(EntityId id, EntityPrimitive primitive) {
     if (primitive != EntityPrimitive::Empty) {
       AddComponent<NameComponent>(id)->name = GetNameForPrimitive(primitive);
