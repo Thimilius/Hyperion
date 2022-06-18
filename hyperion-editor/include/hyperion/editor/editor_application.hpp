@@ -18,7 +18,8 @@ namespace Hyperion::Editor {
     static void PauseRuntime();
     static void ExitRuntime();
 
-    static void CreateEntity(EntityPrimitive primitive);
+    static EntityId CreateEntity(EntityPrimitive primitive);
+    static void DestroyEntity();
     static void DuplicateEntity();
 
     static void OpenWorld();

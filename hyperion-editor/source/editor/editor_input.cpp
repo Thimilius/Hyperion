@@ -9,7 +9,6 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/editor/editor_application.hpp"
-#include "hyperion/editor/editor_selection.hpp"
 #include "hyperion/editor/editor_ui.hpp"
 
 //------------------------- Namespaces -------------------------
@@ -68,10 +67,7 @@ namespace Hyperion::Editor {
     }
     
     if (Input::IsKeyDown(KeyCode::Delete)) {
-      if (EditorSelection::HasSelection()) {
-        EditorApplication::GetWorld()->GetEntityManager()->DestroyEntity(EditorSelection::GetSelection());
-        EditorSelection::Deselect();
-      }
+      EditorApplication::DestroyEntity();
     }
     if (Input::IsKeyDown(KeyCode::Q)) {
       EditorUI::SetTransformationTool(RenderGizmoType::Translate);

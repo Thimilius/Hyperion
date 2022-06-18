@@ -21,6 +21,11 @@ namespace Hyperion {
       return;
     }
 
+    if (entity == parent) {
+      HYP_LOG_WARN("Entity", "Trying to set parent of entity with id {} to itself.", entity);
+      return;
+    }
+
     HierarchyComponent *entity_hierarchy = m_manager->GetComponent<HierarchyComponent>(entity);
     HYP_ASSERT(entity_hierarchy);
     if (entity_hierarchy->parent == parent) {

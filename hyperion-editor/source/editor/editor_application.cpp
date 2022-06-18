@@ -71,9 +71,10 @@ namespace Hyperion::Editor {
   }
 
   //--------------------------------------------------------------
-  void EditorApplication::CreateEntity(EntityPrimitive primitive) {
+  EntityId EditorApplication::CreateEntity(EntityPrimitive primitive) {
     EntityId entity = s_world->GetEntityManager()->CreateEntity(primitive);
     EditorSelection::Select(entity);
+    return entity;
   }
 
   //--------------------------------------------------------------
@@ -82,6 +83,15 @@ namespace Hyperion::Editor {
       EntityId entity = EditorSelection::GetSelection();
       EntityId duplicate = s_world->GetEntityManager()->InstantiateEntity(entity);
       EditorSelection::Select(duplicate);
+    }
+  }
+
+  //--------------------------------------------------------------
+  void EditorApplication::DestroyEntity() {
+    if (EditorSelection::HasSelection()) {
+      EntityId entity = EditorSelection::GetSelection();
+      s_world->GetEntityManager()->DestroyEntity(entity);
+      EditorSelection::Deselect();
     }
   }
   

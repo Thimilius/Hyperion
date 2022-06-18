@@ -71,6 +71,13 @@ namespace Hyperion::Editor {
     
     s_entity_creation_menu = { {
       { "Empty", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Base); }, { } },
+      { "Empty Child", [](auto _) {
+        if (EditorSelection::HasSelection()) {
+          EntityId parent = EditorSelection::GetSelection();
+          EntityId new_entity = EditorApplication::CreateEntity(EntityPrimitive::Base);
+          EditorApplication::GetWorld()->GetHierarchy()->SetParent(new_entity, parent);
+        }
+      }, { } },
       { "Objects", { }, {
         { "Cube", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Cube); }, { } },
         { "Sphere", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Sphere); }, { } },
@@ -280,12 +287,12 @@ namespace Hyperion::Editor {
         }
 
         UIImmediate::FillSpace();
-              
+
+        if (UIImmediate::Button("\uf24d", FitType::ToLayout, s_icon_theme).clicked) {
+          EditorApplication::DuplicateEntity();
+        }
         if (UIImmediate::Button("\uf1f8", FitType::ToLayout, s_icon_theme).clicked) {
-          if (EditorSelection::HasSelection()) {
-            manager->DestroyEntity(EditorSelection::GetSelection());
-            EditorSelection::Deselect();
-          }
+          EditorApplication::DestroyEntity();
         }
       }
       UIImmediate::EndPanel();
