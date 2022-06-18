@@ -88,11 +88,6 @@ namespace Hyperion::Editor {
 
   //--------------------------------------------------------------
   void EditorUI::Update() {
-    World *world = EditorApplication::GetWorld();
-    EntityManager *manager = world->GetEntityManager();
-    EntityHierarchy *hierarchy = world->GetHierarchy();
-    UIImmediateTheme *icon_theme = UIImmediate::GetTheme("Icon");
-
     EngineState engine_state = Engine::GetEngineState();
     UIImmediate::SetOverlayColor(
       engine_state == EngineState::EditorRuntimePaused || engine_state == EngineState::EditorRuntimePlaying
@@ -102,49 +97,7 @@ namespace Hyperion::Editor {
     
     UIImmediate::Begin();
     {
-      Size header_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, EditorStyle::HEADER_HEIGHT } };
-      UIImmediate::BeginPanel("Header Panel", header_panel_size);
-      {
-        bool8 is_translation_tool = s_transformation_tool == RenderGizmoType::Translate;
-        bool8 is_rotation_tool = s_transformation_tool == RenderGizmoType::Rotate;
-        bool8 is_scale_tool = s_transformation_tool == RenderGizmoType::Scale;
-        if (UIImmediate::TextToggle(is_translation_tool, "\uf0b2", FitType::ToLayout, icon_theme).clicked) {
-          s_transformation_tool = RenderGizmoType::Translate;
-        }
-        if (UIImmediate::TextToggle(is_rotation_tool, "\uf2f1", FitType::ToLayout, icon_theme).clicked) {
-          s_transformation_tool = RenderGizmoType::Rotate;
-        }
-        if (UIImmediate::TextToggle(is_scale_tool, "\uf424", FitType::ToLayout, icon_theme).clicked) {
-          s_transformation_tool = RenderGizmoType::Scale;
-        }
-
-        UIImmediate::BeginCenter("Play Buttons");
-        {
-          EngineState engine_mode = Engine::GetEngineState();
-          bool8 is_playing = engine_mode == EngineState::EditorRuntimePlaying || engine_mode == EngineState::EditorRuntimePaused;
-          if (UIImmediate::TextToggle(is_playing, "\uf04b", FitType::ToLayout, icon_theme).clicked) {
-            EditorApplication::EnterRuntime();
-
-            s_view_mode = EditorViewMode::Game;
-          }
-          bool8 is_paused = engine_mode == EngineState::EditorRuntimePaused;
-          if (UIImmediate::TextToggle(is_paused, "\uf04c", FitType::ToLayout, icon_theme).clicked) {
-            EditorApplication::PauseRuntime();
-          }
-          if (UIImmediate::Button("\uf04d", FitType::ToLayout, icon_theme).clicked) {
-            EditorApplication::ExitRuntime();
-
-            // On exit we need to update our cached pointers because they have become invalid.
-            world = EditorApplication::GetWorld();
-            manager = world->GetEntityManager();
-            hierarchy = world->GetHierarchy();
-
-            s_view_mode = EditorViewMode::Editor;
-          }
-        }
-        UIImmediate::EndCenter();
-      }
-      UIImmediate::EndPanel();
+      HeaderPanel();
 
       UIImmediate::Separator();
       
@@ -154,176 +107,11 @@ namespace Hyperion::Editor {
         Size left_panel_size[2] = { { SizeKind::PercentOfParent, 0.3f }, { SizeKind::AutoFill, 0.0f } };
         UIImmediate::BeginPanel("Left Panel", left_panel_size, ChildLayout::Vertical);
         {
-          Size upper_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
-          UIImmediate::BeginPanel("Upper Panel", upper_panel_size, ChildLayout::Vertical);
-          {
-            Size hierarchy_header_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 25.0f } };
-            UIImmediate::BeginPanel("Hierarchy Header", hierarchy_header_panel_size);
-            {
-              if (UIImmediate::Button("\uf067", FitType::ToLayout, icon_theme).clicked) {
-                OperatingSystem::OpenContextMenu(s_entity_creation_menu);
-              }
-
-              UIImmediate::FillSpace();
-              
-              if (UIImmediate::Button("\uf1f8", FitType::ToLayout, icon_theme).clicked) {
-                if (EditorSelection::HasSelection()) {
-                  manager->DestroyEntity(EditorSelection::GetSelection());
-                  EditorSelection::Deselect();
-                }
-              }
-            }
-            UIImmediate::EndPanel();
-
-            UIImmediate::Separator();
-            
-            Size hierarchy_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
-            UIImmediate::BeginPanel("Hierarchy Panel", hierarchy_panel_size, ChildLayout::Vertical);
-            {
-              EntityId child = hierarchy->GetFirstRoot();
-              for (uint64 i = 0; i < hierarchy->GetRootCount(); i++) {
-                HierarchyComponent *child_hierarchy = manager->GetComponent<HierarchyComponent>(child);
-                DrawEntityHierarchy(manager, child, child_hierarchy, 0);
-                child = child_hierarchy->next_sibling;
-              }
-
-              if (UIImmediate::BeginPanel("Deselect Panel", hierarchy_panel_size, ChildLayout::Vertical, true, s_panel_theme).clicked) {
-                EditorSelection::Deselect();
-              }
-              UIImmediate::EndPanel();
-            }
-            UIImmediate::EndPanel();
-          }
-          UIImmediate::EndPanel();
+          EntityHierarchyPanel();
 
           UIImmediate::Separator();
           
-          Size lower_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
-          UIImmediate::BeginPanel("Inspection Panel", lower_panel_size, ChildLayout::Vertical);
-          {
-            if (EditorSelection::HasSelection()) {
-              EntityId entity = EditorSelection::GetSelection();
-              String text = StringUtils::Format(
-                "Entity\nId: {{Index: {} - Version: {}}}\nGuid: {}",
-                EntityId::GetIndex(entity),
-                EntityId::GetVersion(entity),
-                manager->GetUUID(entity).ToString()
-              );
-              UIImmediate::Text(text, TextAlignment::TopCenter, FitType::ToLayout);
-              UIImmediate::Space(SizeKind::Pixels, 10);
-
-              bool8 is_enabled = !manager->HasComponent<DisabledComponent>(entity);
-              if (UIImmediate::TextToggle(is_enabled, is_enabled ? "\uf06e" : "\uf070", FitType::ToLayout, icon_theme).clicked) {
-                manager->SetEnabled(entity, is_enabled);
-              }
-              
-              for (const ComponentInfo &component_info : ComponentRegistry::GetComponentInfos()) {
-                void *component = manager->GetComponent(component_info.id, entity);
-                if (component) {
-                  Type component_type = *component_info.type;
-
-                  bool8 should_skip_component = false;
-                  Variant hide_metadata = component_type.get_metadata(TypeMetadata::HideInEditor);
-                  if (hide_metadata.is_valid() && hide_metadata.is_type<bool8>()) {
-                    should_skip_component = hide_metadata.to_bool();
-                  }
-                  if (should_skip_component) {
-                    continue;
-                  }
-
-                  String component_name;
-                  Variant name_metadata = component_type.get_metadata(TypeMetadata::EditorName);
-                  if (name_metadata.is_valid() && name_metadata.is_type<String>()) {
-                    component_name = name_metadata.get_value<String>();
-                  } else {
-                    component_name = component_type.get_name().to_string();
-                  }
-                  
-                  UIImmediate::Space(SizeKind::Pixels, 10.0f);
-                  Size component_header_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 20.0f } };
-                  UIImmediate::BeginPanel(component_name + "Header", component_header_panel_size);
-                  {
-                    UIImmediate::Space(SizeKind::Pixels, 5.0f);
-                    
-                    UIImmediate::Text(component_name, TextAlignment::MiddleLeft, FitType::ToLayout);
-                    UIImmediate::FillSpace();
-                    
-                    if (UIImmediate::Button("\uf0e2", FitType::ToLayout, icon_theme).clicked) {
-                      component_info.destructor(component);
-                      component_info.constructor(component);
-                    }
-
-                    bool8 component_removable = true;
-                    Variant removable_metadata = component_type.get_metadata(TypeMetadata::EditorRemovable);
-                    if (removable_metadata.is_valid() && removable_metadata.is_type<bool8>()) {
-                      component_removable = removable_metadata.to_bool();
-                    }
-                    if (component_removable) {
-                      if (UIImmediate::Button("\uf1f8", FitType::ToLayout, icon_theme).clicked) {
-                        manager->RemoveComponent(component_info.id, entity);
-                      }
-                    }
-                    
-                    UIImmediate::Space(SizeKind::Pixels, 5.0f);
-                  }
-                  UIImmediate::EndPanel();
-
-                  Instance instance = Reflection::CreateInstanceFromRaw(component_type, component);
-                    
-                  for (Property property : component_type.get_properties()) {
-                    Type property_type = property.get_type();
-                    String property_name = property.get_name().to_string();
-
-                    bool8 should_skip_property = false;
-                    Variant serialize_metadata = property.get_metadata(PropertyMetadata::Serialize);
-                    if (serialize_metadata.is_valid() && serialize_metadata.is_type<bool8>()) {
-                      should_skip_property = !serialize_metadata.to_bool();
-                    }
-                    if (should_skip_property) {
-                      continue;
-                    }
-                      
-                    Size property_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 20.0f } };
-                    UIImmediate::BeginPanel(property_name, property_panel_size, ChildLayout::Horizontal);
-                    {
-                      UIImmediate::Space(SizeKind::Pixels, 15.0f);
-                      
-                      String property_label = property_name + ":";
-                      UIImmediate::Text(property_label, TextAlignment::MiddleCenter, FitType::ToLayout);
-
-                      if (property_type != Type::get<String>()) {
-                        UIImmediate::FillSpace();
-                      } else {
-                        UIImmediate::Space(SizeKind::Pixels, 10.0f);
-                      }
-                      
-                      Variant property_value = property.get_value(instance);
-
-                      if (property_type == Type::get<String>()) {
-                        String string = property_value.get_value<String>();
-                        if (UIImmediate::Input(property_name, string, TextAlignment::MiddleLeft, FitType::Fill).input_changed) {
-                          property.set_value(instance, string);
-                        }
-                      } else if (property_type.is_arithmetic()) {
-                        UIImmediate::Text(property_value.to_string(), TextAlignment::MiddleRight, FitType::ToLayout);
-                      } else if (property_type == Type::get<Vector3>()) {
-                        UIImmediate::Text(property_value.get_value<Vector3>().ToString(), TextAlignment::MiddleRight, FitType::ToLayout);
-                      } else if (property_type == Type::get<Quaternion>()) {
-                        UIImmediate::Text(property_value.get_value<Quaternion>().ToEulerAngles().ToString(), TextAlignment::MiddleRight, FitType::ToLayout);
-                      }
-
-                      UIImmediate::Space(SizeKind::Pixels, 5.0f);
-                    }
-                    UIImmediate::EndPanel();
-                  }
-                }
-              }
-            } else {
-              String text = "No entity selected!";
-              UIImmediate::Text(text, TextAlignment::TopCenter, FitType::ToLayout);  
-            }
-          }
-          UIImmediate::EndPanel();
+          EntityInspectionPanel();
         }
         UIImmediate::EndPanel();
 
@@ -332,79 +120,15 @@ namespace Hyperion::Editor {
         Size right_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
         UIImmediate::BeginPanel("Right Panel", right_panel_size, ChildLayout::Vertical);
         {
-          Size preview_container_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
-          UIImmediate::BeginPanel("Preview Container", preview_container_panel_size, ChildLayout::Vertical);
-          {
-            Size preview_header_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 25.0f } };
-            UIImmediate::BeginPanel("Preview Header", preview_header_panel_size);
-            {
-              bool8 is_vsync = RenderEngine::GetVSyncMode() != VSyncMode::DontSync;
-              if (UIImmediate::TextToggle(is_vsync, "\uf108", FitType::ToLayout, icon_theme).clicked) {
-                RenderEngine::SetVSyncMode(
-                  RenderEngine::GetVSyncMode() == VSyncMode::DontSync
-                    ? VSyncMode::EveryVBlank
-                    : VSyncMode::DontSync
-                );
-              }
-              bool8 should_draw_grid = RenderGizmos::GetShouldDrawGrid();
-              if (UIImmediate::TextToggle(should_draw_grid, "\uf850", FitType::ToLayout, icon_theme).clicked) {
-                RenderGizmos::SetShouldDrawGrid(should_draw_grid);
-              }
-              bool8 should_draw_bounds = RenderGizmos::GetShouldDrawAllBounds();
-              if (UIImmediate::TextToggle(should_draw_bounds, "\uf247", FitType::ToLayout, icon_theme).clicked) {
-                RenderGizmos::SetShouldDrawAllBounds(should_draw_bounds);
-              }
-              if (UIImmediate::Button("\uf03d", FitType::ToLayout, icon_theme).clicked) {
-                EditorCamera::Reset();
-              }
-
-              UIImmediate::BeginCenter("Center");
-              {
-                bool8 in_editor_view = s_view_mode == EditorViewMode::Editor;
-                if (UIImmediate::TextToggle(in_editor_view, "\uf1b3", FitType::ToLayout, icon_theme).clicked) {
-                  s_view_mode = EditorViewMode::Editor;
-                }
-                bool8 in_game_view = s_view_mode == EditorViewMode::Game;
-                if (UIImmediate::TextToggle(in_game_view, "\uf11b", FitType::ToLayout, icon_theme).clicked) {
-                  s_view_mode = EditorViewMode::Game;
-                }
-              }
-              UIImmediate::EndCenter();
-              
-              UIImmediate::FillSpace();
-
-              String stats_format = "FPS: {} ({:.2f}ms)";
-              String stats_text = StringUtils::Format(stats_format, Time::GetFPS(), Time::GetFrameTime());
-              UIImmediate::Text(stats_text, TextAlignment::MiddleCenter, FitType::ToLayout);
-
-              UIImmediate::Space(SizeKind::Pixels, 5.0f);
-            }
-            UIImmediate::EndPanel();
-
-            UIImmediate::Separator();
-
-            EditorRenderPipeline *render_pipeline = EditorApplication::GetRenderPipeline();
-            Texture *render_texture = nullptr;
-            if (s_view_mode == EditorViewMode::Editor) {
-              render_texture = render_pipeline->GetEditorTargetRenderTexture();
-            } else {
-              render_texture = render_pipeline->GetTargetRenderTexture();
-            }
-            
-            String image_id = "Preview Image";
-            Size preview_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
-            UIImmediate::Image(image_id, render_texture, preview_panel_size, false);
-            s_preview_element = UIImmediate::GetId(image_id);
-          }
-          UIImmediate::EndPanel();
+          PreviewPanel();
 
           UIImmediate::Separator();
           
           Size lower_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::PercentOfParent, 0.3f } };
           UIImmediate::BeginPanel("Lower Panel", lower_panel_size);
           {
-            Size left_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
-            UIImmediate::BeginPanel("Left Panel", left_panel_size);
+            Size lower_left_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
+            UIImmediate::BeginPanel("Left Panel", lower_left_panel_size);
             {
               
             }
@@ -412,8 +136,8 @@ namespace Hyperion::Editor {
 
             UIImmediate::Separator();
           
-            Size right_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
-            UIImmediate::BeginPanel("Right Panel", right_panel_size);
+            Size lower_right_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
+            UIImmediate::BeginPanel("Right Panel", lower_right_panel_size);
             {
               
             }
@@ -436,36 +160,7 @@ namespace Hyperion::Editor {
     }
     UIImmediate::End();
 
-    RenderGizmos::SetShouldDrawTransformationGizmo(EditorSelection::HasSelection());
-    if (EditorSelection::HasSelection()) {
-      EntityId entity = EditorSelection::GetSelection();
-      LocalTransformComponent *local_transform = manager->GetComponent<LocalTransformComponent>(entity);
-      DerivedTransformComponent *derived_transform = manager->GetComponent<DerivedTransformComponent>(entity);
-      DerivedTransformComponent *camera_transform = EditorCamera::GetTransform();
-      CameraComponent *camera = EditorCamera::GetCamera();
-      
-      RenderGizmos::SetTransformationGizmoTransformation(Matrix4x4::Translate(derived_transform->position));
-
-      // We have to remember to do everything in the space of the preview rect. That includes:
-      //   - Getting the correct mouse position with (0, 0) at the bottom and corner of the preview rect
-      //   - Calculating a ray from that transformed mouse position
-      Rect rect = GetPreviewRect();
-      Vector2 mouse_position = Input::GetMousePosition().ToFloat();
-      Vector2 position = TransformScreenToPreviewPosition(mouse_position);
-      Ray ray = CameraUtilities::ScreenPointToRay(camera, camera_transform, position, Vector2(rect.width, rect.height));
-
-      GizmoManipulation manipulation = UIImmediateGizmos::Manipulate(
-        s_transformation_tool,
-        manager,
-        entity,
-        derived_transform,
-        local_transform,
-        camera_transform,
-        ray
-      );
-      s_is_in_gizmo = manipulation.in_transformation;
-      RenderGizmos::UpdateTransformationGizmo(s_transformation_tool, manipulation.highlight_axis);
-    }
+    UpdateGizmo();
   }
 
   //--------------------------------------------------------------
@@ -529,7 +224,97 @@ namespace Hyperion::Editor {
   }
 
   //--------------------------------------------------------------
-  void EditorUI::DrawEntityHierarchy(EntityManager *manager, EntityId entity, HierarchyComponent *branch_hierarchy, uint32 depth) {
+  void EditorUI::HeaderPanel() {
+    Size header_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, EditorStyle::HEADER_HEIGHT } };
+    UIImmediate::BeginPanel("Header Panel", header_panel_size);
+    {
+      bool8 is_translation_tool = s_transformation_tool == RenderGizmoType::Translate;
+      bool8 is_rotation_tool = s_transformation_tool == RenderGizmoType::Rotate;
+      bool8 is_scale_tool = s_transformation_tool == RenderGizmoType::Scale;
+      if (UIImmediate::TextToggle(is_translation_tool, "\uf0b2", FitType::ToLayout, s_icon_theme).clicked) {
+        s_transformation_tool = RenderGizmoType::Translate;
+      }
+      if (UIImmediate::TextToggle(is_rotation_tool, "\uf2f1", FitType::ToLayout, s_icon_theme).clicked) {
+        s_transformation_tool = RenderGizmoType::Rotate;
+      }
+      if (UIImmediate::TextToggle(is_scale_tool, "\uf424", FitType::ToLayout, s_icon_theme).clicked) {
+        s_transformation_tool = RenderGizmoType::Scale;
+      }
+
+      UIImmediate::BeginCenter("Play Buttons");
+      {
+        EngineState engine_mode = Engine::GetEngineState();
+        bool8 is_playing = engine_mode == EngineState::EditorRuntimePlaying || engine_mode == EngineState::EditorRuntimePaused;
+        if (UIImmediate::TextToggle(is_playing, "\uf04b", FitType::ToLayout, s_icon_theme).clicked) {
+          EditorApplication::EnterRuntime();
+
+          s_view_mode = EditorViewMode::Game;
+        }
+        bool8 is_paused = engine_mode == EngineState::EditorRuntimePaused;
+        if (UIImmediate::TextToggle(is_paused, "\uf04c", FitType::ToLayout, s_icon_theme).clicked) {
+          EditorApplication::PauseRuntime();
+        }
+        if (UIImmediate::Button("\uf04d", FitType::ToLayout, s_icon_theme).clicked) {
+          EditorApplication::ExitRuntime();
+
+          s_view_mode = EditorViewMode::Editor;
+        }
+      }
+      UIImmediate::EndCenter();
+    }
+    UIImmediate::EndPanel();
+  }
+
+  //--------------------------------------------------------------
+  void EditorUI::EntityHierarchyPanel() {
+    EntityManager *manager = EditorApplication::GetWorld()->GetEntityManager();
+    
+    Size upper_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
+    UIImmediate::BeginPanel("Upper Panel", upper_panel_size, ChildLayout::Vertical);
+    {
+      Size hierarchy_header_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 25.0f } };
+      UIImmediate::BeginPanel("Hierarchy Header", hierarchy_header_panel_size);
+      {
+        if (UIImmediate::Button("\uf067", FitType::ToLayout, s_icon_theme).clicked) {
+          OperatingSystem::OpenContextMenu(s_entity_creation_menu);
+        }
+
+        UIImmediate::FillSpace();
+              
+        if (UIImmediate::Button("\uf1f8", FitType::ToLayout, s_icon_theme).clicked) {
+          if (EditorSelection::HasSelection()) {
+            manager->DestroyEntity(EditorSelection::GetSelection());
+            EditorSelection::Deselect();
+          }
+        }
+      }
+      UIImmediate::EndPanel();
+
+      UIImmediate::Separator();
+            
+      Size hierarchy_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
+      UIImmediate::BeginPanel("Hierarchy Panel", hierarchy_panel_size, ChildLayout::Vertical);
+      {
+        EntityHierarchy *hierarchy = EditorApplication::GetWorld()->GetHierarchy();
+        EntityId child = hierarchy->GetFirstRoot();
+        for (uint64 i = 0; i < hierarchy->GetRootCount(); i++) {
+          HierarchyComponent *child_hierarchy = manager->GetComponent<HierarchyComponent>(child);
+          EntityHierarchyPanelRecursive(manager, child, child_hierarchy, 0);
+          child = child_hierarchy->next_sibling;
+        }
+
+        if (UIImmediate::BeginPanel("Deselect Panel", hierarchy_panel_size, ChildLayout::Vertical, true, s_panel_theme).clicked) {
+          EditorSelection::Deselect();
+        }
+        UIImmediate::EndPanel();
+      }
+      UIImmediate::EndPanel();
+    }
+    UIImmediate::EndPanel();
+  }
+
+  //--------------------------------------------------------------
+  void EditorUI::EntityHierarchyPanelRecursive(EntityManager *manager, EntityId entity, HierarchyComponent *branch_hierarchy, uint32 depth) {
     String hierarchy_text;
 
     NameComponent *name = manager->GetComponent<NameComponent>(entity);
@@ -552,7 +337,7 @@ namespace Hyperion::Editor {
     {
       bool8 is_disabled = manager->HasComponent<DisabledComponent>(entity);
       
-      UIImmediate::Space(SizeKind::Pixels, depth * 20.0f + 5.0f);
+      UIImmediate::Space(SizeKind::Pixels, static_cast<float32>(depth) * 20.0f + 5.0f);
       UIImmediate::Text("\uf1b2", TextAlignment::MiddleCenter, FitType::ToLayout, false, is_disabled ? s_disabled_icon_theme : s_icon_theme);
       UIImmediate::Space(SizeKind::Pixels, 5.0f);
       UIImmediate::PushId("Name");
@@ -564,11 +349,256 @@ namespace Hyperion::Editor {
     EntityId child = branch_hierarchy->first_child;
     for (uint64 i = 0; i < branch_hierarchy->child_count; i++) {
       HierarchyComponent *child_hierarchy = manager->GetComponent<HierarchyComponent>(child);
-      DrawEntityHierarchy(manager, child, child_hierarchy, depth + 1);
+      EntityHierarchyPanelRecursive(manager, child, child_hierarchy, depth + 1);
       child = child_hierarchy->next_sibling;
     }
   }
 
+  //--------------------------------------------------------------
+  void EditorUI::EntityInspectionPanel() {
+    EntityManager *manager = EditorApplication::GetWorld()->GetEntityManager();
+    
+    Size inspection_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
+    UIImmediate::BeginPanel("Inspection Panel", inspection_panel_size, ChildLayout::Vertical);
+    {
+      if (EditorSelection::HasSelection()) {
+        EntityId entity = EditorSelection::GetSelection();
+        String text = StringUtils::Format(
+          "Entity\nId: {{Index: {} - Version: {}}}\nGuid: {}",
+          EntityId::GetIndex(entity),
+          EntityId::GetVersion(entity),
+          manager->GetUUID(entity).ToString()
+        );
+        UIImmediate::Text(text, TextAlignment::TopCenter, FitType::ToLayout);
+        UIImmediate::Space(SizeKind::Pixels, 10);
+
+        bool8 is_enabled = !manager->HasComponent<DisabledComponent>(entity);
+        if (UIImmediate::TextToggle(is_enabled, is_enabled ? "\uf06e" : "\uf070", FitType::ToLayout, s_icon_theme).clicked) {
+          manager->SetEnabled(entity, is_enabled);
+        }
+        
+        for (const ComponentInfo &component_info : ComponentRegistry::GetComponentInfos()) {
+          void *component = manager->GetComponent(component_info.id, entity);
+          if (component) {
+            Type component_type = *component_info.type;
+
+            Variant hide_metadata = component_type.get_metadata(TypeMetadata::HideInEditor);
+            if (hide_metadata.is_valid() && hide_metadata.is_type<bool8>()) {
+              bool8 should_skip_component = hide_metadata.to_bool();
+              if (should_skip_component) {
+                continue;
+              }
+            }
+
+            ComponentPanel(component_info, component_type, component);
+          }
+        }
+      } else {
+        String text = "No entity selected!";
+        UIImmediate::Text(text, TextAlignment::TopCenter, FitType::ToLayout);  
+      }
+    }
+    UIImmediate::EndPanel();
+  }
+
+  //--------------------------------------------------------------
+  void EditorUI::PreviewPanel() {
+    Size preview_container_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
+    UIImmediate::BeginPanel("Preview Container", preview_container_panel_size, ChildLayout::Vertical);
+    {
+      Size preview_header_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 25.0f } };
+      UIImmediate::BeginPanel("Preview Header", preview_header_panel_size);
+      {
+        bool8 is_vsync = RenderEngine::GetVSyncMode() != VSyncMode::DontSync;
+        if (UIImmediate::TextToggle(is_vsync, "\uf108", FitType::ToLayout, s_icon_theme).clicked) {
+          RenderEngine::SetVSyncMode(
+            RenderEngine::GetVSyncMode() == VSyncMode::DontSync
+              ? VSyncMode::EveryVBlank
+              : VSyncMode::DontSync
+          );
+        }
+        bool8 should_draw_grid = RenderGizmos::GetShouldDrawGrid();
+        if (UIImmediate::TextToggle(should_draw_grid, "\uf850", FitType::ToLayout, s_icon_theme).clicked) {
+          RenderGizmos::SetShouldDrawGrid(should_draw_grid);
+        }
+        bool8 should_draw_bounds = RenderGizmos::GetShouldDrawAllBounds();
+        if (UIImmediate::TextToggle(should_draw_bounds, "\uf247", FitType::ToLayout, s_icon_theme).clicked) {
+          RenderGizmos::SetShouldDrawAllBounds(should_draw_bounds);
+        }
+        if (UIImmediate::Button("\uf03d", FitType::ToLayout, s_icon_theme).clicked) {
+          EditorCamera::Reset();
+        }
+
+        UIImmediate::BeginCenter("Center");
+        {
+          bool8 in_editor_view = s_view_mode == EditorViewMode::Editor;
+          if (UIImmediate::TextToggle(in_editor_view, "\uf1b3", FitType::ToLayout, s_icon_theme).clicked) {
+            s_view_mode = EditorViewMode::Editor;
+          }
+          bool8 in_game_view = s_view_mode == EditorViewMode::Game;
+          if (UIImmediate::TextToggle(in_game_view, "\uf11b", FitType::ToLayout, s_icon_theme).clicked) {
+            s_view_mode = EditorViewMode::Game;
+          }
+        }
+        UIImmediate::EndCenter();
+        
+        UIImmediate::FillSpace();
+
+        String stats_format = "FPS: {} ({:.2f}ms)";
+        String stats_text = StringUtils::Format(stats_format, Time::GetFPS(), Time::GetFrameTime());
+        UIImmediate::Text(stats_text, TextAlignment::MiddleCenter, FitType::ToLayout);
+
+        UIImmediate::Space(SizeKind::Pixels, 5.0f);
+      }
+      UIImmediate::EndPanel();
+
+      UIImmediate::Separator();
+
+      EditorRenderPipeline *render_pipeline = EditorApplication::GetRenderPipeline();
+      Texture *render_texture = nullptr;
+      if (s_view_mode == EditorViewMode::Editor) {
+        render_texture = render_pipeline->GetEditorTargetRenderTexture();
+      } else {
+        render_texture = render_pipeline->GetTargetRenderTexture();
+      }
+      
+      String image_id = "Preview Image";
+      Size preview_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
+      UIImmediate::Image(image_id, render_texture, preview_panel_size, false);
+      s_preview_element = UIImmediate::GetId(image_id);
+    }
+    UIImmediate::EndPanel();
+  }
+
+  //--------------------------------------------------------------
+  void EditorUI::ComponentPanel(const ComponentInfo &component_info, Type component_type, void *component) {
+    String component_name;
+    Variant name_metadata = component_type.get_metadata(TypeMetadata::EditorName);
+    if (name_metadata.is_valid() && name_metadata.is_type<String>()) {
+      component_name = name_metadata.get_value<String>();
+    } else {
+      component_name = component_type.get_name().to_string();
+    }
+    
+    UIImmediate::Space(SizeKind::Pixels, 10.0f);
+    Size component_header_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 20.0f } };
+    UIImmediate::BeginPanel(component_name + "Header", component_header_panel_size);
+    {
+      UIImmediate::Space(SizeKind::Pixels, 5.0f);
+      
+      UIImmediate::Text(component_name, TextAlignment::MiddleLeft, FitType::ToLayout);
+      UIImmediate::FillSpace();
+      
+      if (UIImmediate::Button("\uf0e2", FitType::ToLayout, s_icon_theme).clicked) {
+        component_info.destructor(component);
+        component_info.constructor(component);
+      }
+
+      bool8 component_removable = true;
+      Variant removable_metadata = component_type.get_metadata(TypeMetadata::EditorRemovable);
+      if (removable_metadata.is_valid() && removable_metadata.is_type<bool8>()) {
+        component_removable = removable_metadata.to_bool();
+      }
+      if (component_removable) {
+        if (UIImmediate::Button("\uf1f8", FitType::ToLayout, s_icon_theme).clicked) {
+          EditorApplication::GetWorld()->GetEntityManager()->RemoveComponent(component_info.id, EditorSelection::GetSelection());
+        }
+      }
+      
+      UIImmediate::Space(SizeKind::Pixels, 5.0f);
+    }
+    UIImmediate::EndPanel();
+
+    Instance instance = Reflection::CreateInstanceFromRaw(component_type, component);
+      
+    for (Property property : component_type.get_properties()) {
+      Variant serialize_metadata = property.get_metadata(PropertyMetadata::Serialize);
+      if (serialize_metadata.is_valid() && serialize_metadata.is_type<bool8>()) {
+        bool8 should_skip_property = !serialize_metadata.to_bool();
+        if (should_skip_property) {
+          continue;
+        }
+      }
+
+      PropertyPanel(instance, property);
+    }
+  }
+
+  //--------------------------------------------------------------
+  void EditorUI::PropertyPanel(Instance instance, Property property) {
+    Type property_type = property.get_type();
+    String property_name = property.get_name().to_string();
+
+    Size property_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 20.0f } };
+    UIImmediate::BeginPanel(property_name, property_panel_size, ChildLayout::Horizontal);
+    {
+      UIImmediate::Space(SizeKind::Pixels, 15.0f);
+      
+      String property_label = property_name + ":";
+      UIImmediate::Text(property_label, TextAlignment::MiddleCenter, FitType::ToLayout);
+
+      if (property_type != Type::get<String>()) {
+        UIImmediate::FillSpace();
+      } else {
+        UIImmediate::Space(SizeKind::Pixels, 10.0f);
+      }
+      
+      Variant property_value = property.get_value(instance);
+
+      if (property_type == Type::get<String>()) {
+        String string = property_value.get_value<String>();
+        if (UIImmediate::Input(property_name, string, TextAlignment::MiddleLeft, FitType::Fill).input_changed) {
+          property.set_value(instance, string);
+        }
+      } else if (property_type.is_arithmetic()) {
+        UIImmediate::Text(property_value.to_string(), TextAlignment::MiddleRight, FitType::ToLayout);
+      } else if (property_type == Type::get<Vector3>()) {
+        UIImmediate::Text(property_value.get_value<Vector3>().ToString(), TextAlignment::MiddleRight, FitType::ToLayout);
+      } else if (property_type == Type::get<Quaternion>()) {
+        UIImmediate::Text(property_value.get_value<Quaternion>().ToEulerAngles().ToString(), TextAlignment::MiddleRight, FitType::ToLayout);
+      }
+
+      UIImmediate::Space(SizeKind::Pixels, 5.0f);
+    }
+    UIImmediate::EndPanel();
+  }
+
+  //--------------------------------------------------------------
+  void EditorUI::UpdateGizmo() {
+    RenderGizmos::SetShouldDrawTransformationGizmo(EditorSelection::HasSelection());
+    if (EditorSelection::HasSelection()) {
+      EntityId entity = EditorSelection::GetSelection();
+      EntityManager *manager = EditorApplication::GetWorld()->GetEntityManager();
+      
+      LocalTransformComponent *local_transform = manager->GetComponent<LocalTransformComponent>(entity);
+      DerivedTransformComponent *derived_transform = manager->GetComponent<DerivedTransformComponent>(entity);
+      DerivedTransformComponent *camera_transform = EditorCamera::GetTransform();
+      CameraComponent *camera = EditorCamera::GetCamera();
+      
+      RenderGizmos::SetTransformationGizmoTransformation(Matrix4x4::Translate(derived_transform->position));
+
+      // We have to remember to do everything in the space of the preview rect. That includes:
+      //   - Getting the correct mouse position with (0, 0) at the bottom and corner of the preview rect
+      //   - Calculating a ray from that transformed mouse position
+      Rect rect = GetPreviewRect();
+      Vector2 mouse_position = Input::GetMousePosition().ToFloat();
+      Vector2 position = TransformScreenToPreviewPosition(mouse_position);
+      Ray ray = CameraUtilities::ScreenPointToRay(camera, camera_transform, position, Vector2(rect.width, rect.height));
+
+      GizmoManipulation manipulation = UIImmediateGizmos::Manipulate(
+        s_transformation_tool,
+        manager,
+        entity,
+        derived_transform,
+        local_transform,
+        camera_transform,
+        ray
+      );
+      s_is_in_gizmo = manipulation.in_transformation;
+      RenderGizmos::UpdateTransformationGizmo(s_transformation_tool, manipulation.highlight_axis);
+    }
+  }
+  
   //--------------------------------------------------------------
   Vector2 EditorUI::TransformScreenToPreviewPosition(Vector2 screen_position) {
     Rect preview_rect = EditorUI::GetPreviewRect();
