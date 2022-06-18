@@ -113,7 +113,7 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  EntityId EntityManager::InstantiateEntity(EntityId id) {
+  EntityId EntityManager::InstantiateEntity(EntityId id, EntityHierarchyInstantiationPolicy instantiation_policy) {
     HYP_PROFILE_SCOPE("World.InstantiateEntity");
     
     if (IsAlive(id)) {
@@ -138,9 +138,11 @@ namespace Hyperion {
         }
       }
 
-      // FIXME: This is currently not correct as it does not copy our potential children. 
-
-      m_world->m_hierarchy.HandleEntityCreation(instantiated);
+      switch (instantiation_policy) {
+        case EntityHierarchyInstantiationPolicy::KeepHierarchy: m_world->m_hierarchy.HandleEntityInstantiation(id, instantiated); break;
+        case EntityHierarchyInstantiationPolicy::IgnoreHierarchy: break;
+        default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+      }
       
       return instantiated;
     } else {

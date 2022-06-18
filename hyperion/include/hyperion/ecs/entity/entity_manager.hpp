@@ -47,7 +47,7 @@ namespace Hyperion {
 
     EntityId CreateEntity(EntityPrimitive primitive = EntityPrimitive::Base, EntityUUID uuid = EntityUUID::Generate());
     EntityId CreateMultiMeshEntity(Mesh *mesh);
-    EntityId InstantiateEntity(EntityId id);
+    EntityId InstantiateEntity(EntityId id, EntityHierarchyInstantiationPolicy instantiation_policy = EntityHierarchyInstantiationPolicy::KeepHierarchy);
     void DestroyEntity(EntityId id, EntityHierarchyDestructionPolicy hierarchy_destruction_policy = EntityHierarchyDestructionPolicy::DestroyChildren);
 
     EntityArchetype *CreateArchetype(EntityId id);

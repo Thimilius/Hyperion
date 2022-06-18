@@ -26,6 +26,11 @@ namespace Hyperion {
     KeepChildrenAsRoots,
   };
 
+  enum class EntityHierarchyInstantiationPolicy {
+    KeepHierarchy,
+    IgnoreHierarchy
+  };
+  
   class EntityHierarchy final {
   private:
     enum class EntityHierarchyRootPolicy {
@@ -47,6 +52,8 @@ namespace Hyperion {
     EntityHierarchy() = default;
   private:
     void HandleEntityCreation(EntityId entity);
+    void HandleEntityInstantiation(EntityId original, EntityId instantiated);
+    void HandleEntityInstantiationRecursive(EntityId original_parent, EntityId instantiated_parent);
     void HandleEntityDestruction(EntityId entity, EntityHierarchyDestructionPolicy destruction_policy);
 
     void RemoveOldRelations(EntityId entity, HierarchyComponent *entity_hierarchy);

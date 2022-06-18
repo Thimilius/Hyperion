@@ -110,6 +110,53 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
+  void EntityHierarchy::HandleEntityInstantiation(EntityId original, EntityId instantiated) {
+    HierarchyComponent *original_hierarchy = m_manager->GetComponent<HierarchyComponent>(original);
+    HierarchyComponent *instantiated_hierarchy = m_manager->GetComponent<HierarchyComponent>(instantiated);
+    if (!original_hierarchy) {
+      return;
+    }
+
+    // We reset our hierarchy to default values.
+    *instantiated_hierarchy = HierarchyComponent(); 
+
+    HandleEntityInstantiationRecursive(original, instantiated);
+
+    // After instantiating our children the data of the component pools has likely been moved invalidating our hierarchy pointers in the process.
+    // That means we have to grab fresh pointers to them.
+    original_hierarchy = m_manager->GetComponent<HierarchyComponent>(original);
+    instantiated_hierarchy = m_manager->GetComponent<HierarchyComponent>(instantiated);
+    
+    // We set ourself as the child of our original parent.
+    if (original_hierarchy->parent == EntityId::EMPTY) {
+      AddRootRelation(instantiated, instantiated_hierarchy, EntityHierarchyRootPolicy::KeepChildren);
+    } else {
+      SetParent(instantiated, original_hierarchy->parent);
+      m_root_count++;
+    }
+  }
+
+  //--------------------------------------------------------------
+  void EntityHierarchy::HandleEntityInstantiationRecursive(EntityId original_parent, EntityId instantiated_parent) {
+    HierarchyComponent *original_parent_hierarchy = m_manager->GetComponent<HierarchyComponent>(original_parent);
+    EntityId original_child = original_parent_hierarchy->first_child;
+    uint64 child_count = original_parent_hierarchy->child_count;
+    for (uint64 i = 0; i < child_count; i++) {
+      EntityId instantiated_child = m_manager->InstantiateEntity(original_child, EntityHierarchyInstantiationPolicy::IgnoreHierarchy);
+      HierarchyComponent *child_instantiated_hierarchy = m_manager->GetComponent<HierarchyComponent>(instantiated_child);
+      *child_instantiated_hierarchy = HierarchyComponent();
+      SetParent(instantiated_child, instantiated_parent, EntityHierarchyTransformUpdate::None);
+      m_root_count++;
+
+      HandleEntityInstantiationRecursive(original_child, instantiated_child);
+
+      HierarchyComponent *child_original_hierarchy = m_manager->GetComponent<HierarchyComponent>(original_child);
+      EntityId next_child = child_original_hierarchy->next_sibling;
+      original_child = next_child;
+    }
+  }
+
+  //--------------------------------------------------------------
   void EntityHierarchy::HandleEntityDestruction(EntityId entity, EntityHierarchyDestructionPolicy destruction_policy) {
     HierarchyComponent *hierarchy = m_manager->GetComponent<HierarchyComponent>(entity);
     if (hierarchy) {
