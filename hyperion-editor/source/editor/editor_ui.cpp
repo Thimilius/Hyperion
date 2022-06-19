@@ -70,26 +70,26 @@ namespace Hyperion::Editor {
     s_disabled_icon_theme->text_color = EditorStyle::COLOR_DISABLED;
     
     s_entity_creation_menu = { {
-      { "Empty", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Base); }, { } },
-      { "Empty Child", [](auto _) {
+      { "Empty", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Base); }, { }, { } },
+      { "Empty Child", "",[](auto _) {
         if (EditorSelection::HasSelection()) {
           EntityId parent = EditorSelection::GetSelection();
           EntityId new_entity = EditorApplication::CreateEntity(EntityPrimitive::Base);
           EditorApplication::GetWorld()->GetHierarchy()->SetParent(new_entity, parent);
         }
-      }, { } },
-      { "Objects", { }, {
-        { "Cube", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Cube); }, { } },
-        { "Sphere", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Sphere); }, { } },
-        { "Plane", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Plane); }, { } },
-        { "Quad", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Quad); }, { } },
+      }, { }, { } },
+      { "Objects", "", { }, { }, {
+        { "Cube", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Cube); }, { }, { } },
+        { "Sphere", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Sphere); }, { }, { } },
+        { "Plane", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Plane); }, { }, { } },
+        { "Quad", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Quad); }, { }, { } },
       }, },
-      { "Light", { }, {
-        { "Directional Light", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::DirectionalLight); }, { } },
-        { "Point Light", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::PointLight); }, { } },
-        { "Spot Light", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::SpotLight); }, { } },
+      { "Light", "", { }, { }, {
+        { "Directional Light", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::DirectionalLight); }, { }, { } },
+        { "Point Light", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::PointLight); }, { }, { } },
+        { "Spot Light", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::SpotLight); }, { }, { } },
       }, },
-      { "Camera", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Camera); }, { } }
+      { "Camera", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Camera); }, { }, { } }
     } };
   }
 

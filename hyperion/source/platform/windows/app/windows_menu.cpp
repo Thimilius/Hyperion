@@ -39,15 +39,35 @@ namespace Hyperion {
     HMENU sub_menu = type == WindowsMenuType::Menu ? ::CreateMenu() : CreatePopupMenu();
 
     for (const MenuItem &item : items) {
-      WideString wide_text = StringUtils::Utf8ToUtf16(item.text);
+      bool8 is_separator = (item.flags & MenuItemFlags::Separator) == MenuItemFlags::Separator;
+      bool8 is_disabled = (item.flags & MenuItemFlags::Disabled) == MenuItemFlags::Disabled;
+      bool8 is_checked = (item.flags & MenuItemFlags::Checked) == MenuItemFlags::Checked;
+      
+      UINT mask = MIIM_FTYPE | MIIM_ID | MIIM_STATE;
+      if (!is_separator) {
+        mask |= MIIM_STRING;
+      }
 
+      UINT state = MFS_UNHILITE;
+      state |= is_disabled ? MFS_DISABLED : MFS_ENABLED;
+      if (is_checked) {
+        state |= MFS_CHECKED;
+      }
+      
       MENUITEMINFOW item_info = { };
       item_info.cbSize = sizeof(MENUITEMINFOW);
-      item_info.fMask = MIIM_FTYPE | MIIM_ID | MIIM_STRING | MIIM_STATE;
-      item_info.fType = MFT_STRING;
-      item_info.fState = MFS_ENABLED | MFS_UNHILITE;
+      item_info.fMask = mask;
+      item_info.fType = is_separator ? MFT_SEPARATOR : MFT_STRING;
+      item_info.fState = state;
       item_info.wID = identifier_counter++;
-      item_info.dwTypeData = wide_text.data();
+
+      if (!is_separator) {
+        WideString wide_text = StringUtils::Utf8ToUtf16(item.text);
+        if (!item.keyboard_shortcut.empty()) {
+          wide_text += L"\t" + StringUtils::Utf8ToUtf16(item.keyboard_shortcut);
+        }
+        item_info.dwTypeData = wide_text.data();  
+      }
 
       bool8 is_sub_menu = !item.sub_items.IsEmpty();
       HMENU sub_sub_menu = nullptr;

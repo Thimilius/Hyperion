@@ -11,10 +11,25 @@ namespace Hyperion {
 
   using MenuItemCallback = std::function<void(const MenuItem &)>;
 
+  enum class MenuItemFlags {
+    None,
+
+    Separator = BIT(0),
+    Disabled = BIT(1),
+    Checked = BIT(2),
+  };
+  HYP_CREATE_ENUM_FLAG_OPERATORS(MenuItemFlags);
+  
   struct MenuItem {
     String text;
+    String keyboard_shortcut;
     MenuItemCallback callback;
+    MenuItemFlags flags = MenuItemFlags::None;
     Array<MenuItem> sub_items;
+
+    static MenuItem Separator() {
+      return { "", "", { }, MenuItemFlags::Separator, { } };
+    }
   };
 
   struct Menu {
