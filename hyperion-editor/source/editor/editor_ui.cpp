@@ -168,6 +168,12 @@ namespace Hyperion::Editor {
     UIImmediate::End();
 
     UpdateGizmo();
+
+    // At the end we execute all delayed actions.
+    for (const std::function<void()> &delayed_action : s_delayed_actions) {
+      delayed_action();
+    }
+    s_delayed_actions.Clear();
   }
 
   //--------------------------------------------------------------
@@ -284,7 +290,7 @@ namespace Hyperion::Editor {
       UIImmediate::BeginPanel("Hierarchy Header", hierarchy_header_panel_size);
       {
         if (UIImmediate::Button("\uf067", FitType::ToLayout, s_icon_theme).clicked) {
-          OperatingSystem::OpenContextMenu(s_entity_creation_menu);
+          OpenContextMenu(s_entity_creation_menu);
         }
 
         String world_name = world->GetName();
@@ -314,8 +320,11 @@ namespace Hyperion::Editor {
           child = child_hierarchy->next_sibling;
         }
 
-        if (UIImmediate::BeginPanel("Deselect Panel", hierarchy_panel_size, ChildLayout::Vertical, true, s_panel_theme).clicked) {
+        UIImmediateInteraction panel_interaction = UIImmediate::BeginPanel("Deselect Panel", hierarchy_panel_size, ChildLayout::Vertical, true, s_panel_theme);
+        if (panel_interaction.clicked) {
           EditorSelection::Deselect();
+        } else if (panel_interaction.right_clicked) {
+          OpenContextMenu(s_entity_creation_menu);
         }
         UIImmediate::EndPanel();
       }
@@ -341,9 +350,18 @@ namespace Hyperion::Editor {
       theme = s_selection_theme;
     }
     
-    Size panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 15 } };
-    if (UIImmediate::BeginPanel(StringUtils::Format("{}", entity), panel_size, ChildLayout::Horizontal, true, theme).clicked) {
+    Size panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 15.0f } };
+    UIImmediateInteraction entity_interaction = UIImmediate::BeginPanel(StringUtils::Format("{}", entity), panel_size, ChildLayout::Horizontal, true, theme);
+    if (entity_interaction.clicked || entity_interaction.right_clicked) {
       EditorSelection::Select(entity);
+
+      if (entity_interaction.right_clicked) {
+        Menu entity_menu = { {
+          { "Duplicate", "", [](auto _) { EditorApplication::DuplicateEntity(); }, { }, { } },
+          { "Destroy", "", [](auto _) { EditorApplication::DestroyEntity(); }, { }, { } },
+        } };
+        OpenContextMenu(entity_menu);
+      }
     }
     {
       bool8 is_disabled = manager->HasComponent<DisabledComponent>(entity);
@@ -483,18 +501,23 @@ namespace Hyperion::Editor {
 
       UIImmediate::Separator();
 
-      EditorRenderPipeline *render_pipeline = EditorApplication::GetRenderPipeline();
-      Texture *render_texture = nullptr;
-      if (s_view_mode == EditorViewMode::Editor) {
-        render_texture = render_pipeline->GetEditorTargetRenderTexture();
-      } else {
-        render_texture = render_pipeline->GetTargetRenderTexture();
-      }
-      
-      String image_id = "Preview Image";
       Size preview_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
-      UIImmediate::Image(image_id, render_texture, preview_panel_size, false);
-      s_preview_element = UIImmediate::GetId(image_id);
+      UIImmediate::BeginPanel("Preview", preview_panel_size);
+      {
+        EditorRenderPipeline *render_pipeline = EditorApplication::GetRenderPipeline();
+        Texture *render_texture = nullptr;
+        if (s_view_mode == EditorViewMode::Editor) {
+          render_texture = render_pipeline->GetEditorTargetRenderTexture();
+        } else {
+          render_texture = render_pipeline->GetTargetRenderTexture();
+        }
+      
+        String image_id = "Preview Image";
+        Size preview_image_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
+        UIImmediate::Image(image_id, render_texture, preview_image_size, false);
+        s_preview_element = UIImmediate::GetId(image_id);
+      }
+      UIImmediate::EndPanel();
     }
     UIImmediate::EndPanel();
   }
@@ -643,5 +666,18 @@ namespace Hyperion::Editor {
     
     return point;
   }
-  
+
+  //--------------------------------------------------------------
+  void EditorUI::OpenContextMenu(const Menu &menu) {
+    // We delay opening the context menu.
+    // This way the actions of the context menu do not interfere with the building of the immediate ui (i.e. duplicating/destroying entities).
+    // We must take the menu by value as it will probably not be alive any more when our delayed opening gets executed.
+    s_delayed_actions.Add([menu]() { OperatingSystem::OpenContextMenu(menu); });
+  }
+
+  //--------------------------------------------------------------
+  void EditorUI::ScheduleAction(const std::function<void()> &delayed_action) {
+    s_delayed_actions.Add(delayed_action);
+  }
+
 }

@@ -45,6 +45,9 @@ namespace Hyperion::Editor {
     static void UpdateGizmo();
     
     static Vector2 TransformScreenToPreviewPosition(Vector2 screen_position);
+
+    static void OpenContextMenu(const Menu &menu);
+    static void ScheduleAction(const std::function<void()> &delayed_action);
   private:
     inline static UI::UIImmediateId s_preview_element;
 
@@ -60,6 +63,8 @@ namespace Hyperion::Editor {
     inline static Rendering::RenderGizmoType s_transformation_tool = Rendering::RenderGizmoType::Translate;
 
     inline static Menu s_entity_creation_menu;
+
+    inline static Array<std::function<void()>> s_delayed_actions;
   };
 
 }
