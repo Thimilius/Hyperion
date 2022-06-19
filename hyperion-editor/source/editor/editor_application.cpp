@@ -94,6 +94,18 @@ namespace Hyperion::Editor {
       EditorSelection::Deselect();
     }
   }
+
+  //--------------------------------------------------------------
+  void EditorApplication::NewWorld() {
+    if (Engine::GetEngineState() == EngineState::Editor) {
+      World *world = WorldManager::CreateWorld();
+      WorldManager::SetActiveWorld(world);
+      WorldManager::DestroyWorld(s_world);
+      s_world = world;
+      
+      EditorSelection::Deselect();
+    }
+  }
   
   //--------------------------------------------------------------
   void EditorApplication::OpenWorld() {
@@ -107,6 +119,8 @@ namespace Hyperion::Editor {
         s_world = world;
 
         EditorSelection::Deselect();
+
+        HYP_INFO("Editor", "Opened world at path: {}", path);
       }  
     }
   }
@@ -114,17 +128,21 @@ namespace Hyperion::Editor {
   //--------------------------------------------------------------
   void EditorApplication::SaveWorld() {
     String path = OperatingSystem::SaveFileDialog("Save World", ".world");
-    if (!StringUtils::EndsWith(path, ".world")) {
-      path += ".world";
+    if (!path.empty()) {
+      if (!StringUtils::EndsWith(path, ".world")) {
+        path += ".world";
+      }
+      String world_text = WorldSerializer::Serialize(s_world);
+      FileSystem::WriteAllText(path, world_text);
+      HYP_INFO("Editor", "Saved world at path: {}", path);
     }
-    String world_text = WorldSerializer::Serialize(s_world);
-    FileSystem::WriteAllText(path, world_text);
   }
 
   //--------------------------------------------------------------
   void EditorApplication::OnSetup(ApplicationSettings &settings) {
     settings.window.menu.items = { {
       "File", "", { }, { }, {
+        { "New World", "Ctrl+N", [this](auto _) { NewWorld(); }, { }, { } },
         { "Open World", "Ctrl+O", [this](auto _) { OpenWorld(); }, { }, { } },
         { "Save World", "Ctrl+S", [this](auto _) { SaveWorld(); }, { }, { } },
         MenuItem::Separator(),

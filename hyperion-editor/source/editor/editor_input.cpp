@@ -28,6 +28,9 @@ namespace Hyperion::Editor {
     Window *main_window = application->GetMainWindow();
     
     if (Input::IsKeyHold(KeyCode::Control)) {
+      if (Input::IsKeyDown(KeyCode::N)) {
+        EditorApplication::NewWorld();
+      }
       if (Input::IsKeyDown(KeyCode::O)) {
         EditorApplication::OpenWorld();
       }
