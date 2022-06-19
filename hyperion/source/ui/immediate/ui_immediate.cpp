@@ -46,7 +46,9 @@ namespace Hyperion::UI {
     s_state.is_right_mouse_up = Input::IsMouseButtonUp(MouseButtonCode::Right);
     s_state.hovered_element = 0;
     s_state.last_focused_element = s_state.focused_element;
-    s_state.focused_element = s_state.is_left_mouse_down || s_state.is_right_mouse_down ? 0 : s_state.focused_element;
+    s_state.focused_element = s_state.is_left_mouse_down || s_state.is_right_mouse_down || Input::IsMouseButtonDown(MouseButtonCode::Middle)
+      ? 0
+      : s_state.focused_element;
     s_state.current_frame_index++;
 
     s_state.root_element = UIImmediateElement();
@@ -363,17 +365,17 @@ namespace Hyperion::UI {
             }
           }
         });
-        
+
         dispatcher.Dispatch<KeyTypedAppEvent>([&element, &increment_cursor, theme, &interaction, &text](KeyTypedAppEvent &typed_event) {
           String key_typed = typed_event.GetCharacter();
           bool8 has_characters = true;
           Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(key_typed);
           for (uint32 codepoint : codepoints) {
-            if (codepoint == ' ' || codepoint == '\t' || codepoint == '\n' || codepoint == '\r') {
+            if (codepoint == ' ' || codepoint == '\t' || codepoint == '\n') {
               continue;
             }
             
-            if (!theme->font->HasCodepoint(codepoint)) {
+            if (!theme->font->HasCodepoint(codepoint) || codepoint == '\r') {
               has_characters = false;
               break;
             }

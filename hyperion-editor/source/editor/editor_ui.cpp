@@ -274,7 +274,8 @@ namespace Hyperion::Editor {
 
   //--------------------------------------------------------------
   void EditorUI::EntityHierarchyPanel() {
-    EntityManager *manager = EditorApplication::GetWorld()->GetEntityManager();
+    World *world = EditorApplication::GetWorld();
+    EntityManager *manager = world->GetEntityManager();
     
     Size upper_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
     UIImmediate::BeginPanel("Upper Panel", upper_panel_size, ChildLayout::Vertical);
@@ -286,7 +287,10 @@ namespace Hyperion::Editor {
           OperatingSystem::OpenContextMenu(s_entity_creation_menu);
         }
 
-        UIImmediate::FillSpace();
+        String world_name = world->GetName();
+        if (UIImmediate::Input("World Name", world_name, TextAlignment::MiddleCenter, FitType::Fill).input_changed) {
+          world->SetName(world_name);
+        }
 
         if (UIImmediate::Button("\uf24d", FitType::ToLayout, s_icon_theme).clicked) {
           EditorApplication::DuplicateEntity();
