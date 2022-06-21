@@ -46,7 +46,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void RenderFrame::SetCamera(uint64 camera_index) {
-    RenderFrameCommandSetCamera set_camera;
+    RenderFrameCommandSetCamera set_camera = { };
     set_camera.camera_index = camera_index;
 
     RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::SetCamera);
@@ -55,7 +55,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void RenderFrame::ExecuteCommandBuffer(const RenderCommandBuffer &command_buffer) {
-    RenderFrameCommandExecuteCommandBuffer execute_command_buffer;
+    RenderFrameCommandExecuteCommandBuffer execute_command_buffer = { };
     execute_command_buffer.command_buffer = command_buffer;
 
     RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::ExecuteCommandBuffer);
@@ -64,7 +64,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void RenderFrame::DrawMeshes(CullingResults &culling_results, DrawingParameters drawing_parameters) {
-    RenderFrameCommandDrawMeshes draw_meshes;
+    RenderFrameCommandDrawMeshes draw_meshes = { };
     draw_meshes.culling_results = culling_results;
     draw_meshes.drawing_parameters = drawing_parameters;
     draw_meshes.sorted_objects = culling_results.visible_objects;
@@ -113,7 +113,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void RenderFrame::DrawShadows(ShadowParameters shadow_parameters) {
-    RenderFrameCommandDrawShadows draw_shadows;
+    RenderFrameCommandDrawShadows draw_shadows = { };
     draw_shadows.shadow_parameters = shadow_parameters;
 
     RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::DrawShadows);
@@ -122,7 +122,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void RenderFrame::DrawUI() {
-    RenderFrameCommandDrawUI draw_ui;
+    RenderFrameCommandDrawUI draw_ui = { };
 
     RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::DrawUI);
     command.data = draw_ui;
@@ -130,7 +130,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void RenderFrame::DrawObjectIds(RenderTargetId render_target_id) {
-    RenderFrameCommandDrawObjectIds draw_object_ids;
+    RenderFrameCommandDrawObjectIds draw_object_ids = { };
     draw_object_ids.render_target_id = render_target_id;
 
     RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::DrawObjectIds);
@@ -139,7 +139,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void RenderFrame::DrawGizmos() {
-    RenderFrameCommandDrawGizmos draw_gizmos;
+    RenderFrameCommandDrawGizmos draw_gizmos = { };
     draw_gizmos.shader_handle = AssetManager::GetShaderPrimitive(ShaderPrimitive::Gizmo)->GetMetadata().handle;
     draw_gizmos.grid.should_draw = RenderGizmos::GetShouldDrawGrid();
     draw_gizmos.grid.local_to_world = Matrix4x4::Identity();
@@ -156,7 +156,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void RenderFrame::DrawEditorUI() {
-    RenderFrameCommandDrawEditorUI draw_editor_ui;
+    RenderFrameCommandDrawEditorUI draw_editor_ui = { };
 
     RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::DrawEditorUI);
     command.data = draw_editor_ui;

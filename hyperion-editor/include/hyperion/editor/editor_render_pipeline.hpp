@@ -14,8 +14,10 @@ namespace Hyperion::Editor {
   public:
     void Initialize() override;
     void Render(Rendering::RenderFrame *render_frame, const Array<const Rendering::RenderFrameContextCamera *> &cameras) override;
-    void RenderCamera(Rendering::RenderFrame *render_frame, const Rendering::RenderFrameContextCamera *camera) override;
     void Shutdown() override;
+    
+    void SetupRendering(Rendering::RenderFrame *render_frame) override; 
+    void RenderCamera(Rendering::RenderFrame *render_frame, const Rendering::RenderFrameContextCamera *camera) override;
 
     inline uint32 GetRenderTargetWidth() const override { return m_wrapped_pipeline->GetRenderTargetWidth(); }
     inline uint32 GetRenderTargetHeight() const override { return m_wrapped_pipeline->GetRenderTargetHeight(); }
@@ -23,6 +25,7 @@ namespace Hyperion::Editor {
     inline RenderTexture *GetTargetRenderTexture() const override { return m_wrapped_pipeline->GetTargetRenderTexture(); }
     inline RenderTexture *GetEditorTargetRenderTexture() const { return m_editor_render_texture; }
 
+    inline void SetShouldDoSetup(bool8 should_do_setup) override { m_wrapped_pipeline->SetShouldDoSetup(should_do_setup); }
     inline void SetShouldBlitToScreen(bool8 should_blit_to_screen) override { m_wrapped_pipeline->SetShouldBlitToScreen(should_blit_to_screen); }
     inline void SetShouldResizeToScreen(bool8 should_resize_to_screen) override { m_wrapped_pipeline->SetShouldResizeToScreen(should_resize_to_screen); }
     inline void SetShouldDrawGizmos(bool8 should_draw_gizmos) override { m_wrapped_pipeline->SetShouldDrawGizmos(should_draw_gizmos); }

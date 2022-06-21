@@ -36,25 +36,8 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void ForwardRenderPipeline::Render(RenderFrame *render_frame, const Array<const RenderFrameContextCamera *> &cameras) {
-    if (m_should_resize_to_screen) {
-      if (Display::HasChangedSize()) {
-        m_render_target_width = Display::GetWidth();
-        m_render_target_height = Display::GetHeight();
-        m_target_render_texture->Resize(m_render_target_width, m_render_target_height);
-      }
-    } else {
-      if (m_target_render_texture->GetWidth() != m_render_target_width || m_target_render_texture->GetHeight() != m_render_target_height) {
-        m_target_render_texture->Resize(m_render_target_width, m_render_target_height);
-      }
-    }
-
-    {
-      RenderCommandBuffer command_buffer;
-      command_buffer.SetRenderTarget(RenderTargetId::Default());
-      command_buffer.ClearRenderTarget(ClearFlags::All, Color::Black());
-      command_buffer.SetRenderTarget(m_target_render_texture->GetRenderTargetId());
-      ForwardRenderLighting::SetupLighting(render_frame->GetContext(), command_buffer);
-      render_frame->ExecuteCommandBuffer(command_buffer);
+    if (m_should_do_setup) {
+      SetupRendering(render_frame);
     }
 
     for (const RenderFrameContextCamera *camera : cameras) {
@@ -69,6 +52,33 @@ namespace Hyperion::Rendering {
       } else {
         command_buffer.SetRenderTarget(RenderTargetId::Default());
       }
+      render_frame->ExecuteCommandBuffer(command_buffer);
+    }
+  }
+
+  //--------------------------------------------------------------
+  void ForwardRenderPipeline::Shutdown() { }
+
+  //--------------------------------------------------------------
+  void ForwardRenderPipeline::SetupRendering(RenderFrame *render_frame) {
+    if (m_should_resize_to_screen) {
+      if (Display::HasChangedSize()) {
+        m_render_target_width = Display::GetWidth();
+        m_render_target_height = Display::GetHeight();
+        m_target_render_texture->Resize(m_render_target_width, m_render_target_height);
+      }
+    } else {
+      if (m_target_render_texture->GetWidth() != m_render_target_width || m_target_render_texture->GetHeight() != m_render_target_height) {
+        m_target_render_texture->Resize(m_render_target_width, m_render_target_height);
+      }
+    }
+    
+    {
+      RenderCommandBuffer command_buffer;
+      command_buffer.SetRenderTarget(RenderTargetId::Default());
+      command_buffer.ClearRenderTarget(ClearFlags::All, Color::Black());
+      command_buffer.SetRenderTarget(m_target_render_texture->GetRenderTargetId());
+      ForwardRenderLighting::SetupLighting(render_frame->GetContext(), command_buffer);
       render_frame->ExecuteCommandBuffer(command_buffer);
     }
   }
@@ -107,9 +117,6 @@ namespace Hyperion::Rendering {
       render_frame->DrawGizmos();  
     }
   }
-
-  //--------------------------------------------------------------
-  void ForwardRenderPipeline::Shutdown() { }
 
   //--------------------------------------------------------------
   void ForwardRenderPipeline::SetRenderTargetSize(uint32 width, uint32 height) {

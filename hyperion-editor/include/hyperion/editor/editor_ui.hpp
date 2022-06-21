@@ -22,10 +22,12 @@ namespace Hyperion::Editor {
     static void Initialize();
     static void Update();
 
+    static EditorViewMode GetViewMode() { return s_view_mode; }
+    
     static bool8 HasFocusedElement();
     static Rect GetPreviewRect();
     static bool8 IsMouseInsidePreviewRect();
-
+    
     static void SetTransformationTool(Rendering::RenderGizmoType transformation_tool) { s_transformation_tool = transformation_tool; }
     
     static void HandleMouseSelection(Rendering::RenderFrame *render_frame, RenderTexture *render_texture);

@@ -28,6 +28,7 @@ namespace Hyperion::Editor {
     SetShouldBlitToScreen(false);
     SetShouldResizeToScreen(false);
     SetShouldDrawGizmos(false);
+    SetShouldDoSetup(false);
 
     UpdateSize();
     m_wrapped_pipeline->Initialize();
@@ -64,19 +65,28 @@ namespace Hyperion::Editor {
     m_object_ids_render_texture->Resize(GetRenderTargetWidth(), GetRenderTargetHeight());
     m_editor_render_texture->Resize(GetRenderTargetWidth(), GetRenderTargetHeight());
 
-    m_wrapped_pipeline->Render(render_frame, cameras);
-
+    SetupRendering(render_frame);
+    
+    if (EditorUI::GetViewMode() == EditorViewMode::Game) {
+      m_wrapped_pipeline->Render(render_frame, cameras);
+    }
+    
     RenderEditor(render_frame);
-  }
-
-  //--------------------------------------------------------------
-  void EditorRenderPipeline::RenderCamera(RenderFrame *render_frame, const RenderFrameContextCamera *camera) {
-    m_wrapped_pipeline->RenderCamera(render_frame, camera);
   }
 
   //--------------------------------------------------------------
   void EditorRenderPipeline::Shutdown() {
     m_wrapped_pipeline->Shutdown();
+  }
+
+  //--------------------------------------------------------------
+  void EditorRenderPipeline::SetupRendering(Rendering::RenderFrame *render_frame) {
+    m_wrapped_pipeline->SetupRendering(render_frame);
+  }
+
+  //--------------------------------------------------------------
+  void EditorRenderPipeline::RenderCamera(RenderFrame *render_frame, const RenderFrameContextCamera *camera) {
+    m_wrapped_pipeline->RenderCamera(render_frame, camera);
   }
 
   //--------------------------------------------------------------
@@ -88,12 +98,14 @@ namespace Hyperion::Editor {
       render_frame->ExecuteCommandBuffer(command_buffer);
     }
 
-    RenderFrameContextCamera editor_camera = EditorCamera::GetContextCamera();
-    editor_camera.index = static_cast<uint32>(RenderEngine::GetMainRenderFrame()->GetContext().GetCameras().GetLength());
-    RenderEngine::GetMainRenderFrame()->GetContext().AddCamera() = editor_camera;
-    SetShouldDrawGizmos(true);
-    m_wrapped_pipeline->RenderCamera(render_frame, &editor_camera);
-    SetShouldDrawGizmos(false);
+    if (EditorUI::GetViewMode() == EditorViewMode::Editor) {
+      RenderFrameContextCamera editor_camera = EditorCamera::GetContextCamera();
+      editor_camera.index = static_cast<uint32>(RenderEngine::GetMainRenderFrame()->GetContext().GetCameras().GetLength());
+      RenderEngine::GetMainRenderFrame()->GetContext().AddCamera() = editor_camera;
+      SetShouldDrawGizmos(true);
+      m_wrapped_pipeline->RenderCamera(render_frame, &editor_camera);
+      SetShouldDrawGizmos(false);  
+    }
 
     {
       RenderCommandBuffer command_buffer;
