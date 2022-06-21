@@ -29,6 +29,9 @@ project "hyperion"
 		"%{prj.location}/include/hyperion/modules/bullet/**",
 		"%{prj.location}/source/modules/bullet/**",
 
+		"%{prj.location}/include/hyperion/modules/soloud/**",
+		"%{prj.location}/source/modules/soloud/**",
+
   	"%{prj.location}/vendor/glad/source/glad_wgl.c"
 	}
 
@@ -51,9 +54,16 @@ project "hyperion"
 	filter "files:hyperion/vendor/**"
 		flags { "NoPCH" }
 
+	filter "options:audio=soloud"
+		files { 
+			"%{prj.location}/include/hyperion/modules/soloud/**",
+			"%{prj.location}/source/modules/soloud/**"
+		}
+		includedirs { "%{prj.location}/vendor/soloud/include" }
+
 	filter "options:physics=bullet"
 		files { 
-			"%{prj.location}/include/hyperion/modules/bullet/**",
+			"%{prj.location}/include/hyperion/modules/bullet/**",	
 			"%{prj.location}/source/modules/bullet/**"
 		}
 		includedirs { package_bullet_includedirs }
@@ -116,12 +126,19 @@ function linkhyperion(path)
 		links { package_rttr_release_links }
 		links { package_shaderc_release_links }
 
+	filter { "system:windows", "configurations:debug", "options:audio=soloud" }
+		libdirs { path .. "hyperion/vendor/soloud/lib/debug/windows/" }
+		links { "soloud" }
+	filter { "system:windows", "configurations:profile or release", "options:audio=soloud" }
+		libdirs { path .. "hyperion/vendor/soloud/lib/release/windows/" }
+		links { "soloud" }
+
 	filter { "system:windows", "configurations:debug", "options:physics=bullet" }
 		libdirs { package_bullet_debug_libdirs }
 		links { package_bullet_debug_links }
 	filter { "system:windows", "configurations:profile or release", "options:physics=bullet" }
 		libdirs { package_bullet_release_libdirs }
 		links { package_bullet_release_links }
-		
+
 	filter { }
 end

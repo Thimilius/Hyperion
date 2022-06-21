@@ -25,11 +25,12 @@ workspace "hyperion"
 		value = "API",
 		description = "Specifies the audio backend",
 		allowed = {
-			{ "none", "None" }
+			{ "none", "None" },
+			{ "soloud", "SoLoud" },
 		}
 	}
 	if not _OPTIONS[audio_backend_option] then
-		_OPTIONS[audio_backend_option] = "none"
+		_OPTIONS[audio_backend_option] = "soloud"
 	end
 
 	newoption {
@@ -69,6 +70,8 @@ workspace "hyperion"
 
 	filter "options:audio=none"
 		defines { "HYP_AUDIO_NONE" }
+	filter "options:audio=soloud"
+		defines { "HYP_AUDIO_SOLOUD" }
 
 	filter "options:physics=none"
 		defines { "HYP_PHYSICS_NONE" }
