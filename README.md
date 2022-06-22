@@ -45,14 +45,17 @@ The best example for that is the C# scripting where the focus is the implementat
 
 ## Dependencies
 
+For dependency management the project uses the *Conan* package manage.
+
 Currently the engine relies on the following libraries:
 - [*assimp*](https://github.com/assimp/assimp) for loading meshes
-- [*bullet3*](https://github.com/bulletphysics/bullet3) for providing a physics backend
+- [*bullet3*](https://github.com/bulletphysics/bullet3) for providing a physics driver
 - [*freetype*](https://github.com/freetype/freetype) for loading fonts
 - [*glad*](https://github.com/Dav1dde/glad) for loading OpenGL extensions
 - [*nameof*](https://github.com/Neargye/nameof) for simplifying getting the name of types at compile-time
 - [*optick*](https://github.com/bombomby/optick) for integration with the frame-debugger
 - [*shaderc*](https://github.com/google/shaderc) for compiling glsl to SPIR-V
+- [*soloud*](https://github.com/jarikomppa/soloud) for providing an audio driver
 - [*stb*](https://github.com/nothings/stb) for loading images
 - [*vulkan-memory-allocator*](https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator) for simplifying memory management in Vulkan 
 - [*yaml-cpp*](https://github.com/jbeder/yaml-cpp) for serializing data 
@@ -68,7 +71,7 @@ This way the gaining of knowledge can be maximized by actually having to impleme
 
 ## Building
 
-Currently the engine uses *Premake5* as a build system and *Conan* as a package manager.
+Currently the engine uses *Premake5* as a build system.
 The *generate.bat* script generates the required Visual Studio solution file for building on Windows using MSVC and set ups all required packages (Premake5 and Conan have to be on the path).
 Currently there is no support for other platforms or other compilers.
 
