@@ -19,6 +19,8 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   void TextMeshGenerator::GenerateMesh(const TextMeshGenerationSettings &settings, MeshBuilder &mesh_builder) {
+    HYP_PROFILE_SCOPE("TextMeshGenerator.GenerateMesh")
+    
     Font *font = settings.font;
     Color color = settings.color;
     float32 scale_x = settings.scale.x;

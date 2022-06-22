@@ -83,7 +83,7 @@ namespace Hyperion::UI {
     Color text_shadow_color = Color::Black();
     Vector2 text_shadow_offset = Vector2(1.0f, -1.0f);
 
-    float32 scroll_multiplier = 5.0f;
+    float32 scroll_multiplier = 10.0f;
     
     Font *font = nullptr;
   };

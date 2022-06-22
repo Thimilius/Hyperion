@@ -113,7 +113,7 @@ namespace Hyperion::Editor {
       Size center_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
       UIImmediate::BeginPanel("Center Panel", center_panel_size);
       {
-        Size left_panel_size[2] = { { SizeKind::PercentOfParent, 0.3f }, { SizeKind::AutoFill, 0.0f } };
+        Size left_panel_size[2] = { { SizeKind::PercentOfParent, 0.35f }, { SizeKind::AutoFill, 0.0f } };
         UIImmediate::BeginPanel("Left Panel", left_panel_size, ChildLayout::Vertical);
         {
           EntityHierarchyPanel();
@@ -560,8 +560,8 @@ namespace Hyperion::Editor {
     } else {
       component_name = component_type.get_name().to_string();
     }
-    
-    UIImmediate::Space(SizeKind::Pixels, 10.0f);
+
+    UIImmediate::Space(SizeKind::Pixels, 5.0f);
     Size component_header_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 25.0f } };
     UIImmediate::BeginPanel(component_name + "Header", component_header_panel_size);
     {
@@ -589,6 +589,7 @@ namespace Hyperion::Editor {
       UIImmediate::Space(SizeKind::Pixels, 5.0f);
     }
     UIImmediate::EndPanel();
+    UIImmediate::Space(SizeKind::Pixels, 5.0f);
 
     Instance instance = Reflection::CreateInstanceFromRaw(component_type, component);
       

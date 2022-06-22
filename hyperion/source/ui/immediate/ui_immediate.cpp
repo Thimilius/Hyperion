@@ -466,7 +466,7 @@ namespace Hyperion::UI {
     {
       HYP_PROFILE_SCOPE("UIImmediate.Layout.Step1")
       
-      IterateHierarchy(s_state.root_element, [](UIImmediateElement &element) {
+      IterateHierarchyForLayout(s_state.root_element, [](UIImmediateElement &element) {
         auto calculate_size = [](UIImmediateElement &element, uint32 axis) {
           Size &semantic_size = element.layout.semantic_size[axis];
 
@@ -495,8 +495,6 @@ namespace Hyperion::UI {
 
         calculate_size(element, 0);
         calculate_size(element, 1);
-
-        return true;
       });
     }
     
@@ -504,7 +502,7 @@ namespace Hyperion::UI {
     {
       HYP_PROFILE_SCOPE("UIImmediate.Layout.Step2")
       
-      IterateHierarchy(s_state.root_element, [](UIImmediateElement &element) {
+      IterateHierarchyForLayout(s_state.root_element, [](UIImmediateElement &element) {
         auto calculate_size = [](UIImmediateElement &element, uint32 axis) {
           UIImmediateElement *parent = element.hierarchy.parent;
         
@@ -554,8 +552,6 @@ namespace Hyperion::UI {
 
         calculate_size(element, 0);
         calculate_size(element, 1);
-
-        return true;
       });
     }
 
@@ -563,7 +559,7 @@ namespace Hyperion::UI {
     {
       HYP_PROFILE_SCOPE("UIImmediate.Layout.Step3")
       
-      IterateHierarchy(s_state.root_element, [](UIImmediateElement &element) {
+      IterateHierarchyForLayout(s_state.root_element, [](UIImmediateElement &element) {
         auto calculate_size = [](UIImmediateElement &element, uint32 axis) {
           if (element.layout.semantic_size[axis].kind == SizeKind::AutoFill) {
             UIImmediateElement *parent = element.hierarchy.parent;
@@ -578,8 +574,6 @@ namespace Hyperion::UI {
 
         calculate_size(element, 0);
         calculate_size(element, 1);
-
-        return true;
       });
     }
     
@@ -587,7 +581,7 @@ namespace Hyperion::UI {
     {
       HYP_PROFILE_SCOPE("UIImmediate.Layout.Step4")
       
-      IterateHierarchy(s_state.root_element, [](UIImmediateElement &element) {
+      IterateHierarchyForLayout(s_state.root_element, [](UIImmediateElement &element) {
         UIImmediateElement *parent = element.hierarchy.parent;
         
         // Position ourself relative to our previous sibling depending on the layout axis of our parent.
@@ -651,8 +645,6 @@ namespace Hyperion::UI {
         element.layout.rect = Rect(rect_position, rect_size);
         element.layout.child_size[0] = element.layout.computed_child_size_sum[0];
         element.layout.child_size[1] = element.layout.computed_child_size_sum[1];
-        
-        return true;
       });
     }
   }
@@ -661,10 +653,10 @@ namespace Hyperion::UI {
   void UIImmediate::Render() {
     HYP_PROFILE_SCOPE("UIImmediate::Render")
     
-    RectInt default_scissor = { 0, 0, static_cast<int32>(Display::GetWidth()), static_cast<int32>(Display::GetHeight()) };
+    RectInt root_scissor = { 0, 0, static_cast<int32>(Display::GetWidth()), static_cast<int32>(Display::GetHeight()) };
     
     bool8 last_draw_was_a_simple_rect = false;
-    IterateHierarchy(s_state.root_element, [&last_draw_was_a_simple_rect, default_scissor](UIImmediateElement &element) {
+    IterateHierarchyForRender(s_state.root_element, root_scissor, [&last_draw_was_a_simple_rect](UIImmediateElement &element, RectInt scissor) {
       if (!IsInsideParent(element)) {
         return false;
       }
@@ -679,26 +671,19 @@ namespace Hyperion::UI {
       bool8 is_input = (element.widget.flags & UIImmediateWidgetFlags::Input) == UIImmediateWidgetFlags::Input;
       bool8 is_image = (element.widget.flags & UIImmediateWidgetFlags::Image) == UIImmediateWidgetFlags::Image;
 
-      Rect rect = element.layout.rect; 
-      Vector2 screen_point = UISpacePointToScreenPoint(Vector2(rect.x, rect.y));
-      RectInt element_scissor = {
-        static_cast<int32>(screen_point.x),
-        static_cast<int32>(screen_point.y),
-        static_cast<int32>(rect.width),
-        static_cast<int32>(rect.height)
-      };
+      Rect rect = element.layout.rect;
       
       if (is_separator || is_panel || is_button || is_toggle || is_input || is_image) {
         Color color = GetBackgroundColor(element);
 
         if (is_image) {
           if (last_draw_was_a_simple_rect) {
-            Flush(default_scissor);    
+            Flush(scissor);    
           }
           
           last_draw_was_a_simple_rect = false;
           DrawRect(rect, color);
-          Flush(default_scissor, AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI), element.widget.texture, false);
+          Flush(scissor, AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI), element.widget.texture, false);
         } else {
           DrawRect(rect, color);
           last_draw_was_a_simple_rect = true;
@@ -707,7 +692,7 @@ namespace Hyperion::UI {
 
       if (is_text || is_button || is_toggle || is_input) {
         if (last_draw_was_a_simple_rect) {
-          Flush(default_scissor);    
+          Flush(scissor);    
         }
 
         Vector2 text_offset;
@@ -740,7 +725,7 @@ namespace Hyperion::UI {
         Color color = GetTextColor(element);
         DrawText(rect, element.widget.text, theme.font, element.widget.text_alignment, color, text_offset);
         
-        Flush(element_scissor, AssetManager::GetMaterialPrimitive(MaterialPrimitive::Font), theme.font->GetTexture());
+        Flush(scissor, AssetManager::GetMaterialPrimitive(MaterialPrimitive::Font), theme.font->GetTexture());
         last_draw_was_a_simple_rect = false;
       }
 
@@ -774,14 +759,14 @@ namespace Hyperion::UI {
           };
           
           DrawRect(cursor_rect, theme.input_cursor_color);
-          Flush(default_scissor);
+          Flush(scissor);
           last_draw_was_a_simple_rect = false;
         }
       }
       
       return true;
     });
-    Flush(default_scissor);
+    Flush(root_scissor);
     
     Rendering::RenderFrameContext &render_frame_context = Rendering::RenderEngine::GetMainRenderFrame()->GetContext();
     for (UIImmediateMeshDraw mesh_draw : s_mesh_draws) {
@@ -1094,6 +1079,11 @@ namespace Hyperion::UI {
     element->layout.rect = rect;
     element->layout.child_size[0] = child_sum[0];
     element->layout.child_size[1] = child_sum[1];
+
+    // HACK: This is a weird workaround but prevents things from being permanently cut.
+    if (Display::HasChangedSize()) {
+      element->widget.scroll_offset = 0.0f;
+    }
     
     PlaceElementInHierarchy(*element);
 
@@ -1188,15 +1178,59 @@ namespace Hyperion::UI {
   }
   
   //--------------------------------------------------------------
-  void UIImmediate::IterateHierarchy(UIImmediateElement &parent, const std::function<bool8(UIImmediateElement &)> &callback) {
-    if (callback(parent)) {
-      UIImmediateElement *child = parent.hierarchy.first_child;
-      for (uint64 i = 0; i < parent.hierarchy.child_count; ++i) {
-        IterateHierarchy(*child, callback);
-        child = child->hierarchy.next_sibling;
-      }
+  void UIImmediate::IterateHierarchyForLayout(UIImmediateElement &parent, const std::function<void(UIImmediateElement &)> &callback) {
+    callback(parent);
+    UIImmediateElement *child = parent.hierarchy.first_child;
+    for (uint64 i = 0; i < parent.hierarchy.child_count; ++i) {
+      IterateHierarchyForLayout(*child, callback);
+      child = child->hierarchy.next_sibling;
     }
   }
-  
+
+  //--------------------------------------------------------------
+  void UIImmediate::IterateHierarchyForRender(
+    UIImmediateElement &parent,
+    RectInt scissor,
+    const std::function<bool8(UIImmediateElement &, RectInt)> &callback) {
+    if (callback(parent, scissor)) {
+      // Scrollables push a new scissor rect on the stack.
+      bool8 is_scrollable = (parent.widget.flags & UIImmediateWidgetFlags::Scrollable) == UIImmediateWidgetFlags::Scrollable;
+      if (is_scrollable) {
+        // We get a new scissor rect so flush everything we have until now to force a new draw call.
+        Flush(scissor);
+        
+        Rect rect = parent.layout.rect;
+        Vector2 rect_screen_point = UISpacePointToScreenPoint(Vector2(rect.x, rect.y));
+        scissor = {
+          static_cast<int32>(rect_screen_point.x),
+          static_cast<int32>(rect_screen_point.y),
+          static_cast<int32>(rect.width),
+          static_cast<int32>(rect.height)
+        };
+      }
+      
+      UIImmediateElement *child = parent.hierarchy.first_child;
+      for (uint64 i = 0; i < parent.hierarchy.child_count; ++i) {
+        // Text elements use their own rect as a scissor.
+        bool8 is_text = (parent.widget.flags & UIImmediateWidgetFlags::Text) == UIImmediateWidgetFlags::Text;
+        RectInt child_scissor = scissor;
+        if (is_text) {
+          // NOTE: This new scissor relies on the fact that the rendering flushes before drawing text.
+          Rect child_rect = child->layout.rect;
+          Vector2 child_rect_screen_point = UISpacePointToScreenPoint(Vector2(child_rect.x, child_rect.y));
+          child_scissor = {
+            static_cast<int32>(child_rect_screen_point.x),
+            static_cast<int32>(child_rect_screen_point.y),
+            static_cast<int32>(child_rect.width),
+            static_cast<int32>(child_rect.height)
+          };
+        }
+
+        IterateHierarchyForRender(*child, child_scissor, callback);
+        child = child->hierarchy.next_sibling;
+      }  
+    }
+  }
+
 }
  
