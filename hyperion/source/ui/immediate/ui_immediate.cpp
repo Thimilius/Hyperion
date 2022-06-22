@@ -453,178 +453,196 @@ namespace Hyperion::UI {
   //--------------------------------------------------------------
   void UIImmediate::Layout() {
     // Step 1: Calculate all independent size kinds likes pixels and text content.
-    IterateHierarchy(s_state.root_element, [](UIImmediateElement &element) {
-      auto calculate_size = [](UIImmediateElement &element, uint32 axis) {
-        Size &semantic_size = element.layout.semantic_size[axis];
+    {
+      HYP_PROFILE_SCOPE("UIImmediate.Layout.Step1")
+      
+      IterateHierarchy(s_state.root_element, [](UIImmediateElement &element) {
+        auto calculate_size = [](UIImmediateElement &element, uint32 axis) {
+          Size &semantic_size = element.layout.semantic_size[axis];
 
-        float32 computed_size = 0.0f;
-        if (semantic_size.kind == SizeKind::Pixels) {
-          computed_size = semantic_size.value;
-        }
-        if (semantic_size.kind == SizeKind::TextContent) {
-          if (!element.widget.text.empty()) {
-            Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(element.widget.text);
-            TextSize text_size =  TextUtilities::GetTextSize(element.widget.theme->font, codepoints, 0, 1.0f, false);
-            computed_size = text_size.size[axis] + semantic_size.value;
-          } else {
+          float32 computed_size = 0.0f;
+          if (semantic_size.kind == SizeKind::Pixels) {
             computed_size = semantic_size.value;
           }
-        }
-
-        element.layout.computed_size[axis] = computed_size;
-
-        if (element.hierarchy.parent != nullptr) {
-          if ((element.widget.flags & UIImmediateWidgetFlags::Empty) != UIImmediateWidgetFlags::Empty) {
-            element.hierarchy.parent->layout.computed_child_size_sum[axis] += computed_size;
-          }
-        }
-      };
-
-      calculate_size(element, 0);
-      calculate_size(element, 1);
-
-      return true;
-    });
-    
-    // Step 2: Calculate all upwards dependent sizes like percentage of parent and prepare fill.
-    IterateHierarchy(s_state.root_element, [](UIImmediateElement &element) {
-      auto calculate_size = [](UIImmediateElement &element, uint32 axis) {
-        UIImmediateElement *parent = element.hierarchy.parent;
-        
-        // The auto fill should only be applied to the axis which is being used for child layout.
-        if (element.layout.semantic_size[axis].kind == SizeKind::AutoFill) {
-          if (parent != nullptr) {
-            if ((axis == 0 && parent->layout.child_layout == ChildLayout::Horizontal) ||
-              (axis == 1 && parent->layout.child_layout == ChildLayout::Vertical)) {
-              parent->layout.fill_child_count++;  
+          if (semantic_size.kind == SizeKind::TextContent) {
+            if (!element.widget.text.empty()) {
+              Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(element.widget.text);
+              TextSize text_size =  TextUtilities::GetTextSize(element.widget.theme->font, codepoints, 0, 1.0f, false);
+              computed_size = text_size.size[axis] + semantic_size.value;
             } else {
-              // Otherwise it should act as a full percentage of parent. 
-              element.layout.semantic_size[axis].kind = SizeKind::PercentOfParent;
-              element.layout.semantic_size[axis].value = 1.0f;
+              computed_size = semantic_size.value;
             }
           }
-        }
-        
-        if (element.layout.semantic_size[axis].kind == SizeKind::AutoFill) {
-          if (parent != nullptr) {
-            float32 parent_size = parent->layout.computed_size[axis];
-            float32 computed_size = parent_size - parent->layout.computed_child_size_sum[axis];
-            
-            element.layout.computed_size[axis] = computed_size / static_cast<float32>(parent->layout.fill_child_count);
-          }
-        }
-        
-        if (element.layout.semantic_size[axis].kind == SizeKind::PercentOfParent) {
-          float32 percent = Math::Clamp01(element.layout.semantic_size[axis].value);
-          
-          float32 parent_size = 0.0f;
-          if (parent == nullptr) {
-            parent_size = axis == 0 ? static_cast<float32>(Display::GetWidth()) : static_cast<float32>(Display::GetHeight());
-          } else {
-            parent_size = parent->layout.computed_size[axis];
-          }
-          float32 computed_size = percent * parent_size;
 
           element.layout.computed_size[axis] = computed_size;
-          
-          if (parent != nullptr) {
+
+          if (element.hierarchy.parent != nullptr) {
             if ((element.widget.flags & UIImmediateWidgetFlags::Empty) != UIImmediateWidgetFlags::Empty) {
-              parent->layout.computed_child_size_sum[axis] += computed_size;
+              element.hierarchy.parent->layout.computed_child_size_sum[axis] += computed_size;
             }
-          }  
-        }
-      };
+          }
+        };
 
-      calculate_size(element, 0);
-      calculate_size(element, 1);
+        calculate_size(element, 0);
+        calculate_size(element, 1);
 
-      return true;
-    });
+        return true;
+      });
+    }
+    
+    // Step 2: Calculate all upwards dependent sizes like percentage of parent and prepare fill.
+    {
+      HYP_PROFILE_SCOPE("UIImmediate.Layout.Step2")
+      
+      IterateHierarchy(s_state.root_element, [](UIImmediateElement &element) {
+        auto calculate_size = [](UIImmediateElement &element, uint32 axis) {
+          UIImmediateElement *parent = element.hierarchy.parent;
+        
+          // The auto fill should only be applied to the axis which is being used for child layout.
+          if (element.layout.semantic_size[axis].kind == SizeKind::AutoFill) {
+            if (parent != nullptr) {
+              if ((axis == 0 && parent->layout.child_layout == ChildLayout::Horizontal) ||
+                (axis == 1 && parent->layout.child_layout == ChildLayout::Vertical)) {
+                parent->layout.fill_child_count++;  
+              } else {
+                // Otherwise it should act as a full percentage of parent. 
+                element.layout.semantic_size[axis].kind = SizeKind::PercentOfParent;
+                element.layout.semantic_size[axis].value = 1.0f;
+              }
+            }
+          }
+        
+          if (element.layout.semantic_size[axis].kind == SizeKind::AutoFill) {
+            if (parent != nullptr) {
+              float32 parent_size = parent->layout.computed_size[axis];
+              float32 computed_size = parent_size - parent->layout.computed_child_size_sum[axis];
+            
+              element.layout.computed_size[axis] = computed_size / static_cast<float32>(parent->layout.fill_child_count);
+            }
+          }
+        
+          if (element.layout.semantic_size[axis].kind == SizeKind::PercentOfParent) {
+            float32 percent = Math::Clamp01(element.layout.semantic_size[axis].value);
+          
+            float32 parent_size = 0.0f;
+            if (parent == nullptr) {
+              parent_size = axis == 0 ? static_cast<float32>(Display::GetWidth()) : static_cast<float32>(Display::GetHeight());
+            } else {
+              parent_size = parent->layout.computed_size[axis];
+            }
+            float32 computed_size = percent * parent_size;
+
+            element.layout.computed_size[axis] = computed_size;
+          
+            if (parent != nullptr) {
+              if ((element.widget.flags & UIImmediateWidgetFlags::Empty) != UIImmediateWidgetFlags::Empty) {
+                parent->layout.computed_child_size_sum[axis] += computed_size;
+              }
+            }  
+          }
+        };
+
+        calculate_size(element, 0);
+        calculate_size(element, 1);
+
+        return true;
+      });
+    }
 
     // Step 3: Calculate fill.
-    IterateHierarchy(s_state.root_element, [](UIImmediateElement &element) {
-      auto calculate_size = [](UIImmediateElement &element, uint32 axis) {
-        if (element.layout.semantic_size[axis].kind == SizeKind::AutoFill) {
-          UIImmediateElement *parent = element.hierarchy.parent;
-          if (parent != nullptr) {
-            float32 parent_size = parent->layout.computed_size[axis];
-            float32 computed_size = parent_size - parent->layout.computed_child_size_sum[axis];
+    {
+      HYP_PROFILE_SCOPE("UIImmediate.Layout.Step3")
+      
+      IterateHierarchy(s_state.root_element, [](UIImmediateElement &element) {
+        auto calculate_size = [](UIImmediateElement &element, uint32 axis) {
+          if (element.layout.semantic_size[axis].kind == SizeKind::AutoFill) {
+            UIImmediateElement *parent = element.hierarchy.parent;
+            if (parent != nullptr) {
+              float32 parent_size = parent->layout.computed_size[axis];
+              float32 computed_size = parent_size - parent->layout.computed_child_size_sum[axis];
             
-            element.layout.computed_size[axis] = computed_size / static_cast<float32>(parent->layout.fill_child_count);
+              element.layout.computed_size[axis] = computed_size / static_cast<float32>(parent->layout.fill_child_count);
+            }
           }
-        }
-      };
+        };
 
-      calculate_size(element, 0);
-      calculate_size(element, 1);
+        calculate_size(element, 0);
+        calculate_size(element, 1);
 
-      return true;
-    });
+        return true;
+      });
+    }
     
     // Last step: Calculate relative position to parent and final rect.
-    IterateHierarchy(s_state.root_element, [](UIImmediateElement &element) {
-      UIImmediateElement *parent = element.hierarchy.parent;
+    {
+      HYP_PROFILE_SCOPE("UIImmediate.Layout.Step4")
       
-      // Position ourself relative to our previous sibling depending on the layout axis of our parent.
-      float32 relative_position[2] = { };
-      bool8 element_is_empty = (element.widget.flags & UIImmediateWidgetFlags::Empty) == UIImmediateWidgetFlags::Empty;
-      if (parent != nullptr && !element_is_empty) {
-        switch (parent->layout.child_layout) {
-          case ChildLayout::Horizontal: {
-            relative_position[0] += parent->layout.child_layout_offset;
-            parent->layout.child_layout_offset += element.layout.computed_size[0];
-            break;
+      IterateHierarchy(s_state.root_element, [](UIImmediateElement &element) {
+        UIImmediateElement *parent = element.hierarchy.parent;
+        
+        // Position ourself relative to our previous sibling depending on the layout axis of our parent.
+        float32 relative_position[2] = { };
+        bool8 element_is_empty = (element.widget.flags & UIImmediateWidgetFlags::Empty) == UIImmediateWidgetFlags::Empty;
+        if (parent != nullptr && !element_is_empty) {
+          switch (parent->layout.child_layout) {
+            case ChildLayout::Horizontal: {
+              relative_position[0] += parent->layout.child_layout_offset;
+              parent->layout.child_layout_offset += element.layout.computed_size[0];
+              break;
+            }
+            case ChildLayout::Vertical: {
+              relative_position[1] += parent->layout.child_layout_offset;
+              parent->layout.child_layout_offset -= element.layout.computed_size[1];
+              break;
+            }
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
           }
-          case ChildLayout::Vertical: {
-            relative_position[1] += parent->layout.child_layout_offset;
-            parent->layout.child_layout_offset -= element.layout.computed_size[1];
-            break;
+        }
+
+        float32 absolute_position[2] = { relative_position[0], relative_position[1] };
+        if (parent != nullptr) {
+          absolute_position[0] += parent->layout.computed_absolute_position[0];
+          absolute_position[1] += parent->layout.computed_absolute_position[1];
+
+          // For now we restrict every elements size to not overflow the parents size.
+          Rect parent_rect = parent->layout.rect;
+          float32 x = relative_position[0];
+          float32 y = relative_position[1];
+          float32 width = element.layout.computed_size[0];
+          float32 height = element.layout.computed_size[1];
+
+          if (x + width > parent_rect.width) {
+            element.layout.computed_size[0] = width - ((x + width) - parent_rect.width);
           }
-          default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
+          if (y + height > parent_rect.height) {
+            element.layout.computed_size[1] = height - ((x + height) - parent_rect.height);
+          }
         }
-      }
+        element.layout.computed_absolute_position[0] = absolute_position[0];
+        element.layout.computed_absolute_position[1] = absolute_position[1];
+        
+        // Properly position us in the correct coordinate space with our final calculated position and size.
+        Vector2 rect_size = Vector2(element.layout.computed_size[0], element.layout.computed_size[1]);
+        Vector2 rect_position = Vector2(element.layout.computed_absolute_position[0], element.layout.computed_absolute_position[1]);
 
-      float32 absolute_position[2] = { relative_position[0], relative_position[1] };
-      if (parent != nullptr) {
-        absolute_position[0] += parent->layout.computed_absolute_position[0];
-        absolute_position[1] += parent->layout.computed_absolute_position[1];
-
-        // For now we restrict every elements size to not overflow the parents size.
-        Rect parent_rect = parent->layout.rect;
-        float32 x = relative_position[0];
-        float32 y = relative_position[1];
-        float32 width = element.layout.computed_size[0];
-        float32 height = element.layout.computed_size[1];
-
-        if (x + width > parent_rect.width) {
-          element.layout.computed_size[0] = width - ((x + width) - parent_rect.width);
-        }
-        if (y + height > parent_rect.height) {
-          element.layout.computed_size[1] = height - ((x + height) - parent_rect.height);
-        }
-      }
-      element.layout.computed_absolute_position[0] = absolute_position[0];
-      element.layout.computed_absolute_position[1] = absolute_position[1];
-      
-      // Properly position us in the correct coordinate space with our final calculated position and size.
-      Vector2 rect_size = Vector2(element.layout.computed_size[0], element.layout.computed_size[1]);
-      Vector2 rect_position = Vector2(element.layout.computed_absolute_position[0], element.layout.computed_absolute_position[1]);
-
-      // Position (0, 0) is at the center of the screen.
-      // So every element gets an offset to position it at the top left corner of the screen.
-      rect_position.x -= static_cast<float32>(Display::GetWidth()) / 2.0f;
-      rect_position.y += static_cast<float32>(Display::GetHeight()) / 2.0f;
-      // Every rect is positioned relative to the bottom left corner.
-      rect_position.y -= rect_size.y;
-      
-      element.layout.rect = Rect(rect_position, rect_size);
-      
-      return true;
-    });
+        // Position (0, 0) is at the center of the screen.
+        // So every element gets an offset to position it at the top left corner of the screen.
+        rect_position.x -= static_cast<float32>(Display::GetWidth()) / 2.0f;
+        rect_position.y += static_cast<float32>(Display::GetHeight()) / 2.0f;
+        // Every rect is positioned relative to the bottom left corner.
+        rect_position.y -= rect_size.y;
+        
+        element.layout.rect = Rect(rect_position, rect_size);
+        
+        return true;
+      });
+    }
   }
 
   //--------------------------------------------------------------
   void UIImmediate::Render() {
+    HYP_PROFILE_SCOPE("UIImmediate::Render")
+    
     RectInt default_scissor = { 0, 0, static_cast<int32>(Display::GetWidth()), static_cast<int32>(Display::GetHeight()) };
     
     bool8 last_draw_was_a_simple_rect = false;
