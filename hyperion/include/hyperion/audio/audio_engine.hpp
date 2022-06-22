@@ -4,7 +4,6 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
 #include "hyperion/audio/audio_driver.hpp"
-#include "hyperion/core/app/application_settings.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -15,6 +14,9 @@ namespace Hyperion {
 namespace Hyperion::Audio {
 
   class AudioEngine final {
+  public:
+    static IAudioSound *LoadSound(const String &path);
+    static void PlaySound(IAudioSound *sound);
   private:
     AudioEngine() = delete;
     ~AudioEngine() = delete;

@@ -13,6 +13,16 @@
 namespace Hyperion::Audio {
 
   //--------------------------------------------------------------
+  IAudioSound *AudioEngine::LoadSound(const String &path) {
+    return s_audio_driver->LoadSound(path);
+  }
+
+  //--------------------------------------------------------------
+  void AudioEngine::PlaySound(IAudioSound *sound) {
+    s_audio_driver->PlaySound(sound);
+  }
+
+  //--------------------------------------------------------------
   void AudioEngine::Initialize() {
 #ifdef HYP_AUDIO_SOLOUD
     s_audio_driver = new SoLoudAudioDriver();

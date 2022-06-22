@@ -161,7 +161,7 @@ namespace Hyperion::Editor {
 
     settings.scripting.assembly_name = "Hyperion.Editor.dll";
   }
-
+  
   //--------------------------------------------------------------
   void EditorApplication::OnInitialize() {
     if (FileSystem::Exists(WORLD_PATH)) {
@@ -201,7 +201,6 @@ namespace Hyperion::Editor {
 
     Vector2 preview_size = EditorUI::GetPreviewRect().size;
     Display::SetPreviewSize(static_cast<uint32>(preview_size.x), static_cast<uint32>(preview_size.y));
-
 #if UI_TEST
     static UI::UIImmediateTheme *red_theme = UI::UIImmediate::CreateTheme("Red");
     red_theme->panel_color = Color::Red();

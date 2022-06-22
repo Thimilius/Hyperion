@@ -6,6 +6,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/audio/audio_driver.hpp"
+#include "hyperion/modules/soloud/soloud_audio_sound.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Audio {
@@ -16,8 +17,13 @@ namespace Hyperion::Audio {
 
     void Initialize() override;
     void Shutdown() override;
+
+    IAudioSound *LoadSound(const String &path) override;
+    void PlaySound(IAudioSound *sound) override;
   private:
     SoLoud::Soloud *m_soloud = nullptr;
+
+    Array<SoLoudAudioSound *> m_sounds;
   };
   
 }

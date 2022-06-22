@@ -4,6 +4,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/common.hpp"
 #include "hyperion/audio/audio_backend.hpp"
+#include "hyperion/audio/audio_sound.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Audio {
@@ -16,6 +17,9 @@ namespace Hyperion::Audio {
 
     virtual void Initialize() = 0;
     virtual void Shutdown() = 0;
+
+    virtual IAudioSound *LoadSound(const String &path) = 0;
+    virtual void PlaySound(IAudioSound *sound) = 0;
   };
 
   class NullAudioDriver final : public IAudioDriver {
@@ -27,6 +31,9 @@ namespace Hyperion::Audio {
     }
 
     void Shutdown() override { }
+
+    IAudioSound *LoadSound(const String &path) override { return new NullAudioSound(); }
+    void PlaySound(IAudioSound *sound) override { }
   };
 
 }
