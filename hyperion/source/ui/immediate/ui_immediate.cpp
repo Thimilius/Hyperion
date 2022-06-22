@@ -38,6 +38,7 @@ namespace Hyperion::UI {
     }
 
     s_state.mouse_position = ScreenPointToUISpacePoint(Input::GetMousePosition().ToFloat());
+    s_state.mouse_scroll = Input::GetMouseScroll();
     s_state.is_left_mouse_down = Input::IsMouseButtonDown(MouseButtonCode::Left);
     s_state.is_left_mouse_hold = Input::IsMouseButtonHold(MouseButtonCode::Left);
     s_state.is_left_mouse_up = Input::IsMouseButtonUp(MouseButtonCode::Left);
@@ -159,8 +160,17 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
-  UIImmediateInteraction UIImmediate::BeginPanel(const String &text, Size size[2], ChildLayout child_layout, bool8 interactable, UIImmediateTheme *theme) {
+  UIImmediateInteraction UIImmediate::BeginPanel(
+    const String &text,
+    Size size[2],
+    ChildLayout child_layout,
+    bool8 scrollable,
+    bool8 interactable,
+    UIImmediateTheme *theme) {
     UIImmediateWidgetFlags widget_flags = interactable ? UIImmediateWidgetFlags::Panel | UIImmediateWidgetFlags::Interactable : UIImmediateWidgetFlags::Panel;
+    if (scrollable) {
+      widget_flags |= UIImmediateWidgetFlags::Scrollable;
+    }
     UIImmediateElement &element = GetOrCreateElement(text, widget_flags);
 
     element.layout.semantic_size[0] = size[0];
@@ -301,16 +311,16 @@ namespace Hyperion::UI {
     // That means every modification we make to the cursor has to be converted to the appropriate byte size of the corresponding utf-8 codepoint.
     
     auto decrement_cursor = [](UIImmediateElement &element, int32 size) {
-      element.widget.cursor_position.x -= size;
-      if (element.widget.cursor_position.x < 0) {
-        element.widget.cursor_position.x = 0;
+      element.widget.input_cursor_position.x -= size;
+      if (element.widget.input_cursor_position.x < 0) {
+        element.widget.input_cursor_position.x = 0;
       }
       element.animation.focused_time_offset = Time::GetTime();
     };
     auto increment_cursor = [](UIImmediateElement &element, int32 size, const String &text) {
-      element.widget.cursor_position.x += size;
-      if (element.widget.cursor_position.x > static_cast<int32>(text.size())) {
-        element.widget.cursor_position.x = static_cast<int32>(text.size());
+      element.widget.input_cursor_position.x += size;
+      if (element.widget.input_cursor_position.x > static_cast<int32>(text.size())) {
+        element.widget.input_cursor_position.x = static_cast<int32>(text.size());
       }
       element.animation.focused_time_offset = Time::GetTime();
     };
@@ -328,17 +338,17 @@ namespace Hyperion::UI {
             // We lose focus on return.
             s_state.focused_element = 0;
           } else if (key_code == KeyCode::Left) {
-            decrement_cursor(element, static_cast<int32>(StringUtils::GetCodepointSizeBeforeOffsetFromUtf8(text, element.widget.cursor_position.x)));
+            decrement_cursor(element, static_cast<int32>(StringUtils::GetCodepointSizeBeforeOffsetFromUtf8(text, element.widget.input_cursor_position.x)));
           } else if (key_code == KeyCode::Right) {
-            increment_cursor(element, static_cast<int32>(StringUtils::GetCodepointSizeFromUtf8(text, element.widget.cursor_position.x)), text);
+            increment_cursor(element, static_cast<int32>(StringUtils::GetCodepointSizeFromUtf8(text, element.widget.input_cursor_position.x)), text);
           } else if (key_code == KeyCode::Home) {
-            element.widget.cursor_position = Vector2Int();
+            element.widget.input_cursor_position = Vector2Int();
           } else if (key_code == KeyCode::End) {
-            element.widget.cursor_position = Vector2Int(static_cast<int32>(element.widget.text.size()), 0); 
+            element.widget.input_cursor_position = Vector2Int(static_cast<int32>(element.widget.text.size()), 0); 
           } else if (key_code == KeyCode::Back) {
             if (!text.empty()) {
-              uint32 codepoint_size = StringUtils::GetCodepointSizeBeforeOffsetFromUtf8(text, element.widget.cursor_position.x);
-              int32 erase_position = element.widget.cursor_position.x - static_cast<int32>(codepoint_size);
+              uint32 codepoint_size = StringUtils::GetCodepointSizeBeforeOffsetFromUtf8(text, element.widget.input_cursor_position.x);
+              int32 erase_position = element.widget.input_cursor_position.x - static_cast<int32>(codepoint_size);
               if (erase_position >= 0) {
                 text.erase(erase_position, codepoint_size);
                 decrement_cursor(element, static_cast<int32>(codepoint_size));
@@ -347,8 +357,8 @@ namespace Hyperion::UI {
             }
           } else if (key_code == KeyCode::Delete) {
             if (!text.empty()) {
-              uint32 codepoint_size = StringUtils::GetCodepointSizeFromUtf8(text, element.widget.cursor_position.x);
-              int32 erase_position = element.widget.cursor_position.x;
+              uint32 codepoint_size = StringUtils::GetCodepointSizeFromUtf8(text, element.widget.input_cursor_position.x);
+              int32 erase_position = element.widget.input_cursor_position.x;
               if (erase_position >= 0 && erase_position < static_cast<int32>(text.size())) {
                 text.erase(erase_position, codepoint_size);
                 interaction.input_changed = true;
@@ -359,7 +369,7 @@ namespace Hyperion::UI {
           if (pressed_event.HasKeyModifier(KeyModifier::Control)) {
             if (key_code == KeyCode::V) {
               String clipboard = Input::GetClipboard();
-              text.insert(element.widget.cursor_position.x, clipboard);
+              text.insert(element.widget.input_cursor_position.x, clipboard);
               increment_cursor(element, static_cast<int32>(clipboard.size()), text);
               interaction.input_changed = true;
             }
@@ -382,7 +392,7 @@ namespace Hyperion::UI {
           }
 
           if (has_characters) {
-            text.insert(element.widget.cursor_position.x, key_typed);
+            text.insert(element.widget.input_cursor_position.x, key_typed);
             increment_cursor(element, static_cast<int32>(key_typed.size()), text);
             interaction.input_changed = true;
           }
@@ -597,6 +607,11 @@ namespace Hyperion::UI {
             }
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
           }
+          
+          // Add scroll offset.
+          if ((parent->widget.flags & UIImmediateWidgetFlags::Scrollable) == UIImmediateWidgetFlags::Scrollable) {
+            relative_position[1] -= parent->widget.scroll_offset;
+          }
         }
 
         float32 absolute_position[2] = { relative_position[0], relative_position[1] };
@@ -631,8 +646,11 @@ namespace Hyperion::UI {
         rect_position.y += static_cast<float32>(Display::GetHeight()) / 2.0f;
         // Every rect is positioned relative to the bottom left corner.
         rect_position.y -= rect_size.y;
-        
+
+        // Set persistent layout state.
         element.layout.rect = Rect(rect_position, rect_size);
+        element.layout.child_size[0] = element.layout.computed_child_size_sum[0];
+        element.layout.child_size[1] = element.layout.computed_child_size_sum[1];
         
         return true;
       });
@@ -695,7 +713,7 @@ namespace Hyperion::UI {
         Vector2 text_offset;
         // Figure out wrapping offset.
         if (is_input && s_state.focused_element == element.id.id) {
-          uint32 codepoint_offset = StringUtils::GetCodepointOffsetFromUtf8(element.widget.text, element.widget.cursor_position.x);
+          uint32 codepoint_offset = StringUtils::GetCodepointOffsetFromUtf8(element.widget.text, element.widget.input_cursor_position.x);
           
           Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(element.widget.text);
           Vector2 cursor_position = TextUtilities::GetCursorPosition(
@@ -730,7 +748,7 @@ namespace Hyperion::UI {
       if (is_input && s_state.focused_element == element.id.id) {
         if (Time::BetweenInterval(theme.input_cursor_blink_rate, element.animation.focused_time_offset - theme.input_cursor_blink_rate)) {
           // We need to convert the cursor position from a byte offset to a utf-8 codepoint offset.
-          uint32 codepoint_offset = StringUtils::GetCodepointOffsetFromUtf8(element.widget.text, element.widget.cursor_position.x);
+          uint32 codepoint_offset = StringUtils::GetCodepointOffsetFromUtf8(element.widget.text, element.widget.input_cursor_position.x);
           
           Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(element.widget.text);
           Vector2 cursor_position = TextUtilities::GetCursorPosition(
@@ -1069,9 +1087,13 @@ namespace Hyperion::UI {
 
     // We have to remember to reset non persistent state.
     element->hierarchy = { };
+    // The layout contains both persistent and non persistent state.
     Rect rect = element->layout.rect;
+    float32 child_sum[2] = { element->layout.child_size[0], element->layout.child_size[1] };
     element->layout = { };
     element->layout.rect = rect;
+    element->layout.child_size[0] = child_sum[0];
+    element->layout.child_size[1] = child_sum[1];
     
     PlaceElementInHierarchy(*element);
 
@@ -1109,13 +1131,26 @@ namespace Hyperion::UI {
   
   //--------------------------------------------------------------
   UIImmediateInteraction UIImmediate::InteractWithElement(UIImmediateElement &element) {
+    UIImmediateInteraction result = { };
+    result.element = &element;
+
+    if ((element.widget.flags & UIImmediateWidgetFlags::Scrollable) == UIImmediateWidgetFlags::Scrollable) {
+      if (IsInsideRect(element.layout.rect, s_state.mouse_position)) {
+        // Check if we have an actual overflow.
+        if (element.layout.child_size[1] > element.layout.rect.height) {
+          // Overflow is negative because positive y axis goes down.
+          float32 overflow = -(element.layout.child_size[1] - element.layout.rect.height);
+          element.widget.scroll_offset += s_state.mouse_scroll * element.widget.theme->scroll_multiplier;
+          element.widget.scroll_offset = Math::Clamp(element.widget.scroll_offset, overflow, 0.0f);
+        }
+      }
+    }
+    
     if (!IsInsideParent(element)) {
-      return { };
+      return result;
     }
       
     if ((element.widget.flags & UIImmediateWidgetFlags::Interactable) == UIImmediateWidgetFlags::Interactable) {
-      UIImmediateInteraction interaction;
-      
       UIImmediateId id = element.id.id;
       
       bool8 is_inside = IsInsideRect(element.layout.rect, s_state.mouse_position);
@@ -1131,7 +1166,7 @@ namespace Hyperion::UI {
               element.animation.focused_time_offset = Time::GetTime();
               
               // Position the cursor at the end for an input field.
-              element.widget.cursor_position = Vector2Int(static_cast<int32>(element.widget.text.size()), 0);
+              element.widget.input_cursor_position = Vector2Int(static_cast<int32>(element.widget.text.size()), 0);
             }
           }
         }
@@ -1141,15 +1176,15 @@ namespace Hyperion::UI {
       bool8 is_pressed_widget = s_state.pressed_element == id;
       bool8 is_focused_widget = s_state.focused_element == id;
 
-      interaction.hovered = is_hovered_widget;
-      interaction.focused = is_focused_widget;
-      interaction.clicked = s_state.is_left_mouse_up && is_hovered_widget && is_pressed_widget;
-      interaction.right_clicked = s_state.is_right_mouse_up && is_hovered_widget && is_pressed_widget;
+      result.hovered = is_hovered_widget;
+      result.focused = is_focused_widget;
+      result.clicked = s_state.is_left_mouse_up && is_hovered_widget && is_pressed_widget;
+      result.right_clicked = s_state.is_right_mouse_up && is_hovered_widget && is_pressed_widget;
       
-      return interaction;
+      return result;
     }
 
-    return { };
+    return result;
   }
   
   //--------------------------------------------------------------
@@ -1159,7 +1194,7 @@ namespace Hyperion::UI {
       for (uint64 i = 0; i < parent.hierarchy.child_count; ++i) {
         IterateHierarchy(*child, callback);
         child = child->hierarchy.next_sibling;
-      }  
+      }
     }
   }
   

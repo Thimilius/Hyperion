@@ -28,14 +28,14 @@ namespace Hyperion::Scripting {
   void DotnetScriptingWorld::OnLoadContext() {
     // The destruction of entities and removal of components needs to be forwarded to the managed side. 
     EntityManager *manager = m_world->GetEntityManager();
-    manager->RegisterOnEntityDestroyed({ ConnectionArguments<&DotnetScriptingWorld::OnEntityDestroyed>, this });
+    manager->RegisterOnEntityDestroyed({ DelegateConnection<&DotnetScriptingWorld::OnEntityDestroyed>, this });
     for (ComponentInfo info : ComponentRegistry::GetComponentInfos()) {
       // We skip components which are treated in a special way.
       if (info.id == ComponentRegistry::GetId<DisabledComponent>() || info.id == ComponentRegistry::GetId<StaticComponent>()) {
         continue;
       }
       
-      manager->RegisterOnComponentRemoved(info.id, { ConnectionArguments<&DotnetScriptingWorld::OnComponentRemoved>, this });
+      manager->RegisterOnComponentRemoved(info.id, { DelegateConnection<&DotnetScriptingWorld::OnComponentRemoved>, this });
     }
     
     // Managed World and EntityManager instances are always being created.
@@ -54,9 +54,9 @@ namespace Hyperion::Scripting {
     m_world_handle = nullptr;
     
     EntityManager *manager = m_world->GetEntityManager();
-    manager->UnregisterOnEntityDestroyed({ ConnectionArguments<&DotnetScriptingWorld::OnEntityDestroyed>, this });
+    manager->UnregisterOnEntityDestroyed({ DelegateConnection<&DotnetScriptingWorld::OnEntityDestroyed>, this });
     for (ComponentInfo info : ComponentRegistry::GetComponentInfos()) {
-      manager->UnregisterOnComponentRemoved(info.id, { ConnectionArguments<&DotnetScriptingWorld::OnComponentRemoved>, this });
+      manager->UnregisterOnComponentRemoved(info.id, { DelegateConnection<&DotnetScriptingWorld::OnComponentRemoved>, this });
     }
   }
 

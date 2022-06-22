@@ -91,6 +91,8 @@ namespace Hyperion::Editor {
       }, },
       { "Camera", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Camera); }, { }, { } }
     } };
+
+    EditorSelection::RegisterSelectionCallback(DelegateConnection<&EditorUI::OnSelectionChange>);
   }
 
   //--------------------------------------------------------------
@@ -118,7 +120,7 @@ namespace Hyperion::Editor {
 
           UIImmediate::Separator();
           
-          EntityInspectionPanel();
+          EntityInspectorPanel();
         }
         UIImmediate::EndPanel();
 
@@ -183,11 +185,10 @@ namespace Hyperion::Editor {
 
   //--------------------------------------------------------------
   Rect EditorUI::GetPreviewRect() {
-    UIImmediateElement *element = UIImmediate::GetElement(s_preview_element);
-    if (element == nullptr) {
+    if (s_preview_element == nullptr) {
       return { 0, 0, static_cast<float32>(Display::GetWidth()), static_cast<float32>(Display::GetHeight()) };  
     } else {
-      return element->layout.rect;
+      return s_preview_element->layout.rect;
     }
   }
 
@@ -310,7 +311,7 @@ namespace Hyperion::Editor {
       UIImmediate::Separator();
             
       Size hierarchy_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
-      UIImmediate::BeginPanel("Hierarchy Panel", hierarchy_panel_size, ChildLayout::Vertical);
+      UIImmediate::BeginPanel("Hierarchy Panel", hierarchy_panel_size, ChildLayout::Vertical, true);
       {
         EntityHierarchy *hierarchy = EditorApplication::GetWorld()->GetHierarchy();
         EntityId child = hierarchy->GetFirstRoot();
@@ -320,10 +321,17 @@ namespace Hyperion::Editor {
           child = child_hierarchy->next_sibling;
         }
 
-        UIImmediateInteraction panel_interaction = UIImmediate::BeginPanel("Deselect Panel", hierarchy_panel_size, ChildLayout::Vertical, true, s_panel_theme);
-        if (panel_interaction.clicked) {
+        UIImmediateInteraction deselect_panel_interaction = UIImmediate::BeginPanel(
+          "Deselect Panel",
+          hierarchy_panel_size,
+          ChildLayout::Vertical,
+          false,
+          true,
+          s_panel_theme
+        );
+        if (deselect_panel_interaction.clicked) {
           EditorSelection::Deselect();
-        } else if (panel_interaction.right_clicked) {
+        } else if (deselect_panel_interaction.right_clicked) {
           OpenContextMenu(s_entity_creation_menu);
         }
         UIImmediate::EndPanel();
@@ -351,7 +359,14 @@ namespace Hyperion::Editor {
     }
     
     Size panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 15.0f } };
-    UIImmediateInteraction entity_interaction = UIImmediate::BeginPanel(StringUtils::Format("{}", entity), panel_size, ChildLayout::Horizontal, true, theme);
+    UIImmediateInteraction entity_interaction = UIImmediate::BeginPanel(
+      StringUtils::Format("{}", entity),
+      panel_size,
+      ChildLayout::Horizontal,
+      false,
+      true,
+      theme
+    );
     if (entity_interaction.clicked || entity_interaction.right_clicked) {
       EditorSelection::Select(entity);
 
@@ -384,11 +399,12 @@ namespace Hyperion::Editor {
   }
 
   //--------------------------------------------------------------
-  void EditorUI::EntityInspectionPanel() {
+  void EditorUI::EntityInspectorPanel() {
     EntityManager *manager = EditorApplication::GetWorld()->GetEntityManager();
     
-    Size inspection_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
-    UIImmediate::BeginPanel("Inspection Panel", inspection_panel_size, ChildLayout::Vertical);
+    Size inspector_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
+    UIImmediateInteraction inspector_interaction = UIImmediate::BeginPanel("Inspector Panel", inspector_panel_size, ChildLayout::Vertical, true);
+    s_inspector_element = inspector_interaction.element;
     {
       if (EditorSelection::HasSelection()) {
         EntityId entity = EditorSelection::GetSelection();
@@ -442,7 +458,7 @@ namespace Hyperion::Editor {
         }
       } else {
         String text = "No entity selected!";
-        UIImmediate::Text(text, TextAlignment::TopCenter, FitType::ToLayout);  
+        UIImmediate::Text(text, TextAlignment::MiddleCenter, FitType::Fill);  
       }
     }
     UIImmediate::EndPanel();
@@ -515,7 +531,7 @@ namespace Hyperion::Editor {
         String image_id = "Preview Image";
         Size preview_image_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
         UIImmediate::Image(image_id, render_texture, preview_image_size, false);
-        s_preview_element = UIImmediate::GetId(image_id);
+        s_preview_element = UIImmediate::GetElement(UIImmediate::GetId(image_id));
       }
       UIImmediate::EndPanel();
     }
@@ -655,7 +671,15 @@ namespace Hyperion::Editor {
       RenderGizmos::UpdateTransformationGizmo(s_transformation_tool, manipulation.highlight_axis);
     }
   }
-  
+
+  //--------------------------------------------------------------
+  void EditorUI::OnSelectionChange(EntityId old_entity, EntityId new_entity) {
+    // Reset scroll of inspector when selection changes.
+    if (s_inspector_element != nullptr) {
+      s_inspector_element->widget.scroll_offset = 0.0f;  
+    }
+  }
+
   //--------------------------------------------------------------
   Vector2 EditorUI::TransformScreenToPreviewPosition(Vector2 screen_position) {
     Rect preview_rect = EditorUI::GetPreviewRect();

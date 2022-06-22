@@ -34,6 +34,7 @@ namespace Hyperion::UI {
       const String &text,
       Size size[2],
       ChildLayout child_layout = ChildLayout::Horizontal,
+      bool8 scrollable = false,
       bool8 interactable = false,
       UIImmediateTheme *theme = GetDefaultTheme()
     );

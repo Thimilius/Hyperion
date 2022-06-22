@@ -38,20 +38,23 @@ namespace Hyperion::Editor {
     static void HeaderPanel();
     static void EntityHierarchyPanel();
     static void EntityHierarchyPanelRecursive(EntityManager *manager, EntityId entity, HierarchyComponent *branch_hierarchy, uint32 depth);
-    static void EntityInspectionPanel();
+    static void EntityInspectorPanel();
     static void PreviewPanel();
 
     static void ComponentPanel(const ComponentInfo &component_info, Type component_type, void *component);
     static void PropertyPanel(Instance instance, Property property);
 
     static void UpdateGizmo();
+
+    static void OnSelectionChange(EntityId old_entity, EntityId new_entity);
     
     static Vector2 TransformScreenToPreviewPosition(Vector2 screen_position);
 
     static void OpenContextMenu(const Menu &menu);
     static void ScheduleAction(const std::function<void()> &delayed_action);
   private:
-    inline static UI::UIImmediateId s_preview_element;
+    inline static UI::UIImmediateElement *s_preview_element;
+    inline static UI::UIImmediateElement *s_inspector_element;
 
     inline static UI::UIImmediateTheme *s_icon_theme;
     inline static UI::UIImmediateTheme *s_selection_theme;

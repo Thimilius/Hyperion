@@ -25,10 +25,10 @@ namespace Hyperion::Physics {
     m_collision_world = new btCollisionWorld(m_collision_dispatcher, m_broadphase, collision_configuration);
 
     EntityManager *manager = world->GetEntityManager();
-    manager->RegisterOnComponentAdded<BoxColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::AddBoxCollider>, this });
-    manager->RegisterOnComponentRemoved<BoxColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::RemoveBoxCollider>, this });
-    manager->RegisterOnComponentAdded<SphereColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::AddSphereCollider>, this });
-    manager->RegisterOnComponentRemoved<SphereColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::RemoveSphereCollider>, this });
+    manager->RegisterOnComponentAdded<BoxColliderComponent>({ DelegateConnection<&BulletPhysicsWorld::AddBoxCollider>, this });
+    manager->RegisterOnComponentRemoved<BoxColliderComponent>({ DelegateConnection<&BulletPhysicsWorld::RemoveBoxCollider>, this });
+    manager->RegisterOnComponentAdded<SphereColliderComponent>({ DelegateConnection<&BulletPhysicsWorld::AddSphereCollider>, this });
+    manager->RegisterOnComponentRemoved<SphereColliderComponent>({ DelegateConnection<&BulletPhysicsWorld::RemoveSphereCollider>, this });
     
     if (other) {
       CopyColliders(world);
@@ -38,10 +38,10 @@ namespace Hyperion::Physics {
   //--------------------------------------------------------------
   BulletPhysicsWorld::~BulletPhysicsWorld() {
     EntityManager *manager = m_world->GetEntityManager();
-    manager->RegisterOnComponentAdded<BoxColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::AddBoxCollider>, this });
-    manager->RegisterOnComponentRemoved<BoxColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::RemoveBoxCollider>, this });
-    manager->RegisterOnComponentAdded<SphereColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::AddSphereCollider>, this });
-    manager->RegisterOnComponentRemoved<SphereColliderComponent>({ ConnectionArguments<&BulletPhysicsWorld::RemoveSphereCollider>, this });
+    manager->RegisterOnComponentAdded<BoxColliderComponent>({ DelegateConnection<&BulletPhysicsWorld::AddBoxCollider>, this });
+    manager->RegisterOnComponentRemoved<BoxColliderComponent>({ DelegateConnection<&BulletPhysicsWorld::RemoveBoxCollider>, this });
+    manager->RegisterOnComponentAdded<SphereColliderComponent>({ DelegateConnection<&BulletPhysicsWorld::AddSphereCollider>, this });
+    manager->RegisterOnComponentRemoved<SphereColliderComponent>({ DelegateConnection<&BulletPhysicsWorld::RemoveSphereCollider>, this });
     
     ClearColliders();
     

@@ -13,6 +13,8 @@
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::UI {
+
+  struct UIImmediateElement;
   
   using UIImmediateId = uint64;
 
@@ -35,6 +37,8 @@ namespace Hyperion::UI {
   };
 
   struct UIImmediateInteraction {
+    UIImmediateElement *element;
+    
     bool8 hovered = false;
     bool8 focused = false;
     bool8 clicked = false;
@@ -79,6 +83,8 @@ namespace Hyperion::UI {
     Color text_shadow_color = Color::Black();
     Vector2 text_shadow_offset = Vector2(1.0f, -1.0f);
 
+    float32 scroll_multiplier = 5.0f;
+    
     Font *font = nullptr;
   };
   
@@ -87,28 +93,29 @@ namespace Hyperion::UI {
 
     Interactable = BIT(0),
     Focusable = BIT(1),
+    Scrollable = BIT(2),
     
-    Empty = BIT(2),
-    Space = BIT(3),
-    Separator = BIT(4),
-    Panel = BIT(5),
-    Text = BIT(6),
-    Button = BIT(7),
-    Toggle = BIT(8),
-    Input = BIT(9),
-    Image = BIT(10)
+    Empty = BIT(3),
+    Space = BIT(4),
+    Separator = BIT(5),
+    Panel = BIT(6),
+    Text = BIT(7),
+    Button = BIT(8),
+    Toggle = BIT(9),
+    Input = BIT(10),
+    Image = BIT(11)
   };
   HYP_CREATE_ENUM_FLAG_OPERATORS(UIImmediateWidgetFlags)
 
   struct UIImmediateElement {
-    struct UIImmediateElementId {
+    struct Id {
       UIImmediateId id = 0;
       String id_text;
       uint64 last_frame_touched_index = 0;
       bool8 looked_up_this_frame = false;
     } id;
     
-    struct UIImmediateElementHierarchy {
+    struct Hierarchy {
       UIImmediateElement *parent = nullptr;
 
       UIImmediateElement *previous_sibling = nullptr;
@@ -119,7 +126,7 @@ namespace Hyperion::UI {
       UIImmediateElement *last_child = nullptr;  
     } hierarchy;
 
-    struct UIImmediateElementLayout {
+    struct Layout {
       Size semantic_size[2] = { };
       
       ChildLayout child_layout = ChildLayout::Vertical;
@@ -131,34 +138,37 @@ namespace Hyperion::UI {
 
       uint32 fill_child_count = { };
       float32 computed_child_size_sum[2] = { };
-    
+
+      // This is persistent state.
       Rect rect = Rect();
+      float32 child_size[2] = { };
     } layout;
 
-    struct UIImmediateElementWidget {
+    struct Widget {
       UIImmediateWidgetFlags flags = UIImmediateWidgetFlags::None;
 
       UIImmediateTheme *theme = nullptr;
       
+      float32 scroll_offset = 0.0f;
+      
       String text = String();
       TextAlignment text_alignment = TextAlignment::TopLeft;
-
       bool8 toggled = false;
-
-      Vector2Int cursor_position;
+      Vector2Int input_cursor_position;
       
       Texture *texture = nullptr;
       bool8 enable_blending = true;
       uint32 render_attachment_index = 0;
     } widget;
 
-    struct UIImmediateElementAnimation {
+    struct Animation {
       float32 focused_time_offset = 0.0f;
     } animation;
   };
 
   struct UIImmediateState {
     Vector2 mouse_position = Vector2();
+    float32 mouse_scroll = 0.0f;
     bool8 is_left_mouse_down = false;
     bool8 is_left_mouse_hold = false;
     bool8 is_left_mouse_up = false;

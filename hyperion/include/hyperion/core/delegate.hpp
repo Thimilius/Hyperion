@@ -13,7 +13,7 @@ namespace Hyperion {
   struct DelegateConnectionArguments { };
 
   template<auto Func>
-  inline constexpr DelegateConnectionArguments<Func> ConnectionArguments { };
+  inline constexpr DelegateConnectionArguments<Func> DelegateConnection { };
 
   template<typename>
   class Delegate;
