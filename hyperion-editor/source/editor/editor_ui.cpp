@@ -403,59 +403,72 @@ namespace Hyperion::Editor {
     EntityManager *manager = EditorApplication::GetWorld()->GetEntityManager();
     
     Size inspector_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
-    UIImmediateInteraction inspector_interaction = UIImmediate::BeginPanel("Inspector Panel", inspector_panel_size, ChildLayout::Vertical, true);
-    s_inspector_element = inspector_interaction.element;
+    UIImmediate::BeginPanel("Inspector Panel", inspector_panel_size, ChildLayout::Vertical);
     {
       if (EditorSelection::HasSelection()) {
         EntityId entity = EditorSelection::GetSelection();
-        
-        Size inspection_panel_title_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 15.0f } };
-        UIImmediate::BeginPanel("Entity", inspection_panel_title_size);
+
+        Size inspection_panel_header_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 40.0f } };
+        UIImmediate::BeginPanel("Header", inspection_panel_header_size, ChildLayout::Vertical);
         {
-          UIImmediate::Text("Entity", TextAlignment::TopCenter, FitType::Fill);
-        }
-        UIImmediate::EndPanel();
-
-        Size inspection_panel_header_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 25.0f } };
-        UIImmediate::BeginPanel("Header", inspection_panel_header_size);
-        {
-          UIImmediate::Space(SizeKind::Pixels, 5.0f);
-          
-          String uuid_text = StringUtils::Format("UUID: {}", manager->GetUUID(entity).ToString());
-          UIImmediate::Text(uuid_text, TextAlignment::MiddleLeft, FitType::ToLayout);
-          
-          UIImmediate::FillSpace();
-          
-          bool8 is_enabled = !manager->HasComponent<DisabledComponent>(entity);
-          if (UIImmediate::TextToggle(is_enabled, is_enabled ? "\uf06e" : "\uf070", FitType::ToLayout, s_icon_theme).clicked) {
-            manager->SetEnabled(entity, is_enabled);
+          Size inspection_panel_title_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 15.0f } };
+          UIImmediate::BeginPanel("Entity", inspection_panel_title_size);
+          {
+            UIImmediate::Text("Entity", TextAlignment::TopCenter, FitType::Fill);
           }
+          UIImmediate::EndPanel();
 
-          bool8 is_static = manager->HasComponent<StaticComponent>(entity);
-          if (UIImmediate::TextToggle(is_static,"\uf066", FitType::ToLayout, s_icon_theme).clicked) {
-            manager->SetStatic(entity, is_static);
-          }
-
-          UIImmediate::Space(SizeKind::Pixels, 5.0f);
-        }
-        UIImmediate::EndPanel();
-        
-        for (const ComponentInfo &component_info : ComponentRegistry::GetComponentInfos()) {
-          void *component = manager->GetComponent(component_info.id, entity);
-          if (component) {
-            Type component_type = *component_info.type;
-
-            Variant hide_metadata = component_type.get_metadata(TypeMetadata::HideInEditor);
-            if (hide_metadata.is_valid() && hide_metadata.is_type<bool8>()) {
-              bool8 should_skip_component = hide_metadata.to_bool();
-              if (should_skip_component) {
-                continue;
-              }
+          Size inspection_panel_details_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 25.0f } };
+          UIImmediate::BeginPanel("Details", inspection_panel_details_size);
+          {
+            UIImmediate::Space(SizeKind::Pixels, 5.0f);
+            
+            String uuid_text = StringUtils::Format("UUID: {}", manager->GetUUID(entity).ToString());
+            UIImmediate::Text(uuid_text, TextAlignment::MiddleLeft, FitType::ToLayout);
+            
+            UIImmediate::FillSpace();
+            
+            bool8 is_enabled = !manager->HasComponent<DisabledComponent>(entity);
+            if (UIImmediate::TextToggle(is_enabled, is_enabled ? "\uf06e" : "\uf070", FitType::ToLayout, s_icon_theme).clicked) {
+              manager->SetEnabled(entity, is_enabled);
             }
 
-            ComponentPanel(component_info, component_type, component);
+            bool8 is_static = manager->HasComponent<StaticComponent>(entity);
+            if (UIImmediate::TextToggle(is_static,"\uf066", FitType::ToLayout, s_icon_theme).clicked) {
+              manager->SetStatic(entity, is_static);
+            }
+
+            UIImmediate::Space(SizeKind::Pixels, 5.0f);
+          }
+          UIImmediate::EndPanel();
+        }
+        UIImmediate::EndPanel();
+
+        UIImmediate::Space(SizeKind::Pixels, 5.0f);
+        UIImmediate::Separator();
+        
+        Size inspection_panel_components_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
+        UIImmediateInteraction inspector_interaction = UIImmediate::BeginPanel("Components", inspection_panel_components_size, ChildLayout::Vertical, true);
+        s_inspector_element = inspector_interaction.element;
+        {
+          for (const ComponentInfo &component_info : ComponentRegistry::GetComponentInfos()) {
+            void *component = manager->GetComponent(component_info.id, entity);
+            if (component) {
+              Type component_type = *component_info.type;
+
+              Variant hide_metadata = component_type.get_metadata(TypeMetadata::HideInEditor);
+              if (hide_metadata.is_valid() && hide_metadata.is_type<bool8>()) {
+                bool8 should_skip_component = hide_metadata.to_bool();
+                if (should_skip_component) {
+                  continue;
+                }
+              }
+
+              ComponentPanel(component_info, component_type, component);
+            }
           }
         }
+        UIImmediate::EndPanel();
       } else {
         String text = "No entity selected!";
         UIImmediate::Text(text, TextAlignment::MiddleCenter, FitType::Fill);  
