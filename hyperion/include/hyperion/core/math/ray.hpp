@@ -15,8 +15,11 @@ namespace Hyperion {
     Ray(Vector3 origin, Vector3 direction);
 
     Vector3 GetPoint(float32 t) const;
+    Vector3 GetClosestPointToRay(Ray ray) const;
 
     String ToString() const;
+
+    static float32 DistanceBetweenRays(Ray a, Ray b);
   };
 
 }

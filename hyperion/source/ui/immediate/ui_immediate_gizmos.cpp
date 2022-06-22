@@ -11,96 +11,6 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::UI {
 
-  auto get_closest_t_for_first_ray = [](Ray l1, Ray l2) -> float {
-    const Vector3 dp = l2.origin - l1.origin;
-    const float v12 = l1.direction.Dot(l1.direction);
-    const float v22 = l2.direction.Dot(l2.direction);
-    const float v1v2 = l1.direction.Dot(l2.direction);
-
-    const float det = v1v2 * v1v2 - v12 * v22;
-
-    if (std::abs(det) > FLT_MIN)
-    {
-      const float inv_det = 1.f / det;
-
-      const float dpv1 = dp.Dot(l1.direction);
-      const float dpv2 = dp.Dot(l2.direction);
-
-      auto l1t = inv_det * (v22 * dpv1 - v1v2 * dpv2);
-      auto l2t = inv_det * (v1v2 * dpv1 - v12 * dpv2);
-        
-      return -l1t;
-    }
-    else
-    {
-      const Vector3 a = Vector3::Cross(dp, l1.direction);
-      return std::sqrt(a.Dot(a) / v12);
-    }
-  };
-
-  auto distance_between_rays = [](Ray a, Ray b) {
-    Vector3 cross = Vector3::Cross(a.direction, b.direction);
-    float32 mag = cross.Magnitude();
-    if (mag == 0.0f) {
-      return 0.0f;
-    }
-
-    Vector3 p = b.origin - a.origin;
-    float32 d = cross.Dot(p);
-
-    return d / mag;
-  };
-
-  struct Circle {
-    Vector3 center;
-    Vector3 orientation;
-    float32 radius;
-  };
-    
-  auto closest_distance_line_circle = [](Ray ray, Circle circle, Vector3 &point) {
-    Plane plane = Plane(circle.orientation, circle.center);
-
-    float32 distance = 0.0f;
-    if (plane.Intersects(ray, distance)) {
-      Vector3 on_plane = ray.GetPoint(distance);
-      point = circle.center + circle.radius * (on_plane - circle.center).Normalized();
-      return (on_plane - point).Magnitude();
-    } else {
-      Vector3 a = ray.origin - circle.center;
-      Vector3 b = circle.orientation;
-      Vector3 rejection = a - (a.Dot(b) / b.Dot(b)) * b;
-
-      point = circle.radius * rejection.Normalized();
-
-      float32 distance_to_point = Vector3::Cross(ray.direction, point - ray.origin).Magnitude();
-      return distance_to_point;
-    }
-  };
-
-  auto angle = [](Vector3 current, Vector3 offset, Vector3 circle_orientation) {
-    float32 dot = current.Dot(offset);
-    dot = Math::Clamp(dot, -1.0f, 1.0f);
-
-    if (dot >= 0.9999999f) {
-      dot = 1.0f;
-    }
-          
-    float32 angle = Math::ACos(dot);
-    float32 degree = Math::RadToDeg(angle);
-
-    float32 lul = Vector3::Cross(offset, current).Dot(circle_orientation);
-    float32 mag = (Vector3::Cross(offset, current) * (circle_orientation)).Magnitude();
-
-    float32 sign = 1.0f;
-    if (mag != 0.0f) {
-      sign = lul / mag;  
-    }
-
-    degree *= sign;
-
-    return degree;
-  };
-    
   //--------------------------------------------------------------
   GizmoManipulation UIImmediateGizmos::Manipulate(
     Rendering::RenderGizmoType type,
@@ -122,7 +32,6 @@ namespace Hyperion::UI {
     Vector3 position = derived_transform->position;
     GizmoManipulation result = { };
     if (type == Rendering::RenderGizmoType::Translate) {
-      
       Ray x_axis_ray = Ray(Vector3(0.0f, position.y, position.z), Vector3(1.0f, 0.0f, 0.0f));
       Ray y_axis_ray = Ray(Vector3(position.x, 0.0f, position.z), Vector3(0.0f, 1.0f, 0.0f));
       Ray z_axis_ray = Ray(Vector3(position.x, position.y, 0.0f), Vector3(0.0f, 0.0f, 1.0f));
@@ -130,15 +39,12 @@ namespace Hyperion::UI {
       Vector3 y_handle_position = Vector3(position.x, position.y + 0.5f, position.z);
       Vector3 z_handle_position = Vector3(position.x, position.y, position.z + 0.5f);
 
-      float32 distance_to_x = distance_between_rays(x_axis_ray, ray);
-      float32 x_t = get_closest_t_for_first_ray(x_axis_ray, ray);
-      Vector3 x_axis_point = x_axis_ray.GetPoint(x_t);
-      float32 distance_to_y = distance_between_rays(y_axis_ray, ray);
-      float32 y_t = get_closest_t_for_first_ray(y_axis_ray, ray);
-      Vector3 y_axis_point = y_axis_ray.GetPoint(y_t);
-      float32 distance_to_z = distance_between_rays(z_axis_ray, ray);
-      float32 z_t = get_closest_t_for_first_ray(z_axis_ray, ray);
-      Vector3 z_axis_point = z_axis_ray.GetPoint(z_t);
+      float32 distance_to_x = Ray::DistanceBetweenRays(x_axis_ray, ray);
+      Vector3 x_axis_point = x_axis_ray.GetClosestPointToRay(ray);
+      float32 distance_to_y = Ray::DistanceBetweenRays(y_axis_ray, ray);
+      Vector3 y_axis_point = y_axis_ray.GetClosestPointToRay(ray);
+      float32 distance_to_z = Ray::DistanceBetweenRays(z_axis_ray, ray);
+      Vector3 z_axis_point = z_axis_ray.GetClosestPointToRay(ray);
 
       near_x = x_handle_position.Distance(x_axis_point) < 0.5f && std::abs(distance_to_x) < 0.1f;
       near_y = y_handle_position.Distance(y_axis_point) < 0.5f && std::abs(distance_to_y) < 0.1f;
@@ -211,11 +117,11 @@ namespace Hyperion::UI {
       Circle z_circle = { position, Vector3(0.0f, 0.0f, 1.0f), 1.0f };
       
       Vector3 x_circle_point = Vector3();
-      float32 distance_to_x = closest_distance_line_circle(ray, x_circle, x_circle_point);
+      float32 distance_to_x = x_circle.GetClosestPointToRay(ray, x_circle_point);
       Vector3 y_circle_point = Vector3();
-      float32 distance_to_y = closest_distance_line_circle(ray, y_circle, y_circle_point);
+      float32 distance_to_y = y_circle.GetClosestPointToRay(ray, y_circle_point);
       Vector3 z_circle_point = Vector3();
-      float32 distance_to_z = closest_distance_line_circle(ray, z_circle, z_circle_point);
+      float32 distance_to_z = z_circle.GetClosestPointToRay(ray, z_circle_point);
 
       near_x = distance_to_x < 0.1f;
       near_y = distance_to_y < 0.1f;
@@ -223,17 +129,17 @@ namespace Hyperion::UI {
 
       if (near_x) {
         if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
-          offset = x_circle_point - x_circle.center;
+          offset = x_circle_point;
           should_move_x = true;
         }
       } else if (near_y) {
         if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
-          offset = y_circle_point - y_circle.center;
+          offset = y_circle_point;
           should_move_y = true;
         }
       } else if (near_z) {
         if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
-          offset = z_circle_point - z_circle.center;
+          offset = z_circle_point;
           should_move_z = true;
         }
       }
@@ -244,8 +150,8 @@ namespace Hyperion::UI {
         near_z = false;
         
         if (should_move_x) {
-          Vector3 current = x_circle_point - x_circle.center;
-          float32 degree = angle(current, offset, x_circle.orientation);
+          Vector3 current = x_circle_point;
+          float32 degree = x_circle.GetAngleBetweenPoints(current, offset);
           
           Quaternion new_rotation = Quaternion::FromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), degree) * local_transform->rotation;
           local_transform->rotation = new_rotation;
@@ -254,8 +160,8 @@ namespace Hyperion::UI {
 
           near_x = true;
         } else if (should_move_y) {
-          Vector3 current = y_circle_point - y_circle.center;
-          float32 degree = angle(current, offset, y_circle.orientation);
+          Vector3 current = y_circle_point;
+          float32 degree = y_circle.GetAngleBetweenPoints(current, offset);
           
           Quaternion new_rotation = Quaternion::FromAxisAngle(Vector3(0.0f, 1.0f, 0.0f), degree) * local_transform->rotation;
           local_transform->rotation = new_rotation;
@@ -264,8 +170,8 @@ namespace Hyperion::UI {
 
           near_y = true;
         } else if (should_move_z) {
-          Vector3 current = z_circle_point - z_circle.center;
-          float32 degree = angle(current, offset, z_circle.orientation);
+          Vector3 current = z_circle_point;
+          float32 degree = z_circle.GetAngleBetweenPoints(current, offset);
           
           Quaternion new_rotation = Quaternion::FromAxisAngle(Vector3(0.0f, 0.0f, 1.0f), degree) * local_transform->rotation;
           local_transform->rotation = new_rotation;

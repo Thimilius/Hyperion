@@ -25,6 +25,7 @@
 #include "hyperion/core/string_utils.hpp"
 #include "hyperion/core/math/bounding_box.hpp"
 #include "hyperion/core/math/bounding_sphere.hpp"
+#include "hyperion/core/math/circle.hpp"
 #include "hyperion/core/math/math.hpp"
 #include "hyperion/core/math/matrix3x3.hpp"
 #include "hyperion/core/math/matrix4x4.hpp"
