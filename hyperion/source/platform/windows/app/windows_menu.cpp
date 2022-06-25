@@ -61,8 +61,8 @@ namespace Hyperion {
       item_info.fState = state;
       item_info.wID = identifier_counter++;
 
+      WideString wide_text = StringUtils::Utf8ToUtf16(item.text);
       if (!is_separator) {
-        WideString wide_text = StringUtils::Utf8ToUtf16(item.text);
         if (!item.keyboard_shortcut.empty()) {
           wide_text += L"\t" + StringUtils::Utf8ToUtf16(item.keyboard_shortcut);
         }
