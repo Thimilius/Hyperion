@@ -1065,7 +1065,8 @@ namespace Hyperion::UI {
     // This is just a validation helper to notify when an element gets called twice.
     // That will happen when the same id is used for supposedly different elements.
     if (element->id.looked_up_this_frame) {
-      HYP_LOG_ERROR("UI", "Elements share an id - This leads to undefined behaviour!");
+      HYP_LOG_ERROR("UI", "Elements share the id '{}' - This leads to undefined behaviour!", id_text);
+      HYP_DEBUG_BREAK;
     }
     element->id.looked_up_this_frame = true;
     element->id.last_frame_touched_index = s_state.current_frame_index;

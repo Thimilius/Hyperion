@@ -7,6 +7,7 @@
 #include <hyperion/core/app/time.hpp>
 #include "hyperion/core/system/engine.hpp"
 #include <hyperion/core/system/operating_system.hpp>
+#include <hyperion/ecs/component/components/ui_components.hpp>
 #include <hyperion/ecs/component/components/utilities/camera_utilities.hpp>
 #include <hyperion/render/render_engine.hpp>
 #include <hyperion/ui/immediate/ui_immediate.hpp>
@@ -467,6 +468,74 @@ namespace Hyperion::Editor {
               ComponentPanel(component_info, component_type, component);
             }
           }
+
+          UIImmediate::Space(SizeKind::Pixels, 5.0f);
+          Size add_panel_components_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 25.0f } };
+          UIImmediate::BeginPanel("Add Panel", add_panel_components_size);
+          {
+            UIImmediate::BeginCenter("Center");
+            if (UIImmediate::Button("Add Component").clicked) {
+              MenuItem add_tag_component = { "Tag", "", [manager, entity](auto _) {
+                manager->AddComponent<TagComponent>(entity);
+              }, manager->HasComponent<TagComponent>(entity) ? MenuItemFlags::Disabled : MenuItemFlags::None, { } }; 
+
+              MenuItem box_collider_component = { "Box Collider", "", [manager, entity](auto _) {
+                manager->AddComponent<Physics::BoxColliderComponent>(entity);
+              }, manager->HasComponent<Physics::BoxColliderComponent>(entity) ? MenuItemFlags::Disabled : MenuItemFlags::None, { } };
+              MenuItem sphere_collider_component = { "Sphere Collider", "", [manager, entity](auto _) {
+                manager->AddComponent<Physics::SphereColliderComponent>(entity);
+              }, manager->HasComponent<Physics::SphereColliderComponent>(entity) ? MenuItemFlags::Disabled : MenuItemFlags::None, { } };
+
+              MenuItem camera_component = { "Camera", "", [manager, entity](auto _) {
+                manager->AddComponent<CameraComponent>(entity);
+              }, manager->HasComponent<CameraComponent>(entity) ? MenuItemFlags::Disabled : MenuItemFlags::None, { } };
+              MenuItem sprite_component = { "Sprite", "", [manager, entity](auto _) {
+                manager->AddComponent<SpriteComponent>(entity);
+              }, manager->HasComponent<SpriteComponent>(entity) ? MenuItemFlags::Disabled : MenuItemFlags::None, { } };
+              MenuItem mesh_component = { "Mesh", "", [manager, entity](auto _) {
+                manager->AddComponent<MeshComponent>(entity);
+                // A mesh needs bounds to be useful.
+                manager->GetOrAddComponent<MeshBoundsComponent>(entity);
+              }, manager->HasComponent<MeshComponent>(entity) ? MenuItemFlags::Disabled : MenuItemFlags::None, { } };
+              MenuItem directional_light_component = { "Directional Light", "", [manager, entity](auto _) {
+                manager->AddComponent<DirectionalLightComponent>(entity);
+              }, manager->HasComponent<DirectionalLightComponent>(entity) ? MenuItemFlags::Disabled : MenuItemFlags::None, { } };
+              MenuItem point_light_component = { "Point Light", "", [manager, entity](auto _) {
+                manager->AddComponent<PointLightComponent>(entity);
+              }, manager->HasComponent<PointLightComponent>(entity) ? MenuItemFlags::Disabled : MenuItemFlags::None, { } };
+              MenuItem spot_light_component = { "Spot Light", "", [manager, entity](auto _) {
+                manager->AddComponent<SpotLightComponent>(entity);
+              }, manager->HasComponent<SpotLightComponent>(entity) ? MenuItemFlags::Disabled : MenuItemFlags::None, { } };
+
+              MenuItem ui_view_component = { "UI View", "", [manager, entity](auto _) {
+                manager->AddComponent<UIViewComponent>(entity);
+              }, manager->HasComponent<UIViewComponent>(entity) ? MenuItemFlags::Disabled : MenuItemFlags::None, { } };
+              
+              Menu add_component_menu = { {
+                add_tag_component,
+                { "Physics", "", { }, { }, {
+                  box_collider_component,
+                  sphere_collider_component,
+                }, },
+                { "Render", "", { }, { }, {
+                  camera_component,
+                  sprite_component,
+                  mesh_component,
+                  MenuItem::Separator(),
+                  directional_light_component,
+                  point_light_component,
+                  spot_light_component
+                }, },
+                { "UI", "", { }, { }, {
+                  ui_view_component,
+                }, }
+              } };
+              OpenContextMenu(add_component_menu);
+            }
+            UIImmediate::EndCenter();
+          }
+          UIImmediate::EndPanel();
+          UIImmediate::Space(SizeKind::Pixels, 5.0f);
         }
         UIImmediate::EndPanel();
       } else {
@@ -592,7 +661,8 @@ namespace Hyperion::Editor {
     UIImmediate::Space(SizeKind::Pixels, 5.0f);
 
     Instance instance = Reflection::CreateInstanceFromRaw(component_type, component);
-      
+
+    UIImmediate::PushId(component_name);
     for (Property property : component_type.get_properties()) {
       Variant serialize_metadata = property.get_metadata(PropertyMetadata::Serialize);
       if (serialize_metadata.is_valid() && serialize_metadata.is_type<bool8>()) {
@@ -604,6 +674,7 @@ namespace Hyperion::Editor {
 
       PropertyPanel(instance, property);
     }
+    UIImmediate::PopId();
   }
 
   //--------------------------------------------------------------
