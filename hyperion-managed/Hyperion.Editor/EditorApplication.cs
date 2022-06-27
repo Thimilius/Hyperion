@@ -5,7 +5,7 @@ namespace Hyperion.Sandbox {
   public class EditorApplication : IApplication {
     private World m_World;
     private Entity m_Entity;
-    
+
     public void Initialize() {
       m_World = WorldManager.GetActiveWorld();
       EntityManager entityManager = m_World.EntityManager;

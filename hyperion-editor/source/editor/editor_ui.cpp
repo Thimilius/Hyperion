@@ -627,11 +627,14 @@ namespace Hyperion::Editor {
       UIImmediate::BeginPanel("Console Entries", console_entries_panel_size, ChildLayout::Vertical, true);
       {
         const Array<EditorLogEntry> log_entries = logger.GetLogEntries();
-        for (uint64 i = 0; i < log_entries.GetLength(); i++) {
+        uint32 max_entries = 250;
+        uint32 index = 0;
+        for (auto it = log_entries.rbegin(); it != log_entries.rend() && index < max_entries; ++it) {
+          uint32 i = index++;
           Size log_entry_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 20.0f } };
           UIImmediate::BeginPanel(StringUtils::Format("Log Entry {}", i), log_entry_panel_size);
           {
-            UIImmediate::Text(log_entries[i].message);
+            UIImmediate::Text(it->message);
           }
           UIImmediate::EndPanel();
         }
