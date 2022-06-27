@@ -37,3 +37,4 @@
 #include "hyperion/core/math/vector4.hpp"
 #include "hyperion/core/profiling/profile.hpp"
 #include "hyperion/core/system/engine.hpp"
+#include "hyperion/core/system/engine_config.hpp"

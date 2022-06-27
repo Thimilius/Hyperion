@@ -3,7 +3,6 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/application_settings.hpp"
-#include "hyperion/core/system/engine_config.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -79,6 +78,8 @@ namespace Hyperion {
 #else
     inline static EngineMode s_state = EngineMode::Runtime;
 #endif
+
+    inline static ILogger *s_console_logger;
   private:
     friend class Hyperion::Application;
     friend class Hyperion::Main;

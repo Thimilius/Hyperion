@@ -193,38 +193,38 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  void WindowsOperatingSystem::PrintToConsole(LogColor color, const String &message) {
+  void WindowsOperatingSystem::PrintToConsole(ConsoleColor color, const String &message) {
     int16 console_color = 0;
     switch (color) {
-      case LogColor::Black: console_color = 0;
+      case ConsoleColor::Black: console_color = 0;
         break;
-      case LogColor::Red: console_color = FOREGROUND_INTENSITY | FOREGROUND_RED;
+      case ConsoleColor::Red: console_color = FOREGROUND_INTENSITY | FOREGROUND_RED;
         break;
-      case LogColor::Green: console_color = FOREGROUND_INTENSITY | FOREGROUND_GREEN;
+      case ConsoleColor::Green: console_color = FOREGROUND_INTENSITY | FOREGROUND_GREEN;
         break;
-      case LogColor::Blue: console_color = FOREGROUND_INTENSITY | FOREGROUND_BLUE;
+      case ConsoleColor::Blue: console_color = FOREGROUND_INTENSITY | FOREGROUND_BLUE;
         break;
-      case LogColor::Yellow: console_color = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN;
+      case ConsoleColor::Yellow: console_color = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN;
         break;
-      case LogColor::Magenta: console_color = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE;
+      case ConsoleColor::Magenta: console_color = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE;
         break;
-      case LogColor::Cyan: console_color = FOREGROUND_INTENSITY | FOREGROUND_BLUE | FOREGROUND_GREEN;
+      case ConsoleColor::Cyan: console_color = FOREGROUND_INTENSITY | FOREGROUND_BLUE | FOREGROUND_GREEN;
         break;
-      case LogColor::DarkRed: console_color = FOREGROUND_RED;
+      case ConsoleColor::DarkRed: console_color = FOREGROUND_RED;
         break;
-      case LogColor::DarkGreen: console_color = FOREGROUND_GREEN;
+      case ConsoleColor::DarkGreen: console_color = FOREGROUND_GREEN;
         break;
-      case LogColor::DarkBlue: console_color = FOREGROUND_BLUE;
+      case ConsoleColor::DarkBlue: console_color = FOREGROUND_BLUE;
         break;
-      case LogColor::DarkYellow: console_color = FOREGROUND_RED | FOREGROUND_GREEN;
+      case ConsoleColor::DarkYellow: console_color = FOREGROUND_RED | FOREGROUND_GREEN;
         break;
-      case LogColor::DarkMagenta: console_color = FOREGROUND_RED | FOREGROUND_BLUE;
+      case ConsoleColor::DarkMagenta: console_color = FOREGROUND_RED | FOREGROUND_BLUE;
         break;
-      case LogColor::DarkCyan: console_color = FOREGROUND_BLUE | FOREGROUND_GREEN;
+      case ConsoleColor::DarkCyan: console_color = FOREGROUND_BLUE | FOREGROUND_GREEN;
         break;
-      case LogColor::Grey: console_color = FOREGROUND_INTENSITY;
+      case ConsoleColor::Grey: console_color = FOREGROUND_INTENSITY;
         break;
-      case LogColor::White: console_color = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
+      case ConsoleColor::White: console_color = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
         break;
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
     }

@@ -84,6 +84,29 @@ namespace Hyperion {
     Videos
   };
 
+  enum class ConsoleColor {
+    Black,
+
+    Red,
+    Green,
+    Blue,
+
+    Yellow,
+    Magenta,
+    Cyan,
+
+    DarkRed,
+    DarkGreen,
+    DarkBlue,
+
+    DarkYellow,
+    DarkMagenta,
+    DarkCyan,
+
+    Grey,
+    White
+  };
+
   enum class MessageBoxType {
     Info,
     Warning,
