@@ -52,9 +52,9 @@
 
 ## UI
 - Immediate
-	- Fix layout
+		- Input Sliders
 - Font rendering
     - SDF
 
 ## Editor
-- Fix rotation of child entities with gizmo using WorldToLocal helpers
+- Fix rotation of child entities with gizmo

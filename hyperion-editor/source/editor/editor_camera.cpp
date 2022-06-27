@@ -80,7 +80,7 @@ namespace Hyperion::Editor {
       m_last_mouse_position = current_mouse_position;
     }
 
-    if (!EditorUI::HasFocusedElement() && Input::IsKeyDown(KeyCode::R)) {
+    if (!EditorUI::HasFocusedElement() && Input::IsKeyDown(KeyCode::C)) {
       Reset();
     }
   }
