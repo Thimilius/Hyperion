@@ -666,6 +666,20 @@ namespace Hyperion::UI {
           // In all other cases we inherit the scissor rect from our parent.
           element.layout.scissor_rect = parent->layout.scissor_rect;
         }
+
+        // Clip our scissor rect to our parents.
+        if (parent != nullptr) {
+          int32 width = element.layout.scissor_rect.x + element.layout.scissor_rect.width;
+          int32 height = element.layout.scissor_rect.y + element.layout.scissor_rect.height;
+          int32 parent_width = parent->layout.scissor_rect.x + parent->layout.scissor_rect.width;
+          int32 parent_height = parent->layout.scissor_rect.y + parent->layout.scissor_rect.height;
+          if (width > parent_width) {
+            element.layout.scissor_rect.width -= width - parent_width;
+          }
+          if (height > parent_height) {
+            element.layout.scissor_rect.height -= height - parent_height;
+          }
+        }
       });
     }
   }
@@ -1086,13 +1100,15 @@ namespace Hyperion::UI {
     element->hierarchy = { };
     // The layout contains both persistent and non persistent state.
     Rect rect = element->layout.rect;
+    RectInt scissor_rect = element->layout.scissor_rect;
     float32 child_sum[2] = { element->layout.child_size[0], element->layout.child_size[1] };
     element->layout = { };
     element->layout.rect = rect;
+    element->layout.scissor_rect = scissor_rect;
     element->layout.child_size[0] = child_sum[0];
     element->layout.child_size[1] = child_sum[1];
 
-    // HACK: This is a weird workaround but prevents things from being permanently cut.
+    // HACK: This is a weird workaround but prevents things from being permanently stuck in an invalid scroll offset.
     if (Display::HasChangedSize()) {
       element->widget.scroll_offset = 0.0f;
     }
@@ -1151,12 +1167,16 @@ namespace Hyperion::UI {
     if (!IsInsideParent(element)) {
       return result;
     }
-      
+
     if ((element.widget.flags & UIImmediateWidgetFlags::Interactable) == UIImmediateWidgetFlags::Interactable) {
       UIImmediateId id = element.id.id;
       
       bool8 is_inside = IsInsideRect(element.layout.rect, s_state.mouse_position);
-      if (is_inside) {
+      bool8 is_inside_scissor = element.layout.scissor_rect.Contains(
+        Vector2Int(static_cast<int32>(s_state.mouse_position.x), static_cast<int32>(s_state.mouse_position.y))
+      );
+      
+      if (is_inside && is_inside_scissor) {
         s_state.hovered_element = id;
         if (s_state.pressed_element == 0 && (s_state.is_left_mouse_down || s_state.is_right_mouse_down)) {
           s_state.pressed_element = id;
