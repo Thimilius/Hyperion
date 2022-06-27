@@ -994,7 +994,7 @@ namespace Hyperion::UI {
     } else {
       Rect element_rect = element.layout.rect;
       Rect parent_rect = parent->layout.rect;
-      return parent_rect.Intersects(element_rect);
+      return parent_rect.Overlaps(element_rect);
     }
   }
 

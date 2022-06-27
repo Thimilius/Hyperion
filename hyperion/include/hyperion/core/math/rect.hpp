@@ -34,7 +34,7 @@ namespace Hyperion {
     Vector2 GetMax() const;
     Vector2 GetCenter() const;
 
-    bool8 Intersects(const Rect &other) const;
+    bool8 Overlaps(const Rect &other) const;
     bool8 Contains(Vector2 point) const;
 
     String ToString() const;
@@ -70,7 +70,7 @@ namespace Hyperion {
     Vector2Int GetMax() const;
     Vector2Int GetCenter() const;
 
-    bool8 Intersects(const RectInt &other) const;
+    bool8 Overlaps(const RectInt &other) const;
     bool8 Contains(Vector2Int point) const;
 
     String ToString() const;

@@ -34,7 +34,7 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  bool8 Rect::Intersects(const Rect &other) const {
+  bool8 Rect::Overlaps(const Rect &other) const {
     Vector2 this_max = GetMax();
     Vector2 other_max = other.GetMax();
     return other_max.x > x && other.x < this_max.x && other_max.y > y && other.y < this_max.y;
@@ -88,7 +88,7 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  bool8 RectInt::Intersects(const RectInt &other) const {
+  bool8 RectInt::Overlaps(const RectInt &other) const {
     Vector2Int this_max = GetMax();
     Vector2Int other_max = other.GetMax();
     return other_max.x > x && other.x < this_max.x && other_max.y > y && other.y < this_max.y;
