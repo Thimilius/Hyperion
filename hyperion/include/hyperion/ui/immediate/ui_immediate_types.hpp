@@ -141,6 +141,7 @@ namespace Hyperion::UI {
 
       // This is persistent state.
       Rect rect = Rect();
+      RectInt scissor_rect = RectInt();
       float32 child_size[2] = { };
     } layout;
 

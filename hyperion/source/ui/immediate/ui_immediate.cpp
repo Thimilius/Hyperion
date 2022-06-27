@@ -577,17 +577,22 @@ namespace Hyperion::UI {
       });
     }
     
-    // Last step: Calculate relative position to parent and final rect.
+    // Last step: Calculate relative and absolute position as well as the final rect for rendering and scissor.
     {
       HYP_PROFILE_SCOPE("UIImmediate.Layout.Step4")
       
       IterateHierarchyForLayout(s_state.root_element, [](UIImmediateElement &element) {
         UIImmediateElement *parent = element.hierarchy.parent;
+
+        bool8 is_empty = (element.widget.flags & UIImmediateWidgetFlags::Empty) == UIImmediateWidgetFlags::Empty;
+        bool8 is_scrollable = (element.widget.flags & UIImmediateWidgetFlags::Scrollable) == UIImmediateWidgetFlags::Scrollable;
+        bool8 is_text = (element.widget.flags & UIImmediateWidgetFlags::Text) == UIImmediateWidgetFlags::Text;
+        bool8 is_button = (element.widget.flags & UIImmediateWidgetFlags::Button) == UIImmediateWidgetFlags::Button;
+        bool8 is_input = (element.widget.flags & UIImmediateWidgetFlags::Input) == UIImmediateWidgetFlags::Input;
         
         // Position ourself relative to our previous sibling depending on the layout axis of our parent.
         float32 relative_position[2] = { };
-        bool8 element_is_empty = (element.widget.flags & UIImmediateWidgetFlags::Empty) == UIImmediateWidgetFlags::Empty;
-        if (parent != nullptr && !element_is_empty) {
+        if (parent != nullptr && !is_empty) {
           switch (parent->layout.child_layout) {
             case ChildLayout::Horizontal: {
               relative_position[0] += parent->layout.child_layout_offset;
@@ -603,7 +608,8 @@ namespace Hyperion::UI {
           }
           
           // Add scroll offset.
-          if ((parent->widget.flags & UIImmediateWidgetFlags::Scrollable) == UIImmediateWidgetFlags::Scrollable) {
+          bool8 parent_is_scrollable = (parent->widget.flags & UIImmediateWidgetFlags::Scrollable) == UIImmediateWidgetFlags::Scrollable;
+          if (parent_is_scrollable) {
             relative_position[1] -= parent->widget.scroll_offset;
           }
         }
@@ -645,6 +651,21 @@ namespace Hyperion::UI {
         element.layout.rect = Rect(rect_position, rect_size);
         element.layout.child_size[0] = element.layout.computed_child_size_sum[0];
         element.layout.child_size[1] = element.layout.computed_child_size_sum[1];
+
+        // Figure our our scissor rect.
+        // NOTE: The scissor rect is still in ui-space-coordinates not screen-space coordinate as needed for actual rendering.
+        if (is_text || is_input || is_button || is_scrollable || parent == nullptr) {
+          // When text or a scrollable is involved we use ourselves as the scissor rect.
+          element.layout.scissor_rect = {
+            static_cast<int32>(element.layout.rect.x),
+            static_cast<int32>(element.layout.rect.y),
+            static_cast<int32>(element.layout.rect.width),
+            static_cast<int32>(element.layout.rect.height)  
+          };
+        } else if (parent != nullptr) {
+          // In all other cases we inherit the scissor rect from our parent.
+          element.layout.scissor_rect = parent->layout.scissor_rect;
+        }
       });
     }
   }
@@ -653,10 +674,7 @@ namespace Hyperion::UI {
   void UIImmediate::Render() {
     HYP_PROFILE_SCOPE("UIImmediate::Render")
     
-    RectInt root_scissor = { 0, 0, static_cast<int32>(Display::GetWidth()), static_cast<int32>(Display::GetHeight()) };
-    
-    bool8 last_draw_was_a_simple_rect = false;
-    IterateHierarchyForRender(s_state.root_element, root_scissor, [&last_draw_was_a_simple_rect](UIImmediateElement &element, RectInt scissor) {
+    IterateHierarchyForRender(s_state.root_element, [](UIImmediateElement &element) {
       if (!IsInsideParent(element)) {
         return false;
       }
@@ -672,29 +690,24 @@ namespace Hyperion::UI {
       bool8 is_image = (element.widget.flags & UIImmediateWidgetFlags::Image) == UIImmediateWidgetFlags::Image;
 
       Rect rect = element.layout.rect;
+      // Transform scissor rect to screen-space coordinates.
+      RectInt scissor_rect = element.layout.scissor_rect;
+      Vector2 screen_space_point = UISpacePointToScreenPoint(Vector2(static_cast<float32>(scissor_rect.x), static_cast<float32>(scissor_rect.y)));
+      scissor_rect.x = static_cast<int32>(screen_space_point.x);
+      scissor_rect.y = static_cast<int32>(screen_space_point.y);
       
       if (is_separator || is_panel || is_button || is_toggle || is_input || is_image) {
         Color color = GetBackgroundColor(element);
 
+        DrawRect(rect, color);
         if (is_image) {
-          if (last_draw_was_a_simple_rect) {
-            Flush(scissor);    
-          }
-          
-          last_draw_was_a_simple_rect = false;
-          DrawRect(rect, color);
-          Flush(scissor, AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI), element.widget.texture, false);
+          Flush(scissor_rect, AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI), element.widget.texture, false);
         } else {
-          DrawRect(rect, color);
-          last_draw_was_a_simple_rect = true;
+          Flush(scissor_rect);
         }
       }
 
       if (is_text || is_button || is_toggle || is_input) {
-        if (last_draw_was_a_simple_rect) {
-          Flush(scissor);    
-        }
-
         Vector2 text_offset;
         // Figure out wrapping offset.
         if (is_input && s_state.focused_element == element.id.id) {
@@ -725,8 +738,7 @@ namespace Hyperion::UI {
         Color color = GetTextColor(element);
         DrawText(rect, element.widget.text, theme.font, element.widget.text_alignment, color, text_offset);
         
-        Flush(scissor, AssetManager::GetMaterialPrimitive(MaterialPrimitive::Font), theme.font->GetTexture());
-        last_draw_was_a_simple_rect = false;
+        Flush(scissor_rect, AssetManager::GetMaterialPrimitive(MaterialPrimitive::Font), theme.font->GetTexture());
       }
 
       // Render cursor for input field when focused.
@@ -759,14 +771,13 @@ namespace Hyperion::UI {
           };
           
           DrawRect(cursor_rect, theme.input_cursor_color);
-          Flush(scissor);
-          last_draw_was_a_simple_rect = false;
+          Flush(scissor_rect);
         }
       }
       
       return true;
     });
-    Flush(root_scissor);
+    Flush(s_state.root_element.layout.scissor_rect);
     
     Rendering::RenderFrameContext &render_frame_context = Rendering::RenderEngine::GetMainRenderFrame()->GetContext();
     for (UIImmediateMeshDraw mesh_draw : s_mesh_draws) {
@@ -1179,55 +1190,21 @@ namespace Hyperion::UI {
   }
   
   //--------------------------------------------------------------
-  void UIImmediate::IterateHierarchyForLayout(UIImmediateElement &parent, const std::function<void(UIImmediateElement &)> &callback) {
-    callback(parent);
-    UIImmediateElement *child = parent.hierarchy.first_child;
-    for (uint64 i = 0; i < parent.hierarchy.child_count; ++i) {
+  void UIImmediate::IterateHierarchyForLayout(UIImmediateElement &element, const std::function<void(UIImmediateElement &)> &callback) {
+    callback(element);
+    UIImmediateElement *child = element.hierarchy.first_child;
+    for (uint64 i = 0; i < element.hierarchy.child_count; ++i) {
       IterateHierarchyForLayout(*child, callback);
       child = child->hierarchy.next_sibling;
     }
   }
 
   //--------------------------------------------------------------
-  void UIImmediate::IterateHierarchyForRender(
-    UIImmediateElement &parent,
-    RectInt scissor,
-    const std::function<bool8(UIImmediateElement &, RectInt)> &callback) {
-    if (callback(parent, scissor)) {
-      // Scrollables push a new scissor rect on the stack.
-      bool8 is_scrollable = (parent.widget.flags & UIImmediateWidgetFlags::Scrollable) == UIImmediateWidgetFlags::Scrollable;
-      if (is_scrollable) {
-        // We get a new scissor rect so flush everything we have until now to force a new draw call.
-        Flush(scissor);
-        
-        Rect rect = parent.layout.rect;
-        Vector2 rect_screen_point = UISpacePointToScreenPoint(Vector2(rect.x, rect.y));
-        scissor = {
-          static_cast<int32>(rect_screen_point.x),
-          static_cast<int32>(rect_screen_point.y),
-          static_cast<int32>(rect.width),
-          static_cast<int32>(rect.height)
-        };
-      }
-      
-      UIImmediateElement *child = parent.hierarchy.first_child;
-      for (uint64 i = 0; i < parent.hierarchy.child_count; ++i) {
-        // Text elements use their own rect as a scissor.
-        bool8 is_text = (parent.widget.flags & UIImmediateWidgetFlags::Text) == UIImmediateWidgetFlags::Text;
-        RectInt child_scissor = scissor;
-        if (is_text) {
-          // NOTE: This new scissor relies on the fact that the rendering flushes before drawing text.
-          Rect child_rect = child->layout.rect;
-          Vector2 child_rect_screen_point = UISpacePointToScreenPoint(Vector2(child_rect.x, child_rect.y));
-          child_scissor = {
-            static_cast<int32>(child_rect_screen_point.x),
-            static_cast<int32>(child_rect_screen_point.y),
-            static_cast<int32>(child_rect.width),
-            static_cast<int32>(child_rect.height)
-          };
-        }
-
-        IterateHierarchyForRender(*child, child_scissor, callback);
+  void UIImmediate::IterateHierarchyForRender(UIImmediateElement &element, const std::function<bool8(UIImmediateElement &)> &callback) {
+    if (callback(element)) {
+      UIImmediateElement *child = element.hierarchy.first_child;
+      for (uint64 i = 0; i < element.hierarchy.child_count; ++i) {
+        IterateHierarchyForRender(*child, callback);
         child = child->hierarchy.next_sibling;
       }  
     }
