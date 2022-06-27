@@ -150,7 +150,7 @@ namespace Hyperion {
   //--------------------------------------------------------------
   Vector2 Vector2::Normalized() const {
     float32 magnitude = Magnitude();
-    if (magnitude == 0) {
+    if (magnitude == 0.0f) {
       return Vector2();
     } else {
       return Vector2(x / magnitude, y / magnitude);

@@ -172,7 +172,7 @@ namespace Hyperion {
   //--------------------------------------------------------------
   Vector3 Vector3::Normalized() const {
     float32 magnitude = Magnitude();
-    if (magnitude == 0) {
+    if (magnitude == 0.0f) {
       return Vector3();
     } else {
       return Vector3(x / magnitude, y / magnitude, z / magnitude);

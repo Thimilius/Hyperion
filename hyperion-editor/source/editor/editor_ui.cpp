@@ -755,10 +755,10 @@ namespace Hyperion::Editor {
       CameraComponent *camera = EditorCamera::GetCamera();
 
       Matrix4x4 gizmo_transform;
-      if (s_transformation_mode == GizmoMode::Local) {
-        gizmo_transform = Matrix4x4::TRS(derived_transform->position, derived_transform->rotation, Vector3::One());
-      } else {
+      if (s_transformation_mode == GizmoMode::World && s_transformation_tool != RenderGizmoType::Scale) {
         gizmo_transform = Matrix4x4::Translate(derived_transform->position);
+      } else {
+        gizmo_transform = Matrix4x4::TRS(derived_transform->position, derived_transform->rotation, Vector3::One());
       }
       RenderGizmos::SetTransformationGizmoTransformation(gizmo_transform);
 
