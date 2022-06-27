@@ -53,6 +53,7 @@ namespace Hyperion::Editor {
     
     static Vector2 TransformScreenToPreviewPosition(Vector2 screen_position);
 
+    static void CreateEntityMenu(Array<MenuItem> &items);
     static void OpenContextMenu(const Menu &menu);
     static void ScheduleAction(const std::function<void()> &delayed_action);
   private:
@@ -69,9 +70,7 @@ namespace Hyperion::Editor {
     
     inline static bool8 s_is_in_gizmo;
     inline static Rendering::RenderGizmoType s_transformation_tool = Rendering::RenderGizmoType::Translate;
-    inline static UI::GizmoMode s_transformation_mode = UI::GizmoMode::World;
-
-    inline static Menu s_entity_creation_menu;
+    inline static UI::GizmoMode s_transformation_mode = UI::GizmoMode::Local;
 
     inline static Array<std::function<void()>> s_delayed_actions;
   };

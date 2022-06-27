@@ -69,29 +69,6 @@ namespace Hyperion::Editor {
     s_disabled_icon_theme = UI::UIImmediate::CreateTheme("Disabled Icon", s_icon_theme);
     s_disabled_icon_theme->text_color = EditorStyle::COLOR_DISABLED;
     
-    s_entity_creation_menu = { {
-      { "Empty", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Base); }, { }, { } },
-      { "Empty Child", "",[](auto _) {
-        if (EditorSelection::HasSelection()) {
-          EntityId parent = EditorSelection::GetSelection();
-          EntityId new_entity = EditorApplication::CreateEntity(EntityPrimitive::Base);
-          EditorApplication::GetWorld()->GetHierarchy()->SetParent(new_entity, parent);
-        }
-      }, { }, { } },
-      { "Objects", "", { }, { }, {
-        { "Cube", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Cube); }, { }, { } },
-        { "Sphere", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Sphere); }, { }, { } },
-        { "Plane", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Plane); }, { }, { } },
-        { "Quad", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Quad); }, { }, { } },
-      }, },
-      { "Light", "", { }, { }, {
-        { "Directional Light", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::DirectionalLight); }, { }, { } },
-        { "Point Light", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::PointLight); }, { }, { } },
-        { "Spot Light", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::SpotLight); }, { }, { } },
-      }, },
-      { "Camera", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Camera); }, { }, { } }
-    } };
-
     EditorSelection::RegisterSelectionCallback(DelegateConnection<&EditorUI::OnSelectionChange>);
   }
 
@@ -238,13 +215,13 @@ namespace Hyperion::Editor {
       
       UIImmediate::Space(SizeKind::Pixels, 10.0f);
       
-      bool8 is_world_mode = s_transformation_mode == GizmoMode::World;
       bool8 is_local_mode = s_transformation_mode == GizmoMode::Local;
-      if (UIImmediate::TextToggle(is_world_mode, "\uf0ac", FitType::ToLayout, s_icon_theme).clicked) {
-        s_transformation_mode = GizmoMode::World;
-      }
+      bool8 is_world_mode = s_transformation_mode == GizmoMode::World;
       if (UIImmediate::TextToggle(is_local_mode, "\uf21d", FitType::ToLayout, s_icon_theme).clicked) {
         s_transformation_mode = GizmoMode::Local;
+      }
+      if (UIImmediate::TextToggle(is_world_mode, "\uf0ac", FitType::ToLayout, s_icon_theme).clicked) {
+        s_transformation_mode = GizmoMode::World;
       }
       
       UIImmediate::BeginCenter("Play Buttons");
@@ -283,7 +260,9 @@ namespace Hyperion::Editor {
       UIImmediate::BeginPanel("Hierarchy Header", hierarchy_header_panel_size);
       {
         if (UIImmediate::Button("\uf067", FitType::ToLayout, s_icon_theme).clicked) {
-          OpenContextMenu(s_entity_creation_menu);
+          Menu entity_creation_menu;
+          CreateEntityMenu(entity_creation_menu.items);
+          OpenContextMenu(entity_creation_menu);
         }
 
         String world_name = world->GetName();
@@ -324,7 +303,11 @@ namespace Hyperion::Editor {
         if (deselect_panel_interaction.clicked) {
           EditorSelection::Deselect();
         } else if (deselect_panel_interaction.right_clicked) {
-          OpenContextMenu(s_entity_creation_menu);
+          Menu context_menu;
+          MenuItem create_entity_item = { "Create Entity", "", { }, { }, { } };
+          CreateEntityMenu(create_entity_item.sub_items);
+          context_menu.items.Add(create_entity_item);
+          OpenContextMenu(context_menu);
         }
         UIImmediate::EndPanel();
       }
@@ -363,9 +346,13 @@ namespace Hyperion::Editor {
       EditorSelection::Select(entity);
 
       if (entity_interaction.right_clicked) {
+        MenuItem create_entity_item = { "Create Entity", "", { }, { }, { } };
+        CreateEntityMenu(create_entity_item.sub_items);
         Menu entity_menu = { {
           { "Duplicate", "", [](auto _) { EditorApplication::DuplicateEntity(); }, { }, { } },
           { "Destroy", "", [](auto _) { EditorApplication::DestroyEntity(); }, { }, { } },
+          MenuItem::Separator(),
+          create_entity_item
         } };
         OpenContextMenu(entity_menu);
       }
@@ -508,7 +495,7 @@ namespace Hyperion::Editor {
                   box_collider_component,
                   sphere_collider_component,
                 }, },
-                { "Render", "", { }, { }, {
+                { "Rendering", "", { }, { }, {
                   camera_component,
                   sprite_component,
                   mesh_component,
@@ -815,6 +802,31 @@ namespace Hyperion::Editor {
     point.y -= preview_rect.y;
     
     return point;
+  }
+
+  //--------------------------------------------------------------
+  void EditorUI::CreateEntityMenu(Array<MenuItem> &items) {
+    items.Add({ "Empty", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Base); }, { }, { } });
+    items.Add({ "Empty Child", "",[](auto _) {
+      if (EditorSelection::HasSelection()) {
+        EntityId parent = EditorSelection::GetSelection();
+        EntityId new_entity = EditorApplication::CreateEntity(EntityPrimitive::Base);
+        EditorApplication::GetWorld()->GetHierarchy()->SetParent(new_entity, parent);
+      }
+    }, EditorSelection::HasSelection() ? MenuItemFlags::None : MenuItemFlags::Disabled, { } });
+    items.Add({ "Objects", "", { }, { }, {
+      { "Cube", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Cube); }, { }, { } },
+      { "Sphere", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Sphere); }, { }, { } },
+      { "Plane", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Plane); }, { }, { } },
+      { "Quad", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Quad); }, { }, { } },
+    }, });
+    items.Add({ "Rendering", "", { }, { }, {
+      { "Camera", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Camera); }, { }, { } },
+      MenuItem::Separator(),
+      { "Directional Light", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::DirectionalLight); }, { }, { } },
+      { "Point Light", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::PointLight); }, { }, { } },
+      { "Spot Light", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::SpotLight); }, { }, { } },
+    }, });
   }
 
   //--------------------------------------------------------------
