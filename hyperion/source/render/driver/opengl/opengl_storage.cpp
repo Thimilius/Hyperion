@@ -73,9 +73,9 @@ namespace Hyperion::Rendering {
       const char *object_id_fragment = R"(
         #version 450 core
 
-        layout(location = 0) out uint o_object_id;
+        layout(location = 0) out uvec2 o_object_id;
 
-        uniform uint u_object_id;
+        uniform uvec2 u_object_id;
 
         void main() {
 	        o_object_id = u_object_id;
@@ -418,7 +418,7 @@ namespace Hyperion::Rendering {
       glVertexArrayElementBuffer(opengl_mesh.vertex_array, opengl_mesh.index_buffer);
 
       for (VertexAttribute vertex_attribute : vertex_format.attributes) {
-        GLuint attribute_index = OpenGLUtilities::GetAttributeIndexForVertextAttributeSize(vertex_attribute.kind);
+        GLuint attribute_index = OpenGLUtilities::GetAttributeIndexForVertexAttributeSize(vertex_attribute.kind);
         GLint size = vertex_attribute.dimension;
         GLenum type = OpenGLUtilities::GetVertexAttributeType(vertex_attribute.type);
 

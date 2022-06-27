@@ -180,13 +180,13 @@ namespace Hyperion::Editor {
 
         RenderCommandBuffer command_buffer;
         command_buffer.RequestAsyncReadback(render_texture->GetRenderTargetId(), 0, region, [](auto &result) {
-          const uint32 *data = reinterpret_cast<const uint32 *>(result.data.GetData());
-          if (result.data.GetLength() >= 4) {
-            uint32 id = *data;
-            if (id == UINT32_MAX) {
+          const uint64 *data = reinterpret_cast<const uint64 *>(result.data.GetData());
+          if (result.data.GetLength() >= 8) {
+            EntityId id = *data;
+            if (id == EntityId::EMPTY) {
               EditorSelection::Deselect();
             } else {
-              EditorSelection::Select(EntityId::FromSmall(id));
+              EditorSelection::Select(id);
             }
           }
         });

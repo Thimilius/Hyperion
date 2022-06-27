@@ -60,14 +60,15 @@ namespace Hyperion::Rendering {
   using TexturePixelData = Array<byte>;
 
   enum class RenderTextureFormat {
-    RGBA32,
-    UInt32,
+    RGBA8,
+    R32UInt,
+    RG32UInt,
     Depth24,
     Depth24Stencil8,
   };
 
   struct RenderTextureAttachment {
-    RenderTextureFormat format;
+    RenderTextureFormat format = RenderTextureFormat::RGBA8;
     TextureAttributes attributes;
     bool8 readable = true;
   };

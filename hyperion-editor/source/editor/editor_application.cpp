@@ -122,7 +122,7 @@ namespace Hyperion::Editor {
 
         EditorSelection::Deselect();
 
-        HYP_INFO("Editor", "Opened world at path: {}", path);
+        HYP_LOG_INFO("Editor", "Opened world at path: {}", path);
       }  
     }
   }
@@ -136,7 +136,7 @@ namespace Hyperion::Editor {
       }
       String world_text = WorldSerializer::Serialize(s_world);
       FileSystem::WriteAllText(path, world_text);
-      HYP_INFO("Editor", "Saved world at path: {}", path);
+      HYP_LOG_INFO("Editor", "Saved world at path: {}", path);
     }
   }
 

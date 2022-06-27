@@ -10,7 +10,7 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-  using RenderFrameContextObjectId = uint32;
+  using RenderFrameContextObjectId = uint64;
 
   struct RenderFrameContextObject {
     RenderFrameContextObjectId id = 0;

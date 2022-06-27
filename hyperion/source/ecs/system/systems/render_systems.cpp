@@ -153,7 +153,7 @@ namespace Hyperion::Rendering {
       SpriteComponent *sprite = manager->GetComponent<SpriteComponent>(entity);
 
       RenderFrameContextObjectSprite &render_frame_context_sprite_object = render_frame_context.AddSpriteObject();
-      render_frame_context_sprite_object.id = EntityId::CreateSmall(entity);
+      render_frame_context_sprite_object.id = entity;
       render_frame_context_sprite_object.local_to_world = local_to_world->local_to_world;
       render_frame_context_sprite_object.position = Vector3(local_to_world->local_to_world.columns[3]);
       render_frame_context_sprite_object.color = sprite->color;
@@ -179,7 +179,7 @@ namespace Hyperion::Rendering {
       }
       
       RenderFrameContextObjectMesh &render_frame_context_mesh_object = render_frame_context.AddMeshObject();
-      render_frame_context_mesh_object.id = EntityId::CreateSmall(entity);
+      render_frame_context_mesh_object.id = entity;
       render_frame_context_mesh_object.local_to_world = local_to_world->local_to_world;
       render_frame_context_mesh_object.position = Vector3(local_to_world->local_to_world.columns[3]);
       render_frame_context_mesh_object.mesh_handle = mesh_handle;

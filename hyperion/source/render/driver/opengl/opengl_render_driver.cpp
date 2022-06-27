@@ -232,8 +232,8 @@ namespace Hyperion::Rendering {
     UseRenderTexture(command.render_target_id);
     const OpenGLRenderTexture &opengl_render_texture = m_storage.GetRenderTexture(command.render_target_id.handle);
     glDepthMask(GL_TRUE);
-    GLuint clear_value = UINT32_MAX;
-    glClearNamedFramebufferuiv(opengl_render_texture.framebuffer, GL_COLOR, GL_NONE, &clear_value);
+    GLuint clear_values[2] = { UINT32_MAX, UINT32_MAX };
+    glClearNamedFramebufferuiv(opengl_render_texture.framebuffer, GL_COLOR, 0, clear_values);
     glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     const OpenGLShader &opengl_shader = m_storage.GetStatic().object_id_shader;
@@ -246,9 +246,10 @@ namespace Hyperion::Rendering {
       GLint model_location = opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::Model)];
       glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, mesh_object.local_to_world.elements);
 
+      // NOTE: The object id needs to be put in the uvec2 in reverse order.
       GLint object_id_location = opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::ObjectId)];
-      glProgramUniform1ui(opengl_shader.program, object_id_location, mesh_object.id);
-
+      glProgramUniform2ui(opengl_shader.program, object_id_location, 0xFFFFFFFF & mesh_object.id, mesh_object.id >> 32);
+      
       UseMesh(opengl_mesh);
       DrawSubMesh(opengl_mesh.sub_meshes[mesh_object.sub_mesh_index]);
     }
@@ -414,13 +415,12 @@ namespace Hyperion::Rendering {
       const OpenGLRenderTexture &render_texture = render_texture_it->second;
       const OpenGLRenderTextureAttachment &attachment = render_texture.attachments[command.attachment_index];
       RenderTextureFormat format = attachment.format;
-      HYP_ASSERT(format != RenderTextureFormat::Depth24Stencil8);
+      HYP_ASSERT(format != RenderTextureFormat::Depth24Stencil8 && format != RenderTextureFormat::Depth24);
 
       // Make sure we are not out of bounds when accessing the render texture.
       RectInt region = command.region;
       bool8 x_range_is_not_valid = region.x < 0 || (region.width + region.x) < 0 || (region.width + region.x) > static_cast<int32>(render_texture.width);
-      bool8 y_range_is_not_valid = region.y < 0 || (region.height + region.y) < 0 || (region.height + region.y) > static_cast<int32>(render_texture.
-        height);
+      bool8 y_range_is_not_valid = region.y < 0 || (region.height + region.y) < 0 || (region.height + region.y) > static_cast<int32>(render_texture.height);
       if (x_range_is_not_valid || y_range_is_not_valid) {
         HYP_LOG_ERROR("OpenGL", "Trying to read out-of-bounds data of a render texture!");
       } else {
@@ -433,8 +433,7 @@ namespace Hyperion::Rendering {
 
         glBindFramebuffer(GL_READ_FRAMEBUFFER, render_texture.framebuffer);
         glNamedFramebufferReadBuffer(render_texture.framebuffer, GL_COLOR_ATTACHMENT0);
-        glReadnPixels(region.x, region.y, region.width, region.height, format_value, format_type, buffer_size,
-                      async_request_result.result.data.GetData());
+        glReadnPixels(region.x, region.y, region.width, region.height, format_value, format_type, buffer_size, async_request_result.result.data.GetData());
       }
     }
   }

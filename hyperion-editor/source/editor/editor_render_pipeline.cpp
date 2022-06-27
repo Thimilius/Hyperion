@@ -42,7 +42,7 @@ namespace Hyperion::Editor {
       render_texture_parameters.width = m_wrapped_pipeline->GetRenderTargetWidth();
       render_texture_parameters.height = m_wrapped_pipeline->GetRenderTargetHeight();
       render_texture_parameters.attachments = {
-        { RenderTextureFormat::UInt32, render_texture_attributes, true },
+        { RenderTextureFormat::RG32UInt, render_texture_attributes, true },
         { RenderTextureFormat::Depth24Stencil8, render_texture_attributes, false },
       };
       m_object_ids_render_texture = AssetManager::CreateRenderTexture(render_texture_parameters);
@@ -52,7 +52,7 @@ namespace Hyperion::Editor {
       render_texture_parameters.width = m_wrapped_pipeline->GetRenderTargetWidth();
       render_texture_parameters.height = m_wrapped_pipeline->GetRenderTargetHeight();
       render_texture_parameters.attachments = {
-        { RenderTextureFormat::RGBA32, render_texture_attributes, true },
+        { RenderTextureFormat::RGBA8, render_texture_attributes, true },
         { RenderTextureFormat::Depth24Stencil8, render_texture_attributes, false },
       };
       m_editor_render_texture = AssetManager::CreateRenderTexture(render_texture_parameters);

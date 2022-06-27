@@ -149,8 +149,9 @@ namespace Hyperion::Rendering {
   //--------------------------------------------------------------
   bool8 OpenGLUtilities::IsRenderTextureFormatAColor(RenderTextureFormat format) {
     switch (format) {
-      case RenderTextureFormat::RGBA32:
-      case RenderTextureFormat::UInt32: return true;
+      case RenderTextureFormat::RGBA8:
+      case RenderTextureFormat::R32UInt:
+      case RenderTextureFormat::RG32UInt: return true;
       case RenderTextureFormat::Depth24:
       case RenderTextureFormat::Depth24Stencil8: return false;
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
@@ -161,8 +162,9 @@ namespace Hyperion::Rendering {
   //--------------------------------------------------------------
   GLenum OpenGLUtilities::GetRenderTextureAttachmentType(RenderTextureFormat format) {
     switch (format) {
-      case RenderTextureFormat::RGBA32: return GL_COLOR_ATTACHMENT0;
-      case RenderTextureFormat::UInt32: return GL_COLOR_ATTACHMENT0;
+      case RenderTextureFormat::RGBA8:
+      case RenderTextureFormat::R32UInt:
+      case RenderTextureFormat::RG32UInt: return GL_COLOR_ATTACHMENT0;
       case RenderTextureFormat::Depth24: return GL_DEPTH_ATTACHMENT;
       case RenderTextureFormat::Depth24Stencil8: return GL_DEPTH_STENCIL_ATTACHMENT;
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
@@ -173,8 +175,9 @@ namespace Hyperion::Rendering {
   //--------------------------------------------------------------
   GLenum OpenGLUtilities::GetRenderTextureInternalFormat(RenderTextureFormat internal_format) {
     switch (internal_format) {
-      case RenderTextureFormat::RGBA32: return GL_RGBA8;
-      case RenderTextureFormat::UInt32: return GL_R32UI;
+      case RenderTextureFormat::RGBA8: return GL_RGBA8;
+      case RenderTextureFormat::R32UInt: return GL_R32UI;
+      case RenderTextureFormat::RG32UInt: return GL_RG32UI;
       case RenderTextureFormat::Depth24: return GL_DEPTH_COMPONENT24;
       case RenderTextureFormat::Depth24Stencil8: return GL_DEPTH24_STENCIL8;
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
@@ -186,8 +189,9 @@ namespace Hyperion::Rendering {
   GLenum OpenGLUtilities::GetRenderTextureFormat(RenderTextureFormat format) {
     // FIXME: Missing formats.
     switch (format) {
-      case RenderTextureFormat::RGBA32: return GL_RGBA;
-      case RenderTextureFormat::UInt32: return GL_RED_INTEGER;
+      case RenderTextureFormat::RGBA8: return GL_RGBA;
+      case RenderTextureFormat::R32UInt: return GL_RED_INTEGER;
+      case RenderTextureFormat::RG32UInt: return GL_RG_INTEGER;
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         return 0;
     }
@@ -197,8 +201,9 @@ namespace Hyperion::Rendering {
   GLenum OpenGLUtilities::GetRenderTextureFormatType(RenderTextureFormat format_type) {
     // FIXME: Missing formats.
     switch (format_type) {
-      case RenderTextureFormat::RGBA32: return GL_UNSIGNED_BYTE;
-      case RenderTextureFormat::UInt32: return GL_UNSIGNED_INT;
+      case RenderTextureFormat::RGBA8: return GL_UNSIGNED_BYTE;
+      case RenderTextureFormat::R32UInt: return GL_UNSIGNED_INT;
+      case RenderTextureFormat::RG32UInt: return GL_UNSIGNED_INT;
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         return 0;
     }
@@ -209,8 +214,9 @@ namespace Hyperion::Rendering {
     // FIXME: Missing formats.
     GLsizei region_size = region.width * region.height;
     switch (format) {
-      case RenderTextureFormat::RGBA32: return region_size * 4 * sizeof(byte);
-      case RenderTextureFormat::UInt32: return region_size * 1 * sizeof(uint32);
+      case RenderTextureFormat::RGBA8: return region_size * 4 * sizeof(byte);
+      case RenderTextureFormat::R32UInt: return region_size * 1 * sizeof(uint32);
+      case RenderTextureFormat::RG32UInt: return region_size * 2 * sizeof(uint32);
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
         return 0;
     }
@@ -229,7 +235,7 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  GLuint OpenGLUtilities::GetAttributeIndexForVertextAttributeSize(VertexAttributeKind kind) {
+  GLuint OpenGLUtilities::GetAttributeIndexForVertexAttributeSize(VertexAttributeKind kind) {
     switch (kind) {
       case VertexAttributeKind::Position: return 0;
       case VertexAttributeKind::Normal: return 1;
