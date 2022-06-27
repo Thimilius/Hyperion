@@ -14,6 +14,7 @@ namespace Hyperion::UI {
   //--------------------------------------------------------------
   GizmoManipulation UIImmediateGizmos::Manipulate(
     Rendering::RenderGizmoType type,
+    GizmoMode mode,
     EntityManager *entity_manager,
     EntityId entity,
     DerivedTransformComponent *derived_transform,
@@ -28,16 +29,20 @@ namespace Hyperion::UI {
     bool8 near_x = false;
     bool8 near_y = false;
     bool8 near_z = false;
+
+    Vector3 right = mode == GizmoMode::Local ? TransformUtilities::GetRight(derived_transform) : Vector3(1.0f, 0.0f, 0.0f);
+    Vector3 up = mode == GizmoMode::Local ? TransformUtilities::GetUp(derived_transform) : Vector3(0.0f, 1.0f, 0.0f);
+    Vector3 forward = mode == GizmoMode::Local ? -TransformUtilities::GetForward(derived_transform) : Vector3(0.0f, 0.0f, 1.0f);
     
     Vector3 position = derived_transform->position;
     GizmoManipulation result = { };
     if (type == Rendering::RenderGizmoType::Translate) {
-      Ray x_axis_ray = Ray(Vector3(0.0f, position.y, position.z), Vector3(1.0f, 0.0f, 0.0f));
-      Ray y_axis_ray = Ray(Vector3(position.x, 0.0f, position.z), Vector3(0.0f, 1.0f, 0.0f));
-      Ray z_axis_ray = Ray(Vector3(position.x, position.y, 0.0f), Vector3(0.0f, 0.0f, 1.0f));
-      Vector3 x_handle_position = Vector3(position.x + 0.5f, position.y, position.z);
-      Vector3 y_handle_position = Vector3(position.x, position.y + 0.5f, position.z);
-      Vector3 z_handle_position = Vector3(position.x, position.y, position.z + 0.5f);
+      Ray x_axis_ray = Ray(position, right);
+      Ray y_axis_ray = Ray(position, up);
+      Ray z_axis_ray = Ray(position, forward);
+      Vector3 x_handle_position = position + 0.5f * right;
+      Vector3 y_handle_position = position + 0.5f * up;
+      Vector3 z_handle_position = position + 0.5f * forward;
 
       float32 distance_to_x = Ray::DistanceBetweenRays(x_axis_ray, ray);
       Vector3 x_axis_point = x_axis_ray.GetClosestPointToRay(ray);
@@ -50,15 +55,6 @@ namespace Hyperion::UI {
       near_y = y_handle_position.Distance(y_axis_point) < 0.5f && std::abs(distance_to_y) < 0.1f;
       near_z = z_handle_position.Distance(z_axis_point) < 0.5f && std::abs(distance_to_z) < 0.1f;
 
-      Plane xy_plane = Plane(Vector3(0.0f, 0.0f, 1.0f), -position.z);
-      Plane xz_plane = Plane(Vector3(0.0f, 1.0f, 0.0f), -position.y); 
-      Plane yz_plane = Plane(Vector3(1.0f, 0.0f, 0.0f), -position.x);
-
-      Vector3 camera_direction = TransformUtilities::GetForward(camera_transform);
-      float32 xy_plane_dot = Math::Abs(xy_plane.normal.Dot(camera_direction));
-      float32 xz_plane_dot = Math::Abs(xz_plane.normal.Dot(camera_direction));
-      float32 yz_plane_dot = Math::Abs(yz_plane.normal.Dot(camera_direction));
-      
       if (near_x) {
         if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
           offset = derived_transform->position - x_axis_point;
@@ -76,38 +72,15 @@ namespace Hyperion::UI {
         }
       }
 
-      Plane plane;
-      float32 plane_distance = 0.0f;
       if (Input::IsMouseButtonHold(MouseButtonCode::Left)) {
         if (should_move_x) {
-          if (xy_plane_dot > xz_plane_dot) {
-            plane = xy_plane;
-          } else {
-            plane = xz_plane;
-          }
-          plane.Intersects(ray, plane_distance);
-          x_axis_point.x = ray.GetPoint(plane_distance).x;
-          
+          x_axis_point = x_axis_ray.GetClosestPointToRay(ray);
           local_transform->position = TransformUtilities::WorldToLocalPosition(entity_manager, entity, x_axis_point + offset);
         } else if (should_move_y) {
-          if (xy_plane_dot > yz_plane_dot) {
-            plane = xy_plane;
-          } else {
-            plane = yz_plane;
-          }
-          plane.Intersects(ray, plane_distance);
-          y_axis_point.y = ray.GetPoint(plane_distance).y;
-          
+          y_axis_point = y_axis_ray.GetClosestPointToRay(ray);
           local_transform->position = TransformUtilities::WorldToLocalPosition(entity_manager, entity, y_axis_point + offset);
         } else if (should_move_z) {
-          if (xz_plane_dot > yz_plane_dot) {
-            plane = xz_plane;
-          } else {
-            plane = yz_plane;
-          }
-          plane.Intersects(ray, plane_distance);
-          z_axis_point.z = ray.GetPoint(plane_distance).z;
-          
+          z_axis_point = z_axis_ray.GetClosestPointToRay(ray);
           local_transform->position = TransformUtilities::WorldToLocalPosition(entity_manager, entity, z_axis_point + offset);
         }
       }
@@ -151,8 +124,8 @@ namespace Hyperion::UI {
         
         if (should_move_x) {
           Vector3 current = x_circle_point;
-          float32 degree = x_circle.GetAngleBetweenPoints(current, offset);
-          
+          float32 degree = x_circle.GetAngleBetweenPointsOnCircle(current, offset);
+
           Quaternion new_rotation = Quaternion::FromAxisAngle(Vector3(1.0f, 0.0f, 0.0f), degree) * local_transform->rotation;
           local_transform->rotation = new_rotation;
 
@@ -161,8 +134,8 @@ namespace Hyperion::UI {
           near_x = true;
         } else if (should_move_y) {
           Vector3 current = y_circle_point;
-          float32 degree = y_circle.GetAngleBetweenPoints(current, offset);
-          
+          float32 degree = y_circle.GetAngleBetweenPointsOnCircle(current, offset);
+
           Quaternion new_rotation = Quaternion::FromAxisAngle(Vector3(0.0f, 1.0f, 0.0f), degree) * local_transform->rotation;
           local_transform->rotation = new_rotation;
 
@@ -171,7 +144,7 @@ namespace Hyperion::UI {
           near_y = true;
         } else if (should_move_z) {
           Vector3 current = z_circle_point;
-          float32 degree = z_circle.GetAngleBetweenPoints(current, offset);
+          float32 degree = z_circle.GetAngleBetweenPointsOnCircle(current, offset);
           
           Quaternion new_rotation = Quaternion::FromAxisAngle(Vector3(0.0f, 0.0f, 1.0f), degree) * local_transform->rotation;
           local_transform->rotation = new_rotation;

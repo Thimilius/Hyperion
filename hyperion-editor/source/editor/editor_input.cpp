@@ -81,6 +81,12 @@ namespace Hyperion::Editor {
     if (Input::IsKeyDown(KeyCode::E)) {
       EditorUI::SetTransformationTool(RenderGizmoType::Scale);
     }
+    if (Input::IsKeyDown(KeyCode::R)) {
+      EditorUI::SetTransformationMode(UI::GizmoMode::World);
+    }
+    if (Input::IsKeyDown(KeyCode::T)) {
+      EditorUI::SetTransformationMode(UI::GizmoMode::Local);
+    }
   }
   
 }

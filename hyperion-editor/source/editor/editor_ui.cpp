@@ -11,7 +11,6 @@
 #include <hyperion/ecs/component/components/utilities/camera_utilities.hpp>
 #include <hyperion/render/render_engine.hpp>
 #include <hyperion/ui/immediate/ui_immediate.hpp>
-#include <hyperion/ui/immediate/ui_immediate_gizmos.hpp>
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/editor/editor_application.hpp"
@@ -236,7 +235,18 @@ namespace Hyperion::Editor {
       if (UIImmediate::TextToggle(is_scale_tool, "\uf424", FitType::ToLayout, s_icon_theme).clicked) {
         s_transformation_tool = RenderGizmoType::Scale;
       }
-
+      
+      UIImmediate::Space(SizeKind::Pixels, 10.0f);
+      
+      bool8 is_world_mode = s_transformation_mode == GizmoMode::World;
+      bool8 is_local_mode = s_transformation_mode == GizmoMode::Local;
+      if (UIImmediate::TextToggle(is_world_mode, "\uf0ac", FitType::ToLayout, s_icon_theme).clicked) {
+        s_transformation_mode = GizmoMode::World;
+      }
+      if (UIImmediate::TextToggle(is_local_mode, "\uf21d", FitType::ToLayout, s_icon_theme).clicked) {
+        s_transformation_mode = GizmoMode::Local;
+      }
+      
       UIImmediate::BeginCenter("Play Buttons");
       {
         EngineState engine_mode = Engine::GetEngineState();
@@ -756,8 +766,14 @@ namespace Hyperion::Editor {
       DerivedTransformComponent *derived_transform = manager->GetComponent<DerivedTransformComponent>(entity);
       DerivedTransformComponent *camera_transform = EditorCamera::GetTransform();
       CameraComponent *camera = EditorCamera::GetCamera();
-      
-      RenderGizmos::SetTransformationGizmoTransformation(Matrix4x4::Translate(derived_transform->position));
+
+      Matrix4x4 gizmo_transform;
+      if (s_transformation_mode == GizmoMode::Local) {
+        gizmo_transform = Matrix4x4::TRS(derived_transform->position, derived_transform->rotation, Vector3::One());
+      } else {
+        gizmo_transform = Matrix4x4::Translate(derived_transform->position);
+      }
+      RenderGizmos::SetTransformationGizmoTransformation(gizmo_transform);
 
       // We have to remember to do everything in the space of the preview rect. That includes:
       //   - Getting the correct mouse position with (0, 0) at the bottom and corner of the preview rect
@@ -769,6 +785,7 @@ namespace Hyperion::Editor {
 
       GizmoManipulation manipulation = UIImmediateGizmos::Manipulate(
         s_transformation_tool,
+        s_transformation_mode,
         manager,
         entity,
         derived_transform,

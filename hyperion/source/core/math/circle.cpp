@@ -35,7 +35,10 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
-  float32 Circle::GetAngleBetweenPoints(Vector3 a, Vector3 b) {
+  float32 Circle::GetAngleBetweenPointsOnCircle(Vector3 a, Vector3 b) {
+    a -= center;
+    b -= center;
+    
     float32 dot = a.Dot(b);
     dot = Math::Clamp(dot, -1.0f, 1.0f);
 

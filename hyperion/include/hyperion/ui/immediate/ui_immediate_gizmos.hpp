@@ -9,9 +9,8 @@
 namespace Hyperion::UI {
 
   enum class GizmoMode {
-    TranslateX,
-    TranslateY,
-    TranslateZ,
+    Local,
+    World
   };
 
   struct GizmoManipulation {
@@ -23,6 +22,7 @@ namespace Hyperion::UI {
   public:
     static GizmoManipulation Manipulate(
       Rendering::RenderGizmoType type,
+      GizmoMode mode,
       EntityManager *entity_manager,
       EntityId entity,
       DerivedTransformComponent *derived_transform,

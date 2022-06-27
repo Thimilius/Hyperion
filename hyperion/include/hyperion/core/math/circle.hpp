@@ -16,7 +16,7 @@ namespace Hyperion {
     Circle(Vector3 center, Vector3 orientation, float32 radius);
 
     float32 GetClosestPointToRay(Ray ray, Vector3 &point);
-    float32 GetAngleBetweenPoints(Vector3 a, Vector3 b);
+    float32 GetAngleBetweenPointsOnCircle(Vector3 a, Vector3 b);
   };  
   
 }
