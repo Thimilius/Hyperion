@@ -25,8 +25,6 @@
 #include "hyperion/editor/editor_selection.hpp"
 #include "hyperion/editor/editor_ui.hpp"
 
-#define UI_TEST false
-
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Editor {
 
@@ -35,6 +33,10 @@ namespace Hyperion::Editor {
   //--------------------------------------------------------------
   void EditorApplication::EnterRuntime() {
     if (Engine::GetEngineState() == EngineState::Editor) {
+      if (s_editor_logger.ShouldClearOnPlay()) {
+        s_editor_logger.Clear();
+      }
+      
       EditorSelection::Deselect();
       
       World *copy = WorldManager::CopyWorld(s_world);
@@ -164,6 +166,8 @@ namespace Hyperion::Editor {
   
   //--------------------------------------------------------------
   void EditorApplication::OnInitialize() {
+    Log::RegisterLogger(&s_editor_logger);
+    
     if (FileSystem::Exists(WORLD_PATH)) {
       String text = FileSystem::ReadAllText(WORLD_PATH);
       s_world = WorldSerializer::Deserialize(text);
@@ -185,60 +189,24 @@ namespace Hyperion::Editor {
     }
     WorldManager::SetActiveWorld(s_world);
 
-#if !UI_TEST
     EditorUI::Initialize();
-#endif
     EditorCamera::Initialize();
   }
 
   //--------------------------------------------------------------
   void EditorApplication::OnUpdate(float32 delta_time) {
     EditorInput::Update();
-#if !UI_TEST
     EditorUI::Update();
-#endif
     EditorCamera::Update(delta_time);
 
     Vector2 preview_size = EditorUI::GetPreviewRect().size;
     Display::SetPreviewSize(static_cast<uint32>(preview_size.x), static_cast<uint32>(preview_size.y));
-#if UI_TEST
-    static UI::UIImmediateTheme *red_theme = UI::UIImmediate::CreateTheme("Red");
-    red_theme->panel_color = Color::Red();
-    static UI::UIImmediateTheme *green_theme = UI::UIImmediate::CreateTheme("Green");
-    green_theme->panel_color = Color::Green();
-    static UI::UIImmediateTheme *yellow_theme = UI::UIImmediate::CreateTheme("Yellow");
-    yellow_theme->panel_color = Color::Yellow();
-    
-    UI::UIImmediate::Begin();
-    {
-      UI::Size top_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::Pixels, 25.0f } };
-      UI::UIImmediate::BeginPanel("Top Panel", top_size, UI::ChildLayout::Horizontal, false, red_theme);
-      {
-        UI::UIImmediate::Space(UI::SizeKind::Pixels, 25.0f);
-        static String input = "Hello there";
-        UI::UIImmediate::Input("Input", input, UI::TextAlignment::MiddleCenter, UI::FitType::Fill);
-        UI::UIImmediate::Space(UI::SizeKind::Pixels, 25.0f);
-      }
-      UI::UIImmediate::EndPanel();
-
-      UI::Size center_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::AutoFill, 0.0f } };
-      UI::UIImmediate::BeginPanel("Center Panel", center_size, UI::ChildLayout::Horizontal, false, green_theme);
-      {
-        
-      }
-      UI::UIImmediate::EndPanel();
-      
-      UI::Size bottom_size[2] = { { UI::SizeKind::AutoFill, 0.0f }, { UI::SizeKind::Pixels, 25.0f } };
-      UI::UIImmediate::BeginPanel("Bottom Panel", bottom_size, UI::ChildLayout::Horizontal, false, yellow_theme);
-      {
-        
-      }
-      UI::UIImmediate::EndPanel();
-    }
-    UI::UIImmediate::End();
-#endif
   }
-  
+
+  void EditorApplication::OnShutdown() {
+    Log::UnregisterLogger(&s_editor_logger);
+  }
+
 }
 
 //--------------------------------------------------------------

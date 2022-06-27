@@ -6,6 +6,9 @@
 #include <hyperion/ecs/world/world.hpp>
 #include <hyperion/editor/editor_render_pipeline.hpp>
 
+//---------------------- Project Includes ----------------------
+#include "hyperion/editor/editor_logger.hpp"
+
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Editor {
 
@@ -13,6 +16,7 @@ namespace Hyperion::Editor {
   public:
     inline static World *GetWorld() { return s_world; }
     inline static EditorRenderPipeline *GetRenderPipeline() { return s_render_pipeline; }
+    inline static EditorLogger &GetLogger() { return s_editor_logger; }
 
     static void EnterRuntime();
     static void PauseRuntime();
@@ -29,7 +33,10 @@ namespace Hyperion::Editor {
     void OnSetup(ApplicationSettings &settings) override;
     void OnInitialize() override;
     void OnUpdate(float32 delta_time) override;
+    void OnShutdown() override;
   private:
+    inline static EditorLogger s_editor_logger;
+    
     inline static World *s_world;
     inline static World *s_old_world;
 

@@ -133,27 +133,8 @@ namespace Hyperion::Editor {
           PreviewPanel();
 
           UIImmediate::Separator();
-          
-          Size lower_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::PercentOfParent, 0.3f } };
-          UIImmediate::BeginPanel("Lower Panel", lower_panel_size);
-          {
-            Size lower_left_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
-            UIImmediate::BeginPanel("Left Panel", lower_left_panel_size);
-            {
-              
-            }
-            UIImmediate::EndPanel();
 
-            UIImmediate::Separator();
-          
-            Size lower_right_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
-            UIImmediate::BeginPanel("Right Panel", lower_right_panel_size);
-            {
-              
-            }
-            UIImmediate::EndPanel();
-          }
-          UIImmediate::EndPanel();
+          ConsolePanel();
         }
         UIImmediate::EndPanel();
       }
@@ -614,6 +595,46 @@ namespace Hyperion::Editor {
         Size preview_image_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
         UIImmediate::Image(image_id, render_texture, preview_image_size, false);
         s_preview_element = UIImmediate::GetElement(UIImmediate::GetId(image_id));
+      }
+      UIImmediate::EndPanel();
+    }
+    UIImmediate::EndPanel();
+  }
+
+  //--------------------------------------------------------------
+  void EditorUI::ConsolePanel() {
+    EditorLogger &logger = EditorApplication::GetLogger();
+    
+    Size console_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::PercentOfParent, 0.3f } };
+    UIImmediate::BeginPanel("Console Panel", console_panel_size, ChildLayout::Vertical);
+    {
+      Size console_header_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 20.0f } };
+      UIImmediate::BeginPanel("Console Header", console_header_panel_size);
+      {
+        if (UIImmediate::Button("Clear", FitType::ToLayout).clicked) {
+          logger.Clear();
+        }
+        bool8 should_clear_on_play = logger.ShouldClearOnPlay();
+        if (UIImmediate::TextToggle(should_clear_on_play, "Clear on Play", FitType::ToLayout).clicked) {
+          logger.SetShouldClearOnPlay(should_clear_on_play);
+        }
+      }
+      UIImmediate::EndPanel();
+
+      UIImmediate::Separator();
+
+      Size console_entries_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
+      UIImmediate::BeginPanel("Console Entries", console_entries_panel_size, ChildLayout::Vertical, true);
+      {
+        const Array<EditorLogEntry> log_entries = logger.GetLogEntries();
+        for (uint64 i = 0; i < log_entries.GetLength(); i++) {
+          Size log_entry_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 20.0f } };
+          UIImmediate::BeginPanel(StringUtils::Format("Log Entry {}", i), log_entry_panel_size);
+          {
+            UIImmediate::Text(log_entries[i].message);
+          }
+          UIImmediate::EndPanel();
+        }
       }
       UIImmediate::EndPanel();
     }

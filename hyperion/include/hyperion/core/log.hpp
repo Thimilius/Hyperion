@@ -16,7 +16,7 @@ namespace Hyperion {
   };
 
   enum class LogType {
-    Core,
+    Engine,
     Client
   };
 
@@ -26,12 +26,12 @@ namespace Hyperion {
   public:
     virtual ~ILogger() = default;
   public:
-    virtual void Log(LogLevel level, const String &message) = 0;
+    virtual void Log(LogType type, LogLevel level, const String &message) = 0;
   };
 
   class ConsoleLogger final : public ILogger {
   public:
-    void Log(LogLevel level, const String &message) override;
+    void Log(LogType type, LogLevel level, const String &message) override;
   private:
     static ConsoleColor GetLogColor(LogLevel level);
   };
@@ -62,10 +62,10 @@ namespace Hyperion {
 
 }
 
-#define HYP_LOG_TRACE(s, m, ...) Hyperion::Log::LogMessage(LogType::Core, LogLevel::Trace, s, m, ##__VA_ARGS__)
-#define HYP_LOG_INFO(s, m, ...)  Hyperion::Log::LogMessage(LogType::Core, LogLevel::Info, s, m, ##__VA_ARGS__)
-#define HYP_LOG_WARN(s, m, ...)  Hyperion::Log::LogMessage(LogType::Core, LogLevel::Warning, s, m, ##__VA_ARGS__)
-#define HYP_LOG_ERROR(s, m, ...) Hyperion::Log::LogMessage(LogType::Core, LogLevel::Error, s, m, ##__VA_ARGS__)
+#define HYP_LOG_TRACE(s, m, ...) Hyperion::Log::LogMessage(LogType::Engine, LogLevel::Trace, s, m, ##__VA_ARGS__)
+#define HYP_LOG_INFO(s, m, ...)  Hyperion::Log::LogMessage(LogType::Engine, LogLevel::Info, s, m, ##__VA_ARGS__)
+#define HYP_LOG_WARN(s, m, ...)  Hyperion::Log::LogMessage(LogType::Engine, LogLevel::Warning, s, m, ##__VA_ARGS__)
+#define HYP_LOG_ERROR(s, m, ...) Hyperion::Log::LogMessage(LogType::Engine, LogLevel::Error, s, m, ##__VA_ARGS__)
 
 #define HYP_TRACE(m, ...) Hyperion::Log::LogMessage(LogType::Client, LogLevel::Trace, "Client", m, ##__VA_ARGS__)
 #define HYP_INFO(m, ...)  Hyperion::Log::LogMessage(LogType::Client, LogLevel::Info, "Client", m, ##__VA_ARGS__)

@@ -40,6 +40,7 @@ namespace Hyperion::Editor {
     static void EntityHierarchyPanelRecursive(EntityManager *manager, EntityId entity, HierarchyComponent *branch_hierarchy, uint32 depth);
     static void EntityInspectorPanel();
     static void PreviewPanel();
+    static void ConsolePanel();
 
     static void ComponentPanel(const ComponentInfo &component_info, Type component_type, void *component);
     static void PropertyPanel(Instance instance, Property property);

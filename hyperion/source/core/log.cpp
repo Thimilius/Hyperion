@@ -14,7 +14,7 @@
 namespace Hyperion {
 
   //--------------------------------------------------------------
-  void ConsoleLogger::Log(LogLevel level, const String &message) {
+  void ConsoleLogger::Log(LogType type, LogLevel level, const String &message) {
     OperatingSystem::PrintToConsole(GetLogColor(level), message);
   }
   
@@ -39,7 +39,7 @@ namespace Hyperion {
     String final_message = StringUtils::Format("{} - [{}] - {}\n", prefix_buffer, system, formatted_message);
 
     for (ILogger *logger : s_loggers) {
-      logger->Log(level, final_message);
+      logger->Log(type, level, final_message);
     }
   }
 

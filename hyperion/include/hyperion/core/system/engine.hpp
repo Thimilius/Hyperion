@@ -79,7 +79,7 @@ namespace Hyperion {
     inline static EngineMode s_state = EngineMode::Runtime;
 #endif
 
-    inline static ILogger *s_console_logger;
+    inline static ConsoleLogger s_console_logger;
   private:
     friend class Hyperion::Application;
     friend class Hyperion::Main;

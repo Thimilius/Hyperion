@@ -21,16 +21,16 @@ namespace Hyperion::Scripting {
 
     // Log.
     s_core_bootstrap_arguments.native_bindings.log.log_trace = [](ManagedString message) {
-      HYP_LOG_TRACE("Scripting", "{}", message);
+      HYP_TRACE("{}", message);
     };
     s_core_bootstrap_arguments.native_bindings.log.log_info = [](ManagedString message) {
-      HYP_LOG_INFO("Scripting", "{}", message);
+      HYP_INFO("{}", message);
     };
     s_core_bootstrap_arguments.native_bindings.log.log_warn = [](ManagedString message) {
-      HYP_LOG_WARN("Scripting", "{}", message);
+      HYP_WARN("{}", message);
     };
     s_core_bootstrap_arguments.native_bindings.log.log_error = [](ManagedString message) {
-      HYP_LOG_ERROR("Scripting", "{}", message);
+      HYP_ERROR("{}", message);
     };
 
     // Time.

@@ -11,6 +11,8 @@ namespace Hyperion.Sandbox {
       EntityManager entityManager = m_World.EntityManager;
       
       m_Entity = entityManager.CreateEntity(EntityPrimitive.Cube);
+      
+      Engine.Log("Hello there from C#");
     }
 
     public void Update() {

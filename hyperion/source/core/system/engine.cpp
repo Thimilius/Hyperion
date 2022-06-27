@@ -60,8 +60,7 @@ namespace Hyperion {
     // We initialize the operating system first to get logging ability.
     OperatingSystem::Initialize();
 
-    s_console_logger = new ConsoleLogger();
-    Log::RegisterLogger(s_console_logger);
+    Log::RegisterLogger(&s_console_logger);
 
     HYP_LOG_INFO("Engine", "Initializing...");
     OperatingSystemInfo operating_system_info = OperatingSystem::GetSystemInfo();
@@ -451,8 +450,7 @@ namespace Hyperion {
     
     delete s_application->GetMainWindow();
 
-    Log::UnregisterLogger(s_console_logger);
-    delete s_console_logger;
+    Log::UnregisterLogger(&s_console_logger);
   }
 
   //--------------------------------------------------------------
