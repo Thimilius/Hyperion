@@ -19,7 +19,6 @@ namespace Hyperion::UI {
     EntityId entity,
     DerivedTransformComponent *derived_transform,
     LocalTransformComponent *local_transform,
-    DerivedTransformComponent *camera_transform,
     Ray ray) {
     static Vector3 offset = Vector3();
     static bool8 should_transform_x = false;
@@ -87,7 +86,7 @@ namespace Hyperion::UI {
       Circle x_circle = { position, right, 1.0f };
       Circle y_circle = { position, up, 1.0f };
       Circle z_circle = { position, forward, 1.0f };
-      
+
       Vector3 x_circle_point = Vector3();
       float32 distance_to_x = x_circle.GetClosestPointToRay(ray, x_circle_point);
       Vector3 y_circle_point = Vector3();
@@ -125,6 +124,9 @@ namespace Hyperion::UI {
           Vector3 current = x_circle_point;
           float32 degree = x_circle.GetAngleBetweenPointsOnCircle(current, offset);
 
+          if (mode == GizmoMode::Local) {
+            right = local_transform->rotation * Vector3(1.0f, 0.0f, 0.0f);
+          }
           Quaternion new_rotation = Quaternion::FromAxisAngle(right, degree) * local_transform->rotation;
           local_transform->rotation = new_rotation;
 
@@ -135,6 +137,9 @@ namespace Hyperion::UI {
           Vector3 current = y_circle_point;
           float32 degree = y_circle.GetAngleBetweenPointsOnCircle(current, offset);
 
+          if (mode == GizmoMode::Local) {
+            up = local_transform->rotation * Vector3(0.0f, 1.0f, 0.0f);
+          }
           Quaternion new_rotation = Quaternion::FromAxisAngle(up, degree) * local_transform->rotation;
           local_transform->rotation = new_rotation;
 
@@ -144,7 +149,10 @@ namespace Hyperion::UI {
         } else if (should_transform_z) {
           Vector3 current = z_circle_point;
           float32 degree = z_circle.GetAngleBetweenPointsOnCircle(current, offset);
-          
+
+          if (mode == GizmoMode::Local) {
+            forward = local_transform->rotation * Vector3(0.0f, 0.0f, 1.0f);
+          }
           Quaternion new_rotation = Quaternion::FromAxisAngle(forward, degree) * local_transform->rotation;
           local_transform->rotation = new_rotation;
 

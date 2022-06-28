@@ -27,7 +27,6 @@ namespace Hyperion::UI {
       EntityId entity,
       DerivedTransformComponent *derived_transform,
       LocalTransformComponent *local_transform,
-      DerivedTransformComponent *camera_transform,
       Ray ray
     );
   private:

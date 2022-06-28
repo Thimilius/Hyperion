@@ -777,7 +777,6 @@ namespace Hyperion::Editor {
         entity,
         derived_transform,
         local_transform,
-        camera_transform,
         ray
       );
       s_is_in_gizmo = manipulation.in_transformation;
