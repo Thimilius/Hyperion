@@ -25,7 +25,7 @@ namespace Hyperion::Rendering {
   enum class BlendingOperator {
     Add,
     Subtract,
-    ReverseSubract
+    ReverseSubtract
   };
 
   struct BlendingFunction {
