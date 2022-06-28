@@ -780,7 +780,7 @@ namespace Hyperion::Editor {
         ray
       );
       s_is_in_gizmo = manipulation.in_transformation;
-      RenderGizmos::UpdateTransformationGizmo(s_transformation_tool, manipulation.highlight_axis);
+      RenderGizmos::UpdateTransformationGizmo(s_transformation_tool, manipulation.highlight_axis, manipulation.in_transformation);
     }
   }
 

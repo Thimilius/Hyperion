@@ -14,8 +14,9 @@
 namespace Hyperion::Rendering {
 
   enum class RenderFrameCommandType {
+    None,
+    
     SetCamera,
-
     ExecuteCommandBuffer,
 
     DrawMeshes,
@@ -23,7 +24,6 @@ namespace Hyperion::Rendering {
     DrawUI,
     DrawGizmos,
     DrawObjectIds,
-
     DrawEditorUI,
   };
 
@@ -108,7 +108,7 @@ namespace Hyperion::Rendering {
   struct RenderFrameCommandDrawEditorUI { };
 
   struct RenderFrameCommand {
-    RenderFrameCommandType type;
+    RenderFrameCommandType type = RenderFrameCommandType::None;
 
     std::variant<
       RenderFrameCommandSetCamera,

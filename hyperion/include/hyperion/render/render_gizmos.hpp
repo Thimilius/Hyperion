@@ -50,14 +50,14 @@ namespace Hyperion::Rendering {
     inline static void SetTransformationGizmoTransformation(Matrix4x4 transform) {
       s_transformation_gizmo_transformation = transform;
     }
-    static void UpdateTransformationGizmo(RenderGizmoType type, RenderGizmoAxisHighlight highlight);
+    static void UpdateTransformationGizmo(RenderGizmoType type, RenderGizmoAxisHighlight highlight, bool8 dragging);
     
     inline static bool GetShouldDrawAllBounds() { return s_should_draw_all_bounds; }
     inline static void SetShouldDrawAllBounds(bool8 should_draw_all_bounds) { s_should_draw_all_bounds = should_draw_all_bounds; }
   private:
     static void Initialize();
 
-    static void RegenerateTransformationGizmoMesh(RenderGizmoType type, RenderGizmoAxisHighlight highlight);
+    static void RegenerateTransformationGizmoMesh(RenderGizmoType type, RenderGizmoAxisHighlight highlight, bool8 dragging);
   private:
     inline static bool8 s_should_draw_grid = true;
     inline static RenderGizmoGridType s_grid_type = RenderGizmoGridType::XZPlane;
@@ -68,6 +68,7 @@ namespace Hyperion::Rendering {
     inline static Matrix4x4 s_transformation_gizmo_transformation = Matrix4x4::Identity();
     inline static RenderGizmoType s_transformation_gizmo_type = RenderGizmoType::None;
     inline static RenderGizmoAxisHighlight s_transformation_gizmo_highlight = RenderGizmoAxisHighlight::None;
+    inline static bool8 s_transformation_gizmo_dragging = false;
 
     inline static bool8 s_should_draw_all_bounds = false;
   private:
