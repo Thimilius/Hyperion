@@ -80,7 +80,7 @@ namespace Hyperion::Rendering {
           OpenGLDebugGroup debug_group("DrawShadows");
 
           const RenderFrameCommandDrawShadows &command = std::get<RenderFrameCommandDrawShadows>(frame_command.data);
-          ExecuteFrameCommandDrawShadows(command);
+          ExecuteFrameCommandDrawShadows(command, context);
 
           break;
         }
@@ -128,9 +128,9 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void OpenGLRenderDriver::ExecuteFrameCommandSetCamera(const RenderFrameCommandSetCamera &command, const RenderFrameContext &context) {
-    m_static.camera_index = command.camera_index;
+    m_state.camera_index = command.camera_index;
 
-    const RenderFrameContextCamera &render_frame_context_camera = context.GetCameras()[m_static.camera_index];
+    const RenderFrameContextCamera &render_frame_context_camera = context.GetCameras()[m_state.camera_index];
 
     OpenGLUniformBufferCamera uniform_buffer_camera;
     uniform_buffer_camera.camera_view_matrix = render_frame_context_camera.view_matrix;
@@ -208,8 +208,32 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::ExecuteFrameCommandDrawShadows(const RenderFrameCommandDrawShadows &command) {
+  void OpenGLRenderDriver::ExecuteFrameCommandDrawShadows(const RenderFrameCommandDrawShadows &command, const RenderFrameContext &context) {
+    const RenderFrameContextLight &light = context.GetLights()[command.shadow_parameters.light_index];
+
+    glViewport(0, 0, static_cast<GLsizei>(command.shadow_parameters.shadow_map_size), static_cast<GLsizei>(command.shadow_parameters.shadow_map_size));
+
+    const OpenGLShader &opengl_shader = m_storage.GetStatic().shadow_shader;
+    GLint model_location = opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::Model)];
+    GLint light_space_location = opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::LightSpace)];
+    UseShader(opengl_shader);
+
+    // TODO: Move that into render pipeline.
+    Vector3 light_position = Vector3(2.0f, 4.0f, 0.0f);
+    Matrix4x4 light_view = Matrix4x4::LookAt(light_position, light_position + light.direction, Vector3::Up());
+    Matrix4x4 light_projection = Matrix4x4::Orthographic(-10.0f, 10.0f, -10.0f, 10.0f, 0.0f, 10.0f);
+    Matrix4x4 light_space = light_projection * light_view;
+    glProgramUniformMatrix4fv(opengl_shader.program, light_space_location, 1, GL_FALSE, light_space.elements);
     
+    const Array<RenderFrameContextObjectMesh> &mesh_objects = context.GetMeshObjects();
+    for (const RenderFrameContextObjectMesh &mesh_object : mesh_objects) {
+      const OpenGLMesh &opengl_mesh = m_storage.GetMesh(mesh_object.mesh_handle);
+
+      glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, mesh_object.local_to_world.elements);
+      
+      UseMesh(opengl_mesh);
+      DrawSubMesh(opengl_mesh.sub_meshes[mesh_object.sub_mesh_index]);
+    }
   }
 
   //--------------------------------------------------------------
@@ -220,7 +244,7 @@ namespace Hyperion::Rendering {
   //--------------------------------------------------------------
   void OpenGLRenderDriver::ExecuteFrameCommandDrawObjectIds(const RenderFrameCommandDrawObjectIds &command, const RenderFrameContext &context) {
     {
-      const RenderFrameContextCamera &render_frame_context_camera = context.GetCameras()[m_static.camera_index];
+      const RenderFrameContextCamera &render_frame_context_camera = context.GetCameras()[m_state.camera_index];
 
       OpenGLUniformBufferCamera uniform_buffer_camera;
       uniform_buffer_camera.camera_view_matrix = render_frame_context_camera.view_matrix;
@@ -239,17 +263,17 @@ namespace Hyperion::Rendering {
     glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     const OpenGLShader &opengl_shader = m_storage.GetStatic().object_id_shader;
+    GLint model_location = opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::Model)];
+    GLint object_id_location = opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::ObjectId)];
     UseShader(opengl_shader);
 
     for (const RenderFrameContextObjectMesh &mesh_object : context.GetMeshObjects()) {
       OpenGLDebugGroup debug_group("DrawMesh");
       const OpenGLMesh &opengl_mesh = m_storage.GetMesh(mesh_object.mesh_handle);
 
-      GLint model_location = opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::Model)];
       glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, mesh_object.local_to_world.elements);
 
       // NOTE: The object id needs to be put in the uvec2 in reverse order.
-      GLint object_id_location = opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::ObjectId)];
       glProgramUniform2ui(opengl_shader.program, object_id_location, 0xFFFFFFFF & mesh_object.id, mesh_object.id >> 32);
       
       UseMesh(opengl_mesh);
@@ -390,14 +414,14 @@ namespace Hyperion::Rendering {
     // We need something more sophisticated which abstracts the proper shader uniform names and binding points.
     GLuint buffer_id = -1;
     if (command.id == 0) {
-      buffer_id = m_static.lighting_uniform_buffer;
+      buffer_id = m_state.lighting_uniform_buffer;
 
       if (buffer_id == -1) {
         glCreateBuffers(1, &buffer_id);
         glNamedBufferData(buffer_id, data.GetLength(), data.GetData(), GL_DYNAMIC_DRAW);
         glBindBufferBase(GL_UNIFORM_BUFFER, 1, buffer_id);
 
-        m_static.lighting_uniform_buffer = buffer_id;
+        m_state.lighting_uniform_buffer = buffer_id;
 
         return;
       }
@@ -434,7 +458,7 @@ namespace Hyperion::Rendering {
         GLenum format_type = OpenGLUtilities::GetRenderTextureFormatType(format);
 
         glBindFramebuffer(GL_READ_FRAMEBUFFER, render_texture.framebuffer);
-        glNamedFramebufferReadBuffer(render_texture.framebuffer, GL_COLOR_ATTACHMENT0);
+        glNamedFramebufferReadBuffer(render_texture.framebuffer, GL_COLOR_ATTACHMENT0); // FIXME: This does not support reading the correct attachment.
         glReadnPixels(region.x, region.y, region.width, region.height, format_value, format_type, buffer_size, async_request_result.result.data.GetData());
       }
     }

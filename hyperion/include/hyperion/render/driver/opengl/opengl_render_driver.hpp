@@ -55,7 +55,7 @@ namespace Hyperion::Rendering {
     void ExecuteFrameCommandSetCamera(const RenderFrameCommandSetCamera &command, const RenderFrameContext &context);
     void ExecuteFrameCommandExecuteCommandBuffer(const RenderFrameCommandExecuteCommandBuffer &command, RenderFrame *render_frame);
     void ExecuteFrameCommandDrawMeshes(const RenderFrameCommandDrawMeshes &command, RenderFrame *render_frame, const RenderFrameContext &context);
-    void ExecuteFrameCommandDrawShadows(const RenderFrameCommandDrawShadows &command);
+    void ExecuteFrameCommandDrawShadows(const RenderFrameCommandDrawShadows &command, const RenderFrameContext &context);
     void ExecuteFrameCommandDrawUI(const RenderFrameCommandDrawUI &command, const RenderFrameContext &context);
     void ExecuteFrameCommandDrawObjectIds(const RenderFrameCommandDrawObjectIds &command, const RenderFrameContext &context);
     void ExecuteFrameCommandDrawGizmos(const RenderFrameCommandDrawGizmos &command, const RenderFrameContext &context);
@@ -80,7 +80,7 @@ namespace Hyperion::Rendering {
     void SetMaterialTextureProperty(ShaderPropertyStorage::Texture texture_property, uint32 texture_unit, GLuint program, GLuint location);
     void UseMesh(const OpenGLMesh &opengl_mesh);
   private:
-    OpenGLState m_static = OpenGLState();
+    OpenGLState m_state = OpenGLState();
     OpenGLStorage m_storage = OpenGLStorage();
 
     Array<GroupedShader> m_grouped_shaders;

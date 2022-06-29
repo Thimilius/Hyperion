@@ -68,6 +68,7 @@ namespace Hyperion::Rendering {
 
   struct ShadowParameters {
     uint32 light_index = 0;
+    uint32 shadow_map_size = 0;
   };
 
   struct RenderFrameCommandDrawMeshes {

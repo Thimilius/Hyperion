@@ -8,35 +8,38 @@
 #include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/core/app/display.hpp"
 #include "hyperion/render/pipelines/forward/forward_render_lighting.hpp"
+#include "hyperion/ui/ui_types.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void ForwardRenderPipeline::Initialize() {
-    TextureAttributes render_texture_attributes;
-    render_texture_attributes.filter = TextureFilter::Point;
-    render_texture_attributes.use_mipmaps = false;
-
     if (m_should_resize_to_screen) {
       m_render_target_width = Display::GetWidth();
       m_render_target_height = Display::GetHeight();
     }
 
+    TextureAttributes target_texture_attributes;
+    target_texture_attributes.filter = TextureFilter::Point;
+    target_texture_attributes.use_mipmaps = false;
     RenderTextureParameters render_texture_parameters;
     render_texture_parameters.width = m_render_target_width;
     render_texture_parameters.height = m_render_target_height;
     render_texture_parameters.attachments = {
-      { RenderTextureFormat::RGBA8, render_texture_attributes, true },
-      { RenderTextureFormat::Depth24Stencil8, render_texture_attributes, false },
+      { RenderTextureFormat::RGBA8, target_texture_attributes, true },
+      { RenderTextureFormat::Depth24Stencil8, target_texture_attributes, false },
     };
     m_target_render_texture = AssetManager::CreateRenderTexture(render_texture_parameters);
 
-    render_texture_attributes.filter = TextureFilter::Bilinear;
-    render_texture_parameters.width = 1024;
-    render_texture_parameters.height = 1024;
+    TextureAttributes shadow_texture_attributes;
+    shadow_texture_attributes.filter = TextureFilter::Point;
+    shadow_texture_attributes.use_mipmaps = false;
+    shadow_texture_attributes.wrap_mode = TextureWrapMode::Repeat;
+    render_texture_parameters.width = SHADOW_MAP_SIZE;
+    render_texture_parameters.height = SHADOW_MAP_SIZE;
     render_texture_parameters.attachments = {
-      { RenderTextureFormat::Depth24, render_texture_attributes, true },
+      { RenderTextureFormat::Depth24, shadow_texture_attributes, true },
     };
     m_shadow_render_texture = AssetManager::CreateRenderTexture(render_texture_parameters);
   }
@@ -112,6 +115,13 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void ForwardRenderPipeline::DrawShadows(RenderFrame *render_frame) {
+    // Make sure that we actually have a main light we can draw shadows for.
+    const Array<RenderFrameContextLight> &lights = render_frame->GetContext().GetLights();
+    auto light_it = lights.begin();
+    if (light_it == lights.end() || light_it->type != LightType::Directional) {
+      return;
+    }
+    
     {
       RenderCommandBuffer command_buffer;
       command_buffer.SetRenderTarget(m_shadow_render_texture->GetRenderTargetId());
@@ -121,6 +131,7 @@ namespace Hyperion::Rendering {
 
     ShadowParameters shadow_parameters;
     shadow_parameters.light_index = 0;
+    shadow_parameters.shadow_map_size = SHADOW_MAP_SIZE;
     render_frame->DrawShadows(shadow_parameters);
   }
 

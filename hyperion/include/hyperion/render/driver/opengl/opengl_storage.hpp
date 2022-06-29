@@ -16,6 +16,7 @@ namespace Hyperion::Rendering {
     ObjectId,
     LightCount,
     LightIndices,
+    LightSpace,
 
     Last
   };
@@ -74,6 +75,8 @@ namespace Hyperion::Rendering {
 
     OpenGLShader object_id_shader;
 
+    OpenGLShader shadow_shader;
+    
     GLuint fullscreen_shader;
     GLuint fullscreen_vertex_array;
 

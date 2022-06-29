@@ -91,13 +91,6 @@ namespace Hyperion::Editor {
 
   //--------------------------------------------------------------
   void EditorRenderPipeline::RenderEditor(RenderFrame *render_frame) {
-    {
-      RenderCommandBuffer command_buffer;
-      command_buffer.SetRenderTarget(m_editor_render_texture->GetRenderTargetId());
-      command_buffer.ClearRenderTarget(ClearFlags::All, Color::Black());
-      render_frame->ExecuteCommandBuffer(command_buffer);
-    }
-
     if (EditorUI::GetViewMode() == EditorViewMode::Editor) {
       RenderFrameContextCamera editor_camera = EditorCamera::GetContextCamera();
       editor_camera.index = static_cast<uint32>(RenderEngine::GetMainRenderFrame()->GetContext().GetCameras().GetLength());
@@ -105,7 +98,9 @@ namespace Hyperion::Editor {
       
       SetShouldDrawGizmos(true);
       m_wrapped_pipeline->RenderCamera(render_frame, &editor_camera, m_editor_render_texture);
-      SetShouldDrawGizmos(false);  
+      SetShouldDrawGizmos(false);
+
+      EditorUI::HandleMouseSelection(render_frame, m_object_ids_render_texture);
     }
 
     {
@@ -113,8 +108,6 @@ namespace Hyperion::Editor {
       command_buffer.SetRenderTarget(RenderTargetId::Default());
       render_frame->ExecuteCommandBuffer(command_buffer);
     }
-
-    EditorUI::HandleMouseSelection(render_frame, m_object_ids_render_texture);
     
     render_frame->DrawEditorUI();
   }

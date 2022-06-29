@@ -25,7 +25,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void MeshBoundsSystem::Run(EntityManager *manager) {
-    HYP_PROFILE_SCOPE("RenderBoundsSystem.Run");
+    HYP_PROFILE_SCOPE("RenderBoundsSystem.Run")
 
     auto view = manager->GetView<LocalToWorldComponent, MeshComponent, MeshBoundsComponent>(ExcludeComponents<StaticComponent>());
     for (EntityId entity : view) {
@@ -42,7 +42,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void EnvironmentSystem::Run(EntityManager *manager) {
-    HYP_PROFILE_SCOPE("EnvironmentSystem.Run");
+    HYP_PROFILE_SCOPE("EnvironmentSystem.Run")
 
     RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
 
@@ -54,7 +54,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void CameraSystem::Run(EntityManager *manager) {
-    HYP_PROFILE_SCOPE("CameraSystem.Run");
+    HYP_PROFILE_SCOPE("CameraSystem.Run")
 
     RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
 
@@ -97,7 +97,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void LightSystem::Run(EntityManager *manager) {
-    HYP_PROFILE_SCOPE("LightSystem.Run");
+    HYP_PROFILE_SCOPE("LightSystem.Run")
 
     RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
 
@@ -143,7 +143,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void SpriteRenderSystem::Run(EntityManager *manager) {
-    HYP_PROFILE_SCOPE("SpriteSystem.Run");
+    HYP_PROFILE_SCOPE("SpriteSystem.Run")
 
     RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
 
@@ -162,7 +162,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void MeshRenderSystem::Run(EntityManager *manager) {
-    HYP_PROFILE_SCOPE("RenderMeshSystem.Run");
+    HYP_PROFILE_SCOPE("RenderMeshSystem.Run")
 
     RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
 
@@ -193,7 +193,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void UIRenderSystem::Run(EntityManager *manager) {
-    HYP_PROFILE_SCOPE("UIRenderSystem.Run");
+    HYP_PROFILE_SCOPE("UIRenderSystem.Run")
 
     RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
     Delegate<RenderFrameContextObjectUI &()> ui_object_adder;
@@ -214,7 +214,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void UIRenderSystem::RenderElement(UIElement *element, Delegate<RenderFrameContextObjectUI &()> ui_object_adder) {
-    HYP_PROFILE_SCOPE("UIRenderSystem.RenderElement");
+    HYP_PROFILE_SCOPE("UIRenderSystem.RenderElement")
 
     if (element && element->GetStyle().GetVisibility() == Visibility::Visible) {
       UIElementRenderer renderer = element->GetRenderer();

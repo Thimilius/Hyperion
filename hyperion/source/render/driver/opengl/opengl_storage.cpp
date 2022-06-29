@@ -45,8 +45,10 @@ namespace Hyperion::Rendering {
         }
       )";
       m_static.error_shader.program = OpenGLShaderCompiler::Compile(error_vertex, error_fragment).program;
-      m_static.error_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::Model)] =
-        glGetUniformLocation(m_static.error_shader.program, "u_model");
+      m_static.error_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::Model)] = glGetUniformLocation(
+        m_static.error_shader.program,
+        "u_model"
+      );
     }
 
     {
@@ -82,12 +84,45 @@ namespace Hyperion::Rendering {
         }
       )";
       m_static.object_id_shader.program = OpenGLShaderCompiler::Compile(object_id_vertex, object_id_fragment).program;
-      m_static.object_id_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::Model)] =
-        glGetUniformLocation(m_static.object_id_shader.program, "u_model");
-      m_static.object_id_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::ObjectId)] =
-        glGetUniformLocation(m_static.object_id_shader.program, "u_object_id");
+      m_static.object_id_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::Model)] = glGetUniformLocation(
+        m_static.object_id_shader.program,
+        "u_model"
+      );
+      m_static.object_id_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::ObjectId)] = glGetUniformLocation(
+        m_static.object_id_shader.program,
+        "u_object_id"
+      );
     }
+    
+    {
+      const char *shadow_vertex = R"(
+        #version 450 core
 
+        layout(location = 0) in vec3 a_position;
+
+        uniform mat4 u_light_space;
+        uniform mat4 u_model;
+
+        void main() {
+	        gl_Position = u_light_space * u_model * vec4(a_position, 1.0);
+        }
+      )";
+      const char *shadow_fragment = R"(
+        #version 450 core
+
+        void main() { }
+      )";
+      m_static.shadow_shader.program = OpenGLShaderCompiler::Compile(shadow_vertex, shadow_fragment).program;
+      m_static.shadow_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::LightSpace)] = glGetUniformLocation(
+        m_static.shadow_shader.program,
+        "u_light_space"
+      );
+      m_static.shadow_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::Model)] = glGetUniformLocation(
+        m_static.shadow_shader.program,
+        "u_model"
+      );
+    }
+    
     {
       const char *fullscreen_vertex = R"(
         #version 450 core
