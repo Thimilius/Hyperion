@@ -351,11 +351,23 @@ namespace Hyperion::Rendering {
         opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::Model)] = glGetUniformLocation(opengl_shader.program, "u_model");
         opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::Color)] = glGetUniformLocation(opengl_shader.program, "u_color");
         opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::Texture)] = glGetUniformLocation(opengl_shader.program, "u_texture");
-        opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::LightCount)] =
-          glGetUniformLocation(opengl_shader.program, "u_light_count");
-        opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::LightIndices)] =
-          glGetUniformLocation(opengl_shader.program, "u_light_indices");
+        opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::LightCount)] = glGetUniformLocation(
+          opengl_shader.program,
+          "u_light_count"
+        );
+        opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::LightIndices)] = glGetUniformLocation(
+          opengl_shader.program,
+          "u_light_indices"
+        );
+        opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::LightSpace)] = glGetUniformLocation(
+          opengl_shader.program,
+          "u_light_space"
+        );
         opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::ObjectId)] = glGetUniformLocation(opengl_shader.program, "u_object_id");
+        opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::ShadowMap)] = glGetUniformLocation(
+          opengl_shader.program,
+          "u_shadow_map"
+        );
       } else {
         opengl_shader.program = m_static.error_shader.program;
       }

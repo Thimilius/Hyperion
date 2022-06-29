@@ -625,11 +625,29 @@ namespace Hyperion::Rendering {
       GLint model_location = opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::Model)];
       GLint light_count_location = opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::LightCount)];
       GLint light_indices_location = opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::LightIndices)];
+      GLint light_space_location = opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::LightSpace)];
+      GLint shadow_map_location = opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::ShadowMap)];
+
+      // Get shadow map.
+      const OpenGLRenderTexture &opengl_shadow_map = m_storage.GetRenderTexture(drawing_parameters.shadow_map_render_target_id.handle);
+      GLuint shadow_map = opengl_shadow_map.attachments[0].attachment;
+      
+      // TODO: Move that into render pipeline.
+      Vector3 light_position = Vector3(2.0f, 4.0f, 0.0f);
+      Matrix4x4 light_view = Matrix4x4::LookAt(light_position, light_position + lights[0].direction, Vector3::Up());
+      Matrix4x4 light_projection = Matrix4x4::Orthographic(-10.0f, 10.0f, -10.0f, 10.0f, 0.0f, 10.0f);
+      Matrix4x4 light_space = light_projection * light_view;
+      glProgramUniformMatrix4fv(opengl_shader.program, light_space_location, 1, GL_FALSE, light_space.elements);
       
       for (const auto &[material_id, grouped_material] : grouped_shader.materials) {
         HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderGroupedMaterial")
 
         UseMaterial(opengl_shader, *grouped_material.material);
+
+        // Set shadow map.
+        uint32 texture_unit = 1; // FIXME: This should be set depending on the amount of texture units in the material.
+        glBindTextureUnit(texture_unit, shadow_map);
+        glProgramUniform1i(opengl_shader.program, shadow_map_location, texture_unit);
 
         for (const auto &[mesh_id, grouped_mesh] : grouped_material.meshes) {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderGroupedMesh")

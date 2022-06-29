@@ -14,6 +14,7 @@ out V2F {
 	vec3 position;
 	vec3 normal;
 	vec2 texture0;
+	vec4 light_space_position;
 } o_v2f;
 
 layout(std140, binding = 0) uniform Camera {
@@ -22,6 +23,7 @@ layout(std140, binding = 0) uniform Camera {
 } u_camera;
 
 uniform mat4 u_model;
+uniform mat4 u_light_space;
 
 vec3 obj_to_world_space(vec3 position) {
 	return (u_model * vec4(position, 1.0)).xyz;
@@ -35,10 +37,15 @@ vec4 obj_to_clip_space(vec3 position) {
 	return u_camera.projection * u_camera.view * u_model * vec4(position, 1.0);
 }
 
+vec4 obj_to_light_space(vec3 position) {
+	return u_light_space * u_model * vec4(position, 1.0);
+}
+
 void main() {
 	o_v2f.position = obj_to_world_space(a_position);
 	o_v2f.normal = normal_to_world_space(a_normal);
 	o_v2f.texture0 = a_texture0;
+	o_v2f.light_space_position = obj_to_light_space(a_position); 
 
 	gl_Position = obj_to_clip_space(a_position);
 }
@@ -52,6 +59,7 @@ in V2F {
 	vec3 position;
 	vec3 normal;
 	vec2 texture0;
+	vec4 light_space_position;
 } i_v2f;
 
 struct Light {
@@ -73,6 +81,7 @@ layout(std140, binding = 1) uniform Lighting {
 } u_lighting;
 uniform uint u_light_count;
 uniform uvec4 u_light_indices;
+uniform sampler2D u_shadow_map;
 
 uniform vec4 m_color;
 uniform sampler2D m_texture;
@@ -112,7 +121,18 @@ vec3 calculate_phong_point_light(vec3 position, vec3 normal, Light light) {
 	return lighting_color;
 }
 
-vec4 calculate_phong_lighting(vec3 position, vec3 normal) {
+float calculate_shadow(vec4 light_space_position) {
+	vec3 projection = light_space_position.xyz / light_space_position.w;
+	projection = projection * 0.5 + 0.5;
+	
+	float closest_depth = texture(u_shadow_map, projection.xy).r;
+	float current_depth = projection.z;
+	
+	float shadow = current_depth > closest_depth ? 1.0 : 0.0;
+	return shadow;
+}
+
+vec4 calculate_phong_lighting(vec3 position, vec3 normal, vec4 light_space_position) {
 	vec3 main_lighting = calculate_phong_directional_light(position, normal, u_lighting.main_light);
 
 	vec3 point_lighting;
@@ -120,12 +140,14 @@ vec4 calculate_phong_lighting(vec3 position, vec3 normal) {
 		point_lighting += calculate_phong_point_light(position, normal, u_lighting.point_lights[u_light_indices[i]]);
 	}
 
-	return vec4(main_lighting + point_lighting + u_lighting.ambient_color.rgb, 1.0);
+	float shadow = calculate_shadow(light_space_position);
+	
+	return vec4(u_lighting.ambient_color.rgb + (1.0 - shadow) * (main_lighting + point_lighting), 1.0);
 }
 
 void main() {
 	vec4 texture_color = texture(m_texture, i_v2f.texture0);
-	vec4 lighting_color = calculate_phong_lighting(i_v2f.position, i_v2f.normal);
+	vec4 lighting_color = calculate_phong_lighting(i_v2f.position, i_v2f.normal, i_v2f.light_space_position);
 	
 	o_color = texture_color * lighting_color * m_color;
 }

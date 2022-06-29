@@ -156,7 +156,9 @@ namespace Hyperion::Rendering {
     drawing_parameters_opaque.render_order = ShaderRenderOrder::Opaque;
     drawing_parameters_opaque.sorting_settings.camera_position = camera->position;
     drawing_parameters_opaque.sorting_settings.criteria = SortingCriteria::Opaque;
+    drawing_parameters_opaque.shadow_map_render_target_id = m_shadow_render_texture->GetRenderTargetId();
     render_frame->DrawMeshes(culling_results, drawing_parameters_opaque);
+    
 
     DrawingParameters drawing_parameters_transparent;
     drawing_parameters_transparent.filter_mask = LayerMask::Everything;
@@ -164,6 +166,7 @@ namespace Hyperion::Rendering {
     drawing_parameters_transparent.render_order = ShaderRenderOrder::Transparent;
     drawing_parameters_transparent.sorting_settings.camera_position = camera->position;
     drawing_parameters_transparent.sorting_settings.criteria = SortingCriteria::Transparent;
+    drawing_parameters_transparent.shadow_map_render_target_id = m_shadow_render_texture->GetRenderTargetId();
     render_frame->DrawMeshes(culling_results, drawing_parameters_transparent);
   }
 

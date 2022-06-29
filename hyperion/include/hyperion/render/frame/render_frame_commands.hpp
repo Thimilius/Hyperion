@@ -64,6 +64,7 @@ namespace Hyperion::Rendering {
     PerObjectData per_object_data = PerObjectData::Nothing;
     ShaderRenderOrder render_order = ShaderRenderOrder::Opaque;
     SortingSettings sorting_settings;
+    RenderTargetId shadow_map_render_target_id;
   };
 
   struct ShadowParameters {

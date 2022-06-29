@@ -17,6 +17,7 @@ namespace Hyperion::Rendering {
     LightCount,
     LightIndices,
     LightSpace,
+    ShadowMap,
 
     Last
   };
