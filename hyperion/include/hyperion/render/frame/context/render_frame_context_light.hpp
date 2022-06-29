@@ -10,10 +10,12 @@
 namespace Hyperion::Rendering {
 
   struct RenderFrameContextLight {
-    LightType type;
+    LightType type = LightType::Directional;
 
     Color color;
-    float32 intensity;
+    float32 intensity = 1.0f;
+    
+    LightShadows shadows = LightShadows::None;
 
     Vector3 direction;
     Vector3 position;

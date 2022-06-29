@@ -110,6 +110,7 @@ namespace Hyperion::Rendering {
       render_frame_context_light.type = LightType::Directional;
       render_frame_context_light.intensity = directional_light->intensity;
       render_frame_context_light.color = directional_light->color;
+      render_frame_context_light.shadows = directional_light->shadows;
       render_frame_context_light.direction = TransformUtilities::GetForward(derived_transform);
     }
 
@@ -122,6 +123,7 @@ namespace Hyperion::Rendering {
       render_frame_context_light.type = LightType::Point;
       render_frame_context_light.intensity = point_light->intensity;
       render_frame_context_light.color = point_light->color;
+      render_frame_context_light.shadows = point_light->shadows;
       render_frame_context_light.position = derived_transform->position;
       render_frame_context_light.range = point_light->range;
     }
@@ -135,6 +137,7 @@ namespace Hyperion::Rendering {
       render_frame_context_light.type = LightType::Spot;
       render_frame_context_light.intensity = spot_light->intensity;
       render_frame_context_light.color = spot_light->color;
+      render_frame_context_light.shadows = spot_light->shadows;
       render_frame_context_light.position = derived_transform->position;
       render_frame_context_light.inner_spot_radius = spot_light->inner_spot_radius;
       render_frame_context_light.outer_spot_radius = spot_light->outer_spot_radius;

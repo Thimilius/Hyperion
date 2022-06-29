@@ -10,4 +10,9 @@ namespace Hyperion::Rendering {
     Spot
   };
 
+  enum class LightShadows {
+    None,
+    SoftShadows
+  };
+
 }

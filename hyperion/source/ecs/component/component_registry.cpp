@@ -72,6 +72,11 @@ namespace Hyperion {
        Value(HYP_NAME_OF_ENUM(ScalingMode::ConstantPixelSize), ScalingMode::ConstantPixelSize)
       );
 
+      Registration::enumeration<LightShadows>(HYP_NAME_OF_TYPE(LightShadows))(
+       Value(HYP_NAME_OF_ENUM(LightShadows::None), LightShadows::None),
+       Value(HYP_NAME_OF_ENUM(LightShadows::SoftShadows), LightShadows::SoftShadows)
+      );
+      
       Registration::class_<CameraViewportClipping>(HYP_NAME_OF_TYPE(CameraViewportClipping))
         .constructor<>()
         .property("x", &CameraViewportClipping::x)
@@ -190,7 +195,8 @@ namespace Hyperion {
 
       Registration::class_<LightComponent>(HYP_NAME_OF_TYPE(LightComponent))
         .property("intensity", &LightComponent::intensity)
-        .property("color", &LightComponent::color);
+        .property("color", &LightComponent::color)
+        .property("shadows", &LightComponent::shadows);
 
       Registration::class_<DirectionalLightComponent>(HYP_NAME_OF_TYPE(DirectionalLightComponent))
         .constructor<>();

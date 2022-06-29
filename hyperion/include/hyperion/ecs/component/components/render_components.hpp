@@ -7,6 +7,7 @@
 #include "hyperion/core/math/bounding_box.hpp"
 #include "hyperion/render/types/render_types_camera.hpp"
 #include "hyperion/render/types/render_types_general.hpp"
+#include "hyperion/render/types/render_types_light.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
@@ -61,6 +62,8 @@ namespace Hyperion::Rendering {
     
     float32 intensity = 1.0f;
     Color color = Color::White();
+
+    LightShadows shadows = LightShadows::SoftShadows;
   protected:
     LightComponent() = default;
   };

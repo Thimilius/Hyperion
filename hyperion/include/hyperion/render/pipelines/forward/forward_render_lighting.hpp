@@ -29,6 +29,8 @@ namespace Hyperion::Rendering {
 
   class ForwardRenderLighting {
   public:
+    inline const RenderFrameContextLight *GetMainLight() const { return m_main_light; } 
+    
     void SetupLighting(RenderFrameContext &context, RenderCommandBuffer &command_buffer);
     Matrix4x4 CalculateLightSpaceMatrixForMainLight();
   private:

@@ -126,7 +126,7 @@ float calculate_shadow(vec3 normal, vec4 light_space_position) {
 	projection = projection * 0.5 + 0.5;
 	
 	float current_depth = projection.z;
-	float shadow_bias = max(0.0025 * (1.0 - dot(normal, u_lighting.main_light.direction)), 0.0025);
+	float shadow_bias = max(0.005 * (1.0 - dot(normal, u_lighting.main_light.direction)), 0.0025);
 	
 	float shadow = 0.0;
 	vec2 texel_size = 1.0 / textureSize(u_shadow_map, 0);

@@ -179,11 +179,13 @@ namespace Hyperion::Editor {
       manager->GetComponent<LocalTransformComponent>(camera)->position = Vector3(0.0f, 1.0f, 5.0f);
       EntityId light = manager->CreateEntity(EntityPrimitive::DirectionalLight);
       manager->GetComponent<LocalTransformComponent>(light)->rotation = Quaternion::FromEulerAngles(-30.0f, 20.0f, 0.0f);
+      EntityId ground = manager->CreateEntity(EntityPrimitive::Plane);
+      manager->GetComponent<LocalTransformComponent>(ground)->position = Vector3(0.0f, -0.5f, 0.0f);
       EntityId parent = manager->CreateEntity(EntityPrimitive::Cube);
-      EntityId child = manager->CreateEntity(EntityPrimitive::Sphere);
+      EntityId child = manager->CreateEntity(EntityPrimitive::Cube);
       manager->GetComponent<LocalTransformComponent>(child)->position = Vector3(2.0f, 0.0f, 0.0f);
       s_world->GetHierarchy()->SetParent(child, parent);
-
+      
       String text = WorldSerializer::Serialize(s_world);
       FileSystem::WriteAllText(WORLD_PATH, text);
     }
