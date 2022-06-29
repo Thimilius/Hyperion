@@ -54,7 +54,7 @@ namespace Hyperion::Rendering {
     bool8 m_should_resize_to_screen = true;
     bool8 m_should_draw_gizmos = true;
   private:
-    inline static constexpr uint32 SHADOW_MAP_SIZE = 1024;
+    inline static constexpr uint32 SHADOW_MAP_SIZE = 2048;
   };
 
 }

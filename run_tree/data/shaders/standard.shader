@@ -125,11 +125,18 @@ float calculate_shadow(vec3 normal, vec4 light_space_position) {
 	vec3 projection = light_space_position.xyz / light_space_position.w;
 	projection = projection * 0.5 + 0.5;
 	
-	float closest_depth = texture(u_shadow_map, projection.xy).r;
 	float current_depth = projection.z;
+	float shadow_bias = max(0.0025 * (1.0 - dot(normal, u_lighting.main_light.direction)), 0.0025);
 	
-	float shadow_bias = max(0.005 * (1.0 - dot(normal, u_lighting.main_light.direction)), 0.005);
-	float shadow = current_depth - shadow_bias > closest_depth ? 1.0 : 0.0;
+	float shadow = 0.0;
+	vec2 texel_size = 1.0 / textureSize(u_shadow_map, 0);
+	for (int x = -2; x <= 2; x++) {
+		for (int y = -2; y <= 2; y++) {
+			float pcf_depth = texture(u_shadow_map, projection.xy + texel_size * vec2(x, y)).r;
+			shadow += current_depth - shadow_bias > pcf_depth ? 1.0 : 0.0;
+		}	
+	}
+	shadow /= 25.0;
 	
 	if (projection.z > 1.0) {
 		shadow = 0.0;
