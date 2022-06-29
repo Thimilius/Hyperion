@@ -12,14 +12,14 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   OpenGLDebugGroup::OpenGLDebugGroup(const String &message) {
-#ifdef HYP_DEBUG
+#ifndef HYP_RELEASE
     glPushDebugGroup(GL_DEBUG_SOURCE_APPLICATION, 0, static_cast<GLsizei>(message.length()), message.c_str());
 #endif
   }
 
   //--------------------------------------------------------------
   OpenGLDebugGroup::~OpenGLDebugGroup() {
-#ifdef HYP_DEBUG
+#ifndef HYP_RELEASE
     glPopDebugGroup();
 #endif
   }
