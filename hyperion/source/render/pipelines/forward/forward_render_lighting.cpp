@@ -56,12 +56,14 @@ namespace Hyperion::Rendering {
   //--------------------------------------------------------------
   void ForwardRenderLighting::CopyFrameLightToLight(const RenderFrameContextLight &frame_light, ForwardLight &light) {
     light.color = frame_light.color;
-    light.intensity = frame_light.intensity;
+    light.intensity = Math::Clamp01(frame_light.intensity);
     light.direction = frame_light.direction;
     light.position = frame_light.position;
     light.range = frame_light.range;
     light.spot_inner_radius = frame_light.inner_spot_radius;
     light.spot_outer_radius = frame_light.outer_spot_radius;
+    light.shadow_intensity = Math::Clamp01(frame_light.shadow_intensity);
+    light.shadow_bias = frame_light.shadow_bias;
   }
 
 }

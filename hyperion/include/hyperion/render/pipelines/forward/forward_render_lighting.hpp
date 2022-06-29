@@ -10,13 +10,13 @@ namespace Hyperion::Rendering {
   struct ForwardLight {
     Color color;
     Vector3 direction;
-    float32 intensity;
+    float32 intensity = 0.0f;
     Vector3 position;
-    float32 range;
-    float32 spot_inner_radius;
-    float32 spot_outer_radius;
-
-    float32 padding[2];
+    float32 range = 0.0f;
+    float32 spot_inner_radius = 0.0f;
+    float32 spot_outer_radius = 0.0f;
+    float32 shadow_intensity = 0.0f;
+    float32 shadow_bias = 0.0f;
   };
 
   struct ForwardLightingBuffer {

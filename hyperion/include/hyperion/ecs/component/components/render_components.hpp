@@ -64,6 +64,8 @@ namespace Hyperion::Rendering {
     Color color = Color::White();
 
     LightShadows shadows = LightShadows::SoftShadows;
+    float32 shadow_intensity = 1.0f;
+    float32 shadow_bias = 0.005f;
   protected:
     LightComponent() = default;
   };

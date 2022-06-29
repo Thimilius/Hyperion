@@ -16,6 +16,8 @@ namespace Hyperion::Rendering {
     float32 intensity = 1.0f;
     
     LightShadows shadows = LightShadows::None;
+    float32 shadow_intensity = 1.0f;
+    float32 shadow_bias = 0.005f;
 
     Vector3 direction;
     Vector3 position;

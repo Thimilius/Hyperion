@@ -70,6 +70,8 @@ struct Light {
 	float range;
 	float spot_inner_radius;
 	float spot_outer_radius;
+	float shadow_intensity;
+	float shadow_bias;
 };
 
 layout(std140, binding = 1) uniform Lighting {
@@ -121,12 +123,12 @@ vec3 calculate_phong_point_light(vec3 position, vec3 normal, Light light) {
 	return lighting_color;
 }
 
-float calculate_shadow(vec3 normal, vec4 light_space_position) {
+float calculate_shadow(vec3 normal, vec4 light_space_position, Light light) {
 	vec3 projection = light_space_position.xyz / light_space_position.w;
 	projection = projection * 0.5 + 0.5;
 	
 	float current_depth = projection.z;
-	float shadow_bias = max(0.005 * (1.0 - dot(normal, u_lighting.main_light.direction)), 0.0025);
+	float shadow_bias = max(light.shadow_bias * (1.0 - dot(normal, light.direction)), light.shadow_bias / 2.0);
 	
 	float shadow = 0.0;
 	vec2 texel_size = 1.0 / textureSize(u_shadow_map, 0);
@@ -138,6 +140,8 @@ float calculate_shadow(vec3 normal, vec4 light_space_position) {
 	}
 	shadow /= 25.0;
 	
+	shadow *= light.shadow_intensity;
+	
 	if (projection.z > 1.0) {
 		shadow = 0.0;
 	}
@@ -146,16 +150,15 @@ float calculate_shadow(vec3 normal, vec4 light_space_position) {
 }
 
 vec4 calculate_phong_lighting(vec3 position, vec3 normal, vec4 light_space_position) {
-	vec3 main_lighting = calculate_phong_directional_light(position, normal, u_lighting.main_light);
-
+	float shadow = calculate_shadow(normal, light_space_position, u_lighting.main_light);
+	vec3 main_lighting = (1.0 - shadow) * calculate_phong_directional_light(position, normal, u_lighting.main_light);
+	
 	vec3 point_lighting;
 	for (int i = 0; i < u_light_count; i++) {
 		point_lighting += calculate_phong_point_light(position, normal, u_lighting.point_lights[u_light_indices[i]]);
 	}
-
-	float shadow = calculate_shadow(normal, light_space_position);
 	
-	return vec4(u_lighting.ambient_color.rgb + (1.0 - shadow) * (main_lighting + point_lighting), 1.0);
+	return vec4(u_lighting.ambient_color.rgb + main_lighting + point_lighting, 1.0);
 }
 
 void main() {

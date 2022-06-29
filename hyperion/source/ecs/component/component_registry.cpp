@@ -196,7 +196,9 @@ namespace Hyperion {
       Registration::class_<LightComponent>(HYP_NAME_OF_TYPE(LightComponent))
         .property("intensity", &LightComponent::intensity)
         .property("color", &LightComponent::color)
-        .property("shadows", &LightComponent::shadows);
+        .property("shadows", &LightComponent::shadows)
+        .property("shadow_intensity", &LightComponent::shadow_intensity)
+        .property("shadow_bias", &LightComponent::shadow_bias);
 
       Registration::class_<DirectionalLightComponent>(HYP_NAME_OF_TYPE(DirectionalLightComponent))
         .constructor<>();
