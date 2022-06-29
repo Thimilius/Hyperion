@@ -20,61 +20,61 @@ namespace Hyperion {
         .property("id", &EntityId::id);
       
       Registration::enumeration<LayerMask>(HYP_NAME_OF_TYPE(LayerMask))(
-        Value(HYP_NAME_OF_ENUM(LayerMask::Nothing), LayerMask::Nothing),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer1), LayerMask::Layer1),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer2), LayerMask::Layer2),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer3), LayerMask::Layer3),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer4), LayerMask::Layer4),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer5), LayerMask::Layer5),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer6), LayerMask::Layer6),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer7), LayerMask::Layer7),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer8), LayerMask::Layer8),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer9), LayerMask::Layer9),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer10), LayerMask::Layer10),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer11), LayerMask::Layer11),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer12), LayerMask::Layer12),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer13), LayerMask::Layer13),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer14), LayerMask::Layer14),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer15), LayerMask::Layer15),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer16), LayerMask::Layer16),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer17), LayerMask::Layer17),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer18), LayerMask::Layer18),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer19), LayerMask::Layer19),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer20), LayerMask::Layer20),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer21), LayerMask::Layer21),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer22), LayerMask::Layer22),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer23), LayerMask::Layer23),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer24), LayerMask::Layer24),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer25), LayerMask::Layer25),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer26), LayerMask::Layer26),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer27), LayerMask::Layer27),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer28), LayerMask::Layer28),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer29), LayerMask::Layer29),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer30), LayerMask::Layer30),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Layer31), LayerMask::Layer31),
-        Value(HYP_NAME_OF_ENUM(LayerMask::Everything), LayerMask::Everything)
+        Value("Nothing", LayerMask::Nothing),
+        Value("Layer1", LayerMask::Layer1),
+        Value("Layer2", LayerMask::Layer2),
+        Value("Layer3", LayerMask::Layer3),
+        Value("Layer4", LayerMask::Layer4),
+        Value("Layer5", LayerMask::Layer5),
+        Value("Layer6", LayerMask::Layer6),
+        Value("Layer7", LayerMask::Layer7),
+        Value("Layer8", LayerMask::Layer8),
+        Value("Layer9", LayerMask::Layer9),
+        Value("Layer10", LayerMask::Layer10),
+        Value("Layer11", LayerMask::Layer11),
+        Value("Layer12", LayerMask::Layer12),
+        Value("Layer13", LayerMask::Layer13),
+        Value("Layer14", LayerMask::Layer14),
+        Value("Layer15", LayerMask::Layer15),
+        Value("Layer16", LayerMask::Layer16),
+        Value("Layer17", LayerMask::Layer17),
+        Value("Layer18", LayerMask::Layer18),
+        Value("Layer19", LayerMask::Layer19),
+        Value("Layer20", LayerMask::Layer20),
+        Value("Layer21", LayerMask::Layer21),
+        Value("Layer22", LayerMask::Layer22),
+        Value("Layer23", LayerMask::Layer23),
+        Value("Layer24", LayerMask::Layer24),
+        Value("Layer25", LayerMask::Layer25),
+        Value("Layer26", LayerMask::Layer26),
+        Value("Layer27", LayerMask::Layer27),
+        Value("Layer28", LayerMask::Layer28),
+        Value("Layer29", LayerMask::Layer29),
+        Value("Layer30", LayerMask::Layer30),
+        Value("Layer31", LayerMask::Layer31),
+        Value("Everything", LayerMask::Everything)
       );
       
       Registration::enumeration<CameraProjectionMode>(HYP_NAME_OF_TYPE(CameraProjectionMode))(
-       Value(HYP_NAME_OF_ENUM(CameraProjectionMode::Perspective), CameraProjectionMode::Perspective),
-       Value(HYP_NAME_OF_ENUM(CameraProjectionMode::Orthographic), CameraProjectionMode::Orthographic)
+       Value("Perspective", CameraProjectionMode::Perspective),
+       Value("Orthographic", CameraProjectionMode::Orthographic)
       );
 
       Registration::enumeration<CameraClearMode>(HYP_NAME_OF_TYPE(CameraClearMode))(
-       Value(HYP_NAME_OF_ENUM(CameraClearMode::Nothing), CameraClearMode::Nothing),
-       Value(HYP_NAME_OF_ENUM(CameraClearMode::Depth), CameraClearMode::Depth),
-       Value(HYP_NAME_OF_ENUM(CameraClearMode::Color), CameraClearMode::Color),
-       Value(HYP_NAME_OF_ENUM(CameraClearMode::Skybox), CameraClearMode::Skybox)
+       Value("Nothing", CameraClearMode::Nothing),
+       Value("Depth", CameraClearMode::Depth),
+       Value("Color", CameraClearMode::Color),
+       Value("Skybox", CameraClearMode::Skybox)
       );
 
       Registration::enumeration<ScalingMode>(HYP_NAME_OF_TYPE(ScalingMode))(
-       Value(HYP_NAME_OF_ENUM(ScalingMode::ScaleWithScreenSize), ScalingMode::ScaleWithScreenSize),
-       Value(HYP_NAME_OF_ENUM(ScalingMode::ConstantPixelSize), ScalingMode::ConstantPixelSize)
+       Value("ScaleWithScreenSize", ScalingMode::ScaleWithScreenSize),
+       Value("ConstantPixelSize", ScalingMode::ConstantPixelSize)
       );
 
       Registration::enumeration<LightShadows>(HYP_NAME_OF_TYPE(LightShadows))(
-       Value(HYP_NAME_OF_ENUM(LightShadows::None), LightShadows::None),
-       Value(HYP_NAME_OF_ENUM(LightShadows::SoftShadows), LightShadows::SoftShadows)
+       Value("None", LightShadows::None),
+       Value("SoftShadows", LightShadows::SoftShadows)
       );
       
       Registration::class_<CameraViewportClipping>(HYP_NAME_OF_TYPE(CameraViewportClipping))

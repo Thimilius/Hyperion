@@ -115,16 +115,16 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void ForwardRenderPipeline::DrawShadows(RenderFrame *render_frame) {
-    const RenderFrameContextLight *main_light = m_lighting.GetMainLight();
-    if (main_light == nullptr || main_light->shadows == LightShadows::None) {
-      return;
-    }
-    
     {
       RenderCommandBuffer command_buffer;
       command_buffer.SetRenderTarget(m_shadow_render_texture->GetRenderTargetId());
       command_buffer.ClearRenderTarget(ClearFlags::Depth, Color::Black());
       render_frame->ExecuteCommandBuffer(command_buffer);
+    }
+
+    const RenderFrameContextLight *main_light = m_lighting.GetMainLight();
+    if (main_light == nullptr || main_light->shadows == LightShadows::None) {
+      return;
     }
     
     ShadowParameters shadow_parameters;

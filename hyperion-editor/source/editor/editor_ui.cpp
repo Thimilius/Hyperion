@@ -731,6 +731,19 @@ namespace Hyperion::Editor {
         UIImmediate::Text(property_value.get_value<Vector3>().ToString(), TextAlignment::MiddleRight, FitType::ToLayout);
       } else if (property_type == Type::get<Quaternion>()) {
         UIImmediate::Text(property_value.get_value<Quaternion>().ToEulerAngles().ToString(), TextAlignment::MiddleRight, FitType::ToLayout);
+      } else if (property_type.is_enumeration()) {
+        Enumeration enumeration = property_type.get_enumeration();
+        String enum_value_name = enumeration.value_to_name(property_value).to_string();
+        if (UIImmediate::Button(enum_value_name, FitType::ToLayout).clicked) {
+          Menu menu;
+          for (auto enum_value : enumeration.get_values()) {
+            bool8 is_selected = property_value == enum_value; 
+            menu.items.Add({ enumeration.value_to_name(enum_value).to_string(), "", [&property_set_successfully, property, instance, enum_value](auto _) {
+              property_set_successfully = property.set_value(instance, enum_value);
+            }, is_selected ? MenuItemFlags::Checked : MenuItemFlags::None, { } });
+          }
+          OpenContextMenu(menu);
+        }
       }
 
       if (!property_set_successfully) {

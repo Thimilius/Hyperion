@@ -15,6 +15,7 @@ namespace Hyperion {
   using Instance = rttr::instance;
   using Type = rttr::type;
   using Property = rttr::property;
+  using Enumeration = rttr::enumeration;
   using Registration = rttr::registration;
 
   template<typename Enum_Type>

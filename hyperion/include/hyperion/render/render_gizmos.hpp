@@ -59,7 +59,7 @@ namespace Hyperion::Rendering {
 
     static void RegenerateTransformationGizmoMesh(RenderGizmoType type, RenderGizmoAxisHighlight highlight, bool8 dragging);
   private:
-    inline static bool8 s_should_draw_grid = true;
+    inline static bool8 s_should_draw_grid = false;
     inline static RenderGizmoGridType s_grid_type = RenderGizmoGridType::XZPlane;
     inline static Mesh *s_grid_mesh;
 
