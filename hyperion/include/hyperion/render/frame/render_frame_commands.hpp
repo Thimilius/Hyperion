@@ -59,17 +59,23 @@ namespace Hyperion::Rendering {
     Vector3 camera_position;
   };
 
+  struct ShadowSettings {
+    RenderTargetId shadow_map_render_target_id;
+    Matrix4x4 light_space_matrix;
+  };
+  
   struct DrawingParameters {
     LayerMask filter_mask = LayerMask::Everything;
     PerObjectData per_object_data = PerObjectData::Nothing;
     ShaderRenderOrder render_order = ShaderRenderOrder::Opaque;
     SortingSettings sorting_settings;
-    RenderTargetId shadow_map_render_target_id;
+    ShadowSettings shadow_settings;
   };
 
   struct ShadowParameters {
     uint32 light_index = 0;
     uint32 shadow_map_size = 0;
+    Matrix4x4 light_space_matrix;
   };
 
   struct RenderFrameCommandDrawMeshes {

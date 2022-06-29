@@ -209,8 +209,6 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void OpenGLRenderDriver::ExecuteFrameCommandDrawShadows(const RenderFrameCommandDrawShadows &command, const RenderFrameContext &context) {
-    const RenderFrameContextLight &light = context.GetLights()[command.shadow_parameters.light_index];
-
     glViewport(0, 0, static_cast<GLsizei>(command.shadow_parameters.shadow_map_size), static_cast<GLsizei>(command.shadow_parameters.shadow_map_size));
 
     const OpenGLShader &opengl_shader = m_storage.GetStatic().shadow_shader;
@@ -218,12 +216,7 @@ namespace Hyperion::Rendering {
     GLint light_space_location = opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::LightSpace)];
     UseShader(opengl_shader);
 
-    // TODO: Move that into render pipeline.
-    Vector3 light_position = Vector3(2.0f, 4.0f, 0.0f);
-    Matrix4x4 light_view = Matrix4x4::LookAt(light_position, light_position + light.direction, Vector3::Up());
-    Matrix4x4 light_projection = Matrix4x4::Orthographic(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 10.0f);
-    Matrix4x4 light_space = light_projection * light_view;
-    glProgramUniformMatrix4fv(opengl_shader.program, light_space_location, 1, GL_FALSE, light_space.elements);
+    glProgramUniformMatrix4fv(opengl_shader.program, light_space_location, 1, GL_FALSE, command.shadow_parameters.light_space_matrix.elements);
     
     const Array<RenderFrameContextObjectMesh> &mesh_objects = context.GetMeshObjects();
     for (const RenderFrameContextObjectMesh &mesh_object : mesh_objects) {
@@ -628,16 +621,10 @@ namespace Hyperion::Rendering {
       GLint light_space_location = opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::LightSpace)];
       GLint shadow_map_location = opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::ShadowMap)];
 
-      // Get shadow map.
-      const OpenGLRenderTexture &opengl_shadow_map = m_storage.GetRenderTexture(drawing_parameters.shadow_map_render_target_id.handle);
+      const OpenGLRenderTexture &opengl_shadow_map = m_storage.GetRenderTexture(drawing_parameters.shadow_settings.shadow_map_render_target_id.handle);
+      // NOTE: This assumes the shadow map contains just a single depth texture as the first attachment.
       GLuint shadow_map = opengl_shadow_map.attachments[0].attachment;
-      
-      // TODO: Move that into render pipeline.
-      Vector3 light_position = Vector3(2.0f, 4.0f, 0.0f);
-      Matrix4x4 light_view = Matrix4x4::LookAt(light_position, light_position + lights[0].direction, Vector3::Up());
-      Matrix4x4 light_projection = Matrix4x4::Orthographic(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 10.0f);
-      Matrix4x4 light_space = light_projection * light_view;
-      glProgramUniformMatrix4fv(opengl_shader.program, light_space_location, 1, GL_FALSE, light_space.elements);
+      glProgramUniformMatrix4fv(opengl_shader.program, light_space_location, 1, GL_FALSE, drawing_parameters.shadow_settings.light_space_matrix.elements);
       
       for (const auto &[material_id, grouped_material] : grouped_shader.materials) {
         HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderGroupedMaterial")

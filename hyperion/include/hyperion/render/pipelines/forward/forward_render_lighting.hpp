@@ -27,14 +27,14 @@ namespace Hyperion::Rendering {
     ForwardLight point_lights[128];
   };
 
-  class ForwardRenderLighting final {
+  class ForwardRenderLighting {
   public:
-    static void SetupLighting(RenderFrameContext &context, RenderCommandBuffer &command_buffer);
-  private:
-    ForwardRenderLighting() = delete;
-    ~ForwardRenderLighting() = delete;
+    void SetupLighting(RenderFrameContext &context, RenderCommandBuffer &command_buffer);
+    Matrix4x4 CalculateLightSpaceMatrixForMainLight();
   private:
     static void CopyFrameLightToLight(const RenderFrameContextLight &frame_light, ForwardLight &light);
+  private:
+    const RenderFrameContextLight *m_main_light = nullptr;
   };
 
 }

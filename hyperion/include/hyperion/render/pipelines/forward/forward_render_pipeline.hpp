@@ -4,6 +4,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/render/frame/render_frame.hpp"
 #include "hyperion/render/pipelines/render_pipeline.hpp"
+#include "hyperion/render/pipelines/forward/forward_render_lighting.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -41,7 +42,7 @@ namespace Hyperion::Rendering {
     void DrawShadows(RenderFrame *render_frame);
     void DrawMeshes(RenderFrame *render_frame, const RenderFrameContextCamera *camera, CullingResults &culling_results, RenderTexture *target_texture);
   private:
-    inline static constexpr uint32 SHADOW_MAP_SIZE = 1024;
+    ForwardRenderLighting m_lighting;
     
     uint32 m_render_target_width = 0;
     uint32 m_render_target_height = 0;
@@ -52,6 +53,8 @@ namespace Hyperion::Rendering {
     bool8 m_should_blit_to_screen = true;
     bool8 m_should_resize_to_screen = true;
     bool8 m_should_draw_gizmos = true;
+  private:
+    inline static constexpr uint32 SHADOW_MAP_SIZE = 1024;
   };
 
 }
