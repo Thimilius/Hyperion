@@ -12,26 +12,26 @@
 namespace Hyperion::Rendering {
 
   struct RenderFrameContextCamera {
-    uint32 index;
+    uint32 index = 0;
 
-    CameraProjectionMode projection_mode;
+    CameraProjectionMode projection_mode = CameraProjectionMode::Perspective;
 
-    CameraClearMode clear_mode;
+    CameraClearMode clear_mode = CameraClearMode::Color;
     Color background_color;
 
-    LayerMask culling_mask;
+    LayerMask culling_mask = LayerMask::Everything;
 
     Vector3 position;
     Vector3 forward;
     Vector3 up;
 
-    float32 near_plane;
-    float32 far_plane;
+    float32 near_plane = 0.1f;
+    float32 far_plane = 100.0f;
 
-    float32 fov;
-    float32 orthographic_size;
+    float32 fov = 60.0f;
+    float32 orthographic_size = 10.0f;
 
-    CameraViewport viewport;
+    CameraViewport viewport = { };
 
     Matrix4x4 view_matrix;
     Matrix4x4 projection_matrix;

@@ -208,7 +208,9 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::ExecuteFrameCommandDrawShadows(const RenderFrameCommandDrawShadows &command) { }
+  void OpenGLRenderDriver::ExecuteFrameCommandDrawShadows(const RenderFrameCommandDrawShadows &command) {
+    
+  }
 
   //--------------------------------------------------------------
   void OpenGLRenderDriver::ExecuteFrameCommandDrawUI(const RenderFrameCommandDrawUI &command, const RenderFrameContext &context) {

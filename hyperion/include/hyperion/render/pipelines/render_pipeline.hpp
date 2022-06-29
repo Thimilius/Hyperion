@@ -32,7 +32,7 @@ namespace Hyperion::Rendering {
     virtual void Shutdown() = 0;
     
     virtual void SetupRendering(RenderFrame *render_frame) = 0;
-    virtual void RenderCamera(RenderFrame *render_frame, const RenderFrameContextCamera *) = 0;
+    virtual void RenderCamera(RenderFrame *render_frame, const RenderFrameContextCamera *, RenderTexture *target_texture) = 0;
 
     virtual uint32 GetRenderTargetWidth() const = 0;
     virtual uint32 GetRenderTargetHeight() const = 0;

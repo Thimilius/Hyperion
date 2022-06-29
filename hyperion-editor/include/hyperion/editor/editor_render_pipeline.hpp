@@ -17,7 +17,7 @@ namespace Hyperion::Editor {
     void Shutdown() override;
     
     void SetupRendering(Rendering::RenderFrame *render_frame) override; 
-    void RenderCamera(Rendering::RenderFrame *render_frame, const Rendering::RenderFrameContextCamera *camera) override;
+    void RenderCamera(Rendering::RenderFrame *render_frame, const Rendering::RenderFrameContextCamera *camera, RenderTexture *target_texture) override;
 
     inline uint32 GetRenderTargetWidth() const override { return m_wrapped_pipeline->GetRenderTargetWidth(); }
     inline uint32 GetRenderTargetHeight() const override { return m_wrapped_pipeline->GetRenderTargetHeight(); }

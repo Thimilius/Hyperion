@@ -26,7 +26,7 @@ namespace Hyperion::Rendering {
     void Shutdown() override;
     
     void SetupRendering(RenderFrame *render_frame) override;
-    void RenderCamera(RenderFrame *render_frame, const RenderFrameContextCamera *camera) override;
+    void RenderCamera(RenderFrame *render_frame, const RenderFrameContextCamera *camera, RenderTexture *target_texture) override;
 
     inline uint32 GetRenderTargetWidth() const override { return m_render_target_width; }
     inline uint32 GetRenderTargetHeight() const override { return m_render_target_height; }
@@ -38,9 +38,13 @@ namespace Hyperion::Rendering {
     inline void SetShouldResizeToScreen(bool8 should_resize_to_screen) override { m_should_resize_to_screen = should_resize_to_screen; }
     inline void SetShouldDrawGizmos(bool8 should_draw_gizmos) override { m_should_draw_gizmos = should_draw_gizmos; }
   private:
+    void DrawShadows(RenderFrame *render_frame);
+    void DrawMeshes(RenderFrame *render_frame, const RenderFrameContextCamera *camera, CullingResults &culling_results, RenderTexture *target_texture);
+  private:
     uint32 m_render_target_width = 0;
     uint32 m_render_target_height = 0;
     RenderTexture *m_target_render_texture = nullptr;
+    RenderTexture *m_shadow_render_texture = nullptr;
 
     bool8 m_should_do_setup = true;
     bool8 m_should_blit_to_screen = true;

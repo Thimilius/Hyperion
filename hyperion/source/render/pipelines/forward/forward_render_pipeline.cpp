@@ -30,8 +30,15 @@ namespace Hyperion::Rendering {
       { RenderTextureFormat::RGBA8, render_texture_attributes, true },
       { RenderTextureFormat::Depth24Stencil8, render_texture_attributes, false },
     };
-
     m_target_render_texture = AssetManager::CreateRenderTexture(render_texture_parameters);
+
+    render_texture_attributes.filter = TextureFilter::Bilinear;
+    render_texture_parameters.width = 1024;
+    render_texture_parameters.height = 1024;
+    render_texture_parameters.attachments = {
+      { RenderTextureFormat::Depth24, render_texture_attributes, true },
+    };
+    m_shadow_render_texture = AssetManager::CreateRenderTexture(render_texture_parameters);
   }
 
   //--------------------------------------------------------------
@@ -41,7 +48,7 @@ namespace Hyperion::Rendering {
     }
 
     for (const RenderFrameContextCamera *camera : cameras) {
-      RenderCamera(render_frame, camera);
+      RenderCamera(render_frame, camera, m_target_render_texture);
     }
 
     render_frame->DrawUI();
@@ -77,26 +84,61 @@ namespace Hyperion::Rendering {
       RenderCommandBuffer command_buffer;
       command_buffer.SetRenderTarget(RenderTargetId::Default());
       command_buffer.ClearRenderTarget(ClearFlags::All, Color::Black());
-      command_buffer.SetRenderTarget(m_target_render_texture->GetRenderTargetId());
       ForwardRenderLighting::SetupLighting(render_frame->GetContext(), command_buffer);
       render_frame->ExecuteCommandBuffer(command_buffer);
     }
   }
 
   //--------------------------------------------------------------
-  void ForwardRenderPipeline::RenderCamera(RenderFrame *render_frame, const RenderFrameContextCamera *camera) {
+  void ForwardRenderPipeline::RenderCamera(RenderFrame *render_frame, const RenderFrameContextCamera *camera, RenderTexture *target_texture) {
     CullingParameters culling_parameters;
     culling_parameters.matrix = camera->view_projection_matrix;
     culling_parameters.mask = camera->culling_mask;
     CullingResults culling_results = render_frame->Cull(culling_parameters);
 
-    render_frame->SetCamera(camera->index);
+    DrawShadows(render_frame);
+    DrawMeshes(render_frame, camera, culling_results, target_texture);
+    
+    if (m_should_draw_gizmos) {
+      render_frame->DrawGizmos();  
+    }
+  }
+
+  //--------------------------------------------------------------
+  void ForwardRenderPipeline::SetRenderTargetSize(uint32 width, uint32 height) {
+    m_render_target_width = width;
+    m_render_target_height = height;
+  }
+
+  //--------------------------------------------------------------
+  void ForwardRenderPipeline::DrawShadows(RenderFrame *render_frame) {
     {
       RenderCommandBuffer command_buffer;
-      command_buffer.ClearRenderTarget(ClearFlags::All, camera->background_color);
+      command_buffer.SetRenderTarget(m_shadow_render_texture->GetRenderTargetId());
+      command_buffer.ClearRenderTarget(ClearFlags::Depth, Color::Black());
       render_frame->ExecuteCommandBuffer(command_buffer);
     }
 
+    ShadowParameters shadow_parameters;
+    shadow_parameters.light_index = 0;
+    render_frame->DrawShadows(shadow_parameters);
+  }
+
+  //--------------------------------------------------------------
+  void ForwardRenderPipeline::DrawMeshes(
+    RenderFrame *render_frame,
+    const RenderFrameContextCamera *camera,
+    CullingResults &culling_results,
+    RenderTexture *target_texture) {
+    {
+      RenderCommandBuffer command_buffer;
+      command_buffer.SetRenderTarget(target_texture->GetRenderTargetId());
+      command_buffer.ClearRenderTarget(ClearFlags::All, camera->background_color);
+      render_frame->ExecuteCommandBuffer(command_buffer);
+    }
+    
+    render_frame->SetCamera(camera->index);
+    
     DrawingParameters drawing_parameters_opaque;
     drawing_parameters_opaque.filter_mask = LayerMask::Everything;
     drawing_parameters_opaque.per_object_data = PerObjectData::LightIndices;
@@ -112,16 +154,6 @@ namespace Hyperion::Rendering {
     drawing_parameters_transparent.sorting_settings.camera_position = camera->position;
     drawing_parameters_transparent.sorting_settings.criteria = SortingCriteria::Transparent;
     render_frame->DrawMeshes(culling_results, drawing_parameters_transparent);
-
-    if (m_should_draw_gizmos) {
-      render_frame->DrawGizmos();  
-    }
-  }
-
-  //--------------------------------------------------------------
-  void ForwardRenderPipeline::SetRenderTargetSize(uint32 width, uint32 height) {
-    m_render_target_width = width;
-    m_render_target_height = height;
   }
 
 }

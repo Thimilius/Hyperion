@@ -53,10 +53,10 @@ namespace Hyperion::Rendering {
     None,
 
     Color = BIT(0),
-    Depth24 = BIT(1),
+    Depth = BIT(1),
     Stencil = BIT(2),
 
-    All = Color | Depth24 | Stencil
+    All = Color | Depth | Stencil
   };
 
   HYP_CREATE_ENUM_FLAG_OPERATORS(ClearFlags);

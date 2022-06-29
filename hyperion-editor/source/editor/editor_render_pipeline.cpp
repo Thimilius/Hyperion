@@ -85,8 +85,8 @@ namespace Hyperion::Editor {
   }
 
   //--------------------------------------------------------------
-  void EditorRenderPipeline::RenderCamera(RenderFrame *render_frame, const RenderFrameContextCamera *camera) {
-    m_wrapped_pipeline->RenderCamera(render_frame, camera);
+  void EditorRenderPipeline::RenderCamera(RenderFrame *render_frame, const RenderFrameContextCamera *camera, RenderTexture *target_texture) {
+    m_wrapped_pipeline->RenderCamera(render_frame, camera, target_texture);
   }
 
   //--------------------------------------------------------------
@@ -102,8 +102,9 @@ namespace Hyperion::Editor {
       RenderFrameContextCamera editor_camera = EditorCamera::GetContextCamera();
       editor_camera.index = static_cast<uint32>(RenderEngine::GetMainRenderFrame()->GetContext().GetCameras().GetLength());
       RenderEngine::GetMainRenderFrame()->GetContext().AddCamera() = editor_camera;
+      
       SetShouldDrawGizmos(true);
-      m_wrapped_pipeline->RenderCamera(render_frame, &editor_camera);
+      m_wrapped_pipeline->RenderCamera(render_frame, &editor_camera, m_editor_render_texture);
       SetShouldDrawGizmos(false);  
     }
 

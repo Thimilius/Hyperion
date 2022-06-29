@@ -13,7 +13,7 @@ namespace Hyperion::Rendering {
     if ((clear_flags & ClearFlags::Color) == ClearFlags::Color) {
       result |= GL_COLOR_BUFFER_BIT;
     }
-    if ((clear_flags & ClearFlags::Depth24) == ClearFlags::Depth24) {
+    if ((clear_flags & ClearFlags::Depth) == ClearFlags::Depth) {
       result |= GL_DEPTH_BUFFER_BIT;
     }
     if ((clear_flags & ClearFlags::Stencil) == ClearFlags::Stencil) {
