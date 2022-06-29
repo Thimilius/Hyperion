@@ -68,7 +68,7 @@ project "hyperion"
 		}
 		includedirs { package_bullet_includedirs }
 
-	filter "configurations:profile"
+	filter "configurations:debug or profile"
 		files { "%{prj.location}/vendor/optick/source/**" }
 		includedirs { "%{prj.location}/vendor/optick/include" }
 

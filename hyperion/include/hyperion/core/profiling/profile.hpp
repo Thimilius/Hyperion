@@ -1,7 +1,7 @@
 //------------------------ Header Guard ------------------------
 #pragma once
 
-#ifdef HYP_PROFILE
+#ifndef HYP_RELEASE
 #include <optick/optick.h>
 
 #define HYP_PROFILE_FRAME(name) OPTICK_FRAME(name)
