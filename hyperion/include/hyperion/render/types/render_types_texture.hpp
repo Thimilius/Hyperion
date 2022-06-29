@@ -2,7 +2,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/common.hpp"
+#include "hyperion/core/color.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
@@ -47,6 +47,7 @@ namespace Hyperion::Rendering {
     TextureFilter filter = TextureFilter::Bilinear;
     TextureAnisotropicFilter anisotropic_filter = TextureAnisotropicFilter::None;
     bool8 use_mipmaps = true;
+    Color border_color = Color::Black();
   };
 
   struct Texture2DParameters {

@@ -35,7 +35,8 @@ namespace Hyperion::Rendering {
     TextureAttributes shadow_texture_attributes;
     shadow_texture_attributes.filter = TextureFilter::Point;
     shadow_texture_attributes.use_mipmaps = false;
-    shadow_texture_attributes.wrap_mode = TextureWrapMode::Repeat;
+    shadow_texture_attributes.wrap_mode = TextureWrapMode::Border;
+    shadow_texture_attributes.border_color = Color::White();
     render_texture_parameters.width = SHADOW_MAP_SIZE;
     render_texture_parameters.height = SHADOW_MAP_SIZE;
     render_texture_parameters.attachments = {

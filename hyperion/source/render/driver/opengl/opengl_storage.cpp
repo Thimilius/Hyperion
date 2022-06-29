@@ -563,6 +563,8 @@ namespace Hyperion::Rendering {
 
     GLfloat anisotropic_filter_value = OpenGLUtilities::GetTextureAnisotropicFilter(attributes.anisotropic_filter);
     glTextureParameterf(texture, GL_TEXTURE_MAX_ANISOTROPY, anisotropic_filter_value);
+
+    glTextureParameterfv(texture, GL_TEXTURE_BORDER_COLOR, &attributes.border_color.r);
   }
 
 }
