@@ -221,7 +221,7 @@ namespace Hyperion::Rendering {
     // TODO: Move that into render pipeline.
     Vector3 light_position = Vector3(2.0f, 4.0f, 0.0f);
     Matrix4x4 light_view = Matrix4x4::LookAt(light_position, light_position + light.direction, Vector3::Up());
-    Matrix4x4 light_projection = Matrix4x4::Orthographic(-10.0f, 10.0f, -10.0f, 10.0f, 0.0f, 10.0f);
+    Matrix4x4 light_projection = Matrix4x4::Orthographic(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 10.0f);
     Matrix4x4 light_space = light_projection * light_view;
     glProgramUniformMatrix4fv(opengl_shader.program, light_space_location, 1, GL_FALSE, light_space.elements);
     
@@ -635,7 +635,7 @@ namespace Hyperion::Rendering {
       // TODO: Move that into render pipeline.
       Vector3 light_position = Vector3(2.0f, 4.0f, 0.0f);
       Matrix4x4 light_view = Matrix4x4::LookAt(light_position, light_position + lights[0].direction, Vector3::Up());
-      Matrix4x4 light_projection = Matrix4x4::Orthographic(-10.0f, 10.0f, -10.0f, 10.0f, 0.0f, 10.0f);
+      Matrix4x4 light_projection = Matrix4x4::Orthographic(-10.0f, 10.0f, -10.0f, 10.0f, -10.0f, 10.0f);
       Matrix4x4 light_space = light_projection * light_view;
       glProgramUniformMatrix4fv(opengl_shader.program, light_space_location, 1, GL_FALSE, light_space.elements);
       
