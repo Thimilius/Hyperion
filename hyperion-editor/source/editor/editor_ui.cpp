@@ -726,7 +726,14 @@ namespace Hyperion::Editor {
           property_set_successfully = property.set_value(instance, string);
         }
       } else if (property_type.is_arithmetic()) {
-        UIImmediate::Text(property_value.to_string(), TextAlignment::MiddleRight, FitType::ToLayout);
+        if (property_type == Type::get<float32>()) {
+          float32 float_value = property_value.get_value<float32>(); 
+          if (UIImmediate::InputFloat("Float Input", float_value, TextAlignment::MiddleLeft, FitType::ToLayout).input_changed) {
+            property_set_successfully = property.set_value(instance, float_value);  
+          }
+        } else {
+          UIImmediate::Text(property_value.to_string(), TextAlignment::MiddleRight, FitType::ToLayout);  
+        }
       } else if (property_type == Type::get<Vector3>()) {
         UIImmediate::Text(property_value.get_value<Vector3>().ToString(), TextAlignment::MiddleRight, FitType::ToLayout);
       } else if (property_type == Type::get<Quaternion>()) {

@@ -72,6 +72,13 @@ namespace Hyperion::UI {
       FitType fit_type = FitType::None,
       UIImmediateTheme *theme = GetDefaultTheme()
     );
+    static UIImmediateInteraction InputFloat(
+      const String &id_text,
+      float32 &value,
+      TextAlignment text_alignment = TextAlignment::TopLeft,
+      FitType fit_type = FitType::None,
+      UIImmediateTheme *theme = GetDefaultTheme()
+    );
     static void Image(const String &id_text, Texture *texture, Size size[2], bool8 enable_blending = true);
 
     static Vector2 UISpacePointToScreenPoint(Vector2 ui_space_point);
@@ -102,6 +109,11 @@ namespace Hyperion::UI {
     static UIImmediateElement &GetOrCreateElement(const String &id_text, UIImmediateWidgetFlags widget_flags);
     static UIImmediateElement &CreateTemporaryElement(UIImmediateWidgetFlags widget_flags);
     static void PlaceElementInHierarchy(UIImmediateElement &element);
+    static void HandleInputInteraction(
+      UIImmediateElement &element,
+      UIImmediateInteraction &interaction,
+      String &text, UIImmediateTheme *theme
+    );
     static UIImmediateInteraction InteractWithElement(UIImmediateElement &element);
 
     static void IterateHierarchyForLayout(UIImmediateElement &element, const std::function<void(UIImmediateElement &)> &callback);

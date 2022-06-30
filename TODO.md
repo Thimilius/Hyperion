@@ -1,8 +1,7 @@
 # TODO
 
 ## App
-- Multiple windows
-- Internal event queue
+- Support for multiple windows
 - Time Main Thread and Render Thread individually
 
 ## Assets
@@ -18,8 +17,7 @@
 ## ECS
 - Hierarchy should use callbacks when adding/removing HierarchyComponent
 - Hierarchy callbacks for transform updates
-- Entity instantiation should include hierarchy
-- System execution order
+- Add ability to properly define system execution order
 - Archetypes with overwrites
 
 ## Physics
@@ -27,14 +25,14 @@
 - Rigidbodies
 
 ## Rendering
-- Proper Vulkan implementation
 - Lighting
 	- Spotlights
-  - Storage buffers
 	- Frustum culling
+  - Use forward clustered shading
 - Async readback
 	- Textures
 	- Buffers
+- Proper Vulkan implementation
 
 ## Serialization
 - Support for arrays and maps
@@ -53,8 +51,9 @@
 ## UI
 - Immediate
 		- Input Sliders
+		- Main Thread performance is barely acceptable (it actually really isn't)
 - Font rendering
     - SDF
 
 ## Editor
-- Fix rotation of child entities with gizmo
+- Fix rotation of child entities with gizmo in world space mode
