@@ -735,7 +735,7 @@ namespace Hyperion::Editor {
           UIImmediate::Text(property_value.to_string(), TextAlignment::MiddleRight, FitType::ToLayout);  
         }
       } else if (property_type == Type::get<Vector3>()) {
-        UIImmediate::Text(property_value.get_value<Vector3>().ToString(), TextAlignment::MiddleRight, FitType::ToLayout);
+        property_set_successfully = PropertyVector3(property, instance, property_value.get_value<Vector3>());
       } else if (property_type == Type::get<Quaternion>()) {
         UIImmediate::Text(property_value.get_value<Quaternion>().ToEulerAngles().ToString(), TextAlignment::MiddleRight, FitType::ToLayout);
       } else if (property_type.is_enumeration()) {
@@ -760,6 +760,35 @@ namespace Hyperion::Editor {
       UIImmediate::Space(SizeKind::Pixels, 5.0f);
     }
     UIImmediate::EndPanel();
+  }
+
+  //--------------------------------------------------------------
+  bool8 EditorUI::PropertyVector3(Property property, Instance instance, Vector3 value) {
+    bool8 property_set_successfully = true;
+        
+    UIImmediate::Text("X", TextAlignment::MiddleRight, FitType::ToLayout);
+    UIImmediate::Space(SizeKind::Pixels, 4.0f);
+    if (UIImmediate::InputFloat("X Input", value.x, TextAlignment::MiddleLeft, FitType::ToLayout).input_changed) {
+      property_set_successfully = property.set_value(instance, value);  
+    }
+        
+    UIImmediate::Space(SizeKind::Pixels, 6.0f);
+        
+    UIImmediate::Text("Y", TextAlignment::MiddleRight, FitType::ToLayout);
+    UIImmediate::Space(SizeKind::Pixels, 4.0f);
+    if (UIImmediate::InputFloat("Y Input", value.y, TextAlignment::MiddleLeft, FitType::ToLayout).input_changed) {
+      property_set_successfully = property.set_value(instance, value);  
+    }
+        
+    UIImmediate::Space(SizeKind::Pixels, 6.0f);
+        
+    UIImmediate::Text("Z", TextAlignment::MiddleRight, FitType::ToLayout);
+    UIImmediate::Space(SizeKind::Pixels, 4.0f);
+    if (UIImmediate::InputFloat("Z Input", value.z, TextAlignment::MiddleLeft, FitType::ToLayout).input_changed) {
+      property_set_successfully = property.set_value(instance, value);  
+    }
+
+    return property_set_successfully;
   }
 
   //--------------------------------------------------------------

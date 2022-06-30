@@ -46,6 +46,7 @@ namespace Hyperion::Editor {
 
     static void ComponentPanel(const ComponentInfo &component_info, Type component_type, void *component);
     static void PropertyPanel(Instance instance, Property property);
+    static bool8 PropertyVector3(Property property, Instance instance, Vector3 value);
 
     static void UpdateGizmo();
 
