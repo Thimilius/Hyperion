@@ -737,20 +737,9 @@ namespace Hyperion::Editor {
       } else if (property_type == Type::get<Vector3>()) {
         property_set_successfully = PropertyVector3(property, instance, property_value.get_value<Vector3>());
       } else if (property_type == Type::get<Quaternion>()) {
-        UIImmediate::Text(property_value.get_value<Quaternion>().ToEulerAngles().ToString(), TextAlignment::MiddleRight, FitType::ToLayout);
+        property_set_successfully = PropertyQuaternion(property, instance, property_value.get_value<Quaternion>());
       } else if (property_type.is_enumeration()) {
-        Enumeration enumeration = property_type.get_enumeration();
-        String enum_value_name = enumeration.value_to_name(property_value).to_string();
-        if (UIImmediate::Button(enum_value_name, FitType::ToLayout).clicked) {
-          Menu menu;
-          for (auto enum_value : enumeration.get_values()) {
-            bool8 is_selected = property_value == enum_value; 
-            menu.items.Add({ enumeration.value_to_name(enum_value).to_string(), "", [&property_set_successfully, property, instance, enum_value](auto _) {
-              property_set_successfully = property.set_value(instance, enum_value);
-            }, is_selected ? MenuItemFlags::Checked : MenuItemFlags::None, { } });
-          }
-          OpenContextMenu(menu);
-        }
+        property_set_successfully = PropertyEnum(property, instance, property_type, property_value);
       }
 
       if (!property_set_successfully) {
@@ -791,6 +780,60 @@ namespace Hyperion::Editor {
     return property_set_successfully;
   }
 
+  //--------------------------------------------------------------
+  bool8 EditorUI::PropertyQuaternion(Property property, Instance instance, Quaternion value) {
+    bool8 property_set_successfully = true;
+
+    Vector3 euler_value = value.ToEulerAngles();
+        
+    UIImmediate::Text("X", TextAlignment::MiddleRight, FitType::ToLayout);
+    UIImmediate::Space(SizeKind::Pixels, 4.0f);
+    if (UIImmediate::InputFloat("X Input", euler_value.x, TextAlignment::MiddleLeft, FitType::ToLayout).input_changed) {
+      Quaternion quaternion = Quaternion::FromEulerAngles(euler_value);
+      property_set_successfully = property.set_value(instance, quaternion);  
+    }
+        
+    UIImmediate::Space(SizeKind::Pixels, 6.0f);
+        
+    UIImmediate::Text("Y", TextAlignment::MiddleRight, FitType::ToLayout);
+    UIImmediate::Space(SizeKind::Pixels, 4.0f);
+    if (UIImmediate::InputFloat("Y Input", euler_value.y, TextAlignment::MiddleLeft, FitType::ToLayout).input_changed) {
+      Quaternion quaternion = Quaternion::FromEulerAngles(euler_value);
+      property_set_successfully = property.set_value(instance, quaternion);  
+    }
+        
+    UIImmediate::Space(SizeKind::Pixels, 6.0f);
+        
+    UIImmediate::Text("Z", TextAlignment::MiddleRight, FitType::ToLayout);
+    UIImmediate::Space(SizeKind::Pixels, 4.0f);
+    if (UIImmediate::InputFloat("Z Input", euler_value.z, TextAlignment::MiddleLeft, FitType::ToLayout).input_changed) {
+      Quaternion quaternion = Quaternion::FromEulerAngles(euler_value);
+      property_set_successfully = property.set_value(instance, quaternion); 
+    }
+
+    return property_set_successfully;
+  }
+
+  //--------------------------------------------------------------
+  bool8 EditorUI::PropertyEnum(Property property, Instance instance, Type property_type, Variant property_value) {
+    bool8 property_set_successfully = true;
+    
+    Enumeration enumeration = property_type.get_enumeration();
+    String enum_value_name = enumeration.value_to_name(property_value).to_string();
+    if (UIImmediate::Button(enum_value_name, FitType::ToLayout).clicked) {
+      Menu menu;
+      for (auto enum_value : enumeration.get_values()) {
+        bool8 is_selected = property_value == enum_value; 
+        menu.items.Add({ enumeration.value_to_name(enum_value).to_string(), "", [&property_set_successfully, property, instance, enum_value](auto _) {
+          property_set_successfully = property.set_value(instance, enum_value);
+        }, is_selected ? MenuItemFlags::Checked : MenuItemFlags::None, { } });
+      }
+      OpenContextMenu(menu);
+    }
+
+    return property_set_successfully;
+  }
+  
   //--------------------------------------------------------------
   void EditorUI::UpdateGizmo() {
     RenderGizmos::SetShouldDrawTransformationGizmo(EditorSelection::HasSelection());
