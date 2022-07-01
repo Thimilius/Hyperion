@@ -32,8 +32,12 @@ namespace Hyperion {
     friend class Hyperion::Engine;
     friend class Hyperion::Main;
 
+#ifdef HYP_DEBUG
     friend void *::operator new(size_t size);
-    friend void ::operator delete(void *memory, size_t size);
+    friend void ::operator delete(void *memory) noexcept;
+    friend void *::operator new[](size_t size);
+    friend void ::operator delete[](void *memory) noexcept;
+#endif
   };
 
 }
