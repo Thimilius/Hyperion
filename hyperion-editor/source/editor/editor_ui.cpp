@@ -2,6 +2,7 @@
 #include "hyperion/editor/editor_ui.hpp"
 
 //---------------------- Library Includes ----------------------
+#include <hyperion/assets/asset_manager.hpp>
 #include <hyperion/assets/loader/font_loader.hpp>
 #include <hyperion/core/app/display.hpp>
 #include <hyperion/core/app/time.hpp>
@@ -132,7 +133,7 @@ namespace Hyperion::Editor {
     }
     UIImmediate::End();
 
-    UpdateGizmo();
+    UpdateGizmos();
 
     // At the end we execute all delayed actions.
     for (const std::function<void()> &delayed_action : s_delayed_actions) {
@@ -871,9 +872,13 @@ namespace Hyperion::Editor {
   }
   
   //--------------------------------------------------------------
-  void EditorUI::UpdateGizmo() {
-    RenderGizmos::SetShouldDrawTransformationGizmo(EditorSelection::HasSelection());
-    if (EditorSelection::HasSelection()) {
+  void EditorUI::UpdateGizmos() {
+    bool8 has_selection = EditorSelection::HasSelection();
+
+    RenderGizmos::SetShouldDrawTransformationGizmo(has_selection);
+    RenderGizmos::SetShouldDrawHighlight(has_selection);
+    
+    if (has_selection) {
       EntityId entity = EditorSelection::GetSelection();
       EntityManager *manager = EditorApplication::GetWorld()->GetEntityManager();
       
@@ -882,33 +887,49 @@ namespace Hyperion::Editor {
       DerivedTransformComponent *camera_transform = EditorCamera::GetTransform();
       CameraComponent *camera = EditorCamera::GetCamera();
 
-      Matrix4x4 gizmo_transform;
-      if (s_transformation_mode == GizmoMode::World && s_transformation_tool != RenderGizmoType::Scale) {
-        gizmo_transform = Matrix4x4::Translate(derived_transform->position);
-      } else {
-        gizmo_transform = Matrix4x4::TRS(derived_transform->position, derived_transform->rotation, Vector3::One());
+      {
+        Matrix4x4 gizmo_transform;
+        if (s_transformation_mode == GizmoMode::World && s_transformation_tool != RenderGizmoType::Scale) {
+          gizmo_transform = Matrix4x4::Translate(derived_transform->position);
+        } else {
+          gizmo_transform = Matrix4x4::TRS(derived_transform->position, derived_transform->rotation, Vector3::One());
+        }
+        RenderGizmos::SetTransformationGizmoTransformation(gizmo_transform);
+
+        // We have to remember to do everything in the space of the preview rect. That includes:
+        //   - Getting the correct mouse position with (0, 0) at the bottom and corner of the preview rect
+        //   - Calculating a ray from that transformed mouse position
+        Rect rect = GetPreviewRect();
+        Vector2 mouse_position = Input::GetMousePosition().ToFloat();
+        Vector2 position = TransformScreenToPreviewPosition(mouse_position);
+        Ray ray = CameraUtilities::ScreenPointToRay(camera, camera_transform, position, Vector2(rect.width, rect.height));
+
+        GizmoManipulation manipulation = UIImmediateGizmos::Manipulate(
+          s_transformation_tool,
+          s_transformation_mode,
+          manager,
+          entity,
+          derived_transform,
+          local_transform,
+          ray
+        );
+        s_is_in_gizmo = manipulation.in_transformation;
+        RenderGizmos::UpdateTransformationGizmo(s_transformation_tool, manipulation.highlight_axis, manipulation.in_transformation);
       }
-      RenderGizmos::SetTransformationGizmoTransformation(gizmo_transform);
 
-      // We have to remember to do everything in the space of the preview rect. That includes:
-      //   - Getting the correct mouse position with (0, 0) at the bottom and corner of the preview rect
-      //   - Calculating a ray from that transformed mouse position
-      Rect rect = GetPreviewRect();
-      Vector2 mouse_position = Input::GetMousePosition().ToFloat();
-      Vector2 position = TransformScreenToPreviewPosition(mouse_position);
-      Ray ray = CameraUtilities::ScreenPointToRay(camera, camera_transform, position, Vector2(rect.width, rect.height));
+      {
+        // Check if we actually have a mesh we can highlight.
+        MeshComponent *mesh_component = manager->GetComponent<MeshComponent>(entity);
+        if (mesh_component) {
+          Mesh *mesh = AssetManager::GetMesh(mesh_component->mesh);
+          RenderGizmos::SetHighlightMesh(mesh);
 
-      GizmoManipulation manipulation = UIImmediateGizmos::Manipulate(
-        s_transformation_tool,
-        s_transformation_mode,
-        manager,
-        entity,
-        derived_transform,
-        local_transform,
-        ray
-      );
-      s_is_in_gizmo = manipulation.in_transformation;
-      RenderGizmos::UpdateTransformationGizmo(s_transformation_tool, manipulation.highlight_axis, manipulation.in_transformation);
+          LocalToWorldComponent *local_to_world = manager->GetComponent<LocalToWorldComponent>(entity);
+          RenderGizmos::SetHighlightTransformation(local_to_world->local_to_world);
+        } else {
+          RenderGizmos::SetShouldDrawHighlight(false);  
+        }
+      }
     }
   }
 

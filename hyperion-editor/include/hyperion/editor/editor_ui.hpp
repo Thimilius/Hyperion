@@ -50,7 +50,7 @@ namespace Hyperion::Editor {
     static bool8 PropertyQuaternion(Property property, Instance instance, Quaternion value);
     static bool8 PropertyEnum(Property property, Instance instance, Type property_type, Variant property_value);
 
-    static void UpdateGizmo();
+    static void UpdateGizmos();
 
     static void OnSelectionChange(EntityId old_entity, EntityId new_entity);
     

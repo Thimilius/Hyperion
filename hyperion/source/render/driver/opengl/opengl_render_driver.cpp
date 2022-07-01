@@ -289,6 +289,9 @@ namespace Hyperion::Rendering {
     glUseProgram(opengl_shader.program);
 
     GLint model_location = opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::Model)];
+    GLint add_color_location = glGetUniformLocation(opengl_shader.program, "u_add_color");
+
+    glProgramUniform4f(opengl_shader.program, add_color_location, 0.0f, 0.0f, 0.0f, 0.0f);
     
     if (command.grid.should_draw) {
       glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, command.grid.local_to_world.elements);
@@ -300,16 +303,6 @@ namespace Hyperion::Rendering {
       DrawSubMesh(sub_mesh);
     }
 
-    if (command.highlight.should_draw) {
-      glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, command.highlight.local_to_world.elements);
-
-      const OpenGLMesh &opengl_mesh = m_storage.GetMesh(command.highlight.mesh_handle);
-      UseMesh(opengl_mesh);
-
-      SubMesh sub_mesh = opengl_mesh.sub_meshes[0];
-      DrawSubMesh(sub_mesh);
-    }
-    
     if (command.should_draw_mesh_bounds) {
       glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, Matrix4x4::Identity().elements);
 
@@ -317,9 +310,27 @@ namespace Hyperion::Rendering {
         DrawRenderBounds(object.bounds);
       }
     }
-
-    // The transformation gizmos is an overlay so we disable depth testing.
+    
+    // The highlight and transformation gizmos is an overlay so we disable depth testing.
     glDisable(GL_DEPTH_TEST);
+
+    // HACK: This whole gizmo highlight is very hardcoded and should be done by the render pipeline instead.
+    if (command.highlight.should_draw) {
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+      glProgramUniform4f(opengl_shader.program, add_color_location, 1.0f, 0.5f, 0.1f, 1.0f);
+      glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, command.highlight.local_to_world.elements);
+
+      const OpenGLMesh &opengl_mesh = m_storage.GetMesh(command.highlight.mesh_handle);
+      UseMesh(opengl_mesh);
+
+      SubMesh sub_mesh = opengl_mesh.sub_meshes[0];
+      DrawSubMesh(sub_mesh);
+
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+      glProgramUniform4f(opengl_shader.program, add_color_location, 0.0f, 0.0f, 0.0f, 0.0f);
+    }
+    
     if (command.transformation_gizmo.should_draw) {
       glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, command.transformation_gizmo.local_to_world.elements);
 
@@ -329,6 +340,7 @@ namespace Hyperion::Rendering {
       SubMesh sub_mesh = opengl_mesh.sub_meshes[0];
       DrawSubMesh(sub_mesh);
     }
+    
     glEnable(GL_DEPTH_TEST);
   }
 
@@ -652,7 +664,7 @@ namespace Hyperion::Rendering {
         // This is something that the render pipeline should fully control using a system of "global" shader variables.
         uint32 texture_unit = 1; // FIXME: This should be set depending on the amount of texture units in the material.
         glBindTextureUnit(texture_unit, shadow_map);
-        glProgramUniform1ui(opengl_shader.program, shadow_map_location, texture_unit);
+        glProgramUniform1i(opengl_shader.program, shadow_map_location, texture_unit);
 
         for (const auto &[mesh_id, grouped_mesh] : grouped_material.meshes) {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderGroupedMesh")

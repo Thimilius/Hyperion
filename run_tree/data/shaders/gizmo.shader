@@ -36,6 +36,8 @@ in V2F {
 	vec4 color;
 } i_v2f;
 
+uniform vec4 u_add_color;
+
 void main() {
-	o_color = i_v2f.color;
+	o_color = i_v2f.color + u_add_color;
 }

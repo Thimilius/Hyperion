@@ -141,15 +141,34 @@ namespace Hyperion::Rendering {
   void RenderFrame::DrawGizmos() {
     RenderFrameCommandDrawGizmos draw_gizmos = { };
     draw_gizmos.shader_handle = AssetManager::GetShaderPrimitive(ShaderPrimitive::Gizmo)->GetMetadata().handle;
+    
     draw_gizmos.grid.should_draw = RenderGizmos::GetShouldDrawGrid();
     draw_gizmos.grid.local_to_world = Matrix4x4::Identity();
-    draw_gizmos.grid.mesh_handle = RenderGizmos::GetGridMesh()->GetMetadata().handle;
+    Mesh *grid_mesh = RenderGizmos::GetGridMesh();
+    if (grid_mesh) {
+      draw_gizmos.grid.mesh_handle = grid_mesh->GetMetadata().handle;
+    } else {
+      draw_gizmos.grid.mesh_handle = AssetHandle();
+    }
+    
     draw_gizmos.highlight.should_draw = RenderGizmos::GetShouldDrawHighlight();
     draw_gizmos.highlight.local_to_world = RenderGizmos::GetHighlightTransformation();
-    draw_gizmos.highlight.mesh_handle = RenderGizmos::GetHighlightMesh()->GetMetadata().handle;
+    Mesh *highlight_mesh = RenderGizmos::GetHighlightMesh();
+    if (highlight_mesh) {
+      draw_gizmos.highlight.mesh_handle = highlight_mesh->GetMetadata().handle;
+    } else {
+      draw_gizmos.highlight.mesh_handle = AssetHandle();
+    }
+    
     draw_gizmos.transformation_gizmo.should_draw = RenderGizmos::GetShouldDrawTransformationGizmo();
     draw_gizmos.transformation_gizmo.local_to_world = RenderGizmos::GetTransformationGizmoTransformation();
-    draw_gizmos.transformation_gizmo.mesh_handle = RenderGizmos::GetTransformationGizmoMesh()->GetMetadata().handle;
+    Mesh *transformation_gizmo_mesh = RenderGizmos::GetTransformationGizmoMesh();
+    if (transformation_gizmo_mesh) {
+      draw_gizmos.transformation_gizmo.mesh_handle = transformation_gizmo_mesh->GetMetadata().handle;
+    } else {
+      draw_gizmos.transformation_gizmo.mesh_handle = AssetHandle();
+    }
+    
     draw_gizmos.should_draw_mesh_bounds = RenderGizmos::GetShouldDrawMeshBounds();
 
     RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::DrawGizmos);
