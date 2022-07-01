@@ -126,7 +126,11 @@ namespace Hyperion::Rendering {
     void LoadMaterial(RenderAssetMaterial &material);
     void LoadMesh(RenderAssetMesh &mesh);
     void UnloadAssets(RenderAssetContext &asset_context);
+    void UnloadTexture2D(AssetHandle texture_2d_handle);
     void UnloadRenderTexture(AssetHandle render_texture_handle);
+    void UnloadShader(AssetHandle shader_handle);
+    void UnloadMaterial(AssetHandle material_handle);
+    void UnloadMesh(AssetHandle mesh_handle);
 
     void SetTextureAttributes(GLuint texture, TextureAttributes attributes);
   private:

@@ -21,7 +21,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   void AssetLoadSystem::Run(EntityManager *manager) {
-    HYP_PROFILE_SCOPE("AssetLoadSystem.Run");
+    HYP_PROFILE_SCOPE("AssetLoadSystem.Run")
 
     RenderAssetContext &asset_context = RenderEngine::GetMainRenderFrame()->GetAssetContext();
     for (Asset *asset : AssetManager::s_assets_to_load) {
@@ -31,7 +31,7 @@ namespace Hyperion {
 
       switch (asset->GetAssetType()) {
         case AssetType::Texture: {
-          HYP_PROFILE_SCOPE("AssetLoadSystem.LoadTexture");
+          HYP_PROFILE_SCOPE("AssetLoadSystem.LoadTexture")
 
           Texture *texture = static_cast<Texture *>(asset);
           switch (texture->GetDimension()) {
@@ -70,7 +70,7 @@ namespace Hyperion {
           break;
         }
         case AssetType::Material: {
-          HYP_PROFILE_SCOPE("AssetLoadSystem.LoadMaterial");
+          HYP_PROFILE_SCOPE("AssetLoadSystem.LoadMaterial")
 
           Material *material = static_cast<Material *>(asset);
           RenderAssetMaterial &render_asset_material = asset_context.AddMaterialAssetToLoad();
@@ -80,7 +80,7 @@ namespace Hyperion {
           break;
         }
         case AssetType::Mesh: {
-          HYP_PROFILE_SCOPE("AssetLoadSystem.LoadMesh");
+          HYP_PROFILE_SCOPE("AssetLoadSystem.LoadMesh")
 
           Mesh *mesh = static_cast<Mesh *>(asset);
           RenderAssetMesh &render_asset_mesh = asset_context.AddMeshAssetToLoad();
@@ -102,7 +102,7 @@ namespace Hyperion {
           break;
         }
         case AssetType::Shader: {
-          HYP_PROFILE_SCOPE("AssetLoadSystem.LoadShader");
+          HYP_PROFILE_SCOPE("AssetLoadSystem.LoadShader")
 
           Shader *shader = static_cast<Shader *>(asset);
           RenderAssetShader &render_asset_shader = asset_context.AddShaderAssetToLoad();
@@ -111,8 +111,10 @@ namespace Hyperion {
           render_asset_shader.data = shader->GetData();
           break;
         }
-        default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-          break;
+        case AssetType::None:
+        case AssetType::Font:
+        case AssetType::TextureAtlas: break;
+        default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
       }
 
       asset->ResetDirty();
@@ -122,7 +124,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   void AssetUnloadSystem::Run(EntityManager *manager) {
-    HYP_PROFILE_SCOPE("AssetUnloadSystem.Run");
+    HYP_PROFILE_SCOPE("AssetUnloadSystem.Run")
 
     RenderAssetContext &asset_context = RenderEngine::GetMainRenderFrame()->GetAssetContext();
     for (Asset *asset : AssetManager::s_assets_to_unload) {
@@ -140,8 +142,7 @@ namespace Hyperion {
               asset_context.AddRenderTextureToUnload(asset_handle);
               break;
             }
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-              break;
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
           }
           break;
         }
@@ -157,8 +158,10 @@ namespace Hyperion {
           asset_context.AddShaderToUnload(asset_handle);
           break;
         }
-        default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-          break;
+        case AssetType::None:
+        case AssetType::Font:
+        case AssetType::TextureAtlas: break;
+        default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
       }
     }
   }

@@ -272,14 +272,14 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   void AssetManager::PreUpdate() {
-    HYP_PROFILE_SCOPE("AssetManager.PreUpdate");
+    HYP_PROFILE_SCOPE("AssetManager.PreUpdate")
 
     s_shader_watcher->Update();
   }
 
   //--------------------------------------------------------------
   void AssetManager::LateUpdate() {
-    HYP_PROFILE_SCOPE("AssetManager.LateUpdate");
+    HYP_PROFILE_SCOPE("AssetManager.LateUpdate")
 
     {
       AssetLoadSystem asset_load_system;
@@ -297,9 +297,27 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   void AssetManager::Shutdown() {
+    UnloadAllAssets();
+    
     FontLoader::Shutdown();
     MeshLoader::Shutdown();
     ImageLoader::Shutdown();
+  }
+
+  //--------------------------------------------------------------
+  void AssetManager::UnloadAllAssets() {
+    for (auto [asset_handle, asset] : s_assets) {
+      s_assets_to_unload.Add(asset);
+    }
+    s_assets.Clear();
+    
+    AssetUnloadSystem asset_unload_system;
+    asset_unload_system.Run(nullptr);
+
+    for (Asset *asset : s_assets_to_unload) {
+      delete asset;
+    }
+    s_assets_to_unload.Clear();
   }
 
   //--------------------------------------------------------------

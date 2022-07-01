@@ -208,7 +208,7 @@ namespace Hyperion::Rendering {
     OpenGLDebugGroup debug_group("LoadAssets");
 
     // The order in which we load the assets is important.
-    // For example a material might reference a shader or texture which should always be loaded first.
+    // For example a material might reference a shader or texture which should always get loaded first.
 
     for (RenderAssetShader &shader : asset_context.GetShaderAssetsToLoad()) {
       LoadShader(shader);
@@ -503,36 +503,28 @@ namespace Hyperion::Rendering {
     HYP_PROFILE_SCOPE("OpenGLRenderDriver.UnloadAssets")
     OpenGLDebugGroup debug_group("UnloadAssets");
 
-    for (AssetHandle shader_handle : asset_context.GetShaderAssetsToUnload()) {
-      glDeleteProgram(m_shaders.Get(shader_handle).program);
-      m_shaders.Remove(shader_handle);
-    }
     for (AssetHandle texture_2d_handle : asset_context.GetTexture2DAssetsToUnload()) {
-      GLuint texture = m_textures.Get(texture_2d_handle).texture;
-      glDeleteTextures(1, &texture);
-      m_textures.Remove(texture_2d_handle);
+      UnloadTexture2D(texture_2d_handle);
     }
     for (AssetHandle render_texture_handle : asset_context.GetRenderTextureAssetsToUnload()) {
       UnloadRenderTexture(render_texture_handle);
     }
+    for (AssetHandle shader_handle : asset_context.GetShaderAssetsToUnload()) {
+      UnloadShader(shader_handle);
+    }
     for (AssetHandle material_handle : asset_context.GetMaterialAssetsToUnload()) {
-      m_materials.Remove(material_handle);
+      UnloadMaterial(material_handle);
     }
     for (AssetHandle mesh_handle : asset_context.GetMeshAssetsToUnload()) {
-      auto mesh_it = m_meshes.Find(mesh_handle);
-      if (mesh_it == m_meshes.end()) {
-        HYP_LOG_ERROR("OpenGL", "Trying to delete mesh {} which does not exist!", mesh_handle);
-        HYP_DEBUG_BREAK;
-      } else {
-        OpenGLMesh &opengl_mesh = mesh_it->second;
-
-        glDeleteBuffers(1, &opengl_mesh.vertex_buffer);
-        glDeleteBuffers(1, &opengl_mesh.index_buffer);
-        glDeleteVertexArrays(1, &opengl_mesh.vertex_array);
-
-        m_meshes.Remove(mesh_handle);
-      }
+      UnloadMesh(mesh_handle);
     }
+  }
+
+  //--------------------------------------------------------------
+  void OpenGLStorage::UnloadTexture2D(AssetHandle texture_2d_handle) {
+    GLuint texture = m_textures.Get(texture_2d_handle).texture;
+    glDeleteTextures(1, &texture);
+    m_textures.Remove(texture_2d_handle);
   }
 
   //--------------------------------------------------------------
@@ -548,6 +540,34 @@ namespace Hyperion::Rendering {
     glDeleteFramebuffers(1, &opengl_render_texture.framebuffer);
 
     m_render_textures.Remove(render_texture_handle);
+  }
+
+  //--------------------------------------------------------------
+  void OpenGLStorage::UnloadShader(AssetHandle shader_handle) {
+    glDeleteProgram(m_shaders.Get(shader_handle).program);
+    m_shaders.Remove(shader_handle);
+  }
+
+  //--------------------------------------------------------------
+  void OpenGLStorage::UnloadMaterial(AssetHandle material_handle) {
+    m_materials.Remove(material_handle);
+  }
+
+  //--------------------------------------------------------------
+  void OpenGLStorage::UnloadMesh(AssetHandle mesh_handle) {
+    auto mesh_it = m_meshes.Find(mesh_handle);
+    if (mesh_it == m_meshes.end()) {
+      HYP_LOG_ERROR("OpenGL", "Trying to delete mesh {} which does not exist!", mesh_handle);
+      HYP_DEBUG_BREAK;
+    } else {
+      OpenGLMesh &opengl_mesh = mesh_it->second;
+
+      glDeleteBuffers(1, &opengl_mesh.vertex_buffer);
+      glDeleteBuffers(1, &opengl_mesh.index_buffer);
+      glDeleteVertexArrays(1, &opengl_mesh.vertex_array);
+
+      m_meshes.Remove(mesh_handle);
+    }
   }
 
   //--------------------------------------------------------------

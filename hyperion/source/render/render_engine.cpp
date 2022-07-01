@@ -177,7 +177,9 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void RenderEngine::ShutdownGraphicsContext() {
-    s_render_driver_context->GetDriver()->Shutdown();
+    IRenderDriver *render_driver = s_render_driver_context->GetDriver();
+    render_driver->HandleAssets(s_main_frame->GetAssetContext());
+    render_driver->Shutdown();
 
     s_render_driver_context->Shutdown();
     delete s_render_driver_context;

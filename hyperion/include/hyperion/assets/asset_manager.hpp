@@ -114,6 +114,8 @@ namespace Hyperion {
     static void LateUpdate();
     static void Shutdown();
 
+    static void UnloadAllAssets();
+    
     static void InitializePrimitives();
     static void SetNewHandle(Asset *asset, const String &handle);
 

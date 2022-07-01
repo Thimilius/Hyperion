@@ -444,9 +444,10 @@ namespace Hyperion {
 
     Physics::PhysicsEngine::Shutdown();
     Audio::AudioEngine::Shutdown();
-    Rendering::RenderEngine::Shutdown();
 
+    // The asset manager unloads all assets which will then get unloaded from the GPU on the Render Thread.
     AssetManager::Shutdown();
+    Rendering::RenderEngine::Shutdown();
     
     delete s_application->GetMainWindow();
 

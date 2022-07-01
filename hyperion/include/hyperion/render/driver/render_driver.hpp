@@ -28,7 +28,7 @@ namespace Hyperion::Rendering {
 
   class RenderDriver : public IRenderDriver {
   public:
-    virtual ~RenderDriver() = default;
+    virtual ~RenderDriver() override = default;
   public:
     inline void ResetStats() override { m_stats = RenderStats(); }
     inline RenderStats GetStats() const override { return m_stats; }
