@@ -1105,6 +1105,9 @@ namespace Hyperion::UI {
           float32 overflow = -(element.layout.child_size[1] - element.layout.rect.height);
           element.widget.scroll_offset += s_state.mouse_scroll * element.widget.theme->scroll_multiplier;
           element.widget.scroll_offset = Math::Clamp(element.widget.scroll_offset, overflow, 0.0f);
+        } else {
+          // If have no overflow (or no longer have one) we do not need a scroll offset.
+          element.widget.scroll_offset = 0.0f;
         }
       }
     }
