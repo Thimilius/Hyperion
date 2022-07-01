@@ -17,7 +17,7 @@ namespace Hyperion {
     using Iterator = typename std::unordered_map<K, V>::iterator;
     using ConstIterator = typename std::unordered_map<K, V>::const_iterator;
   public:
-    inline Map() { }
+    Map() = default;
     inline Map(std::initializer_list<Pair> init) : m_map(init) { }
   public:
     inline uint64 GetLength() const { return m_map.size(); }

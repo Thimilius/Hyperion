@@ -18,7 +18,7 @@ namespace Hyperion {
     using ReverseIterator = typename std::vector<T>::reverse_iterator;
     using ConstReverseIterator = typename std::vector<T>::const_reverse_iterator;
   public:
-    inline Array() { }
+    Array() = default;
     inline Array(uint64 size) : m_vector(size) { }
 
     template<typename Iterator>

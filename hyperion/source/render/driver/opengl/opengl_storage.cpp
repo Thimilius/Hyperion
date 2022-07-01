@@ -239,10 +239,10 @@ namespace Hyperion::Rendering {
     SetTextureAttributes(opengl_texture.texture, texture_2d.parameters.attributes);
 
     TextureFormat format = texture_2d.parameters.format;
-    GLsizei width = texture_2d.parameters.width;
-    GLsizei height = texture_2d.parameters.height;
+    GLsizei width = static_cast<GLsizei>(texture_2d.parameters.width);
+    GLsizei height =  static_cast<GLsizei>(texture_2d.parameters.height);
     GLenum internal_format = OpenGLUtilities::GetTextureInternalFormat(format);
-    GLsizei mipmap_count = Math::Max(texture_2d.mipmap_count, static_cast<uint32>(1));
+    GLsizei mipmap_count =  static_cast<GLsizei>(Math::Max(texture_2d.mipmap_count, static_cast<uint32>(1)));
     glTextureStorage2D(opengl_texture.texture, mipmap_count, internal_format, width, height);
 
     OpenGLUtilities::FlipTextureHorizontally(texture_2d.parameters.width, texture_2d.parameters.height, format, texture_2d.pixels);
@@ -269,8 +269,8 @@ namespace Hyperion::Rendering {
     // TODO: We should do some sort of validation.
 
     uint64 attachment_count = render_texture.parameters.attachments.GetLength();
-    uint32 width = render_texture.parameters.width;
-    uint32 height = render_texture.parameters.height;
+    GLsizei width = static_cast<GLsizei>(render_texture.parameters.width);
+    GLsizei height = static_cast<GLsizei>(render_texture.parameters.height);
 
     OpenGLRenderTexture opengl_render_texture;
     opengl_render_texture.handle = render_texture.handle;
@@ -304,7 +304,7 @@ namespace Hyperion::Rendering {
         TextureAttributes attributes = attachment.attributes;
         SetTextureAttributes(opengl_attachment.attachment, attributes);
 
-        GLsizei mipmap_count = attributes.use_mipmaps ? Math::Max(render_texture.mipmap_count, static_cast<uint32>(1)) : 1;
+        GLsizei mipmap_count = attributes.use_mipmaps ? static_cast<GLsizei>(Math::Max(render_texture.mipmap_count, static_cast<uint32>(1))) : 1;
         glTextureStorage2D(opengl_attachment.attachment, mipmap_count, opengl_internal_format, width, height);
 
         glNamedFramebufferTexture(opengl_render_texture.framebuffer, opengl_attachment_type, opengl_attachment.attachment, 0);
@@ -321,7 +321,7 @@ namespace Hyperion::Rendering {
     for (GLenum i = 0; i < color_attachment_count; i++) {
       buffers[i] = GL_COLOR_ATTACHMENT0 + i;
     }
-    glNamedFramebufferDrawBuffers(opengl_render_texture.framebuffer, color_attachment_count, buffers.GetData());
+    glNamedFramebufferDrawBuffers(opengl_render_texture.framebuffer, static_cast<GLsizei>(color_attachment_count), buffers.GetData());
 
     if (glCheckNamedFramebufferStatus(opengl_render_texture.framebuffer, GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE) {
       m_render_textures.Insert(render_texture.handle, opengl_render_texture);
@@ -391,7 +391,7 @@ namespace Hyperion::Rendering {
     if (material_it == m_materials.end()) {
       OpenGLMaterial opengl_material;
       opengl_material.handle = material.handle;
-      opengl_material.shader = &m_shaders.Get(material.shader_handle);;
+      opengl_material.shader = &m_shaders.Get(material.shader_handle);
       opengl_material.properties = std::move(material.properties);
 
       m_materials.Insert(material.handle, opengl_material);
@@ -414,7 +414,7 @@ namespace Hyperion::Rendering {
 
     // Create interleaved data for better access on the GPU.
     uint32 vertex_count = static_cast<uint32>(data.positions.GetLength());
-    Array<byte> vertices(vertex_count * vertex_format.stride);
+    Array<byte> vertices = Array<byte>(static_cast<uint64>(vertex_count) * vertex_format.stride);
     for (uint32 i = 0; i < vertex_count; i++) {
       uint32 index = i * vertex_format.stride;
 
@@ -435,7 +435,6 @@ namespace Hyperion::Rendering {
       if (has_texture0) {
         Vector2 &texture0 = reinterpret_cast<Vector2 &>(vertices[index]);
         texture0 = data.texture0[i];
-        index += MeshVertexFormat::VERTEX_ATTRIBUTE_SIZE_TEXTURE0;
       }
     }
 
@@ -451,14 +450,14 @@ namespace Hyperion::Rendering {
       opengl_mesh.index_buffer_size = index_buffer_size;
 
       glCreateBuffers(1, &opengl_mesh.vertex_buffer);
-      glNamedBufferData(opengl_mesh.vertex_buffer, vertex_buffer_size, vertices.GetData(), GL_STATIC_DRAW);
+      glNamedBufferData(opengl_mesh.vertex_buffer, static_cast<GLsizei>(vertex_buffer_size), vertices.GetData(), GL_STATIC_DRAW);
 
       glCreateBuffers(1, &opengl_mesh.index_buffer);
-      glNamedBufferData(opengl_mesh.index_buffer, index_buffer_size, data.indices.GetData(), GL_STATIC_DRAW);
+      glNamedBufferData(opengl_mesh.index_buffer, static_cast<GLsizei>(index_buffer_size), data.indices.GetData(), GL_STATIC_DRAW);
       opengl_mesh.index_count = static_cast<GLsizei>(data.indices.GetLength());
 
       GLuint binding_index = 0;
-      GLsizei stride = vertex_format.stride;
+      GLsizei stride = static_cast<GLsizei>(vertex_format.stride);
       GLuint relative_offset = 0;
       glCreateVertexArrays(1, &opengl_mesh.vertex_array);
       glVertexArrayVertexBuffer(opengl_mesh.vertex_array, binding_index, opengl_mesh.vertex_buffer, 0, stride);
@@ -466,7 +465,7 @@ namespace Hyperion::Rendering {
 
       for (VertexAttribute vertex_attribute : vertex_format.attributes) {
         GLuint attribute_index = OpenGLUtilities::GetAttributeIndexForVertexAttributeSize(vertex_attribute.kind);
-        GLint size = vertex_attribute.dimension;
+        GLint size = static_cast<GLint>(vertex_attribute.dimension);
         GLenum type = OpenGLUtilities::GetVertexAttributeType(vertex_attribute.type);
 
         glEnableVertexArrayAttrib(opengl_mesh.vertex_array, attribute_index);
@@ -485,15 +484,15 @@ namespace Hyperion::Rendering {
       opengl_mesh.sub_meshes = std::move(mesh.sub_meshes);
 
       if (vertex_buffer_size > opengl_mesh.vertex_buffer_size) {
-        glNamedBufferData(opengl_mesh.vertex_buffer, vertex_buffer_size, vertices.GetData(), GL_STATIC_DRAW);
+        glNamedBufferData(opengl_mesh.vertex_buffer, static_cast<GLsizeiptr>(vertex_buffer_size), vertices.GetData(), GL_STATIC_DRAW);
       } else {
-        glNamedBufferSubData(opengl_mesh.vertex_buffer, 0, vertex_buffer_size, vertices.GetData());
+        glNamedBufferSubData(opengl_mesh.vertex_buffer, 0, static_cast<GLsizeiptr>(vertex_buffer_size), vertices.GetData());
       }
       
       if (index_buffer_size > opengl_mesh.index_buffer_size) {
-        glNamedBufferData(opengl_mesh.index_buffer, index_buffer_size, data.indices.GetData(), GL_STATIC_DRAW);
+        glNamedBufferData(opengl_mesh.index_buffer, static_cast<GLsizeiptr>(index_buffer_size), data.indices.GetData(), GL_STATIC_DRAW);
       } else {
-        glNamedBufferSubData(opengl_mesh.index_buffer, 0, index_buffer_size, data.indices.GetData());
+        glNamedBufferSubData(opengl_mesh.index_buffer, 0, static_cast<GLsizeiptr>(index_buffer_size), data.indices.GetData());
       }
     }
   }
