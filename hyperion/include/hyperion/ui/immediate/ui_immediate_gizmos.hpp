@@ -32,6 +32,11 @@ namespace Hyperion::UI {
   private:
     UIImmediateGizmos() = delete;
     ~UIImmediateGizmos() = delete;
+  private:
+    inline static Vector3 s_offset = Vector3();
+    inline static bool8 s_should_transform_x = false;
+    inline static bool8 s_should_transform_y = false;
+    inline static bool8 s_should_transform_z = false;
   };
   
 }

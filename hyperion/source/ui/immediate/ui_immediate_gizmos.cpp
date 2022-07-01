@@ -20,16 +20,12 @@ namespace Hyperion::UI {
     DerivedTransformComponent *derived_transform,
     LocalTransformComponent *local_transform,
     Ray ray) {
-    static Vector3 offset = Vector3();
-    static bool8 should_transform_x = false;
-    static bool8 should_transform_y = false;
-    static bool8 should_transform_z = false;
-
+    // NOTE: This gizmo is really only supported as a global instance.
     bool8 near_x = false;
     bool8 near_y = false;
     bool8 near_z = false;
 
-    // NOTE: Scale does not support global mode.
+    // Scale does not support global mode and is always supplied in local mode.
     bool8 is_in_local_mode = mode == GizmoMode::Local || type == Rendering::RenderGizmoType::Scale;
     Vector3 right = is_in_local_mode ? TransformUtilities::GetRight(derived_transform) : Vector3(1.0f, 0.0f, 0.0f);
     Vector3 up = is_in_local_mode ? TransformUtilities::GetUp(derived_transform) : Vector3(0.0f, 1.0f, 0.0f);
@@ -58,28 +54,28 @@ namespace Hyperion::UI {
 
       if (near_x) {
         if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
-          offset = derived_transform->position - x_axis_point;
-          should_transform_x = true;
+          s_offset = derived_transform->position - x_axis_point;
+          s_should_transform_x = true;
         }
       } else if (near_y) {
         if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
-          offset = derived_transform->position - y_axis_point;
-          should_transform_y = true;
+          s_offset = derived_transform->position - y_axis_point;
+          s_should_transform_y = true;
         }
       } else if (near_z) {
         if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
-          offset = derived_transform->position - z_axis_point;
-          should_transform_z = true;
+          s_offset = derived_transform->position - z_axis_point;
+          s_should_transform_z = true;
         }
       }
 
       if (Input::IsMouseButtonHold(MouseButtonCode::Left)) {
-        if (should_transform_x) {
-          local_transform->position = TransformUtilities::WorldToLocalPosition(entity_manager, entity, x_axis_point + offset);
-        } else if (should_transform_y) {
-          local_transform->position = TransformUtilities::WorldToLocalPosition(entity_manager, entity, y_axis_point + offset);
-        } else if (should_transform_z) {
-          local_transform->position = TransformUtilities::WorldToLocalPosition(entity_manager, entity, z_axis_point + offset);
+        if (s_should_transform_x) {
+          local_transform->position = TransformUtilities::WorldToLocalPosition(entity_manager, entity, x_axis_point + s_offset);
+        } else if (s_should_transform_y) {
+          local_transform->position = TransformUtilities::WorldToLocalPosition(entity_manager, entity, y_axis_point + s_offset);
+        } else if (s_should_transform_z) {
+          local_transform->position = TransformUtilities::WorldToLocalPosition(entity_manager, entity, z_axis_point + s_offset);
         }
       }
     } else if (type == Rendering::RenderGizmoType::Rotate) {
@@ -100,18 +96,18 @@ namespace Hyperion::UI {
 
       if (near_x) {
         if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
-          offset = x_circle_point;
-          should_transform_x = true;
+          s_offset = x_circle_point;
+          s_should_transform_x = true;
         }
       } else if (near_y) {
         if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
-          offset = y_circle_point;
-          should_transform_y = true;
+          s_offset = y_circle_point;
+          s_should_transform_y = true;
         }
       } else if (near_z) {
         if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
-          offset = z_circle_point;
-          should_transform_z = true;
+          s_offset = z_circle_point;
+          s_should_transform_z = true;
         }
       }
 
@@ -120,9 +116,9 @@ namespace Hyperion::UI {
         near_y = false;
         near_z = false;
         
-        if (should_transform_x) {
+        if (s_should_transform_x) {
           Vector3 current = x_circle_point;
-          float32 degree = x_circle.GetAngleBetweenPointsOnCircle(current, offset);
+          float32 degree = x_circle.GetAngleBetweenPointsOnCircle(current, s_offset);
 
           if (mode == GizmoMode::Local) {
             right = local_transform->rotation * Vector3(1.0f, 0.0f, 0.0f);
@@ -130,12 +126,12 @@ namespace Hyperion::UI {
           Quaternion new_rotation = Quaternion::FromAxisAngle(right, degree) * local_transform->rotation;
           local_transform->rotation = new_rotation;
 
-          offset = current;
+          s_offset = current;
 
           near_x = true;
-        } else if (should_transform_y) {
+        } else if (s_should_transform_y) {
           Vector3 current = y_circle_point;
-          float32 degree = y_circle.GetAngleBetweenPointsOnCircle(current, offset);
+          float32 degree = y_circle.GetAngleBetweenPointsOnCircle(current, s_offset);
 
           if (mode == GizmoMode::Local) {
             up = local_transform->rotation * Vector3(0.0f, 1.0f, 0.0f);
@@ -143,12 +139,12 @@ namespace Hyperion::UI {
           Quaternion new_rotation = Quaternion::FromAxisAngle(up, degree) * local_transform->rotation;
           local_transform->rotation = new_rotation;
 
-          offset = current;
+          s_offset = current;
 
           near_y = true;
-        } else if (should_transform_z) {
+        } else if (s_should_transform_z) {
           Vector3 current = z_circle_point;
-          float32 degree = z_circle.GetAngleBetweenPointsOnCircle(current, offset);
+          float32 degree = z_circle.GetAngleBetweenPointsOnCircle(current, s_offset);
 
           if (mode == GizmoMode::Local) {
             forward = local_transform->rotation * Vector3(0.0f, 0.0f, 1.0f);
@@ -156,7 +152,7 @@ namespace Hyperion::UI {
           Quaternion new_rotation = Quaternion::FromAxisAngle(forward, degree) * local_transform->rotation;
           local_transform->rotation = new_rotation;
 
-          offset = current;
+          s_offset = current;
 
           near_z = true;
         }
@@ -186,50 +182,50 @@ namespace Hyperion::UI {
       
       if (near_x) {
         if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
-          offset = local_transform->scale;
-          offset.x -= x_axis_point.Dot(x_scale_axis);
-          should_transform_x = true;
+          s_offset = local_transform->scale;
+          s_offset.x -= x_axis_point.Dot(x_scale_axis);
+          s_should_transform_x = true;
         }
       } else if (near_y) {
         if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
-          offset = local_transform->scale;
-          offset.y -= y_axis_point.Dot(y_scale_axis);
-          should_transform_y = true;
+          s_offset = local_transform->scale;
+          s_offset.y -= y_axis_point.Dot(y_scale_axis);
+          s_should_transform_y = true;
         }
       } else if (near_z) {
         if (Input::IsMouseButtonDown(MouseButtonCode::Left)) {
-          offset = local_transform->scale;
-          offset.z -= z_axis_point.Dot(z_scale_axis);
-          should_transform_z = true;
+          s_offset = local_transform->scale;
+          s_offset.z -= z_axis_point.Dot(z_scale_axis);
+          s_should_transform_z = true;
         }
       }
 
       if (Input::IsMouseButtonHold(MouseButtonCode::Left)) {
-        if (should_transform_x) {
+        if (s_should_transform_x) {
           float32 scale_x = x_axis_point.Dot(x_scale_axis);
-          local_transform->scale.x = scale_x + offset.x;
-        } else if (should_transform_y) {
+          local_transform->scale.x = scale_x + s_offset.x;
+        } else if (s_should_transform_y) {
           float32 scale_y = y_axis_point.Dot(y_scale_axis);
-          local_transform->scale.y = scale_y + offset.y;
-        } else if (should_transform_z) {
+          local_transform->scale.y = scale_y + s_offset.y;
+        } else if (s_should_transform_z) {
           float32 scale_z = z_axis_point.Dot(z_scale_axis);
-          local_transform->scale.z = scale_z + offset.z;
+          local_transform->scale.z = scale_z + s_offset.z;
         }
       }
     }
 
     if (Input::IsMouseButtonUp(MouseButtonCode::Left)) {
-      should_transform_x = false;
-      should_transform_y = false;
-      should_transform_z = false;
+      s_should_transform_x = false;
+      s_should_transform_y = false;
+      s_should_transform_z = false;
     }
     
-    result.in_transformation = should_transform_x || should_transform_y || should_transform_z; 
-    if (near_x || should_transform_x) {
+    result.in_transformation = s_should_transform_x || s_should_transform_y || s_should_transform_z; 
+    if (near_x || s_should_transform_x) {
       result.highlight_axis = Rendering::RenderGizmoAxisHighlight::X;
-    } else if (near_y || should_transform_y) {
+    } else if (near_y || s_should_transform_y) {
       result.highlight_axis = Rendering::RenderGizmoAxisHighlight::Y;
-    } else if (near_z || should_transform_z) {
+    } else if (near_z || s_should_transform_z) {
       result.highlight_axis = Rendering::RenderGizmoAxisHighlight::Z;
     }
     
