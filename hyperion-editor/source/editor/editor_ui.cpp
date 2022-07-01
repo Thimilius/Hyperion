@@ -659,21 +659,39 @@ namespace Hyperion::Editor {
       
       UIImmediate::Text(component_name, TextAlignment::MiddleLeft, FitType::ToLayout);
       UIImmediate::FillSpace();
-      
-      if (UIImmediate::Button("\uf0e2", FitType::ToLayout, s_icon_theme).clicked) {
-        component_info.destructor(component);
-        component_info.constructor(component);
-      }
 
-      bool8 component_removable = true;
-      Variant removable_metadata = component_type.get_metadata(TypeMetadata::EditorRemovable);
-      if (removable_metadata.is_valid() && removable_metadata.is_type<bool8>()) {
-        component_removable = removable_metadata.to_bool();
-      }
-      if (component_removable) {
-        if (UIImmediate::Button("\uf1f8", FitType::ToLayout, s_icon_theme).clicked) {
-          EditorApplication::GetWorld()->GetEntityManager()->RemoveComponent(component_info.id, EditorSelection::GetSelection());
+      if (UIImmediate::Button("\uf0c9", FitType::ToLayout, s_icon_theme).clicked) {
+        bool8 component_removable = true;
+        Variant removable_metadata = component_type.get_metadata(TypeMetadata::EditorRemovable);
+        if (removable_metadata.is_valid() && removable_metadata.is_type<bool8>()) {
+          component_removable = removable_metadata.to_bool();
         }
+        
+        Menu menu = { {
+          { "Reset", "", [component_info, component](auto _) {
+            component_info.destructor(component);
+            component_info.constructor(component);
+          }, { }, { } },
+          { "Remove", "", [component_info](auto _) {
+            EditorApplication::GetWorld()->GetEntityManager()->RemoveComponent(component_info.id, EditorSelection::GetSelection());
+          }, component_removable ? MenuItemFlags::None : MenuItemFlags::Disabled, { } },
+        } };
+
+        if (component_type == Type::get<LocalTransformComponent>()) {
+          LocalTransformComponent *local_transform_component = static_cast<LocalTransformComponent *>(component);
+          menu.items.Add(MenuItem::Separator());
+          menu.items.Add({ "Reset Position", "", [local_transform_component](auto _) {
+            local_transform_component->position = Vector3::Zero();
+          }, { }, { } });
+          menu.items.Add({ "Reset Rotation", "", [local_transform_component](auto _) {
+            local_transform_component->rotation = Quaternion::Identity();
+          }, { }, { } });
+          menu.items.Add({ "Reset Scale", "", [local_transform_component](auto _) {
+            local_transform_component->scale = Vector3::One();
+          }, { }, { } });
+        }
+        
+        OpenContextMenu(menu);
       }
       
       UIImmediate::Space(SizeKind::Pixels, 5.0f);
