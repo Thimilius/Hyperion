@@ -111,6 +111,12 @@ namespace Hyperion::UI {
     MultiLine
   };
 
+  enum class InputCharacterValidation {
+    None,
+    Integer,
+    Decimal,
+  };
+
   enum class SizeKind {
     None,
     Pixels,

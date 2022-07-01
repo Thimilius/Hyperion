@@ -109,12 +109,17 @@ namespace Hyperion::UI {
     static UIImmediateElement &GetOrCreateElement(const String &id_text, UIImmediateWidgetFlags widget_flags);
     static UIImmediateElement &CreateTemporaryElement(UIImmediateWidgetFlags widget_flags);
     static void PlaceElementInHierarchy(UIImmediateElement &element);
+
+    static UIImmediateInteraction InteractWithElement(UIImmediateElement &element);
     static void HandleInputInteraction(
       UIImmediateElement &element,
       UIImmediateInteraction &interaction,
-      String &text, UIImmediateTheme *theme
+      String &text,
+      InputCharacterValidation validation,
+      UIImmediateTheme *theme
     );
-    static UIImmediateInteraction InteractWithElement(UIImmediateElement &element);
+    static bool8 ValidateInputCharacters(InputCharacterValidation validation, String text, int32 position, const String &to_insert);
+    static void ResetFocusTime(UIImmediateElement &element);
 
     static void IterateHierarchyForLayout(UIImmediateElement &element, const std::function<void(UIImmediateElement &)> &callback);
     static void IterateHierarchyForRender(UIImmediateElement &element, const std::function<bool8(UIImmediateElement &)> &callback);

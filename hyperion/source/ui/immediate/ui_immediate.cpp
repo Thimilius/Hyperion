@@ -309,7 +309,7 @@ namespace Hyperion::UI {
 
     UIImmediateInteraction interaction = InteractWithElement(element);
     if (interaction.focused) {
-      HandleInputInteraction(element, interaction, text, theme);
+      HandleInputInteraction(element, interaction, text, InputCharacterValidation::None, theme);
     }
 
     element.widget.theme = theme;
@@ -338,7 +338,7 @@ namespace Hyperion::UI {
     if (interaction.focused) {
       text = element.widget.text;
 
-      HandleInputInteraction(element, interaction, text, theme);
+      HandleInputInteraction(element, interaction, text, InputCharacterValidation::Decimal, theme);
       
       value = std::strtof(text.c_str(), nullptr);
     }
@@ -1091,105 +1091,14 @@ namespace Hyperion::UI {
   }
 
   //--------------------------------------------------------------
-  void UIImmediate::HandleInputInteraction(UIImmediateElement &element, UIImmediateInteraction &interaction, String &text, UIImmediateTheme *theme) {
-    // NOTE: Cursor position is a byte offset into the string not a unicode character offset.
-    // That means every modification we make to the cursor has to be converted to the appropriate byte size of the corresponding utf-8 codepoint.
-    
-    auto decrement_cursor = [](UIImmediateElement &element, int32 size) {
-      element.widget.input_cursor_position.x -= size;
-      if (element.widget.input_cursor_position.x < 0) {
-        element.widget.input_cursor_position.x = 0;
-      }
-      element.animation.focused_time_offset = Time::GetTime();
-    };
-    auto increment_cursor = [](UIImmediateElement &element, int32 size, const String &text) {
-      element.widget.input_cursor_position.x += size;
-      if (element.widget.input_cursor_position.x > static_cast<int32>(text.size())) {
-        element.widget.input_cursor_position.x = static_cast<int32>(text.size());
-      }
-      element.animation.focused_time_offset = Time::GetTime();
-    };
-
-    for (AppEvent *app_event : Input::GetEvents()) {
-      AppEventDispatcher dispatcher = AppEventDispatcher(*app_event);
-    
-      dispatcher.Dispatch<KeyPressedAppEvent>([&element, &decrement_cursor, &increment_cursor, &text, &interaction](KeyPressedAppEvent &pressed_event) {
-        KeyCode key_code = pressed_event.GetKeyCode();
-        if (key_code == KeyCode::Return) {
-          interaction.input_submitted = true;
-          
-          // We lose focus on return.
-          s_state.focused_element = 0;
-        } else if (key_code == KeyCode::Left) {
-          decrement_cursor(element, static_cast<int32>(StringUtils::GetCodepointSizeBeforeOffsetFromUtf8(text, element.widget.input_cursor_position.x)));
-        } else if (key_code == KeyCode::Right) {
-          increment_cursor(element, static_cast<int32>(StringUtils::GetCodepointSizeFromUtf8(text, element.widget.input_cursor_position.x)), text);
-        } else if (key_code == KeyCode::Home) {
-          element.widget.input_cursor_position = Vector2Int();
-        } else if (key_code == KeyCode::End) {
-          element.widget.input_cursor_position = Vector2Int(static_cast<int32>(element.widget.text.size()), 0); 
-        } else if (key_code == KeyCode::Back) {
-          if (!text.empty()) {
-            uint32 codepoint_size = StringUtils::GetCodepointSizeBeforeOffsetFromUtf8(text, element.widget.input_cursor_position.x);
-            int32 erase_position = element.widget.input_cursor_position.x - static_cast<int32>(codepoint_size);
-            if (erase_position >= 0) {
-              text.erase(erase_position, codepoint_size);
-              decrement_cursor(element, static_cast<int32>(codepoint_size));
-              interaction.input_changed = true;
-            }
-          }
-        } else if (key_code == KeyCode::Delete) {
-          if (!text.empty()) {
-            uint32 codepoint_size = StringUtils::GetCodepointSizeFromUtf8(text, element.widget.input_cursor_position.x);
-            int32 erase_position = element.widget.input_cursor_position.x;
-            if (erase_position >= 0 && erase_position < static_cast<int32>(text.size())) {
-              text.erase(erase_position, codepoint_size);
-              interaction.input_changed = true;
-            }  
-          }
-        }
-
-        if (pressed_event.HasKeyModifier(KeyModifier::Control)) {
-          if (key_code == KeyCode::V) {
-            String clipboard = Input::GetClipboard();
-            text.insert(element.widget.input_cursor_position.x, clipboard);
-            increment_cursor(element, static_cast<int32>(clipboard.size()), text);
-            interaction.input_changed = true;
-          }
-        }
-      });
-
-      dispatcher.Dispatch<KeyTypedAppEvent>([&element, &increment_cursor, theme, &interaction, &text](KeyTypedAppEvent &typed_event) {
-        String key_typed = typed_event.GetCharacter();
-        bool8 has_characters = true;
-        Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(key_typed);
-        for (uint32 codepoint : codepoints) {
-          if (codepoint == ' ' || codepoint == '\t' || codepoint == '\n') {
-            continue;
-          }
-          
-          if (!theme->font->HasCodepoint(codepoint) || codepoint == '\r') {
-            has_characters = false;
-            break;
-          }
-        }
-
-        if (has_characters) {
-          text.insert(element.widget.input_cursor_position.x, key_typed);
-          increment_cursor(element, static_cast<int32>(key_typed.size()), text);
-          interaction.input_changed = true;
-        }
-      });
-    }
-  }
-
-  //--------------------------------------------------------------
   UIImmediateInteraction UIImmediate::InteractWithElement(UIImmediateElement &element) {
     UIImmediateInteraction result = { };
     result.element = &element;
 
+    bool8 is_inside_rect = IsInsideRect(element.layout.rect, s_state.mouse_position);
+
     if ((element.widget.flags & UIImmediateWidgetFlags::Scrollable) == UIImmediateWidgetFlags::Scrollable) {
-      if (IsInsideRect(element.layout.rect, s_state.mouse_position)) {
+      if (is_inside_rect) {
         // Check if we have an actual overflow.
         if (element.layout.child_size[1] > element.layout.rect.height) {
           // Overflow is negative because positive y axis goes down.
@@ -1207,12 +1116,11 @@ namespace Hyperion::UI {
     if ((element.widget.flags & UIImmediateWidgetFlags::Interactable) == UIImmediateWidgetFlags::Interactable) {
       UIImmediateId id = element.id.id;
       
-      bool8 is_inside = IsInsideRect(element.layout.rect, s_state.mouse_position);
       bool8 is_inside_scissor = element.layout.scissor_rect.Contains(
         Vector2Int(static_cast<int32>(s_state.mouse_position.x), static_cast<int32>(s_state.mouse_position.y))
       );
       
-      if (is_inside && is_inside_scissor) {
+      if (is_inside_rect && is_inside_scissor) {
         s_state.hovered_element = id;
         if (s_state.pressed_element == 0 && (s_state.is_left_mouse_down || s_state.is_right_mouse_down)) {
           s_state.pressed_element = id;
@@ -1221,7 +1129,7 @@ namespace Hyperion::UI {
 
             // We do a check to see that we did not have focus before to reset some state.
             if (s_state.last_focused_element != id) {
-              element.animation.focused_time_offset = Time::GetTime();
+              ResetFocusTime(element);
               
               // Position the cursor at the end for an input field.
               element.widget.input_cursor_position = Vector2Int(static_cast<int32>(element.widget.text.size()), 0);
@@ -1245,6 +1153,167 @@ namespace Hyperion::UI {
     return result;
   }
   
+  //--------------------------------------------------------------
+  void UIImmediate::HandleInputInteraction(
+    UIImmediateElement &element,
+    UIImmediateInteraction &interaction,
+    String &text,
+    InputCharacterValidation validation,
+    UIImmediateTheme *theme) {
+    // NOTE: The cursor position is a byte offset into the string and NOT a unicode character offset.
+    // That means every modification we make to the cursor has to be converted to the appropriate byte size of the corresponding utf-8 codepoint.
+    
+    auto decrement_cursor = [](UIImmediateElement &element, int32 size) {
+      element.widget.input_cursor_position.x -= size;
+      if (element.widget.input_cursor_position.x < 0) {
+        element.widget.input_cursor_position.x = 0;
+      }
+    };
+    auto increment_cursor = [](UIImmediateElement &element, int32 size, const String &text) {
+      element.widget.input_cursor_position.x += size;
+      if (element.widget.input_cursor_position.x > static_cast<int32>(text.size())) {
+        element.widget.input_cursor_position.x = static_cast<int32>(text.size());
+      }
+    };
+
+    for (AppEvent *app_event : Input::GetEvents()) {
+      AppEventDispatcher dispatcher = AppEventDispatcher(*app_event);
+    
+      dispatcher.Dispatch<KeyPressedAppEvent>([&element, &decrement_cursor, &increment_cursor, &text, &interaction, validation](KeyPressedAppEvent &event) {
+        KeyCode key_code = event.GetKeyCode();
+        if (key_code == KeyCode::Return) {
+          interaction.input_submitted = true;
+          
+          // We lose focus on return.
+          s_state.focused_element = 0;
+        } else if (key_code == KeyCode::Left) {
+          decrement_cursor(element, static_cast<int32>(StringUtils::GetCodepointSizeBeforeOffsetFromUtf8(text, element.widget.input_cursor_position.x)));
+          ResetFocusTime(element);
+        } else if (key_code == KeyCode::Right) {
+          increment_cursor(element, static_cast<int32>(StringUtils::GetCodepointSizeFromUtf8(text, element.widget.input_cursor_position.x)), text);
+          ResetFocusTime(element);
+        } else if (key_code == KeyCode::Home) {
+          element.widget.input_cursor_position = Vector2Int();
+          ResetFocusTime(element);
+        } else if (key_code == KeyCode::End) {
+          element.widget.input_cursor_position = Vector2Int(static_cast<int32>(element.widget.text.size()), 0);
+          ResetFocusTime(element);
+        } else if (key_code == KeyCode::Back) {
+          if (!text.empty()) {
+            uint32 codepoint_size = StringUtils::GetCodepointSizeBeforeOffsetFromUtf8(text, element.widget.input_cursor_position.x);
+            int32 erase_position = element.widget.input_cursor_position.x - static_cast<int32>(codepoint_size);
+            if (erase_position >= 0) {
+              text.erase(erase_position, codepoint_size);
+              decrement_cursor(element, static_cast<int32>(codepoint_size));
+              interaction.input_changed = true;
+              ResetFocusTime(element);
+            }
+          }
+        } else if (key_code == KeyCode::Delete) {
+          if (!text.empty()) {
+            uint32 codepoint_size = StringUtils::GetCodepointSizeFromUtf8(text, element.widget.input_cursor_position.x);
+            int32 erase_position = element.widget.input_cursor_position.x;
+            if (erase_position >= 0 && erase_position < static_cast<int32>(text.size())) {
+              text.erase(erase_position, codepoint_size);
+              interaction.input_changed = true;
+              ResetFocusTime(element);
+            }  
+          }
+        }
+
+        if (event.HasKeyModifier(KeyModifier::Control)) {
+          if (key_code == KeyCode::V) {
+            String clipboard = Input::GetClipboard();
+            int32 insert_position = element.widget.input_cursor_position.x;
+            if (ValidateInputCharacters(validation, text, insert_position, clipboard)) {
+              text.insert(insert_position, clipboard);
+              increment_cursor(element, static_cast<int32>(clipboard.size()), text);
+              interaction.input_changed = true;
+              ResetFocusTime(element);
+            }
+          }
+        }
+      });
+
+      dispatcher.Dispatch<KeyTypedAppEvent>([&element, &increment_cursor, theme, &interaction, &text, validation](KeyTypedAppEvent &typed_event) {
+        String key_typed = typed_event.GetCharacter();
+        bool8 has_characters = true;
+        Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(key_typed);
+        for (uint32 codepoint : codepoints) {
+          if (codepoint == ' ' || codepoint == '\t' || codepoint == '\n') {
+            continue;
+          }
+          
+          if (!theme->font->HasCodepoint(codepoint) || codepoint == '\r') {
+            has_characters = false;
+            break;
+          }
+        }
+
+        if (has_characters) {
+          int32 insert_position = element.widget.input_cursor_position.x;
+          if (ValidateInputCharacters(validation, text, insert_position, key_typed)) {
+            text.insert(insert_position, key_typed);
+            increment_cursor(element, static_cast<int32>(key_typed.size()), text);
+            interaction.input_changed = true;
+            ResetFocusTime(element);
+          }
+        }
+      });
+    }
+  }
+
+  //--------------------------------------------------------------
+  bool8 UIImmediate::ValidateInputCharacters(InputCharacterValidation validation, String text, int32 position, const String &to_insert) {
+    bool8 is_valid = true;
+    
+    if (validation == InputCharacterValidation::Integer || validation == InputCharacterValidation::Decimal) {
+      text.insert(position, to_insert);
+      Array<uint32> codepoints = StringUtils::GetCodepointsFromUtf8(text);
+
+      bool8 has_single_decimal_point = false;
+      for (uint32 i = 0; i < codepoints.GetLength(); ++i) {
+        uint32 codepoint = codepoints[i];
+
+        // Make sure dash is at the start.
+        if (codepoint == '-') {
+          if (i == 0) {
+            continue;
+          } else {
+            is_valid = false;
+            break;  
+          }
+        }
+
+        // We only allow a single decimal point.
+        if (validation == InputCharacterValidation::Decimal) {
+          if (codepoint == '.' || codepoint == ',') {
+            if (has_single_decimal_point) {
+              is_valid = false;
+              break;
+            } else {
+              has_single_decimal_point = true;
+              continue;
+            }
+          }
+        }
+          
+        // All other characters have to be numbers
+        if (codepoint < '0' || codepoint > '9') {
+          is_valid = false;
+          break;
+        }
+      }
+    }
+    
+    return is_valid;
+  }
+
+  //--------------------------------------------------------------
+  void UIImmediate::ResetFocusTime(UIImmediateElement &element) {
+    element.animation.focused_time_offset = Time::GetTime();
+  }
+
   //--------------------------------------------------------------
   void UIImmediate::IterateHierarchyForLayout(UIImmediateElement &element, const std::function<void(UIImmediateElement &)> &callback) {
     callback(element);
