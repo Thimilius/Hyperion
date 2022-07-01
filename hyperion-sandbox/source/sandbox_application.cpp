@@ -17,6 +17,7 @@
 #include <hyperion/ecs/component/components/utilities/transform_utilities.hpp>
 #include <hyperion/ecs/world/world_manager.hpp>
 #include <hyperion/render/render_engine.hpp>
+#include <hyperion/render/render_gizmos.hpp>
 #include <hyperion/render/pipelines/forward/forward_render_pipeline.hpp>
 
 //------------------------- Namespaces -------------------------
@@ -133,7 +134,7 @@ namespace Sandbox {
       Rendering::RenderGizmos::SetShouldDrawGrid(!Rendering::RenderGizmos::GetShouldDrawGrid());
     }
     if (Input::IsKeyDown(KeyCode::F4)) {
-      Rendering::RenderGizmos::SetShouldDrawAllBounds(!Rendering::RenderGizmos::GetShouldDrawAllBounds());
+      Rendering::RenderGizmos::SetShouldDrawMeshBounds(!Rendering::RenderGizmos::GetShouldDrawMeshBounds());
     }
 
     EntityManager *manager = g_world->GetEntityManager();
@@ -170,13 +171,14 @@ namespace Sandbox {
     String vsync = Rendering::RenderEngine::GetVSyncMode() == Rendering::VSyncMode::DontSync ? "Off" : "On";
     uint64 memory = MemoryStats::GetGlobalMemory();
     String title = StringUtils::Format(format,
-                                       Time::GetFPS(),
-                                       Time::GetFrameTime(),
-                                       vsync,
-                                       render_stats.draw_calls,
-                                       render_stats.vertex_count,
-                                       render_stats.triangle_count,
-                                       memory);
+      Time::GetFPS(),
+      Time::GetFrameTime(),
+      vsync,
+      render_stats.draw_calls,
+      render_stats.vertex_count,
+      render_stats.triangle_count,
+      memory
+    );
 
     GetMainWindow()->SetTitle(title);
   }

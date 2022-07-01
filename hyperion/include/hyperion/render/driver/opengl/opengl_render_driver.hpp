@@ -77,7 +77,7 @@ namespace Hyperion::Rendering {
     void UseRenderTexture(RenderTargetId render_target_id);
     void UseShader(const OpenGLShader &opengl_shader);
     void UseMaterial(const OpenGLShader &opengl_shader, const OpenGLMaterial &opengl_material);
-    void SetMaterialTextureProperty(ShaderPropertyStorage::Texture texture_property, uint32 texture_unit, GLuint program, GLuint location);
+    void SetMaterialTextureProperty(ShaderPropertyStorage::Texture texture_property, uint32 texture_unit, GLuint program, GLint location);
     void UseMesh(const OpenGLMesh &opengl_mesh);
   private:
     OpenGLState m_state = OpenGLState();

@@ -26,13 +26,16 @@
 
 ## Rendering
 - Lighting
-	- Spotlights
-	- Frustum culling
+    - Spotlights
+    - Frustum culling
   - Use forward clustered shading
 - Async readback
-	- Textures
-	- Buffers
+    - Textures
+    - Buffers
 - Proper Vulkan implementation
+- Better system to support "globals" (similar to Unity)
+    - Setting of global buffers
+    - Setting of global shader properties
 
 ## Serialization
 - Support for arrays and maps

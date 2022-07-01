@@ -9,6 +9,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/application.hpp"
+#include "hyperion/render/render_gizmos.hpp"
 #include "hyperion/render/pipelines/forward/forward_render_pipeline.hpp"
 #include "hyperion/render/threading/render_thread_synchronization.hpp"
 

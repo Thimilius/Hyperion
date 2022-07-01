@@ -7,7 +7,6 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset_types.hpp"
 #include "hyperion/core/math/matrix4x4.hpp"
-#include "hyperion/render/render_gizmos.hpp"
 #include "hyperion/render/command/render_command_buffer.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -95,22 +94,19 @@ namespace Hyperion::Rendering {
   };
 
   struct RenderFrameCommandDrawGizmos {
+    struct GizmoInstance {
+      bool8 should_draw = false;
+      Matrix4x4 local_to_world;
+      AssetHandle mesh_handle;
+    };
+    
     AssetHandle shader_handle;
 
-    struct Grid {
-      bool8 should_draw;
-      Matrix4x4 local_to_world;
-      RenderGizmoGridType type;
-      AssetHandle mesh_handle;
-    } grid;
+    GizmoInstance grid;
+    GizmoInstance highlight;
+    GizmoInstance transformation_gizmo;
 
-    struct TransformationGizmo {
-      bool8 should_draw;
-      Matrix4x4 local_to_world;
-      AssetHandle mesh_handle;
-    } transformation_gizmo;
-
-    bool8 should_draw_all_bounds;
+    bool8 should_draw_mesh_bounds;
   };
 
   struct RenderFrameCommandDrawEditorUI { };

@@ -59,7 +59,7 @@ namespace Hyperion::Editor {
       RenderGizmos::SetShouldDrawGrid(!RenderGizmos::GetShouldDrawGrid());
     }
     if (Input::IsKeyDown(KeyCode::F4)) {
-      RenderGizmos::SetShouldDrawAllBounds(!RenderGizmos::GetShouldDrawAllBounds());
+      RenderGizmos::SetShouldDrawMeshBounds(!RenderGizmos::GetShouldDrawMeshBounds());
     }
     if (Input::IsKeyDown(KeyCode::F5)) {
       if (Engine::GetEngineState() == EngineState::Editor) {

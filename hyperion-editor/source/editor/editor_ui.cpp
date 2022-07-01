@@ -549,9 +549,9 @@ namespace Hyperion::Editor {
         if (UIImmediate::TextToggle(should_draw_grid, "\uf850", FitType::ToLayout, s_icon_theme).clicked) {
           RenderGizmos::SetShouldDrawGrid(should_draw_grid);
         }
-        bool8 should_draw_bounds = RenderGizmos::GetShouldDrawAllBounds();
+        bool8 should_draw_bounds = RenderGizmos::GetShouldDrawMeshBounds();
         if (UIImmediate::TextToggle(should_draw_bounds, "\uf247", FitType::ToLayout, s_icon_theme).clicked) {
-          RenderGizmos::SetShouldDrawAllBounds(should_draw_bounds);
+          RenderGizmos::SetShouldDrawMeshBounds(should_draw_bounds);
         }
         if (UIImmediate::Button("\uf03d", FitType::ToLayout, s_icon_theme).clicked) {
           EditorCamera::Reset();

@@ -57,17 +57,17 @@ namespace Hyperion::Rendering {
     Array<Vector4> colors;
     Array<Vector2> texture0;
 
-    Array<uint32> indices;
+    Array<uint32> indices; // NOTE: This is quite wasteful as every mesh as INT indices currently. We should have support for SHORT as well.
   };
 
   struct MeshVertexFormat {
-    uint32 stride;
+    uint32 stride = 0;
     Array<VertexAttribute> attributes;
 
-    inline static uint32 VERTEX_ATTRIBUTE_SIZE_POSITION = sizeof(float32) * 3;
-    inline static uint32 VERTEX_ATTRIBUTE_SIZE_NORMAL = sizeof(float32) * 3;
-    inline static uint32 VERTEX_ATTRIBUTE_SIZE_COLOR = sizeof(float32) * 4;
-    inline static uint32 VERTEX_ATTRIBUTE_SIZE_TEXTURE0 = sizeof(float32) * 2;
+    inline static constexpr uint32 VERTEX_ATTRIBUTE_SIZE_POSITION = sizeof(float32) * 3;
+    inline static constexpr uint32 VERTEX_ATTRIBUTE_SIZE_NORMAL = sizeof(float32) * 3;
+    inline static constexpr uint32 VERTEX_ATTRIBUTE_SIZE_COLOR = sizeof(float32) * 4;
+    inline static constexpr uint32 VERTEX_ATTRIBUTE_SIZE_TEXTURE0 = sizeof(float32) * 2;
   };
 
 }

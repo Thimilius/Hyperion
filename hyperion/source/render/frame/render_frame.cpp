@@ -23,7 +23,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   CullingResults RenderFrame::Cull(CullingParameters parameters) {
-    HYP_PROFILE_SCOPE("RenderFrame.Cull");
+    HYP_PROFILE_SCOPE("RenderFrame.Cull")
 
     Array<Plane> frustum_planes = CameraUtilities::ExtractFrustumPlanes(parameters.matrix);
 
@@ -71,7 +71,7 @@ namespace Hyperion::Rendering {
 
     // We do the sorting on the Main Thread.
     {
-      HYP_PROFILE_SCOPE("RenderFrame.SortObjects");
+      HYP_PROFILE_SCOPE("RenderFrame.SortObjects")
 
       const Array<RenderFrameContextObjectMesh> &mesh_objects = m_context.GetMeshObjects();
       Vector3 camera_position = drawing_parameters.sorting_settings.camera_position;
@@ -143,12 +143,14 @@ namespace Hyperion::Rendering {
     draw_gizmos.shader_handle = AssetManager::GetShaderPrimitive(ShaderPrimitive::Gizmo)->GetMetadata().handle;
     draw_gizmos.grid.should_draw = RenderGizmos::GetShouldDrawGrid();
     draw_gizmos.grid.local_to_world = Matrix4x4::Identity();
-    draw_gizmos.grid.type = RenderGizmos::GetGridType();
     draw_gizmos.grid.mesh_handle = RenderGizmos::GetGridMesh()->GetMetadata().handle;
+    draw_gizmos.highlight.should_draw = RenderGizmos::GetShouldDrawHighlight();
+    draw_gizmos.highlight.local_to_world = RenderGizmos::GetHighlightTransformation();
+    draw_gizmos.highlight.mesh_handle = RenderGizmos::GetHighlightMesh()->GetMetadata().handle;
     draw_gizmos.transformation_gizmo.should_draw = RenderGizmos::GetShouldDrawTransformationGizmo();
     draw_gizmos.transformation_gizmo.local_to_world = RenderGizmos::GetTransformationGizmoTransformation();
     draw_gizmos.transformation_gizmo.mesh_handle = RenderGizmos::GetTransformationGizmoMesh()->GetMetadata().handle;
-    draw_gizmos.should_draw_all_bounds = RenderGizmos::GetShouldDrawAllBounds();
+    draw_gizmos.should_draw_mesh_bounds = RenderGizmos::GetShouldDrawMeshBounds();
 
     RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::DrawGizmos);
     command.data = draw_gizmos;

@@ -120,8 +120,8 @@ namespace Hyperion::Rendering {
 
           break;
         }
-        default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-          break;
+        case RenderFrameCommandType::None:
+        default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
       }
     }
   }
@@ -220,12 +220,13 @@ namespace Hyperion::Rendering {
     
     const Array<RenderFrameContextObjectMesh> &mesh_objects = context.GetMeshObjects();
     for (const RenderFrameContextObjectMesh &mesh_object : mesh_objects) {
-      const OpenGLMesh &opengl_mesh = m_storage.GetMesh(mesh_object.mesh_handle);
-
       glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, mesh_object.local_to_world.elements);
       
+      const OpenGLMesh &opengl_mesh = m_storage.GetMesh(mesh_object.mesh_handle);
       UseMesh(opengl_mesh);
-      DrawSubMesh(opengl_mesh.sub_meshes[mesh_object.sub_mesh_index]);
+
+      SubMesh sub_mesh = opengl_mesh.sub_meshes[mesh_object.sub_mesh_index];
+      DrawSubMesh(sub_mesh);
     }
   }
 
@@ -262,15 +263,17 @@ namespace Hyperion::Rendering {
 
     for (const RenderFrameContextObjectMesh &mesh_object : context.GetMeshObjects()) {
       OpenGLDebugGroup debug_group("DrawMesh");
-      const OpenGLMesh &opengl_mesh = m_storage.GetMesh(mesh_object.mesh_handle);
 
       glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, mesh_object.local_to_world.elements);
 
       // NOTE: The object id needs to be put in the uvec2 in reverse order.
       glProgramUniform2ui(opengl_shader.program, object_id_location, 0xFFFFFFFF & mesh_object.id, mesh_object.id >> 32);
       
+      const OpenGLMesh &opengl_mesh = m_storage.GetMesh(mesh_object.mesh_handle);
       UseMesh(opengl_mesh);
-      DrawSubMesh(opengl_mesh.sub_meshes[mesh_object.sub_mesh_index]);
+
+      SubMesh sub_mesh = opengl_mesh.sub_meshes[mesh_object.sub_mesh_index];
+      DrawSubMesh(sub_mesh);
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -297,14 +300,24 @@ namespace Hyperion::Rendering {
       DrawSubMesh(sub_mesh);
     }
 
-    if (command.should_draw_all_bounds) {
+    if (command.highlight.should_draw) {
+      glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, command.highlight.local_to_world.elements);
+
+      const OpenGLMesh &opengl_mesh = m_storage.GetMesh(command.highlight.mesh_handle);
+      UseMesh(opengl_mesh);
+
+      SubMesh sub_mesh = opengl_mesh.sub_meshes[0];
+      DrawSubMesh(sub_mesh);
+    }
+    
+    if (command.should_draw_mesh_bounds) {
       glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, Matrix4x4::Identity().elements);
 
       for (const RenderFrameContextObjectMesh &object : context.GetMeshObjects()) {
         DrawRenderBounds(object.bounds);
       }
     }
-    
+
     // The transformation gizmos is an overlay so we disable depth testing.
     glDisable(GL_DEPTH_TEST);
     if (command.transformation_gizmo.should_draw) {
@@ -341,8 +354,8 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void OpenGLRenderDriver::ExecuteBufferCommandBlit(const RenderCommandBufferCommandBlit &command) {
-      GLint source_width = Display::GetWidth();
-      GLint source_height = Display::GetHeight();
+      uint32 source_width = Display::GetWidth();
+      uint32 source_height = Display::GetHeight();
       GLuint source_framebuffer = 0;
       GLuint source_color_attachment = 0;
       if (command.source.handle != RenderTargetId::Default().handle) {
@@ -355,8 +368,8 @@ namespace Hyperion::Rendering {
         source_color_attachment = opengl_render_texture.attachments.Get(0).attachment;
       }
 
-      GLint destination_width = Display::GetWidth();
-      GLint destination_height = Display::GetHeight();
+      uint32 destination_width = Display::GetWidth();
+      uint32 destination_height = Display::GetHeight();
       GLuint destination_framebuffer = 0;
       if (command.destination.handle != RenderTargetId::Default().handle) {
         const OpenGLRenderTexture &opengl_render_texture = m_storage.GetRenderTexture(command.destination.handle);
@@ -374,12 +387,12 @@ namespace Hyperion::Rendering {
           destination_framebuffer,
           0,
           0,
-          source_width,
-          source_height,
+          static_cast<GLint>(source_width),
+          static_cast<GLint>(source_height),
           0,
           0,
-          destination_width,
-          destination_height,
+          static_cast<GLint>(destination_width),
+          static_cast<GLint>(destination_height),
           mask,
           GL_NEAREST);
       } else {
@@ -403,15 +416,18 @@ namespace Hyperion::Rendering {
   void OpenGLRenderDriver::ExecuteBufferCommandSetGlobalBuffer(const RenderCommandBufferCommandSetGlobalBuffer &command) {
     auto &data = command.render_buffer.GetData();
 
+    GLsizeiptr data_length = static_cast<GLsizeiptr>(data.GetLength());
+    
     // HACK: This is kind of stupid.
-    // We need something more sophisticated which abstracts the proper shader uniform names and binding points.
+    // We need a sophisticated which supports setting of arbitrary global buffers and shader properties.
     GLuint buffer_id = -1;
     if (command.id == 0) {
       buffer_id = m_state.lighting_uniform_buffer;
 
-      if (buffer_id == -1) {
+      // HACK: This check is even more stupid but will hopefully be replaced soon. 
+      if (buffer_id == 0xFFFFFFFF) {
         glCreateBuffers(1, &buffer_id);
-        glNamedBufferData(buffer_id, data.GetLength(), data.GetData(), GL_DYNAMIC_DRAW);
+        glNamedBufferData(buffer_id, data_length, data.GetData(), GL_DYNAMIC_DRAW);
         glBindBufferBase(GL_UNIFORM_BUFFER, 1, buffer_id);
 
         m_state.lighting_uniform_buffer = buffer_id;
@@ -420,7 +436,7 @@ namespace Hyperion::Rendering {
       }
     }
 
-    glNamedBufferSubData(buffer_id, 0, data.GetLength(), data.GetData());
+    glNamedBufferSubData(buffer_id, 0, data_length, data.GetData());
   }
 
   //--------------------------------------------------------------
@@ -550,6 +566,7 @@ namespace Hyperion::Rendering {
     HYP_PROFILE_SCOPE("OpenGLRenderDriver.SetupPerObjectLightIndices")
 
     // HACK: Currently this is pretty hardcoded for 4 light indices per object (and a maximum of 128 global lights).
+    // This should really be replaced by a proper forward clustered shading support.
 
     grouped_object.light_count = 0;
     grouped_object.light_indices[0] = UINT32_MAX;
@@ -557,12 +574,12 @@ namespace Hyperion::Rendering {
     grouped_object.light_indices[2] = UINT32_MAX;
     grouped_object.light_indices[3] = UINT32_MAX;
 
-    uint32 light_index = 0;
+    uint32 current_light_index = 0;
     float32 smallest_distances[4] = { FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX };
 
-    // TODO: Add culling for lights.
+    // NOTE: We currently do no culling of lights which is unfortunate.
     for (const RenderFrameContextLight &light : render_frame_context.GetLights()) {
-      if (light.type == LightType::Point && light_index < 128) {
+      if (light.type == LightType::Point && current_light_index < 128) {
         float32 distance_to_light = (light.position - object_position).SqrMagnitude();
 
         // Is the light even in range?
@@ -573,31 +590,31 @@ namespace Hyperion::Rendering {
             grouped_object.light_indices[3] = grouped_object.light_indices[2];
             grouped_object.light_indices[2] = grouped_object.light_indices[1];
             grouped_object.light_indices[1] = grouped_object.light_indices[0];
-            grouped_object.light_indices[0] = light_index;
+            grouped_object.light_indices[0] = current_light_index;
           } else if (distance_to_light < smallest_distances[1]) {
             smallest_distances[1] = distance_to_light;
 
             grouped_object.light_indices[3] = grouped_object.light_indices[2];
             grouped_object.light_indices[2] = grouped_object.light_indices[1];
-            grouped_object.light_indices[1] = light_index;
+            grouped_object.light_indices[1] = current_light_index;
           } else if (distance_to_light < smallest_distances[2]) {
             smallest_distances[2] = distance_to_light;
 
             grouped_object.light_indices[3] = grouped_object.light_indices[2];
-            grouped_object.light_indices[2] = light_index;
+            grouped_object.light_indices[2] = current_light_index;
           } else if (distance_to_light < smallest_distances[3]) {
             smallest_distances[3] = distance_to_light;
 
-            grouped_object.light_indices[3] = light_index;
+            grouped_object.light_indices[3] = current_light_index;
           }
         }
 
-        light_index++;
+        current_light_index++;
       }
     }
 
-    for (uint64 i = 0; i < 4; i++) {
-      if (grouped_object.light_indices[i] != UINT32_MAX) {
+    for (uint32 light_index : grouped_object.light_indices) {
+      if (light_index != UINT32_MAX) {
         grouped_object.light_count++;
       }
     }
@@ -631,10 +648,11 @@ namespace Hyperion::Rendering {
 
         UseMaterial(opengl_shader, *grouped_material.material);
 
-        // Set shadow map.
+        // HACK: Set shadow map. This should not really happen here in this way.
+        // This is something that the render pipeline should fully control using a system of "global" shader variables.
         uint32 texture_unit = 1; // FIXME: This should be set depending on the amount of texture units in the material.
         glBindTextureUnit(texture_unit, shadow_map);
-        glProgramUniform1i(opengl_shader.program, shadow_map_location, texture_unit);
+        glProgramUniform1ui(opengl_shader.program, shadow_map_location, texture_unit);
 
         for (const auto &[mesh_id, grouped_mesh] : grouped_material.meshes) {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderGroupedMesh")
@@ -670,8 +688,14 @@ namespace Hyperion::Rendering {
     m_stats.vertex_count += sub_mesh.vertex_count;
     m_stats.triangle_count += sub_mesh.index_count;
 
-    GLenum topology = OpenGLUtilities::GetTopology(sub_mesh.topology);
-    glDrawElementsBaseVertex(topology, sub_mesh.index_count, GL_UNSIGNED_INT, index_offset, sub_mesh.vertex_offset);
+    GLenum topology_mode = OpenGLUtilities::GetTopology(sub_mesh.topology);
+    glDrawElementsBaseVertex(
+      topology_mode,
+      static_cast<GLsizei>(sub_mesh.index_count),
+      GL_UNSIGNED_INT,
+      index_offset,
+      static_cast<GLint>(sub_mesh.vertex_offset)
+    );
   }
 
   //--------------------------------------------------------------
@@ -730,7 +754,8 @@ namespace Hyperion::Rendering {
       const OpenGLMesh &opengl_mesh = m_storage.GetMesh(element.mesh_handle);
       UseMesh(opengl_mesh);
 
-      DrawSubMesh(opengl_mesh.sub_meshes[0]);
+      SubMesh sub_mesh = opengl_mesh.sub_meshes[0];
+      DrawSubMesh(sub_mesh);
     }
 
     glDisable(GL_SCISSOR_TEST);
@@ -763,7 +788,7 @@ namespace Hyperion::Rendering {
     glNamedBufferSubData(m_storage.GetStatic().render_bounds_vertex_buffer, 0, data.GetLength() * sizeof(OpenGLImmediateVertex), data.GetData());
 
     glBindVertexArray(m_storage.GetStatic().render_bounds_vertex_array);
-    glDrawElementsBaseVertex(GL_LINES, 24, GL_UNSIGNED_INT, 0, 0);
+    glDrawElementsBaseVertex(GL_LINES, 24, GL_UNSIGNED_INT, nullptr, 0);
   }
 
   //--------------------------------------------------------------
@@ -795,8 +820,8 @@ namespace Hyperion::Rendering {
         glDepthMask(GL_FALSE);
         break;
       }
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-        break;
+      case ShaderZWrite::Unknown:
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
     }
     switch (attributes.blending_mode) {
       case ShaderBlendingMode::On: {
@@ -808,8 +833,8 @@ namespace Hyperion::Rendering {
         glDisable(GL_BLEND);
         break;
       }
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-        break;
+      case ShaderBlendingMode::Unknown:
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
     }
     switch (attributes.culling_mode) {
       case ShaderCullingMode::Off: {
@@ -826,8 +851,8 @@ namespace Hyperion::Rendering {
         glCullFace(GL_BACK);
         break;
       }
-      default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-        break;
+      case ShaderCullingMode::Unknown:
+      default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
     }
 
     glUseProgram(opengl_shader.program);
@@ -874,14 +899,14 @@ namespace Hyperion::Rendering {
           texture_unit++;
           break;
         }
-        default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-          break;
+        case ShaderPropertyType::Unknown:
+        default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
       }
     }
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::SetMaterialTextureProperty(ShaderPropertyStorage::Texture texture_property, uint32 texture_unit, GLuint program, GLuint location) {
+  void OpenGLRenderDriver::SetMaterialTextureProperty(ShaderPropertyStorage::Texture texture_property, uint32 texture_unit, GLuint program, GLint location) {
     // NOTE: This setting of textures is quite expensive and could probably be done more performant.
 
     GLuint texture = 0;
@@ -906,7 +931,7 @@ namespace Hyperion::Rendering {
     }
 
     glBindTextureUnit(texture_unit, texture);
-    glProgramUniform1i(program, location, texture_unit);
+    glProgramUniform1i(program, location, static_cast<GLint>(texture_unit));
   }
 
   //--------------------------------------------------------------
