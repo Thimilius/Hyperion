@@ -198,7 +198,7 @@ namespace Hyperion::Editor {
   //--------------------------------------------------------------
   void EditorApplication::OnUpdate(float32 delta_time) {
     EditorInput::Update();
-    EditorUI::Update();
+    EditorUI::Draw();
     EditorCamera::Update(delta_time);
 
     Vector2 preview_size = EditorUI::GetPreviewRect().size;

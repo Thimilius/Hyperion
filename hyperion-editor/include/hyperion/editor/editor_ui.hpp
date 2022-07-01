@@ -21,7 +21,7 @@ namespace Hyperion::Editor {
   class EditorUI final {
   public:
     static void Initialize();
-    static void Update();
+    static void Draw();
 
     static EditorViewMode GetViewMode() { return s_view_mode; }
     
@@ -66,10 +66,13 @@ namespace Hyperion::Editor {
     inline static UI::UIImmediateTheme *s_icon_theme;
     inline static UI::UIImmediateTheme *s_selection_theme;
     inline static UI::UIImmediateTheme *s_panel_theme;
-    inline static UI::UIImmediateTheme *s_disabled_theme;
-    inline static UI::UIImmediateTheme *s_disabled_icon_theme;
+    inline static UI::UIImmediateTheme *s_no_toggle_highlight_icon_theme;
+    inline static UI::UIImmediateTheme *s_entity_disabled_theme;
+    inline static UI::UIImmediateTheme *s_entity_disabled_icon_theme;
 
     inline static EditorViewMode s_view_mode = EditorViewMode::Editor;
+
+    inline static Map<Type, bool8> s_component_panel_toggles;
     
     inline static bool8 s_is_in_gizmo;
     inline static Rendering::RenderGizmoType s_transformation_tool = Rendering::RenderGizmoType::Translate;

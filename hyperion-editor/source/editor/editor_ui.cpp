@@ -63,17 +63,22 @@ namespace Hyperion::Editor {
     s_panel_theme->panel_color_hovered = EditorStyle::COLOR_NORMAL;
     s_panel_theme->panel_color_pressed = EditorStyle::COLOR_NORMAL;
 
-    s_disabled_theme = UI::UIImmediate::CreateTheme("Disabled");
-    s_disabled_theme->text_color = EditorStyle::COLOR_DISABLED;
+    s_no_toggle_highlight_icon_theme = UI::UIImmediate::CreateTheme("No Toggle Highlight Icon", s_icon_theme);
+    s_no_toggle_highlight_icon_theme->toggle_toggled_color = s_no_toggle_highlight_icon_theme->toggle_normal_color;
+    s_no_toggle_highlight_icon_theme->toggle_toggled_color_hovered = s_no_toggle_highlight_icon_theme->toggle_normal_color_hovered;
+    s_no_toggle_highlight_icon_theme->toggle_toggled_color_pressed = s_no_toggle_highlight_icon_theme->toggle_normal_color_pressed;
+    
+    s_entity_disabled_theme = UI::UIImmediate::CreateTheme("Disabled");
+    s_entity_disabled_theme->text_color = EditorStyle::COLOR_DISABLED;
 
-    s_disabled_icon_theme = UI::UIImmediate::CreateTheme("Disabled Icon", s_icon_theme);
-    s_disabled_icon_theme->text_color = EditorStyle::COLOR_DISABLED;
+    s_entity_disabled_icon_theme = UI::UIImmediate::CreateTheme("Disabled Icon", s_icon_theme);
+    s_entity_disabled_icon_theme->text_color = EditorStyle::COLOR_DISABLED;
     
     EditorSelection::RegisterSelectionCallback(DelegateConnection<&EditorUI::OnSelectionChange>);
   }
 
   //--------------------------------------------------------------
-  void EditorUI::Update() {
+  void EditorUI::Draw() {
     EngineState engine_state = Engine::GetEngineState();
     UIImmediate::SetOverlayColor(
       engine_state == EngineState::EditorRuntimePaused || engine_state == EngineState::EditorRuntimePlaying
@@ -361,10 +366,10 @@ namespace Hyperion::Editor {
       bool8 is_disabled = manager->HasComponent<DisabledComponent>(entity);
       
       UIImmediate::Space(SizeKind::Pixels, static_cast<float32>(depth) * 20.0f + 5.0f);
-      UIImmediate::Text("\uf1b2", TextAlignment::MiddleCenter, FitType::ToLayout, false, is_disabled ? s_disabled_icon_theme : s_icon_theme);
+      UIImmediate::Text("\uf1b2", TextAlignment::MiddleCenter, FitType::ToLayout, false, is_disabled ? s_entity_disabled_icon_theme : s_icon_theme);
       UIImmediate::Space(SizeKind::Pixels, 5.0f);
       UIImmediate::PushId("Name");
-      UIImmediate::Text(hierarchy_text, TextAlignment::MiddleLeft, FitType::Fill, false, is_disabled ? s_disabled_theme : UIImmediate::GetDefaultTheme());
+      UIImmediate::Text(hierarchy_text, TextAlignment::MiddleLeft, FitType::Fill, false, is_disabled ? s_entity_disabled_theme : UIImmediate::GetDefaultTheme());
       UIImmediate::PopId();
     }
     UIImmediate::EndPanel();
@@ -651,13 +656,23 @@ namespace Hyperion::Editor {
       component_name = component_type.get_name().to_string();
     }
 
+    auto component_panel_toggle_it = s_component_panel_toggles.Find(component_type);
+    if (component_panel_toggle_it == s_component_panel_toggles.end()) {
+      s_component_panel_toggles.Insert(component_type, true);
+    }
+    bool8 &component_panel_toggle =  s_component_panel_toggles.Get(component_type);
+    
     UIImmediate::Space(SizeKind::Pixels, 5.0f);
     Size component_header_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 25.0f } };
     UIImmediate::BeginPanel(component_name + "Header", component_header_panel_size);
     {
       UIImmediate::Space(SizeKind::Pixels, 5.0f);
-      
+
+      UIImmediate::TextToggle(component_panel_toggle, component_panel_toggle ? "\uf078" : "\uf077", FitType::ToLayout, s_no_toggle_highlight_icon_theme);
+      UIImmediate::Space(SizeKind::Pixels, 5.0f);
+
       UIImmediate::Text(component_name, TextAlignment::MiddleLeft, FitType::ToLayout);
+      
       UIImmediate::FillSpace();
 
       if (UIImmediate::Button("\uf0c9", FitType::ToLayout, s_icon_theme).clicked) {
@@ -697,23 +712,26 @@ namespace Hyperion::Editor {
       UIImmediate::Space(SizeKind::Pixels, 5.0f);
     }
     UIImmediate::EndPanel();
-    UIImmediate::Space(SizeKind::Pixels, 5.0f);
 
-    Instance instance = Reflection::CreateInstanceFromRaw(component_type, component);
+    if (component_panel_toggle) {
+      UIImmediate::Space(SizeKind::Pixels, 5.0f);
 
-    UIImmediate::PushId(component_name);
-    for (Property property : component_type.get_properties()) {
-      Variant serialize_metadata = property.get_metadata(PropertyMetadata::Serialize);
-      if (serialize_metadata.is_valid() && serialize_metadata.is_type<bool8>()) {
-        bool8 should_skip_property = !serialize_metadata.to_bool();
-        if (should_skip_property) {
-          continue;
+      Instance instance = Reflection::CreateInstanceFromRaw(component_type, component);
+
+      UIImmediate::PushId(component_name);
+      for (Property property : component_type.get_properties()) {
+        Variant serialize_metadata = property.get_metadata(PropertyMetadata::Serialize);
+        if (serialize_metadata.is_valid() && serialize_metadata.is_type<bool8>()) {
+          bool8 should_skip_property = !serialize_metadata.to_bool();
+          if (should_skip_property) {
+            continue;
+          }
         }
-      }
 
-      PropertyPanel(instance, property);
+        PropertyPanel(instance, property);
+      }
+      UIImmediate::PopId();
     }
-    UIImmediate::PopId();
   }
 
   //--------------------------------------------------------------
