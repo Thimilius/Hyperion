@@ -32,7 +32,7 @@ project "hyperion"
 		"%{prj.location}/include/hyperion/modules/soloud/**",
 		"%{prj.location}/source/modules/soloud/**",
 
-  	"%{prj.location}/vendor/glad/source/glad_wgl.c"
+  	    "%{prj.location}/vendor/glad/source/glad_wgl.c"
 	}
 
 	includedirs {

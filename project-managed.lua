@@ -47,7 +47,6 @@ project "Hyperion.Core"
   csversion "9.0"
   kind "SharedLib"
   clr "Unsafe"
-  dynamicloading(true)
   namespace "Hyperion"
 
   files { "%{prj.location}/**.cs" }
@@ -75,7 +74,6 @@ project "Hyperion.Core"
   framework "net6.0"
   csversion "9.0"
   kind "SharedLib"
-  dynamicloading(true)
 
   links { "Hyperion.Core" }
 
@@ -104,7 +102,6 @@ project "Hyperion.Sandbox"
   framework "net6.0"
   csversion "9.0"
   kind "SharedLib"
-  dynamicloading(true)
 
   links { "Hyperion.Core" }
 
