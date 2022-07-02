@@ -76,7 +76,7 @@ namespace Hyperion {
 #ifdef HYP_EDITOR
     inline static EngineState s_state = EngineState::Editor;
 #else
-    inline static EngineMode s_state = EngineMode::Runtime;
+    inline static EngineState s_state = EngineState::Runtime;
 #endif
 
     inline static ConsoleLogger s_console_logger;
