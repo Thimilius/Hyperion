@@ -496,6 +496,10 @@ namespace Hyperion::Rendering {
       } else {
         glNamedBufferSubData(opengl_mesh.index_buffer, 0, static_cast<GLsizeiptr>(index_buffer_size), data.indices.GetData());
       }
+
+      // We can not forget to update the new vertex and index buffer sizes.
+      opengl_mesh.vertex_buffer_size = vertex_buffer_size;
+      opengl_mesh.index_buffer_size = index_buffer_size;
     }
   }
 

@@ -192,8 +192,8 @@ namespace Hyperion::Rendering {
 
           break;
         }
-        default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-          break;
+        case RenderCommandBufferCommandType::None:
+        default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
       }
     }
   }
@@ -428,27 +428,34 @@ namespace Hyperion::Rendering {
   void OpenGLRenderDriver::ExecuteBufferCommandSetGlobalBuffer(const RenderCommandBufferCommandSetGlobalBuffer &command) {
     auto &data = command.render_buffer.GetData();
 
-    GLsizeiptr data_length = static_cast<GLsizeiptr>(data.GetLength());
+    uint64 buffer_size = data.GetLength();
     
-    // HACK: This is kind of stupid.
-    // We need a sophisticated which supports setting of arbitrary global buffers and shader properties.
-    GLuint buffer_id = -1;
-    if (command.id == 0) {
-      buffer_id = m_state.lighting_uniform_buffer;
+    // Try to find the global buffer if it already exists
+    auto it = m_state.global_properties.buffers.Find(command.id);
+    if (it == m_state.global_properties.buffers.end()) {
+      OpenGLGlobalBuffer global_buffer;
+      global_buffer.buffer_size = buffer_size;
+      
+      glCreateBuffers(1, &global_buffer.buffer);
+      glNamedBufferData(global_buffer.buffer, static_cast<GLsizeiptr>(buffer_size), data.GetData(), GL_DYNAMIC_DRAW);
 
-      // HACK: This check is even more stupid but will hopefully be replaced soon. 
-      if (buffer_id == 0xFFFFFFFF) {
-        glCreateBuffers(1, &buffer_id);
-        glNamedBufferData(buffer_id, data_length, data.GetData(), GL_DYNAMIC_DRAW);
-        glBindBufferBase(GL_UNIFORM_BUFFER, 1, buffer_id);
+      // FIXME: The binding of global buffers should not happen here.
+      // The actual binding index depends on the shader.
+      // That means this should really be done in UseShader somehow.
+      glBindBufferBase(GL_UNIFORM_BUFFER, 1, global_buffer.buffer);
 
-        m_state.lighting_uniform_buffer = buffer_id;
+      m_state.global_properties.buffers.Insert(command.id, global_buffer);
+    } else {
+      OpenGLGlobalBuffer &global_buffer = it->second;
 
-        return;
+      if (buffer_size > global_buffer.buffer_size) {
+        glNamedBufferData(global_buffer.buffer, static_cast<GLsizeiptr>(buffer_size), data.GetData(), GL_DYNAMIC_DRAW);        
+      } else {
+        glNamedBufferSubData(global_buffer.buffer, 0, static_cast<GLsizeiptr>(buffer_size), data.GetData());
       }
-    }
 
-    glNamedBufferSubData(buffer_id, 0, data_length, data.GetData());
+      global_buffer.buffer_size = buffer_size;
+    }
   }
 
   //--------------------------------------------------------------

@@ -30,45 +30,45 @@ namespace Hyperion::Rendering {
     ShaderAttributes attributes;
 
     Array<GLint> material_locations;
-    GLuint program;
+    GLuint program = 0;
 
-    GLint fixed_locations[OpenGLShaderUniformLocation::Last];
+    GLint fixed_locations[OpenGLShaderUniformLocation::Last] = { };
   };
 
   struct OpenGLTexture : public OpenGLAsset {
-    GLuint texture;
+    GLuint texture = 0;
   };
 
   struct OpenGLRenderTextureAttachment {
-    RenderTextureFormat format;
+    RenderTextureFormat format = { };
 
-    GLuint attachment;
+    GLuint attachment = 0;
   };
 
   struct OpenGLRenderTexture : public OpenGLAsset {
-    uint32 width;
-    uint32 height;
+    uint32 width = 0;
+    uint32 height = 0;
     Array<OpenGLRenderTextureAttachment> attachments;
 
-    GLuint framebuffer;
+    GLuint framebuffer = 0;
   };
 
   struct OpenGLMaterial : public OpenGLAsset {
     MaterialPropertyCollection properties;
 
-    OpenGLShader *shader;
+    OpenGLShader *shader = nullptr;
   };
 
   struct OpenGLMesh : public OpenGLAsset {
     Array<SubMesh> sub_meshes;
 
-    GLsizei index_count;
-    GLuint vertex_buffer;
-    GLuint index_buffer;
-    GLuint vertex_array;
+    GLsizei index_count = 0;
+    GLuint vertex_buffer = 0;
+    GLuint index_buffer = 0;
+    GLuint vertex_array = 0;
 
-    uint64 vertex_buffer_size;
-    uint64 index_buffer_size;
+    uint64 vertex_buffer_size = 0;
+    uint64 index_buffer_size = 0;
   };
 
   struct OpenGLStaticStorage {
@@ -78,16 +78,16 @@ namespace Hyperion::Rendering {
 
     OpenGLShader shadow_shader;
     
-    GLuint fullscreen_shader;
-    GLuint fullscreen_vertex_array;
+    GLuint fullscreen_shader = 0;
+    GLuint fullscreen_vertex_array = 0;
 
-    GLuint ui_shader;
+    GLuint ui_shader = 0;
 
-    GLuint camera_uniform_buffer;
+    GLuint camera_uniform_buffer = 0;
 
     GLuint render_bounds_vertex_buffer = -1;
-    GLuint render_bounds_index_buffer;
-    GLuint render_bounds_vertex_array;
+    GLuint render_bounds_index_buffer = 0;
+    GLuint render_bounds_vertex_array = 0;
   };
 
   struct OpenGLUniformBufferCamera {

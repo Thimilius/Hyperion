@@ -38,9 +38,20 @@ namespace Hyperion::Rendering {
     Map<AssetHandle, GroupedMaterial> materials;
   };
 
+  struct OpenGLGlobalBuffer {
+    ShaderPropertyId id = 0;
+    GLuint buffer = 0;
+    uint64 buffer_size = 0;
+  };
+  
+  struct OpenGLGlobalProperties {
+    Map<ShaderPropertyId, OpenGLGlobalBuffer> buffers;
+  };
+  
   struct OpenGLState {
     uint64 camera_index = 0;
-    GLuint lighting_uniform_buffer = -1;
+
+    OpenGLGlobalProperties global_properties = { };
   };
 
   class OpenGLRenderDriver final : public RenderDriver {

@@ -15,10 +15,14 @@
 namespace Hyperion::Rendering {
 
   enum class RenderCommandBufferCommandType {
+    None,
+    
     ClearRenderTarget,
     SetRenderTarget,
     Blit,
+    
     SetGlobalBuffer,
+    
     RequestAsyncReadback,
   };
 
@@ -62,7 +66,7 @@ namespace Hyperion::Rendering {
   };
 
   struct RenderCommandBufferCommand {
-    RenderCommandBufferCommandType type;
+    RenderCommandBufferCommandType type = RenderCommandBufferCommandType::None;
 
     std::variant<
       RenderCommandBufferCommandClearRenderTarget,
