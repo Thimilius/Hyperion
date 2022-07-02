@@ -9,7 +9,7 @@ namespace Hyperion {
 
   struct MenuItem;
 
-  using MenuItemCallback = std::function<void(const MenuItem &)>;
+  using MenuItemCallback = std::function<void()>;
 
   enum class MenuItemFlags {
     None,

@@ -30,7 +30,7 @@ namespace Hyperion {
     uint32 identifier_count = 1;
     const MenuItem *item = FindMenuItem(menu.items, identifier, identifier_count);
     if (item && item->callback) {
-      item->callback(*item);
+      item->callback();
     }
   }
   

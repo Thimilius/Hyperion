@@ -144,14 +144,14 @@ namespace Hyperion::Editor {
   void EditorApplication::OnSetup(ApplicationSettings &settings) {
     settings.window.menu.items = { {
       "File", "", { }, { }, {
-        { "New World", "Ctrl+N", [this](auto _) { NewWorld(); }, { }, { } },
-        { "Open World", "Ctrl+O", [this](auto _) { OpenWorld(); }, { }, { } },
-        { "Save World", "Ctrl+S", [this](auto _) { SaveWorld(); }, { }, { } },
+        { "New World", "Ctrl+N", [this]() { NewWorld(); }, { }, { } },
+        { "Open World", "Ctrl+O", [this]() { OpenWorld(); }, { }, { } },
+        { "Save World", "Ctrl+S", [this]() { SaveWorld(); }, { }, { } },
         MenuItem::Separator(),
-        { "Exit", "Ctrl+W", [this](auto _) { Exit(); }, { }, { } },
+        { "Exit", "Ctrl+W", [this]() { Exit(); }, { }, { } },
     } }, {
       "Help", "", { }, { }, {
-        { "About", "", [this](auto _) { OperatingSystem::MessageBox(MessageBoxType::Info, "About Hyperion", "Hyperion 0.1.0\n"); }, { }, { } }
+        { "About", "", [this]() { OperatingSystem::MessageBox(MessageBoxType::Info, "About Hyperion", "Hyperion 0.1.0\n"); }, { }, { } }
     } } };
 
     s_render_pipeline = new EditorRenderPipeline();

@@ -355,8 +355,8 @@ namespace Hyperion::Editor {
         MenuItem create_entity_item = { "Create Entity", "", { }, { }, { } };
         CreateEntityMenu(create_entity_item.sub_items);
         Menu entity_menu = { {
-          { "Duplicate", "", [](auto _) { EditorApplication::DuplicateEntity(); }, { }, { } },
-          { "Destroy", "", [](auto _) { EditorApplication::DestroyEntity(); }, { }, { } },
+          { "Duplicate", "", []() { EditorApplication::DuplicateEntity(); }, { }, { } },
+          { "Destroy", "", []() { EditorApplication::DestroyEntity(); }, { }, { } },
           MenuItem::Separator(),
           create_entity_item
         } };
@@ -459,39 +459,39 @@ namespace Hyperion::Editor {
           {
             UIImmediate::BeginCenter("Center");
             if (UIImmediate::Button("Add Component").clicked) {
-              MenuItem add_tag_component = { "Tag", "", [manager, entity](auto _) {
+              MenuItem add_tag_component = { "Tag", "", [manager, entity]() {
                 manager->AddComponent<TagComponent>(entity);
               }, manager->HasComponent<TagComponent>(entity) ? MenuItemFlags::Disabled : MenuItemFlags::None, { } }; 
 
-              MenuItem box_collider_component = { "Box Collider", "", [manager, entity](auto _) {
+              MenuItem box_collider_component = { "Box Collider", "", [manager, entity]() {
                 manager->AddComponent<Physics::BoxColliderComponent>(entity);
               }, manager->HasComponent<Physics::BoxColliderComponent>(entity) ? MenuItemFlags::Disabled : MenuItemFlags::None, { } };
-              MenuItem sphere_collider_component = { "Sphere Collider", "", [manager, entity](auto _) {
+              MenuItem sphere_collider_component = { "Sphere Collider", "", [manager, entity]() {
                 manager->AddComponent<Physics::SphereColliderComponent>(entity);
               }, manager->HasComponent<Physics::SphereColliderComponent>(entity) ? MenuItemFlags::Disabled : MenuItemFlags::None, { } };
 
-              MenuItem camera_component = { "Camera", "", [manager, entity](auto _) {
+              MenuItem camera_component = { "Camera", "", [manager, entity]() {
                 manager->AddComponent<CameraComponent>(entity);
               }, manager->HasComponent<CameraComponent>(entity) ? MenuItemFlags::Disabled : MenuItemFlags::None, { } };
-              MenuItem sprite_component = { "Sprite", "", [manager, entity](auto _) {
+              MenuItem sprite_component = { "Sprite", "", [manager, entity]() {
                 manager->AddComponent<SpriteComponent>(entity);
               }, manager->HasComponent<SpriteComponent>(entity) ? MenuItemFlags::Disabled : MenuItemFlags::None, { } };
-              MenuItem mesh_component = { "Mesh", "", [manager, entity](auto _) {
+              MenuItem mesh_component = { "Mesh", "", [manager, entity]() {
                 manager->AddComponent<MeshComponent>(entity);
                 // A mesh needs bounds to be useful.
                 manager->GetOrAddComponent<MeshBoundsComponent>(entity);
               }, manager->HasComponent<MeshComponent>(entity) ? MenuItemFlags::Disabled : MenuItemFlags::None, { } };
-              MenuItem directional_light_component = { "Directional Light", "", [manager, entity](auto _) {
+              MenuItem directional_light_component = { "Directional Light", "", [manager, entity]() {
                 manager->AddComponent<DirectionalLightComponent>(entity);
               }, manager->HasComponent<DirectionalLightComponent>(entity) ? MenuItemFlags::Disabled : MenuItemFlags::None, { } };
-              MenuItem point_light_component = { "Point Light", "", [manager, entity](auto _) {
+              MenuItem point_light_component = { "Point Light", "", [manager, entity]() {
                 manager->AddComponent<PointLightComponent>(entity);
               }, manager->HasComponent<PointLightComponent>(entity) ? MenuItemFlags::Disabled : MenuItemFlags::None, { } };
-              MenuItem spot_light_component = { "Spot Light", "", [manager, entity](auto _) {
+              MenuItem spot_light_component = { "Spot Light", "", [manager, entity]() {
                 manager->AddComponent<SpotLightComponent>(entity);
               }, manager->HasComponent<SpotLightComponent>(entity) ? MenuItemFlags::Disabled : MenuItemFlags::None, { } };
 
-              MenuItem ui_view_component = { "UI View", "", [manager, entity](auto _) {
+              MenuItem ui_view_component = { "UI View", "", [manager, entity]() {
                 manager->AddComponent<UIViewComponent>(entity);
               }, manager->HasComponent<UIViewComponent>(entity) ? MenuItemFlags::Disabled : MenuItemFlags::None, { } };
               
@@ -684,11 +684,11 @@ namespace Hyperion::Editor {
         }
         
         Menu menu = { {
-          { "Reset", "", [component_info, component](auto _) {
+          { "Reset", "", [component_info, component]() {
             component_info.destructor(component);
             component_info.constructor(component);
           }, { }, { } },
-          { "Remove", "", [component_info](auto _) {
+          { "Remove", "", [component_info]() {
             EditorApplication::GetWorld()->GetEntityManager()->RemoveComponent(component_info.id, EditorSelection::GetSelection());
           }, component_removable ? MenuItemFlags::None : MenuItemFlags::Disabled, { } },
         } };
@@ -696,13 +696,13 @@ namespace Hyperion::Editor {
         if (component_type == Type::get<LocalTransformComponent>()) {
           LocalTransformComponent *local_transform_component = static_cast<LocalTransformComponent *>(component);
           menu.items.Add(MenuItem::Separator());
-          menu.items.Add({ "Reset Position", "", [local_transform_component](auto _) {
+          menu.items.Add({ "Reset Position", "", [local_transform_component]() {
             local_transform_component->position = Vector3::Zero();
           }, { }, { } });
-          menu.items.Add({ "Reset Rotation", "", [local_transform_component](auto _) {
+          menu.items.Add({ "Reset Rotation", "", [local_transform_component]() {
             local_transform_component->rotation = Quaternion::Identity();
           }, { }, { } });
-          menu.items.Add({ "Reset Scale", "", [local_transform_component](auto _) {
+          menu.items.Add({ "Reset Scale", "", [local_transform_component]() {
             local_transform_component->scale = Vector3::One();
           }, { }, { } });
         }
@@ -861,7 +861,7 @@ namespace Hyperion::Editor {
       Menu menu;
       for (auto enum_value : enumeration.get_values()) {
         bool8 is_selected = property_value == enum_value; 
-        menu.items.Add({ enumeration.value_to_name(enum_value).to_string(), "", [&property_set_successfully, property, instance, enum_value](auto _) {
+        menu.items.Add({ enumeration.value_to_name(enum_value).to_string(), "", [&property_set_successfully, property, instance, enum_value]() {
           property_set_successfully = property.set_value(instance, enum_value);
         }, is_selected ? MenuItemFlags::Checked : MenuItemFlags::None, { } });
       }
@@ -954,8 +954,8 @@ namespace Hyperion::Editor {
 
   //--------------------------------------------------------------
   void EditorUI::CreateEntityMenu(Array<MenuItem> &items) {
-    items.Add({ "Empty", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Base); }, { }, { } });
-    items.Add({ "Empty Child", "",[](auto _) {
+    items.Add({ "Empty", "", []() { EditorApplication::CreateEntity(EntityPrimitive::Base); }, { }, { } });
+    items.Add({ "Empty Child", "",[]() {
       if (EditorSelection::HasSelection()) {
         EntityId parent = EditorSelection::GetSelection();
         EntityId new_entity = EditorApplication::CreateEntity(EntityPrimitive::Base);
@@ -963,17 +963,17 @@ namespace Hyperion::Editor {
       }
     }, EditorSelection::HasSelection() ? MenuItemFlags::None : MenuItemFlags::Disabled, { } });
     items.Add({ "Objects", "", { }, { }, {
-      { "Cube", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Cube); }, { }, { } },
-      { "Sphere", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Sphere); }, { }, { } },
-      { "Plane", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Plane); }, { }, { } },
-      { "Quad", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Quad); }, { }, { } },
+      { "Cube", "", []() { EditorApplication::CreateEntity(EntityPrimitive::Cube); }, { }, { } },
+      { "Sphere", "", []() { EditorApplication::CreateEntity(EntityPrimitive::Sphere); }, { }, { } },
+      { "Plane", "", []() { EditorApplication::CreateEntity(EntityPrimitive::Plane); }, { }, { } },
+      { "Quad", "", []() { EditorApplication::CreateEntity(EntityPrimitive::Quad); }, { }, { } },
     }, });
     items.Add({ "Rendering", "", { }, { }, {
-      { "Camera", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::Camera); }, { }, { } },
+      { "Camera", "", []() { EditorApplication::CreateEntity(EntityPrimitive::Camera); }, { }, { } },
       MenuItem::Separator(),
-      { "Directional Light", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::DirectionalLight); }, { }, { } },
-      { "Point Light", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::PointLight); }, { }, { } },
-      { "Spot Light", "", [](auto _) { EditorApplication::CreateEntity(EntityPrimitive::SpotLight); }, { }, { } },
+      { "Directional Light", "", []() { EditorApplication::CreateEntity(EntityPrimitive::DirectionalLight); }, { }, { } },
+      { "Point Light", "", []() { EditorApplication::CreateEntity(EntityPrimitive::PointLight); }, { }, { } },
+      { "Spot Light", "", []() { EditorApplication::CreateEntity(EntityPrimitive::SpotLight); }, { }, { } },
     }, });
   }
 
