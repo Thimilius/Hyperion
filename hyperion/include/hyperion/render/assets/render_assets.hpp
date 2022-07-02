@@ -17,17 +17,17 @@ namespace Hyperion::Rendering {
 
   struct RenderAssetTexture2D : public RenderAsset {
     Texture2DParameters parameters;
-    uint32 mipmap_count;
+    uint32 mipmap_count = 0;
     TexturePixelData pixels;
   };
 
   struct RenderAssetRenderTexture : public RenderAsset {
     RenderTextureParameters parameters;
-    uint32 mipmap_count;
+    uint32 mipmap_count = 0;
   };
 
   struct RenderAssetShader : public RenderAsset {
-    bool8 is_valid;
+    bool8 is_valid = false;
     ShaderData data;
   };
 
@@ -39,6 +39,8 @@ namespace Hyperion::Rendering {
   struct RenderAssetMesh : public RenderAsset {
     MeshData data;
     MeshVertexFormat vertex_format;
+    MeshIndexFormat index_format = MeshIndexFormat::UInt32;
+    MeshUpdateType update_type = MeshUpdateType::Static;
     SubMeshes sub_meshes;
   };
 

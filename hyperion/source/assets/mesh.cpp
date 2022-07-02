@@ -19,6 +19,13 @@ namespace Hyperion {
   }
 
   //--------------------------------------------------------------
+  void Mesh::MarkDynamic() {
+    // NOTE: Marking a mesh dynamic does not mark the asset dirty.
+    // As a result the marking only works right after mesh creation.
+    m_update_type = MeshUpdateType::Dynamic;
+  }
+  
+  //--------------------------------------------------------------
   const MeshData &Mesh::GetData() const {
     ValidateDataAccess();
     return m_data;

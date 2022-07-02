@@ -34,6 +34,7 @@ namespace Hyperion::Rendering {
     static GLenum GetRenderTextureFormatType(RenderTextureFormat format_type);
     static GLsizei GetRenderTextureBufferSize(RectInt region, RenderTextureFormat format);
 
+    static GLenum GetBufferUsage(MeshUpdateType update_type);
     static GLenum GetTopology(MeshTopology mesh_topology);
     static GLuint GetAttributeIndexForVertexAttributeSize(VertexAttributeKind kind);
     static GLenum GetVertexAttributeType(VertexAttributeType vertex_attribute_type);

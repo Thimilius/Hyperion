@@ -25,9 +25,13 @@ namespace Hyperion {
     inline AssetType GetAssetType() const override { return AssetType::Mesh; }
 
     inline const Rendering::MeshVertexFormat &GetVertexFormat() const { return m_vertex_format; }
+    inline Rendering::MeshIndexFormat GetIndexFormat() const { return m_index_format; }
+    inline Rendering::MeshUpdateType GetUpdateType() const { return m_update_type; }
     inline const Rendering::SubMeshes &GetSubMeshes() { return m_sub_meshes; }
     inline uint32 GetSubMeshCount() const { return static_cast<uint32>(m_sub_meshes.GetLength()); }
 
+    void MarkDynamic();
+    
     const Rendering::MeshData &GetData() const;
     void SetData(const Rendering::MeshData &data, const Rendering::SubMeshes &sub_meshes);
 
@@ -37,6 +41,8 @@ namespace Hyperion {
   private:
     Rendering::MeshData m_data;
     Rendering::MeshVertexFormat m_vertex_format = { };
+    Rendering::MeshIndexFormat m_index_format = Rendering::MeshIndexFormat::UInt32;
+    Rendering::MeshUpdateType m_update_type = Rendering::MeshUpdateType::Static;
     Rendering::SubMeshes m_sub_meshes;
 
     BoundingBox m_bounds;

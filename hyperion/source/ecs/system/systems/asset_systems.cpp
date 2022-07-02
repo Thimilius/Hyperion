@@ -64,8 +64,8 @@ namespace Hyperion {
               render_asset_render_texture.mipmap_count = render_texture->GetMipmapCount();
               break;
             }
-            default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
-              break;
+            case TextureDimension::TextureCubemap:
+            default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
           }
           break;
         }
@@ -86,6 +86,8 @@ namespace Hyperion {
           RenderAssetMesh &render_asset_mesh = asset_context.AddMeshAssetToLoad();
           render_asset_mesh.handle = asset_handle;
           render_asset_mesh.vertex_format = mesh->GetVertexFormat();
+          render_asset_mesh.index_format = mesh->GetIndexFormat();
+          render_asset_mesh.update_type = mesh->GetUpdateType();
           render_asset_mesh.sub_meshes = mesh->GetSubMeshes();
           if (can_move) {
             render_asset_mesh.data = std::move(mesh->m_data);
@@ -142,6 +144,7 @@ namespace Hyperion {
               asset_context.AddRenderTextureToUnload(asset_handle);
               break;
             }
+            case TextureDimension::TextureCubemap:
             default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
           }
           break;

@@ -12,11 +12,37 @@ namespace Hyperion::Rendering {
     UInt32
   };
 
+  enum class MeshUpdateType {
+    Static,
+    Dynamic
+  };
+  
   enum class MeshTopology {
     Points,
     Lines,
     LineStrip,
     Triangles
+  };
+
+  struct SubMesh {
+    MeshTopology topology = MeshTopology::Triangles;
+
+    uint32 vertex_count = 0;
+    uint32 vertex_offset = 0;
+    uint32 index_count = 0;
+    uint32 index_offset = 0;
+  };
+
+  using SubMeshes = Array<SubMesh>;
+
+  struct MeshData {
+    Array<Vector3> positions;
+    Array<Vector3> normals;
+    Array<Vector4> colors;
+    Array<Vector2> texture0;
+
+    // NOTE: This is quite wasteful as every mesh as INT indices currently. We should have support for SHORT as well.
+    Array<uint32> indices;
   };
 
   enum class VertexAttributeKind {
@@ -40,29 +66,11 @@ namespace Hyperion::Rendering {
     uint32 dimension;
   };
 
-  struct SubMesh {
-    MeshTopology topology;
-
-    uint32 vertex_count;
-    uint32 vertex_offset;
-    uint32 index_count;
-    uint32 index_offset;
-  };
-
-  using SubMeshes = Array<SubMesh>;
-
-  struct MeshData {
-    Array<Vector3> positions;
-    Array<Vector3> normals;
-    Array<Vector4> colors;
-    Array<Vector2> texture0;
-
-    Array<uint32> indices; // NOTE: This is quite wasteful as every mesh as INT indices currently. We should have support for SHORT as well.
-  };
-
+  using VertexAttributes = Array<VertexAttribute>;
+  
   struct MeshVertexFormat {
     uint32 stride = 0;
-    Array<VertexAttribute> attributes;
+    VertexAttributes attributes;
 
     inline static constexpr uint32 VERTEX_ATTRIBUTE_SIZE_POSITION = sizeof(float32) * 3;
     inline static constexpr uint32 VERTEX_ATTRIBUTE_SIZE_NORMAL = sizeof(float32) * 3;
