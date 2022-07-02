@@ -193,6 +193,7 @@ namespace Hyperion::Editor {
 
     EditorUI::Initialize();
     EditorCamera::Initialize();
+    EditorInput::Initialize();
   }
 
   //--------------------------------------------------------------

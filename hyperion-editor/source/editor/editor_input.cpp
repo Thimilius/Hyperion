@@ -18,75 +18,88 @@ using namespace Hyperion::Rendering;
 namespace Hyperion::Editor {
 
   //--------------------------------------------------------------
+  void EditorInput::Initialize() {
+    AddShortcut("New World", KeyModifier::Control, KeyCode::N, []() { EditorApplication::NewWorld(); });
+    AddShortcut("Open World", KeyModifier::Control, KeyCode::O, []() { EditorApplication::OpenWorld(); });
+    AddShortcut("Save World", KeyModifier::Control, KeyCode::S, []() { EditorApplication::SaveWorld(); });
+    AddShortcut("Quit", KeyModifier::Control, KeyCode::W, []() { EditorApplication::GetInstance()->Exit(); });
+    AddShortcut("Duplicate Entity", KeyModifier::Control, KeyCode::D, []() { EditorApplication::DuplicateEntity(); });
+
+    AddShortcut("Toggle Window Mode", KeyModifier::None, KeyCode::F1, []() {
+      Window *main_window = EditorApplication::GetInstance()->GetMainWindow();
+      main_window->SetWindowMode(main_window->GetWindowMode() == WindowMode::Borderless ? WindowMode::Windowed : WindowMode::Borderless);
+    });
+    AddShortcut("Toggle VSync", KeyModifier::None, KeyCode::F2, []() {
+      RenderEngine::SetVSyncMode(RenderEngine::GetVSyncMode() == VSyncMode::DontSync ? VSyncMode::EveryVBlank : VSyncMode::DontSync);
+    });
+    AddShortcut("Toggle Grid", KeyModifier::None, KeyCode::F3, []() { RenderGizmos::SetShouldDrawGrid(!RenderGizmos::GetShouldDrawGrid()); });
+    AddShortcut("Toggle Bounds", KeyModifier::None, KeyCode::F4, []() {
+      RenderGizmos::SetShouldDrawMeshBounds(!RenderGizmos::GetShouldDrawMeshBounds());
+    });
+    AddShortcut("Enter/Exit Runtime", KeyModifier::None, KeyCode::F5, []() {
+      if (Engine::GetEngineState() == EngineState::Editor) {
+        EditorApplication::EnterRuntime();
+      } else {
+        EditorApplication::ExitRuntime();
+      }
+    });
+    
+    AddShortcut("Destroy Entity", KeyModifier::None, KeyCode::Delete, []() { EditorApplication::DestroyEntity(); });
+    AddShortcut("Translate Tool", KeyModifier::None, KeyCode::Q, []() { EditorUI::SetTransformationTool(RenderGizmoType::Translate); });
+    AddShortcut("Rotation Tool", KeyModifier::None, KeyCode::W, []() { EditorUI::SetTransformationTool(RenderGizmoType::Rotate); });
+    AddShortcut("Scale Tool", KeyModifier::None, KeyCode::E, []() { EditorUI::SetTransformationTool(RenderGizmoType::Scale); });
+    AddShortcut("Local Mode", KeyModifier::None, KeyCode::R, []() { EditorUI::SetTransformationMode(UI::GizmoMode::Local); });
+    AddShortcut("Global Mode", KeyModifier::None, KeyCode::T, []() { EditorUI::SetTransformationMode(UI::GizmoMode::World); });
+  }
+  
+  //--------------------------------------------------------------
   void EditorInput::Update() {
     // We do not want to check any keyboard shortcuts when we have a focused element.
     if (UI::UIImmediate::HasFocusedElement()) {
       return;
     }
 
-    EditorApplication *application = static_cast<EditorApplication *>(EditorApplication::GetInstance());
-    Window *main_window = application->GetMainWindow();
-    
-    if (Input::IsKeyHold(KeyCode::Control)) {
-      if (Input::IsKeyDown(KeyCode::N)) {
-        EditorApplication::NewWorld();
+    for (EditorKeyboardShortcut &shortcut : s_shortcuts) {
+      KeyModifier modifier = shortcut.key_modifier;
+
+      if (!Input::IsKeyDown(shortcut.key_code)) {
+        continue;
       }
-      if (Input::IsKeyDown(KeyCode::O)) {
-        EditorApplication::OpenWorld();
+
+      bool8 has_none = modifier == KeyModifier::None;
+      bool8 has_shift = (modifier & KeyModifier::Shift) == KeyModifier::Shift;
+      bool8 has_control = (modifier & KeyModifier::Control) == KeyModifier::Control;
+      bool8 has_alt = (modifier & KeyModifier::Alt) == KeyModifier::Alt;
+
+      bool8 shift_hold = Input::IsKeyHold(KeyCode::Shift);
+      bool8 control_hold = Input::IsKeyHold(KeyCode::Control);
+      bool8 alt_hold = Input::IsKeyHold(KeyCode::Alt);
+      
+      if (has_shift && !shift_hold) {
+        continue;
       }
-      if (Input::IsKeyDown(KeyCode::S)) {
-        EditorApplication::SaveWorld();
+      if (has_control && !control_hold) {
+        continue;
       }
-      if (Input::IsKeyDown(KeyCode::W)) {
-        EditorApplication::GetInstance()->Exit();  
+      if (has_alt && !alt_hold) {
+        continue;
       }
-      if (Input::IsKeyDown(KeyCode::D)) {
-        EditorApplication::DuplicateEntity();
+      if (has_none && (shift_hold || control_hold || alt_hold)) {
+        continue;
       }
-    }
-    
-    if (Input::IsKeyDown(KeyCode::F1)) {
-      main_window->SetWindowMode(main_window->GetWindowMode() == WindowMode::Borderless ? WindowMode::Windowed : WindowMode::Borderless);
-    }
-    if (Input::IsKeyDown(KeyCode::F2)) {
-      RenderEngine::SetVSyncMode(
-        RenderEngine::GetVSyncMode() == VSyncMode::DontSync
-          ? VSyncMode::EveryVBlank
-          : VSyncMode::DontSync
-      );
-    }
-    if (Input::IsKeyDown(KeyCode::F3)) {
-      RenderGizmos::SetShouldDrawGrid(!RenderGizmos::GetShouldDrawGrid());
-    }
-    if (Input::IsKeyDown(KeyCode::F4)) {
-      RenderGizmos::SetShouldDrawMeshBounds(!RenderGizmos::GetShouldDrawMeshBounds());
-    }
-    if (Input::IsKeyDown(KeyCode::F5)) {
-      if (Engine::GetEngineState() == EngineState::Editor) {
-        EditorApplication::EnterRuntime();
-      } else {
-        EditorApplication::ExitRuntime();
-      }
-    }
-    
-    if (Input::IsKeyDown(KeyCode::Delete)) {
-      EditorApplication::DestroyEntity();
-    }
-    if (Input::IsKeyDown(KeyCode::Q)) {
-      EditorUI::SetTransformationTool(RenderGizmoType::Translate);
-    }
-    if (Input::IsKeyDown(KeyCode::W)) {
-      EditorUI::SetTransformationTool(RenderGizmoType::Rotate);
-    }
-    if (Input::IsKeyDown(KeyCode::E)) {
-      EditorUI::SetTransformationTool(RenderGizmoType::Scale);
-    }
-    if (Input::IsKeyDown(KeyCode::R)) {
-      EditorUI::SetTransformationMode(UI::GizmoMode::Local);
-    }
-    if (Input::IsKeyDown(KeyCode::T)) {
-      EditorUI::SetTransformationMode(UI::GizmoMode::World);
+
+      shortcut.callback();
     }
   }
-  
+
+  //--------------------------------------------------------------
+  void EditorInput::AddShortcut(const String &name, KeyModifier modifier, KeyCode code, EditorKeyboardShortcutCallback callback) {
+    EditorKeyboardShortcut shortcut;
+    shortcut.name = name;
+    shortcut.key_modifier = modifier;
+    shortcut.key_code = code;
+    shortcut.callback = std::move(callback);
+    s_shortcuts.Add(shortcut);
+  }
+
 }
