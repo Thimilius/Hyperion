@@ -99,7 +99,7 @@ namespace Sandbox {
     g_world->GetHierarchy()->SetParent(g_child, g_parent);
 
     std::unique_ptr<Image> image;
-    image.reset(ImageLoader::Load("icon/icon.png").Unwrap());
+    image.reset(ImageLoader::Load("assets/icon/icon.png").Unwrap());
     Texture2DParameters parameters;
     parameters.format = TextureFormat::RGBA32;
     parameters.width = image->GetWidth();

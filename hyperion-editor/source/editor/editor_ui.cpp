@@ -48,10 +48,10 @@ namespace Hyperion::Editor {
     theme->input_color_pressed = EditorStyle::COLOR_PRESSED;
     theme->input_color_focused = EditorStyle::COLOR_FOCUSED;
     theme->text_shadow_enabled = true;
-    theme->font = FontLoader::LoadFont("data/fonts/space_mono_regular.ttf", EditorStyle::FONT_SIZE, FontCharacterSet::LatinSupplement);
+    theme->font = FontLoader::LoadFont("assets/fonts/space_mono_regular.ttf", EditorStyle::FONT_SIZE, FontCharacterSet::LatinSupplement);
 
     s_icon_theme = UI::UIImmediate::CreateTheme("Icon");
-    s_icon_theme->font = FontLoader::LoadFont("data/fonts/font_awesome_solid.otf", EditorStyle::FONT_SIZE, FontCharacterSet::All);
+    s_icon_theme->font = FontLoader::LoadFont("assets/fonts/font_awesome_solid.otf", EditorStyle::FONT_SIZE, FontCharacterSet::All);
     s_icon_theme->text_shadow_enabled = false;
 
     s_selection_theme = UI::UIImmediate::CreateTheme("Selection");

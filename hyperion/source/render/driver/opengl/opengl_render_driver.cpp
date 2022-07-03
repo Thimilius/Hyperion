@@ -294,6 +294,8 @@ namespace Hyperion::Rendering {
     glProgramUniform4f(opengl_shader.program, add_color_location, 0.0f, 0.0f, 0.0f, 0.0f);
     
     if (command.grid.should_draw) {
+      HYP_PROFILE_SCOPE("Grid")
+      
       glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, command.grid.local_to_world.elements);
 
       const OpenGLMesh &opengl_mesh = m_storage.GetMesh(command.grid.mesh_handle);
@@ -304,6 +306,8 @@ namespace Hyperion::Rendering {
     }
 
     if (command.should_draw_mesh_bounds) {
+      HYP_PROFILE_SCOPE("Bounds")
+      
       glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, Matrix4x4::Identity().elements);
 
       for (const RenderFrameContextObjectMesh &object : context.GetMeshObjects()) {
@@ -316,6 +320,8 @@ namespace Hyperion::Rendering {
 
     // HACK: This whole gizmo highlight is very hardcoded and should be done by the render pipeline instead.
     if (command.highlight.should_draw) {
+      HYP_PROFILE_SCOPE("Highlight")
+      
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
       glProgramUniform4f(opengl_shader.program, add_color_location, 1.0f, 0.5f, 0.1f, 1.0f);
@@ -332,6 +338,8 @@ namespace Hyperion::Rendering {
     }
     
     if (command.transformation_gizmo.should_draw) {
+      HYP_PROFILE_SCOPE("Transformation")
+      
       glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, command.transformation_gizmo.local_to_world.elements);
 
       const OpenGLMesh &opengl_mesh = m_storage.GetMesh(command.transformation_gizmo.mesh_handle);

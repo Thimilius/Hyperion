@@ -77,7 +77,7 @@ project "hyperion"
 			"%{prj.location}/include/hyperion/platform/windows/**.hpp",
 			"%{prj.location}/source/platform/windows/**.cpp",
 
-    	"%{prj.location}/vendor/glad/source/glad_wgl.c"
+    	    "%{prj.location}/vendor/glad/source/glad_wgl.c"
 		}
 		
 function linkhyperion(path)
@@ -141,4 +141,13 @@ function linkhyperion(path)
 		links { package_bullet_release_links }
 
 	filter { }
+end
+
+function copyhyperionassets(root_path, target_path)
+    source_root = root_path .. "hyperion/"
+
+    postbuildcommands {
+        "{COPYDIR} " .. source_root .. "assets/ " .. target_path .. "/assets/",
+        "{COPYDIR} " .. source_root .. "tools/ " .. target_path .. "/tools/",
+    }
 end

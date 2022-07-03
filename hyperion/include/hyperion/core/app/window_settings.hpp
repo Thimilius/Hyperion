@@ -20,7 +20,7 @@ namespace Hyperion {
 
   struct WindowSettings {
     String title = "Hyperion";
-    String icon = "icon/icon.ico";
+    String icon = "assets/icon/icon.ico";
 
     uint32 width = 1280;
     uint32 height = 720;

@@ -243,6 +243,9 @@ namespace Hyperion {
         s_textures.Remove(asset_handle);
         break;
       }
+      case AssetType::None:
+      case AssetType::Font:
+      case AssetType::TextureAtlas: break;
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
     }
 
@@ -258,7 +261,8 @@ namespace Hyperion {
 
     InitializePrimitives();
 
-    s_shader_watcher = new FileWatcher("data/shaders/", [](FileWatcherFileStatus status, const String &path, const String &filename, const String &extension) {
+    // TODO: Take into account asset settings.
+    s_shader_watcher = new FileWatcher("assets/shaders/", [](FileWatcherFileStatus status, const String &path, const String &filename, const String &extension) {
       if (status == FileWatcherFileStatus::Modified) {
         for (auto [handle, shader] : s_shaders) {
           const AssetMetadata &metadata = shader->GetMetadata();
@@ -327,19 +331,19 @@ namespace Hyperion {
     texture_parameters.width = 2;
     texture_parameters.height = 2;
     Array<byte> texture_pixels;
-    texture_pixels.Resize(4 * 4, 0xFF);
+    texture_pixels.Resize(static_cast<uint64>(4 * 4), 0xFF);
     s_primitives.texture_2d_white = CreateTexture2D(texture_parameters, texture_pixels);
     SetNewHandle(s_primitives.texture_2d_white, "{DAD9FD91-8932-4A1E-B086-56F64DC20EF7}");
 
-    s_primitives.shader_standard = CreateShader("data/shaders/standard.shader");
+    s_primitives.shader_standard = CreateShader("assets/shaders/standard.shader");
     SetNewHandle(s_primitives.shader_standard, "{6AFEA19E-547B-41F5-A008-4473AE771E06}");
-    s_primitives.shader_unlit = CreateShader("data/shaders/unlit.shader");
+    s_primitives.shader_unlit = CreateShader("assets/shaders/unlit.shader");
     SetNewHandle(s_primitives.shader_unlit, "{23AA53FE-6A47-4571-BC47-00EAAFA2F54B}");
-    s_primitives.shader_gizmo = CreateShader("data/shaders/gizmo.shader");
+    s_primitives.shader_gizmo = CreateShader("assets/shaders/gizmo.shader");
     SetNewHandle(s_primitives.shader_gizmo, "{F05F02F1-A7E1-42B7-9618-F13AB38BCA87}");
-    s_primitives.shader_ui = CreateShader("data/shaders/ui.shader");
+    s_primitives.shader_ui = CreateShader("assets/shaders/ui.shader");
     SetNewHandle(s_primitives.shader_ui, "{D1D71E77-6EA7-4B5D-A7D3-C5C07D1F5386}");
-    s_primitives.shader_font = CreateShader("data/shaders/font.shader");
+    s_primitives.shader_font = CreateShader("assets/shaders/font.shader");
     SetNewHandle(s_primitives.shader_font, "{97566962-2BEF-4D77-9813-27FC6F73375F}");
 
     s_primitives.material_default = CreateMaterial(s_primitives.shader_standard);
@@ -399,6 +403,9 @@ namespace Hyperion {
         s_textures.Insert(new_handle, texture);
         break;
       }
+      case AssetType::None:
+      case AssetType::Font:
+      case AssetType::TextureAtlas: break;
       default: HYP_ASSERT_ENUM_OUT_OF_RANGE;
     }
 

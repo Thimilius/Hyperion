@@ -22,6 +22,8 @@
 	excludes { "%{prj.location}/resource.rc" }
 	includedirs { "%{prj.location}/include" }
 		
+    copyhyperionassets("../", "../run_tree")
+		
 	filter "system:windows"
 		files { "%{prj.location}/resource.rc" }
 		postbuildcommands {

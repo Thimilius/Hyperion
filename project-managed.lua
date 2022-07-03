@@ -24,10 +24,11 @@ project "Hyperion.Runtime"
   excludes { "%{prj.location}/obj/**.cs" }
 
   postbuildcommands {
-    "{COPY} Hyperion.Runtime.dll ../../../../../run_tree/data/managed/",
-    "{COPY} Hyperion.Runtime.pdb ../../../../../run_tree/data/managed/",
-    "{COPY} Hyperion.Runtime.deps.json ../../../../../run_tree/data/managed/",
-    "{COPY} Hyperion.Runtime.runtimeconfig.json ../../../../../run_tree/data/managed/",
+    "{MKDIR} ../../../../../run_tree/managed/",
+    "{COPY} Hyperion.Runtime.dll ../../../../../run_tree/managed/",
+    "{COPY} Hyperion.Runtime.pdb ../../../../../run_tree/managed/",
+    "{COPY} Hyperion.Runtime.deps.json ../../../../../run_tree/managed/",
+    "{COPY} Hyperion.Runtime.runtimeconfig.json ../../../../../run_tree/managed/",
   }
 
 project "Hyperion.Core"
@@ -53,9 +54,10 @@ project "Hyperion.Core"
   excludes { "%{prj.location}/obj/**.cs" }
 
   postbuildcommands {
-    "{COPY} Hyperion.Core.dll ../../../../../run_tree/data/managed/",
-    "{COPY} Hyperion.Core.pdb ../../../../../run_tree/data/managed/",
-    "{COPY} Hyperion.Core.deps.json ../../../../../run_tree/data/managed/",
+    "{MKDIR} ../../../../../run_tree/managed/",
+    "{COPY} Hyperion.Core.dll ../../../../../run_tree/managed/",
+    "{COPY} Hyperion.Core.pdb ../../../../../run_tree/managed/",
+    "{COPY} Hyperion.Core.deps.json ../../../../../run_tree/managed/",
   }
 
   project "Hyperion.Editor"
@@ -81,9 +83,10 @@ project "Hyperion.Core"
   excludes { "%{prj.location}/obj/**.cs" }
 
   postbuildcommands {
-    "{COPY} Hyperion.Editor.dll ../../../../../run_tree/data/managed/",
-    "{COPY} Hyperion.Editor.pdb ../../../../../run_tree/data/managed/",
-    "{COPY} Hyperion.Editor.deps.json ../../../../../run_tree/data/managed/",
+    "{MKDIR} ../../../../../run_tree/managed/",
+    "{COPY} Hyperion.Editor.dll ../../../../../run_tree/managed/",
+    "{COPY} Hyperion.Editor.pdb ../../../../../run_tree/managed/",
+    "{COPY} Hyperion.Editor.deps.json ../../../../../run_tree/managed/",
   }
 
 project "Hyperion.Sandbox"
@@ -109,7 +112,8 @@ project "Hyperion.Sandbox"
   excludes { "%{prj.location}/obj/**.cs" }
 
   postbuildcommands {
-    "{COPY} Hyperion.Sandbox.dll ../../../../../run_tree/data/managed/",
-    "{COPY} Hyperion.Sandbox.pdb ../../../../../run_tree/data/managed/",
-    "{COPY} Hyperion.Sandbox.deps.json ../../../../../run_tree/data/managed/",
+    "{MKDIR} ../../../../../run_tree/managed/",
+    "{COPY} Hyperion.Sandbox.dll ../../../../../run_tree/managed/",
+    "{COPY} Hyperion.Sandbox.pdb ../../../../../run_tree/managed/",
+    "{COPY} Hyperion.Sandbox.deps.json ../../../../../run_tree/managed/",
   }

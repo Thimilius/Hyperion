@@ -597,14 +597,14 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void VulkanRenderContext::CreateGraphicsPipeline() {
-    VkShaderModule vertex_shader_module = VulkanShaderCompiler::CompileModule(m_device, "data/shaders/vulkan/shader.vert", VK_SHADER_STAGE_VERTEX_BIT);
+    VkShaderModule vertex_shader_module = VulkanShaderCompiler::CompileModule(m_device, "assets/shaders/vulkan/shader.vert", VK_SHADER_STAGE_VERTEX_BIT);
     VkPipelineShaderStageCreateInfo vertex_shader_stage_create_info = { };
     vertex_shader_stage_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
     vertex_shader_stage_create_info.stage = VK_SHADER_STAGE_VERTEX_BIT;
     vertex_shader_stage_create_info.module = vertex_shader_module;
     vertex_shader_stage_create_info.pName = "main";
 
-    VkShaderModule fragment_shader_module = VulkanShaderCompiler::CompileModule(m_device, "data/shaders/vulkan/shader.frag", VK_SHADER_STAGE_FRAGMENT_BIT);
+    VkShaderModule fragment_shader_module = VulkanShaderCompiler::CompileModule(m_device, "assets/shaders/vulkan/shader.frag", VK_SHADER_STAGE_FRAGMENT_BIT);
     VkPipelineShaderStageCreateInfo fragment_shader_stage_create_info = { };
     fragment_shader_stage_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
     fragment_shader_stage_create_info.stage = VK_SHADER_STAGE_FRAGMENT_BIT;

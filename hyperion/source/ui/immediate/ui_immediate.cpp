@@ -34,7 +34,7 @@ namespace Hyperion::UI {
     s_mesh_draws.Clear();
 
     if (!s_default_theme.font) {
-      s_default_theme.font = FontLoader::LoadFont("data/fonts/space_mono_regular.ttf", 12, FontCharacterSet::LatinSupplement);  
+      s_default_theme.font = FontLoader::LoadFont("assets/fonts/space_mono_regular.ttf", 12, FontCharacterSet::LatinSupplement);  
     }
 
     s_state.mouse_position = ScreenPointToUISpacePoint(Input::GetMousePosition().ToFloat());

@@ -153,7 +153,7 @@ namespace Hyperion::Editor {
       "Help", "", { }, { }, {
         { "About", "", [this]() { OperatingSystem::MessageBox(MessageBoxType::Info, "About Hyperion", "Hyperion 0.1.0\n"); }, { }, { } }
     } } };
-
+    
     s_render_pipeline = new EditorRenderPipeline();
     settings.render.backend = Rendering::RenderBackend::OpenGL;
     settings.render.threading_mode = Rendering::RenderThreadingMode::MultiThreaded;

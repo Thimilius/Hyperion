@@ -10,7 +10,7 @@ namespace Hyperion {
   //--------------------------------------------------------------
   const char *EngineConfig::GetToolsPath() {
 #ifdef HYP_PLATFORM_WINDOWS
-    return "data/tools/windows";
+    return "tools/windows";
 #else
 #error Platform not implemented
 #endif
@@ -23,7 +23,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   const char *EngineConfig::GetManagedLibrariesPath() {
-    return "data/managed"; 
+    return "managed"; 
   }
 
 }
