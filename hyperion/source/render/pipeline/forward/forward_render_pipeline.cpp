@@ -2,11 +2,12 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/render/pipelines/forward/forward_render_pipeline.hpp"
+#include "hyperion/render/pipeline/forward/forward_render_pipeline.hpp"
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/core/app/display.hpp"
+#include "hyperion/render/render_frame.hpp"
 #include "hyperion/ui/ui_types.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -45,16 +46,16 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void ForwardRenderPipeline::Render(RenderFrame *render_frame, const Array<const RenderObjectContextCamera *> &cameras) {
+  void ForwardRenderPipeline::Render(RenderPipelineContext &context, const Array<const RenderObjectContextCamera *> &cameras) {
     if (m_should_do_setup) {
-      SetupRendering(render_frame);
+      SetupRendering(context);
     }
 
     for (const RenderObjectContextCamera *camera : cameras) {
-      RenderCamera(render_frame, camera, m_target_render_texture);
+      RenderCamera(context, camera, m_target_render_texture);
     }
 
-    render_frame->DrawUI();
+    context.DrawUI();
     {
       RenderCommandBuffer command_buffer;
       if (m_should_blit_to_screen) {
@@ -62,7 +63,7 @@ namespace Hyperion::Rendering {
       } else {
         command_buffer.SetRenderTarget(RenderTargetId::Default());
       }
-      render_frame->ExecuteCommandBuffer(command_buffer);
+      context.ExecuteCommandBuffer(command_buffer);
     }
   }
 
@@ -70,7 +71,7 @@ namespace Hyperion::Rendering {
   void ForwardRenderPipeline::Shutdown() { }
 
   //--------------------------------------------------------------
-  void ForwardRenderPipeline::SetupRendering(RenderFrame *render_frame) {
+  void ForwardRenderPipeline::SetupRendering(RenderPipelineContext &context) {
     if (m_should_resize_to_screen) {
       if (Display::HasChangedSize()) {
         m_render_target_width = Display::GetWidth();
@@ -87,23 +88,23 @@ namespace Hyperion::Rendering {
       RenderCommandBuffer command_buffer;
       command_buffer.SetRenderTarget(RenderTargetId::Default());
       command_buffer.ClearRenderTarget(ClearFlags::All, Color::Black());
-      m_lighting.SetupLighting(render_frame->GetObjectContext(), command_buffer);
-      render_frame->ExecuteCommandBuffer(command_buffer);
+      m_lighting.SetupLighting(context.GetRenderFrame()->GetObjectContext(), command_buffer);
+      context.ExecuteCommandBuffer(command_buffer);
     }
   }
 
   //--------------------------------------------------------------
-  void ForwardRenderPipeline::RenderCamera(RenderFrame *render_frame, const RenderObjectContextCamera *camera, RenderTexture *target_texture) {
+  void ForwardRenderPipeline::RenderCamera(RenderPipelineContext &context, const RenderObjectContextCamera *camera, RenderTexture *target_texture) {
     CullingParameters culling_parameters;
     culling_parameters.matrix = camera->view_projection_matrix;
     culling_parameters.mask = camera->culling_mask;
-    CullingResults culling_results = render_frame->Cull(culling_parameters);
+    CullingResults culling_results = context.Cull(culling_parameters);
 
-    DrawShadows(render_frame);
-    DrawMeshes(render_frame, camera, culling_results, target_texture);
+    DrawShadows(context);
+    DrawMeshes(context, camera, culling_results, target_texture);
     
     if (m_should_draw_gizmos) {
-      render_frame->DrawGizmos();  
+      context.DrawGizmos();  
     }
   }
 
@@ -114,12 +115,12 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void ForwardRenderPipeline::DrawShadows(RenderFrame *render_frame) {
+  void ForwardRenderPipeline::DrawShadows(RenderPipelineContext &context) {
     {
       RenderCommandBuffer command_buffer;
       command_buffer.SetRenderTarget(m_shadow_render_texture->GetRenderTargetId());
       command_buffer.ClearRenderTarget(ClearFlags::Depth, Color::Black());
-      render_frame->ExecuteCommandBuffer(command_buffer);
+      context.ExecuteCommandBuffer(command_buffer);
     }
 
     const RenderObjectContextLight *main_light = m_lighting.GetMainLight();
@@ -131,12 +132,12 @@ namespace Hyperion::Rendering {
     shadow_parameters.light_index = 0;
     shadow_parameters.shadow_map_size = SHADOW_MAP_SIZE;
     shadow_parameters.light_space_matrix = m_lighting.CalculateLightSpaceMatrixForMainLight();
-    render_frame->DrawShadows(shadow_parameters);
+    context.DrawShadows(shadow_parameters);
   }
 
   //--------------------------------------------------------------
   void ForwardRenderPipeline::DrawMeshes(
-    RenderFrame *render_frame,
+    RenderPipelineContext &context,
     const RenderObjectContextCamera *camera,
     CullingResults &culling_results,
     RenderTexture *target_texture) {
@@ -144,10 +145,10 @@ namespace Hyperion::Rendering {
       RenderCommandBuffer command_buffer;
       command_buffer.SetRenderTarget(target_texture->GetRenderTargetId());
       command_buffer.ClearRenderTarget(ClearFlags::All, camera->background_color);
-      render_frame->ExecuteCommandBuffer(command_buffer);
+      context.ExecuteCommandBuffer(command_buffer);
     }
     
-    render_frame->SetCamera(camera->index);
+    context.SetCamera(camera->index);
     
     DrawingParameters drawing_parameters_opaque;
     drawing_parameters_opaque.filter_mask = LayerMask::Everything;
@@ -157,7 +158,7 @@ namespace Hyperion::Rendering {
     drawing_parameters_opaque.sorting_settings.criteria = SortingCriteria::Opaque;
     drawing_parameters_opaque.shadow_settings.light_space_matrix = m_lighting.CalculateLightSpaceMatrixForMainLight();
     drawing_parameters_opaque.shadow_settings.shadow_map_render_target_id = m_shadow_render_texture->GetRenderTargetId();
-    render_frame->DrawMeshes(culling_results, drawing_parameters_opaque);
+    context.DrawMeshes(culling_results, drawing_parameters_opaque);
 
     DrawingParameters drawing_parameters_transparent;
     drawing_parameters_transparent.filter_mask = LayerMask::Everything;
@@ -167,7 +168,7 @@ namespace Hyperion::Rendering {
     drawing_parameters_transparent.sorting_settings.criteria = SortingCriteria::Transparent;
     drawing_parameters_transparent.shadow_settings.light_space_matrix = m_lighting.CalculateLightSpaceMatrixForMainLight();
     drawing_parameters_transparent.shadow_settings.shadow_map_render_target_id = m_shadow_render_texture->GetRenderTargetId();
-    render_frame->DrawMeshes(culling_results, drawing_parameters_transparent);
+    context.DrawMeshes(culling_results, drawing_parameters_transparent);
   }
 
 }

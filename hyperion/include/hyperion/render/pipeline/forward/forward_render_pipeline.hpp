@@ -2,9 +2,8 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/render/frame/render_frame.hpp"
-#include "hyperion/render/pipelines/render_pipeline.hpp"
-#include "hyperion/render/pipelines/forward/forward_render_lighting.hpp"
+#include "hyperion/render/pipeline/render_pipeline.hpp"
+#include "hyperion/render/pipeline/forward/forward_render_lighting.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -23,11 +22,11 @@ namespace Hyperion::Rendering {
   class ForwardRenderPipeline final : public IRenderPipeline {
   public:
     void Initialize() override;
-    void Render(RenderFrame *render_frame, const Array<const RenderObjectContextCamera *> &cameras) override;
+    void Render(RenderPipelineContext &context, const Array<const RenderObjectContextCamera *> &cameras) override;
     void Shutdown() override;
     
-    void SetupRendering(RenderFrame *render_frame) override;
-    void RenderCamera(RenderFrame *render_frame, const RenderObjectContextCamera *camera, RenderTexture *target_texture) override;
+    void SetupRendering(RenderPipelineContext &context) override;
+    void RenderCamera(RenderPipelineContext &context, const RenderObjectContextCamera *camera, RenderTexture *target_texture) override;
 
     inline uint32 GetRenderTargetWidth() const override { return m_render_target_width; }
     inline uint32 GetRenderTargetHeight() const override { return m_render_target_height; }
@@ -39,8 +38,8 @@ namespace Hyperion::Rendering {
     inline void SetShouldResizeToScreen(bool8 should_resize_to_screen) override { m_should_resize_to_screen = should_resize_to_screen; }
     inline void SetShouldDrawGizmos(bool8 should_draw_gizmos) override { m_should_draw_gizmos = should_draw_gizmos; }
   private:
-    void DrawShadows(RenderFrame *render_frame);
-    void DrawMeshes(RenderFrame *render_frame, const RenderObjectContextCamera *camera, CullingResults &culling_results, RenderTexture *target_texture);
+    void DrawShadows(RenderPipelineContext &context);
+    void DrawMeshes(RenderPipelineContext &context, const RenderObjectContextCamera *camera, CullingResults &culling_results, RenderTexture *target_texture);
   private:
     ForwardRenderLighting m_lighting;
     

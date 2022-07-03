@@ -6,6 +6,7 @@
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/display.hpp"
+#include "hyperion/render/render_frame.hpp"
 #include "hyperion/render/driver/opengl/opengl_debug_group.hpp"
 #include "hyperion/render/driver/opengl/opengl_shader_compiler.hpp"
 #include "hyperion/render/driver/opengl/opengl_utilities.hpp"
@@ -45,89 +46,89 @@ namespace Hyperion::Rendering {
 
     const RenderObjectContext &context = render_frame->GetObjectContext();
 
-    const Array<RenderFrameCommand> &frame_commands = render_frame->GetCommands();
-    for (const RenderFrameCommand &frame_command : frame_commands) {
-      switch (frame_command.type) {
-        case RenderFrameCommandType::SetCamera: {
+    const Array<RenderPipelineCommand> &pipeline_commands = render_frame->GetPipelineContext().GetCommands();
+    for (const RenderPipelineCommand &pipeline_command : pipeline_commands) {
+      switch (pipeline_command.type) {
+        case RenderPipelineCommandType::SetCamera: {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.SetCamera")
           OpenGLDebugGroup debug_group("SetCamera");
           
-          const RenderFrameCommandSetCamera &command = std::get<RenderFrameCommandSetCamera>(frame_command.data);
+          const RenderPipelineCommandSetCamera &command = std::get<RenderPipelineCommandSetCamera>(pipeline_command.data);
           ExecuteFrameCommandSetCamera(command, context);
           
           break;
         }
-        case RenderFrameCommandType::ExecuteCommandBuffer: {
+        case RenderPipelineCommandType::ExecuteCommandBuffer: {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.ExecuteCommandBuffer")
           OpenGLDebugGroup debug_group("ExecuteCommandBuffer");
 
-          const RenderFrameCommandExecuteCommandBuffer &command = std::get<RenderFrameCommandExecuteCommandBuffer>(frame_command.data);
+          const RenderPipelineCommandExecuteCommandBuffer &command = std::get<RenderPipelineCommandExecuteCommandBuffer>(pipeline_command.data);
           ExecuteFrameCommandExecuteCommandBuffer(command, render_frame);
 
           break;
         }
-        case RenderFrameCommandType::DrawMeshes: {
+        case RenderPipelineCommandType::DrawMeshes: {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawMeshes")
           OpenGLDebugGroup debug_group("DrawMeshes");
 
-          const RenderFrameCommandDrawMeshes &command = std::get<RenderFrameCommandDrawMeshes>(frame_command.data);
+          const RenderPipelineCommandDrawMeshes &command = std::get<RenderPipelineCommandDrawMeshes>(pipeline_command.data);
           ExecuteFrameCommandDrawMeshes(command, render_frame, context);
 
           break;
         }
-        case RenderFrameCommandType::DrawShadows: {
+        case RenderPipelineCommandType::DrawShadows: {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawShadows")
           OpenGLDebugGroup debug_group("DrawShadows");
 
-          const RenderFrameCommandDrawShadows &command = std::get<RenderFrameCommandDrawShadows>(frame_command.data);
+          const RenderPipelineCommandDrawShadows &command = std::get<RenderPipelineCommandDrawShadows>(pipeline_command.data);
           ExecuteFrameCommandDrawShadows(command, context);
 
           break;
         }
-        case RenderFrameCommandType::DrawUI: {
+        case RenderPipelineCommandType::DrawUI: {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawUI")
           OpenGLDebugGroup debug_group("DrawUI");
 
-          const RenderFrameCommandDrawUI &command = std::get<RenderFrameCommandDrawUI>(frame_command.data);
+          const RenderPipelineCommandDrawUI &command = std::get<RenderPipelineCommandDrawUI>(pipeline_command.data);
           ExecuteFrameCommandDrawUI(command, context);
           
           break;
         }
-        case RenderFrameCommandType::DrawObjectIds: {
+        case RenderPipelineCommandType::DrawObjectIds: {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawObjectIds")
           OpenGLDebugGroup debug_group("DrawObjectIds");
 
-          const RenderFrameCommandDrawObjectIds &command = std::get<RenderFrameCommandDrawObjectIds>(frame_command.data);
+          const RenderPipelineCommandDrawObjectIds &command = std::get<RenderPipelineCommandDrawObjectIds>(pipeline_command.data);
           ExecuteFrameCommandDrawObjectIds(command, context);
 
           break;
         }
-        case RenderFrameCommandType::DrawGizmos: {
+        case RenderPipelineCommandType::DrawGizmos: {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawGizmos")
           OpenGLDebugGroup debug_group("DrawGizmos");
 
-          const RenderFrameCommandDrawGizmos &command = std::get<RenderFrameCommandDrawGizmos>(frame_command.data);
+          const RenderPipelineCommandDrawGizmos &command = std::get<RenderPipelineCommandDrawGizmos>(pipeline_command.data);
           ExecuteFrameCommandDrawGizmos(command, context);
 
           break;
         }
-        case RenderFrameCommandType::DrawEditorUI: {
+        case RenderPipelineCommandType::DrawEditorUI: {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderFrameCommand.DrawEditorUI")
           OpenGLDebugGroup debug_group("DrawEditorUI");
 
-          const RenderFrameCommandDrawEditorUI &command = std::get<RenderFrameCommandDrawEditorUI>(frame_command.data);
+          const RenderPipelineCommandDrawEditorUI &command = std::get<RenderPipelineCommandDrawEditorUI>(pipeline_command.data);
           ExecuteFrameCommandDrawEditorUI(command, context);
 
           break;
         }
-        case RenderFrameCommandType::None:
+        case RenderPipelineCommandType::None:
         default: HYP_ASSERT_ENUM_OUT_OF_RANGE; break;
       }
     }
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::ExecuteFrameCommandSetCamera(const RenderFrameCommandSetCamera &command, const RenderObjectContext &context) {
+  void OpenGLRenderDriver::ExecuteFrameCommandSetCamera(const RenderPipelineCommandSetCamera &command, const RenderObjectContext &context) {
     m_state.camera_index = command.camera_index;
 
     const RenderObjectContextCamera &render_frame_context_camera = context.GetCameras()[m_state.camera_index];
@@ -142,7 +143,7 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::ExecuteFrameCommandExecuteCommandBuffer(const RenderFrameCommandExecuteCommandBuffer &command, RenderFrame *render_frame) {
+  void OpenGLRenderDriver::ExecuteFrameCommandExecuteCommandBuffer(const RenderPipelineCommandExecuteCommandBuffer &command, RenderFrame *render_frame) {
     const RenderCommandBuffer &command_buffer = command.command_buffer;
     const Array<RenderCommandBufferCommand> &command_buffer_commands = command_buffer.GetCommands();
     for (const RenderCommandBufferCommand &command_buffer_command : command_buffer_commands) {
@@ -200,7 +201,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void OpenGLRenderDriver::ExecuteFrameCommandDrawMeshes(
-    const RenderFrameCommandDrawMeshes &command,
+    const RenderPipelineCommandDrawMeshes &command,
     RenderFrame *render_frame,
     const RenderObjectContext &context) {
     PrepareObjects(render_frame, command.sorted_objects, command.drawing_parameters);
@@ -208,7 +209,7 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::ExecuteFrameCommandDrawShadows(const RenderFrameCommandDrawShadows &command, const RenderObjectContext &context) {
+  void OpenGLRenderDriver::ExecuteFrameCommandDrawShadows(const RenderPipelineCommandDrawShadows &command, const RenderObjectContext &context) {
     glViewport(0, 0, static_cast<GLsizei>(command.shadow_parameters.shadow_map_size), static_cast<GLsizei>(command.shadow_parameters.shadow_map_size));
 
     const OpenGLShader &opengl_shader = m_storage.GetStatic().shadow_shader;
@@ -231,12 +232,12 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::ExecuteFrameCommandDrawUI(const RenderFrameCommandDrawUI &command, const RenderObjectContext &context) {
+  void OpenGLRenderDriver::ExecuteFrameCommandDrawUI(const RenderPipelineCommandDrawUI &command, const RenderObjectContext &context) {
     DrawUI(context.GetUIElements());
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::ExecuteFrameCommandDrawObjectIds(const RenderFrameCommandDrawObjectIds &command, const RenderObjectContext &context) {
+  void OpenGLRenderDriver::ExecuteFrameCommandDrawObjectIds(const RenderPipelineCommandDrawObjectIds &command, const RenderObjectContext &context) {
     {
       const RenderObjectContextCamera &render_frame_context_camera = context.GetCameras()[m_state.camera_index];
 
@@ -280,7 +281,7 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::ExecuteFrameCommandDrawGizmos(const RenderFrameCommandDrawGizmos &command, const RenderObjectContext &context) {
+  void OpenGLRenderDriver::ExecuteFrameCommandDrawGizmos(const RenderPipelineCommandDrawGizmos &command, const RenderObjectContext &context) {
     glDepthMask(GL_FALSE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -353,7 +354,7 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::ExecuteFrameCommandDrawEditorUI(const RenderFrameCommandDrawEditorUI &command, const RenderObjectContext &context) {
+  void OpenGLRenderDriver::ExecuteFrameCommandDrawEditorUI(const RenderPipelineCommandDrawEditorUI &command, const RenderObjectContext &context) {
     DrawUI(context.GetEditorUIElements());
   }
 
@@ -470,7 +471,7 @@ namespace Hyperion::Rendering {
   void OpenGLRenderDriver::ExecuteBufferCommandRequestAsyncReadback(const RenderCommandBufferCommandRequestAsyncReadback &command, RenderFrame *render_frame) {
     auto render_texture_it = m_storage.FindRenderTexture(command.render_target_id.handle);
     if (render_texture_it != m_storage.GetRenderTextureEnd()) {
-      AsyncRequestResult &async_request_result = render_frame->AddAsyncRequestResult();
+      AsyncRequestResult &async_request_result = render_frame->GetPipelineContext().AddAsyncRequestResult();
       async_request_result.callback = command.callback;
       async_request_result.result.region = command.region;
 

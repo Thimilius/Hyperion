@@ -6,7 +6,7 @@
 #include "hyperion/core/app/window_settings.hpp"
 #include "hyperion/render/render_backend.hpp"
 #include "hyperion/render/render_context_types.hpp"
-#include "hyperion/render/pipelines/render_pipeline.hpp"
+#include "hyperion/render/pipeline/render_pipeline.hpp"
 #include "hyperion/render/threading/render_threading_mode.hpp"
 #include "hyperion/scripting/scripting_backend.hpp"
 

@@ -2,7 +2,7 @@
 #pragma once
 
 //---------------------- Project Includes ----------------------
-#include "hyperion/common.hpp"
+#include "hyperion/render/pipeline/render_pipeline_context.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -28,11 +28,11 @@ namespace Hyperion::Rendering {
     virtual ~IRenderPipeline() = default;
   public:
     virtual void Initialize() = 0;
-    virtual void Render(RenderFrame *render_frame, const Array<const RenderObjectContextCamera *> &cameras) = 0;
+    virtual void Render(RenderPipelineContext &context, const Array<const RenderObjectContextCamera *> &cameras) = 0;
     virtual void Shutdown() = 0;
     
-    virtual void SetupRendering(RenderFrame *render_frame) = 0;
-    virtual void RenderCamera(RenderFrame *render_frame, const RenderObjectContextCamera *, RenderTexture *target_texture) = 0;
+    virtual void SetupRendering(RenderPipelineContext &context) = 0;
+    virtual void RenderCamera(RenderPipelineContext &context, const RenderObjectContextCamera *, RenderTexture *target_texture) = 0;
 
     virtual uint32 GetRenderTargetWidth() const = 0;
     virtual uint32 GetRenderTargetHeight() const = 0;

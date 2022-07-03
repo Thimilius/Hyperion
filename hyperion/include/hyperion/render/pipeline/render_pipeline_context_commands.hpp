@@ -12,7 +12,7 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-  enum class RenderFrameCommandType {
+  enum class RenderPipelineCommandType {
     None,
     
     SetCamera,
@@ -26,11 +26,11 @@ namespace Hyperion::Rendering {
     DrawEditorUI,
   };
 
-  struct RenderFrameCommandSetCamera {
+  struct RenderPipelineCommandSetCamera {
     uint64 camera_index;
   };
 
-  struct RenderFrameCommandExecuteCommandBuffer {
+  struct RenderPipelineCommandExecuteCommandBuffer {
     RenderCommandBuffer command_buffer;
   };
 
@@ -77,23 +77,23 @@ namespace Hyperion::Rendering {
     Matrix4x4 light_space_matrix;
   };
 
-  struct RenderFrameCommandDrawMeshes {
+  struct RenderPipelineCommandDrawMeshes {
     CullingResults culling_results;
     DrawingParameters drawing_parameters;
     Array<uint32> sorted_objects;
   };
 
-  struct RenderFrameCommandDrawShadows {
+  struct RenderPipelineCommandDrawShadows {
     ShadowParameters shadow_parameters;
   };
 
-  struct RenderFrameCommandDrawUI { };
+  struct RenderPipelineCommandDrawUI { };
 
-  struct RenderFrameCommandDrawObjectIds {
+  struct RenderPipelineCommandDrawObjectIds {
     RenderTargetId render_target_id;
   };
 
-  struct RenderFrameCommandDrawGizmos {
+  struct RenderPipelineCommandDrawGizmos {
     struct GizmoInstance {
       bool8 should_draw = false;
       Matrix4x4 local_to_world;
@@ -106,23 +106,23 @@ namespace Hyperion::Rendering {
     GizmoInstance highlight;
     GizmoInstance transformation_gizmo;
 
-    bool8 should_draw_mesh_bounds;
+    bool8 should_draw_mesh_bounds = false;
   };
 
-  struct RenderFrameCommandDrawEditorUI { };
+  struct RenderPipelineCommandDrawEditorUI { };
 
-  struct RenderFrameCommand {
-    RenderFrameCommandType type = RenderFrameCommandType::None;
+  struct RenderPipelineCommand {
+    RenderPipelineCommandType type = RenderPipelineCommandType::None;
 
     std::variant<
-      RenderFrameCommandSetCamera,
-      RenderFrameCommandExecuteCommandBuffer,
-      RenderFrameCommandDrawMeshes,
-      RenderFrameCommandDrawShadows,
-      RenderFrameCommandDrawUI,
-      RenderFrameCommandDrawObjectIds,
-      RenderFrameCommandDrawGizmos,
-      RenderFrameCommandDrawEditorUI
+      RenderPipelineCommandSetCamera,
+      RenderPipelineCommandExecuteCommandBuffer,
+      RenderPipelineCommandDrawMeshes,
+      RenderPipelineCommandDrawShadows,
+      RenderPipelineCommandDrawUI,
+      RenderPipelineCommandDrawObjectIds,
+      RenderPipelineCommandDrawGizmos,
+      RenderPipelineCommandDrawEditorUI
     > data;
   };
 

@@ -6,7 +6,7 @@
 #include <hyperion/core/math/rect.hpp>
 #include <hyperion/ecs/world/world.hpp>
 #include <hyperion/render/render_gizmos.hpp>
-#include <hyperion/render/frame/render_frame.hpp>
+#include <hyperion/render/pipeline/render_pipeline_context.hpp>
 #include <hyperion/ui/immediate/ui_immediate_types.hpp>
 #include <hyperion/ui/immediate/ui_immediate_gizmos.hpp>
 
@@ -32,7 +32,7 @@ namespace Hyperion::Editor {
     static void SetTransformationTool(Rendering::RenderGizmoType transformation_tool) { s_transformation_tool = transformation_tool; }
     static void SetTransformationMode(UI::GizmoMode transformation_mode) { s_transformation_mode = transformation_mode; }
     
-    static void HandleMouseSelection(Rendering::RenderFrame *render_frame, RenderTexture *render_texture);
+    static void HandleMouseSelection(Rendering::RenderPipelineContext &context, RenderTexture *render_texture);
   private:
     EditorUI() = delete;
     ~EditorUI() = delete;

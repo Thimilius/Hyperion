@@ -2,7 +2,7 @@
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/render/pipelines/forward/forward_render_lighting.hpp"
+#include "hyperion/render/pipeline/forward/forward_render_lighting.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {

@@ -165,14 +165,14 @@ namespace Hyperion::Editor {
   }
 
   //--------------------------------------------------------------
-  void EditorUI::HandleMouseSelection(RenderFrame *render_frame, RenderTexture *render_texture) {
+  void EditorUI::HandleMouseSelection(RenderPipelineContext &context, RenderTexture *render_texture) {
     if (Input::IsMouseButtonDown(MouseButtonCode::Left) && !s_is_in_gizmo) {
       Vector2 mouse_position = Input::GetMousePosition().ToFloat();
       Vector2 ui_space_point = UIImmediate::ScreenPointToUISpacePoint(mouse_position);
       Rect rect = EditorUI::GetPreviewRect(); 
       
       if (UIImmediate::IsInsideRect(rect, ui_space_point)) {
-        render_frame->DrawObjectIds(render_texture->GetRenderTargetId());
+        context.DrawObjectIds(render_texture->GetRenderTargetId());
 
         Vector2 point = ui_space_point;
         point.x -= rect.x;
@@ -196,7 +196,7 @@ namespace Hyperion::Editor {
             }
           }
         });
-        render_frame->ExecuteCommandBuffer(command_buffer);
+        context.ExecuteCommandBuffer(command_buffer);
       }
     }
   }

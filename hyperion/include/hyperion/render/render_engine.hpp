@@ -9,8 +9,8 @@
 #include "hyperion/core/app/window.hpp"
 #include "hyperion/core/threading/thread.hpp"
 #include "hyperion/render/render_context.hpp"
+#include "hyperion/render/render_frame.hpp"
 #include "hyperion/render/render_stats.hpp"
-#include "hyperion/render/frame/render_frame.hpp"
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion {
@@ -59,12 +59,6 @@ namespace Hyperion::Rendering {
   // That would of course help with performance for some workloads... but the first paragraph still stands.
   // 
   // ────────────────────────────────────────────────────────────────────────────────────
-  // RENDER FRAME CONTEXT:
-  // The RenderFrameContext is the interaction point between the ECS and the rendering engine.
-  // Render systems take the different components and extract every object, camera, light, etc. and copies it into the context.
-  // It can be thought of as the snapshot of the simulated world with all the data required to render it.
-  // 
-  // ────────────────────────────────────────────────────────────────────────────────────
   // RENDER ASSET CONTEXT:
   // The RenderAssetContext contains every asset that needs to be loaded/unloaded on the GPU.
   // That includes meshes, shaders, materials, textures, ...
@@ -73,32 +67,42 @@ namespace Hyperion::Rendering {
   // In the case where the asset is set to AssetDataAccess::None or AssetDataAccess::Write, the data can simply be moved and no copy has to be made.
   // 
   // ────────────────────────────────────────────────────────────────────────────────────
+  // RENDER OBJECT CONTEXT:
+  // The RenderObjectContext is the interaction point between the ECS and the rendering engine.
+  // Render systems take the different components and extract every object, camera, light, etc. and copies it into the context.
+  // It can be thought of as the snapshot of the simulated world with all the data required to render it.
+  //
+  // ────────────────────────────────────────────────────────────────────────────────────
+  // RENDER PIPELINE CONTEXT:
+  // The RenderPipelineContext acts as a command buffer to schedule very high level rendering commands.
+  // This is mainly inspired by the Scriptable Render Pipeline from Unity.
+  // The commands include among other things:
+  //   - Culling
+  //   - Drawing meshes
+  //   - Drawing shadows
+  //   - Drawing ui
+  //   - Executing a command buffer
+  //
+  // The execution of a command buffer allows pipelines to control the render state and render target.
+  // A RenderCommandBuffer is responsible for holding those more lower level commands.
+  // Those include among others:
+  //   - Clearing/Setting/Blitting of render targets
+  //   - Setting global shader properties and buffers
+  //   - Requesting async readback
+  // 
+  // ────────────────────────────────────────────────────────────────────────────────────
   // RENDER FRAME:
   // The RenderFrame is the high level structure that gets exchanged between the Main and Render Thread.
+  // The RenderFrame owns the RenderAssetContext, RenderObjectContext and RenderPipelineContext.
   // There are always two static RenderFrames allocated.
   // One used by the Main Thread to fill it with data and the other one used by the Render Thread to read from it.
   // It acts as a double buffer so that the synchronization point between the two threads is therefore a simple pointer swap.
   // 
-  // The RenderFrame owns the RenderFrameContext and RenderAssetContext as those contains all relevant ECS data and asset references.
-  // That alone however is not enough as we do not yet know HOW to render the data in the context.
-  // Because of that another purpose for the RenderFrame is to act as a command buffer for high level render commands.
-  // This is mainly inspired by the Scriptable Render Pipeline from Unity.
-  // The commands include among other things:
-  //     - Drawing:
-  //         - General (All objects)
-  //         - Detailed (Single object)
-  //     - Setting up camera properties
-  //     - Rasterizer state
-  //     - Render passes
-  //     - Render targets:
-  //         - Setting
-  //         - Blitting
-  // 
   // ────────────────────────────────────────────────────────────────────────────────────
   // RENDER PIPELINE:
   // The RenderPipeline is the highest level in the rendering API stack.
-  // A RenderPipeline lives on the Main Thread and gets passed the corresponding RenderFrame for writing.
-  // It uses the RenderFrame to schedule the high level rendering commands which will produce the final render output.
+  // A RenderPipeline lives on the Main Thread and gets passed the RenderPipelineContext of the corresponding RenderFrame for writing.
+  // It uses the RenderPipelineContext to schedule the high level rendering commands which will produce the final render output.
   // That way different kinds of rendering pipelines, like forward or deferred, can easily be implemented.
   // 
   // ────────────────────────────────────────────────────────────────────────────────────
@@ -106,8 +110,8 @@ namespace Hyperion::Rendering {
   // The RenderDriver is the lowest point in the rendering API stack.
   // A RenderDriver lives on the Render Thread and gets passed the corresponding RenderFrame for reading.
   // For every underlying graphics API there exists a RenderDriver whose job is twofold:
-  //     1. Loading/Unloading of GPU assets taken from RenderFrameContext
-  //     2. Translation of RenderFrame commands to graphics API commands
+  //   1. Loading/Unloading of GPU assets taken from RenderAssetContext
+  //   2. Translation of RenderPipelineContext commands referencing objects in the RenderObjectContext to graphics API commands
   // 
   // NOTE: There was a plan to have a full grown graphics API abstraction layer with implementations for every graphics API.
   // However that would introduce yet ANOTHER API level and might also be very time consuming to develop if we want something efficient. 

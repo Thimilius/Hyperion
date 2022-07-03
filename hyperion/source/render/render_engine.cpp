@@ -10,7 +10,7 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/core/app/application.hpp"
 #include "hyperion/render/render_gizmos.hpp"
-#include "hyperion/render/pipelines/forward/forward_render_pipeline.hpp"
+#include "hyperion/render/pipeline/forward/forward_render_pipeline.hpp"
 #include "hyperion/render/threading/render_thread_synchronization.hpp"
 
 //-------------------- Definition Namespace --------------------
@@ -76,7 +76,7 @@ namespace Hyperion::Rendering {
     for (const RenderObjectContextCamera &camera : context_cameras) {
       cameras.Add(&camera);
     }
-    s_render_pipeline->Render(s_main_frame, cameras);
+    s_render_pipeline->Render(s_main_frame->GetPipelineContext(), cameras);
   }
 
   //--------------------------------------------------------------
@@ -149,7 +149,7 @@ namespace Hyperion::Rendering {
     s_render_frame = temp;
 
     // The main frame is now the old render frame which means the async request can be read back from there.
-    for (const AsyncRequestResult &async_request_result : s_main_frame->GetAsyncRequestResults()) {
+    for (const AsyncRequestResult &async_request_result : s_main_frame->GetPipelineContext().GetAsyncRequestResults()) {
       async_request_result.callback(async_request_result.result);
     }
 

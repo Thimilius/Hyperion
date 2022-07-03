@@ -18,7 +18,6 @@
 #include <hyperion/ecs/world/world_manager.hpp>
 #include <hyperion/render/render_engine.hpp>
 #include <hyperion/render/render_gizmos.hpp>
-#include <hyperion/render/pipelines/forward/forward_render_pipeline.hpp>
 
 //------------------------- Namespaces -------------------------
 using namespace Hyperion;

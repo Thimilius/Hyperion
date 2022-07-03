@@ -15,7 +15,7 @@
 #include "hyperion/ecs/component/components/utilities/transform_utilities.hpp"
 #include "hyperion/ecs/world/world.hpp"
 #include "hyperion/render/render_engine.hpp"
-#include "hyperion/render/frame/render_frame.hpp"
+#include "hyperion/render/render_frame.hpp"
 
 //------------------------- Namespaces -------------------------
 using namespace Hyperion::UI;

@@ -1,36 +1,37 @@
-//----------------- Precompiled Header Include -----------------
+﻿//----------------- Precompiled Header Include -----------------
 #include "hyppch.hpp"
 
 //--------------------- Definition Include ---------------------
-#include "hyperion/render/frame/render_frame.hpp"
+#include "hyperion/render/pipeline/render_pipeline_context.hpp"
 
 //---------------------- Project Includes ----------------------
 #include "hyperion/assets/asset_manager.hpp"
 #include "hyperion/assets/shader.hpp"
 #include "hyperion/ecs/component/components/utilities/camera_utilities.hpp"
+#include "hyperion/render/render_frame.hpp"
 #include "hyperion/render/render_gizmos.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
-  void RenderFrame::Clear() {
-    m_object_context.Clear();
-    m_asset_context.Clear();
+  void RenderPipelineContext::Clear() {
     m_commands.Clear();
     m_async_request_results.Clear();
   }
-
+  
   //--------------------------------------------------------------
-  CullingResults RenderFrame::Cull(CullingParameters parameters) {
+  CullingResults RenderPipelineContext::Cull(CullingParameters parameters) {
     HYP_PROFILE_SCOPE("RenderFrame.Cull")
 
     CullingResults result;
 
     if (parameters.mask != LayerMask::Nothing) {
+      const Array<RenderObjectContextMesh> &meshes = m_render_frame->GetObjectContext().GetMeshes();
+      
       Array<Plane> frustum_planes = CameraUtilities::ExtractFrustumPlanes(parameters.matrix);
       uint32 index = 0;
-      for (const RenderObjectContextMesh &object : m_object_context.GetMeshes()) {
+      for (const RenderObjectContextMesh &object : meshes) {
         bool8 is_in_layer = (object.layer_mask & parameters.mask) == object.layer_mask && object.layer_mask != LayerMask::Nothing;
         if (is_in_layer) {
           bool8 is_inside_frustum = CameraUtilities::IsInsideFrustum(frustum_planes, object.bounds);
@@ -47,26 +48,26 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void RenderFrame::SetCamera(uint64 camera_index) {
-    RenderFrameCommandSetCamera set_camera = { };
+  void RenderPipelineContext::SetCamera(uint64 camera_index) {
+    RenderPipelineCommandSetCamera set_camera = { };
     set_camera.camera_index = camera_index;
 
-    RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::SetCamera);
+    RenderPipelineCommand &command = CreateCommand(RenderPipelineCommandType::SetCamera);
     command.data = set_camera;
   }
 
   //--------------------------------------------------------------
-  void RenderFrame::ExecuteCommandBuffer(const RenderCommandBuffer &command_buffer) {
-    RenderFrameCommandExecuteCommandBuffer execute_command_buffer = { };
+  void RenderPipelineContext::ExecuteCommandBuffer(const RenderCommandBuffer &command_buffer) {
+    RenderPipelineCommandExecuteCommandBuffer execute_command_buffer = { };
     execute_command_buffer.command_buffer = command_buffer;
 
-    RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::ExecuteCommandBuffer);
+    RenderPipelineCommand &command = CreateCommand(RenderPipelineCommandType::ExecuteCommandBuffer);
     command.data = execute_command_buffer;
   }
 
   //--------------------------------------------------------------
-  void RenderFrame::DrawMeshes(CullingResults &culling_results, DrawingParameters drawing_parameters) {
-    RenderFrameCommandDrawMeshes draw_meshes = { };
+  void RenderPipelineContext::DrawMeshes(CullingResults &culling_results, DrawingParameters drawing_parameters) {
+    RenderPipelineCommandDrawMeshes draw_meshes = { };
     draw_meshes.culling_results = culling_results;
     draw_meshes.drawing_parameters = drawing_parameters;
     draw_meshes.sorted_objects = culling_results.visible_objects;
@@ -75,7 +76,7 @@ namespace Hyperion::Rendering {
     {
       HYP_PROFILE_SCOPE("RenderFrame.SortObjects")
 
-      const Array<RenderObjectContextMesh> &mesh_objects = m_object_context.GetMeshes();
+      const Array<RenderObjectContextMesh> &mesh_objects = m_render_frame->GetObjectContext().GetMeshes();
       Vector3 camera_position = drawing_parameters.sorting_settings.camera_position;
 
       switch (drawing_parameters.sorting_settings.criteria) {
@@ -109,39 +110,39 @@ namespace Hyperion::Rendering {
       }
     }
 
-    RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::DrawMeshes);
+    RenderPipelineCommand &command = CreateCommand(RenderPipelineCommandType::DrawMeshes);
     command.data = draw_meshes;
   }
 
   //--------------------------------------------------------------
-  void RenderFrame::DrawShadows(ShadowParameters shadow_parameters) {
-    RenderFrameCommandDrawShadows draw_shadows = { };
+  void RenderPipelineContext::DrawShadows(ShadowParameters shadow_parameters) {
+    RenderPipelineCommandDrawShadows draw_shadows = { };
     draw_shadows.shadow_parameters = shadow_parameters;
 
-    RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::DrawShadows);
+    RenderPipelineCommand &command = CreateCommand(RenderPipelineCommandType::DrawShadows);
     command.data = draw_shadows;
   }
 
   //--------------------------------------------------------------
-  void RenderFrame::DrawUI() {
-    RenderFrameCommandDrawUI draw_ui = { };
+  void RenderPipelineContext::DrawUI() {
+    RenderPipelineCommandDrawUI draw_ui = { };
 
-    RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::DrawUI);
+    RenderPipelineCommand &command = CreateCommand(RenderPipelineCommandType::DrawUI);
     command.data = draw_ui;
   }
 
   //--------------------------------------------------------------
-  void RenderFrame::DrawObjectIds(RenderTargetId render_target_id) {
-    RenderFrameCommandDrawObjectIds draw_object_ids = { };
+  void RenderPipelineContext::DrawObjectIds(RenderTargetId render_target_id) {
+    RenderPipelineCommandDrawObjectIds draw_object_ids = { };
     draw_object_ids.render_target_id = render_target_id;
 
-    RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::DrawObjectIds);
+    RenderPipelineCommand &command = CreateCommand(RenderPipelineCommandType::DrawObjectIds);
     command.data = draw_object_ids;
   }
 
   //--------------------------------------------------------------
-  void RenderFrame::DrawGizmos() {
-    RenderFrameCommandDrawGizmos draw_gizmos = { };
+  void RenderPipelineContext::DrawGizmos() {
+    RenderPipelineCommandDrawGizmos draw_gizmos = { };
     draw_gizmos.shader_handle = AssetManager::GetShaderPrimitive(ShaderPrimitive::Gizmo)->GetMetadata().handle;
     
     draw_gizmos.grid.should_draw = RenderGizmos::GetShouldDrawGrid();
@@ -173,30 +174,30 @@ namespace Hyperion::Rendering {
     
     draw_gizmos.should_draw_mesh_bounds = RenderGizmos::GetShouldDrawMeshBounds();
 
-    RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::DrawGizmos);
+    RenderPipelineCommand &command = CreateCommand(RenderPipelineCommandType::DrawGizmos);
     command.data = draw_gizmos;
   }
 
   //--------------------------------------------------------------
-  void RenderFrame::DrawEditorUI() {
-    RenderFrameCommandDrawEditorUI draw_editor_ui = { };
+  void RenderPipelineContext::DrawEditorUI() {
+    RenderPipelineCommandDrawEditorUI draw_editor_ui = { };
 
-    RenderFrameCommand &command = CreateCommand(RenderFrameCommandType::DrawEditorUI);
+    RenderPipelineCommand &command = CreateCommand(RenderPipelineCommandType::DrawEditorUI);
     command.data = draw_editor_ui;
   }
 
   //--------------------------------------------------------------
-  AsyncRequestResult &RenderFrame::AddAsyncRequestResult() {
+  AsyncRequestResult &RenderPipelineContext::AddAsyncRequestResult() {
     m_async_request_results.Resize(m_async_request_results.GetLength() + 1);
     return m_async_request_results.GetLast();
   }
 
   //--------------------------------------------------------------
-  RenderFrameCommand &RenderFrame::CreateCommand(RenderFrameCommandType type) {
+  RenderPipelineCommand &RenderPipelineContext::CreateCommand(RenderPipelineCommandType type) {
     m_commands.Resize(m_commands.GetLength() + 1);
-    RenderFrameCommand &command = m_commands.GetLast();
+    RenderPipelineCommand &command = m_commands.GetLast();
     command.type = type;
     return command;
   }
-
+  
 }

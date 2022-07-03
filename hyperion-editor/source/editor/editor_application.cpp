@@ -4,8 +4,8 @@
 //---------------------- Library Includes ----------------------
 #include <hyperion/entry_point.hpp>
 #include <hyperion/core/random.hpp>
-#include "hyperion/core/app/display.hpp"
-#include "hyperion/core/app/events/window_events.hpp"
+#include <hyperion/core/app/display.hpp>
+#include <hyperion/core/app/events/window_events.hpp>
 #include <hyperion/core/io/file_system.hpp>
 #include <hyperion/core/memory/memory.hpp>
 #include <hyperion/core/system/engine.hpp>

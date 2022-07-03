@@ -7,6 +7,11 @@
 #include "hyperion/render/object/render_object_context_light.hpp"
 #include "hyperion/render/object/render_object_context_objects.hpp"
 
+//-------------------- Forward Declarations --------------------
+namespace Hyperion::Rendering {
+  class RenderFrame;
+}
+
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
@@ -30,6 +35,8 @@ namespace Hyperion::Rendering {
     RenderObjectContextUIElement &AddUIElement();
     RenderObjectContextUIElement &AddEditorUIElement();
   private:
+    RenderFrame *m_render_frame = nullptr;
+    
     RenderObjectContextEnvironment m_environment = { };
     Array<RenderObjectContextCamera> m_cameras;
     Array<RenderObjectContextLight> m_lights;
@@ -37,6 +44,8 @@ namespace Hyperion::Rendering {
     Array<RenderObjectContextSprite> m_sprites;
     Array<RenderObjectContextUIElement> m_ui_elements;
     Array<RenderObjectContextUIElement> m_editor_ui_elements;
+  private:
+    friend class Hyperion::Rendering::RenderFrame;
   };
 
 }

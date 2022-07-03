@@ -10,7 +10,7 @@
 #include "hyperion/render/render_engine.hpp"
 #include "hyperion/render/driver/vulkan/vulkan_render_context.hpp"
 #include "hyperion/render/driver/vulkan/vulkan_utilities.hpp"
-#include "hyperion/render/frame/render_frame.hpp"
+#include "hyperion/render/render_frame.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {

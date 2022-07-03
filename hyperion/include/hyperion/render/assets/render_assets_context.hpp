@@ -4,6 +4,11 @@
 //---------------------- Project Includes ----------------------
 #include "hyperion/render/assets/render_assets.hpp"
 
+//-------------------- Forward Declarations --------------------
+namespace Hyperion::Rendering {
+  class RenderFrame;
+}
+
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
@@ -33,6 +38,8 @@ namespace Hyperion::Rendering {
     void AddMaterialToUnload(AssetHandle asset_handle);
     void AddMeshToUnload(AssetHandle asset_handle);
   private:
+    RenderFrame *m_render_frame = nullptr;
+    
     Array<RenderAssetTexture2D> m_texture_2ds_to_load;
     Array<RenderAssetRenderTexture> m_render_textures_to_load;
     Array<RenderAssetShader> m_shaders_to_load;
@@ -43,6 +50,8 @@ namespace Hyperion::Rendering {
     Array<AssetHandle> m_shaders_to_unload;
     Array<AssetHandle> m_materials_to_unload;
     Array<AssetHandle> m_meshes_to_unload;
+  private:
+    friend class Hyperion::Rendering::RenderFrame;
   };
 
 }

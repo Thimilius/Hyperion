@@ -5,9 +5,9 @@
 #include <glad/glad.h>
 
 //---------------------- Project Includes ----------------------
+#include "hyperion/render/render_frame.hpp"
 #include "hyperion/render/driver/render_driver.hpp"
 #include "hyperion/render/driver/opengl/opengl_storage.hpp"
-#include "hyperion/render/frame/render_frame.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
@@ -63,14 +63,14 @@ namespace Hyperion::Rendering {
   private:
     void ExecuteRenderFrame(RenderFrame *render_frame);
     
-    void ExecuteFrameCommandSetCamera(const RenderFrameCommandSetCamera &command, const RenderObjectContext &context);
-    void ExecuteFrameCommandExecuteCommandBuffer(const RenderFrameCommandExecuteCommandBuffer &command, RenderFrame *render_frame);
-    void ExecuteFrameCommandDrawMeshes(const RenderFrameCommandDrawMeshes &command, RenderFrame *render_frame, const RenderObjectContext &context);
-    void ExecuteFrameCommandDrawShadows(const RenderFrameCommandDrawShadows &command, const RenderObjectContext &context);
-    void ExecuteFrameCommandDrawUI(const RenderFrameCommandDrawUI &command, const RenderObjectContext &context);
-    void ExecuteFrameCommandDrawObjectIds(const RenderFrameCommandDrawObjectIds &command, const RenderObjectContext &context);
-    void ExecuteFrameCommandDrawGizmos(const RenderFrameCommandDrawGizmos &command, const RenderObjectContext &context);
-    void ExecuteFrameCommandDrawEditorUI(const RenderFrameCommandDrawEditorUI &command, const RenderObjectContext &context);
+    void ExecuteFrameCommandSetCamera(const RenderPipelineCommandSetCamera &command, const RenderObjectContext &context);
+    void ExecuteFrameCommandExecuteCommandBuffer(const RenderPipelineCommandExecuteCommandBuffer &command, RenderFrame *render_frame);
+    void ExecuteFrameCommandDrawMeshes(const RenderPipelineCommandDrawMeshes &command, RenderFrame *render_frame, const RenderObjectContext &context);
+    void ExecuteFrameCommandDrawShadows(const RenderPipelineCommandDrawShadows &command, const RenderObjectContext &context);
+    void ExecuteFrameCommandDrawUI(const RenderPipelineCommandDrawUI &command, const RenderObjectContext &context);
+    void ExecuteFrameCommandDrawObjectIds(const RenderPipelineCommandDrawObjectIds &command, const RenderObjectContext &context);
+    void ExecuteFrameCommandDrawGizmos(const RenderPipelineCommandDrawGizmos &command, const RenderObjectContext &context);
+    void ExecuteFrameCommandDrawEditorUI(const RenderPipelineCommandDrawEditorUI &command, const RenderObjectContext &context);
 
     void ExecuteBufferCommandClearRenderTarget(const RenderCommandBufferCommandClearRenderTarget &command);
     void ExecuteBufferCommandSetRenderTarget(const RenderCommandBufferCommandSetRenderTarget &command);
