@@ -1,6 +1,9 @@
 ﻿//--------------------- Definition Include ---------------------
 #include "hyperion/editor/editor_ui.hpp"
 
+//--------------- C++ Standard Library Includes ----------------
+#include <filesystem>
+
 //---------------------- Library Includes ----------------------
 #include <hyperion/assets/asset_manager.hpp>
 #include <hyperion/assets/loader/font_loader.hpp>
@@ -116,7 +119,7 @@ namespace Hyperion::Editor {
 
           UIImmediate::Separator();
 
-          ConsolePanel();
+          TabViewPanel();
         }
         UIImmediate::EndPanel();
       }
@@ -554,6 +557,7 @@ namespace Hyperion::Editor {
         if (UIImmediate::TextToggle(should_draw_bounds, "\uf247", FitType::ToLayout, s_icon_theme).clicked) {
           RenderGizmos::SetShouldDrawMeshBounds(should_draw_bounds);
         }
+        UIImmediate::TextToggle(s_show_fps, "\uf012", FitType::ToLayout, s_icon_theme);
         if (UIImmediate::Button("\uf03d", FitType::ToLayout, s_icon_theme).clicked) {
           EditorCamera::Reset();
         }
@@ -573,11 +577,13 @@ namespace Hyperion::Editor {
         
         UIImmediate::FillSpace();
 
-        String stats_format = "FPS: {} ({:.2f}ms)";
-        String stats_text = StringUtils::Format(stats_format, Time::GetFPS(), Time::GetFrameTime());
-        UIImmediate::Text(stats_text, TextAlignment::MiddleCenter, FitType::ToLayout);
+        if (s_show_fps) {
+          String stats_format = "FPS: {} ({:.2f}ms)";
+          String stats_text = StringUtils::Format(stats_format, Time::GetFPS(), Time::GetFrameTime());
+          UIImmediate::Text(stats_text, TextAlignment::MiddleCenter, FitType::ToLayout);
 
-        UIImmediate::Space(SizeKind::Pixels, 5.0f);
+          UIImmediate::Space(SizeKind::Pixels, 5.0f);  
+        }
       }
       UIImmediate::EndPanel();
 
@@ -605,44 +611,115 @@ namespace Hyperion::Editor {
   }
 
   //--------------------------------------------------------------
-  void EditorUI::ConsolePanel() {
-    EditorLogger &logger = EditorApplication::GetLogger();
-    
-    Size console_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::PercentOfParent, 0.3f } };
-    UIImmediate::BeginPanel("Console Panel", console_panel_size, ChildLayout::Vertical);
+  void EditorUI::TabViewPanel() {
+    Size tab_view_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::PercentOfParent, 0.3f } };
+    UIImmediate::BeginPanel("Tab View Panel", tab_view_panel_size, ChildLayout::Vertical);
     {
       Size console_header_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 20.0f } };
-      UIImmediate::BeginPanel("Console Header", console_header_panel_size);
+      UIImmediate::BeginPanel("Tab View Header", console_header_panel_size);
       {
-        if (UIImmediate::Button("Clear", FitType::ToLayout).clicked) {
-          logger.Clear();
+        bool8 is_content = s_tab_view == EditorTabView::Content;
+        if (UIImmediate::TextToggle(is_content, "Content", FitType::ToLayout).clicked) {
+          s_tab_view = EditorTabView::Content;
         }
-        bool8 should_clear_on_play = logger.ShouldClearOnPlay();
-        if (UIImmediate::TextToggle(should_clear_on_play, "Clear on Play", FitType::ToLayout).clicked) {
-          logger.SetShouldClearOnPlay(should_clear_on_play);
+        bool8 is_console = s_tab_view == EditorTabView::Console;
+        if (UIImmediate::TextToggle(is_console, "Console", FitType::ToLayout).clicked) {
+          s_tab_view = EditorTabView::Console;
         }
       }
       UIImmediate::EndPanel();
 
       UIImmediate::Separator();
 
-      Size console_entries_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
-      UIImmediate::BeginPanel("Console Entries", console_entries_panel_size, ChildLayout::Vertical, true);
+      Size tab_view_container_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
+      UIImmediate::BeginPanel("Tab View Container", tab_view_container_panel_size, ChildLayout::Vertical);
       {
-        const Array<EditorLogEntry> log_entries = logger.GetLogEntries();
-        uint32 max_entries = 250;
-        uint32 index = 0;
-        for (auto it = log_entries.rbegin(); it != log_entries.rend() && index < max_entries; ++it) {
-          uint32 i = index++;
-          Size log_entry_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 20.0f } };
-          UIImmediate::BeginPanel(StringUtils::Format("Log Entry {}", i), log_entry_panel_size);
+        if (s_tab_view == EditorTabView::Content) {
+          ContentPanel();
+        } else if (s_tab_view == EditorTabView::Console) {
+          ConsolePanel();
+        }
+      }
+      UIImmediate::EndPanel();
+    }
+    UIImmediate::EndPanel();
+  }
+
+  //--------------------------------------------------------------
+  void EditorUI::ContentPanel() {
+    Size console_header_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 20.0f } };
+    UIImmediate::BeginPanel("Content Header", console_header_panel_size);
+    {
+      if (UIImmediate::Button("Back").clicked) {
+        
+      }
+    }
+    UIImmediate::EndPanel();
+
+    UIImmediate::Separator();
+    
+    Size tab_view_container_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
+    UIImmediate::BeginPanel("Content Container", tab_view_container_panel_size);
+    {
+      Size left_panel_size[2] = { { SizeKind::PercentOfParent, 0.3f }, { SizeKind::AutoFill, 0.0f } };
+      UIImmediate::BeginPanel("Left", left_panel_size, ChildLayout::Vertical, true);
+      {
+        for (const std::filesystem::directory_entry& entry : std::filesystem::directory_iterator("assets")) {
+          Size entry_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 20.0f } };
+          String filename = entry.path().filename().string();
+          UIImmediate::BeginPanel(filename, entry_panel_size);
           {
-            UIImmediate::Text(it->message);
+            UIImmediate::Text(filename, TextAlignment::MiddleLeft, FitType::ToLayout); 
           }
           UIImmediate::EndPanel();
         }
       }
       UIImmediate::EndPanel();
+
+      Size right_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
+      UIImmediate::BeginPanel("Right", right_panel_size, ChildLayout::Vertical, true);
+      {
+        
+      }
+      UIImmediate::EndPanel();
+    }
+    UIImmediate::EndPanel();
+  }
+
+  //--------------------------------------------------------------
+  void EditorUI::ConsolePanel() {
+    EditorLogger &logger = EditorApplication::GetLogger();
+    
+    Size console_header_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 20.0f } };
+    UIImmediate::BeginPanel("Console Header", console_header_panel_size);
+    {
+      if (UIImmediate::Button("Clear", FitType::ToLayout).clicked) {
+        logger.Clear();
+      }
+      bool8 should_clear_on_play = logger.ShouldClearOnPlay();
+      if (UIImmediate::TextToggle(should_clear_on_play, "Clear on Play", FitType::ToLayout).clicked) {
+        logger.SetShouldClearOnPlay(should_clear_on_play);
+      }
+    }
+    UIImmediate::EndPanel();
+
+    UIImmediate::Separator();
+
+    Size console_entries_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::AutoFill, 0.0f } };
+    UIImmediate::BeginPanel("Console Entries", console_entries_panel_size, ChildLayout::Vertical, true);
+    {
+      const Array<EditorLogEntry> log_entries = logger.GetLogEntries();
+      uint32 max_entries = 250;
+      uint32 index = 0;
+      for (auto it = log_entries.rbegin(); it != log_entries.rend() && index < max_entries; ++it) {
+        uint32 i = index++;
+        Size log_entry_panel_size[2] = { { SizeKind::AutoFill, 0.0f }, { SizeKind::Pixels, 20.0f } };
+        UIImmediate::BeginPanel(StringUtils::Format("Log Entry {}", i), log_entry_panel_size);
+        {
+          UIImmediate::Text(it->message);
+        }
+        UIImmediate::EndPanel();
+      }
     }
     UIImmediate::EndPanel();
   }

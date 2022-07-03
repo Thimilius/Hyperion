@@ -17,6 +17,11 @@ namespace Hyperion::Editor {
     Editor,
     Game
   };
+
+  enum class EditorTabView {
+    Content,
+    Console
+  };
   
   class EditorUI final {
   public:
@@ -42,6 +47,8 @@ namespace Hyperion::Editor {
     static void EntityHierarchyPanelRecursive(EntityManager *manager, EntityId entity, HierarchyComponent *branch_hierarchy, uint32 depth);
     static void EntityInspectorPanel();
     static void PreviewPanel();
+    static void TabViewPanel();
+    static void ContentPanel();
     static void ConsolePanel();
 
     static void ComponentPanel(const ComponentInfo &component_info, Type component_type, void *component);
@@ -70,8 +77,10 @@ namespace Hyperion::Editor {
     inline static UI::UIImmediateTheme *s_entity_disabled_theme;
     inline static UI::UIImmediateTheme *s_entity_disabled_icon_theme;
 
+    inline static bool8 s_show_fps = false;
     inline static EditorViewMode s_view_mode = EditorViewMode::Editor;
-
+    inline static EditorTabView s_tab_view = EditorTabView::Content;
+    
     inline static Map<Type, bool8> s_component_panel_toggles;
     
     inline static bool8 s_is_in_gizmo;
