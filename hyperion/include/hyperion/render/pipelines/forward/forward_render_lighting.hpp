@@ -29,14 +29,14 @@ namespace Hyperion::Rendering {
 
   class ForwardRenderLighting {
   public:
-    inline const RenderFrameContextLight *GetMainLight() const { return m_main_light; } 
+    inline const RenderObjectContextLight *GetMainLight() const { return m_main_light; } 
     
-    void SetupLighting(RenderFrameContext &context, RenderCommandBuffer &command_buffer);
+    void SetupLighting(RenderObjectContext &context, RenderCommandBuffer &command_buffer);
     Matrix4x4 CalculateLightSpaceMatrixForMainLight();
   private:
-    static void CopyFrameLightToLight(const RenderFrameContextLight &frame_light, ForwardLight &light);
+    static void CopyFrameLightToLight(const RenderObjectContextLight &frame_light, ForwardLight &light);
   private:
-    const RenderFrameContextLight *m_main_light = nullptr;
+    const RenderObjectContextLight *m_main_light = nullptr;
   };
 
 }

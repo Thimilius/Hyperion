@@ -44,19 +44,19 @@ namespace Hyperion::Rendering {
   void EnvironmentSystem::Run(EntityManager *manager) {
     HYP_PROFILE_SCOPE("EnvironmentSystem.Run")
 
-    RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
+    RenderObjectContext &render_object_context = RenderEngine::GetMainRenderFrame()->GetObjectContext();
 
     const WorldEnvironment &world_environment = manager->GetWorld()->GetEnvironment();
-    RenderFrameContextEnvironment &render_frame_context_environment = render_frame_context.GetEnvironment();
-    render_frame_context_environment.ambient_light.intensity = world_environment.ambient_light.intensity;
-    render_frame_context_environment.ambient_light.color = world_environment.ambient_light.color;
+    RenderObjectContextEnvironment &render_object_context_environment = render_object_context.GetEnvironment();
+    render_object_context_environment.ambient_light.intensity = world_environment.ambient_light.intensity;
+    render_object_context_environment.ambient_light.color = world_environment.ambient_light.color;
   }
 
   //--------------------------------------------------------------
   void CameraSystem::Run(EntityManager *manager) {
     HYP_PROFILE_SCOPE("CameraSystem.Run")
 
-    RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
+    RenderObjectContext &render_object_context = RenderEngine::GetMainRenderFrame()->GetObjectContext();
 
     auto view = manager->GetView<DerivedTransformComponent, CameraComponent>();
     uint32 index = 0;
@@ -72,26 +72,26 @@ namespace Hyperion::Rendering {
       CameraViewport camera_viewport = CameraUtilities::CalculateViewportFromClipping(camera->viewport_clipping, display_size);
       CameraUtilities::RecalculateMatrices(camera, derived_transform, camera_viewport);
 
-      RenderFrameContextCamera &render_frame_context_camera = render_frame_context.AddCamera();
-      render_frame_context_camera.index = index++;
-      render_frame_context_camera.projection_mode = camera->projection_mode;
-      render_frame_context_camera.clear_mode = camera->clear_mode;
-      render_frame_context_camera.background_color = camera->background_color;
-      render_frame_context_camera.culling_mask = camera->culling_mask;
-      render_frame_context_camera.position = derived_transform->position;
-      render_frame_context_camera.forward = TransformUtilities::GetForward(derived_transform);
-      render_frame_context_camera.up = TransformUtilities::GetUp(derived_transform);
-      render_frame_context_camera.fov = camera->fov;
-      render_frame_context_camera.orthographic_size = camera->orthographic_size;
-      render_frame_context_camera.near_plane = camera->near_plane;
-      render_frame_context_camera.far_plane = camera->far_plane;
-      render_frame_context_camera.view_matrix = camera->view_matrix;
-      render_frame_context_camera.inverse_view_matrix = camera->view_matrix.Inverted();
-      render_frame_context_camera.projection_matrix = camera->projection_matrix;
-      render_frame_context_camera.inverse_projection_matrix = camera->projection_matrix.Inverted();
-      render_frame_context_camera.view_projection_matrix = camera->view_projection_matrix;
-      render_frame_context_camera.inverse_view_projection_matrix = camera->view_projection_matrix.Inverted();
-      render_frame_context_camera.viewport = camera_viewport;
+      RenderObjectContextCamera &render_object_context_camera = render_object_context.AddCamera();
+      render_object_context_camera.index = index++;
+      render_object_context_camera.projection_mode = camera->projection_mode;
+      render_object_context_camera.clear_mode = camera->clear_mode;
+      render_object_context_camera.background_color = camera->background_color;
+      render_object_context_camera.culling_mask = camera->culling_mask;
+      render_object_context_camera.position = derived_transform->position;
+      render_object_context_camera.forward = TransformUtilities::GetForward(derived_transform);
+      render_object_context_camera.up = TransformUtilities::GetUp(derived_transform);
+      render_object_context_camera.fov = camera->fov;
+      render_object_context_camera.orthographic_size = camera->orthographic_size;
+      render_object_context_camera.near_plane = camera->near_plane;
+      render_object_context_camera.far_plane = camera->far_plane;
+      render_object_context_camera.view_matrix = camera->view_matrix;
+      render_object_context_camera.inverse_view_matrix = camera->view_matrix.Inverted();
+      render_object_context_camera.projection_matrix = camera->projection_matrix;
+      render_object_context_camera.inverse_projection_matrix = camera->projection_matrix.Inverted();
+      render_object_context_camera.view_projection_matrix = camera->view_projection_matrix;
+      render_object_context_camera.inverse_view_projection_matrix = camera->view_projection_matrix.Inverted();
+      render_object_context_camera.viewport = camera_viewport;
     }
   }
 
@@ -99,21 +99,21 @@ namespace Hyperion::Rendering {
   void LightSystem::Run(EntityManager *manager) {
     HYP_PROFILE_SCOPE("LightSystem.Run")
 
-    RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
+    RenderObjectContext &render_object_context = RenderEngine::GetMainRenderFrame()->GetObjectContext();
 
     auto directional_view = manager->GetView<DerivedTransformComponent, DirectionalLightComponent>();
     for (EntityId entity : directional_view) {
       DerivedTransformComponent *derived_transform = manager->GetComponent<DerivedTransformComponent>(entity);
       DirectionalLightComponent *directional_light = manager->GetComponent<DirectionalLightComponent>(entity);
 
-      RenderFrameContextLight &render_frame_context_light = render_frame_context.AddLight();
-      render_frame_context_light.type = LightType::Directional;
-      render_frame_context_light.intensity = directional_light->intensity;
-      render_frame_context_light.color = directional_light->color;
-      render_frame_context_light.shadows = directional_light->shadows;
-      render_frame_context_light.shadow_intensity = directional_light->shadow_intensity;
-      render_frame_context_light.shadow_bias = directional_light->shadow_bias;
-      render_frame_context_light.direction = TransformUtilities::GetForward(derived_transform);
+      RenderObjectContextLight &render_object_context_light = render_object_context.AddLight();
+      render_object_context_light.type = LightType::Directional;
+      render_object_context_light.intensity = directional_light->intensity;
+      render_object_context_light.color = directional_light->color;
+      render_object_context_light.shadows = directional_light->shadows;
+      render_object_context_light.shadow_intensity = directional_light->shadow_intensity;
+      render_object_context_light.shadow_bias = directional_light->shadow_bias;
+      render_object_context_light.direction = TransformUtilities::GetForward(derived_transform);
     }
 
     auto point_view = manager->GetView<DerivedTransformComponent, PointLightComponent>();
@@ -121,15 +121,15 @@ namespace Hyperion::Rendering {
       DerivedTransformComponent *derived_transform = manager->GetComponent<DerivedTransformComponent>(entity);
       PointLightComponent *point_light = manager->GetComponent<PointLightComponent>(entity);
 
-      RenderFrameContextLight &render_frame_context_light = render_frame_context.AddLight();
-      render_frame_context_light.type = LightType::Point;
-      render_frame_context_light.intensity = point_light->intensity;
-      render_frame_context_light.color = point_light->color;
-      render_frame_context_light.shadows = point_light->shadows;
-      render_frame_context_light.shadow_intensity = point_light->shadow_intensity;
-      render_frame_context_light.shadow_bias = point_light->shadow_bias;
-      render_frame_context_light.position = derived_transform->position;
-      render_frame_context_light.range = point_light->range;
+      RenderObjectContextLight &render_object_context_light = render_object_context.AddLight();
+      render_object_context_light.type = LightType::Point;
+      render_object_context_light.intensity = point_light->intensity;
+      render_object_context_light.color = point_light->color;
+      render_object_context_light.shadows = point_light->shadows;
+      render_object_context_light.shadow_intensity = point_light->shadow_intensity;
+      render_object_context_light.shadow_bias = point_light->shadow_bias;
+      render_object_context_light.position = derived_transform->position;
+      render_object_context_light.range = point_light->range;
     }
 
     auto spot_view = manager->GetView<DerivedTransformComponent, SpotLightComponent>();
@@ -137,16 +137,16 @@ namespace Hyperion::Rendering {
       DerivedTransformComponent *derived_transform = manager->GetComponent<DerivedTransformComponent>(entity);
       SpotLightComponent *spot_light = manager->GetComponent<SpotLightComponent>(entity);
 
-      RenderFrameContextLight &render_frame_context_light = render_frame_context.AddLight();
-      render_frame_context_light.type = LightType::Spot;
-      render_frame_context_light.intensity = spot_light->intensity;
-      render_frame_context_light.color = spot_light->color;
-      render_frame_context_light.shadows = spot_light->shadows;
-      render_frame_context_light.shadow_intensity = spot_light->shadow_intensity;
-      render_frame_context_light.shadow_bias = spot_light->shadow_bias;
-      render_frame_context_light.position = derived_transform->position;
-      render_frame_context_light.inner_spot_radius = spot_light->inner_spot_radius;
-      render_frame_context_light.outer_spot_radius = spot_light->outer_spot_radius;
+      RenderObjectContextLight &render_object_context_light = render_object_context.AddLight();
+      render_object_context_light.type = LightType::Spot;
+      render_object_context_light.intensity = spot_light->intensity;
+      render_object_context_light.color = spot_light->color;
+      render_object_context_light.shadows = spot_light->shadows;
+      render_object_context_light.shadow_intensity = spot_light->shadow_intensity;
+      render_object_context_light.shadow_bias = spot_light->shadow_bias;
+      render_object_context_light.position = derived_transform->position;
+      render_object_context_light.inner_spot_radius = spot_light->inner_spot_radius;
+      render_object_context_light.outer_spot_radius = spot_light->outer_spot_radius;
     }
   }
 
@@ -154,18 +154,18 @@ namespace Hyperion::Rendering {
   void SpriteRenderSystem::Run(EntityManager *manager) {
     HYP_PROFILE_SCOPE("SpriteSystem.Run")
 
-    RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
+    RenderObjectContext &render_object_context = RenderEngine::GetMainRenderFrame()->GetObjectContext();
 
     auto view = manager->GetView<LocalToWorldComponent, SpriteComponent>();
     for (EntityId entity : view) {
       LocalToWorldComponent *local_to_world = manager->GetComponent<LocalToWorldComponent>(entity);
       SpriteComponent *sprite = manager->GetComponent<SpriteComponent>(entity);
 
-      RenderFrameContextObjectSprite &render_frame_context_sprite_object = render_frame_context.AddSpriteObject();
-      render_frame_context_sprite_object.id = entity;
-      render_frame_context_sprite_object.local_to_world = local_to_world->local_to_world;
-      render_frame_context_sprite_object.position = Vector3(local_to_world->local_to_world.columns[3]);
-      render_frame_context_sprite_object.color = sprite->color;
+      RenderObjectContextSprite &render_object_context_sprite = render_object_context.AddSprite();
+      render_object_context_sprite.id = entity;
+      render_object_context_sprite.local_to_world = local_to_world->local_to_world;
+      render_object_context_sprite.position = Vector3(local_to_world->local_to_world.columns[3]);
+      render_object_context_sprite.color = sprite->color;
     }
   }
 
@@ -173,7 +173,7 @@ namespace Hyperion::Rendering {
   void MeshRenderSystem::Run(EntityManager *manager) {
     HYP_PROFILE_SCOPE("RenderMeshSystem.Run")
 
-    RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
+    RenderObjectContext &render_object_context = RenderEngine::GetMainRenderFrame()->GetObjectContext();
 
     auto view = manager->GetView<LocalToWorldComponent, MeshBoundsComponent, MeshComponent>();
     for (EntityId entity : view) {
@@ -187,16 +187,16 @@ namespace Hyperion::Rendering {
         continue;
       }
       
-      RenderFrameContextObjectMesh &render_frame_context_mesh_object = render_frame_context.AddMeshObject();
-      render_frame_context_mesh_object.id = entity;
-      render_frame_context_mesh_object.local_to_world = local_to_world->local_to_world;
-      render_frame_context_mesh_object.position = Vector3(local_to_world->local_to_world.columns[3]);
-      render_frame_context_mesh_object.mesh_handle = mesh_handle;
-      render_frame_context_mesh_object.sub_mesh_index = mesh->sub_mesh_index;
-      render_frame_context_mesh_object.shader_handle = AssetManager::GetMaterial(material_handle)->GetShader()->GetMetadata().handle; // TODO: Remove this.
-      render_frame_context_mesh_object.material_handle = material_handle;
-      render_frame_context_mesh_object.layer_mask = mesh->layer_mask;
-      render_frame_context_mesh_object.bounds = mesh_bounds->bounds;
+      RenderObjectContextMesh &render_object_context_mesh = render_object_context.AddMesh();
+      render_object_context_mesh.id = entity;
+      render_object_context_mesh.local_to_world = local_to_world->local_to_world;
+      render_object_context_mesh.position = Vector3(local_to_world->local_to_world.columns[3]);
+      render_object_context_mesh.mesh_handle = mesh_handle;
+      render_object_context_mesh.sub_mesh_index = mesh->sub_mesh_index;
+      render_object_context_mesh.shader_handle = AssetManager::GetMaterial(material_handle)->GetShader()->GetMetadata().handle; // TODO: Remove this.
+      render_object_context_mesh.material_handle = material_handle;
+      render_object_context_mesh.layer_mask = mesh->layer_mask;
+      render_object_context_mesh.bounds = mesh_bounds->bounds;
     }
   }
 
@@ -204,9 +204,9 @@ namespace Hyperion::Rendering {
   void UIRenderSystem::Run(EntityManager *manager) {
     HYP_PROFILE_SCOPE("UIRenderSystem.Run")
 
-    RenderFrameContext &render_frame_context = RenderEngine::GetMainRenderFrame()->GetContext();
-    Delegate<RenderFrameContextObjectUI &()> ui_object_adder;
-    ui_object_adder.Connect<&RenderFrameContext::AddUIObject>(&render_frame_context);
+    RenderObjectContext &render_object_context = RenderEngine::GetMainRenderFrame()->GetObjectContext();
+    Delegate<RenderObjectContextUIElement &()> ui_object_adder;
+    ui_object_adder.Connect<&RenderObjectContext::AddUIElement>(&render_object_context);
 
     auto view = manager->GetView<UIViewComponent>();
     for (EntityId entity : view) {
@@ -217,12 +217,12 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void UIRenderSystem::Run(UIViewComponent *ui_view, Delegate<RenderFrameContextObjectUI &()> ui_object_adder) {
+  void UIRenderSystem::Run(UIViewComponent *ui_view, Delegate<RenderObjectContextUIElement &()> ui_object_adder) {
     RenderElement(ui_view->root_element, ui_object_adder);
   }
 
   //--------------------------------------------------------------
-  void UIRenderSystem::RenderElement(UIElement *element, Delegate<RenderFrameContextObjectUI &()> ui_object_adder) {
+  void UIRenderSystem::RenderElement(UIElement *element, Delegate<RenderObjectContextUIElement &()> ui_object_adder) {
     HYP_PROFILE_SCOPE("UIRenderSystem.RenderElement")
 
     if (element && element->GetStyle().GetVisibility() == Visibility::Visible) {
@@ -241,17 +241,17 @@ namespace Hyperion::Rendering {
            ? renderer.texture->GetMetadata().handle
            : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetMetadata().handle;
 
-          RenderFrameContextObjectUI &render_frame_context_ui_object = ui_object_adder();
-          render_frame_context_ui_object.local_to_world = Matrix4x4::Identity();
-          render_frame_context_ui_object.mesh_handle = renderer.mesh->GetMetadata().handle;
-          render_frame_context_ui_object.shader_handle = material->GetShader()->GetMetadata().handle;
-          render_frame_context_ui_object.material_handle = material->GetMetadata().handle;
-          render_frame_context_ui_object.color = color;
-          render_frame_context_ui_object.texture.handle = texture_handle;
-          render_frame_context_ui_object.texture.dimension = renderer.texture ? renderer.texture->GetDimension() : TextureDimension::Texture2D;
-          render_frame_context_ui_object.texture.render_texture_attachment_index = renderer.render_texture_attachment_index;
-          render_frame_context_ui_object.scissor = { 0, 0, static_cast<int32>(Display::GetWidth()), static_cast<int32>(Display::GetHeight()) };
-          render_frame_context_ui_object.enable_blending = renderer.enable_blending;
+          RenderObjectContextUIElement &render_object_context_ui_element = ui_object_adder();
+          render_object_context_ui_element.local_to_world = Matrix4x4::Identity();
+          render_object_context_ui_element.mesh_handle = renderer.mesh->GetMetadata().handle;
+          render_object_context_ui_element.shader_handle = material->GetShader()->GetMetadata().handle;
+          render_object_context_ui_element.material_handle = material->GetMetadata().handle;
+          render_object_context_ui_element.color = color;
+          render_object_context_ui_element.texture.handle = texture_handle;
+          render_object_context_ui_element.texture.dimension = renderer.texture ? renderer.texture->GetDimension() : TextureDimension::Texture2D;
+          render_object_context_ui_element.texture.render_texture_attachment_index = renderer.render_texture_attachment_index;
+          render_object_context_ui_element.scissor = { 0, 0, static_cast<int32>(Display::GetWidth()), static_cast<int32>(Display::GetHeight()) };
+          render_object_context_ui_element.enable_blending = renderer.enable_blending;
         }
       }
 

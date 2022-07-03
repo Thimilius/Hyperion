@@ -7,7 +7,7 @@
 #include <hyperion/core/math/vector3.hpp>
 #include <hyperion/ecs/component/components/transform_components.hpp>
 #include <hyperion/ecs/component/components/render_components.hpp>
-#include <hyperion/render/frame/context/render_frame_context_camera.hpp>
+#include <hyperion/render/object/render_object_context_camera.hpp>
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Editor {
@@ -21,7 +21,7 @@ namespace Hyperion::Editor {
     inline static Rendering::CameraComponent *GetCamera() { return &s_camera; }
     inline static DerivedTransformComponent *GetTransform() { return &s_transform; }
     
-    static Rendering::RenderFrameContextCamera GetContextCamera();
+    static Rendering::RenderObjectContextCamera GetObjectContextCamera();
   private:
     static Vector3 GetPositionUnderMouse();
     static Vector3 GetXZPlanePosition(Vector3 position, Vector3 forward);

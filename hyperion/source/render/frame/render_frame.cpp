@@ -15,7 +15,7 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void RenderFrame::Clear() {
-    m_context.Clear();
+    m_object_context.Clear();
     m_asset_context.Clear();
     m_commands.Clear();
     m_async_request_results.Clear();
@@ -30,7 +30,7 @@ namespace Hyperion::Rendering {
     if (parameters.mask != LayerMask::Nothing) {
       Array<Plane> frustum_planes = CameraUtilities::ExtractFrustumPlanes(parameters.matrix);
       uint32 index = 0;
-      for (const RenderFrameContextObjectMesh &object : m_context.GetMeshObjects()) {
+      for (const RenderObjectContextMesh &object : m_object_context.GetMeshes()) {
         bool8 is_in_layer = (object.layer_mask & parameters.mask) == object.layer_mask && object.layer_mask != LayerMask::Nothing;
         if (is_in_layer) {
           bool8 is_inside_frustum = CameraUtilities::IsInsideFrustum(frustum_planes, object.bounds);
@@ -75,15 +75,15 @@ namespace Hyperion::Rendering {
     {
       HYP_PROFILE_SCOPE("RenderFrame.SortObjects")
 
-      const Array<RenderFrameContextObjectMesh> &mesh_objects = m_context.GetMeshObjects();
+      const Array<RenderObjectContextMesh> &mesh_objects = m_object_context.GetMeshes();
       Vector3 camera_position = drawing_parameters.sorting_settings.camera_position;
 
       switch (drawing_parameters.sorting_settings.criteria) {
         case SortingCriteria::None: break;
         case SortingCriteria::Opaque: {
           std::sort(draw_meshes.sorted_objects.begin(), draw_meshes.sorted_objects.end(), [mesh_objects, camera_position](uint32 a, uint32 b) {
-            const RenderFrameContextObjectMesh &mesh_a = mesh_objects[a];
-            const RenderFrameContextObjectMesh &mesh_b = mesh_objects[b];
+            const RenderObjectContextMesh &mesh_a = mesh_objects[a];
+            const RenderObjectContextMesh &mesh_b = mesh_objects[b];
 
             float32 distance_sqr_a = (camera_position - mesh_a.position).SqrMagnitude();
             float32 distance_sqr_b = (camera_position - mesh_b.position).SqrMagnitude();
@@ -94,8 +94,8 @@ namespace Hyperion::Rendering {
         }
         case SortingCriteria::Transparent: {
           std::sort(draw_meshes.sorted_objects.begin(), draw_meshes.sorted_objects.end(), [mesh_objects, camera_position](uint32 a, uint32 b) {
-            const RenderFrameContextObjectMesh &mesh_a = mesh_objects[a];
-            const RenderFrameContextObjectMesh &mesh_b = mesh_objects[b];
+            const RenderObjectContextMesh &mesh_a = mesh_objects[a];
+            const RenderObjectContextMesh &mesh_b = mesh_objects[b];
 
             float32 distance_sqr_a = (camera_position - mesh_a.position).SqrMagnitude();
             float32 distance_sqr_b = (camera_position - mesh_b.position).SqrMagnitude();

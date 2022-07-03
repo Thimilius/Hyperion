@@ -7,7 +7,7 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-  struct RenderFrameContextEnvironment {
+  struct RenderObjectContextEnvironment {
     struct AmbientLight {
       float32 intensity;
       Color color;

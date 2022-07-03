@@ -8,8 +8,8 @@
 namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
-  void ForwardRenderLighting::SetupLighting(RenderFrameContext &context, RenderCommandBuffer &command_buffer) {
-    RenderFrameContextEnvironment environment = context.GetEnvironment();
+  void ForwardRenderLighting::SetupLighting(RenderObjectContext &context, RenderCommandBuffer &command_buffer) {
+    RenderObjectContextEnvironment environment = context.GetEnvironment();
     auto &lights = context.GetLights();
     RenderBuffer render_buffer_lighting = RenderBuffer(sizeof(ForwardLightingBuffer));
     ForwardLightingBuffer *lighting_buffer = reinterpret_cast<ForwardLightingBuffer *>(render_buffer_lighting.GetData().GetData());
@@ -19,7 +19,7 @@ namespace Hyperion::Rendering {
     // Because of how the frame context gets populated, we know that the first light (if present and directional) is the main light.
     auto light_it = lights.begin();
     if (light_it != lights.end() && light_it->type == LightType::Directional) {
-      const RenderFrameContextLight &main_light = *light_it;
+      const RenderObjectContextLight &main_light = *light_it;
       m_main_light = &main_light;
       CopyFrameLightToLight(main_light, lighting_buffer->main_light);
     } else {
@@ -27,7 +27,7 @@ namespace Hyperion::Rendering {
     }
 
     uint64 point_light_index = 0;
-    for (const RenderFrameContextLight &light : lights) {
+    for (const RenderObjectContextLight &light : lights) {
       if (light.type == LightType::Point) {
         // HACK: For now we just ignore every light that is beyond our hardcoded limit.
 
@@ -54,7 +54,7 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void ForwardRenderLighting::CopyFrameLightToLight(const RenderFrameContextLight &frame_light, ForwardLight &light) {
+  void ForwardRenderLighting::CopyFrameLightToLight(const RenderObjectContextLight &frame_light, ForwardLight &light) {
     light.color = frame_light.color;
     light.intensity = Math::Clamp01(frame_light.intensity);
     light.direction = frame_light.direction;

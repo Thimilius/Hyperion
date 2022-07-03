@@ -736,14 +736,14 @@ namespace Hyperion::UI {
     });
     Flush(s_state.root_element.layout.scissor_rect);
     
-    Rendering::RenderFrameContext &render_frame_context = Rendering::RenderEngine::GetMainRenderFrame()->GetContext();
+    Rendering::RenderObjectContext &render_object_context = Rendering::RenderEngine::GetMainRenderFrame()->GetObjectContext();
     for (UIImmediateMeshDraw mesh_draw : s_mesh_draws) {
       Material *material = mesh_draw.material ? mesh_draw.material : AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI);
       AssetHandle texture_handle = mesh_draw.texture
        ? mesh_draw.texture->GetMetadata().handle
        : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetMetadata().handle;
       
-      Rendering::RenderFrameContextObjectUI &render_frame_context_ui_object = render_frame_context.AddEditorUIObject();
+      Rendering::RenderObjectContextUIElement &render_frame_context_ui_object = render_object_context.AddEditorUIElement();
       render_frame_context_ui_object.local_to_world = Matrix4x4::Identity();
       render_frame_context_ui_object.mesh_handle = mesh_draw.mesh.mesh->GetMetadata().handle;
       render_frame_context_ui_object.shader_handle = material->GetShader()->GetMetadata().handle;

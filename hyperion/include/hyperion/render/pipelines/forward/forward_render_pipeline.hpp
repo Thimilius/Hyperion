@@ -14,7 +14,7 @@ namespace Hyperion {
   class Shader;
 
   namespace Rendering {
-    struct RenderFrameContextCamera;
+    struct RenderObjectContextCamera;
   }}
 
 //-------------------- Definition Namespace --------------------
@@ -23,11 +23,11 @@ namespace Hyperion::Rendering {
   class ForwardRenderPipeline final : public IRenderPipeline {
   public:
     void Initialize() override;
-    void Render(RenderFrame *render_frame, const Array<const RenderFrameContextCamera *> &cameras) override;
+    void Render(RenderFrame *render_frame, const Array<const RenderObjectContextCamera *> &cameras) override;
     void Shutdown() override;
     
     void SetupRendering(RenderFrame *render_frame) override;
-    void RenderCamera(RenderFrame *render_frame, const RenderFrameContextCamera *camera, RenderTexture *target_texture) override;
+    void RenderCamera(RenderFrame *render_frame, const RenderObjectContextCamera *camera, RenderTexture *target_texture) override;
 
     inline uint32 GetRenderTargetWidth() const override { return m_render_target_width; }
     inline uint32 GetRenderTargetHeight() const override { return m_render_target_height; }
@@ -40,7 +40,7 @@ namespace Hyperion::Rendering {
     inline void SetShouldDrawGizmos(bool8 should_draw_gizmos) override { m_should_draw_gizmos = should_draw_gizmos; }
   private:
     void DrawShadows(RenderFrame *render_frame);
-    void DrawMeshes(RenderFrame *render_frame, const RenderFrameContextCamera *camera, CullingResults &culling_results, RenderTexture *target_texture);
+    void DrawMeshes(RenderFrame *render_frame, const RenderObjectContextCamera *camera, CullingResults &culling_results, RenderTexture *target_texture);
   private:
     ForwardRenderLighting m_lighting;
     

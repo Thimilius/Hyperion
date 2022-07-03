@@ -11,7 +11,7 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-  struct RenderFrameContextCamera {
+  struct RenderObjectContextCamera {
     uint32 index = 0;
 
     CameraProjectionMode projection_mode = CameraProjectionMode::Perspective;

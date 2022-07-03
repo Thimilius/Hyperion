@@ -70,10 +70,10 @@ namespace Hyperion::Rendering {
   void RenderEngine::Render() {
     HYP_PROFILE_SCOPE("RenderEngine.RenderPipeline")
 
-    const Array<RenderFrameContextCamera> context_cameras = s_main_frame->GetContext().GetCameras();
-    Array<const RenderFrameContextCamera *> cameras;
+    const Array<RenderObjectContextCamera> context_cameras = s_main_frame->GetObjectContext().GetCameras();
+    Array<const RenderObjectContextCamera *> cameras;
     cameras.Reserve(context_cameras.GetLength());
-    for (const RenderFrameContextCamera &camera : context_cameras) {
+    for (const RenderObjectContextCamera &camera : context_cameras) {
       cameras.Add(&camera);
     }
     s_render_pipeline->Render(s_main_frame, cameras);

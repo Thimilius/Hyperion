@@ -103,13 +103,13 @@ namespace Hyperion::Editor {
   }
 
   //--------------------------------------------------------------
-  Rendering::RenderFrameContextCamera EditorCamera::GetContextCamera() {
+  Rendering::RenderObjectContextCamera EditorCamera::GetObjectContextCamera() {
     Rect preview_rect = EditorUI::GetPreviewRect();
     Rendering::CameraViewport viewport = { 0, 0, static_cast<int32>(preview_rect.width), static_cast<int32>(preview_rect.height) };
     
     Rendering::CameraUtilities::RecalculateMatrices(&s_camera, &s_transform, viewport);
 
-    Rendering::RenderFrameContextCamera render_frame_context_camera;
+    Rendering::RenderObjectContextCamera render_frame_context_camera;
     render_frame_context_camera.projection_mode = s_camera.projection_mode;
     render_frame_context_camera.clear_mode = s_camera.clear_mode;
     render_frame_context_camera.background_color = s_camera.background_color;

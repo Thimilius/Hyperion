@@ -63,14 +63,14 @@ namespace Hyperion::Rendering {
   private:
     void ExecuteRenderFrame(RenderFrame *render_frame);
     
-    void ExecuteFrameCommandSetCamera(const RenderFrameCommandSetCamera &command, const RenderFrameContext &context);
+    void ExecuteFrameCommandSetCamera(const RenderFrameCommandSetCamera &command, const RenderObjectContext &context);
     void ExecuteFrameCommandExecuteCommandBuffer(const RenderFrameCommandExecuteCommandBuffer &command, RenderFrame *render_frame);
-    void ExecuteFrameCommandDrawMeshes(const RenderFrameCommandDrawMeshes &command, RenderFrame *render_frame, const RenderFrameContext &context);
-    void ExecuteFrameCommandDrawShadows(const RenderFrameCommandDrawShadows &command, const RenderFrameContext &context);
-    void ExecuteFrameCommandDrawUI(const RenderFrameCommandDrawUI &command, const RenderFrameContext &context);
-    void ExecuteFrameCommandDrawObjectIds(const RenderFrameCommandDrawObjectIds &command, const RenderFrameContext &context);
-    void ExecuteFrameCommandDrawGizmos(const RenderFrameCommandDrawGizmos &command, const RenderFrameContext &context);
-    void ExecuteFrameCommandDrawEditorUI(const RenderFrameCommandDrawEditorUI &command, const RenderFrameContext &context);
+    void ExecuteFrameCommandDrawMeshes(const RenderFrameCommandDrawMeshes &command, RenderFrame *render_frame, const RenderObjectContext &context);
+    void ExecuteFrameCommandDrawShadows(const RenderFrameCommandDrawShadows &command, const RenderObjectContext &context);
+    void ExecuteFrameCommandDrawUI(const RenderFrameCommandDrawUI &command, const RenderObjectContext &context);
+    void ExecuteFrameCommandDrawObjectIds(const RenderFrameCommandDrawObjectIds &command, const RenderObjectContext &context);
+    void ExecuteFrameCommandDrawGizmos(const RenderFrameCommandDrawGizmos &command, const RenderObjectContext &context);
+    void ExecuteFrameCommandDrawEditorUI(const RenderFrameCommandDrawEditorUI &command, const RenderObjectContext &context);
 
     void ExecuteBufferCommandClearRenderTarget(const RenderCommandBufferCommandClearRenderTarget &command);
     void ExecuteBufferCommandSetRenderTarget(const RenderCommandBufferCommandSetRenderTarget &command);
@@ -79,10 +79,10 @@ namespace Hyperion::Rendering {
     void ExecuteBufferCommandRequestAsyncReadback(const RenderCommandBufferCommandRequestAsyncReadback &command, RenderFrame *render_frame);
     
     void PrepareObjects(RenderFrame *render_frame, const Array<uint32> &sorted_objects, DrawingParameters drawing_parameters);
-    void SetupPerObjectLightIndices(const RenderFrameContext &render_frame_context, GroupedObject &grouped_object, Vector3 object_position);
-    void DrawMeshes(const RenderFrameContextEnvironment &environment, const Array<RenderFrameContextLight> &lights, DrawingParameters drawing_parameters);
+    void SetupPerObjectLightIndices(const RenderObjectContext &render_object_context, GroupedObject &grouped_object, Vector3 object_position);
+    void DrawMeshes(const RenderObjectContextEnvironment &environment, const Array<RenderObjectContextLight> &lights, DrawingParameters drawing_parameters);
     void DrawSubMesh(const SubMesh &sub_mesh);
-    void DrawUI(const Array<RenderFrameContextObjectUI> &elements);
+    void DrawUI(const Array<RenderObjectContextUIElement> &elements);
     void DrawRenderBounds(const BoundingBox &bounds);
 
     void UseRenderTexture(RenderTargetId render_target_id);

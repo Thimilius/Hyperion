@@ -6,7 +6,7 @@
 #include "hyperion/render/assets/render_assets_context.hpp"
 #include "hyperion/render/command/render_command_buffer.hpp"
 #include "hyperion/render/frame/render_frame_commands.hpp"
-#include "hyperion/render/frame/context/render_frame_context.hpp"
+#include "hyperion/render/object/render_object_context.hpp"
 
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
@@ -15,10 +15,10 @@ namespace Hyperion::Rendering {
   public:
     void Clear();
 
-    inline RenderFrameContext &GetContext() { return m_context; }
-    inline const RenderFrameContext &GetContext() const { return m_context; }
     inline RenderAssetContext &GetAssetContext() { return m_asset_context; }
     inline const RenderAssetContext &GetAssetContext() const { return m_asset_context; }
+    inline RenderObjectContext &GetObjectContext() { return m_object_context; }
+    inline const RenderObjectContext &GetObjectContext() const { return m_object_context; }
     inline const Array<RenderFrameCommand> &GetCommands() const { return m_commands; }
 
     CullingResults Cull(CullingParameters parameters);
@@ -37,8 +37,8 @@ namespace Hyperion::Rendering {
   private:
     RenderFrameCommand &CreateCommand(RenderFrameCommandType type);
   private:
-    RenderFrameContext m_context;
     RenderAssetContext m_asset_context;
+    RenderObjectContext m_object_context;
     Array<RenderFrameCommand> m_commands;
     Array<AsyncRequestResult> m_async_request_results;
   };

@@ -12,13 +12,13 @@ namespace Hyperion::Rendering {
 
   using RenderFrameContextObjectId = uint64;
 
-  struct RenderFrameContextObject {
+  struct RenderObjectContextObject {
     RenderFrameContextObjectId id = 0;
     Matrix4x4 local_to_world;
     Vector3 position;
   };
 
-  struct RenderFrameContextObjectMesh : public RenderFrameContextObject {
+  struct RenderObjectContextMesh : public RenderObjectContextObject {
     AssetHandle mesh_handle;
     uint32 sub_mesh_index = 0;
 
@@ -30,11 +30,11 @@ namespace Hyperion::Rendering {
     BoundingBox bounds;
   };
 
-  struct RenderFrameContextObjectSprite : public RenderFrameContextObject {
+  struct RenderObjectContextSprite : public RenderObjectContextObject {
     Color color;
   };
 
-  struct RenderFrameContextObjectUI : public RenderFrameContextObject {
+  struct RenderObjectContextUIElement : public RenderObjectContextObject {
     AssetHandle mesh_handle;
 
     AssetHandle shader_handle;

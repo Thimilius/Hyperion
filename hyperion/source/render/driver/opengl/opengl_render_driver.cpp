@@ -43,7 +43,7 @@ namespace Hyperion::Rendering {
   void OpenGLRenderDriver::ExecuteRenderFrame(RenderFrame *render_frame) {
     HYP_PROFILE_SCOPE("OpenGLRenderDriver.ExecuteRenderFrameCommands")
 
-    const RenderFrameContext &context = render_frame->GetContext();
+    const RenderObjectContext &context = render_frame->GetObjectContext();
 
     const Array<RenderFrameCommand> &frame_commands = render_frame->GetCommands();
     for (const RenderFrameCommand &frame_command : frame_commands) {
@@ -127,10 +127,10 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::ExecuteFrameCommandSetCamera(const RenderFrameCommandSetCamera &command, const RenderFrameContext &context) {
+  void OpenGLRenderDriver::ExecuteFrameCommandSetCamera(const RenderFrameCommandSetCamera &command, const RenderObjectContext &context) {
     m_state.camera_index = command.camera_index;
 
-    const RenderFrameContextCamera &render_frame_context_camera = context.GetCameras()[m_state.camera_index];
+    const RenderObjectContextCamera &render_frame_context_camera = context.GetCameras()[m_state.camera_index];
 
     OpenGLUniformBufferCamera uniform_buffer_camera;
     uniform_buffer_camera.camera_view_matrix = render_frame_context_camera.view_matrix;
@@ -202,13 +202,13 @@ namespace Hyperion::Rendering {
   void OpenGLRenderDriver::ExecuteFrameCommandDrawMeshes(
     const RenderFrameCommandDrawMeshes &command,
     RenderFrame *render_frame,
-    const RenderFrameContext &context) {
+    const RenderObjectContext &context) {
     PrepareObjects(render_frame, command.sorted_objects, command.drawing_parameters);
     DrawMeshes(context.GetEnvironment(), context.GetLights(), command.drawing_parameters);
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::ExecuteFrameCommandDrawShadows(const RenderFrameCommandDrawShadows &command, const RenderFrameContext &context) {
+  void OpenGLRenderDriver::ExecuteFrameCommandDrawShadows(const RenderFrameCommandDrawShadows &command, const RenderObjectContext &context) {
     glViewport(0, 0, static_cast<GLsizei>(command.shadow_parameters.shadow_map_size), static_cast<GLsizei>(command.shadow_parameters.shadow_map_size));
 
     const OpenGLShader &opengl_shader = m_storage.GetStatic().shadow_shader;
@@ -218,8 +218,8 @@ namespace Hyperion::Rendering {
 
     glProgramUniformMatrix4fv(opengl_shader.program, light_space_location, 1, GL_FALSE, command.shadow_parameters.light_space_matrix.elements);
 
-    const Array<RenderFrameContextObjectMesh> &mesh_objects = context.GetMeshObjects();
-    for (const RenderFrameContextObjectMesh &mesh_object : mesh_objects) {
+    const Array<RenderObjectContextMesh> &mesh_objects = context.GetMeshes();
+    for (const RenderObjectContextMesh &mesh_object : mesh_objects) {
       glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, mesh_object.local_to_world.elements);
       
       const OpenGLMesh &opengl_mesh = m_storage.GetMesh(mesh_object.mesh_handle);
@@ -231,14 +231,14 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::ExecuteFrameCommandDrawUI(const RenderFrameCommandDrawUI &command, const RenderFrameContext &context) {
-    DrawUI(context.GetUIObjects());
+  void OpenGLRenderDriver::ExecuteFrameCommandDrawUI(const RenderFrameCommandDrawUI &command, const RenderObjectContext &context) {
+    DrawUI(context.GetUIElements());
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::ExecuteFrameCommandDrawObjectIds(const RenderFrameCommandDrawObjectIds &command, const RenderFrameContext &context) {
+  void OpenGLRenderDriver::ExecuteFrameCommandDrawObjectIds(const RenderFrameCommandDrawObjectIds &command, const RenderObjectContext &context) {
     {
-      const RenderFrameContextCamera &render_frame_context_camera = context.GetCameras()[m_state.camera_index];
+      const RenderObjectContextCamera &render_frame_context_camera = context.GetCameras()[m_state.camera_index];
 
       OpenGLUniformBufferCamera uniform_buffer_camera;
       uniform_buffer_camera.camera_view_matrix = render_frame_context_camera.view_matrix;
@@ -261,7 +261,7 @@ namespace Hyperion::Rendering {
     GLint object_id_location = opengl_shader.fixed_locations[static_cast<uint32>(OpenGLShaderUniformLocation::ObjectId)];
     UseShader(opengl_shader);
 
-    for (const RenderFrameContextObjectMesh &mesh_object : context.GetMeshObjects()) {
+    for (const RenderObjectContextMesh &mesh_object : context.GetMeshes()) {
       OpenGLDebugGroup debug_group("DrawMesh");
 
       glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, mesh_object.local_to_world.elements);
@@ -280,7 +280,7 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::ExecuteFrameCommandDrawGizmos(const RenderFrameCommandDrawGizmos &command, const RenderFrameContext &context) {
+  void OpenGLRenderDriver::ExecuteFrameCommandDrawGizmos(const RenderFrameCommandDrawGizmos &command, const RenderObjectContext &context) {
     glDepthMask(GL_FALSE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -310,7 +310,7 @@ namespace Hyperion::Rendering {
       
       glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, Matrix4x4::Identity().elements);
 
-      for (const RenderFrameContextObjectMesh &object : context.GetMeshObjects()) {
+      for (const RenderObjectContextMesh &object : context.GetMeshes()) {
         DrawRenderBounds(object.bounds);
       }
     }
@@ -353,8 +353,8 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::ExecuteFrameCommandDrawEditorUI(const RenderFrameCommandDrawEditorUI &command, const RenderFrameContext &context) {
-    DrawUI(context.GetEditorUIObjects());
+  void OpenGLRenderDriver::ExecuteFrameCommandDrawEditorUI(const RenderFrameCommandDrawEditorUI &command, const RenderObjectContext &context) {
+    DrawUI(context.GetEditorUIElements());
   }
 
   //--------------------------------------------------------------
@@ -506,11 +506,11 @@ namespace Hyperion::Rendering {
 
     Array<GroupedShader> grouped_shaders;
 
-    const RenderFrameContext &render_frame_context = render_frame->GetContext();
-    const Array<RenderFrameContextObjectMesh> &mesh_objects = render_frame_context.GetMeshObjects();
+    const RenderObjectContext &render_object_context = render_frame->GetObjectContext();
+    const Array<RenderObjectContextMesh> &mesh_objects = render_object_context.GetMeshes();
 
     for (uint32 index : sorted_objects) {
-      const RenderFrameContextObjectMesh &render_frame_context_object_mesh = mesh_objects[index];
+      const RenderObjectContextMesh &render_frame_context_object_mesh = mesh_objects[index];
 
       AssetHandle shader_handle = render_frame_context_object_mesh.shader_handle;
       AssetHandle material_handle = render_frame_context_object_mesh.material_handle;
@@ -575,7 +575,7 @@ namespace Hyperion::Rendering {
       // TODO: Can we make this check here at compile time and divert the runtime check to the call site of GroupObjects?
       // This would save this branch check on every iteration.
       if ((drawing_parameters.per_object_data & PerObjectData::LightIndices) == PerObjectData::LightIndices) {
-        SetupPerObjectLightIndices(render_frame_context, grouped_object, render_frame_context_object_mesh.position);
+        SetupPerObjectLightIndices(render_object_context, grouped_object, render_frame_context_object_mesh.position);
       }
 
       grouped_mesh->objects.Add(grouped_object);
@@ -589,7 +589,7 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::SetupPerObjectLightIndices(const RenderFrameContext &render_frame_context, GroupedObject &grouped_object, Vector3 object_position) {
+  void OpenGLRenderDriver::SetupPerObjectLightIndices(const RenderObjectContext &render_object_context, GroupedObject &grouped_object, Vector3 object_position) {
     HYP_PROFILE_SCOPE("OpenGLRenderDriver.SetupPerObjectLightIndices")
 
     // HACK: Currently this is pretty hardcoded for 4 light indices per object (and a maximum of 128 global lights).
@@ -605,7 +605,7 @@ namespace Hyperion::Rendering {
     float32 smallest_distances[4] = { FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX };
 
     // NOTE: We currently do no culling of lights which is unfortunate.
-    for (const RenderFrameContextLight &light : render_frame_context.GetLights()) {
+    for (const RenderObjectContextLight &light : render_object_context.GetLights()) {
       if (light.type == LightType::Point && current_light_index < 128) {
         float32 distance_to_light = (light.position - object_position).SqrMagnitude();
 
@@ -649,8 +649,8 @@ namespace Hyperion::Rendering {
 
   //--------------------------------------------------------------
   void OpenGLRenderDriver::DrawMeshes(
-    const RenderFrameContextEnvironment &environment,
-    const Array<RenderFrameContextLight> &lights,
+    const RenderObjectContextEnvironment &environment,
+    const Array<RenderObjectContextLight> &lights,
     DrawingParameters drawing_parameters) {
     HYP_PROFILE_SCOPE("OpenGLRenderDriver.DrawMeshes")
 
@@ -726,7 +726,7 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void OpenGLRenderDriver::DrawUI(const Array<RenderFrameContextObjectUI> &elements) {
+  void OpenGLRenderDriver::DrawUI(const Array<RenderObjectContextUIElement> &elements) {
     {
       uint32 width = Display::GetWidth();
       uint32 height = Display::GetHeight();
@@ -743,7 +743,7 @@ namespace Hyperion::Rendering {
 
     glEnable(GL_SCISSOR_TEST);
     
-    for (const RenderFrameContextObjectUI &element : elements) {
+    for (const RenderObjectContextUIElement &element : elements) {
       const OpenGLShader &opengl_shader = m_storage.GetShader(element.shader_handle);
       UseShader(opengl_shader);
 

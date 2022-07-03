@@ -9,7 +9,7 @@
 //-------------------- Definition Namespace --------------------
 namespace Hyperion::Rendering {
 
-  struct RenderFrameContextLight {
+  struct RenderObjectContextLight {
     LightType type = LightType::Directional;
 
     Color color;

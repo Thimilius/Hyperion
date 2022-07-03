@@ -60,7 +60,7 @@ namespace Hyperion::Editor {
   }
 
   //--------------------------------------------------------------
-  void EditorRenderPipeline::Render(RenderFrame *render_frame, const Array<const RenderFrameContextCamera *> &cameras) {
+  void EditorRenderPipeline::Render(RenderFrame *render_frame, const Array<const RenderObjectContextCamera *> &cameras) {
     UpdateSize();
     m_object_ids_render_texture->Resize(GetRenderTargetWidth(), GetRenderTargetHeight());
     m_editor_render_texture->Resize(GetRenderTargetWidth(), GetRenderTargetHeight());
@@ -85,16 +85,16 @@ namespace Hyperion::Editor {
   }
 
   //--------------------------------------------------------------
-  void EditorRenderPipeline::RenderCamera(RenderFrame *render_frame, const RenderFrameContextCamera *camera, RenderTexture *target_texture) {
+  void EditorRenderPipeline::RenderCamera(RenderFrame *render_frame, const RenderObjectContextCamera *camera, RenderTexture *target_texture) {
     m_wrapped_pipeline->RenderCamera(render_frame, camera, target_texture);
   }
 
   //--------------------------------------------------------------
   void EditorRenderPipeline::RenderEditor(RenderFrame *render_frame) {
     if (EditorUI::GetViewMode() == EditorViewMode::Editor) {
-      RenderFrameContextCamera editor_camera = EditorCamera::GetContextCamera();
-      editor_camera.index = static_cast<uint32>(RenderEngine::GetMainRenderFrame()->GetContext().GetCameras().GetLength());
-      RenderEngine::GetMainRenderFrame()->GetContext().AddCamera() = editor_camera;
+      RenderObjectContextCamera editor_camera = EditorCamera::GetObjectContextCamera();
+      editor_camera.index = static_cast<uint32>(RenderEngine::GetMainRenderFrame()->GetObjectContext().GetCameras().GetLength());
+      RenderEngine::GetMainRenderFrame()->GetObjectContext().AddCamera() = editor_camera;
       
       SetShouldDrawGizmos(true);
       m_wrapped_pipeline->RenderCamera(render_frame, &editor_camera, m_editor_render_texture);

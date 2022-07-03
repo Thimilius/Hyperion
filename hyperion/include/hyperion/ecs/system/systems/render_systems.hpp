@@ -6,7 +6,7 @@
 
 //-------------------- Forward Declarations --------------------
 namespace Hyperion { namespace Rendering {
-    struct RenderFrameContextObjectUI;
+    struct RenderObjectContextUIElement;
   }
 
   namespace UI {
@@ -51,9 +51,9 @@ namespace Hyperion::Rendering {
   public:
     void Run(EntityManager *manager) override;
   public:
-    static void Run(UI::UIViewComponent *ui_view, Delegate<RenderFrameContextObjectUI &()> ui_object_adder);
+    static void Run(UI::UIViewComponent *ui_view, Delegate<RenderObjectContextUIElement &()> ui_object_adder);
   private:
-    static void RenderElement(UI::UIElement *element, Delegate<RenderFrameContextObjectUI &()> ui_object_adder);
+    static void RenderElement(UI::UIElement *element, Delegate<RenderObjectContextUIElement &()> ui_object_adder);
   };
 
 }

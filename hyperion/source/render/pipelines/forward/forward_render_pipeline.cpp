@@ -45,12 +45,12 @@ namespace Hyperion::Rendering {
   }
 
   //--------------------------------------------------------------
-  void ForwardRenderPipeline::Render(RenderFrame *render_frame, const Array<const RenderFrameContextCamera *> &cameras) {
+  void ForwardRenderPipeline::Render(RenderFrame *render_frame, const Array<const RenderObjectContextCamera *> &cameras) {
     if (m_should_do_setup) {
       SetupRendering(render_frame);
     }
 
-    for (const RenderFrameContextCamera *camera : cameras) {
+    for (const RenderObjectContextCamera *camera : cameras) {
       RenderCamera(render_frame, camera, m_target_render_texture);
     }
 
@@ -87,13 +87,13 @@ namespace Hyperion::Rendering {
       RenderCommandBuffer command_buffer;
       command_buffer.SetRenderTarget(RenderTargetId::Default());
       command_buffer.ClearRenderTarget(ClearFlags::All, Color::Black());
-      m_lighting.SetupLighting(render_frame->GetContext(), command_buffer);
+      m_lighting.SetupLighting(render_frame->GetObjectContext(), command_buffer);
       render_frame->ExecuteCommandBuffer(command_buffer);
     }
   }
 
   //--------------------------------------------------------------
-  void ForwardRenderPipeline::RenderCamera(RenderFrame *render_frame, const RenderFrameContextCamera *camera, RenderTexture *target_texture) {
+  void ForwardRenderPipeline::RenderCamera(RenderFrame *render_frame, const RenderObjectContextCamera *camera, RenderTexture *target_texture) {
     CullingParameters culling_parameters;
     culling_parameters.matrix = camera->view_projection_matrix;
     culling_parameters.mask = camera->culling_mask;
@@ -122,7 +122,7 @@ namespace Hyperion::Rendering {
       render_frame->ExecuteCommandBuffer(command_buffer);
     }
 
-    const RenderFrameContextLight *main_light = m_lighting.GetMainLight();
+    const RenderObjectContextLight *main_light = m_lighting.GetMainLight();
     if (main_light == nullptr || main_light->shadows == LightShadows::None) {
       return;
     }
@@ -137,7 +137,7 @@ namespace Hyperion::Rendering {
   //--------------------------------------------------------------
   void ForwardRenderPipeline::DrawMeshes(
     RenderFrame *render_frame,
-    const RenderFrameContextCamera *camera,
+    const RenderObjectContextCamera *camera,
     CullingResults &culling_results,
     RenderTexture *target_texture) {
     {
