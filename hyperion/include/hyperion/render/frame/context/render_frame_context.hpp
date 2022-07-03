@@ -30,7 +30,7 @@ namespace Hyperion::Rendering {
     RenderFrameContextObjectUI &AddUIObject();
     RenderFrameContextObjectUI &AddEditorUIObject();
   private:
-    RenderFrameContextEnvironment m_environment;
+    RenderFrameContextEnvironment m_environment = { };
     Array<RenderFrameContextCamera> m_cameras;
     Array<RenderFrameContextLight> m_lights;
     Array<RenderFrameContextObjectMesh> m_mesh_objects;

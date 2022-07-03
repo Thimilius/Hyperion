@@ -147,10 +147,10 @@ namespace Hyperion::Rendering {
   //--------------------------------------------------------------
   CameraViewport CameraUtilities::CalculateViewportFromClipping(CameraViewportClipping viewport_clipping, Vector2 display_size) {
     CameraViewport viewport = { };
-    viewport.x = static_cast<uint32>(Math::Clamp01(viewport_clipping.x) * display_size.x);
-    viewport.y = static_cast<uint32>(Math::Clamp01(viewport_clipping.y) * display_size.y);
-    viewport.width = static_cast<uint32>(Math::Clamp01(viewport_clipping.width) * display_size.x);
-    viewport.height = static_cast<uint32>(Math::Clamp01(viewport_clipping.height) * display_size.y);
+    viewport.x = static_cast<int32>(Math::Clamp01(viewport_clipping.x) * display_size.x);
+    viewport.y = static_cast<int32>(Math::Clamp01(viewport_clipping.y) * display_size.y);
+    viewport.width = static_cast<int32>(Math::Clamp01(viewport_clipping.width) * display_size.x);
+    viewport.height = static_cast<int32>(Math::Clamp01(viewport_clipping.height) * display_size.y);
     return viewport;
   }
 

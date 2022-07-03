@@ -25,22 +25,24 @@ namespace Hyperion::Rendering {
   CullingResults RenderFrame::Cull(CullingParameters parameters) {
     HYP_PROFILE_SCOPE("RenderFrame.Cull")
 
-    Array<Plane> frustum_planes = CameraUtilities::ExtractFrustumPlanes(parameters.matrix);
-
     CullingResults result;
 
-    uint32 index = 0;
-    for (const RenderFrameContextObjectMesh &object : m_context.GetMeshObjects()) {
-      bool8 is_inside_frustum = CameraUtilities::IsInsideFrustum(frustum_planes, object.bounds);
-      bool8 is_in_layer = (object.layer_mask & parameters.mask) == object.layer_mask;
+    if (parameters.mask != LayerMask::Nothing) {
+      Array<Plane> frustum_planes = CameraUtilities::ExtractFrustumPlanes(parameters.matrix);
+      uint32 index = 0;
+      for (const RenderFrameContextObjectMesh &object : m_context.GetMeshObjects()) {
+        bool8 is_in_layer = (object.layer_mask & parameters.mask) == object.layer_mask && object.layer_mask != LayerMask::Nothing;
+        if (is_in_layer) {
+          bool8 is_inside_frustum = CameraUtilities::IsInsideFrustum(frustum_planes, object.bounds);
+          if (is_inside_frustum) {
+            result.visible_objects.Add(index);  
+          }
+        }
 
-      if (is_inside_frustum && is_in_layer) {
-        result.visible_objects.Add(index);
+        index++;
       }
-
-      index++;
     }
-
+    
     return result;
   }
 

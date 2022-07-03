@@ -217,7 +217,7 @@ namespace Hyperion::Rendering {
     UseShader(opengl_shader);
 
     glProgramUniformMatrix4fv(opengl_shader.program, light_space_location, 1, GL_FALSE, command.shadow_parameters.light_space_matrix.elements);
-    
+
     const Array<RenderFrameContextObjectMesh> &mesh_objects = context.GetMeshObjects();
     for (const RenderFrameContextObjectMesh &mesh_object : mesh_objects) {
       glProgramUniformMatrix4fv(opengl_shader.program, model_location, 1, GL_FALSE, mesh_object.local_to_world.elements);
@@ -679,7 +679,7 @@ namespace Hyperion::Rendering {
         // This is something that the render pipeline should fully control using a system of "global" shader variables.
         uint32 texture_unit = 1; // FIXME: This should be set depending on the amount of texture units in the material.
         glBindTextureUnit(texture_unit, shadow_map);
-        glProgramUniform1i(opengl_shader.program, shadow_map_location, texture_unit);
+        glProgramUniform1i(opengl_shader.program, shadow_map_location, static_cast<GLint>(texture_unit));
 
         for (const auto &[mesh_id, grouped_mesh] : grouped_material.meshes) {
           HYP_PROFILE_SCOPE("OpenGLRenderDriver.RenderGroupedMesh")
