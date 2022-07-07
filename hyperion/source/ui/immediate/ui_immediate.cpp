@@ -740,14 +740,14 @@ namespace Hyperion::UI {
     for (UIImmediateMeshDraw mesh_draw : s_mesh_draws) {
       Material *material = mesh_draw.material ? mesh_draw.material : AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI);
       AssetHandle texture_handle = mesh_draw.texture
-       ? mesh_draw.texture->GetMetadata().handle
-       : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetMetadata().handle;
+       ? mesh_draw.texture->GetHandle()
+       : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetHandle();
       
       Rendering::RenderObjectContextUIElement &render_frame_context_ui_object = render_object_context.AddEditorUIElement();
       render_frame_context_ui_object.local_to_world = Matrix4x4::Identity();
-      render_frame_context_ui_object.mesh_handle = mesh_draw.mesh.mesh->GetMetadata().handle;
-      render_frame_context_ui_object.shader_handle = material->GetShader()->GetMetadata().handle;
-      render_frame_context_ui_object.material_handle = material->GetMetadata().handle;
+      render_frame_context_ui_object.mesh_handle = mesh_draw.mesh.mesh->GetHandle();
+      render_frame_context_ui_object.shader_handle = material->GetShader()->GetHandle();
+      render_frame_context_ui_object.material_handle = material->GetHandle();
       render_frame_context_ui_object.color = mesh_draw.color;
       render_frame_context_ui_object.texture.handle = texture_handle;
       render_frame_context_ui_object.texture.dimension = mesh_draw.texture ? mesh_draw.texture->GetDimension() : Rendering::TextureDimension::Texture2D;

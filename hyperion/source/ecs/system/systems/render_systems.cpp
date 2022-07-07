@@ -237,14 +237,14 @@ namespace Hyperion::Rendering {
         if (color.a > 0.0f) {
           Material *material = renderer.material ? renderer.material : AssetManager::GetMaterialPrimitive(MaterialPrimitive::UI);
           AssetHandle texture_handle = renderer.texture
-           ? renderer.texture->GetMetadata().handle
-           : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetMetadata().handle;
+           ? renderer.texture->GetHandle()
+           : AssetManager::GetTexture2DPrimitive(Texture2DPrimitive::White)->GetHandle();
 
           RenderObjectContextUIElement &render_object_context_ui_element = ui_object_adder();
           render_object_context_ui_element.local_to_world = Matrix4x4::Identity();
-          render_object_context_ui_element.mesh_handle = renderer.mesh->GetMetadata().handle;
-          render_object_context_ui_element.shader_handle = material->GetShader()->GetMetadata().handle;
-          render_object_context_ui_element.material_handle = material->GetMetadata().handle;
+          render_object_context_ui_element.mesh_handle = renderer.mesh->GetHandle();
+          render_object_context_ui_element.shader_handle = material->GetShader()->GetHandle();
+          render_object_context_ui_element.material_handle = material->GetHandle();
           render_object_context_ui_element.color = color;
           render_object_context_ui_element.texture.handle = texture_handle;
           render_object_context_ui_element.texture.dimension = renderer.texture ? renderer.texture->GetDimension() : TextureDimension::Texture2D;

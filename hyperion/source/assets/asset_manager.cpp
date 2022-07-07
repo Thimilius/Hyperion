@@ -218,7 +218,7 @@ namespace Hyperion {
       return;
     }
 
-    AssetHandle asset_handle = asset->GetMetadata().handle;
+    AssetHandle asset_handle = asset->GetHandle();
     
     s_assets.Remove(asset_handle);
     
@@ -367,7 +367,7 @@ namespace Hyperion {
 
   //--------------------------------------------------------------
   void AssetManager::SetNewHandle(Asset *asset, const String &handle) {
-    AssetHandle old_handle = asset->GetMetadata().handle;
+    AssetHandle old_handle = asset->GetHandle();
     AssetHandle new_handle = AssetHandle(AssetHandleType::Generate(handle));
 
     HYP_ASSERT(s_assets.Contains(old_handle));

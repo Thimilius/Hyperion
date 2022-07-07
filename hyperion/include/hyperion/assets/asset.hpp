@@ -19,7 +19,9 @@ namespace Hyperion {
     Asset(AssetMetadata metadata) : m_metadata(std::move(metadata)) { }
     virtual ~Asset() = default;
   public:
-    inline const AssetMetadata &GetMetadata() const { return m_metadata; }
+    inline AssetMetadata GetMetadata() const { return m_metadata; }
+    inline AssetHandle GetHandle() const { return m_metadata.handle; }
+    inline AssetDataAccess GetDataAccess() const { return m_metadata.data_access; }
     inline bool8 IsDirty() const { return m_is_dirty; }
 
     virtual AssetType GetAssetType() const = 0;

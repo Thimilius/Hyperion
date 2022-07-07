@@ -143,13 +143,13 @@ namespace Hyperion::Rendering {
   //--------------------------------------------------------------
   void RenderPipelineContext::DrawGizmos() {
     RenderPipelineCommandDrawGizmos draw_gizmos = { };
-    draw_gizmos.shader_handle = AssetManager::GetShaderPrimitive(ShaderPrimitive::Gizmo)->GetMetadata().handle;
+    draw_gizmos.shader_handle = AssetManager::GetShaderPrimitive(ShaderPrimitive::Gizmo)->GetHandle();
     
     draw_gizmos.grid.should_draw = RenderGizmos::GetShouldDrawGrid();
     draw_gizmos.grid.local_to_world = Matrix4x4::Identity();
     Mesh *grid_mesh = RenderGizmos::GetGridMesh();
     if (grid_mesh) {
-      draw_gizmos.grid.mesh_handle = grid_mesh->GetMetadata().handle;
+      draw_gizmos.grid.mesh_handle = grid_mesh->GetHandle();
     } else {
       draw_gizmos.grid.mesh_handle = AssetHandle();
     }
@@ -158,7 +158,7 @@ namespace Hyperion::Rendering {
     draw_gizmos.highlight.local_to_world = RenderGizmos::GetHighlightTransformation();
     Mesh *highlight_mesh = RenderGizmos::GetHighlightMesh();
     if (highlight_mesh) {
-      draw_gizmos.highlight.mesh_handle = highlight_mesh->GetMetadata().handle;
+      draw_gizmos.highlight.mesh_handle = highlight_mesh->GetHandle();
     } else {
       draw_gizmos.highlight.mesh_handle = AssetHandle();
     }
@@ -167,7 +167,7 @@ namespace Hyperion::Rendering {
     draw_gizmos.transformation_gizmo.local_to_world = RenderGizmos::GetTransformationGizmoTransformation();
     Mesh *transformation_gizmo_mesh = RenderGizmos::GetTransformationGizmoMesh();
     if (transformation_gizmo_mesh) {
-      draw_gizmos.transformation_gizmo.mesh_handle = transformation_gizmo_mesh->GetMetadata().handle;
+      draw_gizmos.transformation_gizmo.mesh_handle = transformation_gizmo_mesh->GetHandle();
     } else {
       draw_gizmos.transformation_gizmo.mesh_handle = AssetHandle();
     }
