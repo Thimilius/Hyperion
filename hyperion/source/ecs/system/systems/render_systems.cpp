@@ -193,7 +193,6 @@ namespace Hyperion::Rendering {
       render_object_context_mesh.position = Vector3(local_to_world->local_to_world.columns[3]);
       render_object_context_mesh.mesh_handle = mesh_handle;
       render_object_context_mesh.sub_mesh_index = mesh->sub_mesh_index;
-      render_object_context_mesh.shader_handle = AssetManager::GetMaterial(material_handle)->GetShader()->GetMetadata().handle; // TODO: Remove this.
       render_object_context_mesh.material_handle = material_handle;
       render_object_context_mesh.layer_mask = mesh->layer_mask;
       render_object_context_mesh.bounds = mesh_bounds->bounds;

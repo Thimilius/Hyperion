@@ -22,7 +22,6 @@ namespace Hyperion::Rendering {
     AssetHandle mesh_handle;
     uint32 sub_mesh_index = 0;
 
-    AssetHandle shader_handle;
     AssetHandle material_handle;
 
     LayerMask layer_mask = LayerMask::Default;

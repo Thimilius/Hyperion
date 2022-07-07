@@ -513,25 +513,23 @@ namespace Hyperion::Rendering {
     for (uint32 index : sorted_objects) {
       const RenderObjectContextMesh &render_frame_context_object_mesh = mesh_objects[index];
 
-      AssetHandle shader_handle = render_frame_context_object_mesh.shader_handle;
-      AssetHandle material_handle = render_frame_context_object_mesh.material_handle;
-      AssetHandle mesh_handle = render_frame_context_object_mesh.mesh_handle;
-
       if ((render_frame_context_object_mesh.layer_mask & drawing_parameters.filter_mask) != render_frame_context_object_mesh.layer_mask) {
         continue;
       }
 
-      auto opengl_shader_it = m_storage.FindShader(shader_handle);
-      if (opengl_shader_it == m_storage.GetShaderEnd()) {
-        HYP_LOG_ERROR("OpenGL", "Failed to retrieve OpenGL shader!");
-        continue;
-      } else {
-        ShaderRenderOrder render_order = opengl_shader_it->second.attributes.render_order;
-        if (render_order != drawing_parameters.render_order) {
-          continue;
-        }
-      }
+      AssetHandle mesh_handle = render_frame_context_object_mesh.mesh_handle;
+      AssetHandle material_handle = render_frame_context_object_mesh.material_handle;
+      
+      const OpenGLMaterial &material = m_storage.GetMaterial(render_frame_context_object_mesh.material_handle);
+      const OpenGLShader &shader = *material.shader;
 
+      // Skip objects which are not part of the render order we want to draw
+      ShaderRenderOrder render_order = shader.attributes.render_order;
+      if (render_order != drawing_parameters.render_order) {
+        continue;
+      }
+      
+      AssetHandle shader_handle = shader.handle;
       auto shaders_it = std::find_if(grouped_shaders.begin(), grouped_shaders.end(), [shader_handle](const GroupedShader &grouped_shader) {
         return grouped_shader.shader->handle == shader_handle;
       });
