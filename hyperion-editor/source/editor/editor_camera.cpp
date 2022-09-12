@@ -34,17 +34,15 @@ namespace Hyperion::Editor {
       m_mouse_captured = false;
     }
     if (EditorUI::IsMouseInsidePreviewRect()) {
-      m_should_receive_input = true;
       if (Input::IsMouseButtonDown(MouseButtonCode::Right) || Input::IsMouseButtonDown(MouseButtonCode::Middle)) {
         m_mouse_captured = true;
       }
-    } else {
-      m_should_receive_input = m_mouse_captured;  
     }
+    m_should_control_transformation = m_mouse_captured;
     
     Vector3 position = s_transform.position;
     {
-      if (m_should_receive_input && Input::IsMouseButtonHold(MouseButtonCode::Middle)) {
+      if (m_should_control_transformation && Input::IsMouseButtonHold(MouseButtonCode::Middle)) {
         position += right * mouse_axis_x * m_xz_plane_distance * m_movement_speed;
         position += (up + forward).Normalized() * mouse_axis_y * m_xz_plane_distance * m_movement_speed;
 
@@ -53,7 +51,7 @@ namespace Hyperion::Editor {
     }
 
     {
-      if (m_should_receive_input && Input::IsMouseButtonHold(MouseButtonCode::Right)) {
+      if (m_should_control_transformation && Input::IsMouseButtonHold(MouseButtonCode::Right)) {
         m_rotation_velocity_x += m_rotation_speed * mouse_axis_x * delta_time;
         m_rotation_velocity_y += m_rotation_speed * mouse_axis_y * delta_time;
       }
@@ -63,7 +61,7 @@ namespace Hyperion::Editor {
       m_rotation_axis_x = ClampAngle(m_rotation_axis_x, -90, 90);
       Quaternion rotation = Quaternion::FromEulerAngles(m_rotation_axis_x, m_rotation_axis_y, 0);
 
-      if (m_should_receive_input) {
+      if (EditorUI::IsMouseInsidePreviewRect()) {
         m_zoom -= Input::GetMouseScroll() * m_xz_plane_distance * m_zoom_speed;  
       }
       m_zoom = Math::Clamp(m_zoom, 0.05f, 1000.0f);
