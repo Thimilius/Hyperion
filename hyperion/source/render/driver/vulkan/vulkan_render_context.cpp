@@ -1099,10 +1099,12 @@ namespace Hyperion::Rendering {
     void *user_data) {
 
     if (severity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {
+#if 0
       // HACK: This message is triggered when minimizing the window and the size becomes (0, 0). We are just ignoring this case for now...
       if (String(callback_data->pMessage).contains("VUID-VkSwapchainCreateInfoKHR-imageExtent-01274")) {
         return VK_FALSE;
       }
+#endif
 
       HYP_LOG_ERROR("Vulkan", "Validation: {}", callback_data->pMessage);
       HYP_DEBUG_BREAK;
