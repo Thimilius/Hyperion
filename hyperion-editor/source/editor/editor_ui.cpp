@@ -746,7 +746,7 @@ namespace Hyperion::Editor {
     {
       UIImmediate::Space(SizeKind::Pixels, 5.0f);
 
-      UIImmediate::TextToggle(component_panel_toggle, component_panel_toggle ? "\uf078" : "\uf077", FitType::ToLayout, s_no_toggle_highlight_icon_theme);
+      UIImmediate::TextToggle(component_panel_toggle, component_panel_toggle ? "\uf078" : "\uf054", FitType::ToLayout, s_no_toggle_highlight_icon_theme);
       UIImmediate::Space(SizeKind::Pixels, 5.0f);
 
       UIImmediate::Text(component_name, TextAlignment::MiddleLeft, FitType::ToLayout);
