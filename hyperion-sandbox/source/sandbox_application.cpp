@@ -60,6 +60,7 @@ namespace Sandbox {
     
     g_camera = manager->CreateEntity(EntityPrimitive::Camera);
     g_light = manager->CreateEntity(EntityPrimitive::DirectionalLight);
+    manager->GetComponent<LocalTransformComponent>(g_light)->rotation = Quaternion::FromEulerAngles(-45.0f, 0.0f, 0.0f);
 
     g_camera_controller = new LookAroundCameraController(g_camera);
     g_camera_controller->Reset(manager);
@@ -74,9 +75,9 @@ namespace Sandbox {
         material->SetColor("m_color", Color(Random::Get(), Random::Get(), Random::Get(), 1.0f));
 #endif
         EntityId entity = manager->CreateEntity(EntityPrimitive::Cube);
-        manager->GetComponent<LocalTransformComponent>(entity)->position = Vector3(x * 2.0f, 0.0f, -z * 2.0f);
+        manager->GetComponent<LocalTransformComponent>(entity)->position = Vector3(x * 1.5f, 0.0f, -z * 1.5f);
 #ifdef HYP_STRESS_TEST_EXTREME
-        manager->GetComponent<MeshComponent>(entity)->material = material;
+        manager->GetComponent<MeshComponent>(entity)->material = material->GetHandle();
 #endif
         g_world->GetHierarchy()->SetParent(entity, g_parent);
         manager->RemoveComponent<Physics::BoxColliderComponent>(entity);
@@ -153,7 +154,7 @@ namespace Sandbox {
       transform->rotation = rotation;
 #ifdef HYP_STRESS_TEST_EXTREME
       MeshComponent *mesh = manager->GetComponent<MeshComponent>(entity);
-      mesh->material->SetColor("m_color", Color(Random::Get(), Random::Get(), Random::Get(), 1.0f));
+      AssetManager::GetMaterial(mesh->material)->SetColor("m_color", Color(Random::Get(), Random::Get(), Random::Get(), 1.0f));
 #endif
     }
 #endif
