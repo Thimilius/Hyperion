@@ -14,6 +14,10 @@ The focus is again on exploring and understanding the needed architecture to sup
 Because learning is the driving factor of this project it has gone through a lot of different architectures.
 Before making breaking changes and/or overhauling the architecture, major "milestones" of the engine  have been marked as *tags*. 
 
+<div align="center">
+    <img src="preview.png" alt="Preview" width="100%"/>
+</div>
+
 ## Notable Features
 
 This is not necessarily a summary of all included features but instead the most notables ones.
