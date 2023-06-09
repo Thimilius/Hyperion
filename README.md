@@ -1,7 +1,7 @@
 # Hyperion
 
 <div align="center">
-    <img src="hyperion/assets/icon/icon.png" alt="Logo" width="512"/>
+    <img src="hyperion/assets/icon/icon.png" alt="Logo" height="200"/>
 </div>
 
 ## Overview
