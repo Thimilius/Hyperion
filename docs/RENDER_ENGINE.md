@@ -1,7 +1,7 @@
 ﻿# Render Engine
 
 ## Introduction
-This is the documentation and overview of how the rendering (should/will) work.
+This is the documentation and overview of how the rendering process works.
 First of all Hyperion is not an attempt to be the next Unreal Engine, Cry Engine, Unity, ... (you name it).
 That means that performance is probably not the highest it could be but we still try to make it fairly efficient.
 Mostly however we want to provide a good high level rendering abstraction layer that is customizable.
@@ -24,7 +24,7 @@ Render Thread: │ Frame N - 1 ││   Frame N   ││ Frame N + 1 │
                └─────────────┘└─────────────┘└─────────────┘
 ```
 Obviously in a lot of scenarios the work between the two threads is not evenly divided.
-That means most of the time either the Main Thread has to wait for the Render Thread or the other way ar
+That means most of the time either the Main Thread has to wait for the Render Thread or the other way around.
 There is also an option to turn off the pipelined multithreading and have everything done on the Main Thread.
 The data extraction and command translation stays the same regardless, it's just on a single thread.
 Currently we do not employ any kind of worker threads on the Main or Render Thread.
@@ -37,11 +37,11 @@ The **RenderAssetContext** contains every asset that needs to be loaded/unloaded
 That includes meshes, shaders, materials, textures, ...
 The data for shaders and materials is always copied which is usually fine as it is quite lightweight.
 The bigger data from meshes and textures is ONLY copied when the asset is set to _AssetDataAccess::ReadAndWrite_.
-In the case where the asset is set to _AssetDataAccess::None_ or _AssetDataAccess::Write_, the data can simply be moved and n
+In the case where the asset is set to _AssetDataAccess::None_ or _AssetDataAccess::Write_, the data can simply be moved.
 
 ### Render Object Context
 The **RenderObjectContext** is the interaction point between the ECS and the rendering engine.
-Render systems take the different components and extract every object, camera, light, etc. and copies it into the context
+Render systems take the different components and extract every object, camera, light, etc. and copies it into the context.
 It can be thought of as the snapshot of the simulated world with all the data required to render it.
 
 ### Render Pipeline Context
@@ -55,7 +55,7 @@ The commands include among other things:
   * Executing a command buffer
 
 The execution of a command buffer allows pipelines to control the render state and render target.
-A _RenderCommandBuffer_ is responsible for holding those more lower level commands.
+A _RenderCommandBuffer_ is responsible for holding these more lower level commands.
 Those include among others:
   * Clearing/Setting/Blitting of render targets
   * Setting global shader properties and buffers
@@ -70,7 +70,7 @@ It acts as a double buffer so that the synchronization point between the two thr
 
 ### Render Pipeline
 The **RenderPipeline** is the highest level in the rendering API stack.
-A RenderPipeline lives on the Main Thread and gets passed the RenderPipelineContext of the corresponding RenderFrame for
+A RenderPipeline lives on the Main Thread and gets passed the RenderPipelineContext of the corresponding RenderFrame.
 It uses the RenderPipelineContext to schedule the high level rendering commands which will produce the final render outpu
 That way different kinds of rendering pipelines, like forward or deferred, can easily be implemented.
 

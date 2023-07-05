@@ -6,6 +6,8 @@
 
 ## Overview
 
+Hyperion is a framework/engine for 3D interactive applications like games.
+
 The main goal of this project is to serve as a learning tool while developing.
 It is not trying to be the next Unreal, Unity, CryEngine, Godot or similar.
 Instead it focuses on how all the different features of those engines could potentially be implemented while providing a similar easy to use high-level API.
@@ -32,7 +34,7 @@ This is not necessarily a summary of all included features but instead the most 
     - Entity/Transformation hierarchy
     - World serialization
 - Render Engine
-    - Architecture supporting multiple graphics API backends (Currently only OpenGL is implemented; Vulkan is experimental)
+    - Architecture supporting multiple graphics API backends (Currently only OpenGL is implemented; Vulkan is WIP)
     - Pipelined Main and Render Thread
     - High level API to support implementation of different render pipelines (like Unity's scriptable render pipeline)
     - View frustum culling
